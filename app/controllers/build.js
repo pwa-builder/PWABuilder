@@ -31,12 +31,6 @@ export default Ember.ObjectController.extend({
         nextstep:function(stepToActivate){
             //Activate the next step
             Ember.set(this.steps["step"+stepToActivate], 'active',true);
-            //Ember.set(this.steps["step"+stepToActivate], 'current', true);
-
-            //Make last step not current
-            //if(stepToActivate > 1) {
-            //    Ember.set(this.steps["step"+(stepToActivate-1)], 'current', false);
-            //}
         },
         usage:function(){
             this.transitionTo('usage');
