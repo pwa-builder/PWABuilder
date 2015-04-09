@@ -1,0 +1,196 @@
+<div class="main-info">
+    <h1>Build</h1>
+    <div id="builder_holder">
+    	<div id="form_holder">
+    		<section id="step1" {{bind-attr class=":step :current steps.step1.active:active"}}>
+    			<header>
+    				<h2>Step 1: Tell us about your site</h2>
+    			</header>
+    			<section class="form-body">
+	    			<p class="instructions">Provide your URL or upload your manifest and we’ll help fill in the gaps if there are any.</p>
+	    			<label>Url</label>
+	    			{{input name="url"}}
+	    			<span>or</span>
+	    			<label>Upload manifest</label>
+	    			{{file-upload}}
+	    			<div class="button-holder">
+	    				<button class="button next-step" {{action "nextstep" 2}}>Next</button>
+	    			</div>
+	    		</section>
+    		</section>
+    		<section id="step2" {{bind-attr class=":step :current steps.step2.active:active"}}>
+    			<header>
+    				<h2>Step 2: Site Data</h2>
+    			</header>
+    			<section class="form-body">
+	    			<p class="instructions">Here are the values we picked up from your site. Update or add any details below.</p>
+					<div class="form-item">
+	    				<label>Name</label>
+	    				{{input name="name"}}
+	    			</div>
+	    			<div class="form-item">
+	    				<label>Short Name</label>
+	    				{{input name="short_name"}}
+	    			</div>
+	    			<div class="form-item">
+	    				<label>Icons</label>
+	    			</div>
+	    			<div class="form-item">
+	    				<label>Upload Icon</label>
+	    				{{file-upload}}
+	    			</div>
+	    			<div class="form-item">
+	    				<label>Scope</label>
+	    				{{input name="scope"}}
+	    			</div>
+	    			<div class="form-item">
+	    				<label>Start Url</label>
+	    				{{input name="start_url"}}
+	    			</div>
+	    			<div class="form-item">
+	    				<label>Display</label>
+	    				<select name="display">
+	    					<option value="fullscreen">fullscreen</option>
+	    					<option value="standalone">standalone</option>
+	    					<option value="minimal-ui">minimal-ui</option>
+	    					<option value="browser">browser</option>
+	    				</select>
+	    			</div>
+	    			<div class="form-item">
+	    				<label>Orientation</label>
+	    				<select name="orientation">
+	    					<option value="any">any</option>
+	    					<option value="natural">natural</option>
+	    					<option value="landscape">landscape</option>
+	    					<option value="portrait">portrait</option>
+	    				</select>
+	    			</div>
+	    			<div class="button-holder">
+	    				<button class="button next-step" {{action "nextstep" 3}}>Next</button>
+	    			</div>
+	    		</section>
+    		</section>
+    		<section id="step3" {{bind-attr class=":step :current steps.step3.active:active"}}>
+    			<header>
+    				<h2>Step 3: Capabilities</h2>
+    			</header>
+    			<section class="form-body">
+	    			<div class="form-item">
+	    				<label>Sharing</label>
+	    				{{input type="checkbox" name="sharing" checked=isAdmin}}
+	    			</div>
+	    			<div class="form-item">
+	    				<label>Search</label>
+	    				{{input type="checkbox" name="search" checked=isAdmin}}
+	    			</div>
+	    			<div class="form-item">
+	    				<label>Secondary pinning</label>
+	    				{{input type="checkbox" name="secondary_pinning" checked=isAdmin}}
+	    			</div>
+	    			<div class="form-item">
+	    				<label>Geolocation</label>
+	    				{{input type="checkbox" name="geolocation" checked=isAdmin}}
+	    			</div>
+	    			<div class="form-item">
+	    				<label>Live Tiles</label>
+	    				{{input type="checkbox" name="live_tiles" checked=isAdmin}}
+	    			</div>
+	    			<div class="form-item">
+	    				<label>Offline detection</label>
+	    				{{input type="checkbox" name="offline_detection" checked=isAdmin}}
+	    			</div>
+	    			<div class="form-item">
+	    				<label>Custom styles</label>
+	    				{{input type="checkbox" name="custom_styles" checked=isAdmin}}
+	    			</div>
+	    			<div class="form-item">
+	    				<label>Script injection</label>
+	    				{{input type="checkbox" name="script_injection" checked=isAdmin}}
+	    			</div>
+	    			<div class="button-holder">
+	    				<button class="button next-step" {{action "nextstep" 4}}>Next</button>
+	    			</div>
+	    		</section>
+    		</section>
+    		<section id="step4" {{bind-attr class=":step :current steps.step4.active:active"}}>
+    			<header>
+    				<h2>Step 4: Custom Extensions</h2>
+    			</header>
+    			<section class="form-body">
+	    			<p class="instructions">Specify custom members to be added to the manifest.</p>
+	    			<div class="form-item">
+	    				<label>Member Name</label>
+	    				{{input name="member_name"}}
+	    			</div>
+	    			<div class="form-item">
+	    				<label>Member Value</label>
+	    				{{textarea name="member_value"}}
+	    			</div>
+	    			<div class="button-holder">
+	    				<button class="button next-step" {{action "nextstep" 5}}>Next</button>
+	    			</div>
+	    		</section>
+    		</section>
+    		<section id="step5" {{bind-attr class=":step :current steps.step5.active:active"}}>
+    			<header>
+    				<h2>Step 5: App store details</h2>
+    			</header>
+    			<section class="form-body">
+	    			<p class="instructions">We need a bit more info to get your apps ready for the different stores. If you provide us with the details below, we’ll make sure your projects are ready for each of the stores.</p>
+	    			<div class="form-item">
+	    				<label>Description</label>
+	    				{{input name="description"}}
+	    			</div>
+	    			<div class="form-item">
+	    				<label>Version</label>
+	    				{{input name="version"}}
+	    			</div>
+	    			<div class="form-item">
+	    				<label>Version Code</label>
+	    				{{input name="version_code"}}
+	    			</div>
+	    			<div class="form-item">
+	    				<label>Build</label>
+	    				{{input name="build"}}
+	    			</div>
+	    			<div class="form-item">
+	    				<label>Publisher Display Name</label>
+	    				{{input name="publisher_display_name"}}
+	    			</div>
+	    			<div class="form-item">
+	    				<label>Organization Identifier</label>
+	    				{{input name="organization_identifier"}}
+	    			</div>
+	    			<div class="button-holder">
+	    				<button class="button next-step" {{action "nextstep" 6}}>Next</button>
+	    			</div>
+	    		</section>
+    		</section>
+    		<section id="step6" {{bind-attr class=":step :current steps.step6.active:active"}}>
+    			<header>
+    				<h2>That's it! You're package is downloading now. Next head over to usage!</h2>
+    			</header>
+    			<section class="form-body">
+    				<div class="button-holder">
+    					<button class="button" {{action "usage"}}>Usage</button>
+    				</div>
+    			</section>
+    		</section>
+    	</div>
+    	<div id="manifest_holder">
+    		<header>
+    			<h2>W3C Manifest</h2>
+    		</header>
+    		<section class="manifest-body">
+    			<pre>{
+    	"name": "www.manifoldjs.com",
+    	"icons": [],
+    	"start_url": "http://www.manifoldjs.com/",
+    	"display": "fullscreen",
+    	"orientation": "any"
+}
+				</pre>
+    		</section>
+    	</div>
+    </div>
+</div>
