@@ -1,3 +1,10 @@
 @import 'normalize';
-@import 'variables';
+@import 'pure-grid';
+
+//Base Styles
+@import '_base/_b-fonts';
+@import '_base/_b-colors';
+@import '_base/_b-elements';
+@import '_base/_b-main';
+
 @import 'main';
