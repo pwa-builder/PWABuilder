@@ -16,15 +16,25 @@
 
 #header ul li {
 	float:left;
-	margin:0 1em;
+	margin: 0 0 0 1em;
+}
+
+#header ul li:first-child {
+	margin: 0;
 }
 
 #header a {
-	color:#fff;
+	color: #fff;
 	text-decoration: none;
-	font-family:$sans-stack-bold;
-	font-weight:bold;
-	line-height:4.688rem;
+	font-family: $sans-stack-semibold;
+	line-height: 4.688rem;
+}
+
+#header a.active {
+	background-color:$primary-accent;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	padding: .25em .85em .35em .85em;
 }
 
 #header .nav_logo {
