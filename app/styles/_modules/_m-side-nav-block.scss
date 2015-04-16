@@ -1,0 +1,28 @@
+.side-nav-block {
+	margin-top:2em;
+}
+
+.side-nav-block .title {
+	color:$secondary-accent;
+	font-size:1.2rem;
+	line-height:2.5rem;
+	background-color:$dark-accent;
+	font-family:$serif-stack;
+	padding:0 1rem;
+}
+
+.side-nav-block ul {
+	list-style-type: none;
+}
+
+.side-nav-block li {
+	font-family: $sans-stack-light;
+}
+
+.side-nav-block a {
+	color:black;
+}
+
+.side-nav-block a:hover {
+	color:$primary-accent;
+}
