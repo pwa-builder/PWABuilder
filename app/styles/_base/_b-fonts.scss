@@ -1,0 +1,50 @@
+@font-face {
+  font-family: 'Bree Serif';
+  src: url('fonts/BreeSerif/BreeSerif-Regular.eot'); //IE9 Compat Modes 
+  src: url('fonts/BreeSerif/BreeSerif-Regular.eot?#iefix') format('embedded-opentype'), // IE6-IE8 
+       url('fonts/BreeSerif/BreeSerif-Regular.woff') format('woff'), // Modern Browsers 
+       url('fonts/BreeSerif/BreeSerif-Regular.ttf')  format('truetype'), // Safari, Android, iOS 
+       url('fonts/BreeSerif/BreeSerif-Regular.svg#65485b48d4fb32dd0130a508c61d08ce') format('svg'); // Legacy iOS 
+       
+  font-style:   normal;
+  font-weight:  400;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url('fonts/OpenSans/OpenSans-Regular.eot'); // IE9 Compat Modes 
+  src: local('☺'), url('fonts/OpenSans/OpenSans-Regular.eot?#iefix') format('embedded-opentype'), // IE6-IE8 
+       url('fonts/OpenSans/OpenSans-Regular.woff') format('woff'), // Modern Browsers 
+       url('fonts/OpenSans/OpenSans-Regular.ttf')  format('truetype'), // Safari, Android, iOS 
+       url('fonts/OpenSans/OpenSans-Regular.svg#os') format('svg'); // Legacy iOS 
+       
+  font-style:   normal;
+  font-weight:  400;
+}
+
+@font-face {
+  font-family: 'Open Sans Bold';
+  src: url('fonts/OpenSans/OpenSans-Bold.eot'); // IE9 Compat Modes 
+  src: local('☺'), url('fonts/OpenSans/OpenSans-Bold.eot?#iefix') format('embedded-opentype'), // IE6-IE8 
+       url('fonts/OpenSans/OpenSans-Bold.woff') format('woff'), // Modern Browsers 
+       url('fonts/OpenSans/OpenSans-Bold.ttf')  format('truetype'), // Safari, Android, iOS 
+       url('fonts/OpenSans/OpenSans-Bold.svg#os') format('svg'); // Legacy iOS 
+       
+  font-style:   normal;
+  font-weight:  400;
+}
+
+@font-face {
+  font-family: 'Inconsolata';
+  src: url('fonts/Inconsolata/Inconsolata-Regular.eot'); // IE9 Compat Modes 
+  src: url('fonts/Inconsolata/Inconsolata-Regular.eot?#iefix') format('embedded-opentype'), // IE6-IE8 
+       url('fonts/Inconsolata/Inconsolata-Regular.woff') format('woff'), // Modern Browsers 
+       url('fonts/Inconsolata/Inconsolata-Regular.ttf')  format('truetype'), // Safari, Android, iOS 
+       url('fonts/Inconsolata/Inconsolata-Regular.svg#i') format('svg'); // Legacy iOS 
+}
+
+//Fonts
+$serif-stack: 'Bree Serif', serif;
+$sans-stack: 'Open Sans', sans-serif;
+$sans-stack-bold: 'Open Sans Bold', sans-serif;
+$code-stack: 'Inconsolata', monospace;
