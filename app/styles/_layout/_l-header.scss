@@ -1,0 +1,28 @@
+#header {
+	height:4.688rem;
+	color:#fff;
+	background-color:$dark-accent;
+}
+
+#header nav {
+	float:right;
+}
+
+#header ul {
+	list-style-type: none;
+	margin:0;
+	padding:0;
+}
+
+#header ul li {
+	float:left;
+	margin:0 1em;
+}
+
+#header a {
+	color:#fff;
+	text-decoration: none;
+	font-family:$sans-stack-bold;
+	font-weight:bold;
+	line-height:4.688rem;
+}

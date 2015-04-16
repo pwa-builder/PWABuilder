@@ -6,7 +6,10 @@ var Router = Ember.Router.extend({
 });
 
 export default Router.map(function() {
-	this.route('build'); //Build page
+	this.route('generator'); //Generator page
 	this.route('usage'); //Usage page
+	this.route('about'); //Usage page
+	this.route('documentation'); //Usage page
+	this.route('contribute'); //Usage page
 	this.route('style-guide'); //Style guide
 });

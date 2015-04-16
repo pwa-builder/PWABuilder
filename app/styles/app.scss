@@ -5,6 +5,16 @@
 @import '_base/_b-fonts';
 @import '_base/_b-colors';
 @import '_base/_b-elements';
-@import '_base/_b-main';
+
+//Layout Styles
+@import '_layout/_l-header';
+@import '_layout/_l-footer';
+@import '_layout/_l-main';
+
+//Module Styles
+@import '_modules/_m-build-process';
+@import '_modules/_m-latest-version';
+@import '_modules/_m-more-info';
+@import '_modules/_m-whos-using';
 
 @import 'main';
