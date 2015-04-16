@@ -6,6 +6,7 @@ html, button, input, select, textarea,
 
 
 h1, h2, h3, h4, h5, h6 {
+	margin-top:0;
 	font-family:$serif-stack;
 }
 
@@ -33,7 +34,7 @@ button {
 	background:$primary-accent;
 	border:none;
 	color:#fff;
-	padding:1em;
+	padding:.5em;
 	border-radius: 7px;
 	line-height:1.2em;
 }
@@ -41,4 +42,18 @@ button {
 pre {
 	font-family:$code-stack;
 	padding:1em;
+	margin:0 !important;
+	background-color:black;
+	color:white;
+	box-shadow: 0px 0px 7px #333;
+	border-radius:0 !important;
+}
+
+strong {
+	font-family:$sans-stack-bold;
+}
+
+a {
+	color:$primary-accent;
+	text-decoration: none;
 }

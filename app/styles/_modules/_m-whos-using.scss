@@ -1,4 +1,13 @@
 .whos-using {
 	padding:2rem;
 	background-color: white;
+	text-align: center;
+}
+
+.whos-using img {
+	display:inline-block;
+}
+
+.whos-using .title {
+	color:$secondary-accent;
 }

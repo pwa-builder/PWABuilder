@@ -1,4 +1,14 @@
 .latest-version {
+	text-align: center;
 	padding:2rem;
 	background-color: $secondary-accent;
+}
+
+.latest-version .version {
+	display:inline-block;
+	margin:0 1em;
+}
+
+.latest-version .title {
+	color:white;
 }

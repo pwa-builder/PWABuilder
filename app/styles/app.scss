@@ -12,9 +12,12 @@
 @import '_layout/_l-main';
 
 //Module Styles
+@import '_modules/_m-header-section';
 @import '_modules/_m-build-process';
 @import '_modules/_m-latest-version';
 @import '_modules/_m-more-info';
 @import '_modules/_m-whos-using';
+@import '_modules/_m-page-intro';
+@import '_modules/_m-usage-block';
 
 @import 'main';
