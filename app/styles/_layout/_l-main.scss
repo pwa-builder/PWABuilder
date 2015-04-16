@@ -6,3 +6,12 @@
 	max-width:1000px;
 	margin:0 auto;
 }
+
+.pure-g > div {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.l-box {
+    padding: 1em;
+}
