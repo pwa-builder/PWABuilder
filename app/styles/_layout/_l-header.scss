@@ -16,13 +16,43 @@
 
 #header ul li {
 	float:left;
-	margin:0 1em;
+	margin: 0;
+}
+
+#header ul li:first-child {
+	margin: 0;
 }
 
 #header a {
-	color:#fff;
+	color: #fff;
 	text-decoration: none;
-	font-family:$sans-stack-bold;
-	font-weight:bold;
-	line-height:4.688rem;
+	font-family: $sans-stack-semibold;
+	line-height: 4.688rem;
+	padding: .25em .75em .35em .75em;
+	-webkit-transition: all 0.25s ease-in-out;
+	-moz-transition: all 0.25s ease-in-out;
+	-ms-transition: all 0.25s ease-in-out;
+	-o-transition: all 0.25s ease-in-out;
+	transition: all 0.25s ease-in-out;
+}
+
+#header a:hover {
+	color:$quaternary-accent;
+}
+
+#header a.active {
+	background-color:$primary-accent;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	padding: .25em .75em .35em .75em;
+}
+#header a:hover.active {
+	background-color:$primary-accent;
+	color:#fff;
+}
+
+#header .nav_logo {
+	width: 215px;
+	height: 50px;
+	margin: 0.6875rem 0;
 }
