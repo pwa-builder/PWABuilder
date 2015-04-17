@@ -64,6 +64,7 @@ $form-accent:#999999;
 .generator .form-item {
 	clear:both;
 	padding-bottom:2.8rem;
+	position:relative;
 }
 
 .generator input {
@@ -134,19 +135,31 @@ $form-accent:#999999;
     display: none;
 }
 
-.generator .step3 label:after {
+.generator .step3 label {
+	display:inline-block;
+	text-align: left;
+	width:45%;
+	cursor:pointer;
+}
+
+.generator .step3 label:before {
     content: "";
     display: inline-block;
- 
-    width: 16px;
-    height: 16px;
- 
+    width: 1.313rem;
+    height: 1.313rem;
     margin-right: 10px;
-    position: absolute;
-    left: 0;
-    bottom: 1px;
-    background-color: #aaa;
-    box-shadow: inset 0px 2px 3px 0px rgba(0, 0, 0, .3), 0px 1px 0px 0px rgba(255, 255, 255, .8);
+    position: relative;
+    border:1px solid $form-accent;
+    top:.3rem;
+}
+
+.generator .step3 input[type=checkbox]:checked + label:before {
+    content: "\2713";
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
+    font-size: 15px;
+    color: black;
+    text-align: center;
+    line-height: 1.313rem;
 }
 
 

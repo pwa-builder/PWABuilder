@@ -91,36 +91,36 @@
     			</header>
     			<section class="form-body">
 	    			<div class="form-item">
-	    				<label>Sharing</label>
-	    				{{input type="checkbox" name="sharing" checked=isAdmin}}
+	    				{{input type="checkbox" id="sharing" name="sharing" checked="sharing"}}
+	    				<label for="sharing">Sharing</label>
 	    			</div>
 	    			<div class="form-item">
-	    				<label>Search</label>
-	    				{{input type="checkbox" name="search" checked=isAdmin}}
+	    				{{input type="checkbox" id="search" name="search" checked="search"}}
+	    				<label for="search">Search</label>
 	    			</div>
 	    			<div class="form-item">
-	    				<label>Secondary pinning</label>
-	    				{{input type="checkbox" name="secondary_pinning" checked=isAdmin}}
+	    				{{input type="checkbox" id="secondary_pinning" name="secondary_pinning" checked="secondary_pinning"}}
+	    				<label for="secondary_pinning">Secondary pinning</label>
 	    			</div>
 	    			<div class="form-item">
-	    				<label>Geolocation</label>
-	    				{{input type="checkbox" name="geolocation" checked=isAdmin}}
+	    				{{input type="checkbox" id="geolocation" name="geolocation" checked="geolocation"}}
+	    				<label for="geolocation">Geolocation</label>
 	    			</div>
 	    			<div class="form-item">
-	    				<label>Live Tiles</label>
-	    				{{input type="checkbox" name="live_tiles" checked=isAdmin}}
+	    				{{input type="checkbox" id="live_tiles" name="live_tiles" checked="live_tiles"}}
+	    				<label for="live_tiles">Live Tiles</label>
 	    			</div>
 	    			<div class="form-item">
-	    				<label>Offline detection</label>
-	    				{{input type="checkbox" name="offline_detection" checked=isAdmin}}
+	    				{{input type="checkbox" id="offline_detection" name="offline_detection" checked="offline_detection"}}
+	    				<label for="offline_detection">Offline detection</label>
 	    			</div>
 	    			<div class="form-item">
-	    				<label>Custom styles</label>
-	    				{{input type="checkbox" name="custom_styles" checked=isAdmin}}
+	    				{{input type="checkbox" id="custom_styles" name="custom_styles" checked="custom_styles"}}
+	    				<label for="custom_styles">Custom styles</label>
 	    			</div>
 	    			<div class="form-item">
-	    				<label>Script injection</label>
-	    				{{input type="checkbox" name="script_injection" checked=isAdmin}}
+	    				{{input type="checkbox" id="script_injection" name="script_injection" checked="script_injection"}}
+	    				<label for="script_injection">Script injection</label>
 	    			</div>
 	    			<div class="button-holder">
 	    				<button class="button next-step" {{action "nextstep" 4}}>Next Step</button>
