@@ -1,4 +1,20 @@
 #footer {
+	font-size: 14px;
+	padding:3.125rem 0;
 	color:#fff;
 	background-color:black;
+}
+
+#footer .copyright {
+	color:$quaternary-accent;
+}
+
+#footer .social {
+	text-align:right;
+	margin-bottom: 1.875rem;
+}
+
+#footer .summary {
+	text-align:right;
+	margin-bottom: 1.875rem;
 }
