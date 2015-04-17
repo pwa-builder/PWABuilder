@@ -1,14 +1,16 @@
 .latest-version {
 	text-align: center;
-	padding:2rem;
+	padding: 3.125rem 3.75rem 3.75rem;
 	background-color: $secondary-accent;
 }
 
 .latest-version .version {
+	font-size: 22px;
 	display:inline-block;
 	margin:0 1em;
 }
 
 .latest-version .title {
 	color:white;
+	margin-bottom: .75rem;
 }
