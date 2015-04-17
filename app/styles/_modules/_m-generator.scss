@@ -1,3 +1,5 @@
+$form-accent:#999999;
+
 .generator .generator-section > header {
 	background-color:$dark-accent;
 }
@@ -19,7 +21,20 @@
 }
 
 .generator .step {
+	padding-left:1.25rem;
+	margin-top:1rem;
+	font-family:$sans-stack-light;
+}
 
+.generator .step header {
+
+}
+
+.generator .step header .title {
+	font-size:1.25rem;
+	line-height:2.2rem;
+	padding-left:3.25rem;
+	margin-bottom:0;
 }
 
 .generator .number-callout {
@@ -32,5 +47,66 @@
 	font-family:$serif-stack;
 	font-size:1.563rem;
 	text-align: center;
-	line-height:2.25rem;
+	line-height:2.15rem;
+}
+
+.generator .instructions {
+	padding-left:3.25rem;
+	margin-top:0;
+}
+
+.generator hr {
+	border:none;
+	background:#f2f2f2;
+	height:1px;
+}
+
+.generator .form-item {
+	clear:both;
+	padding-bottom:2.8rem;
+}
+
+.generator input {
+	display:block;
+	border:1px solid $form-accent;
+	width:65%;
+	float:right;
+	height:2.125rem;
+	padding:.1rem;
+}
+
+.generator textarea {
+	width:65%;
+	float:right;
+	border:1px solid $form-accent;
+	padding:.1rem;
+	margin-bottom:.4rem;
+}
+
+.generator select {
+	width:65%;
+	float:right;
+}
+
+.generator label {
+	display:block;
+	width:30%;
+	float:left;
+	text-align: right;
+	line-height:2.215rem;
+}
+
+.generator .button-holder {
+	clear:both;
+	text-align: right;
+}
+
+.generator .step5 label {
+	width:40%;
+}
+
+.generator .step5 input {
+	width:50%;
+	float:left;
+	margin-left:1rem;
 }

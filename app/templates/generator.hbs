@@ -8,10 +8,10 @@
     		<header>
     			<div class="title">Site Information</div>
     		</header>
-    		<section id="step1" {{bind-attr class=":step :current steps.step1.active:active"}}>
+    		<section id="step1" {{bind-attr class=":step :step1 :current steps.step1.active:active"}}>
     			<header>
     				<div class="number-callout">1</div>
-    				<h2>Step 1: Tell us about your site</h2>
+    				<h2 class="title">Get Started</h2>
     			</header>
     			<section class="form-body">
 	    			<p class="instructions">Provide your URL or upload your manifest and we’ll help fill in the gaps if there are any.</p>
@@ -21,13 +21,15 @@
 	    			<label>Upload manifest</label>
 	    			{{file-upload}}
 	    			<div class="button-holder">
-	    				<button class="button next-step" {{action "nextstep" 2}}>Next</button>
+	    				<button class="button next-step" {{action "nextstep" 2}}>Next Step</button>
 	    			</div>
 	    		</section>
+	    		<hr />
     		</section>
-    		<section id="step2" {{bind-attr class=":step :current steps.step2.active:active"}}>
+    		<section id="step2" {{bind-attr class=":step :step2 :current steps.step2.active:active"}}>
     			<header>
-    				<h2>Step 2: Site Data</h2>
+    				<div class="number-callout">2</div>
+    				<h2 class="title">Site Data</h2>
     			</header>
     			<section class="form-body">
 	    			<p class="instructions">Here are the values we picked up from your site. Update or add any details below.</p>
@@ -73,13 +75,15 @@
 	    				</select>
 	    			</div>
 	    			<div class="button-holder">
-	    				<button class="button next-step" {{action "nextstep" 3}}>Next</button>
+	    				<button class="button next-step" {{action "nextstep" 3}}>Next Step</button>
 	    			</div>
+	    			<hr />
 	    		</section>
     		</section>
-    		<section id="step3" {{bind-attr class=":step :current steps.step3.active:active"}}>
+    		<section id="step3" {{bind-attr class=":step :step3 :current steps.step3.active:active"}}>
     			<header>
-    				<h2>Step 3: Capabilities</h2>
+    				<div class="number-callout">3</div>
+    				<h2 class="title">Capabilities</h2>
     			</header>
     			<section class="form-body">
 	    			<div class="form-item">
@@ -115,13 +119,15 @@
 	    				{{input type="checkbox" name="script_injection" checked=isAdmin}}
 	    			</div>
 	    			<div class="button-holder">
-	    				<button class="button next-step" {{action "nextstep" 4}}>Next</button>
+	    				<button class="button next-step" {{action "nextstep" 4}}>Next Step</button>
 	    			</div>
+	    			<hr />
 	    		</section>
     		</section>
-    		<section id="step4" {{bind-attr class=":step :current steps.step4.active:active"}}>
+    		<section id="step4" {{bind-attr class=":step :step4 :current steps.step4.active:active"}}>
     			<header>
-    				<h2>Step 4: Custom Extensions</h2>
+    				<div class="number-callout">4</div>
+    				<h2 class="title">Custom Values</h2>
     			</header>
     			<section class="form-body">
 	    			<p class="instructions">Specify custom members to be added to the manifest.</p>
@@ -134,13 +140,15 @@
 	    				{{textarea name="member_value"}}
 	    			</div>
 	    			<div class="button-holder">
-	    				<button class="button next-step" {{action "nextstep" 5}}>Next</button>
+	    				<button class="button next-step" {{action "nextstep" 5}}>Next Step</button>
 	    			</div>
+	    			<hr />
 	    		</section>
     		</section>
-    		<section id="step5" {{bind-attr class=":step :current steps.step5.active:active"}}>
+    		<section id="step5" {{bind-attr class=":step :step5 :current steps.step5.active:active"}}>
     			<header>
-    				<h2>Step 5: App store details</h2>
+    				<div class="number-callout">5</div>
+    				<h2 class="title">App Store Details</h2>
     			</header>
     			<section class="form-body">
 	    			<p class="instructions">We need a bit more info to get your apps ready for the different stores. If you provide us with the details below, we’ll make sure your projects are ready for each of the stores.</p>
@@ -169,17 +177,26 @@
 	    				{{input name="organization_identifier"}}
 	    			</div>
 	    			<div class="button-holder">
-	    				<button class="button next-step" {{action "nextstep" 6}}>Next</button>
+	    				<button class="button next-step" {{action "nextstep" 6}}>Next Step</button>
 	    			</div>
+	    			<hr />
 	    		</section>
     		</section>
-    		<section id="step6" {{bind-attr class=":step :current steps.step6.active:active"}}>
+    		<section id="step6" {{bind-attr class=":step :step6 :current steps.step6.active:active"}}>
     			<header>
-    				<h2>That's it! You're package is downloading now. Next head over to usage!</h2>
+    				<div class="number-callout">6</div>
+    				<h2 class="title">Download your package</h2>
+    			</header>
+    			<hr />
+    		</section>
+    		<section id="step7" {{bind-attr class=":step :step7 :current steps.step7.active:active"}}>
+    			<header>
+    				<div class="number-callout">7</div>
+    				<h2 class="title">Move on to Usage</h2>
     			</header>
     			<section class="form-body">
     				<div class="button-holder">
-    					<button class="button" {{action "usage"}}>Usage</button>
+    					<button class="button" {{action "usage"}}>Usage Documentation</button>
     				</div>
     			</section>
     		</section>
