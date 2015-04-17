@@ -4,15 +4,17 @@
 
 .side-nav-block .title {
 	color:$secondary-accent;
-	font-size:1.2rem;
+	font-size:1.15rem;
 	line-height:2.5rem;
 	background-color:$dark-accent;
 	font-family:$serif-stack;
-	padding:0 1rem;
+	padding:0 1rem .05rem 1rem;
 }
 
 .side-nav-block ul {
 	list-style-type: none;
+	padding-left:1rem;
+	margin:.5rem 0 1rem 0;
 }
 
 .side-nav-block li {
