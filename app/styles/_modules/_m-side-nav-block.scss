@@ -1,0 +1,34 @@
+.side-nav-block {
+	margin-top:2rem;
+}
+
+.side-nav-block:first-child {
+	margin-top:3.75rem;
+}
+
+.side-nav-block .title {
+	color:$secondary-accent;
+	font-size:1.15rem;
+	line-height:2.5rem;
+	background-color:$dark-accent;
+	font-family:$serif-stack;
+	padding:0 1rem .05rem 1rem;
+}
+
+.side-nav-block ul {
+	list-style-type: none;
+	padding-left:1rem;
+	margin:.5rem 0 1rem 0;
+}
+
+.side-nav-block li {
+	font-family: $sans-stack-light;
+}
+
+.side-nav-block a {
+	color:black;
+}
+
+.side-nav-block a:hover {
+	color:$primary-accent;
+}
