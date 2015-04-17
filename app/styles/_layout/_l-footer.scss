@@ -5,6 +5,30 @@
 	background-color:black;
 }
 
+#footer ul {
+	list-style-type: none;
+	padding-left:0;
+	margin:.5rem 0 1rem 0;
+}
+
+#footer li {
+	font-family: $sans-stack-light;
+	margin-bottom: 1rem;
+}
+
+#footer li a {
+	color:#fff;
+	-webkit-transition: all 0.25s ease-in-out;
+	-moz-transition: all 0.25s ease-in-out;
+	-ms-transition: all 0.25s ease-in-out;
+	-o-transition: all 0.25s ease-in-out;
+	transition: all 0.25s ease-in-out;
+}
+
+#footer li a:hover {
+	color:$primary-accent;
+}
+
 #footer .copyright {
 	color:$quaternary-accent;
 }
