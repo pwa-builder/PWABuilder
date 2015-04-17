@@ -1,9 +1,11 @@
 .build-process {
-	padding:2rem;
+	padding:4.375rem;
 	background-color: $tertiary-accent;
 }
 
 .build-process .title {
-	margin-bottom:0;
+	font-size: 22px;
+	text-align: right;
+	margin: 0.625rem 1.875rem 0.625rem 5rem;
 	line-height:1.2em;
 }
