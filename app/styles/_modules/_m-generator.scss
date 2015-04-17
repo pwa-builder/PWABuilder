@@ -101,6 +101,24 @@ $form-accent:#999999;
 	text-align: right;
 }
 
+.generator .step1 .url label {
+	width:8%;
+	text-align:left;
+}
+
+.generator .step1 .url input {
+	width:90%;
+}
+
+.generator .step1 .manifest label {
+	width:28%;
+	text-align: left;
+}
+
+.generator .step1 .manifest input {
+	width:70%;
+}
+
 .generator .step5 label {
 	width:40%;
 }
@@ -109,4 +127,34 @@ $form-accent:#999999;
 	width:50%;
 	float:left;
 	margin-left:1rem;
+}
+
+//Checkboxes
+.generator .step3 input[type=checkbox] {
+    display: none;
+}
+
+.generator .step3 label:after {
+    content: "";
+    display: inline-block;
+ 
+    width: 16px;
+    height: 16px;
+ 
+    margin-right: 10px;
+    position: absolute;
+    left: 0;
+    bottom: 1px;
+    background-color: #aaa;
+    box-shadow: inset 0px 2px 3px 0px rgba(0, 0, 0, .3), 0px 1px 0px 0px rgba(255, 255, 255, .8);
+}
+
+
+
+
+
+
+//Manifest section
+.generator .generator-section pre {
+	box-shadow: none;
 }

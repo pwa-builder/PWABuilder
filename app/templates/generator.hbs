@@ -15,11 +15,15 @@
     			</header>
     			<section class="form-body">
 	    			<p class="instructions">Provide your URL or upload your manifest and we’ll help fill in the gaps if there are any.</p>
-	    			<label>Url</label>
-	    			{{input name="url"}}
-	    			<span>or</span>
-	    			<label>Upload manifest</label>
-	    			{{file-upload}}
+	    			<div class="form-item url">
+	    				<label>URL</label>
+	    				{{input name="url"}}
+	    			</div>
+	    			<span>&nbsp;or</span>
+	    			<div class="form-item manifest">
+	    				<label>Upload manifest</label>
+	    				{{file-upload}}
+	    			</div>
 	    			<div class="button-holder">
 	    				<button class="button next-step" {{action "nextstep" 2}}>Next Step</button>
 	    			</div>
