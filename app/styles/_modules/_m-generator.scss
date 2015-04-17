@@ -1,0 +1,36 @@
+.generator .generator-section > header {
+	background-color:$dark-accent;
+}
+
+.generator .generator-section > header .title {
+	color:$secondary-accent;
+	font-family:$serif-stack;
+	font-size:1.313rem;
+	line-height:2.5rem;
+	padding:0 1rem .05rem 1rem;
+}
+
+.generator .generator-section:first-child {
+	padding-right:.5rem;
+}
+
+.generator .generator-section:last-child {
+	padding-left:.5rem;
+}
+
+.generator .step {
+
+}
+
+.generator .number-callout {
+	background:$tertiary-accent;
+	width:2.25rem;
+	height:2.25rem;
+	float:left;
+	border-radius:50%;
+	color:white;
+	font-family:$serif-stack;
+	font-size:1.563rem;
+	text-align: center;
+	line-height:2.25rem;
+}
