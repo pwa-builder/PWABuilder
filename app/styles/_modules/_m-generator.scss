@@ -171,12 +171,8 @@ $form-accent:#999999;
 }
 
 .generator .step3 input[type=checkbox]:checked + label:before {
-    content: "\2713";
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
-    font-size: 15px;
-    color: black;
-    text-align: center;
-    line-height: 1.313rem;
+    content: "";
+    background:url('/assets/images/checkmark.png') no-repeat -3px -13px;
 }
 
 
@@ -187,4 +183,5 @@ $form-accent:#999999;
 //Manifest section
 .generator .generator-section pre {
 	box-shadow: none;
+	min-height:20rem;
 }

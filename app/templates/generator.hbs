@@ -22,7 +22,7 @@
 	    			<span>&nbsp;or</span>
 	    			<div class="form-item manifest">
 	    				<label>Upload manifest</label>
-	    				{{file-upload}}
+	    				{{file-input action="manifestUpload"}}
 	    			</div>
 	    			<div class="button-holder">
 	    				<button class="button next-step" {{action "nextstep" 2}}>Next Step</button>
@@ -210,7 +210,7 @@
     			<div class="title">W3C Manifest</div>
     		</header>
     		<section class="manifest-body">
-    			<pre><code class="language-javascript">{{content}}</code></pre>
+    			<pre><code class="language-javascript">{{formattedContent}}</code></pre>
     		</section>
     	</div>
     </div>
