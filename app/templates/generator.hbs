@@ -17,7 +17,7 @@
 	    			<p class="instructions">Provide your URL or upload your manifest and we’ll help fill in the gaps if there are any.</p>
 	    			<div class="form-item url">
 	    				<label>URL</label>
-	    				{{input name="url"}}
+	    				{{input value=siteUrl}}
 	    			</div>
 	    			<span>&nbsp;or</span>
 	    			<div class="form-item manifest">
@@ -39,11 +39,11 @@
 	    			<p class="instructions">Here are the values we picked up from your site. Update or add any details below.</p>
 					<div class="form-item">
 	    				<label>Name</label>
-	    				{{input name="name"}}
+	    				{{input value=content.name}}
 	    			</div>
 	    			<div class="form-item">
 	    				<label>Short Name</label>
-	    				{{input name="short_name"}}
+	    				{{input value=content.short_name}}
 	    			</div>
 	    			<div class="form-item">
 	    				<label>Icons</label>
@@ -210,14 +210,7 @@
     			<div class="title">W3C Manifest</div>
     		</header>
     		<section class="manifest-body">
-    			<pre><code class="language-javascript">{
-    	"name": "www.manifoldjs.com",
-    	"icons": [],
-    	"start_url": "http://www.manifoldjs.com/",
-    	"display": "fullscreen",
-    	"orientation": "any"
-}
-				</code></pre>
+    			<pre><code class="language-javascript">{{content}}</code></pre>
     		</section>
     	</div>
     </div>

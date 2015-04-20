@@ -24,6 +24,23 @@ $form-accent:#999999;
 	padding-left:1.25rem;
 	margin-top:1rem;
 	font-family:$sans-stack-light;
+	display:none;
+}
+
+.generator .step header {
+	cursor:pointer;
+}
+
+.generator .step .form-body {
+	display:none;
+}
+
+.generator .step.active {
+	display:block;
+}
+
+.generator .step.active.current .form-body {
+	display:block;
 }
 
 .generator .step header {

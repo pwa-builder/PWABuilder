@@ -16,6 +16,10 @@ module.exports = function(environment) {
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
+    },
+
+    contentSecurityPolicy:  {
+        'connect-src': "'self' http://localhost:3000 http://0.0.0.0:3000 ws://localhost:3000 ws://localhost:4200",
     }
   };
 
