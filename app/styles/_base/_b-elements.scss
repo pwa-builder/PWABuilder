@@ -49,15 +49,23 @@ button:hover {
 	color: $primary-accent;
 }
 
-pre {
+pre, .shell {
 	font-family:$code-stack;
-	padding:1em;
+	font-size: 1.125em;
+	padding: 1.25em 1.75em;
 	margin:0 !important;
 	background-color:black;
 	color:white;
 	box-shadow: 0px 0px 7px #333;
 	border-radius:0 !important;
 }
+
+	.shell .line { display: block; margin: 0; padding: 0; }
+	.shell .line span { display: inline-block; }
+	.shell p.line { line-height: 1.375em; }
+		.shell .prompt { color: #b25538; }
+		.shell .command { color: #fec77c; }
+		.shell .app { color: #ffffff; }
 
 strong {
 	font-family:$sans-stack-bold;
