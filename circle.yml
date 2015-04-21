@@ -4,6 +4,7 @@ machine:
 dependencies:
   override:
     - npm install
+    - bower install
     - npm install ember-cli -g
 test:
   override:
