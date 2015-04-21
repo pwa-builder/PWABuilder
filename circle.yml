@@ -5,6 +5,7 @@ dependencies:
   override:
     - npm install ember-cli -g
     - npm install bower -g
+    - npm install phantomjs -g
     - npm install
     - bower install
 test:
