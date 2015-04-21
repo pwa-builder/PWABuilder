@@ -6,7 +6,6 @@ dependencies:
     - npm install ember-cli -g
     - npm install bower -g
     - npm install phantomjs -g
-    - npm install node-sass
     - npm install
     - bower install
 test:
