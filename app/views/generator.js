@@ -1,19 +1,18 @@
 import Ember from 'ember';
 
 export default Ember.View.extend({
-	initialize: function(){
+	initialize: function () {
 		var scope = this;
-
-		scope.$(".step header").click(function(e){
-			$(this).parent(".step").toggleClass("current");
+		scope.$('.step header').click(function () {
+			scope.$(this).parent('.step').toggleClass('current');
 		});
 	}.on('didInsertElement'),
-	stepChange: function(){
+	stepChange: function () {
 		var scope = this;
-		Ember.run.scheduleOnce('afterRender', function(){
-			var $prevItems = scope.$(".active.current").not(":last");
-			$prevItems.removeClass("current");
-			$("button", $prevItems).hide();
+		Ember.run.scheduleOnce('afterRender', function () {
+			var $prevItems = scope.$('.active.current').not(':last');
+			$prevItems.removeClass('current');
+			scope.$('button', $prevItems).hide();
 		});
 	}.observes(
 		'controller.steps.step1.active',
