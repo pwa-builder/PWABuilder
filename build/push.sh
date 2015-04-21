@@ -2,6 +2,7 @@
 
 rm -rf .git
 ember build -prod
+cp ./web.config ./dist
 cd ./dist
 git init
 git config user.email "interactive@bamideas.com"
