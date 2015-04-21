@@ -23,7 +23,7 @@
 	margin: 0;
 }
 
-#header a {
+#header nav a {
 	color: #fff;
 	text-decoration: none;
 	font-family: $sans-stack-semibold;
@@ -36,17 +36,17 @@
 	transition: all 0.25s ease-in-out;
 }
 
-#header a:hover {
+#header nav a:hover {
 	color:$quaternary-accent;
 }
 
-#header a.active {
+#header nav a.active {
 	background-color:$primary-accent;
 	-moz-border-radius: 2px;
 	border-radius: 2px;
 	padding: .25em .75em .35em .75em;
 }
-#header a:hover.active {
+#header nav a:hover.active {
 	background-color:$primary-accent;
 	color:#fff;
 }
