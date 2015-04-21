@@ -1,4 +1,49 @@
 #footer {
+	font-size: 14px;
+	padding:3.125rem 0;
 	color:#fff;
 	background-color:black;
+}
+
+#footer ul {
+	list-style-type: none;
+	padding-left:0;
+	margin:.5rem 0 1rem 0;
+}
+
+#footer li {
+	font-family: $sans-stack-light;
+	margin-bottom: 1rem;
+}
+
+#footer li a {
+	color:#fff;
+	-webkit-transition: all 0.25s ease-in-out;
+	-moz-transition: all 0.25s ease-in-out;
+	-ms-transition: all 0.25s ease-in-out;
+	-o-transition: all 0.25s ease-in-out;
+	transition: all 0.25s ease-in-out;
+}
+
+#footer li a:hover {
+	color:$primary-accent;
+}
+
+#footer .copyright {
+	color:$quaternary-accent;
+}
+
+#footer .social {
+	text-align:right;
+	margin-bottom: 1.875rem;
+}
+
+	#footer .social .logo_twitter { height: 41px; width: 50px; margin: 0 15px 2px 0; }
+	#footer .social .logo_github { height: 49px; width: 50px; margin: 0 20px 0 0; }
+	#footer .social .logo_npm { height: 27px; width: 70px; margin: 0 20px 10px 0; }
+	#footer .social .logo_stackoverflow { height: 50px; width: 39px; }
+
+#footer .summary {
+	text-align:right;
+	margin-bottom: 1.875rem;
 }
