@@ -1,0 +1,15 @@
+machine:
+  node:
+    version: 0.12.2
+dependencies:
+  override:
+    - npm install
+    - npm install ember-cli -g
+test:
+  override:
+    - ember test
+deployment:
+  staging:
+    branch: deployment
+    commands:
+      - ./build/push.sh
