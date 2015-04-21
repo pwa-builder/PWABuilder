@@ -1,11 +1,12 @@
 #header {
-	height:4.688rem;
 	color:#fff;
 	background-color:$dark-accent;
+	overflow: auto;
 }
 
 #header nav {
 	float:right;
+	overflow: auto;
 }
 
 #header ul {
@@ -54,7 +55,7 @@
 #header .nav_logo {
 	width: 215px;
 	height: 50px;
-	margin: 0.6875rem 0;
+	margin: 0.75rem 0;
 }
 
 #header #ember347.active {
