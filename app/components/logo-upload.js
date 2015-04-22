@@ -8,6 +8,7 @@ export default Ember.Component.extend({
   actions: {
     addLogo: function(){
       var self = this;
+      console.log(config.APP.API_URL);
 
       ajax({
         url:config.APP.API_URL+'/images',
@@ -16,7 +17,7 @@ export default Ember.Component.extend({
         dataType: 'json',
         contentType: 'application/json; charset=utf-8'
       }).then(function(result) {
-        self.logos.pushObject({ src: self.logoUrl, meta: result.meta });
+        self.logos.pushObject({ src: self.logoUrl, sizes: result.meta.width +'x'+result.meta.height });
         self.set('logoUrl','');
         self.sendAction('action',self.logos);
       });
