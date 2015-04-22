@@ -6,3 +6,40 @@
 	color:$secondary-accent;
 	margin:0;
 }
+
+.errors {
+	padding: .75rem 2rem 1.5rem 2rem;
+	margin: 2rem 0;
+	background-color: $dark-accent;
+	color: #fff;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+}
+	.errors h5 {
+		font-size: 1.25rem;
+		margin: .75rem 0 .25rem 0;
+		color: $tertiary-accent;
+	}
+		.errors h5 span {
+			display: inline-block;
+			font-size: 75%;
+			color: #888;
+		}
+	.errors h6 {
+		font-size: 1rem;
+		margin: 0 0 .5rem 0;
+		color: $secondary-accent;
+	}
+		.errors h6 span {
+			display: inline-block;
+			font-size: 75%;
+			color: #888;
+		}
+	.errors ul {
+		margin: 0 0 .5rem .75rem;
+		padding: 0;
+	}
+	.errors li {
+		font-size: .75rem;
+		margin: 0 0 .25rem 0;
+	}
