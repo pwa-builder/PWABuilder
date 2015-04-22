@@ -49,9 +49,11 @@ export default Ember.Object.extend({
   update: function(){
     var self = this;
     ajax({
-        url: config.APP.API_URL + '/manifests/' + this.manifestId,
+        url: config.APP.API_URL + '/manifests/' + this.get('manifestId'),
         type: 'PUT',
-        data: JSON.stringify(this.manifest),
+        data: JSON.stringify(this.get('manifest')),
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8'
     }).then(function(result) {
         self.set('manifest',result.content);
         console.log(result);
