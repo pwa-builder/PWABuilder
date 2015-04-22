@@ -2,7 +2,7 @@
 
 module.exports = function(environment) {
   var ENV = {
-    modulePrefix: 'appmyweb',
+    modulePrefix: 'manifoldjs-site',
     environment: environment,
     baseURL: '/',
     locationType: 'auto',
