@@ -1,0 +1,22 @@
+machine:
+  node:
+    version: 0.12.2
+dependencies:
+  override:
+    - npm install ember-cli -g
+    - npm install bower -g
+    - npm install phantomjs -g
+    - npm install
+    - bower install
+test:
+  override:
+    - ember test
+deployment:
+  staging:
+    branch: version-1-0-0
+    commands:
+      - ./build/push_staging.sh
+  production:
+    branch: master
+    commands:
+      - ./build/push_prod.sh

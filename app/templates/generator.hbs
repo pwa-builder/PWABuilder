@@ -22,38 +22,38 @@
       </div>
       {{/generator-step}}
       {{#generator-step step="2" stepTitle="Site Data" data=model action="stepUpdated" allowToggle=model.step1Complete}}
-      <p class="instructions">Here are the values we picked up from your site. Update or add any details below.</p>
-      <div class="form-item">
-        <label>Name</label>
-        {{input value=model.manifest.name}}
-      </div>
-      <div class="form-item">
-        <label>Short Name</label>
-        {{input value=model.manifest.short_name}}
-      </div>
-      <div class="form-item">
-        <label>Icons</label>
-      </div>
-      <div class="form-item">
-        <label>Upload Icon</label>
-        {{file-input}}
-      </div>
-      <div class="form-item">
-        <label>Scope</label>
-        {{input value=model.manifest.scope}}
-      </div>
-      <div class="form-item">
-        <label>Start Url</label>
-        {{input value=model.manifest.start_url}}
-      </div>
-      <div class="form-item">
-        <label>Display</label>
-        {{view "select" content=model.display.names value=model.manifest.display}}
-      </div>
-      <div class="form-item">
-        <label>Orientation</label>
-        {{view "select" content=model.orientation.names value=model.manifest.orientation}}
-      </div>
+<p class="instructions">Here are the values we picked up from your site. Update or add any details below.</p>
+          <div class="form-item">
+              <label>Name</label>
+              {{input value=model.manifest.name}}
+            </div>
+            <div class="form-item">
+              <label>Short Name</label>
+              {{input value=model.manifest.short_name}}
+            </div>
+            <div class="form-item">
+              <label>Icons</label>
+            </div>
+            <div class="form-item">
+              <label>Upload Icon</label>
+              {{logo-upload action="updateLogos"}}
+            </div>
+            <div class="form-item">
+              <label>Scope</label>
+              {{input value=model.manifest.scope}}
+            </div>
+            <div class="form-item">
+              <label>Start Url</label>
+              {{input value=model.manifest.start_url}}
+            </div>
+            <div class="form-item">
+              <label>Display</label>
+              {{view "select" content=model.display.names value=model.manifest.display}}
+            </div>
+            <div class="form-item">
+              <label>Orientation</label>
+              {{view "select" content=model.orientation.names value=model.manifest.orientation}}
+            </div>
       {{/generator-step}}
       {{#generator-step step="3" stepTitle="Capabilities" data=model action="stepUpdated" allowToggle=model.step1Complete}}
       <div class="form-item">

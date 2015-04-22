@@ -2,7 +2,7 @@
 
 module.exports = function(environment) {
   var ENV = {
-    modulePrefix: 'appmyweb',
+    modulePrefix: 'manifoldjs-site',
     environment: environment,
     baseURL: '/',
     locationType: 'auto',
@@ -29,6 +29,7 @@ module.exports = function(environment) {
     // ENV.APP.LOG_TRANSITIONS = true;
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
+    ENV.APP.API_URL='http://localhost:4200';
   }
 
   if (environment === 'test') {
@@ -44,7 +45,7 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-
+    ENV.APP.API_URL='http://manifold-api-staging.azurewebsites.net';
   }
 
   return ENV;

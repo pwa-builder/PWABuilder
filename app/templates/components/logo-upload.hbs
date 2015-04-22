@@ -1,0 +1,10 @@
+{{input value=logoUrl placeholder="URL for logo"}}
+<button {{action 'addLogo'}}>+</button>
+
+<div class="logos">
+  {{#each logo in logos}}
+    <div>src: {{logo.src}} width: {{logo.meta.width}} height: {{logo.meta.height}} type: {{logo.meta.format}}</div>
+    <button {{action 'removeLogo' logo}}>-</button>
+  {{/each}}
+</div>
+

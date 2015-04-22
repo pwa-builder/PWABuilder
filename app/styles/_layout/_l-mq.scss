@@ -1,0 +1,119 @@
+@-ms-viewport {	width: device-width; }
+@viewport {	width: device-width; }
+
+@media screen and (max-width: 47.938em) {
+	.l-max-width {
+		width:80%;
+	}
+	
+	.l-right {
+		padding-left:0;
+	}
+	.header-section, .build-process, .latest-version, .more-info, .whos-using {
+    	padding: 3rem 1rem;
+	}
+	.hp_logo {
+		display: block;
+		width: 70%;
+		margin: 0 auto 1em auto !important;
+		text-align: center;
+	}
+	.hp_logo_body {
+		display: block;
+		width: 90%;
+		margin: 0 auto 1em auto !important;
+		text-align: center;
+	}
+	.header-section h2 {
+		font-size: 30px !important;
+		line-height:1.2em;
+		text-align: center;
+	}
+	.header-section button {
+    	display: block;
+    	margin: 0 auto;
+    	font-size: 1.275rem;
+	}
+	.build-process .title {
+		display: block;
+		width: 100%;
+		margin: 0 auto 1em auto;
+		text-align: center;
+	}
+	pre, .shell {
+		font-size: 1em;
+		margin: 0 !important;
+	}
+	.latest-version .title, .whos-using .title {
+	    font-size: 1.75rem;
+   		line-height: 2rem !important;
+	}
+	.latest-version .version {
+		font-size: 18px;
+		margin: 0 !important;
+	}
+	.aboutfp h4 {
+   		line-height: 2rem;
+	}
+	.more-info .copy {
+		margin-bottom: 1rem;
+	}
+	.more-info button {
+		margin-bottom: 2rem;
+	}
+	.whoisusingmjs .sitelogo_yummly, .whoisusingmjs .sitelogo_22tracks, .whoisusingmjs .sitelogo_boostmedia, .whoisusingmjs .sitelogo_nickelodeon {
+		display: block;
+		width: 35%;
+		height: auto;
+		margin: 0 auto 1.5rem auto;
+	}
+}
+
+@media screen and (min-width: 48.000em) and (max-width: 62.375em) {
+	.hp_logo {
+		margin: 0 2rem 0 0;
+	}
+	.build-process .title {
+		font-size: 22px;
+		text-align: right;
+		margin: .5rem 1.75rem .5rem 0;
+		line-height: 1.2em;
+	}
+}
+
+@media screen and (max-width: 62.438em) {
+	.l-max-width {
+		width:80%;
+	}
+	#header {
+		height:auto;
+		padding: 1.625rem 0;
+	}
+	#header nav {
+		float:none;
+	}
+	#header ul {
+		text-align: center;
+		overflow: auto;
+	}
+	#header ul li {
+		float:none;
+		display: inline-block;
+		margin: 0;
+	}
+	#header nav a {
+		font-size: 14px;
+		line-height: 2.063rem;
+		padding: .25em .75em .35em .75em;
+	}
+	#header .nav_logo {
+		width: 100%;
+	}
+	.hp_logo {
+		margin: 0 3rem 0 0;
+	}
+	.header-section h2 {
+		font-size: 40px;
+		line-height:1.2em;
+	}
+}
