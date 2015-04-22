@@ -1,15 +1,20 @@
 $form-accent:#999999;
 
-.generator .generator-section > header {
+.generator {
+  margin-top: 2rem;
+}
+
+.generator-section > header {
 	background-color:$dark-accent;
 }
 
-.generator .generator-section > header .title {
-	color:$secondary-accent;
+.generator-section-title {
+	padding:0 1rem .05rem 1rem;
+  margin: 0;
+  color:$secondary-accent;
 	font-family:$serif-stack;
 	font-size:1.313rem;
 	line-height:2.5rem;
-	padding:0 1rem .05rem 1rem;
 }
 
 .generator .generator-section:first-child {
@@ -21,10 +26,17 @@ $form-accent:#999999;
 }
 
 .generator .step {
-  opacity: 0.6;
-  padding-left:1.25rem;
-	margin-top:1rem;
+	margin: 1rem 0 0 1rem;
 	font-family:$sans-stack-light;
+}
+
+.generator .step-wrapper {
+  padding-left: 3.25rem;
+}
+
+.generator .step--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .generator .step header {
@@ -36,27 +48,12 @@ $form-accent:#999999;
 }
 
 .generator .step .title {
-	padding-left:3.25rem;
 	margin-bottom:0;
 	font-size:1.25rem;
 	line-height:2.2rem;
 }
 
-.generator .number-callout {
-	background:$tertiary-accent;
-	width:2.25rem;
-	height:2.25rem;
-	float:left;
-	border-radius:50%;
-	color:white;
-	font-family:$serif-stack;
-	font-size:1.563rem;
-	text-align: center;
-	line-height:2.15rem;
-}
-
 .generator .instructions {
-	padding-left:3.25rem;
 	margin-top:0;
 }
 
@@ -105,6 +102,37 @@ $form-accent:#999999;
 .generator .button-holder {
 	clear:both;
 	text-align: right;
+}
+
+/* Generator step list custom numbering */
+
+.generator-step-list {
+  margin-left: 0;
+  padding-left: 0;
+  list-style-type: none;
+}
+
+.generator-step-list .step {
+	position: relative;
+	counter-increment: step-counter;
+}
+
+.generator-step-list .step::before {
+	width: 2.25rem;
+	height: 2.25rem;
+	position: absolute;
+	left: 0;
+	content: counter(step-counter);
+	border-radius: 50%;
+	text-align: center;
+  background:$tertiary-accent;
+	color:white;
+	font-family:$serif-stack;
+	font-size:1.563rem;
+}
+
+.generator-step-list .step--disabled {
+  cursor: not-allowed;
 }
 
 .generator .step1 .url label {
@@ -162,11 +190,6 @@ $form-accent:#999999;
     content: "";
     background:url('/assets/images/checkmark.png') no-repeat -3px -13px;
 }
-
-
-
-
-
 
 //Manifest section
 .generator .generator-section pre {

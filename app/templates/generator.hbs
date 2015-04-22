@@ -4,132 +4,140 @@
     <p>Duis nulla nunc, ullamcorper ac tristique at, gravida quis ipsum. Sed viverra sodales imperdiet. Morbi pulvinar sollicitudin turpis non eleifend. Mauris eu nibh id augue mollis venenatis. Nulla facilisi. Curabitur mi justo, sollicitudin quis libero vitae, imperdiet pellentesque est. Donec quis euismod ipsum. Donec sit amet velit a tortor faucibus blandit vitae sit amet leo.</p>
   </div>
   <div class="pure-g generator" id="builder_holder">
+    <div class="pure-u-1 pure-u-md-1-2 generator-section" id="form_holder">
     <header>
-        <h1 class="title">Site Information</h1>
+      <h2 class="generator-section-title">Site Information</h2>
     </header>
-    <ol class="pure-u-1 pure-u-md-1-2 generator-section" id="form_holder">
-      {{#generator-step step="1" stepTitle="Get Started" data=model isShowingBody=true action="stepUpdated"}}
-        <p class="instructions">Provide your URL or upload your manifest and we’ll help fill in the gaps if there are any.</p>
-        <div class="form-item url">
-          <label>URL</label>
-          {{input type="url" value=model.siteUrl}}
-        </div>
-        <span>&nbsp;or</span>
-        <div class="form-item manifest">
-          <label>Upload manifest</label>
-          {{file-input action="manifestUpload"}}
-        </div>
+    <ol class="generator-step-list">
+      {{#generator-step step="1" stepTitle="Get Started" data=model isShowingBody=true action="stepUpdated" allowToggle=true}}
+      <p class="instructions">Provide your URL or upload your manifest and we'll help fill in the gaps if there are any.</p>
+      <div class="form-item url">
+        <label>URL</label>
+        {{input name="siteUrl" type="url" value=model.siteUrl focus-out="updateModel"}}
+      </div>
+      <span>&nbsp;or</span>
+      <div class="form-item manifest">
+        <label>Upload Manifest</label>
+        {{file-input action="manifestUpload"}}
+      </div>
       {{/generator-step}}
       {{#generator-step step="2" stepTitle="Site Data" data=model action="stepUpdated" allowToggle=model.step1Complete}}
-<p class="instructions">Here are the values we picked up from your site. Update or add any details below.</p>
-          <div class="form-item">
-              <label>Name</label>
-              {{input value=model.manifest.name}}
-            </div>
-            <div class="form-item">
-              <label>Short Name</label>
-              {{input value=model.manifest.short_name}}
-            </div>
-            <div class="form-item">
-              <label>Icons</label>
-            </div>
-            <div class="form-item">
-              <label>Upload Icon</label>
-              {{file-input}}
-            </div>
-            <div class="form-item">
-              <label>Scope</label>
-              {{input value=model.manifest.scope}}
-            </div>
-            <div class="form-item">
-              <label>Start Url</label>
-              {{input value=model.manifest.start_url}}
-            </div>
-            <div class="form-item">
-              <label>Display</label>
-              {{view "select" content=model.display.names value=model.manifest.display}}
-            </div>
-            <div class="form-item">
-              <label>Orientation</label>
-              {{view "select" content=model.orientation.names value=model.manifest.orientation}}
-            </div>
+      <p class="instructions">Here are the values we picked up from your site. Update or add any details below.</p>
+      <div class="form-item">
+        <label>Name</label>
+        {{input value=model.manifest.name}}
+      </div>
+      <div class="form-item">
+        <label>Short Name</label>
+        {{input value=model.manifest.short_name}}
+      </div>
+      <div class="form-item">
+        <label>Icons</label>
+      </div>
+      <div class="form-item">
+        <label>Upload Icon</label>
+        {{file-input}}
+      </div>
+      <div class="form-item">
+        <label>Scope</label>
+        {{input value=model.manifest.scope}}
+      </div>
+      <div class="form-item">
+        <label>Start Url</label>
+        {{input value=model.manifest.start_url}}
+      </div>
+      <div class="form-item">
+        <label>Display</label>
+        {{view "select" content=model.display.names value=model.manifest.display}}
+      </div>
+      <div class="form-item">
+        <label>Orientation</label>
+        {{view "select" content=model.orientation.names value=model.manifest.orientation}}
+      </div>
       {{/generator-step}}
       {{#generator-step step="3" stepTitle="Capabilities" data=model action="stepUpdated" allowToggle=model.step1Complete}}
       <div class="form-item">
-              {{input type="checkbox" id="wat_sharing" name="wat_sharing" checked=model.manifest.wat_sharing}}
-              <label for="sharing">Sharing</label>
-            </div>
-            <div class="form-item">
-              {{input type="checkbox" id="wat_search" name="wat_search" checked=model.manifest.wat_search}}
-              <label for="search">Search</label>
-            </div>
-            <div class="form-item">
-              {{input type="checkbox" id="wat_secondary-pinning" name="wat_secondary-pinning" checked=model.manifest.wat_secondary-pinning}}
-              <label for="secondary_pinning">Secondary pinning</label>
-            </div>
-            <div class="form-item">
-              {{input type="checkbox" id="wat_geolocation" name="wat_geolocation" checked=model.manifest.wat_geolocation}}
-              <label for="geolocation">Geolocation</label>
-            </div>
-            <div class="form-item">
-              {{input type="checkbox" id="wat_tiles" name="wat_tiles" checked=model.manifest.wat_tiles}}
-              <label for="live_tiles">Live Tiles</label>
-            </div>
-            <div class="form-item">
-              {{input type="checkbox" id="wat_offline" name="wat_offline" checked=model.manifest.wat_offline}}
-              <label for="offline_detection">Offline detection</label>
-            </div>
-            <div class="form-item">
-              {{input type="checkbox" id="wat_styles" name="wat_styles" checked=model.manifest.wat_styles}}
-              <label for="custom_styles">Custom styles</label>
-            </div>
-            <div class="form-item">
-              {{input type="checkbox" id="wat_script" name="wat_script" checked=model.manifest.wat_script}}
-              <label for="script_injection">Script injection</label>
-            </div>
+        {{input type="checkbox" id="wat_sharing" name="wat_sharing" checked=model.manifest.wat_sharing}}
+        <label for="sharing">Sharing</label>
+      </div>
+      <div class="form-item">
+        {{input type="checkbox" id="wat_search" name="wat_search" checked=model.manifest.wat_search}}
+        <label for="search">Search</label>
+      </div>
+      <div class="form-item">
+        {{input type="checkbox" id="wat_secondary-pinning" name="wat_secondary-pinning" checked=model.manifest.wat_secondary-pinning}}
+        <label for="secondary_pinning">Secondary pinning</label>
+      </div>
+      <div class="form-item">
+        {{input type="checkbox" id="wat_geolocation" name="wat_geolocation" checked=model.manifest.wat_geolocation}}
+        <label for="geolocation">Geolocation</label>
+      </div>
+      <div class="form-item">
+        {{input type="checkbox" id="wat_tiles" name="wat_tiles" checked=model.manifest.wat_tiles}}
+        <label for="live_tiles">Live Tiles</label>
+      </div>
+      <div class="form-item">
+        {{input type="checkbox" id="wat_offline" name="wat_offline" checked=model.manifest.wat_offline}}
+        <label for="offline_detection">Offline detection</label>
+      </div>
+      <div class="form-item">
+        {{input type="checkbox" id="wat_styles" name="wat_styles" checked=model.manifest.wat_styles}}
+        <label for="custom_styles">Custom styles</label>
+      </div>
+      <div class="form-item">
+        {{input type="checkbox" id="wat_script" name="wat_script" checked=model.manifest.wat_script}}
+        <label for="script_injection">Script injection</label>
+      </div>
       {{/generator-step}}
       {{#generator-step step="4" stepTitle="Custom Values" data=model action="stepUpdated" allowToggle=model.step1Complete}}
-         <p class="instructions">Specify custom members to be added to the manifest.</p>
-            <div class="form-item">
-              <label>Member Name</label>
-              {{input name="member_name"}}
-            </div>
-            <div class="form-item">
-              <label>Member Value</label>
-              {{textarea name="member_value"}}
-            </div>
+      <p class="instructions">Specify custom members to be added to the manifest.</p>
+      <div class="form-item">
+        <label>Member Name</label>
+        {{input name="member_name"}}
+      </div>
+      <div class="form-item">
+        <label>Member Value</label>
+        {{textarea name="member_value"}}
+      </div>
       {{/generator-step}}
       {{#generator-step step="5" stepTitle="App Store Details" data=model action="stepUpdated" allowToggle=model.step1Complete}}
-            <p class="instructions">We need a bit more info to get your apps ready for the different stores. If you provide us with the details below, we’ll make sure your projects are ready for each of the stores.</p>
-            <div class="form-item">
-              <label>Description</label>
-              {{input name="description" value=model.manifest.description}}
-            </div>
-            <div class="form-item">
-              <label>Version</label>
-              {{input name="version" value=model.manifest.version}}
-            </div>
-            <div class="form-item">
-              <label>Version Code</label>
-              {{input name="version_code" value=model.manifest.version_code}}
-            </div>
-            <div class="form-item">
-              <label>Build</label>
-              {{input name="build" value=model.manifest.build}}
-            </div>
-            <div class="form-item">
-              <label>Publisher Display Name</label>
-              {{input name="publisher_display_name" value=model.manifest.publishername}}
-            </div>
-            <div class="form-item">
-              <label>Organization Identifier</label>
-              {{input name="organization_identifier" value=model.manifest.organizationid}}
-            </div>
+      <p class="instructions">We need a bit more info to get your apps ready for the different stores. If you provide us with the details below, we’ll make sure your projects are ready for each of the stores.</p>
+      <div class="form-item">
+        <label>Description</label>
+        {{input name="description" value=model.manifest.description}}
+      </div>
+      <div class="form-item">
+        <label>Version</label>
+        {{input name="version" value=model.manifest.version}}
+      </div>
+      <div class="form-item">
+        <label>Version Code</label>
+        {{input name="version_code" value=model.manifest.version_code}}
+      </div>
+      <div class="form-item">
+        <label>Build</label>
+        {{input name="build" value=model.manifest.build}}
+      </div>
+      <div class="form-item">
+        <label>Publisher Display Name</label>
+        {{input name="publisher_display_name" value=model.manifest.publishername}}
+      </div>
+      <div class="form-item">
+        <label>Organization Identifier</label>
+        {{input name="organization_identifier" value=model.manifest.organizationid}}
+      </div>
       {{/generator-step}}
       {{#generator-step step="6" stepTitle="Download your package" data=model action="stepUpdated" allowToggle=model.step1Complete}}
       {{/generator-step}}
-      {{#generator-step step="7" stepTitle="Move on to usage" data=model action="stepUpdated" allowToggle=model.step1Complete}}
-      {{/generator-step}}
-      </ol>
-    </div>
+    </ol>
   </div>
+  <div class="pure-u-1 pure-u-md-1-2 generator-section" id="manifest_holder">
+    <header>
+      <h2 class="generator-section-title">W3C Manifest</h2>
+    </header>
+    <section class="manifest-body">
+      <pre><code class="language-javascript">{{model.formattedManifest}}</code></pre>
+    </section>
+  </div>
+  </div>
+</div>

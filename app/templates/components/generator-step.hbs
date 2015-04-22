@@ -1,6 +1,5 @@
-<li class="step" id="step_{{step}}">
+<div class="step-wrapper">
   <header class="step-header" {{action "toggleBody"}}>
-    <div class="number-callout">{{step}}</div>
     <h2 class="title">{{stepTitle}}</h2>
   </header>
   {{#if isShowingBody}}
@@ -10,6 +9,5 @@
       <button class="button next-step" {{action "updateModel"}}>Next Step</button>
     </div>
   </div>
-  {{/if}}
-</li>
-
+{{/if}}
+</div>
