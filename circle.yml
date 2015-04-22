@@ -13,7 +13,7 @@ test:
     - ember test
 deployment:
   staging:
-    branch: deployment
+    branch: version-1-0-0
     commands:
       - ./build/push_staging.sh
   production:
