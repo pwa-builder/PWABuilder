@@ -8,8 +8,10 @@
     		<header>
     			<div class="title">Site Information</div>
     		</header>
-    		<section id="step1" {{bind-attr class=":step :step1 :current steps.step1.active:active"}}>
-    			<header>
+    		<section id="step1" {{bind-attr class=":step :step1 model.steps.objectAt(0).current:current model.steps.objectAt(0).active:active"}}>
+          <header {{action "toggleStep" 1}}>
+            {{#link-to 'generator.step1'}}Step 1{{/link-to}}
+            {{outlet 'step1'}}
     				<div class="number-callout">1</div>
     				<h2 class="title">Get Started</h2>
     			</header>
@@ -17,7 +19,7 @@
 	    			<p class="instructions">Provide your URL or upload your manifest and we’ll help fill in the gaps if there are any.</p>
 	    			<div class="form-item url">
 	    				<label>URL</label>
-	    				{{input value=siteUrl}}
+	    				{{input type="url" value=model.siteUrl}}
 	    			</div>
 	    			<span>&nbsp;or</span>
 	    			<div class="form-item manifest">
@@ -30,8 +32,9 @@
 	    		</section>
 	    		<hr />
     		</section>
-    		<section id="step2" {{bind-attr class=":step :step2 :current steps.step2.active:active"}}>
-    			<header>
+    		<section id="step2" {{bind-attr class=":step :step2 model.steps[1].current:current model.steps[1].active:active"}}>
+          <header {{action "toggleStep" 2}}>
+            {{#link-to 'generator.step2'}}Step 2{{/link-to}}
     				<div class="number-callout">2</div>
     				<h2 class="title">Site Data</h2>
     			</header>
@@ -84,7 +87,7 @@
 	    			<hr />
 	    		</section>
     		</section>
-    		<section id="step3" {{bind-attr class=":step :step3 :current steps.step3.active:active"}}>
+    		<section id="step3" {{bind-attr class=":step :step3 :current steps[2].active:active"}}>
     			<header>
     				<div class="number-callout">3</div>
     				<h2 class="title">Capabilities</h2>
@@ -128,7 +131,7 @@
 	    			<hr />
 	    		</section>
     		</section>
-    		<section id="step4" {{bind-attr class=":step :step4 :current steps.step4.active:active"}}>
+    		<section id="step4" {{bind-attr class=":step :step4 :current model.steps[3].active:active"}}>
     			<header>
     				<div class="number-callout">4</div>
     				<h2 class="title">Custom Values</h2>
@@ -149,7 +152,7 @@
 	    			<hr />
 	    		</section>
     		</section>
-    		<section id="step5" {{bind-attr class=":step :step5 :current steps.step5.active:active"}}>
+    		<section id="step5" {{bind-attr class=":step :step5 :current model.steps[4].active:active"}}>
     			<header>
     				<div class="number-callout">5</div>
     				<h2 class="title">App Store Details</h2>
@@ -186,14 +189,14 @@
 	    			<hr />
 	    		</section>
     		</section>
-    		<section id="step6" {{bind-attr class=":step :step6 :current steps.step6.active:active"}}>
+    		<section id="step6" {{bind-attr class=":step :step6 :current model.steps[5].active:active"}}>
     			<header>
     				<div class="number-callout">6</div>
     				<h2 class="title">Download your package</h2>
     			</header>
     			<hr />
     		</section>
-    		<section id="step7" {{bind-attr class=":step :step7 :current steps.step7.active:active"}}>
+    		<section id="step7" {{bind-attr class=":step :step7 :current model.steps[6].active:active"}}>
     			<header>
     				<div class="number-callout">7</div>
     				<h2 class="title">Move on to Usage</h2>

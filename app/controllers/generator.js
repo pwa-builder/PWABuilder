@@ -1,46 +1,12 @@
 /* global Prism */
+
 import Ember from 'ember';
 import ajax from 'ic-ajax';
 
 export default Ember.Controller.extend({
-  manifestId: '',
-  siteUrl: '',
-  content: '',
-  formattedContent: '',
-  file: null,
-  steps:{
-    step1: {
-      id: 'step1',
-      active:true
-    },
-    step2:{
-      id: 'step2',
-      active:false
-    },
-    step3:{
-      id: 'step3',
-      active:false
-    },
-    step4:{
-      id: 'step4',
-      active:false
-    },
-    step5:{
-      id: 'step5',
-      active:false
-    },
-    step6:{
-      id: 'step6',
-      active:false
-    },
-    step7:{
-      id: 'step7',
-      active:false
-    }
-  },
   createManifest:function () {
-    var scope = this;
-    var fd = new FormData();
+    //this.model.set('steps.step1.active',true);
+    /*var fd = new FormData();
     if(scope.get('siteUrl') !== '') {
       fd.append('siteUrl',scope.get('siteUrl'));
     } else if(scope.get('file')) {
@@ -57,15 +23,36 @@ export default Ember.Controller.extend({
       scope.set('manifestId', result.id);
       scope.set('formattedContent', JSON.stringify(result.content, null, 4));
     });
-    Prism.highlightElement(scope.$('.manifest-body'));
+    var el = scope.$('.manifest-body');
+    Prism.highlightElement(el[0]);*/
   },
   actions:{
+    toggleStep: function (index) {
+
+      /*var steps = this.model.get('steps');
+
+      console.log(steps);
+
+      steps.forEach(function (step) {
+        console.log(step);
+        step.active = false;
+        step.current = false;
+        //step.set('active', false);
+        //step.set('current', false);
+      });
+
+      var step = this.model.get('steps').objectAt(index);
+
+      Ember.set(step, 'active', true);
+      Ember.set(step, 'current', true);*/
+
+    },
     nextstep:function (stepToActivate){
       //Activate the next step
-      Ember.set(this.steps['step' + stepToActivate], 'active',true);
+      /*Ember.set(this.steps['step' + stepToActivate], 'active',true);
       if(stepToActivate === 2) {
         this.createManifest();
-      }
+      }*/
     },
     usage:function () {
       this.transitionTo('usage');

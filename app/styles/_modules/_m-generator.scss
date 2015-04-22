@@ -21,10 +21,10 @@ $form-accent:#999999;
 }
 
 .generator .step {
-	padding-left:1.25rem;
+  opacity: 0.6;
+  padding-left:1.25rem;
 	margin-top:1rem;
 	font-family:$sans-stack-light;
-	display:none;
 }
 
 .generator .step header {
@@ -36,15 +36,11 @@ $form-accent:#999999;
 }
 
 .generator .step.active {
-	display:block;
+	opacity: 1;
 }
 
 .generator .step.active.current .form-body {
 	display:block;
-}
-
-.generator .step header {
-
 }
 
 .generator .step header .title {
