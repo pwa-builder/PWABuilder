@@ -79,10 +79,17 @@
 		margin: .5rem 1.75rem .5rem 0;
 		line-height: 1.2em;
 	}
+	.side-nav-block {
+    	margin-top: 1.25rem;
+	}
 	.side-nav-block .title {
 		font-size: 1rem;
 		line-height: 1.25rem;
 		padding: 0.5rem 1rem 0.75rem 1rem;
+	}
+	.side-nav-block li {
+    	font-size: .875rem;
+    	line-height: 1.375rem;
 	}
 }
 
