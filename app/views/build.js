@@ -4,8 +4,8 @@ export default Ember.View.extend({
 	initialize: function(){
 		var scope = this;
 
-		scope.$(".step header").click(function(e){
-			$(this).parent(".step").toggleClass("current");
+		scope.$(".step header").click(function(){
+			scope.$(this).parent(".step").toggleClass("current");
 		});
 	}.on('didInsertElement'),
 	stepChange: function(){
@@ -14,7 +14,7 @@ export default Ember.View.extend({
 			console.log("CHANGE");
 			var $prevItems = scope.$(".active.current").not(":last");
 			$prevItems.removeClass("current");
-			$("button", $prevItems).hide();
+			this.$("button", $prevItems).hide();
 		});
 	}.observes(
 		'controller.steps.step1.active',
