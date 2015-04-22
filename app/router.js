@@ -6,7 +6,7 @@ var Router = Ember.Router.extend({
 });
 
 export default Router.map(function() {
-    this.route('generator', function () {
+    this.resource('generator', function () {
       this.route('step1');
       this.route('step2');
     }); //Generator page

@@ -1,19 +1,18 @@
-/* global Generator */
 import Ember from 'ember';
-import Generator from '../models/generator';
+import GeneratorModel from '../models/generator';
+//import RouteAware from '../mixins/routeaware';
 
 export default Ember.Route.extend({
-  currentStep: 0,
   model: function () {
-    return Generator.create();
+    return GeneratorModel.create();
   },
-  setupController : function (controller, model) {
-    controller.set('model', model);
-  },
-  actions:{
-    willTransition: function(transition) {
-      console.log('transition?', transition);
-      return true;
+  actions: {
+    stepUpdated: function (step) {
+      var model = this.modelFor('generator');
+      if(step === '1'){
+        model.set('step1Complete',true);
+      }
+      model.save();
     }
   }
 });

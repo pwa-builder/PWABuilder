@@ -1,0 +1,15 @@
+<li class="step" id="step_{{step}}">
+  <header class="step-header" {{action "toggleBody"}}>
+    <div class="number-callout">{{step}}</div>
+    <h2 class="title">{{stepTitle}}</h2>
+  </header>
+  {{#if isShowingBody}}
+  <div class="form-body">
+    {{yield}}
+    <div class="button-holder">
+      <button class="button next-step" {{action "updateModel"}}>Next Step</button>
+    </div>
+  </div>
+  {{/if}}
+</li>
+

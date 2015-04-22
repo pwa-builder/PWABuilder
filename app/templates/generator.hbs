@@ -1,220 +1,135 @@
 <div class="l-max-width">
-	<div class="page-intro">
-		<h1 class="title">Generate</h1>
-		<p>Duis nulla nunc, ullamcorper ac tristique at, gravida quis ipsum. Sed viverra sodales imperdiet. Morbi pulvinar sollicitudin turpis non eleifend. Mauris eu nibh id augue mollis venenatis. Nulla facilisi. Curabitur mi justo, sollicitudin quis libero vitae, imperdiet pellentesque est. Donec quis euismod ipsum. Donec sit amet velit a tortor faucibus blandit vitae sit amet leo.</p>
-	</div>
-    <div class="pure-g generator" id="builder_holder">
-    	<div class="pure-u-1 pure-u-md-1-2 generator-section" id="form_holder">
-    		<header>
-    			<div class="title">Site Information</div>
-    		</header>
-    		<section id="step1" {{bind-attr class=":step :step1 model.steps.objectAt(0).current:current model.steps.objectAt(0).active:active"}}>
-          <header {{action "toggleStep" 1}}>
-            {{#link-to 'generator.step1'}}Step 1{{/link-to}}
-            {{outlet 'step1'}}
-    				<div class="number-callout">1</div>
-    				<h2 class="title">Get Started</h2>
-    			</header>
-    			<section class="form-body">
-	    			<p class="instructions">Provide your URL or upload your manifest and we’ll help fill in the gaps if there are any.</p>
-	    			<div class="form-item url">
-	    				<label>URL</label>
-	    				{{input type="url" value=model.siteUrl}}
-	    			</div>
-	    			<span>&nbsp;or</span>
-	    			<div class="form-item manifest">
-	    				<label>Upload manifest</label>
-	    				{{file-input action="manifestUpload"}}
-	    			</div>
-	    			<div class="button-holder">
-	    				<button class="button next-step" {{action "nextstep" 2}}>Next Step</button>
-	    			</div>
-	    		</section>
-	    		<hr />
-    		</section>
-    		<section id="step2" {{bind-attr class=":step :step2 model.steps[1].current:current model.steps[1].active:active"}}>
-          <header {{action "toggleStep" 2}}>
-            {{#link-to 'generator.step2'}}Step 2{{/link-to}}
-    				<div class="number-callout">2</div>
-    				<h2 class="title">Site Data</h2>
-    			</header>
-    			<section class="form-body">
-	    			<p class="instructions">Here are the values we picked up from your site. Update or add any details below.</p>
-					<div class="form-item">
-	    				<label>Name</label>
-	    				{{input value=content.name}}
-	    			</div>
-	    			<div class="form-item">
-	    				<label>Short Name</label>
-	    				{{input value=content.short_name}}
-	    			</div>
-	    			<div class="form-item">
-	    				<label>Icons</label>
-	    			</div>
-	    			<div class="form-item">
-	    				<label>Upload Icon</label>
-	    				{{file-upload}}
-	    			</div>
-	    			<div class="form-item">
-	    				<label>Scope</label>
-	    				{{input name="scope"}}
-	    			</div>
-	    			<div class="form-item">
-	    				<label>Start Url</label>
-	    				{{input name="start_url"}}
-	    			</div>
-	    			<div class="form-item">
-	    				<label>Display</label>
-	    				<select name="display">
-	    					<option value="fullscreen">fullscreen</option>
-	    					<option value="standalone">standalone</option>
-	    					<option value="minimal-ui">minimal-ui</option>
-	    					<option value="browser">browser</option>
-	    				</select>
-	    			</div>
-	    			<div class="form-item">
-	    				<label>Orientation</label>
-	    				<select name="orientation">
-	    					<option value="any">any</option>
-	    					<option value="natural">natural</option>
-	    					<option value="landscape">landscape</option>
-	    					<option value="portrait">portrait</option>
-	    				</select>
-	    			</div>
-	    			<div class="button-holder">
-	    				<button class="button next-step" {{action "nextstep" 3}}>Next Step</button>
-	    			</div>
-	    			<hr />
-	    		</section>
-    		</section>
-    		<section id="step3" {{bind-attr class=":step :step3 :current steps[2].active:active"}}>
-    			<header>
-    				<div class="number-callout">3</div>
-    				<h2 class="title">Capabilities</h2>
-    			</header>
-    			<section class="form-body">
-	    			<div class="form-item">
-	    				{{input type="checkbox" id="sharing" name="sharing" checked="sharing"}}
-	    				<label for="sharing">Sharing</label>
-	    			</div>
-	    			<div class="form-item">
-	    				{{input type="checkbox" id="search" name="search" checked="search"}}
-	    				<label for="search">Search</label>
-	    			</div>
-	    			<div class="form-item">
-	    				{{input type="checkbox" id="secondary_pinning" name="secondary_pinning" checked="secondary_pinning"}}
-	    				<label for="secondary_pinning">Secondary pinning</label>
-	    			</div>
-	    			<div class="form-item">
-	    				{{input type="checkbox" id="geolocation" name="geolocation" checked="geolocation"}}
-	    				<label for="geolocation">Geolocation</label>
-	    			</div>
-	    			<div class="form-item">
-	    				{{input type="checkbox" id="live_tiles" name="live_tiles" checked="live_tiles"}}
-	    				<label for="live_tiles">Live Tiles</label>
-	    			</div>
-	    			<div class="form-item">
-	    				{{input type="checkbox" id="offline_detection" name="offline_detection" checked="offline_detection"}}
-	    				<label for="offline_detection">Offline detection</label>
-	    			</div>
-	    			<div class="form-item">
-	    				{{input type="checkbox" id="custom_styles" name="custom_styles" checked="custom_styles"}}
-	    				<label for="custom_styles">Custom styles</label>
-	    			</div>
-	    			<div class="form-item">
-	    				{{input type="checkbox" id="script_injection" name="script_injection" checked="script_injection"}}
-	    				<label for="script_injection">Script injection</label>
-	    			</div>
-	    			<div class="button-holder">
-	    				<button class="button next-step" {{action "nextstep" 4}}>Next Step</button>
-	    			</div>
-	    			<hr />
-	    		</section>
-    		</section>
-    		<section id="step4" {{bind-attr class=":step :step4 :current model.steps[3].active:active"}}>
-    			<header>
-    				<div class="number-callout">4</div>
-    				<h2 class="title">Custom Values</h2>
-    			</header>
-    			<section class="form-body">
-	    			<p class="instructions">Specify custom members to be added to the manifest.</p>
-	    			<div class="form-item">
-	    				<label>Member Name</label>
-	    				{{input name="member_name"}}
-	    			</div>
-	    			<div class="form-item">
-	    				<label>Member Value</label>
-	    				{{textarea name="member_value"}}
-	    			</div>
-	    			<div class="button-holder">
-	    				<button class="button next-step" {{action "nextstep" 5}}>Next Step</button>
-	    			</div>
-	    			<hr />
-	    		</section>
-    		</section>
-    		<section id="step5" {{bind-attr class=":step :step5 :current model.steps[4].active:active"}}>
-    			<header>
-    				<div class="number-callout">5</div>
-    				<h2 class="title">App Store Details</h2>
-    			</header>
-    			<section class="form-body">
-	    			<p class="instructions">We need a bit more info to get your apps ready for the different stores. If you provide us with the details below, we’ll make sure your projects are ready for each of the stores.</p>
-	    			<div class="form-item">
-	    				<label>Description</label>
-	    				{{input name="description"}}
-	    			</div>
-	    			<div class="form-item">
-	    				<label>Version</label>
-	    				{{input name="version"}}
-	    			</div>
-	    			<div class="form-item">
-	    				<label>Version Code</label>
-	    				{{input name="version_code"}}
-	    			</div>
-	    			<div class="form-item">
-	    				<label>Build</label>
-	    				{{input name="build"}}
-	    			</div>
-	    			<div class="form-item">
-	    				<label>Publisher Display Name</label>
-	    				{{input name="publisher_display_name"}}
-	    			</div>
-	    			<div class="form-item">
-	    				<label>Organization Identifier</label>
-	    				{{input name="organization_identifier"}}
-	    			</div>
-	    			<div class="button-holder">
-	    				<button class="button next-step" {{action "nextstep" 6}}>Next Step</button>
-	    			</div>
-	    			<hr />
-	    		</section>
-    		</section>
-    		<section id="step6" {{bind-attr class=":step :step6 :current model.steps[5].active:active"}}>
-    			<header>
-    				<div class="number-callout">6</div>
-    				<h2 class="title">Download your package</h2>
-    			</header>
-    			<hr />
-    		</section>
-    		<section id="step7" {{bind-attr class=":step :step7 :current model.steps[6].active:active"}}>
-    			<header>
-    				<div class="number-callout">7</div>
-    				<h2 class="title">Move on to Usage</h2>
-    			</header>
-    			<section class="form-body">
-    				<div class="button-holder">
-    					<button class="button" {{action "usage"}}>Usage Documentation</button>
-    				</div>
-    			</section>
-    		</section>
-    	</div>
-    	<div class="pure-u-1 pure-u-md-1-2 generator-section" id="manifest_holder">
-    		<header>
-    			<div class="title">W3C Manifest</div>
-    		</header>
-    		<section class="manifest-body">
-    			<pre><code class="language-javascript">{{formattedContent}}</code></pre>
-    		</section>
-    	</div>
+  <div class="page-intro">
+    <h1 class="title">Generate</h1>
+    <p>Duis nulla nunc, ullamcorper ac tristique at, gravida quis ipsum. Sed viverra sodales imperdiet. Morbi pulvinar sollicitudin turpis non eleifend. Mauris eu nibh id augue mollis venenatis. Nulla facilisi. Curabitur mi justo, sollicitudin quis libero vitae, imperdiet pellentesque est. Donec quis euismod ipsum. Donec sit amet velit a tortor faucibus blandit vitae sit amet leo.</p>
+  </div>
+  <div class="pure-g generator" id="builder_holder">
+    <header>
+        <h1 class="title">Site Information</h1>
+    </header>
+    <ol class="pure-u-1 pure-u-md-1-2 generator-section" id="form_holder">
+      {{#generator-step step="1" stepTitle="Get Started" data=model isShowingBody=true action="stepUpdated"}}
+        <p class="instructions">Provide your URL or upload your manifest and we’ll help fill in the gaps if there are any.</p>
+        <div class="form-item url">
+          <label>URL</label>
+          {{input type="url" value=model.siteUrl}}
+        </div>
+        <span>&nbsp;or</span>
+        <div class="form-item manifest">
+          <label>Upload manifest</label>
+          {{file-input action="manifestUpload"}}
+        </div>
+      {{/generator-step}}
+      {{#generator-step step="2" stepTitle="Site Data" data=model action="stepUpdated" allowToggle=model.step1Complete}}
+<p class="instructions">Here are the values we picked up from your site. Update or add any details below.</p>
+          <div class="form-item">
+              <label>Name</label>
+              {{input value=model.manifest.name}}
+            </div>
+            <div class="form-item">
+              <label>Short Name</label>
+              {{input value=model.manifest.short_name}}
+            </div>
+            <div class="form-item">
+              <label>Icons</label>
+            </div>
+            <div class="form-item">
+              <label>Upload Icon</label>
+              {{file-input}}
+            </div>
+            <div class="form-item">
+              <label>Scope</label>
+              {{input value=model.manifest.scope}}
+            </div>
+            <div class="form-item">
+              <label>Start Url</label>
+              {{input value=model.manifest.start_url}}
+            </div>
+            <div class="form-item">
+              <label>Display</label>
+              {{view "select" content=model.display.names value=model.manifest.display}}
+            </div>
+            <div class="form-item">
+              <label>Orientation</label>
+              {{view "select" content=model.orientation.names value=model.manifest.orientation}}
+            </div>
+      {{/generator-step}}
+      {{#generator-step step="3" stepTitle="Capabilities" data=model action="stepUpdated" allowToggle=model.step1Complete}}
+      <div class="form-item">
+              {{input type="checkbox" id="wat_sharing" name="wat_sharing" checked=model.manifest.wat_sharing}}
+              <label for="sharing">Sharing</label>
+            </div>
+            <div class="form-item">
+              {{input type="checkbox" id="wat_search" name="wat_search" checked=model.manifest.wat_search}}
+              <label for="search">Search</label>
+            </div>
+            <div class="form-item">
+              {{input type="checkbox" id="wat_secondary-pinning" name="wat_secondary-pinning" checked=model.manifest.wat_secondary-pinning}}
+              <label for="secondary_pinning">Secondary pinning</label>
+            </div>
+            <div class="form-item">
+              {{input type="checkbox" id="wat_geolocation" name="wat_geolocation" checked=model.manifest.wat_geolocation}}
+              <label for="geolocation">Geolocation</label>
+            </div>
+            <div class="form-item">
+              {{input type="checkbox" id="wat_tiles" name="wat_tiles" checked=model.manifest.wat_tiles}}
+              <label for="live_tiles">Live Tiles</label>
+            </div>
+            <div class="form-item">
+              {{input type="checkbox" id="wat_offline" name="wat_offline" checked=model.manifest.wat_offline}}
+              <label for="offline_detection">Offline detection</label>
+            </div>
+            <div class="form-item">
+              {{input type="checkbox" id="wat_styles" name="wat_styles" checked=model.manifest.wat_styles}}
+              <label for="custom_styles">Custom styles</label>
+            </div>
+            <div class="form-item">
+              {{input type="checkbox" id="wat_script" name="wat_script" checked=model.manifest.wat_script}}
+              <label for="script_injection">Script injection</label>
+            </div>
+      {{/generator-step}}
+      {{#generator-step step="4" stepTitle="Custom Values" data=model action="stepUpdated" allowToggle=model.step1Complete}}
+         <p class="instructions">Specify custom members to be added to the manifest.</p>
+            <div class="form-item">
+              <label>Member Name</label>
+              {{input name="member_name"}}
+            </div>
+            <div class="form-item">
+              <label>Member Value</label>
+              {{textarea name="member_value"}}
+            </div>
+      {{/generator-step}}
+      {{#generator-step step="5" stepTitle="App Store Details" data=model action="stepUpdated" allowToggle=model.step1Complete}}
+            <p class="instructions">We need a bit more info to get your apps ready for the different stores. If you provide us with the details below, we’ll make sure your projects are ready for each of the stores.</p>
+            <div class="form-item">
+              <label>Description</label>
+              {{input name="description" value=model.manifest.description}}
+            </div>
+            <div class="form-item">
+              <label>Version</label>
+              {{input name="version" value=model.manifest.version}}
+            </div>
+            <div class="form-item">
+              <label>Version Code</label>
+              {{input name="version_code" value=model.manifest.version_code}}
+            </div>
+            <div class="form-item">
+              <label>Build</label>
+              {{input name="build" value=model.manifest.build}}
+            </div>
+            <div class="form-item">
+              <label>Publisher Display Name</label>
+              {{input name="publisher_display_name" value=model.manifest.publishername}}
+            </div>
+            <div class="form-item">
+              <label>Organization Identifier</label>
+              {{input name="organization_identifier" value=model.manifest.organizationid}}
+            </div>
+      {{/generator-step}}
+      {{#generator-step step="6" stepTitle="Download your package" data=model action="stepUpdated" allowToggle=model.step1Complete}}
+      {{/generator-step}}
+      {{#generator-step step="7" stepTitle="Move on to usage" data=model action="stepUpdated" allowToggle=model.step1Complete}}
+      {{/generator-step}}
+      </ol>
     </div>
-</div>
+  </div>
