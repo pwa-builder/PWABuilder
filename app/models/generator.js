@@ -1,6 +1,7 @@
 /* global JSON */
 import Ember from 'ember';
 import ajax from 'ic-ajax';
+import config from '../config/environment';
 
 export default Ember.Object.extend({
   step1Complete: false,
@@ -30,7 +31,7 @@ export default Ember.Object.extend({
   create: function(){
     var self = this;
     ajax({
-        url:'/manifests/',
+        url:config.APP.API_URL+'/manifests/',
         type: 'POST',
         data: JSON.stringify({ siteUrl: this.siteUrl }),
         dataType: 'json',
@@ -44,8 +45,8 @@ export default Ember.Object.extend({
   update: function(){
     var self = this;
     ajax({
-        url:'/manifests/' + this.manifestId,
-        type: 'POST',
+        url: config.APP.API_URL + '/manifests/' + this.manifestId,
+        type: 'PUT',
         data: JSON.stringify(this.manifest),
     }).then(function(result) {
         self.manifest = JSON.parse(result);

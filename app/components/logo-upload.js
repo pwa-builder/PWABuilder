@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import ajax from 'ic-ajax';
+import config from '../config/environment';
 
 export default Ember.Component.extend({
   logoUrl: "",
@@ -9,7 +10,7 @@ export default Ember.Component.extend({
       var self = this;
 
       ajax({
-        url:'/images/',
+        url:config.APP.API_URL+'/images',
         type: 'POST',
         data: JSON.stringify({ image: { src: self.logoUrl }}),
         dataType: 'json',
