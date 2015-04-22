@@ -13,6 +13,11 @@ export default Ember.Route.extend({
         model.set('step1Complete',true);
       }
       model.save();
+    },
+    updateLogos: function(logos){
+      var model = this.modelFor('generator');
+      model.set('logos',logos);
+      model.save();
     }
   }
 });
