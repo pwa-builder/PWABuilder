@@ -15,4 +15,8 @@ deployment:
   staging:
     branch: deployment
     commands:
-      - ./build/push.sh
+      - ./build/push_staging.sh
+  production:
+    branch: master
+    commands:
+      - ./build/push_prod.sh
