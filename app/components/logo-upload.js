@@ -8,8 +8,6 @@ export default Ember.Component.extend({
   actions: {
     addLogo: function(){
       var self = this;
-      console.log(config.APP.API_URL);
-
       ajax({
         url:config.APP.API_URL+'/images',
         type: 'POST',

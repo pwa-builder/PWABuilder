@@ -6,7 +6,7 @@ import config from '../config/environment';
 export default Ember.Object.extend({
   step1Complete: false,
   manifestId: null,
-  siteUrl: 'http://www.cnn.com',
+  siteUrl: '',
   manifest: Ember.Object.create({
     name: '',
     short_name: '',
@@ -15,6 +15,9 @@ export default Ember.Object.extend({
     display: '',
     orientation: ''
   }),
+  suggestions: Ember.Object.create(),
+  warnings: Ember.Object.create(),
+  members: Ember.A(),
   display: {
     names: ['fullscreen', 'standalone', 'minimal-ui', 'browser']
   },
@@ -43,6 +46,15 @@ export default Ember.Object.extend({
     }).then(function(result) {
         self.set('manifest',result.content);
         self.set('manifestId', result.id);
+
+        if(result.suggestions){
+          self.set('suggestions', result.suggestions);
+        }
+
+        if(result.warnings){
+          self.set('warnings', result.warnings);
+        }
+
         console.log(result);
     });
   },
@@ -56,6 +68,15 @@ export default Ember.Object.extend({
         contentType: 'application/json; charset=utf-8'
     }).then(function(result) {
         self.set('manifest',result.content);
+
+        if(result.suggestions){
+          self.set('suggestions', result.suggestions);
+        }
+
+        if(result.warnings){
+          self.set('warnings', result.warnings);
+        }
+
         console.log(result);
     });
   }
