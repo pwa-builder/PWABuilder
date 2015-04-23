@@ -1,0 +1,198 @@
+$form-accent:#999999;
+
+.generator {
+  margin-top: 2rem;
+}
+
+.generator-section > header {
+	background-color:$dark-accent;
+}
+
+.generator-section-title {
+	padding:0 1rem .05rem 1rem;
+  margin: 0;
+  color:$secondary-accent;
+	font-family:$serif-stack;
+	font-size:1.313rem;
+	line-height:2.5rem;
+}
+
+.generator .generator-section:first-child {
+	padding-right:.5rem;
+}
+
+.generator .generator-section:last-child {
+	padding-left:.5rem;
+}
+
+.generator .step {
+	margin: 1rem 0 0 1rem;
+	font-family:$sans-stack-light;
+}
+
+.generator .step-wrapper {
+  padding-left: 3.25rem;
+}
+
+.generator .step--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.generator .step header {
+	cursor:pointer;
+}
+
+.generator .step.active {
+	opacity: 1;
+}
+
+.generator .step .title {
+	margin-bottom:0;
+	font-size:1.25rem;
+	line-height:2.2rem;
+}
+
+.generator .instructions {
+	margin-top:0;
+}
+
+.generator hr {
+	border:none;
+	background:#f2f2f2;
+	height:1px;
+}
+
+.generator .form-item {
+	clear:both;
+	padding-bottom:2.8rem;
+	position:relative;
+}
+
+.generator input {
+	display:block;
+	border:1px solid $form-accent;
+	width:65%;
+	float:right;
+	height:2.125rem;
+	padding:.1rem;
+}
+
+.generator textarea {
+	width:65%;
+	float:right;
+	border:1px solid $form-accent;
+	padding:.1rem;
+	margin-bottom:.4rem;
+}
+
+.generator select {
+	width:65%;
+	float:right;
+}
+
+.generator label {
+	display:block;
+	width:30%;
+	float:left;
+	text-align: right;
+	line-height:2.215rem;
+}
+
+.generator .button-holder {
+	clear:both;
+	text-align: right;
+}
+
+/* Generator step list custom numbering */
+
+.generator-step-list {
+  margin-left: 0;
+  padding-left: 0;
+  list-style-type: none;
+}
+
+.generator-step-list .step {
+	position: relative;
+	counter-increment: step-counter;
+}
+
+.generator-step-list .step::before {
+	width: 2.25rem;
+	height: 2.25rem;
+	position: absolute;
+	left: 0;
+	content: counter(step-counter);
+	border-radius: 50%;
+	text-align: center;
+  background:$tertiary-accent;
+	color:white;
+	font-family:$serif-stack;
+	font-size:1.563rem;
+}
+
+.generator-step-list .step--disabled {
+  cursor: not-allowed;
+}
+
+.generator .step1 .url label {
+	width:8%;
+	text-align:left;
+}
+
+.generator .step1 .url input {
+	width:90%;
+}
+
+.generator .step1 .manifest label {
+	width:28%;
+	text-align: left;
+}
+
+.generator .step1 .manifest input {
+	width:70%;
+}
+
+.generator .step5 label {
+	width:40%;
+}
+
+.generator .step5 input {
+	width:50%;
+	float:left;
+	margin-left:1rem;
+}
+
+//Checkboxes
+.generator .step3 input[type=checkbox] {
+    display: none;
+}
+
+.generator .step3 label {
+	display:inline-block;
+	text-align: left;
+	width:45%;
+	cursor:pointer;
+}
+
+.generator .step3 label:before {
+    content: "";
+    display: inline-block;
+    width: 1.313rem;
+    height: 1.313rem;
+    margin-right: 10px;
+    position: relative;
+    border:1px solid $form-accent;
+    top:.3rem;
+}
+
+.generator .step3 input[type=checkbox]:checked + label:before {
+    content: "";
+    background:url('/assets/images/checkmark.png') no-repeat -3px -13px;
+}
+
+//Manifest section
+.generator .generator-section pre {
+	box-shadow: none;
+	min-height:20rem;
+}
