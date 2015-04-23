@@ -53,7 +53,7 @@ button:hover {
 	color: $primary-accent;
 }
 
-pre, .shell {
+pre {
 	font-family:$code-stack;
 	font-size: 1.125em;
 	padding: 1.25em 1.75em;
@@ -62,15 +62,22 @@ pre, .shell {
 	color:white;
 	box-shadow: 0px 0px 7px #333;
 	border-radius:0 !important;
-	/*
     white-space: pre-wrap;       // CSS 3
     white-space: -moz-pre-wrap;  // Mozilla, since 1999
     white-space: -pre-wrap;      // Opera 4-6 
     white-space: -o-pre-wrap;    // Opera 7 
     word-wrap: break-word;       // Internet Explorer 5.5+ 
-    */
 }
-
+.shell {
+	font-family:$code-stack;
+	font-size: 1.125em;
+	padding: 1.25em 1.75em;
+	margin:0 !important;
+	background-color:black;
+	color:white;
+	box-shadow: 0px 0px 7px #333;
+	border-radius:0 !important;
+}
 	.shell .line { display: block; margin: 0; padding: 0; }
 	.shell .line span { display: inline-block; }
 	.shell p.line { line-height: 1.375em; }
