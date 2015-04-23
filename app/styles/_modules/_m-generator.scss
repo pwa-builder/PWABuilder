@@ -28,6 +28,12 @@ $form-accent:#999999;
 .generator .step {
 	margin: 1rem 0 0 1rem;
 	font-family:$sans-stack-light;
+	font-size:.875rem;
+}
+
+.generator code {
+	font-size:.875rem;
+	line-height: .875rem;
 }
 
 .generator .step-wrapper {
@@ -76,6 +82,11 @@ $form-accent:#999999;
 	float:right;
 	height:2.125rem;
 	padding:.1rem;
+}
+
+.generator .upload-file {
+	float:left;
+	width:47% !important;
 }
 
 .generator textarea {
@@ -147,10 +158,6 @@ $form-accent:#999999;
 .generator .step1 .manifest label {
 	width:28%;
 	text-align: left;
-}
-
-.generator .step1 .manifest input {
-	width:70%;
 }
 
 .generator .step5 label {
