@@ -123,3 +123,16 @@ a {
 a:hover {
 	color: #000;
 }
+
+table {
+	width: 100%;
+	margin: 2rem 0;
+	border-collapse: collapse;
+}
+
+td {
+	vertical-align: top;
+	border: 1px solid #999999;
+	text-align: left;
+	padding: .5rem 1rem;
+}
