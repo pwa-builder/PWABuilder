@@ -13,7 +13,7 @@ export default Ember.Component.extend({
       console.log(file);
       var self = this;
       var data = this.generateFormData(file);
-      this.$("#uploadFile").attr("value", file.name);
+      this.$(".upload-file").attr("value", file.name);
       ajax({
         url: config.APP.API_URL + '/manifests',
         type: 'POST',
