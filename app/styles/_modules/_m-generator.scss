@@ -154,13 +154,19 @@ $form-accent:#999999;
 }
 
 .generator .step5 label {
-	width:40%;
+	width:42%;
 }
 
 .generator .step5 input {
-	width:50%;
+	width:34%;
 	float:left;
 	margin-left:1rem;
+}
+
+.generator .step5 .fa {
+	float:left;
+	line-height:2.125rem;
+	margin-left:.3rem;
 }
 
 //Checkboxes
@@ -189,6 +195,10 @@ $form-accent:#999999;
 .generator .step3 input[type=checkbox]:checked + label:before {
     content: "";
     background:url('/assets/images/checkmark.png') no-repeat -3px -13px;
+}
+
+.generator .fa {
+	font-size:1.3rem;
 }
 
 .generator .package-download {

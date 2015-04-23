@@ -105,26 +105,39 @@
       <div class="form-item">
         <label>Description</label>
         {{input name="description" value=model.manifest.description}}
+        {{fa-icon "windows"}}
+        {{fa-icon "mobile-phone"}}
+        {{fa-icon "android"}}
       </div>
       <div class="form-item">
         <label>Version</label>
         {{input name="version" value=model.manifest.version}}
+        {{fa-icon "windows"}}
+        {{fa-icon "mobile-phone"}}
+        {{fa-icon "android"}}
+        {{fa-icon "apple"}}
       </div>
       <div class="form-item">
         <label>Version Code</label>
         {{input name="version_code" value=model.manifest.version_code}}
+        {{fa-icon "android"}}
       </div>
       <div class="form-item">
         <label>Build</label>
         {{input name="build" value=model.manifest.build}}
+        {{fa-icon "apple"}}
       </div>
       <div class="form-item">
         <label>Publisher Display Name</label>
         {{input name="publisher_display_name" value=model.manifest.publishername}}
+        {{fa-icon "windows"}}
+        {{fa-icon "mobile-phone"}}
+        {{fa-icon "apple"}}
       </div>
       <div class="form-item">
         <label>Organization Identifier</label>
         {{input name="organization_identifier" value=model.manifest.organizationid}}
+        {{fa-icon "apple"}}
       </div>
       {{/generator-step}}
       {{#generator-step step="6" stepTitle="Download your package" data=model action="stepUpdated" allowToggle=model.step1Complete}}
