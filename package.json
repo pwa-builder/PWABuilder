@@ -32,6 +32,7 @@
     "ember-cli-uglify": "1.0.1",
     "ember-data": "1.0.0-beta.16.1",
     "ember-export-application-global": "^1.0.2",
-    "ember-cli-sass": "~4.0.0-beta.6"
+    "ember-cli-sass": "~4.0.0-beta.6",
+    "ember-cli-font-awesome": "0.0.9"
   }
 }

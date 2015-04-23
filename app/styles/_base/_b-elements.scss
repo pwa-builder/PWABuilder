@@ -2,6 +2,10 @@ html {
 	font-size: 1rem; //16px
 }
 
+body {
+	background-color: #000;
+}
+
 html, button, input, select, textarea,
 .pure-g [class *= "pure-u"] {
     /* Set your content font stack here: */
@@ -34,7 +38,7 @@ h5 {
 	font-size:1.5rem; 	//24px
 }
 
-button {
+button, .btn {
 	background:$primary-accent;
 	border:none;
 	color:#fff;
@@ -48,9 +52,37 @@ button {
 	transition: all 0.25s ease-in-out;
 }
 
-button:hover {
+button:hover, .btn:hover {
 	background:$dark-accent;
 	color: $primary-accent;
+}
+
+.fileUpload {
+	width:30%;
+	text-align: center;
+    position: absolute;
+    right:0;
+    overflow: hidden;
+    margin: 0;
+    -ms-touch-action: manipulation;
+  	touch-action: manipulation;
+  	cursor: pointer;
+  	-webkit-user-select: none;
+  	-moz-user-select: none;
+  	-ms-user-select: none;
+  	user-select: none;
+}
+.fileUpload input.upload {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    width:100% !important;
 }
 
 pre {
@@ -104,4 +136,17 @@ a {
 
 a:hover {
 	color: #000;
+}
+
+table {
+	width: 100%;
+	margin: 2rem 0;
+	border-collapse: collapse;
+}
+
+td {
+	vertical-align: top;
+	border: 1px solid #999999;
+	text-align: left;
+	padding: .5rem 1rem;
 }
