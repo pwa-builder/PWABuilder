@@ -1,137 +1,167 @@
-<div class="l-max-width">
-  <div class="page-intro">
+<div class="pure-g l-max-width">
+	<section class="pure-u-1 pure-u-md-1-1 l-bottom">
+		<div class="page-intro">
     <h1 class="title">Generate</h1>
     <p>Duis nulla nunc, ullamcorper ac tristique at, gravida quis ipsum. Sed viverra sodales imperdiet. Morbi pulvinar sollicitudin turpis non eleifend. Mauris eu nibh id augue mollis venenatis. Nulla facilisi. Curabitur mi justo, sollicitudin quis libero vitae, imperdiet pellentesque est. Donec quis euismod ipsum. Donec sit amet velit a tortor faucibus blandit vitae sit amet leo.</p>
   </div>
-  <div class="pure-g generator" id="builder_holder">
+		<div class="pure-g generator" id="builder_holder">
     <div class="pure-u-1 pure-u-md-1-2 generator-section" id="form_holder">
-      <header>
-        <h2 class="generator-section-title">Site Information</h2>
-      </header>
-      <ol class="generator-step-list">
-        {{#generator-step step="1" stepTitle="Get Started" data=model isShowingBody=true action="stepUpdated" allowToggle=true}}
-        <p class="instructions">Provide your URL or upload your manifest and we'll help fill in the gaps if there are any.</p>
-        <div class="form-item url">
-          <label>URL</label>
-          {{input name="siteUrl" type="url" value=model.siteUrl}}
-        </div>
-        <span>&nbsp;or</span>
-        <div class="form-item manifest">
-          {{#manifest-upload action="updateManifest"}}{{/manifest-upload}}
-        </div>
-        {{/generator-step}}
-        {{#generator-step step="2" stepTitle="Site Data" data=model action="stepUpdated" allowToggle=model.step1Complete}}
-        <p class="instructions">Here are the values we picked up from your site. Update or add any details below.</p>
-        <div class="form-item">
-          <label>Name</label>
-          {{input value=model.manifest.name focus-out="updateModel"}}
-        </div>
-        <div class="form-item">
-          <label>Short Name</label>
-          {{input value=model.manifest.short_name focus-out="updateModel"}}
-        </div>
-        <div class="form-item">
-          <label>Icons</label>
-        </div>
-        <div class="form-item">
-          <label>Upload Icon</label>
-          {{logo-upload action="updateLogos" focus-out="updateModel"}}
-        </div>
-        <div class="form-item">
-          <label>Scope</label>
-          {{input value=model.manifest.scope focus-out="updateModel"}}
-        </div>
-        <div class="form-item">
-          <label>Start Url</label>
-          {{input value=model.manifest.start_url focus-out="updateModel"}}
-        </div>
-        <div class="form-item">
-          <label>Display</label>
-          {{view "select" content=model.display.names prompt="Select Display" value=selectedDisplay}}
-        </div>
-        <div class="form-item">
-          <label>Orientation</label>
-          {{view "select" content=model.orientation.names prompt="Select Orientation" value=selectedOrientation}}
-        </div>
-        {{/generator-step}}
-        {{#generator-step step="3" stepTitle="Capabilities" data=model action="stepUpdated" allowToggle=model.step1Complete}}
-        <div class="form-item">
-          {{input type="checkbox" id="wat_sharing" name="wat_sharing" checked=model.manifest.wat_sharing}}
-          <label for="wat_sharing">Sharing</label>
-        </div>
-        <div class="form-item">
-          {{input type="checkbox" id="wat_search" name="wat_search" checked=model.manifest.wat_search}}
-          <label for="wat_search">Search</label>
-        </div>
-        <div class="form-item">
-          {{input type="checkbox" id="wat_secondary-pinning" name="wat_secondary-pinning" checked=model.manifest.wat_secondary-pinning}}
-          <label for="wat_secondary-pinning">Secondary pinning</label>
-        </div>
-        <div class="form-item">
-          {{input type="checkbox" id="wat_geolocation" name="wat_geolocation" checked=model.manifest.wat_geolocation}}
-          <label for="wat_geolocation">Geolocation</label>
-        </div>
-        <div class="form-item">
-          {{input type="checkbox" id="wat_tiles" name="wat_tiles" checked=model.manifest.wat_tiles}}
-          <label for="wat_tiles">Live Tiles</label>
-        </div>
-        <div class="form-item">
-          {{input type="checkbox" id="wat_offline" name="wat_offline" checked=model.manifest.wat_offline}}
-          <label for="wat_offline">Offline detection</label>
-        </div>
-        <div class="form-item">
-          {{input type="checkbox" id="wat_styles" name="wat_styles" checked=model.manifest.wat_styles}}
-          <label for="wat_styles">Custom styles</label>
-        </div>
-        <div class="form-item">
-          {{input type="checkbox" id="wat_script" name="wat_script" checked=model.manifest.wat_script}}
-          <label for="wat_script">Script injection</label>
-        </div>
-        {{/generator-step}}
-        {{#generator-step step="4" stepTitle="Custom Values" data=model action="stepUpdated" allowToggle=model.step1Complete}}
-        <p class="instructions">Specify custom members to be added to the manifest.</p>
-        <div class="form-item">
-          {{#member-list action="manageMember"}}{{/member-list}}
-        </div>
-        {{/generator-step}}
-        {{#generator-step step="5" stepTitle="App Store Details" data=model action="stepUpdated" allowToggle=model.step1Complete}}
-        <p class="instructions">We need a bit more info to get your apps ready for the different stores. If you provide us with the details below, we’ll make sure your projects are ready for each of the stores.</p>
-        <div class="form-item">
-          <label>Description</label>
-          {{input name="description" value=model.manifest.description focus-out="updateModel"}}
-        </div>
-        <div class="form-item">
-          <label>Version</label>
-          {{input name="version" value=model.manifest.version focus-out="updateModel"}}
-        </div>
-        <div class="form-item">
-          <label>Version Code</label>
-          {{input name="version_code" value=model.manifest.version_code focus-out="updateModel"}}
-        </div>
-        <div class="form-item">
-          <label>Build</label>
-          {{input name="build" value=model.manifest.build focus-out="updateModel"}}
-        </div>
-        <div class="form-item">
-          <label>Publisher Display Name</label>
-          {{input name="publisher_display_name" value=model.manifest.publishername focus-out="updateModel"}}
-        </div>
-        <div class="form-item">
-          <label>Organization Identifier</label>
-          {{input name="organization_identifier" value=model.manifest.organizationid focus-out="updateModel"}}
-        </div>
-        {{/generator-step}}
-        {{#generator-step step="6" stepTitle="Download your package" data=model action="stepUpdated" allowToggle=model.step1Complete}}
-        {{/generator-step}}
-      </ol>
-    </div>
-    <div class="pure-u-1 pure-u-md-1-2 generator-section" id="manifest_holder">
-      <header>
-        <h2 class="generator-section-title">W3C Manifest</h2>
-      </header>
-      <section class="manifest-body">
-        <pre><code class="language-javascript">{{model.formattedManifest}}</code></pre>
-      </section>
-    </div>
+    <header>
+      <h2 class="generator-section-title">Site Information</h2>
+    </header>
+    <ol class="generator-step-list">
+      {{#generator-step step="1" stepTitle="Get Started" data=model isShowingBody=true action="stepUpdated" allowToggle=true}}
+      <p class="instructions">Provide your URL or upload your manifest and we'll help fill in the gaps if there are any.</p>
+      <div class="form-item url">
+        <label>URL</label>
+        {{input name="siteUrl" type="url" value=model.siteUrl}}
+      </div>
+      <span>&nbsp;or</span>
+      <div class="form-item manifest">
+        {{#manifest-upload action="updateManifest"}}{{/manifest-upload}}
+      </div>
+      {{/generator-step}}
+      {{#generator-step step="2" stepTitle="Site Data" data=model action="stepUpdated" allowToggle=model.step1Complete}}
+<p class="instructions">Here are the values we picked up from your site. Update or add any details below.</p>
+          <div class="form-item">
+              <label>Name</label>
+              {{input value=model.manifest.name focus-out="updateModel"}}
+            </div>
+            <div class="form-item">
+              <label>Short Name</label>
+              {{input value=model.manifest.short_name focus-out="updateModel"}}
+            </div>
+            <div class="form-item">
+              <label>Icons</label>
+            </div>
+            <div class="form-item">
+              <label>Upload Icon</label>
+              {{logo-upload action="updateLogos" focus-out="updateModel"}}
+            </div>
+            <div class="form-item">
+              <label>Scope</label>
+              {{input value=model.manifest.scope focus-out="updateModel"}}
+            </div>
+            <div class="form-item">
+              <label>Start Url</label>
+              {{input value=model.manifest.start_url focus-out="updateModel"}}
+            </div>
+            <div class="form-item">
+              <label>Display</label>
+              {{view "select" content=model.display.names prompt="Select Display" value=selectedDisplay}}
+            </div>
+            <div class="form-item">
+              <label>Orientation</label>
+              {{view "select" content=model.orientation.names prompt="Select Orientation" value=selectedOrientation}}
+            </div>
+      {{/generator-step}}
+      {{#generator-step step="3" stepTitle="Capabilities" data=model action="stepUpdated" allowToggle=model.step1Complete}}
+      <div class="form-item">
+        {{input type="checkbox" id="wat_sharing" name="wat_sharing" checked=model.manifest.wat_sharing}}
+        <label for="wat_sharing">Sharing</label>
+      </div>
+      <div class="form-item">
+        {{input type="checkbox" id="wat_search" name="wat_search" checked=hasSearch}}
+        <label for="wat_search">Search</label>
+      </div>
+      <div class="form-item">
+        {{input type="checkbox" id="wat_secondary-pinning" name="wat_secondary-pinning" checked=hasSecondaryPinning}}
+        <label for="wat_secondary-pinning">Secondary pinning</label>
+      </div>
+      <div class="form-item">
+        {{input type="checkbox" id="wat_geolocation" name="wat_geolocation" checked=hasGeolocation}}
+        <label for="wat_geolocation">Geolocation</label>
+      </div>
+      <div class="form-item">
+        {{input type="checkbox" id="wat_tiles" name="wat_tiles" checked=hasTiles}}
+        <label for="wat_tiles">Live Tiles</label>
+      </div>
+      <div class="form-item">
+        {{input type="checkbox" id="wat_offline" name="wat_offline" checked=hasOffline}}
+        <label for="wat_offline">Offline detection</label>
+      </div>
+      <div class="form-item">
+        {{input type="checkbox" id="wat_styles" name="wat_styles" checked=hasStyles}}
+        <label for="wat_styles">Custom styles</label>
+      </div>
+      <div class="form-item">
+        {{input type="checkbox" id="wat_script" name="wat_script" checked=hasScript}}
+        <label for="wat_script">Script injection</label>
+      </div>
+      {{/generator-step}}
+      {{#generator-step step="4" stepTitle="Custom Values" data=model action="stepUpdated" allowToggle=model.step1Complete}}
+      <p class="instructions">Specify custom members to be added to the manifest.</p>
+      <div class="form-item">
+        {{#member-list action="manageMember"}}{{/member-list}}
+       </div>
+      {{/generator-step}}
+      {{#generator-step step="5" stepTitle="App Store Details" data=model action="stepUpdated" allowToggle=model.step1Complete}}
+      <p class="instructions">We need a bit more info to get your apps ready for the different stores. If you provide us with the details below, we’ll make sure your projects are ready for each of the stores.</p>
+      <div class="form-item">
+        <label>Description</label>
+        {{input name="description" value=model.manifest.description}}
+        {{fa-icon "windows"}}
+        {{fa-icon "mobile-phone"}}
+        {{fa-icon "android"}}
+      </div>
+      <div class="form-item">
+        <label>Version</label>
+        {{input name="version" value=model.manifest.version}}
+        {{fa-icon "windows"}}
+        {{fa-icon "mobile-phone"}}
+        {{fa-icon "android"}}
+        {{fa-icon "apple"}}
+      </div>
+      <div class="form-item">
+        <label>Version Code</label>
+        {{input name="version_code" value=model.manifest.version_code}}
+        {{fa-icon "android"}}
+      </div>
+      <div class="form-item">
+        <label>Build</label>
+        {{input name="build" value=model.manifest.build}}
+        {{fa-icon "apple"}}
+      </div>
+      <div class="form-item">
+        <label>Publisher Display Name</label>
+        {{input name="publisher_display_name" value=model.manifest.publishername}}
+        {{fa-icon "windows"}}
+        {{fa-icon "mobile-phone"}}
+        {{fa-icon "apple"}}
+      </div>
+      <div class="form-item">
+        <label>Organization Identifier</label>
+        {{input name="organization_identifier" value=model.manifest.organizationid}}
+        {{fa-icon "apple"}}
+      </div>
+      {{/generator-step}}
+      {{#generator-step step="6" stepTitle="Download your package" data=model action="stepUpdated" allowToggle=model.step1Complete}}
+      	<a href="#" class="package-download">{{fa-icon "download"}}</a>
+      	{{#link-to 'usage' class="usage-link"}}Now: Learn how to distribute this package across different platforms{{/link-to}}
+      {{/generator-step}}
+    </ol>
   </div>
+  <div class="pure-u-1 pure-u-md-1-2 generator-section" id="manifest_holder">
+    <header>
+      <h2 class="generator-section-title">W3C Manifest</h2>
+    </header>
+    <section class="manifest-body">
+      <pre><code class="language-javascript">{{model.formattedManifest}}</code></pre>
+    </section>
+
+      {{#if model.suggestionsArray}}
+    <div class="errors">
+
+      <h5>Suggestions</h5>
+      {{#each section in model.suggestionsArray}}
+        <h6>{{section.title}} <span>({{section.suggestions.length}})</span></h6>
+        {{#each item in section.suggestions}}
+        <li>{{item}}</li>
+        {{/each}}
+      {{/each}}
+      </div>
+      {{/if}}
+  </div>
+  </div>
+  </section>
 </div>
