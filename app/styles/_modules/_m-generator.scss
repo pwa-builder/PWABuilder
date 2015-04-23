@@ -160,13 +160,13 @@ $form-accent:#999999;
 .generator .step5 input {
 	width:34%;
 	float:left;
-	margin-left:1rem;
+	margin-left:.5rem;
 }
 
 .generator .step5 .fa {
 	float:left;
 	line-height:2.125rem;
-	margin-left:.3rem;
+	margin-left:.4rem;
 }
 
 //Checkboxes
@@ -199,6 +199,14 @@ $form-accent:#999999;
 
 .generator .fa {
 	font-size:1.3rem;
+}
+
+.generator .fa-windows {
+	font-size:1.2em;
+}
+
+.generator .fa-mobile-phone{
+	font-size:1.5em;
 }
 
 .generator .package-download {
