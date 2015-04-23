@@ -1,10 +1,15 @@
+/* global _:true */
 import Ember from 'ember';
 import GeneratorModel from '../models/generator';
 //import RouteAware from '../mixins/routeaware';
 
 export default Ember.Route.extend({
+  selectedDisplay: '',
   model: function () {
     return GeneratorModel.create();
+  },
+  setupController: function(controller, model) {
+    this.controllerFor('generator').set('model', model);
   },
   actions: {
     stepUpdated: function (step) {
@@ -14,9 +19,38 @@ export default Ember.Route.extend({
       }
       model.save();
     },
-    updateLogos: function(logos){
+    updateLogos: function(logos) {
       var model = this.modelFor('generator');
       model.set('logos',logos);
+      model.save();
+    },
+    updateManifest: function (result) {
+      var model = this.modelFor('generator');
+      model.set('step1Complete', true);
+      model.set('manifestId', result.id);
+      model.set('manifest', result.content);
+      model.save();
+    },
+    updateModel: function () {
+      var model = this.modelFor('generator');
+      model.save();
+    },
+    updateModelProperty: function(name, value) {
+      var model = this.modelFor('generator');
+      model.set('manifest.'+ name, value);
+      model.save();
+    },
+    manageMember: function(action, member){
+      console.log('members', action, member);
+      var model = this.modelFor('generator');
+      var manifest = model.get('manifest');
+      if(action === 'add'){
+        manifest[member.member_name] = member.member_value;
+      } else if (action === 'remove') {
+        console.log('removing', member.member_name);
+        delete manifest[member.member_name];
+      }
+      console.log('modified manifest',manifest);
       model.save();
     }
   }

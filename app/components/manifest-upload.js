@@ -3,19 +3,26 @@ import ajax from 'ic-ajax';
 import config from '../config/environment';
 
 export default Ember.Component.extend({
-  generateFormData: function() {
-
+  generateFormData: function(file) {
+    var formData = new FormData();
+    formData.append('file', file);
+    return formData;
   },
-  uploadManifest: function() {
-    ajax({
-      url: config.APP.API_URL + '/manifest',
+  actions:{
+    uploadManifest: function(file) {
+      console.log(file);
+      var self = this;
+      var data = this.generateFormData(file);
+      ajax({
+        url: config.APP.API_URL + '/manifests',
         type: 'POST',
-        data: null,
-        dataType: 'json',
-        contentType: 'application/json; charset=utf-8'
+        data: data,
+        contentType: false,
+        processData: false,
+        cache: false
       }).then(function(result) {
-        console.log(result);
+        self.sendAction('action', result);
       });
-
-  }
+    }
+  },
 });
