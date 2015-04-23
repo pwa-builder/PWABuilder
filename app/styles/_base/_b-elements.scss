@@ -38,7 +38,7 @@ h5 {
 	font-size:1.5rem; 	//24px
 }
 
-button {
+button, .btn {
 	background:$primary-accent;
 	border:none;
 	color:#fff;
@@ -52,9 +52,26 @@ button {
 	transition: all 0.25s ease-in-out;
 }
 
-button:hover {
+button:hover, .btn:hover {
 	background:$dark-accent;
 	color: $primary-accent;
+}
+
+.fileUpload {
+    position: relative;
+    overflow: hidden;
+    margin: 10px;
+}
+.fileUpload input.upload {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
 }
 
 pre {

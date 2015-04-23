@@ -1,9 +1,10 @@
-<div class="l-max-width">
-  <div class="page-intro">
+<div class="pure-g l-max-width">
+	<section class="pure-u-1 pure-u-md-1-1 l-bottom">
+		<div class="page-intro">
     <h1 class="title">Generate</h1>
     <p>Duis nulla nunc, ullamcorper ac tristique at, gravida quis ipsum. Sed viverra sodales imperdiet. Morbi pulvinar sollicitudin turpis non eleifend. Mauris eu nibh id augue mollis venenatis. Nulla facilisi. Curabitur mi justo, sollicitudin quis libero vitae, imperdiet pellentesque est. Donec quis euismod ipsum. Donec sit amet velit a tortor faucibus blandit vitae sit amet leo.</p>
   </div>
-  <div class="pure-g generator" id="builder_holder">
+		<div class="pure-g generator" id="builder_holder">
     <div class="pure-u-1 pure-u-md-1-2 generator-section" id="form_holder">
     <header>
       <h2 class="generator-section-title">Site Information</h2>
@@ -18,7 +19,10 @@
       <span>&nbsp;or</span>
       <div class="form-item manifest">
         <label>Upload Manifest</label>
-        {{file-input action="manifestUpload"}}
+        <div class="fileUpload btn">
+			<span>Upload</span>
+			<input id="uploadBtn" type="file" class="upload" />
+		</div>
       </div>
       {{/generator-step}}
       {{#generator-step step="2" stepTitle="Site Data" data=model action="stepUpdated" allowToggle=model.step1Complete}}
@@ -140,4 +144,5 @@
     </section>
   </div>
   </div>
+  </section>
 </div>
