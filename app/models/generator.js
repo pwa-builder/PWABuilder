@@ -15,6 +15,9 @@ export default Ember.Object.extend({
     display: '',
     orientation: ''
   }),
+  suggestions: Ember.Object.create(),
+  warnings: Ember.Object.create(),
+  members: Ember.A(),
   display: {
     names: ['fullscreen', 'standalone', 'minimal-ui', 'browser']
   },
@@ -25,6 +28,28 @@ export default Ember.Object.extend({
     console.log('formattedManifest');
     return JSON.stringify(this.get('manifest'), null, '    ');
   }.property('manifest'),
+  suggestionsArray: function() {
+    var keys = Object.keys(this.suggestions);
+    var suggestions = Ember.A();
+    if(keys){
+      for (var i = 0, l = keys.length; i < l; i ++) {
+        var v = keys[i];
+        var section = {};
+        section.title = v;
+        section.suggestions = [];
+        for (var j = 0, k = this.suggestions[v].length; j < k; j ++) {
+          var w = this.suggestions[v][j];
+          section.suggestions.push(w);
+        }
+        suggestions.push(section);
+      }
+    }
+    return suggestions;
+  }.property('suggestions'),
+  warningsArray: function() {
+    console.log(this.suggestions);
+    return Ember.makeArray(this.warnings);
+  }.property('warnings'),
   save: function () {
     if(!this.manifestId) {
       this.create();
@@ -43,6 +68,15 @@ export default Ember.Object.extend({
     }).then(function(result) {
         self.set('manifest',result.content);
         self.set('manifestId', result.id);
+
+        if(result.suggestions){
+          self.set('suggestions', result.suggestions);
+        }
+
+        if(result.warnings){
+          self.set('warnings', result.warnings);
+        }
+
         console.log(result);
     });
   },
@@ -56,6 +90,15 @@ export default Ember.Object.extend({
         contentType: 'application/json; charset=utf-8'
     }).then(function(result) {
         self.set('manifest',result.content);
+
+        if(result.suggestions){
+          self.set('suggestions', result.suggestions);
+        }
+
+        if(result.warnings){
+          self.set('warnings', result.warnings);
+        }
+
         console.log(result);
     });
   }

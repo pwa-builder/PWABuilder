@@ -1,0 +1,23 @@
+{{#if members}}
+<table class="generator-members">
+  {{#each member in members}}
+    <tr>
+      <td>{{member.member_name}}</td>
+      <td>{{member.member_value}}</td>
+      <td><button {{action 'removeMember' member}}>-</button></td>
+    </tr>
+  {{/each}}
+</table>
+{{/if}}
+<div class="form-group">
+  <div class="form-item">
+    <label for="member_name">Member Name</label>
+    {{input id="member_name" name="member_name" value=member_name}}
+  </div>
+  <div class="form-item">
+    <label>Member Value</label>
+    {{textarea id="member_value" name="member_value" value=member_value}}
+  </div>
+  <button {{action 'addMember'}}>+</button>
+</div>
+
