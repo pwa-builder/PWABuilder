@@ -132,27 +132,19 @@
     <section class="manifest-body">
       <pre><code class="language-javascript">{{model.formattedManifest}}</code></pre>
     </section>
+
+      {{#if model.suggestionsArray}}
     <div class="errors">
 
-      {{#if model.suggestions}}
-
-      <h5>Suggestions <span>({{model.suggestions.length}} items)</span></h5>
-      {{#each item in model.suggestions}}
-        <h6>{{@key}}</h6>
+      <h5>Suggestions</h5>
+      {{#each section in model.suggestionsArray}}
+        <h6>{{section.title}} <span>({{section.suggestions.length}})</span></h6>
+        {{#each item in section.suggestions}}
+        <li>{{item}}</li>
+        {{/each}}
       {{/each}}
+      </div>
       {{/if}}
-
-      <h5>Warnings <span>(1 item)</span></h5>
-
-      <h6>Icons <span>(4 items)</span></h6>
-      <ul>
-        <li>Launcher icons of the following sizes are required: 48x48, 72x72, 96x96, 144x144, 192x192, 512x512,</li>
-        <li>An app icon of the following sizes is required: 76x76, 120x120, 152x152 and 180x180,</li>
-        <li>An 1024x1024 app icon for the App Store is required,</li>
-        <li>A launch image of the following sizes is required: 750x1334, 1334x750, 1242x2208, 2208x1242, 640x1136, 640x960, 1536x2048, 2048x1536, 768x1024 and 1024x768</li>
-      </ul>
-    </div>
-
   </div>
   </div>
 </div>

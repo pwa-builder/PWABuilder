@@ -6,7 +6,7 @@ import config from '../config/environment';
 export default Ember.Object.extend({
   step1Complete: false,
   manifestId: null,
-  siteUrl: '',
+  siteUrl: 'http://www.cnn.com',
   manifest: Ember.Object.create({
     name: '',
     short_name: '',
@@ -28,6 +28,28 @@ export default Ember.Object.extend({
     console.log('formattedManifest');
     return JSON.stringify(this.get('manifest'), null, '    ');
   }.property('manifest'),
+  suggestionsArray: function() {
+    var keys = Object.keys(this.suggestions);
+    var suggestions = Ember.A();
+    if(keys){
+      for (var i = 0, l = keys.length; i < l; i ++) {
+        var v = keys[i];
+        var section = {};
+        section.title = v;
+        section.suggestions = [];
+        for (var j = 0, k = this.suggestions[v].length; j < k; j ++) {
+          var w = this.suggestions[v][j];
+          section.suggestions.push(w);
+        }
+        suggestions.push(section);
+      }
+    }
+    return suggestions;
+  }.property('suggestions'),
+  warningsArray: function() {
+    console.log(this.suggestions);
+    return Ember.makeArray(this.warnings);
+  }.property('warnings'),
   save: function () {
     if(!this.manifestId) {
       this.create();
