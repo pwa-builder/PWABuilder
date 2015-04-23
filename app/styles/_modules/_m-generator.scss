@@ -84,6 +84,11 @@ $form-accent:#999999;
 	padding:.1rem;
 }
 
+.generator input.upload-file {
+	float:left;
+	width:47% !important;
+}
+
 .generator textarea {
 	width:65%;
 	float:right;

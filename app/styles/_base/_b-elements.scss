@@ -58,7 +58,7 @@ button:hover, .btn:hover {
 }
 
 .fileUpload {
-	width:30%;
+	width:15%;
 	text-align: center;
     position: absolute;
     right:0;
@@ -71,18 +71,25 @@ button:hover, .btn:hover {
   	-moz-user-select: none;
   	-ms-user-select: none;
   	user-select: none;
+  	line-height:1.5rem;
 }
+
+.fileUpload span {
+	font-family:$sans-stack;
+	cursor: pointer;
+}
+
 .fileUpload input.upload {
     position: absolute;
     top: 0;
     right: 0;
     margin: 0;
     padding: 0;
-    font-size: 20px;
     cursor: pointer;
     opacity: 0;
     filter: alpha(opacity=0);
     width:100% !important;
+    line-height:2.325rem;
 }
 
 pre {
