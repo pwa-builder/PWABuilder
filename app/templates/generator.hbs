@@ -103,6 +103,25 @@
         <label>Member Value</label>
         {{textarea name="member_value"}}
       </div>
+      
+		<table>
+			<tr>
+				<td>Test 1</td>
+				<td>Test description</td>
+				<td>X</td>
+			</tr>
+			<tr>
+				<td>Test 2</td>
+				<td>Test description with a longer description</td>
+				<td>X</td>
+			</tr>
+			<tr>
+				<td>Test 3 longer headline</td>
+				<td>Test description</td>
+				<td>X</td>
+			</tr>
+		</table>
+      
       {{/generator-step}}
       {{#generator-step step="5" stepTitle="App Store Details" data=model action="stepUpdated" allowToggle=model.step1Complete}}
       <p class="instructions">We need a bit more info to get your apps ready for the different stores. If you provide us with the details below, we’ll make sure your projects are ready for each of the stores.</p>
