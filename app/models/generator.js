@@ -26,7 +26,7 @@ export default Ember.Object.extend({
   },
   formattedManifest: function () {
     console.log('formattedManifest');
-    return JSON.stringify(this.get('manifest'), null, '    ');
+    return new Ember.Handlebars.SafeString("<code class='language-javascript'>"+JSON.stringify(this.get('manifest'), null, '    ')+"</code>");
   }.property('manifest'),
   suggestionsArray: function() {
     var keys = Object.keys(this.suggestions);
