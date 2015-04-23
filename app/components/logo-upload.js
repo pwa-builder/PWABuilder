@@ -18,6 +18,8 @@ export default Ember.Component.extend({
         self.logos.pushObject({ src: self.logoUrl, sizes: result.meta.width +'x'+result.meta.height });
         self.set('logoUrl','');
         self.sendAction('action',self.logos);
+      }).fail(function(err){
+        self.set('logoUrl','');
       });
     },
     removeLogo: function(logo){
