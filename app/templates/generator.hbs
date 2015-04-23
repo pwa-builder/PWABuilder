@@ -128,7 +128,8 @@
       </div>
       {{/generator-step}}
       {{#generator-step step="6" stepTitle="Download your package" data=model action="stepUpdated" allowToggle=model.step1Complete}}
-      	{{#link-to 'usage'}}Learn how to distribute this package across different platforms{{/link-to}}
+      	<a href="#" class="package-download">{{fa-icon "download"}}</a>
+      	{{#link-to 'usage' class="usage-link"}}Now: Learn how to distribute this package across different platforms{{/link-to}}
       {{/generator-step}}
     </ol>
   </div>

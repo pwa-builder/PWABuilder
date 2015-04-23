@@ -191,6 +191,28 @@ $form-accent:#999999;
     background:url('/assets/images/checkmark.png') no-repeat -3px -13px;
 }
 
+.generator .package-download {
+	font-size:2rem;
+	color:black;
+	position:absolute;
+	right:0;
+	top:-.2rem;
+}
+
+.generator .package-download:hover {
+	color:$primary-accent;
+}
+
+.generator .usage-link {
+	font-size:.8rem;
+	padding:.5rem 0;
+	display:block;
+}
+
+.generator .step:last-child .next-step {
+	display:none;
+}
+
 //Manifest section
 .generator .generator-section pre {
 	box-shadow: none;
