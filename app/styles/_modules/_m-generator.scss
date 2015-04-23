@@ -34,7 +34,7 @@ $form-accent:#999999;
   padding-left: 3.25rem;
 }
 
-.generator .step--disabled {
+.generator .step--disabled, .generator .step--disabled .title {
   opacity: 0.6;
   cursor: not-allowed;
 }
