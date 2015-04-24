@@ -6,6 +6,7 @@ export default Ember.Component.extend({
   members: Ember.A(),
   actions: {
     addMember: function () {
+      var self = this;
       var member = {};
       var members = this.get('members');
       var member_name = this.get('member_name');
@@ -15,6 +16,8 @@ export default Ember.Component.extend({
         member.member_value = member_value;
         members.pushObject(member);
         this.sendAction('action', 'add', member);
+        self.set('member_name', '');
+        self.set('member_value', '');
       }
     },
     removeMember: function(member){
