@@ -18,7 +18,6 @@ export default Ember.Component.extend({
       }
     },
     removeMember: function(member){
-      console.log('removeMember', member);
       var members = this.get('members');
       members.removeObject(member);
       this.sendAction('action', 'remove', member);

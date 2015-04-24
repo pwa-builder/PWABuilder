@@ -58,18 +58,18 @@ export default Ember.Object.extend({
   create: function(){
     var self = this;
     ajax({
-        url:config.APP.API_URL+'/manifests/',
-        type: 'POST',
-        data: JSON.stringify({ siteUrl: this.get('siteUrl') }),
-        dataType: 'json',
-        contentType: 'application/json; charset=utf-8'
+      url:config.APP.API_URL+'/manifests/',
+      type: 'POST',
+      data: JSON.stringify({ siteUrl: this.get('siteUrl') }),
+      dataType: 'json',
+      contentType: 'application/json; charset=utf-8'
     }).then(function(result) {
-        self.set('manifest',result.content);
-        self.set('manifestId', result.id);
+      self.set('manifest', result.content);
+      self.set('manifestId', result.id);
 
-        if(result.suggestions){
-          self.set('suggestions', result.suggestions);
-        }
+      if(result.suggestions){
+        self.set('suggestions', result.suggestions);
+      }
 
         if(result.warnings){
           self.set('warnings', result.warnings);
@@ -80,21 +80,21 @@ export default Ember.Object.extend({
   update: function(){
     var self = this;
     ajax({
-        url: config.APP.API_URL + '/manifests/' + this.get('manifestId'),
-        type: 'PUT',
-        data: JSON.stringify(this.get('manifest')),
-        dataType: 'json',
-        contentType: 'application/json; charset=utf-8'
+      url: config.APP.API_URL + '/manifests/' + this.get('manifestId'),
+      type: 'PUT',
+      data: JSON.stringify(this.get('manifest')),
+      dataType: 'json',
+      contentType: 'application/json; charset=utf-8'
     }).then(function(result) {
         self.set('manifest',result.content);
 
-        if(result.suggestions){
-          self.set('suggestions', result.suggestions);
-        }
+      if(result.suggestions){
+        self.set('suggestions', result.suggestions);
+      }
 
-        if(result.warnings){
-          self.set('warnings', result.warnings);
-        }
+      if(result.warnings){
+        self.set('warnings', result.warnings);
+      }
 
     });
   }
