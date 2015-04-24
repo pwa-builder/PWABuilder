@@ -3,20 +3,19 @@ import Ember from 'ember';
 export default Ember.Controller.extend({
   selectedDisplay: null,
   selectedOrientation: null,
-  watchDisplay: function() {
-    console.log(this.get('selectedDisplay'));
-    var selected = this.get('selectedDisplay');
-    if(selected){
-      this.send('updateModelProperty', 'display', this.get('selectedDisplay'));
+  valueOrEmptyString: function (value) {
+    if(value) {
+      return value;
+    } else {
+      return '';
     }
+  },
+  watchDisplay: function() {
+    var selected = this.get('selectedDisplay');
+    this.send('updateModelProperty', 'display', this.valueOrEmptyString(selected));
   }.observes('selectedDisplay'),
   watchOrientation: function() {
     var selected = this.get('selectedOrientation');
-    if(selected !== ''){
-      this.send('updateModelProperty', 'orientation', this.get('selectedOrientation'));
-    }
-  }.observes('selectedOrientation'),
-  watchModel: function() {
-    // I want to call this.model.save() here, but that'll be an endless loop
-  }.observes('model.manifest.wat_sharing')
+    this.send('updateModelProperty', 'orientation', this.valueOrEmptyString(selected));
+  }.observes('selectedOrientation')
 });
