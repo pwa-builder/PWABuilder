@@ -25,7 +25,6 @@ export default Ember.Object.extend({
     names: ['any', 'natural', 'landscape', 'portrait', 'portrait-primary', 'portrait-secondary', 'landscape-primary', 'landscape-secondary']
   },
   formattedManifest: function () {
-    console.log('formattedManifest');
     return new Ember.Handlebars.SafeString("<code class='language-javascript'>"+JSON.stringify(this.get('manifest'), null, '    ')+"</code>");
   }.property('manifest'),
   suggestionsArray: function() {
@@ -47,7 +46,6 @@ export default Ember.Object.extend({
     return suggestions;
   }.property('suggestions'),
   warningsArray: function() {
-    console.log(this.suggestions);
     return Ember.makeArray(this.warnings);
   }.property('warnings'),
   save: function () {
@@ -77,7 +75,6 @@ export default Ember.Object.extend({
           self.set('warnings', result.warnings);
         }
 
-        console.log(result);
     });
   },
   update: function(){
@@ -99,7 +96,6 @@ export default Ember.Object.extend({
           self.set('warnings', result.warnings);
         }
 
-        console.log(result);
     });
   }
 });

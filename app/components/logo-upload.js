@@ -3,7 +3,7 @@ import ajax from 'ic-ajax';
 import config from '../config/environment';
 
 export default Ember.Component.extend({
-  logoUrl: "",
+  logoUrl: '',
   logos: Ember.A(),
   actions: {
     addLogo: function(){
@@ -18,7 +18,7 @@ export default Ember.Component.extend({
         self.logos.pushObject({ src: self.logoUrl, sizes: result.meta.width +'x'+result.meta.height });
         self.set('logoUrl','');
         self.sendAction('action',self.logos);
-      }).fail(function(){
+      }).catch(function(){
         self.set('logoUrl','');
       });
     },
