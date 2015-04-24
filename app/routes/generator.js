@@ -20,7 +20,7 @@ export default Ember.Route.extend({
     },
     updateLogos: function(logos) {
       var model = this.modelFor('generator');
-      model.set('logos',logos);
+      model.set('manifest.icons',logos);
       model.save();
     },
     updateManifest: function (result) {

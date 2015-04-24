@@ -13,8 +13,7 @@ export default Ember.Object.extend({
     icons:[],
     start_url: '',
     display: '',
-    orientation: '',
-    wat_sharing: true
+    orientation: ''
   }),
   suggestions: Ember.Object.create(),
   warnings: Ember.Object.create(),
@@ -58,7 +57,6 @@ export default Ember.Object.extend({
   },
   create: function(){
     var self = this;
-    console.log('model before sending create: ', this.get('manifest'));
     ajax({
       url:config.APP.API_URL+'/manifests/',
       type: 'POST',
@@ -73,14 +71,14 @@ export default Ember.Object.extend({
         self.set('suggestions', result.suggestions);
       }
 
-      if(result.warnings){
-        self.set('warnings', result.warnings);
-      }
+        if(result.warnings){
+          self.set('warnings', result.warnings);
+        }
+
     });
   },
   update: function(){
     var self = this;
-    console.log('model before sending update data: ', this.get('manifest'));
     ajax({
       url: config.APP.API_URL + '/manifests/' + this.get('manifestId'),
       type: 'PUT',
@@ -88,8 +86,7 @@ export default Ember.Object.extend({
       dataType: 'json',
       contentType: 'application/json; charset=utf-8'
     }).then(function(result) {
-      console.log('model before saving update data: ', self.get('manifest'));
-      self.set('manifest',result.content);
+        self.set('manifest',result.content);
 
       if(result.suggestions){
         self.set('suggestions', result.suggestions);
