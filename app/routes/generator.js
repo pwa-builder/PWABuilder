@@ -1,4 +1,3 @@
-/* global _:true */
 import Ember from 'ember';
 import GeneratorModel from '../models/generator';
 //import RouteAware from '../mixins/routeaware';

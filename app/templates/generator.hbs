@@ -61,31 +61,31 @@
         <label for="wat_sharing">Sharing</label>
       </div>
       <div class="form-item">
-        {{input type="checkbox" id="wat_search" name="wat_search" checked=hasSearch}}
+        {{input type="checkbox" id="wat_search" name="wat_search" checked=model.manifest.wat_search}}
         <label for="wat_search">Search</label>
       </div>
       <div class="form-item">
-        {{input type="checkbox" id="wat_secondary-pinning" name="wat_secondary-pinning" checked=hasSecondaryPinning}}
+        {{input type="checkbox" id="wat_secondary-pinning" name="wat_secondary-pinning" checked=model.manifest.wat_secondary-pinning}}
         <label for="wat_secondary-pinning">Secondary pinning</label>
       </div>
       <div class="form-item">
-        {{input type="checkbox" id="wat_geolocation" name="wat_geolocation" checked=hasGeolocation}}
+        {{input type="checkbox" id="wat_geolocation" name="wat_geolocation" checked=model.manifest.wat_geolocation}}
         <label for="wat_geolocation">Geolocation</label>
       </div>
       <div class="form-item">
-        {{input type="checkbox" id="wat_tiles" name="wat_tiles" checked=hasTiles}}
+        {{input type="checkbox" id="wat_tiles" name="wat_tiles" checked=model.manifest.wat_tiles}}
         <label for="wat_tiles">Live Tiles</label>
       </div>
       <div class="form-item">
-        {{input type="checkbox" id="wat_offline" name="wat_offline" checked=hasOffline}}
+        {{input type="checkbox" id="wat_offline" name="wat_offline" checked=model.manifest.wat_offline}}
         <label for="wat_offline">Offline detection</label>
       </div>
       <div class="form-item">
-        {{input type="checkbox" id="wat_styles" name="wat_styles" checked=hasStyles}}
+        {{input type="checkbox" id="wat_styles" name="wat_styles" checked=model.manifest.wat_styles}}
         <label for="wat_styles">Custom styles</label>
       </div>
       <div class="form-item">
-        {{input type="checkbox" id="wat_script" name="wat_script" checked=hasScript}}
+        {{input type="checkbox" id="wat_script" name="wat_script" checked=model.manifest.wat_script}}
         <label for="wat_script">Script injection</label>
       </div>
       {{/generator-step}}
@@ -99,14 +99,14 @@
       <p class="instructions">We need a bit more info to get your apps ready for the different stores. If you provide us with the details below, we’ll make sure your projects are ready for each of the stores.</p>
       <div class="form-item">
         <label>Description</label>
-        {{input name="description" value=model.manifest.description}}
+        {{input name="description" value=model.manifest.description focus-out="updateModel"}}
         {{fa-icon "windows"}}
         {{fa-icon "mobile-phone"}}
         {{fa-icon "android"}}
       </div>
       <div class="form-item">
         <label>Version</label>
-        {{input name="version" value=model.manifest.version}}
+        {{input name="version" value=model.manifest.version focus-out="updateModel"}}
         {{fa-icon "windows"}}
         {{fa-icon "mobile-phone"}}
         {{fa-icon "android"}}
@@ -114,24 +114,24 @@
       </div>
       <div class="form-item">
         <label>Version Code</label>
-        {{input name="version_code" value=model.manifest.version_code}}
+        {{input name="version_code" value=model.manifest.version_code focus-out="updateModel"}}
         {{fa-icon "android"}}
       </div>
       <div class="form-item">
         <label>Build</label>
-        {{input name="build" value=model.manifest.build}}
+        {{input name="build" value=model.manifest.build focus-out="updateModel"}}
         {{fa-icon "apple"}}
       </div>
       <div class="form-item">
         <label>Publisher Display Name</label>
-        {{input name="publisher_display_name" value=model.manifest.publishername}}
+        {{input name="publisher_display_name" value=model.manifest.publishername focus-out="updateModel"}}
         {{fa-icon "windows"}}
         {{fa-icon "mobile-phone"}}
         {{fa-icon "apple"}}
       </div>
       <div class="form-item">
         <label>Organization Identifier</label>
-        {{input name="organization_identifier" value=model.manifest.organizationid}}
+        {{input name="organization_identifier" value=model.manifest.organizationid focus-out="updateModel"}}
         {{fa-icon "apple"}}
       </div>
       {{/generator-step}}

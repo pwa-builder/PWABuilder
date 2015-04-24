@@ -28,6 +28,5 @@
   "white": false,
   "eqnull": true,
   "esnext": true,
-  "unused": true,
-  "_": true
+  "unused": true
 }
