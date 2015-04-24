@@ -22,7 +22,7 @@
       </div>
       {{/generator-step}}
       {{#generator-step step="2" stepTitle="Site Data" data=model action="stepUpdated" allowToggle=model.step1Complete}}
-<p class="instructions">Here are the values we picked up from your site. Update or add any details below.</p>
+        <p class="instructions">Here are the values we picked up from your site. Update or add any details below.</p>
           <div class="form-item">
               <label>Name</label>
               {{input value=model.manifest.name focus-out="updateModel"}}
@@ -57,35 +57,35 @@
       {{/generator-step}}
       {{#generator-step step="3" stepTitle="Capabilities" data=model action="stepUpdated" allowToggle=model.step1Complete}}
       <div class="form-item">
-        {{input type="checkbox" id="wat_sharing" name="wat_sharing" checked=model.manifest.wat_sharing}}
+        {{#generator-checkbox type="checkbox" id="wat_sharing" name="wat_sharing" checked=model.manifest.wat_sharing action="updateModel"}}{{/generator-checkbox}}
         <label for="wat_sharing">Sharing</label>
       </div>
       <div class="form-item">
-        {{input type="checkbox" id="wat_search" name="wat_search" checked=model.manifest.wat_search}}
+        {{#generator-checkbox type="checkbox" id="wat_search" name="wat_search" checked=model.manifest.wat_search action="updateModel"}}{{/generator-checkbox}}
         <label for="wat_search">Search</label>
       </div>
       <div class="form-item">
-        {{input type="checkbox" id="wat_secondary-pinning" name="wat_secondary-pinning" checked=model.manifest.wat_secondary-pinning}}
+        {{#generator-checkbox type="checkbox" id="wat_secondary-pinning" name="wat_secondary-pinning" checked=model.manifest.wat_secondary-pinning action="updateModel"}}{{/generator-checkbox}}
         <label for="wat_secondary-pinning">Secondary pinning</label>
       </div>
       <div class="form-item">
-        {{input type="checkbox" id="wat_geolocation" name="wat_geolocation" checked=model.manifest.wat_geolocation}}
+        {{#generator-checkbox  type="checkbox" id="wat_geolocation" name="wat_geolocation" checked=model.manifest.wat_geolocation action="updateModel"}}{{/generator-checkbox}}
         <label for="wat_geolocation">Geolocation</label>
       </div>
       <div class="form-item">
-        {{input type="checkbox" id="wat_tiles" name="wat_tiles" checked=model.manifest.wat_tiles}}
+        {{#generator-checkbox  type="checkbox" id="wat_tiles" name="wat_tiles" checked=model.manifest.wat_tiles action="updateModel"}}{{/generator-checkbox}}
         <label for="wat_tiles">Live Tiles</label>
       </div>
       <div class="form-item">
-        {{input type="checkbox" id="wat_offline" name="wat_offline" checked=model.manifest.wat_offline}}
+        {{#generator-checkbox  type="checkbox" id="wat_offline" name="wat_offline" checked=model.manifest.wat_offline action="updateModel"}}{{/generator-checkbox}}
         <label for="wat_offline">Offline detection</label>
       </div>
       <div class="form-item">
-        {{input type="checkbox" id="wat_styles" name="wat_styles" checked=model.manifest.wat_styles}}
+        {{#generator-checkbox  type="checkbox" id="wat_styles" name="wat_styles" checked=model.manifest.wat_styles action="updateModel"}}{{/generator-checkbox}}
         <label for="wat_styles">Custom styles</label>
       </div>
       <div class="form-item">
-        {{input type="checkbox" id="wat_script" name="wat_script" checked=model.manifest.wat_script}}
+        {{#generator-checkbox  type="checkbox" id="wat_script" name="wat_script" checked=model.manifest.wat_script action="updateModel"}}{{/generator-checkbox}}
         <label for="wat_script">Script injection</label>
       </div>
       {{/generator-step}}
@@ -161,7 +161,7 @@
       {{/each}}
       </div>
       {{/if}}
-  </div>
+      </div>
   </div>
   </section>
 </div>

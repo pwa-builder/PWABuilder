@@ -27,8 +27,6 @@ export default Ember.Component.extend({
     },
     updateModel: function(){
       this.sendAction('action', this.get('step'));
-      // var $manifestBody = Ember.$('.manifest-body')[0];
-      // Prism.highlightElement($manifestBody);
     }
   }
 });

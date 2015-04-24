@@ -13,7 +13,8 @@ export default Ember.Object.extend({
     icons:[],
     start_url: '',
     display: '',
-    orientation: ''
+    orientation: '',
+    wat_sharing: true
   }),
   suggestions: Ember.Object.create(),
   warnings: Ember.Object.create(),
@@ -25,7 +26,6 @@ export default Ember.Object.extend({
     names: ['any', 'natural', 'landscape', 'portrait', 'portrait-primary', 'portrait-secondary', 'landscape-primary', 'landscape-secondary']
   },
   formattedManifest: function () {
-    console.log('formattedManifest');
     return new Ember.Handlebars.SafeString("<code class='language-javascript'>"+JSON.stringify(this.get('manifest'), null, '    ')+"</code>");
   }.property('manifest'),
   suggestionsArray: function() {
@@ -47,7 +47,6 @@ export default Ember.Object.extend({
     return suggestions;
   }.property('suggestions'),
   warningsArray: function() {
-    console.log(this.suggestions);
     return Ember.makeArray(this.warnings);
   }.property('warnings'),
   save: function () {
@@ -59,47 +58,47 @@ export default Ember.Object.extend({
   },
   create: function(){
     var self = this;
+    console.log('model before sending create: ', this.get('manifest'));
     ajax({
-        url:config.APP.API_URL+'/manifests/',
-        type: 'POST',
-        data: JSON.stringify({ siteUrl: this.get('siteUrl') }),
-        dataType: 'json',
-        contentType: 'application/json; charset=utf-8'
+      url:config.APP.API_URL+'/manifests/',
+      type: 'POST',
+      data: JSON.stringify({ siteUrl: this.get('siteUrl') }),
+      dataType: 'json',
+      contentType: 'application/json; charset=utf-8'
     }).then(function(result) {
-        self.set('manifest',result.content);
-        self.set('manifestId', result.id);
+      self.set('manifest', result.content);
+      self.set('manifestId', result.id);
 
-        if(result.suggestions){
-          self.set('suggestions', result.suggestions);
-        }
+      if(result.suggestions){
+        self.set('suggestions', result.suggestions);
+      }
 
-        if(result.warnings){
-          self.set('warnings', result.warnings);
-        }
-
-        console.log(result);
+      if(result.warnings){
+        self.set('warnings', result.warnings);
+      }
     });
   },
   update: function(){
     var self = this;
+    console.log('model before sending update data: ', this.get('manifest'));
     ajax({
-        url: config.APP.API_URL + '/manifests/' + this.get('manifestId'),
-        type: 'PUT',
-        data: JSON.stringify(this.get('manifest')),
-        dataType: 'json',
-        contentType: 'application/json; charset=utf-8'
+      url: config.APP.API_URL + '/manifests/' + this.get('manifestId'),
+      type: 'PUT',
+      data: JSON.stringify(this.get('manifest')),
+      dataType: 'json',
+      contentType: 'application/json; charset=utf-8'
     }).then(function(result) {
-        self.set('manifest',result.content);
+      console.log('model before saving update data: ', self.get('manifest'));
+      self.set('manifest',result.content);
 
-        if(result.suggestions){
-          self.set('suggestions', result.suggestions);
-        }
+      if(result.suggestions){
+        self.set('suggestions', result.suggestions);
+      }
 
-        if(result.warnings){
-          self.set('warnings', result.warnings);
-        }
+      if(result.warnings){
+        self.set('warnings', result.warnings);
+      }
 
-        console.log(result);
     });
   }
 });

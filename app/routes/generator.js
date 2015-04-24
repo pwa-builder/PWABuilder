@@ -40,16 +40,13 @@ export default Ember.Route.extend({
       model.save();
     },
     manageMember: function(action, member){
-      console.log('members', action, member);
       var model = this.modelFor('generator');
       var manifest = model.get('manifest');
       if(action === 'add'){
         manifest[member.member_name] = member.member_value;
       } else if (action === 'remove') {
-        console.log('removing', member.member_name);
         delete manifest[member.member_name];
       }
-      console.log('modified manifest',manifest);
       model.save();
     }
   }
