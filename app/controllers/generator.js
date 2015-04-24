@@ -4,7 +4,6 @@ export default Ember.Controller.extend({
   selectedDisplay: null,
   selectedOrientation: null,
   watchDisplay: function() {
-    console.log(this.get('selectedDisplay'));
     var selected = this.get('selectedDisplay');
     if(selected){
       this.send('updateModelProperty', 'display', this.get('selectedDisplay'));
