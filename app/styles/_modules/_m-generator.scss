@@ -5,16 +5,32 @@ $form-accent:#999999;
 }
 
 .generator-section > header {
+	padding:0 1rem .05rem 1rem;
 	background-color:$dark-accent;
 }
 
 .generator-section-title {
-	padding:0 1rem .05rem 1rem;
   margin: 0;
   color:$secondary-accent;
 	font-family:$serif-stack;
 	font-size:1.313rem;
 	line-height:2.5rem;
+}
+
+.generator-issues-notification {
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+  color: $tertiary-accent;
+}
+
+.generator-issues-notification a,
+.generator-issues-notification a:visited,
+.generator-issues-notification a:hover {
+  text-decoration: underline;
+  cursor: pointer;
+  font-family: "Bree Serif", serif;
+  font-weight: bold;
 }
 
 .generator .generator-section:first-child {
@@ -244,7 +260,7 @@ $form-accent:#999999;
 	min-height:20rem;
 }
 
-.errors {
+.issues {
 	padding: .75rem 2rem 1.5rem 2rem;
 	margin: 2rem 0;
 	background-color: $dark-accent;
@@ -252,31 +268,43 @@ $form-accent:#999999;
 	-moz-border-radius: 2px;
 	border-radius: 2px;
 }
-	.errors h5 {
+	.issues-title {
 		font-size: 1.25rem;
 		margin: .75rem 0 .25rem 0;
 		color: $tertiary-accent;
 	}
-		.errors h5 span {
+		.issues-title span {
 			display: inline-block;
 			font-size: 75%;
 			color: #888;
 		}
-	.errors h6 {
+	.issues .issues-subheading {
 		font-size: 1rem;
 		margin: 0 0 .5rem 0;
-		color: $secondary-accent;
+		color: #fff;
 	}
-		.errors h6 span {
+		.issues .issues-subheading span {
 			display: inline-block;
 			font-size: 75%;
 			color: #888;
 		}
-	.errors ul {
+	.issues ul {
 		margin: 0 0 .5rem .75rem;
 		padding: 0;
 	}
-	.errors li {
+	.issues li {
 		font-size: .75rem;
 		margin: 0 0 .25rem 0;
 	}
+
+.issues-title-warnings {
+  color: $quaternary-accent;
+}
+
+.issues-title-suggestions {
+  color: $secondary-accent;
+}
+
+.issues-title-errors {
+  color: $primary-accent;
+}
