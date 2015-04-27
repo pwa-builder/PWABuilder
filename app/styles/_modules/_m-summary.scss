@@ -12,7 +12,34 @@
 	margin: 0 0 2rem 0;
 }
 
+.summary p.mone {
+	color:$dark-accent;
+	margin: 0 0 1rem 0;
+}
+
+.summary p.nom {
+	color:$dark-accent;
+	margin: 0;
+}
+
 .summary p.slim {
 	color:$dark-accent;
 	margin: 0 0 1rem 0;
+}
+
+.summary table {
+	margin: 0 0 2rem 0;
+}
+
+.summary td, th {
+  height: 2rem;
+  border: 1px solid #eee;
+  text-align: left;
+  font-size: .9rem;
+}
+.summary th {
+  background-color: $dark-accent;
+  color: #fff;
+  border-color: white;
+  text-align: center;
 }
