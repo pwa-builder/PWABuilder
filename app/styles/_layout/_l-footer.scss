@@ -5,6 +5,12 @@
 	background-color:black;
 }
 
+#footer .divider {
+	font-family: $sans-stack-light;
+	font-size: 130%;
+	color: #444;
+}
+
 #footer ul {
 	list-style-type: none;
 	padding-left:0;
@@ -30,7 +36,21 @@
 }
 
 #footer .copyright {
+	margin-top: 2rem;
 	color:$quaternary-accent;
+}
+
+#footer .copyright a {
+	color:$quaternary-accent;
+	-webkit-transition: all 0.25s ease-in-out;
+	-moz-transition: all 0.25s ease-in-out;
+	-ms-transition: all 0.25s ease-in-out;
+	-o-transition: all 0.25s ease-in-out;
+	transition: all 0.25s ease-in-out;
+}
+
+#footer .copyright a:hover {
+	color:#fff;
 }
 
 #footer .social {
