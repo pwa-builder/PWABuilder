@@ -125,9 +125,9 @@ code {
 	.shell .line { display: block; margin: 0; padding: 0; }
 	.shell .line span { display: inline-block; }
 	.shell p.line { line-height: 1.375em; }
-		.shell .prompt { color: #b25538; }
-		.shell .command { color: #fec77c; }
-		.shell .app { color: #ffffff; }
+		.shell .prompt { color: #b25538; vertical-align: top; }
+		.shell .command { color: #fec77c; vertical-align: top; }
+		.shell .app { color: #ffffff; vertical-align: top; }
 
 strong {
 	font-family:$sans-stack-bold;
