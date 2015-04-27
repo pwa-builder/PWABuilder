@@ -13,10 +13,12 @@ export default Ember.Route.extend({
   activate: function() {
     this._super();
     $('.application').addClass('l-app-style');
+    $('footer').addClass('is-small');
   },
   deactivate: function() {
     this._super();
     $('.application').removeClass('l-app-style');
+    $('footer').removeClass('is-small');
   },
   actions: {
     stepUpdated: function (step) {

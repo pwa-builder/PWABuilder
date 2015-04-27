@@ -46,6 +46,10 @@
 	height:100%;
 }
 
+.l-app-style.no-header {
+	height:calc(100% - 4.938rem - 3rem);
+}
+
 .l-app-style .page-intro {
 	margin-top:0;
 }
