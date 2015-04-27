@@ -135,10 +135,9 @@
             {{fa-icon "apple"}}
           </div>
           {{/generator-step}}
-          {{#generator-step step="6" stepTitle="Download your package" data=model action="stepUpdated" allowToggle=model.step1Complete}}
-          <a href="#" class="package-download">{{fa-icon "download"}}</a>
-          {{#link-to 'usage' class="usage-link"}}Now: Learn how to distribute this package across different platforms{{/link-to}}
-          {{/generator-step}}
+          {{#download-archive class="download-archive" disabled=step1Complete}}
+            <p>{{#link-to 'usage' class="usage-link"}}Now: Learn how to distribute this package across different platforms{{/link-to}}</p>
+          {{/download-archive}}
         </ol>
       </div>
       <div class="pure-u-1 pure-u-md-1-2 generator-section manifest" id="manifest_holder">

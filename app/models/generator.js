@@ -103,5 +103,14 @@ export default Ember.Object.extend({
       }
 
     });
+  },
+  build: function(){
+    var self = this;
+    ajax({
+      url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/build',
+      type: 'POST'
+    }).then(function(result){
+      self.set('archive', result.archive);
+    });
   }
 });
