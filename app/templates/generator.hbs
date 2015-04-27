@@ -145,31 +145,41 @@
         <header>
           <h2 class="generator-section-title">W3C Manifest</h2>
           {{#if model.hasIssues}}
-          <h3 class="generator-errors-notification">{{#skip-link anchor="#errors_list"}}{{issue-notifications model.errorTotal model.warningsTotal model.suggestionsTotal}}{{/skip-link}}</h3>
+            <p class="generator-issues-notification">
+              {{#skip-link class="issues-title-errors" anchor="#errors_list"}}Errors ({{model.errorsTotal}}){{/skip-link}},
+              {{#skip-link class="issues-title-warnings" anchor="#warnings_list"}}Warnings ({{model.warningsTotal}}){{/skip-link}},
+              {{#skip-link class="issues-title-suggestions" anchor="#suggestions_list"}}Suggestions ({{model.suggestionsTotal}}){{/skip-link}}
+            </p>
           {{/if}}
         </header>
         <section class="manifest-body">
           {{formatted-manifest data=model}}
         </section>
         {{#if model.hasIssues}}
-        <div id="errors_list" class="errors">
+        <div id="issues_list" class="issues">
           {{#if model.errors}}
-          <h5 class="errors-title">Errors <span>({{model.errorsTotal}} {{pluralize-it "item" model.errorsTotal}})</span></h5>
-            {{#each member in model.errors}}
-              {{partial "issue-list"}}
-            {{/each}}
+            <div id="errors_list">
+              <h5 class="issues-title issues-title-errors">Errors <span>({{model.errorsTotal}} {{pluralize-it "item" model.errorsTotal}})</span></h5>
+              {{#each member in model.errors}}
+                {{partial "issue-list"}}
+              {{/each}}
+            </div>
           {{/if}}
           {{#if model.warnings}}
-            <h5 class="errors-title">Warnings <span>({{model.warningsTotal}} {{pluralize-it "item" model.warningsTotal}})</span></h5>
-            {{#each member in model.warnings}}
-              {{partial "issue-list"}}
-            {{/each}}
+            <div id="warnings_list">
+              <h5 class="issues-title issues-title-warnings">Warnings <span>({{model.warningsTotal}} {{pluralize-it "item" model.warningsTotal}})</span></h5>
+              {{#each member in model.warnings}}
+                {{partial "issue-list"}}
+              {{/each}}
+            </div>
           {{/if}}
           {{#if model.suggestions}}
-          <h5 class="errors-title">Suggestions <span>({{model.suggestionsTotal}} {{pluralize-it "item" model.suggestionsTotal}})</span></h5>
-            {{#each member in model.suggestions}}
-              {{partial "issue-list"}}
-            {{/each}}
+            <div id="suggestions_list">
+              <h5 class="issues-title issues-title-suggestions">Suggestions <span>({{model.suggestionsTotal}} {{pluralize-it "item" model.suggestionsTotal}})</span></h5>
+              {{#each member in model.suggestions}}
+                {{partial "issue-list"}}
+              {{/each}}
+            </div>
           {{/if}}
         </div>
         {{/if}}
