@@ -1,4 +1,4 @@
-/* global JSON */
+/* global JSON: true, _:true */
 import Ember from 'ember';
 import ajax from 'ic-ajax';
 import config from '../config/environment';
@@ -15,9 +15,28 @@ export default Ember.Object.extend({
     display: '',
     orientation: ''
   }),
-  suggestions: Ember.Object.create(),
-  warnings: Ember.Object.create(),
+  suggestions: Ember.A(),
+  warnings: Ember.A(),
+  errors: Ember.A(),
   members: Ember.A(),
+  errorsTotal: function(){
+    return _.sum(this.errors, function(n){
+      return n.issues.length;
+    });
+  }.property('errors'),
+  warningsTotal: function(){
+    return _.sum(this.warnings, function(n){
+      return n.issues.length;
+    });
+  }.property('errors'),
+  suggestionsTotal: function(){
+    return _.sum(this.suggestions, function(n){
+      return n.issues.length;
+    });
+  }.property('errors'),
+  hasIssues: function(){
+    return this.errors.length > 0 || this.warnings.length > 0 || this.suggestions.length > 0;
+  }.property('errors,suggestions,warnings'),
   display: {
     names: ['fullscreen', 'standalone', 'minimal-ui', 'browser']
   },
@@ -27,27 +46,6 @@ export default Ember.Object.extend({
   formattedManifest: function () {
     return new Ember.Handlebars.SafeString("<code class='language-javascript'>"+JSON.stringify(this.get('manifest'), null, '    ')+"</code>");
   }.property('manifest'),
-  suggestionsArray: function() {
-    var keys = Object.keys(this.suggestions);
-    var suggestions = Ember.A();
-    if(keys){
-      for (var i = 0, l = keys.length; i < l; i ++) {
-        var v = keys[i];
-        var section = {};
-        section.title = v;
-        section.suggestions = [];
-        for (var j = 0, k = this.suggestions[v].length; j < k; j ++) {
-          var w = this.suggestions[v][j];
-          section.suggestions.push(w);
-        }
-        suggestions.push(section);
-      }
-    }
-    return suggestions;
-  }.property('suggestions'),
-  warningsArray: function() {
-    return Ember.makeArray(this.warnings);
-  }.property('warnings'),
   save: function () {
     if(!this.manifestId) {
       this.create();
@@ -67,13 +65,17 @@ export default Ember.Object.extend({
       self.set('manifest', result.content);
       self.set('manifestId', result.id);
 
-      if(result.suggestions){
+      if(result.suggestions) {
         self.set('suggestions', result.suggestions);
       }
 
-        if(result.warnings){
-          self.set('warnings', result.warnings);
-        }
+      if(result.warnings) {
+        self.set('warnings', result.warnings);
+      }
+
+      if(result.errors) {
+        self.set('errors', result.errors);
+      }
 
     });
   },
@@ -94,6 +96,10 @@ export default Ember.Object.extend({
 
       if(result.warnings){
         self.set('warnings', result.warnings);
+      }
+
+      if(result.errors) {
+        self.set('errors', result.errors);
       }
 
     });
