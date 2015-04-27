@@ -4,12 +4,8 @@ export default Ember.Component.extend({
   tagName: 'a',
   anchor: '',
   classNames: ['skip-link'],
-  // Add attributes to component for href
-  // href should be set to retain anchor properties
-  // such as pointer cursor and text underline
-  attributeBindings: ['href'],
   // Used so that upon clicking on the link
-  // anchor behaviors or ignored
+  // anchor behaviors are ignored
   click: function(){
     this.scrollTo();
   },
