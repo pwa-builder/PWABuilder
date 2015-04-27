@@ -47,3 +47,34 @@
 	text-align:right;
 	margin-bottom: 1.875rem;
 }
+
+#footer .simple-content {
+	display:none;
+}
+
+#footer.is-small {
+	position:fixed;
+	bottom:0;
+	padding:0;
+	height:3rem;
+}
+
+#footer.is-small .simple-content {
+	display:block;
+}
+
+#footer.is-small .copyright {
+	line-height:3rem;
+}
+
+#footer.is-small .social img {
+	width:5%;
+}
+
+#footer.is-small div.pure-g {
+	display:none;
+}
+
+#footer.is-small div.pure-g.simple-content {
+	display:block;
+}
