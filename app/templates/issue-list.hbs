@@ -1,0 +1,7 @@
+<h6>{{member.member}}</h6>
+{{#each issue in member.issues}}
+  <li>
+    <p><strong>{{code-format issue.code}}:</strong> {{issue.description}}. Platforms affected: {{issue.platform}}.</p>
+  </li>
+{{/each}}
+

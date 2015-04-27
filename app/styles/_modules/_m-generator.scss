@@ -5,16 +5,31 @@ $form-accent:#999999;
 }
 
 .generator-section > header {
+	padding:0 1rem .05rem 1rem;
 	background-color:$dark-accent;
 }
 
 .generator-section-title {
-	padding:0 1rem .05rem 1rem;
   margin: 0;
   color:$secondary-accent;
 	font-family:$serif-stack;
 	font-size:1.313rem;
 	line-height:2.5rem;
+}
+
+.generator-errors-notification {
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+  color: $tertiary-accent;
+}
+
+.generator-errors-notification a,
+.generator-errors-notification a:visited,
+.generator-errors-notification a:hover {
+  color: $tertiary-accent;
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 .generator .generator-section:first-child {
@@ -252,12 +267,12 @@ $form-accent:#999999;
 	-moz-border-radius: 2px;
 	border-radius: 2px;
 }
-	.errors h5 {
+	.errors-title {
 		font-size: 1.25rem;
 		margin: .75rem 0 .25rem 0;
 		color: $tertiary-accent;
 	}
-		.errors h5 span {
+		.errors-title span {
 			display: inline-block;
 			font-size: 75%;
 			color: #888;
