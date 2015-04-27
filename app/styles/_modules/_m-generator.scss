@@ -1,28 +1,37 @@
 $form-accent:#999999;
 
 .generator {
-  margin-top: 2rem;
+  //margin-top: 2rem;
+  //height:-webkit-calc(100% - 4.938rem);
+  //height:calc(100% - 4.938rem);
+  height:100%;
+  overflow-y:hidden;
 }
 
 .generator-section > header {
 	background-color:$dark-accent;
 }
 
+.generator-section {
+	overflow-y:scroll;
+	height:100%;
+}
+
 .generator-section-title {
 	padding:0 1rem .05rem 1rem;
-  margin: 0;
-  color:$secondary-accent;
+  	margin: 0;
+  	color:$secondary-accent;
 	font-family:$serif-stack;
 	font-size:1.313rem;
 	line-height:2.5rem;
 }
 
-.generator .generator-section:first-child {
-	padding-right:.5rem;
-}
-
 .generator .generator-section:last-child {
 	padding-left:.5rem;
+}
+
+.generator .form-holder {
+	padding:0 1rem;
 }
 
 .generator .step {
@@ -239,6 +248,10 @@ $form-accent:#999999;
 }
 
 //Manifest section
+.generator .manifest-holder {
+	background-color:$dark-accent;
+}
+
 .generator .generator-section pre {
 	box-shadow: none;
 	min-height:20rem;
