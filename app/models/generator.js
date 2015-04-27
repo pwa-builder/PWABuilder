@@ -6,7 +6,7 @@ import config from '../config/environment';
 export default Ember.Object.extend({
   step1Complete: false,
   manifestId: null,
-  siteUrl: 'http://www.cnn.com',
+  siteUrl: '',
   manifest: Ember.Object.create({
     name: '',
     short_name: '',
