@@ -7,22 +7,21 @@ $form-accent:#999999;
 }
 
 .generator-section > header {
-	padding:0 1rem .05rem 1rem;
-	background-color:$dark-accent;
+  padding:0 1rem .05rem 1rem;
+  background-color:$dark-accent;
 }
 
 .generator-section {
-	overflow-y:scroll;
-	height:100%;
+  overflow-y:scroll;
+  height:100%;
 }
 
 .generator-section-title {
-	padding:0 1rem .05rem 1rem;
- 	margin: 0;
-  	color:$secondary-accent;
-	font-family:$serif-stack;
-	font-size:1.313rem;
-	line-height:2.5rem;
+  margin: 0;
+  color:$secondary-accent;
+  font-family:$serif-stack;
+  font-size:1.313rem;
+  line-height:2.5rem;
 }
 
 .generator-issues-notification {
@@ -42,27 +41,26 @@ $form-accent:#999999;
 }
 
 .generator .generator-section:first-child {
-	padding-right:.5rem;
+  padding-right:.5rem;
 }
 
->>>>>>> version-1-0-0
 .generator .generator-section:last-child {
-	padding-left:.5rem;
+  padding-left:.5rem;
 }
 
 .generator .form-holder {
-	padding:0 1rem;
+  padding:0 1rem;
 }
 
 .generator .step {
-	margin: 1rem 0 0 1rem;
-	font-family:$sans-stack-light;
-	font-size:.875rem;
+  margin: 1rem 0 0 1rem;
+  font-family:$sans-stack-light;
+  font-size:.875rem;
 }
 
 .generator code {
-	font-size:.875rem;
-	line-height: .875rem;
+  font-size:.875rem;
+  line-height: .875rem;
 }
 
 .generator .step-wrapper {
@@ -75,73 +73,73 @@ $form-accent:#999999;
 }
 
 .generator .step header {
-	cursor:pointer;
+  cursor:pointer;
 }
 
 .generator .step.active {
-	opacity: 1;
+  opacity: 1;
 }
 
 .generator .step .title {
-	margin-bottom:0;
-	font-size:1.25rem;
-	line-height:2.2rem;
+  margin-bottom:0;
+  font-size:1.25rem;
+  line-height:2.2rem;
 }
 
 .generator .instructions {
-	margin-top:0;
+  margin-top:0;
 }
 
 .generator hr {
-	border:none;
-	background:#f2f2f2;
-	height:1px;
+  border:none;
+  background:#f2f2f2;
+  height:1px;
 }
 
 .generator .form-item {
-	clear:both;
-	padding-bottom:2.8rem;
-	position:relative;
+  clear:both;
+  padding-bottom:2.8rem;
+  position:relative;
 }
 
 .generator input {
-	display:block;
-	border:1px solid $form-accent;
-	width:65%;
-	float:right;
-	height:2.125rem;
-	padding:.1rem;
+  display:block;
+  border:1px solid $form-accent;
+  width:65%;
+  float:right;
+  height:2.125rem;
+  padding:.1rem;
 }
 
 .generator .upload-file {
-	float:left;
-	width:47% !important;
+  float:left;
+  width:47% !important;
 }
 
 .generator textarea {
-	width:65%;
-	float:right;
-	border:1px solid $form-accent;
-	padding:.1rem;
-	margin-bottom:.4rem;
+  width:65%;
+  float:right;
+  border:1px solid $form-accent;
+  padding:.1rem;
+  margin-bottom:.4rem;
 }
 
 .generator select {
-	width:65%;
-	float:right;
+  width:65%;
+  float:right;
 }
 
 .generator label {
-	display:block;
-	width:30%;
-	float:left;
-	text-align: right;
-	line-height:2.215rem;
+  display:block;
+  width:30%;
+  float:left;
+  text-align: right;
+  line-height:2.215rem;
 }
 
 .generator .button-holder {
-	clear:both;
-	text-align: right;
+  clear:both;
+  text-align: right;
 }
 
 /* Generator step list custom numbering */
@@ -153,22 +151,22 @@ $form-accent:#999999;
 }
 
 .generator-step-list .step {
-	position: relative;
-	counter-increment: step-counter;
+  position: relative;
+  counter-increment: step-counter;
 }
 
 .generator-step-list .step::before {
-	width: 2.25rem;
-	height: 2.25rem;
-	position: absolute;
-	left: 0;
-	content: counter(step-counter);
-	border-radius: 50%;
-	text-align: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  position: absolute;
+  left: 0;
+  content: counter(step-counter);
+  border-radius: 50%;
+  text-align: center;
   background:$tertiary-accent;
-	color:white;
-	font-family:$serif-stack;
-	font-size:1.563rem;
+  color:white;
+  font-family:$serif-stack;
+  font-size:1.563rem;
 }
 
 .generator-step-list .step--disabled {
@@ -176,33 +174,33 @@ $form-accent:#999999;
 }
 
 .generator .step1 .url label {
-	width:8%;
-	text-align:left;
+  width:8%;
+  text-align:left;
 }
 
 .generator .step1 .url input {
-	width:90%;
+  width:90%;
 }
 
 .generator .step1 .manifest label {
-	width:28%;
-	text-align: left;
+  width:28%;
+  text-align: left;
 }
 
 .generator .step5 label {
-	width:42%;
+  width:42%;
 }
 
 .generator .step5 input {
-	width:34%;
-	float:left;
-	margin-left:.5rem;
+  width:34%;
+  float:left;
+  margin-left:.5rem;
 }
 
 .generator .step5 .fa {
-	float:left;
-	line-height:2.125rem;
-	margin-left:.4rem;
+  float:left;
+  line-height:2.125rem;
+  margin-left:.4rem;
 }
 
 //Checkboxes
@@ -211,10 +209,10 @@ $form-accent:#999999;
 }
 
 .generator .step3 label {
-	display:inline-block;
-	text-align: left;
-	width:45%;
-	cursor:pointer;
+  display:inline-block;
+  text-align: left;
+  width:45%;
+  cursor:pointer;
 }
 
 .generator .step3 label:before {
@@ -234,85 +232,85 @@ $form-accent:#999999;
 }
 
 .generator .fa {
-	font-size:1.3rem;
+  font-size:1.3rem;
 }
 
 .generator .fa-windows {
-	font-size:1.2em;
+  font-size:1.2em;
 }
 
 .generator .fa-mobile-phone{
-	font-size:1.5em;
+  font-size:1.5em;
 }
 
 .generator .package-download {
-	font-size:2rem;
-	color:black;
-	position:absolute;
-	right:0;
-	top:-.2rem;
+  font-size:2rem;
+  color:black;
+  position:absolute;
+  right:0;
+  top:-.2rem;
 }
 
 .generator .package-download:hover {
-	color:$primary-accent;
+  color:$primary-accent;
 }
 
 .generator .usage-link {
-	font-size:.8rem;
-	padding:.5rem 0;
-	display:block;
+  font-size:.8rem;
+  padding:.5rem 0;
+  display:block;
 }
 
 .generator .step:last-child .next-step {
-	display:none;
+  display:none;
 }
 
 //Manifest section
 .generator .manifest-holder {
-	background-color:$dark-accent;
+  background-color:$dark-accent;
 }
 
 .generator .generator-section pre {
-	box-shadow: none;
-	min-height:20rem;
+  box-shadow: none;
+  min-height:20rem;
 }
 
 .issues {
-	padding: .75rem 2rem 1.5rem 2rem;
-	margin: 2rem 0;
-	background-color: $dark-accent;
-	color: #fff;
-	-moz-border-radius: 2px;
-	border-radius: 2px;
+  padding: .75rem 2rem 1.5rem 2rem;
+  margin: 2rem 0;
+  background-color: $dark-accent;
+  color: #fff;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
 }
-	.issues-title {
-		font-size: 1.25rem;
-		margin: .75rem 0 .25rem 0;
-		color: $tertiary-accent;
-	}
-		.issues-title span {
-			display: inline-block;
-			font-size: 75%;
-			color: #888;
-		}
-	.issues .issues-subheading {
-		font-size: 1rem;
-		margin: 0 0 .5rem 0;
-		color: #fff;
-	}
-		.issues .issues-subheading span {
-			display: inline-block;
-			font-size: 75%;
-			color: #888;
-		}
-	.issues ul {
-		margin: 0 0 .5rem .75rem;
-		padding: 0;
-	}
-	.issues li {
-		font-size: .75rem;
-		margin: 0 0 .25rem 0;
-	}
+  .issues-title {
+    font-size: 1.25rem;
+    margin: .75rem 0 .25rem 0;
+    color: $tertiary-accent;
+  }
+    .issues-title span {
+      display: inline-block;
+      font-size: 75%;
+      color: #888;
+    }
+  .issues .issues-subheading {
+    font-size: 1rem;
+    margin: 0 0 .5rem 0;
+    color: #fff;
+  }
+    .issues .issues-subheading span {
+      display: inline-block;
+      font-size: 75%;
+      color: #888;
+    }
+  .issues ul {
+    margin: 0 0 .5rem .75rem;
+    padding: 0;
+  }
+  .issues li {
+    font-size: .75rem;
+    margin: 0 0 .25rem 0;
+  }
 
 .issues-title-warnings {
   color: $quaternary-accent;
@@ -324,4 +322,22 @@ $form-accent:#999999;
 
 .issues-title-errors {
   color: $primary-accent;
+}
+
+.download-archive .btn {
+  cursor: not-allowed;
+  background-color: $secondary-accent - 90;
+}
+
+.download-archive .btn:hover {
+  color: #fff;
+}
+
+.download-archive .btn.isEnabled {
+  cursor: pointer;
+  background-color: $secondary-accent;
+}
+
+.download-archive {
+  margin-top: 2rem;
 }
