@@ -49,9 +49,10 @@ $form-accent:#999999;
 
 .generator-issues-notification {
   margin: 0;
-  padding: 0;
+  padding: 1rem;
   font-size: 1rem;
   color: $tertiary-accent;
+  background:#000;
 }
 
 .generator-issues-notification a,
@@ -63,12 +64,16 @@ $form-accent:#999999;
   font-weight: bold;
 }
 
+.generator-issues-notification a:hover {
+  color: #fff;
+}
+
 .generator .generator-section:first-child {
 	padding-right:0;
 }
 
 .generator .generator-section:last-child {
-  padding-left:.5rem;
+  padding-left: 0;
 }
 
 .generator .form-holder {
