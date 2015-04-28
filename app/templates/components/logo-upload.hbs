@@ -2,9 +2,25 @@
 <button {{action 'addLogo'}}>+</button>
 
 <div class="logos">
-  {{#each logo in logos}}
-    <div>src: {{logo.src}} sizes: {{logo.sizes}}</div>
-    <button {{action 'removeLogo' logo}}>-</button>
-  {{/each}}
+	{{#if logos}}
+		<table class="generator-members">
+			<thead>
+				<tr>
+					<th>Preview</th>
+					<th>Source</th>
+					<th>Size</th>
+					<th>Remove</th>
+				</tr>
+			</thead>
+	  	{{#each logo in logos}}
+		    <tr>
+		      <td><img class='icon-preview' src="{{logo.src}}" /></td>
+		      <td>{{logo.src}}</td>
+		      <td>{{logo.sizes}}</td>
+		      <td><button {{action 'removeLogo' logo}}>-</button></td>
+		    </tr>
+	  	{{/each}}
+	  	</table>
+	{{/if}}
 </div>
 
