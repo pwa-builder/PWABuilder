@@ -1,7 +1,6 @@
 /* global JSON: true, _:true */
 import Ember from 'ember';
 import ajax from 'ic-ajax';
-import _ from 'lodash';
 import config from '../config/environment';
 
 export default Ember.Object.extend({
