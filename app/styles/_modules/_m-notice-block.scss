@@ -1,0 +1,10 @@
+.notice-block{
+  padding: 1rem 1rem;
+  margin-bottom: 1rem;
+  background: $secondary-accent - 10;
+  color: $secondary-accent + 200;
+}
+
+.notice-block > a {
+  color: $quaternary-accent + 10;
+}
