@@ -17,6 +17,6 @@ deployment:
     commands:
       - ./build/push_staging.sh
   production:
-    branch: master
+    branch: prod-stageb
     commands:
       - ./build/push_prod.sh
