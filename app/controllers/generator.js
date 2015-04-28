@@ -19,10 +19,6 @@ export default Ember.Controller.extend({
     step4: {
       name: 'step4',
       isCurrent: false
-    },
-    step5: {
-      name: 'step5',
-      isCurrent: false
     }
   }),
   selectedDisplay: null,

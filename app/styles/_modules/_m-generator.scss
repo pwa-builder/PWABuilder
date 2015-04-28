@@ -187,48 +187,20 @@ $form-accent:#999999;
   text-align: left;
 }
 
-.generator .step5 label {
+.generator .step4 label {
   width:42%;
 }
 
-.generator .step5 input {
+.generator .step4 input {
   width:34%;
   float:left;
   margin-left:.5rem;
 }
 
-.generator .step5 .fa {
+.generator .step4 .fa {
   float:left;
   line-height:2.125rem;
   margin-left:.4rem;
-}
-
-//Checkboxes
-.generator .step3 input[type=checkbox] {
-    display: none;
-}
-
-.generator .step3 label {
-  display:inline-block;
-  text-align: left;
-  width:45%;
-  cursor:pointer;
-}
-
-.generator .step3 label:before {
-    content: "";
-    display: inline-block;
-    width: 1.313rem;
-    height: 1.313rem;
-    margin-right: 10px;
-    position: relative;
-    border:1px solid $form-accent;
-    top:.3rem;
-}
-
-.generator .step3 input[type=checkbox]:checked + label:before {
-    content: "";
-    background:url('/assets/images/checkmark.png') no-repeat -3px -13px;
 }
 
 .generator .fa {

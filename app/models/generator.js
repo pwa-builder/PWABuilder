@@ -7,7 +7,7 @@ export default Ember.Object.extend({
   archiveLink: '',
   isBuilding: false,
   manifestId: null,
-  siteUrl: 'http://www.cnn.com',
+  siteUrl: '',
   manifest: Ember.Object.create(),
   suggestions: Ember.A(),
   warnings: Ember.A(),
