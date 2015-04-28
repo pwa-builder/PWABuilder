@@ -4,7 +4,6 @@ import config from '../config/environment';
 
 export default Ember.Component.extend({
   logoUrl: '',
-  logos: Ember.A(),
   actions: {
     addLogo: function(){
       var self = this;

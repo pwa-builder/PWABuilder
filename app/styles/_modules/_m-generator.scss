@@ -1,9 +1,10 @@
 $form-accent:#999999;
 
-.generator {
-  //margin-top: 2rem;
-  height:100%;
-  overflow-y:hidden;
+@media screen and (min-width: 48em) {
+  .generator {
+    height: 100%;
+    overflow-y:hidden;
+  }
 }
 
 .generator-section > header {
@@ -14,8 +15,15 @@ $form-accent:#999999;
 }
 
 .generator-section {
-  overflow-y:scroll;
-  height:100%;
+  height:auto;
+  overflow:auto;
+}
+
+@media screen and (min-width: 48em) {
+  .generator-section {
+    height: 100%;
+    overflow-y:scroll;
+  }
 }
 
 .generator-section-title {
@@ -147,8 +155,8 @@ $form-accent:#999999;
 }
 
 .generator .upload-file {
-  float:left;
   width:47% !important;
+  float:left;
 }
 
 .generator textarea {
@@ -176,6 +184,52 @@ $form-accent:#999999;
   clear:both;
   text-align: right;
   padding-right: 1rem;
+}
+
+.generator .icon-preview {
+	width:2rem;
+}
+
+.generator .logo-upload {
+	padding-bottom:0;
+}
+
+.generator .logo-upload .fa, .generator .member-list .fa {
+	font-size:1rem;
+}
+
+.generator .logos {
+	margin-top:1.5rem;
+}
+
+.generator table {
+	width:66%;
+	float:right;
+	margin-top:0;
+}
+
+.generator th {
+	font-family:$sans-stack-semibold;
+	text-align: center;
+}
+
+.generator td {
+	text-align: center;
+	padding:0;
+	line-height:3rem;
+	border:0;
+}
+
+.generator td button {
+	margin-right:.5rem;
+}
+
+.generator tbody tr:nth-child(odd) {
+	background-color:$table-accent;
+}
+
+.generator .add-button {
+	margin-top:.5rem;
 }
 
 /* Generator step list custom numbering */
@@ -275,7 +329,14 @@ $form-accent:#999999;
 
 //Manifest section
 .generator .manifest-holder {
+  display: none;
   background-color:$dark-accent;
+}
+
+@media screen and (min-width: 48em) {
+  .generator .manifest-holder {
+    display: block;
+  }
 }
 
 .generator .generator-section pre {

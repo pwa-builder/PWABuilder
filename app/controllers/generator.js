@@ -30,6 +30,10 @@ export default Ember.Controller.extend({
       return '';
     }
   },
+  updateSelect: function(property, value) {
+    this.model.set(property, value);
+    this.model.save();
+  },
   customMembers: function(){
     var staticValues = ['lang','name','short_name','scope','icons','display','orientation','start_url','theme_color','related_applications','prefer_related_applications'];
     var model = this.get('model');
@@ -47,14 +51,6 @@ export default Ember.Controller.extend({
 
     return customProps;
   }.property('model'),
-  watchDisplay: function() {
-    var selected = this.get('selectedDisplay');
-    this.send('updateModelProperty', 'display', this.valueOrEmptyString(selected));
-  }.observes('selectedDisplay'),
-  watchOrientation: function() {
-    var selected = this.get('selectedOrientation');
-    this.send('updateModelProperty', 'orientation', this.valueOrEmptyString(selected));
-  }.observes('selectedOrientation'),
   actions: {
     updateStep: function(currentStep, nextStep) {
       if(currentStep) {

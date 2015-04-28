@@ -2,7 +2,6 @@ import Ember from 'ember';
 import GeneratorModel from '../models/generator';
 
 export default Ember.Route.extend({
-  selectedDisplay: '',
   model: function () {
     return GeneratorModel.create();
   },
@@ -35,6 +34,17 @@ export default Ember.Route.extend({
       controller.set('step1Complete', true);
       model.set('manifestId', result.id);
       model.set('manifest', result.content);
+      if(result.content.display === undefined) {
+        model.set('manifest.display', 'fullscreen');
+      }
+      if(!result.content.orientation) {
+        model.set('manifest.orientation', 'any');
+      }
+
+      if(!model.get('manifest.icons')) {
+        model.set('manifest.icons',[]);
+      }
+
       model.save();
     },
     updateModelProperty: function(name, value) {
