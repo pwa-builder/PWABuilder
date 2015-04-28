@@ -42,14 +42,16 @@
 	padding-bottom:2.85rem;
 }
 
-.l-app-style {
-	height:100%;
-}
-
 .l-app-style.no-header {
 	height:calc(100% - 4.938rem - 3rem);
 }
 
 .l-app-style .page-intro {
 	margin-top:0;
+}
+
+@media screen and (min-width: 48em) {
+  .l-app-style {
+	  height:100%;
+  }
 }

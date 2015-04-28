@@ -1,9 +1,10 @@
 $form-accent:#999999;
 
-.generator {
-  //margin-top: 2rem;
-  height:100%;
-  overflow-y:hidden;
+@media screen and (min-width: 48em) {
+  .generator {
+    overflow-y:hidden;
+    height: 100%;
+  }
 }
 
 .generator-section > header {
@@ -12,8 +13,14 @@ $form-accent:#999999;
 }
 
 .generator-section {
-  overflow-y:scroll;
-  height:100%;
+  overflow:auto;
+  height:auto;
+}
+
+@media screen and (min-width: 48em) {
+  .generator-section {
+    overflow-y:scroll;
+  }
 }
 
 .generator-section-title {
