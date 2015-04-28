@@ -8,7 +8,7 @@
       <h2 class="generator-section-title">Site Information</h2>
     </header>
   <ol class="generator-step-list">
-    {{#generator-step step="1" stepTitle="Get Started" data=model isShowingBody=true action="stepUpdated" allowToggle=true}}
+    {{#generator-step step="1" nextStep="2" stepTitle="Get Started" data=model isShowingBody=steps.step1.isCurrent allowToggle=true action="updateStep"}}
     <p class="instructions">Provide your URL or upload your manifest and we'll help fill in the gaps if there are any.</p>
     <div class="form-item url">
       <label>URL</label>
@@ -19,7 +19,7 @@
       {{#manifest-upload action="updateManifest"}}{{/manifest-upload}}
     </div>
     {{/generator-step}}
-    {{#generator-step step="2" stepTitle="Site Data" data=model action="stepUpdated" allowToggle=model.step1Complete}}
+    {{#generator-step step="2" nextStep="3" stepTitle="Site Data" isShowingBody=steps.step2.isCurrent data=model allowToggle=step1Complete action="updateStep"}}
       <p class="instructions">Here are the values we picked up from your site. Update or add any details below.</p>
         <div class="form-item">
             <label>Name</label>
@@ -53,7 +53,7 @@
             {{view "select" content=model.orientation.names prompt="Select Orientation" value=selectedOrientation}}
           </div>
           {{/generator-step}}
-          {{#generator-step step="3" stepTitle="Capabilities" data=model action="stepUpdated" allowToggle=model.step1Complete}}
+          {{#generator-step step="3" nextStep="4" stepTitle="Capabilities" data=mode isShowingBody=steps.step3.isCurrent action="updateStep" allowToggle=step1Complete}}
           <div class="form-item">
             {{#generator-checkbox type="checkbox" id="wat_sharing" name="wat_sharing" checked=model.manifest.wat_sharing action="updateModel"}}{{/generator-checkbox}}
             <label for="wat_sharing">Sharing</label>
@@ -87,13 +87,13 @@
             <label for="wat_script">Script injection</label>
           </div>
           {{/generator-step}}
-          {{#generator-step step="4" stepTitle="Custom Values" data=model action="stepUpdated" allowToggle=model.step1Complete}}
+          {{#generator-step step="4" nextStep="5" stepTitle="Custom Values" data=model action="updateStep" isShowingBody=steps.step4.isCurrent allowToggle=step1Complete}}
           <p class="instructions">Specify custom members to be added to the manifest.</p>
           <div class="form-item">
             {{#member-list action="manageMember" members=customMembers}}{{/member-list}}
           </div>
           {{/generator-step}}
-          {{#generator-step step="5" stepTitle="App Store Details" data=model action="stepUpdated" allowToggle=model.step1Complete}}
+          {{#generator-step step="5" stepTitle="App Store Details" data=model action="updateStep" isShowingBody=steps.step5.isCurrent allowToggle=step1Complete showNextStep=false}}
           <p class="instructions">We need a bit more info to get your apps ready for the different stores. If you provide us with the details below, we’ll make sure your projects are ready for each of the stores.</p>
           <div class="form-item">
             <label>Description</label>
@@ -133,10 +133,9 @@
             {{fa-icon "apple"}}
           </div>
           {{/generator-step}}
-          {{#generator-step step="6" stepTitle="Download your package" data=model action="stepUpdated" allowToggle=model.step1Complete}}
-          <a href="#" class="package-download">{{fa-icon "download"}}</a>
-          {{#link-to 'usage' class="usage-link"}}Now: Learn how to distribute this package across different platforms{{/link-to}}
-          {{/generator-step}}
+          {{#download-archive class="button-holder download-archive" isBuilding=model.isBuilding isEnabled=step1Complete action="buildArchive" archiveLink=model.archiveLink}}
+            <p>{{#link-to 'usage' class="usage-link"}}Now: Learn how to distribute this package across different platforms{{/link-to}}</p>
+          {{/download-archive}}
         </ol>
       </div>
       <div class="pure-u-1 pure-u-md-1-2 generator-section manifest manifest-holder" id="manifest_holder">
