@@ -7,8 +7,10 @@ $form-accent:#999999;
 }
 
 .generator-section > header {
-	padding:0 1rem .05rem 1rem;
-	background-color:$dark-accent;
+	display: block;
+	width: 100%;
+	padding:0;
+	background-color:$secondary-accent;
 }
 
 .generator-section {
@@ -19,10 +21,26 @@ $form-accent:#999999;
 .generator-section-title {
 	padding:0 1rem .05rem 1rem;
  	margin: 0;
-  	color:$secondary-accent;
+  	color:#fff;
 	font-family:$serif-stack;
-	font-size:1.313rem;
-	line-height:2.5rem;
+	font-size:1.5rem;
+	line-height:3rem;
+}
+
+.generator-section > header .fixed {
+	position: fixed;
+	display: block;
+	width: 100%;
+	background-color:$secondary-accent;
+}
+
+.generator p.intro {
+	background-color: #fff;
+	padding: 1rem;
+	margin: 0;
+}
+.generator-section .manifest-body {
+	margin-top: 3rem;
 }
 
 .generator-issues-notification {
@@ -42,7 +60,7 @@ $form-accent:#999999;
 }
 
 .generator .generator-section:first-child {
-	padding-right:.5rem;
+	padding-right:0;
 }
 
 >>>>>>> version-1-0-0
@@ -51,11 +69,11 @@ $form-accent:#999999;
 }
 
 .generator .form-holder {
-	padding:0 1rem;
+	padding:0 0;
 }
 
 .generator .step {
-	margin: 1rem 0 0 1rem;
+	margin: 1rem;
 	font-family:$sans-stack-light;
 	font-size:.875rem;
 }
@@ -274,11 +292,12 @@ $form-accent:#999999;
 
 .generator .generator-section pre {
 	box-shadow: none;
-	min-height:20rem;
+	line-height: 1.125rem;
+	//min-height:20rem;
 }
 
 .issues {
-	padding: .75rem 2rem 1.5rem 2rem;
+	padding: .75rem 1.5rem 1.5rem 1.5rem;
 	margin: 2rem 0;
 	background-color: $dark-accent;
 	color: #fff;
