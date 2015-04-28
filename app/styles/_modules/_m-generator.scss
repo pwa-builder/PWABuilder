@@ -267,7 +267,14 @@ $form-accent:#999999;
 
 //Manifest section
 .generator .manifest-holder {
+  display: none;
   background-color:$dark-accent;
+}
+
+@media screen and (min-width: 48em) {
+  .generator .manifest-holder {
+    display: block;
+  }
 }
 
 .generator .generator-section pre {
