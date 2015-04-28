@@ -19,9 +19,7 @@ var app = new EmberApp();
 
 app.import('bower_components/prism/themes/prism-okaidia.css');
 app.import('bower_components/prism/prism.js');
-
-app.import('bower_components/lodash/lodash.min.js');
-
 app.import('bower_components/pluralize/pluralize.js');
+app.import('bower_components/lodash/lodash.min.js');
 
 module.exports = app.toTree();

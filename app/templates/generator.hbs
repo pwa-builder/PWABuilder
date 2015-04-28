@@ -90,7 +90,7 @@
           {{#generator-step step="4" nextStep="5" stepTitle="Custom Values" data=model action="updateStep" isShowingBody=steps.step4.isCurrent allowToggle=step1Complete}}
           <p class="instructions">Specify custom members to be added to the manifest.</p>
           <div class="form-item">
-            {{#member-list action="manageMember"}}{{/member-list}}
+            {{#member-list action="manageMember" members=customMembers}}{{/member-list}}
           </div>
           {{/generator-step}}
           {{#generator-step step="5" stepTitle="App Store Details" data=model action="updateStep" isShowingBody=steps.step5.isCurrent allowToggle=step1Complete showNextStep=false}}
