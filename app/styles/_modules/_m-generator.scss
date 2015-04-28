@@ -2,8 +2,8 @@ $form-accent:#999999;
 
 @media screen and (min-width: 48em) {
   .generator {
-    overflow-y:hidden;
     height: 100%;
+    overflow-y:hidden;
   }
 }
 
@@ -13,12 +13,13 @@ $form-accent:#999999;
 }
 
 .generator-section {
-  overflow:auto;
   height:auto;
+  overflow:auto;
 }
 
 @media screen and (min-width: 48em) {
   .generator-section {
+    height: 100%;
     overflow-y:scroll;
   }
 }
@@ -119,8 +120,8 @@ $form-accent:#999999;
 }
 
 .generator .upload-file {
-  float:left;
   width:47% !important;
+  float:left;
 }
 
 .generator textarea {
