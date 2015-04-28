@@ -34,7 +34,7 @@ export default Ember.Route.extend({
       controller.set('step1Complete', true);
       model.set('manifestId', result.id);
       model.set('manifest', result.content);
-      if(result.content.display == undefined) {
+      if(result.content.display === undefined) {
         model.set('manifest.display', 'fullscreen');
       }
       if(!result.content.orientation) {
