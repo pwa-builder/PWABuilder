@@ -105,9 +105,9 @@ pre {
 	border-radius:0 !important;
     white-space: pre-wrap;       // CSS 3
     white-space: -moz-pre-wrap;  // Mozilla, since 1999
-    white-space: -pre-wrap;      // Opera 4-6 
-    white-space: -o-pre-wrap;    // Opera 7 
-    word-wrap: break-word;       // Internet Explorer 5.5+ 
+    white-space: -pre-wrap;      // Opera 4-6
+    white-space: -o-pre-wrap;    // Opera 7
+    word-wrap: break-word;       // Internet Explorer 5.5+
 }
 code {
 	font-family:$code-stack !important;
@@ -158,4 +158,8 @@ td {
 	border: 1px solid #999999;
 	text-align: left;
 	padding: .5rem 1rem;
+}
+
+.hidden {
+  display: none;
 }
