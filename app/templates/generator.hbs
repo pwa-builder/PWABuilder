@@ -29,12 +29,9 @@
         <label>Short Name</label>
         {{input value=model.manifest.short_name focus-out="updateModel"}}
       </div>
-      <div class="form-item">
-        <label>Icons</label>
-      </div>
-      <div class="form-item">
-        <label>Upload Icon</label>
-        {{logo-upload action="updateLogos"}}
+      <div class="form-item logo-upload">
+        <label>Icon Url</label>
+        {{logo-upload action="updateLogos" logos=model.manifest.icons}}
       </div>
       <div class="form-item">
         <label>Scope</label>
@@ -46,11 +43,11 @@
       </div>
       <div class="form-item">
         <label>Display</label>
-        {{view "select" content=model.display.names prompt="Select Display" value=selectedDisplay}}
+        {{generator-select content=model.display.names modelProperty="manifest.display" value=model.manifest.display}}
       </div>
       <div class="form-item">
         <label>Orientation</label>
-        {{view "select" content=model.orientation.names prompt="Select Orientation" value=selectedOrientation}}
+        {{generator-select content=model.orientation.names modelProperty="manifest.orientation" value=model.manifest.orientation}}
       </div>
       {{/generator-step}}
       {{#generator-step step="3" nextStep="4" stepTitle="Custom Values" data=model action="updateStep" isShowingBody=steps.step3.isCurrent allowToggle=step1Complete}}

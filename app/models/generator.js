@@ -59,6 +59,17 @@ export default Ember.Object.extend({
       self.set('manifest', result.content);
       self.set('manifestId', result.id);
 
+      //Set Defaults
+      self.set('manifest.display', 'fullscreen');
+      self.set('manifest.orientation', 'any');
+
+      if(!self.get('manifest.icons')) {
+        self.set('manifest.icons',[]);
+      }
+
+
+      self.save();
+
       if(result.suggestions) {
         self.set('suggestions', result.suggestions);
       }
