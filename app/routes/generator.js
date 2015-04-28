@@ -43,6 +43,11 @@ export default Ember.Route.extend({
       if(!result.content.orientation) {
         model.set('manifest.orientation', 'any');
       }
+
+      if(!model.get('manifest.icons')) {
+        model.set('manifest.icons',[]);
+      }
+
       model.save();
     },
     updateModel: function () {
