@@ -15,4 +15,5 @@ export default Router.map(function() {
     this.route('documentation'); //Usage page
     this.route('contribute'); //Usage page
     this.route('style-guide'); //Style guide
+    this.route('license');
 });
