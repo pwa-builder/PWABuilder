@@ -29,11 +29,8 @@
             <label>Short Name</label>
             {{input value=model.manifest.short_name focus-out="updateModel"}}
           </div>
-          <div class="form-item">
-            <label>Icons</label>
-          </div>
-          <div class="form-item">
-            <label>Upload Icon</label>
+          <div class="form-item logo-upload">
+            <label>Icon Url</label>
             {{logo-upload action="updateLogos" logos=model.manifest.icons}}
           </div>
           <div class="form-item">

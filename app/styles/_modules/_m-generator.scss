@@ -147,6 +147,48 @@ $form-accent:#999999;
 	width:2rem;
 }
 
+.generator .logo-upload {
+	padding-bottom:0;
+}
+
+.generator .logo-upload .fa, .generator .member-list .fa {
+	font-size:1rem;
+}
+
+.generator .logos {
+	margin-top:1.5rem;
+}
+
+.generator table {
+	width:66%;
+	float:right;
+	margin-top:0;
+}
+
+.generator th {
+	font-family:$sans-stack-semibold;
+	text-align: center;
+}
+
+.generator td {
+	text-align: center;
+	padding:0;
+	line-height:3rem;
+	border:0;
+}
+
+.generator td button {
+	margin-right:.5rem;
+}
+
+.generator tbody tr:nth-child(odd) {
+	background-color:$table-accent;
+}
+
+.generator .add-button {
+	margin-top:.5rem;
+}
+
 /* Generator step list custom numbering */
 
 .generator-step-list {
