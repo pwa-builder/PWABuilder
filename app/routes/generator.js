@@ -3,7 +3,6 @@ import GeneratorModel from '../models/generator';
 //import RouteAware from '../mixins/routeaware';
 
 export default Ember.Route.extend({
-  selectedDisplay: '',
   model: function () {
     return GeneratorModel.create();
   },
@@ -38,6 +37,12 @@ export default Ember.Route.extend({
       model.set('step1Complete', true);
       model.set('manifestId', result.id);
       model.set('manifest', result.content);
+      if(result.content.display == undefined) {
+        model.set('manifest.display', 'fullscreen');
+      }
+      if(!result.content.orientation) {
+        model.set('manifest.orientation', 'any');
+      }
       model.save();
     },
     updateModel: function () {

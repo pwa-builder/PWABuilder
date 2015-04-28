@@ -46,11 +46,11 @@
           </div>
           <div class="form-item">
             <label>Display</label>
-            {{view "select" content=model.display.names value=selectedDisplay selection=selectedDisplay}}
+            {{generator-select content=model.display.names modelProperty="manifest.display" value=model.manifest.display}}
           </div>
           <div class="form-item">
             <label>Orientation</label>
-            {{view "select" content=model.orientation.names value=selectedOrientation selection=selectedOrientation}}
+            {{generator-select content=model.orientation.names modelProperty="manifest.orientation" value=model.manifest.orientation}}
           </div>
           {{/generator-step}}
           {{#generator-step step="3" stepTitle="Capabilities" data=model action="stepUpdated" allowToggle=model.step1Complete}}

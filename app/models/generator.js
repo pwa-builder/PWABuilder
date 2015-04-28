@@ -67,6 +67,7 @@ export default Ember.Object.extend({
 
       self.set('manifest.display', 'fullscreen');
       self.set('manifest.orientation', 'any');
+      self.save();
 
       if(result.suggestions) {
         self.set('suggestions', result.suggestions);
