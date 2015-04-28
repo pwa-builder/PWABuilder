@@ -29,7 +29,7 @@ export default Ember.Component.extend({
         }
         catch(e){
           if(/Unexpected token.*/.test(e.message)){
-            self.set('memberAlert','There was a problem parsing the value.  Make sure it is valid JSON');
+            self.set('memberAlert','There was a problem parsing the value.  Make sure it is valid JSON (strings must be wrapped in quotes)');
             self.set('showAlert',true);
             return;
           }
