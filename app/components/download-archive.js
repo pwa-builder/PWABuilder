@@ -1,24 +1,29 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
-  disabled: true,
-  isGenerating: false,
+  isEnabled: true,
+  isBuilding: false,
+  isNotBuilding: Ember.computed.not('isBuilding'),
+  archiveLink: '',
   initialMessage: 'Generate Package',
   buildingMessage: 'Building Package&hellip;',
-  buttonMessage: function() {
+  linkMessage: function() {
     var message = '';
-    if(this.isGenerating){
+    if(this.isBuilding){
       message = this.buildingMessage;
     } else {
       message = this.initialMessage;
     }
     return new Ember.Handlebars.SafeString(message);
-  }.property('isGenerating'),
+  }.property('isBuilding'),
+  triggerArchiveDownload: function() {
+    window.location.href = this.archiveLink;
+  }.observes('archiveLink'),
   actions: {
-    requestArchive: function(){
-      this.set('disabled', true);
-      this.set('isGenerating', true);
-      this.sendAction('action', this);
+    handleClick: function(){
+      if(this.isEnabled && !this.isBuilding){
+        this.sendAction('action');
+      }
     }
   }
 });

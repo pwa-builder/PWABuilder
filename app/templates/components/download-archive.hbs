@@ -1,3 +1,6 @@
-<button type="submit" {{action "requestArchive"}} disabled="{{disabled}}">
-  {{buttonMessage}} {{fa-icon "download"}}
-</button>
+<a {{bind-attr class=":btn isEnabled:isEnabled"}} {{action "handleClick"}}>
+  {{linkMessage}}
+  {{#if isBuilding}}{{fa-icon "circle-o-notch fa-spin"}}{{/if}}
+  {{#if isNotBuilding}}{{fa-icon "download"}}{{/if}}
+</a>
+{{yield}}
