@@ -1,9 +1,10 @@
 $form-accent:#999999;
 
-.generator {
-  //margin-top: 2rem;
-  height:100%;
-  overflow-y:hidden;
+@media screen and (min-width: 48em) {
+  .generator {
+    height: 100%;
+    overflow-y:hidden;
+  }
 }
 
 .generator-section > header {
@@ -12,8 +13,15 @@ $form-accent:#999999;
 }
 
 .generator-section {
-  overflow-y:scroll;
-  height:100%;
+  height:auto;
+  overflow:auto;
+}
+
+@media screen and (min-width: 48em) {
+  .generator-section {
+    height: 100%;
+    overflow-y:scroll;
+  }
 }
 
 .generator-section-title {
@@ -112,8 +120,8 @@ $form-accent:#999999;
 }
 
 .generator .upload-file {
-  float:left;
   width:47% !important;
+  float:left;
 }
 
 .generator textarea {
@@ -285,7 +293,14 @@ $form-accent:#999999;
 
 //Manifest section
 .generator .manifest-holder {
+  display: none;
   background-color:$dark-accent;
+}
+
+@media screen and (min-width: 48em) {
+  .generator .manifest-holder {
+    display: block;
+  }
 }
 
 .generator .generator-section pre {
