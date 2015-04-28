@@ -21,6 +21,9 @@ export default Ember.Component.extend({
       }
       var member = {};
       var member_name = this.get('member_name');
+      if(member_name.indexOf('_') === -1){
+        member_name = 'mjs_'+member_name;
+      }
       var member_value = this.get('member_value');
       if(member_name && member_value) {
         member.member_name = member_name;

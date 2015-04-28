@@ -33,7 +33,9 @@ export default Ember.Controller.extend({
   customMembers: function(){
     var staticValues = ['lang','name','short_name','scope','icons','display','orientation','start_url','theme_color','related_applications','prefer_related_applications'];
     var model = this.get('model');
-    var keys = _.keys(model.manifest);
+    var keys = _.filter(_.keys(model.manifest),function(key){
+      return key.indexOf('_') !== -1;
+    });
     var customKeys = _.difference(keys,staticValues);
     var customProps = _.map(customKeys,function(key){
       var data = {
