@@ -4,17 +4,11 @@ import ajax from 'ic-ajax';
 import config from '../config/environment';
 
 export default Ember.Object.extend({
-  step1Complete: false,
+  archiveLink: '',
+  isBuilding: false,
   manifestId: null,
-  siteUrl: '',
-  manifest: Ember.Object.create({
-    name: '',
-    short_name: '',
-    icons:[],
-    start_url: '',
-    display: '',
-    orientation: ''
-  }),
+  siteUrl: 'http://www.cnn.com',
+  manifest: Ember.Object.create(),
   suggestions: Ember.A(),
   warnings: Ember.A(),
   errors: Ember.A(),
@@ -102,6 +96,19 @@ export default Ember.Object.extend({
         self.set('errors', result.errors);
       }
 
+    });
+  },
+  build: function(){
+    var self = this;
+    this.set('isBuilding', true);
+    ajax({
+      url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/build',
+      type: 'POST'
+    }).then(function(result){
+      self.set('archiveLink', result.archive);
+      self.set('isBuilding', false);
+    }).catch(function(){
+      self.set('isBuilding', false);
     });
   }
 });

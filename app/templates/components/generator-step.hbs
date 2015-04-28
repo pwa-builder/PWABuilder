@@ -5,9 +5,11 @@
   {{#if isShowingBody}}
   <div class="form-body">
     {{yield}}
+    {{#if showNextStep}}
     <div class="button-holder">
-      <button class="button next-step" {{action "updateModel"}}>Next Step</button>
+      <button class="button next-step" {{action "updateStep" step nextStep}}>Next Step</button>
     </div>
+    {{/if}}
   </div>
 {{/if}}
 </div>

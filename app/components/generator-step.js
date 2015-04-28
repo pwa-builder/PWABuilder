@@ -2,7 +2,9 @@ import Ember from 'ember';
 
 export default Ember.Component.extend({
   step: null,
+  nextStep: null,
   isShowingBody: false,
+  showNextStep: true,
   allowToggle: false,
   tagName: 'li',
   classNames: ['step'],
@@ -25,8 +27,10 @@ export default Ember.Component.extend({
         this.toggleProperty('isShowingBody');
       }
     },
-    updateModel: function(){
-      this.sendAction('action', this.get('step'));
+    updateStep: function(currentStep, nextStep){
+      this.toggleProperty('isShowingBody');
+      this.sendAction('action', currentStep, nextStep);
+      return true; // keep bubbling
     }
   }
 });
