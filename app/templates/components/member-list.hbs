@@ -3,12 +3,13 @@
   {{#each member in members}}
     <tr>
       <td>{{member.member_name}}</td>
-      <td>{{member.member_value}}</td>
+      <td>{{json-stringify member.member_value}}</td>
       <td><button {{action 'removeMember' member}}>-</button></td>
     </tr>
   {{/each}}
 </table>
 {{/if}}
+<p class="instructions alert"><i class="fa fa-exclamation {{if showAlert 'show' 'hidden'}}"></i> {{memberAlert}}</p>
 <div class="form-group">
   <div class="form-item">
     <label for="member_name">Member Name</label>
@@ -18,6 +19,8 @@
     <label>Member Value</label>
     {{textarea id="member_value" name="member_value" value=member_value}}
   </div>
-  <button {{action 'addMember'}}>+</button>
+  <div class="button-holder">
+    <button {{action 'addMember'}}>+</button>
+  </div>
 </div>
 
