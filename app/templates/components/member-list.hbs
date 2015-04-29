@@ -16,7 +16,6 @@
   <thead>
     <tr>
       <th>Name</th>
-      <th>Value</th>
       <th></th>
     </tr>
   </thead>
@@ -24,7 +23,6 @@
   {{#each member in members}}
     <tr>
       <td>{{member.member_name}}</td>
-      <td>{{json-stringify member.member_value}}</td>
       <td><button {{action 'removeMember' member}}>{{fa-icon "times"}}</button></td>
     </tr>
   {{/each}}

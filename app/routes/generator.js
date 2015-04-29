@@ -39,6 +39,8 @@ export default Ember.Route.extend({
       model.build();
     },
     downloadArchive: function(archiveLink){
+      var controller = this.controllerFor('generator');
+      controller.set('buildReady', true);
       ga('send', 'event', 'item', 'click', 'generator-build-download');
       window.location.href = archiveLink;
     },
