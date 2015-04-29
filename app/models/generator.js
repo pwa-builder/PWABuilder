@@ -6,6 +6,7 @@ import config from '../config/environment';
 export default Ember.Object.extend({
   archiveLink: '',
   isBuilding: false,
+  isSaving: false,
   manifestId: null,
   siteUrl: '',
   manifest: Ember.Object.create(),
@@ -41,6 +42,7 @@ export default Ember.Object.extend({
     return new Ember.Handlebars.SafeString("<code class='language-javascript'>"+JSON.stringify(this.get('manifest'), null, '    ')+"</code>");
   }.property('manifest'),
   save: function () {
+    this.set('isSaving', true);
     if(!this.manifestId) {
       this.create();
     } else {
@@ -67,9 +69,6 @@ export default Ember.Object.extend({
         self.set('manifest.icons',[]);
       }
 
-
-      self.save();
-
       if(result.suggestions) {
         self.set('suggestions', result.suggestions);
       }
@@ -82,6 +81,12 @@ export default Ember.Object.extend({
         self.set('errors', result.errors);
       }
 
+      self.save();
+
+      self.set('isSaving', false);
+
+    }).catch(function(){
+      self.set('isSaving', false);
     });
   },
   update: function(){
@@ -119,6 +124,10 @@ export default Ember.Object.extend({
         self.set('errors', result.errors);
       }
 
+      self.set('isSaving', false);
+
+    }).catch(function(){
+      self.set('isSaving', false);
     });
   },
   build: function(){

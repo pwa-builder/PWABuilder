@@ -57,12 +57,14 @@ export default Ember.Controller.extend({
         this.set('steps.step'+currentStep+'.isCurrent', false);
         if(currentStep === '1') {
           this.set('step1Complete',true);
+          this.model.create();
+        } else {
+          this.model.save();
         }
       }
       if(nextStep){
         this.set('steps.step'+nextStep+'.isCurrent', true);
       }
-      this.model.save();
     }
   }
 });

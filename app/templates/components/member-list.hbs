@@ -7,10 +7,10 @@
     <label>Member Value</label>
     {{textarea id="member_value" name="member_value" value=member_value}}
   </div>
+  <p class="instructions alert"><i class="fa fa-exclamation {{if showAlert 'show' 'hidden'}}"></i> {{memberAlert}}</p>
   <div class="button-holder">
     <button {{action 'addMember'}}>Add Member&nbsp;&nbsp; {{fa-icon "plus"}}</button>
   </div>
-  <p class="instructions alert"><i class="fa fa-exclamation {{if showAlert 'show' 'hidden'}}"></i> {{memberAlert}}</p>
 {{#if members}}
 <table class="generator-members">
   <thead>
