@@ -3,6 +3,7 @@
 rm -rf .git
 ember build -e staging
 cp ./web.config ./dist
+cp -r ./bin ./dist/bin
 cd ./dist
 git init
 git config user.email "interactive@bamideas.com"
