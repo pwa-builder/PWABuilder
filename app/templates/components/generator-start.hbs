@@ -1,0 +1,15 @@
+{{#generator-start data=model action="updateStep"}}
+<div class="step-wrapper">
+  <header class="step-header" {{action "toggleBody"}}>
+    <h2 class="title">Site Data</h2>
+  </header>
+  <div class="form-body">
+    {{yield}}
+    <div class="button-holder">
+      <button class="button next-step" {{action "updateStep"}}>
+        Get Started
+      </button>
+    </div>
+  </div>
+</div>
+{{/generator-start}}
