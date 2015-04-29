@@ -10,7 +10,6 @@ export default Ember.Component.extend({
   },
   actions:{
     uploadManifest: function(file) {
-      console.log(file);
       var self = this;
       var data = this.generateFormData(file);
       this.$(".upload-file").attr("value", file.name);
