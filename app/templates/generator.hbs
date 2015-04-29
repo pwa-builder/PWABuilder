@@ -1,185 +1,142 @@
 <div class="pure-g generator" id="builder_holder">
-  <div class="pure-u-1-2 generator-section form-holder">
-    <div class="page-intro">
-      <h1 class="title">Generate your App Manifest</h1>
-      <p>ManifoldJS takes simple meta-data about your site and uses that to generate native "hosted" apps for Android, ChromeOS, FirefoxOS, iOS, and Windows. You can also code-edit the Manifest itself.</p>
-    </div>
+  <div class="pure-u-1 pure-u-md-1-2 generator-section form-holder">
     <header>
-      <h2 class="generator-section-title">Site Information</h2>
+      <h2 class="generator-section-title">Generate your App Manifest</h2>
+      <p class="intro">ManifoldJS takes simple meta-data about your site and uses that to generate native "hosted" apps for Android, ChromeOS, FirefoxOS, iOS, and Windows.</p>
     </header>
-  <ol class="generator-step-list">
-    {{#generator-step step="1" stepTitle="Get Started" data=model isShowingBody=true action="stepUpdated" allowToggle=true}}
-    <p class="instructions">Provide your URL or upload your manifest and we'll help fill in the gaps if there are any.</p>
-    <div class="form-item url">
-      <label>URL</label>
-      {{input name="siteUrl" type="url" value=model.siteUrl}}
-    </div>
-    <span>&nbsp;or</span>
-    <div class="form-item manifest">
-      {{#manifest-upload action="updateManifest"}}{{/manifest-upload}}
-    </div>
-    {{/generator-step}}
-    {{#generator-step step="2" stepTitle="Site Data" data=model action="stepUpdated" allowToggle=model.step1Complete}}
+    <ol class="generator-step-list">
+      {{#generator-step step="1" nextStep="2" stepTitle="Get Started" data=model isShowingBody=steps.step1.isCurrent allowToggle=true action="updateStep"}}
+      <p class="instructions">Provide your URL or upload your manifest and we'll help fill in the gaps if there are any.</p>
+      <div class="form-item url">
+        <label>URL</label>
+        {{input name="siteUrl" type="url" value=model.siteUrl placeholder="Enter a URL"}}
+      </div>
+      <span>&nbsp;or</span>
+      <div class="form-item manifest">
+        {{#manifest-upload action="updateManifest"}}{{/manifest-upload}}
+      </div>
+      {{/generator-step}}
+      {{#generator-step step="2" nextStep="3" stepTitle="Site Data" isShowingBody=steps.step2.isCurrent data=model allowToggle=step1Complete action="updateStep"}}
       <p class="instructions">Here are the values we picked up from your site. Update or add any details below.</p>
-        <div class="form-item">
-            <label>Name</label>
-            {{input value=model.manifest.name focus-out="updateModel"}}
-          </div>
-          <div class="form-item">
-            <label>Short Name</label>
-            {{input value=model.manifest.short_name focus-out="updateModel"}}
-          </div>
-          <div class="form-item">
-            <label>Icons</label>
-          </div>
-          <div class="form-item">
-            <label>Upload Icon</label>
-            {{logo-upload action="updateLogos"}}
-          </div>
-          <div class="form-item">
-            <label>Scope</label>
-            {{input value=model.manifest.scope focus-out="updateModel"}}
-          </div>
-          <div class="form-item">
-            <label>Start Url</label>
-            {{input value=model.manifest.start_url focus-out="updateModel"}}
-          </div>
-          <div class="form-item">
-            <label>Display</label>
-            {{view "select" content=model.display.names prompt="Select Display" value=selectedDisplay}}
-          </div>
-          <div class="form-item">
-            <label>Orientation</label>
-            {{view "select" content=model.orientation.names prompt="Select Orientation" value=selectedOrientation}}
-          </div>
-          {{/generator-step}}
-          {{#generator-step step="3" stepTitle="Capabilities" data=model action="stepUpdated" allowToggle=model.step1Complete}}
-          <div class="form-item">
-            {{#generator-checkbox type="checkbox" id="wat_sharing" name="wat_sharing" checked=model.manifest.wat_sharing action="updateModel"}}{{/generator-checkbox}}
-            <label for="wat_sharing">Sharing</label>
-          </div>
-          <div class="form-item">
-            {{#generator-checkbox type="checkbox" id="wat_search" name="wat_search" checked=model.manifest.wat_search action="updateModel"}}{{/generator-checkbox}}
-            <label for="wat_search">Search</label>
-          </div>
-          <div class="form-item">
-            {{#generator-checkbox type="checkbox" id="wat_secondary-pinning" name="wat_secondary-pinning" checked=model.manifest.wat_secondary-pinning action="updateModel"}}{{/generator-checkbox}}
-            <label for="wat_secondary-pinning">Secondary pinning</label>
-          </div>
-          <div class="form-item">
-            {{#generator-checkbox  type="checkbox" id="wat_geolocation" name="wat_geolocation" checked=model.manifest.wat_geolocation action="updateModel"}}{{/generator-checkbox}}
-            <label for="wat_geolocation">Geolocation</label>
-          </div>
-          <div class="form-item">
-            {{#generator-checkbox  type="checkbox" id="wat_tiles" name="wat_tiles" checked=model.manifest.wat_tiles action="updateModel"}}{{/generator-checkbox}}
-            <label for="wat_tiles">Live Tiles</label>
-          </div>
-          <div class="form-item">
-            {{#generator-checkbox  type="checkbox" id="wat_offline" name="wat_offline" checked=model.manifest.wat_offline action="updateModel"}}{{/generator-checkbox}}
-            <label for="wat_offline">Offline detection</label>
-          </div>
-          <div class="form-item">
-            {{#generator-checkbox  type="checkbox" id="wat_styles" name="wat_styles" checked=model.manifest.wat_styles action="updateModel"}}{{/generator-checkbox}}
-            <label for="wat_styles">Custom styles</label>
-          </div>
-          <div class="form-item">
-            {{#generator-checkbox  type="checkbox" id="wat_script" name="wat_script" checked=model.manifest.wat_script action="updateModel"}}{{/generator-checkbox}}
-            <label for="wat_script">Script injection</label>
-          </div>
-          {{/generator-step}}
-          {{#generator-step step="4" stepTitle="Custom Values" data=model action="stepUpdated" allowToggle=model.step1Complete}}
-          <p class="instructions">Specify custom members to be added to the manifest.</p>
-          <div class="form-item">
-            {{#member-list action="manageMember"}}{{/member-list}}
-          </div>
-          {{/generator-step}}
-          {{#generator-step step="5" stepTitle="App Store Details" data=model action="stepUpdated" allowToggle=model.step1Complete}}
-          <p class="instructions">We need a bit more info to get your apps ready for the different stores. If you provide us with the details below, we’ll make sure your projects are ready for each of the stores.</p>
-          <div class="form-item">
-            <label>Description</label>
-            {{input name="description" value=model.manifest.description focus-out="updateModel"}}
-            {{fa-icon "windows"}}
-            {{fa-icon "mobile-phone"}}
-            {{fa-icon "android"}}
-          </div>
-          <div class="form-item">
-            <label>Version</label>
-            {{input name="version" value=model.manifest.version focus-out="updateModel"}}
-            {{fa-icon "windows"}}
-            {{fa-icon "mobile-phone"}}
-            {{fa-icon "android"}}
-            {{fa-icon "apple"}}
-          </div>
-          <div class="form-item">
-            <label>Version Code</label>
-            {{input name="version_code" value=model.manifest.version_code focus-out="updateModel"}}
-            {{fa-icon "android"}}
-          </div>
-          <div class="form-item">
-            <label>Build</label>
-            {{input name="build" value=model.manifest.build focus-out="updateModel"}}
-            {{fa-icon "apple"}}
-          </div>
-          <div class="form-item">
-            <label>Publisher Display Name</label>
-            {{input name="publisher_display_name" value=model.manifest.publishername focus-out="updateModel"}}
-            {{fa-icon "windows"}}
-            {{fa-icon "mobile-phone"}}
-            {{fa-icon "apple"}}
-          </div>
-          <div class="form-item">
-            <label>Organization Identifier</label>
-            {{input name="organization_identifier" value=model.manifest.organizationid focus-out="updateModel"}}
-            {{fa-icon "apple"}}
-          </div>
-          {{/generator-step}}
-          {{#generator-step step="6" stepTitle="Download your package" data=model action="stepUpdated" allowToggle=model.step1Complete}}
-          <a href="#" class="package-download">{{fa-icon "download"}}</a>
-          {{#link-to 'usage' class="usage-link"}}Now: Learn how to distribute this package across different platforms{{/link-to}}
-          {{/generator-step}}
-        </ol>
+      <div class="form-item">
+        <label>Name</label>
+        {{input value=model.manifest.name focus-out="updateModel"}}
       </div>
-      <div class="pure-u-1 pure-u-md-1-2 generator-section manifest manifest-holder" id="manifest_holder">
-        <header>
-          <h2 class="generator-section-title">W3C Manifest</h2>
-          {{#if model.hasIssues}}
-            <p class="generator-issues-notification">
-              {{#skip-link class="issues-title-errors" anchor="#errors_list"}}Errors ({{model.errorsTotal}}){{/skip-link}},
-              {{#skip-link class="issues-title-warnings" anchor="#warnings_list"}}Warnings ({{model.warningsTotal}}){{/skip-link}},
-              {{#skip-link class="issues-title-suggestions" anchor="#suggestions_list"}}Suggestions ({{model.suggestionsTotal}}){{/skip-link}}
-            </p>
-          {{/if}}
-        </header>
-        <section class="manifest-body">
-          {{formatted-manifest data=model}}
-        </section>
-        {{#if model.hasIssues}}
-        <div id="issues_list" class="issues">
-          {{#if model.errors}}
-            <div id="errors_list">
-              <h5 class="issues-title issues-title-errors">Errors <span>({{model.errorsTotal}} {{pluralize-it "item" model.errorsTotal}})</span></h5>
-              {{#each member in model.errors}}
-                {{partial "issue-list"}}
-              {{/each}}
-            </div>
-          {{/if}}
-          {{#if model.warnings}}
-            <div id="warnings_list">
-              <h5 class="issues-title issues-title-warnings">Warnings <span>({{model.warningsTotal}} {{pluralize-it "item" model.warningsTotal}})</span></h5>
-              {{#each member in model.warnings}}
-                {{partial "issue-list"}}
-              {{/each}}
-            </div>
-          {{/if}}
-          {{#if model.suggestions}}
-            <div id="suggestions_list">
-              <h5 class="issues-title issues-title-suggestions">Suggestions <span>({{model.suggestionsTotal}} {{pluralize-it "item" model.suggestionsTotal}})</span></h5>
-              {{#each member in model.suggestions}}
-                {{partial "issue-list"}}
-              {{/each}}
-            </div>
-          {{/if}}
-        </div>
-        {{/if}}
+      <div class="form-item">
+        <label>Short Name</label>
+        {{input value=model.manifest.short_name focus-out="updateModel"}}
       </div>
+      <div class="form-item logo-upload">
+        <label>Icon Url</label>
+        {{logo-upload action="updateLogos" logos=model.manifest.icons}}
+      </div>
+      <div class="form-item">
+        <label>Scope</label>
+        {{input value=model.manifest.scope focus-out="updateModel"}}
+      </div>
+      <div class="form-item">
+        <label>Start Url</label>
+        {{input value=model.manifest.start_url focus-out="updateModel"}}
+      </div>
+      <div class="form-item">
+        <label>Display</label>
+        {{generator-select content=model.display.names modelProperty="manifest.display" value=model.manifest.display}}
+      </div>
+      <div class="form-item">
+        <label>Orientation</label>
+        {{generator-select content=model.orientation.names modelProperty="manifest.orientation" value=model.manifest.orientation}}
+      </div>
+      {{/generator-step}}
+      {{#generator-step step="3" nextStep="4" stepTitle="Custom Values" data=model action="updateStep" isShowingBody=steps.step3.isCurrent allowToggle=step1Complete}}
+      <p class="instructions">Specify custom members to be added to the manifest.</p>
+      <div class="form-item">
+        {{#member-list action="manageMember" members=customMembers}}{{/member-list}}
+      </div>
+      {{/generator-step}}
+      {{#generator-step step="4" stepTitle="App Store Details" data=model action="updateStep" isShowingBody=steps.step4.isCurrent allowToggle=step1Complete showNextStep=false}}
+      <p class="instructions">We need a bit more info to get your apps ready for the different stores. If you provide us with the details below, we’ll make sure your projects are ready for each of the stores.</p>
+      <div class="form-item">
+        <label>Description</label>
+        {{input name="description" value=model.manifest.description focus-out="updateModel"}}
+        {{fa-icon "windows"}}
+        {{fa-icon "mobile-phone"}}
+        {{fa-icon "android"}}
+      </div>
+      <div class="form-item">
+        <label>Version</label>
+        {{input name="version" value=model.manifest.version focus-out="updateModel"}}
+        {{fa-icon "windows"}}
+        {{fa-icon "mobile-phone"}}
+        {{fa-icon "android"}}
+        {{fa-icon "apple"}}
+      </div>
+      <div class="form-item">
+        <label>Version Code</label>
+        {{input name="version_code" value=model.manifest.version_code focus-out="updateModel"}}
+        {{fa-icon "android"}}
+      </div>
+      <div class="form-item">
+        <label>Build</label>
+        {{input name="build" value=model.manifest.build focus-out="updateModel"}}
+        {{fa-icon "apple"}}
+      </div>
+      <div class="form-item">
+        <label>Publisher Display Name</label>
+        {{input name="publisher_display_name" value=model.manifest.publishername focus-out="updateModel"}}
+        {{fa-icon "windows"}}
+        {{fa-icon "mobile-phone"}}
+        {{fa-icon "apple"}}
+      </div>
+      <div class="form-item">
+        <label>Organization Identifier</label>
+        {{input name="organization_identifier" value=model.manifest.organizationid focus-out="updateModel"}}
+        {{fa-icon "apple"}}
+      </div>
+      {{/generator-step}}
+      {{#download-archive class="button-holder download-archive" isBuilding=model.isBuilding isEnabled=step1Complete action="buildArchive" archiveLink=model.archiveLink}}
+      <p>{{#link-to 'usage' class="usage-link"}}Now: Learn how to distribute this package across different platforms{{/link-to}}</p>
+      {{/download-archive}}
+    </ol>
+  </div>
+  <div class="pure-u-1 pure-u-md-1-2 generator-section manifest manifest-holder" id="manifest_holder">
+    <header>
+      <h2 class="generator-section-title">W3C Manifest{{#if model.isSaving}} {{fa-icon "circle-o-notch fa-spin"}}{{/if}}</h2>
+      <p class="generator-issues-notification">
+      {{#skip-link class="issues-title-errors" anchor="#errors_list"}}Errors ({{model.errorsTotal}}){{/skip-link}},
+      {{#skip-link class="issues-title-warnings" anchor="#warnings_list"}}Warnings ({{model.warningsTotal}}){{/skip-link}},
+      {{#skip-link class="issues-title-suggestions" anchor="#suggestions_list"}}Suggestions ({{model.suggestionsTotal}}){{/skip-link}}
+      </p>
+    </header>
+    <section class="manifest-body">
+      {{formatted-manifest data=model}}
+    </section>
+    {{#if model.hasIssues}}
+    <div id="issues_list" class="issues">
+      {{#if model.errors}}
+      <div id="errors_list">
+        <h5 class="issues-title issues-title-errors">Errors <span>({{model.errorsTotal}} {{pluralize-it "item" model.errorsTotal}})</span></h5>
+        {{#each member in model.errors}}
+        {{partial "issue-list"}}
+        {{/each}}
+      </div>
+      {{/if}}
+      {{#if model.warnings}}
+      <div id="warnings_list">
+        <h5 class="issues-title issues-title-warnings">Warnings <span>({{model.warningsTotal}} {{pluralize-it "item" model.warningsTotal}})</span></h5>
+        {{#each member in model.warnings}}
+        {{partial "issue-list"}}
+        {{/each}}
+      </div>
+      {{/if}}
+      {{#if model.suggestions}}
+      <div id="suggestions_list">
+        <h5 class="issues-title issues-title-suggestions">Suggestions <span>({{model.suggestionsTotal}} {{pluralize-it "item" model.suggestionsTotal}})</span></h5>
+        {{#each member in model.suggestions}}
+        {{partial "issue-list"}}
+        {{/each}}
+      </div>
+      {{/if}}
     </div>
+    {{/if}}
+  </div>
+</div>

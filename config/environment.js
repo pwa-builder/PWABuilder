@@ -44,8 +44,12 @@ module.exports = function(environment) {
     ENV.APP.rootElement = '#ember-testing';
   }
 
-  if (environment === 'production') {
+  if (environment === 'staging') {
     ENV.APP.API_URL='http://manifold-api-staging.azurewebsites.net';
+  }
+
+  if (environment === 'production') {
+    ENV.APP.API_URL='http://manifold-api-prod.azurewebsites.net';
   }
 
   return ENV;

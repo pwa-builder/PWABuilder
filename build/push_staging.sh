@@ -1,7 +1,7 @@
 #! /bin/bash
 
 rm -rf .git
-ember build -prod
+ember build -e staging
 cp ./web.config ./dist
 cd ./dist
 git init

@@ -2,7 +2,9 @@
 
 var EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
-var app = new EmberApp();
+var app = new EmberApp({
+  emberCliFontAwesome: { includeFontAwesomeAssets: false }
+});
 
 // Use `app.import` to add additional libraries to the generated
 // output files.
@@ -19,9 +21,15 @@ var app = new EmberApp();
 
 app.import('bower_components/prism/themes/prism-okaidia.css');
 app.import('bower_components/prism/prism.js');
-
+app.import('bower_components/pluralize/pluralize.js');
 app.import('bower_components/lodash/lodash.min.js');
 
-app.import('bower_components/pluralize/pluralize.js');
+app.import("bower_components/font-awesome/css/font-awesome.css");
+app.import("bower_components/font-awesome/fonts/fontawesome-webfont.eot", { destDir: "fonts" });
+app.import("bower_components/font-awesome/fonts/fontawesome-webfont.svg", { destDir: "fonts" });
+app.import("bower_components/font-awesome/fonts/fontawesome-webfont.ttf", { destDir: "fonts" });
+app.import("bower_components/font-awesome/fonts/fontawesome-webfont.woff", { destDir: "fonts" });
+app.import("bower_components/font-awesome/fonts/fontawesome-webfont.woff2", { destDir: "fonts" });
+app.import("bower_components/font-awesome/fonts/FontAwesome.otf", { destDir: "fonts" });
 
 module.exports = app.toTree();

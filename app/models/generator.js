@@ -4,17 +4,12 @@ import ajax from 'ic-ajax';
 import config from '../config/environment';
 
 export default Ember.Object.extend({
-  step1Complete: false,
+  archiveLink: '',
+  isBuilding: false,
+  isSaving: false,
   manifestId: null,
   siteUrl: '',
-  manifest: Ember.Object.create({
-    name: '',
-    short_name: '',
-    icons:[],
-    start_url: '',
-    display: '',
-    orientation: ''
-  }),
+  manifest: Ember.Object.create(),
   suggestions: Ember.A(),
   warnings: Ember.A(),
   errors: Ember.A(),
@@ -47,6 +42,7 @@ export default Ember.Object.extend({
     return new Ember.Handlebars.SafeString("<code class='language-javascript'>"+JSON.stringify(this.get('manifest'), null, '    ')+"</code>");
   }.property('manifest'),
   save: function () {
+    this.set('isSaving', true);
     if(!this.manifestId) {
       this.create();
     } else {
@@ -65,6 +61,14 @@ export default Ember.Object.extend({
       self.set('manifest', result.content);
       self.set('manifestId', result.id);
 
+      //Set Defaults
+      self.set('manifest.display', 'fullscreen');
+      self.set('manifest.orientation', 'any');
+
+      if(!self.get('manifest.icons')) {
+        self.set('manifest.icons',[]);
+      }
+
       if(result.suggestions) {
         self.set('suggestions', result.suggestions);
       }
@@ -77,14 +81,32 @@ export default Ember.Object.extend({
         self.set('errors', result.errors);
       }
 
+      self.save();
+
+      self.set('isSaving', false);
+
+    }).catch(function(){
+      self.set('isSaving', false);
     });
   },
   update: function(){
-    var self = this;
+    var self = this,
+      manifest = self.get('manifest');
+
+    manifest = _.omit(manifest,function(prop){
+        if(_.isString(prop)){
+            return _.isEmpty(prop);
+        }else if(_.isObject(prop)){
+            return _.isUndefined(prop);
+        }
+
+        return false;
+    });
+
     ajax({
       url: config.APP.API_URL + '/manifests/' + this.get('manifestId'),
       type: 'PUT',
-      data: JSON.stringify(this.get('manifest')),
+      data: JSON.stringify(manifest),
       dataType: 'json',
       contentType: 'application/json; charset=utf-8'
     }).then(function(result) {
@@ -102,6 +124,23 @@ export default Ember.Object.extend({
         self.set('errors', result.errors);
       }
 
+      self.set('isSaving', false);
+
+    }).catch(function(){
+      self.set('isSaving', false);
+    });
+  },
+  build: function(){
+    var self = this;
+    this.set('isBuilding', true);
+    ajax({
+      url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/build',
+      type: 'POST'
+    }).then(function(result){
+      self.set('archiveLink', result.archive);
+      self.set('isBuilding', false);
+    }).catch(function(){
+      self.set('isBuilding', false);
     });
   }
 });

@@ -1,9 +1,7 @@
 import Ember from 'ember';
 import GeneratorModel from '../models/generator';
-//import RouteAware from '../mixins/routeaware';
 
 export default Ember.Route.extend({
-  selectedDisplay: '',
   model: function () {
     return GeneratorModel.create();
   },
@@ -12,36 +10,41 @@ export default Ember.Route.extend({
   },
   activate: function() {
     this._super();
-    $('.application').addClass('l-app-style');
-    $('footer').addClass('is-small');
+    Ember.$('.application').addClass('l-app-style');
+    Ember.$('footer').addClass('is-small');
   },
   deactivate: function() {
     this._super();
-    $('.application').removeClass('l-app-style');
-    $('footer').removeClass('is-small');
+    Ember.$('.application').removeClass('l-app-style');
+    Ember.$('footer').removeClass('is-small');
   },
   actions: {
-    stepUpdated: function (step) {
-      var model = this.modelFor('generator');
-      if(step === '1'){
-        model.set('step1Complete',true);
-      }
-      model.save();
-    },
     updateLogos: function(logos) {
       var model = this.modelFor('generator');
       model.set('manifest.icons',logos);
       model.save();
     },
+    buildArchive: function(){
+      var model = this.modelFor('generator');
+      model.build();
+    },
     updateManifest: function (result) {
       var model = this.modelFor('generator');
-      model.set('step1Complete', true);
+      var controller = this.controllerFor('generator');
+      controller.set('step1Complete', true);
       model.set('manifestId', result.id);
       model.set('manifest', result.content);
-      model.save();
-    },
-    updateModel: function () {
-      var model = this.modelFor('generator');
+      if(result.content.display === undefined) {
+        model.set('manifest.display', 'fullscreen');
+      }
+      if(!result.content.orientation) {
+        model.set('manifest.orientation', 'any');
+      }
+
+      if(!model.get('manifest.icons')) {
+        model.set('manifest.icons',[]);
+      }
+
       model.save();
     },
     updateModelProperty: function(name, value) {
@@ -60,7 +63,11 @@ export default Ember.Route.extend({
       model.save();
     },
     didTransition: function() {
-      $('.application').addClass('l-app-style');
+      Ember.$('.application').addClass('l-app-style');
+    },
+    updateModel: function(){
+      var model = this.modelFor('generator');
+      model.save();
     }
   }
 });
