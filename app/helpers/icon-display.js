@@ -5,6 +5,10 @@ export default Ember.HTMLBars.makeBoundHelper(function(value, options) {
   var escapedSrc = Ember.Handlebars.Utils.escapeExpression(options.src),
     escapedBase = Ember.Handlebars.Utils.escapeExpression(options.base);
 
+    if(escapedSrc.charAt(0) === '/'){
+      escapedSrc = escapedSrc.substring(1, escapedSrc.length - 1);
+    }
+
     if(escapedBase.slice(-1) === '/'){
       escapedBase = escapedBase.substring(0, escapedBase.length - 1);
     }

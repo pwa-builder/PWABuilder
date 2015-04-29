@@ -9,7 +9,7 @@ export default Ember.Component.extend({
     addLogo: function(){
       var self = this;
 
-      if(self.logoUrl.indexOf('/') === 0){
+      if(self.logoUrl.charAt(0) === '/'){
         self.set('logoUrl',self.logoUrl.slice(1));
       }
 
