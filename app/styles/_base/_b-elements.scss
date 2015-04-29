@@ -160,6 +160,17 @@ td {
 	padding: .5rem 1rem;
 }
 
+hr {
+	display: block;
+	clear: both;
+	background: transparent;
+	margin: 3rem 0 2rem 0;
+	height: 1px;
+	border-style: none none solid;
+	border-width: 0 0 1px;
+	border-color: #e5e5e5;
+}
+
 .hidden {
   display: none;
 }

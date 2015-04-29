@@ -1,8 +1,13 @@
-.summary {
+.summary, .usage {
 	margin-top:2rem;
 }
 
-.summary .title, .summary .titlesub {
+.summary .title {
+	color:$secondary-accent;
+	margin: 0 0 1rem 0;
+}
+
+.summary .titlesub, .summary h1, .summary h2, .summary h3, .summary h4, .summary h5 {
 	color:$dark-accent;
 	margin: 0 0 1rem 0;
 }
@@ -43,3 +48,8 @@
   border-color: white;
   text-align: center;
 }
+
+.summary tr.alt {
+  background-color: #e5e5e5;
+}
+

@@ -87,12 +87,18 @@
 }
 
 #footer.is-small .copyright {
-  line-height:3rem;
+	line-height:3rem;
+	margin-top:0;
 }
 
-#footer.is-small .social img {
-  width:5%;
+#footer.is-small .social {
+	margin-top: 10px;
 }
+
+	#footer.is-small .social .logo_twitter { height: 21px; width: 25px; margin: 0 7px 1px 0; }
+	#footer.is-small .social .logo_github { height: 25px; width: 25px; margin: 0 10px 0 0; }
+	#footer.is-small .social .logo_npm { height: 14px; width: 35px; margin: 0 10px 5px 0; }
+	#footer.is-small .social .logo_stackoverflow { height: 25px; width: 20px; }
 
 #footer.is-small div.pure-g {
   display:none;

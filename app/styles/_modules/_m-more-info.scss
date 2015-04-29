@@ -13,7 +13,7 @@
 	margin-bottom: 2rem;
 }
 
-.more-info button {
+.more-info button, .more-info .btn {
 	background-color: $dark-accent;
 	border-radius: 3px;
 	-webkit-transition: all 0.25s ease-in-out;
@@ -23,7 +23,7 @@
 	transition: all 0.25s ease-in-out;
 }
 
-.more-info button:hover {
+.more-info button:hover,  .more-info .btn:hover {
 	background-color: #fff;
 	color: $dark-accent;
 }

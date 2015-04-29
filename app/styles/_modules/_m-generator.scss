@@ -8,8 +8,10 @@ $form-accent:#999999;
 }
 
 .generator-section > header {
-  padding:0 1rem .05rem 1rem;
-  background-color:$dark-accent;
+	display: block;
+	width: 100%;
+	padding:0;
+	background-color:$secondary-accent;
 }
 
 .generator-section {
@@ -25,7 +27,28 @@ $form-accent:#999999;
 }
 
 .generator-section-title {
-  margin: 0;
+	padding:0 1rem .05rem 1rem;
+ 	margin: 0;
+  	color:#fff;
+	font-family:$serif-stack;
+	font-size:1.5rem;
+	line-height:3rem;
+}
+
+.generator-section > header .fixed {
+	position: fixed;
+	display: block;
+	width: 100%;
+	background-color:$secondary-accent;
+}
+
+.generator p.intro {
+	background-color: #fff;
+	padding: 1rem;
+	margin: 0;
+}
+.generator-section .manifest-body {
+	margin-top: 6rem;
   color:$secondary-accent;
   font-family:$serif-stack;
   font-size:1.313rem;
@@ -34,9 +57,10 @@ $form-accent:#999999;
 
 .generator-issues-notification {
   margin: 0;
-  padding: 0;
+  padding: 1rem;
   font-size: 1rem;
   color: $tertiary-accent;
+  background:#000;
 }
 
 .generator-issues-notification a,
@@ -48,15 +72,26 @@ $form-accent:#999999;
   font-weight: bold;
 }
 
+.generator-issues-notification a:hover {
+  color: #fff;
+}
+
 .generator .generator-section:first-child {
-  padding-right:.5rem;
+	padding-right:0;
 }
 
 .generator .generator-section:last-child {
-  padding-left:.5rem;
+  padding-left: 0;
 }
 
 .generator .form-holder {
+	padding:0 0;
+}
+
+.generator .step {
+	margin: 1rem;
+	font-family:$sans-stack-light;
+	font-size:.875rem;
   padding:0 1rem;
 }
 
@@ -105,9 +140,10 @@ $form-accent:#999999;
 }
 
 .generator .form-item {
-  clear:both;
-  padding-bottom:2.8rem;
-  position:relative;
+  position: relative;
+  clear: both;
+  margin-bottom: 1rem;
+  overflow: auto;
 }
 
 .generator input {
@@ -116,7 +152,6 @@ $form-accent:#999999;
   width:65%;
   float:right;
   height:2.125rem;
-  padding:.1rem;
 }
 
 .generator .upload-file {
@@ -135,6 +170,7 @@ $form-accent:#999999;
 .generator select {
   width:65%;
   float:right;
+  margin-top: 0.6rem;
 }
 
 .generator label {
@@ -303,47 +339,52 @@ $form-accent:#999999;
   }
 }
 
+.manifest-holder > header {
+  position: fixed;
+}
+
 .generator .generator-section pre {
-  box-shadow: none;
-  min-height:20rem;
+	box-shadow: none;
+	line-height: 1.125rem;
+	//min-height:20rem;
 }
 
 .issues {
-  padding: .75rem 2rem 1.5rem 2rem;
-  margin: 2rem 0;
-  background-color: $dark-accent;
-  color: #fff;
-  -moz-border-radius: 2px;
-  border-radius: 2px;
+	padding: .75rem 1.5rem 1.5rem 1.5rem;
+	margin: 0;
+	background-color: $dark-accent;
+	color: #fff;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
 }
-  .issues-title {
-    font-size: 1.25rem;
-    margin: .75rem 0 .25rem 0;
-    color: $tertiary-accent;
-  }
-    .issues-title span {
-      display: inline-block;
-      font-size: 75%;
-      color: #888;
-    }
-  .issues .issues-subheading {
-    font-size: 1rem;
-    margin: 0 0 .5rem 0;
-    color: #fff;
-  }
-    .issues .issues-subheading span {
-      display: inline-block;
-      font-size: 75%;
-      color: #888;
-    }
-  .issues ul {
-    margin: 0 0 .5rem .75rem;
-    padding: 0;
-  }
-  .issues li {
-    font-size: .75rem;
-    margin: 0 0 .25rem 0;
-  }
+	.issues-title {
+		font-size: 1.25rem;
+		margin: .75rem 0 .25rem 0;
+		color: $tertiary-accent;
+	}
+		.issues-title span {
+			display: inline-block;
+			font-size: 75%;
+			color: #888;
+		}
+	.issues .issues-subheading {
+		font-size: 1rem;
+		margin: 0 0 .5rem 0;
+		color: #fff;
+	}
+		.issues .issues-subheading span {
+			display: inline-block;
+			font-size: 75%;
+			color: #888;
+		}
+	.issues ul {
+		margin: 0 0 .5rem .75rem;
+		padding: 0;
+	}
+	.issues li {
+		font-size: .75rem;
+		margin: 0 0 .25rem 0;
+	}
 
 .issues-title-warnings {
   color: $quaternary-accent;
@@ -372,5 +413,5 @@ $form-accent:#999999;
 }
 
 .download-archive {
-  margin-top: 2rem;
+  margin: 2rem 1rem 0 1rem;
 }
