@@ -54,6 +54,7 @@ export default Ember.Controller.extend({
   actions: {
     updateStep: function(currentStep, nextStep) {
       if(currentStep) {
+        ga('send', 'event', 'item', 'click', 'generator-step-'+currentStep);
         this.set('steps.step'+currentStep+'.isCurrent', false);
         if(currentStep === '1') {
           this.set('step1Complete',true);

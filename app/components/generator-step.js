@@ -28,7 +28,6 @@ export default Ember.Component.extend({
       }
     },
     updateStep: function(currentStep, nextStep){
-      ga('send', 'event', 'item', 'click', 'generator-step-'+this.step);
       this.toggleProperty('isShowingBody');
       this.sendAction('action', currentStep, nextStep);
       return true; // keep bubbling
