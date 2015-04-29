@@ -14,6 +14,7 @@
     "qunit": "~1.17.1",
     "prism": "*",
     "lodash": "~3.7.0",
-    "pluralize": "~1.1.2"
+    "pluralize": "~1.1.2",
+    "font-awesome": "~4.3.0"
   }
 }
