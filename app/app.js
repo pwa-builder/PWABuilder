@@ -11,8 +11,19 @@ var App = Ember.Application.extend({
   Resolver: Resolver
 });
 
+//Allow data-eventname to be set on link-to's
 Ember.LinkView.reopen({
 	attributeBindings: ['data-eventname']
+});
+
+Ember.Router.reopen({
+  notifyGoogleAnalytics: function() {
+    if (!ga) { return; }
+    return ga('send', 'pageview', {
+        'page': this.get('url'),
+        'title': this.get('url')
+      });
+  }.on('didTransition')
 });
 
 loadInitializers(App, config.modulePrefix);
