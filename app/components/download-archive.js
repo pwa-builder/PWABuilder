@@ -18,11 +18,13 @@ export default Ember.Component.extend({
     return new Ember.Handlebars.SafeString(message);
   }.property('isBuilding'),
   triggerArchiveDownload: function() {
+    ga('send', 'event', 'item', 'click', 'generator-build-download');
     window.location.href = this.archiveLink;
   }.observes('archiveLink'),
   actions: {
     handleClick: function(){
       if(this.isEnabled && !this.isBuilding){
+        ga('send', 'event', 'item', 'click', 'generator-build-trigger');
         this.sendAction('action');
       }
     }

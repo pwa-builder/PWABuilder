@@ -11,6 +11,10 @@ var App = Ember.Application.extend({
   Resolver: Resolver
 });
 
+Ember.LinkView.reopen({
+	attributeBindings: ['data-eventname']
+});
+
 loadInitializers(App, config.modulePrefix);
 
 export default App;
