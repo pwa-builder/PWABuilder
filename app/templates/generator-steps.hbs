@@ -1,5 +1,5 @@
 <ol class="generator-step-list">
-  {{#generator-step step="2" nextStep="3" stepTitle="Site Data" isShowingBody=steps.step2.isCurrent data=model allowToggle=step1Complete action="updateStep"}}
+  {{#generator-step step="1" nextStep="2" stepTitle="Site Data" isShowingBody=steps.step1.isCurrent data=model action="updateStep"}}
   <p class="instructions">Here are the values we picked up from your site. Update or add any details below.</p>
   <div class="form-item">
     <label>Name</label>
@@ -30,13 +30,13 @@
     {{generator-select content=model.orientation.names modelProperty="manifest.orientation" value=model.manifest.orientation}}
   </div>
   {{/generator-step}}
-  {{#generator-step step="3" nextStep="4" stepTitle="Custom Values" data=model action="updateStep" isShowingBody=steps.step3.isCurrent allowToggle=step1Complete}}
+  {{#generator-step step="2" nextStep="3" stepTitle="Custom Values" data=model action="updateStep"isShowingBody=steps.step2.isCurrent }}
   <p class="instructions">Specify custom members to be added to the manifest.</p>
   <div class="form-item">
     {{#member-list action="manageMember" members=customMembers}}{{/member-list}}
   </div>
   {{/generator-step}}
-  {{#generator-step step="4" stepTitle="App Store Details" data=model action="updateStep" isShowingBody=steps.step4.isCurrent allowToggle=step1Complete showNextStep=false}}
+  {{#generator-step step="3" stepTitle="App Store Details" data=model action="updateStep" isShowingBody=steps.step3.isCurrent showNextStep=false}}
   <p class="instructions">We need a bit more info to get your apps ready for the different stores. If you provide us with the details below, we’ll make sure your projects are ready for each of the stores.</p>
   <div class="form-item">
     <label>Description</label>
@@ -76,7 +76,4 @@
     {{fa-icon "apple"}}
   </div>
   {{/generator-step}}
-  {{#download-archive class="button-holder download-archive" isBuilding=model.isBuilding isEnabled=step1Complete action="buildArchive" archiveLink=model.archiveLink}}
-  <p>{{#link-to 'usage' class="usage-link"}}Now: Learn how to distribute this package across different platforms{{/link-to}}</p>
-  {{/download-archive}}
 </ol>

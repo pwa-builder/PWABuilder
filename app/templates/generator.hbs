@@ -4,15 +4,24 @@
       <h2 class="generator-section-title">Generate your App Manifest</h2>
       <p class="intro">ManifoldJS takes simple meta-data about your site and uses that to generate native "hosted" apps for Android, ChromeOS, FirefoxOS, iOS, and Windows.</p>
     </header>
-    {{#if step1Complete}}
+    {{#if startComplete}}
       {{partial "generator-steps"}}
+      <div class="step">
+        <div class="button-holder">
+          <p>
+            {{#download-archive class="button-holder download-archive" isBuilding=model.isBuilding action="buildArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+            <button {{action "startOver"}}>Start Over</button>
+          </p>
+          <p>{{#link-to 'usage' class="usage-link"}}Now: Learn how to distribute this package across different platforms{{/link-to}}</p>
+        </div>
+      </div>
     {{else}}
-      {{partial "generator-start"}}
+      {{#generator-start isSaving=model.isSaving action="startComplete" class="generator-start step-wrapper step"}}{{/generator-start}}
     {{/if}}
   </div>
   <div class="pure-u-1 pure-u-md-1-2 generator-section manifest manifest-holder" id="manifest_holder">
     <header>
-      <h2 class="generator-section-title">W3C Manifest{{#if model.isSaving}} {{fa-icon "circle-o-notch fa-spin"}}{{/if}}</h2>
+      <h2 class="generator-section-title">W3C Manifest{{#if isProcessing}} {{fa-icon "circle-o-notch fa-spin"}}{{/if}}</h2>
       <p class="generator-issues-notification">
       {{#skip-link class="issues-title-errors" anchor="#errors_list"}}Errors ({{model.errorsTotal}}){{/skip-link}},
       {{#skip-link class="issues-title-warnings" anchor="#warnings_list"}}Warnings ({{model.warningsTotal}}){{/skip-link}},

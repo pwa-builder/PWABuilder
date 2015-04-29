@@ -5,7 +5,7 @@ export default Ember.Component.extend({
   nextStep: null,
   isShowingBody: false,
   showNextStep: true,
-  allowToggle: false,
+  allowToggle: true,
   tagName: 'li',
   classNames: ['step'],
   classNameBindings: ['stepId', 'isEnabled'],

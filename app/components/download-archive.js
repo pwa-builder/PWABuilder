@@ -7,7 +7,7 @@ export default Ember.Component.extend({
   archiveLink: '',
   initialMessage: 'Generate Package',
   buildingMessage: 'Building Package&hellip;',
-  tagName: 'li',
+  tagName: 'span',
   linkMessage: function() {
     var message = '';
     if(this.isBuilding){
