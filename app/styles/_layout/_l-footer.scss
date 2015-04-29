@@ -1,49 +1,109 @@
 #footer {
-	font-size: 14px;
-	padding:3.125rem 0;
-	color:#fff;
-	background-color:black;
+  font-size: 14px;
+  padding:3.125rem 0;
+  color:#fff;
+  background-color:black;
+}
+
+#footer .divider {
+  font-family: $sans-stack-light;
+  font-size: 130%;
+  color: #444;
 }
 
 #footer ul {
-	list-style-type: none;
-	padding-left:0;
-	margin:.5rem 0 1rem 0;
+  list-style-type: none;
+  padding-left:0;
+  margin:.5rem 0 1rem 0;
 }
 
 #footer li {
-	font-family: $sans-stack-light;
-	margin-bottom: 1rem;
+  font-family: $sans-stack-light;
+  margin-bottom: 1rem;
 }
 
 #footer li a {
-	color:#fff;
-	-webkit-transition: all 0.25s ease-in-out;
-	-moz-transition: all 0.25s ease-in-out;
-	-ms-transition: all 0.25s ease-in-out;
-	-o-transition: all 0.25s ease-in-out;
-	transition: all 0.25s ease-in-out;
+  color:#fff;
+  -webkit-transition: all 0.25s ease-in-out;
+  -moz-transition: all 0.25s ease-in-out;
+  -ms-transition: all 0.25s ease-in-out;
+  -o-transition: all 0.25s ease-in-out;
+  transition: all 0.25s ease-in-out;
 }
 
 #footer li a:hover {
-	color:$primary-accent;
+  color:$primary-accent;
 }
 
 #footer .copyright {
-	color:$quaternary-accent;
+  margin-top: 2rem;
+  color:$quaternary-accent;
+  vertical-align: middle;
+}
+
+#footer .copyright a {
+  color:$quaternary-accent;
+  -webkit-transition: all 0.25s ease-in-out;
+  -moz-transition: all 0.25s ease-in-out;
+  -ms-transition: all 0.25s ease-in-out;
+  -o-transition: all 0.25s ease-in-out;
+  transition: all 0.25s ease-in-out;
+}
+
+#footer .copyright a:hover {
+  color:#fff;
 }
 
 #footer .social {
-	text-align:right;
-	margin-bottom: 1.875rem;
+  text-align:right;
+  margin-bottom: 1.875rem;
 }
 
-	#footer .social .logo_twitter { height: 41px; width: 50px; margin: 0 15px 2px 0; }
-	#footer .social .logo_github { height: 49px; width: 50px; margin: 0 20px 0 0; }
-	#footer .social .logo_npm { height: 27px; width: 70px; margin: 0 20px 10px 0; }
-	#footer .social .logo_stackoverflow { height: 50px; width: 39px; }
+  #footer .social .logo_twitter { height: 41px; width: 50px; margin: 0 15px 2px 0; }
+  #footer .social .logo_github { height: 49px; width: 50px; margin: 0 20px 0 0; }
+  #footer .social .logo_npm { height: 27px; width: 70px; margin: 0 20px 10px 0; }
+  #footer .social .logo_stackoverflow { height: 50px; width: 39px; }
 
 #footer .summary {
-	text-align:right;
-	margin-bottom: 1.875rem;
+  text-align:right;
+  margin-bottom: 1.875rem;
+}
+
+#footer .simple-content {
+  display:none;
+}
+
+@media screen and (min-width: 48em) {
+  #footer.is-small {
+    position:fixed;
+    bottom:0;
+    padding:0;
+    height:3rem;
+  }
+}
+
+#footer.is-small .simple-content {
+  display:block;
+}
+
+#footer.is-small .copyright {
+	line-height:3rem;
+	margin-top:0;
+}
+
+#footer.is-small .social {
+	margin-top: 10px;
+}
+
+	#footer.is-small .social .logo_twitter { height: 21px; width: 25px; margin: 0 7px 1px 0; }
+	#footer.is-small .social .logo_github { height: 25px; width: 25px; margin: 0 10px 0 0; }
+	#footer.is-small .social .logo_npm { height: 14px; width: 35px; margin: 0 10px 5px 0; }
+	#footer.is-small .social .logo_stackoverflow { height: 25px; width: 20px; }
+
+#footer.is-small div.pure-g {
+  display:none;
+}
+
+#footer.is-small div.pure-g.simple-content {
+  display:block;
 }

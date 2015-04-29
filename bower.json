@@ -1,5 +1,5 @@
 {
-  "name": "jackrabbit",
+  "name": "manifoldjs-site",
   "dependencies": {
     "jquery": "^1.11.1",
     "ember": "1.11.0",
@@ -12,6 +12,9 @@
     "ember-qunit": "0.3.0",
     "ember-qunit-notifications": "0.0.7",
     "qunit": "~1.17.1",
-    "ember-uploader": "0.3.6"
+    "prism": "*",
+    "lodash": "~3.7.0",
+    "pluralize": "~1.1.2",
+    "font-awesome": "~4.3.0"
   }
 }

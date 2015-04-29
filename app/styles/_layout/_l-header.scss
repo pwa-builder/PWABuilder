@@ -1,11 +1,12 @@
 #header {
-	height:4.688rem;
 	color:#fff;
 	background-color:$dark-accent;
+	overflow: auto;
 }
 
 #header nav {
 	float:right;
+	overflow: auto;
 }
 
 #header ul {
@@ -23,7 +24,7 @@
 	margin: 0;
 }
 
-#header a {
+#header nav a {
 	color: #fff;
 	text-decoration: none;
 	font-family: $sans-stack-semibold;
@@ -36,17 +37,17 @@
 	transition: all 0.25s ease-in-out;
 }
 
-#header a:hover {
+#header nav a:hover {
 	color:$quaternary-accent;
 }
 
-#header a.active {
+#header nav a.active {
 	background-color:$primary-accent;
 	-moz-border-radius: 2px;
 	border-radius: 2px;
 	padding: .25em .75em .35em .75em;
 }
-#header a:hover.active {
+#header nav a:hover.active {
 	background-color:$primary-accent;
 	color:#fff;
 }
@@ -54,9 +55,9 @@
 #header .nav_logo {
 	width: 215px;
 	height: 50px;
-	margin: 0.6875rem 0;
+	margin: 0.75rem 0;
 }
 
-#header #ember347.active {
+#header .active .nav_logo {
 	display: none;
 }

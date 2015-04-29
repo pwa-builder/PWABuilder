@@ -2,7 +2,7 @@
 
 module.exports = function(environment) {
   var ENV = {
-    modulePrefix: 'appmyweb',
+    modulePrefix: 'manifoldjs-site',
     environment: environment,
     baseURL: '/',
     locationType: 'auto',
@@ -16,6 +16,10 @@ module.exports = function(environment) {
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
+    },
+
+    contentSecurityPolicy:  {
+        'connect-src': "'self' http://localhost:3000 http://0.0.0.0:3000 ws://localhost:3000 ws://localhost:4200",
     }
   };
 
@@ -25,6 +29,7 @@ module.exports = function(environment) {
     // ENV.APP.LOG_TRANSITIONS = true;
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
+    ENV.APP.API_URL='http://localhost:4200';
   }
 
   if (environment === 'test') {
@@ -39,8 +44,12 @@ module.exports = function(environment) {
     ENV.APP.rootElement = '#ember-testing';
   }
 
-  if (environment === 'production') {
+  if (environment === 'staging') {
+    ENV.APP.API_URL='http://manifold-api-staging.azurewebsites.net';
+  }
 
+  if (environment === 'production') {
+    ENV.APP.API_URL='http://manifold-api-prod.azurewebsites.net';
   }
 
   return ENV;

@@ -1,5 +1,6 @@
 .l-full-width {
 	width:100%;
+	background-color: #fff;
 }
 
 .l-max-width {
@@ -24,8 +25,8 @@
 }
 
 .hp_logo_body {
-	width: 381px;
-	height: 78px;
+	max-width: 381px;
+	max-height: 78px;
 	margin: 0 0 .25rem .125rem;
 }
 
@@ -39,4 +40,18 @@
 
 .l-bottom {
 	padding-bottom:2.85rem;
+}
+
+.l-app-style.no-header {
+	height:calc(100% - 4.938rem - 3rem);
+}
+
+.l-app-style .page-intro {
+	margin-top:0;
+}
+
+@media screen and (min-width: 48em) {
+  .l-app-style {
+	  height:100%;
+  }
 }

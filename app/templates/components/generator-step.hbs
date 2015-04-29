@@ -1,0 +1,15 @@
+<div class="step-wrapper">
+  <header class="step-header" {{action "toggleBody"}}>
+    <h2 class="title">{{stepTitle}}</h2>
+  </header>
+  {{#if isShowingBody}}
+  <div class="form-body">
+    {{yield}}
+    {{#if showNextStep}}
+    <div class="button-holder">
+      <button class="button next-step" {{action "updateStep" step nextStep}}>Next Step</button>
+    </div>
+    {{/if}}
+  </div>
+{{/if}}
+</div>

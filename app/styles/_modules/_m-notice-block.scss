@@ -1,0 +1,24 @@
+.notice-block{
+	padding: 1rem 1.25rem;
+	margin-bottom: 1.25rem;
+	background: $secondary-accent - 10;
+	color: $secondary-accent + 200;
+}
+
+.notice-block > a {
+	color: $quaternary-accent + 10;
+	background: #24a2a0;
+	padding: 0 5px;
+	text-decoration: none;
+	-webkit-transition: all 0.25s ease-in-out;
+	-moz-transition: all 0.25s ease-in-out;
+	-ms-transition: all 0.25s ease-in-out;
+	-o-transition: all 0.25s ease-in-out;
+	transition: all 0.25s ease-in-out;
+}
+
+.notice-block > a:hover {
+  color: #fff;
+  background: #24a2a0;
+  padding: 0 5px;
+}
