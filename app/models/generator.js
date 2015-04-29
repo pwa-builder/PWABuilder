@@ -114,6 +114,8 @@ export default Ember.Object.extend({
 
       self.set('isSaving', false);
 
+    }).catch(function(){
+      self.set('isSaving', false);
     });
   },
   build: function(){
