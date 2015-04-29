@@ -268,38 +268,42 @@ $form-accent:#999999;
   cursor: not-allowed;
 }
 
-.generator .step1 .url label {
+.generator .generator-start {
+  padding: 0 1rem 1rem 0;
+}
+
+.generator-start .url label {
   width:8%;
   text-align:left;
 }
 
-.generator .step1 .url input {
+.generator-start .url input {
   width:90%;
 }
 
-.generator .step1 .manifest label {
+.generator-start .manifest label {
   width:28%;
   text-align: left;
 }
 
-.generator .step4 label {
+.generator .step3 label {
   width:42%;
 }
 
-.generator .step4 input {
+.generator .step3 input {
   width:34%;
   float:left;
   margin-left:.5rem;
 }
 
-.generator .step4 .fa {
+.generator .step3 .fa {
   float:left;
   line-height:2.125rem;
   margin-left:.4rem;
 }
 
 .generator .fa {
-  font-size:1.3rem;
+  font-size:1rem;
 }
 
 .generator .fa-windows {
@@ -322,7 +326,11 @@ $form-accent:#999999;
   color:$primary-accent;
 }
 
-.generator .usage-link.btn {
+.alert {
+  color:$primary-accent;
+}
+
+.generator .usage-link {
   font-size:.8rem;
   padding:.5rem 0;
   display:block;
@@ -336,10 +344,6 @@ $form-accent:#999999;
 
 .generator .usage-link.btn.show {
   display:block;
-}
-
-.generator .step:last-child .next-step {
-  display:none;
 }
 
 //Manifest section
@@ -412,16 +416,19 @@ $form-accent:#999999;
   color: $primary-accent;
 }
 
-.download-archive .btn {
+.download-archive .btn,
+.btn.highlighted {
   cursor: not-allowed;
   background-color: $secondary-accent - 90;
 }
 
-.download-archive .btn:hover {
+.download-archive .btn:hover,
+.generator-start .btn:hover {
   color: #fff;
 }
 
-.download-archive .btn.isEnabled {
+.download-archive .btn.isEnabled,
+.generator-start .btn {
   cursor: pointer;
   background-color: $secondary-accent;
 }

@@ -1,0 +1,25 @@
+<header class="step-header">
+  <h2 class="title">Provide a URL or manifest</h2>
+</header>
+<div class="form-body">
+  <p class="instructions">Provide your URL or upload your manifest and we'll help fill in the gaps if there are any.</p>
+  {{#if message}}<p class="instructions alert">{{fa-icon "exclamation"}} {{message}}</p>{{/if}}
+  <div class="form-item url">
+    <label>URL</label>
+    {{input name="siteUrl" type="url" value=siteUrl placeholder="Enter a URL" action="startComplete"}}
+  </div>
+  <span>&nbsp;or</span>
+  <div class="form-item manifest">
+    <label>Upload Manifest</label>
+    <input class="upload-file" placeholder="Choose File" disabled="disabled" value="{{fileName}}" />
+    <div class="fileUpload btn">
+      <span>Browse</span>
+      {{file-input class="upload" action="uploadFile"}}
+    </div>
+  </div>
+  <div class="button-holder">
+    <button {{bind-attr class=":btn :isEnabled :next-step"}} {{action "startComplete"}}>
+      Get Started {{#if isSaving}}{{fa-icon "circle-o-notch fa-spin"}}{{/if}}
+    </button>
+  </div>
+</div
