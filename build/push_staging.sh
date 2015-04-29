@@ -2,7 +2,7 @@
 
 rm -rf .git
 ember build -e staging
-cp ./web.config ./dist
+cp ./web.staging.config ./dist/web.config
 cp -r ./bin ./dist/bin
 cd ./dist
 git init
