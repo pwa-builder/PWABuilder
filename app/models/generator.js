@@ -88,11 +88,20 @@ export default Ember.Object.extend({
     var self = this,
       manifest = self.get('manifest');
 
+    manifest = _.omit(manifest,function(prop){
+        if(_.isString(prop) || _.isArray(prop)){
+            return _.isEmpty(prop);
+        }else if(_.isObject(prop)){
+            return _.isUndefined(prop);
+        }
+
+        return false;
+    });
 
     ajax({
       url: config.APP.API_URL + '/manifests/' + this.get('manifestId'),
       type: 'PUT',
-      data: JSON.stringify(this.get('manifest')),
+      data: JSON.stringify(manifest),
       dataType: 'json',
       contentType: 'application/json; charset=utf-8'
     }).then(function(result) {
