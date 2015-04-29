@@ -83,9 +83,7 @@ export default Ember.Object.extend({
 
       self.save();
 
-      Ember.run.later((function() {
-        self.set('isSaving', false);
-      }), 1000);
+      self.set('isSaving', false);
 
     }).catch(function(){
       self.set('isSaving', false);
