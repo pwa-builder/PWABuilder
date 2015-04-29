@@ -89,7 +89,7 @@ export default Ember.Object.extend({
       manifest = self.get('manifest');
 
     manifest = _.omit(manifest,function(prop){
-        if(_.isString(prop) || _.isArray(prop)){
+        if(_.isString(prop)){
             return _.isEmpty(prop);
         }else if(_.isObject(prop)){
             return _.isUndefined(prop);
