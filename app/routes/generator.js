@@ -25,8 +25,13 @@ export default Ember.Route.extend({
       model.save();
     },
     buildArchive: function(){
+      ga('send', 'event', 'item', 'click', 'generator-build-trigger');
       var model = this.modelFor('generator');
       model.build();
+    },
+    downloadArchive: function(archiveLink){
+      ga('send', 'event', 'item', 'click', 'generator-build-download');
+      window.location.href = archiveLink;
     },
     updateManifest: function (result) {
       var model = this.modelFor('generator');

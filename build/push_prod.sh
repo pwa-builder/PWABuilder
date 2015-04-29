@@ -2,7 +2,7 @@
 
 rm -rf .git
 ember build -prod
-cp ./web.config ./dist
+cp ./web.prod.config ./dist/web.config
 cp -r ./bin ./dist/bin
 cd ./dist
 git init

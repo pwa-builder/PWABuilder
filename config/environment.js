@@ -20,6 +20,8 @@ module.exports = function(environment) {
 
     contentSecurityPolicy:  {
         'connect-src': "'self' http://localhost:3000 http://0.0.0.0:3000 ws://localhost:3000 ws://localhost:4200",
+        'img-src': "'self' http://www.google-analytics.com",
+        'script-src': "'self' 'unsafe-inline' 'unsafe-eval' localhost:35729 0.0.0.0:35729 http://www.google-analytics.com"
     }
   };
 
