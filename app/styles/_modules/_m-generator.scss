@@ -48,7 +48,7 @@ $form-accent:#999999;
 	margin: 0;
 }
 .generator-section .manifest-body {
-	margin-top: 0;
+	margin-top: 6rem;
   color:$secondary-accent;
   font-family:$serif-stack;
   font-size:1.313rem;
@@ -140,9 +140,10 @@ $form-accent:#999999;
 }
 
 .generator .form-item {
-  clear:both;
-  padding-bottom:2.8rem;
-  position:relative;
+  position: relative;
+  clear: both;
+  margin-bottom: 1rem;
+  overflow: auto;
 }
 
 .generator input {
@@ -151,7 +152,6 @@ $form-accent:#999999;
   width:65%;
   float:right;
   height:2.125rem;
-  padding:.1rem;
 }
 
 .generator .upload-file {
@@ -170,6 +170,7 @@ $form-accent:#999999;
 .generator select {
   width:65%;
   float:right;
+  margin-top: 0.6rem;
 }
 
 .generator label {
@@ -183,7 +184,6 @@ $form-accent:#999999;
 .generator .button-holder {
   clear:both;
   text-align: right;
-  padding-right: 1rem;
 }
 
 .generator .icon-preview {
@@ -339,6 +339,10 @@ $form-accent:#999999;
   }
 }
 
+.manifest-holder > header {
+  position: fixed;
+}
+
 .generator .generator-section pre {
 	box-shadow: none;
 	line-height: 1.125rem;
@@ -347,7 +351,7 @@ $form-accent:#999999;
 
 .issues {
 	padding: .75rem 1.5rem 1.5rem 1.5rem;
-	margin: 2rem 0;
+	margin: 0;
 	background-color: $dark-accent;
 	color: #fff;
 	-moz-border-radius: 2px;
@@ -409,5 +413,5 @@ $form-accent:#999999;
 }
 
 .download-archive {
-  margin-top: 2rem;
+  margin: 2rem 1rem 0 1rem;
 }
