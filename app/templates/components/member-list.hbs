@@ -1,0 +1,35 @@
+<div class="form-group member-list">
+  <div class="form-item">
+    <label for="member_name">Member Name</label>
+    {{input id="member_name" name="member_name" value=member_name}}
+  </div>
+  <div class="form-item">
+    <label>Member Value</label>
+    {{textarea id="member_value" name="member_value" value=member_value}}
+  </div>
+  <p class="instructions alert"><i class="fa fa-exclamation {{if showAlert 'show' 'hidden'}}"></i> {{memberAlert}}</p>
+  <div class="button-holder">
+    <button {{action 'addMember'}}>Add Member&nbsp;&nbsp; {{fa-icon "plus"}}</button>
+  </div>
+{{#if members}}
+<table class="generator-members">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Value</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+  {{#each member in members}}
+    <tr>
+      <td>{{member.member_name}}</td>
+      <td>{{json-stringify member.member_value}}</td>
+      <td><button {{action 'removeMember' member}}>{{fa-icon "times"}}</button></td>
+    </tr>
+  {{/each}}
+  </tbody>
+</table>
+{{/if}}
+</div>
+

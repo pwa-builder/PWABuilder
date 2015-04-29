@@ -1,0 +1,27 @@
+{{input value=logoUrl type="url" placeholder="URL for logo"}}
+<div class="button-holder">
+	<button class="add-button" {{action 'addLogo'}}>Add Icon&nbsp;&nbsp; {{fa-icon "plus"}}</button>
+</div>
+<div class="logos">
+	{{#if logos}}
+		<table class="generator-members">
+			<thead>
+				<tr>
+					<th>Preview</th>
+					<th>Size</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+	  	{{#each logo in logos}}
+		    <tr>
+		      <td><a href="{{logo.src}}" target="_blank"><img class='icon-preview' src="{{logo.src}}" /></a></td>
+		      <td>{{logo.sizes}}</td>
+		      <td class="button-holder"><button {{action 'removeLogo' logo}}>{{fa-icon "times"}}</button></td>
+		    </tr>
+	  	{{/each}}
+	  		</tbody>
+	  	</table>
+	{{/if}}
+</div>
+

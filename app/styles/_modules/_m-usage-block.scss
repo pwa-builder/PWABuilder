@@ -2,6 +2,28 @@
 	margin-bottom:2em;
 }
 
+.usage-block .titlecont {
+	margin-bottom: 1rem;
+}
+
 .usage-block .title {
-	margin-bottom:0;
+	display: inline-block;
+	vertical-align: middle;
+	margin-bottom: 0;
+}
+
+.platform_icon {
+	display: inline-block;
+	vertical-align: middle;
+	font-size: 1.125rem;
+	margin: 0 .25rem 0 0;
+}
+
+.platform_icon .fa-mobile-phone {
+	font-size: 1.375em;
+	margin-top: .25rem;
+}
+
+.platform_icon .fa-google {
+	margin-top: .5rem;
 }

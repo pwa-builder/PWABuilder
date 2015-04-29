@@ -14,3 +14,13 @@
 	color:white;
 	margin-bottom: .75rem;
 }
+
+.latest-version a {
+	color:$dark-accent;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+.latest-version a:hover {
+	color:#fff;
+}

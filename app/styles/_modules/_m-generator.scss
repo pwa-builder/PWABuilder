@@ -1,0 +1,416 @@
+$form-accent:#999999;
+
+@media screen and (min-width: 48em) {
+  .generator {
+    height: 100%;
+    overflow-y:hidden;
+  }
+}
+
+.generator-section > header {
+	display: block;
+	width: 100%;
+	padding:0;
+	background-color:$secondary-accent;
+}
+
+.generator-section {
+  height:auto;
+  overflow:auto;
+}
+
+@media screen and (min-width: 48em) {
+  .generator-section {
+    height: 100%;
+    overflow-y:scroll;
+  }
+}
+
+.generator-section-title {
+	padding:0 1rem .05rem 1rem;
+ 	margin: 0;
+  	color:#fff;
+	font-family:$serif-stack;
+	font-size:1.5rem;
+	line-height:3rem;
+}
+
+.generator-section > header .fixed {
+	position: fixed;
+	display: block;
+	width: 100%;
+	background-color:$secondary-accent;
+}
+
+.generator p.intro {
+	background-color: #fff;
+	padding: 1rem;
+	margin: 0;
+}
+.generator-section .manifest-body {
+	margin-top: 6rem;
+  color:$secondary-accent;
+  font-family:$serif-stack;
+  font-size:1.313rem;
+  line-height:2.5rem;
+}
+
+.generator-issues-notification {
+  margin: 0;
+  padding: 1rem;
+  font-size: 1rem;
+  color: $tertiary-accent;
+  background:#000;
+}
+
+.generator-issues-notification a,
+.generator-issues-notification a:visited,
+.generator-issues-notification a:hover {
+  text-decoration: underline;
+  cursor: pointer;
+  font-family: "Bree Serif", serif;
+  font-weight: bold;
+}
+
+.generator-issues-notification a:hover {
+  color: #fff;
+}
+
+.generator .generator-section:first-child {
+	padding-right:0;
+}
+
+.generator .generator-section:last-child {
+  padding-left: 0;
+}
+
+.generator .form-holder {
+	padding:0 0;
+}
+
+.generator .step {
+	margin: 1rem;
+	font-family:$sans-stack-light;
+	font-size:.875rem;
+  padding:0 1rem;
+}
+
+.generator .step {
+  margin: 1rem 0 0 1rem;
+  font-family:$sans-stack-light;
+  font-size:.875rem;
+}
+
+.generator code {
+  font-size:.875rem;
+  line-height: .875rem;
+}
+
+.generator .step-wrapper {
+  padding-left: 3.25rem;
+}
+
+.generator .step--disabled, .generator .step--disabled .title {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.generator .step header {
+  cursor:pointer;
+}
+
+.generator .step.active {
+  opacity: 1;
+}
+
+.generator .step .title {
+  margin-bottom:0;
+  font-size:1.25rem;
+  line-height:2.2rem;
+}
+
+.generator .instructions {
+  margin-top:0;
+}
+
+.generator hr {
+  border:none;
+  background:#f2f2f2;
+  height:1px;
+}
+
+.generator .form-item {
+  position: relative;
+  clear: both;
+  margin-bottom: 1rem;
+  overflow: auto;
+}
+
+.generator input {
+  display:block;
+  border:1px solid $form-accent;
+  width:65%;
+  float:right;
+  height:2.125rem;
+}
+
+.generator .upload-file {
+  width:47% !important;
+  float:left;
+}
+
+.generator textarea {
+  width:65%;
+  float:right;
+  border:1px solid $form-accent;
+  padding:.1rem;
+  margin-bottom:.4rem;
+}
+
+.generator select {
+  width:65%;
+  float:right;
+  margin-top: 0.6rem;
+}
+
+.generator label {
+  display:block;
+  width:30%;
+  float:left;
+  text-align: right;
+  line-height:2.215rem;
+}
+
+.generator .button-holder {
+  clear:both;
+  text-align: right;
+}
+
+.generator .icon-preview {
+	width:2rem;
+}
+
+.generator .logo-upload {
+	padding-bottom:0;
+}
+
+.generator .logo-upload .fa, .generator .member-list .fa {
+	font-size:1rem;
+}
+
+.generator .logos {
+	margin-top:1.5rem;
+}
+
+.generator table {
+	width:66%;
+	float:right;
+	margin-top:0;
+}
+
+.generator th {
+	font-family:$sans-stack-semibold;
+	text-align: center;
+}
+
+.generator td {
+	text-align: center;
+	padding:0;
+	line-height:3rem;
+	border:0;
+}
+
+.generator td button {
+	margin-right:.5rem;
+}
+
+.generator tbody tr:nth-child(odd) {
+	background-color:$table-accent;
+}
+
+.generator .add-button {
+	margin-top:.5rem;
+}
+
+/* Generator step list custom numbering */
+
+.generator-step-list {
+  margin-left: 0;
+  padding-left: 0;
+  list-style-type: none;
+}
+
+.generator-step-list .step {
+  position: relative;
+  counter-increment: step-counter;
+}
+
+.generator-step-list .step::before {
+  width: 2.25rem;
+  height: 2.25rem;
+  position: absolute;
+  left: 0;
+  content: counter(step-counter);
+  border-radius: 50%;
+  text-align: center;
+  background:$tertiary-accent;
+  color:white;
+  font-family:$serif-stack;
+  font-size:1.563rem;
+}
+
+.generator-step-list .step--disabled {
+  cursor: not-allowed;
+}
+
+.generator .step1 .url label {
+  width:8%;
+  text-align:left;
+}
+
+.generator .step1 .url input {
+  width:90%;
+}
+
+.generator .step1 .manifest label {
+  width:28%;
+  text-align: left;
+}
+
+.generator .step4 label {
+  width:42%;
+}
+
+.generator .step4 input {
+  width:34%;
+  float:left;
+  margin-left:.5rem;
+}
+
+.generator .step4 .fa {
+  float:left;
+  line-height:2.125rem;
+  margin-left:.4rem;
+}
+
+.generator .fa {
+  font-size:1.3rem;
+}
+
+.generator .fa-windows {
+  font-size:1.2em;
+}
+
+.generator .fa-mobile-phone{
+  font-size:1.5em;
+}
+
+.generator .package-download {
+  font-size:2rem;
+  color:black;
+  position:absolute;
+  right:0;
+  top:-.2rem;
+}
+
+.generator .package-download:hover {
+  color:$primary-accent;
+}
+
+.generator .usage-link {
+  font-size:.8rem;
+  padding:.5rem 0;
+  display:block;
+}
+
+.generator .step:last-child .next-step {
+  display:none;
+}
+
+//Manifest section
+.generator .manifest-holder {
+  display: none;
+  background-color:$dark-accent;
+}
+
+@media screen and (min-width: 48em) {
+  .generator .manifest-holder {
+    display: inline-block;
+  }
+}
+
+.manifest-holder > header {
+  position: fixed;
+}
+
+.generator .generator-section pre {
+	box-shadow: none;
+	line-height: 1.125rem;
+}
+
+.issues {
+	padding: .75rem 1.5rem 1.5rem 1.5rem;
+	margin: 0;
+	background-color: $dark-accent;
+	color: #fff;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+}
+	.issues-title {
+		font-size: 1.25rem;
+		margin: .75rem 0 .25rem 0;
+		color: $tertiary-accent;
+	}
+		.issues-title span {
+			display: inline-block;
+			font-size: 75%;
+			color: #888;
+		}
+	.issues .issues-subheading {
+		font-size: 1rem;
+		margin: 0 0 .5rem 0;
+		color: #fff;
+	}
+		.issues .issues-subheading span {
+			display: inline-block;
+			font-size: 75%;
+			color: #888;
+		}
+	.issues ul {
+		margin: 0 0 .5rem .75rem;
+		padding: 0;
+	}
+	.issues li {
+		font-size: .75rem;
+		margin: 0 0 .25rem 0;
+	}
+
+.issues-title-warnings {
+  color: $quaternary-accent;
+}
+
+.issues-title-suggestions {
+  color: $secondary-accent;
+}
+
+.issues-title-errors {
+  color: $primary-accent;
+}
+
+.download-archive .btn {
+  cursor: not-allowed;
+  background-color: $secondary-accent - 90;
+}
+
+.download-archive .btn:hover {
+  color: #fff;
+}
+
+.download-archive .btn.isEnabled {
+  cursor: pointer;
+  background-color: $secondary-accent;
+}
+
+.download-archive {
+  margin: 2rem 1rem 0 1rem;
+}
