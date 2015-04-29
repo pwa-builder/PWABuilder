@@ -1,8 +1,9 @@
 #! /bin/bash
 
 rm -rf .git
-ember build -prod
+ember build -e staging
 cp ./web.config ./dist
+cp -r ./bin ./dist/bin
 cd ./dist
 git init
 git config user.email "interactive@bamideas.com"
