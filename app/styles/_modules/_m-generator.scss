@@ -335,7 +335,7 @@ $form-accent:#999999;
 
 @media screen and (min-width: 48em) {
   .generator .manifest-holder {
-    display: block;
+    display: inline-block;
   }
 }
 
@@ -346,7 +346,6 @@ $form-accent:#999999;
 .generator .generator-section pre {
 	box-shadow: none;
 	line-height: 1.125rem;
-	//min-height:20rem;
 }
 
 .issues {
