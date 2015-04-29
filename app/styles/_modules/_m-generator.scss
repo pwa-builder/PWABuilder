@@ -202,6 +202,10 @@ $form-accent:#999999;
 	margin-top:1.5rem;
 }
 
+.generator .generator-members {
+  margin-top:1rem;
+}
+
 .generator table {
 	width:66%;
 	float:right;
@@ -211,6 +215,7 @@ $form-accent:#999999;
 .generator th {
 	font-family:$sans-stack-semibold;
 	text-align: center;
+  border:none;
 }
 
 .generator td {
