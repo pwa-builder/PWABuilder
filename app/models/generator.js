@@ -38,15 +38,30 @@ export default Ember.Object.extend({
   orientation: {
     names: ['any', 'natural', 'landscape', 'portrait', 'portrait-primary', 'portrait-secondary', 'landscape-primary', 'landscape-secondary']
   },
-  formattedManifest: function () {
-    return new Ember.Handlebars.SafeString("<code class='language-javascript'>"+JSON.stringify(this.get('manifest'), null, '    ')+"</code>");
-  }.property('manifest'),
   save: function () {
     this.set('isSaving', true);
     if(!this.manifestId) {
       this.create();
     } else {
       this.update();
+    }
+  },
+  processResult: function(result){
+    this.set('manifest', result.content);
+    this.set('manifestId', result.id);
+    this.set('manifest.display', 'fullscreen');
+    this.set('manifest.orientation', 'any');
+    if(!this.get('manifest.icons')) {
+      this.set('manifest.icons',[]);
+    }
+    if(result.suggestions) {
+      this.set('suggestions', result.suggestions);
+    }
+    if(result.warnings) {
+      this.set('warnings', result.warnings);
+    }
+    if(result.errors) {
+      this.set('errors', result.errors);
     }
   },
   create: function(){
@@ -58,51 +73,23 @@ export default Ember.Object.extend({
       dataType: 'json',
       contentType: 'application/json; charset=utf-8'
     }).then(function(result) {
-      self.set('manifest', result.content);
-      self.set('manifestId', result.id);
-
-      //Set Defaults
-      self.set('manifest.display', 'fullscreen');
-      self.set('manifest.orientation', 'any');
-
-      if(!self.get('manifest.icons')) {
-        self.set('manifest.icons',[]);
-      }
-
-      if(result.suggestions) {
-        self.set('suggestions', result.suggestions);
-      }
-
-      if(result.warnings) {
-        self.set('warnings', result.warnings);
-      }
-
-      if(result.errors) {
-        self.set('errors', result.errors);
-      }
-
-      self.save();
-
+      self.processResult(result);
       self.set('isSaving', false);
-
     }).catch(function(){
       self.set('isSaving', false);
     });
   },
   update: function(){
-    var self = this,
-      manifest = self.get('manifest');
-
+    var self = this;
+    var manifest = self.get('manifest');
     manifest = _.omit(manifest,function(prop){
-        if(_.isString(prop)){
-            return _.isEmpty(prop);
-        }else if(_.isObject(prop)){
-            return _.isUndefined(prop);
-        }
-
-        return false;
+      if(_.isString(prop)){
+        return _.isEmpty(prop);
+      }else if(_.isObject(prop)){
+        return _.isUndefined(prop);
+      }
+      return false;
     });
-
     ajax({
       url: config.APP.API_URL + '/manifests/' + this.get('manifestId'),
       type: 'PUT',
@@ -110,22 +97,8 @@ export default Ember.Object.extend({
       dataType: 'json',
       contentType: 'application/json; charset=utf-8'
     }).then(function(result) {
-        self.set('manifest',result.content);
-
-      if(result.suggestions){
-        self.set('suggestions', result.suggestions);
-      }
-
-      if(result.warnings){
-        self.set('warnings', result.warnings);
-      }
-
-      if(result.errors) {
-        self.set('errors', result.errors);
-      }
-
+      self.processResult(result);
       self.set('isSaving', false);
-
     }).catch(function(){
       self.set('isSaving', false);
     });
@@ -141,6 +114,29 @@ export default Ember.Object.extend({
       self.set('isBuilding', false);
     }).catch(function(){
       self.set('isBuilding', false);
+    });
+  },
+  generateFormData: function(file) {
+    var formData = new FormData();
+    formData.append('file', file);
+    return formData;
+  },
+  upload: function(file) {
+    var self = this;
+    var data = this.generateFormData(file);
+    this.set('isSaving', true);
+    ajax({
+      url: config.APP.API_URL + '/manifests',
+      type: 'POST',
+      data: data,
+      contentType: false,
+      processData: false,
+      cache: false
+    }).then(function(result) {
+      self.processResult(result);
+      self.set('isSaving', false);
+    }).catch(function(){
+      self.set('isSaving', false);
     });
   }
 });

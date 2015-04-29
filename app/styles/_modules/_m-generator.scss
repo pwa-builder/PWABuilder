@@ -202,6 +202,10 @@ $form-accent:#999999;
 	margin-top:1.5rem;
 }
 
+.generator .generator-members {
+  margin-top:1rem;
+}
+
 .generator table {
 	width:66%;
 	float:right;
@@ -211,6 +215,7 @@ $form-accent:#999999;
 .generator th {
 	font-family:$sans-stack-semibold;
 	text-align: center;
+  border:none;
 }
 
 .generator td {
@@ -263,38 +268,42 @@ $form-accent:#999999;
   cursor: not-allowed;
 }
 
-.generator .step1 .url label {
+.generator .generator-start {
+  padding: 0 1rem 1rem 0;
+}
+
+.generator-start .url label {
   width:8%;
   text-align:left;
 }
 
-.generator .step1 .url input {
+.generator-start .url input {
   width:90%;
 }
 
-.generator .step1 .manifest label {
+.generator-start .manifest label {
   width:28%;
   text-align: left;
 }
 
-.generator .step4 label {
+.generator .step3 label {
   width:42%;
 }
 
-.generator .step4 input {
+.generator .step3 input {
   width:34%;
   float:left;
   margin-left:.5rem;
 }
 
-.generator .step4 .fa {
+.generator .step3 .fa {
   float:left;
   line-height:2.125rem;
   margin-left:.4rem;
 }
 
 .generator .fa {
-  font-size:1.3rem;
+  font-size:1rem;
 }
 
 .generator .fa-windows {
@@ -317,14 +326,24 @@ $form-accent:#999999;
   color:$primary-accent;
 }
 
+.alert {
+  color:$primary-accent;
+}
+
 .generator .usage-link {
   font-size:.8rem;
   padding:.5rem 0;
   display:block;
+  background:$tertiary-accent;
+  width:100%;
+  color:white;
+  text-align: center;
+  cursor:pointer;
+  display:none;
 }
 
-.generator .step:last-child .next-step {
-  display:none;
+.generator .usage-link.btn.show {
+  display:block;
 }
 
 //Manifest section
@@ -397,16 +416,19 @@ $form-accent:#999999;
   color: $primary-accent;
 }
 
-.download-archive .btn {
+.download-archive .btn,
+.btn.highlighted {
   cursor: not-allowed;
   background-color: $secondary-accent - 90;
 }
 
-.download-archive .btn:hover {
+.download-archive .btn:hover,
+.generator-start .btn:hover {
   color: #fff;
 }
 
-.download-archive .btn.isEnabled {
+.download-archive .btn.isEnabled,
+.generator-start .btn {
   cursor: pointer;
   background-color: $secondary-accent;
 }

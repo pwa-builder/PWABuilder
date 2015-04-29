@@ -80,11 +80,18 @@
 	.aboutfp h4 {
    		line-height: 2rem;
 	}
+	.more-info {
+		padding-bottom: 0;
+	}
 	.more-info .copy {
 		margin-bottom: 1rem;
 	}
-	.more-info button {
+	.more-info .l-box {
 		margin-bottom: 2rem;
+	}
+	.more-info button, .more-info .btn {
+		display: inline-block;
+		margin-bottom: 1rem;
 	}
 	.whoisusingmjs .sitelogo_yummly, .whoisusingmjs .sitelogo_22tracks, .whoisusingmjs .sitelogo_boostmedia, .whoisusingmjs .sitelogo_nickelodeon {
 		display: block;
@@ -157,6 +164,17 @@
     	font-size: .875rem;
     	line-height: 1.375rem;
 	}
+	.more-info {
+		padding: 2rem;
+	}
+	.more-info h4 {
+		font-size: 1.25rem;
+		line-height: 1.5rem;
+	}
+	.more-info .copy {
+		font-size: .85rem;
+		line-height: 1.25rem;
+	}
 }
 
 /* 850px to 899px */
@@ -197,6 +215,10 @@
 	.side-nav-block li {
     	font-size: .875rem;
     	line-height: 1.375rem;
+	}
+	.more-info h4 {
+		font-size: 1.375rem;
+		line-height: 1.75rem;
 	}
 }
 
@@ -239,6 +261,10 @@
     	font-size: .875rem;
     	line-height: 1.375rem;
 	}
+	.more-info h4 {
+		font-size: 1.5rem;
+		line-height: 1.75rem;
+	}
 }
 
 /* 1000px to 1099px */
@@ -258,5 +284,8 @@
 	.header-section h2 {
 		font-size: 3.125rem;
 		line-height:1.2em;
+	}
+	.more-info h4 {
+		line-height: 1.875rem;
 	}
 }

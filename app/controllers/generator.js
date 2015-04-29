@@ -2,7 +2,21 @@
 import Ember from 'ember';
 
 export default Ember.Controller.extend({
-  step1Complete: false,
+  startReady: false,
+  startComplete: function(){
+    var startReady = this.get('startReady');
+    var manifestId = this.get('model.manifestId');
+    return startReady && manifestId;
+  }.property('startReady','model.isSaving', 'model.manifestId'),
+  formattedManifest: function () {
+    var model = this.get('model');
+    var code = model.get('manifest');
+    return new Ember.Handlebars.SafeString('<code class=\'language-javascript\'>' + JSON.stringify(code, null, 2) + '</code>');
+  }.property('model.manifest'),
+  isProcessing: function() {
+    var model = this.get('model');
+    return model.get('isBuilding') || model.get('isSaving');
+  }.property('model.isBuilding', 'model.isSaving'),
   steps: Ember.Object.create({
     step1: {
       name: 'step1',
@@ -15,14 +29,11 @@ export default Ember.Controller.extend({
     step3: {
       name: 'step3',
       isCurrent: false
-    },
-    step4: {
-      name: 'step4',
-      isCurrent: false
     }
   }),
   selectedDisplay: null,
   selectedOrientation: null,
+  buildReady: false,
   valueOrEmptyString: function (value) {
     if(value) {
       return value;
@@ -48,7 +59,6 @@ export default Ember.Controller.extend({
       };
       return data;
     });
-
     return customProps;
   }.property('model'),
   actions: {
@@ -56,16 +66,19 @@ export default Ember.Controller.extend({
       if(currentStep) {
         ga('send', 'event', 'item', 'click', 'generator-step-'+currentStep);
         this.set('steps.step'+currentStep+'.isCurrent', false);
-        if(currentStep === '1') {
-          this.set('step1Complete',true);
-          this.model.create();
-        } else {
-          this.model.save();
-        }
+        this.model.save();
       }
       if(nextStep){
         this.set('steps.step'+nextStep+'.isCurrent', true);
       }
+    },
+    startOver: function(){
+      this.set('startReady', false);
+      return true;
+    },
+    startComplete: function() {
+      this.set('startReady', true);
+      return true;
     }
   }
 });

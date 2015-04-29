@@ -19,6 +19,15 @@ export default Ember.Route.extend({
     Ember.$('footer').removeClass('is-small');
   },
   actions: {
+    startComplete: function(siteUrl, file) {
+      var model = this.modelFor('generator');
+      if(siteUrl){
+        model.set('siteUrl', siteUrl);
+        model.save();
+      } else if (file) {
+        model.upload(file);
+      }
+    },
     updateLogos: function(logos) {
       var model = this.modelFor('generator');
       model.set('manifest.icons',logos);
@@ -30,27 +39,10 @@ export default Ember.Route.extend({
       model.build();
     },
     downloadArchive: function(archiveLink){
+      var controller = this.controllerFor('generator');
+      controller.set('buildReady', true);
       ga('send', 'event', 'item', 'click', 'generator-build-download');
       window.location.href = archiveLink;
-    },
-    updateManifest: function (result) {
-      var model = this.modelFor('generator');
-      var controller = this.controllerFor('generator');
-      controller.set('step1Complete', true);
-      model.set('manifestId', result.id);
-      model.set('manifest', result.content);
-      if(result.content.display === undefined) {
-        model.set('manifest.display', 'fullscreen');
-      }
-      if(!result.content.orientation) {
-        model.set('manifest.orientation', 'any');
-      }
-
-      if(!model.get('manifest.icons')) {
-        model.set('manifest.icons',[]);
-      }
-
-      model.save();
     },
     updateModelProperty: function(name, value) {
       var model = this.modelFor('generator');
@@ -73,6 +65,9 @@ export default Ember.Route.extend({
     updateModel: function(){
       var model = this.modelFor('generator');
       model.save();
+    },
+    startOver: function(){
+      this.refresh();
     }
   }
 });
