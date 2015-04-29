@@ -322,9 +322,19 @@ $form-accent:#999999;
   color:$primary-accent;
 }
 
-.generator .usage-link {
+.generator .usage-link.btn {
   font-size:.8rem;
   padding:.5rem 0;
+  display:block;
+  background:$tertiary-accent;
+  width:100%;
+  color:white;
+  text-align: center;
+  cursor:pointer;
+  display:none;
+}
+
+.generator .usage-link.btn.show {
   display:block;
 }
 

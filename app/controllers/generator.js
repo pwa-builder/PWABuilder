@@ -23,6 +23,7 @@ export default Ember.Controller.extend({
   }),
   selectedDisplay: null,
   selectedOrientation: null,
+  buildReady: false,
   valueOrEmptyString: function (value) {
     if(value) {
       return value;
