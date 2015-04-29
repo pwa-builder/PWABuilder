@@ -18,7 +18,7 @@ export default Ember.Component.extend({
     return new Ember.Handlebars.SafeString(message);
   }.property('isBuilding'),
   triggerArchiveDownload: function() {
-    window.location.href = this.archiveLink;
+    this.sendAction('download', this.archiveLink);
   }.observes('archiveLink'),
   actions: {
     handleClick: function(){
