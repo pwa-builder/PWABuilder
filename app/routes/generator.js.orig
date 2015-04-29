@@ -38,10 +38,32 @@ export default Ember.Route.extend({
       var model = this.modelFor('generator');
       model.build();
     },
+<<<<<<< HEAD
+=======
     downloadArchive: function(archiveLink){
       ga('send', 'event', 'item', 'click', 'generator-build-download');
       window.location.href = archiveLink;
     },
+    updateManifest: function (result) {
+      var model = this.modelFor('generator');
+      var controller = this.controllerFor('generator');
+      controller.set('step1Complete', true);
+      model.set('manifestId', result.id);
+      model.set('manifest', result.content);
+      if(result.content.display === undefined) {
+        model.set('manifest.display', 'fullscreen');
+      }
+      if(!result.content.orientation) {
+        model.set('manifest.orientation', 'any');
+      }
+
+      if(!model.get('manifest.icons')) {
+        model.set('manifest.icons',[]);
+      }
+
+      model.save();
+    },
+>>>>>>> 1.0.2
     updateModelProperty: function(name, value) {
       var model = this.modelFor('generator');
       model.set('manifest.'+ name, value);

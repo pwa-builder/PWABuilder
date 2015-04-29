@@ -12,7 +12,7 @@
             {{#download-archive class="button-holder download-archive" isBuilding=model.isBuilding action="buildArchive" archiveLink=model.archiveLink}}{{/download-archive}}
             <button {{action "startOver"}}>Start Over</button>
           </p>
-          <p>{{#link-to 'usage' class="usage-link"}}Now: Learn how to distribute this package across different platforms{{/link-to}}</p>
+          <p>{{#link-to 'deploy' classNameBindings=":usage-link :btn buildReady:show"}}<strong>Now:</strong> Learn how to distribute this package across different platforms{{/link-to}}</p>
         </div>
       </div>
     {{else}}
