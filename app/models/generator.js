@@ -85,7 +85,10 @@ export default Ember.Object.extend({
     });
   },
   update: function(){
-    var self = this;
+    var self = this,
+      manifest = self.get('manifest');
+
+
     ajax({
       url: config.APP.API_URL + '/manifests/' + this.get('manifestId'),
       type: 'PUT',
