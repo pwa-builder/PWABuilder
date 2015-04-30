@@ -9,14 +9,15 @@ export default Ember.Component.extend({
     addLogo: function(){
       var self = this;
 
-      if(self.logoUrl.charAt(0) === '/'){
-        self.set('logoUrl',self.logoUrl.slice(1));
-      }
-
       var imageSrc = self.logoUrl;
 
-      if(self.logoUrl.indexOf('http') === -1){
-        imageSrc = self.baseUrl + '/' + self.logoUrl;
+      if(imageSrc.charAt(0) === '/'){
+        imageSrc = imageSrc.slice(1);
+      }
+
+
+      if(imageSrc.indexOf('http') === -1){
+        imageSrc = self.baseUrl + '/' + imageSrc;
       }
 
       ajax({
