@@ -1,4 +1,4 @@
-{{input value=logoUrl type="url" placeholder="URL for logo"}}
+{{input value=logoUrl type="url" placeholder="http://example.com/image.png or /images/example.png"}}
 <div class="button-holder">
 	<button class="add-button" {{action 'addLogo'}}>Add Icon&nbsp;&nbsp; {{fa-icon "plus"}}</button>
 </div>
@@ -15,7 +15,7 @@
 			<tbody>
 	  	{{#each logo in logos}}
 		    <tr>
-		      <td><a href="{{logo.src}}" target="_blank"><img class='icon-preview' src="{{logo.src}}" /></a></td>
+          <td><a href="{{logo.imgSrc}}" target="_blank">{{icon-display src=logo.src base=baseUrl}}</a></td>
 		      <td>{{logo.sizes}}</td>
 		      <td class="button-holder"><button {{action 'removeLogo' logo}}>{{fa-icon "times"}}</button></td>
 		    </tr>

@@ -4,13 +4,25 @@ import config from '../config/environment';
 
 export default Ember.Component.extend({
   logoUrl: '',
+  baseUrl: '',
   actions: {
     addLogo: function(){
       var self = this;
+
+      if(self.logoUrl.charAt(0) === '/'){
+        self.set('logoUrl',self.logoUrl.slice(1));
+      }
+
+      var imageSrc = self.logoUrl;
+
+      if(self.logoUrl.indexOf('http') === -1){
+        imageSrc = self.baseUrl + '/' + self.logoUrl;
+      }
+
       ajax({
         url:config.APP.API_URL+'/images',
         type: 'POST',
-        data: JSON.stringify({ image: { src: self.logoUrl }}),
+        data: JSON.stringify({ image: { src: imageSrc }}),
         dataType: 'json',
         contentType: 'application/json; charset=utf-8'
       }).then(function(result) {
