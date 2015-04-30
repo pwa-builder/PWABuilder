@@ -1,3 +1,7 @@
+:focus {
+	outline: 1px dashed $primary-accent;
+}
+
 html {
 	font-size: 1rem; //16px
 	height:100%;
