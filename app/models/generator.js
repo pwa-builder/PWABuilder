@@ -63,10 +63,10 @@ export default Ember.Object.extend({
     }
   },
   setDefaults: function(result){
-    if(result.content.display == undefined) {
+    if(result.content.display === undefined) {
       this.set('manifest.display', 'fullscreen');
     }
-    if(result.content.orientation == undefined) {
+    if(result.content.orientation === undefined) {
       this.set('manifest.orientation', 'any');
     }
   },
