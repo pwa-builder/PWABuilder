@@ -49,8 +49,6 @@ export default Ember.Object.extend({
   processResult: function(result){
     this.set('manifest', result.content);
     this.set('manifestId', result.id);
-    this.set('manifest.display', 'fullscreen');
-    this.set('manifest.orientation', 'any');
     if(!this.get('manifest.icons')) {
       this.set('manifest.icons',[]);
     }
@@ -64,6 +62,14 @@ export default Ember.Object.extend({
       this.set('errors', result.errors);
     }
   },
+  setDefaults: function(result){
+    if(result.content.display === undefined) {
+      this.set('manifest.display', 'fullscreen');
+    }
+    if(result.content.orientation === undefined) {
+      this.set('manifest.orientation', 'any');
+    }
+  },
   create: function(){
     var self = this;
     ajax({
@@ -74,6 +80,7 @@ export default Ember.Object.extend({
       contentType: 'application/json; charset=utf-8'
     }).then(function(result) {
       self.processResult(result);
+      self.setDefaults(result);
       self.set('isSaving', false);
     }).catch(function(){
       self.set('isSaving', false);
@@ -134,6 +141,7 @@ export default Ember.Object.extend({
       cache: false
     }).then(function(result) {
       self.processResult(result);
+      self.setDefaults(result);
       self.set('isSaving', false);
     }).catch(function(){
       self.set('isSaving', false);

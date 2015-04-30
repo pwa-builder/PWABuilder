@@ -31,11 +31,8 @@ export default Ember.Component.extend({
           member.member_value = JSON.parse(member_value);
         }
         catch(e){
-          if(/Unexpected token.*/.test(e.message)){
-            self.set('memberAlert','There was a problem parsing the value.  Make sure it is valid JSON (strings must be wrapped in quotes)');
-            self.set('showAlert',true);
-            return;
-          }
+          self.set('memberAlert','There was a problem parsing the value.  Make sure it is valid JSON (strings must be wrapped in quotes)');
+          self.set('showAlert',true);
         }
         members.pushObject(member);
         this.sendAction('action', 'add', member);
