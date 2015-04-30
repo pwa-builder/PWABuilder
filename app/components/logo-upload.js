@@ -13,7 +13,11 @@ export default Ember.Component.extend({
         self.set('logoUrl',self.logoUrl.slice(1));
       }
 
-      var imageSrc = self.baseUrl + '/' + self.logoUrl;
+      var imageSrc = self.logoUrl;
+
+      if(self.logoUrl.indexOf('http') === -1){
+        imageSrc = self.baseUrl + '/' + self.logoUrl;
+      }
 
       ajax({
         url:config.APP.API_URL+'/images',
