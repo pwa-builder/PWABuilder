@@ -29,15 +29,15 @@ export default Ember.Component.extend({
         member.member_name = member_name;
         try{
           member.member_value = JSON.parse(member_value);
+          members.pushObject(member);
+          self.sendAction('action', 'add', member);
+          self.set('member_name', '');
+          self.set('member_value', '');
         }
         catch(e){
           self.set('memberAlert','There was a problem parsing the value.  Make sure it is valid JSON (strings must be wrapped in quotes)');
           self.set('showAlert',true);
         }
-        members.pushObject(member);
-        this.sendAction('action', 'add', member);
-        self.set('member_name', '');
-        self.set('member_value', '');
       }
     },
     removeMember: function(member){
