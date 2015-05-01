@@ -367,6 +367,10 @@ $form-accent:#999999;
 	line-height: 1.125rem;
 }
 
+#issues_list > div {
+  outline-style:none;
+}
+
 .issues {
 	padding: .75rem 1.5rem 1.5rem 1.5rem;
 	margin: 0;
@@ -379,6 +383,8 @@ $form-accent:#999999;
 		font-size: 1.25rem;
 		margin: .75rem 0 .25rem 0;
 		color: $tertiary-accent;
+    padding-top:6.5rem;
+    margin-top:-6.5rem;
 	}
 		.issues-title span {
 			display: inline-block;

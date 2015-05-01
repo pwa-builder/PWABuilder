@@ -27,6 +27,10 @@
 	transition: all 0.25s ease-in-out;
 }
 
+.more-info button:focus, .more-info .btn:focus {
+	outline-color:$secondary-accent;
+}
+
 .more-info button:hover,  .more-info .btn:hover {
 	background-color: #fff;
 	color: $dark-accent;
