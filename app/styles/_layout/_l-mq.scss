@@ -73,10 +73,6 @@
 	    font-size: 1.75rem;
    		line-height: 2rem !important;
 	}
-	.latest-version .version {
-		font-size: 18px;
-		margin: 0 !important;
-	}
 	.aboutfp h4 {
    		line-height: 2rem;
 	}
@@ -222,6 +218,12 @@
 	}
 }
 
+@media screen and (min-width: 56.250em) {
+  .latest-version .version {
+    font-size: 22px;
+  }
+}
+
 /* 900px to 1000px */
 @media screen and (min-width: 56.250em) and (max-width: 62.438em) {
 	.l-max-width {
@@ -265,6 +267,9 @@
 		font-size: 1.5rem;
 		line-height: 1.75rem;
 	}
+  .latest-version .version {
+	  font-size: 22px;
+  }
 }
 
 /* 1000px to 1099px */
