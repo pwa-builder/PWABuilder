@@ -1,13 +1,11 @@
 .latest-version {
-	text-align: center;
 	padding: 3.125rem 3.75rem 3.75rem;
 	background-color: $secondary-accent;
+  text-align: center;
 }
 
 .latest-version .version {
-	font-size: 22px;
-	display:inline-block;
-	margin:0 1em;
+	font-size: 18px;
 }
 
 .latest-version .title {
@@ -19,6 +17,10 @@
 	color:$dark-accent;
 	text-decoration: none;
 	font-weight: bold;
+}
+
+.latest-version img {
+  vertical-align: middle;
 }
 
 .latest-version a:hover {
