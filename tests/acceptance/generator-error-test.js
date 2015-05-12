@@ -28,11 +28,6 @@ module('Acceptance: Generator Errors', {
       textStatus: 'success'
     });
 
-    defineFixture('http://testserver/manifests/123/build',{
-      errorThrown: 'There were errors',
-      jqXHR: {},
-      textStatus: 'error'
-    });
   },
 
   afterEach: function() {
@@ -41,6 +36,12 @@ module('Acceptance: Generator Errors', {
 });
 
 test('shows errors if the build fails', function(assert) {
+  defineFixture('http://testserver/manifests/123/build',{
+    errorThrown: 'There were errors',
+    jqXHR: {},
+    textStatus: 'error'
+  });
+
   visit('/generator');
   fillIn('.form-item.url > input','bing.com');
   click('.get-started');
@@ -48,5 +49,25 @@ test('shows errors if the build fails', function(assert) {
   andThen(function() {
     var errors = find(".build-errors > p");
     assert.equal(errors.text(), 'There were errors');
+  });
+});
+
+test('shows only error notification if no message is found in error', function(assert) {
+  defineFixture('http://testserver/manifests/123/build',{
+    errorThrown: '',
+    jqXHR: {},
+    textStatus: 'error'
+  });
+
+  visit('/generator');
+  fillIn('.form-item.url > input','bing.com');
+  click('.get-started');
+  click('.build');
+  andThen(function() {
+    var errors = find(".build-errors > p"),
+        errorNotification = find(".build-errors > h5");
+
+    assert.equal(errorNotification.text(),"There were some errors while trying to build your project");
+    assert.equal(errors.length,0);
   });
 });

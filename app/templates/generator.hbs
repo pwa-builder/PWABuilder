@@ -15,9 +15,11 @@
           <p>{{#link-to 'deploy' classNameBindings=":usage-link :btn model.buildReady:show"}}<strong>Now:</strong> Learn how to distribute this package across different platforms{{/link-to}}</p>
           {{#if model.buildFailed}}
             <div class="build-errors">
-              <h3>There were some errors while trying to build your project</h3>
+              <h5>There were some errors while trying to build your project</h5>
               {{#each error in model.buildErrors}}
-                <p>{{error.errorThrown}}</p>
+                {{#if error.errorThrown}}
+                  <p>{{error.errorThrown}}</p>
+                {{/if}}
               {{/each}}
             </div>
           {{/if}}
