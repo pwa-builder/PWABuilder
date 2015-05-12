@@ -7,11 +7,14 @@ export default Ember.Component.extend({
   archiveLink: '',
   initialMessage: 'Generate Package',
   buildingMessage: 'Building Package&hellip;',
+  failedMessage: 'Try Again?',
   tagName: 'span',
   linkMessage: function() {
     var message = '';
     if(this.isBuilding){
       message = this.buildingMessage;
+    } else if(this.buildFailed){
+      message = this.failedMessage;
     } else {
       message = this.initialMessage;
     }

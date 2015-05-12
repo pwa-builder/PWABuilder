@@ -9,10 +9,18 @@
       <div class="step">
         <div class="button-holder">
           <p>
-            {{#download-archive class="button-holder download-archive" isBuilding=model.isBuilding action="buildArchive" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+            {{#download-archive class="button-holder download-archive" isBuilding=model.isBuilding buildFailed=model.buildFailed action="buildArchive" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
             <button {{action "startOver"}}>Start Over</button>
           </p>
-          <p>{{#link-to 'deploy' classNameBindings=":usage-link :btn buildReady:show"}}<strong>Now:</strong> Learn how to distribute this package across different platforms{{/link-to}}</p>
+          <p>{{#link-to 'deploy' classNameBindings=":usage-link :btn model.buildReady:show"}}<strong>Now:</strong> Learn how to distribute this package across different platforms{{/link-to}}</p>
+          {{#if model.buildFailed}}
+            <div class="build-errors">
+              <h3>There were some errors while trying to build your project</h3>
+              {{#each error in model.buildErrors}}
+                <p>{{error.errorThrown}}</p>
+              {{/each}}
+            </div>
+          {{/if}}
         </div>
       </div>
     {{else}}

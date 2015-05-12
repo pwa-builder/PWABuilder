@@ -1,4 +1,4 @@
-<button {{bind-attr class=":btn isEnabled:isEnabled"}} {{action "handleClick"}}>
+<button class="btn build {{if isEnabled 'isEnabled'}}" {{action "handleClick"}}>
   {{linkMessage}}
   {{#if isBuilding}}{{fa-icon "circle-o-notch fa-spin"}}{{/if}}
   {{#if isNotBuilding}}{{fa-icon "download"}}{{/if}}
