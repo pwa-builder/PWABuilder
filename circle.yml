@@ -10,7 +10,7 @@ dependencies:
     - bower install
 test:
   override:
-    - echo "No Test"
+    - echo "No Tests"
 deployment:
   staging:
     branch: 1.0.3

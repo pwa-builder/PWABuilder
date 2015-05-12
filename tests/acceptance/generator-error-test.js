@@ -42,6 +42,7 @@ test('shows errors if the build fails', function(assert) {
     textStatus: 'error'
   });
 
+  visit('/');
   visit('/generator');
   fillIn('.form-item.url > input','bing.com');
   click('.get-started');
@@ -59,6 +60,7 @@ test('shows only error notification if no message is found in error', function(a
     textStatus: 'error'
   });
 
+  visit('/');
   visit('/generator');
   fillIn('.form-item.url > input','bing.com');
   click('.get-started');
@@ -66,6 +68,14 @@ test('shows only error notification if no message is found in error', function(a
   andThen(function() {
     var errors = find(".build-errors > p"),
         errorNotification = find(".build-errors > h5");
+
+    if(errors.length > 0){
+      if(errors.type === 'object'){
+        console.log('Errors',errors.text());
+      }else{
+        console.log('Errors',errors[0].innerHTML);
+      }
+    }
 
     assert.equal(errorNotification.text(),"There were some errors while trying to build your project");
     assert.equal(errors.length,0);
