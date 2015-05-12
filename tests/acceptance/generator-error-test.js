@@ -37,7 +37,7 @@ module('Acceptance: Generator Errors', {
 
 test('shows errors if the build fails', function(assert) {
   defineFixture('http://testserver/manifests/123/build',{
-    errorThrown: 'There were errors',
+    errorThrown: 'There were errors!!!',
     jqXHR: {},
     textStatus: 'error'
   });
@@ -49,7 +49,7 @@ test('shows errors if the build fails', function(assert) {
   click('.build');
   andThen(function() {
     var errors = find(".build-errors > p");
-    assert.equal(errors.text(), 'There were errors');
+    assert.equal(errors.text(), 'There were errors!!!');
   });
 });
 

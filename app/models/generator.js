@@ -117,6 +117,7 @@ export default Ember.Object.extend({
     var self = this;
     this.set('isBuilding', true);
     this.set('buildFailed',false);
+    this.buildErrors.clear();
     ajax({
       url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/build',
       type: 'POST'
