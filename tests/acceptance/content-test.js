@@ -5,15 +5,17 @@ import {
 } from 'qunit';
 import startApp from 'manifoldjs-site/tests/helpers/start-app';
 
-var application;
+var App;
 
 module('Acceptance: Content', {
   beforeEach: function() {
-    application = startApp();
+    App = startApp();
+    var mockGa = function(){};
+    App.register('ga:main',mockGa,{ instantiate: false });
   },
 
   afterEach: function() {
-    Ember.run(application, 'destroy');
+    Ember.run(App, 'destroy');
   }
 });
 
@@ -22,6 +24,6 @@ test('visiting home', function(assert) {
 
   andThen(function() {
     var navs = find("nav > ul > li");
-    assert.equal(navs.length, 6);
+    assert.equal(navs.length, 5);
   });
 });

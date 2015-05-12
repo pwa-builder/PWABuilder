@@ -33,7 +33,6 @@ export default Ember.Controller.extend({
   }),
   selectedDisplay: null,
   selectedOrientation: null,
-  buildReady: false,
   valueOrEmptyString: function (value) {
     if(value) {
       return value;
@@ -64,7 +63,7 @@ export default Ember.Controller.extend({
   actions: {
     updateStep: function(currentStep, nextStep) {
       if(currentStep) {
-        ga('send', 'event', 'item', 'click', 'generator-step-'+currentStep);
+        this.ga('send', 'event', 'item', 'click', 'generator-step-'+currentStep);
         this.set('steps.step'+currentStep+'.isCurrent', false);
         this.model.save();
       }
