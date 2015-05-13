@@ -6,7 +6,9 @@ import config from '../config/environment';
 export default Ember.Object.extend({
   archiveLink: '',
   isBuilding: false,
+  buildFailed: false,
   isSaving: false,
+  buildReady: false,
   manifestId: null,
   siteUrl: '',
   manifest: Ember.Object.create(),
@@ -14,6 +16,7 @@ export default Ember.Object.extend({
   warnings: Ember.A(),
   errors: Ember.A(),
   members: Ember.A(),
+  buildErrors: Ember.A(),
   errorsTotal: function(){
     return _.sum(this.errors, function(n){
       return n.issues.length;
@@ -113,14 +116,23 @@ export default Ember.Object.extend({
   build: function(){
     var self = this;
     this.set('isBuilding', true);
+    this.set('buildFailed',false);
+    this.buildErrors.clear();
     ajax({
       url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/build',
       type: 'POST'
     }).then(function(result){
       self.set('archiveLink', result.archive);
       self.set('isBuilding', false);
-    }).catch(function(){
+      self.set('buildFailed',false);
+      self.buildErrors.clear();
+    }).catch(function(err){
       self.set('isBuilding', false);
+      self.set('buildFailed', true);
+      self.set('buildReady',false);
+      if(err.jqXHR.responseJSON){
+        self.buildErrors.addObject(err.jqXHR.responseJSON.error);
+      }
     });
   },
   generateFormData: function(file) {

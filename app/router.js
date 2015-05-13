@@ -5,6 +5,16 @@ var Router = Ember.Router.extend({
   location: config.locationType
 });
 
+Ember.Router.reopen({
+  notifyGoogleAnalytics: function() {
+    if (!this.ga) { return; }
+    return this.ga('send', 'pageview', {
+        'page': this.get('url'),
+        'title': this.get('url')
+      });
+  }.on('didTransition')
+});
+
 export default Router.map(function() {
     this.resource('generator', function () {
       this.route('step1');

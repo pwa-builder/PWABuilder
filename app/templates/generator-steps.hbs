@@ -7,7 +7,7 @@
   </div>
   <div class="form-item">
     <label>Short Name</label>
-    {{input value=model.manifest.short_name focus-out="updateModel"}}
+    {{input name="short_name" value=model.manifest.short_name focus-out="updateModel"}}
   </div>
   <div class="form-item logo-upload">
     <label>Icon Url</label>
@@ -30,50 +30,10 @@
     {{generator-select content=model.orientation.names modelProperty="manifest.orientation" value=model.manifest.orientation}}
   </div>
   {{/generator-step}}
-  {{#generator-step step="2" nextStep="3" stepTitle="Custom Values" data=model action="updateStep"isShowingBody=steps.step2.isCurrent }}
+  {{#generator-step step="2" showNextStep=false stepTitle="Custom Values" data=model action="updateStep"isShowingBody=steps.step2.isCurrent }}
   <p class="instructions">Specify custom members to be added to the manifest.</p>
   <div class="form-item">
     {{#member-list action="manageMember" members=customMembers}}{{/member-list}}
-  </div>
-  {{/generator-step}}
-  {{#generator-step step="3" stepTitle="App Store Details" data=model action="updateStep" isShowingBody=steps.step3.isCurrent showNextStep=false}}
-  <p class="instructions">We need a bit more info to get your apps ready for the different stores. If you provide us with the details below, we’ll make sure your projects are ready for each of the stores.</p>
-  <div class="form-item">
-    <label>Description</label>
-    {{input name="description" value=model.manifest.description focus-out="updateModel"}}
-    {{fa-icon "windows"}}
-    {{fa-icon "mobile-phone"}}
-    {{fa-icon "android"}}
-  </div>
-  <div class="form-item">
-    <label>Version</label>
-    {{input name="version" value=model.manifest.version focus-out="updateModel"}}
-    {{fa-icon "windows"}}
-    {{fa-icon "mobile-phone"}}
-    {{fa-icon "android"}}
-    {{fa-icon "apple"}}
-  </div>
-  <div class="form-item">
-    <label>Version Code</label>
-    {{input name="version_code" value=model.manifest.version_code focus-out="updateModel"}}
-    {{fa-icon "android"}}
-  </div>
-  <div class="form-item">
-    <label>Build</label>
-    {{input name="build" value=model.manifest.build focus-out="updateModel"}}
-    {{fa-icon "apple"}}
-  </div>
-  <div class="form-item">
-    <label>Publisher Display Name</label>
-    {{input name="publisher_display_name" value=model.manifest.publishername focus-out="updateModel"}}
-    {{fa-icon "windows"}}
-    {{fa-icon "mobile-phone"}}
-    {{fa-icon "apple"}}
-  </div>
-  <div class="form-item">
-    <label>Organization Identifier</label>
-    {{input name="organization_identifier" value=model.manifest.organizationid focus-out="updateModel"}}
-    {{fa-icon "apple"}}
   </div>
   {{/generator-step}}
 </ol>

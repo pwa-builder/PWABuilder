@@ -5,7 +5,7 @@ export default Ember.View.extend({
 	didInsertElement:function(){
 		//Analytics Event Tracking
 		Ember.$(document).on('click','.event',function(){
-			ga('send', 'event', 'item', 'click', Ember.$(this).data('eventname'));
+			this.ga('send', 'event', 'item', 'click', Ember.$(this).data('eventname'));
 		});
 	}
 });

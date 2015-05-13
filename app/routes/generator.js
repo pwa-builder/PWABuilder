@@ -34,14 +34,14 @@ export default Ember.Route.extend({
       model.save();
     },
     buildArchive: function(){
-      ga('send', 'event', 'item', 'click', 'generator-build-trigger');
+      this.ga('send', 'event', 'item', 'click', 'generator-build-trigger');
       var model = this.modelFor('generator');
       model.build();
     },
     downloadArchive: function(archiveLink){
-      var controller = this.controllerFor('generator');
-      controller.set('buildReady', true);
-      ga('send', 'event', 'item', 'click', 'generator-build-download');
+      var model = this.modelFor('generator');
+      model.set('buildReady',true);
+      this.ga('send', 'event', 'item', 'click', 'generator-build-download');
       window.location.href = archiveLink;
     },
     updateModelProperty: function(name, value) {

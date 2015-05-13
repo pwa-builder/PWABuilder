@@ -10,10 +10,10 @@ dependencies:
     - bower install
 test:
   override:
-    - echo "No Test"
+    - ember test -p 4200
 deployment:
   staging:
-    branch: 1.0.3
+    branch: 1.0.4
     commands:
       - ./build/push_staging.sh
   production:

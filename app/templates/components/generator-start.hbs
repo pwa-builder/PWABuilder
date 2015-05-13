@@ -18,7 +18,7 @@
     </div>
   </div>
   <div class="button-holder">
-    <button {{bind-attr class=":btn :isEnabled :next-step"}} {{action "startComplete"}}>
+    <button {{bind-attr class=":get-started :btn :isEnabled :next-step"}} {{action "startComplete"}}>
       Get Started {{#if isSaving}}{{fa-icon "circle-o-notch fa-spin"}}{{/if}}
     </button>
   </div>
