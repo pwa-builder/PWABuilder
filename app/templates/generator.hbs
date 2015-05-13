@@ -17,8 +17,8 @@
             <div class="build-errors">
               <h5>There were some errors while trying to build your project</h5>
               {{#each error in model.buildErrors}}
-                {{#if error.errorThrown}}
-                  <p>{{error.errorThrown}}</p>
+                {{#if error}}
+                  <p>{{error}}</p>
                 {{/if}}
               {{/each}}
             </div>
