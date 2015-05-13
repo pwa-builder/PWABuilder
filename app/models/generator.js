@@ -130,7 +130,7 @@ export default Ember.Object.extend({
       self.set('isBuilding', false);
       self.set('buildFailed', true);
       self.set('buildReady',false);
-      self.buildErrors.addObject(err);
+      self.buildErrors.addObject(err.jqXHR.responseJSON.error);
     });
   },
   generateFormData: function(file) {
