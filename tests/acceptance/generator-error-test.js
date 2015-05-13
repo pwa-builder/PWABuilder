@@ -37,8 +37,10 @@ module('Acceptance: Generator Errors', {
 
 test('shows errors if the build fails', function(assert) {
   defineFixture('http://testserver/manifests/123/build',{
-    errorThrown: 'There were errors!!!',
-    jqXHR: {},
+    errorThrown: 'Internal Server Error',
+    jqXHR: {
+      responseJSON: { error: 'There were errors!!!' }
+    },
     textStatus: 'error'
   });
 
@@ -55,8 +57,9 @@ test('shows errors if the build fails', function(assert) {
 
 test('shows only error notification if no message is found in error', function(assert) {
   defineFixture('http://testserver/manifests/123/build',{
-    errorThrown: '',
-    jqXHR: {},
+    errorThrown: 'Internal Server Error',
+    jqXHR: {
+    },
     textStatus: 'error'
   });
 
