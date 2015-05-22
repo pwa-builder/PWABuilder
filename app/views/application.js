@@ -4,8 +4,9 @@ export default Ember.View.extend({
 	classNames:['application'],
 	didInsertElement:function(){
 		//Analytics Event Tracking
+    var self = this;
 		Ember.$(document).on('click','.event',function(){
-			this.ga('send', 'event', 'item', 'click', Ember.$(this).data('eventname'));
+			self.ga('send', 'event', 'item', 'click', Ember.$(this).data('eventname'));
 		});
 	}
 });
