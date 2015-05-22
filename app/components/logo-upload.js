@@ -5,6 +5,15 @@ import config from '../config/environment';
 export default Ember.Component.extend({
   logoUrl: '',
   baseUrl: '',
+  imageAlert: '',
+  showAlert: false,
+  isAddDisabled: function(){
+    if(this.get('logoUrl') === ''){
+      return true;
+    } else {
+      return false;
+    }
+  }.property('logoUrl'),
   actions: {
     addLogo: function(){
       var self = this;
@@ -14,7 +23,6 @@ export default Ember.Component.extend({
       if(imageSrc.charAt(0) === '/'){
         imageSrc = imageSrc.slice(1);
       }
-
 
       if(imageSrc.indexOf('http') === -1){
         imageSrc = self.baseUrl + '/' + imageSrc;
@@ -30,9 +38,13 @@ export default Ember.Component.extend({
         self.logos.pushObject({ src: self.logoUrl, sizes: result.meta.width +'x'+result.meta.height });
         self.set('logoUrl','');
         self.sendAction('action',self.logos);
+        self.set('imageAlert', '');
+        self.set('showAlert', false);
       }).catch(function(){
-        self.set('logoUrl','');
+        self.set('imageAlert','Please ensure you\'re using a relative or absolute path to an existing image.');
+        self.set('showAlert',true);
       });
+
     },
     removeLogo: function(logo){
       this.logos.removeObject(logo);

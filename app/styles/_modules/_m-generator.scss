@@ -237,6 +237,10 @@ $form-accent:#999999;
 	margin-top:.5rem;
 }
 
+.generator input:-ms-input-placeholder {
+  color: lighten( #000, 70% );
+}
+
 /* Generator step list custom numbering */
 
 .generator-step-list {
