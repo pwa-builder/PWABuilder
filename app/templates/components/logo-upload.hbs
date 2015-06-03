@@ -1,6 +1,7 @@
 {{input value=logoUrl type="url" placeholder="http://example.com/image.png or /images/example.png"}}
 <div class="button-holder">
-	<button class="add-button" {{action 'addLogo'}}>Add Icon&nbsp;&nbsp; {{fa-icon "plus"}}</button>
+  <button class="add-button" {{action 'addLogo'}} {{bind-attr disabled="isAddDisabled"}}>{{hasLogoUrl}} Add Icon&nbsp;&nbsp; {{fa-icon "plus"}}</button>
+  {{#if showAlert}}<p class="instructions alert clearfix"><i class="fa fa-exclamation"></i> {{imageAlert}}</p>{{/if}}
 </div>
 <div class="logos">
 	{{#if logos}}
