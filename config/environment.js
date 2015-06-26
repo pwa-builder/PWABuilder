@@ -52,7 +52,7 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-    ENV.APP.API_URL='http://manifold-api-prod.azurewebsites.net';
+    ENV.APP.API_URL='http://manifold-api-prod2.azurewebsites.net';
   }
 
   return ENV;
