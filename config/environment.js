@@ -47,10 +47,6 @@ module.exports = function(environment) {
     ENV.APP.API_URL='http://testserver';
   }
 
-  if (environment === 'staging') {
-    ENV.APP.API_URL='http://manifold-api-staging.azurewebsites.net';
-  }
-
   if (environment === 'preproduction') {
     ENV.APP.API_URL='http://manifold-api-pre.azurewebsites.net';
   }
