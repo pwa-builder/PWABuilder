@@ -19,12 +19,22 @@
 		<p><div class="shell">
 			<p class="line">
 				<span class="prompt">$</span>
-				<span class="app">manifoldjs &lt;website-url&gt; [-d &lt;app-directory&gt;] [-s &lt;short-name&gt;] [-p &lt;platforms&gt;] [-l &lt;log-level&gt;]<br />[-b] [-m &lt;manifest-file&gt;]</span>
+				<span class="command">manifoldjs </span>
+				<span class="app">&lt;website-url&gt; [options]</span>
 			</p>
 		</div></p>
+		<p>-or-</p>
+		<p><div class="shell">
+			<p class="line">
+				<span class="prompt">$</span>
+				<span class="command">manifoldjs </span>
+				<span class="app">&lt;command&gt; </span>
+			</p>
+		</div></p>		
+		
 
 		<h5>Parameters</h5>
-		<table>
+		<!--table>
 			<tr>
 				<th>Parameter</th>
 				<th>Description</th>
@@ -57,16 +67,92 @@
 				<td>-b|--build</td>
 				<td><strong>(optional)</strong> Forces the building process</td>
 			</tr>
-		</table>
+		</table -->
+		<table><thead>
+<tr>
+<th><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Parameter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>website-url</code></td>
+<td>URL of the hosted website. This parameter is not required if a manifest location is specified with the <em>-m</em> option</td>
+</tr>
+<tr>
+<td><code>-d, --directory</code></td>
+<td><strong>(optional)</strong> Path to the generated project files (default value: current directory)</td>
+</tr>
+<tr>
+<td><code>-s, --shortname</code></td>
+<td><strong>(optional)</strong> Application short name. When specified, it overrides the short_name value of the manifest</td>
+</tr>
+<tr>
+<td><code>-l, --loglevel</code></td>
+<td><strong>(optional)</strong> Tracing log level options. Available log levels: <em>debug,info,warn,error</em> (default value: <em>warn</em>)</td>
+</tr>
+<tr>
+<td><code>-p, --platforms</code></td>
+<td><strong>(optional)</strong> Platforms to generate. Supported platforms: <em>windows,windows10,android,ios,chrome,web,firefox</em> (default value: all platforms)</td>
+</tr>
+<tr>
+<td><code>-b, --build</code></td>
+<td><strong>(optional)</strong> Forces the building process</td>
+</tr>
+<tr>
+<td><code>-m, --manifest</code></td>
+<td><strong>(optional)</strong> Location of the W3C Web App manifest file (URL or local path). If not specified, the tool looks for a manifest in the site URL. Otherwise, a new manifest will be created pointing to the site URL.</td>
+</tr>
+<tr>
+<td><code>-c, --crosswalk</code></td>
+<td><strong>(optional)</strong> Enable Crosswalk for Android. Crosswalk is a web runtime that can be used to replace the stock WebView used by Android Cordova apps. Crosswalk is based on Google Chromium with Cordova API support and has better HTML5 feature support compared to the default WebView available in Android.</td>
+</tr>
+<tr>
+<td><code>-w, --webAppToolkit</code></td>
+<td><strong>(optional)</strong> Adds the <a href="https://github.com/manifoldjs/Web-App-ToolKit">Web App Toolkit</a> cordova plugin. The Web App Toolkit is a plugin for creating Windows, Android and iOS apps based on existing web content. It depends on the Hosted Web App Plugin. Used in the right way, it can facilitate the creation of compelling extensions to your web content for users across platforms.</td>
+</tr>
+</tbody></table>
+
+		<h5>Commands</h5>
+		
+		
+		<table><thead>
+<tr>
+<th><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>run &lt;platform&gt;</code></td>
+<td>Launches the app of the specified platform. Currently, only <em>android</em> and <em>windows</em> platforms are supported by this command</td>
+</tr>
+<tr>
+<td><code>visualstudio</code></td>
+<td>(for Windows only) Opens the project file of the generated Windows 8.1 / Windows 10 app in Visual Studio</td>
+</tr>
+<tr>
+<td><code>package &lt;content-directory&gt; &lt;output-package-path&gt;</code></td>
+<td>Creates an APPX package for uploading the Windows 10 app to the Store, where <em>&lt;content-directory&gt;</em> is the folder that contains the app contents, including the <strong>appmanifest.xml</strong> file and the app's icons, and <em>&lt;output-package-path&gt;</em> is the path to the APPX file to be generated</td>
+</tr>
+</tbody></table>
+
 
         <h5>Example</h5>
+		<h4>Creating a new hosted web application</h4>
         <p><div class="shell">
 			<p class="line">
 				<span class="prompt">$</span>
-				<span class="app">manifoldjs http://meteorite.azurewebsites.net -d C:\Projects -l info -p windows,android -b</span>
+				<span class="command">manifoldjs </span>
+				<span class="app">http://meteorite.azurewebsites.net -d C:\Projects -l info -p windows,android -b</span>
 			</p>
 		</div></p>
-
+		<h4>Packaging a Windows 10 app for submission to the Store</h4>
+        <p><div class="shell">
+			<p class="line">
+				<span class="prompt">$</span>
+				<span class="command">manifoldjs </span>
+				<span class="app">package /myapp/windows10/manifest /yourapp/yourapp.appx -l debug</span>
+			</p>
+		</div></p>
         <hr />
 
         <h3 id="unittests">Unit Tests</h3>
