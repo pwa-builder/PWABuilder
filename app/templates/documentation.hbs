@@ -103,6 +103,10 @@
 <td><strong>(optional)</strong> Location of the W3C Web App manifest file (URL or local path). If not specified, the tool looks for a manifest in the site URL. Otherwise, a new manifest will be created pointing to the site URL.</td>
 </tr>
 <tr>
+<td><code>-f, --forceManifestFormat</code></td>
+<td><strong>(optional)</strong> Allows to specify the manifest format and skip the automatic detection. Can be used when the manifest contains additional, non-standard members.</td>
+</tr>
+<tr>
 <td><code>-c, --crosswalk</code></td>
 <td><strong>(optional)</strong> Enable Crosswalk for Android. Crosswalk is a web runtime that can be used to replace the stock WebView used by Android Cordova apps. Crosswalk is based on Google Chromium with Cordova API support and has better HTML5 feature support compared to the default WebView available in Android.</td>
 </tr>
@@ -123,15 +127,15 @@
 </thead><tbody>
 <tr>
 <td><code>run &lt;platform&gt;</code></td>
-<td>Launches the app of the specified platform. Currently, only <em>android</em> and <em>windows</em> platforms are supported by this command</td>
+<td>Launches the app of the specified platform. Currently, <em>android</em>, <em>ios</em>, <em>windows</em> and <em>windows10</em> platforms are supported by this command</td>
 </tr>
 <tr>
-<td><code>visualstudio</code></td>
+<td><code>open</code></td>
 <td>(for Windows only) Opens the project file of the generated Windows 8.1 / Windows 10 app in Visual Studio</td>
 </tr>
 <tr>
-<td><code>package &lt;content-directory&gt; &lt;output-package-path&gt;</code></td>
-<td>Creates an APPX package for uploading the Windows 10 app to the Store, where <em>&lt;content-directory&gt;</em> is the folder that contains the app contents, including the <strong>appmanifest.xml</strong> file and the app's icons, and <em>&lt;output-package-path&gt;</em> is the path to the APPX file to be generated</td>
+<td><code>package [-p &lt;platform-list&gt;]</code></td>
+<td>Creates a package for supported platforms (windows10, android, iOS) for uploading to the Store, where <em>-p &lt;platform-list&gt;</em> is an optional parameter to specificy the platforms to be packaged. In some cases, like Windows 10, data must be pulled from the store and updated in the manifest before it can be packaged and uploaded.</td>
 </tr>
 </tbody></table>
 
@@ -142,7 +146,7 @@
 			<p class="line">
 				<span class="prompt">$</span>
 				<span class="command">manifoldjs </span>
-				<span class="app">http://meteorite.azurewebsites.net -d C:\Projects -l info -p windows,android -b</span>
+				<span class="app">http://meteorite.azurewebsites.net -d /projects -p windows10,android -l info</span>
 			</p>
 		</div></p>
 		<h4>Running a Windows 10 app locally</h4>
@@ -162,7 +166,7 @@
 			<p class="line">
 				<span class="prompt">$</span>
 				<span class="command">manifoldjs </span>
-				<span class="app">package /myapp/windows10/manifest /yourapp/yourapp.appx -l debug</span>
+				<span class="app">package -p windows10 -l info</span>
 			</p>
 		</div></p>
         <hr />
@@ -189,11 +193,11 @@
         <h3 id="inputmanifests">Supported Input Manifests</h3>
         <ul>
 			<li><a href="http://www.w3.org/TR/appmanifest/" target="_blank">W3C Web App</a></li>
+			<li><a href="https://developers.google.com/chrome/apps/docs/developers_guide" target="_blank">Chrome Hosted Apps</a></li>
         </ul>
         <p class="nom">We plan to support the following manifest files in the future:</p>
         <ul>
 			<li><a href="http://wat-docs.azurewebsites.net/JsonWindows" target="_blank">Web App Template</a></li>
-			<li><a href="https://developers.google.com/chrome/apps/docs/developers_guide" target="_blank">Chrome Hosted Apps</a></li>
 			<li><a href="https://developer.mozilla.org/Apps/Build/Manifest" target="_blank">Firefox Open Web Apps</a></li>
 		</ul>
       </div>
