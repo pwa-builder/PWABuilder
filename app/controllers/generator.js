@@ -24,7 +24,7 @@ export default Ember.Controller.extend({
     },
     step2: {
       name: 'step2',
-      isCurrent: false
+      isCurrent: true
     },
     step3: {
       name: 'step3',

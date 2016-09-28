@@ -30,7 +30,16 @@
     {{generator-select content=model.orientation.names modelProperty="manifest.orientation" value=model.manifest.orientation}}
   </div>
   {{/generator-step}}
-  {{#generator-step step="2" showNextStep=false stepTitle="Custom Values" data=model action="updateStep"isShowingBody=steps.step2.isCurrent }}
+  {{#generator-step step="2" nextStep="3" stepTitle="Platforms" isShowingBody=steps.step2.isCurrent data=model action="updateStep" }}
+  <p class="instructions">Select the platforms to generate.</p>
+  {{#each platform in model.platforms}}
+  <div class="form-item checkbox">
+    <label>{{platform.name}}</label>
+    {{input type="checkbox" checked=platform.isSelected focus-out="updateModel" }}     
+  </div>
+  {{/each}}
+  {{/generator-step}}
+  {{#generator-step step="3" showNextStep=false stepTitle="Custom Values" isShowingBody=steps.step3.isCurrent data=model action="updateStep" }}
   <p class="instructions">Specify custom members to be added to the manifest.</p>
   <div class="form-item">
     {{#member-list action="manageMember" members=customMembers}}{{/member-list}}
