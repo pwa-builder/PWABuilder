@@ -73,6 +73,16 @@ export default Ember.Controller.extend({
     },
     startOver: function(){
       this.set('startReady', false);
+      
+      this.set('steps.step1.isCurrent', true);
+      this.set('steps.step2.isCurrent', true);
+      this.set('steps.step3.isCurrent', false);
+      
+      var model = this.get('model');
+      model.get('platforms').forEach(function(item) {
+        item.isSelected = true;
+      });
+
       return true;
     },
     startComplete: function() {
