@@ -148,6 +148,13 @@ $form-accent:#999999;
 
 .generator .form-item.checkbox {
   margin-bottom: 0;
+  float: left;
+  width: 50%;
+  clear: none;
+}
+
+.generator .form-item.checkbox label {
+  width: 50%;
 }
 
 .generator input:not([type=checkbox]) {
