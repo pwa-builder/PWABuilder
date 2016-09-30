@@ -5,6 +5,8 @@ export default Ember.Component.extend({
   nextStep: null,
   isShowingBody: false,
   showNextStep: true,
+  showCustomButton: false,
+  customButtonText: "",
   allowToggle: true,
   tagName: 'li',
   classNames: ['step'],
@@ -31,6 +33,9 @@ export default Ember.Component.extend({
       this.toggleProperty('isShowingBody');
       this.sendAction('action', currentStep, nextStep);
       return true; // keep bubbling
+    }, 
+    customAction: function() {
+      this.sendAction('customAction');
     }
   }
 });

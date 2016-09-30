@@ -30,7 +30,7 @@
     {{generator-select content=model.orientation.names modelProperty="manifest.orientation" value=model.manifest.orientation}}
   </div>
   {{/generator-step}}
-  {{#generator-step step="2" nextStep="3" stepTitle="Platforms" isShowingBody=steps.step2.isCurrent data=model action="updateStep" }}
+  {{#generator-step step="2" nextStep="3" stepTitle="Platforms" showCustomButton=true customButtonText="Select/Clear All" isShowingBody=steps.step2.isCurrent data=model action="updateStep" customAction="updateSelection" }}
   <p class="instructions">Select the platforms to generate.</p>
   {{#each platform in model.platforms}}
   <div class="form-item checkbox">

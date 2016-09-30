@@ -80,14 +80,28 @@ export default Ember.Controller.extend({
       
       var model = this.get('model');
       model.get('platforms').forEach(function(item) {
-        item.isSelected = true;
+        Ember.set(item, 'isSelected', true);
       });
+      model.save();
 
       return true;
     },
     startComplete: function() {
       this.set('startReady', true);
       return true;
+    },
+    updateSelection: function() {
+      var allSelected = true;
+      var model = this.get('model');
+      model.get('platforms').forEach(function(item) {
+        if (!item.isSelected) {
+          allSelected = false;
+        }
+      });
+      model.get('platforms').forEach(function(item) {
+        Ember.set(item, 'isSelected', !allSelected);
+      });
+      model.save();
     }
   }
 });
