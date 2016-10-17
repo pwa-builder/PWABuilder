@@ -22,7 +22,6 @@ export default Router.map(function() {
     }); //Generator page
     this.route('deploy');
     this.route('about');
-    this.route('imagegenerator');
     this.route('style-guide');
     this.route('license');
 });
