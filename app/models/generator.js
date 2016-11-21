@@ -17,8 +17,6 @@ export default Ember.Object.extend({
     { name: 'windows', isSelected: true },
     { name: 'android', isSelected: true },
     { name: 'ios', isSelected: true },
-    { name: 'chrome', isSelected: true },
-    { name: 'firefox', isSelected: true },
     { name: 'web', isSelected: true }
   ],
   suggestions: Ember.A(),
