@@ -1,0 +1,6 @@
+<button class="btn build {{if isEnabled 'isEnabled'}}" {{action "handleClick"}}>
+  {{linkMessage}}
+  {{#if isBuilding}}{{fa-icon "circle-o-notch fa-spin"}}{{/if}}
+  {{#if isNotBuilding}}{{fa-icon "globe"}}{{/if}}
+</button>
+{{yield}}

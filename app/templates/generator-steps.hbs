@@ -1,5 +1,5 @@
 <ol class="generator-step-list">
-  {{#generator-step step="1" nextStep="2" stepTitle="Site Data" isShowingBody=steps.step1.isCurrent data=model action="updateStep"}}
+  {{#generator-step step="1" nextStep="2" stepTitle="Create Your Manifest" isShowingBody=steps.step1.isCurrent data=model action="updateStep"}}
   <p class="instructions">Here are the values we picked up from your site. Update or add any details below.</p>
   <div class="form-item">
     <label>Name</label>
@@ -30,19 +30,29 @@
     {{generator-select content=model.orientation.names modelProperty="manifest.orientation" value=model.manifest.orientation}}
   </div>
   {{/generator-step}}
-  {{#generator-step step="2" nextStep="3" stepTitle="Platforms" showCustomButton=true customButtonText="Select/Clear All" isShowingBody=steps.step2.isCurrent data=model action="updateStep" customAction="updateSelection" }}
-  <p class="instructions">Select the platforms to generate.</p>
-  {{#each platform in model.platforms}}
-  <div class="form-item checkbox">
-    <label>{{platform.name}}</label>
-    {{input type="checkbox" checked=platform.isSelected focus-out="updateModel" }}     
-  </div>
-  {{/each}}
+  {{#generator-step step="2" nextStep="3" stepTitle="Deploy Your Service Worker" isShowingBody=steps.step2.isCurrent data=model action="updateStep" }}
+  <p class="instructions">Select the service workers for your app.</p>
   {{/generator-step}}
-  {{#generator-step step="3" showNextStep=false stepTitle="Custom Values" isShowingBody=steps.step3.isCurrent data=model action="updateStep" }}
+  {{#generator-step step="3" nextStep="4" stepTitle="Custom Values" isShowingBody=steps.step3.isCurrent data=model action="updateStep" }}
   <p class="instructions">Specify custom members to be added to the manifest.</p>
   <div class="form-item">
     {{#member-list action="manageMember" members=customMembers}}{{/member-list}}
   </div>
+  {{/generator-step}}
+  {{#generator-step step="4" showNextStep=false stepTitle="Publish" isShowingBody=steps.step4.isCurrent data=model action="updateStep" }}
+  <p class="instructions">Generate the packages for your preferred platform.</p>
+  <p>
+     <span>Web</span>
+     {{#download-archive class="button-holder download-archive" initialMessage="Download files for your website" isBuilding=model.isBuilding buildFailed=model.buildFailed action="buildArchive" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+  </p>
+  <p>
+     <span>Windows 10</span>
+     {{#publish-package class="button-holder download-archive" initialMessage="Publish package" isBuilding=model.isBuilding buildFailed=model.buildFailed action="publishPackage" }}{{/publish-package}}
+     {{#download-archive class="button-holder download-archive" initialMessage="Download package for self-publishing" isBuilding=model.isBuilding buildFailed=model.buildFailed action="buildArchive" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+  </p>
+  <p>
+     <span>Polyfills (Windows, Android, iOS)</span>
+     {{#download-archive class="button-holder download-archive" initialMessage="Download packages for self-publishing" isBuilding=model.isBuilding buildFailed=model.buildFailed action="buildArchive" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+  </p>
   {{/generator-step}}
 </ol>
