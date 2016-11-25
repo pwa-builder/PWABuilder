@@ -13,7 +13,7 @@ export default Ember.Object.extend({
   siteUrl: '',
   manifest: Ember.Object.create(),
   platforms: [
-    { name: 'windows10', isSelected: false },
+    { name: 'windows10', isSelected: true },
     { name: 'windows', isSelected: false },
     { name: 'android', isSelected: false },
     { name: 'ios', isSelected: false },
@@ -153,7 +153,7 @@ export default Ember.Object.extend({
       });
     }
   },
-  package: function(){
+  package: function(platform, options){
     var self = this;
     this.set('isBuilding', true);
     this.set('buildFailed',false);
@@ -168,7 +168,7 @@ export default Ember.Object.extend({
       ajax({
         url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/package',
         type: 'POST',
-        data: JSON.stringify({ platform: 'windows10', options: { DotWeb: false, AutoPublish: true, username: 'testsite', email: 'testsite@email.com' } }),
+        data: JSON.stringify({ platform: platform, options: options  }),
         dataType: 'json',
         contentType: 'application/json; charset=utf-8'
       }).then(function(result){
