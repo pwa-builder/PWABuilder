@@ -5,20 +5,13 @@ import config from '../config/environment';
 
 export default Ember.Object.extend({
   archiveLink: '',
-  isBuilding: false,
-  buildFailed: false,
+  isBuilding: [],
+  buildFailed: [],
   isSaving: false,
   buildReady: false,
   manifestId: null,
   siteUrl: '',
   manifest: Ember.Object.create(),
-  platforms: [
-    { name: 'windows10', isSelected: true },
-    { name: 'windows', isSelected: false },
-    { name: 'android', isSelected: false },
-    { name: 'ios', isSelected: false },
-    { name: 'web', isSelected: false }
-  ],
   suggestions: Ember.A(),
   warnings: Ember.A(),
   errors: Ember.A(),
@@ -120,73 +113,71 @@ export default Ember.Object.extend({
       self.set('isSaving', false);
     });
   },
-  build: function(){
-    var self = this;
-    this.set('isBuilding', true);
-    this.set('buildFailed',false);
+  build: function(platform){
+    var self = this,
+      platformsList = [];
+
+    this.set('isBuilding.' + platform, true);
+    this.set('buildFailed.' + platform,false);
     this.buildErrors.clear();
-    // Throw an error if no platform is selected
-    if(!this.arePlatformsSelected()) {
-      this.set('isBuilding', false);
-      this.set('buildFailed', true);
-      this.set('buildReady',false);
-      this.buildErrors.addObject("Please select at least one of the supported platforms");
-    } else {
-      ajax({
-        url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/build',
-        type: 'POST',
-        data: JSON.stringify({ platforms: this.getPlatforms() }),
-        dataType: 'json',
-        contentType: 'application/json; charset=utf-8'
-      }).then(function(result){
-        self.set('archiveLink', result.archive);
-        self.set('isBuilding', false);
-        self.set('buildFailed',false);
-        self.buildErrors.clear();
-      }).catch(function(err){
-        self.set('isBuilding', false);
-        self.set('buildFailed', true);
-        self.set('buildReady',false);
-        if(err.jqXHR.responseJSON){
-          self.buildErrors.addObject(err.jqXHR.responseJSON.error);
-        }
-      });
+    
+    if (platform === 'Web') {
+      platformsList = [ 'web' ];
     }
+    else if (platform === 'Win10') {
+      platformsList = [ 'windows10' ];
+    }
+    else if (platform === 'Polyfills') {
+      platformsList = [ 'windows', 'ios', 'android' ];
+    }
+
+    ajax({
+      url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/build',
+      type: 'POST',
+      data: JSON.stringify({ platforms: platformsList }),
+      dataType: 'json',
+      contentType: 'application/json; charset=utf-8'
+    }).then(function(result){
+      self.set('archiveLink', result.archive);
+      self.set('isBuilding.' + platform, false);
+      self.set('buildFailed.' + platform, false);
+      self.buildErrors.clear();
+    }).catch(function(err){
+      self.set('isBuilding.' + platform, false);
+      self.set('buildFailed.' + platform, true);
+      self.set('buildReady', false);
+      if(err.jqXHR.responseJSON){
+        self.buildErrors.addObject(err.jqXHR.responseJSON.error);
+      }
+    });
   },
   package: function(platform, options){
     var self = this;
     this.set('isBuilding', true);
     this.set('buildFailed',false);
     this.buildErrors.clear();
-    // Throw an error if no platform is selected
-    if(!this.arePlatformsSelected()) {
-      this.set('isBuilding', false);
-      this.set('buildFailed', true);
-      this.set('buildReady',false);
-      this.buildErrors.addObject("Please select at least one of the supported platforms");
-    } else {
-      ajax({
-        url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/package',
-        type: 'POST',
-        data: JSON.stringify({ platform: platform, options: options  }),
-        dataType: 'json',
-        contentType: 'application/json; charset=utf-8'
-      }).then(function(result){
+
+    ajax({
+      url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/package',
+      type: 'POST',
+      data: JSON.stringify({ platform: platform, options: options  }),
+      dataType: 'json',
+      contentType: 'application/json; charset=utf-8'
+    }).then(function(result){
         if (result) {
           self.set('archiveLink', result.archive);
           self.set('isBuilding', false);
           self.set('buildFailed',false);
           self.buildErrors.clear();
-        }
-      }).catch(function(err){
-        self.set('isBuilding', false);
-        self.set('buildFailed', true);
-        self.set('buildReady',false);
-        if(err.jqXHR.responseJSON){
-          self.buildErrors.addObject(err.jqXHR.responseJSON.error);
-        }
-      });
-    }
+      }
+    }).catch(function(err){
+      self.set('isBuilding', false);
+      self.set('buildFailed', true);
+      self.set('buildReady',false);
+      if(err.jqXHR.responseJSON){
+        self.buildErrors.addObject(err.jqXHR.responseJSON.error);
+      }
+    });
   },
   generateFormData: function(file) {
     var formData = new FormData();
@@ -211,19 +202,5 @@ export default Ember.Object.extend({
     }).catch(function(){
       self.set('isSaving', false);
     });
-  },
-  getPlatforms: function() {
-    var platforms = [];
-    
-    this.get('platforms').forEach(function(item) {
-      if (!!item.isSelected) {
-        platforms.push(item.name);
-      }
-    });
-
-    return platforms;
-  },
-  arePlatformsSelected: function() {
-    return this.getPlatforms().length > 0;
   }
 });

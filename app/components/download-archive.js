@@ -5,6 +5,7 @@ export default Ember.Component.extend({
   isBuilding: false,
   isNotBuilding: Ember.computed.not('isBuilding'),
   archiveLink: '',
+  platform: '',
   initialMessage: 'Generate Package',
   buildingMessage: 'Building Package&hellip;',
   failedMessage: 'Try Again?',
@@ -21,12 +22,12 @@ export default Ember.Component.extend({
     return new Ember.Handlebars.SafeString(message);
   }.property('isBuilding'),
   triggerArchiveDownload: function() {
-    this.sendAction('download', this.archiveLink);
+    this.sendAction('download', this.archiveLink, this.platform);
   }.observes('archiveLink'),
   actions: {
     handleClick: function(){
       if(this.isEnabled && !this.isBuilding){
-        this.sendAction('action');
+        this.sendAction('action', this.platform);
       }
     }
   }

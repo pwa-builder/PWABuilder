@@ -33,28 +33,16 @@ export default Ember.Route.extend({
       model.set('manifest.icons',logos);
       model.save();
     },
-    buildArchive: function(){
+    buildArchive: function(platform){
       this.ga('send', 'event', 'item', 'click', 'generator-build-trigger');
       var model = this.modelFor('generator');
-      model.build();
+      model.build(platform);
     },
-    downloadArchive: function(archiveLink){
+    downloadArchive: function(archiveLink, platform){
       var model = this.modelFor('generator');
-      model.set('buildReady',true);
+      model.set('build' + platform + 'Ready',true);
       this.ga('send', 'event', 'item', 'click', 'generator-build-download');
       window.location.href = archiveLink;
-    },
-    buildPackage: function(){
-      var model = this.modelFor('generator');
-      
-      var platform = 'windows10';
-
-      var options = { 
-        DotWeb: true, 
-        AutoPublish: false
-      }
-      
-      model.package(platform, options);
     },
     publishPackage: function(){
       var model = this.modelFor('generator');
