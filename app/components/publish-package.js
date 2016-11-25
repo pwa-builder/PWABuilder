@@ -19,9 +19,6 @@ export default Ember.Component.extend({
     }
     return new Ember.Handlebars.SafeString(message);
   }.property('isBuilding'),
-  triggerArchiveDownload: function() {
-    this.sendAction('download', this.archiveLink);
-  }.observes('archiveLink'),
   actions: {
     handleClick: function(){
       if(this.isEnabled && !this.isBuilding){

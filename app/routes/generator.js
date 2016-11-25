@@ -44,6 +44,14 @@ export default Ember.Route.extend({
       this.ga('send', 'event', 'item', 'click', 'generator-build-download');
       window.location.href = archiveLink;
     },
+    publishPackage: function(){
+      var model = this.modelFor('generator');
+      var platform = model.platforms.find(function(platform) {
+        return platform.name = 'windows10'; 
+      });
+      platform.isSelected = true;
+      model.package();
+    },
     updateModelProperty: function(name, value) {
       var model = this.modelFor('generator');
       model.set('manifest.'+ name, value);

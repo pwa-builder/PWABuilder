@@ -13,11 +13,11 @@ export default Ember.Object.extend({
   siteUrl: '',
   manifest: Ember.Object.create(),
   platforms: [
-    { name: 'windows10', isSelected: true },
-    { name: 'windows', isSelected: true },
-    { name: 'android', isSelected: true },
-    { name: 'ios', isSelected: true },
-    { name: 'web', isSelected: true }
+    { name: 'windows10', isSelected: false },
+    { name: 'windows', isSelected: false },
+    { name: 'android', isSelected: false },
+    { name: 'ios', isSelected: false },
+    { name: 'web', isSelected: false }
   ],
   suggestions: Ember.A(),
   warnings: Ember.A(),
@@ -136,6 +136,39 @@ export default Ember.Object.extend({
         url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/build',
         type: 'POST',
         data: JSON.stringify({ platforms: this.getPlatforms() }),
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8'
+      }).then(function(result){
+        self.set('archiveLink', result.archive);
+        self.set('isBuilding', false);
+        self.set('buildFailed',false);
+        self.buildErrors.clear();
+      }).catch(function(err){
+        self.set('isBuilding', false);
+        self.set('buildFailed', true);
+        self.set('buildReady',false);
+        if(err.jqXHR.responseJSON){
+          self.buildErrors.addObject(err.jqXHR.responseJSON.error);
+        }
+      });
+    }
+  },
+  package: function(){
+    var self = this;
+    this.set('isBuilding', true);
+    this.set('buildFailed',false);
+    this.buildErrors.clear();
+    // Throw an error if no platform is selected
+    if(!this.arePlatformsSelected()) {
+      this.set('isBuilding', false);
+      this.set('buildFailed', true);
+      this.set('buildReady',false);
+      this.buildErrors.addObject("Please select at least one of the supported platforms");
+    } else {
+      ajax({
+        url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/package',
+        type: 'POST',
+        data: JSON.stringify({ platform: 'windows10', options: { DotWeb: false, AutoPublish: true, username: 'testsite', email: 'testsite@email.com' } }),
         dataType: 'json',
         contentType: 'application/json; charset=utf-8'
       }).then(function(result){
