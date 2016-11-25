@@ -48,7 +48,7 @@
   <p>
      <span>Windows 10</span>
      {{#publish-package class="button-holder download-archive" initialMessage="Publish package" isBuilding=model.isBuilding buildFailed=model.buildFailed action="publishPackage" }}{{/publish-package}}
-     {{#download-archive class="button-holder download-archive" initialMessage="Download package for self-publishing" isBuilding=model.isBuilding buildFailed=model.buildFailed action="buildArchive" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+     {{#download-archive class="button-holder download-archive" initialMessage="Download package for self-publishing" isBuilding=model.isBuilding buildFailed=model.buildFailed action="buildPackage" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
   </p>
   <p>
      <span>Polyfills (Windows, Android, iOS)</span>

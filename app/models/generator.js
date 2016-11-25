@@ -172,10 +172,12 @@ export default Ember.Object.extend({
         dataType: 'json',
         contentType: 'application/json; charset=utf-8'
       }).then(function(result){
-        self.set('archiveLink', result.archive);
-        self.set('isBuilding', false);
-        self.set('buildFailed',false);
-        self.buildErrors.clear();
+        if (result) {
+          self.set('archiveLink', result.archive);
+          self.set('isBuilding', false);
+          self.set('buildFailed',false);
+          self.buildErrors.clear();
+        }
       }).catch(function(err){
         self.set('isBuilding', false);
         self.set('buildFailed', true);
