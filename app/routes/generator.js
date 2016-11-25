@@ -66,7 +66,7 @@ export default Ember.Route.extend({
         AutoPublish: true, 
         username: 'testsite', 
         email: 'testsite@email.com' 
-      }
+      };
       
       model.package(platform, options);
     },
