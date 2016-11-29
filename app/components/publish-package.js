@@ -5,7 +5,7 @@ export default Ember.Component.extend({
   isBuilding: false,
   isNotBuilding: Ember.computed.not('isBuilding'),
   initialMessage: 'Generate Package',
-  buildingMessage: 'Building Package&hellip;',
+  buildingMessage: 'Publishing Package&hellip;',
   failedMessage: 'Try Again?',
   tagName: 'span',
   linkMessage: function() {

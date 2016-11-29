@@ -121,14 +121,10 @@ export default Ember.Object.extend({
     this.set('buildFailed.' + platform,false);
     this.buildErrors.clear();
     
-    if (platform === 'Web') {
-      platformsList = [ 'web' ];
-    }
-    else if (platform === 'Win10') {
-      platformsList = [ 'windows10' ];
-    }
-    else if (platform === 'Polyfills') {
+    if (platform === 'Polyfills') {
       platformsList = [ 'windows', 'ios', 'android' ];
+    } else {
+      platformsList = [ platform ];
     }
 
     ajax({
@@ -153,8 +149,15 @@ export default Ember.Object.extend({
   },
   package: function(platform, options){
     var self = this;
-    this.set('isBuilding', true);
-    this.set('buildFailed',false);
+
+    if (options.DotWeb) {
+      this.set('isBuilding.' + platform, true);
+      this.set('buildFailed.' + platform,false);
+    } else {
+      this.set('isBuilding.Win10Publish', true);
+      this.set('buildFailed.Win10Publish',false);
+    }
+
     this.buildErrors.clear();
 
     ajax({
@@ -166,13 +169,25 @@ export default Ember.Object.extend({
     }).then(function(result){
         if (result) {
           self.set('archiveLink', result.archive);
-          self.set('isBuilding', false);
-          self.set('buildFailed',false);
-          self.buildErrors.clear();
-      }
+        }
+        
+        if (options.DotWeb) {
+          self.set('isBuilding.' + platform, false);
+          self.set('buildFailed.' + platform,false);
+        } else {
+          self.set('isBuilding.Win10Publish', false);
+          self.set('buildFailed.Win10Publish',false);
+        }
+
+        self.buildErrors.clear();
     }).catch(function(err){
-      self.set('isBuilding', false);
-      self.set('buildFailed', true);
+      if (options.DotWeb) {
+        self.set('isBuilding.' + platform, false);
+        self.set('buildFailed.' + platform,true);
+      } else {
+        self.set('isBuilding.Win10Publish', false);
+        self.set('buildFailed.Win10Publish',true);
+      }
       self.set('buildReady',false);
       if(err.jqXHR.responseJSON){
         self.buildErrors.addObject(err.jqXHR.responseJSON.error);

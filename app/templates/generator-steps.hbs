@@ -43,12 +43,12 @@
   <p class="instructions">Generate the packages for your preferred platform.</p>
   <p>
      <span>Web</span>
-     {{#download-archive class="button-holder download-archive" initialMessage="Download files for your website" isBuilding=model.isBuilding.Web buildFailed=model.buildFailed.Web action="buildArchive" platform="Web" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+     {{#download-archive class="button-holder download-archive" initialMessage="Download files for your website" isBuilding=model.isBuilding.web buildFailed=model.buildFailed.web action="buildArchive" platform="web" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
   </p>
   <p>
      <span>Windows 10</span>
-     {{#publish-package class="button-holder download-archive" initialMessage="Publish package" isBuilding=model.isBuilding.Win10Publish buildFailed=model.buildFailed.Win10Publish action="publishPackage" }}{{/publish-package}}
-     {{#download-archive class="button-holder download-archive" initialMessage="Download package for self-publishing" isBuilding=model.isBuilding.Win10 buildFailed=model.buildFailed.Win10 action="buildArchive" platform="Win10" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+     {{#publish-package class="button-holder download-archive" initialMessage="Publish package" isBuilding=model.isBuilding.Win10Publish buildFailed=model.buildFailed.Win10Publish action="publishWin10Package" }}{{/publish-package}}
+     {{#download-archive class="button-holder download-archive" initialMessage="Download package for self-publishing" isBuilding=model.isBuilding.windows10 buildFailed=model.buildFailed.windows10 action="buildWin10Package" platform="windows10" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
   </p>
   <p>
      <span>Polyfills (Windows, Android, iOS)</span>
