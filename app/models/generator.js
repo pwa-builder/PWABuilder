@@ -130,7 +130,7 @@ export default Ember.Object.extend({
     ajax({
       url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/build',
       type: 'POST',
-      data: JSON.stringify({ platforms: platformsList }),
+      data: JSON.stringify({ platforms: platformsList, dirSuffix: platform }),
       dataType: 'json',
       contentType: 'application/json; charset=utf-8'
     }).then(function(result){
@@ -149,11 +149,15 @@ export default Ember.Object.extend({
   },
   package: function(platform, options){
     var self = this;
+    
+    var dirSuffix = platform;
 
     if (options.DotWeb) {
+      dirSuffix += 'dotWeb'
       this.set('isBuilding.' + platform, true);
       this.set('buildFailed.' + platform,false);
     } else {
+      dirSuffix += 'publish'
       this.set('isBuilding.Win10Publish', true);
       this.set('buildFailed.Win10Publish',false);
     }
@@ -163,14 +167,14 @@ export default Ember.Object.extend({
     ajax({
       url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/package',
       type: 'POST',
-      data: JSON.stringify({ platform: platform, options: options  }),
+      data: JSON.stringify({ platform: platform, options: options, dirSuffix: dirSuffix  }),
       dataType: 'json',
       contentType: 'application/json; charset=utf-8'
     }).then(function(result){
         if (result) {
           self.set('archiveLink', result.archive);
         }
-        
+
         if (options.DotWeb) {
           self.set('isBuilding.' + platform, false);
           self.set('buildFailed.' + platform,false);
