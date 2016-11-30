@@ -8,6 +8,11 @@ export default Ember.Component.extend({
   buildingMessage: 'Publishing Package&hellip;',
   failedMessage: 'Try Again?',
   tagName: 'span',
+  showDialog: false,
+  name: '',
+  email: '',
+  missingName: false,
+  invalidEmail: false,
   linkMessage: function() {
     var message = '';
     if(this.isBuilding){
@@ -21,8 +26,23 @@ export default Ember.Component.extend({
   }.property('isBuilding'),
   actions: {
     handleClick: function(){
-      if(this.isEnabled && !this.isBuilding){
-        this.sendAction('action');
+      if(this.isEnabled && !this.isBuilding) {
+        this.set('showDialog', true);
+      }
+    },
+    close: function() {
+      this.set('invalidEmail', false);
+      this.set('missingName', false);
+      this.set('showDialog', false);
+    },
+    accept: function(){
+      var emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      this.set('invalidEmail', !emailRegex.test(this.email));
+      this.set('missingName', this.name === '');
+
+      if (!this.missingName && !this.invalidEmail) {
+        this.set('showDialog', false);
+        this.sendAction('action', this.name, this.email);
       }
     }
   }

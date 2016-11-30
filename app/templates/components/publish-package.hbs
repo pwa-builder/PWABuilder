@@ -3,4 +3,29 @@
   {{#if isBuilding}}{{fa-icon "circle-o-notch fa-spin"}}{{/if}}
   {{#if isNotBuilding}}{{fa-icon "globe"}}{{/if}}
 </button>
+{{#if showDialog}}
+<div class="modal-fog">
+  <div class="modal-frame">
+    <h5 class="modal-title">
+      Publish Package
+    </h5>
+    <div class="modal-body">
+      <div class="form-item">
+        {{#if missingName}}<p class="instructions alert">{{fa-icon "exclamation"}} Please, provide the name or company name.</p>{{/if}}
+        <label>Name or Company Name</label> {{input value=name placeholder="Enter a Name or Company Name"}}
+      </div>
+
+      <div class="form-item">
+        {{#if invalidEmail}}<p class="instructions alert">{{fa-icon "exclamation"}} Please, provide a valid E-mail address.</p>{{/if}}
+        <label>E-mail</label> {{input value=email placeholder="Enter a valid E-mail address"}}
+      </div>
+
+      <div class="form-item">
+        <button class="button" {{action "accept"}}>Accept</button>
+        <button class="button" {{action "close"}}>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+{{/if}}
 {{yield}}

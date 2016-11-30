@@ -27,3 +27,35 @@
 
 @import '_layout/_l-mq';
 @import 'main';
+
+.modal-fog {
+    background: rgba(30, 30, 30, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 9999;
+}
+.modal-frame {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    border: 1px solid #333;
+    background: #ddd;
+    height: auto;
+    margin-top: -140px;
+    width: 570px;
+    margin-left: -285px;
+    z-index: 10000;
+}
+.modal-title {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    margin-top: 14px;
+}
+.modal-body {
+    margin-top: 45px;
+    padding: 18px;
+}

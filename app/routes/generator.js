@@ -56,16 +56,16 @@ export default Ember.Route.extend({
       
       model.package(platform, options);
     },
-    publishWin10Package: function(){
+    publishWin10Package: function(publishName, publishEmail){
       var model = this.modelFor('generator');
       
       var platform = 'windows10';
-
+      
       var options = { 
         DotWeb: false, 
         AutoPublish: true, 
-        autoPublishName: 'testsite', 
-        autoPublishEmail: 'testsite@email.com' 
+        autoPublishName: publishName, 
+        autoPublishEmail: publishEmail
       };
       
       model.package(platform, options);
