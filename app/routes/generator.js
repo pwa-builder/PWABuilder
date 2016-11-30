@@ -64,7 +64,7 @@ export default Ember.Route.extend({
       var options = { 
         DotWeb: false, 
         AutoPublish: true, 
-        username: 'testsite', 
+        name: 'testsite', 
         email: 'testsite@email.com' 
       };
       
