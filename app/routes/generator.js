@@ -52,7 +52,7 @@ export default Ember.Route.extend({
       var options = { 
         DotWeb: true, 
         AutoPublish: false
-      }
+      };
       
       model.package(platform, options);
     },

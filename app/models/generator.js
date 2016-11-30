@@ -153,11 +153,11 @@ export default Ember.Object.extend({
     var dirSuffix = platform;
 
     if (options.DotWeb) {
-      dirSuffix += 'dotWeb'
+      dirSuffix += 'dotWeb';
       this.set('isBuilding.' + platform, true);
       this.set('buildFailed.' + platform,false);
     } else {
-      dirSuffix += 'publish'
+      dirSuffix += 'publish';
       this.set('isBuilding.Win10Publish', true);
       this.set('buildFailed.Win10Publish',false);
     }
