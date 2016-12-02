@@ -9,6 +9,7 @@ export default Ember.Object.extend({
   buildFailed: [],
   isSaving: false,
   buildReady: false,
+  publishSuccedded: false,
   manifestId: null,
   siteUrl: '',
   manifest: Ember.Object.create(),
@@ -179,6 +180,7 @@ export default Ember.Object.extend({
           self.set('isBuilding.' + platform, false);
           self.set('buildFailed.' + platform,false);
         } else {
+          self.set('publishSuccedded', true);
           self.set('isBuilding.Win10Publish', false);
           self.set('buildFailed.Win10Publish',false);
         }

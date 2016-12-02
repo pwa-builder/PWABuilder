@@ -7,6 +7,7 @@ export default Ember.Component.extend({
   initialMessage: 'Generate Package',
   buildingMessage: 'Publishing Package&hellip;',
   failedMessage: 'Try Again?',
+  successMessage: 'Package Published!',
   tagName: 'span',
   showDialog: false,
   name: '',
@@ -19,6 +20,14 @@ export default Ember.Component.extend({
       message = this.buildingMessage;
     } else if(this.buildFailed){
       message = this.failedMessage;
+    } else if (this.publishSuccedded) {
+        this.set('publishSuccedded', false);
+        message = this.successMessage;
+        var that = this;
+        setTimeout(function() {
+          message = that.initialMessage;
+          that.notifyPropertyChange('isBuilding');
+        }, 4000);
     } else {
       message = this.initialMessage;
     }
