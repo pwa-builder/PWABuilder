@@ -1,58 +1,112 @@
-<ol class="generator-step-list">
-  {{#generator-step step="1" nextStep="2" stepTitle="Create Your Manifest" isShowingBody=steps.step1.isCurrent data=model action="updateStep"}}
-  <p class="instructions">Here are the values we picked up from your site. Update or add any details below.</p>
-  <div class="form-item">
-    <label>Name</label>
-    {{input value=model.manifest.name focus-out="updateModel"}}
+<ul class="generator-tabs">
+  {{#each step in steps}}
+  {{#generator-tab step=step.step}}
+  <a>{{step.step}}. {{step.stepTitle}}</a>{{/generator-tab}}
+  {{/each}}
+</ul>
+<ul class="generator-step-list">
+  {{#generator-step step="1" nextStep="2" stepTitle="Create Your Manifest" data=model action="updateStep" showNextStep=startComplete}}
+  {{#if startComplete}}
+  <div class="pure-g">
+    <div class="pure-u-1 pure-u-md-1-2 generator-section form-holder">
+      <p class="instructions">Here are the values we picked up from your site. Update or add any details below.</p>
+      <div class="form-item">
+        <label>Name</label>
+        {{input value=model.manifest.name focus-out="updateModel"}}
+      </div>
+      <div class="form-item">
+        <label>Short Name</label>
+        {{input name="short_name" value=model.manifest.short_name focus-out="updateModel"}}
+      </div>
+      <div class="form-item logo-upload">
+        <label>Icon Url</label>
+        {{logo-upload action="updateLogos" logos=model.manifest.icons baseUrl=model.manifest.start_url}}
+      </div>
+      <div class="form-item">
+        <label>Scope</label>
+        {{input value=model.manifest.scope focus-out="updateModel"}}
+      </div>
+      <div class="form-item">
+        <label>Start Url</label>
+        {{input value=model.manifest.start_url focus-out="updateModel"}}
+      </div>
+      <div class="form-item">
+        <label>Display</label>
+        {{generator-select content=model.display.names modelProperty="manifest.display" value=model.manifest.display}}
+      </div>
+      <div class="form-item">
+        <label>Orientation</label>
+        {{generator-select content=model.orientation.names modelProperty="manifest.orientation" value=model.manifest.orientation}}
+      </div>
+
+      <h2 class="toggle-title" {{action "toggleCustomMembers"}}>Specify custom members to be added to the manifest.</h2>
+      {{#if showCustomMembers}}
+      <div class="form-item">
+        {{#member-list action="manageMember" members=customMembers}}{{/member-list}}
+      </div>
+      {{/if}}
+    </div>
+    <div class="pure-u-1 pure-u-md-1-2 generator-section manifest manifest-holder" id="manifest_holder">
+      <header>
+        <h2 class="generator-section-title">W3C Manifest{{#if isProcessing}} {{fa-icon "circle-o-notch fa-spin"}}{{/if}}</h2>
+        <p class="generator-issues-notification">
+          {{#skip-link class="issues-title-errors" anchor="#errors_list"}}Errors ({{model.errorsTotal}}){{/skip-link}},
+          {{#skip-link class="issues-title-warnings" anchor="#warnings_list"}}Warnings ({{model.warningsTotal}}){{/skip-link}},
+          {{#skip-link class="issues-title-suggestions" anchor="#suggestions_list"}}Suggestions ({{model.suggestionsTotal}}){{/skip-link}}
+        </p>
+      </header>
+      {{partial "generator-preview"}}
+    </div>
   </div>
-  <div class="form-item">
-    <label>Short Name</label>
-    {{input name="short_name" value=model.manifest.short_name focus-out="updateModel"}}
-  </div>
-  <div class="form-item logo-upload">
-    <label>Icon Url</label>
-    {{logo-upload action="updateLogos" logos=model.manifest.icons baseUrl=model.manifest.start_url}}
-  </div>
-  <div class="form-item">
-    <label>Scope</label>
-    {{input value=model.manifest.scope focus-out="updateModel"}}
-  </div>
-  <div class="form-item">
-    <label>Start Url</label>
-    {{input value=model.manifest.start_url focus-out="updateModel"}}
-  </div>
-  <div class="form-item">
-    <label>Display</label>
-    {{generator-select content=model.display.names modelProperty="manifest.display" value=model.manifest.display}}
-  </div>
-  <div class="form-item">
-    <label>Orientation</label>
-    {{generator-select content=model.orientation.names modelProperty="manifest.orientation" value=model.manifest.orientation}}
-  </div>
+  {{else}}
+  {{#generator-start isSaving=model.isSaving action="startComplete" class="generator-start step"}}{{/generator-start}}
+  {{/if}}
   {{/generator-step}}
-  {{#generator-step step="2" nextStep="3" stepTitle="Deploy Your Service Worker" isShowingBody=steps.step2.isCurrent data=model action="updateStep" }}
+
+  {{#generator-step step="2" nextStep="3" stepTitle="Deploy Your Service Worker" data=model action="updateStep" showNextStep=startComplete}}
   <p class="instructions">Select the service workers for your app.</p>
   {{/generator-step}}
-  {{#generator-step step="3" nextStep="4" stepTitle="Custom Values" isShowingBody=steps.step3.isCurrent data=model action="updateStep" }}
-  <p class="instructions">Specify custom members to be added to the manifest.</p>
-  <div class="form-item">
-    {{#member-list action="manageMember" members=customMembers}}{{/member-list}}
-  </div>
-  {{/generator-step}}
-  {{#generator-step step="4" showNextStep=false stepTitle="Publish" isShowingBody=steps.step4.isCurrent data=model action="updateStep" }}
+
+  {{#generator-step step="3" stepTitle="Publish" showNextStep=false data=model action="updateStep" }}
+  {{#if startComplete}}
   <p class="instructions">Generate the packages for your preferred platform.</p>
   <p>
-     <span>Web</span>
-     {{#download-archive class="button-holder download-archive" initialMessage="Download files for your website" isBuilding=model.isBuilding.web buildFailed=model.buildFailed.web action="buildArchive" platform="web" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+    <span>Web</span>
+    {{#download-archive class="button-holder download-archive" initialMessage="Download files for your website" isBuilding=model.isBuilding.web buildFailed=model.buildFailed.web action="buildArchive" platform="web" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
   </p>
   <p>
-     <span>Windows 10</span>
+    <span>Windows 10</span>
      {{#publish-package class="button-holder download-archive" initialMessage="Publish package" isBuilding=model.isBuilding.Win10Publish buildFailed=model.buildFailed.Win10Publish publishSuccedded=model.publishSuccedded action="publishWin10Package" publishName=model.name publishEmail=model.email}}{{/publish-package}}
-     {{#download-archive class="button-holder download-archive" initialMessage="Download package for self-publishing" isBuilding=model.isBuilding.windows10 buildFailed=model.buildFailed.windows10 action="buildWin10Package" platform="windows10" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+    {{#download-archive class="button-holder download-archive" initialMessage="Download package for self-publishing" isBuilding=model.isBuilding.windows10 buildFailed=model.buildFailed.windows10 action="buildWin10Package" platform="windows10" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
   </p>
   <p>
-     <span>Polyfills (Windows, Android, iOS)</span>
-     {{#download-archive class="button-holder download-archive" initialMessage="Download packages for self-publishing" isBuilding=model.isBuilding.Polyfills buildFailed=model.buildFailed.Polyfills action="buildArchive" platform="Polyfills" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+    <span>Polyfills (Windows, Android, iOS)</span>
+    {{#download-archive class="button-holder download-archive" initialMessage="Download packages for self-publishing" isBuilding=model.isBuilding.Polyfills buildFailed=model.buildFailed.Polyfills action="buildArchive" platform="Polyfills" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
   </p>
+  {{else}}
+  <p class="instructions">You need to create your manifest first.</p>
+  <button class="button next-step" {{action "updateStep" "1"}}>Go to first step</button>
+  {{/if}}
   {{/generator-step}}
-</ol>
+</ul>
+
+{{#if startComplete}}
+<div class="step">
+  <div class="button-holder">
+    <p>
+      <button {{action "startOver"}}>Start Over</button>
+    </p>
+    <p>{{#link-to 'deploy' classNameBindings=":usage-link :btn model.buildReady:show"}}<strong>Now:</strong> Learn how to distribute this package across different platforms{{/link-to}}</p>
+    {{#if model.buildFailed}}
+    <div class="build-errors">
+      <h5>There were some errors while trying to build your project</h5>
+      {{#each error in model.buildErrors}}
+      {{#if error}}
+      <p>{{error}}</p>
+      {{/if}}
+      {{/each}}
+    </div>
+    {{/if}}
+  </div>
+</div>
+{{/if}}

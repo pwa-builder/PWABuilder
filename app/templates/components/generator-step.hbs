@@ -1,18 +1,13 @@
 <div class="step-wrapper">
-  <header class="step-header" {{action "toggleBody"}}>
-    <h2 class="title">{{stepTitle}}</h2>
-  </header>
-  {{#if isShowingBody}}
   <div class="form-body">
     {{yield}}
     <div class="button-holder">
       {{#if showCustomButton}}
       <button class="button" {{action "customAction"}}>{{customButtonText}}</button>
       {{/if}}
-      {{#if showNextStep}}
-      <button class="button next-step" {{action "updateStep" step nextStep}}>Next Step</button>
+      {{#if showNextStep }}
+      <button class="button next-step" {{action "updateStep" nextStep}}>Next Step</button>
       {{/if}}
     </div>
   </div>
-  {{/if}}
 </div>
