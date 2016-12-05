@@ -1,42 +1,7 @@
-<div class="pure-g generator" id="builder_holder">
-  <div class="pure-u-1 pure-u-md-1-2 generator-section form-holder">
+<div class="generator generator-section form-holder" id="builder_holder">
     <header>
       <h2 class="generator-section-title">Generate your App Manifest</h2>
       <p class="intro">ManifoldJS takes simple meta-data about your site and uses that to generate native "hosted" apps for Android, iOS, and Windows.</p>
     </header>
-    {{#if startComplete}}
-      {{partial "generator-steps"}}
-      <div class="step">
-        <div class="button-holder">
-          <p>
-            <button {{action "startOver"}}>Start Over</button>
-          </p>
-          <p>{{#link-to 'deploy' classNameBindings=":usage-link :btn model.buildReady:show"}}<strong>Now:</strong> Learn how to distribute this package across different platforms{{/link-to}}</p>
-          {{#if model.buildFailed}}
-            <div class="build-errors">
-              <h5>There were some errors while trying to build your project</h5>
-              {{#each error in model.buildErrors}}
-                {{#if error}}
-                  <p>{{error}}</p>
-                {{/if}}
-              {{/each}}
-            </div>
-          {{/if}}
-        </div>
-      </div>
-    {{else}}
-      {{#generator-start isSaving=model.isSaving action="startComplete" class="generator-start step-wrapper step"}}{{/generator-start}}
-    {{/if}}
-  </div>
-  <div class="pure-u-1 pure-u-md-1-2 generator-section manifest manifest-holder" id="manifest_holder">
-    <header>
-      <h2 class="generator-section-title">W3C Manifest{{#if isProcessing}} {{fa-icon "circle-o-notch fa-spin"}}{{/if}}</h2>
-      <p class="generator-issues-notification">
-      {{#skip-link class="issues-title-errors" anchor="#errors_list"}}Errors ({{model.errorsTotal}}){{/skip-link}},
-      {{#skip-link class="issues-title-warnings" anchor="#warnings_list"}}Warnings ({{model.warningsTotal}}){{/skip-link}},
-      {{#skip-link class="issues-title-suggestions" anchor="#suggestions_list"}}Suggestions ({{model.suggestionsTotal}}){{/skip-link}}
-      </p>
-    </header>
-    {{partial "generator-preview"}}
-  </div>
+    {{partial "generator-steps"}}
 </div>
