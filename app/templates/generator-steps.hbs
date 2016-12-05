@@ -77,7 +77,7 @@
   <p>
     <span>Windows 10</span>
      {{#publish-package class="button-holder download-archive" initialMessage="Publish package" isBuilding=model.isBuilding.Win10Publish buildFailed=model.buildFailed.Win10Publish publishSuccedded=model.publishSuccedded action="publishWin10Package" publishName=model.name publishEmail=model.email}}{{/publish-package}}
-    {{#download-archive class="button-holder download-archive" initialMessage="Download package for self-publishing" isBuilding=model.isBuilding.windows10 buildFailed=model.buildFailed.windows10 action="buildWin10Package" platform="windows10" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+    {{#download-archive class="button-holder download-archive" initialMessage="Download package for self-publishing" isBuilding=model.isBuilding.windows10 buildFailed=model.buildFailed.windows10 action="buildArchive" platform="windows10" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
   </p>
   <p>
     <span>Polyfills (Windows, Android, iOS)</span>
