@@ -548,3 +548,53 @@ ul.generator-tabs li.active{
   text-align: center;
   margin-top: 1rem;
 }
+
+.download-primary > button,
+.download-primary .btn.isEnabled {
+    background-color: #2955a0;
+    font-size: 1.2rem;
+    margin-top: 2rem;
+}
+
+.service-workers > .form-item.checkbox {
+  margin-bottom: 1.5rem;
+}
+
+.service-workers > .form-item.checkbox > label {
+  font-size: 1.4rem;
+  width: auto;
+}
+
+.service-workers > .form-item.checkbox > .description {
+  font-size: 0.8rem;
+  float: left;
+}
+
+.service-workers > .button-holder.download-archive {
+  text-align: center;
+  margin-bottom: 2rem;
+  float: left;
+}
+
+.service-workers > .form-item.checkbox > input[type=checkbox] {
+  margin-left: 0rem;
+  margin-right: 1rem;
+}
+
+@media only screen and (max-width: 600px) {
+  .publish-container {
+    margin-top: 1rem;
+  }
+
+  .publish-header > div {
+    width: 90%;
+    border-right: none;
+    border-bottom: 1px solid #cecece;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .publish-footer {
+    margin-top: 0rem;
+  }
+}
