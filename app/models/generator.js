@@ -42,6 +42,19 @@ export default Ember.Object.extend({
   orientation: {
     names: ['any', 'natural', 'landscape', 'portrait', 'portrait-primary', 'portrait-secondary', 'landscape-primary', 'landscape-secondary']
   },
+  serviceWorkers: [
+    {id: 1, name: 'Offline page', isSelected: false, isDisabled: false },
+    {id: 2, name: 'Offline copy of pages', isSelected: false, isDisabled: false }
+  ],
+  serviceWorkerCodePreview: { forWebSite: '', forServiceWorker: '' },
+  hasServiceWorkersSelected: function() {
+    var selectedWorkers = this.serviceWorkers.filter(function (serviceWorker) {
+      return (serviceWorker.isSelected); 
+    });
+    var hasSelected = selectedWorkers.length != 0
+    this.getServiceWorkerCodePreview(hasSelected);
+    return hasSelected;
+  }.property('serviceWorkers.@each.isSelected'),
   save: function () {
     this.set('isSaving', true);
     if(!this.manifestId) {
@@ -223,5 +236,59 @@ export default Ember.Object.extend({
     }).catch(function(){
       self.set('isSaving', false);
     });
+  },
+  getSelectedServiceWorkers: function() {
+    var result = this.serviceWorkers.filter(function (serviceWorker) {
+          return (serviceWorker.isSelected); 
+        })
+        .map(function (serviceWorker) {
+          return serviceWorker.id;
+        });
+      if (result.length === 2) {
+        //If both checkbox are checked return 3 (1+2).
+        return [3]; 
+      }
+      return result;
+  },
+  downloadServiceWorker: function() {
+    var self = this;
+    var platform = "serviceWorker";
+    self.set('isBuilding.' + platform, true);
+    this.set('buildFailed.' + platform,false);
+
+    var selectedWorkers = self.getSelectedServiceWorkers().join(',');
+
+    ajax({
+      url: config.APP.API_URL + '/serviceworkers?ids=' + selectedWorkers,
+      type: 'GET',
+      dataType: 'json',
+      contentType: 'application/json; charset=utf-8'
+    }).then(function(result){
+      self.set('isBuilding.' + platform, false); 
+      self.set('archiveLink', result.archive);
+    }).catch(function(result) {
+      self.set('isBuilding.' + platform, false);
+      self.set('buildFailed.' + platform, true);
+    });
+  },
+  getServiceWorkerCodePreview: function(hasServiceWorkersSelected) {
+    var self = this;    
+    if (hasServiceWorkersSelected){
+      var selectedWorkers = self.getSelectedServiceWorkers().join(',');
+
+      ajax({
+        url: config.APP.API_URL + '/serviceworkers/previewcode?ids=' + selectedWorkers,
+        type: 'GET',
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8'      
+      }).then(function(result) {
+        self.set('serviceWorkerCodePreview.forWebSite', result.webSite);
+        self.set('serviceWorkerCodePreview.forServiceWorker', result.serviceWorker);
+      });
+    } 
+    else {
+      self.set('serviceWorkerCodePreview.forWebSite', '');
+      self.set('serviceWorkerCodePreview.forServiceWorker', '');      
+    }
   }
 });

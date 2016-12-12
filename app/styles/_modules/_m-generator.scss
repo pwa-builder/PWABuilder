@@ -505,3 +505,14 @@ ul.generator-tabs li.active{
   background: transparent;
 
 }
+
+.generator-service-worker-code {
+  min-height: 20%;
+}
+.service-workers > .form-item.checkbox {
+  width: 100%;
+}
+.service-workers > .form-item.checkbox,
+.service-workers > .download-archive {
+  display: block;
+}

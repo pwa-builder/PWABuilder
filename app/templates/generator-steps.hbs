@@ -64,8 +64,38 @@
   {{/generator-step}}
 
   {{#generator-step step="2" nextStep="3" stepTitle="Deploy Your Service Worker" data=model action="updateStep" showNextStep=startComplete}}
-  <p class="instructions">Select the service workers for your app.</p>
+  <div class="pure-g">
+    <div class="pure-u-1 pure-u-md-1-2 generator-section service-workers">
+      <p class="instructions">Select the service workers for your app.</p>
+      {{#each worker in model.serviceWorkers}}
+        <div class="form-item checkbox">
+          <label>{{worker.name}}</label>
+          {{input type="checkbox" checked=worker.isSelected focus-out="updateModel" disabled=worker.isDisabled }}
+        </div>
+      {{/each}}
+    
+      {{#download-archive class="button-holder download-archive" initialMessage="Download service worker" isBuilding=model.isBuilding.serviceWorker buildFailed=model.buildFailed.serviceWorker action="downloadServiceWorker" platform="serviceWorker" isEnabled=model.hasServiceWorkersSelected}}{{/download-archive}}
+    </div>
+
+    <div class="pure-u-1 pure-u-md-1-2 generator-section manifest manifest-holder">
+      <header>
+        <h2 class="generator-section-title">Code for website</h2>
+      </header>
+      <div class="generator-service-worker-code">
+        {{formatted-manifest data=formattedServiceWorkerWebsiteCode}}
+      </div>
+
+      <header>
+        <h2 class="generator-section-title">Service worker code</h2>
+      </header>
+      <div class="generator-service-worker-code">
+        {{formatted-manifest data=formattedServiceWorkerCode}}
+        {{!--{{model.serviceWorkerCodePreview.forServiceWorker}}--}}
+      </div>
+    </div>
+  </div>
   {{/generator-step}}
+
 
   {{#generator-step step="3" stepTitle="Publish" showNextStep=false data=model action="updateStep" }}
   {{#if startComplete}}

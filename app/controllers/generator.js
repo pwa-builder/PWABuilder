@@ -13,6 +13,18 @@ export default Ember.Controller.extend({
     var code = model.get('manifest');
     return new Ember.Handlebars.SafeString('<code class=\'language-javascript\'>' + JSON.stringify(code, null, 2) + '</code>');
   }.property('model.manifest'),
+  formattedServiceWorkerWebsiteCode : function() {
+    var model = this.get('model');
+    var codePreview = model.get('serviceWorkerCodePreview');
+    var code = codePreview.forWebSite;
+    return new Ember.Handlebars.SafeString('<code class=\'language-javascript\'>' + code + '</code>');
+  }.property('model.serviceWorkerCodePreview.forWebSite'),
+  formattedServiceWorkerCode : function() {
+    var model = this.get('model');
+    var codePreview = model.get('serviceWorkerCodePreview');
+    var code = codePreview.forServiceWorker;
+    return new Ember.Handlebars.SafeString('<code class=\'language-javascript\'>' + code + '</code>');
+  }.property('model.serviceWorkerCodePreview.forServiceWorker'),
   isProcessing: function() {
     var model = this.get('model');
     return model.get('isBuilding') || model.get('isSaving');

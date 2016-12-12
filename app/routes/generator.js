@@ -82,6 +82,14 @@ export default Ember.Route.extend({
     },
     startOver: function(){
       this.refresh();
+    },
+    downloadServiceWorker: function() {
+      var model = this.modelFor('generator');
+      model.downloadServiceWorker();
+    },
+    getServiceWorkerCodePreview: function() {
+      var model = this.modelFor('generator');
+      model.getServiceWorkerCodePreview();
     }
   }
 });
