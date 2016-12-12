@@ -516,3 +516,35 @@ ul.generator-tabs li.active{
 .service-workers > .download-archive {
   display: block;
 }
+
+.publish-container > h1 {
+  text-align: center;
+}
+
+.publish-header {
+  text-align: center;
+}
+.publish-header > div {
+  width: 30%;
+  display: inline-block;
+  vertical-align: top;
+  border-right: 1px solid #cecece;
+  padding-right: 1rem;
+  min-height: 14rem;
+  padding-left: 1rem;
+}
+.publish-header > div:nth-last-child(1) {
+  border-right: none;
+}
+.publish-header > div > p {
+  text-align: left;
+}
+
+.publish-footer {
+  margin-top: 3rem;
+}
+.publish-footer > div {
+  width: 100%;
+  text-align: center;
+  margin-top: 1rem;
+}
