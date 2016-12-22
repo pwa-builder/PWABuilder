@@ -12,7 +12,9 @@
         <div>            
         {{generator-radio-button value='pick' checked=colorOption}}
         <label>Custom color</label>
-        {{input type="color" name="background_color" value=color disabled=cantChooseColor}}
+        {{#if canChooseColor}}
+            {{input type="color" name="background_color" value=color}}
+        {{/if}}
         </div>
     </div>
 </div>

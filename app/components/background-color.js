@@ -5,8 +5,8 @@ export default Ember.Component.extend({
     color: '',
     lastColor: '',
     colorOption: undefined,
-    cantChooseColor: function() {
-        return this.colorOption !== "pick";
+    canChooseColor: function() {
+        return this.colorOption === "pick";
     }.property("colorOption"),
     watchTypeColorChoosen: function() {
         if (this.colorOption === "none") {

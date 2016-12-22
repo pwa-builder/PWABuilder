@@ -588,24 +588,6 @@ ul.generator-tabs li.active{
   margin-right: 1rem;
 }
 
-@media only screen and (max-width: 600px) {
-  .publish-container {
-    margin-top: 1rem;
-  }
-
-  .publish-header > div {
-    width: 90%;
-    border-right: none;
-    border-bottom: 1px solid #cecece;
-    margin-bottom: 1rem;
-    padding-bottom: 1rem;
-  }
-
-  .publish-footer {
-    margin-top: 0rem;
-  }
-}
-
 #relatedApplication-list td.text-truncated {
   max-width: 10rem;
   white-space: nowrap;
@@ -628,8 +610,64 @@ ul.generator-tabs li.active{
     width: 65%;
     float: right;
 }
+.background-color-options > div {
+  display: inline-block;
+  width: 30%;
+  height: 2rem;
+}
 .background-color-options > div > label {
   display: inline-block;
   float: none;
   margin-left: 5px;
+}
+.background-color-options > div > input[type=color]{
+  display: inline-block;
+  width: 30%;
+  float: none; 
+  height: 1.5rem;
+  margin-left: 5px;
+}
+
+.download-manifest {
+  background-color: #2955a0;
+  font-size: 1.2rem;
+}
+.download-manifest:hover {
+  background-color: #2955a0;  
+  color: white;
+}
+.download-manifest:focus {
+  outline: 1px dashed white;
+}
+
+
+@media only screen and (max-width: 600px) {
+  .publish-container {
+    margin-top: 1rem;
+  }
+
+  .publish-header > div {
+    width: 90%;
+    border-right: none;
+    border-bottom: 1px solid #cecece;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .publish-footer {
+    margin-top: 0rem;
+  }
+
+}
+
+@media only screen and (max-width: 1370px) {
+  .background-color-options {
+    height: 100px;
+  }
+
+  .background-color-options > div {
+    width: 100%;
+    display: block;
+  }
+
 }
