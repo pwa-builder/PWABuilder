@@ -15,5 +15,11 @@ export default Ember.Component.extend({
   	}).observes('data.formattedManifest'),
   	highlightTime: (function(){
   		Prism.highlightElement(this.$("code")[0]);
-  	})
+  	}),
+	showDownloadButton: false,
+	actions: {
+		downloadManifest: function () {			
+			this.sendAction('downloadAction', 'downloadManifest');
+		}
+	}
 });

@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import GeneratorModel from '../models/generator';
+import config from '../config/environment';
 
 export default Ember.Route.extend({
   model: function () {
@@ -111,6 +112,10 @@ export default Ember.Route.extend({
     getServiceWorkerCodePreview: function() {
       var model = this.modelFor('generator');
       model.getServiceWorkerCodePreview();
+    }, 
+    downloadManifest: function() {
+      var model = this.modelFor('generator');
+      window.location = config.APP.API_URL + '/manifests/?id=' + model.get('manifestId');
     }
   }
 });
