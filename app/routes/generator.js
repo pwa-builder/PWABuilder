@@ -115,7 +115,7 @@ export default Ember.Route.extend({
     }, 
     downloadManifest: function() {
       var model = this.modelFor('generator');
-      window.location = config.APP.API_URL + '/manifests/?id=' + model.get('manifestId');
+      window.location = config.APP.API_URL + '/manifests/' + model.get('manifestId') + '/download';
     }
   }
 });
