@@ -73,6 +73,27 @@ export default Ember.Route.extend({
       }
       model.save();
     },
+    manageRelatedApplications: function(action, relatedApp) {
+      var model = this.modelFor('generator');
+      var manifest = model.get('manifest');
+      if(action === 'add'){
+        if (!manifest.related_applications) {
+          manifest.related_applications = Ember.A();
+        }
+        manifest.related_applications.pushObject(relatedApp);
+      } else if (action === 'remove') {
+        var _relatedApp = manifest.related_applications.filter(function(item) {
+          return item.platform === relatedApp.platform && item.url === relatedApp.url && item.id === relatedApp.id;
+        });
+        if (_relatedApp) {
+          manifest.related_applications.removeObjects(_relatedApp);
+        }
+        if (manifest.related_applications.length === 0) {
+          delete manifest["related_applications"];
+        }
+      }
+      model.save();
+    },
     didTransition: function() {
       Ember.$('.application').addClass('l-app-style');
     },

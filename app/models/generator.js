@@ -2,6 +2,7 @@
 import Ember from 'ember';
 import ajax from 'ic-ajax';
 import config from '../config/environment';
+import langConst from './languageConst';
 
 export default Ember.Object.extend({
   archiveLink: '',
@@ -51,12 +52,21 @@ export default Ember.Object.extend({
     var selectedWorkers = this.serviceWorkers.filter(function (serviceWorker) {
       return (serviceWorker.isSelected); 
     });
-    var hasSelected = selectedWorkers.length != 0
+    var hasSelected = selectedWorkers.length !== 0;
     this.getServiceWorkerCodePreview(hasSelected);
     return hasSelected;
   }.property('serviceWorkers.@each.isSelected'),
   save: function () {
     this.set('isSaving', true);
+    
+    var manifest = this.get('manifest');
+    if (manifest.lang && manifest.lang === "") {
+      delete manifest.lang;
+    }
+    if (manifest.background_color && manifest.background_color === "none") {
+      delete manifest.background_color;
+    }
+    
     if(!this.manifestId) {
       this.create();
     } else {
@@ -86,6 +96,9 @@ export default Ember.Object.extend({
     if(result.content.orientation === undefined) {
       this.set('manifest.orientation', 'any');
     }
+    if (result.content.lang === undefined) {
+      this.set('manifest.lang', '');
+    }
   },
   create: function(){
     var self = this;
@@ -98,6 +111,11 @@ export default Ember.Object.extend({
     }).then(function(result) {
       self.processResult(result);
       self.setDefaults(result);
+
+      if (result.content.lang === undefined) {
+        this.set('manifest.lang', '');
+      }
+
       self.set('isSaving', false);
     }).catch(function(){
       self.set('isSaving', false);
@@ -237,7 +255,7 @@ export default Ember.Object.extend({
       self.set('isSaving', false);
     });
   },
-  getSelectedServiceWorkers: function() {
+  getSelectedServiceWorkers: function() {    
     var result = this.serviceWorkers.filter(function (serviceWorker) {
           return (serviceWorker.isSelected); 
         })
@@ -266,7 +284,7 @@ export default Ember.Object.extend({
     }).then(function(result){
       self.set('isBuilding.' + platform, false); 
       self.set('archiveLink', result.archive);
-    }).catch(function(result) {
+    }).catch(function() {
       self.set('isBuilding.' + platform, false);
       self.set('buildFailed.' + platform, true);
     });
@@ -290,5 +308,6 @@ export default Ember.Object.extend({
       self.set('serviceWorkerCodePreview.forWebSite', '');
       self.set('serviceWorkerCodePreview.forServiceWorker', '');      
     }
-  }
+  },
+  languages: [{"code": '', "name": " "}].pushObjects(langConst.languageConst())
 });

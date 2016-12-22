@@ -32,6 +32,7 @@ export default Ember.Controller.extend({
   steps: Ember.A(),
   activeStep: null,
   showCustomMembers: false,
+  showRelatedApps: false,
   selectedDisplay: null,
   selectedOrientation: null,
   valueOrEmptyString: function (value) {
@@ -46,7 +47,7 @@ export default Ember.Controller.extend({
     this.model.save();
   },
   customMembers: function(){
-    var staticValues = ['lang','name','short_name','scope','icons','display','orientation','start_url','theme_color','related_applications','prefer_related_applications'];
+    var staticValues = ['lang','name','short_name','scope','icons','display','orientation','start_url','theme_color','related_applications','prefer_related_applications', 'background_color'];
     var model = this.get('model');
     var keys = _.filter(_.keys(model.manifest),function(key){
       return key.indexOf('_') !== -1;
@@ -61,7 +62,10 @@ export default Ember.Controller.extend({
     });
     return customProps;
   }.property('model'),
-  
+  relatedApplications: function() {
+    var model = this.get('model');
+    return model.get('relatedApplications');
+  }.property('model'),
   setActiveStep: function(stepId) {
     if (this.get('activeStep') !== null) {
       if (stepId !== this.get('activeStep')) {
@@ -114,6 +118,10 @@ export default Ember.Controller.extend({
     toggleCustomMembers: function() {
       var current = this.get("showCustomMembers");
       this.set("showCustomMembers", !current);
+    },
+    toggleRelatedApps: function() {
+      var current = this.get("showRelatedApps");
+      this.set("showRelatedApps", !current);      
     }
   }
 });

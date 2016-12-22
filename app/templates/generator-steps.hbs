@@ -18,6 +18,10 @@
         <label>Short Name</label>
         {{input name="short_name" value=model.manifest.short_name focus-out="updateModel"}}
       </div>
+      <div class="form-item">
+        <label>Description</label>
+        {{input name="description" value=model.manifest.description focus-out="updateModel"}}
+      </div>
       <div class="form-item logo-upload">
         <label>Icon Url</label>
         {{logo-upload action="updateLogos" logos=model.manifest.icons baseUrl=model.manifest.start_url}}
@@ -38,6 +42,23 @@
         <label>Orientation</label>
         {{generator-select content=model.orientation.names modelProperty="manifest.orientation" value=model.manifest.orientation}}
       </div>
+      <div class="form-item">
+        <label>Language</label>
+        {{generator-select content=model.languages
+                optionLabelPath="content.name"
+                optionValuePath="content.code"
+                modelProperty="manifest.lang" 
+                value=model.manifest.lang
+                selectionProperty="code"
+                }}
+      </div>
+      {{#background-color color=model.manifest.background_color action="updateModelProperty"}} {{/background-color}}
+      <h2 class="toggle-title" {{action "toggleRelatedApps"}}>Specify related applications to be added to the manifest.</h2>
+      {{#if showRelatedApps}}
+      <div class="form-item">
+        {{#related-application-list action="updateModelProperty" preferRelatedApplications=model.manifest.prefer_related_applications relatedApplications=model.manifest.related_applications }}{{/related-application-list}}
+      </div>
+      {{/if}}
 
       <h2 class="toggle-title" {{action "toggleCustomMembers"}}>Specify custom members to be added to the manifest.</h2>
       {{#if showCustomMembers}}

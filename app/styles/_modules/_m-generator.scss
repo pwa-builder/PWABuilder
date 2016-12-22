@@ -196,10 +196,10 @@ ul.generator-tabs li.active{
   height:2.125rem;
 }
 
-.generator input[type=checkbox] {
-    float: left;
-    margin-left: 5%;
-    height: 2.12rem;
+.generator input[type=checkbox]{
+  float: left;
+  margin-left: 5%;
+  height: 2.12rem;
 }
 
 .generator textarea {
@@ -221,6 +221,13 @@ ul.generator-tabs li.active{
   float:left;
   text-align: right;
   line-height:2.215rem;
+}
+
+.generator input[type=radio] {
+  width: initial;
+  float: none;
+  display: inline-block;
+  height: initial;
 }
 
 .generator .button-holder {
@@ -597,4 +604,32 @@ ul.generator-tabs li.active{
   .publish-footer {
     margin-top: 0rem;
   }
+}
+
+#relatedApplication-list td.text-truncated {
+  max-width: 10rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis
+}
+
+.form-item > div.checkbox-item {
+    width: 65%;
+    float: left;
+    text-align: right;
+    margin-left: 35%;
+}
+.form-item > div.checkbox-item > input[type=checkbox] {
+    margin-left: initial;
+    margin-right: 5%;
+}
+
+.background-color-options {
+    width: 65%;
+    float: right;
+}
+.background-color-options > div > label {
+  display: inline-block;
+  float: none;
+  margin-left: 5px;
 }
