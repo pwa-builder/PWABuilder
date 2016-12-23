@@ -118,44 +118,47 @@
   </div>
   {{/generator-step}}
 
-
   {{#generator-step step="3" stepTitle="Publish" showNextStep=false data=model action="updateStep" }}
   {{#if startComplete}}
-  <div class="publish-container">
-    <h1>Publish PWA</h1>
-    <div class="publish-header">
-      <div>
-        <h2>Web</h2>
-        {{#download-archive class="button-holder download-archive" initialMessage="Download" isBuilding=model.isBuilding.web buildFailed=model.buildFailed.web action="buildArchive" platform="web" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus condimentum nulla viverra sagittis bibendum. Fusce tempus leo eget risus fringilla, vel pharetra sapien lacinia. Donec ut viverra mauris, in luctus nulla. Nulla aliquet quis turpis a pretium. Etiam eget iaculis.</p>
+    {{#if model.hasNoErrors}}
+      <div class="publish-container">
+        <h1>Publish PWA</h1>
+        <div class="publish-header">
+          <div>
+            <h2>Web</h2>
+            {{#download-archive class="button-holder download-archive" initialMessage="Download" isBuilding=model.isBuilding.web buildFailed=model.buildFailed.web action="buildArchive" platform="web" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus condimentum nulla viverra sagittis bibendum. Fusce tempus leo eget risus fringilla, vel pharetra sapien lacinia. Donec ut viverra mauris, in luctus nulla. Nulla aliquet quis turpis a pretium. Etiam eget iaculis.</p>
+          </div>
+          <div>
+            <h2>Windows</h2>
+            {{#download-archive class="button-holder download-archive" initialMessage="Download" isBuilding=model.isBuilding.windows10 buildFailed=model.buildFailed.windows10 action="buildArchive" platform="windows10" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus condimentum nulla viverra sagittis bibendum. Fusce tempus leo eget risus fringilla, vel pharetra sapien lacinia. Donec ut viverra mauris, in luctus nulla. Nulla aliquet quis turpis a pretium. Etiam eget iaculis.</p>
+            {{#publish-package class="button-holder download-archive" initialMessage="Publish 1-step" isBuilding=model.isBuilding.Win10Publish buildFailed=model.buildFailed.Win10Publish publishSuccedded=model.publishSuccedded action="publishWin10Package" publishName=model.name publishEmail=model.email}}{{/publish-package}}
+          </div>
+          <div>
+            <h2>Android</h2>
+            {{#download-archive class="button-holder download-archive" initialMessage="Download" isBuilding=model.isBuilding.android buildFailed=model.buildFailed.android action="buildArchive" platform="android" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus condimentum nulla viverra sagittis bibendum. Fusce tempus leo eget risus fringilla, vel pharetra sapien lacinia. Donec ut viverra mauris, in luctus nulla. Nulla aliquet quis turpis a pretium. Etiam eget iaculis.</p>
+            {{#publish-package class="button-holder download-archive" initialMessage="Publish 1-step" isBuilding=model.isBuilding.Win10Publish buildFailed=model.buildFailed.Win10Publish publishSuccedded=model.publishSuccedded action="publishWin10Package" publishName=model.name publishEmail=model.email isEnabled=false }}{{/publish-package}}        
+          </div>
+        </div>
+        <div class="publish-footer">
+          <div>
+            <h2>iOS Polyfill</h2>
+            {{#download-archive class="button-holder download-archive" initialMessage="Download" isBuilding=model.isBuilding.ios buildFailed=model.buildFailed.ios action="buildArchive" platform="ios" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+          </div>
+          <div>
+            {{#download-archive class="button-holder download-archive download-primary" initialMessage="Download entire project" isBuilding=model.isBuilding.Polyfills buildFailed=model.buildFailed.Polyfills action="buildArchive" platform="Polyfills" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+          </div>
+        </div>
       </div>
-      <div>
-        <h2>Windows</h2>
-        {{#download-archive class="button-holder download-archive" initialMessage="Download" isBuilding=model.isBuilding.windows10 buildFailed=model.buildFailed.windows10 action="buildArchive" platform="windows10" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus condimentum nulla viverra sagittis bibendum. Fusce tempus leo eget risus fringilla, vel pharetra sapien lacinia. Donec ut viverra mauris, in luctus nulla. Nulla aliquet quis turpis a pretium. Etiam eget iaculis.</p>
-        {{#publish-package class="button-holder download-archive" initialMessage="Publish 1-step" isBuilding=model.isBuilding.Win10Publish buildFailed=model.buildFailed.Win10Publish publishSuccedded=model.publishSuccedded action="publishWin10Package" publishName=model.name publishEmail=model.email}}{{/publish-package}}
-      </div>
-      <div>
-        <h2>Android</h2>
-        {{#download-archive class="button-holder download-archive" initialMessage="Download" isBuilding=model.isBuilding.android buildFailed=model.buildFailed.android action="buildArchive" platform="android" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus condimentum nulla viverra sagittis bibendum. Fusce tempus leo eget risus fringilla, vel pharetra sapien lacinia. Donec ut viverra mauris, in luctus nulla. Nulla aliquet quis turpis a pretium. Etiam eget iaculis.</p>
-        {{#publish-package class="button-holder download-archive" initialMessage="Publish 1-step" isBuilding=model.isBuilding.Win10Publish buildFailed=model.buildFailed.Win10Publish publishSuccedded=model.publishSuccedded action="publishWin10Package" publishName=model.name publishEmail=model.email isEnabled=false }}{{/publish-package}}        
-      </div>
-    </div>
-    <div class="publish-footer">
-      <div>
-        <h2>iOS Polyfill</h2>
-        {{#download-archive class="button-holder download-archive" initialMessage="Download" isBuilding=model.isBuilding.ios buildFailed=model.buildFailed.ios action="buildArchive" platform="ios" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
-      </div>
-      <div>
-        {{#download-archive class="button-holder download-archive download-primary" initialMessage="Download entire project" isBuilding=model.isBuilding.Polyfills buildFailed=model.buildFailed.Polyfills action="buildArchive" platform="Polyfills" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
-      </div>
-    </div>
-  </div>
-  
+    {{else}}
+      <p class="instructions">There are some validation errors in the manifest. Please fix them and try again.</p>
+      <button class="button next-step" {{action "updateStep" "1"}}>Go to first step</button>
+    {{/if}}  
   {{else}}
-  <p class="instructions">You need to create your manifest first.</p>
-  <button class="button next-step" {{action "updateStep" "1"}}>Go to first step</button>
+    <p class="instructions">You need to create your manifest first.</p>
+    <button class="button next-step" {{action "updateStep" "1"}}>Go to first step</button>
   {{/if}}
   {{/generator-step}}
 </ul>

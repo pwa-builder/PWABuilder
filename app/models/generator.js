@@ -37,6 +37,9 @@ export default Ember.Object.extend({
   hasIssues: function(){
     return this.errors.length > 0 || this.warnings.length > 0 || this.suggestions.length > 0;
   }.property('errors,suggestions,warnings'),
+  hasNoErrors: function() {
+    return this.errors.length === 0;
+  }.property('errors'),
   display: {
     names: ['fullscreen', 'standalone', 'minimal-ui', 'browser']
   },

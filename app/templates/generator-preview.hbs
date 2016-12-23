@@ -1,6 +1,9 @@
 <section class="manifest-body">
-  {{formatted-manifest data=formattedManifest showDownloadButton=true downloadAction="downloadManifest"}}
+  {{formatted-manifest data=formattedManifest}}
 </section>
+
+{{#download-archive class="button-holder download-archive download-manifest" initialMessage="Download manifest" isBuilding=model.isBuilding.web buildFailed=model.buildFailed.web action="buildArchive" platform="web" download="downloadArchive" archiveLink=model.archiveLink isEnabled=model.hasNoErrors}}{{/download-archive}}
+
 {{#if model.hasIssues}}
 <div id="issues_list" class="issues">
   {{#if model.errors}}
