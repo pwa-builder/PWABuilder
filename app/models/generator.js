@@ -61,15 +61,7 @@ export default Ember.Object.extend({
   }.property('serviceWorkers.@each.isSelected'),
   save: function () {
     this.set('isSaving', true);
-    
-    var manifest = this.get('manifest');
-    if (manifest.lang && manifest.lang === "") {
-      delete manifest.lang;
-    }
-    if (manifest.background_color && manifest.background_color === "none") {
-      delete manifest.background_color;
-    }
-    
+      
     if(!this.manifestId) {
       this.create();
     } else {
@@ -312,5 +304,17 @@ export default Ember.Object.extend({
       self.set('serviceWorkerCodePreview.forServiceWorker', '');      
     }
   },
-  languages: [{"code": '', "name": " "}].pushObjects(langConst.languageConst())
+  languages: [{"code": '', "name": " "}].pushObjects(langConst.languageConst()),
+  watchLang: function() {
+    var manifest = this.get('manifest');
+    if (manifest.lang && manifest.lang === "") {
+      delete manifest.lang;
+    }
+  }.observes("manifest.lang"),
+  watchBackgroundColor: function() {
+    var manifest = this.get('manifest');
+    if (manifest.background_color && manifest.background_color === "none") {
+      delete manifest.background_color;
+    }
+  }.observes("manifest.background_color"),
 });
