@@ -19,6 +19,7 @@ export default Ember.Object.extend({
   errors: Ember.A(),
   members: Ember.A(),
   buildErrors: Ember.A(),
+  assets: Ember.A(),
   errorsTotal: function(){
     return _.sum(this.errors, function(n){
       return n.issues.length;
@@ -317,4 +318,30 @@ export default Ember.Object.extend({
       delete manifest.background_color;
     }
   }.observes("manifest.background_color"),
+  generateMissingImages: function(fileInfo, callback) {
+    var self = this;
+    
+    var formData = new FormData();
+    formData.append('file', fileInfo);
+
+    ajax({
+      url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/generatemissingimages' ,
+      type: 'POST',
+      data: formData,
+      contentType: false,
+      processData: false,
+      cache: false
+    }).then(function(result){
+      self.set('manifest', result.content);
+      self.set('assets', result.assets);
+      callback();
+    }).catch(function(error) {
+      console.error('Error: ' + error);
+      callback(error);
+    });
+  },
+  hasAssets: function() {
+    return (this.assets && this.assets.length > 0);
+  }.property('assets'),
+
 });

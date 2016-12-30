@@ -11,7 +11,23 @@ export default Ember.Controller.extend({
   formattedManifest: function () {
     var model = this.get('model');
     var code = model.get('manifest');
-    return new Ember.Handlebars.SafeString('<code class=\'language-javascript\'>' + JSON.stringify(code, null, 2) + '</code>');
+
+    var _code = JSON.stringify(code);
+    _code = JSON.parse(_code);
+
+    _code.icons.map(function (icon) {
+      if (icon.src.indexOf('data:') === 0){
+        icon.src = "[Embedded]";
+      }
+      if (icon.fileName) {
+        delete icon.fileName;
+      }
+      if (icon.generated) {
+        delete icon.generated;
+      }
+    });
+
+    return new Ember.Handlebars.SafeString('<code class=\'language-javascript\'>' + JSON.stringify(_code, null, 2) + '</code>');
   }.property('model.manifest'),
   formattedServiceWorkerWebsiteCode : function() {
     var model = this.get('model');
@@ -125,4 +141,3 @@ export default Ember.Controller.extend({
     }
   }
 });
-

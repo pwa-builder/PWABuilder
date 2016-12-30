@@ -1,6 +1,5 @@
 import Ember from 'ember';
 import GeneratorModel from '../models/generator';
-import config from '../config/environment';
 
 export default Ember.Route.extend({
   model: function () {
@@ -28,6 +27,10 @@ export default Ember.Route.extend({
       } else if (file) {
         model.upload(file);
       }
+    },
+    deleteAssets: function() {
+      var model = this.modelFor('generator');
+      model.set('assets', []);
     },
     updateLogos: function(logos) {
       var model = this.modelFor('generator');
@@ -113,9 +116,9 @@ export default Ember.Route.extend({
       var model = this.modelFor('generator');
       model.getServiceWorkerCodePreview();
     }, 
-    downloadManifest: function() {
+    addUploadedImage: function(imageInfo, callback) {
       var model = this.modelFor('generator');
-      window.location = config.APP.API_URL + '/manifests/' + model.get('manifestId') + '/download';
+      model.generateMissingImages(imageInfo, callback);
     }
   }
 });

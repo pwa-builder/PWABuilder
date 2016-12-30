@@ -238,6 +238,7 @@ ul.generator-tabs li.active{
 
 .generator .icon-preview {
 	width:2rem;
+  vertical-align: middle;
 }
 
 .generator .logo-upload {
@@ -246,10 +247,6 @@ ul.generator-tabs li.active{
 
 .generator .logo-upload .fa, .generator .member-list .fa {
 	font-size:1rem;
-}
-
-.generator .logos {
-	margin-top:1.5rem;
 }
 
 .generator .generator-members {
@@ -283,8 +280,18 @@ ul.generator-tabs li.active{
 	background-color:$table-accent;
 }
 
-.generator .add-button {
-	margin-top:.5rem;
+.button-holder.icons {
+  width: 65%;
+  float: right;
+}
+.button-holder.icons button.upload-image {
+  float: left;
+  background: #2abebc;
+  color: white;
+}
+
+.button-holder.icons button.upload-image > i.fa-upload {
+  margin-left: 5px;
 }
 
 .generator input:-ms-input-placeholder {
@@ -641,6 +648,21 @@ ul.generator-tabs li.active{
   outline: 1px dashed white;
 }
 
+.upload-image-modal .form-item > input[type=checkbox] {
+  margin-left: 0px;
+  margin-right: 5%;
+}
+
+.upload-image-modal .form-item .upload-file {
+    width: 55%;
+    float: left;
+    margin-left: 10px;
+}
+
+//pre.language-javascript > code.language-javascript > 
+span:contains("Embedded") {
+  font-style: italic;
+}
 
 @media only screen and (max-width: 600px) {
   .publish-container {
@@ -658,7 +680,6 @@ ul.generator-tabs li.active{
   .publish-footer {
     margin-top: 0rem;
   }
-
 }
 
 @media only screen and (max-width: 1370px) {
