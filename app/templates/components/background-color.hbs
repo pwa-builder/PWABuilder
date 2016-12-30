@@ -1,0 +1,20 @@
+<div class="form-item">
+    <label>Background Color</label>
+    <div class="background-color-options">
+        <div>
+            {{generator-radio-button value='none' checked=colorOption}}
+            <label>None</label>
+        </div>
+        <div>
+            {{generator-radio-button value='transparent' checked=colorOption}}
+            <label>Transparent</label>
+        </div>
+        <div>            
+        {{generator-radio-button value='pick' checked=colorOption}}
+        <label>Custom color</label>
+        {{#if canChooseColor}}
+            {{input type="color" name="background_color" value=color}}
+        {{/if}}
+        </div>
+    </div>
+</div>

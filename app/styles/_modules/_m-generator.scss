@@ -15,15 +15,8 @@ $form-accent:#999999;
 }
 
 .generator-section {
-  height:auto;
-  overflow:auto;
-}
-
-@media screen and (min-width: 48em) {
-  .generator-section {
     height: 100%;
-    overflow-y:scroll;
-  }
+    overflow-y:auto;
 }
 
 .generator-section-title {
@@ -48,11 +41,14 @@ $form-accent:#999999;
 	margin: 0;
 }
 .generator-section .manifest-body {
-	margin-top: 6rem;
   color:$secondary-accent;
   font-family:$serif-stack;
   font-size:1.313rem;
   line-height:2.5rem;
+}
+
+.generator-section .manifest-body pre {
+    overflow: unset;
 }
 
 .generator-issues-notification {
@@ -76,27 +72,54 @@ $form-accent:#999999;
   color: #fff;
 }
 
-.generator .generator-section:first-child {
-	padding-right:0;
-}
-
-.generator .generator-section:last-child {
-  padding-left: 0;
-}
-
 .generator .form-holder {
-	padding:0 0;
+	padding: 5px 20px 5px 0;
+}
+
+ul.generator-tabs {
+    list-style-type: none;
+    margin: 0 16px;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+ul.generator-tabs li.tab {
+    cursor:pointer;
+}
+
+ul.generator-tabs li {float: left;}
+
+ul.generator-tabs li a {
+    display: inline-block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    transition: 0.3s;
+    font-size: 14px;
+}
+
+ul.generator-tabs li a:hover {background-color: #ddd;}
+
+.generator-step-list li.step {
+    display: none;
+}
+
+ul.generator-tabs li a:focus, 
+ul.generator-tabs li.active{
+  background-color: #ccc;
+}
+
+.generator-step-list li.active 
+{
+  display: block;
 }
 
 .generator .step {
-	margin: 1rem;
-	font-family:$sans-stack-light;
-	font-size:.875rem;
-  padding:0 1rem;
-}
-
-.generator .step {
-  margin: 1rem 0 0 1rem;
+  padding: 0;
+  margin: 0 1rem;
   font-family:$sans-stack-light;
   font-size:.875rem;
 }
@@ -107,7 +130,7 @@ $form-accent:#999999;
 }
 
 .generator .step-wrapper {
-  padding-left: 3.25rem;
+  padding-left: 1rem;
 }
 
 .generator .step--disabled, .generator .step--disabled .title {
@@ -116,6 +139,7 @@ $form-accent:#999999;
 }
 
 .generator .step header {
+  margin-top:10px;
   cursor:pointer;
 }
 
@@ -129,8 +153,15 @@ $form-accent:#999999;
   line-height:2.2rem;
 }
 
+.generator .step .toggle-title {
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 2.2rem;
+  margin-top: 2.5rem;
+}
+
 .generator .instructions {
-  margin-top:0;
+  margin-top: 10px;
 }
 
 .generator hr {
@@ -165,15 +196,10 @@ $form-accent:#999999;
   height:2.125rem;
 }
 
-.generator input[type=checkbox] {
-    float: left;
-    margin-left: 5%;
-    height: 2.12rem;
-}
-
-.generator .upload-file {
-  width:47% !important;
-  float:left !important;
+.generator input[type=checkbox]{
+  float: left;
+  margin-left: 5%;
+  height: 2.12rem;
 }
 
 .generator textarea {
@@ -192,15 +218,22 @@ $form-accent:#999999;
 
 .generator label {
   display:block;
-  width:30%;
   float:left;
   text-align: right;
   line-height:2.215rem;
 }
 
+.generator input[type=radio] {
+  width: initial;
+  float: none;
+  display: inline-block;
+  height: initial;
+}
+
 .generator .button-holder {
   clear:both;
   text-align: right;
+  margin-top: 20px;
 }
 
 .generator .icon-preview {
@@ -261,6 +294,7 @@ $form-accent:#999999;
 /* Generator step list custom numbering */
 
 .generator-step-list {
+  margin-top: 0;
   margin-left: 0;
   padding-left: 0;
   list-style-type: none;
@@ -271,7 +305,7 @@ $form-accent:#999999;
   counter-increment: step-counter;
 }
 
-.generator-step-list .step::before {
+/*.generator-step-list .step::before {
   width: 2.25rem;
   height: 2.25rem;
   position: absolute;
@@ -283,7 +317,7 @@ $form-accent:#999999;
   color:white;
   font-family:$serif-stack;
   font-size:1.563rem;
-}
+}*/
 
 .generator-step-list .step--disabled {
   cursor: not-allowed;
@@ -293,18 +327,25 @@ $form-accent:#999999;
   padding: 0 1rem 1rem 0;
 }
 
-.generator-start .url label {
-  width:8%;
+.generator-start .url label,
+.generator-start .manifest label  {
+  margin-right: 10px;
   text-align:left;
 }
 
-.generator-start .url input {
-  width:90%;
+.generator-start .url input{
+  width: 80%;
+  float:left;
 }
 
-.generator-start .manifest label {
-  width:28%;
-  text-align: left;
+.generator-start .manifest input.upload-file {
+  width: 50%;
+  float: left;
+  margin-right: 10px;
+}
+
+.generator-start .manifest .fileUpload {
+  position: relative;
 }
 
 /*
@@ -371,18 +412,14 @@ $form-accent:#999999;
 
 //Manifest section
 .generator .manifest-holder {
+  overflow-y:auto;
+  height: 1150px;
   display: none;
   background-color:$dark-accent;
 }
 
-@media screen and (min-width: 48em) {
-  .generator .manifest-holder {
-    display: inline-block;
-  }
-}
-
-.manifest-holder > header {
-  position: fixed;
+.generator .manifest-holder {
+  display: inline-block;
 }
 
 .generator .generator-section pre {
@@ -473,5 +510,165 @@ $form-accent:#999999;
 }
 .logos .generator-members .btn:hover, .logos .generator-members button:hover{
   background: transparent;
+
+}
+
+.generator-service-worker-code {
+  min-height: 20%;
+}
+.service-workers > .form-item.checkbox {
+  width: 100%;
+}
+.service-workers > .form-item.checkbox,
+.service-workers > .download-archive {
+  display: block;
+}
+
+.publish-container > h1 {
+  text-align: center;
+}
+
+.publish-header {
+  text-align: center;
+}
+.publish-header > div {
+  width: 30%;
+  display: inline-block;
+  vertical-align: top;
+  border-right: 1px solid #cecece;
+  padding-right: 1rem;
+  min-height: 15rem;
+  padding-left: 1rem;
+}
+.publish-header > div:nth-last-child(1) {
+  border-right: none;
+}
+.publish-header > div > p {
+  text-align: left;
+}
+
+.publish-footer {
+  margin-top: 3rem;
+}
+.publish-footer > div {
+  width: 100%;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.download-primary > button,
+.download-primary .btn.isEnabled {
+    background-color: #2955a0;
+    font-size: 1.2rem;
+    margin-top: 2rem;
+}
+
+.service-workers > .form-item.checkbox {
+  margin-bottom: 1.5rem;
+}
+
+.service-workers > .form-item.checkbox > label {
+  font-size: 1.4rem;
+  width: auto;
+}
+
+.service-workers > .form-item.checkbox > .description {
+  font-size: 0.8rem;
+  float: left;
+}
+
+.service-workers > .button-holder.download-archive {
+  text-align: center;
+  margin-bottom: 2rem;
+  float: left;
+}
+
+.service-workers > .form-item.checkbox > input[type=checkbox] {
+  margin-left: 0rem;
+  margin-right: 1rem;
+}
+
+#relatedApplication-list td.text-truncated {
+  max-width: 10rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis
+}
+
+.form-item > div.checkbox-item {
+    width: 65%;
+    float: left;
+    text-align: right;
+    margin-left: 35%;
+}
+.form-item > div.checkbox-item > input[type=checkbox] {
+    margin-left: initial;
+    margin-right: 5%;
+}
+
+.background-color-options {
+    width: 65%;
+    float: right;
+}
+.background-color-options > div {
+  display: inline-block;
+  width: 30%;
+  height: 2rem;
+}
+.background-color-options > div > label {
+  display: inline-block;
+  float: none;
+  margin-left: 5px;
+}
+.background-color-options > div > input[type=color]{
+  display: inline-block;
+  width: 30%;
+  float: none; 
+  height: 1.5rem;
+  margin-left: 5px;
+}
+
+.download-manifest {
+  background-color: #2955a0;
+  font-size: 1.2rem;
+  margin-left: 22px;
+}
+.download-manifest:hover {
+  background-color: #2955a0;  
+  color: white;
+}
+.download-manifest:focus {
+  outline: 1px dashed white;
+}
+
+
+@media only screen and (max-width: 600px) {
+  .publish-container {
+    margin-top: 1rem;
+  }
+
+  .publish-header > div {
+    width: 90%;
+    border-right: none;
+    border-bottom: 1px solid #cecece;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .publish-footer {
+    margin-top: 0rem;
+  }
+
+}
+
+@media only screen and (max-width: 1370px) {
+  .background-color-options {
+    height: 100px;
+  }
+
+  .background-color-options > div {
+    width: 100%;
+    display: block;
+  }
 
 }

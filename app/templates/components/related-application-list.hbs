@@ -1,0 +1,47 @@
+<div class="form-group">
+    <p class="instructions alert"><i class="fa fa-exclamation {{if showAlert 'show' 'hidden'}}"></i> {{memberAlert}}</p>
+    <div class="form-item">
+        <label>Platform</label>
+        {{input name="relatedApp_platform" value=relatedApp_platform}}
+    </div>
+    <div class="form-item">
+        <label>URL</label>
+        {{input name="relatedApp_url" value=relatedApp_url}}
+    </div>
+    <div class="form-item">
+        <label>Id</label>
+        {{input name="relatedApp_id" value=relatedApp_id}}
+    </div>
+
+    <div class="button-holder">
+        <button {{action 'addRelatedApplication'}}>Add Related Application</button>
+    </div>
+
+    {{#if relatedApplications}}
+        <table id="relatedApplication-list">
+            <thead>
+                <tr>
+                    <td>Platform</td>
+                    <td>URL</td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each app in relatedApplications}}
+                <tr>
+                    <td>{{app.platform}}</td>
+                    <td class="text-truncated">{{app.url}}</td>
+                    <td><button {{action 'removeRelatedApplication' app}}>{{fa-icon "times"}}</button></td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    {{/if}}
+
+    <div class="form-item">
+        <div class="checkbox-item">
+            {{generator-checkbox checked=preferRelatedApplications action="updatepreferRelatedApplications" }}
+            <label>Prefer related applications</label>
+        </div>
+    </div>
+</div>

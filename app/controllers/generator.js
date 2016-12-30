@@ -13,24 +13,26 @@ export default Ember.Controller.extend({
     var code = model.get('manifest');
     return new Ember.Handlebars.SafeString('<code class=\'language-javascript\'>' + JSON.stringify(code, null, 2) + '</code>');
   }.property('model.manifest'),
+  formattedServiceWorkerWebsiteCode : function() {
+    var model = this.get('model');
+    var codePreview = model.get('serviceWorkerCodePreview');
+    var code = codePreview.forWebSite;
+    return new Ember.Handlebars.SafeString('<code class=\'language-javascript\'>' + code + '</code>');
+  }.property('model.serviceWorkerCodePreview.forWebSite'),
+  formattedServiceWorkerCode : function() {
+    var model = this.get('model');
+    var codePreview = model.get('serviceWorkerCodePreview');
+    var code = codePreview.forServiceWorker;
+    return new Ember.Handlebars.SafeString('<code class=\'language-javascript\'>' + code + '</code>');
+  }.property('model.serviceWorkerCodePreview.forServiceWorker'),
   isProcessing: function() {
     var model = this.get('model');
     return model.get('isBuilding') || model.get('isSaving');
   }.property('model.isBuilding', 'model.isSaving'),
-  steps: Ember.Object.create({
-    step1: {
-      name: 'step1',
-      isCurrent: true
-    },
-    step2: {
-      name: 'step2',
-      isCurrent: true
-    },
-    step3: {
-      name: 'step3',
-      isCurrent: false
-    }
-  }),
+  steps: Ember.A(),
+  activeStep: null,
+  showCustomMembers: false,
+  showRelatedApps: false,
   selectedDisplay: null,
   selectedOrientation: null,
   valueOrEmptyString: function (value) {
@@ -45,7 +47,7 @@ export default Ember.Controller.extend({
     this.model.save();
   },
   customMembers: function(){
-    var staticValues = ['lang','name','short_name','scope','icons','display','orientation','start_url','theme_color','related_applications','prefer_related_applications'];
+    var staticValues = ['lang','name','short_name','scope','icons','display','orientation','start_url','theme_color','related_applications','prefer_related_applications', 'background_color'];
     var model = this.get('model');
     var keys = _.filter(_.keys(model.manifest),function(key){
       return key.indexOf('_') !== -1;
@@ -60,23 +62,25 @@ export default Ember.Controller.extend({
     });
     return customProps;
   }.property('model'),
+  relatedApplications: function() {
+    var model = this.get('model');
+    return model.get('relatedApplications');
+  }.property('model'),
+  setActiveStep: function(stepId) {
+    if (this.get('activeStep') !== null) {
+      if (stepId !== this.get('activeStep')) {
+        this.set('activeStep', stepId);
+      }      
+    } else {
+      this.set('activeStep', stepId);
+    }
+  },
+
   actions: {
-    updateStep: function(currentStep, nextStep) {
-      if(currentStep) {
-        this.ga('send', 'event', 'item', 'click', 'generator-step-'+currentStep);
-        this.set('steps.step'+currentStep+'.isCurrent', false);
-        this.model.save();
-      }
-      if(nextStep){
-        this.set('steps.step'+nextStep+'.isCurrent', true);
-      }
-    },
     startOver: function(){
       this.set('startReady', false);
-      
-      this.set('steps.step1.isCurrent', true);
-      this.set('steps.step2.isCurrent', true);
-      this.set('steps.step3.isCurrent', false);
+      this.set('model.manifestId', null);
+      this.set('activeStep', "1");
       
       var model = this.get('model');
       model.get('platforms').forEach(function(item) {
@@ -86,8 +90,15 @@ export default Ember.Controller.extend({
 
       return true;
     },
+    updateStep: function(nextStep){
+      this.setActiveStep(nextStep);
+      return true; // keep bubbling
+    }, 
     startComplete: function() {
       this.set('startReady', true);
+      this.set('activeStep', "1");
+      this.set("showCustomMembers", false);
+
       return true;
     },
     updateSelection: function() {
@@ -102,6 +113,15 @@ export default Ember.Controller.extend({
         Ember.set(item, 'isSelected', !allSelected);
       });
       model.save();
+    },
+
+    toggleCustomMembers: function() {
+      var current = this.get("showCustomMembers");
+      this.set("showCustomMembers", !current);
+    },
+    toggleRelatedApps: function() {
+      var current = this.get("showRelatedApps");
+      this.set("showRelatedApps", !current);      
     }
   }
 });

@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import GeneratorModel from '../models/generator';
+import config from '../config/environment';
 
 export default Ember.Route.extend({
   model: function () {
@@ -33,16 +34,30 @@ export default Ember.Route.extend({
       model.set('manifest.icons',logos);
       model.save();
     },
-    buildArchive: function(){
+    buildArchive: function(platform){
       this.ga('send', 'event', 'item', 'click', 'generator-build-trigger');
       var model = this.modelFor('generator');
-      model.build();
+      model.build(platform);
     },
-    downloadArchive: function(archiveLink){
+    downloadArchive: function(archiveLink, platform){
       var model = this.modelFor('generator');
-      model.set('buildReady',true);
+      model.set('build' + platform + 'Ready',true);
       this.ga('send', 'event', 'item', 'click', 'generator-build-download');
       window.location.href = archiveLink;
+    },
+    publishWin10Package: function(publishName, publishEmail){
+      var model = this.modelFor('generator');
+      
+      var platform = 'windows10';
+      
+      var options = { 
+        DotWeb: false, 
+        AutoPublish: true, 
+        autoPublishName: publishName, 
+        autoPublishEmail: publishEmail
+      };
+      
+      model.package(platform, options);
     },
     updateModelProperty: function(name, value) {
       var model = this.modelFor('generator');
@@ -59,6 +74,27 @@ export default Ember.Route.extend({
       }
       model.save();
     },
+    manageRelatedApplications: function(action, relatedApp) {
+      var model = this.modelFor('generator');
+      var manifest = model.get('manifest');
+      if(action === 'add'){
+        if (!manifest.related_applications) {
+          manifest.related_applications = Ember.A();
+        }
+        manifest.related_applications.pushObject(relatedApp);
+      } else if (action === 'remove') {
+        var _relatedApp = manifest.related_applications.filter(function(item) {
+          return item.platform === relatedApp.platform && item.url === relatedApp.url && item.id === relatedApp.id;
+        });
+        if (_relatedApp) {
+          manifest.related_applications.removeObjects(_relatedApp);
+        }
+        if (manifest.related_applications.length === 0) {
+          delete manifest["related_applications"];
+        }
+      }
+      model.save();
+    },
     didTransition: function() {
       Ember.$('.application').addClass('l-app-style');
     },
@@ -68,6 +104,18 @@ export default Ember.Route.extend({
     },
     startOver: function(){
       this.refresh();
+    },
+    downloadServiceWorker: function() {
+      var model = this.modelFor('generator');
+      model.downloadServiceWorker();
+    },
+    getServiceWorkerCodePreview: function() {
+      var model = this.modelFor('generator');
+      model.getServiceWorkerCodePreview();
+    }, 
+    downloadManifest: function() {
+      var model = this.modelFor('generator');
+      window.location = config.APP.API_URL + '/manifests/' + model.get('manifestId') + '/download';
     }
   }
 });
