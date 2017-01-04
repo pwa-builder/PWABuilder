@@ -72,7 +72,7 @@ export default Ember.Component.extend({
         self.getImageDataURI(fileInfo, function (dataUri) {
             var sizes = self.getImageSize(dataUri);
 
-            self.logos.pushObject({ src: dataUri, sizes: sizes.width +'x'+sizes.height });
+            self.logos.pushObject({ fileName: fileInfo.name, src: dataUri, sizes: sizes.width +'x'+sizes.height });
             self.sendAction('action',self.logos);
 
             callback();
