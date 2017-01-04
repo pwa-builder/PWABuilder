@@ -614,12 +614,14 @@ ul.generator-tabs li.active{
 }
 
 .background-color-options {
+    height: 100px;
     width: 65%;
     float: right;
 }
 .background-color-options > div {
   display: inline-block;
-  width: 30%;
+  width: 100%;
+  display: block;
   height: 2rem;
 }
 .background-color-options > div > label {
@@ -680,16 +682,4 @@ span:contains("Embedded") {
   .publish-footer {
     margin-top: 0rem;
   }
-}
-
-@media only screen and (max-width: 1370px) {
-  .background-color-options {
-    height: 100px;
-  }
-
-  .background-color-options > div {
-    width: 100%;
-    display: block;
-  }
-
 }
