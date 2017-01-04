@@ -1,0 +1,44 @@
+<button class="btn build upload-image {{if isEnabled 'isEnabled'}}" {{action "showPopup"}}>
+    {{message}} {{fa-icon "upload"}}
+</button>
+
+{{#if showDialog}}
+<div class="modal-fog">
+  <div class="modal-frame upload-image-modal">
+    <h5 class="modal-title">
+      Upload an image
+    </h5>
+    <div class="modal-body">
+      {{#if showErrorMessage}}
+        <div>
+          <p>There was an error uploading the image. Please try again.</p>
+        </div>
+      {{/if}}
+      <div class="form-item">
+        <label>Upload image</label>
+        <div>
+          <input class="upload-file" placeholder="Choose File" disabled="disabled" value="{{fileName}}" />
+          <div class="fileUpload btn">
+            <span>Browse</span>
+            {{file-input class="upload" action="uploadFile"}}
+          </div>
+        </div>
+      </div>
+
+      <div class="form-item">
+          {{generator-checkbox checked=generateMissingSizes}}
+          <label>Generate missing images from this image</label>
+      </div>
+
+      <div class="form-item">
+        <button class="button" {{action "accept"}}>
+          Submit
+          {{#if isSaving}}{{fa-icon "circle-o-notch fa-spin"}}{{/if}}
+        </button>
+        <button class="button" {{action "close"}}>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+{{/if}}
+{{yield}}

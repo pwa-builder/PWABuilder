@@ -8,15 +8,15 @@ export default Ember.Component.extend({
     canChooseColor: function() {
         return this.colorOption === "pick";
     }.property("colorOption"),
-    watchTypeColorChoosen: function() {
+    watchTypeColorChosen: function() {
         if (this.colorOption === "none") {
             this.set("color", "none");
         } else if (this.colorOption === "transparent") {
             this.set("color", "transparent");
         }
     }.observes("colorOption"),
-    updateColorChoosen: function() {
-        if (this.lastColor !== this.color && this.context._state !== 'preRender') {
+    updateColorChosen: function() {        
+        if (this.color && this.lastColor !== this.color && this.context._state !== 'preRender') {
             this.sendAction('action', 'background_color', this.color);
             this.set('lastColor', this.color);
         }
@@ -32,7 +32,7 @@ export default Ember.Component.extend({
             this.set('colorOption', 'pick');
         } else if (converter.isAlias(this.color) || converter.isRGB(this.color) || converter.isHSL(this.color)) {
             this.set('colorOption', 'pick');
-            //Component return the color in the four byte hexa.
+            // Color picker component returns the color in the four byte hexa.
             this.set('color', "#" + converter.toHexadecimal(this.color).slice(4, 10));
         } else {
             this.set('colorOption', 'none');

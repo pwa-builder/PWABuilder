@@ -24,7 +24,7 @@
       </div>
       <div class="form-item logo-upload">
         <label>Icon Url</label>
-        {{logo-upload action="updateLogos" logos=model.manifest.icons baseUrl=model.manifest.start_url}}
+        {{logo-upload action="updateLogos" generateMissingImageAction="addUploadedImage" deleteAssetsAction="deleteAssets" logos=model.manifest.icons baseUrl=model.manifest.start_url hasAssets=model.hasAssets}}
       </div>
       <div class="form-item">
         <label>Scope</label>
