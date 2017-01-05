@@ -96,8 +96,12 @@
           <span class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean pellentesque tempus magna ac lobortis. Sed vel porttitor felis, ac porta sapien. Curabitur iaculis commodo tristique. Sed sed massa diam. Donec sagittis lacinia blandit. Fusce et massa leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eleifend velit a risus pharetra, imperdiet imperdiet magna consectetur. Curabitur vel rutrum nisl, ut maximus arcu.</span>
         </div>
       {{/each}}
-    
-      {{#download-archive class="button-holder download-archive" initialMessage="Download service worker" isBuilding=model.isBuilding.serviceWorker buildFailed=model.buildFailed.serviceWorker action="downloadServiceWorker" platform="serviceWorker" isEnabled=model.hasServiceWorkersSelected}}{{/download-archive}}
+      
+      <div>
+        {{#download-archive class="button-holder download-archive" initialMessage="Download service worker" isBuilding=model.isBuilding.serviceWorker buildFailed=model.buildFailed.serviceWorker action="downloadServiceWorker" platform="serviceWorker" isEnabled=model.hasServiceWorkersSelected}}{{/download-archive}}
+      </div>
+
+      <p class="instructions">You can also download the source code directly from <a href="https://github.com/manifoldjs/serviceworkers" target="_blank">GitHub</a>.</p>
     </div>
 
     <div class="pure-u-1 pure-u-md-1-2 generator-section manifest manifest-holder">
