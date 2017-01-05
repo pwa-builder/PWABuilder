@@ -149,8 +149,8 @@ export default Ember.Object.extend({
     this.set('buildFailed.' + platform,false);
     this.buildErrors.clear();
     
-    if (platform === 'Polyfills') {
-      platformsList = [ 'windows', 'ios', 'android' ];
+    if (platform === 'All') {
+      platformsList = [ 'web', 'windows10', 'windows', 'ios', 'android' ];
     } else {
       platformsList = [ platform ];
     }
