@@ -95,10 +95,10 @@ ul.generator-tabs li a {
     display: inline-block;
     color: black;
     text-align: center;
-    padding: 14px 16px;
+    padding: 44px 36px;
     text-decoration: none;
     transition: 0.3s;
-    font-size: 14px;
+    font-size: 24px;
 }
 
 ul.generator-tabs li a:hover {background-color: #ddd;}
@@ -503,7 +503,7 @@ ul.generator-tabs li.active{
 .download-archive .btn.isEnabled,
 .generator-start .btn {
   cursor: pointer;
-  background-color: $secondary-accent;
+  background-color: $primary-accent;
 }
 
 .download-archive {
@@ -681,5 +681,8 @@ span:contains("Embedded") {
 
   .publish-footer {
     margin-top: 0rem;
+  }
+  .center{
+    text-align:center;
   }
 }

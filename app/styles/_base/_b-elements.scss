@@ -36,10 +36,12 @@ h2 {
 
 h3 {
 	font-size:1.875rem; //30px
+	font-family: $sans-stack-light;
 }
 
 h4 {
 	font-size:1.75rem; 	//28px
+	font-family: $sans-stack-light;
 }
 
 h5 {
@@ -47,7 +49,7 @@ h5 {
 }
 
 button, .btn {
-	background:$primary-accent;
+	background:$secondary-accent;
 	border:none;
 	color:#fff;
   margin: 0;
@@ -141,7 +143,7 @@ strong {
 }
 
 a {
-	color:$primary-accent;
+	color: dodgerblue;
 	text-decoration: none;
 	-webkit-transition: all 0.25s ease-in-out;
 	-moz-transition: all 0.25s ease-in-out;
