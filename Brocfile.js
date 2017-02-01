@@ -22,7 +22,7 @@ var app = new EmberApp({
 app.import('bower_components/prism/themes/prism-okaidia.css');
 app.import('bower_components/prism/prism.js');
 app.import('bower_components/pluralize/pluralize.js');
-app.import('bower_components/lodash/lodash.min.js');
+app.import('bower_components/lodash/dist/lodash.min.js');
 
 app.import("bower_components/font-awesome/css/font-awesome.css");
 app.import("bower_components/font-awesome/fonts/fontawesome-webfont.eot", { destDir: "fonts" });
