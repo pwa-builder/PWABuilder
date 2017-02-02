@@ -7,10 +7,10 @@
 }
 
 .side-nav-block .title {
-	color:$secondary-accent;
+	color:$color-secondary;
 	font-size:1.15rem;
 	line-height:2.5rem;
-	background-color:$dark-accent;
+	background-color:$color-background-dark;
 	font-family:$serif-stack;
 	padding:0 1rem .05rem 1rem;
 }
@@ -30,5 +30,5 @@
 }
 
 .side-nav-block a:hover {
-	color:$primary-accent;
+	color:$color-brand;
 }

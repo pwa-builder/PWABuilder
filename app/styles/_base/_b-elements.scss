@@ -1,5 +1,5 @@
 :focus {
-	outline: 1px dashed $primary-accent;
+	outline: 1px dashed $color-brand;
 }
 
 html {
@@ -49,7 +49,7 @@ h5 {
 }
 
 button, .btn {
-	background:$secondary-accent;
+	background: $color-secondary;
 	border:none;
 	color:#fff;
   margin: 0;
@@ -64,8 +64,8 @@ button, .btn {
 }
 
 button:hover, .btn:hover {
-	background:$dark-accent;
-	color: $primary-accent;
+	background: $color-background-dark;
+	color: $color-brand;
 }
 
 .fileUpload {

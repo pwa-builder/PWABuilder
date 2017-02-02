@@ -32,17 +32,17 @@
 }
 
 #footer li a:hover {
-  color:$primary-accent;
+  color: $color-brand;
 }
 
 #footer .copyright {
   margin-top: 2rem;
-  color:$quaternary-accent;
+  color: $color-complementary;
   vertical-align: middle;
 }
 
 #footer .copyright a {
-  color:$quaternary-accent;
+  color: $color-complementary;
   -webkit-transition: all 0.25s ease-in-out;
   -moz-transition: all 0.25s ease-in-out;
   -ms-transition: all 0.25s ease-in-out;

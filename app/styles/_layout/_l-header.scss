@@ -1,6 +1,6 @@
 #header {
 	color:#fff;
-	background-color:$dark-accent;
+	background-color: $color-background-dark;
 	overflow: auto;
 }
 
@@ -38,17 +38,17 @@
 }
 
 #header nav a:hover {
-	color:$quaternary-accent;
+	color: $color-complementary;
 }
 
 #header nav a.active {
-	background-color:$primary-accent;
+	background-color: $color-brand;
 	-moz-border-radius: 2px;
 	border-radius: 2px;
 	padding: .25em .75em .35em .75em;
 }
 #header nav a:hover.active {
-	background-color:$primary-accent;
+	background-color: $color-brand;
 	color:#fff;
 }
 

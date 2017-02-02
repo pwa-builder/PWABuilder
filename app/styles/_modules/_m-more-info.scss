@@ -1,10 +1,10 @@
 .more-info {
 	padding:4.375rem;
-	background-color: $primary-accent;
+	background-color: $color-brand;
 }
 
 .aboutfp h4 {
-	color: $dark-accent;
+	color: $color-foreground-dark;
 	margin-bottom: 1rem;
 }
 
@@ -18,7 +18,7 @@
 }
 
 .more-info button, .more-info .btn {
-	background-color: $dark-accent;
+	background-color: $color-background-dark;
 	border-radius: 3px;
 	-webkit-transition: all 0.25s ease-in-out;
 	-moz-transition: all 0.25s ease-in-out;
@@ -28,12 +28,12 @@
 }
 
 .more-info button:focus, .more-info .btn:focus {
-	outline-color:$secondary-accent;
+	outline-color: $color-foreground-dark;
 }
 
 .more-info button:hover,  .more-info .btn:hover {
 	background-color: #fff;
-	color: $dark-accent;
+	color: $color-foreground-dark;
 }
 
 	.whoisusingmjs .sitelogo_yummly { height: 60px; width: 162px; margin: 0 30px 0 0; }

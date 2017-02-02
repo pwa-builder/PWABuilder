@@ -3,32 +3,32 @@
 }
 
 .summary .title {
-	color:$secondary-accent;
+	color: $color-secondary;
 	margin: 0 0 1rem 0;
 }
 
 .summary .titlesub, .summary h1, .summary h2, .summary h3, .summary h4, .summary h5 {
-	color:$dark-accent;
+	color: $color-foreground-dark;
 	margin: 0 0 1rem 0;
 }
 
 .summary p {
-	color:$dark-accent;
+	color: $color-foreground-dark;
 	margin: 0 0 2rem 0;
 }
 
 .summary p.mone {
-	color:$dark-accent;
+	color:$color-foreground-dark;
 	margin: 0 0 1rem 0;
 }
 
 .summary p.nom {
-	color:$dark-accent;
+	color:$color-foreground-dark;
 	margin: 0;
 }
 
 .summary p.slim {
-	color:$dark-accent;
+	color:$color-foreground-dark;
 	margin: 0 0 1rem 0;
 }
 
@@ -43,7 +43,7 @@
   font-size: .9rem;
 }
 .summary th {
-  background-color: $dark-accent;
+  background-color: $color-foreground-dark;
   color: #fff;
   border-color: white;
   text-align: center;

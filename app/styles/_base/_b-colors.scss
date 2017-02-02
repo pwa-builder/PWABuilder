@@ -1,24 +1,18 @@
-//Colors
-$dark-accent:#495463; 		//Dark Grey
-$primary-accent:#706F6C; 	//Red
-$secondary-accent:#BDD1CE; 	//Teal
-$tertiary-accent:#E9E4E1; 	//Gold
-$quaternary-accent:#D5DEDB; 	//Orange
-$table-accent:#D5DEDB; 	//Gray
+@import '../variables';
 
 //Background accented classes, mainly just for the style guide
 .bg-dark-accent {
-	background-color:$dark-accent;
+  background-color: $color-background-dark;
 }
 
 .bg-primary-accent {
-	background-color:$primary-accent;
+  background-color: $color-brand
 }
 
 .bg-secondary-accent {
-	background-color:$secondary-accent;
+  background-color: $color-secondary;
 }
 
 .bg-tertiary-accent {
-	background-color:$tertiary-accent;
+  background-color: $color-complementary;
 }

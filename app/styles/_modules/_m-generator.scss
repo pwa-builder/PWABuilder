@@ -11,7 +11,7 @@ $form-accent:#999999;
 	display: block;
 	width: 100%;
 	padding:0;
-	background-color:$secondary-accent;
+	background-color:$color-secondary;
 }
 
 .generator-section {
@@ -32,7 +32,7 @@ $form-accent:#999999;
 	position: fixed;
 	display: block;
 	width: 100%;
-	background-color:$secondary-accent;
+	background-color:$color-secondary;
 }
 
 .generator p.intro {
@@ -41,7 +41,7 @@ $form-accent:#999999;
 	margin: 0;
 }
 .generator-section .manifest-body {
-  color:$secondary-accent;
+  color:$color-secondary;
   font-family:$serif-stack;
   font-size:1.313rem;
   line-height:2.5rem;
@@ -55,7 +55,7 @@ $form-accent:#999999;
   margin: 0;
   padding: 1rem;
   font-size: 1rem;
-  color: $tertiary-accent;
+  color: $color-complementary;
   background:#000;
 }
 
@@ -277,7 +277,7 @@ ul.generator-tabs li.active{
 }
 
 .generator tbody tr:nth-child(odd) {
-	background-color:$table-accent;
+	background-color:$color-secondary;
 }
 
 .button-holder.icons {
@@ -394,18 +394,18 @@ ul.generator-tabs li.active{
 }
 
 .generator .package-download:hover {
-  color:$primary-accent;
+  color:$color-brand;
 }
 
 .alert {
-  color:$primary-accent;
+  color:$color-brand;
 }
 
 .generator .usage-link {
   font-size:.8rem;
   padding:.5rem 0;
   display:block;
-  background:$tertiary-accent;
+  background:$color-complementary;
   width:100%;
   color:white;
   text-align: center;
@@ -422,7 +422,7 @@ ul.generator-tabs li.active{
   overflow-y:auto;
   height: 1150px;
   display: none;
-  background-color:$dark-accent;
+  background-color:$color-background-dark;
 }
 
 .generator .manifest-holder {
@@ -441,7 +441,7 @@ ul.generator-tabs li.active{
 .issues {
 	padding: .75rem 1.5rem 1.5rem 1.5rem;
 	margin: 0;
-	background-color: $dark-accent;
+	background-color: $color-background-dark;
 	color: #fff;
 	-moz-border-radius: 2px;
 	border-radius: 2px;
@@ -449,7 +449,7 @@ ul.generator-tabs li.active{
 	.issues-title {
 		font-size: 1.25rem;
 		margin: .75rem 0 .25rem 0;
-		color: $tertiary-accent;
+		color: $color-complementary;
     padding-top:6.5rem;
     margin-top:-6.5rem;
 	}
@@ -478,21 +478,21 @@ ul.generator-tabs li.active{
 	}
 
 .issues-title-warnings {
-  color: $quaternary-accent;
+  color: $color-complementary;
 }
 
 .issues-title-suggestions {
-  color: $secondary-accent;
+  color: $color-secondary;
 }
 
 .issues-title-errors {
-  color: $primary-accent;
+  color: $color-brand;
 }
 
 .download-archive .btn,
 .btn.highlighted {
   cursor: not-allowed;
-  background-color: $secondary-accent - 90;
+  background-color: $color-secondary;
 }
 
 .download-archive .btn:hover,
@@ -503,7 +503,7 @@ ul.generator-tabs li.active{
 .download-archive .btn.isEnabled,
 .generator-start .btn {
   cursor: pointer;
-  background-color: $primary-accent;
+  background-color: $color-brand;
 }
 
 .download-archive {

@@ -1,12 +1,12 @@
 .notice-block{
 	padding: 1rem 1.25rem;
 	margin-bottom: 1.25rem;
-	background: $secondary-accent - 10;
-	color: $secondary-accent + 200;
+	background: $color-secondary-dark;
+	color: $color-secondary-brighter;
 }
 
 .notice-block > a {
-	color: $quaternary-accent + 10;
+	color: $color-complementary;
 	background: #24a2a0;
 	padding: 0 5px;
 	text-decoration: none;
