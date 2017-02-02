@@ -1,3 +1,4 @@
+/* global _: global */
 import Ember from 'ember';
 
 export default Ember.Component.extend({
@@ -17,9 +18,12 @@ export default Ember.Component.extend({
   }.property('step', 'parentView.controller.activeStep'),
 
   didInsertElement: function() {
-    console.log(this.get('parentView.controller.steps'));
+    var steps = this.get('parentView.controller').get('steps');
+    if (_.some(steps, ['step', this.get('step')])) {
+      return;
+    }
+
     this.get('parentView.controller').get('steps').pushObject({step: this.get('step'), stepTitle: this.get('stepTitle')});
-    
     if (this.get('parentView.controller').get('activeStep') === null) {
       this.get('parentView.controller').setActiveStep(this.get('step'));
     }
