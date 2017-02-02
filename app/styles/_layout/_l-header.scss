@@ -1,6 +1,6 @@
 #header {
-  color: $color-foreground-brighter;
   background-color: $color-background-dark;
+  color: $color-foreground-brighter;
   overflow: auto;
 }
 
@@ -26,10 +26,10 @@
 
 #header nav a {
   color: $color-foreground-brighter;
-  text-decoration: none;
   font-family: $sans-stack-semibold;
   line-height: 4.688rem;
   padding: .25em .75em .35em .75em;
+  text-decoration: none;
   -webkit-transition: all 0.25s ease-in-out;
   -moz-transition: all 0.25s ease-in-out;
   -ms-transition: all 0.25s ease-in-out;
@@ -53,9 +53,9 @@
 }
 
 #header .nav_logo {
-  width: 215px;
   height: 50px;
   margin: 0.75rem 0;
+  width: 215px;
 }
 
 #header .active .nav_logo {

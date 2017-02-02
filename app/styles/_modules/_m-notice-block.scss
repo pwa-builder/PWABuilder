@@ -1,13 +1,13 @@
 .notice-block{
-  padding: 1rem 1.25rem;
-  margin-bottom: 1.25rem;
   background: $color-secondary-dark;
   color: $color-secondary-brighter;
+  margin-bottom: 1.25rem;
+  padding: 1rem 1.25rem;
 }
 
 .notice-block > a {
-  color: $color-complementary;
   background: $color-secondary;
+  color: $color-complementary;
   padding: 0 5px;
   text-decoration: none;
   -webkit-transition: all 0.25s ease-in-out;
@@ -18,7 +18,7 @@
 }
 
 .notice-block > a:hover {
-  color: $color-foreground-brighter;
   background: $color-secondary;
+  color: $color-foreground-brighter;
   padding: 0 5px;
 }

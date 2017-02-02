@@ -1,11 +1,11 @@
 .l-full-width {
-  width:100%;
   background-color: $color-background-brighter;
+  width:100%;
 }
 
 .l-max-width {
-  max-width:1000px;
   margin:0 auto;
+  max-width:1000px;
 }
 
 .pure-g > div, .pure-g > section {
@@ -19,15 +19,15 @@
 }
 
 .hp_logo {
-  width: 230px;
   height: 380px;
   margin: 0 5.313rem;
+  width: 230px;
 }
 
 .hp_logo_body {
-  max-width: 381px;
-  max-height: 78px;
   margin: 0 0 .25rem .125rem;
+  max-height: 78px;
+  max-width: 381px;
 }
 
 .l-top {

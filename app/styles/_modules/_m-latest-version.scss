@@ -1,6 +1,6 @@
 .latest-version {
-  padding: 3.125rem 3.75rem 3.75rem;
   background-color: $color-secondary;
+  padding: 3.125rem 3.75rem 3.75rem;
   text-align: center;
 }
 
@@ -15,8 +15,8 @@
 
 .latest-version a {
   color: $color-foreground-dark;
-  text-decoration: none;
   font-weight: bold;
+  text-decoration: none;
 }
 
 .latest-version img {

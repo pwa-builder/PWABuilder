@@ -43,15 +43,15 @@
 }
 
 .summary td, th {
-  height: 2rem;
   border: 1px solid $color-foreground-dark;
-  text-align: left;
   font-size: .9rem;
+  height: 2rem;
+  text-align: left;
 }
 .summary th {
   background-color: $color-foreground-dark;
-  color: $color-foreground-brighter;
   border-color: $color-foreground-bright;
+  color: $color-foreground-brighter;
   text-align: center;
 }
 

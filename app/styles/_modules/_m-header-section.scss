@@ -1,6 +1,6 @@
 .header-section {
-  padding: 4.375rem;
   background-color: $color-background-brighter;
+  padding: 4.375rem;
 }
 
 .header-section h1 {
@@ -9,10 +9,10 @@
 }
 
 .header-section h2 {
+  color: $color-secondary;
   font-family: $rum-stack-thin;
   font-size: 3.375rem;
   font-weight: normal;
-  color: $color-secondary;
   line-height: 1.2em;
 }
 
