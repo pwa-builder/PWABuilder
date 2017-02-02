@@ -1,55 +1,61 @@
-.summary, .usage {
-	margin-top:2rem;
+.summary,
+.usage {
+  margin-top: 2rem;
 }
 
 .summary .title {
-	color: $color-secondary;
-	margin: 0 0 1rem 0;
+  color: $color-secondary;
+  margin: 0 0 1rem 0;
 }
 
-.summary .titlesub, .summary h1, .summary h2, .summary h3, .summary h4, .summary h5 {
-	color: $color-foreground-dark;
-	margin: 0 0 1rem 0;
+.summary .titlesub,
+.summary h1,
+.summary h2,
+.summary h3,
+.summary h4,
+.summary h5 {
+  color: $color-foreground-dark;
+  margin: 0 0 1rem 0;
 }
 
 .summary p {
-	color: $color-foreground-dark;
-	margin: 0 0 2rem 0;
+  color: $color-foreground-dark;
+  margin: 0 0 2rem 0;
 }
 
 .summary p.mone {
-	color:$color-foreground-dark;
-	margin: 0 0 1rem 0;
+  color: $color-foreground-dark;
+  margin: 0 0 1rem 0;
 }
 
 .summary p.nom {
-	color:$color-foreground-dark;
-	margin: 0;
+  color: $color-foreground-dark;
+  margin: 0;
 }
 
 .summary p.slim {
-	color:$color-foreground-dark;
-	margin: 0 0 1rem 0;
+  color: $color-foreground-dark;
+  margin: 0 0 1rem 0;
 }
 
 .summary table {
-	margin: 0 0 2rem 0;
+  margin: 0 0 2rem 0;
 }
 
 .summary td, th {
   height: 2rem;
-  border: 1px solid #eee;
+  border: 1px solid $color-foreground-dark;
   text-align: left;
   font-size: .9rem;
 }
 .summary th {
   background-color: $color-foreground-dark;
-  color: #fff;
-  border-color: white;
+  color: $color-foreground-brighter;
+  border-color: $color-foreground-bright;
   text-align: center;
 }
 
 .summary tr.alt {
-  background-color: #e5e5e5;
+  background-color: $color-background-bright;
 }
 

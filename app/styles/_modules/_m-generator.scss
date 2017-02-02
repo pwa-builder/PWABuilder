@@ -1,50 +1,50 @@
-$form-accent:#999999;
+$form-accent: $color-background-dark;
 
 @media screen and (min-width: 48em) {
   .generator {
     height: 100%;
-    overflow-y:hidden;
+    overflow-y: hidden;
   }
 }
 
 .generator-section > header {
-	display: block;
-	width: 100%;
-	padding:0;
-	background-color:$color-secondary;
+  display: block;
+  width: 100%;
+  padding: 0;
+  background-color: $color-secondary;
 }
 
 .generator-section {
     height: 100%;
-    overflow-y:auto;
+    overflow-y: auto;
 }
 
 .generator-section-title {
-	padding:0 1rem .05rem 1rem;
- 	margin: 0;
-  	color:#fff;
-	font-family:$serif-stack;
-	font-size:1.5rem;
-	line-height:3rem;
+  padding: 0 1rem .05rem 1rem;
+  margin: 0;
+  color: $color-foreground-brighter;
+  font-family: $serif-stack;
+  font-size: 1.5rem;
+  line-height: 3rem;
 }
 
 .generator-section > header .fixed {
-	position: fixed;
-	display: block;
-	width: 100%;
-	background-color:$color-secondary;
+  position: fixed;
+  display: block;
+  width: 100%;
+  background-color: $color-secondary;
 }
 
 .generator p.intro {
-	background-color: #fff;
-	padding: 1rem;
-	margin: 0;
+  background-color: $color-background-brighter;
+  padding: 1rem;
+  margin: 0;
 }
 .generator-section .manifest-body {
-  color:$color-secondary;
-  font-family:$serif-stack;
-  font-size:1.313rem;
-  line-height:2.5rem;
+  color: $color-secondary;
+  font-family: $serif-stack;
+  font-size: 1.313rem;
+  line-height: 2.5rem;
 }
 
 .generator-section .manifest-body pre {
@@ -56,7 +56,7 @@ $form-accent:#999999;
   padding: 1rem;
   font-size: 1rem;
   color: $color-complementary;
-  background:#000;
+  background: $color-background-darker;
 }
 
 .generator-issues-notification a,
@@ -69,11 +69,11 @@ $form-accent:#999999;
 }
 
 .generator-issues-notification a:hover {
-  color: #fff;
+  color: $color-background-brighter;
 }
 
 .generator .form-holder {
-	padding: 5px 20px 5px 0;
+  padding: 5px 20px 5px 0;
 }
 
 ul.generator-tabs {
@@ -81,19 +81,21 @@ ul.generator-tabs {
     margin: 0 16px;
     padding: 0;
     overflow: hidden;
-    border: 1px solid #ccc;
-    background-color: #f1f1f1;
+    border: 1px solid $color-foreground-dark;
+    background-color: $color-background-bright;
 }
 
 ul.generator-tabs li.tab {
-    cursor:pointer;
+    cursor: pointer;
 }
 
-ul.generator-tabs li {float: left;}
+ul.generator-tabs li {
+  float: left;
+}
 
 ul.generator-tabs li a {
     display: inline-block;
-    color: black;
+    color: $color-foreground-dark;
     text-align: center;
     padding: 44px 36px;
     text-decoration: none;
@@ -101,15 +103,17 @@ ul.generator-tabs li a {
     font-size: 24px;
 }
 
-ul.generator-tabs li a:hover {background-color: #ddd;}
+ul.generator-tabs li a:hover {
+  background-color: $color-background-dark;
+}
 
 .generator-step-list li.step {
     display: none;
 }
 
 ul.generator-tabs li a:focus, 
-ul.generator-tabs li.active{
-  background-color: #ccc;
+ul.generator-tabs li.active {
+  background-color: $color-background-dark;
 }
 
 .generator-step-list li.active 
@@ -120,12 +124,12 @@ ul.generator-tabs li.active{
 .generator .step {
   padding: 0;
   margin: 0 1rem;
-  font-family:$sans-stack-light;
-  font-size:.875rem;
+  font-family: $sans-stack-light;
+  font-size: .875rem;
 }
 
 .generator code {
-  font-size:.875rem;
+  font-size: .875rem;
   line-height: .875rem;
 }
 
@@ -139,8 +143,8 @@ ul.generator-tabs li.active{
 }
 
 .generator .step header {
-  margin-top:10px;
-  cursor:pointer;
+  margin-top: 10px;
+  cursor: pointer;
 }
 
 .generator .step.active {
@@ -148,9 +152,9 @@ ul.generator-tabs li.active{
 }
 
 .generator .step .title {
-  margin-bottom:0;
-  font-size:1.25rem;
-  line-height:2.2rem;
+  margin-bottom: 0;
+  font-size: 1.25rem;
+  line-height: 2.2rem;
 }
 
 .generator .step .toggle-title {
@@ -165,9 +169,9 @@ ul.generator-tabs li.active{
 }
 
 .generator hr {
-  border:none;
-  background:#f2f2f2;
-  height:1px;
+  border: none;
+  background: $color-background-bright;
+  height: 1px;
 }
 
 .generator .form-item {
@@ -189,11 +193,11 @@ ul.generator-tabs li.active{
 }
 
 .generator input:not([type=checkbox]) {
-  display:block;
-  border:1px solid $form-accent;
-  width:65%;
-  float:right;
-  height:2.125rem;
+  display: block;
+  border: 1px solid $form-accent;
+  width: 65%;
+  float: right;
+  height: 2.125rem;
 }
 
 .generator input[type=checkbox]{
@@ -203,81 +207,80 @@ ul.generator-tabs li.active{
 }
 
 .generator textarea {
-  width:65%;
-  float:right;
-  border:1px solid $form-accent;
-  padding:.1rem;
-  margin-bottom:.4rem;
+  width: 65%;
+  float: right;
+  border: 1px solid $form-accent;
+  padding: .1rem;
+  margin-bottom: .4rem;
 }
 
 .generator select {
-  width:65%;
-  float:right;
+  width: 65%;
+  float: right;
   margin-top: 0.6rem;
 }
 
 .generator label {
-  display:block;
-  float:left;
+  display: block;
+  float: left;
   text-align: right;
-  line-height:2.215rem;
+  line-height: 2.215rem;
 }
 
 .generator input[type=radio] {
   width: initial;
-  float: none;
   display: inline-block;
   height: initial;
 }
 
 .generator .button-holder {
-  clear:both;
+  clear: both;
   text-align: right;
   margin-top: 20px;
 }
 
 .generator .icon-preview {
-	width:2rem;
+  width: 2rem;
   vertical-align: middle;
 }
 
 .generator .logo-upload {
-	padding-bottom:0;
+  padding-bottom: 0;
 }
 
 .generator .logo-upload .fa, .generator .member-list .fa {
-	font-size:1rem;
+  font-size: 1rem;
 }
 
 .generator .generator-members {
-  margin-top:1rem;
+  margin-top: 1rem;
 }
 
 .generator table {
-	width:66%;
-	float:right;
-	margin-top:0;
+  width: 66%;
+  float: right;
+  margin-top: 0;
 }
 
 .generator th {
-	font-family:$sans-stack-semibold;
-	text-align: center;
-  border:none;
+  font-family: $sans-stack-semibold;
+  text-align: center;
+  border: none;
 }
 
 .generator td {
-	text-align: center;
-	padding:0;
-	line-height:3rem;
-	border:0;
+  text-align: center;
+  padding: 0;
+  line-height: 3rem;
+  border: 0;
 }
 
 .generator td button {
-	margin-right:.5rem;
+  margin-right: .5rem;
 }
 
 .generator tbody tr:nth-child(odd) {
-	background-color:$color-secondary;
+  background-color: $color-secondary;
 }
 
 .button-holder.icons {
@@ -286,8 +289,8 @@ ul.generator-tabs li.active{
 }
 .button-holder.icons button.upload-image {
   float: left;
-  background: #2abebc;
-  color: white;
+  background: $color-complementary;
+  color: $color-foreground-brighter;
 }
 
 .button-holder.icons button.upload-image > i.fa-upload {
@@ -295,7 +298,7 @@ ul.generator-tabs li.active{
 }
 
 .generator input:-ms-input-placeholder {
-  color: lighten( #000, 70% );
+  color: $color-foreground-dark;
 }
 
 /* Generator step list custom numbering */
@@ -312,20 +315,6 @@ ul.generator-tabs li.active{
   counter-increment: step-counter;
 }
 
-/*.generator-step-list .step::before {
-  width: 2.25rem;
-  height: 2.25rem;
-  position: absolute;
-  left: 0;
-  content: counter(step-counter);
-  border-radius: 50%;
-  text-align: center;
-  background:$tertiary-accent;
-  color:white;
-  font-family:$serif-stack;
-  font-size:1.563rem;
-}*/
-
 .generator-step-list .step--disabled {
   cursor: not-allowed;
 }
@@ -335,14 +324,14 @@ ul.generator-tabs li.active{
 }
 
 .generator-start .url label,
-.generator-start .manifest label  {
+.generator-start .manifest label {
   margin-right: 10px;
-  text-align:left;
+  text-align: left;
 }
 
 .generator-start .url input{
   width: 80%;
-  float:left;
+  float: left;
 }
 
 .generator-start .manifest input.upload-file {
@@ -355,74 +344,56 @@ ul.generator-tabs li.active{
   position: relative;
 }
 
-/*
-.generator .step3 label {
-  width:42%;
-}
-
-.generator .step3 input {
-  width:34%;
-  float:left;
-  margin-left:.5rem;
-}
-
-.generator .step3 .fa {
-  float:left;
-  line-height:2.125rem;
-  margin-left:.4rem;
-}
-*/
-
 .generator .fa {
-  font-size:1rem;
+  font-size: 1rem;
 }
 
 .generator .fa-windows {
-  font-size:1.2em;
+  font-size: 1.2em;
 }
 
 .generator .fa-mobile-phone{
-  font-size:1.5em;
+  font-size: 1.5em;
 }
 
 .generator .package-download {
-  font-size:2rem;
-  color:black;
-  position:absolute;
-  right:0;
-  top:-.2rem;
+  font-size: 2rem;
+  color: $color-foreground-darker;
+  position: absolute;
+  right: 0;
+  top: -.2rem;
 }
 
 .generator .package-download:hover {
-  color:$color-brand;
+  color: $color-brand;
 }
 
 .alert {
-  color:$color-brand;
+  color: $color-brand;
 }
 
 .generator .usage-link {
-  font-size:.8rem;
-  padding:.5rem 0;
-  display:block;
-  background:$color-complementary;
-  width:100%;
-  color:white;
+  font-size: .8rem;
+  padding: .5rem 0;
+  display: block;
+  background: $color-complementary;
+  width: 100%;
+  color: $color-foreground-brighter;
   text-align: center;
-  cursor:pointer;
-  display:none;
+  cursor: pointer;
+  display: none;
 }
 
 .generator .usage-link.btn.show {
-  display:block;
+  display: block;
 }
 
 //Manifest section
 .generator .manifest-holder {
-  overflow-y:auto;
+  overflow-y: auto;
   height: 1150px;
   display: none;
-  background-color:$color-background-dark;
+  background-color: $color-background-dark;
 }
 
 .generator .manifest-holder {
@@ -430,52 +401,52 @@ ul.generator-tabs li.active{
 }
 
 .generator .generator-section pre {
-	box-shadow: none;
-	line-height: 1.125rem;
+  box-shadow: none;
+  line-height: 1.125rem;
 }
 
 #issues_list > div {
-  outline-style:none;
+  outline-style: none;
 }
 
 .issues {
-	padding: .75rem 1.5rem 1.5rem 1.5rem;
-	margin: 0;
-	background-color: $color-background-dark;
-	color: #fff;
-	-moz-border-radius: 2px;
-	border-radius: 2px;
+  padding: .75rem 1.5rem 1.5rem 1.5rem;
+  margin: 0;
+  background-color: $color-background-dark;
+  color: $color-foreground-brighter;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
 }
-	.issues-title {
-		font-size: 1.25rem;
-		margin: .75rem 0 .25rem 0;
-		color: $color-complementary;
-    padding-top:6.5rem;
-    margin-top:-6.5rem;
-	}
-		.issues-title span {
-			display: inline-block;
-			font-size: 75%;
-			color: #888;
-		}
-	.issues .issues-subheading {
-		font-size: 1rem;
-		margin: 0 0 .5rem 0;
-		color: #fff;
-	}
-		.issues .issues-subheading span {
-			display: inline-block;
-			font-size: 75%;
-			color: #888;
-		}
-	.issues ul {
-		margin: 0 0 .5rem .75rem;
-		padding: 0;
-	}
-	.issues li {
-		font-size: .75rem;
-		margin: 0 0 .25rem 0;
-	}
+  .issues-title {
+    font-size: 1.25rem;
+    margin: .75rem 0 .25rem 0;
+    color: $color-complementary;
+    padding-top: 6.5rem;
+    margin-top: -6.5rem;
+  }
+  .issues-title span {
+    display: inline-block;
+    font-size: 75%;
+    color: $color-foreground-dark;
+  }
+  .issues .issues-subheading {
+    font-size: 1rem;
+    margin: 0 0 .5rem 0;
+    color: $color-foreground-brighter;
+  }
+  .issues .issues-subheading span {
+    display: inline-block;
+    font-size: 75%;
+    color: $color-foreground-dark;
+  }
+  .issues ul {
+    margin: 0 0 .5rem .75rem;
+    padding: 0;
+  }
+  .issues li {
+    font-size: .75rem;
+    margin: 0 0 .25rem 0;
+  }
 
 .issues-title-warnings {
   color: $color-complementary;
@@ -497,7 +468,7 @@ ul.generator-tabs li.active{
 
 .download-archive .btn:hover,
 .generator-start .btn:hover {
-  color: #fff;
+  color: $color-foreground-brighter;
 }
 
 .download-archive .btn.isEnabled,
@@ -513,7 +484,7 @@ ul.generator-tabs li.active{
 /*override of remove buttons to make them less obtruseive  */
 .logos .generator-members .btn, .logos .generator-members button{
   background: transparent;
-  color: #ccc;
+  color: $color-foreground-bright;
 }
 .logos .generator-members .btn:hover, .logos .generator-members button:hover{
   background: transparent;
@@ -542,7 +513,7 @@ ul.generator-tabs li.active{
   width: 30%;
   display: inline-block;
   vertical-align: top;
-  border-right: 1px solid #cecece;
+  border-right: 1px solid $color-foreground-bright;
   padding-right: 1rem;
   min-height: 15rem;
   padding-left: 1rem;
@@ -565,7 +536,7 @@ ul.generator-tabs li.active{
 
 .download-primary > button,
 .download-primary .btn.isEnabled {
-    background-color: #2955a0;
+    background-color: $color-complementary;
     font-size: 1.2rem;
     margin-top: 2rem;
 }
@@ -603,20 +574,20 @@ ul.generator-tabs li.active{
 }
 
 .form-item > div.checkbox-item {
-    width: 65%;
-    float: left;
-    text-align: right;
-    margin-left: 35%;
+  width: 65%;
+  float: left;
+  text-align: right;
+  margin-left: 35%;
 }
 .form-item > div.checkbox-item > input[type=checkbox] {
-    margin-left: initial;
-    margin-right: 5%;
+  margin-left: initial;
+  margin-right: 5%;
 }
 
 .background-color-options {
-    height: 100px;
-    width: 65%;
-    float: right;
+  height: 100px;
+  width: 65%;
+  float: right;
 }
 .background-color-options > div {
   display: inline-block;
@@ -626,24 +597,22 @@ ul.generator-tabs li.active{
 }
 .background-color-options > div > label {
   display: inline-block;
-  float: none;
   margin-left: 5px;
 }
 .background-color-options > div > input[type=color]{
   display: inline-block;
   width: 30%;
-  float: none; 
   height: 1.5rem;
   margin-left: 5px;
 }
 
 .download-manifest {
-  background-color: #2955a0;
+  background-color: $color-complementary;
   font-size: 1.2rem;
   margin-left: 22px;
 }
 .download-manifest:hover {
-  background-color: #2955a0;  
+  background-color: $color-complementary-dark;  
   color: white;
 }
 .download-manifest:focus {
@@ -674,7 +643,7 @@ span:contains("Embedded") {
   .publish-header > div {
     width: 90%;
     border-right: none;
-    border-bottom: 1px solid #cecece;
+    border-bottom: 1px solid $color-foreground-dark;
     margin-bottom: 1rem;
     padding-bottom: 1rem;
   }
@@ -683,6 +652,6 @@ span:contains("Embedded") {
     margin-top: 0rem;
   }
   .center{
-    text-align:center;
+    text-align: center;
   }
 }

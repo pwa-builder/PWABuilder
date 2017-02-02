@@ -1,13 +1,13 @@
 .whos-using {
-	padding:3.125rem;
-	background-color: white;
-	text-align: center;
+  padding: 3.125rem;
+  background-color: $color-background-brighter;
+  text-align: center;
 }
 
 .whos-using img {
-	display:inline-block;
+  display: inline-block;
 }
 
 .whos-using .title {
-	color: $color-secondary;
+  color: $color-secondary;
 }
