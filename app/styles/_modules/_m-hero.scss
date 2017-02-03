@@ -1,0 +1,31 @@
+@import '../variables';
+
+.pwa-hero {
+    height: 50vh;
+    max-height: 530px;
+    min-height: 250px;
+    overflow: hidden;
+    position: relative;
+
+    &-background {
+        background-image: url('images/hero_poster.png');
+        background-size: cover;
+        height: 100%;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+        z-index: -1;
+    }
+
+    &-video {
+        left: 0;
+        position: absolute;
+        top: 0;
+        z-index: -1;
+
+        @media screen and (max-width: $media-screen-xs) {
+            display: none;
+        }
+    }
+}
