@@ -1,0 +1,64 @@
+@import '../variables';
+
+@mixin action-link($primary, $secondary, $size) {
+  color: $primary;
+  display: inline-block;
+  padding: 0 .5rem;
+  position: relative;
+  transition: color $animation-speed-default;
+
+  &:before {
+    background-color: $secondary;
+    border-radius: 1rem;
+    bottom: -.35rem;
+    content: '';
+    display: block;
+    height: $size;
+    left: 0;
+    position: absolute;
+    transition: width $animation-speed-default $animation-ease-default;
+    width: 0;
+  }
+
+  &.active,
+  &:hover {
+    color: darken($secondary, 10%);
+    transition: color $animation-speed-default;
+
+    &:before {
+      transition: width $animation-speed-slow $animation-ease-vibrant;
+      width: 100%;
+    }
+  }
+}
+
+&-link {
+        color: $color-foreground-darker;
+        display: inline-block;
+        padding-top: .5rem;
+        position: relative;
+        transition: color $animation-speed-fast;
+
+        &:before {
+            background-color: $color-secondary;
+            border-radius: 1rem;
+            bottom: -.35rem;
+            content: '';
+            display: block;
+            height: .1rem;
+            left: 0;
+            position: absolute;
+            transition: width $animation-speed-default $animation-ease-default;
+            width: 0;
+        }
+
+        &:hover {
+            color: $color-secondary-bright;
+            transition: color $animation-speed-fast;
+
+            &:before {
+                transition: width $animation-speed-slow $animation-ease-vibrant;
+                width: 100%;
+            }
+        }
+    }

@@ -49,20 +49,12 @@
         text-align: center;
     }
 
-    &-button {
-        background-color: $color-complementary;
-        border-radius: .5rem;
-        color: $color-foreground-brighter;
-        display: inline-block;
-        font-family: 'Bitter';
-        font-size: $font-size-l;
-        text-align: center;
-        padding: .75rem 3rem;
+    &-block {
+        display: block;
     }
 
     &-link {
-        color: $color-foreground-darker;
-        display: block;
+        @include action-link ( $color-foreground-darker, $color-secondary, .1rem);
         padding-top: .5rem;
     }
 }

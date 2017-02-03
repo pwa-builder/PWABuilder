@@ -12,18 +12,20 @@ $color-secondary-bright: lighten($color-secondary, 10%);
 $color-secondary-brighter: lighten($color-secondary, 20%);
 
 $color-complementary: #6A3AB2;
-$color-complementary-dark: darken($color-secondary, 10%);
-$color-complementary-darker: darken($color-secondary, 20%);
-$color-complementary-bright: lighten($color-secondary, 10%);
-$color-complementary-brighter: lighten($color-secondary, 20%);
+$color-complementary-dark: darken($color-complementary, 10%);
+$color-complementary-darker: darken($color-complementary, 20%);
+$color-complementary-bright: lighten($color-complementary, 10%);
+$color-complementary-brighter: lighten($color-complementary, 50%);
 
 $color-background-dark: #EAEAEA;
 $color-background-darker: #333333;
+$color-background-darkest: #000;
 $color-background-bright: #F2F2F2;
 $color-background-brighter: #FFFFFF;
 
 $color-foreground-dark: #8B8B8B;
 $color-foreground-darker: #333333;
+$color-foreground-darkest: #000;
 $color-foreground-bright: #F2F2F2;
 $color-foreground-brighter: #FFFFFF;
 
@@ -35,6 +37,7 @@ $animation-speed-default: .35s;
 $animation-speed-slow: .5s;
 $animation-speed-fast: .15s;
 $animation-ease-default: ease-out;
+$animation-ease-minimal: linear;
 $animation-ease-vibrant: #{'cubic-bezier(.03, .77, .39, 1.21)'};
 
 // Fonts

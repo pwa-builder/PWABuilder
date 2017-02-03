@@ -1,4 +1,5 @@
 @import '../variables';
+@import '../mixins/action';
 
 .pwa-header {
   background-color: $color-background-brighter;
@@ -45,34 +46,6 @@
   }
 
   &-link {
-    color: $color-foreground-darker;
-    display: block;
-    padding: 0 .5rem;
-    position: relative;
-    transition: color $animation-speed-default;
-
-    &:before {
-      background-color: $color-brand;
-      border-radius: 1rem;
-      bottom: -.35rem;
-      content: '';
-      display: block;
-      height: .2rem;
-      left: 0;
-      position: absolute;
-      transition: width $animation-speed-default $animation-ease-default;
-      width: 0;
-    }
-
-    &.active,
-    &:hover {
-      color: $color-brand-dark;
-      transition: color $animation-speed-default;
-
-      &:before {
-        transition: width $animation-speed-slow $animation-ease-vibrant;
-        width: 100%;
-      }
-    }
+    @include action-link ( $color-foreground-darker, $color-brand, .2rem);
   }
 }
