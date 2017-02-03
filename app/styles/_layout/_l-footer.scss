@@ -1,20 +1,20 @@
 #footer {
+  background-color: $color-background-darker;
+  color: $color-foreground-brighter;
   font-size: 14px;
-  padding:3.125rem 0;
-  color:#fff;
-  background-color:black;
+  padding: 3.125rem 0;
 }
 
 #footer .divider {
+  color: $color-foreground-dark;
   font-family: $sans-stack-light;
   font-size: 130%;
-  color: #444;
 }
 
 #footer ul {
   list-style-type: none;
-  padding-left:0;
-  margin:.5rem 0 1rem 0;
+  margin: .5rem 0 1rem 0;
+  padding-left: 0;
 }
 
 #footer li {
@@ -23,7 +23,7 @@
 }
 
 #footer li a {
-  color:#fff;
+  color: $color-foreground-brighter;
   -webkit-transition: all 0.25s ease-in-out;
   -moz-transition: all 0.25s ease-in-out;
   -ms-transition: all 0.25s ease-in-out;
@@ -32,17 +32,17 @@
 }
 
 #footer li a:hover {
-  color:$primary-accent;
+  color: $color-brand;
 }
 
 #footer .copyright {
+  color: $color-complementary;
   margin-top: 2rem;
-  color:$quaternary-accent;
   vertical-align: middle;
 }
 
 #footer .copyright a {
-  color:$quaternary-accent;
+  color: $color-complementary;
   -webkit-transition: all 0.25s ease-in-out;
   -moz-transition: all 0.25s ease-in-out;
   -ms-transition: all 0.25s ease-in-out;
@@ -51,57 +51,57 @@
 }
 
 #footer .copyright a:hover {
-  color:#fff;
+  color: $color-foreground-brighter;
 }
 
 #footer .social {
-  text-align:right;
   margin-bottom: 1.875rem;
+  text-align:right;
 }
 
-  #footer .social .logo_twitter { height: 41px; width: 50px; margin: 0 15px 2px 0; }
-  #footer .social .logo_github { height: 49px; width: 50px; margin: 0 20px 0 0; }
-  #footer .social .logo_npm { height: 27px; width: 70px; margin: 0 20px 10px 0; }
-  #footer .social .logo_stackoverflow { height: 50px; width: 39px; }
+#footer .social .logo_twitter { height: 41px; margin: 0 15px 2px 0; width: 50px; }
+#footer .social .logo_github { height: 49px; margin: 0 20px 0 0; width: 50px; }
+#footer .social .logo_npm { height: 27px; margin: 0 20px 10px 0; width: 70px; }
+#footer .social .logo_stackoverflow { height: 50px; width: 39px; }
 
 #footer .summary {
-  text-align:right;
   margin-bottom: 1.875rem;
+  text-align: right;
 }
 
 #footer .simple-content {
-  display:none;
+  display: none;
 }
 
 @media screen and (min-width: 48em) {
   #footer.is-small {
-    position:fixed;
-    bottom:0;
-    padding:0;
-    height:3rem;
+    bottom: 0;
+    height: 3rem;
+    padding: 0;
+    position: fixed;
   }
 }
 
 #footer.is-small .simple-content {
-  display:block;
+  display: block;
 }
 
 #footer.is-small .copyright {
-	line-height:3rem;
-	margin-top:0;
+  line-height: 3rem;
+  margin-top: 0;
 }
 
 #footer.is-small .social {
-	margin-top: 10px;
+  margin-top: 10px;
 }
 
-	#footer.is-small .social .logo_twitter { height: 21px; width: 25px; margin: 0 7px 1px 0; }
-	#footer.is-small .social .logo_github { height: 25px; width: 25px; margin: 0 10px 0 0; }
-	#footer.is-small .social .logo_npm { height: 14px; width: 35px; margin: 0 10px 5px 0; }
-	#footer.is-small .social .logo_stackoverflow { height: 25px; width: 20px; }
+  #footer.is-small .social .logo_twitter { height: 21px; margin: 0 7px 1px 0; width: 25px; }
+  #footer.is-small .social .logo_github { height: 25px; margin: 0 10px 0 0; width: 25px; }
+  #footer.is-small .social .logo_npm { height: 14px; margin: 0 10px 5px 0; width: 35px; }
+  #footer.is-small .social .logo_stackoverflow { height: 25px; width: 20px; }
 
 #footer.is-small div.pure-g {
-  display:none;
+  display: none;
 }
 
 #footer.is-small div.pure-g.simple-content {

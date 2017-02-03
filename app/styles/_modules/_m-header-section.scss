@@ -1,21 +1,21 @@
 .header-section {
-	padding:4.375rem;
-	background-color: white;
+  background-color: $color-background-brighter;
+  padding: 4.375rem;
 }
 
 .header-section h1 {
-	font-size:75px;
-	margin-bottom:0;
+  font-size: 75px;
+  margin-bottom: 0;
 }
 
 .header-section h2 {
-	font-family:$rum-stack-thin;
-	font-size:3.375rem;
-	font-weight: normal;
-	color:$secondary-accent;
-	line-height:1.2em;
+  color: $color-secondary;
+  font-family: $rum-stack-thin;
+  font-size: 3.375rem;
+  font-weight: normal;
+  line-height: 1.2em;
 }
 
 .header-section button {
-	font-size:1.875rem;
+  font-size: 1.875rem;
 }

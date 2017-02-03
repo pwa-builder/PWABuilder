@@ -1,5 +1,6 @@
-@import 'normalize';
-@import 'pure-grid';
+// Vendor Styles
+@import '_vendor/normalize';
+@import '_vendor/pure-grid';
 
 //Base Styles
 @import '_base/_b-fonts';
@@ -9,7 +10,6 @@
 //Layout Styles
 @import '_layout/_l-header';
 @import '_layout/_l-footer';
-@import '_layout/_l-main';
 
 //Module Styles
 @import '_modules/_m-header-section';
@@ -26,7 +26,6 @@
 @import '_modules/_m-build-errors';
 
 @import '_layout/_l-mq';
-@import 'main';
 
 .modal-fog {
     background: rgba(30, 30, 30, 0.5);

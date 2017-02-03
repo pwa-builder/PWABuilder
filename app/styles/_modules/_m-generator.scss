@@ -1,50 +1,50 @@
-$form-accent:#999999;
+$form-accent: $color-background-dark;
 
 @media screen and (min-width: 48em) {
   .generator {
     height: 100%;
-    overflow-y:hidden;
+    overflow-y: hidden;
   }
 }
 
 .generator-section > header {
-	display: block;
-	width: 100%;
-	padding:0;
-	background-color:$secondary-accent;
+  background-color: $color-secondary;
+  display: block;
+  padding: 0;
+  width: 100%;
 }
 
 .generator-section {
     height: 100%;
-    overflow-y:auto;
+    overflow-y: auto;
 }
 
 .generator-section-title {
-	padding:0 1rem .05rem 1rem;
- 	margin: 0;
-  	color:#fff;
-	font-family:$serif-stack;
-	font-size:1.5rem;
-	line-height:3rem;
+  color: $color-foreground-brighter;
+  font-family: $serif-stack;
+  font-size: 1.5rem;
+  line-height: 3rem;
+  margin: 0;
+  padding: 0 1rem .05rem 1rem;
 }
 
 .generator-section > header .fixed {
-	position: fixed;
-	display: block;
-	width: 100%;
-	background-color:$secondary-accent;
+  background-color: $color-secondary;
+  display: block;
+  position: fixed;
+  width: 100%;
 }
 
 .generator p.intro {
-	background-color: #fff;
-	padding: 1rem;
-	margin: 0;
+  background-color: $color-background-brighter;
+  margin: 0;
+  padding: 1rem;
 }
 .generator-section .manifest-body {
-  color:$secondary-accent;
-  font-family:$serif-stack;
-  font-size:1.313rem;
-  line-height:2.5rem;
+  color: $color-secondary;
+  font-family: $serif-stack;
+  font-size: 1.313rem;
+  line-height: 2.5rem;
 }
 
 .generator-section .manifest-body pre {
@@ -52,64 +52,68 @@ $form-accent:#999999;
 }
 
 .generator-issues-notification {
+  background: $color-background-darker;
+  color: $color-complementary;
+  font-size: 1rem;
   margin: 0;
   padding: 1rem;
-  font-size: 1rem;
-  color: $tertiary-accent;
-  background:#000;
 }
 
 .generator-issues-notification a,
 .generator-issues-notification a:visited,
 .generator-issues-notification a:hover {
-  text-decoration: underline;
   cursor: pointer;
   font-family: "Bree Serif", serif;
   font-weight: bold;
+  text-decoration: underline;
 }
 
 .generator-issues-notification a:hover {
-  color: #fff;
+  color: $color-background-brighter;
 }
 
 .generator .form-holder {
-	padding: 5px 20px 5px 0;
+  padding: 5px 20px 5px 0;
 }
 
 ul.generator-tabs {
+    background-color: $color-background-bright;
+    border: 1px solid $color-foreground-dark;
     list-style-type: none;
     margin: 0 16px;
-    padding: 0;
     overflow: hidden;
-    border: 1px solid #ccc;
-    background-color: #f1f1f1;
+    padding: 0;
 }
 
 ul.generator-tabs li.tab {
-    cursor:pointer;
+    cursor: pointer;
 }
 
-ul.generator-tabs li {float: left;}
+ul.generator-tabs li {
+  float: left;
+}
 
 ul.generator-tabs li a {
+    color: $color-foreground-dark;
     display: inline-block;
-    color: black;
-    text-align: center;
+    font-size: 24px;
     padding: 44px 36px;
+    text-align: center;
     text-decoration: none;
     transition: 0.3s;
-    font-size: 24px;
 }
 
-ul.generator-tabs li a:hover {background-color: #ddd;}
+ul.generator-tabs li a:hover {
+  background-color: $color-background-dark;
+}
 
 .generator-step-list li.step {
     display: none;
 }
 
 ul.generator-tabs li a:focus, 
-ul.generator-tabs li.active{
-  background-color: #ccc;
+ul.generator-tabs li.active {
+  background-color: $color-background-dark;
 }
 
 .generator-step-list li.active 
@@ -118,14 +122,14 @@ ul.generator-tabs li.active{
 }
 
 .generator .step {
-  padding: 0;
+  font-family: $sans-stack-light;
+  font-size: .875rem;
   margin: 0 1rem;
-  font-family:$sans-stack-light;
-  font-size:.875rem;
+  padding: 0;
 }
 
 .generator code {
-  font-size:.875rem;
+  font-size: .875rem;
   line-height: .875rem;
 }
 
@@ -134,13 +138,13 @@ ul.generator-tabs li.active{
 }
 
 .generator .step--disabled, .generator .step--disabled .title {
-  opacity: 0.6;
   cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .generator .step header {
-  margin-top:10px;
-  cursor:pointer;
+  cursor: pointer;
+  margin-top: 10px;
 }
 
 .generator .step.active {
@@ -148,9 +152,9 @@ ul.generator-tabs li.active{
 }
 
 .generator .step .title {
-  margin-bottom:0;
-  font-size:1.25rem;
-  line-height:2.2rem;
+  font-size: 1.25rem;
+  line-height: 2.2rem;
+  margin-bottom: 0;
 }
 
 .generator .step .toggle-title {
@@ -165,23 +169,23 @@ ul.generator-tabs li.active{
 }
 
 .generator hr {
-  border:none;
-  background:#f2f2f2;
-  height:1px;
+  background: $color-background-bright;
+  border: none;
+  height: 1px;
 }
 
 .generator .form-item {
-  position: relative;
   clear: both;
   margin-bottom: 1rem;
   overflow: auto;
+  position: relative;
 }
 
 .generator .form-item.checkbox {
-  margin-bottom: 0;
-  float: left;
-  width: 50%;
   clear: none;
+  float: left;
+  margin-bottom: 0;
+  width: 50%;
 }
 
 .generator .form-item.checkbox label {
@@ -189,105 +193,104 @@ ul.generator-tabs li.active{
 }
 
 .generator input:not([type=checkbox]) {
-  display:block;
-  border:1px solid $form-accent;
-  width:65%;
-  float:right;
-  height:2.125rem;
+  border: 1px solid $form-accent;
+  display: block;
+  float: right;
+  height: 2.125rem;
+  width: 65%;
 }
 
 .generator input[type=checkbox]{
   float: left;
-  margin-left: 5%;
   height: 2.12rem;
+  margin-left: 5%;
 }
 
 .generator textarea {
-  width:65%;
-  float:right;
-  border:1px solid $form-accent;
-  padding:.1rem;
-  margin-bottom:.4rem;
+  border: 1px solid $form-accent;
+  float: right;
+  margin-bottom: .4rem;
+  padding: .1rem;
+  width: 65%;
 }
 
 .generator select {
-  width:65%;
-  float:right;
+  float: right;
   margin-top: 0.6rem;
+  width: 65%;
 }
 
 .generator label {
-  display:block;
-  float:left;
+  display: block;
+  float: left;
+  line-height: 2.215rem;
   text-align: right;
-  line-height:2.215rem;
 }
 
 .generator input[type=radio] {
-  width: initial;
-  float: none;
   display: inline-block;
   height: initial;
+  width: initial;
 }
 
 .generator .button-holder {
-  clear:both;
-  text-align: right;
+  clear: both;
   margin-top: 20px;
+  text-align: right;
 }
 
 .generator .icon-preview {
-	width:2rem;
   vertical-align: middle;
+  width: 2rem;
 }
 
 .generator .logo-upload {
-	padding-bottom:0;
+  padding-bottom: 0;
 }
 
 .generator .logo-upload .fa, .generator .member-list .fa {
-	font-size:1rem;
+  font-size: 1rem;
 }
 
 .generator .generator-members {
-  margin-top:1rem;
+  margin-top: 1rem;
 }
 
 .generator table {
-	width:66%;
-	float:right;
-	margin-top:0;
+  float: right;
+  margin-top: 0;
+  width: 66%;
 }
 
 .generator th {
-	font-family:$sans-stack-semibold;
-	text-align: center;
-  border:none;
+  border: none;
+  font-family: $sans-stack-semibold;
+  text-align: center;
 }
 
 .generator td {
-	text-align: center;
-	padding:0;
-	line-height:3rem;
-	border:0;
+  border: 0;
+  line-height: 3rem;
+  padding: 0;
+  text-align: center;
 }
 
 .generator td button {
-	margin-right:.5rem;
+  margin-right: .5rem;
 }
 
 .generator tbody tr:nth-child(odd) {
-	background-color:$table-accent;
+  background-color: $color-secondary;
 }
 
 .button-holder.icons {
-  width: 65%;
   float: right;
+  width: 65%;
 }
 .button-holder.icons button.upload-image {
+  background: $color-complementary;
+  color: $color-foreground-brighter;
   float: left;
-  background: #2abebc;
-  color: white;
 }
 
 .button-holder.icons button.upload-image > i.fa-upload {
@@ -295,36 +298,22 @@ ul.generator-tabs li.active{
 }
 
 .generator input:-ms-input-placeholder {
-  color: lighten( #000, 70% );
+  color: $color-foreground-dark;
 }
 
 /* Generator step list custom numbering */
 
 .generator-step-list {
-  margin-top: 0;
-  margin-left: 0;
-  padding-left: 0;
   list-style-type: none;
+  margin-left: 0;
+  margin-top: 0;
+  padding-left: 0;
 }
 
 .generator-step-list .step {
-  position: relative;
   counter-increment: step-counter;
+  position: relative;
 }
-
-/*.generator-step-list .step::before {
-  width: 2.25rem;
-  height: 2.25rem;
-  position: absolute;
-  left: 0;
-  content: counter(step-counter);
-  border-radius: 50%;
-  text-align: center;
-  background:$tertiary-accent;
-  color:white;
-  font-family:$serif-stack;
-  font-size:1.563rem;
-}*/
 
 .generator-step-list .step--disabled {
   cursor: not-allowed;
@@ -335,94 +324,76 @@ ul.generator-tabs li.active{
 }
 
 .generator-start .url label,
-.generator-start .manifest label  {
+.generator-start .manifest label {
   margin-right: 10px;
-  text-align:left;
+  text-align: left;
 }
 
 .generator-start .url input{
+  float: left;
   width: 80%;
-  float:left;
 }
 
 .generator-start .manifest input.upload-file {
-  width: 50%;
   float: left;
   margin-right: 10px;
+  width: 50%;
 }
 
 .generator-start .manifest .fileUpload {
   position: relative;
 }
 
-/*
-.generator .step3 label {
-  width:42%;
-}
-
-.generator .step3 input {
-  width:34%;
-  float:left;
-  margin-left:.5rem;
-}
-
-.generator .step3 .fa {
-  float:left;
-  line-height:2.125rem;
-  margin-left:.4rem;
-}
-*/
-
 .generator .fa {
-  font-size:1rem;
+  font-size: 1rem;
 }
 
 .generator .fa-windows {
-  font-size:1.2em;
+  font-size: 1.2em;
 }
 
 .generator .fa-mobile-phone{
-  font-size:1.5em;
+  font-size: 1.5em;
 }
 
 .generator .package-download {
-  font-size:2rem;
-  color:black;
-  position:absolute;
-  right:0;
-  top:-.2rem;
+  color: $color-foreground-darker;
+  font-size: 2rem;
+  position: absolute;
+  right: 0;
+  top: -.2rem;
 }
 
 .generator .package-download:hover {
-  color:$primary-accent;
+  color: $color-brand;
 }
 
 .alert {
-  color:$primary-accent;
+  color: $color-brand;
 }
 
 .generator .usage-link {
-  font-size:.8rem;
-  padding:.5rem 0;
-  display:block;
-  background:$tertiary-accent;
-  width:100%;
-  color:white;
+  background: $color-complementary;
+  color: $color-foreground-brighter;
+  cursor: pointer;
+  display: block;
+  display: none;
+  font-size: .8rem;
+  padding: .5rem 0;
   text-align: center;
-  cursor:pointer;
-  display:none;
+  width: 100%;
 }
 
 .generator .usage-link.btn.show {
-  display:block;
+  display: block;
 }
 
 //Manifest section
 .generator .manifest-holder {
-  overflow-y:auto;
-  height: 1150px;
+  background-color: $color-background-dark;
   display: none;
-  background-color:$dark-accent;
+  height: 1150px;
+  overflow-y: auto;
 }
 
 .generator .manifest-holder {
@@ -430,80 +401,80 @@ ul.generator-tabs li.active{
 }
 
 .generator .generator-section pre {
-	box-shadow: none;
-	line-height: 1.125rem;
+  box-shadow: none;
+  line-height: 1.125rem;
 }
 
 #issues_list > div {
-  outline-style:none;
+  outline-style: none;
 }
 
 .issues {
-	padding: .75rem 1.5rem 1.5rem 1.5rem;
-	margin: 0;
-	background-color: $dark-accent;
-	color: #fff;
-	-moz-border-radius: 2px;
-	border-radius: 2px;
+  background-color: $color-background-dark;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  color: $color-foreground-brighter;
+  margin: 0;
+  padding: .75rem 1.5rem 1.5rem 1.5rem;
 }
-	.issues-title {
-		font-size: 1.25rem;
-		margin: .75rem 0 .25rem 0;
-		color: $tertiary-accent;
-    padding-top:6.5rem;
-    margin-top:-6.5rem;
-	}
-		.issues-title span {
-			display: inline-block;
-			font-size: 75%;
-			color: #888;
-		}
-	.issues .issues-subheading {
-		font-size: 1rem;
-		margin: 0 0 .5rem 0;
-		color: #fff;
-	}
-		.issues .issues-subheading span {
-			display: inline-block;
-			font-size: 75%;
-			color: #888;
-		}
-	.issues ul {
-		margin: 0 0 .5rem .75rem;
-		padding: 0;
-	}
-	.issues li {
-		font-size: .75rem;
-		margin: 0 0 .25rem 0;
-	}
+  .issues-title {
+    color: $color-complementary;
+    font-size: 1.25rem;
+    margin: .75rem 0 .25rem 0;
+    margin-top: -6.5rem;
+    padding-top: 6.5rem;
+  }
+  .issues-title span {
+    color: $color-foreground-dark;
+    display: inline-block;
+    font-size: 75%;
+  }
+  .issues .issues-subheading {
+    color: $color-foreground-brighter;
+    font-size: 1rem;
+    margin: 0 0 .5rem 0;
+  }
+  .issues .issues-subheading span {
+    color: $color-foreground-dark;
+    display: inline-block;
+    font-size: 75%;
+  }
+  .issues ul {
+    margin: 0 0 .5rem .75rem;
+    padding: 0;
+  }
+  .issues li {
+    font-size: .75rem;
+    margin: 0 0 .25rem 0;
+  }
 
 .issues-title-warnings {
-  color: $quaternary-accent;
+  color: $color-complementary;
 }
 
 .issues-title-suggestions {
-  color: $secondary-accent;
+  color: $color-secondary;
 }
 
 .issues-title-errors {
-  color: $primary-accent;
+  color: $color-brand;
 }
 
 .download-archive .btn,
 .btn.highlighted {
+  background-color: $color-secondary;
   cursor: not-allowed;
-  background-color: $secondary-accent - 90;
 }
 
 .download-archive .btn:hover,
 .generator-start .btn:hover {
-  color: #fff;
+  color: $color-foreground-brighter;
 }
 
 .download-archive .btn.isEnabled,
 .generator-start .btn {
+  background-color: $color-brand;
   cursor: pointer;
-  background-color: $primary-accent;
 }
 
 .download-archive {
@@ -513,7 +484,7 @@ ul.generator-tabs li.active{
 /*override of remove buttons to make them less obtruseive  */
 .logos .generator-members .btn, .logos .generator-members button{
   background: transparent;
-  color: #ccc;
+  color: $color-foreground-bright;
 }
 .logos .generator-members .btn:hover, .logos .generator-members button:hover{
   background: transparent;
@@ -539,13 +510,13 @@ ul.generator-tabs li.active{
   text-align: center;
 }
 .publish-header > div {
-  width: 30%;
+  border-right: 1px solid $color-foreground-bright;
   display: inline-block;
-  vertical-align: top;
-  border-right: 1px solid #cecece;
-  padding-right: 1rem;
   min-height: 15rem;
   padding-left: 1rem;
+  padding-right: 1rem;
+  vertical-align: top;
+  width: 30%;
 }
 .publish-header > div:nth-last-child(1) {
   border-right: none;
@@ -558,14 +529,14 @@ ul.generator-tabs li.active{
   margin-top: 3rem;
 }
 .publish-footer > div {
-  width: 100%;
-  text-align: center;
   margin-top: 1rem;
+  text-align: center;
+  width: 100%;
 }
 
 .download-primary > button,
 .download-primary .btn.isEnabled {
-    background-color: #2955a0;
+    background-color: $color-complementary;
     font-size: 1.2rem;
     margin-top: 2rem;
 }
@@ -580,14 +551,14 @@ ul.generator-tabs li.active{
 }
 
 .service-workers > .form-item.checkbox > .description {
-  font-size: 0.8rem;
   float: left;
+  font-size: 0.8rem;
 }
 
 .service-workers > .button-holder.download-archive {
-  text-align: center;
-  margin-bottom: 2rem;
   float: left;
+  margin-bottom: 2rem;
+  text-align: center;
 }
 
 .service-workers > .form-item.checkbox > input[type=checkbox] {
@@ -597,53 +568,51 @@ ul.generator-tabs li.active{
 
 #relatedApplication-list td.text-truncated {
   max-width: 10rem;
-  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis
+  text-overflow: ellipsis;
+  white-space: nowrap
 }
 
 .form-item > div.checkbox-item {
-    width: 65%;
-    float: left;
-    text-align: right;
-    margin-left: 35%;
+  float: left;
+  margin-left: 35%;
+  text-align: right;
+  width: 65%;
 }
 .form-item > div.checkbox-item > input[type=checkbox] {
-    margin-left: initial;
-    margin-right: 5%;
+  margin-left: initial;
+  margin-right: 5%;
 }
 
 .background-color-options {
-    height: 100px;
-    width: 65%;
-    float: right;
+  float: right;
+  height: 100px;
+  width: 65%;
 }
 .background-color-options > div {
   display: inline-block;
-  width: 100%;
   display: block;
   height: 2rem;
+  width: 100%;
 }
 .background-color-options > div > label {
   display: inline-block;
-  float: none;
   margin-left: 5px;
 }
 .background-color-options > div > input[type=color]{
   display: inline-block;
-  width: 30%;
-  float: none; 
   height: 1.5rem;
   margin-left: 5px;
+  width: 30%;
 }
 
 .download-manifest {
-  background-color: #2955a0;
+  background-color: $color-complementary;
   font-size: 1.2rem;
   margin-left: 22px;
 }
 .download-manifest:hover {
-  background-color: #2955a0;  
+  background-color: $color-complementary-dark;  
   color: white;
 }
 .download-manifest:focus {
@@ -656,9 +625,9 @@ ul.generator-tabs li.active{
 }
 
 .upload-image-modal .form-item .upload-file {
-    width: 55%;
     float: left;
     margin-left: 10px;
+    width: 55%;
 }
 
 //pre.language-javascript > code.language-javascript > 
@@ -672,17 +641,17 @@ span:contains("Embedded") {
   }
 
   .publish-header > div {
-    width: 90%;
+    border-bottom: 1px solid $color-foreground-dark;
     border-right: none;
-    border-bottom: 1px solid #cecece;
     margin-bottom: 1rem;
     padding-bottom: 1rem;
+    width: 90%;
   }
 
   .publish-footer {
     margin-top: 0rem;
   }
   .center{
-    text-align:center;
+    text-align: center;
   }
 }

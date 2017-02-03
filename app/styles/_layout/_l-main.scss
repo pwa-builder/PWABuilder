@@ -1,17 +1,17 @@
 .l-full-width {
-	width:100%;
-	background-color: #fff;
+  background-color: $color-background-brighter;
+  width:100%;
 }
 
 .l-max-width {
-	max-width:1000px;
-	margin:0 auto;
+  margin:0 auto;
+  max-width:1000px;
 }
 
 .pure-g > div, .pure-g > section {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .l-box {
@@ -19,39 +19,39 @@
 }
 
 .hp_logo {
-	width: 230px;
-	height: 380px;
-	margin: 0 5.313rem;
+  height: 380px;
+  margin: 0 5.313rem;
+  width: 230px;
 }
 
 .hp_logo_body {
-	max-width: 381px;
-	max-height: 78px;
-	margin: 0 0 .25rem .125rem;
+  margin: 0 0 .25rem .125rem;
+  max-height: 78px;
+  max-width: 381px;
 }
 
 .l-top {
-	padding-top:2.85rem;
+  padding-top: 2.85rem;
 }
 
 .l-right {
-	padding-left:2em;
+  padding-left: 2em;
 }
 
 .l-bottom {
-	padding-bottom:2.85rem;
+  padding-bottom: 2.85rem;
 }
 
 .l-app-style.no-header {
-	height:calc(100% - 4.938rem - 3rem);
+  height: calc(100% - 4.938rem - 3rem);
 }
 
 .l-app-style .page-intro {
-	margin-top:0;
+  margin-top: 0;
 }
 
 @media screen and (min-width: 48em) {
   .l-app-style {
-	  height:100%;
+    height: 100%;
   }
 }
