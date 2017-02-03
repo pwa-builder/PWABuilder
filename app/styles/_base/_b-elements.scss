@@ -14,23 +14,12 @@ body {
   height: 100%;
 }
 
-html,
-button,
-input,
-select,
-textarea,
-.pure-g [class *= "pure-u"] {
-  font-family: $sans-stack;
-}
-
-
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  font-family: $rum-stack-thin;
   font-weight: normal;
   line-height: 1.2em;
   margin-top: 0;
@@ -45,12 +34,10 @@ h2 {
 }
 
 h3 {
-  font-family: $sans-stack-light;
   font-size: 1.875rem; //30px
 }
 
 h4 {
-  font-family: $sans-stack-light;
   font-size: 1.75rem; 	//28px
 }
 
@@ -99,7 +86,6 @@ button:hover,
 
 .fileUpload span {
   cursor: pointer;
-  font-family: $sans-stack;
 }
 
 .fileUpload input.upload {
@@ -119,8 +105,7 @@ pre {
   background-color: $color-background-darker;
   border-radius:0 !important;
   box-shadow: 0px 0px 7px $color-background-dark;
-  color:white;
-  font-family: $code-stack;
+  color: $color-foreground-brighter;
   font-size: 1.125em;
   margin: 0 !important;
   padding: 1.25em 1.75em;
@@ -131,16 +116,11 @@ pre {
   word-wrap: break-word;       // Internet Explorer 5.5+
 }
 
-code {
-  font-family: $code-stack !important;
-}
-
 .shell {
   background-color: $color-background-dark;
   border-radius: 0 !important;
   box-shadow: 0px 0px 7px $color-background-dark;
   color: $color-foreground-brighter;
-  font-family:$code-stack;
   font-size: 1.125em;
   margin: 0 !important;
   padding: 1.25em 1.75em;
@@ -152,10 +132,6 @@ code {
   .shell .prompt { color: $color-shell-prompt; vertical-align: top; }
   .shell .command { color: $color-shell-command; vertical-align: top; }
   .shell .app { color: $color-foreground-brighter; vertical-align: top; }
-
-strong {
-  font-family:$sans-stack-bold;
-}
 
 a {
   color: $color-secondary;
