@@ -1,7 +1,7 @@
 // Colors
 $color-brand: #1FC2C8;
 $color-brand-dark: darken($color-brand, 10%);
-$color-brand-darker: darken($color-brand, 20%);
+$color-brand-darker: darken($color-brand, 15%);
 $color-brand-bright: lighten($color-brand, 10%);
 $color-brand-brighter: lighten($color-brand, 20%);
 
@@ -34,6 +34,8 @@ $color-shell-command: #FEC77C;
 $animation-speed-default: .35s;
 $animation-speed-slow: .5s;
 $animation-speed-fast: .15s;
+$animation-ease-default: ease-out;
+$animation-ease-vibrant: #{'cubic-bezier(.03, .77, .39, 1.21)'};
 
 // Fonts
 $font-weight-light: 200;
