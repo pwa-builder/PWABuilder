@@ -1,7 +1,10 @@
 @import '../variables';
 
 .pwa-hero {
-    height: 50vh;
+    align-items: center;
+    display: flex;
+    height: 100vh;
+    justify-content: center;
     max-height: 530px;
     min-height: 250px;
     overflow: hidden;
@@ -27,5 +30,39 @@
         @media screen and (max-width: $media-screen-xs) {
             display: none;
         }
+    }
+
+    &-row {
+        max-width: 900px;
+        width: auto;
+    }
+
+    &-title {
+        color: $color-foreground-darker;
+        font-family: 'Bitter';
+        font-size: $font-size-xl;
+        font-weight: $font-weight-normal;
+        text-align: center;
+    }
+
+    &-actions {
+        text-align: center;
+    }
+
+    &-button {
+        background-color: $color-complementary;
+        border-radius: .5rem;
+        color: $color-foreground-brighter;
+        display: inline-block;
+        font-family: 'Bitter';
+        font-size: $font-size-l;
+        text-align: center;
+        padding: .75rem 3rem;
+    }
+
+    &-link {
+        color: $color-foreground-darker;
+        display: block;
+        padding-top: .5rem;
     }
 }
