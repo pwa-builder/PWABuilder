@@ -9,10 +9,6 @@
   right:0;
   text-align: center;
   touch-action: manipulation;
-  -ms-touch-action: manipulation;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
   width: 15%;
 }
@@ -42,10 +38,6 @@ pre {
   font-size: 1.125em;
   margin: 0 !important;
   padding: 1.25em 1.75em;
-  white-space: pre-wrap;       // CSS 3
-  white-space: -moz-pre-wrap;  // Mozilla, since 1999
-  white-space: -pre-wrap;      // Opera 4-6
-  white-space: -o-pre-wrap;    // Opera 7
   word-wrap: break-word;       // Internet Explorer 5.5+
 }
 
