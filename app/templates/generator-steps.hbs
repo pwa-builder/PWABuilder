@@ -1,7 +1,8 @@
-<ul class="generator-tabs">
+<ul class="pwa-generator-tabs">
   {{#each step in steps}}
-  {{#generator-tab step=step.step}}
-  <a>{{step.step}}. {{step.stepTitle}}</a>{{/generator-tab}}
+    {{#generator-tab step=step.step}}
+      <a class="pwa-generator-tab_action">{{step.stepTitle}}</a>
+    {{/generator-tab}}
   {{/each}}
 </ul>
 <ul class="generator-step-list">
