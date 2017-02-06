@@ -1,71 +1,89 @@
-<section class="l-fullwidth header-section">
-	<div class="l-max-width pure-g">
-		<div class="pure-u-1 pure-u-md-2-5">
-			PWA.tools
-		</div>
-		<div class="pure-u-1 pure-u-md-3-5">
-			
-			<h2>All the tools you need to build and deploy your Progressive Web Apps</h2>
-			<div class="pure-u-1 pure-u-md-4-5">			
-				<button class="event" data-eventname="generator-cta" {{action 'generator'}}>Get Started</button>
-			</div>
+<section class="pwa-hero">
+  <div class="pwa-hero-background">
+    <video class="pwa-hero-video" playsinline autoplay muted loop>
+      <source src="assets/images/hero.mp4" type="video/mp4">
+    </video>
+  </div>
 
-			<div class="pure-u-1 pure-u-md-1-1">			
-			<br />	<a href="#">or download the CLI</a>
-			</div>
-			
+  <div class="pwa-hero-row">
+    <h2 class="pwa-hero-title">
+      All the tools you need to build and deploy your Progressive Web Apps
+    </h2>
 
-		</div>
-	</div>
-</section>
-<section class="l-fullwidth build-process">
-	<div class="l-max-width pure-g">
-		<div class="pure-u-1-1">
-			<h2 class="">What makes a Progressive Web App?</h2>
-		</div>
-		<div class="pure-u-1 pure-u-md-1-3 l-box">
-			<h4 class="">Secure</h4>
-			<p>All Progressive Web Apps start with a secure connection (https) to make sure all trafic is as safe 
-				as a native app. A Secure endpoint also allows the servie worker to securly take action on the behalf of your app.
-			</p>
-			
-		</div>
+    <div class="pwa-hero-actions">
+      <button class="pwa-button event" data-eventname="generator-cta" {{action 'generator'}}>
+        Get Started
+      </button>
 
-		<div class="pure-u-1 pure-u-md-1-3 l-box">
-			<h4 class="">Standard Manifest</h4>
-			<p>Your site should be controlled by a W3C manifest that determins the experience and behavior of
-				your PWA.  This includes everything from images, to language, to the start page of your web app. 
-				
-			</p>
-			<button {{action 'generator'}}>generate manifest</button>
-		</div>
-		<div class="pure-u-1 pure-u-md-1-3 l-box">
-			<h4 class="">Network Independent</h4>
-			<p>All Progressive Web Apps should have a service worker to help control trafic when the network 
-				isn't there ir isn't relyable. Your app should be able to work independent of network.
-			</p>
-			<button {{action 'generator'}}>build SW</button>
-		</div>
-	</div>
-</section>
-<section class="l-fullwidth latest-version">
-	<div class="l-max-width pure-g">
-    <div class="pure-u-1">
-  		<h2 class="title">Two Ways to Work</h2>
+     <div class="pwa-hero-block">
+        <a class="pwa-hero-link" href="#">
+          or download the CLI
+        </a>
+     </div>
     </div>
   </div>
-		<div class="l-max-width pure-g">
-			<div class="version pure-u-1 pure-u-md-1-2">
-				<strong>Web Based:</strong> <a href="#">Get started Now</a>
-			</div>
-			<div class="version pure-u-1 pure-u-md-1-2">
-				<strong>CLI (node based):</strong> v1.1.0 <a href="https://github.com/manifoldjs/ManifoldJS/tree/v0.7.0" target="_blank">download now</a>
-			</div>
-		</div>
+</section>
+<section class="pwa-infos l-pad">
+  <div class="pure-g">
+    <div class="pure-u-1">
+      <h2 class="pwa-infos-title">What makes a Progressive Web App?</h2>
+    </div>
+    <div class="pwa-infos-box pure-u-1 pure-u-md-1-3">
+      <h4 class="pwa-infos-subtitle">Secure</h4>
+      <p class="pwa-infos-text">All Progressive Web Apps start with a secure connection (https) to make sure all trafic is as safe 
+        as a native app. A Secure endpoint also allows the servie worker to securly take action on the behalf of your app.
+      </p>
+    </div>
+
+    <div class="pwa-infos-box pure-u-1 pure-u-md-1-3">
+      <h4 class="pwa-infos-subtitle">Standard Manifest</h4>
+      <p class="pwa-infos-text">Your site should be controlled by a W3C manifest that determins the experience and behavior of
+        your PWA.  This includes everything from images, to language, to the start page of your web app. </p>
+      <button class="pwa-button pwa-button--spaced" {{action 'generator'}}>Generate manifest</button>
+    </div>
+    <div class="pwa-infos-box pure-u-1 pure-u-md-1-3">
+      <h4 class="pwa-infos-subtitle">Network Independent</h4>
+      <p class="pwa-infos-text">All Progressive Web Apps should have a service worker to help control trafic when the network 
+        isn't there ir isn't relyable. Your app should be able to work independent of network.
+      </p>
+      <button class="pwa-button pwa-button--spaced"  {{action 'generator'}}>Build SW</button>
+    </div>
+  </div>
+</section>
+<section class="pwa-ways l-pad">
+  <div class="pure-g">
+    <div class="pure-u-1">
+      <h2 class="pwa-ways-title">Two Ways to Work</h2>
+    </div>
+
+    <div class="pure-u-1 pure-u-md-1-2">
+      <div class="pwa-ways-box">
+        <img class="pwa-ways-logo" src="assets/images/logo_small.png" alt="Small PWA Builder logo">
+        <h4 class="pwa-ways-subtitle">Web Based</h4> 
+        <a class="pwa-ways-action" href="#">
+          Get started Now
+        </a>
+      </div>
+    </div>
+
+    <div class="pure-u-1 pure-u-md-1-2">
+      <div class="pwa-ways-box">
+        <img class="pwa-ways-logo" src="assets/images/logo_small.png" alt="Small PWA Builder logo">
+        <h4 class="pwa-ways-subtitle">CLI (node based): v1.1.0 </h4> 
+        <a class="pwa-ways-action" href="https://github.com/manifoldjs/ManifoldJS/tree/v0.7.0" target="_blank">
+          Download now
+        </a>
+      </div>
+    </div>
+  </div>
 </section>
 
-<section class="l-fullwidth more-info">	
-	<div class="l-max-width aboutfp">
-		<h2>PWA.tools is in cooperation with these fine partners:</h2>
-	</div>
+<section class="pwa-partners l-pad l-pad--top">
+    <h2 class="pwa-partners-title">PWA.tools is in cooperation with these fine partners</h2>
+    <ul class="pwa-partners-list">
+      <li class="pwa-partners-logo"></li>
+      <li class="pwa-partners-logo"></li>
+      <li class="pwa-partners-logo"></li>
+      <li class="pwa-partners-logo"></li>
+    </ul>
 </section>

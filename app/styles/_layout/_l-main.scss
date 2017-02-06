@@ -1,57 +1,28 @@
-.l-full-width {
-  background-color: $color-background-brighter;
-  width:100%;
-}
+.l {
+  &-pad {
+    padding: 8vh 25vw;
 
-.l-max-width {
-  margin:0 auto;
-  max-width:1000px;
-}
+    @media screen and (max-width: $media-screen-xxl) {
+        padding: 6vh 15vw;
+    }
 
-.pure-g > div, .pure-g > section {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
+    @media screen and (max-width: $media-screen-l) {
+        padding: 5vh 5vw;
+    }
 
-.l-box {
-    padding: 0 1em;
-}
+    &--top {
+      padding-left: inherit;
+      padding-right: inherit;
 
-.hp_logo {
-  height: 380px;
-  margin: 0 5.313rem;
-  width: 230px;
-}
+      @media screen and (max-width: $media-screen-xxl) {
+          padding-left: inherit;
+          padding-right: inherit;
+      }
 
-.hp_logo_body {
-  margin: 0 0 .25rem .125rem;
-  max-height: 78px;
-  max-width: 381px;
-}
-
-.l-top {
-  padding-top: 2.85rem;
-}
-
-.l-right {
-  padding-left: 2em;
-}
-
-.l-bottom {
-  padding-bottom: 2.85rem;
-}
-
-.l-app-style.no-header {
-  height: calc(100% - 4.938rem - 3rem);
-}
-
-.l-app-style .page-intro {
-  margin-top: 0;
-}
-
-@media screen and (min-width: 48em) {
-  .l-app-style {
-    height: 100%;
+      @media screen and (max-width: $media-screen-l) {
+          padding-left: inherit;
+          padding-right: inherit;
+      }
+    }
   }
 }

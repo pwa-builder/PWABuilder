@@ -21,7 +21,6 @@ $form-accent: $color-background-dark;
 
 .generator-section-title {
   color: $color-foreground-brighter;
-  font-family: $serif-stack;
   font-size: 1.5rem;
   line-height: 3rem;
   margin: 0;
@@ -42,7 +41,6 @@ $form-accent: $color-background-dark;
 }
 .generator-section .manifest-body {
   color: $color-secondary;
-  font-family: $serif-stack;
   font-size: 1.313rem;
   line-height: 2.5rem;
 }
@@ -63,7 +61,6 @@ $form-accent: $color-background-dark;
 .generator-issues-notification a:visited,
 .generator-issues-notification a:hover {
   cursor: pointer;
-  font-family: "Bree Serif", serif;
   font-weight: bold;
   text-decoration: underline;
 }
@@ -122,7 +119,6 @@ ul.generator-tabs li.active {
 }
 
 .generator .step {
-  font-family: $sans-stack-light;
   font-size: .875rem;
   margin: 0 1rem;
   padding: 0;
@@ -264,7 +260,6 @@ ul.generator-tabs li.active {
 
 .generator th {
   border: none;
-  font-family: $sans-stack-semibold;
   text-align: center;
 }
 

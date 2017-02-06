@@ -1,109 +1,46 @@
-#footer {
+@import '../variables';
+@import '../mixins/action';
+
+.pwa-footer {
   background-color: $color-background-darker;
   color: $color-foreground-brighter;
-  font-size: 14px;
-  padding: 3.125rem 0;
-}
+  font-family: 'Bitter';
+  padding: 1.5vw 2vw;
+  
+  &-action {
+    @include action-link ( $color-foreground-brighter, $color-secondary, .1rem, false);
 
-#footer .divider {
-  color: $color-foreground-dark;
-  font-family: $sans-stack-light;
-  font-size: 130%;
-}
-
-#footer ul {
-  list-style-type: none;
-  margin: .5rem 0 1rem 0;
-  padding-left: 0;
-}
-
-#footer li {
-  font-family: $sans-stack-light;
-  margin-bottom: 1rem;
-}
-
-#footer li a {
-  color: $color-foreground-brighter;
-  -webkit-transition: all 0.25s ease-in-out;
-  -moz-transition: all 0.25s ease-in-out;
-  -ms-transition: all 0.25s ease-in-out;
-  -o-transition: all 0.25s ease-in-out;
-  transition: all 0.25s ease-in-out;
-}
-
-#footer li a:hover {
-  color: $color-brand;
-}
-
-#footer .copyright {
-  color: $color-complementary;
-  margin-top: 2rem;
-  vertical-align: middle;
-}
-
-#footer .copyright a {
-  color: $color-complementary;
-  -webkit-transition: all 0.25s ease-in-out;
-  -moz-transition: all 0.25s ease-in-out;
-  -ms-transition: all 0.25s ease-in-out;
-  -o-transition: all 0.25s ease-in-out;
-  transition: all 0.25s ease-in-out;
-}
-
-#footer .copyright a:hover {
-  color: $color-foreground-brighter;
-}
-
-#footer .social {
-  margin-bottom: 1.875rem;
-  text-align:right;
-}
-
-#footer .social .logo_twitter { height: 41px; margin: 0 15px 2px 0; width: 50px; }
-#footer .social .logo_github { height: 49px; margin: 0 20px 0 0; width: 50px; }
-#footer .social .logo_npm { height: 27px; margin: 0 20px 10px 0; width: 70px; }
-#footer .social .logo_stackoverflow { height: 50px; width: 39px; }
-
-#footer .summary {
-  margin-bottom: 1.875rem;
-  text-align: right;
-}
-
-#footer .simple-content {
-  display: none;
-}
-
-@media screen and (min-width: 48em) {
-  #footer.is-small {
-    bottom: 0;
-    height: 3rem;
-    padding: 0;
-    position: fixed;
+    &--block {
+      display: block;
+      margin-bottom: 1.5rem;
+      max-width: 12rem;
+    }
   }
-}
 
-#footer.is-small .simple-content {
-  display: block;
-}
+  &-social {
+    text-align: right;
+  }
 
-#footer.is-small .copyright {
-  line-height: 3rem;
-  margin-top: 0;
-}
+  &-logo_action {
+    @include action-link ( $color-foreground-brighter, $color-secondary, .1rem, false);
+  }
 
-#footer.is-small .social {
-  margin-top: 10px;
-}
+  &-logo {
+    margin: 0 1rem;
+    width: 2rem;
 
-  #footer.is-small .social .logo_twitter { height: 21px; margin: 0 7px 1px 0; width: 25px; }
-  #footer.is-small .social .logo_github { height: 25px; margin: 0 10px 0 0; width: 25px; }
-  #footer.is-small .social .logo_npm { height: 14px; margin: 0 10px 5px 0; width: 35px; }
-  #footer.is-small .social .logo_stackoverflow { height: 25px; width: 20px; }
+    &--big {
+      width: 3rem;
+    }
 
-#footer.is-small div.pure-g {
-  display: none;
-}
+    &--small {
+      width: 1.5rem;
+    }
+  }
 
-#footer.is-small div.pure-g.simple-content {
-  display:block;
+  &-copy {
+    font-size: $font-size-s;
+    margin-top: 5vw;
+  }
+
 }

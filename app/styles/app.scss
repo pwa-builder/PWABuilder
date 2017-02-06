@@ -3,58 +3,31 @@
 @import '_vendor/pure-grid';
 
 //Base Styles
-@import '_base/_b-fonts';
-@import '_base/_b-colors';
-@import '_base/_b-elements';
+@import '_base/b-fonts';
+@import '_base/b-colors';
+@import '_base/b-elements';
+@import '_base/b-globals';
+
+//Component Styles
+@import '_components/c-button';
 
 //Layout Styles
-@import '_layout/_l-header';
-@import '_layout/_l-footer';
+@import '_layout/l-header';
+@import '_layout/l-footer';
+@import '_layout/l-main';
 
 //Module Styles
-@import '_modules/_m-header-section';
-@import '_modules/_m-build-process';
-@import '_modules/_m-latest-version';
-@import '_modules/_m-more-info';
-@import '_modules/_m-whos-using';
-@import '_modules/_m-page-intro';
-@import '_modules/_m-usage-block';
-@import '_modules/_m-side-nav-block';
-@import '_modules/_m-generator';
-@import '_modules/_m-summary';
-@import '_modules/_m-notice-block';
-@import '_modules/_m-build-errors';
-
-@import '_layout/_l-mq';
-
-.modal-fog {
-    background: rgba(30, 30, 30, 0.5);
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    z-index: 9999;
-}
-.modal-frame {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    border: 1px solid #333;
-    background: #ddd;
-    height: auto;
-    margin-top: -140px;
-    width: 570px;
-    margin-left: -285px;
-    z-index: 10000;
-}
-.modal-title {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    margin-top: 14px;
-}
-.modal-body {
-    margin-top: 45px;
-    padding: 18px;
-}
+@import '_modules/m-hero';
+@import '_modules/m-infos';
+@import '_modules/m-ways';
+@import '_modules/m-partners';
+@import '_modules/m-build-process';
+@import '_modules/m-more-info';
+@import '_modules/m-whos-using';
+@import '_modules/m-page-intro';
+@import '_modules/m-usage-block';
+@import '_modules/m-side-nav-block';
+@import '_modules/m-generator';
+@import '_modules/m-summary';
+@import '_modules/m-notice-block';
+@import '_modules/m-build-errors';

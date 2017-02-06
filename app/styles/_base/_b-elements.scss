@@ -1,85 +1,5 @@
 @import '../variables';
 
-:focus {
-  outline: 1px dashed $color-brand;
-}
-
-html {
-  font-size: 1rem; //16px
-  height: 100%;
-}
-
-body {
-  background-color: $color-background-darker;
-  height: 100%;
-}
-
-html,
-button,
-input,
-select,
-textarea,
-.pure-g [class *= "pure-u"] {
-  font-family: $sans-stack;
-}
-
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: $rum-stack-thin;
-  font-weight: normal;
-  line-height: 1.2em;
-  margin-top: 0;
-}
-
-h1 {
-  font-size: 2.25rem; 	//36px
-}
-
-h2 {
-  font-size: 2.125rem; //34px
-}
-
-h3 {
-  font-family: $sans-stack-light;
-  font-size: 1.875rem; //30px
-}
-
-h4 {
-  font-family: $sans-stack-light;
-  font-size: 1.75rem; 	//28px
-}
-
-h5 {
-  font-size: 1.5rem; 	//24px
-}
-
-button,
-.btn {
-  background: $color-secondary;
-  border: none;
-  border-radius: 5px;
-  color: $color-foreground-brighter;
-  line-height: 1.2em;
-  margin: 0;
-  padding: .5em 1.125em;
-  -webkit-transition: all 0.25s ease-in-out;
-  -moz-transition: all 0.25s ease-in-out;
-  -ms-transition: all 0.25s ease-in-out;
-  -o-transition: all 0.25s ease-in-out;
-  transition: all 0.25s ease-in-out;
-}
-
-button:hover,
-.btn:hover {
-  background: $color-background-dark;
-  color: $color-brand;
-}
-
 .fileUpload {
   cursor: pointer;
   line-height: 1.5rem;
@@ -99,7 +19,6 @@ button:hover,
 
 .fileUpload span {
   cursor: pointer;
-  font-family: $sans-stack;
 }
 
 .fileUpload input.upload {
@@ -119,8 +38,7 @@ pre {
   background-color: $color-background-darker;
   border-radius:0 !important;
   box-shadow: 0px 0px 7px $color-background-dark;
-  color:white;
-  font-family: $code-stack;
+  color: $color-foreground-brighter;
   font-size: 1.125em;
   margin: 0 !important;
   padding: 1.25em 1.75em;
@@ -131,16 +49,11 @@ pre {
   word-wrap: break-word;       // Internet Explorer 5.5+
 }
 
-code {
-  font-family: $code-stack !important;
-}
-
 .shell {
   background-color: $color-background-dark;
   border-radius: 0 !important;
   box-shadow: 0px 0px 7px $color-background-dark;
   color: $color-foreground-brighter;
-  font-family:$code-stack;
   font-size: 1.125em;
   margin: 0 !important;
   padding: 1.25em 1.75em;
@@ -153,22 +66,8 @@ code {
   .shell .command { color: $color-shell-command; vertical-align: top; }
   .shell .app { color: $color-foreground-brighter; vertical-align: top; }
 
-strong {
-  font-family:$sans-stack-bold;
-}
-
 a {
-  color: $color-secondary;
   text-decoration: none;
-  -webkit-transition: all 0.25s ease-in-out;
-  -moz-transition: all 0.25s ease-in-out;
-  -ms-transition: all 0.25s ease-in-out;
-  -o-transition: all 0.25s ease-in-out;
-  transition: all 0.25s ease-in-out;
-}
-
-a:hover {
-  color: $color-foreground-dark;
 }
 
 table {

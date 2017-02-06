@@ -1,0 +1,56 @@
+@import '../variables';
+
+html,
+body {
+  font-family: 'FiraSans';
+  font-size: 16px;
+
+  @media screen and (max-width: $media-screen-l) {
+    font-size: 14px;
+  }
+
+  @media screen and (max-width: $media-screen-s) {
+    font-size: 12px;
+  }
+}
+
+button {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.modal-fog {
+  background: rgba(30, 30, 30, 0.5);
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 9999;
+}
+
+.modal-frame {
+  background: $color-background-bright;
+  border: 1px solid $color-foreground-dark;
+  height: auto;
+  left: 50%;
+  margin-left: -285px;
+  margin-top: -140px;
+  position: fixed;
+  top: 50%;
+  width: 570px;
+  z-index: 10000;
+}
+
+.modal-title {
+  margin-top: 14px;
+  position: absolute;
+  text-align: center;
+  width: 100%;
+}
+
+.modal-body {
+  margin-top: 45px;
+  padding: 18px;
+}
