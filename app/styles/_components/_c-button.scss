@@ -40,4 +40,8 @@
             width: 100% + $size / 2;
         }
     }
+
+    &--spaced {
+        font-size: $font-size-m;
+    }
 }

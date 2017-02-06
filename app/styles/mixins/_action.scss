@@ -1,11 +1,14 @@
 @import '../variables';
 
-@mixin action-link($primary, $secondary, $size) {
+@mixin action-link($primary, $secondary, $size, $padded: true) {
   color: $primary;
   display: inline-block;
-  padding: 0 .5rem;
   position: relative;
   transition: color $animation-speed-default;
+
+  @if ($padded) {
+    padding: 0 .5rem;
+  }
 
   &:before {
     background-color: $secondary;
@@ -31,34 +34,3 @@
     }
   }
 }
-
-&-link {
-        color: $color-foreground-darker;
-        display: inline-block;
-        padding-top: .5rem;
-        position: relative;
-        transition: color $animation-speed-fast;
-
-        &:before {
-            background-color: $color-secondary;
-            border-radius: 1rem;
-            bottom: -.35rem;
-            content: '';
-            display: block;
-            height: .1rem;
-            left: 0;
-            position: absolute;
-            transition: width $animation-speed-default $animation-ease-default;
-            width: 0;
-        }
-
-        &:hover {
-            color: $color-secondary-bright;
-            transition: color $animation-speed-fast;
-
-            &:before {
-                transition: width $animation-speed-slow $animation-ease-vibrant;
-                width: 100%;
-            }
-        }
-    }

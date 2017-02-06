@@ -14,12 +14,13 @@
 //Layout Styles
 @import '_layout/l-header';
 @import '_layout/l-footer';
-@import '_layout/l-mq';
+@import '_layout/l-main';
 
 //Module Styles
 @import '_modules/m-hero';
+@import '_modules/m-infos';
+@import '_modules/m-ways';
 @import '_modules/m-build-process';
-@import '_modules/m-latest-version';
 @import '_modules/m-more-info';
 @import '_modules/m-whos-using';
 @import '_modules/m-page-intro';
