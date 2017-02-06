@@ -42,6 +42,9 @@
         font-family: 'Bitter';
         font-size: $font-size-xl;
         font-weight: $font-weight-normal;
+        margin: 0 auto;
+        margin-bottom: $font-size-xl;
+        max-width: 90%;
         text-align: center;
     }
 
@@ -54,7 +57,7 @@
     }
 
     &-link {
-        @include action-link ( $color-foreground-darker, $color-secondary, .1rem);
+        @include action-link ( $color-foreground-darker, $color-foreground-darker, .1rem);
         padding-top: .5rem;
     }
 }

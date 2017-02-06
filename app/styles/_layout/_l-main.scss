@@ -1,13 +1,28 @@
 .l {
   &-pad {
-    padding: 10vh 25vw;
+    padding: 8vh 25vw;
 
     @media screen and (max-width: $media-screen-xxl) {
-        padding: 8vh 15vw;
+        padding: 6vh 15vw;
     }
 
     @media screen and (max-width: $media-screen-l) {
-        padding: 7vh 5vw;
+        padding: 5vh 5vw;
+    }
+
+    &--top {
+      padding-left: inherit;
+      padding-right: inherit;
+
+      @media screen and (max-width: $media-screen-xxl) {
+          padding-left: inherit;
+          padding-right: inherit;
+      }
+
+      @media screen and (max-width: $media-screen-l) {
+          padding-left: inherit;
+          padding-right: inherit;
+      }
     }
   }
 }

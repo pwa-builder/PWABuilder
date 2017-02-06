@@ -5,6 +5,7 @@
         font-family: 'Bitter';
         font-size: $font-size-xl;
         font-weight: $font-weight-normal;
+        padding-bottom: $font-size-xl;
         width: 52%;
 
         @media screen and (max-width: $media-screen-xxl) {
@@ -19,6 +20,14 @@
     &-box {
         padding-right: 1.5vw;
         text-align: center;
+
+        @media screen and (max-width: $media-screen-s) {
+            min-height: 15rem;
+        }
+
+        @media screen and (max-width: $media-screen-xxs) {
+            min-height: 18rem;
+        }
     }
 
     &-subtitle {
