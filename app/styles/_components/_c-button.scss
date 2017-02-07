@@ -12,33 +12,14 @@
     padding: .75rem 3rem;
     position: relative;
 
-    &:before {
-        background: $color-complementary-dark;
-        border-radius: .5rem;
-        content: '';
-        height: 100%;
-        left: 0;
-        position: absolute;
-        top: 0;
-        transition: all $animation-speed-fast $animation-ease-vibrant;
-        width: 100%;
-        z-index: -1;
-    }
-
     &:hover {
         color: $color-complementary-brighter;
         padding: .75rem 2.2rem;
         transition: all $animation-speed-fast $animation-ease-vibrant;
+    }
 
-        &:before {
-            $size: 10%;
-            height: 100% + $size;
-            left: -$size / 4;
-            position: absolute;
-            top: -$size / 2;
-            transition: all $animation-speed-fast $animation-ease-vibrant;
-            width: 100% + $size / 2;
-        }
+    &:focus {
+        outline: 0;
     }
 
     &--spaced {
