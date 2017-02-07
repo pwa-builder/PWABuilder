@@ -28,6 +28,10 @@
     font-family: 'Bitter';
     font-weight: $font-weight-normal;
     font-size: $font-size-l;
+
+    &--last {
+      margin-bottom: 2rem;
+    }
   }
 
   &-info {
@@ -185,6 +189,22 @@
     }
   }
 
+  &-semipadded {
+    padding-left: 9vw;
+
+    @media screen and (max-width: $media-screen-l) {
+      padding-left: 6vw;
+    }
+
+    @media screen and (max-width: $media-screen-m) {
+      padding-left: 2vw;
+    }
+
+    @media screen and (max-width: $media-screen-s) {
+      padding-left: 1vw;
+    }
+  }
+
   &-field {
     width: 100%;
   }
@@ -197,20 +217,41 @@
     padding-left: .5rem;
   }
 
+  $max-size: 90%;
   &-input {
-    border: .15rem solid $color-brand; 
+    background-color: $color-background-brighter;
+    border: .15rem solid $color-foreground-dark; 
     border-radius: .25rem;
     color: $color-foreground-darker;
     font-family: 'FiraSans';
     font-size: $font-size-m;
     margin: .75rem 0 1.5rem 0;
     padding: 1rem;
-    width: 90%;
+    width: $max-size;
+
+    &--select {
+      background-color: $color-background-dark;
+      cursor: pointer;
+      text-transform: capitalize;
+    }
+
+    &--fake {
+      cursor: pointer;
+      display: inline-block;
+      width: 90%;
+    }
 
     &:focus {
-      border-color: $color-brand-dark;
+      background-color: $color-background-brighter;
+      border-color: $color-brand;
       outline: 0;
     }
+
+    &:disabled,
+    &.is-disabled {
+      background-color: $color-background-dark;
+    }
+
   }
 
   &-wrapper {
@@ -231,5 +272,45 @@
     font-size: $font-size-m;
     padding-left: .25rem;
     transform: translateY(-10%);
+  }
+
+  &-table {
+    background-color: $color-background-brighter;
+    border-radius: .5rem;
+    margin: 2rem 0;
+    padding: 1rem;
+    width: $max-size;
+
+    @media screen and (max-width: $media-screen-s) {
+      margin: 3rem 0;
+    }
+  }
+
+  &-tableh {
+    font-family: 'Bitter';
+    font-size: $font-size-l;
+  }
+
+  &-tablec {
+    font-family: 'Bitter';
+    font-size: $font-size-m;
+    text-transform: capitalize;
+
+    img {
+      max-width: 90%;
+    }
+
+    &--right {
+      text-align: right;
+    }
+  }
+
+  &-close {
+    color: $color-foreground-darker;
+    cursor: pointer;
+
+    &:hover {
+      color: $color-complementary;
+    }
   }
 }

@@ -1,12 +1,13 @@
-
 import Ember from 'ember';
+const PLACEHOLDER = 'Choose File';
 
 export default Ember.Component.extend({
     isEnabled: true,
     message: 'Or upload an image...',
     showDialog: false,
-    fileName: undefined,
-    fileInfo: undefined,
+    classNames: ['l-inline'],
+    fileName: PLACEHOLDER,
+    fileInfo: null,
     generateMissingSizes: true,
     isSaving: false,
     showErrorMessage: false,
@@ -21,13 +22,14 @@ export default Ember.Component.extend({
                 } else {
                     self.set('showDialog', false);
 
-                    self.set('fileName', undefined);
-                    self.set('fileInfo', undefined);
+                    self.set('fileName', PLACEHOLDER);
+                    self.set('fileInfo', null);
                     self.set('generateMissingSizes', true);
                 }
             });
         }, 
         close: function() {
+            this.set('fileName', PLACEHOLDER);
             this.set('showDialog', false);
         },
         showPopup : function() {
