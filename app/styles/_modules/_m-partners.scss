@@ -1,6 +1,9 @@
 @import '../variables';
 
 .pwa-partners {
+    // Don't show this section for now
+    display: none;
+
     &-title {
         font-family: 'Bitter';
         font-size: $font-size-xl;
