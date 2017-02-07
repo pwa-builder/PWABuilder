@@ -10,13 +10,36 @@
     margin-bottom: 4vw;
     padding: 1rem 0;
     width: 100%;
+
+    &--minimal {
+      background-color: transparent;
+      margin-bottom: 2vw;
+      text-align: left;
+    }
+  }
+
+  &-title {
+    font-family: 'Bitter';
+    font-weight: $font-weight-semibold;
+    font-size: $font-size-xl;
+  }
+
+  &-subtitle {
+    font-family: 'Bitter';
+    font-weight: $font-weight-normal;
+    font-size: $font-size-l;
   }
 
   &-info {
     font-family: 'Bitter';
     font-size: $font-size-m;
+    margin: 2rem auto;
     text-align: center;
     width: 100%;
+
+    @media screen and (max-width: $media-screen-m) {
+      width: 90%;
+    }
   }
 
   &-tabs {
@@ -107,5 +130,106 @@
         border: none;
       }
     }
+  }
+
+  &-step {
+    animation: generator-step-hide $animation-speed-slow forwards;
+    background-color: $color-background-bright;
+    display: none;
+    margin-top: 4rem;
+    padding-top: 2rem;
+
+    &.active {
+      animation: generator-step-show $animation-speed-slow forwards;
+      display: block;
+    }
+
+    @media screen and (max-width: $media-screen-m) {
+      padding: 10vw;
+    }
+  }
+
+  @keyframes generator-step-hide {
+    0% {
+      opacity: 1;
+    },
+
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes generator-step-show {
+    0% {
+      opacity: 0;
+    },
+
+    100% {
+      opacity: 1;
+    }
+  }
+
+  &-padded {
+    padding-left: 18vw;
+
+    @media screen and (max-width: $media-screen-l) {
+      padding-left: 15vw;
+    }
+
+    @media screen and (max-width: $media-screen-m) {
+      padding-left: 5vw;
+    }
+
+    @media screen and (max-width: $media-screen-s) {
+      padding-left: 0;
+    }
+  }
+
+  &-field {
+    width: 100%;
+  }
+
+  &-label {
+    color: $color-foreground-darker;
+    display: block;
+    font-family: 'Bitter';
+    font-size: $font-size-m;
+    padding-left: .5rem;
+  }
+
+  &-input {
+    border: .15rem solid $color-brand; 
+    border-radius: .25rem;
+    color: $color-foreground-darker;
+    font-family: 'FiraSans';
+    font-size: $font-size-m;
+    margin: .75rem 0 1.5rem 0;
+    padding: 1rem;
+    width: 90%;
+
+    &:focus {
+      border-color: $color-brand-dark;
+      outline: 0;
+    }
+  }
+
+  &-wrapper {
+    height: 5rem;
+    position: relative;
+
+    @media screen and (max-width: $media-screen-m) {
+      height: 4rem;
+    }
+  }
+
+  &-error {
+    color: $color-error;
+  }
+
+  &-loading {
+    display: inline-block;
+    font-size: $font-size-m;
+    padding-left: .25rem;
+    transform: translateY(-10%);
   }
 }

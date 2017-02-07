@@ -17,6 +17,7 @@ $color-complementary-darker: darken($color-complementary, 20%);
 $color-complementary-bright: lighten($color-complementary, 5%);
 $color-complementary-brighter: lighten($color-complementary, 50%);
 
+$color-background-semidark: #5A5A5A;
 $color-background-dark: #EAEAEA;
 $color-background-darker: #333333;
 $color-background-darkest: #000;
@@ -32,9 +33,11 @@ $color-foreground-brighter: #FFFFFF;
 $color-shell-prompt: #B25538;
 $color-shell-command: #FEC77C;
 
+$color-error: #ED4545;
+
 // Animations
 $animation-speed-default: .35s;
-$animation-speed-slow: .5s;
+$animation-speed-slow: 1s;
 $animation-speed-fast: .15s;
 $animation-ease-default: ease-out;
 $animation-ease-minimal: linear;
@@ -48,7 +51,7 @@ $font-weight-semibold: 600;
 $font-weight-bold: 700;
 $font-weight-black: 800;
 
-$font-size-xs: .5rem;    // 8px
+$font-size-xs: .75rem;    // 12px
 $font-size-s: .85rem;    // 13.6px
 $font-size-m: 1rem;      // 16px
 $font-size-l: 1.5rem;    // 24px

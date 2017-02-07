@@ -25,4 +25,15 @@
     &--spaced {
         font-size: $font-size-m;
     }
+
+    &--simple {
+        background-color: $color-background-semidark;
+        font-size: $font-size-m;
+    }
+
+    &--abs {
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
 }
