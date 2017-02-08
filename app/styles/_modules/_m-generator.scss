@@ -55,7 +55,6 @@
   }
 
   &-tabs {
-    list-style: none;
     margin: 0 auto;
     padding: 0;
     text-align: center;
@@ -286,6 +285,10 @@
     @media screen and (max-width: $media-screen-m) {
       height: 4rem;
     }
+
+    &--padded {
+      padding-top: 1rem;
+    }
   }
 
   &-error {
@@ -341,9 +344,19 @@
 
   &-buttons {
     margin-top: 2rem;
+
+    &--centered {
+      padding: 0 0 1rem 0;
+      text-align: center;
+    }
   }
 
   &-options {
     padding: .5rem 0 1rem 0;
+  }
+
+  &-messages {
+    background-color: $color-background-brighter;
+    padding: 1rem;
   }
 }
