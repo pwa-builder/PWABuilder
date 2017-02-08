@@ -3,28 +3,35 @@ import colorConverter from './colorConverter/colorConverter';
 
 export default Ember.Component.extend({
     color: '',
+    colorText: '',
     lastColor: '',
     colorOption: undefined,
-    canChooseColor: function() {
+    checkInputColor: function () {
+        var i = document.createElement("input");
+        i.setAttribute("type", "color");
+        return i.type !== "text";
+    }.property("colorOption"),
+    canChooseColor: function () {
         return this.colorOption === "pick";
     }.property("colorOption"),
-    watchTypeColorChosen: function() {
+    watchTypeColorChosen: function () {
         if (this.colorOption === "none") {
             this.set("color", "none");
         } else if (this.colorOption === "transparent") {
             this.set("color", "transparent");
         }
     }.observes("colorOption"),
-    updateColorChosen: function() {        
+    updateColorChosen: function () {
         if (this.color && this.lastColor !== this.color && this.context._state !== 'preRender') {
             this.sendAction('action', 'background_color', this.color);
             this.set('lastColor', this.color);
+            this.set('colorText', this.color);
         }
     }.observes("color"),
-    calculateColorOption: function() {
+    calculateColorOption: function () {
         var converter = colorConverter.create();
 
-        if(!this.color || this.color === "none") {
+        if (!this.color || this.color === "none") {
             this.set('colorOption', 'none');
         } else if (this.color === 'transparent') {
             this.set('colorOption', 'transparent');
@@ -37,5 +44,10 @@ export default Ember.Component.extend({
         } else {
             this.set('colorOption', 'none');
         }
-    }.observes("color").on('init')
+    }.observes("color").on('init'),
+    actions: {
+        updateModel: function () {
+            this.set('color', this.colorText);
+        }
+    }
 });
