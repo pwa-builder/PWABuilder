@@ -1,6 +1,6 @@
 @import '../variables';
 
-.pwa-ways {
+.pwa-infobox {
     background-color: $color-background-dark;
 
     &-title {
@@ -26,6 +26,10 @@
 
         @media screen and (max-width: $media-screen-s) {
             margin-bottom: 2vw;
+        }
+
+        &--fixed {
+            min-height: 50vh;
         }
     }
 
