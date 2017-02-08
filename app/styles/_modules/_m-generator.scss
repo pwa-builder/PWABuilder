@@ -1,4 +1,5 @@
 @import '../variables';
+@import '../mixins/action';
 
 .pwa-generator {
   &-header {
@@ -31,6 +32,13 @@
 
     &--last {
       margin-bottom: 2rem;
+    }
+
+    &--toggleable {
+      cursor: pointer;
+      max-width: 90%;
+      margin: .5rem 0;
+      @include action-link ( $color-foreground-darker, $color-foreground-darkest, .15rem, false);
     }
   }
 
@@ -207,6 +215,10 @@
 
   &-field {
     width: 100%;
+
+    &--padded {
+      padding-top: .5rem;
+    }
   }
 
   &-label {

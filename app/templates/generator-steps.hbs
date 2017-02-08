@@ -59,14 +59,14 @@
                 }}
       </div>
       {{#background-color color=model.manifest.background_color action="updateModelProperty"}} {{/background-color}}
-      <h2 class="toggle-title" {{action "toggleRelatedApps"}}>Specify related applications to be added to the manifest.</h2>
+      <h4 class="pwa-generator-subtitle pwa-generator-subtitle--toggleable" {{action "toggleRelatedApps"}}>Specify related applications to be added to the manifest.</h4>
       {{#if showRelatedApps}}
       <div class="pwa-generator-field">
         {{#related-application-list action="updateModelProperty" preferRelatedApplications=model.manifest.prefer_related_applications relatedApplications=model.manifest.related_applications }}{{/related-application-list}}
       </div>
       {{/if}}
 
-      <h2 class="toggle-title" {{action "toggleCustomMembers"}}>Specify custom members to be added to the manifest.</h2>
+      <h4 class="pwa-generator-subtitle pwa-generator-subtitle--toggleable" {{action "toggleCustomMembers"}}>Specify custom members to be added to the manifest.</h4>
       {{#if showCustomMembers}}
       <div class="pwa-generator-field">
         {{#member-list action="manageMember" members=customMembers}}{{/member-list}}
