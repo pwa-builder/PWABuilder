@@ -48,7 +48,7 @@ export default Ember.Object.extend({
     names: ['any', 'natural', 'landscape', 'portrait', 'portrait-primary', 'portrait-secondary', 'landscape-primary', 'landscape-secondary']
   },
   serviceWorkers: [
-    {id: 1, name: 'Offline page', isSelected: false, isDisabled: false },
+    {id: 1, name: 'Offline page', isSelected: true, isDisabled: false },
     {id: 2, name: 'Offline copy of pages', isSelected: false, isDisabled: false }
   ],
   serviceWorkerCodePreview: { forWebSite: '', forServiceWorker: '' },

@@ -90,39 +90,41 @@
   {{/generator-step}}
 
   {{#generator-step step="2" nextStep="3" stepTitle="Build Service Worker" data=model action="updateStep" showNextStep=startComplete}}
-  <div class="pure-g">
+  <div class="pwa-generator-semipadded pure-g">
     <div class="pure-u-1 pure-u-md-1-2 generator-section service-workers">
-      <p class="instructions">Select the service worker functionality for your app.</p>
+      <p class="pwa-generator-subtitle">Select the service worker functionality for your app.</p>
       {{#each worker in model.serviceWorkers}}
-        <div class="pwa-generator-field checkbox">
-          {{input class='pwa-generator-input' type="checkbox" checked=worker.isSelected focus-out="updateModel" disabled=worker.isDisabled }}
-          <label class="pwa-generator-label">{{worker.name}}</label>
+        <div class="pwa-generator-field pwa-generator-field--padded checkbox">
+          <label class="pwa-generator-label">
+            {{input type="checkbox" checked=worker.isSelected focus-out="updateModel" disabled=worker.isDisabled }}
+            {{worker.name}}
+          </label>
           
-          <span class="description">This simple but eligent solution pulls a file from your web server called "offline.html" (make sure that file is actually there) and 
+          <span class="pwa-generator-description">This simple but eligent solution pulls a file from your web server called "offline.html" (make sure that file is actually there) and 
             serves the file whenever a network connection can not be made.
           </span>
         </div>
       {{/each}}
       
-      <div>
-        {{#download-archive class="button-holder download-archive" initialMessage="Download service worker" isBuilding=model.isBuilding.serviceWorker buildFailed=model.buildFailed.serviceWorker action="downloadServiceWorker" platform="serviceWorker" isEnabled=model.hasServiceWorkersSelected}}{{/download-archive}}
+      <div class="pwa-generator-buttons">
+        {{#download-archive initialMessage="Download service worker" isBuilding=model.isBuilding.serviceWorker buildFailed=model.buildFailed.serviceWorker action="downloadServiceWorker" platform="serviceWorker" isEnabled=model.hasServiceWorkersSelected}}{{/download-archive}}
       </div>
 
-      <p class="instructions">You can also download the source code directly from <a href="https://github.com/manifoldjs/serviceworkers" target="_blank">GitHub</a>.</p>
+      <p>You can also download the source code directly from <a class="pwa-generator-link" href="https://github.com/manifoldjs/serviceworkers" target="_blank">GitHub</a>.</p>
     </div>
 
     <div class="pure-u-1 pure-u-md-1-2 generator-section manifest manifest-holder">
       <header>
-        <h2 class="generator-section-title">Code for website</h2>
+        <h2 class="pwa-generator-subtitle">Code for website</h2>
       </header>
-      <div class="generator-service-worker-code">
+      <div class="pwa-generator-code">
         {{formatted-manifest data=formattedServiceWorkerWebsiteCode}}
       </div>
 
       <header>
-        <h2 class="generator-section-title">Service worker code</h2>
+        <h2 class="pwa-generator-subtitle">Service worker code</h2>
       </header>
-      <div class="generator-service-worker-code">
+      <div class="pwa-generator-code">
         {{formatted-manifest data=formattedServiceWorkerCode}}
       </div>
     </div>
