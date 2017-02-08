@@ -1,0 +1,59 @@
+@import '../variables';
+
+.pwa-modal {
+    background: rgba($color-background-darkest, .3);
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 100;
+
+    &-box {
+        $w: 60vw;
+        $h: 50vh;
+        background: $color-background-brighter;
+        border-radius: .5rem;
+        height: $h;
+        left: 50%;
+        margin-left: -$w / 2;
+        margin-top: -$h / 2;
+        min-height: 400px;
+        position: fixed;
+        top: 50%;
+        width: $w;
+        z-index: 110;
+
+        @media screen and (max-width: $media-screen-l) {
+            $w: 80vw;
+            $h: 50vh;
+            height: $h;
+            margin-left: -$w / 2;
+            margin-top: -$h / 2;
+            width: $w;
+        }
+
+        @media screen and (max-width: $media-screen-m) {
+            $w: 80vw;
+            $h: 60vh;
+            height: $h;
+            margin-left: -$w / 2;
+            margin-top: -$h / 2;
+            width: $w;
+        }
+    }
+
+    &-title {
+        font-family: 'Bitter';
+        font-weight: $font-weight-semibold;
+        font-size: $font-size-l;
+        margin: 2rem 0;
+        text-align: center;
+        width: 100%;
+    }
+
+    &-body {
+        margin-top: 45px;
+        padding: 18px;
+    }
+}

@@ -11,16 +11,15 @@ export default Ember.Component.extend({
       var siteUrl = this.get('siteUrl');
       var file = this.get('file');
       if(!siteUrl && !file){
-        this.set('message', 'Please provide a URL or manifest file.');
+        this.set('message', 'Please provide a URL.');
       } else {
         this.set('message', '');
         this.sendAction('action', siteUrl, file);
       }
     },
-    uploadFile: function(file) {
-      this.set('file', file);
-      this.set('fileName', file.name);
-      this.sendAction('upload', file);
+    goToSecondStep: function() {
+      let controller = this.get('parentView.parentView.controller');
+      controller.setActiveStep(controller.get('steps')[1].step);
     }
   }
 });

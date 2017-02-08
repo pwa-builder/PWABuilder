@@ -20,6 +20,7 @@
     @media screen and (max-width: $media-screen-s) {
       overflow-x: auto;
       padding-bottom: .5rem;
+      width: 100%;
     }
   }
 
@@ -33,8 +34,8 @@
   &-menu {
     font-family: 'Bitter';
     font-size: 1.1em;
-    list-style: none;
     margin-right: 1vw;
+    margin-top: 1vw;
     padding: 0;
     white-space: nowrap;
   }

@@ -2,33 +2,30 @@
   {{formatted-manifest data=formattedManifest}}
 </section>
 
-{{#download-archive class="button-holder download-archive download-manifest" initialMessage="Download manifest" isBuilding=model.isBuilding.web buildFailed=model.buildFailed.web action="buildArchive" platform="web" download="downloadArchive" archiveLink=model.archiveLink isEnabled=model.hasNoErrors}}{{/download-archive}}
+<div class="pwa-generator-wrapper pwa-generator-wrapper--padded">
+  {{#download-archive initialMessage="Download manifest" isBuilding=model.isBuilding.web buildFailed=model.buildFailed.web action="buildArchive" platform="web" download="downloadArchive" archiveLink=model.archiveLink isEnabled=model.hasNoErrors}}{{/download-archive}}
+</div>
 
 {{#if model.hasIssues}}
-<div id="issues_list" class="issues">
-  {{#if model.errors}}
-  <div id="errors_list">
-    <h5 class="issues-title issues-title-errors">Errors <span>({{model.errorsTotal}} {{pluralize-it "item" model.errorsTotal}})</span></h5>
-    {{#each member in model.errors}}
-    {{partial "issue-list"}}
-    {{/each}}
+  <div class="pwa-generator-messages">
+
+    {{#if model.warnings}}
+    <div id="warnings_list">
+      <h5 class="pwa-generator-subtitle">Warnings <span>({{model.warningsTotal}} {{pluralize-it "item" model.warningsTotal}})</span></h5>
+      {{#each member in model.warnings}}
+      {{partial "issue-list"}}
+      {{/each}}
+    </div>
+    {{/if}}
+
+    {{#if model.suggestions}}
+    <div id="suggestions_list">
+      <h5 class="pwa-generator-subtitle">Suggestions <span>({{model.suggestionsTotal}} {{pluralize-it "item" model.suggestionsTotal}})</span></h5>
+      {{#each member in model.suggestions}}
+      {{partial "issue-list"}}
+      {{/each}}
+    </div>
+    {{/if}}
+
   </div>
-  {{/if}}
-  {{#if model.warnings}}
-  <div id="warnings_list">
-    <h5 class="issues-title issues-title-warnings">Warnings <span>({{model.warningsTotal}} {{pluralize-it "item" model.warningsTotal}})</span></h5>
-    {{#each member in model.warnings}}
-    {{partial "issue-list"}}
-    {{/each}}
-  </div>
-  {{/if}}
-  {{#if model.suggestions}}
-  <div id="suggestions_list">
-    <h5 class="issues-title issues-title-suggestions">Suggestions <span>({{model.suggestionsTotal}} {{pluralize-it "item" model.suggestionsTotal}})</span></h5>
-    {{#each member in model.suggestions}}
-    {{partial "issue-list"}}
-    {{/each}}
-  </div>
-  {{/if}}
-</div>
 {{/if}}

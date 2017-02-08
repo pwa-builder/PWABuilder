@@ -1,47 +1,53 @@
-<div class="form-group">
-    <p class="instructions alert"><i class="fa fa-exclamation {{if showAlert 'show' 'hidden'}}"></i> {{memberAlert}}</p>
-    <div class="form-item">
-        <label>Platform</label>
-        {{input name="relatedApp_platform" value=relatedApp_platform}}
-    </div>
-    <div class="form-item">
-        <label>URL</label>
-        {{input name="relatedApp_url" value=relatedApp_url}}
-    </div>
-    <div class="form-item">
-        <label>Id</label>
-        {{input name="relatedApp_id" value=relatedApp_id}}
-    </div>
+<div class="pwa-generator-field">
+    <label class="pwa-generator-label">Platform</label>
+    {{input class="pwa-generator-input" name="relatedApp_platform" value=relatedApp_platform}}
+</div>
+<div class="pwa-generator-field">
+    <label class="pwa-generator-label">URL</label>
+    {{input class="pwa-generator-input" name="relatedApp_url" value=relatedApp_url}}
+</div>
+<div class="pwa-generator-field">
+    <label class="pwa-generator-label">Id</label>
+    {{input class="pwa-generator-input" name="relatedApp_id" value=relatedApp_id}}
+</div>
 
-    <div class="button-holder">
-        <button {{action 'addRelatedApplication'}}>Add Related Application</button>
-    </div>
+<div class="button-holder">
+    <button class="pwa-button pwa-button--text pwa-button--right" {{action 'addRelatedApplication'}}>
+        Add Related Application
+    </button>
+</div>
 
-    {{#if relatedApplications}}
-        <table id="relatedApplication-list">
-            <thead>
-                <tr>
-                    <td>Platform</td>
-                    <td>URL</td>
-                    <td></td>
-                </tr>
-            </thead>
-            <tbody>
-                {{#each app in relatedApplications}}
-                <tr>
-                    <td>{{app.platform}}</td>
-                    <td class="text-truncated">{{app.url}}</td>
-                    <td><button {{action 'removeRelatedApplication' app}}>{{fa-icon "times"}}</button></td>
-                </tr>
-                {{/each}}
-            </tbody>
-        </table>
-    {{/if}}
+<div class="pwa-generator-field pwa-generator-field--padded"></div>
 
-    <div class="form-item">
-        <div class="checkbox-item">
-            {{generator-checkbox checked=preferRelatedApplications action="updatepreferRelatedApplications" }}
-            <label>Prefer related applications</label>
-        </div>
+{{#if showAlert}}
+<p class="pwa-generator-error">
+    <i class="fa fa-exclamation"></i> {{memberAlert}}
+</p>
+{{/if}}
+
+{{#if relatedApplications}}
+    <div class="pure-g pwa-generator-table">
+        <div class="pure-u-2-5 pwa-generator-tableh">Platform</div>
+        <div class="pure-u-2-5 pwa-generator-tableh">URL</div>
+        <div class="pure-u-1-5"></div>
+
+        {{#each app in relatedApplications}}
+            <div class="pure-u-2-5 pwa-generator-tablec">
+                {{app.platform}}
+            </div>
+            <div class="pure-u-2-5 pwa-generator-tablec">
+                {{app.url}}
+            </div>
+            <div class="pure-u-1-5 pwa-generator-tablec pwa-generator-tablec--right">
+                <span class="pwa-generator-close" {{action 'removeRelatedApplication' app}}>{{fa-icon "times"}}</span>
+            </div>
+        {{/each}}
     </div>
+{{/if}}
+
+<div class="pwa-generator-field">
+    <label class="pwa-generator-label">
+        {{generator-checkbox checked=preferRelatedApplications action="updatepreferRelatedApplications" }}
+        Prefer related applications
+    </label>
 </div>

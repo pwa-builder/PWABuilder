@@ -1,41 +1,52 @@
-<button class="btn build upload-image {{if isEnabled 'isEnabled'}}" {{action "showPopup"}}>
-    {{message}} {{fa-icon "upload"}}
+<button class="pwa-button pwa-button--text {{if isEnabled 'isEnabled'}}" {{action "showPopup"}}>
+    {{message}}
 </button>
 
 {{#if showDialog}}
-<div class="modal-fog">
-  <div class="modal-frame upload-image-modal">
-    <h5 class="modal-title">
+<div class="pwa-modal">
+  <div class="pwa-modal-box">
+    <h5 class="pwa-modal-title">
       Upload an image
     </h5>
-    <div class="modal-body">
+    <div class="pwa-modal-body">
       {{#if showErrorMessage}}
         <div>
           <p>There was an error uploading the image. Please try again.</p>
         </div>
       {{/if}}
-      <div class="form-item">
-        <label>Upload image</label>
-        <div>
-          <input class="upload-file" placeholder="Choose File" disabled="disabled" value="{{fileName}}" />
-          <div class="fileUpload btn">
-            <span>Browse</span>
-            {{file-input class="upload" action="uploadFile"}}
+      <div class="pwa-generator-field">
+        <span class="pwa-generator-label">Upload image</span>
+        <label class="pwa-generator-input pwa-generator-input--fake is-disabled" for="modal-file">
+          {{fileName}}
+        </label>
+        {{file-input id="modal-file" class="l-hidden" action="uploadFile"}}
+      </div>
+
+      <div class="pwa-generator-field">
+          <label>
+            {{generator-checkbox checked=generateMissingSizes}} 
+            Generate missing images from this image
+          </label>
+      </div>
+
+      <div class="pwa-generator-buttons pure-g">
+        <div class="pure-u-8-24">
+          <div class="pure-g">
+            <div class="pure-u-1-2">
+              <button class="pwa-button pwa-button--spaced" {{action "accept"}}>
+                Submit
+                {{#if isSaving}}
+                    <span class="pwa-generator-loading">
+                      {{fa-icon "circle-o-notch fa-spin"}}
+                    </span>
+                  {{/if}}
+              </button>
+            </div>
+            <div class="pure-u-1-2">
+              <button class="pwa-button pwa-button--simple" {{action "close"}}>Cancel</button>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div class="form-item">
-          {{generator-checkbox checked=generateMissingSizes}}
-          <label>Generate missing images from this image</label>
-      </div>
-
-      <div class="form-item">
-        <button class="button" {{action "accept"}}>
-          Submit
-          {{#if isSaving}}{{fa-icon "circle-o-notch fa-spin"}}{{/if}}
-        </button>
-        <button class="button" {{action "close"}}>Cancel</button>
       </div>
     </div>
   </div>

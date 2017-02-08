@@ -14,7 +14,7 @@ export default Ember.Component.extend({
       self.set('showAlert',false);
 
       var members = this.get('members');
-      if(_.any(members,'member_name',this.get('member_name'))){
+      if(_.some(members,'member_name',this.get('member_name'))){
         self.set('memberAlert','A custom value with that key already exists');
         self.set('showAlert',true);
         return;

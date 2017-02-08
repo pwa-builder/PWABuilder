@@ -10,7 +10,7 @@ export default Ember.Component.extend({
   customButtonText: "",
   allowToggle: true,
   tagName: 'li',
-  classNames: ['step'],
+  classNames: ['pwa-generator-step'],
   classNameBindings: ['isActive:active'],
 
   isActive: function() {

@@ -1,39 +1,5 @@
 @import '../variables';
 
-.fileUpload {
-  cursor: pointer;
-  line-height: 1.5rem;
-  margin: 0;
-  overflow: hidden;
-  position: absolute;
-  right:0;
-  text-align: center;
-  touch-action: manipulation;
-  -ms-touch-action: manipulation;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  width: 15%;
-}
-
-.fileUpload span {
-  cursor: pointer;
-}
-
-.fileUpload input.upload {
-  cursor: pointer;
-  filter: alpha(opacity=0);
-  line-height: 2.325rem;
-  margin: 0;
-  opacity: 0;
-  padding: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 100% !important;
-}
-
 pre {
   background-color: $color-background-darker;
   border-radius:0 !important;
@@ -42,10 +8,6 @@ pre {
   font-size: 1.125em;
   margin: 0 !important;
   padding: 1.25em 1.75em;
-  white-space: pre-wrap;       // CSS 3
-  white-space: -moz-pre-wrap;  // Mozilla, since 1999
-  white-space: -pre-wrap;      // Opera 4-6
-  white-space: -o-pre-wrap;    // Opera 7
   word-wrap: break-word;       // Internet Explorer 5.5+
 }
 

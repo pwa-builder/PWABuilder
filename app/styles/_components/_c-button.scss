@@ -4,6 +4,7 @@
     background-color: $color-complementary;
     border-radius: .5rem;
     color: $color-foreground-brighter;
+    cursor: pointer;
     display: inline-block;
     font-family: 'Bitter';
     font-size: $font-size-l;
@@ -12,36 +13,52 @@
     padding: .75rem 3rem;
     position: relative;
 
-    &:before {
-        background: $color-complementary-dark;
-        border-radius: .5rem;
-        content: '';
-        height: 100%;
-        left: 0;
-        position: absolute;
-        top: 0;
-        transition: all $animation-speed-fast $animation-ease-vibrant;
-        width: 100%;
-        z-index: -1;
-    }
-
     &:hover {
         color: $color-complementary-brighter;
         padding: .75rem 2.2rem;
         transition: all $animation-speed-fast $animation-ease-vibrant;
+    }
 
-        &:before {
-            $size: 10%;
-            height: 100% + $size;
-            left: -$size / 4;
-            position: absolute;
-            top: -$size / 2;
-            transition: all $animation-speed-fast $animation-ease-vibrant;
-            width: 100% + $size / 2;
-        }
+    &:focus {
+        outline: 0;
     }
 
     &--spaced {
         font-size: $font-size-m;
+    }
+
+    &--simple {
+        background-color: $color-background-semidark;
+        font-size: $font-size-m;
+    }
+
+    &--abs {
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+
+    &--text {
+        background-color: transparent;
+        border-bottom: solid .15rem $color-complementary;
+        border-radius: 0;
+        color: $color-complementary;
+        display: inline-block;
+        font-size: $font-size-m;
+        padding: .3rem .8rem;
+
+        &:hover {
+            color: $color-complementary-bright;
+            padding: .3rem 1rem;
+        }
+
+        &:disabled {
+            opacity: .5;
+        }
+    }
+
+    &--right {
+        float: right;
+        margin-right: 10%;
     }
 }

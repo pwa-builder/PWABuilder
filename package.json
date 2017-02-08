@@ -22,6 +22,7 @@
     "broccoli-asset-rev": "^2.0.2",
     "ember-cli": "0.2.3",
     "ember-cli-app-version": "0.3.3",
+    "ember-cli-autoprefixer": "0.6.0",
     "ember-cli-babel": "^4.0.0",
     "ember-cli-content-security-policy": "0.4.0",
     "ember-cli-dependency-checker": "0.0.8",

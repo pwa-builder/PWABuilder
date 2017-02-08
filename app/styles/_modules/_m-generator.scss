@@ -1,652 +1,362 @@
-$form-accent: $color-background-dark;
+@import '../variables';
+@import '../mixins/action';
 
-@media screen and (min-width: 48em) {
-  .generator {
-    height: 100%;
-    overflow-y: hidden;
+.pwa-generator {
+  &-header {
+    background-color: $color-brand;
+    color: $color-foreground-darker;
+    font-family: 'Bitter';
+    font-size: $font-size-l;
+    text-align: center;
+    margin-bottom: 4vw;
+    padding: 1rem 0;
+    width: 100%;
+
+    &--minimal {
+      background-color: transparent;
+      margin-bottom: 2vw;
+      text-align: left;
+    }
   }
-}
 
-.generator-section > header {
-  background-color: $color-secondary;
-  display: block;
-  padding: 0;
-  width: 100%;
-}
+  &-title {
+    font-family: 'Bitter';
+    font-weight: $font-weight-semibold;
+    font-size: $font-size-xl;
+  }
 
-.generator-section {
-    height: 100%;
-    overflow-y: auto;
-}
+  &-subtitle {
+    font-family: 'Bitter';
+    font-weight: $font-weight-normal;
+    font-size: $font-size-l;
 
-.generator-section-title {
-  color: $color-foreground-brighter;
-  font-size: 1.5rem;
-  line-height: 3rem;
-  margin: 0;
-  padding: 0 1rem .05rem 1rem;
-}
+    &--last {
+      margin-bottom: 2rem;
+    }
 
-.generator-section > header .fixed {
-  background-color: $color-secondary;
-  display: block;
-  position: fixed;
-  width: 100%;
-}
+    &--toggleable {
+      cursor: pointer;
+      max-width: 90%;
+      margin: .5rem 0;
+      @include action-link ( $color-foreground-darker, $color-foreground-darkest, .15rem, false);
+    }
+  }
 
-.generator p.intro {
-  background-color: $color-background-brighter;
-  margin: 0;
-  padding: 1rem;
-}
-.generator-section .manifest-body {
-  color: $color-secondary;
-  font-size: 1.313rem;
-  line-height: 2.5rem;
-}
+  &-info {
+    font-family: 'Bitter';
+    font-size: $font-size-m;
+    margin: 2rem auto;
+    text-align: center;
+    width: 100%;
 
-.generator-section .manifest-body pre {
-    overflow: unset;
-}
+    @media screen and (max-width: $media-screen-m) {
+      width: 90%;
+    }
+  }
 
-.generator-issues-notification {
-  background: $color-background-darker;
-  color: $color-complementary;
-  font-size: 1rem;
-  margin: 0;
-  padding: 1rem;
-}
-
-.generator-issues-notification a,
-.generator-issues-notification a:visited,
-.generator-issues-notification a:hover {
-  cursor: pointer;
-  font-weight: bold;
-  text-decoration: underline;
-}
-
-.generator-issues-notification a:hover {
-  color: $color-background-brighter;
-}
-
-.generator .form-holder {
-  padding: 5px 20px 5px 0;
-}
-
-ul.generator-tabs {
-    background-color: $color-background-bright;
-    border: 1px solid $color-foreground-dark;
-    list-style-type: none;
-    margin: 0 16px;
-    overflow: hidden;
+  &-tabs {
+    margin: 0 auto;
     padding: 0;
-}
+    text-align: center;
+  }
 
-ul.generator-tabs li.tab {
+  $tab-color-off: $color-brand-brighter;
+  $tab-color-on: $color-brand;
+  $tab-size: 16rem;
+  &-tab {
+    $size: 5rem;
+    background-color: $tab-color-off;
+    color: $color-foreground-darker;
     cursor: pointer;
-}
-
-ul.generator-tabs li {
-  float: left;
-}
-
-ul.generator-tabs li a {
-    color: $color-foreground-dark;
     display: inline-block;
-    font-size: 24px;
-    padding: 44px 36px;
-    text-align: center;
-    text-decoration: none;
-    transition: 0.3s;
-}
+    font-family: 'Bitter';
+    font-size: $font-size-m;
+    height: $size;
+    line-height: $font-size-m;
+    margin: 0 3rem;
+    padding: 2rem 1rem 2rem 3rem;
+    position: relative;
+    text-align: left;
+    transition: all $animation-speed-default $animation-ease-default;
+    width: $tab-size;
 
-ul.generator-tabs li a:hover {
-  background-color: $color-background-dark;
-}
+    &:after {
+      border-top: $size / 2 solid transparent;
+      border-bottom: $size / 2 solid transparent;
+      border-left: $size / 2 solid $tab-color-off;
+      content: '';
+      height: 0; 
+      right: - $size / 2;
+      position: absolute;
+      top: 0;
+      transition: all $animation-speed-default $animation-ease-default;
+      width: 0; 
+    }
 
-.generator-step-list li.step {
+    &:before {
+      $font: $size * .4;
+      $border: .5rem;
+      background-color: $color-background-brighter;
+      border-radius: 50%;
+      border: $border solid $tab-color-off;
+      box-shadow: inset 0 0 0 .2rem $color-brand;
+      content: attr(data-step);
+      font-size: $font;
+      height: $size; 
+      left: - $size / 2;
+      line-height: 2 * $font;
+      position: absolute;
+      text-align: center;
+      top: 0;
+      transition: all $animation-speed-default $animation-ease-default;
+      width: $size;
+    }
+
+    &.active {
+       background-color: $tab-color-on;
+       transition: all $animation-speed-default $animation-ease-default;
+
+       &:after { 
+         border-left-color: $tab-color-on;
+         transition: all $animation-speed-default $animation-ease-default;
+       }
+
+       &:before { 
+         border-color: $tab-color-on;
+         box-shadow: none;
+         transition: all $animation-speed-default $animation-ease-default;
+       }
+    }
+
+    &:hover {
+      width: $tab-size * 1.2;
+    }
+
+    @media screen and (max-width: $media-screen-m) {
+      border-radius: .5rem;
+      display: block;
+      margin: 2rem auto;
+
+      &:after {
+        border: none;
+      }
+    }
+  }
+
+  &-step {
+    animation: generator-step-hide $animation-speed-slow forwards;
+    background-color: $color-background-bright;
     display: none;
-}
+    margin-top: 4rem;
+    padding-top: 2rem;
 
-ul.generator-tabs li a:focus, 
-ul.generator-tabs li.active {
-  background-color: $color-background-dark;
-}
+    &.active {
+      animation: generator-step-show $animation-speed-slow forwards;
+      display: block;
+    }
 
-.generator-step-list li.active 
-{
-  display: block;
-}
-
-.generator .step {
-  font-size: .875rem;
-  margin: 0 1rem;
-  padding: 0;
-}
-
-.generator code {
-  font-size: .875rem;
-  line-height: .875rem;
-}
-
-.generator .step-wrapper {
-  padding-left: 1rem;
-}
-
-.generator .step--disabled, .generator .step--disabled .title {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-.generator .step header {
-  cursor: pointer;
-  margin-top: 10px;
-}
-
-.generator .step.active {
-  opacity: 1;
-}
-
-.generator .step .title {
-  font-size: 1.25rem;
-  line-height: 2.2rem;
-  margin-bottom: 0;
-}
-
-.generator .step .toggle-title {
-  cursor: pointer;
-  font-size: 1rem;
-  line-height: 2.2rem;
-  margin-top: 2.5rem;
-}
-
-.generator .instructions {
-  margin-top: 10px;
-}
-
-.generator hr {
-  background: $color-background-bright;
-  border: none;
-  height: 1px;
-}
-
-.generator .form-item {
-  clear: both;
-  margin-bottom: 1rem;
-  overflow: auto;
-  position: relative;
-}
-
-.generator .form-item.checkbox {
-  clear: none;
-  float: left;
-  margin-bottom: 0;
-  width: 50%;
-}
-
-.generator .form-item.checkbox label {
-  width: 50%;
-}
-
-.generator input:not([type=checkbox]) {
-  border: 1px solid $form-accent;
-  display: block;
-  float: right;
-  height: 2.125rem;
-  width: 65%;
-}
-
-.generator input[type=checkbox]{
-  float: left;
-  height: 2.12rem;
-  margin-left: 5%;
-}
-
-.generator textarea {
-  border: 1px solid $form-accent;
-  float: right;
-  margin-bottom: .4rem;
-  padding: .1rem;
-  width: 65%;
-}
-
-.generator select {
-  float: right;
-  margin-top: 0.6rem;
-  width: 65%;
-}
-
-.generator label {
-  display: block;
-  float: left;
-  line-height: 2.215rem;
-  text-align: right;
-}
-
-.generator input[type=radio] {
-  display: inline-block;
-  height: initial;
-  width: initial;
-}
-
-.generator .button-holder {
-  clear: both;
-  margin-top: 20px;
-  text-align: right;
-}
-
-.generator .icon-preview {
-  vertical-align: middle;
-  width: 2rem;
-}
-
-.generator .logo-upload {
-  padding-bottom: 0;
-}
-
-.generator .logo-upload .fa, .generator .member-list .fa {
-  font-size: 1rem;
-}
-
-.generator .generator-members {
-  margin-top: 1rem;
-}
-
-.generator table {
-  float: right;
-  margin-top: 0;
-  width: 66%;
-}
-
-.generator th {
-  border: none;
-  text-align: center;
-}
-
-.generator td {
-  border: 0;
-  line-height: 3rem;
-  padding: 0;
-  text-align: center;
-}
-
-.generator td button {
-  margin-right: .5rem;
-}
-
-.generator tbody tr:nth-child(odd) {
-  background-color: $color-secondary;
-}
-
-.button-holder.icons {
-  float: right;
-  width: 65%;
-}
-.button-holder.icons button.upload-image {
-  background: $color-complementary;
-  color: $color-foreground-brighter;
-  float: left;
-}
-
-.button-holder.icons button.upload-image > i.fa-upload {
-  margin-left: 5px;
-}
-
-.generator input:-ms-input-placeholder {
-  color: $color-foreground-dark;
-}
-
-/* Generator step list custom numbering */
-
-.generator-step-list {
-  list-style-type: none;
-  margin-left: 0;
-  margin-top: 0;
-  padding-left: 0;
-}
-
-.generator-step-list .step {
-  counter-increment: step-counter;
-  position: relative;
-}
-
-.generator-step-list .step--disabled {
-  cursor: not-allowed;
-}
-
-.generator .generator-start {
-  padding: 0 1rem 1rem 0;
-}
-
-.generator-start .url label,
-.generator-start .manifest label {
-  margin-right: 10px;
-  text-align: left;
-}
-
-.generator-start .url input{
-  float: left;
-  width: 80%;
-}
-
-.generator-start .manifest input.upload-file {
-  float: left;
-  margin-right: 10px;
-  width: 50%;
-}
-
-.generator-start .manifest .fileUpload {
-  position: relative;
-}
-
-.generator .fa {
-  font-size: 1rem;
-}
-
-.generator .fa-windows {
-  font-size: 1.2em;
-}
-
-.generator .fa-mobile-phone{
-  font-size: 1.5em;
-}
-
-.generator .package-download {
-  color: $color-foreground-darker;
-  font-size: 2rem;
-  position: absolute;
-  right: 0;
-  top: -.2rem;
-}
-
-.generator .package-download:hover {
-  color: $color-brand;
-}
-
-.alert {
-  color: $color-brand;
-}
-
-.generator .usage-link {
-  background: $color-complementary;
-  color: $color-foreground-brighter;
-  cursor: pointer;
-  display: block;
-  display: none;
-  font-size: .8rem;
-  padding: .5rem 0;
-  text-align: center;
-  width: 100%;
-}
-
-.generator .usage-link.btn.show {
-  display: block;
-}
-
-//Manifest section
-.generator .manifest-holder {
-  background-color: $color-background-dark;
-  display: none;
-  height: 1150px;
-  overflow-y: auto;
-}
-
-.generator .manifest-holder {
-  display: inline-block;
-}
-
-.generator .generator-section pre {
-  box-shadow: none;
-  line-height: 1.125rem;
-}
-
-#issues_list > div {
-  outline-style: none;
-}
-
-.issues {
-  background-color: $color-background-dark;
-  -moz-border-radius: 2px;
-  border-radius: 2px;
-  color: $color-foreground-brighter;
-  margin: 0;
-  padding: .75rem 1.5rem 1.5rem 1.5rem;
-}
-  .issues-title {
-    color: $color-complementary;
-    font-size: 1.25rem;
-    margin: .75rem 0 .25rem 0;
-    margin-top: -6.5rem;
-    padding-top: 6.5rem;
+    @media screen and (max-width: $media-screen-m) {
+      padding: 10vw;
+    }
   }
-  .issues-title span {
-    color: $color-foreground-dark;
+
+  @keyframes generator-step-hide {
+    0% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes generator-step-show {
+    0% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+
+  &-padded {
+    padding-left: 18vw;
+
+    @media screen and (max-width: $media-screen-l) {
+      padding-left: 15vw;
+    }
+
+    @media screen and (max-width: $media-screen-m) {
+      padding-left: 5vw;
+    }
+
+    @media screen and (max-width: $media-screen-s) {
+      padding-left: 0;
+    }
+  }
+
+  &-semipadded {
+    padding-left: 9vw;
+
+    @media screen and (max-width: $media-screen-l) {
+      padding-left: 6vw;
+    }
+
+    @media screen and (max-width: $media-screen-m) {
+      padding-left: 2vw;
+    }
+
+    @media screen and (max-width: $media-screen-s) {
+      padding-left: 1vw;
+    }
+  }
+
+  &-field {
+    width: 100%;
+
+    &--padded {
+      padding-top: .5rem;
+    }
+  }
+
+  &-label {
+    color: $color-foreground-darker;
+    display: block;
+    font-family: 'Bitter';
+    font-size: $font-size-m;
+    padding-left: .5rem;
+  }
+
+  $max-size: 90%;
+  &-input {
+    background-color: $color-background-brighter;
+    border: .15rem solid $color-foreground-dark; 
+    border-radius: .25rem;
+    color: $color-foreground-darker;
+    font-family: 'FiraSans';
+    font-size: $font-size-m;
+    margin: .75rem 0 1.5rem 0;
+    padding: 1rem;
+    width: $max-size;
+
+    &--select {
+      background-color: $color-background-dark;
+      cursor: pointer;
+      text-transform: capitalize;
+    }
+
+    &--fake {
+      cursor: pointer;
+      display: inline-block;
+      width: 90%;
+    }
+
+    &--small {
+      width: 20%;
+    }
+
+    &--tiny {
+      $margin: .5rem;
+      padding: 0;
+      width: 3rem;
+      height: 2.5rem;
+      transform: translateY($margin);
+      margin-right: $margin;
+    }
+
+    &:focus {
+      background-color: $color-background-brighter;
+      border-color: $color-brand;
+      outline: 0;
+    }
+
+    &:disabled,
+    &.is-disabled {
+      background-color: $color-background-dark;
+    }
+
+  }
+
+  &-wrapper {
+    height: 5rem;
+    position: relative;
+
+    @media screen and (max-width: $media-screen-m) {
+      height: 4rem;
+    }
+
+    &--padded {
+      padding-top: 1rem;
+    }
+  }
+
+  &-error {
+    color: $color-error;
+  }
+
+  &-loading {
     display: inline-block;
-    font-size: 75%;
-  }
-  .issues .issues-subheading {
-    color: $color-foreground-brighter;
-    font-size: 1rem;
-    margin: 0 0 .5rem 0;
-  }
-  .issues .issues-subheading span {
-    color: $color-foreground-dark;
-    display: inline-block;
-    font-size: 75%;
-  }
-  .issues ul {
-    margin: 0 0 .5rem .75rem;
-    padding: 0;
-  }
-  .issues li {
-    font-size: .75rem;
-    margin: 0 0 .25rem 0;
+    font-size: $font-size-m;
+    padding-left: .25rem;
+    transform: translateY(-10%);
   }
 
-.issues-title-warnings {
-  color: $color-complementary;
-}
+  &-table {
+    background-color: $color-background-brighter;
+    border-radius: .5rem;
+    margin: 2rem 0;
+    padding: 1rem;
+    width: $max-size;
 
-.issues-title-suggestions {
-  color: $color-secondary;
-}
+    @media screen and (max-width: $media-screen-s) {
+      margin: 3rem 0;
+    }
+  }
 
-.issues-title-errors {
-  color: $color-brand;
-}
+  &-tableh {
+    font-family: 'Bitter';
+    font-size: $font-size-l;
+  }
 
-.download-archive .btn,
-.btn.highlighted {
-  background-color: $color-secondary;
-  cursor: not-allowed;
-}
+  &-tablec {
+    font-family: 'Bitter';
+    font-size: $font-size-m;
+    text-transform: capitalize;
 
-.download-archive .btn:hover,
-.generator-start .btn:hover {
-  color: $color-foreground-brighter;
-}
+    img {
+      max-width: 90%;
+    }
 
-.download-archive .btn.isEnabled,
-.generator-start .btn {
-  background-color: $color-brand;
-  cursor: pointer;
-}
+    &--right {
+      text-align: right;
+    }
+  }
 
-.download-archive {
-  margin: 2rem 1rem 0 1rem;
-}
+  &-close {
+    color: $color-foreground-darker;
+    cursor: pointer;
 
-/*override of remove buttons to make them less obtruseive  */
-.logos .generator-members .btn, .logos .generator-members button{
-  background: transparent;
-  color: $color-foreground-bright;
-}
-.logos .generator-members .btn:hover, .logos .generator-members button:hover{
-  background: transparent;
+    &:hover {
+      color: $color-complementary;
+    }
+  }
 
-}
-
-.generator-service-worker-code {
-  min-height: 20%;
-}
-.service-workers > .form-item.checkbox {
-  width: 100%;
-}
-.service-workers > .form-item.checkbox,
-.service-workers > .download-archive {
-  display: block;
-}
-
-.publish-container > h1 {
-  text-align: center;
-}
-
-.publish-header {
-  text-align: center;
-}
-.publish-header > div {
-  border-right: 1px solid $color-foreground-bright;
-  display: inline-block;
-  min-height: 15rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  vertical-align: top;
-  width: 30%;
-}
-.publish-header > div:nth-last-child(1) {
-  border-right: none;
-}
-.publish-header > div > p {
-  text-align: left;
-}
-
-.publish-footer {
-  margin-top: 3rem;
-}
-.publish-footer > div {
-  margin-top: 1rem;
-  text-align: center;
-  width: 100%;
-}
-
-.download-primary > button,
-.download-primary .btn.isEnabled {
-    background-color: $color-complementary;
-    font-size: 1.2rem;
+  &-buttons {
     margin-top: 2rem;
-}
 
-.service-workers > .form-item.checkbox {
-  margin-bottom: 1.5rem;
-}
-
-.service-workers > .form-item.checkbox > label {
-  font-size: 1.4rem;
-  width: auto;
-}
-
-.service-workers > .form-item.checkbox > .description {
-  float: left;
-  font-size: 0.8rem;
-}
-
-.service-workers > .button-holder.download-archive {
-  float: left;
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.service-workers > .form-item.checkbox > input[type=checkbox] {
-  margin-left: 0rem;
-  margin-right: 1rem;
-}
-
-#relatedApplication-list td.text-truncated {
-  max-width: 10rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap
-}
-
-.form-item > div.checkbox-item {
-  float: left;
-  margin-left: 35%;
-  text-align: right;
-  width: 65%;
-}
-.form-item > div.checkbox-item > input[type=checkbox] {
-  margin-left: initial;
-  margin-right: 5%;
-}
-
-.background-color-options {
-  float: right;
-  height: 100px;
-  width: 65%;
-}
-.background-color-options > div {
-  display: inline-block;
-  display: block;
-  height: 2rem;
-  width: 100%;
-}
-.background-color-options > div > label {
-  display: inline-block;
-  margin-left: 5px;
-}
-.background-color-options > div > input[type=color]{
-  display: inline-block;
-  height: 1.5rem;
-  margin-left: 5px;
-  width: 30%;
-}
-
-.download-manifest {
-  background-color: $color-complementary;
-  font-size: 1.2rem;
-  margin-left: 22px;
-}
-.download-manifest:hover {
-  background-color: $color-complementary-dark;  
-  color: white;
-}
-.download-manifest:focus {
-  outline: 1px dashed white;
-}
-
-.upload-image-modal .form-item > input[type=checkbox] {
-  margin-left: 0px;
-  margin-right: 5%;
-}
-
-.upload-image-modal .form-item .upload-file {
-    float: left;
-    margin-left: 10px;
-    width: 55%;
-}
-
-//pre.language-javascript > code.language-javascript > 
-span:contains("Embedded") {
-  font-style: italic;
-}
-
-@media only screen and (max-width: 600px) {
-  .publish-container {
-    margin-top: 1rem;
+    &--centered {
+      padding: 0 0 1rem 0;
+      text-align: center;
+    }
   }
 
-  .publish-header > div {
-    border-bottom: 1px solid $color-foreground-dark;
-    border-right: none;
-    margin-bottom: 1rem;
-    padding-bottom: 1rem;
-    width: 90%;
+  &-options {
+    padding: .5rem 0 1rem 0;
   }
 
-  .publish-footer {
-    margin-top: 0rem;
-  }
-  .center{
-    text-align: center;
+  &-messages {
+    background-color: $color-background-brighter;
+    padding: 1rem;
   }
 }

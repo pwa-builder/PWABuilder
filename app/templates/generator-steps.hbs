@@ -1,50 +1,56 @@
-<ul class="generator-tabs">
+<ul class="pwa-generator-tabs">
   {{#each step in steps}}
-  {{#generator-tab step=step.step}}
-  <a>{{step.step}}. {{step.stepTitle}}</a>{{/generator-tab}}
+    {{#generator-tab step=step.step}}
+      <a class="pwa-generator-tab_action">{{step.stepTitle}}</a>
+    {{/generator-tab}}
   {{/each}}
 </ul>
 <ul class="generator-step-list">
   {{#generator-step step="1" nextStep="2" stepTitle="Generate Manifest" data=model action="updateStep" showNextStep=startComplete}}
   {{#if startComplete}}
-  <div class="pure-g">
-    <div class="pure-u-1 pure-u-md-1-2 generator-section form-holder">
-      <p class="instructions">Here are the values we picked up from your site. Update or add any details below.</p>
-      <div class="form-item">
-        <label>Name</label>
-        {{input value=model.manifest.name focus-out="updateModel"}}
+  <div class="pwa-generator-semipadded pure-g">
+    <div class="pwa-generator-form pure-u-1 pure-u-md-1-2">
+      <h4  class="pwa-generator-subtitle">
+        Here are the values we picked up from your site.
+      </h4>
+      <h4  class="pwa-generator-subtitle pwa-generator-subtitle--last">
+        Update or add any details below.
+      </h4>
+      <div class="pwa-generator-field">
+        <label class="pwa-generator-label">Name</label>
+        {{input class='pwa-generator-input' value=model.manifest.name focus-out="updateModel"}}
       </div>
-      <div class="form-item">
-        <label>Short Name</label>
-        {{input name="short_name" value=model.manifest.short_name focus-out="updateModel"}}
+      <div class="pwa-generator-field">
+        <label class="pwa-generator-label">Short Name</label>
+        {{input class='pwa-generator-input' name="short_name" value=model.manifest.short_name focus-out="updateModel"}}
       </div>
-      <div class="form-item">
-        <label>Description</label>
-        {{input name="description" value=model.manifest.description focus-out="updateModel"}}
+      <div class="pwa-generator-field">
+        <label class="pwa-generator-label">Description</label>
+        {{input class='pwa-generator-input' name="description" value=model.manifest.description focus-out="updateModel"}}
       </div>
-      <div class="form-item logo-upload">
-        <label>Icon Url</label>
+      <div class="pwa-generator-field logo-upload">
+        <label class="pwa-generator-label">Icon Url</label>
         {{logo-upload action="updateLogos" generateMissingImageAction="addUploadedImage" deleteAssetsAction="deleteAssets" logos=model.manifest.icons baseUrl=model.manifest.start_url hasAssets=model.hasAssets}}
       </div>
-      <div class="form-item">
-        <label>Scope</label>
-        {{input value=model.manifest.scope focus-out="updateModel"}}
+      <div class="pwa-generator-field">
+        <label class="pwa-generator-label">Scope</label>
+        {{input class='pwa-generator-input' value=model.manifest.scope focus-out="updateModel"}}
       </div>
-      <div class="form-item">
-        <label>Start Url</label>
-        {{input value=model.manifest.start_url focus-out="updateModel"}}
+      <div class="pwa-generator-field">
+        <label class="pwa-generator-label">Start Url</label>
+        {{input class='pwa-generator-input' value=model.manifest.start_url focus-out="updateModel"}}
       </div>
-      <div class="form-item">
-        <label>Display</label>
-        {{generator-select content=model.display.names modelProperty="manifest.display" value=model.manifest.display}}
+      <div class="pwa-generator-field">
+        <label class="pwa-generator-label">Display</label>
+        {{generator-select class='pwa-generator-input pwa-generator-input--select' content=model.display.names modelProperty="manifest.display" value=model.manifest.display}}
       </div>
-      <div class="form-item">
-        <label>Orientation</label>
-        {{generator-select content=model.orientation.names modelProperty="manifest.orientation" value=model.manifest.orientation}}
+      <div class="pwa-generator-field">
+        <label class="pwa-generator-label">Orientation</label>
+        {{generator-select class='pwa-generator-input pwa-generator-input--select' content=model.orientation.names modelProperty="manifest.orientation" value=model.manifest.orientation}}
       </div>
-      <div class="form-item">
-        <label>Language</label>
-        {{generator-select content=model.languages
+      <div class="pwa-generator-field">
+        <label class="pwa-generator-label">Language</label>
+        {{generator-select class='pwa-generator-input pwa-generator-input--select' content=model.languages
                 optionLabelPath="content.name"
                 optionValuePath="content.code"
                 modelProperty="manifest.lang" 
@@ -53,16 +59,16 @@
                 }}
       </div>
       {{#background-color color=model.manifest.background_color action="updateModelProperty"}} {{/background-color}}
-      <h2 class="toggle-title" {{action "toggleRelatedApps"}}>Specify related applications to be added to the manifest.</h2>
+      <h4 class="pwa-generator-subtitle pwa-generator-subtitle--toggleable" {{action "toggleRelatedApps"}}>Specify related applications to be added to the manifest.</h4>
       {{#if showRelatedApps}}
-      <div class="form-item">
+      <div class="pwa-generator-field">
         {{#related-application-list action="updateModelProperty" preferRelatedApplications=model.manifest.prefer_related_applications relatedApplications=model.manifest.related_applications }}{{/related-application-list}}
       </div>
       {{/if}}
 
-      <h2 class="toggle-title" {{action "toggleCustomMembers"}}>Specify custom members to be added to the manifest.</h2>
+      <h4 class="pwa-generator-subtitle pwa-generator-subtitle--toggleable" {{action "toggleCustomMembers"}}>Specify custom members to be added to the manifest.</h4>
       {{#if showCustomMembers}}
-      <div class="form-item">
+      <div class="pwa-generator-field">
         {{#member-list action="manageMember" members=customMembers}}{{/member-list}}
       </div>
       {{/if}}
@@ -71,16 +77,15 @@
       <header>
         <h2 class="generator-section-title">W3C Manifest{{#if isProcessing}} {{fa-icon "circle-o-notch fa-spin"}}{{/if}}</h2>
         <p class="generator-issues-notification">
-          {{#skip-link class="issues-title-errors" anchor="#errors_list"}}Errors ({{model.errorsTotal}}){{/skip-link}},
-          {{#skip-link class="issues-title-warnings" anchor="#warnings_list"}}Warnings ({{model.warningsTotal}}){{/skip-link}},
-          {{#skip-link class="issues-title-suggestions" anchor="#suggestions_list"}}Suggestions ({{model.suggestionsTotal}}){{/skip-link}}
+          {{#skip-link class="pwa-button pwa-button--simple" anchor="#warnings_list"}}Warnings ({{model.warningsTotal}}){{/skip-link}}
+          {{#skip-link class="pwa-button pwa-button--simple" anchor="#suggestions_list"}}Suggestions ({{model.suggestionsTotal}}){{/skip-link}}
         </p>
       </header>
       {{partial "generator-preview"}}
     </div>
   </div>
   {{else}}
-  {{#generator-start isSaving=model.isSaving action="startComplete" class="generator-start step"}}{{/generator-start}}
+    {{#generator-start isSaving=model.isSaving action="startComplete" class="generator-start step"}}{{/generator-start}}
   {{/if}}
   {{/generator-step}}
 
@@ -89,9 +94,9 @@
     <div class="pure-u-1 pure-u-md-1-2 generator-section service-workers">
       <p class="instructions">Select the service worker functionality for your app.</p>
       {{#each worker in model.serviceWorkers}}
-        <div class="form-item checkbox">
-          {{input type="checkbox" checked=worker.isSelected focus-out="updateModel" disabled=worker.isDisabled }}
-          <label>{{worker.name}}</label>
+        <div class="pwa-generator-field checkbox">
+          {{input class='pwa-generator-input' type="checkbox" checked=worker.isSelected focus-out="updateModel" disabled=worker.isDisabled }}
+          <label class="pwa-generator-label">{{worker.name}}</label>
           
           <span class="description">This simple but eligent solution pulls a file from your web server called "offline.html" (make sure that file is actually there) and 
             serves the file whenever a network connection can not be made.
@@ -172,20 +177,17 @@
 
 {{#if startComplete}}
 <div class="step">
-  <div class="button-holder">
-    <p>
-      <button {{action "startOver"}}>Start Over</button>
-    </p>
-    <p>{{#link-to 'deploy' classNameBindings=":usage-link :btn model.buildReady:show"}}<strong>Now:</strong> Learn how to distribute this package across different platforms{{/link-to}}</p>
+  <div class="pwa-generator-buttons pwa-generator-buttons--centered">
+      <button class="pwa-button pwa-button--simple" {{action "startOver"}}>Start Over</button>
     {{#if model.buildFailed}}
-    <div class="build-errors">
-      <h5>There were some errors while trying to build your project</h5>
-      {{#each error in model.buildErrors}}
-      {{#if error}}
-      <p>{{error}}</p>
-      {{/if}}
-      {{/each}}
-    </div>
+      <p class="pwa-generator-error">
+        <h5>There were some errors while trying to build your project</h5>
+        {{#each error in model.buildErrors}}
+          {{#if error}}
+            <p>{{error}}</p>
+          {{/if}}
+        {{/each}}
+      </p>
     {{/if}}
   </div>
 </div>
