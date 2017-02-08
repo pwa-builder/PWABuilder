@@ -21,17 +21,17 @@ export default Ember.Object.extend({
   buildErrors: Ember.A(),
   assets: Ember.A(),
   errorsTotal: function(){
-    return _.sum(this.errors, function(n){
+    return _.sumBy(this.errors, function(n){
       return n.issues.length;
     });
   }.property('errors'),
   warningsTotal: function(){
-    return _.sum(this.warnings, function(n){
+    return _.sumBy(this.warnings, function(n){
       return n.issues.length;
     });
   }.property('errors'),
   suggestionsTotal: function(){
-    return _.sum(this.suggestions, function(n){
+    return _.sumBy(this.suggestions, function(n){
       return n.issues.length;
     });
   }.property('errors'),
