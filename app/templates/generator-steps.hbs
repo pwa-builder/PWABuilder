@@ -151,11 +151,10 @@
           <div class="pure-u-1 pure-u-md-1-3">
             <div class="pwa-infobox-box pwa-infobox-box--fixed">
               <h4 class="pwa-infobox-subtitle">Windows</h4> 
-              <p class="pwa-generator-description pwa-generator-description--big">Windows 10 PWA support is still in Beta, so some features like service workers will not work on all user machines.  We invite you to join our beta PWA program.  Your PWA can be created and app listing generated from the below one step publishing button.  <a class="pwa-generator-link" href="#"> Learn more</a> about Windows 10 PWA advantages.</p>
+              <p class="pwa-generator-description pwa-generator-description--big">Windows 10 PWA support is still in Beta, so some features like service workers will not work on all user machines.  We invite you to join our beta PWA program.  Your PWA can be created and app listing generated from the below one step publishing button.</p>
               {{#download-archive isColored=true  class="button-holder download-archive" initialMessage="Download" isBuilding=model.isBuilding.windows10 buildFailed=model.buildFailed.windows10 action="buildArchive" platform="windows10" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
               {{#publish-package initialMessage="Publish 1-step" isBuilding=model.isBuilding.Win10Publish buildFailed=model.buildFailed.Win10Publish publishSuccedded=model.publishSuccedded action="publishWin10Package" publishName=model.name publishEmail=model.email}}{{/publish-package}}
               <p>
-                <a class="pwa-generator-link" href="#">already have a windows 10 account?</a>
               </p>
             </div>
           </div>
