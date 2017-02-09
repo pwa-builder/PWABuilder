@@ -67,11 +67,6 @@
     }
   }
 
-  &-codewrapper {
-    background-color: $color-background-darker;
-    padding: 1rem 0;
-  }
-
   &-info {
     font-family: 'Bitter';
     font-size: $font-size-m;
@@ -398,8 +393,10 @@
   }
 
   &-code {
+    background-color: $color-background-darker;
     margin: .5rem 0;
     min-height: 4rem;
+    padding: 1rem 0 0 0;
   }
 
   &-description {
