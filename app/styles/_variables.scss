@@ -34,6 +34,7 @@ $color-shell-prompt: #B25538;
 $color-shell-command: #FEC77C;
 
 $color-error: #ED4545;
+$color-error-brighter: lighten($color-error, 20%);
 
 // Animations
 $animation-speed-default: .35s;

@@ -22,6 +22,21 @@
     &--up {
       margin-top: -$step-padding;
     }
+
+    &--sub {
+      margin-top: -$step-padding;
+      margin-bottom: 0;
+      padding: 1.5rem;
+      text-align: left;
+    }
+
+    &--rounded {
+      background-color: $color-background-brighter;
+      border-radius: .5rem;
+      margin: 0 auto;
+      padding: 1rem 1rem;
+      width: 90%;
+    }
   }
 
   &-title {
@@ -45,6 +60,16 @@
       margin: .5rem 0;
       @include action-link ( $color-foreground-darker, $color-foreground-darkest, .15rem, false);
     }
+
+    &--complementary {
+      color: $color-brand-dark;
+      margin-top: .5rem;
+    }
+  }
+
+  &-codewrapper {
+    background-color: $color-background-darker;
+    padding: 1rem 0;
   }
 
   &-info {
@@ -363,6 +388,13 @@
   &-messages {
     background-color: $color-background-brighter;
     padding: 1rem;
+
+    &--code {
+      background-color: $color-background-darker;
+      color: $color-foreground-brighter;
+      font-size: $font-size-s;
+      padding: 3rem 1rem;
+    }
   }
 
   &-code {
@@ -381,6 +413,16 @@
       font-size: $size;
       line-height: $size;
     }
+  }
+
+  &-issue {
+    line-height: $font-size-m;;
+  }
+
+  &-topic {
+    color: $color-secondary-darker;
+    font-size: $font-size-m;
+    font-weight: $font-weight-normal;
   }
 
   &-link {
