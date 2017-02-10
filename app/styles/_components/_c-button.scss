@@ -61,4 +61,23 @@
         float: right;
         margin-right: 10%;
     }
+
+    // for simple modifier
+    &--brand {
+        color: $color-foreground-brighter;
+        background-color: $color-complementary;
+
+        &:hover {
+            color: $color-complementary-brighter;
+        }
+    }
+
+    &--warning {
+        color: $color-foreground-brighter;
+        background-color: $color-error;
+
+        &:hover {
+            color: $color-error-brighter;
+        }
+    }
 }
