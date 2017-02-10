@@ -174,7 +174,7 @@
             <div class="pwa-infobox-box pwa-infobox-box--fixed">
               <h4 class="pwa-infobox-subtitle">Android</h4> 
                <p class="pwa-generator-description pwa-generator-description--big">PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.</p>
-               {{#download-archive isColored=true class="button-holder download-archive" initialMessage="Download" isBuilding=model.isBuilding.android buildFailed=model.buildFailed.android action="buildArchive" platform="android" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+               {{#download-archive isColored=true initialMessage="Download" isBuilding=model.isBuilding.android buildFailed=model.buildFailed.android action="buildArchive" platform="android" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
             </div>
           </div>
         </div>
@@ -183,17 +183,21 @@
             <h2 class="pwa-generator-subtitle">iOS Polyfill</h2>
             {{#download-archive class="button-holder download-archive" initialMessage="Download" isBuilding=model.isBuilding.ios buildFailed=model.buildFailed.ios action="buildArchive" platform="ios" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
             <p>
-              {{#download-archive isColored=true class="button-holder download-archive download-primary" initialMessage="Download entire project" isBuilding=model.isBuilding.All buildFailed=model.buildFailed.All action="buildArchive" platform="All" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+              {{#download-archive isColored=true initialMessage="Download entire project" isBuilding=model.isBuilding.All buildFailed=model.buildFailed.All action="buildArchive" platform="All" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
             </p>
           </div>
       </div>
     {{else}}
-      <p class="instructions">There are some validation errors in the manifest. Please fix them and try again.</p>
-      <button class="button next-step" {{action "updateStep" "1"}}>Go to first step</button>
+      <div class="pwa-generator-buttons pwa-generator-buttons--centered">
+        <p class="instructions">There are some validation errors in the manifest. Please fix them and try again.</p>
+        <button class="pwa-button pwa-button--simple" {{action "updateStep" "1"}}>Go to first step</button>
+      </div>
     {{/if}}  
   {{else}}
-    <p class="instructions">You need to create your manifest first.</p>
-    <button class="button next-step" {{action "updateStep" "1"}}>Go to first step</button>
+    <div class="pwa-generator-buttons pwa-generator-buttons--centered">
+      <p class="instructions">You need to create your manifest first.</p>
+      <button class="pwa-button pwa-button--simple" {{action "updateStep" "1"}}>Go to first step</button>
+     </div>
   {{/if}}
   {{/generator-step}}
 </ul>
