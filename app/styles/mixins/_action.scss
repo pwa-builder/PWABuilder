@@ -1,6 +1,6 @@
 @import '../variables';
 
-@mixin action-link($primary, $secondary, $size, $padded: true) {
+@mixin action-link($primary, $secondary, $size, $padded: true, $inverse: false) {
   color: $primary;
   display: inline-block;
   position: relative;
@@ -21,6 +21,10 @@
     position: absolute;
     transition: width $animation-speed-default $animation-ease-default;
     width: 0;
+
+     @if ($inverse) { 
+      width: 100% !important;
+     }
   }
 
   &.active,
@@ -31,6 +35,9 @@
     &:before {
       transition: width $animation-speed-slow $animation-ease-vibrant;
       width: 100%;
+      @if ($inverse) { 
+        width: 0 !important;
+     }
     }
   }
 }

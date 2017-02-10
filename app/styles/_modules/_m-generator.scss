@@ -285,7 +285,6 @@
     display: block;
     font-family: 'Bitter';
     font-size: $font-size-m;
-    padding-left: .5rem;
   }
 
   $max-size: 90%;
@@ -297,7 +296,7 @@
     font-family: 'FiraSans';
     font-size: $font-size-m;
     margin: .75rem 0 1.5rem 0;
-    padding: 1rem;
+    padding: 1rem .75rem;
     width: $max-size;
 
     &--select {
@@ -339,11 +338,11 @@
   }
 
   &-wrapper {
-    height: 5rem;
+    height: 4rem;
     position: relative;
 
-    @media screen and (max-width: $media-screen-m) {
-      height: 4rem;
+    @media screen and (max-width: $media-screen-s) {
+      height: 5rem;
     }
 
     &--padded {

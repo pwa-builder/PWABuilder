@@ -45,6 +45,15 @@
   &-hidden {
     display: none;
   }
+
+  &-breath {
+      padding-top: 2rem;
+  }
+
+  &-narrow {
+      margin: 0;
+      padding: 0;
+  }
 }
 
 :not(pre) > code[class*="language-"], pre[class*="language-"] {
