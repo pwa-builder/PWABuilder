@@ -30,6 +30,20 @@
     &--simple {
         background-color: $color-background-semidark;
         font-size: $font-size-m;
+
+        @media screen and (max-width: $media-screen-xxl) {
+            padding: .75rem .5rem;
+        }
+
+        @media screen and (max-width: $media-screen-l) {
+            font-size: $font-size-s;
+        }
+
+        @media screen and (max-width: $media-screen-m) {
+            font-size: $font-size-m;
+            margin: .5rem 0;
+            width: 100%;
+        }
     }
 
     &--abs {

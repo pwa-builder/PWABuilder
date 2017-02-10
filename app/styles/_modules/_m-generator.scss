@@ -21,6 +21,10 @@
 
     &--up {
       margin-top: -$step-padding;
+      
+      @media screen and (max-width: $media-screen-m) {
+         margin-top: 1rem;
+      }
     }
 
     &--sub {
@@ -28,6 +32,10 @@
       margin-bottom: 0;
       padding: 1.5rem;
       text-align: left;
+
+       @media screen and (max-width: $media-screen-m) {
+         margin-top: 1rem;
+      }
     }
 
     &--rounded {
@@ -45,6 +53,7 @@
     font-size: $font-size-xl;
   }
 
+  $toggle-space: -.2rem;
   &-subtitle {
     font-family: 'Bitter';
     font-weight: $font-weight-normal;
@@ -55,16 +64,50 @@
     }
 
     &--toggleable {
+      color: $color-foreground-darker;
       cursor: pointer;
       max-width: 90%;
       margin: .5rem 0;
-      @include action-link ( $color-foreground-darker, $color-foreground-darkest, .15rem, false);
+      transition: color $animation-speed-default;
+
+      &:hover {
+        color: $color-foreground-darkest;
+        transition: color $animation-speed-default;
+      }
+
+      &:after {
+        content: '\f078';
+        display: inline-block;
+        font: normal normal normal 14px/1 FontAwesome;
+        font-size: 1.2rem;
+        margin-left: .5rem;
+        transform: translateY($toggle-space);
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+
+        transition: all $animation-speed-default;
+      }
     }
 
     &--complementary {
       color: $color-brand-dark;
       margin-top: .5rem;
     }
+  }
+
+  &-toggle {
+    display: block;
+    margin: 1rem 0;
+  }
+
+  &-togglecheck {
+    display: none;
+  }
+
+  &-togglecheck:checked ~ &-subtitle--toggleable:after {
+    transform: translateY($toggle-space) rotate(180deg);
+    transition: all $animation-speed-default;
   }
 
   &-info {
@@ -250,7 +293,6 @@
     display: block;
     font-family: 'Bitter';
     font-size: $font-size-m;
-    padding-left: .5rem;
   }
 
   $max-size: 90%;
@@ -262,7 +304,7 @@
     font-family: 'FiraSans';
     font-size: $font-size-m;
     margin: .75rem 0 1.5rem 0;
-    padding: 1rem;
+    padding: 1rem .75rem;
     width: $max-size;
 
     &--select {
@@ -304,11 +346,11 @@
   }
 
   &-wrapper {
-    height: 5rem;
+    height: 4rem;
     position: relative;
 
-    @media screen and (max-width: $media-screen-m) {
-      height: 4rem;
+    @media screen and (max-width: $media-screen-s) {
+      height: 5rem;
     }
 
     &--padded {
@@ -389,26 +431,38 @@
       color: $color-foreground-brighter;
       font-size: $font-size-s;
       padding: 3rem 1rem;
+
+      @media screen and (max-width: $media-screen-l) {
+        padding-top: 5rem;
+      }
+    }
+  }
+
+  &-message {
+    padding-bottom: 2rem;
+
+    &:last-of-type {
+      padding-bottom: 0;
     }
   }
 
   &-code {
     background-color: $color-background-darker;
-    margin: .5rem 0;
+    margin: 0;
     min-height: 4rem;
     padding: 1rem 0 0 0;
   }
 
   &-description {
-    color: $color-foreground-dark;
+    color: $color-foreground-darker;
     display: inline-block;
     margin: .25rem 0 2rem;
     width: $max-size;
 
-    &--big {
-      $size: $font-size-m * 1.2;
-      font-size: $size;
-      line-height: $size;
+    &--fixed {
+      font-size: $font-size-m;
+      min-height: 10rem;
+      line-height: $font-size-m * 1.4;
     }
   }
 

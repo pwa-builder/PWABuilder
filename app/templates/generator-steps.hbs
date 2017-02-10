@@ -59,14 +59,20 @@
                 }}
       </div>
       {{#background-color color=model.manifest.background_color action="updateModelProperty"}} {{/background-color}}
-      <h4 class="pwa-generator-subtitle pwa-generator-subtitle--toggleable" {{action "toggleRelatedApps"}}>Specify related applications to be added to the manifest.</h4>
+      <label class="pwa-generator-toggle">
+        <input type="checkbox" class="pwa-generator-togglecheck">
+        <h4 class="pwa-generator-subtitle pwa-generator-subtitle--toggleable" {{action "toggleRelatedApps" preventDefault=false}}>Specify related applications to be added to the manifest.</h4>
+      </label>
       {{#if showRelatedApps}}
       <div class="pwa-generator-field">
         {{#related-application-list action="updateModelProperty" preferRelatedApplications=model.manifest.prefer_related_applications relatedApplications=model.manifest.related_applications }}{{/related-application-list}}
       </div>
       {{/if}}
 
-      <h4 class="pwa-generator-subtitle pwa-generator-subtitle--toggleable" {{action "toggleCustomMembers"}}>Specify custom members to be added to the manifest.</h4>
+      <label class="pwa-generator-toggle">
+        <input type="checkbox" class="pwa-generator-togglecheck">
+        <h4 class="pwa-generator-subtitle pwa-generator-subtitle--toggleable" {{action "toggleCustomMembers" preventDefault=false}}>Specify custom members to be added to the manifest.</h4>
+      </label>
       {{#if showCustomMembers}}
       <div class="pwa-generator-field">
         {{#member-list action="manageMember" members=customMembers}}{{/member-list}}
@@ -80,13 +86,13 @@
       <div class="pwa-generator-code">
         <div class="pwa-generator-header pwa-generator-header--rounded">
           <div class="pure-g">
-            <div class="pure-u-1-3">
+            <div class="pure-u-1 pure-u-md-1-3">
               {{#skip-link class="pwa-button pwa-button--simple pwa-button--warning" anchor="#warnings_list"}}Warnings ({{model.warningsTotal}}){{/skip-link}}
             </div>
-            <div class="pure-u-1-3">
+            <div class="pure-u-1 pure-u-md-1-3">
               {{#skip-link class="pwa-button pwa-button--simple" anchor="#suggestions_list"}}Suggestions ({{model.suggestionsTotal}}){{/skip-link}}
             </div>
-            <div class="pure-u-1-3">
+            <div class="pure-u-1 pure-u-md-1-3">
               <button class="pwa-button pwa-button--simple pwa-button--brand" {{action "updateStep" "2"}}>Next step</button>
             </div>
           </div>
@@ -125,16 +131,36 @@
     </div>
 
     <div class="pure-u-1 pure-u-md-1-2 generator-section manifest manifest-holder">
-      <header>
-        <h2 class="pwa-generator-subtitle">Code for website</h2>
+      <header class="pwa-generator-header pwa-generator-header--sub">
+            Code for website
       </header>
+      <div class="pwa-generator-code">
+        <div class="pwa-generator-header pwa-generator-header--rounded">
+          <div class="pure-g">
+            <div class="pure-u-2-3"></div>
+            <div class="pure-u-1 pure-u-md-1-3">
+              <button class="pwa-button pwa-button--simple pwa-button--brand" {{action "updateStep" "3"}}>Next step</button>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="pwa-generator-code">
         {{formatted-manifest data=formattedServiceWorkerWebsiteCode}}
       </div>
 
-      <header>
-        <h2 class="pwa-generator-subtitle">Service worker code</h2>
+      <header class="pwa-generator-header pwa-generator-header--sub">
+            Service worker code
       </header>
+      <div class="pwa-generator-code">
+        <div class="pwa-generator-header pwa-generator-header--rounded">
+          <div class="pure-g">
+            <div class="pure-u-2-3"></div>
+            <div class="pure-u-1 pure-u-md-1-3">
+              <button class="pwa-button pwa-button--simple pwa-button--brand" {{action "updateStep" "3"}}>Next step</button>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="pwa-generator-code">
         {{formatted-manifest data=formattedServiceWorkerCode}}
       </div>
@@ -145,47 +171,50 @@
   {{#generator-step step="3" stepTitle="Publish PWA" showNextStep=false data=model action="updateStep" }}
   {{#if startComplete}}
     {{#if model.hasNoErrors}}
-      <div>
-        <header class="pwa-generator-header pwa-generator-header--up">
-            Publish PWA
-        </header>
-
+      <section class="pwa-infobox pwa-infobox--transparent l-pad l-pad--thin">
         <div class="pure-g">
+          <div class="pure-u-1">
+            <h2 class="pwa-infobox-title pwa-infobox-title--centered">Publish PWA</h2>
+          </div>
+
           <div class="pure-u-1 pure-u-md-1-3">
-            <div class="pwa-infobox-box pwa-infobox-box--fixed">
-              <h4 class="pwa-infobox-subtitle">Web</h4> 
-              <p class="pwa-generator-description pwa-generator-description--big">Download these files and add them to your website.  Different browsers will detect your Progressive Web App in different ways, but the manifest and service workers are required for each of them. </p>
+            <div class="pwa-infobox-box pwa-infobox-box--flat">
+              <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">Web</h4> 
+              <p class="pwa-generator-description pwa-generator-description--fixed">
+                Download these files and add them to your website.  Different browsers will detect your Progressive Web App in different ways, but the manifest and service workers are required for each of them.
+              </p>
               {{#download-archive isColored=true class="button-holder download-archive" initialMessage="Download" isBuilding=model.isBuilding.web buildFailed=model.buildFailed.web action="buildArchive" platform="web" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
             </div>
           </div>
 
           <div class="pure-u-1 pure-u-md-1-3">
-            <div class="pwa-infobox-box pwa-infobox-box--fixed">
-              <h4 class="pwa-infobox-subtitle">Windows</h4> 
-              <p class="pwa-generator-description pwa-generator-description--big">Windows 10 PWA support is still in Beta, so some features like service workers will not work on all user machines.  We invite you to join our beta PWA program.  Your PWA can be created and app listing generated from the below one step publishing button.</p>
-              {{#download-archive isColored=true  class="button-holder download-archive" initialMessage="Download" isBuilding=model.isBuilding.windows10 buildFailed=model.buildFailed.windows10 action="buildArchive" platform="windows10" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
-              {{#publish-package initialMessage="Publish 1-step" isBuilding=model.isBuilding.Win10Publish buildFailed=model.buildFailed.Win10Publish publishSuccedded=model.publishSuccedded action="publishWin10Package" publishName=model.name publishEmail=model.email}}{{/publish-package}}
-              <p>
-              </p>
+            <div class="pwa-infobox-box pwa-infobox-box--flat">
+              <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">Windows</h4> 
+                <p class="pwa-generator-description pwa-generator-description--fixed">
+                  Windows 10 PWA support is still in Beta, so some features like service workers will not work on all user machines.  We invite you to join our beta PWA program.  Your PWA can be created and app listing generated from the below one step publishing button.
+                </p>
+                {{#download-archive isColored=true  class="button-holder download-archive" initialMessage="Download" isBuilding=model.isBuilding.windows10 buildFailed=model.buildFailed.windows10 action="buildArchive" platform="windows10" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+                {{#publish-package initialMessage="Publish 1-step" isBuilding=model.isBuilding.Win10Publish buildFailed=model.buildFailed.Win10Publish publishSuccedded=model.publishSuccedded action="publishWin10Package" publishName=model.name publishEmail=model.email}}{{/publish-package}}
             </div>
           </div>
 
           <div class="pure-u-1 pure-u-md-1-3">
-            <div class="pwa-infobox-box pwa-infobox-box--fixed">
-              <h4 class="pwa-infobox-subtitle">Android</h4> 
-               <p class="pwa-generator-description pwa-generator-description--big">PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.</p>
-               {{#download-archive isColored=true initialMessage="Download" isBuilding=model.isBuilding.android buildFailed=model.buildFailed.android action="buildArchive" platform="android" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+            <div class="pwa-infobox-box pwa-infobox-box--flat">
+              <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">Android</h4> 
+              <p class="pwa-generator-description pwa-generator-description--fixed">
+                PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.
+              </p>
+              {{#download-archive isColored=true class="button-holder download-archive" initialMessage="Download" isBuilding=model.isBuilding.android buildFailed=model.buildFailed.android action="buildArchive" platform="android" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
             </div>
           </div>
         </div>
-        
-        <div class="pwa-generator-buttons pwa-generator-buttons--centered">
-            <h2 class="pwa-generator-subtitle">iOS Polyfill</h2>
-            {{#download-archive class="button-holder download-archive" initialMessage="Download" isBuilding=model.isBuilding.ios buildFailed=model.buildFailed.ios action="buildArchive" platform="ios" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
-            <p>
-              {{#download-archive isColored=true initialMessage="Download entire project" isBuilding=model.isBuilding.All buildFailed=model.buildFailed.All action="buildArchive" platform="All" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
-            </p>
-          </div>
+      </section>
+      <div class="pwa-generator-buttons pwa-generator-buttons--centered">
+        <h2 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">iOS Polyfill</h2>
+        {{#download-archive initialMessage="Download" isBuilding=model.isBuilding.ios buildFailed=model.buildFailed.ios action="buildArchive" platform="ios" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+        <p>
+          {{#download-archive isColored=true class="button-holder download-archive download-primary" initialMessage="Download entire project" isBuilding=model.isBuilding.All buildFailed=model.buildFailed.All action="buildArchive" platform="All" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+        </p>
       </div>
     {{else}}
       <div class="pwa-generator-buttons pwa-generator-buttons--centered">
