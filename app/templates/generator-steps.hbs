@@ -217,12 +217,16 @@
         </p>
       </div>
     {{else}}
-      <p class="instructions">There are some validation errors in the manifest. Please fix them and try again.</p>
-      <button class="button next-step" {{action "updateStep" "1"}}>Go to first step</button>
+      <div class="pwa-generator-buttons pwa-generator-buttons--centered">
+        <p class="instructions">There are some validation errors in the manifest. Please fix them and try again.</p>
+        <button class="pwa-button pwa-button--simple" {{action "updateStep" "1"}}>Go to first step</button>
+      </div>
     {{/if}}  
   {{else}}
-    <p class="instructions">You need to create your manifest first.</p>
-    <button class="button next-step" {{action "updateStep" "1"}}>Go to first step</button>
+    <div class="pwa-generator-buttons pwa-generator-buttons--centered">
+      <p class="instructions">You need to create your manifest first.</p>
+      <button class="pwa-button pwa-button--simple" {{action "updateStep" "1"}}>Go to first step</button>
+     </div>
   {{/if}}
   {{/generator-step}}
 </ul>
