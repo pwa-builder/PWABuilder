@@ -21,6 +21,10 @@
 
     &--up {
       margin-top: -$step-padding;
+      
+      @media screen and (max-width: $media-screen-m) {
+         margin-top: 1rem;
+      }
     }
 
     &--sub {
@@ -28,6 +32,10 @@
       margin-bottom: 0;
       padding: 1.5rem;
       text-align: left;
+
+       @media screen and (max-width: $media-screen-m) {
+         margin-top: 1rem;
+      }
     }
 
     &--rounded {
@@ -423,6 +431,10 @@
       color: $color-foreground-brighter;
       font-size: $font-size-s;
       padding: 3rem 1rem;
+
+      @media screen and (max-width: $media-screen-l) {
+        padding-top: 5rem;
+      }
     }
   }
 
