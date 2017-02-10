@@ -38,6 +38,10 @@
       }
     }
 
+    &--subfitted {
+      margin-top: 0;
+    }
+
     &--rounded {
       background-color: $color-background-brighter;
       border-radius: .5rem;

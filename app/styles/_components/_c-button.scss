@@ -1,6 +1,7 @@
 @import '../variables';
 
 .pwa-button {
+    $button-pad: .75rem;
     background-color: $color-complementary;
     border-radius: .5rem;
     color: $color-foreground-brighter;
@@ -10,12 +11,12 @@
     font-size: $font-size-l;
     text-align: center;
     transition: all $animation-speed-fast $animation-ease-vibrant;
-    padding: .75rem 3rem;
+    padding: $button-pad 3rem;
     position: relative;
 
     &:hover {
         color: $color-complementary-brighter;
-        padding: .75rem 2.2rem;
+        padding: $button-pad 2.2rem;
         transition: all $animation-speed-fast $animation-ease-vibrant;
     }
 
@@ -32,7 +33,11 @@
         font-size: $font-size-m;
 
         @media screen and (max-width: $media-screen-xxl) {
-            padding: .75rem .5rem;
+            padding: $button-pad .5rem;
+
+            &:hover {
+                padding: $button-pad .3rem;
+            }
         }
 
         @media screen and (max-width: $media-screen-l) {
