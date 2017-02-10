@@ -45,6 +45,7 @@
     font-size: $font-size-xl;
   }
 
+  $toggle-space: -.2rem;
   &-subtitle {
     font-family: 'Bitter';
     font-weight: $font-weight-normal;
@@ -55,16 +56,50 @@
     }
 
     &--toggleable {
+      color: $color-foreground-darker;
       cursor: pointer;
       max-width: 90%;
       margin: .5rem 0;
-      @include action-link ( $color-foreground-darker, $color-foreground-darkest, .15rem, false);
+      transition: color $animation-speed-default;
+
+      &:hover {
+        color: $color-foreground-darkest;
+        transition: color $animation-speed-default;
+      }
+
+      &:after {
+        content: '\f078';
+        display: inline-block;
+        font: normal normal normal 14px/1 FontAwesome;
+        font-size: 1.2rem;
+        margin-left: .5rem;
+        transform: translateY($toggle-space);
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+
+        transition: all $animation-speed-default;
+      }
     }
 
     &--complementary {
       color: $color-brand-dark;
       margin-top: .5rem;
     }
+  }
+
+  &-toggle {
+    display: block;
+    margin: 1rem 0;
+  }
+
+  &-togglecheck {
+    display: none;
+  }
+
+  &-togglecheck:checked ~ &-subtitle--toggleable:after {
+    transform: translateY($toggle-space) rotate(180deg);
+    transition: all $animation-speed-default;
   }
 
   &-info {
@@ -392,23 +427,31 @@
     }
   }
 
+  &-message {
+    padding-bottom: 2rem;
+
+    &:last-of-type {
+      padding-bottom: 0;
+    }
+  }
+
   &-code {
     background-color: $color-background-darker;
-    margin: .5rem 0;
+    margin: 0;
     min-height: 4rem;
     padding: 1rem 0 0 0;
   }
 
   &-description {
-    color: $color-foreground-dark;
+    color: $color-foreground-darker;
     display: inline-block;
     margin: .25rem 0 2rem;
     width: $max-size;
 
-    &--big {
-      $size: $font-size-m * 1.2;
-      font-size: $size;
-      line-height: $size;
+    &--fixed {
+      font-size: $font-size-m;
+      min-height: 10rem;
+      line-height: $font-size-m * 1.4;
     }
   }
 
