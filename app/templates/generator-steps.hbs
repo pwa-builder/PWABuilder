@@ -81,20 +81,18 @@
     </div>
     <div class="pure-u-1 pure-u-md-1-2 generator-section manifest manifest-holder" id="manifest_holder">
       <header class="pwa-generator-header pwa-generator-header--sub">
-            W3C Manifest
+            <div class="pure-u-1 pure-u-md-1-3">
+              W3C Manifest
+            </div>
+            <div class="pwa-generator-align pure-u-1 pure-u-md-3-5">
+              <button class="pwa-button pwa-button--simple pwa-button--brand" {{action "updateStep" "2"}}>Next step</button>
+            </div>
       </header>
       <div class="pwa-generator-code">
         <div class="pwa-generator-header pwa-generator-header--rounded">
-          <div class="pure-g">
-            <div class="pure-u-1 pure-u-md-1-3">
+          <div class="pwa-generator-content">
               {{#skip-link class="pwa-button pwa-button--simple pwa-button--warning" anchor="#warnings_list"}}Warnings ({{model.warningsTotal}}){{/skip-link}}
-            </div>
-            <div class="pure-u-1 pure-u-md-1-3">
               {{#skip-link class="pwa-button pwa-button--simple" anchor="#suggestions_list"}}Suggestions ({{model.suggestionsTotal}}){{/skip-link}}
-            </div>
-            <div class="pure-u-1 pure-u-md-1-3">
-              <button class="pwa-button pwa-button--simple pwa-button--brand" {{action "updateStep" "2"}}>Next step</button>
-            </div>
           </div>
         </div>
         {{partial "generator-preview"}}
@@ -108,59 +106,46 @@
 
   {{#generator-step step="2" nextStep="3" stepTitle="Build Service Worker" data=model action="updateStep" showNextStep=startComplete}}
   <div class="pwa-generator-semipadded pure-g">
-    <div class="pure-u-1 pure-u-md-1-2 generator-section service-workers">
-      <p class="pwa-generator-subtitle">Select the service worker functionality for your app.</p>
-      {{#each worker in model.serviceWorkers}}
-        <div class="pwa-generator-field pwa-generator-field--padded checkbox">
-          <label class="pwa-generator-label">
-            {{input type="checkbox" checked=worker.isSelected focus-out="updateModel" disabled=worker.isDisabled }}
-            {{worker.name}}
-          </label>
-          
-          <span class="pwa-generator-description">This simple but eligent solution pulls a file from your web server called "offline.html" (make sure that file is actually there) and 
-            serves the file whenever a network connection can not be made.
-          </span>
+      <div class="pure-u-1 pure-u-md-1-2 generator-section service-workers">
+        <p class="pwa-generator-subtitle">Select the service worker functionality for your app.</p>
+        {{#each worker in model.serviceWorkers}}
+          <div class="pwa-generator-field pwa-generator-field--padded checkbox">
+            <label class="pwa-generator-label">
+              {{input type="checkbox" checked=worker.isSelected focus-out="updateModel" disabled=worker.isDisabled }}
+              {{worker.name}}
+            </label>
+            
+            <span class="pwa-generator-description">This simple but eligent solution pulls a file from your web server called "offline.html" (make sure that file is actually there) and 
+              serves the file whenever a network connection can not be made.
+            </span>
+          </div>
+        {{/each}}
+        
+        <div class="pwa-generator-buttons">
+          {{#download-archive initialMessage="Download service worker" isBuilding=model.isBuilding.serviceWorker buildFailed=model.buildFailed.serviceWorker action="downloadServiceWorker" platform="serviceWorker" isEnabled=model.hasServiceWorkersSelected}}{{/download-archive}}
         </div>
-      {{/each}}
-      
-      <div class="pwa-generator-buttons">
-        {{#download-archive initialMessage="Download service worker" isBuilding=model.isBuilding.serviceWorker buildFailed=model.buildFailed.serviceWorker action="downloadServiceWorker" platform="serviceWorker" isEnabled=model.hasServiceWorkersSelected}}{{/download-archive}}
-      </div>
 
-      <p>You can also download the source code directly from <a class="pwa-generator-link" href="https://github.com/manifoldjs/serviceworkers" target="_blank">GitHub</a>.</p>
-    </div>
+        <p>You can also download the source code directly from <a class="pwa-generator-link" href="https://github.com/manifoldjs/serviceworkers" target="_blank">GitHub</a>.</p>
+      </div>
 
     <div class="pure-u-1 pure-u-md-1-2 generator-section manifest manifest-holder">
       <header class="pwa-generator-header pwa-generator-header--sub">
-            Code for website
-      </header>
-      <div class="pwa-generator-code">
-        <div class="pwa-generator-header pwa-generator-header--rounded">
-          <div class="pure-g">
-            <div class="pure-u-2-3"></div>
-            <div class="pure-u-1 pure-u-md-1-3">
+            <div class="pure-u-1 pure-u-md-1-2">
+              Code for website
+            </div>
+            <div class="pwa-generator-align pure-u-1 pure-u-md-2-5">
               <button class="pwa-button pwa-button--simple pwa-button--brand" {{action "updateStep" "3"}}>Next step</button>
             </div>
-          </div>
-        </div>
-      </div>
+      </header>
       <div class="pwa-generator-code">
         {{formatted-manifest data=formattedServiceWorkerWebsiteCode}}
       </div>
 
       <header class="pwa-generator-header pwa-generator-header--sub pwa-generator-header--subfitted">
-            Service worker code
-      </header>
-      <div class="pwa-generator-code">
-        <div class="pwa-generator-header pwa-generator-header--rounded">
-          <div class="pure-g">
-            <div class="pure-u-2-3"></div>
-            <div class="pure-u-1 pure-u-md-1-3">
-              <button class="pwa-button pwa-button--simple pwa-button--brand" {{action "updateStep" "3"}}>Next step</button>
+            <div class="pure-u-1 pure-u-md-1-2">
+              Service worker code
             </div>
-          </div>
-        </div>
-      </div>
+      </header>
       <div class="pwa-generator-code">
         {{formatted-manifest data=formattedServiceWorkerCode}}
       </div>

@@ -45,10 +45,15 @@
         }
 
         @media screen and (max-width: $media-screen-m) {
+            $size: 90%;
             font-size: $font-size-m;
-            margin: .5rem 0;
-            width: 100%;
+            margin: .5rem (100% - $size) / 2;
+            width: $size;
         }
+    }
+
+    &--left {
+        margin-left: 0 !important;
     }
 
     &--abs {
@@ -92,8 +97,9 @@
     }
 
     &--warning {
-        color: $color-foreground-brighter;
         background-color: $color-error;
+        color: $color-foreground-brighter;
+        margin-right: 1rem;
 
         &:hover {
             color: $color-error-brighter;
