@@ -37,10 +37,12 @@ export default Ember.Component.extend({
             this.set('colorOption', 'transparent');
         } else if (converter.isHexadecimal(this.color)) {
             this.set('colorOption', 'pick');
+            this.set('colorText', this.color);
         } else if (converter.isAlias(this.color) || converter.isRGB(this.color) || converter.isHSL(this.color)) {
             this.set('colorOption', 'pick');
             // Color picker component returns the color in the four byte hexa.
             this.set('color', "#" + converter.toHexadecimal(this.color).slice(4, 10));
+            this.set('colorText', this.color);
         } else {
             this.set('colorOption', 'none');
         }

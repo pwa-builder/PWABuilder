@@ -1,4 +1,4 @@
-<button class="pwa-button {{if isColored 'pwa-button--spaced' 'pwa-button--simple'}} {{if isEnabled 'isEnabled'}}" {{action "handleClick"}}>
+<button class="pwa-button pwa-button--simple {{if isColored 'pwa-button--brand'}} {{if isEnabled 'isEnabled'}}" {{action "handleClick"}}>
   {{linkMessage}}
   {{#if isBuilding}}
     <span class="pwa-generator-loading">
