@@ -14,8 +14,8 @@
       </div>
 
       <div class="pure-g l-breath">
-        <div class="pwa-generator-wrapper pure-u-1 pure-u-md-3-5">
-            <button {{bind-attr class=":get-started :pwa-button :pwa-button--abs :isEnabled :next-step"}} 
+        <div class="pwa-generator-wrapper pure-u-3-5">
+            <button {{bind-attr class=":get-started :pwa-button :isEnabled :next-step"}} 
                   {{action 'startComplete'}}>
                     Get Started 
                     {{#if isSaving}}
@@ -26,15 +26,15 @@
           </button>
         </div>
 
-        <div class="pure-u-1 pure-u-md-2-5">
+        <div class="pure-u-2-5">
           {{#if message}}
-            <p class="pwa-generator-error">{{message}} {{fa-icon "exclamation"}}</p>
+            <p class="pwa-generator-error">{{fa-icon "exclamation"}} {{message}}</p>
           {{/if}}
         </div>
 
         <div class="pwa-generator-wrapper pure-u-1">
           <button {{action 'goToSecondStep'}}
-                  class="pwa-button pwa-button--simple pwa-button--left pwa-button--abs">
+                  class="pwa-button pwa-button--simple">
                   Skip to Build Service Worker
           </button>
         </div>
