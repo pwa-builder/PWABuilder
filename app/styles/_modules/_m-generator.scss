@@ -332,6 +332,10 @@
       width: 20%;
     }
 
+    &--largest {
+      width: 100%;
+    }
+
     &--tiny {
       $margin: .5rem;
       padding: 0;
@@ -495,5 +499,34 @@
 
   &-content {
     display: 	inline-block;
+  }
+
+  $size_c: 60%;
+  $margin_c: 20%;
+
+  &-container {
+    margin-left: $margin_c;
+    width: $size_c;
+
+    @media screen and (max-width: $media-screen-xl) {
+      margin-left: $margin_c / 2;
+      width: $size_c / 3 + $size_c;
+    }
+  }
+
+  &-box {
+    text-align: left;
+  }
+
+  &-box_buttons {
+    text-align: right;
+  }
+
+  &-space_right {
+      margin-right: 1rem;
+  }
+  
+  &-space_top {
+      padding-top: 1rem;
   }
 }
