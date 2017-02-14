@@ -499,6 +499,12 @@
 
   &-content {
     display: 	inline-block;
+    width: 100%;
+  }
+
+  &-contentright {
+    display: 	inline-block;
+    float: right;
   }
 
   $size_c: 60%;

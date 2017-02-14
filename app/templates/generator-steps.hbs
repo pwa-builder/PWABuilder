@@ -89,6 +89,7 @@
           <div class="pwa-generator-content">
               {{#skip-link class="pwa-button pwa-button--simple pwa-button--warning" anchor="#warnings_list"}}Warnings ({{model.warningsTotal}}){{/skip-link}}
               {{#skip-link class="pwa-button pwa-button--simple" anchor="#suggestions_list"}}Suggestions ({{model.suggestionsTotal}}){{/skip-link}}
+              {{#download-archive class="pwa-generator-contentright" initialMessage="Download manifest" isBuilding=model.isBuilding.web buildFailed=model.buildFailed.web action="buildArchive" platform="web" download="downloadArchive" archiveLink=model.archiveLink isEnabled=model.hasNoErrors}}{{/download-archive}}
           </div>
         </div>
         {{partial "generator-preview"}}
