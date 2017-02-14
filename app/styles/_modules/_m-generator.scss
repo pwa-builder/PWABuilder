@@ -227,10 +227,6 @@
       animation: generator-step-show $animation-speed-slow forwards;
       display: block;
     }
-
-    @media screen and (max-width: $media-screen-m) {
-      padding: 8vw;
-    }
   }
 
   @keyframes generator-step-hide {
@@ -478,7 +474,6 @@
 
     &--fixed {
       font-size: $font-size-m;
-      min-height: 10rem;
       line-height: $font-size-m * 1.4;
     }
   }

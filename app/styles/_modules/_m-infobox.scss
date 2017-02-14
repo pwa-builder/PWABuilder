@@ -43,7 +43,15 @@
 
         &--flat {
             box-shadow: none;
-            text-align: center;
+            min-height: 50rem;
+
+            @media screen and (max-width: $media-screen-m) {
+                min-height: 53rem;
+            }
+
+            @media screen and (max-width: $media-screen-s) {
+                min-height: auto;
+            }
         }
     }
 
@@ -58,5 +66,9 @@
         font-weight: $font-weight-normal;
 
         @include action-link ( $color-complementary-bright, $color-complementary, .2rem, false);
+    }
+
+    &-padded {
+        padding-bottom: 5rem;
     }
 }
