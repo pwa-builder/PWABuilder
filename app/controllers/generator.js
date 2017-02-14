@@ -108,7 +108,6 @@ export default Ember.Controller.extend({
     },
     updateStep: function(nextStep){
       this.setActiveStep(nextStep);
-      return true; // keep bubbling
     }, 
     startComplete: function() {
       this.set('startReady', true);
