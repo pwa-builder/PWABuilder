@@ -227,10 +227,6 @@
       animation: generator-step-show $animation-speed-slow forwards;
       display: block;
     }
-
-    @media screen and (max-width: $media-screen-m) {
-      padding: 8vw;
-    }
   }
 
   @keyframes generator-step-hide {
@@ -325,11 +321,15 @@
     &--fake {
       cursor: pointer;
       display: inline-block;
-      width: 90%;
+      width: 100%;
     }
 
     &--small {
       width: 20%;
+    }
+
+    &--largest {
+      width: 100%;
     }
 
     &--tiny {
@@ -474,7 +474,6 @@
 
     &--fixed {
       font-size: $font-size-m;
-      min-height: 10rem;
       line-height: $font-size-m * 1.4;
     }
   }
@@ -495,5 +494,40 @@
 
   &-content {
     display: 	inline-block;
+    width: 100%;
+  }
+
+  &-contentright {
+    display: 	inline-block;
+    float: right;
+  }
+
+  $size_c: 60%;
+  $margin_c: 20%;
+
+  &-container {
+    margin-left: $margin_c;
+    width: $size_c;
+
+    @media screen and (max-width: $media-screen-xl) {
+      margin-left: $margin_c / 2;
+      width: $size_c / 3 + $size_c;
+    }
+  }
+
+  &-box {
+    text-align: left;
+  }
+
+  &-box_buttons {
+    text-align: right;
+  }
+
+  &-space_right {
+      margin-right: 1rem;
+  }
+  
+  &-space_top {
+      padding-top: 1rem;
   }
 }

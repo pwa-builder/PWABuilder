@@ -5,47 +5,41 @@
 {{#if showDialog}}
 <div class="pwa-modal">
   <div class="pwa-modal-box">
-    <h5 class="pwa-modal-title">
+    <h5 class="pwa-modal-title pwa-modal-title--normal">
       Upload an image
     </h5>
     <div class="pwa-modal-body">
-      {{#if showErrorMessage}}
-        <div>
-          <p>There was an error uploading the image. Please try again.</p>
-        </div>
-      {{/if}}
-      <div class="pwa-generator-field">
-        <span class="pwa-generator-label">Upload image</span>
-        <label class="pwa-generator-input pwa-generator-input--fake is-disabled" for="modal-file">
-          {{fileName}}
-        </label>
-        {{file-input id="modal-file" class="l-hidden" action="uploadFile"}}
-      </div>
-
-      <div class="pwa-generator-field">
-          <label>
-            {{generator-checkbox checked=generateMissingSizes}} 
-            Generate missing images from this image
-          </label>
-      </div>
-
-      <div class="pwa-generator-buttons pure-g">
-        <div class="pure-u-8-24">
-          <div class="pure-g">
-            <div class="pure-u-1-2">
-              <button class="pwa-button pwa-button--simple pwa-button--brand" {{action "accept"}}>
-                Submit
-                {{#if isSaving}}
-                    <span class="pwa-generator-loading">
-                      {{fa-icon "circle-o-notch fa-spin"}}
-                    </span>
-                  {{/if}}
-              </button>
-            </div>
-            <div class="pure-u-1-2">
-              <button class="pwa-button pwa-button--simple" {{action "close"}}>Cancel</button>
-            </div>
+      <div class="pwa-generator-container">
+        {{#if showErrorMessage}}
+          <div>
+            <p>There was an error uploading the image. Please try again.</p>
           </div>
+        {{/if}}
+        <div class="pwa-generator-box">
+          <span class="pwa-generator-label">Upload image</span>
+          <label class="pwa-generator-input pwa-generator-input--fake is-disabled" for="modal-file">
+            {{fileName}}
+          </label>
+          {{file-input id="modal-file" class="l-hidden" action="uploadFile"}}
+        </div>
+
+        <div class="pwa-generator-field">
+            <label>
+              {{generator-checkbox checked=generateMissingSizes}} 
+              Generate missing images from this image
+            </label>
+        </div>
+
+        <div class="pwa-generator-box_buttons">
+            <button class="pwa-generator-space_right pwa-button pwa-button--simple pwa-button--brand" {{action "accept"}}>
+              Submit
+              {{#if isSaving}}
+                  <span class="pwa-generator-loading">
+                    {{fa-icon "circle-o-notch fa-spin"}}
+                  </span>
+                {{/if}}
+            </button>
+            <button class="pwa-button pwa-button--simple" {{action "close"}}>Cancel</button>
         </div>
       </div>
     </div>
