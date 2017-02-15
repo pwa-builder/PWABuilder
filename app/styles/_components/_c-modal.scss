@@ -56,4 +56,19 @@
         margin-top: 45px;
         padding: 18px;
     }
+
+    &-tablec {
+        $padding:1.5rem;
+        font-family: 'Bitter';
+        text-align: right;
+        font-size: $font-size-m;
+        padding-top: $padding;
+        padding-right: $padding;
+        text-transform: capitalize;
+
+
+    img {
+      max-width: 90%;
+    }
+  }
 }

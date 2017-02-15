@@ -5,6 +5,9 @@
 {{#if showDialog}}
 <div class="pwa-modal">
   <div class="pwa-modal-box">
+    <div class="pure-u-1-1 pwa-modal-tablec">
+      <span class="pwa-generator-close" {{action 'close'}}>{{fa-icon "times"}}</span>
+    </div>
     <h5 class="pwa-modal-title pwa-modal-title--normal">
       Upload an image
     </h5>
@@ -39,7 +42,6 @@
                   </span>
                 {{/if}}
             </button>
-            <button class="pwa-button pwa-button--simple" {{action "close"}}>Cancel</button>
         </div>
       </div>
     </div>
