@@ -11,6 +11,9 @@
 {{#if showDialog}}
 <div class="pwa-modal">
   <div class="pwa-modal-box">
+     <div class="pure-u-1-1 pwa-modal-tablec">
+        <span class="pwa-generator-close" {{action 'close'}}>{{fa-icon "times"}}</span>
+      </div>
     <div class="pwa-generator-space_top">
       <h5 class="pwa-modal-title pwa-modal-title--normal">
         Publish Package
@@ -41,8 +44,8 @@
           <button class="pwa-generator-space_right pwa-button pwa-button--simple pwa-button--brand" {{action "accept"}}>
             Submit
           </button>
-          <button class="pwa-button pwa-button--simple" {{action "close"}}>
-            Cancel
+          <button class="pwa-button pwa-button--simple" {{action "close"}}>		
+            Cancel		
           </button>
         </div>
       </div>
