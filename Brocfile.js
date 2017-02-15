@@ -1,11 +1,16 @@
 /* global require, module */
 
 var EmberApp = require('ember-cli/lib/broccoli/ember-app');
-
+var isDev = EmberApp.env() === 'development';
 var app = new EmberApp({
   emberCliFontAwesome: { includeFontAwesomeAssets: false },
   autoprefixer: {
     browsers: ['last 2 ios version']
+  },
+  minifyCSS: { enabled: !isDev },
+  minifyJS:  { enabled: !isDev },
+  sourcemaps: {
+    enabled: isDev
   }
 });
 
