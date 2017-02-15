@@ -476,6 +476,10 @@
       font-size: $font-size-m;
       line-height: $font-size-m * 1.4;
     }
+
+    &--context {
+      max-width: 30rem;
+    }
   }
 
   &-issue {

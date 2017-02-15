@@ -43,10 +43,11 @@
 
         &--flat {
             box-shadow: none;
-            min-height: 50rem;
+            text-align: center;
+            min-height: 25rem;
 
             @media screen and (max-width: $media-screen-m) {
-                min-height: 53rem;
+                min-height: 28rem;
             }
 
             @media screen and (max-width: $media-screen-s) {
@@ -69,6 +70,6 @@
     }
 
     &-padded {
-        padding-bottom: 5rem;
+        padding-bottom: 2rem;
     }
 }
