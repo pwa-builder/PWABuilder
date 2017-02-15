@@ -156,7 +156,7 @@
             <h2 class="pwa-infobox-title pwa-infobox-title--centered">Publish PWA</h2>
           </div>
 
-          <div class="pure-u-1 pure-u-md-1-3">
+          <div class="pure-u-1 pure-u-md-1-2">
             <div class="pwa-infobox-box pwa-infobox-box--flat">
               <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">Web</h4> 
               <p class="pwa-generator-description pwa-generator-description--fixed">
@@ -166,28 +166,29 @@
             </div>
           </div>
 
-          <div class="pure-u-1 pure-u-md-2-3">
+          <div class="pure-u-1 pure-u-md-1-2">
             <div class="pwa-infobox-box pwa-infobox-box--flat">
-                
-                <div class="pwa-infobox-padded">
-                  <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">Windows</h4> 
-                  <p class="pwa-generator-description pwa-generator-description--fixed">
-                    Windows 10 PWA support is still in Beta, so some features like service workers will not work on all user machines.  We invite you to join our beta PWA program.  Your PWA can be created and app listing generated from the below one step publishing button.
-                  </p>
-                  {{#publish-package isColored=true initialMessage="Publish 1-step" isBuilding=model.isBuilding.Win10Publish buildFailed=model.buildFailed.Win10Publish publishSuccedded=model.publishSuccedded action="publishWin10Package" publishName=model.name publishEmail=model.email}}{{/publish-package}}
-                  {{#download-archive class="button-holder download-archive" initialMessage="Download" isBuilding=model.isBuilding.windows10 buildFailed=model.buildFailed.windows10 action="buildArchive" platform="windows10" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
-                </div>
-                
-                <div class="pwa-infobox-padded">
-                  <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">Android</h4> 
-                  <p class="pwa-generator-description pwa-generator-description--fixed">
-                    PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.
-                  </p>
+              <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">Windows</h4> 
+              <p class="pwa-generator-description pwa-generator-description--fixed">
+                Windows 10 PWA support is still in Beta, so some features like service workers will not work on all user machines.  We invite you to join our beta PWA program.  Your PWA can be created and app listing generated from the below one step publishing button.
+              </p>
+              {{#publish-package isColored=true initialMessage="Publish 1-step" isBuilding=model.isBuilding.Win10Publish buildFailed=model.buildFailed.Win10Publish publishSuccedded=model.publishSuccedded action="publishWin10Package" publishName=model.name publishEmail=model.email}}{{/publish-package}}
+              {{#download-archive class="button-holder download-archive" initialMessage="Download" isBuilding=model.isBuilding.windows10 buildFailed=model.buildFailed.windows10 action="buildArchive" platform="windows10" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+            </div>
+          </div>
+          <div class="pure-u-1">
+            <div class="pwa-infobox-box pwa-infobox-box--flat">
+              <div class="pwa-infobox-padded">
+                <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">Android</h4> 
+                <p class="pwa-generator-description pwa-generator-description--fixed pwa-generator-description--context">
+                  PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.
+                </p>
+                <div>
                   {{#download-archive initialMessage="Download" isBuilding=model.isBuilding.android buildFailed=model.buildFailed.android action="buildArchive" platform="android" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
                 </div>
-
-                <h2 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">iOS Polyfill</h2>
-                {{#download-archive initialMessage="Download" isBuilding=model.isBuilding.ios buildFailed=model.buildFailed.ios action="buildArchive" platform="ios" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+              </div>
+              <h2 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">iOS Polyfill</h2>
+              {{#download-archive initialMessage="Download" isBuilding=model.isBuilding.ios buildFailed=model.buildFailed.ios action="buildArchive" platform="ios" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
             </div>
           </div>
         </div>

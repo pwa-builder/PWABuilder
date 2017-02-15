@@ -32,7 +32,6 @@
     font-size: $font-size-l;
     overflow: hidden;
     padding: $button-pad 3rem;
-    position: relative;
     text-align: center;
 
     &:hover {
@@ -65,7 +64,7 @@
         }
 
         @media screen and (max-width: $media-screen-xxl) {
-            padding: $button-pad .5rem;
+            padding: $button-pad 1.5rem;
         }
     }
 
