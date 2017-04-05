@@ -50,13 +50,13 @@ module.exports = function(environment) {
   }
 
   if (environment === 'preproduction') {
-    ENV.APP.API_URL='http://manifold-api-pre.azurewebsites.net';
-    ENV.APP.IMAGEGENERATOR_URL = 'http://appimagegenerator-pre.azurewebsites.net';
+    ENV.APP.API_URL='//manifold-api-pre.azurewebsites.net';
+    ENV.APP.IMAGEGENERATOR_URL = '//appimagegenerator-pre.azurewebsites.net';
   }
 
   if (environment === 'production') {
-    ENV.APP.API_URL='http://manifold-api-prod.azurewebsites.net';
-    ENV.APP.IMAGEGENERATOR_URL = 'http://appimagegenerator-prod.azurewebsites.net';
+    ENV.APP.API_URL='//manifold-api-prod.azurewebsites.net';
+    ENV.APP.IMAGEGENERATOR_URL = '//appimagegenerator-prod.azurewebsites.net';
   }
 
   return ENV;
