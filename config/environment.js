@@ -2,7 +2,7 @@
 
 module.exports = function(environment) {
   var ENV = {
-    modulePrefix: 'manifoldjs-site',
+    modulePrefix: 'pwabuilder-site',
     environment: environment,
     baseURL: '/',
     locationType: 'auto',
