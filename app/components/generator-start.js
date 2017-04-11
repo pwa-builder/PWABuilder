@@ -9,6 +9,7 @@ export default Ember.Component.extend({
   file: null,
   fileName: null,
   message: '',
+  startFailure: null,
   isSaving: false,
   actions:{
     startComplete: function(){

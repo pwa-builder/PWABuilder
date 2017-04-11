@@ -15,9 +15,9 @@
 
       <div class="pure-g l-breath">
         <div class="pwa-generator-wrapper pure-u-3-5">
-            <button {{bind-attr class=":get-started :pwa-button :isEnabled :next-step"}} 
+            <button {{bind-attr class=":get-started :pwa-button :isEnabled :next-step"}}
                   {{action 'startComplete'}}>
-                    Get Started 
+                    Get Started
                     {{#if isSaving}}
                       <span class="pwa-generator-loading">
                         {{fa-icon "circle-o-notch fa-spin"}}
@@ -32,6 +32,11 @@
           {{/if}}
         </div>
 
+        {{#if startFailure}}
+        <div class="pure-u-1">
+          <p class="pwa-generator-error">{{fa-icon "exclamation"}} {{startFailure}}</p>
+        </div>
+        {{/if}}
         <div class="pwa-generator-wrapper pure-u-1">
           <button {{action 'goToSecondStep'}}
                   class="pwa-button pwa-button--simple">

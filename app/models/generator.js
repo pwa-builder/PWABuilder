@@ -18,6 +18,7 @@ export default Ember.Object.extend({
   warnings: Ember.A(),
   errors: Ember.A(),
   members: Ember.A(),
+  startFailure: null,
   buildErrors: Ember.A(),
   assets: Ember.A(),
   errorsTotal: function(){
@@ -54,7 +55,7 @@ export default Ember.Object.extend({
   serviceWorkerCodePreview: { forWebSite: '', forServiceWorker: '' },
   hasServiceWorkersSelected: function() {
     var selectedWorkers = this.serviceWorkers.filter(function (serviceWorker) {
-      return (serviceWorker.isSelected); 
+      return (serviceWorker.isSelected);
     });
     var hasSelected = selectedWorkers.length !== 0;
     this.getServiceWorkerCodePreview(hasSelected);
@@ -62,7 +63,8 @@ export default Ember.Object.extend({
   }.property('serviceWorkers.@each.isSelected'),
   save: function () {
     this.set('isSaving', true);
-      
+    this.set('startFailure', null);
+
     if(!this.manifestId) {
       this.create();
     } else {
@@ -113,7 +115,8 @@ export default Ember.Object.extend({
       }
 
       self.set('isSaving', false);
-    }).catch(function(){
+    }).catch(function(err){
+      self.set('startFailure', err.jqXHR.responseJSON.error || 'No error details received.');
       self.set('isSaving', false);
     });
   },
@@ -137,7 +140,8 @@ export default Ember.Object.extend({
     }).then(function(result) {
       self.processResult(result);
       self.set('isSaving', false);
-    }).catch(function(){
+    }).catch(function(err){
+      self.set('startFailure', err.jqXHR.responseJSON.error || 'No error details received.');
       self.set('isSaving', false);
     });
   },
@@ -148,7 +152,7 @@ export default Ember.Object.extend({
     this.set('isBuilding.' + platform, true);
     this.set('buildFailed.' + platform,false);
     this.buildErrors.clear();
-    
+
     if (platform === 'All') {
       platformsList = [ 'web', 'windows10', 'windows', 'ios', 'android' ];
     } else {
@@ -177,7 +181,7 @@ export default Ember.Object.extend({
   },
   package: function(platform, options){
     var self = this;
-    
+
     var dirSuffix = platform;
 
     if (options.DotWeb) {
@@ -251,16 +255,16 @@ export default Ember.Object.extend({
       self.set('isSaving', false);
     });
   },
-  getSelectedServiceWorkers: function() {    
+  getSelectedServiceWorkers: function() {
     var result = this.serviceWorkers.filter(function (serviceWorker) {
-          return (serviceWorker.isSelected); 
+          return (serviceWorker.isSelected);
         })
         .map(function (serviceWorker) {
           return serviceWorker.id;
         });
       if (result.length === 2) {
         //If both checkbox are checked return 3 (1+2).
-        return [3]; 
+        return [3];
       }
       return result;
   },
@@ -278,7 +282,7 @@ export default Ember.Object.extend({
       dataType: 'json',
       contentType: 'application/json; charset=utf-8'
     }).then(function(result){
-      self.set('isBuilding.' + platform, false); 
+      self.set('isBuilding.' + platform, false);
       self.set('archiveLink', result.archive);
     }).catch(function() {
       self.set('isBuilding.' + platform, false);
@@ -286,7 +290,7 @@ export default Ember.Object.extend({
     });
   },
   getServiceWorkerCodePreview: function(hasServiceWorkersSelected) {
-    var self = this;    
+    var self = this;
     if (hasServiceWorkersSelected){
       var selectedWorkers = self.getSelectedServiceWorkers().join(',');
 
@@ -294,15 +298,15 @@ export default Ember.Object.extend({
         url: config.APP.API_URL + '/serviceworkers/previewcode?ids=' + selectedWorkers,
         type: 'GET',
         dataType: 'json',
-        contentType: 'application/json; charset=utf-8'      
+        contentType: 'application/json; charset=utf-8'
       }).then(function(result) {
         self.set('serviceWorkerCodePreview.forWebSite', result.webSite);
         self.set('serviceWorkerCodePreview.forServiceWorker', result.serviceWorker);
       });
-    } 
+    }
     else {
       self.set('serviceWorkerCodePreview.forWebSite', '');
-      self.set('serviceWorkerCodePreview.forServiceWorker', '');      
+      self.set('serviceWorkerCodePreview.forServiceWorker', '');
     }
   },
   languages: [{"code": '', "name": " "}].pushObjects(langConst.languageConst()),
@@ -320,7 +324,7 @@ export default Ember.Object.extend({
   }.observes("manifest.background_color"),
   generateMissingImages: function(fileInfo, callback) {
     var self = this;
-    
+
     var formData = new FormData();
     formData.append('file', fileInfo);
 

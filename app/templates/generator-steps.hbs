@@ -53,7 +53,7 @@
         {{generator-select class='pwa-generator-input pwa-generator-input--select' content=model.languages
                 optionLabelPath="content.name"
                 optionValuePath="content.code"
-                modelProperty="manifest.lang" 
+                modelProperty="manifest.lang"
                 value=model.manifest.lang
                 selectionProperty="code"
                 }}
@@ -97,7 +97,7 @@
     </div>
   </div>
   {{else}}
-    {{#generator-start isSaving=model.isSaving action="startComplete" class="generator-start step"}}{{/generator-start}}
+    {{#generator-start isSaving=model.isSaving startFailure=model.startFailure action="startComplete" class="generator-start step"}}{{/generator-start}}
   {{/if}}
   {{/generator-step}}
 
@@ -111,13 +111,13 @@
               {{input type="checkbox" checked=worker.isSelected focus-out="updateModel" disabled=worker.isDisabled }}
               {{worker.name}}
             </label>
-            
-            <span class="pwa-generator-description">This simple but elegant solution pulls a file from your web server called "offline.html" (make sure that file is actually there) and 
+
+            <span class="pwa-generator-description">This simple but elegant solution pulls a file from your web server called "offline.html" (make sure that file is actually there) and
               serves the file whenever a network connection can not be made.
             </span>
           </div>
         {{/each}}
-        
+
         <div class="pwa-generator-buttons">
           {{#download-archive initialMessage="Download service worker" isBuilding=model.isBuilding.serviceWorker buildFailed=model.buildFailed.serviceWorker action="downloadServiceWorker" platform="serviceWorker" isEnabled=model.hasServiceWorkersSelected}}{{/download-archive}}
         </div>
@@ -158,7 +158,7 @@
 
           <div class="pure-u-1 pure-u-md-1-2">
             <div class="pwa-infobox-box pwa-infobox-box--flat">
-              <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">Web</h4> 
+              <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">Web</h4>
               <p class="pwa-generator-description pwa-generator-description--fixed">
                 Download these files and add them to your website.  Different browsers will detect your Progressive Web App in different ways, but the manifest and service workers are required for each of them.
               </p>
@@ -168,7 +168,7 @@
 
           <div class="pure-u-1 pure-u-md-1-2">
             <div class="pwa-infobox-box pwa-infobox-box--flat">
-              <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">Windows</h4> 
+              <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">Windows</h4>
               <p class="pwa-generator-description pwa-generator-description--fixed">
                 Windows 10 PWA support is still in Beta, so some features like service workers will not work on all user machines.  We invite you to join our beta PWA program.  Your PWA can be created and app listing generated from the below one step publishing button.
               </p>
@@ -179,7 +179,7 @@
           <div class="pure-u-1">
             <div class="pwa-infobox-box pwa-infobox-box--flat">
               <div class="pwa-infobox-padded">
-                <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">Android</h4> 
+                <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">Android</h4>
                 <p class="pwa-generator-description pwa-generator-description--fixed pwa-generator-description--context">
                   PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.
                 </p>
@@ -198,7 +198,7 @@
         <p class="instructions">There are some validation errors in the manifest. Please fix them and try again.</p>
         <button class="pwa-button pwa-button--simple" {{action "updateStep" "1"}}>Go to first step</button>
       </div>
-    {{/if}}  
+    {{/if}}
   {{else}}
     <div class="pwa-generator-buttons pwa-generator-buttons--centered">
       <p class="instructions">You need to create your manifest first.</p>
