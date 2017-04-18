@@ -24,6 +24,23 @@
         width: $w;
         z-index: 110;
 
+        &.error {
+            max-height: 480px;
+            min-height: 320px;
+
+            @media screen and (max-width: $media-screen-l) {
+                min-height: 320px;
+            }
+
+            @media screen and (max-width: $media-screen-m) {
+                min-height: 320px;
+            }
+
+            .pwa-generator-box_buttons {
+                margin-top: 25px;
+            }
+        }
+
         @media screen and (max-width: $media-screen-l) {
             $w: 80vw;
             $h: 50vh;

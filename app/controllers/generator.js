@@ -86,7 +86,7 @@ export default Ember.Controller.extend({
     if (this.get('activeStep') !== null) {
       if (stepId !== this.get('activeStep')) {
         this.set('activeStep', stepId);
-      }      
+      }
     } else {
       this.set('activeStep', stepId);
     }
@@ -97,7 +97,7 @@ export default Ember.Controller.extend({
       this.set('startReady', false);
       this.set('model.manifestId', null);
       this.set('activeStep', "1");
-      
+
       var model = this.get('model');
       model.get('platforms').forEach(function(item) {
         Ember.set(item, 'isSelected', true);
@@ -108,7 +108,7 @@ export default Ember.Controller.extend({
     },
     updateStep: function(nextStep){
       this.setActiveStep(nextStep);
-    }, 
+    },
     startComplete: function() {
       this.set('startReady', true);
       this.set('activeStep', "1");
@@ -136,7 +136,7 @@ export default Ember.Controller.extend({
     },
     toggleRelatedApps: function() {
       var current = this.get("showRelatedApps");
-      this.set("showRelatedApps", !current);      
+      this.set("showRelatedApps", !current);
     }
   }
 });

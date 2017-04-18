@@ -42,6 +42,9 @@ export default Ember.Object.extend({
   hasNoErrors: function() {
     return this.errors.length === 0;
   }.property('errors'),
+  isHTTPS: function() {
+    return this.siteUrl.indexOf('https') === 0;
+  }.property('siteUrl'),
   display: {
     names: ['fullscreen', 'standalone', 'minimal-ui', 'browser']
   },

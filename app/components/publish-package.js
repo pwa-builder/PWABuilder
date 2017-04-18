@@ -10,6 +10,7 @@ export default Ember.Component.extend({
   successMessage: 'Package Published!',
   tagName: 'span',
   showDialog: false,
+  showError: false,
   name: '',
   email: '',
   missingName: false,
@@ -37,12 +38,15 @@ export default Ember.Component.extend({
     handleClick: function(){
       if(this.isEnabled && !this.isBuilding) {
         this.set('showDialog', true);
+      } else if (!this.isEnabled) {
+        this.set('showError', true);
       }
     },
     close: function() {
       this.set('invalidEmail', false);
       this.set('missingName', false);
       this.set('showDialog', false);
+      this.set('showError', false);
     },
     accept: function(){
       var emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -53,6 +57,13 @@ export default Ember.Component.extend({
         this.set('showDialog', false);
         this.sendAction('action', this.name, this.email);
       }
+    },
+    startOver: function() {
+      this.set('invalidEmail', false);
+      this.set('missingName', false);
+      this.set('showDialog', false);
+      this.set('showError', false);
+      this.sendAction('startOver', this.name, this.email);
     }
   }
 });
