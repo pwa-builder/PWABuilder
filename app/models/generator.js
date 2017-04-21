@@ -52,8 +52,8 @@ export default Ember.Object.extend({
     names: ['any', 'natural', 'landscape', 'portrait', 'portrait-primary', 'portrait-secondary', 'landscape-primary', 'landscape-secondary']
   },
   serviceWorkers: [
-    {id: 1, name: 'Offline page', isSelected: true, isDisabled: false },
-    {id: 2, name: 'Offline copy of pages', isSelected: false, isDisabled: false }
+    {id: 1, name: 'Offline page', isSelected: true, isDisabled: false, description: "This simple but elegant solution pulls a file from your web server called \"offline.html\" (make sure that file is actually there) and serves the file whenever a network connection can not be made." },
+    {id: 2, name: 'Offline copy of pages', isSelected: false, isDisabled: false, description: "A solution that expands the offline capabilities of your app.  A copy of each pages is stored in the cache as your visitors view them.  This allows a visitor to load any previously viewed page while they are offline.  It can be used in conjunction with the \"offline page\" service worker to provide a more complete offline experience" }
   ],
   serviceWorkerCodePreview: { forWebSite: '', forServiceWorker: '' },
   hasServiceWorkersSelected: function() {
