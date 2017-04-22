@@ -22,7 +22,6 @@ export default Ember.Component.extend({
     } else if(this.buildFailed){
       message = this.failedMessage;
     } else if (this.publishSuccedded) {
-        this.set('publishSuccedded', false);
         message = this.successMessage;
         var that = this;
         setTimeout(function() {
@@ -47,6 +46,7 @@ export default Ember.Component.extend({
       this.set('missingName', false);
       this.set('showDialog', false);
       this.set('showError', false);
+      this.set('publishSuccedded', false);
     },
     accept: function(){
       var emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
