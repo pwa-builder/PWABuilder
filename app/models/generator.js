@@ -162,8 +162,11 @@ export default Ember.Object.extend({
       platformsList = [ platform ];
     }
 
+    // Include selected service workers when building packages
+    var selectedWorkers = self.getSelectedServiceWorkers().join(',');
+
     ajax({
-      url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/build',
+      url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/build?ids=' + selectedWorkers,
       type: 'POST',
       data: JSON.stringify({ platforms: platformsList, dirSuffix: platform }),
       dataType: 'json',
@@ -199,8 +202,11 @@ export default Ember.Object.extend({
 
     this.buildErrors.clear();
 
+    // Include selected service workers when building packages
+    var selectedWorkers = self.getSelectedServiceWorkers().join(',');
+
     ajax({
-      url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/package',
+      url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/package?ids=' + selectedWorkers,
       type: 'POST',
       data: JSON.stringify({ platform: platform, options: options, dirSuffix: dirSuffix  }),
       dataType: 'json',
