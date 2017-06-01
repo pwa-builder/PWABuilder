@@ -108,6 +108,7 @@ export default Ember.Controller.extend({
     },
     updateStep: function(nextStep){
       this.setActiveStep(nextStep);
+      window.scrollTo(0,0);
     },
     startComplete: function() {
       this.set('startReady', true);

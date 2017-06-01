@@ -32,6 +32,7 @@ export default Ember.Component.extend({
   actions: {
     updateStep: function(nextStep){
       this.get('parentView.controller').setActiveStep(nextStep);
+      window.scrollTo(0,0);
       return true; // keep bubbling
     }, 
     customAction: function() {
