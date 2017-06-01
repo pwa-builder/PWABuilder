@@ -14,6 +14,13 @@ export default Ember.Component.extend({
   actions:{
     startComplete: function(){
       var siteUrl = this.get('siteUrl');
+
+      // If no protocol, assume https
+      if(siteUrl && !siteUrl.startsWith('http') && !siteUrl.startsWith('http')){
+        this.set('siteUrl', 'https://' + siteUrl);
+        siteUrl = this.get('siteUrl');
+      }
+
       var file = this.get('file');
       if(!siteUrl && !file || !isValidUrl(siteUrl)){
         this.set('message', 'Please provide a URL.');
