@@ -464,6 +464,18 @@
     code {
       white-space: pre-wrap;
     }
+
+    &.code-for-website{
+      pre {
+        max-height: 350px;
+      }
+    }
+
+    &.service-worker-code{
+      pre {
+        max-height: 400px;
+      }
+    }  
   }
 
   &-description {
