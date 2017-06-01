@@ -51,19 +51,19 @@ export default Ember.Object.extend({
   orientation: {
     names: ['any', 'natural', 'landscape', 'portrait', 'portrait-primary', 'portrait-secondary', 'landscape-primary', 'landscape-secondary']
   },
+  selectedServiceWorker: 1,
   serviceWorkers: [
-    {id: 1, name: 'Offline page', isSelected: true, isDisabled: false, description: "This simple but elegant solution pulls a file from your web server called \"offline.html\" (make sure that file is actually there) and serves the file whenever a network connection can not be made." },
-    {id: 2, name: 'Offline copy of pages', isSelected: false, isDisabled: false, description: "A solution that expands the offline capabilities of your app.  A copy of each pages is stored in the cache as your visitors view them.  This allows a visitor to load any previously viewed page while they are offline.  It can be used in conjunction with the \"offline page\" service worker to provide a more complete offline experience" }
+    {id: 1, name: 'Offline page', isDisabled: false, description: "This simple but elegant solution pulls a file from your web server called \"offline.html\" (make sure that file is actually there) and serves the file whenever a network connection can not be made." },
+    {id: 2, name: 'Offline copy of pages', isDisabled: false, description: "A solution that expands the offline capabilities of your app. A copy of each pages is stored in the cache as your visitors view them. This allows a visitor to load any previously viewed page while they are offline." },
+    {id: 3, name: 'Offline copy with Backup offline page', isDisabled: false, description: "A copy of each pages is stored in the cache as your visitors view them. This allows a visitor to load any previously viewed page while they are offline. This then adds the \"offline page\" that allows you to customize the message and experience if the app is offline, and the page is not in the cache." },
+    {id: 4, name: 'Cache-first network (coming soon)',isDisabled: true, description: "Use this service worker to pre-cache content. The content you add to the \"cache-array\" will be added immediately to the cache and service from the cache whenever a page requests it. At the same time it will update the cache with the version you have on the server. Configure your file array to include all your site files, or a subset that you want to be served quickly." },
+    {id: 5, name: 'Advanced Pre-cache (coming soon)', isDisabled: true, description: "Use this service worker to improve the performance of your app, and make it work offline. The advanced pre-cache allows you to configure files and routs that are cached in different manors (pre-cache, server first, cache first etc). The tool can be used to build a lightening fast app (even for dynamic content) that works offline." }
   ],
   serviceWorkerCodePreview: { forWebSite: '', forServiceWorker: '' },
   hasServiceWorkersSelected: function() {
-    var selectedWorkers = this.serviceWorkers.filter(function (serviceWorker) {
-      return (serviceWorker.isSelected);
-    });
-    var hasSelected = selectedWorkers.length !== 0;
-    this.getServiceWorkerCodePreview(hasSelected);
-    return hasSelected;
-  }.property('serviceWorkers.@each.isSelected'),
+    this.getServiceWorkerCodePreview(this.selectedServiceWorker);
+    return this.selectedServiceWorker;
+  }.property('selectedServiceWorker'),
   save: function () {
     this.set('isSaving', true);
     this.set('startFailure', null);
@@ -162,11 +162,8 @@ export default Ember.Object.extend({
       platformsList = [ platform ];
     }
 
-    // Include selected service workers when building packages
-    var selectedWorkers = self.getSelectedServiceWorkers().join(',');
-
     ajax({
-      url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/build?ids=' + selectedWorkers,
+      url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/build?ids=' + self.selectedServiceWorker,
       type: 'POST',
       data: JSON.stringify({ platforms: platformsList, dirSuffix: platform }),
       dataType: 'json',
@@ -202,11 +199,8 @@ export default Ember.Object.extend({
 
     this.buildErrors.clear();
 
-    // Include selected service workers when building packages
-    var selectedWorkers = self.getSelectedServiceWorkers().join(',');
-
     ajax({
-      url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/package?ids=' + selectedWorkers,
+      url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/package?ids=' + self.selectedServiceWorker,
       type: 'POST',
       data: JSON.stringify({ platform: platform, options: options, dirSuffix: dirSuffix  }),
       dataType: 'json',
@@ -264,29 +258,14 @@ export default Ember.Object.extend({
       self.set('isSaving', false);
     });
   },
-  getSelectedServiceWorkers: function() {
-    var result = this.serviceWorkers.filter(function (serviceWorker) {
-          return (serviceWorker.isSelected);
-        })
-        .map(function (serviceWorker) {
-          return serviceWorker.id;
-        });
-      if (result.length === 2) {
-        //If both checkbox are checked return 3 (1+2).
-        return [3];
-      }
-      return result;
-  },
   downloadServiceWorker: function() {
     var self = this;
     var platform = "serviceWorker";
     self.set('isBuilding.' + platform, true);
     this.set('buildFailed.' + platform,false);
 
-    var selectedWorkers = self.getSelectedServiceWorkers().join(',');
-
     ajax({
-      url: config.APP.API_URL + '/serviceworkers?ids=' + selectedWorkers,
+      url: config.APP.API_URL + '/serviceworkers?ids=' + self.selectedServiceWorker,
       type: 'GET',
       dataType: 'json',
       contentType: 'application/json; charset=utf-8'
@@ -301,10 +280,9 @@ export default Ember.Object.extend({
   getServiceWorkerCodePreview: function(hasServiceWorkersSelected) {
     var self = this;
     if (hasServiceWorkersSelected){
-      var selectedWorkers = self.getSelectedServiceWorkers().join(',');
 
       ajax({
-        url: config.APP.API_URL + '/serviceworkers/previewcode?ids=' + selectedWorkers,
+        url: config.APP.API_URL + '/serviceworkers/previewcode?ids=' + self.selectedServiceWorker,
         type: 'GET',
         dataType: 'json',
         contentType: 'application/json; charset=utf-8'

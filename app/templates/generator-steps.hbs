@@ -108,7 +108,7 @@
         {{#each worker in model.serviceWorkers}}
           <div class="pwa-generator-field pwa-generator-field--padded checkbox">
             <label class="pwa-generator-label">
-              {{input type="checkbox" checked=worker.isSelected focus-out="updateModel" disabled=worker.isDisabled }}
+              {{generator-radio-button checked=model.selectedServiceWorker value=worker.id disabled=worker.isDisabled }}
               {{worker.name}}
             </label>
 
