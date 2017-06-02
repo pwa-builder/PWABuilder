@@ -94,6 +94,7 @@ export default Ember.Controller.extend({
 
   actions: {
     startOver: function(){
+      this.ga('send', 'event', 'item', 'click', 'generator-startover-trigger');
       this.set('startReady', false);
       this.set('model.manifestId', null);
       this.set('activeStep', "1");
@@ -107,6 +108,7 @@ export default Ember.Controller.extend({
       return true;
     },
     updateStep: function(nextStep){
+      this.ga('send', 'event', 'item', 'click', 'generator-nextStep-trigger');
       this.setActiveStep(nextStep);
       window.scrollTo(0,0);
     },

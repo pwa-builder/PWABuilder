@@ -49,6 +49,7 @@ export default Ember.Route.extend({
       window.location.href = archiveLink;
     },
     publishWin10Package: function(publishName, publishEmail){
+      this.ga('send', 'event', 'item', 'click', 'generator-publishWindows10-trigger');
       var model = this.modelFor('generator');
       
       var platform = 'windows10';
