@@ -28,7 +28,11 @@ var app = new EmberApp({
 // along with the exports of each module as its value.
 
 app.import('bower_components/prism/themes/prism-okaidia.css');
+app.import('bower_components/clipboard/dist/clipboard.js');
 app.import('bower_components/prism/prism.js');
+app.import('bower_components/prism/plugins/toolbar/prism-toolbar.css');
+app.import('bower_components/prism/plugins/toolbar/prism-toolbar.js');
+app.import('bower_components/custom-copy-to-clipboard/prism-copy-to-clipboard.js');
 app.import('bower_components/pluralize/pluralize.js');
 app.import('bower_components/lodash/dist/lodash.min.js');
 
