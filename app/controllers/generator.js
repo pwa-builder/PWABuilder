@@ -15,17 +15,19 @@ export default Ember.Controller.extend({
     var _code = JSON.stringify(code);
     _code = JSON.parse(_code);
 
-    _code.icons.map(function (icon) {
-      if (icon.src.indexOf('data:') === 0){
-        icon.src = "[Embedded]";
-      }
-      if (icon.fileName) {
-        delete icon.fileName;
-      }
-      if (icon.generated) {
-        delete icon.generated;
-      }
-    });
+    if(_code && _code.icons){
+      _code.icons.map(function (icon) {
+        if (icon.src.indexOf('data:') === 0){
+          icon.src = "[Embedded]";
+        }
+        if (icon.fileName) {
+          delete icon.fileName;
+        }
+        if (icon.generated) {
+          delete icon.generated;
+        }
+      });
+    }
 
     return new Ember.Handlebars.SafeString('<code class=\'language-javascript\'>' + JSON.stringify(_code, null, 2) + '</code>');
   }.property('model.manifest'),
@@ -100,9 +102,13 @@ export default Ember.Controller.extend({
       this.set('activeStep', "1");
 
       var model = this.get('model');
-      model.get('platforms').forEach(function(item) {
-        Ember.set(item, 'isSelected', true);
-      });
+      var platforms = model.get('platforms');
+      if(platforms){
+        platforms.forEach(function(item) {
+          Ember.set(item, 'isSelected', true);
+        });
+      }
+
       model.save();
 
       return true;
