@@ -17,39 +17,39 @@
         Update or add any details below.
       </h4>
       <div class="pwa-generator-field">
-        <label class="pwa-generator-label">Name</label>
+        <label class="pwa-generator-label">Name <a class="pwa-generator-link" href="https://www.w3.org/TR/appmanifest/#name-member" target="_blank">[?]</a></label>
         {{input class='pwa-generator-input' value=model.manifest.name focus-out="updateModel"}}
       </div>
       <div class="pwa-generator-field">
-        <label class="pwa-generator-label">Short Name</label>
+        <label class="pwa-generator-label">Short Name <a class="pwa-generator-link" href="https://www.w3.org/TR/appmanifest/#short_name-member" target="_blank">[?]</a></label>
         {{input class='pwa-generator-input' name="short_name" value=model.manifest.short_name focus-out="updateModel"}}
       </div>
       <div class="pwa-generator-field">
-        <label class="pwa-generator-label">Description</label>
+        <label class="pwa-generator-label">Description <a class="pwa-generator-link" href="https://www.w3.org/TR/appmanifest/#description-member" target="_blank">[?]</a></label>
         {{input class='pwa-generator-input' name="description" value=model.manifest.description focus-out="updateModel"}}
       </div>
       <div class="pwa-generator-field logo-upload">
-        <label class="pwa-generator-label">Icon Url</label>
+        <label class="pwa-generator-label">Icon Url <a class="pwa-generator-link" href="https://www.w3.org/TR/appmanifest/#icons-member" target="_blank">[?]</a></label>
         {{logo-upload action="updateLogos" generateMissingImageAction="addUploadedImage" deleteAssetsAction="deleteAssets" logos=model.manifest.icons baseUrl=model.manifest.start_url hasAssets=model.hasAssets}}
       </div>
       <div class="pwa-generator-field">
-        <label class="pwa-generator-label">Scope</label>
+        <label class="pwa-generator-label">Scope <a class="pwa-generator-link" href="https://www.w3.org/TR/appmanifest/#scope-member" target="_blank">[?]</a></label>
         {{input class='pwa-generator-input' value=model.manifest.scope focus-out="updateModel"}}
       </div>
       <div class="pwa-generator-field">
-        <label class="pwa-generator-label">Start Url</label>
+        <label class="pwa-generator-label">Start Url <a class="pwa-generator-link" href="https://www.w3.org/TR/appmanifest/#start_url-member" target="_blank">[?]</a></label>
         {{input class='pwa-generator-input' value=model.manifest.start_url focus-out="updateModel"}}
       </div>
       <div class="pwa-generator-field">
-        <label class="pwa-generator-label">Display</label>
+        <label class="pwa-generator-label">Display <a class="pwa-generator-link" href="https://www.w3.org/TR/appmanifest/#display-member" target="_blank">[?]</a></label>
         {{generator-select class='pwa-generator-input pwa-generator-input--select' content=model.display.names modelProperty="manifest.display" value=model.manifest.display}}
       </div>
       <div class="pwa-generator-field">
-        <label class="pwa-generator-label">Orientation</label>
+        <label class="pwa-generator-label">Orientation <a class="pwa-generator-link" href="https://www.w3.org/TR/appmanifest/#orientation-member" target="_blank">[?]</a></label>
         {{generator-select class='pwa-generator-input pwa-generator-input--select' content=model.orientation.names modelProperty="manifest.orientation" value=model.manifest.orientation}}
       </div>
       <div class="pwa-generator-field">
-        <label class="pwa-generator-label">Language</label>
+        <label class="pwa-generator-label">Language <a class="pwa-generator-link" href="https://www.w3.org/TR/appmanifest/#lang-member" target="_blank">[?]</a></label>
         {{generator-select class='pwa-generator-input pwa-generator-input--select' content=model.languages
                 optionLabelPath="content.name"
                 optionValuePath="content.code"
