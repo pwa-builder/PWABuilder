@@ -13,6 +13,7 @@ export default Ember.Object.extend({
   publishSuccedded: false,
   manifestId: null,
   siteUrl: '',
+  siteServiceWorkers: null,
   manifest: Ember.Object.create(),
   suggestions: Ember.A(),
   warnings: Ember.A(),
@@ -64,6 +65,9 @@ export default Ember.Object.extend({
     this.getServiceWorkerCodePreview(this.selectedServiceWorker);
     return this.selectedServiceWorker;
   }.property('selectedServiceWorker'),
+  siteRegistersServiceWorker: function(){
+    return this.siteServiceWorkers && this.siteServiceWorkers.length !== 0;
+  }.property('siteServiceWorkers'),
   save: function () {
     this.set('isSaving', true);
     this.set('startFailure', null);
@@ -77,6 +81,7 @@ export default Ember.Object.extend({
   processResult: function(result){
     this.set('manifest', result.content);
     this.set('manifestId', result.id);
+    this.set('siteServiceWorkers', result.siteServiceWorkers);
     if(!this.get('manifest.icons')) {
       this.set('manifest.icons',[]);
     }
