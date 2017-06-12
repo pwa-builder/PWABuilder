@@ -1,42 +1,38 @@
 .more-info {
-	padding:4.375rem;
-	background-color: $primary-accent;
+  background-color: $color-brand;
+  padding: 4.375rem;
 }
 
 .aboutfp h4 {
-	color: $dark-accent;
-	margin-bottom: 1rem;
+  color: $color-foreground-dark;
+  margin-bottom: 1rem;
 }
 
 .more-info h4 {
-	line-height: 1.875rem;
+  line-height: 1.875rem;
 }
 
 .more-info .copy {
-	color:#fff;
-	margin-bottom: 2rem;
+  color: $color-foreground-brighter;
+  margin-bottom: 2rem;
 }
 
 .more-info button, .more-info .btn {
-	background-color: $dark-accent;
-	border-radius: 3px;
-	-webkit-transition: all 0.25s ease-in-out;
-	-moz-transition: all 0.25s ease-in-out;
-	-ms-transition: all 0.25s ease-in-out;
-	-o-transition: all 0.25s ease-in-out;
-	transition: all 0.25s ease-in-out;
+  background-color: $color-background-dark;
+  border-radius: 3px;
+  transition: all 0.25s ease-in-out;
 }
 
 .more-info button:focus, .more-info .btn:focus {
-	outline-color:$secondary-accent;
+  outline-color: $color-foreground-dark;
 }
 
 .more-info button:hover,  .more-info .btn:hover {
-	background-color: #fff;
-	color: $dark-accent;
+  background-color: $color-background-brighter;
+  color: $color-foreground-dark;
 }
 
-	.whoisusingmjs .sitelogo_yummly { height: 60px; width: 162px; margin: 0 30px 0 0; }
-	.whoisusingmjs .sitelogo_22tracks { height: 38px; width: 218px; margin: 0 30px 20px 0; }
-	.whoisusingmjs .sitelogo_boostmedia { height: 62px; width: 147px; margin: 0 30px 15px 0; }
-	.whoisusingmjs .sitelogo_nickelodeon { height: 45px; width: 315px; margin: 0 0 20px 0; }
+.whoisusingmjs .sitelogo_yummly { height: 60px; margin: 0 30px 0 0; width: 162px; }
+.whoisusingmjs .sitelogo_22tracks { height: 38px; margin: 0 30px 20px 0; width: 218px; }
+.whoisusingmjs .sitelogo_boostmedia { height: 62px; margin: 0 30px 15px 0; width: 147px; }
+.whoisusingmjs .sitelogo_nickelodeon { height: 45px; margin: 0 0 20px 0; width: 315px; }

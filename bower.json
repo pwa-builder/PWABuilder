@@ -1,5 +1,5 @@
 {
-  "name": "manifoldjs-site",
+  "name": "pwabuilder-site",
   "dependencies": {
     "jquery": "1.11.1",
     "ember": "1.11.0",
@@ -13,8 +13,8 @@
     "ember-qunit-notifications": "0.0.7",
     "qunit": "~1.17.1",
     "prism": "*",
-    "lodash": "~3.7.0",
     "pluralize": "~1.1.2",
-    "font-awesome": "~4.3.0"
-  }
+    "font-awesome": "~4.3.0",
+    "lodash": "^4.17.4",
+    "clipboard": "~1.7.1"  }
 }

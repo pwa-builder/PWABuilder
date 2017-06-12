@@ -1,43 +1,39 @@
-<div class="pure-g generator" id="builder_holder">
-  <div class="pure-u-1 pure-u-md-1-2 generator-section form-holder">
-    <header>
-      <h2 class="generator-section-title">Generate your App Manifest</h2>
-      <p class="intro">ManifoldJS takes simple meta-data about your site and uses that to generate native "hosted" apps for Android, ChromeOS, FirefoxOS, iOS, and Windows.</p>
+<div class="pwa-generator" id="builder_holder">
+    <header class="pwa-generator-header">
+        Generate your Progressive Web App
     </header>
-    {{#if startComplete}}
-      {{partial "generator-steps"}}
-      <div class="step">
-        <div class="button-holder">
-          <p>
-            {{#download-archive class="button-holder download-archive" isBuilding=model.isBuilding buildFailed=model.buildFailed action="buildArchive" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
-            <button {{action "startOver"}}>Start Over</button>
-          </p>
-          <p>{{#link-to 'deploy' classNameBindings=":usage-link :btn model.buildReady:show"}}<strong>Now:</strong> Learn how to distribute this package across different platforms{{/link-to}}</p>
-          {{#if model.buildFailed}}
-            <div class="build-errors">
-              <h5>There were some errors while trying to build your project</h5>
-              {{#each error in model.buildErrors}}
-                {{#if error}}
-                  <p>{{error}}</p>
-                {{/if}}
-              {{/each}}
-            </div>
-          {{/if}}
-        </div>
+
+    <p class="pwa-generator-info">
+      PWA.tools takes data from your site and uses that to generate cross-platform Progressive Web Apps
+    </p>
+    {{partial "generator-steps"}}
+
+    <section class="pwa-infobox l-pad">
+  <div class="pure-g">
+    <div class="pure-u-1">
+      <h2 class="pwa-infobox-title">Two Ways to Work</h2>
+    </div>
+
+    <div class="pure-u-1 pure-u-md-1-2">
+      <div class="pwa-infobox-box">
+        <img class="pwa-infobox-logo" src="assets/images/logo_small.png" alt="Small PWA Builder logo">
+        <h4 class="pwa-infobox-subtitle">Web Based</h4> 
+        <a class="pwa-infobox-action" href="/generator">
+          Get started Now
+        </a>
       </div>
-    {{else}}
-      {{#generator-start isSaving=model.isSaving action="startComplete" class="generator-start step-wrapper step"}}{{/generator-start}}
-    {{/if}}
+    </div>
+
+    <div class="pure-u-1 pure-u-md-1-2">
+      <div class="pwa-infobox-box">
+        <img class="pwa-infobox-logo" src="assets/images/logo_small.png" alt="Small PWA Builder logo">
+        <h4 class="pwa-infobox-subtitle">CLI (node based): v1.1.0 </h4> 
+        <a class="pwa-infobox-action" href="https://github.com/manifoldjs/ManifoldJS/releases" target="_blank">
+          Download now
+        </a>
+      </div>
+    </div>
   </div>
-  <div class="pure-u-1 pure-u-md-1-2 generator-section manifest manifest-holder" id="manifest_holder">
-    <header>
-      <h2 class="generator-section-title">W3C Manifest{{#if isProcessing}} {{fa-icon "circle-o-notch fa-spin"}}{{/if}}</h2>
-      <p class="generator-issues-notification">
-      {{#skip-link class="issues-title-errors" anchor="#errors_list"}}Errors ({{model.errorsTotal}}){{/skip-link}},
-      {{#skip-link class="issues-title-warnings" anchor="#warnings_list"}}Warnings ({{model.warningsTotal}}){{/skip-link}},
-      {{#skip-link class="issues-title-suggestions" anchor="#suggestions_list"}}Suggestions ({{model.suggestionsTotal}}){{/skip-link}}
-      </p>
-    </header>
-    {{partial "generator-preview"}}
-  </div>
+</section>
+
 </div>

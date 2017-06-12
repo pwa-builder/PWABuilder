@@ -1,6 +1,9 @@
-<button class="btn build {{if isEnabled 'isEnabled'}}" {{action "handleClick"}}>
+<button class="pwa-button pwa-button--simple {{if isColored 'pwa-button--brand'}} {{if isEnabled 'isEnabled'}}" {{action "handleClick"}}>
   {{linkMessage}}
-  {{#if isBuilding}}{{fa-icon "circle-o-notch fa-spin"}}{{/if}}
-  {{#if isNotBuilding}}{{fa-icon "download"}}{{/if}}
+  {{#if isBuilding}}
+    <span class="pwa-generator-loading">
+      {{fa-icon "circle-o-notch fa-spin"}}
+    </span>
+  {{/if}}
 </button>
 {{yield}}

@@ -1,63 +1,52 @@
-#header {
-	color:#fff;
-	background-color:$dark-accent;
-	overflow: auto;
-}
+@import '../variables';
+@import '../mixins/action';
 
-#header nav {
-	float:right;
-	overflow: auto;
-}
+.pwa-header {
+  background-color: $color-background-brighter;
+  padding: 1rem 2vw;
 
-#header ul {
-	list-style-type: none;
-	margin:0;
-	padding:0;
-}
+  &-left {
+    text-align: left;
 
-#header ul li {
-	float:left;
-	margin: 0;
-}
+    @media screen and (max-width: $media-screen-s) {
+      text-align: center;
+      width: 100%;
+    }
+  }
 
-#header ul li:first-child {
-	margin: 0;
-}
+  &-right {
+    text-align: right;
 
-#header nav a {
-	color: #fff;
-	text-decoration: none;
-	font-family: $sans-stack-semibold;
-	line-height: 4.688rem;
-	padding: .25em .75em .35em .75em;
-	-webkit-transition: all 0.25s ease-in-out;
-	-moz-transition: all 0.25s ease-in-out;
-	-ms-transition: all 0.25s ease-in-out;
-	-o-transition: all 0.25s ease-in-out;
-	transition: all 0.25s ease-in-out;
-}
+    @media screen and (max-width: $media-screen-s) {
+      overflow-x: auto;
+      padding-bottom: .5rem;
+      width: 100%;
+    }
+  }
 
-#header nav a:hover {
-	color:$quaternary-accent;
-}
+  &-logo {
+    $size: 210px;
+    max-width: $size;
+    min-width: $size / 2;
+    width: 100%;
+  }
 
-#header nav a.active {
-	background-color:$primary-accent;
-	-moz-border-radius: 2px;
-	border-radius: 2px;
-	padding: .25em .75em .35em .75em;
-}
-#header nav a:hover.active {
-	background-color:$primary-accent;
-	color:#fff;
-}
+  &-menu {
+    font-family: 'Bitter';
+    font-size: 1.1em;
+    margin-right: 1vw;
+    margin-top: 1vw;
+    padding: 0;
+    white-space: nowrap;
+  }
 
-#header .nav_logo {
-	width: 215px;
-	height: 50px;
-	margin: 0.75rem 0;
-}
+  &-item {
+    display: inline-block;
+    margin: 0 .5vw;
+    text-align: center;
+  }
 
-#header .active .nav_logo {
-	display: none;
+  &-link {
+    @include action-link ( $color-foreground-darker, $color-brand, .2rem);
+  }
 }

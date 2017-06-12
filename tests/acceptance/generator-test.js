@@ -4,7 +4,7 @@ import {
   test
 } from 'qunit';
 import { defineFixture } from 'ic-ajax';
-import startApp from 'manifoldjs-site/tests/helpers/start-app';
+import startApp from 'pwabuilder-site/tests/helpers/start-app';
 
 var App;
 

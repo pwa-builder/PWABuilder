@@ -1,25 +1,50 @@
-<header class="step-header">
-  <h2 class="title">Provide a URL or manifest</h2>
-</header>
-<div class="form-body">
-  <p class="instructions">Provide your URL or upload your manifest and we'll help fill in the gaps if there are any.</p>
-  {{#if message}}<p class="instructions alert">{{fa-icon "exclamation"}} {{message}}</p>{{/if}}
-  <div class="form-item url">
-    <label>URL</label>
-    {{input name="siteUrl" type="url" value=siteUrl placeholder="Enter a URL" action="startComplete"}}
-  </div>
-  <span>&nbsp;or</span>
-  <div class="form-item manifest">
-    <label>Upload Manifest</label>
-    <input class="upload-file" placeholder="Choose File" disabled="disabled" value="{{fileName}}" />
-    <div class="fileUpload btn">
-      <span>Browse</span>
-      {{file-input class="upload" action="uploadFile"}}
+<div class="pure-g pwa-generator-padded">
+  <div class="pure-u-1 pure-u-md-3-5 pure-u-lg-2-5">
+    <header class="pwa-generator-header pwa-generator-header--minimal">
+      <h2 class="pwa-generator-title">Provide a URL</h2>
+      <h4 class="pwa-generator-subtitle">
+        Provide your URL and we'll help fill in the gaps if there are any.
+      </h4>
+    </header>
+
+    <div class="pwa-generator-form">
+      <div class="pwa-generator-field">
+        <label class="pwa-generator-label">URL</label>
+        {{input class='pwa-generator-input' name="siteUrl" type="url" value=siteUrl placeholder="Enter a URL" action="startComplete"}}
+      </div>
+
+      <div class="pure-g l-breath">
+        <div class="pwa-generator-wrapper pure-u-3-5">
+            <button {{bind-attr class=":get-started :pwa-button :isEnabled :next-step"}}
+                  {{action 'startComplete'}}>
+                    Get Started
+                    {{#if isSaving}}
+                      <span class="pwa-generator-loading">
+                        {{fa-icon "circle-o-notch fa-spin"}}
+                      </span>
+                    {{/if}}
+          </button>
+        </div>
+
+        <div class="pure-u-2-5">
+          {{#if message}}
+            <p class="pwa-generator-error">{{fa-icon "exclamation"}} {{message}}</p>
+          {{/if}}
+        </div>
+
+        {{#if startFailure}}
+        <div class="pure-u-1">
+          <p class="pwa-generator-error">{{fa-icon "exclamation"}} {{startFailure}}</p>
+        </div>
+        {{/if}}
+        <div class="pwa-generator-wrapper pure-u-1">
+          <button {{action 'goToSecondStep'}}
+                  class="pwa-button pwa-button--simple">
+                  Skip to Build Service Worker
+          </button>
+        </div>
+      </div>
+      <p class="l-narrow">If you already have the Manifest and want to download the service worker source code you can skip the first step.</p>
     </div>
-  </div>
-  <div class="button-holder">
-    <button {{bind-attr class=":get-started :btn :isEnabled :next-step"}} {{action "startComplete"}}>
-      Get Started {{#if isSaving}}{{fa-icon "circle-o-notch fa-spin"}}{{/if}}
-    </button>
   </div>
 </div>

@@ -1,0 +1,125 @@
+@import '../variables';
+
+@mixin button-shadow($rad) {
+    box-shadow: 0 $rad 2 * $rad 0 rgba($color-background-darkest, .2);
+    transition: all $animation-speed-default $animation-ease-default;
+}
+
+@mixin button-brand() {
+    color: $color-foreground-brighter;
+    background-color: $color-complementary;
+
+    &:hover {
+        background-color:  $color-complementary-bright;
+    }
+
+    &:active {
+        background-color: $color-complementary;
+    }
+}
+
+.pwa-button {
+    $button-pad: .75rem;
+    $shadow: 2px;
+
+    @include button-shadow($shadow);
+    @include button-brand();
+
+    border-radius: .5rem;
+    cursor: pointer;
+    display: inline-block;
+    font-family: 'Bitter';
+    font-size: $font-size-l;
+    overflow: hidden;
+    padding: $button-pad 3rem;
+    text-align: center;
+
+    &:hover {
+        @include button-shadow($shadow * 2);
+    }
+
+    &:active {
+        @include button-shadow($shadow);
+    }
+
+    &:focus {
+        outline: 0;
+    }
+
+    @media screen and (max-width: $media-screen-l) {
+        font-size: $font-size-l * .9;
+        padding: $button-pad 1rem;
+    }
+
+    &--simple {
+        background-color: $color-background-semidark;
+        font-size: $font-size-m;
+
+        &:hover {
+            background-color: lighten($color-background-semidark, 5%);
+        }
+
+        &:active {
+            background-color: $color-background-semidark;
+        }
+
+        @media screen and (max-width: $media-screen-xxl) {
+            padding: $button-pad 1.5rem;
+        }
+    }
+
+    // To use with simple
+    &--brand {
+        @include button-brand();
+    }
+
+    &--warning {
+        color: $color-foreground-brighter;
+        background-color: $color-error;
+
+        &:hover {
+            background-color:  $color-error-bright;
+        }
+
+        &:active {
+            background-color: $color-error;
+        }
+    }
+
+    &--text {
+        background-color: transparent;
+        border-bottom: solid .15rem $color-complementary;
+        border-radius: 0;
+        box-shadow: none;
+        color: $color-complementary;
+        font-size: $font-size-m;
+        padding: .3rem .8rem;
+
+        &:hover {
+            background-color: transparent;
+            color: $color-complementary-bright;
+            box-shadow: none;
+        }
+
+        &:active {
+            background-color: transparent;
+            color: $color-complementary;
+            box-shadow: none;
+        }
+
+        &:disabled {
+            opacity: .5;
+        }
+    }
+
+    &--right {
+        float: right;
+        margin-right: 10%;
+    }
+
+    &--header {
+        float: right;
+        margin-right: 1%;
+        margin-top: -.5rem;
+    }
+}

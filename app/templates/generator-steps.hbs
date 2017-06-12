@@ -1,48 +1,228 @@
-<ol class="generator-step-list">
-  {{#generator-step step="1" nextStep="2" stepTitle="Site Data" isShowingBody=steps.step1.isCurrent data=model action="updateStep"}}
-  <p class="instructions">Here are the values we picked up from your site. Update or add any details below.</p>
-  <div class="form-item">
-    <label>Name</label>
-    {{input value=model.manifest.name focus-out="updateModel"}}
-  </div>
-  <div class="form-item">
-    <label>Short Name</label>
-    {{input name="short_name" value=model.manifest.short_name focus-out="updateModel"}}
-  </div>
-  <div class="form-item logo-upload">
-    <label>Icon Url</label>
-    {{logo-upload action="updateLogos" logos=model.manifest.icons baseUrl=model.manifest.start_url}}
-  </div>
-  <div class="form-item">
-    <label>Scope</label>
-    {{input value=model.manifest.scope focus-out="updateModel"}}
-  </div>
-  <div class="form-item">
-    <label>Start Url</label>
-    {{input value=model.manifest.start_url focus-out="updateModel"}}
-  </div>
-  <div class="form-item">
-    <label>Display</label>
-    {{generator-select content=model.display.names modelProperty="manifest.display" value=model.manifest.display}}
-  </div>
-  <div class="form-item">
-    <label>Orientation</label>
-    {{generator-select content=model.orientation.names modelProperty="manifest.orientation" value=model.manifest.orientation}}
-  </div>
-  {{/generator-step}}
-  {{#generator-step step="2" nextStep="3" stepTitle="Platforms" showCustomButton=true customButtonText="Select/Clear All" isShowingBody=steps.step2.isCurrent data=model action="updateStep" customAction="updateSelection" }}
-  <p class="instructions">Select the platforms to generate.</p>
-  {{#each platform in model.platforms}}
-  <div class="form-item checkbox">
-    <label>{{platform.name}}</label>
-    {{input type="checkbox" checked=platform.isSelected focus-out="updateModel" }}     
-  </div>
+<ul class="pwa-generator-tabs">
+  {{#each step in steps}}
+    {{#generator-tab step=step.step}}
+      <a class="pwa-generator-tab_action">{{step.stepTitle}}</a>
+    {{/generator-tab}}
   {{/each}}
+</ul>
+<ul class="generator-step-list">
+  {{#generator-step step="1" nextStep="2" stepTitle="Generate Manifest" data=model action="updateStep" showNextStep=startComplete}}
+  {{#if startComplete}}
+  <div class="pwa-generator-semipadded pure-g">
+    <div class="pwa-generator-form pure-u-1 pure-u-md-1-2">
+      <h4  class="pwa-generator-subtitle">
+        Here are the values we picked up from your site.
+      </h4>
+      <h4  class="pwa-generator-subtitle pwa-generator-subtitle--last">
+        Update or add any details below.
+      </h4>
+      <div class="pwa-generator-field">
+        <label class="pwa-generator-label">Name <a class="pwa-generator-link" href="https://www.w3.org/TR/appmanifest/#name-member" target="_blank">[?]</a></label>
+        {{input class='pwa-generator-input' value=model.manifest.name focus-out="updateModel"}}
+      </div>
+      <div class="pwa-generator-field">
+        <label class="pwa-generator-label">Short Name <a class="pwa-generator-link" href="https://www.w3.org/TR/appmanifest/#short_name-member" target="_blank">[?]</a></label>
+        {{input class='pwa-generator-input' name="short_name" value=model.manifest.short_name focus-out="updateModel"}}
+      </div>
+      <div class="pwa-generator-field">
+        <label class="pwa-generator-label">Description <a class="pwa-generator-link" href="https://www.w3.org/TR/appmanifest/#description-member" target="_blank">[?]</a></label>
+        {{input class='pwa-generator-input' name="description" value=model.manifest.description focus-out="updateModel"}}
+      </div>
+      <div class="pwa-generator-field logo-upload">
+        <label class="pwa-generator-label">Icon Url <a class="pwa-generator-link" href="https://www.w3.org/TR/appmanifest/#icons-member" target="_blank">[?]</a></label>
+        {{logo-upload action="updateLogos" generateMissingImageAction="addUploadedImage" deleteAssetsAction="deleteAssets" logos=model.manifest.icons baseUrl=model.manifest.start_url hasAssets=model.hasAssets}}
+      </div>
+      <div class="pwa-generator-field">
+        <label class="pwa-generator-label">Scope <a class="pwa-generator-link" href="https://www.w3.org/TR/appmanifest/#scope-member" target="_blank">[?]</a></label>
+        {{input class='pwa-generator-input' value=model.manifest.scope focus-out="updateModel"}}
+      </div>
+      <div class="pwa-generator-field">
+        <label class="pwa-generator-label">Start Url <a class="pwa-generator-link" href="https://www.w3.org/TR/appmanifest/#start_url-member" target="_blank">[?]</a></label>
+        {{input class='pwa-generator-input' value=model.manifest.start_url focus-out="updateModel"}}
+      </div>
+      <div class="pwa-generator-field">
+        <label class="pwa-generator-label">Display <a class="pwa-generator-link" href="https://www.w3.org/TR/appmanifest/#display-member" target="_blank">[?]</a></label>
+        {{generator-select class='pwa-generator-input pwa-generator-input--select' content=model.display.names modelProperty="manifest.display" value=model.manifest.display}}
+      </div>
+      <div class="pwa-generator-field">
+        <label class="pwa-generator-label">Orientation <a class="pwa-generator-link" href="https://www.w3.org/TR/appmanifest/#orientation-member" target="_blank">[?]</a></label>
+        {{generator-select class='pwa-generator-input pwa-generator-input--select' content=model.orientation.names modelProperty="manifest.orientation" value=model.manifest.orientation}}
+      </div>
+      <div class="pwa-generator-field">
+        <label class="pwa-generator-label">Language <a class="pwa-generator-link" href="https://www.w3.org/TR/appmanifest/#lang-member" target="_blank">[?]</a></label>
+        {{generator-select class='pwa-generator-input pwa-generator-input--select' content=model.languages
+                optionLabelPath="content.name"
+                optionValuePath="content.code"
+                modelProperty="manifest.lang"
+                value=model.manifest.lang
+                selectionProperty="code"
+                }}
+      </div>
+      {{#background-color color=model.manifest.background_color action="updateModelProperty"}} {{/background-color}}
+      <label class="pwa-generator-toggle">
+        <input type="checkbox" class="pwa-generator-togglecheck">
+        <h4 class="pwa-generator-subtitle pwa-generator-subtitle--toggleable" {{action "toggleRelatedApps" preventDefault=false}}>Specify related applications to be added to the manifest.</h4>
+      </label>
+      {{#if showRelatedApps}}
+      <div class="pwa-generator-field">
+        {{#related-application-list action="updateModelProperty" preferRelatedApplications=model.manifest.prefer_related_applications relatedApplications=model.manifest.related_applications }}{{/related-application-list}}
+      </div>
+      {{/if}}
+
+      <label class="pwa-generator-toggle">
+        <input type="checkbox" class="pwa-generator-togglecheck">
+        <h4 class="pwa-generator-subtitle pwa-generator-subtitle--toggleable" {{action "toggleCustomMembers" preventDefault=false}}>Specify custom members to be added to the manifest.</h4>
+      </label>
+      {{#if showCustomMembers}}
+      <div class="pwa-generator-field">
+        {{#member-list action="manageMember" members=customMembers}}{{/member-list}}
+      </div>
+      {{/if}}
+    </div>
+    <div class="pure-u-1 pure-u-md-1-2 generator-section manifest manifest-holder" id="manifest_holder">
+      <header class="pwa-generator-header pwa-generator-header--sub">
+        W3C Manifest
+        <button class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" {{action "updateStep" "2"}}>Next step</button>
+      </header>
+      <div class="pwa-generator-code">
+        <div class="pwa-generator-header pwa-generator-header--rounded">
+          <div class="pwa-generator-content">
+              {{#skip-link class="pwa-button pwa-button--simple pwa-button--warning" anchor="#warnings_list"}}Warnings ({{model.warningsTotal}}){{/skip-link}}
+              {{#skip-link class="pwa-button pwa-button--simple" anchor="#suggestions_list"}}Suggestions ({{model.suggestionsTotal}}){{/skip-link}}
+              {{#download-archive class="pwa-generator-contentright" initialMessage="Download manifest" isBuilding=model.isBuilding.web buildFailed=model.buildFailed.web action="buildArchive" platform="web" download="downloadArchive" archiveLink=model.archiveLink isEnabled=model.hasNoErrors}}{{/download-archive}}
+          </div>
+        </div>
+        {{partial "generator-preview"}}
+      </div>
+    </div>
+  </div>
+  {{else}}
+    {{#generator-start isSaving=model.isSaving startFailure=model.startFailure action="startComplete" class="generator-start step"}}{{/generator-start}}
+  {{/if}}
   {{/generator-step}}
-  {{#generator-step step="3" showNextStep=false stepTitle="Custom Values" isShowingBody=steps.step3.isCurrent data=model action="updateStep" }}
-  <p class="instructions">Specify custom members to be added to the manifest.</p>
-  <div class="form-item">
-    {{#member-list action="manageMember" members=customMembers}}{{/member-list}}
+
+  {{#generator-step step="2" nextStep="3" stepTitle="Build Service Worker" data=model action="updateStep" showNextStep=startComplete}}
+  <div class="pwa-generator-semipadded pure-g">
+      <div class="pure-u-1 pure-u-md-1-2 generator-section service-workers">
+        <div class="pwa-generator-subtitle">Select the service worker functionality for your app.</div>
+        {{#if model.siteRegistersServiceWorker }}
+          <p class="pwa-generator-subtitle--complementary">Your site already registers a service worker; you can still include additional functionality from the list below.</p>
+        {{/if}}
+        {{#each worker in model.serviceWorkers}}
+          <div class="pwa-generator-field pwa-generator-field--padded checkbox">
+            <label class="pwa-generator-label">
+              {{generator-radio-button checked=model.selectedServiceWorker value=worker.id disabled=worker.isDisabled }}
+              {{worker.name}}
+            </label>
+
+            <span class="pwa-generator-description">{{worker.description}}</span>
+          </div>
+        {{/each}}
+
+        <div class="pwa-generator-buttons">
+          {{#download-archive initialMessage="Download service worker" isBuilding=model.isBuilding.serviceWorker buildFailed=model.buildFailed.serviceWorker action="downloadServiceWorker" platform="serviceWorker" isEnabled=model.hasServiceWorkersSelected}}{{/download-archive}}
+        </div>
+
+        <p>You can also download the source code directly from <a class="pwa-generator-link" href="https://github.com/manifoldjs/serviceworkers" target="_blank">GitHub</a>.</p>
+      </div>
+
+    <div class="pure-u-1 pure-u-md-1-2 generator-section manifest manifest-holder">
+      <header class="pwa-generator-header pwa-generator-header--sub">
+        Code for website
+        <button class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" {{action "updateStep" "3"}}>Next step</button>
+      </header>
+      <div class="pwa-generator-code code-for-website">
+        {{formatted-manifest data=formattedServiceWorkerWebsiteCode}}
+      </div>
+
+      <header class="pwa-generator-header pwa-generator-header--sub pwa-generator-header--subfitted">
+            <div class="pure-u-1 pure-u-md-1-2">
+              Service worker code
+            </div>
+      </header>
+      <div class="pwa-generator-code service-worker-code">
+        {{formatted-manifest data=formattedServiceWorkerCode}}
+      </div>
+    </div>
   </div>
   {{/generator-step}}
-</ol>
+
+  {{#generator-step step="3" stepTitle="Publish PWA" showNextStep=false data=model action="updateStep" }}
+  {{#if startComplete}}
+    {{#if model.hasNoErrors}}
+      <section class="pwa-infobox pwa-infobox--transparent l-pad l-pad--thin">
+
+        <div class="pure-g">
+          <div class="pure-u-1">
+            <h2 class="pwa-infobox-title pwa-infobox-title--centered">Publish PWA</h2>
+          </div>
+
+          <div class="pure-u-1 pure-u-md-1-2">
+            <div class="pwa-infobox-box pwa-infobox-box--flat">
+              <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">Web</h4>
+              <p class="pwa-generator-description pwa-generator-description--fixed">
+                Download these files and add them to your website.  Different browsers will detect your Progressive Web App in different ways, but the manifest and service workers are required for each of them.
+              </p>
+              {{#download-archive isColored=true class="button-holder download-archive" initialMessage="Download" isBuilding=model.isBuilding.web buildFailed=model.buildFailed.web action="buildArchive" platform="web" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+            </div>
+          </div>
+
+          <div class="pure-u-1 pure-u-md-1-2">
+            <div class="pwa-infobox-box pwa-infobox-box--flat">
+              <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">Windows</h4>
+              <p class="pwa-generator-description pwa-generator-description--fixed">
+                Windows 10 PWA support is still in Beta, so some features like service workers will not work on all user machines.  We invite you to join our beta PWA program.  Your PWA can be created and app listing generated from the below one step publishing button.
+              </p>
+              {{#publish-package isEnabled=model.isHTTPS startOver="startOver" isColored=true initialMessage="Publish 1-step" isBuilding=model.isBuilding.Win10Publish buildFailed=model.buildFailed.Win10Publish publishSuccedded=model.publishSuccedded action="publishWin10Package" publishName=model.name publishEmail=model.email}}{{/publish-package}}
+              {{#download-archive class="button-holder download-archive" initialMessage="Download" isBuilding=model.isBuilding.windows10 buildFailed=model.buildFailed.windows10 action="buildArchive" platform="windows10" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+            </div>
+          </div>
+          <div class="pure-u-1">
+            <div class="pwa-infobox-box pwa-infobox-box--flat">
+              <div class="pwa-infobox-padded">
+                <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">Android</h4>
+                <p class="pwa-generator-description pwa-generator-description--fixed pwa-generator-description--context">
+                  PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.
+                </p>
+                <div>
+                  {{#download-archive initialMessage="Download" isBuilding=model.isBuilding.android buildFailed=model.buildFailed.android action="buildArchive" platform="android" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+                </div>
+              </div>
+              <h2 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">iOS Polyfill</h2>
+              {{#download-archive initialMessage="Download" isBuilding=model.isBuilding.ios buildFailed=model.buildFailed.ios action="buildArchive" platform="ios" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+            </div>
+          </div>
+        </div>
+      </section>
+    {{else}}
+      <div class="pwa-generator-buttons pwa-generator-buttons--centered">
+        <p class="instructions">There are some validation errors in the manifest. Please fix them and try again.</p>
+        <button class="pwa-button pwa-button--simple" {{action "updateStep" "1"}}>Go to first step</button>
+      </div>
+    {{/if}}
+  {{else}}
+    <div class="pwa-generator-buttons pwa-generator-buttons--centered">
+      <p class="instructions">You need to create your manifest first.</p>
+      <button class="pwa-button pwa-button--simple" {{action "updateStep" "1"}}>Go to first step</button>
+     </div>
+  {{/if}}
+  {{/generator-step}}
+</ul>
+
+{{#if startComplete}}
+<div class="step">
+  <div class="pwa-generator-buttons pwa-generator-buttons--centered">
+      <button class="pwa-button pwa-button--simple" {{action "startOver"}}>Start Over</button>
+    {{#if model.buildFailed}}
+      <p class="pwa-generator-error">
+        <h5>There were some errors while trying to build your project</h5>
+        {{#each error in model.buildErrors}}
+          {{#if error}}
+            <p>{{error}}</p>
+          {{/if}}
+        {{/each}}
+      </p>
+    {{/if}}
+  </div>
+</div>
+{{/if}}

@@ -1,8 +1,8 @@
-<h6 class="issues-subheading">{{member.member}}</h6>
+<h4 class="pwa-generator-subtitle pwa-generator-subtitle--complementary">{{member.member}}</h4>
 <ul>
 {{#each issue in member.issues}}
   <li>
-    <p><strong>{{code-format issue.code}}:</strong> {{issue.description}}. Platforms affected: {{issue.platform}}.</p>
+    <p class="pwa-generator-issue"><strong class="pwa-generator-topic">{{code-format issue.code}}:</strong> {{issue.description}}. Platforms affected: {{issue.platform}}.</p>
   </li>
 {{/each}}
 </ul>
