@@ -153,6 +153,7 @@ export default Ember.Object.extend({
       self.set('isSaving', false);
     });
   },
+  // Create downloadable Archive for user
   build: function(platform){
     var self = this,
       platformsList = [];
@@ -187,6 +188,34 @@ export default Ember.Object.extend({
       }
     });
   },
+  buildAppX: function(){
+    var self = this;
+
+    this.set('isBuilding.appX', true);
+    this.set('buildFailed.appX',false);
+    this.buildErrors.clear();
+
+    ajax({
+      url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/appx',
+      type: 'POST',
+      //data: JSON.stringify({ platforms: platformsList, dirSuffix: platform }),
+      dataType: 'json',
+      contentType: 'application/json; charset=utf-8'
+    }).then(function(result){
+      self.set('appXLink', result.archive);
+      self.set('isBuilding.appX', false);
+      self.set('buildFailed.appX', false);
+      self.buildErrors.clear();
+    }).catch(function(err){
+      self.set('isBuilding.appX', false);
+      self.set('buildFailed.appX', true);
+      self.set('buildReady', false);
+      if(err.jqXHR.responseJSON){
+        self.buildErrors.addObject(err.jqXHR.responseJSON.error);
+      }
+    });
+  },
+  // Package and send to our DropBox location
   package: function(platform, options){
     var self = this;
 
