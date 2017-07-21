@@ -42,10 +42,10 @@ export default Ember.Route.extend({
       var model = this.modelFor('generator');
       model.build(platform);
     },
-    buildAppX: function() {
+    buildAppX: function(name, publisheridentity, packagename) {
       this.ga('send', 'event', 'item', 'click', 'generator-build-trigger');
       var model = this.modelFor('generator');
-      model.buildAppX();
+      model.buildAppX(name, publisheridentity, packagename);
     },
     downloadArchive: function(archiveLink, platform){
       var model = this.modelFor('generator');

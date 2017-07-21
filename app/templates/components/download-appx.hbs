@@ -16,13 +16,16 @@
       </div>
     <div class="pwa-generator-space_top">
       <h5 class="pwa-modal-title pwa-modal-title--normal">
-        Publish Package
+        Generate AppX
       </h5>
     </div>
     <div class="pwa-modal-body">
       <div class="pwa-generator-container">
         <div class="pwa-generator-box">
-          <label class="pwa-generator-label">Name or Company Name</label>
+          <label class="pwa-generator-label">Enter your <a href="https://developer.microsoft.com/en-us/windows" target="_blank">Dev Center</a> details below in order to generate an AppX package you can upload to the store.<br/></label>
+        </div>
+        <div class="pwa-generator-box">
+          <label class="pwa-generator-label">Publisher Display Name</label>
         </div>
           {{input class="pwa-generator-input pwa-generator-input--largest" value=name placeholder="Enter a Name or Company Name"}}
         {{#if missingName}}
@@ -32,14 +35,26 @@
         {{/if}}
 
         <div class="pwa-generator-box form-item">
-          <label class="pwa-generator-label">E-mail</label>
+          <label class="pwa-generator-label">Publisher Identity</label>
+          <label class="pwa-generator-label">Found under Account Settings, Windows Publisher ID.</label>
         </div>
-          {{input class="pwa-generator-input pwa-generator-input--largest" value=email placeholder="Enter a valid E-mail address"}}
-        {{#if invalidEmail}}
+          {{input class="pwa-generator-input pwa-generator-input--largest" value=publisher placeholder="CN="}}
+        {{#if missingPublisher}}
           <p class="pwa-generator-error">
-              <i class="fa fa-exclamation"></i> Please, provide a valid E-mail address.
+              <i class="fa fa-exclamation"></i> Please, provide a publisher Identity.
           </p>
         {{/if}}
+
+        <div class="pwa-generator-box form-item">
+          <label class="pwa-generator-label">Package Family Name</label>
+        </div>
+          {{input class="pwa-generator-input pwa-generator-input--largest" value=package placeholder="Enter a valid Package Family Name"}}
+        {{#if missingPackage}}
+          <p class="pwa-generator-error">
+              <i class="fa fa-exclamation"></i> Please, provide a package family name.
+          </p>
+        {{/if}}
+
         <div class="pwa-generator-box_buttons">
           <button class="pwa-generator-space_right pwa-button pwa-button--simple pwa-button--brand" {{action "accept"}}>
             Submit
@@ -61,7 +76,7 @@
       </div>
     <div class="pwa-generator-space_top">
       <h5 class="pwa-modal-title pwa-modal-title--normal">
-        Unable to publish package
+        Unable to generate AppX
       </h5>
     </div>
     <div class="pwa-modal-body">
@@ -97,6 +112,11 @@
       <div class="pwa-generator-container">
         <div class="pwa-generator-box">
           <label class="pwa-generator-label">You'll receive a confirmation message once the publishing process is completed.</label>
+        </div>
+        <div class="pwa-generator-box_buttons">
+          <button class="pwa-button pwa-button--simple pwa-button--brand" {{action "download"}}>
+            Download
+          </button>
         </div>
         <div class="pwa-generator-box_buttons">
           <button class="pwa-button pwa-button--simple pwa-button--brand" {{action "close"}}>

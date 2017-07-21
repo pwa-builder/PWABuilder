@@ -175,7 +175,7 @@
               </p>
               {{#publish-package isEnabled=model.isHTTPS startOver="startOver" isColored=true initialMessage="Publish 1-step" isBuilding=model.isBuilding.Win10Publish buildFailed=model.buildFailed.Win10Publish publishSuccedded=model.publishSuccedded action="publishWin10Package" publishName=model.name publishEmail=model.email}}{{/publish-package}}
               {{#download-archive class="button-holder download-archive" initialMessage="Download" isBuilding=model.isBuilding.windows10 buildFailed=model.buildFailed.windows10 action="buildArchive" platform="windows10" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
-              {{#download-archive class="button-holder download-archive" initialMessage="Download AppX" isBuilding=model.isBuilding.appX buildFailed=model.buildFailed.appX action="buildAppX" download="downloadArchive" archiveLink=model.appXLink}}{{/download-archive}}
+              {{#download-appx isEnabled=true startOver="startOver" isColored=true initialMessage="Download AppX" isBuilding=model.isBuilding.appX buildFailed=model.buildFailed.appX action="buildAppX" download="downloadArchive" archiveLink=model.appXLink}}{{/download-appx}}
             </div>
           </div>
           <div class="pure-u-1">

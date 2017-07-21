@@ -188,7 +188,7 @@ export default Ember.Object.extend({
       }
     });
   },
-  buildAppX: function(){
+  buildAppX: function(name, publisheridentity, packagename){
     var self = this;
 
     this.set('isBuilding.appX', true);
@@ -198,7 +198,7 @@ export default Ember.Object.extend({
     ajax({
       url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/appx',
       type: 'POST',
-      //data: JSON.stringify({ platforms: platformsList, dirSuffix: platform }),
+      data: JSON.stringify({ name: name, publisher: publisheridentity, package: packagename }),
       dataType: 'json',
       contentType: 'application/json; charset=utf-8'
     }).then(function(result){
