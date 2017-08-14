@@ -5,6 +5,9 @@ export default Ember.Route.extend({
     generator: function () {
       this.transitionTo('generator');
     }
+  },
+    beforeModel(/* transition */) {
+    this.transitionTo('generator'); // Implicitly aborts the on-going transition.
   }
 });
 

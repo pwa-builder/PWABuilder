@@ -1,0 +1,53 @@
+<div class="pwa-generator-field">
+    <label class="pwa-generator-label">Platform <a class="pwa-generator-link" href="https://www.w3.org/TR/appmanifest/#platform-member" target="_blank">[?]</a></label>
+    {{input class="pwa-generator-input" name="relatedApp_platform" value=relatedApp_platform}}
+</div>
+<div class="pwa-generator-field">
+    <label class="pwa-generator-label">URL <a class="pwa-generator-link" href="https://www.w3.org/TR/appmanifest/#url-member" target="_blank">[?]</a></label>
+    {{input class="pwa-generator-input" name="relatedApp_url" value=relatedApp_url}}
+</div>
+<div class="pwa-generator-field">
+    <label class="pwa-generator-label">Id <a class="pwa-generator-link" href="https://www.w3.org/TR/appmanifest/#id-member" target="_blank">[?]</a></label>
+    {{input class="pwa-generator-input" name="relatedApp_id" value=relatedApp_id}}
+</div>
+
+<div class="button-holder">
+    <button class="pwa-button pwa-button--text pwa-button--right" {{action 'addRelatedApplication'}}>
+        Add Related Application
+    </button>
+</div>
+
+<div class="pwa-generator-field pwa-generator-field--padded"></div>
+
+{{#if showAlert}}
+<p class="pwa-generator-error">
+    <i class="fa fa-exclamation"></i> {{memberAlert}}
+</p>
+{{/if}}
+
+{{#if relatedApplications}}
+    <div class="pure-g pwa-generator-table">
+        <div class="pure-u-2-5 pwa-generator-tableh">Platform</div>
+        <div class="pure-u-2-5 pwa-generator-tableh">URL</div>
+        <div class="pure-u-1-5"></div>
+
+        {{#each app in relatedApplications}}
+            <div class="pure-u-2-5 pwa-generator-tablec">
+                {{app.platform}}
+            </div>
+            <div class="pure-u-2-5 pwa-generator-tablec">
+                {{app.url}}
+            </div>
+            <div class="pure-u-1-5 pwa-generator-tablec pwa-generator-tablec--right">
+                <span class="pwa-generator-close" {{action 'removeRelatedApplication' app}}>{{fa-icon "times"}}</span>
+            </div>
+        {{/each}}
+    </div>
+{{/if}}
+
+<div class="pwa-generator-field">
+    <label class="pwa-generator-label">
+        {{generator-checkbox checked=preferRelatedApplications action="updatepreferRelatedApplications" }}
+        Prefer related applications
+    </label>
+</div>

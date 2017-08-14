@@ -1,0 +1,111 @@
+<p>
+  <button class="pwa-button pwa-button--simple {{if isColored 'pwa-button--brand'}} {{if isEnabled 'isEnabled'}}" {{action "handleClick"}}>
+    {{linkMessage}}
+    {{#if isBuilding}}
+      <span class="pwa-generator-loading">
+        {{fa-icon "circle-o-notch fa-spin"}}
+      </span>
+    {{/if}}
+  </button>
+</p>
+{{#if showDialog}}
+<div class="pwa-modal">
+  <div class="pwa-modal-box">
+     <div class="pure-u-1-1 pwa-modal-tablec">
+        <span class="pwa-generator-close" {{action 'close'}}>{{fa-icon "times"}}</span>
+      </div>
+    <div class="pwa-generator-space_top">
+      <h5 class="pwa-modal-title pwa-modal-title--normal">
+        Publish Package
+      </h5>
+    </div>
+    <div class="pwa-modal-body">
+      <div class="pwa-generator-container">
+        <div class="pwa-generator-box">
+          <label class="pwa-generator-label">Name or Company Name</label>
+        </div>
+          {{input class="pwa-generator-input pwa-generator-input--largest" value=name placeholder="Enter a Name or Company Name"}}
+        {{#if missingName}}
+          <p class="pwa-generator-error">
+              <i class="fa fa-exclamation"></i> Please, provide the name or company name.
+          </p>
+        {{/if}}
+
+        <div class="pwa-generator-box form-item">
+          <label class="pwa-generator-label">E-mail</label>
+        </div>
+          {{input class="pwa-generator-input pwa-generator-input--largest" value=email placeholder="Enter a valid E-mail address"}}
+        {{#if invalidEmail}}
+          <p class="pwa-generator-error">
+              <i class="fa fa-exclamation"></i> Please, provide a valid E-mail address.
+          </p>
+        {{/if}}
+        <div class="pwa-generator-box_buttons">
+          <button class="pwa-generator-space_right pwa-button pwa-button--simple pwa-button--brand" {{action "accept"}}>
+            Submit
+          </button>
+          <button class="pwa-button pwa-button--simple" {{action "close"}}>
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{/if}}
+{{#if showError}}
+<div class="pwa-modal">
+  <div class="pwa-modal-box error">
+     <div class="pure-u-1-1 pwa-modal-tablec">
+        <span class="pwa-generator-close" {{action 'close'}}>{{fa-icon "times"}}</span>
+      </div>
+    <div class="pwa-generator-space_top">
+      <h5 class="pwa-modal-title pwa-modal-title--normal">
+        Unable to publish package
+      </h5>
+    </div>
+    <div class="pwa-modal-body">
+      <div class="pwa-generator-container">
+        <div class="pwa-generator-box">
+          <label class="pwa-generator-label">Publish 1-step requires start URL to be secure. Make sure to provide an <strong>https</strong> URL before publishing your PWA.</label>
+        </div>
+        <div class="pwa-generator-box_buttons">
+          <button class="pwa-button pwa-button--simple" {{action "startOver"}}>
+            Start Over
+          </button>
+          <button class="pwa-button pwa-button--simple pwa-button--brand" {{action "close"}}>
+            Continue
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{/if}}
+{{#if publishSuccedded}}
+<div class="pwa-modal">
+  <div class="pwa-modal-box error">
+     <div class="pure-u-1-1 pwa-modal-tablec">
+        <span class="pwa-generator-close" {{action 'close'}}>{{fa-icon "times"}}</span>
+      </div>
+    <div class="pwa-generator-space_top">
+      <h5 class="pwa-modal-title pwa-modal-title--normal">
+        Package is being processed
+      </h5>
+    </div>
+    <div class="pwa-modal-body">
+      <div class="pwa-generator-container">
+        <div class="pwa-generator-box">
+          <label class="pwa-generator-label">You'll receive a comnfirmation message once the publishing process is completed.</label>
+        </div>
+        <div class="pwa-generator-box_buttons">
+          <button class="pwa-button pwa-button--simple pwa-button--brand" {{action "close"}}>
+            Ok
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{/if}}
+{{yield}}

@@ -1,57 +1,62 @@
-.l-full-width {
-	width:100%;
-	background-color: #fff;
-}
+.l {
+  &-pad {
+    padding: 8vh 25vw;
 
-.l-max-width {
-	max-width:1000px;
-	margin:0 auto;
-}
+    @media screen and (max-width: $media-screen-xxl) {
+        padding: 6vh 15vw;
+    }
 
-.pure-g > div, .pure-g > section {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-}
+    @media screen and (max-width: $media-screen-l) {
+        padding: 5vh 5vw;
+    }
 
-.l-box {
-    padding: 0 1em;
-}
+    &--top {
+      padding-left: inherit;
+      padding-right: inherit;
 
-.hp_logo {
-	width: 230px;
-	height: 380px;
-	margin: 0 5.313rem;
-}
+      @media screen and (max-width: $media-screen-xxl) {
+          padding-left: inherit;
+          padding-right: inherit;
+      }
 
-.hp_logo_body {
-	max-width: 381px;
-	max-height: 78px;
-	margin: 0 0 .25rem .125rem;
-}
+      @media screen and (max-width: $media-screen-l) {
+          padding-left: inherit;
+          padding-right: inherit;
+      }
+    }
 
-.l-top {
-	padding-top:2.85rem;
-}
+    &--thin {
+        padding: 0 15vw;
 
-.l-right {
-	padding-left:2em;
-}
+        @media screen and (max-width: $media-screen-xxl) {
+            padding: 0 7vw;
+        }
 
-.l-bottom {
-	padding-bottom:2.85rem;
-}
-
-.l-app-style.no-header {
-	height:calc(100% - 4.938rem - 3rem);
-}
-
-.l-app-style .page-intro {
-	margin-top:0;
-}
-
-@media screen and (min-width: 48em) {
-  .l-app-style {
-	  height:100%;
+        @media screen and (max-width: $media-screen-l) {
+            padding: 0 2vw;
+        }
+    }
   }
+
+  &-inline {
+      display: inline-block;
+  }
+
+  &-hidden {
+    display: none;
+  }
+
+  &-breath {
+      padding-top: 2rem;
+  }
+
+  &-narrow {
+      margin: 0;
+      padding: 0;
+  }
+}
+
+:not(pre) > code[class*="language-"], pre[class*="language-"] {
+    background: transparent !important;
+    box-shadow: none !important;
 }

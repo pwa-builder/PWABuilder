@@ -28,21 +28,40 @@ export default Ember.Route.extend({
         model.upload(file);
       }
     },
+    deleteAssets: function() {
+      var model = this.modelFor('generator');
+      model.set('assets', []);
+    },
     updateLogos: function(logos) {
       var model = this.modelFor('generator');
       model.set('manifest.icons',logos);
       model.save();
     },
-    buildArchive: function(){
+    buildArchive: function(platform){
       this.ga('send', 'event', 'item', 'click', 'generator-build-trigger');
       var model = this.modelFor('generator');
-      model.build();
+      model.build(platform);
     },
-    downloadArchive: function(archiveLink){
+    downloadArchive: function(archiveLink, platform){
       var model = this.modelFor('generator');
-      model.set('buildReady',true);
+      model.set('build' + platform + 'Ready',true);
       this.ga('send', 'event', 'item', 'click', 'generator-build-download');
       window.location.href = archiveLink;
+    },
+    publishWin10Package: function(publishName, publishEmail){
+      this.ga('send', 'event', 'item', 'click', 'generator-publishWindows10-trigger');
+      var model = this.modelFor('generator');
+      
+      var platform = 'windows10';
+      
+      var options = { 
+        DotWeb: false, 
+        AutoPublish: true, 
+        autoPublishName: publishName, 
+        autoPublishEmail: publishEmail
+      };
+      
+      model.package(platform, options);
     },
     updateModelProperty: function(name, value) {
       var model = this.modelFor('generator');
@@ -59,6 +78,27 @@ export default Ember.Route.extend({
       }
       model.save();
     },
+    manageRelatedApplications: function(action, relatedApp) {
+      var model = this.modelFor('generator');
+      var manifest = model.get('manifest');
+      if(action === 'add'){
+        if (!manifest.related_applications) {
+          manifest.related_applications = Ember.A();
+        }
+        manifest.related_applications.pushObject(relatedApp);
+      } else if (action === 'remove') {
+        var _relatedApp = manifest.related_applications.filter(function(item) {
+          return item.platform === relatedApp.platform && item.url === relatedApp.url && item.id === relatedApp.id;
+        });
+        if (_relatedApp) {
+          manifest.related_applications.removeObjects(_relatedApp);
+        }
+        if (manifest.related_applications.length === 0) {
+          delete manifest["related_applications"];
+        }
+      }
+      model.save();
+    },
     didTransition: function() {
       Ember.$('.application').addClass('l-app-style');
     },
@@ -68,6 +108,18 @@ export default Ember.Route.extend({
     },
     startOver: function(){
       this.refresh();
+    },
+    downloadServiceWorker: function() {
+      var model = this.modelFor('generator');
+      model.downloadServiceWorker();
+    },
+    getServiceWorkerCodePreview: function() {
+      var model = this.modelFor('generator');
+      model.getServiceWorkerCodePreview();
+    }, 
+    addUploadedImage: function(imageInfo, callback) {
+      var model = this.modelFor('generator');
+      model.generateMissingImages(imageInfo, callback);
     }
   }
 });

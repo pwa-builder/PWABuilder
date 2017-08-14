@@ -1,33 +1,35 @@
-<div class="form-group member-list">
-  <p class="instructions alert"><i class="fa fa-exclamation {{if showAlert 'show' 'hidden'}}"></i> {{memberAlert}}</p>
-  <div class="form-item">
-    <label for="member_name">Member Name</label>
-    {{input id="member_name" name="member_name" value=member_name}}
-  </div>
-  <div class="form-item">
-    <label>Member Value</label>
-    {{textarea id="member_value" name="member_value" value=member_value}}
-  </div>
-  <div class="button-holder">
-    <button {{action 'addMember'}}>Add Member&nbsp;&nbsp; {{fa-icon "plus"}}</button>
-  </div>
-{{#if members}}
-<table class="generator-members">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-  {{#each member in members}}
-    <tr>
-      <td>{{member.member_name}}</td>
-      <td><button {{action 'removeMember' member}}>{{fa-icon "times"}}</button></td>
-    </tr>
-  {{/each}}
-  </tbody>
-</table>
-{{/if}}
+<div class="pwa-generator-field">
+    <label class="pwa-generator-label">Member Name</label>
+    {{input class="pwa-generator-input" name="member_name" value=member_name}}
+</div>
+<div class="pwa-generator-field">
+    <label class="pwa-generator-label">Member Value</label>
+    {{input class="pwa-generator-input" name="member_value" value=member_value}}
 </div>
 
+<div class="button-holder">
+    <button class="pwa-button pwa-button--text pwa-button--right" {{action 'addMember'}}>
+        Add Member
+    </button>
+</div>
+
+<div class="pwa-generator-field pwa-generator-field--padded"></div>
+
+{{#if showAlert}}
+<p class="pwa-generator-error">
+    <i class="fa fa-exclamation"></i> {{memberAlert}}
+</p>
+{{/if}}
+
+{{#if members}}
+    <div class="pure-g pwa-generator-table">
+        {{#each member in members}}
+            <div class="pure-u-4-5 pwa-generator-tablec">
+                {{member.member_name}}
+            </div>
+            <div class="pure-u-1-5 pwa-generator-tablec pwa-generator-tablec--right">
+                <span class="pwa-generator-close" {{action 'removeMember' member}}>{{fa-icon "times"}}</span>
+            </div>
+        {{/each}}
+    </div>
+{{/if}}

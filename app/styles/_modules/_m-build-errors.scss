@@ -1,18 +1,18 @@
 .build-errors {
-  background: $primary-accent;
+  background: $color-brand;
   border-radius: 5px;
 
   h5 {
-    color: white;
-    padding: 0.5rem 1rem 0.5rem 0.5rem;
+    color: $color-foreground-brighter;
     font-size: 1rem;
     margin-bottom: 0.5rem;
+    padding: 0.5rem 1rem 0.5rem 0.5rem;
   }
 
   p {
-    padding: 0.5rem 1rem 1rem 0.5rem;
-    font-weight: bold;
+    color: $color-foreground-brighter;
     font-size: 1rem;
-    color: white;
+    font-weight: bold;
+    padding: 0.5rem 1rem 1rem 0.5rem;
   }
 }

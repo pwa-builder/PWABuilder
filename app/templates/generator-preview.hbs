@@ -1,31 +1,27 @@
 <section class="manifest-body">
   {{formatted-manifest data=formattedManifest}}
 </section>
+
 {{#if model.hasIssues}}
-<div id="issues_list" class="issues">
-  {{#if model.errors}}
-  <div id="errors_list">
-    <h5 class="issues-title issues-title-errors">Errors <span>({{model.errorsTotal}} {{pluralize-it "item" model.errorsTotal}})</span></h5>
-    {{#each member in model.errors}}
-    {{partial "issue-list"}}
-    {{/each}}
+  <div class="pwa-generator-messages pwa-generator-messages--code">
+
+    {{#if model.warnings}}
+    <div class="pwa-generator-message" id="warnings_list">
+      <h5 class="pwa-generator-subtitle">Warnings <span>({{model.warningsTotal}} {{pluralize-it "item" model.warningsTotal}})</span></h5>
+      {{#each member in model.warnings}}
+      {{partial "issue-list"}}
+      {{/each}}
+    </div>
+    {{/if}}
+
+    {{#if model.suggestions}}
+    <div class="pwa-generator-message" id="suggestions_list">
+      <h5 class="pwa-generator-subtitle">Suggestions <span>({{model.suggestionsTotal}} {{pluralize-it "item" model.suggestionsTotal}})</span></h5>
+      {{#each member in model.suggestions}}
+      {{partial "issue-list"}}
+      {{/each}}
+    </div>
+    {{/if}}
+
   </div>
-  {{/if}}
-  {{#if model.warnings}}
-  <div id="warnings_list">
-    <h5 class="issues-title issues-title-warnings">Warnings <span>({{model.warningsTotal}} {{pluralize-it "item" model.warningsTotal}})</span></h5>
-    {{#each member in model.warnings}}
-    {{partial "issue-list"}}
-    {{/each}}
-  </div>
-  {{/if}}
-  {{#if model.suggestions}}
-  <div id="suggestions_list">
-    <h5 class="issues-title issues-title-suggestions">Suggestions <span>({{model.suggestionsTotal}} {{pluralize-it "item" model.suggestionsTotal}})</span></h5>
-    {{#each member in model.suggestions}}
-    {{partial "issue-list"}}
-    {{/each}}
-  </div>
-  {{/if}}
-</div>
 {{/if}}

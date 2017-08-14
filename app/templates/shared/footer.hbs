@@ -1,43 +1,27 @@
-<footer id="footer" class="l-full-width">
-	<div class="l-max-width">
-		<div class="pure-g">
-			<div class="pure-u-1 pure-u-md-1-5">
-				<ul>
-					<li>{{#link-to 'generator'}}Generate{{/link-to}}</li>
-					<li>{{#link-to 'deploy'}}Deploy{{/link-to}}</li>
-					<li><a href="https://github.com/manifoldjs/manifoldJS/wiki" target="_blank">Documentation</a></li>
-				</ul>
-			</div>
-			<div class="pure-u-1 pure-u-md-2-5">
-				<ul>
-					<li>{{imagegenerator-link}}</li>
-					<li><a href="https://github.com/manifoldjs" target="_blank">Github</a></li>
-				</ul>
-			</div>
-			<div class="pure-u-1 pure-u-md-2-5">
-				<div class="social">
-					<a href="https://twitter.com/boyofgreen" target="_blank"><img class="logo_twitter" src="/assets/images/logo_twitter.svg"></a>
-					<a href="https://github.com/manifoldjs" target="_blank"><img class="logo_github" src="/assets/images/logo_github.svg"></a>
-					<a href="https://www.npmjs.com/package/manifoldjs" target="_blank"><img class="logo_npm" src="/assets/images/logo_npm.svg"></a>
-					<a href="http://stackoverflow.com/questions/tagged/manifoldjs" target="_blank"><img class="logo_stackoverflow" src="/assets/images/logo_stackoverflow.svg"></a>
-				</div>
-			</div>
-			<div class="pure-u-1 pure-u-md-1-1 copyright">
-				&copy; {{current-year}} ManifoldJS. All rights reserved. <span class="divider">|</span> {{#link-to "license"}}License{{/link-to}}
-			</div>
-		</div>
-		<div class="pure-g simple-content">
-			<div class="pure-u-1 pure-u-md-1-2 copyright">
-				&copy; {{current-year}} ManifoldJS. All rights reserved. <span class="divider">|</span> {{#link-to "license"}}License{{/link-to}}
-			</div>
-			<div class="pure-u-1 pure-u-md-1-2">
-				<div class="social">
-					<a href="https://twitter.com/boyofgreen" target="_blank"><img class="logo_twitter" src="/assets/images/logo_twitter.svg"></a>
-					<a href="https://github.com/manifoldjs" target="_blank"><img class="logo_github" src="/assets/images/logo_github.svg"></a>
-					<a href="https://www.npmjs.com/package/manifoldjs" target="_blank"><img class="logo_npm" src="/assets/images/logo_npm.svg"></a>
-					<a href="http://stackoverflow.com/questions/tagged/manifoldjs" target="_blank"><img class="logo_stackoverflow" src="/assets/images/logo_stackoverflow.svg"></a>
-				</div>
-			</div>
-		</div>
-	</div>
+<footer class="pwa-footer pure-g">
+  <div class="pure-u-1-2 pure-u-md-1-5">
+    {{#link-to 'generator' class='pwa-footer-action pwa-footer-action--block'}}Generate{{/link-to}}
+    <a class="pwa-footer-action pwa-footer-action--block" href="http://docs.pwabuilder.com/" target="_blank">Documentation</a>
+  </div>
+  <div class="pure-u-1-2 pure-u-md-1-5">
+    {{imagegenerator-link 'pwa-footer-action pwa-footer-action--block'}}
+    <a class="pwa-footer-action pwa-footer-action--block" href="https://github.com/manifoldjs" target="_blank">Github</a>
+  </div>
+  <div class="pwa-footer-social pure-u-1 pure-u-md-3-5">
+    <a class="pwa-footer-logo_action" href="https://twitter.com/boyofgreen" target="_blank">
+      <img class="pwa-footer-logo" src="/assets/images/logo_twitter.svg">
+    </a>
+    <a class="pwa-footer-logo_action" href="https://github.com/manifoldjs" target="_blank">
+      <img class="pwa-footer-logo" src="/assets/images/logo_github.svg">
+    </a>
+    <a class="pwa-footer-logo_action" href="https://www.npmjs.com/package/manifoldjs" target="_blank">
+      <img class="pwa-footer-logo pwa-footer-logo--big" src="/assets/images/logo_npm.svg">
+    </a>
+    <a class="pwa-footer-logo_action" href="http://stackoverflow.com/questions/tagged/manifoldjs" target="_blank">
+      <img class="pwa-footer-logo pwa-footer-logo--small" src="/assets/images/logo_stackoverflow.svg">
+    </a>
+  </div>
+  <div class="pure-u-1 pwa-footer-copy">
+    &copy; {{current-year}} ManifoldJS. All rights reserved. <span class="divider">|</span> <a href="https://github.com/manifoldjs/ManifoldJS#license" target="_blank" class="pwa-footer-action">License</a>
+  </div>
 </footer>

@@ -4,7 +4,10 @@ import Ember from 'ember';
 
 export default Ember.Component.extend({
 	didInsertElement: (function(){
-		Prism.highlightElement(this.$("code")[0]);
+		var codeElement = this.$("code")[0];
+		if(codeElement && codeElement.textContent && codeElement.textContent.length){
+			Prism.highlightElement(codeElement);
+		}
 	}),
 	tagName:'pre',
   	schedulePrism: (function(){

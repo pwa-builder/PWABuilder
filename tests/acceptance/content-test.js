@@ -3,7 +3,7 @@ import {
   module,
   test
 } from 'qunit';
-import startApp from 'manifoldjs-site/tests/helpers/start-app';
+import startApp from 'pwabuilder-site/tests/helpers/start-app';
 
 var App;
 

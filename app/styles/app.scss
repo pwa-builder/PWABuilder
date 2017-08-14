@@ -1,29 +1,34 @@
-@import 'normalize';
-@import 'pure-grid';
+// Vendor Styles
+@import '_vendor/normalize';
+@import '_vendor/pure-grid';
 
 //Base Styles
-@import '_base/_b-fonts';
-@import '_base/_b-colors';
-@import '_base/_b-elements';
+@import '_base/b-fonts';
+@import '_base/b-colors';
+@import '_base/b-elements';
+@import '_base/b-globals';
+
+//Component Styles
+@import '_components/c-button';
+@import '_components/c-modal';
 
 //Layout Styles
-@import '_layout/_l-header';
-@import '_layout/_l-footer';
-@import '_layout/_l-main';
+@import '_layout/l-header';
+@import '_layout/l-footer';
+@import '_layout/l-main';
 
 //Module Styles
-@import '_modules/_m-header-section';
-@import '_modules/_m-build-process';
-@import '_modules/_m-latest-version';
-@import '_modules/_m-more-info';
-@import '_modules/_m-whos-using';
-@import '_modules/_m-page-intro';
-@import '_modules/_m-usage-block';
-@import '_modules/_m-side-nav-block';
-@import '_modules/_m-generator';
-@import '_modules/_m-summary';
-@import '_modules/_m-notice-block';
-@import '_modules/_m-build-errors';
-
-@import '_layout/_l-mq';
-@import 'main';
+@import '_modules/m-hero';
+@import '_modules/m-infos';
+@import '_modules/m-infobox';
+@import '_modules/m-partners';
+@import '_modules/m-build-process';
+@import '_modules/m-more-info';
+@import '_modules/m-whos-using';
+@import '_modules/m-page-intro';
+@import '_modules/m-usage-block';
+@import '_modules/m-side-nav-block';
+@import '_modules/m-generator';
+@import '_modules/m-summary';
+@import '_modules/m-notice-block';
+@import '_modules/m-build-errors';
