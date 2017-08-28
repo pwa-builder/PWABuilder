@@ -6,6 +6,7 @@ import langConst from './languageConst';
 
 export default Ember.Object.extend({
   archiveLink: '',
+  appXLink: '',
   isBuilding: [],
   buildFailed: [],
   isSaving: false,
@@ -188,7 +189,7 @@ export default Ember.Object.extend({
       }
     });
   },
-  buildAppX: function(name, publisheridentity, packagename){
+  buildAppX: function(name, publisheridentity, packagename, version){
     var self = this;
 
     this.set('isBuilding.appX', true);
@@ -198,7 +199,7 @@ export default Ember.Object.extend({
     ajax({
       url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/appx',
       type: 'POST',
-      data: JSON.stringify({ name: name, publisher: publisheridentity, package: packagename }),
+      data: JSON.stringify({ name: name, publisher: publisheridentity, package: packagename, version: version }),
       dataType: 'json',
       contentType: 'application/json; charset=utf-8'
     }).then(function(result){

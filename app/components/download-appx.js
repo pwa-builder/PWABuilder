@@ -4,19 +4,23 @@ export default Ember.Component.extend({
   isEnabled: true,
   isBuilding: false,
   isNotBuilding: Ember.computed.not('isBuilding'),
-  initialMessage: 'Generate Package',
-  buildingMessage: 'Publishing Package&hellip;',
+  initialMessage: 'Generate AppX',
+  buildingMessage: 'Generating AppX&hellip;',
   failedMessage: 'Try Again?',
-  successMessage: 'Package Published!',
+  successMessage: 'Download AppX',
   tagName: 'span',
   showDialog: false,
   showError: false,
   name: '',
   publisher: '',
   package: '',
+  version: '',
   missingName: false,
   missingPublisher: false,
   missingPackage: false,
+  missingVersion: false,
+  archiveLink: '',
+  platform: 'appx',
   linkMessage: function() {
     var message = '';
     if(this.isBuilding){
@@ -25,16 +29,14 @@ export default Ember.Component.extend({
       message = this.failedMessage;
     } else if (this.publishSuccedded) {
         message = this.successMessage;
-        var that = this;
-        setTimeout(function() {
-          message = that.initialMessage;
-          that.notifyPropertyChange('isBuilding');
-        }, 4000);
     } else {
       message = this.initialMessage;
     }
     return new Ember.Handlebars.SafeString(message);
   }.property('isBuilding'),
+  triggerArchiveDownload: function() {
+    this.sendAction('download', this.archiveLink, this.platform);
+  }.observes('archiveLink'),
   actions: {
     handleClick: function(){
       if(this.isEnabled && !this.isBuilding) {
@@ -47,6 +49,7 @@ export default Ember.Component.extend({
       this.set('missingName', false);
       this.set('missingPublisher', false);
       this.set('missingPackage', false);
+      this.set('missingVersion', false);
       this.set('showDialog', false);
       this.set('showError', false);
       this.set('publishSuccedded', false);
@@ -57,18 +60,20 @@ export default Ember.Component.extend({
       this.set('missingName', this.name === '');
       this.set('missingPublisher', this.publisher === '');
       this.set('missingPackage', this.package === '');
+      this.set('missingVersion', this.version === '');
 
-      if (!this.missingName && !this.missingPublisher && !this.missingPackage) {
+      if (!this.missingName && !this.missingPublisher && !this.missingPackage && !this.missingVersion) {
         this.set('showDialog', false);
-        this.sendAction('action', this.name, this.publisher, this.package);
+        this.sendAction('action', this.name, this.publisher, this.package, this.version);
       }
     },
     startOver: function() {
       this.set('missingName', false);
       this.set('missingPublisher', false);
       this.set('missingPackage', false);
+      this.set('missingVersion', false);
       this.set('showError', false);
-      this.sendAction('startOver', this.name, this.publisher, this.package);
+      this.sendAction('startOver', this.name, this.publisher, this.package, this.version);
     }
   }
 });

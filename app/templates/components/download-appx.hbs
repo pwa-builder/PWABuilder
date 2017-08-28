@@ -55,6 +55,16 @@
           </p>
         {{/if}}
 
+        <div class="pwa-generator-box form-item">
+          <label class="pwa-generator-label">Version Number (E.g. 1.0.0.0)</label>
+        </div>
+          {{input class="pwa-generator-input pwa-generator-input--largest" value=version placeholder="Enter a Package Version Number"}}
+        {{#if missingVersion}}
+          <p class="pwa-generator-error">
+              <i class="fa fa-exclamation"></i> Please, provide a version number.
+          </p>
+        {{/if}}
+
         <div class="pwa-generator-box_buttons">
           <button class="pwa-generator-space_right pwa-button pwa-button--simple pwa-button--brand" {{action "accept"}}>
             Submit
