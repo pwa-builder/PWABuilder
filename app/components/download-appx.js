@@ -27,8 +27,6 @@ export default Ember.Component.extend({
       message = this.buildingMessage;
     } else if(this.buildFailed){
       message = this.failedMessage;
-    } else if (this.publishSuccedded) {
-        message = this.successMessage;
     } else {
       message = this.initialMessage;
     }
@@ -55,7 +53,6 @@ export default Ember.Component.extend({
       this.set('missingVersion', false);
       this.set('showDialog', false);
       this.set('showError', false);
-      this.set('publishSuccedded', false);
     },
     accept: function(){
       // TODO: More Client-Side Validation Here
