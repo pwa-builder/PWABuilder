@@ -40,12 +40,15 @@ export default Ember.Component.extend({
   actions: {
     handleClick: function(){
       if(this.isEnabled && !this.isBuilding) {
+        // Prevent page from scrolling, so inner-div can scroll instead.
+        Ember.$('body').addClass('stop-scroll');
         this.set('showDialog', true);
       } else if (!this.isEnabled) {
         this.set('showError', true);
       }
     },
     close: function() {
+      Ember.$('body').removeClass('stop-scroll');
       this.set('missingName', false);
       this.set('missingPublisher', false);
       this.set('missingPackage', false);
@@ -55,16 +58,18 @@ export default Ember.Component.extend({
       this.set('publishSuccedded', false);
     },
     accept: function(){
-      //var emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      //this.set('invalidEmail', !emailRegex.test(this.email));
+      // TODO: More Client-Side Validation Here
       this.set('missingName', this.name === '');
       this.set('missingPublisher', this.publisher === '');
       this.set('missingPackage', this.package === '');
       this.set('missingVersion', this.version === '');
 
+
       if (!this.missingName && !this.missingPublisher && !this.missingPackage && !this.missingVersion) {
+        Ember.$('body').removeClass('stop-scroll');
         this.set('showDialog', false);
         this.sendAction('action', this.name, this.publisher, this.package, this.version);
+        // TODO: Hook-in to error result and display other dialog properly
       }
     },
     startOver: function() {

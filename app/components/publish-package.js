@@ -36,12 +36,14 @@ export default Ember.Component.extend({
   actions: {
     handleClick: function(){
       if(this.isEnabled && !this.isBuilding) {
+        Ember.$('body').addClass('stop-scroll');
         this.set('showDialog', true);
       } else if (!this.isEnabled) {
         this.set('showError', true);
       }
     },
     close: function() {
+      Ember.$('body').removeClass('stop-scroll');
       this.set('invalidEmail', false);
       this.set('missingName', false);
       this.set('showDialog', false);
@@ -54,6 +56,7 @@ export default Ember.Component.extend({
       this.set('missingName', this.name === '');
 
       if (!this.missingName && !this.invalidEmail) {
+        Ember.$('body').removeClass('stop-scroll');
         this.set('showDialog', false);
         this.sendAction('action', this.name, this.email);
       }
