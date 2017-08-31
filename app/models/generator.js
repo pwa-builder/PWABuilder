@@ -189,7 +189,7 @@ export default Ember.Object.extend({
       }
     });
   },
-  buildAppX: function(name, publisheridentity, packagename, version){
+  buildAppX: function(name, publisheridentity, packagename, version, callback){
     var self = this;
 
     this.set('isBuilding.appX', true);
@@ -207,12 +207,18 @@ export default Ember.Object.extend({
       self.set('isBuilding.appX', false);
       self.set('buildFailed.appX', false);
       self.buildErrors.clear();
+      callback();
     }).catch(function(err){
       self.set('isBuilding.appX', false);
       self.set('buildFailed.appX', true);
       self.set('buildReady', false);
       if(err.jqXHR.responseJSON){
         self.buildErrors.addObject(err.jqXHR.responseJSON.error);
+        console.error('Error: ' + err.jqXHR.responseJSON.error);
+        callback(err.jqXHR.responseJSON.error);
+      } else {
+        console.error('Error: ' + err);
+        callback(err);
       }
     });
   },

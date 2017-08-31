@@ -11,6 +11,7 @@ export default Ember.Component.extend({
   tagName: 'span',
   showDialog: false,
   showError: false,
+  errorMessage: '',
   name: '',
   publisher: '',
   package: '',
@@ -33,6 +34,7 @@ export default Ember.Component.extend({
     return new Ember.Handlebars.SafeString(message);
   }.property('isBuilding'),
   triggerArchiveDownload: function() {
+    // Setup file to auto-download in the browser when link is set from generator action.
     this.sendAction('download', this.archiveLink, this.platform);
   }.observes('archiveLink'),
   actions: {
@@ -55,18 +57,32 @@ export default Ember.Component.extend({
       this.set('showError', false);
     },
     accept: function(){
-      // TODO: More Client-Side Validation Here
-      this.set('missingName', this.name === '');
-      this.set('missingPublisher', this.publisher === '');
-      this.set('missingPackage', this.package === '');
-      this.set('missingVersion', this.version === '');
-
+      this.set('missingName', this.name.match(/^\s*$/) !== null);
+      this.set('missingPublisher', this.publisher.match(/^\s*$/) !== null);
+      this.set('missingPackage', this.package.match(/^\s*$/) !== null);
+      this.set('missingVersion', this.version.match(/^\s*$/) !== null);
 
       if (!this.missingName && !this.missingPublisher && !this.missingPackage && !this.missingVersion) {
-        Ember.$('body').removeClass('stop-scroll');
-        this.set('showDialog', false);
-        this.sendAction('action', this.name, this.publisher, this.package, this.version);
-        // TODO: Hook-in to error result and display other dialog properly
+        this.set('errorMessage', '');
+        this.set('showError', false);
+
+        var self = this;
+        this.sendAction('action', this.name, this.publisher, this.package, this.version, function (error) {
+          if (error) {
+            // Check for common/known errors and simplify message
+            if (error.indexOf("@Publisher\nPackage creation failed") !== -1) {
+              error = "Invalid Publisher Identity.";
+            } else if (error.indexOf("@Version\nPackage creation failed.") !== -1) {
+              error = "Invalid Version Number.";
+            }
+
+            self.set('showError', true);
+            self.set('errorMessage', error);
+          } else {
+            Ember.$('body').removeClass('stop-scroll');
+            self.set('showDialog', false);
+          }
+        });
       }
     },
     startOver: function() {

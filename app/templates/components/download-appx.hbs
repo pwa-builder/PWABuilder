@@ -21,6 +21,13 @@
     </div>
     <div class="pwa-modal-body">
       <div class="pwa-generator-container">
+        {{#if showError}}
+          <div>
+            <p>There was an error generating the AppX package:</p>
+            <p class="pwa-generator-error">{{errorMessage}}</p>
+            <p>Please try again.</p>
+          </div>
+        {{/if}}
         <div class="pwa-generator-box">
           <label class="pwa-generator-label">Enter your <a href="https://developer.microsoft.com/en-us/windows" target="_blank">Dev Center</a> details below in order to generate an AppX package you can upload to the store.<br/></label>
         </div>
@@ -68,38 +75,14 @@
         <div class="pwa-generator-box_buttons">
           <button class="pwa-generator-space_right pwa-button pwa-button--simple pwa-button--brand" {{action "accept"}}>
             Submit
+            {{#if isBuilding}}
+              <span class="pwa-generator-loading">
+                {{fa-icon "circle-o-notch fa-spin"}}
+              </span>
+            {{/if}}
           </button>
           <button class="pwa-button pwa-button--simple" {{action "close"}}>
             Cancel
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-{{/if}}
-{{#if showError}}
-<div class="pwa-modal">
-  <div class="pwa-modal-box error">
-     <div class="pure-u-1-1 pwa-modal-tablec">
-        <span class="pwa-generator-close" {{action 'close'}}>{{fa-icon "times"}}</span>
-      </div>
-    <div class="pwa-generator-space_top">
-      <h5 class="pwa-modal-title pwa-modal-title--normal">
-        Unable to generate AppX
-      </h5>
-    </div>
-    <div class="pwa-modal-body">
-      <div class="pwa-generator-container">
-        <div class="pwa-generator-box">
-          <label class="pwa-generator-label">Publish 1-step requires start URL to be secure. Make sure to provide an <strong>https</strong> URL before publishing your PWA.</label>
-        </div>
-        <div class="pwa-generator-box_buttons">
-          <button class="pwa-button pwa-button--simple" {{action "startOver"}}>
-            Start Over
-          </button>
-          <button class="pwa-button pwa-button--simple pwa-button--brand" {{action "close"}}>
-            Continue
           </button>
         </div>
       </div>
