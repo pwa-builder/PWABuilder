@@ -20,6 +20,7 @@ export default Ember.Component.extend({
                 if (error) {
                     self.set('showErrorMessage', true);
                 } else {
+                    Ember.$('body').removeClass('stop-scroll');
                     self.set('showDialog', false);
 
                     self.set('fileName', PLACEHOLDER);
@@ -29,10 +30,12 @@ export default Ember.Component.extend({
             });
         }, 
         close: function() {
+            Ember.$('body').removeClass('stop-scroll');
             this.set('fileName', PLACEHOLDER);
             this.set('showDialog', false);
         },
         showPopup : function() {
+            Ember.$('body').addClass('stop-scroll');
             this.set('showDialog', true);
         },
         uploadFile: function(fileInfo) {
