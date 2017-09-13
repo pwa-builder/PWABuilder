@@ -16,5 +16,7 @@
     "pluralize": "~1.1.2",
     "font-awesome": "~4.3.0",
     "lodash": "^4.17.4",
-    "clipboard": "~1.7.1"  }
+    "clipboard": "~1.7.1",
+    "flare": "~1.0.0"
+  }
 }
