@@ -18,7 +18,6 @@
             <button {{bind-attr class=":get-started :pwa-button :isEnabled :next-step"}}
                     {{action 'startComplete'}}
                     data-flare='{"category": "Build", "action": "Step 2", "label": "Scan for Manifest", "value": { "page": "/build/manifest-scan" }}'>
-                    >
                     Get Started
                     {{#if isSaving}}
                       <span class="pwa-generator-loading">
@@ -43,7 +42,6 @@
           <button {{action 'goToSecondStep'}}
                   class="pwa-button pwa-button--simple"
                   data-flare='{"category": "Skip", "action": "Manifest", "label": "Skip to Service Worker", "value": { "page": "/skip/service-worker" }}'>
-                  >
                   Skip to Build Service Worker
           </button>
         </div>
