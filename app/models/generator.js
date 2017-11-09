@@ -6,6 +6,7 @@ import langConst from './languageConst';
 
 export default Ember.Object.extend({
   archiveLink: '',
+  appXLink: '',
   isBuilding: [],
   buildFailed: [],
   isSaving: false,
@@ -57,7 +58,7 @@ export default Ember.Object.extend({
     {id: 1, name: 'Offline page', isDisabled: false, description: "This simple but elegant solution pulls a file from your web server called \"offline.html\" (make sure that file is actually there) and serves the file whenever a network connection can not be made." },
     {id: 2, name: 'Offline copy of pages', isDisabled: false, description: "A solution that expands the offline capabilities of your app. A copy of each pages is stored in the cache as your visitors view them. This allows a visitor to load any previously viewed page while they are offline." },
     {id: 3, name: 'Offline copy with Backup offline page', isDisabled: false, description: "A copy of each pages is stored in the cache as your visitors view them. This allows a visitor to load any previously viewed page while they are offline. This then adds the \"offline page\" that allows you to customize the message and experience if the app is offline, and the page is not in the cache." },
-    {id: 4, name: 'Cache-first network (coming soon)',isDisabled: false, description: "Use this service worker to pre-cache content. The content you add to the \"cache-array\" will be added immediately to the cache and service from the cache whenever a page requests it. At the same time it will update the cache with the version you have on the server. Configure your file array to include all your site files, or a subset that you want to be served quickly." },
+    {id: 4, name: 'Cache-first network',isDisabled: false, description: "Use this service worker to pre-cache content. The content you add to the \"cache-array\" will be added immediately to the cache and service from the cache whenever a page requests it. At the same time it will update the cache with the version you have on the server. Configure your file array to include all your site files, or a subset that you want to be served quickly." },
     {id: 5, name: 'Advanced Pre-cache (coming soon)', isDisabled: true, description: "Use this service worker to improve the performance of your app, and make it work offline. The advanced pre-cache allows you to configure files and routs that are cached in different manors (pre-cache, server first, cache first etc). The tool can be used to build a lightening fast app (even for dynamic content) that works offline." }
   ],
   serviceWorkerCodePreview: { forWebSite: '', forServiceWorker: '' },
@@ -153,6 +154,7 @@ export default Ember.Object.extend({
       self.set('isSaving', false);
     });
   },
+  // Create downloadable Archive for user
   build: function(platform){
     var self = this,
       platformsList = [];
@@ -187,6 +189,40 @@ export default Ember.Object.extend({
       }
     });
   },
+  buildAppX: function(name, publisheridentity, packagename, version, callback){
+    var self = this;
+
+    this.set('isBuilding.appX', true);
+    this.set('buildFailed.appX',false);
+    this.buildErrors.clear();
+
+    ajax({
+      url: config.APP.API_URL + '/manifests/' + this.get('manifestId') + '/appx',
+      type: 'POST',
+      data: JSON.stringify({ name: name, publisher: publisheridentity, package: packagename, version: version }),
+      dataType: 'json',
+      contentType: 'application/json; charset=utf-8'
+    }).then(function(result){
+      self.set('appXLink', result.archive);
+      self.set('isBuilding.appX', false);
+      self.set('buildFailed.appX', false);
+      self.buildErrors.clear();
+      callback();
+    }).catch(function(err){
+      self.set('isBuilding.appX', false);
+      self.set('buildFailed.appX', true);
+      self.set('buildReady', false);
+      if(err.jqXHR.responseJSON){
+        self.buildErrors.addObject(err.jqXHR.responseJSON.error);
+        console.error('Error: ' + err.jqXHR.responseJSON.error);
+        callback(err.jqXHR.responseJSON.error);
+      } else {
+        console.error('Error: ' + err);
+        callback(err);
+      }
+    });
+  },
+  // Package and send to our DropBox location
   package: function(platform, options){
     var self = this;
 

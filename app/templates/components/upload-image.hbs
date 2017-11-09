@@ -34,7 +34,8 @@
         </div>
 
         <div class="pwa-generator-box_buttons">
-            <button class="pwa-generator-space_right pwa-button pwa-button--simple pwa-button--brand" {{action "accept"}}>
+            <button class="pwa-generator-space_right pwa-button pwa-button--simple pwa-button--brand" {{action "accept"}}
+                    data-flare='{"category": "Manifest", "action": "Add Member", "label": "Image Upload", "value": { "page": "/manifest/add-member" }}'>
               Submit
               {{#if isSaving}}
                   <span class="pwa-generator-loading">
@@ -42,7 +43,10 @@
                   </span>
                 {{/if}}
             </button>
-            <button class="pwa-button pwa-button--simple" {{action "close"}}>Cancel</button>
+            <button class="pwa-button pwa-button--simple" {{action "close"}}
+                    data-flare='{"category": "Manifest", "action": "Add Member", "label": "Image Upload - Cancel", "value": { "page": "/manifest/add-member" }}'>
+              Cancel
+            </button>
         </div>
       </div>
     </div>

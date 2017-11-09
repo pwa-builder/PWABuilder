@@ -1,4 +1,6 @@
-<button class="pwa-button pwa-button--simple {{if isColored 'pwa-button--brand'}} {{if isEnabled 'isEnabled'}}" {{action "handleClick"}}>
+<button class="pwa-button pwa-button--simple {{if isColored 'pwa-button--brand'}} {{if isEnabled 'isEnabled'}}"
+        {{action "handleClick"}}
+        data-flare='{"category": "Download", "action": "Web", "label": "Download Archive", "value": { "page": "/download/web" }}'>
   {{linkMessage}}
   {{#if isBuilding}}
     <span class="pwa-generator-loading">
