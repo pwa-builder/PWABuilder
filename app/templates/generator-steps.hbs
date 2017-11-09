@@ -123,7 +123,7 @@
           {{#download-archive initialMessage="Download service worker" isBuilding=model.isBuilding.serviceWorker buildFailed=model.buildFailed.serviceWorker action="downloadServiceWorker" platform="serviceWorker" isEnabled=model.hasServiceWorkersSelected}}{{/download-archive}}
         </div>
 
-        <p>You can also download the source code directly from <a class="pwa-generator-link" href="https://github.com/manifoldjs/serviceworkers" target="_blank">GitHub</a>.</p>
+        <p>You can also download the source code directly from <a class="pwa-generator-link" href="https://github.com/pwa-builder/serviceworkers" target="_blank">GitHub</a>.</p>
       </div>
 
     <div class="pure-u-1 pure-u-md-1-2 generator-section manifest manifest-holder">
@@ -175,6 +175,7 @@
               </p>
               {{#publish-package isEnabled=model.isHTTPS startOver="startOver" isColored=true initialMessage="Publish 1-step" isBuilding=model.isBuilding.Win10Publish buildFailed=model.buildFailed.Win10Publish publishSuccedded=model.publishSuccedded action="publishWin10Package" publishName=model.name publishEmail=model.email}}{{/publish-package}}
               {{#download-archive class="button-holder download-archive" initialMessage="Download" isBuilding=model.isBuilding.windows10 buildFailed=model.buildFailed.windows10 action="buildArchive" platform="windows10" download="downloadArchive" archiveLink=model.archiveLink}}{{/download-archive}}
+              {{#download-appx isEnabled=true startOver="startOver" isColored=true initialMessage="Generate AppX" isBuilding=model.isBuilding.appX buildFailed=model.buildFailed.appX action="buildAppX" download="downloadArchive" archiveLink=model.appXLink}}{{/download-appx}}
             </div>
           </div>
           <div class="pure-u-1">

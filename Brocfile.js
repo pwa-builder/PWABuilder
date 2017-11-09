@@ -35,6 +35,7 @@ app.import('bower_components/prism/plugins/toolbar/prism-toolbar.js');
 app.import('bower_components/custom-copy-to-clipboard/prism-copy-to-clipboard.js');
 app.import('bower_components/pluralize/pluralize.js');
 app.import('bower_components/lodash/dist/lodash.min.js');
+app.import('bower_components/flare/dist/flare.min.js');
 
 app.import("bower_components/font-awesome/css/font-awesome.css");
 app.import("bower_components/font-awesome/fonts/fontawesome-webfont.eot", { destDir: "fonts" });

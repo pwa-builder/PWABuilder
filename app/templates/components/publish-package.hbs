@@ -41,10 +41,12 @@
           </p>
         {{/if}}
         <div class="pwa-generator-box_buttons">
-          <button class="pwa-generator-space_right pwa-button pwa-button--simple pwa-button--brand" {{action "accept"}}>
+          <button class="pwa-generator-space_right pwa-button pwa-button--simple pwa-button--brand" {{action "accept"}}
+                  data-flare='{"category": "Publish", "action": "Windows Store", "label": "Publish to the Windows Store", "value": { "page": "/publish/windows-store" }}'>
             Submit
           </button>
-          <button class="pwa-button pwa-button--simple" {{action "close"}}>
+          <button class="pwa-button pwa-button--simple" {{action "close"}}
+                  data-flare='{"category": "Publish", "action": "Windows Store", "label": "Cancelled", "value": { "page": "/publish/windows-store/cancel" }}'>
             Cancel
           </button>
         </div>
@@ -70,10 +72,12 @@
           <label class="pwa-generator-label">Publish 1-step requires start URL to be secure. Make sure to provide an <strong>https</strong> URL before publishing your PWA.</label>
         </div>
         <div class="pwa-generator-box_buttons">
-          <button class="pwa-button pwa-button--simple" {{action "startOver"}}>
+          <button class="pwa-button pwa-button--simple" {{action "startOver"}}
+                  data-flare='{"category": "Publish", "action": "Windows Store", "label": "Start Over", "value": { "page": "/publish/windows-store/start-over" }}'>
             Start Over
           </button>
-          <button class="pwa-button pwa-button--simple pwa-button--brand" {{action "close"}}>
+          <button class="pwa-button pwa-button--simple pwa-button--brand" {{action "close"}}
+                  data-flare='{"category": "Publish", "action": "Windows Store", "label": "Cancelled", "value": { "page": "/publish/windows-store/cancel" }}'>
             Continue
           </button>
         </div>
@@ -96,10 +100,11 @@
     <div class="pwa-modal-body">
       <div class="pwa-generator-container">
         <div class="pwa-generator-box">
-          <label class="pwa-generator-label">You'll receive a comnfirmation message once the publishing process is completed.</label>
+          <label class="pwa-generator-label">You'll receive a confirmation message once the publishing process is completed.</label>
         </div>
         <div class="pwa-generator-box_buttons">
-          <button class="pwa-button pwa-button--simple pwa-button--brand" {{action "close"}}>
+          <button class="pwa-button pwa-button--simple pwa-button--brand" {{action "close"}}
+                  data-flare='{"category": "Publish", "action": "Windows Store", "label": "Complete", "value": { "page": "/publish/windows-store/finished" }}'>
             Ok
           </button>
         </div>

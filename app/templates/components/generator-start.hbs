@@ -16,7 +16,8 @@
       <div class="pure-g l-breath">
         <div class="pwa-generator-wrapper pure-u-3-5">
             <button {{bind-attr class=":get-started :pwa-button :isEnabled :next-step"}}
-                  {{action 'startComplete'}}>
+                    {{action 'startComplete'}}
+                    data-flare='{"category": "Build", "action": "Step 2", "label": "Scan for Manifest", "value": { "page": "/build/manifest-scan" }}'>
                     Get Started
                     {{#if isSaving}}
                       <span class="pwa-generator-loading">
@@ -39,7 +40,8 @@
         {{/if}}
         <div class="pwa-generator-wrapper pure-u-1">
           <button {{action 'goToSecondStep'}}
-                  class="pwa-button pwa-button--simple">
+                  class="pwa-button pwa-button--simple"
+                  data-flare='{"category": "Skip", "action": "Manifest", "label": "Skip to Service Worker", "value": { "page": "/skip/service-worker" }}'>
                   Skip to Build Service Worker
           </button>
         </div>
