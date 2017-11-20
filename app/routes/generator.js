@@ -50,7 +50,7 @@ export default Ember.Route.extend({
     downloadArchive: function(archiveLink, platform){
       var model = this.modelFor('generator');
       model.set('build' + platform + 'Ready',true);
-      this.ga('send', 'event', 'item', 'click', 'generator-build-download-'+platform);
+     this.ga('send', 'event', 'item', 'click', 'generator-build-download');
       window.location.href = archiveLink;
     },
     publishWin10Package: function(publishName, publishEmail){
