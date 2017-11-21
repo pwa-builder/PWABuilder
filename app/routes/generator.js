@@ -38,19 +38,19 @@ export default Ember.Route.extend({
       model.save();
     },
     buildArchive: function(platform){
-      this.ga('send', 'event', 'item', 'click', 'generator-build-trigger');
+      this.ga('send', 'event', 'item', 'click', 'generator-build-trigger-'+platform);
       var model = this.modelFor('generator');
       model.build(platform);
     },
     buildAppX: function(name, publisheridentity, packagename, version, callback) {
-      this.ga('send', 'event', 'item', 'click', 'generator-build-trigger');
+      this.ga('send', 'event', 'item', 'click', 'generator-buildAppx-trigger-windows10');
       var model = this.modelFor('generator');
       model.buildAppX(name, publisheridentity, packagename, version, callback);
     },
     downloadArchive: function(archiveLink, platform){
       var model = this.modelFor('generator');
       model.set('build' + platform + 'Ready',true);
-      this.ga('send', 'event', 'item', 'click', 'generator-build-download');
+     this.ga('send', 'event', 'item', 'click', 'generator-build-download');
       window.location.href = archiveLink;
     },
     publishWin10Package: function(publishName, publishEmail){
@@ -117,6 +117,8 @@ export default Ember.Route.extend({
     downloadServiceWorker: function() {
       var model = this.modelFor('generator');
       model.downloadServiceWorker();
+      this.ga('send', 'event', 'item', 'click', 'generator-download-serviceworker');
+      
     },
     getServiceWorkerCodePreview: function() {
       var model = this.modelFor('generator');
