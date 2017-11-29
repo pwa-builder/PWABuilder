@@ -1,9 +1,0 @@
-{{yield}}
-<div class="pwa-generator-buttons pwa-generator-buttons--centered">
-  {{#if showCustomButton}}
-  <button class="button" {{action "customAction"}}>{{customButtonText}}</button>
-  {{/if}}
-  {{#if showNextStep }}
-  <button class="pwa-button" {{action "updateStep" nextStep}}>Next Step</button>
-  {{/if}}
-</div>
