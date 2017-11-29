@@ -21,6 +21,8 @@
     "generate": "nuxt generate"
   },
   "devDependencies": {
+    "node-sass": "^4.7.2",
+    "sass-loader": "^6.0.6",
     "ts-loader": "^3.0.0",
     "typescript": "^2.2.2"
   }

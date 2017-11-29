@@ -3,7 +3,7 @@
     <img :src="'https://robots.johnlindquist.com/' + person.first_name + '_' + person.last_name" />
     <div class="flex flex-column items-center pa2 b--black-20">
       <div class="f4">{{person.first_name}} {{person.last_name}}</div>
-      <button @click="select(person.id)" class="w-100 bg-blue dim mv2 pv2 bn pointer">Select</button>
+      <button @click="select(person.id)" class="w-100 bg-blue dim mv2 pv2 bn pointer red">Select</button>
     </div>
   </div>
 </template>
@@ -20,3 +20,10 @@ export default class Card extends Vue {
   @Action select
 }
 </script>
+
+<style lang="scss">
+.red {
+    color: red;
+}
+
+</style>
