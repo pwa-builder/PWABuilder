@@ -18,7 +18,7 @@ module.exports = {
   /*
   ** Build configuration
   */
-  css: ['tachyons/css/tachyons.min.css', '~/assets/css/main.css'],
+  css: ['tachyons/css/tachyons.min.css', '~/assets/scss/main.scss'],
   build: {
     vendor: ['axios', 'gsap', 'vuex-class', 'nuxt-class-component']
   },
