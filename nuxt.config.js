@@ -1,3 +1,4 @@
+// Info about configuration https://nuxtjs.org/guide/configuration/
 module.exports = {
   env: {
     baseUrl: process.env.BASE_URL || 'http://localhost:3000'
@@ -11,13 +12,7 @@ module.exports = {
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
   },
-  /*
-  ** Customize the progress-bar color
-  */
   loading: { color: '#3B8070' },
-  /*
-  ** Build configuration
-  */
   css: ['tachyons/css/tachyons.min.css', '~/assets/scss/main.scss'],
   build: {
     vendor: ['axios', 'gsap', 'vuex-class', 'nuxt-class-component']
