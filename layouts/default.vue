@@ -37,7 +37,7 @@ export default {
 
     <footer class="l-footer pure-g is-small">
       <div class="pure-u-1-2 pure-u-md-1-5">
-        <a id="ember388" class="ember-view l-footer-action l-footer-action--block active" href="/generator">Generate</a>
+        <a class="l-footer-action l-footer-action--block active" href="/generator">Generate</a>
         <a class="l-footer-action l-footer-action--block" href="http://docs.pwabuilder.com/" target="_blank">Documentation</a>
       </div>
       <div class="pure-u-1-2 pure-u-md-1-5">
