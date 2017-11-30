@@ -1,0 +1,14 @@
+@import 'variables';
+@import 'mixins/medias';
+
+.is {
+    &-hidden {
+        display: none;
+    }
+
+    &-disabled {
+        @include medias {
+            opacity: .5;
+        }
+    }
+}

@@ -4,14 +4,15 @@
   "dependencies": {
     "axios": "^0.16.1",
     "gsap": "^1.19.1",
+    "normalize-scss": "^7.0.0",
     "nuxt": "latest",
     "nuxt-class-component": "^1.0.3",
     "tachyons": "^4.7.0",
     "vue": "~2.5.1",
-    "vue-server-renderer": "~2.5.1",
-    "vue-template-compiler": "~2.5.1",
     "vue-class-component": "^6.0.0",
     "vue-property-decorator": "^6.0.0",
+    "vue-server-renderer": "~2.5.1",
+    "vue-template-compiler": "~2.5.1",
     "vuex-class": "^0.3.0"
   },
   "scripts": {

@@ -13,10 +13,11 @@ module.exports = {
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
   },
   loading: { color: '#1FC2C8' },
-  css: ['tachyons/css/tachyons.min.css', '~/assets/scss/main.scss'],
+  css: ['tachyons/css/tachyons.min.css', '~/assets/scss/app.scss'],
   build: {
     extractCSS: true,
-    vendor: ['axios', 'gsap', 'vuex-class', 'nuxt-class-component']
+    vendor: ['axios', 'gsap', 'vuex-class', 'nuxt-class-component'],
+    plugins:[]
   },
   modules: ['~/modules/typescript']
 }
