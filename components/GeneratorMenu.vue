@@ -9,7 +9,7 @@
     <ul class="generator_menu-tabs">
 
         <li class="generator_menu-tab">
-            <nuxt-link to="/" class="generator_menu-link" active-class="is-active" data-step="1">
+            <nuxt-link to="generator" class="generator_menu-link" active-class="is-active" data-step="1">
                 Generate Manifest
             </nuxt-link>
         </li>

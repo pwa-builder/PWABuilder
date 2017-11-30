@@ -1,3 +1,9 @@
+<script>
+export default {
+  middleware: 'default'
+}
+</script>
+
 <template>
   <div>
     <header class="l-header pure-g">
@@ -10,7 +16,7 @@
       <nav class="l-header-right pure-u pure-u-md-4-5">
         <ul class="l-header-menu">
           <li class="l-header-item">
-            <nuxt-link to="/" class="l-header-link" active-class="is-active">PWA Builder</nuxt-link>
+            <nuxt-link to="generator" class="l-header-link" active-class="is-active">PWA Builder</nuxt-link>
           </li>
           <li class="l-header-item">
             <a class="l-header-link" href="//docs.pwabuilder.com/" target="_blank">Documentation</a>
