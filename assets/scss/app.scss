@@ -12,6 +12,11 @@
 'vendor/normalize',
 'vendor/pure-grid';
 
+// Layout
+@import
+'layout/l-header',
+'layout/l-footer';
+
 // Legacy
 // These are files from the old website
 // These files are not completely migrated yet
@@ -20,8 +25,6 @@
 'legacy/_base/b-elements',
 'legacy/_components/c-button',
 'legacy/_components/c-modal',
-'legacy/_layout/l-footer',
-'legacy/_layout/l-header',
 'legacy/_layout/l-main',
 'legacy/_modules/m-hero',
 'legacy/_modules/m-infos',

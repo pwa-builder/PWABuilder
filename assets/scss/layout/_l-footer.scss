@@ -1,7 +1,7 @@
-@import '../../base/variables';
-@import '../../mixins/action';
+@import '../base/variables';
+@import '../mixins/action';
 
-.pwa-footer {
+.l-footer {
     background-color: $color-background-darker;
     color: $color-foreground-brighter;
     font-family: 'Bitter';

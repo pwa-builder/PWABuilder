@@ -1,7 +1,7 @@
-@import '../../base/variables';
-@import '../../mixins/action';
+@import '../base/variables';
+@import '../mixins/action';
 
-.pwa-header {
+.l-header {
     background-color: $color-background-brighter;
     padding: 1rem 2vw;
 
