@@ -27,7 +27,7 @@
         }
     }
 
-    &.active,
+    &.is-active,
     &:hover {
         color: darken($secondary, 10%);
         transition: color $animation-speed-default;
