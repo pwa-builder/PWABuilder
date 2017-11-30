@@ -11,7 +11,7 @@
       <nav class="pwa-header-right pure-u pure-u-md-4-5">
         <ul class="pwa-header-menu">
           <li class="pwa-header-item">
-            <nuxt-link to="generator" active-class="active">PWA Builder</nuxt-link>
+            <nuxt-link to="generator" class="pwa-header-link" active-class="active">PWA Builder</nuxt-link>
           </li>
           <li class="pwa-header-item">
             <a class="pwa-header-link" href="//docs.pwabuilder.com/" target="_blank">Documentation</a>

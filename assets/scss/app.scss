@@ -8,5 +8,32 @@
 @import 'base/globals';
 
 // Vendor
-@import 'vendor/normalize';
-//@import '../../node_modules/folder...
+@import
+'vendor/normalize',
+'vendor/pure-grid';
+
+// Legacy
+// These are files from the old website
+// These files are not completely migrated yet
+@import
+'legacy/_base/b-colors',
+'legacy/_base/b-elements',
+'legacy/_components/c-button',
+'legacy/_components/c-modal',
+'legacy/_layout/l-footer',
+'legacy/_layout/l-header',
+'legacy/_layout/l-main',
+'legacy/_modules/m-hero',
+'legacy/_modules/m-infos',
+'legacy/_modules/m-infobox',
+'legacy/_modules/m-partners',
+'legacy/_modules/m-build-process',
+'legacy/_modules/m-more-info',
+'legacy/_modules/m-whos-using',
+'legacy/_modules/m-page-intro',
+'legacy/_modules/m-usage-block',
+'legacy/_modules/m-side-nav-block',
+'legacy/_modules/m-generator',
+'legacy/_modules/m-summary',
+'legacy/_modules/m-notice-block',
+'legacy/_modules/m-build-errors';

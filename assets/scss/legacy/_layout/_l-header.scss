@@ -1,0 +1,53 @@
+@import '../../base/variables';
+@import '../../mixins/action';
+
+.pwa-header {
+    background-color: $color-background-brighter;
+    padding: 1rem 2vw;
+
+    &-left {
+        text-align: left;
+
+        @media screen and (max-width: $media-screen-s) {
+            text-align: center;
+            width: 100%;
+        }
+    }
+
+    &-right {
+        text-align: right;
+
+        @media screen and (max-width: $media-screen-s) {
+            overflow-x: auto;
+            padding-bottom: .5rem;
+            width: 100%;
+        }
+    }
+
+    &-logo {
+        $size: 210px;
+
+        max-width: $size;
+        min-width: $size / 2;
+        width: 100%;
+    }
+
+    &-menu {
+        font-family: 'Bitter';
+        font-size: 1.1em;
+        margin-right: 1vw;
+        margin-top: 1vw;
+        padding: 0;
+        white-space: nowrap;
+    }
+
+    &-item {
+        display: inline-block;
+        margin: 0 .5vw;
+        text-align: center;
+    }
+
+    &-link {
+        @include action-link ( $color-foreground-darker, $color-brand, .2rem);
+    }
+}

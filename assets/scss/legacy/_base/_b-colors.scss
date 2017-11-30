@@ -1,0 +1,18 @@
+@import '../../base/variables';
+
+//Background accented classes, mainly just for the style guide
+.bg-dark-accent {
+    background-color: $color-background-dark;
+}
+
+.bg-primary-accent {
+    background-color: $color-brand;
+}
+
+.bg-secondary-accent {
+    background-color: $color-secondary;
+}
+
+.bg-tertiary-accent {
+    background-color: $color-complementary;
+}

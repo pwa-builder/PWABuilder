@@ -1,0 +1,77 @@
+@import '../../base/variables';
+
+pre {
+    background-color: $color-background-darker;
+    border-radius: 0 !important;
+    box-shadow: 0 0 7px $color-background-dark;
+    color: $color-foreground-brighter;
+    font-size: 1.125em;
+    margin: 0 !important;
+    padding: 1.25em 1.75em;
+    word-wrap: break-word;       // Internet Explorer 5.5+
+}
+
+.shell {
+    background-color: $color-background-dark;
+    border-radius: 0 !important;
+    box-shadow: 0 0 7px $color-background-dark;
+    color: $color-foreground-brighter;
+    font-size: 1.125em;
+    margin: 0 !important;
+    padding: 1.25em 1.75em;
+}
+
+.shell .line {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+.shell .line span {
+    display: inline-block;
+}
+.shell p.line {
+    line-height: 1.375em;
+}
+.shell .prompt {
+    color: $color-shell-prompt;
+    vertical-align: top;
+}
+.shell .command {
+    color: $color-shell-command;
+    vertical-align: top;
+}
+.shell .app {
+    color: $color-foreground-brighter;
+    vertical-align: top;
+}
+
+a {
+    text-decoration: none;
+}
+
+table {
+    border-collapse: collapse;
+    margin: 2rem 0;
+    width: 100%;
+}
+
+td {
+    border: 1px solid $color-foreground-dark;
+    padding: .5rem 1rem;
+    text-align: left;
+    vertical-align: top;
+}
+
+hr {
+    background: transparent;
+    border-style: none none solid;
+    border-width: 0 0 1px;
+    clear: both;
+    display: block;
+    height: 1px;
+    margin: 3rem 0 2rem 0;
+}
+
+.hidden {
+    display: none;
+}
