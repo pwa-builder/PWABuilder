@@ -39,7 +39,7 @@ export default class TwoWays extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '~assets/scss/base/variables';
 @import '~assets/scss/mixins/action';
 

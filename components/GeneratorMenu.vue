@@ -35,7 +35,7 @@ export default class TwoWays extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '~assets/scss/base/variables';
 
 .generator_menu {
