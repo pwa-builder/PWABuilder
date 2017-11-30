@@ -27,8 +27,7 @@ You will need the following things properly installed on your computer.
 
 ### Building
 
-* `npm run build` (development)
-* `npm run build --environment production` (production)
+* `npm run build` (production)
 
 ### Serve
 
