@@ -42,6 +42,7 @@ export default class TwoWays extends Vue {
 <style lang="scss">
 @import '~assets/scss/base/variables';
 @import '~assets/scss/mixins/action';
+
 .twoways {
     background-color: $color-background-dark;
 
