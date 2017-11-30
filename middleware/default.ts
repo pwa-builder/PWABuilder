@@ -1,5 +1,5 @@
 export default function ({ route, redirect }) {
-    if (route.name !== 'index') {
+    if (route.path !== '/') {
         return;
     }
     return redirect('/generator');

@@ -8,7 +8,7 @@ export default {
   <div>
     <header class="l-header pure-g">
       <div class="l-header-left pure-u pure-u-md-1-5">
-        <nuxt-link to="/">
+        <nuxt-link to="/generator">
           <img class="l-header-logo" src="~/assets/images/logo.png" alt="PWA Builder logo">
         </nuxt-link>
       </div>
@@ -16,7 +16,7 @@ export default {
       <nav class="l-header-right pure-u pure-u-md-4-5">
         <ul class="l-header-menu">
           <li class="l-header-item">
-            <nuxt-link to="generator" class="l-header-link" active-class="is-active">PWA Builder</nuxt-link>
+            <nuxt-link to="/generator" class="l-header-link is-active">PWA Builder</nuxt-link>
           </li>
           <li class="l-header-item">
             <a class="l-header-link" href="//docs.pwabuilder.com/" target="_blank">Documentation</a>
