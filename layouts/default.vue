@@ -4,7 +4,7 @@
     <header class="pwa-header pure-g">
       <div class="pwa-header-left pure-u pure-u-md-1-5">
         <nuxt-link to="/">
-          <img class="pwa-header-logo" src="assets/images/logo-4fb7f2c9c42c310ace5c2fcb62412082.png" alt="PWA Builder logo">
+          <img class="pwa-header-logo" src="~/assets/images/logo.png" alt="PWA Builder logo">
         </nuxt-link>
       </div>
     
