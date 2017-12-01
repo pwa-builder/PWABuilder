@@ -2,16 +2,16 @@
 <section class="twoways l-pad">
   <div class="pure-g">
     <div class="pure-u-1">
-      <h2 class="twoways-title">Two Ways to Work</h2>
+      <h2 class="twoways-title">{{ $t('twoways.title') }}</h2>
     </div>
 
     <div class="pure-u-1 pure-u-md-1-2">
       <div class="twoways-box">
         <img class="twoways-logo" src="~/assets/images/logo_small.png" alt="Small PWA Builder logo">
-        <h4 class="twoways-subtitle">Web Based</h4> 
+        <h4 class="twoways-subtitle">{{ $t('twoways.web_based') }}</h4> 
         <nuxt-link to="/" class="twoways-action"
            data-flare='{"category": "Build", "action": "Step 1", "label": "PWA Infobox", "value": { "page": "/" }}'>
-          Get started Now
+          {{ $t('twoways.started_now') }}
         </nuxt-link>
       </div>
     </div>
@@ -19,10 +19,10 @@
     <div class="pure-u-1 pure-u-md-1-2">
       <div class="twoways-box">
         <img class="twoways-logo" src="~/assets/images/logo_small.png" alt="Small PWA Builder logo">
-        <h4 class="twoways-subtitle">CLI (node based): v1.1.0 </h4> 
+        <h4 class="twoways-subtitle">{{ $t('twoways.subtitle') }}</h4> 
         <a class="twoways-action" href="https://github.com/pwa-builder/ManifoldJS/releases" target="_blank"
            data-flare='{"category": "Download", "action": "CLI", "label": "PWA Infobox", "value": { "page": "/" }}'>
-          Download now
+          {{ $t('twoways.download') }}
         </a>
       </div>
     </div>

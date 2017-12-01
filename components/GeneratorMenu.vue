@@ -1,28 +1,28 @@
 <template>
 <section class="generator_menu">
     <header class="generator_menu-header">
-        Generate your Progressive Web App
+        {{ $t('generatormenu.title') }}
     </header>
     <p class="generator_menu-info">
-      PWA.tools takes data from your site and uses that to generate cross-platform Progressive Web Apps
+      {{ $t('generatormenu.subtitle') }}
     </p>
     <ul class="generator_menu-tabs">
 
         <li class="generator_menu-tab">
             <nuxt-link :to="$i18n.path('')" exact class="generator_menu-link" active-class="is-active" data-step="1">
-                Generate Manifest
+                {{ $t('generatormenu.generate') }}
             </nuxt-link>
         </li>
 
         <li class="generator_menu-tab">
             <nuxt-link :to="$i18n.path('serviceworker')" class="generator_menu-link" active-class="is-active" data-step="2">
-                Build Service Worker
+                {{ $t('generatormenu.serviceworker') }}
             </nuxt-link>
         </li>
 
         <li class="generator_menu-tab">
             <nuxt-link :to="$i18n.path('publish')" class="generator_menu-link" active-class="is-active" data-step="3">
-                Publish PWA
+                {{ $t('generatormenu.publish') }}
             </nuxt-link>
         </li>
     </ul>

@@ -9,23 +9,23 @@ export default {
     <header class="l-header pure-g">
       <div class="l-header-left pure-u pure-u-md-1-5">
         <nuxt-link to="/generator">
-          <img class="l-header-logo" src="~/assets/images/logo.png" alt="PWA Builder logo">
+          <img class="l-header-logo" src="~/assets/images/logo.png" :alt="$t('menu.logo')">
         </nuxt-link>
       </div>
     
       <nav class="l-header-right pure-u pure-u-md-4-5">
         <ul class="l-header-menu">
           <li class="l-header-item">
-            <nuxt-link :to="$i18n.path('')" exact class="l-header-link is-active">PWA Builder</nuxt-link>
+            <nuxt-link :to="$i18n.path('')" exact class="l-header-link is-active">{{ $t('menu.home') }}</nuxt-link>
           </li>
           <li class="l-header-item">
-            <a class="l-header-link" href="//docs.pwabuilder.com/" target="_blank">Documentation</a>
+            <a class="l-header-link" href="//docs.pwabuilder.com/" target="_blank">{{ $t('menu.documentation') }}</a>
           </li>
           <li class="l-header-item">
-            <a class="l-header-link" href="//appimagegenerator-prod.azurewebsites.net">PWA Image Generator</a>
+            <a class="l-header-link" href="//appimagegenerator-prod.azurewebsites.net">{{ $t('menu.generator') }}</a>
           </li>
           <li class="l-header-item">
-            <a class="l-header-link" href="//github.com/pwa-builder" target="_blank">Github</a>
+            <a class="l-header-link" href="//github.com/pwa-builder" target="_blank">{{ $t('menu.github') }}</a>
           </li>
         </ul>
       </nav>
@@ -37,12 +37,12 @@ export default {
 
     <footer class="l-footer pure-g is-small">
       <div class="pure-u-1-2 pure-u-md-1-5">
-        <a class="l-footer-action l-footer-action--block active" href="/generator">Generate</a>
-        <a class="l-footer-action l-footer-action--block" href="http://docs.pwabuilder.com/" target="_blank">Documentation</a>
+        <a class="l-footer-action l-footer-action--block active" href="/generator">{{ $t('menu.generate') }}</a>
+        <a class="l-footer-action l-footer-action--block" href="http://docs.pwabuilder.com/" target="_blank">{{ $t('menu.documentation') }}</a>
       </div>
       <div class="pure-u-1-2 pure-u-md-1-5">
-        <a class="l-footer-action l-footer-action--block" href="//appimagegenerator-prod.azurewebsites.net">PWA Image Generator</a>
-        <a class="l-footer-action l-footer-action--block" href="https://github.com/pwa-builder" target="_blank">Github</a>
+        <a class="l-footer-action l-footer-action--block" href="//appimagegenerator-prod.azurewebsites.net">{{ $t('menu.generator') }}</a>
+        <a class="l-footer-action l-footer-action--block" href="https://github.com/pwa-builder" target="_blank">{{ $t('menu.github') }}</a>
       </div>
       <div class="l-footer-social pure-u-1 pure-u-md-3-5">
         <a class="l-footer-logo_action" href="https://twitter.com/boyofgreen" target="_blank">
@@ -59,7 +59,7 @@ export default {
         </a>
       </div>
       <div class="pure-u-1 l-footer-copy">
-        PWABuilder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward. <span class="divider">|</span> <a href="https://github.com/pwa-builder/ManifoldJS#license" target="_blank" class="l-footer-action">License</a>
+        {{ $t('footer.copyright') }}<span class="divider">|</span> <a href="https://github.com/pwa-builder/ManifoldJS#license" target="_blank" class="l-footer-action">{{ $t('footer.license') }}</a>
       </div>
     </footer>
   </div>
