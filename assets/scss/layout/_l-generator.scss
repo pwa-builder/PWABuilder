@@ -1,7 +1,7 @@
-@import '../../base/variables';
-@import '../../mixins/action';
+@import '../base/variables';
+@import '../mixins/action';
 
-.pwa-generator {
+.l-generator {
     $step-padding: 2rem;
     $toggle-space: -.2rem;
     $tab-color-off: $color-brand-brighter;
@@ -10,6 +10,17 @@
     $max-size: 90%;
     $size_c: 60%;
     $margin_c: 20%;
+
+    &-title {
+        font-family: 'Bitter';
+        font-size: $font-size-xl;
+        font-weight: $font-weight-bold;
+        padding-bottom: $font-size-xl / 2;
+
+        &--centered {
+            text-align: center;
+        }
+    }
 
     &-subtitle {
         font-family: 'Bitter';
@@ -67,36 +78,9 @@
     }
 
     &-step {
-        animation: generator-step-hide $animation-speed-slow forwards;
         background-color: $color-background-bright;
-        display: none;
-        margin-top: 4rem;
-        padding-top: $step-padding;
-
-        &.is-active {
-            animation: generator-step-show $animation-speed-slow forwards;
-            display: block;
-        }
-    }
-
-    @keyframes generator-step-hide {
-        0% {
-            opacity: 1;
-        }
-
-        100% {
-            opacity: 0;
-        }
-    }
-
-    @keyframes generator-step-show {
-        0% {
-            opacity: 0;
-        }
-
-        100% {
-            opacity: 1;
-        }
+        color: $color-foreground-darker;
+        padding: $step-padding 0 $step-padding * 2 0;
     }
 
     &-align {

@@ -1,4 +1,4 @@
-@import '../../base/variables';
+@import '../base/variables';
 
 @mixin button-shadow($rad) {
     box-shadow: 0 $rad 2 * $rad 0 rgba($color-background-darkest, .2);
@@ -21,9 +21,13 @@
 .pwa-button {
     $button-pad: .75rem;
     $shadow: 2px;
-    @include button-shadow($shadow);
-    @include button-brand();
 
+@include button-shadow($shadow);
+
+@include button-brand();
+
+    appearance: button;
+    border: none;
     border-radius: .5rem;
     cursor: pointer;
     display: inline-block;

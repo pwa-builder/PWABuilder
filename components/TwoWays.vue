@@ -2,7 +2,7 @@
 <section class="twoways l-pad">
   <div class="pure-g">
     <div class="pure-u-1">
-      <h2 class="twoways-title">{{ $t('twoways.title') }}</h2>
+      <h2 class="l-generator-title">{{ $t('twoways.title') }}</h2>
     </div>
 
     <div class="pure-u-1 pure-u-md-1-2">
@@ -48,17 +48,6 @@ export default class TwoWays extends Vue {
 
     &--transparent {
         background-color: transparent;
-    }
-
-    &-title {
-        font-family: 'Bitter';
-        font-size: $font-size-xl;
-        font-weight: $font-weight-regular;
-        padding-bottom: $font-size-xl / 2;
-
-        &--centered {
-            text-align: center;
-        }
     }
 
     &-subtitle {

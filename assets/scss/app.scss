@@ -15,7 +15,13 @@
 // Layout
 @import
 'layout/l-header',
-'layout/l-footer';
+'layout/l-footer',
+'layout/l-generator';
+
+// Private SASS components (without logic)
+@import
+'components/button',
+'components/modal';
 
 // Legacy
 // These are files from the old website
@@ -23,8 +29,6 @@
 @import
 'legacy/_base/b-colors',
 'legacy/_base/b-elements',
-'legacy/_components/c-button',
-'legacy/_components/c-modal',
 'legacy/_layout/l-main',
 'legacy/_modules/m-hero',
 'legacy/_modules/m-infos',
@@ -35,7 +39,6 @@
 'legacy/_modules/m-page-intro',
 'legacy/_modules/m-usage-block',
 'legacy/_modules/m-side-nav-block',
-'legacy/_modules/m-generator',
 'legacy/_modules/m-summary',
 'legacy/_modules/m-notice-block',
 'legacy/_modules/m-build-errors';
