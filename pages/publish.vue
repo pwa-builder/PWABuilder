@@ -1,4 +1,4 @@
 <script>
-import Publish from '~/pages/_lang/publish'
-export default Publish
+import Page from '~/pages/_lang/publish'
+export default Page
 </script>

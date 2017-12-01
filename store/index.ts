@@ -1,5 +1,3 @@
-import axios from "~/plugins/axios";
-
 export const state = () => ({
   selected: 1,
   people: [],
@@ -29,12 +27,5 @@ export const getters = {
 };
 
 export const actions = {
-  async nuxtServerInit({ commit }) {
-    const response = await axios.get("/random-data.json");
-    const people = response.data.slice(0, 10);
-    commit("setPeople", people);
-  },
-  select({ commit }, id) {
-    commit("select", id);
-  }
+  async nuxtServerInit({ commit }) {},
 };

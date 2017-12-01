@@ -1,6 +1,11 @@
 {
-  "about": {
-    "title": "About",
-    "introduction": "This page is made to give you more informations1."
+    "generator": {
+      "title": "Generate1"
+    },
+    "serviceworker": {
+      "title": "ServiceWorker1"
+    },
+    "publish": {
+      "title": "Publish1"
+    }
   }
-}

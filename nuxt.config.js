@@ -16,12 +16,15 @@ module.exports = {
   css: ['tachyons/css/tachyons.min.css', '~/assets/scss/app.scss'],
   build: {
     extractCSS: true,
-    vendor: ['axios', 'gsap', 'vuex-class', 'nuxt-class-component', 'vue-i18n'],
+    vendor: ['gsap', 'vuex-class', 'nuxt-class-component', 'vue-i18n'],
     plugins:[]
   },
   router: {
     middleware: 'i18n'
   },
   plugins: ['~/plugins/i18n.js'],
-  modules: ['~/modules/typescript']
+  modules: [
+    '~/modules/typescript',
+    '@nuxtjs/axios'
+  ]
 }

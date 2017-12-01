@@ -1,7 +1,7 @@
 <template>
   <section>
     <GeneratorMenu/>
-    {{ $t('publish.title') }}
+    {{ $t('generator.title') }}
     <TwoWays/>
   </section>
 </template>

@@ -1,3 +1,5 @@
+// From: https://nuxtjs.org/examples/i18n
+
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 
@@ -13,5 +15,13 @@ export default ({ app, store }) => {
       'en': require('~/locales/en.json'),
       'es': require('~/locales/es.json')
     }
-  })
+  });
+
+  app.i18n.path = (link) => {
+    if (app.i18n.locale === app.i18n.fallbackLocale) {
+      return `/${link}`;
+    }
+
+    return `/${app.i18n.locale}/${link}`;
+  };
 }

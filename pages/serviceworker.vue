@@ -1,22 +1,4 @@
-<template>
-  <section>
-    <GeneratorMenu/>
-    Build worker
-    <TwoWays/>
-  </section>
-</template>
-
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'nuxt-class-component'
-import GeneratorMenu from '~/components/GeneratorMenu'
-import TwoWays from '~/components/TwoWays'
-
-@Component({
-  components: {
-    TwoWays,
-    GeneratorMenu
-  }
-})
-export default class extends Vue {}
+<script>
+import Page from '~/pages/_lang/serviceworker'
+export default Page
 </script>
