@@ -13,6 +13,7 @@
     "vue-property-decorator": "^6.0.0",
     "vue-server-renderer": "~2.5.1",
     "vue-template-compiler": "~2.5.1",
+    "vuex": "^3.0.1",
     "vuex-class": "^0.3.0"
   },
   "scripts": {
@@ -22,6 +23,8 @@
     "generate": "nuxt generate"
   },
   "devDependencies": {
+    "node-sass": "^4.7.2",
+    "sass-loader": "^6.0.6",
     "ts-loader": "^3.0.0",
     "typescript": "^2.2.2"
   }

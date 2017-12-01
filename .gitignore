@@ -41,3 +41,4 @@ build/Release
 /libpeerconnection.log
 npm-debug.log
 testem.log
+.nuxt/
