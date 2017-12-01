@@ -37,7 +37,7 @@ export default {
 
     <footer class="l-footer pure-g is-small">
       <div class="pure-u-1-2 pure-u-md-1-5">
-        <a class="l-footer-action l-footer-action--block active" href="/generator">{{ $t('menu.generate') }}</a>
+        <nuxt-link class="l-footer-action l-footer-action--block active" :to="$i18n.path('')">{{ $t('menu.generate') }}</nuxt-link>
         <a class="l-footer-action l-footer-action--block" href="http://docs.pwabuilder.com/" target="_blank">{{ $t('menu.documentation') }}</a>
       </div>
       <div class="pure-u-1-2 pure-u-md-1-5">
