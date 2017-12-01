@@ -2,7 +2,9 @@ import axios from "~/plugins/axios";
 
 export const state = () => ({
   selected: 1,
-  people: []
+  people: [],
+  locales: ['en', 'es'],
+  locale: 'en'
 });
 
 export const mutations = {
@@ -11,6 +13,11 @@ export const mutations = {
   },
   setPeople(state, people) {
     state.people = people;
+  },
+  SET_LANG(state, locale) {
+    if (state.locales.indexOf(locale) !== -1) {
+      state.locale = locale
+    }
   }
 };
 
