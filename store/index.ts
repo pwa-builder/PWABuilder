@@ -1,31 +1,7 @@
-export const state = () => ({
-  selected: 1,
-  people: [],
-  locales: ['en', 'es'],
-  locale: 'en'
-});
+// More info about store: https://vuex.vuejs.org/en/core-concepts.html
 
-export const mutations = {
-  select(state, id) {
-    state.selected = id;
-  },
-  setPeople(state, people) {
-    state.people = people;
-  },
-  SET_LANG(state, locale) {
-    if (state.locales.indexOf(locale) !== -1) {
-      state.locale = locale
-    }
-  }
-};
-
-export const getters = {
-  selectedPerson: state => {
-    const p = state.people.find(person => person.id === state.selected);
-    return p ? p : { first_name: "Please,", last_name: "select someone" };
-  }
-};
-
-export const actions = {
-  async nuxtServerInit({ commit }) {},
-};
+// Export root properties of the store
+export * from './actions'; // Sync or async operations that commit mutations
+export * from './mutations'; // Modify the state
+export * from './getters'; // Get complex information from state
+export * from './state'; // The information of our app, we can get or update it.

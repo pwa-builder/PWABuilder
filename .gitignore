@@ -42,3 +42,4 @@ build/Release
 npm-debug.log
 testem.log
 .nuxt/
+.vs/
