@@ -18,13 +18,14 @@
     "vuex-class": "^0.3.0"
   },
   "scripts": {
-    "dev": "nuxt",
-    "build": "nuxt build",
+    "dev": "cross-env NODE_ENV=development nuxt",
+    "build": "cross-env NODE_ENV=production nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate"
   },
   "devDependencies": {
     "@types/node": "^8.0.53",
+    "cross-env": "^5.1.1",
     "node-sass": "^4.7.2",
     "sass-loader": "^6.0.6",
     "ts-loader": "^3.0.0",

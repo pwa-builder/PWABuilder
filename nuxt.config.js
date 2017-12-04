@@ -1,7 +1,9 @@
 // Info about configuration https://nuxtjs.org/guide/configuration/
+console.log(`Environment: ${process.env.NODE_ENV}`);
+
 module.exports = {
   env: {
-    baseUrl: process.env.BASE_URL || 'http://localhost:3000'
+    ...require(`./environments/${process.env.NODE_ENV}`)
   },
   head: {
     title: 'PWABuilder',

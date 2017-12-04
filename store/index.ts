@@ -1,4 +1,5 @@
 import * as example from './modules/example';
+import * as generator from './modules/generator';
 import * as i18n from './modules/i18n';
 
 // More info about store: https://vuex.vuejs.org/en/core-concepts.html
@@ -11,6 +12,7 @@ import * as i18n from './modules/i18n';
 
 export const modules = {
     [example.name]: example,
+    [generator.name]: generator,
     [i18n.name]: i18n
 };
 
