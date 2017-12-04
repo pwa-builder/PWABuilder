@@ -10,8 +10,8 @@ import * as i18n from './modules/i18n';
     // Mutations: Modify the state
 
 export const modules = {
-    example,
-    i18n
+    [example.name]: example,
+    [i18n.name]: i18n
 };
 
 export type RootState = typeof modules;

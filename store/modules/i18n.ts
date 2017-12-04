@@ -1,6 +1,8 @@
 import { ActionTree, MutationTree, GetterTree } from 'vuex';
 import { RootState } from 'store';
 
+export const name = 'i18n';
+
 export const types = {
     SET: 'SET'
 };
