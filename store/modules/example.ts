@@ -21,7 +21,6 @@ export const getters: GetterTree<State, RootState> = {
 
 export const actions: ActionTree<State, RootState> = {
     select({ commit, state, rootState }, id: number) {
-        commit(rootState.i18n.types.SET, 'es');
         commit(types.SELECT, id);
     }
 };
