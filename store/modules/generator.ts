@@ -52,18 +52,22 @@ export const state = (): State => ({
 export const getters: GetterTree<State, RootState> = {};
 
 export const actions: ActionTree<State, RootState> = {
-    updateLink({ commit }, url: string) {
+    updateLink({ commit }, url: string): void {
         commit(types.UPDATE_LINK, url);
     },
 
-    async generate({ commit, state }) {
-        const options = {
-            siteUrl: state.url
-        };
+    async generate({ commit, state }): Promise<{}> {
+        return new Promise(async resolve => {
+            const options = {
+                siteUrl: state.url
+            };
+    
+            const result = await this.$axios.$post(apiUrl, options);
+            commit(types.UPDATE_WITH_MANIFEST, result);
+            commit(types.SET_DEFAULTS_MANIFEST);
 
-        const result = await this.$axios.$post(apiUrl, options);
-        commit(types.UPDATE_WITH_MANIFEST, result)
-        commit(types.SET_DEFAULTS_MANIFEST)
+            resolve();
+        });
     }
 };
 

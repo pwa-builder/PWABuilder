@@ -80,7 +80,7 @@ export default class extends Vue {
     this.updateLink(url);
   }
 
-  public checkUrlAndGenerate(): void {
+  public async checkUrlAndGenerate(): Promise<void> {
     let url = this.url;
 
     if (url && !url.startsWith('http') && !url.startsWith('http')){
@@ -94,7 +94,9 @@ export default class extends Vue {
 
     this.error = null;
     this.updateLink(url);
-    this.generate();
+    await this.generate();
+
+    console.log('loaded');
   }
 }
 </script>
