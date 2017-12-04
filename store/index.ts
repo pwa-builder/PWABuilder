@@ -1,7 +1,17 @@
-// More info about store: https://vuex.vuejs.org/en/core-concepts.html
+import * as example from './modules/example';
+import * as i18n from './modules/i18n';
 
-// Export root properties of the store
-export * from './actions'; // Sync or async operations that commit mutations
-export * from './mutations'; // Modify the state
-export * from './getters'; // Get complex information from state
-export * from './state'; // The information of our app, we can get or update it.
+// More info about store: https://vuex.vuejs.org/en/core-concepts.html
+// Structure of the store:
+    // Types: Types that represent the keys of the mutations to commit
+    // State: The information of our app, we can get or update it.
+    // Getters: Get complex information from state
+    // Action: Sync or async operations that commit mutations
+    // Mutations: Modify the state
+
+export const modules = {
+    example,
+    i18n
+};
+
+export type RootState = typeof modules;

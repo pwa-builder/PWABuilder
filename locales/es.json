@@ -1,1 +1,10 @@
-{}
+{
+    "menu": {
+        "logo": "logo PWA Builder",
+        "home": "PWA Builder",
+        "documentation": "Documentación",
+        "generator": "PWA Image Generator",
+        "github": "Github",
+        "generate": "Generate"
+    }
+}
