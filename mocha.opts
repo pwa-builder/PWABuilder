@@ -1,0 +1,2 @@
+--require tsconfig.mocha.js
+test/**/*.ts 

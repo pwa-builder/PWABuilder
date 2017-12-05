@@ -21,17 +21,23 @@
     "dev": "cross-env NODE_ENV=development nuxt",
     "build": "cross-env NODE_ENV=production nuxt build",
     "start": "nuxt start",
-    "generate": "nuxt generate"
+    "generate": "nuxt generate",
+    "test": "mocha --opts mocha.opts"
   },
   "devDependencies": {
+    "@types/chai": "^4.0.8",
+    "@types/mocha": "^2.2.44",
     "@types/node": "^8.0.53",
+    "chai": "^4.1.2",
     "cross-env": "^5.1.1",
     "fork-ts-checker-webpack-plugin": "^0.2.9",
+    "mocha": "^4.0.1",
     "node-sass": "^4.7.2",
     "sass-lint": "^1.12.1",
     "sass-loader": "^6.0.6",
     "sasslint-webpack-plugin": "^1.0.4",
     "ts-loader": "^3.2.0",
+    "ts-node": "^3.3.0",
     "tslint": "^5.8.0",
     "typescript": "^2.6.2"
   }
