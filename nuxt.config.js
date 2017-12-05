@@ -26,9 +26,9 @@ module.exports = {
         failOnWarning: false,
         failOnError: false
       }),
-      new ForkTsCheckerWebpackPlugin({
-        tslint: true
-      })
+      // new ForkTsCheckerWebpackPlugin({
+      //   tslint: true
+      // })
     ]
   },
   router: {
