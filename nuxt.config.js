@@ -5,9 +5,7 @@ var ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 console.log(`Environment: ${process.env.NODE_ENV}`);
 
 module.exports = {
-  env: {
-    ...require(`./environments/${process.env.NODE_ENV}`)
-  },
+  env: require(`./environments/${process.env.NODE_ENV}`),
   head: {
     title: 'PWABuilder',
     meta: [

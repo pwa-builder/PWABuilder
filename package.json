@@ -21,7 +21,8 @@
     "dev": "cross-env NODE_ENV=development nuxt",
     "build": "cross-env NODE_ENV=production nuxt build",
     "start": "nuxt start",
-    "generate": "nuxt generate",
+    "generate": "cross-env NODE_ENV=development nuxt generate",
+    "generate-prod": "cross-env NODE_ENV=production nuxt generate",
     "test": "mocha --opts mocha.opts"
   },
   "devDependencies": {
