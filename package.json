@@ -21,7 +21,9 @@
     "dev": "cross-env NODE_ENV=development nuxt",
     "build": "cross-env NODE_ENV=production nuxt build",
     "start": "nuxt start",
-    "generate": "nuxt generate"
+    "generate": "nuxt generate",
+    "lint": "tslint -c tslint.json 'store/**/*.ts'",
+    "precommit": "npm run lint"
   },
   "devDependencies": {
     "@types/node": "^8.0.53",
@@ -31,6 +33,7 @@
     "sass-loader": "^6.0.6",
     "sasslint-webpack-plugin": "^1.0.4",
     "ts-loader": "^3.2.0",
+    "tslint": "^5.8.0",
     "typescript": "^2.6.2"
   }
 }
