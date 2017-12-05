@@ -1,5 +1,6 @@
 // Info about configuration https://nuxtjs.org/guide/configuration/
 var sassLintPlugin = require('sasslint-webpack-plugin');
+var ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 console.log(`Environment: ${process.env.NODE_ENV}`);
 
@@ -26,6 +27,9 @@ module.exports = {
         glob: '?(assets|components|layouts|pages)/**/*.s?(a|c)ss',
         failOnWarning: false,
         failOnError: false
+      }),
+      new ForkTsCheckerWebpackPlugin({
+        tslint: true
       })
     ]
   },

@@ -21,13 +21,12 @@
     "dev": "cross-env NODE_ENV=development nuxt",
     "build": "cross-env NODE_ENV=production nuxt build",
     "start": "nuxt start",
-    "generate": "nuxt generate",
-    "lint": "tslint -c tslint.json -e 'node_modules/**' -t stylish '**/*.ts'",
-    "precommit": "npm run lint"
+    "generate": "nuxt generate"
   },
   "devDependencies": {
     "@types/node": "^8.0.53",
     "cross-env": "^5.1.1",
+    "fork-ts-checker-webpack-plugin": "^0.2.9",
     "node-sass": "^4.7.2",
     "sass-lint": "^1.12.1",
     "sass-loader": "^6.0.6",
