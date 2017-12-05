@@ -34,7 +34,7 @@ export interface Manifest {
 
 export interface State {
     url: string | null;
-    error: string | null;
+    error: string | null
     manifest: Manifest | null;
     manifestId: string | null;
     siteServiceWorkers: any;
