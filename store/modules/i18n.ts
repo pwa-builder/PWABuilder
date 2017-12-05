@@ -9,7 +9,7 @@ export const types = {
 
 export interface State {
     locales: string[];
-    locale: string
+    locale: string;
 }
 
 export const state = (): State => ({
@@ -24,7 +24,7 @@ export const actions: ActionTree<State, RootState> = {};
 export const mutations: MutationTree<State> = {
     [types.SET](state, locale) {
         if (state.locales.indexOf(locale) !== -1) {
-            state.locale = locale
+            state.locale = locale;
         }
     }
 };

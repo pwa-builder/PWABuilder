@@ -5,4 +5,4 @@ export default ({ route, redirect }) => {
     }
 
     return redirect('/');
-}
+};

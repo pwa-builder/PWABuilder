@@ -20,7 +20,7 @@ export interface Manifest {
     background_color: string | null;
     description: string | null;
     dir: string | null;
-    display: string,
+    display: string;
     lang: string | null;
     name: string | null;
     orientation: string | null;
