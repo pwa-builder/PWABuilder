@@ -3,10 +3,15 @@ import { RootState } from 'store';
 
 const apiUrl = `${process.env.apiUrl}/manifests`;
 
+const isValidUrl = (siteUrl: string): boolean => {
+    return /^(http|https):\/\/[^ "]+$/.test(siteUrl);
+};
+
 export const name = 'generator';
 
 export const types = {
     UPDATE_LINK: 'UPDATE_LINK',
+    UPDATE_ERROR: 'UPDATE_ERROR',
     UPDATE_WITH_MANIFEST: 'UPDATE_WITH_MANIFEST',
     SET_DEFAULTS_MANIFEST: 'SET_DEFAULTS_MANIFEST'
 };
@@ -29,17 +34,19 @@ export interface Manifest {
 
 export interface State {
     url: string | null;
+    error: string | null;
     manifest: Manifest | null;
     manifestId: string | null;
     siteServiceWorkers: any;
     icons: string[];
     suggestions: string[] | null;
     warnings: string[] | null;
-    errors: string [] | null;
+    errors: string[] | null;
 }
 
 export const state = (): State => ({
     url: null,
+    error: null,
     manifest: null,
     manifestId: null,
     siteServiceWorkers: null,
@@ -53,6 +60,15 @@ export const getters: GetterTree<State, RootState> = {};
 
 export const actions: ActionTree<State, RootState> = {
     updateLink({ commit }, url: string): void {
+        if (url && !url.startsWith('http') && !url.startsWith('http')) {
+            url = 'https://' + url;
+        }
+
+        if (!isValidUrl(url)) {
+            commit(types.UPDATE_ERROR, 'Please provide a URL.');
+            return;
+          }
+
         commit(types.UPDATE_LINK, url);
     },
 
@@ -61,7 +77,7 @@ export const actions: ActionTree<State, RootState> = {
             const options = {
                 siteUrl: state.url
             };
-    
+
             const result = await this.$axios.$post(apiUrl, options);
             commit(types.UPDATE_WITH_MANIFEST, result);
             commit(types.SET_DEFAULTS_MANIFEST);
@@ -74,6 +90,11 @@ export const actions: ActionTree<State, RootState> = {
 export const mutations: MutationTree<State> = {
     [types.UPDATE_LINK](state, url: string): void {
         state.url = url;
+        state.error = null;
+    },
+
+    [types.UPDATE_ERROR](state, error: string): void {
+        state.error = error;
     },
 
     [types.UPDATE_WITH_MANIFEST](state, result): void {

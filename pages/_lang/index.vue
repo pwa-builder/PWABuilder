@@ -13,8 +13,8 @@
 
           <div class="l-generator-form">
             <div class="l-generator-field">
-              <label class="l-generator-label">URL</label>
-              <input class="l-generator-input" placeholder="Enter a URL" name="siteUrl" type="url" ref="url" v-model="url">
+              <label class="l-generator-label" for="siteUrl">URL</label>
+              <input class="l-generator-input" placeholder="Enter a URL" name="siteUrl" id="siteUrl" type="url" ref="url" v-model="siteUrl">
             </div>
 
             <div class="pure-g l-breath">
@@ -56,10 +56,6 @@ import TwoWays from '~/components/TwoWays';
 const GeneratorState = namespace(modules.generator.name, State);
 const GeneratorAction = namespace(modules.generator.name, Action);
 
-const isValidUrl = (siteUrl: string): boolean => {
-  return /^(http|https):\/\/[^ "]+$/.test(siteUrl);
-};
-
 @Component({
   components: {
     TwoWays,
@@ -67,36 +63,18 @@ const isValidUrl = (siteUrl: string): boolean => {
   }
 })
 export default class extends Vue {
-  public error: string | null = null;
+  public siteUrl: string | null = null;
+
+  @GeneratorState url: string;
+  @GeneratorState error: string;
 
   @GeneratorAction updateLink;
   @GeneratorAction generate;
 
-  get url(): string {
-    return this.$store.state.generator.url;
-  }
-
-  set url(url: string) {
-    this.updateLink(url);
-  }
-
   public async checkUrlAndGenerate(): Promise<void> {
-    let url = this.url;
-
-    if (url && !url.startsWith('http') && !url.startsWith('http')){
-      url = 'https://' + this.url;
-    }
-
-    if (!isValidUrl(url)) {
-      this.error = 'Please provide a URL.';
-      return;
-    }
-
-    this.error = null;
-    this.updateLink(url);
+    this.updateLink(this.siteUrl);
+    this.siteUrl = this.url;
     await this.generate();
-
-    console.log('loaded');
   }
 }
 </script>
