@@ -23,7 +23,7 @@
     "start": "nuxt start",
     "generate": "nuxt generate",
     "lint": "tslint -c tslint.json -e 'node_modules/**' -t stylish '**/*.ts'",
-    "pre-commit": "npm run lint"
+    "precommit": "npm run lint"
   },
   "devDependencies": {
     "@types/node": "^8.0.53",
