@@ -8,8 +8,8 @@
     $tab-color-on: $color-brand;
     $tab-size: 16rem;
     $max-size: 90%;
-    $size_c: 60%;
-    $margin_c: 20%;
+    $sizec: 60%;
+    $marginc: 20%;
 
     &-title {
         font-family: 'Bitter';
@@ -48,9 +48,7 @@
                 display: inline-block;
                 font: normal normal normal 14px/1 FontAwesome;
                 font-size: 1.2rem;
-                -webkit-font-smoothing: antialiased;
                 margin-left: .5rem;
-                -moz-osx-font-smoothing: grayscale;
                 text-rendering: auto;
                 transform: translateY($toggle-space);
                 transition: all $animation-speed-default;
@@ -134,6 +132,7 @@
         font-family: 'Bitter';
         font-size: $font-size-m;
     }
+
     &-input {
         background-color: $color-background-brighter;
         border: .15rem solid $color-foreground-dark;
@@ -328,7 +327,7 @@
     }
 
     &-issue {
-        line-height: $font-size-m;;
+        line-height: $font-size-m;
     }
 
     &-topic {
@@ -338,7 +337,7 @@
     }
 
     &-link {
-        @include action-link ( $color-complementary, $color-complementary-dark, .1rem, false);
+        @include action-link ($color-complementary, $color-complementary-dark, .1rem, false);
     }
 
     &-content {
@@ -352,12 +351,12 @@
     }
 
     &-container {
-        margin-left: $margin_c;
-        width: $size_c;
+        margin-left: $marginc;
+        width: $sizec;
 
         @media screen and (max-width: $media-screen-xl) {
-            margin-left: $margin_c / 2;
-            width: $size_c / 3 + $size_c;
+            margin-left: $marginc / 2;
+            width: $sizec / 3 + $sizec;
         }
     }
 

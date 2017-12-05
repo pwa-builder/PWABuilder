@@ -4,9 +4,10 @@ Copyright 2013 Yahoo!
 Licensed under the BSD License.
 https://github.com/yahoo/pure/blob/master/LICENSE.md
 */
+// sass-lint:disable-all
 .pure-g {
     -webkit-align-content: flex-start;
-    align-content: flex-start;;
+    align-content: flex-start;
     display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
@@ -18,6 +19,7 @@ https://github.com/yahoo/pure/blob/master/LICENSE.md
     font-family: FreeSans,Arimo,'Droid Sans',Helvetica,Arial,sans-serif;
     letter-spacing: -.31em;
     text-rendering: optimizespeed;
+    ;
 }@media all and (-ms-high-contrast:none),(-ms-high-contrast:active) {
     table .pure-g {
         display: block;
@@ -74,10 +76,11 @@ https://github.com/yahoo/pure/blob/master/LICENSE.md
 .pure-u-9-24 {
     display: inline-block;
     letter-spacing: normal;
-    text-rendering: auto;;
+    text-rendering: auto;
     vertical-align: top;
     word-spacing: normal;
     zoom: 1;
+    ;
 }.pure-g [class*=pure-u] {
     font-family: sans-serif;
 }.pure-u-1-24 {
@@ -211,10 +214,11 @@ https://github.com/yahoo/pure/blob/master/LICENSE.md
     .pure-u-sm-9-24 {
         display: inline-block;
         letter-spacing: normal;
-        text-rendering: auto;;
+        text-rendering: auto;
         vertical-align: top;
         word-spacing: normal;
         zoom: 1;
+        ;
     }.pure-u-sm-1-24 {
         width: 4.1667%;
     }.pure-u-sm-1-12,
@@ -339,10 +343,11 @@ https://github.com/yahoo/pure/blob/master/LICENSE.md
     .pure-u-md-9-24 {
         display: inline-block;
         letter-spacing: normal;
-        text-rendering: auto;;
+        text-rendering: auto;
         vertical-align: top;
         word-spacing: normal;
         zoom: 1;
+        ;
     }.pure-u-md-1-24 {
         width: 4.1667%;
     }.pure-u-md-1-12,
@@ -467,10 +472,11 @@ https://github.com/yahoo/pure/blob/master/LICENSE.md
     .pure-u-lg-9-24 {
         display: inline-block;
         letter-spacing: normal;
-        text-rendering: auto;;
+        text-rendering: auto;
         vertical-align: top;
         word-spacing: normal;
         zoom: 1;
+        ;
     }.pure-u-lg-1-24 {
         width: 4.1667%;
     }.pure-u-lg-1-12,
@@ -595,10 +601,11 @@ https://github.com/yahoo/pure/blob/master/LICENSE.md
     .pure-u-xl-9-24 {
         display: inline-block;
         letter-spacing: normal;
-        text-rendering: auto;;
+        text-rendering: auto;
         vertical-align: top;
         word-spacing: normal;
         zoom: 1;
+        ;
     }.pure-u-xl-1-24 {
         width: 4.1667%;
     }.pure-u-xl-1-12,

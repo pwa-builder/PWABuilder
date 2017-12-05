@@ -5,7 +5,7 @@
     transition: all $animation-speed-default $animation-ease-default;
 }
 
-@mixin button-brand() {
+@mixin button-brand {
     background-color: $color-complementary;
     color: $color-foreground-brighter;
 
@@ -22,12 +22,11 @@
     $button-pad: .75rem;
     $shadow: 2px;
 
-@include button-shadow($shadow);
-
-@include button-brand();
+    @include button-brand;
+    @include button-shadow($shadow);
 
     appearance: button;
-    border: none;
+    border: 0;
     border-radius: .5rem;
     cursor: pointer;
     display: inline-block;
@@ -73,7 +72,7 @@
 
     // To use with simple
     &--brand {
-        @include button-brand();
+        @include button-brand;
     }
 
     &--warning {

@@ -26,20 +26,25 @@ pre {
     margin: 0;
     padding: 0;
 }
+
 .shell .line span {
     display: inline-block;
 }
+
 .shell p.line {
     line-height: 1.375em;
 }
+
 .shell .prompt {
     color: $color-shell-prompt;
     vertical-align: top;
 }
+
 .shell .command {
     color: $color-shell-command;
     vertical-align: top;
 }
+
 .shell .app {
     color: $color-foreground-brighter;
     vertical-align: top;

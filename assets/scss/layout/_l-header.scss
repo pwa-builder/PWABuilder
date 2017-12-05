@@ -48,6 +48,6 @@
     }
 
     &-link {
-        @include action-link ( $color-foreground-darker, $color-brand, .2rem);
+        @include action-link ($color-foreground-darker, $color-brand, .2rem);
     }
 }

@@ -57,7 +57,7 @@
     }
 
     &-link {
-        @include action-link ( $color-foreground-darker, $color-foreground-darker, .1rem, true, true);
+        @include action-link ($color-foreground-darker, $color-foreground-darker, .1rem, true, true);
 
         padding-top: .5rem;
     }

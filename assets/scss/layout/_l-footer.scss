@@ -8,7 +8,7 @@
     padding: 1.5vw 2vw;
 
     &-action {
-        @include action-link ( $color-foreground-brighter, $color-secondary, .2rem, false);
+        @include action-link ($color-foreground-brighter, $color-secondary, .2rem, false);
 
         &--block {
             display: block;
@@ -22,7 +22,7 @@
     }
 
     &-logo_action {
-        @include action-link ( $color-foreground-brighter, $color-secondary, .2rem, false);
+        @include action-link ($color-foreground-brighter, $color-secondary, .2rem, false);
     }
 
     &-logo {
