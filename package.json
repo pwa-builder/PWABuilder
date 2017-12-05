@@ -27,7 +27,9 @@
     "@types/node": "^8.0.53",
     "cross-env": "^5.1.1",
     "node-sass": "^4.7.2",
+    "sass-lint": "^1.12.1",
     "sass-loader": "^6.0.6",
+    "sasslint-webpack-plugin": "^1.0.4",
     "ts-loader": "^3.2.0",
     "typescript": "^2.6.2"
   }

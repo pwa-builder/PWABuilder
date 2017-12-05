@@ -1,4 +1,6 @@
 // Info about configuration https://nuxtjs.org/guide/configuration/
+var sassLintPlugin = require('sasslint-webpack-plugin');
+
 console.log(`Environment: ${process.env.NODE_ENV}`);
 
 module.exports = {
@@ -19,7 +21,13 @@ module.exports = {
   build: {
     extractCSS: true,
     vendor: ['gsap', 'vuex-class', 'nuxt-class-component', 'vue-i18n'],
-    plugins:[]
+    plugins:[
+      new sassLintPlugin({
+        glob: '?(assets|components|layouts|pages)/**/*.s?(a|c)ss',
+        failOnWarning: false,
+        failOnError: false
+      })
+    ]
   },
   router: {
     middleware: 'i18n'
