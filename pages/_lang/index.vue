@@ -45,13 +45,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Component from 'nuxt-class-component';
-import { Action, State, namespace } from 'vuex-class';
+import Vue from "vue";
+import Component from "nuxt-class-component";
+import { Action, State, namespace } from "vuex-class";
 
-import { modules } from '~/store';
-import GeneratorMenu from '~/components/GeneratorMenu';
-import TwoWays from '~/components/TwoWays';
+import { modules } from "~/store";
+import GeneratorMenu from "~/components/GeneratorMenu";
+import TwoWays from "~/components/TwoWays";
 
 const GeneratorState = namespace(modules.generator.name, State);
 const GeneratorAction = namespace(modules.generator.name, Action);
@@ -69,12 +69,16 @@ export default class extends Vue {
   @GeneratorState error: string;
 
   @GeneratorAction updateLink;
-  @GeneratorAction generate;
+  @GeneratorAction getManifestInformation;
 
   public async checkUrlAndGenerate(): Promise<void> {
     this.updateLink(this.siteUrl);
     this.siteUrl = this.url;
-    await this.generate();
+
+    await this.getManifestInformation();
+    this.$router.push({
+      name: 'serviceworker'
+    });
   }
 }
 </script>

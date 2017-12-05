@@ -72,17 +72,22 @@ export const actions: ActionTree<State, RootState> = {
         commit(types.UPDATE_LINK, url);
     },
 
-    async generate({ commit, state }): Promise<{}> {
-        return new Promise(async resolve => {
+    async getManifestInformation({ commit, state }): Promise<{}> {
+        return new Promise(async (resolve, reject) => {
             const options = {
                 siteUrl: state.url
             };
 
-            const result = await this.$axios.$post(apiUrl, options);
-            commit(types.UPDATE_WITH_MANIFEST, result);
-            commit(types.SET_DEFAULTS_MANIFEST);
+            try {
+                const result = await this.$axios.$post(apiUrl, options);
 
-            resolve();
+                commit(types.UPDATE_WITH_MANIFEST, result);
+                commit(types.SET_DEFAULTS_MANIFEST);
+    
+                resolve();
+            } catch (e) {
+                commit(types.UPDATE_ERROR, e.response.data.error || e.response.data || e.response.statusText);
+            }
         });
     }
 };
