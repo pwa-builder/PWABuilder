@@ -28,7 +28,7 @@
     "cross-env": "^5.1.1",
     "node-sass": "^4.7.2",
     "sass-loader": "^6.0.6",
-    "ts-loader": "^3.0.0",
-    "typescript": "^2.2.2"
+    "ts-loader": "^3.2.0",
+    "typescript": "^2.6.2"
   }
 }
