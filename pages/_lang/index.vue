@@ -26,7 +26,7 @@
               </div>
 
               <div class="pure-u-2-5">
-                 <p class="pwa-generator-error">{{error}}</p>
+                 <p class="l-generator-error">{{error}}</p>
               </div>
 
               <div class="l-generator-wrapper pure-u-1">
