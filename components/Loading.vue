@@ -1,5 +1,6 @@
 <template>
-<section class="loading" v-if="active">
+<section>
+    <div class="loading" v-if="active"></div>
 </section>
 </template>
 
@@ -23,13 +24,13 @@ export default class extends Vue {
     animation: loading 1.4s infinite linear;
     background: linear-gradient(to right, $color-foreground-brighter 10%, rgba($color-foreground-brighter, 0) 42%);
     border-radius: 50%;
+    display: inline-block;
     font-size: 10px;
-    height: 11em;
-    margin: 50px auto;
+    height: 2em;
     position: relative;
     text-indent: -9999em;
     transform: translateZ(0);
-    width: 11em;
+    width: 2em;
 
     &:before {
         background-color: $color-foreground-brighter;

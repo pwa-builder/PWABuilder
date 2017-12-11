@@ -38,4 +38,18 @@
             transform: translate(-50%, -50%);
         }
     }
+
+    &-display {
+        &-inline_block {
+            display: inline-block;
+        }
+    }
+
+    &-margin {
+        &-left {
+            &-sm {
+                margin-left: .5rem;
+            }
+        }
+    }
 }

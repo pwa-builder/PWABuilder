@@ -12,7 +12,9 @@
     "license": "License"
   },
   "generator": {
-    "title": "Generate"
+    "title": "Generate",
+    "start": "Get started",
+    "skip": "Skip to Build Service Worker"
   },
   "serviceworker": {
     "title": "ServiceWorker"

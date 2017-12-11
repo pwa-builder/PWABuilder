@@ -19,9 +19,11 @@
 
             <div class="pure-g l-breath">
               <div class="l-generator-wrapper pure-u-3-5">
-                  <button @click="checkUrlAndGenerate"
-                          data-flare="{'category': 'Build', 'action': 'Step 2', 'label': 'Scan for Manifest', 'value': { 'page': '/build/manifest-scan' }}" class="get-started pwa-button isEnabled next-step">
-                          Get Started
+                  <button 
+                    @click="checkUrlAndGenerate"
+                    class="get-started pwa-button isEnabled next-step"
+                    data-flare="{'category': 'Build', 'action': 'Step 2', 'label': 'Scan for Manifest', 'value': { 'page': '/build/manifest-scan' }}" >
+                    {{ $t('generator.start') }} <Loading :active="!generatorReady" class="u-display-inline_block u-margin-left-sm" />
                   </button>
               </div>
 
@@ -30,8 +32,11 @@
               </div>
 
               <div class="l-generator-wrapper pure-u-1">
-                <button class="pwa-button pwa-button--simple" data-flare="{'category': 'Skip', 'action': 'Manifest', 'label': 'Skip to Service Worker', 'value': { 'page': '/skip/service-worker' }}">
-                        Skip to Build Service Worker
+                <button 
+                  @click="skipCheckUrl"
+                  class="pwa-button pwa-button--simple" 
+                  data-flare="{'category': 'Skip', 'action': 'Manifest', 'label': 'Skip to Service Worker', 'value': { 'page': '/skip/service-worker' }}">
+                  {{ $t('generator.skip') }}
                 </button>
               </div>
             </div>
@@ -52,6 +57,7 @@ import { Action, State, namespace } from "vuex-class";
 import { modules } from "~/store";
 import GeneratorMenu from "~/components/GeneratorMenu";
 import TwoWays from "~/components/TwoWays";
+import Loading from "~/components/Loading";
 
 const GeneratorState = namespace(modules.generator.name, State);
 const GeneratorAction = namespace(modules.generator.name, Action);
@@ -59,11 +65,13 @@ const GeneratorAction = namespace(modules.generator.name, Action);
 @Component({
   components: {
     TwoWays,
-    GeneratorMenu
+    GeneratorMenu,
+    Loading
   }
 })
 export default class extends Vue {
   public siteUrl: string | null = null;
+  public generatorReady = true;
 
   @GeneratorState url: string;
   @GeneratorState error: string;
@@ -71,8 +79,18 @@ export default class extends Vue {
   @GeneratorAction updateLink;
   @GeneratorAction getManifestInformation;
 
+  public skipCheckUrl(): void {
+    this.$router.push({
+      name: 'serviceworker'
+    });
+  }
+
   public async checkUrlAndGenerate(): Promise<void> {
+    this.generatorReady = false;
     this.updateLink(this.siteUrl);
+    if (this.error) {
+      this.generatorReady = true;
+    }
     this.siteUrl = this.url;
 
     await this.getManifestInformation();
