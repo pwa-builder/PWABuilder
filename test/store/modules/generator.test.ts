@@ -9,13 +9,13 @@ import { RootState } from 'store';
 use(sinonChai);
 
 let state: generator.State;
-let actionContext: ActionContext<generator.State, RootState>;
+let actionContext: ActionContext<any, any>;
 
 describe('generator', () => {
 
     beforeEach(() => {
         state = generator.state();
-        actionContext = actionContextMockBuilder<generator.State>(state);
+        actionContext = actionContextMockBuilder<any>(state);
         sinon.spy(actionContext, 'commit');
     });
 
