@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import * as i18n from '../../../store/modules/i18n';
+import * as i18n from 'store/modules/i18n';
 
 let state;
 

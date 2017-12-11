@@ -58,7 +58,7 @@ export const state = (): State => ({
 
 export const getters: GetterTree<State, RootState> = {};
 
-export const actions: ActionTree<State, RootState> = {
+export const actions: ActionTree<State, any> = {
     updateLink({ commit }, url: string): void {
         if (url && !url.startsWith('http') && !url.startsWith('http')) {
             url = 'https://' + url;
