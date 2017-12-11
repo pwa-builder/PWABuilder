@@ -1,4 +1,3 @@
-import * as example from './modules/example';
 import * as generator from './modules/generator';
 import * as i18n from './modules/i18n';
 
@@ -11,7 +10,6 @@ import * as i18n from './modules/i18n';
     // Mutations: Modify the state
 
 export const modules = {
-    [example.name]: example,
     [generator.name]: generator,
     [i18n.name]: i18n
 };
