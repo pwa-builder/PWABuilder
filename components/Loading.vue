@@ -14,7 +14,7 @@ export default class extends Vue {
     @Prop({type: Boolean, default: false})
     public active: boolean;
 
-    @Prop({type: String, default: 'sm'})
+    @Prop({type: String, default: 'md'})
     public size: string;
 }
 </script>
@@ -31,6 +31,12 @@ export default class extends Vue {
     position: relative;
 
     &-sm {
+        border-width: .15rem;
+        height: .8rem;
+        width: .8rem;
+    }
+
+    &-md {
         border-width: .2rem;
         height: 1.5rem;
         top: .2rem;

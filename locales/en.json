@@ -17,7 +17,9 @@
     "skip": "Skip to Build Service Worker"
   },
   "serviceworker": {
-    "title": "ServiceWorker"
+    "title": "Select the service worker functionality for your app.",
+    "download": "Download service worker",
+    "building": "Building package..."
   },
   "publish": {
     "title": "Publish"
