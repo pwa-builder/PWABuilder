@@ -80,7 +80,7 @@ export default class extends Vue {
   @GeneratorAction getManifestInformation;
 
   public mounted():void {
-
+    this.siteUrl = '';
   }
 
   public get inProgress(): boolean {
@@ -96,9 +96,9 @@ export default class extends Vue {
   public async checkUrlAndGenerate(): Promise<void> {
     this.generatorReady = false;
     this.updateLink(this.siteUrl);
-
-    //this.siteUrl = this.url;
-
+    if (this.siteUrl) {
+      this.siteUrl = this.url;
+    }
     await this.getManifestInformation();
     this.$router.push({
       name: 'serviceworker'
