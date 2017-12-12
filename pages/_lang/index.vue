@@ -15,7 +15,13 @@
             <form @submit.prevent="checkUrlAndGenerate" @keydown.enter.prevent="checkUrlAndGenerate">
               <div class="l-generator-field">
                 <label class="l-generator-label" for="siteUrl">URL</label>
-                <input class="l-generator-input" placeholder="Enter a URL" name="siteUrl" id="siteUrl" type="url" ref="url" v-model="siteUrl">
+                <input 
+                  class="l-generator-input"
+                  placeholder="Enter a URL"
+                  name="siteUrl" id="siteUrl"
+                  type="text"
+                  ref="url"
+                  v-model="siteUrl">
               </div>
 
               <div class="pure-g l-breath">
