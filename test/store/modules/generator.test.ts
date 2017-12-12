@@ -11,8 +11,8 @@ import { RootState } from 'store';
 use(sinonChai);
 
 let state: generator.State;
-let actionContext: ActionContext<any, any>;
-let actions: generator.Actions<any, any>;
+let actionContext: ActionContext<generator.State, RootState>;
+let actions: generator.Actions<generator.State, RootState>;
 let mock = new MockAdapter(axios);
 // Todo: Move to general configuration
 process.env = configureEnv();
@@ -23,7 +23,7 @@ describe('generator', () => {
 
     beforeEach(() => {
         state = generator.state();
-        actionContext = actionContextMockBuilder<any>(state);
+        actionContext = actionContextMockBuilder<generator.State>(state);
         sinon.spy(actionContext, 'commit');
         actions = nuxtAxiosMockBuilder(generator.actions);
     });
