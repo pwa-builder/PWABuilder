@@ -1,2 +1,3 @@
 --require tsconfig.mocha.js
+--require tsconfig-paths/register
 test/**/*.ts 

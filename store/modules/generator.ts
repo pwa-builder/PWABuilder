@@ -1,4 +1,4 @@
-import { ActionTree, MutationTree, GetterTree } from 'vuex';
+import { ActionTree, MutationTree, GetterTree, Action, ActionContext } from 'vuex';
 import { RootState } from 'store';
 
 const apiUrl = `${process.env.apiUrl}/manifests`;
@@ -58,7 +58,12 @@ export const state = (): State => ({
 
 export const getters: GetterTree<State, RootState> = {};
 
-export const actions: ActionTree<State, RootState> = {
+export interface Actions<S, R> extends ActionTree<S, R> {
+    updateLink(context: ActionContext<S, R>, url: string): void;
+    getManifestInformation(context: ActionContext<S, R>): void;
+}
+
+export const actions: Actions<State, RootState> = {
     updateLink({ commit }, url: string): void {
         if (url && !url.startsWith('http') && !url.startsWith('http')) {
             url = 'https://' + url;
