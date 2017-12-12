@@ -23,7 +23,7 @@
                     @click="checkUrlAndGenerate"
                     class="get-started pwa-button isEnabled next-step"
                     data-flare="{'category': 'Build', 'action': 'Step 2', 'label': 'Scan for Manifest', 'value': { 'page': '/build/manifest-scan' }}" >
-                    {{ $t('generator.start') }} <Loading :active="!generatorReady && !error" class="u-display-inline_block u-margin-left-sm" />
+                    {{ $t('generator.start') }} <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm" />
                   </button>
               </div>
 
@@ -79,6 +79,14 @@ export default class extends Vue {
   @GeneratorAction updateLink;
   @GeneratorAction getManifestInformation;
 
+  public mounted():void {
+
+  }
+
+  public get inProgress(): boolean {
+    return !this.generatorReady && !this.error;
+  }
+
   public skipCheckUrl(): void {
     this.$router.push({
       name: 'serviceworker'
@@ -88,7 +96,8 @@ export default class extends Vue {
   public async checkUrlAndGenerate(): Promise<void> {
     this.generatorReady = false;
     this.updateLink(this.siteUrl);
-    this.siteUrl = this.url;
+
+    //this.siteUrl = this.url;
 
     await this.getManifestInformation();
     this.$router.push({
