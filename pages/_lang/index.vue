@@ -12,35 +12,38 @@
           </header>
 
           <div class="l-generator-form">
-            <div class="l-generator-field">
-              <label class="l-generator-label" for="siteUrl">URL</label>
-              <input class="l-generator-input" placeholder="Enter a URL" name="siteUrl" id="siteUrl" type="url" ref="url" v-model="siteUrl">
-            </div>
+            <form @submit.prevent="checkUrlAndGenerate" @keydown.enter.prevent="checkUrlAndGenerate">
+              <div class="l-generator-field">
+                <label class="l-generator-label" for="siteUrl">URL</label>
+                <input class="l-generator-input" placeholder="Enter a URL" name="siteUrl" id="siteUrl" type="url" ref="url" v-model="siteUrl">
+              </div>
 
-            <div class="pure-g l-breath">
-              <div class="l-generator-wrapper pure-u-3-5">
+              <div class="pure-g l-breath">
+                <div class="l-generator-wrapper pure-u-3-5">
+                    <button
+                      type="submit"
+                      class="get-started pwa-button isEnabled next-step"
+                      data-flare="{'category': 'Build', 'action': 'Step 2', 'label': 'Scan for Manifest', 'value': { 'page': '/build/manifest-scan' }}" >
+                      {{ $t('generator.start') }} <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm" />
+                    </button>
+                </div>
+
+                <div class="pure-u-2-5">
+                   <p class="l-generator-error">{{error}}</p>
+                </div>
+
+                <div class="l-generator-wrapper pure-u-1">
                   <button 
-                    @click="checkUrlAndGenerate"
-                    class="get-started pwa-button isEnabled next-step"
-                    data-flare="{'category': 'Build', 'action': 'Step 2', 'label': 'Scan for Manifest', 'value': { 'page': '/build/manifest-scan' }}" >
-                    {{ $t('generator.start') }} <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm" />
+                    @click="skipCheckUrl"
+                    class="pwa-button pwa-button--simple" 
+                    data-flare="{'category': 'Skip', 'action': 'Manifest', 'label': 'Skip to Service Worker', 'value': { 'page': '/skip/service-worker' }}">
+                    {{ $t('generator.skip') }}
                   </button>
+                </div>
               </div>
-
-              <div class="pure-u-2-5">
-                 <p class="l-generator-error">{{error}}</p>
-              </div>
-
-              <div class="l-generator-wrapper pure-u-1">
-                <button 
-                  @click="skipCheckUrl"
-                  class="pwa-button pwa-button--simple" 
-                  data-flare="{'category': 'Skip', 'action': 'Manifest', 'label': 'Skip to Service Worker', 'value': { 'page': '/skip/service-worker' }}">
-                  {{ $t('generator.skip') }}
-                </button>
-              </div>
-            </div>
-            <p class="l-narrow">If you already have the Manifest and want to download the service worker source code you can skip the first step.</p>
+              <p class="l-narrow">If you already have the Manifest and want to download the service worker source code you can skip the first step.</p>
+              
+            </form>
           </div>
         </div>
       </div>
