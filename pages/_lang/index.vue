@@ -107,11 +107,11 @@ export default class extends Vue {
     this.updateLink(this.siteUrl);
     if (this.siteUrl) {
       this.siteUrl = this.url;
+      await this.getManifestInformation();
+      this.$router.push({
+        name: 'serviceworker'
+      });
     }
-    await this.getManifestInformation();
-    this.$router.push({
-      name: 'serviceworker'
-    });
   }
 }
 </script>
