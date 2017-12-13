@@ -12,9 +12,37 @@
     "license": "License"
   },
   "generator": {
-    "title": "Generate",
+    "title": "Provide a URL",
+    "subtitle": "Provide your URL and we'll help fill in the gaps if there are any.",
+    "url": "URL",
+    "placeholder_url": "Enter a URL",
     "start": "Get started",
-    "skip": "Skip to Build Service Worker"
+    "skip": "Skip to Build Service Worker",
+    "skip_description": "If you already have the Manifest and want to download the service worker source code you can skip the first step."
+  },
+  "generate": {
+    "subtitle": "Here are the values we picked up from your site.",
+    "instructions": "Update or add any details below.",
+    "name": "Name",
+    "short_name": "Short Name",
+    "description": "Description",
+    "icon_url": "Icon Url",
+    "upload": "Or upload an image...",
+    "add_icon": "Add icon",
+    "preview": "Preview",
+    "size": "Size",
+    "scope": "Scope",
+    "start_url": "Start Url",
+    "display": "Display",
+    "fullscreen": "fullscreen",
+    "orientation": "Orientation",
+    "any": "any",
+    "language": "Language",
+    "background_color": "Background Color",
+    "none": "None",
+    "specify_application": "Specify related applications to be added to the manifest.",
+    "specify_members": "Specify custom members to be added to the manifest.",
+    "next_step": "Next Step"
   },
   "serviceworker": {
     "title": "Select the service worker functionality for your app.",

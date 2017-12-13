@@ -5,19 +5,19 @@
       <div class="pure-g l-generator-padded">
         <div class="pure-u-1 pure-u-md-3-5 pure-u-lg-2-5">
           <header class="l-generator-header l-generator-header--minimal">
-            <h2 class="l-generator-title">Provide a URL</h2>
+            <h2 class="l-generator-title">{{ $t('generator.title') }}</h2>
             <h4 class="l-generator-subtitle">
-              Provide your URL and we'll help fill in the gaps if there are any.
+              {{ $t('generator.subtitle') }}
             </h4>
           </header>
 
           <div class="l-generator-form">
             <form @submit.prevent="checkUrlAndGenerate" @keydown.enter.prevent="checkUrlAndGenerate">
               <div class="l-generator-field">
-                <label class="l-generator-label" for="siteUrl">URL</label>
+                <label class="l-generator-label" for="siteUrl">{{ $t('generator.url') }}</label>
                 <input 
                   class="l-generator-input"
-                  placeholder="Enter a URL"
+                  :placeholder="$t('generator.placeholder_url')"
                   name="siteUrl" id="siteUrl"
                   type="text"
                   ref="url"
@@ -47,7 +47,7 @@
                   </button>
                 </div>
               </div>
-              <p class="l-narrow">If you already have the Manifest and want to download the service worker source code you can skip the first step.</p>
+              <p class="l-narrow">{{ $t('generator.skip_description') }}</p>
               
             </form>
           </div>

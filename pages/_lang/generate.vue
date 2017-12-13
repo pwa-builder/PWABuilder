@@ -5,31 +5,31 @@
         <div class="l-generator-semipadded">
           <div class="l-generator-form pure-u-1 pure-u-md-1-2">
             <h4 class="l-generator-subtitle">
-                Here are the values we picked up from your site.
+                {{ $t('generate.subtitle') }}
             </h4>
             <h4 class="l-generator-subtitle l-generator-subtitle--last">
-                Update or add any details below.
+                {{ $t('generate.instructions') }}
             </h4>
             <div class="l-generator-field">
-                <label class="l-generator-label">Name
+                <label class="l-generator-label">{{ $t('generate.name') }}
                     <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#name-member" target="_blank">[?]</a>
                 </label>
                 <input class="l-generator-input" v-model="manifest$.name" type="text">
             </div>
             <div class="l-generator-field">
-                <label class="l-generator-label">Short Name
+                <label class="l-generator-label">{{ $t('generate.short_name') }}
                     <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#short_name-member" target="_blank">[?]</a>
                 </label>
                 <input class="l-generator-input" v-model="manifest$.short_name" name="short_name" type="text">
             </div>
             <div class="l-generator-field">
-                <label class="l-generator-label">Description
+                <label class="l-generator-label">{{ $t('generate.description') }}
                     <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#description-member" target="_blank">[?]</a>
                 </label>
                 <input class="l-generator-input" v-model="manifest$.description" name="description" type="text">
             </div>
             <div class="l-generator-field logo-upload">
-                <label class="l-generator-label">Icon Url
+                <label class="l-generator-label">{{ $t('generate.icon_url') }}
                     <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#icons-member" target="_blank">[?]</a>
                 </label>
                 <div>
@@ -39,17 +39,17 @@
                     <div class="button-holder icons">
                         <div class="l-inline">
                             <button class="pwa-button pwa-button--text isEnabled">
-                                Or upload an image...
+                                {{ $t('generate.upload') }}
                             </button>
                         </div>
                         <button class="pwa-button pwa-button--text pwa-button--right" disabled="">
-                           Add Icon
+                           {{ $t('generate.add_icon') }}
                         </button>
                     </div>
 
                     <div class="pure-g l-generator-table">
-                        <div class="pure-u-10-24 l-generator-tableh">Preview</div>
-                        <div class="pure-u-8-24 l-generator-tableh">Size</div>
+                        <div class="pure-u-10-24 l-generator-tableh">{{ $t('generate.preview') }}</div>
+                        <div class="pure-u-8-24 l-generator-tableh">{{ $t('generate.size') }}</div>
                         <div class="pure-u-1-8"></div>
                         <div class="pure-u-1-8"></div>
 
@@ -72,27 +72,27 @@
                 </div>
             </div>
             <div class="l-generator-field">
-                <label class="l-generator-label">Scope
+                <label class="l-generator-label">{{ $t('generate.scope') }}
                     <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#scope-member" target="_blank">[?]</a>
                 </label>
                 <input class="l-generator-input" v-model="manifest$.scope" type="text">
             </div>
             <div class="l-generator-field">
-                <label class="l-generator-label">Start Url
+                <label class="l-generator-label">{{ $t('generate.start_url') }}
                     <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#start_url-member" target="_blank">[?]</a>
                 </label>
                 <input class="l-generator-input" v-model="manifest$.start_url" type="text">
             </div>
             <div class="l-generator-field">
-                <label class="l-generator-label">Display
+                <label class="l-generator-label">{{ $t('generate.display') }}
                     <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#display-member" target="_blank">[?]</a>
                 </label>
                 <select class="l-generator-input l-generator-input--select">
-                    <option value="fullscreen">fullscreen</option>
+                    <option value="fullscreen">{{ $t('generate.fullscreen') }}</option>
                 </select>
             </div>
             <div class="l-generator-field">
-                <label class="l-generator-label">Orientation
+                <label class="l-generator-label">{{ $t('generate.orientation') }}
                     <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#orientation-member" target="_blank">[?]</a>
                 </label>
                 <select class="l-generator-input l-generator-input--select">
@@ -101,7 +101,7 @@
                 </select>
             </div>
             <div class="l-generator-field">
-                <label class="l-generator-label">Language
+                <label class="l-generator-label">{{ $t('generate.language') }}
                     <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#lang-member" target="_blank">[?]</a>
                 </label>
                 <select id="ember554" class="l-generator-input l-generator-input--select">
@@ -111,30 +111,30 @@
             </div>
             <div id="ember567">
                 <div class="l-generator-field">
-                    <label class="l-generator-label">Background Color
+                    <label class="l-generator-label">B{{ $t('generate.background_color') }}
                         <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#background_color-member" target="_blank">[?]</a>
                     </label>
                     <div class="l-generator-options">
                         <label class="l-generator-label">
-                            <input type="radio" value="none"> None
+                            <input type="radio" value="none"> {{ $t('generate.none') }}
                         </label>
                     </div>
                 </div>
             </div>
             <label class="l-generator-toggle">
                 <input type="checkbox" class="l-generator-togglecheck">
-                <h4 class="l-generator-subtitle l-generator-subtitle--toggleable">Specify related applications to be added to the manifest.</h4>
+                <h4 class="l-generator-subtitle l-generator-subtitle--toggleable">{{ $t('generate.specify_application') }}</h4>
             </label>
             <label class="l-generator-toggle">
                 <input type="checkbox" class="l-generator-togglecheck">
-                <h4 class="l-generator-subtitle l-generator-subtitle--toggleable">Specify custom members to be added to the manifest.</h4>
+                <h4 class="l-generator-subtitle l-generator-subtitle--toggleable">{{ $t('generate.specify_members') }}</h4>
             </label>
         </div>
         </div>
     </div>
 
     <div class="l-generator-buttons l-generator-buttons--centered">
-        <button class="pwa-button">Next Step</button>
+        <button class="pwa-button">{{ $t('generate.next_step') }}</button>
     </div>
     </div>
     <TwoWays/>
