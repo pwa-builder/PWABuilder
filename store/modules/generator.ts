@@ -1,6 +1,8 @@
 import { ActionTree, MutationTree, GetterTree, Action, ActionContext } from 'vuex';
 import { RootState } from 'store';
 
+const apiUrl = `${process.env.apiUrl}/manifests`;
+
 const isValidUrl = (siteUrl: string): boolean => {
     return /^(http|https):\/\/[^ "]+$/.test(siteUrl);
 };
@@ -87,8 +89,6 @@ export const actions: Actions<State, RootState> = {
             };
 
             try {
-                // Todo: Move to external, check generator.test
-                const apiUrl = `${process.env.apiUrl}/manifests`;
                 const result = await this.$axios.$post(apiUrl, options);
                 commit(types.UPDATE_WITH_MANIFEST, result);
                 commit(types.SET_DEFAULTS_MANIFEST);

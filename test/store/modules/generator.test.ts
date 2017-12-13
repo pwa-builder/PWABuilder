@@ -1,23 +1,18 @@
-import { expect, use } from 'chai';
-import * as sinon from 'sinon';
-import * as sinonChai from 'sinon-chai';
-import axios from 'axios';
-import * as MockAdapter from 'axios-mock-adapter';
 import { ActionContext } from 'vuex';
-import { actionContextMockBuilder, nuxtAxiosMockBuilder, configureEnv } from '../../utils';
-import * as generator from 'store/modules/generator';
 import { RootState } from 'store';
 
-use(sinonChai);
+import { expect, sinon } from 'test/libs/chai';
+import { axiosMock } from 'test/libs/axios';
+
+import { actionContextMockBuilder, nuxtAxiosMockBuilder } from 'test/utils';
+
+import * as generator from 'store/modules/generator';
 
 let state: generator.State;
 let actionContext: ActionContext<generator.State, RootState>;
 let actions: generator.Actions<generator.State, RootState>;
-let mock = new MockAdapter(axios);
-// Todo: Move to general configuration
-process.env = configureEnv();
 
-mock.onPost(`${process.env.apiUrl}/manifests`).reply(200, {});
+axiosMock.onPost(`${process.env.apiUrl}/manifests`).reply(200, {});
 
 describe('generator', () => {
 
