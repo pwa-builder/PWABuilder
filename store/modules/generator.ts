@@ -11,6 +11,8 @@ export const name = 'generator';
 
 export const types = {
     SET_LANGUAGES: 'SET_LANGUAGES',
+    SET_DISPLAYS: 'SET_DISPLAYS',
+    SET_ORIENTATIONS: 'SET_ORIENTATIONS',
     UPDATE_LINK: 'UPDATE_LINK',
     UPDATE_ERROR: 'UPDATE_ERROR',
     UPDATE_WITH_MANIFEST: 'UPDATE_WITH_MANIFEST',
@@ -33,7 +35,7 @@ export interface Manifest {
     theme_color: string | null;
 }
 
-export interface Language {
+export interface StaticContent {
     code: string;
     name: string;
 }
@@ -48,7 +50,9 @@ export interface State {
     suggestions: string[] | null;
     warnings: string[] | null;
     errors: string[] | null;
-    languages: Language[] | null;
+    languages: StaticContent[] | null;
+    displays: StaticContent[] | null;
+    orientations: StaticContent[] | null;
 }
 
 export const state = (): State => ({
@@ -61,7 +65,9 @@ export const state = (): State => ({
     suggestions: null,
     warnings: null,
     errors: null,
-    languages: null
+    languages: null,
+    displays: null,
+    orientations: null
 });
 
 export const getters: GetterTree<State, RootState> = {};
@@ -76,6 +82,8 @@ export const actions: Actions<State, RootState> = {
     async nuxtServerInit({ commit }): Promise<void> {
         try {
             commit(types.SET_LANGUAGES, await this.$axios.$get('/languages.json'));
+            commit(types.SET_DISPLAYS, await this.$axios.$get('/displays.json'));
+            commit(types.SET_ORIENTATIONS, await this.$axios.$get('/orientations.json'));
         } catch (e) {
             throw e;
         }
@@ -119,8 +127,16 @@ export const actions: Actions<State, RootState> = {
 };
 
 export const mutations: MutationTree<State> = {
-    [types.SET_LANGUAGES](state, languages: Language[]): void {
+    [types.SET_LANGUAGES](state, languages: StaticContent[]): void {
         state.languages = languages;
+    },
+
+    [types.SET_DISPLAYS](state, displays: StaticContent[]): void {
+        state.displays = displays;
+    },
+
+    [types.SET_ORIENTATIONS](state, orientations: StaticContent[]): void {
+        state.orientations = orientations;
     },
 
     [types.UPDATE_LINK](state, url: string): void {
