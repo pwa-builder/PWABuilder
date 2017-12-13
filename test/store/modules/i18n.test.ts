@@ -1,7 +1,8 @@
-import { expect } from 'chai';
+import { expect } from 'test/libs/chai';
+
 import * as i18n from 'store/modules/i18n';
 
-let state;
+let state: i18n.State;
 
 describe('i18n', () => {
 

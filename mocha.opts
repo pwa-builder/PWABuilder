@@ -1,3 +1,4 @@
 --require tsconfig.mocha.js
 --require tsconfig-paths/register
+--require ./test/setup.js
 test/**/*.ts 

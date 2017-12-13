@@ -63,13 +63,14 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 import { Action, State, namespace } from "vuex-class";
 
-import { modules } from "~/store";
 import GeneratorMenu from "~/components/GeneratorMenu";
 import TwoWays from "~/components/TwoWays";
 import Loading from "~/components/Loading";
 
-const GeneratorState = namespace(modules.generator.name, State);
-const GeneratorAction = namespace(modules.generator.name, Action);
+import * as generator from "~/store/modules/generator";
+
+const GeneratorState = namespace(generator.name, State);
+const GeneratorAction = namespace(generator.name, Action);
 
 @Component({
   components: {
@@ -108,8 +109,9 @@ export default class extends Vue {
     if (this.siteUrl) {
       this.siteUrl = this.url;
       await this.getManifestInformation();
+
       this.$router.push({
-        name: 'serviceworker'
+        name: 'generate'
       });
     }
   }
