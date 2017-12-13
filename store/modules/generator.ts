@@ -70,7 +70,27 @@ export const state = (): State => ({
     orientations: null
 });
 
-export const getters: GetterTree<State, RootState> = {};
+function getStaticContentNames(collection: StaticContent[] | null): string[] {
+    if (!collection) {
+        return [];
+    }
+
+    return collection.map(x => x.name);
+}
+
+export const getters: GetterTree<State, RootState> = {
+    languagesNames(state: State): string[] {
+        return getStaticContentNames(state.languages);
+    },
+
+    displaysNames(state: State): string[] {
+        return getStaticContentNames(state.displays);
+    },
+
+    orientationsNames(state: State): string[] {
+        return getStaticContentNames(state.orientations);
+    }
+};
 
 export interface Actions<S, R> extends ActionTree<S, R> {
     nuxtServerInit(context: ActionContext<S, R>): void;
