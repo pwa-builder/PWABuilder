@@ -5,7 +5,7 @@
         <div class="l-generator-semipadded pure-g">
           <div class="pure-u-1 pure-u-md-1-2 generator-section service-workers">
             <div class="l-generator-subtitle">{{ $t('serviceworker.title') }}</div>
-            <form @submit.prevent="downloadServiceWorker" @keydown.enter.prevent="downloadServiceWorker">
+            <form @submit.prevent="download" @keydown.enter.prevent="download">
               <div class="l-generator-field l-generator-field--padded checkbox">
                 <label class="l-generator-label">
                   <input type="radio" value="1" v-model="serviceWorker">
@@ -68,11 +68,16 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'nuxt-class-component'
-import GeneratorMenu from '~/components/GeneratorMenu'
-import TwoWays from '~/components/TwoWays'
-import Loading from '~/components/Loading'
+import Vue from 'vue';
+import Component from 'nuxt-class-component';
+import { Action, State, namespace } from "vuex-class";
+import { modules } from "~/store";
+import GeneratorMenu from '~/components/GeneratorMenu';
+import TwoWays from '~/components/TwoWays';
+import Loading from '~/components/Loading';
+
+const ServiceworkerState = namespace(modules.serviceworker.name, State);
+const ServiceworkerAction = namespace(modules.serviceworker.name, Action);
 
 @Component({
   components: {
@@ -85,9 +90,15 @@ export default class extends Vue {
   public isBuilding = false;
   public serviceWorker: number = 1;
 
-  public downloadServiceWorker(): void {
+  @ServiceworkerState error: string;
+
+  @ServiceworkerAction downloadServiceWorker;
+
+  public async download(): Promise<void> {
     this.isBuilding = true;
-    //this.ga('send', 'event', 'item', 'click', 'generator-download-serviceworker');
+    await this.downloadServiceWorker(this.serviceWorker);
+    //this.ga('send', 'event', 'item', 'click', 'serviceworker-download');
+    this.isBuilding = false;
   }
 }
 </script>
