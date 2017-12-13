@@ -99,6 +99,7 @@ export default class extends Vue {
 
   @ServiceworkerState error: string;
   @ServiceworkerState serviceworker: number;
+  @ServiceworkerState archive: string;
 
   @ServiceworkerAction downloadServiceWorker;
 
@@ -109,6 +110,9 @@ export default class extends Vue {
   public async download(): Promise<void> {
     this.isBuilding = true;
     await this.downloadServiceWorker(this.serviceworker$);
+    if (this.archive) {
+      window.location.href = this.archive;
+    }
     //this.ga('send', 'event', 'item', 'click', 'serviceworker-download');
     this.isBuilding = false;
   }

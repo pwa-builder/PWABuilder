@@ -42,7 +42,6 @@ export const actions: Actions<State, RootState> = {
                 const apiUrl = `${process.env.apiUrl}/serviceworkers?ids=${serviceworker}`;
                 const result = await this.$axios.$get(apiUrl);
                 commit(types.UPDATE_ARCHIVE, result.archive);
-                window.location.href = result.archive;
                 resolve();
             } catch (e) {
                 commit(types.UPDATE_ERROR, e.response.data.error || e.response.data || e.response.statusText);
