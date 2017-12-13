@@ -51,10 +51,15 @@
                 <span class="l-generator-description">{{ $t('serviceworker.descriptions.advanced') }}</span>
               </div>
 
-              <button data-flare="{'category': 'Download', 'action': 'Web', 'label': 'Download Archive', 'value': { 'page': '/download/web' }}" class="pwa-button pwa-button--simple isEnabled">
-                <span v-if="!isBuilding">{{ $t('serviceworker.download') }}</span>
-                <span v-if="isBuilding">{{ $t('serviceworker.building') }} <Loading :active="true" :size="'sm'" class="u-display-inline_block u-margin-left-sm" /></span>
-              </button>
+              <div class="l-generator-wrapper pure-u-2-5">
+                <button data-flare="{'category': 'Download', 'action': 'Web', 'label': 'Download Archive', 'value': { 'page': '/download/web' }}" class="pwa-button pwa-button--simple isEnabled">
+                  <span v-if="!isBuilding">{{ $t('serviceworker.download') }}</span>
+                  <span v-if="isBuilding">{{ $t('serviceworker.building') }} <Loading :active="true" :size="'sm'" class="u-display-inline_block u-margin-left-sm" /></span>
+                </button>
+              </div>
+              <div class="pure-u-3-5">
+                 <p class="l-generator-error">{{error}}</p>
+              </div>
             </form>
             <p>{{ $t('serviceworker.download_link') }} <a class="l-generator-link" href="https://github.com/pwa-builder/serviceworkers" target="_blank">GitHub</a>.</p>
           </div>
@@ -71,13 +76,15 @@
 import Vue from 'vue';
 import Component from 'nuxt-class-component';
 import { Action, State, namespace } from "vuex-class";
-import { modules } from "~/store";
+
 import GeneratorMenu from '~/components/GeneratorMenu';
 import TwoWays from '~/components/TwoWays';
 import Loading from '~/components/Loading';
 
-const ServiceworkerState = namespace(modules.serviceworker.name, State);
-const ServiceworkerAction = namespace(modules.serviceworker.name, Action);
+import * as serviceworker from "~/store/modules/serviceworker";
+
+const ServiceworkerState = namespace(serviceworker.name, State);
+const ServiceworkerAction = namespace(serviceworker.name, Action);
 
 @Component({
   components: {

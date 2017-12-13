@@ -29,7 +29,7 @@ export const actions: Actions<State, RootState> = {
     async downloadServiceWorker({ commit }, serviceWorkerId: number): Promise<{}> {
         return new Promise(async (resolve, reject) => {
             if (!serviceWorkerId) {
-                commit(types.UPDATE_ERROR, 'Url is empty');
+                commit(types.UPDATE_ERROR, 'Serviceworker is not defined');
                 resolve();
             }
 
