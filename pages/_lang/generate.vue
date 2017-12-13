@@ -14,19 +14,19 @@
                 <label class="l-generator-label">Name
                     <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#name-member" target="_blank">[?]</a>
                 </label>
-                <input class="l-generator-input" type="text">
+                <input class="l-generator-input" v-model="manifest$.name" type="text">
             </div>
             <div class="l-generator-field">
                 <label class="l-generator-label">Short Name
                     <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#short_name-member" target="_blank">[?]</a>
                 </label>
-                <input class="l-generator-input" name="short_name" type="text">
+                <input class="l-generator-input" v-model="manifest$.short_name" name="short_name" type="text">
             </div>
             <div class="l-generator-field">
                 <label class="l-generator-label">Description
                     <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#description-member" target="_blank">[?]</a>
                 </label>
-                <input class="l-generator-input" name="description" type="text">
+                <input class="l-generator-input" v-model="manifest$.description" name="description" type="text">
             </div>
             <div class="l-generator-field logo-upload">
                 <label class="l-generator-label">Icon Url
@@ -75,13 +75,13 @@
                 <label class="l-generator-label">Scope
                     <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#scope-member" target="_blank">[?]</a>
                 </label>
-                <input class="l-generator-input" type="text">
+                <input class="l-generator-input" v-model="manifest$.scope" type="text">
             </div>
             <div class="l-generator-field">
                 <label class="l-generator-label">Start Url
                     <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#start_url-member" target="_blank">[?]</a>
                 </label>
-                <input class="l-generator-input" type="text">
+                <input class="l-generator-input" v-model="manifest$.start_url" type="text">
             </div>
             <div class="l-generator-field">
                 <label class="l-generator-label">Display
@@ -97,7 +97,7 @@
                 </label>
                 <select class="l-generator-input l-generator-input--select">
 
-                    <option id="ember608" value="any">any</option>
+                    <option value="any">any</option>
                 </select>
             </div>
             <div class="l-generator-field">
@@ -105,7 +105,7 @@
                     <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#lang-member" target="_blank">[?]</a>
                 </label>
                 <select id="ember554" class="l-generator-input l-generator-input--select">
-                    <option id="ember616" value=""> </option>
+                    <option value=""> </option>
                     
                 </select>
             </div>
@@ -116,7 +116,7 @@
                     </label>
                     <div class="l-generator-options">
                         <label class="l-generator-label">
-                            <input id="ember799" type="radio" value="none"> None
+                            <input type="radio" value="none"> None
                         </label>
                     </div>
                 </div>
@@ -161,6 +161,8 @@ const GeneratorAction = namespace(generator.name, Action);
   }
 })
 export default class extends Vue {
+  public manifest$: generator.Manifest | null = null;
+
   @GeneratorState manifest: generator.Manifest;
 
   public created(): void {
@@ -169,8 +171,8 @@ export default class extends Vue {
         path: "/"
       });
     }
-  }
 
-  public skipCheckUrl(): void {}
+    this.manifest$ = this.manifest || {};
+  }
 }
 </script>
