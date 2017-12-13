@@ -21,7 +21,7 @@
                   name="siteUrl" id="siteUrl"
                   type="text"
                   ref="url"
-                  v-model="siteUrl">
+                  v-model="url$">
               </div>
 
               <div class="pure-g l-breath">
@@ -80,7 +80,7 @@ const GeneratorAction = namespace(generator.name, Action);
   }
 })
 export default class extends Vue {
-  public siteUrl: string | null = null;
+  public url$: string | null = null;
   public generatorReady = true;
 
   @GeneratorState url: string;
@@ -90,7 +90,7 @@ export default class extends Vue {
   @GeneratorAction getManifestInformation;
 
   public created(): void {
-    this.siteUrl = this.url;
+    this.url$ = this.url;
   }
 
   public get inProgress(): boolean {
@@ -105,9 +105,9 @@ export default class extends Vue {
 
   public async checkUrlAndGenerate(): Promise<void> {
     this.generatorReady = false;
-    this.updateLink(this.siteUrl);
-    if (this.siteUrl) {
-      this.siteUrl = this.url;
+    this.updateLink(this.url$);
+    if (this.url$) {
+      this.url$ = this.url;
       await this.getManifestInformation();
 
       this.$router.push({
