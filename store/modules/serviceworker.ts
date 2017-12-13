@@ -1,6 +1,8 @@
 import { ActionTree, MutationTree, GetterTree, Action, ActionContext } from 'vuex';
 import { RootState } from 'store';
 
+const apiUrl = `${process.env.apiUrl}/serviceworkers`;
+
 export const name = 'serviceworker';
 
 export const types = {
@@ -39,8 +41,7 @@ export const actions: Actions<State, RootState> = {
             commit(types.UPDATE_SERVICEWORKER, serviceworker);
 
             try {
-                const apiUrl = `${process.env.apiUrl}/serviceworkers?ids=${serviceworker}`;
-                const result = await this.$axios.$get(apiUrl);
+                const result = await this.$axios.$get(`${apiUrl}?ids=${serviceworker}`);
                 commit(types.UPDATE_ARCHIVE, result.archive);
                 resolve();
             } catch (e) {
