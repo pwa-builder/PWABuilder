@@ -19,7 +19,22 @@
   "serviceworker": {
     "title": "Select the service worker functionality for your app.",
     "download": "Download service worker",
-    "building": "Building package..."
+    "building": "Building package...",
+    "download_link": "You can also download the source code directly from",
+    "titles": {
+      "offline_page": "Offline page",
+      "offline_copy": "Offline copy of pages",
+      "offline_copy_backup": "Offline copy with Backup offline page",
+      "cache_first": "Cache-first network",
+      "advanced": "Advanced Pre-cache (coming soon)"
+    },
+    "descriptions": {
+      "offline_page": "This simple but elegant solution pulls a file from your web server called \"offline.html\" (make sure that file is actually there) and serves the file whenever a network connection can not be made.",
+      "offline_copy": "A solution that expands the offline capabilities of your app. A copy of each pages is stored in the cache as your visitors view them. This allows a visitor to load any previously viewed page while they are offline.",
+      "offline_copy_backup": "A copy of each pages is stored in the cache as your visitors view them. This allows a visitor to load any previously viewed page while they are offline. This then adds the \"offline page\" that allows you to customize the message and experience if the app is offline, and the page is not in the cache.",
+      "cache_first": "Use this service worker to pre-cache content. The content you add to the \"cache-array\" will be added immediately to the cache and service from the cache whenever a page requests it. At the same time it will update the cache with the version you have on the server. Configure your file array to include all your site files, or a subset that you want to be served quickly.",
+      "advanced": "Use this service worker to improve the performance of your app, and make it work offline. The advanced pre-cache allows you to configure files and routes that are cached in different manners (pre-cache, server first, cache first etc). The tool can be used to build a lightening fast app (even for dynamic content) that works offline."
+    }
   },
   "publish": {
     "title": "Publish"

@@ -5,14 +5,50 @@
         <div class="l-generator-semipadded pure-g">
           <div class="pure-u-1 pure-u-md-1-2 generator-section service-workers">
             <div class="l-generator-subtitle">{{ $t('serviceworker.title') }}</div>
-            <form @submit.prevent="build" @keydown.enter.prevent="build">
+            <form @submit.prevent="downloadServiceWorker" @keydown.enter.prevent="downloadServiceWorker">
               <div class="l-generator-field l-generator-field--padded checkbox">
                 <label class="l-generator-label">
-                  <input type="radio" value="1">
-                  Offline page
+                  <input type="radio" value="1" v-model="serviceWorker">
+                  {{ $t('serviceworker.titles.offline_page') }}
                 </label>
 
-                <span class="l-generator-description">This simple but elegant solution pulls a file from your web server called "offline.html" (make sure that file is actually there) and serves the file whenever a network connection can not be made.</span>
+                <span class="l-generator-description">{{ $t('serviceworker.descriptions.offline_page') }}</span>
+              </div>
+
+              <div class="l-generator-field l-generator-field--padded checkbox">
+                <label class="l-generator-label">
+                  <input type="radio" value="2" v-model="serviceWorker">
+                  {{ $t('serviceworker.titles.offline_copy') }}
+                </label>
+
+                <span class="l-generator-description">{{ $t('serviceworker.descriptions.offline_copy') }}</span>
+              </div>
+
+              <div class="l-generator-field l-generator-field--padded checkbox">
+                <label class="l-generator-label">
+                  <input type="radio" value="3" v-model="serviceWorker">
+                  {{ $t('serviceworker.titles.offline_copy_backup') }}
+                </label>
+
+                <span class="l-generator-description">{{ $t('serviceworker.descriptions.offline_copy_backup') }}</span>
+              </div>
+
+              <div class="l-generator-field l-generator-field--padded checkbox">
+                <label class="pwa-generator-label">
+                  <input type="radio" value="4" v-model="serviceWorker">
+                  {{ $t('serviceworker.titles.cache_first') }}
+                </label>
+
+                <span class="l-generator-description">{{ $t('serviceworker.descriptions.cache_first') }}</span>
+              </div>
+
+              <div class="l-generator-field l-generator-field--padded checkbox">
+                <label class="l-generator-label">
+                  <input type="radio" value="5" disabled="" v-model="serviceWorker">
+                  {{ $t('serviceworker.titles.advanced') }}
+                </label>
+
+                <span class="l-generator-description">{{ $t('serviceworker.descriptions.advanced') }}</span>
               </div>
 
               <button data-flare="{'category': 'Download', 'action': 'Web', 'label': 'Download Archive', 'value': { 'page': '/download/web' }}" class="pwa-button pwa-button--simple isEnabled">
@@ -20,9 +56,10 @@
                 <span v-if="isBuilding">{{ $t('serviceworker.building') }} <Loading :active="true" :size="'sm'" class="u-display-inline_block u-margin-left-sm" /></span>
               </button>
             </form>
+            <p>{{ $t('serviceworker.download_link') }} <a class="l-generator-link" href="https://github.com/pwa-builder/serviceworkers" target="_blank">GitHub</a>.</p>
           </div>
           <div class="pure-u-1 pure-u-md-1-2 generator-section manifest manifest-holder">
-            
+            Code for website
           </div>
         </div>
       </div>
@@ -46,9 +83,11 @@ import Loading from '~/components/Loading'
 })
 export default class extends Vue {
   public isBuilding = false;
+  public serviceWorker: number = 1;
 
-  public build(): void {
+  public downloadServiceWorker(): void {
     this.isBuilding = true;
+    //this.ga('send', 'event', 'item', 'click', 'generator-download-serviceworker');
   }
 }
 </script>
