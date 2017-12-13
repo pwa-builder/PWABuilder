@@ -10,6 +10,7 @@ const isValidUrl = (siteUrl: string): boolean => {
 export const name = 'generator';
 
 export const types = {
+    SET_LANGUAGES: 'SET_LANGUAGES',
     UPDATE_LINK: 'UPDATE_LINK',
     UPDATE_ERROR: 'UPDATE_ERROR',
     UPDATE_WITH_MANIFEST: 'UPDATE_WITH_MANIFEST',
@@ -32,6 +33,11 @@ export interface Manifest {
     theme_color: string | null;
 }
 
+export interface Language {
+    code: string;
+    name: string;
+}
+
 export interface State {
     url: string | null;
     error: string | null;
@@ -42,6 +48,7 @@ export interface State {
     suggestions: string[] | null;
     warnings: string[] | null;
     errors: string[] | null;
+    languages: Language[] | null;
 }
 
 export const state = (): State => ({
@@ -53,17 +60,27 @@ export const state = (): State => ({
     icons: [],
     suggestions: null,
     warnings: null,
-    errors: null
+    errors: null,
+    languages: null
 });
 
 export const getters: GetterTree<State, RootState> = {};
 
 export interface Actions<S, R> extends ActionTree<S, R> {
+    nuxtServerInit(context: ActionContext<S, R>): void;
     updateLink(context: ActionContext<S, R>, url: string): void;
     getManifestInformation(context: ActionContext<S, R>): void;
 }
 
 export const actions: Actions<State, RootState> = {
+    async nuxtServerInit({ commit }): Promise<void> {
+        try {
+            commit(types.SET_LANGUAGES, await this.$axios.$get('/languages.json'));
+        } catch (e) {
+            throw e;
+        }
+    },
+
     updateLink({ commit }, url: string): void {
         if (url && !url.startsWith('http') && !url.startsWith('http')) {
             url = 'https://' + url;
@@ -102,6 +119,10 @@ export const actions: Actions<State, RootState> = {
 };
 
 export const mutations: MutationTree<State> = {
+    [types.SET_LANGUAGES](state, languages: Language[]): void {
+        state.languages = languages;
+    },
+
     [types.UPDATE_LINK](state, url: string): void {
         state.url = url;
         state.error = null;
