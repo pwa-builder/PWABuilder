@@ -1,6 +1,6 @@
 <template>
   <section>
-    <GeneratorMenu/>
+    <GeneratorMenu first-link-path='generate'/>
     <div class="l-generator-step">
     </div>
     <TwoWays/>

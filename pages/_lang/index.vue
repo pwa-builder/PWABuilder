@@ -109,8 +109,9 @@ export default class extends Vue {
     if (this.siteUrl) {
       this.siteUrl = this.url;
       await this.getManifestInformation();
+
       this.$router.push({
-        name: 'serviceworker'
+        name: 'generate'
       });
     }
   }

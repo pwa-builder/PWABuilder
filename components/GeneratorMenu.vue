@@ -9,19 +9,19 @@
     <ul class="generator_menu-tabs">
 
         <li class="generator_menu-tab">
-            <nuxt-link :to="$i18n.path('')" exact class="generator_menu-link" active-class="is-active" data-step="1">
+            <nuxt-link :to="$i18n.path(firstLinkPath || '')" exact class="generator_menu-link" :active-class="activeClass" data-step="1">
                 {{ $t('generatormenu.generate') }}
             </nuxt-link>
         </li>
 
         <li class="generator_menu-tab">
-            <nuxt-link :to="$i18n.path('serviceworker')" class="generator_menu-link" active-class="is-active" data-step="2">
+            <nuxt-link :to="$i18n.path('serviceworker')" class="generator_menu-link" :active-class="activeClass" data-step="2">
                 {{ $t('generatormenu.serviceworker') }}
             </nuxt-link>
         </li>
 
         <li class="generator_menu-tab">
-            <nuxt-link :to="$i18n.path('publish')" class="generator_menu-link" active-class="is-active" data-step="3">
+            <nuxt-link :to="$i18n.path('publish')" class="generator_menu-link" :active-class="activeClass" data-step="3">
                 {{ $t('generatormenu.publish') }}
             </nuxt-link>
         </li>
@@ -32,9 +32,15 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'nuxt-class-component'
+import { Prop } from 'vue-property-decorator';
 
 @Component()
-export default class extends Vue {}
+export default class extends Vue {
+    public readonly activeClass = 'is-active';
+
+    @Prop({type: String, default: null})
+    public readonly firstLinkPath: string;
+}
 </script>
 
 <style lang="scss" scoped>
