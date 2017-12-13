@@ -89,8 +89,8 @@ export default class extends Vue {
   @GeneratorAction updateLink;
   @GeneratorAction getManifestInformation;
 
-  public mounted():void {
-    this.siteUrl = '';
+  public created(): void {
+    this.siteUrl = this.url;
   }
 
   public get inProgress(): boolean {

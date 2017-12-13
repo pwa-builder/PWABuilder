@@ -8,7 +8,7 @@
             <form @submit.prevent="download" @keydown.enter.prevent="download">
               <div class="l-generator-field l-generator-field--padded checkbox">
                 <label class="l-generator-label">
-                  <input type="radio" value="1" v-model="serviceWorker">
+                  <input type="radio" value="1" v-model="serviceworker$">
                   {{ $t('serviceworker.titles.offline_page') }}
                 </label>
 
@@ -17,7 +17,7 @@
 
               <div class="l-generator-field l-generator-field--padded checkbox">
                 <label class="l-generator-label">
-                  <input type="radio" value="2" v-model="serviceWorker">
+                  <input type="radio" value="2" v-model="serviceworker$">
                   {{ $t('serviceworker.titles.offline_copy') }}
                 </label>
 
@@ -26,7 +26,7 @@
 
               <div class="l-generator-field l-generator-field--padded checkbox">
                 <label class="l-generator-label">
-                  <input type="radio" value="3" v-model="serviceWorker">
+                  <input type="radio" value="3" v-model="serviceworker$">
                   {{ $t('serviceworker.titles.offline_copy_backup') }}
                 </label>
 
@@ -35,7 +35,7 @@
 
               <div class="l-generator-field l-generator-field--padded checkbox">
                 <label class="pwa-generator-label">
-                  <input type="radio" value="4" v-model="serviceWorker">
+                  <input type="radio" value="4" v-model="serviceworker$">
                   {{ $t('serviceworker.titles.cache_first') }}
                 </label>
 
@@ -44,7 +44,7 @@
 
               <div class="l-generator-field l-generator-field--padded checkbox">
                 <label class="l-generator-label">
-                  <input type="radio" value="5" disabled="" v-model="serviceWorker">
+                  <input type="radio" value="5" disabled="" v-model="serviceworker$">
                   {{ $t('serviceworker.titles.advanced') }}
                 </label>
 
@@ -95,15 +95,20 @@ const ServiceworkerAction = namespace(serviceworker.name, Action);
 })
 export default class extends Vue {
   public isBuilding = false;
-  public serviceWorker: number = 1;
+  public serviceworker$: number | null = null;
 
   @ServiceworkerState error: string;
+  @ServiceworkerState serviceworker: number;
 
   @ServiceworkerAction downloadServiceWorker;
 
+  public created(): void {
+    this.serviceworker$ = this.serviceworker || 1;
+  }
+
   public async download(): Promise<void> {
     this.isBuilding = true;
-    await this.downloadServiceWorker(this.serviceWorker);
+    await this.downloadServiceWorker(this.serviceworker$);
     //this.ga('send', 'event', 'item', 'click', 'serviceworker-download');
     this.isBuilding = false;
   }
