@@ -1,0 +1,10 @@
+[
+    {"code":"an","name":"any"},
+    {"code":"na","name":"natural"},
+    {"code":"l","name":"landscape"},
+    {"code":"p","name":"portrait"},
+    {"code":"pr","name":"portrait-primary"},
+    {"code":"ps","name":"portrait-secondary"},
+    {"code":"lp","name":"landscape-primary"},
+    {"code":"ls","name":"landscape-secondary"}
+]

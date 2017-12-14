@@ -10,6 +10,9 @@ const isValidUrl = (siteUrl: string): boolean => {
 export const name = 'generator';
 
 export const types = {
+    SET_LANGUAGES: 'SET_LANGUAGES',
+    SET_DISPLAYS: 'SET_DISPLAYS',
+    SET_ORIENTATIONS: 'SET_ORIENTATIONS',
     UPDATE_LINK: 'UPDATE_LINK',
     UPDATE_ERROR: 'UPDATE_ERROR',
     UPDATE_WITH_MANIFEST: 'UPDATE_WITH_MANIFEST',
@@ -31,6 +34,11 @@ export interface Manifest {
     short_name: string | null;
     start_url: string | null;
     theme_color: string | null;
+}
+
+export interface StaticContent {
+    code: string;
+    name: string;
 }
 
 export interface State {
@@ -56,8 +64,6 @@ export const state = (): State => ({
     warnings: null,
     errors: null
 });
-
-export const getters: GetterTree<State, RootState> = {};
 
 export interface Actions<S, R> extends ActionTree<S, R> {
     updateLink(context: ActionContext<S, R>, url: string): void;

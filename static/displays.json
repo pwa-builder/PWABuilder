@@ -1,0 +1,6 @@
+[
+    {"code":"fs","name":"fullscreen"},
+    {"code":"st","name":"standalone"},
+    {"code":"mi","name":"minimal-ui"},
+    {"code":"br","name":"browser"}
+]
