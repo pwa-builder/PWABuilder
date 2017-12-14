@@ -50,9 +50,6 @@ export interface State {
     suggestions: string[] | null;
     warnings: string[] | null;
     errors: string[] | null;
-    languages: StaticContent[] | null;
-    displays: StaticContent[] | null;
-    orientations: StaticContent[] | null;
 }
 
 export const state = (): State => ({
@@ -64,52 +61,17 @@ export const state = (): State => ({
     icons: [],
     suggestions: null,
     warnings: null,
-    errors: null,
-    languages: null,
-    displays: null,
-    orientations: null
+    errors: null
 });
 
-function getStaticContentNames(collection: StaticContent[] | null): string[] {
-    if (!collection) {
-        return [];
-    }
-
-    return collection.map(x => x.name);
-}
-
-export const getters: GetterTree<State, RootState> = {
-    languagesNames(state: State): string[] {
-        return getStaticContentNames(state.languages);
-    },
-
-    displaysNames(state: State): string[] {
-        return getStaticContentNames(state.displays);
-    },
-
-    orientationsNames(state: State): string[] {
-        return getStaticContentNames(state.orientations);
-    }
-};
-
 export interface Actions<S, R> extends ActionTree<S, R> {
-    nuxtServerInit(context: ActionContext<S, R>): void;
     updateLink(context: ActionContext<S, R>, url: string): void;
     getManifestInformation(context: ActionContext<S, R>): void;
 }
 
 export const actions: Actions<State, RootState> = {
-    async nuxtServerInit({ commit }): Promise<void> {
-        try {
-            commit(types.SET_LANGUAGES, await this.$axios.$get('/languages.json'));
-            commit(types.SET_DISPLAYS, await this.$axios.$get('/displays.json'));
-            commit(types.SET_ORIENTATIONS, await this.$axios.$get('/orientations.json'));
-        } catch (e) {
-            throw e;
-        }
-    },
-
-    updateLink({ commit }, url: string): void {
+    updateLink({ commit, state, rootState }, url: string): void {
+        console.log(state, rootState);
         if (url && !url.startsWith('http') && !url.startsWith('http')) {
             url = 'https://' + url;
         }
@@ -147,18 +109,6 @@ export const actions: Actions<State, RootState> = {
 };
 
 export const mutations: MutationTree<State> = {
-    [types.SET_LANGUAGES](state, languages: StaticContent[]): void {
-        state.languages = languages;
-    },
-
-    [types.SET_DISPLAYS](state, displays: StaticContent[]): void {
-        state.displays = displays;
-    },
-
-    [types.SET_ORIENTATIONS](state, orientations: StaticContent[]): void {
-        state.orientations = orientations;
-    },
-
     [types.UPDATE_LINK](state, url: string): void {
         state.url = url;
         state.error = null;

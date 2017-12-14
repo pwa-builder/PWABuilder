@@ -1,3 +1,4 @@
+import * as root from './root';
 import * as generator from './modules/generator';
 import * as serviceworker from './modules/serviceworker';
 import * as i18n from './modules/i18n';
@@ -17,15 +18,9 @@ export const modules = {
     [i18n.name]: i18n
 };
 
-export type RootState = typeof modules;
+export type RootState = typeof modules & root.State;
 
-// Call to nuxtServerInit of all the modules
-export const actions: ActionTree<{}, RootState> = {
-    async nuxtServerInit({ dispatch }) {
-        for (const key in modules) {
-            if (modules[key].actions && modules[key].actions.nuxtServerInit) {
-                dispatch(`${key}/nuxtServerInit`);
-            }
-        }
-    },
-};
+export const state = root.state;
+export const getters = root.getters;
+export const actions = root.actions;
+export const mutations = root.mutations;
