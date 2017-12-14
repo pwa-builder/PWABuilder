@@ -42,7 +42,7 @@
                                 {{ $t("generate.upload") }}
                             </button>
                         </div>
-                        <button class="pwa-button pwa-button--text pwa-button--right" :click="onClickAddIcon()">
+                        <button class="pwa-button pwa-button--text pwa-button--right" @click="onClickAddIcon()">
                            {{ $t("generate.add_icon") }}
                         </button>
                     </div>
@@ -55,8 +55,8 @@
 
                         <div class="pure-u-1" v-for="icon in icons" :key="icon.src">
                             <div class="pure-u-10-24 l-generator-tablec">
-                                <a target="_blank" :href="(manifest$.start_url + icon.src)">
-                                    <img class="icon-preview" :src="(manifest$.start_url + icon.src)">
+                                <a target="_blank" :href="icon.src">
+                                    <img class="icon-preview" :src="icon.src">
                                 </a>
                             </div>
                             <div class="pure-u-8-24 l-generator-tablec">
@@ -184,11 +184,11 @@ export default class extends Vue {
     this.manifest$ = {...this.manifest};
   }
 
-  public onClickRemoveIcon(icon) {
+  public onClickRemoveIcon(icon: generator.Icon): void {
       this.removeIcon(icon);
   }
 
-  public onClickAddIcon() {
+  public onClickAddIcon(): void {
       this.addIconFromUrl(this.newIconSrc);
   }
 }

@@ -77,21 +77,24 @@ export interface Actions<S, R> extends ActionTree<S, R> {
     getManifestInformation(context: ActionContext<S, R>): void;
     removeIcon(context: ActionContext<S, R>, icon: Icon): void;
     reset(context: ActionContext<S, R>): void;
-    addIconFromUrl(context: ActionContext<S, R>, newIconSrc: string | null): void;
+    addIconFromUrl(context: ActionContext<S, R>, newIconSrc: string): void;
 }
 
-function getImageSize(aSrc) {
-    if (typeof document === 'undefined') {
-      return { width: 0, height: 0 };
-    }
+function getImageIconSize(aSrc): Promise<{width: number, height: number}> {
+    return new Promise(resolve => {
+        if (typeof document === 'undefined') {
+            resolve({ width: 0, height: 0 });
+          }
 
-    let tmpImg = document.createElement('img');
-    tmpImg.src = aSrc;
+          let tmpImg = document.createElement('img');
 
-    return {
-      width: tmpImg.width,
-      height: tmpImg.height
-    };
+          tmpImg.onload = () => resolve({
+            width: tmpImg.width,
+            height: tmpImg.height
+          });
+
+          tmpImg.src = aSrc;
+    });
 }
 
 export const actions: Actions<State, RootState> = {
@@ -142,7 +145,6 @@ export const actions: Actions<State, RootState> = {
 
         if (index > -1) {
             icons.splice(index, 1);
-            console.log(state.icons);
             commit(types.UPDATE_ICONS, icons);
         }
     },
@@ -151,10 +153,10 @@ export const actions: Actions<State, RootState> = {
         commit(types.RESET);
     },
 
-    addIconFromUrl({ commit, state }, newIconSrc: string | null): void {
+    async addIconFromUrl({ commit, state }, newIconSrc: string): Promise<void> {
         let src = newIconSrc;
 
-        if (!src || src.length < 1) {
+        if (!src) {
             return;
         }
 
@@ -163,11 +165,15 @@ export const actions: Actions<State, RootState> = {
         }
 
         if (!src.includes('http')) {
-            src = state.manifest ? state.manifest.start_url || '' : state.url || '' + '/' + src;
+            src = state.manifest ? state.manifest.start_url + src || '' : state.url + src || '' + '/' + src;
         }
 
-        const sizes = getImageSize(src);
-        commit(types.ADD_ICON, {src, sizes});
+        try {
+            const sizes = await getImageIconSize(src);
+            commit(types.ADD_ICON, {src, sizes: `${sizes.width}x${sizes.height}`});
+        } catch (e) {
+            throw e;
+        }
     }
 };
 
