@@ -18,6 +18,7 @@ export const types = {
     UPDATE_WITH_MANIFEST: 'UPDATE_WITH_MANIFEST',
     SET_DEFAULTS_MANIFEST: 'SET_DEFAULTS_MANIFEST',
     UPDATE_ICONS: 'UPDATE_ICONS',
+    ADD_ICON: 'ADD_ICON',
     RESET: 'RESET'
 };
 
@@ -76,6 +77,21 @@ export interface Actions<S, R> extends ActionTree<S, R> {
     getManifestInformation(context: ActionContext<S, R>): void;
     removeIcon(context: ActionContext<S, R>, icon: Icon): void;
     reset(context: ActionContext<S, R>): void;
+    addIconFromUrl(context: ActionContext<S, R>, newIconSrc: string | null): void;
+}
+
+function getImageSize(aSrc) {
+    if (typeof document === 'undefined') {
+      return { width: 0, height: 0 };
+    }
+
+    let tmpImg = document.createElement('img');
+    tmpImg.src = aSrc;
+
+    return {
+      width: tmpImg.width,
+      height: tmpImg.height
+    };
 }
 
 export const actions: Actions<State, RootState> = {
@@ -87,7 +103,7 @@ export const actions: Actions<State, RootState> = {
         if (!isValidUrl(url)) {
             commit(types.UPDATE_ERROR, 'Please provide a URL.');
             return;
-          }
+        }
 
         commit(types.UPDATE_LINK, url);
     },
@@ -107,10 +123,10 @@ export const actions: Actions<State, RootState> = {
                 const result = await this.$axios.$post(apiUrl, options);
                 commit(types.UPDATE_WITH_MANIFEST, result);
                 commit(types.SET_DEFAULTS_MANIFEST, {
-                    displays: rootState.displays ? rootState.displays[0].name : '', 
+                    displays: rootState.displays ? rootState.displays[0].name : '',
                     orientations: rootState.orientations ? rootState.orientations[0].name : ''
                 });
-    
+
                 resolve();
             } catch (e) {
                 commit(types.UPDATE_ERROR, e.response.data.error || e.response.data || e.response.statusText);
@@ -133,6 +149,25 @@ export const actions: Actions<State, RootState> = {
 
     reset({ commit }): void {
         commit(types.RESET);
+    },
+
+    addIconFromUrl({ commit, state }, newIconSrc: string | null): void {
+        let src = newIconSrc;
+
+        if (!src || src.length < 1) {
+            return;
+        }
+
+        if (src.charAt(0) === '/') {
+            src = src.slice(1);
+        }
+
+        if (!src.includes('http')) {
+            src = state.manifest ? state.manifest.start_url || '' : state.url || '' + '/' + src;
+        }
+
+        const sizes = getImageSize(src);
+        commit(types.ADD_ICON, {src, sizes});
     }
 };
 
@@ -168,6 +203,10 @@ export const mutations: MutationTree<State> = {
 
     [types.UPDATE_ICONS](state, icons: Icon[]): void {
         state.icons = icons;
+    },
+
+    [types.ADD_ICON](state, icon: Icon): void {
+        state.icons.push(icon);
     },
 
     [types.RESET](state): void {

@@ -34,7 +34,7 @@
                 </label>
                 <div>
                     <input class="l-generator-input" placeholder="http://example.com/image.png or /images/example.png"
-                        type="url">
+                        type="url" v-model="newIconSrc">
 
                     <div class="button-holder icons">
                         <div class="l-inline">
@@ -42,7 +42,7 @@
                                 {{ $t("generate.upload") }}
                             </button>
                         </div>
-                        <button class="pwa-button pwa-button--text pwa-button--right" disabled="">
+                        <button class="pwa-button pwa-button--text pwa-button--right" :click="onClickAddIcon()">
                            {{ $t("generate.add_icon") }}
                         </button>
                     </div>
@@ -162,6 +162,7 @@ const GeneratorActions = namespace(generator.name, Action);
 })
 export default class extends Vue {
   public manifest$: generator.Manifest | null = null;
+  public newIconSrc = '';
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState icons: generator.Icon[];
@@ -171,6 +172,7 @@ export default class extends Vue {
   @Getter displaysNames: string[];
 
   @GeneratorActions removeIcon;
+  @GeneratorActions addIconFromUrl;
 
   public created(): void {
     if (!this.manifest) {
@@ -184,6 +186,10 @@ export default class extends Vue {
 
   public onClickRemoveIcon(icon) {
       this.removeIcon(icon);
+  }
+
+  public onClickAddIcon() {
+      this.addIconFromUrl(this.newIconSrc);
   }
 }
 </script>
