@@ -88,7 +88,7 @@
                     <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#display-member" target="_blank">[?]</a>
                 </label>
                 <select class="l-generator-input l-generator-input--select">
-                    <option value="fullscreen">{{ $t('generate.fullscreen') }}</option>
+                    <option v-for="display in displaysNames" :value="display" :key="display">{{display}}</option>
                 </select>
             </div>
             <div class="l-generator-field">
@@ -96,17 +96,15 @@
                     <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#orientation-member" target="_blank">[?]</a>
                 </label>
                 <select class="l-generator-input l-generator-input--select">
-
-                    <option value="any">any</option>
+                    <option v-for="orientation in orientationsNames" :value="orientation" :key="orientation">{{orientation}}</option>
                 </select>
             </div>
             <div class="l-generator-field">
                 <label class="l-generator-label">{{ $t('generate.language') }}
                     <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#lang-member" target="_blank">[?]</a>
                 </label>
-                <select id="ember554" class="l-generator-input l-generator-input--select">
-                    <option value=""> </option>
-                    
+                <select class="l-generator-input l-generator-input--select">
+                    <option v-for="language in languagesNames" :value="language" :key="language">{{language}}</option>
                 </select>
             </div>
             <div id="ember567">
@@ -152,8 +150,6 @@ import TwoWays from "~/components/TwoWays";
 import * as generator from "~/store/modules/generator";
 
 const GeneratorState = namespace(generator.name, State);
-const GeneratorAction = namespace(generator.name, Action);
-const GeneratorGetter = namespace(generator.name, Getter);
 
 @Component({
   components: {
@@ -165,8 +161,10 @@ export default class extends Vue {
   public manifest$: generator.Manifest | null = null;
 
   @GeneratorState manifest: generator.Manifest;
-  @GeneratorGetter languagesNames: string[];
-  @GeneratorGetter displaysNames: string[];
+
+  @Getter orientationsNames: string[];
+  @Getter languagesNames: string[];
+  @Getter displaysNames: string[];
 
   public created(): void {
     if (!this.manifest) {
