@@ -83,7 +83,7 @@ export const actions: Actions<State, RootState> = {
         commit(types.UPDATE_LINK, url);
     },
 
-    async getManifestInformation({ commit, state }): Promise<{}> {
+    async getManifestInformation({ commit, state, rootState }): Promise<{}> {
         return new Promise(async (resolve, reject) => {
             if (!state.url) {
                 commit(types.UPDATE_ERROR, 'Url is empty');
@@ -97,7 +97,10 @@ export const actions: Actions<State, RootState> = {
             try {
                 const result = await this.$axios.$post(apiUrl, options);
                 commit(types.UPDATE_WITH_MANIFEST, result);
-                commit(types.SET_DEFAULTS_MANIFEST);
+                commit(types.SET_DEFAULTS_MANIFEST, {
+                    displays: rootState.displays ? rootState.displays[0].name : '', 
+                    orientations: rootState.orientations ? rootState.orientations[0].name : ''
+                });
     
                 resolve();
             } catch (e) {
@@ -127,14 +130,14 @@ export const mutations: MutationTree<State> = {
         state.errors = result.errors;
     },
 
-    [types.SET_DEFAULTS_MANIFEST](state): void {
+    [types.SET_DEFAULTS_MANIFEST](state, payload): void {
         if (!state.manifest) {
             return;
         }
 
         state.manifest.lang = state.manifest.lang || '';
-        state.manifest.display = state.manifest.display || 'fullscreen';
-        state.manifest.orientation = state.manifest.orientation || 'any';
+        state.manifest.display = state.manifest.display || payload.defaultDisplay;
+        state.manifest.orientation = state.manifest.orientation || payload.defaultOrientation;
     }
 };
 

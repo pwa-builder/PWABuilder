@@ -87,7 +87,7 @@
                 <label class="l-generator-label">{{ $t("generate.display") }}
                     <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#display-member" target="_blank">[?]</a>
                 </label>
-                <select class="l-generator-input l-generator-input--select">
+                <select class="l-generator-input l-generator-input--select" v-model="manifest$.display">
                     <option v-for="display in displaysNames" :value="display" :key="display">{{display}}</option>
                 </select>
             </div>
@@ -95,7 +95,7 @@
                 <label class="l-generator-label">{{ $t("generate.orientation") }}
                     <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#orientation-member" target="_blank">[?]</a>
                 </label>
-                <select class="l-generator-input l-generator-input--select">
+                <select class="l-generator-input l-generator-input--select" v-model="manifest$.orientation">
                     <option v-for="orientation in orientationsNames" :value="orientation" :key="orientation">{{orientation}}</option>
                 </select>
             </div>
@@ -103,7 +103,7 @@
                 <label class="l-generator-label">{{ $t("generate.language") }}
                     <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#lang-member" target="_blank">[?]</a>
                 </label>
-                <select class="l-generator-input l-generator-input--select">
+                <select class="l-generator-input l-generator-input--select" v-model="manifest$.lang">
                     <option v-for="language in languagesNames" :value="language" :key="language">{{language}}</option>
                 </select>
             </div>
@@ -173,7 +173,7 @@ export default class extends Vue {
       });
     }
 
-    this.manifest$ = this.manifest || {};
+    this.manifest$ = {...this.manifest} || {};
   }
 }
 </script>
