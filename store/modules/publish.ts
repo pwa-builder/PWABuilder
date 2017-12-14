@@ -32,7 +32,7 @@ export const actions: Actions<State, RootState> = {
     },
 
     updateStatus({ commit, rootState }): void {
-        let status = rootState.generator['url'] ? true : false;
+        let status = !!rootState.generator['url'];
         commit(types.UPDATE_STATUS, status);
     }
 };
