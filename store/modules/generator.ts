@@ -17,7 +17,7 @@ export const types = {
     UPDATE_ERROR: 'UPDATE_ERROR',
     UPDATE_WITH_MANIFEST: 'UPDATE_WITH_MANIFEST',
     SET_DEFAULTS_MANIFEST: 'SET_DEFAULTS_MANIFEST',
-    REMOVE_ICON: 'REMOVE_ICON'
+    UPDATE_ICONS: 'UPDATE_ICONS'
 };
 
 export interface Manifest {
@@ -117,12 +117,15 @@ export const actions: Actions<State, RootState> = {
     },
 
     removeIcon({ commit, state }, icon: Icon): void {
-        const index = state.icons.findIndex(i => {
+        let icons = [...state.icons];
+        const index = icons.findIndex(i => {
             return i.src === icon.src;
         });
 
         if (index > -1) {
-            commit(types.REMOVE_ICON, index);
+            icons.splice(index, 1);
+            console.log(state.icons);
+            commit(types.UPDATE_ICONS, icons);
         }
     },
 };
@@ -157,8 +160,8 @@ export const mutations: MutationTree<State> = {
         state.manifest.orientation = state.manifest.orientation || payload.defaultOrientation;
     },
 
-    [types.REMOVE_ICON](state, index: number): void {
-        state.icons.splice(index, 1);
+    [types.UPDATE_ICONS](state, icons: Icon[]): void {
+        state.icons = icons;
     }
 };
 
