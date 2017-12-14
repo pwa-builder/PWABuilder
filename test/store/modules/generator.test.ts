@@ -68,4 +68,15 @@ describe('generator', () => {
             expect(actionContext.commit).to.have.been.calledWith(generator.types.UPDATE_ERROR);
         });
     });
+
+    describe('when wants to remove an icon', () => {
+        it('should update the state without this icon', async () => {
+            const icon = { src: 'icon', sizes: '1x1'};
+
+            actionContext.state.icons = [icon];
+            await actions.removeIcon(actionContext, icon);
+            expect(actionContext.commit).to.not.have.been.calledWith(generator.types.UPDATE_ICONS, [icon]);
+            expect(actionContext.commit).to.have.been.calledWith(generator.types.UPDATE_ICONS, []);
+        });
+    });
 });
