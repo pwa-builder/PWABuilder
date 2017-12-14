@@ -8,7 +8,7 @@
     "generate": "Generate"
   },
   "footer": {
-    "copyright": "PWABuilder was foun,ed by Microsoft as a community guided, open source project to help move PWA adoption forward.",
+    "copyright": "PWABuilder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.",
     "license": "License"
   },
   "generator": {
@@ -65,7 +65,10 @@
     }
   },
   "publish": {
-    "title": "Publish"
+    "title": "Publish PWA",
+    "manifest_needed": "You need to create your manifest first.",
+    "first_step": "Go to first step",
+    "start_over": "Start Over"
   },
   "generatormenu": {
     "title": "Generate your Progressive Web App",

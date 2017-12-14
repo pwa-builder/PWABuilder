@@ -58,16 +58,16 @@
   </section>
 </template>
 
-<script lang="ts">
-import Vue from "vue";
-import Component from "nuxt-class-component";
-import { Action, State, namespace } from "vuex-class";
+<script lang='ts'>
+import Vue from 'vue';
+import Component from 'nuxt-class-component';
+import { Action, State, namespace } from 'vuex-class';
 
-import GeneratorMenu from "~/components/GeneratorMenu";
-import TwoWays from "~/components/TwoWays";
-import Loading from "~/components/Loading";
+import GeneratorMenu from '~/components/GeneratorMenu';
+import TwoWays from '~/components/TwoWays';
+import Loading from '~/components/Loading';
 
-import * as generator from "~/store/modules/generator";
+import * as generator from '~/store/modules/generator';
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorAction = namespace(generator.name, Action);

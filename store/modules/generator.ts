@@ -13,7 +13,8 @@ export const types = {
     UPDATE_LINK: 'UPDATE_LINK',
     UPDATE_ERROR: 'UPDATE_ERROR',
     UPDATE_WITH_MANIFEST: 'UPDATE_WITH_MANIFEST',
-    SET_DEFAULTS_MANIFEST: 'SET_DEFAULTS_MANIFEST'
+    SET_DEFAULTS_MANIFEST: 'SET_DEFAULTS_MANIFEST',
+    RESET: 'RESET'
 };
 
 export interface Manifest {
@@ -61,6 +62,7 @@ export const getters: GetterTree<State, RootState> = {};
 export interface Actions<S, R> extends ActionTree<S, R> {
     updateLink(context: ActionContext<S, R>, url: string): void;
     getManifestInformation(context: ActionContext<S, R>): void;
+    reset(context: ActionContext<S, R>): void;
 }
 
 export const actions: Actions<State, RootState> = {
@@ -98,6 +100,10 @@ export const actions: Actions<State, RootState> = {
                 commit(types.UPDATE_ERROR, e.response.data.error || e.response.data || e.response.statusText);
             }
         });
+    },
+
+    reset({ commit }): void {
+        commit(types.RESET);
     }
 };
 
@@ -129,6 +135,18 @@ export const mutations: MutationTree<State> = {
         state.manifest.lang = state.manifest.lang || '';
         state.manifest.display = state.manifest.display || 'fullscreen';
         state.manifest.orientation = state.manifest.orientation || 'any';
+    },
+
+    [types.RESET](state): void {
+        state.url= null;
+        state.error= null;
+        state.manifest= null;
+        state.manifestId= null;
+        state.siteServiceWorkers= null;
+        state.icons= [];
+        state.suggestions= null;
+        state.warnings= null;
+        state.errors= null;
     }
 };
 

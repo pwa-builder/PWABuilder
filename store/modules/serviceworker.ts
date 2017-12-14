@@ -8,7 +8,8 @@ export const name = 'serviceworker';
 export const types = {
     UPDATE_ARCHIVE: 'UPDATE_ARCHIVE',
     UPDATE_SERVICEWORKER: 'UPDATE_SERVICEWORKER',
-    UPDATE_ERROR: 'UPDATE_ERROR'
+    UPDATE_ERROR: 'UPDATE_ERROR',
+    RESET: 'RESET'
 };
 
 export interface State {
@@ -27,6 +28,7 @@ export const getters: GetterTree<State, RootState> = {};
 
 export interface Actions<S, R> extends ActionTree<S, R> {
     downloadServiceWorker(context: ActionContext<S, R>, serviceWorkerId: number): void;
+    reset(context: ActionContext<S, R>): void;
 }
 
 export const actions: Actions<State, RootState> = {
@@ -48,6 +50,9 @@ export const actions: Actions<State, RootState> = {
                 commit(types.UPDATE_ERROR, e.response.data.error || e.response.data || e.response.statusText);
             }
         });
+    },
+    reset({ commit }): void {
+        commit(types.RESET);
     }
 };
 
@@ -60,6 +65,11 @@ export const mutations: MutationTree<State> = {
     },
     [types.UPDATE_ERROR](state, error: string): void {
         state.error = error;
+    },
+    [types.RESET](state): void {
+        state.archive= null;
+        state.serviceworker= null;
+        state.error= null;
     }
 };
 
