@@ -1,6 +1,7 @@
 import * as root from './root';
 import * as generator from './modules/generator';
 import * as serviceworker from './modules/serviceworker';
+import * as publish from './modules/publish';
 import * as i18n from './modules/i18n';
 import { ActionTree } from 'vuex';
 
@@ -15,6 +16,7 @@ import { ActionTree } from 'vuex';
 export const modules = {
     [generator.name]: generator,
     [serviceworker.name]: serviceworker,
+    [publish.name]: publish,
     [i18n.name]: i18n
 };
 

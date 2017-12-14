@@ -17,7 +17,8 @@ export const types = {
     UPDATE_ERROR: 'UPDATE_ERROR',
     UPDATE_WITH_MANIFEST: 'UPDATE_WITH_MANIFEST',
     SET_DEFAULTS_MANIFEST: 'SET_DEFAULTS_MANIFEST',
-    UPDATE_ICONS: 'UPDATE_ICONS'
+    UPDATE_ICONS: 'UPDATE_ICONS',
+    RESET: 'RESET'
 };
 
 export interface Manifest {
@@ -74,6 +75,7 @@ export interface Actions<S, R> extends ActionTree<S, R> {
     updateLink(context: ActionContext<S, R>, url: string): void;
     getManifestInformation(context: ActionContext<S, R>): void;
     removeIcon(context: ActionContext<S, R>, icon: Icon): void;
+    reset(context: ActionContext<S, R>): void;
 }
 
 export const actions: Actions<State, RootState> = {
@@ -128,6 +130,10 @@ export const actions: Actions<State, RootState> = {
             commit(types.UPDATE_ICONS, icons);
         }
     },
+
+    reset({ commit }): void {
+        commit(types.RESET);
+    }
 };
 
 export const mutations: MutationTree<State> = {
@@ -162,6 +168,18 @@ export const mutations: MutationTree<State> = {
 
     [types.UPDATE_ICONS](state, icons: Icon[]): void {
         state.icons = icons;
+    },
+
+    [types.RESET](state): void {
+        state.url = null;
+        state.error = null;
+        state.manifest = null;
+        state.manifestId = null;
+        state.siteServiceWorkers = null;
+        state.icons = [];
+        state.suggestions = null;
+        state.warnings = null;
+        state.errors = null;
     }
 };
 
