@@ -53,20 +53,22 @@
                         <div class="pure-u-1-8"></div>
                         <div class="pure-u-1-8"></div>
 
-                        <div class="pure-u-10-24 l-generator-tablec">
-                            <a target="_blank" href="">
-                                <img class="icon-preview" src="http://google.es/images/branding/product/ico/googleg_lodp.ico">
-                            </a>
-                        </div>
-                        <div class="pure-u-8-24 l-generator-tablec">
-                            16x16 32x32
-                        </div>
-                        <div class="pure-u-1-8 l-generator-tablec">
-                        </div>
-                        <div class="pure-u-1-8 l-generator-tablec l-generator-tablec--right">
-                            <span class="l-generator-close">
-                                <i class="fa fa-times" aria-hidden="true"></i>
-                            </span>
+                        <div class="pure-u-1" v-for="icon in icons" :key="icon.src">
+                            <div class="pure-u-10-24 l-generator-tablec">
+                                <a target="_blank" :href="(manifest$.start_url + icon.src)">
+                                    <img class="icon-preview" :src="(manifest$.start_url + icon.src)">
+                                </a>
+                            </div>
+                            <div class="pure-u-8-24 l-generator-tablec">
+                                {{icon.sizes}}
+                            </div>
+                            <div class="pure-u-1-8 l-generator-tablec">
+                            </div>
+                            <div class="pure-u-1-8 l-generator-tablec l-generator-tablec--right" @click="onClickRemoveIcon(icon)">
+                                <span class="l-generator-close">
+                                    <i aria-hidden="true">✕</i>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -150,6 +152,7 @@ import TwoWays from '~/components/TwoWays';
 import * as generator from '~/store/modules/generator';
 
 const GeneratorState = namespace(generator.name, State);
+const GeneratorActions = namespace(generator.name, Action);
 
 @Component({
   components: {
@@ -161,10 +164,13 @@ export default class extends Vue {
   public manifest$: generator.Manifest | null = null;
 
   @GeneratorState manifest: generator.Manifest;
+  @GeneratorState icons: generator.Icon[];
 
   @Getter orientationsNames: string[];
   @Getter languagesNames: string[];
   @Getter displaysNames: string[];
+
+  @GeneratorActions removeIcon;
 
   public created(): void {
     if (!this.manifest) {
@@ -173,7 +179,11 @@ export default class extends Vue {
       });
     }
 
-    this.manifest$ = {...this.manifest} || {};
+    this.manifest$ = {...this.manifest};
+  }
+
+  public onClickRemoveIcon(icon) {
+      this.removeIcon(icon);
   }
 }
 </script>

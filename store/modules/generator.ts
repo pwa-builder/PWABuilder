@@ -16,7 +16,8 @@ export const types = {
     UPDATE_LINK: 'UPDATE_LINK',
     UPDATE_ERROR: 'UPDATE_ERROR',
     UPDATE_WITH_MANIFEST: 'UPDATE_WITH_MANIFEST',
-    SET_DEFAULTS_MANIFEST: 'SET_DEFAULTS_MANIFEST'
+    SET_DEFAULTS_MANIFEST: 'SET_DEFAULTS_MANIFEST',
+    REMOVE_ICON: 'REMOVE_ICON'
 };
 
 export interface Manifest {
@@ -40,13 +41,18 @@ export interface StaticContent {
     name: string;
 }
 
+export interface Icon {
+    src: string;
+    sizes: string;
+}
+
 export interface State {
     url: string | null;
     error: string | null;
     manifest: Manifest | null;
     manifestId: string | null;
     siteServiceWorkers: any;
-    icons: string[];
+    icons: Icon[];
     suggestions: string[] | null;
     warnings: string[] | null;
     errors: string[] | null;
@@ -67,6 +73,7 @@ export const state = (): State => ({
 export interface Actions<S, R> extends ActionTree<S, R> {
     updateLink(context: ActionContext<S, R>, url: string): void;
     getManifestInformation(context: ActionContext<S, R>): void;
+    removeIcon(context: ActionContext<S, R>, icon: Icon): void;
 }
 
 export const actions: Actions<State, RootState> = {
@@ -107,7 +114,17 @@ export const actions: Actions<State, RootState> = {
                 commit(types.UPDATE_ERROR, e.response.data.error || e.response.data || e.response.statusText);
             }
         });
-    }
+    },
+
+    removeIcon({ commit, state }, icon: Icon): void {
+        const index = state.icons.findIndex(i => {
+            return i.src === icon.src;
+        });
+
+        if (index > -1) {
+            commit(types.REMOVE_ICON, index);
+        }
+    },
 };
 
 export const mutations: MutationTree<State> = {
@@ -124,7 +141,7 @@ export const mutations: MutationTree<State> = {
         state.manifest = result.content;
         state.manifestId = result.id;
         state.siteServiceWorkers = result.siteServiceWorkers;
-        state.icons = result.icons || [];
+        state.icons = result.content.icons || [];
         state.suggestions = result.suggestions;
         state.warnings = result.warnings;
         state.errors = result.errors;
@@ -138,6 +155,10 @@ export const mutations: MutationTree<State> = {
         state.manifest.lang = state.manifest.lang || '';
         state.manifest.display = state.manifest.display || payload.defaultDisplay;
         state.manifest.orientation = state.manifest.orientation || payload.defaultOrientation;
+    },
+
+    [types.REMOVE_ICON](state, index: number): void {
+        state.icons.splice(index, 1);
     }
 };
 
