@@ -1,11 +1,11 @@
 import { ActionContext } from 'vuex';
-import { RootState, modules } from 'store';
+import { RootState, modules, state } from 'store';
 
-export let actionContextMockBuilder = <S>(state: S): ActionContext<S, RootState> => ({
+export let actionContextMockBuilder = <S>(s: S): ActionContext<S, RootState> => ({
     dispatch: (type: string) => Promise.resolve(),
     commit: (type: string) => {},
-    state: state,
+    state: s,
     getters: {},
-    rootState: modules,
+    rootState: {...modules, ...state()},
     rootGetters: {}
 });

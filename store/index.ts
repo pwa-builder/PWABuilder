@@ -1,7 +1,9 @@
+import * as root from './root';
 import * as generator from './modules/generator';
 import * as serviceworker from './modules/serviceworker';
 import * as publish from './modules/publish';
 import * as i18n from './modules/i18n';
+import { ActionTree } from 'vuex';
 
 // More info about store: https://vuex.vuejs.org/en/core-concepts.html
 // Structure of the store:
@@ -18,4 +20,9 @@ export const modules = {
     [i18n.name]: i18n
 };
 
-export type RootState = typeof modules;
+export type RootState = typeof modules & root.State;
+
+export const state = root.state;
+export const getters = root.getters;
+export const actions = root.actions;
+export const mutations = root.mutations;
