@@ -97,6 +97,16 @@ function getImageIconSize(aSrc): Promise<{width: number, height: number}> {
     });
 }
 
+function prepareIconsUrls(icons: Icon[], baseUrl: string) {
+    return icons.map(icon => {
+        if (!icon.src.includes('http')) {
+            icon.src = baseUrl + icon.src;
+        }
+
+        return icon;
+    });
+}
+
 export const actions: Actions<State, RootState> = {
     updateLink({ commit }, url: string): void {
         if (url && !url.startsWith('http')) {
@@ -191,7 +201,7 @@ export const mutations: MutationTree<State> = {
         state.manifest = result.content;
         state.manifestId = result.id;
         state.siteServiceWorkers = result.siteServiceWorkers;
-        state.icons = result.content.icons || [];
+        state.icons = prepareIconsUrls(result.content.icons, state.manifest && state.manifest.start_url ? state.manifest.start_url : '') || [];
         state.suggestions = result.suggestions;
         state.warnings = result.warnings;
         state.errors = result.errors;
