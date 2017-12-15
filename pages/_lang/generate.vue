@@ -28,6 +28,8 @@
                 </label>
                 <input class="l-generator-input" v-model="manifest$.description" name="description" type="text">
             </div>
+
+            <Modal title="$t('generate.upload_title')" ref="iconsModal" @submit="onSubmitIconModal"></Modal>
             <div class="l-generator-field logo-upload">
                 <label class="l-generator-label">{{ $t("generate.icon_url") }}
                     <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#icons-member" target="_blank">[?]</a>
@@ -38,7 +40,8 @@
 
                     <div class="button-holder icons">
                         <div class="l-inline">
-                            <button class="pwa-button pwa-button--text isEnabled">
+                            <button class="pwa-button pwa-button--text"
+                                    @click="onClickUploadIcon()">
                                 {{ $t("generate.upload") }}
                             </button>
                         </div>
@@ -148,6 +151,7 @@ import { Action, State, Getter, namespace } from 'vuex-class';
 
 import GeneratorMenu from '~/components/GeneratorMenu';
 import TwoWays from '~/components/TwoWays';
+import Modal from '~/components/Modal';
 
 import * as generator from '~/store/modules/generator';
 
@@ -157,7 +161,8 @@ const GeneratorActions = namespace(generator.name, Action);
 @Component({
   components: {
     TwoWays,
-    GeneratorMenu
+    GeneratorMenu,
+    Modal
   }
 })
 export default class extends Vue {
@@ -190,6 +195,15 @@ export default class extends Vue {
 
   public onClickAddIcon(): void {
       this.addIconFromUrl(this.newIconSrc);
+  }
+
+  public onClickUploadIcon(): void {
+    const $iconModal = this.$refs.iconsModal as Modal;
+    $iconModal.show();
+  }
+
+  public onSubmitIconModal(): void {
+      console.log('submit')
   }
 }
 </script>
