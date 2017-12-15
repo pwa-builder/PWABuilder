@@ -21,6 +21,7 @@
 // Private SASS components (without logic)
 @import
 'components/button',
+'components/infobox',
 'components/modal';
 
 // Legacy
@@ -32,7 +33,6 @@
 'legacy/_layout/l-main',
 'legacy/_modules/m-hero',
 'legacy/_modules/m-infos',
-'legacy/_modules/m-infobox',
 'legacy/_modules/m-partners',
 'legacy/_modules/m-build-process',
 'legacy/_modules/m-more-info',

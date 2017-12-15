@@ -73,7 +73,7 @@ export const state = (): State => ({
 
 export interface Actions<S, R> extends ActionTree<S, R> {
     updateLink(context: ActionContext<S, R>, url: string): void;
-    getManifestInformation(context: ActionContext<S, R>): void;
+    getManifestInformation(context: ActionContext<S, R>): Promise<{}>;
     removeIcon(context: ActionContext<S, R>, icon: Icon): void;
     reset(context: ActionContext<S, R>): void;
 }
