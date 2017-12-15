@@ -72,39 +72,41 @@ export const state = (): State => ({
     errors: null
 });
 
+export const helpers = {
+    getImageIconSize(aSrc: string): Promise<{width: number, height: number}> {
+        return new Promise(resolve => {
+            if (typeof document === 'undefined') {
+                resolve({ width: 0, height: 0 });
+              }
+    
+              let tmpImg = document.createElement('img');
+    
+              tmpImg.onload = () => resolve({
+                width: tmpImg.width,
+                height: tmpImg.height
+              });
+    
+              tmpImg.src = aSrc;
+        });
+    },
+    
+    prepareIconsUrls(icons: Icon[], baseUrl: string) {
+        return icons.map(icon => {
+            if (!icon.src.includes('http')) {
+                icon.src = baseUrl + icon.src;
+            }
+    
+            return icon;
+        });
+    }
+};
+
 export interface Actions<S, R> extends ActionTree<S, R> {
     updateLink(context: ActionContext<S, R>, url: string): void;
     getManifestInformation(context: ActionContext<S, R>): void;
     removeIcon(context: ActionContext<S, R>, icon: Icon): void;
     reset(context: ActionContext<S, R>): void;
     addIconFromUrl(context: ActionContext<S, R>, newIconSrc: string): void;
-}
-
-function getImageIconSize(aSrc): Promise<{width: number, height: number}> {
-    return new Promise(resolve => {
-        if (typeof document === 'undefined') {
-            resolve({ width: 0, height: 0 });
-          }
-
-          let tmpImg = document.createElement('img');
-
-          tmpImg.onload = () => resolve({
-            width: tmpImg.width,
-            height: tmpImg.height
-          });
-
-          tmpImg.src = aSrc;
-    });
-}
-
-function prepareIconsUrls(icons: Icon[], baseUrl: string) {
-    return icons.map(icon => {
-        if (!icon.src.includes('http')) {
-            icon.src = baseUrl + icon.src;
-        }
-
-        return icon;
-    });
 }
 
 export const actions: Actions<State, RootState> = {
@@ -175,11 +177,12 @@ export const actions: Actions<State, RootState> = {
         }
 
         if (!src.includes('http')) {
-            src = state.manifest ? state.manifest.start_url + src || '' : state.url + src || '' + '/' + src;
+            let prefix = state.manifest ? state.manifest.start_url : state.url;
+            src = (prefix || '') + src;
         }
 
         try {
-            const sizes = await getImageIconSize(src);
+            const sizes = await helpers.getImageIconSize(src);
             commit(types.ADD_ICON, {src, sizes: `${sizes.width}x${sizes.height}`});
         } catch (e) {
             throw e;
@@ -201,7 +204,7 @@ export const mutations: MutationTree<State> = {
         state.manifest = result.content;
         state.manifestId = result.id;
         state.siteServiceWorkers = result.siteServiceWorkers;
-        state.icons = prepareIconsUrls(result.content.icons, state.manifest && state.manifest.start_url ? state.manifest.start_url : '') || [];
+        state.icons = helpers.prepareIconsUrls(result.content.icons, state.manifest && state.manifest.start_url ? state.manifest.start_url : '') || [];
         state.suggestions = result.suggestions;
         state.warnings = result.warnings;
         state.errors = result.errors;
