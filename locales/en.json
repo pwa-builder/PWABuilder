@@ -67,6 +67,16 @@
   "publish": {
     "title": "Publish PWA",
     "manifest_needed": "You need to create your manifest first.",
+    "web": "Web",
+    "web_description": "Download these files and add them to your website.  Different browsers will detect your Progressive Web App in different ways, but the manifest and service workers are required for each of them.",
+    "windows": "Windows",
+    "windows_description": "Windows 10 PWA support is still in Beta, so some features like service workers will not work on all user machines.  We invite you to join our beta PWA program.  Your PWA can be created and app listing generated from the below one step publishing button.",
+    "generate_appx": "Generate AppX",
+    "android": "Android",
+    "android_description": "PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.",
+    "polyfill": "iOS Polyfill",
+    "building_package": "Building package...",
+    "download": "Download",
     "first_step": "Go to first step",
     "start_over": "Start Over"
   },
