@@ -29,7 +29,9 @@
                 <input class="l-generator-input" v-model="manifest$.description" name="description" type="text">
             </div>
 
-            <Modal title="$t('generate.upload_title')" ref="iconsModal" @submit="onSubmitIconModal"></Modal>
+            <Modal :title="$t('generate.upload_title')" ref="iconsModal" @submit="onSubmitIconModal">
+                Pruebecita de Quiquesito
+            </Modal>
             <div class="l-generator-field logo-upload">
                 <label class="l-generator-label">{{ $t("generate.icon_url") }}
                     <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#icons-member" target="_blank">[?]</a>
@@ -112,9 +114,9 @@
                     <option v-for="language in languagesNames" :value="language" :key="language">{{language}}</option>
                 </select>
             </div>
-            <div id="ember567">
+            <div>
                 <div class="l-generator-field">
-                    <label class="l-generator-label">B{{ $t("generate.background_color") }}
+                    <label class="l-generator-label">{{ $t("generate.background_color") }}
                         <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#background_color-member" target="_blank">[?]</a>
                     </label>
                     <div class="l-generator-options">
@@ -139,21 +141,20 @@
     <div class="l-generator-buttons l-generator-buttons--centered">
         <button class="pwa-button">{{ $t("generate.next_step") }}</button>
     </div>
-    </div>
     <TwoWays/>
 </section>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Component from 'nuxt-class-component';
-import { Action, State, Getter, namespace } from 'vuex-class';
+import Vue from "vue";
+import Component from "nuxt-class-component";
+import { Action, State, Getter, namespace } from "vuex-class";
 
-import GeneratorMenu from '~/components/GeneratorMenu';
-import TwoWays from '~/components/TwoWays';
-import Modal from '~/components/Modal';
+import GeneratorMenu from "~/components/GeneratorMenu";
+import TwoWays from "~/components/TwoWays";
+import Modal from "~/components/Modal";
 
-import * as generator from '~/store/modules/generator';
+import * as generator from "~/store/modules/generator";
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
@@ -167,7 +168,7 @@ const GeneratorActions = namespace(generator.name, Action);
 })
 export default class extends Vue {
   public manifest$: generator.Manifest | null = null;
-  public newIconSrc = '';
+  public newIconSrc = "";
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState icons: generator.Icon[];
@@ -182,28 +183,27 @@ export default class extends Vue {
   public created(): void {
     if (!this.manifest) {
       this.$router.push({
-        path: '/'
+        path: "/"
       });
     }
 
-    this.manifest$ = {...this.manifest};
+    this.manifest$ = { ...this.manifest };
   }
 
   public onClickRemoveIcon(icon: generator.Icon): void {
-      this.removeIcon(icon);
+    this.removeIcon(icon);
   }
 
   public onClickAddIcon(): void {
-      this.addIconFromUrl(this.newIconSrc);
+    this.addIconFromUrl(this.newIconSrc);
   }
 
   public onClickUploadIcon(): void {
-    const $iconModal = this.$refs.iconsModal as Modal;
-    $iconModal.show();
+    (this.$refs.iconsModal as Modal).show();
   }
 
   public onSubmitIconModal(): void {
-      console.log('submit')
+    (this.$refs.iconsModal as Modal).hide();
   }
 }
 </script>

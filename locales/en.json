@@ -42,7 +42,8 @@
     "none": "None",
     "specify_application": "Specify related applications to be added to the manifest.",
     "specify_members": "Specify custom members to be added to the manifest.",
-    "next_step": "Next Step"
+    "next_step": "Next Step",
+    "upload_title": "Upload an image"
   },
   "serviceworker": {
     "title": "Select the service worker functionality for your app.",
@@ -93,5 +94,9 @@
     "web_based": "Web Based",
     "started_now": "Get started Now",
     "download": "Download now"
+  },
+  "modal": {
+    "submit": "Submit",
+    "cancel": "Cancel"
   }
 }

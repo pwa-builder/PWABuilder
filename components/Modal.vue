@@ -3,27 +3,29 @@
     <div class="modal" v-if="showModal">
         <div class="modal-box">
             <div class="pure-u-1-1 modal-tablec">
-                <span class="l-generator-close">✕</span>
+                <span class="l-generator-close"
+                      @click="onClickCancel()">
+                    ✕
+                </span>
             </div>
 
-            <h5 class="modal-title modal-title--normal">
-                
-            </h5>
+            <h5 class="modal-title modal-title--normal">{{title}}</h5>
 
             <div class="modal-body">
-            </div>
+                <slot/>
 
-            <div class="modal-buttons">
-                <button class="l-generator-space_right pwa-button pwa-button--simple pwa-button--brand"
-                        @click="onClickSubmit()"
-                        data-flare='{"category": "Manifest", "action": "Add Member", "label": "Image Upload", "value": { "page": "/manifest/add-member" }}'>
-                        Submit
-                </button>
-                <button class="pwa-button pwa-button--simple"
-                        @click="onClickCancel()"
-                        data-flare='{"category": "Manifest", "action": "Add Member", "label": "Image Upload - Cancel", "value": { "page": "/manifest/add-member" }}'>
-                        Cancel
-                </button>
+                <div class="modal-buttons">
+                    <button class="l-generator-space_right pwa-button pwa-button--simple pwa-button--brand"
+                            @click="onClickSubmit()"
+                            data-flare='{"category": "Manifest", "action": "Add Member", "label": "Image Upload", "value": { "page": "/manifest/add-member" }}'>
+                            {{$t("modal.submit")}}
+                    </button>
+                    <button class="pwa-button pwa-button--simple"
+                            @click="onClickCancel()"
+                            data-flare='{"category": "Manifest", "action": "Add Member", "label": "Image Upload - Cancel", "value": { "page": "/manifest/add-member" }}'>
+                            {{$t("modal.cancel")}}
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -31,33 +33,33 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import { Prop } from 'vue-property-decorator';
-import Component from 'nuxt-class-component'
+import Vue from "vue";
+import { Prop } from "vue-property-decorator";
+import Component from "nuxt-class-component";
 
 @Component()
 export default class extends Vue {
-    private showModal = false;
+  private showModal = false;
 
-    @Prop({type: String, default: ''})
-    public title: string;
+  @Prop({ type: String, default: "" })
+  public title: string;
 
-    public show(): void {
-        this.showModal = true;
-    }
+  public show(): void {
+    this.showModal = true;
+  }
 
-    public hide(): void {
-        this.showModal = false;
-    }
+  public hide(): void {
+    this.showModal = false;
+  }
 
-    public onClickSubmit() {
-        this.$emit('submit');
-    }
+  public onClickSubmit() {
+    this.$emit("submit");
+  }
 
-    public onClickCancel() {
-        this.hide();
-        this.$emit('cancel');
-    }
+  public onClickCancel() {
+    this.hide();
+    this.$emit("cancel");
+  }
 }
 </script>
 
@@ -123,13 +125,15 @@ export default class extends Vue {
         font-family: 'Bitter';
         font-size: $font-size-l;
         font-weight: $font-weight-semibold;
+        margin-top: 0;
         text-align: center;
         width: 100%;
     }
 
     &-body {
-        margin-top: 45px;
+        margin: 45px auto 0 auto;
         padding: 18px;
+        width: 60%;
     }
 
     &-tablec {
@@ -142,7 +146,6 @@ export default class extends Vue {
         text-align: right;
         text-transform: capitalize;
 
-
         img {
             max-width: 90%;
         }
@@ -152,6 +155,5 @@ export default class extends Vue {
         text-align: right;
     }
 }
-
 
 </style>
