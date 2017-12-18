@@ -27,7 +27,8 @@ module.exports = {
         failOnError: false
       }),
       // new ForkTsCheckerWebpackPlugin({
-      //   tslint: true
+      //   tslint: true,
+      //   vue: true
       // })
     ]
   },
