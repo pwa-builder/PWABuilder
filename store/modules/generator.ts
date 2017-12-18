@@ -21,7 +21,7 @@ export const types = {
     UPDATE_ICONS: 'UPDATE_ICONS',
     ADD_ICON: 'ADD_ICON',
     ADD_ASSETS: 'ADD_ASSETS',
-    RESET: 'RESET'
+    RESET_STATES: 'RESET_STATES'
 };
 
 export interface Manifest {
@@ -128,7 +128,7 @@ export interface Actions<S, R> extends ActionTree<S, R> {
     updateLink(context: ActionContext<S, R>, url: string): void;
     getManifestInformation(context: ActionContext<S, R>): Promise<void>;
     removeIcon(context: ActionContext<S, R>, icon: Icon): void;
-    reset(context: ActionContext<S, R>): void;
+    resetStates(context: ActionContext<S, R>): void;
     addIconFromUrl(context: ActionContext<S, R>, newIconSrc: string): void;
     uploadIcon(context: ActionContext<S, R>, iconFile: File): void;
     generateMissingImages(context: ActionContext<S, R>, iconFile: File): void;
@@ -169,7 +169,9 @@ export const actions: Actions<State, RootState> = {
 
                 resolve();
             } catch (e) {
-                commit(types.UPDATE_ERROR, e.response.data.error || e.response.data || e.response.statusText);
+                let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
+                commit(types.UPDATE_ERROR, errorMessage);
+                reject(e);
             }
         });
     },
@@ -186,8 +188,8 @@ export const actions: Actions<State, RootState> = {
         }
     },
 
-    reset({ commit }): void {
-        commit(types.RESET);
+    resetStates({ commit }): void {
+        commit(types.RESET_STATES);
     },
 
     async addIconFromUrl({ commit, state }, newIconSrc: string): Promise<void> {
@@ -277,7 +279,7 @@ export const mutations: MutationTree<State> = {
         state.icons.push(icon);
     },
 
-    [types.RESET](state): void {
+    [types.RESET_STATES](state): void {
         state.url = null;
         state.error = null;
         state.manifest = null;

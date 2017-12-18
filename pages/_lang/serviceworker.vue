@@ -104,7 +104,7 @@ export default class extends Vue {
   @ServiceworkerAction downloadServiceWorker;
 
   public created(): void {
-    this.serviceworker$ = this.serviceworker || 1;
+    this.serviceworker$ = this.serviceworker;
   }
 
   public async download(): Promise<void> {

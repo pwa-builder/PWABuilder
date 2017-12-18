@@ -3,12 +3,12 @@ import { RootState } from 'store';
 
 const apiUrl = `${process.env.apiUrl}/manifests`;
 const platforms = {
-  web: 'web',
-  windows10: 'windows10',
-  windows: 'windows',
-  ios: 'ios',
-  android: 'android',
-  all: 'All'
+    web: 'web',
+    windows10: 'windows10',
+    windows: 'windows',
+    ios: 'ios',
+    android: 'android',
+    all: 'All'
 }
 
 export const name = 'publish';
@@ -36,14 +36,14 @@ export const getters: GetterTree<State, RootState> = {};
 export interface Actions<S, R> extends ActionTree<S, R> {
     resetAppData(context: ActionContext<S, R>): void;
     updateStatus(context: ActionContext<S, R>): void;
-    build(context: ActionContext<S, R>, platform: string): void;
+    build(context: ActionContext<S, R>, platform: string): Promise<void>;
 }
 
 export const actions: Actions<State, RootState> = {
 
     resetAppData({ commit, dispatch }): void {
-        dispatch('generator/reset', undefined, {root:true});
-        dispatch('serviceworker/reset', undefined, {root:true});
+        dispatch('generator/resetStates', undefined, {root:true});
+        dispatch('serviceworker/resetStates', undefined, {root:true});
     },
 
     updateStatus({ commit, rootState }): void {
@@ -51,30 +51,38 @@ export const actions: Actions<State, RootState> = {
         commit(types.UPDATE_STATUS, status);
     },
 
-    async build({ commit, rootState }, platform: string): Promise<{}> {
-        return new Promise(async (resolve, reject) => {
-          if (!platform) {
-              commit(types.UPDATE_ERROR, 'Platform is required');
-              resolve();
-          }
+    async build({ commit, rootState }, platform: string): Promise<void> {
+        return new Promise<void>(async (resolve, reject) => {
+            const manifestId = rootState.generator.manifestId;
+            const serviceworker = rootState.serviceworker.serviceworker;
 
-          let platformsList: string[] = [];
-          if (platform === platforms.all) {
-            platformsList = [ platforms.web, platforms.windows10, platforms.windows, platforms.ios, platforms.android ];
-          } else {
-            platformsList = [ platform ];
-          }
+            if (!manifestId || !serviceworker) {
+                commit(types.UPDATE_ERROR, 'Manifest is required');
+                resolve();
+            }
 
-          try {
-            const options = JSON.stringify({ platforms: platformsList, dirSuffix: platform });
-            //TODO investigate selectedServiceWorker
-            const selectedServiceWorker = 1;
-            const result = await this.$axios.$post(`${apiUrl}/${rootState.generator['manifestId']}/build?ids=${selectedServiceWorker}`, options);
-              commit(types.UPDATE_ARCHIVELINK, result.archive);
-            resolve();
-          } catch (e) {
-              commit(types.UPDATE_ERROR, e.response.data.error || e.response.data || e.response.statusText);
-          }
+            if (!platform) {
+                commit(types.UPDATE_ERROR, 'Platform is required');
+                resolve();
+            }
+
+            let platformsList: string[] = [];
+            if (platform === platforms.all) {
+                platformsList = [ platforms.web, platforms.windows10, platforms.windows, platforms.ios, platforms.android ];
+            } else {
+                platformsList = [ platform ];
+            }
+
+            try {
+                const options = JSON.stringify({ platforms: platformsList, dirSuffix: platform });
+                const result = await this.$axios.$post(`${apiUrl}/${manifestId}/build?ids=${serviceworker}`, options);
+                commit(types.UPDATE_ARCHIVELINK, result.archive);
+                resolve();
+            } catch (e) {
+                let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
+                commit(types.UPDATE_ERROR, errorMessage);
+                reject(e);
+            }
         });
     }
 };
