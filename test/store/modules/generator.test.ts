@@ -63,6 +63,29 @@ describe('generator', () => {
             expect(actionContext.commit).to.have.been.calledWith(generator.types.UPDATE_WITH_MANIFEST);
             expect(actionContext.commit).to.have.been.calledWith(generator.types.SET_DEFAULTS_MANIFEST);
         });
+
+        it('should update error if params are incorrect and API respond with error', async () => {
+            const url = 'http://microsoft.com';
+            const status = 500;
+            actionContext.state.url = url;
+
+            axiosMock.onPost(`${process.env.apiUrl}/manifests`).reply(status, {});
+
+            await actions.getManifestInformation(actionContext)
+            .catch(e => {
+                expect(e.response.status).to.be.equal(status);
+                expect(actionContext.commit).to.have.been.calledWith(generator.types.UPDATE_ERROR);
+            });
+
+            expect(actionContext.commit).to.not.have.been.calledWith(generator.types.UPDATE_WITH_MANIFEST);
+            expect(actionContext.commit).to.not.have.been.calledWith(generator.types.SET_DEFAULTS_MANIFEST);
+
+        });
+
+        afterEach(() => {
+            axiosMock.reset();
+        });
+
     });
 
     describe('when submit empty url', () => {
