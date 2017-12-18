@@ -43,7 +43,10 @@
     "specify_application": "Specify related applications to be added to the manifest.",
     "specify_members": "Specify custom members to be added to the manifest.",
     "next_step": "Next Step",
-    "upload_title": "Upload an image"
+    "upload_title": "Upload an image",
+    "upload_image": "Upload image",
+    "choose_file": "Choose File",
+    "generate_missing": "Generate missing images from this image"
   },
   "serviceworker": {
     "title": "Select the service worker functionality for your app.",

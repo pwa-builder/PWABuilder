@@ -30,7 +30,19 @@
             </div>
 
             <Modal :title="$t('generate.upload_title')" ref="iconsModal" @submit="onSubmitIconModal">
-                Pruebecita de Quiquesito
+                <div class="l-generator-box">
+                    <span class="l-generator-label">{{ $t("generate.upload_image") }}</span>
+                    <label class="l-generator-input l-generator-input--fake is-disabled" for="modal-file">
+                        {{ $t("generate.choose_file") }}
+                    </label>
+                    <input id="modal-file" class="l-hidden" type="file">
+                </div>
+
+                <div class="l-generator-field">
+                    <label>
+                        <input type="checkbox"> {{ $t("generate.generate_missing") }}
+                    </label>
+                </div>
             </Modal>
             <div class="l-generator-field logo-upload">
                 <label class="l-generator-label">{{ $t("generate.icon_url") }}
