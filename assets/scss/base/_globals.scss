@@ -18,3 +18,7 @@ body {
         font-size: $font-size * .65;
     }
 }
+
+.stop-scroll {
+    overflow: hidden;
+}
