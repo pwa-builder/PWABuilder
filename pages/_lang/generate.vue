@@ -35,12 +35,12 @@
                     <label class="l-generator-input l-generator-input--fake is-disabled" for="modal-file">
                         {{ $t("generate.choose_file") }}
                     </label>
-                    <input id="modal-file" class="l-hidden" type="file">
+                    <input id="modal-file" @change="onFileIconChange" class="l-hidden" type="file">
                 </div>
 
                 <div class="l-generator-field">
                     <label>
-                        <input type="checkbox"> {{ $t("generate.generate_missing") }}
+                        <input type="checkbox" v-model="iconCheckMissing"> {{ $t("generate.generate_missing") }}
                     </label>
                 </div>
             </Modal>
@@ -80,6 +80,7 @@
                                 {{icon.sizes}}
                             </div>
                             <div class="pure-u-1-8 l-generator-tablec">
+                                {{icon.generated ? 'Magic' : ''}}
                             </div>
                             <div class="pure-u-1-8 l-generator-tablec l-generator-tablec--right" @click="onClickRemoveIcon(icon)">
                                 <span class="l-generator-close">
@@ -181,6 +182,8 @@ const GeneratorActions = namespace(generator.name, Action);
 export default class extends Vue {
   public manifest$: generator.Manifest | null = null;
   public newIconSrc = "";
+  private iconFile: File | null = null;
+  public iconCheckMissing: boolean = true;
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState icons: generator.Icon[];
@@ -191,6 +194,8 @@ export default class extends Vue {
 
   @GeneratorActions removeIcon;
   @GeneratorActions addIconFromUrl;
+  @GeneratorActions uploadIcon;
+  @GeneratorActions generateMissingImages;
 
   public created(): void {
     if (!this.manifest) {
@@ -210,11 +215,31 @@ export default class extends Vue {
     this.addIconFromUrl(this.newIconSrc);
   }
 
+  public onFileIconChange(e: Event): void {
+    const target = e.target as HTMLInputElement;
+
+    if (!target.files) {
+      return;
+    }
+
+    this.iconFile = target.files[0];
+  }
+
   public onClickUploadIcon(): void {
     (this.$refs.iconsModal as Modal).show();
   }
 
-  public onSubmitIconModal(): void {
+  public async onSubmitIconModal(): Promise<void> {
+    if (!this.iconFile) {
+      return;
+    }
+
+    if (this.iconCheckMissing) {
+        await this.generateMissingImages(this.iconFile);
+    } else {
+        await this.uploadIcon(this.iconFile);
+    }
+
     (this.$refs.iconsModal as Modal).hide();
   }
 }
