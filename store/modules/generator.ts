@@ -16,9 +16,11 @@ export const types = {
     UPDATE_LINK: 'UPDATE_LINK',
     UPDATE_ERROR: 'UPDATE_ERROR',
     UPDATE_WITH_MANIFEST: 'UPDATE_WITH_MANIFEST',
+    OVERWRITE_MANIFEST: 'OVERRIDE_MANIFEST',
     SET_DEFAULTS_MANIFEST: 'SET_DEFAULTS_MANIFEST',
     UPDATE_ICONS: 'UPDATE_ICONS',
     ADD_ICON: 'ADD_ICON',
+    ADD_ASSETS: 'ADD_ASSETS',
     RESET_STATES: 'RESET_STATES'
 };
 
@@ -45,7 +47,13 @@ export interface StaticContent {
 
 export interface Icon {
     src: string;
+    generated?: boolean;
     sizes: string;
+}
+
+export interface Asset {
+    filename: string;
+    data: Blob;
 }
 
 export interface State {
@@ -58,6 +66,7 @@ export interface State {
     suggestions: string[] | null;
     warnings: string[] | null;
     errors: string[] | null;
+    assets: Asset[] | null;
 }
 
 export const state = (): State => ({
@@ -69,7 +78,8 @@ export const state = (): State => ({
     icons: [],
     suggestions: null,
     warnings: null,
-    errors: null
+    errors: null,
+    assets: null
 });
 
 export const helpers = {
@@ -98,7 +108,20 @@ export const helpers = {
     
             return icon;
         });
-    }
+    },
+
+    async getImageDataURI(file: File): Promise<string> {
+        return new Promise<string>(resolve => {
+          const reader = new FileReader();
+    
+          reader.onload = (aImg: any) => {
+            const result: string = aImg.target.result;
+            resolve(result);
+          };
+    
+          reader.readAsDataURL(file);
+        });
+      }
 };
 
 export interface Actions<S, R> extends ActionTree<S, R> {
@@ -107,6 +130,8 @@ export interface Actions<S, R> extends ActionTree<S, R> {
     removeIcon(context: ActionContext<S, R>, icon: Icon): void;
     resetStates(context: ActionContext<S, R>): void;
     addIconFromUrl(context: ActionContext<S, R>, newIconSrc: string): void;
+    uploadIcon(context: ActionContext<S, R>, iconFile: File): void;
+    generateMissingImages(context: ActionContext<S, R>, iconFile: File): void;
 }
 
 export const actions: Actions<State, RootState> = {
@@ -189,6 +214,21 @@ export const actions: Actions<State, RootState> = {
         } catch (e) {
             throw e;
         }
+    },
+
+    async uploadIcon({ commit, state }, iconFile: File): Promise<void> {
+        const dataUri: string = await helpers.getImageDataURI(iconFile);
+        const sizes = await helpers.getImageIconSize(dataUri);
+        commit(types.ADD_ICON, {src: dataUri, sizes: `${sizes.width}x${sizes.height}`});
+    },
+
+    async generateMissingImages({ commit, state }, iconFile: File): Promise<void> {
+        let formData = new FormData();
+        formData.append('file', iconFile);
+
+        const result = await this.$axios.$post(`${apiUrl}/${state.manifestId}/generatemissingimages`, formData);
+        commit(types.OVERWRITE_MANIFEST, result);
+        commit(types.ADD_ASSETS, result.assets);
     }
 };
 
@@ -212,6 +252,11 @@ export const mutations: MutationTree<State> = {
         state.errors = result.errors;
     },
 
+    [types.OVERWRITE_MANIFEST](state, result): void {
+        state.manifest = result.content;
+        state.icons = result.content.icons;
+    },
+
     [types.SET_DEFAULTS_MANIFEST](state, payload): void {
         if (!state.manifest) {
             return;
@@ -224,6 +269,10 @@ export const mutations: MutationTree<State> = {
 
     [types.UPDATE_ICONS](state, icons: Icon[]): void {
         state.icons = icons;
+    },
+
+    [types.ADD_ASSETS](state, assets: Asset[]): void {
+        state.assets = assets;
     },
 
     [types.ADD_ICON](state, icon: Icon): void {
