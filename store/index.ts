@@ -20,7 +20,14 @@ export const modules = {
     [i18n.name]: i18n
 };
 
-export type RootState = typeof modules & root.State;
+interface ModulesStates {
+    generator: generator.State;
+    serviceworker: serviceworker.State;
+    publish: publish.State;
+    i18n: i18n.State;
+}
+
+export type RootState = root.State & ModulesStates;
 
 export const state = root.state;
 export const getters = root.getters;

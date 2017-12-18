@@ -12,8 +12,6 @@ let state: serviceworker.State;
 let actionContext: ActionContext<serviceworker.State, RootState>;
 let actions: serviceworker.Actions<serviceworker.State, RootState>;
 
-axiosMock.onGet(`${process.env.apiUrl}/serviceworkers?ids=1`).reply(200, {});
-
 describe('serviceworker', () => {
 
     beforeEach(() => {
@@ -26,15 +24,42 @@ describe('serviceworker', () => {
     describe('when download service worker', () => {
         it('should change generate download link', async () => {
             const serviceworkerId = 1;
+            const status = 200;
+
+            axiosMock.onGet(`${process.env.apiUrl}/serviceworkers?ids=${serviceworkerId}`).reply(status, {});
+
             await actions.downloadServiceWorker(actionContext, serviceworkerId);
+
             expect(actionContext.commit).to.have.been.calledWith(serviceworker.types.UPDATE_ARCHIVE);
+        });
+
+        it('should update error if params are incorrect and API respond with error', async () => {
+            const serviceworkerId = -1;
+            const status = 500;
+
+            axiosMock.onGet(`${process.env.apiUrl}/serviceworkers?ids=${serviceworkerId}`).reply(status, {});
+
+            await actions.downloadServiceWorker(actionContext, serviceworkerId)
+            .catch(e => {
+                expect(e.response.status).to.be.equal(status);
+                expect(actionContext.commit).to.have.been.calledWith(serviceworker.types.UPDATE_ERROR);
+            });
+
+            expect(actionContext.commit).to.not.have.been.calledWith(serviceworker.types.UPDATE_ARCHIVE);
         });
     });
 
-    describe('when download service worker with null serviceworkerId', () => {
+    describe('when download serviceworker with null serviceworkerId', () => {
         it('should return error message', async () => {
             await actions.downloadServiceWorker(actionContext, 0);
             expect(actionContext.commit).to.have.been.calledWith(serviceworker.types.UPDATE_ERROR);
+        });
+    });
+
+    describe('when reset serviceworker states', () => {
+        it('should reset states', () => {
+            actions.resetStates(actionContext);
+            expect(actionContext.commit).to.have.been.calledWith(serviceworker.types.RESET_STATES);
         });
     });
 });

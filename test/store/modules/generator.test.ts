@@ -13,8 +13,6 @@ let state: generator.State;
 let actionContext: ActionContext<generator.State, RootState>;
 let actions: generator.Actions<generator.State, RootState>;
 
-axiosMock.onPost(`${process.env.apiUrl}/manifests`).reply(200, {});
-
 describe('generator', () => {
 
     beforeEach(() => {
@@ -55,9 +53,13 @@ describe('generator', () => {
     describe('when submit url', () => {
         it('should change generate manifest information', async () => {
             const url = 'http://microsoft.com';
+            const status = 200;
             actionContext.state.url = url;
 
+            axiosMock.onPost(`${process.env.apiUrl}/manifests`).reply(status, {});
+
             await actions.getManifestInformation(actionContext);
+
             expect(actionContext.commit).to.have.been.calledWith(generator.types.UPDATE_WITH_MANIFEST);
             expect(actionContext.commit).to.have.been.calledWith(generator.types.SET_DEFAULTS_MANIFEST);
         });
@@ -112,6 +114,13 @@ describe('generator', () => {
 
             await actions.addIconFromUrl(actionContext, src);
             expect(actionContext.commit).to.have.been.calledWith(generator.types.ADD_ICON, {src: baseUrl + src.slice(1), sizes: '0x0'});
+        });
+    });
+
+    describe('when reset generator states', () => {
+        it('should reset states', () => {
+            actions.resetStates(actionContext);
+            expect(actionContext.commit).to.have.been.calledWith(generator.types.RESET_STATES);
         });
     });
 });
