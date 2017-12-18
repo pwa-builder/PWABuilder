@@ -103,7 +103,7 @@ export const helpers = {
 
 export interface Actions<S, R> extends ActionTree<S, R> {
     updateLink(context: ActionContext<S, R>, url: string): void;
-    getManifestInformation(context: ActionContext<S, R>): Promise<{}>;
+    getManifestInformation(context: ActionContext<S, R>): Promise<void>;
     removeIcon(context: ActionContext<S, R>, icon: Icon): void;
     resetStates(context: ActionContext<S, R>): void;
     addIconFromUrl(context: ActionContext<S, R>, newIconSrc: string): void;
@@ -123,8 +123,8 @@ export const actions: Actions<State, RootState> = {
         commit(types.UPDATE_LINK, url);
     },
 
-    async getManifestInformation({ commit, state, rootState }): Promise<{}> {
-        return new Promise(async (resolve, reject) => {
+    async getManifestInformation({ commit, state, rootState }): Promise<void> {
+        return new Promise<void>(async (resolve, reject) => {
             if (!state.url) {
                 commit(types.UPDATE_ERROR, 'Url is empty');
                 resolve();

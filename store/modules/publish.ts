@@ -36,7 +36,7 @@ export const getters: GetterTree<State, RootState> = {};
 export interface Actions<S, R> extends ActionTree<S, R> {
     resetAppData(context: ActionContext<S, R>): void;
     updateStatus(context: ActionContext<S, R>): void;
-    build(context: ActionContext<S, R>, platform: string): Promise<{}>;
+    build(context: ActionContext<S, R>, platform: string): Promise<void>;
 }
 
 export const actions: Actions<State, RootState> = {
@@ -51,8 +51,8 @@ export const actions: Actions<State, RootState> = {
         commit(types.UPDATE_STATUS, status);
     },
 
-    async build({ commit, rootState }, platform: string): Promise<{}> {
-        return new Promise(async (resolve, reject) => {
+    async build({ commit, rootState }, platform: string): Promise<void> {
+        return new Promise<void>(async (resolve, reject) => {
             const manifestId = rootState.generator.manifestId;
             const serviceworker = rootState.serviceworker.serviceworker;
 

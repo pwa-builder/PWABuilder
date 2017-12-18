@@ -27,14 +27,14 @@ export const state = (): State => ({
 export const getters: GetterTree<State, RootState> = {};
 
 export interface Actions<S, R> extends ActionTree<S, R> {
-    downloadServiceWorker(context: ActionContext<S, R>, serviceWorkerId: number): Promise<{}>;
+    downloadServiceWorker(context: ActionContext<S, R>, serviceWorkerId: number): Promise<void>;
     resetStates(context: ActionContext<S, R>): void;
 }
 
 export const actions: Actions<State, RootState> = {
 
-    async downloadServiceWorker({ commit }, serviceworker: number): Promise<{}> {
-        return new Promise(async (resolve, reject) => {
+    async downloadServiceWorker({ commit }, serviceworker: number): Promise<void> {
+        return new Promise<void>(async (resolve, reject) => {
             if (!serviceworker) {
                 commit(types.UPDATE_ERROR, 'Serviceworker is not defined');
                 resolve();
