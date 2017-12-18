@@ -15,7 +15,7 @@
                 {{ $t('publish.web_description') }}
               </p>
               <span class="button-holder download-archive"><button data-flare="{'category': 'Download', 'action': 'Web', 'label': 'Download Archive', 'value': { 'page': '/download/web' }}" class="pwa-button pwa-button--simple pwa-button--brand" @click="buildArchive('web')">
-                <span v-if="isReady.web">{{ $t('publish.download') }}</span>
+                <span v-if="isReady.web">{{ $t(downloadButtonMessage['web']) }}</span>
                 <span v-if="!isReady.web">{{ $t('publish.building_package') }} <Loading :active="true" :size="'sm'" class="u-display-inline_block u-margin-left-sm" /></span>
               </button></span>
             </div>
@@ -26,7 +26,7 @@
               <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.windows') }}</h4>
               <p class="l-generator-description l-generator-description--fixed">{{ $t('publish.windows_description') }}</p>
               <span class="button-holder download-archive"><button data-flare="{'category': 'Download', 'action': 'Web', 'label': 'Download Archive', 'value': { 'page': '/download/web' }}" class="pwa-button pwa-button--simple  isEnabled" @click="buildArchive('windows10')">
-                <span v-if="isReady.windows10">{{ $t('publish.download') }}</span>
+                <span v-if="isReady.windows10">{{ $t(downloadButtonMessage['windows10']) }}</span>
                 <span v-if="!isReady.windows10">{{ $t('publish.building_package') }} <Loading :active="true" :size="'sm'" class="u-display-inline_block u-margin-left-sm" /></span>
               </button></span>
               <p><button class="pwa-button pwa-button--simple pwa-button--brand" @click="openAppXModal()">{{ $t('publish.generate_appx') }}</button></p>
@@ -39,14 +39,14 @@
                 <p class="l-generator-description l-generator-description--fixed l-generator-description--context">{{ $t('publish.android_description') }}</p>
                 <div>
                   <button data-flare="{'category': 'Download', 'action': 'Web', 'label': 'Download Archive', 'value': { 'page': '/download/web' }}" class="pwa-button pwa-button--simple" @click="buildArchive('android')">
-                    <span v-if="isReady.android">{{ $t('publish.download') }}</span>
+                    <span v-if="isReady.android">{{ $t(downloadButtonMessage['android']) }}</span>
                 <span v-if="!isReady.android">{{ $t('publish.building_package') }} <Loading :active="true" :size="'sm'" class="u-display-inline_block u-margin-left-sm" /></span>
                   </button>
                 </div>
               </div>
-              <h2 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.ios') }}l</h2>
+              <h2 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.ios') }}</h2>
               <button data-flare="{'category': 'Download', 'action': 'Web', 'label': 'Download Archive', 'value': { 'page': '/download/web' }}" class="pwa-button pwa-button--simple" @click="buildArchive('ios')">
-                <span v-if="isReady.ios">{{ $t('publish.download') }}</span>
+                <span v-if="isReady.ios">{{ $t(downloadButtonMessage['ios']) }}</span>
                 <span v-if="!isReady.ios">{{ $t('publish.building_package') }} <Loading :active="true" :size="'sm'" class="u-display-inline_block u-margin-left-sm" /></span>
               </button></span>
             </div>
@@ -84,23 +84,32 @@ const PublishState = namespace(publish.name, State);
 const PublishAction = namespace(publish.name, Action);
 
 @Component({
-  components: {
-    TwoWays,
-    GeneratorMenu,
-    Loading
-  }
+    components: {
+        TwoWays,
+        GeneratorMenu,
+        Loading
+    }
 })
 export default class extends Vue {
 
-  public isReady = {
-    web: true,
-    windows10: true,
-    android: true,
-    ios: true,
-    appx: true
-  };
+    public isReady = {
+        web: true,
+        windows10: true,
+        android: true,
+        ios: true,
+        appx: true
+    };
+
+    public downloadButtonMessage = {
+        web: 'publish.download',
+        windows10: 'publish.download',
+        android: 'publish.download',
+        ios: 'publish.download',
+        appx: 'publish.download'
+    };
 
   @PublishState status: boolean;
+  @PublishState archiveLink: string;
 
   @PublishAction resetAppData;
   @PublishAction updateStatus;
@@ -118,8 +127,15 @@ export default class extends Vue {
 
   public async buildArchive(platform: string): Promise<void> {
     //this.ga('send', 'event', 'item', 'click', 'generator-build-trigger-'+platform);
+    if (!this.isReady[platform]) {
+        return;
+    }
     this.isReady[platform] = false;
+    this.downloadButtonMessage[platform] = 'publish.try_again';
     await this.build(platform);
+    if (this.archiveLink) {
+      window.location.href = this.archiveLink;
+    }
     this.isReady[platform] = true;
   }
 
