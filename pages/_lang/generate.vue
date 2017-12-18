@@ -230,9 +230,13 @@ export default class extends Vue {
   }
 
   public async onSubmitIconModal(): Promise<void> {
+    const $iconsModal = (this.$refs.iconsModal as Modal);
+
     if (!this.iconFile) {
       return;
     }
+
+    $iconsModal.showLoading();
 
     if (this.iconCheckMissing) {
         await this.generateMissingImages(this.iconFile);
@@ -240,7 +244,9 @@ export default class extends Vue {
         await this.uploadIcon(this.iconFile);
     }
 
-    (this.$refs.iconsModal as Modal).hide();
+    $iconsModal.hide();
+    $iconsModal.hideLoading();
+    this.iconFile = null;
   }
 
   public onCancelIconModal(): void {

@@ -18,7 +18,8 @@
                     <button class="l-generator-space_right pwa-button pwa-button--simple pwa-button--brand"
                             @click="onClickSubmit()"
                             data-flare='{"category": "Manifest", "action": "Add Member", "label": "Image Upload", "value": { "page": "/manifest/add-member" }}'>
-                            {{$t("modal.submit")}}
+                            {{$t("modal.submit")}} 
+                            <Loading :active="isLoading" :size="'sm'" class="u-display-inline_block u-margin-left-sm" />
                     </button>
                     <button class="pwa-button pwa-button--simple"
                             @click="onClickCancel()"
@@ -36,13 +37,23 @@
 import Vue from "vue";
 import { Prop } from "vue-property-decorator";
 import Component from "nuxt-class-component";
+import Loading from '~/components/Loading';
 
-@Component()
+@Component({
+    components: {
+        Loading
+    }
+})
 export default class extends Vue {
   private showModal = false;
+  private loadingCount = 0;
 
   @Prop({ type: String, default: "" })
   public title: string;
+
+  public get isLoading() {
+      return this.loadingCount > 0;
+  }
 
   public show(): void {
     this.showModal = true;
@@ -59,6 +70,18 @@ export default class extends Vue {
   public onClickCancel() {
     this.hide();
     this.$emit("cancel");
+  }
+
+  public showLoading() {
+      this.loadingCount++;
+  }
+
+  public hideLoading() {
+      this.loadingCount--;
+
+      if (this.loadingCount < 0) {
+          this.loadingCount = 0;
+      }
   }
 }
 </script>
