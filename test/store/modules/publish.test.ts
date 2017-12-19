@@ -101,7 +101,7 @@ describe('publish', () => {
             await actions.buildAppx(actionContext, params)
             .catch(e => {
                 expect(e.response.status).to.be.equal(status);
-                expect(actionContext.commit).to.have.been.calledWith(publish.types.UPDATE_ERROR);
+                expect(actionContext.commit).to.have.been.calledWith(publish.types.UPDATE_APPXERROR);
             });
 
             expect(actionContext.commit).to.not.have.been.calledWith(publish.types.UPDATE_APPXLINK);
@@ -116,7 +116,7 @@ describe('publish', () => {
             };
             await actions.buildAppx(actionContext, params);
 
-            expect(actionContext.commit).to.have.been.calledWith(publish.types.UPDATE_ERROR);
+            expect(actionContext.commit).to.have.been.calledWith(publish.types.UPDATE_APPXERROR);
         });
 
         afterEach(() => {
