@@ -34,9 +34,9 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Prop } from "vue-property-decorator";
-import Component from "nuxt-class-component";
+import Vue from 'vue';
+import { Prop } from 'vue-property-decorator';
+import Component from 'nuxt-class-component';
 import Loading from '~/components/Loading';
 
 @Component({
@@ -48,7 +48,7 @@ export default class extends Vue {
   private showModal = false;
   private loadingCount = 0;
 
-  @Prop({ type: String, default: "" })
+  @Prop({ type: String, default: '' })
   public title: string;
 
   public get isLoading() {
@@ -64,12 +64,12 @@ export default class extends Vue {
   }
 
   public onClickSubmit() {
-    this.$emit("submit");
+    this.$emit('submit');
   }
 
   public onClickCancel() {
     this.hide();
-    this.$emit("cancel");
+    this.$emit('cancel');
   }
 
   public showLoading() {

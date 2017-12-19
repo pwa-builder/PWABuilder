@@ -16,19 +16,29 @@ export const name = 'publish';
 export const types = {
     UPDATE_STATUS: 'UPDATE_STATUS',
     UPDATE_ERROR: 'UPDATE_ERROR',
-    UPDATE_ARCHIVELINK: 'UPDATE_ARCHIVELINK'
+    UPDATE_ARCHIVELINK: 'UPDATE_ARCHIVELINK',
+    UPDATE_APPXLINK: 'UPDATE_APPXLINK'
 };
 
 export interface State {
     status: boolean | null;
     error: string | null;
     archiveLink: string | null;
+    appXLink: string | null;
+}
+
+export interface appxParams {
+    publisher: string | null;
+    publisher_id: string | null;
+    package: string | null;
+    version: string | null;
 }
 
 export const state = (): State => ({
     status: null,
     error: null,
-    archiveLink: null
+    archiveLink: null,
+    appXLink: null
 });
 
 export const getters: GetterTree<State, RootState> = {};
@@ -37,6 +47,7 @@ export interface Actions<S, R> extends ActionTree<S, R> {
     resetAppData(context: ActionContext<S, R>): void;
     updateStatus(context: ActionContext<S, R>): void;
     build(context: ActionContext<S, R>, platform: string): Promise<void>;
+    buildAppx(context: ActionContext<S, R>, params: appxParams): Promise<void>;
 }
 
 export const actions: Actions<State, RootState> = {
@@ -84,6 +95,33 @@ export const actions: Actions<State, RootState> = {
                 reject(e);
             }
         });
+    },
+
+    async buildAppx({ commit, rootState }, params: appxParams): Promise<void> {
+        return new Promise<void>(async (resolve, reject) => {
+            const manifestId = rootState.generator.manifestId;
+
+            if (!manifestId) {
+                commit(types.UPDATE_ERROR, 'Manifest is required');
+                resolve();
+            }
+
+            if (!params.publisher || !params.publisher_id || !params.package || !params.version) {
+                commit(types.UPDATE_ERROR, 'Params are required');
+                resolve();
+            }
+
+            try {
+                const options = JSON.stringify({ name: params.publisher, publisher: params.publisher_id, package: params.package, version: params.version });
+                const result = await this.$axios.$post(`${apiUrl}/${manifestId}/appx`, options);
+                commit(types.UPDATE_APPXLINK, result.archive);
+                resolve();
+            } catch (e) {
+                let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
+                commit(types.UPDATE_ERROR, errorMessage);
+                reject(e);
+            }
+        });
     }
 };
 
@@ -96,6 +134,9 @@ export const mutations: MutationTree<State> = {
     },
     [types.UPDATE_ARCHIVELINK](state, url: string): void {
         state.archiveLink = url;
+    },
+    [types.UPDATE_APPXLINK](state, url: string): void {
+        state.appXLink = url;
     }
 };
 
