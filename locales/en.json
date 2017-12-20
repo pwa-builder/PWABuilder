@@ -117,5 +117,12 @@
   "modal": {
     "submit": "Submit",
     "cancel": "Cancel"
+  },
+  "related_applications": {
+   "platform": "Platform",
+   "url": "URL",
+   "id": "Id",
+   "add": "Add Related Application",
+   "prfer": "Prefer related applications"
   }
 }
