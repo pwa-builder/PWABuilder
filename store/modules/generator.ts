@@ -396,7 +396,7 @@ export const mutations: MutationTree<State> = {
         const index = state.manifest.related_applications.findIndex(app => {
             return app.id === id;
         });
-
+        
         if (index < 0) {
             return;
         }
@@ -421,7 +421,7 @@ export const mutations: MutationTree<State> = {
         state.error = null;
     },
 
-    [types.REMOVE_RELATED_APPLICATION](state, name: string): void {
+    [types.REMOVE_CUSTOM_MEMBER](state, name: string): void {
         if (!state.members) {
             return;
         }
