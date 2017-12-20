@@ -123,6 +123,6 @@
    "url": "URL",
    "id": "Id",
    "add": "Add Related Application",
-   "prfer": "Prefer related applications"
+   "prefer": "Prefer related applications"
   }
 }
