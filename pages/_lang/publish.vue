@@ -56,6 +56,7 @@
                   <label class="l-generator-label">{{ $t('publish.label_version') }}</label>
                 </div>
               <input class="l-generator-input l-generator-input--largest" :placeholder="$t('publish.placeholder_version')" type="text" v-model="appxForm.version" requied>
+              <p class="l-generator-error" v-if="appxError">{{appxError}}</p>
         </Modal>
           <div class="pure-u-1">
             <div class="pwa-infobox-box pwa-infobox-box--flat">
@@ -145,6 +146,7 @@ export default class extends Vue {
     @PublishState status: boolean;
     @PublishState archiveLink: string;
     @PublishState appXLink: string;
+    @PublishState appxError: string;
 
     @PublishAction resetAppData;
     @PublishAction updateStatus;
@@ -182,7 +184,10 @@ export default class extends Vue {
     public async onSubmitAppxModal(): Promise<void> {
         const $appxModal = (this.$refs.appxModal as Modal);
         $appxModal.showLoading();
-        await this.buildAppx(this.appxForm);
+        await this.buildAppx(this.appxForm)
+        .catch(e => { 
+            $appxModal.hideLoading();
+        });
         $appxModal.hideLoading();
         if (this.appXLink) {
             window.location.href = this.appXLink;

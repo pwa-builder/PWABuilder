@@ -17,12 +17,14 @@ export const types = {
     UPDATE_STATUS: 'UPDATE_STATUS',
     UPDATE_ERROR: 'UPDATE_ERROR',
     UPDATE_ARCHIVELINK: 'UPDATE_ARCHIVELINK',
-    UPDATE_APPXLINK: 'UPDATE_APPXLINK'
+    UPDATE_APPXLINK: 'UPDATE_APPXLINK',
+    UPDATE_APPXERROR: 'UPDATE_APPXERROR'
 };
 
 export interface State {
     status: boolean | null;
     error: string | null;
+    appxError: string | null;
     archiveLink: string | null;
     appXLink: string | null;
 }
@@ -37,6 +39,7 @@ export interface appxParams {
 export const state = (): State => ({
     status: null,
     error: null,
+    appxError: null,
     archiveLink: null,
     appXLink: null
 });
@@ -100,14 +103,16 @@ export const actions: Actions<State, RootState> = {
     async buildAppx({ commit, rootState }, params: appxParams): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
             const manifestId = rootState.generator.manifestId;
+            //reset errors
+            commit(types.UPDATE_APPXERROR, '');
 
             if (!manifestId) {
-                commit(types.UPDATE_ERROR, 'Manifest is required');
+                commit(types.UPDATE_APPXERROR, 'Manifest is required');
                 resolve();
             }
 
             if (!params.publisher || !params.publisher_id || !params.package || !params.version) {
-                commit(types.UPDATE_ERROR, 'Params are required');
+                commit(types.UPDATE_APPXERROR, 'All fields are required.');
                 resolve();
             }
 
@@ -117,8 +122,18 @@ export const actions: Actions<State, RootState> = {
                 commit(types.UPDATE_APPXLINK, result.archive);
                 resolve();
             } catch (e) {
-                let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
-                commit(types.UPDATE_ERROR, errorMessage);
+                // Check for common/known errors and simplify message
+                let errorMessage = '';
+                let error = e.response.data ? e.response.data.error.toString() : e.response.toString();
+
+                if (error.includes(`@Publisher\nPackage creation failed`)) {
+                  errorMessage = 'Invalid Publisher Identity.';
+                } else if (error.includes(`@Version\nPackage creation failed.`)) {
+                  errorMessage = 'Invalid Version Number.';
+                } else {
+                    errorMessage = 'Package building error.';
+                }
+                commit(types.UPDATE_APPXERROR, errorMessage);
                 reject(e);
             }
         });
@@ -131,6 +146,9 @@ export const mutations: MutationTree<State> = {
     },
     [types.UPDATE_ERROR](state, error: string): void {
         state.error = error;
+    },
+    [types.UPDATE_APPXERROR](state, error: string): void {
+        state.appxError = error;
     },
     [types.UPDATE_ARCHIVELINK](state, url: string): void {
         state.archiveLink = url;
