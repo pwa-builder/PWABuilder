@@ -3,151 +3,161 @@
     <GeneratorMenu first-link-path="generate" />
     <div class="l-generator-step">
         <div class="l-generator-semipadded">
-          <div class="l-generator-form pure-u-1 pure-u-md-1-2">
-            <h4 class="l-generator-subtitle">
-                {{ $t("generate.subtitle") }}
-            </h4>
-            <h4 class="l-generator-subtitle l-generator-subtitle--last">
-                {{ $t("generate.instructions") }}
-            </h4>
-            <div class="l-generator-field">
-                <label class="l-generator-label">{{ $t("generate.name") }}
-                    <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#name-member" target="_blank">[?]</a>
-                </label>
-                <input class="l-generator-input" v-model="manifest$.name" type="text">
-            </div>
-            <div class="l-generator-field">
-                <label class="l-generator-label">{{ $t("generate.short_name") }}
-                    <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#short_name-member" target="_blank">[?]</a>
-                </label>
-                <input class="l-generator-input" v-model="manifest$.short_name" name="short_name" type="text">
-            </div>
-            <div class="l-generator-field">
-                <label class="l-generator-label">{{ $t("generate.description") }}
-                    <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#description-member" target="_blank">[?]</a>
-                </label>
-                <input class="l-generator-input" v-model="manifest$.description" name="description" type="text">
-            </div>
-
-            <Modal :title="$t('generate.upload_title')" ref="iconsModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
-                <div class="l-generator-box">
-                    <span class="l-generator-label">{{ $t("generate.upload_image") }}</span>
-                    <label class="l-generator-input l-generator-input--fake is-disabled" for="modal-file">
-                        {{ iconFile && iconFile.name ? iconFile.name : $t("generate.choose_file") }}
-                    </label>
-                    <input id="modal-file" @change="onFileIconChange" class="l-hidden" type="file">
-                </div>
-
+            <div class="l-generator-form pure-u-1 pure-u-md-1-2">
+                <h4 class="l-generator-subtitle">
+                    {{ $t("generate.subtitle") }}
+                </h4>
+                <h4 class="l-generator-subtitle l-generator-subtitle--last">
+                    {{ $t("generate.instructions") }}
+                </h4>
                 <div class="l-generator-field">
-                    <label>
-                        <input type="checkbox" v-model="iconCheckMissing"> {{ $t("generate.generate_missing") }}
+                    <label class="l-generator-label">{{ $t("generate.name") }}
+                        <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#name-member" target="_blank">[?]</a>
                     </label>
+                    <input class="l-generator-input" v-model="manifest$.name" type="text">
                 </div>
-            </Modal>
-            <div class="l-generator-field logo-upload">
-                <label class="l-generator-label">{{ $t("generate.icon_url") }}
-                    <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#icons-member" target="_blank">[?]</a>
-                </label>
-                <div>
-                    <input class="l-generator-input" placeholder="http://example.com/image.png or /images/example.png"
-                        type="url" v-model="newIconSrc">
+                <div class="l-generator-field">
+                    <label class="l-generator-label">{{ $t("generate.short_name") }}
+                        <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#short_name-member" target="_blank">[?]</a>
+                    </label>
+                    <input class="l-generator-input" v-model="manifest$.short_name" name="short_name" type="text">
+                </div>
+                <div class="l-generator-field">
+                    <label class="l-generator-label">{{ $t("generate.description") }}
+                        <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#description-member" target="_blank">[?]</a>
+                    </label>
+                    <input class="l-generator-input" v-model="manifest$.description" name="description" type="text">
+                </div>
 
-                    <div class="button-holder icons">
-                        <div class="l-inline">
-                            <button class="pwa-button pwa-button--text"
-                                    @click="onClickUploadIcon()">
-                                {{ $t("generate.upload") }}
-                            </button>
-                        </div>
-                        <button class="pwa-button pwa-button--text pwa-button--right" @click="onClickAddIcon()">
-                           {{ $t("generate.add_icon") }}
-                        </button>
+                <Modal :title="$t('generate.upload_title')" ref="iconsModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
+                    <div class="l-generator-box">
+                        <span class="l-generator-label">{{ $t("generate.upload_image") }}</span>
+                        <label class="l-generator-input l-generator-input--fake is-disabled" for="modal-file">
+                            {{ iconFile && iconFile.name ? iconFile.name : $t("generate.choose_file") }}
+                        </label>
+                        <input id="modal-file" @change="onFileIconChange" class="l-hidden" type="file">
                     </div>
 
-                    <div class="pure-g l-generator-table">
-                        <div class="pure-u-10-24 l-generator-tableh">{{ $t("generate.preview") }}</div>
-                        <div class="pure-u-8-24 l-generator-tableh">{{ $t("generate.size") }}</div>
-                        <div class="pure-u-1-8"></div>
-                        <div class="pure-u-1-8"></div>
-
-                        <div class="pure-u-1" v-for="icon in icons" :key="icon.src">
-                            <div class="pure-u-10-24 l-generator-tablec">
-                                <a target="_blank" :href="icon.src">
-                                    <img class="icon-preview" :src="icon.src">
-                                </a>
-                            </div>
-                            <div class="pure-u-8-24 l-generator-tablec">
-                                {{icon.sizes}}
-                            </div>
-                            <div class="pure-u-1-8 l-generator-tablec" :title="$t('generate.icon_autogenerated')">
-                                {{icon.generated ? '(A)' : ''}}
-                            </div>
-                            <div class="pure-u-1-8 l-generator-tablec l-generator-tablec--right" @click="onClickRemoveIcon(icon)">
-                                <span class="l-generator-close" :title="$t('generate.remove_icon')">
-                                    <i aria-hidden="true">✕</i>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="l-generator-field">
-                <label class="l-generator-label">{{ $t("generate.scope") }}
-                    <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#scope-member" target="_blank">[?]</a>
-                </label>
-                <input class="l-generator-input" v-model="manifest$.scope" type="text">
-            </div>
-            <div class="l-generator-field">
-                <label class="l-generator-label">{{ $t("generate.start_url") }}
-                    <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#start_url-member" target="_blank">[?]</a>
-                </label>
-                <input class="l-generator-input" v-model="manifest$.start_url" type="text">
-            </div>
-            <div class="l-generator-field">
-                <label class="l-generator-label">{{ $t("generate.display") }}
-                    <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#display-member" target="_blank">[?]</a>
-                </label>
-                <select class="l-generator-input l-generator-input--select" v-model="manifest$.display">
-                    <option v-for="display in displaysNames" :value="display" :key="display">{{display}}</option>
-                </select>
-            </div>
-            <div class="l-generator-field">
-                <label class="l-generator-label">{{ $t("generate.orientation") }}
-                    <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#orientation-member" target="_blank">[?]</a>
-                </label>
-                <select class="l-generator-input l-generator-input--select" v-model="manifest$.orientation">
-                    <option v-for="orientation in orientationsNames" :value="orientation" :key="orientation">{{orientation}}</option>
-                </select>
-            </div>
-            <div class="l-generator-field">
-                <label class="l-generator-label">{{ $t("generate.language") }}
-                    <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#lang-member" target="_blank">[?]</a>
-                </label>
-                <select class="l-generator-input l-generator-input--select" v-model="manifest$.lang">
-                    <option v-for="language in languagesNames" :value="language" :key="language">{{language}}</option>
-                </select>
-            </div>
-            <div>
-                <div class="l-generator-field">
-                    <label class="l-generator-label">{{ $t("generate.background_color") }}
-                        <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#background_color-member" target="_blank">[?]</a>
-                    </label>
-                    <div class="l-generator-options">
-                        <label class="l-generator-label">
-                            <input type="radio" value="none"> {{ $t("generate.none") }}
+                    <div class="l-generator-field">
+                        <label>
+                            <input type="checkbox" v-model="iconCheckMissing"> {{ $t("generate.generate_missing") }}
                         </label>
                     </div>
+                </Modal>
+                <div class="l-generator-field logo-upload">
+                    <label class="l-generator-label">{{ $t("generate.icon_url") }}
+                        <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#icons-member" target="_blank">[?]</a>
+                    </label>
+                    <div>
+                        <input class="l-generator-input" placeholder="http://example.com/image.png or /images/example.png" type="url" v-model="newIconSrc">
+
+                        <div class="button-holder icons">
+                            <div class="l-inline">
+                                <button class="pwa-button pwa-button--text" @click="onClickUploadIcon()">
+                                    {{ $t("generate.upload") }}
+                                </button>
+                            </div>
+                            <button class="pwa-button pwa-button--text pwa-button--right" @click="onClickAddIcon()">
+                                {{ $t("generate.add_icon") }}
+                            </button>
+                        </div>
+
+                        <div class="pure-g l-generator-table">
+                            <div class="pure-u-10-24 l-generator-tableh">{{ $t("generate.preview") }}</div>
+                            <div class="pure-u-8-24 l-generator-tableh">{{ $t("generate.size") }}</div>
+                            <div class="pure-u-1-8"></div>
+                            <div class="pure-u-1-8"></div>
+
+                            <div class="pure-u-1" v-for="icon in icons" :key="icon.src">
+                                <div class="pure-u-10-24 l-generator-tablec">
+                                    <a target="_blank" :href="icon.src">
+                                        <img class="icon-preview" :src="icon.src">
+                                    </a>
+                                </div>
+                                <div class="pure-u-8-24 l-generator-tablec">
+                                    {{icon.sizes}}
+                                </div>
+                                <div class="pure-u-1-8 l-generator-tablec" :title="$t('generate.icon_autogenerated')">
+                                    {{icon.generated ? '(A)' : ''}}
+                                </div>
+                                <div class="pure-u-1-8 l-generator-tablec l-generator-tablec--right" @click="onClickRemoveIcon(icon)">
+                                    <span class="l-generator-close" :title="$t('generate.remove_icon')">
+                                        <i aria-hidden="true">✕</i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="l-generator-field">
+                    <label class="l-generator-label">{{ $t("generate.scope") }}
+                        <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#scope-member" target="_blank">[?]</a>
+                    </label>
+                    <input class="l-generator-input" v-model="manifest$.scope" type="text">
+                </div>
+                <div class="l-generator-field">
+                    <label class="l-generator-label">{{ $t("generate.start_url") }}
+                        <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#start_url-member" target="_blank">[?]</a>
+                    </label>
+                    <input class="l-generator-input" v-model="manifest$.start_url" type="text">
+                </div>
+                <div class="l-generator-field">
+                    <label class="l-generator-label">{{ $t("generate.display") }}
+                        <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#display-member" target="_blank">[?]</a>
+                    </label>
+                    <select class="l-generator-input l-generator-input--select" v-model="manifest$.display">
+                        <option v-for="display in displaysNames" :value="display" :key="display">{{display}}</option>
+                    </select>
+                </div>
+                <div class="l-generator-field">
+                    <label class="l-generator-label">{{ $t("generate.orientation") }}
+                        <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#orientation-member" target="_blank">[?]</a>
+                    </label>
+                    <select class="l-generator-input l-generator-input--select" v-model="manifest$.orientation">
+                        <option v-for="orientation in orientationsNames" :value="orientation" :key="orientation">{{orientation}}</option>
+                    </select>
+                </div>
+                <div class="l-generator-field">
+                    <label class="l-generator-label">{{ $t("generate.language") }}
+                        <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#lang-member" target="_blank">[?]</a>
+                    </label>
+                    <select class="l-generator-input l-generator-input--select" v-model="manifest$.lang">
+                        <option v-for="language in languagesNames" :value="language" :key="language">{{language}}</option>
+                    </select>
+                </div>
+                <div>
+                    <div class="l-generator-field">
+                        <label class="l-generator-label">{{ $t("generate.background_color") }}
+                            <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#background_color-member" target="_blank">[?]</a>
+                        </label>
+                        <div class="l-generator-options">
+                            <label class="l-generator-label">
+                                <input type="radio" value="none"> {{ $t("generate.none") }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <input type="checkbox" id="related-applications-field" class="l-generator-togglecheck is-hidden">
+                    <label class="l-generator-toggle" for="related-applications-field">
+                        <h4 class="l-generator-subtitle l-generator-subtitle--toggleable">{{ $t("generate.specify_application") }}</h4>
+                    </label>
+                    <div class="l-generator-field l-generator-field--toggle">
+                        <RelatedApplications />
+                    </div>
+                </div>
+
+                <div>
+                    <input type="checkbox" id="specify-members-field" class="l-generator-togglecheck is-hidden">
+                    <label class="l-generator-toggle" for="specify-members-field">
+                        <h4 class="l-generator-subtitle l-generator-subtitle--toggleable">{{ $t("generate.specify_members") }}</h4>
+                    </label>
+                    <div class="l-generator-field l-generator-field--toggle">
+                        Section
+                    </div>
                 </div>
             </div>
-            <label class="l-generator-toggle">
-                <input type="checkbox" class="l-generator-togglecheck">
-                <h4 class="l-generator-subtitle l-generator-subtitle--toggleable">{{ $t("generate.specify_application") }}</h4>
-            </label>
-            <label class="l-generator-toggle">
-                <input type="checkbox" class="l-generator-togglecheck">
-                <h4 class="l-generator-subtitle l-generator-subtitle--toggleable">{{ $t("generate.specify_members") }}</h4>
-            </label>
-        </div>
         </div>
     </div>
 
@@ -166,6 +176,7 @@ import { Action, State, Getter, namespace } from "vuex-class";
 import GeneratorMenu from "~/components/GeneratorMenu";
 import TwoWays from "~/components/TwoWays";
 import Modal from "~/components/Modal";
+import RelatedApplications from "~/components/RelatedApplications";
 
 import * as generator from "~/store/modules/generator";
 
@@ -173,84 +184,85 @@ const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
 
 @Component({
-  components: {
-    TwoWays,
-    GeneratorMenu,
-    Modal
-  }
+    components: {
+        TwoWays,
+        GeneratorMenu,
+        RelatedApplications,
+        Modal
+    }
 })
 export default class extends Vue {
-  public manifest$: generator.Manifest | null = null;
-  public newIconSrc = "";
-  public iconCheckMissing: boolean = true;
-  private iconFile: File | null = null;
+    public manifest$: generator.Manifest | null = null;
+    public newIconSrc = "";
+    public iconCheckMissing: boolean = true;
+    private iconFile: File | null = null;
 
-  @GeneratorState manifest: generator.Manifest;
-  @GeneratorState icons: generator.Icon[];
+    @GeneratorState manifest: generator.Manifest;
+    @GeneratorState icons: generator.Icon[];
 
-  @Getter orientationsNames: string[];
-  @Getter languagesNames: string[];
-  @Getter displaysNames: string[];
+    @Getter orientationsNames: string[];
+    @Getter languagesNames: string[];
+    @Getter displaysNames: string[];
 
-  @GeneratorActions removeIcon;
-  @GeneratorActions addIconFromUrl;
-  @GeneratorActions uploadIcon;
-  @GeneratorActions generateMissingImages;
+    @GeneratorActions removeIcon;
+    @GeneratorActions addIconFromUrl;
+    @GeneratorActions uploadIcon;
+    @GeneratorActions generateMissingImages;
 
-  public created(): void {
-    if (!this.manifest) {
-      this.$router.push({
-        path: "/"
-      });
+    public created(): void {
+        if (!this.manifest) {
+            this.$router.push({
+                path: "/"
+            });
+        }
+
+        this.manifest$ = { ...this.manifest };
     }
 
-    this.manifest$ = { ...this.manifest };
-  }
-
-  public onClickRemoveIcon(icon: generator.Icon): void {
-    this.removeIcon(icon);
-  }
-
-  public onClickAddIcon(): void {
-    this.addIconFromUrl(this.newIconSrc);
-  }
-
-  public onFileIconChange(e: Event): void {
-    const target = e.target as HTMLInputElement;
-
-    if (!target.files) {
-      return;
+    public onClickRemoveIcon(icon: generator.Icon): void {
+        this.removeIcon(icon);
     }
 
-    this.iconFile = target.files[0];
-  }
-
-  public onClickUploadIcon(): void {
-    (this.$refs.iconsModal as Modal).show();
-  }
-
-  public async onSubmitIconModal(): Promise<void> {
-    const $iconsModal = (this.$refs.iconsModal as Modal);
-
-    if (!this.iconFile) {
-      return;
+    public onClickAddIcon(): void {
+        this.addIconFromUrl(this.newIconSrc);
     }
 
-    $iconsModal.showLoading();
+    public onFileIconChange(e: Event): void {
+        const target = e.target as HTMLInputElement;
 
-    if (this.iconCheckMissing) {
-        await this.generateMissingImages(this.iconFile);
-    } else {
-        await this.uploadIcon(this.iconFile);
+        if (!target.files) {
+            return;
+        }
+
+        this.iconFile = target.files[0];
     }
 
-    $iconsModal.hide();
-    $iconsModal.hideLoading();
-    this.iconFile = null;
-  }
+    public onClickUploadIcon(): void {
+        (this.$refs.iconsModal as Modal).show();
+    }
 
-  public onCancelIconModal(): void {
-      this.iconFile = null;
-  }
+    public async onSubmitIconModal(): Promise<void> {
+        const $iconsModal = (this.$refs.iconsModal as Modal);
+
+        if (!this.iconFile) {
+            return;
+        }
+
+        $iconsModal.showLoading();
+
+        if (this.iconCheckMissing) {
+            await this.generateMissingImages(this.iconFile);
+        } else {
+            await this.uploadIcon(this.iconFile);
+        }
+
+        $iconsModal.hide();
+        $iconsModal.hideLoading();
+        this.iconFile = null;
+    }
+
+    public onCancelIconModal(): void {
+        this.iconFile = null;
+    }
 }
 </script>

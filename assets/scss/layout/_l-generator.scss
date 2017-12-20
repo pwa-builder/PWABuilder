@@ -44,9 +44,8 @@
             }
 
             &:after {
-                content: '\f078';
+                content: 'V';
                 display: inline-block;
-                font: normal normal normal 14px/1 FontAwesome;
                 font-size: 1.2rem;
                 margin-left: .5rem;
                 text-rendering: auto;
@@ -66,13 +65,17 @@
         margin: 1rem 0;
     }
 
-    &-togglecheck {
+    &-togglecheck:checked ~ &-toggle &-subtitle--toggleable:after {
+        transform: translateY($toggle-space) rotate(180deg);
+        transition: all $animation-speed-default;
+    }
+
+    &-togglecheck ~ &-field--toggle {
         display: none;
     }
 
-    &-togglecheck:checked ~ &-subtitle--toggleable:after {
-        transform: translateY($toggle-space) rotate(180deg);
-        transition: all $animation-speed-default;
+    &-togglecheck:checked ~ &-field--toggle {
+        display: block;
     }
 
     &-step {
