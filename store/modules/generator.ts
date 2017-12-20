@@ -21,7 +21,10 @@ export const types = {
     UPDATE_ICONS: 'UPDATE_ICONS',
     ADD_ICON: 'ADD_ICON',
     ADD_ASSETS: 'ADD_ASSETS',
-    RESET_STATES: 'RESET_STATES'
+    RESET_STATES: 'RESET_STATES',
+    ADD_RELATED_APPLICATION: 'ADD_RELATED_APPLICATION',
+    REMOVE_RELATED_APPLICATION: 'REMOVE_RELATED_APPLICATION',
+    UPDATE_PREFER_RELATED_APPLICATION: 'UPDATE_PREFER_RELATED_APPLICATION'
 };
 
 export interface Manifest {
@@ -33,7 +36,7 @@ export interface Manifest {
     name: string | null;
     orientation: string | null;
     prefer_related_applications: boolean;
-    related_applications: string[];
+    related_applications: RelatedApplication[];
     scope: string | null;
     short_name: string | null;
     start_url: string | null;
@@ -54,6 +57,12 @@ export interface Icon {
 export interface Asset {
     filename: string;
     data: Blob;
+}
+
+export interface RelatedApplication {
+    platform: string;
+    url: string;
+    id: string;
 }
 
 export interface State {
@@ -83,45 +92,62 @@ export const state = (): State => ({
 });
 
 export const helpers = {
-    getImageIconSize(aSrc: string): Promise<{width: number, height: number}> {
+    getImageIconSize(aSrc: string): Promise<{ width: number, height: number }> {
         return new Promise(resolve => {
             if (typeof document === 'undefined') {
                 resolve({ width: 0, height: 0 });
-              }
-    
-              let tmpImg = document.createElement('img');
-    
-              tmpImg.onload = () => resolve({
+            }
+
+            let tmpImg = document.createElement('img');
+
+            tmpImg.onload = () => resolve({
                 width: tmpImg.width,
                 height: tmpImg.height
-              });
-    
-              tmpImg.src = aSrc;
+            });
+
+            tmpImg.src = aSrc;
         });
     },
-    
+
     prepareIconsUrls(icons: Icon[], baseUrl: string) {
         return icons.map(icon => {
             if (!icon.src.includes('http')) {
                 icon.src = baseUrl + icon.src;
             }
-    
+
             return icon;
         });
     },
 
     async getImageDataURI(file: File): Promise<string> {
         return new Promise<string>(resolve => {
-          const reader = new FileReader();
-    
-          reader.onload = (aImg: any) => {
-            const result: string = aImg.target.result;
-            resolve(result);
-          };
-    
-          reader.readAsDataURL(file);
+            const reader = new FileReader();
+
+            reader.onload = (aImg: any) => {
+                const result: string = aImg.target.result;
+                resolve(result);
+            };
+
+            reader.readAsDataURL(file);
         });
-      }
+    },
+
+    hasRelatedApplicationErrors(app: RelatedApplication): string | undefined {
+        if (!app.platform) {
+            return 'You must enter the Platform.';
+        }
+
+        if (!app.url && !app.id) {
+            return 'You must enter either the URL or ID.';
+        }
+
+        const urlRegExpr = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.?[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+        if (app.url && !urlRegExpr.test(app.url)) {
+            return 'You must enter a valid URL.';
+        }
+
+        return;
+    }
 };
 
 export interface Actions<S, R> extends ActionTree<S, R> {
@@ -132,6 +158,9 @@ export interface Actions<S, R> extends ActionTree<S, R> {
     addIconFromUrl(context: ActionContext<S, R>, newIconSrc: string): void;
     uploadIcon(context: ActionContext<S, R>, iconFile: File): void;
     generateMissingImages(context: ActionContext<S, R>, iconFile: File): void;
+    addRelatedApplication(context: ActionContext<S, R>, payload: RelatedApplication): void;
+    removeRelatedApplication(context: ActionContext<S, R>, id: string): void;
+    changePreferRelatedApplication(context: ActionContext<S, R>, status: boolean): void;
 }
 
 export const actions: Actions<State, RootState> = {
@@ -210,7 +239,7 @@ export const actions: Actions<State, RootState> = {
 
         try {
             const sizes = await helpers.getImageIconSize(src);
-            commit(types.ADD_ICON, {src, sizes: `${sizes.width}x${sizes.height}`});
+            commit(types.ADD_ICON, { src, sizes: `${sizes.width}x${sizes.height}` });
         } catch (e) {
             throw e;
         }
@@ -219,7 +248,7 @@ export const actions: Actions<State, RootState> = {
     async uploadIcon({ commit, state }, iconFile: File): Promise<void> {
         const dataUri: string = await helpers.getImageDataURI(iconFile);
         const sizes = await helpers.getImageIconSize(dataUri);
-        commit(types.ADD_ICON, {src: dataUri, sizes: `${sizes.width}x${sizes.height}`});
+        commit(types.ADD_ICON, { src: dataUri, sizes: `${sizes.width}x${sizes.height}` });
     },
 
     async generateMissingImages({ commit, state }, iconFile: File): Promise<void> {
@@ -229,6 +258,25 @@ export const actions: Actions<State, RootState> = {
         const result = await this.$axios.$post(`${apiUrl}/${state.manifestId}/generatemissingimages`, formData);
         commit(types.OVERWRITE_MANIFEST, result);
         commit(types.ADD_ASSETS, result.assets);
+    },
+
+    addRelatedApplication({ commit }, payload: RelatedApplication): void {
+        const errors = helpers.hasRelatedApplicationErrors(payload);
+
+        if (errors) {
+            commit(types.UPDATE_ERROR, errors);
+            return;
+        }
+
+        commit(types.ADD_RELATED_APPLICATION, payload);
+    },
+
+    removeRelatedApplication({ commit }, id: string): void {
+        commit(types.REMOVE_RELATED_APPLICATION, id);
+    },
+
+    changePreferRelatedApplication({ commit }, status: boolean): void {
+        commit(types.UPDATE_PREFER_RELATED_APPLICATION, state);
     }
 };
 
@@ -289,6 +337,43 @@ export const mutations: MutationTree<State> = {
         state.suggestions = null;
         state.warnings = null;
         state.errors = null;
+    },
+
+    [types.ADD_RELATED_APPLICATION](state, payload: RelatedApplication): void {
+        if (!state.manifest || !state.manifest.related_applications) {
+            return;
+        }
+
+        state.manifest.related_applications = state.manifest.related_applications || [];
+
+        state.manifest.related_applications.push(payload);
+        state.error = null;
+    },
+
+    [types.REMOVE_RELATED_APPLICATION](state, id: string): void {
+        if (!state.manifest || !state.manifest.related_applications) {
+            return;
+        }
+
+        state.manifest.related_applications = state.manifest.related_applications || [];
+
+        const index = state.manifest.related_applications.findIndex(app => {
+            return app.id === id;
+        });
+
+        if (index < 0) {
+            return;
+        }
+
+        state.manifest.related_applications.splice(index, 1);
+    },
+
+    [types.UPDATE_PREFER_RELATED_APPLICATION](state, status: boolean): void {
+        if (!state.manifest) {
+            return;
+        }
+
+        state.manifest.prefer_related_applications = status;
     }
 };
 
