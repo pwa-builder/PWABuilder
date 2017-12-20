@@ -154,7 +154,7 @@
                         <h4 class="l-generator-subtitle l-generator-subtitle--toggleable">{{ $t("generate.specify_members") }}</h4>
                     </label>
                     <div class="l-generator-field l-generator-field--toggle">
-                        Section
+                        <CustomMembers />
                     </div>
                 </div>
             </div>
@@ -177,6 +177,7 @@ import GeneratorMenu from "~/components/GeneratorMenu";
 import TwoWays from "~/components/TwoWays";
 import Modal from "~/components/Modal";
 import RelatedApplications from "~/components/RelatedApplications";
+import CustomMembers from "~/components/CustomMembers";
 
 import * as generator from "~/store/modules/generator";
 
