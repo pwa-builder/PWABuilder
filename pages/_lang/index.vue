@@ -21,7 +21,8 @@
                   name="siteUrl" id="siteUrl"
                   type="text"
                   ref="url"
-                  v-model="url$">
+                  v-model="url$"
+                  autofocus>
               </div>
 
               <div class="pure-g l-breath">
