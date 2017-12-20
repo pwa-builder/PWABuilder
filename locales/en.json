@@ -124,5 +124,10 @@
    "id": "Id",
    "add": "Add Related Application",
    "prefer": "Prefer related applications"
+  },
+  "custom_members": {
+    "name": "Member Name",
+    "value": "Member Value",
+    "add": "Add Member"
   }
 }
