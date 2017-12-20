@@ -33,7 +33,7 @@
         {{error}}
     </p>
 
-    <div class="pure-g l-generator-table" v-if="manifest$.related_applications">
+    <div class="pure-g l-generator-table" v-if="manifest$.related_applications && manifest$.related_applications.length > 0">
         <div class="pure-u-2-5 l-generator-tableh">{{ $t("related_applications.platform") }}</div>
         <div class="pure-u-2-5 l-generator-tableh">{{ $t("related_applications.url") }}</div>
         <div class="pure-u-1-5"></div>
