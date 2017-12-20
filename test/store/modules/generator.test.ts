@@ -1,4 +1,4 @@
-import { ActionContext } from 'vuex';
+import { ActionContext, MutationTree } from 'vuex';
 import { RootState } from 'store';
 
 import { expect, sinon } from 'test/libs/chai';
@@ -12,6 +12,7 @@ import { Manifest } from 'store/modules/generator';
 let state: generator.State;
 let actionContext: ActionContext<generator.State, RootState>;
 let actions: generator.Actions<generator.State, RootState>;
+let mutations: MutationTree<generator.State>;
 
 describe('generator', () => {
 
@@ -20,6 +21,7 @@ describe('generator', () => {
         actionContext = actionContextMockBuilder<generator.State>(state);
         sinon.spy(actionContext, 'commit');
         actions = nuxtAxiosMockBuilder(generator.actions);
+        mutations = generator.mutations;
         generator.helpers.getImageIconSize = (src: string) => Promise.resolve({ width: 0, height: 0 });
     });
 
@@ -144,6 +146,109 @@ describe('generator', () => {
         it('should reset states', () => {
             actions.resetStates(actionContext);
             expect(actionContext.commit).to.have.been.calledWith(generator.types.RESET_STATES);
+        });
+    });
+
+    describe('when add a related application', () => {
+        it('should not commit an update if is not valid application', () => {
+            const app = {
+                platform: '',
+                url: '',
+                id: ''
+            };
+
+            actions.addRelatedApplication(actionContext, app);
+
+            expect(actionContext.commit).to.have.been.calledWith(generator.types.UPDATE_ERROR);
+        });
+
+        it('should commit an update if is a valid application', () => {
+            const app = {
+                platform: 'testplatform',
+                url: 'website',
+                id: 'myid'
+            };
+
+            actions.addRelatedApplication(actionContext, app);
+
+            expect(actionContext.commit).to.have.been.calledWith(generator.types.ADD_RELATED_APPLICATION);
+        });
+
+        it('should update the state with new application', () => {
+            const payload = {
+                platform: 'testplatform',
+                url: 'website',
+                id: 'myid'
+            };
+
+            state.manifest = {} as Manifest;
+            state.manifest.related_applications = [];
+
+            mutations[generator.types.ADD_RELATED_APPLICATION](state, payload);
+            expect(state.manifest.related_applications.length).to.be.equal(1);
+        });
+
+        it('should remove errors when update an application', () => {
+            const payload = {
+                platform: 'testplatform',
+                url: 'website',
+                id: 'myid'
+            };
+
+            state.manifest = {} as Manifest;
+            state.manifest.related_applications = [];
+            state.error = 'error';
+
+            mutations[generator.types.ADD_RELATED_APPLICATION](state, payload);
+            expect(state.error).to.be.null;
+        });
+    });
+
+    describe('when remove a related application', () => {
+        it('should not remove if index is not found', () => {
+            const id = 'myid';
+            const app = {
+                platform: 'testplatform',
+                url: 'website',
+                id: id
+            };
+
+            state.manifest = {} as Manifest;
+            state.manifest.related_applications = [app];
+
+            mutations[generator.types.REMOVE_RELATED_APPLICATION](state, `${id}__`);
+            expect(state.manifest.related_applications.length).to.be.equal(1);
+        });
+
+        it('should remove if index is found', () => {
+            const id = 'myid';
+            const app = {
+                platform: 'testplatform',
+                url: 'website',
+                id: id
+            };
+
+            state.manifest = {} as Manifest;
+            state.manifest.related_applications = [app];
+
+            mutations[generator.types.REMOVE_RELATED_APPLICATION](state, id);
+            expect(state.manifest.related_applications.length).to.be.equal(0);
+        });
+    });
+
+    describe('when change prefer related application', () => {
+        it('should change the state value', () => {
+            const app = {
+                platform: 'testplatform',
+                url: 'website',
+                id: 'myid'
+            };
+
+            state.manifest = {} as Manifest;
+            state.manifest.prefer_related_applications = false;
+
+            mutations[generator.types.UPDATE_PREFER_RELATED_APPLICATION](state, true);
+            expect(state.manifest.prefer_related_applications).to.be.equal(true);
         });
     });
 });
