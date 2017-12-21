@@ -1,5 +1,6 @@
 import { ActionTree, MutationTree, GetterTree, Action, ActionContext } from 'vuex';
 import { RootState } from 'store';
+import colorConverter from '~/utils/color-converter';
 
 const apiUrl = `${process.env.apiUrl}/manifests`;
 
@@ -165,6 +166,14 @@ export const helpers = {
         }
 
         return;
+    },
+
+    fixColorFromServer(color: string): string {
+        if (!color) {
+            return '';
+        }
+
+        return '#' + colorConverter.toHexadecimal(color).slice(4, 10);
     }
 };
 
@@ -209,6 +218,9 @@ export const actions: Actions<State, RootState> = {
 
             try {
                 const result = await this.$axios.$post(apiUrl, options);
+                // Convert color if necessary
+                result.background_color = helpers.fixColorFromServer(result.background_color);
+
                 commit(types.UPDATE_WITH_MANIFEST, result);
                 commit(types.SET_DEFAULTS_MANIFEST, {
                     displays: rootState.displays ? rootState.displays[0].name : '',
