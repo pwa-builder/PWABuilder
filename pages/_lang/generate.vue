@@ -166,7 +166,9 @@
     </div>
 
     <div class="l-generator-buttons l-generator-buttons--centered">
-        <button class="pwa-button">{{ $t("generate.next_step") }}</button>
+        <nuxt-link :to="$i18n.path('serviceworker')" class="pwa-button">
+                {{ $t("generate.next_step") }}
+            </nuxt-link>
     </div>
     <TwoWays/>
 </section>

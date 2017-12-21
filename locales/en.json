@@ -55,6 +55,9 @@
     "download": "Download service worker",
     "building": "Building package...",
     "download_link": "You can also download the source code directly from",
+    "next_step": "Next Step",
+    "code_preview_web": "Code for website",
+    "code_preview_serviceworker":"Service worker code",
     "titles": {
       "offline_page": "Offline page",
       "offline_copy": "Offline copy of pages",
@@ -117,6 +120,11 @@
   "modal": {
     "submit": "Submit",
     "cancel": "Cancel"
+  },
+  "code_viewer": {
+    "copy": "Copy",
+    "copied": "Copied!",
+    "error": "Error"
   },
   "related_applications": {
    "platform": "Platform",

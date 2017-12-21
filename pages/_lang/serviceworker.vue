@@ -63,11 +63,21 @@
             </form>
             <p>{{ $t('serviceworker.download_link') }} <a class="l-generator-link" href="https://github.com/pwa-builder/serviceworkers" target="_blank">GitHub</a>.</p>
           </div>
-          <div class="pure-u-1 pure-u-md-1-2 generator-section manifest manifest-holder">
-            Code for website
+          <div class="serviceworker-preview pure-u-1 pure-u-md-1-2 generator-section">
+            <CodeViewer :code="webPreview" :title="$t('serviceworker.code_preview_web')">
+                <nuxt-link :to="$i18n.path('publish')" class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header">
+                    {{ $t("serviceworker.next_step") }}
+                </nuxt-link>
+            </CodeViewer>
+            <CodeViewer :code="serviceworkerPreview" :title="$t('serviceworker.code_preview_serviceworker')"></CodeViewer>
           </div>
         </div>
       </div>
+        <div class="l-generator-buttons l-generator-buttons--centered">
+            <nuxt-link :to="$i18n.path('publish')" class="pwa-button">
+                {{ $t("serviceworker.next_step") }}
+            </nuxt-link>
+        </div>
     <TwoWays/>
   </section>
 </template>
@@ -75,11 +85,13 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'nuxt-class-component';
+import { Watch } from 'vue-property-decorator';
 import { Action, State, namespace } from "vuex-class";
 
 import GeneratorMenu from '~/components/GeneratorMenu';
 import TwoWays from '~/components/TwoWays';
 import Loading from '~/components/Loading';
+import CodeViewer from '~/components/CodeViewer';
 
 import * as serviceworker from "~/store/modules/serviceworker";
 
@@ -90,31 +102,52 @@ const ServiceworkerAction = namespace(serviceworker.name, Action);
   components: {
     TwoWays,
     GeneratorMenu,
-    Loading
+    Loading,
+    CodeViewer
   }
 })
 export default class extends Vue {
-  public isBuilding = false;
-  public serviceworker$: number | null = null;
+    public isBuilding = false;
+    public serviceworker$: number | null = null;
 
-  @ServiceworkerState error: string;
-  @ServiceworkerState serviceworker: number;
-  @ServiceworkerState archive: string;
+    @ServiceworkerState error: string;
+    @ServiceworkerState serviceworker: number;
+    @ServiceworkerState serviceworkerPreview: string;
+    @ServiceworkerState webPreview: string;
+    @ServiceworkerState archive: string;
 
-  @ServiceworkerAction downloadServiceWorker;
+    @ServiceworkerAction downloadServiceWorker;
+    @ServiceworkerAction getCode;
 
-  public created(): void {
-    this.serviceworker$ = this.serviceworker;
-  }
-
-  public async download(): Promise<void> {
-    this.isBuilding = true;
-    await this.downloadServiceWorker(this.serviceworker$);
-    if (this.archive) {
-      window.location.href = this.archive;
+    public created(): void {
+        this.serviceworker$ = this.serviceworker;
     }
-    //this.ga('send', 'event', 'item', 'click', 'serviceworker-download');
-    this.isBuilding = false;
-  }
+
+    public async download(): Promise<void> {
+        this.isBuilding = true;
+        await this.downloadServiceWorker(this.serviceworker$);
+        if (this.archive) {
+            window.location.href = this.archive;
+        }
+        //this.ga('send', 'event', 'item', 'click', 'serviceworker-download');
+        this.isBuilding = false;
+    }
+
+    @Watch('serviceworker$')
+    async onServiceworker$Changed() {
+        await this.getCode(this.serviceworker$);
+    }
 }
+
 </script>
+
+<style lang="scss" scoped>
+@import '~assets/scss/base/variables';
+
+.serviceworker {
+    &-preview {
+        margin-top: -2rem;
+    }
+}
+
+</style>
