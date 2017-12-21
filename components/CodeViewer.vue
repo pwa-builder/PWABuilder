@@ -27,7 +27,7 @@ export default class extends Vue {
     public title: string;
 
     @Prop({ type: String, default: '' })
-    public code: string;
+    public code: string | null;
 
     public highlightedCode: string | null = null;
     public copyText= 'copy';
