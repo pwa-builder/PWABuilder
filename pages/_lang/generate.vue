@@ -62,6 +62,10 @@
                             </button>
                         </div>
 
+                        <p class="l-generator-error" v-if="error">
+                            {{error}}
+                        </p>
+
                         <div class="pure-g l-generator-table">
                             <div class="pure-u-10-24 l-generator-tableh">{{ $t("generate.preview") }}</div>
                             <div class="pure-u-8-24 l-generator-tableh">{{ $t("generate.size") }}</div>
@@ -198,6 +202,7 @@ export default class extends Vue {
     public newIconSrc = "";
     public iconCheckMissing: boolean = true;
     private iconFile: File | null = null;
+    public error: string | null = null;
 
     @GeneratorState manifest: generator.Manifest;
     @GeneratorState icons: generator.Icon[];
@@ -226,7 +231,11 @@ export default class extends Vue {
     }
 
     public onClickAddIcon(): void {
-        this.addIconFromUrl(this.newIconSrc);
+        try {
+            this.addIconFromUrl(this.newIconSrc);
+        } catch (e) {
+            this.error = e;
+        }
     }
 
     public onFileIconChange(e: Event): void {

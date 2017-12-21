@@ -80,9 +80,9 @@ export default class extends Vue {
     public url: string | null = null;
     public id: string | null = null;
     public prefer_related_applications = false;
+    public error: string | null = null;
 
     @GeneratorState manifest: generator.Manifest;
-    @GeneratorState error: string | null;
 
     @GeneratorActions addRelatedApplication;
     @GeneratorActions removeRelatedApplication;
@@ -94,18 +94,20 @@ export default class extends Vue {
     }
 
     public onClickAdd(): void {
-        this.addRelatedApplication({
-            platform: this.platform,
-            url: this.url,
-            id: this.id,
-        } as generator.RelatedApplication);
+        try {
+            this.addRelatedApplication({
+                platform: this.platform,
+                url: this.url,
+                id: this.id,
+            } as generator.RelatedApplication);
 
-        if (!this.error) {
             this.platform = null;
             this.url = null;
             this.id = null;
 
             this.manifest$ = { ...this.manifest };
+        } catch (e) {
+            this.error = e;
         }
     }
 

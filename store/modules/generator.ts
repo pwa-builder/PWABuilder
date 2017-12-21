@@ -14,7 +14,6 @@ export const types = {
     SET_DISPLAYS: 'SET_DISPLAYS',
     SET_ORIENTATIONS: 'SET_ORIENTATIONS',
     UPDATE_LINK: 'UPDATE_LINK',
-    UPDATE_ERROR: 'UPDATE_ERROR',
     UPDATE_WITH_MANIFEST: 'UPDATE_WITH_MANIFEST',
     OVERWRITE_MANIFEST: 'OVERRIDE_MANIFEST',
     SET_DEFAULTS_MANIFEST: 'SET_DEFAULTS_MANIFEST',
@@ -74,7 +73,6 @@ export interface CustomMember {
 
 export interface State {
     url: string | null;
-    error: string | null;
     manifest: Manifest | null;
     manifestId: string | null;
     siteServiceWorkers: any;
@@ -88,7 +86,6 @@ export interface State {
 
 export const state = (): State => ({
     url: null,
-    error: null,
     manifest: null,
     manifestId: null,
     siteServiceWorkers: null,
@@ -183,8 +180,7 @@ export const actions: Actions<State, RootState> = {
         }
 
         if (!isValidUrl(url)) {
-            commit(types.UPDATE_ERROR, 'Please provide a URL.');
-            return;
+            throw 'Please provide a URL.';
         }
 
         commit(types.UPDATE_LINK, url);
@@ -193,8 +189,7 @@ export const actions: Actions<State, RootState> = {
     async getManifestInformation({ commit, state, rootState }): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
             if (!state.url) {
-                commit(types.UPDATE_ERROR, 'Url is empty');
-                resolve();
+                throw 'Url is empty';
             }
 
             const options = {
@@ -212,8 +207,7 @@ export const actions: Actions<State, RootState> = {
                 resolve();
             } catch (e) {
                 let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
-                commit(types.UPDATE_ERROR, errorMessage);
-                reject(e);
+                throw errorMessage;
             }
         });
     },
@@ -277,8 +271,7 @@ export const actions: Actions<State, RootState> = {
         const errors = helpers.hasRelatedApplicationErrors(payload);
 
         if (errors) {
-            commit(types.UPDATE_ERROR, errors);
-            return;
+            throw errors;
         }
 
         commit(types.ADD_RELATED_APPLICATION, payload);
@@ -295,8 +288,7 @@ export const actions: Actions<State, RootState> = {
     addCustomMember({ commit, state }, payload: CustomMember): void {
 
         if (state.members.find(member => member.name === payload.name)) {
-            commit(types.UPDATE_ERROR, 'A custom value with that key already exists');
-            return;
+            throw 'A custom value with that key already exists';
         }
 
         if (!payload.name.includes('_')) {
@@ -307,7 +299,7 @@ export const actions: Actions<State, RootState> = {
             payload.value = JSON.parse(payload.value);
             commit(types.ADD_CUSTOM_MEMBER, payload);
         } catch (e) {
-            commit(types.UPDATE_ERROR, 'There was a problem parsing the value.  Make sure it is valid JSON (strings must be wrapped in quotes)');
+            throw 'There was a problem parsing the value.  Make sure it is valid JSON (strings must be wrapped in quotes)';
         }
     },
 
@@ -319,11 +311,6 @@ export const actions: Actions<State, RootState> = {
 export const mutations: MutationTree<State> = {
     [types.UPDATE_LINK](state, url: string): void {
         state.url = url;
-        state.error = null;
-    },
-
-    [types.UPDATE_ERROR](state, error: string): void {
-        state.error = error;
     },
 
     [types.UPDATE_WITH_MANIFEST](state, result): void {
@@ -365,7 +352,6 @@ export const mutations: MutationTree<State> = {
 
     [types.RESET_STATES](state): void {
         state.url = null;
-        state.error = null;
         state.manifest = null;
         state.manifestId = null;
         state.siteServiceWorkers = null;
@@ -383,7 +369,6 @@ export const mutations: MutationTree<State> = {
         state.manifest.related_applications = state.manifest.related_applications || [];
 
         state.manifest.related_applications.push(payload);
-        state.error = null;
     },
 
     [types.REMOVE_RELATED_APPLICATION](state, id: string): void {
@@ -418,7 +403,6 @@ export const mutations: MutationTree<State> = {
         }
 
         state.members.push(payload);
-        state.error = null;
     },
 
     [types.REMOVE_CUSTOM_MEMBER](state, name: string): void {

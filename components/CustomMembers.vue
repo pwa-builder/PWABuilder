@@ -54,9 +54,9 @@ export default class extends Vue {
     public members$: generator.CustomMember[] | null = null;
     public name: string | null = null;
     public value: string | null = null;
+    public error: string | null = null;
 
     @GeneratorState members: generator.CustomMember[];
-    @GeneratorState error: string | null;
 
     @GeneratorActions addCustomMember;
     @GeneratorActions removeCustomMember;
@@ -66,16 +66,18 @@ export default class extends Vue {
     }
 
     public onClickAdd(): void {
-        this.addCustomMember({
-            name: this.name,
-            value: this.value
-        } as generator.CustomMember);
+        try {
+            this.addCustomMember({
+                name: this.name,
+                value: this.value
+            } as generator.CustomMember);
 
-        if (!this.error) {
             this.name = null;
             this.value = null;
 
             this.members$ = [...this.members ];
+        } catch(e) {
+            this.error = e;
         }
     }
 
