@@ -162,7 +162,7 @@
                     </div>
                 </div>
             </div>
-            <div class="pure-u-1 pure-u-md-1-2">
+            <div class="generate-code pure-u-1 pure-u-md-1-2">
                 <CodeViewer :code="getCode()" :title="$t('generate.w3c_manifest')">
                     <nuxt-link :to="$i18n.path('serviceworker')" class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header">
                         {{ $t("serviceworker.next_step") }}
@@ -319,3 +319,13 @@ export default class extends Vue {
     }
 }
 </script>
+
+<style lang="scss" scoped>
+@import '~assets/scss/base/variables';
+
+.generate {
+    &-code {
+        margin-top: -2rem;
+    }
+}
+</style>

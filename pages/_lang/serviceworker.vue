@@ -149,5 +149,4 @@ export default class extends Vue {
         margin-top: -2rem;
     }
 }
-
 </style>
