@@ -25,7 +25,8 @@ export const types = {
     REMOVE_RELATED_APPLICATION: 'REMOVE_RELATED_APPLICATION',
     UPDATE_PREFER_RELATED_APPLICATION: 'UPDATE_PREFER_RELATED_APPLICATION',
     ADD_CUSTOM_MEMBER: 'ADD_CUSTOM_MEMBER',
-    REMOVE_CUSTOM_MEMBER: 'REMOVE_CUSTOM_MEMBER'
+    REMOVE_CUSTOM_MEMBER: 'REMOVE_CUSTOM_MEMBER',
+    UPDATE_COLOR: 'UPDATE_COLOR'
 };
 
 export interface Manifest {
@@ -71,6 +72,11 @@ export interface CustomMember {
     value: string;
 }
 
+export interface ColorOptions {
+    colorOption: string;
+    color: string;
+}
+
 export interface State {
     url: string | null;
     manifest: Manifest | null;
@@ -99,7 +105,11 @@ export const state = (): State => ({
 
 export const helpers = {
     MEMBER_PREFIX: 'mjs_',
-
+    COLOR_OPTIONS: {
+        none: 'none',
+        transparent: 'transparent',
+        pick: 'pick'
+    },
     getImageIconSize(aSrc: string): Promise<{ width: number, height: number }> {
         return new Promise(resolve => {
             if (typeof document === 'undefined') {
@@ -171,6 +181,7 @@ export interface Actions<S, R> extends ActionTree<S, R> {
     changePreferRelatedApplication(context: ActionContext<S, R>, status: boolean): void;
     addCustomMember(context: ActionContext<S, R>, payload: CustomMember): void;
     removeCustomMember(context: ActionContext<S, R>, name: string): void;
+    updateColor(context: ActionContext<S, R>, payload: ColorOptions): void;
 }
 
 export const actions: Actions<State, RootState> = {
@@ -306,6 +317,16 @@ export const actions: Actions<State, RootState> = {
     removeCustomMember({ commit }, name: string): void {
         commit(types.REMOVE_CUSTOM_MEMBER, name);
     },
+
+    updateColor({ commit }, payload: ColorOptions): void {
+        let color = payload.colorOption;
+
+        if (color === helpers.COLOR_OPTIONS.pick) {
+            color = payload.color;
+        }
+
+        commit(types.UPDATE_COLOR, color);
+    }
 };
 
 export const mutations: MutationTree<State> = {
@@ -419,6 +440,14 @@ export const mutations: MutationTree<State> = {
         }
 
         state.members.splice(index, 1);
+    },
+
+    [types.UPDATE_COLOR](state, color: string): void {
+        if (!state.manifest) {
+            return;
+        }
+
+        state.manifest.background_color = color;
     },
 };
 
