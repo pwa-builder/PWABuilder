@@ -63,7 +63,7 @@
             </form>
             <p>{{ $t('serviceworker.download_link') }} <a class="l-generator-link" href="https://github.com/pwa-builder/serviceworkers" target="_blank">GitHub</a>.</p>
           </div>
-          <div class="serviceworker-preview pure-u-1 pure-u-md-1-2 generator-section manifest manifest-holder">
+          <div class="serviceworker-preview pure-u-1 pure-u-md-1-2 generator-section">
             <CodeViewer :code="webPreview" :title="$t('serviceworker.code_preview_web')">
                 <nuxt-link :to="$i18n.path('publish')" class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header">
                     {{ $t("serviceworker.next_step") }}

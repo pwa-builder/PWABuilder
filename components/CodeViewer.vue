@@ -63,14 +63,13 @@ export default class extends Vue {
     &-header {
         background-color: $color-brand;
         line-height: 1.5;
-        padding: 1.5rem;
+        padding: 1.5rem 1.5rem 1.1rem 1.5rem;
     }
 
     &-title {
         color: $color-foreground-darker;
         font-family: 'Bitter';
         font-size: $font-size-l;
-        font-weight: $font-weight-semibold;
     }
 
     &-toolbar {
@@ -111,11 +110,10 @@ export default class extends Vue {
         margin: 0;
         min-height: 4rem;
         position: relative;
-        &:hover {
-            .code_viewer-copy {
-                opacity: 1;
-            }
-        }
+    }
+
+    &-content:hover &-copy {
+        opacity: 1;
     }
 }
 
