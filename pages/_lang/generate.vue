@@ -154,7 +154,7 @@
                         <h4 class="l-generator-subtitle l-generator-subtitle--toggleable">{{ $t("generate.specify_members") }}</h4>
                     </label>
                     <div class="l-generator-field l-generator-field--toggle">
-                        Section
+                        <CustomMembers />
                     </div>
                 </div>
             </div>
@@ -169,16 +169,17 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Component from "nuxt-class-component";
-import { Action, State, Getter, namespace } from "vuex-class";
+import Vue from 'vue';
+import Component from 'nuxt-class-component';
+import { Action, State, Getter, namespace } from 'vuex-class';
 
-import GeneratorMenu from "~/components/GeneratorMenu";
-import TwoWays from "~/components/TwoWays";
-import Modal from "~/components/Modal";
-import RelatedApplications from "~/components/RelatedApplications";
+import GeneratorMenu from '~/components/GeneratorMenu';
+import TwoWays from '~/components/TwoWays';
+import Modal from '~/components/Modal';
+import RelatedApplications from '~/components/RelatedApplications';
+import CustomMembers from '~/components/CustomMembers';
 
-import * as generator from "~/store/modules/generator";
+import * as generator from '~/store/modules/generator';
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
@@ -188,6 +189,7 @@ const GeneratorActions = namespace(generator.name, Action);
         TwoWays,
         GeneratorMenu,
         RelatedApplications,
+        CustomMembers,
         Modal
     }
 })

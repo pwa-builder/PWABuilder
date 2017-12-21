@@ -104,6 +104,8 @@ export default class extends Vue {
             this.platform = null;
             this.url = null;
             this.id = null;
+
+            this.manifest$ = { ...this.manifest };
         }
     }
 

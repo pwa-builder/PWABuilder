@@ -24,7 +24,9 @@ export const types = {
     RESET_STATES: 'RESET_STATES',
     ADD_RELATED_APPLICATION: 'ADD_RELATED_APPLICATION',
     REMOVE_RELATED_APPLICATION: 'REMOVE_RELATED_APPLICATION',
-    UPDATE_PREFER_RELATED_APPLICATION: 'UPDATE_PREFER_RELATED_APPLICATION'
+    UPDATE_PREFER_RELATED_APPLICATION: 'UPDATE_PREFER_RELATED_APPLICATION',
+    ADD_CUSTOM_MEMBER: 'ADD_CUSTOM_MEMBER',
+    REMOVE_CUSTOM_MEMBER: 'REMOVE_CUSTOM_MEMBER'
 };
 
 export interface Manifest {
@@ -65,6 +67,11 @@ export interface RelatedApplication {
     id: string;
 }
 
+export interface CustomMember {
+    name: string;
+    value: string;
+}
+
 export interface State {
     url: string | null;
     error: string | null;
@@ -72,6 +79,7 @@ export interface State {
     manifestId: string | null;
     siteServiceWorkers: any;
     icons: Icon[];
+    members: CustomMember[];
     suggestions: string[] | null;
     warnings: string[] | null;
     errors: string[] | null;
@@ -85,6 +93,7 @@ export const state = (): State => ({
     manifestId: null,
     siteServiceWorkers: null,
     icons: [],
+    members: [],
     suggestions: null,
     warnings: null,
     errors: null,
@@ -92,6 +101,8 @@ export const state = (): State => ({
 });
 
 export const helpers = {
+    MEMBER_PREFIX: 'mjs_',
+
     getImageIconSize(aSrc: string): Promise<{ width: number, height: number }> {
         return new Promise(resolve => {
             if (typeof document === 'undefined') {
@@ -161,6 +172,8 @@ export interface Actions<S, R> extends ActionTree<S, R> {
     addRelatedApplication(context: ActionContext<S, R>, payload: RelatedApplication): void;
     removeRelatedApplication(context: ActionContext<S, R>, id: string): void;
     changePreferRelatedApplication(context: ActionContext<S, R>, status: boolean): void;
+    addCustomMember(context: ActionContext<S, R>, payload: CustomMember): void;
+    removeCustomMember(context: ActionContext<S, R>, name: string): void;
 }
 
 export const actions: Actions<State, RootState> = {
@@ -277,7 +290,30 @@ export const actions: Actions<State, RootState> = {
 
     changePreferRelatedApplication({ commit }, status: boolean): void {
         commit(types.UPDATE_PREFER_RELATED_APPLICATION, state);
-    }
+    },
+
+    addCustomMember({ commit, state }, payload: CustomMember): void {
+
+        if (state.members.find(member => member.name === payload.name)) {
+            commit(types.UPDATE_ERROR, 'A custom value with that key already exists');
+            return;
+        }
+
+        if (!payload.name.includes('_')) {
+            payload.name = helpers.MEMBER_PREFIX + payload.name;
+        }
+
+        try {
+            payload.value = JSON.parse(payload.value);
+            commit(types.ADD_CUSTOM_MEMBER, payload);
+        } catch (e) {
+            commit(types.UPDATE_ERROR, 'There was a problem parsing the value.  Make sure it is valid JSON (strings must be wrapped in quotes)');
+        }
+    },
+
+    removeCustomMember({ commit }, name: string): void {
+        commit(types.REMOVE_CUSTOM_MEMBER, name);
+    },
 };
 
 export const mutations: MutationTree<State> = {
@@ -360,7 +396,7 @@ export const mutations: MutationTree<State> = {
         const index = state.manifest.related_applications.findIndex(app => {
             return app.id === id;
         });
-
+        
         if (index < 0) {
             return;
         }
@@ -374,6 +410,31 @@ export const mutations: MutationTree<State> = {
         }
 
         state.manifest.prefer_related_applications = status;
-    }
+    },
+
+    [types.ADD_CUSTOM_MEMBER](state, payload: CustomMember): void {
+        if (!state.members) {
+            return;
+        }
+
+        state.members.push(payload);
+        state.error = null;
+    },
+
+    [types.REMOVE_CUSTOM_MEMBER](state, name: string): void {
+        if (!state.members) {
+            return;
+        }
+
+        const index = state.members.findIndex(member => {
+            return member.name === name;
+        });
+
+        if (index < 0) {
+            return;
+        }
+
+        state.members.splice(index, 1);
+    },
 };
 

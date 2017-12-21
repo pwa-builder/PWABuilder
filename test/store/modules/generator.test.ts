@@ -210,7 +210,7 @@ describe('generator', () => {
             const app = {
                 platform: 'testplatform',
                 url: 'website',
-                id: id
+                id
             };
 
             state.manifest = {} as Manifest;
@@ -225,7 +225,7 @@ describe('generator', () => {
             const app = {
                 platform: 'testplatform',
                 url: 'website',
-                id: id
+                id
             };
 
             state.manifest = {} as Manifest;
@@ -249,6 +249,96 @@ describe('generator', () => {
 
             mutations[generator.types.UPDATE_PREFER_RELATED_APPLICATION](state, true);
             expect(state.manifest.prefer_related_applications).to.be.equal(true);
+        });
+    });
+
+    describe('when add a custom member', () => {
+        it('should not commit an update if member already exists', () => {
+            const member = {
+                name: 'test',
+                value: '{}',
+            };
+
+            actionContext.state.members = [member]
+
+            actions.addCustomMember(actionContext, member);
+
+            expect(actionContext.commit).to.have.been.calledWith(generator.types.UPDATE_ERROR);
+        });
+
+        it('should add prefix is doest not contain "_"', () => {
+            const name = 'test';
+            const member = {
+                name,
+                value: '{}',
+            };
+
+            actionContext.state.members = []
+
+            actions.addCustomMember(actionContext, member);
+
+            expect(member.name).to.have.be.equal(generator.helpers.MEMBER_PREFIX + name);
+        });
+
+        it('should not commit an update if member value is not valid', () => {
+            const member = {
+                name: 'test',
+                value: 'not a json',
+            };
+
+            actionContext.state.members = []
+
+            actions.addCustomMember(actionContext, member);
+
+            expect(actionContext.commit).to.have.been.calledWith(generator.types.UPDATE_ERROR);
+        });
+
+        it('should commit an update if member is valid', () => {
+            const member = {
+                name: 'test',
+                value: '{}',
+            };
+
+            actionContext.state.members = []
+
+            actions.addCustomMember(actionContext, member);
+
+            expect(actionContext.commit).to.have.been.calledWith(generator.types.ADD_CUSTOM_MEMBER);
+        });
+    });
+
+    describe('when remove a custom member', () => {
+        it('should not remove if index is not found', () => {
+            const name = 'name';
+            const member = {
+                name,
+                value: '{}'
+            };
+
+            actionContext.state.members = [member];
+
+            mutations[generator.types.REMOVE_CUSTOM_MEMBER](state, `${name}__`);
+            expect(actionContext.state.members.length).to.be.equal(1);
+        });
+
+        it('should remove if index is found', () => {
+            const id = 'myid';
+            const app = {
+                platform: 'testplatform',
+                url: 'website',
+                id
+            };
+
+            const name = 'name';
+            const member = {
+                name,
+                value: '{}'
+            };
+
+            actionContext.state.members = [member];
+
+            mutations[generator.types.REMOVE_CUSTOM_MEMBER](state, name);
+            expect(actionContext.state.members.length).to.be.equal(0);
         });
     });
 });
