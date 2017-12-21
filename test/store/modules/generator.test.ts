@@ -26,11 +26,10 @@ describe('generator', () => {
     });
 
     describe('when adds link with an invalid url', () => {
-        it('should update state with error', () => {
+        it('should throw an error', () => {
             const url = 'httptest';
-            actions.updateLink(actionContext, url);
 
-            expect(actionContext.commit).to.have.been.calledWith(generator.types.UPDATE_ERROR);
+            expect(() => actions.updateLink(actionContext, url)).to.throw();
         });
     });
 
@@ -66,22 +65,14 @@ describe('generator', () => {
             expect(actionContext.commit).to.have.been.calledWith(generator.types.SET_DEFAULTS_MANIFEST);
         });
 
-        it('should update error if params are incorrect and API respond with error', async () => {
+        it('should throw an if params are incorrect and API respond with error', async () => {
             const url = 'http://microsoft.com';
             const status = 500;
             actionContext.state.url = url;
 
             axiosMock.onPost(`${process.env.apiUrl}/manifests`).reply(status, {});
 
-            await actions.getManifestInformation(actionContext)
-            .catch(e => {
-                expect(e.response.status).to.be.equal(status);
-                expect(actionContext.commit).to.have.been.calledWith(generator.types.UPDATE_ERROR);
-            });
-
-            expect(actionContext.commit).to.not.have.been.calledWith(generator.types.UPDATE_WITH_MANIFEST);
-            expect(actionContext.commit).to.not.have.been.calledWith(generator.types.SET_DEFAULTS_MANIFEST);
-
+            expect(actions.getManifestInformation(actionContext)).to.eventually.throw();
         });
 
         afterEach(() => {
@@ -91,12 +82,11 @@ describe('generator', () => {
     });
 
     describe('when submit empty url', () => {
-        it('should return error message', async () => {
+        it('should throw an error', async () => {
             const url = '';
             actionContext.state.url = url;
 
-            await actions.getManifestInformation(actionContext);
-            expect(actionContext.commit).to.have.been.calledWith(generator.types.UPDATE_ERROR);
+            expect(actions.getManifestInformation(actionContext)).to.eventually.throw();
         });
     });
 
@@ -157,9 +147,7 @@ describe('generator', () => {
                 id: ''
             };
 
-            actions.addRelatedApplication(actionContext, app);
-
-            expect(actionContext.commit).to.have.been.calledWith(generator.types.UPDATE_ERROR);
+            expect(() => actions.addRelatedApplication(actionContext, app)).to.throw();
         });
 
         it('should commit an update if is a valid application', () => {
@@ -186,21 +174,6 @@ describe('generator', () => {
 
             mutations[generator.types.ADD_RELATED_APPLICATION](state, payload);
             expect(state.manifest.related_applications.length).to.be.equal(1);
-        });
-
-        it('should remove errors when update an application', () => {
-            const payload = {
-                platform: 'testplatform',
-                url: 'website',
-                id: 'myid'
-            };
-
-            state.manifest = {} as Manifest;
-            state.manifest.related_applications = [];
-            state.error = 'error';
-
-            mutations[generator.types.ADD_RELATED_APPLICATION](state, payload);
-            expect(state.error).to.be.null;
         });
     });
 
@@ -259,11 +232,9 @@ describe('generator', () => {
                 value: '{}',
             };
 
-            actionContext.state.members = [member]
+            actionContext.state.members = [member];
 
-            actions.addCustomMember(actionContext, member);
-
-            expect(actionContext.commit).to.have.been.calledWith(generator.types.UPDATE_ERROR);
+            expect(() => actions.addCustomMember(actionContext, member)).to.throw();
         });
 
         it('should add prefix is doest not contain "_"', () => {
@@ -273,7 +244,7 @@ describe('generator', () => {
                 value: '{}',
             };
 
-            actionContext.state.members = []
+            actionContext.state.members = [];
 
             actions.addCustomMember(actionContext, member);
 
@@ -286,11 +257,9 @@ describe('generator', () => {
                 value: 'not a json',
             };
 
-            actionContext.state.members = []
+            actionContext.state.members = [];
 
-            actions.addCustomMember(actionContext, member);
-
-            expect(actionContext.commit).to.have.been.calledWith(generator.types.UPDATE_ERROR);
+            expect(() => actions.addCustomMember(actionContext, member)).to.throw();
         });
 
         it('should commit an update if member is valid', () => {
@@ -299,7 +268,7 @@ describe('generator', () => {
                 value: '{}',
             };
 
-            actionContext.state.members = []
+            actionContext.state.members = [];
 
             actions.addCustomMember(actionContext, member);
 
