@@ -80,7 +80,7 @@ export const actions: Actions<State, RootState> = {
             }
 
             try {
-                const options = JSON.stringify({ platforms: platformsList, dirSuffix: platform });
+                const options = { platforms: platformsList, dirSuffix: platform };
                 const result = await this.$axios.$post(`${apiUrl}/${manifestId}/build?ids=${serviceworker}`, options);
                 commit(types.UPDATE_ARCHIVELINK, result.archive);
                 resolve();
