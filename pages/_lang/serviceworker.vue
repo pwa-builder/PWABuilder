@@ -58,7 +58,7 @@
                 </button>
               </div>
               <div class="pure-u-3-5">
-                 <p class="l-generator-error">{{error}}</p>
+                 <p class="l-generator-error">{{ $t(error) }}</p>
               </div>
             </form>
             <p>{{ $t('serviceworker.download_link') }} <a class="l-generator-link" href="https://github.com/pwa-builder/serviceworkers" target="_blank">GitHub</a>.</p>

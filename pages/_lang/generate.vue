@@ -63,7 +63,7 @@
                         </div>
 
                         <p class="l-generator-error" v-if="error">
-                            {{error}}
+                            {{ $t(error) }}
                         </p>
 
                         <div class="pure-g l-generator-table">

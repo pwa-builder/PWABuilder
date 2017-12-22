@@ -36,7 +36,7 @@
                 </div>
 
                 <div class="pure-u-2-5">
-                   <p class="l-generator-error">{{error}}</p>
+                   <p class="l-generator-error">{{ $t(error) }}</p>
                 </div>
 
                 <div class="l-generator-wrapper pure-u-1">
