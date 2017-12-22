@@ -16,6 +16,7 @@ export const types = {
     SET_ORIENTATIONS: 'SET_ORIENTATIONS',
     UPDATE_LINK: 'UPDATE_LINK',
     UPDATE_WITH_MANIFEST: 'UPDATE_WITH_MANIFEST',
+    UPDATE_MANIFEST: 'UPDATE_MANIFEST',
     OVERWRITE_MANIFEST: 'OVERRIDE_MANIFEST',
     SET_DEFAULTS_MANIFEST: 'SET_DEFAULTS_MANIFEST',
     UPDATE_ICONS: 'UPDATE_ICONS',
@@ -180,6 +181,7 @@ export const helpers = {
 
 export interface Actions<S, R> extends ActionTree<S, R> {
     update(context: ActionContext<S, R>): void;
+    updateManifest(context: ActionContext<S, R>, manifest: Manifest): void;
     updateLink(context: ActionContext<S, R>, url: string): void;
     getManifestInformation(context: ActionContext<S, R>): Promise<void>;
     removeIcon(context: ActionContext<S, R>, icon: Icon): void;
@@ -210,6 +212,11 @@ export const actions: Actions<State, RootState> = {
             displays: rootState.displays ? rootState.displays[0].name : '',
             orientations: rootState.orientations ? rootState.orientations[0].name : ''
         });
+    },
+
+    updateManifest({ commit, dispatch }, manifest): void {
+        commit(types.UPDATE_MANIFEST, manifest);
+        dispatch('update');
     },
 
     updateLink({ commit }, url: string): void {
@@ -373,6 +380,10 @@ export const actions: Actions<State, RootState> = {
 export const mutations: MutationTree<State> = {
     [types.UPDATE_LINK](state, url: string): void {
         state.url = url;
+    },
+
+    [types.UPDATE_MANIFEST](state, manifest: Manifest): void {
+        state.manifest = manifest;
     },
 
     [types.UPDATE_WITH_MANIFEST](state, result): void {
