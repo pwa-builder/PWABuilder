@@ -38,6 +38,7 @@ module.exports = {
   plugins: ['~/plugins/i18n.js'],
   modules: [
     '~/modules/typescript',
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    '@nuxtjs/font-awesome'
   ]
 }

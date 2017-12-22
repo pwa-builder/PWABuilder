@@ -3,6 +3,7 @@
   "private": true,
   "dependencies": {
     "@nuxtjs/axios": "^4.5.0",
+    "@nuxtjs/font-awesome": "^1.0.3",
     "babel-polyfill": "^6.26.0",
     "clipboard": "^1.7.1",
     "gsap": "^1.19.1",
