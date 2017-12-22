@@ -1,4 +1,4 @@
-<script>
-import Page from '~/pages/_lang/serviceworker'
-export default Page
+<script lang="ts">
+import Page from '~/pages/_lang/serviceworker.vue';
+export default Page;
 </script>

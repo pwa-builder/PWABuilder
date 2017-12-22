@@ -64,9 +64,9 @@ import Vue from 'vue';
 import Component from 'nuxt-class-component';
 import { Action, State, namespace } from 'vuex-class';
 
-import GeneratorMenu from '~/components/GeneratorMenu';
-import TwoWays from '~/components/TwoWays';
-import Loading from '~/components/Loading';
+import GeneratorMenu from '~/components/GeneratorMenu.vue';
+import TwoWays from '~/components/TwoWays.vue';
+import Loading from '~/components/Loading.vue';
 
 import * as generator from '~/store/modules/generator';
 

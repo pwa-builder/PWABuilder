@@ -1,4 +1,4 @@
-<script>
-import Page from '~/pages/_lang/generate'
-export default Page
+<script lang="ts">
+import Page from '~/pages/_lang/generate.vue';
+export default Page;
 </script>

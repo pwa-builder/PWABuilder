@@ -24,6 +24,7 @@
       "~/pages/*": ["./pages/*"],
       "~/plugins/*": ["./plugins/*"],
       "~/static/*": ["./static/*"],
+      "~/store/*": ["./store/*"],
       "~/utils/*": ["./utils/*"],
       "~/test/*": ["./test/*"]
     }

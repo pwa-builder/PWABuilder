@@ -105,7 +105,7 @@
                     <label class="l-generator-label">{{ $t("generate.start_url") }}
                         <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#start_url-member" target="_blank">[?]</a>
                     </label>
-                    <input class="l-generator-input" v-model="manifest$.start_url" @change="onChangeSimpleInput()"type="text">
+                    <input class="l-generator-input" v-model="manifest$.start_url" @change="onChangeSimpleInput()" type="text">
                 </div>
                 <div class="l-generator-field">
                     <label class="l-generator-label">{{ $t("generate.display") }}
@@ -186,14 +186,14 @@ import Vue from 'vue';
 import Component from 'nuxt-class-component';
 import { Action, State, Getter, namespace } from 'vuex-class';
 
-import GeneratorMenu from '~/components/GeneratorMenu';
-import TwoWays from '~/components/TwoWays';
-import Modal from '~/components/Modal';
-import CodeViewer from '~/components/CodeViewer';
-import RelatedApplications from '~/components/RelatedApplications';
-import CustomMembers from '~/components/CustomMembers';
-import StartOver from '~/components/StartOver';
-import ColorSelector from '~/components/ColorSelector';
+import GeneratorMenu from '~/components/GeneratorMenu.vue';
+import TwoWays from '~/components/TwoWays.vue';
+import Modal from '~/components/Modal.vue';
+import CodeViewer from '~/components/CodeViewer.vue';
+import RelatedApplications from '~/components/RelatedApplications.vue';
+import CustomMembers from '~/components/CustomMembers.vue';
+import StartOver from '~/components/StartOver.vue';
+import ColorSelector from '~/components/ColorSelector.vue';
 
 import * as generator from '~/store/modules/generator';
 
@@ -214,8 +214,8 @@ const GeneratorActions = namespace(generator.name, Action);
 })
 export default class extends Vue {
     public manifest$: generator.Manifest | null = null;
-    public newIconSrc = "";
-    public iconCheckMissing: boolean = true;
+    public newIconSrc = '';
+    public iconCheckMissing = true;
     private iconFile: File | null = null;
     public error: string | null = null;
 
@@ -235,11 +235,14 @@ export default class extends Vue {
     public created(): void {
         if (!this.manifest) {
             this.$router.push({
-                path: "/"
+                path: '/'
             });
         }
 
         this.manifest$ = { ...this.manifest };
+
+        const x = 'hello';
+        
     }
 
     public onChangeSimpleInput(): void {

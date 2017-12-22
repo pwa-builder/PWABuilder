@@ -1,4 +1,4 @@
-<script>
-import Page from '~/pages/_lang/index'
-export default Page
+<script lang="ts">
+import Page from '~/pages/_lang/index.vue';
+export default Page;
 </script>

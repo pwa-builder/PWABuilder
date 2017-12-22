@@ -89,15 +89,15 @@
 import Vue from 'vue';
 import Component from 'nuxt-class-component';
 import { Watch } from 'vue-property-decorator';
-import { Action, State, namespace } from "vuex-class";
+import { Action, State, namespace } from 'vuex-class';
 
-import GeneratorMenu from '~/components/GeneratorMenu';
-import TwoWays from '~/components/TwoWays';
-import Loading from '~/components/Loading';
-import CodeViewer from '~/components/CodeViewer';
-import StartOver from '~/components/StartOver';
+import GeneratorMenu from '~/components/GeneratorMenu.vue';
+import TwoWays from '~/components/TwoWays.vue';
+import Loading from '~/components/Loading.vue';
+import CodeViewer from '~/components/CodeViewer.vue';
+import StartOver from '~/components/StartOver.vue';
 
-import * as serviceworker from "~/store/modules/serviceworker";
+import * as serviceworker from '~/store/modules/serviceworker';
 
 const ServiceworkerState = namespace(serviceworker.name, State);
 const ServiceworkerAction = namespace(serviceworker.name, Action);
