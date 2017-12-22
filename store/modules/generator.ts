@@ -142,16 +142,16 @@ export const helpers = {
 
     hasRelatedApplicationErrors(app: RelatedApplication): string | undefined {
         if (!app.platform) {
-            return 'You must enter the Platform.';
+            return 'error.enter_platform';
         }
 
         if (!app.url && !app.id) {
-            return 'You must enter either the URL or ID.';
+            return 'error.enter_url';
         }
 
         const urlRegExpr = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.?[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
         if (app.url && !urlRegExpr.test(app.url)) {
-            return 'You must enter a valid URL.';
+            return 'error.enter_valid_url';
         }
 
         return;
@@ -180,7 +180,7 @@ export const actions: Actions<State, RootState> = {
         }
 
         if (!isValidUrl(url)) {
-            throw 'Please provide a URL.';
+            throw 'error.provide_url';
         }
 
         commit(types.UPDATE_LINK, url);
@@ -189,7 +189,7 @@ export const actions: Actions<State, RootState> = {
     async getManifestInformation({ commit, state, rootState }): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
             if (!state.url) {
-                throw 'Url is empty';
+                throw 'error.url_empty';
             }
 
             const options = {
@@ -288,7 +288,7 @@ export const actions: Actions<State, RootState> = {
     addCustomMember({ commit, state }, payload: CustomMember): void {
 
         if (state.members.find(member => member.name === payload.name)) {
-            throw 'A custom value with that key already exists';
+            throw 'error.custom_value';
         }
 
         if (!payload.name.includes('_')) {
@@ -299,7 +299,7 @@ export const actions: Actions<State, RootState> = {
             payload.value = JSON.parse(payload.value);
             commit(types.ADD_CUSTOM_MEMBER, payload);
         } catch (e) {
-            throw 'There was a problem parsing the value.  Make sure it is valid JSON (strings must be wrapped in quotes)';
+            throw 'error.parsing_value';
         }
     },
 

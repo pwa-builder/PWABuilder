@@ -65,11 +65,11 @@ export const actions: Actions<State, RootState> = {
             const serviceworker = rootState.serviceworker.serviceworker;
 
             if (!manifestId || !serviceworker) {
-                reject('Manifest is required');
+                reject('error.manifest_required');
             }
 
             if (!platform) {
-                reject('Platform is required');
+                reject('error.platform_required');
             }
 
             let platformsList: string[] = [];
@@ -96,11 +96,11 @@ export const actions: Actions<State, RootState> = {
             const manifestId = rootState.generator.manifestId;
 
             if (!manifestId) {
-                reject('Manifest is required');
+                reject('error.manifest_required');
             }
 
             if (!params.publisher || !params.publisher_id || !params.package || !params.version) {
-                reject('All fields are required.');
+                reject('error.fields_required');
             }
 
             try {
