@@ -7,7 +7,7 @@ import { axiosMock } from 'test/libs/axios';
 import { actionContextMockBuilder, nuxtAxiosMockBuilder } from 'test/utils';
 
 import * as generator from 'store/modules/generator';
-import { Manifest } from 'store/modules/generator';
+import { Manifest, helpers } from 'store/modules/generator';
 
 let state: generator.State;
 let actionContext: ActionContext<generator.State, RootState>;
@@ -308,6 +308,47 @@ describe('generator', () => {
 
             mutations[generator.types.REMOVE_CUSTOM_MEMBER](state, name);
             expect(actionContext.state.members.length).to.be.equal(0);
+        });
+    });
+
+    describe('when update color', () => {
+        it('should commit with transparent if the selection is transparent', () => {
+            const colorOption = helpers.COLOR_OPTIONS.transparent;
+            const color = '#FF0000';
+            const colorOptions = {
+                colorOption,
+                color
+            };
+
+            actions.updateColor(actionContext, colorOptions);
+
+            expect(actionContext.commit).to.have.been.calledWith(generator.types.UPDATE_COLOR, colorOption);
+        });
+
+        it('should commit with none if the selection is none', () => {
+            const colorOption = helpers.COLOR_OPTIONS.none;
+            const color = '#FF0000';
+            const colorOptions = {
+                colorOption,
+                color
+            };
+
+            actions.updateColor(actionContext, colorOptions);
+
+            expect(actionContext.commit).to.have.been.calledWith(generator.types.UPDATE_COLOR, colorOption);
+        });
+
+        it('should commit with the selected color if the selection is pick', () => {
+            const colorOption = helpers.COLOR_OPTIONS.pick;
+            const color = '#FF0000';
+            const colorOptions = {
+                colorOption,
+                color
+            };
+
+            actions.updateColor(actionContext, colorOptions);
+
+            expect(actionContext.commit).to.have.been.calledWith(generator.types.UPDATE_COLOR, color);
         });
     });
 });

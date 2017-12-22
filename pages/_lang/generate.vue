@@ -130,16 +130,7 @@
                     </select>
                 </div>
                 <div>
-                    <div class="l-generator-field">
-                        <label class="l-generator-label">{{ $t("generate.background_color") }}
-                            <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#background_color-member" target="_blank">[?]</a>
-                        </label>
-                        <div class="l-generator-options">
-                            <label class="l-generator-label">
-                                <input type="radio" value="none"> {{ $t("generate.none") }}
-                            </label>
-                        </div>
-                    </div>
+                    <ColorSelector />
                 </div>
 
                 <div>
@@ -192,6 +183,7 @@ import Modal from '~/components/Modal';
 import CodeViewer from '~/components/CodeViewer';
 import RelatedApplications from '~/components/RelatedApplications';
 import CustomMembers from '~/components/CustomMembers';
+import ColorSelector from '~/components/ColorSelector';
 
 import * as generator from '~/store/modules/generator';
 
@@ -204,8 +196,9 @@ const GeneratorActions = namespace(generator.name, Action);
         GeneratorMenu,
         RelatedApplications,
         CustomMembers,
-        Modal,
-        CodeViewer
+        ColorSelector,
+        CodeViewer,
+        Modal
     }
 })
 export default class extends Vue {
@@ -328,4 +321,5 @@ export default class extends Vue {
         margin-top: -2rem;
     }
 }
+
 </style>
