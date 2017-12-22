@@ -10,7 +10,6 @@ export const types = {
     UPDATE_SERVICEWORKER: 'UPDATE_SERVICEWORKER',
     UPDATE_SERVICEWORKERPREVIEW: 'UPDATE_SERVICEWORKERPREVIEW',
     UPDATE_WEBPREVIEW: 'UPDATE_WEBPREVIEW',
-    UPDATE_ERROR: 'UPDATE_ERROR',
     RESET_STATES: 'RESET_STATES'
 };
 
@@ -19,15 +18,13 @@ export interface State {
     serviceworker: number;
     serviceworkerPreview: string | null;
     webPreview: string | null;
-    error: string | null;
 }
 
 export const state = (): State => ({
     archive: null,
     serviceworker: 1,
     serviceworkerPreview: null,
-    webPreview: null,
-    error: null
+    webPreview: null
 });
 
 export const getters: GetterTree<State, RootState> = {};
@@ -43,8 +40,7 @@ export const actions: Actions<State, RootState> = {
     async downloadServiceWorker({ commit }, serviceworker: number): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
             if (!serviceworker) {
-                commit(types.UPDATE_ERROR, 'Serviceworker is not defined');
-                resolve();
+                reject ('Serviceworker is not defined');
             }
 
             commit(types.UPDATE_SERVICEWORKER, serviceworker);
@@ -55,16 +51,14 @@ export const actions: Actions<State, RootState> = {
                 resolve();
             } catch (e) {
               let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
-              commit(types.UPDATE_ERROR, errorMessage);
-              reject(e);
+              reject (errorMessage);
             }
         });
     },
     async getCode({ commit }, serviceworker: number): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
             if (!serviceworker) {
-                commit(types.UPDATE_ERROR, 'Serviceworker is not defined');
-                resolve();
+                reject('Serviceworker is not defined');
             }
             try {
                 const result = await this.$axios.$get(`${apiUrl}/previewcode?ids=${serviceworker}`);
@@ -73,8 +67,7 @@ export const actions: Actions<State, RootState> = {
                 resolve();
             } catch (e) {
                 let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
-                commit(types.UPDATE_ERROR, errorMessage);
-                reject(e);
+                reject (errorMessage);
             }
         });
     },
@@ -90,9 +83,6 @@ export const mutations: MutationTree<State> = {
     [types.UPDATE_SERVICEWORKER](state, serviceworker: number): void {
         state.serviceworker = serviceworker;
     },
-    [types.UPDATE_ERROR](state, error: string): void {
-        state.error = error;
-    },
     [types.UPDATE_SERVICEWORKERPREVIEW](state, code: string): void {
         state.serviceworkerPreview = code;
     },
@@ -102,7 +92,6 @@ export const mutations: MutationTree<State> = {
     [types.RESET_STATES](state): void {
         state.archive= null;
         state.serviceworker= 1;
-        state.error= null;
     }
 };
 

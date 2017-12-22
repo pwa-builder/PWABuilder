@@ -15,16 +15,12 @@ export const name = 'publish';
 
 export const types = {
     UPDATE_STATUS: 'UPDATE_STATUS',
-    UPDATE_ERROR: 'UPDATE_ERROR',
     UPDATE_ARCHIVELINK: 'UPDATE_ARCHIVELINK',
-    UPDATE_APPXLINK: 'UPDATE_APPXLINK',
-    UPDATE_APPXERROR: 'UPDATE_APPXERROR'
+    UPDATE_APPXLINK: 'UPDATE_APPXLINK'
 };
 
 export interface State {
     status: boolean | null;
-    error: string | null;
-    appxError: string | null;
     archiveLink: string | null;
     appXLink: string | null;
 }
@@ -38,8 +34,6 @@ export interface appxParams {
 
 export const state = (): State => ({
     status: null,
-    error: null,
-    appxError: null,
     archiveLink: null,
     appXLink: null
 });
@@ -71,13 +65,11 @@ export const actions: Actions<State, RootState> = {
             const serviceworker = rootState.serviceworker.serviceworker;
 
             if (!manifestId || !serviceworker) {
-                commit(types.UPDATE_ERROR, 'Manifest is required');
-                resolve();
+                reject('Manifest is required');
             }
 
             if (!platform) {
-                commit(types.UPDATE_ERROR, 'Platform is required');
-                resolve();
+                reject('Platform is required');
             }
 
             let platformsList: string[] = [];
@@ -94,8 +86,7 @@ export const actions: Actions<State, RootState> = {
                 resolve();
             } catch (e) {
                 let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
-                commit(types.UPDATE_ERROR, errorMessage);
-                reject(e);
+                reject(errorMessage);
             }
         });
     },
@@ -103,17 +94,13 @@ export const actions: Actions<State, RootState> = {
     async buildAppx({ commit, rootState }, params: appxParams): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
             const manifestId = rootState.generator.manifestId;
-            //reset errors
-            commit(types.UPDATE_APPXERROR, '');
 
             if (!manifestId) {
-                commit(types.UPDATE_APPXERROR, 'Manifest is required');
-                resolve();
+                reject('Manifest is required');
             }
 
             if (!params.publisher || !params.publisher_id || !params.package || !params.version) {
-                commit(types.UPDATE_APPXERROR, 'All fields are required.');
-                resolve();
+                reject('All fields are required.');
             }
 
             try {
@@ -133,8 +120,7 @@ export const actions: Actions<State, RootState> = {
                 } else {
                     errorMessage = 'Package building error.';
                 }
-                commit(types.UPDATE_APPXERROR, errorMessage);
-                reject(e);
+                reject(errorMessage);
             }
         });
     }
@@ -143,12 +129,6 @@ export const actions: Actions<State, RootState> = {
 export const mutations: MutationTree<State> = {
     [types.UPDATE_STATUS](state, status: boolean): void {
         state.status = status;
-    },
-    [types.UPDATE_ERROR](state, error: string): void {
-        state.error = error;
-    },
-    [types.UPDATE_APPXERROR](state, error: string): void {
-        state.appxError = error;
     },
     [types.UPDATE_ARCHIVELINK](state, url: string): void {
         state.archiveLink = url;

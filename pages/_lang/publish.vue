@@ -146,12 +146,13 @@ export default class extends Vue {
     @PublishState status: boolean;
     @PublishState archiveLink: string;
     @PublishState appXLink: string;
-    @PublishState appxError: string;
 
     @PublishAction resetAppData;
     @PublishAction updateStatus;
     @PublishAction build;
     @PublishAction buildAppx;
+
+    public appxError: string | null = null;
 
     public created(): void {
         this.updateStatus();
@@ -184,13 +185,16 @@ export default class extends Vue {
     public async onSubmitAppxModal(): Promise<void> {
         const $appxModal = (this.$refs.appxModal as Modal);
         $appxModal.showLoading();
-        await this.buildAppx(this.appxForm)
-        .catch(e => { 
+
+        try {
+          await this.buildAppx(this.appxForm);
+
+           if (this.appXLink) {
+              window.location.href = this.appXLink;
+          }
+        } catch (e) { 
+            this.appxError = e;
             $appxModal.hideLoading();
-        });
-        $appxModal.hideLoading();
-        if (this.appXLink) {
-            window.location.href = this.appXLink;
         }
     }
 
