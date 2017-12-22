@@ -131,7 +131,8 @@ export const helpers = {
     prepareIconsUrls(icons: Icon[], baseUrl: string) {
         return icons.map(icon => {
             if (!icon.src.includes('http')) {
-                icon.src = baseUrl + icon.src;
+                //remove posible trailing/leading slashes
+                icon.src = `${baseUrl.replace(/\/$/, '')}/${icon.src.replace(/^\/+/g, '')}`;
             }
 
             return icon;
