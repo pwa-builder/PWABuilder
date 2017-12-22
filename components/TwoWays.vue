@@ -39,70 +39,69 @@ export default class extends Vue {}
 </script>
 
 <style lang="scss" scoped>
-@import '~assets/scss/base/variables';
-@import '~assets/scss/mixins/action';
+@import "~assets/scss/base/variables";
+@import "~assets/scss/mixins/action";
 
 .twoways {
-    background-color: $color-background-dark;
+  background-color: $color-background-dark;
 
-    &--transparent {
-        background-color: transparent;
+  &--transparent {
+    background-color: transparent;
+  }
+
+  &-subtitle {
+    font-family: Bitter;
+    font-size: $font-size-l;
+    font-weight: $font-weight-bold;
+    margin: .5rem 0 0 0;
+
+    &--thin {
+      font-weight: $font-weight-regular;
+      margin-bottom: .5rem;
+    }
+  }
+
+  &-box {
+    background-color: $color-background-brighter;
+    border-radius: .5rem;
+    box-shadow: 0 .8rem 2rem .2rem rgba($color-background-darkest, .2);
+    margin: .5vw .75vw;
+    padding: 2.5rem;
+
+    @media screen and (max-width: $media-screen-s) {
+      margin-bottom: 2vw;
     }
 
-    &-subtitle {
-        font-family: Bitter;
-        font-size: $font-size-l;
-        font-weight: $font-weight-bold;
-        margin: .5rem 0 0 0;
+    &--flat {
+      box-shadow: none;
+      min-height: 25rem;
+      text-align: center;
 
-        &--thin {
-            font-weight: $font-weight-regular;
-            margin-bottom: .5rem;
-        }
+      @media screen and (max-width: $media-screen-m) {
+        min-height: 28rem;
+      }
+
+      @media screen and (max-width: $media-screen-s) {
+        min-height: auto;
+      }
     }
+  }
 
-    &-box {
-        background-color: $color-background-brighter;
-        border-radius: .5rem;
-        box-shadow: 0 .8rem 2rem .2rem rgba($color-background-darkest, .2);
-        margin: .5vw .75vw;
-        padding: 2.5rem;
+  &-logo {
+    max-width: 4.8rem;
+    width: 100%;
+  }
 
-        @media screen and (max-width: $media-screen-s) {
-            margin-bottom: 2vw;
-        }
+  &-action {
+    @include action-link ($color-complementary-bright, $color-complementary, .2rem, false);
 
-        &--flat {
-            box-shadow: none;
-            min-height: 25rem;
-            text-align: center;
+    font-family: Bitter;
+    font-size: $font-size-l;
+    font-weight: $font-weight-regular;
+  }
 
-            @media screen and (max-width: $media-screen-m) {
-                min-height: 28rem;
-            }
-
-            @media screen and (max-width: $media-screen-s) {
-                min-height: auto;
-            }
-        }
-    }
-
-    &-logo {
-        max-width: 4.8rem;
-        width: 100%;
-    }
-
-    &-action {
-        @include action-link ( $color-complementary-bright, $color-complementary, .2rem, false);
-
-        font-family: Bitter;
-        font-size: $font-size-l;
-        font-weight: $font-weight-regular;
-    }
-
-    &-padded {
-        padding-bottom: 2rem;
-    }
+  &-padded {
+    padding-bottom: 2rem;
+  }
 }
-
 </style>

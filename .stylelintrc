@@ -12,6 +12,7 @@
     "font-family-no-missing-generic-family-keyword": null,
     "color-hex-case": "upper",
     "color-hex-length": "long",
-    "no-missing-end-of-source-newline": null
+    "no-missing-end-of-source-newline": null,
+    "no-empty-source": null
   }
 }

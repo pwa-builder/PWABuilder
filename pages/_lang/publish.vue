@@ -135,100 +135,99 @@ const PublishState = namespace(publish.name, State);
 const PublishAction = namespace(publish.name, Action);
 
 @Component({
-    components: {
-        TwoWays,
-        GeneratorMenu,
-        Loading,
-        StartOver,
-        Modal
-    }
+  components: {
+    TwoWays,
+    GeneratorMenu,
+    Loading,
+    StartOver,
+    Modal
+  }
 })
 export default class extends Vue {
+  public isReady = {
+    web: true,
+    windows10: true,
+    android: true,
+    ios: true,
+    appx: true
+  };
 
-    public isReady = {
-        web: true,
-        windows10: true,
-        android: true,
-        ios: true,
-        appx: true
+  public appxForm: publish.AppxParams = {
+    publisher: null,
+    publisher_id: null,
+    package: null,
+    version: null
+  };
+
+  public downloadButtonMessage = {
+    web: 'publish.download',
+    windows10: 'publish.download',
+    android: 'publish.download',
+    ios: 'publish.download',
+    appx: 'publish.download'
+  };
+
+  @PublishState status: boolean;
+  @PublishState archiveLink: string;
+  @PublishState appXLink: string;
+
+  @PublishAction updateStatus;
+  @PublishAction build;
+  @PublishAction buildAppx;
+
+  public appxError: string | null = null;
+
+  public created(): void {
+    this.updateStatus();
+  }
+
+  public goToHome(): void {
+    this.$router.push({
+      name: 'index'
+    });
+  }
+
+  public async buildArchive(platform: string): Promise<void> {
+    //this.ga('send', 'event', 'item', 'click', 'generator-build-trigger-'+platform);
+    if (!this.isReady[platform]) {
+      return;
+    }
+    this.isReady[platform] = false;
+    this.downloadButtonMessage[platform] = 'publish.try_again';
+    await this.build(platform);
+    if (this.archiveLink) {
+      window.location.href = this.archiveLink;
+    }
+    this.isReady[platform] = true;
+  }
+
+  public openAppXModal(): void {
+    (this.$refs.appxModal as Modal).show();
+  }
+
+  public async onSubmitAppxModal(): Promise<void> {
+    const $appxModal = this.$refs.appxModal as Modal;
+    $appxModal.showLoading();
+
+    try {
+      await this.buildAppx(this.appxForm);
+
+      if (this.appXLink) {
+        window.location.href = this.appXLink;
+      }
+    } catch (e) {
+      this.appxError = e;
+      $appxModal.hideLoading();
+    }
+  }
+
+  public onCancelAppxModal(): void {
+    this.appxForm = {
+      publisher: null,
+      publisher_id: null,
+      package: null,
+      version: null
     };
-
-    public appxForm: publish.AppxParams = {
-        publisher: null,
-        publisher_id: null,
-        package: null,
-        version: null
-    };
-
-    public downloadButtonMessage = {
-        web: 'publish.download',
-        windows10: 'publish.download',
-        android: 'publish.download',
-        ios: 'publish.download',
-        appx: 'publish.download'
-    };
-
-    @PublishState status: boolean;
-    @PublishState archiveLink: string;
-    @PublishState appXLink: string;
-
-    @PublishAction updateStatus;
-    @PublishAction build;
-    @PublishAction buildAppx;
-
-    public appxError: string | null = null;
-
-    public created(): void {
-        this.updateStatus();
-    }
-
-    public goToHome(): void {
-        this.$router.push({
-            name: 'index'
-        });
-    }
-
-    public async buildArchive(platform: string): Promise<void> {
-        //this.ga('send', 'event', 'item', 'click', 'generator-build-trigger-'+platform);
-        if (!this.isReady[platform]) {
-            return;
-        }
-        this.isReady[platform] = false;
-        this.downloadButtonMessage[platform] = 'publish.try_again';
-        await this.build(platform);
-        if (this.archiveLink) {
-            window.location.href = this.archiveLink;
-        }
-        this.isReady[platform] = true;
-    }
-
-    public openAppXModal(): void {
-        (this.$refs.appxModal as Modal).show();
-    }
-
-    public async onSubmitAppxModal(): Promise<void> {
-        const $appxModal = (this.$refs.appxModal as Modal);
-        $appxModal.showLoading();
-
-        try {
-          await this.buildAppx(this.appxForm);
-
-           if (this.appXLink) {
-              window.location.href = this.appXLink;
-          }
-        } catch (e) { 
-            this.appxError = e;
-            $appxModal.hideLoading();
-        }
-    }
-
-    public onCancelAppxModal(): void {
-        this.appxForm = {
-            publisher: null,
-            publisher_id: null,
-            package: null,
-            version: null
-        };
-    }
+  }
 }
 </script>

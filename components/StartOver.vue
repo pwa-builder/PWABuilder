@@ -5,9 +5,9 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue from 'vue';
 import { Action, namespace } from 'vuex-class';
-import Component from 'nuxt-class-component'
+import Component from 'nuxt-class-component';
 
 import * as publish from '~/store/modules/publish';
 
@@ -30,10 +30,10 @@ export default class extends Vue {
 @import '~assets/scss/base/variables';
 
 .start_over {
-    background-color: $color-foreground-brighter;
-    display: block;
-    padding: 2rem;
-    text-align: center;
+  background-color: $color-foreground-brighter;
+  display: block;
+  padding: 2rem;
+  text-align: center;
 }
 
 </style>

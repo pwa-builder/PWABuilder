@@ -74,53 +74,53 @@ const GeneratorState = namespace(generator.name, State);
 const GeneratorAction = namespace(generator.name, Action);
 
 @Component({
-    components: {
-        TwoWays,
-        GeneratorMenu,
-        Loading
-    }
+  components: {
+    TwoWays,
+    GeneratorMenu,
+    Loading
+  }
 })
 export default class extends Vue {
-    public url$: string | null = null;
-    public generatorReady = true;
-    public error: string | null = null;
+  public url$: string | null = null;
+  public generatorReady = true;
+  public error: string | null = null;
 
-    @GeneratorState url: string;
+  @GeneratorState url: string;
 
-    @GeneratorAction updateLink;
-    @GeneratorAction getManifestInformation;
+  @GeneratorAction updateLink;
+  @GeneratorAction getManifestInformation;
 
-    public created(): void {
+  public created(): void {
+    this.url$ = this.url;
+  }
+
+  public get inProgress(): boolean {
+    return !this.generatorReady && !this.error;
+  }
+
+  public skipCheckUrl(): void {
+    this.$router.push({
+      name: 'serviceworker'
+    });
+  }
+
+  public async checkUrlAndGenerate(): Promise<void> {
+    this.generatorReady = false;
+
+    try {
+      this.updateLink(this.url$);
+
+      if (this.url$) {
         this.url$ = this.url;
-    }
+        await this.getManifestInformation();
 
-    public get inProgress(): boolean {
-        return !this.generatorReady && !this.error;
-    }
-
-    public skipCheckUrl(): void {
         this.$router.push({
-            name: 'serviceworker'
+          name: 'generate'
         });
+      }
+    } catch (e) {
+      this.error = e;
     }
-
-    public async checkUrlAndGenerate(): Promise<void> {
-        this.generatorReady = false;
-
-        try {
-            this.updateLink(this.url$);
-
-            if (this.url$) {
-                this.url$ = this.url;
-                await this.getManifestInformation();
-
-                this.$router.push({
-                    name: 'generate'
-                });
-            }
-        } catch (e) {
-            this.error = e;
-        }
   }
 }
 </script>

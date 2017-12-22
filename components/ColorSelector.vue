@@ -17,9 +17,8 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'nuxt-class-component'
-import { Watch } from 'vue-property-decorator';
+import Vue from 'vue';
+import Component from 'nuxt-class-component';
 import { Action, State, namespace } from 'vuex-class';
 
 import * as generator from '~/store/modules/generator';
@@ -34,7 +33,7 @@ export default class extends Vue {
     public colorOptions = generator.helpers.COLOR_OPTIONS;
     public id: string | null = null;
     public color: string | null = null;
-    public canChooseColor: boolean = false;
+    public canChooseColor = false;
 
     @GeneratorState manifest: generator.Manifest;
     @GeneratorActions updateColor;
@@ -73,7 +72,7 @@ export default class extends Vue {
             return true;
         }
 
-        return this.manifest$.background_color === colorOption
+        return this.manifest$.background_color === colorOption;
     }
 
     public onChangeColor(colorOption: string): void {
@@ -88,8 +87,3 @@ export default class extends Vue {
     }
 }
 </script>
-
-<style lang="scss" scoped>
-@import '~assets/scss/base/variables';
-
-</style>

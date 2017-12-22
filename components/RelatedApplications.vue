@@ -63,12 +63,11 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Prop } from "vue-property-decorator";
-import Component from "nuxt-class-component";
-import { Action, State, namespace } from "vuex-class";
+import Vue from 'vue';
+import Component from 'nuxt-class-component';
+import { Action, State, namespace } from 'vuex-class';
 
-import * as generator from "~/store/modules/generator";
+import * as generator from '~/store/modules/generator';
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
@@ -121,7 +120,3 @@ export default class extends Vue {
 }
 </script>
 
-<style lang="scss" scoped>
-@import '~assets/scss/base/variables';
-
-</style>

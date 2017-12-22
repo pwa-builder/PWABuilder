@@ -40,7 +40,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { Prop } from 'vue-property-decorator';
 import Component from 'nuxt-class-component';
 import { Action, State, namespace } from 'vuex-class';
 
@@ -76,7 +75,7 @@ export default class extends Vue {
             this.value = null;
 
             this.members$ = [...this.members ];
-        } catch(e) {
+        } catch (e) {
             this.error = e;
         }
     }
@@ -86,8 +85,3 @@ export default class extends Vue {
     }
 }
 </script>
-
-<style lang="scss" scoped>
-@import '~assets/scss/base/variables';
-
-</style>

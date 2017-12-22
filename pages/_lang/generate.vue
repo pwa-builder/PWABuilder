@@ -201,90 +201,88 @@ const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
 
 @Component({
-    components: {
-        TwoWays,
-        GeneratorMenu,
-        RelatedApplications,
-        CustomMembers,
-        ColorSelector,
-        CodeViewer,
-        StartOver,
-        Modal
-    }
+  components: {
+    TwoWays,
+    GeneratorMenu,
+    RelatedApplications,
+    CustomMembers,
+    ColorSelector,
+    CodeViewer,
+    StartOver,
+    Modal
+  }
 })
 export default class extends Vue {
-    public manifest$: generator.Manifest | null = null;
-    public newIconSrc = '';
-    public iconCheckMissing = true;
-    private iconFile: File | null = null;
-    public error: string | null = null;
+  public manifest$: generator.Manifest | null = null;
+  public newIconSrc = '';
+  public iconCheckMissing = true;
+  private iconFile: File | null = null;
+  public error: string | null = null;
 
-    @GeneratorState manifest: generator.Manifest;
-    @GeneratorState icons: generator.Icon[];
+  @GeneratorState manifest: generator.Manifest;
+  @GeneratorState icons: generator.Icon[];
 
-    @Getter orientationsNames: string[];
-    @Getter languagesNames: string[];
-    @Getter displaysNames: string[];
+  @Getter orientationsNames: string[];
+  @Getter languagesNames: string[];
+  @Getter displaysNames: string[];
 
-    @GeneratorActions removeIcon;
-    @GeneratorActions addIconFromUrl;
-    @GeneratorActions updateManifest;
-    @GeneratorActions uploadIcon;
-    @GeneratorActions generateMissingImages;
+  @GeneratorActions removeIcon;
+  @GeneratorActions addIconFromUrl;
+  @GeneratorActions updateManifest;
+  @GeneratorActions uploadIcon;
+  @GeneratorActions generateMissingImages;
 
-    public created(): void {
-        if (!this.manifest) {
-            this.$router.push({
-                path: '/'
-            });
-        }
-
-        this.manifest$ = { ...this.manifest };
-
-        const x = 'hello';
-        
+  public created(): void {
+    if (!this.manifest) {
+      this.$router.push({
+        path: '/'
+      });
     }
 
-    public onChangeSimpleInput(): void {
-        this.updateManifest(this.manifest$);
-        this.manifest$ = { ...this.manifest };
+    this.manifest$ = { ...this.manifest };
+  }
+
+  public onChangeSimpleInput(): void {
+    this.updateManifest(this.manifest$);
+    this.manifest$ = { ...this.manifest };
+  }
+
+  public onClickRemoveIcon(icon: generator.Icon): void {
+    this.removeIcon(icon);
+  }
+
+  public onClickAddIcon(): void {
+    try {
+      this.addIconFromUrl(this.newIconSrc);
+    } catch (e) {
+      this.error = e;
+    }
+  }
+
+  public onFileIconChange(e: Event): void {
+    const target = e.target as HTMLInputElement;
+
+    if (!target.files) {
+      return;
     }
 
-    public onClickRemoveIcon(icon: generator.Icon): void {
-        this.removeIcon(icon);
-    }
+    this.iconFile = target.files[0];
+  }
 
-    public onClickAddIcon(): void {
-        try {
-            this.addIconFromUrl(this.newIconSrc);
-        } catch (e) {
-            this.error = e;
-        }
-    }
-
-    public onFileIconChange(e: Event): void {
-        const target = e.target as HTMLInputElement;
-
-        if (!target.files) {
-            return;
-        }
-
-        this.iconFile = target.files[0];
-    }
-
-    public getIcons(): string {
-        let icons = this.icons.map(icon => {
-            return `
+  public getIcons(): string {
+    let icons = this.icons.map(icon => {
+      return `
     {
       "src": "${icon.src}",
       "sizes": "${icon.sizes}"
     },`;
-        });
-        return icons.toString().slice(0, -1);
-    }
+    });
+    return icons.toString().slice(0, -1);
+  }
 
-    public getCode(): string | null {
-        return this.manifest ? `{
+  public getCode(): string | null {
+    return this.manifest
+      ? `{
   "dir": "${this.manifest.dir}",
   "lang": "${this.manifest.lang}",
   "name": "${this.manifest.name}",
@@ -300,46 +298,46 @@ export default class extends Vue {
   "prefer_related_applications": "${this.manifest.prefer_related_applications}",
   "icons": [${this.getIcons()}
   ]
-}` : null;
+}`
+      : null;
+  }
+
+  public onClickUploadIcon(): void {
+    (this.$refs.iconsModal as Modal).show();
+  }
+
+  public async onSubmitIconModal(): Promise<void> {
+    const $iconsModal = this.$refs.iconsModal as Modal;
+
+    if (!this.iconFile) {
+      return;
     }
 
-    public onClickUploadIcon(): void {
-        (this.$refs.iconsModal as Modal).show();
+    $iconsModal.showLoading();
+
+    if (this.iconCheckMissing) {
+      await this.generateMissingImages(this.iconFile);
+    } else {
+      await this.uploadIcon(this.iconFile);
     }
 
-    public async onSubmitIconModal(): Promise<void> {
-        const $iconsModal = (this.$refs.iconsModal as Modal);
+    $iconsModal.hide();
+    $iconsModal.hideLoading();
+    this.iconFile = null;
+  }
 
-        if (!this.iconFile) {
-            return;
-        }
-
-        $iconsModal.showLoading();
-
-        if (this.iconCheckMissing) {
-            await this.generateMissingImages(this.iconFile);
-        } else {
-            await this.uploadIcon(this.iconFile);
-        }
-
-        $iconsModal.hide();
-        $iconsModal.hideLoading();
-        this.iconFile = null;
-    }
-
-    public onCancelIconModal(): void {
-        this.iconFile = null;
-    }
+  public onCancelIconModal(): void {
+    this.iconFile = null;
+  }
 }
 </script>
 
 <style lang="scss" scoped>
-@import '~assets/scss/base/variables';
+@import "~assets/scss/base/variables";
 
 .generate {
-    &-code {
-        margin-top: -2rem;
-    }
+  &-code {
+    margin-top: -2rem;
+  }
 }
-
 </style>
