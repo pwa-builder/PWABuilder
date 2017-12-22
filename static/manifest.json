@@ -1,0 +1,76 @@
+{
+    "dir": "ltr",
+    "lang": "de",
+    "name": "Progressive Web Apps Builder",
+    "scope": "/",
+    "display": "browser",
+    "start_url": "http://www.pwabuilder.com/",
+    "short_name": "PWABuilder",
+    "theme_color": "#1FC2C8",
+    "description": "All the tools you need to build and deploy your Progressive Web Apps.",
+    "orientation": "any",
+    "background_color": "#1FC2C8",
+    "related_applications": [],
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "/images/assets/icons/ms-icon-144x144-487a503e5cb29bbe0df7296db4093b7e.png",
+            "type": "image/png",
+            "sizes": "144x144"
+        },
+        {
+            "src": "/images/favicon.ico",
+            "sizes": "16x16"
+        },
+        {
+            "src": "/images/assets/icons/apple-icon-06144a2a7b5101d447ecb4832502e73e.png",
+            "type": "image/png",
+            "sizes": "120x120"
+        },
+        {
+            "src": "/images/assets/icons/apple-icon-57x57-b82ef058b133f3197df61c326fa7cd6d.png",
+            "sizes": "57x57",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/assets/icons/apple-icon-60x60-b66cbd77323ac1bf15ad29a64ad5827f.png",
+            "sizes": "60x60",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/assets/icons/apple-icon-72x72-66bbf8447788cee426eebcddfa8eede8.png",
+            "sizes": "72x72",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/assets/icons/apple-icon-76x76-8e88034967133f6a0454fe32e2070ffd.png",
+            "sizes": "76x76",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/assets/icons/apple-icon-114x114-a2731f540851db0ed9fb4a7c74e2c6ce.png",
+            "sizes": "114x114",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/assets/icons/apple-icon-120x120-06144a2a7b5101d447ecb4832502e73e.png",
+            "sizes": "120x120",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/assets/icons/apple-icon-144x144-487a503e5cb29bbe0df7296db4093b7e.png",
+            "sizes": "144x144",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/assets/icons/apple-icon-152x152-b600c0b40a21bbb9f8c1d18acde168e9.png",
+            "sizes": "152x152",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/assets/icons/apple-icon-180x180-f0f5be1ded11c7ec66b00dd23c277a5d.png",
+            "sizes": "180x180",
+            "type": "image/png"
+        }
+    ]
+}
