@@ -109,8 +109,8 @@ const ServiceworkerAction = namespace(serviceworker.name, Action);
 export default class extends Vue {
     public isBuilding = false;
     public serviceworker$: number | null = null;
+    public error: string | null = null;
 
-    @ServiceworkerState error: string;
     @ServiceworkerState serviceworker: number;
     @ServiceworkerState serviceworkerPreview: string;
     @ServiceworkerState webPreview: string;
@@ -125,7 +125,11 @@ export default class extends Vue {
 
     public async download(): Promise<void> {
         this.isBuilding = true;
-        await this.downloadServiceWorker(this.serviceworker$);
+        try {
+            await this.downloadServiceWorker(this.serviceworker$);
+        } catch (e) {
+            this.error = e;
+        }
         if (this.archive) {
             window.location.href = this.archive;
         }
@@ -135,7 +139,11 @@ export default class extends Vue {
 
     @Watch('serviceworker$')
     async onServiceworker$Changed() {
-        await this.getCode(this.serviceworker$);
+        try {
+            await this.getCode(this.serviceworker$);
+        } catch (e) {
+            this.error = e;
+        }
     }
 }
 

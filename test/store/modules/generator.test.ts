@@ -65,7 +65,7 @@ describe('generator', () => {
             expect(actionContext.commit).to.have.been.calledWith(generator.types.SET_DEFAULTS_MANIFEST);
         });
 
-        it('should throw an if params are incorrect and API respond with error', async () => {
+        it('should throw an error if params are incorrect and API respond with error', async () => {
             const url = 'http://microsoft.com';
             const status = 500;
             actionContext.state.url = url;

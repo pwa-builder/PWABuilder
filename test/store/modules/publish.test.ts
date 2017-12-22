@@ -38,7 +38,7 @@ describe('publish', () => {
             expect(actionContext.commit).to.have.been.calledWith(publish.types.UPDATE_ARCHIVELINK);
         });
 
-        it('should update error if params are incorrect and API respond with error', async () => {
+        it('should throw an error if params are incorrect and API respond with error', () => {
             const manifestId = '-1';
             const serviceworker = -1;
             const platform = 'web';
@@ -49,19 +49,11 @@ describe('publish', () => {
 
             axiosMock.onPost(`${process.env.apiUrl}/manifests/${manifestId}/build?ids=${serviceworker}`, {"platforms":["web"],"dirSuffix":"web"}).reply(status);
 
-            await actions.build(actionContext, platform)
-            .catch(e => {
-                expect(e.response.status).to.be.equal(status);
-                expect(actionContext.commit).to.have.been.calledWith(publish.types.UPDATE_ERROR);
-            });
-
-            expect(actionContext.commit).to.not.have.been.calledWith(publish.types.UPDATE_ARCHIVELINK);
+            expect(actions.build(actionContext, platform)).to.eventually.throw();
         });
 
-        it('should update error if platform parameter is empty', async () => {
-            await actions.build(actionContext, '');
-
-            expect(actionContext.commit).to.have.been.calledWith(publish.types.UPDATE_ERROR);
+        it('should throw an error if platform parameter is empty', () => {
+            expect(actions.build(actionContext, '')).to.eventually.throw();
         });
     });
 
@@ -98,25 +90,18 @@ describe('publish', () => {
 
             axiosMock.onPost(`${process.env.apiUrl}/manifests/${manifestId}/appx`).reply(status);
 
-            await actions.buildAppx(actionContext, params)
-            .catch(e => {
-                expect(e.response.status).to.be.equal(status);
-                expect(actionContext.commit).to.have.been.calledWith(publish.types.UPDATE_APPXERROR);
-            });
-
-            expect(actionContext.commit).to.not.have.been.calledWith(publish.types.UPDATE_APPXLINK);
+            expect(actions.buildAppx(actionContext, params)).to.eventually.throw();
         });
 
-        it('should update error if platform parameter is empty', async () => {
+        it('should update error if platform parameter is empty', () => {
             const params = {
                 publisher: null,
                 publisher_id: null,
                 package: null,
                 version: null
             };
-            await actions.buildAppx(actionContext, params);
 
-            expect(actionContext.commit).to.have.been.calledWith(publish.types.UPDATE_APPXERROR);
+            expect(actions.buildAppx(actionContext, params)).to.eventually.throw();
         });
 
         afterEach(() => {
