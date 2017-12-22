@@ -14,19 +14,19 @@
                     <label class="l-generator-label">{{ $t("generate.name") }}
                         <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#name-member" target="_blank">[?]</a>
                     </label>
-                    <input class="l-generator-input" v-model="manifest$.name" type="text">
+                    <input class="l-generator-input" v-model="manifest$.name" @change="onChangeSimpleInput()" type="text">
                 </div>
                 <div class="l-generator-field">
                     <label class="l-generator-label">{{ $t("generate.short_name") }}
                         <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#short_name-member" target="_blank">[?]</a>
                     </label>
-                    <input class="l-generator-input" v-model="manifest$.short_name" name="short_name" type="text">
+                    <input class="l-generator-input" v-model="manifest$.short_name" @change="onChangeSimpleInput()" name="short_name" type="text">
                 </div>
                 <div class="l-generator-field">
                     <label class="l-generator-label">{{ $t("generate.description") }}
                         <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#description-member" target="_blank">[?]</a>
                     </label>
-                    <input class="l-generator-input" v-model="manifest$.description" name="description" type="text">
+                    <input class="l-generator-input" v-model="manifest$.description" @change="onChangeSimpleInput()" name="description" type="text">
                 </div>
 
                 <Modal :title="$t('generate.upload_title')" ref="iconsModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
@@ -99,19 +99,19 @@
                     <label class="l-generator-label">{{ $t("generate.scope") }}
                         <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#scope-member" target="_blank">[?]</a>
                     </label>
-                    <input class="l-generator-input" v-model="manifest$.scope" type="text">
+                    <input class="l-generator-input" v-model="manifest$.scope" @change="onChangeSimpleInput()" type="text">
                 </div>
                 <div class="l-generator-field">
                     <label class="l-generator-label">{{ $t("generate.start_url") }}
                         <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#start_url-member" target="_blank">[?]</a>
                     </label>
-                    <input class="l-generator-input" v-model="manifest$.start_url" type="text">
+                    <input class="l-generator-input" v-model="manifest$.start_url" @change="onChangeSimpleInput()"type="text">
                 </div>
                 <div class="l-generator-field">
                     <label class="l-generator-label">{{ $t("generate.display") }}
                         <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#display-member" target="_blank">[?]</a>
                     </label>
-                    <select class="l-generator-input l-generator-input--select" v-model="manifest$.display">
+                    <select class="l-generator-input l-generator-input--select" v-model="manifest$.display" @change="onChangeSimpleInput()">
                         <option v-for="display in displaysNames" :value="display" :key="display">{{display}}</option>
                     </select>
                 </div>
@@ -119,7 +119,7 @@
                     <label class="l-generator-label">{{ $t("generate.orientation") }}
                         <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#orientation-member" target="_blank">[?]</a>
                     </label>
-                    <select class="l-generator-input l-generator-input--select" v-model="manifest$.orientation">
+                    <select class="l-generator-input l-generator-input--select" v-model="manifest$.orientation" @change="onChangeSimpleInput()">
                         <option v-for="orientation in orientationsNames" :value="orientation" :key="orientation">{{orientation}}</option>
                     </select>
                 </div>
@@ -128,7 +128,7 @@
                         <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#lang-member" target="_blank">[?]</a>
                     </label>
                     <select class="l-generator-input l-generator-input--select" v-model="manifest$.lang">
-                        <option v-for="language in languagesNames" :value="language" :key="language">{{language}}</option>
+                        <option v-for="language in languagesNames" :value="language" :key="language" @change="onChangeSimpleInput()">{{language}}</option>
                     </select>
                 </div>
                 <div>
@@ -228,6 +228,7 @@ export default class extends Vue {
 
     @GeneratorActions removeIcon;
     @GeneratorActions addIconFromUrl;
+    @GeneratorActions updateManifest;
     @GeneratorActions uploadIcon;
     @GeneratorActions generateMissingImages;
 
@@ -238,6 +239,11 @@ export default class extends Vue {
             });
         }
 
+        this.manifest$ = { ...this.manifest };
+    }
+
+    public onChangeSimpleInput(): void {
+        this.updateManifest(this.manifest$);
         this.manifest$ = { ...this.manifest };
     }
 

@@ -16,6 +16,7 @@ export const types = {
     SET_ORIENTATIONS: 'SET_ORIENTATIONS',
     UPDATE_LINK: 'UPDATE_LINK',
     UPDATE_WITH_MANIFEST: 'UPDATE_WITH_MANIFEST',
+    UPDATE_MANIFEST: 'UPDATE_MANIFEST',
     OVERWRITE_MANIFEST: 'OVERRIDE_MANIFEST',
     SET_DEFAULTS_MANIFEST: 'SET_DEFAULTS_MANIFEST',
     UPDATE_ICONS: 'UPDATE_ICONS',
@@ -179,6 +180,8 @@ export const helpers = {
 };
 
 export interface Actions<S, R> extends ActionTree<S, R> {
+    update(context: ActionContext<S, R>): void;
+    updateManifest(context: ActionContext<S, R>, manifest: Manifest): void;
     updateLink(context: ActionContext<S, R>, url: string): void;
     getManifestInformation(context: ActionContext<S, R>): Promise<void>;
     removeIcon(context: ActionContext<S, R>, icon: Icon): void;
@@ -195,6 +198,27 @@ export interface Actions<S, R> extends ActionTree<S, R> {
 }
 
 export const actions: Actions<State, RootState> = {
+    async update({ commit, state, rootState }): Promise<void> {
+        if (!state.manifestId) {
+            // Create
+            await this.$axios.$post(apiUrl, { siteUrl: state.url});
+        }
+
+         // Update
+         const result = await this.$axios.$put(`${apiUrl}/${state.manifestId}`, state.manifest);
+
+        commit(types.UPDATE_WITH_MANIFEST, result);
+        commit(types.SET_DEFAULTS_MANIFEST, {
+            displays: rootState.displays ? rootState.displays[0].name : '',
+            orientations: rootState.orientations ? rootState.orientations[0].name : ''
+        });
+    },
+
+    updateManifest({ commit, dispatch }, manifest): void {
+        commit(types.UPDATE_MANIFEST, manifest);
+        dispatch('update');
+    },
+
     updateLink({ commit }, url: string): void {
         if (url && !url.startsWith('http')) {
             url = 'https://' + url;
@@ -236,7 +260,7 @@ export const actions: Actions<State, RootState> = {
         });
     },
 
-    removeIcon({ commit, state }, icon: Icon): void {
+    removeIcon({ commit, state, dispatch }, icon: Icon): void {
         let icons = [...state.icons];
         const index = icons.findIndex(i => {
             return i.src === icon.src;
@@ -246,13 +270,15 @@ export const actions: Actions<State, RootState> = {
             icons.splice(index, 1);
             commit(types.UPDATE_ICONS, icons);
         }
+
+        dispatch('update');
     },
 
     resetStates({ commit }): void {
         commit(types.RESET_STATES);
     },
 
-    async addIconFromUrl({ commit, state }, newIconSrc: string): Promise<void> {
+    async addIconFromUrl({ commit, state, dispatch }, newIconSrc: string): Promise<void> {
         let src = newIconSrc;
 
         if (!src) {
@@ -271,27 +297,30 @@ export const actions: Actions<State, RootState> = {
         try {
             const sizes = await helpers.getImageIconSize(src);
             commit(types.ADD_ICON, { src, sizes: `${sizes.width}x${sizes.height}` });
+            dispatch('update');
         } catch (e) {
             throw e;
         }
     },
 
-    async uploadIcon({ commit, state }, iconFile: File): Promise<void> {
+    async uploadIcon({ commit, state, dispatch }, iconFile: File): Promise<void> {
         const dataUri: string = await helpers.getImageDataURI(iconFile);
         const sizes = await helpers.getImageIconSize(dataUri);
         commit(types.ADD_ICON, { src: dataUri, sizes: `${sizes.width}x${sizes.height}` });
+        dispatch('update');
     },
 
-    async generateMissingImages({ commit, state }, iconFile: File): Promise<void> {
+    async generateMissingImages({ commit, state, dispatch }, iconFile: File): Promise<void> {
         let formData = new FormData();
         formData.append('file', iconFile);
 
         const result = await this.$axios.$post(`${apiUrl}/${state.manifestId}/generatemissingimages`, formData);
         commit(types.OVERWRITE_MANIFEST, result);
         commit(types.ADD_ASSETS, result.assets);
+        dispatch('update');
     },
 
-    addRelatedApplication({ commit }, payload: RelatedApplication): void {
+    addRelatedApplication({ commit, dispatch }, payload: RelatedApplication): void {
         const errors = helpers.hasRelatedApplicationErrors(payload);
 
         if (errors) {
@@ -299,17 +328,20 @@ export const actions: Actions<State, RootState> = {
         }
 
         commit(types.ADD_RELATED_APPLICATION, payload);
+        dispatch('update');
     },
 
-    removeRelatedApplication({ commit }, id: string): void {
+    removeRelatedApplication({ commit, dispatch }, id: string): void {
         commit(types.REMOVE_RELATED_APPLICATION, id);
+        dispatch('update');
     },
 
-    changePreferRelatedApplication({ commit }, status: boolean): void {
+    changePreferRelatedApplication({ commit, dispatch }, status: boolean): void {
         commit(types.UPDATE_PREFER_RELATED_APPLICATION, state);
+        dispatch('update');
     },
 
-    addCustomMember({ commit, state }, payload: CustomMember): void {
+    addCustomMember({ commit, state, dispatch }, payload: CustomMember): void {
 
         if (state.members.find(member => member.name === payload.name)) {
             throw 'error.custom_value';
@@ -322,16 +354,18 @@ export const actions: Actions<State, RootState> = {
         try {
             payload.value = JSON.parse(payload.value);
             commit(types.ADD_CUSTOM_MEMBER, payload);
+            dispatch('update');
         } catch (e) {
             throw 'error.parsing_value';
         }
     },
 
-    removeCustomMember({ commit }, name: string): void {
+    removeCustomMember({ commit, dispatch }, name: string): void {
         commit(types.REMOVE_CUSTOM_MEMBER, name);
+        dispatch('update');
     },
 
-    updateColor({ commit }, payload: ColorOptions): void {
+    updateColor({ commit, dispatch }, payload: ColorOptions): void {
         let color = payload.colorOption;
 
         if (color === helpers.COLOR_OPTIONS.pick) {
@@ -339,12 +373,17 @@ export const actions: Actions<State, RootState> = {
         }
 
         commit(types.UPDATE_COLOR, color);
+        dispatch('update');
     }
 };
 
 export const mutations: MutationTree<State> = {
     [types.UPDATE_LINK](state, url: string): void {
         state.url = url;
+    },
+
+    [types.UPDATE_MANIFEST](state, manifest: Manifest): void {
+        state.manifest = manifest;
     },
 
     [types.UPDATE_WITH_MANIFEST](state, result): void {
