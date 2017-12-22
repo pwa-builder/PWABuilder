@@ -3,10 +3,12 @@
   "private": true,
   "dependencies": {
     "@nuxtjs/axios": "^4.5.0",
+    "clipboard": "^1.7.1",
     "gsap": "^1.19.1",
     "normalize-scss": "^7.0.0",
     "nuxt": "latest",
     "nuxt-class-component": "^1.0.3",
+    "prismjs": "^1.9.0",
     "tachyons": "^4.7.0",
     "vue": "~2.5.1",
     "vue-class-component": "^6.0.0",

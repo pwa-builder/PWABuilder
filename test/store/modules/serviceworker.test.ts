@@ -33,26 +33,51 @@ describe('serviceworker', () => {
             expect(actionContext.commit).to.have.been.calledWith(serviceworker.types.UPDATE_ARCHIVE);
         });
 
-        it('should update error if params are incorrect and API respond with error', async () => {
+        it('should throw an error if params are incorrect and API respond with error', () => {
             const serviceworkerId = -1;
             const status = 500;
 
             axiosMock.onGet(`${process.env.apiUrl}/serviceworkers?ids=${serviceworkerId}`).reply(status, {});
 
-            await actions.downloadServiceWorker(actionContext, serviceworkerId)
-            .catch(e => {
-                expect(e.response.status).to.be.equal(status);
-                expect(actionContext.commit).to.have.been.calledWith(serviceworker.types.UPDATE_ERROR);
-            });
+            expect(actions.downloadServiceWorker(actionContext, serviceworkerId)).to.eventually.throw();
+        });
 
-            expect(actionContext.commit).to.not.have.been.calledWith(serviceworker.types.UPDATE_ARCHIVE);
+        it('should throw an error if we send null serviceworkerId param', () => {
+            expect(actions.downloadServiceWorker(actionContext, 0)).to.eventually.throw();
+        });
+
+        afterEach(() => {
+            axiosMock.reset();
         });
     });
 
-    describe('when download serviceworker with null serviceworkerId', () => {
-        it('should return error message', async () => {
-            await actions.downloadServiceWorker(actionContext, 0);
-            expect(actionContext.commit).to.have.been.calledWith(serviceworker.types.UPDATE_ERROR);
+    describe('when get code', () => {
+        it('should change code', async () => {
+            const serviceworkerId = 1;
+            const status = 200;
+            axiosMock.onGet(`${process.env.apiUrl}/serviceworkers/previewcode?ids=${serviceworkerId}`).reply(status, {});
+
+            await actions.getCode(actionContext, serviceworkerId);
+
+            expect(actionContext.commit).to.have.been.calledWith(serviceworker.types.UPDATE_SERVICEWORKERPREVIEW);
+            expect(actionContext.commit).to.have.been.calledWith(serviceworker.types.UPDATE_WEBPREVIEW);
+        });
+
+        it('should update error if params are incorrect and API respond with error', () => {
+            const serviceworkerId = -1;
+            const status = 500;
+
+            axiosMock.onGet(`${process.env.apiUrl}/serviceworkers/previewcode?ids=${serviceworkerId}`).reply(status, {});
+
+            expect(actions.getCode(actionContext, serviceworkerId)).to.eventually.throw();
+        });
+
+        it('should return error message if we send null serviceworkerId param', () => {
+            expect(actions.getCode(actionContext, 0)).to.eventually.throw();
+        });
+
+        afterEach(() => {
+            axiosMock.reset();
         });
     });
 

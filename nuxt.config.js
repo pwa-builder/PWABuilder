@@ -16,10 +16,10 @@ module.exports = {
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
   },
   loading: { color: '#1FC2C8' },
-  css: ['tachyons/css/tachyons.min.css', '~/assets/scss/app.scss'],
+  css: ['tachyons/css/tachyons.min.css', 'prismjs/themes/prism-okaidia.css', '~/assets/scss/app.scss'],
   build: {
     extractCSS: true,
-    vendor: ['gsap', 'vuex-class', 'nuxt-class-component', 'vue-i18n'],
+    vendor: ['gsap', 'vuex-class', 'nuxt-class-component', 'vue-i18n', 'prismjs'],
     plugins:[
       new sassLintPlugin({
         glob: '?(assets|components|layouts|pages)/**/*.s?(a|c)ss',

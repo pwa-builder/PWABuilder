@@ -153,11 +153,20 @@
                     </div>
                 </div>
             </div>
+            <div class="generate-code pure-u-1 pure-u-md-1-2">
+                <CodeViewer :code="getCode()" :title="$t('generate.w3c_manifest')">
+                    <nuxt-link :to="$i18n.path('serviceworker')" class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header">
+                        {{ $t("serviceworker.next_step") }}
+                    </nuxt-link>
+                </CodeViewer>
+            </div>
         </div>
     </div>
 
     <div class="l-generator-buttons l-generator-buttons--centered">
-        <button class="pwa-button">{{ $t("generate.next_step") }}</button>
+        <nuxt-link :to="$i18n.path('serviceworker')" class="pwa-button">
+                {{ $t("generate.next_step") }}
+            </nuxt-link>
     </div>
     <TwoWays/>
 </section>
@@ -171,6 +180,7 @@ import { Action, State, Getter, namespace } from 'vuex-class';
 import GeneratorMenu from '~/components/GeneratorMenu';
 import TwoWays from '~/components/TwoWays';
 import Modal from '~/components/Modal';
+import CodeViewer from '~/components/CodeViewer';
 import RelatedApplications from '~/components/RelatedApplications';
 import CustomMembers from '~/components/CustomMembers';
 import ColorSelector from '~/components/ColorSelector';
@@ -187,6 +197,7 @@ const GeneratorActions = namespace(generator.name, Action);
         RelatedApplications,
         CustomMembers,
         ColorSelector,
+        CodeViewer,
         Modal
     }
 })
@@ -241,6 +252,37 @@ export default class extends Vue {
         this.iconFile = target.files[0];
     }
 
+    public getIcons(): string {
+        let icons = this.icons.map(icon => {
+            return `
+    {
+      "src": "${icon.src}",
+      "sizes": "${icon.sizes}"
+    },`;
+        });
+        return icons.toString().slice(0, -1);
+    }
+
+    public getCode(): string | null {
+        return this.manifest ? `{
+  "dir": "${this.manifest.dir}",
+  "lang": "${this.manifest.lang}",
+  "name": "${this.manifest.name}",
+  "scope": "${this.manifest.scope}",
+  "display": "${this.manifest.display}",
+  "start_url": "${this.manifest.start_url}",
+  "short_name": "${this.manifest.short_name}",
+  "theme_color": "${this.manifest.theme_color}",
+  "description": "${this.manifest.description}",
+  "orientation": "${this.manifest.orientation}",
+  "background_color": "${this.manifest.background_color}",
+  "related_applications": "${this.manifest.related_applications}",
+  "prefer_related_applications": "${this.manifest.prefer_related_applications}",
+  "icons": [${this.getIcons()}
+  ]
+}` : null;
+    }
+
     public onClickUploadIcon(): void {
         (this.$refs.iconsModal as Modal).show();
     }
@@ -270,3 +312,14 @@ export default class extends Vue {
     }
 }
 </script>
+
+<style lang="scss" scoped>
+@import '~assets/scss/base/variables';
+
+.generate {
+    &-code {
+        margin-top: -2rem;
+    }
+}
+
+</style>
