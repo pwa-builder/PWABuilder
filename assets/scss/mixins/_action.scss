@@ -1,43 +1,44 @@
 @import '../base/variables';
 
 @mixin action-link($primary, $secondary, $size, $padded: true, $inverse: false) {
-    color: $primary;
-    display: inline-block;
-    position: relative;
+  color: $primary;
+  display: inline-block;
+  position: relative;
+  transition: color $animation-speed-default;
+
+  @if ($padded) {
+    padding: 0 .5rem;
+  }
+
+  &::before {
+    background-color: $secondary;
+    border-radius: 1rem;
+    bottom: -.35rem;
+    content: '';
+    display: block;
+    height: $size;
+    left: 0;
+    position: absolute;
+    transition: width $animation-speed-default $animation-ease-default;
+    width: 0;
+
+    @if ($inverse) {
+      width: 100% !important;
+    }
+  }
+
+  &.is-active,
+  &:hover {
+    color: darken($secondary, 10%);
     transition: color $animation-speed-default;
 
-    @if ($padded) {
-        padding: 0 .5rem;
+    &::before {
+      transition: width $animation-speed-slow $animation-ease-vibrant;
+      width: 100%;
+
+      @if ($inverse) {
+        width: 0 !important;
+      }
     }
-
-    &:before {
-        background-color: $secondary;
-        border-radius: 1rem;
-        bottom: -.35rem;
-        content: '';
-        display: block;
-        height: $size;
-        left: 0;
-        position: absolute;
-        transition: width $animation-speed-default $animation-ease-default;
-        width: 0;
-
-        @if ($inverse) {
-            width: 100% !important;
-        }
-    }
-
-    &.is-active,
-    &:hover {
-        color: darken($secondary, 10%);
-        transition: color $animation-speed-default;
-
-        &:before {
-            transition: width $animation-speed-slow $animation-ease-vibrant;
-            width: 100%;
-            @if ($inverse) {
-                width: 0 !important;
-            }
-        }
-    }
+  }
 }

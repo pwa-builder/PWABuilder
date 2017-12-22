@@ -1,17 +1,18 @@
 @import '../../node_modules/normalize-scss/sass/normalize/variables';
 @import '../../node_modules/normalize-scss/sass/normalize/vertical-rhythm';
 @import '../../node_modules/normalize-scss/sass/normalize/normalize-mixin';
+
 @include normalize;
 
 *,
 *::before,
 *::after {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 a,
 a:active,
 a:hover,
 a:visited {
-    text-decoration: none;
+  text-decoration: none;
 }

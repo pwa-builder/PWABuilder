@@ -30,8 +30,8 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'nuxt-class-component'
+import Vue from 'vue';
+import Component from 'nuxt-class-component';
 import { Prop } from 'vue-property-decorator';
 
 @Component()
@@ -58,7 +58,7 @@ export default class extends Vue {
     &-header {
         background-color: $color-brand;
         color: $color-foreground-darker;
-        font-family: 'Bitter';
+        font-family: Bitter;
         font-size: $font-size-l;
         margin-bottom: 4vw;
         padding: 1rem 0;
@@ -67,7 +67,7 @@ export default class extends Vue {
     }
 
     &-info {
-        font-family: 'Bitter';
+        font-family: Bitter;
         font-size: $font-size-m;
         margin: 2rem auto;
         text-align: center;
@@ -98,7 +98,7 @@ export default class extends Vue {
         color: $color-foreground-darker;
         cursor: pointer;
         display: inline-block;
-        font-family: 'Bitter';
+        font-family: Bitter;
         font-size: $font-size-m;
         height: $tab-height;
         line-height: $font-size-m;

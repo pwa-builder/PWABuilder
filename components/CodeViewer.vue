@@ -38,18 +38,18 @@ export default class extends Vue {
         }
         let clipboard = new Clipboard(this.$refs.code);
         clipboard.on('success', e => {
-            this.copyText= 'copied';
+            this.copyText = 'copied';
         });
 
         clipboard.on('error', e => {
-            this.copyText= 'error';
+            this.copyText = 'error';
         });
     }
 
     @Watch('code')
     onCodeChanged() {
         if (this.code) {
-            this.copyText= 'copy';
+            this.copyText = 'copy';
             this.highlightedCode = Prism.highlight(this.code, Prism.languages.javascript);
         }
     }
@@ -68,7 +68,7 @@ export default class extends Vue {
 
     &-title {
         color: $color-foreground-darker;
-        font-family: 'Bitter';
+        font-family: Bitter;
         font-size: $font-size-l;
     }
 

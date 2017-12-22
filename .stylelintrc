@@ -1,0 +1,17 @@
+{
+  "processors": ["stylelint-processor-html"],
+  "extends": "stylelint-config-standard",
+  "plugins": [
+    "stylelint-order",
+    "stylelint-scss"
+  ],
+  "rules": {
+    "order/properties-alphabetical-order": true,
+    "at-rule-no-unknown": null,
+    "number-leading-zero": "never",
+    "font-family-no-missing-generic-family-keyword": null,
+    "color-hex-case": "upper",
+    "color-hex-length": "long",
+    "no-missing-end-of-source-newline": null
+  }
+}

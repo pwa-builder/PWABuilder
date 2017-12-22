@@ -31,8 +31,8 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'nuxt-class-component'
+import Vue from 'vue';
+import Component from 'nuxt-class-component';
 
 @Component()
 export default class extends Vue {}
@@ -50,7 +50,7 @@ export default class extends Vue {}
     }
 
     &-subtitle {
-        font-family: 'Bitter';
+        font-family: Bitter;
         font-size: $font-size-l;
         font-weight: $font-weight-bold;
         margin: .5rem 0 0 0;
@@ -95,7 +95,7 @@ export default class extends Vue {}
     &-action {
         @include action-link ( $color-complementary-bright, $color-complementary, .2rem, false);
 
-        font-family: 'Bitter';
+        font-family: Bitter;
         font-size: $font-size-l;
         font-weight: $font-weight-regular;
     }

@@ -4,7 +4,6 @@
 // Fonts
 @include font-include(Bitter, Regular, $font-weight-regular, normal);
 @include font-include(Bitter, Bold, $font-weight-bold, normal);
-
 @include font-include(FiraSans, Light, $font-weight-light, normal);
 @include font-include(FiraSans, Regular, $font-weight-regular, normal);
 @include font-include(FiraSans, Bold, $font-weight-bold, normal);

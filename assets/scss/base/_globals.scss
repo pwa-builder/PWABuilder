@@ -2,23 +2,23 @@
 
 html,
 body {
-    $font-size: 16px;
+  $font-size: 16px;
 
-    background: $color-background-bright;
-    font-family: Bitter;
-    font-size: $font-size;
-    height: 100%;
-    width: 100%;
+  background: $color-background-bright;
+  font-family: Bitter;
+  font-size: $font-size;
+  height: 100%;
+  width: 100%;
 
-    @media screen and (max-width: $media-screen-m) {
-        font-size: $font-size * .875;
-    }
+  @media screen and (max-width: $media-screen-m) {
+    font-size: $font-size * .875;
+  }
 
-    @media screen and (max-width: $media-screen-s) {
-        font-size: $font-size * .75;
-    }
+  @media screen and (max-width: $media-screen-s) {
+    font-size: $font-size * .75;
+  }
 }
 
 .stop-scroll {
-    overflow: hidden;
+  overflow: hidden;
 }

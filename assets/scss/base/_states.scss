@@ -2,13 +2,13 @@
 @import 'mixins/medias';
 
 .is {
-    &-hidden {
-        display: none;
-    }
+  &-hidden {
+    display: none;
+  }
 
-    &-disabled {
-        @include medias {
-            opacity: .5;
-        }
+  &-disabled {
+    @include medias {
+      opacity: .5;
     }
+  }
 }

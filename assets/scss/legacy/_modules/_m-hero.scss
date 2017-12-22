@@ -1,64 +1,64 @@
 @import '../../base/variables';
 
 .pwa-hero {
-    align-items: center;
-    display: flex;
-    height: 100vh;
-    justify-content: center;
-    max-height: 530px;
-    min-height: 250px;
-    overflow: hidden;
-    position: relative;
+  align-items: center;
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  max-height: 530px;
+  min-height: 250px;
+  overflow: hidden;
+  position: relative;
 
-    &-background {
-        background-image: url('~/assets/images/hero_poster.png');
-        background-size: cover;
-        height: 100%;
-        left: 0;
-        position: absolute;
-        top: 0;
-        width: 100%;
-        z-index: -1;
+  &-background {
+    background-image: url('~/assets/images/hero_poster.png');
+    background-size: cover;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: -1;
+  }
+
+  &-video {
+    left: 0;
+    position: absolute;
+    top: 0;
+    z-index: -1;
+
+    @media screen and (max-width: $media-screen-xs) {
+      display: none;
     }
+  }
 
-    &-video {
-        left: 0;
-        position: absolute;
-        top: 0;
-        z-index: -1;
+  &-row {
+    max-width: 900px;
+    width: auto;
+  }
 
-        @media screen and (max-width: $media-screen-xs) {
-            display: none;
-        }
-    }
+  &-title {
+    color: $color-foreground-darker;
+    font-family: Bitter;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-regular;
+    margin: 0 auto;
+    margin-bottom: $font-size-xl;
+    max-width: 90%;
+    text-align: center;
+  }
 
-    &-row {
-        max-width: 900px;
-        width: auto;
-    }
+  &-actions {
+    text-align: center;
+  }
 
-    &-title {
-        color: $color-foreground-darker;
-        font-family: 'Bitter';
-        font-size: $font-size-xl;
-        font-weight: $font-weight-regular;
-        margin: 0 auto;
-        margin-bottom: $font-size-xl;
-        max-width: 90%;
-        text-align: center;
-    }
+  &-block {
+    display: block;
+  }
 
-    &-actions {
-        text-align: center;
-    }
+  &-link {
+    @include action-link ($color-foreground-darker, $color-foreground-darker, .1rem, true, true);
 
-    &-block {
-        display: block;
-    }
-
-    &-link {
-        @include action-link ($color-foreground-darker, $color-foreground-darker, .1rem, true, true);
-
-        padding-top: .5rem;
-    }
+    padding-top: .5rem;
+  }
 }

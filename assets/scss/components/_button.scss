@@ -1,126 +1,126 @@
 @import '../base/variables';
 
 @mixin button-shadow($rad) {
-    box-shadow: 0 $rad 2 * $rad 0 rgba($color-background-darkest, .2);
-    transition: all $animation-speed-default $animation-ease-default;
+  box-shadow: 0 $rad 2 * $rad 0 rgba($color-background-darkest, .2);
+  transition: all $animation-speed-default $animation-ease-default;
 }
 
 @mixin button-brand {
+  background-color: $color-complementary;
+  color: $color-foreground-brighter;
+
+  &:hover {
+    background-color: $color-complementary-bright;
+  }
+
+  &:active {
     background-color: $color-complementary;
-    color: $color-foreground-brighter;
-
-    &:hover {
-        background-color: $color-complementary-bright;
-    }
-
-    &:active {
-        background-color: $color-complementary;
-    }
+  }
 }
 
 .pwa-button {
-    $button-pad: .75rem;
-    $shadow: 2px;
+  $button-pad: .75rem;
+  $shadow: 2px;
 
-    @include button-brand;
+  @include button-brand;
+  @include button-shadow($shadow);
+
+  border: 0;
+  border-radius: .5rem;
+  cursor: pointer;
+  display: inline-block;
+  font-family: Bitter;
+  font-size: $font-size-l;
+  overflow: hidden;
+  padding: $button-pad 3rem;
+  text-align: center;
+
+  &:hover {
+    @include button-shadow($shadow * 2);
+  }
+
+  &:active {
     @include button-shadow($shadow);
+  }
 
-    border: 0;
-    border-radius: .5rem;
-    cursor: pointer;
-    display: inline-block;
-    font-family: 'Bitter';
-    font-size: $font-size-l;
-    overflow: hidden;
-    padding: $button-pad 3rem;
-    text-align: center;
+  &:focus {
+    outline: 0;
+  }
+
+  @media screen and (max-width: $media-screen-l) {
+    font-size: $font-size-l * .9;
+    padding: $button-pad 1rem;
+  }
+
+  &--simple {
+    background-color: $color-background-semidark;
+    font-size: $font-size-m;
 
     &:hover {
-        @include button-shadow($shadow * 2);
+      background-color: lighten($color-background-semidark, 5%);
     }
 
     &:active {
-        @include button-shadow($shadow);
+      background-color: $color-background-semidark;
     }
 
-    &:focus {
-        outline: 0;
+    @media screen and (max-width: $media-screen-xxl) {
+      padding: $button-pad 1.5rem;
+    }
+  }
+
+  // To use with simple
+  &--brand {
+    @include button-brand;
+  }
+
+  &--warning {
+    background-color: $color-error;
+    color: $color-foreground-brighter;
+
+    &:hover {
+      background-color: $color-error-bright;
     }
 
-    @media screen and (max-width: $media-screen-l) {
-        font-size: $font-size-l * .9;
-        padding: $button-pad 1rem;
+    &:active {
+      background-color: $color-error;
+    }
+  }
+
+  &--text {
+    background-color: transparent;
+    border-bottom: solid .15rem $color-complementary;
+    border-radius: 0;
+    box-shadow: none;
+    color: $color-complementary;
+    font-size: $font-size-m;
+    padding: .3rem .8rem;
+
+    &:hover {
+      background-color: transparent;
+      box-shadow: none;
+      color: $color-complementary-bright;
     }
 
-    &--simple {
-        background-color: $color-background-semidark;
-        font-size: $font-size-m;
-
-        &:hover {
-            background-color: lighten($color-background-semidark, 5%);
-        }
-
-        &:active {
-            background-color: $color-background-semidark;
-        }
-
-        @media screen and (max-width: $media-screen-xxl) {
-            padding: $button-pad 1.5rem;
-        }
+    &:active {
+      background-color: transparent;
+      box-shadow: none;
+      color: $color-complementary;
     }
 
-    // To use with simple
-    &--brand {
-        @include button-brand;
+    &:disabled {
+      opacity: .5;
     }
+  }
 
-    &--warning {
-        background-color: $color-error;
-        color: $color-foreground-brighter;
+  &--right {
+    float: right;
+    margin-right: 10%;
+  }
 
-        &:hover {
-            background-color: $color-error-bright;
-        }
-
-        &:active {
-            background-color: $color-error;
-        }
-    }
-
-    &--text {
-        background-color: transparent;
-        border-bottom: solid .15rem $color-complementary;
-        border-radius: 0;
-        box-shadow: none;
-        color: $color-complementary;
-        font-size: $font-size-m;
-        padding: .3rem .8rem;
-
-        &:hover {
-            background-color: transparent;
-            box-shadow: none;
-            color: $color-complementary-bright;
-        }
-
-        &:active {
-            background-color: transparent;
-            box-shadow: none;
-            color: $color-complementary;
-        }
-
-        &:disabled {
-            opacity: .5;
-        }
-    }
-
-    &--right {
-        float: right;
-        margin-right: 10%;
-    }
-
-    &--header {
-        float: right;
-        margin-right: 1%;
-        margin-top: -.5rem;
-    }
+  &--header {
+    float: right;
+    margin-right: 1%;
+    margin-top: -.5rem;
+  }
 }

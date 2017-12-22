@@ -2,377 +2,377 @@
 @import '../mixins/action';
 
 .l-generator {
-    $step-padding: 2rem;
-    $toggle-space: -.2rem;
-    $tab-color-off: $color-brand-brighter;
-    $tab-color-on: $color-brand;
-    $tab-size: 16rem;
-    $max-size: 90%;
-    $sizec: 60%;
-    $marginc: 20%;
+  $step-padding: 2rem;
+  $toggle-space: -.2rem;
+  $tab-color-off: $color-brand-brighter;
+  $tab-color-on: $color-brand;
+  $tab-size: 16rem;
+  $max-size: 90%;
+  $sizec: 60%;
+  $marginc: 20%;
 
-    &-title {
-        font-family: 'Bitter';
-        font-size: $font-size-xl;
-        font-weight: $font-weight-bold;
-        padding-bottom: $font-size-xl / 2;
+  &-title {
+    font-family: Bitter;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    padding-bottom: $font-size-xl / 2;
 
-        &--centered {
-            text-align: center;
-        }
+    &--centered {
+      text-align: center;
+    }
+  }
+
+  &-subtitle {
+    font-family: Bitter;
+    font-size: $font-size-l;
+    font-weight: $font-weight-regular;
+
+    &--last {
+      margin-bottom: 2rem;
     }
 
-    &-subtitle {
-        font-family: 'Bitter';
-        font-size: $font-size-l;
-        font-weight: $font-weight-regular;
+    &--toggleable {
+      color: $color-foreground-darker;
+      cursor: pointer;
+      margin: .5rem 0;
+      max-width: 90%;
+      transition: color $animation-speed-default;
 
-        &--last {
-            margin-bottom: 2rem;
-        }
+      &:hover {
+        color: $color-foreground-darkest;
+        transition: color $animation-speed-default;
+      }
 
-        &--toggleable {
-            color: $color-foreground-darker;
-            cursor: pointer;
-            margin: .5rem 0;
-            max-width: 90%;
-            transition: color $animation-speed-default;
-
-            &:hover {
-                color: $color-foreground-darkest;
-                transition: color $animation-speed-default;
-            }
-
-            &:after {
-                content: '\f078';
-                display: inline-block;
-                font-family: FontAwesome;
-                font-size: 1.2rem;
-                margin-left: .5rem;
-                text-rendering: auto;
-                transform: translateY($toggle-space);
-                transition: all $animation-speed-default;
-            }
-        }
-
-        &--complementary {
-            color: $color-brand-dark;
-            margin-top: .5rem;
-        }
-    }
-
-    &-toggle {
-        display: block;
-        margin: 1rem 0;
-    }
-
-    &-togglecheck:checked ~ &-toggle &-subtitle--toggleable:after {
-        transform: translateY($toggle-space) rotate(180deg);
+      &::after {
+        content: '\f078';
+        display: inline-block;
+        font-family: FontAwesome;
+        font-size: 1.2rem;
+        margin-left: .5rem;
+        text-rendering: auto;
+        transform: translateY($toggle-space);
         transition: all $animation-speed-default;
+      }
     }
 
-    &-togglecheck ~ &-field--toggle {
-        display: none;
+    &--complementary {
+      color: $color-brand-dark;
+      margin-top: .5rem;
+    }
+  }
+
+  &-toggle {
+    display: block;
+    margin: 1rem 0;
+  }
+
+  &-togglecheck:checked ~ &-toggle &-subtitle--toggleable::after {
+    transform: translateY($toggle-space) rotate(180deg);
+    transition: all $animation-speed-default;
+  }
+
+  &-togglecheck ~ &-field--toggle {
+    display: none;
+  }
+
+  &-togglecheck:checked ~ &-field--toggle {
+    display: block;
+  }
+
+  &-step {
+    background-color: $color-background-bright;
+    color: $color-foreground-darker;
+    padding: $step-padding 0 $step-padding * 2 0;
+  }
+
+  &-align {
+    text-align: right;
+  }
+
+  &-padded {
+    padding-left: 18vw;
+
+    @media screen and (max-width: $media-screen-l) {
+      padding-left: 15vw;
     }
 
-    &-togglecheck:checked ~ &-field--toggle {
-        display: block;
+    @media screen and (max-width: $media-screen-m) {
+      padding-left: 5vw;
     }
 
-    &-step {
-        background-color: $color-background-bright;
-        color: $color-foreground-darker;
-        padding: $step-padding 0 $step-padding * 2 0;
+    @media screen and (max-width: $media-screen-s) {
+      padding-left: 0;
+    }
+  }
+
+  &-semipadded {
+    padding-left: 9vw;
+
+    @media screen and (max-width: $media-screen-l) {
+      padding-left: 6vw;
     }
 
-    &-align {
-        text-align: right;
+    @media screen and (max-width: $media-screen-m) {
+      padding-left: 2vw;
     }
 
-    &-padded {
-        padding-left: 18vw;
+    @media screen and (max-width: $media-screen-s) {
+      padding-left: 1vw;
+    }
+  }
 
-        @media screen and (max-width: $media-screen-l) {
-            padding-left: 15vw;
-        }
+  &-field {
+    margin-bottom: 1em;
+    width: 100%;
 
-        @media screen and (max-width: $media-screen-m) {
-            padding-left: 5vw;
-        }
+    &--padded {
+      padding-top: .5rem;
+    }
+  }
 
-        @media screen and (max-width: $media-screen-s) {
-            padding-left: 0;
-        }
+  &-label {
+    color: $color-foreground-darker;
+    display: block;
+    font-family: Bitter;
+    font-size: $font-size-m;
+  }
+
+  &-input {
+    background-color: $color-background-brighter;
+    border: .15rem solid $color-foreground-dark;
+    border-radius: .25rem;
+    color: $color-foreground-darker;
+    font-family: 'FiraSans';
+    font-size: $font-size-m;
+    margin: .75rem 0 1.5rem 0;
+    padding: 1rem .75rem;
+    width: $max-size;
+
+    &--select {
+      background-color: $color-background-dark;
+      cursor: pointer;
+      text-transform: capitalize;
     }
 
-    &-semipadded {
-        padding-left: 9vw;
-
-        @media screen and (max-width: $media-screen-l) {
-            padding-left: 6vw;
-        }
-
-        @media screen and (max-width: $media-screen-m) {
-            padding-left: 2vw;
-        }
-
-        @media screen and (max-width: $media-screen-s) {
-            padding-left: 1vw;
-        }
+    &--fake {
+      cursor: pointer;
+      display: inline-block;
+      width: 100%;
     }
 
-    &-field {
-        margin-bottom: 1em;
-        width: 100%;
-
-        &--padded {
-            padding-top: .5rem;
-        }
+    &--small {
+      width: 20%;
     }
 
-    &-label {
-        color: $color-foreground-darker;
-        display: block;
-        font-family: 'Bitter';
-        font-size: $font-size-m;
+    &--largest {
+      width: 100%;
     }
 
-    &-input {
-        background-color: $color-background-brighter;
-        border: .15rem solid $color-foreground-dark;
-        border-radius: .25rem;
-        color: $color-foreground-darker;
-        font-family: 'FiraSans';
-        font-size: $font-size-m;
-        margin: .75rem 0 1.5rem 0;
-        padding: 1rem .75rem;
-        width: $max-size;
+    &--tiny {
+      $margin: .5rem;
 
-        &--select {
-            background-color: $color-background-dark;
-            cursor: pointer;
-            text-transform: capitalize;
-        }
-
-        &--fake {
-            cursor: pointer;
-            display: inline-block;
-            width: 100%;
-        }
-
-        &--small {
-            width: 20%;
-        }
-
-        &--largest {
-            width: 100%;
-        }
-
-        &--tiny {
-            $margin: .5rem;
-
-            height: 2.5rem;
-            margin-right: $margin;
-            padding: 0;
-            transform: translateY($margin);
-            width: 3rem;
-        }
-
-        &:focus {
-            background-color: $color-background-brighter;
-            border-color: $color-brand;
-            outline: 0;
-        }
-
-        &:disabled,
-        &.is-disabled {
-            background-color: $color-background-dark;
-        }
+      height: 2.5rem;
+      margin-right: $margin;
+      padding: 0;
+      transform: translateY($margin);
+      width: 3rem;
     }
 
-    &-wrapper {
-        height: 4rem;
-        position: relative;
-
-        @media screen and (max-width: $media-screen-s) {
-            height: 5rem;
-        }
-
-        &--padded {
-            padding-top: 1rem;
-        }
+    &:focus {
+      background-color: $color-background-brighter;
+      border-color: $color-brand;
+      outline: 0;
     }
 
-    &-error {
-        color: $color-error;
+    &:disabled,
+    &.is-disabled {
+      background-color: $color-background-dark;
+    }
+  }
+
+  &-wrapper {
+    height: 4rem;
+    position: relative;
+
+    @media screen and (max-width: $media-screen-s) {
+      height: 5rem;
     }
 
-    &-loading {
-        display: inline-block;
-        font-size: $font-size-m;
-        padding-left: .25rem;
-        transform: translateY(-10%);
+    &--padded {
+      padding-top: 1rem;
+    }
+  }
+
+  &-error {
+    color: $color-error;
+  }
+
+  &-loading {
+    display: inline-block;
+    font-size: $font-size-m;
+    padding-left: .25rem;
+    transform: translateY(-10%);
+  }
+
+  &-table {
+    background-color: $color-background-brighter;
+    border-radius: .5rem;
+    margin: 2rem 0;
+    padding: 1rem;
+    width: $max-size;
+
+    @media screen and (max-width: $media-screen-s) {
+      margin: 3rem 0;
+    }
+  }
+
+  &-tableh {
+    font-family: Bitter;
+    font-size: $font-size-l;
+  }
+
+  &-tablec {
+    font-family: Bitter;
+    font-size: $font-size-m;
+    text-transform: capitalize;
+
+    img {
+      max-width: 90%;
     }
 
-    &-table {
-        background-color: $color-background-brighter;
-        border-radius: .5rem;
-        margin: 2rem 0;
-        padding: 1rem;
-        width: $max-size;
+    &--right {
+      text-align: right;
+    }
+  }
 
-        @media screen and (max-width: $media-screen-s) {
-            margin: 3rem 0;
-        }
+  &-close {
+    color: $color-foreground-darker;
+    cursor: pointer;
+
+    &:hover {
+      color: $color-complementary;
+    }
+  }
+
+  &-buttons {
+    margin-top: 2rem;
+
+    &--centered {
+      padding: 0 0 2rem 0;
+      text-align: center;
+    }
+  }
+
+  &-options {
+    padding: .5rem 0 1rem 0;
+  }
+
+  &-messages {
+    background-color: $color-background-brighter;
+    padding: 1rem;
+
+    &--code {
+      background-color: $color-background-darker;
+      color: $color-foreground-brighter;
+      font-size: $font-size-s;
+      padding: 3rem 1rem;
+
+      @media screen and (max-width: $media-screen-l) {
+        padding-top: 5rem;
+      }
+    }
+  }
+
+  &-message {
+    padding-bottom: 2rem;
+
+    &:last-of-type {
+      padding-bottom: 0;
+    }
+  }
+
+  &-code {
+    background-color: $color-background-darker;
+    margin: 0;
+    min-height: 4rem;
+    padding: 1rem 0 0 0;
+
+    code {
+      white-space: pre-wrap;
     }
 
-    &-tableh {
-        font-family: 'Bitter';
-        font-size: $font-size-l;
+    &.code-for-website {
+      pre {
+        max-height: 350px;
+      }
     }
 
-    &-tablec {
-        font-family: 'Bitter';
-        font-size: $font-size-m;
-        text-transform: capitalize;
+    &.service-worker-code {
+      pre {
+        max-height: 400px;
+      }
+    }
+  }
 
-        img {
-            max-width: 90%;
-        }
+  &-description {
+    color: $color-foreground-darker;
+    display: inline-block;
+    margin: .25rem 0 2rem;
+    width: $max-size;
 
-        &--right {
-            text-align: right;
-        }
+    &--fixed {
+      font-size: $font-size-m;
+      line-height: $font-size-m * 1.4;
     }
 
-    &-close {
-        color: $color-foreground-darker;
-        cursor: pointer;
-
-        &:hover {
-            color: $color-complementary;
-        }
+    &--context {
+      max-width: 30rem;
     }
+  }
 
-    &-buttons {
-        margin-top: 2rem;
+  &-issue {
+    line-height: $font-size-m;
+  }
 
-        &--centered {
-            padding: 0 0 2rem 0;
-            text-align: center;
-        }
+  &-topic {
+    color: $color-secondary-darker;
+    font-size: $font-size-m;
+    font-weight: $font-weight-regular;
+  }
+
+  &-link {
+    @include action-link ($color-complementary, $color-complementary-dark, .1rem, false);
+  }
+
+  &-content {
+    display: inline-block;
+    width: 100%;
+  }
+
+  &-contentright {
+    display: inline-block;
+    float: right;
+  }
+
+  &-container {
+    margin-left: $marginc;
+    width: $sizec;
+
+    @media screen and (max-width: $media-screen-xl) {
+      margin-left: $marginc / 2;
+      width: $sizec / 3 + $sizec;
     }
+  }
 
-    &-options {
-        padding: .5rem 0 1rem 0;
-    }
+  &-box {
+    text-align: left;
+  }
 
-    &-messages {
-        background-color: $color-background-brighter;
-        padding: 1rem;
+  &-space_right {
+    margin-right: 1rem;
+  }
 
-        &--code {
-            background-color: $color-background-darker;
-            color: $color-foreground-brighter;
-            font-size: $font-size-s;
-            padding: 3rem 1rem;
-
-            @media screen and (max-width: $media-screen-l) {
-                padding-top: 5rem;
-            }
-        }
-    }
-
-    &-message {
-        padding-bottom: 2rem;
-
-        &:last-of-type {
-            padding-bottom: 0;
-        }
-    }
-
-    &-code {
-        background-color: $color-background-darker;
-        margin: 0;
-        min-height: 4rem;
-        padding: 1rem 0 0 0;
-
-        code {
-            white-space: pre-wrap;
-        }
-
-        &.code-for-website {
-            pre {
-                max-height: 350px;
-            }
-        }
-
-        &.service-worker-code {
-            pre {
-                max-height: 400px;
-            }
-        }
-    }
-
-    &-description {
-        color: $color-foreground-darker;
-        display: inline-block;
-        margin: .25rem 0 2rem;
-        width: $max-size;
-
-        &--fixed {
-            font-size: $font-size-m;
-            line-height: $font-size-m * 1.4;
-        }
-
-        &--context {
-            max-width: 30rem;
-        }
-    }
-
-    &-issue {
-        line-height: $font-size-m;
-    }
-
-    &-topic {
-        color: $color-secondary-darker;
-        font-size: $font-size-m;
-        font-weight: $font-weight-regular;
-    }
-
-    &-link {
-        @include action-link ($color-complementary, $color-complementary-dark, .1rem, false);
-    }
-
-    &-content {
-        display: inline-block;
-        width: 100%;
-    }
-
-    &-contentright {
-        display: inline-block;
-        float: right;
-    }
-
-    &-container {
-        margin-left: $marginc;
-        width: $sizec;
-
-        @media screen and (max-width: $media-screen-xl) {
-            margin-left: $marginc / 2;
-            width: $sizec / 3 + $sizec;
-        }
-    }
-
-    &-box {
-        text-align: left;
-    }
-
-    &-space_right {
-        margin-right: 1rem;
-    }
-
-    &-space_top {
-        padding-top: 1rem;
-    }
+  &-space_top {
+    padding-top: 1rem;
+  }
 }

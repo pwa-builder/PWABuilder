@@ -145,7 +145,7 @@ export default class extends Vue {
     }
 
     &-title {
-        font-family: 'Bitter';
+        font-family: Bitter;
         font-size: $font-size-l;
         font-weight: $font-weight-semibold;
         margin-top: 0;
@@ -162,7 +162,7 @@ export default class extends Vue {
     &-tablec {
         $padding: 1.5rem;
 
-        font-family: 'Bitter';
+        font-family: Bitter;
         font-size: $font-size-m;
         padding-right: $padding;
         padding-top: $padding;

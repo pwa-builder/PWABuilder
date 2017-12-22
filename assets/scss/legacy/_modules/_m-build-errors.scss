@@ -1,18 +1,18 @@
 .build-errors {
-    background: $color-brand;
-    border-radius: 5px;
+  background: $color-brand;
+  border-radius: 5px;
 
-    h5 {
-        color: $color-foreground-brighter;
-        font-size: 1rem;
-        margin-bottom: .5rem;
-        padding: .5rem 1rem .5rem .5rem;
-    }
+  h5 {
+    color: $color-foreground-brighter;
+    font-size: 1rem;
+    margin-bottom: .5rem;
+    padding: .5rem 1rem .5rem .5rem;
+  }
 
-    p {
-        color: $color-foreground-brighter;
-        font-size: 1rem;
-        font-weight: bold;
-        padding: .5rem 1rem 1rem .5rem;
-    }
+  p {
+    color: $color-foreground-brighter;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: .5rem 1rem 1rem .5rem;
+  }
 }

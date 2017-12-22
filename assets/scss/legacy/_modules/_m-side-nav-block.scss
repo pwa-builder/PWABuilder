@@ -1,28 +1,28 @@
 .side-nav-block {
-    margin-top: 2rem;
+  margin-top: 2rem;
 }
 
 .side-nav-block:first-child {
-    margin-top: 3.75rem;
+  margin-top: 3.75rem;
 }
 
 .side-nav-block .title {
-    background-color: $color-background-dark;
-    color: $color-secondary;
-    font-size: 1.15rem;
-    line-height: 2.5rem;
-    padding: 0 1rem .05rem 1rem;
+  background-color: $color-background-dark;
+  color: $color-secondary;
+  font-size: 1.15rem;
+  line-height: 2.5rem;
+  padding: 0 1rem .05rem 1rem;
 }
 
 .side-nav-block ul {
-    margin: .5rem 0 1rem 0;
-    padding-left: 1rem;
+  margin: .5rem 0 1rem 0;
+  padding-left: 1rem;
 }
 
 .side-nav-block a {
-    color: $color-foreground-darker;
+  color: $color-foreground-darker;
 }
 
 .side-nav-block a:hover {
-    color: $color-brand;
+  color: $color-brand;
 }

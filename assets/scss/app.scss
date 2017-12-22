@@ -1,44 +1,44 @@
 // Base Helpers
 @import
-'base/fonts',
-'base/states',
-'base/utilities';
+  'base/fonts',
+  'base/states',
+  'base/utilities';
 
 // Base Files
 @import 'base/globals';
 
 // Vendor
 @import
-'vendor/normalize',
-'vendor/pure-grid';
+  'vendor/normalize',
+  'vendor/pure-grid';
 
 // Layout
 @import
-'layout/l-header',
-'layout/l-footer',
-'layout/l-generator';
+  'layout/l-header',
+  'layout/l-footer',
+  'layout/l-generator';
 
 // Private SASS components (without logic)
 @import
-'components/button',
-'components/infobox';
+  'components/button',
+  'components/infobox';
 
 // Legacy
 // These are files from the old website
 // These files are not completely migrated yet
 @import
-'legacy/_base/b-colors',
-'legacy/_base/b-elements',
-'legacy/_layout/l-main',
-'legacy/_modules/m-hero',
-'legacy/_modules/m-infos',
-'legacy/_modules/m-partners',
-'legacy/_modules/m-build-process',
-'legacy/_modules/m-more-info',
-'legacy/_modules/m-whos-using',
-'legacy/_modules/m-page-intro',
-'legacy/_modules/m-usage-block',
-'legacy/_modules/m-side-nav-block',
-'legacy/_modules/m-summary',
-'legacy/_modules/m-notice-block',
-'legacy/_modules/m-build-errors';
+  'legacy/_base/b-colors',
+  'legacy/_base/b-elements',
+  'legacy/_layout/l-main',
+  'legacy/_modules/m-hero',
+  'legacy/_modules/m-infos',
+  'legacy/_modules/m-partners',
+  'legacy/_modules/m-build-process',
+  'legacy/_modules/m-more-info',
+  'legacy/_modules/m-whos-using',
+  'legacy/_modules/m-page-intro',
+  'legacy/_modules/m-usage-block',
+  'legacy/_modules/m-side-nav-block',
+  'legacy/_modules/m-summary',
+  'legacy/_modules/m-notice-block',
+  'legacy/_modules/m-build-errors';
