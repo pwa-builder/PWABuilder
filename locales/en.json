@@ -136,6 +136,19 @@
    "add": "Add Related Application",
    "prefer": "Prefer related applications"
   },
+  "error": {
+    "url_empty": "Url is empty",
+    "provide_url": "Please provide a URL.",
+    "custom_value": "A custom value with that key already exists",
+    "parsing_value": "There was a problem parsing the value. Make sure it is valid JSON (strings must be wrapped in quotes)",
+    "enter_platform": "You must enter the Platform.",
+    "enter_url": "You must enter either the URL or ID.",
+    "enter_valid_url": "You must enter a valid URL.",
+    "manifest_required": "Manifest is required.",
+    "platform_required": "Platform is required.",
+    "fields_required": "All fields are required.",
+    "serviceworker_not_defined": "Serviceworker is not defined."
+  },
   "custom_members": {
     "name": "Member Name",
     "value": "Member Value",

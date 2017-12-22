@@ -44,8 +44,9 @@
             }
 
             &:after {
-                content: 'V';
+                content: '\f078';
                 display: inline-block;
+                font-family: FontAwesome;
                 font-size: 1.2rem;
                 margin-left: .5rem;
                 text-rendering: auto;

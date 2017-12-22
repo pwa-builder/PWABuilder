@@ -40,7 +40,7 @@ export const actions: Actions<State, RootState> = {
     async downloadServiceWorker({ commit }, serviceworker: number): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
             if (!serviceworker) {
-                reject ('Serviceworker is not defined');
+                reject ('error.serviceworker_not_defined');
             }
 
             commit(types.UPDATE_SERVICEWORKER, serviceworker);
@@ -58,7 +58,7 @@ export const actions: Actions<State, RootState> = {
     async getCode({ commit }, serviceworker: number): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
             if (!serviceworker) {
-                reject('Serviceworker is not defined');
+                reject('error.serviceworker_not_defined');
             }
             try {
                 const result = await this.$axios.$get(`${apiUrl}/previewcode?ids=${serviceworker}`);
