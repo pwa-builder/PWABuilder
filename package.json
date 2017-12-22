@@ -6,6 +6,7 @@
     "babel-polyfill": "^6.26.0",
     "clipboard": "^1.7.1",
     "gsap": "^1.19.1",
+    "manup": "^1.0.1",
     "normalize-scss": "^7.0.0",
     "nuxt": "latest",
     "nuxt-class-component": "^1.0.3",

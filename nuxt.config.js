@@ -13,14 +13,21 @@ module.exports = {
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: 'All the tools you need to build and deploy your Progressive Web Apps.' }
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
+    link: [
+      {
+        rel: 'icon',
+        type: 'image/x-icon',
+        href: '/favicon.ico',
+        manifest: '/manifest.json'
+      }
+    ]
   },
   loading: { color: '#1FC2C8' },
   css: ['tachyons/css/tachyons.min.css', 'prismjs/themes/prism-okaidia.css', '~/assets/scss/app.scss'],
   build: {
     extractCSS: true,
     vendor: ['babel-polyfill', 'gsap', 'vuex-class', 'nuxt-class-component', 'vue-i18n', 'prismjs'],
-    plugins:[
+    plugins: [
       new sassLintPlugin({
         glob: '?(assets|components|layouts|pages)/**/*.s?(a|c)ss',
         failOnWarning: false,
