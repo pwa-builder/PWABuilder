@@ -3,7 +3,7 @@
     "lang": "de",
     "name": "Progressive Web Apps Builder",
     "scope": "/",
-    "display": "fullscreen",
+    "display": "standalone",
     "start_url": "http://www.pwabuilder.com/",
     "short_name": "PWABuilder",
     "theme_color": "#1FC2C8",
