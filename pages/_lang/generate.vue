@@ -86,7 +86,9 @@
                                 </div>
                                 <div class="pure-u-1-8 l-generator-tablec l-generator-tablec--right" @click="onClickRemoveIcon(icon)">
                                     <span class="l-generator-close" :title="$t('generate.remove_icon')">
-                                        <i aria-hidden="true"><span class="fa fa-times"></span></i>
+                                        <i aria-hidden="true">
+                                            <span class="fa fa-times"></span>
+                                        </i>
                                     </span>
                                 </div>
                             </div>
@@ -165,9 +167,16 @@
 
     <div class="l-generator-buttons l-generator-buttons--centered">
         <nuxt-link :to="$i18n.path('serviceworker')" class="pwa-button">
-                {{ $t("generate.next_step") }}
-            </nuxt-link>
+            {{ $t("generate.next_step") }}
+        </nuxt-link>
+
+        <div class="step">
+
+        </div>
     </div>
+
+    <StartOver />
+
     <TwoWays/>
 </section>
 </template>
@@ -183,6 +192,7 @@ import Modal from '~/components/Modal';
 import CodeViewer from '~/components/CodeViewer';
 import RelatedApplications from '~/components/RelatedApplications';
 import CustomMembers from '~/components/CustomMembers';
+import StartOver from '~/components/StartOver';
 import ColorSelector from '~/components/ColorSelector';
 
 import * as generator from '~/store/modules/generator';
@@ -198,6 +208,7 @@ const GeneratorActions = namespace(generator.name, Action);
         CustomMembers,
         ColorSelector,
         CodeViewer,
+        StartOver,
         Modal
     }
 })

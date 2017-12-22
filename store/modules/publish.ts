@@ -9,7 +9,7 @@ const platforms = {
     ios: 'ios',
     android: 'android',
     all: 'All'
-}
+};
 
 export const name = 'publish';
 
@@ -25,7 +25,7 @@ export interface State {
     appXLink: string | null;
 }
 
-export interface appxParams {
+export interface AppxParams {
     publisher: string | null;
     publisher_id: string | null;
     package: string | null;
@@ -44,14 +44,14 @@ export interface Actions<S, R> extends ActionTree<S, R> {
     resetAppData(context: ActionContext<S, R>): void;
     updateStatus(context: ActionContext<S, R>): void;
     build(context: ActionContext<S, R>, platform: string): Promise<void>;
-    buildAppx(context: ActionContext<S, R>, params: appxParams): Promise<void>;
+    buildAppx(context: ActionContext<S, R>, params: AppxParams): Promise<void>;
 }
 
 export const actions: Actions<State, RootState> = {
 
     resetAppData({ commit, dispatch }): void {
-        dispatch('generator/resetStates', undefined, {root:true});
-        dispatch('serviceworker/resetStates', undefined, {root:true});
+        dispatch('generator/resetStates', undefined, { root: true });
+        dispatch('serviceworker/resetStates', undefined, { root: true });
     },
 
     updateStatus({ commit, rootState }): void {
@@ -91,7 +91,7 @@ export const actions: Actions<State, RootState> = {
         });
     },
 
-    async buildAppx({ commit, rootState }, params: appxParams): Promise<void> {
+    async buildAppx({ commit, rootState }, params: AppxParams): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
             const manifestId = rootState.generator.manifestId;
 

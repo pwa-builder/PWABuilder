@@ -11,11 +11,11 @@ body {
     width: 100%;
 
     @media screen and (max-width: $media-screen-m) {
-        font-size: $font-size * .8;
+        font-size: $font-size * .875;
     }
 
     @media screen and (max-width: $media-screen-s) {
-        font-size: $font-size * .65;
+        font-size: $font-size * .75;
     }
 }
 

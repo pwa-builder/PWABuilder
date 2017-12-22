@@ -86,6 +86,11 @@ export default class extends Vue {
 
     &-tab {
         display: inline-block;
+
+        @media screen and (max-width: $media-screen-m) {
+            display: block;
+            margin: 2rem auto;
+        }
     }
 
     &-link {
@@ -159,8 +164,6 @@ export default class extends Vue {
 
         @media screen and (max-width: $media-screen-m) {
             border-radius: .5rem;
-            display: block;
-            margin: 2rem auto;
 
             &:after {
                 border: none;
