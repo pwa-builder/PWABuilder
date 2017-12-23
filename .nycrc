@@ -1,0 +1,15 @@
+{
+  "include": [
+    "store/**/*.ts",
+    "middleware/**/*.ts",
+    "utils/**/*.ts"
+  ],
+  "report-dir": ".coverage",
+  "extension": [
+    ".ts"
+  ],
+  "reporter": [
+    "html"
+  ],
+  "all": true
+}

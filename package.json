@@ -28,7 +28,8 @@
     "start": "nuxt start",
     "generate": "cross-env NODE_ENV=development nuxt generate",
     "generate-prod": "cross-env NODE_ENV=production nuxt generate",
-    "test": "mocha --opts mocha.opts"
+    "test": "mocha --opts mocha.opts",
+    "cover": "nyc npm test && opener ./.coverage/index.html"
   },
   "devDependencies": {
     "@types/chai": "^4.0.8",
@@ -44,6 +45,8 @@
     "fork-ts-checker-webpack-plugin": "^0.2.9",
     "mocha": "^4.0.1",
     "node-sass": "^4.7.2",
+    "nyc": "^11.4.1",
+    "opener": "^1.4.3",
     "sass-loader": "^6.0.6",
     "sinon": "^4.1.3",
     "sinon-chai": "^2.14.0",
