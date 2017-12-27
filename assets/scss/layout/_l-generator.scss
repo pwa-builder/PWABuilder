@@ -26,6 +26,7 @@
     font-family: Bitter;
     font-size: $font-size-l;
     font-weight: $font-weight-regular;
+    margin: 0;
 
     &--last {
       margin-bottom: 2rem;
@@ -57,7 +58,7 @@
 
     &--complementary {
       color: $color-brand-dark;
-      margin-top: .5rem;
+      margin-top: 1rem;
     }
   }
 
@@ -338,6 +339,7 @@
     color: $color-secondary-darker;
     font-size: $font-size-m;
     font-weight: $font-weight-regular;
+    margin-left: -.3rem;
   }
 
   &-link {

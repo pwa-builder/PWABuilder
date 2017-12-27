@@ -13,6 +13,7 @@
     "color-hex-case": "upper",
     "color-hex-length": "long",
     "no-missing-end-of-source-newline": null,
-    "no-empty-source": null
+    "no-empty-source": null,
+    "shorthand-property-no-redundant-values": null
   }
 }

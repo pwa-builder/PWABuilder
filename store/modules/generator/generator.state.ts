@@ -46,6 +46,17 @@ export interface ColorOptions {
     color: string;
 }
 
+export interface CodeIssue {
+    code: string;
+    description: string;
+    platform: string;
+}
+
+export interface CodeError {
+    member: string;
+    issues: CodeIssue[];
+}
+
 export interface State {
     url: string | null;
     manifest: Manifest | null;
@@ -53,8 +64,8 @@ export interface State {
     siteServiceWorkers: any;
     icons: Icon[];
     members: CustomMember[];
-    suggestions: string[] | null;
-    warnings: string[] | null;
+    suggestions: CodeError[] | null;
+    warnings: CodeError[] | null;
     errors: string[] | null;
     assets: Asset[] | null;
 }
