@@ -1,6 +1,6 @@
 <template>
 <section>
-    <GeneratorMenu first-link-path="generate" />
+    <GeneratorMenu />
     <div class="l-generator-step">
         <div class="l-generator-semipadded">
             <div class="l-generator-form pure-u-1 pure-u-md-1-2">

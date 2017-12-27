@@ -9,7 +9,7 @@
     <ul class="generator_menu-tabs">
 
         <li class="generator_menu-tab">
-            <nuxt-link :to="$i18n.path(firstLinkPath || '')" exact class="generator_menu-link" :active-class="activeClass" data-step="1">
+            <nuxt-link :to="$i18n.path(firstLinkPath ? '' : 'generate')" exact class="generator_menu-link" :active-class="activeClass" data-step="1">
                 {{ $t('generatormenu.generate') }}
             </nuxt-link>
         </li>
@@ -38,8 +38,8 @@ import { Prop } from 'vue-property-decorator';
 export default class extends Vue {
   public readonly activeClass = 'is-active';
 
-  @Prop({ type: String, default: null })
-  public readonly firstLinkPath: string;
+  @Prop({ type: Boolean, default: false })
+  public readonly firstLinkPath: boolean;
 }
 </script>
 

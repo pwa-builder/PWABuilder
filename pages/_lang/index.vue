@@ -1,6 +1,6 @@
 <template>
   <section>
-    <GeneratorMenu/>
+    <GeneratorMenu :first-link-path="true"/>
     <div class="l-generator-step">
       <div class="pure-g l-generator-padded">
         <div class="pure-u-1 pure-u-md-3-5 pure-u-lg-2-5">
