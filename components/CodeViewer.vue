@@ -14,6 +14,17 @@
             <SkipLink v-if="suggestions" class="pwa-button pwa-button--simple pwa-button--margin" :anchor="'#' + suggestionsId">
               {{ $t("code_viewer.suggestions") }} ({{suggestionsTotal}})
             </SkipLink>
+
+            <span class="button-holder download-archive">
+                <button data-flare="{'category': 'Download', 'action': 'Web', 'label': 'Download Archive', 'value': { 'page': '/download/web' }}"
+                    class="pwa-button pwa-button--simple pwa-button--brand" @click="buildArchive('web')">
+                    <span v-if="isReady.web">{{ $t(downloadButtonMessage) }}</span>
+                    <span v-if="!isReady.web">{{ $t('publish.building_package') }}
+                        <Loading :active="true" :size="'sm'" class="u-display-inline_block u-margin-left-sm"
+                        />
+                    </span>
+                </button>
+            </span>
           </div>
         </div>
         <pre class="code_viewer-pre language-javascript" :style="{ height: size }" v-if="highlightedCode"><code class="code_viewer-code language-javascript" v-html="highlightedCode"></code></pre>
@@ -31,12 +42,18 @@ import Vue from 'vue';
 import Clipboard from 'clipboard';
 import Prism from 'prismjs';
 import Component from 'nuxt-class-component';
+import { Action, State, namespace } from 'vuex-class';
 import { Prop, Watch } from 'vue-property-decorator';
 
 import SkipLink from '~/components/SkipLink.vue';
 import IssuesList from '~/components/IssuesList.vue';
-
 import { CodeError } from '~/store/modules/generator';
+
+// TODO: Change to component
+import * as publish from '~/store/modules/publish';
+
+const PublishState = namespace(publish.name, State);
+const PublishAction = namespace(publish.name, Action);
 
 @Component({
   components: {
@@ -45,6 +62,10 @@ import { CodeError } from '~/store/modules/generator';
   }
 })
 export default class extends Vue {
+  @PublishState archiveLink: string;
+
+  @PublishAction build;
+
   @Prop({ type: String, default: '' })
   public title: string;
 
@@ -70,6 +91,8 @@ export default class extends Vue {
   public copyText = 'copy';
   public readonly warningsId = 'warnings_list';
   public readonly suggestionsId = 'suggestions_list';
+  public isReady = true;
+  public downloadButtonMessage = 'publish.download';
 
   public mounted(): void {
     if (this.code) {
@@ -98,6 +121,20 @@ export default class extends Vue {
         Prism.languages.javascript
       );
     }
+  }
+
+  public async buildArchive(platform: string): Promise<void> {
+    //this.ga('send', 'event', 'item', 'click', 'generator-build-trigger-'+platform);
+    if (!this.isReady) {
+      return;
+    }
+    this.isReady = false;
+    this.downloadButtonMessage = 'publish.try_again';
+    await this.build(platform);
+    if (this.archiveLink) {
+      window.location.href = this.archiveLink;
+    }
+    this.isReady = true;
   }
 }
 </script>
