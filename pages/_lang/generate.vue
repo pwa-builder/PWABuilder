@@ -156,7 +156,7 @@
                 </div>
             </div>
             <div class="generate-code pure-u-1 pure-u-md-1-2">
-                <CodeViewer :code="getCode()" :title="$t('generate.w3c_manifest')">
+                <CodeViewer :code="getCode()" :title="$t('generate.w3c_manifest')" :suggestions="suggestions" :suggestionsTotal="suggestionsTotal" :warningsTotal="warningsTotal">
                     <nuxt-link :to="$i18n.path('serviceworker')" class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header">
                         {{ $t("serviceworker.next_step") }}
                     </nuxt-link>
@@ -169,10 +169,6 @@
         <nuxt-link :to="$i18n.path('serviceworker')" class="pwa-button">
             {{ $t("generate.next_step") }}
         </nuxt-link>
-
-        <div class="step">
-
-        </div>
     </div>
 
     <StartOver />
@@ -221,6 +217,8 @@ export default class extends Vue {
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState icons: generator.Icon[];
+  @GeneratorState suggestions: string[];
+  @GeneratorState warnings: string[];
 
   @Getter orientationsNames: string[];
   @Getter languagesNames: string[];
