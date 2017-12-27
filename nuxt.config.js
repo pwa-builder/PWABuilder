@@ -14,12 +14,8 @@ module.exports = {
             { hid: 'description', name: 'description', content: 'All the tools you need to build and deploy your Progressive Web Apps.' }
         ],
         link: [
-            {
-                rel: 'icon',
-                type: 'image/x-icon',
-                href: '/favicon.ico',
-                manifest: '/manifest.json'
-            }
+            { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+            { rel: 'manifest', href: '/manifest.json' }
         ]
     },
     loading: { color: '#1FC2C8' },
