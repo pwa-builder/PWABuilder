@@ -1,5 +1,5 @@
 import colorConverter from '~/utils/color-converter';
-import { Icon, RelatedApplication } from '~/store/modules/generator';
+import { Icon, RelatedApplication, CodeError } from '~/store/modules/generator';
 
 export const helpers = {
     MEMBER_PREFIX: 'mjs_',
@@ -77,5 +77,21 @@ export const helpers = {
         }
 
         return '#' + colorConverter.toHexadecimal(color).slice(4, 10);
+    },
+
+    sumIssues(errors: CodeError[] | null): number {
+        if (!errors) {
+            return 0;
+        }
+
+        debugger;
+        let total = 0;
+        errors.forEach(error => {
+            if (error.issues && error.issues.length) {
+                total += error.issues.length;
+            }
+        });
+
+        return total;
     }
 };

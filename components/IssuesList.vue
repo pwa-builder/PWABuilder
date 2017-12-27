@@ -1,6 +1,6 @@
 <template>
 <section v-if="errors" class="l-generator-message" :id="id">
-    <h5 class="l-generator-subtitle">{{title}} <span>({{total}} {{total.length === 1 ? 'item' : 'items'}})</span></h5>
+    <h5 class="l-generator-subtitle">{{title}} <span>({{total}} {{total === 1 ? 'item' : 'items'}})</span></h5>
     <article v-for="error in errors" :key="error.member">
       <h4 class="l-generator-subtitle l-generator-subtitle--complementary">{{error.member}}</h4>
       <ul>
@@ -27,7 +27,7 @@ import { CodeError } from '~/store/modules/generator';
 
 @Component()
 export default class extends Vue {
-  @Prop({ type: Array, default: [] })
+  @Prop({ type: Array, default: () => [] })
   public errors: CodeError[];
 
   @Prop({ type: String, default: '' })

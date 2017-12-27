@@ -156,7 +156,7 @@
                 </div>
             </div>
             <div class="generate-code pure-u-1 pure-u-md-1-2">
-                <CodeViewer :code="getCode()" :title="$t('generate.w3c_manifest')" :suggestions="suggestions" :suggestionsTotal="suggestionsTotal" :warningsTotal="warningsTotal">
+                <CodeViewer :code="getCode()" :title="$t('generate.w3c_manifest')" :suggestions="suggestions" :suggestionsTotal="suggestionsTotal" :warnings="warnings" :warningsTotal="warningsTotal">
                     <nuxt-link :to="$i18n.path('serviceworker')" class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header">
                         {{ $t("serviceworker.next_step") }}
                     </nuxt-link>
@@ -195,6 +195,7 @@ import * as generator from '~/store/modules/generator';
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
+const GeneratorGetters = namespace(generator.name, Getter);
 
 @Component({
   components: {
@@ -229,6 +230,9 @@ export default class extends Vue {
   @GeneratorActions updateManifest;
   @GeneratorActions uploadIcon;
   @GeneratorActions generateMissingImages;
+
+  @GeneratorGetters suggestionsTotal;
+  @GeneratorGetters warningsTotal;
 
   public created(): void {
     if (!this.manifest) {

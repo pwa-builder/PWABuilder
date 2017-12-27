@@ -7,18 +7,18 @@
     <div class="code_viewer-content" :style="{ height: size }">
         <div class="code_viewer-copy js-clipboard" :data-clipboard-text="code" ref="code">{{ $t('code_viewer.' + copyText) }}</div>
         <div class="code_viewer-toolbar" v-if="warnings || suggestions">
-          <SkipLink v-if="warnings" class="pwa-button pwa-button--simple pwa-button--warning" :anchor="'#' + warningsId" :total="warningsTotal">
-            Warnings ({{warnings.length}})
+          <SkipLink v-if="warnings" class="pwa-button pwa-button--simple pwa-button--warning" :anchor="'#' + warningsId">
+            Warnings ({{warningsTotal}})
           </SkipLink>
-          <SkipLink v-if="suggestions" class="pwa-button pwa-button--simple"  :anchor="'#' + suggestionsId" :total="suggestionsTotal">
-            Suggestions ({{suggestions.length}})
+          <SkipLink v-if="suggestions" class="pwa-button pwa-button--simple"  :anchor="'#' + suggestionsId">
+            Suggestions ({{suggestionsTotal}})
           </SkipLink>
         </div>
         <pre class="code_viewer-pre language-javascript" :style="{ height: size }" v-if="highlightedCode"><code class="code_viewer-code language-javascript" v-html="highlightedCode"></code></pre>
 
         <div class="l-generator-messages l-generator-messages--code">
-          <IssuesList :errors="warnings" :title="'Warnings'" :id="warningsId" />
-          <IssuesList :errors="suggestions" :title="'Suggestions'" :id="suggestionsId" />
+          <IssuesList :errors="warnings" :title="'Warnings'" :id="warningsId" :total="warningsTotal" />
+          <IssuesList :errors="suggestions" :title="'Suggestions'" :id="suggestionsId" :total="suggestionsTotal" />
         </div>
     </div>
 </section>
@@ -36,7 +36,6 @@ import IssuesList from '~/components/IssuesList.vue';
 
 import { CodeError } from '~/store/modules/generator';
 
-
 @Component({
   components: {
     SkipLink,
@@ -53,10 +52,10 @@ export default class extends Vue {
   @Prop({ type: String, default: 'auto' })
   public size: string | null;
 
-  @Prop({ type: Array, default: [] })
+  @Prop({ type: Array, default: () => [] })
   public suggestions: CodeError[];
 
-  @Prop({ type: Array, default: [] })
+  @Prop({ type: Array, default: () => [] })
   public warnings: CodeError[];
 
   @Prop({ type: Number, default: 0 })
@@ -77,8 +76,6 @@ export default class extends Vue {
         Prism.languages.javascript
       );
     }
-
-    console.log(this.warnings);
 
     let clipboard = new Clipboard(this.$refs.code);
     clipboard.on('success', e => {
