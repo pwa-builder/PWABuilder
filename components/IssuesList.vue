@@ -1,7 +1,7 @@
 <template>
 <div class="issues_list">
     <section v-if="errors" class="l-generator-message" :id="id">
-      <h5 class="l-generator-subtitle">{{title}} <span>({{total}} {{total === 1 ? 'item' : 'items'}})</span></h5>
+      <h5 class="l-generator-subtitle">{{title}} <span>({{total}} {{total === 1 ? $t("issues_list.item") : $t("issues_list.items") }})</span></h5>
       <article v-for="error in errors" :key="error.member">
         <h4 class="l-generator-subtitle l-generator-subtitle--complementary">{{error.member}}</h4>
         <ul class="issues_list-items">
@@ -11,7 +11,7 @@
                 {{codeFormat(issue.code)}}:
               </strong> 
               {{issue.description}}
-              Platforms affected:{{issue.platform}}.
+              {{ $t("issues_list.platforms") }}:{{issue.platform}}.
             </p>
           </li>
         </ul>

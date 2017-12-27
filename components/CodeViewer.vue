@@ -9,18 +9,18 @@
         <div class="code_viewer-padded" v-if="warnings || suggestions">
           <div class="code_viewer-header code_viewer-header--rounded">
             <SkipLink v-if="warnings" class="pwa-button pwa-button--simple pwa-button--margin pwa-button--warning" :anchor="'#' + warningsId">
-              Warnings ({{warningsTotal}})
+              {{ $t("code_viewer.warnings") }} ({{warningsTotal}})
             </SkipLink>
             <SkipLink v-if="suggestions" class="pwa-button pwa-button--simple pwa-button--margin" :anchor="'#' + suggestionsId">
-              Suggestions ({{suggestionsTotal}})
+              {{ $t("code_viewer.suggestions") }} ({{suggestionsTotal}})
             </SkipLink>
           </div>
         </div>
         <pre class="code_viewer-pre language-javascript" :style="{ height: size }" v-if="highlightedCode"><code class="code_viewer-code language-javascript" v-html="highlightedCode"></code></pre>
 
         <div class="l-generator-messages l-generator-messages--code">
-          <IssuesList :errors="warnings" :title="'Warnings'" :id="warningsId" :total="warningsTotal" />
-          <IssuesList :errors="suggestions" :title="'Suggestions'" :id="suggestionsId" :total="suggestionsTotal" />
+          <IssuesList :errors="warnings" :title="$t('code_viewer.warnings')" :id="warningsId" :total="warningsTotal" />
+          <IssuesList :errors="suggestions" :title="$t('code_viewer.suggestions')" :id="suggestionsId" :total="suggestionsTotal" />
         </div>
     </div>
 </section>
@@ -148,6 +148,7 @@ export default class extends Vue {
     border-radius: .5em;
     box-shadow: 0 2px 0 0 rgba($color-background-darkest, .2);
     color: $color-foreground-brightest;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
     font-size: $font-size-s;
     opacity: 0;
     padding: 0 .5em;

@@ -127,7 +127,9 @@
   "code_viewer": {
     "copy": "Copy",
     "copied": "Copied!",
-    "error": "Error"
+    "error": "Error",
+    "warnings": "Warnings",
+    "suggestions": "Suggestions"
   },
   "related_applications": {
    "platform": "Platform",
@@ -153,5 +155,10 @@
     "name": "Member Name",
     "value": "Member Value",
     "add": "Add Member"
+  },
+  "issues_list": {
+    "platforms": "Platforms affected",
+    "item": "item",
+    "items": "items"
   }
 }
