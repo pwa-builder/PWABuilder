@@ -15,16 +15,14 @@
               {{ $t("code_viewer.suggestions") }} ({{suggestionsTotal}})
             </SkipLink>
 
-            <span class="button-holder download-archive">
-                <button data-flare="{'category': 'Download', 'action': 'Web', 'label': 'Download Archive', 'value': { 'page': '/download/web' }}"
-                    class="pwa-button pwa-button--simple pwa-button--brand" @click="buildArchive('web')">
-                    <span v-if="isReady.web">{{ $t(downloadButtonMessage) }}</span>
-                    <span v-if="!isReady.web">{{ $t('publish.building_package') }}
-                        <Loading :active="true" :size="'sm'" class="u-display-inline_block u-margin-left-sm"
-                        />
-                    </span>
-                </button>
-            </span>
+            <div data-flare="{'category': 'Download', 'action': 'Web', 'label': 'Download Archive', 'value': { 'page': '/download/web' }}"
+                class="pwa-button pwa-button--simple pwa-button--total_right" @click="buildArchive('web')">
+                <span v-if="isReady">{{ $t(downloadButtonMessage) }}</span>
+                <span v-if="!isReady">{{ $t('publish.building_package') }}
+                    <Loading :active="true" :size="'sm'" class="u-display-inline_block u-margin-left-sm"
+                    />
+                </span>
+            </div>
           </div>
         </div>
         <pre class="code_viewer-pre language-javascript" :style="{ height: size }" v-if="highlightedCode"><code class="code_viewer-code language-javascript" v-html="highlightedCode"></code></pre>
@@ -46,6 +44,7 @@ import { Action, State, namespace } from 'vuex-class';
 import { Prop, Watch } from 'vue-property-decorator';
 
 import SkipLink from '~/components/SkipLink.vue';
+import Loading from '~/components/Loading.vue';
 import IssuesList from '~/components/IssuesList.vue';
 import { CodeError } from '~/store/modules/generator';
 
@@ -58,6 +57,7 @@ const PublishAction = namespace(publish.name, Action);
 @Component({
   components: {
     SkipLink,
+    Loading,
     IssuesList
   }
 })
@@ -92,7 +92,7 @@ export default class extends Vue {
   public readonly warningsId = 'warnings_list';
   public readonly suggestionsId = 'suggestions_list';
   public isReady = true;
-  public downloadButtonMessage = 'publish.download';
+  public downloadButtonMessage = 'publish.download_manifest';
 
   public mounted(): void {
     if (this.code) {
@@ -128,13 +128,19 @@ export default class extends Vue {
     if (!this.isReady) {
       return;
     }
+
     this.isReady = false;
-    this.downloadButtonMessage = 'publish.try_again';
-    await this.build(platform);
-    if (this.archiveLink) {
-      window.location.href = this.archiveLink;
+
+    try {
+      await this.build(platform);
+
+      if (this.archiveLink) {
+        window.location.href = this.archiveLink;
+      }
+      this.isReady = true;
+    } catch (e) {
+      this.downloadButtonMessage = 'publish.try_again';
     }
-    this.isReady = true;
   }
 }
 </script>

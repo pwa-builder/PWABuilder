@@ -104,7 +104,8 @@
     "label_package": "Package Family Name",
     "placeholder_package": "Enter a valid Package Family Name",
     "label_version": "Version Number (E.g. 1.0.0.0)",
-    "placeholder_version": "Enter a Package Version Number"
+    "placeholder_version": "Enter a Package Version Number",
+    "download_manifest": "Download manifest"
   },
   "generatormenu": {
     "title": "Generate your Progressive Web App",

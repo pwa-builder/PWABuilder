@@ -193,12 +193,16 @@ export default class extends Vue {
       return;
     }
     this.isReady[platform] = false;
-    this.downloadButtonMessage[platform] = 'publish.try_again';
-    await this.build(platform);
-    if (this.archiveLink) {
-      window.location.href = this.archiveLink;
+
+    try {
+      await this.build(platform);
+      if (this.archiveLink) {
+        window.location.href = this.archiveLink;
+      }
+      this.isReady[platform] = true;
+    } catch (e) {
+      this.downloadButtonMessage[platform] = 'publish.try_again';
     }
-    this.isReady[platform] = true;
   }
 
   public openAppXModal(): void {

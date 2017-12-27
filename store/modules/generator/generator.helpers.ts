@@ -84,7 +84,6 @@ export const helpers = {
             return 0;
         }
 
-        debugger;
         let total = 0;
         errors.forEach(error => {
             if (error.issues && error.issues.length) {
