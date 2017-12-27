@@ -273,9 +273,9 @@ export default class extends Vue {
     let icons = this.icons.map(icon => {
       return `
     {
-      "src": "${icon.src}",
+      "src": "${icon.src.includes('data:image') ? '[Embedded]' : icon.src}",
       "sizes": "${icon.sizes}"
-    },`;
+    }`;
     });
     return icons.toString().slice(0, -1);
   }

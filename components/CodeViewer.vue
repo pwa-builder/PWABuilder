@@ -4,10 +4,10 @@
         <div class="code_viewer-title pure-u-1 pure-u-md-1-2">{{title}}</div>
         <div class="code_viewer-title pure-u-1 pure-u-md-1-2"><slot/></div>
     </header>
-    <div class="code_viewer-content">
+    <div class="code_viewer-content" :style="{ height: size }">
         <div class="code_viewer-copy js-clipboard" :data-clipboard-text="code" ref="code">{{ $t('code_viewer.' + copyText) }}</div>
         <div class="code_viewer-toolbar"></div>
-        <pre class="code_viewer-pre language-javascript" v-if="highlightedCode"><code class="code_viewer-code language-javascript" v-html="highlightedCode"></code></pre>
+        <pre class="code_viewer-pre language-javascript" :style="{ height: size }" v-if="highlightedCode"><code class="code_viewer-code language-javascript" v-html="highlightedCode"></code></pre>
     </div>
 </section>
 </template>
@@ -27,6 +27,9 @@ export default class extends Vue {
 
   @Prop({ type: String, default: '' })
   public code: string | null;
+
+  @Prop({ type: String, default: 'auto' })
+  public size: string | null;
 
   public highlightedCode: string | null = null;
   public copyText = 'copy';
@@ -65,6 +68,8 @@ export default class extends Vue {
 @import "~assets/scss/base/variables";
 
 .code_viewer {
+  font-size: 0;
+
   &-header {
     background-color: $color-brand;
     line-height: 1.5;
@@ -78,12 +83,12 @@ export default class extends Vue {
   }
 
   &-pre {
-    max-height: 25rem;
     overflow: auto;
     padding: 1rem;
   }
 
   &-code {
+    font-size: 1rem;
     white-space: pre-wrap;
   }
 
@@ -107,7 +112,6 @@ export default class extends Vue {
 
   &-content {
     background-color: $color-background-darker;
-    height: 25rem;
     margin: 0;
     min-height: 4rem;
     position: relative;

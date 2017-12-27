@@ -65,12 +65,12 @@
                         target="_blank">GitHub</a>.</p>
             </div>
             <div class="serviceworker-preview pure-u-1 pure-u-md-1-2 generator-section">
-                <CodeViewer :code="webPreview" :title="$t('serviceworker.code_preview_web')">
+                <CodeViewer :size="viewerSize" :code="webPreview" :title="$t('serviceworker.code_preview_web')">
                     <nuxt-link :to="$i18n.path('publish')" class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header">
                         {{ $t("serviceworker.next_step") }}
                     </nuxt-link>
                 </CodeViewer>
-                <CodeViewer :code="serviceworkerPreview" :title="$t('serviceworker.code_preview_serviceworker')"></CodeViewer>
+                <CodeViewer :size="viewerSize" :code="serviceworkerPreview" :title="$t('serviceworker.code_preview_serviceworker')"></CodeViewer>
             </div>
         </div>
     </div>
@@ -115,6 +115,7 @@ export default class extends Vue {
   public isBuilding = false;
   public serviceworker$: number | null = null;
   public error: string | null = null;
+  public viewerSize = '25rem';
 
   @ServiceworkerState serviceworker: number;
   @ServiceworkerState serviceworkerPreview: string;
