@@ -6,13 +6,15 @@
     </header>
     <div class="code_viewer-content" :style="{ height: size }">
         <div class="code_viewer-copy js-clipboard" :data-clipboard-text="code" ref="code">{{ $t('code_viewer.' + copyText) }}</div>
-        <div class="code_viewer-toolbar" v-if="warnings || suggestions">
-          <SkipLink v-if="warnings" class="pwa-button pwa-button--simple pwa-button--warning" :anchor="'#' + warningsId">
-            Warnings ({{warningsTotal}})
-          </SkipLink>
-          <SkipLink v-if="suggestions" class="pwa-button pwa-button--simple"  :anchor="'#' + suggestionsId">
-            Suggestions ({{suggestionsTotal}})
-          </SkipLink>
+        <div class="code_viewer-padded" v-if="warnings || suggestions">
+          <div class="code_viewer-header code_viewer-header--rounded">
+            <SkipLink v-if="warnings" class="pwa-button pwa-button--simple pwa-button--margin pwa-button--warning" :anchor="'#' + warningsId">
+              Warnings ({{warningsTotal}})
+            </SkipLink>
+            <SkipLink v-if="suggestions" class="pwa-button pwa-button--simple pwa-button--margin" :anchor="'#' + suggestionsId">
+              Suggestions ({{suggestionsTotal}})
+            </SkipLink>
+          </div>
         </div>
         <pre class="code_viewer-pre language-javascript" :style="{ height: size }" v-if="highlightedCode"><code class="code_viewer-code language-javascript" v-html="highlightedCode"></code></pre>
 
@@ -106,10 +108,23 @@ export default class extends Vue {
 .code_viewer {
   font-size: 0;
 
+  &-padded {
+    padding-top: 1rem;
+  }
+
   &-header {
     background-color: $color-brand;
     line-height: 1.5;
     padding: 1.5rem 1.5rem 1.1rem 1.5rem;
+
+    &--rounded {
+      background-color: $color-background-brighter;
+      border-radius: .5rem;
+      margin: 0 auto;
+      padding: 1rem 1rem;
+      text-align: left;
+      width: 90%;
+    }
   }
 
   &-title {
