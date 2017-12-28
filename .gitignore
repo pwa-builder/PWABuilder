@@ -43,3 +43,5 @@ npm-debug.log
 testem.log
 .nuxt/
 .vs/
+.coverage/
+.nyc_output/
