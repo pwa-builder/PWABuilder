@@ -90,8 +90,8 @@ export const mutations: MutationTree<State> = {
         state.webPreview = code;
     },
     [types.RESET_STATES](state): void {
-        state.archive= null;
-        state.serviceworker= 1;
+        state.archive = null;
+        state.serviceworker = 1;
     }
 };
 

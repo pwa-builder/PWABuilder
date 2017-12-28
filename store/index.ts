@@ -3,7 +3,6 @@ import * as generator from './modules/generator';
 import * as serviceworker from './modules/serviceworker';
 import * as publish from './modules/publish';
 import * as i18n from './modules/i18n';
-import { ActionTree } from 'vuex';
 
 // More info about store: https://vuex.vuejs.org/en/core-concepts.html
 // Structure of the store:
