@@ -19,7 +19,7 @@
                             @click="onClickSubmit()"
                             data-flare='{"category": "Manifest", "action": "Add Member", "label": "Image Upload", "value": { "page": "/manifest/add-member" }}'>
                             {{$t("modal.submit")}} 
-                            <Loading :active="isLoading" :size="'sm'" class="u-display-inline_block u-margin-left-sm" />
+                            <Loading :active="isLoading" class="u-display-inline_block u-margin-left-sm" />
                     </button>
                     <button class="pwa-button pwa-button--simple"
                             @click="onClickCancel()"

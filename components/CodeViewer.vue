@@ -36,7 +36,6 @@ import Component from 'nuxt-class-component';
 import { Prop, Watch } from 'vue-property-decorator';
 
 import SkipLink from '~/components/SkipLink.vue';
-import Loading from '~/components/Loading.vue';
 import IssuesList from '~/components/IssuesList.vue';
 import Download from '~/components/Download.vue';
 import { CodeError } from '~/store/modules/generator';
@@ -44,7 +43,6 @@ import { CodeError } from '~/store/modules/generator';
 @Component({
   components: {
     SkipLink,
-    Loading,
     Download,
     IssuesList
   }

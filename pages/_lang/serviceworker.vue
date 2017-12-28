@@ -51,7 +51,7 @@
                             class="pwa-button pwa-button--simple isEnabled">
                             <span v-if="!isBuilding">{{ $t('serviceworker.download') }}</span>
                             <span v-if="isBuilding">{{ $t('serviceworker.building') }}
-                                <Loading :active="true" :size="'sm'" class="u-display-inline_block u-margin-left-sm"
+                                <Loading :active="true" class="u-display-inline_block u-margin-left-sm"
                                 />
                             </span>
                         </button>

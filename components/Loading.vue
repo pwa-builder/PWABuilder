@@ -1,6 +1,6 @@
 <template>
 <section>
-    <div class="loading" v-if="active" :class="'loading-' + size"></div>
+    <div class="loading" v-if="active"></div>
 </section>
 </template>
 
@@ -13,9 +13,6 @@ import Component from 'nuxt-class-component';
 export default class extends Vue {
   @Prop({ type: Boolean, default: false })
   public active: boolean;
-
-  @Prop({ type: String, default: 'md' })
-  public size: string;
 }
 </script>
 
@@ -24,24 +21,17 @@ export default class extends Vue {
 
 // From: https://projects.lukehaas.me/css-loaders/
 .loading {
+  $size: 1.1em;
+
   animation: spin 1.3s linear infinite;
   border-color: $color-foreground-brighter transparent;
   border-radius: 50%;
   border-style: solid;
+  border-width: .12em;
+  height: $size;
   position: relative;
-
-  &-sm {
-    border-width: .15rem;
-    height: .8rem;
-    width: .8rem;
-  }
-
-  &-md {
-    border-width: .2rem;
-    height: 1.5rem;
-    top: .2rem;
-    width: 1.5rem;
-  }
+  top: .2em;
+  width: $size;
 
   @keyframes spin {
     0% {

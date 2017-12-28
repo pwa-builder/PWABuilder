@@ -5,7 +5,7 @@
         @click="buildArchive(platform)">
     <span v-if="isReady">{{ message$ }}</span>
     <span v-if="!isReady">{{ $t('publish.building_package') }}
-        <Loading :active="true" :size="'sm'" class="u-display-inline_block u-margin-left-sm"
+        <Loading :active="true" class="u-display-inline_block u-margin-left-sm"
         />
     </span>
 </div>
