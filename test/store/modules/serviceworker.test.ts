@@ -1,7 +1,7 @@
 import { ActionContext } from 'vuex';
 import { RootState } from 'store';
 
-import { expect, sinon } from 'test/libs/chai';
+import { expect, spy } from 'test/libs/chai';
 import { axiosMock } from 'test/libs/axios';
 
 import { actionContextMockBuilder, nuxtAxiosMockBuilder } from 'test/utils';
@@ -17,7 +17,7 @@ describe('serviceworker', () => {
     beforeEach(() => {
         state = serviceworker.state();
         actionContext = actionContextMockBuilder<serviceworker.State>(state);
-        sinon.spy(actionContext, 'commit');
+        spy(actionContext, 'commit');
         actions = nuxtAxiosMockBuilder(serviceworker.actions);
     });
 

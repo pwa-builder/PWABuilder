@@ -1,7 +1,7 @@
 import { ActionContext } from 'vuex';
 import { RootState } from 'store';
 
-import { expect, sinon } from 'test/libs/chai';
+import { expect, spy } from 'test/libs/chai';
 import { axiosMock } from 'test/libs/axios';
 
 import { actionContextMockBuilder, nuxtAxiosMockBuilder } from 'test/utils';
@@ -17,7 +17,7 @@ describe('publish', () => {
     beforeEach(() => {
         state = publish.state();
         actionContext = actionContextMockBuilder<publish.State>(state);
-        sinon.spy(actionContext, 'commit');
+        spy(actionContext, 'commit');
         actions = nuxtAxiosMockBuilder(publish.actions);
     });
 
@@ -31,7 +31,7 @@ describe('publish', () => {
             actionContext.rootState.generator.manifestId = manifestId;
             actionContext.rootState.serviceworker.serviceworker = serviceworker;
 
-            axiosMock.onPost(`${process.env.apiUrl}/manifests/${manifestId}/build?ids=${serviceworker}`, {"platforms":["web"],"dirSuffix":"web"}).reply(status);
+            axiosMock.onPost(`${process.env.apiUrl}/manifests/${manifestId}/build?ids=${serviceworker}`, {'platforms': ['web'], 'dirSuffix': 'web'}).reply(status);
 
             await actions.build(actionContext, platform);
 
@@ -47,7 +47,7 @@ describe('publish', () => {
             actionContext.rootState.generator.manifestId = manifestId;
             actionContext.rootState.serviceworker.serviceworker = serviceworker;
 
-            axiosMock.onPost(`${process.env.apiUrl}/manifests/${manifestId}/build?ids=${serviceworker}`, {"platforms":["web"],"dirSuffix":"web"}).reply(status);
+            axiosMock.onPost(`${process.env.apiUrl}/manifests/${manifestId}/build?ids=${serviceworker}`, {'platforms': ['web'], 'dirSuffix': 'web'}).reply(status);
 
             expect(actions.build(actionContext, platform)).to.eventually.throw();
         });

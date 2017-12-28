@@ -1,4 +1,5 @@
 --require ./test/tsconfig.mocha.js
 --require tsconfig-paths/register
+--require jsdom-global/register
 --require ./test/setup.js
 test/**/*.ts 

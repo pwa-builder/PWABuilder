@@ -1,7 +1,7 @@
-import { ActionContext, MutationTree } from 'vuex';
+import { ActionContext } from 'vuex';
 import { RootState } from 'store';
 
-import { expect, sinon } from 'test/libs/chai';
+import { expect, SinonStub, spy, stub } from 'test/libs/chai';
 import { axiosMock } from 'test/libs/axios';
 
 import { actionContextMockBuilder, nuxtAxiosMockBuilder } from 'test/utils';
@@ -12,17 +12,19 @@ import { Manifest, helpers } from 'store/modules/generator';
 let state: generator.State;
 let actionContext: ActionContext<generator.State, RootState>;
 let actions: generator.Actions<generator.State, RootState>;
-let mutations: MutationTree<generator.State>;
 
-describe('generator', () => {
+describe('generator actions', () => {
 
     beforeEach(() => {
         state = generator.state();
         actionContext = actionContextMockBuilder<generator.State>(state);
-        sinon.spy(actionContext, 'commit');
+        spy(actionContext, 'commit');
+        stub(generator.helpers, 'getImageIconSize').returns(Promise.resolve({ width: 0, height: 0 }));
         actions = nuxtAxiosMockBuilder(generator.actions);
-        mutations = generator.mutations;
-        generator.helpers.getImageIconSize = (src: string) => Promise.resolve({ width: 0, height: 0 });
+    });
+
+    afterEach(() => {
+        (generator.helpers.getImageIconSize as SinonStub).restore();
     });
 
     describe('when adds link with an invalid url', () => {
@@ -78,7 +80,6 @@ describe('generator', () => {
         afterEach(() => {
             axiosMock.reset();
         });
-
     });
 
     describe('when submit empty url', () => {
@@ -161,68 +162,6 @@ describe('generator', () => {
 
             expect(actionContext.commit).to.have.been.calledWith(generator.types.ADD_RELATED_APPLICATION);
         });
-
-        it('should update the state with new application', () => {
-            const payload = {
-                platform: 'testplatform',
-                url: 'website',
-                id: 'myid'
-            };
-
-            state.manifest = {} as Manifest;
-            state.manifest.related_applications = [];
-
-            mutations[generator.types.ADD_RELATED_APPLICATION](state, payload);
-            expect(state.manifest.related_applications.length).to.be.equal(1);
-        });
-    });
-
-    describe('when remove a related application', () => {
-        it('should not remove if index is not found', () => {
-            const id = 'myid';
-            const app = {
-                platform: 'testplatform',
-                url: 'website',
-                id
-            };
-
-            state.manifest = {} as Manifest;
-            state.manifest.related_applications = [app];
-
-            mutations[generator.types.REMOVE_RELATED_APPLICATION](state, `${id}__`);
-            expect(state.manifest.related_applications.length).to.be.equal(1);
-        });
-
-        it('should remove if index is found', () => {
-            const id = 'myid';
-            const app = {
-                platform: 'testplatform',
-                url: 'website',
-                id
-            };
-
-            state.manifest = {} as Manifest;
-            state.manifest.related_applications = [app];
-
-            mutations[generator.types.REMOVE_RELATED_APPLICATION](state, id);
-            expect(state.manifest.related_applications.length).to.be.equal(0);
-        });
-    });
-
-    describe('when change prefer related application', () => {
-        it('should change the state value', () => {
-            const app = {
-                platform: 'testplatform',
-                url: 'website',
-                id: 'myid'
-            };
-
-            state.manifest = {} as Manifest;
-            state.manifest.prefer_related_applications = false;
-
-            mutations[generator.types.UPDATE_PREFER_RELATED_APPLICATION](state, true);
-            expect(state.manifest.prefer_related_applications).to.be.equal(true);
-        });
     });
 
     describe('when add a custom member', () => {
@@ -273,41 +212,6 @@ describe('generator', () => {
             actions.addCustomMember(actionContext, member);
 
             expect(actionContext.commit).to.have.been.calledWith(generator.types.ADD_CUSTOM_MEMBER);
-        });
-    });
-
-    describe('when remove a custom member', () => {
-        it('should not remove if index is not found', () => {
-            const name = 'name';
-            const member = {
-                name,
-                value: '{}'
-            };
-
-            actionContext.state.members = [member];
-
-            mutations[generator.types.REMOVE_CUSTOM_MEMBER](state, `${name}__`);
-            expect(actionContext.state.members.length).to.be.equal(1);
-        });
-
-        it('should remove if index is found', () => {
-            const id = 'myid';
-            const app = {
-                platform: 'testplatform',
-                url: 'website',
-                id
-            };
-
-            const name = 'name';
-            const member = {
-                name,
-                value: '{}'
-            };
-
-            actionContext.state.members = [member];
-
-            mutations[generator.types.REMOVE_CUSTOM_MEMBER](state, name);
-            expect(actionContext.state.members.length).to.be.equal(0);
         });
     });
 
