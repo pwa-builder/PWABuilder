@@ -1,6 +1,9 @@
-import { expect } from 'test/libs/chai';
+import { expect, stub } from 'test/libs/chai';
 
 import * as generator from 'store/modules/generator';
+import colorConverter from 'utils/color-converter';
+import { SinonStub } from 'sinon';
+import { CodeIssue, CodeError } from 'store/modules/generator';
 
 class MockImage {
     constructor(public width = 0, public height = 0) {
@@ -149,6 +152,39 @@ describe('generator helpers', () => {
             };
 
             expect(generator.helpers.hasRelatedApplicationErrors(app)).to.be.equal(undefined);
+        });
+    });
+
+    describe('when fixColorFromServer receives a color', () => {
+        it('should return empty string if color is empty', () => {
+            const color = '';
+            expect(generator.helpers.fixColorFromServer(color)).to.be.equal('');
+        });
+
+        it('should return an hexadececimal color if color is not empty', () => {
+            const color = 'rgb(0, 0, 0)';
+
+            stub(colorConverter, 'toHexadecimal').returns('0000000000');
+
+            expect(generator.helpers.fixColorFromServer(color)).to.be.equal('#000000');
+
+            (colorConverter.toHexadecimal as SinonStub).restore();
+        });
+    });
+
+    describe('when sumIssues an array of issues', () => {
+        it('should return 0 if the array is null', () => {
+            const errors = null;
+            expect(generator.helpers.sumIssues(errors)).to.be.equal(0);
+        });
+
+        it('should return the correct amount if the array has issues', () => {
+            const errors = [
+                {
+                    issues: [{} as CodeIssue, {} as CodeIssue]
+                } as CodeError
+            ];
+            expect(generator.helpers.sumIssues(errors)).to.be.equal(2);
         });
     });
 });

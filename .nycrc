@@ -1,8 +1,7 @@
 {
   "include": [
     "store/**/*.ts",
-    "middleware/**/*.ts",
-    "utils/**/*.ts"
+    "middleware/**/*.ts"
   ],
   "report-dir": ".coverage",
   "extension": [
