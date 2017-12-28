@@ -31,9 +31,9 @@ export interface Asset {
 }
 
 export interface RelatedApplication {
-    platform: string;
-    url: string;
-    id: string;
+    platform: string | null;
+    url: string | null;
+    id: string | null;
 }
 
 export interface CustomMember {

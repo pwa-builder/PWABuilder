@@ -16,15 +16,17 @@ export const helpers = {
     getImageIconSize(aSrc: string): Promise<{ width: number, height: number }> {
         return new Promise(resolve => {
             if (typeof document === 'undefined') {
-                resolve({ width: 0, height: 0 });
+                resolve({ width: -1, height: -1 });
             }
 
             let tmpImg = document.createElement('img');
-
-            tmpImg.onload = () => resolve({
-                width: tmpImg.width,
-                height: tmpImg.height
-            });
+            tmpImg.onload = () => {
+                console.log(111111111111111111, tmpImg);
+                resolve({
+                    width: tmpImg.width,
+                    height: tmpImg.height
+                });
+            };
 
             tmpImg.src = aSrc;
         });
