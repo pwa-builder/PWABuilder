@@ -20,7 +20,7 @@
         </div>
         <pre class="code_viewer-pre language-javascript" :style="{ height: size }" v-if="highlightedCode"><code class="code_viewer-code language-javascript" v-html="highlightedCode"></code></pre>
 
-        <div class="l-generator-messages l-generator-messages--code">
+        <div class="l-generator-messages l-generator-messages--code" v-if="warnings || suggestions">
           <IssuesList :errors="warnings" :title="$t('code_viewer.warnings')" :id="warningsId" :total="warningsTotal" />
           <IssuesList :errors="suggestions" :title="$t('code_viewer.suggestions')" :id="suggestionsId" :total="suggestionsTotal" />
         </div>
@@ -57,10 +57,10 @@ export default class extends Vue {
   @Prop({ type: String, default: 'auto' })
   public size: string | null;
 
-  @Prop({ type: Array, default: () => [] })
-  public suggestions: CodeError[];
+  @Prop({ type: Array, default: null })
+  public suggestions: CodeError[] | null;
 
-  @Prop({ type: Array, default: () => [] })
+  @Prop({ type: Array, default: null })
   public warnings: CodeError[];
 
   @Prop({ type: Number, default: 0 })
