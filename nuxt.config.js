@@ -1,6 +1,6 @@
 // Info about configuration https://nuxtjs.org/guide/configuration/
-var StyleLintPlugin = require('stylelint-webpack-plugin');
-var ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const StyleLintPlugin = require('stylelint-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 console.log(`Environment: ${process.env.NODE_ENV}`);
 
