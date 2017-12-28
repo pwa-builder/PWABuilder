@@ -1,4 +1,4 @@
-import { ActionTree, MutationTree, GetterTree, Action, ActionContext } from 'vuex';
+import { ActionTree, MutationTree, GetterTree, ActionContext } from 'vuex';
 import { RootState } from 'store';
 
 const apiUrl = `${process.env.apiUrl}/manifests`;
@@ -104,7 +104,7 @@ export const actions: Actions<State, RootState> = {
             }
 
             try {
-                const options = JSON.stringify({ name: params.publisher, publisher: params.publisher_id, package: params.package, version: params.version });
+                const options = { name: params.publisher, publisher: params.publisher_id, package: params.package, version: params.version };
                 const result = await this.$axios.$post(`${apiUrl}/${manifestId}/appx`, options);
                 commit(types.UPDATE_APPXLINK, result.archive);
                 resolve();
