@@ -15,14 +15,7 @@
               {{ $t("code_viewer.suggestions") }} ({{suggestionsTotal}})
             </SkipLink>
 
-            <div data-flare="{'category': 'Download', 'action': 'Web', 'label': 'Download Archive', 'value': { 'page': '/download/web' }}"
-                class="pwa-button pwa-button--simple pwa-button--total_right" @click="buildArchive('web')">
-                <span v-if="isReady">{{ $t(downloadButtonMessage) }}</span>
-                <span v-if="!isReady">{{ $t('publish.building_package') }}
-                    <Loading :active="true" :size="'sm'" class="u-display-inline_block u-margin-left-sm"
-                    />
-                </span>
-            </div>
+            <Download platform="web" :is-right="true" :message="$t('publish.download')" />
           </div>
         </div>
         <pre class="code_viewer-pre language-javascript" :style="{ height: size }" v-if="highlightedCode"><code class="code_viewer-code language-javascript" v-html="highlightedCode"></code></pre>
@@ -40,32 +33,23 @@ import Vue from 'vue';
 import Clipboard from 'clipboard';
 import Prism from 'prismjs';
 import Component from 'nuxt-class-component';
-import { Action, State, namespace } from 'vuex-class';
 import { Prop, Watch } from 'vue-property-decorator';
 
 import SkipLink from '~/components/SkipLink.vue';
 import Loading from '~/components/Loading.vue';
 import IssuesList from '~/components/IssuesList.vue';
+import Download from '~/components/Download.vue';
 import { CodeError } from '~/store/modules/generator';
-
-// TODO: Change to component
-import * as publish from '~/store/modules/publish';
-
-const PublishState = namespace(publish.name, State);
-const PublishAction = namespace(publish.name, Action);
 
 @Component({
   components: {
     SkipLink,
     Loading,
+    Download,
     IssuesList
   }
 })
 export default class extends Vue {
-  @PublishState archiveLink: string;
-
-  @PublishAction build;
-
   @Prop({ type: String, default: '' })
   public title: string;
 
@@ -120,26 +104,6 @@ export default class extends Vue {
         this.code,
         Prism.languages.javascript
       );
-    }
-  }
-
-  public async buildArchive(platform: string): Promise<void> {
-    //this.ga('send', 'event', 'item', 'click', 'generator-build-trigger-'+platform);
-    if (!this.isReady) {
-      return;
-    }
-
-    this.isReady = false;
-
-    try {
-      await this.build(platform);
-
-      if (this.archiveLink) {
-        window.location.href = this.archiveLink;
-      }
-      this.isReady = true;
-    } catch (e) {
-      this.downloadButtonMessage = 'publish.try_again';
     }
   }
 }

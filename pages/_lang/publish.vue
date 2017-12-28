@@ -15,14 +15,7 @@
                             {{ $t('publish.web_description') }}
                         </p>
                         <span class="button-holder download-archive">
-                            <button data-flare="{'category': 'Download', 'action': 'Web', 'label': 'Download Archive', 'value': { 'page': '/download/web' }}"
-                                class="pwa-button pwa-button--simple pwa-button--brand" @click="buildArchive('web')">
-                                <span v-if="isReady.web">{{ $t(downloadButtonMessage['web']) }}</span>
-                                <span v-if="!isReady.web">{{ $t('publish.building_package') }}
-                                    <Loading :active="true" :size="'sm'" class="u-display-inline_block u-margin-left-sm"
-                                    />
-                                </span>
-                            </button>
+                            <Download platform="web" :message="$t('publish.download')" :is-brand="true" />
                         </span>
                     </div>
                 </div>
@@ -32,14 +25,7 @@
                         <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.windows') }}</h4>
                         <p class="l-generator-description l-generator-description--fixed">{{ $t('publish.windows_description') }}</p>
                         <span class="button-holder download-archive">
-                            <button data-flare="{'category': 'Download', 'action': 'Web', 'label': 'Download Archive', 'value': { 'page': '/download/web' }}"
-                                class="pwa-button pwa-button--simple  isEnabled" @click="buildArchive('windows10')">
-                                <span v-if="isReady.windows10">{{ $t(downloadButtonMessage['windows10']) }}</span>
-                                <span v-if="!isReady.windows10">{{ $t('publish.building_package') }}
-                                    <Loading :active="true" :size="'sm'" class="u-display-inline_block u-margin-left-sm"
-                                    />
-                                </span>
-                            </button>
+                            <Download platform="windows10" :message="$t('publish.download')" />
                         </span>
                         <p>
                             <button class="pwa-button pwa-button--simple pwa-button--brand" @click="openAppXModal()">{{ $t('publish.generate_appx') }}</button>
@@ -83,26 +69,11 @@
                             <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.android') }}</h4>
                             <p class="l-generator-description l-generator-description--fixed l-generator-description--context">{{ $t('publish.android_description') }}</p>
                             <div>
-                                <button data-flare="{'category': 'Download', 'action': 'Web', 'label': 'Download Archive', 'value': { 'page': '/download/web' }}"
-                                    class="pwa-button pwa-button--simple" @click="buildArchive('android')">
-                                    <span v-if="isReady.android">{{ $t(downloadButtonMessage['android']) }}</span>
-                                    <span v-if="!isReady.android">{{ $t('publish.building_package') }}
-                                        <Loading :active="true" :size="'sm'" class="u-display-inline_block u-margin-left-sm"
-                                        />
-                                    </span>
-                                </button>
+                                <Download platform="android" :message="$t('publish.download')" />
                             </div>
                         </div>
                         <h2 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.ios') }}</h2>
-                        <button data-flare="{'category': 'Download', 'action': 'Web', 'label': 'Download Archive', 'value': { 'page': '/download/web' }}"
-                            class="pwa-button pwa-button--simple" @click="buildArchive('ios')">
-                            <span v-if="isReady.ios">{{ $t(downloadButtonMessage['ios']) }}</span>
-                            <span v-if="!isReady.ios">{{ $t('publish.building_package') }}
-                                <Loading :active="true" :size="'sm'" class="u-display-inline_block u-margin-left-sm"
-                                />
-                            </span>
-                        </button>
-                        </span>
+                        <Download platform="ios" :message="$t('publish.download')" />
                     </div>
                 </div>
             </div>
@@ -125,8 +96,8 @@ import { Action, State, namespace } from 'vuex-class';
 
 import GeneratorMenu from '~/components/GeneratorMenu.vue';
 import TwoWays from '~/components/TwoWays.vue';
-import Loading from '~/components/Loading.vue';
 import StartOver from '~/components/StartOver.vue';
+import Download from '~/components/Download.vue';
 import Modal from '~/components/Modal.vue';
 
 import * as publish from '~/store/modules/publish';
@@ -138,20 +109,12 @@ const PublishAction = namespace(publish.name, Action);
   components: {
     TwoWays,
     GeneratorMenu,
-    Loading,
+    Download,
     StartOver,
     Modal
   }
 })
 export default class extends Vue {
-  public isReady = {
-    web: true,
-    windows10: true,
-    android: true,
-    ios: true,
-    appx: true
-  };
-
   public appxForm: publish.AppxParams = {
     publisher: null,
     publisher_id: null,
@@ -159,20 +122,10 @@ export default class extends Vue {
     version: null
   };
 
-  public downloadButtonMessage = {
-    web: 'publish.download',
-    windows10: 'publish.download',
-    android: 'publish.download',
-    ios: 'publish.download',
-    appx: 'publish.download'
-  };
-
   @PublishState status: boolean;
-  @PublishState archiveLink: string;
   @PublishState appXLink: string;
 
   @PublishAction updateStatus;
-  @PublishAction build;
   @PublishAction buildAppx;
 
   public appxError: string | null = null;
@@ -185,24 +138,6 @@ export default class extends Vue {
     this.$router.push({
       name: 'index'
     });
-  }
-
-  public async buildArchive(platform: string): Promise<void> {
-    //this.ga('send', 'event', 'item', 'click', 'generator-build-trigger-'+platform);
-    if (!this.isReady[platform]) {
-      return;
-    }
-    this.isReady[platform] = false;
-
-    try {
-      await this.build(platform);
-      if (this.archiveLink) {
-        window.location.href = this.archiveLink;
-      }
-      this.isReady[platform] = true;
-    } catch (e) {
-      this.downloadButtonMessage[platform] = 'publish.try_again';
-    }
   }
 
   public openAppXModal(): void {
