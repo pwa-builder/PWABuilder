@@ -84,6 +84,10 @@
     background-color: $color-background-bright;
     color: $color-foreground-darker;
     padding: $step-padding 0 $step-padding * 2 0;
+
+    &--big {
+      min-height: 50vh;
+    }
   }
 
   &-align {
