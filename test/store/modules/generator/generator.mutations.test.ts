@@ -11,7 +11,7 @@ let state: generator.State;
 let actionContext: ActionContext<generator.State, RootState>;
 let mutations: MutationTree<generator.State>;
 
-describe('generator mutations', () => {
+describe('store generator mutations', () => {
 
     beforeEach(() => {
         state = generator.state();

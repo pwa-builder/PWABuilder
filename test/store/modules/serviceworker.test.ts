@@ -12,7 +12,7 @@ let state: serviceworker.State;
 let actionContext: ActionContext<serviceworker.State, RootState>;
 let actions: serviceworker.Actions<serviceworker.State, RootState>;
 
-describe('serviceworker', () => {
+describe('store serviceworker', () => {
 
     beforeEach(() => {
         state = serviceworker.state();

@@ -15,7 +15,7 @@ class MockImage {
     public onload() {}
 }
 
-describe('generator helpers', () => {
+describe('store generator helpers', () => {
 
     describe('when isValidUrl receives an url', () => {
         it('should return false if url is invalid', () => {

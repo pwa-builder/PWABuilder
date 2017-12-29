@@ -12,7 +12,7 @@ let state: publish.State;
 let actionContext: ActionContext<publish.State, RootState>;
 let actions: publish.Actions<publish.State, RootState>;
 
-describe('publish', () => {
+describe('store publish', () => {
 
     beforeEach(() => {
         state = publish.state();

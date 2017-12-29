@@ -13,7 +13,7 @@ let state: generator.State;
 let actionContext: ActionContext<generator.State, RootState>;
 let actions: generator.Actions<generator.State, RootState>;
 
-describe('generator actions', () => {
+describe('store generator actions', () => {
 
     beforeEach(() => {
         state = generator.state();

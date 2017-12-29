@@ -4,7 +4,7 @@ import * as i18n from 'store/modules/i18n';
 
 let state: i18n.State;
 
-describe('i18n', () => {
+describe('store i18n', () => {
 
     beforeEach(() => {
         state = i18n.state();
