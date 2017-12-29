@@ -1,8 +1,8 @@
 <template>
 <section class="code_viewer">
     <header class="code_viewer-header">
-        <div class="code_viewer-title pure-u-1 pure-u-md-1-2">{{title}}</div>
-        <div class="code_viewer-title pure-u-1 pure-u-md-1-2"><slot/></div>
+        <div class="code_viewer-title pure-u-1-2">{{title}}</div>
+        <div class="code_viewer-title pure-u-1-2"><slot/></div>
     </header>
     <div class="code_viewer-content" :style="{ height: size }">
         <div class="code_viewer-copy js-clipboard" :data-clipboard-text="code" ref="code">{{ $t('code_viewer.' + copyText) }}</div>
@@ -112,6 +112,10 @@ export default class extends Vue {
 
 .code_viewer {
   font-size: 0;
+
+  @media screen and (max-width: $media-screen-s) {
+    margin-top: 4rem;
+  }
 
   &-padded {
     padding-top: 1rem;

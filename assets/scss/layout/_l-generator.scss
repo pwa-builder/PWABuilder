@@ -88,6 +88,12 @@
     &--big {
       min-height: 50vh;
     }
+
+    @media screen and (max-width: $media-screen-s) {
+      $padding: 1rem;
+
+      padding: $step-padding $padding $step-padding * 2 $padding;
+    }
   }
 
   &-align {
