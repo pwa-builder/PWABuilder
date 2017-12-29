@@ -6,10 +6,10 @@
     </div>
 
     <div class="pure-u-1 pure-u-md-1-2">
-      <div class="twoways-box">
-        <img class="twoways-logo" src="~/assets/images/logo_small.png" alt="Small PWA Builder logo">
-        <h4 class="twoways-subtitle">{{ $t('twoways.web_based') }}</h4> 
-        <nuxt-link to="/" class="twoways-action"
+      <div class="pwa-infobox-box">
+        <img class="pwa-infobox-logo" src="~/assets/images/logo_small.png" alt="Small PWA Builder logo">
+        <h4 class="pwa-infobox-subtitle">{{ $t('twoways.web_based') }}</h4> 
+        <nuxt-link to="/" class="pwa-infobox-action"
            data-flare='{"category": "Build", "action": "Step 1", "label": "PWA Infobox", "value": { "page": "/" }}'>
           {{ $t('twoways.started_now') }}
         </nuxt-link>
@@ -17,10 +17,10 @@
     </div>
 
     <div class="pure-u-1 pure-u-md-1-2">
-      <div class="twoways-box">
-        <img class="twoways-logo" src="~/assets/images/logo_small.png" alt="Small PWA Builder logo">
-        <h4 class="twoways-subtitle">{{ $t('twoways.subtitle') }}</h4> 
-        <a class="twoways-action" href="https://github.com/pwa-builder/ManifoldJS/releases" target="_blank"
+      <div class="pwa-infobox-box">
+        <img class="pwa-infobox-logo" src="~/assets/images/logo_small.png" alt="Small PWA Builder logo">
+        <h4 class="pwa-infobox-subtitle">{{ $t('twoways.subtitle') }}</h4> 
+        <a class="pwa-infobox-action" href="https://github.com/pwa-builder/ManifoldJS/releases" target="_blank"
            data-flare='{"category": "Download", "action": "CLI", "label": "PWA Infobox", "value": { "page": "/" }}'>
           {{ $t('twoways.download') }}
         </a>
@@ -37,71 +37,3 @@ import Component from 'nuxt-class-component';
 @Component()
 export default class extends Vue {}
 </script>
-
-<style lang="scss" scoped>
-@import "~assets/scss/base/variables";
-@import "~assets/scss/mixins/action";
-
-.twoways {
-  background-color: $color-background-dark;
-
-  &--transparent {
-    background-color: transparent;
-  }
-
-  &-subtitle {
-    font-family: Bitter;
-    font-size: $font-size-l;
-    font-weight: $font-weight-bold;
-    margin: .5rem 0 0 0;
-
-    &--thin {
-      font-weight: $font-weight-regular;
-      margin-bottom: .5rem;
-    }
-  }
-
-  &-box {
-    background-color: $color-background-brighter;
-    border-radius: .5rem;
-    box-shadow: 0 .8rem 2rem .2rem rgba($color-background-darkest, .2);
-    margin: .5vw .75vw;
-    padding: 2.5rem;
-
-    @media screen and (max-width: $media-screen-s) {
-      margin-bottom: 2vw;
-    }
-
-    &--flat {
-      box-shadow: none;
-      min-height: 25rem;
-      text-align: center;
-
-      @media screen and (max-width: $media-screen-m) {
-        min-height: 28rem;
-      }
-
-      @media screen and (max-width: $media-screen-s) {
-        min-height: auto;
-      }
-    }
-  }
-
-  &-logo {
-    max-width: 4.8rem;
-    width: 100%;
-  }
-
-  &-action {
-    @include action-link ($color-complementary-bright, $color-complementary, .2rem, false);
-
-    font-family: Bitter;
-    font-size: $font-size-l;
-    font-weight: $font-weight-regular;
-  }
-
-  &-padded {
-    padding-bottom: 2rem;
-  }
-}
-</style>
