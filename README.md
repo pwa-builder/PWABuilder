@@ -25,6 +25,10 @@ You will need the following things properly installed on your computer.
 
 * `npm test`
 
+### Running Test Coverage
+
+* `npm run cover`
+
 ### Building
 
 * `npm run build` (production)

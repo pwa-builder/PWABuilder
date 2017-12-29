@@ -21,7 +21,6 @@ export const helpers = {
 
             let tmpImg = document.createElement('img');
             tmpImg.onload = () => {
-                console.log(111111111111111111, tmpImg);
                 resolve({
                     width: tmpImg.width,
                     height: tmpImg.height
