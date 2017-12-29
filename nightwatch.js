@@ -1,3 +1,4 @@
+const env = require(`./environments/${process.env.NODE_ENV}`)
 module.exports = {
   src_folders : ['./test-e2e'],
   output_folder : './e2e-logs/',
@@ -7,7 +8,7 @@ module.exports = {
   }, 
   test_settings: {
     default: {
-    launch_url: 'localhost:3000',
+    launch_url: env.baseUrl,
     selenium_host: '127.0.0.1',
     selenium_port : '4444',
       silent: true
