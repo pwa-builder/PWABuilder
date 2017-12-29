@@ -24,25 +24,27 @@ export const state = (): any => ({
     orientations: null
 });
 
-function getStaticContentNames(collection: StaticContent[] | null): string[] {
-    if (!collection) {
-        return [];
+export const helpers = {
+    getStaticContentNames(collection: StaticContent[] | null): string[] {
+        if (!collection) {
+            return [];
+        }
+    
+        return collection.map(x => x.name);
     }
-
-    return collection.map(x => x.name);
-}
+};
 
 export const getters: GetterTree<State, RootState> = {
     languagesNames(state: State): string[] {
-        return getStaticContentNames(state.languages);
+        return helpers.getStaticContentNames(state.languages);
     },
 
     displaysNames(state: State): string[] {
-        return getStaticContentNames(state.displays);
+        return helpers.getStaticContentNames(state.displays);
     },
 
     orientationsNames(state: State): string[] {
-        return getStaticContentNames(state.orientations);
+        return helpers.getStaticContentNames(state.orientations);
     }
 };
 
