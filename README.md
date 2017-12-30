@@ -29,6 +29,13 @@ You will need the following things properly installed on your computer.
 
 * `npm run cover`
 
+### Running Test Coverage
+
+* `npm install selenium-standalone@latest -g` _only once_
+* `npm run e2e`
+
+> You need have installed [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+
 ### Building
 
 * `npm run build` (production)

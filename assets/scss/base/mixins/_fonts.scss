@@ -38,5 +38,5 @@
 }
 
 @mixin font-include($font, $type, $weight: null, $style: null) {
-  @include font-face($font, '/static/fonts/' + $font + '/' + $font + '-' + $type, $weight, $style);
+  @include font-face($font, '/static/fonts/' + $font + '-' + $type, $weight, $style);
 }
