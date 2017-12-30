@@ -4,7 +4,7 @@ module.exports = {
   output_folder : './e2e-logs/',
   selenium : {
     start_process : false,
-    log_path : './e2e-logs/'
+    log_path : '.e2e-logs'
   }, 
   test_settings: {
     default: {
@@ -15,7 +15,13 @@ module.exports = {
       desiredCapabilities: {
         browserName: 'chrome',
         javascriptEnabled: true
-      }
+      },
+      screenshots: {
+        enabled: true,
+        path: '.e2e-logs',
+        on_failure: true,
+        on_error: true
+      },
     }
   }
 };

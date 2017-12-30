@@ -1,15 +1,19 @@
-// test/e2e/simple/simpleTest.js
+const env = require(`../environments/${process.env.NODE_ENV}`)
+
 module.exports = {
     beforeEach: browser => {
       browser
-        .url('http://localhost:8000')
-        .waitForElementVisible('body')
-        .waitForElementVisible('#app > div');
+        .url(env.baseUrl)
+        .waitForElementVisible('.container', 1000);
     },
     'Smoke test': browser => {
       browser
-        .assert.visible('#app > div', 'Check if app has rendered with   React')
-        .assert.title('MyTitle');
+        .assert.visible('#siteUrl', 'Check if website input exist')
+        .assert.value('#siteUrl', '')
+        .click('.get-started.pwa-button.isEnabled.next-step')
+        .pause(1000)
+        .assert.visible('.l-generator-error')
+        .assert.containsText('.l-generator-error', 'Please provide a URL.');
     },
     after: browser => browser.end(),
   };
