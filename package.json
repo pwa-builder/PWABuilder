@@ -29,14 +29,14 @@
     "dev": "cross-env NODE_ENV=development API_URL_BROWSER=/ API_URL=http://localhost:3000 nuxt",
     "prebuild": "npm run shared-tasks",
     "build": "cross-env NODE_ENV=production nuxt build",
-    "start": "nuxt start",
+    "start": "cross-env NODE_ENV=development nuxt start",
     "pregenerate": "npm run shared-tasks",
     "generate": "cross-env NODE_ENV=development nuxt generate",
     "pregenerate-prod": "npm run shared-tasks",
     "generate-prod": "cross-env NODE_ENV=production nuxt generate",
     "test": "mocha --opts mocha.opts",
-    "pree2e": "selenium-standalone start",
-    "e2e": "cross-env NODE_ENV=development nightwatch --config nightwatch.js",
+    "a": "selenium-standalone start",
+    "e2e": "concurrently \"npm start\" \"selenium-standalone start\" \"wait-on http://localhost:4444 && cross-env NODE_ENV=development nightwatch --config nightwatch.js\" --names \"V,S,N\" --prefix name --kill-others",
     "cover": "nyc npm test && opener ./.coverage/index.html",
     "fontmin": "fontmin ./static/fonts-raw/**/* ./static/fonts"
   },
@@ -51,6 +51,7 @@
     "axios-mock-adapter": "^1.10.0",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
+    "concurrently": "^3.5.1",
     "cross-env": "^5.1.1",
     "fontmin": "^0.9.6",
     "fork-ts-checker-webpack-plugin": "^0.2.9",
@@ -74,6 +75,7 @@
     "ts-node": "^3.3.0",
     "tsconfig-paths": "^2.6.0",
     "tslint": "^5.8.0",
-    "typescript": "^2.6.2"
+    "typescript": "^2.6.2",
+    "wait-on": "^2.0.2"
   }
 }

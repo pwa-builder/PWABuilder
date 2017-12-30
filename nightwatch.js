@@ -8,10 +8,14 @@ module.exports = {
   }, 
   test_settings: {
     default: {
-    launch_url: env.baseUrl,
-    selenium_host: '127.0.0.1',
-    selenium_port : '4444',
-      silent: true
+      launch_url: env.baseUrl,
+      selenium_host: 'localhost',
+      selenium_port : '4444',
+      silent: true,
+      desiredCapabilities: {
+        browserName: 'chrome',
+        javascriptEnabled: true
+      }
     }
   }
 };
