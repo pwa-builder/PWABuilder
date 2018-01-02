@@ -1,14 +1,14 @@
-<script>
+<script lang="ts">
 export default {
   middleware: 'default'
-}
+};
 </script>
 
 <template>
   <div>
     <header class="l-header pure-g">
       <div class="l-header-left pure-u pure-u-md-1-5">
-        <nuxt-link to="/generator">
+        <nuxt-link to="/">
           <img class="l-header-logo" src="~/assets/images/logo.png" :alt="$t('menu.logo')">
         </nuxt-link>
       </div>
