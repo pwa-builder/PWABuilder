@@ -37,7 +37,7 @@
     "pree2e": "npm run build",
     "e2e": "concurrently \"npm start\" \"selenium-standalone start\" \"wait-on http://localhost:4444 && wait-on http://localhost:3000 && cross-env NODE_ENV=development nightwatch --config nightwatch.js\" --names \"📦,⚙️,🦉\" --prefix name --kill-others",
     "cover": "nyc npm test && opener ./.coverage/index.html",
-    "fontmin": "fontmin ./static/fonts-raw/**/* ./static/fonts"
+    "fontmin": "fontmin ./static/fonts-raw/**/* ./static/fonts -T"
   },
   "devDependencies": {
     "@types/chai": "^4.0.8",
