@@ -26,7 +26,10 @@ module.exports = {
             { rel: 'apple-touch-icon', sizes: '120x120', href: '/Images/assets/icons/apple-icon-120x120-06144a2a7b5101d447ecb4832502e73e.png' },
             { rel: 'apple-touch-icon', sizes: '144x144', href: '/Images/assets/icons/apple-icon-144x144-487a503e5cb29bbe0df7296db4093b7e.png' },
             { rel: 'apple-touch-icon', sizes: '152x152', href: '/Images/assets/icons/apple-icon-152x152-b600c0b40a21bbb9f8c1d18acde168e9.png' },
-            { rel: 'apple-touch-icon', sizes: '180x180', href: '/Images/assets/icons/apple-icon-180x180-f0f5be1ded11c7ec66b00dd23c277a5d.png' },
+            { rel: 'apple-touch-icon', sizes: '180x180', href: '/Images/assets/icons/apple-icon-180x180-f0f5be1ded11c7ec66b00dd23c277a5d.png' }
+        ],
+        script: [
+            { src: '/pwabuilder-sw-register.js' }
         ]
     },
     loading: { color: '#1FC2C8' },
