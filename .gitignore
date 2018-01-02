@@ -48,3 +48,4 @@ testem.log
 
 # Meanwhile we don't have a better approach with webpack
 static/fonts/
+e2e-logs/

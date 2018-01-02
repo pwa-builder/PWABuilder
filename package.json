@@ -23,20 +23,19 @@
     "vuex-class": "^0.3.0"
   },
   "scripts": {
-    "postinstall": "selenium-standalone install",
     "shared-tasks": "npm run fontmin",
     "predev": "npm run shared-tasks",
     "dev": "cross-env NODE_ENV=development API_URL_BROWSER=/ API_URL=http://localhost:3000 nuxt",
     "prebuild": "npm run shared-tasks",
     "build": "cross-env NODE_ENV=production nuxt build",
-    "start-test": "cross-env NODE_ENV=production API_URL_BROWSER=/ API_URL=http://localhost:3000 nuxt start",
-    "start": "nuxt start",
+    "start": "cross-env NODE_ENV=production API_URL_BROWSER=/ API_URL=http://localhost:3000 nuxt start",
     "pregenerate": "npm run shared-tasks",
     "generate": "cross-env NODE_ENV=development nuxt generate",
     "pregenerate-prod": "npm run shared-tasks",
     "generate-prod": "cross-env NODE_ENV=production nuxt generate",
     "test": "mocha --opts mocha.opts",
-    "e2e": "concurrently \"npm start-test\" \"selenium-standalone start\" \"wait-on http://localhost:4444 && wait-on http://localhost:3000 && cross-env NODE_ENV=development nightwatch --config nightwatch.js\" --names \"📦,⚙️,🦉\" --prefix name --kill-others",
+    "pree2e": "npm run build",
+    "e2e": "concurrently \"npm start\" \"selenium-standalone start\" \"wait-on http://localhost:4444 && wait-on http://localhost:3000 && cross-env NODE_ENV=development nightwatch --config nightwatch.js\" --names \"📦,⚙️,🦉\" --prefix name --kill-others",
     "cover": "nyc npm test && opener ./.coverage/index.html",
     "fontmin": "fontmin ./static/fonts-raw/**/* ./static/fonts"
   },
