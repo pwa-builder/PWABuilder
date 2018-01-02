@@ -18,7 +18,7 @@ export interface State {
     orientations: StaticContent[] | null;
 }
 
-export const state = (): any => ({
+export const state = (): State => ({
     languages: null,
     displays: null,
     orientations: null
