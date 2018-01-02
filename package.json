@@ -37,7 +37,7 @@
     "pree2e": "npm run build",
     "e2e": "concurrently \"cross-env NODE_ENV=production API_URL_BROWSER=/ API_URL=http://localhost:3000 nuxt start\" \"selenium-standalone start\" \"wait-on http://localhost:4444 && wait-on http://localhost:3000 && cross-env NODE_ENV=development nightwatch --config nightwatch.js\" --names \"📦,⚙️,🦉\" --prefix name --kill-others",
     "cover": "nyc npm test && opener ./.coverage/index.html",
-    "fontmin": "fontmin ./static/fonts-raw/**/* ./static/fonts -T"
+    "fontmin": "fontmin static/fonts-raw/**/* static/fonts -T"
   },
   "devDependencies": {
     "@types/chai": "^4.0.8",
