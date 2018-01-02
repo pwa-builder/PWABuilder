@@ -105,7 +105,15 @@ IF EXIST "%DEPLOYMENT_TARGET%\package.json" (
   popd
 )
 
-:: 4. Run prod script
+:: 4. Run shared-tasks script
+IF EXIST "%DEPLOYMENT_TARGET%\package.json" (
+  pushd "%DEPLOYMENT_TARGET%"
+  call :ExecuteCmd !NPM_CMD! run shared-tasks
+  IF !ERRORLEVEL! NEQ 0 goto error
+  popd
+)
+
+:: 5. Run prod script
 IF EXIST "%DEPLOYMENT_TARGET%\package.json" (
   pushd "%DEPLOYMENT_TARGET%"
   call :ExecuteCmd !NPM_CMD! run generate-prod
