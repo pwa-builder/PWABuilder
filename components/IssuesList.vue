@@ -10,7 +10,7 @@
         {{error.member}}
       </h4>
       <ul class="issues_list-items">
-        <li v-for="issue in error.issues" :key="issue.code">
+        <li v-for="issue in error.issues" :key="issue.code + Math.random()">
           <p class="l-generator-issue">
             <strong class="l-generator-topic">
               {{codeFormat(issue.code)}}:
