@@ -1,10 +1,12 @@
 // Info about configuration https://nuxtjs.org/guide/configuration/
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const env = require(`./environments/${process.env.NODE_ENV}`);
+
 console.log(`Environment: ${process.env.NODE_ENV}`);
 
 module.exports = {
-    env: require(`./environments/${process.env.NODE_ENV}`),
+    env: env,
     head: {
         title: 'PWABuilder',
         meta: [
@@ -57,7 +59,7 @@ module.exports = {
         '@nuxtjs/axios',
         '@nuxtjs/font-awesome',
         ['@nuxtjs/google-analytics', {
-            id: 'UA-98003629-1'
+            id: env.analytics
         }]
     ]
 }
