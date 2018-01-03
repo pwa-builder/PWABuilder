@@ -1,6 +1,6 @@
 <template>
 <div class="start_over">
-    <button @click="reset" class="pwa-button pwa-button--simple">{{ $t('publish.start_over') }}</button>
+    <button @click="reset(); $ga.event('item', 'click', 'generator-startover-trigger')" class="pwa-button pwa-button--simple">{{ $t('publish.start_over') }}</button>
 </div>
 </template>
 

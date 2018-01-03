@@ -1,7 +1,6 @@
 // Info about configuration https://nuxtjs.org/guide/configuration/
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-
 console.log(`Environment: ${process.env.NODE_ENV}`);
 
 module.exports = {
@@ -56,6 +55,9 @@ module.exports = {
     modules: [
         '~/modules/typescript',
         '@nuxtjs/axios',
-        '@nuxtjs/font-awesome'
+        '@nuxtjs/font-awesome',
+        ['@nuxtjs/google-analytics', {
+            id: 'UA-98003629-1'
+        }]
     ]
 }

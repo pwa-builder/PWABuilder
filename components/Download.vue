@@ -1,8 +1,8 @@
 <template>
-<div :data-flare="JSON.stringify({'category': 'Download', 'action': platform, 'label': 'Download Archive', 'value': { 'page': `/download/${platform}` }})"
-        class="pwa-button pwa-button--simple"
-        :class="{'pwa-button--brand': isBrand, 'pwa-button--total_right': isRight}"
-        @click="buildArchive(platform)">
+<div class="pwa-button pwa-button--simple"
+     :class="{'pwa-button--brand': isBrand, 'pwa-button--total_right': isRight}"
+     @click="buildArchive(platform); $ga.event('Download', platform, 'Download Archive', { 'page': `/download/${platform}` });  $ga.event('item', 'click', `generator-build-trigger-${platform}`)">
+
     <span v-if="isReady">{{ message$ }}</span>
     <span v-if="!isReady">{{ $t('publish.building_package') }}
         <Loading :active="true" class="u-display-inline_block u-margin-left-sm"

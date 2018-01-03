@@ -30,7 +30,7 @@
                     <button
                       type="submit"
                       class="get-started pwa-button isEnabled next-step"
-                      data-flare="{'category': 'Build', 'action': 'Step 2', 'label': 'Scan for Manifest', 'value': { 'page': '/build/manifest-scan' }}" >
+                      @click="$ga.event('Build', 'Step 2', 'Scan for Manifest', { 'page': `/build/manifest-scan` })">
                       {{ $t('generator.start') }} <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm" />
                     </button>
                 </div>
@@ -41,9 +41,8 @@
 
                 <div class="l-generator-wrapper pure-u-1">
                   <button 
-                    @click="skipCheckUrl"
-                    class="pwa-button pwa-button--simple" 
-                    data-flare="{'category': 'Skip', 'action': 'Manifest', 'label': 'Skip to Service Worker', 'value': { 'page': '/skip/service-worker' }}">
+                    @click="skipCheckUrl(); $ga.event('Skip', 'Manifest', 'Skip to Service Worker', { 'page': `/skip/service-worker` })"
+                    class="pwa-button pwa-button--simple">
                     {{ $t('generator.skip') }}
                   </button>
                 </div>

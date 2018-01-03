@@ -16,14 +16,12 @@
 
                 <div class="modal-buttons">
                     <button class="l-generator-space_right pwa-button pwa-button--simple pwa-button--brand"
-                            @click="onClickSubmit()"
-                            data-flare='{"category": "Manifest", "action": "Add Member", "label": "Image Upload", "value": { "page": "/manifest/add-member" }}'>
+                            @click="onClickSubmit(); $ga.event('Manifest', 'Add Member', 'Image Upload', { 'page': `/manifest/add-member` })">
                             {{$t("modal.submit")}} 
                             <Loading :active="isLoading" class="u-display-inline_block u-margin-left-sm" />
                     </button>
                     <button class="pwa-button pwa-button--simple"
-                            @click="onClickCancel()"
-                            data-flare='{"category": "Manifest", "action": "Add Member", "label": "Image Upload - Cancel", "value": { "page": "/manifest/add-member" }}'>
+                            @click="onClickCancel(); $ga.event('Manifest', 'Add Member', 'Image Upload - Cancel', { 'page': `/manifest/add-member` })">
                             {{$t("modal.cancel")}}
                     </button>
                 </div>

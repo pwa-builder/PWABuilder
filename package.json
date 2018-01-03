@@ -4,6 +4,7 @@
   "dependencies": {
     "@nuxtjs/axios": "^4.5.0",
     "@nuxtjs/font-awesome": "^1.0.3",
+    "@nuxtjs/google-analytics": "^2.0.2",
     "babel-polyfill": "^6.26.0",
     "clipboard": "^1.7.1",
     "fontmin": "^0.9.6",

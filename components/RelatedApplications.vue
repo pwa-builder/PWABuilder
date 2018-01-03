@@ -22,7 +22,7 @@
     </div>
 
     <div class="button-holder">
-        <button class="pwa-button pwa-button--text pwa-button--right" @click="onClickAdd()" data-flare='{"category": "Manifest", "action": "Add Member", "label": "Related Application", "value": { "page": "/manifest/add-member" }}'>
+        <button class="pwa-button pwa-button--text pwa-button--right" @click="onClickAdd(); $ga.event('Manifest', 'Add Member', 'Related Application', { 'page': `/manifest/add-member` })">
             {{ $t("related_applications.add") }}
         </button>
     </div>
