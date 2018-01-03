@@ -7,7 +7,6 @@
     "@nuxtjs/google-analytics": "^2.0.2",
     "babel-polyfill": "^6.26.0",
     "clipboard": "^1.7.1",
-    "fontmin": "^0.9.6",
     "gsap": "^1.19.1",
     "manup": "^1.0.1",
     "normalize-scss": "^7.0.0",
@@ -26,10 +25,7 @@
     "vuex-class": "^0.3.0"
   },
   "scripts": {
-    "shared-tasks": "npm run fontmin",
-    "predev": "npm run shared-tasks",
     "dev": "cross-env NODE_ENV=development API_URL_BROWSER=/ API_URL=http://localhost:3000 nuxt",
-    "prebuild": "npm run shared-tasks",
     "build": "cross-env NODE_ENV=production nuxt build",
     "start": "nuxt start",
     "generate": "cross-env NODE_ENV=development nuxt generate --spa",
@@ -37,8 +33,7 @@
     "test": "mocha --opts mocha.opts",
     "pree2e": "npm run build",
     "e2e": "concurrently \"cross-env NODE_ENV=production API_URL_BROWSER=/ API_URL=http://localhost:3000 nuxt start\" \"selenium-standalone start\" \"wait-on http://localhost:4444 && wait-on http://localhost:3000 && cross-env NODE_ENV=development nightwatch --config nightwatch.js\" --names \"📦,⚙️,🦉\" --prefix name --kill-others",
-    "cover": "nyc npm test && opener ./.coverage/index.html",
-    "fontmin": "fontmin static/fonts-raw/**/* static/fonts -T"
+    "cover": "nyc npm test && opener ./.coverage/index.html"
   },
   "devDependencies": {
     "@types/chai": "^4.0.8",

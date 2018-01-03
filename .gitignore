@@ -45,7 +45,4 @@ testem.log
 .vs/
 .coverage/
 .nyc_output/
-
-# Meanwhile we don't have a better approach with webpack
-static/fonts/
 e2e-logs/
