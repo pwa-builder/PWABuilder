@@ -1,31 +1,32 @@
 <template>
 <section class="generator_menu">
-    <header class="generator_menu-header">
-        {{ $t('generatormenu.title') }}
-    </header>
-    <p class="generator_menu-info">
-      {{ $t('generatormenu.subtitle') }}
-    </p>
-    <ul class="generator_menu-tabs">
+  <header class="generator_menu-header">
+    {{ $t('generatormenu.title') }}
+  </header>
+  <p class="generator_menu-info">
+    {{ $t('generatormenu.subtitle') }}
+  </p>
 
-        <li class="generator_menu-tab">
-            <nuxt-link :to="$i18n.path(firstLinkPath ? '' : 'generate')" exact class="generator_menu-link" :active-class="activeClass" data-step="1">
-                {{ $t('generatormenu.generate') }}
-            </nuxt-link>
-        </li>
+  <ul class="generator_menu-tabs">
+    <li class="generator_menu-tab">
+      <nuxt-link :to="$i18n.path(firstLinkPath ? '' : 'generate')" exact class="generator_menu-link" :active-class="activeClass"
+        data-step="1">
+        {{ $t('generatormenu.generate') }}
+      </nuxt-link>
+    </li>
 
-        <li class="generator_menu-tab">
-            <nuxt-link :to="$i18n.path('serviceworker')" class="generator_menu-link" :active-class="activeClass" data-step="2">
-                {{ $t('generatormenu.serviceworker') }}
-            </nuxt-link>
-        </li>
+    <li class="generator_menu-tab">
+      <nuxt-link :to="$i18n.path('serviceworker')" class="generator_menu-link" :active-class="activeClass" data-step="2">
+        {{ $t('generatormenu.serviceworker') }}
+      </nuxt-link>
+    </li>
 
-        <li class="generator_menu-tab">
-            <nuxt-link :to="$i18n.path('publish')" class="generator_menu-link" :active-class="activeClass" data-step="3">
-                {{ $t('generatormenu.publish') }}
-            </nuxt-link>
-        </li>
-    </ul>
+    <li class="generator_menu-tab">
+      <nuxt-link :to="$i18n.path('publish')" class="generator_menu-link" :active-class="activeClass" data-step="3">
+        {{ $t('generatormenu.publish') }}
+      </nuxt-link>
+    </li>
+  </ul>
 </section>
 </template>
 
@@ -113,7 +114,7 @@ export default class extends Vue {
       border-bottom: $tab-height / 2 solid transparent;
       border-left: $tab-height / 2 solid $tab-color-off;
       border-top: $tab-height / 2 solid transparent;
-      content: "";
+      content: '';
       height: 0;
       position: absolute;
       right: - $tab-height / 2;
