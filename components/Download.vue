@@ -1,13 +1,12 @@
 <template>
-<div class="pwa-button pwa-button--simple"
-     :class="{'pwa-button--brand': isBrand, 'pwa-button--total_right': isRight}"
-     @click="buildArchive(platform); $ga.event('Download', platform, 'Download Archive', { 'page': `/download/${platform}` });  $ga.event('item', 'click', `generator-build-trigger-${platform}`)">
+<div class="pwa-button pwa-button--simple" 
+    :class="{'pwa-button--brand': isBrand, 'pwa-button--total_right': isRight}"
+    @click="buildArchive(platform); $ga.event('Download', platform, 'Download Archive', { 'page': `/download/${platform}` }); $ga.event('item', 'click', `generator-build-trigger-${platform}`)">
 
-    <span v-if="isReady">{{ message$ }}</span>
-    <span v-if="!isReady">{{ $t('publish.building_package') }}
-        <Loading :active="true" class="u-display-inline_block u-margin-left-sm"
-        />
-    </span>
+  <span v-if="isReady">{{ message$ }}</span>
+  <span v-if="!isReady">{{ $t('publish.building_package') }}
+    <Loading :active="true" class="u-display-inline_block u-margin-left-sm" />
+  </span>
 </div>
 </template>
 
@@ -45,7 +44,6 @@ export default class extends Vue {
   public message$ = '';
 
   @PublishState archiveLink: string;
-
   @PublishAction build;
 
   public created(): void {
@@ -73,7 +71,3 @@ export default class extends Vue {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-@import "~assets/scss/base/variables";
-</style>
