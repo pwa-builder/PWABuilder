@@ -1,30 +1,37 @@
 <template>
 <section class="code_viewer">
-    <header class="code_viewer-header">
-        <div class="code_viewer-title pure-u-1-2">{{title}}</div>
-        <div class="code_viewer-title pure-u-1-2"><slot/></div>
-    </header>
-    <div class="code_viewer-content" :style="{ height: size }">
-        <div class="code_viewer-copy js-clipboard" :data-clipboard-text="code" ref="code">{{ $t('code_viewer.' + copyText) }}</div>
-        <div class="code_viewer-padded" v-if="warnings || suggestions">
-          <div class="code_viewer-header code_viewer-header--rounded">
-            <SkipLink v-if="warnings" class="pwa-button pwa-button--simple pwa-button--margin pwa-button--warning" :anchor="'#' + warningsId">
-              {{ $t("code_viewer.warnings") }} ({{warningsTotal}})
-            </SkipLink>
-            <SkipLink v-if="suggestions" class="pwa-button pwa-button--simple pwa-button--margin" :anchor="'#' + suggestionsId">
-              {{ $t("code_viewer.suggestions") }} ({{suggestionsTotal}})
-            </SkipLink>
-
-            <Download platform="web" :is-right="true" :message="$t('publish.download')" />
-          </div>
-        </div>
-        <pre class="code_viewer-pre language-javascript" :style="{ height: size }" v-if="highlightedCode"><code class="code_viewer-code language-javascript" v-html="highlightedCode"></code></pre>
-
-        <div class="l-generator-messages l-generator-messages--code" v-if="warningsTotal > 0 || suggestionsTotal > 0">
-          <IssuesList :errors="warnings" :title="$t('code_viewer.warnings')" :id="warningsId" :total="warningsTotal" v-if="warningsTotal > 0" />
-          <IssuesList :errors="suggestions" :title="$t('code_viewer.suggestions')" :id="suggestionsId" :total="suggestionsTotal" v-if="suggestionsTotal > 0" />
-        </div>
+  <header class="code_viewer-header">
+    <div class="code_viewer-title pure-u-1-2">
+      {{title}}
     </div>
+    <div class="code_viewer-title pure-u-1-2">
+      <slot/>
+    </div>
+  </header>
+
+  <div class="code_viewer-content" :style="{ height: size }">
+    <div class="code_viewer-copy js-clipboard" :data-clipboard-text="code" ref="code">
+      {{ $t('code_viewer.' + copyTextKey) }}
+    </div>
+    <div class="code_viewer-padded" v-if="warnings || suggestions">
+      <div class="code_viewer-header code_viewer-header--rounded">
+        <SkipLink v-if="warnings" class="pwa-button pwa-button--simple pwa-button--margin pwa-button--warning" :anchor="'#' + warningsId">
+          {{ $t("code_viewer.warnings") }} ({{warningsTotal}})
+        </SkipLink>
+        <SkipLink v-if="suggestions" class="pwa-button pwa-button--simple pwa-button--margin" :anchor="'#' + suggestionsId">
+          {{ $t("code_viewer.suggestions") }} ({{suggestionsTotal}})
+        </SkipLink>
+
+        <Download platform="web" :is-right="true" :message="$t('publish.download')" />
+      </div>
+    </div>
+    <pre class="code_viewer-pre language-javascript" :style="{ height: size }" v-if="highlightedCode"><code class="code_viewer-code language-javascript" v-html="highlightedCode"></code></pre>
+
+    <div class="l-generator-messages l-generator-messages--code" v-if="warningsTotal > 0 || suggestionsTotal > 0">
+      <IssuesList :errors="warnings" :title="$t('code_viewer.warnings')" :id="warningsId" :total="warningsTotal" v-if="warningsTotal > 0"/>
+      <IssuesList :errors="suggestions" :title="$t('code_viewer.suggestions')" :id="suggestionsId" :total="suggestionsTotal" v-if="suggestionsTotal > 0"/>
+    </div>
+  </div>
 </section>
 </template>
 
@@ -70,7 +77,7 @@ export default class extends Vue {
   public suggestionsTotal: number;
 
   public highlightedCode: string | null = null;
-  public copyText = 'copy';
+  public copyTextKey = 'copy';
   public readonly warningsId = 'warnings_list';
   public readonly suggestionsId = 'suggestions_list';
   public isReady = true;
@@ -86,18 +93,18 @@ export default class extends Vue {
 
     let clipboard = new Clipboard(this.$refs.code);
     clipboard.on('success', e => {
-      this.copyText = 'copied';
+      this.copyTextKey = 'copied';
     });
 
     clipboard.on('error', e => {
-      this.copyText = 'error';
+      this.copyTextKey = 'error';
     });
   }
 
   @Watch('code')
   onCodeChanged() {
     if (this.code) {
-      this.copyText = 'copy';
+      this.copyTextKey = 'copy';
       this.highlightedCode = Prism.highlight(
         this.code,
         Prism.languages.javascript
