@@ -1,33 +1,32 @@
 <template>
 <section>
-    <div class="modal" v-if="showModal">
-        <div class="modal-box">
-            <div class="pure-u-1-1 modal-tablec">
-                <span class="l-generator-close"
-                      @click="onClickCancel()">
-                    <span class="fa fa-times"></span>
-                </span>
-            </div>
+  <div class="modal" v-if="showModal">
+    <div class="modal-box">
+      <div class="pure-u-1-1 modal-tablec">
+        <span class="l-generator-close" @click="onClickCancel()">
+          <span class="fa fa-times"></span>
+        </span>
+      </div>
 
-            <h5 class="modal-title modal-title--normal">{{title}}</h5>
+      <h5 class="modal-title modal-title--normal">
+        {{title}}
+      </h5>
 
-            <div class="modal-body">
-                <slot/>
+      <div class="modal-body">
+        <slot/>
 
-                <div class="modal-buttons">
-                    <button class="l-generator-space_right pwa-button pwa-button--simple pwa-button--brand"
-                            @click="onClickSubmit(); $ga.event('Manifest', 'Add Member', 'Image Upload', { 'page': `/manifest/add-member` })">
-                            {{$t("modal.submit")}} 
-                            <Loading :active="isLoading" class="u-display-inline_block u-margin-left-sm" />
-                    </button>
-                    <button class="pwa-button pwa-button--simple"
-                            @click="onClickCancel(); $ga.event('Manifest', 'Add Member', 'Image Upload - Cancel', { 'page': `/manifest/add-member` })">
-                            {{$t("modal.cancel")}}
-                    </button>
-                </div>
-            </div>
+        <div class="modal-buttons">
+          <button class="l-generator-space_right pwa-button pwa-button--simple pwa-button--brand" @click="onClickSubmit(); $ga.event('Manifest', 'Add Member', 'Image Upload', { 'page': `/manifest/add-member` })">
+            {{$t("modal.submit")}}
+            <Loading :active="isLoading" class="u-display-inline_block u-margin-left-sm" />
+          </button>
+          <button class="pwa-button pwa-button--simple" @click="onClickCancel(); $ga.event('Manifest', 'Add Member', 'Image Upload - Cancel', { 'page': `/manifest/add-member` })">
+            {{$t("modal.cancel")}}
+          </button>
         </div>
+      </div>
     </div>
+  </div>
 </section>
 </template>
 
@@ -61,20 +60,20 @@ export default class extends Vue {
     this.showModal = false;
   }
 
-  public onClickSubmit() {
+  public onClickSubmit(): void {
     this.$emit('submit');
   }
 
-  public onClickCancel() {
+  public onClickCancel(): void {
     this.hide();
     this.$emit('cancel');
   }
 
-  public showLoading() {
+  public showLoading(): void {
     this.loadingCount++;
   }
 
-  public hideLoading() {
+  public hideLoading(): void {
     this.loadingCount--;
 
     if (this.loadingCount < 0) {
