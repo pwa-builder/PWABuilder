@@ -83,11 +83,7 @@ export default class extends Vue {
   }
 
   public onChangeColor(colorOption: string): void {
-    if (!this.color) {
-      return;
-    }
-
-    const colorOptions: generator.ColorOptions = { colorOption, color: this.color };
+    const colorOptions: generator.ColorOptions = { colorOption, color: this.color || colorOption };
     this.updateColor(colorOptions);
 
     this.manifest$ = { ...this.manifest };
