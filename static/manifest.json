@@ -76,6 +76,12 @@
             "src": "/images/assets/icons/apple-icon-192x192-frt5be1ded11c7ec66b00dd234677a5d.png",
             "sizes": "192x192",
             "type": "image/png"
+        },
+        {
+            "src": "/images/assets/icons/apple-icon-512x512-frt5be1ded11c593udsdsdd29fur6732.png",
+            "sizes": "512x512",
+            "type": "image/png"
         }
     ]
 }
+
