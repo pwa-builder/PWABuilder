@@ -97,6 +97,7 @@ export default class extends Vue {
 
   public async checkUrlAndGenerate(): Promise<void> {
     this.generatorReady = false;
+    this.error = null;
 
     try {
       this.updateLink(this.url$);
