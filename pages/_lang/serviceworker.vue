@@ -55,7 +55,7 @@
             </button>
           </div>
           <div class="pure-u-3-5">
-            <p class="l-generator-error"><span class="icon-exclamation"></span> {{ $t(error) }}</p>
+            <p class="l-generator-error" v-if="error"><span class="icon-exclamation"></span> {{ $t(error) }}</p>
           </div>
         </form>
         <p>{{ $t('serviceworker.download_link') }}
