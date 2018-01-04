@@ -14,7 +14,8 @@ module.exports = {
             { name: 'viewport', content: 'width=device-width, initial-scale=1' },
             { hid: 'description', name: 'description', content: 'All the tools you need to build and deploy your Progressive Web Apps.' },
             { name: 'msapplication-TileImage', content: '/Images/assets/icons/ms-icon-144x144-487a503e5cb29bbe0df7296db4093b7e.png' },
-            { name: 'msapplication-TileColor', content: '#1FC2C8' }
+            { name: 'msapplication-TileColor', content: '#1FC2C8' },
+            { name: 'theme-color', content: '#1FC2C8' }
         ],
         link: [
             { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
