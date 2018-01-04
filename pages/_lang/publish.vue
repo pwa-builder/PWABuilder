@@ -61,7 +61,7 @@
           </div>
           <input class="l-generator-input l-generator-input--largest" :placeholder="$t('publish.placeholder_version')" type="text"
             v-model="appxForm.version" requied>
-          <p class="l-generator-error" v-if="appxError">{{ $t(appxError) }}</p>
+          <p class="l-generator-error" v-if="appxError"><span class="icon-exclamation"></span> {{ $t(appxError) }}</p>
         </Modal>
         <div class="pure-u-1">
           <div class="pwa-infobox-box pwa-infobox-box--flat">

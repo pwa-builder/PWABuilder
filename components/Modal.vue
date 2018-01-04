@@ -4,7 +4,7 @@
     <div class="modal-box">
       <div class="pure-u-1-1 modal-tablec">
         <span class="l-generator-close" @click="onClickCancel()">
-          <span class="fa fa-times"></span>
+          <span class="icon-times"></span>
         </span>
       </div>
 

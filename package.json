@@ -1,9 +1,19 @@
 {
   "version": "2.0.0",
   "private": true,
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development API_URL_BROWSER=/ API_URL=http://localhost:3000 nuxt",
+    "build": "cross-env NODE_ENV=production nuxt build",
+    "start": "nuxt start",
+    "generate": "cross-env NODE_ENV=development nuxt generate --spa",
+    "generate-prod": "cross-env NODE_ENV=production nuxt generate --spa",
+    "test": "mocha --opts mocha.opts",
+    "pree2e": "npm run build",
+    "e2e": "concurrently \"cross-env NODE_ENV=production API_URL_BROWSER=/ API_URL=http://localhost:3000 nuxt start\" \"selenium-standalone start\" \"wait-on http://localhost:4444 && wait-on http://localhost:3000 && cross-env NODE_ENV=development nightwatch --config nightwatch.js\" --names \"📦,⚙️,🦉\" --prefix name --kill-others",
+    "cover": "nyc npm test && opener ./.coverage/index.html"
+  },
   "dependencies": {
     "@nuxtjs/axios": "^4.5.0",
-    "@nuxtjs/font-awesome": "^1.0.3",
     "@nuxtjs/google-analytics": "^2.0.2",
     "babel-polyfill": "^6.26.0",
     "clipboard": "^1.7.1",
@@ -23,17 +33,6 @@
     "vue-template-compiler": "~2.5.1",
     "vuex": "^3.0.1",
     "vuex-class": "^0.3.0"
-  },
-  "scripts": {
-    "dev": "cross-env NODE_ENV=development API_URL_BROWSER=/ API_URL=http://localhost:3000 nuxt",
-    "build": "cross-env NODE_ENV=production nuxt build",
-    "start": "nuxt start",
-    "generate": "cross-env NODE_ENV=development nuxt generate --spa",
-    "generate-prod": "cross-env NODE_ENV=production nuxt generate --spa",
-    "test": "mocha --opts mocha.opts",
-    "pree2e": "npm run build",
-    "e2e": "concurrently \"cross-env NODE_ENV=production API_URL_BROWSER=/ API_URL=http://localhost:3000 nuxt start\" \"selenium-standalone start\" \"wait-on http://localhost:4444 && wait-on http://localhost:3000 && cross-env NODE_ENV=development nightwatch --config nightwatch.js\" --names \"📦,⚙️,🦉\" --prefix name --kill-others",
-    "cover": "nyc npm test && opener ./.coverage/index.html"
   },
   "devDependencies": {
     "@types/chai": "^4.0.8",

@@ -28,7 +28,10 @@
               </div>
 
               <div class="pure-u-2-5">
-                <p class="l-generator-error">{{ $t(error) }}</p>
+                <p class="l-generator-error" v-if="error">
+                  <span class="icon-exclamation"></span>
+                  {{ $t(error) }}
+                </p>
               </div>
 
               <div class="l-generator-wrapper pure-u-1">

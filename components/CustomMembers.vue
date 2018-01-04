@@ -22,6 +22,7 @@
   <div class="l-generator-field l-generator-field--padded"></div>
 
   <p class="l-generator-error" v-if="error">
+    <span class="icon-exclamation"></span>
     {{error}}
   </p>
 

@@ -58,7 +58,6 @@ module.exports = {
     modules: [
         '~/modules/typescript',
         '@nuxtjs/axios',
-        '@nuxtjs/font-awesome',
         ['@nuxtjs/google-analytics', {
             id: env.analytics
         }]

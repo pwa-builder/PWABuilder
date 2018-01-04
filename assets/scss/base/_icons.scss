@@ -1,0 +1,8 @@
+@import 'mixins/icomoon';
+$icons: (
+  times: 'f00d',
+  magic: 'f0d0',
+  exclamation: 'f12a',
+);
+
+@include icomoon-generate($icons);
