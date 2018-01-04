@@ -2,14 +2,12 @@
   "version": "2.0.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_ENV=development API_URL_BROWSER=/ API_URL=http://localhost:3000 nuxt",
+    "dev": "cross-env NODE_ENV=development nuxt",
     "build": "cross-env NODE_ENV=production nuxt build",
-    "start": "nuxt start",
-    "generate": "cross-env NODE_ENV=development nuxt generate --spa",
-    "generate-prod": "cross-env NODE_ENV=production nuxt generate --spa",
+    "start": "cross-env NODE_ENV=production nuxt start",
     "test": "mocha --opts mocha.opts",
     "pree2e": "npm run build",
-    "e2e": "concurrently \"cross-env NODE_ENV=production API_URL_BROWSER=/ API_URL=http://localhost:3000 nuxt start\" \"selenium-standalone start\" \"wait-on http://localhost:4444 && wait-on http://localhost:3000 && cross-env NODE_ENV=development nightwatch --config nightwatch.js\" --names \"📦,⚙️,🦉\" --prefix name --kill-others",
+    "e2e": "concurrently \"npm start\" \"selenium-standalone start\" \"wait-on http://localhost:4444 && wait-on http://localhost:3000 && cross-env NODE_ENV=development nightwatch --config nightwatch.js\" --names \"📦,⚙️,🦉\" --prefix name --kill-others",
     "cover": "nyc npm test && opener ./.coverage/index.html"
   },
   "dependencies": {
