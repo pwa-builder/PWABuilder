@@ -3,6 +3,7 @@ $icons: (
   times: 'f00d',
   magic: 'f0d0',
   exclamation: 'f12a',
+  angle-down: 'f107'
 );
 
 @include icomoon-generate($icons);
