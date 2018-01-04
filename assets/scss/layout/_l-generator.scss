@@ -47,11 +47,11 @@
       &::after {
         content: '\f107';
         display: inline-block;
-        font-family: FontAwesome;
-        font-size: 1.2rem;
+        font-family: Icomoon;
+        font-size: 1.5rem;
         margin-left: .5rem;
         text-rendering: auto;
-        transform: translateY($toggle-space);
+        transform: translateY(0);
         transition: all $animation-speed-default;
       }
     }

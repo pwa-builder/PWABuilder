@@ -4,7 +4,7 @@
     "name": "Progressive Web Apps Builder",
     "scope": "/",
     "display": "standalone",
-    "start_url": "http://www.pwabuilder.com/",
+    "start_url": "https://www.pwabuilder.com/",
     "short_name": "PWABuilder",
     "theme_color": "#1FC2C8",
     "description": "All the tools you need to build and deploy your Progressive Web Apps.",
