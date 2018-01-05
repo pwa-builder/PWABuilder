@@ -3,7 +3,7 @@ const StyleLintPlugin = require('stylelint-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const env = require(`./environments/${process.env.NODE_ENV}`);
 
-console.log(`Environment: ${process.env.NODE_ENV}, ${process.env.HOST}, ${process.env.PORT}, ${process.env.BASE_URL}`);
+console.log(`Environment: ${process.env.NODE_ENV}, ${process.env.HOST}, ${process.env.PORT}, ${env.siteUrl}`);
 
 module.exports = {
     env: env,
