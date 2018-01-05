@@ -3,14 +3,13 @@
 // We need this because we are on Azure, if is not your case or similar you can 
 // add to your package.json the script: "start": "cross-env NODE_ENV=production nuxt start"
 
-// Force production for this file
-process.env.NODE_ENV = 'production';
+// Add production as fallback if you haven not configured the environment
+process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+process.env.HOST = process.env.HOST || '127.0.0.1'
+process.env.PORT = process.env.PORT || 3000
 
 const app = require('express')()
 const { Nuxt, Builder } = require('nuxt')
-
-const host = process.env.HOST || '127.0.0.1'
-const port = process.env.PORT || 3000
 
 // Import and set Nuxt.js options
 let config = require('./nuxt.config.js')
@@ -28,4 +27,4 @@ if (config.dev) {
 app.use(nuxt.render)
 
 // Start express server
-app.listen(port, host)
+app.listen(process.env.PORT, process.env.HOST)
