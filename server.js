@@ -1,6 +1,7 @@
 
 // Custom server from official example https://github.com/nuxt/nuxt.js/blob/dev/examples/custom-server/server.js
-// We need this because we are on Azure, if is not your case or similar you can use `npm strt`
+// We need this because we are on Azure, if is not your case or similar you can 
+// add to your package.json the script: "start": "cross-env NODE_ENV=production nuxt start"
 
 const app = require('express')()
 const { Nuxt, Builder } = require('nuxt')
