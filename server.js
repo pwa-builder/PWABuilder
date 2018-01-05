@@ -3,6 +3,9 @@
 // We need this because we are on Azure, if is not your case or similar you can 
 // add to your package.json the script: "start": "cross-env NODE_ENV=production nuxt start"
 
+// Force production for this file
+process.env.NODE_ENV = 'production';
+
 const app = require('express')()
 const { Nuxt, Builder } = require('nuxt')
 

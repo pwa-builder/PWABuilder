@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development nuxt",
     "build": "cross-env NODE_ENV=production nuxt build",
+    "start": "node server.js",
     "test": "mocha --opts mocha.opts",
     "pree2e": "npm run build",
     "e2e": "concurrently \"npm start\" \"selenium-standalone start\" \"wait-on http://localhost:4444 && wait-on http://localhost:3000 && cross-env NODE_ENV=development nightwatch --config nightwatch.js\" --names \"📦,⚙️,🦉\" --prefix name --kill-others",
