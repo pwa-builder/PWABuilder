@@ -18,7 +18,7 @@
     "gsap": "^1.19.1",
     "manup": "^1.0.1",
     "normalize-scss": "^7.0.0",
-    "nuxt": "latest",
+    "nuxt": "1.0.0-rc11",
     "nuxt-class-component": "^1.0.3",
     "prismjs": "^1.9.0",
     "tachyons": "^4.7.0",

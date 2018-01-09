@@ -1,8 +1,6 @@
 import { GetterTree, ActionContext, ActionTree, MutationTree } from 'vuex';
 import { RootState } from 'store';
 
-const staticsUrl = process.env.siteUrl;
-
 export const types = {
     SET_LANGUAGES: 'SET_LANGUAGES',
     SET_DISPLAYS: 'SET_DISPLAYS',
@@ -56,12 +54,11 @@ export interface Actions<S, R> extends ActionTree<S, R> {
 }
 
 export const actions: Actions<State, RootState> = {
-    async nuxtServerInit({ commit }): Promise<void> {
+    nuxtServerInit({ commit }): void {
         try {
-            console.log(staticsUrl + '/languages.json');
-            commit(types.SET_LANGUAGES, await this.$axios.$get(staticsUrl + '/languages.json'));
-            commit(types.SET_DISPLAYS, await this.$axios.$get(staticsUrl + '/displays.json'));
-            commit(types.SET_ORIENTATIONS, await this.$axios.$get(staticsUrl + '/orientations.json'));
+            commit(types.SET_LANGUAGES, require('~/static/data/languages.json'));
+            commit(types.SET_DISPLAYS, require('~/static/data/displays.json'));
+            commit(types.SET_ORIENTATIONS, require('~/static/data/orientations.json'));
         } catch (e) {
             throw e;
         }
