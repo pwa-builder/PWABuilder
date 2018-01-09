@@ -245,7 +245,7 @@ export default class extends Vue {
   public created(): void {
     if (!this.manifest) {
       this.$router.push({
-        path: '/'
+        path: this.$i18n.path('')
       });
 
       return;
