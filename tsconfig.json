@@ -17,7 +17,7 @@
     "baseUrl": ".",
     "allowJs": true,
     "paths": {
-      "~/": ["./"],
+      "~/*": ["./"],
       "~/assets/*": ["./assets/*"],
       "~/components/*": ["./components/*"],
       "~/middleware/*": ["./middleware/*"],

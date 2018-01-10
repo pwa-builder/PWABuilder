@@ -35,20 +35,20 @@ module.exports = {
         ]
     },
     loading: { color: '#1FC2C8' },
-    css: ['tachyons/css/tachyons.min.css', 'prismjs/themes/prism-okaidia.css', '~/assets/scss/app.scss'],
+    css: ['prismjs/themes/prism-okaidia.css', '~/assets/scss/app.scss'],
     build: {
         extractCSS: true,
-        vendor: ['babel-polyfill', 'gsap', 'vuex-class', 'nuxt-class-component', 'vue-i18n', 'prismjs'],
+        vendor: ['babel-polyfill', 'vuex-class', 'nuxt-class-component', 'vue-i18n', 'prismjs'],
         plugins: [
             new StyleLintPlugin({
                 files: ['**/*.scss', '**/*.vue'],
                 failOnError: false,
                 syntax: 'scss'
             }),
-            // new ForkTsCheckerWebpackPlugin({
-            //   tslint: true,
-            //   vue: true
-            // })
+            new ForkTsCheckerWebpackPlugin({
+              tslint: true,
+              vue: true
+            })
         ]
     },
     router: {

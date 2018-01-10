@@ -1,4 +1,4 @@
-import { ActionTree, MutationTree, GetterTree, Action, ActionContext } from 'vuex';
+import { ActionTree, MutationTree, GetterTree, ActionContext } from 'vuex';
 import { RootState } from 'store';
 
 const apiUrl = `${process.env.apiUrl}/serviceworkers`;

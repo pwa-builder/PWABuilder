@@ -92,13 +92,6 @@ describe('store generator mutations', () => {
         });
 
         it('should remove if index is found', () => {
-            const id = 'myid';
-            const app = {
-                platform: 'testplatform',
-                url: 'website',
-                id
-            };
-
             const name = 'name';
             const member = {
                 name,

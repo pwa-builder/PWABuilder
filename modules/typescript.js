@@ -6,7 +6,8 @@ module.exports = function () {
     const tsLoader = {
       loader: 'ts-loader',
       options: {
-        appendTsSuffixTo: [/\.vue$/]
+        appendTsSuffixTo: [/\.vue$/],
+        transpileOnly: true
       }
     }
     // Add TypeScript loader
