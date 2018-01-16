@@ -245,7 +245,7 @@ export default class extends Vue {
   public created(): void {
     if (!this.manifest) {
       this.$router.push({
-        path: '/'
+        path: this.$i18n.path('')
       });
 
       return;
@@ -255,8 +255,12 @@ export default class extends Vue {
   }
 
   public onChangeSimpleInput(): void {
-    this.updateManifest(this.manifest$);
-    this.manifest$ = { ...this.manifest };
+    try {
+      this.updateManifest(this.manifest$);
+      this.manifest$ = { ...this.manifest };
+    } catch (e) {
+      this.error = e;
+    }
   }
 
   public onClickRemoveIcon(icon: generator.Icon): void {

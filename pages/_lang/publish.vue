@@ -136,7 +136,7 @@ export default class extends Vue {
 
   public goToHome(): void {
     this.$router.push({
-      name: 'index'
+      path: this.$i18n.path('')
     });
   }
 
