@@ -1,13 +1,21 @@
-// 1. Make sure to import 'vue' before declaring augmented types
+// Make sure to import 'vue' before declaring augmented types
 import Vue from 'vue'
 import VueRouter from 'vue-router';
 
-// 2. Specify a file with the types you want to augment
-//    Vue has the constructor type in types/vue.d.ts
+// Specify a file with the types you want to augment
+
+declare module 'vue-i18n/types/index' {
+  // Declare augmentation for Vue-i18n
+  interface IVueI18n {
+    path: (path: string) => string;
+  }
+}
+
 declare module 'vue/types/vue' {
-  // 3. Declare augmentation for Vue
+  // Declare augmentation for Vue
   interface Vue {
     $ga: any;
     $router: VueRouter;
   }
 }
+
