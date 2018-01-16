@@ -28,6 +28,9 @@
               </div>
 
               <div class="pure-u-2-5">
+              </div>
+                
+              <div class="pure-u-1">
                 <p class="l-generator-error" v-if="error">
                   <span class="icon-exclamation"></span>
                   {{ $t(error) }}
@@ -102,14 +105,16 @@ export default class extends Vue {
     try {
       this.updateLink(this.url$);
 
-      if (this.url$) {
-        this.url$ = this.url;
-        await this.getManifestInformation();
-
-        this.$router.push({
-          name: 'generate'
-        });
+      if (!this.url$) {
+        return;
       }
+
+      this.url$ = this.url;
+      await this.getManifestInformation();
+
+      this.$router.push({
+        name: 'generate'
+      });
     } catch (e) {
       this.error = e;
     }

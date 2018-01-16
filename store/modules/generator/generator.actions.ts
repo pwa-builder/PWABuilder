@@ -57,32 +57,30 @@ export const actions: Actions<State, RootState> = {
     },
 
     async getManifestInformation({ commit, state, rootState }): Promise<void> {
-        return new Promise<void>(async (resolve, reject) => {
-            if (!state.url) {
-                throw 'error.url_empty';
-            }
+        if (!state.url) {
+            throw 'error.url_empty';
+        }
 
-            const options = {
-                siteUrl: state.url
-            };
+        const options = {
+            siteUrl: state.url
+        };
 
-            try {
-                const result = await this.$axios.$post(apiUrl, options);
-                // Convert color if necessary
-                result.background_color = helpers.fixColorFromServer(result.background_color);
+        try {
+            const result = await this.$axios.$post(apiUrl, options);
+            // Convert color if necessary
+            result.background_color = helpers.fixColorFromServer(result.background_color);
 
-                commit(types.UPDATE_WITH_MANIFEST, result);
-                commit(types.SET_DEFAULTS_MANIFEST, {
-                    displays: rootState.displays ? rootState.displays[0].name : '',
-                    orientations: rootState.orientations ? rootState.orientations[0].name : ''
-                });
+            commit(types.UPDATE_WITH_MANIFEST, result);
+            commit(types.SET_DEFAULTS_MANIFEST, {
+                displays: rootState.displays ? rootState.displays[0].name : '',
+                orientations: rootState.orientations ? rootState.orientations[0].name : ''
+            });
 
-                resolve();
-            } catch (e) {
-                let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
-                throw errorMessage;
-            }
-        });
+            return;
+        } catch (e) {
+            let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
+            throw errorMessage;
+        }
     },
 
     removeIcon({ commit, state, dispatch }, icon: Icon): void {
