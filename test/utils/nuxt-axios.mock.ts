@@ -1,5 +1,3 @@
-import { ActionContext } from 'vuex';
-import { RootState, modules } from 'store';
 import axios from 'axios';
 
 export let nuxtAxiosMockBuilder = actions => {
