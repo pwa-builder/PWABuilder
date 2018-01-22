@@ -288,33 +288,31 @@ export default class extends Vue {
   public getIcons(): string {
     let icons = this.icons.map(icon => {
       return `
-    {
-      "src": "${icon.src.includes('data:image') ? '[Embedded]' : icon.src}",
-      "sizes": "${icon.sizes}"
-    }`;
+        {
+            "src": "${icon.src.includes('data:image') ? '[Embedded]' : icon.src}",
+            "sizes": "${icon.sizes}"
+        }`;
     });
-    return icons.toString().slice(0, -1);
+    return icons.toString();
+  }
+
+  private getManifestProperties(): string {
+    let manifest ='';
+      for (let property in this.manifest) {
+        if (property !== 'icons') {
+          manifest += `"${property}" : "${this.manifest[property]}",
+    `;
+        }
+      }
+      manifest += `"icons" : [${this.getIcons()}
+    ]`;
+    return `{
+    ${manifest}
+}`;
   }
 
   public getCode(): string | null {
-    return this.manifest
-      ? `{
-  "dir": "${this.manifest.dir}",
-  "lang": "${this.manifest.lang}",
-  "name": "${this.manifest.name}",
-  "scope": "${this.manifest.scope}",
-  "display": "${this.manifest.display}",
-  "start_url": "${this.manifest.start_url}",
-  "short_name": "${this.manifest.short_name}",
-  "theme_color": "${this.manifest.theme_color}",
-  "description": "${this.manifest.description}",
-  "orientation": "${this.manifest.orientation}",
-  "background_color": "${this.manifest.background_color}",
-  "related_applications": "${this.manifest.related_applications}",
-  "prefer_related_applications": "${this.manifest.prefer_related_applications}",
-  "icons": [${this.getIcons()}
-  ]
-}` : null;
+    return this.manifest ? this.getManifestProperties() : null;
   }
 
   public onClickUploadIcon(): void {
