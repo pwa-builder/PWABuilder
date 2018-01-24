@@ -1,4 +1,4 @@
 module.exports = {
-    apiUrl: 'https://manifold-api-prod.azurewebsites.net',
+    apiUrl: 'https://manifold-api-pre.azurewebsites.net',
     analytics: 'UA-98003629-1'
 }
