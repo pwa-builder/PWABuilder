@@ -97,6 +97,8 @@ IF /I "%IN_PLACE_DEPLOYMENT%" NEQ "1" (
 :: 2. Select node version
 call :SelectNodeVersion
 
+IF "%VARIABLE%" == "" GOTO MODULE
+
 :: 3. Install npm packages
 IF EXIST "%DEPLOYMENT_TARGET%\package.json" (
   pushd "%DEPLOYMENT_TARGET%"
@@ -105,10 +107,16 @@ IF EXIST "%DEPLOYMENT_TARGET%\package.json" (
   popd
 )
 
+:: Check if preview or production
+IF NOT DEFINED NODE_ENV (
+  SET NODE_ENV=production
+)
+
+
 :: 4. Run prod script
 IF EXIST "%DEPLOYMENT_TARGET%\package.json" (
   pushd "%DEPLOYMENT_TARGET%"
-  call :ExecuteCmd !NPM_CMD! run build
+  call :ExecuteCmd !NPM_CMD! run build-%NODE_ENV%
   IF !ERRORLEVEL! NEQ 0 goto error
   popd
 )

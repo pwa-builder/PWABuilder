@@ -297,7 +297,7 @@ export default class extends Vue {
   }
 
   private getManifestProperties(): string {
-    let manifest ='';
+    let manifest = '';
       for (let property in this.manifest) {
         if (property !== 'icons') {
           manifest += `"${property}" : "${this.manifest[property]}",

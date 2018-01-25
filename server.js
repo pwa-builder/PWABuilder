@@ -4,7 +4,7 @@
 // add to your package.json the script: "start": "cross-env NODE_ENV=production nuxt start"
 
 // Add production as fallback if you haven not configured the environment
-process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+process.env.NODE_ENV = process.env.NODE_ENV;
 process.env.HOST = process.env.HOST || '127.0.0.1'
 process.env.PORT = process.env.PORT || 3000
 
