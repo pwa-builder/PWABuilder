@@ -225,6 +225,7 @@ export default class extends Vue {
   public error: string | null = null;
 
   @GeneratorState manifest: generator.Manifest;
+  @GeneratorState members: generator.CustomMember[];
   @GeneratorState icons: generator.Icon[];
   @GeneratorState suggestions: string[];
   @GeneratorState warnings: string[];
@@ -285,7 +286,7 @@ export default class extends Vue {
     this.iconFile = target.files[0];
   }
 
-  public getIcons(): string {
+  private getIcons(): string {
     let icons = this.icons.map(icon => {
       return `
         {
@@ -296,16 +297,35 @@ export default class extends Vue {
     return icons.toString();
   }
 
+  private getCustomMembers(): string {
+    if (this.members.length < 1) {
+      return '';
+    }
+
+    let membersString = `,
+    `;
+    this.members.forEach((member, i) => {
+      if (i === this.members.length - 1) {
+        membersString += `"${member.name}" : "${member.value}"`;
+      } else {
+        membersString += `"${member.name}" : "${member.value}",
+    `;
+      }
+    });
+    return membersString;
+  }
+
   private getManifestProperties(): string {
     let manifest = '';
       for (let property in this.manifest) {
         if (property !== 'icons') {
-          manifest += `"${property}" : "${this.manifest[property]}",
+          manifest += `"${property}"; : "${this.manifest[property]}",
     `;
         }
       }
-      manifest += `"icons" : [${this.getIcons()}
+      manifest += `'icons' : [${this.getIcons()}
     ]`;
+      manifest += this.getCustomMembers();
     return `{
     ${manifest}
 }`;

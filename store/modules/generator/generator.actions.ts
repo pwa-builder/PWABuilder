@@ -30,7 +30,11 @@ export const actions: Actions<State, RootState> = {
         }
 
          // Update
-         const result = await this.$axios.$put(`${apiUrl}/${state.manifestId}`, state.manifest);
+         const customManifest: any = state.manifest;
+         state.members.forEach(member => {
+             customManifest[member.name] = member.value;
+         });
+         const result = await this.$axios.$put(`${apiUrl}/${state.manifestId}`, customManifest);
 
         commit(types.UPDATE_WITH_MANIFEST, result);
         commit(types.SET_DEFAULTS_MANIFEST, {

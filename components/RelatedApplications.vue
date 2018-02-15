@@ -107,6 +107,7 @@ export default class extends Vue {
 
   public onClickRemove(id: string): void {
       this.removeRelatedApplication(id);
+      this.manifest$ = { ...this.manifest };
   }
 
   public onChangePreferCheckbox($event): void {

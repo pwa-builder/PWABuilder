@@ -23,7 +23,7 @@
 
   <p class="l-generator-error" v-if="error">
     <span class="icon-exclamation"></span>
-    {{error}}
+    {{$t(error)}}
   </p>
 
   <div class="pure-g l-generator-table" v-if="members$ && members$.length > 0">
@@ -80,6 +80,7 @@ export default class extends Vue {
       this.value = null;
 
       this.members$ = [...this.members ];
+      this.error = null;
     } catch (e) {
       this.error = e;
     }
@@ -87,6 +88,7 @@ export default class extends Vue {
 
   public onClickRemove(name: string): void {
     this.removeCustomMember(name);
+    this.members$ = [...this.members ];
   }
 }
 </script>
