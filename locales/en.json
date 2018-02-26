@@ -101,8 +101,8 @@
     "label_identity": "Publisher Identity",
     "label_publisher_id": "Found under Account Settings, Windows Publisher ID.",
     "placeholder_identity": "CN=",
-    "label_package": "Package Family Name",
-    "placeholder_package": "Enter a valid Package Family Name",
+    "label_package": "Package Identity Name",
+    "placeholder_package": "Enter a valid Package Identity Name",
     "label_version": "Version Number (E.g. 1.0.0.0)",
     "placeholder_version": "Enter a Package Version Number",
     "download_manifest": "Download manifest"
