@@ -9,8 +9,7 @@
   },
   "footer": {
     "copyright": "PWABuilder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.",
-    "privacy": "Our Privacy Statement",
-    "license": "llincense"
+    "license": "Our Privacy Statement"
   },
   "generator": {
     "title": "Provide a URL",
