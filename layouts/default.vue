@@ -59,7 +59,7 @@ export default {
         </a>
       </div>
       <div class="pure-u-1 l-footer-copy">
-        {{ $t('footer.copyright') }}<span class="divider">|</span> <a href="https://go.microsoft.com/fwlink/?LinkId=521839" target="_blank" class="l-footer-action">{{ $t('footer.privacy') }}</a>
+        {{ $t('footer.copyright') }}<span class="divider">|</span> <a href="https://go.microsoft.com/fwlink/?LinkId=521839" target="_blank" class="l-footer-action">{{ $t('footer.license') }}</a>
       </div>
     </footer>
   </div>
