@@ -26,5 +26,7 @@ if (config.dev) {
 // Give nuxt middleware to express
 app.use(nuxt.render)
 
+
+
 // Start express server
 app.listen(process.env.PORT, process.env.HOST)

@@ -23,7 +23,7 @@
         <div class="pure-u-1 pure-u-md-1-2">
           <div class="pwa-infobox-box pwa-infobox-box--flat">
             <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.windows') }}</h4>
-            <p class="l-generator-description l-generator-description--fixed">{{ $t('publish.windows_description') }}<a href="http://docs.pwabuilder.com/quickstart/2018/02/03/quick-start-sideload-pwa-win10.html" target="blank" />{{ $t('publish.sideload_instructions') }}</p>
+            <p class="l-generator-description l-generator-description--fixed">{{ $t('publish.windows_description') }}  <a href="http://docs.pwabuilder.com/quickstart/2018/02/03/quick-start-sideload-pwa-win10.html" target="blank">{{ $t('publish.sideload_instructions') }}</a></p>
             <span class="button-holder download-archive">
               <Download platform="windows10" :message="$t('publish.download')" />
             </span>
