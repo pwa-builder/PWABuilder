@@ -23,12 +23,12 @@
         <div class="pure-u-1 pure-u-md-1-2">
           <div class="pwa-infobox-box pwa-infobox-box--flat">
             <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.windows') }}</h4>
-            <p class="l-generator-description l-generator-description--fixed">{{ $t('publish.windows_description') }}</p>
+            <p class="l-generator-description l-generator-description--fixed">{{ $t('publish.windows_description') }}  <a href="http://docs.pwabuilder.com/quickstart/2018/02/03/quick-start-sideload-pwa-win10.html" target="blank">{{ $t('publish.sideload_instructions') }}</a></p>
             <span class="button-holder download-archive">
               <Download platform="windows10" :message="$t('publish.download')" />
             </span>
             <p>
-              <button class="pwa-button pwa-button--simple pwa-button--brand" @click="openAppXModal()">{{ $t('publish.generate_appx') }}</button>
+              <button class="pwa-button pwa-button--simple pwa-button--brand" @click="openAppXModal(); $ga.event('Publish', 'Windows10-appx', 'Windows10-appx', { 'page': `/publish/windows10-appx` })"> {{ $t('publish.generate_appx') }}</button>
             </p>
           </div>
         </div>

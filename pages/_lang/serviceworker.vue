@@ -47,7 +47,7 @@
           </div>
 
           <div class="l-generator-wrapper pure-u-2-5">
-            <button @click="$ga.event('Download', 'Web', 'Download Archive', { 'page': `/download/web` })" class="pwa-button pwa-button--simple isEnabled">
+            <button @click="$ga.event('Download', 'Serviceworker', 'Download Archive', { 'page': `/download/serviceworker` })" class="pwa-button pwa-button--simple isEnabled">
               <span v-if="!isBuilding">{{ $t('serviceworker.download') }}</span>
               <span v-if="isBuilding">{{ $t('serviceworker.building') }}
                 <Loading :active="true" class="u-display-inline_block u-margin-left-sm" />

@@ -77,7 +77,7 @@ describe('store generator helpers', () => {
                 src: 'test',
                 sizes: '0x0'
             }];
-            const baseUrl = 'test';
+            const baseUrl = 'https://test.com';
 
             expect(generator.helpers.prepareIconsUrls(icons, baseUrl)[0].src).to.be.equal(`${baseUrl}/test`);
         });
@@ -87,7 +87,7 @@ describe('store generator helpers', () => {
                 src: '/test',
                 sizes: '0x0'
             }];
-            const baseUrl = 'test';
+            const baseUrl = 'https://test.com';
 
             expect(generator.helpers.prepareIconsUrls(icons, baseUrl)[0].src).to.be.equal(`${baseUrl}/test`);
         });
@@ -97,7 +97,7 @@ describe('store generator helpers', () => {
                 src: 'test',
                 sizes: '0x0'
             }];
-            const baseUrl = '/test';
+            const baseUrl = 'https://test.com';
 
             expect(generator.helpers.prepareIconsUrls(icons, baseUrl)[0].src).to.be.equal(`${baseUrl}/test`);
         });
@@ -107,7 +107,7 @@ describe('store generator helpers', () => {
                 src: '/test',
                 sizes: '0x0'
             }];
-            const baseUrl = '/test';
+            const baseUrl = 'https://test.com';
 
             expect(generator.helpers.prepareIconsUrls(icons, baseUrl)[0].src).to.be.equal(`${baseUrl}/test`);
         });

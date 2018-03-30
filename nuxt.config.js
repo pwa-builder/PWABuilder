@@ -57,9 +57,6 @@ module.exports = {
     plugins: ['~/plugins/i18n.js'],
     modules: [
         '~/modules/typescript',
-        '@nuxtjs/axios',
-        ['@nuxtjs/google-analytics', {
-            id: env.analytics
-        }]
+        '@nuxtjs/axios'
     ]
 }

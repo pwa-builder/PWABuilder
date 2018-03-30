@@ -1,3 +1,4 @@
+
 @import '../base/variables';
 @import '../mixins/action';
 
@@ -43,4 +44,8 @@
     margin-top: 5vw;
     text-align: center;
   }
+}
+
+.divider {
+  padding: 0 5px;
 }

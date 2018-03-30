@@ -59,7 +59,7 @@ export default {
         </a>
       </div>
       <div class="pure-u-1 l-footer-copy">
-        {{ $t('footer.copyright') }}<span class="divider">|</span> <a href="https://github.com/pwa-builder/ManifoldJS#license" target="_blank" class="l-footer-action">{{ $t('footer.license') }}</a>
+        {{ $t('footer.copyright') }}<span class="divider">|</span> <a href="https://go.microsoft.com/fwlink/?LinkId=521839" target="_blank" class="l-footer-action">{{ $t('footer.privacy') }}</a>
       </div>
     </footer>
   </div>
