@@ -35,14 +35,12 @@ export const helpers = {
         return icons.map(icon => {
             if (!icon.src.includes('http')) {
                 //remove non-base scope path for sites like mastodon and billthis
-                var pathArray = baseUrl.split( '/' );
-                var protocol = pathArray[0];
-                var host = pathArray[2];
+                const pathArray = baseUrl.split( '/' );
+                const protocol = pathArray[0];
+                const host = pathArray[2];
                 baseUrl = protocol + '//' + host; 
                 //remove posible trailing/leading slashes
                 icon.src = `${baseUrl.replace(/\/$/, '')}/${icon.src.replace(/^\/+/g, '')}`;
-                
-               
             }
 
             return icon;

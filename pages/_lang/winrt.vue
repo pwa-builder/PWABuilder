@@ -67,80 +67,62 @@
 <script lang='ts'>
 import Vue from 'vue';
 import Component from 'nuxt-class-component';
-import { Action, State, Getter, namespace } from 'vuex-class';
-import axios from 'axios'
-
-import GeneratorMenu from '~/components/GeneratorMenu.vue';
-import TwoWays from '~/components/TwoWays.vue';
-import Modal from '~/components/Modal.vue';
-import CodeViewer from '~/components/CodeViewer.vue';
-import RelatedApplications from '~/components/RelatedApplications.vue';
-import CustomMembers from '~/components/CustomMembers.vue';
-import StartOver from '~/components/StartOver.vue';
-import ColorSelector from '~/components/ColorSelector.vue';
-
-import * as generator from '~/store/modules/generator';
-
-const GeneratorState = namespace(generator.name, State);
-const GeneratorActions = namespace(generator.name, Action);
-const GeneratorGetters = namespace(generator.name, Getter);
+import axios from 'axios';
 
 @Component({
-  components: {
-      
-  }
+  components: {}
 })
-
 export default class extends Vue {
-  asyncData ({ params }) {
-    return axios.get(`http://localhost:15336/api/source`)
-    .then((res) => {
-
-      let fromItem = function (func, file, source) {
-        let id = file.Id + "." + func.Name;
+  asyncData({ params }) {
+    return axios.get(`http://localhost:15336/api/source`).then(res => {
+      let fromItem = function(func, file, source) {
+        let id = file.Id + '.' + func.Name;
 
         let parms = Array<any>();
 
         for (let i = 0; i < func.Parameters.length; i++) {
-            let parm = func.Parameters[i];
-            let newParm = {
-                name: parm.Name,
-                id: id + "." + parm.Name,
-                default: parm.Default,
-                type: parm.Type,
-                description: parm.Description
-            };
+          let parm = func.Parameters[i];
+          let newParm = {
+            name: parm.Name,
+            id: id + '.' + parm.Name,
+            default: parm.Default,
+            type: parm.Type,
+            description: parm.Description
+          };
 
-            parms.push(newParm);
+          parms.push(newParm);
         }
 
         return {
-            title: func.Name || file.Name || source.Name,
-            description: func.Description || file.Description || source.Description,
-            image: func.Image || file.Image || source.Image,
-            id: file.Id + "." + func.Name,
-            parms: parms,
-            url: source.Url,
-            hash: source.Hash,
-            included: false,
-            comments: func.Comments
-        }    
-      }
+          title: func.Name || file.Name || source.Name,
+          description:
+            func.Description || file.Description || source.Description,
+          image: func.Image || file.Image || source.Image,
+          id: file.Id + '.' + func.Name,
+          parms: parms,
+          url: source.Url,
+          hash: source.Hash,
+          included: false,
+          comments: func.Comments
+        };
+      };
 
       let results = Array<any>();
 
-      for (var s = 0; s < res.data.Sources.length; s++) {
-          var source = res.data.Sources[s];
-          var file = source.Parsed.File;
-          for (var f = 0; f < source.Parsed.Functions.length; f++) {
-              var fn = source.Parsed.Functions[f];
-              var newItem = fromItem(fn, file, source);
-              results.push(newItem);
+      if (res.data.Sources) {
+        for (let s = 0; s < res.data.Sources.length; s++) {
+          const source = res.data.Sources[s];
+          const file = source.Parsed.File;
+          for (let f = 0; f < source.Parsed.Functions.length; f++) {
+            const fn = source.Parsed.Functions[f];
+            const newItem = fromItem(fn, file, source);
+            results.push(newItem);
           }
+        }
       }
-
-      return { controls: results }
-    })
+      
+      return { controls: results };
+    });
   }
 }
 </script>
@@ -156,131 +138,131 @@ export default class extends Vue {
 </style>
 
 <style>
-  .page {
-    background: #CCCCCC;
-    padding-top: 60px;
-  }
+.page {
+  background: #CCCCCC;
+  padding-top: 60px;
+}
 
-  .cardround {
-    font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
-    margin: 10px;
-    padding: 0px;
-    height: 310px;
-    width: 200px;
-    border: black solid 1px;
-    border-radius: 4px;
-    background: white;
-    box-shadow: 5px 5px 5px #999999;
-    display: block;
-    float: left;
-  }
+.cardround {
+  background: white;
+  border: black solid 1px;
+  border-radius: 4px;
+  box-shadow: 5px 5px 5px #999999;
+  display: block;
+  float: left;
+  font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+  height: 310px;
+  margin: 10px;
+  padding: 0;
+  width: 200px;
+}
 
-  .card {
-    font-family: "Segoe UI Semilight","Segoe WP Semilight","Segoe WP","Segoe UI",Arial,Sans-Serif;
-    margin: 10px;
-    padding: 0px;
-    width: 200px;
-    height: 310px;
-    border: black solid 1px;
-    background: white;
-    box-shadow: 5px 5px 5px #999999;
-    display: block;
-    float: left;
-  }
+.card {
+  background: white;
+  border: black solid 1px;
+  box-shadow: 5px 5px 5px #999999;
+  display: block;
+  float: left;
+  font-family: "Segoe UI Semilight", "Segoe WP Semilight", "Segoe WP", "Segoe UI", Arial, Sans-Serif;
+  height: 310px;
+  margin: 10px;
+  padding: 0;
+  width: 200px;
+}
 
-  .cardname {
-    font-size: 20px;
-    font-style: normal;
-    font-variant: normal;
-    font-weight: 300;
-    flex: 0 0 90%;
-  }
+.cardname {
+  flex: 0 0 90%;
+  font-size: 20px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: 300;
+}
 
-  .cardimage {
-    width: 198px;
-    height: auto;
-    max-height: 198px;
-    opacity: 0.8;
-  }
+.cardimage {
+  height: auto;
+  max-height: 198px;
+  opacity: .8;
+  width: 198px;
+}
 
-  .cardtextarea {
-    margin: 5px;
-  }
+.cardtextarea {
+  margin: 5px;
+}
 
-  .cardtopline {
-    display: flex;
-  }
+.cardtopline {
+  display: flex;
+}
 
-  .cardcheck {
-    flex: 1;
-    margin-top: 5px;
-  }
+.cardcheck {
+  flex: 1;
+  margin-top: 5px;
+}
 
-  .carddesc {
-    font-family: "Segoe UI","Segoe WP",Arial,Sans-Serif;
-    font-size: 13px;
-    font-style: normal;
-    font-variant: normal;
-    font-weight: 400;
-    bottom: 10px;
-    margin-right: 5px;
-    position: absolute;
-    vertical-align: bottom;
-  }
+.carddesc {
+  bottom: 10px;
+  font-family: "Segoe UI", "Segoe WP", Arial, Sans-Serif;
+  font-size: 13px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: 400;
+  margin-right: 5px;
+  position: absolute;
+  vertical-align: bottom;
+}
 
-  .cardinside {
-    position: absolute;
-    height: 310px;
-  }
+.cardinside {
+  height: 310px;
+  position: absolute;
+}
 
-  .proparea {
-    margin: 20px;
-  }
+.proparea {
+  margin: 20px;
+}
 
-  .propspacer {
-    height: 20px;
-  }
+.propspacer {
+  height: 20px;
+}
 
-  .fullline {
-    display: block;
-  }
+.fullline {
+  display: block;
+}
 </style>
 <style>
-  #tiles {
-      width: 100%;
-      height: 75%;
-      display: block;
-  }
+#tiles {
+  display: block;
+  height: 75%;
+  width: 100%;
+}
 
-  #left {
-      float: left;
-      display: block;
-      width: 75%;
-  }
+#left {
+  display: block;
+  float: left;
+  width: 75%;
+}
 
-  #right {
-      width: 25%;
-      right: 0;
-      float: right;
-  }
+#right {
+  float: right;
+  right: 0;
+  width: 25%;
+}
 
-  .CodeMirror {
-      display: block;
-      height: 25%;
-      clear: both;
-      width: 100%;
-      background: #ddd;
-  }
+.CodeMirror {
+  background: #DDDDDD;
+  clear: both;
+  display: block;
+  height: 25%;
+  width: 100%;
+}
 
-  #SourceTab {
-      height: 100%;
-  }
+#SourceTab {
+  height: 100%;
+}
 
-  #SourceTab > .CodeMirror {
-      height: 100%;
-  }
-    
-  .CodeMirror-scroll {
-      height: 90% !important;
-  }
+#SourceTab > .CodeMirror {
+  height: 100%;
+}
+
+.CodeMirror-scroll {
+  height: 90% !important;
+}
 </style>
