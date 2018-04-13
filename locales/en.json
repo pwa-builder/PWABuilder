@@ -6,7 +6,7 @@
     "generator": "PWA Image Generator",
     "github": "Github",
     "generate": "Generate",
-    "reno" : "Reno Service"
+    "winrt" : "WinRT Apis"
   },
   "footer": {
     "copyright": "PWABuilder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.",

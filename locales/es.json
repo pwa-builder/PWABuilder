@@ -6,6 +6,6 @@
         "generator": "PWA Image Generator",
         "github": "Github",
         "generate": "Generate",
-        "reno" : "Reno Service"
+        "winrt" : "WinRT Apis"
     }
 }

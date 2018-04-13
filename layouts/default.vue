@@ -22,7 +22,7 @@ export default {
             <a class="l-header-link" href="//docs.pwabuilder.com/" target="_blank">{{ $t('menu.documentation') }}</a>
           </li>
           <li class="l-header-item">
-            <nuxt-link :to="$i18n.path('reno')" exact class="l-header-link is-active">{{ $t('menu.reno') }}</nuxt-link>
+            <nuxt-link :to="$i18n.path('winrt')" exact class="l-header-link">{{ $t('menu.winrt') }}</nuxt-link>
           </li>
           <li class="l-header-item">
             <a class="l-header-link" href="//appimagegenerator-prod.azurewebsites.net">{{ $t('menu.generator') }}</a>
