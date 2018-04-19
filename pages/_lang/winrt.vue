@@ -1,66 +1,51 @@
 <template>
   <section>
-        <div id="left">
-            <section id="tiles">
-                <div v-for="item in controls" :key="item">
-                    <div class="card" v-on:click="focus(item, $event)">
-                        <div class="cardinside">
-                            <img class="cardimage" :src=item.image />
-                            <div class="cardtextarea">
-                                <div class="cardtopline">
-                                    <div class="cardname">{{ item.title }}</div>
-                                    <div class="cardcheck">
-                                        <input type="checkbox" id="enable"
-                                               v-on:change="check(item, $event)"
-                                               v-model="item.included" />
-                                    </div>
-                                </div>
-                                <div class="carddesc">{{ item.description }}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <button v-on:click="generate()">Generate</button>
-                </div>
-            </section>
-
-            <div id="resizer">
+    <WinrtMenu />
+    <section class="l-generator-step">
+      <section class="twoways l-pad">
+        <div class="pure-g">
+          <div class="pure-u-1 pure-u-md-1-2" v-for="item in controls" :key="item.id" v-on:click="onclick(item, $event)">
+            <div class="pwa-infobox-box">
+              <img class="pwa-infobox-logo" src="~/assets/images/logo_small.png" alt="Small PWA Builder logo">
+              <h4 class="pwa-infobox-subtitle">{{ item.title }}</h4>
+              <div class="cardcheck">
+                <div>{{ item.description }}</div>
+                <input type="checkbox" id="enable"
+                    v-on:change="check(item, $event)"
+                    v-model="item.included" />
+              </div>
             </div>
-
-            <div id="source">
-            </div>
+          </div>
         </div>
-
-<!--
-        <aside id="right" class="w3-sidebar w3-bar-block">
-            <div class="tab">
-                <button class="tablinks" onclick="openTab(event, 'PropertiesTab')">Properties</button>
-                <button class="tablinks" onclick="openTab(event, 'SourceTab')">Source</button>
+      </section>
+      <div class="pure-g">
+        <div class="pure-u-1 pure-u-md-1-5">
+          <h4 class="l-generator-subtitle">
+            {{ selectedTitle }}
+          </h4>
+        </div>
+      </div>
+      <div class="pure-g">
+        <div class="l-generator-semipadded pure-u-1 pure-u-md-1-2">
+          <div class="l-generator-form ">
+            <div class="l-generator-field" v-for="prop in properties" :key="prop.id">
+              <label class="l-generator-label">{{prop.name}}
+                <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#name-member" target="_blank">[?]</a>
+              </label>
+              <input class="l-generator-input" :id="prop.id" :placeholder="prop.description" v-model="prop.default" type="text">
             </div>
-
-            <div id="PropertiesTab" class="tabcontent active">
-                <h5 class="w3-bar-item">Option Properties</h5>
-                <div class="proparea">
-                    <div v-for="prop in properties" :key="prop">
-                        <div>{{prop.name}}</div>
-                        <textarea :id="prop.id" :placeholder="prop.description" v-model="prop.default"
-                                   v-on:change="changed(prop, $event)"
-                                   v-on:input="changed(prop, $event)"
-                                   v-on:onpropertychange="changed(prop, $event)">
-
-                        </textarea>
-                    </div>
-                </div>
-                <div class="propspacer"></div>
-            </div>
-
-            <div id="SourceTab" class="tabcontent" style="display: none;">
-                <div id="Source">
-
-                </div>
-            </div>
-        </aside>-->
+          </div>
+          <div class="pure-u-1 pure-u-md-1-2">
+            <div class="pwa-button pwa-button--simple" v-if="properties" v-on:click="generate()">{{ $t("winrt.generate") }}</div>
+          </div>
+        </div>
+        <CodeViewer v-if="properties" :code="getCode()" class="code pure-u-1 pure-u-md-1-2" />
+      </div>
+      <br/>
+      <div class="pure-g">
+        <CodeViewer v-if="properties" :code="source" class="source pure-u-1 pure-u-md-5-5" />
+      </div>
+    </section>
   </section>
 </template>
 
@@ -68,13 +53,31 @@
 import Vue from 'vue';
 import Component from 'nuxt-class-component';
 import axios from 'axios';
+import { Prop, Watch } from 'vue-property-decorator';
+import CodeViewer from '~/components/CodeViewerReduced.vue';
+import WinrtMenu from '~/components/WinRtMenu.vue';
+
+import Card from '~/components/Card.vue';
 
 @Component({
-  components: {}
+  components: {CodeViewer, WinrtMenu}
 })
-export default class extends Vue {
-  asyncData({ params }) {
-    return axios.get(`http://localhost:15336/api/source`).then(res => {
+export default class Winrt extends Vue {
+  @Prop({ type: String, default: '' })
+  public code: string | null;
+  
+  @Prop({ type: String, default: '' })
+  public source: string | null;
+
+  @Prop()
+  properties: any;
+
+  controls: any;
+
+  selectedTitle: string | null;
+
+  async asyncData({ params }) {
+    return await axios.get(`http://renoserviceapi.azurewebsites.net/api/source`).then(res => {
       let fromItem = function(func, file, source) {
         let id = file.Id + '.' + func.Name;
 
@@ -96,8 +99,8 @@ export default class extends Vue {
         return {
           title: func.Name || file.Name || source.Name,
           description:
-            func.Description || file.Description || source.Description,
-          image: func.Image || file.Image || source.Image,
+          func.Description || file.Description || source.Description,
+          image: func.Image || file.Image || source.Image || './assets/images/logo_small.png',
           id: file.Id + '.' + func.Name,
           parms: parms,
           url: source.Url,
@@ -116,33 +119,32 @@ export default class extends Vue {
           for (let f = 0; f < source.Parsed.Functions.length; f++) {
             const fn = source.Parsed.Functions[f];
             const newItem = fromItem(fn, file, source);
+
             results.push(newItem);
           }
         }
       }
-      
+
       return { controls: results };
+    });
+  }
+
+  getCode(): string | null{
+    return this.code;
+  } 
+
+  async onclick(item, event) {
+      await axios.get(item.url).then(data => {
+        this.code = item.comments;
+        this.source = data.data;
+        this.properties = item.parms;
+        this.selectedTitle = item.title;
     });
   }
 }
 </script>
 
-<style lang="scss" scoped>
-@import "~assets/scss/base/variables";
-
-.generate {
-  &-code {
-    margin-top: -2rem;
-  }
-}
-</style>
-
 <style>
-.page {
-  background: #CCCCCC;
-  padding-top: 60px;
-}
-
 .cardround {
   background: white;
   border: black solid 1px;
@@ -154,19 +156,7 @@ export default class extends Vue {
   height: 310px;
   margin: 10px;
   padding: 0;
-  width: 200px;
-}
-
-.card {
-  background: white;
-  border: black solid 1px;
-  box-shadow: 5px 5px 5px #999999;
-  display: block;
-  float: left;
-  font-family: "Segoe UI Semilight", "Segoe WP Semilight", "Segoe WP", "Segoe UI", Arial, Sans-Serif;
-  height: 310px;
-  margin: 10px;
-  padding: 0;
+  position: relative;
   width: 200px;
 }
 
@@ -226,43 +216,34 @@ export default class extends Vue {
 .fullline {
   display: block;
 }
-</style>
-<style>
-#tiles {
-  display: block;
-  height: 75%;
-  width: 100%;
-}
 
-#left {
-  display: block;
-  float: left;
-  width: 75%;
-}
-
-#right {
-  float: right;
-  right: 0;
-  width: 25%;
-}
-
-.CodeMirror {
+.source {
   background: #DDDDDD;
   clear: both;
   display: block;
-  height: 25%;
+  float: right;
+  height: 50%;
+  right: 0;
   width: 100%;
 }
 
-#SourceTab {
-  height: 100%;
+.code {
+  background: #DDDDDD;
+  clear: both;
+  display: block;
+  float: right;
+  height: 50%;
+  right: 0;
+  width: 50%;
 }
+</style>
 
-#SourceTab > .CodeMirror {
-  height: 100%;
-}
+<style lang="scss" scoped>
+@import "~assets/scss/base/variables";
 
-.CodeMirror-scroll {
-  height: 90% !important;
+.generate {
+  &-code {
+    margin-top: -2rem;
+  }
 }
 </style>

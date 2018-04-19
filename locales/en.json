@@ -115,6 +115,13 @@
     "serviceworker": "Build Service Worker",
     "publish": "Publish PWA"
   },
+  "winrtmenu": {
+    "title": "Use our WinRT Api",
+    "subtitle": "Create your own Win10 app"
+  },
+  "winrt": {
+    "generate": "Generate"
+  },
   "twoways": {
     "title": "Two Ways to Work",
     "subtitle": "CLI (node based): v1.1.0",
