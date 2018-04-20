@@ -18,32 +18,43 @@
           </div>
         </div>
       </section>
-      <div class="pure-g">
-        <div class="pure-u-1 pure-u-md-1-5">
-          <h4 class="l-generator-subtitle">
-            {{ selectedTitle }}
-          </h4>
-        </div>
-      </div>
-      <div class="pure-g">
-        <div class="l-generator-semipadded pure-u-1 pure-u-md-1-2">
-          <div class="l-generator-form ">
-            <div class="l-generator-field" v-for="prop in properties" :key="prop.id">
-              <label class="l-generator-label">{{prop.name}}
-                <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#name-member" target="_blank">[?]</a>
-              </label>
-              <input class="l-generator-input" :id="prop.id" :placeholder="prop.description" v-model="prop.default" type="text">
+      <div class="tab_container">
+        <input id="tab1" type="radio" name="tabs" class="tab_input" checked>
+			  <label for="tab1" class="tab_label"><i class="fa fa-code"></i><span>Setup Snippet</span></label>
+
+        <input id="tab2" type="radio" name="tabs" class="tab_input">
+        <label for="tab2" class="tab_label"><i class="fa fa-pencil-square-o"></i><span>Source Code</span></label>
+
+        <section id="content1" class="tab-content tab_section">
+          <div class="pure-g">
+            <div class="pure-u-1 pure-u-md-1-5">
+              <h4 class="l-generator-subtitle">
+                {{ selectedTitle }}
+              </h4>
             </div>
           </div>
-          <div class="pure-u-1 pure-u-md-1-2">
-            <div class="pwa-button pwa-button--simple" v-if="properties" v-on:click="generate()">{{ $t("winrt.generate") }}</div>
+          <div class="pure-g">
+            <div class="l-generator-semipadded pure-u-1 pure-u-md-1-2">
+              <div class="l-generator-form ">
+                <div class="l-generator-field" v-for="prop in properties" :key="prop.id">
+                  <label class="l-generator-label">{{prop.name}}
+                    <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#name-member" target="_blank">[?]</a>
+                  </label>
+                  <input class="l-generator-input" :id="prop.id" :placeholder="prop.description" v-model="prop.default" type="text">
+                </div>
+              </div>
+              <div class="pure-u-1 pure-u-md-1-2">
+                <div class="pwa-button pwa-button--simple" v-if="properties" v-on:click="generate()">{{ $t("winrt.generate") }}</div>
+              </div>
+            </div>
+            <CodeViewer v-if="properties" :code="getCode()" class="code pure-u-1 pure-u-md-1-2" />
           </div>
-        </div>
-        <CodeViewer v-if="properties" :code="getCode()" class="code pure-u-1 pure-u-md-1-2" />
-      </div>
-      <br/>
-      <div class="pure-g">
-        <CodeViewer v-if="properties" :code="source" class="source pure-u-1 pure-u-md-5-5" />
+        </section>
+        <section id="content2" class="tab-content tab_section">
+          <div class="pure-g">
+            <CodeViewer v-if="properties" :code="source" class="source pure-u-1 pure-u-md-5-5" />
+          </div>
+        </section>
       </div>
     </section>
   </section>
@@ -235,6 +246,106 @@ export default class Winrt extends Vue {
   height: 50%;
   right: 0;
   width: 50%;
+}
+
+/* Tabs */
+.tab_container {
+  margin: 0 auto;
+  padding-top: 70px;
+  position: relative;
+  width: 90%;
+}
+
+.tab_input,
+.tab_section {
+  clear: both;
+  display: none;
+  padding-top: 10px;
+}
+
+.tab_label {
+  background: #F0F0F0;
+  color: #757575;
+  cursor: pointer;
+  display: block;
+  float: left;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 1.5em;
+  text-align: center;
+  text-decoration: none;
+  width: 20%;
+}
+
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2 {
+  background: #FFFFFF;
+  border-bottom: 2px solid #F0F0F0;
+  color: #999999;
+  display: block;
+  padding: 20px;
+}
+
+.tab_container .tab-content div {
+  -webkit-animation: fadeInScale .7s ease-in-out;
+  -moz-animation: fadeInScale .7s ease-in-out;
+  animation: fadeInScale .7s ease-in-out;
+}
+
+.tab_container .tab-content h3 {
+  text-align: center;
+}
+
+.tab_container [id^="tab"]:checked + label {
+  background: #FFFFFF;
+  box-shadow: inset 0 3px #00CCEE;
+}
+
+.tab_label .fa {
+  font-size: 1.3em;
+  margin: 0 .4em 0 0;
+}
+
+.tab_container [id^="tab"]:checked + label .fa {
+  color: #00CCEE;
+}
+
+/* Media query */
+@media only screen and (max-width: 930px) {
+  .tab_label span {
+    font-size: 14px;
+  }
+
+  .tab_label .fa {
+    font-size: 14px;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .tab_label span {
+    display: none;
+  }
+
+  .tab_label .fa {
+    font-size: 16px;
+  }
+
+  .tab_container {
+    width: 98%;
+  }
+}
+
+/* Content Animation */
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(.9);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 </style>
 
