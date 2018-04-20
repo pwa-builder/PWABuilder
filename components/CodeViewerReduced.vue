@@ -11,14 +11,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Clipboard from 'clipboard';
 import Prism from 'prismjs';
 import Component from 'nuxt-class-component';
 import { Prop, Watch } from 'vue-property-decorator';
-
-import SkipLink from '~/components/SkipLink.vue';
-import IssuesList from '~/components/IssuesList.vue';
-import { CodeError } from '~/store/modules/generator';
 
 @Component({})
 export default class extends Vue {

@@ -10,9 +10,6 @@
               <h4 class="pwa-infobox-subtitle">{{ item.title }}</h4>
               <div class="cardcheck">
                 <div>{{ item.description }}</div>
-                <input type="checkbox" id="enable"
-                    v-on:change="check(item, $event)"
-                    v-model="item.included" />
               </div>
             </div>
           </div>
@@ -45,7 +42,7 @@
                 </div>
               </div>
               <div class="pure-u-1 pure-u-md-1-2">
-                <div class="pwa-button pwa-button--simple" v-if="properties" v-on:click="generate()">{{ $t("winrt.generate") }}</div>
+                <div class="pwa-button pwa-button--simple" v-if="properties" v-on:click="download()">{{ $t("winrt.download") }}</div>
               </div>
             </div>
             <CodeViewer v-if="properties" :code="getCode()" class="code pure-u-1 pure-u-md-1-2" />
@@ -65,11 +62,9 @@
 import Vue from 'vue';
 import Component from 'nuxt-class-component';
 import axios from 'axios';
-import { Prop, Watch } from 'vue-property-decorator';
+import { Prop } from 'vue-property-decorator';
 import CodeViewer from '~/components/CodeViewerReduced.vue';
 import WinrtMenu from '~/components/WinRtMenu.vue';
-
-import Card from '~/components/Card.vue';
 
 @Component({
   components: {CodeViewer, WinrtMenu}
@@ -141,9 +136,9 @@ export default class Winrt extends Vue {
     });
   }
 
-  getCode(): string | null{
+  getCode(): string | null {
     return this.code;
-  } 
+  }
 
   async onclick(item, event) {
       await axios.get(item.url).then(data => {
@@ -153,6 +148,58 @@ export default class Winrt extends Vue {
         this.selectedTitle = item.title;
     });
   }
+
+  download() {
+    let that = this;
+    let results = this.outputProcessor(this.controls);
+
+    axios('http://localhost:15336/api/source/generate', {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: JSON.stringify(results),
+      method: 'POST'
+    })
+    .then(res => {
+      let fileName = 'snippet.zip';
+      that.saveAs(fileName, res);
+    });
+  }
+
+  outputProcessor(items) {
+    let results = Array<any>();
+
+    for (let i = 0; i < items.length; i++) {
+      let item = items[i];
+      
+      let newItem = {
+          id: item.id,
+          url: item.url,
+          hash: item.hash,
+          parms: Array<any>()
+      };
+
+      for (let j = 0; j < item.parms.length; j++) {
+        newItem.parms.push({
+            id: item.parms[j].id,
+            defaultData: item.parms[j].default
+        });
+      }
+
+      results.push(newItem);
+    }
+
+    return {controls: results};
+  }
+
+  saveAs(fileName, xhttp) {
+    let a = document.createElement('a');
+    a.href = window.URL.createObjectURL(xhttp.response);
+    a.download = fileName;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+  } 
 }
 </script>
 
@@ -333,19 +380,6 @@ export default class Winrt extends Vue {
 
   .tab_container {
     width: 98%;
-  }
-}
-
-/* Content Animation */
-@keyframes fadeInScale {
-  0% {
-    opacity: 0;
-    transform: scale(.9);
-  }
-
-  100% {
-    opacity: 1;
-    transform: scale(1);
   }
 }
 </style>
