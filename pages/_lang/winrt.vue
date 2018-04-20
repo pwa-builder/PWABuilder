@@ -18,7 +18,7 @@
           </div>
         </div>
       </section>
-      <div class="tab_container">
+      <div class="tab_container" v-if="properties">
         <input id="tab1" type="radio" name="tabs" class="tab_input" checked>
 			  <label for="tab1" class="tab_label"><i class="fa fa-code"></i><span>Setup Snippet</span></label>
 
@@ -33,6 +33,7 @@
               </h4>
             </div>
           </div>
+          <br/>
           <div class="pure-g">
             <div class="l-generator-semipadded pure-u-1 pure-u-md-1-2">
               <div class="l-generator-form ">
