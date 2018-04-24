@@ -1,10 +1,19 @@
 <template>
 <section class="code_viewer">
+  <header class="code_viewer-header">
+    <div class="code_viewer-title pure-u-1-2">
+      {{title}}
+    </div>
+    <div class="code_viewer-title pure-u-1-2">
+      <slot/>
+    </div>
+  </header>
   <div class="code_viewer-content" :style="{ height: size }">
     <div class="code_viewer-copy js-clipboard"  ref="code">
     </div>
-
-    <pre class="code_viewer-pre language-javascript" :style="{ height: size }" v-if="highlightedCode"><code class="code_viewer-code language-javascript" v-html="highlightedCode"></code></pre>
+    <pre class="code_viewer-pre language-javascript" v-if="highlightedCode">
+      <code class="code_viewer-code language-javascript code_container" v-html="highlightedCode"/>
+    </pre>
   </div>
 </section>
 </template>
@@ -20,6 +29,9 @@ export default class extends Vue {
 
   @Prop({ type: String, default: '' })
   public code: string | null;
+
+  @Prop({ type: String, default: '' })
+  public title: string | null;
 
   @Prop({ type: String, default: 'auto' })
   public size: string | null;
@@ -116,11 +128,18 @@ export default class extends Vue {
     background-color: $color-background-darker;
     margin: 0;
     min-height: 4rem;
+    overflow: scroll;
     position: relative;
   }
 
   &-content:hover &-copy {
     opacity: 1;
+  }
+
+  .code_container {
+    height: 50%;
+    overflow-x: scroll;
+    overflow-y: scroll;
   }
 }
 </style>

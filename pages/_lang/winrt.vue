@@ -1,60 +1,60 @@
 <template>
   <section>
     <WinrtMenu />
-    <section class="l-generator-step">
-      <section class="twoways l-pad">
-        <div class="pure-g">
-          <div class="pure-u-1 pure-u-md-1-2" v-for="item in controls" :key="item.id" v-on:click="onclick(item, $event)">
-            <div class="pwa-infobox-box">
-              <img class="pwa-infobox-logo" src="~/assets/images/logo_small.png" alt="Small PWA Builder logo">
-              <h4 class="pwa-infobox-subtitle">{{ item.title }}</h4>
-              <div class="cardcheck">
-                <div>{{ item.description }}</div>
+        <div class="pure-u-1 pure-u-md-1-3">
+          <div class="l-generator-table tile-table">
+            <div class="pure-u-1" v-for="item in controls" :key="item.id" v-on:click="onclick(item, $event)">
+              <div class="pure-u-12-24 cardround">
+                <img class="cardimage" src="~/assets/images/logo_small.png" alt="Small PWA Builder logo">
+                <h4 class="title">{{ item.title }}</h4>
+                <div class="description">
+                  <div>{{ item.description }}</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </section>
-      <div class="tab_container" v-if="properties">
-        <input id="tab1" type="radio" name="tabs" class="tab_input" checked>
-			  <label for="tab1" class="tab_label"><i class="fa fa-code"></i><span>Setup Snippet</span></label>
+        <div class="tab_container generate-code pure-u-1 pure-u-md-2-3" v-if="properties">
+          <input id="tab1" type="radio" name="tabs" class="tab_input" checked>
+          <label for="tab1" class="tab_label"><i class="fa fa-code"></i><span>Source Code</span></label>
 
-        <input id="tab2" type="radio" name="tabs" class="tab_input">
-        <label for="tab2" class="tab_label"><i class="fa fa-pencil-square-o"></i><span>Source Code</span></label>
+          <input id="tab2" type="radio" name="tabs" class="tab_input">
+          <label for="tab2" class="tab_label"><i class="fa fa-pencil-square-o"></i><span>Setup Snippet</span></label>
 
-        <section id="content1" class="tab-content tab_section">
-          <div class="pure-g">
-            <div class="pure-u-1 pure-u-md-1-5">
-              <h4 class="l-generator-subtitle">
-                {{ selectedTitle }}
-              </h4>
+          <section id="content1" class="tab-content tab_section">
+            <div class="pure-g">
+              <div class="pure-u-1 pure-u-md-1-5">
+                <h4 class="l-generator-subtitle"> {{ selectedTitle }} </h4>
+              </div>
             </div>
-          </div>
-          <br/>
-          <div class="pure-g">
-            <div class="l-generator-semipadded pure-u-1 pure-u-md-1-2">
-              <div class="l-generator-form ">
-                <div class="l-generator-field" v-for="prop in properties" :key="prop.id">
-                  <label class="l-generator-label">{{prop.name}}
-                    <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#name-member" target="_blank">[?]</a>
-                  </label>
-                  <input class="l-generator-input" :id="prop.id" :placeholder="prop.description" v-model="prop.default" type="text">
+            <br/>
+            <div class="pure-g">
+              <div>
+                <CodeViewer v-if="properties" :code="getCode()" :title="getTitle('Code Configuration')" class="code pure-u-1 pure-u-md-1-2" />
+              </div>
+              <div>
+                <CodeViewer v-if="properties" :code="source" :title="getTitle('Full source Code')" class="source pure-u-1 pure-u-md-1-2" />
+              </div>
+            </div>
+          </section>
+          <section id="content2" class="tab-content tab_section">
+            <div class="pure-g">
+              <div class="pure-u-1 pure-u-md-1-1">
+                <div class="l-generator-form ">
+                  <div class="l-generator-field" v-for="prop in properties" :key="prop.id">
+                    <label class="l-generator-label">{{prop.name}}
+                      <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#name-member" target="_blank">[?]</a>
+                    </label>
+                    <input class="l-generator-input" :id="prop.id" :placeholder="prop.description" v-model="prop.default" type="text">
+                  </div>
+                </div>
+                <div class="pure-u-1 pure-u-md-1-2">
+                  <div class="pwa-button pwa-button--simple" v-if="properties" v-on:click="download()">{{ $t("winrt.download") }}</div>
                 </div>
               </div>
-              <div class="pure-u-1 pure-u-md-1-2">
-                <div class="pwa-button pwa-button--simple" v-if="properties" v-on:click="download()">{{ $t("winrt.download") }}</div>
-              </div>
             </div>
-            <CodeViewer v-if="properties" :code="getCode()" class="code pure-u-1 pure-u-md-1-2" />
-          </div>
-        </section>
-        <section id="content2" class="tab-content tab_section">
-          <div class="pure-g">
-            <CodeViewer v-if="properties" :code="source" class="source pure-u-1 pure-u-md-5-5" />
-          </div>
-        </section>
-      </div>
-    </section>
+          </section>
+        </div>
   </section>
 </template>
 
@@ -83,8 +83,8 @@ export default class Winrt extends Vue {
 
   selectedTitle: string | null;
 
-  async asyncData({ params }) {
-    return await axios.get(`http://renoserviceapi.azurewebsites.net/api/source`).then(res => {
+  async asyncData() {
+    return await axios.get('http://localhost:49080/api/source').then(res => {
       let fromItem = function(func, file, source) {
         let id = file.Id + '.' + func.Name;
 
@@ -140,6 +140,10 @@ export default class Winrt extends Vue {
     return this.code;
   }
 
+  getTitle(title): string | null {
+    return title;
+  }
+
   async onclick(item, event) {
       await axios.get(item.url).then(data => {
         this.code = item.comments;
@@ -149,21 +153,24 @@ export default class Winrt extends Vue {
     });
   }
 
-  download() {
+  async download() {
     let that = this;
-    let results = this.outputProcessor(this.controls);
 
-    axios('http://localhost:15336/api/source/generate', {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      data: JSON.stringify(results),
-      method: 'POST'
-    })
-    .then(res => {
-      let fileName = 'snippet.zip';
-      that.saveAs(fileName, res);
-    });
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        var a;
+        if (xhttp.readyState === 4 && xhttp.status === 200) {
+            var fileName = "snippet.zip";
+            that.saveAs(fileName, xhttp);
+        }
+    };
+
+    xhttp.open("POST", "http://localhost:15336/api/source/generate", true);
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.setRequestHeader("Access-Control-Allow-Origin", "*");
+    xhttp.responseType = 'blob';
+    var results = this.outputProcessor(this.controls);
+    xhttp.send(JSON.stringify(results));
   }
 
   outputProcessor(items) {
@@ -193,7 +200,7 @@ export default class Winrt extends Vue {
   }
 
   saveAs(fileName, xhttp) {
-    let a = document.createElement('a');
+    var a = document.createElement('a');
     a.href = window.URL.createObjectURL(xhttp.response);
     a.download = fileName;
     a.style.display = 'none';
@@ -206,74 +213,43 @@ export default class Winrt extends Vue {
 <style>
 .cardround {
   background: white;
-  border: black solid 1px;
+  border: grey solid 1px;
   border-radius: 4px;
   box-shadow: 5px 5px 5px #999999;
+  cursor: pointer;
   display: block;
-  float: left;
   font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
-  height: 310px;
-  margin: 10px;
+  height: 200px;
+  margin: auto;
+  margin-bottom: 20px;
+  margin-top: 20px;
   padding: 0;
   position: relative;
-  width: 200px;
+  text-align: center;
+  width: 350px;
 }
 
-.cardname {
-  flex: 0 0 90%;
-  font-size: 20px;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: 300;
+.cardround:hover {
+  background-color: lightgrey;
+}
+
+.description {
+  margin: 0 0 48px;
 }
 
 .cardimage {
   height: auto;
-  max-height: 198px;
+  margin: 10px;
+  max-height: 100px;
   opacity: .8;
-  width: 198px;
+  padding: 5px 5px 5px 5px;
+  width: 100px;
 }
 
-.cardtextarea {
-  margin: 5px;
-}
-
-.cardtopline {
-  display: flex;
-}
-
-.cardcheck {
-  flex: 1;
-  margin-top: 5px;
-}
-
-.carddesc {
-  bottom: 10px;
-  font-family: "Segoe UI", "Segoe WP", Arial, Sans-Serif;
-  font-size: 13px;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: 400;
-  margin-right: 5px;
-  position: absolute;
-  vertical-align: bottom;
-}
-
-.cardinside {
-  height: 310px;
-  position: absolute;
-}
-
-.proparea {
-  margin: 20px;
-}
-
-.propspacer {
-  height: 20px;
-}
-
-.fullline {
-  display: block;
+.title {
+  color: #D18B49;
+  font-size: 24px;
+  margin: 0 0 12px;
 }
 
 .source {
@@ -293,7 +269,7 @@ export default class Winrt extends Vue {
   float: right;
   height: 50%;
   right: 0;
-  width: 50%;
+  width: 100%;
 }
 
 /* Tabs */
@@ -301,7 +277,11 @@ export default class Winrt extends Vue {
   margin: 0 auto;
   padding-top: 70px;
   position: relative;
-  width: 90%;
+  width: 60%;
+}
+
+.tile-table {
+  margin: 32px !important;
 }
 
 .tab_input,
@@ -322,7 +302,7 @@ export default class Winrt extends Vue {
   padding: 1.5em;
   text-align: center;
   text-decoration: none;
-  width: 20%;
+  width: 30%;
 }
 
 #tab1:checked ~ #content1,
