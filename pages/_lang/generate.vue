@@ -326,9 +326,7 @@ export default class extends Vue {
       manifest += `"icons" : [${this.getIcons()}
     ]`;
       manifest += this.getCustomMembers();
-    return `{
-    ${manifest}
-}`;
+    return `{${manifest}}`;
   }
 
   public getCode(): string | null {
