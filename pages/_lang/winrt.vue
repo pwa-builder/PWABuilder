@@ -84,7 +84,7 @@ export default class Winrt extends Vue {
   selectedTitle: string | null;
 
   async asyncData() {
-    return await axios.get(`${process.env.apiUrl2}/api/source`).then(res => {
+    return await axios.get(`${process.env.apiUrl2}/api/winrt`).then(res => {
       let fromItem = function(func, file, source) {
         let id = file.Id + '.' + func.Name;
 
@@ -164,7 +164,7 @@ export default class Winrt extends Vue {
         }
     };
 
-    xhttp.open('POST', `${process.env.apiUrl2}/api/source/generate`, true);
+    xhttp.open('POST', `${process.env.apiUrl2}/api/winrt/generate`, true);
     xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
     xhttp.responseType = 'blob';
