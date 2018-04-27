@@ -319,11 +319,11 @@ export default class extends Vue {
     let manifest = '';
       for (let property in this.manifest) {
         if (property !== 'icons') {
-          manifest += `"${property}"; : "${this.manifest[property]}",
+          manifest += `"${property}" : "${this.manifest[property]}",
     `;
         }
       }
-      manifest += `'icons' : [${this.getIcons()}
+      manifest += `"icons" : [${this.getIcons()}
     ]`;
       manifest += this.getCustomMembers();
     return `{
