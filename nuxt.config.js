@@ -31,7 +31,8 @@ module.exports = {
             { rel: 'apple-touch-icon', sizes: '180x180', href: '/Images/assets/icons/apple-icon-180x180-f0f5be1ded11c7ec66b00dd23c277a5d.png' }
         ],
         script: [
-            { src: '/pwabuilder-sw-register.js' }
+            { src: '/pwabuilder-sw-register.js' },
+            { src: "https://use.fontawesome.com/releases/v5.0.10/js/all.js" }
         ]
     },
     loading: { color: '#1FC2C8' },
