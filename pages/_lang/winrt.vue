@@ -156,20 +156,19 @@ export default class Winrt extends Vue {
   async download() {
     let that = this;
 
-    var xhttp = new XMLHttpRequest();
+    let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
-        var a;
         if (xhttp.readyState === 4 && xhttp.status === 200) {
-            var fileName = "snippet.zip";
+            let fileName = 'snippet.zip';
             that.saveAs(fileName, xhttp);
         }
     };
 
-    xhttp.open("POST", `${process.env.apiUrl2}/api/source/generate`, true);
-    xhttp.setRequestHeader("Content-Type", "application/json");
-    xhttp.setRequestHeader("Access-Control-Allow-Origin", "*");
+    xhttp.open('POST', `${process.env.apiUrl2}/api/source/generate`, true);
+    xhttp.setRequestHeader('Content-Type', 'application/json');
+    xhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
     xhttp.responseType = 'blob';
-    var results = this.outputProcessor(this.controls);
+    let results = this.outputProcessor(this.controls);
     xhttp.send(JSON.stringify(results));
   }
 
@@ -200,7 +199,7 @@ export default class Winrt extends Vue {
   }
 
   saveAs(fileName, xhttp) {
-    var a = document.createElement('a');
+    let a = document.createElement('a');
     a.href = window.URL.createObjectURL(xhttp.response);
     a.download = fileName;
     a.style.display = 'none';

@@ -1,20 +1,18 @@
-<script lang="ts">
-import Vue from 'vue';
+  <script lang="ts">
+  export default {
+    middleware: 'default',
 
-export default {
-middleware: 'default',
-
- data(){
-   return{
-     pathnameUrl: this.$route.path,
-   };
- },
- watch: {
-   '$route': function(){
-     this.pathnameUrl = this.$route.path
-   }
- }
-};
+    data() {
+      return {
+        pathnameUrl: this.$route.path,
+      };
+    },
+    watch: {
+      '$route': function() {
+        this.pathnameUrl = this.$route.path;
+      }
+    }
+  };
 </script>
 
 <template>
@@ -40,7 +38,9 @@ middleware: 'default',
             </nuxt-link>
           </li>
           <li class="l-header-item">
-            <a class="l-header-link" href="//appimagegenerator-prod.azurewebsites.net">{{ $t('menu.generator') }}</a>
+            <nuxt-link :to="$i18n.path('imageGenerator')" @click="pathnameUrl='/imageGenerator'" exact 
+            :class="[pathnameUrl === '/imageGenerator' ? 'l-header-link is-active' : 'l-header-link ']">
+            {{ $t('menu.generator') }}</nuxt-link>
           </li>
           <li class="l-header-item">
             <a class="l-header-link" href="//github.com/pwa-builder" target="_blank">{{ $t('menu.github') }}</a>
