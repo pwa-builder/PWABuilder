@@ -6,6 +6,6 @@
         "generator": "PWA Image Generator",
         "github": "Github",
         "generate": "Generate",
-        "winrt" : "WinRT Apis"
+        "windows" : "Windows APIs"
     }
 }
