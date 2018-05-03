@@ -1,60 +1,54 @@
 <template>
   <section>
-    <WinrtMenu />
-        <div class="pure-u-1 pure-u-md-1-3">
-          <div class="l-generator-table tile-table">
-            <div class="pure-u-1" v-for="item in controls" :key="item.id" v-on:click="onclick(item, $event)">
-              <div class="pure-u-12-24 cardround">
-                <img class="cardimage" src="~/assets/images/logo_small.png" alt="Small PWA Builder logo">
-                <h4 class="title">{{ item.title }}</h4>
-                <div class="description">
-                  <div>{{ item.description }}</div>
-                </div>
-              </div>
+    <WindowsMenu />
+      <div class="l-generator-step">
+        <div class="l-generator-semipadded pure-g">
+          <div class="pure-u-1 pure-u-md-1-3 generator-section service-workers">
+            <div class="l-generator-subtitle">{{ $t('windows.title') }}</div>
+            <div class="l-generator-field l-generator-field--padded checkbox" v-for="item in controls" :key="item.id">
+              <label class="l-generator-label">
+                <input type="radio" :value="item" v-model="windowsfeature"> {{item.title}}
+              </label>
+              <span class="l-generator-description">{{ item.description }}</span>
             </div>
           </div>
-        </div>
-        <div class="tab_container generate-code pure-u-1 pure-u-md-2-3" v-if="properties">
-          <input id="tab1" type="radio" name="tabs" class="tab_input" checked>
-          <label for="tab1" class="tab_label"><i class="fa fa-code"></i><span>Source Code</span></label>
+          <div class="pure-u-1 pure-u-md-2-3">
+            <div class="tab_container" >
+                <input id="tab1" type="radio" name="tabs" class="tab_input" checked>
+                <label for="tab1" class="tab_label"><i class="fa fa-code"></i><span> Usage</span></label>
 
-          <input id="tab2" type="radio" name="tabs" class="tab_input">
-          <label for="tab2" class="tab_label"><i class="fa fa-pencil-square-o"></i><span>Setup Snippet</span></label>
+                <input id="tab2" type="radio" name="tabs" class="tab_input">
+                <label for="tab2" class="tab_label"><i class="fa fa-file-alt"></i><span> Code</span></label>
 
-          <section id="content1" class="tab-content tab_section">
-            <div class="pure-g">
-              <div class="pure-u-1 pure-u-md-1-5">
-                <h4 class="l-generator-subtitle"> {{ selectedTitle }} </h4>
-              </div>
-            </div>
-            <br/>
-            <div class="pure-g">
-              <div>
-                <CodeViewer v-if="properties" :code="getCode()" :title="getTitle('Code Configuration')" class="code pure-u-1 pure-u-md-1-2" />
-              </div>
-              <div>
-                <CodeViewer v-if="properties" :code="source" :title="getTitle('Full source Code')" class="source pure-u-1 pure-u-md-1-2" />
-              </div>
-            </div>
-          </section>
-          <section id="content2" class="tab-content tab_section">
-            <div class="pure-g">
-              <div class="pure-u-1 pure-u-md-1-1">
-                <div class="l-generator-form ">
-                  <div class="l-generator-field" v-for="prop in properties" :key="prop.id">
-                    <label class="l-generator-label">{{prop.name}}
-                      <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#name-member" target="_blank">[?]</a>
-                    </label>
-                    <input class="l-generator-input" :id="prop.id" :placeholder="prop.description" v-model="prop.default" type="text">
+                <section id="content1" class="tab-content tab_section">
+                  <br/>
+                  <div class="pure-g">
+                    <div class="generate-code pure-u-1">
+                      <CodeViewer :code="code" :title="$t('windows.codeTitle')" />
+                      <br/>
+                      <div class="l-generator-form ">
+                        <div class="l-generator-field" v-for="prop in properties" :key="prop.id">
+                          <label class="l-generator-label">{{prop.name}}
+                            <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#name-member" target="_blank">[?]</a>
+                          </label>
+                          <input class="l-generator-input" :id="prop.id" :placeholder="prop.description" v-model="prop.default" type="text">
+                        </div>
+                      </div>
+                      <div class="pure-u-1 pure-u-md-1-2">
+                        <div class="pwa-button pwa-button--simple" v-on:click="download()">{{ $t("windows.download") }}</div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div class="pure-u-1 pure-u-md-1-2">
-                  <div class="pwa-button pwa-button--simple" v-if="properties" v-on:click="download()">{{ $t("winrt.download") }}</div>
-                </div>
+                </section>
+                <section id="content2" class="tab-content tab_section">
+                  <CodeViewer :size="viewerSize" :code="source" :title="$t('windows.sourceTitle')">
+                    <div class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" v-if="properties" v-on:click="download()">{{ $t("windows.download") }}</div>      
+                  </CodeViewer>
+                </section>
               </div>
-            </div>
-          </section>
+          </div>
         </div>
+      </div>
   </section>
 </template>
 
@@ -63,25 +57,43 @@ import Vue from 'vue';
 import Component from 'nuxt-class-component';
 import axios from 'axios';
 import { Prop } from 'vue-property-decorator';
-import CodeViewer from '~/components/CodeViewerReduced.vue';
-import WinrtMenu from '~/components/WinRtMenu.vue';
+import { Watch } from 'vue-property-decorator';
+import CodeViewer from '~/components/CodeViewer.vue';
+import WindowsMenu from '~/components/WindowsMenu.vue';
 
 @Component({
-  components: {CodeViewer, WinrtMenu}
+  components: {CodeViewer, WindowsMenu}
 })
-export default class Winrt extends Vue {
+export default class windows extends Vue {
   @Prop({ type: String, default: '' })
   public code: string | null;
   
+  @Prop()
+  public windowsfeature: any;
+
   @Prop({ type: String, default: '' })
   public source: string | null;
 
   @Prop()
   properties: any;
-
+  error: any;
   controls: any;
 
   selectedTitle: string | null;
+  public viewerSize = '30rem';
+
+  mounted(){
+    this.windowsfeature = this.controls[0];
+  }
+
+  @Watch('windowsfeature')
+  async onwindowsfeatureChanged() {
+    try {
+      await this.onchange(this.windowsfeature);
+    } catch (e) {
+      this.error = e;
+    }
+  }
 
   async asyncData() {
     return await axios.get(`${process.env.apiUrl2}/api/winrt`).then(res => {
@@ -136,15 +148,7 @@ export default class Winrt extends Vue {
     });
   }
 
-  getCode(): string | null {
-    return this.code;
-  }
-
-  getTitle(title): string | null {
-    return title;
-  }
-
-  async onclick(item, event) {
+  async onchange(item) {
       await axios.get(item.url).then(data => {
         this.code = item.comments;
         this.source = data.data;
@@ -210,73 +214,11 @@ export default class Winrt extends Vue {
 </script>
 
 <style>
-.cardround {
-  background: white;
-  border: grey solid 1px;
-  border-radius: 4px;
-  box-shadow: 5px 5px 5px #999999;
-  cursor: pointer;
-  display: block;
-  font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
-  height: 200px;
-  margin: auto;
-  margin-bottom: 20px;
-  margin-top: 20px;
-  padding: 0;
-  position: relative;
-  text-align: center;
-  width: 350px;
-}
-
-.cardround:hover {
-  background-color: lightgrey;
-}
-
-.description {
-  margin: 0 0 48px;
-}
-
-.cardimage {
-  height: auto;
-  margin: 10px;
-  max-height: 100px;
-  opacity: .8;
-  padding: 5px 5px 5px 5px;
-  width: 100px;
-}
-
-.title {
-  color: #D18B49;
-  font-size: 24px;
-  margin: 0 0 12px;
-}
-
-.source {
-  background: #DDDDDD;
-  clear: both;
-  display: block;
-  float: right;
-  height: 50%;
-  right: 0;
-  width: 100%;
-}
-
-.code {
-  background: #DDDDDD;
-  clear: both;
-  display: block;
-  float: right;
-  height: 50%;
-  right: 0;
-  width: 100%;
-}
-
 /* Tabs */
 .tab_container {
   margin: 0 auto;
-  padding-top: 70px;
   position: relative;
-  width: 60%;
+  width: 100%;
 }
 
 .tile-table {

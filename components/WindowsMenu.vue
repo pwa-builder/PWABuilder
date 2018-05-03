@@ -1,11 +1,8 @@
 <template>
-<section class="generator_menu">
+<section class="">
   <header class="generator_menu-header">
-    {{ $t('winrtmenu.title') }}
+    {{ $t('windowsmenu.title') }}
   </header>
-  <p class="generator_menu-info">
-    {{ $t('winrtmenu.subtitle') }}
-  </p>
 </section>
 </template>
 

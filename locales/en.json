@@ -6,7 +6,7 @@
     "generator": "PWA Image Generator",
     "github": "Github",
     "generate": "Generate",
-    "winrt" : "WinRT Apis"
+    "windows" : "Windows APIs"
   },
   "footer": {
     "copyright": "PWABuilder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.",
@@ -115,12 +115,15 @@
     "serviceworker": "Build Service Worker",
     "publish": "Publish PWA"
   },
-  "winrtmenu": {
-    "title": "Use our WinRT Api",
+  "windowsmenu": {
+    "title": "Use our window Api",
     "subtitle": "Create your own Win10 app"
   },
-  "winrt": {
-    "download": "Download code"
+  "windows": {
+    "download": "Download code",
+    "title": "Select the Windows feature for your app.",
+    "sourceTitle": "Source Code",
+    "codeTitle": "code Configuration"
   },
   "twoways": {
     "title": "Two Ways to Work",
