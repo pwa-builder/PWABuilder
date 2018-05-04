@@ -161,8 +161,9 @@ export default class windows extends Vue {
 
   async download() {
     let that = this;
-
+    let items = Array<any>();
     let xhttp = new XMLHttpRequest();
+
     xhttp.onreadystatechange = function () {
         if (xhttp.readyState === 4 && xhttp.status === 200) {
             let fileName = 'snippet.zip';
@@ -174,7 +175,9 @@ export default class windows extends Vue {
     xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
     xhttp.responseType = 'blob';
-    let results = this.outputProcessor(this.controls);
+
+    items.push(this.windowsfeature)
+    let results = this.outputProcessor(items);
     xhttp.send(JSON.stringify(results));
   }
 
