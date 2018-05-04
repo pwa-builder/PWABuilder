@@ -125,7 +125,7 @@ export default class windows extends Vue {
           url: source.Url,
           hash: source.Hash,
           included: false,
-          snippet: func.Comments
+          snippet: func.Snippet
         };
       };
 
