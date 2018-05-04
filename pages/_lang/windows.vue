@@ -24,7 +24,7 @@
                   <br/>
                   <div class="pure-g">
                     <div class="generate-code pure-u-1">
-                      <CodeViewer :code="code" :title="$t('windows.codeTitle')" />
+                      <CodeViewer :code="snippet" :title="$t('windows.codeTitle')" />
                       <br/>
                       <div class="l-generator-form ">
                         <div class="l-generator-field" v-for="prop in properties" :key="prop.id">
@@ -66,7 +66,7 @@ import WindowsMenu from '~/components/WindowsMenu.vue';
 })
 export default class windows extends Vue {
   @Prop({ type: String, default: '' })
-  public code: string | null;
+  public snippet: string | null;
   
   @Prop()
   public windowsfeature: any;
@@ -98,7 +98,7 @@ export default class windows extends Vue {
   async asyncData() {
     return await axios.get(`${process.env.apiUrl2}/api/winrt`).then(res => {
       let fromItem = function(func, file, source) {
-        let id = file.Id + '.' + func.Name;
+        let id = file.Id + '.' + func.Name; //file.id is undefined
 
         let parms = Array<any>();
 
@@ -125,7 +125,7 @@ export default class windows extends Vue {
           url: source.Url,
           hash: source.Hash,
           included: false,
-          comments: func.Comments
+          snippet: func.Snippet
         };
       };
 
@@ -149,9 +149,11 @@ export default class windows extends Vue {
   }
 
   async onchange(item) {
+      //change comment name property
+
       await axios.get(item.url).then(data => {
-        this.code = item.comments;
-        this.source = data.data;
+        this.snippet = item.snippet.replace(/(\/\*[\s\S]*?\*\/|([^:/]|^)\/\/.*$)/g, '');
+        this.source = data.data.replace(/(\/\*[\s\S]*?\*\/|([^:/]|^)\/\/.*$)/g, '');
         this.properties = item.parms;
         this.selectedTitle = item.title;
     });
@@ -159,8 +161,9 @@ export default class windows extends Vue {
 
   async download() {
     let that = this;
-
+    let items = Array<any>();
     let xhttp = new XMLHttpRequest();
+
     xhttp.onreadystatechange = function () {
         if (xhttp.readyState === 4 && xhttp.status === 200) {
             let fileName = 'snippet.zip';
@@ -172,7 +175,9 @@ export default class windows extends Vue {
     xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
     xhttp.responseType = 'blob';
-    let results = this.outputProcessor(this.controls);
+
+    items.push(this.windowsfeature)
+    let results = this.outputProcessor(items);
     xhttp.send(JSON.stringify(results));
   }
 
