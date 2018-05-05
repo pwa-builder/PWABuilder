@@ -161,7 +161,7 @@
         <div class="generate-code pure-u-1 pure-u-md-1-2">
           <CodeViewer :code="getCode()" :title="$t('generate.w3c_manifest')" :suggestions="suggestions" :suggestionsTotal="suggestionsTotal"
             :warnings="warnings" :warningsTotal="warningsTotal">
-            <nuxt-link :to="$i18n.path('serviceworker')" class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" @click=" $awa( { 'uri': 'https://preview.pwabuilder.com/generator-nextStep-trigger' })">
+            <nuxt-link :to="$i18n.path('serviceworker')" class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger' })">
               {{ $t("serviceworker.next_step") }}
             </nuxt-link>
           </CodeViewer>
@@ -170,7 +170,7 @@
     </div>
 
     <div class="l-generator-buttons l-generator-buttons--centered">
-      <nuxt-link :to="$i18n.path('serviceworker')" class="pwa-button" @click=" $awa( { 'uri': 'https://preview.pwabuilder.com/generator-nextStep-trigger' })">
+      <nuxt-link :to="$i18n.path('serviceworker')" class="pwa-button" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger' })">
         {{ $t("generate.next_step") }}
       </nuxt-link>
     </div>

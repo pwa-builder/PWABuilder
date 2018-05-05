@@ -14,7 +14,7 @@
   </div>
 
   <div class="button-holder">
-    <button class="pwa-button pwa-button--text pwa-button--right" @click="onClickAdd(); $awa( { 'uri': 'https://preview.pwabuilder.com/manifest/add-member' });">
+    <button class="pwa-button pwa-button--text pwa-button--right" @click="onClickAdd(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
       {{ $t("custom_members.add") }}
     </button>
   </div>
@@ -92,24 +92,6 @@ export default class extends Vue {
   }
 }
 
-Vue.prototype.$awa = function (config) { 
- 
-  //awa.ct.capturePageView(config);
-
-  return 
-}
-
-// Vue.prototype.$ga = function (a,b,c,config) { 
-// this.event = function(){
-//     if(config && config.page){
-//      // awa.ct.capturePageView({"uri":config.page});
-//     }else{
-//      // awa.ct.capturePageView({"pageName":c});
-      
-// }
-// }
-//   return 
-// }
 
 
 </script>

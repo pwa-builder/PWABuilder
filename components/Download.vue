@@ -1,7 +1,7 @@
 <template>
 <div class="pwa-button pwa-button--simple" 
     :class="{'pwa-button--brand': isBrand, 'pwa-button--total_right': isRight}"
-    @click="buildArchive(platform);  $awa( { 'uri': 'https://preview.pwabuilder.com/download/{platform}' });">
+    @click="buildArchive(platform);  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/download/{platform}' });">
 
   <span v-if="isReady">{{ message$ }}</span>
   <span v-if="!isReady">{{ $t('publish.building_package') }}
