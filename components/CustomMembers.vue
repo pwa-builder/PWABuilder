@@ -99,17 +99,17 @@ Vue.prototype.$awa = function (config) {
   return 
 }
 
-Vue.prototype.$ga = function (a,b,c,config) { 
-this.event = function(){
-    if(config && config.page){
-     // awa.ct.capturePageView({"uri":config.page});
-    }else{
-     // awa.ct.capturePageView({"pageName":c});
+// Vue.prototype.$ga = function (a,b,c,config) { 
+// this.event = function(){
+//     if(config && config.page){
+//      // awa.ct.capturePageView({"uri":config.page});
+//     }else{
+//      // awa.ct.capturePageView({"pageName":c});
       
-}
-}
-  return 
-}
+// }
+// }
+//   return 
+// }
 
 
 </script>
