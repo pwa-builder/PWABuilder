@@ -94,7 +94,7 @@ export default class extends Vue {
 
 Vue.prototype.$awa = function (config) { 
  
-  awa.ct.capturePageView(config);
+ // awa.ct.capturePageView(config);
 
   return 
 }
@@ -102,9 +102,9 @@ Vue.prototype.$awa = function (config) {
 Vue.prototype.$ga = function (a,b,c,config) { 
 this.event = function(){
     if(config && config.page){
-      awa.ct.capturePageView({"uri":config.page});
+    //  awa.ct.capturePageView({"uri":config.page});
     }else{
-      awa.ct.capturePageView({"pageName":c});
+     // awa.ct.capturePageView({"pageName":c});
       
 }
 }
