@@ -1,6 +1,6 @@
 //This is the "Offline page" service worker
 
-//Install stage sets up the offline page in the cahche and opens a new cache
+//Install stage sets up the offline page in the cache and opens a new cache
 self.addEventListener('install', function(event) {
   var offlinePage = new Request('offline.html');
   event.waitUntil(
@@ -24,7 +24,7 @@ self.addEventListener('fetch', function(event) {
     }));
 });
 
-//This is a event that can be fired from your page to tell the SW to update the offline page
+//This is an event that can be fired from your page to tell the SW to update the offline page
 self.addEventListener('refreshOffline', function(response) {
   return caches.open('pwabuilder-offline').then(function(cache) {
     console.log('[PWA Builder] Offline page updated from refreshOffline event: '+ response.url);

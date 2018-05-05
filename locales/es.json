@@ -5,6 +5,7 @@
         "documentation": "Documentación",
         "generator": "PWA Image Generator",
         "github": "Github",
-        "generate": "Generate"
+        "generate": "Generate",
+        "windows" : "Windows APIs"
     }
 }

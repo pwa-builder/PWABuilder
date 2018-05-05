@@ -21,7 +21,7 @@
 
             <div class="pure-g l-breath">
               <div class="l-generator-wrapper pure-u-3-5">
-                <button type="submit" class="get-started pwa-button isEnabled next-step" @click="$ga.event('Build', 'Step 2', 'Scan for Manifest', { 'page': `/build/manifest-scan` })">
+                <button type="submit" class="get-started pwa-button isEnabled next-step" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/build/manifest-scan' })">
                   {{ $t('generator.start') }}
                   <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm"/>
                 </button>
@@ -38,7 +38,7 @@
               </div>
 
               <div class="l-generator-wrapper pure-u-1">
-                <button @click="skipCheckUrl(); $ga.event('Skip', 'Manifest', 'Skip to Service Worker', { 'page': `/skip/service-worker` })"
+                <button @click="skipCheckUrl(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/skip/service-worker' })"
                   class="pwa-button pwa-button--simple">
                   {{ $t('generator.skip') }}
                 </button>
@@ -119,5 +119,16 @@ export default class extends Vue {
       this.error = e;
     }
   }
+}
+
+declare var awa: any;
+
+
+Vue.prototype.$awa = function (config) { 
+ 
+  awa.ct.capturePageView(config);
+
+
+  return
 }
 </script>

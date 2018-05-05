@@ -15,7 +15,9 @@ module.exports = {
             { hid: 'description', name: 'description', content: 'All the tools you need to build and deploy your Progressive Web Apps.' },
             { name: 'msapplication-TileImage', content: '/Images/assets/icons/ms-icon-144x144-487a503e5cb29bbe0df7296db4093b7e.png' },
             { name: 'msapplication-TileColor', content: '#1FC2C8' },
-            { name: 'theme-color', content: '#1FC2C8' }
+            { name: 'theme-color', content: '#1FC2C8' },
+            { name: 'ms.appid', content: 'PWABuilder' }
+            
         ],
         link: [
             { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
@@ -31,7 +33,10 @@ module.exports = {
             { rel: 'apple-touch-icon', sizes: '180x180', href: '/Images/assets/icons/apple-icon-180x180-f0f5be1ded11c7ec66b00dd23c277a5d.png' }
         ],
         script: [
-            { src: '/pwabuilder-sw-register.js' }
+            { src: '/pwabuilder-sw-register.js' }, 
+            { src: 'https://az725175.vo.msecnd.net/scripts/jsll-4.js'},
+            { src: "https://use.fontawesome.com/releases/v5.0.10/js/all.js" },
+            { src: '/awa-register.js'}
         ]
     },
     loading: { color: '#1FC2C8' },

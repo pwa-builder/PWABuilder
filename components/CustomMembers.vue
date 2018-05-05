@@ -14,7 +14,7 @@
   </div>
 
   <div class="button-holder">
-    <button class="pwa-button pwa-button--text pwa-button--right" @click="onClickAdd(); $ga.event('Manifest', 'Add Member', 'Add a Member', { 'page': '/manifest/add-member' })">
+    <button class="pwa-button pwa-button--text pwa-button--right" @click="onClickAdd(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
       {{ $t("custom_members.add") }}
     </button>
   </div>
@@ -91,4 +91,7 @@ export default class extends Vue {
     this.members$ = [...this.members ];
   }
 }
+
+
+
 </script>

@@ -1,7 +1,18 @@
-<script lang="ts">
-export default {
-  middleware: 'default'
-};
+  <script lang="ts">
+  export default {
+    middleware: 'default',
+
+    data() {
+      return {
+        pathnameUrl: this.$route.path,
+      };
+    },
+    watch: {
+      '$route': function() {
+        this.pathnameUrl = this.$route.path;
+      }
+    }
+  };
 </script>
 
 <template>
@@ -16,13 +27,20 @@ export default {
       <nav class="l-header-right pure-u pure-u-md-4-5">
         <ul class="l-header-menu">
           <li class="l-header-item">
-            <nuxt-link :to="$i18n.path('')" exact class="l-header-link is-active">{{ $t('menu.home') }}</nuxt-link>
+            <nuxt-link :to="$i18n.path('')" exact :class="[pathnameUrl === '/' ? 'l-header-link is-active' : 'l-header-link']">{{ $t('menu.home') }}</nuxt-link>
           </li>
           <li class="l-header-item">
             <a class="l-header-link" href="//docs.pwabuilder.com/" target="_blank">{{ $t('menu.documentation') }}</a>
           </li>
           <li class="l-header-item">
-            <a class="l-header-link" href="//appimagegenerator-prod.azurewebsites.net">{{ $t('menu.generator') }}</a>
+            <nuxt-link :to="$i18n.path('windows')" exact :class="[pathnameUrl === '/windows' ? 'l-header-link is-active' : 'l-header-link']">
+              {{ $t('menu.windows') }}
+            </nuxt-link>
+          </li>
+          <li class="l-header-item">
+            <nuxt-link :to="$i18n.path('imageGenerator')" @click="pathnameUrl='/imageGenerator'" exact 
+            :class="[pathnameUrl === '/imageGenerator' ? 'l-header-link is-active' : 'l-header-link ']">
+            {{ $t('menu.generator') }}</nuxt-link>
           </li>
           <li class="l-header-item">
             <a class="l-header-link" href="//github.com/pwa-builder" target="_blank">{{ $t('menu.github') }}</a>
