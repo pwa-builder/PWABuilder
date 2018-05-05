@@ -9,7 +9,6 @@ module.exports = {
     env: env,
     head: {
         title: 'PWABuilder',
-        
         meta: [
             { charset: 'utf-8' },
             { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -32,16 +31,11 @@ module.exports = {
             { rel: 'apple-touch-icon', sizes: '180x180', href: '/Images/assets/icons/apple-icon-180x180-f0f5be1ded11c7ec66b00dd23c277a5d.png' }
         ],
         script: [
-            { src: '/pwabuilder-sw-register.js' },
-            {src: "https://use.fontawesome.com/releases/v5.0.10/js/all.js"}
+            { src: '/pwabuilder-sw-register.js' }
         ]
     },
     loading: { color: '#1FC2C8' },
-    css: [
-        'prismjs/themes/prism-okaidia.css', 
-        '~/assets/scss/app.scss',
-        
-    ],
+    css: ['prismjs/themes/prism-okaidia.css', '~/assets/scss/app.scss'],
     build: {
         extractCSS: true,
         vendor: ['babel-polyfill', 'vuex-class', 'nuxt-class-component', 'vue-i18n', 'prismjs'],
