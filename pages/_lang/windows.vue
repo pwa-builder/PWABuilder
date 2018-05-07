@@ -28,7 +28,7 @@
                       <br/>
                       <div class="l-generator-form ">
                         <div class="l-generator-field" v-for="prop in properties" :key="prop.id">
-                          <div class="l-generator-label">{{prop.name}}</div>
+                          <div class="l-generator-label">{{prop.name}} </div>
                           <div class="l-generator-input value-table" :id="prop.id"  v-model="prop.default">{{prop.description}}</div>
                         </div>
                       </div>
