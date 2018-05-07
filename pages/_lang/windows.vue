@@ -28,10 +28,8 @@
                       <br/>
                       <div class="l-generator-form ">
                         <div class="l-generator-field" v-for="prop in properties" :key="prop.id">
-                          <label class="l-generator-label">{{prop.name}}
-                            <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#name-member" target="_blank">[?]</a>
-                          </label>
-                          <input class="l-generator-input" :id="prop.id" :placeholder="prop.description" v-model="prop.default" type="text">
+                          <div class="l-generator-label">{{prop.name}}</div>
+                          <div class="l-generator-input" :id="prop.id"  v-model="prop.default">{{prop.description}}</div>
                         </div>
                       </div>
                       <div class="pure-u-1 pure-u-md-1-2">
