@@ -12,10 +12,6 @@ export const types = {
     UPDATE_WEBPREVIEW: 'UPDATE_WEBPREVIEW',
     RESET_STATES: 'RESET_STATES'
 };
-export interface LALALA {
-    archive: string | null;
-    serviceworker: number;
-}
 
 export interface State {
     archive: string | null;

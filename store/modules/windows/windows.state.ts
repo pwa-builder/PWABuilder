@@ -20,20 +20,10 @@ export interface Snippet {
 
 export interface State {
   snippets: Snippet[] | null;
+  snippet: Snippet | null;
 }
 
-export const snippet = (): Snippet => ({
-  title: null,
-  description: null,
-  image: null,
-  id: null,
-  parms: [],
-  url: null,
-  hash: null,
-  included: false,
-  snippet: null
-});
-
 export const state = (): State => ({
-  snippets: []
+  snippets: [],
+  snippet: null
 });

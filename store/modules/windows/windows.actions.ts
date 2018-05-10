@@ -1,12 +1,14 @@
 import { ActionTree, ActionContext } from 'vuex';
 import { State, Parm, Snippet, types } from '~/store/modules/windows';
 import { RootState } from 'store';
+import { state } from '~/store/modules/serviceworker';
 
 const apiUrl = `${process.env.apiUrl2}/api/winrt`;
 
 
 export interface Actions<S, R> extends ActionTree<S, R> {
   getSnippets(context: ActionContext<S, R>): Promise<void>;
+  selectSnippet(context: ActionContext<S, R>, snippet: Snippet): Promise<void>;
 }
 
 export const actions: Actions<State, RootState> = {
@@ -33,7 +35,7 @@ export const actions: Actions<State, RootState> = {
           
                     parms.push(newParm);
                   }
-                  
+
                   const result: Snippet = {
                     title: func.Name || file.Name || source.Name,
                     description: func.Description || file.Description || source.Description,
@@ -63,15 +65,26 @@ export const actions: Actions<State, RootState> = {
                     }
                   }
                 }
+
+                return results;
               });
 
               commit(types.UPDATE_SNIPPETS, data);
               resolve();
+
           } catch (e) {
               let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
               reject (errorMessage);
           }
       });
+  },
+
+  selectSnippet({ commit }, snippet: Snippet): Promise<void> {
+    return new Promise<void>(async (resolve, reject) => {
+      
+      commit(types.UPDATE_SNIPPET, snippet);
+      resolve();
+    });
   },
 
   resetStates({ commit }): void {
