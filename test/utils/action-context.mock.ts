@@ -5,7 +5,8 @@ const modulesStates = {
     generator: modules.generator.state(),
     serviceworker: modules.serviceworker.state(),
     publish: modules.publish.state(),
-    i18n: modules.i18n.state()
+    i18n: modules.i18n.state(),
+    windows: modules.windows.state()
 };
 
 export let actionContextMockBuilder = <S>(s: S): ActionContext<S, RootState> => ({
