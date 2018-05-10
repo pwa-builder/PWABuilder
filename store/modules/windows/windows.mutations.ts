@@ -1,5 +1,5 @@
 import { MutationTree } from 'vuex';
-import {state, State, Parm, snippet, Snippet, types} from '~/store/modules/windows';
+import { State, Snippet, types } from '~/store/modules/windows';
 
 
 export const mutations: MutationTree<State> = {

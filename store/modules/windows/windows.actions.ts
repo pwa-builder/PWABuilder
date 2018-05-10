@@ -1,5 +1,5 @@
 import { ActionTree, ActionContext } from 'vuex';
-import {state, State, Parm, snippet, Snippet, types} from '~/store/modules/windows';
+import { State, Parm, Snippet, types } from '~/store/modules/windows';
 import { RootState } from 'store';
 
 const apiUrl = `${process.env.apiUrl2}/api/winrt`;
@@ -64,7 +64,7 @@ export const actions: Actions<State, RootState> = {
                   }
                 }
               });
-              console.log("data");
+
               commit(types.UPDATE_SNIPPETS, data);
               resolve();
           } catch (e) {

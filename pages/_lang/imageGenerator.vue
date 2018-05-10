@@ -119,8 +119,6 @@
 
 <script lang='ts'>
 import axios from 'axios';
-import Component from 'nuxt-class-component';
-import { Action, State, namespace } from 'vuex-class';
 import GeneratorMenu from '~/components/GeneratorMenu.vue';
 
  

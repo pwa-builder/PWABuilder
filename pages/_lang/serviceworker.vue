@@ -136,9 +136,8 @@ export default class extends Vue {
     if (this.archive) {
       window.location.href = this.archive;
     }
-
   
-    this.$awa( { 'referrerUri': 'https://preview.pwabuilder.com/serviceworker-download' })
+    this.$awa( { 'referrerUri': 'https://preview.pwabuilder.com/serviceworker-download' });
     this.isBuilding = false;
   }
 
