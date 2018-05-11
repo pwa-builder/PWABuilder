@@ -6,24 +6,25 @@ export interface Parm {
   description: string | null;
 }
 
-export interface Snippet {
+export interface Sample {
   title: string | null;
   description: string | null;
   image: string | null;
   id: string | null;
-  parms: Parm[]| null;
+  parms: Parm[];
   url: string | null;
   hash: string | null;
   included: boolean | false;
   snippet: string | null;
+  source: string | null;
 }
 
 export interface State {
-  snippets: Snippet[] | null;
-  snippet: Snippet | null;
+  samples: Sample[];
+  sample: Sample | null;
 }
 
 export const state = (): State => ({
-  snippets: [],
-  snippet: null
+  samples: [],
+  sample: null
 });

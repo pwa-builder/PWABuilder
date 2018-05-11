@@ -1,15 +1,16 @@
 import { MutationTree } from 'vuex';
-import { State, Snippet, types } from '~/store/modules/windows';
+import { State, Sample, types } from '~/store/modules/windows';
 
 
 export const mutations: MutationTree<State> = {
-  [types.UPDATE_SNIPPETS](state, data: Array<Snippet>): void {
-      state.snippets = data;
+  [types.UPDATE_SAMPLES](state, data: Array<Sample>): void {
+    state.samples = data;
   },
-  [types.UPDATE_SNIPPET](state, data: Snippet): void {
-    state.snippet = data;
-},
+  [types.UPDATE_SAMPLE](state, payload): void {
+    payload.sample.source = payload.source;  
+    state.sample = payload.sample; 
+  },
   [types.RESET_STATES](state): void {
-    state.snippets = null;
+    state.samples = [];
   }
 };
