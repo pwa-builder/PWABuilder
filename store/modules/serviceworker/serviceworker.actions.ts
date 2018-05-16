@@ -1,5 +1,5 @@
 import { ActionTree, MutationTree, GetterTree, ActionContext } from 'vuex';
-import { State, types } from '~/store/modules/serviceworker';
+import { State, types, ServiceWorker } from '~/store/modules/serviceworker';
 import { RootState } from 'store';
 
 const apiUrl = `${process.env.apiUrl}/serviceworkers`;
@@ -8,6 +8,7 @@ const apiUrl = `${process.env.apiUrl}/serviceworkers`;
 export interface Actions<S, R> extends ActionTree<S, R> {
     downloadServiceWorker(context: ActionContext<S, R>, serviceWorkerId: number): Promise<void>;
     getCode(context: ActionContext<S, R>, serviceworker: number): Promise<void>;
+    getServiceworkers(context: ActionContext<S, R>): Promise<void>;
     resetStates(context: ActionContext<S, R>): void;
 }
 
@@ -44,6 +45,24 @@ export const actions: Actions<State, RootState> = {
             } catch (e) {
                 let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
                 reject (errorMessage);
+            }
+        });
+    },
+    async getServiceworkers({ commit }): Promise<void> {
+        return new Promise<void>(async (resolve, reject) => {
+            try{
+                const result = new Array<ServiceWorker>();
+
+                result.push(<ServiceWorker>{id: 1, webPreview: '', serviceworkerPreview: ''});
+                result.push(<ServiceWorker>{id: 2, webPreview: '', serviceworkerPreview: ''});
+                result.push(<ServiceWorker>{id: 3, webPreview: '', serviceworkerPreview: ''});
+                result.push(<ServiceWorker>{id: 4, webPreview: '', serviceworkerPreview: ''});
+
+                commit(types.UPDATE_SERVICEWORKERS, result);
+
+                resolve();
+            }
+            catch{              
             }
         });
     },

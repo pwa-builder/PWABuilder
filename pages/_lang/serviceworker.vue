@@ -95,6 +95,7 @@ import CodeViewer from '~/components/CodeViewer.vue';
 import StartOver from '~/components/StartOver.vue';
 
 import * as serviceworker from '~/store/modules/serviceworker';
+import { ServiceWorker } from '~/store/modules/serviceworker';
 
 const ServiceworkerState = namespace(serviceworker.name, State);
 const ServiceworkerAction = namespace(serviceworker.name, Action);
@@ -111,9 +112,11 @@ const ServiceworkerAction = namespace(serviceworker.name, Action);
 export default class extends Vue {
   public isBuilding = false;
   public serviceworker$: number | null = null;
+  public serviceworkers$: ServiceWorker[];
   public error: string | null = null;
   public viewerSize = '25rem';
 
+  @ServiceworkerState serviceworkers: ServiceWorker[];
   @ServiceworkerState serviceworker: number;
   @ServiceworkerState serviceworkerPreview: string;
   @ServiceworkerState webPreview: string;
@@ -121,9 +124,11 @@ export default class extends Vue {
 
   @ServiceworkerAction downloadServiceWorker;
   @ServiceworkerAction getCode;
+  @ServiceworkerAction getServiceworkers;
 
-  public created(): void {
-    this.serviceworker$ = this.serviceworker;
+  async created(){
+    await this.getServiceworkers();
+    this.serviceworker$ = this.serviceworkers[0].id;
   }
 
   public async download(): Promise<void> {
