@@ -1,33 +1,9 @@
 import { ActionTree, MutationTree, GetterTree, ActionContext } from 'vuex';
+import { State, types } from '~/store/modules/serviceworker';
 import { RootState } from 'store';
 
 const apiUrl = `${process.env.apiUrl}/serviceworkers`;
 
-export const name = 'serviceworker';
-
-export const types = {
-    UPDATE_ARCHIVE: 'UPDATE_ARCHIVE',
-    UPDATE_SERVICEWORKER: 'UPDATE_SERVICEWORKER',
-    UPDATE_SERVICEWORKERPREVIEW: 'UPDATE_SERVICEWORKERPREVIEW',
-    UPDATE_WEBPREVIEW: 'UPDATE_WEBPREVIEW',
-    RESET_STATES: 'RESET_STATES'
-};
-
-export interface State {
-    archive: string | null;
-    serviceworker: number;
-    serviceworkerPreview: string | null;
-    webPreview: string | null;
-}
-
-export const state = (): State => ({
-    archive: null,
-    serviceworker: 1,
-    serviceworkerPreview: null,
-    webPreview: null
-});
-
-export const getters: GetterTree<State, RootState> = {};
 
 export interface Actions<S, R> extends ActionTree<S, R> {
     downloadServiceWorker(context: ActionContext<S, R>, serviceWorkerId: number): Promise<void>;
@@ -75,23 +51,3 @@ export const actions: Actions<State, RootState> = {
         commit(types.RESET_STATES);
     }
 };
-
-export const mutations: MutationTree<State> = {
-    [types.UPDATE_ARCHIVE](state, archive: string): void {
-        state.archive = archive;
-    },
-    [types.UPDATE_SERVICEWORKER](state, serviceworker: number): void {
-        state.serviceworker = serviceworker;
-    },
-    [types.UPDATE_SERVICEWORKERPREVIEW](state, code: string): void {
-        state.serviceworkerPreview = code;
-    },
-    [types.UPDATE_WEBPREVIEW](state, code: string): void {
-        state.webPreview = code;
-    },
-    [types.RESET_STATES](state): void {
-        state.archive = null;
-        state.serviceworker = 1;
-    }
-};
-
