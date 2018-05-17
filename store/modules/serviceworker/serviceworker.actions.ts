@@ -1,4 +1,4 @@
-import { ActionTree, MutationTree, GetterTree, ActionContext } from 'vuex';
+import { ActionTree, ActionContext } from 'vuex';
 import { State, types, ServiceWorker } from '~/store/modules/serviceworker';
 import { RootState } from 'store';
 
@@ -50,19 +50,23 @@ export const actions: Actions<State, RootState> = {
     },
     async getServiceworkers({ commit }): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
-            try{
-                const result = new Array<ServiceWorker>();
+            try {
+                const result = await this.$axios.$get(`${apiUrl}/getAll`).then( data => {
+                    let aux = new Array<ServiceWorker>();
 
-                result.push(<ServiceWorker>{id: 1, webPreview: '', serviceworkerPreview: ''});
-                result.push(<ServiceWorker>{id: 2, webPreview: '', serviceworkerPreview: ''});
-                result.push(<ServiceWorker>{id: 3, webPreview: '', serviceworkerPreview: ''});
-                result.push(<ServiceWorker>{id: 4, webPreview: '', serviceworkerPreview: ''});
+                    aux.push(<ServiceWorker>{id: 1, title: 'SW 1', description: 'Lorem ipsum dolor sit amet consectetur adipiscing elit nec, mattis conubia fusce magnis molestie duis non sodales consequat, etiam nibh phasellus nisi turpis ac semper.'});
+                    aux.push(<ServiceWorker>{id: 2, title: 'SW 2', description: 'Lorem ipsum dolor sit amet consectetur adipiscing elit nec, mattis conubia fusce magnis molestie duis non sodales consequat, etiam nibh phasellus nisi turpis ac semper.'});
+                    aux.push(<ServiceWorker>{id: 3, title: 'SW 3', description: 'Lorem ipsum dolor sit amet consectetur adipiscing elit nec, mattis conubia fusce magnis molestie duis non sodales consequat, etiam nibh phasellus nisi turpis ac semper.'});
+                    aux.push(<ServiceWorker>{id: 4, title: 'SW 4', description: 'Lorem ipsum dolor sit amet consectetur adipiscing elit nec, mattis conubia fusce magnis molestie duis non sodales consequat, etiam nibh phasellus nisi turpis ac semper.'});
+
+                    return aux;
+                });
 
                 commit(types.UPDATE_SERVICEWORKERS, result);
 
                 resolve();
             }
-            catch{              
+            catch {              
             }
         });
     },

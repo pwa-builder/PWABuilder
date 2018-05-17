@@ -6,46 +6,13 @@
       <div class="pure-u-1 pure-u-md-1-2 generator-section service-workers">
         <div class="l-generator-subtitle">{{ $t('serviceworker.title') }}</div>
         <form @submit.prevent="download" @keydown.enter.prevent="download">
-          <div class="l-generator-field l-generator-field--padded checkbox">
+          <div class="l-generator-field l-generator-field--padded checkbox" v-for="sw in serviceworkers" :key="sw.id">
             <label class="l-generator-label">
-              <input type="radio" value="1" v-model="serviceworker$"> {{ $t('serviceworker.titles.offline_page') }}
+              <input type="radio" :value="sw.id" v-model="serviceworker$"> {{ sw.title }}
             </label>
 
-            <span class="l-generator-description">{{ $t('serviceworker.descriptions.offline_page') }}</span>
+            <span class="l-generator-description">{{ sw.description }}</span>
           </div>
-
-          <div class="l-generator-field l-generator-field--padded checkbox">
-            <label class="l-generator-label">
-              <input type="radio" value="2" v-model="serviceworker$"> {{ $t('serviceworker.titles.offline_copy') }}
-            </label>
-
-            <span class="l-generator-description">{{ $t('serviceworker.descriptions.offline_copy') }}</span>
-          </div>
-
-          <div class="l-generator-field l-generator-field--padded checkbox">
-            <label class="l-generator-label">
-              <input type="radio" value="3" v-model="serviceworker$"> {{ $t('serviceworker.titles.offline_copy_backup') }}
-            </label>
-
-            <span class="l-generator-description">{{ $t('serviceworker.descriptions.offline_copy_backup') }}</span>
-          </div>
-
-          <div class="l-generator-field l-generator-field--padded checkbox">
-            <label class="pwa-generator-label">
-              <input type="radio" value="4" v-model="serviceworker$"> {{ $t('serviceworker.titles.cache_first') }}
-            </label>
-
-            <span class="l-generator-description">{{ $t('serviceworker.descriptions.cache_first') }}</span>
-          </div>
-
-          <div class="l-generator-field l-generator-field--padded checkbox">
-            <label class="l-generator-label">
-              <input type="radio" value="5" disabled="" v-model="serviceworker$"> {{ $t('serviceworker.titles.advanced') }}
-            </label>
-
-            <span class="l-generator-description">{{ $t('serviceworker.descriptions.advanced') }}</span>
-          </div>
-
           <div class="l-generator-wrapper pure-u-2-5">
             <button @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/download/serviceworker' })" class="pwa-button pwa-button--simple isEnabled">
               <span v-if="!isBuilding">{{ $t('serviceworker.download') }}</span>
@@ -109,6 +76,7 @@ const ServiceworkerAction = namespace(serviceworker.name, Action);
     CodeViewer
   }
 })
+
 export default class extends Vue {
   public isBuilding = false;
   public serviceworker$: number | null = null;
@@ -126,7 +94,7 @@ export default class extends Vue {
   @ServiceworkerAction getCode;
   @ServiceworkerAction getServiceworkers;
 
-  async created(){
+  async created() {
     await this.getServiceworkers();
     this.serviceworker$ = this.serviceworkers[0].id;
   }
