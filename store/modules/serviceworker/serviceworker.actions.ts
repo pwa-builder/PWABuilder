@@ -50,7 +50,7 @@ export const actions: Actions<State, RootState> = {
   async getServiceworkers({ commit }): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       try {
-        await this.$axios.$get(`${apiUrl}/getAll`).then( data => {
+        await this.$axios.$get(`${apiUrl}/getServiceWorkersDescription`).then( data => {
           commit(types.UPDATE_SERVICEWORKERS, data.serviceworkers);
           resolve();
         });
