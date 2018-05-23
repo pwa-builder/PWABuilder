@@ -7,23 +7,28 @@
       </div>
         <div class="l-generator-step" id='content'>
           <div class="l-generator-semipadded pure-g">
-            <div class="pure-u-1 pure-u-md-1-3 generator-section service-workers">
-              <div class="l-generator-subtitle">{{ $t('windows.title') }}</div>
-              <div class="l-generator-field l-generator-field--padded checkbox" v-for="sample in samples" :key="sample.id">
-                <label class="l-generator-label">
-                  <input type="radio" :value="sample" v-model="selectedSample$"> {{sample.title}}
-                </label>
-                <span class="l-generator-description">{{ sample.description }}</span>
+            <!-- Service Worker Selection -->
+            <div class="pure-u-1 pure-u-md-1-3 generator-section service-workers" >
+              <div style="height: 60px;"> 
+                <div class="l-generator-subtitle" style="margin-bottom: 1px;">{{ $t('windows.title') }}</div>
+              </div>
+              <div class="swScroll" id='swContainer'>
+                <div class="l-generator-field l-generator-field--padded checkbox" v-for="sample in samples" :key="sample.id">
+                  <label class="l-generator-label">
+                    <input type="radio" :value="sample" v-model="selectedSample$"> {{sample.title}}
+                  </label>
+                  <span class="l-generator-description">{{ sample.description }}</span>
+                </div>
               </div>
             </div>
-            <div class="pure-u-1 pure-u-md-2-3">
-              <div class="tab_container" >
+            <div class="pure-u-1 pure-u-md-2-3" >
+              <div class="tab_container" id='codeContainer'>
                   <input id="tab1" type="radio" name="tabs" class="tab_input" checked>
                   <label for="tab1" class="tab_label"><i class="fa fa-code"></i><span> Usage</span></label>
 
                   <input id="tab2" type="radio" name="tabs" class="tab_input">
                   <label for="tab2" class="tab_label"><i class="fa fa-file-alt"></i><span> Code</span></label>
-                  <FadeLoader />
+
                   <section id="content1" class="tab-content tab_section">
                     <br/>
                     <div class="pure-g">
@@ -81,6 +86,8 @@ export default class extends Vue {
   
   spinner:any;
   containerSpinner:any;
+  containerCode:any;
+  containerSW:any;
   
   selectedSample$: windowsStore.Sample | null = null;
   @WindowsState samples: windowsStore.Sample[];
@@ -100,7 +107,7 @@ export default class extends Vue {
   }
 
   @Watch('selectedSample$')
-  
+
   async onSelectedSample$Changed() {
     this.showLoadingSpinner(true)
     
@@ -185,10 +192,17 @@ export default class extends Vue {
   copyContentSize(){
     this.spinner = document.getElementById('loadingSpinner');
     this.containerSpinner = document.getElementById('containerSpinner');
+    this.containerCode = document.getElementById('codeContainer');
+    this.containerSW = document.getElementById('swContainer');
+
     const content:any = document.getElementById('section');
 
     this.containerSpinner.style.height = content.offsetHeight + 'px';
     this.containerSpinner.style.width = content.offsetWidth + 'px';
+
+    /* Copy code size to sw container */
+    console.log("offsetheigt",(this.containerCode.offsetHeight - 60) + 'px')
+    this.containerSW.style.height = (this.containerCode.offsetHeight - 60) + 'px';
     
   }
 
@@ -196,6 +210,10 @@ export default class extends Vue {
 </script>
 
 <style>
+.swScroll {
+  overflow-y: auto;
+}
+
 /* CSS Loading Spinner */
 #loadingSpinner {
   height: 64px;
