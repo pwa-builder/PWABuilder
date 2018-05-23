@@ -9,17 +9,20 @@
           <div class="l-generator-semipadded pure-g">
             <!-- Service Worker Selection -->
             <div class="pure-u-1 pure-u-md-1-3 generator-section service-workers" >
-              <div style="height: 60px;"> 
+
+              <RadioButtonSamples  :samples="samples"/>
+              <!-- <div style="height: 60px;"> 
                 <div class="l-generator-subtitle" style="margin-bottom: 1px;">{{ $t('windows.title') }}</div>
+                <div> <input type="text" v-model="samplesTextFilter" @keydown="onSampleFilterChanged" placeholder="Search"/></div>
               </div>
               <div class="swScroll" id='swContainer'>
-                <div class="l-generator-field l-generator-field--padded checkbox" v-for="sample in samples" :key="sample.id">
+                <div class="l-generator-field l-generator-field--padded checkbox" v-for="sample in sampleFilter" :key="sample.id">
                   <label class="l-generator-label">
                     <input type="radio" :value="sample" v-model="selectedSample$"> {{sample.title}}
                   </label>
                   <span class="l-generator-description">{{ sample.description }}</span>
                 </div>
-              </div>
+              </div> -->
             </div>
             <div class="pure-u-1 pure-u-md-2-3" >
               <div class="tab_container" id='codeContainer'>
@@ -70,12 +73,13 @@ import { Watch } from 'vue-property-decorator';
 import CodeViewer from '~/components/CodeViewer.vue';
 import WindowsMenu from '~/components/WindowsMenu.vue';
 import * as windowsStore from '~/store/modules/windows';
+import RadioButtonSamples from '~/components/RadioButtonSamples.vue';
 
 const WindowsState = namespace(windowsStore.name, State);
 const WindowsAction = namespace(windowsStore.name, Action);
 
 @Component({
-  components: {CodeViewer, WindowsMenu}
+  components: {CodeViewer, WindowsMenu, RadioButtonSamples}
 })
 
 
@@ -90,6 +94,8 @@ export default class extends Vue {
   containerSW:any;
   
   selectedSample$: windowsStore.Sample | null = null;
+  sampleFilter:windowsStore.Sample[];
+  samplesTextFilter:any = '';
   @WindowsState samples: windowsStore.Sample[];
 
   @WindowsAction getSamples;
@@ -100,111 +106,116 @@ export default class extends Vue {
     this.showLoadingSpinner(true)
     
     await this.getSamples();
+    this.sampleFilter = this.samples;
+ 
     this.selectedSample$ = this.samples[0];
     
     this.showLoadingSpinner(false)
     
   }
 
-  @Watch('selectedSample$')
+   @Watch('selectedSample$')
 
-  async onSelectedSample$Changed() {
-    this.showLoadingSpinner(true)
+   async onSelectedSample$Changed() {
+     //this.showLoadingSpinner(true)
     
-    try {
-      await this.selectSample(this.selectedSample$);
-    } catch (e) {
-      this.error = e;
-    }
-    this.showLoadingSpinner(false)
+      try {
+       await this.selectSample(this.selectedSample$);
+      } catch (e) {
+       this.error = e;
+     }
+     //this.showLoadingSpinner(false)
       
-  }
+   }
 
-  async download() {
-    let that = this;
-    let items = Array<any>();
-    let xhttp = new XMLHttpRequest();
+  
 
-    xhttp.onreadystatechange = function () {
-        if (xhttp.readyState === 4 && xhttp.status === 200) {
-            let fileName = 'sample.zip';
-            that.saveAs(fileName, xhttp);
-        }
-    };
+  // async download() {
+  //   let that = this;
+  //   let items = Array<any>();
+  //   let xhttp = new XMLHttpRequest();
 
-    xhttp.open('POST', `${process.env.apiUrl2}/api/winrt/generate`, true);
-    xhttp.setRequestHeader('Content-Type', 'application/json');
-    xhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
-    xhttp.responseType = 'blob';
+  //   xhttp.onreadystatechange = function () {
+  //       if (xhttp.readyState === 4 && xhttp.status === 200) {
+  //           let fileName = 'sample.zip';
+  //           that.saveAs(fileName, xhttp);
+  //       }
+  //   };
 
-    items.push(this.selectedSample$);
-    let results = this.outputProcessor(items);
-    xhttp.send(JSON.stringify(results));
-  }
+  //   xhttp.open('POST', `${process.env.apiUrl2}/api/winrt/generate`, true);
+  //   xhttp.setRequestHeader('Content-Type', 'application/json');
+  //   xhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
+  //   xhttp.responseType = 'blob';
 
-  outputProcessor(items) {
-    let results = Array<any>();
+  //   items.push(this.selectedSample$);
+  //   let results = this.outputProcessor(items);
+  //   xhttp.send(JSON.stringify(results));
+  // }
 
-    for (let i = 0; i < items.length; i++) {
-      let item = items[i];
+  // outputProcessor(items) {
+  //   let results = Array<any>();
+
+  //   for (let i = 0; i < items.length; i++) {
+  //     let item = items[i];
       
-      let newItem = {
-          id: item.id,
-          url: item.url,
-          hash: item.hash,
-          parms: Array<any>()
-      };
+  //     let newItem = {
+  //         id: item.id,
+  //         url: item.url,
+  //         hash: item.hash,
+  //         parms: Array<any>()
+  //     };
 
-      for (let j = 0; j < item.parms.length; j++) {
-        newItem.parms.push({
-            id: item.parms[j].id,
-            defaultData: item.parms[j].default
-        });
-      }
+  //     for (let j = 0; j < item.parms.length; j++) {
+  //       newItem.parms.push({
+  //           id: item.parms[j].id,
+  //           defaultData: item.parms[j].default
+  //       });
+  //     }
 
-      results.push(newItem);
-    }
+  //     results.push(newItem);
+  //   }
 
-    return {controls: results};
-  }
+  //   return {controls: results};
+  // }
 
-  saveAs(fileName, xhttp) {
-    let a = document.createElement('a');
-    a.href = window.URL.createObjectURL(xhttp.response);
-    a.download = fileName;
-    a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click();
-  } 
+  // saveAs(fileName, xhttp) {
+  //   let a = document.createElement('a');
+  //   a.href = window.URL.createObjectURL(xhttp.response);
+  //   a.download = fileName;
+  //   a.style.display = 'none';
+  //   document.body.appendChild(a);
+  //   a.click();
+  // } 
 
-  showLoadingSpinner(show:boolean){
-    this.copyContentSize()
-    
-    if(show){
-      this.spinner.style.display = "block";
-      this.containerSpinner.style.display = "block";
-    }else{
-      this.spinner.style.display = "none";
-      this.containerSpinner.style.display = "none";
-    }
-  }
-
-  copyContentSize(){
-    this.spinner = document.getElementById('loadingSpinner');
+   showLoadingSpinner(show:boolean){
+  //   this.copyContentSize()
+      this.spinner = document.getElementById('loadingSpinner');
     this.containerSpinner = document.getElementById('containerSpinner');
-    this.containerCode = document.getElementById('codeContainer');
-    this.containerSW = document.getElementById('swContainer');
+     if(show){
+       this.spinner.style.display = "block";
+      this.containerSpinner.style.display = "block";
+     }else{
+       this.spinner.style.display = "none";
+       this.containerSpinner.style.display = "none";
+    }
+   }
 
-    const content:any = document.getElementById('section');
+  // copyContentSize(){
+  //   this.spinner = document.getElementById('loadingSpinner');
+  //   this.containerSpinner = document.getElementById('containerSpinner');
+  //   this.containerCode = document.getElementById('codeContainer');
+  //   this.containerSW = document.getElementById('swContainer');
 
-    this.containerSpinner.style.height = content.offsetHeight + 'px';
-    this.containerSpinner.style.width = content.offsetWidth + 'px';
+  //   const content:any = document.getElementById('section');
 
-    /* Copy code size to sw container */
-    console.log("offsetheigt",(this.containerCode.offsetHeight - 60) + 'px')
-    this.containerSW.style.height = (this.containerCode.offsetHeight - 60) + 'px';
+  //   this.containerSpinner.style.height = content.offsetHeight + 'px';
+  //   this.containerSpinner.style.width = content.offsetWidth + 'px';
+
+  //   /* Copy code size to sw container */
+  //   console.log("offsetheigt",(this.containerCode.offsetHeight - 60) + 'px')
+  //   this.containerSW.style.height = (this.containerCode.offsetHeight - 60) + 'px';
     
-  }
+  // }
 
 }
 </script>
