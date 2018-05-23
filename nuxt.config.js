@@ -35,6 +35,7 @@ module.exports = {
         script: [
             { src: '/pwabuilder-sw-register.js' }, 
             { src: 'https://az725175.vo.msecnd.net/scripts/jsll-4.js'},
+            { src: "https://use.fontawesome.com/releases/v5.0.10/js/all.js" },
             { src: '/awa-register.js'}
         ]
     },

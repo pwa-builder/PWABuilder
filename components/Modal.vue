@@ -16,11 +16,11 @@
         <slot/>
 
         <div class="modal-buttons">
-          <button class="l-generator-space_right pwa-button pwa-button--simple pwa-button--brand" @click="onClickSubmit(); $ga.event('Manifest', 'Add Member', 'Image Upload', { 'page': `/manifest/add-member` })">
+          <button class="l-generator-space_right pwa-button pwa-button--simple pwa-button--brand" @click="onClickSubmit();  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
             {{$t("modal.submit")}}
             <Loading :active="isLoading" class="u-display-inline_block u-margin-left-sm" />
           </button>
-          <button class="pwa-button pwa-button--simple" @click="onClickCancel(); $ga.event('Manifest', 'Add Member', 'Image Upload - Cancel', { 'page': `/manifest/add-member` })">
+          <button class="pwa-button pwa-button--simple" @click="onClickCancel(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
             {{$t("modal.cancel")}}
           </button>
         </div>

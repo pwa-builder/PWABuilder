@@ -46,3 +46,6 @@ testem.log
 .coverage/
 .nyc_output/
 e2e-logs/
+package.json
+package-lock.json
+.vscode/launch.json

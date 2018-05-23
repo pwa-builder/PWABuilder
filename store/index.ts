@@ -3,6 +3,7 @@ import * as generator from './modules/generator';
 import * as serviceworker from './modules/serviceworker';
 import * as publish from './modules/publish';
 import * as i18n from './modules/i18n';
+import * as windows from './modules/windows';
 
 // More info about store: https://vuex.vuejs.org/en/core-concepts.html
 // Structure of the store:
@@ -16,7 +17,8 @@ export const modules = {
     [generator.name]: generator,
     [serviceworker.name]: serviceworker,
     [publish.name]: publish,
-    [i18n.name]: i18n
+    [i18n.name]: i18n,
+    [windows.name]: windows
 };
 
 interface ModulesStates {
@@ -24,6 +26,7 @@ interface ModulesStates {
     serviceworker: serviceworker.State;
     publish: publish.State;
     i18n: i18n.State;
+    windows: windows.State;
 }
 
 export type RootState = root.State & ModulesStates;
