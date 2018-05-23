@@ -1,5 +1,5 @@
 import { ActionTree, ActionContext } from 'vuex';
-import { State, types, ServiceWorker } from '~/store/modules/serviceworker';
+import { State, types } from '~/store/modules/serviceworker';
 import { RootState } from 'store';
 
 const apiUrl = `${process.env.apiUrl}/serviceworkers`;
