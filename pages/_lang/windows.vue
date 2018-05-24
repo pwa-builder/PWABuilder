@@ -125,62 +125,62 @@ export default class extends Vue {
 
   
 
-  // async download() {
-  //   let that = this;
-  //   let items = Array<any>();
-  //   let xhttp = new XMLHttpRequest();
+  async download() {
+    let that = this;
+    let items = Array<any>();
+    let xhttp = new XMLHttpRequest();
 
-  //   xhttp.onreadystatechange = function () {
-  //       if (xhttp.readyState === 4 && xhttp.status === 200) {
-  //           let fileName = 'sample.zip';
-  //           that.saveAs(fileName, xhttp);
-  //       }
-  //   };
+    xhttp.onreadystatechange = function () {
+        if (xhttp.readyState === 4 && xhttp.status === 200) {
+            let fileName = 'sample.zip';
+            that.saveAs(fileName, xhttp);
+        }
+    };
 
-  //   xhttp.open('POST', `${process.env.apiUrl2}/api/winrt/generate`, true);
-  //   xhttp.setRequestHeader('Content-Type', 'application/json');
-  //   xhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
-  //   xhttp.responseType = 'blob';
+    xhttp.open('POST', `${process.env.apiUrl2}/api/winrt/generate`, true);
+    xhttp.setRequestHeader('Content-Type', 'application/json');
+    xhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
+    xhttp.responseType = 'blob';
 
-  //   items.push(this.selectedSample$);
-  //   let results = this.outputProcessor(items);
-  //   xhttp.send(JSON.stringify(results));
-  // }
+    items.push(this.selectedSample$);
+    let results = this.outputProcessor(items);
+    xhttp.send(JSON.stringify(results));
+  }
 
-  // outputProcessor(items) {
-  //   let results = Array<any>();
+  outputProcessor(items) {
+    let results = Array<any>();
 
-  //   for (let i = 0; i < items.length; i++) {
-  //     let item = items[i];
+    for (let i = 0; i < items.length; i++) {
+      let item = items[i];
       
-  //     let newItem = {
-  //         id: item.id,
-  //         url: item.url,
-  //         hash: item.hash,
-  //         parms: Array<any>()
-  //     };
+      let newItem = {
+          id: item.id,
+          url: item.url,
+          hash: item.hash,
+          parms: Array<any>()
+      };
 
-  //     for (let j = 0; j < item.parms.length; j++) {
-  //       newItem.parms.push({
-  //           id: item.parms[j].id,
-  //           defaultData: item.parms[j].default
-  //       });
-  //     }
+      for (let j = 0; j < item.parms.length; j++) {
+        newItem.parms.push({
+            id: item.parms[j].id,
+            defaultData: item.parms[j].default
+        });
+      }
 
-  //     results.push(newItem);
-  //   }
+      results.push(newItem);
+    }
 
-  //   return {controls: results};
-  // }
+    return {controls: results};
+  }
 
-  // saveAs(fileName, xhttp) {
-  //   let a = document.createElement('a');
-  //   a.href = window.URL.createObjectURL(xhttp.response);
-  //   a.download = fileName;
-  //   a.style.display = 'none';
-  //   document.body.appendChild(a);
-  //   a.click();
-  // } 
+  saveAs(fileName, xhttp) {
+    let a = document.createElement('a');
+    a.href = window.URL.createObjectURL(xhttp.response);
+    a.download = fileName;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+  } 
 
    showLoadingSpinner(show:boolean){
   //   this.copyContentSize()

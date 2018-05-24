@@ -2,7 +2,7 @@
 <section>
     <div style="height: 5rem;"> 
                 <div class="l-generator-subtitle" style="margin-bottom: 1px;">{{ $t('windows.title') }}</div>
-               <!-- <div> <input type="text" v-model="samplesTextFilter" @keydown="onSampleFilterChanged" placeholder="Search"/></div> -->
+                <div> <input type="text" v-model="samplesTextFilter" @keydown="onSampleFilterChanged" placeholder="Search"/></div>
               </div>
               <div class="swScroll" id='swContainer'>
                 <div class="l-generator-field l-generator-field--padded checkbox" v-for="sample in sampleFilter" :key="sample.id">
@@ -50,22 +50,20 @@ export default class extends Vue {
   @Watch('selectedSample$')
   
    async onSelectedSample$Changed() {
-     //this.showLoadingSpinner(true)
-    console.log("selectedSample", this.selectedSample$)
     this.$emit('sampleChanged', this.selectedSample$)
       
    }
-  // onSampleFilterChanged(){
-  //   console.log(this.samplesTextFilter)
-  //   const filterText = this.samplesTextFilter
-  //   let filterResult = this.samples.filter(function(elem:any){return elem.title.toLowerCase().includes(filterText.toLowerCase())});
-  //   console.log("sampleFilter", filterResult)
-  //   if(filterResult.length < this.samples.length ){
-  //     this.sampleFilter = filterResult;
-  //   }else{
-  //     this.sampleFilter = this.samples;
-  //   }
-  // }
+  onSampleFilterChanged(){
+    console.log(this.samplesTextFilter)
+    const filterText = this.samplesTextFilter
+    let filterResult = this.samples.filter(function(elem:any){return elem.title.toLowerCase().includes(filterText.toLowerCase())});
+    console.log("sampleFilter", filterResult)
+    if(filterResult.length < this.samples.length ){
+      this.sampleFilter = filterResult;
+    }else{
+      this.sampleFilter = this.samples;
+    }
+  }
   
 }
 
