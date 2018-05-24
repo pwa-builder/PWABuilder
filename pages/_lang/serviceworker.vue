@@ -8,9 +8,8 @@
         <form @submit.prevent="download" @keydown.enter.prevent="download">
           <div class="l-generator-field l-generator-field--padded checkbox" v-for="sw in serviceworkers" :key="sw.id">
             <label class="l-generator-label">
-              <input type="radio" :value="sw.id" v-model="serviceworker$"> {{ sw.title }}
+              <input type="radio" :value="sw.id" v-model="serviceworker$" :disabled="sw.disable"/> {{ sw.title }} <span v-if="sw.disable">(coming soon)</span>
             </label>
-
             <span class="l-generator-description">{{ sw.description }}</span>
           </div>
           <div class="l-generator-wrapper pure-u-2-5">
