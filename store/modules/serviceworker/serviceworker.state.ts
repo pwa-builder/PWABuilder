@@ -4,6 +4,7 @@ export interface ServiceWorker {
     webPreview: string | null;
     description: string | null;
     title: string | null;
+    disable: boolean | false;
 }
 
 export interface State {
