@@ -23,9 +23,12 @@ import { Action, State, namespace } from 'vuex-class';
 import { Prop, Watch, } from 'vue-property-decorator';
 import Component from 'nuxt-class-component';
 import * as windowsStore from '~/store/modules/windows';
+const WindowsAction = namespace(windowsStore.name, Action);
 
 @Component()
 export default class extends Vue {
+  @WindowsAction selectSample;
+  error:any;
   selectedSample$: windowsStore.Sample | null = null;
   samplesTextFilter:String = '';
    @Prop({ type: Array, default: null })
@@ -43,6 +46,15 @@ export default class extends Vue {
     console.log("sampleFulter",this.sampleFilter)
     this.selectedSample$ = this.samples[0]
   }
+
+  @Watch('selectedSample$')
+  
+   async onSelectedSample$Changed() {
+     //this.showLoadingSpinner(true)
+    console.log("selectedSample", this.selectedSample$)
+    this.$emit('sampleChanged', this.selectedSample$)
+      
+   }
   // onSampleFilterChanged(){
   //   console.log(this.samplesTextFilter)
   //   const filterText = this.samplesTextFilter

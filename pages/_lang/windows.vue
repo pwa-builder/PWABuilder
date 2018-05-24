@@ -10,7 +10,7 @@
             <!-- Service Worker Selection -->
             <div class="pure-u-1 pure-u-md-1-3 generator-section service-workers" >
 
-              <RadioButtonSamples  :samples="samples"/>
+              <RadioButtonSamples  :samples="samples" @sampleChanged="SelectedSampleChanged"/>
               <!-- <div style="height: 60px;"> 
                 <div class="l-generator-subtitle" style="margin-bottom: 1px;">{{ $t('windows.title') }}</div>
                 <div> <input type="text" v-model="samplesTextFilter" @keydown="onSampleFilterChanged" placeholder="Search"/></div>
@@ -106,21 +106,16 @@ export default class extends Vue {
     this.showLoadingSpinner(true)
     
     await this.getSamples();
-    this.sampleFilter = this.samples;
- 
-    this.selectedSample$ = this.samples[0];
-    
+
     this.showLoadingSpinner(false)
     
   }
 
-   @Watch('selectedSample$')
-
-   async onSelectedSample$Changed() {
+  SelectedSampleChanged(sample) {
      //this.showLoadingSpinner(true)
-    
+     this.selectedSample$ = sample;
       try {
-       await this.selectSample(this.selectedSample$);
+       this.selectSample(this.selectedSample$);
       } catch (e) {
        this.error = e;
      }
