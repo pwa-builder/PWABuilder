@@ -130,8 +130,15 @@ async SelectedSampleChanged(sample) {
    }
   changeRBListSize(){
     const content1:any = document.getElementById('content1');
-    this.sampleSize = content1.offsetHeight + 'px';
-    console.log("content1.offsetHeight",content1.offsetHeight)
+    const content2:any = document.getElementById('content2');
+    if(content1.offsetHeight > 20){
+      console.log('content1',content1.style)
+      this.sampleSize = content1.offsetHeight + 'px';
+      console.log("content1.offsetHeight",content1.offsetHeight)
+    }else if(content2.offsetHeight > 20){
+      this.sampleSize = content2.offsetHeight + 'px';
+      console.log("content2.offsetHeight",content2.offsetHeight)
+    }
   }
 
 
