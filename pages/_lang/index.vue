@@ -128,7 +128,6 @@ Vue.prototype.$awa = function (config) {
  
   awa.ct.capturePageView(config);
 
-
-  return
-}
+  return;
+};
 </script>

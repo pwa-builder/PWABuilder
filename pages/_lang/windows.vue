@@ -5,11 +5,11 @@
         <div class="l-generator-semipadded pure-g">
           <div class="pure-u-1 pure-u-md-1-3 generator-section service-workers">
             <div class="l-generator-subtitle">{{ $t('windows.title') }}</div>
-            <div class="l-generator-field l-generator-field--padded checkbox" v-for="item in controls" :key="item.id">
+            <div class="l-generator-field l-generator-field--padded checkbox" v-for="sample in samples" :key="sample.id">
               <label class="l-generator-label">
-                <input type="radio" :value="item" v-model="windowsfeature"> {{item.title}}
+                <input type="radio" :value="sample" v-model="selectedSample$"> {{sample.title}}
               </label>
-              <span class="l-generator-description">{{ item.description }}</span>
+              <span class="l-generator-description">{{ sample.description }}</span>
             </div>
           </div>
           <div class="pure-u-1 pure-u-md-2-3">
@@ -24,14 +24,12 @@
                   <br/>
                   <div class="pure-g">
                     <div class="generate-code pure-u-1">
-                      <CodeViewer :code="snippet" :title="$t('windows.codeTitle')" />
+                      <CodeViewer :code="selectedSample$.snippet" v-if="selectedSample$" :title="$t('windows.codeTitle')" />
                       <br/>
-                      <div class="l-generator-form ">
-                        <div class="l-generator-field" v-for="prop in properties" :key="prop.id">
-                          <label class="l-generator-label">{{prop.name}}
-                            <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#name-member" target="_blank">[?]</a>
-                          </label>
-                          <input class="l-generator-input" :id="prop.id" :placeholder="prop.description" v-model="prop.default" type="text">
+                      <div class="l-generator-form " v-if="selectedSample$">
+                        <div class="l-generator-field" v-for="prop in selectedSample$.parms" :key="prop.id">
+                          <div class="l-generator-label">{{prop.name}} </div>
+                          <div class="l-generator-input value-table" :id="prop.id">{{prop.description}}</div>
                         </div>
                       </div>
                       <div class="pure-u-1 pure-u-md-1-2">
@@ -41,8 +39,8 @@
                   </div>
                 </section>
                 <section id="content2" class="tab-content tab_section">
-                  <CodeViewer :size="viewerSize" :code="source" :title="$t('windows.sourceTitle')">
-                    <div class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" v-if="properties" v-on:click="download()">{{ $t("windows.download") }}</div>      
+                  <CodeViewer :size="viewerSize" :code="selectedSample$.source" v-if="selectedSample$" :title="$t('windows.sourceTitle')">
+                    <div class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" v-on:click="download()">{{ $t("windows.download") }}</div>      
                   </CodeViewer>
                 </section>
               </div>
@@ -55,108 +53,42 @@
 <script lang='ts'>
 import Vue from 'vue';
 import Component from 'nuxt-class-component';
-import axios from 'axios';
-import { Prop } from 'vue-property-decorator';
+import { Action, State, namespace } from 'vuex-class';
 import { Watch } from 'vue-property-decorator';
 import CodeViewer from '~/components/CodeViewer.vue';
 import WindowsMenu from '~/components/WindowsMenu.vue';
 
+import * as windowsStore from '~/store/modules/windows';
+
+const WindowsState = namespace(windowsStore.name, State);
+const WindowsAction = namespace(windowsStore.name, Action);
+
 @Component({
   components: {CodeViewer, WindowsMenu}
 })
-export default class windows extends Vue {
-  @Prop({ type: String, default: '' })
-  public snippet: string | null;
-  
-  @Prop()
-  public windowsfeature: any;
 
-  @Prop({ type: String, default: '' })
-  public source: string | null;
-
-  @Prop()
-  properties: any;
+export default class extends Vue {
   error: any;
-  controls: any;
+  viewerSize = '30rem';
 
-  selectedTitle: string | null;
-  public viewerSize = '30rem';
+  selectedSample$: windowsStore.Sample | null = null;
+  @WindowsState samples: windowsStore.Sample[];
 
-  mounted(){
-    this.windowsfeature = this.controls[0];
+  @WindowsAction getSamples;
+  @WindowsAction selectSample;
+
+  async created() {
+    await this.getSamples();
+    this.selectedSample$ = this.samples[0];
   }
 
-  @Watch('windowsfeature')
-  async onwindowsfeatureChanged() {
+  @Watch('selectedSample$')
+  async onSelectedSample$Changed() {
     try {
-      await this.onchange(this.windowsfeature);
+      await this.selectSample(this.selectedSample$);
     } catch (e) {
       this.error = e;
     }
-  }
-
-  async asyncData() {
-    return await axios.get(`${process.env.apiUrl2}/api/winrt`).then(res => {
-      let fromItem = function(func, file, source) {
-        let id = file.Id + '.' + func.Name; //file.id is undefined
-
-        let parms = Array<any>();
-
-        for (let i = 0; i < func.Parameters.length; i++) {
-          let parm = func.Parameters[i];
-          let newParm = {
-            name: parm.Name,
-            id: id + '.' + parm.Name,
-            default: parm.Default,
-            type: parm.Type,
-            description: parm.Description
-          };
-
-          parms.push(newParm);
-        }
-
-        return {
-          title: func.Name || file.Name || source.Name,
-          description:
-          func.Description || file.Description || source.Description,
-          image: func.Image || file.Image || source.Image || './assets/images/logo_small.png',
-          id: file.Id + '.' + func.Name,
-          parms: parms,
-          url: source.Url,
-          hash: source.Hash,
-          included: false,
-          snippet: func.Snippet
-        };
-      };
-
-      let results = Array<any>();
-
-      if (res.data.Sources) {
-        for (let s = 0; s < res.data.Sources.length; s++) {
-          const source = res.data.Sources[s];
-          const file = source.Parsed.File;
-          for (let f = 0; f < source.Parsed.Functions.length; f++) {
-            const fn = source.Parsed.Functions[f];
-            const newItem = fromItem(fn, file, source);
-
-            results.push(newItem);
-          }
-        }
-      }
-
-      return { controls: results };
-    });
-  }
-
-  async onchange(item) {
-      //change comment name property
-
-      await axios.get(item.url).then(data => {
-        this.snippet = item.snippet.replace(/(\/\*[\s\S]*?\*\/|([^:/]|^)\/\/.*$)/g, '');
-        this.source = data.data.replace(/(\/\*[\s\S]*?\*\/|([^:/]|^)\/\/.*$)/g, '');
-        this.properties = item.parms;
-        this.selectedTitle = item.title;
-    });
   }
 
   async download() {
@@ -166,7 +98,7 @@ export default class windows extends Vue {
 
     xhttp.onreadystatechange = function () {
         if (xhttp.readyState === 4 && xhttp.status === 200) {
-            let fileName = 'snippet.zip';
+            let fileName = 'sample.zip';
             that.saveAs(fileName, xhttp);
         }
     };
@@ -176,7 +108,7 @@ export default class windows extends Vue {
     xhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
     xhttp.responseType = 'blob';
 
-    items.push(this.windowsfeature)
+    items.push(this.selectedSample$);
     let results = this.outputProcessor(items);
     xhttp.send(JSON.stringify(results));
   }
