@@ -15,10 +15,10 @@
             </div>
             <div class="pure-u-1 pure-u-md-2-3 codeViewerColumn"  >
               <div class="tab_container" id='codeContainer' >
-                  <input id="tab1" type="radio" name="tabs" class="tab_input" checked>
+                  <input id="tab1" type="radio" name="tabs" class="tab_input" @change="changeRBListSize" checked>
                   <label for="tab1" class="tab_label"><i class="fa fa-code"></i><span> Usage</span></label>
 
-                  <input id="tab2" type="radio" name="tabs" class="tab_input">
+                  <input id="tab2" type="radio" name="tabs" class="tab_input" @change="changeRBListSize">
                   <label for="tab2" class="tab_label"><i class="fa fa-file-alt"></i><span> Code</span></label>
 
                   <section id="content1" class="tab-content tab_section">
@@ -132,12 +132,9 @@ async SelectedSampleChanged(sample) {
     const content1:any = document.getElementById('content1');
     const content2:any = document.getElementById('content2');
     if(content1.offsetHeight > 20){
-      console.log('content1',content1.style)
       this.sampleSize = content1.offsetHeight + 'px';
-      console.log("content1.offsetHeight",content1.offsetHeight)
     }else if(content2.offsetHeight > 20){
       this.sampleSize = content2.offsetHeight + 'px';
-      console.log("content2.offsetHeight",content2.offsetHeight)
     }
   }
 
