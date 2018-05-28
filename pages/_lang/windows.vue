@@ -8,24 +8,13 @@
         <div class="l-generator-step" id='content'>
           <div class="l-generator-semipadded pure-g">
             <!-- Service Worker Selection -->
-            <div class="pure-u-1 pure-u-md-1-3 generator-section service-workers" >
+            <div class="pure-u-1 pure-u-md-1-3 generator-section service-workers sampleList">
 
-              <RadioButtonSamples  :samples="samples" @sampleChanged="SelectedSampleChanged"/>
-              <!-- <div style="height: 60px;"> 
-                <div class="l-generator-subtitle" style="margin-bottom: 1px;">{{ $t('windows.title') }}</div>
-                <div> <input type="text" v-model="samplesTextFilter" @keydown="onSampleFilterChanged" placeholder="Search"/></div>
-              </div>
-              <div class="swScroll" id='swContainer'>
-                <div class="l-generator-field l-generator-field--padded checkbox" v-for="sample in sampleFilter" :key="sample.id">
-                  <label class="l-generator-label">
-                    <input type="radio" :value="sample" v-model="selectedSample$"> {{sample.title}}
-                  </label>
-                  <span class="l-generator-description">{{ sample.description }}</span>
-                </div>
-              </div> -->
+              <RadioButtonSamples :size="sampleSize" :samples="samples" @sampleChanged="SelectedSampleChanged" :radioButtonList="radioBtnList"/>
+
             </div>
-            <div class="pure-u-1 pure-u-md-2-3" >
-              <div class="tab_container" id='codeContainer'>
+            <div class="pure-u-1 pure-u-md-2-3 codeViewerColumn"  >
+              <div class="tab_container" id='codeContainer' >
                   <input id="tab1" type="radio" name="tabs" class="tab_input" checked>
                   <label for="tab1" class="tab_label"><i class="fa fa-code"></i><span> Usage</span></label>
 
@@ -38,7 +27,7 @@
                       <div class="generate-code pure-u-1">
                         <CodeViewer :code="selectedSample$.snippet" v-if="selectedSample$" :title="$t('windows.codeTitle')" />
                         <br/>
-                        <div class="l-generator-form " v-if="selectedSample$">
+                        <div class="l-generator-form overflowPropList" v-if="selectedSample$" >
                           <div class="l-generator-field" v-for="prop in selectedSample$.parms" :key="prop.id">
                             <div class="l-generator-label">{{prop.name}} </div>
                             <div class="l-generator-input value-table" :id="prop.id">{{prop.description}}</div>
@@ -86,12 +75,13 @@ const WindowsAction = namespace(windowsStore.name, Action);
 
 export default class extends Vue {
   error: any;
-  viewerSize = '30rem';
-  
+  viewerSize = '50rem';//30rem
+  sampleSize = '55rem';
+
   spinner:any;
   containerSpinner:any;
   containerCode:any;
-  containerSW:any;
+  radioBtnList:String = '';
   
   selectedSample$: windowsStore.Sample | null = null;
   sampleFilter:windowsStore.Sample[];
@@ -102,28 +92,48 @@ export default class extends Vue {
   @WindowsAction selectSample;
 
   async mounted() {
-
+    this.spinner = document.getElementById('loadingSpinner');
+    this.containerSpinner = document.getElementById('containerSpinner');
     this.showLoadingSpinner(true)
     
     await this.getSamples();
-
+          this.changeRBListSize();
+  
     this.showLoadingSpinner(false)
     
   }
 
-  SelectedSampleChanged(sample) {
-     //this.showLoadingSpinner(true)
-     this.selectedSample$ = sample;
-      try {
-       this.selectSample(this.selectedSample$);
-      } catch (e) {
-       this.error = e;
-     }
-     //this.showLoadingSpinner(false)
+async SelectedSampleChanged(sample) {
+    
+    this.showLoadingSpinner(true)
+    this.selectedSample$ = sample;
+        try {
+        await  this.selectSample(this.selectedSample$);
+        await  this.changeRBListSize();
+        } catch (e) {
+        this.error = e;
+      }
+     this.showLoadingSpinner(false)
       
    }
 
-  
+    showLoadingSpinner(show:boolean){
+    console.log("loading spinner")
+     if(show){
+       this.spinner.style.display = "block";
+      this.containerSpinner.style.display = "block";
+      
+     }else{
+       this.spinner.style.display = "none";
+       this.containerSpinner.style.display = "none";
+    }
+   }
+  changeRBListSize(){
+    const content1:any = document.getElementById('content1');
+    this.sampleSize = content1.offsetHeight + 'px';
+    console.log("content1.offsetHeight",content1.offsetHeight)
+  }
+
 
   async download() {
     let that = this;
@@ -182,42 +192,23 @@ export default class extends Vue {
     a.click();
   } 
 
-   showLoadingSpinner(show:boolean){
-  //   this.copyContentSize()
-      this.spinner = document.getElementById('loadingSpinner');
-    this.containerSpinner = document.getElementById('containerSpinner');
-     if(show){
-       this.spinner.style.display = "block";
-      this.containerSpinner.style.display = "block";
-     }else{
-       this.spinner.style.display = "none";
-       this.containerSpinner.style.display = "none";
-    }
-   }
 
-  // copyContentSize(){
-  //   this.spinner = document.getElementById('loadingSpinner');
-  //   this.containerSpinner = document.getElementById('containerSpinner');
-  //   this.containerCode = document.getElementById('codeContainer');
-  //   this.containerSW = document.getElementById('swContainer');
-
-  //   const content:any = document.getElementById('section');
-
-  //   this.containerSpinner.style.height = content.offsetHeight + 'px';
-  //   this.containerSpinner.style.width = content.offsetWidth + 'px';
-
-  //   /* Copy code size to sw container */
-  //   console.log("offsetheigt",(this.containerCode.offsetHeight - 60) + 'px')
-  //   this.containerSW.style.height = (this.containerCode.offsetHeight - 60) + 'px';
-    
-  // }
 
 }
 </script>
 
 <style>
-.swScroll {
+.overflowPropList {
+  height: 25vh;
   overflow-y: auto;
+}
+
+.sampleList {
+  height: 75vh;
+}
+
+.codeViewerColumn {
+  height: 75vh;
 }
 
 /* CSS Loading Spinner */
