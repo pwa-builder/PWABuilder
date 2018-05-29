@@ -40,7 +40,7 @@ export const actions: Actions<State, RootState> = {
         const result = await this.$axios.$get(`${apiUrl}/previewcode?ids=${serviceworker}`);
         commit(types.UPDATE_SERVICEWORKERPREVIEW, result.serviceWorker);
         commit(types.UPDATE_WEBPREVIEW, result.webSite);
-        commit(types.UPDATE_SERVICEWORKER, serviceworker)
+        commit(types.UPDATE_SERVICEWORKER, serviceworker);
         resolve();
       } catch (e) {
         let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
