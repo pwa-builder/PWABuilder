@@ -35,7 +35,6 @@ export default class extends Vue {
   error:any;
   selectedSample$: windowsStore.Sample | null = null;
   samplesTextFilter:String = '';
-  swContainer:any;
   rbHeader:any;
   
 
@@ -45,20 +44,14 @@ export default class extends Vue {
   @Prop({ type: String, default: 'auto' })
   public size;
 
-    @Prop({ type: String, default: '' })
-  public radioButtonList;
 
   sampleFilter = this.samples;
-
-  mounted(): void{
-    this.swContainer = document.getElementById('swContainer');
-    this.rbHeader = document.getElementById('rbHeader');
-  }
 
   @Watch('samples')
   onSamplesChanged(){
     this.sampleFilter = this.samples
     this.selectedSample$ = this.samples[0]
+    
   }
 
   @Watch('selectedSample$')
@@ -85,6 +78,7 @@ export default class extends Vue {
 
 
 <style>
+
 .subtitle {
   margin-bottom: 3%;
 }

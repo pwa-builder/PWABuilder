@@ -10,7 +10,7 @@
             <!-- Service Worker Selection -->
             <div class="pure-u-1 pure-u-md-1-3 generator-section service-workers sampleList">
 
-              <RadioButtonSamples :size="sampleSize" :samples="samples" @sampleChanged="SelectedSampleChanged" :radioButtonList="radioBtnList"/>
+              <RadioButtonSamples :size="sampleSize" :samples="samples" @sampleChanged="SelectedSampleChanged"/>
 
             </div>
             <div class="pure-u-1 pure-u-md-2-3 codeViewerColumn"  >
@@ -129,8 +129,8 @@ async SelectedSampleChanged(sample) {
     }
    }
   changeRBListSize(){
-    const content1:any = document.getElementById('content1');
-    const content2:any = document.getElementById('content2');
+    const content1:any = document.getElementById('content1'); //Usage tab
+    const content2:any = document.getElementById('content2'); //Code tab
     if(content1.offsetHeight > 20){
       this.sampleSize = content1.offsetHeight + 'px';
     }else if(content2.offsetHeight > 20){
