@@ -3,31 +3,8 @@
   <GeneratorMenu/>
   <div class="l-generator-step">
     <div class="l-generator-semipadded pure-g">
-      <div class="pure-u-1 pure-u-md-1-2 generator-section service-workers">
-        <div class="l-generator-subtitle">{{ $t('serviceworker.title') }}</div>
-        <form @submit.prevent="download" @keydown.enter.prevent="download">
-          <div class="l-generator-field l-generator-field--padded checkbox" v-for="sw in serviceworkers" :key="sw.id">
-            <label class="l-generator-label">
-              <input type="radio" :value="sw.id" v-model="serviceworker$" :disabled="sw.disable"/> {{ sw.title }} <span v-if="sw.disable">(coming soon)</span>
-            </label>
-            <span class="l-generator-description">{{ sw.description }}</span>
-          </div>
-          <div class="l-generator-wrapper pure-u-2-5">
-            <button @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/download/serviceworker' })" class="pwa-button pwa-button--simple isEnabled">
-              <span v-if="!isBuilding">{{ $t('serviceworker.download') }}</span>
-              <span v-if="isBuilding">{{ $t('serviceworker.building') }}
-                <Loading :active="true" class="u-display-inline_block u-margin-left-sm" />
-              </span>
-            </button>
-          </div>
-          <div class="pure-u-3-5">
-            <p class="l-generator-error" v-if="error"><span class="icon-exclamation"></span> {{ $t(error) }}</p>
-          </div>
-        </form>
-        <p>{{ $t('serviceworker.download_link') }}
-          <a class="l-generator-link" href="https://github.com/pwa-builder/serviceworkers" target="_blank">GitHub</a>.</p>
-      </div>
-      <div class="serviceworker-preview pure-u-1 pure-u-md-1-2 generator-section">
+      <RadioButtonSamples style="width: 50%" :size="sampleSize" :samples="serviceworkers" @sampleChanged="SelectedSampleChanged"/>
+      <div class="serviceworker-preview pure-u-1 pure-u-md-1-2 generator-section" id="codeBox">
         <CodeViewer :size="viewerSize" :code="webPreview" :title="$t('serviceworker.code_preview_web')">
           <nuxt-link :to="$i18n.path('publish')" class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})">
             {{ $t("serviceworker.next_step") }}
@@ -63,6 +40,9 @@ import StartOver from '~/components/StartOver.vue';
 import * as serviceworker from '~/store/modules/serviceworker';
 import { ServiceWorker } from '~/store/modules/serviceworker';
 
+import RadioButtonSamples from '~/components/RadioButtonSamples.vue';
+
+
 const ServiceworkerState = namespace(serviceworker.name, State);
 const ServiceworkerAction = namespace(serviceworker.name, Action);
 
@@ -72,7 +52,8 @@ const ServiceworkerAction = namespace(serviceworker.name, Action);
     GeneratorMenu,
     Loading,
     StartOver,
-    CodeViewer
+    CodeViewer,
+    RadioButtonSamples
   }
 })
 
@@ -82,6 +63,9 @@ export default class extends Vue {
   public serviceworkers$: ServiceWorker[];
   public error: string | null = null;
   public viewerSize = '25rem';
+  public sampleSize = '53rem';
+  
+
 
   @ServiceworkerState serviceworkers: ServiceWorker[];
   @ServiceworkerState serviceworker: number;
@@ -95,7 +79,8 @@ export default class extends Vue {
 
   async created() {
     await this.getServiceworkers();
-    this.serviceworker$ = this.serviceworkers[0].id;
+    //this.serviceworker$ = this.serviceworkers[0].id;
+    //this.changeRBListSize();
   }
 
   public async download(): Promise<void> {
@@ -112,16 +97,27 @@ export default class extends Vue {
     this.$awa( { 'referrerUri': 'https://preview.pwabuilder.com/serviceworker-download' });
     this.isBuilding = false;
   }
-
-  @Watch('serviceworker$')
-  async onServiceworker$Changed() {
-    try {
-      await this.getCode(this.serviceworker$);
-    } catch (e) {
-      this.error = e;
+  async SelectedSampleChanged(sample) {
+    this.serviceworker$ = sample;
+        try {
+          await  this.getCode(this.serviceworker$.id);
+          await this.changeRBListSize();
+        } catch (e) {
+        this.error = e;
+      }
+      
+   }
+  changeRBListSize(){
+    const codeBox:any = document.getElementById('codeBox');
+    let body:any = document.querySelector('body');
+    let fontSize = window.getComputedStyle(body).getPropertyValue('font-size');
+    if(codeBox.offsetHeight > 20){
+      this.sampleSize = (codeBox.height / parseFloat(fontSize)) + 'px';
     }
   }
 }
+
+
 </script>
 
 <style lang="scss" scoped>
