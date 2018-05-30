@@ -3,10 +3,7 @@
   <GeneratorMenu/>
   <div class="l-generator-step">
     <div class="l-generator-semipadded pure-g">
-
       <RadioButtonSamples style="width: 50%" :size="sampleSize" :samples="serviceworkers" @sampleChanged="SelectedSampleChanged"/>
-  
-
       <div class="serviceworker-preview pure-u-1 pure-u-md-1-2 generator-section" id="codeBox">
         <CodeViewer :size="viewerSize" :code="webPreview" :title="$t('serviceworker.code_preview_web')">
           <nuxt-link :to="$i18n.path('publish')" class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})">
