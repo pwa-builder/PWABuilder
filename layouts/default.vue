@@ -33,11 +33,6 @@
             <a class="l-header-link" href="//docs.pwabuilder.com/" target="_blank">{{ $t('menu.documentation') }}</a>
           </li>
           <li class="l-header-item">
-            <nuxt-link :to="$i18n.path('windows')" exact :class="[pathnameUrl === '/windows' ? 'l-header-link is-active' : 'l-header-link']">
-              {{ $t('menu.windows') }}
-            </nuxt-link>
-          </li>
-          <li class="l-header-item">
             <nuxt-link :to="$i18n.path('imageGenerator')" @click="pathnameUrl='/imageGenerator'" exact 
             :class="[pathnameUrl === '/imageGenerator' ? 'l-header-link is-active' : 'l-header-link ']">
             {{ $t('menu.generator') }}</nuxt-link>
