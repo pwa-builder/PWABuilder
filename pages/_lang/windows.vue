@@ -1,56 +1,49 @@
 <template>
   <section id='section'>
-    
-      <WindowsMenu />
-      <div class='spinner-container' id="containerSpinner" style='background-color: rgba(43, 43, 43, 0.7); display: none;'>
-        <div class="lds-ring" id='loadingSpinner' style="display: none;"><div></div><div></div><div></div><div></div></div>
-      </div>
-        <div class="l-generator-step" id='content'>
-          <div class="l-generator-semipadded pure-g">
-            <!-- Service Worker Selection -->
-            <div class="pure-u-1 pure-u-md-1-3 generator-section service-workers sampleList">
-
-              <RadioButtonSamples :size="sampleSize" :samples="samples" @sampleChanged="SelectedSampleChanged"/>
-
-            </div>
-            <div class="pure-u-1 pure-u-md-2-3 codeViewerColumn"  >
-              <div class="tab_container" id='codeContainer' >
-                  <input id="tab1" type="radio" name="tabs" class="tab_input" @change="changeRBListSize" checked>
-                  <label for="tab1" class="tab_label"><i class="fa fa-code"></i><span> Usage</span></label>
-
-                  <input id="tab2" type="radio" name="tabs" class="tab_input" @change="changeRBListSize">
-                  <label for="tab2" class="tab_label"><i class="fa fa-file-alt"></i><span> Code</span></label>
-
-                  <section id="content1" class="tab-content tab_section">
-                    <br/>
-                    <div class="pure-g">
-                      <div class="generate-code pure-u-1">
-                        <CodeViewer :code="selectedSample$.snippet" v-if="selectedSample$" :title="$t('windows.codeTitle')" />
-                        <br/>
-                        <div class="l-generator-form overflowPropList" v-if="selectedSample$" >
-                          <div class="l-generator-field" v-for="prop in selectedSample$.parms" :key="prop.id">
-                            <div class="l-generator-label">{{prop.name}} </div>
-                            <div class="l-generator-input value-table" :id="prop.id">{{prop.description}}</div>
-                          </div>
-                        </div>
-                        <div class="pure-u-1 pure-u-md-1-2">
-                          <div class="pwa-button pwa-button--simple" v-on:click="download()">{{ $t("windows.download") }}</div>
-                        </div>
-                      </div>
+    <WindowsMenu />
+    <div class='spinner-container' id="containerSpinner" style='background-color: rgba(43, 43, 43, 0.7); display: none;'>
+      <div class="lds-ring" id='loadingSpinner' style="display: none;"><div></div><div></div><div></div><div></div></div>
+    </div>
+    <div class="l-generator-step" id='content'>
+      <div class="l-generator-semipadded pure-g">
+        <!-- Service Worker Selection -->
+        <div class="pure-u-1 pure-u-md-1-3 generator-section service-workers sampleList">
+          <div class="l-generator-subtitle subtitle" >{{ $t('windows.title') }}</div>
+          <RadioButtonSamples :size="sampleSize" :samples="samples" @sampleChanged="SelectedSampleChanged"/>
+        </div>
+        <div class="pure-u-1 pure-u-md-2-3 codeViewerColumn"  >
+          <div class="tab_container" id='codeContainer' >
+            <input id="tab1" type="radio" name="tabs" class="tab_input" @change="changeRBListSize" checked>
+            <label for="tab1" class="tab_label"><i class="fa fa-code"></i><span> Usage</span></label>
+            <input id="tab2" type="radio" name="tabs" class="tab_input" @change="changeRBListSize">
+            <label for="tab2" class="tab_label"><i class="fa fa-file-alt"></i><span> Code</span></label>
+            <section id="content1" class="tab-content tab_section">
+              <br/>
+              <div class="pure-g">
+                <div class="generate-code pure-u-1">
+                  <CodeViewer :code="selectedSample$.snippet" v-if="selectedSample$" :title="$t('windows.codeTitle')" />
+                  <br/>
+                  <div class="l-generator-form overflowPropList" v-if="selectedSample$" >
+                    <div class="l-generator-field" v-for="prop in selectedSample$.parms" :key="prop.id">
+                      <div class="l-generator-label">{{prop.name}} </div>
+                      <div class="l-generator-input value-table" :id="prop.id">{{prop.description}}</div>
                     </div>
-                  </section>
-                  <section id="content2" class="tab-content tab_section">
-                    <CodeViewer :size="viewerSize" :code="selectedSample$.source" v-if="selectedSample$" :title="$t('windows.sourceTitle')">
-                      <div class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" v-on:click="download()">{{ $t("windows.download") }}</div>      
-                    </CodeViewer>
-                  </section>
+                  </div>
+                  <div class="pure-u-1 pure-u-md-1-2">
+                    <div class="pwa-button pwa-button--simple" v-on:click="download()">{{ $t("windows.download") }}</div>
+                  </div>
                 </div>
-            </div>
+              </div>
+            </section>
+            <section id="content2" class="tab-content tab_section">
+              <CodeViewer :size="viewerSize" :code="selectedSample$.source" v-if="selectedSample$" :title="$t('windows.sourceTitle')">
+                <div class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" v-on:click="download()">{{ $t("windows.download") }}</div>      
+              </CodeViewer>
+            </section>
           </div>
         </div>
-
-      
-      
+      </div>
+    </div>
   </section>
 </template>
 
@@ -69,8 +62,6 @@ const WindowsAction = namespace(windowsStore.name, Action);
 @Component({
   components: {CodeViewer, WindowsMenu, RadioButtonSamples}
 })
-
-
 
 export default class extends Vue {
   error: any;
@@ -94,38 +85,36 @@ export default class extends Vue {
     this.spinner = document.getElementById('loadingSpinner');
     this.containerSpinner = document.getElementById('containerSpinner');
     this.showLoadingSpinner(true);
-    
     await this.getSamples();
-          this.changeRBListSize();
-  
+    this.changeRBListSize();
     this.showLoadingSpinner(false);
-    
   }
 
-async SelectedSampleChanged(sample) {
-    
+  async SelectedSampleChanged(sample) {
     this.showLoadingSpinner(true);
     this.selectedSample$ = sample;
-        try {
-        await  this.selectSample(this.selectedSample$);
-        await  this.changeRBListSize();
-        } catch (e) {
-        this.error = e;
-      }
-     this.showLoadingSpinner(false);
-      
-   }
+    
+    try {
+      await  this.selectSample(this.selectedSample$);
+      await  this.changeRBListSize();
+    } catch (e) {
+      this.error = e;
+    }
+    
+    this.showLoadingSpinner(false);  
+  }
 
-    showLoadingSpinner(show: boolean) {
-     if (show) {
+  showLoadingSpinner(show: boolean) {
+    
+    if (show) {
       this.spinner.style.display = 'block';
       this.containerSpinner.style.display = 'block';
-      
-     } else {
-       this.spinner.style.display = 'none';
-       this.containerSpinner.style.display = 'none';
+    } else {
+      this.spinner.style.display = 'none';
+      this.containerSpinner.style.display = 'none';
     }
-   }
+  }
+
   changeRBListSize() {
     const content1: any = document.getElementById('content1');
     const content2: any = document.getElementById('content2');
@@ -137,16 +126,16 @@ async SelectedSampleChanged(sample) {
     }
   }
 
-async download() {
+  async download() {
     let that = this;
     let items = Array<any>();
     let xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function () {
-        if (xhttp.readyState === 4 && xhttp.status === 200) {
-            let fileName = 'sample.zip';
-            that.saveAs(fileName, xhttp);
-        }
+      if (xhttp.readyState === 4 && xhttp.status === 200) {
+        let fileName = 'sample.zip';
+        that.saveAs(fileName, xhttp);
+      }
     };
 
     xhttp.open('POST', `${process.env.apiUrl2}/api/winrt/generate`, true);
@@ -192,10 +181,7 @@ async download() {
     a.style.display = 'none';
     document.body.appendChild(a);
     a.click();
-  } 
-
-
-
+  }
 }
 </script>
 
