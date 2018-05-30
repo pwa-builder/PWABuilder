@@ -23,21 +23,17 @@
 
 <script lang='ts'>
 import Vue from 'vue';
-import { Action, State, namespace } from 'vuex-class';
 import { Prop, Watch, } from 'vue-property-decorator';
 import Component from 'nuxt-class-component';
 import * as windowsStore from '~/store/modules/windows';
-import windows from '~/pages/_lang/windows.vue';
-const WindowsAction = namespace(windowsStore.name, Action);
 
 @Component()
 export default class extends Vue {
-  error:any;
+  error: any;
   selectedSample$: windowsStore.Sample | null = null;
-  samplesTextFilter:String = '';
-  rbHeader:any;
+  samplesTextFilter: String = '';
+  rbHeader: any;
   
-
   @Prop({ type: Array, default: null })
   public samples;
 
@@ -48,32 +44,29 @@ export default class extends Vue {
   sampleFilter = this.samples;
 
   @Watch('samples')
-  onSamplesChanged(){
-    this.sampleFilter = this.samples
-    this.selectedSample$ = this.samples[0]
-    
+  onSamplesChanged() {
+    this.sampleFilter = this.samples;
+    this.selectedSample$ = this.samples[0];   
   }
 
   @Watch('selectedSample$')
   onSelectedSample$Changed() {
-   this.$emit('sampleChanged', this.selectedSample$)
+   this.$emit('sampleChanged', this.selectedSample$);
   }
 
-  onSampleFilterChanged(){
-    const filterText = this.samplesTextFilter
-    let filterResult = this.samples.filter(function(elem:any){
-                          return elem.title.toLowerCase().includes(filterText.toLowerCase())
+  onSampleFilterChanged() {
+    const filterText = this.samplesTextFilter;
+    let filterResult = this.samples.filter(function(elem: any) {
+                          return elem.title.toLowerCase().includes(filterText.toLowerCase());
                           });
-    if(filterResult.length < this.samples.length ){
+    if (filterResult.length < this.samples.length ) {
       this.sampleFilter = filterResult;
-    }else{
+    } else {
       this.sampleFilter = this.samples;
     }
   }
   
 }
-
-
 </script>
 
 
