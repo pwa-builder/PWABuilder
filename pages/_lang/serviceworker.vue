@@ -3,7 +3,29 @@
   <GeneratorMenu/>
   <div class="l-generator-step">
     <div class="l-generator-semipadded pure-g">
-      <RadioButtonSamples style="width: 50%" :size="sampleSize" :samples="serviceworkers" @sampleChanged="SelectedSampleChanged"/>
+      <div class="pure-u-1 pure-u-md-1-2 generator-section service-workers">
+
+        <div class="l-generator-subtitle">{{ $t('serviceworker.title') }}</div>
+        <form @submit.prevent="download" @keydown.enter.prevent="download">
+          <div class="l-generator-field l-generator-field--padded checkbox">
+            <RadioButtonSamples :size="sampleSize" :samples="serviceworkers" @sampleChanged="SelectedSampleChanged"/>
+         </div>
+
+          <div class="l-generator-wrapper pure-u-2-5">
+            <button @click="$ga.event('Download', 'Serviceworker', 'Download Archive', { 'page': `/download/serviceworker` })" class="pwa-button pwa-button--simple isEnabled">
+              <span v-if="!isBuilding">{{ $t('serviceworker.download') }}</span>
+              <span v-if="isBuilding">{{ $t('serviceworker.building') }}
+                <Loading :active="true" class="u-display-inline_block u-margin-left-sm" />
+              </span>
+            </button>
+          </div>
+          <div class="pure-u-3-5">
+            <p class="l-generator-error" v-if="error"><span class="icon-exclamation"></span> {{ $t(error) }}</p>
+          </div>
+        </form>
+        <p>{{ $t('serviceworker.download_link') }}
+          <a class="l-generator-link" href="https://github.com/pwa-builder/serviceworkers" target="_blank">GitHub</a>.</p>
+      </div>
       <div class="serviceworker-preview pure-u-1 pure-u-md-1-2 generator-section" id="codeBox">
         <CodeViewer :size="viewerSize" :code="webPreview" :title="$t('serviceworker.code_preview_web')">
           <nuxt-link :to="$i18n.path('publish')" class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})">
@@ -58,7 +80,7 @@ const ServiceworkerAction = namespace(serviceworker.name, Action);
 
 export default class extends Vue {
   public isBuilding = false;
-  public serviceworker$: number | null = null;
+  public serviceworker$: number | number = 1;
   public serviceworkers$: ServiceWorker[];
   public error: string | null = null;
   public viewerSize = '25rem';
@@ -78,8 +100,6 @@ export default class extends Vue {
 
   async created() {
     await this.getServiceworkers();
-    //this.serviceworker$ = this.serviceworkers[0].id;
-    //this.changeRBListSize();
   }
 
   public async download(): Promise<void> {
@@ -97,9 +117,9 @@ export default class extends Vue {
     this.isBuilding = false;
   }
   async SelectedSampleChanged(sample) {
-    this.serviceworker$ = sample;
+    this.serviceworker$ = sample.id;
         try {
-          await  this.getCode(this.serviceworker$.id);
+          await  this.getCode(this.serviceworker$);
           await this.changeRBListSize();
         } catch (e) {
         this.error = e;
