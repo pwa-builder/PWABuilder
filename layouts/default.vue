@@ -1,7 +1,7 @@
   <script lang="ts">
   export default {
     middleware: 'default',
-
+    
     data() {
       return {
         pathnameUrl: this.$route.path,
@@ -35,8 +35,13 @@
           <li class="l-header-item">
             <nuxt-link :to="$i18n.path('imageGenerator')" @click="pathnameUrl='/imageGenerator'" exact 
             :class="[pathnameUrl === '/imageGenerator' ? 'l-header-link is-active' : 'l-header-link ']">
-            {{ $t('menu.generator') }}</nuxt-link>
+              {{ $t('menu.generator') }}</nuxt-link>
           </li>
+          <li class="l-header-item">
+            <nuxt-link :to="$i18n.path('windows')" exact :class="[pathnameUrl === '/windows' ? 'l-header-link is-active' : 'l-header-link']">
+              {{ $t('menu.windows') }}
+            </nuxt-link>
+          </li>          
           <li class="l-header-item">
             <a class="l-header-link" href="//github.com/pwa-builder" target="_blank">{{ $t('menu.github') }}</a>
           </li>
