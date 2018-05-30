@@ -28,7 +28,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'nuxt-class-component';
-import { Watch } from 'vue-property-decorator';
 import { Action, State, namespace } from 'vuex-class';
 
 import GeneratorMenu from '~/components/GeneratorMenu.vue';
@@ -107,11 +106,12 @@ export default class extends Vue {
       }
       
    }
-  changeRBListSize(){
-    const codeBox:any = document.getElementById('codeBox');
-    let body:any = document.querySelector('body');
+  changeRBListSize() {
+    const codeBox: any = document.getElementById('codeBox');
+    let body: any = document.querySelector('body');
     let fontSize = window.getComputedStyle(body).getPropertyValue('font-size');
-    if(codeBox.offsetHeight > 20){
+    
+    if (codeBox.offsetHeight > 20) {
       this.sampleSize = (codeBox.height / parseFloat(fontSize)) + 'px';
     }
   }

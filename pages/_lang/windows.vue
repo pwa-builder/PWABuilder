@@ -58,7 +58,6 @@
 import Vue from 'vue';
 import Component from 'nuxt-class-component';
 import { Action, State, namespace } from 'vuex-class';
-import { Watch } from 'vue-property-decorator';
 import CodeViewer from '~/components/CodeViewer.vue';
 import WindowsMenu from '~/components/WindowsMenu.vue';
 import * as windowsStore from '~/store/modules/windows';
@@ -75,17 +74,17 @@ const WindowsAction = namespace(windowsStore.name, Action);
 
 export default class extends Vue {
   error: any;
-  viewerSize = '50rem';//30rem
+  viewerSize = '50rem';
   sampleSize = '55rem';
 
-  spinner:any;
-  containerSpinner:any;
-  containerCode:any;
-  radioBtnList:String = '';
+  spinner: any;
+  containerSpinner: any;
+  containerCode: any;
+  radioBtnList: String = '';
   
   selectedSample$: windowsStore.Sample | null = null;
-  sampleFilter:windowsStore.Sample[];
-  samplesTextFilter:any = '';
+  sampleFilter: windowsStore.Sample[];
+  samplesTextFilter: any = '';
   @WindowsState samples: windowsStore.Sample[];
 
   @WindowsAction getSamples;
@@ -94,18 +93,18 @@ export default class extends Vue {
   async mounted() {
     this.spinner = document.getElementById('loadingSpinner');
     this.containerSpinner = document.getElementById('containerSpinner');
-    this.showLoadingSpinner(true)
+    this.showLoadingSpinner(true);
     
     await this.getSamples();
           this.changeRBListSize();
   
-    this.showLoadingSpinner(false)
+    this.showLoadingSpinner(false);
     
   }
 
 async SelectedSampleChanged(sample) {
     
-    this.showLoadingSpinner(true)
+    this.showLoadingSpinner(true);
     this.selectedSample$ = sample;
         try {
         await  this.selectSample(this.selectedSample$);
@@ -113,33 +112,32 @@ async SelectedSampleChanged(sample) {
         } catch (e) {
         this.error = e;
       }
-     this.showLoadingSpinner(false)
+     this.showLoadingSpinner(false);
       
    }
 
-    showLoadingSpinner(show:boolean){
-    console.log("loading spinner")
-     if(show){
-       this.spinner.style.display = "block";
-      this.containerSpinner.style.display = "block";
+    showLoadingSpinner(show: boolean) {
+     if (show) {
+      this.spinner.style.display = 'block';
+      this.containerSpinner.style.display = 'block';
       
-     }else{
-       this.spinner.style.display = "none";
-       this.containerSpinner.style.display = "none";
+     } else {
+       this.spinner.style.display = 'none';
+       this.containerSpinner.style.display = 'none';
     }
    }
-  changeRBListSize(){
-    const content1:any = document.getElementById('content1'); //Usage tab
-    const content2:any = document.getElementById('content2'); //Code tab
-    if(content1.offsetHeight > 20){
+  changeRBListSize() {
+    const content1: any = document.getElementById('content1');
+    const content2: any = document.getElementById('content2');
+
+    if (content1.offsetHeight > 20) {
       this.sampleSize = content1.offsetHeight + 'px';
-    }else if(content2.offsetHeight > 20){
+    } else if (content2.offsetHeight > 20) {
       this.sampleSize = content2.offsetHeight + 'px';
     }
   }
 
-
-  async download() {
+async download() {
     let that = this;
     let items = Array<any>();
     let xhttp = new XMLHttpRequest();
