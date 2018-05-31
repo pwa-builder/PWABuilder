@@ -130,8 +130,8 @@
             <label class="l-generator-label">{{ $t("generate.language") }}
               <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#lang-member" target="_blank">[?]</a>
             </label>
-            <select class="l-generator-input l-generator-input--select" v-model="manifest$.lang">
-              <option v-for="language in languagesNames" :value="language.code" :key="language.code" @change="onChangeSimpleInput()">{{language.name}}</option>
+            <select class="l-generator-input l-generator-input--select" v-model="manifest$.lang" @change="onChangeSimpleInput()">
+              <option v-for="language in languagesNames" :value="language.code" :key="language.code"  >{{language.name}}</option>
             </select>
           </div>
           <div>
@@ -244,7 +244,6 @@ export default class extends Vue {
   @GeneratorGetters warningsTotal;
 
   public created(): void {
-    console.log("languages", this.languagesNames)
     if (!this.manifest) {
       this.$router.push({
         path: this.$i18n.path('')

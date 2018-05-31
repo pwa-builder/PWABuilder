@@ -29,7 +29,6 @@ export const helpers = {
         if (!collection) {
             return [];
         }
-        console.log("colecction", collection)
         //return collection.map(x => x.name);
         return collection;
     }

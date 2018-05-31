@@ -17,7 +17,7 @@ describe('store root', () => {
                 { code: '1', name: 'test'}
             ];
             
-            expect(root.helpers.getStaticContentNames(collection)[0]).to.be.equal(collection[0].name);
+            expect(root.helpers.getStaticContentNames(collection)[0]).to.be.equal(collection[0]);
         });
 
         it('should works fin when is ussed in a getter', () => {
@@ -31,9 +31,9 @@ describe('store root', () => {
                 orientations: collection
             };
             
-            expect(root.getters.languagesNames(state, null, {} as RootState, null)[0]).to.be.equal(collection[0].name);
-            expect(root.getters.displaysNames(state, null, {} as RootState, null)[0]).to.be.equal(collection[0].name);
-            expect(root.getters.orientationsNames(state, null, {} as RootState, null)[0]).to.be.equal(collection[0].name);
+            expect(root.getters.languagesNames(state, null, {} as RootState, null)[0]).to.be.equal(collection[0]);
+            expect(root.getters.displaysNames(state, null, {} as RootState, null)[0]).to.be.equal(collection[0]);
+            expect(root.getters.orientationsNames(state, null, {} as RootState, null)[0]).to.be.equal(collection[0]);
         });
     });
 });
