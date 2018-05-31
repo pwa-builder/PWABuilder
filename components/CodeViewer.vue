@@ -127,6 +127,10 @@ export default class extends Vue {
     margin-top: 4rem;
   }
 
+  @media screen and (max-width: 769px) {
+    margin-top: 0;
+  }
+
   &-padded {
     padding-top: 1rem;
   }

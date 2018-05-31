@@ -7,11 +7,10 @@
     <div class="l-generator-step" id='content'>
       <div class="l-generator-semipadded pure-g">
         <!-- Service Worker Selection -->
-        <div class="pure-u-1 pure-u-md-1-3 generator-section service-workers sampleList">
-          <div class="l-generator-subtitle subtitle" >{{ $t('windows.title') }}</div>
-          <RadioButtonSamples :size="sampleSize" :samples="samples" @sampleChanged="SelectedSampleChanged"/>
+        <div class="pure-u-1 pure-u-md-1-3 generator-section service-workers">
+          <RadioButtonSamples :title="$t('windows.title')" :size="sampleSize" :samples="samples" @sampleChanged="SelectedSampleChanged"/>
         </div>
-        <div class="pure-u-1 pure-u-md-2-3 codeViewerColumn"  >
+        <div class="pure-u-1 pure-u-md-2-3">
           <div class="tab_container" id='codeContainer' >
             <input id="tab1" type="radio" name="tabs" class="tab_input" @change="changeRBListSize" checked>
             <label for="tab1" class="tab_label"><i class="fa fa-code"></i><span> Usage</span></label>
@@ -116,14 +115,8 @@ export default class extends Vue {
   }
 
   changeRBListSize() {
-    const content1: any = document.getElementById('content1');
-    const content2: any = document.getElementById('content2');
-
-    if (content1.offsetHeight > 20) {
-      this.sampleSize = content1.offsetHeight + 'px';
-    } else if (content2.offsetHeight > 20) {
-      this.sampleSize = content2.offsetHeight + 'px';
-    }
+    const codeContainer: any = document.getElementById('codeContainer');
+    this.sampleSize = codeContainer.offsetHeight + 'px';
   }
 
   async download() {
@@ -189,10 +182,6 @@ export default class extends Vue {
 .overflowPropList {
   height: 25vh;
   overflow-y: auto;
-}
-
-.sampleList {
-  height: 75vh;
 }
 
 .codeViewerColumn {
