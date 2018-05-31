@@ -2,7 +2,7 @@ import { ActionTree, ActionContext } from 'vuex';
 import { State, Parm, Sample, types } from '~/store/modules/windows';
 import { RootState } from 'store';
 
-const apiUrl = `${process.env.apiUrl2}/api/windows`;
+const apiUrl = `${process.env.apiUrl2}/api/winrt`;
 
 export interface Actions<S, R> extends ActionTree<S, R> {
   getSamples(context: ActionContext<S, R>): Promise<void>;

@@ -1,8 +1,6 @@
 <template>
-<section class="section">
-  
+  <section class="section">
     <div id="rbHeader" class="rbHeader"> 
-      <div class="l-generator-subtitle subtitle" >{{ $t('windows.title') }}</div>
       <div> 
         <input type="text" v-model="samplesTextFilter" @keydown="onSampleFilterChanged" placeholder="Search"/>
       </div>
@@ -14,12 +12,9 @@
         </label>
         <span class="l-generator-description">{{ sample.description }}</span>
       </div>
-                
     </div>
-  
-</section>
+  </section>
 </template>
-
 
 <script lang='ts'>
 import Vue from 'vue';
@@ -33,15 +28,13 @@ export default class extends Vue {
   selectedSample$: windowsStore.Sample | null = null;
   samplesTextFilter: String = '';
   rbHeader: any;
+  sampleFilter = this.samples;
   
   @Prop({ type: Array, default: null })
   public samples;
 
   @Prop({ type: String, default: 'auto' })
   public size;
-
-
-  sampleFilter = this.samples;
 
   @Watch('samples')
   onSamplesChanged() {
@@ -56,19 +49,16 @@ export default class extends Vue {
 
   onSampleFilterChanged() {
     const filterText = this.samplesTextFilter;
-    let filterResult = this.samples.filter(function(elem: any) {
-                          return elem.title.toLowerCase().includes(filterText.toLowerCase());
-                          });
+    let filterResult = this.samples.filter(function(elem: any) {return elem.title.toLowerCase().includes(filterText.toLowerCase())});
+    
     if (filterResult.length < this.samples.length ) {
       this.sampleFilter = filterResult;
     } else {
       this.sampleFilter = this.samples;
     }
   }
-  
 }
 </script>
-
 
 <style>
 
@@ -87,15 +77,4 @@ export default class extends Vue {
 .swContainer {
   overflow-y: auto;
 }
-</style>
-
-<style lang="scss" scoped>
-// @import "~assets/scss/base/variables";
-
-// .generate {
-//   &-code {
-//     margin-top: -2rem;
-//   }
-// }
-
 </style>
