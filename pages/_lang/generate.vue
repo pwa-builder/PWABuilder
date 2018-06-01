@@ -1,11 +1,10 @@
 <template>
 <section>
   <GeneratorMenu />
-
   <div v-if="manifest$">
     <div class="l-generator-step">
       <div class="l-generator-semipadded">
-        <div class="l-generator-form pure-u-1 pure-u-md-1-2">
+        <div class="l-generator-form pure-u-1 pure-u-md-1-2 generateForm">
           <h4 class="l-generator-subtitle">
             {{ $t("generate.subtitle") }}
           </h4>
@@ -370,5 +369,9 @@ export default class extends Vue {
   &-code {
     margin-top: -2rem;
   }
+}
+
+.generateForm {
+  margin-bottom: 3rem;
 }
 </style>
