@@ -115,7 +115,7 @@
               <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#display-member" target="_blank">[?]</a>
             </label>
             <select class="l-generator-input l-generator-input--select" v-model="manifest$.display" @change="onChangeSimpleInput()">
-              <option v-for="display in displaysNames" :value="display" :key="display">{{display}}</option>
+              <option v-for="display in displaysNames" :value="display.name" :key="display.code">{{display.name}}</option>
             </select>
           </div>
           <div class="l-generator-field">
@@ -123,15 +123,15 @@
               <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#orientation-member" target="_blank">[?]</a>
             </label>
             <select class="l-generator-input l-generator-input--select" v-model="manifest$.orientation" @change="onChangeSimpleInput()">
-              <option v-for="orientation in orientationsNames" :value="orientation" :key="orientation">{{orientation}}</option>
+              <option v-for="orientation in orientationsNames" :value="orientation.name" :key="orientation.code">{{orientation.name}}</option>
             </select>
           </div>
           <div class="l-generator-field">
             <label class="l-generator-label">{{ $t("generate.language") }}
               <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#lang-member" target="_blank">[?]</a>
             </label>
-            <select class="l-generator-input l-generator-input--select" v-model="manifest$.lang">
-              <option v-for="language in languagesNames" :value="language" :key="language" @change="onChangeSimpleInput()">{{language}}</option>
+            <select class="l-generator-input l-generator-input--select" v-model="manifest$.lang" @change="onChangeSimpleInput()">
+              <option v-for="language in languagesNames" :value="language.code" :key="language.code"  >{{language.name}}</option>
             </select>
           </div>
           <div>
@@ -231,7 +231,7 @@ export default class extends Vue {
   @GeneratorState warnings: string[];
 
   @Getter orientationsNames: string[];
-  @Getter languagesNames: string[];
+  @Getter languagesNames: StaticContent;
   @Getter displaysNames: string[];
 
   @GeneratorActions removeIcon;
