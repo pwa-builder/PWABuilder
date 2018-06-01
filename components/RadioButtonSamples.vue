@@ -8,7 +8,7 @@
     <div class="swContainer" id='swContainer':style="{ height: sizeSWContainer }" >
       <div class="l-generator-field l-generator-field--padded checkbox" v-for="sample in sampleFilter" :key="sample.id">
         <label class="l-generator-label">
-          <input type="radio" :value="sample" v-model="selectedSample$"> {{sample.title}}
+                    <input type="radio" :value="sample" v-model="selectedSample$" :disabled="sample.disable" > {{sample.title}} <span v-if="sample.disable">(coming soon)</span>
         </label>
         <span class="l-generator-description">{{ sample.description }}</span>
       </div>
