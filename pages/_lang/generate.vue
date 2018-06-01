@@ -230,9 +230,9 @@ export default class extends Vue {
   @GeneratorState suggestions: string[];
   @GeneratorState warnings: string[];
 
-  @Getter orientationsNames: string[];
-  @Getter languagesNames: StaticContent;
-  @Getter displaysNames: string[];
+  @Getter orientationsNames: generator.StaticContent[];
+  @Getter languagesNames: generator.StaticContent[];
+  @Getter displaysNames: generator.StaticContent[];
 
   @GeneratorActions removeIcon;
   @GeneratorActions addIconFromUrl;

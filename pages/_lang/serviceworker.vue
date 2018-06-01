@@ -9,7 +9,7 @@
               <RadioButtonSamples :title="$t('serviceworker.title')" :size="sampleSize" :samples="serviceworkers" @sampleChanged="SelectedSampleChanged"/>
             </div>
             <div class="l-generator-wrapper pure-u-2-5">
-              <button @click=" $awa( { 'uri': 'https://preview.pwabuilder.com/download/serviceworker' })" class="pwa-button pwa-button--simple isEnabled">
+              <button @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/download/serviceworker' })" class="pwa-button pwa-button--simple isEnabled">
                 <span v-if="!isBuilding">{{ $t('serviceworker.download') }}</span>
                 <span v-if="isBuilding">{{ $t('serviceworker.building') }}
                   <Loading :active="true" class="u-display-inline_block u-margin-left-sm" />
@@ -25,7 +25,7 @@
         </div>
         <div class="serviceworker-preview pure-u-1 pure-u-md-1-2 generator-section" id="codeBox">
           <CodeViewer id="codeViewer1" :size="viewerSize" :code="webPreview" :title="$t('serviceworker.code_preview_web')">
-            <nuxt-link :to="$i18n.path('publish')" class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" @click=" $awa( { 'uri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})">
+            <nuxt-link :to="$i18n.path('publish')" class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})">
             {{ $t("serviceworker.next_step") }}
             </nuxt-link>
           </CodeViewer>
@@ -34,7 +34,7 @@
       </div>
     </div>
     <div class="l-generator-buttons l-generator-buttons--centered">
-      <nuxt-link :to="$i18n.path('publish')" class="pwa-button" @click=" $awa( { 'uri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})">{{ $t("serviceworker.next_step") }}</nuxt-link>
+      <nuxt-link :to="$i18n.path('publish')" class="pwa-button" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})">{{ $t("serviceworker.next_step") }}</nuxt-link>
     </div>
     <StartOver />
     <TwoWays/>
@@ -103,7 +103,7 @@ export default class extends Vue {
       window.location.href = this.archive;
     }
   
-    this.$awa( { 'uri': 'https://preview.pwabuilder.com/serviceworker-download' });
+    this.$awa( { 'referrerUri': 'https://preview.pwabuilder.com/serviceworker-download' });
     this.isBuilding = false;
   }
   async SelectedSampleChanged(sample) {

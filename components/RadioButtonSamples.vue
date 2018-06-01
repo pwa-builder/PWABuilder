@@ -28,9 +28,9 @@ export default class extends Vue {
   error: any;
   selectedSample$: windowsStore.Sample | null = null;
   samplesTextFilter: String = '';
-  sampleFilter = this.samples;
+  sampleFilter: windowsStore.Sample[];
   sizeSWContainer: String = 'auto';
-  sizeContainer: String = this.size;
+  sizeContainer: String = '';
   
   @Prop({ type: Array, default: null })
   public samples;
@@ -40,6 +40,11 @@ export default class extends Vue {
 
   @Prop({ type: String, default: '' })
   public title;
+
+  mounted() {
+    this.sampleFilter = this.samples;
+    this.sizeContainer = this.size;
+  }
 
   @Watch('samples')
   onSamplesChanged() {
@@ -54,11 +59,10 @@ export default class extends Vue {
 
   @Watch('size')
   onSizeChanged() {
-    let screenH: Number = window.screen.availHeight;
     let screenW: Number = window.screen.availWidth;
     const header: any = document.getElementById('rbHeader');
     
-    if(screenW <= 767){
+    if (screenW <= 767) {
       this.sizeContainer = '330px';
       this.sizeSWContainer = '250px';
     } else {
@@ -68,7 +72,7 @@ export default class extends Vue {
 
   onSampleFilterChanged() {
     const filterText = this.samplesTextFilter;
-    let filterResult = this.samples.filter(function(elem: any) {return elem.title.toLowerCase().includes(filterText.toLowerCase())});
+    let filterResult = this.samples.filter(function(elem: any) { return elem.title.toLowerCase().includes(filterText.toLowerCase()); });
     
     if (filterResult.length < this.samples.length ) {
       this.sampleFilter = filterResult;
