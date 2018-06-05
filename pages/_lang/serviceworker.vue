@@ -23,13 +23,13 @@
           <p>{{ $t('serviceworker.download_link') }}
           <a class="l-generator-link" href="https://github.com/pwa-builder/serviceworkers" target="_blank">GitHub</a>.</p>
         </div>
-        <div class="serviceworker-preview pure-u-1 pure-u-md-1-2 generator-section" id="codeBox">
-          <CodeViewer id="codeViewer1" :size="viewerSize" :code="webPreview" :title="$t('serviceworker.code_preview_web')">
+        <div class="serviceworker-preview pure-u-1 pure-u-md-1-2 generator-section" id="codeBox" ref="codeBox">
+          <CodeViewer id="codeViewer1" ref="codeViewer1" :size="viewerSize" :code="webPreview" :title="$t('serviceworker.code_preview_web')">
             <nuxt-link :to="$i18n.path('publish')" class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})">
             {{ $t("serviceworker.next_step") }}
             </nuxt-link>
           </CodeViewer>
-          <CodeViewer id="codeViewer2" :size="viewerSize" :code="serviceworkerPreview" :title="$t('serviceworker.code_preview_serviceworker')"></CodeViewer>
+          <CodeViewer id="codeViewer2" ref="codeViewer2" :size="viewerSize" :code="serviceworkerPreview" :title="$t('serviceworker.code_preview_serviceworker')"></CodeViewer>
         </div>
       </div>
     </div>
@@ -117,12 +117,15 @@ export default class extends Vue {
   }
 
   changeRBListSize() {
-    const codeBox: any = document.getElementById('codeBox');
-    const codeViewer1: any = document.getElementById('codeViewer1');
-    const codeViewer2: any = document.getElementById('codeViewer2');
+
+    let codeBox: any = this.$refs.codeBox;
+    let codeViewer1: any = this.$refs.codeViewer1;
+    let codeViewer2: any = this.$refs.codeViewer2;
+    if (codeBox) {
+      if (codeBox.clientHeight > 20) {
+        this.sampleSize = (codeViewer1.clientHeight + codeViewer2.clientHeight) + 'px';
+      }
     
-    if (codeBox.offsetHeight > 20) {
-      this.sampleSize = (codeViewer1.offsetHeight + codeViewer2.offsetHeight) + 'px';
     }
   }
 }

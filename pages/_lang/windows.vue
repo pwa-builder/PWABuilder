@@ -11,7 +11,7 @@
           <RadioButtonSamples :title="$t('windows.title')" :size="sampleSize" :samples="samples" @sampleChanged="SelectedSampleChanged"/>
         </div>
         <div class="pure-u-1 pure-u-md-2-3">
-          <div class="tab_container" id='codeContainer' >
+          <div class="tab_container" id='codeContainer' ref="codeContainer" >
             <input id="tab1" type="radio" name="tabs" class="tab_input" @change="changeRBListSize" checked>
             <label for="tab1" class="tab_label"><i class="fa fa-code"></i><span> Usage</span></label>
             <input id="tab2" type="radio" name="tabs" class="tab_input" @change="changeRBListSize">
@@ -115,8 +115,10 @@ export default class extends Vue {
   }
 
   changeRBListSize() {
-    const codeContainer: any = document.getElementById('codeContainer');
-    this.sampleSize = codeContainer.offsetHeight + 'px';
+    const codeContainer: any = this.$refs.codeContainer;
+    if (codeContainer) {
+      this.sampleSize = codeContainer.clientHeight + 'px';
+    }
   }
 
   async download() {
