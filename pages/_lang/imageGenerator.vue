@@ -34,14 +34,14 @@
                 <label class="pwa-generator-label">Background Color</label>
                 <div class="pwa-generator-options">
                   <label class="pwa-generator-label">
-                    <input type="radio" name="colorOption" class="colorOption" checked="checked" value="0" />
+                    <input type="radio" name="colorOption" class="colorOption" checked="checked" @click="clickColorOption" value="0" />
                     Transparent
                   </label>
                   <label class="pwa-generator-label">
-                    <input type="radio" name="colorOption" class="colorOption" value="1" />
+                    <input type="radio" name="colorOption" class="colorOption" value="1" @click="clickColorOption"/>
                     Custom color
                   </label>  
-                  <div class="colorpickers">
+                  <div class="colorpickers" :style="{ display: displayColorPicker}">
                     <input class="pwa-generator-input pwa-generator-input--tiny input-color" type="color" />
                     <input class="pwa-generator-input pwa-generator-input--small pwa-generator-input--hassmall" placeholder="#000000" name="color" id="color" type="text" />
                     <input type="hidden" name="colorChanged" id="colorChanged" value="0" />
@@ -131,7 +131,8 @@ export default {
       labelFileName: 'Choose File',
       isLoading: false,
       isAllChecked: true,
-      platforms: ['windows10', 'windows', 'android', 'ios', 'chrome', 'firefox'], 
+      platforms: ['windows10', 'windows', 'android', 'ios', 'chrome', 'firefox'],
+      displayColorPicker: 'none'
     };
   },
 
@@ -161,6 +162,13 @@ export default {
           this.platforms = ['windows10', 'windows', 'android', 'ios', 'chrome', 'firefox'];
           this.isAllChecked = true;
         }
+    },
+    clickColorOption(obj) {
+      if (obj.target.value === '1') {
+        this.displayColorPicker = 'block';
+      } else {
+        this.displayColorPicker = 'none';
+      }
     }
   },
   computed: {

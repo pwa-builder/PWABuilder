@@ -1,11 +1,13 @@
 <template>
 <section>
+  <div id="containerSpinner" :style="{ display: spinnerDisplay }">
+      <div class="lds-ring" id='loadingSpinner' :style="{ display: spinnerDisplay }"><div></div><div></div><div></div><div></div></div>
+    </div>
   <GeneratorMenu />
-
   <div v-if="manifest$">
     <div class="l-generator-step">
       <div class="l-generator-semipadded">
-        <div class="l-generator-form pure-u-1 pure-u-md-1-2">
+        <div class="l-generator-form pure-u-1 pure-u-md-1-2 generateForm">
           <h4 class="l-generator-subtitle">
             {{ $t("generate.subtitle") }}
           </h4>
@@ -223,6 +225,7 @@ export default class extends Vue {
   public iconCheckMissing = true;
   private iconFile: File | null = null;
   public error: string | null = null;
+  spinnerDisplay = 'none';
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
@@ -264,8 +267,10 @@ export default class extends Vue {
     }
   }
 
-  public onClickRemoveIcon(icon: generator.Icon): void {
-    this.removeIcon(icon);
+  public async onClickRemoveIcon(icon: generator.Icon) {
+    this.showSpinner(true);
+    await this.removeIcon(icon);
+    this.showSpinner(false);
   }
 
   public onClickAddIcon(): void {
@@ -360,6 +365,15 @@ export default class extends Vue {
   public onCancelIconModal(): void {
     this.iconFile = null;
   }
+
+  public showSpinner(show: boolean) {
+    if (show) {
+      this.spinnerDisplay = 'block';
+    } else {
+      this.spinnerDisplay = 'none';
+    }
+  }
+
 }
 </script>
 
@@ -369,6 +383,71 @@ export default class extends Vue {
 .generate {
   &-code {
     margin-top: -2rem;
+  }
+}
+
+.generateForm {
+  margin-bottom: 3rem;
+}
+
+/* CSS Loading Spinner */
+#loadingSpinner {
+  height: 64px;
+  left: 50%;
+  margin: -75px 0 0 -75px;
+  top: 50%;
+  width: 64px;
+  z-index: 2;
+}
+
+#containerSpinner {
+  background-color: rgba(43, 43, 43, .7);
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  z-index: 1;
+}
+
+.lds-ring {
+  display: inline-block;
+  height: 64px;
+  position: relative;
+  width: 64px;
+}
+
+.lds-ring div {
+  animation: lds-ring 1.2s cubic-bezier(1, 1, 1, 1) infinite;
+  border: 6px solid #FFFFFF;
+  border-color: #FFFFFF transparent transparent transparent;
+  border-radius: 50%;
+  box-sizing: border-box;
+  display: block;
+  height: 51px;
+  margin: 6px;
+  position: absolute;
+  width: 51px;
+}
+
+.lds-ring div:nth-child(1) {
+  animation-delay: -.45s;
+}
+
+.lds-ring div:nth-child(2) {
+  animation-delay: -.3s;
+}
+
+.lds-ring div:nth-child(3) {
+  animation-delay: -.15s;
+}
+
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
   }
 }
 </style>

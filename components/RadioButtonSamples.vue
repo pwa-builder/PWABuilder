@@ -5,7 +5,7 @@
         <div class="l-generator-subtitle subtitle">{{ title }}</div>
         <div><input type="text" v-model="samplesTextFilter" @keydown="onSampleFilterChanged" placeholder="Search"/></div>
     </div>
-    <div class="swContainer" id='swContainer':style="{ height: sizeSWContainer }" >
+    <div class="swContainer" id='swContainer' :style="{ height: sizeSWContainer }" >
       <div class="l-generator-field l-generator-field--padded checkbox" v-for="sample in sampleFilter" :key="sample.id">
         <label class="l-generator-label">
                     <input type="radio" :value="sample" v-model="selectedSample$" :disabled="sample.disable" > {{sample.title}} <span v-if="sample.disable">(coming soon)</span>
@@ -25,12 +25,6 @@ import * as windowsStore from '~/store/modules/windows';
 
 @Component()
 export default class extends Vue {
-  error: any;
-  selectedSample$: windowsStore.Sample | null = null;
-  samplesTextFilter: String = '';
-  sampleFilter: windowsStore.Sample[];
-  sizeSWContainer: String = 'auto';
-  sizeContainer: String = '';
   
   @Prop({ type: Array, default: null })
   public samples;
@@ -41,7 +35,15 @@ export default class extends Vue {
   @Prop({ type: String, default: '' })
   public title;
 
-  mounted() {
+  error: any;
+  sampleFilter: windowsStore.Sample[];
+  samplesTextFilter: String = '';
+  selectedSample$: windowsStore.Sample | null = null;
+  sizeContainer: String = '';
+  sizeSWContainer: String = 'auto';
+  rbHeader: any;
+
+  created() {
     this.sampleFilter = this.samples;
     this.sizeContainer = this.size;
   }
