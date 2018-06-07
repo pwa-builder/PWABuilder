@@ -42,9 +42,9 @@
                     Custom color
                   </label>  
                   <div class="colorpickers" :style="{ display: displayColorPicker}">
-                    <input class="pwa-generator-input pwa-generator-input--tiny input-color" type="color" />
-                    <input class="pwa-generator-input pwa-generator-input--small pwa-generator-input--hassmall" placeholder="#000000" name="color" id="color" type="text" />
-                    <input type="hidden" name="colorChanged" id="colorChanged" value="0" />
+                    <input class="pwa-generator-input pwa-generator-input--tiny input-color" type="color" @change="colorPickerChanged"/>
+                    <input class="pwa-generator-input pwa-generator-input--small pwa-generator-input--hassmall" placeholder="#000000" ref='colorHex' name="color" id="color" type="text" />
+                    <input type="hidden" name="colorChanged" id="colorChanged" value="0" ref='colorChanged' />
                     <small class="pwa-generator-small">Choose a color for the background (leave blank to default to the pixel at the top left)</small>
                   </div>
                 </div>
@@ -168,6 +168,15 @@ export default {
         this.displayColorPicker = 'block';
       } else {
         this.displayColorPicker = 'none';
+      }
+    },
+    colorPickerChanged(obj) {
+      if (obj.target.value != '') {
+        this.$refs.colorHex.value = obj.target.value;
+        this.$refs.colorChanged.value = 1;
+      } else {
+        this.$refs.colorHex.value = '';
+        this.$refs.colorChanged.value = 0;
       }
     }
   },
