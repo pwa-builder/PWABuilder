@@ -21,7 +21,7 @@
 
             <div class="pure-g l-breath">
               <div class="l-generator-wrapper pure-u-3-5">
-                <button type="submit" class="get-started pwa-button isEnabled next-step" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/build/manifest-scan' })">
+                <button type="submit" class="get-started pwa-button isEnabled next-step" @click=" $awa( { 'referrerUri': `${referrerUri}/build/manifest-scan` })">
                   {{ $t('generator.start') }}
                   <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm"/>
                 </button>
@@ -38,7 +38,7 @@
               </div>
 
               <div class="l-generator-wrapper pure-u-1">
-                <button @click="skipCheckUrl(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/skip/service-worker' })"
+                <button @click="skipCheckUrl(); $awa( { 'referrerUri': `${referrerUri}/skip/service-worker` })"
                   class="pwa-button pwa-button--simple">
                   {{ $t('generator.skip') }}
                 </button>
@@ -67,6 +67,7 @@ import * as generator from '~/store/modules/generator';
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorAction = namespace(generator.name, Action);
+const referrerUri = process.env.referrerUri;
 
 @Component({
   components: {
