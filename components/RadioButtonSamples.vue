@@ -1,17 +1,18 @@
 <template>
-  <section class="section">
+  <section class="section" >
+    <div class="containerList" :style="{ height: sizeContainer }" style="margin-bottom: 10px;">
     <div id="rbHeader" class="rbHeader"> 
-      <div> 
-        <input type="text" v-model="samplesTextFilter" @keydown="onSampleFilterChanged" placeholder="Search"/>
-      </div>
+        <div class="l-generator-subtitle subtitle">{{ title }}</div>
+        <div><input type="text" v-model="samplesTextFilter" @keydown="onSampleFilterChanged" placeholder="Search"/></div>
     </div>
-    <div class="swContainer" id='swContainer' :style="{ height: size }">
+    <div class="swContainer" id='swContainer' :style="{ height: sizeSWContainer }" >
       <div class="l-generator-field l-generator-field--padded checkbox" v-for="sample in sampleFilter" :key="sample.id">
         <label class="l-generator-label">
-          <input type="radio" :value="sample" v-model="selectedSample$"> {{sample.title}}
+                    <input type="radio" :value="sample" v-model="selectedSample$" :disabled="sample.disable" > {{sample.title}} <span v-if="sample.disable">(coming soon)</span>
         </label>
         <span class="l-generator-description">{{ sample.description }}</span>
       </div>
+    </div>
     </div>
   </section>
 </template>
@@ -24,17 +25,28 @@ import * as windowsStore from '~/store/modules/windows';
 
 @Component()
 export default class extends Vue {
-  error: any;
-  selectedSample$: windowsStore.Sample | null = null;
-  samplesTextFilter: String = '';
-  rbHeader: any;
-  sampleFilter = this.samples;
   
   @Prop({ type: Array, default: null })
   public samples;
 
   @Prop({ type: String, default: 'auto' })
   public size;
+
+  @Prop({ type: String, default: '' })
+  public title;
+
+  error: any;
+  sampleFilter: windowsStore.Sample[];
+  samplesTextFilter: String = '';
+  selectedSample$: windowsStore.Sample | null = null;
+  sizeContainer: String = '';
+  sizeSWContainer: String = 'auto';
+  rbHeader: any;
+
+  created() {
+    this.sampleFilter = this.samples;
+    this.sizeContainer = this.size;
+  }
 
   @Watch('samples')
   onSamplesChanged() {
@@ -47,9 +59,22 @@ export default class extends Vue {
    this.$emit('sampleChanged', this.selectedSample$);
   }
 
+  @Watch('size')
+  onSizeChanged() {
+    let screenW: Number = window.screen.availWidth;
+    const header: any = document.getElementById('rbHeader');
+    
+    if (screenW <= 767) {
+      this.sizeContainer = '330px';
+      this.sizeSWContainer = '250px';
+    } else {
+      this.sizeSWContainer = (parseInt(this.size) - header.offsetHeight) + 'px'; 
+    }
+  }
+
   onSampleFilterChanged() {
     const filterText = this.samplesTextFilter;
-    let filterResult = this.samples.filter(function(elem: any) {return elem.title.toLowerCase().includes(filterText.toLowerCase())});
+    let filterResult = this.samples.filter(function(elem: any) { return elem.title.toLowerCase().includes(filterText.toLowerCase()); });
     
     if (filterResult.length < this.samples.length ) {
       this.sampleFilter = filterResult;
@@ -61,13 +86,23 @@ export default class extends Vue {
 </script>
 
 <style>
+@media only screen and (max-width: 767px) {
+  .containerList {
+    height: 330px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .swContainer {
+    height: 250px !important;
+  }
+}
 
 .subtitle {
   margin-bottom: 3%;
 }
 
 .rbHeader {
-  height: 5em;
+  padding-bottom: 5px;
 }
 
 .section {
@@ -76,5 +111,6 @@ export default class extends Vue {
 
 .swContainer {
   overflow-y: auto;
+  padding-bottom: 10px;
 }
 </style>

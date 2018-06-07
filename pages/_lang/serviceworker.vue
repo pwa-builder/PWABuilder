@@ -4,13 +4,12 @@
     <div class="l-generator-step">
       <div class="l-generator-semipadded pure-g">
         <div class="pure-u-1 pure-u-md-1-2 generator-section service-workers">
-          <div class="l-generator-subtitle"> {{ $t('serviceworker.title') }} </div>
           <form @submit.prevent="download" @keydown.enter.prevent="download">
-            <div class="l-generator-field l-generator-field--padded checkbox">
-              <RadioButtonSamples :size="sampleSize" :samples="serviceworkers" @sampleChanged="SelectedSampleChanged"/>
+            <div class="l-generator-field l-generator-field--padded checkbox" style="margin-top: -2rem;">
+              <RadioButtonSamples :title="$t('serviceworker.title')" :size="sampleSize" :samples="serviceworkers" @sampleChanged="SelectedSampleChanged"/>
             </div>
             <div class="l-generator-wrapper pure-u-2-5">
-              <button @click=" $awa( { 'uri': 'https://preview.pwabuilder.com/download/serviceworker' })" class="pwa-button pwa-button--simple isEnabled">
+              <button @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/download/serviceworker' })" class="pwa-button pwa-button--simple isEnabled">
                 <span v-if="!isBuilding">{{ $t('serviceworker.download') }}</span>
                 <span v-if="isBuilding">{{ $t('serviceworker.building') }}
                   <Loading :active="true" class="u-display-inline_block u-margin-left-sm" />
@@ -24,18 +23,18 @@
           <p>{{ $t('serviceworker.download_link') }}
           <a class="l-generator-link" href="https://github.com/pwa-builder/serviceworkers" target="_blank">GitHub</a>.</p>
         </div>
-        <div class="serviceworker-preview pure-u-1 pure-u-md-1-2 generator-section" id="codeBox">
-          <CodeViewer :size="viewerSize" :code="webPreview" :title="$t('serviceworker.code_preview_web')">
-            <nuxt-link :to="$i18n.path('publish')" class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" @click=" $awa( { 'uri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})">
+        <div class="serviceworker-preview pure-u-1 pure-u-md-1-2 generator-section" id="codeBox" ref="codeBox">
+          <CodeViewer id="codeViewer1" ref="codeViewer1" :size="viewerSize" :code="webPreview" :title="$t('serviceworker.code_preview_web')">
+            <nuxt-link :to="$i18n.path('publish')" class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})">
             {{ $t("serviceworker.next_step") }}
             </nuxt-link>
           </CodeViewer>
-          <CodeViewer :size="viewerSize" :code="serviceworkerPreview" :title="$t('serviceworker.code_preview_serviceworker')"></CodeViewer>
+          <CodeViewer id="codeViewer2" ref="codeViewer2" :size="viewerSize" :code="serviceworkerPreview" :title="$t('serviceworker.code_preview_serviceworker')"></CodeViewer>
         </div>
       </div>
     </div>
     <div class="l-generator-buttons l-generator-buttons--centered">
-      <nuxt-link :to="$i18n.path('publish')" class="pwa-button" @click=" $awa( { 'uri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})">{{ $t("serviceworker.next_step") }}</nuxt-link>
+      <nuxt-link :to="$i18n.path('publish')" class="pwa-button" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})">{{ $t("serviceworker.next_step") }}</nuxt-link>
     </div>
     <StartOver />
     <TwoWays/>
@@ -73,10 +72,9 @@ export default class extends Vue {
   public isBuilding = false;
   public serviceworker$: number | number = 1;
   public serviceworkers$: ServiceWorker[];
-  public error: string | null = null;
+  public error: string | string = '';
   public viewerSize = '25rem';
-  public sampleSize = '53rem';
-  
+  public sampleSize = '';
 
 
   @ServiceworkerState serviceworkers: ServiceWorker[];
@@ -91,6 +89,7 @@ export default class extends Vue {
 
   async created() {
     await this.getServiceworkers();
+    await this.changeRBListSize();
   }
 
   public async download(): Promise<void> {
@@ -104,7 +103,7 @@ export default class extends Vue {
       window.location.href = this.archive;
     }
   
-    this.$awa( { 'uri': 'https://preview.pwabuilder.com/serviceworker-download' });
+    this.$awa( { 'referrerUri': 'https://preview.pwabuilder.com/serviceworker-download' });
     this.isBuilding = false;
   }
   async SelectedSampleChanged(sample) {
@@ -118,12 +117,15 @@ export default class extends Vue {
   }
 
   changeRBListSize() {
-    const codeBox: any = document.getElementById('codeBox');
-    let body: any = document.querySelector('body');
-    let fontSize = window.getComputedStyle(body).getPropertyValue('font-size');
+
+    let codeBox: any = this.$refs.codeBox;
+    let codeViewer1: any = this.$refs.codeViewer1;
+    let codeViewer2: any = this.$refs.codeViewer2;
+    if (codeBox) {
+      if (codeBox.clientHeight > 20) {
+        this.sampleSize = (codeViewer1.clientHeight + codeViewer2.clientHeight) + 'px';
+      }
     
-    if (codeBox.offsetHeight > 20) {
-      this.sampleSize = (codeBox.height / parseFloat(fontSize)) + 'px';
     }
   }
 }
@@ -135,6 +137,15 @@ export default class extends Vue {
 .serviceworker {
   &-preview {
     margin-top: -2rem;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .serviceworker {
+    &-preview {
+      margin-bottom: 2rem;
+      margin-top: 5px;
+    }
   }
 }
 </style>
