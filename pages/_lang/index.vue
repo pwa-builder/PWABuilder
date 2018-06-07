@@ -21,7 +21,7 @@
 
             <div class="pure-g l-breath">
               <div class="l-generator-wrapper pure-u-3-5">
-                <button type="submit" class="get-started pwa-button isEnabled next-step" @keydown.enter.prevent="checkUrlAndGenerate" @click.prevent="checkUrlAndGenerate(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/build/manifest-scan' })">
+                <button type="submit" class="get-started pwa-button isEnabled next-step" @keydown.enter.prevent="checkUrlAndGenerate" @click.prevent="checkUrlAndGenerate(); $awa( { 'referrerUri': `${referrerUri}/build/manifest-scan` })">
                   {{ $t('generator.start') }}
                   <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm"/>
                 </button>
@@ -29,7 +29,7 @@
 
               <div class="pure-u-2-5">
               </div>
-                
+             
               <div class="pure-u-1">
                 <p class="l-generator-error" v-if="error">
                   <span class="icon-exclamation"></span>
@@ -38,7 +38,7 @@
               </div>
 
               <div class="l-generator-wrapper pure-u-1">
-                <button @click.prevent="skipCheckUrl(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/skip/service-worker' })"
+                <button @click.prevent="skipCheckUrl(); $awa( { 'referrerUri': `${referrerUri}/skip/service-worker` })"
                   class="pwa-button pwa-button--simple">
                   {{ $t('generator.skip') }}
                 </button>
@@ -67,6 +67,7 @@ import * as generator from '~/store/modules/generator';
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorAction = namespace(generator.name, Action);
+const referrerUri = process.env.referrerUri;
 
 @Component({
   components: {

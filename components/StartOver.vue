@@ -1,6 +1,6 @@
 <template>
 <div class="start_over">
-  <button @click="reset();$awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/generator-startover-trigger' });" class="pwa-button pwa-button--simple">
+  <button @click="reset();$awa( { 'referrerUri': `${referrerUri}/manifest/generator-startover-trigger` });" class="pwa-button pwa-button--simple">
     {{ $t('publish.start_over') }}
   </button>
 </div>
@@ -14,6 +14,7 @@ import Component from 'nuxt-class-component';
 import * as publish from '~/store/modules/publish';
 
 const PublishAction = namespace(publish.name, Action);
+const referrerUri = process.env.referrerUri;
 
 @Component()
 export default class extends Vue {
