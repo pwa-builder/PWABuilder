@@ -21,7 +21,6 @@ import * as publish from '~/store/modules/publish';
 
 const PublishState = namespace(publish.name, State);
 const PublishAction = namespace(publish.name, Action);
-const referrerUri = process.env.referrerUri;
 
 @Component({
   components: {
@@ -30,6 +29,8 @@ const referrerUri = process.env.referrerUri;
 })
 export default class extends Vue {
   public isReady = true;
+
+  public referrerUri = process.env.referrerUri;
 
   @Prop({ type: String, default: '' })
   public readonly platform: string;

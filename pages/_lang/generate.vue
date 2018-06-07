@@ -206,7 +206,6 @@ import * as generator from '~/store/modules/generator';
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
 const GeneratorGetters = namespace(generator.name, Getter);
-const referrerUri = process.env.referrerUri;
 
 @Component({
   components: {
@@ -227,6 +226,8 @@ export default class extends Vue {
   private iconFile: File | null = null;
   public error: string | null = null;
   spinnerDisplay = 'none';
+
+  public referrerUri = process.env.referrerUri;
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];

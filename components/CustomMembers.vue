@@ -50,7 +50,6 @@ import * as generator from '~/store/modules/generator';
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
-const referrerUri = process.env.referrerUri;
 
 @Component()
 export default class extends Vue {
@@ -58,6 +57,8 @@ export default class extends Vue {
   public name: string | null = null;
   public value: string | null = null;
   public error: string | null = null;
+
+  public referrerUri = process.env.referrerUri;
 
   @GeneratorState members: generator.CustomMember[];
 
