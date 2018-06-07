@@ -1,11 +1,13 @@
 <template>
 <section>
+  <div id="containerSpinner" :style="{ display: spinnerDisplay }">
+      <div class="lds-ring" id='loadingSpinner' :style="{ display: spinnerDisplay }"><div></div><div></div><div></div><div></div></div>
+    </div>
   <GeneratorMenu />
-
   <div v-if="manifest$">
     <div class="l-generator-step">
       <div class="l-generator-semipadded">
-        <div class="l-generator-form pure-u-1 pure-u-md-1-2">
+        <div class="l-generator-form pure-u-1 pure-u-md-1-2 generateForm">
           <h4 class="l-generator-subtitle">
             {{ $t("generate.subtitle") }}
           </h4>
@@ -115,7 +117,7 @@
               <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#display-member" target="_blank">[?]</a>
             </label>
             <select class="l-generator-input l-generator-input--select" v-model="manifest$.display" @change="onChangeSimpleInput()">
-              <option v-for="display in displaysNames" :value="display" :key="display">{{display}}</option>
+              <option v-for="display in displaysNames" :value="display.name" :key="display.code">{{display.name}}</option>
             </select>
           </div>
           <div class="l-generator-field">
@@ -123,15 +125,15 @@
               <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#orientation-member" target="_blank">[?]</a>
             </label>
             <select class="l-generator-input l-generator-input--select" v-model="manifest$.orientation" @change="onChangeSimpleInput()">
-              <option v-for="orientation in orientationsNames" :value="orientation" :key="orientation">{{orientation}}</option>
+              <option v-for="orientation in orientationsNames" :value="orientation.name" :key="orientation.code">{{orientation.name}}</option>
             </select>
           </div>
           <div class="l-generator-field">
             <label class="l-generator-label">{{ $t("generate.language") }}
               <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#lang-member" target="_blank">[?]</a>
             </label>
-            <select class="l-generator-input l-generator-input--select" v-model="manifest$.lang">
-              <option v-for="language in languagesNames" :value="language" :key="language" @change="onChangeSimpleInput()">{{language}}</option>
+            <select class="l-generator-input l-generator-input--select" v-model="manifest$.lang" @change="onChangeSimpleInput()">
+              <option v-for="language in languagesNames" :value="language.code" :key="language.code"  >{{language.name}}</option>
             </select>
           </div>
           <div>
@@ -224,6 +226,7 @@ export default class extends Vue {
   public iconCheckMissing = true;
   private iconFile: File | null = null;
   public error: string | null = null;
+  spinnerDisplay = 'none';
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
@@ -231,9 +234,9 @@ export default class extends Vue {
   @GeneratorState suggestions: string[];
   @GeneratorState warnings: string[];
 
-  @Getter orientationsNames: string[];
-  @Getter languagesNames: string[];
-  @Getter displaysNames: string[];
+  @Getter orientationsNames: generator.StaticContent[];
+  @Getter languagesNames: generator.StaticContent[];
+  @Getter displaysNames: generator.StaticContent[];
 
   @GeneratorActions removeIcon;
   @GeneratorActions addIconFromUrl;
@@ -265,8 +268,10 @@ export default class extends Vue {
     }
   }
 
-  public onClickRemoveIcon(icon: generator.Icon): void {
-    this.removeIcon(icon);
+  public async onClickRemoveIcon(icon: generator.Icon) {
+    this.showSpinner(true);
+    await this.removeIcon(icon);
+    this.showSpinner(false);
   }
 
   public onClickAddIcon(): void {
@@ -361,6 +366,15 @@ export default class extends Vue {
   public onCancelIconModal(): void {
     this.iconFile = null;
   }
+
+  public showSpinner(show: boolean) {
+    if (show) {
+      this.spinnerDisplay = 'block';
+    } else {
+      this.spinnerDisplay = 'none';
+    }
+  }
+
 }
 </script>
 
@@ -370,6 +384,71 @@ export default class extends Vue {
 .generate {
   &-code {
     margin-top: -2rem;
+  }
+}
+
+.generateForm {
+  margin-bottom: 3rem;
+}
+
+/* CSS Loading Spinner */
+#loadingSpinner {
+  height: 64px;
+  left: 50%;
+  margin: -75px 0 0 -75px;
+  top: 50%;
+  width: 64px;
+  z-index: 2;
+}
+
+#containerSpinner {
+  background-color: rgba(43, 43, 43, .7);
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  z-index: 1;
+}
+
+.lds-ring {
+  display: inline-block;
+  height: 64px;
+  position: relative;
+  width: 64px;
+}
+
+.lds-ring div {
+  animation: lds-ring 1.2s cubic-bezier(1, 1, 1, 1) infinite;
+  border: 6px solid #FFFFFF;
+  border-color: #FFFFFF transparent transparent transparent;
+  border-radius: 50%;
+  box-sizing: border-box;
+  display: block;
+  height: 51px;
+  margin: 6px;
+  position: absolute;
+  width: 51px;
+}
+
+.lds-ring div:nth-child(1) {
+  animation-delay: -.45s;
+}
+
+.lds-ring div:nth-child(2) {
+  animation-delay: -.3s;
+}
+
+.lds-ring div:nth-child(3) {
+  animation-delay: -.15s;
+}
+
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
   }
 }
 </style>

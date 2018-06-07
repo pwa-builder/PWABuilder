@@ -12,7 +12,7 @@
         </header>
 
         <div class="l-generator-form">
-          <form @submit.prevent="checkUrlAndGenerate" @keydown.enter.prevent="checkUrlAndGenerate">
+          <form >
             <div class="l-generator-field">
               <label class="l-generator-label" for="siteUrl">{{ $t('generator.url') }}</label>
               <input class="l-generator-input" :placeholder="$t('generator.placeholder_url')" name="siteUrl" id="siteUrl" type="text" ref="url"
@@ -21,7 +21,7 @@
 
             <div class="pure-g l-breath">
               <div class="l-generator-wrapper pure-u-3-5">
-                <button type="submit" class="get-started pwa-button isEnabled next-step" @click=" $awa( { 'referrerUri': `${referrerUri}/build/manifest-scan` })">
+                <button type="submit" class="get-started pwa-button isEnabled next-step" @keydown.enter.prevent="checkUrlAndGenerate" @click.prevent="checkUrlAndGenerate(); $awa( { 'referrerUri': `${referrerUri}/build/manifest-scan` })">
                   {{ $t('generator.start') }}
                   <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm"/>
                 </button>
@@ -29,7 +29,7 @@
 
               <div class="pure-u-2-5">
               </div>
-                
+             
               <div class="pure-u-1">
                 <p class="l-generator-error" v-if="error">
                   <span class="icon-exclamation"></span>
@@ -38,7 +38,7 @@
               </div>
 
               <div class="l-generator-wrapper pure-u-1">
-                <button @click="skipCheckUrl(); $awa( { 'referrerUri': `${referrerUri}/skip/service-worker` })"
+                <button @click.prevent="skipCheckUrl(); $awa( { 'referrerUri': `${referrerUri}/skip/service-worker` })"
                   class="pwa-button pwa-button--simple">
                   {{ $t('generator.skip') }}
                 </button>
