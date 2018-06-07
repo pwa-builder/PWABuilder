@@ -36,8 +36,6 @@ import { Prop } from 'vue-property-decorator';
 import Component from 'nuxt-class-component';
 import Loading from '~/components/Loading.vue';
 
-const referrerUri = process.env.referrerUri;
-
 @Component({
   components: {
     Loading
@@ -46,6 +44,8 @@ const referrerUri = process.env.referrerUri;
 export default class extends Vue {
   public showModal = false;
   private loadingCount = 0;
+
+  public referrerUri = process.env.referrerUri;
 
   @Prop({ type: String, default: '' })
   public title: string;

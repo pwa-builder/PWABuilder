@@ -67,7 +67,6 @@ import * as generator from '~/store/modules/generator';
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorAction = namespace(generator.name, Action);
-const referrerUri = process.env.referrerUri;
 
 @Component({
   components: {
@@ -80,6 +79,7 @@ export default class extends Vue {
   public url$: string | null = null;
   public generatorReady = true;
   public error: string | null = null;
+  public referrerUri = process.env.referrerUri;
 
   @GeneratorState url: string;
   @GeneratorAction updateLink;

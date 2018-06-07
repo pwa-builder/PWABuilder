@@ -32,8 +32,10 @@
 import Vue from 'vue';
 import Component from 'nuxt-class-component';
 
-const referrerUri = process.env.referrerUri;
+
 
 @Component()
-export default class extends Vue {}
+export default class extends Vue {
+  public referrerUri = process.env.referrerUri;
+}
 </script>

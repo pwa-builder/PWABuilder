@@ -70,7 +70,6 @@ import * as generator from '~/store/modules/generator';
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
-const referrerUri = process.env.referrerUri;
 
 @Component()
 export default class extends Vue {
@@ -80,6 +79,8 @@ export default class extends Vue {
   public id: string | null = null;
   public prefer_related_applications = false;
   public error: string | null = null;
+
+  public referrerUri = process.env.referrerUri;
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorActions addRelatedApplication;

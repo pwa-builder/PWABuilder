@@ -14,11 +14,12 @@ import Component from 'nuxt-class-component';
 import * as publish from '~/store/modules/publish';
 
 const PublishAction = namespace(publish.name, Action);
-const referrerUri = process.env.referrerUri;
 
 @Component()
 export default class extends Vue {
   @PublishAction resetAppData;
+
+  public referrerUri = process.env.referrerUri;
 
   public reset(): void {
     this.resetAppData();

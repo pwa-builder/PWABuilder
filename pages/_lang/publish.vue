@@ -104,7 +104,6 @@ import * as publish from '~/store/modules/publish';
 
 const PublishState = namespace(publish.name, State);
 const PublishAction = namespace(publish.name, Action);
-const referrerUri = process.env.referrerUri;
 
 @Component({
   components: {
@@ -122,6 +121,8 @@ export default class extends Vue {
     package: null,
     version: null
   };
+
+  public referrerUri = process.env.referrerUri;
 
   @PublishState status: boolean;
   @PublishState appXLink: string;
