@@ -33,7 +33,7 @@ export const helpers = {
 
     prepareIconsUrls(icons: Icon[], baseUrl: string) {
         return icons.map(icon => {
-            if (!icon.src.includes('http')) {
+            if (!icon.src.includes('http') && !icon.src.includes('data:image')) {
                 //remove non-base scope path for sites like mastodon and billthis
                 const pathArray = baseUrl.split( '/' );
                 const protocol = pathArray[0];
