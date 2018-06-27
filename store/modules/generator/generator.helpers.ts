@@ -32,17 +32,32 @@ export const helpers = {
     },
 
     prepareIconsUrls(icons: Icon[], baseUrl: string) {
-        return icons.map(icon => {
-            if (!icon.src.includes('http') && !icon.src.includes('data:image')) {
-                //remove non-base scope path for sites like mastodon and billthis
-                const pathArray = baseUrl.split( '/' );
-                const protocol = pathArray[0];
-                const host = pathArray[2];
-                baseUrl = protocol + '//' + host; 
-                //remove posible trailing/leading slashes
-                icon.src = `${baseUrl.replace(/\/$/, '')}/${icon.src.replace(/^\/+/g, '')}`;
+        var getLocation = function(href) {
+            var a = document.createElement("a");
+            a.href = href;
+            return a;
+        };
+        var getBaseURL = function(href) {
+            var l = getLocation(href);
+            var pathnames = l.pathname.split('/');
+            var pathsNumber = pathnames.length;
+            // Removing possible filename at the end of the URL
+            if (pathnames[pathnames.length-1].indexOf('.') !== -1) {
+                pathsNumber--; 
             }
+            var finalPathname = "";
+            for (var i=0; i<pathsNumber; i++) {
+                finalPathname += pathnames[i];
+            }
+            return l.origin + '/' + finalPathname; 
+        };
+        var parsedBaseUrl = getBaseURL(baseUrl);
+        return icons.map(icon => {
+            if (!icon.src.includes('http')) {
 
+                //remove posible trailing/leading slashes
+                icon.src = `${parsedBaseUrl}/${icon.src.replace(/^\/+/g, '')}`;
+            }
             return icon;
         });
     },
