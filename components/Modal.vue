@@ -16,11 +16,11 @@
         <slot/>
 
         <div class="modal-buttons">
-          <button class="l-generator-space_right pwa-button pwa-button--simple pwa-button--brand" @click="onClickSubmit();  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
+          <button class="l-generator-space_right pwa-button pwa-button--simple pwa-button--brand" @click="onClickSubmit();  $awa( { 'referrerUri': `${referrerUri}/manifest/add-member` });">
             {{$t("modal.submit")}}
             <Loading :active="isLoading" class="u-display-inline_block u-margin-left-sm" />
           </button>
-          <button class="pwa-button pwa-button--simple" @click="onClickCancel(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
+          <button class="pwa-button pwa-button--simple" @click="onClickCancel(); $awa( { 'referrerUri': `${referrerUri}/manifest/add-member` });">
             {{$t("modal.cancel")}}
           </button>
         </div>
@@ -44,6 +44,8 @@ import Loading from '~/components/Loading.vue';
 export default class extends Vue {
   public showModal = false;
   private loadingCount = 0;
+
+  public referrerUri = process.env.referrerUri;
 
   @Prop({ type: String, default: '' })
   public title: string;

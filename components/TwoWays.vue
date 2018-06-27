@@ -9,7 +9,7 @@
       <div class="pwa-infobox-box">
         <img class="pwa-infobox-logo" src="~/assets/images/logo_small.png" alt="Small PWA Builder logo">
         <h4 class="pwa-infobox-subtitle">{{ $t('twoways.web_based') }}</h4>
-        <nuxt-link to="/" class="pwa-infobox-action" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/' }); ">
+        <nuxt-link to="/" class="pwa-infobox-action" @click=" $awa( { 'referrerUri': `${referrerUri}/manifest/` }); ">
           {{ $t('twoways.started_now') }}
         </nuxt-link>
       </div>
@@ -19,7 +19,7 @@
       <div class="pwa-infobox-box">
         <img class="pwa-infobox-logo" src="~/assets/images/logo_small.png" alt="Small PWA Builder logo">
         <h4 class="pwa-infobox-subtitle">{{ $t('twoways.subtitle') }}</h4>
-        <a class="pwa-infobox-action" href="https://github.com/pwa-builder/ManifoldJS/releases" target="_blank" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/' });">
+        <a class="pwa-infobox-action" href="https://github.com/pwa-builder/ManifoldJS/releases" target="_blank" @click=" $awa( { 'referrerUri': `${referrerUri}/manifest/` });">
           {{ $t('twoways.download') }}
         </a>
       </div>
@@ -32,6 +32,10 @@
 import Vue from 'vue';
 import Component from 'nuxt-class-component';
 
+
+
 @Component()
-export default class extends Vue {}
+export default class extends Vue {
+  public referrerUri = process.env.referrerUri;
+}
 </script>

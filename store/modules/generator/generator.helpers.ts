@@ -54,6 +54,7 @@ export const helpers = {
         var parsedBaseUrl = getBaseURL(baseUrl);
         return icons.map(icon => {
             if (!icon.src.includes('http')) {
+
                 //remove posible trailing/leading slashes
                 icon.src = `${parsedBaseUrl}/${icon.src.replace(/^\/+/g, '')}`;
             }
