@@ -24,19 +24,18 @@ export interface Actions<S, R> extends ActionTree<S, R> {
 
 export const actions: Actions<State, RootState> = {
     async update({ commit, state, rootState }): Promise<void> {
-
         if (!state.manifestId) {
             // Create
             await this.$axios.$post(apiUrl, { siteUrl: state.url});
         }
+
          // Update
          const customManifest: any = state.manifest;
          state.members.forEach(member => {
              customManifest[member.name] = member.value;
          });
-         let result = await this.$axios.$put(`${apiUrl}/${state.manifestId}`, customManifest);
+         const result = await this.$axios.$put(`${apiUrl}/${state.manifestId}`, customManifest);
 
-         result.content.icons = state.icons;
         commit(types.UPDATE_WITH_MANIFEST, result);
         commit(types.SET_DEFAULTS_MANIFEST, {
             displays: rootState.displays ? rootState.displays[0].name : '',
@@ -88,17 +87,18 @@ export const actions: Actions<State, RootState> = {
         }
     },
 
-    async removeIcon({ commit, state, dispatch }, icon: Icon): Promise<any> {
+    removeIcon({ commit, state, dispatch }, icon: Icon): void {
         let icons = [...state.icons];
         const index = icons.findIndex(i => {
             return i.src === icon.src;
         });
+
         if (index > -1) {
             icons.splice(index, 1);
             commit(types.UPDATE_ICONS, icons);
         }
-        await dispatch('update');
-        return true;
+
+        dispatch('update');
     },
 
     resetStates({ commit }): void {

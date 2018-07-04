@@ -21,7 +21,7 @@
   </div>
 
   <div class="button-holder">
-    <button class="pwa-button pwa-button--text pwa-button--right" @click="onClickAdd(); $awa( { 'referrerUri': `${referrerUri}/manifest/add-member` });">
+    <button class="pwa-button pwa-button--text pwa-button--right" @click="onClickAdd(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
       {{ $t("related_applications.add") }}
     </button>
   </div>
@@ -79,8 +79,6 @@ export default class extends Vue {
   public id: string | null = null;
   public prefer_related_applications = false;
   public error: string | null = null;
-
-  public referrerUri = process.env.referrerUri;
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorActions addRelatedApplication;

@@ -1,6 +1,6 @@
 <template>
 <div class="start_over">
-  <button @click="reset();$awa( { 'referrerUri': `${referrerUri}/manifest/generator-startover-trigger` });" class="pwa-button pwa-button--simple">
+  <button @click="reset();$awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/generator-startover-trigger' });" class="pwa-button pwa-button--simple">
     {{ $t('publish.start_over') }}
   </button>
 </div>
@@ -18,8 +18,6 @@ const PublishAction = namespace(publish.name, Action);
 @Component()
 export default class extends Vue {
   @PublishAction resetAppData;
-
-  public referrerUri = process.env.referrerUri;
 
   public reset(): void {
     this.resetAppData();

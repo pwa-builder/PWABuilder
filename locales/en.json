@@ -116,7 +116,7 @@
     "publish": "Publish PWA"
   },
   "windowsmenu": {
-    "title": "Windows API Beta",
+    "title": "Use our window Api",
     "subtitle": "Create your own Win10 app"
   },
   "windows": {

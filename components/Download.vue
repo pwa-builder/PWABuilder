@@ -1,7 +1,7 @@
 <template>
 <div class="pwa-button pwa-button--simple" 
     :class="{'pwa-button--brand': isBrand, 'pwa-button--total_right': isRight}"
-    @click="buildArchive(platform);  $awa( { 'referrerUri': `${referrerUri}/download/{platform}` });">
+    @click="buildArchive(platform);  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/download/{platform}' });">
 
   <span v-if="isReady">{{ message$ }}</span>
   <span v-if="!isReady">{{ $t('publish.building_package') }}
@@ -29,8 +29,6 @@ const PublishAction = namespace(publish.name, Action);
 })
 export default class extends Vue {
   public isReady = true;
-
-  public referrerUri = process.env.referrerUri;
 
   @Prop({ type: String, default: '' })
   public readonly platform: string;

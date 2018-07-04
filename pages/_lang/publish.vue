@@ -28,7 +28,7 @@
               <Download platform="windows10" :message="$t('publish.download')" />
             </span>
             <p>
-              <button class="pwa-button pwa-button--simple pwa-button--brand" @click="openAppXModal();  $awa( { 'referrerUri': `${referrerUri}/publish/windows10-appx` })"> {{ $t('publish.generate_appx') }}</button>
+              <button class="pwa-button pwa-button--simple pwa-button--brand" @click="openAppXModal();  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/publish/windows10-appx' })"> {{ $t('publish.generate_appx') }}</button>
             </p>
           </div>
         </div>
@@ -121,8 +121,6 @@ export default class extends Vue {
     package: null,
     version: null
   };
-
-  public referrerUri = process.env.referrerUri;
 
   @PublishState status: boolean;
   @PublishState appXLink: string;

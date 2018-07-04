@@ -25,25 +25,25 @@ export const state = (): State => ({
 });
 
 export const helpers = {
-    getStaticContentNames(collection: StaticContent[] | null): StaticContent[] {
+    getStaticContentNames(collection: StaticContent[] | null): string[] {
         if (!collection) {
             return [];
         }
-        //return collection.map(x => x.name);
-        return collection;
+    
+        return collection.map(x => x.name);
     }
 };
 
 export const getters: GetterTree<State, RootState> = {
-    languagesNames(state: State): StaticContent[] {
+    languagesNames(state: State): string[] {
         return helpers.getStaticContentNames(state.languages);
     },
 
-    displaysNames(state: State): StaticContent[] {
+    displaysNames(state: State): string[] {
         return helpers.getStaticContentNames(state.displays);
     },
 
-    orientationsNames(state: State): StaticContent[] {
+    orientationsNames(state: State): string[] {
         return helpers.getStaticContentNames(state.orientations);
     }
 };
