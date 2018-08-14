@@ -72,8 +72,18 @@
                 <Download platform="android" :message="$t('publish.download')" />
               </div>
             </div>
-            <h2 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.ios') }}</h2>
-            <Download platform="ios" :message="$t('publish.download')" />
+            <div class="pwa-infobox-padded">
+              <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.ios') }}</h4>
+              <div>
+                <Download platform="ios" :message="$t('publish.download')" />
+              </div>
+            </div>
+            <div class="pwa-infobox-padded">
+              <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.mac') }}</h4>
+              <div>
+                <Download platform="ios" :message="$t('publish.download')" />
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -89,6 +89,7 @@
     "android": "Android",
     "android_description": "PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.",
     "ios": "iOS Polyfill",
+    "mac": "Mac OS",
     "building_package": "Building package...",
     "download": "Download",
     "try_again": "Try Again?",
