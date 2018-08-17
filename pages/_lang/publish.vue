@@ -81,7 +81,7 @@
             <div class="pwa-infobox-padded">
               <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.mac') }}</h4>
               <div>
-                <Download platform="ios" :message="$t('publish.download')" />
+                <Download platform="mac" :message="$t('publish.download')" />
               </div>
             </div>
           </div>

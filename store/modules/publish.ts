@@ -7,6 +7,7 @@ const platforms = {
     windows10: 'windows10',
     windows: 'windows',
     ios: 'ios',
+    mac: 'mac',
     android: 'android',
     all: 'All'
 };
