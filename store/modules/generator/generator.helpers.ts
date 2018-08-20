@@ -33,7 +33,7 @@ export const helpers = {
 
     prepareIconsUrls(icons: Icon[], baseUrl: string) {
         return icons.map(icon => {
-            if (!icon.src.includes('http')) {
+            if (!icon.src.includes('http') && !icon.src.includes('data:image')) {
                 const pathArray = baseUrl.split( '/' );
                 const protocol = pathArray[0];
                 const host = pathArray[2];
