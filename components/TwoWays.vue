@@ -32,6 +32,6 @@
 import Vue from 'vue';
 import Component from 'nuxt-class-component';
 
-@Component()
+@Component({})
 export default class extends Vue {}
 </script>

@@ -28,7 +28,7 @@ import * as generator from '~/store/modules/generator';
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
 
-@Component()
+@Component({})
 export default class extends Vue {
   public manifest$: generator.Manifest | null = null;
 
