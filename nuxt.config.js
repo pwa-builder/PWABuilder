@@ -57,7 +57,7 @@ module.exports = {
         ]
     },
     router: {
-        middleware: 'i18n'
+        middleware: ['i18n', 'default']
     },
     plugins: ['~/plugins/i18n.js'],
     modules: [
