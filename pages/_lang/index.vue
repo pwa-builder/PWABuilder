@@ -50,7 +50,6 @@
       </div>
     </div>
   </div>
-  <TwoWays/>
 </section>
 </template>
 
@@ -60,7 +59,6 @@ import Component from 'nuxt-class-component';
 import { Action, State, namespace } from 'vuex-class';
 
 import GeneratorMenu from '~/components/GeneratorMenu.vue';
-import TwoWays from '~/components/TwoWays.vue';
 import Loading from '~/components/Loading.vue';
 
 import * as generator from '~/store/modules/generator';
@@ -70,7 +68,6 @@ const GeneratorAction = namespace(generator.name, Action);
 
 @Component({
   components: {
-    TwoWays,
     GeneratorMenu,
     Loading
   }

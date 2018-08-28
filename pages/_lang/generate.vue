@@ -181,7 +181,6 @@
   <div v-if="!manifest$">
     <div class="l-generator-step l-generator-step--big"></div>
   </div>
-  <TwoWays/>
 </section>
 </template>
 
@@ -191,7 +190,6 @@ import Component from 'nuxt-class-component';
 import { Action, State, Getter, namespace } from 'vuex-class';
 
 import GeneratorMenu from '~/components/GeneratorMenu.vue';
-import TwoWays from '~/components/TwoWays.vue';
 import Modal from '~/components/Modal.vue';
 import CodeViewer from '~/components/CodeViewer.vue';
 import RelatedApplications from '~/components/RelatedApplications.vue';
@@ -207,7 +205,6 @@ const GeneratorGetters = namespace(generator.name, Getter);
 
 @Component({
   components: {
-    TwoWays,
     GeneratorMenu,
     RelatedApplications,
     CustomMembers,

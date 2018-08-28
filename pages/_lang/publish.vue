@@ -85,7 +85,6 @@
     <p class="instructions">{{ $t('publish.manifest_needed') }}</p>
     <button @click="goToHome" class="pwa-button pwa-button--simple">{{ $t('publish.first_step') }}</button>
   </div>
-  <TwoWays/>
 </section>
 </template>
 
@@ -95,7 +94,6 @@ import Component from 'nuxt-class-component';
 import { Action, State, namespace } from 'vuex-class';
 
 import GeneratorMenu from '~/components/GeneratorMenu.vue';
-import TwoWays from '~/components/TwoWays.vue';
 import StartOver from '~/components/StartOver.vue';
 import Download from '~/components/Download.vue';
 import Modal from '~/components/Modal.vue';
@@ -107,7 +105,6 @@ const PublishAction = namespace(publish.name, Action);
 
 @Component({
   components: {
-    TwoWays,
     GeneratorMenu,
     Download,
     StartOver,

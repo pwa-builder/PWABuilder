@@ -44,7 +44,6 @@
   </div>
 
   <StartOver />
-  <TwoWays/>
 </section>
 </template>
 
@@ -55,7 +54,6 @@ import { Watch } from 'vue-property-decorator';
 import { Action, State, namespace } from 'vuex-class';
 
 import GeneratorMenu from '~/components/GeneratorMenu.vue';
-import TwoWays from '~/components/TwoWays.vue';
 import Loading from '~/components/Loading.vue';
 import CodeViewer from '~/components/CodeViewer.vue';
 import StartOver from '~/components/StartOver.vue';
@@ -68,7 +66,6 @@ const ServiceworkerAction = namespace(serviceworker.name, Action);
 
 @Component({
   components: {
-    TwoWays,
     GeneratorMenu,
     Loading,
     StartOver,
