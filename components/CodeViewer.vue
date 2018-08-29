@@ -1,32 +1,16 @@
 <template>
 <section class="code_viewer">
-  <header class="code_viewer-header">
-    <div class="code_viewer-title pure-u-1-2">
-      {{title}}
-    </div>
-    <div class="code_viewer-title pure-u-1-2">
-      <slot/>
-    </div>
-  </header>
-
-  <div class="code_viewer-content" :style="{ height: size }">
-    <div class="code_viewer-copy js-clipboard" :data-clipboard-text="code" ref="code">
-      {{ $t('code_viewer.' + copyTextKey) }}
-    </div>
-    <div class="code_viewer-padded" v-if="warnings || suggestions">
-      <div class="code_viewer-header code_viewer-header--rounded">
-        <Download platform="web" :is-right="true" :message="$t('publish.download')" />
-      </div>
-    </div>
-    <pre class="code_viewer-pre language-javascript" :style="{ height: size }" v-if="highlightedCode"><code class="code_viewer-code language-javascript" v-html="highlightedCode"></code></pre>
+  <div class="code_viewer-copy js-clipboard" :data-clipboard-text="code" ref="code">
+    {{ $t("code_viewer." + copyTextKey) }}
   </div>
+  <div class="code_viewer-pre" ref="monacoDiv"></div>
 </section>
 </template>
 
-<script lang="ts">
+<script lang='ts'>
 import Vue from 'vue';
 import Clipboard from 'clipboard';
-import Prism from 'prismjs';
+import * as monaco from 'monaco-editor';
 import Component from 'nuxt-class-component';
 import { Prop, Watch } from 'vue-property-decorator';
 
@@ -64,7 +48,6 @@ export default class extends Vue {
   @Prop({ type: Number, default: 0 })
   public suggestionsTotal: number;
 
-  public highlightedCode: string | null = null;
   public copyTextKey = 'copy';
   public readonly warningsId = 'warnings_list';
   public readonly suggestionsId = 'suggestions_list';
@@ -73,10 +56,17 @@ export default class extends Vue {
 
   public mounted(): void {
     if (this.code) {
-      this.highlightedCode = Prism.highlight(
-        this.code,
-        Prism.languages.javascript
-      );
+      // Have to put this inside nextTick for vue
+      // to see the ref
+      this.$nextTick(() => {
+        if (this.code) {
+          monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
+            value: this.code,
+            language: 'javascript',
+            fixedOverflowWidgets: true
+          });
+        }
+      });
     }
 
     let clipboard = new Clipboard(this.$refs.code);
@@ -89,27 +79,29 @@ export default class extends Vue {
     });
   }
 
+  public updated(): void {}
+
   @Watch('code')
   onCodeChanged() {
     if (this.code) {
       this.copyTextKey = 'copy';
-      this.highlightedCode = Prism.highlight(
-        this.code,
-        Prism.languages.javascript
-      );
+      monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
+        value: this.code,
+        language: 'javascript',
+        fixedOverflowWidgets: true
+      });
     }
   }
 }
-
-
-
 </script>
 
-<style lang="scss" scoped>
-@import "~assets/scss/base/variables";
+<style lang='scss' scoped>
+@import '~assets/scss/base/variables';
 
 .code_viewer {
+  display: flex;
   font-size: 0;
+  height: 100%;
 
   @media screen and (max-width: $media-screen-s) {
     margin-top: 4rem;
@@ -141,13 +133,12 @@ export default class extends Vue {
   }
 
   &-pre {
-    overflow: auto;
+    flex-grow: 1;
     padding: 1rem;
   }
 
   &-code {
     font-size: 1rem;
-    white-space: pre-wrap;
   }
 
   &-copy {

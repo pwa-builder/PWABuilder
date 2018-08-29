@@ -37,21 +37,21 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Component from "nuxt-class-component";
-import { Prop } from "vue-property-decorator";
+import Vue from 'vue';
+import Component from 'nuxt-class-component';
+import { Prop } from 'vue-property-decorator';
 
 @Component({})
 export default class extends Vue {
-  public readonly activeClass = "is-active";
+  public readonly activeClass = 'is-active';
 
   @Prop({ type: Boolean, default: false })
   public readonly firstLinkPath: boolean;
 }
 </script>
 
-<style lang="scss" scoped>
-@import "~assets/scss/base/variables";
+<style lang='scss' scoped>
+@import '~assets/scss/base/variables';
 
 .generator_menu {
   $tab-color-off: $color-brand-brighter;
