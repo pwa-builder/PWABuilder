@@ -1,27 +1,13 @@
 <template>
 <section>
-  <GeneratorMenu />
-
+  <!--<GeneratorMenu />-->
+  <div id="header">Header Placeholder</div>
   <div v-if="manifest$">
-    <div class="l-generator-step">
-      <div class="l-generator-semipadded">
-        <div class="l-generator-form">
-          <h4 class="l-generator-subtitle">
-            {{ $t("generate.subtitle") }}
-          </h4>
-          <h4 class="l-generator-subtitle l-generator-subtitle--last">
-            {{ $t("generate.instructions") }}
-          </h4>
-        </div>
-
-        <div class="generate-code pure-u-1">
-          <CodeViewer :code="getCode()" :title="$t('generate.w3c_manifest')" :suggestions="suggestions" :suggestionsTotal="suggestionsTotal"
-            :warnings="warnings" :warningsTotal="warningsTotal">
-          </CodeViewer>
-        </div>
-      </div>
+    <div class="generate-code">
+      <CodeViewer :code="getCode()" :title="$t('generate.w3c_manifest')" :suggestions="suggestions" :suggestionsTotal="suggestionsTotal"
+          :warnings="warnings" :warningsTotal="warningsTotal">
+      </CodeViewer>
     </div>
-
     <StartOver />
   </div>
 
@@ -212,8 +198,20 @@ export default class extends Vue {
 
 .generate {
   &-code {
-    height: 400px;
-    margin-top: -2rem;
+    background: white;
+    border-radius: 2px;
+    box-shadow: 0 6px 10px 0 rgba(0, 0, 0, .3), 0 2px 2px 0 rgba(0, 0, 0, .2);
+    left: 113px;
+    padding: 2em;
+    position: absolute;
+    right: 113px;
+    top: 537px;
   }
+}
+
+#header {
+  background: rgb(71, 98, 226);
+  background: linear-gradient(180deg, rgba(71, 98, 226, 1) 0%, rgba(71, 98, 226, 1) 25%, rgba(255, 255, 255, 1) 100%);
+  height: 937px;
 }
 </style>
