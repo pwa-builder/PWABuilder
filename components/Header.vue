@@ -78,6 +78,7 @@ export default class extends Vue {
     display: flex;
     justify-content: space-between;
     margin: 20px;
+    z-index: 99;
   }
 
   header {
@@ -147,8 +148,8 @@ export default class extends Vue {
   }
 
   #getStartedInput {
-    background: transparent;
-    border: 1px solid white;
+    background: white;
+    border: none;
     border-radius: 10px;
     color: #6A6A6A;
     display: block;
@@ -189,6 +190,10 @@ export default class extends Vue {
 
   #rightHeaderBlock {
     color: white;
+    z-index: 99;
+  }
+
+  #leftHeaderBlock {
     z-index: 99;
   }
 </style>
