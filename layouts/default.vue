@@ -1,5 +1,11 @@
   <script lang="ts">
+  import Header from '~/components/Header.vue';
+
   export default {
+    components: {
+      Header
+    },
+
     data() {
       return {
         pathnameUrl: this.$route.path,
@@ -15,15 +21,9 @@
 
 <template>
   <div>
-    <header class="l-header pure-g">
-      <div class="l-header-left pure-u pure-u-md-1-5">
-        <nuxt-link to="/">
-          <h1>PWABuilder</h1>
-        </nuxt-link>
-      </div>
-    </header>
+    <Header />
 
-    <div class="container">
+    <!--<div class="container">
       <nuxt/>
     </div>
 
@@ -53,6 +53,6 @@
       <div class="pure-u-1 l-footer-copy">
         {{ $t('footer.copyright') }}<span class="divider">|</span> <a href="https://go.microsoft.com/fwlink/?LinkId=521839" target="_blank" class="l-footer-action">{{ $t('footer.privacy') }}</a>
       </div>
-    </footer>
+    </footer>-->
   </div>
 </template>
