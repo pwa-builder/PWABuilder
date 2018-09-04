@@ -7,8 +7,11 @@
       <CodeViewer :code="getCode()" :title="$t('generate.w3c_manifest')" :suggestions="suggestions" :suggestionsTotal="suggestionsTotal"
           :warnings="warnings" :warningsTotal="warningsTotal">
       </CodeViewer>
+
+      <div id="downloadDiv">
+        <button id="downloadButton">Download</button>
+      </div>
     </div>
-    <StartOver />
   </div>
 
   <div v-if="!manifest$">
@@ -201,11 +204,12 @@ export default class extends Vue {
     background: white;
     border-radius: 2px;
     box-shadow: 0 6px 10px 0 rgba(0, 0, 0, .3), 0 2px 2px 0 rgba(0, 0, 0, .2);
+    height: 750px;
     left: 113px;
     padding: 2em;
     position: absolute;
     right: 113px;
-    top: 537px;
+    top: 100px;
   }
 }
 
@@ -213,5 +217,22 @@ export default class extends Vue {
   background: rgb(71, 98, 226);
   background: linear-gradient(180deg, rgba(71, 98, 226, 1) 0%, rgba(71, 98, 226, 1) 25%, rgba(255, 255, 255, 1) 100%);
   height: 937px;
+}
+
+#downloadButton {
+  background: white;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 6px 10px 0 rgba(0, 0, 0, .3), 0 2px 2px 0 rgba(0, 0, 0, .2);
+  color: #8B8B8B;
+  font-size: 36px;
+  height: 80px;
+  width: 298px;
+}
+
+#downloadDiv {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 5rem;
 }
 </style>
