@@ -1,11 +1,6 @@
   <script lang="ts">
-  import Header from '~/components/Header.vue';
 
   export default {
-    components: {
-      Header
-    },
-
     data() {
       return {
         pathnameUrl: this.$route.path,
@@ -21,8 +16,6 @@
 
 <template>
   <div>
-    <Header />
-
     <div class="container">
       <nuxt/>
     </div>
