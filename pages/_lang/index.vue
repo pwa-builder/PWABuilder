@@ -1,20 +1,23 @@
 <template>
-  <div id="wrapperDiv">
-    <section class="indexSection">
-      <div class="line"></div>
-      <h2>How it Works</h2>
-    </section>
+  <div>
+    <Header />
+    <div id="wrapperDiv">
+      <section class="indexSection">
+        <div class="line"></div>
+        <h2>How it Works</h2>
+      </section>
 
-    <section class="indexSection">
-      <div class="line"></div>
-      <h2>Other Useful Tools</h2>
+      <section class="indexSection">
+        <div class="line"></div>
+        <h2>Other Useful Tools</h2>
 
-      <div id="cardBar">
-        <Card title="Windows APIs" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sit amet.."/>
-        <Card title="Image Generator" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sit amet.."/>
-        <Card title="Knowledge Base" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sit amet.."/>
-      </div>
-    </section>
+        <div id="cardBar">
+          <Card title="Windows APIs" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sit amet.."/>
+          <Card title="Image Generator" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sit amet.."/>
+          <Card title="Knowledge Base" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sit amet.."/>
+        </div>
+      </section>
+    </div>
   </div>
 </template>
 
@@ -23,9 +26,11 @@ import Vue from 'vue';
 import Component from 'nuxt-class-component';
 
 import Card from '~/components/Card.vue';
+import Header from '~/components/Header.vue';
 
 @Component({
   components: {
+    Header,
     Card
   }
 })

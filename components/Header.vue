@@ -31,9 +31,15 @@
 
           <p id='placeholderText'>Enter your URL and we'll help you fill in the gaps if there are any.</p>
 
-          <input id="getStartedInput" type="text" placeholder="https://example.com" />
+          <form @submit.prevent="checkUrlAndGenerate" @keydown.enter.prevent="checkUrlAndGenerate">
+            <label class="l-generator-label" for="siteUrl">{{ $t('generator.url') }}</label>
+            <input id="getStartedInput" :placeholder="$t('generator.placeholder_url')" name="siteUrl" type="text" ref="url"
+                v-model="url$" autofocus />
 
-          <button id="getStartedButton">Get Started</button>
+            <button @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/build/manifest-scan' })" id="getStartedButton">{{ $t('generator.start') }}
+             <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm"/>
+            </button>
+          </form>
         </div>
       </section>
     </header>
@@ -43,10 +49,69 @@
 <script lang='ts'>
 import Vue from 'vue';
 import Component from 'nuxt-class-component';
+import { Action, State, namespace } from 'vuex-class';
 
-@Component({})
+import Loading from '~/components/Loading.vue';
+
+import * as generator from '~/store/modules/generator';
+
+const GeneratorState = namespace(generator.name, State);
+const GeneratorAction = namespace(generator.name, Action);
+
+@Component({
+  components: {
+    Loading
+  }
+})
 export default class extends Vue {
+  public url$: string | null = null;
+  public generatorReady = true;
+  public error: string | null = null;
 
+  @GeneratorState url: string;
+  @GeneratorAction updateLink;
+  @GeneratorAction getManifestInformation;
+
+  public created(): void {
+    this.url$ = this.url;
+  }
+
+  public get inProgress(): boolean {
+    return !this.generatorReady && !this.error;
+  }
+
+  public async checkUrlAndGenerate(): Promise<void> {
+    this.generatorReady = false;
+    this.error = null;
+
+    try {
+      this.updateLink(this.url$);
+
+      if (!this.url$) {
+        return;
+      }
+
+      this.url$ = this.url;
+      await this.getManifestInformation();
+
+      this.$router.push({
+        name: 'generate'
+      });
+    } catch (e) {
+      this.error = e;
+    }
+  }
+}
+
+declare var awa: any;
+
+
+Vue.prototype.$awa = function (config) { 
+
+  console.log('here');
+  awa.ct.capturePageView(config);
+
+  return;
 }
 </script>
 
