@@ -23,7 +23,7 @@
   <div>
     <Header />
 
-    <!--<div class="container">
+    <div class="container">
       <nuxt/>
     </div>
 
