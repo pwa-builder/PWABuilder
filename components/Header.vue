@@ -28,7 +28,7 @@
 
           <p id='placeholderText'>Enter your URL and we'll help you fill in the gaps if there are any.</p>
 
-          <input id="getStartedInput" type="text" />
+          <input id="getStartedInput" type="text" placeholder="https://example.com" />
 
           <button id="getStartedButton">Get Started</button>
         </div>
@@ -110,6 +110,7 @@ export default class extends Vue {
   }
 
   h2 {
+    font-size: 36px;
     font-weight: normal;
   }
 
@@ -130,21 +131,23 @@ export default class extends Vue {
     float: right;
     font-size: 20px;
     height: 48px;
-    margin-top: 58px;
+    margin-top: 37px;
     width: 149px;
   }
 
   #getStartedInput {
     background: transparent;
     border: 1px solid white;
-    border-radius: 5px;
+    border-radius: 10px;
     color: #6A6A6A;
     display: block;
     height: 71px;
+    padding-left: 23px;
     width: 491px;
   }
 
   #placeholderText {
+    margin-bottom: 33px;
     width: 297px;
   }
 
@@ -163,6 +166,13 @@ export default class extends Vue {
   }
 
   #helpButton {
+    background: transparent;
+    border: none;
+    color: white;
     margin-right: 89px;
+  }
+
+  #rightHeaderBlock {
+    color: white;
   }
 </style>
