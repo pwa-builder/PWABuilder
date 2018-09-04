@@ -13,6 +13,9 @@
         </div>
       </div>
 
+      <img id="heroImage" src="~/assets/images/Mask.png" />
+
+
       <section id="headerBlock">
 
         <div id="leftHeaderBlock">
@@ -56,6 +59,14 @@ export default class extends Vue {
     height: 771px;
   }
 
+  #heroImage {
+    height: 47rem;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 80rem;
+  }
+
   #headerImage {
     background: white;
     height: 97px;
@@ -70,7 +81,6 @@ export default class extends Vue {
   }
 
   header {
-    background: $color-secondary;
     color: $color-brand;
     width: 100%;
   }
@@ -79,8 +89,9 @@ export default class extends Vue {
     background: $color-secondary;
     color: $color-brand;
     display: flex;
-    justify-content: space-around;
-    margin-left: 3rem;
+    justify-content: space-between;
+    margin-left: 83px;
+    margin-right: 83px;
     margin-top: 8rem;
   }
 
@@ -165,6 +176,10 @@ export default class extends Vue {
     width: 92px;
   }
 
+  #manifestBlock {
+    z-index: 99;
+  }
+
   #helpButton {
     background: transparent;
     border: none;
@@ -174,5 +189,6 @@ export default class extends Vue {
 
   #rightHeaderBlock {
     color: white;
+    z-index: 99;
   }
 </style>
