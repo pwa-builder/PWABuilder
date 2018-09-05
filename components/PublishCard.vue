@@ -47,10 +47,11 @@ export default class extends Vue {
 
 .title {
   color: #8B8B8B;
-  font-size: 22px;
+  font-size: 40px;
+  font-weight: normal;
 }
 
 .description {
-  color: #8B8B8B;
+  color: #0E0E0E;
 }
 </style>
