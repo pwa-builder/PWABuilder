@@ -220,11 +220,12 @@ export default class extends Vue {
 #downloadButton {
   background: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   box-shadow: 0 6px 10px 0 rgba(0, 0, 0, .3), 0 2px 2px 0 rgba(0, 0, 0, .2);
   color: #8B8B8B;
   font-size: 36px;
   height: 80px;
+  margin: 50px;
   width: 298px;
 }
 
