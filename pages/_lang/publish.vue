@@ -1,6 +1,6 @@
 <template>
 <section>
-  <GeneratorMenu/>
+  <!--<GeneratorMenu/>-->
   <div v-if="status">
     <div class="pwa-infobox pwa-infobox--transparent l-pad l-pad--thin">
       <div class="pure-g">
@@ -8,7 +8,7 @@
           <h2 class="pwa-infobox-title pwa-infobox-title--centered">{{ $t('publish.title') }}</h2>
         </div>
 
-        <div class="pure-u-1 pure-u-md-1-2">
+        <!--<div class="pure-u-1 pure-u-md-1-2">
           <div class="pwa-infobox-box pwa-infobox-box--flat">
             <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.web') }}</h4>
             <p class="l-generator-description l-generator-description--fixed">
@@ -18,9 +18,14 @@
               <Download platform="web" :message="$t('publish.download')" :is-brand="true" />
             </span>
           </div>
-        </div>
+        </div>-->
+        <PublishCard :platform="$t('publish.web')" :description="$t('publish.web_description')">
+          <span class="button-holder download-archive">
+            <Download platform="web" :message="$t('publish.download')" :is-brand="true" />
+          </span>
+        </PublishCard>
 
-        <div class="pure-u-1 pure-u-md-1-2">
+        <!--<div class="pure-u-1 pure-u-md-1-2">
           <div class="pwa-infobox-box pwa-infobox-box--flat">
             <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.windows') }}</h4>
             <p class="l-generator-description l-generator-description--fixed">{{ $t('publish.windows_description') }}  <a href="http://docs.pwabuilder.com/quickstart/2018/02/03/quick-start-sideload-pwa-win10.html" target="blank">{{ $t('publish.sideload_instructions') }}</a></p>
@@ -31,7 +36,16 @@
               <button class="pwa-button pwa-button--simple pwa-button--brand" @click="openAppXModal();  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/publish/windows10-appx' })"> {{ $t('publish.generate_appx') }}</button>
             </p>
           </div>
-        </div>
+        </div>-->
+        <PublishCard :platform="$t('publish.windows')" :description="$t('publish.windows_description')">
+          <span class="button-holder download-archive">
+            <Download platform="windows10" :message="$t('publish.download')" />
+          </span>
+          <p>
+            <button class="pwa-button pwa-button--simple pwa-button--brand" @click="openAppXModal();  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/publish/windows10-appx' })"> {{ $t('publish.generate_appx') }}</button>
+          </p>
+        </PublishCard>
+
         <Modal :title="$t('publish.generate_appx')" ref="appxModal" @submit="onSubmitAppxModal" @cancel="onCancelAppxModal" v-if="appxForm">
           <div class="l-generator-box">
             <label class="l-generator-label">{{ $t('publish.enter_your') }}
@@ -63,7 +77,8 @@
             v-model="appxForm.version" requied>
           <p class="l-generator-error" v-if="appxError"><span class="icon-exclamation"></span> {{ $t(appxError) }}</p>
         </Modal>
-        <div class="pure-u-1">
+
+        <!--<div class="pure-u-1">
           <div class="pwa-infobox-box pwa-infobox-box--flat">
             <div class="pwa-infobox-padded">
               <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.android') }}</h4>
@@ -75,7 +90,19 @@
             <h2 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.ios') }}</h2>
             <Download platform="ios" :message="$t('publish.download')" />
           </div>
-        </div>
+        </div>-->
+        <section id="mobilePlatformsBar">
+          <PublishCard class="mobileCard" :platform="$t('publish.android')" :description="$t('publish.android_description')">
+            <div>
+              <Download platform="android" :message="$t('publish.download')" />
+            </div>
+          </PublishCard>
+          <PublishCard class="mobileCard" :platform="$t('publish.ios')" :description="$t('publish.ios_description')">
+            <div>
+              <Download platform="ios" :message="$t('publish.download')" />
+            </div>
+          </PublishCard>
+        </section>
       </div>
     </div>
     <StartOver />
@@ -97,6 +124,7 @@ import GeneratorMenu from '~/components/GeneratorMenu.vue';
 import StartOver from '~/components/StartOver.vue';
 import Download from '~/components/Download.vue';
 import Modal from '~/components/Modal.vue';
+import PublishCard from '~/components/PublishCard.vue';
 
 import * as publish from '~/store/modules/publish';
 
@@ -108,7 +136,8 @@ const PublishAction = namespace(publish.name, Action);
     GeneratorMenu,
     Download,
     StartOver,
-    Modal
+    Modal,
+    PublishCard
   }
 })
 export default class extends Vue {
@@ -119,7 +148,8 @@ export default class extends Vue {
     version: null
   };
 
-  @PublishState status: boolean;
+  // @PublishState status: boolean;
+  @PublishState status: boolean = true;
   @PublishState appXLink: string;
 
   @PublishAction updateStatus;
@@ -167,3 +197,14 @@ export default class extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  #mobilePlatformsBar {
+    display: flex;
+  }
+
+  #mobilePlatformsBar .mobileCard {
+    flex: 1;
+  }
+</style>
+
