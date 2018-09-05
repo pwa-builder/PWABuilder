@@ -61,7 +61,6 @@ export default class extends Vue {
       this.$nextTick(() => {
         if (this.code) {
           monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
-            theme: 'vs-dark',
             value: this.code,
             language: 'json',
             fixedOverflowWidgets: true
@@ -87,7 +86,6 @@ export default class extends Vue {
     if (this.code) {
       this.copyTextKey = 'copy';
       monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
-        theme: 'vs-dark',
         value: this.code,
         language: 'json',
         fixedOverflowWidgets: true
@@ -103,7 +101,7 @@ export default class extends Vue {
 .code_viewer {
   display: flex;
   font-size: 0;
-  height: 80%;
+  height: 800px;
 
   @media screen and (max-width: $media-screen-s) {
     margin-top: 4rem;
