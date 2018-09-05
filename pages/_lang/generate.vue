@@ -1,7 +1,7 @@
 <template>
 <section>
   <!--<GeneratorMenu />-->
-  <div id="header">Header Placeholder</div>
+  <Toolbar />
   <div v-if="manifest$">
     <div class="generate-code">
       <h2 id="manifestHeader">W3C Manifest</h2>
@@ -33,6 +33,7 @@ import RelatedApplications from '~/components/RelatedApplications.vue';
 import CustomMembers from '~/components/CustomMembers.vue';
 import StartOver from '~/components/StartOver.vue';
 import ColorSelector from '~/components/ColorSelector.vue';
+import Toolbar from '~/components/Toolbar.vue';
 
 import * as generator from '~/store/modules/generator';
 
@@ -48,7 +49,8 @@ const GeneratorGetters = namespace(generator.name, Getter);
     ColorSelector,
     CodeViewer,
     StartOver,
-    Modal
+    Modal,
+    Toolbar
   }
 })
 export default class extends Vue {
@@ -205,16 +207,8 @@ export default class extends Vue {
     background: white;
     border-radius: 2px;
     box-shadow: 0 6px 10px 0 rgba(0, 0, 0, .3), 0 2px 2px 0 rgba(0, 0, 0, .2);
-    margin-bottom: 113px;
-    margin-left: 113px;
-    margin-right: 113px;
+    margin: 113px;
   }
-}
-
-#header {
-  background: rgb(71, 98, 226);
-  background: linear-gradient(180deg, rgba(71, 98, 226, 1) 0%, rgba(71, 98, 226, 1) 25%, rgba(255, 255, 255, 1) 100%);
-  height: 300px;
 }
 
 #downloadButton {
@@ -235,7 +229,6 @@ export default class extends Vue {
 }
 
 #manifestHeader {
-  //box-shadow: 0 10px 20px rgba(0, 0, 0, .19), 0 6px 6px rgba(0, 0 ,0 , .23);
   border-radius: 5px;
   box-shadow: 0 10px 20px 0 rgba(0, 0, 0, .19), 0 6px 6px rgba(0, 0, 0, .23);
   color: #949494;
