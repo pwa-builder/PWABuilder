@@ -1,12 +1,13 @@
 <template>
 <section>
   <!--<GeneratorMenu/>-->
+  <Toolbar />
   <div v-if="status">
     <div class="pwa-infobox pwa-infobox--transparent l-pad l-pad--thin">
       <div class="pure-g">
-        <div class="pure-u-1">
+        <!--<div class="pure-u-1">
           <h2 class="pwa-infobox-title pwa-infobox-title--centered">{{ $t('publish.title') }}</h2>
-        </div>
+        </div>-->
 
         <!--<div class="pure-u-1 pure-u-md-1-2">
           <div class="pwa-infobox-box pwa-infobox-box--flat">
@@ -125,6 +126,7 @@ import StartOver from '~/components/StartOver.vue';
 import Download from '~/components/Download.vue';
 import Modal from '~/components/Modal.vue';
 import PublishCard from '~/components/PublishCard.vue';
+import Toolbar from '~/components/Toolbar.vue';
 
 import * as publish from '~/store/modules/publish';
 
@@ -137,7 +139,8 @@ const PublishAction = namespace(publish.name, Action);
     Download,
     StartOver,
     Modal,
-    PublishCard
+    PublishCard,
+    Toolbar
   }
 })
 export default class extends Vue {
