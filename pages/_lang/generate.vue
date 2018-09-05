@@ -4,6 +4,7 @@
   <div id="header">Header Placeholder</div>
   <div v-if="manifest$">
     <div class="generate-code">
+      <h2 id="manifestHeader">W3C Manifest</h2>
       <CodeViewer :code="getCode()" :title="$t('generate.w3c_manifest')" :suggestions="suggestions" :suggestionsTotal="suggestionsTotal"
           :warnings="warnings" :warningsTotal="warningsTotal">
       </CodeViewer>
@@ -204,19 +205,16 @@ export default class extends Vue {
     background: white;
     border-radius: 2px;
     box-shadow: 0 6px 10px 0 rgba(0, 0, 0, .3), 0 2px 2px 0 rgba(0, 0, 0, .2);
-    height: 750px;
-    left: 113px;
-    padding: 2em;
-    position: absolute;
-    right: 113px;
-    top: 100px;
+    margin-bottom: 113px;
+    margin-left: 113px;
+    margin-right: 113px;
   }
 }
 
 #header {
   background: rgb(71, 98, 226);
   background: linear-gradient(180deg, rgba(71, 98, 226, 1) 0%, rgba(71, 98, 226, 1) 25%, rgba(255, 255, 255, 1) 100%);
-  height: 937px;
+  height: 300px;
 }
 
 #downloadButton {
@@ -233,6 +231,19 @@ export default class extends Vue {
 #downloadDiv {
   display: flex;
   justify-content: flex-end;
-  margin-top: 5rem;
+}
+
+#manifestHeader {
+  //box-shadow: 0 10px 20px rgba(0, 0, 0, .19), 0 6px 6px rgba(0, 0 ,0 , .23);
+  border-radius: 5px;
+  box-shadow: 0 10px 20px 0 rgba(0, 0, 0, .19), 0 6px 6px rgba(0, 0, 0, .23);
+  color: #949494;
+  font-size: 30px;
+  font-weight: normal;
+  margin: 0;
+  padding-bottom: 25px;
+  padding-left: 40px;
+  padding-top: 22px;
+  width: 356px;
 }
 </style>
