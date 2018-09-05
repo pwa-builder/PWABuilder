@@ -218,6 +218,7 @@ Vue.prototype.$awa = function (config) {
     color: #6A6A6A;
     display: block;
     height: 71px;
+    outline: none;
     padding-left: 23px;
     width: 491px;
   }
