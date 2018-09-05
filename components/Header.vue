@@ -32,8 +32,7 @@
           <p id='placeholderText'>Enter your URL and we'll help you fill in the gaps if there are any.</p>
 
           <form @submit.prevent="checkUrlAndGenerate" @keydown.enter.prevent="checkUrlAndGenerate">
-            <label class="l-generator-label" for="siteUrl">{{ $t('generator.url') }}</label>
-            <input id="getStartedInput" :placeholder="$t('generator.placeholder_url')" name="siteUrl" type="text" ref="url"
+            <input id="getStartedInput" :aria-label="$t('generator.url')" :placeholder="$t('generator.placeholder_url')" name="siteUrl" type="text" ref="url"
                 v-model="url$" autofocus />
 
             <button @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/build/manifest-scan' })" id="getStartedButton">{{ $t('generator.start') }}
