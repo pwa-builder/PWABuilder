@@ -1,15 +1,11 @@
 <template>
 <section class="code_viewer">
-  <div class="code_viewer-copy js-clipboard" :data-clipboard-text="code" ref="code">
-    {{ $t("code_viewer." + copyTextKey) }}
-  </div>
   <div class="code_viewer-pre" ref="monacoDiv"></div>
 </section>
 </template>
 
 <script lang='ts'>
 import Vue from 'vue';
-import Clipboard from 'clipboard';
 import * as monaco from 'monaco-editor';
 import Component from 'nuxt-class-component';
 import { Prop, Watch } from 'vue-property-decorator';
@@ -48,7 +44,6 @@ export default class extends Vue {
   @Prop({ type: Number, default: 0 })
   public suggestionsTotal: number;
 
-  public copyTextKey = 'copy';
   public readonly warningsId = 'warnings_list';
   public readonly suggestionsId = 'suggestions_list';
   public isReady = true;
@@ -68,15 +63,6 @@ export default class extends Vue {
         }
       });
     }
-
-    let clipboard = new Clipboard(this.$refs.code);
-    clipboard.on('success', e => {
-      this.copyTextKey = 'copied';
-    });
-
-    clipboard.on('error', e => {
-      this.copyTextKey = 'error';
-    });
   }
 
   public updated(): void {}
@@ -84,7 +70,6 @@ export default class extends Vue {
   @Watch('code')
   onCodeChanged() {
     if (this.code) {
-      this.copyTextKey = 'copy';
       monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
         value: this.code,
         language: 'json',

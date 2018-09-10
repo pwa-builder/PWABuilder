@@ -1,6 +1,5 @@
 <template>
 <section>
-  <!--<GeneratorMenu />-->
   <Toolbar />
   <div v-if="manifest$">
     <div class="generate-code">
@@ -10,6 +9,7 @@
       </CodeViewer>
 
       <div id="downloadDiv">
+        <button @click="copy()" id="copyButton">Copy</button>
         <button id="downloadButton">Download</button>
       </div>
     </div>
@@ -25,6 +25,7 @@
 import Vue from 'vue';
 import Component from 'nuxt-class-component';
 import { Action, State, Getter, namespace } from 'vuex-class';
+import Clipboard from 'clipboard';
 
 import GeneratorMenu from '~/components/GeneratorMenu.vue';
 import Modal from '~/components/Modal.vue';
@@ -196,6 +197,29 @@ export default class extends Vue {
   public onCancelIconModal(): void {
     this.iconFile = null;
   }
+
+  public async copy(): Promise<void> {
+    // use the new async clipboard API if available
+    // if not fall back to a library
+    if ((navigator as any).clipboard) {
+      console.log('using new api');
+      try {
+        await (navigator as any).clipboard.writeText(this.getCode());
+      } catch (err) {
+        console.error(err);
+      }
+    } else {
+      console.log('doing things the old way');
+      let clipboard = new Clipboard(this.getCode());
+      clipboard.on('success', e => {
+        // this.copyTextKey = 'copied';
+      });
+
+      clipboard.on('error', e => {
+        // this.copyTextKey = 'error';
+      });
+    }
+  }
 }
 </script>
 
@@ -211,7 +235,8 @@ export default class extends Vue {
   }
 }
 
-#downloadButton {
+#downloadButton,
+#copyButton {
   background: white;
   border: none;
   border-radius: 10px;
@@ -220,6 +245,7 @@ export default class extends Vue {
   font-size: 36px;
   height: 80px;
   margin: 50px;
+  outline: none;
   width: 298px;
 }
 
