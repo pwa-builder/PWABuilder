@@ -249,7 +249,6 @@ export default class extends Vue {
   font-size: 36px;
   height: 80px;
   margin: 50px;
-  outline: none;
   width: 298px;
 }
 
