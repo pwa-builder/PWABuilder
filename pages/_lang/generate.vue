@@ -15,6 +15,10 @@
     </div>
   </div>
 
+  <div id="copyToast" v-bind:class="{copied: copied}">
+    Copied!
+  </div>
+
   <div v-if="!manifest$">
     <div class="l-generator-step l-generator-step--big"></div>
   </div>
@@ -60,6 +64,7 @@ export default class extends Vue {
   public iconCheckMissing = true;
   private iconFile: File | null = null;
   public error: string | null = null;
+  public copied: boolean = false;
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
@@ -202,21 +207,20 @@ export default class extends Vue {
     // use the new async clipboard API if available
     // if not fall back to a library
     if ((navigator as any).clipboard) {
-      console.log('using new api');
       try {
         await (navigator as any).clipboard.writeText(this.getCode());
+        this.copied = true;
       } catch (err) {
         console.error(err);
       }
     } else {
-      console.log('doing things the old way');
       let clipboard = new Clipboard(this.getCode());
       clipboard.on('success', e => {
-        // this.copyTextKey = 'copied';
+        this.copied = true;
       });
 
       clipboard.on('error', e => {
-        // this.copyTextKey = 'error';
+        console.error(e);
       });
     }
   }
@@ -265,5 +269,23 @@ export default class extends Vue {
   padding-left: 40px;
   padding-top: 22px;
   width: 356px;
+}
+
+.copied {
+  opacity: 1 !important;
+}
+
+#copyToast {
+  background: $color-complementary;
+  border-radius: 10px;
+  bottom: 16px;
+  opacity: 0;
+  padding: 15px;
+  position: fixed;
+  right: 16px;
+  text-align: center;
+  transition: opacity .3s;
+  width: 8rem;
+  z-index: 9999;
 }
 </style>
