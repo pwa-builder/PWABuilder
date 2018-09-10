@@ -68,7 +68,7 @@ header {
   background: $color-complementary;
   border: none;
   border-radius: 5px;
-  box-shadow: 0 7px 9px 0 #002cff, 0 4px 0px 0 #002cff;
+  box-shadow: 0 7px 9px 0 #002CFF, 0 4px 0 0 #002CFF;
   height: 47px;
   margin-right: 25px;
   width: 92px;
