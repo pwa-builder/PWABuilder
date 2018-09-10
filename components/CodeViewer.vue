@@ -101,7 +101,6 @@ export default class extends Vue {
 .code_viewer {
   display: flex;
   font-size: 0;
-  height: 800px;
 
   @media screen and (max-width: $media-screen-s) {
     margin-top: 4rem;
