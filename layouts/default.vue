@@ -1,23 +1,76 @@
   <script lang="ts">
+  import Vue from 'vue';
+  import Component from 'nuxt-class-component';
+  import { Watch } from 'vue-property-decorator';
 
-  export default {
+  @Component({})
+  export default class extends Vue {
+    public seen: boolean = false;
+    // public pathnameUrl: string =  this.$route.path;
+
+    public mounted(): void {
+      const savedValue = localStorage.getItem('PWABuilderGDPR');
+      if (JSON.parse((savedValue as string)) !== true) {
+        this.seen = true;
+        localStorage.setItem('PWABuilderGDPR', JSON.stringify(true));
+      }
+    };
+
     data() {
       return {
         pathnameUrl: this.$route.path,
       };
-    },
-    watch: {
-      '$route': function() {
-        this.pathnameUrl = this.$route.path;
-      }
+    };
+
+    @Watch('$route')
+    handleRoute() {
+      // this.pathnameUrl = this.$route.path;
     }
   };
 </script>
+
+<style lang="scss" scoped>
+  @import '~assets/scss/base/variables';
+
+  #gdprDiv {
+    animation: slideup;
+    animation-duration: 200ms;
+    animation-fill-mode: forwards;
+    background: white;
+    border-radius: 5px 5px 0 0;
+    bottom: 0;
+    color: $color-brand;
+    left: 10rem;
+    opacity: 0;
+    padding: 16px;
+    position: fixed;
+    right: 10rem;
+    transform: translateY(40px);
+    z-index: 9999;
+  }
+
+  @keyframes slideup {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+}
+</style>
+
 
 <template>
   <div>
     <div class="container">
       <nuxt/>
+    </div>
+
+    <div v-if="seen" id="gdprDiv">
+      <p>GDPR Text</p>
     </div>
 
     <footer class="l-footer pure-g is-small">
@@ -46,6 +99,6 @@
       <div class="pure-u-1 l-footer-copy">
         {{ $t('footer.copyright') }}<span class="divider">|</span> <a href="https://go.microsoft.com/fwlink/?LinkId=521839" target="_blank" class="l-footer-action">{{ $t('footer.privacy') }}</a>
       </div>
-    </footer>-->
+    </footer>
   </div>
 </template>
