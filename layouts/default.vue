@@ -1,12 +1,10 @@
   <script lang="ts">
   import Vue from 'vue';
   import Component from 'nuxt-class-component';
-  import { Watch } from 'vue-property-decorator';
 
   @Component({})
   export default class extends Vue {
     public seen: boolean = false;
-    // public pathnameUrl: string =  this.$route.path;
 
     public mounted(): void {
       const savedValue = localStorage.getItem('PWABuilderGDPR');
@@ -15,17 +13,6 @@
         localStorage.setItem('PWABuilderGDPR', JSON.stringify(true));
       }
     };
-
-    data() {
-      return {
-        pathnameUrl: this.$route.path,
-      };
-    };
-
-    @Watch('$route')
-    handleRoute() {
-      // this.pathnameUrl = this.$route.path;
-    }
   };
 </script>
 
