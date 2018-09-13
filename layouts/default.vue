@@ -4,6 +4,7 @@
 
   @Component({})
   export default class extends Vue {
+   
     public seen: boolean = false;
 
     public mounted(): void {
@@ -20,44 +21,25 @@
   @import '~assets/scss/base/variables';
 
   #gdprDiv {
-    animation: slideup;
-    animation-duration: 200ms;
-    animation-fill-mode: forwards;
-    background: white;
-    border-radius: 5px 5px 0 0;
-    bottom: 0;
-    color: $color-brand;
-    left: 10rem;
-    opacity: 0;
-    padding: 16px;
-    position: fixed;
-    right: 10rem;
-    transform: translateY(40px);
+    align-items: center;
+    background: #F2F2F2;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
     z-index: 9999;
   }
-
-  @keyframes slideup {
-    from {
-      opacity: 0;
-      transform: translateY(40px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-}
 </style>
 
 
 <template>
   <div>
-    <div class="container">
-      <nuxt/>
+    <div v-if="seen" id="gdprDiv">
+      <p>This site uses cookies for analytics, personalized content and ads. By continuing to browse this site, you agree to this use.</p>
+      <a href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule">Learn More</a>
     </div>
 
-    <div v-if="seen" id="gdprDiv">
-      <p>GDPR Text</p>
+    <div class="container">
+      <nuxt/>
     </div>
 
     <footer class="l-footer pure-g is-small">
