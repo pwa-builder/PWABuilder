@@ -1,15 +1,23 @@
-  <script lang="ts">
+<script lang="ts">
   export default {
     middleware: 'default',
     
     data() {
       return {
         pathnameUrl: this.$route.path,
+        seen: false
       };
     },
     watch: {
       '$route': function() {
         this.pathnameUrl = this.$route.path;
+      }
+    },
+    mounted: function() {
+      const savedValue = localStorage.getItem('PWABuilderGDPR');
+      if (JSON.parse((savedValue as string)) !== true) {
+        this.seen = true;
+        localStorage.setItem('PWABuilderGDPR', JSON.stringify(true));
       }
     }
   };
@@ -17,6 +25,11 @@
 
 <template>
   <div>
+    <div v-if="seen" id="gdprDiv">
+      <p>This site uses cookies for analytics, personalized content and ads. By continuing to browse this site, you agree to this use.</p>
+      <a href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule">Learn More</a>
+    </div>
+
     <header class="l-header pure-g">
       <div class="l-header-left pure-u pure-u-md-1-5">
         <nuxt-link to="/">
@@ -82,3 +95,14 @@
     </footer>
   </div>
 </template>
+
+<style>
+  #gdprDiv {
+    align-items: center;
+    background: #F2F2F2;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    z-index: 9999;
+  }
+</style>
