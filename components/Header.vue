@@ -109,7 +109,7 @@ Vue.prototype.$awa = function (config) {
   awa.ct.capturePageView(config);
 
   return;
-}
+};
 </script>
 
 <style lang="scss" scoped>

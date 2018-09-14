@@ -64,7 +64,7 @@ export default class extends Vue {
   public iconCheckMissing = true;
   private iconFile: File | null = null;
   public error: string | null = null;
-  public copied: boolean = false;
+  public copied = false;
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];

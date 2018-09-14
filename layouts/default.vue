@@ -5,7 +5,7 @@
   @Component({})
   export default class extends Vue {
    
-    public seen: boolean = false;
+    public seen = false;
 
     public mounted(): void {
       const savedValue = localStorage.getItem('PWABuilderGDPR');
@@ -13,8 +13,8 @@
         this.seen = true;
         localStorage.setItem('PWABuilderGDPR', JSON.stringify(true));
       }
-    };
-  };
+    }
+  }
 </script>
 
 <style lang="scss" scoped>

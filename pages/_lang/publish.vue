@@ -152,7 +152,7 @@ export default class extends Vue {
   };
 
   // @PublishState status: boolean;
-  @PublishState status: boolean = true;
+  @PublishState status = true;
   @PublishState appXLink: string;
 
   @PublishAction updateStatus;
