@@ -2,7 +2,13 @@
   import Vue from 'vue';
   import Component from 'nuxt-class-component';
 
-  @Component({})
+  import Toolbar from '~/components/Toolbar.vue';
+
+  @Component({
+    components: {
+      Toolbar
+    }
+  })
   export default class extends Vue {
    
     public seen = false;
@@ -37,6 +43,8 @@
       <p>This site uses cookies for analytics, personalized content and ads. By continuing to browse this site, you agree to this use.</p>
       <a href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule">Learn More</a>
     </div>
+
+    <Toolbar />
 
     <div class="container">
       <nuxt/>

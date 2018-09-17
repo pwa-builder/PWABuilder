@@ -1,12 +1,5 @@
 <template>
 <section class="generator_menu">
-  <header class="generator_menu-header">
-    {{ $t('generatormenu.title') }}
-  </header>
-  <p class="generator_menu-info">
-    {{ $t('generatormenu.subtitle') }}
-  </p>
-
   <ul class="generator_menu-tabs">
     <li class="generator_menu-tab">
       <nuxt-link :to="$i18n.path(firstLinkPath ? '' : 'generate')" exact class="generator_menu-link" :active-class="activeClass"

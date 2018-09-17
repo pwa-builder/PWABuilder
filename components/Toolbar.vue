@@ -1,12 +1,11 @@
 <template>
   <header>
     <div id="titleHeader">
-      <img id="headerImage" alt="headerImage" />
+      <img id="headerImage" />
       <h1>PWA Builder</h1>
     </div>
 
     <div id="buttonBlock">
-      <button id="manifestButton">Manifest</button>
       <button id="helpButton">Help</button>
     </div>
   </header>
@@ -30,16 +29,19 @@ header {
   background: $color-brand;
   color: white;
   display: flex;
-  height: 195px;
+  flex-direction: row;
   justify-content: space-between;
+  padding-bottom: 32px;
+  padding-top: 32px;
   width: 100%;
 }
 
 #headerImage {
   background: white;
-  height: 97px;
+  border-radius: 50%;
+  height: 48px;
   margin-right: 15px;
-  width: 93px;
+  width: 48px;
 }
 
 #headerImageBlock {
@@ -60,8 +62,9 @@ header {
 }
 
 #titleHeader {
+  align-items: center;
   display: flex;
-  margin-left: 33px;
+  margin-left: 68px;
 }
 
 #manifestButton {
@@ -82,13 +85,14 @@ header {
   background: transparent;
   border: none;
   color: white;
-  margin-right: 89px;
+  font-weight: 600;
+  height: 24px;
+  margin-right: 68px;
 }
 
 h1 {
-  font-size: 40px;
+  font-size: 28px;
   font-weight: normal;
   margin: 0;
-  width: 125px;
 }
 </style>
