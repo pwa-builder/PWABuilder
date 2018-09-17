@@ -1,29 +1,50 @@
 <template>
 <section class="generator_menu">
+  <h1 id="howItWorks">How it works...</h1>
   <ul class="generator_menu-tabs">
     <li class="generator_menu-tab">
       <nuxt-link :to="$i18n.path(firstLinkPath ? '' : 'generate')" exact class="generator_menu-link" :active-class="activeClass"
         data-step="1">
-       <!-- {{ $t('generatormenu.generate') }}-->
+       <!--{{ $t('generatormenu.generate') }}-->
       </nuxt-link>
+
+      <div id="circleText">
+        <h4>Lorem ipsum so dolor</h4>
+        <p>Lorem ipsum so dolor sit amet etc and a quick summary about what a PWA is. Also a link to more information</p>
+      </div>
     </li>
 
     <li class="generator_menu-tab">
       <nuxt-link :to="$i18n.path('serviceworker')" class="generator_menu-link" :active-class="activeClass" data-step="2">
         <!--{{ $t('generatormenu.serviceworker') }}-->
       </nuxt-link>
+      
+      <div id="circleText">
+        <h4>Lorem ipsum so dolor</h4>
+        <p>Lorem ipsum so dolor sit amet etc and a quick summary about what a PWA is. Also a link to more information</p>
+      </div>
     </li>
 
     <li class="generator_menu-tab">
       <nuxt-link :to="$i18n.path('publish')" class="generator_menu-link" :active-class="activeClass" data-step="3">
         <!--{{ $t('generatormenu.publish') }}-->
       </nuxt-link>
+
+      <div id="circleText">
+        <h4>Lorem ipsum so dolor</h4>
+        <p>Lorem ipsum so dolor sit amet etc and a quick summary about what a PWA is. Also a link to more information</p>
+      </div>
     </li>
     
     <li class="generator_menu-tab">
       <nuxt-link :to="$i18n.path('publish')" class="generator_menu-link" :active-class="activeClass" data-step="3">
         <!--{{ $t('generatormenu.publish') }}-->
       </nuxt-link>
+      
+      <div id="circleText">
+        <h4>Lorem ipsum so dolor</h4>
+        <p>Lorem ipsum so dolor sit amet etc and a quick summary about what a PWA is. Also a link to more information</p>
+      </div>
     </li>
   </ul>
 </section>
@@ -58,7 +79,6 @@ export default class extends Vue {
   &-header {
     background-color: $color-brand;
     color: $color-foreground-darker;
-    font-family: Bitter;
     font-size: $font-size-l;
     margin-bottom: 4vw;
     padding: 1rem 0;
@@ -67,7 +87,6 @@ export default class extends Vue {
   }
 
   &-info {
-    font-family: Bitter;
     font-size: $font-size-m;
     margin: 2rem auto;
     text-align: center;
@@ -96,7 +115,20 @@ export default class extends Vue {
     background: lightgrey;
     border-radius: 50%;
     display: block;
+    height: 184px;
     padding: 2rem;
+    width: 184px;
+  }
+
+  #howItWorks {
+    font-size: 32px;
+    margin-bottom: 41px;
+    margin-left: 68px;
+    margin-top: 64px;
+  }
+
+  #circleText {
+    width: 184px;
   }
 }
 </style>
