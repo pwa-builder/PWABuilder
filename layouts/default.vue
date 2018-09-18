@@ -5,11 +5,27 @@
     data() {
       return {
         pathnameUrl: this.$route.path,
+        seen: true
       };
     },
     watch: {
       '$route': function() {
         this.pathnameUrl = this.$route.path;
+      }
+    },
+    mounted: function() {
+      const savedValue = localStorage.getItem('PWABuilderGDPR');
+      if (JSON.parse((savedValue as string)) === true) {
+        this.seen = true;
+      } else {
+        // GDPR banner has not been seen before, lets show it
+        this.seen = false
+      }
+    },
+    methods: {
+      okGDPR: function () {
+        this.seen = true;
+        localStorage.setItem('PWABuilderGDPR', JSON.stringify(true));
       }
     }
   };
@@ -17,6 +33,12 @@
 
 <template>
   <div>
+
+    <div v-if="!seen" id="gdprDiv">
+      <p>This site uses cookies for analytics, personalized content and ads. By continuing to browse this site, you agree to this use.</p>
+      <button v-on:click="okGDPR">OK</button>
+    </div>
+
     <header class="l-header pure-g">
       <div class="l-header-left pure-u pure-u-md-1-5">
         <nuxt-link to="/">
@@ -82,3 +104,23 @@
     </footer>
   </div>
 </template>
+
+<style lang="scss" scoped>
+  @import "~assets/scss/base/variables";
+
+  #gdprDiv {
+    align-items: center;
+    background: #F2F2F2;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    z-index: 9999;
+  }
+
+  #gdprDiv button {
+    background: transparent;
+    border: none;
+    color: #1FC2C8;
+  }
+
+</style>
