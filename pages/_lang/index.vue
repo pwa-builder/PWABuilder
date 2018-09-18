@@ -44,7 +44,7 @@
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque auctor arcu non felis ultricies, ut viverra eros accumsan. Aenean eget lorem luctus, aliquet diam eu, imperdiet nisi. Donec quis justo nisl. Cras quis arcu sapien.</p>
       </div>
 
-      <section id="goodBetterBar">
+      <div id="goodBetterBar">
         <div>
           <h3>Good</h3>
           <ul>
@@ -68,7 +68,39 @@
             <li>Integrates with native features in the operating system</li>
           </ul>
         </div>
-      </section>
+      </div>
+    </div>
+  </div>
+
+  <div id="otherTools">
+    <div id="otherHeaderBlock">
+      <h2 id="quickBlockText">Other useful tools</h2>
+    </div>
+
+    <div id="otherBar">
+      <div id="otherTool">
+        <img />
+        <h4>Lorem ipsum so dolor</h4>
+        <p>Lorem ipsum so dolor sit amet etc and a quick summary about what a PWA is. Also a link to more information</p>
+      </div>
+
+      <div id="otherTool">
+        <img />
+        <h4>Lorem ipsum so dolor</h4>
+        <p>Lorem ipsum so dolor sit amet etc and a quick summary about what a PWA is. Also a link to more information</p>
+      </div>
+
+      <div id="otherTool">
+        <img />
+        <h4>Lorem ipsum so dolor</h4>
+        <p>Lorem ipsum so dolor sit amet etc and a quick summary about what a PWA is. Also a link to more information</p>
+      </div>
+
+      <div id="otherTool">
+        <img />
+        <h4>Lorem ipsum so dolor</h4>
+        <p>Lorem ipsum so dolor sit amet etc and a quick summary about what a PWA is. Also a link to more information</p>
+      </div>
     </div>
   </div>
 </section>
@@ -163,7 +195,8 @@ Vue.prototype.$awa = function(config) {
     width: 100%;
   }
 
-  #whatMakesBlock {
+  #whatMakesBlock,
+  #otherTools {
     padding-bottom: 48px;
     padding-left: 68px;
     padding-right: 68px;
@@ -227,7 +260,8 @@ Vue.prototype.$awa = function(config) {
     text-align: center;
   }
 
-  #goodBetterBar {
+  #goodBetterBar,
+  #otherBar {
     display: flex;
     justify-content: space-between;
   }
@@ -235,6 +269,20 @@ Vue.prototype.$awa = function(config) {
   #goodBetterBar h3 {
     font-size: 32px;
     font-weight: 400;
+  }
+
+  #otherTool {
+    margin-top: 41px;
+    width: 280px;
+  }
+
+  #otherTool p {
+    width: 184px;
+  }
+
+  #otherTool img {
+    height: 184px;
+    width: 280px;
   }
 </style>
 
