@@ -1,7 +1,6 @@
 <template>
 <section>
-  <!--<GeneratorMenu/>-->
-  <Toolbar />
+  <!--<GeneratorMenu/>
   <div v-if="status">
     <div class="pwa-infobox pwa-infobox--transparent l-pad l-pad--thin">
       <div class="pure-g">
@@ -19,12 +18,12 @@
               <Download platform="web" :message="$t('publish.download')" :is-brand="true" />
             </span>
           </div>
-        </div>-->
-        <PublishCard :platform="$t('publish.web')" :description="$t('publish.web_description')">
+        </div>
+       <!-- <PublishCard :platform="$t('publish.web')" :description="$t('publish.web_description')">
           <span class="button-holder download-archive">
             <Download platform="web" :message="$t('publish.download')" :is-brand="true" />
           </span>
-        </PublishCard>
+        </PublishCard>-->
 
         <!--<div class="pure-u-1 pure-u-md-1-2">
           <div class="pwa-infobox-box pwa-infobox-box--flat">
@@ -37,17 +36,17 @@
               <button class="pwa-button pwa-button--simple pwa-button--brand" @click="openAppXModal();  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/publish/windows10-appx' })"> {{ $t('publish.generate_appx') }}</button>
             </p>
           </div>
-        </div>-->
-        <PublishCard :platform="$t('publish.windows')" :description="$t('publish.windows_description')">
+        </div>
+        <!--<PublishCard :platform="$t('publish.windows')" :description="$t('publish.windows_description')">
           <span class="button-holder download-archive">
             <Download platform="windows10" :message="$t('publish.download')" />
           </span>
           <p>
             <button class="pwa-button pwa-button--simple pwa-button--brand" @click="openAppXModal();  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/publish/windows10-appx' })"> {{ $t('publish.generate_appx') }}</button>
           </p>
-        </PublishCard>
+        </PublishCard>-->
 
-        <Modal :title="$t('publish.generate_appx')" ref="appxModal" @submit="onSubmitAppxModal" @cancel="onCancelAppxModal" v-if="appxForm">
+        <!--<Modal :title="$t('publish.generate_appx')" ref="appxModal" @submit="onSubmitAppxModal" @cancel="onCancelAppxModal" v-if="appxForm">
           <div class="l-generator-box">
             <label class="l-generator-label">{{ $t('publish.enter_your') }}
               <a href="https://developer.microsoft.com/en-us/windows" target="_blank">{{ $t('publish.dev_center') }}</a> {{ $t('publish.publisher_details') }}</label>
@@ -79,7 +78,7 @@
           <p class="l-generator-error" v-if="appxError"><span class="icon-exclamation"></span> {{ $t(appxError) }}</p>
         </Modal>
 
-        <!--<div class="pure-u-1">
+        <div class="pure-u-1">
           <div class="pwa-infobox-box pwa-infobox-box--flat">
             <div class="pwa-infobox-padded">
               <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.android') }}</h4>
@@ -91,8 +90,8 @@
             <h2 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.ios') }}</h2>
             <Download platform="ios" :message="$t('publish.download')" />
           </div>
-        </div>-->
-        <section id="mobilePlatformsBar">
+        </div>
+        <!--<section id="mobilePlatformsBar">
           <PublishCard class="mobileCard" :platform="$t('publish.android')" :description="$t('publish.android_description')">
             <div>
               <Download platform="android" :message="$t('publish.download')" />
@@ -103,32 +102,111 @@
               <Download platform="ios" :message="$t('publish.download')" />
             </div>
           </PublishCard>
-        </section>
-      </div>
+        </section>-->
+      <!--</div>
     </div>
-    <StartOver />
+    <StartOver />-
   </div>
 
   <div class="l-generator-buttons l-generator-buttons--centered" v-if="!status">
     <p class="instructions">{{ $t('publish.manifest_needed') }}</p>
     <button @click="goToHome" class="pwa-button pwa-button--simple">{{ $t('publish.first_step') }}</button>
-  </div>
+  </div>-->
+
+    <div class="l-generator-step">
+      <div class="pure-g padding">
+        <section id="getStartedBlock">
+          <div id="quickTextBlock">
+            <h2 id="quickBlockText">Ready to publish your app? Let's get started!</h2>
+
+            <p id="quickBlockPlaceholder">You have a few different options to publish your app. You can download the files and deploy them to your site, or you can download pre-populated app projects for the major app platforms from the links below..</p>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="l-generator-step light">
+      <div id="whatMakesBlock">
+        <div id="goodPWAHeaderBlock">
+          <h2 id="quickBlockText">Before we begin?</h2>
+          <p>It looks like your app is missing a couple of great features that'll make it even better. These features are super easy to add (we'll even show you how!), and will significantly improve the quality of your app. Use the links below to add these items to your app.</p>
+        </div>
+
+        <div id="goodBetterBar">
+          <div>
+            <h3>Good</h3>
+            <ul>
+              <li>Uses a fully completed manifest</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3>Better</h3>
+            <ul>
+              <li>Uses a fully completed manifest</li>
+              <li>Uses Service Workers to enable offline use cases</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3>Best</h3>
+            <ul>
+              <li>Uses a fully completed manifest</li>
+              <li>Uses Service Workers to enable offline use cases</li>
+              <li>Integrates with native features in the operating system</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="l-generator-step">
+      <div class="pure-g padding">
+        <section id="downloadForSite">
+          <h2>Download these files to add to your site</h2>
+          <a>What do I do with these files?</a>
+
+          <div id="lists">
+            <ul>
+              <input name="Download Everything" type="radio" /> 
+              <label for="Download Everything">Download Everything</label>
+            </ul>
+            or
+            <ul>
+              <input name="DownloadJust" type="radio" /> 
+              <label for="DownloadJust">Download Just these files:</label>
+              <ul>
+                <input type="radio" />App Manifest
+                <input type="radio" /> Service Workers
+                <input type="radio" />API Samples
+                <input type="radio" />Windows 10 Sideloader
+              </ul>
+            </ul>
+          </div>
+        </section>
+
+        <section id="generateProject">
+          <h2>Or let us generate some app projects for you</h2>
+          <a>What do I do with these files?</a>
+        </section>
+      </div>
+    </div>
 </section>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Component from 'nuxt-class-component';
-import { Action, State, namespace } from 'vuex-class';
+import Vue from "vue";
+import Component from "nuxt-class-component";
+import { Action, State, namespace } from "vuex-class";
 
-import GeneratorMenu from '~/components/GeneratorMenu.vue';
-import StartOver from '~/components/StartOver.vue';
-import Download from '~/components/Download.vue';
-import Modal from '~/components/Modal.vue';
-import PublishCard from '~/components/PublishCard.vue';
-import Toolbar from '~/components/Toolbar.vue';
+import GeneratorMenu from "~/components/GeneratorMenu.vue";
+import StartOver from "~/components/StartOver.vue";
+import Download from "~/components/Download.vue";
+import Modal from "~/components/Modal.vue";
+import PublishCard from "~/components/PublishCard.vue";
+import Toolbar from "~/components/Toolbar.vue";
 
-import * as publish from '~/store/modules/publish';
+import * as publish from "~/store/modules/publish";
 
 const PublishState = namespace(publish.name, State);
 const PublishAction = namespace(publish.name, Action);
@@ -166,7 +244,7 @@ export default class extends Vue {
 
   public goToHome(): void {
     this.$router.push({
-      path: this.$i18n.path('')
+      path: this.$i18n.path("")
     });
   }
 
@@ -202,12 +280,67 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
-  #mobilePlatformsBar {
-    display: flex;
+  @import '~assets/scss/base/variables';
+
+  .padding {
+    padding-bottom: 48px;
+    padding-left: 68px;
+    padding-right: 190px;
+    padding-top: 64px;
+    width: 100%;
   }
 
-  #mobilePlatformsBar .mobileCard {
-    flex: 1;
+  #quickBlockText {
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0;
+    width: 472px;
+  }
+
+  .l-generator-step {
+    padding: 0;
+  }
+
+  #getStartedBlock {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  #quickTextBlock {
+    margin-bottom: 27px;
+  }
+
+  #goodPWAHeaderBlock {
+    width: 760px;
+  }
+
+  #goodBetterBar,
+  #otherBar {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  #goodBetterBar h3 {
+    font-size: 32px;
+    font-weight: 400;
+  }
+
+  #whatMakesBlock,
+  #otherTools {
+    padding-bottom: 48px;
+    padding-left: 68px;
+    padding-right: 68px;
+    padding-top: 65px;
+  }
+
+  .light {
+    background: white;
+  }
+
+  #quickBlockPlaceholder {
+    width: 760px;
   }
 </style>
 
