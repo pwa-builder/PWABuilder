@@ -161,25 +161,38 @@
     </div>
 
     <div class="l-generator-step">
-      <div class="pure-g padding">
+      <div class="downloadSection pure-g padding">
         <section id="downloadForSite">
           <h2>Download these files to add to your site</h2>
-          <a>What do I do with these files?</a>
+          <a href="https://www.microsoft.com">What do I do with these files?</a>
 
           <div id="lists">
-            <ul>
-              <input name="Download Everything" type="radio" /> 
-              <label for="Download Everything">Download Everything</label>
-            </ul>
-            or
-            <ul>
-              <input name="DownloadJust" type="radio" /> 
-              <label for="DownloadJust">Download Just these files:</label>
+            <button id="downloadAllButton">Download Everything</button>
+
+            <div>or</div>
+
+            <ul id="justTheseList">
+              Download Just these files:
               <ul>
-                <input type="radio" />App Manifest
-                <input type="radio" /> Service Workers
-                <input type="radio" />API Samples
-                <input type="radio" />Windows 10 Sideloader
+                <span>
+                  <input id="manifest" type="radio" />
+                  <label for="manifest">App Manifest</label>
+                </span>
+
+                <span>
+                  <input id="serviceWorkers" type="radio" />
+                  <label for="serviceWorkers">Service Workers</label>
+                </span>
+
+                <span>
+                  <input id="apiSamples" type="radio" />
+                  <label for="apiSamples">API Samples</label>
+                </span>
+
+                <span>
+                  <input id="windows10" type="radio" />
+                  <label for="windows10">Windows 10 Package</label>
+                </span>
               </ul>
             </ul>
           </div>
@@ -187,7 +200,7 @@
 
         <section id="generateProject">
           <h2>Or let us generate some app projects for you</h2>
-          <a>What do I do with these files?</a>
+          <a href="https://www.microsoft.com">What do I do with these files?</a>
         </section>
       </div>
     </div>
@@ -341,6 +354,34 @@ export default class extends Vue {
 
   #quickBlockPlaceholder {
     width: 760px;
+  }
+
+  #justTheseList,
+  #justTheseList ul {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #justTheseList {
+    margin-top: 12px;
+    padding: 0;
+  }
+
+  #justTheseList ul {
+    padding-left: 15px;
+  }
+
+  #downloadAllButton {
+    margin-bottom: 12px;
+    margin-top: 44px;
+  }
+
+  .downloadSection {
+    justify-content: space-between;
+  }
+
+  label {
+    margin-left: 15px;
   }
 </style>
 
