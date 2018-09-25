@@ -200,13 +200,40 @@
               </ul>
             </ul>
 
-            <button id="mainDownloadButton">Download</button>
+            <button class="mainDownloadButton">Download</button>
           </div>
         </section>
 
         <section id="generateProject">
           <h2>Or let us generate some app projects for you</h2>
           <a href="https://www.microsoft.com">What do I do with these files?</a>
+
+          <div class="platformCard">
+            <h3>Windows</h3>
+            <p>Service Worker support requires RS4 or above. You'll get a copy of each PWAbuilder component as well as a side-loadable version of your PWA (requires Win10 in dev mode). The Generate Appx button can be used to generate a PWA package to submit to the Microsoft Store.</p>
+            <button class="mainDownloadButton">Download</button>
+          </div>
+
+          <div class="platformCard">
+            <h3>iOS</h3>
+            <p>asdf asdf asdf asdf asdf asdf asdf asdf asdf</p>
+            <button class="mainDownloadButton">Download</button>
+          </div>
+
+          <div class="platformCard">
+            <h3>Android</h3>
+            <p>
+              PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.
+              PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.
+            </p>
+            <button class="mainDownloadButton">Download</button>
+          </div>
+
+          <div class="platformCard">
+            <h3>macOS</h3>
+            <p>asdf asdf asdf asdf asdf asdf asdf asdf asdf</p>
+            <button class="mainDownloadButton">Download</button>
+          </div>
         </section>
       </div>
     </div>
@@ -341,6 +368,12 @@ export default class extends Vue {
     justify-content: space-between;
   }
 
+  .platformCard h3 {
+    font-size: 24px;
+    font-weight: 400;
+    margin-top: 48px;
+  }
+
   #goodBetterBar h3 {
     font-size: 32px;
     font-weight: 400;
@@ -395,14 +428,18 @@ export default class extends Vue {
     margin-bottom: 16px;
   }
 
-  #mainDownloadButton {
+  .mainDownloadButton {
     background: $color-brand;
     border: none;
     border-radius: 20px;
     color: white;
     height: 36px;
-    margin-top: 20px;
     width: 138px;
+  }
+
+  .platformCard p {
+    font-size: 18px;
+    width: 664px;
   }
 </style>
 
