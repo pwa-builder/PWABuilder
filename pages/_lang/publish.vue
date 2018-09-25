@@ -167,12 +167,16 @@
           <a href="https://www.microsoft.com">What do I do with these files?</a>
 
           <div id="lists">
-            <button id="downloadAllButton">Download Everything</button>
+
+            <span id="downloadAllButton">
+              <input type="radio" id="downloadAll" />
+              <label for="downloadAll">Download All</label>
+            </span>
 
             <div>or</div>
 
             <ul id="justTheseList">
-              Download Just these files:
+              <div id="justTheseText">Download Just these files:</div>
               <ul>
                 <span>
                   <input id="manifest" type="radio" />
@@ -195,6 +199,8 @@
                 </span>
               </ul>
             </ul>
+
+            <button id="mainDownloadButton">Download</button>
           </div>
         </section>
 
@@ -372,6 +378,7 @@ export default class extends Vue {
   }
 
   #downloadAllButton {
+    display: block;
     margin-bottom: 12px;
     margin-top: 44px;
   }
@@ -382,6 +389,20 @@ export default class extends Vue {
 
   label {
     margin-left: 15px;
+  }
+
+  #justTheseText {
+    margin-bottom: 16px;
+  }
+
+  #mainDownloadButton {
+    background: $color-brand;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    height: 36px;
+    margin-top: 20px;
+    width: 138px;
   }
 </style>
 
