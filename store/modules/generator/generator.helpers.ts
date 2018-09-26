@@ -34,16 +34,25 @@ export const helpers = {
     prepareIconsUrls(icons: Icon[], baseUrl: string) {
         return icons.map(icon => {
             if (!icon.src.includes('http') && !icon.src.includes('data:image')) {
-                //remove non-base scope path for sites like mastodon and billthis
                 const pathArray = baseUrl.split( '/' );
                 const protocol = pathArray[0];
                 const host = pathArray[2];
-                baseUrl = protocol + '//' + host; 
-                if(icon.src.includes('data:'))baseUrl = '';
-                //remove posible trailing/leading slashes
+                let pathsNumber = pathArray.length;
+                let additionnalPath = '';
+                // Images are not directly stored at the root level
+                if (pathsNumber > 3) {
+                    // Removing possible filename at the end of the URL or #
+                    if (pathArray[pathArray.length - 1].indexOf('.') !== -1 || pathArray[pathArray.length - 1].indexOf('#') !== -1) {
+                        pathsNumber--; 
+                    }
+                    for (let i = 3; i < pathsNumber; i++) {
+                        additionnalPath += '/' + pathArray[i];
+                    }
+                }
+                baseUrl = protocol + '//' + host + additionnalPath;
+                //remove posible trailing/leading slashes 
                 icon.src = `${baseUrl.replace(/\/$/, '')}/${icon.src.replace(/^\/+/g, '')}`;
             }
-
             return icon;
         });
     },

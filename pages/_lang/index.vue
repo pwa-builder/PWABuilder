@@ -116,7 +116,7 @@ export default class extends Vue {
         name: 'generate'
       });
     } catch (e) {
-      this.error = e;
+      this.error = e.message;
     }
   }
 }
