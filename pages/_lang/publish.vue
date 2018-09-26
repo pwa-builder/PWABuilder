@@ -1,125 +1,14 @@
 <template>
-<section>
-  <!--<GeneratorMenu/>
-  <div v-if="status">
-    <div class="pwa-infobox pwa-infobox--transparent l-pad l-pad--thin">
-      <div class="pure-g">
-        <!--<div class="pure-u-1">
-          <h2 class="pwa-infobox-title pwa-infobox-title--centered">{{ $t('publish.title') }}</h2>
-        </div>-->
-
-        <!--<div class="pure-u-1 pure-u-md-1-2">
-          <div class="pwa-infobox-box pwa-infobox-box--flat">
-            <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.web') }}</h4>
-            <p class="l-generator-description l-generator-description--fixed">
-              {{ $t('publish.web_description') }}
-            </p>
-            <span class="button-holder download-archive">
-              <Download platform="web" :message="$t('publish.download')" :is-brand="true" />
-            </span>
-          </div>
-        </div>
-       <!-- <PublishCard :platform="$t('publish.web')" :description="$t('publish.web_description')">
-          <span class="button-holder download-archive">
-            <Download platform="web" :message="$t('publish.download')" :is-brand="true" />
-          </span>
-        </PublishCard>-->
-
-        <!--<div class="pure-u-1 pure-u-md-1-2">
-          <div class="pwa-infobox-box pwa-infobox-box--flat">
-            <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.windows') }}</h4>
-            <p class="l-generator-description l-generator-description--fixed">{{ $t('publish.windows_description') }}  <a href="http://docs.pwabuilder.com/quickstart/2018/02/03/quick-start-sideload-pwa-win10.html" target="blank">{{ $t('publish.sideload_instructions') }}</a></p>
-            <span class="button-holder download-archive">
-              <Download platform="windows10" :message="$t('publish.download')" />
-            </span>
-            <p>
-              <button class="pwa-button pwa-button--simple pwa-button--brand" @click="openAppXModal();  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/publish/windows10-appx' })"> {{ $t('publish.generate_appx') }}</button>
-            </p>
-          </div>
-        </div>
-        <!--<PublishCard :platform="$t('publish.windows')" :description="$t('publish.windows_description')">
-          <span class="button-holder download-archive">
-            <Download platform="windows10" :message="$t('publish.download')" />
-          </span>
-          <p>
-            <button class="pwa-button pwa-button--simple pwa-button--brand" @click="openAppXModal();  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/publish/windows10-appx' })"> {{ $t('publish.generate_appx') }}</button>
-          </p>
-        </PublishCard>-->
-
-        <!--<Modal :title="$t('publish.generate_appx')" ref="appxModal" @submit="onSubmitAppxModal" @cancel="onCancelAppxModal" v-if="appxForm">
-          <div class="l-generator-box">
-            <label class="l-generator-label">{{ $t('publish.enter_your') }}
-              <a href="https://developer.microsoft.com/en-us/windows" target="_blank">{{ $t('publish.dev_center') }}</a> {{ $t('publish.publisher_details') }}</label>
-          </div>
-          <div class="l-generator-box">
-            <label class="l-generator-label">{{ $t('publish.label_publisher') }}</label>
-          </div>
-          <input class="l-generator-input l-generator-input--largest" :placeholder="$t('publish.placeholder_publisher')" type="text"
-            v-model="appxForm.publisher" requied>
-
-          <div class="l-generator-box form-item">
-            <label class="l-generator-label">{{ $t('publish.label_identity') }}</label>
-            <label class="l-generator-label">{{ $t('publish.label_publisher_id') }}</label>
-          </div>
-          <input class="l-generator-input l-generator-input--largest" :placeholder="$t('publish.placeholder_identity')" type="text"
-            v-model="appxForm.publisher_id" requied>
-
-          <div class="l-generator-box form-item">
-            <label class="l-generator-label">{{ $t('publish.label_package') }}</label>
-          </div>
-          <input class="l-generator-input l-generator-input--largest" :placeholder="$t('publish.placeholder_package')" type="text"
-            v-model="appxForm.package" requied>
-
-          <div class="l-generator-box form-item">
-            <label class="l-generator-label">{{ $t('publish.label_version') }}</label>
-          </div>
-          <input class="l-generator-input l-generator-input--largest" :placeholder="$t('publish.placeholder_version')" type="text"
-            v-model="appxForm.version" requied>
-          <p class="l-generator-error" v-if="appxError"><span class="icon-exclamation"></span> {{ $t(appxError) }}</p>
-        </Modal>
-
-        <div class="pure-u-1">
-          <div class="pwa-infobox-box pwa-infobox-box--flat">
-            <div class="pwa-infobox-padded">
-              <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.android') }}</h4>
-              <p class="l-generator-description l-generator-description--fixed l-generator-description--context">{{ $t('publish.android_description') }}</p>
-              <div>
-                <Download platform="android" :message="$t('publish.download')" />
-              </div>
-            </div>
-            <h2 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.ios') }}</h2>
-            <Download platform="ios" :message="$t('publish.download')" />
-          </div>
-        </div>
-        <!--<section id="mobilePlatformsBar">
-          <PublishCard class="mobileCard" :platform="$t('publish.android')" :description="$t('publish.android_description')">
-            <div>
-              <Download platform="android" :message="$t('publish.download')" />
-            </div>
-          </PublishCard>
-          <PublishCard class="mobileCard" :platform="$t('publish.ios')" :description="$t('publish.ios_description')">
-            <div>
-              <Download platform="ios" :message="$t('publish.download')" />
-            </div>
-          </PublishCard>
-        </section>-->
-      <!--</div>
-    </div>
-    <StartOver />-
-  </div>
-
-  <div class="l-generator-buttons l-generator-buttons--centered" v-if="!status">
-    <p class="instructions">{{ $t('publish.manifest_needed') }}</p>
-    <button @click="goToHome" class="pwa-button pwa-button--simple">{{ $t('publish.first_step') }}</button>
-  </div>-->
-
+  <section>
     <div class="l-generator-step">
       <div class="pure-g padding">
         <section id="getStartedBlock">
           <div id="quickTextBlock">
             <h2 id="quickBlockText">Ready to publish your app? Let's get started!</h2>
 
-            <p id="quickBlockPlaceholder">You have a few different options to publish your app. You can download the files and deploy them to your site, or you can download pre-populated app projects for the major app platforms from the links below..</p>
+            <p id="quickBlockPlaceholder">You have a few different options to publish your app. You can download the
+              files and deploy them to your site, or you can download pre-populated app projects for the major app
+              platforms from the links below..</p>
           </div>
         </section>
       </div>
@@ -129,7 +18,9 @@
       <div id="whatMakesBlock">
         <div id="goodPWAHeaderBlock">
           <h2 id="quickBlockText">Before we begin?</h2>
-          <p>It looks like your app is missing a couple of great features that'll make it even better. These features are super easy to add (we'll even show you how!), and will significantly improve the quality of your app. Use the links below to add these items to your app.</p>
+          <p>It looks like your app is missing a couple of great features that'll make it even better. These features
+            are super easy to add (we'll even show you how!), and will significantly improve the quality of your app.
+            Use the links below to add these items to your app.</p>
         </div>
 
         <div id="goodBetterBar">
@@ -169,7 +60,7 @@
           <div id="lists">
 
             <span id="downloadAllButton">
-              <input type="radio" id="downloadAll" />
+              <input type="checkbox" id="downloadAll" />
               <label for="downloadAll">Download All</label>
             </span>
 
@@ -179,28 +70,28 @@
               <div id="justTheseText">Download Just these files:</div>
               <ul>
                 <span>
-                  <input id="manifest" type="radio" />
+                  <input id="manifest" v-model="files" value="manifest" type="checkbox" />
                   <label for="manifest">App Manifest</label>
                 </span>
 
                 <span>
-                  <input id="serviceWorkers" type="radio" />
+                  <input id="serviceWorkers" v-model="files" value="serviceWorkers" type="checkbox" />
                   <label for="serviceWorkers">Service Workers</label>
                 </span>
 
                 <span>
-                  <input id="apiSamples" type="radio" />
+                  <input id="apiSamples" v-model="files" value="apiSamples" type="checkbox" />
                   <label for="apiSamples">API Samples</label>
                 </span>
 
                 <span>
-                  <input id="windows10" type="radio" />
+                  <input id="windows10" v-model="files" value="windows10Package" type="checkbox" />
                   <label for="windows10">Windows 10 Package</label>
                 </span>
               </ul>
             </ul>
 
-            <button class="mainDownloadButton">Download</button>
+            <button @click="downloadFiles" class="mainDownloadButton">Download</button>
           </div>
         </section>
 
@@ -210,23 +101,25 @@
 
           <div class="platformCard">
             <h3>Windows</h3>
-            <p>Service Worker support requires RS4 or above. You'll get a copy of each PWAbuilder component as well as a side-loadable version of your PWA (requires Win10 in dev mode). The Generate Appx button can be used to generate a PWA package to submit to the Microsoft Store.</p>
-            <button class="mainDownloadButton">Download</button>
+            <p>Service Worker support requires RS4 or above. You'll get a copy of each PWAbuilder component as well as
+              a side-loadable version of your PWA (requires Win10 in dev mode). The Generate Appx button can be used to
+              generate a PWA package to submit to the Microsoft Store.</p>
+            <Download platform="windows10" :message="$t('publish.download')" />
           </div>
 
           <div class="platformCard">
             <h3>iOS</h3>
             <p>asdf asdf asdf asdf asdf asdf asdf asdf asdf</p>
-            <button class="mainDownloadButton">Download</button>
+            <Download platform="ios" :message="$t('publish.download')" />
           </div>
 
           <div class="platformCard">
             <h3>Android</h3>
             <p>
-              PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.
-              PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.
+              PWAs are available through the browser on Android, however your PWA can also be submitted to the play
+              store by submitting the package you get below.
             </p>
-            <button class="mainDownloadButton">Download</button>
+            <Download platform="android" :message="$t('publish.download')" />
           </div>
 
           <div class="platformCard">
@@ -237,7 +130,7 @@
         </section>
       </div>
     </div>
-</section>
+  </section>
 </template>
 
 <script lang="ts">
@@ -274,6 +167,8 @@ export default class extends Vue {
     package: null,
     version: null
   };
+
+  public files: any[] = [];
 
   // @PublishState status: boolean;
   @PublishState status = true;
@@ -321,6 +216,10 @@ export default class extends Vue {
       package: null,
       version: null
     };
+  }
+
+  public downloadFiles() {
+    console.log(this.files);
   }
 }
 </script>
