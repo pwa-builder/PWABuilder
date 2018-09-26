@@ -22,6 +22,7 @@
 
               <button @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/build/manifest-scan' })" id="getStartedButton">
                 {{ $t('generator.start') }}
+                <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm"/>
               </button>
             </form>
           </div>
@@ -118,7 +119,6 @@ import Component from 'nuxt-class-component';
 import { Action, State, namespace } from 'vuex-class';
 
 import GeneratorMenu from '~/components/GeneratorMenu.vue';
-// import TwoWays from "~/components/TwoWays.vue";
 import Loading from '~/components/Loading.vue';
 import * as generator from '~/store/modules/generator';
 
@@ -127,7 +127,6 @@ const GeneratorAction = namespace(generator.name, Action);
 
 @Component({
   components: {
-    // TwoWays,
     GeneratorMenu,
     Loading
   }
