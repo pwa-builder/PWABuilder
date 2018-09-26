@@ -241,18 +241,18 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Component from "nuxt-class-component";
-import { Action, State, namespace } from "vuex-class";
+import Vue from 'vue';
+import Component from 'nuxt-class-component';
+import { Action, State, namespace } from 'vuex-class';
 
-import GeneratorMenu from "~/components/GeneratorMenu.vue";
-import StartOver from "~/components/StartOver.vue";
-import Download from "~/components/Download.vue";
-import Modal from "~/components/Modal.vue";
-import PublishCard from "~/components/PublishCard.vue";
-import Toolbar from "~/components/Toolbar.vue";
+import GeneratorMenu from '~/components/GeneratorMenu.vue';
+import StartOver from '~/components/StartOver.vue';
+import Download from '~/components/Download.vue';
+import Modal from '~/components/Modal.vue';
+import PublishCard from '~/components/PublishCard.vue';
+import Toolbar from '~/components/Toolbar.vue';
 
-import * as publish from "~/store/modules/publish";
+import * as publish from '~/store/modules/publish';
 
 const PublishState = namespace(publish.name, State);
 const PublishAction = namespace(publish.name, Action);
@@ -290,7 +290,7 @@ export default class extends Vue {
 
   public goToHome(): void {
     this.$router.push({
-      path: this.$i18n.path("")
+      path: this.$i18n.path('')
     });
   }
 
