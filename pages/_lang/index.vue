@@ -7,7 +7,7 @@
         <div id="quickTextBlock">
           <h2 id="quickBlockText">{{ $t('home.mast_title') }}</h2>
 
-          <p id="quickBlockPlaceholder">Lorem ipsum so dolor sit amet etc and a quick summary about what a PWA is. Also a link to more information.</p>
+          <p id="quickBlockPlaceholder">{{ $t('home.mast_tag') }}</p>
         </div>
 
         <div id="bottomBlock">
