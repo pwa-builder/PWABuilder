@@ -271,6 +271,7 @@ Vue.prototype.$awa = function(config) {
   }
 
   #goodBetterBar h3 {
+    font-family: $font-family-l3;
     font-size: 32px;
     font-weight: 400;
   }
