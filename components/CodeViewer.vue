@@ -48,6 +48,7 @@ export default class extends Vue {
   public readonly suggestionsId = 'suggestions_list';
   public isReady = true;
   public downloadButtonMessage = 'publish.download_manifest';
+  public editor: monaco.editor.IStandaloneCodeEditor | null = null;
 
   public mounted(): void {
     if (this.code) {
@@ -55,7 +56,7 @@ export default class extends Vue {
       // to see the ref
       this.$nextTick(() => {
         if (this.code) {
-          monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
+          this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
             value: this.code,
             language: 'json',
             fixedOverflowWidgets: true
@@ -70,11 +71,10 @@ export default class extends Vue {
   @Watch('code')
   onCodeChanged() {
     if (this.code) {
-      monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
-        value: this.code,
-        language: 'json',
-        fixedOverflowWidgets: true
-      });
+      console.log('here');
+      if (this.editor) {
+        this.editor.setValue(this.code);
+      }
     }
   }
 }
