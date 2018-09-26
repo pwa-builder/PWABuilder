@@ -5,7 +5,7 @@
     <div class="pure-g padding">
       <section id="getStartedBlock">
         <div id="quickTextBlock">
-          <h2 id="quickBlockText">Quickly and easily turn your website into an app</h2>
+          <h2 id="quickBlockText">{{ $t('home.mast_title') }}</h2>
 
           <p id="quickBlockPlaceholder">Lorem ipsum so dolor sit amet etc and a quick summary about what a PWA is. Also a link to more information.</p>
         </div>

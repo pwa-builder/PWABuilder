@@ -9,6 +9,7 @@
     "windows" : "Windows APIs"
   },
   "home": {
+    "mast_title":"Quickly and easily turn your website into an app!",
     "what_makes_title":"What makes a good PWA?",
     "what_makes_body":"A good PWA is indistinguishable from a good native app.  A good PWA works whether you are connected to the internet or working offline, on a phone or a powerful PC, and works great with a mouse as well as touch.  But don't stop at good, we can help make your PWA great!",
     "quality_low_title":"Good",
