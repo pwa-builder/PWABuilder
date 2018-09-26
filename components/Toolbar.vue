@@ -26,8 +26,7 @@ export default class extends Vue {
 
 header {
   align-items: center;
-  background: $color-brand;
-  color: white;
+  color: $color-secondary;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -37,7 +36,7 @@ header {
 }
 
 #headerImage {
-  background: white;
+  background: $color-secondary;
   border-radius: 50%;
   height: 48px;
   margin-right: 15px;
@@ -84,7 +83,7 @@ header {
 #helpButton {
   background: transparent;
   border: none;
-  color: white;
+  color: $color-secondary;
   font-weight: 600;
   height: 24px;
   margin-right: 68px;

@@ -52,24 +52,18 @@
 
     <footer class="l-footer pure-g is-small">
       <div class="pure-u-1-2 pure-u-md-1-5">
-        <nuxt-link class="l-footer-action l-footer-action--block active" :to="$i18n.path('')">{{ $t('menu.generate') }}</nuxt-link>
-        <a class="l-footer-action l-footer-action--block" href="http://docs.pwabuilder.com/" target="_blank">{{ $t('menu.documentation') }}</a>
       </div>
       <div class="pure-u-1-2 pure-u-md-1-5">
-        <a class="l-footer-action l-footer-action--block" href="//appimagegenerator-prod.azurewebsites.net">{{ $t('menu.generator') }}</a>
-        <a class="l-footer-action l-footer-action--block" href="https://github.com/pwa-builder" target="_blank">{{ $t('menu.github') }}</a>
+     
       </div>
       <div class="l-footer-social pure-u-1 pure-u-md-3-5">
-        <a class="l-footer-logo_action" href="https://twitter.com/boyofgreen" target="_blank">
-          <img class="l-footer-logo" src="~/assets/images/logo_twitter.svg">
-        </a>
         <a class="l-footer-logo_action" href="https://github.com/pwa-builder" target="_blank">
           <img class="l-footer-logo" src="~/assets/images/logo_github.svg">
         </a>
-        <a class="l-footer-logo_action" href="https://www.npmjs.com/package/manifoldjs" target="_blank">
+        <a class="l-footer-logo_action" href="https://www.npmjs.com/package/pwabuilder" target="_blank">
           <img class="l-footer-logo l-footer-logo--big" src="~/assets/images/logo_npm.svg">
         </a>
-        <a class="l-footer-logo_action" href="http://stackoverflow.com/questions/tagged/manifoldjs" target="_blank">
+        <a class="l-footer-logo_action" href="http://stackoverflow.com/questions/tagged/pwabuilder" target="_blank">
           <img class="l-footer-logo l-footer-logo--small" src="~/assets/images/logo_stackoverflow.svg">
         </a>
       </div>

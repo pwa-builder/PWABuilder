@@ -8,6 +8,20 @@
     "generate": "Generate",
     "windows" : "Windows APIs"
   },
+  "home": {
+    "what_makes_title":"What makes a good PWA?",
+    "what_makes_body":"A good PWA is indistinguishable from a good native app.  A good PWA works whether you are connected to the internet or working offline, on a phone or a powerful PC, and works great with a mouse as well as touch.  But don't stop at good, we can help make your PWA great!",
+    "quality_low_title":"Good",
+    "quality_mid_title":"Better",
+    "quality_high_title":"Best",
+    "quality_low_list_1":"Runs on secure HTTPS",
+    "quality_low_list_2":"Has a basic W3C manifest",
+    "quality_low_list_3":"Works offline",
+    "quality_mid_list_1":"Uses service worker for performance and advanced offline",
+    "quality_mid_list_2":"Advanced Manifest with app listing info",
+    "quality_mid_list_3":"Works with different inputs and screen sizes",
+    "quality_high_list_1":"Uses advanced \"app like\" features"
+  },
   "footer": {
     "copyright": "PWABuilder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.",
     "privacy": "Our Privacy Statement"

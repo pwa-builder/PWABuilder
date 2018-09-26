@@ -116,7 +116,7 @@ Vue.prototype.$awa = function (config) {
   @import '~assets/scss/base/variables';
 
   .headerWrapper {
-    background: $color-secondary;
+    background: $color-background-brighter;
     display: flex;
     height: 771px;
   }
@@ -130,7 +130,7 @@ Vue.prototype.$awa = function (config) {
   }
 
   #headerImage {
-    background: white;
+    background: $color-foreground-dark;
     height: 97px;
     margin-right: 15px;
     width: 93px;
