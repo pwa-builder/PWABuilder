@@ -1,6 +1,10 @@
 <template>
 <section class="code_viewer">
   <div class="code_viewer-pre" ref="monacoDiv"></div>
+
+  <div v-if="errorNumber">
+    <p>{{this.errorNumber}} errors</p>
+  </div>
 </section>
 </template>
 
@@ -49,6 +53,7 @@ export default class extends Vue {
   public isReady = true;
   public downloadButtonMessage = 'publish.download_manifest';
   public editor: monaco.editor.IStandaloneCodeEditor | null = null;
+  public errorNumber: number = 0;
 
   public mounted(): void {
     if (this.code) {
@@ -60,6 +65,14 @@ export default class extends Vue {
             value: this.code,
             language: 'json',
             fixedOverflowWidgets: true
+          });
+
+          const model = this.editor.getModel();
+          model.onDidChangeDecorations(() => {
+            const errors = (<any>window).monaco.editor.getModelMarkers({});
+            console.log(errors);
+
+            this.errorNumber = errors.length;
           });
         }
       });
@@ -84,6 +97,7 @@ export default class extends Vue {
 
 .code_viewer {
   display: flex;
+  flex-direction: column;
   font-size: 0;
   height: 450px;
 
