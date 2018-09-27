@@ -3,7 +3,7 @@
 <section>
   <div v-if="manifest$">
     <div class="l-generator-step">
-      <div class="l-generator-semipadded">
+      <div class="l-generator-semipadded mainDiv">
         <div class="l-generator-form pure-u-1 pure-u-md-1-2">
           <h4 class="l-generator-subtitle">
             {{ $t("generate.subtitle") }}
@@ -186,18 +186,26 @@
           </div>
         </div>
 
+        <div>
+          
+        </div>
+
         <div class="generate-code pure-u-1 pure-u-md-1-2">
-          <CodeViewer :code="getCode()" :title="$t('generate.w3c_manifest')" :suggestions="suggestions" :suggestionsTotal="suggestionsTotal"
+          <button class="manifestButton" v-bind:class="{ active: seeEditor }" @click="seeManifest()">Manifest Preview</button>
+          <button class="manifestButton" v-bind:class="{ active: !seeEditor }" @click="seeGuidance()">Guidance</button>
+
+          <CodeViewer v-if="seeEditor" :code="getCode()" :title="$t('generate.w3c_manifest')" :suggestions="suggestions" :suggestionsTotal="suggestionsTotal"
             :warnings="warnings" :warningsTotal="warningsTotal">
             <nuxt-link :to="$i18n.path('serviceworker')" class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger' })">
               {{ $t("serviceworker.next_step") }}
             </nuxt-link>
           </CodeViewer>
+          <div v-else>
+            <h1>Hello World</h1>
+          </div>
         </div>
       </div>
     </div>
-
-
 
     <div class="l-generator-buttons l-generator-buttons--centered">
       <nuxt-link :to="$i18n.path('serviceworker')" class="pwa-button" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger' })">
@@ -255,6 +263,7 @@ export default class extends Vue {
   public iconCheckMissing = true;
   private iconFile: File | null = null;
   public error: string | null = null;
+  public seeEditor: boolean = true;
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
@@ -394,10 +403,16 @@ export default class extends Vue {
 
   }
 
-
-
   public onCancelIconModal(): void {
     this.iconFile = null;
+  }
+
+  public seeManifest() {
+    this.seeEditor = true;
+  }
+
+  public seeGuidance() {
+    this.seeEditor = false;
   }
 }
 
@@ -410,5 +425,20 @@ export default class extends Vue {
   &-code {
     margin-top: -2rem;
   }
+}
+
+.manifestButton {
+  background: transparent;
+  border: none;
+  color: $color-brand;
+  outline: none;
+}
+
+.active {
+  border-bottom: 2px solid black;
+}
+
+.mainDiv {
+  display: flex;
 }
 </style>

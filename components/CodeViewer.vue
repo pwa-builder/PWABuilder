@@ -71,7 +71,6 @@ export default class extends Vue {
   @Watch('code')
   onCodeChanged() {
     if (this.code) {
-      console.log('here');
       if (this.editor) {
         this.editor.setValue(this.code);
       }
