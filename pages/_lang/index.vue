@@ -239,8 +239,7 @@ Vue.prototype.$awa = function(config) {
 
   #quickTextBlock,
   #leftBlock,
-  #alreadyPWA,
-  #goodPWAHeaderBlock {
+  #alreadyPWA {
     width: 472px;
   }
   
@@ -261,18 +260,6 @@ Vue.prototype.$awa = function(config) {
     margin-left: 8px;
     padding: 10px;
     text-align: center;
-  }
-
-  #goodBetterBar,
-  #otherBar {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  #goodBetterBar h3 {
-    font-family: $font-family-l3;
-    font-size: 32px;
-    font-weight: 400;
   }
 
   #otherTool {

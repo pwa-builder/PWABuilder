@@ -209,6 +209,8 @@
       </nuxt-link>
     </div>
 
+    <GoodPWA />
+
     <StartOver />
   </div>
 
@@ -233,6 +235,7 @@ import RelatedApplications from '~/components/RelatedApplications.vue';
 import CustomMembers from '~/components/CustomMembers.vue';
 import StartOver from '~/components/StartOver.vue';
 import ColorSelector from '~/components/ColorSelector.vue';
+import GoodPWA from '~/components/GoodPWA.vue';
 
 import * as generator from '~/store/modules/generator';
 
@@ -248,7 +251,8 @@ const GeneratorGetters = namespace(generator.name, Getter);
     ColorSelector,
     CodeViewer,
     StartOver,
-    Modal
+    Modal,
+    GoodPWA
   }
 })
 
