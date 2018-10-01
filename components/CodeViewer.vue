@@ -78,6 +78,8 @@ export default class extends Vue {
             console.log(errors);
 
             this.errorNumber = errors.length;
+
+            this.$emit('invalidManifest');
           });
         }
       });
