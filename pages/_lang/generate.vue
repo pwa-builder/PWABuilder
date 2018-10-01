@@ -190,7 +190,7 @@
           <button class="manifestButton" v-bind:class="{ active: seeEditor }" @click="seeManifest()">Manifest Preview</button>
           <button class="manifestButton" v-bind:class="{ active: !seeEditor }" @click="seeGuidance()">Guidance</button>
 
-          <CodeViewer v-if="seeEditor" :code="getCode()" :title="$t('generate.w3c_manifest')" :suggestions="suggestions" :suggestionsTotal="suggestionsTotal"
+          <CodeViewer v-on:invalidManifest="invalidManifest()" v-if="seeEditor" :code="getCode()" :title="$t('generate.w3c_manifest')" :suggestions="suggestions" :suggestionsTotal="suggestionsTotal"
             :warnings="warnings" :warningsTotal="warningsTotal">
             <nuxt-link :to="$i18n.path('serviceworker')" class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger' })">
               {{ $t("serviceworker.next_step") }}
@@ -209,7 +209,7 @@
       </nuxt-link>
     </div>
 
-    <GoodPWA />
+    <GoodPWA :hasManifest="goodManifest"/>
 
     <StartOver />
   </div>
@@ -264,6 +264,7 @@ export default class extends Vue {
   private iconFile: File | null = null;
   public error: string | null = null;
   public seeEditor: boolean = true;
+  public goodManifest: boolean;
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
@@ -287,6 +288,8 @@ export default class extends Vue {
 
   public created(): void {
     if (!this.manifest) {
+      this.goodManifest = false;
+
       this.$router.push({
         path: this.$i18n.path('')
       });
@@ -294,6 +297,7 @@ export default class extends Vue {
     }
 
     this.manifest$ = { ...this.manifest };
+    this.goodManifest = true;
   }
 
   public onChangeSimpleInput(): void {
@@ -413,6 +417,10 @@ export default class extends Vue {
 
   public seeGuidance() {
     this.seeEditor = false;
+  }
+
+  public invalidManifest() {
+    this.goodManifest = false;
   }
 }
 
