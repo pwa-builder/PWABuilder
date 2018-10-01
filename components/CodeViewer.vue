@@ -5,6 +5,10 @@
   <div v-if="errorNumber">
     <p>{{this.errorNumber}} errors</p>
   </div>
+
+  <div id="downloadDiv">
+    <button @click="copy()" id="copyButton">Copy</button>
+  </div>
 </section>
 </template>
 
@@ -13,6 +17,7 @@ import Vue from 'vue';
 import * as monaco from 'monaco-editor';
 import Component from 'nuxt-class-component';
 import { Prop, Watch } from 'vue-property-decorator';
+import Clipboard from 'clipboard';
 
 import SkipLink from '~/components/SkipLink.vue';
 import IssuesList from '~/components/IssuesList.vue';
@@ -83,9 +88,23 @@ export default class extends Vue {
 
   @Watch('code')
   onCodeChanged() {
-    if (this.code) {
-      if (this.editor) {
-        this.editor.setValue(this.code);
+    if (this.code && this.editor) {
+      this.editor.setValue(this.code);
+    }
+  }
+
+  async copy() {
+    if (this.editor) {
+      const code = this.editor.getValue();
+
+      if ((navigator as any).clipboard) {
+        try {
+          await (navigator as any).clipboard.writeText(code);
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        let clipboard = new Clipboard(code);
       }
     }
   }
