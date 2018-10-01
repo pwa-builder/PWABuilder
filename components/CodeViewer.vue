@@ -117,7 +117,6 @@ export default class extends Vue {
 .code_viewer {
   display: flex;
   flex-direction: column;
-  font-size: 0;
   height: 450px;
 
   @media screen and (max-width: $media-screen-s) {
