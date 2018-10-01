@@ -4,8 +4,7 @@ html,
 body {
   $font-size: 16px;
 
-  background: white;
-  font-family: Helvetica;
+  font-family: "Segoe UI";
   font-size: $font-size;
   height: 100%;
   width: 100%;
@@ -17,6 +16,10 @@ body {
   @media screen and (max-width: $media-screen-s) {
     font-size: $font-size * .75;
   }
+}
+
+html {
+  background: $color-brand-tertiary;
 }
 
 .stop-scroll {

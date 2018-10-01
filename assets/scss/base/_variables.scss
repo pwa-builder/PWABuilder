@@ -26,6 +26,12 @@ $color-shell-prompt: #B25538;
 $color-shell-command: #FEC77C;
 $color-error: #ED4545;
 $color-error-bright: lighten($color-error, 5%);
+//new colors for brand
+$color-brand-primary: #2C3E50;
+$color-brand-secondary: #FC4349;
+$color-brand-tertiary: #D7DADB;
+$color-brand-quartary:#6DBCDB;
+$color-brand-quintary:#FFFFFF;
 
 // Animations
 $animation-speed-default: .35s;

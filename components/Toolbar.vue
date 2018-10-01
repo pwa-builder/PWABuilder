@@ -26,7 +26,7 @@ export default class extends Vue {
 
 header {
   align-items: center;
-  color: $color-secondary;
+  color: $color-brand-primary;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -51,8 +51,6 @@ header {
 }
 
 #headerBlock {
-  background: $color-secondary;
-  color: $color-brand;
   display: flex;
   justify-content: space-between;
   margin-left: 83px;
@@ -70,7 +68,6 @@ header {
   background: $color-complementary;
   border: none;
   border-radius: 5px;
-  box-shadow: 0 7px 9px 0 #002CFF, 0 4px 0 0 #002CFF;
   height: 47px;
   margin-right: 25px;
   width: 92px;
@@ -90,6 +87,7 @@ header {
 }
 
 h1 {
+  display: none;
   font-size: 28px;
   font-weight: normal;
   margin: 0;

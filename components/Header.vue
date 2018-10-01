@@ -116,7 +116,6 @@ Vue.prototype.$awa = function (config) {
   @import '~assets/scss/base/variables';
 
   .headerWrapper {
-    background: $color-background-brighter;
     display: flex;
     height: 771px;
   }
@@ -149,7 +148,6 @@ Vue.prototype.$awa = function (config) {
   }
 
   #headerBlock {
-    background: $color-secondary;
     color: $color-brand;
     display: flex;
     justify-content: space-between;
@@ -177,6 +175,7 @@ Vue.prototype.$awa = function (config) {
   }
 
   h1 {
+    display: none;
     font-size: 40px;
     font-weight: normal;
     margin: 0;

@@ -73,7 +73,6 @@ export default class extends Vue {
   $tab-size: 16rem;
   $tab-height: 5rem;
 
-  background-color: $color-background-brighter;
   padding-bottom: 4rem;
 
   &-header {

@@ -10,7 +10,7 @@
   },
   "home": {
     "mast_title":"Quickly and easily turn your website into an app!",
-    "mast_tag": "With Progressive Web Apps (or simply PWAs) you dont have to decide between using open web technologies for cross-platform interoperability and providing your users with a native app-like experience customized for their device",
+    "mast_tag": "With Progressive Web Apps (or simply PWAs) you don't have to decide between using cross-platform web technologies and providing your users with a native app-like experience.",
     "what_makes_title":"What makes a good PWA?",
     "what_makes_body":"A good PWA is indistinguishable from a good native app.  A good PWA works whether you are connected to the internet or working offline, on a phone or a powerful PC, and works great with a mouse as well as touch.  But don't stop at good, we can help make your PWA great!",
     "quality_low_title":"Good",

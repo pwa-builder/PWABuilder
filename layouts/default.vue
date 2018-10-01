@@ -34,11 +34,30 @@
     justify-content: space-evenly;
     z-index: 9999;
   }
-</style>
 
+  .bgArt {
+    position: absolute;
+    z-index: -1;
+  }
+
+  #artw {
+    transform: translateX(50%);
+  }
+ 
+  #artb {
+    transform: translateX(-50%);
+  }
+  
+  #artlb {
+    transform: scale(.5);
+  }
+</style>
 
 <template>
   <div>
+  <img id="artw" class="bgArt" src="~/assets/images/white.svg">
+  <img id="artb" class="bgArt" src="~/assets/images/blue.svg">
+  <img id="artlb" class="bgArt" src="~/assets/images/lightBlue.svg">
     <div v-if="seen" id="gdprDiv">
       <p>This site uses cookies for analytics, personalized content and ads. By continuing to browse this site, you agree to this use.</p>
       <a href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule">Learn More</a>
