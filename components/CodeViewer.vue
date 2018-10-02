@@ -79,7 +79,9 @@ export default class extends Vue {
 
             this.errorNumber = errors.length;
 
-            this.$emit('invalidManifest');
+            if (errors.length > 0) {
+              this.$emit('invalidManifest');
+            }
           });
         }
       });
