@@ -209,7 +209,7 @@
       </nuxt-link>
     </div>
 
-    <GoodPWA :hasManifest="goodManifest"/>
+    <GoodPWA :hasManifest="hasManifest" :hasBetterManifest="betterManifest"/>
 
     <StartOver />
   </div>
@@ -264,7 +264,8 @@ export default class extends Vue {
   private iconFile: File | null = null;
   public error: string | null = null;
   public seeEditor: boolean = true;
-  public goodManifest: boolean;
+  public hasManifest: boolean = false;
+  public betterManifest: boolean = false;
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
@@ -288,16 +289,30 @@ export default class extends Vue {
 
   public created(): void {
     if (!this.manifest) {
-      this.goodManifest = false;
+      this.hasManifest = false;
 
-      this.$router.push({
+      this.$router.push({ 
         path: this.$i18n.path('')
       });
       return;
     }
 
     this.manifest$ = { ...this.manifest };
-    this.goodManifest = true;
+    console.log(this.manifest);
+    this.analyzeManifest(this.manifest);
+  }
+
+  private analyzeManifest(manifest: generator.Manifest) {
+    // set props to pass to GoodBetterBest component
+    // based on how filled out the manifest is
+
+    // we already know we have a manifest by this point
+    this.hasManifest = true;
+
+    // we have a better manifest if these checks pass
+    if (manifest.related_applications.length > 0) {
+      this.betterManifest = true;
+    }
   }
 
   public onChangeSimpleInput(): void {
@@ -420,7 +435,7 @@ export default class extends Vue {
   }
 
   public invalidManifest() {
-    this.goodManifest = false;
+    this.hasManifest = false;
   }
 }
 
