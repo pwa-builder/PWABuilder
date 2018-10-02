@@ -43,6 +43,8 @@
     </nuxt-link>
   </div>
 
+  <GoodPWA/>
+
   <StartOver />
 </section>
 </template>
@@ -57,6 +59,7 @@ import GeneratorMenu from '~/components/GeneratorMenu.vue';
 import Loading from '~/components/Loading.vue';
 import CodeViewer from '~/components/CodeViewer.vue';
 import StartOver from '~/components/StartOver.vue';
+import GoodPWA from '~/components/GoodPWA.vue';
 
 import * as serviceworker from '~/store/modules/serviceworker';
 import { ServiceWorker } from '~/store/modules/serviceworker';
@@ -69,7 +72,8 @@ const ServiceworkerAction = namespace(serviceworker.name, Action);
     GeneratorMenu,
     Loading,
     StartOver,
-    CodeViewer
+    CodeViewer,
+    GoodPWA
   }
 })
 
