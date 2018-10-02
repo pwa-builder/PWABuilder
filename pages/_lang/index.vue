@@ -12,10 +12,6 @@
 
         <div id="bottomBlock">
           <div id="leftBlock">
-            <h2 id="getStartedHere">Get Started!</h2>
-
-            <p id='placeholderText'>Enter the URL of the website you want to convert to a Progressive Web App below</p>
-
             <form @submit.prevent="checkUrlAndGenerate" @keydown.enter.prevent="checkUrlAndGenerate">
               <input id="getStartedInput" :aria-label="$t('generator.url')" :placeholder="$t('generator.placeholder_url')" name="siteUrl" type="text" ref="url"
                 v-model="url$" autofocus />
@@ -26,16 +22,16 @@
               </button>
             </form>
           </div>
-
-          <div id="alreadyPWA">
-            <h3>Or if you're already familiar with PWAs...</h3>
-            <a href="">Take me straight to the APIs, extensions, and other good stuff!</a>
-          </div>
         </div>
       </section>
     </div>
   </div>
-
+  <section class="pure-g proTag">
+    <div id="alreadyPWA"> 
+      <h3>Already have an awesome PWA?</h3>
+      <a href="">Click here for a bunch of cool, free extras that you can add to your PWA to make it even better!</a>
+    </div>
+  </section>
   <GeneratorMenu :first-link-path="true" />
 
   <div class="l-generator-step">
@@ -191,11 +187,28 @@ Vue.prototype.$awa = function(config) {
   @import '~assets/scss/base/variables';
 
   .padding {
+    margin-bottom: 100px;
+    margin-left: 138px;
     padding-bottom: 48px;
-    padding-left: 68px;
     padding-right: 190px;
     padding-top: 64px;
     width: 100%;
+  }
+
+  .proTag {
+    font-size: 22px;
+    margin: 148px 0 100px 138px;
+    width: 256px;
+  }
+
+  .proTag a,
+  .proTag a:visited {
+    color: $color-brand-quintary;
+  }
+
+  .proTag h3 {
+    color: $color-brand-primary;
+    font-size: 24px;
   }
 
   #whatMakesBlock,
@@ -207,9 +220,15 @@ Vue.prototype.$awa = function(config) {
   }
 
   #quickBlockText {
-    font-size: 32px;
+    color: $color-brand-quintary;
+    font-size: 36px;
     font-weight: 600;
     margin: 0;
+  }
+  
+  #quickBlockPlaceholder {
+    color: $color-brand-quintary;
+    font-size: 24px;
   }
 
   .l-generator-step {
@@ -245,17 +264,17 @@ Vue.prototype.$awa = function(config) {
   
   #getStartedInput {
     border: solid 1px grey;
-    border-radius: 25px;
+    border-radius: 1px;
     font-size: 14px;
     padding: 10px;
     width: 280px;
   }
 
   #getStartedButton {
-    background: $color-brand;
+    background-color: $color-brand-quintary;
     border: none;
-    border-radius: 25px;
-    color: white;
+    border-radius: 1px;
+    color: $color-brand-primary;
     font-size: 14px;
     margin-left: 8px;
     padding: 10px;

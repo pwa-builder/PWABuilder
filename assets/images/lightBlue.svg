@@ -6,18 +6,6 @@
       }
 
       .cls-2 {
-        fill: #2c3e50;
-        font-size: 24px;
-        font-family: Bungee-Regular, Bungee;
-      }
-
-      .cls-3 {
-        fill: #fff;
-        font-size: 16px;
-        font-family: SegoeUI, Segoe UI;
-      }
-
-      .cls-4 {
         filter: url(#Path_292);
       }
     </style>
@@ -29,11 +17,7 @@
       <feComposite in="SourceGraphic"/>
     </filter>
   </defs>
-  <g id="Already_have_PWA_diamond" data-name="Already have PWA diamond" transform="translate(18 -552.501)">
-    <g class="cls-4" transform="matrix(1, 0, 0, 1, -18, 552.5)">
-      <path id="Path_292-2" data-name="Path 292" class="cls-1" d="M1240,974.707,1493.414,848l253.414,126.707-253.414,126.705Z" transform="translate(-1222 -836)"/>
-    </g>
-    <text id="Already_have_an_awesome_PWA_" data-name="Already have an awesome PWA?" class="cls-2" transform="translate(138 610)"><tspan x="0" y="39">Already have an </tspan><tspan x="0" y="65">awesome PWA?</tspan></text>
-    <text id="Click_here_for_a_bunch_of_cool_free_extras_that_you_can_add_to_your_PWA_to_make_it_even_better_" data-name="Click here for a bunch of cool, free extras that you can add to your PWA to make it even better!" class="cls-3" transform="translate(138 692)"><tspan x="0" y="17">Click here for a bunch of cool, free </tspan><tspan x="0" y="39">extras that you can add to your </tspan><tspan x="0" y="61">PWA to make it even better!</tspan></text>
+  <g class="cls-2" transform="matrix(1, 0, 0, 1, 0, 0)">
+    <path id="Path_292-2" data-name="Path 292" class="cls-1" d="M1240,974.707,1493.414,848l253.414,126.707-253.414,126.705Z" transform="translate(-1222 -836)"/>
   </g>
 </svg>
