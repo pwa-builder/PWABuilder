@@ -209,7 +209,7 @@
       </nuxt-link>
     </div>
 
-    <GoodPWA :hasManifest="hasManifest" :hasBetterManifest="betterManifest"/>
+    <GoodPWA :hasManifest="basicManifest" :hasBetterManifest="betterManifest"/>
 
     <StartOver />
   </div>
@@ -264,7 +264,7 @@ export default class extends Vue {
   private iconFile: File | null = null;
   public error: string | null = null;
   public seeEditor: boolean = true;
-  public hasManifest: boolean = false;
+  public basicManifest: boolean = false;
   public betterManifest: boolean = false;
 
   @GeneratorState manifest: generator.Manifest;
@@ -289,8 +289,6 @@ export default class extends Vue {
 
   public created(): void {
     if (!this.manifest) {
-      this.hasManifest = false;
-
       this.$router.push({ 
         path: this.$i18n.path('')
       });
@@ -307,7 +305,7 @@ export default class extends Vue {
     // based on how filled out the manifest is
 
     // we already know we have a manifest by this point
-    this.hasManifest = true;
+    this.basicManifest = true;
 
     // we have a better manifest if these checks pass
     if (manifest.related_applications.length > 0) {
@@ -435,7 +433,8 @@ export default class extends Vue {
   }
 
   public invalidManifest() {
-    this.hasManifest = false;
+    console.log('invalid');
+    this.basicManifest = false;
   }
 }
 

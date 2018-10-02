@@ -53,10 +53,6 @@ export default class extends Vue {
   @Prop({}) hasBestWorker: boolean;
   @Prop({}) hasNativeFeatures: boolean;
   @Prop({}) isResponsive: boolean;
-
-  public mounted() {
-    console.log('hello world', this.hasManifest);
-  }
 }
 </script>
 
