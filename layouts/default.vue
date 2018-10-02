@@ -41,15 +41,23 @@
   }
 
   #artw {
-    transform: translateX(50%);
+    transform: translate(540.87px, -33.78px);
+    width: 1705px;
   }
  
   #artb {
-    transform: translateX(-50%);
+    transform: translate(-1502.98px, -324.99px);
+    width: 2539.28px;
   }
   
   #artlb {
-    transform: scale(.5);
+    transform: translate(0, 565px);
+    width: 507px;
+  }
+
+  #logoLarge {
+    transform: translate(706.2px, 185.6px);
+    width: 496.69px;
   }
 </style>
 
@@ -58,6 +66,7 @@
   <img id="artw" class="bgArt" src="~/assets/images/white.svg">
   <img id="artb" class="bgArt" src="~/assets/images/blue.svg">
   <img id="artlb" class="bgArt" src="~/assets/images/lightBlue.svg">
+  <img id="logoLarge" class="bgArt" src="~/assets/images/PWABuilderLogo.svg">  
     <div v-if="seen" id="gdprDiv">
       <p>This site uses cookies for analytics, personalized content and ads. By continuing to browse this site, you agree to this use.</p>
       <a href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule">Learn More</a>

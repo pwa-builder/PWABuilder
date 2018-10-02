@@ -1,4 +1,5 @@
 @import 'variables';
+@import url('https://fonts.googleapis.com/css?family=Bungee');
 
 html,
 body {
@@ -24,4 +25,13 @@ html {
 
 .stop-scroll {
   overflow: hidden;
+}
+
+h1,
+h2,
+h3 {
+  font-family: 'Bungee', cursive;
+  margin: 0;
+  margin-block-end: 0;
+  margin-block-start: 0;
 }

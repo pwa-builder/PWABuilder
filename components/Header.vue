@@ -169,6 +169,7 @@ Vue.prototype.$awa = function (config) {
   }
 
   #quickBlockText {
+    color: $color-brand-quintary;
     font-size: 36px;
     font-weight: normal;
     width: 439px;

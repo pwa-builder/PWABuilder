@@ -1,8 +1,6 @@
 <template>
   <header>
     <div id="titleHeader">
-      <img id="headerImage" />
-      <h1>PWA Builder</h1>
     </div>
 
     <div id="buttonBlock">
