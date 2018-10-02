@@ -209,7 +209,7 @@
       </nuxt-link>
     </div>
 
-    <GoodPWA :hasManifest="basicManifest" :hasBetterManifest="betterManifest"/>
+    <GoodPWA :hasManifest="basicManifest" :hasBetterManifest="betterManifest" :hasBestManifest="bestManifest"/>
 
     <StartOver />
   </div>
@@ -266,6 +266,7 @@ export default class extends Vue {
   public seeEditor: boolean = true;
   public basicManifest: boolean = false;
   public betterManifest: boolean = false;
+  public bestManifest: boolean = true;
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
@@ -296,7 +297,6 @@ export default class extends Vue {
     }
 
     this.manifest$ = { ...this.manifest };
-    console.log(this.manifest);
     this.analyzeManifest(this.manifest);
   }
 
@@ -307,9 +307,20 @@ export default class extends Vue {
     // we already know we have a manifest by this point
     this.basicManifest = true;
 
-    // we have a better manifest if these checks pass
+    // does the manifest have related applications filled out?
     if (manifest.related_applications.length > 0) {
       this.betterManifest = true;
+    }
+
+    // if we have all the values filled out we have the
+    // "best" manifest
+    for (let key in manifest) {
+      if (manifest.hasOwnProperty(key)) {
+          if (manifest[key].length === 0) {
+            // an entry is empty
+            this.bestManifest = false;
+          }
+      }
     }
   }
 
