@@ -197,13 +197,14 @@ Vue.prototype.$awa = function(config) {
 
   .proTag {
     font-size: 22px;
-    margin: 148px 0 100px 138px;
+    margin: 134px 0 100px 138px;
     width: 256px;
   }
 
   .proTag a,
   .proTag a:visited {
     color: $color-brand-quintary;
+    font-size: 16px;
   }
 
   .proTag h3 {
