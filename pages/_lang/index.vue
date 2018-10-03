@@ -197,7 +197,7 @@ Vue.prototype.$awa = function(config) {
 
   .proTag {
     font-size: 22px;
-    margin: 134px 0 100px 138px;
+    margin: 134px 138px 0 138px;
     width: 256px;
   }
 

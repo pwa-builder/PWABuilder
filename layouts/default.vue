@@ -73,6 +73,16 @@
     transform: translate(706.2px, 185.6px);
     width: 496.69px;
   }
+
+  #decorStack {
+    transform: translate(1134px, 610px);
+    width: 128px;
+  }
+
+  #bigWhite {
+    transform: translate(-1655px, 1278px);
+    width: 3309px;
+  }
 </style>
 
 <template>
@@ -81,6 +91,9 @@
   <img id="artb" class="bgArt" src="~/assets/images/blue.svg">
   <img id="artlb" class="bgArt" src="~/assets/images/lightBlue.svg">
   <img id="logoLarge" class="bgArt" src="~/assets/images/PWABuilderLogo.svg">  
+  <img id="decorStack" class="bgArt" src="~/assets/images/StackedCube.svg">  
+  <img id="bigWhite" class="bgArt" src="~/assets/images/white.svg">
+
     <div v-if="seen" id="gdprDiv">
       <p>This site uses cookies for analytics, personalized content and ads. By continuing to browse this site, you agree to this use.</p>
       <a href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule">Learn More</a>
