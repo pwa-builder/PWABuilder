@@ -37,7 +37,7 @@
     <h2 id="quickBlockText">  {{ $t('home.what_makes_title') }}</h2>
     <p>{{ $t('home.what_makes_body') }}</p>
   </div>
-  <GoodPWA />
+  <GoodPWA :allGood="true"/>
 
   <div id="otherTools">
     <div id="otherHeaderBlock">
@@ -134,7 +134,8 @@ export default class extends Vue {
       await this.getManifestInformation();
 
       this.$router.push({
-        name: 'gettingStarted'
+        // name: 'gettingStarted'
+        name: 'generate'
       });
     } catch (e) {
       this.error = e;

@@ -6,9 +6,9 @@
       <div class="rateContainer"><img id="good" class="rateBoxes" src="~/assets/images/good.svg"></div>
       <h3>{{ $t('home.quality_low_title') }}</h3>
       <ul>
-        <li v-bind:class="{ good: isHttps }">{{ $t('home.quality_low_list_1') }}</li>
-        <li v-bind:class="{ good: hasManifest }">{{ $t('home.quality_low_list_2') }}</li>
-        <li v-bind:class="{ good: hasWorker }">{{ $t('home.quality_low_list_3') }}</li>
+        <li v-bind:class="{ good: statusState.isHttps || allGood }">{{ $t('home.quality_low_list_1') }}</li>
+        <li v-bind:class="{ good: statusState.hasManifest || allGood }">{{ $t('home.quality_low_list_2') }}</li>
+        <li v-bind:class="{ good: statusState.hasWorker || allGood }">{{ $t('home.quality_low_list_3') }}</li>
       </ul>
     </div>
 
@@ -16,8 +16,8 @@
       <div class="rateContainer"><img id="better" class="rateBoxes" src="~/assets/images/better.svg"></div>
       <h3>{{ $t('home.quality_mid_title') }}</h3>
       <ul>
-        <li v-bind:class="{ good: hasBetterWorker }">{{ $t('home.quality_mid_list_1') }}</li>
-        <li v-bind:class="{ good: hasBetterManifest }">{{ $t('home.quality_mid_list_2') }}</li>
+        <li v-bind:class="{ good: statusState.hasBetterWorker || allGood }">{{ $t('home.quality_mid_list_1') }}</li>
+        <li v-bind:class="{ good: statusState.hasBetterManifest || allGood }">{{ $t('home.quality_mid_list_2') }}</li>
       </ul>
     </div>
 
@@ -25,7 +25,7 @@
       <div class="rateContainer"><img id="best" class="rateBoxes" src="~/assets/images/best.svg"></div>
       <h3>{{ $t('home.quality_high_title') }}</h3>
       <ul>
-        <li v-bind:class="{ good: hasNativeFeatures }">{{ $t('home.quality_high_list_1') }}</li>
+        <li v-bind:class="{ good: statusState.hasNativeFeatures || allGood }">{{ $t('home.quality_high_list_1') }}</li>
       </ul>
     </div>
   </div>
@@ -48,6 +48,43 @@ export default class extends Vue {
   @Prop({}) hasBestWorker: boolean;
   @Prop({}) hasNativeFeatures: boolean;
   @Prop({}) isResponsive: boolean;
+  @Prop({}) allGood: boolean;
+
+  statusState: any = {};
+
+  public mounted() {
+    this.updateStatusState();
+  }
+
+  public updated() {
+    // const status = this.updateStatusState();
+    sessionStorage.setItem('pwaStatus', JSON.stringify(status));
+  }
+
+  updateStatusState() {
+    let savedStatus: string | object | any = sessionStorage.getItem('pwaStatus');
+    if (savedStatus) {
+      // our saved status
+      savedStatus = JSON.parse(savedStatus);
+    }
+
+    const updatedStatus = { 
+      isHttps: this.isHttps,
+      hasManifest: this.hasManifest,
+      hasWorker: this.hasWorker,
+      hasBetterManifest: this.hasBetterManifest,
+      hasBetterWorker: this.hasBetterWorker,
+      hasBestManifest: this.hasBestManifest,
+      hasBestWorker: this.hasBestWorker,
+      hasNativeFeatures: this.hasNativeFeatures,
+      isResponsive: this.isResponsive
+    };
+
+   /*this.statusState = {...updatedStatus, ...savedStatus};*/
+   console.log(this.statusState);
+
+   return updatedStatus;
+  }
 }
 </script>
 

@@ -32,7 +32,7 @@
           body.setAttribute('data-location', pageName);
         }
         next();
-      })
+      });
     }
   }
 </script>

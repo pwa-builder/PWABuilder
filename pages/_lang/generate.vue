@@ -263,10 +263,10 @@ export default class extends Vue {
   public iconCheckMissing = true;
   private iconFile: File | null = null;
   public error: string | null = null;
-  public seeEditor: boolean = true;
-  public basicManifest: boolean = false;
-  public betterManifest: boolean = false;
-  public bestManifest: boolean = true;
+  public seeEditor = true;
+  public basicManifest = false;
+  public betterManifest = false;
+  public bestManifest = true;
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
