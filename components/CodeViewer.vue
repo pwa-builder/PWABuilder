@@ -58,7 +58,7 @@ export default class extends Vue {
   public isReady = true;
   public downloadButtonMessage = 'publish.download_manifest';
   public editor: monaco.editor.IStandaloneCodeEditor | null = null;
-  public errorNumber: number = 0;
+  public errorNumber = 0;
 
   public mounted(): void {
     if (this.code) {
@@ -109,6 +109,19 @@ export default class extends Vue {
         }
       } else {
         let clipboard = new Clipboard(code);
+
+        clipboard.on('success', (e) => {
+          console.info('Action:', e.action);
+          console.info('Text:', e.text);
+          console.info('Trigger:', e.trigger);
+
+          e.clearSelection();
+        });
+
+        clipboard.on('error', (e) => {
+            console.error('Action:', e.action);
+            console.error('Trigger:', e.trigger);
+        });
       }
     }
   }
