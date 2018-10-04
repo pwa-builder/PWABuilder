@@ -1,12 +1,9 @@
 <template>
  <div id='wrapper'>
-  <div id="goodPWAHeaderBlock">
-    <h2 id="quickBlockText">  {{ $t('home.what_makes_title') }}</h2>
-    <p>{{ $t('home.what_makes_body') }}</p>
-  </div>
 
   <div id="goodBetterBar">
-    <div>
+    <div class="choiceCol">
+      <div class="rateContainer"><img id="good" class="rateBoxes" src="~/assets/images/good.svg"></div>
       <h3>{{ $t('home.quality_low_title') }}</h3>
       <ul>
         <li v-bind:class="{ good: statusState.isHttps }">{{ $t('home.quality_low_list_1') }}</li>
@@ -15,22 +12,20 @@
       </ul>
     </div>
 
-    <div>
+    <div class="choiceCol">
+      <div class="rateContainer"><img id="better" class="rateBoxes" src="~/assets/images/better.svg"></div>
       <h3>{{ $t('home.quality_mid_title') }}</h3>
       <ul>
         <li v-bind:class="{ good: statusState.hasBetterWorker }">{{ $t('home.quality_mid_list_1') }}</li>
-        <li v-bind:class="{ good: statusState.hasBetterManifest }">{{ $t('home.quality_mid_list_2') }}</li>
-        <li v-bind:class="{ good: statusState.isResponsive }">{{ $t('home.quality_mid_list_3') }}</li>
+        <li v-bind:class="{ good: statusSTate.hasBetterManifest }">{{ $t('home.quality_mid_list_2') }}</li>
       </ul>
     </div>
 
-    <div>
+    <div class="choiceCol">
+      <div class="rateContainer"><img id="best" class="rateBoxes" src="~/assets/images/best.svg"></div>
       <h3>{{ $t('home.quality_high_title') }}</h3>
       <ul>
-        <li>{{ $t('home.quality_high_list_1') }}</li>
-        <li v-bind:class="{ good: statusState.hasBestManifest }">Uses a fully completed manifest</li>
-        <li v-bind:class="{ good: statusState.hasBestWorker }">Uses Service Workers to enable offline use cases</li>
-        <li v-bind:class="{ good: statusState.hasNativeFeatures }">Integrates with native features in the operating system</li>
+        <li v-bind:class="{ good: statusState.hasNativeFeatures }">{{ $t('home.quality_high_list_1') }}</li>
       </ul>
     </div>
   </div>
@@ -95,24 +90,57 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
+/* stylelint-disable */
 @import '~assets/scss/base/variables';
 
 #wrapper {
   padding-bottom: 48px;
-  padding-left: 68px;
-  padding-right: 190px;
-  padding-top: 64px;
+  padding-left: 138px;
+  padding-right: 138px;
+  padding-top: 0;
+}
+
+.rateBoxes {
+  width: 154px;
+}
+
+.rateContainer{
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 165px;
+  justify-content: flex-end;
 }
 
 #goodBetterBar {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
+  text-align: center;
+  width: 100%;
+
+  h3 {
+    color: $color-brand-primary;
+    font-size: 32px;
+    font-weight: 400;
+  }
 }
 
-#goodBetterBar h3 {
-  font-family: $font-family-l3;
-  font-size: 32px;
-  font-weight: 400;
+.choiceCol {
+  width: 376px;
+
+  li {
+    font-family: 'Bungee', cursive;
+    font-size: 16px;
+    line-height: 26px;
+    margin: 0;
+    margin-bottom: 10px;
+    padding-left: 30px;
+    text-align: left;
+    background-image: url('~/assets/images/gbbChecked.svg');
+    background-size: 24px 24px;
+    background-repeat: no-repeat;
+    list-style: none;
+  }
 }
 
 #goodPWAHeaderBlock {

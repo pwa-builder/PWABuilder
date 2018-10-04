@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 206 131.334">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #d7dadb;
+      }
+
+      .cls-2 {
+        fill: #2c3e50;
+      }
+
+      .cls-3 {
+        fill: #6dbcdb;
+      }
+
+      .cls-4 {
+        filter: url(#Path_290);
+      }
+    </style>
+    <filter id="Path_290" x="0" y="10.333" width="206" height="121" filterUnits="userSpaceOnUse">
+      <feOffset input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feFlood flood-opacity="0.251"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Group_110" data-name="Group 110" transform="translate(-626 -222.667)">
+    <g id="Group_89" data-name="Group 89" transform="translate(644 222.667)">
+      <g class="cls-4" transform="matrix(1, 0, 0, 1, -18, 0)">
+        <path id="Path_290-2" data-name="Path 290" class="cls-1" d="M1240,890.5l85-42.5,85,42.5L1325,933Z" transform="translate(-1222 -819.67)"/>
+      </g>
+      <path id="Path_277" data-name="Path 277" class="cls-1" d="M1240,890.5l85-42.5,85,42.5L1325,933Z" transform="translate(-1240 -848)"/>
+      <path id="Path_276" data-name="Path 276" class="cls-2" d="M1341,884.333l-85,42.5V898.5l85-42.5Z" transform="translate(-1171 -813.5)"/>
+      <path id="Path_279" data-name="Path 279" class="cls-3" d="M1240,884.333l85,42.5V898.5L1240,856Z" transform="translate(-1240 -813.5)"/>
+    </g>
+  </g>
+</svg>
