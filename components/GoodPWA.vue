@@ -6,9 +6,9 @@
       <div class="rateContainer"><img id="good" class="rateBoxes" src="~/assets/images/good.svg"></div>
       <h3>{{ $t('home.quality_low_title') }}</h3>
       <ul>
-        <li v-bind:class="{ good: !statusState.isHttps }">{{ $t('home.quality_low_list_1') }}</li>
-        <li v-bind:class="{ good: !statusState.hasManifest }">{{ $t('home.quality_low_list_2') }}</li>
-        <li v-bind:class="{ good: !statusState.hasWorker }">{{ $t('home.quality_low_list_3') }}</li>
+        <li v-bind:class="{ good: statusState.isHttps || allGood }">{{ $t('home.quality_low_list_1') }}</li>
+        <li v-bind:class="{ good: statusState.hasManifest || allGood }">{{ $t('home.quality_low_list_2') }}</li>
+        <li v-bind:class="{ good: statusState.hasWorker || allGood }">{{ $t('home.quality_low_list_3') }}</li>
       </ul>
     </div>
 
@@ -16,8 +16,8 @@
       <div class="rateContainer"><img id="better" class="rateBoxes" src="~/assets/images/better.svg"></div>
       <h3>{{ $t('home.quality_mid_title') }}</h3>
       <ul>
-        <li v-bind:class="{ good: !statusState.hasBetterWorker }">{{ $t('home.quality_mid_list_1') }}</li>
-        <li v-bind:class="{ good: !statusState.hasBetterManifest }">{{ $t('home.quality_mid_list_2') }}</li>
+        <li v-bind:class="{ good: statusState.hasBetterWorker || allGood }">{{ $t('home.quality_mid_list_1') }}</li>
+        <li v-bind:class="{ good: statusState.hasBetterManifest || allGood }">{{ $t('home.quality_mid_list_2') }}</li>
       </ul>
     </div>
 
@@ -25,7 +25,7 @@
       <div class="rateContainer"><img id="best" class="rateBoxes" src="~/assets/images/best.svg"></div>
       <h3>{{ $t('home.quality_high_title') }}</h3>
       <ul>
-        <li v-bind:class="{ good: !statusState.hasNativeFeatures }">{{ $t('home.quality_high_list_1') }}</li>
+        <li v-bind:class="{ good: statusState.hasNativeFeatures || allGood }">{{ $t('home.quality_high_list_1') }}</li>
       </ul>
     </div>
   </div>
@@ -48,6 +48,7 @@ export default class extends Vue {
   @Prop({}) hasBestWorker: boolean;
   @Prop({}) hasNativeFeatures: boolean;
   @Prop({}) isResponsive: boolean;
+  @Prop({}) allGood: boolean;
 
   statusState: any = {};
 
