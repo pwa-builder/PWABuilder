@@ -6,9 +6,18 @@
       <div class="rateContainer"><img id="good" class="rateBoxes" src="~/assets/images/good.svg"></div>
       <h3>{{ $t('home.quality_low_title') }}</h3>
       <ul>
-        <li v-bind:class="{ good: statusState.isHttps || allGood }">{{ $t('home.quality_low_list_1') }}</li>
-        <li v-bind:class="{ good: statusState.hasManifest || allGood }">{{ $t('home.quality_low_list_2') }}</li>
-        <li v-bind:class="{ good: statusState.hasWorker || allGood }">{{ $t('home.quality_low_list_3') }}</li>
+        <li v-bind:class="{ good: statusState.isHttps || allGood }">
+          {{ $t('home.quality_low_list_1') }}
+          <div v-if="statusState.isHttps || allGoodWithText" class='paramText'>some text that describes this thing</div>
+        </li>
+        <li v-bind:class="{ good: statusState.hasManifest || allGood }">
+          {{ $t('home.quality_low_list_2') }}
+          <div v-if="statusState.hasManifest || allGoodWithText" class='paramText'>some text that describes this thing</div>
+        </li>
+        <li v-bind:class="{ good: statusState.hasWorker || allGood }">
+          {{ $t('home.quality_low_list_3') }}
+          <div v-if="statusState.hasWorker || allGoodWithText" class='paramText'>some text that describes this thing</div>
+        </li>
       </ul>
     </div>
 
@@ -16,8 +25,14 @@
       <div class="rateContainer"><img id="better" class="rateBoxes" src="~/assets/images/better.svg"></div>
       <h3>{{ $t('home.quality_mid_title') }}</h3>
       <ul>
-        <li v-bind:class="{ good: statusState.hasBetterWorker || allGood }">{{ $t('home.quality_mid_list_1') }}</li>
-        <li v-bind:class="{ good: statusState.hasBetterManifest || allGood }">{{ $t('home.quality_mid_list_2') }}</li>
+        <li v-bind:class="{ good: statusState.hasBetterWorker || allGood }">
+          {{ $t('home.quality_mid_list_1') }}
+          <div v-if="statusState.hasBetterWorker || allGoodWithText" class='paramText'>some text that describes this thing</div>
+        </li>
+        <li v-bind:class="{ good: statusState.hasBetterManifest || allGood }">
+          {{ $t('home.quality_mid_list_2') }}
+          <div v-if="statusState.hasBetterManifest || allGoodWithText" class='paramText'>some text that describes this thing</div>
+        </li>
       </ul>
     </div>
 
@@ -25,7 +40,10 @@
       <div class="rateContainer"><img id="best" class="rateBoxes" src="~/assets/images/best.svg"></div>
       <h3>{{ $t('home.quality_high_title') }}</h3>
       <ul>
-        <li v-bind:class="{ good: statusState.hasNativeFeatures || allGood }">{{ $t('home.quality_high_list_1') }}</li>
+        <li v-bind:class="{ good: statusState.hasNativeFeatures || allGood }">
+          {{ $t('home.quality_high_list_1') }}
+          <div v-if="statusState.hasNativeFeatures || allGoodWithText" class='paramText'>some text that describes this thing</div>
+        </li>
       </ul>
     </div>
   </div>
@@ -49,6 +67,7 @@ export default class extends Vue {
   @Prop({}) hasNativeFeatures: boolean;
   @Prop({}) isResponsive: boolean;
   @Prop({}) allGood: boolean;
+  @Prop({}) allGoodWithText: boolean;
 
   statusState: any = {};
 

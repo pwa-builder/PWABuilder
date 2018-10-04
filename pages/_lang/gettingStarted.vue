@@ -15,7 +15,7 @@
 
     <div class="chooseContainer">
       <h2>Your App Results</h2>
-      <GoodPWA />
+      <GoodPWA :allGoodWithText="true"/>
     </div>
   </section>
 </template>
