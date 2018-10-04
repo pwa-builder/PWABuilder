@@ -31,7 +31,7 @@
           body.setAttribute('location', to.fullPath);
         }
         next();
-      })
+      });
     }
   }
 </script>

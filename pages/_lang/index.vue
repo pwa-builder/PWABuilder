@@ -166,7 +166,8 @@ export default class extends Vue {
       await this.getManifestInformation();
 
       this.$router.push({
-        name: 'gettingStarted'
+        // name: 'gettingStarted'
+        name: 'generate'
       });
     } catch (e) {
       this.error = e;
