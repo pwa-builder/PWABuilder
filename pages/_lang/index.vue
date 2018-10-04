@@ -37,8 +37,9 @@
     <h2 id="quickBlockText">  {{ $t('home.what_makes_title') }}</h2>
     <p>{{ $t('home.what_makes_body') }}</p>
   </div>
-  <GoodPWA :allGood="true"/>
-
+  <div class="homeGood">
+    <GoodPWA :allGood="true"/>
+  </div>
   <div id="otherTools">
     <div id="otherHeaderBlock">
       <h2 id="quickBlockText">Other useful tools</h2>

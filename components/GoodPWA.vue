@@ -1,14 +1,27 @@
 <template>
  <div id='wrapper'>
 
-  <div id="goodBetterBar">
+  <div class="goodBetterBar">
     <div class="choiceCol selectedBox">
       <div class="rateContainer"><img id="good" class="rateBoxes" src="~/assets/images/good.svg"></div>
       <h3>{{ $t('home.quality_low_title') }}</h3>
       <ul>
-        <li v-bind:class="{ good: statusState.isHttps || allGood }">{{ $t('home.quality_low_list_1') }}</li>
-        <li v-bind:class="{ good: statusState.hasManifest || allGood }">{{ $t('home.quality_low_list_2') }}</li>
-        <li v-bind:class="{ good: statusState.hasWorker || allGood }">{{ $t('home.quality_low_list_3') }}</li>
+        <li v-bind:class="{ good: statusState.isHttps || allGood }">
+          <h3>{{ $t('home.quality_low_list_1') }}</h3>
+        
+        </li>
+        <li v-bind:class="{ good: statusState.hasManifest || allGood }">
+          <h3>{{ $t('home.quality_low_list_2') }}</h3>
+          <p>
+            It looks like you have a basic W3C manifest in place, so you are off to a good start
+          </p>
+          <a href="">Add to the Manifest</a>
+        </li>
+        <li v-bind:class="{ good: statusState.hasWorker || allGood }">
+          <h3>{{ $t('home.quality_low_list_3') }}</h3>
+          <p></p>
+          <a href="">Add to the Manifest</a>
+        </li>
       </ul>
     </div>
 
@@ -16,8 +29,12 @@
       <div class="rateContainer"><img id="better" class="rateBoxes" src="~/assets/images/better.svg"></div>
       <h3>{{ $t('home.quality_mid_title') }}</h3>
       <ul>
-        <li v-bind:class="{ good: statusState.hasBetterWorker || allGood }">{{ $t('home.quality_mid_list_1') }}</li>
-        <li v-bind:class="{ good: statusState.hasBetterManifest || allGood }">{{ $t('home.quality_mid_list_2') }}</li>
+        <li v-bind:class="{ good: statusState.hasBetterWorker || allGood }">
+          <h3>{{ $t('home.quality_mid_list_1') }}</h3>
+        </li>
+        <li v-bind:class="{ good: statusState.hasBetterManifest || allGood }">
+          <h3>{{ $t('home.quality_mid_list_2') }}</h3>
+        </li>
       </ul>
     </div>
 
@@ -25,7 +42,9 @@
       <div class="rateContainer"><img id="best" class="rateBoxes" src="~/assets/images/best.svg"></div>
       <h3>{{ $t('home.quality_high_title') }}</h3>
       <ul>
-        <li v-bind:class="{ good: statusState.hasNativeFeatures || allGood }">{{ $t('home.quality_high_list_1') }}</li>
+        <li v-bind:class="{ good: statusState.hasNativeFeatures || allGood }">
+          <h3>{{ $t('home.quality_high_list_1') }}</h3>
+        </li>
       </ul>
     </div>
   </div>
@@ -111,7 +130,7 @@ export default class extends Vue {
   justify-content: flex-end;
 }
 
-#goodBetterBar {
+.goodBetterBar {
   display: flex;
   justify-content: space-evenly;
   text-align: center;
@@ -121,6 +140,7 @@ export default class extends Vue {
     color: $color-brand-primary;
     font-size: 32px;
     font-weight: 400;
+    padding-left: 30px;
   }
 }
 
@@ -134,13 +154,32 @@ export default class extends Vue {
     line-height: 26px;
     margin: 0;
     margin-bottom: 10px;
-    padding-left: 30px;
     text-align: left;
-    background-image: url('~/assets/images/gbbChecked.svg');
+    background-image: url('~/assets/images/gbbNotChecked.svg');
     background-size: 24px 24px;
     background-repeat: no-repeat;
     list-style: none;
+
+    h3 {
+      font-size: 16px;
+    }
+
+    p {
+      font-family: "Segoe UI";
+    }
+
+    a {
+      color: $color-brand-quintary;
+      background-image: url('~/assets/images/goButton.svg');
+      background-size: 240px 41px;
+      background-repeat: no-repeat;
+      display: inline-block;
+      width: 240px;
+      line-height: 41px;
+      text-align: center;
+    }
   }
+
 }
 
   .selectedBox {
@@ -148,12 +187,18 @@ export default class extends Vue {
     background-repeat: no-repeat;
     background-size: contain;
   }
+  .homeGood {
+
+    .selectedBox {
+    background-image: none;
+    }
+  }
 
 #goodPWAHeaderBlock {
   width: 472px;
 }
 
 .good {
-  color: $color-brand;
+background-image: url('~/assets/images/gbbChecked.svg');
 }
 </style>
