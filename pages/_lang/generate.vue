@@ -209,7 +209,7 @@
       </nuxt-link>
     </div>
 
-    <GoodPWA :hasManifest="basicManifest" :hasBetterManifest="betterManifest" :hasBestManifest="bestManifest"/>
+    <GoodPWA :hasManifest="basicManifest" :hasBetterManifest="betterManifest"/>
 
     <StartOver />
   </div>
@@ -300,7 +300,7 @@ export default class extends Vue {
     this.analyzeManifest(this.manifest);
   }
 
-  private analyzeManifest(manifest: generator.Manifest) {
+  private analyzeManifest(manifest) {
     // set props to pass to GoodBetterBest component
     // based on how filled out the manifest is
 
@@ -308,7 +308,7 @@ export default class extends Vue {
     this.basicManifest = true;
 
     // does the manifest have related applications filled out?
-    if (manifest.related_applications.length > 0) {
+    if (manifest.icons && manifest.icons.length > 0) {
       this.betterManifest = true;
     }
 

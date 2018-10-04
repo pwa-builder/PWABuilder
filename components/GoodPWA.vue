@@ -8,19 +8,20 @@
       <ul>
         <li v-bind:class="{ good: statusState.isHttps || allGood }">
           <h3>{{ $t('home.quality_low_list_1') }}</h3>
-        
+        <p v-if="statusState.isHttps || allGoodWithText" class='paramText'>
         </li>
         <li v-bind:class="{ good: statusState.hasManifest || allGood }">
           <h3>{{ $t('home.quality_low_list_2') }}</h3>
-          <p>
+          <p v-if="statusState.hasManifest || allGoodWithText" class='paramText'>
             It looks like you have a basic W3C manifest in place, so you are off to a good start
           </p>
           <a href="">Add to the Manifest</a>
         </li>
         <li v-bind:class="{ good: statusState.hasWorker || allGood }">
           <h3>{{ $t('home.quality_low_list_3') }}</h3>
-          <p></p>
+          <p v-if="statusState.hasWorker || allGoodWithText" class='paramText'></p>
           <a href="">Add to the Manifest</a>
+
         </li>
       </ul>
     </div>
@@ -31,9 +32,12 @@
       <ul>
         <li v-bind:class="{ good: statusState.hasBetterWorker || allGood }">
           <h3>{{ $t('home.quality_mid_list_1') }}</h3>
+          <P  v-if="statusState.hasBetterWorker || allGoodWithText" class='paramText'></p>
         </li>
         <li v-bind:class="{ good: statusState.hasBetterManifest || allGood }">
           <h3>{{ $t('home.quality_mid_list_2') }}</h3>
+          <p v-if="statusState.hasBetterManifest || allGoodWithText" class='paramText'></p>
+
         </li>
       </ul>
     </div>
@@ -44,6 +48,8 @@
       <ul>
         <li v-bind:class="{ good: statusState.hasNativeFeatures || allGood }">
           <h3>{{ $t('home.quality_high_list_1') }}</h3>
+          <p v-if="statusState.hasNativeFeatures || allGoodWithText" class='paramText'></p>
+
         </li>
       </ul>
     </div>
@@ -68,11 +74,12 @@ export default class extends Vue {
   @Prop({}) hasNativeFeatures: boolean;
   @Prop({}) isResponsive: boolean;
   @Prop({}) allGood: boolean;
+  @Prop({}) allGoodWithText: boolean;
 
   statusState: any = {};
 
   public mounted() {
-    this.updateStatusState();
+    this.statusState = this.updateStatusState();
   }
 
   public updated() {
@@ -99,7 +106,7 @@ export default class extends Vue {
       isResponsive: this.isResponsive
     };
 
-   /*this.statusState = {...updatedStatus, ...savedStatus};*/
+   // this.statusState = {...updatedStatus, ...savedStatus};
    console.log(this.statusState);
 
    return updatedStatus;
