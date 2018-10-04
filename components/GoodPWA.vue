@@ -72,7 +72,7 @@ export default class extends Vue {
   statusState: any = {};
 
   public mounted() {
-    this.updateStatusState();
+    this.statusState = this.updateStatusState();
   }
 
   public updated() {
@@ -99,7 +99,7 @@ export default class extends Vue {
       isResponsive: this.isResponsive
     };
 
-   /*this.statusState = {...updatedStatus, ...savedStatus};*/
+   // this.statusState = {...updatedStatus, ...savedStatus};
    console.log(this.statusState);
 
    return updatedStatus;
