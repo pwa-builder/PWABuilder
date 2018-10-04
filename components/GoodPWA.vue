@@ -2,7 +2,7 @@
  <div id='wrapper'>
 
   <div id="goodBetterBar">
-    <div class="choiceCol">
+    <div class="choiceCol selectedBox">
       <div class="rateContainer"><img id="good" class="rateBoxes" src="~/assets/images/good.svg"></div>
       <h3>{{ $t('home.quality_low_title') }}</h3>
       <ul>
@@ -89,6 +89,7 @@ export default class extends Vue {
 
 .choiceCol {
   width: 376px;
+  height: 911px;
 
   li {
     font-family: 'Bungee', cursive;
@@ -104,6 +105,12 @@ export default class extends Vue {
     list-style: none;
   }
 }
+
+  .selectedBox {
+    background-image: url('~/assets/images/slectedBox.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
 
 #goodPWAHeaderBlock {
   width: 472px;
