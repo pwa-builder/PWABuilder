@@ -28,7 +28,8 @@
         const body = document.querySelector('body');
 
         if (body) {
-          body.setAttribute('location', to.fullPath);
+          const pageName = to.fullPath.replace("/","");
+          body.setAttribute('data-location', pageName);
         }
         next();
       });
@@ -37,7 +38,13 @@
 </script>
 
 <style lang="scss" scoped>
+/* stylelint-disable */
   @import '~assets/scss/base/variables';
+
+  #baseContainer{
+    width: 1280px;
+    margin: 0 auto;
+  }
 
   #gdprDiv {
     align-items: center;
@@ -52,6 +59,9 @@
     filter: drop-shadow(0 6px 12px rgba(0, 0, 0, .16));
     position: absolute;
     z-index: -1;
+    transition-property: width transform;
+    transition-duration: .7s;
+    transition-timing-function: ease-in-out;
   }
 
   #artw {
@@ -83,12 +93,42 @@
     transform: translate(-1655px, 1278px);
     width: 3309px;
   }
+
+  body[data-location="gettingStarted"]{
+    #artb {
+      transform: translate(-1587.98px, -1130.4px);
+      width: 3688px;
+     }
+
+    #artw {
+      transform: translate(-349px, -258px);
+      width: 833px;
+    }
+
+    #artlb {
+      transform: translate(729px, 0);
+      width: 1101px;
+    }
+    #logoLarge {
+      transform: translate(68px, 32px);
+      width: 48px;
+    }
+    #decorStack {
+      transform: translate(729px, 194px);
+      width: 128px;
+    }
+
+    #bigWhite {
+      transform: translate(-1655px, 1278px);
+      width: 1px;
+    }
+  }
 </style>
 
 <template>
-  <div>
-  <img id="artw" class="bgArt" src="~/assets/images/white.svg">
+  <div id="baseContainer">
   <img id="artb" class="bgArt" src="~/assets/images/blue.svg">
+  <img id="artw" class="bgArt" src="~/assets/images/white.svg">
   <img id="artlb" class="bgArt" src="~/assets/images/lightBlue.svg">
   <img id="logoLarge" class="bgArt" src="~/assets/images/PWABuilderLogo.svg">  
   <img id="decorStack" class="bgArt" src="~/assets/images/StackedCube.svg">  
