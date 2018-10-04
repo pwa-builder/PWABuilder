@@ -17,7 +17,7 @@
       <h3>{{ $t('home.quality_mid_title') }}</h3>
       <ul>
         <li v-bind:class="{ good: !statusState.hasBetterWorker }">{{ $t('home.quality_mid_list_1') }}</li>
-        <li v-bind:class="{ good: !statusSTate.hasBetterManifest }">{{ $t('home.quality_mid_list_2') }}</li>
+        <li v-bind:class="{ good: !statusState.hasBetterManifest }">{{ $t('home.quality_mid_list_2') }}</li>
       </ul>
     </div>
 
