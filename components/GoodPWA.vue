@@ -8,7 +8,7 @@
       <ul>
         <li v-bind:class="{ good: statusState.isHttps || allGood }">
           <h3>{{ $t('home.quality_low_list_1') }}</h3>
-        <p v-if="statusState.isHttps || allGoodWithText" class='paramText'>
+        <p v-if="statusState.isHttps || allGoodWithText" class='paramText'></p>
         </li>
         <li v-bind:class="{ good: statusState.hasManifest || allGood }">
           <h3>{{ $t('home.quality_low_list_2') }}</h3>
