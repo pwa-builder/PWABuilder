@@ -8,19 +8,19 @@
       <ul>
         <li v-bind:class="{ good: statusState.isHttps || allGood }">
           <h3>{{ $t('home.quality_low_list_1') }}</h3>
-        <p v-if="statusState.isHttps || allGoodWithText" class='paramText'></p>
+        <p v-if="statusState.isHttps || allGoodWithText" class='paramText'>Your site is secure!</p>
         </li>
         <li v-bind:class="{ good: statusState.hasManifest || allGood }">
           <h3>{{ $t('home.quality_low_list_2') }}</h3>
           <p v-if="statusState.hasManifest || allGoodWithText" class='paramText'>
-            It looks like you have a basic W3C manifest in place, so you are off to a good start
+            A basic W3C manifest is a signle your website is an app.
           </p>
           <a href="">Add to the Manifest</a>
         </li>
         <li v-bind:class="{ good: statusState.hasWorker || allGood }">
           <h3>{{ $t('home.quality_low_list_3') }}</h3>
-          <p v-if="statusState.hasWorker || allGoodWithText" class='paramText'></p>
-          <a href="">Add to the Manifest</a>
+          <p v-if="statusState.hasWorker || allGoodWithText" class='paramText'>Your site should still do something when your user is offline.</p>
+          <a href="">Add a Service Worker</a>
 
         </li>
       </ul>
@@ -32,11 +32,13 @@
       <ul>
         <li v-bind:class="{ good: statusState.hasBetterWorker || allGood }">
           <h3>{{ $t('home.quality_mid_list_1') }}</h3>
-          <P  v-if="statusState.hasBetterWorker || allGoodWithText" class='paramText'></p>
+          <P  v-if="statusState.hasBetterWorker || allGoodWithText" class='paramText'>Your Service worker should manage traffic for offline funcatinality and app like performance.</p>
+           <a href="">Add a Service Worke</a>
         </li>
         <li v-bind:class="{ good: statusState.hasBetterManifest || allGood }">
           <h3>{{ $t('home.quality_mid_list_2') }}</h3>
-          <p v-if="statusState.hasBetterManifest || allGoodWithText" class='paramText'></p>
+          <p v-if="statusState.hasBetterManifest || allGoodWithText" class='paramText'>The manifest becomes more useful with more data.  We recommend App name, theme colors and a large tile / icon image.</p>
+           <a href="">Add to the Manifest</a>
 
         </li>
       </ul>
@@ -48,7 +50,8 @@
       <ul>
         <li v-bind:class="{ good: statusState.hasNativeFeatures || allGood }">
           <h3>{{ $t('home.quality_high_list_1') }}</h3>
-          <p v-if="statusState.hasNativeFeatures || allGoodWithText" class='paramText'></p>
+          <p v-if="statusState.hasNativeFeatures || allGoodWithText" class='paramText'>The Best PWAs can replace native apps.  Add app like functionality for the best PWA experience. </p>
+           <a href="">Add App-like feautres</a>
 
         </li>
       </ul>
@@ -173,6 +176,7 @@ export default class extends Vue {
 
     p {
       font-family: "Segoe UI";
+      margin-right: 10px;
     }
 
     a {
@@ -192,7 +196,7 @@ export default class extends Vue {
   .selectedBox {
     background-image: url('~/assets/images/slectedBox.svg');
     background-repeat: no-repeat;
-    background-size: contain;
+    background-size: 345px;
   }
   .homeGood {
 
