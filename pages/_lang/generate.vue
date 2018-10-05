@@ -2,20 +2,27 @@
 
 <section>
   <div v-if="manifest$">
-    <div class="l-generator-step">
+    <div class="l-generator-step ">
+      <div class="mastHead">
+        <h4 class="l-generator-subtitle">
+          {{ $t("generate.subtitle") }}
+        </h4>
+
+        <p class="l-generator l-generator--last">
+          {{ $t("generate.instructions") }}
+        </p>
+      </div>
       <div class="l-generator-semipadded mainDiv">
-        <div class="l-generator-form pure-u-1 pure-u-md-1-2">
-          <h4 class="l-generator-subtitle">
-            {{ $t("generate.subtitle") }}
-          </h4>
-
-          <h4 class="l-generator-subtitle l-generator-subtitle--last">
-            {{ $t("generate.instructions") }}
-          </h4>
-
+        <div class="l-generator-form">
+          <div class="formNav">
+          <h3>Jump To</h3>
+          <h3>Basic Info</h3>
+          <h3>Images</h3>
+          <h3>Settings</h3>
+          </div>
           <div class="l-generator-field">
             <label class="l-generator-label">{{ $t("generate.name") }}
-              <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#name-member" target="_blank">[?]</a>
+              <p>Used for App lists or Store listings</p>
             </label>
 
             <input class="l-generator-input" v-model="manifest$.name" @change="onChangeSimpleInput()" type="text">
@@ -23,7 +30,7 @@
 
           <div class="l-generator-field">
             <label class="l-generator-label">{{ $t("generate.short_name") }}
-              <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#short_name-member" target="_blank">[?]</a>
+              <p>Used for tiles or home screens</p>
             </label>
 
             <input class="l-generator-input" v-model="manifest$.short_name" @change="onChangeSimpleInput()" name="short_name" type="text">
@@ -31,10 +38,10 @@
 
           <div class="l-generator-field">
             <label class="l-generator-label">{{ $t("generate.description") }}
-              <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#description-member" target="_blank">[?]</a>
+              <p>Used for App listings</p>
             </label>
 
-            <input class="l-generator-input" v-model="manifest$.description" @change="onChangeSimpleInput()" name="description" type="text">
+            <textarea class="l-generator-input" v-model="manifest$.description" @change="onChangeSimpleInput()" name="description" type="text"></textarea>
           </div>
 
           <Modal :title="$t('generate.upload_title')" ref="iconsModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
@@ -453,6 +460,22 @@ export default class extends Vue {
 
 <style lang="scss" scoped>
 @import "~assets/scss/base/variables";
+/* stylelint-disable */
+
+.mastHead {
+  margin-top: 4em;
+  margin-bottom: 4em;
+  margin-left: 68px;
+  width: 568px;
+}
+
+.formNav{
+  h3 {
+    display: inline;
+    color: $color-brand-primary;
+    margin: 0 .5em;
+  }
+}
 
 .generate {
   &-code {
@@ -473,5 +496,6 @@ export default class extends Vue {
 
 .mainDiv {
   display: flex;
+  width: 100%;
 }
 </style>

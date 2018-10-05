@@ -15,7 +15,7 @@
     "how_works_title": "What is a PWA?",
     "how_works_body": "A Progressive Web App (or simply PWA) is a web site that acts, looks, and feels like a native app. Your web app runs in a browser just like it does today, but on platforms that support it, the app can be installed on the device and have the behavior and privlages of a native app.",
     "how_works_body_2": "Why build native apps for every platform when your PWA can run on iOS, Windows, Android, and now MacOS",
-    "what_makes_title":"What is a PWA?",
+    "what_makes_title":"What makes a good PWA?",
     "what_makes_body":"A good PWA is indistinguishable from a good native app.  A good PWA works whether you are connected to the internet or working offline, on a phone or a powerful PC, and works great with a mouse as well as touch.  But don't stop at good, we can help make your PWA great!",
     "quality_low_title":"Good",
     "quality_mid_title":"Better",
@@ -44,8 +44,8 @@
     "skip_description": "If you already have the Manifest and want to download the service worker source code you can skip the first step."
   },
   "generate": {
-    "subtitle": "Here are the values we picked up from your site.",
-    "instructions": "Update or add any details below.",
+    "subtitle": "Here's what we've picked up from your site",
+    "instructions": "Take a look and add or update anything we missed. Hit next when you're done, and if you need any guidance just tap the 'Guidance' tab.",
     "name": "Name",
     "short_name": "Short Name",
     "description": "Description",

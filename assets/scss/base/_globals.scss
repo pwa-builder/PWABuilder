@@ -2,7 +2,8 @@
 @import url('https://fonts.googleapis.com/css?family=Bungee');
 
 html,
-body {
+body,
+input {
   color: $color-brand-primary;
   $font-size: 16px;
 
@@ -34,6 +35,7 @@ h3,
 h4 {
   font-family: 'Bungee', cursive;
   font-size: 24px;
+  font-weight: normal;
   margin: 0;
   margin-block-end: 0;
   margin-block-start: 0;

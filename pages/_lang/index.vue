@@ -34,7 +34,7 @@
   </section>
   <GeneratorMenu :first-link-path="true" />
   <div id="goodPWAHeaderBlock">
-    <h2 id="quickBlockText">  {{ $t('home.what_makes_title') }}</h2>
+    <h2>  {{ $t('home.what_makes_title') }}</h2>
     <p>{{ $t('home.what_makes_body') }}</p>
   </div>
   <div class="homeGood">
@@ -42,7 +42,7 @@
   </div>
   <div id="otherTools">
     <div id="otherHeaderBlock">
-      <h2 id="quickBlockText">Other useful tools</h2>
+      <h2>Other useful tools</h2>
     </div>
 
     <div id="otherBar">
@@ -135,7 +135,7 @@ export default class extends Vue {
       await this.getManifestInformation();
 
       this.$router.push({
-        name: 'gettingStarted'
+        name: 'generate'
       });
     } catch (e) {
       this.error = e;
@@ -154,6 +154,10 @@ Vue.prototype.$awa = function(config) {
 
 <style lang="scss" scoped>
   @import '~assets/scss/base/variables';
+
+  #otherTools {
+    display: none;
+  }
 
   .padding {
     margin-bottom: 100px;
@@ -250,6 +254,7 @@ Vue.prototype.$awa = function(config) {
 
     h2 {
       color: $color-brand-primary;
+      font-size: 24px;
     }
   }
 

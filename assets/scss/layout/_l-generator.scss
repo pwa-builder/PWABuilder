@@ -1,6 +1,8 @@
 @import '../base/variables';
 @import '../mixins/action';
 
+/* stylelint-disable */
+
 .l-generator {
   $step-padding: 2rem;
   $toggle-space: -.2rem;
@@ -23,12 +25,13 @@
   }
 
   &-subtitle {
-    font-family: Bitter;
-    font-size: $font-size-l;
-    font-weight: $font-weight-regular;
+    color: $color-brand-quintary;
+    font-size: 36px;
+    line-height: 42px;
     margin: 0;
 
     &--last {
+      color: $color-brand-quintary;
       margin-bottom: 2rem;
     }
 
@@ -81,8 +84,9 @@
   }
 
   &-step {
-    color: $color-foreground-darker;
-    padding: $step-padding 0 $step-padding * 2 0;
+    color: $color-brand-quintary;
+    font-size: 24px;
+    line-height: 32px;
 
     &--big {
       min-height: 50vh;
@@ -116,7 +120,7 @@
   }
 
   &-semipadded {
-    padding-left: 9vw;
+    padding-left: 68px;
 
     @media screen and (max-width: $media-screen-l) {
       padding-left: 6vw;
@@ -140,23 +144,31 @@
     }
   }
 
+  &-form {
+    padding-right: 4em;
+
+    p {
+      color: rgba(44,62,80, .6);
+      margin: 0;
+      font-size: 14px;
+    }
+  }
+
   &-label {
-    color: $color-foreground-darker;
-    display: block;
-    font-family: Bitter;
-    font-size: $font-size-m;
+    color: $color-brand-primary;
+    font-size: 18px;
+    line-height: 24px;
   }
 
   &-input {
-    background-color: $color-background-brighter;
-    border: .15rem solid $color-foreground-dark;
-    border-radius: .25rem;
-    color: $color-foreground-darker;
-    font-family: 'FiraSans';
-    font-size: $font-size-m;
-    margin: .75rem 0 1.5rem 0;
-    padding: 1rem .75rem;
-    width: $max-size;
+    border-width: 0 0 1px 0;
+    border-color: $color-brand-quartary;
+    border-style: solid;
+    color: $color-brand-primary;
+    font-size: 14px;
+    line-height: 19px;
+    font-family: "Segoe UI";
+    background-color: transparent;
 
     &--select {
       background-color: $color-background-dark;
