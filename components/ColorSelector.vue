@@ -2,7 +2,7 @@
 <div class="l-generator-field">
   <label class="l-generator-label">
     {{ $t("generate.background_color") }}
-    <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#background_color-member" target="_blank">[?]</a>
+    <p>select the background color for your splash screen and tile</p>
   </label>
   <div class="l-generator-options">
     <label class="l-generator-label" v-for="colorOption in colorOptions" :key="colorOption">

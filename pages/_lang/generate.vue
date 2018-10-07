@@ -41,8 +41,18 @@
               <p>Used for App listings</p>
             </label>
 
-            <textarea class="l-generator-input" v-model="manifest$.description" @change="onChangeSimpleInput()" name="description" type="text"></textarea>
+            <textarea class="l-generator-textarea" v-model="manifest$.description" @change="onChangeSimpleInput()" name="description" type="text"></textarea>
           </div>
+
+          <div class="l-generator-field">
+            <label class="l-generator-label">{{ $t("generate.start_url") }}
+              <p>This will be the first page that loads in your PWA.</p>
+            </label>
+
+            <input class="l-generator-input" v-model="manifest$.start_url" @change="onChangeSimpleInput()" type="text">
+          </div>
+
+
 
           <Modal :title="$t('generate.upload_title')" ref="iconsModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
             <div class="l-generator-box">
@@ -63,7 +73,7 @@
 
           <div class="l-generator-field logo-upload">
             <label class="l-generator-label">{{ $t("generate.icon_url") }}
-              <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#icons-member" target="_blank">[?]</a>
+             <p> We suggest at least one image 512x512 or larger</p>
             </label>
 
             <div>
@@ -71,12 +81,12 @@
 
               <div class="button-holder icons">
                 <div class="l-inline">
-                  <button class="pwa-button pwa-button--text" @click="onClickUploadIcon()">
+                  <button class="work-button l-generator-button" @click="onClickUploadIcon()">
                     {{ $t("generate.upload") }}
                   </button>
                 </div>
 
-                <button class="pwa-button pwa-button--text pwa-button--right" @click="onClickAddIcon()">
+                <button class="work-button pwa-button--right" @click="onClickAddIcon()">
                   {{ $t("generate.add_icon") }}
                 </button>
               </div>
@@ -121,23 +131,15 @@
 
           <div class="l-generator-field">
             <label class="l-generator-label">{{ $t("generate.scope") }}
-              <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#scope-member" target="_blank">[?]</a>
+              <p>scope determins what part of your website runs in the PWA</p>
             </label>
 
             <input class="l-generator-input" v-model="manifest$.scope" @change="onChangeSimpleInput()" type="text">
           </div>
 
           <div class="l-generator-field">
-            <label class="l-generator-label">{{ $t("generate.start_url") }}
-              <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#start_url-member" target="_blank">[?]</a>
-            </label>
-
-            <input class="l-generator-input" v-model="manifest$.start_url" @change="onChangeSimpleInput()" type="text">
-          </div>
-
-          <div class="l-generator-field">
             <label class="l-generator-label">{{ $t("generate.display") }}
-              <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#display-member" target="_blank">[?]</a>
+              <p>Display indetifies the browser components that should be included in your. "Standalone" appears as a traditional app</p>
             </label>
 
             <select class="l-generator-input l-generator-input--select" v-model="manifest$.display" @change="onChangeSimpleInput()">
@@ -147,7 +149,7 @@
 
           <div class="l-generator-field">
             <label class="l-generator-label">{{ $t("generate.orientation") }}
-              <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#orientation-member" target="_blank">[?]</a>
+              <p>Orientation determines the perfered flow of your application</p>
             </label>
 
             <select class="l-generator-input l-generator-input--select" v-model="manifest$.orientation" @change="onChangeSimpleInput()">
@@ -157,7 +159,7 @@
 
           <div class="l-generator-field">
             <label class="l-generator-label">{{ $t("generate.language") }}
-              <a class="l-generator-link" href="https://www.w3.org/TR/appmanifest/#lang-member" target="_blank">[?]</a>
+              <p>declare the language of your PWA</p>
             </label>
 
             <select class="l-generator-input l-generator-input--select" v-model="manifest$.lang">
@@ -173,7 +175,7 @@
             <input type="checkbox" id="related-applications-field" class="l-generator-togglecheck is-hidden">
 
             <label class="l-generator-toggle" for="related-applications-field">
-              <h4 class="l-generator-subtitle l-generator-subtitle--toggleable">{{ $t("generate.specify_application") }}</h4>
+              <p class="l-generator-subtitle l-generator-subtitle--toggleable">{{ $t("generate.specify_application") }}</p>
             </label>
 
             <div class="l-generator-field l-generator-field--toggle">
@@ -184,7 +186,7 @@
           <div>
             <input type="checkbox" id="specify-members-field" class="l-generator-togglecheck is-hidden">
             <label class="l-generator-toggle" for="specify-members-field">
-              <h4 class="l-generator-subtitle l-generator-subtitle--toggleable">{{ $t("generate.specify_members") }}</h4>
+              <p class="l-generator-subtitle l-generator-subtitle--toggleable">{{ $t("generate.specify_members") }}</p>
             </label>
 
             <div class="l-generator-field l-generator-field--toggle">
@@ -210,15 +212,13 @@
       </div>
     </div>
 
-    <div class="l-generator-buttons l-generator-buttons--centered">
-      <nuxt-link :to="$i18n.path('serviceworker')" class="pwa-button" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger' })">
-        {{ $t("generate.next_step") }}
-      </nuxt-link>
+    <div class="l-generator-buttons">
+      <button class="work-button"  @click="onClickShowGBB()">I'm done</button>
     </div>
-
-    <GoodPWA :hasManifest="basicManifest" :hasBetterManifest="betterManifest"/>
-
-    <StartOver />
+    
+    <Modal :title="Next" ref="nextStepModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
+      <GoodPWA :hasManifest="basicManifest" :hasBetterManifest="betterManifest"/>
+    </Modal>
   </div>
 
   <div v-if="!manifest$">
@@ -416,6 +416,10 @@ export default class extends Vue {
     (this.$refs.iconsModal as Modal).show();
   }
 
+public onClickShowGBB(): void {
+    (this.$refs.nextStepModal as Modal).show();
+  }
+
   public async onSubmitIconModal(): Promise<void> {
     const $iconsModal = this.$refs.iconsModal as Modal;
 
@@ -480,6 +484,7 @@ export default class extends Vue {
 .generate {
   &-code {
     margin-top: -2rem;
+    padding-right: 68px;
   }
 }
 

@@ -146,6 +146,7 @@
 
   &-form {
     padding-right: 4em;
+    width: 50%;
 
     p {
       color: rgba(44,62,80, .6);
@@ -160,7 +161,16 @@
     line-height: 24px;
   }
 
-  &-input {
+  &-textarea {
+    width:100%;
+  }
+  
+  &-button {
+    width: 200px;
+  }
+
+  &-input,
+  &-textarea {
     border-width: 0 0 1px 0;
     border-color: $color-brand-quartary;
     border-style: solid;
@@ -169,11 +179,10 @@
     line-height: 19px;
     font-family: "Segoe UI";
     background-color: transparent;
+    padding: .5em;
 
     &--select {
-      background-color: $color-background-dark;
       cursor: pointer;
-      text-transform: capitalize;
     }
 
     &--fake {
@@ -237,8 +246,8 @@
   }
 
   &-table {
-    background-color: $color-background-brighter;
     border-radius: .5rem;
+    color: $color-brand-primary;
     margin: 2rem 0;
     padding: 1rem;
     width: $max-size;
@@ -249,12 +258,10 @@
   }
 
   &-tableh {
-    font-family: Bitter;
     font-size: $font-size-l;
   }
 
   &-tablec {
-    font-family: Bitter;
     font-size: $font-size-m;
     text-transform: capitalize;
 
@@ -398,4 +405,21 @@
   &-space_top {
     padding-top: 1rem;
   }
+
 }
+
+.work-button {
+  color: $color-brand-quintary;
+  background-image: url('~/assets/images/goButton.svg');
+  background-size: 240px 41px;
+  background-repeat: no-repeat;
+  display: inline-block;
+  width: 240px;
+  line-height: 41px;
+  text-align: center;
+  font-size: 16px;
+  border: none;
+}
+
+
+

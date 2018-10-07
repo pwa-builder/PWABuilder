@@ -46,6 +46,7 @@
     margin: 0 auto;
   }
 
+
   #gdprDiv {
     align-items: center;
     background: #F2F2F2;

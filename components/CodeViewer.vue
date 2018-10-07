@@ -68,8 +68,12 @@ export default class extends Vue {
         if (this.code) {
           this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
             value: this.code,
+            lineNumbers: "off",
             language: 'json',
-            fixedOverflowWidgets: true
+            fixedOverflowWidgets: true,
+            minimap: {
+              enabled: false
+            }
           });
 
           const model = this.editor.getModel();
@@ -129,12 +133,18 @@ export default class extends Vue {
 </script>
 
 <style lang='scss' scoped>
+/* stylelint-disable */
+
 @import '~assets/scss/base/variables';
 
 .code_viewer {
+  background-color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .16);
   display: flex;
   flex-direction: column;
-  height: 450px;
+  max-height: 900px;
+  min-height: 700px;
+  padding: 10px;
 
   @media screen and (max-width: $media-screen-s) {
     margin-top: 4rem;
@@ -167,7 +177,7 @@ export default class extends Vue {
 
   &-pre {
     flex-grow: 1;
-    padding: 1rem;
+    padding: 0;
   }
 
   &-code {
