@@ -69,7 +69,7 @@ export default class extends Vue {
           this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
             value: this.code,
             lineNumbers: "off",
-            language: 'json',
+            language: 'javascript',
             fixedOverflowWidgets: true,
             minimap: {
               enabled: false
