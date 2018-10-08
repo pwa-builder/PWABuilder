@@ -44,6 +44,7 @@ import Loading from '~/components/Loading.vue';
 export default class extends Vue {
   public showModal = false;
   private loadingCount = 0;
+  public pageDoc = document.querySelector(".mainDiv");
 
   @Prop({ type: String, default: '' })
   public title: string;
@@ -54,10 +55,13 @@ export default class extends Vue {
 
   public show(): void {
     this.showModal = true;
+    this.pageDoc.style.filter = "blur(25px)"
   }
 
   public hide(): void {
     this.showModal = false;
+    this.pageDoc.style.filter = "blur(0px)"
+
   }
 
   public onClickSubmit(): void {
@@ -84,11 +88,15 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "~assets/scss/base/variables";
+/* stylelint-disable */
 
+@import "~assets/scss/base/variables";
+.mainDiv {
+  filter: blur(30px);
+}
 .modal {
   align-items: flex-start;
-  background: rgba($color-background-darkest, .3);
+  background: rgba($color-brand-quartary, .25);
   display: flex;
   height: 100vh;
   justify-content: center;
@@ -101,14 +109,10 @@ export default class extends Vue {
   z-index: 100;
 
   &-box {
-    $w: 60vw;
-
-    background: $color-background-brighter;
-    border-radius: .5rem;
-    box-shadow: 0 4px 25px 4px rgba(0, 0, 0, .3);
-    box-sizing: border-box;
-    position: relative;
-    width: $w;
+    filter: blur(0px);
+    position: absolute;
+    width: 100%;
+    margin-top: 300px;
     z-index: 110;
 
     &.error {
@@ -129,9 +133,7 @@ export default class extends Vue {
     }
 
     @media screen and (max-width: $media-screen-l) {
-      $w: 60vw;
 
-      width: $w;
     }
 
     @media screen and (max-width: $media-screen-m) {
@@ -151,9 +153,6 @@ export default class extends Vue {
   }
 
   &-body {
-    margin: 45px auto 0 auto;
-    padding: 18px;
-    width: 60%;
   }
 
   &-tablec {
