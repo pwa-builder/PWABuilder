@@ -27,12 +27,12 @@
 
       </div>
       <div class="serviceworker-preview pure-u-1 pure-u-md-1-2 generator-section">
-        <CodeViewer :size="viewerSize" :code="webPreview" :title="$t('serviceworker.code_preview_web')">
+        <CodeViewer codeType="javascript" :size="viewerSize" :code="webPreview" :title="$t('serviceworker.code_preview_web')">
           <nuxt-link :to="$i18n.path('publish')" class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})">
             {{ $t("serviceworker.next_step") }}
           </nuxt-link>
         </CodeViewer>
-        <CodeViewer :size="viewerSize" :code="serviceworkerPreview" :title="$t('serviceworker.code_preview_serviceworker')"></CodeViewer>
+        <CodeViewer codeType="javascript" :size="viewerSize" :code="serviceworkerPreview" :title="$t('serviceworker.code_preview_serviceworker')"></CodeViewer>
             <p class="download-text">{{ $t('serviceworker.download_link') }}
           <a class="" href="https://github.com/pwa-builder/serviceworkers" target="_blank">GitHub</a>.
           </p>
