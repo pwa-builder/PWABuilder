@@ -16,9 +16,9 @@
         <div class="l-generator-form">
           <div class="formNav">
             <h3>Jump To</h3>
-            <h3 @click="showBasicSection = true">Basic Info</h3>
-            <h3 @click="showImagesSection = true">Images</h3>
-            <h3 @click="showSettingsSection = true">Settings</h3>
+            <h3 @click="showBasicsSection()">Basic Info</h3>
+            <h3 @click="showImageSection()">Images</h3>
+            <h3 @click="showSettingSection()">Settings</h3>
           </div>
 
           <section v-if="showBasicSection">
@@ -54,8 +54,6 @@
               <input class="l-generator-input" v-model="manifest$.start_url" @change="onChangeSimpleInput()" type="text">
             </div>
           </section>
-
-
 
           <Modal :title="$t('generate.upload_title')" ref="iconsModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
             <div class="l-generator-box">
@@ -443,6 +441,24 @@ public onClickShowGBB(): void {
   public invalidManifest() {
     console.log('invalid');
     this.basicManifest = false;
+  }
+
+  public showBasicsSection() {
+    this.showBasicSection = true;
+    this.showImagesSection = false;
+    this.showSettingsSection = false;
+  }
+
+  public showImageSection() {
+    this.showImagesSection = true;
+    this.showBasicSection = false
+    this.showSettingsSection = false;
+  }
+
+  public showSettingSection() {
+    this.showSettingsSection = true;
+    this.showImagesSection = false;
+    this.showBasicSection = false
   }
 }
 
