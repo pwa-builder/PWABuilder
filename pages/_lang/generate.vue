@@ -77,7 +77,7 @@
             </label>
 
             <div>
-              <input class="l-generator-input" placeholder="http://example.com/image.png or /images/example.png" type="url" v-model="newIconSrc">
+              <!--<input class="l-generator-input" placeholder="http://example.com/image.png or /images/example.png" type="url" v-model="newIconSrc">-->
 
               <div class="button-holder icons">
                 <div class="l-inline">
@@ -86,9 +86,9 @@
                   </button>
                 </div>
 
-                <button class="work-button pwa-button--right" @click="onClickAddIcon()">
+                <!--<button class="work-button pwa-button--right" @click="onClickAddIcon()">
                   {{ $t("generate.add_icon") }}
-                </button>
+                </button>-->
               </div>
 
               <p class="l-generator-error" v-if="error">
@@ -189,9 +189,9 @@
               <p class="l-generator-subtitle l-generator-subtitle--toggleable">{{ $t("generate.specify_members") }}</p>
             </label>
 
-            <div class="l-generator-field l-generator-field--toggle">
+            <!--<div class="l-generator-field l-generator-field--toggle">
               <CustomMembers />
-            </div>
+            </div>-->
           </div>
         </div>
 
@@ -217,7 +217,7 @@
     </div>
     
     <Modal :title="Next" ref="nextStepModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
-      <GoodPWA :hasManifest="basicManifest" :hasBetterManifest="betterManifest"/>
+      <GoodPWA :hasManifest="basicManifest"/>
     </Modal>
   </div>
 
@@ -272,8 +272,6 @@ export default class extends Vue {
   public error: string | null = null;
   public seeEditor = true;
   public basicManifest = false;
-  public betterManifest = false;
-  public bestManifest = true;
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
@@ -304,31 +302,6 @@ export default class extends Vue {
     }
 
     this.manifest$ = { ...this.manifest };
-    this.analyzeManifest(this.manifest);
-  }
-
-  private analyzeManifest(manifest) {
-    // set props to pass to GoodBetterBest component
-    // based on how filled out the manifest is
-
-    // we already know we have a manifest by this point
-    this.basicManifest = true;
-
-    // does the manifest have related applications filled out?
-    if (manifest.icons && manifest.icons.length > 0) {
-      this.betterManifest = true;
-    }
-
-    // if we have all the values filled out we have the
-    // "best" manifest
-    for (let key in manifest) {
-      if (manifest.hasOwnProperty(key)) {
-          if (manifest[key].length === 0) {
-            // an entry is empty
-            this.bestManifest = false;
-          }
-      }
-    }
   }
 
   public onChangeSimpleInput(): void {
@@ -345,10 +318,13 @@ export default class extends Vue {
   }
 
   public onClickAddIcon(): void {
+    console.log('here');
     try {
+      console.log('trying to add icon from URL', this.newIconSrc);
       this.addIconFromUrl(this.newIconSrc);
     } catch (e) {
       this.error = e;
+      console.error(e);
     }
   }
 

@@ -15,7 +15,7 @@
 
     <div class="chooseContainer">
       <h2>Your App Results</h2>
-      <GoodPWA :allGoodWithText="true" />
+      <GoodPWA :isHttps="true" :hasManifest="basicManifest" :hasBetterManifest="betterManifest" :allGoodWithText="true" />
     </div>
   </section>
 </template>
@@ -25,8 +25,13 @@
 <script lang='ts'>
 import Vue from 'vue';
 import Component from 'nuxt-class-component';
+import { State, namespace } from 'vuex-class';
 
 import GoodPWA from '~/components/GoodPWA.vue';
+
+import * as generator from '~/store/modules/generator';
+
+const GeneratorState = namespace(generator.name, State);
 
 @Component({
   components: {
@@ -35,6 +40,41 @@ import GoodPWA from '~/components/GoodPWA.vue';
 })
 export default class extends Vue {
   
+  public manifest$: generator.Manifest | null = null;
+  public basicManifest = false;
+  public betterManifest = false;
+  public bestManifest = true;
+
+  @GeneratorState manifest: generator.Manifest;
+
+  public mounted() {
+    console.log(this.manifest);
+    this.analyzeManifest(this.manifest);
+  }
+
+  private analyzeManifest(manifest) {
+    // set props to pass to GoodBetterBest component
+    // based on how filled out the manifest is
+
+    // we already know we have a manifest by this point
+    this.basicManifest = true;
+
+    // does the manifest have related applications filled out?
+    if (manifest.icons && manifest.icons.length > 0) {
+      this.betterManifest = true;
+    }
+
+    // if we have all the values filled out we have the
+    // "best" manifest
+    for (let key in manifest) {
+      if (manifest.hasOwnProperty(key)) {
+          if (manifest[key].length === 0) {
+            // an entry is empty
+            this.bestManifest = false;
+          }
+      }
+    }
+  }
 }
 </script>
 
