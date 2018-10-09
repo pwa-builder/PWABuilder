@@ -44,7 +44,7 @@ import Loading from '~/components/Loading.vue';
 export default class extends Vue {
   public showModal = false;
   private loadingCount = 0;
-  public pageDoc = document.querySelector('.mainDiv');
+  public pageDoc = <HTMLElement>document.querySelector('.mainDiv');
 
   @Prop({ type: String, default: '' })
   public title: string;
@@ -55,11 +55,14 @@ export default class extends Vue {
 
   public show(): void {
     this.showModal = true;
-    this.pageDoc.style.filter = 'blur(25px)';
+  //  if(this.pageDoc && this.pageDoc.style){
+      this.pageDoc.style.filter = 'blur(25px)';
+  //  }
   }
 
   public hide(): void {
     this.showModal = false;
+    
     this.pageDoc.style.filter = 'blur(0px)';
 
   }
