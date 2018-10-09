@@ -14,14 +14,15 @@
           <h3>{{ $t('home.quality_low_list_2') }}</h3>
           <p v-if="statusState.hasManifest || allGoodWithText" class='paramText'>
             A basic W3C manifest is a signle your website is an app.
+            <a href="/generate">Add to the Manifest</a>
           </p>
-          <a href="">Add to the Manifest</a>
+          
         </li>
         <li v-bind:class="{ good: statusState.hasWorker || allGood }">
           <h3>{{ $t('home.quality_low_list_3') }}</h3>
-          <p v-if="statusState.hasWorker || allGoodWithText" class='paramText'>Your site should still do something when your user is offline.</p>
-          <a href="">Add a Service Worker</a>
-
+          <p v-if="statusState.hasWorker || allGoodWithText" class='paramText'>Your site should still do something when your user is offline.
+            <a href="/serviceworker">Add a Service Worker</a>
+          </p>
         </li>
       </ul>
     </div>
@@ -32,13 +33,15 @@
       <ul>
         <li v-bind:class="{ good: statusState.hasBetterWorker || allGood }">
           <h3>{{ $t('home.quality_mid_list_1') }}</h3>
-          <P  v-if="statusState.hasBetterWorker || allGoodWithText" class='paramText'>Your Service worker should manage traffic for offline funcatinality and app like performance.</p>
-           <a href="">Add a Service Worke</a>
+          <P  v-if="statusState.hasBetterWorker || allGoodWithText" class='paramText'>Your Service worker should manage traffic for offline funcatinality and app like performance.
+           <a href="/serviceworker">Add a Service Worke</a>
+          </p>
         </li>
         <li v-bind:class="{ good: statusState.hasBetterManifest || allGood }">
           <h3>{{ $t('home.quality_mid_list_2') }}</h3>
-          <p v-if="statusState.hasBetterManifest || allGoodWithText" class='paramText'>The manifest becomes more useful with more data.  We recommend App name, theme colors and a large tile / icon image.</p>
-           <a href="">Add to the Manifest</a>
+          <p v-if="statusState.hasBetterManifest || allGoodWithText" class='paramText'>The manifest becomes more useful with more data.  We recommend App name, theme colors and a large tile / icon image.
+           <a href="/generate">Add to the Manifest</a>
+          </p>
 
         </li>
       </ul>
@@ -50,8 +53,9 @@
       <ul>
         <li v-bind:class="{ good: statusState.hasNativeFeatures || allGood }">
           <h3>{{ $t('home.quality_high_list_1') }}</h3>
-          <p v-if="statusState.hasNativeFeatures || allGoodWithText" class='paramText'>The Best PWAs can replace native apps.  Add app like functionality for the best PWA experience. </p>
+          <p v-if="statusState.hasNativeFeatures || allGoodWithText" class='paramText'>The Best PWAs can replace native apps.  Add app like functionality for the best PWA experience. 
            <a href="">Add App-like feautres</a>
+          </p>
 
         </li>
       </ul>
@@ -150,7 +154,6 @@ export default class extends Vue {
     color: $color-brand-primary;
     font-size: 32px;
     font-weight: 400;
-    padding-left: 30px;
   }
 }
 
@@ -172,6 +175,7 @@ export default class extends Vue {
 
     h3 {
       font-size: 16px;
+      padding-left: 30px;
     }
 
     p {
@@ -188,6 +192,7 @@ export default class extends Vue {
       width: 240px;
       line-height: 41px;
       text-align: center;
+      margin-top: 10px;
     }
   }
 
@@ -209,7 +214,7 @@ export default class extends Vue {
   width: 472px;
 }
 
-.good {
+.choiceCol li.good {
 background-image: url('~/assets/images/gbbChecked.svg');
 }
 </style>
