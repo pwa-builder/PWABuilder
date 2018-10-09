@@ -14,14 +14,18 @@
           <h3>{{ $t('home.quality_low_list_2') }}</h3>
           <p v-if="statusState.hasManifest || allGoodWithText" class='paramText'>
             A basic W3C manifest is a signle your website is an app.
-            <a href="/generate">Add to the Manifest</a>
+            <nuxt-link to="/serviceworker">
+              Add to the Manifest
+            </nuxt-link>
           </p>
           
         </li>
         <li v-bind:class="{ good: statusState.hasWorker || allGood }">
           <h3>{{ $t('home.quality_low_list_3') }}</h3>
           <p v-if="statusState.hasWorker || allGoodWithText" class='paramText'>Your site should still do something when your user is offline.
-            <a href="/serviceworker">Add a Service Worker</a>
+            <nuxt-link to="/serviceworker">
+              Add a Service Worker
+            </nuxt-link>
           </p>
         </li>
       </ul>
@@ -34,13 +38,17 @@
         <li v-bind:class="{ good: statusState.hasBetterWorker || allGood }">
           <h3>{{ $t('home.quality_mid_list_1') }}</h3>
           <P  v-if="statusState.hasBetterWorker || allGoodWithText" class='paramText'>Your Service worker should manage traffic for offline funcatinality and app like performance.
-           <a href="/serviceworker">Add a Service Worke</a>
+           <nuxt-link to"/serviceworker">
+             Add a Service Worker
+           </nuxt-link>
           </p>
         </li>
         <li v-bind:class="{ good: statusState.hasBetterManifest || allGood }">
           <h3>{{ $t('home.quality_mid_list_2') }}</h3>
           <p v-if="statusState.hasBetterManifest || allGoodWithText" class='paramText'>The manifest becomes more useful with more data.  We recommend App name, theme colors and a large tile / icon image.
-           <a href="/generate">Add to the Manifest</a>
+           <nuxt-link to="/generate">
+             Add to the Manifest
+           </nuxt-link>
           </p>
 
         </li>
@@ -54,7 +62,9 @@
         <li v-bind:class="{ good: statusState.hasNativeFeatures || allGood }">
           <h3>{{ $t('home.quality_high_list_1') }}</h3>
           <p v-if="statusState.hasNativeFeatures || allGoodWithText" class='paramText'>The Best PWAs can replace native apps.  Add app like functionality for the best PWA experience. 
-           <a href="">Add App-like feautres</a>
+           <nuxt-link to="">
+             Add App-like feautres
+           </nuxt-link>
           </p>
 
         </li>
