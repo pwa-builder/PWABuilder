@@ -4,55 +4,19 @@
       <div class="pure-g padding">
         <section id="getStartedBlock">
           <div id="quickTextBlock">
-            <h2 id="quickBlockText">Ready to publish your app? Let's get started!</h2>
+            <h2 id="quickBlockText">Download and publish your shiny new app</h2>
 
             <p id="quickBlockPlaceholder">You have a few different options to publish your app. You can download the
               files and deploy them to your site, or you can download pre-populated app projects for the major app
-              platforms from the links below..</p>
+              platforms from the links below.</p>
           </div>
         </section>
       </div>
     </div>
 
-    <div class="l-generator-step light">
-      <div id="whatMakesBlock">
-        <div id="goodPWAHeaderBlock">
-          <h2 id="quickBlockText">Before we begin?</h2>
-          <p>It looks like your app is missing a couple of great features that'll make it even better. These features
-            are super easy to add (we'll even show you how!), and will significantly improve the quality of your app.
-            Use the links below to add these items to your app.</p>
-        </div>
 
-        <div id="goodBetterBar">
-          <div>
-            <h3>Good</h3>
-            <ul>
-              <li>Uses a fully completed manifest</li>
-            </ul>
-          </div>
-
-          <div>
-            <h3>Better</h3>
-            <ul>
-              <li>Uses a fully completed manifest</li>
-              <li>Uses Service Workers to enable offline use cases</li>
-            </ul>
-          </div>
-
-          <div>
-            <h3>Best</h3>
-            <ul>
-              <li>Uses a fully completed manifest</li>
-              <li>Uses Service Workers to enable offline use cases</li>
-              <li>Integrates with native features in the operating system</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="l-generator-step">
-      <div class="downloadSection pure-g padding">
+    <div class="">
+      <div class="downloadSection">
         <section id="downloadForSite">
           <h2>Download these files to add to your site</h2>
           <a href="https://www.microsoft.com">What do I do with these files?</a>
@@ -93,6 +57,10 @@
 
             <button @click="downloadFiles" class="mainDownloadButton">Download</button>
           </div>
+        </section>
+
+        <section id="andOr">
+          <h2>And / Or</h2>
         </section>
 
         <section id="generateProject">
@@ -225,6 +193,8 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
+/* stylelint-disable */
+
   @import '~assets/scss/base/variables';
 
   .padding {
@@ -236,8 +206,8 @@ export default class extends Vue {
   }
 
   #quickBlockText {
-    font-size: 32px;
-    font-weight: 600;
+    font-size: 36px;
+    line-height: 42px;
     margin: 0;
     width: 472px;
   }
@@ -291,7 +261,10 @@ export default class extends Vue {
   }
 
   #quickBlockPlaceholder {
-    width: 760px;
+    width: 430px;
+    color: $color-brand-tertiary;
+    font-size: 22px;
+    line-height: 32px;
   }
 
   #justTheseList,
@@ -316,8 +289,35 @@ export default class extends Vue {
   }
 
   .downloadSection {
+    display: flex;
+    flex-direction: row;
+    margin: 0 68px;
     justify-content: space-between;
+  
+    h2 {
+      font-size: 18px;
+      line-height: 45px;
+    }
   }
+
+  #andOr {
+    flex-flow: nowrap;
+    color: $color-brand-quartary;
+    flex-basis: 8%;
+  }
+
+  #generateProject {
+    width: 50%;
+    display:flex;
+    flex-direction: column;
+  }
+
+  #downloadForSite {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+  }
+
 
   label {
     margin-left: 15px;
