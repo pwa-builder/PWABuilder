@@ -21,7 +21,7 @@
             <h3 @click="showSettingSection()">Settings</h3>
           </div>
 
-          <section v-if="showBasicSection">
+          <section class='animatedSection' v-if="showBasicSection">
             <div class="l-generator-field">
               <label class="l-generator-label">{{ $t("generate.name") }}
                 <p>Used for App lists or Store listings</p>
@@ -72,7 +72,7 @@
             </div>
           </Modal>
 
-          <section v-if="showImagesSection">
+          <section class='animatedSection' v-if="showImagesSection">
             <div class="l-generator-field logo-upload">
               <label class="l-generator-label">{{ $t("generate.icon_url") }}
               <p> We suggest at least one image 512x512 or larger</p>
@@ -132,7 +132,7 @@
             </div>
           </section>
 
-          <section v-if="showSettingsSection">
+          <section class='animatedSection' v-if="showSettingsSection">
             <div class="l-generator-field">
               <label class="l-generator-label">{{ $t("generate.scope") }}
                 <p>scope determins what part of your website runs in the PWA</p>
@@ -504,5 +504,20 @@ public onClickShowGBB(): void {
 .mainDiv {
   display: flex;
   width: 100%;
+}
+
+.animatedSection {
+  animation-duration: 300ms;
+  animation-name: fadein;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 </style>
