@@ -14,7 +14,7 @@
           <h3>{{ $t('home.quality_low_list_2') }}</h3>
           <p v-if="statusState.hasManifest || allGoodWithText" class='paramText'>
             A basic W3C manifest is a signle your website is an app.
-            <nuxt-link to="/generator">
+            <nuxt-link to="/generate">
               Add to the Manifest
             </nuxt-link>
           </p>
