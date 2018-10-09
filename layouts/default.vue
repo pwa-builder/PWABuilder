@@ -183,6 +183,36 @@
       width: 1px;
     }
   }
+
+  body[data-location='publish']{
+    #artb {
+      transform: translate(-1587.98px, -1330.4px);
+      width: 3688px;
+     }
+
+    #artw {
+      transform: translate(-349px, -258px);
+      width: 833px;
+    }
+
+    #artlb {
+      transform: translate(729px, -275px);
+      width: 1101px;
+    }
+    #logoLarge {
+      transform: translate(68px, 32px);
+      width: 48px;
+    }
+    #decorStack {
+      transform: translate(729px, 194px);
+      width: 128px;
+    }
+
+    #bigWhite {
+      transform: translate(-1655px, 1278px);
+      width: 1px;
+    }
+  }
 </style>
 
 <template>

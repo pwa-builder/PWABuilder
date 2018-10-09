@@ -16,16 +16,15 @@
           </div>
           <div class="l-generator-wrapper pure-u-2-5">
 
-                <div class="l-generator-buttons">
-                  <button class="work-button"  @click="onClickShowGBB()">I'm done</button>
-                </div>
+           
+            <a class="work-button"  @click="onClickShowGBB()" href="#">I'm done</a>
+          
           </div>
           <div class="pure-u-3-5">
             <p class="l-generator-error" v-if="error"><span class="icon-exclamation"></span> {{ $t(error) }}</p>
           </div>
         </form>
-        <p>{{ $t('serviceworker.download_link') }}
-          <a class="l-generator-link" href="https://github.com/pwa-builder/serviceworkers" target="_blank">GitHub</a>.</p>
+
       </div>
       <div class="serviceworker-preview pure-u-1 pure-u-md-1-2 generator-section">
         <CodeViewer :size="viewerSize" :code="webPreview" :title="$t('serviceworker.code_preview_web')">
@@ -34,7 +33,11 @@
           </nuxt-link>
         </CodeViewer>
         <CodeViewer :size="viewerSize" :code="serviceworkerPreview" :title="$t('serviceworker.code_preview_serviceworker')"></CodeViewer>
+            <p class="download-text">{{ $t('serviceworker.download_link') }}
+          <a class="" href="https://github.com/pwa-builder/serviceworkers" target="_blank">GitHub</a>.
+          </p>
       </div>
+
     </div>
   </div>
 
@@ -139,7 +142,16 @@ export default class extends Vue {
     margin-top: 2rem;
   }
 }
+.download-text {
+  color: $color-brand-primary;
+  font-size: 14px;
+  margin-right: 68px;
+  text-align: right;
 
+  a, a:visited {
+    color: $color-brand-quartary;
+  }
+}
 .serviceworker-preview {
 
   .code_viewer {
