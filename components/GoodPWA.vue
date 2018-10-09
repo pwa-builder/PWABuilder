@@ -2,7 +2,7 @@
  <div id='wrapper'>
 
   <div class="goodBetterBar">
-    <div class="choiceCol selectedBox">
+    <div v-if="statusState" class="choiceCol selectedBox">
       <div class="rateContainer"><img id="good" class="rateBoxes" src="~/assets/images/good.svg"></div>
       <h3>{{ $t('home.quality_low_title') }}</h3>
       <ul>
@@ -26,7 +26,7 @@
       </ul>
     </div>
 
-    <div class="choiceCol">
+    <div v-if="statusState" class="choiceCol">
       <div class="rateContainer"><img id="better" class="rateBoxes" src="~/assets/images/better.svg"></div>
       <h3>{{ $t('home.quality_mid_title') }}</h3>
       <ul>
@@ -44,7 +44,7 @@
       </ul>
     </div>
 
-    <div class="choiceCol">
+    <div v-if="statusState" class="choiceCol">
       <div class="rateContainer"><img id="best" class="rateBoxes" src="~/assets/images/best.svg"></div>
       <h3>{{ $t('home.quality_high_title') }}</h3>
       <ul>
@@ -79,25 +79,17 @@ export default class extends Vue {
   @Prop({}) allGood: boolean;
   @Prop({}) allGoodWithText: boolean;
 
-  statusState: any = {};
+  statusState: any = null;
 
   public mounted() {
-    this.statusState = this.updateStatusState();
-  }
 
-  public updated() {
-    // const status = this.updateStatusState();
-    sessionStorage.setItem('pwaStatus', JSON.stringify(status));
-  }
+    // trying to grab the previous saved state
+    // this will be null if not found
+    const savedStatus = localStorage.getItem('pwaStatus');
 
-  updateStatusState() {
-    let savedStatus: string | object | any = sessionStorage.getItem('pwaStatus');
-    if (savedStatus) {
-      // our saved status
-      savedStatus = JSON.parse(savedStatus);
-    }
-
-    const updatedStatus = { 
+    // lets set our starting state based on the props we
+    // just received
+    const currentStatus = { 
       isHttps: this.isHttps,
       hasManifest: this.hasManifest,
       hasWorker: this.hasWorker,
@@ -109,10 +101,18 @@ export default class extends Vue {
       isResponsive: this.isResponsive
     };
 
-   // this.statusState = {...updatedStatus, ...savedStatus};
-   console.log(this.statusState);
-
-   return updatedStatus;
+    if (savedStatus !== null) {
+      // if we have saved state lets merge that
+      // and our current state based off our current props
+      // and finally save it and set it as the state
+      localStorage.setItem('pwaStatus', JSON.stringify({...currentStatus, ...JSON.parse(savedStatus)}));
+      this.statusState = {...currentStatus, ...JSON.parse(savedStatus)}
+    } else {
+      // if we dont have any saved state
+      // lets save our current state and then just display it
+      localStorage.setItem('pwaStatus', JSON.stringify(currentStatus));
+      this.statusState = currentStatus;
+    }
   }
 }
 </script>
