@@ -23,39 +23,31 @@
 
           <div id="lists">
 
-            <span id="downloadAllButton">
-              <input type="checkbox" id="downloadAll" />
-              <label for="downloadAll">Download All</label>
-            </span>
+            <h3 id="justTheseText">Download files for Web:</h3>
+            <ul>
+              <li>
+                <input id="manifest" v-model="files" value="manifest" type="checkbox" />
+                <label for="manifest">App Manifest</label>
+              </li>
 
-            <div>or</div>
+              <li>
+                <input id="serviceWorkers" v-model="files" value="serviceWorkers" type="checkbox" />
+                <label for="serviceWorkers">Service Workers</label>
+              </li>
 
-            <ul id="justTheseList">
-              <div id="justTheseText">Download Just these files:</div>
-              <ul>
-                <span>
-                  <input id="manifest" v-model="files" value="manifest" type="checkbox" />
-                  <label for="manifest">App Manifest</label>
-                </span>
+              <li>
+                <input id="apiSamples" v-model="files" value="apiSamples" type="checkbox" />
+                <label for="apiSamples">API Samples</label>
+              </li>
 
-                <span>
-                  <input id="serviceWorkers" v-model="files" value="serviceWorkers" type="checkbox" />
-                  <label for="serviceWorkers">Service Workers</label>
-                </span>
-
-                <span>
-                  <input id="apiSamples" v-model="files" value="apiSamples" type="checkbox" />
-                  <label for="apiSamples">API Samples</label>
-                </span>
-
-                <span>
-                  <input id="windows10" v-model="files" value="windows10Package" type="checkbox" />
-                  <label for="windows10">Windows 10 Package</label>
-                </span>
-              </ul>
+              <li>
+                <input id="windows10" v-model="files" value="windows10Package" type="checkbox" />
+                <label for="windows10">Windows 10 Package</label>
+              </li>
             </ul>
 
-            <button @click="downloadFiles" class="mainDownloadButton">Download</button>
+
+            <button @click="downloadFiles" class="work-button">Download</button>
           </div>
         </section>
 
@@ -93,7 +85,7 @@
           <div class="platformCard">
             <h3>macOS</h3>
             <p>asdf asdf asdf asdf asdf asdf asdf asdf asdf</p>
-            <button class="mainDownloadButton">Download</button>
+            <Download platform="MacOS" :message="$t('publish.download')" />            
           </div>
         </section>
       </div>
@@ -237,16 +229,11 @@ export default class extends Vue {
     justify-content: space-between;
   }
 
-  .platformCard h3 {
-    font-size: 24px;
-    font-weight: 400;
-    margin-top: 48px;
+  .platformCard {
+    margin-bottom: 68px;
+
   }
 
-  #goodBetterBar h3 {
-    font-size: 32px;
-    font-weight: 400;
-  }
 
   #whatMakesBlock,
   #otherTools {
@@ -267,21 +254,6 @@ export default class extends Vue {
     line-height: 32px;
   }
 
-  #justTheseList,
-  #justTheseList ul {
-    display: flex;
-    flex-direction: column;
-  }
-
-  #justTheseList {
-    margin-top: 12px;
-    padding: 0;
-  }
-
-  #justTheseList ul {
-    padding-left: 15px;
-  }
-
   #downloadAllButton {
     display: block;
     margin-bottom: 12px;
@@ -297,6 +269,17 @@ export default class extends Vue {
     h2 {
       font-size: 18px;
       line-height: 45px;
+    }
+
+    a, a:visited {
+      display: block;
+      margin: 18px 0 24px;
+      color: $color-brand-secondary;
+    }
+
+    h3 {
+      font-size: 16px;
+      line-height: 26px;
     }
   }
 
@@ -323,22 +306,60 @@ export default class extends Vue {
     margin-left: 15px;
   }
 
-  #justTheseText {
-    margin-bottom: 16px;
-  }
-
-  .mainDownloadButton {
-    background: $color-brand;
-    border: none;
-    border-radius: 20px;
-    color: white;
-    height: 36px;
-    width: 138px;
-  }
 
   .platformCard p {
-    font-size: 18px;
-    width: 664px;
+    font-size: 16px;
+    line-height: 24px;
+    width: 472px;
   }
+
+  
+[type="checkbox"]:checked,
+[type="checkbox"]:not(:checked) {
+    opacity: 0;
+}
+[type="checkbox"]:checked + label,
+[type="checkbox"]:not(:checked) + label
+{
+    position: relative;
+    padding-left: 32px;
+    cursor: pointer;
+    line-height: 24px;
+
+}
+[type="checkbox"]:checked + label:before,
+[type="checkbox"]:not(:checked) + label:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 28px;
+    height: 28px;
+    background-image: url('~/assets/images/unChecked.png');
+    background-repeat: no-repeat;
+    background-size: 26px;
+}
+[type="checkbox"]:checked + label:after,
+[type="checkbox"]:not(:checked) + label:after {
+    content: '';
+    width: 16px;
+    height: 16px;
+    background-image: url('~/assets/images/checked.png');
+    background-repeat: no-repeat;
+    background-size: 16px;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    border-radius: 100%;
+    transition: all 0.2s ease;
+}
+[type="checkbox"]:not(:checked) + label:after {
+    opacity: 0;
+    transform: scale(0);
+}
+[type="checkbox"]:checked + label:after {
+    opacity: 1;
+    transform: scale(1);
+}
 </style>
 

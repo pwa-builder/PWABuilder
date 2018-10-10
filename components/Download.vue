@@ -1,5 +1,5 @@
 <template>
-<div class="pwa-button pwa-button--simple" 
+<div class="work-button" 
     :class="{'pwa-button--brand': isBrand, 'pwa-button--total_right': isRight}"
     @click="buildArchive(platform);  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/download/{platform}' });">
 
