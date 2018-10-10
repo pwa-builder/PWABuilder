@@ -53,6 +53,9 @@ export default class extends Vue {
   @Prop({ type: Number, default: 0 })
   public suggestionsTotal: number;
 
+  @Prop({ type: String, default: 'javascript'})
+  public codeType: string;
+
   public readonly warningsId = 'warnings_list';
   public readonly suggestionsId = 'suggestions_list';
   public isReady = true;
@@ -69,7 +72,7 @@ export default class extends Vue {
           this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
             value: this.code,
             lineNumbers: "off",
-            language: 'javascript',
+            language: this.codeType,
             fixedOverflowWidgets: true,
             minimap: {
               enabled: false
@@ -77,9 +80,14 @@ export default class extends Vue {
           });
 
           const model = this.editor.getModel();
+
+          model.onDidChangeContent(() => {
+            const value = model.getValue();
+            this.$emit('editorValue', value);
+          });
+
           model.onDidChangeDecorations(() => {
             const errors = (<any>window).monaco.editor.getModelMarkers({});
-            console.log(errors);
 
             this.errorNumber = errors.length;
 
