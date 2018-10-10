@@ -80,9 +80,14 @@ export default class extends Vue {
           });
 
           const model = this.editor.getModel();
+
+          model.onDidChangeContent(() => {
+            const value = model.getValue();
+            this.$emit('editorValue', value);
+          });
+
           model.onDidChangeDecorations(() => {
             const errors = (<any>window).monaco.editor.getModelMarkers({});
-            console.log(errors);
 
             this.errorNumber = errors.length;
 

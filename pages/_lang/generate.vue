@@ -204,7 +204,7 @@
           <button class="manifestButton" v-bind:class="{ active: seeEditor }" @click="seeManifest()">Manifest Preview</button>
           <button class="manifestButton" v-bind:class="{ active: !seeEditor }" @click="seeGuidance()">Guidance</button>
 
-          <CodeViewer codeType="json" v-on:invalidManifest="invalidManifest()" v-if="seeEditor" :code="getCode()" :title="$t('generate.w3c_manifest')" :suggestions="suggestions" :suggestionsTotal="suggestionsTotal"
+          <CodeViewer codeType="json" v-on:invalidManifest="invalidManifest()" v-on:editorValue="handleEditorValue($event)" v-if="seeEditor" :code="getCode()" :title="$t('generate.w3c_manifest')" :suggestions="suggestions" :suggestionsTotal="suggestionsTotal"
             :warnings="warnings" :warningsTotal="warningsTotal">
             <nuxt-link :to="$i18n.path('serviceworker')" class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger' })">
               {{ $t("serviceworker.next_step") }}
@@ -441,6 +441,10 @@ public onClickShowGBB(): void {
   public invalidManifest() {
     console.log('invalid');
     this.basicManifest = false;
+  }
+
+  public handleEditorValue(ev) {
+    this.manifest$ = JSON.parse(ev);
   }
 
   public showBasicsSection() {
