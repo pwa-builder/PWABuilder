@@ -36,7 +36,7 @@ export default class extends Vue {
   public title: string;
 
   @Prop({ type: String, default: '' })
-  public code: string | null;
+  public code: string;
 
   @Prop({ type: String, default: 'auto' })
   public size: string | null;
@@ -63,11 +63,10 @@ export default class extends Vue {
   public editor: monaco.editor.IStandaloneCodeEditor | null = null;
   public errorNumber = 0;
 
-  public mounted(): void {
-    if (this.code) {
-      // Have to put this inside nextTick for vue
-      // to see the ref
+  public created(): void {
+
       this.$nextTick(() => {
+        console.log(this.code);
         if (this.code) {
           this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
             value: this.code,
@@ -97,14 +96,33 @@ export default class extends Vue {
           });
         }
       });
+  }
+
+  public updated(): void {
+    console.log('updated', this.code);
+    if (this.editor) {
+      this.editor.setValue(this.code);
+    }
+
+    if (!this.editor) {
+      this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
+            value: this.code,
+            lineNumbers: "off",
+            language: this.codeType,
+            fixedOverflowWidgets: true,
+            minimap: {
+              enabled: false
+            }
+          });
+      
+      this.editor.setValue(this.code);
     }
   }
 
-  public updated(): void {}
-
   @Watch('code')
   onCodeChanged() {
-    if (this.code && this.editor) {
+    if (this.editor) {
+      console.log(this.code);
       this.editor.setValue(this.code);
     }
   }
