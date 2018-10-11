@@ -81,7 +81,7 @@ import { Prop } from 'vue-property-decorator';
 
 @Component({})
 export default class extends Vue {
-  @Prop({}) isHttps: boolean;
+  @Prop({ default: true }) isHttps: boolean;
   @Prop({}) hasManifest: boolean;
   @Prop({}) hasWorker: boolean;
   @Prop({}) hasBetterManifest: boolean;
