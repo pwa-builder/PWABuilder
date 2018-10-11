@@ -204,7 +204,7 @@
           <button class="manifestButton" v-bind:class="{ active: seeEditor }" @click="seeManifest()">Manifest Preview</button>
           <button class="manifestButton" v-bind:class="{ active: !seeEditor }" @click="seeGuidance()">Guidance</button>
 
-          <!--<CodeViewer codeType="json" v-on:invalidManifest="invalidManifest()" v-on:editorValue="handleEditorValue($event)" v-if="seeEditor" :code="getCode()" :title="$t('generate.w3c_manifest')" :suggestions="suggestions" :suggestionsTotal="suggestionsTotal"
+          <CodeViewer codeType="json" v-on:invalidManifest="invalidManifest()" v-on:editorValue="handleEditorValue($event)" v-if="seeEditor" :code="getCode()" :title="$t('generate.w3c_manifest')" :suggestions="suggestions" :suggestionsTotal="suggestionsTotal"
             :warnings="warnings" :warningsTotal="warningsTotal">
             <nuxt-link :to="$i18n.path('serviceworker')" class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger' })">
               {{ $t("serviceworker.next_step") }}
@@ -212,7 +212,7 @@
           </CodeViewer>
           <div v-else>
             <h1>Hello World</h1>
-          </div>-->
+          </div>
         </div>
       </div>
     </div>

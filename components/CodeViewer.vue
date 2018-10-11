@@ -60,63 +60,40 @@ export default class extends Vue {
   public readonly suggestionsId = 'suggestions_list';
   public isReady = true;
   public downloadButtonMessage = 'publish.download_manifest';
-  public editor: monaco.editor.IStandaloneCodeEditor | null = null;
   public errorNumber = 0;
 
-  public created(): void {
+  public editor: monaco.editor.IStandaloneCodeEditor;
 
-      this.$nextTick(() => {
-        console.log(this.code);
-        if (this.code) {
-          this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
-            value: this.code,
-            lineNumbers: "off",
-            language: this.codeType,
-            fixedOverflowWidgets: true,
-            minimap: {
-              enabled: false
-            }
-          });
+  public mounted(): void {
+    this.$nextTick(() => {
+      if (this.code) {
+        this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
+          value: this.code,
+          lineNumbers: "off",
+          language: this.codeType,
+          fixedOverflowWidgets: true,
+          minimap: {
+            enabled: false
+          }
+        });
 
-          const model = this.editor.getModel();
+        const model = this.editor.getModel();
 
-          model.onDidChangeContent(() => {
-            const value = model.getValue();
-            this.$emit('editorValue', value);
-          });
+        model.onDidChangeContent(() => {
+          const value = model.getValue();
+          this.$emit('editorValue', value);
+        });
 
-          model.onDidChangeDecorations(() => {
-            const errors = (<any>window).monaco.editor.getModelMarkers({});
+        model.onDidChangeDecorations(() => {
+          const errors = (<any>window).monaco.editor.getModelMarkers({});
+          this.errorNumber = errors.length;
 
-            this.errorNumber = errors.length;
-
-            if (errors.length > 0) {
-              this.$emit('invalidManifest');
-            }
-          });
-        }
-      });
-  }
-
-  public updated(): void {
-    console.log('updated', this.code);
-    if (this.editor) {
-      this.editor.setValue(this.code);
-    }
-
-    if (!this.editor) {
-      this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
-            value: this.code,
-            lineNumbers: "off",
-            language: this.codeType,
-            fixedOverflowWidgets: true,
-            minimap: {
-              enabled: false
-            }
-          });
-      
-      this.editor.setValue(this.code);
-    }
+          if (errors.length > 0) {
+            this.$emit('invalidManifest');
+          }
+        });
+      }
+    });
   }
 
   @Watch('code')
@@ -128,7 +105,6 @@ export default class extends Vue {
   }
 
   async copy() {
-    if (this.editor) {
       const code = this.editor.getValue();
 
       if ((navigator as any).clipboard) {
@@ -153,7 +129,6 @@ export default class extends Vue {
             console.error('Trigger:', e.trigger);
         });
       }
-    }
   }
 }
 </script>
