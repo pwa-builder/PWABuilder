@@ -29,6 +29,9 @@
           </p>
         </li>
       </ul>
+      <nuxt-link to="/publish" class="publish work-button">
+        publish your app
+      </nuxt-link>
     </div>
 
     <div v-if="statusState" class="choiceCol">
@@ -135,6 +138,10 @@ export default class extends Vue {
 /* stylelint-disable */
 @import '~assets/scss/base/variables';
 
+.publish {
+  display: none;
+}
+
 #wrapper {
   padding-bottom: 48px;
   padding-left: 138px;
@@ -212,6 +219,11 @@ export default class extends Vue {
     background-image: url('~/assets/images/slectedBox.svg');
     background-repeat: no-repeat;
     background-size: 345px;
+  }
+
+  .publish {
+    display: inline-block;
+
   }
   .homeGood {
 
