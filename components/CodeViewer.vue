@@ -65,31 +65,31 @@ export default class extends Vue {
   public editor: monaco.editor.IStandaloneCodeEditor;
 
   public mounted(): void {
-        this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
-          value: this.code,
-          lineNumbers: "off",
-          language: this.codeType,
-          fixedOverflowWidgets: true,
-          minimap: {
-            enabled: false
-          }
-        });
+    this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
+      value: this.code,
+      lineNumbers: "off",
+      language: this.codeType,
+      fixedOverflowWidgets: true,
+      minimap: {
+        enabled: false
+      }
+    });
 
-        const model = this.editor.getModel();
+    const model = this.editor.getModel();
 
-        model.onDidChangeContent(() => {
-          const value = model.getValue();
-          this.$emit('editorValue', value);
-        });
+    model.onDidChangeContent(() => {
+      const value = model.getValue();
+      this.$emit('editorValue', value);
+    });
 
-        model.onDidChangeDecorations(() => {
-          const errors = (<any>window).monaco.editor.getModelMarkers({});
-          this.errorNumber = errors.length;
+    model.onDidChangeDecorations(() => {
+      const errors = (<any>window).monaco.editor.getModelMarkers({});
+      this.errorNumber = errors.length;
 
-          if (errors.length > 0) {
-            this.$emit('invalidManifest');
-          }
-        });
+      if (errors.length > 0) {
+        this.$emit('invalidManifest');
+      }
+    });
   }
 
   @Watch('code')
