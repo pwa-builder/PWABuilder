@@ -98,11 +98,7 @@ export default class extends Vue {
   async mounted() {
     await this.getServiceworkers();
     this.serviceworker$ = this.serviceworkers[0].id;
-    // await this.getCode(this.serviceworker$);
-    console.log(this.serviceworkerPreview);
-    setTimeout(() => {
-      console.log('after waiting', this.serviceworkerPreview);
-    }, 500);
+    await this.getCode(this.serviceworker$);
   }
 
   public onClickShowGBB(): void {

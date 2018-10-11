@@ -65,8 +65,6 @@ export default class extends Vue {
   public editor: monaco.editor.IStandaloneCodeEditor;
 
   public mounted(): void {
-    this.$nextTick(() => {
-      if (this.code) {
         this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
           value: this.code,
           lineNumbers: "off",
@@ -92,8 +90,6 @@ export default class extends Vue {
             this.$emit('invalidManifest');
           }
         });
-      }
-    });
   }
 
   @Watch('code')
