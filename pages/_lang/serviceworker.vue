@@ -41,9 +41,9 @@
     </div>
   </div>
 
-    <Modal :title="Next" ref="nextStepModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
+    <!--<Modal :title="Next" ref="nextStepModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
       <GoodPWA :hasManifest="basicManifest" :hasBetterManifest="betterManifest"/>
-    </Modal>
+    </Modal>-->
 
 </section>
 </template>
@@ -95,9 +95,10 @@ export default class extends Vue {
   @ServiceworkerAction getCode;
   @ServiceworkerAction getServiceworkers;
 
-  async created() {
+  async mounted() {
     await this.getServiceworkers();
     this.serviceworker$ = this.serviceworkers[0].id;
+    await this.getCode(this.serviceworker$);
   }
 
   public onClickShowGBB(): void {

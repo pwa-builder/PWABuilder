@@ -8,11 +8,11 @@
       <ul>
         <li v-bind:class="{ good: statusState.isHttps || allGood }">
           <h3>{{ $t('home.quality_low_list_1') }}</h3>
-        <p v-if="statusState.isHttps || allGoodWithText" class='paramText'>Your site is secure!</p>
+          <p class='paramText'>Your site is secure!</p>
         </li>
         <li v-bind:class="{ good: statusState.hasManifest || allGood }">
           <h3>{{ $t('home.quality_low_list_2') }}</h3>
-          <p v-if="statusState.hasManifest || allGoodWithText" class='paramText'>
+          <p class='paramText'>
             A basic W3C manifest is a signle your website is an app.
             <nuxt-link to="/generate">
               Add to the Manifest
@@ -22,7 +22,7 @@
         </li>
         <li v-bind:class="{ good: statusState.hasWorker || allGood }">
           <h3>{{ $t('home.quality_low_list_3') }}</h3>
-          <p v-if="statusState.hasWorker || allGoodWithText" class='paramText'>Your site should still do something when your user is offline.
+          <p class='paramText'>Your site should still do something when your user is offline.
             <nuxt-link to="/serviceworker">
               Add a Service Worker
             </nuxt-link>
@@ -37,7 +37,7 @@
       <ul>
         <li v-bind:class="{ good: statusState.hasBetterWorker || allGood }">
           <h3>{{ $t('home.quality_mid_list_1') }}</h3>
-          <P  v-if="statusState.hasBetterWorker || allGoodWithText" class='paramText'>Your Service worker should manage traffic for offline funcatinality and app like performance.
+          <p class='paramText'>Your Service worker should manage traffic for offline funcatinality and app like performance.
            <nuxt-link to"/serviceworker">
              Add a Service Worker
            </nuxt-link>
@@ -45,7 +45,7 @@
         </li>
         <li v-bind:class="{ good: statusState.hasBetterManifest || allGood }">
           <h3>{{ $t('home.quality_mid_list_2') }}</h3>
-          <p v-if="statusState.hasBetterManifest || allGoodWithText" class='paramText'>The manifest becomes more useful with more data.  We recommend App name, theme colors and a large tile / icon image.
+          <p class='paramText'>The manifest becomes more useful with more data.  We recommend App name, theme colors and a large tile / icon image.
            <nuxt-link to="/generate">
              Add to the Manifest
            </nuxt-link>
@@ -61,9 +61,9 @@
       <ul>
         <li v-bind:class="{ good: statusState.hasNativeFeatures || allGood }">
           <h3>{{ $t('home.quality_high_list_1') }}</h3>
-          <p v-if="statusState.hasNativeFeatures || allGoodWithText" class='paramText'>The Best PWAs can replace native apps.  Add app like functionality for the best PWA experience. 
+          <p class='paramText'>The Best PWAs can replace native apps.  Add app like functionality for the best PWA experience. 
            <nuxt-link to="">
-             Add App-like feautres
+             Add App-like features
            </nuxt-link>
           </p>
 
@@ -81,7 +81,7 @@ import { Prop } from 'vue-property-decorator';
 
 @Component({})
 export default class extends Vue {
-  @Prop({}) isHttps: boolean;
+  @Prop({ default: true }) isHttps: boolean;
   @Prop({}) hasManifest: boolean;
   @Prop({}) hasWorker: boolean;
   @Prop({}) hasBetterManifest: boolean;

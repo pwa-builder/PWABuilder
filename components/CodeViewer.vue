@@ -36,7 +36,7 @@ export default class extends Vue {
   public title: string;
 
   @Prop({ type: String, default: '' })
-  public code: string | null;
+  public code: string;
 
   @Prop({ type: String, default: 'auto' })
   public size: string | null;
@@ -60,66 +60,57 @@ export default class extends Vue {
   public readonly suggestionsId = 'suggestions_list';
   public isReady = true;
   public downloadButtonMessage = 'publish.download_manifest';
-  public editor: monaco.editor.IStandaloneCodeEditor | null = null;
   public errorNumber = 0;
 
+  public editor: monaco.editor.IStandaloneCodeEditor;
+
   public mounted(): void {
-    if (this.code) {
-      // Have to put this inside nextTick for vue
-      // to see the ref
-      this.$nextTick(() => {
-        if (this.code) {
-          this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
-            value: this.code,
-            lineNumbers: "off",
-            language: this.codeType,
-            fixedOverflowWidgets: true,
-            wordWrap: 'wordWrapColumn',
-	          wordWrapColumn: 50,
 
-            // Set this to false to not auto word wrap minified files 
-            wordWrapMinified: true,
+    this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
+      value: this.code,
+      lineNumbers: "off",
+      language: this.codeType,
+      fixedOverflowWidgets: true,
+      wordWrap: 'wordWrapColumn',
+      wordWrapColumn: 50,
 
-            // try "same", "indent" or "none"
-            wrappingIndent: "indent",
-            fontSize: 16,
-            minimap: {
-              enabled: false
-            }
-          });
+      // Set this to false to not auto word wrap minified files 
+      wordWrapMinified: true,
 
-          const model = this.editor.getModel();
+      // try "same", "indent" or "none"
+      wrappingIndent: "indent",
+      fontSize: 16,
+      minimap: {
+        enabled: false
+      }
+    });
 
-          model.onDidChangeContent(() => {
-            const value = model.getValue();
-            this.$emit('editorValue', value);
-          });
+    const model = this.editor.getModel();
 
-          model.onDidChangeDecorations(() => {
-            const errors = (<any>window).monaco.editor.getModelMarkers({});
+    model.onDidChangeContent(() => {
+      const value = model.getValue();
+      this.$emit('editorValue', value);
+    });
 
-            this.errorNumber = errors.length;
+    model.onDidChangeDecorations(() => {
+      const errors = (<any>window).monaco.editor.getModelMarkers({});
+      this.errorNumber = errors.length;
 
-            if (errors.length > 0) {
-              this.$emit('invalidManifest');
-            }
-          });
-        }
-      });
-    }
+      if (errors.length > 0) {
+        this.$emit('invalidManifest');
+      }
+    });
   }
-
-  public updated(): void {}
 
   @Watch('code')
   onCodeChanged() {
-    if (this.code && this.editor) {
+    if (this.editor) {
+      console.log(this.code);
       this.editor.setValue(this.code);
     }
   }
 
   async copy() {
-    if (this.editor) {
       const code = this.editor.getValue();
 
       if ((navigator as any).clipboard) {
@@ -144,7 +135,6 @@ export default class extends Vue {
             console.error('Trigger:', e.trigger);
         });
       }
-    }
   }
 }
 </script>

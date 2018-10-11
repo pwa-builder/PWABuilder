@@ -16,9 +16,9 @@
         <div class="l-generator-form">
           <div class="formNav">
             <h3>Jump To</h3>
-            <h3 @click="showBasicsSection()">Basic Info</h3>
-            <h3 @click="showImageSection()">Images</h3>
-            <h3 @click="showSettingSection()">Settings</h3>
+            <h3 v-bind:class="{ active: showBasicSection }" @click="showBasicsSection()">Basic Info</h3>
+            <h3 v-bind:class="{ active: showImagesSection }" @click="showImageSection()">Images</h3>
+            <h3 v-bind:class="{ active: showSettingsSection }" @click="showSettingSection()">Settings</h3>
           </div>
 
           <section class='animatedSection' v-if="showBasicSection">
