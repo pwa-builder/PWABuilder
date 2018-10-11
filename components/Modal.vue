@@ -55,9 +55,10 @@ export default class extends Vue {
 
   public show(): void {
     this.showModal = true;
-  //  if(this.pageDoc && this.pageDoc.style){
+    if(this.pageDoc && this.pageDoc.style){
+      console.log(this.pageDoc)
       this.pageDoc.style.filter = 'blur(25px)';
-  //  }
+    }
   }
 
   public hide(): void {

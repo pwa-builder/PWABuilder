@@ -484,6 +484,7 @@ public onClickShowGBB(): void {
     display: inline;
     color: $color-brand-primary;
     margin: 0 .5em;
+    font-size: 18px;
   }
 }
 
@@ -497,12 +498,14 @@ public onClickShowGBB(): void {
 .manifestButton {
   background: transparent;
   border: none;
-  color: $color-brand;
+  color: $color-brand-primary;
   outline: none;
+  font-family: 'Bungee', 'cursive';
+  font-size: 18px;
 }
 
 .active {
-  border-bottom: 2px solid black;
+  color:$color-brand-quartary;
 }
 
 .mainDiv {

@@ -74,6 +74,15 @@ export default class extends Vue {
             lineNumbers: "off",
             language: this.codeType,
             fixedOverflowWidgets: true,
+            wordWrap: 'wordWrapColumn',
+	          wordWrapColumn: 50,
+
+            // Set this to false to not auto word wrap minified files 
+            wordWrapMinified: true,
+
+            // try "same", "indent" or "none"
+            wrappingIndent: "indent",
+            fontSize: 16,
             minimap: {
               enabled: false
             }
