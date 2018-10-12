@@ -153,6 +153,10 @@ export default class extends Vue {
   min-height: 700px;
   padding: 10px;
 
+  .active {
+    color:$color-brand-quartary;
+  }
+
   @media screen and (max-width: $media-screen-s) {
     margin-top: 4rem;
   }

@@ -210,9 +210,9 @@
               {{ $t("serviceworker.next_step") }}
             </nuxt-link>
           </CodeViewer>
-          <div v-else>
+          <section id='guidanceSection' v-else>
             <h1>Hello World</h1>
-          </div>
+          </section>
         </div>
       </div>
     </div>
@@ -221,7 +221,7 @@
       <button class="work-button"  @click="onClickShowGBB()">I'm done</button>
     </div>
     
-    <Modal :title="Next" ref="nextStepModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
+    <Modal title="Next" ref="nextStepModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
       <GoodPWA :hasManifest="basicManifest"/>
     </Modal>
   </div>
@@ -302,13 +302,6 @@ export default class extends Vue {
 
 
   public created(): void {
-    if (!this.manifest) {
-      this.$router.push({ 
-        path: this.$i18n.path('')
-      });
-      return;
-    }
-
     this.manifest$ = { ...this.manifest };
   }
 
@@ -326,7 +319,6 @@ export default class extends Vue {
   }
 
   public onClickAddIcon(): void {
-    console.log('here');
     try {
       console.log('trying to add icon from URL', this.newIconSrc);
       this.addIconFromUrl(this.newIconSrc);
@@ -472,6 +464,10 @@ public onClickShowGBB(): void {
 @import "~assets/scss/base/variables";
 /* stylelint-disable */
 
+.code_viewer, #guidanceSection {
+  margin-top: 12px;
+}
+
 .mastHead {
   margin-top: 4em;
   margin-bottom: 4em;
@@ -485,6 +481,7 @@ public onClickShowGBB(): void {
     color: $color-brand-primary;
     margin: 0 .5em;
     font-size: 18px;
+    cursor: pointer;
   }
 }
 
@@ -502,9 +499,10 @@ public onClickShowGBB(): void {
   outline: none;
   font-family: 'Bungee', 'cursive';
   font-size: 18px;
+  cursor: pointer;
 }
 
-.active {
+h3.active, .manifestButton.active {
   color:$color-brand-quartary;
 }
 
