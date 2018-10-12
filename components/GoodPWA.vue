@@ -32,7 +32,8 @@
       <nuxt-link to="/publish" class="publish work-button">
         publish your app
       </nuxt-link>
-    </div>
+
+     </div>
 
     <div v-if="statusState" class="choiceCol">
       <div class="rateContainer"><img id="better" class="rateBoxes" src="~/assets/images/better.svg"></div>
@@ -65,7 +66,7 @@
         <li v-bind:class="{ good: statusState.hasNativeFeatures || allGood }">
           <h3>{{ $t('home.quality_high_list_1') }}</h3>
           <p class='paramText'>The Best PWAs can replace native apps.  Add app like functionality for the best PWA experience. 
-           <nuxt-link to="">
+           <nuxt-link to="/windows">
              Add App-like features
            </nuxt-link>
           </p>
@@ -176,7 +177,7 @@ export default class extends Vue {
 
 .choiceCol {
   width: 376px;
-  height: 911px;
+  height: 811px;
 
   li {
     font-family: 'Bungee', cursive;

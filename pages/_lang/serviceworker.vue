@@ -32,7 +32,7 @@
             {{ $t("serviceworker.next_step") }}
           </nuxt-link>
         </CodeViewer>
-        <CodeViewer codeType="javascript" :size="viewerSize" :code="serviceworkerPreview" :title="$t('serviceworker.code_preview_serviceworker')"></CodeViewer>
+        <CodeViewer class="bottomViewer" codeType="javascript" :size="bottomViewerSize" :code="serviceworkerPreview" :title="$t('serviceworker.code_preview_serviceworker')"></CodeViewer>
             <p class="download-text">{{ $t('serviceworker.download_link') }}
           <a class="" href="https://github.com/pwa-builder/serviceworkers" target="_blank">GitHub</a>.
           </p>
@@ -84,6 +84,7 @@ export default class extends Vue {
   public serviceworkers$: ServiceWorker[];
   public error: string | null = null;
   public viewerSize = '25rem';
+  public bottomViewerSize = '55rem'
 
   @ServiceworkerState serviceworkers: ServiceWorker[];
   @ServiceworkerState serviceworker: number;
@@ -161,6 +162,10 @@ export default class extends Vue {
     margin-bottom: 100px;
     margin-right: 68px;
   }
+  .bottomViewer {
+      min-height:  700px;
+      max-height: 900px;
+    }
 }
 .service-workers {
   margin-top: 100px;

@@ -24,25 +24,25 @@
           <div id="lists">
 
             <h3 id="justTheseText">Download files for Web:</h3>
-            <ul>
+            <ul id="downloadList">
               <li>
-                <input id="manifest" v-model="files" value="manifest" type="checkbox" />
+                <input id="manifest" v-model="files" value="manifest" type="checkbox" checked />
                 <label for="manifest">App Manifest</label>
               </li>
 
               <li>
-                <input id="serviceWorkers" v-model="files" value="serviceWorkers" type="checkbox" />
+                <input id="serviceWorkers" v-model="files" value="serviceWorkers" type="checkbox" checked />
                 <label for="serviceWorkers">Service Workers</label>
               </li>
 
               <li>
-                <input id="apiSamples" v-model="files" value="apiSamples" type="checkbox" />
+                <input id="apiSamples" v-model="files" value="apiSamples" type="checkbox" checked />
                 <label for="apiSamples">API Samples</label>
               </li>
 
               <li>
-                <input id="windows10" v-model="files" value="windows10Package" type="checkbox" />
-                <label for="windows10">Windows 10 Package</label>
+                <input id="windows10" v-model="files" value="windows10Package" type="checkbox" checked />
+                <label for="windows10">Windows 10 sideloader</label>
               </li>
             </ul>
 
@@ -299,6 +299,16 @@ export default class extends Vue {
     width: 40%;
     display: flex;
     flex-direction: column;
+
+    ul {
+      margin-left:0;
+      padding-left: 0;
+      list-style: none;
+      margin-block-start: 0;
+      margin-block-end: 0;
+      padding-inline-start: 0;
+      padding-bottom: 24px;
+    }
   }
 
 

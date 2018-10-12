@@ -1,17 +1,22 @@
 <template>
   <section>
-    <WindowsMenu />
       <div class="l-generator-step">
-        <div class="l-generator-semipadded pure-g">
-          <div class="pure-u-1 pure-u-md-1-3 generator-section service-workers">
-            <div class="l-generator-subtitle">{{ $t('windows.title') }}</div>
-            <div class="l-generator-field l-generator-field--padded checkbox" v-for="sample in samples" :key="sample.id">
+      <h4 class="l-generator-subtitle mastHead">{{ $t('windows.title') }}</h4>
+
+        <div class="l-generator-semipadded ">
+
+          <div class="generator-section feature-layout">
+            <div class="l-generator-field l-generator-field--padded checkbox feature-container" v-for="sample in samples" :key="sample.id">
               <label class="l-generator-label">
-                <input type="radio" :value="sample" v-model="selectedSample$"> {{sample.title}}
+                <input type="radio" :value="sample" v-model="selectedSample$"> 
+                <h4>{{sample.title}}</h4>
               </label>
               <span class="l-generator-description">{{ sample.description }}</span>
             </div>
+
           </div>
+
+
           <div class="pure-u-1 pure-u-md-2-3">
             <div class="tab_container" >
                 <input id="tab1" type="radio" name="tabs" class="tab_input" checked>
@@ -151,6 +156,30 @@ export default class extends Vue {
 </script>
 
 <style>
+/* stylelint-disable */
+
+.feature-container {
+  width: 300px;
+  margin: 24px;
+
+}
+
+.input {
+  width: 0;
+  height: 0;
+}
+
+.feature-layout {
+  display: flex;
+  width: 100%;
+}
+.mastHead {
+  margin-top: 4em;
+  margin-bottom: 4em;
+  margin-left: 68px;
+  width: 568px;
+}
+
 /* Tabs */
 .tab_container {
   margin: 0 auto;

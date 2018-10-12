@@ -16,13 +16,9 @@
         <slot/>
 
         <div class="modal-buttons">
-          <button class="l-generator-space_right pwa-button pwa-button--simple pwa-button--brand" @click="onClickSubmit();  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
-            {{$t("modal.submit")}}
-            <Loading :active="isLoading" class="u-display-inline_block u-margin-left-sm" />
-          </button>
-          <button class="pwa-button pwa-button--simple" @click="onClickCancel(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
+          <a class="cancelText" href="#" @click="onClickCancel(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
             {{$t("modal.cancel")}}
-          </button>
+          </a>
         </div>
       </div>
     </div>
@@ -102,7 +98,7 @@ export default class extends Vue {
   align-items: flex-start;
   background: rgba($color-brand-quartary, .25);
   display: flex;
-  height: 100vh;
+  height: 100%;
   justify-content: center;
   left: 0;
   overflow-y: scroll;
@@ -175,7 +171,8 @@ export default class extends Vue {
   }
 
   &-buttons {
-    text-align: right;
+    text-align: center;
+    width: 100%;
   }
 }
 </style>

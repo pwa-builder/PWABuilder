@@ -156,7 +156,7 @@
   },
   "modal": {
     "submit": "Submit",
-    "cancel": "Cancel"
+    "cancel": "I'm not done yet, take me back to editing"
   },
   "code_viewer": {
     "copy": "Copy",
