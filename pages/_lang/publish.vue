@@ -69,7 +69,10 @@
 
           <div class="platformCard">
             <h3>iOS</h3>
-            <p>asdf asdf asdf asdf asdf asdf asdf asdf asdf</p>
+            <p>
+              PWAs are avaiable through the browser on iOS, however your PWA can also be submitted to the app
+              store by building the package you get below in Xcode.
+            </p>
             <Download platform="ios" :message="$t('publish.download')" />
           </div>
 
@@ -83,8 +86,10 @@
           </div>
 
           <div class="platformCard">
-            <h3>macOS</h3>
-            <p>asdf asdf asdf asdf asdf asdf asdf asdf asdf</p>
+            <h3>mac OS</h3>
+            <p>
+              You can use Xcode to build this package to produce an app that runs on MacOS.
+            </p>
             <Download platform="MacOS" :message="$t('publish.download')" />            
           </div>
         </section>
