@@ -302,13 +302,6 @@ export default class extends Vue {
 
 
   public created(): void {
-    if (!this.manifest) {
-      this.$router.push({ 
-        path: this.$i18n.path('')
-      });
-      return;
-    }
-
     this.manifest$ = { ...this.manifest };
   }
 
@@ -326,7 +319,6 @@ export default class extends Vue {
   }
 
   public onClickAddIcon(): void {
-    console.log('here');
     try {
       console.log('trying to add icon from URL', this.newIconSrc);
       this.addIconFromUrl(this.newIconSrc);
