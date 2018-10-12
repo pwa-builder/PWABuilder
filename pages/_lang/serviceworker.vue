@@ -41,9 +41,9 @@
     </div>
   </div>
 
-    <!--<Modal :title="Next" ref="nextStepModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
-      <GoodPWA :hasManifest="basicManifest" :hasBetterManifest="betterManifest"/>
-    </Modal>-->
+  <Modal title="Next" ref="nextStepModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
+    <GoodPWA :hasManifest="basicManifest" :hasBetterManifest="betterManifest"/>
+  </Modal>
 
 </section>
 </template>
