@@ -210,9 +210,9 @@
               {{ $t("serviceworker.next_step") }}
             </nuxt-link>
           </CodeViewer>
-          <div id='guidanceSection' v-else>
+          <section id='guidanceSection' v-else>
             <h1>Hello World</h1>
-          </div>
+          </section>
         </div>
       </div>
     </div>
@@ -489,6 +489,7 @@ public onClickShowGBB(): void {
     color: $color-brand-primary;
     margin: 0 .5em;
     font-size: 18px;
+    cursor: pointer;
   }
 }
 
@@ -506,6 +507,7 @@ public onClickShowGBB(): void {
   outline: none;
   font-family: 'Bungee', 'cursive';
   font-size: 18px;
+  cursor: pointer;
 }
 
 h3.active, .manifestButton.active {
