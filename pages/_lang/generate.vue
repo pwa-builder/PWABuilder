@@ -221,7 +221,7 @@
       <button class="work-button"  @click="onClickShowGBB()">I'm done</button>
     </div>
     
-    <Modal :title="Next" ref="nextStepModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
+    <Modal title="Next" ref="nextStepModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
       <GoodPWA :hasManifest="basicManifest"/>
     </Modal>
   </div>
