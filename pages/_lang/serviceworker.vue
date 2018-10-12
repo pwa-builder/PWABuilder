@@ -41,7 +41,10 @@
     </div>
   </div>
 
-  <Modal title="Next" ref="nextStepModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
+  <!--<Modal title="Next" ref="nextStepModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
+    <GoodPWA :hasWorker="hasSW"/>
+  </Modal>-->
+  <Modal title="Next" ref="nextStepModal">
     <GoodPWA :hasWorker="hasSW"/>
   </Modal>
 
