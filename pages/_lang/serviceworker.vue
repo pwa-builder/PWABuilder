@@ -42,7 +42,7 @@
   </div>
 
   <Modal title="Next" ref="nextStepModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
-    <GoodPWA :hasManifest="basicManifest" :hasBetterManifest="betterManifest"/>
+    <GoodPWA :hasWorker="hasSW"/>
   </Modal>
 
 </section>
@@ -84,7 +84,8 @@ export default class extends Vue {
   public serviceworkers$: ServiceWorker[];
   public error: string | null = null;
   public viewerSize = '25rem';
-  public bottomViewerSize = '55rem'
+  public bottomViewerSize = '55rem';
+  public hasSW: boolean = false;
 
   @ServiceworkerState serviceworkers: ServiceWorker[];
   @ServiceworkerState serviceworker: number;
@@ -104,6 +105,7 @@ export default class extends Vue {
 
   public onClickShowGBB(): void {
     (this.$refs.nextStepModal as Modal).show();
+    this.hasSW = true;
   }
 
   public async download(): Promise<void> {
