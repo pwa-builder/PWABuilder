@@ -210,7 +210,7 @@
               {{ $t("serviceworker.next_step") }}
             </nuxt-link>
           </CodeViewer>
-          <div v-else>
+          <div id='guidanceSection' v-else>
             <h1>Hello World</h1>
           </div>
         </div>
@@ -471,6 +471,10 @@ public onClickShowGBB(): void {
 <style lang="scss" scoped>
 @import "~assets/scss/base/variables";
 /* stylelint-disable */
+
+.code_viewer, #guidanceSection {
+  margin-top: 12px;
+}
 
 .mastHead {
   margin-top: 4em;
