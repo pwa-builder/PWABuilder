@@ -504,7 +504,7 @@ public onClickShowGBB(): void {
   font-size: 18px;
 }
 
-.active {
+h3.active, .manifestButton.active {
   color:$color-brand-quartary;
 }
 
