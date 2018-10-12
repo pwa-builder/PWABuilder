@@ -14,8 +14,11 @@ declare module 'vue-i18n/types/index' {
 declare module 'vue/types/vue' {
   // Declare augmentation for Vue
   interface Vue {
+    $awa: any;
     $ga: any;
     $router: VueRouter;
   }
 }
+
+
 

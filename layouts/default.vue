@@ -1,11 +1,44 @@
-<script lang="ts">
-export default {
-  middleware: 'default'
-};
+  <script lang="ts">
+  export default {
+    middleware: 'default',
+    
+    data() {
+      return {
+        pathnameUrl: this.$route.path,
+        seen: true
+      };
+    },
+    watch: {
+      '$route': function() {
+        this.pathnameUrl = this.$route.path;
+      }
+    },
+    mounted: function() {
+      const savedValue = localStorage.getItem('PWABuilderGDPR');
+      if (JSON.parse((savedValue as string)) === true) {
+        this.seen = true;
+      } else {
+        // GDPR banner has not been seen before, lets show it
+        this.seen = false
+      }
+    },
+    methods: {
+      okGDPR: function () {
+        this.seen = true;
+        localStorage.setItem('PWABuilderGDPR', JSON.stringify(true));
+      }
+    }
+  };
 </script>
 
 <template>
   <div>
+
+    <div v-if="!seen" id="gdprDiv">
+      <p>This site uses cookies for analytics, personalized content and ads. By continuing to browse this site, you agree to this use.</p>
+      <button v-on:click="okGDPR">OK</button>
+    </div>
+
     <header class="l-header pure-g">
       <div class="l-header-left pure-u pure-u-md-1-5">
         <nuxt-link to="/">
@@ -16,14 +49,21 @@ export default {
       <nav class="l-header-right pure-u pure-u-md-4-5">
         <ul class="l-header-menu">
           <li class="l-header-item">
-            <nuxt-link :to="$i18n.path('')" exact class="l-header-link is-active">{{ $t('menu.home') }}</nuxt-link>
+            <nuxt-link :to="$i18n.path('')" exact :class="[pathnameUrl === '/' ? 'l-header-link is-active' : 'l-header-link']">{{ $t('menu.home') }}</nuxt-link>
           </li>
           <li class="l-header-item">
             <a class="l-header-link" href="//docs.pwabuilder.com/" target="_blank">{{ $t('menu.documentation') }}</a>
           </li>
           <li class="l-header-item">
-            <a class="l-header-link" href="//appimagegenerator-prod.azurewebsites.net">{{ $t('menu.generator') }}</a>
+            <nuxt-link :to="$i18n.path('imageGenerator')" @click="pathnameUrl='/imageGenerator'" exact 
+            :class="[pathnameUrl === '/imageGenerator' ? 'l-header-link is-active' : 'l-header-link ']">
+              {{ $t('menu.generator') }}</nuxt-link>
           </li>
+          <li class="l-header-item">
+            <nuxt-link :to="$i18n.path('windows')" exact :class="[pathnameUrl === '/windows' ? 'l-header-link is-active' : 'l-header-link']">
+              {{ $t('menu.windows') }}
+            </nuxt-link>
+          </li>          
           <li class="l-header-item">
             <a class="l-header-link" href="//github.com/pwa-builder" target="_blank">{{ $t('menu.github') }}</a>
           </li>
@@ -64,3 +104,23 @@ export default {
     </footer>
   </div>
 </template>
+
+<style lang="scss" scoped>
+  @import "~assets/scss/base/variables";
+
+  #gdprDiv {
+    align-items: center;
+    background: #F2F2F2;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    z-index: 9999;
+  }
+
+  #gdprDiv button {
+    background: transparent;
+    border: none;
+    color: #1FC2C8;
+  }
+
+</style>
