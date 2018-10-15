@@ -2,16 +2,20 @@
   <section>
       <div class="l-generator-step">
       <h4 class="l-generator-subtitle mastHead">{{ $t('windows.title') }}</h4>
+      <p class="l-generator-subtitle mastHead">{{ $t('windows.summary') }}</p>
+
 
         <div class="l-generator-semipadded ">
 
           <div class="generator-section feature-layout">
             <div class="l-generator-field l-generator-field--padded checkbox feature-container" v-for="sample in samples" :key="sample.id">
+
               <label class="l-generator-label">
+                <img src ="~assets/images/placeHolder.png" class="featureImage" />
                 <input type="radio" :value="sample" v-model="selectedSample$"> 
                 <h4>{{sample.title}}</h4>
               </label>
-              <span class="l-generator-description">{{ sample.description }}</span>
+              <p class="l-generator-description">{{ sample.description }}</p>
             </div>
 
           </div>
@@ -155,29 +159,54 @@ export default class extends Vue {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 /* stylelint-disable */
+@import '~assets/scss/base/variables';
 
 .feature-container {
   width: 300px;
   margin: 24px;
 
+  input {
+    width: 0;
+    height: 0;
+  }
+
+  h4 {
+    font-size: 18px;
+    line-height: 24px;
+  }
+  
+  .featureImage {
+    width: 100%;
+    display: inline-block;
+  }
+
+ .l-generator-description {
+  font-size: 14px;
+  line-height: 18px;
+  color: $color-brand-primary;
 }
 
-.input {
-  width: 0;
-  height: 0;
 }
+
+
 
 .feature-layout {
   display: flex;
   width: 100%;
+  flex-flow: wrap;
 }
 .mastHead {
-  margin-top: 4em;
-  margin-bottom: 4em;
+  margin-top: 2em;
+  margin-bottom: 0em;
   margin-left: 68px;
   width: 568px;
+}
+p.mastHead {
+    font-size: 22px;
+  line-height: 32px;
+  margin-bottom: 4em;
 }
 
 /* Tabs */
