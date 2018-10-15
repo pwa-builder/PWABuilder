@@ -100,10 +100,11 @@ export default class extends Vue {
   statusState: any = null;
 
   public mounted() {
+    console.log('mounted');
 
     // trying to grab the previous saved state
     // this will be null if not found
-    const savedStatus = localStorage.getItem('pwaStatus');
+    const savedStatus = sessionStorage.getItem('pwaStatus');
 
     // lets set our starting state based on the props we
     // just received
@@ -118,12 +119,13 @@ export default class extends Vue {
       hasNativeFeatures: this.hasNativeFeatures,
       isResponsive: this.isResponsive
     };
+    console.log(currentStatus);
 
     if (savedStatus !== null) {
       // if we have saved state lets merge that
       // and our current state based off our current props
       // and finally save it and set it as the state
-      localStorage.setItem('pwaStatus', JSON.stringify({...currentStatus, ...JSON.parse(savedStatus)}));
+      sessionStorage.setItem('pwaStatus', JSON.stringify({...currentStatus, ...JSON.parse(savedStatus)}));
       this.statusState = {...currentStatus, ...JSON.parse(savedStatus)}
     } else {
       // if we dont have any saved state
