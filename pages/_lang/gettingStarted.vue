@@ -47,7 +47,7 @@ export default class extends Vue {
 
   @GeneratorState manifest: generator.Manifest;
 
-  public mounted() {
+  public created() {
     console.log(this.manifest);
     this.analyzeManifest(this.manifest);
   }
