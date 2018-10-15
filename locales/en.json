@@ -143,7 +143,8 @@
   },
   "windows": {
     "download": "Download code",
-    "title": "Select the Windows feature for your app",
+    "title": "Be the Best PWA you can be with advanced APIs",
+    "summary": "now that you are a pwa, you should take advantage of app-like features that will win over your users.",
     "sourceTitle": "Source Code",
     "codeTitle": "Code Configuration"
   },
