@@ -47,7 +47,7 @@ export default class extends Vue {
 
   @GeneratorState manifest: generator.Manifest;
 
-  public mounted() {
+  public created() {
     console.log(this.manifest);
     this.analyzeManifest(this.manifest);
   }
@@ -58,6 +58,7 @@ export default class extends Vue {
 
     // we already know we have a manifest by this point
     this.basicManifest = true;
+    console.log('known here');
 
     // does the manifest have related applications filled out?
     if (manifest.icons && manifest.icons.length > 0) {
