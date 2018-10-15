@@ -26,22 +26,22 @@
             <h3 id="justTheseText">Download files for Web:</h3>
             <ul id="downloadList">
               <li>
-                <input id="manifest" v-model="files" value="manifest" type="checkbox" checked />
+                <input id="manifest" v-model="files" value="manifest" type="checkbox" />
                 <label for="manifest">App Manifest</label>
               </li>
 
               <li>
-                <input id="serviceWorkers" v-model="files" value="serviceWorkers" type="checkbox" checked />
+                <input id="serviceWorkers" v-model="files" value="serviceWorkers" type="checkbox" />
                 <label for="serviceWorkers">Service Workers</label>
               </li>
 
               <li>
-                <input id="apiSamples" v-model="files" value="apiSamples" type="checkbox" checked />
+                <input id="apiSamples" v-model="files" value="apiSamples" type="checkbox" />
                 <label for="apiSamples">API Samples</label>
               </li>
 
               <li>
-                <input id="windows10" v-model="files" value="windows10Package" type="checkbox" checked />
+                <input id="windows10" v-model="files" value="windows10Package" type="checkbox" />
                 <label for="windows10">Windows 10 sideloader</label>
               </li>
             </ul>
@@ -133,7 +133,8 @@ export default class extends Vue {
     version: null
   };
 
-  public files: any[] = [];
+  // Set default web checked items
+  public files: any[] = ['manifest', 'serviceWorkers', 'apiSamples', 'windows10Package'];
 
   // @PublishState status: boolean;
   @PublishState status = true;
@@ -346,13 +347,13 @@ export default class extends Vue {
 [type="checkbox"]:not(:checked) + label:before {
     content: '';
     position: absolute;
-    left: 0;
-    top: 0;
-    width: 28px;
-    height: 28px;
+    left: 5px;
+    top: 5px;
+    width: 16px;
+    height: 16px;
     background-image: url('~/assets/images/unChecked.png');
     background-repeat: no-repeat;
-    background-size: 26px;
+    background-size: 16px;
 }
 [type="checkbox"]:checked + label:after,
 [type="checkbox"]:not(:checked) + label:after {
@@ -363,9 +364,8 @@ export default class extends Vue {
     background-repeat: no-repeat;
     background-size: 16px;
     position: absolute;
-    top: 5px;
     left: 5px;
-    border-radius: 100%;
+    top: 5px;
     transition: all 0.2s ease;
 }
 [type="checkbox"]:not(:checked) + label:after {
