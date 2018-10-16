@@ -53,6 +53,8 @@
                   </CodeViewer>
                 </section>
               </div>
+
+              <GoodPWA :hastNativeFeatures="hasNative"></GoodPWA>
           </div>
         </div>
       </div>
@@ -64,8 +66,10 @@ import Vue from 'vue';
 import Component from 'nuxt-class-component';
 import { Action, State, namespace } from 'vuex-class';
 import { Watch } from 'vue-property-decorator';
+
 import CodeViewer from '~/components/CodeViewer.vue';
 import WindowsMenu from '~/components/WindowsMenu.vue';
+import GoodPWA from '~/components/GoodPWA.vue';
 
 import * as windowsStore from '~/store/modules/windows';
 
@@ -73,12 +77,17 @@ const WindowsState = namespace(windowsStore.name, State);
 const WindowsAction = namespace(windowsStore.name, Action);
 
 @Component({
-  components: {CodeViewer, WindowsMenu}
+  components: {
+    CodeViewer,
+    WindowsMenu,
+    GoodPWA
+  }
 })
 
 export default class extends Vue {
   error: any;
   viewerSize = '30rem';
+  hasNative: boolean = false;
 
   selectedSample$: windowsStore.Sample | null = null;
   @WindowsState samples: windowsStore.Sample[];
@@ -95,6 +104,10 @@ export default class extends Vue {
   async onSelectedSample$Changed() {
     try {
       await this.selectSample(this.selectedSample$);
+
+      // wire up to GBB component
+      // user has selected a native feature to add
+      this.hasNative = true;
     } catch (e) {
       this.error = e;
     }
