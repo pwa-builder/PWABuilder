@@ -45,7 +45,7 @@
     <GoodPWA :hasWorker="hasSW"/>
   </Modal>-->
   <Modal title="Next" ref="nextStepModal">
-    <GoodPWA :hasWorker="hasSW"/>
+    <GoodPWA :hasWorker="hasSW" :hasBetterWorker="betterSW"/>
   </Modal>
 
 </section>
@@ -89,6 +89,7 @@ export default class extends Vue {
   public viewerSize = '25rem';
   public bottomViewerSize = '55rem';
   public hasSW: boolean = false;
+  public betterSW: boolean = false;
 
   @ServiceworkerState serviceworkers: ServiceWorker[];
   @ServiceworkerState serviceworker: number;
@@ -108,7 +109,7 @@ export default class extends Vue {
 
   public onClickShowGBB(): void {
     (this.$refs.nextStepModal as Modal).show();
-    this.hasSW = true;
+    this.analyze();
   }
 
   public async download(): Promise<void> {
@@ -126,10 +127,22 @@ export default class extends Vue {
     this.isBuilding = false;
   }
 
+  public analyze(): void {
+    if (this.serviceworker$) {
+      this.hasSW = true;
+    }
+
+    if (this.serviceworker$ === 4 || this.serviceworker$ === 5) {
+      this.betterSW = true;
+    }
+  }
+
   @Watch('serviceworker$')
-  async onServiceworker$Changed() {
+  async onServiceworker$Changed(): Promise<void> {
     try {
+      console.log(this.serviceworker$)
       await this.getCode(this.serviceworker$);
+      this.analyze()
     } catch (e) {
       this.error = e;
     }
