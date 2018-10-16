@@ -134,6 +134,23 @@ export default class extends Vue {
       this.statusState = currentStatus;
     }
   }
+
+  public reset() {
+    sessionStorage.removeItem('pwaStatus');
+    const currentStatus = { 
+      isHttps: this.isHttps,
+      hasManifest: this.hasManifest,
+      hasWorker: this.hasWorker,
+      hasBetterManifest: this.hasBetterManifest,
+      hasBetterWorker: this.hasBetterWorker,
+      hasBestManifest: this.hasBestManifest,
+      hasBestWorker: this.hasBestWorker,
+      hasNativeFeatures: this.hasNativeFeatures,
+      isResponsive: this.isResponsive
+    };
+
+    this.statusState = currentStatus;
+  }
 }
 </script>
 
