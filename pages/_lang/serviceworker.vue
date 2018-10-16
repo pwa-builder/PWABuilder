@@ -128,12 +128,11 @@ export default class extends Vue {
   }
 
   public analyze(): void {
-    if (this.serviceworker$) {
-      this.hasSW = true;
-    }
-
     if (this.serviceworker$ === 4 || this.serviceworker$ === 5) {
       this.betterSW = true;
+    } else {
+      // default to true for now
+      this.hasSW = true
     }
   }
 
