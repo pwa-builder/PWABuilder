@@ -42,7 +42,7 @@
         <li v-bind:class="{ good: statusState.hasBetterWorker || allGood }">
           <h3>{{ $t('home.quality_mid_list_1') }}</h3>
           <p class='paramText'>Your Service worker should manage traffic for offline funcatinality and app like performance.
-           <nuxt-link to"/serviceworker">
+           <nuxt-link to="/serviceworker">
              Add a Service Worker
            </nuxt-link>
           </p>
@@ -232,6 +232,14 @@ export default class extends Vue {
 
     .selectedBox {
     background-image: none;
+    }
+    
+    .paramText {
+      display: none;
+    }
+
+    .publish {
+      display: none;
     }
   }
 

@@ -2,7 +2,7 @@
 <template>
 <section>
   <div class="l-generator-step">
-    <div class="pure-g padding">
+    <div class="padding">
       <section id="getStartedBlock">
         <div id="quickTextBlock">
           <h2 id="quickBlockText">{{ $t('home.mast_title') }}</h2>
@@ -172,7 +172,7 @@ Vue.prototype.$awa = function(config) {
 
   .proTag {
     font-size: 22px;
-    margin: 134px 138px 0 138px;
+    margin: 100px 138px 0 138px;
     width: 256px;
   }
 
@@ -198,7 +198,6 @@ Vue.prototype.$awa = function(config) {
   #quickBlockText {
     color: $color-brand-quintary;
     font-size: 36px;
-    font-weight: 600;
     margin: 0;
   }
   
@@ -230,6 +229,7 @@ Vue.prototype.$awa = function(config) {
 
   #quickTextBlock {
     margin-bottom: 27px;
+    margin-top: 22px;
   }
 
   #quickTextBlock,

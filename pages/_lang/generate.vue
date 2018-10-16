@@ -469,8 +469,8 @@ public onClickShowGBB(): void {
 }
 
 .mastHead {
-  margin-top: 4em;
-  margin-bottom: 4em;
+  margin-top: 0;
+  margin-bottom: 7em;
   margin-left: 68px;
   width: 568px;
 }

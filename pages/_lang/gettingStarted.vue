@@ -2,7 +2,6 @@
 <template>
   <section>
     <div class="resultsMastHead">
-      <h2>Great!</h2>
       <h2>You're already on your way to creating a pwa!</h2>
       <p>
         <!--this will possibly have to be dynamic-->
@@ -84,21 +83,20 @@ export default class extends Vue {
   @import '~assets/scss/base/variables';
 
   .chooseContainer {
-    margin-top: 180px;
+    margin-top: 118px;
 
     h2 {
       margin-left: 68px;
-      margin-bottom: 68px;
+      margin-bottom: 28px;
     }
   }
   .resultsMastHead {
-    margin-top: 100px;
     color: $color-brand-quintary;
     width: 568px;
     margin-left: 68px;
 
     h2 {
-      margin: 42px 0;
+      margin: 0;
       font-size: 36px;
       line-height: 42px;
     }

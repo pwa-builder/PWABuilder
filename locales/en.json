@@ -44,8 +44,8 @@
     "skip_description": "If you already have the Manifest and want to download the service worker source code you can skip the first step."
   },
   "generate": {
-    "subtitle": "Here's what we've picked up from your site",
-    "instructions": "Take a look and add or update anything we missed. Hit next when you're done, and if you need any guidance just tap the 'Guidance' tab.",
+    "subtitle": "Here's the Manifest",
+    "instructions": "Take a look and add or update anything missing. Hit \"I'm done\" when you're done, and for more tips just tap the 'Guidance' tab.",
     "name": "Name",
     "short_name": "Short Name",
     "description": "Description",
