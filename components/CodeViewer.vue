@@ -73,7 +73,7 @@ export default class extends Vue {
       fixedOverflowWidgets: true,
       wordWrap: 'wordWrapColumn',
       wordWrapColumn: 50,
-
+      scrollBeyondLastLine: false,
       // Set this to false to not auto word wrap minified files 
       wordWrapMinified: true,
 

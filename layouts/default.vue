@@ -44,8 +44,25 @@
   #baseContainer{
     width: 1280px;
     margin: 0 auto;
+    xmargin-top: -100px;
+
+    .container {
+      padding-top: 64px;
+    }
   }
 
+header {
+  display: none !important;
+}
+
+
+  .logoText {
+    position: absolute;
+    top: -400px;
+    font-size: 16px;
+    line-height: 16px;
+    width: 100px;
+  }
 
   #gdprDiv {
     align-items: center;
@@ -76,7 +93,7 @@
   }
   
   #artlb {
-    transform: translate(0, 565px);
+    transform: translate(0, 512px);
     width: 507px;
   }
 
@@ -91,31 +108,36 @@
   }
 
   #bigWhite {
-    transform: translate(-1655px, 1278px);
+    transform: translate(-1655px, 1248px);
     width: 3309px;
   }
 
   body[data-location='gettingStarted']{
+    .logoText {
+      left:1160px;
+      top: 26px;
+    }
+
     #artb {
-      transform: translate(-1587.98px, -1130.4px);
+      transform: translate(-1584px, -1380px);
       width: 3688px;
      }
 
     #artw {
-      transform: translate(-349px, -258px);
+      transform: translate(800px, -258px);
       width: 833px;
     }
 
     #artlb {
-      transform: translate(729px, 0);
+      transform: translate(729px, -46px);
       width: 1101px;
     }
     #logoLarge {
-      transform: translate(68px, 32px);
+      transform: translate(1110px, 32px);
       width: 48px;
     }
     #decorStack {
-      transform: translate(729px, 194px);
+      transform: translate(729px, 148px);
       width: 128px;
     }
 
@@ -126,26 +148,31 @@
   }
 
     body[data-location='generate']{
+     .logoText {
+      left:1160px;
+      top: 26px;
+    }
+
     #artb {
-      transform: translate(-1587.98px, -1330.4px);
+      transform: translate(-1584px, -1462px);
       width: 3688px;
      }
 
     #artw {
-      transform: translate(-349px, -258px);
+      transform: translate(800px, -258px);
       width: 833px;
     }
 
     #artlb {
-      transform: translate(729px, -275px);
+      transform: translate(729px, -128px);
       width: 1101px;
     }
     #logoLarge {
-      transform: translate(68px, 32px);
+      transform: translate(1110px, 32px);
       width: 48px;
     }
     #decorStack {
-      transform: translate(729px, 194px);
+      transform: translate(729px, 68px);
       width: 128px;
     }
 
@@ -155,26 +182,31 @@
     }
   }
   body[data-location='serviceworker']{
+     .logoText {
+      left:1160px;
+      top: 26px;
+    }
+
     #artb {
-      transform: translate(-1587.98px, -1330.4px);
+      transform: translate(-1584px, -1380px);
       width: 3688px;
      }
 
     #artw {
-      transform: translate(-349px, -258px);
+      transform: translate(800px, -258px);
       width: 833px;
     }
 
     #artlb {
-      transform: translate(729px, -275px);
+      transform: translate(729px, -46px);
       width: 1101px;
     }
     #logoLarge {
-      transform: translate(68px, 32px);
+      transform: translate(1110px, 32px);
       width: 48px;
     }
     #decorStack {
-      transform: translate(729px, 194px);
+      transform: translate(729px, 148px);
       width: 128px;
     }
 
@@ -185,26 +217,31 @@
   }
 
   body[data-location='publish']{
+      .logoText {
+      left:1160px;
+      top: 26px;
+    }
+
     #artb {
-      transform: translate(-1587.98px, -1330.4px);
+      transform: translate(-1584px, -1380px);
       width: 3688px;
      }
 
     #artw {
-      transform: translate(-349px, -258px);
+      transform: translate(800px, -258px);
       width: 833px;
     }
 
     #artlb {
-      transform: translate(729px, -275px);
+      transform: translate(729px, -46px);
       width: 1101px;
     }
     #logoLarge {
-      transform: translate(68px, 32px);
+      transform: translate(1110px, 32px);
       width: 48px;
     }
     #decorStack {
-      transform: translate(729px, 194px);
+      transform: translate(729px, 148px);
       width: 128px;
     }
 
@@ -215,26 +252,31 @@
   }
 
   body[data-location='windows']{
+      .logoText {
+      left:1160px;
+      top: 26px;
+    }
+
     #artb {
-      transform: translate(-1587.98px, -1330.4px);
+      transform: translate(-1584px, -1380px);
       width: 3688px;
      }
 
     #artw {
-      transform: translate(-349px, -258px);
+      transform: translate(800px, -258px);
       width: 833px;
     }
 
     #artlb {
-      transform: translate(729px, -275px);
+      transform: translate(729px, -46px);
       width: 1101px;
     }
     #logoLarge {
-      transform: translate(68px, 32px);
+      transform: translate(1110px, 32px);
       width: 48px;
     }
     #decorStack {
-      transform: translate(729px, 194px);
+      transform: translate(729px, 148px);
       width: 128px;
     }
 
@@ -253,6 +295,7 @@
   <img id="logoLarge" class="bgArt" src="~/assets/images/PWABuilderLogo.svg">  
   <img id="decorStack" class="bgArt" src="~/assets/images/StackedCube.svg">  
   <img id="bigWhite" class="bgArt" src="~/assets/images/white.svg">
+  <h1 class="logoText">PWA Builder</h1>
 
     <div v-if="seen" id="gdprDiv">
       <p>This site uses cookies for analytics, personalized content and ads. By continuing to browse this site, you agree to this use.</p>

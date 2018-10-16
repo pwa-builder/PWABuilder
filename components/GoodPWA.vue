@@ -250,6 +250,14 @@ export default class extends Vue {
     .selectedBox {
     background-image: none;
     }
+    
+    .paramText {
+      display: none;
+    }
+
+    .publish {
+      display: none;
+    }
   }
 
 #goodPWAHeaderBlock {
