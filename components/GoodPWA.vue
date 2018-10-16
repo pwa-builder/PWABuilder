@@ -47,7 +47,7 @@
            </nuxt-link>
           </p>
         </li>
-        <li v-bind:class="{ good: statusState.hasBetterManifest || allGood }">
+        <li v-bind:class="{ good: statusState.hasBestManifest || allGood }">
           <h3>{{ $t('home.quality_mid_list_2') }}</h3>
           <p class='paramText'>The manifest becomes more useful with more data.  We recommend App name, theme colors and a large tile / icon image.
            <nuxt-link to="/generate">

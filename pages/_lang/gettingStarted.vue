@@ -14,7 +14,7 @@
 
     <div class="chooseContainer">
       <h2>Your App Results</h2>
-      <GoodPWA :isHttps="true" :hasManifest="basicManifest" :hasBetterManifest="betterManifest" :allGoodWithText="true" />
+      <GoodPWA :isHttps="true" :hasManifest="basicManifest" :hasBestManifest="bestManifest" :allGoodWithText="true" />
     </div>
   </section>
 </template>
@@ -58,20 +58,9 @@ export default class extends Vue {
     // we already know we have a manifest by this point
     this.basicManifest = true;
 
-    // does the manifest have related applications filled out?
+    // does the manifest have icons?
     if (manifest.icons && manifest.icons.length > 0) {
-      this.betterManifest = true;
-    }
-
-    // if we have all the values filled out we have the
-    // "best" manifest
-    for (let key in manifest) {
-      if (manifest.hasOwnProperty(key)) {
-          if (manifest[key].length === 0) {
-            // an entry is empty
-            this.bestManifest = false;
-          }
-      }
+      this.bestManifest = true;
     }
   }
 }
