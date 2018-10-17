@@ -55,10 +55,20 @@
                 </section>
               </div>
 
-              <GoodPWA :hastNativeFeatures="hasNative"></GoodPWA>
+              <div class="l-generator-wrapper pure-u-2-5">       
+                <a class="work-button"  @click="onClickShowGBB()" href="#">{{ $t("general.next_page") }}</a>
+              </div>
+
+              <p class="download-text">{{ $t('general.github_source') }}
+                <a class="" href="https://github.com/pwa-builder/Windows-universal-js-samples/tree/master/win10" target="_blank">GitHub</a>.
+              </p>
           </div>
         </div>
       </div>
+
+      <Modal title="Next" ref="nextStepModal">
+        <GoodPWA :hasNativeFeatures="hasNative"/>
+      </Modal>
   </section>
 </template>
 
@@ -71,6 +81,7 @@ import { Watch } from 'vue-property-decorator';
 import CodeViewer from '~/components/CodeViewer.vue';
 import WindowsMenu from '~/components/WindowsMenu.vue';
 import GoodPWA from '~/components/GoodPWA.vue';
+import Modal from '~/components/Modal.vue';
 
 import * as windowsStore from '~/store/modules/windows';
 
@@ -81,14 +92,15 @@ const WindowsAction = namespace(windowsStore.name, Action);
   components: {
     CodeViewer,
     WindowsMenu,
-    GoodPWA
+    GoodPWA,
+    Modal
   }
 })
 
 export default class extends Vue {
   error: any;
   viewerSize = '30rem';
-  hasNative: boolean = false;
+  hasNative = false;
 
   selectedSample$: windowsStore.Sample | null = null;
   @WindowsState samples: windowsStore.Sample[];
@@ -99,6 +111,10 @@ export default class extends Vue {
   async created() {
     await this.getSamples();
     this.selectedSample$ = this.samples[0];
+  }
+  
+  public onClickShowGBB(): void {
+    (this.$refs.nextStepModal as Modal).show();
   }
 
   @Watch('selectedSample$')
@@ -169,7 +185,7 @@ export default class extends Vue {
     a.style.display = 'none';
     document.body.appendChild(a);
     a.click();
-  } 
+  }
 }
 </script>
 
@@ -196,15 +212,24 @@ export default class extends Vue {
     display: inline-block;
   }
 
- .l-generator-description {
-  font-size: 14px;
-  line-height: 18px;
+  .l-generator-description {
+    font-size: 14px;
+    line-height: 18px;
+    color: $color-brand-primary;
+  }
+
+}
+
+.download-text {
   color: $color-brand-primary;
+  font-size: 14px;
+  margin-right: 68px;
+  text-align: right;
+
+  a, a:visited {
+    color: $color-brand-quartary;
+  }
 }
-
-}
-
-
 
 .feature-layout {
   display: flex;
