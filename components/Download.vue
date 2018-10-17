@@ -33,7 +33,7 @@ export default class extends Vue {
   @Prop({ type: String, default: '' })
   public readonly platform: string;
 
-  @Prop({ type: Array, default: function () { return [] }})
+  @Prop({ type: Array, default: function () { return []; }})
   public readonly parameters: string[];
 
   @Prop({ type: Boolean, default: false })
