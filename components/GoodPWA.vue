@@ -30,7 +30,7 @@
         </li>
       </ul>
       <nuxt-link to="/publish" class="publish work-button">
-        publish your app
+        Publish Your App
       </nuxt-link>
 
      </div>
@@ -267,4 +267,3 @@ export default class extends Vue {
 .choiceCol li.good {
 background-image: url('~/assets/images/gbbChecked.svg');
 }
-</style>
