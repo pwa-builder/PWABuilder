@@ -30,7 +30,7 @@
         </li>
       </ul>
       <nuxt-link to="/publish" class="publish work-button">
-        publish your app
+        Publish your App
       </nuxt-link>
 
      </div>

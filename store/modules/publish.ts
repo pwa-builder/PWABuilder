@@ -43,7 +43,7 @@ export const getters: GetterTree<State, RootState> = {};
 export interface Actions<S, R> extends ActionTree<S, R> {
     resetAppData(context: ActionContext<S, R>): void;
     updateStatus(context: ActionContext<S, R>): void;
-    build(context: ActionContext<S, R>, platform: string): Promise<void>;
+    build(context: ActionContext<S, R>, params: { platform: string, options: string[]}): Promise<void>;
     buildAppx(context: ActionContext<S, R>, params: AppxParams): Promise<void>;
 }
 
@@ -59,7 +59,7 @@ export const actions: Actions<State, RootState> = {
         commit(types.UPDATE_STATUS, status);
     },
 
-    async build({ commit, rootState }, platform: string): Promise<void> {
+    async build({ commit, rootState }, params: { platform: string, options: string[] }): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
             const manifestId = rootState.generator.manifestId;
             const serviceworker = rootState.serviceworker.serviceworker;
@@ -68,19 +68,19 @@ export const actions: Actions<State, RootState> = {
                 reject('error.manifest_required');
             }
 
-            if (!platform) {
+            if (!params.platform) {
                 reject('error.platform_required');
             }
 
             let platformsList: string[] = [];
-            if (platform === platforms.all) {
+            if (params.platform === platforms.all) {
                 platformsList = [ platforms.web, platforms.windows10, platforms.windows, platforms.ios, platforms.android ];
             } else {
-                platformsList = [ platform ];
+                platformsList = [ params.platform ];
             }
 
             try {
-                const options = { platforms: platformsList, dirSuffix: platform };
+                const options = { platforms: platformsList, dirSuffix: params.platform, parameters: params.options };
                 const result = await this.$axios.$post(`${apiUrl}/${manifestId}/build?ids=${serviceworker}`, options);
                 commit(types.UPDATE_ARCHIVELINK, result.archive);
                 resolve();
