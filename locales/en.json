@@ -77,7 +77,8 @@
     "w3c_manifest": "W3C Manifest"
   },
   "serviceworker": {
-    "title": "Select the service worker functionality for your app.",
+    "title": "Pre-made Service Workers",
+    "summary": "Service workers can make your site work offline, run faster, or both. Choose the functionality from our service workers below.",
     "download": "Download service worker",
     "building": "Building package...",
     "download_link": "You can also download the source code directly from",

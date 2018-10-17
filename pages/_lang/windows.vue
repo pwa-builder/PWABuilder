@@ -1,9 +1,10 @@
 <template>
   <section>
       <div class="l-generator-step">
-      <h4 class="l-generator-subtitle mastHead">{{ $t('windows.title') }}</h4>
-      <p class="l-generator-subtitle mastHead">{{ $t('windows.summary') }}</p>
-
+      <div class="mastHead">
+          <h2 class="l-generator-subtitle">{{ $t('windows.title') }}</h2>
+        <p class="l-generator-subtitle">{{ $t('windows.summary') }}</p>              
+      </div>
 
         <div class="l-generator-semipadded ">
 
@@ -54,7 +55,7 @@
                 </section>
               </div>
 
-              <GoodPWA :hasNativeFeatures="hasNative"></GoodPWA>
+              <GoodPWA :hastNativeFeatures="hasNative"></GoodPWA>
           </div>
         </div>
       </div>
@@ -87,7 +88,7 @@ const WindowsAction = namespace(windowsStore.name, Action);
 export default class extends Vue {
   error: any;
   viewerSize = '30rem';
-  hasNative = false;
+  hasNative: boolean = false;
 
   selectedSample$: windowsStore.Sample | null = null;
   @WindowsState samples: windowsStore.Sample[];
@@ -211,16 +212,17 @@ export default class extends Vue {
   flex-flow: wrap;
 }
 .mastHead {
-  margin-top: 2em;
-  margin-bottom: 0em;
+  margin-bottom: 7em;
   margin-left: 68px;
   width: 568px;
-}
-p.mastHead {
+  p {
     font-size: 22px;
-  line-height: 32px;
-  margin-bottom: 4em;
+    line-height: 32px;
+    margin-top: 6px;
+
+  }
 }
+
 
 /* Tabs */
 .tab_container {
