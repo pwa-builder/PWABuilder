@@ -211,7 +211,14 @@
             </nuxt-link>
           </CodeViewer>
           <section id='guidanceSection' v-else>
-            <h1>Hello World</h1>
+            <p>
+              The web app manifest file constitutes a standard centralized place to put metadata about your web application,
+              and providing it informs browsers (and possible others) where to look for information about your web app,
+              information that they may need in different contexts (e.g. what icon and name should be used if your web app
+              is added to the home screen) is an essential piece in the context of progressive web apps, being one of the signals
+              used by some browsers (e.g. Chrome, Opera, Samsung Internet) in deciding if they will show the add to home screen
+              prompt to users
+            </p>
           </section>
         </div>
       </div>
@@ -514,6 +521,11 @@ h3.active, .manifestButton.active {
 .animatedSection {
   animation-duration: 300ms;
   animation-name: fadein;
+}
+
+#guidanceSection p {
+  color: initial;
+  font-size: initial;
 }
 
 @keyframes fadein {
