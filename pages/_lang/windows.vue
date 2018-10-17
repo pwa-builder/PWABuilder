@@ -1,6 +1,6 @@
 <template>
   <section>
-      <div class="l-generator-step">
+      <div ref='mainDiv' class="l-generator-step">
       <div class="mastHead">
           <h2 class="l-generator-subtitle">{{ $t('windows.title') }}</h2>
         <p class="l-generator-subtitle">{{ $t('windows.summary') }}</p>              
@@ -66,7 +66,7 @@
         </div>
       </div>
 
-      <Modal title="Next" ref="nextStepModal">
+      <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" title="Next" ref="nextStepModal">
         <GoodPWA :hasNativeFeatures="hasNative"/>
       </Modal>
   </section>
@@ -185,6 +185,14 @@ export default class extends Vue {
     a.style.display = 'none';
     document.body.appendChild(a);
     a.click();
+  }
+
+  public modalOpened() {
+    (this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(25px)';
+  }
+
+  public modalClosed() {
+    (this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(0px)';
   }
 }
 </script>
