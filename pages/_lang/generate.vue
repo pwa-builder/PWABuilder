@@ -219,6 +219,8 @@
               used by some browsers (e.g. Chrome, Opera, Samsung Internet) in deciding if they will show the add to home screen
               prompt to users
             </p>
+
+            <a href='https://webhint.io/docs/user-guide/hints/hint-manifest-exists/#why-is-this-important'>Learn more from Webhints.io</a>
           </section>
         </div>
       </div>
