@@ -16,8 +16,7 @@
           </div>
           <div class="l-generator-wrapper pure-u-2-5">
 
-           
-            <a class="work-button"  @click="onClickShowGBB()" href="#">I'm done</a>
+            <a class="work-button"  @click="onClickShowGBB()" href="#">{{ $t("general.next_page") }}</a>
           
           </div>
           <div class="pure-u-3-5">
@@ -33,7 +32,7 @@
           </nuxt-link>
         </CodeViewer>
         <CodeViewer class="bottomViewer" codeType="javascript" :size="bottomViewerSize" :code="serviceworkerPreview" :title="$t('serviceworker.code_preview_serviceworker')"></CodeViewer>
-            <p class="download-text">{{ $t('serviceworker.download_link') }}
+            <p class="download-text">{{ $t('general.github_source') }}
           <a class="" href="https://github.com/pwa-builder/serviceworkers" target="_blank">GitHub</a>.
           </p>
       </div>

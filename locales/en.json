@@ -80,7 +80,6 @@
     "title": "Select the service worker functionality for your app.",
     "download": "Download service worker",
     "building": "Building package...",
-    "download_link": "You can also download the source code directly from",
     "next_step": "Next Step",
     "code_preview_web": "Code for website",
     "code_preview_serviceworker":"Service worker code",
@@ -172,6 +171,10 @@
    "id": "Id",
    "add": "Add Related Application",
    "prefer": "Prefer related applications"
+  },
+  "general": {
+    "github_source": "You can also download the source code directly from",
+    "next_page": "I'm done"
   },
   "error": {
     "url_empty": "Url is empty",
