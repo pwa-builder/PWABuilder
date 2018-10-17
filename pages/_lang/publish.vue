@@ -46,8 +46,7 @@
               </li>
             </ul>
 
-
-            <button @click="downloadFiles" class="work-button">Download</button>
+            <Download platform="web" :parameters="files" :message="$t('publish.download')" />
           </div>
         </section>
 
@@ -182,10 +181,6 @@ export default class extends Vue {
       package: null,
       version: null
     };
-  }
-
-  public downloadFiles() {
-    console.log(this.files);
   }
 }
 </script>
