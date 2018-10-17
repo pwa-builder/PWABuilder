@@ -54,7 +54,7 @@
                 </section>
               </div>
 
-              <GoodPWA :hastNativeFeatures="hasNative"></GoodPWA>
+              <GoodPWA :hasNativeFeatures="hasNative"></GoodPWA>
           </div>
         </div>
       </div>
@@ -87,7 +87,7 @@ const WindowsAction = namespace(windowsStore.name, Action);
 export default class extends Vue {
   error: any;
   viewerSize = '30rem';
-  hasNative: boolean = false;
+  hasNative = false;
 
   selectedSample$: windowsStore.Sample | null = null;
   @WindowsState samples: windowsStore.Sample[];
