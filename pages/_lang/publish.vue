@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="l-generator-step">
-      <div class="pure-g padding">
+      <div class="padding">
         <section id="getStartedBlock">
           <div id="quickTextBlock">
             <h2 id="quickBlockText">Download and publish your shiny new app</h2>
@@ -199,7 +199,7 @@ export default class extends Vue {
     padding-bottom: 48px;
     padding-left: 68px;
     padding-right: 190px;
-    padding-top: 64px;
+    padding-top: 0;
     width: 100%;
   }
 
@@ -207,7 +207,7 @@ export default class extends Vue {
     font-size: 36px;
     line-height: 42px;
     margin: 0;
-    width: 472px;
+    width: 500px;
   }
 
   .l-generator-step {

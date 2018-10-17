@@ -44,7 +44,7 @@
   #baseContainer{
     width: 1280px;
     margin: 0 auto;
-    xmargin-top: -100px;
+    position: relative;
 
     .container {
       padding-top: 64px;
@@ -188,7 +188,7 @@ header {
     }
 
     #artb {
-      transform: translate(-1584px, -1380px);
+      transform: translate(-1584px, -1462px);
       width: 3688px;
      }
 
@@ -198,7 +198,7 @@ header {
     }
 
     #artlb {
-      transform: translate(729px, -46px);
+      transform: translate(729px, -128px);
       width: 1101px;
     }
     #logoLarge {
@@ -206,7 +206,7 @@ header {
       width: 48px;
     }
     #decorStack {
-      transform: translate(729px, 148px);
+      transform: translate(729px, 68px);
       width: 128px;
     }
 
@@ -258,7 +258,7 @@ header {
     }
 
     #artb {
-      transform: translate(-1584px, -1380px);
+      transform: translate(-1584px, -1462px);
       width: 3688px;
      }
 
@@ -268,7 +268,7 @@ header {
     }
 
     #artlb {
-      transform: translate(729px, -46px);
+      transform: translate(729px, -128px);
       width: 1101px;
     }
     #logoLarge {
@@ -276,7 +276,7 @@ header {
       width: 48px;
     }
     #decorStack {
-      transform: translate(729px, 148px);
+      transform: translate(729px, 68px);
       width: 128px;
     }
 

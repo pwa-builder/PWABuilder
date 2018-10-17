@@ -1,8 +1,11 @@
 <template>
 <section>
-  <GeneratorMenu/>
+
   <div class="l-generator-step mainDiv service-workers">
-    <h2 class="l-generator-subtitle">{{ $t('serviceworker.title') }}</h2>
+    <div class="mastHead">
+      <h2 class="l-generator-subtitle">{{ $t('serviceworker.title') }}</h2>
+      <p>{{ $t('serviceworker.summary') }}</p>
+    </div>
     <div class="l-generator-semipadded pure-g">
       <div class="pure-u-1 pure-u-md-1-2 generator-section">
 
@@ -155,7 +158,6 @@ export default class extends Vue {
 @import "~assets/scss/base/variables";
 
 .serviceworker {
-  margin-top: 2rem;
 
   &-preview {
     margin-top: 2rem;
@@ -184,17 +186,19 @@ export default class extends Vue {
       max-height: 900px;
     }
 }
-.service-workers {
-  margin-top: 100px;
 
-  h2 {
+.mastHead {
     margin: 0 0 100px 68px;
     width: 400px;
-  }
 
-  .l-generator-subtitle {
-    margin-bottom: 150px;
-  }
+    p {
+      margin: 4px 0;
+    }
+  
+}
+.service-workers {
+
+
 
   h4 {
     display: block;

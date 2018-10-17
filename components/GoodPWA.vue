@@ -195,7 +195,7 @@ export default class extends Vue {
 }
 
 .choiceCol {
-  width: 376px;
+  width: 336px;
   height: 811px;
 
   li {
@@ -225,7 +225,7 @@ export default class extends Vue {
       background-image: url('~/assets/images/goButton.svg');
       background-size: 240px 41px;
       background-repeat: no-repeat;
-      display: inline-block;
+      display: block;
       width: 240px;
       line-height: 41px;
       text-align: center;
