@@ -40,7 +40,6 @@ import Loading from '~/components/Loading.vue';
 export default class extends Vue {
   public showModal = false;
   private loadingCount = 0;
-  public pageDoc = <HTMLElement>document.querySelector('.mainDiv');
 
   @Prop({ type: String, default: '' })
   public title: string;
@@ -51,17 +50,12 @@ export default class extends Vue {
 
   public show(): void {
     this.showModal = true;
-    if(this.pageDoc && this.pageDoc.style){
-      console.log(this.pageDoc)
-      this.pageDoc.style.filter = 'blur(25px)';
-    }
+    this.$emit('modalOpened');
   }
 
   public hide(): void {
     this.showModal = false;
-    
-    this.pageDoc.style.filter = 'blur(0px)';
-
+    this.$emit('modalClosed');
   }
 
   public onClickSubmit(): void {

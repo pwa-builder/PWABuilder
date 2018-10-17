@@ -12,7 +12,7 @@
           {{ $t("generate.instructions") }}
         </p>
       </div>
-      <div class="l-generator-semipadded mainDiv">
+      <div ref='mainDiv' class="l-generator-semipadded mainDiv">
         <div class="l-generator-form">
           <div class="formNav">
             <h3>Jump To</h3>
@@ -55,7 +55,7 @@
             </div>
           </section>
 
-          <Modal :title="$t('generate.upload_title')" ref="iconsModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
+          <Modal v-on:modalOpened="modalOpened()" :title="$t('generate.upload_title')" ref="iconsModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
             <div class="l-generator-box">
               <span class="l-generator-label">{{ $t("generate.upload_image") }}</span>
 
@@ -230,7 +230,7 @@
       <button class="work-button"  @click="onClickShowGBB()">I'm done</button>
     </div>
     
-    <Modal title="Next" ref="nextStepModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
+    <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" title="Next" ref="nextStepModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
       <GoodPWA :hasManifest="basicManifest"/>
     </Modal>
   </div>
@@ -464,6 +464,14 @@ public onClickShowGBB(): void {
     this.showSettingsSection = true;
     this.showImagesSection = false;
     this.showBasicSection = false
+  }
+
+  public modalOpened() {
+    (this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(25px)';
+  }
+
+  public modalClosed() {
+    (this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(0px)';
   }
 }
 

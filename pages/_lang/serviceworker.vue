@@ -1,7 +1,7 @@
 <template>
 <section>
 
-  <div class="l-generator-step mainDiv service-workers">
+  <div ref='mainDiv' class="l-generator-step mainDiv service-workers">
     <div class="mastHead">
       <h2 class="l-generator-subtitle">{{ $t('serviceworker.title') }}</h2>
       <p>{{ $t('serviceworker.summary') }}</p>
@@ -47,7 +47,7 @@
   <!--<Modal title="Next" ref="nextStepModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
     <GoodPWA :hasWorker="hasSW"/>
   </Modal>-->
-  <Modal title="Next" ref="nextStepModal">
+  <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" title="Next" ref="nextStepModal">
     <GoodPWA :hasWorker="hasSW" :hasBetterWorker="betterSW"/>
   </Modal>
 
@@ -148,6 +148,14 @@ export default class extends Vue {
     } catch (e) {
       this.error = e;
     }
+  }
+
+  public modalOpened() {
+    (this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(25px)';
+  }
+
+  public modalClosed() {
+    (this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(0px)';
   }
 }
 </script>
