@@ -183,7 +183,7 @@ export default class extends Vue {
 
 .goodBetterBar {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-around;
   text-align: center;
   width: 100%;
 
