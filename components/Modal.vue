@@ -54,20 +54,25 @@ export default class extends Vue {
     return this.loadingCount > 0;
   }
 
-  public show(): void {
-    this.showModal = true;
-    this.$emit('modalOpened');
-
+  public async show(): Promise<void> {
     // stop scrolling on the body when the modal is open
     (this.$root.$el.closest('body') as HTMLBodyElement).style.overflowY = 'hidden';
+    console.log('set style to hidden');
+
+    this.showModal = true;
+    // have to put a setTimeout here because Edge
+    // has a bug with the filter css style
+    setTimeout(() => {
+      this.$emit('modalOpened');
+    }, 200);
   }
 
   public hide(): void {
-    this.showModal = false;
-    this.$emit('modalClosed');
-
     // enable scrolling on the body when the modal is closed
     (this.$root.$el.closest('body') as HTMLBodyElement).style.overflowY = 'scroll';
+
+    this.showModal = false;
+    this.$emit('modalClosed');
   }
 
   public onClickSubmit(): void {
@@ -97,9 +102,6 @@ export default class extends Vue {
 /* stylelint-disable */
 
 @import "~assets/scss/base/variables";
-.mainDiv {
-  filter: blur(30px);
-}
 .modal {
   align-items: flex-start;
   background: rgba($color-brand-quartary, .25);
