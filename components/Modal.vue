@@ -106,7 +106,7 @@ export default class extends Vue {
     filter: blur(0px);
     position: absolute;
     width: 100%;
-    margin-top: 300px;
+    margin-top: 200px;
     z-index: 110;
 
     &.error {
