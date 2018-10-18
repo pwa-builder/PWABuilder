@@ -29,7 +29,9 @@
   <section class="pure-g proTag">
     <div id="alreadyPWA"> 
       <h3>Already have an awesome PWA?</h3>
-      <a href="">Click here for a bunch of cool, free extras that you can add to your PWA to make it even better!</a>
+      <nuxt-link to='windows'>
+        Click here for a bunch of cool, free extras that you can add to your PWA to make it even better!
+      </nuxt-link>
     </div>
   </section>
   <GeneratorMenu :first-link-path="true" />
