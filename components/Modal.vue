@@ -44,6 +44,12 @@ export default class extends Vue {
   @Prop({ type: String, default: '' })
   public title: string;
 
+  public beforeDestroy() {
+    // Set scrolling to normal here too just to avoid
+    // scrolling potentially getting stuck off
+    (this.$root.$el.closest('body') as HTMLBodyElement).style.overflowY = 'scroll';
+  }
+
   public get isLoading() {
     return this.loadingCount > 0;
   }
@@ -51,11 +57,17 @@ export default class extends Vue {
   public show(): void {
     this.showModal = true;
     this.$emit('modalOpened');
+
+    // stop scrolling on the body when the modal is open
+    (this.$root.$el.closest('body') as HTMLBodyElement).style.overflowY = 'hidden';
   }
 
   public hide(): void {
     this.showModal = false;
     this.$emit('modalClosed');
+
+    // enable scrolling on the body when the modal is closed
+    (this.$root.$el.closest('body') as HTMLBodyElement).style.overflowY = 'scroll';
   }
 
   public onClickSubmit(): void {
