@@ -267,3 +267,4 @@ export default class extends Vue {
 .choiceCol li.good {
 background-image: url('~/assets/images/gbbChecked.svg');
 }
+</style>
