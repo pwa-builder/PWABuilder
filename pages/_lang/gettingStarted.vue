@@ -14,7 +14,7 @@
 
     <div class="chooseContainer">
       <h2>Your App Results</h2>
-      <GoodPWA :isHttps="true" :hasManifest="basicManifest" :hasBestManifest="bestManifest" :allGoodWithText="true" />
+      <GoodPWA :isHttps="true" :allGoodWithText="true" />
     </div>
   </section>
 </template>

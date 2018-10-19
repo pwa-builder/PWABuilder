@@ -214,7 +214,7 @@
     </div>
     
     <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" title="Next" ref="nextStepModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
-      <GoodPWA :hasManifest="basicManifest"/>
+      <GoodPWA/>
     </Modal>
 
     <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" :title="$t('generate.upload_title')" ref="iconsModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">

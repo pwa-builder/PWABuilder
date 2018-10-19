@@ -82,13 +82,18 @@
 import Vue from 'vue';
 import Component from 'nuxt-class-component';
 import { Prop } from 'vue-property-decorator';
+import { State, namespace } from 'vuex-class';
+
+import * as generator from '~/store/modules/generator';
+
+const GeneratorState = namespace(generator.name, State);
 
 @Component({})
 export default class extends Vue {
   @Prop({ default: true }) isHttps: boolean;
-  @Prop({}) hasManifest: boolean;
+  // @Prop({}) hasManifest: boolean;
   @Prop({}) hasWorker: boolean;
-  @Prop({}) hasBetterManifest: boolean;
+  // @Prop({}) hasBetterManifest: boolean;
   @Prop({}) hasBetterWorker: boolean;
   @Prop({}) hasBestManifest: boolean;
   @Prop({}) hasBestWorker: boolean;
@@ -97,10 +102,16 @@ export default class extends Vue {
   @Prop({}) allGood: boolean;
   @Prop({}) allGoodWithText: boolean;
 
+  @GeneratorState manifest: generator.Manifest;
+
   statusState: any = null;
+  hasManifest: boolean = false;
+  hasBetterManifest: boolean = false;
 
   public mounted() {
     console.log('mounted');
+
+    this.analyzeManifest(this.manifest);
 
     // trying to grab the previous saved state
     // this will be null if not found
@@ -132,6 +143,17 @@ export default class extends Vue {
       // lets save our current state and then just display it
       localStorage.setItem('pwaStatus', JSON.stringify(currentStatus));
       this.statusState = currentStatus;
+    }
+  }
+
+    private analyzeManifest(manifest) {
+    // we already know we have a manifest by this point
+    this.hasManifest = true;
+    console.log('analyzing', manifest);
+
+    // does the manifest have icons?
+    if (manifest && manifest.icons && manifest.icons.length > 0) {
+      this.hasBestManifest = true;
     }
   }
 
