@@ -24,13 +24,8 @@
 <script lang='ts'>
 import Vue from 'vue';
 import Component from 'nuxt-class-component';
-import { State, namespace } from 'vuex-class';
 
 import GoodPWA from '~/components/GoodPWA.vue';
-
-import * as generator from '~/store/modules/generator';
-
-const GeneratorState = namespace(generator.name, State);
 
 @Component({
   components: {
@@ -38,31 +33,6 @@ const GeneratorState = namespace(generator.name, State);
   }
 })
 export default class extends Vue {
-  
-  public manifest$: generator.Manifest | null = null;
-  public basicManifest = false;
-  public betterManifest = false;
-  public bestManifest = true;
-
-  @GeneratorState manifest: generator.Manifest;
-
-  public created() {
-    console.log(this.manifest);
-    this.analyzeManifest(this.manifest);
-  }
-
-  private analyzeManifest(manifest) {
-    // set props to pass to GoodBetterBest component
-    // based on how filled out the manifest is
-
-    // we already know we have a manifest by this point
-    this.basicManifest = true;
-
-    // does the manifest have icons?
-    if (manifest.icons && manifest.icons.length > 0) {
-      this.bestManifest = true;
-    }
-  }
 }
 </script>
 
