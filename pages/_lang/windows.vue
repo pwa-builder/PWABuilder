@@ -6,14 +6,18 @@
         <p class="l-generator-subtitle">{{ $t('windows.summary') }}</p>              
       </div>
 
-        <div class="l-generator-semipadded ">
+        <div class="l-generator-semipadded" v-show="samples.length == 0">
+          <p>{{ $t('general.loading') }}</p>
+        </div>
+
+        <div class="l-generator-semipadded" v-show="samples != null">
 
           <div class="generator-section feature-layout">
             <div class="l-generator-field l-generator-field--padded checkbox feature-container" v-for="sample in samples" :key="sample.id">
 
               <label class="l-generator-label">
                 <img src ="~assets/images/placeHolder.png" class="featureImage" />
-                <input type="radio" :value="sample" v-model="selectedSample$"> 
+                <input type="checkbox" :value="sample" v-model="selectedSamples" @click="onClickSample(sample)"> 
                 <h4>{{sample.title}}</h4>
               </label>
               <p class="l-generator-description">{{ sample.description }}</p>
@@ -21,50 +25,51 @@
 
           </div>
 
+          <div class="l-generator-wrapper pure-u-2-5">       
+            <a class="work-button"  @click="onClickShowGBB()" href="#">{{ $t("general.next_page") }}</a>
+          </div>
 
-          <div class="pure-u-1 pure-u-md-2-3">
-            <div class="tab_container" >
-                <input id="tab1" type="radio" name="tabs" class="tab_input" checked>
-                <label for="tab1" class="tab_label"><i class="fa fa-code"></i><span> Usage</span></label>
+          <p class="download-text">{{ $t('general.github_source') }}
+            <a class="" href="https://github.com/pwa-builder/Windows-universal-js-samples/tree/master/win10" target="_blank">GitHub</a>.
+          </p>
+        </div>
+      </div>
 
-                <input id="tab2" type="radio" name="tabs" class="tab_input">
-                <label for="tab2" class="tab_label"><i class="fa fa-file-alt"></i><span> Code</span></label>
+      <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" title="Add Feature" ref="addFeatureModal">
+        <div class="pure-u-1 pure-u-md-2-3">
+          <div class="tab_container" >
+              <input id="tab1" type="radio" name="tabs" class="tab_input" checked>
+              <label for="tab1" class="tab_label"><i class="fa fa-code"></i><span> Usage</span></label>
 
-                <section id="content1" class="tab-content tab_section">
-                  <br/>
-                  <div class="pure-g">
-                    <div class="generate-code pure-u-1">
-                      <CodeViewer :code="selectedSample$.snippet" v-if="selectedSample$" :title="$t('windows.codeTitle')" />
-                      <br/>
-                      <div class="l-generator-form " v-if="selectedSample$">
-                        <div class="l-generator-field" v-for="prop in selectedSample$.parms" :key="prop.id">
+              <input id="tab2" type="radio" name="tabs" class="tab_input">
+              <label for="tab2" class="tab_label"><i class="fa fa-file-alt"></i><span> Code</span></label>
+
+              <section id="content1" class="tab-content tab_section">
+                <br/>
+                <div class="pure-g">
+                  <div class="generate-code pure-u-1 form_container">
+                    <CodeViewer :code="sample.snippet" v-if="sample" :title="$t('windows.codeTitle')" />
+                    <div class="side_panel">
+                      <div class="l-generator-form properties" v-if="sample">
+                        <div class="l-generator-field" v-for="prop in sample.parms" :key="prop.id">
                           <div class="l-generator-label">{{prop.name}} </div>
                           <div class="l-generator-input value-table" :id="prop.id">{{prop.description}}</div>
                         </div>
                       </div>
-                      <div class="pure-u-1 pure-u-md-1-2">
+                      <div class="pure-u-1 pure-u-md-1-2 download">
                         <div class="pwa-button pwa-button--simple" v-on:click="download()">{{ $t("windows.download") }}</div>
                       </div>
                     </div>
                   </div>
-                </section>
-                <section id="content2" class="tab-content tab_section">
-                  <CodeViewer :size="viewerSize" :code="selectedSample$.source" v-if="selectedSample$" :title="$t('windows.sourceTitle')">
-                    <div class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" v-on:click="download()">{{ $t("windows.download") }}</div>      
-                  </CodeViewer>
-                </section>
-              </div>
-
-              <div class="l-generator-wrapper pure-u-2-5">       
-                <a class="work-button"  @click="onClickShowGBB()" href="#">{{ $t("general.next_page") }}</a>
-              </div>
-
-              <p class="download-text">{{ $t('general.github_source') }}
-                <a class="" href="https://github.com/pwa-builder/Windows-universal-js-samples/tree/master/win10" target="_blank">GitHub</a>.
-              </p>
-          </div>
+                </div>
+              </section>
+              <section id="content2" class="tab-content tab_section">
+                <CodeViewer :code="sample.source" v-if="sample" :title="$t('windows.sourceTitle')"/>
+                <div class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" v-on:click="download()">{{ $t("windows.download") }}</div>
+              </section>
+            </div>
         </div>
-      </div>
+      </Modal>
 
       <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" title="Next" ref="nextStepModal">
         <GoodPWA :hasNativeFeatures="hasNative"/>
@@ -76,7 +81,6 @@
 import Vue from 'vue';
 import Component from 'nuxt-class-component';
 import { Action, State, namespace } from 'vuex-class';
-import { Watch } from 'vue-property-decorator';
 
 import CodeViewer from '~/components/CodeViewer.vue';
 import WindowsMenu from '~/components/WindowsMenu.vue';
@@ -102,7 +106,8 @@ export default class extends Vue {
   viewerSize = '30rem';
   hasNative = false;
 
-  selectedSample$: windowsStore.Sample | null = null;
+  selectedSamples: windowsStore.Sample[] = [];
+  @WindowsState sample: windowsStore.Sample;
   @WindowsState samples: windowsStore.Sample[];
 
   @WindowsAction getSamples;
@@ -110,17 +115,17 @@ export default class extends Vue {
 
   async created() {
     await this.getSamples();
-    this.selectedSample$ = this.samples[0];
   }
   
   public onClickShowGBB(): void {
     (this.$refs.nextStepModal as Modal).show();
   }
 
-  @Watch('selectedSample$')
-  async onSelectedSample$Changed() {
+  async onClickSample(sample: windowsStore.Sample) {
     try {
-      await this.selectSample(this.selectedSample$);
+      await this.selectSample(sample);
+
+      (this.$refs.addFeatureModal as Modal).show();
 
       // wire up to GBB component
       // user has selected a native feature to add
@@ -147,7 +152,10 @@ export default class extends Vue {
     xhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
     xhttp.responseType = 'blob';
 
-    items.push(this.selectedSample$);
+    for (let i = 0; i < this.selectedSamples.length; i++) {
+      items.push(this.selectedSamples[i]);
+    }
+
     let results = this.outputProcessor(items);
     xhttp.send(JSON.stringify(results));
   }
@@ -259,9 +267,25 @@ export default class extends Vue {
 
 /* Tabs */
 .tab_container {
-  margin: 0 auto;
-  position: relative;
-  width: 100%;
+  margin: 0 100px;
+  position: absolute;
+  width: 90%;
+}
+
+.form_container {
+  display: flex;
+  flex-direction: row;
+}
+
+.code_viewer {
+  flex: 0 0 50%;
+}
+
+.side_panel {
+  flex: 0 0 50%;
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .tile-table {
@@ -295,6 +319,7 @@ export default class extends Vue {
   border-bottom: 2px solid #F0F0F0;
   color: #999999;
   display: block;
+  flex-wrap: wrap;
   padding: 20px;
 }
 
@@ -343,7 +368,7 @@ export default class extends Vue {
   }
 
   .tab_container {
-    width: 98%;
+    width: 88%;
   }
 }
 </style>

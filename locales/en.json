@@ -175,7 +175,8 @@
   },
   "general": {
     "github_source": "You can also download the source code directly from",
-    "next_page": "I'm done"
+    "next_page": "I'm done",
+    "loading": "Please wait, Loading..."
   },
   "error": {
     "url_empty": "Url is empty",
