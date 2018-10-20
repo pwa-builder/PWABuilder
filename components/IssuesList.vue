@@ -31,7 +31,7 @@ import Component from 'nuxt-class-component';
 
 import { CodeError } from '~/store/modules/generator';
 
-@Component()
+@Component({})
 export default class extends Vue {
   @Prop({ type: Array, default: () => [] })
   public errors: CodeError[];

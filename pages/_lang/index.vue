@@ -1,58 +1,82 @@
+
 <template>
 <section>
-  <GeneratorMenu :first-link-path="true" />
   <div class="l-generator-step">
-    <div class="pure-g l-generator-padded">
-      <div class="pure-u-1 pure-u-md-3-5 pure-u-lg-2-5">
-        <header class="l-generator-header l-generator-header--minimal">
-          <h2 class="l-generator-title">{{ $t('generator.title') }}</h2>
-          <h4 class="l-generator-subtitle">
-            {{ $t('generator.subtitle') }}
-          </h4>
-        </header>
+    <div class="padding">
+      <section id="getStartedBlock">
+        <div id="quickTextBlock">
+          <h2 id="quickBlockText">{{ $t('home.mast_title') }}</h2>
 
-        <div class="l-generator-form">
-          <form @submit.prevent="checkUrlAndGenerate" @keydown.enter.prevent="checkUrlAndGenerate">
-            <div class="l-generator-field">
-              <label class="l-generator-label" for="siteUrl">{{ $t('generator.url') }}</label>
-              <input class="l-generator-input" :placeholder="$t('generator.placeholder_url')" name="siteUrl" id="siteUrl" type="text" ref="url"
-                v-model="url$" autofocus>
-            </div>
-
-            <div class="pure-g l-breath">
-              <div class="l-generator-wrapper pure-u-3-5">
-                <button type="submit" class="get-started pwa-button isEnabled next-step" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/build/manifest-scan' })">
-                  {{ $t('generator.start') }}
-                  <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm"/>
-                </button>
-              </div>
-
-              <div class="pure-u-2-5">
-              </div>
-                
-              <div class="pure-u-1">
-                <p class="l-generator-error" v-if="error">
-                  <span class="icon-exclamation"></span>
-                  {{ $t(error) }}
-                </p>
-              </div>
-
-              <div class="l-generator-wrapper pure-u-1">
-                <button @click="skipCheckUrl(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/skip/service-worker' })"
-                  class="pwa-button pwa-button--simple">
-                  {{ $t('generator.skip') }}
-                </button>
-              </div>
-            </div>
-            <p class="l-narrow">{{ $t('generator.skip_description') }}</p>
-          </form>
+          <p id="quickBlockPlaceholder">{{ $t('home.mast_tag') }}</p>
         </div>
+
+        <div id="bottomBlock">
+          <div id="leftBlock">
+            <form @submit.prevent="checkUrlAndGenerate" @keydown.enter.prevent="checkUrlAndGenerate">
+              <input id="getStartedInput" :aria-label="$t('generator.url')" :placeholder="$t('generator.placeholder_url')" name="siteUrl" type="text" ref="url"
+                v-model="url$" autofocus />
+
+              <button @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/build/manifest-scan' })" id="getStartedButton">
+                {{ $t('generator.start') }}
+                <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm"/>
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <section class="pure-g proTag">
+    <div id="alreadyPWA"> 
+      <h3>Already have an awesome PWA?</h3>
+      <nuxt-link to='windows'>
+        Click here for a bunch of cool, free extras that you can add to your PWA to make it even better!
+      </nuxt-link>
+    </div>
+  </section>
+  <GeneratorMenu :first-link-path="true" />
+  <div id="goodPWAHeaderBlock">
+    <h2>  {{ $t('home.what_makes_title') }}</h2>
+    <p>{{ $t('home.what_makes_body') }}</p>
+  </div>
+  <div class="homeGood">
+    <GoodPWA :allGood="true"/>
+  </div>
+  <div id="otherTools">
+    <div id="otherHeaderBlock">
+      <h2>Other useful tools</h2>
+    </div>
+
+    <div id="otherBar">
+      <div id="otherTool">
+        <img />
+        <h4>Lorem ipsum so dolor</h4>
+        <p>Lorem ipsum so dolor sit amet etc and a quick summary about what a PWA is. Also a link to more information</p>
+      </div>
+
+      <div id="otherTool">
+        <img />
+        <h4>Lorem ipsum so dolor</h4>
+        <p>Lorem ipsum so dolor sit amet etc and a quick summary about what a PWA is. Also a link to more information</p>
+      </div>
+
+      <div id="otherTool">
+        <img />
+        <h4>Lorem ipsum so dolor</h4>
+        <p>Lorem ipsum so dolor sit amet etc and a quick summary about what a PWA is. Also a link to more information</p>
+      </div>
+
+      <div id="otherTool">
+        <img />
+        <h4>Lorem ipsum so dolor</h4>
+        <p>Lorem ipsum so dolor sit amet etc and a quick summary about what a PWA is. Also a link to more information</p>
       </div>
     </div>
   </div>
-  <TwoWays/>
 </section>
 </template>
+
+
 
 <script lang='ts'>
 import Vue from 'vue';
@@ -60,9 +84,8 @@ import Component from 'nuxt-class-component';
 import { Action, State, namespace } from 'vuex-class';
 
 import GeneratorMenu from '~/components/GeneratorMenu.vue';
-import TwoWays from '~/components/TwoWays.vue';
+import GoodPWA from '~/components/GoodPWA.vue';
 import Loading from '~/components/Loading.vue';
-
 import * as generator from '~/store/modules/generator';
 
 const GeneratorState = namespace(generator.name, State);
@@ -70,9 +93,9 @@ const GeneratorAction = namespace(generator.name, Action);
 
 @Component({
   components: {
-    TwoWays,
     GeneratorMenu,
-    Loading
+    Loading,
+    GoodPWA
   }
 })
 export default class extends Vue {
@@ -110,10 +133,13 @@ export default class extends Vue {
       }
 
       this.url$ = this.url;
+
       await this.getManifestInformation();
 
       this.$router.push({
-        name: 'generate'
+
+        // name: 'generate'
+        name: 'gettingStarted'
       });
     } catch (e) {
       this.error = e.message;
@@ -123,11 +149,142 @@ export default class extends Vue {
 
 declare var awa: any;
 
-
-Vue.prototype.$awa = function (config) { 
- 
+Vue.prototype.$awa = function(config) {
   awa.ct.capturePageView(config);
 
   return;
 };
 </script>
+
+<style lang="scss" scoped>
+  @import '~assets/scss/base/variables';
+
+  #otherTools {
+    display: none;
+  }
+
+  .padding {
+    margin-bottom: 100px;
+    margin-left: 138px;
+    padding-bottom: 48px;
+    padding-right: 190px;
+    padding-top: 64px;
+    width: 100%;
+  }
+
+  .proTag {
+    font-size: 22px;
+    margin: 100px 138px 0 138px;
+    width: 256px;
+  }
+
+  .proTag a,
+  .proTag a:visited {
+    color: $color-brand-quintary;
+    font-size: 16px;
+  }
+
+  .proTag h3 {
+    color: $color-brand-primary;
+    font-size: 24px;
+  }
+
+  #whatMakesBlock,
+  #otherTools {
+    padding-bottom: 48px;
+    padding-left: 68px;
+    padding-right: 68px;
+    padding-top: 65px;
+  }
+
+  #quickBlockText {
+    color: $color-brand-quintary;
+    font-size: 36px;
+    margin: 0;
+  }
+  
+  #quickBlockPlaceholder {
+    color: $color-brand-quintary;
+    font-size: 24px;
+  }
+
+  .l-generator-step {
+    padding: 0;
+  }
+
+  #bottomBlock {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  #getStartedBlock {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  p {
+    font-size: 16px;
+  }
+
+  #quickTextBlock {
+    margin-bottom: 27px;
+    margin-top: 22px;
+  }
+
+  #quickTextBlock,
+  #leftBlock,
+  #alreadyPWA {
+    width: 472px;
+  }
+  
+  #getStartedInput {
+    border: solid 1px grey;
+    border-radius: 1px;
+    font-size: 14px;
+    padding: 10px;
+    width: 280px;
+  }
+
+  #goodPWAHeaderBlock {
+    color: $color-brand-primary;
+    font-size: 16px;
+    line-height: 24px;
+    margin-left: 138px;
+    margin-top: 100px;
+    width: 376px;
+
+    h2 {
+      color: $color-brand-primary;
+      font-size: 24px;
+    }
+  }
+
+  #getStartedButton {
+    background-color: $color-brand-quintary;
+    border: none;
+    border-radius: 1px;
+    color: $color-brand-primary;
+    font-size: 14px;
+    margin-left: 8px;
+    padding: 10px;
+    text-align: center;
+  }
+
+  #otherTool {
+    margin-top: 41px;
+    width: 280px;
+  }
+
+  #otherTool p {
+    width: 184px;
+  }
+
+  #otherTool img {
+    height: 184px;
+    width: 280px;
+  }
+</style>
+

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 112">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #d7dadb;
+      }
+
+      .cls-2 {
+        fill: #2c3e50;
+      }
+
+      .cls-3 {
+        fill: #6dbcdb;
+      }
+    </style>
+  </defs>
+  <g id="Stacked_cube_decoration" data-name="Stacked cube decoration" transform="translate(-1152 -650)">
+    <g id="Group_103" data-name="Group 103" transform="translate(1152 666)">
+      <path id="Path_289" data-name="Path 289" class="cls-1" d="M1240,880l64-32,64,32-64,32Z" transform="translate(-1240 -816)"/>
+      <path id="Path_281" data-name="Path 281" class="cls-1" d="M1240,880l64-32,64,32-64,32Z" transform="translate(-1240 -848)"/>
+      <path id="Path_278" data-name="Path 278" class="cls-2" d="M1320,888l-64,32V888l64-32Z" transform="translate(-1192 -824)"/>
+      <path id="Path_280" data-name="Path 280" class="cls-3" d="M1240,888l64,32V888l-64-32Z" transform="translate(-1240 -824)"/>
+    </g>
+    <g id="Group_102" data-name="Group 102" transform="translate(1216 650)">
+      <path id="Path_284" data-name="Path 284" class="cls-1" d="M1240,864l32-16,32,16-32,16Z" transform="translate(-1240 -848)"/>
+      <path id="Path_282" data-name="Path 282" class="cls-2" d="M1288,888l-32,16V872l32-16Z" transform="translate(-1224 -840)"/>
+      <path id="Path_283" data-name="Path 283" class="cls-3" d="M1240,888l32,16V872l-32-16Z" transform="translate(-1240 -840)"/>
+    </g>
+  </g>
+</svg>

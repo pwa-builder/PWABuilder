@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 2575.279 1305.631">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#linear-gradient);
+      }
+
+      .cls-2 {
+        filter: url(#big_blue_diamond);
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="0.787" y1="0.712" x2="0.462" y2="0.311" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#2c3e50"/>
+      <stop offset="1" stop-color="#6dbcdb"/>
+    </linearGradient>
+    <filter id="big_blue_diamond" x="0" y="0" width="2575.279" height="1305.631" filterUnits="userSpaceOnUse">
+      <feOffset dy="6" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g class="cls-2" transform="matrix(1, 0, 0, 1, 0, 0)">
+    <path id="big_blue_diamond-2" data-name="big blue diamond" class="cls-1" d="M1240,1482.819,2509.639,848l1269.64,634.82-1269.64,634.812Z" transform="translate(-1222 -836)"/>
+  </g>
+</svg>

@@ -47,6 +47,7 @@
     "cross-env": "^5.2.0",
     "fork-ts-checker-webpack-plugin": "0.4.10",
     "mocha": "^5.2.0",
+    "monaco-editor-webpack-plugin": "^1.5.1",
     "nightwatch": "^0.9.21",
     "node-sass": "^4.9.3",
     "npm-install-peers": "^1.2.1",

@@ -1,11 +1,13 @@
 @import 'variables';
+@import url('https://fonts.googleapis.com/css?family=Bungee');
 
 html,
-body {
+body,
+input {
+  color: $color-brand-primary;
   $font-size: 16px;
 
-  background: $color-background-bright;
-  font-family: Bitter;
+  font-family: "Segoe UI";
   font-size: $font-size;
   height: 100%;
   width: 100%;
@@ -19,6 +21,23 @@ body {
   }
 }
 
+html {
+  background: $color-brand-tertiary;
+  overflow-x: hidden;
+}
+
 .stop-scroll {
   overflow: hidden;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: 'Bungee', cursive;
+  font-size: 24px;
+  font-weight: normal;
+  margin: 0;
+  margin-block-end: 0;
+  margin-block-start: 0;
 }

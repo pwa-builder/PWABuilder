@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 419.338 348.481">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #d7dadb;
+      }
+
+      .cls-2 {
+        fill: #2c3e50;
+      }
+
+      .cls-3 {
+        fill: #6dbcdb;
+      }
+    </style>
+  </defs>
+  <g id="Group_52" data-name="Group 52" transform="translate(0 0)">
+    <path id="Path_277" data-name="Path 277" class="cls-1" d="M1240,952.545,1449.669,848l209.669,104.545L1449.669,1057.09Z" transform="translate(-1240 -778.304)"/>
+    <path id="Path_276" data-name="Path 276" class="cls-2" d="M1465.669,925.7,1256,1030.241v-69.7L1465.669,856Z" transform="translate(-1046.331 -681.759)"/>
+    <path id="Path_279" data-name="Path 279" class="cls-3" d="M1240,925.7l209.669,104.544v-69.7L1240,856Z" transform="translate(-1240 -681.759)"/>
+    <path id="Path_281" data-name="Path 281" class="cls-1" d="M1240,917.7,1379.779,848l139.779,69.7-139.779,69.7Z" transform="translate(-1170.11 -813.152)"/>
+    <path id="Path_278" data-name="Path 278" class="cls-2" d="M1395.779,925.7,1256,995.393V925.7L1395.779,856Z" transform="translate(-1046.331 -751.456)"/>
+    <path id="Path_280" data-name="Path 280" class="cls-3" d="M1240,925.7l139.779,69.7V925.7L1240,856Z" transform="translate(-1170.11 -751.456)"/>
+    <path id="Path_284" data-name="Path 284" class="cls-1" d="M1240,882.848,1309.89,848l69.89,34.848L1309.89,917.7Z" transform="translate(-1100.221 -848)"/>
+    <path id="Path_282" data-name="Path 282" class="cls-2" d="M1325.89,925.7,1256,960.544v-69.7L1325.89,856Z" transform="translate(-1046.331 -821.152)"/>
+    <path id="Path_283" data-name="Path 283" class="cls-3" d="M1240,925.7l69.89,34.848v-69.7L1240,856Z" transform="translate(-1100.221 -821.152)"/>
+  </g>
+</svg>

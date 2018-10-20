@@ -1,17 +1,27 @@
 <template>
   <section>
-    <WindowsMenu />
-      <div class="l-generator-step">
-        <div class="l-generator-semipadded pure-g">
-          <div class="pure-u-1 pure-u-md-1-3 generator-section service-workers">
-            <div class="l-generator-subtitle">{{ $t('windows.title') }}</div>
-            <div class="l-generator-field l-generator-field--padded checkbox" v-for="sample in samples" :key="sample.id">
+      <div ref='mainDiv' class="l-generator-step">
+      <div class="mastHead">
+          <h2 class="l-generator-subtitle">{{ $t('windows.title') }}</h2>
+        <p class="l-generator-subtitle">{{ $t('windows.summary') }}</p>              
+      </div>
+
+        <div class="l-generator-semipadded ">
+
+          <div class="generator-section feature-layout">
+            <div class="l-generator-field l-generator-field--padded checkbox feature-container" v-for="sample in samples" :key="sample.id">
+
               <label class="l-generator-label">
-                <input type="radio" :value="sample" v-model="selectedSample$"> {{sample.title}}
+                <img src ="~assets/images/placeHolder.png" class="featureImage" />
+                <input type="radio" :value="sample" v-model="selectedSample$"> 
+                <h4>{{sample.title}}</h4>
               </label>
-              <span class="l-generator-description">{{ sample.description }}</span>
+              <p class="l-generator-description">{{ sample.description }}</p>
             </div>
+
           </div>
+
+
           <div class="pure-u-1 pure-u-md-2-3">
             <div class="tab_container" >
                 <input id="tab1" type="radio" name="tabs" class="tab_input" checked>
@@ -44,9 +54,21 @@
                   </CodeViewer>
                 </section>
               </div>
+
+              <div class="l-generator-wrapper pure-u-2-5">       
+                <a class="work-button"  @click="onClickShowGBB()" href="#">{{ $t("general.next_page") }}</a>
+              </div>
+
+              <p class="download-text">{{ $t('general.github_source') }}
+                <a class="" href="https://github.com/pwa-builder/Windows-universal-js-samples/tree/master/win10" target="_blank">GitHub</a>.
+              </p>
           </div>
         </div>
       </div>
+
+      <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" title="Next" ref="nextStepModal">
+        <GoodPWA :hasNativeFeatures="hasNative"/>
+      </Modal>
   </section>
 </template>
 
@@ -55,8 +77,11 @@ import Vue from 'vue';
 import Component from 'nuxt-class-component';
 import { Action, State, namespace } from 'vuex-class';
 import { Watch } from 'vue-property-decorator';
+
 import CodeViewer from '~/components/CodeViewer.vue';
 import WindowsMenu from '~/components/WindowsMenu.vue';
+import GoodPWA from '~/components/GoodPWA.vue';
+import Modal from '~/components/Modal.vue';
 
 import * as windowsStore from '~/store/modules/windows';
 
@@ -64,12 +89,18 @@ const WindowsState = namespace(windowsStore.name, State);
 const WindowsAction = namespace(windowsStore.name, Action);
 
 @Component({
-  components: {CodeViewer, WindowsMenu}
+  components: {
+    CodeViewer,
+    WindowsMenu,
+    GoodPWA,
+    Modal
+  }
 })
 
 export default class extends Vue {
   error: any;
   viewerSize = '30rem';
+  hasNative = false;
 
   selectedSample$: windowsStore.Sample | null = null;
   @WindowsState samples: windowsStore.Sample[];
@@ -81,11 +112,19 @@ export default class extends Vue {
     await this.getSamples();
     this.selectedSample$ = this.samples[0];
   }
+  
+  public onClickShowGBB(): void {
+    (this.$refs.nextStepModal as Modal).show();
+  }
 
   @Watch('selectedSample$')
   async onSelectedSample$Changed() {
     try {
       await this.selectSample(this.selectedSample$);
+
+      // wire up to GBB component
+      // user has selected a native feature to add
+      this.hasNative = true;
     } catch (e) {
       this.error = e;
     }
@@ -146,11 +185,78 @@ export default class extends Vue {
     a.style.display = 'none';
     document.body.appendChild(a);
     a.click();
-  } 
+  }
+
+  public modalOpened() {
+    (this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(25px)';
+  }
+
+  public modalClosed() {
+    (this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(0px)';
+  }
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+/* stylelint-disable */
+@import '~assets/scss/base/variables';
+
+.feature-container {
+  width: 300px;
+  margin: 24px;
+
+  input {
+    width: 0;
+    height: 0;
+  }
+
+  h4 {
+    font-size: 18px;
+    line-height: 24px;
+  }
+  
+  .featureImage {
+    width: 100%;
+    display: inline-block;
+  }
+
+  .l-generator-description {
+    font-size: 14px;
+    line-height: 18px;
+    color: $color-brand-primary;
+  }
+
+}
+
+.download-text {
+  color: $color-brand-primary;
+  font-size: 14px;
+  margin-right: 68px;
+  text-align: right;
+
+  a, a:visited {
+    color: $color-brand-quartary;
+  }
+}
+
+.feature-layout {
+  display: flex;
+  width: 100%;
+  flex-flow: wrap;
+}
+.mastHead {
+  margin-bottom: 7em;
+  margin-left: 68px;
+  width: 568px;
+  p {
+    font-size: 22px;
+    line-height: 32px;
+    margin-top: 6px;
+
+  }
+}
+
+
 /* Tabs */
 .tab_container {
   margin: 0 auto;

@@ -16,7 +16,7 @@ https://github.com/yahoo/pure/blob/master/LICENSE.md
   -ms-flex-flow: row wrap;
   flex-flow: row wrap;
   -ms-flex-line-pack: start;
-  font-family: FreeSans,Arimo,'Droid Sans',Helvetica,Arial,sans-serif;
+  xfont-family: FreeSans,Arimo,'Droid Sans',Helvetica,Arial,sans-serif;
   text-rendering: optimizespeed;
     ;
 }
@@ -89,7 +89,7 @@ https://github.com/yahoo/pure/blob/master/LICENSE.md
 }
 
 .pure-g [class*=pure-u] {
-  font-family: sans-serif;
+  xfont-family: sans-serif;
 }
 
 .pure-u-1-24 {
