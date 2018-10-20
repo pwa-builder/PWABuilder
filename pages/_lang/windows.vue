@@ -15,14 +15,19 @@
           <div class="generator-section feature-layout">
             <div class="l-generator-field l-generator-field--padded checkbox feature-container" v-for="sample in samples" :key="sample.id">
 
+              <input type="checkbox" v-model="selectedSamples" :value="sample" @click="checkRemoveSample(sample)"/>
               <label class="l-generator-label">
                 <img src ="~assets/images/placeHolder.png" class="featureImage" />
-                <input type="checkbox" :value="sample" v-model="selectedSamples" @click="onClickSample(sample)"> 
+                <input type="button" :value="sample" @click="onClickSample(sample)"> 
                 <h4>{{sample.title}}</h4>
               </label>
               <p class="l-generator-description">{{ sample.description }}</p>
             </div>
 
+          </div>
+
+          <div class="pure-u-1 pure-u-md-1-2 download">
+            <div class="pwa-button pwa-button--simple" v-on:click="download(true)">{{ $t("windows.download_bundle") }}</div>
           </div>
 
           <div class="l-generator-wrapper pure-u-2-5">       
@@ -48,7 +53,7 @@
                 <br/>
                 <div class="pure-g">
                   <div class="generate-code pure-u-1 form_container">
-                    <CodeViewer :code="sample.snippet" v-if="sample" :title="$t('windows.codeTitle')" />
+                    <CodeViewer :code="loadCode()" v-on:editorValue="updateCode($event)"  v-if="sample" :title="$t('windows.codeTitle')" />
                     <div class="side_panel">
                       <div class="l-generator-form properties" v-if="sample">
                         <div class="l-generator-field" v-for="prop in sample.parms" :key="prop.id">
@@ -56,8 +61,11 @@
                           <div class="l-generator-input value-table" :id="prop.id">{{prop.description}}</div>
                         </div>
                       </div>
+                      <div class="pure-u-1 pure-u-md-1-2">
+                        <div class="pwa-button pwa-button--simple" v-on:click="addBundle()">{{ $t("windows.add") }}</div>
+                      </div>
                       <div class="pure-u-1 pure-u-md-1-2 download">
-                        <div class="pwa-button pwa-button--simple" v-on:click="download()">{{ $t("windows.download") }}</div>
+                        <div class="pwa-button pwa-button--simple" v-on:click="download()">{{ $t("windows.download_sample") }}</div>
                       </div>
                     </div>
                   </div>
@@ -65,7 +73,7 @@
               </section>
               <section id="content2" class="tab-content tab_section">
                 <CodeViewer :code="sample.source" v-if="sample" :title="$t('windows.sourceTitle')"/>
-                <div class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" v-on:click="download()">{{ $t("windows.download") }}</div>
+                <div class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" v-on:click="download()">{{ $t("windows.download_sample") }}</div>
               </section>
             </div>
         </div>
@@ -129,20 +137,62 @@ export default class extends Vue {
 
       // wire up to GBB component
       // user has selected a native feature to add
-      this.hasNative = true;
+      ////this.hasNative = true;
     } catch (e) {
       this.error = e;
     }
   }
 
-  async download() {
+  async checkRemoveSample(sample: windowsStore.Sample) {
+    // Called before removed from collection in model
+    if (this.selectedSamples.indexOf(sample) != -1)
+    {
+      sample.usercode = null;
+
+      // We're unchecking the last sample
+      if (this.selectedSamples.length == 1) {
+        this.hasNative = false;
+      }
+    } else {
+      // We're adding a sample via checkbox
+      this.hasNative = true;
+    }
+  }
+
+  loadCode() {
+    let index = this.selectedSamples.indexOf(this.sample);
+    if (index != -1 && this.selectedSamples[index].usercode) {
+      return this.selectedSamples[index].usercode;
+    }
+
+    return this.sample.snippet;
+  }
+
+  updateCode(ev)
+  {
+    // TODO: Need to pass this into bundle somehow in download method?
+    this.sample.usercode = ev;
+  }
+
+  async addBundle() {
+    if (this.selectedSamples.indexOf(this.sample) == -1)
+    {
+      this.selectedSamples.push(this.sample);
+    }
+
+    this.hasNative = true;
+
+    (this.$refs.addFeatureModal as Modal).hide();
+  }
+
+  async download(all: boolean = false) {
     let that = this;
     let items = Array<any>();
     let xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function () {
         if (xhttp.readyState === 4 && xhttp.status === 200) {
-            let fileName = 'sample.zip';
+            let fileName = all ? 'codebundle.zip' : 'sample.zip';
             that.saveAs(fileName, xhttp);
         }
     };
@@ -152,8 +202,12 @@ export default class extends Vue {
     xhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
     xhttp.responseType = 'blob';
 
-    for (let i = 0; i < this.selectedSamples.length; i++) {
-      items.push(this.selectedSamples[i]);
+    if (all) {
+      for (let i = 0; i < this.selectedSamples.length; i++) {
+        items.push(this.selectedSamples[i]);
+      }
+    } else {
+      items.push(this.sample);
     }
 
     let results = this.outputProcessor(items);
@@ -213,9 +267,18 @@ export default class extends Vue {
   width: 300px;
   margin: 24px;
 
-  input {
+  input[type='button'] {
     width: 0;
     height: 0;
+    background: transparent;
+    font-size: 0;
+    border: none;
+    cursor: pointer;
+  }
+
+  input[type='checkbox'] {
+    width: 16px;
+    height: 16px;
   }
 
   h4 {
