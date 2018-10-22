@@ -28,7 +28,7 @@
         const body = document.querySelector('body');
 
         if (body) {
-          const pageName = to.fullPath.replace('/','');
+          const pageName = to.fullPath.replace('/', '');
           body.setAttribute('data-location', pageName);
         }
         next();

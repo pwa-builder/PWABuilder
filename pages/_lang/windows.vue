@@ -145,8 +145,7 @@ export default class extends Vue {
 
   async checkRemoveSample(sample: windowsStore.Sample) {
     // Called before removed from collection in model
-    if (this.selectedSamples.indexOf(sample) != -1)
-    {
+    if (this.selectedSamples.indexOf(sample) != -1) {
       sample.usercode = null;
 
       // We're unchecking the last sample
@@ -168,15 +167,13 @@ export default class extends Vue {
     return this.sample.snippet;
   }
 
-  updateCode(ev)
-  {
+  updateCode(ev) {
     // TODO: Need to pass this into bundle somehow in download method?
     this.sample.usercode = ev;
   }
 
   async addBundle() {
-    if (this.selectedSamples.indexOf(this.sample) == -1)
-    {
+    if (this.selectedSamples.indexOf(this.sample) == -1) {
       this.selectedSamples.push(this.sample);
     }
 
@@ -185,7 +182,7 @@ export default class extends Vue {
     (this.$refs.addFeatureModal as Modal).hide();
   }
 
-  async download(all: boolean = false) {
+  async download(all = false) {
     let that = this;
     let items = Array<any>();
     let xhttp = new XMLHttpRequest();

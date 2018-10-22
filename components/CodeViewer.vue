@@ -68,7 +68,7 @@ export default class extends Vue {
 
     this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
       value: this.code,
-      lineNumbers: "off",
+      lineNumbers: 'off',
       language: this.codeType,
       fixedOverflowWidgets: true,
       wordWrap: 'wordWrapColumn',
@@ -78,7 +78,7 @@ export default class extends Vue {
       wordWrapMinified: true,
 
       // try "same", "indent" or "none"
-      wrappingIndent: "indent",
+      wrappingIndent: 'indent',
       fontSize: 16,
       minimap: {
         enabled: false

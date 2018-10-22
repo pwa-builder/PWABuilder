@@ -455,14 +455,14 @@ public onClickShowGBB(): void {
 
   public showImageSection() {
     this.showImagesSection = true;
-    this.showBasicSection = false
+    this.showBasicSection = false;
     this.showSettingsSection = false;
   }
 
   public showSettingSection() {
     this.showSettingsSection = true;
     this.showImagesSection = false;
-    this.showBasicSection = false
+    this.showBasicSection = false;
   }
 
   public modalOpened() {

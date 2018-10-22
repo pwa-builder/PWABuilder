@@ -105,8 +105,8 @@ export default class extends Vue {
   @GeneratorState manifest: generator.Manifest;
 
   statusState: any = null;
-  hasManifest: boolean = false;
-  hasBetterManifest: boolean = false;
+  hasManifest = false;
+  hasBetterManifest = false;
 
   public mounted() {
     console.log('mounted');
@@ -137,7 +137,7 @@ export default class extends Vue {
       // and our current state based off our current props
       // and finally save it and set it as the state
       sessionStorage.setItem('pwaStatus', JSON.stringify({...currentStatus, ...JSON.parse(savedStatus)}));
-      this.statusState = {...currentStatus, ...JSON.parse(savedStatus)}
+      this.statusState = {...currentStatus, ...JSON.parse(savedStatus)};
     } else {
       // if we dont have any saved state
       // lets save our current state and then just display it

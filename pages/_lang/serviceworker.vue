@@ -91,8 +91,8 @@ export default class extends Vue {
   public error: string | null = null;
   public viewerSize = '25rem';
   public bottomViewerSize = '55rem';
-  public hasSW: boolean = false;
-  public betterSW: boolean = false;
+  public hasSW = false;
+  public betterSW = false;
 
   @ServiceworkerState serviceworkers: ServiceWorker[];
   @ServiceworkerState serviceworker: number;
@@ -135,16 +135,16 @@ export default class extends Vue {
       this.betterSW = true;
     } else {
       // default to true for now
-      this.hasSW = true
+      this.hasSW = true;
     }
   }
 
   @Watch('serviceworker$')
   async onServiceworker$Changed(): Promise<void> {
     try {
-      console.log(this.serviceworker$)
+      console.log(this.serviceworker$);
       await this.getCode(this.serviceworker$);
-      this.analyze()
+      this.analyze();
     } catch (e) {
       this.error = e;
     }
