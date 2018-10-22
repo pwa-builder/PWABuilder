@@ -44,7 +44,8 @@ export const actions: Actions<State, RootState> = {
                     hash: source.Hash,
                     included: false,
                     snippet: func.Snippet.replace(/(\/\*[\s\S]*?\*\/|([^:/]|^)\/\/.*$)/g, '').trim(),
-                    source: null
+                    source: null,
+                    usercode: null
                   };
                   
                   return result;
