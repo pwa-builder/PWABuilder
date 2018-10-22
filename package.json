@@ -19,6 +19,7 @@
     "babel-polyfill": "^6.26.0",
     "clipboard": "^2.0.1",
     "manup": "^1.0.1",
+    "monaco-editor": "^0.14.3",
     "normalize-scss": "^7.0.1",
     "nuxt": "1.1.1",
     "nuxt-class-component": "^1.2.1",
