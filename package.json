@@ -14,7 +14,7 @@
     "setup": "npm install && npm-install-peers"
   },
   "dependencies": {
-    "@nuxtjs/axios": "^5.3.3",
+    "@nuxtjs/axios": "^4.5.2",
     "ajv": "^6.5.4",
     "babel-polyfill": "^6.26.0",
     "clipboard": "^2.0.1",
