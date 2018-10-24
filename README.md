@@ -1,6 +1,6 @@
 # PWABuilder
 
-Node/Vue/Nuxt site promoting ManifoldJS tool to build manifest files
+Node/Vue/Nuxt site promoting PWABuilder tool to build manifest files
 
 ## Prerequisites
 
