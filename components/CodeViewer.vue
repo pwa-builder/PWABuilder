@@ -1,46 +1,23 @@
 <template>
 <section class="code_viewer">
-  <header class="code_viewer-header">
-    <div class="code_viewer-title pure-u-1-2">
-      {{title}}
-    </div>
-    <div class="code_viewer-title pure-u-1-2">
-      <slot/>
-    </div>
-  </header>
+  <div class="code_viewer-pre" ref="monacoDiv"></div>
 
-  <div class="code_viewer-content" :style="{ height: size }">
-    <div class="code_viewer-copy js-clipboard" :data-clipboard-text="code" ref="code">
-      {{ $t('code_viewer.' + copyTextKey) }}
-    </div>
-    <div class="code_viewer-padded" v-if="warnings || suggestions">
-      <div class="code_viewer-header code_viewer-header--rounded">
-        <SkipLink v-if="warnings" class="pwa-button pwa-button--simple pwa-button--margin pwa-button--warning" :anchor="'#' + warningsId">
-          {{ $t("code_viewer.warnings") }} ({{warningsTotal}})
-        </SkipLink>
-        <SkipLink v-if="suggestions" class="pwa-button pwa-button--simple pwa-button--margin" :anchor="'#' + suggestionsId">
-          {{ $t("code_viewer.suggestions") }} ({{suggestionsTotal}})
-        </SkipLink>
+  <div v-if="errorNumber">
+    <p>{{this.errorNumber}} errors</p>
+  </div>
 
-        <Download platform="web" :is-right="true" :message="$t('publish.download')" />
-      </div>
-    </div>
-    <pre class="code_viewer-pre language-javascript" :style="{ height: size }" v-if="highlightedCode"><code class="code_viewer-code language-javascript" v-html="highlightedCode"></code></pre>
-
-    <div class="l-generator-messages l-generator-messages--code" v-if="warningsTotal > 0 || suggestionsTotal > 0">
-      <IssuesList :errors="warnings" :title="$t('code_viewer.warnings')" :id="warningsId" :total="warningsTotal" v-if="warningsTotal > 0"/>
-      <IssuesList :errors="suggestions" :title="$t('code_viewer.suggestions')" :id="suggestionsId" :total="suggestionsTotal" v-if="suggestionsTotal > 0"/>
-    </div>
+  <div id="downloadDiv">
+    <button @click="copy()" id="copyButton">Copy</button>
   </div>
 </section>
 </template>
 
-<script lang="ts">
+<script lang='ts'>
 import Vue from 'vue';
-import Clipboard from 'clipboard';
-import Prism from 'prismjs';
+import * as monaco from 'monaco-editor';
 import Component from 'nuxt-class-component';
 import { Prop, Watch } from 'vue-property-decorator';
+import Clipboard from 'clipboard';
 
 import SkipLink from '~/components/SkipLink.vue';
 import IssuesList from '~/components/IssuesList.vue';
@@ -59,7 +36,7 @@ export default class extends Vue {
   public title: string;
 
   @Prop({ type: String, default: '' })
-  public code: string | null;
+  public code: string;
 
   @Prop({ type: String, default: 'auto' })
   public size: string | null;
@@ -76,52 +53,108 @@ export default class extends Vue {
   @Prop({ type: Number, default: 0 })
   public suggestionsTotal: number;
 
-  public highlightedCode: string | null = null;
-  public copyTextKey = 'copy';
+  @Prop({ type: String, default: 'javascript'})
+  public codeType: string;
+
   public readonly warningsId = 'warnings_list';
   public readonly suggestionsId = 'suggestions_list';
   public isReady = true;
   public downloadButtonMessage = 'publish.download_manifest';
+  public errorNumber = 0;
+
+  public editor: monaco.editor.IStandaloneCodeEditor;
 
   public mounted(): void {
-    if (this.code) {
-      this.highlightedCode = Prism.highlight(
-        this.code,
-        Prism.languages.javascript
-      );
-    }
 
-    let clipboard = new Clipboard(this.$refs.code);
-    clipboard.on('success', e => {
-      this.copyTextKey = 'copied';
+    this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
+      value: this.code,
+      lineNumbers: 'off',
+      language: this.codeType,
+      fixedOverflowWidgets: true,
+      wordWrap: 'wordWrapColumn',
+      wordWrapColumn: 50,
+      scrollBeyondLastLine: false,
+      // Set this to false to not auto word wrap minified files 
+      wordWrapMinified: true,
+
+      // try "same", "indent" or "none"
+      wrappingIndent: 'indent',
+      fontSize: 16,
+      minimap: {
+        enabled: false
+      }
     });
 
-    clipboard.on('error', e => {
-      this.copyTextKey = 'error';
+    const model = this.editor.getModel();
+
+    model.onDidChangeContent(() => {
+      const value = model.getValue();
+      this.$emit('editorValue', value);
+    });
+
+    model.onDidChangeDecorations(() => {
+      const errors = (<any>window).monaco.editor.getModelMarkers({});
+      this.errorNumber = errors.length;
+
+      if (errors.length > 0) {
+        this.$emit('invalidManifest');
+      }
     });
   }
 
   @Watch('code')
   onCodeChanged() {
-    if (this.code) {
-      this.copyTextKey = 'copy';
-      this.highlightedCode = Prism.highlight(
-        this.code,
-        Prism.languages.javascript
-      );
+    if (this.editor) {
+      this.editor.setValue(this.code);
     }
   }
+
+  async copy() {
+      const code = this.editor.getValue();
+
+      if ((navigator as any).clipboard) {
+        try {
+          await (navigator as any).clipboard.writeText(code);
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        let clipboard = new Clipboard(code);
+
+        clipboard.on('success', (e) => {
+          console.info('Action:', e.action);
+          console.info('Text:', e.text);
+          console.info('Trigger:', e.trigger);
+
+          e.clearSelection();
+        });
+
+        clipboard.on('error', (e) => {
+            console.error('Action:', e.action);
+            console.error('Trigger:', e.trigger);
+        });
+      }
+  }
 }
-
-
-
 </script>
 
-<style lang="scss" scoped>
-@import "~assets/scss/base/variables";
+<style lang='scss' scoped>
+/* stylelint-disable */
+
+@import '~assets/scss/base/variables';
 
 .code_viewer {
-  font-size: 0;
+  background-color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .16);
+  display: flex;
+  flex-direction: column;
+  max-height: 900px;
+  min-height: 700px;
+  padding: 10px;
+
+  .active {
+    color:$color-brand-quartary;
+  }
 
   @media screen and (max-width: $media-screen-s) {
     margin-top: 4rem;
@@ -153,13 +186,12 @@ export default class extends Vue {
   }
 
   &-pre {
-    overflow: auto;
-    padding: 1rem;
+    flex-grow: 1;
+    padding: 0;
   }
 
   &-code {
     font-size: 1rem;
-    white-space: pre-wrap;
   }
 
   &-copy {

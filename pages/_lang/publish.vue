@@ -1,92 +1,100 @@
 <template>
-<section>
-  <GeneratorMenu/>
-  <div v-if="status">
-    <div class="pwa-infobox pwa-infobox--transparent l-pad l-pad--thin">
-      <div class="pure-g">
-        <div class="pure-u-1">
-          <h2 class="pwa-infobox-title pwa-infobox-title--centered">{{ $t('publish.title') }}</h2>
-        </div>
+  <section>
+    <div class="l-generator-step">
+      <div class="pure-g padding">
+        <section id="getStartedBlock">
+          <div id="quickTextBlock">
+            <h2 id="quickBlockText">Download and publish your shiny new app</h2>
 
-        <div class="pure-u-1 pure-u-md-1-2">
-          <div class="pwa-infobox-box pwa-infobox-box--flat">
-            <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.web') }}</h4>
-            <p class="l-generator-description l-generator-description--fixed">
-              {{ $t('publish.web_description') }}
-            </p>
-            <span class="button-holder download-archive">
-              <Download platform="web" :message="$t('publish.download')" :is-brand="true" />
-            </span>
+            <p id="quickBlockPlaceholder">You have a few different options to publish your app. You can download the
+              files and deploy them to your site, or you can download pre-populated app projects for the major app
+              platforms from the links below.</p>
           </div>
-        </div>
-
-        <div class="pure-u-1 pure-u-md-1-2">
-          <div class="pwa-infobox-box pwa-infobox-box--flat">
-            <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.windows') }}</h4>
-            <p class="l-generator-description l-generator-description--fixed">{{ $t('publish.windows_description') }}  <a href="http://docs.pwabuilder.com/quickstart/2018/02/03/quick-start-sideload-pwa-win10.html" target="blank">{{ $t('publish.sideload_instructions') }}</a></p>
-            <span class="button-holder download-archive">
-              <Download platform="windows10" :message="$t('publish.download')" />
-            </span>
-            <p>
-              <button class="pwa-button pwa-button--simple pwa-button--brand" @click="openAppXModal();  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/publish/windows10-appx' })"> {{ $t('publish.generate_appx') }}</button>
-            </p>
-          </div>
-        </div>
-        <Modal :title="$t('publish.generate_appx')" ref="appxModal" @submit="onSubmitAppxModal" @cancel="onCancelAppxModal" v-if="appxForm">
-          <div class="l-generator-box">
-            <label class="l-generator-label">{{ $t('publish.enter_your') }}
-              <a href="https://developer.microsoft.com/en-us/windows" target="_blank">{{ $t('publish.dev_center') }}</a> {{ $t('publish.publisher_details') }}</label>
-          </div>
-          <div class="l-generator-box">
-            <label class="l-generator-label">{{ $t('publish.label_publisher') }}</label>
-          </div>
-          <input class="l-generator-input l-generator-input--largest" :placeholder="$t('publish.placeholder_publisher')" type="text"
-            v-model="appxForm.publisher" requied>
-
-          <div class="l-generator-box form-item">
-            <label class="l-generator-label">{{ $t('publish.label_identity') }}</label>
-            <label class="l-generator-label">{{ $t('publish.label_publisher_id') }}</label>
-          </div>
-          <input class="l-generator-input l-generator-input--largest" :placeholder="$t('publish.placeholder_identity')" type="text"
-            v-model="appxForm.publisher_id" requied>
-
-          <div class="l-generator-box form-item">
-            <label class="l-generator-label">{{ $t('publish.label_package') }}</label>
-          </div>
-          <input class="l-generator-input l-generator-input--largest" :placeholder="$t('publish.placeholder_package')" type="text"
-            v-model="appxForm.package" requied>
-
-          <div class="l-generator-box form-item">
-            <label class="l-generator-label">{{ $t('publish.label_version') }}</label>
-          </div>
-          <input class="l-generator-input l-generator-input--largest" :placeholder="$t('publish.placeholder_version')" type="text"
-            v-model="appxForm.version" requied>
-          <p class="l-generator-error" v-if="appxError"><span class="icon-exclamation"></span> {{ $t(appxError) }}</p>
-        </Modal>
-        <div class="pure-u-1">
-          <div class="pwa-infobox-box pwa-infobox-box--flat">
-            <div class="pwa-infobox-padded">
-              <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.android') }}</h4>
-              <p class="l-generator-description l-generator-description--fixed l-generator-description--context">{{ $t('publish.android_description') }}</p>
-              <div>
-                <Download platform="android" :message="$t('publish.download')" />
-              </div>
-            </div>
-            <h2 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.ios') }}</h2>
-            <Download platform="ios" :message="$t('publish.download')" />
-          </div>
-        </div>
+        </section>
       </div>
     </div>
-    <StartOver />
-  </div>
 
-  <div class="l-generator-buttons l-generator-buttons--centered" v-if="!status">
-    <p class="instructions">{{ $t('publish.manifest_needed') }}</p>
-    <button @click="goToHome" class="pwa-button pwa-button--simple">{{ $t('publish.first_step') }}</button>
-  </div>
-  <TwoWays/>
-</section>
+
+    <div class="">
+      <div class="downloadSection">
+        <section id="downloadForSite">
+          <h2>Download these files to add to your site</h2>
+          <a href="https://www.microsoft.com">What do I do with these files?</a>
+
+          <div id="lists">
+
+            <h3 id="justTheseText">Download files for Web:</h3>
+            <ul id="downloadList">
+              <li>
+                <input id="manifest" v-model="files" value="manifest" type="checkbox" />
+                <label for="manifest">App Manifest</label>
+              </li>
+
+              <li>
+                <input id="serviceWorkers" v-model="files" value="serviceWorkers" type="checkbox" />
+                <label for="serviceWorkers">Service Workers</label>
+              </li>
+
+              <li>
+                <input id="apiSamples" v-model="files" value="apiSamples" type="checkbox" />
+                <label for="apiSamples">API Samples</label>
+              </li>
+
+              <li>
+                <input id="windows10" v-model="files" value="windows10Package" type="checkbox" />
+                <label for="windows10">Windows 10 sideloader</label>
+              </li>
+            </ul>
+
+            <Download platform="web" :parameters="files" :message="$t('publish.download')" />
+          </div>
+        </section>
+
+        <section id="andOr">
+          <h2>And / Or</h2>
+        </section>
+
+        <section id="generateProject">
+          <h2>Or let us generate some app projects for you</h2>
+          <a href="https://www.microsoft.com">What do I do with these files?</a>
+
+          <div class="platformCard">
+            <h3>Windows</h3>
+            <p>Service Worker support requires RS4 or above. You'll get a copy of each PWAbuilder component as well as
+              a side-loadable version of your PWA (requires Win10 in dev mode). The Generate Appx button can be used to
+              generate a PWA package to submit to the Microsoft Store.</p>
+            <Download platform="windows10" :message="$t('publish.download')" />
+          </div>
+
+          <div class="platformCard">
+            <h3>iOS</h3>
+            <p>
+              PWAs are avaiable through the browser on iOS, however your PWA can also be submitted to the app
+              store by building the package you get below in Xcode.
+            </p>
+            <Download platform="ios" :message="$t('publish.download')" />
+          </div>
+
+          <div class="platformCard">
+            <h3>Android</h3>
+            <p>
+              PWAs are available through the browser on Android, however your PWA can also be submitted to the play
+              store by submitting the package you get below.
+            </p>
+            <Download platform="android" :message="$t('publish.download')" />
+          </div>
+
+          <div class="platformCard">
+            <h3>mac OS</h3>
+            <p>
+              You can use Xcode to build this package to produce an app that runs on MacOS.
+            </p>
+            <Download platform="MacOS" :message="$t('publish.download')" />            
+          </div>
+        </section>
+      </div>
+    </div>
+  </section>
 </template>
 
 <script lang="ts">
@@ -95,10 +103,11 @@ import Component from 'nuxt-class-component';
 import { Action, State, namespace } from 'vuex-class';
 
 import GeneratorMenu from '~/components/GeneratorMenu.vue';
-import TwoWays from '~/components/TwoWays.vue';
 import StartOver from '~/components/StartOver.vue';
 import Download from '~/components/Download.vue';
 import Modal from '~/components/Modal.vue';
+import PublishCard from '~/components/PublishCard.vue';
+import Toolbar from '~/components/Toolbar.vue';
 
 import * as publish from '~/store/modules/publish';
 
@@ -107,11 +116,12 @@ const PublishAction = namespace(publish.name, Action);
 
 @Component({
   components: {
-    TwoWays,
     GeneratorMenu,
     Download,
     StartOver,
-    Modal
+    Modal,
+    PublishCard,
+    Toolbar
   }
 })
 export default class extends Vue {
@@ -122,7 +132,11 @@ export default class extends Vue {
     version: null
   };
 
-  @PublishState status: boolean;
+  // Set default web checked items
+  public files: any[] = ['manifest', 'serviceWorkers', 'apiSamples', 'windows10Package'];
+
+  // @PublishState status: boolean;
+  @PublishState status = true;
   @PublishState appXLink: string;
 
   @PublishAction updateStatus;
@@ -170,3 +184,192 @@ export default class extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+/* stylelint-disable */
+
+  @import '~assets/scss/base/variables';
+
+  .padding {
+    padding-bottom: 48px;
+    padding-left: 68px;
+    padding-right: 190px;
+    padding-top: 64px;
+    width: 100%;
+  }
+
+  #quickBlockText {
+    font-size: 36px;
+    line-height: 42px;
+    margin: 0;
+    width: 472px;
+  }
+
+  .l-generator-step {
+    padding: 0;
+  }
+
+  #getStartedBlock {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  #quickTextBlock {
+    margin-bottom: 27px;
+  }
+
+  #goodPWAHeaderBlock {
+    width: 760px;
+  }
+
+  #goodBetterBar,
+  #otherBar {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .platformCard {
+    margin-bottom: 68px;
+
+  }
+
+
+  #whatMakesBlock,
+  #otherTools {
+    padding-bottom: 48px;
+    padding-left: 68px;
+    padding-right: 68px;
+    padding-top: 65px;
+  }
+
+  .light {
+    background: white;
+  }
+
+  #quickBlockPlaceholder {
+    width: 430px;
+    color: $color-brand-tertiary;
+    font-size: 22px;
+    line-height: 32px;
+  }
+
+  #downloadAllButton {
+    display: block;
+    margin-bottom: 12px;
+    margin-top: 44px;
+  }
+
+  .downloadSection {
+    display: flex;
+    flex-direction: row;
+    margin: 0 68px;
+    justify-content: space-between;
+  
+    h2 {
+      font-size: 18px;
+      line-height: 45px;
+    }
+
+    a, a:visited {
+      display: block;
+      margin: 18px 0 24px;
+      color: $color-brand-secondary;
+    }
+
+    h3 {
+      font-size: 16px;
+      line-height: 26px;
+    }
+  }
+
+  #andOr {
+    flex-flow: nowrap;
+    color: $color-brand-quartary;
+    flex-basis: 8%;
+  }
+
+  #generateProject {
+    width: 50%;
+    display:flex;
+    flex-direction: column;
+  }
+
+  #downloadForSite {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+
+    ul {
+      margin-left:0;
+      padding-left: 0;
+      list-style: none;
+      margin-block-start: 0;
+      margin-block-end: 0;
+      padding-inline-start: 0;
+      padding-bottom: 24px;
+    }
+  }
+
+
+  label {
+    margin-left: 15px;
+  }
+
+
+  .platformCard p {
+    font-size: 16px;
+    line-height: 24px;
+    width: 472px;
+  }
+
+  
+[type="checkbox"]:checked,
+[type="checkbox"]:not(:checked) {
+    opacity: 0;
+}
+[type="checkbox"]:checked + label,
+[type="checkbox"]:not(:checked) + label
+{
+    position: relative;
+    padding-left: 32px;
+    cursor: pointer;
+    line-height: 24px;
+
+}
+[type="checkbox"]:checked + label:before,
+[type="checkbox"]:not(:checked) + label:before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    width: 16px;
+    height: 16px;
+    background-image: url('~/assets/images/unChecked.png');
+    background-repeat: no-repeat;
+    background-size: 16px;
+}
+[type="checkbox"]:checked + label:after,
+[type="checkbox"]:not(:checked) + label:after {
+    content: '';
+    width: 16px;
+    height: 16px;
+    background-image: url('~/assets/images/checked.png');
+    background-repeat: no-repeat;
+    background-size: 16px;
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    transition: all 0.2s ease;
+}
+[type="checkbox"]:not(:checked) + label:after {
+    opacity: 0;
+    transform: scale(0);
+}
+[type="checkbox"]:checked + label:after {
+    opacity: 1;
+    transform: scale(1);
+}
+</style>
+

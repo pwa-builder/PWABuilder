@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1741.481 888.74">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+      }
+
+      .cls-2 {
+        filter: url(#white_diamond);
+      }
+    </style>
+    <filter id="white_diamond" x="0" y="0" width="1741.481" height="888.74" filterUnits="userSpaceOnUse">
+      <feOffset dy="6" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g class="cls-2" transform="matrix(1, 0, 0, 1, 0, 0)">
+    <path id="white_diamond-2" data-name="white diamond" class="cls-1" d="M1240,1274.369,2092.744,848l852.736,426.369L2092.744,1700.74Z" transform="translate(-1222 -836)"/>
+  </g>
+</svg>

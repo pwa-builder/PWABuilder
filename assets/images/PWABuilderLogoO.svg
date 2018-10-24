@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 532.685 431.904">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #d7dadb;
+      }
+
+      .cls-2 {
+        fill: #2c3e50;
+      }
+
+      .cls-3 {
+        fill: #6dbcdb;
+      }
+
+      .cls-4 {
+        filter: url(#Path_290);
+      }
+    </style>
+    <filter id="Path_290" x="0" y="147.561" width="532.685" height="284.343" filterUnits="userSpaceOnUse">
+      <feOffset input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feFlood flood-opacity="0.251"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="PWA_logo_large" data-name="PWA logo large" transform="translate(-626 -176)">
+    <g id="Group_89" data-name="Group 89" transform="translate(644 258.781)">
+      <g class="cls-4" transform="matrix(1, 0, 0, 1, -18, -82.78)">
+        <path id="Path_290-2" data-name="Path 290" class="cls-1" d="M1240,972.172,1488.343,848l248.342,124.172-248.342,124.171Z" transform="translate(-1222 -682.44)"/>
+      </g>
+      <path id="Path_277" data-name="Path 277" class="cls-1" d="M1240,972.172,1488.343,848l248.342,124.172-248.342,124.171Z" transform="translate(-1240 -848)"/>
+      <path id="Path_276" data-name="Path 276" class="cls-2" d="M1504.342,938.781,1256,1062.951v-82.78L1504.342,856Z" transform="translate(-1007.658 -731.829)"/>
+      <path id="Path_279" data-name="Path 279" class="cls-3" d="M1240,938.781l248.343,124.171v-82.78L1240,856Z" transform="translate(-1240 -731.829)"/>
+    </g>
+    <g id="Group_90" data-name="Group 90" transform="translate(726.781 217.39)">
+      <path id="Path_281" data-name="Path 281" class="cls-1" d="M1240,930.78,1405.562,848l165.561,82.78-165.561,82.781Z" transform="translate(-1240 -848)"/>
+      <path id="Path_278" data-name="Path 278" class="cls-2" d="M1421.561,938.781,1256,1021.562V938.781L1421.561,856Z" transform="translate(-1090.439 -773.219)"/>
+      <path id="Path_280" data-name="Path 280" class="cls-3" d="M1240,938.781l165.562,82.781V938.781L1240,856Z" transform="translate(-1240 -773.219)"/>
+    </g>
+    <g id="Group_91" data-name="Group 91" transform="translate(809.562 176)">
+      <path id="Path_284" data-name="Path 284" class="cls-1" d="M1240,889.39,1322.781,848l82.781,41.39-82.781,41.39Z" transform="translate(-1240 -848)"/>
+      <path id="Path_282" data-name="Path 282" class="cls-2" d="M1338.781,938.781,1256,980.171V897.39L1338.781,856Z" transform="translate(-1173.219 -814.61)"/>
+      <path id="Path_283" data-name="Path 283" class="cls-3" d="M1240,938.781l82.781,41.39V897.39L1240,856Z" transform="translate(-1240 -814.61)"/>
+    </g>
+  </g>
+</svg>

@@ -43,10 +43,6 @@
     @include button-shadow($shadow);
   }
 
-  &:focus {
-    outline: 0;
-  }
-
   @media screen and (max-width: $media-screen-l) {
     font-size: $font-size-l * .9;
     padding: $button-pad 1rem;

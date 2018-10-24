@@ -11,7 +11,7 @@ import Vue from 'vue';
 import Component from 'nuxt-class-component';
 import { Prop } from 'vue-property-decorator';
 
-@Component()
+@Component({})
 export default class extends Vue {
   public readonly activeClass = 'is-active';
 
@@ -29,7 +29,6 @@ export default class extends Vue {
   $tab-size: 16rem;
   $tab-height: 5rem;
 
-  background-color: $color-background-brighter;
   padding-bottom: 4rem;
 
   &-header {

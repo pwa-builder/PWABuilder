@@ -1,6 +1,6 @@
 <template>
-<section>
-  <div class="loading" v-if="active"></div>
+<section v-if="active">
+  <div class="loading"></div>
 </section>
 </template>
 
@@ -9,7 +9,7 @@ import Vue from 'vue';
 import { Prop } from 'vue-property-decorator';
 import Component from 'nuxt-class-component';
 
-@Component()
+@Component({})
 export default class extends Vue {
   @Prop({ type: Boolean, default: false })
   public active: boolean;
@@ -24,7 +24,7 @@ export default class extends Vue {
   $size: 1.1em;
 
   animation: spin 1.3s linear infinite;
-  border-color: $color-foreground-brighter transparent;
+  border-color: $color-brand transparent;
   border-radius: 50%;
   border-style: solid;
   border-width: .12em;

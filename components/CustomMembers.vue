@@ -51,7 +51,7 @@ import * as generator from '~/store/modules/generator';
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
 
-@Component()
+@Component({})
 export default class extends Vue {
   public members$: generator.CustomMember[] | null = null;
   public name: string | null = null;

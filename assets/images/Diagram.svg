@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 356 637">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #fc4349;
+        stroke-linecap: round;
+        stroke-width: 4px;
+      }
+
+      .cls-2, .cls-5 {
+        fill: #2c3e50;
+      }
+
+      .cls-2 {
+        font-size: 16px;
+        font-family: Bungee-Regular, Bungee;
+      }
+
+      .cls-3 {
+        fill: url(#linear-gradient);
+      }
+
+      .cls-4 {
+        fill: #fff;
+      }
+
+      .cls-6 {
+        fill: #d7dadb;
+      }
+
+      .cls-7 {
+        filter: url(#Path_295-3);
+      }
+
+      .cls-8 {
+        filter: url(#Path_295-2);
+      }
+
+      .cls-9 {
+        filter: url(#Path_295);
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset="1" stop-color="#6dbcdb"/>
+    </linearGradient>
+    <filter id="Path_295" x="160" y="312" width="196" height="260" filterUnits="userSpaceOnUse">
+      <feOffset dy="6" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="Path_295-2" x="96" y="384" width="116" height="220" filterUnits="userSpaceOnUse">
+      <feOffset dy="6" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="6" result="blur-2"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur-2"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="Path_295-3" x="0" y="447.881" width="84" height="164" filterUnits="userSpaceOnUse">
+      <feOffset dy="6" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="6" result="blur-3"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur-3"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Diagram" transform="translate(-686 -820)">
+    <path id="Path_333" data-name="Path 333" class="cls-1" d="M-1646,5565V5421" transform="translate(2494 -4333)"/>
+    <text id="Your_website" data-name="Your website" class="cls-2" transform="translate(688 1113)"><tspan x="0" y="0">Your website</tspan></text>
+    <text id="Phone" class="cls-2" transform="translate(731 1442)"><tspan x="-28.68" y="0">Phone</tspan></text>
+    <text id="Tablet" class="cls-2" transform="translate(844 1442)"><tspan x="-32.608" y="0">Tablet</tspan></text>
+    <text id="Desktop" class="cls-2" transform="translate(967 1442)"><tspan x="-38.728" y="0">Desktop</tspan></text>
+    <path id="Path_334" data-name="Path 334" class="cls-1" d="M-1646,5453v-32" transform="translate(2598 -4273)"/>
+    <g id="Group_105" data-name="Group 105">
+      <g id="screen" transform="translate(8 16)">
+        <path id="Path_295-4" data-name="Path 295" class="cls-3" d="M1240,1064l240,120V976L1240,856Z" transform="translate(-512 -48)"/>
+        <path id="Path_296" data-name="Path 296" class="cls-4" d="M-1406,5081l-8,4-240-120,8-4Z" transform="translate(2382 -4157)"/>
+        <path id="Path_297" data-name="Path 297" class="cls-5" d="M-1414,5293V5085l8-4v208Z" transform="translate(2382 -4157)"/>
+      </g>
+      <path id="Path_298" data-name="Path 298" class="cls-6" d="M-1630,5005l80,40v16l-80-40Z" transform="translate(2382 -4157)"/>
+      <path id="Path_301" data-name="Path 301" class="cls-6" d="M-1630,5005l80,40v16l-80-40Z" transform="translate(2382 -4069)"/>
+      <path id="Path_302" data-name="Path 302" class="cls-6" d="M-1630,5005l80,40v16l-80-40Z" transform="translate(2382 -4045)"/>
+      <path id="Path_305" data-name="Path 305" class="cls-6" d="M-1630,5005l112,56v16l-112-56Z" transform="translate(2478 -3997)"/>
+      <path id="Path_303" data-name="Path 303" class="cls-6" d="M-1630,5005l80,40v16l-80-40Z" transform="translate(2382 -4021)"/>
+      <path id="Path_304" data-name="Path 304" class="cls-6" d="M-1630,5005l80,40v16l-80-40Z" transform="translate(2382 -3997)"/>
+      <path id="Path_299" data-name="Path 299" class="cls-6" d="M-1534,5053l112,56v104l-112-56Z" transform="translate(2382 -4157)"/>
+      <path id="Path_300" data-name="Path 300" class="cls-6" d="M-1630,5037v48l80,40v-48l-80-40" transform="translate(2382 -4157)"/>
+    </g>
+    <g id="Group_106" data-name="Group 106" transform="translate(-48 -40)">
+      <g id="desktop-2" data-name="desktop" transform="translate(184 376)">
+        <g class="cls-9" transform="matrix(1, 0, 0, 1, 550, 484)">
+          <path id="Path_295-5" data-name="Path 295" class="cls-3" d="M1240,1000l160,80V936l-160-80Z" transform="translate(-1062 -532)"/>
+        </g>
+        <path id="Path_296-2" data-name="Path 296" class="cls-4" d="M-1486,5041l-8,4-160-80,8-4Z" transform="translate(2382 -4157)"/>
+        <path id="Path_297-2" data-name="Path 297" class="cls-5" d="M-1414,5229V5085l8-4v144Z" transform="translate(2302 -4197)"/>
+      </g>
+      <path id="Path_322" data-name="Path 322" class="cls-6" d="M-1630,5005l72,36v16l-72-36Z" transform="translate(2550 -3805)"/>
+      <path id="Path_323" data-name="Path 323" class="cls-6" d="M-1630,5005l72,36v16l-72-36Z" transform="translate(2550 -3717)"/>
+      <path id="Path_330" data-name="Path 330" class="cls-6" d="M-1630,5005l72,36v16l-72-36Z" transform="translate(2550 -3693)"/>
+      <path id="Path_325" data-name="Path 325" class="cls-6" d="M-1630,5005l64,32v16l-64-32Z" transform="translate(2630 -3693)"/>
+      <path id="Path_328" data-name="Path 328" class="cls-6" d="M-1534,5053l64,32v64l-64-32Z" transform="translate(2534 -3813)"/>
+      <path id="Path_329" data-name="Path 329" class="cls-6" d="M-1630,5037v48l72,36v-48l-72-36" transform="translate(2550 -3805)"/>
+    </g>
+    <g id="Group_107" data-name="Group 107" transform="translate(8 -8)">
+      <g id="tablet-2" data-name="tablet" transform="translate(64 416)">
+        <g class="cls-8" transform="matrix(1, 0, 0, 1, 614, 412)">
+          <path id="Path_295-6" data-name="Path 295" class="cls-3" d="M1240,1000l80,40V896l-80-40Z" transform="translate(-1126 -460)"/>
+        </g>
+        <path id="Path_296-3" data-name="Path 296" class="cls-4" d="M-1566,5001l-8,4-80-40,8-4Z" transform="translate(2382 -4157)"/>
+        <path id="Path_297-3" data-name="Path 297" class="cls-5" d="M-1414,5229V5085l8-4v144Z" transform="translate(2222 -4237)"/>
+      </g>
+      <path id="Path_312" data-name="Path 312" class="cls-6" d="M-1630,5005l64,32v16l-64-32Z" transform="translate(2430 -3769)"/>
+      <path id="Path_314" data-name="Path 314" class="cls-6" d="M-1630,5005l28,14v8l-28-14Z" transform="translate(2430 -3693)"/>
+      <path id="Path_321" data-name="Path 321" class="cls-6" d="M-1630,5005l28,14v8l-28-14Z" transform="translate(2430 -3661)"/>
+      <path id="Path_316" data-name="Path 316" class="cls-6" d="M-1626,5007l28,14v8l-28-14Z" transform="translate(2462 -3677)"/>
+      <path id="Path_320" data-name="Path 320" class="cls-6" d="M-1626,5007l28,14v8l-28-14Z" transform="translate(2462 -3645)"/>
+      <path id="Path_315" data-name="Path 315" class="cls-6" d="M-1630,5005l28,14v8l-28-14Z" transform="translate(2430 -3677)"/>
+      <path id="Path_318" data-name="Path 318" class="cls-6" d="M-1630,5005l28,14v8l-28-14Z" transform="translate(2430 -3645)"/>
+      <path id="Path_317" data-name="Path 317" class="cls-6" d="M-1626,5007.187l28,13.813v8l-28-13.813Z" transform="translate(2462 -3661)"/>
+      <path id="Path_319" data-name="Path 319" class="cls-6" d="M-1626,5007.187l28,13.813v8l-28-13.813Z" transform="translate(2462 -3629)"/>
+      <path id="Path_313" data-name="Path 313" class="cls-6" d="M-1630,5082l64,32v-44l-64-32" transform="translate(2430 -3778)"/>
+    </g>
+    <path id="Path_331" data-name="Path 331" class="cls-1" d="M-1646,5438l216-108" transform="translate(2382 -4182)"/>
+    <path id="Path_332" data-name="Path 332" class="cls-1" d="M-1646,5453v-32" transform="translate(2382 -4165)"/>
+    <g id="Group_108" data-name="Group 108">
+      <g id="phone-2" data-name="phone" transform="translate(-24 471.881)">
+        <g class="cls-7" transform="matrix(1, 0, 0, 1, 710, 348.12)">
+          <path id="Path_295-7" data-name="Path 295" class="cls-3" d="M1240,960l48,24V880l-48-24Z" transform="translate(-1222 -396.12)"/>
+        </g>
+        <path id="Path_296-4" data-name="Path 296" class="cls-4" d="M-1598,4985l-8,4-48-24,8-4Z" transform="translate(2382 -4157)"/>
+        <path id="Path_297-4" data-name="Path 297" class="cls-5" d="M-1414,5189.119V5085l8-4v104.119Z" transform="translate(2190 -4253)"/>
+      </g>
+      <path id="Path_306" data-name="Path 306" class="cls-6" d="M-1630,5005l32,16v16l-32-16Z" transform="translate(2342 -3713)"/>
+      <path id="Path_308" data-name="Path 308" class="cls-6" d="M-1630,5005l32,16v8l-32-16Z" transform="translate(2342 -3653)"/>
+      <path id="Path_311" data-name="Path 311" class="cls-6" d="M-1630,5005l32,16v8l-32-16Z" transform="translate(2342 -3637)"/>
+      <path id="Path_307" data-name="Path 307" class="cls-6" d="M-1630,5066l32,16v-28l-32-16" transform="translate(2342 -3722)"/>
+    </g>
+  </g>
+</svg>

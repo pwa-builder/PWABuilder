@@ -1,7 +1,7 @@
 <template>
-<div class="pwa-button pwa-button--simple" 
+<div class="work-button" 
     :class="{'pwa-button--brand': isBrand, 'pwa-button--total_right': isRight}"
-    @click="buildArchive(platform);  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/download/{platform}' });">
+    @click="buildArchive(platform, parameters);  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/download/{platform}' });">
 
   <span v-if="isReady">{{ message$ }}</span>
   <span v-if="!isReady">{{ $t('publish.building_package') }}
@@ -33,6 +33,9 @@ export default class extends Vue {
   @Prop({ type: String, default: '' })
   public readonly platform: string;
 
+  @Prop({ type: Array, default: function () { return []; }})
+  public readonly parameters: string[];
+
   @Prop({ type: Boolean, default: false })
   public readonly isBrand: boolean;
 
@@ -50,7 +53,7 @@ export default class extends Vue {
     this.message$ = this.message;
   }
 
-  public async buildArchive(platform: string): Promise<void> {
+  public async buildArchive(platform: string, parameters: string[]): Promise<void> {
     if (!this.isReady) {
       return;
     }
@@ -58,7 +61,7 @@ export default class extends Vue {
     this.isReady = false;
 
     try {
-      await this.build(platform);
+      await this.build({platform: platform, options: parameters});
       if (this.archiveLink) {
         window.location.href = this.archiveLink;
       }

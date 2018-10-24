@@ -16,13 +16,9 @@
         <slot/>
 
         <div class="modal-buttons">
-          <button class="l-generator-space_right pwa-button pwa-button--simple pwa-button--brand" @click="onClickSubmit();  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
-            {{$t("modal.submit")}}
-            <Loading :active="isLoading" class="u-display-inline_block u-margin-left-sm" />
-          </button>
-          <button class="pwa-button pwa-button--simple" @click="onClickCancel(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
+          <a class="cancelText" href="#" @click="onClickCancel(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
             {{$t("modal.cancel")}}
-          </button>
+          </a>
         </div>
       </div>
     </div>
@@ -48,16 +44,35 @@ export default class extends Vue {
   @Prop({ type: String, default: '' })
   public title: string;
 
+  public beforeDestroy() {
+    // Set scrolling to normal here too just to avoid
+    // scrolling potentially getting stuck off
+    (this.$root.$el.closest('body') as HTMLBodyElement).style.overflowY = 'scroll';
+  }
+
   public get isLoading() {
     return this.loadingCount > 0;
   }
 
-  public show(): void {
+  public async show(): Promise<void> {
+    // stop scrolling on the body when the modal is open
+    (this.$root.$el.closest('body') as HTMLBodyElement).style.overflowY = 'hidden';
+    console.log('set style to hidden');
+
     this.showModal = true;
+    // have to put a setTimeout here because Edge
+    // has a bug with the filter css style
+    setTimeout(() => {
+      this.$emit('modalOpened');
+    }, 200);
   }
 
   public hide(): void {
+    // enable scrolling on the body when the modal is closed
+    (this.$root.$el.closest('body') as HTMLBodyElement).style.overflowY = 'scroll';
+
     this.showModal = false;
+    this.$emit('modalClosed');
   }
 
   public onClickSubmit(): void {
@@ -84,13 +99,14 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "~assets/scss/base/variables";
+/* stylelint-disable */
 
+@import "~assets/scss/base/variables";
 .modal {
   align-items: flex-start;
-  background: rgba($color-background-darkest, .3);
+  background: rgba($color-brand-quartary, .25);
   display: flex;
-  height: 100vh;
+  height: 100%;
   justify-content: center;
   left: 0;
   overflow-y: scroll;
@@ -101,14 +117,10 @@ export default class extends Vue {
   z-index: 100;
 
   &-box {
-    $w: 60vw;
-
-    background: $color-background-brighter;
-    border-radius: .5rem;
-    box-shadow: 0 4px 25px 4px rgba(0, 0, 0, .3);
-    box-sizing: border-box;
-    position: relative;
-    width: $w;
+    filter: blur(0px);
+    position: absolute;
+    width: 100%;
+    margin-top: 200px;
     z-index: 110;
 
     &.error {
@@ -129,9 +141,7 @@ export default class extends Vue {
     }
 
     @media screen and (max-width: $media-screen-l) {
-      $w: 60vw;
 
-      width: $w;
     }
 
     @media screen and (max-width: $media-screen-m) {
@@ -151,9 +161,6 @@ export default class extends Vue {
   }
 
   &-body {
-    margin: 45px auto 0 auto;
-    padding: 18px;
-    width: 60%;
   }
 
   &-tablec {
@@ -172,7 +179,8 @@ export default class extends Vue {
   }
 
   &-buttons {
-    text-align: right;
+    text-align: center;
+    width: 100%;
   }
 }
 </style>
