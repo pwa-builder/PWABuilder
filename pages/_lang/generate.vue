@@ -169,6 +169,7 @@
                 <RelatedApplications />
               </div>
             </div>
+
           </section>
 
           <!--<div>
@@ -206,15 +207,20 @@
             <a href='https://webhint.io/docs/user-guide/hints/hint-manifest-exists/#why-is-this-important'>Learn more from Webhints.io</a>
           </section>
         </div>
+        
       </div>
     </div>
 
-    <div class="l-generator-buttons">
-      <button class="work-button"  @click="onClickShowGBB()">I'm done</button>
+    <div class="l-generator-buttons done-button">
+       <button class="work-button"  @click="onClickShowGBB()">I'm done</button>
+     
     </div>
     
-    <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" title="Next" ref="nextStepModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
+    <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" :showButtons="false" title="" ref="nextStepModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
       <GoodPWA/>
+      <a class="cancelText" href="#" @click="onClickHideGBB(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
+        {{$t("modal.goBack")}}
+      </a>
     </Modal>
 
     <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" :title="$t('generate.upload_title')" ref="iconsModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
@@ -312,6 +318,10 @@ export default class extends Vue {
   public created(): void {
     this.manifest$ = { ...this.manifest };
   }
+  
+  async destroyed() {
+    (this.$root.$el.closest('body') as HTMLBodyElement).classList.remove('modal-screen');
+  }
 
   public onChangeSimpleInput(): void {
     try {
@@ -404,6 +414,11 @@ public onClickShowGBB(): void {
     (this.$refs.nextStepModal as Modal).show();
   }
 
+  public onClickHideGBB(): void {
+    (this.$refs.nextStepModal as Modal).hide();
+
+  }
+
   public async onSubmitIconModal(): Promise<void> {
     const $iconsModal = this.$refs.iconsModal as Modal;
 
@@ -466,11 +481,15 @@ public onClickShowGBB(): void {
   }
 
   public modalOpened() {
-    (this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(25px)';
+   // (this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(25px)';
+    (this.$root.$el.closest('body') as HTMLBodyElement).classList.add('modal-screen')
+
   }
 
   public modalClosed() {
-    (this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(0px)';
+    (this.$root.$el.closest('body') as HTMLBodyElement).classList.remove('modal-screen')
+
+   // (this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(0px)';
   }
 }
 
@@ -479,6 +498,21 @@ public onClickShowGBB(): void {
 <style lang="scss" scoped>
 @import "~assets/scss/base/variables";
 /* stylelint-disable */
+
+.done-button {
+  margin-right: 68px;
+}
+
+  .modal-screen {
+
+  .mainDiv {
+    filter: blur(30px);
+  }
+  .done-button {
+    filter: blur(30px);
+  }
+
+}
 
 .code_viewer, #guidanceSection {
   margin-top: 12px;
@@ -544,6 +578,30 @@ h3.active, .manifestButton.active {
 
   to {
     opacity: 1;
+  }
+}
+
+.modal {
+  #wrapper {
+    padding-bottom: 0;
+  }
+
+  .cancelText {
+    display: block;
+    text-align: center;
+    padding-bottom: 3em;
+  }
+}
+
+.modal-body {
+  .l-generator-box,
+  .l-generator-field {
+    margin: 2em 8em;
+    line-height: 28px;
+
+    .l-generator-label {
+      padding: 0 1em;
+    }
   }
 }
 </style>
