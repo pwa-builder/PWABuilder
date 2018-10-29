@@ -47,23 +47,25 @@
         </div>
       </div>
 
-      <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" title="Add Feature" ref="addFeatureModal">
+      <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" :showSubmitButton="false" title="Add Feature" ref="addFeatureModal">
         <div class="feature-viewer">
           <div class="feature-content">
 
             <div class="side_panel">
               <div class="l-generator-form properties" v-if="sample">
+                <h1>Required Properties</h1>
+
                 <div class="l-generator-field" v-for="prop in sample.parms" :key="prop.id">
-                  <div class="l-generator-label">{{prop.name}} </div>
-                  <div class="l-generator-input value-table" :id="prop.id">{{prop.description}}</div>
+                  <h3 class="l-generator-label">{{prop.name}}</h3>
+                  <p class='propDescription' :id="prop.id">{{prop.description}}</p>
                 </div>
               </div>
-              <div class="pure-u-1 pure-u-md-1-2">
-                <div class="pwa-button pwa-button--simple" v-on:click="addBundle()">{{ $t("windows.add") }}</div>
+
+              <div id="codeButtonsBlock">
+                <button class="pwa-button pwa-button--simple pwa-button--brand" v-on:click="addBundle()">{{ $t("windows.add") }}</button>
+                <button class="pwa-button pwa-button--simple" v-on:click="download()">{{ $t("windows.download_sample") }}</button>
               </div>
-              <div class="pure-u-1 pure-u-md-1-2 download">
-                <div class="pwa-button pwa-button--simple" v-on:click="download()">{{ $t("windows.download_sample") }}</div>
-              </div>
+
             </div>
           </div>
           <div class="code-samples">
@@ -71,7 +73,7 @@
               <CodeViewer  codeType="javascript" :size="viewerSize" :code="loadCode()" v-on:editorValue="updateCode($event)"  v-if="sample" :title="$t('windows.codeTitle')" ></CodeViewer>
             </div>
             <div class="code-bottom">
-                <CodeViewer  codeType="javascript" :size="viewerSize" :code="sample.source" v-if="sample"  :title="$t('windows.sourceTitle')"/>
+              <CodeViewer  codeType="javascript" :size="viewerSize" :code="sample.source" v-if="sample"  :title="$t('windows.sourceTitle')"/>
             </div>
           </div>
         </div>
@@ -292,6 +294,17 @@ export default class extends Vue {
       min-height:  700px;
       max-height: 900px;
     }
+}
+
+.propDescription {
+  color: initial;
+}
+
+#codeButtonsBlock {
+  display: flex;
+  justify-content: space-around;
+  width: 400px;
+  margin-top: 40px;
 }
 
 #loadingCards {
