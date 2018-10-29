@@ -17,7 +17,8 @@
 
               <input type="checkbox" v-model="selectedSamples" :value="sample" @click="checkRemoveSample(sample)"/>
               <label class="l-generator-label">
-                <img :src="sample.image" class="featureImage" />
+                <img v-if="!sample.image.includes('logo_small')" :src="sample.image" class="featureImage" />
+                <img v-if="sample.image.includes('logo_small')" src="~/assets/images/PWABuilderLogo.svg" class="featureImage"  />
                 <input type="button" :value="sample" @click="onClickSample(sample)"> 
                 <h4>{{sample.title}}</h4>
               </label>
@@ -135,6 +136,7 @@ export default class extends Vue {
 
   async created() {
     await this.getSamples();
+    console.log(this.samples);
   }
   
   public onClickShowGBB(): void {
@@ -342,6 +344,8 @@ export default class extends Vue {
   .featureImage {
     width: 100%;
     display: inline-block;
+    height: 300px;
+    object-fit: contain;
   }
 
   .l-generator-description {
