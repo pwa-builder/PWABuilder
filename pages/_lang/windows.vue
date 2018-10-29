@@ -17,7 +17,7 @@
 
               <input type="checkbox" v-model="selectedSamples" :value="sample" @click="checkRemoveSample(sample)"/>
               <label class="l-generator-label">
-                <img src ="~assets/images/placeHolder.png" class="featureImage" />
+                <img :src="sample.image" class="featureImage" />
                 <input type="button" :value="sample" @click="onClickSample(sample)"> 
                 <h4>{{sample.title}}</h4>
               </label>
