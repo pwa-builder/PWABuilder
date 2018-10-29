@@ -61,19 +61,14 @@
                 </div>
               </div>
 
-              <div id="codeButtonsBlock">
-                <button class="pwa-button pwa-button--simple pwa-button--brand" v-on:click="addBundle()">{{ $t("windows.add") }}</button>
-                <button class="pwa-button pwa-button--simple" v-on:click="download()">{{ $t("windows.download_sample") }}</button>
-              </div>
-
             </div>
           </div>
           <div class="code-samples">
             <div class="code-top">
-              <CodeViewer  codeType="javascript" :size="viewerSize" :code="loadCode()" v-on:editorValue="updateCode($event)"  v-if="sample" :title="$t('windows.codeTitle')" ></CodeViewer>
+              <CodeViewer codeType="javascript" :size="viewerSize" :code="loadCode()" v-on:editorValue="updateCode($event)"  v-if="sample" :title="$t('windows.codeTitle')" ></CodeViewer>
             </div>
             <div class="code-bottom">
-              <CodeViewer  codeType="javascript" :size="viewerSize" :code="sample.source" v-if="sample"  :title="$t('windows.sourceTitle')"/>
+              <CodeViewer codeType="javascript" :size="viewerSize" :code="sample.source" v-if="sample"  :title="$t('windows.sourceTitle')"/>
             </div>
           </div>
         </div>
@@ -96,6 +91,8 @@
                 <!-- <div class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" v-on:click="download()">{{ $t("windows.download_sample") }}</div> -->
               <!-- /section>
             </div> -->
+
+            <button slot='extraButton' id='addBundleButton' class="pwa-button pwa-button--simple pwa-button--brand" v-on:click="addBundle()">{{ $t("windows.add") }}</button>
         </div>
       </Modal>
 
@@ -296,15 +293,12 @@ export default class extends Vue {
     }
 }
 
-.propDescription {
-  color: initial;
+#addBundleButton {
+  margin-right: 15px;
 }
 
-#codeButtonsBlock {
-  display: flex;
-  justify-content: space-around;
-  width: 400px;
-  margin-top: 40px;
+.propDescription {
+  color: initial;
 }
 
 #loadingCards {
