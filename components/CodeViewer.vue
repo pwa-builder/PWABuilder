@@ -1,13 +1,14 @@
 <template>
 <section class="code_viewer">
+  <h2 id='codeViewerTitle'>{{title}}</h2>
   <div class="code_viewer-pre" ref="monacoDiv"></div>
 
   <div v-if="errorNumber">
     <p>{{this.errorNumber}} errors</p>
   </div>
 
-  <div id="downloadDiv">
-    <button @click="copy()" id="copyButton">Copy</button>
+  <div id="copyDiv">
+    <button v-if="showCopyButton" @click="copy()" id="copyButton">Copy</button>
   </div>
 </section>
 </template>
@@ -55,6 +56,9 @@ export default class extends Vue {
 
   @Prop({ type: String, default: 'javascript'})
   public codeType: string;
+
+  @Prop({ type: Boolean, default: true})
+  public showCopyButton;
 
   public readonly warningsId = 'warnings_list';
   public readonly suggestionsId = 'suggestions_list';
@@ -156,6 +160,19 @@ export default class extends Vue {
     color:$color-brand-quartary;
   }
 
+  #copyButton {
+    background: $color-brand;
+    color: white;
+    border: none;
+    border-radius: .5rem;
+    padding: 10px;
+  }
+
+  #copyDiv {
+    display: flex;
+    justify-content: flex-end;
+  }
+
   @media screen and (max-width: $media-screen-s) {
     margin-top: 4rem;
   }
@@ -177,6 +194,11 @@ export default class extends Vue {
       text-align: left;
       width: 90%;
     }
+  }
+
+  #codeViewerTitle {
+    margin-bottom: 15px;
+    margin-left: 10px;
   }
 
   &-title {
