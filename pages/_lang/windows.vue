@@ -8,6 +8,12 @@
 
         <div class="l-generator-semipadded" v-show="samples.length == 0">
           <p>{{ $t('general.loading') }}</p>
+
+          <div id="loadingCards">
+            <div class="skeletonLoadingCard"></div>
+            <div class="skeletonLoadingCard"></div>
+            <div class="skeletonLoadingCard"></div>
+          </div>
         </div>
 
         <div class="l-generator-semipadded" v-show="samples != null">
@@ -288,6 +294,16 @@ export default class extends Vue {
     }
 }
 
+#loadingCards {
+  display: flex;
+  justify-content: space-between;
+
+  .skeletonLoadingCard {
+    height: 300px;
+    background: lightgrey;
+    width: 300px;
+  }
+}
 
 .feature-viewer {
   display: flex;
