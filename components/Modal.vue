@@ -125,7 +125,7 @@ export default class extends Vue {
   padding: 32px 0;
   position: absolute;
   top: 0;
-  width: 100vw;
+  width: 100%;
   z-index: 100;
 
   &-box {

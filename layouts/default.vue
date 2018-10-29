@@ -44,7 +44,6 @@
   #baseContainer{
     width: 1280px;
     margin: 0 auto;
-    position: relative;
 
     .container {
       padding-top: 64px;
@@ -114,7 +113,7 @@ header {
 
   body[data-location='gettingStarted']{
     .logoText {
-      left:1160px;
+      transform: translatex(1160px);  
       top: 26px;
     }
 
@@ -149,7 +148,7 @@ header {
 
     body[data-location='generate']{
      .logoText {
-      left:1160px;
+      transform: translatex(1160px);
       top: 26px;
     }
 
@@ -183,7 +182,7 @@ header {
   }
   body[data-location='serviceworker']{
      .logoText {
-      left:1160px;
+      transform: translatex(1160px);      
       top: 26px;
     }
 
@@ -218,7 +217,7 @@ header {
 
   body[data-location='publish']{
       .logoText {
-      left:1160px;
+      transform: translatex(1160px);
       top: 26px;
     }
 
@@ -253,7 +252,7 @@ header {
 
   body[data-location='windows']{
       .logoText {
-      left:1160px;
+      transform: translatex(1160px);
       top: 26px;
     }
 

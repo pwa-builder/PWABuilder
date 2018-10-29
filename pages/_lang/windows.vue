@@ -41,8 +41,34 @@
       </div>
 
       <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" title="Add Feature" ref="addFeatureModal">
-        <div class="pure-u-1 pure-u-md-2-3">
-          <div class="tab_container" >
+        <div class="feature-viewer">
+          <div class="feature-content">
+
+            <div class="side_panel">
+              <div class="l-generator-form properties" v-if="sample">
+                <div class="l-generator-field" v-for="prop in sample.parms" :key="prop.id">
+                  <div class="l-generator-label">{{prop.name}} </div>
+                  <div class="l-generator-input value-table" :id="prop.id">{{prop.description}}</div>
+                </div>
+              </div>
+              <div class="pure-u-1 pure-u-md-1-2">
+                <div class="pwa-button pwa-button--simple" v-on:click="addBundle()">{{ $t("windows.add") }}</div>
+              </div>
+              <div class="pure-u-1 pure-u-md-1-2 download">
+                <div class="pwa-button pwa-button--simple" v-on:click="download()">{{ $t("windows.download_sample") }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="code-samples">
+            <div class="code-top">
+              <CodeViewer  codeType="javascript" :size="viewerSize" :code="loadCode()" v-on:editorValue="updateCode($event)"  v-if="sample" :title="$t('windows.codeTitle')" ></CodeViewer>
+            </div>
+            <div class="code-bottom">
+                <CodeViewer  codeType="javascript" :size="viewerSize" :code="sample.source" v-if="sample"  :title="$t('windows.sourceTitle')"/>
+            </div>
+          </div>
+        </div>
+          <!-- <div class="tab_container" >
               <input id="tab1" type="radio" name="tabs" class="tab_input" checked>
               <label for="tab1" class="tab_label"><i class="fa fa-code"></i><span> Usage</span></label>
 
@@ -53,29 +79,14 @@
                 <br/>
                 <div class="pure-g">
                   <div class="generate-code pure-u-1 form_container">
-                    <CodeViewer :code="loadCode()" v-on:editorValue="updateCode($event)"  v-if="sample" :title="$t('windows.codeTitle')" />
-                    <div class="side_panel">
-                      <div class="l-generator-form properties" v-if="sample">
-                        <div class="l-generator-field" v-for="prop in sample.parms" :key="prop.id">
-                          <div class="l-generator-label">{{prop.name}} </div>
-                          <div class="l-generator-input value-table" :id="prop.id">{{prop.description}}</div>
-                        </div>
-                      </div>
-                      <div class="pure-u-1 pure-u-md-1-2">
-                        <div class="pwa-button pwa-button--simple" v-on:click="addBundle()">{{ $t("windows.add") }}</div>
-                      </div>
-                      <div class="pure-u-1 pure-u-md-1-2 download">
-                        <div class="pwa-button pwa-button--simple" v-on:click="download()">{{ $t("windows.download_sample") }}</div>
-                      </div>
-                    </div>
+
                   </div>
                 </div>
               </section>
               <section id="content2" class="tab-content tab_section">
-                <CodeViewer :code="sample.source" v-if="sample" :title="$t('windows.sourceTitle')"/>
-                <div class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" v-on:click="download()">{{ $t("windows.download_sample") }}</div>
-              </section>
-            </div>
+                <!-- <div class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" v-on:click="download()">{{ $t("windows.download_sample") }}</div> -->
+              <!-- /section>
+            </div> -->
         </div>
       </Modal>
 
@@ -111,8 +122,9 @@ const WindowsAction = namespace(windowsStore.name, Action);
 
 export default class extends Vue {
   error: any;
-  viewerSize = '30rem';
   hasNative = false;
+  public viewerSize = '5rem';
+  public viewerSizeBottom = '55rem';
 
   selectedSamples: windowsStore.Sample[] = [];
   @WindowsState sample: windowsStore.Sample;
@@ -259,6 +271,50 @@ export default class extends Vue {
 <style lang="scss" scoped>
 /* stylelint-disable */
 @import '~assets/scss/base/variables';
+
+.code-samples {
+
+  .code_viewer {
+    min-height:300px;
+    max-height: 700px;
+    margin-bottom: 100px;
+    margin-right: 68px;
+  }
+  .bottomViewer {
+      min-height:  700px;
+      max-height: 900px;
+    }
+}
+
+
+.feature-viewer {
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+  width: 100%;
+  padding: 4em;
+}
+
+.code-samples {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.feature-content {
+  flex: 1;
+}
+
+  .modal-screen {
+
+  .mainDiv {
+    filter: blur(30px);
+  }
+  .done-button {
+    filter: blur(30px);
+  }
+
+}
 
 .feature-container {
   width: 300px;

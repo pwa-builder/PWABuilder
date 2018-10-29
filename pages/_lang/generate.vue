@@ -224,7 +224,7 @@
     </Modal>
 
     <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" :title="$t('generate.upload_title')" ref="iconsModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
-      <div class="l-generator-box">
+      <div class="l-generator-box image-upload">
         <span class="l-generator-label">{{ $t("generate.upload_image") }}</span>
         <label class="l-generator-input l-generator-input--fake is-disabled" for="modal-file">
           {{ iconFile && iconFile.name ? iconFile.name : $t("generate.choose_file") }}
@@ -322,6 +322,7 @@ export default class extends Vue {
   async destroyed() {
     (this.$root.$el.closest('body') as HTMLBodyElement).classList.remove('modal-screen');
   }
+
 
   public onChangeSimpleInput(): void {
     try {
@@ -499,6 +500,10 @@ public onClickShowGBB(): void {
 @import "~assets/scss/base/variables";
 /* stylelint-disable */
 
+
+.image-upload {
+  width:800px;
+}
 .done-button {
   margin-right: 68px;
 }
