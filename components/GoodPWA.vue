@@ -95,7 +95,7 @@ export default class extends Vue {
   @Prop({}) hasWorker: boolean;
   // @Prop({}) hasBetterManifest: boolean;
   @Prop({}) hasBetterWorker: boolean;
-  @Prop({}) hasBestManifest: boolean;
+  // @Prop({}) hasBestManifest: boolean;
   @Prop({}) hasBestWorker: boolean;
   @Prop({}) hasNativeFeatures: boolean;
   @Prop({}) isResponsive: boolean;
@@ -107,6 +107,7 @@ export default class extends Vue {
   statusState: any = null;
   hasManifest = false;
   hasBetterManifest = false;
+  hasBestManifest = false;
 
   public mounted() {
     console.log('mounted');
