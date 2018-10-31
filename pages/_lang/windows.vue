@@ -33,14 +33,16 @@
 
           </div>
 
-          <div class="pure-u-1 pure-u-md-1-2 download">
-            <button class="pwa-button pwa-button--simple" 
-                    v-on:click="download(true)"
-                    :disabled="selectedSamples.length == 0">{{ $t("windows.download_bundle") }}</button>
-          </div>
+          <div id='buttonsBlock'>
+            <div class="pure-u-1 pure-u-md-1-2 download">
+              <button class="pwa-button pwa-button--simple" 
+                      v-on:click="download(true)"
+                      :disabled="selectedSamples.length == 0">{{ $t("windows.download_bundle") }}</button>
+            </div>
 
-          <div class="l-generator-wrapper pure-u-2-5">       
-            <a class="work-button"  @click="onClickShowGBB()" href="#">{{ $t("general.next_page") }}</a>
+            <div class="l-generator-wrapper pure-u-2-5">       
+              <a class="work-button"  @click="onClickShowGBB()" href="#">{{ $t("general.next_page") }}</a>
+            </div>
           </div>
 
           <p class="download-text">{{ $t('general.github_source') }}
@@ -295,6 +297,11 @@ export default class extends Vue {
     }
 }
 
+#buttonsBlock {
+  display: flex;
+  justify-content: center;
+}
+
 #addBundleButton {
   margin-right: 15px;
 }
@@ -306,6 +313,7 @@ export default class extends Vue {
 #loadingCards {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 15px;
 
   .skeletonLoadingCard {
     height: 300px;
