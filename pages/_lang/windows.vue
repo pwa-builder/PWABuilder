@@ -8,6 +8,12 @@
 
         <div class="l-generator-semipadded" v-show="samples.length == 0">
           <p>{{ $t('general.loading') }}</p>
+
+          <div id="loadingCards">
+            <div class="skeletonLoadingCard"></div>
+            <div class="skeletonLoadingCard"></div>
+            <div class="skeletonLoadingCard"></div>
+          </div>
         </div>
 
         <div class="l-generator-semipadded" v-show="samples != null">
@@ -17,7 +23,8 @@
 
               <input type="checkbox" v-model="selectedSamples" :value="sample" @click="checkRemoveSample(sample)"/>
               <label class="l-generator-label">
-                <img src ="~assets/images/placeHolder.png" class="featureImage" />
+                <img v-if="!sample.image.includes('logo_small')" :src="sample.image" class="featureImage" />
+                <img v-if="sample.image.includes('logo_small')" src="~/assets/images/PWABuilderLogo.svg" class="featureImage"  />
                 <input type="button" :value="sample" @click="onClickSample(sample)"> 
                 <h4>{{sample.title}}</h4>
               </label>
@@ -26,12 +33,16 @@
 
           </div>
 
-          <div class="pure-u-1 pure-u-md-1-2 download">
-            <div class="pwa-button pwa-button--simple" v-on:click="download(true)">{{ $t("windows.download_bundle") }}</div>
-          </div>
+          <div id='buttonsBlock'>
+            <div class="pure-u-1 pure-u-md-1-2 download">
+              <button class="pwa-button pwa-button--simple" 
+                      v-on:click="download(true)"
+                      :disabled="selectedSamples.length == 0">{{ $t("windows.download_bundle") }}</button>
+            </div>
 
-          <div class="l-generator-wrapper pure-u-2-5">       
-            <a class="work-button"  @click="onClickShowGBB()" href="#">{{ $t("general.next_page") }}</a>
+            <div class="l-generator-wrapper pure-u-2-5">       
+              <a class="work-button"  @click="onClickShowGBB()" href="#">{{ $t("general.next_page") }}</a>
+            </div>
           </div>
 
           <p class="download-text">{{ $t('general.github_source') }}
@@ -40,31 +51,28 @@
         </div>
       </div>
 
-      <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" title="Add Feature" ref="addFeatureModal">
+      <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" :showSubmitButton="false" title="Add Feature" ref="addFeatureModal">
         <div class="feature-viewer">
           <div class="feature-content">
 
             <div class="side_panel">
               <div class="l-generator-form properties" v-if="sample">
+                <h1>Required Properties</h1>
+
                 <div class="l-generator-field" v-for="prop in sample.parms" :key="prop.id">
-                  <div class="l-generator-label">{{prop.name}} </div>
-                  <div class="l-generator-input value-table" :id="prop.id">{{prop.description}}</div>
+                  <h3 class="l-generator-label">{{prop.name}}</h3>
+                  <p class='propDescription' :id="prop.id">{{prop.description}}</p>
                 </div>
               </div>
-              <div class="pure-u-1 pure-u-md-1-2">
-                <div class="pwa-button pwa-button--simple" v-on:click="addBundle()">{{ $t("windows.add") }}</div>
-              </div>
-              <div class="pure-u-1 pure-u-md-1-2 download">
-                <div class="pwa-button pwa-button--simple" v-on:click="download()">{{ $t("windows.download_sample") }}</div>
-              </div>
+
             </div>
           </div>
           <div class="code-samples">
             <div class="code-top">
-              <CodeViewer  codeType="javascript" :size="viewerSize" :code="loadCode()" v-on:editorValue="updateCode($event)"  v-if="sample" :title="$t('windows.codeTitle')" ></CodeViewer>
+              <CodeViewer codeType="javascript" :size="viewerSize" :code="loadCode()" v-on:editorValue="updateCode($event)"  v-if="sample" :title="$t('windows.codeTitle')" ></CodeViewer>
             </div>
             <div class="code-bottom">
-                <CodeViewer  codeType="javascript" :size="viewerSize" :code="sample.source" v-if="sample"  :title="$t('windows.sourceTitle')"/>
+              <CodeViewer codeType="javascript" :size="viewerSize" :code="sample.source" v-if="sample"  :title="$t('windows.sourceTitle')"/>
             </div>
           </div>
         </div>
@@ -87,6 +95,8 @@
                 <!-- <div class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" v-on:click="download()">{{ $t("windows.download_sample") }}</div> -->
               <!-- /section>
             </div> -->
+
+            <button slot='extraButton' id='addBundleButton' class="pwa-button pwa-button--simple pwa-button--brand" v-on:click="addBundle()">{{ $t("windows.add") }}</button>
         </div>
       </Modal>
 
@@ -135,6 +145,7 @@ export default class extends Vue {
 
   async created() {
     await this.getSamples();
+    console.log(this.samples);
   }
   
   public onClickShowGBB(): void {
@@ -286,6 +297,30 @@ export default class extends Vue {
     }
 }
 
+#buttonsBlock {
+  display: flex;
+  justify-content: center;
+}
+
+#addBundleButton {
+  margin-right: 15px;
+}
+
+.propDescription {
+  color: initial;
+}
+
+#loadingCards {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+
+  .skeletonLoadingCard {
+    height: 300px;
+    background: lightgrey;
+    width: 300px;
+  }
+}
 
 .feature-viewer {
   display: flex;
@@ -342,6 +377,8 @@ export default class extends Vue {
   .featureImage {
     width: 100%;
     display: inline-block;
+    height: 300px;
+    object-fit: contain;
   }
 
   .l-generator-description {

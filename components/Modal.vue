@@ -18,18 +18,15 @@
         
         <div v-if="title != ''" class="modal-buttons">
           
-          <button class="l-generator-space_right pwa-button pwa-button--simple pwa-button--brand" @click="onClickSubmit();  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
-
+          <button v-if="showSubmitButton" class="l-generator-space_right pwa-button pwa-button--simple pwa-button--brand" @click="onClickSubmit();  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
             {{$t("modal.submit")}}
-
             <Loading :active="isLoading" class="u-display-inline_block u-margin-left-sm" />
-
           </button>
 
+          <slot name='extraButton'></slot>
+
           <button class="pwa-button pwa-button--simple" @click="onClickCancel(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
-
             {{$t("modal.cancel")}}
-
           </button>
         </div>
       </div>
@@ -53,8 +50,8 @@ export default class extends Vue {
   public showModal = false;
   private loadingCount = 0;
 
-  @Prop({ type: String, default: '' })
-  public title: string;
+  @Prop({ type: String, default: '' }) public title: string;
+  @Prop({ type: Boolean, default: true}) public showSubmitButton;
   //public showButtons: string;
 
   public beforeDestroy() {
@@ -119,7 +116,7 @@ export default class extends Vue {
   align-items: flex-start;
   background: rgba($color-brand-quartary, .25);
   display: flex;
-  height: 100%;
+  // height: 100%;
   justify-content: center;
   left: 0;
   padding: 32px 0;
