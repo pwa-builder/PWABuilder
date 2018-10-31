@@ -1,5 +1,6 @@
 @import 'variables';
 @import url('https://fonts.googleapis.com/css?family=Bungee');
+/* stylelint-disable */
 
 html,
 body,
@@ -40,4 +41,70 @@ h4 {
   margin: 0;
   margin-block-end: 0;
   margin-block-start: 0;
+}
+
+/*mast head css */
+
+
+.mastHead {
+  margin: 0 0 8em 68px;
+  width: 568px;
+  color: $color-brand-quintary;
+
+  p {
+    margin: 4px 0;
+    font-size: 22px;
+    line-height: 32px;
+  }
+
+  h2 {
+    font-size: 36px;
+    line-height: 42px;
+  }
+
+}
+
+
+/*modals */
+
+.modal-screen {
+  overflow-y: hidden;
+
+  .l-footer {
+    filter: blur(30px);
+  }
+  .bgArt {
+    z-index: 144;
+  }
+
+  .mainDiv {
+    filter: blur(30px);
+  }
+  .done-button {
+    filter: blur(30px);
+  }
+}
+
+.modal {
+  #wrapper {
+    padding-bottom: 0;
+  }
+
+  .cancelText {
+    display: block;
+    text-align: center;
+    padding-bottom: 3em;
+  }
+}
+
+.modal-body {
+  .l-generator-box,
+  .l-generator-field {
+    margin: 2em 8em;
+    line-height: 28px;
+
+    .l-generator-label {
+      padding: 0 1em;
+    }
+  }
 }

@@ -2,8 +2,8 @@
   <section>
       <div ref='mainDiv' class="l-generator-step">
       <div class="mastHead">
-          <h2 class="l-generator-subtitle">{{ $t('windows.title') }}</h2>
-        <p class="l-generator-subtitle">{{ $t('windows.summary') }}</p>              
+          <h2>{{ $t('windows.title') }}</h2>
+        <p>{{ $t('windows.summary') }}</p>              
       </div>
 
         <div class="l-generator-semipadded" v-show="samples.length == 0">
@@ -340,17 +340,6 @@ export default class extends Vue {
   flex: 1;
 }
 
-  .modal-screen {
-
-  .mainDiv {
-    filter: blur(30px);
-  }
-  .done-button {
-    filter: blur(30px);
-  }
-
-}
-
 .feature-container {
   width: 300px;
   margin: 24px;
@@ -404,17 +393,6 @@ export default class extends Vue {
   display: flex;
   width: 100%;
   flex-flow: wrap;
-}
-.mastHead {
-  margin-bottom: 7em;
-  margin-left: 68px;
-  width: 568px;
-  p {
-    font-size: 22px;
-    line-height: 32px;
-    margin-top: 6px;
-
-  }
 }
 
 

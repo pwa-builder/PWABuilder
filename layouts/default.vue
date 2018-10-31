@@ -285,16 +285,7 @@ header {
     }
   }
 
-  .modal-screen {
-  overflow-y: hidden;
 
-  .l-footer {
-    filter: blur(30px);
-  }
-  .bgArt {
-    z-index: 144;
-  }
-}
 </style>
 
 <template>

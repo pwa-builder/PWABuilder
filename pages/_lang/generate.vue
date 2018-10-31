@@ -4,11 +4,10 @@
   <div v-if="manifest$">
     <div class="l-generator-step ">
       <div class="mastHead">
-        <h4 class="l-generator-subtitle">
+        <h2>
           {{ $t("generate.subtitle") }}
-        </h4>
-
-        <p class="l-generator l-generator--last">
+        </h2>
+        <p>
           {{ $t("generate.instructions") }}
         </p>
       </div>
@@ -501,6 +500,9 @@ public onClickShowGBB(): void {
 /* stylelint-disable */
 
 
+.mastHead {
+  margin-bottom: 8em;
+}
 .image-upload {
   width:800px;
 }
@@ -508,27 +510,11 @@ public onClickShowGBB(): void {
   margin-right: 68px;
 }
 
-  .modal-screen {
-
-  .mainDiv {
-    filter: blur(30px);
-  }
-  .done-button {
-    filter: blur(30px);
-  }
-
-}
-
 .code_viewer, #guidanceSection {
   margin-top: 12px;
 }
 
-.mastHead {
-  margin-top: 0;
-  margin-bottom: 7em;
-  margin-left: 68px;
-  width: 568px;
-}
+
 
 .formNav{
   h3 {
@@ -586,27 +572,4 @@ h3.active, .manifestButton.active {
   }
 }
 
-.modal {
-  #wrapper {
-    padding-bottom: 0;
-  }
-
-  .cancelText {
-    display: block;
-    text-align: center;
-    padding-bottom: 3em;
-  }
-}
-
-.modal-body {
-  .l-generator-box,
-  .l-generator-field {
-    margin: 2em 8em;
-    line-height: 28px;
-
-    .l-generator-label {
-      padding: 0 1em;
-    }
-  }
-}
 </style>

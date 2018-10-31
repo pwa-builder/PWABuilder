@@ -1,18 +1,14 @@
 <template>
   <section>
-    <div class="l-generator-step">
-      <div class="pure-g padding">
         <section id="getStartedBlock">
-          <div id="quickTextBlock">
-            <h2 id="quickBlockText">Download and publish your shiny new app</h2>
+          <div class="mastHead">
+            <h2>Download and publish your shiny new app</h2>
 
-            <p id="quickBlockPlaceholder">You have a few different options to publish your app. You can download the
+            <p>You have a few different options to publish your app. You can download the
               files and deploy them to your site, or you can download pre-populated app projects for the major app
               platforms from the links below.</p>
           </div>
         </section>
-      </div>
-    </div>
 
 
     <div class="">
@@ -67,12 +63,11 @@
           </div>
 
           <div class="platformCard">
-            <h3>iOS</h3>
+            <h3>mac OS</h3>
             <p>
-              PWAs are avaiable through the browser on iOS, however your PWA can also be submitted to the app
-              store by building the package you get below in Xcode.
+              You can use Xcode to build this package to produce an app that runs on MacOS.
             </p>
-            <Download platform="ios" :message="$t('publish.download')" />
+            <Download platform="MacOS" :message="$t('publish.download')" />            
           </div>
 
           <div class="platformCard">
@@ -85,12 +80,14 @@
           </div>
 
           <div class="platformCard">
-            <h3>mac OS</h3>
+            <h3>iOS</h3>
             <p>
-              You can use Xcode to build this package to produce an app that runs on MacOS.
+              PWAs are avaiable through the browser on iOS, however your PWA can also be submitted to the app
+              store by building the package you get below in Xcode.
             </p>
-            <Download platform="MacOS" :message="$t('publish.download')" />            
+            <Download platform="ios" :message="$t('publish.download')" />
           </div>
+
         </section>
       </div>
     </div>
@@ -190,19 +187,8 @@ export default class extends Vue {
 
   @import '~assets/scss/base/variables';
 
-  .padding {
-    padding-bottom: 48px;
-    padding-left: 68px;
-    padding-right: 190px;
-    padding-top: 64px;
-    width: 100%;
-  }
-
-  #quickBlockText {
-    font-size: 36px;
-    line-height: 42px;
-    margin: 0;
-    width: 472px;
+  .mastHead {
+    margin-bottom: 12em;
   }
 
   .l-generator-step {
@@ -214,10 +200,6 @@ export default class extends Vue {
     flex-direction: column;
     justify-content: space-between;
     width: 100%;
-  }
-
-  #quickTextBlock {
-    margin-bottom: 27px;
   }
 
   #goodPWAHeaderBlock {

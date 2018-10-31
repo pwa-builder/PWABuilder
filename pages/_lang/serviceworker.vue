@@ -1,9 +1,9 @@
 <template>
 <section>
 
-  <div ref='mainDiv' class="l-generator-step mainDiv service-workers">
+  <div ref='mainDiv' class="mainDiv service-workers">
     <div class="mastHead">
-      <h2 class="l-generator-subtitle">{{ $t('serviceworker.title') }}</h2>
+      <h2>{{ $t('serviceworker.title') }}</h2>
       <p>{{ $t('serviceworker.summary') }}</p>
     </div>
     <div class="l-generator-semipadded pure-g">
@@ -181,28 +181,11 @@ export default class extends Vue {
 
 @import "~assets/scss/base/variables";
 
-.modal {
-  #wrapper {
-    padding-bottom: 0;
-  }
-
-  .cancelText {
-    display: block;
-    text-align: center;
-    padding-bottom: 3em;
-  }
+.mastHead {
+  margin-bottom: 12em;
 }
 
-.modal-screen {
 
-  .mainDiv {
-    filter: blur(30px);
-  }
-  .done-button {
-    filter: blur(30px);
-  }
-
-}
 
 .serviceworker {
 
@@ -234,15 +217,7 @@ export default class extends Vue {
     }
 }
 
-.mastHead {
-    margin: 0 0 100px 68px;
-    width: 400px;
 
-    p {
-      margin: 4px 0;
-    }
-  
-}
 .service-workers {
 
 

@@ -1,31 +1,27 @@
 
 <template>
 <section>
-  <div class="l-generator-step">
-    <div class="padding">
-      <section id="getStartedBlock">
-        <div id="quickTextBlock">
-          <h2 id="quickBlockText">{{ $t('home.mast_title') }}</h2>
+  <section id="getStartedBlock">
+    <div class="mastHead">
+      <h2>{{ $t('home.mast_title') }}</h2>
 
-          <p id="quickBlockPlaceholder">{{ $t('home.mast_tag') }}</p>
-        </div>
-
-        <div id="bottomBlock">
-          <div id="leftBlock">
-            <form @submit.prevent="checkUrlAndGenerate" @keydown.enter.prevent="checkUrlAndGenerate">
-              <input id="getStartedInput" :aria-label="$t('generator.url')" :placeholder="$t('generator.placeholder_url')" name="siteUrl" type="text" ref="url"
-                v-model="url$" autofocus />
-
-              <button @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/build/manifest-scan' })" id="getStartedButton">
-                {{ $t('generator.start') }}
-                <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm"/>
-              </button>
-            </form>
-          </div>
-        </div>
-      </section>
+      <p>{{ $t('home.mast_tag') }}</p>
     </div>
-  </div>
+
+    <div id="bottomBlock">
+      <div id="leftBlock">
+        <form @submit.prevent="checkUrlAndGenerate" @keydown.enter.prevent="checkUrlAndGenerate">
+          <input id="getStartedInput" :aria-label="$t('generator.url')" :placeholder="$t('generator.placeholder_url')" name="siteUrl" type="text" ref="url"
+            v-model="url$" autofocus />
+
+          <button @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/build/manifest-scan' })" id="getStartedButton">
+            {{ $t('generator.start') }}
+            <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm"/>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
   <section class="pure-g proTag">
     <div id="alreadyPWA"> 
       <h3>Already have an awesome PWA?</h3>
@@ -158,18 +154,15 @@ Vue.prototype.$awa = function(config) {
 
 <style lang="scss" scoped>
   @import '~assets/scss/base/variables';
+/* stylelint-disable */
 
   #otherTools {
     display: none;
   }
 
-  .padding {
-    margin-bottom: 100px;
-    margin-left: 138px;
-    padding-bottom: 48px;
-    padding-right: 190px;
-    padding-top: 64px;
-    width: 100%;
+  .mastHead {
+    margin-top: 3em;
+    margin-bottom: 9.2em;
   }
 
   .proTag {
@@ -216,6 +209,8 @@ Vue.prototype.$awa = function(config) {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    margin-left: 68px;
+    margin-bottom: 3em;
   }
 
   #getStartedBlock {
