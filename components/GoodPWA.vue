@@ -47,7 +47,7 @@
            </nuxt-link>
           </p>
         </li>
-        <li v-bind:class="{ good: statusState.hasBestManifest || allGood }">
+        <li v-bind:class="{ good: statusState.hasBetterManifest || allGood }">
           <h3>{{ $t('home.quality_mid_list_2') }}</h3>
           <p class='paramText'>The manifest becomes more useful with more data.  We recommend App name, theme colors and a large tile / icon image.
            <nuxt-link to="/generate">
@@ -85,19 +85,17 @@ import { Prop } from "vue-property-decorator";
 import { State, namespace } from "vuex-class";
 
 import * as generator from "~/store/modules/generator";
+import * as serviceworker from '~/store/modules/serviceworker';
 
 const GeneratorState = namespace(generator.name, State);
+const ServiceworkerState = namespace(serviceworker.name, State);
 
 @Component({})
 export default class extends Vue {
   @Prop({ default: true })
   isHttps: boolean;
   // @Prop({}) hasManifest: boolean;
-  @Prop({})
-  hasWorker: boolean;
   // @Prop({}) hasBetterManifest: boolean;
-  @Prop({})
-  hasBetterWorker: boolean;
   // @Prop({}) hasBestManifest: boolean;
   @Prop({})
   hasBestWorker: boolean;
@@ -113,21 +111,28 @@ export default class extends Vue {
   @GeneratorState
   manifest: generator.Manifest;
 
+  @ServiceworkerState serviceworker: number;
+
   statusState: any = null;
   hasManifest = false;
   hasBetterManifest = false;
   hasBestManifest = false;
+  hasBetterWorker: boolean;
+  hasWorker: boolean;
 
   highlightFirst = false;
   highlightSecond = false;
   highlightThird = false;
 
   public mounted() {
-    console.log("mounted");
-
+    console.log("mounted", this.serviceworker);
     this.analyzeManifest(this.manifest);
+    this.analyzeServiceWorker(this.serviceworker);
+    this.handleState();
+  }
 
-    // trying to grab the previous saved state
+  private handleState() {
+        // trying to grab the previous saved state
     // this will be null if not found
     const savedStatus = sessionStorage.getItem("pwaStatus");
 
@@ -175,6 +180,8 @@ export default class extends Vue {
       this.highlightSecond = true;
     } else if (!this.statusState.hasNativeFeatures) {
       this.highlightThird = true;
+    } else {
+      this.highlightThird = true;
     }
   }
 
@@ -185,7 +192,16 @@ export default class extends Vue {
 
     // does the manifest have icons?
     if (manifest && manifest.icons && manifest.icons.length > 0) {
-      this.hasBestManifest = true;
+      this.hasBetterManifest = true;
+    }
+  }
+
+  public analyzeServiceWorker(worker): void {
+    if (worker >= 4) {
+      this.hasBetterWorker = true;
+      this.hasWorker = true;
+    } else {
+      this.hasWorker = true;
     }
   }
 

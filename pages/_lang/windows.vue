@@ -6,7 +6,7 @@
         <p>{{ $t('windows.summary') }}</p>              
       </div>
 
-        <div  class="l-generator-semipadded" v-show="samples.length == 0">
+        <div class="l-generator" v-show="samples.length == 0">
           <p>{{ $t('general.loading') }}</p>
 
           <div id="loadingCards">
@@ -19,12 +19,12 @@
         <div ref='mainDiv' class="l-generator-semipadded mainDiv" v-show="samples != null">
 
           <div class="generator-section feature-layout">
-            <div class="l-generator-field l-generator-field--padded checkbox feature-container" v-for="sample in samples" :key="sample.id">
+            <div class="l-generator-field checkbox feature-container" v-for="sample in samples" :key="sample.id">
 
               <input type="checkbox" v-model="selectedSamples" :value="sample" @click="checkRemoveSample(sample)"/>
               <label class="l-generator-label">
-                <img v-if="!sample.image.includes('logo_small')" :src="sample.image" class="featureImage" />
-                <img v-if="sample.image.includes('logo_small')" src="~/assets/images/PWABuilderLogo.svg" class="featureImage"  />
+                <img  v-if="!sample.image.includes('logo_small')" :src="sample.image" class="featureImage" />
+                <img  v-if="sample.image.includes('logo_small')" src="~/assets/images/PWABuilderLogo.svg" class="featureImage"  />
                 <input type="button" :value="sample" @click="onClickSample(sample)"> 
                 <h4>{{sample.title}}</h4>
               </label>
@@ -33,7 +33,7 @@
 
           </div>
 
-          <div id='buttonsBlock'>
+          <div id='buttonsBlock' v-show="samples.length > 0">
             <div class="pure-u-1 pure-u-md-1-2 download">
               <button class="pwa-button pwa-button--simple" 
                       v-on:click="download(true)"
@@ -311,9 +311,9 @@ export default class extends Vue {
   margin-bottom: 15px;
 
   .skeletonLoadingCard {
-    height: 300px;
+    height: 212px;
     background: lightgrey;
-    width: 300px;
+    width: 376px;
   }
 }
 
@@ -336,7 +336,7 @@ export default class extends Vue {
 }
 
 .feature-container {
-  width: 300px;
+  width: 376px;
   margin: 24px;
 
   input[type='button'] {
@@ -359,10 +359,11 @@ export default class extends Vue {
   }
   
   .featureImage {
-    width: 100%;
+    // width: 100%;
     display: inline-block;
-    height: 300px;
-    object-fit: contain;
+    object-fit: cover;
+    width: 100%;
+    height: 212px;
   }
 
   .l-generator-description {
