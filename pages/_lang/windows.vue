@@ -297,9 +297,9 @@ export default class extends Vue {
   margin-bottom: 15px;
 
   .skeletonLoadingCard {
-    height: 300px;
+    height: 212px;
     background: lightgrey;
-    width: 300px;
+    width: 376px;
   }
 }
 
