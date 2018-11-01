@@ -102,9 +102,9 @@ header {
     filter: drop-shadow(0 6px 12px rgba(0, 0, 0, .16));
     position: absolute;
     z-index: -1;
-    transition-property: width transform;
-    transition-duration: .7s;
-    transition-timing-function: ease-in-out;
+    xtransition-property: width transform;
+    xtransition-duration: .7s;
+    xtransition-timing-function: ease-in-out;
   }
 
   #artw {
