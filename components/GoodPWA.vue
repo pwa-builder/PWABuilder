@@ -180,6 +180,8 @@ export default class extends Vue {
       this.highlightSecond = true;
     } else if (!this.statusState.hasNativeFeatures) {
       this.highlightThird = true;
+    } else {
+      this.highlightThird = true;
     }
   }
 
