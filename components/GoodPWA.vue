@@ -2,7 +2,7 @@
  <div id='wrapper'>
 
   <div class="goodBetterBar">
-    <div v-if="statusState" class="choiceCol selectedBox">
+    <div v-bind:class="{selectedBox: highlightFirst}" v-if="statusState" class="choiceCol">
       <div class="rateContainer"><img id="good" class="rateBoxes" src="~/assets/images/good.svg"></div>
       <h3>{{ $t('home.quality_low_title') }}</h3>
       <ul>
@@ -35,7 +35,7 @@
 
      </div>
 
-    <div v-if="statusState" class="choiceCol">
+    <div v-bind:class="{selectedBox: highlightSecond}" v-if="statusState" class="choiceCol">
       <div class="rateContainer"><img id="better" class="rateBoxes" src="~/assets/images/better.svg"></div>
       <h3>{{ $t('home.quality_mid_title') }}</h3>
       <ul>
@@ -59,7 +59,7 @@
       </ul>
     </div>
 
-    <div v-if="statusState" class="choiceCol">
+    <div v-bind:class="{selectedBox: highlightThird}" v-if="statusState" class="choiceCol">
       <div class="rateContainer"><img id="best" class="rateBoxes" src="~/assets/images/best.svg"></div>
       <h3>{{ $t('home.quality_high_title') }}</h3>
       <ul>
@@ -79,48 +79,61 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Component from 'nuxt-class-component';
-import { Prop } from 'vue-property-decorator';
-import { State, namespace } from 'vuex-class';
+import Vue from "vue";
+import Component from "nuxt-class-component";
+import { Prop } from "vue-property-decorator";
+import { State, namespace } from "vuex-class";
 
-import * as generator from '~/store/modules/generator';
+import * as generator from "~/store/modules/generator";
 
 const GeneratorState = namespace(generator.name, State);
 
 @Component({})
 export default class extends Vue {
-  @Prop({ default: true }) isHttps: boolean;
+  @Prop({ default: true })
+  isHttps: boolean;
   // @Prop({}) hasManifest: boolean;
-  @Prop({}) hasWorker: boolean;
+  @Prop({})
+  hasWorker: boolean;
   // @Prop({}) hasBetterManifest: boolean;
-  @Prop({}) hasBetterWorker: boolean;
+  @Prop({})
+  hasBetterWorker: boolean;
   // @Prop({}) hasBestManifest: boolean;
-  @Prop({}) hasBestWorker: boolean;
-  @Prop({}) hasNativeFeatures: boolean;
-  @Prop({}) isResponsive: boolean;
-  @Prop({}) allGood: boolean;
-  @Prop({}) allGoodWithText: boolean;
+  @Prop({})
+  hasBestWorker: boolean;
+  @Prop({})
+  hasNativeFeatures: boolean;
+  @Prop({})
+  isResponsive: boolean;
+  @Prop({})
+  allGood: boolean;
+  @Prop({})
+  allGoodWithText: boolean;
 
-  @GeneratorState manifest: generator.Manifest;
+  @GeneratorState
+  manifest: generator.Manifest;
 
   statusState: any = null;
   hasManifest = false;
   hasBetterManifest = false;
   hasBestManifest = false;
 
+  highlightFirst = false;
+  highlightSecond = false;
+  highlightThird = false;
+
   public mounted() {
-    console.log('mounted');
+    console.log("mounted");
 
     this.analyzeManifest(this.manifest);
 
     // trying to grab the previous saved state
     // this will be null if not found
-    const savedStatus = sessionStorage.getItem('pwaStatus');
+    const savedStatus = sessionStorage.getItem("pwaStatus");
 
     // lets set our starting state based on the props we
     // just received
-    const currentStatus = { 
+    const currentStatus = {
       isHttps: this.isHttps,
       hasManifest: this.hasManifest,
       hasWorker: this.hasWorker,
@@ -137,20 +150,38 @@ export default class extends Vue {
       // if we have saved state lets merge that
       // and our current state based off our current props
       // and finally save it and set it as the state
-      sessionStorage.setItem('pwaStatus', JSON.stringify({...currentStatus, ...JSON.parse(savedStatus)}));
-      this.statusState = {...currentStatus, ...JSON.parse(savedStatus)};
+      sessionStorage.setItem(
+        "pwaStatus",
+        JSON.stringify({ ...currentStatus, ...JSON.parse(savedStatus) })
+      );
+      this.statusState = { ...currentStatus, ...JSON.parse(savedStatus) };
     } else {
       // if we dont have any saved state
       // lets save our current state and then just display it
-      localStorage.setItem('pwaStatus', JSON.stringify(currentStatus));
+      localStorage.setItem("pwaStatus", JSON.stringify(currentStatus));
       this.statusState = currentStatus;
+    }
+
+    if (
+      !this.statusState.isHttps ||
+      !this.statusState.hasManifest ||
+      !this.statusState.hasWorker
+    ) {
+      this.highlightFirst = true;
+    } else if (
+      !this.statusState.hasBetterManifest ||
+      !this.statusState.hasBetterWorker
+    ) {
+      this.highlightSecond = true;
+    } else if (!this.statusState.hasNativeFeatures) {
+      this.highlightThird = true;
     }
   }
 
-    private analyzeManifest(manifest) {
+  private analyzeManifest(manifest) {
     // we already know we have a manifest by this point
     this.hasManifest = true;
-    console.log('analyzing', manifest);
+    console.log("analyzing", manifest);
 
     // does the manifest have icons?
     if (manifest && manifest.icons && manifest.icons.length > 0) {
@@ -159,8 +190,8 @@ export default class extends Vue {
   }
 
   public reset() {
-    sessionStorage.removeItem('pwaStatus');
-    const currentStatus = { 
+    sessionStorage.removeItem("pwaStatus");
+    const currentStatus = {
       isHttps: this.isHttps,
       hasManifest: this.hasManifest,
       hasWorker: this.hasWorker,
@@ -179,7 +210,7 @@ export default class extends Vue {
 
 <style lang="scss" scoped>
 /* stylelint-disable */
-@import '~assets/scss/base/variables';
+@import "~assets/scss/base/variables";
 
 .publish {
   display: none;
@@ -196,7 +227,7 @@ export default class extends Vue {
   width: 154px;
 }
 
-.rateContainer{
+.rateContainer {
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -222,13 +253,13 @@ export default class extends Vue {
   height: 811px;
 
   li {
-    font-family: 'Bungee', cursive;
+    font-family: "Bungee", cursive;
     font-size: 16px;
     line-height: 26px;
     margin: 0;
     margin-bottom: 10px;
     text-align: left;
-    background-image: url('~/assets/images/gbbNotChecked.svg');
+    background-image: url("~/assets/images/gbbNotChecked.svg");
     background-size: 24px 24px;
     background-repeat: no-repeat;
     list-style: none;
@@ -245,7 +276,7 @@ export default class extends Vue {
 
     a {
       color: $color-brand-quintary;
-      background-image: url('~/assets/images/goButton.svg');
+      background-image: url("~/assets/images/goButton.svg");
       background-size: 240px 41px;
       background-repeat: no-repeat;
       display: block;
@@ -255,39 +286,36 @@ export default class extends Vue {
       margin-top: 10px;
     }
   }
-
 }
 
+.selectedBox {
+  background-image: url("~/assets/images/slectedBox.svg");
+  background-repeat: no-repeat;
+  background-size: 345px;
+}
+
+.publish {
+  display: inline-block;
+}
+.homeGood {
   .selectedBox {
-    background-image: url('~/assets/images/slectedBox.svg');
-    background-repeat: no-repeat;
-    background-size: 345px;
+    background-image: none;
+  }
+
+  .paramText {
+    display: none;
   }
 
   .publish {
-    display: inline-block;
-
+    display: none;
   }
-  .homeGood {
-
-    .selectedBox {
-    background-image: none;
-    }
-    
-    .paramText {
-      display: none;
-    }
-
-    .publish {
-      display: none;
-    }
-  }
+}
 
 #goodPWAHeaderBlock {
   width: 472px;
 }
 
 .choiceCol li.good {
-background-image: url('~/assets/images/gbbChecked.svg');
+  background-image: url("~/assets/images/gbbChecked.svg");
 }
 </style>
