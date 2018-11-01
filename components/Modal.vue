@@ -116,7 +116,7 @@ export default class extends Vue {
   align-items: flex-start;
   background: rgba($color-brand-quartary, .25);
   display: flex;
-  // height: 100%;
+   height: 150%; /*this is a hack, we should put modal at lower level */
   justify-content: center;
   left: 0;
   padding: 32px 0;

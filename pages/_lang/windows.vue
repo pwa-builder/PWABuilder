@@ -76,25 +76,6 @@
             </div>
           </div>
         </div>
-          <!-- <div class="tab_container" >
-              <input id="tab1" type="radio" name="tabs" class="tab_input" checked>
-              <label for="tab1" class="tab_label"><i class="fa fa-code"></i><span> Usage</span></label>
-
-              <input id="tab2" type="radio" name="tabs" class="tab_input">
-              <label for="tab2" class="tab_label"><i class="fa fa-file-alt"></i><span> Code</span></label>
-
-              <section id="content1" class="tab-content tab_section">
-                <br/>
-                <div class="pure-g">
-                  <div class="generate-code pure-u-1 form_container">
-
-                  </div>
-                </div>
-              </section>
-              <section id="content2" class="tab-content tab_section">
-                <!-- <div class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" v-on:click="download()">{{ $t("windows.download_sample") }}</div> -->
-              <!-- /section>
-            </div> -->
 
             <button slot='extraButton' id='addBundleButton' class="pwa-button pwa-button--simple pwa-button--brand" v-on:click="addBundle()">{{ $t("windows.add") }}</button>
         </div>
