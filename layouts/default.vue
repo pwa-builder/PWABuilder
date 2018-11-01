@@ -36,7 +36,8 @@
     }
 
     private close() {
-      console.log('close pressed');
+      this.seen = false;
+      localStorage.setItem('PWABuilderGDPR', JSON.stringify(true));
     }
   }
 </script>
