@@ -23,7 +23,7 @@
       this.handleUrl();
     }
 
-    handleUrl() {
+    private handleUrl() {
       this.$router.beforeEach((to, from, next) => {
         const body = document.querySelector('body');
 
@@ -33,6 +33,10 @@
         }
         next();
       });
+    }
+
+    private close() {
+      console.log('close pressed');
     }
   }
 </script>
@@ -68,17 +72,38 @@ header {
     background: #F2F2F2;
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    font-size: 14px;
+    justify-content: space-between;
     z-index: 9999;
+    position: absolute;
+    left: 0;
+    right: 0;
+    padding-left: 24px;
+    padding-right: 24px;
+
+    div {
+      display: flex;
+      justify-content: space-between;
+      width: 8em;
+    }
+
+    #closeButton {
+      border: none;
+      background: none;
+
+      i {
+        font-style: normal;
+      }
+    }
   }
 
   .bgArt {
     filter: drop-shadow(0 6px 12px rgba(0, 0, 0, .16));
     position: absolute;
     z-index: -1;
-    xtransition-property: width transform;
-    xtransition-duration: .7s;
-    xtransition-timing-function: ease-in-out;
+    transition-property: width transform;
+    transition-duration: .7s;
+    transition-timing-function: ease-in-out;
   }
 
   #artw {
@@ -300,7 +325,14 @@ header {
 
     <div v-if="seen" id="gdprDiv">
       <p>This site uses cookies for analytics, personalized content and ads. By continuing to browse this site, you agree to this use.</p>
-      <a href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule">Learn More</a>
+
+      <div>
+        <a href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule">Learn More</a>
+
+        <button id="closeButton" @click="close()">
+          <i aria-hidden="true">✕</i>
+        </button>
+      </div>
     </div>
 
     <Toolbar />
