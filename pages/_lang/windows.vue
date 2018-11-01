@@ -347,9 +347,9 @@ export default class extends Vue {
   .featureImage {
     // width: 100%;
     display: inline-block;
-    object-fit: contain;
+    object-fit: cover;
     width: 100%;
-    height: auto;
+    height: 212px;
   }
 
   .l-generator-description {
