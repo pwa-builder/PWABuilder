@@ -18,6 +18,10 @@
             {{ $t('generator.start') }}
             <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm"/>
           </button>
+
+          <div v-if="error" id='errorBox'>
+            {{error}}
+          </div>
         </form>
       </div>
     </div>
@@ -138,7 +142,13 @@ export default class extends Vue {
         name: 'gettingStarted'
       });
     } catch (e) {
-      this.error = e.message;
+      if (e.message) {
+        this.error = e.message;
+      } else {
+        // No error message
+        // so just show error directly
+        this.error = e;
+      }
     }
   }
 }
@@ -163,6 +173,12 @@ Vue.prototype.$awa = function(config) {
   .mastHead {
     margin-top: 3em;
     margin-bottom: 9.2em;
+  }
+
+  #errorBox {
+    color: red;
+    position: absolute;
+    margin-top: 5px;
   }
 
   .proTag {
