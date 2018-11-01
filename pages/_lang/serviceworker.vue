@@ -143,9 +143,9 @@ export default class extends Vue {
   }
 
   public analyze(): void {
-    if (this.serviceworker$ === 4 || this.serviceworker$ === 5) {
+    if (this.serviceworker$ && this.serviceworker$ >= 4) {
       this.betterSW = true;
-    } else {
+    } else if (this.serviceworker$  && this.serviceworker$ < 4) {
       // default to true for now
       this.hasSW = true;
     }
