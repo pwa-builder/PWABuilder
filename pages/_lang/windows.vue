@@ -34,13 +34,8 @@
           </div>
 
           <div id='buttonsBlock' v-show="samples.length > 0">
-            <div class="pure-u-1 pure-u-md-1-2 download">
-              <button class="pwa-button pwa-button--simple" 
-                      v-on:click="download(true)"
-                      :disabled="selectedSamples.length == 0">{{ $t("windows.download_bundle") }}</button>
-            </div>
 
-            <div class="l-generator-wrapper pure-u-2-5">       
+            <div class="l-generator-wrapper">       
               <a class="work-button"  @click="onClickShowGBB()" href="#">{{ $t("general.next_page") }}</a>
             </div>
           </div>
