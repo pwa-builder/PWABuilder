@@ -480,6 +480,12 @@ export default class extends Vue {
   color: #00CCEE;
 }
 
+.code-bottom {
+  .code_viewer {
+    height: 38em;
+  }
+}
+
 /* Media query */
 @media only screen and (max-width: 930px) {
   .tab_label span {
