@@ -6,17 +6,27 @@
         <p>{{ $t('windows.summary') }}</p>              
       </div>
 
-        <div class="l-generator" v-show="samples.length == 0">
+      <!--v-show="samples.length == 0"-->
+
+        <div class="l-generator" >
           <p>{{ $t('general.loading') }}</p>
 
           <div id="loadingCards">
-            <div class="skeletonLoadingCard"></div>
-            <div class="skeletonLoadingCard"></div>
-            <div class="skeletonLoadingCard"></div>
+            <div class="skeletonLoadingCard">
+              <Loading active/>
+            </div>
+            <div class="skeletonLoadingCard">
+              <Loading active/>
+            </div>
+            <div class="skeletonLoadingCard">
+              <Loading active/>
+            </div>
           </div>
         </div>
 
-        <div ref='mainDiv' class="l-generator-semipadded mainDiv" v-show="samples != null">
+        <!--v-show="samples != null"-->
+
+       <div ref='mainDiv' class="l-generator-semipadded mainDiv" v-show="samples == 2">
 
           <div class="generator-section feature-layout">
             <div class="l-generator-field checkbox feature-container" v-for="sample in samples" :key="sample.id">
@@ -94,6 +104,7 @@ import CodeViewer from '~/components/CodeViewer.vue';
 import WindowsMenu from '~/components/WindowsMenu.vue';
 import GoodPWA from '~/components/GoodPWA.vue';
 import Modal from '~/components/Modal.vue';
+import Loading from '~/components/Loading.vue';
 
 import * as windowsStore from '~/store/modules/windows';
 
@@ -105,7 +116,8 @@ const WindowsAction = namespace(windowsStore.name, Action);
     CodeViewer,
     WindowsMenu,
     GoodPWA,
-    Modal
+    Modal,
+    Loading
   }
 })
 
@@ -309,6 +321,9 @@ export default class extends Vue {
     height: 212px;
     background: lightgrey;
     width: 376px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 
