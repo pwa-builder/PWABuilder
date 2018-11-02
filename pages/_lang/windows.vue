@@ -6,9 +6,7 @@
         <p>{{ $t('windows.summary') }}</p>              
       </div>
 
-      <!--v-show="samples.length == 0"-->
-
-        <div class="l-generator" >
+        <div class="l-generator" v-show="samples.length == 0">
           <p>{{ $t('general.loading') }}</p>
 
           <div id="loadingCards">
@@ -24,9 +22,7 @@
           </div>
         </div>
 
-        <!--v-show="samples != null"-->
-
-       <div ref='mainDiv' class="l-generator-semipadded mainDiv" v-show="samples == 2">
+       <div ref='mainDiv' class="l-generator-semipadded mainDiv" v-show="samples != null">
 
           <div class="generator-section feature-layout">
             <div class="l-generator-field checkbox feature-container" v-for="sample in samples" :key="sample.id">
