@@ -22,7 +22,7 @@
           </div>
         </div>
 
-       <div ref='mainDiv' class="l-generator-semipadded mainDiv" v-show="samples != null">
+       <div ref='mainDiv' class="l-generator mainDiv" v-show="samples != null">
 
           <div class="generator-section feature-layout">
             <div class="l-generator-field checkbox feature-container" v-for="sample in samples" :key="sample.id">
