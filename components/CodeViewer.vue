@@ -161,7 +161,7 @@ export default class extends Vue {
   }
 
   #copyButton {
-    background: $color-brand;
+    background: $color-brand-primary;
     color: white;
     border: none;
     border-radius: .5rem;
