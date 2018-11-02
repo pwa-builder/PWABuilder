@@ -114,9 +114,9 @@ export default class extends Vue {
 @import "~assets/scss/base/variables";
 .modal {
   align-items: flex-start;
-  background: rgba($color-brand-quartary, .25);
+  xbackground: rgba($color-brand-quartary, .25);
   display: flex;
-   height: 150%; /*this is a hack, we should put modal at lower level */
+   xheight: 150%; /*this is a hack, we should put modal at lower level */
   justify-content: center;
   left: 0;
   padding: 32px 0;
@@ -124,6 +124,7 @@ export default class extends Vue {
   top: 0;
   width: 100%;
   z-index: 100;
+  xbottom: 0;
 
   &-box {
     filter: blur(0px);

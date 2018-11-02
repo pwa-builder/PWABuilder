@@ -322,6 +322,7 @@ header {
   <img id="logoLarge" class="bgArt" src="~/assets/images/PWABuilderLogo.svg">  
   <img id="decorStack" class="bgArt" src="~/assets/images/StackedCube.svg">  
   <img id="bigWhite" class="bgArt" src="~/assets/images/white.svg">
+  <div id="modal-color" class="modal-color"></div>
   <h1 class="logoText">PWA Builder</h1>
 
     <div v-if="seen" id="gdprDiv">

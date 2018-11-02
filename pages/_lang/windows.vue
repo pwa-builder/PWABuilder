@@ -1,6 +1,6 @@
 <template>
   <section>
-      <div ref='mainDiv' class="l-generator-step">
+      <div  class="l-generator-step">
       <div class="mastHead">
           <h2>{{ $t('windows.title') }}</h2>
         <p>{{ $t('windows.summary') }}</p>              
@@ -16,7 +16,7 @@
           </div>
         </div>
 
-        <div class="l-generator" v-show="samples != null">
+        <div ref='mainDiv' class="l-generator-semipadded mainDiv" v-show="samples != null">
 
           <div class="generator-section feature-layout">
             <div class="l-generator-field checkbox feature-container" v-for="sample in samples" :key="sample.id">
@@ -76,8 +76,11 @@
         </div>
       </Modal>
 
-      <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" title="Next" ref="nextStepModal">
+      <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" :showButtons="false" title="" ref="nextStepModal">
         <GoodPWA :hasNativeFeatures="hasNative"/>
+        <a class="cancelText" href="#" @click="onClickHideGBB(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
+        {{$t("modal.goBack")}}
+      </a>
       </Modal>
   </section>
 </template>
@@ -122,6 +125,15 @@ export default class extends Vue {
   async created() {
     await this.getSamples();
     console.log(this.samples);
+  }
+
+  public onClickHideGBB(): void {
+    (this.$refs.nextStepModal as Modal).hide();
+
+  }
+
+  async destroyed() {
+    (this.$root.$el.closest('body') as HTMLBodyElement).classList.remove('modal-screen');
   }
   
   public onClickShowGBB(): void {
@@ -177,7 +189,7 @@ export default class extends Vue {
     }
 
     this.hasNative = true;
-
+     this.modalClosed();  
     (this.$refs.addFeatureModal as Modal).hide();
   }
 
@@ -246,11 +258,13 @@ export default class extends Vue {
   }
 
   public modalOpened() {
-    (this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(25px)';
+    window.scrollTo(0,0);
+    (this.$root.$el.closest('body') as HTMLBodyElement).classList.add('modal-screen'); 
+    
   }
 
   public modalClosed() {
-    (this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(0px)';
+    (this.$root.$el.closest('body') as HTMLBodyElement).classList.remove('modal-screen');    
   }
 }
 </script>

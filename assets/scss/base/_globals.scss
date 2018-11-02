@@ -66,6 +66,9 @@ h4 {
 
 
 /*modals */
+.modal-color{
+  display: none;
+}
 
 .modal-screen {
 
@@ -82,6 +85,20 @@ h4 {
   }
   .done-button {
     filter: blur(30px);
+  }
+
+  .modal-color {
+    display: flex;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba($color-brand-quartary, .25);
+    z-index: 100;
+    left:0;
+    right: 0;
+    
   }
 }
 
@@ -108,3 +125,4 @@ h4 {
     }
   }
 }
+
