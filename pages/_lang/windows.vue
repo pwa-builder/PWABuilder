@@ -1,23 +1,36 @@
 <template>
   <section>
-      <div ref='mainDiv' class="l-generator-step">
+      <div  class="l-generator-step">
       <div class="mastHead">
-          <h2 class="l-generator-subtitle">{{ $t('windows.title') }}</h2>
-        <p class="l-generator-subtitle">{{ $t('windows.summary') }}</p>              
+          <h2>{{ $t('windows.title') }}</h2>
+        <p>{{ $t('windows.summary') }}</p>              
       </div>
 
-        <div class="l-generator-semipadded" v-show="samples.length == 0">
+        <div class="l-generator" v-show="samples.length == 0">
           <p>{{ $t('general.loading') }}</p>
+
+          <div id="loadingCards">
+            <div class="skeletonLoadingCard">
+              <Loading active/>
+            </div>
+            <div class="skeletonLoadingCard">
+              <Loading active/>
+            </div>
+            <div class="skeletonLoadingCard">
+              <Loading active/>
+            </div>
+          </div>
         </div>
 
-        <div class="l-generator-semipadded" v-show="samples != null">
+       <div ref='mainDiv' class="l-generator mainDiv" v-show="samples != null">
 
           <div class="generator-section feature-layout">
-            <div class="l-generator-field l-generator-field--padded checkbox feature-container" v-for="sample in samples" :key="sample.id">
+            <div class="l-generator-field checkbox feature-container" v-for="sample in samples" :key="sample.id">
 
               <input type="checkbox" v-model="selectedSamples" :value="sample" @click="checkRemoveSample(sample)"/>
               <label class="l-generator-label">
-                <img src ="~assets/images/placeHolder.png" class="featureImage" />
+                <img  v-if="!sample.image.includes('logo_small')" :src="sample.image" class="featureImage" />
+                <img  v-if="sample.image.includes('logo_small')" src="~/assets/images/PWABuilderLogo.svg" class="featureImage"  />
                 <input type="button" :value="sample" @click="onClickSample(sample)"> 
                 <h4>{{sample.title}}</h4>
               </label>
@@ -26,12 +39,11 @@
 
           </div>
 
-          <div class="pure-u-1 pure-u-md-1-2 download">
-            <div class="pwa-button pwa-button--simple" v-on:click="download(true)">{{ $t("windows.download_bundle") }}</div>
-          </div>
+          <div id='buttonsBlock' v-show="samples.length > 0">
 
-          <div class="l-generator-wrapper pure-u-2-5">       
-            <a class="work-button"  @click="onClickShowGBB()" href="#">{{ $t("general.next_page") }}</a>
+            <div class="l-generator-wrapper">       
+              <a class="work-button"  @click="onClickShowGBB()" href="#">{{ $t("general.next_page") }}</a>
+            </div>
           </div>
 
           <p class="download-text">{{ $t('general.github_source') }}
@@ -40,47 +52,41 @@
         </div>
       </div>
 
-      <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" title="Add Feature" ref="addFeatureModal">
-        <div class="pure-u-1 pure-u-md-2-3">
-          <div class="tab_container" >
-              <input id="tab1" type="radio" name="tabs" class="tab_input" checked>
-              <label for="tab1" class="tab_label"><i class="fa fa-code"></i><span> Usage</span></label>
+      <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" :showSubmitButton="false" title="Add Feature" ref="addFeatureModal">
+        <div class="feature-viewer">
+          <div class="feature-content">
 
-              <input id="tab2" type="radio" name="tabs" class="tab_input">
-              <label for="tab2" class="tab_label"><i class="fa fa-file-alt"></i><span> Code</span></label>
+            <div class="side_panel">
+              <div class="l-generator-form properties" v-if="sample">
+                <h1>Required Properties</h1>
 
-              <section id="content1" class="tab-content tab_section">
-                <br/>
-                <div class="pure-g">
-                  <div class="generate-code pure-u-1 form_container">
-                    <CodeViewer :code="loadCode()" v-on:editorValue="updateCode($event)"  v-if="sample" :title="$t('windows.codeTitle')" />
-                    <div class="side_panel">
-                      <div class="l-generator-form properties" v-if="sample">
-                        <div class="l-generator-field" v-for="prop in sample.parms" :key="prop.id">
-                          <div class="l-generator-label">{{prop.name}} </div>
-                          <div class="l-generator-input value-table" :id="prop.id">{{prop.description}}</div>
-                        </div>
-                      </div>
-                      <div class="pure-u-1 pure-u-md-1-2">
-                        <div class="pwa-button pwa-button--simple" v-on:click="addBundle()">{{ $t("windows.add") }}</div>
-                      </div>
-                      <div class="pure-u-1 pure-u-md-1-2 download">
-                        <div class="pwa-button pwa-button--simple" v-on:click="download()">{{ $t("windows.download_sample") }}</div>
-                      </div>
-                    </div>
-                  </div>
+                <div class="l-generator-field" v-for="prop in sample.parms" :key="prop.id">
+                  <h3 class="l-generator-label">{{prop.name}}</h3>
+                  <p class='propDescription' :id="prop.id">{{prop.description}}</p>
                 </div>
-              </section>
-              <section id="content2" class="tab-content tab_section">
-                <CodeViewer :code="sample.source" v-if="sample" :title="$t('windows.sourceTitle')"/>
-                <div class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" v-on:click="download()">{{ $t("windows.download_sample") }}</div>
-              </section>
+              </div>
+
             </div>
+          </div>
+          <div class="code-samples">
+            <div class="code-top">
+              <CodeViewer codeType="javascript" :size="viewerSize" :code="loadCode()" v-on:editorValue="updateCode($event)"  v-if="sample" :title="$t('windows.codeTitle')" ></CodeViewer>
+            </div>
+            <div class="code-bottom">
+              <CodeViewer codeType="javascript" :size="viewerSize" :code="sample.source" v-if="sample"  :title="$t('windows.sourceTitle')"/>
+            </div>
+          </div>
+        </div>
+
+            <button slot='extraButton' id='addBundleButton' class="pwa-button pwa-button--simple pwa-button--brand" v-on:click="addBundle()">{{ $t("windows.add") }}</button>
         </div>
       </Modal>
 
-      <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" title="Next" ref="nextStepModal">
+      <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" :showButtons="false" title="" ref="nextStepModal">
         <GoodPWA :hasNativeFeatures="hasNative"/>
+        <a class="cancelText" href="#" @click="onClickHideGBB(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
+        {{$t("modal.goBack")}}
+      </a>
       </Modal>
   </section>
 </template>
@@ -94,6 +100,7 @@ import CodeViewer from '~/components/CodeViewer.vue';
 import WindowsMenu from '~/components/WindowsMenu.vue';
 import GoodPWA from '~/components/GoodPWA.vue';
 import Modal from '~/components/Modal.vue';
+import Loading from '~/components/Loading.vue';
 
 import * as windowsStore from '~/store/modules/windows';
 
@@ -105,14 +112,16 @@ const WindowsAction = namespace(windowsStore.name, Action);
     CodeViewer,
     WindowsMenu,
     GoodPWA,
-    Modal
+    Modal,
+    Loading
   }
 })
 
 export default class extends Vue {
   error: any;
-  viewerSize = '30rem';
   hasNative = false;
+  public viewerSize = '5rem';
+  public viewerSizeBottom = '55rem';
 
   selectedSamples: windowsStore.Sample[] = [];
   @WindowsState sample: windowsStore.Sample;
@@ -123,6 +132,16 @@ export default class extends Vue {
 
   async created() {
     await this.getSamples();
+    console.log(this.samples);
+  }
+
+  public onClickHideGBB(): void {
+    (this.$refs.nextStepModal as Modal).hide();
+
+  }
+
+  async destroyed() {
+    (this.$root.$el.closest('body') as HTMLBodyElement).classList.remove('modal-screen');
   }
   
   public onClickShowGBB(): void {
@@ -178,7 +197,7 @@ export default class extends Vue {
     }
 
     this.hasNative = true;
-
+     this.modalClosed();  
     (this.$refs.addFeatureModal as Modal).hide();
   }
 
@@ -247,11 +266,13 @@ export default class extends Vue {
   }
 
   public modalOpened() {
-    (this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(25px)';
+    window.scrollTo(0,0);
+    (this.$root.$el.closest('body') as HTMLBodyElement).classList.add('modal-screen'); 
+    
   }
 
   public modalClosed() {
-    (this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(0px)';
+    (this.$root.$el.closest('body') as HTMLBodyElement).classList.remove('modal-screen');    
   }
 }
 </script>
@@ -260,8 +281,68 @@ export default class extends Vue {
 /* stylelint-disable */
 @import '~assets/scss/base/variables';
 
+.code-samples {
+
+  .code_viewer {
+    min-height:300px;
+    max-height: 700px;
+    margin-bottom: 100px;
+    margin-right: 68px;
+  }
+  .bottomViewer {
+      min-height:  700px;
+      max-height: 900px;
+    }
+}
+
+#buttonsBlock {
+  display: flex;
+  justify-content: center;
+}
+
+#addBundleButton {
+  margin-right: 15px;
+}
+
+.propDescription {
+  color: initial;
+}
+
+#loadingCards {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+
+  .skeletonLoadingCard {
+    height: 212px;
+    background: lightgrey;
+    width: 376px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.feature-viewer {
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+  width: 100%;
+  padding: 4em;
+}
+
+.code-samples {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.feature-content {
+  flex: 1;
+}
+
 .feature-container {
-  width: 300px;
+  width: 376px;
   margin: 24px;
 
   input[type='button'] {
@@ -284,8 +365,11 @@ export default class extends Vue {
   }
   
   .featureImage {
-    width: 100%;
+    // width: 100%;
     display: inline-block;
+    object-fit: cover;
+    width: 100%;
+    height: 212px;
   }
 
   .l-generator-description {
@@ -311,17 +395,6 @@ export default class extends Vue {
   display: flex;
   width: 100%;
   flex-flow: wrap;
-}
-.mastHead {
-  margin-bottom: 7em;
-  margin-left: 68px;
-  width: 568px;
-  p {
-    font-size: 22px;
-    line-height: 32px;
-    margin-top: 6px;
-
-  }
 }
 
 
@@ -405,6 +478,12 @@ export default class extends Vue {
 
 .tab_container [id^="tab"]:checked + label .fa {
   color: #00CCEE;
+}
+
+.code-bottom {
+  .code_viewer {
+    height: 38em;
+  }
 }
 
 /* Media query */

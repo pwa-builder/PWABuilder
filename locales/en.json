@@ -159,7 +159,8 @@
   },
   "modal": {
     "submit": "Submit",
-    "cancel": "I'm not done yet, take me back to editing"
+    "goBack": "I'm not done yet, take me back to editing",
+    "cancel": "Cancel"
   },
   "code_viewer": {
     "copy": "Copy",

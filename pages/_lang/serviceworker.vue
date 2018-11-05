@@ -1,9 +1,9 @@
 <template>
 <section>
 
-  <div ref='mainDiv' class="l-generator-step mainDiv service-workers">
+  <div ref='mainDiv' class="mainDiv service-workers">
     <div class="mastHead">
-      <h2 class="l-generator-subtitle">{{ $t('serviceworker.title') }}</h2>
+      <h2>{{ $t('serviceworker.title') }}</h2>
       <p>{{ $t('serviceworker.summary') }}</p>
     </div>
     <div class="l-generator-semipadded pure-g">
@@ -47,8 +47,12 @@
   <!--<Modal title="Next" ref="nextStepModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
     <GoodPWA :hasWorker="hasSW"/>
   </Modal>-->
-  <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" title="Next" ref="nextStepModal">
+  <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" title="" ref="nextStepModal">
     <GoodPWA :hasWorker="hasSW" :hasBetterWorker="betterSW"/>
+    <a class="cancelText" href="#" @click="onClickHideGBB(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
+      {{$t("modal.goBack")}}
+    </a>
+
   </Modal>
 
 </section>
@@ -109,10 +113,18 @@ export default class extends Vue {
     this.serviceworker$ = this.serviceworkers[0].id;
     await this.getCode(this.serviceworker$);
   }
+  async destroyed() {
+    (this.$root.$el.closest('body') as HTMLBodyElement).classList.remove('modal-screen');
+  }
 
   public onClickShowGBB(): void {
     (this.$refs.nextStepModal as Modal).show();
     this.analyze();
+  }
+
+   public onClickHideGBB(): void {
+    (this.$refs.nextStepModal as Modal).hide();
+
   }
 
   public async download(): Promise<void> {
@@ -131,9 +143,9 @@ export default class extends Vue {
   }
 
   public analyze(): void {
-    if (this.serviceworker$ === 4 || this.serviceworker$ === 5) {
+    if (this.serviceworker$ && this.serviceworker$ >= 4) {
       this.betterSW = true;
-    } else {
+    } else if (this.serviceworker$  && this.serviceworker$ < 4) {
       // default to true for now
       this.hasSW = true;
     }
@@ -151,11 +163,15 @@ export default class extends Vue {
   }
 
   public modalOpened() {
-    (this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(25px)';
+    //(this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(25px)';
+    (this.$root.$el.closest('body') as HTMLBodyElement).classList.add('modal-screen')
+
   }
 
   public modalClosed() {
-    (this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(0px)';
+    //(this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(0px)';
+    (this.$root.$el.closest('body') as HTMLBodyElement).classList.remove('modal-screen')
+
   }
 }
 </script>
@@ -164,6 +180,12 @@ export default class extends Vue {
 /* stylelint-disable */
 
 @import "~assets/scss/base/variables";
+
+.mastHead {
+  margin-bottom: 12em;
+}
+
+
 
 .serviceworker {
 
@@ -195,15 +217,7 @@ export default class extends Vue {
     }
 }
 
-.mastHead {
-    margin: 0 0 100px 68px;
-    width: 400px;
 
-    p {
-      margin: 4px 0;
-    }
-  
-}
 .service-workers {
 
 

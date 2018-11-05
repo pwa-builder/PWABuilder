@@ -188,7 +188,6 @@
     &--fake {
       cursor: pointer;
       display: inline-block;
-      width: 100%;
     }
 
     &--small {
@@ -284,7 +283,7 @@
   }
 
   &-buttons {
-    margin-top: 2rem;
+    margin-left: 68px;
 
     &--centered {
       padding: 0 0 2rem 0;
@@ -416,6 +415,7 @@
   font-size: 16px;
   border: none;
 }
+
 
 
 

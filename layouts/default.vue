@@ -23,7 +23,7 @@
       this.handleUrl();
     }
 
-    handleUrl() {
+    private handleUrl() {
       this.$router.beforeEach((to, from, next) => {
         const body = document.querySelector('body');
 
@@ -33,6 +33,11 @@
         }
         next();
       });
+    }
+
+    private close() {
+      this.seen = false;
+      localStorage.setItem('PWABuilderGDPR', JSON.stringify(true));
     }
   }
 </script>
@@ -44,7 +49,6 @@
   #baseContainer{
     width: 1280px;
     margin: 0 auto;
-    position: relative;
 
     .container {
       padding-top: 64px;
@@ -69,8 +73,29 @@ header {
     background: #F2F2F2;
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    font-size: 14px;
+    justify-content: space-between;
     z-index: 9999;
+    position: absolute;
+    left: 0;
+    right: 0;
+    padding-left: 24px;
+    padding-right: 24px;
+
+    div {
+      display: flex;
+      justify-content: space-between;
+      width: 8em;
+    }
+
+    #closeButton {
+      border: none;
+      background: none;
+
+      i {
+        font-style: normal;
+      }
+    }
   }
 
   .bgArt {
@@ -114,7 +139,7 @@ header {
 
   body[data-location='gettingStarted']{
     .logoText {
-      left:1160px;
+      transform: translatex(1160px);  
       top: 26px;
     }
 
@@ -149,7 +174,7 @@ header {
 
     body[data-location='generate']{
      .logoText {
-      left:1160px;
+      transform: translatex(1160px);
       top: 26px;
     }
 
@@ -183,7 +208,7 @@ header {
   }
   body[data-location='serviceworker']{
      .logoText {
-      left:1160px;
+      transform: translatex(1160px);      
       top: 26px;
     }
 
@@ -218,7 +243,7 @@ header {
 
   body[data-location='publish']{
       .logoText {
-      left:1160px;
+      transform: translatex(1160px);
       top: 26px;
     }
 
@@ -253,7 +278,7 @@ header {
 
   body[data-location='windows']{
       .logoText {
-      left:1160px;
+      transform: translatex(1160px);
       top: 26px;
     }
 
@@ -285,6 +310,8 @@ header {
       width: 1px;
     }
   }
+
+
 </style>
 
 <template>
@@ -295,11 +322,19 @@ header {
   <img id="logoLarge" class="bgArt" src="~/assets/images/PWABuilderLogo.svg">  
   <img id="decorStack" class="bgArt" src="~/assets/images/StackedCube.svg">  
   <img id="bigWhite" class="bgArt" src="~/assets/images/white.svg">
+  <div id="modal-color" class="modal-color"></div>
   <h1 class="logoText">PWA Builder</h1>
 
     <div v-if="seen" id="gdprDiv">
       <p>This site uses cookies for analytics, personalized content and ads. By continuing to browse this site, you agree to this use.</p>
-      <a href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule">Learn More</a>
+
+      <div>
+        <a href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule">Learn More</a>
+
+        <button id="closeButton" @click="close()">
+          <i aria-hidden="true">✕</i>
+        </button>
+      </div>
     </div>
 
     <Toolbar />
