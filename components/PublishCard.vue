@@ -24,7 +24,7 @@ export default class extends Vue {
 @import '~assets/scss/base/variables';
 
 .card {
-  box-shadow: 0 20px 40px 0 $color-secondary, 0 14px 12px 0 $color-secondary;
+  box-shadow: 0 20px 40px 0 $color-brand-quintary, 0 14px 12px 0 $color-brand-quintary;
   margin: 69px;
 }
 
@@ -32,7 +32,7 @@ export default class extends Vue {
   background: transparent;
   border: #979797 solid 2px;
   border-radius: 2px;
-  color: $color-brand;
+  color: $color-brand-quintary;
   height: 40px;
   width: 110px;
 }

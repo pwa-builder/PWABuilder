@@ -182,12 +182,12 @@ export default class extends Vue {
   }
 
   &-header {
-    background-color: $color-brand;
+    background-color: $color-brand-quintary;
     line-height: 1.5;
     padding: 1.5rem 1.5rem 1.1rem 1.5rem;
 
     &--rounded {
-      background-color: $color-background-brighter;
+      background-color: $color-brand-quintary;
       border-radius: .5rem;
       margin: 0 auto;
       padding: 1rem 1rem;
@@ -202,7 +202,7 @@ export default class extends Vue {
   }
 
   &-title {
-    color: $color-foreground-darker;
+    color: $color-brand-quintary;
     font-family: Bitter;
     font-size: $font-size-l;
   }
@@ -217,12 +217,12 @@ export default class extends Vue {
   }
 
   &-copy {
-    background-color: $color-background-semidark;
+    background-color: $color-brand-quintary;
     border-radius: .5em;
-    box-shadow: 0 2px 0 0 rgba($color-background-darkest, .2);
-    color: $color-foreground-brightest;
+    box-shadow: 0 2px 0 0 rgba($color-brand-quintary, .2);
+    color: $color-brand-quintary;
     font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-    font-size: $font-size-s;
+    font-size: 18px;
     opacity: 0;
     padding: 0 .5em;
     position: absolute;
@@ -236,7 +236,7 @@ export default class extends Vue {
   }
 
   &-content {
-    background-color: $color-background-darker;
+    background-color: $color-brand-quintary;
     margin: 0;
     min-height: 4rem;
     position: relative;

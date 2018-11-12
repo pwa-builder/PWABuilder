@@ -2,7 +2,7 @@
 @import '../mixins/action';
 
 .l-header {
-  background-color: $color-background-brighter;
+  background-color: $color-brand-quintary;
   padding: 1rem 2vw;
 
   &-left {
@@ -48,6 +48,6 @@
   }
 
   &-link {
-    @include action-link ($color-foreground-darker, $color-brand, .2rem);
+    @include action-link ($color-brand-quintary, $color-brand-quintary, .2rem);
   }
 }
