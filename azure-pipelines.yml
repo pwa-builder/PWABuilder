@@ -1,0 +1,13 @@
+jobs:
+- job: Build
+  pool:
+    vmImage: 'Ubuntu 16.04'
+  steps:
+  - bash: docker build --target $(targetName) -t manifoldsite . 
+    displayName: 'Build docker image'
+  - bash: docker tag manifoldsite $(dockerId).azurecr.io/latest:$(Build.SourceVersion)
+    displayName: 'Re-tag docker image'
+  - bash: docker login -u $(dockerId) -p $(dockerPassword) $(dockerid).azurecr.io
+    displayName: 'Authenticate ACR'
+  - bash: docker push $(dockerId).azurecr.io/latest:$(Build.SourceVersion)
+    displayName: 'Push docker image' 
