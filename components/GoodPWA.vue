@@ -79,12 +79,12 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Component from "nuxt-class-component";
-import { Prop } from "vue-property-decorator";
-import { State, namespace } from "vuex-class";
+import Vue from 'vue';
+import Component from 'nuxt-class-component';
+import { Prop } from 'vue-property-decorator';
+import { State, namespace } from 'vuex-class';
 
-import * as generator from "~/store/modules/generator";
+import * as generator from '~/store/modules/generator';
 import * as serviceworker from '~/store/modules/serviceworker';
 
 const GeneratorState = namespace(generator.name, State);
@@ -125,7 +125,6 @@ export default class extends Vue {
   highlightThird = false;
 
   public mounted() {
-    console.log("mounted", this.serviceworker);
     this.analyzeManifest(this.manifest);
     this.analyzeServiceWorker(this.serviceworker);
     this.handleState();
@@ -134,7 +133,7 @@ export default class extends Vue {
   private handleState() {
         // trying to grab the previous saved state
     // this will be null if not found
-    const savedStatus = sessionStorage.getItem("pwaStatus");
+    const savedStatus = sessionStorage.getItem('pwaStatus');
 
     // lets set our starting state based on the props we
     // just received
@@ -156,14 +155,14 @@ export default class extends Vue {
       // and our current state based off our current props
       // and finally save it and set it as the state
       sessionStorage.setItem(
-        "pwaStatus",
+        'pwaStatus',
         JSON.stringify({ ...currentStatus, ...JSON.parse(savedStatus) })
       );
       this.statusState = { ...currentStatus, ...JSON.parse(savedStatus) };
     } else {
       // if we dont have any saved state
       // lets save our current state and then just display it
-      localStorage.setItem("pwaStatus", JSON.stringify(currentStatus));
+      localStorage.setItem('pwaStatus', JSON.stringify(currentStatus));
       this.statusState = currentStatus;
     }
 
@@ -188,7 +187,7 @@ export default class extends Vue {
   private analyzeManifest(manifest) {
     // we already know we have a manifest by this point
     this.hasManifest = true;
-    console.log("analyzing", manifest);
+    console.log('analyzing', manifest);
 
     // does the manifest have icons?
     if (manifest && manifest.icons && manifest.icons.length > 0) {
@@ -206,7 +205,7 @@ export default class extends Vue {
   }
 
   public reset() {
-    sessionStorage.removeItem("pwaStatus");
+    sessionStorage.removeItem('pwaStatus');
     const currentStatus = {
       isHttps: this.isHttps,
       hasManifest: this.hasManifest,

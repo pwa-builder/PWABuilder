@@ -164,13 +164,13 @@ export default class extends Vue {
 
   public modalOpened() {
     //(this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(25px)';
-    (this.$root.$el.closest('body') as HTMLBodyElement).classList.add('modal-screen')
+    (this.$root.$el.closest('body') as HTMLBodyElement).classList.add('modal-screen');
 
   }
 
   public modalClosed() {
     //(this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(0px)';
-    (this.$root.$el.closest('body') as HTMLBodyElement).classList.remove('modal-screen')
+    (this.$root.$el.closest('body') as HTMLBodyElement).classList.remove('modal-screen');
 
   }
 }
