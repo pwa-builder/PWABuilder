@@ -98,217 +98,24 @@ header {
     }
   }
 
-  .bgArt {
-    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, .16));
-    position: absolute;
-    z-index: -1;
-    xtransition-property: width transform;
-    xtransition-duration: .7s;
-    xtransition-timing-function: ease-in-out;
-  }
-
-  #artw {
-    transform: translate(540.87px, -33.78px);
-    width: 1705px;
-  }
- 
-  #artb {
-    transform: translate(-1502.98px, -324.99px);
-    width: 2539.28px;
-  }
-  
-  #artlb {
-    transform: translate(0, 512px);
-    width: 507px;
-  }
-
-  #logoLarge {
-    transform: translate(706.2px, 185.6px);
-    width: 496.69px;
-  }
-
-  #decorStack {
-    transform: translate(1134px, 610px);
-    width: 128px;
-  }
-
-  #bigWhite {
-    transform: translate(-1655px, 1248px);
-    width: 3309px;
-  }
 
   body[data-location='gettingStarted']{
-    .logoText {
-      transform: translatex(1160px);  
-      top: 26px;
-    }
-
-    #artb {
-      transform: translate(-1584px, -1380px);
-      width: 3688px;
-     }
-
-    #artw {
-      transform: translate(800px, -258px);
-      width: 833px;
-    }
-
-    #artlb {
-      transform: translate(729px, -46px);
-      width: 1101px;
-    }
-    #logoLarge {
-      transform: translate(1110px, 32px);
-      width: 48px;
-    }
-    #decorStack {
-      transform: translate(729px, 148px);
-      width: 128px;
-    }
-
-    #bigWhite {
-      transform: translate(-1655px, 1278px);
-      width: 1px;
-    }
+  
   }
 
     body[data-location='generate']{
-     .logoText {
-      transform: translatex(1160px);
-      top: 26px;
-    }
-
-    #artb {
-      transform: translate(-1584px, -1462px);
-      width: 3688px;
-     }
-
-    #artw {
-      transform: translate(800px, -258px);
-      width: 833px;
-    }
-
-    #artlb {
-      transform: translate(729px, -128px);
-      width: 1101px;
-    }
-    #logoLarge {
-      transform: translate(1110px, 32px);
-      width: 48px;
-    }
-    #decorStack {
-      transform: translate(729px, 68px);
-      width: 128px;
-    }
-
-    #bigWhite {
-      transform: translate(-1655px, 1278px);
-      width: 1px;
-    }
+   
   }
   body[data-location='serviceworker']{
-     .logoText {
-      transform: translatex(1160px);      
-      top: 26px;
-    }
-
-    #artb {
-      transform: translate(-1584px, -1462px);
-      width: 3688px;
-     }
-
-    #artw {
-      transform: translate(800px, -258px);
-      width: 833px;
-    }
-
-    #artlb {
-      transform: translate(729px, -128px);
-      width: 1101px;
-    }
-    #logoLarge {
-      transform: translate(1110px, 32px);
-      width: 48px;
-    }
-    #decorStack {
-      transform: translate(729px, 68px);
-      width: 128px;
-    }
-
-    #bigWhite {
-      transform: translate(-1655px, 1278px);
-      width: 1px;
-    }
+     
   }
 
   body[data-location='publish']{
-      .logoText {
-      transform: translatex(1160px);
-      top: 26px;
-    }
-
-    #artb {
-      transform: translate(-1584px, -1380px);
-      width: 3688px;
-     }
-
-    #artw {
-      transform: translate(800px, -258px);
-      width: 833px;
-    }
-
-    #artlb {
-      transform: translate(729px, -46px);
-      width: 1101px;
-    }
-    #logoLarge {
-      transform: translate(1110px, 32px);
-      width: 48px;
-    }
-    #decorStack {
-      transform: translate(729px, 148px);
-      width: 128px;
-    }
-
-    #bigWhite {
-      transform: translate(-1655px, 1278px);
-      width: 1px;
-    }
+    
   }
 
   body[data-location='windows']{
-      .logoText {
-      transform: translatex(1160px);
-      top: 26px;
-    }
-
-    #artb {
-      transform: translate(-1584px, -1462px);
-      width: 3688px;
-     }
-
-    #artw {
-      transform: translate(800px, -258px);
-      width: 833px;
-    }
-
-    #artlb {
-      transform: translate(729px, -128px);
-      width: 1101px;
-    }
-    #logoLarge {
-      transform: translate(1110px, 32px);
-      width: 48px;
-    }
-    #decorStack {
-      transform: translate(729px, 68px);
-      width: 128px;
-    }
-
-    #bigWhite {
-      transform: translate(-1655px, 1278px);
-      width: 1px;
-    }
+   
   }
 
 
@@ -316,12 +123,7 @@ header {
 
 <template>
   <div id="baseContainer">
-  <img id="artb" class="bgArt" src="~/assets/images/blue.svg">
-  <img id="artlb" class="bgArt" src="~/assets/images/lightBlue.svg">
-  <img id="artw" class="bgArt" src="~/assets/images/white.svg">
-  <img id="logoLarge" class="bgArt" src="~/assets/images/PWABuilderLogo.svg">  
-  <img id="decorStack" class="bgArt" src="~/assets/images/StackedCube.svg">  
-  <img id="bigWhite" class="bgArt" src="~/assets/images/white.svg">
+
   <div id="modal-color" class="modal-color"></div>
   <h1 class="logoText">PWA Builder</h1>
 

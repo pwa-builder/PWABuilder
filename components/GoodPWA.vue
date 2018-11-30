@@ -3,7 +3,6 @@
 
   <div class="goodBetterBar">
     <div v-bind:class="{selectedBox: highlightFirst}" v-if="statusState" class="choiceCol">
-      <div class="rateContainer"><img id="good" class="rateBoxes" src="~/assets/images/good.svg"></div>
       <h3>{{ $t('home.quality_low_title') }}</h3>
       <ul>
         <li v-bind:class="{ good: statusState.isHttps || allGood }">
@@ -36,7 +35,6 @@
      </div>
 
     <div v-bind:class="{selectedBox: highlightSecond}" v-if="statusState" class="choiceCol">
-      <div class="rateContainer"><img id="better" class="rateBoxes" src="~/assets/images/better.svg"></div>
       <h3>{{ $t('home.quality_mid_title') }}</h3>
       <ul>
         <li v-bind:class="{ good: statusState.hasBetterWorker || allGood }">
@@ -60,7 +58,6 @@
     </div>
 
     <div v-bind:class="{selectedBox: highlightThird}" v-if="statusState" class="choiceCol">
-      <div class="rateContainer"><img id="best" class="rateBoxes" src="~/assets/images/best.svg"></div>
       <h3>{{ $t('home.quality_high_title') }}</h3>
       <ul>
         <li v-bind:class="{ good: statusState.hasNativeFeatures || allGood }">
@@ -238,9 +235,6 @@ export default class extends Vue {
   padding-top: 0;
 }
 
-.rateBoxes {
-  width: 154px;
-}
 
 .rateContainer {
   align-items: center;
@@ -291,8 +285,8 @@ export default class extends Vue {
 
     a {
       color: $color-brand-quintary;
-      background-image: url("~/assets/images/goButton.svg");
-      background-size: 240px 41px;
+      //background-image: url("~/assets/images/goButton.svg");
+     // background-size: 240px 41px;
       background-repeat: no-repeat;
       display: block;
       width: 240px;
@@ -304,9 +298,7 @@ export default class extends Vue {
 }
 
 .selectedBox {
-  background-image: url("~/assets/images/slectedBox.svg");
   background-repeat: no-repeat;
-  background-size: 345px;
 }
 
 .publish {
@@ -331,6 +323,6 @@ export default class extends Vue {
 }
 
 .choiceCol li.good {
-  background-image: url("~/assets/images/gbbChecked.svg");
+ // background-image: url("~/assets/images/gbbChecked.svg");
 }
 </style>

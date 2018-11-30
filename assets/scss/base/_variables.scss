@@ -1,37 +1,11 @@
 // Colors
-$color-brand: #4762E2;
-$color-brand-dark: darken($color-brand, 10%);
-$color-brand-darker: darken($color-brand, 15%);
-$color-brand-bright: lighten($color-brand, 10%);
-$color-brand-brighter: #E8F9F9;
-$color-secondary: #333333;
-$color-secondary-dark: darken($color-secondary, 10%);
-$color-secondary-darker: darken($color-secondary, 20%);
-$color-complementary: #61FAE9;
-$color-complementary-dark: darken($color-complementary, 10%);
-$color-complementary-bright: lighten($color-complementary, 5%);
-$color-background-semidark: #5A5A5A;
-$color-background-dark: #EAEAEA;
-$color-background-darker: #333333;
-$color-background-darkest: #000000;
-$color-background-bright: #EFEFEF;
-$color-background-brighter: #FFFFFF;
-$color-foreground-dark: #8B8B8B;
-$color-foreground-darker: #333333;
-$color-foreground-darkest: #000000;
-$color-foreground-bright: #F2F2F2;
-$color-foreground-brightest: #BBBBBB;
-$color-foreground-brighter: #FFFFFF;
-$color-shell-prompt: #B25538;
-$color-shell-command: #FEC77C;
-$color-error: #ED4545;
-$color-error-bright: lighten($color-error, 5%);
+
 //new colors for brand
-$color-brand-primary: #2C3E50;
-$color-brand-secondary: #FC4349;
-$color-brand-tertiary: #D7DADB;
-$color-brand-quartary:#6DBCDB;
-$color-brand-quintary:#FFFFFF;
+$color-brand-primary: black;
+$color-brand-secondary: red;
+$color-brand-tertiary: grey;
+$color-brand-quartary:blue;
+$color-brand-quintary:white;
 
 // Animations
 $animation-speed-default: .35s;

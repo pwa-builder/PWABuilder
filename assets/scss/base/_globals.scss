@@ -35,7 +35,6 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: 'Bungee', cursive;
   font-size: 24px;
   font-weight: normal;
   margin: 0;
@@ -48,7 +47,7 @@ h4 {
 
 .mastHead {
   margin: 0 0 8em 68px;
-  width: 568px;
+  //width: 568px;
   color: $color-brand-quintary;
 
   p {

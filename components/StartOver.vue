@@ -30,9 +30,9 @@ export default class extends Vue {
 
 <style lang="scss" scoped>
 @import '~assets/scss/base/variables';
+/* stylelint-disable */
 
 .start_over {
-  background-color: $color-foreground-brighter;
   display: block;
   padding: 2rem;
   text-align: center;

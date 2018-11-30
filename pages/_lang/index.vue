@@ -184,7 +184,7 @@ Vue.prototype.$awa = function(config) {
   .proTag {
     font-size: 22px;
     margin: 100px 138px 0 138px;
-    width: 256px;
+
   }
 
   .proTag a,
@@ -248,7 +248,7 @@ Vue.prototype.$awa = function(config) {
   #quickTextBlock,
   #leftBlock,
   #alreadyPWA {
-    width: 472px;
+
   }
   
   #getStartedInput {
@@ -256,7 +256,7 @@ Vue.prototype.$awa = function(config) {
     border-radius: 1px;
     font-size: 14px;
     padding: 10px;
-    width: 280px;
+
   }
 
   #goodPWAHeaderBlock {
@@ -265,7 +265,7 @@ Vue.prototype.$awa = function(config) {
     line-height: 24px;
     margin-left: 138px;
     margin-top: 100px;
-    width: 376px;
+
 
     h2 {
       color: $color-brand-primary;
@@ -286,16 +286,16 @@ Vue.prototype.$awa = function(config) {
 
   #otherTool {
     margin-top: 41px;
-    width: 280px;
+
   }
 
   #otherTool p {
-    width: 184px;
+
   }
 
   #otherTool img {
     height: 184px;
-    width: 280px;
+
   }
 </style>
 
