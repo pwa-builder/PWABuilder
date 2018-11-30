@@ -33,9 +33,9 @@ You will need the following things properly installed on your computer.
 
 * `npm install selenium-standalone@latest -g` _only once_
 * `selenium-standalone install` _only once_
-* `npm run e2e`
+* `npm run e2e` 
 
-> You need to have installed [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+> You need to have installed [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) 
 
 ### Building
 

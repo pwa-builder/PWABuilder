@@ -47,7 +47,7 @@
       <h2>Other useful tools</h2>
     </div>
 
-    <div id="otherBar">
+    <!--<div id="otherBar">
       <div id="otherTool">
         <img />
         <h4>Lorem ipsum so dolor</h4>
@@ -71,7 +71,7 @@
         <h4>Lorem ipsum so dolor</h4>
         <p>Lorem ipsum so dolor sit amet etc and a quick summary about what a PWA is. Also a link to more information</p>
       </div>
-    </div>
+    </div>-->
   </div>
 </section>
 </template>
@@ -166,9 +166,9 @@ Vue.prototype.$awa = function(config) {
   @import '~assets/scss/base/variables';
 /* stylelint-disable */
 
-  #otherTools {
+  /*#otherTools {
     display: none;
-  }
+  }*/
 
   .mastHead {
     margin-top: 3em;

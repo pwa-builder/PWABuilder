@@ -266,9 +266,8 @@ export default class extends Vue {
   }
 
   public modalOpened() {
-    window.scrollTo(0,0);
+    window.scrollTo(0, 0);
     (this.$root.$el.closest('body') as HTMLBodyElement).classList.add('modal-screen'); 
-    
   }
 
   public modalClosed() {
