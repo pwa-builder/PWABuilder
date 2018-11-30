@@ -99,7 +99,7 @@ header {
   }
 
 
-  body[data-location='gettingStarted']{
+  /*body[data-location='gettingStarted']{
   
   }
 
@@ -116,7 +116,7 @@ header {
 
   body[data-location='windows']{
    
-  }
+  }*/
 
 
 </style>
