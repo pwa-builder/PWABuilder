@@ -12,7 +12,9 @@
     "e2e": "concurrently \"npm start\" \"selenium-standalone start\" \"wait-on http://localhost:4444 && wait-on http://localhost:3000 && cross-env NODE_ENV=development nightwatch --config nightwatch.js\" --names \"📦,⚙️,🦉\" --prefix name --kill-others",
     "cover": "nyc npm test && opener ./.coverage/index.html",
     "setup": "npm install && npm-install-peers",
-	  "build": "nuxt build"
+    "build": "nuxt build",
+    "build-docker-dev": "docker build -t dev-site --target build-dev .",
+    "run-docker-dev": "docker run -p 3000:80 dev-site"
   },
   "dependencies": {
     "@nuxtjs/axios": "^4.5.2",
