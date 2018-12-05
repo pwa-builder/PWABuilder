@@ -29,12 +29,6 @@ import { Action, State, namespace } from 'vuex-class';
 
 import GoodPWA from '~/components/GoodPWA.vue';
 
-/*import * as serviceworker from '~/store/modules/serviceworker';
-import { ServiceWorker } from '~/store/modules/serviceworker';
-
-const ServiceworkerState = namespace(serviceworker.name, State);
-const ServiceworkerAction = namespace(serviceworker.name, Action);*/
-
 const apiUrl = `${process.env.apiUrl}/serviceworkers/getServiceWorkerFromUrl?siteUrl`;
 
 @Component({
@@ -44,16 +38,10 @@ const apiUrl = `${process.env.apiUrl}/serviceworkers/getServiceWorkerFromUrl?sit
 })
 export default class extends Vue {
 
-  /*@ServiceworkerState serviceworkers: any[];
-
-  @ServiceworkerAction getSiteServiceWorker;*/
-
-
   public async created(): Promise<void> {
     console.log('hello world');
     const data = await axios.get(`${apiUrl}=https://notes-b9f02.firebaseapp.com/`);
     console.log(data.data);
-    // await this.analyzeWorker();
   }
 }
 </script>
