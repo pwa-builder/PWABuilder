@@ -514,12 +514,6 @@ public onClickShowGBB(): void {
   margin-top: 12px;
 }
 
-.is-hidden {
-  display: none;
-}
-
-
-
 .formNav{
   h3 {
     display: inline;
