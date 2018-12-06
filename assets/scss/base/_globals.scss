@@ -43,11 +43,8 @@ h4 {
 }
 
 /*mast head css */
-
-
 .mastHead {
   margin: 0 0 8em 68px;
-  //width: 568px;
   color: $color-brand-quintary;
 
   p {
@@ -62,7 +59,6 @@ h4 {
   }
 
 }
-
 
 /*modals */
 .modal-color{
@@ -123,5 +119,19 @@ h4 {
       padding: 0 1em;
     }
   }
+}
+
+/* Buttons */
+.work-button {
+  color: $color-brand-quintary;
+  background-color: $color-brand-secondary;
+  background-size: 240px 41px;
+  background-repeat: no-repeat;
+  display: inline-block;
+  width: 240px;
+  line-height: 41px;
+  text-align: center;
+  font-size: 16px;
+  border: none;
 }
 

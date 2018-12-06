@@ -198,18 +198,10 @@
   }
 
   &-description {
-
-
-
     &--context {
       max-width: 30rem;
     }
   }
-
-
-
-
-
 
   &-content {
     display: inline-block;
@@ -220,7 +212,6 @@
     display: inline-block;
     float: right;
   }
-
 
   &-box {
     text-align: left;
@@ -236,18 +227,6 @@
 
 }
 
-.work-button {
-  color: $color-brand-quintary;
-  background-color: $color-brand-secondary;
-  background-size: 240px 41px;
-  background-repeat: no-repeat;
-  display: inline-block;
-  width: 240px;
-  line-height: 41px;
-  text-align: center;
-  font-size: 16px;
-  border: none;
-}
 
 
 
