@@ -148,7 +148,7 @@ export default class extends Vue {
 @import '~assets/scss/base/variables';
 
 .code_viewer {
-  background-color: white;
+  background-color: $color-brand-quintary;
   box-shadow: 0 4px 12px rgba(0, 0, 0, .16);
   display: flex;
   flex-direction: column;
@@ -162,7 +162,7 @@ export default class extends Vue {
 
   #copyButton {
     background: $color-brand-primary;
-    color: white;
+    color: $color-brand-quintary;
     border: none;
     border-radius: .5rem;
     padding: 10px;

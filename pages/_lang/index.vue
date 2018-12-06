@@ -176,7 +176,7 @@ Vue.prototype.$awa = function(config) {
   }
 
   #errorBox {
-    color: red;
+    color: $color-brand-secondary;
     position: absolute;
     margin-top: 5px;
   }
@@ -244,15 +244,9 @@ Vue.prototype.$awa = function(config) {
     margin-bottom: 27px;
     margin-top: 22px;
   }
-
-  #quickTextBlock,
-  #leftBlock,
-  #alreadyPWA {
-
-  }
   
   #getStartedInput {
-    border: solid 1px grey;
+    border: solid 1px $color-brand-tertiary;
     border-radius: 1px;
     font-size: 14px;
     padding: 10px;
