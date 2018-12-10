@@ -28,15 +28,6 @@ export default class extends Vue {
   margin: 69px;
 }
 
-.learnMoreButton {
-  background: transparent;
-  border: #979797 solid 2px;
-  border-radius: 2px;
-  color: $color-brand-quintary;
-  height: 40px;
-  width: 110px;
-}
-
 .cardInside {
   border-radius: 5px;
   padding-bottom: 60px;

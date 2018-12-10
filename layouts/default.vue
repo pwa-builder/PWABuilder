@@ -124,7 +124,7 @@ header {
 <template>
   <div id="baseContainer">
 
-  <div id="modal-color" class="modal-color"></div>
+  <div class="modal-color"></div>
   <h1 class="logoText">PWA Builder</h1>
 
     <div v-if="seen" id="gdprDiv">

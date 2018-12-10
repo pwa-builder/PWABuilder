@@ -177,73 +177,9 @@ export default class extends Vue {
     margin-top: 4rem;
   }
 
-  &-padded {
-    padding-top: 1rem;
-  }
-
-  &-header {
-    background-color: $color-brand-quintary;
-    line-height: 1.5;
-    padding: 1.5rem 1.5rem 1.1rem 1.5rem;
-
-    &--rounded {
-      background-color: $color-brand-quintary;
-      border-radius: .5rem;
-      margin: 0 auto;
-      padding: 1rem 1rem;
-      text-align: left;
-      width: 90%;
-    }
-  }
-
   #codeViewerTitle {
     margin-bottom: 15px;
     margin-left: 10px;
-  }
-
-  &-title {
-    color: $color-brand-quintary;
-    font-family: Bitter;
-    font-size: $font-size-l;
-  }
-
-  &-pre {
-    flex-grow: 1;
-    padding: 0;
-  }
-
-  &-code {
-    font-size: 1rem;
-  }
-
-  &-copy {
-    background-color: $color-brand-quintary;
-    border-radius: .5em;
-    box-shadow: 0 2px 0 0 rgba($color-brand-quintary, .2);
-    color: $color-brand-quintary;
-    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-    font-size: 18px;
-    opacity: 0;
-    padding: 0 .5em;
-    position: absolute;
-    right: 2rem;
-    top: 1rem;
-    transition: opacity 1s;
-
-    &:hover {
-      cursor: pointer;
-    }
-  }
-
-  &-content {
-    background-color: $color-brand-quintary;
-    margin: 0;
-    min-height: 4rem;
-    position: relative;
-  }
-
-  &-content:hover &-copy {
-    opacity: 1;
   }
 }
 </style>

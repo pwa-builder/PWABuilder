@@ -25,7 +25,6 @@
 import Vue from 'vue';
 import axios from 'axios';
 import Component from 'nuxt-class-component';
-import { Action, State, namespace } from 'vuex-class';
 
 import GoodPWA from '~/components/GoodPWA.vue';
 
