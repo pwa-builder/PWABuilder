@@ -10,6 +10,7 @@ You will need the following things properly installed on your computer.
 * [Node.js](http://nodejs.org/) (with NPM)
 * [NPM](http://npmjs.com/)
 * [Python 2](https://www.python.org/)
+* If on Windows [Visual Studio](https://visualstudio.microsoft.com/)
 
 ## Installation
 
