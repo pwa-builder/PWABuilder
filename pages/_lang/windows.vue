@@ -193,6 +193,7 @@ export default class extends Vue {
     // (this.$refs.nextStepModal as Modal).show();
   }*/
 
+  // @ts-ignore TS6133 onSelected
   public async onSelected(sample: windowsStore.Sample) {
     console.log(sample);
     try {
@@ -204,6 +205,8 @@ export default class extends Vue {
     }
   }
 
+
+  // @ts-ignore TS6133 onSelected
   public onRemoved(sample: windowsStore.Sample) {
     if (this.selectedSamples.indexOf(sample) != -1) {
       sample.usercode = null;
