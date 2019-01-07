@@ -39,7 +39,7 @@
     "subtitle": "Provide your URL and we'll help fill in the gaps if there are any.",
     "url": "URL",
     "placeholder_url": "Enter a URL",
-    "start": "Get started",
+    "start": "Start",
     "skip": "Skip to Build Service Worker",
     "skip_description": "If you already have the Manifest and want to download the service worker source code you can skip the first step."
   },

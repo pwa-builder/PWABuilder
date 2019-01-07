@@ -48,11 +48,10 @@
 
   #baseContainer{
     width: 1280px;
-    margin: 0 auto;
+  }
 
-    .container {
-      padding-top: 64px;
-    }
+  .container {
+    width: 100vw;
   }
 
 header {
@@ -145,7 +144,7 @@ header {
       <nuxt/>
     </div>
 
-    <footer class="l-footer pure-g is-small">
+    <!--<footer class="l-footer pure-g is-small">
       <div class="pure-u-1-2 pure-u-md-1-5">
       </div>
       <div class="pure-u-1-2 pure-u-md-1-5">
@@ -165,6 +164,6 @@ header {
       <div class="pure-u-1 l-footer-copy">
         {{ $t('footer.copyright') }}<span class="divider">|</span> <a href="https://go.microsoft.com/fwlink/?LinkId=521839" target="_blank" class="l-footer-action">{{ $t('footer.privacy') }}</a>
       </div>
-    </footer>
+    </footer>-->
   </div>
 </template>
