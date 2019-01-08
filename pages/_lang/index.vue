@@ -12,48 +12,36 @@
 
         <p>{{ $t('home.mast_tag') }}</p>
 
-        <button id="moreInfoButton">More Information</button>
-      </div>
+        <div id="formContainer">
+          <form @submit.prevent="checkUrlAndGenerate" @keydown.enter.prevent="checkUrlAndGenerate">
+            <input
+              id="getStartedInput"
+              :aria-label="$t('generator.url')"
+              :placeholder="$t('generator.placeholder_url')"
+              name="siteUrl"
+              type="text"
+              ref="url"
+              v-model="url$"
+              autofocus
+            >
+            
+            <button
+              @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/build/manifest-scan' })"
+              id="getStartedButton"
+            >
+              {{ $t('generator.start') }}
+              <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm"/>
+            </button>
 
-      <footer>
-        <h3>{{ $t('footer.copyright') }}</h3>
-        <span class="divider">|</span>
-        <a
-          href="https://go.microsoft.com/fwlink/?LinkId=521839"
-          target="_blank"
-          class="l-footer-action"
-        >{{ $t('footer.privacy') }}</a>
-      </footer>
-    </section>
-
-    <section id="rightSide">
-      <div id="formContainer">
-        <form @submit.prevent="checkUrlAndGenerate" @keydown.enter.prevent="checkUrlAndGenerate">
-          <input
-            id="getStartedInput"
-            :aria-label="$t('generator.url')"
-            :placeholder="$t('generator.placeholder_url')"
-            name="siteUrl"
-            type="text"
-            ref="url"
-            v-model="url$"
-            autofocus
-          >
-          
-          <button
-            @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/build/manifest-scan' })"
-            id="getStartedButton"
-          >
-            {{ $t('generator.start') }}
-            <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm"/>
-          </button>
-
-          <div v-if="error" id="errorBox">{{error}}</div>
-        </form>
+            <div v-if="error" id="errorBox">{{error}}</div>
+          </form>
+        </div>
       </div>
 
       <button id="expertModeButton">EXPERT MODE - Already have a manifest? Skip ahead!</button>
     </section>
+
+    <section id="rightSide"></section>
     <!--<section id="getStartedBlock">
     <div class="mastHead">
       <h2>{{ $t('home.mast_title') }}</h2>
@@ -174,7 +162,6 @@ export default class extends Vue {
   }
 
   public async checkUrlAndGenerate(): Promise<void> {
-    console.log('here');
     this.generatorReady = false;
     this.error = null;
 
@@ -303,7 +290,7 @@ Vue.prototype.$awa = function(config) {
   }
 
   #formContainer {
-    margin: auto;
+    width: 100%;
 
     form {
       display: flex;
@@ -315,9 +302,11 @@ Vue.prototype.$awa = function(config) {
       padding-left: 20px;
       font-weight: bold;
       font-size: 14px;
-      border-radius: 20px;
       border: none;
-      width: 306px;
+      width: 24em;
+      border-bottom: solid 1px lightgrey;
+      margin-right: 2em;
+      margin-top: 40px;
     }
 
     #getStartedButton {
@@ -330,9 +319,9 @@ Vue.prototype.$awa = function(config) {
       padding-bottom: 11px;
       padding-left: 23px;
       padding-right: 23px;
-      position: relative;
-      right: 2em;
       background: grey;
+      height: 44px;
+      align-self: flex-end;
     }
   }
 
@@ -342,6 +331,8 @@ Vue.prototype.$awa = function(config) {
     border: none;
     height: 80px;
     opacity: 0.6;
+    position: relative;
+    top: 14.8em;
   }
 }
 
