@@ -29,8 +29,10 @@
               @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/build/manifest-scan' })"
               id="getStartedButton"
             >
-              {{ $t('generator.start') }}
-              <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm"/>
+              <div>{{ $t('generator.start') }}</div>
+              <div v-if="inProgress" id="loadingDiv">
+                <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm"/>
+              </div>
             </button>
 
             <div v-if="error" id="errorBox">{{error}}</div>
@@ -292,6 +294,10 @@ Vue.prototype.$awa = function(config) {
   #formContainer {
     width: 100%;
 
+    #loadingDiv {
+      margin-left: 10px;
+    }
+
     form {
       display: flex;
     }
@@ -314,7 +320,6 @@ Vue.prototype.$awa = function(config) {
       font-weight: bold;
       font-size: 18px;
       border-radius: 20px;
-      width: 88px;
       padding-top: 9px;
       padding-bottom: 11px;
       padding-left: 23px;
@@ -322,6 +327,9 @@ Vue.prototype.$awa = function(config) {
       background: grey;
       height: 44px;
       align-self: flex-end;
+      display: flex;
+      flex-direction: row;
+      align-items: baseline;
     }
   }
 
