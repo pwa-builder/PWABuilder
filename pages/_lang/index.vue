@@ -40,7 +40,7 @@
         </div>
       </div>
 
-      <button id="expertModeButton">EXPERT MODE - Already have a manifest? Skip ahead!</button>
+      <button @click="skipCheckUrl()" id="expertModeButton">EXPERT MODE - Already have a manifest? Skip ahead!</button>
     </section>
 
     <section id="rightSide"></section>
@@ -278,6 +278,7 @@ Vue.prototype.$awa = function(config) {
 
     p {
       margin-top: 40px;
+      font-size: 18px;
     }
 
     #moreInfoButton {
