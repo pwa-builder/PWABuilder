@@ -243,7 +243,7 @@ export default class extends Vue {
         Has scope that points to root
         +10 points to user
       */
-      if (data.data.scope.slice(0, -1) === new URL(data.data.scope).origin) {
+      if (data.data.scope && data.data.scope.slice(0, -1) === new URL(data.data.scope).origin) {
         console.log("has scope");
         this.swScore = this.swScore + 10;
       }
