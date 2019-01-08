@@ -21,18 +21,20 @@
           <h1 id="reportCardHeader">Report Card</h1>
 
           <p id="reportCardInfo">
-            We've had a look over your site and it's looking good.
-            You've already got a manifest, which forms the base of a PWA,
-            but we highly recommend you add some features like
-            Service Workers to make the experience even better for your users.
+            Lorem ipsum dolor amet twee stumptown fashion axe bicycle rights.
+            Ennui locavore shaman paleo art party schlitz succulents banh mi mixtape.
+            Selvage 3 wolf moon stumptown art party edison bulb shaman.
           </p>
 
-          <button id="rescanButton">Rescan</button>
+          <button @click="rescan()" id="rescanButton">Rescan</button>
         </div>
       </section>
 
       <section id="scoreSection">
-        <div id="scoreDiv">B+</div>
+        <div id="scoreDiv" v-if="!analyzing">{{overallGrade}}</div>
+        <div id="scoreDiv" v-if="analyzing">
+          <Loading id="gradeLoading" active class="u-display-inline_block u-margin-left-sm"/>
+        </div>
       </section>
     </div>
 
@@ -139,27 +141,36 @@ export default class extends Vue {
   @GeneratorState url: string;
   @GeneratorState manifest: any;
 
+  @GeneratorAction getManifestInformation;
+
   swScore: number = 0;
   manifestScore: number = 0;
   securityScore: number = 0;
+  overallGrade: string = "A";
 
   analyzing: boolean = false;
 
   public async created(): Promise<void> {
-    console.log("hello world", this.url);
+    await this.start();
+  }
+
+  private async start() {
     if (this.url) {
       this.analyzing = true;
 
       this.lookAtSecurity();
       this.lookAtManifest();
       await this.lookAtSW();
+      this.calcGrade();
+
+      console.log(this.overallGrade);
 
       this.analyzing = false;
     }
   }
 
   private lookAtSecurity() {
-    if (this.url.includes('https')) {
+    if (this.url.includes("https")) {
       this.securityScore = this.securityScore + 100;
     }
   }
@@ -175,7 +186,7 @@ export default class extends Vue {
     }
 
     if (this.manifest.icons !== undefined) {
-      this.manifestScore = this.manifestScore  + 10;
+      this.manifestScore = this.manifestScore + 10;
     }
 
     if (this.manifest.name !== undefined) {
@@ -235,7 +246,41 @@ export default class extends Vue {
   }
 
   private calcGrade() {
-    
+    if (
+      this.swScore > 90 &&
+      this.manifestScore > 90 &&
+      this.securityScore > 90
+    ) {
+      this.overallGrade = "A";
+    } else if (
+      this.swScore > 80 &&
+      this.manifestScore > 80 &&
+      this.securityScore > 80
+    ) {
+      this.overallGrade = "B";
+    } else if (
+      this.swScore > 70 &&
+      this.manifestScore > 70 &&
+      this.securityScore > 70
+    ) {
+      this.overallGrade = "C";
+    } else {
+      this.overallGrade = "F";
+    }
+  }
+
+  public async rescan(): Promise<void> {
+    // reset scores and rescan the site
+    this.manifestScore = 0;
+    this.swScore = 0;
+    this.securityScore = 0;
+
+    try {
+      await this.getManifestInformation();
+      await this.start();
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
 </script>
@@ -256,6 +301,11 @@ export default class extends Vue {
     margin-bottom: 28px;
   }
 }*/
+
+#gradeLoading {
+  display: flex;
+  justify-content: center;
+}
 
 #scoreSideBySide {
   display: flex;
