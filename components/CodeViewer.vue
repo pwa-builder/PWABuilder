@@ -152,8 +152,7 @@ export default class extends Vue {
   box-shadow: 0 4px 12px rgba(0, 0, 0, .16);
   display: flex;
   flex-direction: column;
-  max-height: 900px;
-  min-height: 700px;
+  min-height: 100%;
   padding: 10px;
 
   .active {
