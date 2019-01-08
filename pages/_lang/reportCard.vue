@@ -54,7 +54,8 @@
           <li>Something</li>
         </ul>
 
-        <button>Edit</button>
+        <!--<button>Edit</button>-->
+        <nuxt-link class="editButton" to="generate">Edit</nuxt-link>
       </div>
 
       <div id="serviceWorker">
@@ -72,7 +73,8 @@
           <li>Something</li>
         </ul>
 
-        <button>Edit</button>
+        <!--<button>Edit</button>-->
+        <nuxt-link to="serviceworker" class="editButton">Edit</nuxt-link>
       </div>
 
       <div>
@@ -384,7 +386,7 @@ export default class extends Vue {
       width: 420px;
     }
 
-    button {
+    .editButton {
       width: 184px;
       border-radius: 22px;
       border: none;
@@ -393,6 +395,9 @@ export default class extends Vue {
       font-size: 18px;
       padding-top: 9px;
       padding-bottom: 11px;
+      display: flex;
+      justify-content: center;
+      color: inherit;
     }
 
     .score {
