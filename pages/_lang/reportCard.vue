@@ -106,8 +106,14 @@
 import Vue from "vue";
 import axios from "axios";
 import Component from "nuxt-class-component";
+import { Action, State, namespace } from "vuex-class";
 
 import GoodPWA from "~/components/GoodPWA.vue";
+
+import * as generator from "~/store/modules/generator";
+
+const GeneratorState = namespace(generator.name, State);
+const GeneratorAction = namespace(generator.name, Action);
 
 const apiUrl = `${
   process.env.apiUrl
@@ -119,12 +125,18 @@ const apiUrl = `${
   }
 })
 export default class extends Vue {
+  @GeneratorState url: string;
+  @GeneratorAction getManifestInformation;
+
   public async created(): Promise<void> {
-    console.log("hello world");
-    const data = await axios.get(
-      `${apiUrl}=https://notes-b9f02.firebaseapp.com/`
-    );
-    console.log(data.data);
+    console.log("hello world", this.url);
+    if (this.url) {
+      const data = await axios.get(`${apiUrl}=${this.url}`);
+      console.log(data.data);
+
+      const manifestInfo = await this.getManifestInformation();
+      console.log(manifestInfo);
+    }
   }
 }
 </script>
