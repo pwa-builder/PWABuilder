@@ -40,7 +40,10 @@
       <div id="manifest">
         <h2>Manifest</h2>
 
-        <span class="score">50</span>
+        <span v-if="!analyzing" class="score">{{manifestScore}}</span>
+        <span v-if="analyzing" class="score">
+          <Loading active class="u-display-inline_block u-margin-left-sm"/>
+        </span>
 
         <ul>
           <li>Something</li>
@@ -55,7 +58,10 @@
       <div id="serviceWorker">
         <h2>Service Worker</h2>
 
-        <span class="score">50</span>
+        <span v-if="!analyzing" class="score">{{swScore}}</span>
+        <span v-if="analyzing" class="score">
+          <Loading active class="u-display-inline_block u-margin-left-sm"/>
+        </span>
 
         <ul>
           <li>Something</li>
@@ -70,7 +76,10 @@
       <div>
         <h2>Security</h2>
 
-        <span class="score">50</span>
+        <span v-if="!analyzing" class="score">{{securityScore}}</span>
+        <span v-if="analyzing" class="score">
+          <Loading active class="u-display-inline_block u-margin-left-sm"/>
+        </span>
 
         <ul>
           <li>Something</li>
@@ -109,6 +118,7 @@ import Component from "nuxt-class-component";
 import { Action, State, namespace } from "vuex-class";
 
 import GoodPWA from "~/components/GoodPWA.vue";
+import Loading from "~/components/Loading.vue";
 
 import * as generator from "~/store/modules/generator";
 
@@ -121,22 +131,111 @@ const apiUrl = `${
 
 @Component({
   components: {
-    GoodPWA
+    GoodPWA,
+    Loading
   }
 })
 export default class extends Vue {
   @GeneratorState url: string;
-  @GeneratorAction getManifestInformation;
+  @GeneratorState manifest: any;
+
+  swScore: number = 0;
+  manifestScore: number = 0;
+  securityScore: number = 0;
+
+  analyzing: boolean = false;
 
   public async created(): Promise<void> {
     console.log("hello world", this.url);
     if (this.url) {
+      this.analyzing = true;
+
+      this.lookAtSecurity();
+      this.lookAtManifest();
+      await this.lookAtSW();
+
+      this.analyzing = false;
+    }
+  }
+
+  private lookAtSecurity() {
+    if (this.url.includes('https')) {
+      this.securityScore = this.securityScore + 100;
+    }
+  }
+
+  private lookAtManifest() {
+    console.log("manifestInfo", this.manifest);
+    if (this.manifest) {
+      this.manifestScore = this.manifestScore + 50;
+    }
+
+    if (this.manifest.display !== undefined) {
+      this.manifestScore = this.manifestScore + 10;
+    }
+
+    if (this.manifest.icons !== undefined) {
+      this.manifestScore = this.manifestScore  + 10;
+    }
+
+    if (this.manifest.name !== undefined) {
+      this.manifestScore = this.manifestScore + 10;
+    }
+
+    if (this.manifest.short_name !== undefined) {
+      this.manifestScore = this.manifestScore + 10;
+    }
+
+    if (this.manifest.start_url !== undefined) {
+      this.manifestScore = this.manifestScore + 10;
+    }
+  }
+
+  private async lookAtSW(): Promise<void> {
+    if (this.url) {
       const data = await axios.get(`${apiUrl}=${this.url}`);
       console.log(data.data);
 
-      const manifestInfo = await this.getManifestInformation();
-      console.log(manifestInfo);
+      /*
+        Has service worker
+        +50 points to user
+      */
+      if (data.data.hasSW !== null) {
+        this.swScore = this.swScore + 50;
+      }
+
+      /*
+        Caches stuff
+        +30 points to user
+      */
+      const hasCache = data.data.cache.some(entry => entry.fromSW === true);
+      console.log(hasCache);
+
+      if (hasCache === true) {
+        this.swScore = this.swScore + 30;
+      }
+
+      /*
+        Has push reg
+        +10 points to user
+      */
+      if (data.data.pushReg !== null) {
+        this.swScore = this.swScore + 10;
+      }
+
+      /*
+        Has scope that points to root
+        +10 points to user
+      */
+      if (data.data.scope.slice(0, -1) === new URL(data.data.scope).origin) {
+        console.log("has scope");
+        this.swScore = this.swScore + 10;
+      }
     }
+  }
+
+  private calcGrade() {
+    
   }
 }
 </script>

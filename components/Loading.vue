@@ -24,7 +24,7 @@ export default class extends Vue {
   $size: 1.1em;
 
   animation: spin 1.3s linear infinite;
-  border-color: $color-brand-quintary;
+  border-color: blue;
   border-radius: 50%;
   border-style: solid;
   border-width: .12em;
