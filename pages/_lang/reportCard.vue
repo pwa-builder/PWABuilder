@@ -221,11 +221,14 @@ export default class extends Vue {
         Caches stuff
         +30 points to user
       */
-      const hasCache = data.data.cache.some(entry => entry.fromSW === true);
-      console.log(hasCache);
 
-      if (hasCache === true) {
-        this.swScore = this.swScore + 30;
+      if (data.data.cache) {
+        const hasCache = data.data.cache.some(entry => entry.fromSW === true);
+        console.log(hasCache);
+
+        if (hasCache === true) {
+          this.swScore = this.swScore + 30;
+        }
       }
 
       /*
