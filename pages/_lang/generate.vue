@@ -473,6 +473,11 @@
           </div>
         </section>
       </div>
+
+      <div id="doneDiv">
+        <!--<button id="doneButton">Done</button>-->
+        <nuxt-link id="doneButton" to="reportCard">Done</nuxt-link>
+      </div>
     </section>
 
     <section id="rightSide">
@@ -813,6 +818,26 @@ export default class extends Vue {
 
       input {
         font-size: 18px;
+      }
+    }
+
+    #doneDiv {
+      display: flex;
+      justify-content: center;
+
+      #doneButton {
+        width: 184px;
+        height: 44px;
+        border-radius: 20px;
+        border: none;
+        font-weight: bold;
+        font-size: 18px;
+        margin-top: 24px;
+        background: grey;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
       }
     }
   }
