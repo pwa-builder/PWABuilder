@@ -370,8 +370,8 @@ export default class extends Vue {
 }
 
 #cats {
-  margin-left: 164px;
-  margin-right: 164px;
+  margin-left: 16em;
+  margin-right: 16em;
   display: grid;
   grid-template-rows: auto auto;
   grid-template-columns: auto auto;
