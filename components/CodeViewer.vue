@@ -1,28 +1,32 @@
 <template>
-<section class="code_viewer">
-  <div class="code_viewer-pre" ref="monacoDiv"></div>
+  <section class="code_viewer">
+    <div class="code_viewer-pre" ref="monacoDiv"></div>
 
-  <div v-if="errorNumber">
-    <p>{{this.errorNumber}} errors</p>
-  </div>
+    <div id="copyDiv">
+      <button v-if="showCopyButton" @click="copy()" id="copyButton">Copy</button>
+    </div>
 
-  <div id="copyDiv">
-    <button v-if="showCopyButton" @click="copy()" id="copyButton">Copy</button>
-  </div>
-</section>
+    <div id="toolbar">
+      <div v-if="errorNumber">
+        <button id="errorsButton">{{this.errorNumber}} errors</button>
+      </div>
+
+      <button id="settingsButton">Editor Settings</button>
+    </div>
+  </section>
 </template>
 
 <script lang='ts'>
-import Vue from 'vue';
-import * as monaco from 'monaco-editor';
-import Component from 'nuxt-class-component';
-import { Prop, Watch } from 'vue-property-decorator';
-import Clipboard from 'clipboard';
+import Vue from "vue";
+import * as monaco from "monaco-editor";
+import Component from "nuxt-class-component";
+import { Prop, Watch } from "vue-property-decorator";
+import Clipboard from "clipboard";
 
-import SkipLink from '~/components/SkipLink.vue';
-import IssuesList from '~/components/IssuesList.vue';
-import Download from '~/components/Download.vue';
-import { CodeError } from '~/store/modules/generator';
+import SkipLink from "~/components/SkipLink.vue";
+import IssuesList from "~/components/IssuesList.vue";
+import Download from "~/components/Download.vue";
+import { CodeError } from "~/store/modules/generator";
 
 @Component({
   components: {
@@ -32,13 +36,13 @@ import { CodeError } from '~/store/modules/generator';
   }
 })
 export default class extends Vue {
-  @Prop({ type: String, default: '' })
+  @Prop({ type: String, default: "" })
   public title: string;
 
-  @Prop({ type: String, default: '' })
+  @Prop({ type: String, default: "" })
   public code: string;
 
-  @Prop({ type: String, default: 'auto' })
+  @Prop({ type: String, default: "auto" })
   public size: string | null;
 
   @Prop({ type: Array, default: null })
@@ -53,35 +57,34 @@ export default class extends Vue {
   @Prop({ type: Number, default: 0 })
   public suggestionsTotal: number;
 
-  @Prop({ type: String, default: 'javascript'})
+  @Prop({ type: String, default: "javascript" })
   public codeType: string;
 
-  @Prop({ type: Boolean, default: true})
+  @Prop({ type: Boolean, default: true })
   public showCopyButton;
 
-  public readonly warningsId = 'warnings_list';
-  public readonly suggestionsId = 'suggestions_list';
+  public readonly warningsId = "warnings_list";
+  public readonly suggestionsId = "suggestions_list";
   public isReady = true;
-  public downloadButtonMessage = 'publish.download_manifest';
+  public downloadButtonMessage = "publish.download_manifest";
   public errorNumber = 0;
 
   public editor: monaco.editor.IStandaloneCodeEditor;
 
   public mounted(): void {
-
     this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
       value: this.code,
-      lineNumbers: 'off',
+      lineNumbers: "off",
       language: this.codeType,
       fixedOverflowWidgets: true,
-      wordWrap: 'wordWrapColumn',
+      wordWrap: "wordWrapColumn",
       wordWrapColumn: 50,
       scrollBeyondLastLine: false,
-      // Set this to false to not auto word wrap minified files 
+      // Set this to false to not auto word wrap minified files
       wordWrapMinified: true,
 
       // try "same", "indent" or "none"
-      wrappingIndent: 'indent',
+      wrappingIndent: "indent",
       fontSize: 16,
       minimap: {
         enabled: false
@@ -92,7 +95,7 @@ export default class extends Vue {
 
     model.onDidChangeContent(() => {
       const value = model.getValue();
-      this.$emit('editorValue', value);
+      this.$emit("editorValue", value);
     });
 
     model.onDidChangeDecorations(() => {
@@ -100,12 +103,12 @@ export default class extends Vue {
       this.errorNumber = errors.length;
 
       if (errors.length > 0) {
-        this.$emit('invalidManifest');
+        this.$emit("invalidManifest");
       }
     });
   }
 
-  @Watch('code')
+  @Watch("code")
   onCodeChanged() {
     if (this.editor) {
       this.editor.setValue(this.code);
@@ -113,30 +116,30 @@ export default class extends Vue {
   }
 
   async copy() {
-      const code = this.editor.getValue();
+    const code = this.editor.getValue();
 
-      if ((navigator as any).clipboard) {
-        try {
-          await (navigator as any).clipboard.writeText(code);
-        } catch (err) {
-          console.error(err);
-        }
-      } else {
-        let clipboard = new Clipboard(code);
-
-        clipboard.on('success', (e) => {
-          console.info('Action:', e.action);
-          console.info('Text:', e.text);
-          console.info('Trigger:', e.trigger);
-
-          e.clearSelection();
-        });
-
-        clipboard.on('error', (e) => {
-            console.error('Action:', e.action);
-            console.error('Trigger:', e.trigger);
-        });
+    if ((navigator as any).clipboard) {
+      try {
+        await (navigator as any).clipboard.writeText(code);
+      } catch (err) {
+        console.error(err);
       }
+    } else {
+      let clipboard = new Clipboard(code);
+
+      clipboard.on("success", e => {
+        console.info("Action:", e.action);
+        console.info("Text:", e.text);
+        console.info("Trigger:", e.trigger);
+
+        e.clearSelection();
+      });
+
+      clipboard.on("error", e => {
+        console.error("Action:", e.action);
+        console.error("Trigger:", e.trigger);
+      });
+    }
   }
 }
 </script>
@@ -144,7 +147,7 @@ export default class extends Vue {
 <style lang='scss' scoped>
 /* stylelint-disable */
 
-@import '~assets/scss/base/variables';
+@import "~assets/scss/base/variables";
 
 .code_viewer {
   display: flex;
@@ -154,7 +157,7 @@ export default class extends Vue {
   padding-top: 4em;
 
   .active {
-    color:$color-brand-quartary;
+    color: $color-brand-quartary;
   }
 
   #copyButton {
@@ -169,6 +172,9 @@ export default class extends Vue {
   #copyDiv {
     display: flex;
     justify-content: flex-end;
+    position: fixed;
+    top: 16px;
+    right: 16px;
   }
 
   @media screen and (max-width: $media-screen-s) {
@@ -182,6 +188,38 @@ export default class extends Vue {
 
   .code_viewer-pre {
     height: 48em;
+  }
+
+  #toolbar {
+    position: fixed;
+    background: grey;
+    width: 50%;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    justify-content: flex-end;
+    height: 40px;
+    align-items: center;
+
+    #errorsButton {
+      background: #d95050;
+      color: white;
+    }
+
+    #settingsButton {
+      width: 112px;
+    }
+
+    button {
+      border: none;
+      margin: 8px;
+      border-radius: 20px;
+      width: 97px;
+      font-size: 12px;
+      font-weight: bold;
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
   }
 }
 </style>
