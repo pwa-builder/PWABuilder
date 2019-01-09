@@ -6,9 +6,22 @@
       <button v-if="showCopyButton" @click="copy()" id="copyButton">Copy</button>
     </div>
 
+    <div v-if="showOverlay" id="errorOverlay">
+      <button id="closeButton" @click="closeOverlay()">Close</button>
+
+      <h2>Errors</h2>
+
+      <ul>
+        <li v-for="error in errors">
+          <span>Line number {{ error.startLineNumber}}:</span>
+          {{ error.message }}
+        </li>
+      </ul>
+    </div>
+
     <div id="toolbar">
       <div v-if="errorNumber">
-        <button id="errorsButton">{{this.errorNumber}} errors</button>
+        <button @click="showErrorOverlay()" id="errorsButton">{{this.errorNumber}} errors</button>
       </div>
 
       <button id="settingsButton">Editor Settings</button>
@@ -71,6 +84,9 @@ export default class extends Vue {
 
   public editor: monaco.editor.IStandaloneCodeEditor;
 
+  showOverlay: boolean = false;
+  errors: any[] = [];
+
   public mounted(): void {
     this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
       value: this.code,
@@ -99,10 +115,12 @@ export default class extends Vue {
     });
 
     model.onDidChangeDecorations(() => {
-      const errors = (<any>window).monaco.editor.getModelMarkers({});
-      this.errorNumber = errors.length;
+      this.errors = (<any>window).monaco.editor.getModelMarkers({});
+      this.errorNumber = this.errors.length;
 
-      if (errors.length > 0) {
+      console.log(this.errors);
+
+      if (this.errors.length > 0) {
         this.$emit("invalidManifest");
       }
     });
@@ -115,7 +133,7 @@ export default class extends Vue {
     }
   }
 
-  async copy() {
+  private async copy() {
     const code = this.editor.getValue();
 
     if ((navigator as any).clipboard) {
@@ -141,6 +159,14 @@ export default class extends Vue {
       });
     }
   }
+
+  private showErrorOverlay() {
+    this.showOverlay = !this.showOverlay;
+  }
+
+  private closeOverlay() {
+    this.showOverlay = false;
+  }
 }
 </script>
 
@@ -148,6 +174,7 @@ export default class extends Vue {
 /* stylelint-disable */
 
 @import "~assets/scss/base/variables";
+@import "~assets/scss/base/animations";
 
 .code_viewer {
   display: flex;
@@ -219,6 +246,55 @@ export default class extends Vue {
       font-weight: bold;
       padding-top: 8px;
       padding-bottom: 8px;
+    }
+  }
+
+  #errorOverlay {
+    background: white;
+    animation-name: overlayUp;
+    animation-duration: 200ms;
+    animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: fixed;
+    width: 50%;
+    right: 0;
+    bottom: 2.2em;
+    border-top: 1px solid black;
+    padding: 40px;
+
+    h2 {
+      font-weight: bold;
+      font-size: 18px;
+      margin: 0;
+      padding: 0;
+      margin-bottom: 20px;
+    }
+
+    #closeButton {
+      border: none;
+      background: grey;
+      border-radius: 20px;
+      position: absolute;
+      right: 40px;
+      width: 72px;
+      color: white;
+      font-weight: bold;
+      font-size: 12px;
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        font-size: 14px;
+      }
+
+      li span {
+        font-weight: bold;
+      }
     }
   }
 }
