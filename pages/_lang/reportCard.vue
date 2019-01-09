@@ -39,7 +39,7 @@
     </div>
 
     <section id="cats">
-      <div id="manifest">
+      <section id="manifest">
         <h2>Manifest</h2>
 
         <span v-if="!analyzing" class="score">{{manifestScore}}</span>
@@ -49,18 +49,30 @@
 
         <ul>
           <li v-bind:class="{ good: manifest && manifest }">Has a Web Manifest</li>
-          <li v-bind:class="{ good: manifest && manifest.display }">Web Manifest has the display property</li>
-          <li v-bind:class="{ good: manifest && manifest.icons }">Web Manifest has the Icons property</li>
-          <li v-bind:class="{ good: manifest && manifest.name }">Web Manifest has the app name property</li>
-          <li v-bind:class="{ good: manifest && manifest.short_name }">Web Manifest has the short_name property</li>
-          <li v-bind:class="{ good: manifest && manifest.start_url }">Web Manifest has the start_url property</li>
+          <li
+            v-bind:class="{ good: manifest && manifest.display }"
+          >Web Manifest has the display property</li>
+          <li
+            v-bind:class="{ good: manifest && manifest.icons }"
+          >Web Manifest has the Icons property</li>
+          <li
+            v-bind:class="{ good: manifest && manifest.name }"
+          >Web Manifest has the app name property</li>
+          <li
+            v-bind:class="{ good: manifest && manifest.short_name }"
+          >Web Manifest has the short_name property</li>
+          <li
+            v-bind:class="{ good: manifest && manifest.start_url }"
+          >Web Manifest has the start_url property</li>
         </ul>
 
         <!--<button>Edit</button>-->
-        <nuxt-link class="editButton" to="generate">Edit</nuxt-link>
-      </div>
+        <div class="editDiv">
+          <nuxt-link class="editButton" to="generate">Edit</nuxt-link>
+        </div>
+      </section>
 
-      <div id="serviceWorker">
+      <section id="serviceWorker">
         <h2>Service Worker</h2>
 
         <span v-if="!analyzing" class="score">{{swScore}}</span>
@@ -69,17 +81,27 @@
         </span>
 
         <ul>
-          <li v-bind:class="{ good: serviceWorkerData && serviceWorkerData.hasSW }">Has a Service Worker</li>
-          <li v-bind:class="{ good: serviceWorkerData && serviceWorkerData.cache }">Service Worker has cache handlers</li>
-          <li v-bind:class="{ good: serviceWorkerData && serviceWorkerData.scope }">Service Worker has the correct scope</li>
-          <li v-bind:class="{ good: serviceWorkerData && serviceWorkerData.pushReg }">Service Worker has a push registration</li>
+          <li
+            v-bind:class="{ good: serviceWorkerData && serviceWorkerData.hasSW }"
+          >Has a Service Worker</li>
+          <li
+            v-bind:class="{ good: serviceWorkerData && serviceWorkerData.cache }"
+          >Service Worker has cache handlers</li>
+          <li
+            v-bind:class="{ good: serviceWorkerData && serviceWorkerData.scope }"
+          >Service Worker has the correct scope</li>
+          <li
+            v-bind:class="{ good: serviceWorkerData && serviceWorkerData.pushReg }"
+          >Service Worker has a push registration</li>
         </ul>
 
         <!--<button>Edit</button>-->
-        <nuxt-link to="serviceworker" class="editButton">Edit</nuxt-link>
-      </div>
+        <div class="editDiv">
+          <nuxt-link to="serviceworker" class="editButton">Edit</nuxt-link>
+        </div>
+      </section>
 
-      <div>
+      <section>
         <h2>Security</h2>
 
         <span v-if="!analyzing" class="score">{{securityScore}}</span>
@@ -90,11 +112,9 @@
         <ul>
           <li>Has HTTPS</li>
         </ul>
+      </section>
 
-        <button>Add More</button>
-      </div>
-
-      <div>
+      <section>
         <h2>Extras</h2>
 
         <span class="score">50</span>
@@ -104,8 +124,10 @@
           extra functionality!
         </p>
 
-        <button>Add More</button>
-      </div>
+        <div class="editDiv">
+          <nuxt-link to="windows" class="editButton">Add More</nuxt-link>
+        </div>
+      </section>
     </section>
   </main>
 </template>
@@ -224,7 +246,9 @@ export default class extends Vue {
       */
 
       if (this.serviceWorkerData.cache) {
-        const hasCache = this.serviceWorkerData.cache.some(entry => entry.fromSW === true);
+        const hasCache = this.serviceWorkerData.cache.some(
+          entry => entry.fromSW === true
+        );
         console.log(hasCache);
 
         if (hasCache === true) {
@@ -244,7 +268,11 @@ export default class extends Vue {
         Has scope that points to root
         +10 points to user
       */
-      if (this.serviceWorkerData.scope && this.serviceWorkerData.scope.slice(0, -1) === new URL(this.serviceWorkerData.scope).origin) {
+      if (
+        this.serviceWorkerData.scope &&
+        this.serviceWorkerData.scope.slice(0, -1) ===
+          new URL(this.serviceWorkerData.scope).origin
+      ) {
         console.log("has scope");
         this.swScore = this.swScore + 10;
       }
@@ -385,10 +413,16 @@ export default class extends Vue {
     color: blue;
   }
 
-  div {
+  section {
     border: solid 1px grey;
     padding: 40px;
     background: white;
+    display: flex;
+    flex-direction: column;
+
+    ul {
+      flex-grow: 1;
+    }
 
     h2 {
       font-size: 36px;
