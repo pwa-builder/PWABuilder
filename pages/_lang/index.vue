@@ -335,7 +335,7 @@ Vue.prototype.$awa = function(config) {
   }
 
   #expertModeButton {
-    width: 42.4em;
+    width: 50%;
     background: grey;
     border: none;
     height: 80px;
