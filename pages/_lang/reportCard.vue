@@ -42,7 +42,7 @@
       <section class="catSection">
         <h2>Manifest</h2>
 
-        <span v-if="!manifestAnalyzing" class="score">{{manifestScore}}</span>
+        <span v-if="!manifestAnalyzing" class="score">{{manifestScore}} / 100</span>
         <span v-if="manifestAnalyzing" class="score">
           <Loading active class="u-display-inline_block u-margin-left-sm"/>
         </span>
@@ -75,7 +75,7 @@
       <section class="catSection">
         <h2>Service Worker</h2>
 
-        <span v-if="!swAnalyzing" class="score">{{swScore}}</span>
+        <span v-if="!swAnalyzing" class="score">{{swScore}} / 100</span>
         <span v-if="swAnalyzing" class="score">
           <Loading active class="u-display-inline_block u-margin-left-sm"/>
         </span>
@@ -104,7 +104,7 @@
       <section class="catSection">
         <h2>Security</h2>
 
-        <span v-if="!securityAnalyzing" class="score">{{securityScore}}</span>
+        <span v-if="!securityAnalyzing" class="score">{{securityScore}} / 100</span>
         <span v-if="securityAnalyzing" class="score">
           <Loading active class="u-display-inline_block u-margin-left-sm"/>
         </span>
@@ -117,7 +117,7 @@
       <section class="catSection">
         <h2>Extras</h2>
 
-        <span class="score">50</span>
+        <span class="score">50 / 100</span>
 
         <p>
           Add extra features to your PWA to enable
@@ -202,7 +202,6 @@ export default class extends Vue {
 
   private lookAtSecurity(): Promise<void> {
     return new Promise((resolve, reject) => {
-
       if (this.url.includes("https")) {
         this.securityScore = this.securityScore + 100;
       }
@@ -215,7 +214,6 @@ export default class extends Vue {
 
   private lookAtManifest(): Promise<void> {
     return new Promise((resolve, reject) => {
-
       console.log("manifestInfo", this.manifest);
       if (this.manifest) {
         this.manifestScore = this.manifestScore + 50;
@@ -309,7 +307,6 @@ export default class extends Vue {
 
   private calcGrade() {
     return new Promise((resolve, reject) => {
-
       if (
         this.swScore > 90 &&
         this.manifestScore > 90 &&
@@ -342,6 +339,11 @@ export default class extends Vue {
 
   public async rescan(): Promise<void> {
     // reset scores and rescan the site
+    this.securityAnalyzing = true;
+    this.manifestAnalyzing = true;
+    this.swAnalyzing = true;
+    this.calcGradeAnalyzing = true;
+
     this.manifestScore = 0;
     this.swScore = 0;
     this.securityScore = 0;
@@ -484,7 +486,7 @@ export default class extends Vue {
 
     .score {
       position: relative;
-      left: 11em;
+      left: 9em;
       bottom: 1.2em;
       font-size: 36px;
       font-weight: bold;
