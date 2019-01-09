@@ -48,10 +48,12 @@
         </span>
 
         <ul>
-          <li>Something</li>
-          <li>Something</li>
-          <li>Something</li>
-          <li>Something</li>
+          <li v-bind:class="{ good: manifest && manifest }">Has a Web Manifest</li>
+          <li v-bind:class="{ good: manifest && manifest.display }">Web Manifest has the display property</li>
+          <li v-bind:class="{ good: manifest && manifest.icons }">Web Manifest has the Icons property</li>
+          <li v-bind:class="{ good: manifest && manifest.name }">Web Manifest has the app name property</li>
+          <li v-bind:class="{ good: manifest && manifest.short_name }">Web Manifest has the short_name property</li>
+          <li v-bind:class="{ good: manifest && manifest.start_url }">Web Manifest has the start_url property</li>
         </ul>
 
         <!--<button>Edit</button>-->
@@ -67,10 +69,10 @@
         </span>
 
         <ul>
-          <li>Something</li>
-          <li>Something</li>
-          <li>Something</li>
-          <li>Something</li>
+          <li v-bind:class="{ good: serviceWorkerData && serviceWorkerData.hasSW }">Has a Service Worker</li>
+          <li v-bind:class="{ good: serviceWorkerData && serviceWorkerData.cache }">Service Worker has cache handlers</li>
+          <li v-bind:class="{ good: serviceWorkerData && serviceWorkerData.scope }">Service Worker has the correct scope</li>
+          <li v-bind:class="{ good: serviceWorkerData && serviceWorkerData.pushReg }">Service Worker has a push registration</li>
         </ul>
 
         <!--<button>Edit</button>-->
@@ -86,10 +88,7 @@
         </span>
 
         <ul>
-          <li>Something</li>
-          <li>Something</li>
-          <li>Something</li>
-          <li>Something</li>
+          <li>Has HTTPS</li>
         </ul>
 
         <button>Add More</button>
@@ -100,12 +99,10 @@
 
         <span class="score">50</span>
 
-        <ul>
-          <li>Something</li>
-          <li>Something</li>
-          <li>Something</li>
-          <li>Something</li>
-        </ul>
+        <p>
+          Add extra features to your PWA to enable
+          extra functionality!
+        </p>
 
         <button>Add More</button>
       </div>
@@ -151,6 +148,8 @@ export default class extends Vue {
   overallGrade: string = "A";
 
   analyzing: boolean = false;
+
+  serviceWorkerData: any = null;
 
   public async created(): Promise<void> {
     await this.start();
@@ -209,11 +208,13 @@ export default class extends Vue {
       const data = await axios.get(`${apiUrl}=${this.url}`);
       console.log(data.data);
 
+      this.serviceWorkerData = data.data;
+
       /*
         Has service worker
         +50 points to user
       */
-      if (data.data.hasSW !== null) {
+      if (this.serviceWorkerData.hasSW !== null) {
         this.swScore = this.swScore + 50;
       }
 
@@ -222,8 +223,8 @@ export default class extends Vue {
         +30 points to user
       */
 
-      if (data.data.cache) {
-        const hasCache = data.data.cache.some(entry => entry.fromSW === true);
+      if (this.serviceWorkerData.cache) {
+        const hasCache = this.serviceWorkerData.cache.some(entry => entry.fromSW === true);
         console.log(hasCache);
 
         if (hasCache === true) {
@@ -235,7 +236,7 @@ export default class extends Vue {
         Has push reg
         +10 points to user
       */
-      if (data.data.pushReg !== null) {
+      if (this.serviceWorkerData.pushReg !== null) {
         this.swScore = this.swScore + 10;
       }
 
@@ -243,7 +244,7 @@ export default class extends Vue {
         Has scope that points to root
         +10 points to user
       */
-      if (data.data.scope && data.data.scope.slice(0, -1) === new URL(data.data.scope).origin) {
+      if (this.serviceWorkerData.scope && this.serviceWorkerData.scope.slice(0, -1) === new URL(this.serviceWorkerData.scope).origin) {
         console.log("has scope");
         this.swScore = this.swScore + 10;
       }
@@ -378,6 +379,10 @@ export default class extends Vue {
   position: relative;
   bottom: 4.6em;
 
+  .good {
+    color: blue;
+  }
+
   div {
     border: solid 1px grey;
     padding: 40px;
@@ -405,7 +410,7 @@ export default class extends Vue {
 
     .score {
       position: relative;
-      left: 12em;
+      left: 11em;
       bottom: 1.2em;
       font-size: 36px;
       font-weight: bold;
