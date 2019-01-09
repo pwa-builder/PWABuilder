@@ -335,13 +335,13 @@ Vue.prototype.$awa = function(config) {
   }
 
   #expertModeButton {
-    width: 100%;
+    width: 42.4em;
     background: grey;
     border: none;
     height: 80px;
     opacity: 0.6;
-    position: relative;
-    top: 14.8em;
+    position:absolute;
+    bottom: 0;
   }
 }
 
