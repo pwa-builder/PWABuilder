@@ -477,7 +477,7 @@
 
     <section id="rightSide">
       <CodeViewer
-        codetype="json"
+        code-type="json"
         v-on:invalidManifest="invalidManifest()"
         v-on:editorValue="handleEditorValue($event)"
         v-if="seeEditor"
