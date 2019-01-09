@@ -331,6 +331,8 @@ Vue.prototype.$awa = function(config) {
       display: flex;
       flex-direction: row;
       align-items: baseline;
+      background: $color-button-primary-blue-variant;
+      color: white;
     }
   }
 

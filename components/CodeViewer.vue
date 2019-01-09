@@ -229,7 +229,7 @@ export default class extends Vue {
     align-items: center;
 
     #errorsButton {
-      background: #d95050;
+      background: $color-brand-warning;
       color: white;
     }
 

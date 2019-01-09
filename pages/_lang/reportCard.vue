@@ -347,6 +347,8 @@ export default class extends Vue {
       padding-top: 9px;
       padding-bottom: 11px;
       margin-top: 40px;
+      color: white;
+      background: $color-button-primary-blue-variant;
     }
   }
 
@@ -405,7 +407,8 @@ export default class extends Vue {
       padding-bottom: 11px;
       display: flex;
       justify-content: center;
-      color: inherit;
+      color: white;
+      background: $color-button-primary-green-variant;
     }
 
     .score {

@@ -791,7 +791,7 @@ export default class extends Vue {
         justify-content: space-around;
 
         button {
-          background: cornflowerblue;
+          background: $color-button-primary-blue-variant;
           border: none;
           font-weight: bold;
           font-size: 14px;
@@ -807,7 +807,7 @@ export default class extends Vue {
 
     .animatedSection {
       .fieldName {
-        color: cornflowerblue;
+        color: $color-button-primary-green-variant;
         font-size: 18px;
       }
 
