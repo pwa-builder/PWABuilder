@@ -31,19 +31,19 @@
       </section>
 
       <section id="scoreSection">
-        <div id="scoreDiv" v-if="!analyzing">{{overallGrade}}</div>
-        <div id="scoreDiv" v-if="analyzing">
+        <div id="scoreDiv" v-if="!calcGradeAnalyzing">{{overallGrade}}</div>
+        <div id="scoreDiv" v-if="calcGradeAnalyzing">
           <Loading id="gradeLoading" active class="u-display-inline_block u-margin-left-sm"/>
         </div>
       </section>
     </div>
 
     <section id="cats">
-      <section id="manifest">
+      <section class="catSection">
         <h2>Manifest</h2>
 
-        <span v-if="!analyzing" class="score">{{manifestScore}}</span>
-        <span v-if="analyzing" class="score">
+        <span v-if="!manifestAnalyzing" class="score">{{manifestScore}}</span>
+        <span v-if="manifestAnalyzing" class="score">
           <Loading active class="u-display-inline_block u-margin-left-sm"/>
         </span>
 
@@ -72,11 +72,11 @@
         </div>
       </section>
 
-      <section id="serviceWorker">
+      <section class="catSection">
         <h2>Service Worker</h2>
 
-        <span v-if="!analyzing" class="score">{{swScore}}</span>
-        <span v-if="analyzing" class="score">
+        <span v-if="!swAnalyzing" class="score">{{swScore}}</span>
+        <span v-if="swAnalyzing" class="score">
           <Loading active class="u-display-inline_block u-margin-left-sm"/>
         </span>
 
@@ -101,11 +101,11 @@
         </div>
       </section>
 
-      <section>
+      <section class="catSection">
         <h2>Security</h2>
 
-        <span v-if="!analyzing" class="score">{{securityScore}}</span>
-        <span v-if="analyzing" class="score">
+        <span v-if="!securityAnalyzing" class="score">{{securityScore}}</span>
+        <span v-if="securityAnalyzing" class="score">
           <Loading active class="u-display-inline_block u-margin-left-sm"/>
         </span>
 
@@ -114,7 +114,7 @@
         </ul>
       </section>
 
-      <section>
+      <section class="catSection">
         <h2>Extras</h2>
 
         <span class="score">50</span>
@@ -167,9 +167,12 @@ export default class extends Vue {
   swScore: number = 0;
   manifestScore: number = 0;
   securityScore: number = 0;
-  overallGrade: string = "A";
+  overallGrade: string | null = null;
 
-  analyzing: boolean = false;
+  swAnalyzing: boolean = false;
+  manifestAnalyzing: boolean = false;
+  securityAnalyzing: boolean = false;
+  calcGradeAnalyzing: boolean = false;
 
   serviceWorkerData: any = null;
 
@@ -179,50 +182,71 @@ export default class extends Vue {
 
   private async start() {
     if (this.url) {
-      this.analyzing = true;
+      console.log("here");
+      // this.analyzing = true;
+      this.securityAnalyzing = true;
+      this.manifestAnalyzing = true;
+      this.swAnalyzing = true;
+      this.calcGradeAnalyzing = true;
 
-      this.lookAtSecurity();
-      this.lookAtManifest();
+      await this.lookAtSecurity();
+      await this.lookAtManifest();
       await this.lookAtSW();
-      this.calcGrade();
+      await this.calcGrade();
 
       console.log(this.overallGrade);
 
-      this.analyzing = false;
+      // this.analyzing = false;
     }
   }
 
-  private lookAtSecurity() {
-    if (this.url.includes("https")) {
-      this.securityScore = this.securityScore + 100;
-    }
+  private lookAtSecurity(): Promise<void> {
+    return new Promise((resolve, reject) => {
+
+      if (this.url.includes("https")) {
+        this.securityScore = this.securityScore + 100;
+      }
+
+      this.securityAnalyzing = false;
+      console.log(1);
+      resolve();
+    });
   }
 
-  private lookAtManifest() {
-    console.log("manifestInfo", this.manifest);
-    if (this.manifest) {
-      this.manifestScore = this.manifestScore + 50;
-    }
+  private lookAtManifest(): Promise<void> {
+    return new Promise((resolve, reject) => {
 
-    if (this.manifest.display !== undefined) {
-      this.manifestScore = this.manifestScore + 10;
-    }
+      console.log("manifestInfo", this.manifest);
+      if (this.manifest) {
+        this.manifestScore = this.manifestScore + 50;
+      }
 
-    if (this.manifest.icons !== undefined) {
-      this.manifestScore = this.manifestScore + 10;
-    }
+      if (this.manifest.display !== undefined) {
+        this.manifestScore = this.manifestScore + 10;
+      }
 
-    if (this.manifest.name !== undefined) {
-      this.manifestScore = this.manifestScore + 10;
-    }
+      if (this.manifest.icons !== undefined) {
+        this.manifestScore = this.manifestScore + 10;
+      }
 
-    if (this.manifest.short_name !== undefined) {
-      this.manifestScore = this.manifestScore + 10;
-    }
+      if (this.manifest.name !== undefined) {
+        this.manifestScore = this.manifestScore + 10;
+      }
 
-    if (this.manifest.start_url !== undefined) {
-      this.manifestScore = this.manifestScore + 10;
-    }
+      if (this.manifest.short_name !== undefined) {
+        this.manifestScore = this.manifestScore + 10;
+      }
+
+      if (this.manifest.start_url !== undefined) {
+        this.manifestScore = this.manifestScore + 10;
+      }
+
+      this.manifestAnalyzing = false;
+
+      console.log(2);
+
+      resolve();
+    });
   }
 
   private async lookAtSW(): Promise<void> {
@@ -277,30 +301,43 @@ export default class extends Vue {
         this.swScore = this.swScore + 10;
       }
     }
+
+    console.log(3);
+
+    this.swAnalyzing = false;
   }
 
   private calcGrade() {
-    if (
-      this.swScore > 90 &&
-      this.manifestScore > 90 &&
-      this.securityScore > 90
-    ) {
-      this.overallGrade = "A";
-    } else if (
-      this.swScore > 80 &&
-      this.manifestScore > 80 &&
-      this.securityScore > 80
-    ) {
-      this.overallGrade = "B";
-    } else if (
-      this.swScore > 70 &&
-      this.manifestScore > 70 &&
-      this.securityScore > 70
-    ) {
-      this.overallGrade = "C";
-    } else {
-      this.overallGrade = "F";
-    }
+    return new Promise((resolve, reject) => {
+
+      if (
+        this.swScore > 90 &&
+        this.manifestScore > 90 &&
+        this.securityScore > 90
+      ) {
+        this.overallGrade = "A";
+      } else if (
+        this.swScore > 80 &&
+        this.manifestScore > 80 &&
+        this.securityScore > 80
+      ) {
+        this.overallGrade = "B";
+      } else if (
+        this.swScore > 70 &&
+        this.manifestScore > 70 &&
+        this.securityScore > 70
+      ) {
+        this.overallGrade = "C";
+      } else {
+        this.overallGrade = "F";
+      }
+
+      this.calcGradeAnalyzing = false;
+
+      console.log(4);
+
+      resolve();
+    });
   }
 
   public async rescan(): Promise<void> {
@@ -413,7 +450,7 @@ export default class extends Vue {
     color: blue;
   }
 
-  section {
+  .catSection {
     border: solid 1px grey;
     padding: 40px;
     background: white;
