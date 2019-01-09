@@ -826,6 +826,7 @@ export default class extends Vue {
       justify-content: center;
 
       #doneButton {
+        background: $color-button-primary-green-variant;
         width: 184px;
         height: 44px;
         border-radius: 20px;
@@ -833,7 +834,6 @@ export default class extends Vue {
         font-weight: bold;
         font-size: 18px;
         margin-top: 24px;
-        background: grey;
         display: flex;
         justify-content: center;
         align-items: center;

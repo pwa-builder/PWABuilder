@@ -77,9 +77,6 @@
             </label>
             <span class="l-generator-description">{{ sw.description }}</span>
           </div>
-          <div class="l-generator-wrapper pure-u-2-5">
-            <a class="work-button" @click="onClickShowGBB()" href="#">I'm done</a>
-          </div>
           <div class="pure-u-3-5">
             <p class="l-generator-error" v-if="error">
               <span class="icon-exclamation"></span>
@@ -87,6 +84,11 @@
             </p>
           </div>
         </form>
+      </div>
+
+      <div id="doneDiv">
+        <!--<button id="doneButton">Done</button>-->
+        <nuxt-link id="doneButton" to="reportCard">Done</nuxt-link>
       </div>
     </section>
 
@@ -388,6 +390,26 @@ export default class extends Vue {
             margin-left: 12px;
           }
         }
+      }
+    }
+
+    #doneDiv {
+      display: flex;
+      justify-content: center;
+
+      #doneButton {
+        background: $color-button-primary-green-variant;
+        width: 184px;
+        height: 44px;
+        border-radius: 20px;
+        border: none;
+        font-weight: bold;
+        font-size: 18px;
+        margin-top: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
       }
     }
   }
