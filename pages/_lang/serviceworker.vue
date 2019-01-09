@@ -1,7 +1,6 @@
 <template>
-<section>
-
-  <div ref='mainDiv' class="mainDiv service-workers">
+  <main id="sideBySide">
+    <!--<div ref='mainDiv' class="mainDiv service-workers">
     <div class="mastHead">
       <h2>{{ $t('serviceworker.title') }}</h2>
       <p>{{ $t('serviceworker.summary') }}</p>
@@ -46,33 +45,91 @@
 
   <!--<Modal title="Next" ref="nextStepModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
     <GoodPWA :hasWorker="hasSW"/>
-  </Modal>-->
-  <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" title="" ref="nextStepModal">
+    </Modal>-->
+    <!--<Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" title="" ref="nextStepModal">
     <GoodPWA :hasWorker="hasSW" :hasBetterWorker="betterSW"/>
     <a class="cancelText" href="#" @click="onClickHideGBB(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
       {{$t("modal.goBack")}}
     </a>
 
-  </Modal>
+    </Modal>-->
+    <section id="leftSide">
+      <header class="mastHead">
+        <h2>{{ $t("serviceworker.title") }}</h2>
+        <p>{{ $t("serviceworker.summary") }}</p>
+      </header>
 
-</section>
+      <div id="inputSection">
+        <form @submit.prevent="download" @keydown.enter.prevent="download">
+          <div class="inputContainer" v-for="sw in serviceworkers" :key="sw.id">
+            <label class="l-generator-label" :for="sw.id">
+              <div id="inputDiv">
+                <input
+                  type="radio"
+                  :value="sw.id"
+                  v-model="serviceworker$"
+                  :disabled="sw.disable"
+                  :id="sw.id"
+                >
+                <h4>{{ sw.title }}</h4>
+                <span v-if="sw.disable">(coming soon)</span>
+              </div>
+            </label>
+            <span class="l-generator-description">{{ sw.description }}</span>
+          </div>
+          <div class="l-generator-wrapper pure-u-2-5">
+            <a class="work-button" @click="onClickShowGBB()" href="#">I'm done</a>
+          </div>
+          <div class="pure-u-3-5">
+            <p class="l-generator-error" v-if="error">
+              <span class="icon-exclamation"></span>
+              {{ $t(error) }}
+            </p>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section id="rightSide">
+      <CodeViewer
+        code-type="javascript"
+        :size="viewerSize"
+        :code="webPreview"
+        :title="$t('serviceworker.code_preview_web')"
+      >
+        <nuxt-link
+          :to="$i18n.path('publish')"
+          class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header"
+          @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})"
+        >{{ $t("serviceworker.next_step") }}</nuxt-link>
+      </CodeViewer>
+
+      <CodeViewer
+        class="bottomViewer"
+        code-type="javascript"
+        :size="bottomViewerSize"
+        :code="serviceworkerPreview"
+        :title="$t('serviceworker.code_preview_serviceworker')"
+      ></CodeViewer>
+    </section>
+  </main>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Component from 'nuxt-class-component';
-import { Watch } from 'vue-property-decorator';
-import { Action, State, namespace } from 'vuex-class';
+import Vue from "vue";
+import Component from "nuxt-class-component";
+import { Watch } from "vue-property-decorator";
+import { Action, State, namespace } from "vuex-class";
 
-import GeneratorMenu from '~/components/GeneratorMenu.vue';
-import Loading from '~/components/Loading.vue';
-import CodeViewer from '~/components/CodeViewer.vue';
-import StartOver from '~/components/StartOver.vue';
-import GoodPWA from '~/components/GoodPWA.vue';
-import Modal from '~/components/Modal.vue';
+import GeneratorMenu from "~/components/GeneratorMenu.vue";
+import Loading from "~/components/Loading.vue";
+import CodeViewer from "~/components/CodeViewer.vue";
+import StartOver from "~/components/StartOver.vue";
+import GoodPWA from "~/components/GoodPWA.vue";
+import Modal from "~/components/Modal.vue";
 
-import * as serviceworker from '~/store/modules/serviceworker';
-import { ServiceWorker } from '~/store/modules/serviceworker';
+import * as serviceworker from "~/store/modules/serviceworker";
+import { ServiceWorker } from "~/store/modules/serviceworker";
 
 const ServiceworkerState = namespace(serviceworker.name, State);
 const ServiceworkerAction = namespace(serviceworker.name, Action);
@@ -87,14 +144,13 @@ const ServiceworkerAction = namespace(serviceworker.name, Action);
     Modal
   }
 })
-
 export default class extends Vue {
   public isBuilding = false;
   public serviceworker$: number | null = null;
   public serviceworkers$: ServiceWorker[];
   public error: string | null = null;
-  public viewerSize = '25rem';
-  public bottomViewerSize = '55rem';
+  public viewerSize = "25rem";
+  public bottomViewerSize = "55rem";
   public hasSW = false;
   public betterSW = false;
 
@@ -114,7 +170,9 @@ export default class extends Vue {
     await this.getCode(this.serviceworker$);
   }
   async destroyed() {
-    (this.$root.$el.closest('body') as HTMLBodyElement).classList.remove('modal-screen');
+    (this.$root.$el.closest("body") as HTMLBodyElement).classList.remove(
+      "modal-screen"
+    );
   }
 
   public onClickShowGBB(): void {
@@ -122,9 +180,8 @@ export default class extends Vue {
     this.analyze();
   }
 
-   public onClickHideGBB(): void {
+  public onClickHideGBB(): void {
     (this.$refs.nextStepModal as Modal).hide();
-
   }
 
   public async download(): Promise<void> {
@@ -137,21 +194,23 @@ export default class extends Vue {
     if (this.archive) {
       window.location.href = this.archive;
     }
-  
-    this.$awa( { 'referrerUri': 'https://preview.pwabuilder.com/serviceworker-download' });
+
+    this.$awa({
+      referrerUri: "https://preview.pwabuilder.com/serviceworker-download"
+    });
     this.isBuilding = false;
   }
 
   public analyze(): void {
     if (this.serviceworker$ && this.serviceworker$ >= 4) {
       this.betterSW = true;
-    } else if (this.serviceworker$  && this.serviceworker$ < 4) {
+    } else if (this.serviceworker$ && this.serviceworker$ < 4) {
       // default to true for now
       this.hasSW = true;
     }
   }
 
-  @Watch('serviceworker$')
+  @Watch("serviceworker$")
   async onServiceworker$Changed(): Promise<void> {
     try {
       console.log(this.serviceworker$);
@@ -164,14 +223,16 @@ export default class extends Vue {
 
   public modalOpened() {
     //(this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(25px)';
-    (this.$root.$el.closest('body') as HTMLBodyElement).classList.add('modal-screen');
-
+    (this.$root.$el.closest("body") as HTMLBodyElement).classList.add(
+      "modal-screen"
+    );
   }
 
   public modalClosed() {
     //(this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(0px)';
-    (this.$root.$el.closest('body') as HTMLBodyElement).classList.remove('modal-screen');
-
+    (this.$root.$el.closest("body") as HTMLBodyElement).classList.remove(
+      "modal-screen"
+    );
   }
 }
 </script>
@@ -181,14 +242,11 @@ export default class extends Vue {
 
 @import "~assets/scss/base/variables";
 
-.mastHead {
+/*.mastHead {
   margin-bottom: 12em;
 }
 
-
-
 .serviceworker {
-
   &-preview {
     margin-top: 2rem;
   }
@@ -199,39 +257,35 @@ export default class extends Vue {
   margin-right: 68px;
   text-align: right;
 
-  a, a:visited {
+  a,
+  a:visited {
     color: $color-brand-quartary;
   }
 }
 .serviceworker-preview {
-
   .code_viewer {
-    min-height:300px;
+    min-height: 300px;
     max-height: 700px;
     margin-bottom: 100px;
     margin-right: 68px;
   }
   .bottomViewer {
-      min-height:  700px;
-      max-height: 900px;
-    }
+    min-height: 700px;
+    max-height: 900px;
+  }
 }
 
-
 .service-workers {
-
-
-
   h4 {
     display: block;
   }
- 
+
   .l-generator-description {
     font-size: 16px;
     line-height: 24px;
     color: $color-brand-primary;
     padding-right: 34px;
-    display:block;
+    display: block;
     margin-bottom: 40px;
   }
 
@@ -240,37 +294,35 @@ export default class extends Vue {
     margin-bottom: 12px;
   }
 
-[type="radio"]:checked,
-[type="radio"]:not(:checked) {
+  [type="radio"]:checked,
+  [type="radio"]:not(:checked) {
     opacity: 0;
-}
-[type="radio"]:checked + label,
-[type="radio"]:not(:checked) + label
-{
+  }
+  [type="radio"]:checked + label,
+  [type="radio"]:not(:checked) + label {
     position: relative;
     padding-left: 32px;
     cursor: pointer;
     line-height: 24px;
-
-}
-[type="radio"]:checked + label:before,
-[type="radio"]:not(:checked) + label:before {
-    content: '';
+  }
+  [type="radio"]:checked + label:before,
+  [type="radio"]:not(:checked) + label:before {
+    content: "";
     position: absolute;
     left: 0;
     top: 0;
     width: 28px;
     height: 28px;
-    background-image: url('~/assets/images/unChecked.png');
+    background-image: url("~/assets/images/unChecked.png");
     background-repeat: no-repeat;
     background-size: 26px;
-}
-[type="radio"]:checked + label:after,
-[type="radio"]:not(:checked) + label:after {
-    content: '';
+  }
+  [type="radio"]:checked + label:after,
+  [type="radio"]:not(:checked) + label:after {
+    content: "";
     width: 16px;
     height: 16px;
-    background-image: url('~/assets/images/checked.png');
+    background-image: url("~/assets/images/checked.png");
     background-repeat: no-repeat;
     background-size: 16px;
     position: absolute;
@@ -278,14 +330,72 @@ export default class extends Vue {
     left: 5px;
     border-radius: 100%;
     transition: all 0.2s ease;
-}
-[type="radio"]:not(:checked) + label:after {
+  }
+  [type="radio"]:not(:checked) + label:after {
     opacity: 0;
     transform: scale(0);
-}
-[type="radio"]:checked + label:after {
+  }
+  [type="radio"]:checked + label:after {
     opacity: 1;
     transform: scale(1);
-}
+  }*/
+
+#sideBySide {
+  display: flex;
+  justify-content: space-around;
+  height: 100vh;
+
+  #leftSide {
+    flex: 1;
+    background: white;
+    height: 100%;
+
+    .mastHead {
+      padding-top: 4em;
+      padding-left: 8em;
+      padding-right: 8em;
+
+      h2 {
+        font-size: 48px;
+        font-weight: bold;
+        color: black;
+      }
+
+      p {
+        margin-top: 40px;
+        font-size: 18px;
+      }
+    }
+
+    #inputSection {
+      padding-left: 8em;
+      padding-right: 8em;
+
+      .inputContainer {
+        margin-top: 18px;
+
+        #inputDiv {
+          display: flex;
+          align-items: center;
+
+          input {
+            height: 1.2em;
+            flex: 1;
+          }
+
+          h4 {
+            flex: 22;
+            margin-left: 12px;
+          }
+        }
+      }
+    }
+  }
+
+  #rightSide {
+    flex: 1;
+    height: 100%;
+    width: 50%;
+  }
 }
 </style>
