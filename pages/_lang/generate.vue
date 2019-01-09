@@ -821,6 +821,7 @@ export default class extends Vue {
     flex: 1;
     width: 4em;
     height: 100%;
+    border-left: solid 1px grey;
   }
 }
 

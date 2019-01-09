@@ -1,6 +1,5 @@
 <template>
 <section class="code_viewer">
-  <h2 id='codeViewerTitle'>{{title}}</h2>
   <div class="code_viewer-pre" ref="monacoDiv"></div>
 
   <div v-if="errorNumber">
@@ -148,12 +147,11 @@ export default class extends Vue {
 @import '~assets/scss/base/variables';
 
 .code_viewer {
-  background-color: $color-brand-quintary;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, .16);
   display: flex;
   flex-direction: column;
   min-height: 100%;
   padding: 10px;
+  padding-top: 4em;
 
   .active {
     color:$color-brand-quartary;
@@ -163,8 +161,9 @@ export default class extends Vue {
     background: $color-brand-primary;
     color: $color-brand-quintary;
     border: none;
-    border-radius: .5rem;
-    padding: 10px;
+    border-radius: 20px;
+    padding: 6px;
+    width: 6em;
   }
 
   #copyDiv {
@@ -179,6 +178,10 @@ export default class extends Vue {
   #codeViewerTitle {
     margin-bottom: 15px;
     margin-left: 10px;
+  }
+
+  .code_viewer-pre {
+    height: 48em;
   }
 }
 </style>
