@@ -17,11 +17,11 @@
             "check-whitespace"
         ],
         "no-var-keyword": true,
-        "quotemark": [
+        /*"quotemark": [
             true,
             "single",
             "avoid-escape"
-        ],
+        ],*/
         "semicolon": [
             true,
             "ignore-bound-class-methods"
