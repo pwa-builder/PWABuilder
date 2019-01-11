@@ -27,6 +27,7 @@
           </p>
 
           <button @click="rescan()" id="rescanButton">Rescan</button>
+          <button id="publishButton">Publish</button>
         </div>
       </section>
 
@@ -42,28 +43,51 @@
       <section class="catSection">
         <h2>Manifest</h2>
 
-        <span v-if="!manifestAnalyzing" class="score">{{manifestScore}} / 100</span>
+        <span v-if="!manifestAnalyzing" class="score">
+          {{manifestScore}}
+          <span class="scoreSubText">out of 100</span>
+        </span>
         <span v-if="manifestAnalyzing" class="score">
           <Loading active class="u-display-inline_block u-margin-left-sm"/>
         </span>
 
         <ul>
-          <li v-bind:class="{ good: manifest && manifest }">Has a Web Manifest</li>
-          <li
-            v-bind:class="{ good: manifest && manifest.display }"
-          >Web Manifest has the display property</li>
-          <li
-            v-bind:class="{ good: manifest && manifest.icons }"
-          >Web Manifest has the Icons property</li>
-          <li
-            v-bind:class="{ good: manifest && manifest.name }"
-          >Web Manifest has the app name property</li>
-          <li
-            v-bind:class="{ good: manifest && manifest.short_name }"
-          >Web Manifest has the short_name property</li>
-          <li
-            v-bind:class="{ good: manifest && manifest.start_url }"
-          >Web Manifest has the start_url property</li>
+          <li v-bind:class="{ good: manifest }">
+            <i v-if="manifest" class="fas fa-check"></i>
+            <i v-if="!manifest" class="fas fa-times"></i>
+            
+            <span>Has a Web Manifest</span>
+          </li>
+          <li v-bind:class="{ good: manifest && manifest.display }">
+            <i v-if="manifest && manifest.display" class="fas fa-check"></i>
+            <i v-if="manifest && !manifest.display" class="fas fa-times"></i>
+            
+            <span>Web Manifest has the display property</span>
+          </li>
+          <li v-bind:class="{ good: manifest && manifest.icons }">
+            <i v-if="manifest && manifest.icons" class="fas fa-check"></i>
+            <i v-if="manifest && !manifest.icons" class="fas fa-times"></i>
+            
+            <span>Web Manifest has the Icons property</span>
+          </li>
+          <li v-bind:class="{ good: manifest && manifest.name }">
+            <i v-if="manifest && manifest.name" class="fas fa-check"></i>
+            <i v-if="manifest && !manifest.name" class="fas fa-times"></i>
+            
+            <span>Web Manifest has the app name property</span>
+          </li>
+          <li v-bind:class="{ good: manifest && manifest.short_name }">
+            <i v-if="manifest && manifest.short_name" class="fas fa-check"></i>
+            <i v-if="manifest && !manifest.short_name" class="fas fa-times"></i>
+            
+            <span>Web Manifest has the short_name property</span>
+          </li>
+          <li v-bind:class="{ good: manifest && manifest.start_url }">
+            <i v-if="manifest && manifest.start_url" class="fas fa-check"></i>
+            <i v-if="manifest && !manifest.start_url" class="fas fa-times"></i>
+            
+            <span>Web Manifest has the start_url property</span>
+          </li>
         </ul>
 
         <!--<button>Edit</button>-->
@@ -75,24 +99,43 @@
       <section class="catSection">
         <h2>Service Worker</h2>
 
-        <span v-if="!swAnalyzing" class="score">{{swScore}} / 100</span>
+        <span v-if="!swAnalyzing" class="score">
+          {{swScore}}
+          <span class="scoreSubText">out of 100</span>
+        </span>
         <span v-if="swAnalyzing" class="score">
           <Loading active class="u-display-inline_block u-margin-left-sm"/>
         </span>
 
-        <ul>
-          <li
-            v-bind:class="{ good: serviceWorkerData && serviceWorkerData.hasSW }"
-          >Has a Service Worker</li>
-          <li
-            v-bind:class="{ good: serviceWorkerData && serviceWorkerData.cache }"
-          >Service Worker has cache handlers</li>
-          <li
-            v-bind:class="{ good: serviceWorkerData && serviceWorkerData.scope }"
-          >Service Worker has the correct scope</li>
-          <li
-            v-bind:class="{ good: serviceWorkerData && serviceWorkerData.pushReg }"
-          >Service Worker has a push registration</li>
+        <ul v-if="serviceWorkerData">
+          <li v-bind:class="{ good: serviceWorkerData.hasSW }">
+            <i
+              v-bind:class="{'fas fa-check': serviceWorkerData.hasSW, 'fas fa-times': !serviceWorkerData.hasSW}"
+            ></i>
+            
+            <span>Has a Service Worker</span>
+          </li>
+          <li v-bind:class="{ good: serviceWorkerData.cache }">
+            <i
+              v-bind:class="{'fas fa-check': serviceWorkerData.cache, 'fas fa-times': !serviceWorkerData.cache}"
+            ></i>
+            
+            <span>Service Worker has cache handlers</span>
+          </li>
+          <li v-bind:class="{ good: serviceWorkerData.scope }">
+            <i
+              v-bind:class="{'fas fa-check': serviceWorkerData.scope, 'fas fa-times': !serviceWorkerData.scope}"
+            ></i>
+            
+            <span>Service Worker has the correct scope</span>
+          </li>
+          <li v-bind:class="{ good: serviceWorkerData.pushReg }">
+            <i
+              v-bind:class="{'fas fa-check': serviceWorkerData.pushReg, 'fas fa-times': !serviceWorkerData.pushReg}"
+            ></i>
+            
+            <span>Service Worker has a push registration</span>
+          </li>
         </ul>
 
         <!--<button>Edit</button>-->
@@ -104,7 +147,10 @@
       <section class="catSection">
         <h2>Security</h2>
 
-        <span v-if="!securityAnalyzing" class="score">{{securityScore}} / 100</span>
+        <span v-if="!securityAnalyzing" class="score">
+          {{securityScore}}
+          <span class="scoreSubText">out of 100</span>
+        </span>
         <span v-if="securityAnalyzing" class="score">
           <Loading active class="u-display-inline_block u-margin-left-sm"/>
         </span>
@@ -117,7 +163,10 @@
       <section class="catSection">
         <h2>Extras</h2>
 
-        <span class="score">50 / 100</span>
+        <span class="score">
+          50
+          <span class="scoreSubText">out of 100</span>
+        </span>
 
         <p>
           Add extra features to your PWA to enable
@@ -250,7 +299,7 @@ export default class extends Vue {
   private async lookAtSW(): Promise<void> {
     if (this.url) {
       const data = await axios.get(`${apiUrl}=${this.url}`);
-      console.log(data.data);
+      console.log("lookAtSW", data.data);
 
       this.serviceWorkerData = data.data;
 
@@ -416,6 +465,21 @@ export default class extends Vue {
       margin-top: 40px;
       color: white;
       background: $color-button-primary-blue-variant;
+      margin-left: 8px;
+    }
+
+    #publishButton {
+      width: 184px;
+      border-radius: 22px;
+      border: none;
+      background: grey;
+      font-weight: bold;
+      font-size: 18px;
+      padding-top: 9px;
+      padding-bottom: 11px;
+      margin-top: 40px;
+      color: white;
+      background: $color-button-primary-green-variant;
     }
   }
 
@@ -449,7 +513,6 @@ export default class extends Vue {
   bottom: 4.6em;
 
   .good {
-    color: blue;
   }
 
   .catSection {
@@ -461,10 +524,22 @@ export default class extends Vue {
 
     ul {
       flex-grow: 1;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      margin-bottom: 42px;
+
+      li {
+        font-size: 18px;
+
+        span {
+          margin-left: 20px;
+        }
+      }
     }
 
     h2 {
-      font-size: 36px;
+      font-size: 24px;
       font-weight: bold;
       width: 420px;
     }
@@ -486,10 +561,20 @@ export default class extends Vue {
 
     .score {
       position: relative;
-      left: 9em;
+      left: 11em;
       bottom: 1.2em;
       font-size: 36px;
       font-weight: bold;
+      display: flex;
+      width: 2.8em;
+      justify-content: space-between;
+
+      .scoreSubText {
+        color: grey;
+        font-size: 12px;
+        width: 32px;
+        text-align: center;
+      }
     }
   }
 }
