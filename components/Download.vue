@@ -1,5 +1,5 @@
 <template>
-<div class="work-button" 
+<div
     :class="{'pwa-button--brand': isBrand, 'pwa-button--total_right': isRight}"
     @click="buildArchive(platform, parameters);  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/download/{platform}' });">
 
@@ -21,6 +21,14 @@ import * as publish from '~/store/modules/publish';
 
 const PublishState = namespace(publish.name, State);
 const PublishAction = namespace(publish.name, Action);
+
+declare var awa: any;
+
+Vue.prototype.$awa = function (config) { 
+  awa.ct.capturePageView(config);
+
+  return;
+};
 
 @Component({
   components: {
