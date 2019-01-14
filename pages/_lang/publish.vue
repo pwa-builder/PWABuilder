@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <!--<section>
     <section id="getStartedBlock">
       <div class="mastHead">
         <h2>Download and publish your shiny new app</h2>
@@ -90,7 +90,90 @@
         </section>
       </div>
     </div>
-  </section>
+  </section>-->
+  <main id="sideBySide">
+    <section id="leftSide">
+      <header>
+        <img id="logo">
+        <h1 id="headerText">PWABuilder</h1>
+      </header>
+
+      <div id="introContainer">
+        <h2>Download and publish your shiny new app</h2>
+
+        <p>
+          You have a few different options to publish your app. You can download the
+          files and deploy them to your site, or you can download pre-populated app projects for the major app
+          platforms from the links below.
+        </p>
+
+        <div id="publishActionsContainer">
+          <button id="downloadAllButton">Download All</button>
+          <button id="showcaseButton">See Showcase</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="rightSide">
+      <div id="platformsListContainer">
+        <ul>
+          <li>
+            <div id="platformButtonBlock">
+              <i id="platformIcon" class="fab fa-windows"></i>
+              <!--<Download platform="windows10" :message="$t('publish.download')"/>-->
+              <button id="platformDownloadButton">Download</button>
+            </div>
+
+            <span>
+              Service Worker support requires RS4 or above. You'll get a copy of each PWAbuilder component as well as
+              a side-loadable version of your PWA (requires Win10 in dev mode). The Generate Appx button can be used to
+              generate a PWA package to submit to the Microsoft Store.
+            </span>
+          </li>
+
+          <li>
+            <div id="platformButtonBlock">
+              <i id="platformIcon" class="fab fa-apple"></i>
+              <!--<Download platform="windows10" :message="$t('publish.download')"/>-->
+              <button id="platformDownloadButton">Download</button>
+            </div>
+
+            <span>You can use Xcode to build this package to produce an app that runs on MacOS.</span>
+          </li>
+
+          <li>
+            <div id="platformButtonBlock">
+              <i id="platformIcon" class="fab fa-android"></i>
+              <!--<Download platform="windows10" :message="$t('publish.download')"/>-->
+              <button id="platformDownloadButton">Download</button>
+            </div>
+
+            <span>PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.</span>
+          </li>
+
+          <li>
+            <div id="platformButtonBlock">
+              <i id="platformIcon" class="fab fa-apple"></i>
+              <!--<Download platform="windows10" :message="$t('publish.download')"/>-->
+              <button id="platformDownloadButton">Download</button>
+            </div>
+
+            <span>iOS is a thing</span>
+          </li>
+
+          <li>
+            <div id="platformButtonBlock">
+              <i id="platformIcon" class="fab fa-edge"></i>
+              <!--<Download platform="windows10" :message="$t('publish.download')"/>-->
+              <button id="platformDownloadButton">Download</button>
+            </div>
+
+            <span>Download these files and add them to your website. Different browsers will detect your Progressive Web App in different ways, but the manifest and service workers are required for each of them.</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
 </template>
 
 <script lang="ts">
@@ -191,7 +274,7 @@ export default class extends Vue {
 
 @import "~assets/scss/base/variables";
 
-.mastHead {
+/*.mastHead {
   margin-bottom: 12em;
 }
 
@@ -350,6 +433,131 @@ label {
 [type="checkbox"]:checked + label:after {
   opacity: 1;
   transform: scale(1);
+}*/
+
+#sideBySide {
+  display: flex;
+  justify-content: space-around;
+  height: 100vh;
+
+  #leftSide {
+    background: white;
+    height: 100%;
+    flex: 1;
+
+    header {
+      display: flex;
+      align-items: center;
+      padding-left: 68px;
+      margin-top: 32px;
+
+      #headerText {
+        font-size: 28px;
+        font-weight: normal;
+      }
+
+      #logo {
+        background: lightgrey;
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        margin-right: 12px;
+      }
+    }
+
+    #introContainer {
+      padding-top: 6em;
+      padding-right: 10em;
+      padding-left: 10em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      h2 {
+        font-size: 48px;
+        color: black;
+        font-weight: bold;
+      }
+
+      p {
+        margin-top: 40px;
+        font-size: 18px;
+      }
+
+      #publishActionsContainer {
+        display: flex;
+        width: 100%;
+
+        button {
+          border: none;
+          width: 184px;
+          border-radius: 20px;
+          font-size: 18px;
+          font-weight: bold;
+          padding-top: 9px;
+          padding-bottom: 11px;
+        }
+
+        #downloadAllButton {
+          margin-right: 11px;
+          background: $color-button-primary-blue-variant;
+        }
+      }
+    }
+  }
+
+  #rightSide {
+    height: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    #platformsListContainer {
+      padding-top: 12em;
+      padding-right: 8em;
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+          display: flex;
+          height: 84px;
+          margin-bottom: 30px;
+
+          span {
+            margin-left: 19px;
+            font-size: 14px;
+            font-weight: normal;
+            width: 476px;
+          }
+
+          #platformButtonBlock {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            #platformIcon {
+              font-size: 44px;
+            }
+
+            #platformDownloadButton {
+              border: none;
+              border-radius: 20px;
+              font-size: 12px;
+              font-weight: bold;
+              padding-bottom: 5px;
+              padding-top: 3px;
+              padding-left: 11px;
+              padding-right: 11px;
+              margin-top: 11px;
+            }
+          }
+        }
+      }
+    }
+  }
 }
 </style>
 
