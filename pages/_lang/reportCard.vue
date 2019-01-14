@@ -382,7 +382,7 @@ export default class extends Vue {
 
       this.calcGradeAnalyzing = false;
 
-      console.log(4);
+      sessionStorage.setItem("overallGrade", this.overallGrade);
 
       resolve();
     });

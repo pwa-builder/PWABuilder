@@ -113,13 +113,16 @@
       </section>
 
       <section id="scoreSection">
-        <!--<div id="scoreDiv" v-if="!calcGradeAnalyzing">{{overallGrade}}</div>
-        <div id="scoreDiv" v-if="calcGradeAnalyzing">
-          <Loading id="gradeLoading" active class="u-display-inline_block u-margin-left-sm"/>
-        </div>-->
-        <span>This is a score</span>
+        <div id="scoreDiv" v-if="overallGrade">{{overallGrade}}</div>
       </section>
     </div>
+
+    <section id="featureListBlock">
+      <div id="featureCard" v-for="sample in samples" :key="sample.id">
+        <h4>{{sample.title}}</h4>
+        <p>{{ sample.description }}</p>
+      </div>
+    </section>
   </main>
 </template>
 
@@ -153,6 +156,7 @@ export default class extends Vue {
   hasNative = false;
   public viewerSize = "5rem";
   public viewerSizeBottom = "55rem";
+  overallGrade: string | null = null;
 
   selectedSamples: windowsStore.Sample[] = [];
   @WindowsState sample: windowsStore.Sample;
@@ -164,6 +168,12 @@ export default class extends Vue {
   async created() {
     await this.getSamples();
     console.log(this.samples);
+
+    const score = sessionStorage.getItem("overallGrade");
+    console.log(score);
+    if (score) {
+      this.overallGrade = score;
+    }
   }
 
   public onClickHideGBB(): void {
@@ -395,7 +405,22 @@ header {
   }
 
   #scoreSection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     flex: 1;
+
+    #scoreDiv {
+      height: 260px;
+      width: 280px;
+      background: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 92px;
+      font-weight: bold;
+      border-radius: 32px;
+    }
   }
 }
 </style>
