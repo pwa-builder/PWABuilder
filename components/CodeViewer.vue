@@ -84,7 +84,7 @@ export default class extends Vue {
 
   public editor: monaco.editor.IStandaloneCodeEditor;
 
-  showOverlay: boolean = false;
+  showOverlay = false;
   errors: any[] = [];
 
   public mounted(): void {

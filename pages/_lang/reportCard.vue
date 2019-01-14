@@ -215,15 +215,15 @@ export default class extends Vue {
 
   @GeneratorAction getManifestInformation;
 
-  swScore: number = 0;
-  manifestScore: number = 0;
-  securityScore: number = 0;
+  swScore = 0;
+  manifestScore = 0;
+  securityScore = 0;
   overallGrade: string | null = null;
 
-  swAnalyzing: boolean = false;
-  manifestAnalyzing: boolean = false;
-  securityAnalyzing: boolean = false;
-  calcGradeAnalyzing: boolean = false;
+  swAnalyzing = false;
+  manifestAnalyzing = false;
+  securityAnalyzing = false;
+  calcGradeAnalyzing = false;
 
   serviceWorkerData: any = null;
 
