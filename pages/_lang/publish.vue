@@ -91,86 +91,112 @@
       </div>
     </div>
   </section>-->
-  <main id="sideBySide">
-    <section id="leftSide">
-      <header>
-        <img id="logo">
-        <h1 id="headerText">PWABuilder</h1>
-      </header>
+  <main>
+    <section id="sideBySide">
+      <section id="leftSide">
+        <header>
+          <img id="logo">
+          <h1 id="headerText">PWABuilder</h1>
+        </header>
 
-      <div id="introContainer">
-        <h2>Download and publish your shiny new app</h2>
+        <div id="introContainer">
+          <h2>Download and publish your shiny new app</h2>
 
-        <p>
-          You have a few different options to publish your app. You can download the
-          files and deploy them to your site, or you can download pre-populated app projects for the major app
-          platforms from the links below.
-        </p>
+          <p>
+            You have a few different options to publish your app. You can download the
+            files and deploy them to your site, or you can download pre-populated app projects for the major app
+            platforms from the links below.
+          </p>
 
-        <div id="publishActionsContainer">
-          <button id="downloadAllButton">Download All</button>
-          <button id="showcaseButton">See Showcase</button>
+          <div id="publishActionsContainer">
+            <button id="downloadAllButton">Download All</button>
+            <button id="showcaseButton">See Showcase</button>
+          </div>
         </div>
-      </div>
+      </section>
+
+      <section id="rightSide">
+        <div id="platformsListContainer">
+          <ul>
+            <li>
+              <div id="platformButtonBlock">
+                <i id="platformIcon" class="fab fa-windows"></i>
+                <!--<Download platform="windows10" :message="$t('publish.download')"/>-->
+                <button id="platformDownloadButton">Download</button>
+              </div>
+
+              <span>
+                Service Worker support requires RS4 or above. You'll get a copy of each PWAbuilder component as well as
+                a side-loadable version of your PWA (requires Win10 in dev mode). The Generate Appx button can be used to
+                generate a PWA package to submit to the Microsoft Store.
+              </span>
+            </li>
+
+            <li>
+              <div id="platformButtonBlock">
+                <i id="platformIcon" class="fab fa-apple"></i>
+                <!--<Download platform="windows10" :message="$t('publish.download')"/>-->
+                <button id="platformDownloadButton">Download</button>
+              </div>
+
+              <span>You can use Xcode to build this package to produce an app that runs on MacOS.</span>
+            </li>
+
+            <li>
+              <div id="platformButtonBlock">
+                <i id="platformIcon" class="fab fa-android"></i>
+                <!--<Download platform="windows10" :message="$t('publish.download')"/>-->
+                <button id="platformDownloadButton">Download</button>
+              </div>
+
+              <span>PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.</span>
+            </li>
+
+            <li>
+              <div id="platformButtonBlock">
+                <i id="platformIcon" class="fab fa-apple"></i>
+                <!--<Download platform="windows10" :message="$t('publish.download')"/>-->
+                <button id="platformDownloadButton">Download</button>
+              </div>
+
+              <span>iOS is a thing</span>
+            </li>
+
+            <li>
+              <div id="platformButtonBlock">
+                <i id="platformIcon" class="fab fa-edge"></i>
+                <!--<Download platform="windows10" :message="$t('publish.download')"/>-->
+                <button id="platformDownloadButton">Download</button>
+              </div>
+
+              <span>Download these files and add them to your website. Different browsers will detect your Progressive Web App in different ways, but the manifest and service workers are required for each of them.</span>
+            </li>
+          </ul>
+        </div>
+      </section>
     </section>
 
-    <section id="rightSide">
-      <div id="platformsListContainer">
-        <ul>
-          <li>
-            <div id="platformButtonBlock">
-              <i id="platformIcon" class="fab fa-windows"></i>
-              <!--<Download platform="windows10" :message="$t('publish.download')"/>-->
-              <button id="platformDownloadButton">Download</button>
-            </div>
+    <section id="bottomSection">
+      <div id="coolPWAs">
+        <h2>Scope out rad PWAs</h2>
 
-            <span>
-              Service Worker support requires RS4 or above. You'll get a copy of each PWAbuilder component as well as
-              a side-loadable version of your PWA (requires Win10 in dev mode). The Generate Appx button can be used to
-              generate a PWA package to submit to the Microsoft Store.
-            </span>
-          </li>
+        <p>Pinterest, Spotify, and more built some PWAs and they are like whoa! Check them out by clicking on the image or logos. Love doing PWAs? Submit your own!</p>
 
-          <li>
-            <div id="platformButtonBlock">
-              <i id="platformIcon" class="fab fa-apple"></i>
-              <!--<Download platform="windows10" :message="$t('publish.download')"/>-->
-              <button id="platformDownloadButton">Download</button>
-            </div>
+        <div id="iconGrid">
+          <div>
+            <i id="platformIcon" class="fab fa-pinterest"></i>
+          </div>
+          <div>
+            <i id="platformIcon" class="fab fa-spotify"></i>
+          </div>
+          <div>
+            <i id="platformIcon" class="fab fa-microsoft"></i>
+          </div>
+        </div>
+      </div>
 
-            <span>You can use Xcode to build this package to produce an app that runs on MacOS.</span>
-          </li>
-
-          <li>
-            <div id="platformButtonBlock">
-              <i id="platformIcon" class="fab fa-android"></i>
-              <!--<Download platform="windows10" :message="$t('publish.download')"/>-->
-              <button id="platformDownloadButton">Download</button>
-            </div>
-
-            <span>PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.</span>
-          </li>
-
-          <li>
-            <div id="platformButtonBlock">
-              <i id="platformIcon" class="fab fa-apple"></i>
-              <!--<Download platform="windows10" :message="$t('publish.download')"/>-->
-              <button id="platformDownloadButton">Download</button>
-            </div>
-
-            <span>iOS is a thing</span>
-          </li>
-
-          <li>
-            <div id="platformButtonBlock">
-              <i id="platformIcon" class="fab fa-edge"></i>
-              <!--<Download platform="windows10" :message="$t('publish.download')"/>-->
-              <button id="platformDownloadButton">Download</button>
-            </div>
-
-            <span>Download these files and add them to your website. Different browsers will detect your Progressive Web App in different ways, but the manifest and service workers are required for each of them.</span>
-          </li>
-        </ul>
+      <div id="bottomImageSection">
+        <span>I will hold things</span>
       </div>
     </section>
   </main>
@@ -557,6 +583,40 @@ label {
         }
       }
     }
+  }
+}
+
+#bottomSection {
+  display: flex;
+
+  #coolPWAs {
+    padding-left: 10em;
+    flex: 1;
+
+    h2 {
+      font-size: 36px;
+      font-weight: bold;
+    }
+
+    p {
+      width: 392px;
+      font-size: 18px;
+    }
+
+    #iconGrid {
+      display: grid;
+      grid-template-columns: auto auto auto;
+      width: 392px;
+      margin-top: 36px;
+
+      svg {
+        font-size: 64px;
+      }
+    }
+  }
+
+  #bottomImageSection {
+    flex: 1;
   }
 }
 </style>
