@@ -26,8 +26,10 @@
             Selvage 3 wolf moon stumptown art party edison bulb shaman.
           </p>
 
-          <button @click="rescan()" id="rescanButton">Rescan</button>
-          <button id="publishButton">Publish</button>
+          <div id="reportActionsBlock">
+            <button @click="rescan()" id="rescanButton">Rescan</button>
+            <nuxt-link id="publishButton" to="/publish">Publish</nuxt-link>
+          </div>
         </div>
       </section>
 
@@ -444,6 +446,11 @@ export default class extends Vue {
       padding-left: 8em;
     }
 
+    #reportActionsBlock {
+      display: flex;
+      padding-left: 0;
+    }
+
     #reportCardHeader {
       font-weight: bold;
       font-size: 48px;
@@ -466,6 +473,7 @@ export default class extends Vue {
       color: white;
       background: $color-button-primary-blue-variant;
       margin-left: 8px;
+      margin-right: 10px;
     }
 
     #publishButton {
@@ -480,6 +488,9 @@ export default class extends Vue {
       margin-top: 40px;
       color: white;
       background: $color-button-primary-green-variant;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
 
