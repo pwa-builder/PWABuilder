@@ -28,5 +28,6 @@
       "~/utils/*": ["./utils/*"],
       "~/test/*": ["./test/*"]
     }
-  }
+  },
+  "exclude": ["./environments/*"]
 }
