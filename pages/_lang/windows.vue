@@ -121,6 +121,10 @@
       <div id="featureCard" v-for="sample in samples" :key="sample.id">
         <h4>{{sample.title}}</h4>
         <p>{{ sample.description }}</p>
+
+        <div id="featureCardActionsBlock">
+          <button id="featureCardAddButton">Add</button>
+        </div>
       </div>
     </section>
   </main>
@@ -420,6 +424,44 @@ header {
       font-size: 92px;
       font-weight: bold;
       border-radius: 32px;
+    }
+  }
+}
+
+#featureListBlock {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  padding-left: 8em;
+  padding-right: 13em;
+  margin-top: 60px;
+
+  #featureCard {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border: solid grey 1px;
+
+    h4 {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    p {
+      width: 277px;
+      flex: 2;
+    }
+
+    #featureCardActionsBlock {
+      #featureCardAddButton {
+        border: none;
+        border-radius: 20px;
+        padding-top: 11px;
+        padding-bottom: 11px;
+        padding-left: 27px;
+        padding-right: 27px;
+        font-size: 18px;
+        font-weight: bold;
+      }
     }
   }
 }
