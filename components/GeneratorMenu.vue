@@ -28,7 +28,6 @@ export default class extends Vue {
 </script>
 
 <style lang='scss' scoped>
-
 @import '~assets/scss/base/variables';
 
 .generator_menu {
