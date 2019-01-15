@@ -118,14 +118,15 @@
     </div>
 
     <section id="featureListBlock">
-      <div id="featureCard" v-for="sample in samples" :key="sample.id">
+      <!--<div id="featureCard" v-for="sample in samples" :key="sample.id">
         <h4>{{sample.title}}</h4>
         <p>{{ sample.description }}</p>
 
         <div id="featureCardActionsBlock">
-          <button id="featureCardAddButton">Add</button>
+          <button @click="onClickSample(sample)" id="featureCardAddButton">Add</button>
         </div>
-      </div>
+      </div>-->
+      <FeatureCard v-for="sample in samples" :sample="sample" :key="sample.id" v-on:selected="onSelected" v-on:removed="onRemoved"></FeatureCard>
     </section>
   </main>
 </template>
@@ -140,6 +141,7 @@ import WindowsMenu from "~/components/WindowsMenu.vue";
 import GoodPWA from "~/components/GoodPWA.vue";
 import Modal from "~/components/Modal.vue";
 import Loading from "~/components/Loading.vue";*/
+import FeatureCard from "~/components/FeatureCard.vue";
 
 import * as windowsStore from "~/store/modules/windows";
 
@@ -153,6 +155,7 @@ const WindowsAction = namespace(windowsStore.name, Action);
     GoodPWA,
     Modal,
     Loading*/
+    FeatureCard
   }
 })
 export default class extends Vue {
@@ -169,7 +172,7 @@ export default class extends Vue {
   @WindowsAction getSamples;
   @WindowsAction selectSample;
 
-  async created() {
+  async mounted() {
     await this.getSamples();
     console.log(this.samples);
 
@@ -194,9 +197,36 @@ export default class extends Vue {
     // (this.$refs.nextStepModal as Modal).show();
   }
 
-  async onClickSample(sample: windowsStore.Sample) {
+  private async onSelected(sample: windowsStore.Sample) {
+    console.log(sample);
     try {
       await this.selectSample(sample);
+      this.selectedSamples.push(sample);
+    }
+    catch (e) {
+      this.error = e;
+    }
+  }
+
+  private onRemoved(sample: windowsStore.Sample) {
+    if (this.selectedSamples.indexOf(sample) != -1) {
+      sample.usercode = null;
+
+      // We're unchecking the last sample
+      if (this.selectedSamples.length == 1) {
+        this.hasNative = false;
+      }
+    } else {
+      // We're adding a sample via checkbox
+      this.hasNative = true;
+    }
+  }
+
+  async onClickSample(sample: windowsStore.Sample) {
+    try {
+      console.log(sample);
+      await this.selectSample(sample);
+      this.selectedSamples.push(sample);
 
       //  (this.$refs.addFeatureModal as Modal).show();
 
@@ -434,35 +464,5 @@ header {
   padding-left: 8em;
   padding-right: 13em;
   margin-top: 60px;
-
-  #featureCard {
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    border: solid grey 1px;
-
-    h4 {
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    p {
-      width: 277px;
-      flex: 2;
-    }
-
-    #featureCardActionsBlock {
-      #featureCardAddButton {
-        border: none;
-        border-radius: 20px;
-        padding-top: 11px;
-        padding-bottom: 11px;
-        padding-left: 27px;
-        padding-right: 27px;
-        font-size: 18px;
-        font-weight: bold;
-      }
-    }
-  }
 }
 </style>
