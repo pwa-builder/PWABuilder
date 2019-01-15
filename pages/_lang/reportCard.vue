@@ -109,29 +109,29 @@
           <Loading active class="u-display-inline_block u-margin-left-sm"/>
         </span>
 
-        <ul v-if="serviceWorkerData">
-          <li v-bind:class="{ good: serviceWorkerData.hasSW }">
+        <ul>
+          <li v-if="serviceWorkerData" v-bind:class="{ good: serviceWorkerData.hasSW }">
             <i
               v-bind:class="{'fas fa-check': serviceWorkerData.hasSW, 'fas fa-times': !serviceWorkerData.hasSW}"
             ></i>
             
             <span>Has a Service Worker</span>
           </li>
-          <li v-bind:class="{ good: serviceWorkerData.cache }">
+          <li v-if="serviceWorkerData" v-bind:class="{ good: serviceWorkerData.cache }">
             <i
               v-bind:class="{'fas fa-check': serviceWorkerData.cache, 'fas fa-times': !serviceWorkerData.cache}"
             ></i>
             
             <span>Service Worker has cache handlers</span>
           </li>
-          <li v-bind:class="{ good: serviceWorkerData.scope }">
+          <li v-if="serviceWorkerData" v-bind:class="{ good: serviceWorkerData.scope }">
             <i
               v-bind:class="{'fas fa-check': serviceWorkerData.scope, 'fas fa-times': !serviceWorkerData.scope}"
             ></i>
             
             <span>Service Worker has the correct scope</span>
           </li>
-          <li v-bind:class="{ good: serviceWorkerData.pushReg }">
+          <li v-if="serviceWorkerData" v-bind:class="{ good: serviceWorkerData.pushReg }">
             <i
               v-bind:class="{'fas fa-check': serviceWorkerData.pushReg, 'fas fa-times': !serviceWorkerData.pushReg}"
             ></i>
@@ -534,7 +534,7 @@ export default class extends Vue {
     flex-direction: column;
 
     ul {
-      flex-grow: 1;
+      flex-grow: 2;
       list-style: none;
       padding: 0;
       margin: 0;
