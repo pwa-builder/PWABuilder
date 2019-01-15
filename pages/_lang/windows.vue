@@ -193,9 +193,9 @@ export default class extends Vue {
     );
   }
 
-  public onClickShowGBB(): void {
+  /*public onClickShowGBB(): void {
     // (this.$refs.nextStepModal as Modal).show();
-  }
+  }*/
 
   private async onSelected(sample: windowsStore.Sample) {
     console.log(sample);
@@ -222,7 +222,7 @@ export default class extends Vue {
     }
   }
 
-  async onClickSample(sample: windowsStore.Sample) {
+  /*async onClickSample(sample: windowsStore.Sample) {
     try {
       console.log(sample);
       await this.selectSample(sample);
@@ -251,7 +251,7 @@ export default class extends Vue {
       // We're adding a sample via checkbox
       this.hasNative = true;
     }
-  }
+  }*/
 
   loadCode() {
     let index = this.selectedSamples.indexOf(this.sample);
