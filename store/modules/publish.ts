@@ -49,7 +49,7 @@ export interface Actions<S, R> extends ActionTree<S, R> {
 
 export const actions: Actions<State, RootState> = {
 
-    resetAppData({ commit, dispatch }): void {
+    resetAppData({ dispatch }): void {
         dispatch('generator/resetStates', undefined, { root: true });
         dispatch('serviceworker/resetStates', undefined, { root: true });
     },

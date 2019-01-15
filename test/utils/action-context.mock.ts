@@ -10,7 +10,9 @@ const modulesStates = {
 };
 
 export let actionContextMockBuilder = <S>(s: S): ActionContext<S, RootState> => ({
+    // @ts-ignore TS6133 type
     dispatch: (type: string) => Promise.resolve(),
+    // @ts-ignore TS6133 type
     commit: (type: string) => {},
     state: s,
     getters: {},
