@@ -107,7 +107,7 @@
 
           <div id="featureActionsBlock">
             <button id="clearButton">clear</button>
-            <nuxt-link id="doneButton" to="/">Done</nuxt-link>
+            <nuxt-link id="doneButton" to="/reportCard">Done</nuxt-link>
           </div>
         </div>
       </section>
