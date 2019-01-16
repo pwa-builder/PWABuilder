@@ -216,6 +216,8 @@ Vue.prototype.$awa = function(config) {
     background: white;
     height: 100%;
     flex: 1;
+    display: flex;
+    flex-direction: column;
 
     header {
       display: flex;
@@ -269,6 +271,7 @@ Vue.prototype.$awa = function(config) {
     display: flex;
     flex-direction: column;
     align-items: center;
+    flex: 2;
 
     h2 {
       font-size: 48px;
