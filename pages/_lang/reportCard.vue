@@ -252,7 +252,7 @@ export default class extends Vue {
   }
 
   private lookAtSecurity(): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (this.url.includes("https")) {
         this.securityScore = this.securityScore + 100;
       }
@@ -264,7 +264,7 @@ export default class extends Vue {
   }
 
   private lookAtManifest(): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       console.log("manifestInfo", this.manifest);
       if (this.manifest) {
         this.manifestScore = this.manifestScore + 50;
@@ -357,7 +357,7 @@ export default class extends Vue {
   }
 
   private calcGrade() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (
         this.swScore > 90 &&
         this.manifestScore > 90 &&

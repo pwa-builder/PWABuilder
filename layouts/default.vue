@@ -24,7 +24,7 @@
     }
 
     private handleUrl() {
-      this.$router.beforeEach((to, from, next) => {
+      this.$router.beforeEach((to, _from, next) => {
         const body = document.querySelector('body');
 
         if (body) {
@@ -35,6 +35,7 @@
       });
     }
 
+    // @ts-ignore TS6133
     private close() {
       this.seen = false;
       localStorage.setItem('PWABuilderGDPR', JSON.stringify(true));

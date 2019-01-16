@@ -133,6 +133,7 @@ export default class extends Vue {
     }
   }
 
+  // @ts-ignore TS6133
   private async copy() {
     const code = this.editor.getValue();
 
@@ -160,10 +161,12 @@ export default class extends Vue {
     }
   }
 
+  // @ts-ignore TS6133
   private showErrorOverlay() {
     this.showOverlay = !this.showOverlay;
   }
 
+  // @ts-ignore TS6133
   private closeOverlay() {
     this.showOverlay = false;
   }
