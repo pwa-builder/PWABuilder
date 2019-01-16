@@ -19,7 +19,7 @@ describe('store generator actions', () => {
         state = generator.state();
         actionContext = actionContextMockBuilder<generator.State>(state);
         spy(actionContext, 'commit');
-        stub(generator.helpers, 'getImageIconSize').returnsPromise().resolves(Promise.resolve({ width: 0, height: 0 }));
+        stub(generator.helpers, 'getImageIconSize').resolves(Promise.resolve({ width: 0, height: 0 }));
         actions = nuxtAxiosMockBuilder(generator.actions);
     });
 
