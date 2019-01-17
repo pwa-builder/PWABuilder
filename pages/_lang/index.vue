@@ -40,7 +40,10 @@
         </div>
       </div>
 
-      <button @click="skipCheckUrl()" id="expertModeButton">EXPERT MODE - Already have a manifest? Skip ahead!</button>
+      <button
+        @click="skipCheckUrl()"
+        id="expertModeButton"
+      >EXPERT MODE - Already have a manifest? Skip ahead!</button>
     </section>
 
     <section id="rightSide"></section>
@@ -168,15 +171,16 @@ export default class extends Vue {
     this.error = null;
 
     try {
-      this.updateLink(this.url$);
-
       if (!this.url$) {
+        this.error = "You must enter a URL to get started";
         return;
       }
 
+      this.updateLink(this.url$);
+
       this.url$ = this.url;
 
-      await this.getManifestInformation();
+      // await this.getManifestInformation();
 
       this.$router.push({
         // name: 'generate'
@@ -345,7 +349,7 @@ Vue.prototype.$awa = function(config) {
     border: none;
     height: 80px;
     opacity: 0.6;
-    position:absolute;
+    position: absolute;
     bottom: 0;
   }
 }

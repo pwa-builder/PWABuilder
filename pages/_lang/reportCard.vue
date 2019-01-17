@@ -53,42 +53,56 @@
           <Loading active class="u-display-inline_block u-margin-left-sm"/>
         </span>
 
-        <ul>
+        <ul v-if="manifest === 1">
           <li v-bind:class="{ good: manifest }">
             <i v-if="manifest" class="fas fa-check"></i>
             <i v-if="!manifest" class="fas fa-times"></i>
             
-            <span>Has a Web Manifest</span>
+            <span>Web Manifest</span>
           </li>
           <li v-bind:class="{ good: manifest && manifest.display }">
             <i v-if="manifest && manifest.display" class="fas fa-check"></i>
             <i v-if="manifest && !manifest.display" class="fas fa-times"></i>
             
-            <span>Web Manifest has the display property</span>
+            <span>display property</span>
           </li>
           <li v-bind:class="{ good: manifest && manifest.icons }">
             <i v-if="manifest && manifest.icons" class="fas fa-check"></i>
             <i v-if="manifest && !manifest.icons" class="fas fa-times"></i>
             
-            <span>Web Manifest has the Icons property</span>
+            <span>Icons property</span>
           </li>
           <li v-bind:class="{ good: manifest && manifest.name }">
             <i v-if="manifest && manifest.name" class="fas fa-check"></i>
             <i v-if="manifest && !manifest.name" class="fas fa-times"></i>
             
-            <span>Web Manifest has the app name property</span>
+            <span>app name property</span>
           </li>
           <li v-bind:class="{ good: manifest && manifest.short_name }">
             <i v-if="manifest && manifest.short_name" class="fas fa-check"></i>
             <i v-if="manifest && !manifest.short_name" class="fas fa-times"></i>
             
-            <span>Web Manifest has the short_name property</span>
+            <span>short_name property</span>
           </li>
           <li v-bind:class="{ good: manifest && manifest.start_url }">
             <i v-if="manifest && manifest.start_url" class="fas fa-check"></i>
             <i v-if="manifest && !manifest.start_url" class="fas fa-times"></i>
             
-            <span>Web Manifest has the start_url property</span>
+            <span>start_url property</span>
+          </li>
+        </ul>
+        <ul v-else>
+          <li>
+            <span class="skeletonSpan"></span>
+          </li>
+          <li>
+            <span class="skeletonSpan"></span>
+          </li>
+          <li>
+            <span class="skeletonSpan"></span>
+          </li>
+          <li>
+            <span class="skeletonSpan"></span>
           </li>
         </ul>
 
@@ -109,29 +123,29 @@
           <Loading active class="u-display-inline_block u-margin-left-sm"/>
         </span>
 
-        <ul>
-          <li v-if="serviceWorkerData" v-bind:class="{ good: serviceWorkerData.hasSW }">
+        <ul v-if="serviceWorkerData">
+          <li v-bind:class="{ good: serviceWorkerData.hasSW }">
             <i
               v-bind:class="{'fas fa-check': serviceWorkerData.hasSW, 'fas fa-times': !serviceWorkerData.hasSW}"
             ></i>
             
             <span>Has a Service Worker</span>
           </li>
-          <li v-if="serviceWorkerData" v-bind:class="{ good: serviceWorkerData.cache }">
+          <li v-bind:class="{ good: serviceWorkerData.cache }">
             <i
               v-bind:class="{'fas fa-check': serviceWorkerData.cache, 'fas fa-times': !serviceWorkerData.cache}"
             ></i>
             
             <span>Service Worker has cache handlers</span>
           </li>
-          <li v-if="serviceWorkerData" v-bind:class="{ good: serviceWorkerData.scope }">
+          <li v-bind:class="{ good: serviceWorkerData.scope }">
             <i
               v-bind:class="{'fas fa-check': serviceWorkerData.scope, 'fas fa-times': !serviceWorkerData.scope}"
             ></i>
             
             <span>Service Worker has the correct scope</span>
           </li>
-          <li v-if="serviceWorkerData" v-bind:class="{ good: serviceWorkerData.pushReg }">
+          <li v-bind:class="{ good: serviceWorkerData.pushReg }">
             <i
               v-bind:class="{'fas fa-check': serviceWorkerData.pushReg, 'fas fa-times': !serviceWorkerData.pushReg}"
             ></i>
@@ -264,7 +278,10 @@ export default class extends Vue {
   }
 
   private lookAtManifest(): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
+
+      await this.getManifestInformation();
+      
       console.log("manifestInfo", this.manifest);
       if (this.manifest) {
         this.manifestScore = this.manifestScore + 50;
