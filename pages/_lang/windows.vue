@@ -197,7 +197,7 @@ export default class extends Vue {
     // (this.$refs.nextStepModal as Modal).show();
   }*/
 
-  private async onSelected(sample: windowsStore.Sample) {
+  public async onSelected(sample: windowsStore.Sample) {
     console.log(sample);
     try {
       await this.selectSample(sample);
@@ -208,7 +208,7 @@ export default class extends Vue {
     }
   }
 
-  private onRemoved(sample: windowsStore.Sample) {
+  public onRemoved(sample: windowsStore.Sample) {
     if (this.selectedSamples.indexOf(sample) != -1) {
       sample.usercode = null;
 
