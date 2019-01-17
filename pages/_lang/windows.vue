@@ -89,11 +89,9 @@
       </a>
       </Modal>
   </section>-->
+
   <main>
-    <header>
-      <img id="logo">
-      <h1 id="headerText">PWABuilder</h1>
-    </header>
+    <ScoreHeader></ScoreHeader>
 
     <div id="sideBySide">
       <section id="headerSection">
@@ -110,10 +108,6 @@
             <nuxt-link id="doneButton" to="/reportCard">Done</nuxt-link>
           </div>
         </div>
-      </section>
-
-      <section id="scoreSection">
-        <div id="scoreDiv" v-if="overallGrade">{{overallGrade}}</div>
       </section>
     </div>
 
@@ -142,6 +136,7 @@ import GoodPWA from "~/components/GoodPWA.vue";
 import Modal from "~/components/Modal.vue";
 import Loading from "~/components/Loading.vue";*/
 import FeatureCard from "~/components/FeatureCard.vue";
+import ScoreHeader from "~/components/ScoreHeader.vue";
 
 import * as windowsStore from "~/store/modules/windows";
 
@@ -155,7 +150,8 @@ const WindowsAction = namespace(windowsStore.name, Action);
     GoodPWA,
     Modal,
     Loading*/
-    FeatureCard
+    FeatureCard,
+    ScoreHeader
   }
 })
 export default class extends Vue {

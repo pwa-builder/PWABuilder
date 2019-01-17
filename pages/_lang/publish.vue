@@ -92,6 +92,8 @@
     </div>
   </section>-->
   <main>
+    <ScoreHeader></ScoreHeader>
+    
     <section id="sideBySide">
       <section id="leftSide">
         <header>
@@ -212,6 +214,7 @@ import Download from "~/components/Download.vue";
 import Modal from "~/components/Modal.vue";
 import PublishCard from "~/components/PublishCard.vue";
 import Toolbar from "~/components/Toolbar.vue";
+import ScoreHeader from "~/components/ScoreHeader.vue";
 
 import * as publish from "~/store/modules/publish";
 
@@ -225,7 +228,8 @@ const PublishAction = namespace(publish.name, Action);
     StartOver,
     Modal,
     PublishCard,
-    Toolbar
+    Toolbar,
+    ScoreHeader
   }
 })
 export default class extends Vue {
