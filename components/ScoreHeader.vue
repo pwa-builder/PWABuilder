@@ -1,48 +1,4 @@
 <template>
-  <!--<div class="headerWrapper">
-    <header>
-      <div id="headerImageBlock">
-        <div id="titleHeader">
-          <img id="headerImage" alt="headerImage" />
-          <h1>PWA Builder</h1>
-        </div>
-
-        <div id="manifestBlock">
-          <button id="manifestButton">Manifest</button>
-          <button id="helpButton">Help</button>
-        </div>
-      </div>
-
-      <img id="heroImage" src="~/assets/images/Mask.png" />
-
-
-      <section id="headerBlock">
-
-        <div id="leftHeaderBlock">
-          <h2 id="quickBlockText">Quickly and easily turn your website into a PWA</h2>
-
-          <p id="quickBlockPlaceholder">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been.</p>
-
-          <button id="learnMoreButton">Learn More</button>
-        </div>
-
-        <div id="rightHeaderBlock">
-          <h2 id="getStartedHere">Get Started Here!</h2>
-
-          <p id='placeholderText'>Enter your URL and we'll help you fill in the gaps if there are any.</p>
-
-          <form @submit.prevent="checkUrlAndGenerate" @keydown.enter.prevent="checkUrlAndGenerate">
-            <input id="getStartedInput" :aria-label="$t('generator.url')" :placeholder="$t('generator.placeholder_url')" name="siteUrl" type="text" ref="url"
-                v-model="url$" autofocus />
-
-            <button @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/build/manifest-scan' })" id="getStartedButton">{{ $t('generator.start') }}
-             <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm"/>
-            </button>
-          </form>
-        </div>
-      </section>
-    </header>
-  </div>-->
   <header id="scoreHeader">
     <button @click="goBack()" id="backButton">
       <i class="fas fa-chevron-left"></i>
