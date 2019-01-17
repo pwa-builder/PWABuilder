@@ -460,7 +460,7 @@ export default class extends Vue {
 }
 
 .skeletonSpan {
-  background-image: linear-gradient(to right, grey, lightgrey);
+  background-image: linear-gradient(to right, grey, white);
   width: 40%;
   display: block;
   height: 1em;

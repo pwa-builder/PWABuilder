@@ -31,7 +31,7 @@
             >
               <div>{{ $t('generator.start') }}</div>
               <div v-if="inProgress" id="loadingDiv">
-                <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm"/>
+                <Loading :active="inProgress"/>
               </div>
             </button>
 
@@ -337,9 +337,11 @@ Vue.prototype.$awa = function(config) {
       align-self: flex-end;
       display: flex;
       flex-direction: row;
-      align-items: baseline;
+      align-items: center;
       background: $color-button-primary-blue-variant;
       color: white;
+      width: 8em;
+      justify-content: center;
     }
   }
 
