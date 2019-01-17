@@ -19,7 +19,7 @@
       </ul>
     </div>
 
-    <div id="toolbar">
+    <div v-if="showToolbar" id="toolbar">
       <div v-if="errorNumber">
         <button @click="showErrorOverlay()" id="errorsButton">{{this.errorNumber}} errors</button>
       </div>
@@ -75,6 +75,8 @@ export default class extends Vue {
 
   @Prop({ type: Boolean, default: true })
   public showCopyButton;
+
+  @Prop() showToolbar: boolean;
 
   public readonly warningsId = "warnings_list";
   public readonly suggestionsId = "suggestions_list";

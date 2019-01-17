@@ -57,6 +57,11 @@
       <header class="mastHead">
         <h2>{{ $t("serviceworker.title") }}</h2>
         <p>{{ $t("serviceworker.summary") }}</p>
+
+        <div id="doneDiv">
+          <!--<button id="doneButton">Done</button>-->
+          <nuxt-link id="doneButton" to="reportCard">Done</nuxt-link>
+        </div>
       </header>
 
       <div id="inputSection">
@@ -75,7 +80,7 @@
                 <span v-if="sw.disable">(coming soon)</span>
               </div>
             </label>
-            <span class="l-generator-description">{{ sw.description }}</span>
+            <div class="swDesc">{{ sw.description }}</div>
           </div>
           <div class="pure-u-3-5">
             <p class="l-generator-error" v-if="error">
@@ -85,19 +90,16 @@
           </div>
         </form>
       </div>
-
-      <div id="doneDiv">
-        <!--<button id="doneButton">Done</button>-->
-        <nuxt-link id="doneButton" to="reportCard">Done</nuxt-link>
-      </div>
     </section>
 
     <section id="rightSide">
       <CodeViewer
+        class="topViewer"
         code-type="javascript"
         :size="viewerSize"
         :code="webPreview"
         :title="$t('serviceworker.code_preview_web')"
+        :showToolbar="false"
       >
         <nuxt-link
           :to="$i18n.path('publish')"
@@ -112,6 +114,7 @@
         :size="bottomViewerSize"
         :code="serviceworkerPreview"
         :title="$t('serviceworker.code_preview_serviceworker')"
+        :showToolbar="false"
       ></CodeViewer>
     </section>
   </main>
@@ -171,6 +174,7 @@ export default class extends Vue {
     this.serviceworker$ = this.serviceworkers[0].id;
     await this.getCode(this.serviceworker$);
   }
+
   async destroyed() {
     (this.$root.$el.closest("body") as HTMLBodyElement).classList.remove(
       "modal-screen"
@@ -358,13 +362,13 @@ export default class extends Vue {
       padding-right: 8em;
 
       h2 {
-        font-size: 48px;
+        font-size: 36px;
         font-weight: bold;
         color: black;
       }
 
       p {
-        margin-top: 40px;
+        margin-top: 20px;
         font-size: 18px;
       }
     }
@@ -374,11 +378,18 @@ export default class extends Vue {
       padding-right: 8em;
 
       .inputContainer {
-        margin-top: 18px;
+        margin-top: 20px;
+        cursor: pointer;
+
+        .swDesc {
+          font-size: 14px;
+          font-weight: normal;
+          width: 376px;
+        }
 
         #inputDiv {
           display: flex;
-          align-items: center;
+          align-items: unset;
 
           input {
             height: 1.2em;
@@ -387,7 +398,10 @@ export default class extends Vue {
 
           h4 {
             flex: 22;
-            margin-left: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            margin-left: 10px;
           }
         }
       }
@@ -395,7 +409,6 @@ export default class extends Vue {
 
     #doneDiv {
       display: flex;
-      justify-content: center;
 
       #doneButton {
         background: $color-button-primary-green-variant;
@@ -405,7 +418,8 @@ export default class extends Vue {
         border: none;
         font-weight: bold;
         font-size: 18px;
-        margin-top: 24px;
+        margin-top: 30px;
+        margin-bottom: 40px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -418,6 +432,8 @@ export default class extends Vue {
     flex: 1;
     height: 100%;
     width: 50%;
+    display: flex;
+    flex-direction: column;
   }
 }
 </style>

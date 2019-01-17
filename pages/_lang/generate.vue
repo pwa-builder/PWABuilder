@@ -492,6 +492,7 @@
         :suggestionsTotal="suggestionsTotal"
         :warnings="warnings"
         :warningsTotal="warningsTotal"
+        :showToolbar="true"
       >
         <nuxt-link
           :to="$i18n.path('serviceworker')"

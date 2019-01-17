@@ -77,7 +77,7 @@
     "w3c_manifest": "W3C Manifest"
   },
   "serviceworker": {
-    "title": "Pre-made Service Workers",
+    "title": "Service Workers",
     "summary": "Service workers can make your site work offline, run faster, or both. Choose the functionality from our service workers below.",
     "download": "Download service worker",
     "building": "Building package...",
