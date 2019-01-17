@@ -53,7 +53,7 @@
           <Loading active class="u-display-inline_block u-margin-left-sm"/>
         </span>
 
-        <ul v-if="manifest === 1">
+        <ul v-if="manifest">
           <li v-bind:class="{ good: manifest }">
             <i v-if="manifest" class="fas fa-check"></i>
             <i v-if="!manifest" class="fas fa-times"></i>
@@ -153,6 +153,20 @@
             <span>Service Worker has a push registration</span>
           </li>
         </ul>
+        <ul v-else>
+          <li>
+            <span class="skeletonSpan"></span>
+          </li>
+          <li>
+            <span class="skeletonSpan"></span>
+          </li>
+          <li>
+            <span class="skeletonSpan"></span>
+          </li>
+          <li>
+            <span class="skeletonSpan"></span>
+          </li>
+        </ul>
 
         <!--<button>Edit</button>-->
         <div class="editDiv">
@@ -172,17 +186,15 @@
         </span>
 
         <ul>
-          <li>Has HTTPS</li>
+          <li>
+            <i class="fas fa-check"></i>
+            <span>Has HTTPS</span>
+          </li>
         </ul>
       </section>
 
       <section class="catSection">
         <h2>Extras</h2>
-
-        <span class="score">
-          50
-          <span class="scoreSubText">out of 100</span>
-        </span>
 
         <p>
           Add extra features to your PWA to enable
@@ -266,7 +278,7 @@ export default class extends Vue {
   }
 
   private lookAtSecurity(): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       if (this.url.includes("https")) {
         this.securityScore = this.securityScore + 100;
       }
@@ -278,10 +290,9 @@ export default class extends Vue {
   }
 
   private lookAtManifest(): Promise<void> {
-    return new Promise(async (resolve) => {
-
+    return new Promise(async resolve => {
       await this.getManifestInformation();
-      
+
       console.log("manifestInfo", this.manifest);
       if (this.manifest) {
         this.manifestScore = this.manifestScore + 50;
@@ -374,27 +385,27 @@ export default class extends Vue {
   }
 
   private calcGrade() {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       if (
         this.swScore > 90 &&
         this.manifestScore > 90 &&
         this.securityScore > 90
       ) {
-        this.overallGrade = "A";
+        this.overallGrade = "☺️";
       } else if (
         this.swScore > 80 &&
         this.manifestScore > 80 &&
         this.securityScore > 80
       ) {
-        this.overallGrade = "B";
+        this.overallGrade = "🙂";
       } else if (
         this.swScore > 70 &&
         this.manifestScore > 70 &&
         this.securityScore > 70
       ) {
-        this.overallGrade = "C";
+        this.overallGrade = "😐";
       } else {
-        this.overallGrade = "F";
+        this.overallGrade = "☹️";
       }
 
       this.calcGradeAnalyzing = false;
@@ -446,6 +457,15 @@ export default class extends Vue {
 #gradeLoading {
   display: flex;
   justify-content: center;
+}
+
+.skeletonSpan {
+  background-image: linear-gradient(to right, grey, lightgrey);
+  width: 40%;
+  display: block;
+  height: 1em;
+  opacity: 0.6;
+  margin: 5px;
 }
 
 #scoreSideBySide {
