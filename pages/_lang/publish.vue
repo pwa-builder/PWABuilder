@@ -96,10 +96,10 @@
     
     <section id="sideBySide">
       <section id="leftSide">
-        <header>
+        <!--<header>
           <img id="logo">
           <h1 id="headerText">PWABuilder</h1>
-        </header>
+        </header>-->
 
         <div id="introContainer">
           <h2>Download and publish your shiny new app</h2>
@@ -542,7 +542,7 @@ label {
     flex-direction: column;
 
     #platformsListContainer {
-      padding-top: 12em;
+      padding-top: 6.7em;
       padding-right: 8em;
 
       ul {
@@ -592,7 +592,8 @@ label {
 }
 
 #bottomSection {
-  display: flex;
+  // display: flex;
+  display: none;
 
   #coolPWAs {
     padding-left: 10em;

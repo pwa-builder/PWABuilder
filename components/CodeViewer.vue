@@ -184,7 +184,6 @@ export default class extends Vue {
 .code_viewer {
   display: flex;
   flex-direction: column;
-  min-height: 100%;
   padding: 10px;
   padding-top: 4em;
 

@@ -1,6 +1,8 @@
 <template>
-  <main id="sideBySide">
-    <!--<div ref='mainDiv' class="mainDiv service-workers">
+  <div>
+    <ScoreHeader></ScoreHeader>
+    <main id="sideBySide">
+      <!--<div ref='mainDiv' class="mainDiv service-workers">
     <div class="mastHead">
       <h2>{{ $t('serviceworker.title') }}</h2>
       <p>{{ $t('serviceworker.summary') }}</p>
@@ -45,79 +47,80 @@
 
   <!--<Modal title="Next" ref="nextStepModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
     <GoodPWA :hasWorker="hasSW"/>
-    </Modal>-->
-    <!--<Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" title="" ref="nextStepModal">
+      </Modal>-->
+      <!--<Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" title="" ref="nextStepModal">
     <GoodPWA :hasWorker="hasSW" :hasBetterWorker="betterSW"/>
     <a class="cancelText" href="#" @click="onClickHideGBB(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
       {{$t("modal.goBack")}}
     </a>
 
-    </Modal>-->
-    <section id="leftSide">
-      <header class="mastHead">
-        <h2>{{ $t("serviceworker.title") }}</h2>
-        <p>{{ $t("serviceworker.summary") }}</p>
+      </Modal>-->
+      <section id="leftSide">
+        <header class="mastHead">
+          <h2>{{ $t("serviceworker.title") }}</h2>
+          <p>{{ $t("serviceworker.summary") }}</p>
 
-        <div id="doneDiv">
-          <!--<button id="doneButton">Done</button>-->
-          <nuxt-link id="doneButton" to="reportCard">Done</nuxt-link>
+          <div id="doneDiv">
+            <!--<button id="doneButton">Done</button>-->
+            <nuxt-link id="doneButton" to="reportCard">Done</nuxt-link>
+          </div>
+        </header>
+
+        <div id="inputSection">
+          <form @submit.prevent="download" @keydown.enter.prevent="download">
+            <div class="inputContainer" v-for="sw in serviceworkers" :key="sw.id">
+              <label class="l-generator-label" :for="sw.id">
+                <div id="inputDiv">
+                  <input
+                    type="radio"
+                    :value="sw.id"
+                    v-model="serviceworker$"
+                    :disabled="sw.disable"
+                    :id="sw.id"
+                  >
+                  <h4>{{ sw.title }}</h4>
+                  <span v-if="sw.disable">(coming soon)</span>
+                </div>
+              </label>
+              <div class="swDesc">{{ sw.description }}</div>
+            </div>
+            <div class="pure-u-3-5">
+              <p class="l-generator-error" v-if="error">
+                <span class="icon-exclamation"></span>
+                {{ $t(error) }}
+              </p>
+            </div>
+          </form>
         </div>
-      </header>
+      </section>
 
-      <div id="inputSection">
-        <form @submit.prevent="download" @keydown.enter.prevent="download">
-          <div class="inputContainer" v-for="sw in serviceworkers" :key="sw.id">
-            <label class="l-generator-label" :for="sw.id">
-              <div id="inputDiv">
-                <input
-                  type="radio"
-                  :value="sw.id"
-                  v-model="serviceworker$"
-                  :disabled="sw.disable"
-                  :id="sw.id"
-                >
-                <h4>{{ sw.title }}</h4>
-                <span v-if="sw.disable">(coming soon)</span>
-              </div>
-            </label>
-            <div class="swDesc">{{ sw.description }}</div>
-          </div>
-          <div class="pure-u-3-5">
-            <p class="l-generator-error" v-if="error">
-              <span class="icon-exclamation"></span>
-              {{ $t(error) }}
-            </p>
-          </div>
-        </form>
-      </div>
-    </section>
+      <section id="rightSide">
+        <CodeViewer
+          class="topViewer"
+          code-type="javascript"
+          :size="viewerSize"
+          :code="webPreview"
+          :title="$t('serviceworker.code_preview_web')"
+          :showToolbar="false"
+        >
+          <nuxt-link
+            :to="$i18n.path('publish')"
+            class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header"
+            @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})"
+          >{{ $t("serviceworker.next_step") }}</nuxt-link>
+        </CodeViewer>
 
-    <section id="rightSide">
-      <CodeViewer
-        class="topViewer"
-        code-type="javascript"
-        :size="viewerSize"
-        :code="webPreview"
-        :title="$t('serviceworker.code_preview_web')"
-        :showToolbar="false"
-      >
-        <nuxt-link
-          :to="$i18n.path('publish')"
-          class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header"
-          @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})"
-        >{{ $t("serviceworker.next_step") }}</nuxt-link>
-      </CodeViewer>
-
-      <CodeViewer
-        class="bottomViewer"
-        code-type="javascript"
-        :size="bottomViewerSize"
-        :code="serviceworkerPreview"
-        :title="$t('serviceworker.code_preview_serviceworker')"
-        :showToolbar="false"
-      ></CodeViewer>
-    </section>
-  </main>
+        <CodeViewer
+          class="bottomViewer"
+          code-type="javascript"
+          :size="bottomViewerSize"
+          :code="serviceworkerPreview"
+          :title="$t('serviceworker.code_preview_serviceworker')"
+          :showToolbar="false"
+        ></CodeViewer>
+      </section>
+    </main>
+  </div>
 </template>
 
 <script lang="ts">
@@ -132,6 +135,7 @@ import CodeViewer from "~/components/CodeViewer.vue";
 import StartOver from "~/components/StartOver.vue";
 import GoodPWA from "~/components/GoodPWA.vue";
 import Modal from "~/components/Modal.vue";
+import ScoreHeader from "~/components/ScoreHeader.vue";
 
 import * as serviceworker from "~/store/modules/serviceworker";
 import { ServiceWorker } from "~/store/modules/serviceworker";
@@ -146,7 +150,8 @@ const ServiceworkerAction = namespace(serviceworker.name, Action);
     StartOver,
     CodeViewer,
     GoodPWA,
-    Modal
+    Modal,
+    ScoreHeader
   }
 })
 export default class extends Vue {
