@@ -1,45 +1,45 @@
 <template>
-<section>
-  <div class="modal" v-if="showModal">
-    <div class="modal-box">
-      <!-- <div class="pure-u-1-1 modal-tablec">
+  <section>
+    <div class="modal" v-if="showModal">
+      <div class="modal-box">
+        <!-- <div class="pure-u-1-1 modal-tablec">
         <span class="l-generator-close" @click="onClickCancel()">
           <span class="icon-times"></span>
         </span>
-      </div> -->
+        </div>-->
+        <h5 class="modal-title modal-title--normal">{{title}}</h5>
 
-      <h5 class="modal-title modal-title--normal">
-        {{title}}
-      </h5>
+        <div class="modal-body">
+          <slot/>
 
-      <div class="modal-body">
-        <slot/>
+          <div v-if="title != ''" class="modal-buttons">
+            <button
+              v-if="showSubmitButton"
+              id="modalAddButton"
+              @click="onClickSubmit();  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });"
+            >
+              {{$t("modal.submit")}}
+              <Loading :active="isLoading" class="u-display-inline_block u-margin-left-sm"/>
+            </button>
 
-        
-        <div v-if="title != ''" class="modal-buttons">
-          
-          <button v-if="showSubmitButton" class="l-generator-space_right pwa-button pwa-button--simple pwa-button--brand" @click="onClickSubmit();  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
-            {{$t("modal.submit")}}
-            <Loading :active="isLoading" class="u-display-inline_block u-margin-left-sm" />
-          </button>
+            <slot name="extraButton"></slot>
 
-          <slot name='extraButton'></slot>
-
-          <button class="pwa-button pwa-button--simple" @click="onClickCancel(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
-            {{$t("modal.cancel")}}
-          </button>
+            <button
+              id="modalCancelButton"
+              @click="onClickCancel(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });"
+            >{{$t("modal.cancel")}}</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { Prop } from 'vue-property-decorator';
-import Component from 'nuxt-class-component';
-import Loading from '~/components/Loading.vue';
+import Vue from "vue";
+import { Prop } from "vue-property-decorator";
+import Component from "nuxt-class-component";
+import Loading from "~/components/Loading.vue";
 
 @Component({
   components: {
@@ -50,8 +50,8 @@ export default class extends Vue {
   public showModal = false;
   private loadingCount = 0;
 
-  @Prop({ type: String, default: '' }) public title: string;
-  @Prop({ type: Boolean, default: true}) public showSubmitButton;
+  @Prop({ type: String, default: "" }) public title: string;
+  @Prop({ type: Boolean, default: true }) public showSubmitButton;
   //public showButtons: string;
 
   public beforeDestroy() {
@@ -66,14 +66,14 @@ export default class extends Vue {
 
   public async show(): Promise<void> {
     // stop scrolling on the body when the modal is open
-   // (this.$root.$el.closest('body') as HTMLBodyElement).style.overflowY = 'hidden';
-    console.log('set style to hidden');
+    // (this.$root.$el.closest('body') as HTMLBodyElement).style.overflowY = 'hidden';
+    console.log("set style to hidden");
 
     this.showModal = true;
     // have to put a setTimeout here because Edge
     // has a bug with the filter css style
     setTimeout(() => {
-      this.$emit('modalOpened');
+      this.$emit("modalOpened");
     }, 200);
   }
 
@@ -82,16 +82,16 @@ export default class extends Vue {
     //(this.$root.$el.closest('body') as HTMLBodyElement).style.overflowY = 'scroll';
 
     this.showModal = false;
-    this.$emit('modalClosed');
+    this.$emit("modalClosed");
   }
 
   public onClickSubmit(): void {
-    this.$emit('submit');
+    this.$emit("submit");
   }
 
   public onClickCancel(): void {
     this.hide();
-    this.$emit('cancel');
+    this.$emit("cancel");
   }
 
   public showLoading(): void {
@@ -113,11 +113,11 @@ export default class extends Vue {
 
 @import "~assets/scss/base/variables";
 .modal {
-  align-items: flex-start;
+  /*align-items: flex-start;
   xbackground: rgba($color-brand-quartary, .25);
   display: flex;
    xheight: 150%; /*this is a hack, we should put modal at lower level */
-  justify-content: center;
+  /*justify-content: center;
   left: 0;
   padding: 32px 0;
   position: absolute;
@@ -191,8 +191,48 @@ export default class extends Vue {
   &-buttons {
     text-align: center;
     width: 100%;
+  }*/
+
+  background: white;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 9999;
+
+  .modal-title {
+    font-size: 30px;
+    margin: 16px;
+    margin-left: 32px;
+  }
+
+  .modal-buttons {
+    position: fixed;
+    background: grey;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    display: flex;
+    justify-content: flex-end;
+    height: 40px;
+    align-items: center;
+
+    #modalCancelButton {
+      background: $color-brand-warning;
+      color: white;
+    }
+
+    button {
+      border: none;
+      margin: 8px;
+      border-radius: 20px;
+      width: 97px;
+      font-size: 12px;
+      font-weight: bold;
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
   }
 }
-
-
 </style>

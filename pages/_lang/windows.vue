@@ -89,7 +89,6 @@
       </a>
       </Modal>
   </section>-->
-
   <main>
     <ScoreHeader></ScoreHeader>
 
@@ -120,8 +119,64 @@
           <button @click="onClickSample(sample)" id="featureCardAddButton">Add</button>
         </div>
       </div>-->
-      <FeatureCard v-for="sample in samples" :sample="sample" :key="sample.id" v-on:selected="onSelected" v-on:removed="onRemoved"></FeatureCard>
+      <FeatureCard
+        v-for="sample in samples"
+        :sample="sample"
+        :key="sample.id"
+        v-on:selected="onSelected"
+        v-on:removed="onRemoved"
+      ></FeatureCard>
     </section>
+
+    <Modal
+      v-on:modalOpened="modalOpened()"
+      v-on:modalClosed="modalClosed()"
+      :showSubmitButton="false"
+      title="Add Feature"
+      ref="addFeatureModal"
+    >
+      <div class="feature-viewer">
+        <div class="feature-content">
+          <div class="side_panel">
+            <div class="properties" v-if="sample">
+              <h1>Required Properties</h1>
+
+              <div v-for="prop in sample.parms" :key="prop.id">
+                <h3>{{prop.name}}</h3>
+                <p class="propDescription" :id="prop.id">{{prop.description}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="code-samples">
+          <div class="code-top">
+            <CodeViewer
+              code-type="javascript"
+              :size="viewerSize"
+              :code="loadCode()"
+              v-on:editorValue="updateCode($event)"
+              v-if="sample"
+              :title="$t('windows.codeTitle')"
+            ></CodeViewer>
+          </div>
+          <div class="code-bottom">
+            <CodeViewer
+              code-type="javascript"
+              :size="viewerSize"
+              :code="sample.source"
+              v-if="sample"
+              :title="$t('windows.sourceTitle')"
+            />
+          </div>
+        </div>
+      </div>
+
+      <button
+        slot="extraButton"
+        id="addBundleButton"
+        v-on:click="addBundle()"
+      >{{ $t("windows.add") }}</button>
+    </Modal>
   </main>
 </template>
 
@@ -132,11 +187,12 @@ import { Action, State, namespace } from "vuex-class";
 
 /*import CodeViewer from "~/components/CodeViewer.vue";
 import WindowsMenu from "~/components/WindowsMenu.vue";
-import GoodPWA from "~/components/GoodPWA.vue";
+import GoodPWA from "~/components/GoodPWA.vue";*/
 import Modal from "~/components/Modal.vue";
-import Loading from "~/components/Loading.vue";*/
+/*import Loading from "~/components/Loading.vue";*/
 import FeatureCard from "~/components/FeatureCard.vue";
 import ScoreHeader from "~/components/ScoreHeader.vue";
+import CodeViewer from "~/components/CodeViewer.vue";
 
 import * as windowsStore from "~/store/modules/windows";
 
@@ -147,11 +203,12 @@ const WindowsAction = namespace(windowsStore.name, Action);
   components: {
     /*CodeViewer,
     WindowsMenu,
-    GoodPWA,
+    GoodPWA,*/
     Modal,
-    Loading*/
+    /*Loading*/
     FeatureCard,
-    ScoreHeader
+    ScoreHeader,
+    CodeViewer
   }
 })
 export default class extends Vue {
@@ -198,8 +255,9 @@ export default class extends Vue {
     try {
       await this.selectSample(sample);
       this.selectedSamples.push(sample);
-    }
-    catch (e) {
+
+      (this.$refs.addFeatureModal as Modal).show();
+    } catch (e) {
       this.error = e;
     }
   }
@@ -460,5 +518,37 @@ header {
   padding-left: 8em;
   padding-right: 13em;
   margin-top: 60px;
+}
+
+.code-samples {
+  width: 50%;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.code-top {
+  flex: 1;
+}
+
+.code-bottom {
+  flex: 1;
+}
+
+.feature-content {
+  width: 50%;
+}
+
+.feature-viewer {
+  display: flex;
+}
+
+.properties {
+  padding: 2em;
+
+  h1 {
+    font-weight: bold;
+    font-size: 24px;
+  }
 }
 </style>

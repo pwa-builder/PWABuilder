@@ -185,7 +185,7 @@ export default class extends Vue {
   display: flex;
   flex-direction: column;
   padding: 10px;
-  padding-top: 4em;
+  height: 100%;
 
   .active {
     color: $color-brand-quartary;
@@ -218,7 +218,7 @@ export default class extends Vue {
   }
 
   .code_viewer-pre {
-    height: 48em;
+    height: 100%;
   }
 
   #toolbar {

@@ -142,7 +142,7 @@
     "subtitle": "Create your own Win10 app"
   },
   "windows": {
-    "add": "Add to Bundle",
+    "add": "Add",
     "download_bundle": "Download code Bundle",
     "download_sample": "Download sample",
     "title": "Be the Best PWA you can be with advanced APIs",

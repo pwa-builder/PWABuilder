@@ -439,6 +439,10 @@ export default class extends Vue {
     width: 50%;
     display: flex;
     flex-direction: column;
+
+    .code_viewer {
+      border-bottom: 1px grey solid;
+    }
   }
 }
 </style>
