@@ -23,8 +23,10 @@
       <div v-if="errorNumber">
         <button @click="showErrorOverlay()" id="errorsButton">{{this.errorNumber}} errors</button>
       </div>
+      <div v-if="!errorNumber || errorNumber ===0">
+        <button id="noErrorsButton">No Errors</button>
+      </div>
 
-      <button id="settingsButton">Editor Settings</button>
     </div>
   </section>
 </template>
@@ -234,6 +236,11 @@ export default class extends Vue {
 
     #errorsButton {
       background: $color-brand-warning;
+      color: white;
+    }
+
+    #noErrorsButton {
+      background: $color-button-primary-blue-variant;
       color: white;
     }
 
