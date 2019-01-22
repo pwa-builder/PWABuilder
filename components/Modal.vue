@@ -7,9 +7,11 @@
           <span class="icon-times"></span>
         </span>
         </div>-->
-        <h5 class="modal-title modal-title--normal">{{title}}</h5>
-
         <div class="modal-body">
+          <div id="titleBox">
+            <h5 class="modal-title modal-title--normal">{{title}}</h5>
+          </div>
+
           <slot/>
 
           <div v-if="title != ''" class="modal-buttons">
@@ -202,9 +204,12 @@ export default class extends Vue {
   z-index: 9999;
 
   .modal-title {
-    font-size: 30px;
-    margin: 16px;
-    margin-left: 32px;
+    font-size: 36px;
+    width: 50%;
+    padding-left: 1em;
+    margin: 0;
+    margin-left: 0;
+    padding-top: 1em;
   }
 
   .modal-buttons {

@@ -555,6 +555,10 @@ header {
 
 .code-top {
   flex: 1;
+
+  .code_viewer {
+    border-bottom: 1px grey solid;
+  }
 }
 
 .code-bottom {
@@ -570,11 +574,23 @@ header {
 }
 
 .properties {
-  padding: 2em;
+  padding-left: 2.2em;
+  padding-top: 2em;
+  padding-right: 11em;
 
   h1 {
     font-weight: bold;
     font-size: 24px;
+    margin-bottom: 1.2em;
+  }
+
+  h3 {
+    font-weight: bold;
+    font-size: 18px;
+  }
+
+  p {
+    font-size: 14px;
   }
 }
 </style>
