@@ -120,12 +120,25 @@
         </div>
       </div>-->
       <FeatureCard
+        v-if="samples.length > 0"
         v-for="sample in samples"
         :sample="sample"
         :key="sample.id"
         v-on:selected="onSelected"
         v-on:removed="onRemoved"
       ></FeatureCard>
+    </section>
+
+    <section id="fakeCardBlock" v-if="samples.length === 0">
+      <div class="fakeCard">
+        <Loading active></Loading>
+      </div>
+      <div class="fakeCard">
+        <Loading active></Loading>
+      </div>
+      <div class="fakeCard">
+        <Loading active></Loading>
+      </div>
     </section>
 
     <Modal
@@ -189,7 +202,7 @@ import { Action, State, namespace } from "vuex-class";
 import WindowsMenu from "~/components/WindowsMenu.vue";
 import GoodPWA from "~/components/GoodPWA.vue";*/
 import Modal from "~/components/Modal.vue";
-/*import Loading from "~/components/Loading.vue";*/
+import Loading from "~/components/Loading.vue";
 import FeatureCard from "~/components/FeatureCard.vue";
 import ScoreHeader from "~/components/ScoreHeader.vue";
 import CodeViewer from "~/components/CodeViewer.vue";
@@ -205,7 +218,7 @@ const WindowsAction = namespace(windowsStore.name, Action);
     WindowsMenu,
     GoodPWA,*/
     Modal,
-    /*Loading*/
+    Loading,
     FeatureCard,
     ScoreHeader,
     CodeViewer
@@ -226,6 +239,7 @@ export default class extends Vue {
   @WindowsAction selectSample;
 
   async mounted() {
+    console.log(this.samples.length);
     await this.getSamples();
     console.log(this.samples);
 
@@ -413,6 +427,7 @@ export default class extends Vue {
 <style lang="scss" scoped>
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
+@import "~assets/scss/base/animations";
 
 header {
   display: flex;
@@ -512,12 +527,23 @@ header {
   }
 }
 
-#featureListBlock {
+#featureListBlock,
+#fakeCardBlock {
   display: grid;
   grid-template-columns: auto auto auto;
   padding-left: 8em;
   padding-right: 13em;
   margin-top: 60px;
+  gap: 1em;
+
+  .fakeCard {
+    display: flex;
+    justify-content: center;
+    height: 209px;
+    align-items: center;
+    font-size: 4em;
+    background: linear-gradient(-45deg, grey, lightgrey, white);
+  }
 }
 
 .code-samples {
