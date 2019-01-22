@@ -62,7 +62,7 @@
 
           <div id="doneDiv">
             <!--<button id="doneButton">Done</button>-->
-            <nuxt-link id="doneButton" to="reportCard">Done</nuxt-link>
+            <nuxt-link  @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})" id="doneButton" to="reportCard">Done</nuxt-link>
           </div>
         </header>
 
