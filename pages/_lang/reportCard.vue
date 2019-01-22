@@ -34,10 +34,10 @@
       </section>
 
       <section id="scoreSection">
+        <img id="reportGraphic" src="~/assets/images/report_card.svg">
+
         <div id="scoreDiv" v-if="!calcGradeAnalyzing">{{overallGrade}}</div>
-        <div id="scoreDiv" v-if="calcGradeAnalyzing">
-          🤔
-        </div>
+        <div id="scoreDiv" v-if="calcGradeAnalyzing">🤔</div>
       </section>
     </div>
 
@@ -254,14 +254,14 @@ export default class extends Vue {
   serviceWorkerData: any = null;
 
   public async created(): Promise<void> {
-    console.log('Created called');
+    console.log("Created called");
     await this.start();
   }
 
   private async start() {
     if (this.url) {
       console.log("here");
-      sessionStorage.setItem("overallGrade", '🤔');
+      sessionStorage.setItem("overallGrade", "🤔");
       // this.analyzing = true;
       this.securityAnalyzing = true;
       this.manifestAnalyzing = true;
@@ -534,28 +534,35 @@ export default class extends Vue {
   }
 
   #scoreSection {
-    background: $color-brand-tertiary;
     display: flex;
     justify-content: center;
     align-items: center;
 
+    img {
+      position: absolute;
+      top: -25em;
+      right: -2.2em;
+      bottom: 0;
+      z-index: -2;
+      bottom: 0;
+    }
+
     #scoreDiv {
-      height: 260px;
-      width: 280px;
+      height: 210px;
+      width: 261px;
       background: white;
       display: flex;
       justify-content: center;
       align-items: center;
       font-size: 92px;
       font-weight: bold;
-      border-radius: 32px;
     }
   }
 }
 
 #cats {
-  margin-left: 16em;
-  margin-right: 16em;
+  margin-left: 9em;
+  margin-right: 9em;
   display: grid;
   grid-template-rows: auto auto;
   grid-template-columns: auto auto;
@@ -611,7 +618,7 @@ export default class extends Vue {
 
     .score {
       position: relative;
-      left: 11em;
+      left: 14em;
       bottom: 1.2em;
       font-size: 36px;
       font-weight: bold;
