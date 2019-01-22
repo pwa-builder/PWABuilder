@@ -531,7 +531,7 @@ header {
 #fakeCardBlock {
   display: grid;
   grid-template-columns: auto auto auto;
-  padding-left: 8em;
+  padding-left: 13em;
   padding-right: 13em;
   margin-top: 60px;
   gap: 1em;
