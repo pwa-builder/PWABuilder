@@ -1,4 +1,4 @@
-// Colors
+/* stylelint-disable*/
 
 //new colors for brand
 $color-brand-primary: black;
@@ -8,8 +8,9 @@ $color-brand-quartary:blue;
 $color-brand-quintary:white;
 $color-brand-warning: #D95050;
 
-$color-button-primary-green-variant: #21ABA5;
-$color-button-primary-blue-variant: #4B76CC;
+// $color-button-primary-green-variant: #21ABA5;
+$color-button-primary-green-variant: linear-gradient(to right, #21ABA5, #00E0B6);
+$color-button-primary-blue-variant: linear-gradient(to right, #4B76CC, #04BEFE);;
 
 // Animations
 $animation-speed-default: .35s;
