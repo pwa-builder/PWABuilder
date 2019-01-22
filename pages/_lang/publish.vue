@@ -530,6 +530,7 @@ label {
         #downloadAllButton {
           margin-right: 11px;
           background: $color-button-primary-blue-variant;
+          color: white;
         }
       }
     }
@@ -582,6 +583,7 @@ label {
               padding-right: 11px;
               margin-top: 11px;
               background: grey;
+              color: white;
               cursor: pointer;
             }
           }
