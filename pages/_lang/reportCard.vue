@@ -36,7 +36,7 @@
       <section id="scoreSection">
         <div id="scoreDiv" v-if="!calcGradeAnalyzing">{{overallGrade}}</div>
         <div id="scoreDiv" v-if="calcGradeAnalyzing">
-          <Loading id="gradeLoading" active class="u-display-inline_block u-margin-left-sm"/>
+          🤔
         </div>
       </section>
     </div>
@@ -254,12 +254,14 @@ export default class extends Vue {
   serviceWorkerData: any = null;
 
   public async created(): Promise<void> {
+    console.log('Created called');
     await this.start();
   }
 
   private async start() {
     if (this.url) {
       console.log("here");
+      sessionStorage.setItem("overallGrade", '🤔');
       // this.analyzing = true;
       this.securityAnalyzing = true;
       this.manifestAnalyzing = true;
