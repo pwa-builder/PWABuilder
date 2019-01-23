@@ -670,7 +670,7 @@ export default class extends Vue {
   }
 }
 
-@media (max-width: 1360px) {
+@media (max-width: 1370px) {
   #scoreDiv {
     top: -1em !important;
   }
