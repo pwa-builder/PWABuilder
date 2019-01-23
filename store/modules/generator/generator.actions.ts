@@ -163,6 +163,7 @@ export const actions: Actions<State, RootState> = {
         dispatch('update');
     },
 
+    // @ts-ignore TS6133
     changePreferRelatedApplication({ commit, dispatch }, status: boolean): void {
         commit(types.UPDATE_PREFER_RELATED_APPLICATION, status);
         dispatch('update');
