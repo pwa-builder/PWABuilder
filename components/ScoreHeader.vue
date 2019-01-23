@@ -72,7 +72,7 @@ export default class extends Vue {
   }
 
   animateAway() {
-    this.$el.animate(
+    (this.$el as any).animate(
       [
         {
           transform: "translateY(0)"
@@ -90,7 +90,7 @@ export default class extends Vue {
   }
 
   animateBack() {
-    this.$el.animate(
+    (this.$el as any).animate(
       [
         {
           transform: "translateY(-80px)"
