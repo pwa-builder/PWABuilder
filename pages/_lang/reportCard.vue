@@ -556,6 +556,9 @@ export default class extends Vue {
       align-items: center;
       font-size: 92px;
       font-weight: bold;
+      position: relative;
+      top: 0em;
+      right: -0.14em;
     }
   }
 }
@@ -616,6 +619,24 @@ export default class extends Vue {
       background: $color-button-primary-green-variant;
     }
 
+    @media (max-width: 1600px) {
+      .score {
+        left: 12em !important;
+      }
+    }
+
+    @media (max-width: 1450px) {
+      .score {
+        left: 11em !important;
+      }
+    }
+
+    @media (max-width: 1310px) {
+      .score {
+        left: 9em !important;
+      }
+    }
+
     .score {
       position: relative;
       left: 14em;
@@ -633,6 +654,31 @@ export default class extends Vue {
         text-align: center;
       }
     }
+  }
+}
+
+@media (max-width: 1580px) {
+  #scoreDiv {
+    top: -0.4em !important;
+    right: -0.14em !important;
+  }
+}
+
+@media (max-width: 1450px) {
+  #scoreDiv {
+    top: -0.8em !important;
+  }
+}
+
+@media (max-width: 1360px) {
+  #scoreDiv {
+    top: -1em !important;
+  }
+}
+
+@media (max-width: 1300px) {
+  #scoreDiv {
+    top: -1.4em !important;
   }
 }
 </style>
