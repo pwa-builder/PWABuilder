@@ -56,7 +56,7 @@ export default class extends Vue {
 
     this.scrollTarget = document.querySelector("#scrollTarget");
 
-    if (this.scrollTarget) {
+    if (this.scrollTarget && 'animate' in this.$el) {
       const iObserver = new IntersectionObserver(entries => {
 
         if (entries[0].isIntersecting === true) {
