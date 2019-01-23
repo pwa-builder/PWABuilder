@@ -41,6 +41,8 @@ export default class extends Vue {
 
   public score: string | null = null;
 
+  public scrollTarget: HTMLDivElement | null;
+
   @GeneratorState url: string;
   @GeneratorAction updateLink;
   @GeneratorAction getManifestInformation;
@@ -51,6 +53,58 @@ export default class extends Vue {
 
   mounted(): void {
     this.score = sessionStorage.getItem("overallGrade");
+
+    this.scrollTarget = document.querySelector("#scrollTarget");
+
+    if (this.scrollTarget) {
+      const iObserver = new IntersectionObserver(entries => {
+
+        if (entries[0].isIntersecting === true) {
+          this.animateBack();
+        }
+        else {
+          this.animateAway();
+        }
+      });
+
+      iObserver.observe(this.scrollTarget);
+    }
+  }
+
+  animateAway() {
+    this.$el.animate(
+      [
+        {
+          transform: "translateY(0)"
+        },
+        {
+          transform: "translateY(-80px)"
+        }
+      ],
+      {
+        fill: "forwards",
+        duration: 250,
+        easing: 'ease-out'
+      }
+    );
+  }
+
+  animateBack() {
+    this.$el.animate(
+      [
+        {
+          transform: "translateY(-80px)"
+        },
+        {
+          transform: "translateY(0)"
+        }
+      ],
+      {
+        fill: "forwards",
+        duration: 250,
+        easing: 'ease-out'
+      }
+    );
   }
 
   public get inProgress(): boolean {
@@ -103,7 +157,7 @@ Vue.prototype.$awa = function(config) {
   display: flex;
   justify-content: space-between;
   height: 4em;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
   align-items: center;
   padding: 16px;
   z-index: 9999;
