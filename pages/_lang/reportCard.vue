@@ -213,7 +213,7 @@
 
 <script lang='ts'>
 import Vue from "vue";
-import axios from "axios";
+// import axios from "axios";
 import Component from "nuxt-class-component";
 import { Action, State, namespace } from "vuex-class";
 
@@ -253,9 +253,22 @@ export default class extends Vue {
 
   serviceWorkerData: any = null;
 
+  abortController: AbortController;
+
   public async created(): Promise<void> {
     console.log("Created called");
     await this.start();
+
+    if ("AbortController" in window) {
+      this.abortController = new AbortController();
+    }
+  }
+
+  public beforeDestroy() {
+    console.log("navigating away form reportCard page");
+    if (this.abortController) {
+      this.abortController.abort();
+    }
   }
 
   private async start() {
@@ -330,10 +343,22 @@ export default class extends Vue {
 
   private async lookAtSW(): Promise<void> {
     if (this.url) {
-      const data = await axios.get(`${apiUrl}=${this.url}`);
-      console.log("lookAtSW", data.data);
+      if (this.abortController) {
+        const signal = this.abortController.signal;
+        // const data = await axios.get(`${apiUrl}=${this.url}`, { signal });
+        const response = await fetch(`${apiUrl}=${this.url}`, { signal });
+        const data = await response.json();
+        console.log("lookAtSW", data.data);
 
-      this.serviceWorkerData = data.data;
+        this.serviceWorkerData = data.data;
+      }
+      else {
+        const response = await fetch(`${apiUrl}=${this.url}`);
+        const data = await response.json();
+        console.log("lookAtSW", data.data);
+
+        this.serviceWorkerData = data.data;
+      }
 
       /*
         Has service worker
