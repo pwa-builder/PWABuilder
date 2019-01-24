@@ -258,7 +258,9 @@ export default class extends Vue {
   public async created(): Promise<void> {
     console.log("Created called");
     await this.start();
+  }
 
+  public mounted() {
     if ("AbortController" in window) {
       this.abortController = new AbortController();
     }
