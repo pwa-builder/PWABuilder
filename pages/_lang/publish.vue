@@ -93,14 +93,13 @@
   </section>-->
   <main>
     <ScoreHeader></ScoreHeader>
-    
+
     <section id="sideBySide">
       <section id="leftSide">
         <!--<header>
           <img id="logo">
           <h1 id="headerText">PWABuilder</h1>
         </header>-->
-
         <div id="introContainer">
           <h2>Download and publish your shiny new app</h2>
 
@@ -123,7 +122,11 @@
             <li>
               <div id="platformButtonBlock">
                 <i id="platformIcon" class="fab fa-windows"></i>
-                <Download id="platformDownloadButton" platform="windows10" :message="$t('publish.download')"/>
+                <Download
+                  id="platformDownloadButton"
+                  platform="windows10"
+                  :message="$t('publish.download')"
+                />
               </div>
 
               <span>
@@ -137,7 +140,11 @@
               <div id="platformButtonBlock">
                 <i id="platformIcon" class="fab fa-apple"></i>
                 <!--<Download platform="windows10" :message="$t('publish.download')"/>-->
-                <Download id="platformDownloadButton" platform="MacOS" :message="$t('publish.download')"/>
+                <Download
+                  id="platformDownloadButton"
+                  platform="MacOS"
+                  :message="$t('publish.download')"
+                />
               </div>
 
               <span>You can use Xcode to build this package to produce an app that runs on MacOS.</span>
@@ -147,7 +154,11 @@
               <div id="platformButtonBlock">
                 <i id="platformIcon" class="fab fa-android"></i>
                 <!--<Download platform="windows10" :message="$t('publish.download')"/>-->
-                <Download id="platformDownloadButton" platform="Android" :message="$t('publish.download')"/>
+                <Download
+                  id="platformDownloadButton"
+                  platform="Android"
+                  :message="$t('publish.download')"
+                />
               </div>
 
               <span>PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.</span>
@@ -157,7 +168,11 @@
               <div id="platformButtonBlock">
                 <i id="platformIcon" class="fab fa-apple"></i>
                 <!--<Download platform="windows10" :message="$t('publish.download')"/>-->
-                <Download id="platformDownloadButton" platform="ios" :message="$t('publish.download')"/>
+                <Download
+                  id="platformDownloadButton"
+                  platform="ios"
+                  :message="$t('publish.download')"
+                />
               </div>
 
               <span>iOS is a thing</span>
@@ -167,7 +182,11 @@
               <div id="platformButtonBlock">
                 <i id="platformIcon" class="fab fa-edge"></i>
                 <!--<Download platform="windows10" :message="$t('publish.download')"/>-->
-                <Download id="platformDownloadButton" platform="web" :message="$t('publish.download')"/>
+                <Download
+                  id="platformDownloadButton"
+                  platform="web"
+                  :message="$t('publish.download')"
+                />
               </div>
 
               <span>Download these files and add them to your website. Different browsers will detect your Progressive Web App in different ways, but the manifest and service workers are required for each of them.</span>
@@ -585,6 +604,10 @@ label {
               background: grey;
               color: white;
               cursor: pointer;
+              width: 6.7em;
+              display: flex;
+              justify-content: center;
+              align-items: center;
             }
           }
         }
