@@ -4,7 +4,7 @@
     <p>{{ sample.description }}</p>
 
     <div id="featureCardActionsBlock">
-      <button v-if="!selected" @click="onClickSample(sample)" id="featureCardAddButton">Add</button>
+      <button v-if="!selected" @click="onClickSample(sample)" id="featureCardAddButton">Review</button>
       <span v-if="selected" @click="onClickRemoveSample(sample)" id="featureCardRemoveButton">Remove</span>
     </div>
   </div>
