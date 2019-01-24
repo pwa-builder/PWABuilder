@@ -28,7 +28,7 @@
 
           <div id="reportActionsBlock">
             <button @click="rescan()" id="rescanButton">Rescan</button>
-            <nuxt-link id="publishButton" to="/publish">Publish</nuxt-link>
+            <nuxt-link id="publishButton" to="/publish">Build</nuxt-link>
           </div>
         </div>
       </section>
