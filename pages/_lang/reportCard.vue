@@ -585,7 +585,6 @@ export default class extends Vue {
       font-weight: bold;
       position: relative;
       top: 0em;
-      right: -0.14em;
     }
   }
 }
