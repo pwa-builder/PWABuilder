@@ -62,7 +62,11 @@
 
           <div id="doneDiv">
             <!--<button id="doneButton">Done</button>-->
-            <nuxt-link  @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})" id="doneButton" to="reportCard">Done</nuxt-link>
+            <nuxt-link
+              @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})"
+              id="doneButton"
+              to="reportCard"
+            >Done</nuxt-link>
           </div>
         </header>
 
@@ -95,6 +99,7 @@
       </section>
 
       <section id="rightSide">
+        <div id="topTitle">Add this code to your index.html page</div>
         <CodeViewer
           class="topViewer"
           code-type="javascript"
@@ -110,6 +115,7 @@
           >{{ $t("serviceworker.next_step") }}</nuxt-link>
         </CodeViewer>
 
+        <div id="bottomTitle">Add this code to your service worker file</div>
         <CodeViewer
           class="bottomViewer"
           code-type="javascript"
@@ -439,6 +445,22 @@ export default class extends Vue {
     width: 50%;
     display: flex;
     flex-direction: column;
+    padding-top: 1em;
+
+    #topTitle {
+      background: lightgrey;
+      font-weight: bold;
+      padding: 1em;
+      margin-left: 36px;
+    }
+
+    #bottomTitle {
+      background: lightgrey;
+      font-weight: bold;
+      padding: 1em;
+      margin-left: 36px;
+      margin-top: 8em;
+    }
 
     .code_viewer {
       border-bottom: 1px grey solid;
