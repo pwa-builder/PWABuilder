@@ -40,10 +40,9 @@
         </div>
       </div>
 
-      <button
-        @click="skipCheckUrl()"
-        id="expertModeButton"
-      >EXPERT MODE - Already have a manifest? Skip ahead!</button>
+      <button @click="skipCheckUrl()" id="expertModeButton">
+        Already have a PWA? Skip ahead!
+      </button>
     </section>
 
     <section id="rightSide"></section>
@@ -353,6 +352,7 @@ Vue.prototype.$awa = function(config) {
     opacity: 0.6;
     position: absolute;
     bottom: 0;
+    cursor: pointer;
   }
 }
 
