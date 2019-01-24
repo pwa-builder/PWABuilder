@@ -717,7 +717,8 @@ export default class extends Vue {
   }
 
   public handleEditorValue(ev) {
-    this.manifest$ = JSON.parse(ev);
+    console.log(ev);
+    this.manifest$ = ev;
   }
 
   public showBasicsSection() {
