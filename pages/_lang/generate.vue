@@ -495,6 +495,7 @@
           :warnings="warnings"
           :warningsTotal="warningsTotal"
           :showToolbar="true"
+          :showCopyButton="true"
         >
           <nuxt-link
             :to="$i18n.path('serviceworker')"

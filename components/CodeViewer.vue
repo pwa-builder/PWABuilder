@@ -206,7 +206,7 @@ export default class extends Vue {
     display: flex;
     justify-content: flex-end;
     position: fixed;
-    top: 16px;
+    top: 78px;
     right: 16px;
   }
 
