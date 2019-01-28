@@ -279,7 +279,6 @@ export default class extends Vue {
 
   // @ts-ignore TS6133 onSelected
   public async onSelected(sample: windowsStore.Sample) {
-    console.log(sample);
     try {
       await this.selectSample(sample);
       this.selectedSamples.push(sample);
