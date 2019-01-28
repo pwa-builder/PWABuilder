@@ -4,8 +4,16 @@
     <p>{{ sample.description }}</p>
 
     <div id="featureCardActionsBlock">
-      <button v-if="!showRemoveButton || !selected" @click="onClickSample(sample)" id="featureCardAddButton">Review</button>
-      <span v-if="showRemoveButton && selected" @click="onClickRemoveSample(sample)" id="featureCardRemoveButton">Remove</span>
+      <button
+        v-if="!showRemoveButton || !selected"
+        @click="onClickSample(sample)"
+        id="featureCardAddButton"
+      >Review</button>
+      <span
+        v-if="showRemoveButton && selected"
+        @click="onClickRemoveSample(sample)"
+        id="featureCardRemoveButton"
+      >Remove</span>
     </div>
   </div>
 </template>
@@ -30,14 +38,14 @@ export default class extends Vue {
 
   onClickSample(sample: windowsStore.Sample) {
     console.log(sample);
-    this.$emit('selected', sample);
+    this.$emit("selected", sample);
 
     this.selected = true;
   }
 
   onClickRemoveSample(sample: windowsStore.Sample) {
     console.log(sample);
-    this.$emit('removed', sample);
+    this.$emit("removed", sample);
 
     this.selected = false;
   }
@@ -85,6 +93,9 @@ export default class extends Vue {
       padding-right: 27px;
       font-size: 18px;
       font-weight: bold;
+      display: flex;
+      justify-content: center;
+      width: 116px;
       background: $color-brand-warning;
     }
   }
