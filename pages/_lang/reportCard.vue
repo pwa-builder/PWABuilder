@@ -37,7 +37,7 @@
         <img id="reportGraphic" src="~/assets/images/report_card.svg">
 
         <div id="scoreDiv" v-if="!calcGradeAnalyzing">{{overallGrade}}</div>
-        <div id="scoreDiv" v-if="calcGradeAnalyzing">🤔</div>
+        <div id="scoreDiv" v-if="calcGradeAnalyzing">I</div>
       </section>
     </div>
 
@@ -276,7 +276,7 @@ export default class extends Vue {
   private async start() {
     if (this.url) {
       console.log("here");
-      sessionStorage.setItem("overallGrade", "🤔");
+      sessionStorage.setItem("overallGrade", "I");
       // this.analyzing = true;
       this.securityAnalyzing = true;
       this.manifestAnalyzing = true;
@@ -353,8 +353,7 @@ export default class extends Vue {
         console.log("lookAtSW", data.data);
 
         this.serviceWorkerData = data.data;
-      }
-      else {
+      } else {
         const response = await fetch(`${apiUrl}=${this.url}`);
         const data = await response.json();
         console.log("lookAtSW", data.data);
@@ -420,21 +419,21 @@ export default class extends Vue {
         this.manifestScore > 90 &&
         this.securityScore > 90
       ) {
-        this.overallGrade = "☺️";
+        this.overallGrade = "A";
       } else if (
         this.swScore > 80 &&
         this.manifestScore > 80 &&
         this.securityScore > 80
       ) {
-        this.overallGrade = "🙂";
+        this.overallGrade = "B";
       } else if (
         this.swScore > 70 &&
         this.manifestScore > 70 &&
         this.securityScore > 70
       ) {
-        this.overallGrade = "😐";
+        this.overallGrade = "C";
       } else {
-        this.overallGrade = "☹️";
+        this.overallGrade = "D";
       }
 
       this.calcGradeAnalyzing = false;
