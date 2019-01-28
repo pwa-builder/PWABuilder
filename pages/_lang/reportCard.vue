@@ -710,7 +710,7 @@ export default class extends Vue {
 
 @media (max-width: 1300px) {
   #scoreDiv {
-    top: -1.4em !important;
+    top: -1.6em !important;
   }
 
   #cats {
