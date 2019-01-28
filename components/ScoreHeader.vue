@@ -13,6 +13,9 @@
         <span>Rescan</span>
       </nuxt-link>
       <span v-if="score" id="scoreSpan">{{ score }}</span>
+      <span v-else id="loadingSpan">
+        <Loading active></Loading>
+      </span>
     </div>
   </header>
 </template>
@@ -56,13 +59,11 @@ export default class extends Vue {
 
     this.scrollTarget = document.querySelector("#scrollTarget");
 
-    if (this.scrollTarget && 'animate' in this.$el) {
+    if (this.scrollTarget && "animate" in this.$el) {
       const iObserver = new IntersectionObserver(entries => {
-
         if (entries[0].isIntersecting === true) {
           this.animateBack();
-        }
-        else {
+        } else {
           this.animateAway();
         }
       });
@@ -84,7 +85,7 @@ export default class extends Vue {
       {
         fill: "forwards",
         duration: 250,
-        easing: 'ease-out'
+        easing: "ease-out"
       }
     );
   }
@@ -102,7 +103,7 @@ export default class extends Vue {
       {
         fill: "forwards",
         duration: 250,
-        easing: 'ease-out'
+        easing: "ease-out"
       }
     );
   }
@@ -184,6 +185,11 @@ Vue.prototype.$awa = function(config) {
       display: flex;
       justify-content: center;
     }
+  }
+
+  #loadingSpan {
+    margin-right: 1em;
+    margin-left: 0.6em;
   }
 
   #urlDiv {

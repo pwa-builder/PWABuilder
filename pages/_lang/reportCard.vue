@@ -37,7 +37,9 @@
         <img id="reportGraphic" src="~/assets/images/report_card.svg">
 
         <div id="scoreDiv" v-if="!calcGradeAnalyzing">{{overallGrade}}</div>
-        <div id="scoreDiv" v-if="calcGradeAnalyzing">I</div>
+        <div id="scoreDiv" v-if="calcGradeAnalyzing">
+          <Loading active></Loading>
+        </div>
       </section>
     </div>
 
@@ -276,7 +278,6 @@ export default class extends Vue {
   private async start() {
     if (this.url) {
       console.log("here");
-      sessionStorage.setItem("overallGrade", "I");
       // this.analyzing = true;
       this.securityAnalyzing = true;
       this.manifestAnalyzing = true;
@@ -584,6 +585,12 @@ export default class extends Vue {
       font-weight: bold;
       position: relative;
       top: 0em;
+
+      section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
     }
   }
 }
