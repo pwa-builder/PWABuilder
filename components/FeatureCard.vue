@@ -4,8 +4,8 @@
     <p>{{ sample.description }}</p>
 
     <div id="featureCardActionsBlock">
-      <button v-if="!selected" @click="onClickSample(sample)" id="featureCardAddButton">Review</button>
-      <span v-if="selected" @click="onClickRemoveSample(sample)" id="featureCardRemoveButton">Remove</span>
+      <button v-if="!showRemoveButton || !selected" @click="onClickSample(sample)" id="featureCardAddButton">Review</button>
+      <span v-if="showRemoveButton && selected" @click="onClickRemoveSample(sample)" id="featureCardRemoveButton">Remove</span>
     </div>
   </div>
 </template>
@@ -20,8 +20,9 @@ import * as windowsStore from "~/store/modules/windows";
 @Component({})
 export default class extends Vue {
   @Prop({}) sample: windowsStore.Sample;
+  @Prop({}) showRemoveButton: boolean;
 
-  selected = false;
+  selected: boolean = false;
 
   mounted() {
     console.log("im here");
@@ -29,16 +30,16 @@ export default class extends Vue {
 
   onClickSample(sample: windowsStore.Sample) {
     console.log(sample);
-    this.selected = true;
-
     this.$emit('selected', sample);
+
+    this.selected = true;
   }
 
   onClickRemoveSample(sample: windowsStore.Sample) {
     console.log(sample);
-    this.selected = false;
-
     this.$emit('removed', sample);
+
+    this.selected = false;
   }
 }
 </script>

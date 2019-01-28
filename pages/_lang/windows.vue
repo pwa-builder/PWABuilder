@@ -120,12 +120,21 @@
         </div>
       </div>-->
       <FeatureCard
-        v-if="samples.length > 0"
+        v-if="samples.length > 0 && !selectedSamples.includes(sample)"
         v-for="sample in samples"
         :sample="sample"
         :key="sample.id"
         v-on:selected="onSelected"
         v-on:removed="onRemoved"
+        :showRemoveButton="false"
+      ></FeatureCard>
+
+      <FeatureCard
+        v-if="selectedSamples.length > 0"
+        v-for="sample in selectedSamples"
+        :sample="sample"
+        :key="sample.id"
+        :showRemoveButton="true"
       ></FeatureCard>
     </section>
 
@@ -345,7 +354,7 @@ export default class extends Vue {
 
     this.hasNative = true;
     this.modalClosed();
-    // (this.$refs.addFeatureModal as Modal).hide();
+    (this.$refs.addFeatureModal as Modal).hide();
   }
 
   async download(all = false) {
