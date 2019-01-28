@@ -712,6 +712,11 @@ export default class extends Vue {
   #scoreDiv {
     top: -1.4em !important;
   }
+
+  #cats {
+    margin-left: 6em;
+    margin-right: 6em;
+  }
 }
 </style>
 

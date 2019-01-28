@@ -221,6 +221,7 @@ Vue.prototype.$awa = function(config) {
     flex: 1;
     display: flex;
     flex-direction: column;
+    width: 1em;
 
     header {
       display: flex;
@@ -353,6 +354,13 @@ Vue.prototype.$awa = function(config) {
     position: absolute;
     bottom: 0;
     cursor: pointer;
+  }
+}
+
+@media (max-width: 1282px) {
+  #sideBySide #introContainer {
+    padding-top: 4em;
+    padding-left: 4em;
   }
 }
 
