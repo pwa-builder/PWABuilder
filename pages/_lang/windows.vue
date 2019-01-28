@@ -161,6 +161,8 @@
         <div class="feature-content">
           <div class="side_panel">
             <div class="properties" v-if="sample">
+              <p id="sampleDescP">{{sample.description}}</p>
+
               <h1>Required Properties</h1>
 
               <div v-for="prop in sample.parms" :key="prop.id">
@@ -171,6 +173,7 @@
           </div>
         </div>
         <div class="code-samples">
+          <div id="codeHeader">Usage Example</div>
           <div class="code-top">
             <CodeViewer
               code-type="javascript"
@@ -182,6 +185,7 @@
             ></CodeViewer>
           </div>
           <div class="code-bottom">
+            <div id="bottomCodeHeader">Snippit</div>
             <CodeViewer
               code-type="javascript"
               :size="viewerSize"
@@ -285,7 +289,6 @@ export default class extends Vue {
       this.error = e;
     }
   }
-
 
   // @ts-ignore TS6133 onSelected
   public onRemoved(sample: windowsStore.Sample) {
@@ -563,14 +566,12 @@ header {
   height: 90vh;
   display: flex;
   flex-direction: column;
+  margin-top: -4em;
+  height: 90vh;
 }
 
 .code-top {
   flex: 1;
-
-  .code_viewer {
-    border-bottom: 1px grey solid;
-  }
 }
 
 .code-bottom {
@@ -601,8 +602,31 @@ header {
     font-size: 18px;
   }
 
+  #sampleDescP {
+    margin-top: 20px;
+    margin-bottom: 2em;
+    font-size: 18px;
+  }
+
   p {
     font-size: 14px;
   }
+}
+
+#bottomCodeHeader {
+  background: lightgrey;
+  font-weight: bold;
+  padding: 1em;
+  margin-left: 36px;
+  margin-top: 1em;
+  margin-right: 2em;
+}
+
+#codeHeader {
+  background: lightgrey;
+  font-weight: bold;
+  padding: 1em;
+  margin-left: 36px;
+  margin-right: 2em;
 }
 </style>
