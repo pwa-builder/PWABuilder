@@ -202,6 +202,7 @@ export default class extends Vue {
   bottom: 0;
   left: 0;
   z-index: 9999;
+  overflow-y: auto;
 
   .modal-title {
     font-size: 36px;
@@ -212,20 +213,28 @@ export default class extends Vue {
     padding-top: 1em;
   }
 
+  .modal-body {
+    margin-top: 4em;
+  }
+
   .modal-buttons {
     position: fixed;
-    background: grey;
-    bottom: 0;
+    top: 0;
     right: 0;
     left: 0;
     display: flex;
     justify-content: flex-end;
-    height: 40px;
     align-items: center;
+    background: white;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    height: 4em;
+    padding-right: 1em;
 
     #modalCancelButton {
       background: $color-brand-warning;
       color: white;
+      font-size: 16px;
+      font-weight: bold;
     }
 
     button {

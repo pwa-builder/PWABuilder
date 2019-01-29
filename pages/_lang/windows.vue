@@ -100,7 +100,7 @@
           <p id="featurePageInfo">{{ $t('windows.summary') }}</p>-->
           <h1 id="featurePageHeader">Extra Features</h1>
 
-          <p>Your app looks awesome, but why not make it even better!? Give attitude nap all day under the bed. Chase mice attack feet but rub face on everything</p>
+          <p>Add that special something to supercharge your PWA. Consider connecting your website with these API's to enable magical cross-platform experiences.</p>
 
           <div id="featureActionsBlock">
             <button id="clearButton">clear</button>
@@ -565,7 +565,7 @@ header {
   height: 90vh;
   display: flex;
   flex-direction: column;
-  margin-top: -4em;
+  margin-top: -3em;
   height: 90vh;
 }
 
@@ -627,5 +627,12 @@ header {
   padding: 1em;
   margin-left: 36px;
   margin-right: 2em;
+}
+
+#addBundleButton {
+  background: $color-button-primary-blue-variant;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
 }
 </style>

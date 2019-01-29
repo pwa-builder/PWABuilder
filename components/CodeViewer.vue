@@ -6,6 +6,8 @@
       <button v-if="showCopyButton" @click="copy()" id="copyButton">Copy</button>
     </div>
 
+    <div v-if="textCopied" id="copyToast">Code Copied</div>
+
     <div v-if="showOverlay" id="errorOverlay">
       <button id="closeButton" @click="closeOverlay()">Close</button>
 
@@ -26,7 +28,6 @@
       <div v-if="!errorNumber || errorNumber ===0">
         <button id="noErrorsButton">No Errors</button>
       </div>
-
     </div>
   </section>
 </template>
@@ -90,6 +91,7 @@ export default class extends Vue {
 
   showOverlay = false;
   errors: any[] = [];
+  textCopied = false;
 
   public mounted(): void {
     this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
@@ -144,6 +146,11 @@ export default class extends Vue {
     if ((navigator as any).clipboard) {
       try {
         await (navigator as any).clipboard.writeText(code);
+        this.textCopied = true;
+
+        setTimeout(() => {
+          this.textCopied = false;
+        }, 1000);
       } catch (err) {
         console.error(err);
       }
@@ -155,6 +162,11 @@ export default class extends Vue {
         console.info("Text:", e.text);
         console.info("Trigger:", e.trigger);
 
+        this.textCopied = true;
+
+        setTimeout(() => {
+          this.textCopied = false;
+        }, 1000);
         e.clearSelection();
       });
 
@@ -205,9 +217,7 @@ export default class extends Vue {
   #copyDiv {
     display: flex;
     justify-content: flex-end;
-    position: fixed;
-    top: 78px;
-    right: 16px;
+    margin-right: 1.2em;
   }
 
   @media screen and (max-width: $media-screen-s) {
@@ -225,13 +235,12 @@ export default class extends Vue {
 
   #toolbar {
     position: fixed;
-    background: grey;
-    width: 50%;
+    background: lightgrey;
+    width: 49.4%;
     bottom: 0;
     right: 0;
     display: flex;
     justify-content: flex-end;
-    height: 40px;
     align-items: center;
 
     #errorsButton {
@@ -307,6 +316,34 @@ export default class extends Vue {
         font-weight: bold;
       }
     }
+  }
+}
+
+#copyToast {
+  background: grey;
+  color: white;
+  position: fixed;
+  bottom: 16px;
+  right: 32px;
+  z-index: 9999;
+  font-weight: bold;
+  width: 16em;
+  padding: 1em;
+  border-radius: 10px;
+  animation-name: toastUp;
+  animation-duration: 250ms;
+  animation-timing-function: ease;
+}
+
+@keyframes toastUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 </style>
