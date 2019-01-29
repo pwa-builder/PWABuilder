@@ -38,9 +38,6 @@
       <section id="scoreSection">
         <!--<img id="reportGraphic" src="~/assets/images/report_card.svg">-->
         <div id="scoreDiv" v-if="!calcGradeAnalyzing">{{overallGrade}}</div>
-        <div id="scoreDiv" v-if="calcGradeAnalyzing">
-          <Loading active></Loading>
-        </div>
       </section>
     </div>
 
@@ -266,12 +263,11 @@ export default class extends Vue {
   swScore = 0;
   manifestScore = 0;
   securityScore = 0;
-  overallGrade: string | null = null;
+  overallGrade: string = "i";
 
   swAnalyzing = false;
   manifestAnalyzing = false;
   securityAnalyzing = false;
-  calcGradeAnalyzing = false;
 
   serviceWorkerData: any = null;
 
@@ -302,7 +298,6 @@ export default class extends Vue {
       this.securityAnalyzing = true;
       this.manifestAnalyzing = true;
       this.swAnalyzing = true;
-      this.calcGradeAnalyzing = true;
 
       await this.lookAtSecurity();
       await this.lookAtManifest();
@@ -322,7 +317,7 @@ export default class extends Vue {
       }
 
       this.securityAnalyzing = false;
-      console.log(1);
+      this.calcGrade();
       resolve();
     });
   }
@@ -357,8 +352,9 @@ export default class extends Vue {
       }
 
       this.manifestAnalyzing = false;
+      // console.log(2);
 
-      console.log(2);
+      this.calcGrade();
 
       resolve();
     });
@@ -429,7 +425,7 @@ export default class extends Vue {
       }
     }
 
-    console.log(3);
+    this.calcGrade();
 
     this.swAnalyzing = false;
   }
@@ -458,8 +454,6 @@ export default class extends Vue {
         this.overallGrade = "D";
       }
 
-      this.calcGradeAnalyzing = false;
-
       sessionStorage.setItem("overallGrade", this.overallGrade);
 
       resolve();
@@ -471,7 +465,6 @@ export default class extends Vue {
     this.securityAnalyzing = true;
     this.manifestAnalyzing = true;
     this.swAnalyzing = true;
-    this.calcGradeAnalyzing = true;
 
     this.manifestScore = 0;
     this.swScore = 0;
