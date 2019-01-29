@@ -202,6 +202,7 @@ export default class extends Vue {
   bottom: 0;
   left: 0;
   z-index: 9999;
+  overflow-y: auto;
 
   .modal-title {
     font-size: 36px;
