@@ -223,13 +223,12 @@ export default class extends Vue {
 
   #toolbar {
     position: fixed;
-    background: grey;
-    width: 50%;
+    background: lightgrey;
+    width: 49.4%;
     bottom: 0;
     right: 0;
     display: flex;
     justify-content: flex-end;
-    height: 40px;
     align-items: center;
 
     #errorsButton {

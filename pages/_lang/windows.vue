@@ -565,7 +565,7 @@ header {
   height: 90vh;
   display: flex;
   flex-direction: column;
-  margin-top: -4em;
+  margin-top: -3em;
   height: 90vh;
 }
 
