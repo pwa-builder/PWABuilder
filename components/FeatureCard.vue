@@ -32,10 +32,6 @@ export default class extends Vue {
 
   selected: boolean = false;
 
-  mounted() {
-    console.log("im here");
-  }
-
   onClickSample(sample: windowsStore.Sample) {
     console.log(sample);
     this.$emit("selected", sample);
