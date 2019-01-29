@@ -628,4 +628,11 @@ header {
   margin-left: 36px;
   margin-right: 2em;
 }
+
+#addBundleButton {
+  background: $color-button-primary-blue-variant;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+}
 </style>

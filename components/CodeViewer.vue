@@ -205,9 +205,7 @@ export default class extends Vue {
   #copyDiv {
     display: flex;
     justify-content: flex-end;
-    position: fixed;
-    top: 78px;
-    right: 16px;
+    margin-right: 1.2em;
   }
 
   @media screen and (max-width: $media-screen-s) {

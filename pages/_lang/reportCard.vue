@@ -25,7 +25,7 @@
           <p id="reportCardInfo">
             See how well your website supports PWA features and learn how to improve your website's score by addressing the feedback below.
             Click Build to let us help you add what you need. When you've pushed your changes,
-            try Rescanning your website to track your progress.
+            try re-scanning your website to track your progress.
           </p>
 
           <div id="reportActionsBlock">

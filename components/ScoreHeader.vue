@@ -50,13 +50,9 @@ export default class extends Vue {
   @GeneratorAction updateLink;
   @GeneratorAction getManifestInformation;
 
-  public created(): void {
-    this.url$ = this.url;
-  }
-
   mounted(): void {
+    this.url$ = this.url;
     this.score = sessionStorage.getItem("overallGrade");
-
     this.scrollTarget = document.querySelector("#scrollTarget");
 
     if (this.scrollTarget && "animate" in this.$el) {
@@ -169,6 +165,7 @@ Vue.prototype.$awa = function(config) {
   #score {
     font-size: 1.6em;
     display: flex;
+    font-weight: bold;
 
     #rescanButton {
       border: none;
