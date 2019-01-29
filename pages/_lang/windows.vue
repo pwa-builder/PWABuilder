@@ -100,7 +100,7 @@
           <p id="featurePageInfo">{{ $t('windows.summary') }}</p>-->
           <h1 id="featurePageHeader">Extra Features</h1>
 
-          <p>Your app looks awesome, but why not make it even better!? Give attitude nap all day under the bed. Chase mice attack feet but rub face on everything</p>
+          <p>Add that special something to supercharge your PWA. Consider connecting your website with these API's to enable magical cross-platform experiences.</p>
 
           <div id="featureActionsBlock">
             <button id="clearButton">clear</button>
