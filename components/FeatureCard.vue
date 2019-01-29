@@ -33,14 +33,12 @@ export default class extends Vue {
   selected: boolean = false;
 
   onClickSample(sample: windowsStore.Sample) {
-    console.log(sample);
     this.$emit("selected", sample);
 
     this.selected = true;
   }
 
   onClickRemoveSample(sample: windowsStore.Sample) {
-    console.log(sample);
     this.$emit("removed", sample);
 
     this.selected = false;
