@@ -111,7 +111,7 @@
 
           <div id="publishActionsContainer">
             <button id="downloadAllButton">Download All</button>
-            <button id="showcaseButton">See Showcase</button>
+            <!--<button id="showcaseButton">See Showcase</button>-->
           </div>
         </div>
       </section>
