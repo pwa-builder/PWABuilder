@@ -228,6 +228,7 @@ export default class extends Vue {
     background: white;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
     height: 4em;
+    padding-right: 1em;
 
     #modalCancelButton {
       background: $color-brand-warning;
