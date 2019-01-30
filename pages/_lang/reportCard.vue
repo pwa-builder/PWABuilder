@@ -214,7 +214,7 @@
         <section class="catSection">
           <h2>Extras</h2>
 
-          <p>
+          <p id="extrasP">
             Add extra features to your PWA to enable
             extra functionality!
           </p>
@@ -274,7 +274,6 @@ export default class extends Vue {
   abortController: AbortController;
 
   public async created(): Promise<void> {
-    console.log("Created called");
     await this.start();
   }
 
@@ -285,7 +284,6 @@ export default class extends Vue {
   }
 
   public beforeDestroy() {
-    console.log("navigating away form reportCard page");
     if (this.abortController) {
       this.abortController.abort();
     }
@@ -293,7 +291,6 @@ export default class extends Vue {
 
   private async start() {
     if (this.url) {
-      console.log("here");
       // this.analyzing = true;
       this.securityAnalyzing = true;
       this.manifestAnalyzing = true;
@@ -303,10 +300,6 @@ export default class extends Vue {
       await this.lookAtManifest();
       await this.lookAtSW();
       await this.calcGrade();
-
-      console.log(this.overallGrade);
-
-      // this.analyzing = false;
     }
   }
 
@@ -352,7 +345,6 @@ export default class extends Vue {
       }
 
       this.manifestAnalyzing = false;
-      // console.log(2);
 
       this.calcGrade();
 
@@ -539,7 +531,7 @@ export default class extends Vue {
 
     #reportCardHeader {
       font-weight: bold;
-      font-size: 48px;
+      font-size: 36px;
     }
 
     #reportCardInfo {
@@ -626,20 +618,9 @@ export default class extends Vue {
 }
 
 #cats {
-  /*margin-left: 9em;
-  margin-right: 9em;
   display: grid;
   grid-template-rows: auto auto;
   grid-template-columns: auto auto;
-  position: relative;
-  bottom: 4.6em;*/
-
-  display: grid;
-  grid-template-rows: auto auto;
-  grid-template-columns: auto auto;
-
-  .good {
-  }
 
   .catSection {
     border: solid 1px grey;
@@ -715,6 +696,10 @@ export default class extends Vue {
       }
     }
   }
+}
+
+#extrasP {
+  flex-grow: 2;
 }
 
 /*@media (max-width: 1580px) {
