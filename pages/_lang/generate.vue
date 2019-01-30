@@ -851,7 +851,7 @@ export default class extends Vue {
 
     .animatedSection {
       .fieldName {
-        color: $color-button-primary-green-variant;
+        color: #3E8BD7;
         font-size: 18px;
       }
 
