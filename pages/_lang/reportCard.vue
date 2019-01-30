@@ -565,7 +565,6 @@ export default class extends Vue {
       margin-top: 40px;
       color: white;
       background: $color-button-primary-blue-variant;
-      margin-left: 8px;
       margin-right: 10px;
     }
 
