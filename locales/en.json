@@ -10,7 +10,7 @@
   },
   "home": {
     "mast_title":"Quickly and easily turn your website into an app!",
-    "mast_tag": "It's super easy to get started. Just enter the URL of your website below!",
+    "mast_tag": "It's super easy to get started. Just enter the URL of your website below.",
     "empty_tag":"With Progressive Web Apps (or simply PWAs) you don't have to decide between using cross-platform web technologies and providing your users with a native app-like experience.",
     "how_works_title": "What is a PWA?",
     "how_works_body": "A Progressive Web App (or simply PWA) is a web site that acts, looks, and feels like a native app. Your web app runs in a browser just like it does today, but on platforms that support it, the app can be installed on the device and have the behavior and privlages of a native app.",
