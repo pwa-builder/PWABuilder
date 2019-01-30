@@ -157,6 +157,7 @@ Vue.prototype.$awa = function(config) {
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
   align-items: center;
   padding: 16px;
+  padding-right: 1.6em;
   z-index: 9999;
   position: sticky;
   top: 0;

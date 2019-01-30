@@ -29,7 +29,7 @@
               @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/build/manifest-scan' })"
               id="getStartedButton"
             >
-              <div>{{ $t('generator.start') }}</div>
+              <div v-if="!inProgress">{{ $t('generator.start') }}</div>
               <div v-if="inProgress" id="loadingDiv">
                 <Loading :active="inProgress"/>
               </div>
@@ -301,10 +301,6 @@ Vue.prototype.$awa = function(config) {
 
   #formContainer {
     width: 100%;
-
-    #loadingDiv {
-      margin-left: 10px;
-    }
 
     form {
       display: flex;

@@ -91,6 +91,7 @@ export default class extends Vue {
       justify-content: center;
       width: 116px;
       background: $color-brand-warning;
+      color: white;
     }
   }
 }
