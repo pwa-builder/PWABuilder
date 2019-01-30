@@ -37,7 +37,7 @@
 
       <section id="scoreSection">
         <!--<img id="reportGraphic" src="~/assets/images/report_card.svg">-->
-        <div id="scoreDiv" v-if="!calcGradeAnalyzing">
+        <div id="scoreDiv">
           <span>Overall Grade</span>
           {{overallGrade}}
         </div>
