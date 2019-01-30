@@ -483,7 +483,6 @@ header {
     }
 
     #featureActionsBlock {
-      margin-top: 60px;
       display: flex;
 
       #clearButton {
