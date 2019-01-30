@@ -250,16 +250,21 @@
         </header>
 
         <div id="dataSection">
-          <div id="dataButtons">
-            <button
-              v-bind:class="{ active: showBasicSection }"
-              @click="showBasicsSection()"
-            >Basic Info</button>
-            <button v-bind:class="{ active: showImagesSection }" @click="showImageSection()">Images</button>
-            <button
-              v-bind:class="{ active: showSettingsSection }"
-              @click="showSettingSection()"
-            >Settings</button>
+          <div id="dataButtonsBlock">
+            <div id="dataButtons">
+              <button
+                v-bind:class="{ active: showBasicSection }"
+                @click="showBasicsSection()"
+              >Basic Info</button>
+              <button
+                v-bind:class="{ active: showImagesSection }"
+                @click="showImageSection()"
+              >Images</button>
+              <button
+                v-bind:class="{ active: showSettingsSection }"
+                @click="showSettingSection()"
+              >Settings</button>
+            </div>
           </div>
 
           <section class="animatedSection" v-if="showBasicSection">
@@ -797,31 +802,37 @@ export default class extends Vue {
     height: 100%;
 
     .mastHead {
-      padding-top: 4em;
-      padding-left: 8em;
-      padding-right: 8em;
+      padding-top: 40px;
+      padding-right: 96px;
+      padding-left: 164px;
 
       h2 {
-        font-size: 48px;
+        font-size: 36px;
         font-weight: bold;
         color: black;
       }
 
       p {
-        margin-top: 40px;
+        margin-top: 20px;
         font-size: 18px;
       }
     }
 
     #dataSection {
-      padding-top: 1em;
-      padding-left: 8em;
-      padding-right: 8em;
+      padding-top: 40px;
+      padding-right: 96px;
+      padding-left: 164px;
+
+      #dataButtonsBlock {
+        display: flex;
+        justify-content: center;
+      }
 
       #dataButtons {
         display: flex;
         margin-bottom: 2em;
-        justify-content: space-around;
+        justify-content: space-between;
+        width: 392px;
 
         button {
           background: $color-button-primary-blue-variant;
@@ -857,6 +868,7 @@ export default class extends Vue {
     #doneDiv {
       display: flex;
       justify-content: center;
+      margin-bottom: 62px;
 
       #doneButton {
         background: $color-button-primary-green-variant;
