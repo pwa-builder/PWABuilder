@@ -37,7 +37,10 @@
 
       <section id="scoreSection">
         <!--<img id="reportGraphic" src="~/assets/images/report_card.svg">-->
-        <div id="scoreDiv" v-if="!calcGradeAnalyzing">{{overallGrade}}</div>
+        <div id="scoreDiv" v-if="!calcGradeAnalyzing">
+          <span>Overall Grade</span>
+          {{overallGrade}}
+        </div>
       </section>
     </div>
 
@@ -185,9 +188,7 @@
             </li>
           </ul>
 
-          <div id="noSWP" v-if="noServiceWorker">
-            No Service Worker found
-          </div>
+          <div id="noSWP" v-if="noServiceWorker">No Service Worker found</div>
 
           <!--<button>Edit</button>-->
           <div class="editDiv">
@@ -363,7 +364,7 @@ export default class extends Vue {
       if (this.abortController) {
         const signal = this.abortController.signal;
         // const data = await axios.get(`${apiUrl}=${this.url}`, { signal });
-        console.log('fetching sw');
+        console.log("fetching sw");
         const response = await fetch(`${apiUrl}=${this.url}`, { signal });
         const data = await response.json();
         console.log("lookAtSW", data);
@@ -551,6 +552,7 @@ export default class extends Vue {
 
     #reportCardInfo {
       width: 376px;
+      line-height: 28px;
     }
 
     #rescanButton {
@@ -604,16 +606,23 @@ export default class extends Vue {
     }
 
     #scoreDiv {
-      height: 210px;
-      width: 261px;
+      width: 221px;
+      height: 221px;
+      border-radius: 52px;
       background: white;
       display: flex;
       justify-content: center;
       align-items: center;
       font-size: 92px;
       font-weight: bold;
-      border-radius: 20px;
       margin-bottom: 1.2em;
+      flex-direction: column;
+
+      span {
+        font-size: 18px;
+        position: relative;
+        bottom: 8px; 
+      }
 
       section {
         display: flex;
