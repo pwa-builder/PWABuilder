@@ -263,7 +263,7 @@ export default class extends Vue {
   swScore = 0;
   manifestScore = 0;
   securityScore = 0;
-  overallGrade: string = "i";
+  overallGrade = "i";
 
   swAnalyzing = false;
   manifestAnalyzing = false;

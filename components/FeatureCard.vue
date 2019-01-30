@@ -30,7 +30,7 @@ export default class extends Vue {
   @Prop({}) sample: windowsStore.Sample;
   @Prop({}) showRemoveButton: boolean;
 
-  selected: boolean = false;
+  selected = false;
 
   onClickSample(sample: windowsStore.Sample) {
     this.$emit("selected", sample);
