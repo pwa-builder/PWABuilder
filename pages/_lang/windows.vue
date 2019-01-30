@@ -496,7 +496,7 @@ header {
         padding-bottom: 11px;
         margin-top: 40px;
         color: white;
-        background: $color-button-primary-blue-variant;
+        background: $color-brand-secondary;
         margin-left: 8px;
         margin-right: 10px;
       }
@@ -512,7 +512,7 @@ header {
         padding-bottom: 11px;
         margin-top: 40px;
         color: white;
-        background: $color-button-primary-green-variant;
+        background: $color-brand-primary;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -629,7 +629,7 @@ header {
 }
 
 #addBundleButton {
-  background: $color-button-primary-blue-variant;
+  background: $color-brand-primary;
   color: white;
   font-size: 16px;
   font-weight: bold;

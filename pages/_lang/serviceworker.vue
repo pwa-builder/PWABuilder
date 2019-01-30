@@ -422,7 +422,7 @@ export default class extends Vue {
       display: flex;
 
       #doneButton {
-        background: $color-button-primary-green-variant;
+        background: $color-brand-primary;
         width: 184px;
         height: 44px;
         border-radius: 20px;

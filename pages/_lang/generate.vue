@@ -835,7 +835,7 @@ export default class extends Vue {
         width: 392px;
 
         button {
-          background: $color-button-primary-blue-variant;
+          background: $color-brand-primary;
           border: none;
           font-weight: bold;
           font-size: 14px;
@@ -871,7 +871,7 @@ export default class extends Vue {
       margin-bottom: 62px;
 
       #doneButton {
-        background: $color-button-primary-green-variant;
+        background: $color-button-primary-purple-variant;
         width: 184px;
         height: 44px;
         border-radius: 20px;

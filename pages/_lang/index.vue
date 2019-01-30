@@ -37,10 +37,13 @@
 
             <div v-if="error" id="errorBox">{{error}}</div>
           </form>
+
+          <div id="expertModeBlock">
+            <button @click="skipCheckUrl()" id="expertModeButton">Expert Mode</button>
+            <p>Already have a PWA? Skip ahead!</p>
+          </div>
         </div>
       </div>
-
-      <button @click="skipCheckUrl()" id="expertModeButton">Already have a PWA? Skip ahead!</button>
     </section>
 
     <section id="rightSide"></section>
@@ -300,6 +303,32 @@ Vue.prototype.$awa = function(config) {
   #formContainer {
     width: 100%;
 
+    #expertModeBlock {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      margin-top: 144px;
+
+      #expertModeButton {
+        width: 200px;
+        font-weight: bold;
+        font-size: 18px;
+        border: none;
+        border-radius: 22px;
+        padding-top: 9px;
+        padding-bottom: 11px;
+        background-image: $color-button-primary-purple-variant;
+        color: white;
+        height: 44px;
+      }
+
+      p {
+        margin-top: 9px;
+        font-size: 14px;
+      }
+    }
+
     form {
       display: flex;
     }
@@ -307,7 +336,6 @@ Vue.prototype.$awa = function(config) {
     input {
       padding-top: 13px;
       padding-bottom: 12px;
-      padding-left: 20px;
       font-weight: bold;
       font-size: 14px;
       border: none;
@@ -321,7 +349,7 @@ Vue.prototype.$awa = function(config) {
       border: none;
       font-weight: bold;
       font-size: 18px;
-      border-radius: 20px;
+      border-radius: 22px;
       padding-top: 9px;
       padding-bottom: 11px;
       padding-left: 23px;
@@ -332,22 +360,11 @@ Vue.prototype.$awa = function(config) {
       display: flex;
       flex-direction: row;
       align-items: center;
-      background: $color-button-primary-blue-variant;
+      background: $color-brand-primary;
       color: white;
       width: 88px;
       justify-content: center;
     }
-  }
-
-  #expertModeButton {
-    width: 50%;
-    background: grey;
-    border: none;
-    height: 80px;
-    opacity: 0.6;
-    position: absolute;
-    bottom: 0;
-    cursor: pointer;
   }
 }
 

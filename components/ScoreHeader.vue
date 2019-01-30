@@ -178,7 +178,7 @@ Vue.prototype.$awa = function(config) {
       padding-bottom: 9px;
       width: 6em;
       margin-right: 12px;
-      background: $color-button-primary-green-variant;
+      background: $color-brand-primary;
       color: white;
       display: flex;
       justify-content: center;
@@ -195,7 +195,7 @@ Vue.prototype.$awa = function(config) {
   }
 
   #backButton {
-    background: #4a75cc;
+    background: $color-brand-secondary;
     border: none;
     font-weight: bold;
     color: white;

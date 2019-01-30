@@ -564,7 +564,7 @@ export default class extends Vue {
       padding-bottom: 11px;
       margin-top: 40px;
       color: white;
-      background: $color-button-primary-blue-variant;
+      background: $color-brand-secondary;
       margin-right: 10px;
     }
 
@@ -579,7 +579,7 @@ export default class extends Vue {
       padding-bottom: 11px;
       margin-top: 40px;
       color: white;
-      background: $color-button-primary-green-variant;
+      background: $color-brand-primary;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -692,7 +692,7 @@ export default class extends Vue {
       display: flex;
       justify-content: center;
       color: white;
-      background: $color-button-primary-green-variant;
+      background: $color-brand-primary;
     }
 
     .score {

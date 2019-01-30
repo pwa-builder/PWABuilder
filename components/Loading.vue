@@ -60,7 +60,7 @@ export default class extends Vue {
   margin: 1px;
   border-radius: 50%;
   border: 5px solid #fff;
-  border-color: #8148cd transparent #8148cd transparent;
+  border-color: $color-brand-secondary transparent $color-brand-secondary transparent;
   animation: lds-dual-ring 1.2s linear infinite;
 }
 

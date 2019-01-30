@@ -249,7 +249,7 @@ export default class extends Vue {
     }
 
     #noErrorsButton {
-      background: $color-button-primary-blue-variant;
+      background: $color-brand-secondary;
       color: white;
     }
 

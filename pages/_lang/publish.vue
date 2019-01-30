@@ -548,7 +548,7 @@ label {
 
         #downloadAllButton {
           margin-right: 11px;
-          background: $color-button-primary-blue-variant;
+          background: $color-brand-primary;
           color: white;
         }
       }
