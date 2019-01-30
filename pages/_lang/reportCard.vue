@@ -169,7 +169,8 @@
               <span>Service Worker has a push registration</span>
             </li>
           </ul>
-          <ul v-else>
+
+          <ul v-if="!serviceWorkerData && !noServiceWorker">
             <li>
               <span class="skeletonSpan"></span>
             </li>
@@ -183,6 +184,10 @@
               <span class="skeletonSpan"></span>
             </li>
           </ul>
+
+          <div id="noSWP" v-if="noServiceWorker">
+            No Service Worker found
+          </div>
 
           <!--<button>Edit</button>-->
           <div class="editDiv">
@@ -270,6 +275,7 @@ export default class extends Vue {
   securityAnalyzing = false;
 
   serviceWorkerData: any = null;
+  noServiceWorker = false;
 
   abortController: AbortController;
 
@@ -369,6 +375,15 @@ export default class extends Vue {
         console.log("lookAtSW", data.data);
 
         this.serviceWorkerData = data;
+      }
+
+      if (this.serviceWorkerData === false) {
+        this.swScore = 0;
+        this.calcGrade();
+        this.swAnalyzing = false;
+        this.noServiceWorker = true;
+
+        return;
       }
 
       /*
@@ -702,34 +717,8 @@ export default class extends Vue {
   flex-grow: 2;
 }
 
-/*@media (max-width: 1580px) {
-  #scoreDiv {
-    top: -0.4em !important;
-    right: -0.14em !important;
-  }
+#noSWP {
+  flex-grow: 2;
 }
-
-@media (max-width: 1450px) {
-  #scoreDiv {
-    top: -0.8em !important;
-  }
-}
-
-@media (max-width: 1370px) {
-  #scoreDiv {
-    top: -1em !important;
-  }
-}
-
-@media (max-width: 1300px) {
-  #scoreDiv {
-    top: -1.6em !important;
-  }
-
-  #cats {
-    margin-left: 6em;
-    margin-right: 6em;
-  }
-}*/
 </style>
 
