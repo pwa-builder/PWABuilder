@@ -871,7 +871,7 @@ export default class extends Vue {
       margin-bottom: 62px;
 
       #doneButton {
-        background: $color-button-primary-purple-variant;
+        background: $color-brand-secondary;
         width: 184px;
         height: 44px;
         border-radius: 20px;
@@ -890,8 +890,9 @@ export default class extends Vue {
   #rightSide {
     flex: 1;
     width: 4em;
-    height: 100%;
+    height: 102vh;
     border-left: solid 1px grey;
+    background: #EBEBEB;
   }
 }
 

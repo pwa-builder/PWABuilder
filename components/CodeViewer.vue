@@ -94,6 +94,16 @@ export default class extends Vue {
   textCopied = false;
 
   public mounted(): void {
+
+    monaco.editor.defineTheme('customTheme', {
+      base: 'vs',
+      inherit: true,
+      rules: [],
+      colors: {
+        "editor.background": '#EBEBEB'
+      }
+    });
+
     this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
       value: this.code,
       lineNumbers: "off",
@@ -104,6 +114,7 @@ export default class extends Vue {
       scrollBeyondLastLine: false,
       // Set this to false to not auto word wrap minified files
       wordWrapMinified: true,
+      theme: 'customTheme',
 
       // try "same", "indent" or "none"
       wrappingIndent: "indent",
@@ -235,7 +246,7 @@ export default class extends Vue {
 
   #toolbar {
     position: fixed;
-    background: lightgrey;
+    background: #F4F4F4;
     width: 49.4%;
     bottom: 0;
     right: 0;
