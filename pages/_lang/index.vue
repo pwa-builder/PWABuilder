@@ -40,9 +40,7 @@
         </div>
       </div>
 
-      <button @click="skipCheckUrl()" id="expertModeButton">
-        Already have a PWA? Skip ahead!
-      </button>
+      <button @click="skipCheckUrl()" id="expertModeButton">Already have a PWA? Skip ahead!</button>
     </section>
 
     <section id="rightSide"></section>
@@ -269,16 +267,16 @@ Vue.prototype.$awa = function(config) {
   }
 
   #introContainer {
-    padding-top: 9em;
-    padding-right: 100px;
-    padding-left: 8em;
+    padding-top: 140px;
+    padding-right: 96px;
+    padding-left: 164px;
     display: flex;
     flex-direction: column;
     align-items: center;
     flex: 2;
 
     h2 {
-      font-size: 48px;
+      font-size: 36px;
       color: black;
       font-weight: bold;
     }
@@ -336,7 +334,7 @@ Vue.prototype.$awa = function(config) {
       align-items: center;
       background: $color-button-primary-blue-variant;
       color: white;
-      width: 8em;
+      width: 88px;
       justify-content: center;
     }
   }
