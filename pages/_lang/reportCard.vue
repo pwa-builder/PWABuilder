@@ -647,7 +647,7 @@ export default class extends Vue {
 
   .catSection {
     border: solid 1px grey;
-    padding: 40px;
+    padding: 30px;
     background: white;
     display: flex;
     flex-direction: column;
