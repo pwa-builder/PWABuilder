@@ -699,7 +699,6 @@ export default class extends Vue {
       font-size: 36px;
       font-weight: bold;
       display: flex;
-      width: 2.8em;
       justify-content: space-between;
 
       .scoreSubText {
