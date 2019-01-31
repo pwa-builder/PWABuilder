@@ -272,7 +272,6 @@ Vue.prototype.$awa = function(config) {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-color: $color-brand-primary;
   }
 
   #introContainer {
