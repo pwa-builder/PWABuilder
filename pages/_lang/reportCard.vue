@@ -632,7 +632,10 @@ color: green;
   }
 
   #scoreSection {
-    background: #8148cd;
+    background-image: url('~/assets/images/homepage-background.svg');
+    background-position: right;
+    background-repeat: no-repeat;
+    background-color: $color-brand-primary;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -695,7 +698,6 @@ color: green;
     background: rgba(255,255,255,.5);
     display: flex;
     flex-direction: column;
-    xmin-height: 366px;
 
     .catHeader {
       display: flex;
@@ -737,8 +739,11 @@ color: green;
       width: 420px;
     }
 
+    .editDiv {
+      display: flex;
+    }
+
     .editButton {
-      width: 184px;
       border-radius: 22px;
       border: none;
       background: grey;
@@ -746,6 +751,8 @@ color: green;
       font-size: 18px;
       padding-top: 9px;
       padding-bottom: 11px;
+      padding-left: 49px;
+      padding-right: 49px;
       display: flex;
       justify-content: center;
       color: white;
