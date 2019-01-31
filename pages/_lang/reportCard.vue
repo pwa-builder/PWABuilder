@@ -17,10 +17,15 @@
     </div>-->
     <div id="scoreSideBySide">
       <section id="headerSection">
-        <div>
-          <h1 id="reportCardHeader">Report Card</h1>
+        <div class="mast">
+          <h1 id="reportCardHeader">How am I doing so far?</h1>
 
-          <p id="urlTested">URL Tested: {{url}}</p>
+            
+          <div id="urlTested">URL Tested:
+            <p> {{url}}
+            <button @click="rescan()" id="rescanButton">Rescan</button>
+            </p>
+          </div>
 
           <p id="reportCardInfo">
             See how well your website supports PWA features and learn how to improve your website's score by addressing the feedback below.
@@ -29,7 +34,6 @@
           </p>
 
           <div id="reportActionsBlock">
-            <button @click="rescan()" id="rescanButton">Rescan</button>
             <nuxt-link id="publishButton" to="/publish">Build My App</nuxt-link>
           </div>
         </div>
@@ -62,40 +66,51 @@
 
           <ul v-if="manifest">
             <li v-bind:class="{ good: manifest }">
-              <i v-if="manifest" class="fas fa-check"></i>
-              <i v-if="!manifest" class="fas fa-times"></i>
+              <span>Web Manifest properly attached</span>
+
+              <span v-if="manifest"> <i class="fas fa-check"></i><span>10 pts</span></span>
+              <span v-if="!manifest"><i class="fas fa-times"></i><span>0 pts</span></span>
               
-              <span>Has a Web Manifest</span>
+              
             </li>
             <li v-bind:class="{ good: manifest && manifest.display }">
-              <i v-if="manifest && manifest.display" class="fas fa-check"></i>
-              <i v-if="manifest && !manifest.display" class="fas fa-times"></i>
+              <span>Display property utilized</span>
+
+              <span v-if="manifest && manifest.display"><i class="fas fa-check"></i><span>10 pts</span></span>
+              <span v-if="manifest && !manifest.display"><i class="fas fa-times"></i><span> 0 pts</span></span>
               
-              <span>Has the display property</span>
             </li>
             <li v-bind:class="{ good: manifest && manifest.icons }">
-              <i v-if="manifest && manifest.icons" class="fas fa-check"></i>
-              <i v-if="manifest && !manifest.icons" class="fas fa-times"></i>
+              <span>Lists icons for add to home screen</span>
+
+              <span v-if="manifest && manifest.icons"> <i class="fas fa-check"></i><span>10 pts</span></span>
+              <span v-if="manifest && !manifest.icons" > <i class="fas fa-times"></i><span>0 pts</span></span>
               
-              <span>Has the icons Property</span>
+              
             </li>
             <li v-bind:class="{ good: manifest && manifest.name }">
-              <i v-if="manifest && manifest.name" class="fas fa-check"></i>
-              <i v-if="manifest && !manifest.name" class="fas fa-times"></i>
+              <span>Contains app_name property</span>
               
-              <span>Has the app_name property</span>
+              <span v-if="manifest && manifest.name"> <i class="fas fa-check"></i><span>10 pts</span></span>
+              <span v-if="manifest && !manifest.name"> <i class="fas fa-times"></i><span>0 pts</span></span>
+              
+              
             </li>
             <li v-bind:class="{ good: manifest && manifest.short_name }">
-              <i v-if="manifest && manifest.short_name" class="fas fa-check"></i>
-              <i v-if="manifest && !manifest.short_name" class="fas fa-times"></i>
+              <span>Contains short_name property</span>
+
+              <span v-if="manifest && manifest.short_name"> <i class="fas fa-check"></i><span>10 pts</span></span>
+              <span v-if="manifest && !manifest.short_name"> <i class="fas fa-times"></i><span>0 pts</span></span>
               
-              <span>Has the short_name property</span>
+              
             </li>
             <li v-bind:class="{ good: manifest && manifest.start_url }">
-              <i v-if="manifest && manifest.start_url" class="fas fa-check"></i>
-              <i v-if="manifest && !manifest.start_url" class="fas fa-times"></i>
+              <span>Designates a start_url </span>
+
+              <span v-if="manifest && manifest.start_url"> <i class="fas fa-check"></i><span>10 pts</span></span>
+              <span v-if="manifest && !manifest.start_url"> <i class="fas fa-times"></i><span>0 pts</span></span>
               
-              <span>Has the start_url property</span>
+              
             </li>
           </ul>
           <ul v-else>
@@ -144,32 +159,32 @@
 
           <ul v-if="serviceWorkerData">
             <li v-bind:class="{ good: serviceWorkerData.hasSW }">
-              <i
-                v-bind:class="{'fas fa-check': serviceWorkerData.hasSW, 'fas fa-times': !serviceWorkerData.hasSW}"
-              ></i>
+            <span>Has a Service Worker</span>
+              <span v-if="serviceWorkerData && serviceWorkerData.hasSW"> <i class="fas fa-check"></i><span>10 pts</span></span>
+              <span v-if="serviceWorkerData && !serviceWorkerData.hasSW"> <i class="fas fa-times"></i><span>0 pts</span></span>
+
               
-              <span>Has a Service Worker</span>
             </li>
             <li v-bind:class="{ good: serviceWorkerData.cache }">
-              <i
-                v-bind:class="{'fas fa-check': serviceWorkerData.cache, 'fas fa-times': !serviceWorkerData.cache}"
-              ></i>
               
               <span>Service Worker has cache handlers</span>
+              <span v-if="serviceWorkerData && serviceWorkerData.cache"> <i class="fas fa-check"></i><span>10 pts</span></span>
+              <span v-if="serviceWorkerData && !serviceWorkerData.cache"> <i class="fas fa-times"></i><span>0 pts</span></span>
+
             </li>
             <li v-bind:class="{ good: serviceWorkerData.scope }">
-              <i
-                v-bind:class="{'fas fa-check': serviceWorkerData.scope, 'fas fa-times': !serviceWorkerData.scope}"
-              ></i>
               
               <span>Service Worker has the correct scope</span>
+              <span v-if="serviceWorkerData && serviceWorkerData.scope"> <i class="fas fa-check"></i><span>10 pts</span></span>
+              <span v-if="serviceWorkerData && !serviceWorkerData.scope"> <i class="fas fa-times"></i><span>0 pts</span></span>
+
             </li>
             <li v-bind:class="{ good: serviceWorkerData.pushReg }">
-              <i
-                v-bind:class="{'fas fa-check': serviceWorkerData.pushReg, 'fas fa-times': !serviceWorkerData.pushReg}"
-              ></i>
-              
+
               <span>Service Worker has a push registration</span>
+              <span v-if="serviceWorkerData && serviceWorkerData.pushReg"> <i class="fas fa-check"></i><span>10 pts</span></span>
+              <span v-if="serviceWorkerData && !serviceWorkerData.pushReg"> <i class="fas fa-times"></i><span>0 pts</span></span>
+
             </li>
           </ul>
 
@@ -211,8 +226,16 @@
 
           <ul>
             <li>
-              <i class="fas fa-check"></i>
-              <span>Has HTTPS</span>
+              <span>Uses HTTPS URL</span>
+              <span> <i class="fas fa-check"></i> <span> 10 pts</span></span>
+            </li>
+            <li>
+              <span>Valid SSL certificate is use</span>
+              <span> <i class="fas fa-check"></i> <span> 10 pts</span></span>
+            </li>
+            <li>
+              <span>No "mixed" content on page</span>
+              <span> <i class="fas fa-check"></i> <span> 10 pts</span></span>
             </li>
           </ul>
         </section>
@@ -505,6 +528,11 @@ export default class extends Vue {
   }
 }*/
 
+p {
+margin: 0;
+padding: 0;
+}
+
 #gradeLoading {
   display: flex;
   justify-content: center;
@@ -527,18 +555,27 @@ export default class extends Vue {
     flex: 1;
   }
 
+
   #headerSection {
     padding-top: 4em;
 
     #urlTested {
       font-weight: bold;
       margin-top: 0;
-      margin-bottom: 1em;
+      margin-bottom: .2em;
     }
 
-    div {
+    div.mast {
       padding-left: 8em;
     }
+    button#rescanButton {
+      margin-top: 0;
+      font-size: 12px;
+      padding-top: 3px;
+      padding-bottom: 4px;
+      width: 70px;
+    }
+
 
     #reportActionsBlock {
       display: flex;
@@ -648,10 +685,11 @@ export default class extends Vue {
   .catSection {
     border: solid 1px grey;
     padding: 30px;
-    background: white;
+    margin: 30px;
+    background: rgba(255,255,255,.5);
     display: flex;
     flex-direction: column;
-    min-height: 366px;
+    xmin-height: 366px;
 
     .catHeader {
       display: flex;
@@ -659,6 +697,7 @@ export default class extends Vue {
       justify-content: space-between;
       margin-bottom: 1em;
     }
+    
 
     @media (max-width: 1300px) {
       .catHeader {
@@ -675,10 +714,13 @@ export default class extends Vue {
 
       li {
         font-size: 18px;
-        padding: 0.1em;
+        padding: .5em;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
 
         span {
-          margin-left: 20px;
+          margin-left: 1em;
         }
       }
     }
