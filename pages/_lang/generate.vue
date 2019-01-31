@@ -862,6 +862,7 @@ export default class extends Vue {
 
       input {
         font-size: 18px;
+        padding-left: 0;
       }
     }
 
@@ -891,7 +892,6 @@ export default class extends Vue {
     flex: 1;
     width: 4em;
     height: 102vh;
-    border-left: solid 1px grey;
     background: #EBEBEB;
   }
 }
