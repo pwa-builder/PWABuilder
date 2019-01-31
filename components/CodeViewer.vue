@@ -286,11 +286,13 @@ export default class extends Vue {
     animation-duration: 200ms;
     animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
     position: fixed;
-    width: 50%;
+    width: 49.4%;
     right: 0;
     bottom: 2.2em;
     border-top: 1px solid black;
-    padding: 40px;
+    padding-left: 40px;
+    padding-bottom: 40px;
+    padding-top: 20px;
 
     h2 {
       font-weight: bold;
@@ -305,7 +307,8 @@ export default class extends Vue {
       background: grey;
       border-radius: 20px;
       position: absolute;
-      right: 40px;
+      right: 20px;
+      top: 16px;
       width: 72px;
       color: white;
       font-weight: bold;
