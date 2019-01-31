@@ -165,8 +165,8 @@ export default class extends Vue {
   public serviceworker$: number | null = null;
   public serviceworkers$: ServiceWorker[];
   public error: string | null = null;
-  public viewerSize = "25rem";
-  public bottomViewerSize = "55rem";
+  public viewerSize = "10rem";
+  public bottomViewerSize = "10rem";
   public hasSW = false;
   public betterSW = false;
 
@@ -445,25 +445,25 @@ export default class extends Vue {
     width: 50%;
     display: flex;
     flex-direction: column;
-    padding-top: 1em;
+    padding-top: 2px;
+    background: #ebebeb;
 
     #topTitle {
       background: lightgrey;
       font-weight: bold;
       padding: 1em;
-      margin-left: 36px;
+      margin-left: 0px;
     }
 
     #bottomTitle {
       background: lightgrey;
       font-weight: bold;
       padding: 1em;
-      margin-left: 36px;
-      margin-top: 8em;
+      margin-left: 0px;
     }
 
     .code_viewer {
-      border-bottom: 1px grey solid;
+      background: #ebebeb;
     }
   }
 }
