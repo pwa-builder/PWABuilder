@@ -12,7 +12,10 @@
       <nuxt-link to="/reportCard" id="rescanButton">
         <span>Rescan</span>
       </nuxt-link>
-      <span v-if="score" id="scoreSpan">{{ score }}</span>
+      <div v-if="score" id="scoreSpan">
+        <span>Overall Grade</span>
+        {{ score }}
+      </div>
       <span v-else id="loadingSpan">
         <Loading active></Loading>
       </span>
@@ -167,6 +170,18 @@ Vue.prototype.$awa = function(config) {
     font-size: 1.6em;
     display: flex;
     font-weight: bold;
+    justify-content: center;
+    align-items: center;
+
+    #scoreSpan {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      span {
+        font-size: 12px;
+      }
+    }
 
     #rescanButton {
       border: none;
@@ -182,6 +197,7 @@ Vue.prototype.$awa = function(config) {
       color: white;
       display: flex;
       justify-content: center;
+      height: 36px;
     }
   }
 
