@@ -5,7 +5,7 @@
 html,
 body,
 input {
-  $font-size: 16px;
+  $font-size: 18px;
 
   font-family: "Segoe UI";
   font-size: $font-size;
@@ -19,6 +19,11 @@ input {
   @media screen and (max-width: $media-screen-s) {
     font-size: $font-size * .75;
   }
+}
+
+input::placeholder {
+  color: #3C3C3C;
+  opacity: 0.4;
 }
 
 html {

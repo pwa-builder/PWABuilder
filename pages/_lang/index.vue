@@ -342,12 +342,16 @@ Vue.prototype.$awa = function(config) {
       padding-top: 13px;
       padding-bottom: 12px;
       font-weight: bold;
-      font-size: 14px;
+      font-size: 18px;
       border: none;
       width: 24em;
-      border-bottom: solid 1px lightgrey;
+      border-bottom: solid 1px rgba(60, 60, 60, 0.3);
       margin-right: 2em;
       margin-top: 20px;
+    }
+
+    input:focus {
+      border-bottom: solid 1px rgba(60, 60, 60, 1);
     }
 
     #getStartedButton {
