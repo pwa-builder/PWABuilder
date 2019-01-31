@@ -835,7 +835,7 @@ export default class extends Vue {
         width: 392px;
 
         button {
-          background: $color-brand-primary;
+          background: $color-brand-secondary;
           border: none;
           font-weight: bold;
           font-size: 14px;
@@ -851,8 +851,9 @@ export default class extends Vue {
 
     .animatedSection {
       .fieldName {
-        color: #3E8BD7;
+        color: $color-brand-primary;
         font-size: 18px;
+        font-weight: bold;
       }
 
       p {
@@ -891,7 +892,7 @@ export default class extends Vue {
   #rightSide {
     flex: 1;
     width: 4em;
-    height: 102vh;
+    height: 103.4vh;
     background: #EBEBEB;
   }
 }
