@@ -223,6 +223,7 @@ Vue.prototype.$awa = function(config) {
     display: flex;
     flex-direction: column;
     width: 1em;
+    justify-content: center;
 
     header {
       display: flex;
@@ -267,6 +268,7 @@ Vue.prototype.$awa = function(config) {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    background-image: url('~/assets/images/homepage-background.svg');
   }
 
   #introContainer {
