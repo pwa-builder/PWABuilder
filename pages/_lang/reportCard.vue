@@ -130,7 +130,7 @@
 
           <!--<button>Edit</button>-->
           <div class="editDiv">
-            <nuxt-link class="editButton" to="generate">Edit</nuxt-link>
+            <nuxt-link class="editButton" to="generate">Edit Manifest</nuxt-link>
           </div>
         </section>
 
@@ -207,7 +207,7 @@
 
           <!--<button>Edit</button>-->
           <div class="editDiv">
-            <nuxt-link to="serviceworker" class="editButton">Edit</nuxt-link>
+            <nuxt-link to="serviceworker" class="editButton">Choose Service Worker</nuxt-link>
           </div>
         </section>
 
@@ -531,6 +531,12 @@ export default class extends Vue {
 p {
 margin: 0;
 padding: 0;
+}
+.fa-check {
+color: green;
+}
+.fa-times {
+  color: red;
 }
 
 #gradeLoading {
