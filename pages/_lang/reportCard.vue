@@ -707,11 +707,11 @@ color: green;
     }
     
 
-    @media (max-width: 1300px) {
+    /*@media (max-width: 1300px) {
       .catHeader {
         width: 29em;
       }
-    }
+    }*/
 
     ul {
       flex-grow: 2;
@@ -772,6 +772,12 @@ color: green;
         text-align: center;
       }
     }
+  }
+}
+
+@media (max-width: 1300px) {
+  #cats {
+    grid-template-columns: none;
   }
 }
 
