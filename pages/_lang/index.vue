@@ -261,7 +261,6 @@ Vue.prototype.$awa = function(config) {
   }
 
   #rightSide {
-    background: $color-brand-tertiary;
     height: 100%;
     flex: 1;
     display: flex;
