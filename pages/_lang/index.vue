@@ -4,7 +4,7 @@
     <section id="leftSide">
       <header>
         <img id="logo">
-        <h1 id="headerText">PWABuilder</h1>
+        <h2 id="headerText">PWABuilder</h2>
       </header>
 
       <div id="introContainer">
@@ -289,8 +289,9 @@ Vue.prototype.$awa = function(config) {
     }
 
     p {
-      margin-top: 40px;
+      margin-top: 30px;
       font-size: 18px;
+      margin-bottom: 20px;
     }
 
     #moreInfoButton {
@@ -346,7 +347,7 @@ Vue.prototype.$awa = function(config) {
       width: 24em;
       border-bottom: solid 1px lightgrey;
       margin-right: 2em;
-      margin-top: 40px;
+      margin-top: 20px;
     }
 
     #getStartedButton {
