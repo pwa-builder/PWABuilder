@@ -106,7 +106,8 @@ export default class extends Vue {
 
     this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
       value: this.code,
-      lineNumbers: "off",
+      // Turn line numbers on so that line numbers in errors make sense
+      lineNumbers: "on",
       language: this.codeType,
       fixedOverflowWidgets: true,
       wordWrap: "wordWrapColumn",
