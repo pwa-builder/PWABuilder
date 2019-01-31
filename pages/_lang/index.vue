@@ -269,6 +269,10 @@ Vue.prototype.$awa = function(config) {
     align-items: center;
     flex-direction: column;
     background-image: url('~/assets/images/homepage-background.svg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: $color-brand-primary;
   }
 
   #introContainer {
