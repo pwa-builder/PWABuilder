@@ -680,7 +680,7 @@ color: green;
 }
 
 #catsContainer {
-  padding-left: 8em;
+  padding-left: 6.4em;
   padding-right: 8em;
   position: relative;
   bottom: 4em;
