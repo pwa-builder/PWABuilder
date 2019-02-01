@@ -12,8 +12,6 @@
     <div v-if="textCopied" id="copyToast">Code Copied</div>
 
     <div v-if="showOverlay" id="errorOverlay">
-      <button id="closeButton" @click="closeOverlay()">Close</button>
-
       <h2>Errors</h2>
 
       <ul>
@@ -22,6 +20,13 @@
           {{ error.message }}
         </li>
       </ul>
+
+      <div id="errorButtonDiv">
+        <button id="closeButton" @click="closeOverlay()">
+          Close
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
     </div>
 
     <div v-if="showToolbar" id="toolbar">
@@ -297,18 +302,23 @@ export default class extends Vue {
   }
 
   #errorOverlay {
-    background: white;
+    background: #ebebeb;
+    padding: 40px;
     animation-name: overlayUp;
-    animation-duration: 200ms;
+    animation-duration: 350ms;
     animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
     position: fixed;
     width: 49.4%;
     right: 0;
     bottom: 2.2em;
     border-top: 1px solid black;
-    padding-left: 40px;
-    padding-bottom: 40px;
-    padding-top: 20px;
+
+    #errorButtonDiv {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      margin-top: 70px;
+    }
 
     h2 {
       font-weight: bold;
@@ -320,17 +330,15 @@ export default class extends Vue {
 
     #closeButton {
       border: none;
-      background: grey;
+      background: #3c3c3c;
       border-radius: 20px;
-      position: absolute;
-      right: 20px;
-      top: 16px;
-      width: 72px;
       color: white;
       font-weight: bold;
       font-size: 12px;
       padding-top: 8px;
       padding-bottom: 8px;
+      padding-left: 21px;
+      padding-right: 21px;
     }
 
     ul {
@@ -340,6 +348,7 @@ export default class extends Vue {
 
       li {
         font-size: 14px;
+        padding: 2px;
       }
 
       li span {
