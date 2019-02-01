@@ -238,7 +238,7 @@ export default class extends Vue {
   width: 100%;
 
   h3 {
-    color: $color-brand-primary;
+    color: $color-button-primary-purple-variant;
     font-size: 32px;
     font-weight: 400;
   }

@@ -31,7 +31,7 @@ export default class extends Vue {
 @import '~assets/scss/base/variables';
 
 .generator_menu {
-  color: $color-brand-primary;
+  color: $color-button-primary-purple-variant;
   display: flex;
   flex-direction: row;
   font-size: 16px;

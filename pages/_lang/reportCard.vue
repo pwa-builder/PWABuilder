@@ -624,7 +624,7 @@ color: green;
       padding-bottom: 11px;
       margin-top: 40px;
       color: white;
-      background: $color-brand-primary;
+      background: $color-button-primary-purple-variant;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -635,7 +635,7 @@ color: green;
     background-image: url('~/assets/images/homepage-background.svg');
     background-position: right;
     background-repeat: no-repeat;
-    background-color: $color-brand-primary;
+    background-color: $color-button-primary-purple-variant;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -756,7 +756,7 @@ color: green;
       display: flex;
       justify-content: center;
       color: white;
-      background: $color-brand-primary;
+      background: $color-button-primary-purple-variant;
     }
 
     .score {

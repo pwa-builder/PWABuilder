@@ -803,11 +803,11 @@ export default class extends Vue {
 
     .mastHead {
       padding-top: 40px;
-      padding-right: 96px;
+      padding-right: 100px;
       padding-left: 164px;
 
       h2 {
-        font-size: 36px;
+        font-size: 32px;
         font-weight: bold;
         color: black;
       }
@@ -820,7 +820,7 @@ export default class extends Vue {
 
     #dataSection {
       padding-top: 40px;
-      padding-right: 96px;
+      padding-right: 100px;
       padding-left: 164px;
 
       #dataButtonsBlock {
@@ -832,10 +832,10 @@ export default class extends Vue {
         display: flex;
         margin-bottom: 2em;
         justify-content: space-between;
-        width: 392px;
+        width: 340px;
 
         button {
-          background: $color-brand-secondary;
+          background: $color-button-primary-purple-variant;
           border: none;
           font-weight: bold;
           font-size: 14px;
@@ -851,7 +851,7 @@ export default class extends Vue {
 
     .animatedSection {
       .fieldName {
-        color: $color-brand-primary;
+        color: $color-button-primary;
         font-size: 18px;
         font-weight: bold;
       }
@@ -873,8 +873,8 @@ export default class extends Vue {
       margin-bottom: 62px;
 
       #doneButton {
-        background: $color-brand-secondary;
-        width: 184px;
+        background: $color-button-primary-purple-variant;
+        width: 130px;
         height: 44px;
         border-radius: 20px;
         border: none;
@@ -893,7 +893,7 @@ export default class extends Vue {
     flex: 1;
     width: 4em;
     height: 103.4vh;
-    background: #EBEBEB;
+    background: #F0F0F0;
   }
 }
 
@@ -916,7 +916,7 @@ export default class extends Vue {
 .formNav {
   h3 {
     display: inline;
-    color: $color-brand-primary;
+    color: $color-button-primary-purple-variant;
     margin: 0 0.5em;
     font-size: 18px;
     cursor: pointer;
@@ -933,7 +933,7 @@ export default class extends Vue {
 .manifestButton {
   background: transparent;
   border: none;
-  color: $color-brand-primary;
+  color: $color-button-primary-purple-variant;
   outline: none;
   font-family: "Bungee", "cursive";
   font-size: 18px;

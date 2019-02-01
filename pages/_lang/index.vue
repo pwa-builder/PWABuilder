@@ -369,7 +369,7 @@ Vue.prototype.$awa = function(config) {
       display: flex;
       flex-direction: row;
       align-items: center;
-      background: $color-brand-primary;
+      background: $color-button-primary-purple-variant;
       color: white;
       width: 88px;
       justify-content: center;
@@ -411,7 +411,7 @@ Vue.prototype.$awa = function(config) {
 }
 
 .proTag h3 {
-  color: $color-brand-primary;
+  color: $color-button-primary-purple-variant;
   font-size: 24px;
 }
 
@@ -470,14 +470,14 @@ p {
 }
 
 #goodPWAHeaderBlock {
-  color: $color-brand-primary;
+  color: $color-button-primary-purple-variant;
   font-size: 16px;
   line-height: 24px;
   margin-left: 138px;
   margin-top: 100px;
 
   h2 {
-    color: $color-brand-primary;
+    color: $color-button-primary-purple-variant;
     font-size: 24px;
   }
 }
@@ -486,7 +486,7 @@ p {
   background-color: $color-brand-quintary;
   border: none;
   border-radius: 1px;
-  color: $color-brand-primary;
+  color: $color-button-primary-purple-variant;
   font-size: 14px;
   margin-left: 8px;
   padding: 10px;

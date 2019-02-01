@@ -3,11 +3,11 @@
 @import '../mixins/action';
 
 .l-footer {
-  color: $color-brand-primary;
+  color: $color-button-primary-purple-variant;
   padding: 1.5vw 2vw;
 
   &-action {
-    @include action-link ($color-brand-primary, $color-brand-secondary, .2rem, false);
+    @include action-link ($color-button-primary-purple-variant, $color-brand-secondary, .2rem, false);
 
     &--block {
       display: block;
@@ -21,7 +21,7 @@
   }
 
   &-logo_action {
-    @include action-link ($color-brand-primary, $color-brand-secondary, .2rem, false);
+    @include action-link ($color-button-primary-purple-variant, $color-brand-secondary, .2rem, false);
   }
 
   &-logo {

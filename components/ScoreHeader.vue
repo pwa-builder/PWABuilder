@@ -9,16 +9,17 @@
     <div id="urlDiv">{{this.url$}}</div>
 
     <div id="score">
-      <nuxt-link to="/reportCard" id="rescanButton">
-        <span>Rescan</span>
-      </nuxt-link>
       <div v-if="score" id="scoreSpan">
-        <span>Overall Grade</span>
         {{ score }}
+        <span>Overall Grade</span>
       </div>
       <span v-else id="loadingSpan">
         <Loading active></Loading>
       </span>
+
+      <nuxt-link to="/reportCard" id="rescanButton">
+        <span>Rescan</span>
+      </nuxt-link>
     </div>
   </header>
 </template>
@@ -177,9 +178,13 @@ Vue.prototype.$awa = function(config) {
       display: flex;
       flex-direction: column;
       align-items: center;
+      font-weight: bold;
+      font-size: 36px;
+      margin-right: 20px;
 
       span {
         font-size: 12px;
+        font-weight: bold;
       }
     }
 
@@ -193,7 +198,7 @@ Vue.prototype.$awa = function(config) {
       padding-bottom: 9px;
       width: 6em;
       margin-right: 12px;
-      background: $color-brand-primary;
+      background: $color-button-primary-purple-variant;
       color: white;
       display: flex;
       justify-content: center;
@@ -208,6 +213,7 @@ Vue.prototype.$awa = function(config) {
 
   #urlDiv {
     font-weight: bold;
+    font-size: 14px;
   }
 
   #backButton {

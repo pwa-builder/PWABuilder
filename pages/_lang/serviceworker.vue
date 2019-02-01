@@ -269,7 +269,7 @@ export default class extends Vue {
   }
 }
 .download-text {
-  color: $color-brand-primary;
+  color: $color-button-primary-purple-variant;
   font-size: 14px;
   margin-right: 68px;
   text-align: right;
@@ -300,7 +300,7 @@ export default class extends Vue {
   .l-generator-description {
     font-size: 16px;
     line-height: 24px;
-    color: $color-brand-primary;
+    color: $color-button-primary-purple-variant;
     padding-right: 34px;
     display: block;
     margin-bottom: 40px;
@@ -422,7 +422,7 @@ export default class extends Vue {
       display: flex;
 
       #doneButton {
-        background: $color-brand-primary;
+        background: $color-button-primary-purple-variant;
         width: 184px;
         height: 44px;
         border-radius: 20px;
@@ -446,7 +446,7 @@ export default class extends Vue {
     display: flex;
     flex-direction: column;
     padding-top: 2px;
-    background: #ebebeb;
+    background: #F0F0F0;
 
     #topTitle {
       background: lightgrey;
@@ -463,7 +463,7 @@ export default class extends Vue {
     }
 
     .code_viewer {
-      background: #ebebeb;
+      background: #F0F0F0;
     }
   }
 }

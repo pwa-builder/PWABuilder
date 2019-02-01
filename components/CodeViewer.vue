@@ -3,7 +3,10 @@
     <div class="code_viewer-pre" ref="monacoDiv"></div>
 
     <div id="copyDiv">
-      <button v-if="showCopyButton" @click="copy()" id="copyButton">Copy</button>
+      <button v-if="showCopyButton" @click="copy()" id="copyButton">
+        <i id="platformIcon" class="fas fa-copy"></i>
+        Copy
+      </button>
     </div>
 
     <div v-if="textCopied" id="copyToast">Code Copied</div>
@@ -23,10 +26,16 @@
 
     <div v-if="showToolbar" id="toolbar">
       <div v-if="errorNumber">
-        <button @click="showErrorOverlay()" id="errorsButton">{{this.errorNumber}} errors</button>
+        <button @click="showErrorOverlay()" id="errorsButton">
+          <i class="fas fa-exclamation-triangle"></i>
+          {{this.errorNumber}} errors
+        </button>
       </div>
       <div v-if="!errorNumber || errorNumber ===0">
-        <button id="noErrorsButton">No Errors</button>
+        <button id="noErrorsButton">
+          <i class="fas fa-exclamation-triangle"></i>
+          0 Errors
+        </button>
       </div>
     </div>
   </section>
@@ -94,13 +103,12 @@ export default class extends Vue {
   textCopied = false;
 
   public mounted(): void {
-
-    monaco.editor.defineTheme('customTheme', {
-      base: 'vs',
+    monaco.editor.defineTheme("customTheme", {
+      base: "vs",
       inherit: true,
       rules: [],
       colors: {
-        "editor.background": '#EBEBEB'
+        "editor.background": "#F0F0F0"
       }
     });
 
@@ -115,7 +123,7 @@ export default class extends Vue {
       scrollBeyondLastLine: false,
       // Set this to false to not auto word wrap minified files
       wordWrapMinified: true,
-      theme: 'customTheme',
+      theme: "customTheme",
 
       // try "same", "indent" or "none"
       wrappingIndent: "indent",
@@ -218,18 +226,25 @@ export default class extends Vue {
   }
 
   #copyButton {
-    background: $color-brand-primary;
-    color: $color-brand-quintary;
+    background: #c5c5c5;
+    color: #3c3c3c;
     border: none;
     border-radius: 20px;
-    padding: 6px;
-    width: 6em;
+    font-weight: bold;
+    font-size: 12px;
+    padding-top: 3px;
+    padding-bottom: 5px;
+    padding-right: 9px;
+    padding-left: 9px;
   }
 
   #copyDiv {
     display: flex;
     justify-content: flex-end;
     margin-right: 1.2em;
+    position: fixed;
+    bottom: 3em;
+    right: 12px;
   }
 
   @media screen and (max-width: $media-screen-s) {
@@ -247,7 +262,7 @@ export default class extends Vue {
 
   #toolbar {
     position: fixed;
-    background: #F4F4F4;
+    background: #ebebeb;
     width: 49.4%;
     bottom: 0;
     right: 0;

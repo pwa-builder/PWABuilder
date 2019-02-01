@@ -201,7 +201,7 @@ Vue.prototype.$awa = function (config) {
   #getStartedButton {
     background: $color-brand-quintary;
     border: none;
-    color: $color-brand-primary;
+    color: $color-button-primary-purple-variant;
     float: right;
     font-size: 20px;
     height: 48px;
