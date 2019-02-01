@@ -2,12 +2,7 @@
   <section class="code_viewer">
     <div class="code_viewer-pre" ref="monacoDiv"></div>
 
-    <div id="copyDiv">
-      <button v-if="showCopyButton" @click="copy()" id="copyButton">
-        <i id="platformIcon" class="fas fa-copy"></i>
-        Copy
-      </button>
-    </div>
+    <div id="copyDiv"></div>
 
     <div v-if="textCopied" id="copyToast">Code Copied</div>
 
@@ -30,6 +25,11 @@
     </div>
 
     <div v-if="showToolbar" id="toolbar">
+      <button v-if="showCopyButton" @click="copy()" id="copyButton">
+        <i id="platformIcon" class="fas fa-copy"></i>
+        Copy
+      </button>
+      
       <div v-if="errorNumber">
         <button @click="showErrorOverlay()" id="errorsButton">
           <i class="fas fa-exclamation-triangle"></i>
@@ -247,9 +247,10 @@ export default class extends Vue {
     display: flex;
     justify-content: flex-end;
     margin-right: 1.2em;
-    position: fixed;
-    bottom: 3em;
+    position: relative;
+    bottom: 1em;
     right: 12px;
+    z-index: 9999;
   }
 
   @media screen and (max-width: $media-screen-s) {

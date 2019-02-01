@@ -106,7 +106,7 @@
           :size="viewerSize"
           :code="webPreview"
           :title="$t('serviceworker.code_preview_web')"
-          :showToolbar="false"
+          :showToolbar="true"
         >
           <nuxt-link
             :to="$i18n.path('publish')"
@@ -122,7 +122,7 @@
           :size="bottomViewerSize"
           :code="serviceworkerPreview"
           :title="$t('serviceworker.code_preview_serviceworker')"
-          :showToolbar="false"
+          :showToolbar="true"
         ></CodeViewer>
       </section>
     </main>
@@ -180,7 +180,7 @@ export default class extends Vue {
   @ServiceworkerAction getCode;
   @ServiceworkerAction getServiceworkers;
 
-  async mounted() {
+  async created() {
     await this.getServiceworkers();
     this.serviceworker$ = this.serviceworkers[0].id;
     await this.getCode(this.serviceworker$);
@@ -368,9 +368,9 @@ export default class extends Vue {
     height: 100%;
 
     .mastHead {
-      padding-top: 4em;
-      padding-left: 8em;
-      padding-right: 8em;
+      padding-top: 40px;
+      padding-right: 100px;
+      padding-left: 164px;
 
       h2 {
         font-size: 36px;
@@ -385,8 +385,8 @@ export default class extends Vue {
     }
 
     #inputSection {
-      padding-left: 8em;
-      padding-right: 8em;
+      padding-right: 100px;
+      padding-left: 164px;
 
       .inputContainer {
         margin-top: 20px;
@@ -446,24 +446,24 @@ export default class extends Vue {
     display: flex;
     flex-direction: column;
     padding-top: 2px;
-    background: #F0F0F0;
+    background: #f0f0f0;
 
     #topTitle {
-      background: lightgrey;
+      background: #f0f0f0;
       font-weight: bold;
       padding: 1em;
       margin-left: 0px;
     }
 
     #bottomTitle {
-      background: lightgrey;
+      background: #f0f0f0;
       font-weight: bold;
       padding: 1em;
       margin-left: 0px;
     }
 
     .code_viewer {
-      background: #F0F0F0;
+      background: #f0f0f0;
     }
   }
 }
