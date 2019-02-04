@@ -460,6 +460,8 @@ export default class extends Vue {
       font-weight: bold;
       padding: 1em;
       margin-left: 0px;
+      margin-top: -24em;
+      z-index: 99;
     }
 
     .code_viewer {
