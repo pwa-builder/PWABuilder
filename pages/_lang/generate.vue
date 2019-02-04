@@ -330,7 +330,7 @@
           <section class="animatedSection" v-if="showImagesSection">
             <div class="l-generator-field logo-upload">
               <label class="l-generator-label">
-                {{ $t("generate.icon_url") }}
+                <h4 class="fieldName">{{ $t("generate.icon_url") }}</h4>
                 <p>We suggest at least one image 512x512 or larger</p>
               </label>
 
@@ -395,7 +395,7 @@
           <section class="animatedSection" v-if="showSettingsSection">
             <div class="l-generator-field">
               <label class="l-generator-label">
-                {{ $t("generate.scope") }}
+                <h4 class="fieldName">{{ $t("generate.scope") }}</h4>
                 <p>scope determins what part of your website runs in the PWA</p>
               </label>
               
@@ -409,7 +409,7 @@
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                {{ $t("generate.display") }}
+                <h4 class="fieldName">{{ $t("generate.display") }}</h4>
                 <p>Display indetifies the browser components that should be included in your. "Standalone" appears as a traditional app</p>
               </label>
               
@@ -424,7 +424,7 @@
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                {{ $t("generate.orientation") }}
+                <h4 class="fieldName">{{ $t("generate.orientation") }}</h4>
                 <p>Orientation determines the perfered flow of your application</p>
               </label>
               
@@ -443,7 +443,7 @@
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                {{ $t("generate.language") }}
+                <h4 class="fieldName">{{ $t("generate.language") }}</h4>
                 <p>declare the language of your PWA</p>
               </label>
               
