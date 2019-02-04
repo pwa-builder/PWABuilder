@@ -8,7 +8,7 @@
         v-if="!showRemoveButton || !selected"
         @click="onClickSample(sample)"
         id="featureCardAddButton"
-      >Review</button>
+      >View</button>
       <span
         v-if="showRemoveButton && selected"
         @click="onClickRemoveSample(sample)"
@@ -54,7 +54,8 @@ export default class extends Vue {
   display: flex;
   flex-direction: column;
   padding: 20px;
-  border: solid grey 1px;
+  border: solid #C5C5C5 1px;
+  background: white;
 
   h4 {
     font-size: 18px;
@@ -64,6 +65,7 @@ export default class extends Vue {
   p {
     width: 277px;
     flex: 2;
+    font-size: 14px;
   }
 
   #featureCardActionsBlock {
@@ -76,6 +78,8 @@ export default class extends Vue {
       padding-right: 27px;
       font-size: 18px;
       font-weight: bold;
+      background: $color-button-primary-purple-variant;
+      color: white;
     }
 
     #featureCardRemoveButton {
@@ -90,7 +94,7 @@ export default class extends Vue {
       display: flex;
       justify-content: center;
       width: 116px;
-      background: $color-brand-warning;
+      background: $color-brand-secondary;
       color: white;
     }
   }

@@ -92,6 +92,8 @@
   <main>
     <ScoreHeader></ScoreHeader>
 
+    <!--<img src="~/assets/images/BG_extras.svg">-->
+
     <div id="sideBySide">
       <section id="headerSection">
         <div>
@@ -468,12 +470,12 @@ header {
 
   #headerSection {
     flex: 1;
-    padding-left: 8em;
-    padding-right: 10em;
+    padding-left: 164px;
+    padding-right: 164px;
     margin-top: 74px;
 
     #featurePageHeader {
-      font-size: 26px;
+      font-size: 32px;
       font-weight: bold;
     }
 
@@ -486,7 +488,8 @@ header {
       display: flex;
 
       #clearButton {
-        width: 184px;
+        width: 130px;
+        height: 44px;
         border-radius: 22px;
         border: none;
         background: grey;
@@ -497,12 +500,12 @@ header {
         margin-top: 40px;
         color: white;
         background: $color-brand-secondary;
-        margin-left: 8px;
         margin-right: 10px;
       }
 
       #doneButton {
-        width: 184px;
+        width: 130px;
+        height: 44px;
         border-radius: 22px;
         border: none;
         background: grey;
@@ -544,10 +547,9 @@ header {
 #fakeCardBlock {
   display: grid;
   grid-template-columns: auto auto auto;
-  padding-left: 13em;
-  padding-right: 13em;
+  padding-left: 164px;
+  padding-right: 164px;
   margin-top: 60px;
-  gap: 1em;
 
   .fakeCard {
     display: flex;
