@@ -100,7 +100,7 @@
           <!--<h1 id="featurePageHeader">{{ $t('windows.title') }}</h1>
 
           <p id="featurePageInfo">{{ $t('windows.summary') }}</p>-->
-          <h1 id="featurePageHeader">Extra Features</h1>
+          <h1 id="featurePageHeader">Extras</h1>
 
           <p>Add that special something to supercharge your PWA. Consider connecting your website with these API's to enable magical cross-platform experiences.</p>
 
