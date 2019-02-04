@@ -158,7 +158,7 @@ Vue.prototype.$awa = function(config) {
   display: flex;
   justify-content: space-between;
   height: 4em;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  border-bottom: solid #C5C5C5 1px;
   align-items: center;
   padding: 16px;
   padding-right: 1.6em;
