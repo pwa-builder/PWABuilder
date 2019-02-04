@@ -822,6 +822,7 @@ export default class extends Vue {
       padding-top: 40px;
       padding-right: 100px;
       padding-left: 164px;
+      width: 642px;
 
       #dataButtonsBlock {
         display: flex;
