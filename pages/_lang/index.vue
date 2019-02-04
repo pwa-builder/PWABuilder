@@ -348,6 +348,7 @@ Vue.prototype.$awa = function(config) {
       border-bottom: solid 1px rgba(60, 60, 60, 0.3);
       margin-right: 2em;
       margin-top: 20px;
+      outline: none;
     }
 
     input:focus {
