@@ -472,7 +472,6 @@ header {
     flex: 1;
     padding-left: 164px;
     padding-right: 164px;
-    margin-top: 74px;
 
     #featurePageHeader {
       font-size: 32px;
