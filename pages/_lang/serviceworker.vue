@@ -102,6 +102,8 @@
         <div id="topTitle">Add this code to your index.html page</div>
         <CodeViewer
           class="topViewer"
+          color="#F0F0F0"
+          theme="lighter"
           code-type="javascript"
           :size="viewerSize"
           :code="webPreview"
@@ -118,6 +120,8 @@
         <div id="bottomTitle">Add this code to your service worker file</div>
         <CodeViewer
           class="bottomViewer"
+          color="#F0F0F0"
+          theme="darker"
           code-type="javascript"
           :size="bottomViewerSize"
           :code="serviceworkerPreview"
@@ -456,7 +460,7 @@ export default class extends Vue {
     }
 
     #bottomTitle {
-      background: #f0f0f0;
+      background: #E2E2E2;
       font-weight: bold;
       padding: 1em;
       margin-left: 0px;

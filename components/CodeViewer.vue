@@ -94,6 +94,10 @@ export default class extends Vue {
   public showCopyButton;
 
   @Prop() showToolbar: boolean;
+  @Prop({ type: String, default: "#F0F0F0"})
+  public color;
+
+  @Prop({type: String, default: "lighter"}) theme: string;
 
   public readonly warningsId = "warnings_list";
   public readonly suggestionsId = "suggestions_list";
@@ -108,12 +112,13 @@ export default class extends Vue {
   textCopied = false;
 
   public mounted(): void {
-    monaco.editor.defineTheme("customTheme", {
+    console.log(this.color);
+    monaco.editor.defineTheme(`${this.theme}Theme`, {
       base: "vs",
       inherit: true,
       rules: [],
       colors: {
-        "editor.background": "#F0F0F0"
+        "editor.background": this.color
       }
     });
 
@@ -128,7 +133,7 @@ export default class extends Vue {
       scrollBeyondLastLine: false,
       // Set this to false to not auto word wrap minified files
       wordWrapMinified: true,
-      theme: "customTheme",
+      theme: `${this.theme}Theme`,
 
       // try "same", "indent" or "none"
       wrappingIndent: "indent",
