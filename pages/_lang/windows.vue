@@ -92,7 +92,7 @@
   <main>
     <ScoreHeader></ScoreHeader>
 
-    <!--<img src="~/assets/images/BG_extras.svg">-->
+    <img id="featuresBG" src="~/assets/images/features_bg.svg">
 
     <div id="sideBySide">
       <section id="headerSection">
@@ -634,5 +634,12 @@ header {
   color: white;
   font-size: 16px;
   font-weight: bold;
+}
+
+#featuresBG {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: -1;
 }
 </style>
