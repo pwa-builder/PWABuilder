@@ -27,10 +27,7 @@
           <h1 id="reportCardHeader">How am I doing so far?</h1>
 
           <div id="urlTested">URL Tested:
-            <p>
-              {{url}}
-              <button @click="rescan()" id="rescanButton">Rescan</button>
-            </p>
+            <p>{{url}}</p>
           </div>
 
           <p id="reportCardInfo">
@@ -40,6 +37,7 @@
           </p>
 
           <div id="reportActionsBlock">
+            <button @click="rescan()" id="rescanButton">Rescan</button>
             <nuxt-link id="publishButton" to="/publish">Build My App</nuxt-link>
           </div>
         </div>
@@ -641,18 +639,26 @@ p {
       font-weight: bold;
       margin-top: 0;
       margin-bottom: 0.2em;
+
+      p {
+        width: 376px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
     }
 
     div.mast {
       padding-left: 8em;
     }
-    button#rescanButton {
+
+    /*button#rescanButton {
       margin-top: 0;
       font-size: 12px;
       padding-top: 3px;
       padding-bottom: 4px;
       width: 70px;
-    }
+    }*/
 
     #reportActionsBlock {
       display: flex;
@@ -667,21 +673,20 @@ p {
     #reportCardInfo {
       width: 376px;
       line-height: 28px;
+      margin-top: 20px;
     }
 
     #rescanButton {
-      width: 184px;
-      border-radius: 22px;
-      border: none;
-      background: grey;
-      font-weight: bold;
-      font-size: 18px;
-      padding-top: 9px;
-      padding-bottom: 11px;
+      background: #45ada8;
+      height: 44px;
       margin-top: 40px;
+      margin-right: 8px;
+      border: none;
+      border-radius: 22px;
       color: white;
-      background: $color-brand-secondary;
-      margin-right: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      width: 130px;
     }
 
     #publishButton {
