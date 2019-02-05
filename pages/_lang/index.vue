@@ -215,6 +215,10 @@ Vue.prototype.$awa = function(config) {
   display: flex;
   justify-content: space-around;
   height: 100vh;
+  background-image: url("~/assets/images/homepage-background.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 
   #leftSide {
     height: 100%;
@@ -266,10 +270,6 @@ Vue.prototype.$awa = function(config) {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    background-image: url("~/assets/images/homepage-background.svg");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
   }
 
   #introContainer {
