@@ -584,6 +584,13 @@ export default class extends Vue {
   }
 }*/
 
+main {
+  background-image: url("~/assets/images/homepage-background.svg");
+  background-position: right top;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
 p {
   margin: 0;
   padding: 0;
@@ -696,9 +703,6 @@ p {
   }
 
   #scoreSection {
-    background-image: url("~/assets/images/homepage-background.svg");
-    background-position: right;
-    background-repeat: no-repeat;
     background-color: $color-button-primary-purple-variant;
     display: flex;
     justify-content: center;
@@ -759,7 +763,8 @@ p {
     border: solid 1px grey;
     padding: 30px;
     margin: 30px;
-    background: rgba(255, 255, 255, 0.5);
+    // background: rgba(255, 255, 255, 0.5);
+    background: white;
     display: flex;
     flex-direction: column;
 
