@@ -1,9 +1,11 @@
 <template>
   <header id="scoreHeader">
     <button @click="goBack()" id="backButton">
-      <i class="fas fa-chevron-left"></i>
+      <!--<i class="fas fa-chevron-left"></i>
       
-      <span>Back</span>
+      <span>Back</span>-->
+
+      <img id="logo" src="~/assets/images/logo.png">
     </button>
 
     <div id="urlDiv">{{this.url$}}</div>
@@ -217,7 +219,7 @@ Vue.prototype.$awa = function(config) {
   }
 
   #backButton {
-    background: $color-brand-secondary;
+    background: none;
     border: none;
     font-weight: bold;
     color: white;
@@ -227,9 +229,10 @@ Vue.prototype.$awa = function(config) {
     width: 6em;
     display: flex;
     justify-content: center;
+    margin-left: 68px;
 
-    span {
-      margin-left: 10px;
+    img {
+      height: 2em;
     }
   }
 }
