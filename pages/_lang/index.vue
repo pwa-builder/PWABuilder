@@ -43,6 +43,13 @@
           </div>
         </div>
       </div>
+
+      <footer>
+        <p>
+          PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
+          Our Privacy Statement
+        </p>
+      </footer>
     </section>
 
     <section id="rightSide"></section>
@@ -227,6 +234,19 @@ Vue.prototype.$awa = function(config) {
     width: 1em;
     justify-content: center;
 
+    footer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    footer p {
+      text-align: center;
+      width: 376px;
+      font-size: 12px;
+      color: #3c3c3c;
+    }
+
     header {
       display: flex;
       align-items: center;
@@ -241,20 +261,6 @@ Vue.prototype.$awa = function(config) {
       #logo {
         margin-right: 12px;
         width: 10em;
-      }
-    }
-
-    footer {
-      position: fixed;
-      bottom: 0px;
-      padding-bottom: 20px;
-      width: 45em;
-      display: flex;
-      justify-content: center;
-
-      h3 {
-        font-size: 14px;
-        width: 376px;
       }
     }
   }
@@ -309,6 +315,7 @@ Vue.prototype.$awa = function(config) {
       align-items: center;
       flex-direction: column;
       margin-top: 144px;
+      margin-right: 72px;
 
       #expertModeButton {
         width: 200px;
@@ -318,7 +325,7 @@ Vue.prototype.$awa = function(config) {
         border-radius: 22px;
         padding-top: 9px;
         padding-bottom: 11px;
-        background-image: linear-gradient(to right, #7644C2, #11999E);
+        background-image: linear-gradient(to right, #7644c2, #11999e);
         color: white;
         height: 44px;
       }
