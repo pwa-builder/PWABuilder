@@ -160,20 +160,6 @@
       ref="addFeatureModal"
     >
       <div class="feature-viewer">
-        <div class="feature-content">
-          <div class="side_panel">
-            <div class="properties" v-if="sample">
-              <p id="sampleDescP">{{sample.description}}</p>
-
-              <h1>Required Properties</h1>
-
-              <div v-for="prop in sample.parms" :key="prop.id">
-                <h3>{{prop.name}}</h3>
-                <p class="propDescription" :id="prop.id">{{prop.description}}</p>
-              </div>
-            </div>
-          </div>
-        </div>
         <div class="code-samples">
           <div id="codeHeader">Usage Example</div>
           <div class="code-top">
@@ -183,6 +169,7 @@
               :code="loadCode()"
               v-on:editorValue="updateCode($event)"
               v-if="sample"
+              :showToolbar="true"
               :title="$t('windows.codeTitle')"
             ></CodeViewer>
           </div>
@@ -193,6 +180,7 @@
               :size="viewerSize"
               :code="sample.source"
               v-if="sample"
+              :showToolbar="true"
               :title="$t('windows.sourceTitle')"
             />
           </div>
@@ -204,6 +192,21 @@
         id="addBundleButton"
         v-on:click="addBundle()"
       >{{ $t("windows.add") }}</button>
+
+      <p v-if="sample" slot="extraP" id="sampleDescP">{{sample.description}}</p>
+
+      <div v-if="sample" class="feature-content" slot="featureContentSlot">
+        <div class="side_panel">
+          <div class="properties" v-if="sample">
+            <h1>Required Properties</h1>
+
+            <div v-for="prop in sample.parms" :key="prop.id">
+              <h3>{{prop.name}}</h3>
+              <p class="propDescription" :id="prop.id">{{prop.description}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </Modal>
   </main>
 </template>
@@ -561,12 +564,11 @@ header {
 }
 
 .code-samples {
-  width: 50%;
-  height: 90vh;
   display: flex;
   flex-direction: column;
-  margin-top: -3em;
   height: 90vh;
+  width: 100%;
+  flex: 1;
 }
 
 .code-top {
@@ -577,18 +579,8 @@ header {
   flex: 1;
 }
 
-.feature-content {
-  width: 50%;
-}
-
-.feature-viewer {
-  display: flex;
-}
-
 .properties {
-  padding-left: 2.2em;
-  padding-top: 2em;
-  padding-right: 11em;
+  margin-top: 30px;
 
   h1 {
     font-weight: bold;
@@ -599,16 +591,19 @@ header {
   h3 {
     font-weight: bold;
     font-size: 18px;
+    margin-bottom: 10px;
+    margin-top: 30px;
   }
 
   #sampleDescP {
     margin-top: 20px;
-    margin-bottom: 2em;
+    margin-bottom: 30px;
     font-size: 18px;
   }
 
   p {
     font-size: 14px;
+    max-width: 376px;
   }
 }
 
@@ -616,23 +611,18 @@ header {
   background: lightgrey;
   font-weight: bold;
   padding: 1em;
-  margin-left: 36px;
-  margin-top: 1em;
-  margin-right: 2em;
 }
 
 #codeHeader {
   background: lightgrey;
   font-weight: bold;
   padding: 1em;
-  margin-left: 36px;
-  margin-right: 2em;
 }
 
 #addBundleButton {
   background: $color-button-primary-purple-variant;
   color: white;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
 }
 
@@ -641,5 +631,35 @@ header {
   top: 0;
   right: 0;
   z-index: -1;
+}
+
+
+.feature-viewer {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-top: 2px;
+  background: #f0f0f0;
+
+  #topTitle {
+    background: #f0f0f0;
+    font-weight: bold;
+    padding: 1em;
+    margin-left: 0px;
+  }
+
+  #bottomTitle {
+    background: #e2e2e2;
+    font-weight: bold;
+    padding: 1em;
+    margin-left: 0px;
+    margin-top: -24em;
+    z-index: 99;
+  }
+
+  .code_viewer {
+    background: #f0f0f0;
+  }
 }
 </style>

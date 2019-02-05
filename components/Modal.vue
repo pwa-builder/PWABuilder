@@ -10,27 +10,31 @@
         <div class="modal-body">
           <div id="titleBox">
             <h5 class="modal-title modal-title--normal">{{title}}</h5>
+
+            <slot name="extraP"></slot>
+
+            <div v-if="title != ''" class="modal-buttons">
+              <button
+                id="modalCancelButton"
+                @click="onClickCancel(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });"
+              >{{$t("modal.cancel")}}</button>
+
+              <button
+                v-if="showSubmitButton"
+                id="modalAddButton"
+                @click="onClickSubmit();  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });"
+              >
+                {{$t("modal.submit")}}
+                <Loading :active="isLoading" class="u-display-inline_block u-margin-left-sm"/>
+              </button>
+
+              <slot name="extraButton"></slot>
+            </div>
+
+            <slot name="featureContentSlot"></slot>
           </div>
 
           <slot/>
-
-          <div v-if="title != ''" class="modal-buttons">
-            <button
-              v-if="showSubmitButton"
-              id="modalAddButton"
-              @click="onClickSubmit();  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });"
-            >
-              {{$t("modal.submit")}}
-              <Loading :active="isLoading" class="u-display-inline_block u-margin-left-sm"/>
-            </button>
-
-            <slot name="extraButton"></slot>
-
-            <button
-              id="modalCancelButton"
-              @click="onClickCancel(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });"
-            >{{$t("modal.cancel")}}</button>
-          </div>
         </div>
       </div>
     </div>
@@ -195,6 +199,10 @@ export default class extends Vue {
     width: 100%;
   }*/
 
+  .modal-body {
+    display: flex;
+  }
+
   background: white;
   position: fixed;
   top: 0;
@@ -205,48 +213,47 @@ export default class extends Vue {
   overflow-y: auto;
 
   .modal-title {
-    font-size: 36px;
-    width: 50%;
-    padding-left: 1em;
+    font-size: 32px;
     margin: 0;
     margin-left: 0;
     padding-top: 1em;
-  }
-
-  .modal-body {
-    margin-top: 4em;
+    margin-bottom: 30px;
   }
 
   .modal-buttons {
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
     align-items: center;
-    background: white;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-    height: 4em;
-    padding-right: 1em;
 
     #modalCancelButton {
-      background: $color-brand-warning;
+      background: $color-brand-secondary;
       color: white;
-      font-size: 16px;
+      font-size: 18px;
       font-weight: bold;
+      margin-right: 10px;
     }
 
     button {
+      background: $color-button-primary-purple-variant;
+      color: white;
       border: none;
-      margin: 8px;
       border-radius: 20px;
-      width: 97px;
-      font-size: 12px;
+      width: 130px;
+      height: 44px;
+      font-size: 18px;
       font-weight: bold;
       padding-top: 8px;
       padding-bottom: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
+  }
+
+  #titleBox {
+    padding-left: 164px;
+    padding-right: 100px;
+    width: 50%;
   }
 }
 </style>
