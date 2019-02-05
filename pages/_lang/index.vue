@@ -269,13 +269,13 @@ Vue.prototype.$awa = function(config) {
   }
 
   #introContainer {
-    padding-top: 140px;
     padding-right: 96px;
     padding-left: 164px;
     display: flex;
     flex-direction: column;
     align-items: center;
     flex: 2;
+    justify-content: center;
 
     h2 {
       font-size: 36px;
@@ -318,7 +318,7 @@ Vue.prototype.$awa = function(config) {
         border-radius: 22px;
         padding-top: 9px;
         padding-bottom: 11px;
-        background-image: $color-button-primary-purple-variant;
+        background-image: linear-gradient(to right, #7644C2, #11999E);
         color: white;
         height: 44px;
       }
@@ -341,7 +341,7 @@ Vue.prototype.$awa = function(config) {
       border: none;
       width: 24em;
       border-bottom: solid 1px rgba(60, 60, 60, 0.3);
-      margin-right: 2em;
+      margin-right: 1em;
       margin-top: 20px;
       outline: none;
     }
