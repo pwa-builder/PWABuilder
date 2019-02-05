@@ -3,8 +3,7 @@
   <main id="sideBySide">
     <section id="leftSide">
       <header>
-        <img id="logo">
-        <h2 id="headerText">PWABuilder</h2>
+        <img id="logo" src="~/assets/images/logo.png">
       </header>
 
       <div id="introContainer">
@@ -240,11 +239,8 @@ Vue.prototype.$awa = function(config) {
       }
 
       #logo {
-        background: lightgrey;
-        border-radius: 50%;
-        width: 48px;
-        height: 48px;
         margin-right: 12px;
+        width: 10em;
       }
     }
 
