@@ -584,9 +584,9 @@ export default class extends Vue {
 
 main {
   background-image: url("~/assets/images/homepage-background.svg");
-  background-position: right top;
+  background-position: top;
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
 }
 
 p {
@@ -756,7 +756,7 @@ p {
   padding-left: 6.4em;
   padding-right: 8em;
   position: relative;
-  bottom: 4em;
+  bottom: 3em;
 }
 
 #cats {
