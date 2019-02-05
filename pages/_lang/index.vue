@@ -34,7 +34,7 @@
               </div>
             </button>
 
-            <div v-if="error" id="errorBox">{{error}}</div>
+            <!--<div v-if="error" id="errorBox">{{error}}</div>-->
           </form>
 
           <div id="expertModeBlock">

@@ -445,12 +445,13 @@ export default class extends Vue {
 
   #rightSide {
     flex: 1;
-    height: 100%;
+    height: 104.4vh;
     width: 50%;
     display: flex;
     flex-direction: column;
     padding-top: 2px;
     background: #f0f0f0;
+    overflow-y: auto;
 
     #topTitle {
       background: #f0f0f0;
