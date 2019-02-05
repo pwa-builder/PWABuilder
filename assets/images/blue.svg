@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 2539.279 1269.631">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#linear-gradient);
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="0.787" y1="0.712" x2="0.462" y2="0.311" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#2c3e50"/>
+      <stop offset="1" stop-color="#6dbcdb"/>
+    </linearGradient>
+  </defs>
+  <path id="big_blue_diamond" data-name="big blue diamond" class="cls-1" d="M1240,1482.819,2509.639,848l1269.64,634.82-1269.64,634.812Z" transform="translate(-1240 -848)"/>
+</svg>

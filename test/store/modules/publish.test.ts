@@ -33,7 +33,7 @@ describe('store publish', () => {
 
             axiosMock.onPost(`${process.env.apiUrl}/manifests/${manifestId}/build?ids=${serviceworker}`, {'platforms': ['web'], 'dirSuffix': 'web'}).reply(status);
 
-            await actions.build(actionContext, platform);
+            await actions.build(actionContext, { platform: platform });
 
             expect(actionContext.commit).to.have.been.calledWith(publish.types.UPDATE_ARCHIVELINK);
         });
@@ -49,11 +49,11 @@ describe('store publish', () => {
 
             axiosMock.onPost(`${process.env.apiUrl}/manifests/${manifestId}/build?ids=${serviceworker}`, {'platforms': ['web'], 'dirSuffix': 'web'}).reply(status);
 
-            expect(actions.build(actionContext, platform)).to.eventually.throw();
+            expect(actions.build(actionContext, { platform: platform })).to.eventually.throw();
         });
 
         it('should throw an error if platform parameter is empty', () => {
-            expect(actions.build(actionContext, '')).to.eventually.throw();
+            expect(actions.build(actionContext, { platform: ''})).to.eventually.throw();
         });
     });
 

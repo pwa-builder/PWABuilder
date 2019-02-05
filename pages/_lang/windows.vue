@@ -1,114 +1,391 @@
 <template>
-  <section>
-    <WindowsMenu />
-      <div class="l-generator-step">
-        <div class="l-generator-semipadded pure-g">
-          <div class="pure-u-1 pure-u-md-1-3 generator-section service-workers">
-            <div class="l-generator-subtitle">{{ $t('windows.title') }}</div>
-            <div class="l-generator-field l-generator-field--padded checkbox" v-for="sample in samples" :key="sample.id">
-              <label class="l-generator-label">
-                <input type="radio" :value="sample" v-model="selectedSample$"> {{sample.title}}
-              </label>
-              <span class="l-generator-description">{{ sample.description }}</span>
+  <!--<section>
+      <div  class="l-generator-step">
+      <div class="mastHead">
+          <h2>{{ $t('windows.title') }}</h2>
+        <p>{{ $t('windows.summary') }}</p>              
+      </div>
+
+        <div class="l-generator" v-show="samples.length == 0">
+          <p>{{ $t('general.loading') }}</p>
+
+          <div id="loadingCards">
+            <div class="skeletonLoadingCard">
+              <Loading active/>
+            </div>
+            <div class="skeletonLoadingCard">
+              <Loading active/>
+            </div>
+            <div class="skeletonLoadingCard">
+              <Loading active/>
             </div>
           </div>
-          <div class="pure-u-1 pure-u-md-2-3">
-            <div class="tab_container" >
-                <input id="tab1" type="radio" name="tabs" class="tab_input" checked>
-                <label for="tab1" class="tab_label"><i class="fa fa-code"></i><span> Usage</span></label>
+        </div>
 
-                <input id="tab2" type="radio" name="tabs" class="tab_input">
-                <label for="tab2" class="tab_label"><i class="fa fa-file-alt"></i><span> Code</span></label>
+       <div ref='mainDiv' class="l-generator mainDiv" v-show="samples != null">
 
-                <section id="content1" class="tab-content tab_section">
-                  <br/>
-                  <div class="pure-g">
-                    <div class="generate-code pure-u-1">
-                      <CodeViewer :code="selectedSample$.snippet" v-if="selectedSample$" :title="$t('windows.codeTitle')" />
-                      <br/>
-                      <div class="l-generator-form " v-if="selectedSample$">
-                        <div class="l-generator-field" v-for="prop in selectedSample$.parms" :key="prop.id">
-                          <div class="l-generator-label">{{prop.name}} </div>
-                          <div class="l-generator-input value-table" :id="prop.id">{{prop.description}}</div>
-                        </div>
-                      </div>
-                      <div class="pure-u-1 pure-u-md-1-2">
-                        <div class="pwa-button pwa-button--simple" v-on:click="download()">{{ $t("windows.download") }}</div>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-                <section id="content2" class="tab-content tab_section">
-                  <CodeViewer :size="viewerSize" :code="selectedSample$.source" v-if="selectedSample$" :title="$t('windows.sourceTitle')">
-                    <div class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" v-on:click="download()">{{ $t("windows.download") }}</div>      
-                  </CodeViewer>
-                </section>
+          <div class="generator-section feature-layout">
+            <div class="l-generator-field checkbox feature-container" v-for="sample in samples" :key="sample.id">
+
+              <input type="checkbox" v-model="selectedSamples" :value="sample" @click="checkRemoveSample(sample)"/>
+              <label class="l-generator-label">
+                <img  v-if="!sample.image.includes('logo_small')" :src="sample.image" class="featureImage" />
+                <img  v-if="sample.image.includes('logo_small')" src="~/assets/images/PWABuilderLogo.svg" class="featureImage"  />
+                <input type="button" :value="sample" @click="onClickSample(sample)"> 
+                <h4>{{sample.title}}</h4>
+              </label>
+              <p class="l-generator-description">{{ sample.description }}</p>
+            </div>
+
+          </div>
+
+          <div id='buttonsBlock' v-show="samples.length > 0">
+
+            <div class="l-generator-wrapper">       
+              <a class="work-button"  @click="onClickShowGBB()" href="#">{{ $t("general.next_page") }}</a>
+            </div>
+          </div>
+
+          <p class="download-text">{{ $t('general.github_source') }}
+            <a class="" href="https://github.com/pwa-builder/Windows-universal-js-samples/tree/master/win10" target="_blank">GitHub</a>.
+          </p>
+        </div>
+      </div>
+
+      <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" :showSubmitButton="false" title="Add Feature" ref="addFeatureModal">
+        <div class="feature-viewer">
+          <div class="feature-content">
+
+            <div class="side_panel">
+              <div class="l-generator-form properties" v-if="sample">
+                <h1>Required Properties</h1>
+
+                <div class="l-generator-field" v-for="prop in sample.parms" :key="prop.id">
+                  <h3 class="l-generator-label">{{prop.name}}</h3>
+                  <p class='propDescription' :id="prop.id">{{prop.description}}</p>
+                </div>
               </div>
+
+            </div>
+          </div>
+          <div class="code-samples">
+            <div class="code-top">
+              <CodeViewer codeType="javascript" :size="viewerSize" :code="loadCode()" v-on:editorValue="updateCode($event)"  v-if="sample" :title="$t('windows.codeTitle')" ></CodeViewer>
+            </div>
+            <div class="code-bottom">
+              <CodeViewer codeType="javascript" :size="viewerSize" :code="sample.source" v-if="sample"  :title="$t('windows.sourceTitle')"/>
+            </div>
+          </div>
+        </div>
+
+            <button slot='extraButton' id='addBundleButton' class="pwa-button pwa-button--simple pwa-button--brand" v-on:click="addBundle()">{{ $t("windows.add") }}</button>
+        </div>
+      </Modal>
+
+      <Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" :showButtons="false" title="" ref="nextStepModal">
+        <GoodPWA :hasNativeFeatures="hasNative"/>
+        <a class="cancelText" href="#" @click="onClickHideGBB(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
+        {{$t("modal.goBack")}}
+      </a>
+      </Modal>
+  </section>-->
+  <main>
+    <ScoreHeader></ScoreHeader>
+
+    <img id="featuresBG" src="~/assets/images/features_bg.svg">
+
+    <div id="sideBySide">
+      <section id="headerSection">
+        <div>
+          <!--<h1 id="featurePageHeader">{{ $t('windows.title') }}</h1>
+
+          <p id="featurePageInfo">{{ $t('windows.summary') }}</p>-->
+          <h1 id="featurePageHeader">Extras</h1>
+
+          <p>Add that special something to supercharge your PWA. Consider connecting your website with these API's to enable magical cross-platform experiences.</p>
+
+          <div id="featureActionsBlock">
+            <button id="clearButton">clear</button>
+            <nuxt-link id="doneButton" to="/reportCard">Done</nuxt-link>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section id="featureListBlock">
+      <!--<div id="featureCard" v-for="sample in samples" :key="sample.id">
+        <h4>{{sample.title}}</h4>
+        <p>{{ sample.description }}</p>
+
+        <div id="featureCardActionsBlock">
+          <button @click="onClickSample(sample)" id="featureCardAddButton">Add</button>
+        </div>
+      </div>-->
+      <FeatureCard
+        v-if="samples.length > 0 && !selectedSamples.includes(sample)"
+        v-for="sample in samples"
+        :sample="sample"
+        :key="sample.id"
+        v-on:selected="onSelected"
+        v-on:removed="onRemoved"
+        :showRemoveButton="false"
+      ></FeatureCard>
+
+      <FeatureCard
+        v-if="selectedSamples.length > 0"
+        v-for="sample in selectedSamples"
+        :sample="sample"
+        :key="sample.id"
+        :showRemoveButton="true"
+      ></FeatureCard>
+    </section>
+
+    <section id="fakeCardBlock" v-if="samples.length === 0">
+      <div class="fakeCard">
+        <Loading active></Loading>
+      </div>
+      <div class="fakeCard">
+        <Loading active></Loading>
+      </div>
+      <div class="fakeCard">
+        <Loading active></Loading>
+      </div>
+    </section>
+
+    <Modal
+      v-on:modalOpened="modalOpened()"
+      v-on:modalClosed="modalClosed()"
+      :showSubmitButton="false"
+      title="Add Feature"
+      ref="addFeatureModal"
+    >
+      <div class="feature-viewer">
+        <div class="feature-content">
+          <div class="side_panel">
+            <div class="properties" v-if="sample">
+              <p id="sampleDescP">{{sample.description}}</p>
+
+              <h1>Required Properties</h1>
+
+              <div v-for="prop in sample.parms" :key="prop.id">
+                <h3>{{prop.name}}</h3>
+                <p class="propDescription" :id="prop.id">{{prop.description}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="code-samples">
+          <div id="codeHeader">Usage Example</div>
+          <div class="code-top">
+            <CodeViewer
+              code-type="javascript"
+              :size="viewerSize"
+              :code="loadCode()"
+              v-on:editorValue="updateCode($event)"
+              v-if="sample"
+              :title="$t('windows.codeTitle')"
+            ></CodeViewer>
+          </div>
+          <div class="code-bottom">
+            <div id="bottomCodeHeader">Snippit</div>
+            <CodeViewer
+              code-type="javascript"
+              :size="viewerSize"
+              :code="sample.source"
+              v-if="sample"
+              :title="$t('windows.sourceTitle')"
+            />
           </div>
         </div>
       </div>
-  </section>
+
+      <button
+        slot="extraButton"
+        id="addBundleButton"
+        v-on:click="addBundle()"
+      >{{ $t("windows.add") }}</button>
+    </Modal>
+  </main>
 </template>
 
 <script lang='ts'>
-import Vue from 'vue';
-import Component from 'nuxt-class-component';
-import { Action, State, namespace } from 'vuex-class';
-import { Watch } from 'vue-property-decorator';
-import CodeViewer from '~/components/CodeViewer.vue';
-import WindowsMenu from '~/components/WindowsMenu.vue';
+import Vue from "vue";
+import Component from "nuxt-class-component";
+import { Action, State, namespace } from "vuex-class";
 
-import * as windowsStore from '~/store/modules/windows';
+/*import CodeViewer from "~/components/CodeViewer.vue";
+import WindowsMenu from "~/components/WindowsMenu.vue";
+import GoodPWA from "~/components/GoodPWA.vue";*/
+import Modal from "~/components/Modal.vue";
+import Loading from "~/components/Loading.vue";
+import FeatureCard from "~/components/FeatureCard.vue";
+import ScoreHeader from "~/components/ScoreHeader.vue";
+import CodeViewer from "~/components/CodeViewer.vue";
+
+import * as windowsStore from "~/store/modules/windows";
 
 const WindowsState = namespace(windowsStore.name, State);
 const WindowsAction = namespace(windowsStore.name, Action);
 
 @Component({
-  components: {CodeViewer, WindowsMenu}
+  components: {
+    /*CodeViewer,
+    WindowsMenu,
+    GoodPWA,*/
+    Modal,
+    Loading,
+    FeatureCard,
+    ScoreHeader,
+    CodeViewer
+  }
 })
-
 export default class extends Vue {
   error: any;
-  viewerSize = '30rem';
+  hasNative = false;
+  public viewerSize = "5rem";
+  public viewerSizeBottom = "55rem";
+  overallGrade: string | null = null;
 
-  selectedSample$: windowsStore.Sample | null = null;
+  selectedSamples: windowsStore.Sample[] = [];
+  @WindowsState sample: windowsStore.Sample;
   @WindowsState samples: windowsStore.Sample[];
 
   @WindowsAction getSamples;
   @WindowsAction selectSample;
 
-  async created() {
+  async mounted() {
+    console.log(this.samples.length);
     await this.getSamples();
-    this.selectedSample$ = this.samples[0];
+    console.log(this.samples);
+
+    const score = sessionStorage.getItem("overallGrade");
+    console.log(score);
+    if (score) {
+      this.overallGrade = score;
+    }
   }
 
-  @Watch('selectedSample$')
-  async onSelectedSample$Changed() {
+  public onClickHideGBB(): void {
+    // (this.$refs.nextStepModal as Modal).hide();
+  }
+
+  async destroyed() {
+    (this.$root.$el.closest("body") as HTMLBodyElement).classList.remove(
+      "modal-screen"
+    );
+  }
+
+  /*public onClickShowGBB(): void {
+    // (this.$refs.nextStepModal as Modal).show();
+  }*/
+
+  // @ts-ignore TS6133 onSelected
+  public async onSelected(sample: windowsStore.Sample) {
     try {
-      await this.selectSample(this.selectedSample$);
+      await this.selectSample(sample);
+      this.selectedSamples.push(sample);
+
+      (this.$refs.addFeatureModal as Modal).show();
     } catch (e) {
       this.error = e;
     }
   }
 
-  async download() {
+  // @ts-ignore TS6133 onSelected
+  public onRemoved(sample: windowsStore.Sample) {
+    if (this.selectedSamples.indexOf(sample) != -1) {
+      sample.usercode = null;
+
+      // We're unchecking the last sample
+      if (this.selectedSamples.length == 1) {
+        this.hasNative = false;
+      }
+    } else {
+      // We're adding a sample via checkbox
+      this.hasNative = true;
+    }
+  }
+
+  /*async onClickSample(sample: windowsStore.Sample) {
+    try {
+      console.log(sample);
+      await this.selectSample(sample);
+      this.selectedSamples.push(sample);
+
+      //  (this.$refs.addFeatureModal as Modal).show();
+
+      // wire up to GBB component
+      // user has selected a native feature to add
+      ////this.hasNative = true;
+    } catch (e) {
+      this.error = e;
+    }
+  }
+
+  async checkRemoveSample(sample: windowsStore.Sample) {
+    // Called before removed from collection in model
+    if (this.selectedSamples.indexOf(sample) != -1) {
+      sample.usercode = null;
+
+      // We're unchecking the last sample
+      if (this.selectedSamples.length == 1) {
+        this.hasNative = false;
+      }
+    } else {
+      // We're adding a sample via checkbox
+      this.hasNative = true;
+    }
+  }*/
+
+  loadCode() {
+    let index = this.selectedSamples.indexOf(this.sample);
+    if (index != -1 && this.selectedSamples[index].usercode) {
+      return this.selectedSamples[index].usercode;
+    }
+
+    return this.sample.snippet;
+  }
+
+  updateCode(ev) {
+    // TODO: Need to pass this into bundle somehow in download method?
+    this.sample.usercode = ev;
+  }
+
+  async addBundle() {
+    if (this.selectedSamples.indexOf(this.sample) == -1) {
+      this.selectedSamples.push(this.sample);
+    }
+
+    this.hasNative = true;
+    this.modalClosed();
+    (this.$refs.addFeatureModal as Modal).hide();
+  }
+
+  async download(all = false) {
     let that = this;
     let items = Array<any>();
     let xhttp = new XMLHttpRequest();
 
-    xhttp.onreadystatechange = function () {
-        if (xhttp.readyState === 4 && xhttp.status === 200) {
-            let fileName = 'sample.zip';
-            that.saveAs(fileName, xhttp);
-        }
+    xhttp.onreadystatechange = function() {
+      if (xhttp.readyState === 4 && xhttp.status === 200) {
+        let fileName = all ? "codebundle.zip" : "sample.zip";
+        that.saveAs(fileName, xhttp);
+      }
     };
 
-    xhttp.open('POST', `${process.env.apiUrl2}/api/winrt/generate`, true);
-    xhttp.setRequestHeader('Content-Type', 'application/json');
-    xhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
-    xhttp.responseType = 'blob';
+    xhttp.open("POST", `${process.env.apiUrl2}/api/winrt/generate`, true);
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.setRequestHeader("Access-Control-Allow-Origin", "*");
+    xhttp.responseType = "blob";
 
-    items.push(this.selectedSample$);
+    if (all) {
+      for (let i = 0; i < this.selectedSamples.length; i++) {
+        items.push(this.selectedSamples[i]);
+      }
+    } else {
+      items.push(this.sample);
+    }
+
     let results = this.outputProcessor(items);
     xhttp.send(JSON.stringify(results));
   }
@@ -118,136 +395,251 @@ export default class extends Vue {
 
     for (let i = 0; i < items.length; i++) {
       let item = items[i];
-      
+
       let newItem = {
-          id: item.id,
-          url: item.url,
-          hash: item.hash,
-          parms: Array<any>()
+        id: item.id,
+        url: item.url,
+        hash: item.hash,
+        parms: Array<any>()
       };
 
       for (let j = 0; j < item.parms.length; j++) {
         newItem.parms.push({
-            id: item.parms[j].id,
-            defaultData: item.parms[j].default
+          id: item.parms[j].id,
+          defaultData: item.parms[j].default
         });
       }
 
       results.push(newItem);
     }
 
-    return {controls: results};
+    return { controls: results };
   }
 
   saveAs(fileName, xhttp) {
-    let a = document.createElement('a');
+    let a = document.createElement("a");
     a.href = window.URL.createObjectURL(xhttp.response);
     a.download = fileName;
-    a.style.display = 'none';
+    a.style.display = "none";
     document.body.appendChild(a);
     a.click();
-  } 
+  }
+
+  public modalOpened() {
+    window.scrollTo(0, 0);
+    (this.$root.$el.closest("body") as HTMLBodyElement).classList.add(
+      "modal-screen"
+    );
+  }
+
+  public modalClosed() {
+    (this.$root.$el.closest("body") as HTMLBodyElement).classList.remove(
+      "modal-screen"
+    );
+  }
 }
 </script>
 
-<style>
-/* Tabs */
-.tab_container {
-  margin: 0 auto;
-  position: relative;
-  width: 100%;
-}
-
-.tile-table {
-  margin: 32px !important;
-}
-
-.tab_input,
-.tab_section {
-  clear: both;
-  display: none;
-  padding-top: 10px;
-}
-
-.tab_label {
-  background: #F0F0F0;
-  color: #757575;
-  cursor: pointer;
-  display: block;
-  float: left;
-  font-size: 18px;
-  font-weight: 700;
-  padding: 1.5em;
-  text-align: center;
-  text-decoration: none;
-  width: 30%;
-}
-
-#tab1:checked ~ #content1,
-#tab2:checked ~ #content2 {
-  background: #FFFFFF;
-  border-bottom: 2px solid #F0F0F0;
-  color: #999999;
-  display: block;
-  padding: 20px;
-}
-
-.tab_container .tab-content div {
-  -webkit-animation: fadeInScale .7s ease-in-out;
-  -moz-animation: fadeInScale .7s ease-in-out;
-  animation: fadeInScale .7s ease-in-out;
-}
-
-.tab_container .tab-content h3 {
-  text-align: center;
-}
-
-.tab_container [id^="tab"]:checked + label {
-  background: #FFFFFF;
-  box-shadow: inset 0 3px #00CCEE;
-}
-
-.tab_label .fa {
-  font-size: 1.3em;
-  margin: 0 .4em 0 0;
-}
-
-.tab_container [id^="tab"]:checked + label .fa {
-  color: #00CCEE;
-}
-
-/* Media query */
-@media only screen and (max-width: 930px) {
-  .tab_label span {
-    font-size: 14px;
-  }
-
-  .tab_label .fa {
-    font-size: 14px;
-  }
-}
-
-@media only screen and (max-width: 768px) {
-  .tab_label span {
-    display: none;
-  }
-
-  .tab_label .fa {
-    font-size: 16px;
-  }
-
-  .tab_container {
-    width: 98%;
-  }
-}
-</style>
-
 <style lang="scss" scoped>
+/* stylelint-disable */
 @import "~assets/scss/base/variables";
+@import "~assets/scss/base/animations";
 
-.generate {
-  &-code {
-    margin-top: -2rem;
+header {
+  display: flex;
+  align-items: center;
+  padding-left: 68px;
+  margin-top: 32px;
+
+  #headerText {
+    font-size: 28px;
+    font-weight: normal;
   }
+
+  #logo {
+    background: lightgrey;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    margin-right: 12px;
+  }
+}
+
+#sideBySide {
+  display: flex;
+
+  #headerSection {
+    flex: 1;
+    padding-left: 164px;
+    padding-right: 164px;
+
+    #featurePageHeader {
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    p {
+      font-size: 18px;
+      width: 376px;
+    }
+
+    #featureActionsBlock {
+      display: flex;
+
+      #clearButton {
+        width: 130px;
+        height: 44px;
+        border-radius: 22px;
+        border: none;
+        background: grey;
+        font-weight: bold;
+        font-size: 18px;
+        padding-top: 9px;
+        padding-bottom: 11px;
+        margin-top: 40px;
+        color: white;
+        background: $color-brand-secondary;
+        margin-right: 10px;
+      }
+
+      #doneButton {
+        width: 130px;
+        height: 44px;
+        border-radius: 22px;
+        border: none;
+        background: grey;
+        font-weight: bold;
+        font-size: 18px;
+        padding-top: 9px;
+        padding-bottom: 11px;
+        margin-top: 40px;
+        color: white;
+        background: $color-button-primary-purple-variant;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+  }
+
+  #scoreSection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+
+    #scoreDiv {
+      height: 260px;
+      width: 280px;
+      background: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 92px;
+      font-weight: bold;
+      border-radius: 32px;
+    }
+  }
+}
+
+#featureListBlock,
+#fakeCardBlock {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  padding-left: 164px;
+  padding-right: 164px;
+  margin-top: 60px;
+
+  .fakeCard {
+    display: flex;
+    justify-content: center;
+    height: 209px;
+    align-items: center;
+    font-size: 4em;
+    background: linear-gradient(-45deg, grey, lightgrey, white);
+  }
+}
+
+.code-samples {
+  width: 50%;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  margin-top: -3em;
+  height: 90vh;
+}
+
+.code-top {
+  flex: 1;
+}
+
+.code-bottom {
+  flex: 1;
+}
+
+.feature-content {
+  width: 50%;
+}
+
+.feature-viewer {
+  display: flex;
+}
+
+.properties {
+  padding-left: 2.2em;
+  padding-top: 2em;
+  padding-right: 11em;
+
+  h1 {
+    font-weight: bold;
+    font-size: 24px;
+    margin-bottom: 1.2em;
+  }
+
+  h3 {
+    font-weight: bold;
+    font-size: 18px;
+  }
+
+  #sampleDescP {
+    margin-top: 20px;
+    margin-bottom: 2em;
+    font-size: 18px;
+  }
+
+  p {
+    font-size: 14px;
+  }
+}
+
+#bottomCodeHeader {
+  background: lightgrey;
+  font-weight: bold;
+  padding: 1em;
+  margin-left: 36px;
+  margin-top: 1em;
+  margin-right: 2em;
+}
+
+#codeHeader {
+  background: lightgrey;
+  font-weight: bold;
+  padding: 1em;
+  margin-left: 36px;
+  margin-right: 2em;
+}
+
+#addBundleButton {
+  background: $color-button-primary-purple-variant;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+#featuresBG {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: -1;
 }
 </style>

@@ -1,31 +1,16 @@
-// Colors
-$color-brand: #1FC2C8;
-$color-brand-dark: darken($color-brand, 10%);
-$color-brand-darker: darken($color-brand, 15%);
-$color-brand-bright: lighten($color-brand, 10%);
-$color-brand-brighter: #E8F9F9;
-$color-secondary: #FFCD50;
-$color-secondary-dark: darken($color-secondary, 10%);
-$color-secondary-darker: darken($color-secondary, 20%);
-$color-complementary: #6A3AB2;
-$color-complementary-dark: darken($color-complementary, 10%);
-$color-complementary-bright: lighten($color-complementary, 5%);
-$color-background-semidark: #5A5A5A;
-$color-background-dark: #EAEAEA;
-$color-background-darker: #333333;
-$color-background-darkest: #000000;
-$color-background-bright: #EFEFEF;
-$color-background-brighter: #FFFFFF;
-$color-foreground-dark: #8B8B8B;
-$color-foreground-darker: #333333;
-$color-foreground-darkest: #000000;
-$color-foreground-bright: #F2F2F2;
-$color-foreground-brightest: #BBBBBB;
-$color-foreground-brighter: #FFFFFF;
-$color-shell-prompt: #B25538;
-$color-shell-command: #FEC77C;
-$color-error: #ED4545;
-$color-error-bright: lighten($color-error, 5%);
+/* stylelint-disable*/
+
+//new colors for brand
+$color-brand-secondary: #45ADA8;
+$color-button-primary: #9337D8;
+$color-brand-tertiary: #3C3C3C;
+$color-brand-quartary:#F49C45;
+$color-brand-quintary:white;
+$color-brand-warning: #D95050;
+
+// $color-button-primary-green-variant: #21ABA5;
+$color-button-primary-purple-variant: linear-gradient(to right, #703999, #9337D8);
+// $color-button-primary-blue-variant: linear-gradient(to right, #4B76CC, #04BEFE);;
 
 // Animations
 $animation-speed-default: .35s;
@@ -48,6 +33,7 @@ $font-size-s: .85rem;    // 13.6px
 $font-size-m: 1rem;      // 16px
 $font-size-l: 1.5rem;    // 24px
 $font-size-xl: 2.5rem;   // 40px
+$font-family-l3: 'Segoe UI';
 
 // Medias
 $media-screen-xxs: 22.5em; // 360px

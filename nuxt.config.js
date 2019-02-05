@@ -3,6 +3,9 @@ const StyleLintPlugin = require('stylelint-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const env = require(`./environments/${process.env.NODE_ENV}`);
 
+// Webpack plugin for Monaco
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+
 console.log(`Environment: ${process.env.NODE_ENV}`);
 
 module.exports = {
@@ -53,11 +56,12 @@ module.exports = {
             new ForkTsCheckerWebpackPlugin({
               tslint: true,
               vue: true
-            })
+            }),
+            new MonacoWebpackPlugin()
         ]
     },
     router: {
-        middleware: 'i18n'
+        middleware: ['i18n', 'default']
     },
     plugins: ['~/plugins/i18n.js'],
     modules: [

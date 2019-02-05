@@ -9,7 +9,7 @@ import Vue from 'vue';
 import { Prop } from 'vue-property-decorator';
 import Component from 'nuxt-class-component';
 
-@Component()
+@Component({})
 export default class extends Vue {
   @Prop({ type: String, default: null })
   public anchor: string;

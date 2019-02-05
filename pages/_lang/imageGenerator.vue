@@ -145,10 +145,15 @@ export default {
       axios.post(urlUseAPI + 'api/image', formData)
       .then(result => {
         const fileUri = result.data.Uri;
-        console.log('Response from Api');
-        window.open(urlUseAPI + fileUri.substring(1), '_blank');
+        this.safeDownload(urlUseAPI, fileUri);
         this.isLoading = false;
       });
+    },
+    safeDownload(APIUseUrl: string, fileURI: string) {
+      const link = document.createElement('a');
+      link.href = APIUseUrl + fileURI.substring(1);
+      link.setAttribute('download', 'PWABuilderImages');
+      link.click();
     },
     changeLabel() {
         this.labelFileName = this.$refs.fileName.files[0].name;

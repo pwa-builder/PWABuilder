@@ -13,7 +13,7 @@ const { Nuxt, Builder } = require('nuxt')
 
 // Import and set Nuxt.js options
 let config = require('./nuxt.config.js')
-config.dev = !(process.env.NODE_ENV === 'production')
+config.dev = !(process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'preview');
 
 const nuxt = new Nuxt(config)
 
@@ -25,8 +25,9 @@ if (config.dev) {
 
 // Give nuxt middleware to express
 app.use(nuxt.render)
-
+console.log('app is using nuxt renderer')
 
 
 // Start express server
-app.listen(process.env.PORT, process.env.HOST)
+app.listen(process.env.PORT, process.env.HOST);
+console.log('app is listening on: ', process.env.HOST, process.env.PORT);

@@ -1,6 +1,8 @@
 @import '../base/variables';
 @import '../mixins/action';
 
+/* stylelint-disable */
+
 .pwa-generator-small {
   display: block;
   margin-bottom: 1rem;
@@ -703,5 +705,5 @@ th {
 
 .value-table {
   background-color: rgba(51, 51, 51, .05);
-  border: 0 solid white;
+  border: 0 solid $color-brand-quintary;
 }
