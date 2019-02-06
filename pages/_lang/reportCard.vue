@@ -46,8 +46,8 @@
       <section id="scoreSection">
         <!--<img id="reportGraphic" src="~/assets/images/report_card.svg">-->
         <div id="scoreDiv">
-          <span>Overall Grade</span>
           {{overallGrade}}
+          <span>overall grade</span>
         </div>
       </section>
     </div>
@@ -741,6 +741,9 @@ p {
         font-size: 18px;
         position: relative;
         bottom: 8px;
+        color: #8a8a8a;
+        margin-top: 10px;
+        font-weight: bold;
       }
 
       section {
