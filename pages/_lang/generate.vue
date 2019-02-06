@@ -917,7 +917,7 @@ export default class extends Vue {
   #rightSide {
     flex: 1;
     width: 4em;
-    height: 103.4vh;
+    height: 110.4vh;
     background: #F0F0F0;
   }
 }
