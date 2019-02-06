@@ -3,8 +3,7 @@
   <main id="sideBySide">
     <section id="leftSide">
       <header>
-        <img id="logo">
-        <h2 id="headerText">PWABuilder</h2>
+        <img id="logo" src="~/assets/images/logo.png">
       </header>
 
       <div id="introContainer">
@@ -35,7 +34,7 @@
               </div>
             </button>
 
-            <div v-if="error" id="errorBox">{{error}}</div>
+            <!--<div v-if="error" id="errorBox">{{error}}</div>-->
           </form>
 
           <div id="expertModeBlock">
@@ -44,6 +43,13 @@
           </div>
         </div>
       </div>
+
+      <footer>
+        <p>
+          PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
+          Our Privacy Statement
+        </p>
+      </footer>
     </section>
 
     <section id="rightSide"></section>
@@ -215,15 +221,31 @@ Vue.prototype.$awa = function(config) {
   display: flex;
   justify-content: space-around;
   height: 100vh;
+  background-image: url("~/assets/images/homepage-background.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 
   #leftSide {
-    background: white;
     height: 100%;
     flex: 1;
     display: flex;
     flex-direction: column;
     width: 1em;
     justify-content: center;
+
+    footer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    footer p {
+      text-align: center;
+      width: 376px;
+      font-size: 12px;
+      color: #3c3c3c;
+    }
 
     header {
       display: flex;
@@ -237,25 +259,8 @@ Vue.prototype.$awa = function(config) {
       }
 
       #logo {
-        background: lightgrey;
-        border-radius: 50%;
-        width: 48px;
-        height: 48px;
         margin-right: 12px;
-      }
-    }
-
-    footer {
-      position: fixed;
-      bottom: 0px;
-      padding-bottom: 20px;
-      width: 45em;
-      display: flex;
-      justify-content: center;
-
-      h3 {
-        font-size: 14px;
-        width: 376px;
+        width: 10em;
       }
     }
   }
@@ -267,20 +272,16 @@ Vue.prototype.$awa = function(config) {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    background-image: url('~/assets/images/homepage-background.svg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
   }
 
   #introContainer {
-    padding-top: 140px;
     padding-right: 96px;
     padding-left: 164px;
     display: flex;
     flex-direction: column;
     align-items: center;
     flex: 2;
+    justify-content: center;
 
     h2 {
       font-size: 36px;
@@ -314,6 +315,7 @@ Vue.prototype.$awa = function(config) {
       align-items: center;
       flex-direction: column;
       margin-top: 144px;
+      margin-right: 72px;
 
       #expertModeButton {
         width: 200px;
@@ -323,7 +325,7 @@ Vue.prototype.$awa = function(config) {
         border-radius: 22px;
         padding-top: 9px;
         padding-bottom: 11px;
-        background-image: $color-button-primary-purple-variant;
+        background-image: linear-gradient(to right, #7644c2, #11999e);
         color: white;
         height: 44px;
       }
@@ -346,7 +348,7 @@ Vue.prototype.$awa = function(config) {
       border: none;
       width: 24em;
       border-bottom: solid 1px rgba(60, 60, 60, 0.3);
-      margin-right: 2em;
+      margin-right: 1em;
       margin-top: 20px;
       outline: none;
     }

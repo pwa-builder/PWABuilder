@@ -175,7 +175,7 @@
                 />
               </div>
 
-              <span>iOS is a thing</span>
+              <span>PWAs are available through the browser on iOS, however your PWA can also be submitted to the app store by submitting the package you get below.</span>
             </li>
 
             <li>
@@ -487,9 +487,12 @@ label {
   display: flex;
   justify-content: space-around;
   height: 100vh;
+  background-image: url("~/assets/images/bg_publish.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 
   #leftSide {
-    background: white;
     height: 100%;
     flex: 1;
 
@@ -522,13 +525,12 @@ label {
       align-items: center;
 
       h2 {
-        font-size: 48px;
+        font-size: 36px;
         color: black;
         font-weight: bold;
       }
 
       p {
-        margin-top: 40px;
         font-size: 18px;
       }
 

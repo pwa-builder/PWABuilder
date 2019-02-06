@@ -16,15 +16,18 @@
       <GoodPWA :isHttps="true" :allGoodWithText="true" />
     </div>-->
     <div id="scoreSideBySide">
+      <nuxt-link to="/">
+        <header>
+          <img id="logo" src="~/assets/images/logo.png">
+        </header>
+      </nuxt-link>
+
       <section id="headerSection">
         <div class="mast">
           <h1 id="reportCardHeader">How am I doing so far?</h1>
 
-            
           <div id="urlTested">URL Tested:
-            <p> {{url}}
-            <button @click="rescan()" id="rescanButton">Rescan</button>
-            </p>
+            <p>{{url}}</p>
           </div>
 
           <p id="reportCardInfo">
@@ -34,6 +37,7 @@
           </p>
 
           <div id="reportActionsBlock">
+            <button @click="rescan()" id="rescanButton">Rescan</button>
             <nuxt-link id="publishButton" to="/publish">Build My App</nuxt-link>
           </div>
         </div>
@@ -42,8 +46,8 @@
       <section id="scoreSection">
         <!--<img id="reportGraphic" src="~/assets/images/report_card.svg">-->
         <div id="scoreDiv">
-          <span>Overall Grade</span>
           {{overallGrade}}
+          <span>overall grade</span>
         </div>
       </section>
     </div>
@@ -67,50 +71,75 @@
           <ul v-if="manifest">
             <li v-bind:class="{ good: manifest }">
               <span>Web Manifest properly attached</span>
-
-              <span v-if="manifest"> <i class="fas fa-check"></i><span>10 pts</span></span>
-              <span v-if="!manifest"><i class="fas fa-times"></i><span>0 pts</span></span>
               
-              
+              <span v-if="manifest">
+                <i class="fas fa-check"></i>
+                <span>10 pts</span>
+              </span>
+              <span v-if="!manifest">
+                <i class="fas fa-times"></i>
+                <span>0 pts</span>
+              </span>
             </li>
             <li v-bind:class="{ good: manifest && manifest.display }">
               <span>Display property utilized</span>
-
-              <span v-if="manifest && manifest.display"><i class="fas fa-check"></i><span>10 pts</span></span>
-              <span v-if="manifest && !manifest.display"><i class="fas fa-times"></i><span> 0 pts</span></span>
               
+              <span v-if="manifest && manifest.display">
+                <i class="fas fa-check"></i>
+                <span>10 pts</span>
+              </span>
+              <span v-if="manifest && !manifest.display">
+                <i class="fas fa-times"></i>
+                <span>0 pts</span>
+              </span>
             </li>
             <li v-bind:class="{ good: manifest && manifest.icons }">
               <span>Lists icons for add to home screen</span>
-
-              <span v-if="manifest && manifest.icons"> <i class="fas fa-check"></i><span>10 pts</span></span>
-              <span v-if="manifest && !manifest.icons" > <i class="fas fa-times"></i><span>0 pts</span></span>
               
-              
+              <span v-if="manifest && manifest.icons">
+                <i class="fas fa-check"></i>
+                <span>10 pts</span>
+              </span>
+              <span v-if="manifest && !manifest.icons">
+                <i class="fas fa-times"></i>
+                <span>0 pts</span>
+              </span>
             </li>
             <li v-bind:class="{ good: manifest && manifest.name }">
               <span>Contains app_name property</span>
               
-              <span v-if="manifest && manifest.name"> <i class="fas fa-check"></i><span>10 pts</span></span>
-              <span v-if="manifest && !manifest.name"> <i class="fas fa-times"></i><span>0 pts</span></span>
-              
-              
+              <span v-if="manifest && manifest.name">
+                <i class="fas fa-check"></i>
+                <span>10 pts</span>
+              </span>
+              <span v-if="manifest && !manifest.name">
+                <i class="fas fa-times"></i>
+                <span>0 pts</span>
+              </span>
             </li>
             <li v-bind:class="{ good: manifest && manifest.short_name }">
               <span>Contains short_name property</span>
-
-              <span v-if="manifest && manifest.short_name"> <i class="fas fa-check"></i><span>10 pts</span></span>
-              <span v-if="manifest && !manifest.short_name"> <i class="fas fa-times"></i><span>0 pts</span></span>
               
-              
+              <span v-if="manifest && manifest.short_name">
+                <i class="fas fa-check"></i>
+                <span>10 pts</span>
+              </span>
+              <span v-if="manifest && !manifest.short_name">
+                <i class="fas fa-times"></i>
+                <span>0 pts</span>
+              </span>
             </li>
             <li v-bind:class="{ good: manifest && manifest.start_url }">
-              <span>Designates a start_url </span>
-
-              <span v-if="manifest && manifest.start_url"> <i class="fas fa-check"></i><span>10 pts</span></span>
-              <span v-if="manifest && !manifest.start_url"> <i class="fas fa-times"></i><span>0 pts</span></span>
+              <span>Designates a start_url</span>
               
-              
+              <span v-if="manifest && manifest.start_url">
+                <i class="fas fa-check"></i>
+                <span>10 pts</span>
+              </span>
+              <span v-if="manifest && !manifest.start_url">
+                <i class="fas fa-times"></i>
+                <span>0 pts</span>
+              </span>
             </li>
           </ul>
           <ul v-else>
@@ -159,32 +188,48 @@
 
           <ul v-if="serviceWorkerData">
             <li v-bind:class="{ good: serviceWorkerData.hasSW }">
-            <span>Has a Service Worker</span>
-              <span v-if="serviceWorkerData && serviceWorkerData.hasSW"> <i class="fas fa-check"></i><span>10 pts</span></span>
-              <span v-if="serviceWorkerData && !serviceWorkerData.hasSW"> <i class="fas fa-times"></i><span>0 pts</span></span>
-
-              
+              <span>Has a Service Worker</span>
+              <span v-if="serviceWorkerData && serviceWorkerData.hasSW">
+                <i class="fas fa-check"></i>
+                <span>10 pts</span>
+              </span>
+              <span v-if="serviceWorkerData && !serviceWorkerData.hasSW">
+                <i class="fas fa-times"></i>
+                <span>0 pts</span>
+              </span>
             </li>
             <li v-bind:class="{ good: serviceWorkerData.cache }">
-              
               <span>Service Worker has cache handlers</span>
-              <span v-if="serviceWorkerData && serviceWorkerData.cache"> <i class="fas fa-check"></i><span>10 pts</span></span>
-              <span v-if="serviceWorkerData && !serviceWorkerData.cache"> <i class="fas fa-times"></i><span>0 pts</span></span>
-
+              <span v-if="serviceWorkerData && serviceWorkerData.cache">
+                <i class="fas fa-check"></i>
+                <span>10 pts</span>
+              </span>
+              <span v-if="serviceWorkerData && !serviceWorkerData.cache">
+                <i class="fas fa-times"></i>
+                <span>0 pts</span>
+              </span>
             </li>
             <li v-bind:class="{ good: serviceWorkerData.scope }">
-              
               <span>Service Worker has the correct scope</span>
-              <span v-if="serviceWorkerData && serviceWorkerData.scope"> <i class="fas fa-check"></i><span>10 pts</span></span>
-              <span v-if="serviceWorkerData && !serviceWorkerData.scope"> <i class="fas fa-times"></i><span>0 pts</span></span>
-
+              <span v-if="serviceWorkerData && serviceWorkerData.scope">
+                <i class="fas fa-check"></i>
+                <span>10 pts</span>
+              </span>
+              <span v-if="serviceWorkerData && !serviceWorkerData.scope">
+                <i class="fas fa-times"></i>
+                <span>0 pts</span>
+              </span>
             </li>
             <li v-bind:class="{ good: serviceWorkerData.pushReg }">
-
               <span>Service Worker has a push registration</span>
-              <span v-if="serviceWorkerData && serviceWorkerData.pushReg"> <i class="fas fa-check"></i><span>10 pts</span></span>
-              <span v-if="serviceWorkerData && !serviceWorkerData.pushReg"> <i class="fas fa-times"></i><span>0 pts</span></span>
-
+              <span v-if="serviceWorkerData && serviceWorkerData.pushReg">
+                <i class="fas fa-check"></i>
+                <span>10 pts</span>
+              </span>
+              <span v-if="serviceWorkerData && !serviceWorkerData.pushReg">
+                <i class="fas fa-times"></i>
+                <span>0 pts</span>
+              </span>
             </li>
           </ul>
 
@@ -227,15 +272,24 @@
           <ul>
             <li>
               <span>Uses HTTPS URL</span>
-              <span> <i class="fas fa-check"></i> <span> 10 pts</span></span>
+              <span>
+                <i class="fas fa-check"></i>
+                <span>10 pts</span>
+              </span>
             </li>
             <li>
               <span>Valid SSL certificate is use</span>
-              <span> <i class="fas fa-check"></i> <span> 10 pts</span></span>
+              <span>
+                <i class="fas fa-check"></i>
+                <span>10 pts</span>
+              </span>
             </li>
             <li>
               <span>No "mixed" content on page</span>
-              <span> <i class="fas fa-check"></i> <span> 10 pts</span></span>
+              <span>
+                <i class="fas fa-check"></i>
+                <span>10 pts</span>
+              </span>
             </li>
           </ul>
         </section>
@@ -528,13 +582,22 @@ export default class extends Vue {
   }
 }*/
 
+main {
+  background-image: url("~/assets/images/homepage-background.svg");
+  background-position: top;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 p {
-margin: 0;
-padding: 0;
+  margin: 0;
+  padding: 0;
 }
+
 .fa-check {
-color: green;
+  color: #41807D;
 }
+
 .fa-times {
   color: red;
 }
@@ -557,31 +620,47 @@ color: green;
   display: flex;
   height: 34em;
 
+  header {
+    position: absolute;
+    top: 30px;
+    left: 68px;
+
+    img {
+      height: 54px;
+    }
+  }
+
   section {
     flex: 1;
   }
 
-
   #headerSection {
-    padding-top: 4em;
+    padding-top: 124px;
 
     #urlTested {
       font-weight: bold;
       margin-top: 0;
-      margin-bottom: .2em;
+      margin-bottom: 0.2em;
+
+      p {
+        width: 376px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
     }
 
     div.mast {
       padding-left: 8em;
     }
-    button#rescanButton {
+
+    /*button#rescanButton {
       margin-top: 0;
       font-size: 12px;
       padding-top: 3px;
       padding-bottom: 4px;
       width: 70px;
-    }
-
+    }*/
 
     #reportActionsBlock {
       display: flex;
@@ -596,21 +675,20 @@ color: green;
     #reportCardInfo {
       width: 376px;
       line-height: 28px;
+      margin-top: 20px;
     }
 
     #rescanButton {
-      width: 184px;
-      border-radius: 22px;
-      border: none;
-      background: grey;
-      font-weight: bold;
-      font-size: 18px;
-      padding-top: 9px;
-      padding-bottom: 11px;
+      background: #45ada8;
+      height: 44px;
       margin-top: 40px;
+      margin-right: 8px;
+      border: none;
+      border-radius: 22px;
       color: white;
-      background: $color-brand-secondary;
-      margin-right: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      width: 130px;
     }
 
     #publishButton {
@@ -632,9 +710,6 @@ color: green;
   }
 
   #scoreSection {
-    background-image: url('~/assets/images/homepage-background.svg');
-    background-position: right;
-    background-repeat: no-repeat;
     background-color: $color-button-primary-purple-variant;
     display: flex;
     justify-content: center;
@@ -667,7 +742,10 @@ color: green;
       span {
         font-size: 18px;
         position: relative;
-        bottom: 8px; 
+        bottom: 8px;
+        color: #8a8a8a;
+        margin-top: 10px;
+        font-weight: bold;
       }
 
       section {
@@ -683,7 +761,7 @@ color: green;
   padding-left: 6.4em;
   padding-right: 8em;
   position: relative;
-  bottom: 4em;
+  bottom: 3em;
 }
 
 #cats {
@@ -695,7 +773,8 @@ color: green;
     border: solid 1px grey;
     padding: 30px;
     margin: 30px;
-    background: rgba(255,255,255,.5);
+    // background: rgba(255, 255, 255, 0.5);
+    background: white;
     display: flex;
     flex-direction: column;
 
@@ -705,7 +784,6 @@ color: green;
       justify-content: space-between;
       margin-bottom: 1em;
     }
-    
 
     /*@media (max-width: 1300px) {
       .catHeader {
@@ -722,7 +800,7 @@ color: green;
 
       li {
         font-size: 18px;
-        padding: .5em;
+        padding: 0.5em;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
@@ -746,13 +824,14 @@ color: green;
     .editButton {
       border-radius: 22px;
       border: none;
+      height: 44px;
       background: grey;
       font-weight: bold;
       font-size: 18px;
       padding-top: 9px;
       padding-bottom: 11px;
-      padding-left: 49px;
-      padding-right: 49px;
+      padding-left: 20px;
+      padding-right: 20px;
       display: flex;
       justify-content: center;
       color: white;
@@ -764,9 +843,10 @@ color: green;
       font-weight: bold;
       display: flex;
       justify-content: space-between;
+      color: #3c3c3c;
 
       .scoreSubText {
-        color: grey;
+        color: #8A8A8A;
         font-size: 12px;
         width: 32px;
         text-align: center;
