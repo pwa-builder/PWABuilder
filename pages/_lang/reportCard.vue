@@ -716,6 +716,7 @@ p {
     align-items: center;
     flex-direction: column;
     height: 100%;
+    margin-top: 60px;
 
     img {
       position: absolute;
@@ -729,7 +730,7 @@ p {
     #scoreDiv {
       width: 221px;
       height: 221px;
-      border-radius: 52px;
+      border-radius: 35px;
       background: white;
       display: flex;
       justify-content: center;
