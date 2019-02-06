@@ -843,7 +843,7 @@ p {
       font-weight: bold;
       display: flex;
       justify-content: space-between;
-      color: #3c3c3c;
+      color: black;
 
       .scoreSubText {
         color: #8A8A8A;
