@@ -626,7 +626,7 @@ p {
     left: 68px;
 
     img {
-      height: 54px;
+      height: 48px;
     }
   }
 

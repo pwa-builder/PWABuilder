@@ -105,7 +105,7 @@
           <p>Add that special something to supercharge your PWA. Consider connecting your website with these API's to enable magical cross-platform experiences.</p>
 
           <div id="featureActionsBlock">
-            <button id="clearButton">clear</button>
+            <button @click="clearSelected()" id="clearButton">clear</button>
             <nuxt-link id="doneButton" to="/reportCard">Done</nuxt-link>
           </div>
         </div>
@@ -155,6 +155,7 @@
     <Modal
       v-on:modalOpened="modalOpened()"
       v-on:modalClosed="modalClosed()"
+      v-on:modalSubmit="modalSelected()"
       :showSubmitButton="false"
       title="Add Feature"
       ref="addFeatureModal"
@@ -249,6 +250,8 @@ export default class extends Vue {
   public viewerSizeBottom = "55rem";
   overallGrade: string | null = null;
 
+  currentPendingSample: windowsStore.Sample | null = null;
+
   selectedSamples: windowsStore.Sample[] = [];
   @WindowsState sample: windowsStore.Sample;
   @WindowsState samples: windowsStore.Sample[];
@@ -286,12 +289,33 @@ export default class extends Vue {
   public async onSelected(sample: windowsStore.Sample) {
     try {
       await this.selectSample(sample);
-      this.selectedSamples.push(sample);
+      // this.selectedSamples.push(sample);
+      this.currentPendingSample = sample;
 
       (this.$refs.addFeatureModal as Modal).show();
     } catch (e) {
       this.error = e;
     }
+  }
+
+  public async modalSelected() {
+    try {
+      console.log("sample selected");
+      await this.selectSample(this.currentPendingSample);
+      this.selectedSamples.push(this
+        .currentPendingSample as windowsStore.Sample);
+
+      // force a re-render
+      this.selectedSamples = this.selectedSamples;
+      console.log(this.selectedSamples);
+    } catch (e) {
+      this.error = e;
+    }
+  }
+
+  public clearSelected() {
+    this.selectedSamples = [];
+    this.currentPendingSample = null;
   }
 
   // @ts-ignore TS6133 onSelected
@@ -355,13 +379,35 @@ export default class extends Vue {
   }
 
   async addBundle() {
-    if (this.selectedSamples.indexOf(this.sample) == -1) {
+    /*if (this.selectedSamples.indexOf(this.sample) == -1) {
       this.selectedSamples.push(this.sample);
     }
 
     this.hasNative = true;
     this.modalClosed();
-    (this.$refs.addFeatureModal as Modal).hide();
+    (this.$refs.addFeatureModal as Modal).hide();*/
+
+    try {
+      console.log("sample selected", this.currentPendingSample);
+      await this.selectSample(this.currentPendingSample);
+
+      if (this.selectedSamples.indexOf(this.sample) == -1) {
+        console.log('pushing', this.currentPendingSample);
+        this.selectedSamples.push(this
+          .currentPendingSample as windowsStore.Sample);
+        console.log('selectedSamples', this.selectedSamples);
+      }
+
+
+
+      this.hasNative = true;
+      this.modalClosed();
+      (this.$refs.addFeatureModal as Modal).hide();
+    } catch (e) {
+      this.modalClosed();
+      (this.$refs.addFeatureModal as Modal).hide();
+      this.error = e;
+    }
   }
 
   async download(all = false) {
@@ -633,7 +679,6 @@ header {
   z-index: -1;
   height: 100vh;
 }
-
 
 .feature-viewer {
   flex: 1;

@@ -92,12 +92,12 @@ export default class extends Vue {
   }
 
   public onClickSubmit(): void {
-    this.$emit("submit");
+    this.$emit("modalSubmit");
   }
 
   public onClickCancel(): void {
-    this.hide();
     this.$emit("cancel");
+    this.hide();
   }
 
   public showLoading(): void {
