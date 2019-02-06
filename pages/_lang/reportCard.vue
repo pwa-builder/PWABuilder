@@ -594,8 +594,9 @@ p {
   padding: 0;
 }
 .fa-check {
-  color: green;
+  color: #41807D;
 }
+
 .fa-times {
   color: red;
 }
