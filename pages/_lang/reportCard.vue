@@ -593,6 +593,7 @@ p {
   margin: 0;
   padding: 0;
 }
+
 .fa-check {
   color: #41807D;
 }
@@ -823,13 +824,14 @@ p {
     .editButton {
       border-radius: 22px;
       border: none;
+      height: 44px;
       background: grey;
       font-weight: bold;
       font-size: 18px;
       padding-top: 9px;
       padding-bottom: 11px;
-      padding-left: 49px;
-      padding-right: 49px;
+      padding-left: 20px;
+      padding-right: 20px;
       display: flex;
       justify-content: center;
       color: white;
