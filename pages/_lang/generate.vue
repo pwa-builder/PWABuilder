@@ -270,7 +270,7 @@
           <section class="animatedSection" v-if="showBasicSection">
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 class="fieldName">{{ $t("generate.name") }}</h4>
+                <h4 v-bind:class="{ fieldName: activeFormField === 'appName' }">{{ $t("generate.name") }}</h4>
                 <p>Used for App lists or Store listings</p>
               </label>
               
@@ -279,12 +279,13 @@
                 v-model="manifest$.name"
                 @change="onChangeSimpleInput()"
                 type="text"
+                v-on:focus="activeFormField = 'appName'"
               >
             </div>
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 class="fieldName">{{ $t("generate.short_name") }}</h4>
+                <h4 v-bind:class="{ fieldName: activeFormField === 'shortName' }">{{ $t("generate.short_name") }}</h4>
                 <p>Used for tiles or home screens</p>
               </label>
               
@@ -294,12 +295,13 @@
                 @change="onChangeSimpleInput()"
                 name="short_name"
                 type="text"
+                v-on:focus="activeFormField = 'shortName'"
               >
             </div>
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 class="fieldName">{{ $t("generate.description") }}</h4>
+                <h4 v-bind:class="{ fieldName: activeFormField === 'appDesc' }">{{ $t("generate.description") }}</h4>
                 <p>Used for App listings</p>
               </label>
               
@@ -309,12 +311,13 @@
                 @change="onChangeSimpleInput()"
                 name="description"
                 type="text"
+                v-on:focus="activeFormField = 'appDesc'"
               ></textarea>
             </div>
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 class="fieldName">{{ $t("generate.start_url") }}</h4>
+                <h4 v-bind:class="{ fieldName: activeFormField === 'startURL' }">{{ $t("generate.start_url") }}</h4>
                 <p>This will be the first page that loads in your PWA.</p>
               </label>
               
@@ -323,6 +326,7 @@
                 v-model="manifest$.start_url"
                 @change="onChangeSimpleInput()"
                 type="text"
+                v-on:focus="activeFormField = 'startURL'"
               >
             </div>
           </section>
@@ -395,7 +399,7 @@
           <section class="animatedSection" v-if="showSettingsSection">
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 class="fieldName">{{ $t("generate.scope") }}</h4>
+                <h4 v-bind:class="{ fieldName: activeFormField === 'appScope' }">{{ $t("generate.scope") }}</h4>
                 <p>scope determins what part of your website runs in the PWA</p>
               </label>
               
@@ -404,12 +408,13 @@
                 v-model="manifest$.scope"
                 @change="onChangeSimpleInput()"
                 type="text"
+                v-on:focus="activeFormField = 'appScope'"
               >
             </div>
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 class="fieldName">{{ $t("generate.display") }}</h4>
+                <h4  v-bind:class="{ fieldName: activeFormField === 'displayMode' }">{{ $t("generate.display") }}</h4>
                 <p>Display indetifies the browser components that should be included in your. "Standalone" appears as a traditional app</p>
               </label>
               
@@ -417,6 +422,7 @@
                 class="l-generator-input l-generator-input--select"
                 v-model="manifest$.display"
                 @change="onChangeSimpleInput()"
+                v-on:focus="activeFormField = 'displayMode'"
               >
                 <option v-for="display in displaysNames" :value="display" :key="display">{{display}}</option>
               </select>
@@ -424,7 +430,7 @@
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 class="fieldName">{{ $t("generate.orientation") }}</h4>
+                <h4 v-bind:class="{ fieldName: activeFormField === 'appOrientation' }">{{ $t("generate.orientation") }}</h4>
                 <p>Orientation determines the perfered flow of your application</p>
               </label>
               
@@ -432,6 +438,7 @@
                 class="l-generator-input l-generator-input--select"
                 v-model="manifest$.orientation"
                 @change="onChangeSimpleInput()"
+                v-on:focus="activeFormField = 'appOrientation'"
               >
                 <option
                   v-for="orientation in orientationsNames"
@@ -443,7 +450,7 @@
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 class="fieldName">{{ $t("generate.language") }}</h4>
+                <h4 v-bind:class="{ fieldName: activeFormField === 'appLang' }">{{ $t("generate.language") }}</h4>
                 <p>declare the language of your PWA</p>
               </label>
               
@@ -453,6 +460,7 @@
                   :value="language"
                   :key="language"
                   @change="onChangeSimpleInput()"
+                  v-on:change="activeFormField = 'appLang'"
                 >{{language}}</option>
               </select>
             </div>
@@ -585,6 +593,7 @@ export default class extends Vue {
   public showBasicSection = true;
   public showImagesSection = false;
   public showSettingsSection = false;
+  public activeFormField = null;
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
@@ -815,6 +824,7 @@ export default class extends Vue {
       p {
         margin-top: 20px;
         font-size: 18px;
+        line-height: 28px;
       }
     }
 
@@ -855,6 +865,12 @@ export default class extends Vue {
         color: $color-button-primary;
         font-size: 18px;
         font-weight: bold;
+      }
+
+      h4 {
+        font-size: 18px;
+        font-weight: bold;
+        color: #2C2C2C;
       }
 
       p {
