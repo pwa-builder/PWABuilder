@@ -843,9 +843,10 @@ p {
       font-weight: bold;
       display: flex;
       justify-content: space-between;
+      color: #3c3c3c;
 
       .scoreSubText {
-        color: grey;
+        color: #8A8A8A;
         font-size: 12px;
         width: 32px;
         text-align: center;
