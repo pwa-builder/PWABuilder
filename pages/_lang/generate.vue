@@ -830,7 +830,6 @@ export default class extends Vue {
 
     #dataSection {
       padding-top: 40px;
-      padding-right: 100px;
       padding-left: 164px;
       width: 642px;
 
@@ -844,18 +843,25 @@ export default class extends Vue {
         margin-bottom: 2em;
         justify-content: space-between;
         width: 340px;
+        background: #E2E2E2;
+        border-radius: 22px;
 
         button {
-          background: $color-button-primary-purple-variant;
+          background: none;
           border: none;
           font-weight: bold;
           font-size: 14px;
-          color: white;
+          color: #8A8A8A;
           padding-top: 6px;
           padding-bottom: 7px;
           border-radius: 20px;
           width: 92px;
           height: 32px;
+        }
+
+        .active {
+          background: $color-button-primary-purple-variant;
+          color: white;
         }
       }
     }
@@ -871,6 +877,7 @@ export default class extends Vue {
         font-size: 18px;
         font-weight: bold;
         color: #2C2C2C;
+        padding-top: 30px;
       }
 
       p {
@@ -888,6 +895,7 @@ export default class extends Vue {
       display: flex;
       justify-content: center;
       margin-bottom: 62px;
+      padding-left: 100px;
 
       #doneButton {
         background: $color-button-primary-purple-variant;

@@ -42,7 +42,6 @@
   }
 
   &-field {
-    margin-bottom: 1em;
     width: 100%;
 
     &--padded {
@@ -73,7 +72,8 @@
   &-input,
   &-textarea {
     border-width: 0 0 1px 0;
-    font-size: 14px;
+    font-size: 18px;
+    border-color: #f4f4f4;
     line-height: 19px;
     font-family: "Segoe UI";
     background-color: transparent;
