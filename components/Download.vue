@@ -61,14 +61,14 @@ export default class extends Vue {
     this.message$ = this.message;
   }
 
-  public async buildArchive(/*platform: string, parameters: string[]*/): Promise<void> {
-    /*if (!this.isReady) {
+  public async buildArchive(platform: string, parameters: string[]): Promise<void> {
+    if (!this.isReady) {
       return;
-    }*/
+    }
 
     this.isReady = false;
 
-    /*try {
+    try {
       await this.build({platform: platform, options: parameters});
       if (this.archiveLink) {
         window.location.href = this.archiveLink;
@@ -78,7 +78,7 @@ export default class extends Vue {
       setTimeout(() => this.isReady = true, 3000);
     } catch (e) {
       this.message$ = this.$t('publish.try_again') as string;
-    }*/
+    }
   }
 }
 </script>

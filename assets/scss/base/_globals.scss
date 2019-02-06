@@ -6,6 +6,7 @@ html,
 body,
 input {
   $font-size: 18px;
+  color: #3c3c3c;
 
   font-family: "Segoe UI";
   font-size: $font-size;
@@ -28,6 +29,11 @@ input::placeholder {
 
 html {
   overflow-x: hidden;
+}
+
+button {
+  cursor: pointer;
+  outline: none;
 }
 
 h1,
