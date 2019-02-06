@@ -105,7 +105,7 @@
           <p>Add that special something to supercharge your PWA. Consider connecting your website with these API's to enable magical cross-platform experiences.</p>
 
           <div id="featureActionsBlock">
-            <button @click="clearSelected()" id="clearButton">clear</button>
+            <button @click="clearSelected()" id="clearButton">Clear</button>
             <nuxt-link id="doneButton" to="/reportCard">Done</nuxt-link>
           </div>
         </div>
