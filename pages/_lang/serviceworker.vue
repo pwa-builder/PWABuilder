@@ -380,11 +380,13 @@ export default class extends Vue {
         font-size: 36px;
         font-weight: bold;
         color: black;
+        width: 376px
       }
 
       p {
         margin-top: 20px;
         font-size: 18px;
+        width: 376px;
       }
     }
 
@@ -395,6 +397,7 @@ export default class extends Vue {
       .inputContainer {
         margin-top: 20px;
         cursor: pointer;
+        width: 376px;
 
         .swDesc {
           font-size: 14px;
