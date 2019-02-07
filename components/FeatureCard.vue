@@ -62,6 +62,7 @@ export default class extends Vue {
     width: 277px;
     flex: 2;
     font-size: 14px;
+    line-height: 20px;
   }
 
   #featureCardActionsBlock {

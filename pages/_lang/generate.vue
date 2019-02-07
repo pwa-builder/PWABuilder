@@ -823,12 +823,14 @@ export default class extends Vue {
         font-size: 32px;
         font-weight: bold;
         color: black;
+        width: 376px;
       }
 
       p {
         margin-top: 20px;
         font-size: 18px;
         line-height: 28px;
+        width: 376px;
       }
     }
 
@@ -840,13 +842,14 @@ export default class extends Vue {
       #dataButtonsBlock {
         display: flex;
         justify-content: center;
+        padding-right: 6em;
       }
 
       #dataButtons {
         display: flex;
         margin-bottom: 2em;
         justify-content: space-between;
-        width: 340px;
+        width: 292px;
         background: #E2E2E2;
         border-radius: 22px;
 

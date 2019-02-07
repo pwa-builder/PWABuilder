@@ -295,6 +295,7 @@ Vue.prototype.$awa = function(config) {
       font-size: 18px;
       margin-bottom: 20px;
       width: 376px;
+      text-align: left;
     }
 
     #moreInfoButton {
@@ -351,7 +352,7 @@ Vue.prototype.$awa = function(config) {
       border: none;
       width: 24em;
       border-bottom: solid 1px rgba(60, 60, 60, 0.3);
-      margin-right: 1em;
+      margin-right: 0.3em;
       margin-top: 20px;
       outline: none;
     }

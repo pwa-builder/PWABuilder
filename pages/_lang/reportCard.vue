@@ -670,6 +670,7 @@ p {
     #reportCardHeader {
       font-weight: bold;
       font-size: 36px;
+      width: 376px;
     }
 
     #reportCardInfo {
@@ -762,7 +763,7 @@ p {
   padding-left: 6.4em;
   padding-right: 8em;
   position: relative;
-  bottom: 3em;
+  bottom: 1em;
 }
 
 #cats {
@@ -855,6 +856,11 @@ p {
     }
   }
 }
+
+.l-generator-field {
+  width: 376px;
+}
+
 
 @media (max-width: 1300px) {
   #cats {
