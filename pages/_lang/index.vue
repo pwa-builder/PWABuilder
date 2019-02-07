@@ -275,7 +275,7 @@ Vue.prototype.$awa = function(config) {
   }
 
   #introContainer {
-    padding-right: 96px;
+    padding-right: 100px;
     padding-left: 164px;
     display: flex;
     flex-direction: column;
@@ -287,12 +287,15 @@ Vue.prototype.$awa = function(config) {
       font-size: 36px;
       color: black;
       font-weight: bold;
+      width: 376px;
     }
 
     p {
       margin-top: 30px;
       font-size: 18px;
       margin-bottom: 20px;
+      width: 376px;
+      text-align: left;
     }
 
     #moreInfoButton {
@@ -307,7 +310,7 @@ Vue.prototype.$awa = function(config) {
   }
 
   #formContainer {
-    width: 100%;
+    width: 376px;
 
     #expertModeBlock {
       display: flex;
@@ -333,6 +336,7 @@ Vue.prototype.$awa = function(config) {
       p {
         margin-top: 9px;
         font-size: 14px;
+        text-align: center;
       }
     }
 
@@ -348,7 +352,7 @@ Vue.prototype.$awa = function(config) {
       border: none;
       width: 24em;
       border-bottom: solid 1px rgba(60, 60, 60, 0.3);
-      margin-right: 1em;
+      margin-right: 0.3em;
       margin-top: 20px;
       outline: none;
     }

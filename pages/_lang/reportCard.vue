@@ -68,7 +68,7 @@
             </span>
           </div>
 
-          <ul v-if="manifest">
+          <ul v-if="manifest && !noManifest">
             <li v-bind:class="{ good: manifest }">
               <span>Web Manifest properly attached</span>
               
@@ -142,7 +142,7 @@
               </span>
             </li>
           </ul>
-          <ul v-else>
+          <ul v-if="!manifest && !noManifest">
             <li>
               <span class="skeletonSpan"></span>
             </li>
@@ -157,9 +157,12 @@
             </li>
           </ul>
 
+          <div id="noSWP" v-if="noManifest">No Manifest found, we will generate one for you</div>
+
           <!--<button>Edit</button>-->
           <div class="editDiv">
-            <nuxt-link class="editButton" to="generate">Edit Manifest</nuxt-link>
+            <nuxt-link v-if="!noManifest" class="editButton" to="generate">Edit Manifest</nuxt-link>
+            <nuxt-link v-if="noManifest" class="editButton" to="generate">See Generated Manifest</nuxt-link>
           </div>
         </section>
 
@@ -356,6 +359,8 @@ export default class extends Vue {
   serviceWorkerData: any = null;
   noServiceWorker = false;
 
+  noManifest = false;
+
   abortController: AbortController;
 
   public async created(): Promise<void> {
@@ -402,10 +407,20 @@ export default class extends Vue {
 
   private lookAtManifest(): Promise<void> {
     return new Promise(async resolve => {
-      await this.getManifestInformation();
+      let data = await this.getManifestInformation();
+      console.log(data);
 
       console.log("manifestInfo", this.manifest);
-      if (this.manifest) {
+
+      if (this.manifest.generated === true) {
+        this.manifestScore = 0;
+        this.manifestAnalyzing = false;
+        this.calcGrade();
+        this.noManifest = true;
+        return;
+      }
+
+      if (this.manifest.generated === 'undefined') {
         this.manifestScore = this.manifestScore + 50;
       }
 
@@ -671,6 +686,7 @@ p {
     #reportCardHeader {
       font-weight: bold;
       font-size: 36px;
+      width: 376px;
     }
 
     #reportCardInfo {
@@ -763,7 +779,7 @@ p {
   padding-left: 6.4em;
   padding-right: 8em;
   position: relative;
-  bottom: 3em;
+  bottom: 1em;
 }
 
 #cats {
@@ -856,6 +872,11 @@ p {
     }
   }
 }
+
+.l-generator-field {
+  width: 376px;
+}
+
 
 @media (max-width: 1300px) {
   #cats {

@@ -200,7 +200,7 @@ Vue.prototype.$awa = function(config) {
       padding-bottom: 9px;
       width: 6em;
       margin-right: 12px;
-      background: $color-button-primary-purple-variant;
+      background: $color-brand-secondary;
       color: white;
       display: flex;
       justify-content: center;

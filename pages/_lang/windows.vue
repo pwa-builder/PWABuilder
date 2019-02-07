@@ -521,6 +521,7 @@ header {
     flex: 1;
     padding-left: 164px;
     padding-right: 164px;
+    padding-top: 40px;
 
     #featurePageHeader {
       font-size: 32px;
@@ -530,10 +531,13 @@ header {
     p {
       font-size: 18px;
       width: 376px;
+      padding-bottom: 30px;
+      margin: 0;
     }
 
     #featureActionsBlock {
       display: flex;
+      padding-bottom: 30px;
 
       #clearButton {
         width: 130px;
@@ -598,7 +602,8 @@ header {
   padding-left: 164px;
   padding-right: 164px;
   margin-top: 60px;
-
+  margin-bottom: 60px;
+  
   .fakeCard {
     display: flex;
     justify-content: center;
