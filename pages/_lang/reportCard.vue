@@ -297,10 +297,11 @@
         <section class="catSection">
           <h2>Extras</h2>
 
-          <p id="extrasP">
-            Add extra features to your PWA to enable
-            extra functionality!
-          </p>
+          <ul>
+            <li id="extrasP">
+            Your PWA should look, feel, and work like an application. If you don't already have features like authentication, personalization, or platform integrations, check out on "bonus" Extras!     
+            </li>
+          </ul>
 
           <div class="editDiv">
             <nuxt-link to="windows" class="editButton">Add More</nuxt-link>
@@ -346,7 +347,7 @@ export default class extends Vue {
   swScore = 0;
   manifestScore = 0;
   securityScore = 0;
-  overallGrade = "i";
+  overallGrade = "--";
 
   swAnalyzing = false;
   manifestAnalyzing = false;
@@ -429,7 +430,7 @@ export default class extends Vue {
       }
 
       this.manifestAnalyzing = false;
-
+      
       this.calcGrade();
 
       resolve();
