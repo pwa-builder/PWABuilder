@@ -11,7 +11,7 @@
 
       <ul>
         <li v-for="error in errors">
-          <span>Line number {{ error.startLineNumber}}:</span>
+          <span>Line #{{ error.startLineNumber}}:</span>
           {{ error.message }}
         </li>
       </ul>
@@ -280,6 +280,7 @@ export default class extends Vue {
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    border-top: solid 1px #C5C5C5;
 
     #errorsButton {
       background: $color-brand-warning;
@@ -297,13 +298,15 @@ export default class extends Vue {
 
     button {
       border: none;
-      margin: 8px;
+      margin: 10px;
       border-radius: 20px;
       width: 97px;
       font-size: 12px;
       font-weight: bold;
       padding-top: 8px;
       padding-bottom: 8px;
+      padding-left: 10px;
+      padding-right: 10px;
     }
   }
 
@@ -317,7 +320,7 @@ export default class extends Vue {
     width: 49.4%;
     right: 0;
     bottom: 2.2em;
-    border-top: 1px solid black;
+    border-top: solid 1px #C5C5C5;
 
     #errorButtonDiv {
       display: flex;
@@ -340,11 +343,11 @@ export default class extends Vue {
       border-radius: 20px;
       color: white;
       font-weight: bold;
-      font-size: 12px;
+      font-size: 18px;
       padding-top: 8px;
       padding-bottom: 8px;
-      padding-left: 21px;
-      padding-right: 21px;
+      padding-left: 20px;
+      padding-right: 20px;
     }
 
     ul {

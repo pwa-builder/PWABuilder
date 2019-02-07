@@ -5,12 +5,12 @@
 
     <div id="featureCardActionsBlock">
       <button
-        v-if="!showRemoveButton || !selected"
+        v-if="!showRemoveButton"
         @click="onClickSample(sample)"
         id="featureCardAddButton"
       >View</button>
       <span
-        v-if="showRemoveButton && selected"
+        v-if="showRemoveButton"
         @click="onClickRemoveSample(sample)"
         id="featureCardRemoveButton"
       >Remove</span>
@@ -30,18 +30,14 @@ export default class extends Vue {
   @Prop({}) sample: windowsStore.Sample;
   @Prop({}) showRemoveButton: boolean;
 
-  selected = false;
-
   onClickSample(sample: windowsStore.Sample) {
     this.$emit("selected", sample);
 
-    this.selected = true;
+    // this.selected = true;
   }
 
   onClickRemoveSample(sample: windowsStore.Sample) {
     this.$emit("removed", sample);
-
-    this.selected = false;
   }
 }
 </script>
