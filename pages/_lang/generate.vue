@@ -626,8 +626,9 @@ export default class extends Vue {
 
   public onChangeSimpleInput(): void {
     try {
+      console.log(this.manifest$)
       this.updateManifest(this.manifest$);
-      this.manifest$ = this.manifest;
+      // this.manifest$ = this.manifest;
     } catch (e) {
       this.error = e;
     }
@@ -758,7 +759,10 @@ export default class extends Vue {
 
   public handleEditorValue(ev) {
     console.log(ev);
-    this.manifest$ = ev;
+    console.log(this.basicManifest);
+    if (this.basicManifest !== false) {
+      this.manifest$ = ev;
+    }
   }
 
   public showBasicsSection() {
