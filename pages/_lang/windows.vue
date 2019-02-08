@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <!--<section>
       <div  class="l-generator-step">
       <div class="mastHead">
           <h2>{{ $t('windows.title') }}</h2>
@@ -88,40 +88,169 @@
         {{$t("modal.goBack")}}
       </a>
       </Modal>
-  </section>
+  </section>-->
+  <main>
+    <ScoreHeader></ScoreHeader>
+
+    <img id="featuresBG" src="~/assets/images/features_bg.svg">
+
+    <div id="sideBySide">
+      <section id="headerSection">
+        <div>
+          <!--<h1 id="featurePageHeader">{{ $t('windows.title') }}</h1>
+
+          <p id="featurePageInfo">{{ $t('windows.summary') }}</p>-->
+          <h1 id="featurePageHeader">Extras</h1>
+
+          <p>Add that special something to supercharge your PWA. Consider connecting your website with these API's to enable magical cross-platform experiences.</p>
+
+          <div id="featureActionsBlock">
+            <button @click="clearSelected()" id="clearButton">Clear</button>
+            <nuxt-link id="doneButton" to="/reportCard">Done</nuxt-link>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section id="featureListBlock">
+      <!--<div id="featureCard" v-for="sample in samples" :key="sample.id">
+        <h4>{{sample.title}}</h4>
+        <p>{{ sample.description }}</p>
+
+        <div id="featureCardActionsBlock">
+          <button @click="onClickSample(sample)" id="featureCardAddButton">Add</button>
+        </div>
+      </div>-->
+      <FeatureCard
+        v-if="samples.length > 0 && !selectedSamples.includes(sample)"
+        v-for="sample in samples"
+        :sample="sample"
+        :key="sample.id"
+        v-on:selected="onSelected"
+        v-on:removed="onRemoved"
+        :showRemoveButton="false"
+      ></FeatureCard>
+
+      <FeatureCard
+        v-if="selectedSamples.length > 0"
+        v-for="sample in selectedSamples"
+        :sample="sample"
+        :key="sample.id"
+        :showRemoveButton="true"
+      ></FeatureCard>
+    </section>
+
+    <section id="fakeCardBlock" v-if="samples.length === 0">
+      <div class="fakeCard">
+        <Loading active></Loading>
+      </div>
+      <div class="fakeCard">
+        <Loading active></Loading>
+      </div>
+      <div class="fakeCard">
+        <Loading active></Loading>
+      </div>
+    </section>
+
+    <Modal
+      v-on:modalOpened="modalOpened()"
+      v-on:modalClosed="modalClosed()"
+      v-on:modalSubmit="modalSelected()"
+      :showSubmitButton="false"
+      title="Add Feature"
+      ref="addFeatureModal"
+    >
+      <div class="feature-viewer">
+        <div class="code-samples">
+          <div id="codeHeader">Usage Example</div>
+          <div class="code-top">
+            <CodeViewer
+              code-type="javascript"
+              :size="viewerSize"
+              :code="loadCode()"
+              v-on:editorValue="updateCode($event)"
+              v-if="sample"
+              :showToolbar="true"
+              :title="$t('windows.codeTitle')"
+            ></CodeViewer>
+          </div>
+          <div class="code-bottom">
+            <div id="bottomCodeHeader">Snippit</div>
+            <CodeViewer
+              code-type="javascript"
+              :size="viewerSize"
+              :code="sample.source"
+              v-if="sample"
+              :showToolbar="true"
+              :title="$t('windows.sourceTitle')"
+            />
+          </div>
+        </div>
+      </div>
+
+      <button
+        slot="extraButton"
+        id="addBundleButton"
+        v-on:click="addBundle()"
+      >{{ $t("windows.add") }}</button>
+
+      <p v-if="sample" slot="extraP" id="sampleDescP">{{sample.description}}</p>
+
+      <div v-if="sample" class="feature-content" slot="featureContentSlot">
+        <div class="side_panel">
+          <div class="properties" v-if="sample">
+            <h1>Required Properties</h1>
+
+            <div v-for="prop in sample.parms" :key="prop.id">
+              <h3>{{prop.name}}</h3>
+              <p class="propDescription" :id="prop.id">{{prop.description}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Modal>
+  </main>
 </template>
 
 <script lang='ts'>
-import Vue from 'vue';
-import Component from 'nuxt-class-component';
-import { Action, State, namespace } from 'vuex-class';
+import Vue from "vue";
+import Component from "nuxt-class-component";
+import { Action, State, namespace } from "vuex-class";
 
-import CodeViewer from '~/components/CodeViewer.vue';
-import WindowsMenu from '~/components/WindowsMenu.vue';
-import GoodPWA from '~/components/GoodPWA.vue';
-import Modal from '~/components/Modal.vue';
-import Loading from '~/components/Loading.vue';
+/*import CodeViewer from "~/components/CodeViewer.vue";
+import WindowsMenu from "~/components/WindowsMenu.vue";
+import GoodPWA from "~/components/GoodPWA.vue";*/
+import Modal from "~/components/Modal.vue";
+import Loading from "~/components/Loading.vue";
+import FeatureCard from "~/components/FeatureCard.vue";
+import ScoreHeader from "~/components/ScoreHeader.vue";
+import CodeViewer from "~/components/CodeViewer.vue";
 
-import * as windowsStore from '~/store/modules/windows';
+import * as windowsStore from "~/store/modules/windows";
 
 const WindowsState = namespace(windowsStore.name, State);
 const WindowsAction = namespace(windowsStore.name, Action);
 
 @Component({
   components: {
-    CodeViewer,
+    /*CodeViewer,
     WindowsMenu,
-    GoodPWA,
+    GoodPWA,*/
     Modal,
-    Loading
+    Loading,
+    FeatureCard,
+    ScoreHeader,
+    CodeViewer
   }
 })
-
 export default class extends Vue {
   error: any;
   hasNative = false;
-  public viewerSize = '5rem';
-  public viewerSizeBottom = '55rem';
+  public viewerSize = "5rem";
+  public viewerSizeBottom = "55rem";
+  overallGrade: string | null = null;
+
+  currentPendingSample: windowsStore.Sample | null = null;
 
   selectedSamples: windowsStore.Sample[] = [];
   @WindowsState sample: windowsStore.Sample;
@@ -130,29 +259,87 @@ export default class extends Vue {
   @WindowsAction getSamples;
   @WindowsAction selectSample;
 
-  async created() {
+  async mounted() {
+    console.log(this.samples.length);
     await this.getSamples();
     console.log(this.samples);
+
+    const score = sessionStorage.getItem("overallGrade");
+    console.log(score);
+    if (score) {
+      this.overallGrade = score;
+    }
   }
 
   public onClickHideGBB(): void {
-    (this.$refs.nextStepModal as Modal).hide();
-
+    // (this.$refs.nextStepModal as Modal).hide();
   }
 
   async destroyed() {
-    (this.$root.$el.closest('body') as HTMLBodyElement).classList.remove('modal-screen');
-  }
-  
-  public onClickShowGBB(): void {
-    (this.$refs.nextStepModal as Modal).show();
+    (this.$root.$el.closest("body") as HTMLBodyElement).classList.remove(
+      "modal-screen"
+    );
   }
 
-  async onClickSample(sample: windowsStore.Sample) {
+  /*public onClickShowGBB(): void {
+    // (this.$refs.nextStepModal as Modal).show();
+  }*/
+
+  // @ts-ignore TS6133 onSelected
+  public async onSelected(sample: windowsStore.Sample) {
     try {
       await this.selectSample(sample);
+      // this.selectedSamples.push(sample);
+      this.currentPendingSample = sample;
 
       (this.$refs.addFeatureModal as Modal).show();
+    } catch (e) {
+      this.error = e;
+    }
+  }
+
+  public async modalSelected() {
+    try {
+      console.log("sample selected");
+      await this.selectSample(this.currentPendingSample);
+      this.selectedSamples.push(this
+        .currentPendingSample as windowsStore.Sample);
+
+      // force a re-render
+      this.selectedSamples = this.selectedSamples;
+      console.log(this.selectedSamples);
+    } catch (e) {
+      this.error = e;
+    }
+  }
+
+  public clearSelected() {
+    this.selectedSamples = [];
+    this.currentPendingSample = null;
+  }
+
+  // @ts-ignore TS6133 onSelected
+  public onRemoved(sample: windowsStore.Sample) {
+    if (this.selectedSamples.indexOf(sample) != -1) {
+      sample.usercode = null;
+
+      // We're unchecking the last sample
+      if (this.selectedSamples.length == 1) {
+        this.hasNative = false;
+      }
+    } else {
+      // We're adding a sample via checkbox
+      this.hasNative = true;
+    }
+  }
+
+  /*async onClickSample(sample: windowsStore.Sample) {
+    try {
+      console.log(sample);
+      await this.selectSample(sample);
+      this.selectedSamples.push(sample);
+
+      //  (this.$refs.addFeatureModal as Modal).show();
 
       // wire up to GBB component
       // user has selected a native feature to add
@@ -175,7 +362,7 @@ export default class extends Vue {
       // We're adding a sample via checkbox
       this.hasNative = true;
     }
-  }
+  }*/
 
   loadCode() {
     let index = this.selectedSamples.indexOf(this.sample);
@@ -192,13 +379,35 @@ export default class extends Vue {
   }
 
   async addBundle() {
-    if (this.selectedSamples.indexOf(this.sample) == -1) {
+    /*if (this.selectedSamples.indexOf(this.sample) == -1) {
       this.selectedSamples.push(this.sample);
     }
 
     this.hasNative = true;
-     this.modalClosed();  
-    (this.$refs.addFeatureModal as Modal).hide();
+    this.modalClosed();
+    (this.$refs.addFeatureModal as Modal).hide();*/
+
+    try {
+      console.log("sample selected", this.currentPendingSample);
+      await this.selectSample(this.currentPendingSample);
+
+      if (this.selectedSamples.indexOf(this.sample) == -1) {
+        console.log('pushing', this.currentPendingSample);
+        this.selectedSamples.push(this
+          .currentPendingSample as windowsStore.Sample);
+        console.log('selectedSamples', this.selectedSamples);
+      }
+
+
+
+      this.hasNative = true;
+      this.modalClosed();
+      (this.$refs.addFeatureModal as Modal).hide();
+    } catch (e) {
+      this.modalClosed();
+      (this.$refs.addFeatureModal as Modal).hide();
+      this.error = e;
+    }
   }
 
   async download(all = false) {
@@ -206,17 +415,17 @@ export default class extends Vue {
     let items = Array<any>();
     let xhttp = new XMLHttpRequest();
 
-    xhttp.onreadystatechange = function () {
-        if (xhttp.readyState === 4 && xhttp.status === 200) {
-            let fileName = all ? 'codebundle.zip' : 'sample.zip';
-            that.saveAs(fileName, xhttp);
-        }
+    xhttp.onreadystatechange = function() {
+      if (xhttp.readyState === 4 && xhttp.status === 200) {
+        let fileName = all ? "codebundle.zip" : "sample.zip";
+        that.saveAs(fileName, xhttp);
+      }
     };
 
-    xhttp.open('POST', `${process.env.apiUrl2}/api/winrt/generate`, true);
-    xhttp.setRequestHeader('Content-Type', 'application/json');
-    xhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
-    xhttp.responseType = 'blob';
+    xhttp.open("POST", `${process.env.apiUrl2}/api/winrt/generate`, true);
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.setRequestHeader("Access-Control-Allow-Origin", "*");
+    xhttp.responseType = "blob";
 
     if (all) {
       for (let i = 0; i < this.selectedSamples.length; i++) {
@@ -235,288 +444,273 @@ export default class extends Vue {
 
     for (let i = 0; i < items.length; i++) {
       let item = items[i];
-      
+
       let newItem = {
-          id: item.id,
-          url: item.url,
-          hash: item.hash,
-          parms: Array<any>()
+        id: item.id,
+        url: item.url,
+        hash: item.hash,
+        parms: Array<any>()
       };
 
       for (let j = 0; j < item.parms.length; j++) {
         newItem.parms.push({
-            id: item.parms[j].id,
-            defaultData: item.parms[j].default
+          id: item.parms[j].id,
+          defaultData: item.parms[j].default
         });
       }
 
       results.push(newItem);
     }
 
-    return {controls: results};
+    return { controls: results };
   }
 
   saveAs(fileName, xhttp) {
-    let a = document.createElement('a');
+    let a = document.createElement("a");
     a.href = window.URL.createObjectURL(xhttp.response);
     a.download = fileName;
-    a.style.display = 'none';
+    a.style.display = "none";
     document.body.appendChild(a);
     a.click();
   }
 
   public modalOpened() {
     window.scrollTo(0, 0);
-    (this.$root.$el.closest('body') as HTMLBodyElement).classList.add('modal-screen'); 
+    (this.$root.$el.closest("body") as HTMLBodyElement).classList.add(
+      "modal-screen"
+    );
   }
 
   public modalClosed() {
-    (this.$root.$el.closest('body') as HTMLBodyElement).classList.remove('modal-screen');    
+    (this.$root.$el.closest("body") as HTMLBodyElement).classList.remove(
+      "modal-screen"
+    );
   }
 }
 </script>
 
 <style lang="scss" scoped>
 /* stylelint-disable */
-@import '~assets/scss/base/variables';
+@import "~assets/scss/base/variables";
+@import "~assets/scss/base/animations";
 
-.code-samples {
+header {
+  display: flex;
+  align-items: center;
+  padding-left: 68px;
+  margin-top: 32px;
 
-  .code_viewer {
-    min-height:300px;
-    max-height: 700px;
-    margin-bottom: 100px;
-    margin-right: 68px;
+  #headerText {
+    font-size: 28px;
+    font-weight: normal;
   }
-  .bottomViewer {
-      min-height:  700px;
-      max-height: 900px;
-    }
-}
 
-#buttonsBlock {
-  display: flex;
-  justify-content: center;
-}
-
-#addBundleButton {
-  margin-right: 15px;
-}
-
-.propDescription {
-  color: initial;
-}
-
-#loadingCards {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
-
-  .skeletonLoadingCard {
-    height: 212px;
+  #logo {
     background: lightgrey;
-    width: 376px;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    margin-right: 12px;
+  }
+}
+
+#sideBySide {
+  display: flex;
+
+  #headerSection {
+    flex: 1;
+    padding-left: 164px;
+    padding-right: 164px;
+    padding-top: 40px;
+
+    #featurePageHeader {
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    p {
+      font-size: 18px;
+      width: 376px;
+      padding-bottom: 30px;
+      margin: 0;
+    }
+
+    #featureActionsBlock {
+      display: flex;
+      padding-bottom: 30px;
+
+      #clearButton {
+        width: 130px;
+        height: 44px;
+        border-radius: 22px;
+        border: none;
+        background: grey;
+        font-weight: bold;
+        font-size: 18px;
+        padding-top: 9px;
+        padding-bottom: 11px;
+        margin-top: 40px;
+        color: white;
+        background: $color-brand-secondary;
+        margin-right: 10px;
+      }
+
+      #doneButton {
+        width: 130px;
+        height: 44px;
+        border-radius: 22px;
+        border: none;
+        background: grey;
+        font-weight: bold;
+        font-size: 18px;
+        padding-top: 9px;
+        padding-bottom: 11px;
+        margin-top: 40px;
+        color: white;
+        background: $color-button-primary-purple-variant;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+  }
+
+  #scoreSection {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex: 1;
+
+    #scoreDiv {
+      height: 260px;
+      width: 280px;
+      background: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 92px;
+      font-weight: bold;
+      border-radius: 32px;
+    }
   }
 }
 
-.feature-viewer {
-  display: flex;
-  flex-direction: row;
-  justify-content: stretch;
-  width: 100%;
-  padding: 4em;
+#featureListBlock,
+#fakeCardBlock {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  padding-left: 164px;
+  padding-right: 164px;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  
+  .fakeCard {
+    display: flex;
+    justify-content: center;
+    height: 209px;
+    align-items: center;
+    font-size: 4em;
+    background: linear-gradient(-45deg, grey, lightgrey, white);
+  }
 }
 
 .code-samples {
   display: flex;
   flex-direction: column;
-  flex: 1;
-}
-
-.feature-content {
-  flex: 1;
-}
-
-.feature-container {
-  width: 376px;
-  margin: 24px;
-
-  input[type='button'] {
-    width: 0;
-    height: 0;
-    background: transparent;
-    font-size: 0;
-    border: none;
-    cursor: pointer;
-  }
-
-  input[type='checkbox'] {
-    width: 16px;
-    height: 16px;
-  }
-
-  h4 {
-    font-size: 18px;
-    line-height: 24px;
-  }
-  
-  .featureImage {
-    // width: 100%;
-    display: inline-block;
-    object-fit: cover;
-    width: 100%;
-    height: 212px;
-  }
-
-  .l-generator-description {
-    font-size: 14px;
-    line-height: 18px;
-    color: $color-brand-primary;
-  }
-
-}
-
-.download-text {
-  color: $color-brand-primary;
-  font-size: 14px;
-  margin-right: 68px;
-  text-align: right;
-
-  a, a:visited {
-    color: $color-brand-quartary;
-  }
-}
-
-.feature-layout {
-  display: flex;
+  height: 90vh;
   width: 100%;
-  flex-flow: wrap;
+  flex: 1;
 }
 
-
-/* Tabs */
-.tab_container {
-  margin: 0 100px;
-  position: absolute;
-  width: 90%;
-}
-
-.form_container {
-  display: flex;
-  flex-direction: row;
-}
-
-.code_viewer {
-  flex: 0 0 50%;
-}
-
-.side_panel {
-  flex: 0 0 50%;
-  margin-left: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.tile-table {
-  margin: 32px !important;
-}
-
-.tab_input,
-.tab_section {
-  clear: both;
-  display: none;
-  padding-top: 10px;
-}
-
-.tab_label {
-  background: #F0F0F0;
-  color: #757575;
-  cursor: pointer;
-  display: block;
-  float: left;
-  font-size: 18px;
-  font-weight: 700;
-  padding: 1.5em;
-  text-align: center;
-  text-decoration: none;
-  width: 30%;
-}
-
-#tab1:checked ~ #content1,
-#tab2:checked ~ #content2 {
-  background: #FFFFFF;
-  border-bottom: 2px solid #F0F0F0;
-  color: #999999;
-  display: block;
-  flex-wrap: wrap;
-  padding: 20px;
-}
-
-.tab_container .tab-content div {
-  -webkit-animation: fadeInScale .7s ease-in-out;
-  -moz-animation: fadeInScale .7s ease-in-out;
-  animation: fadeInScale .7s ease-in-out;
-}
-
-.tab_container .tab-content h3 {
-  text-align: center;
-}
-
-.tab_container [id^="tab"]:checked + label {
-  background: #FFFFFF;
-  box-shadow: inset 0 3px #00CCEE;
-}
-
-.tab_label .fa {
-  font-size: 1.3em;
-  margin: 0 .4em 0 0;
-}
-
-.tab_container [id^="tab"]:checked + label .fa {
-  color: #00CCEE;
+.code-top {
+  flex: 1;
 }
 
 .code-bottom {
+  flex: 1;
+}
+
+.properties {
+  margin-top: 30px;
+
+  h1 {
+    font-weight: bold;
+    font-size: 24px;
+    margin-bottom: 1.2em;
+  }
+
+  h3 {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 10px;
+    margin-top: 30px;
+  }
+
+  #sampleDescP {
+    margin-top: 20px;
+    margin-bottom: 30px;
+    font-size: 18px;
+  }
+
+  p {
+    font-size: 14px;
+    max-width: 376px;
+  }
+}
+
+#bottomCodeHeader {
+  background: lightgrey;
+  font-weight: bold;
+  padding: 1em;
+}
+
+#codeHeader {
+  background: lightgrey;
+  font-weight: bold;
+  padding: 1em;
+}
+
+#addBundleButton {
+  background: $color-button-primary-purple-variant;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+#featuresBG {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: -1;
+  height: 100vh;
+}
+
+.feature-viewer {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-top: 2px;
+  background: #f0f0f0;
+
+  #topTitle {
+    background: #f0f0f0;
+    font-weight: bold;
+    padding: 1em;
+    margin-left: 0px;
+  }
+
+  #bottomTitle {
+    background: #e2e2e2;
+    font-weight: bold;
+    padding: 1em;
+    margin-left: 0px;
+    margin-top: -24em;
+    z-index: 99;
+  }
+
   .code_viewer {
-    height: 38em;
-  }
-}
-
-/* Media query */
-@media only screen and (max-width: 930px) {
-  .tab_label span {
-    font-size: 14px;
-  }
-
-  .tab_label .fa {
-    font-size: 14px;
-  }
-}
-
-@media only screen and (max-width: 768px) {
-  .tab_label span {
-    display: none;
-  }
-
-  .tab_label .fa {
-    font-size: 16px;
-  }
-
-  .tab_container {
-    width: 88%;
-  }
-}
-</style>
-
-<style lang="scss" scoped>
-@import "~assets/scss/base/variables";
-
-.generate {
-  &-code {
-    margin-top: -2rem;
+    background: #f0f0f0;
   }
 }
 </style>

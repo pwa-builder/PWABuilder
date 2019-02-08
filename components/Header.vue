@@ -158,7 +158,7 @@ Vue.prototype.$awa = function (config) {
 
   #getStartedBlock {
     background: $color-brand;
-    color: white;
+    color: $color-brand-quintary;
     flex-grow: 1;
   }
 
@@ -189,7 +189,7 @@ Vue.prototype.$awa = function (config) {
   }
 
   #learnMoreButton {
-    background: white;
+    background: $color-brand-quintary;
     border: none;
     color: $color-brand;
     font-size: 20px;
@@ -199,9 +199,9 @@ Vue.prototype.$awa = function (config) {
   }
 
   #getStartedButton {
-    background: white;
+    background: $color-brand-quintary;
     border: none;
-    color: black;
+    color: $color-button-primary-purple-variant;
     float: right;
     font-size: 20px;
     height: 48px;
@@ -210,7 +210,7 @@ Vue.prototype.$awa = function (config) {
   }
 
   #getStartedInput {
-    background: white;
+    background: $color-brand-quintary;
     border: none;
     border-radius: 10px;
     color: #6A6A6A;
@@ -247,12 +247,12 @@ Vue.prototype.$awa = function (config) {
   #helpButton {
     background: transparent;
     border: none;
-    color: white;
+    color: $color-brand-quintary;
     margin-right: 89px;
   }
 
   #rightHeaderBlock {
-    color: white;
+    color: $color-brand-quintary;
     z-index: 99;
   }
 

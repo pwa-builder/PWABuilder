@@ -1,10 +1,10 @@
 <template>
-<div class="work-button" 
+<div
     :class="{'pwa-button--brand': isBrand, 'pwa-button--total_right': isRight}"
     @click="buildArchive(platform, parameters);  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/download/{platform}' });">
 
   <span v-if="isReady">{{ message$ }}</span>
-  <span v-if="!isReady">{{ $t('publish.building_package') }}
+  <span v-if="!isReady">
     <Loading :active="true" class="u-display-inline_block u-margin-left-sm" />
   </span>
 </div>
@@ -21,6 +21,14 @@ import * as publish from '~/store/modules/publish';
 
 const PublishState = namespace(publish.name, State);
 const PublishAction = namespace(publish.name, Action);
+
+declare var awa: any;
+
+Vue.prototype.$awa = function (config) { 
+  awa.ct.capturePageView(config);
+
+  return;
+};
 
 @Component({
   components: {

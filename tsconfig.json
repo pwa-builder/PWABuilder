@@ -10,6 +10,8 @@
     "experimentalDecorators": true,
     "noImplicitAny": false,
     "noImplicitThis": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "strictNullChecks": true,
     "removeComments": true,
     "suppressImplicitAnyIndexErrors": true,
@@ -28,5 +30,6 @@
       "~/utils/*": ["./utils/*"],
       "~/test/*": ["./test/*"]
     }
-  }
+  },
+  "exclude": ["./environments/*"]
 }

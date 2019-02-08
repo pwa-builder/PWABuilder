@@ -51,7 +51,8 @@ describe('store generator helpers', () => {
             const _global = global as any;
             const size = 10;
     
-            _global.document = { 
+            _global.document = {
+                // @ts-ignore TS6133 src
                 createElement: (src: string) => new MockImage(size, size)
             };
 

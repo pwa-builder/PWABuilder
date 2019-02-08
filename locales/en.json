@@ -10,7 +10,7 @@
   },
   "home": {
     "mast_title":"Quickly and easily turn your website into an app!",
-    "mast_tag": "It's super easy to get started. Just enter the URL of your website below!",
+    "mast_tag": "It's super easy to get started. Just enter the URL of your website below.",
     "empty_tag":"With Progressive Web Apps (or simply PWAs) you don't have to decide between using cross-platform web technologies and providing your users with a native app-like experience.",
     "how_works_title": "What is a PWA?",
     "how_works_body": "A Progressive Web App (or simply PWA) is a web site that acts, looks, and feels like a native app. Your web app runs in a browser just like it does today, but on platforms that support it, the app can be installed on the device and have the behavior and privlages of a native app.",
@@ -39,12 +39,12 @@
     "subtitle": "Provide your URL and we'll help fill in the gaps if there are any.",
     "url": "URL",
     "placeholder_url": "Enter a URL",
-    "start": "Get started",
+    "start": "Start",
     "skip": "Skip to Build Service Worker",
     "skip_description": "If you already have the Manifest and want to download the service worker source code you can skip the first step."
   },
   "generate": {
-    "subtitle": "Here's the Manifest",
+    "subtitle": "Details we picked up from your site",
     "instructions": "Take a look and add or update anything missing. Hit \"I'm done\" when you're done, and for more tips just tap the 'Guidance' tab.",
     "name": "Name",
     "short_name": "Short Name",
@@ -77,7 +77,7 @@
     "w3c_manifest": "W3C Manifest"
   },
   "serviceworker": {
-    "title": "Pre-made Service Workers",
+    "title": "Service Workers",
     "summary": "Service workers can make your site work offline, run faster, or both. Choose the functionality from our service workers below.",
     "download": "Download service worker",
     "building": "Building package...",
@@ -142,7 +142,7 @@
     "subtitle": "Create your own Win10 app"
   },
   "windows": {
-    "add": "Add to Bundle",
+    "add": "Add",
     "download_bundle": "Download code Bundle",
     "download_sample": "Download sample",
     "title": "Be the Best PWA you can be with advanced APIs",

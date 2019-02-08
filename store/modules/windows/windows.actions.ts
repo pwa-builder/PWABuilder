@@ -79,7 +79,7 @@ export const actions: Actions<State, RootState> = {
   },
 
   async selectSample({ commit }, sample: Sample): Promise<void> {
-    return new Promise<void>(async (resolve, reject) => {
+    return new Promise<void>(async (resolve) => {
 
       await this.$axios.$get(sample.url).then(res => {
         let source = res.replace(/(\/\*[\s\S]*?\*\/|([^:/]|^)\/\/.*$)/g, '').trim();

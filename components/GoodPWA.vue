@@ -224,24 +224,11 @@ export default class extends Vue {
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
 
-.publish {
-  display: none;
-}
-
 #wrapper {
   padding-bottom: 48px;
   padding-left: 138px;
   padding-right: 138px;
   padding-top: 0;
-}
-
-
-.rateContainer {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  height: 165px;
-  justify-content: flex-end;
 }
 
 .goodBetterBar {
@@ -251,7 +238,7 @@ export default class extends Vue {
   width: 100%;
 
   h3 {
-    color: $color-brand-primary;
+    color: $color-button-primary-purple-variant;
     font-size: 32px;
     font-weight: 400;
   }

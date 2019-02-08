@@ -1,7 +1,7 @@
 import { ActionTree, MutationTree, GetterTree, ActionContext } from 'vuex';
 import { RootState } from 'store';
 
-const apiUrl = `${process.env.apiUrl}/manifests`;
+const apiUrl = `https://manifold-api-pre.azurewebsites.net/manifests`;
 const platforms = {
     web: 'web',
     windows10: 'windows10',
@@ -49,7 +49,7 @@ export interface Actions<S, R> extends ActionTree<S, R> {
 
 export const actions: Actions<State, RootState> = {
 
-    resetAppData({ commit, dispatch }): void {
+    resetAppData({ dispatch }): void {
         dispatch('generator/resetStates', undefined, { root: true });
         dispatch('serviceworker/resetStates', undefined, { root: true });
     },
@@ -81,10 +81,12 @@ export const actions: Actions<State, RootState> = {
 
             try {
                 const options = { platforms: platformsList, dirSuffix: params.platform, parameters: params.options };
+                console.log(options);
                 const result = await this.$axios.$post(`${apiUrl}/${manifestId}/build?ids=${serviceworker}`, options);
                 commit(types.UPDATE_ARCHIVELINK, result.archive);
                 resolve();
             } catch (e) {
+              console.log(e);
                 let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
                 reject(errorMessage);
             }

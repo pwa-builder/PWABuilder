@@ -15,9 +15,6 @@ export default class extends Vue {
 
 <style lang="scss" scoped>
 /* stylelint-disable */
-
-@import '~assets/scss/base/variables';
-
 header {
  height: 0
 }

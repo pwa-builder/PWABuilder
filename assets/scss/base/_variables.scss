@@ -1,11 +1,16 @@
-// Colors
+/* stylelint-disable*/
 
 //new colors for brand
-$color-brand-primary: black;
-$color-brand-secondary: red;
-$color-brand-tertiary: grey;
-$color-brand-quartary:blue;
+$color-brand-secondary: #45ADA8;
+$color-button-primary: #9337D8;
+$color-brand-tertiary: #3C3C3C;
+$color-brand-quartary:#F49C45;
 $color-brand-quintary:white;
+$color-brand-warning: #D95050;
+
+// $color-button-primary-green-variant: #21ABA5;
+$color-button-primary-purple-variant: linear-gradient(to right, #703999, #9337D8);
+// $color-button-primary-blue-variant: linear-gradient(to right, #4B76CC, #04BEFE);;
 
 // Animations
 $animation-speed-default: .35s;

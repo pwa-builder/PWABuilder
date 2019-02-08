@@ -5,8 +5,8 @@
 html,
 body,
 input {
-  color: $color-brand-primary;
-  $font-size: 16px;
+  $font-size: 18px;
+  color: #3c3c3c;
 
   font-family: "Segoe UI";
   font-size: $font-size;
@@ -22,13 +22,18 @@ input {
   }
 }
 
+input::placeholder {
+  color: #3C3C3C;
+  opacity: 0.4;
+}
+
 html {
-  background: $color-brand-tertiary;
   overflow-x: hidden;
 }
 
-.stop-scroll {
-  overflow: hidden;
+button {
+  cursor: pointer;
+  outline: none;
 }
 
 h1,
@@ -42,31 +47,26 @@ h4 {
   margin-block-start: 0;
 }
 
-/*mast head css */
-
-
-.mastHead {
-  margin: 0 0 8em 68px;
-  //width: 568px;
-  color: $color-brand-quintary;
-
-  p {
-    margin: 4px 0;
-    font-size: 22px;
-    line-height: 32px;
-  }
-
-  h2 {
-    font-size: 36px;
-    line-height: 42px;
-  }
-
+h1 {
+  margin-bottom: 30px;
 }
 
+h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+}
 
-/*modals */
-.modal-color{
-  display: none;
+h3 {
+  color: $color-button-primary-purple-variant;
+}
+
+p {
+  font-size: 18px;
+  line-height: 28px;
+}
+
+a {
+  color: $color-button-primary-purple-variant;
 }
 
 .modal-screen {
@@ -93,7 +93,7 @@ h4 {
     bottom: 0;
     width: 100%;
     height: 100%;
-    background: rgba($color-brand-quartary, .25);
+    // background: white;
     z-index: 100;
     left:0;
     right: 0;
@@ -123,5 +123,19 @@ h4 {
       padding: 0 1em;
     }
   }
+}
+
+/* Buttons */
+.work-button {
+  color: $color-brand-quintary;
+  background-color: $color-brand-secondary;
+  background-size: 240px 41px;
+  background-repeat: no-repeat;
+  display: inline-block;
+  width: 240px;
+  line-height: 41px;
+  text-align: center;
+  font-size: 16px;
+  border: none;
 }
 

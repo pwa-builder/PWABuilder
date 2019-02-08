@@ -1,105 +1,110 @@
   <script lang="ts">
-  import Vue from 'vue';
-  import Component from 'nuxt-class-component';
+import Vue from "vue";
+import Component from "nuxt-class-component";
 
-  import Toolbar from '~/components/Toolbar.vue';
+import Toolbar from "~/components/Toolbar.vue";
 
-  @Component({
-    components: {
-      Toolbar
-    }
-  })
-  export default class extends Vue {
-   
-    public seen = false;
-
-    public mounted(): void {
-      const savedValue = localStorage.getItem('PWABuilderGDPR');
-      if (JSON.parse((savedValue as string)) !== true) {
-        this.seen = true;
-        localStorage.setItem('PWABuilderGDPR', JSON.stringify(true));
-      }
-
-      this.handleUrl();
-    }
-
-    private handleUrl() {
-      this.$router.beforeEach((to, from, next) => {
-        const body = document.querySelector('body');
-
-        if (body) {
-          const pageName = to.fullPath.replace('/', '');
-          body.setAttribute('data-location', pageName);
-        }
-        next();
-      });
-    }
-
-    private close() {
-      this.seen = false;
-      localStorage.setItem('PWABuilderGDPR', JSON.stringify(true));
-    }
+@Component({
+  components: {
+    Toolbar
   }
+})
+export default class extends Vue {
+  public seen = false;
+
+  public mounted(): void {
+    const savedValue = localStorage.getItem("PWABuilderGDPR");
+    if (JSON.parse(savedValue as string) !== true) {
+      this.seen = true;
+      localStorage.setItem("PWABuilderGDPR", JSON.stringify(true));
+    }
+
+    this.handleUrl();
+  }
+
+  private handleUrl() {
+    this.$router.beforeEach((to, _from, next) => {
+      const body = document.querySelector("body");
+
+      if (body) {
+        const pageName = to.fullPath.replace("/", "");
+        body.setAttribute("data-location", pageName);
+      }
+      next();
+    });
+  }
+
+  // @ts-ignore TS6133
+  private close() {
+    this.seen = false;
+    localStorage.setItem("PWABuilderGDPR", JSON.stringify(true));
+  }
+}
 </script>
 
 <style lang="scss" scoped>
 /* stylelint-disable */
-  @import '~assets/scss/base/variables';
+@import "~assets/scss/base/variables";
 
-  #baseContainer{
-    width: 1280px;
-    margin: 0 auto;
+#baseContainer {
+  width: 1280px;
 
-    .container {
-      padding-top: 64px;
-    }
+  #scrollTarget {
+    width: 100%;
+    height: 1em;
+    position: absolute;
+    top: 5em;
+    pointer-events: none;
   }
+}
+
+.container {
+  width: 100vw;
+}
 
 header {
   display: none !important;
 }
 
+.logoText {
+  position: absolute;
+  top: -400px;
+  font-size: 16px;
+  line-height: 16px;
+  width: 100px;
+}
 
-  .logoText {
-    position: absolute;
-    top: -400px;
-    font-size: 16px;
-    line-height: 16px;
-    width: 100px;
-  }
+#gdprDiv {
+  align-items: center;
+  background: #f2f2f2;
+  display: flex;
+  flex-direction: row;
+  font-size: 14px;
+  justify-content: space-between;
+  z-index: 9999;
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding-left: 24px;
+  padding-right: 24px;
 
-  #gdprDiv {
-    align-items: center;
-    background: #F2F2F2;
+  div {
     display: flex;
-    flex-direction: row;
-    font-size: 14px;
     justify-content: space-between;
-    z-index: 9999;
-    position: absolute;
-    left: 0;
-    right: 0;
-    padding-left: 24px;
-    padding-right: 24px;
-
-    div {
-      display: flex;
-      justify-content: space-between;
-      width: 8em;
-    }
-
-    #closeButton {
-      border: none;
-      background: none;
-
-      i {
-        font-style: normal;
-      }
-    }
+    width: 8em;
   }
 
+  #closeButton {
+    border: none;
+    background: none;
 
-  body[data-location='gettingStarted']{
+    i {
+      font-style: normal;
+    }
+  }
+}
+
+/*body[data-location='gettingStarted']{
   
   }
 
@@ -116,36 +121,37 @@ header {
 
   body[data-location='windows']{
    
-  }
-
-
+  }*/
 </style>
 
 <template>
   <div id="baseContainer">
+    <div id="scrollTarget"></div>
 
-  <div id="modal-color" class="modal-color"></div>
-  <h1 class="logoText">PWA Builder</h1>
+    <div class="modal-color"></div>
+    <h1 class="logoText">PWA Builder</h1>
 
     <div v-if="seen" id="gdprDiv">
       <p>This site uses cookies for analytics, personalized content and ads. By continuing to browse this site, you agree to this use.</p>
 
       <div>
-        <a href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule">Learn More</a>
-
+        <a
+          href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
+        >Learn More</a>
+        
         <button id="closeButton" @click="close()">
           <i aria-hidden="true">✕</i>
         </button>
       </div>
     </div>
 
-    <Toolbar />
+    <Toolbar/>
 
     <div class="container">
       <nuxt/>
     </div>
 
-    <footer class="l-footer pure-g is-small">
+    <!--<footer class="l-footer pure-g is-small">
       <div class="pure-u-1-2 pure-u-md-1-5">
       </div>
       <div class="pure-u-1-2 pure-u-md-1-5">
@@ -165,6 +171,6 @@ header {
       <div class="pure-u-1 l-footer-copy">
         {{ $t('footer.copyright') }}<span class="divider">|</span> <a href="https://go.microsoft.com/fwlink/?LinkId=521839" target="_blank" class="l-footer-action">{{ $t('footer.privacy') }}</a>
       </div>
-    </footer>
+    </footer>-->
   </div>
 </template>

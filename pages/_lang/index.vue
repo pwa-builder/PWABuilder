@@ -1,7 +1,59 @@
 
 <template>
-<section>
-  <section id="getStartedBlock">
+  <main id="sideBySide">
+    <section id="leftSide">
+      <header>
+        <img id="logo" src="~/assets/images/logo.png">
+      </header>
+
+      <div id="introContainer">
+        <h2>{{ $t('home.mast_title') }}</h2>
+
+        <p>{{ $t('home.mast_tag') }}</p>
+
+        <div id="formContainer">
+          <form @submit.prevent="checkUrlAndGenerate" @keydown.enter.prevent="checkUrlAndGenerate">
+            <input
+              id="getStartedInput"
+              :aria-label="$t('generator.url')"
+              :placeholder="$t('generator.placeholder_url')"
+              name="siteUrl"
+              type="text"
+              ref="url"
+              v-model="url$"
+              autofocus
+            >
+            
+            <button
+              @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/build/manifest-scan' })"
+              id="getStartedButton"
+            >
+              <div v-if="!inProgress">{{ $t('generator.start') }}</div>
+              <div v-if="inProgress" id="loadingDiv">
+                <Loading :active="inProgress"/>
+              </div>
+            </button>
+
+            <!--<div v-if="error" id="errorBox">{{error}}</div>-->
+          </form>
+
+          <div id="expertModeBlock">
+            <button @click="skipCheckUrl()" id="expertModeButton">Expert Mode</button>
+            <p>Already have a PWA? Skip ahead!</p>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>
+          PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
+          Our Privacy Statement
+        </p>
+      </footer>
+    </section>
+
+    <section id="rightSide"></section>
+    <!--<section id="getStartedBlock">
     <div class="mastHead">
       <h2>{{ $t('home.mast_title') }}</h2>
 
@@ -45,8 +97,7 @@
   <div id="otherTools">
     <div id="otherHeaderBlock">
       <h2>Other useful tools</h2>
-    </div>
-
+    </div>-->
     <!--<div id="otherBar">
       <div id="otherTool">
         <img />
@@ -71,22 +122,22 @@
         <h4>Lorem ipsum so dolor</h4>
         <p>Lorem ipsum so dolor sit amet etc and a quick summary about what a PWA is. Also a link to more information</p>
       </div>
+    </div>
     </div>-->
-  </div>
-</section>
+  </main>
 </template>
 
 
 
 <script lang='ts'>
-import Vue from 'vue';
-import Component from 'nuxt-class-component';
-import { Action, State, namespace } from 'vuex-class';
+import Vue from "vue";
+import Component from "nuxt-class-component";
+import { Action, State, namespace } from "vuex-class";
 
-import GeneratorMenu from '~/components/GeneratorMenu.vue';
-import GoodPWA from '~/components/GoodPWA.vue';
-import Loading from '~/components/Loading.vue';
-import * as generator from '~/store/modules/generator';
+import GeneratorMenu from "~/components/GeneratorMenu.vue";
+import GoodPWA from "~/components/GoodPWA.vue";
+import Loading from "~/components/Loading.vue";
+import * as generator from "~/store/modules/generator";
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorAction = namespace(generator.name, Action);
@@ -117,7 +168,7 @@ export default class extends Vue {
 
   public skipCheckUrl(): void {
     this.$router.push({
-      name: 'serviceworker'
+      name: "serviceworker"
     });
   }
 
@@ -126,20 +177,20 @@ export default class extends Vue {
     this.error = null;
 
     try {
-      this.updateLink(this.url$);
-
       if (!this.url$) {
+        this.error = "You must enter a URL to get started";
         return;
       }
 
+      this.updateLink(this.url$);
+
       this.url$ = this.url;
 
-      await this.getManifestInformation();
+      // await this.getManifestInformation();
 
       this.$router.push({
-
         // name: 'generate'
-        name: 'gettingStarted'
+        name: "reportCard"
       });
     } catch (e) {
       if (e.message) {
@@ -163,139 +214,301 @@ Vue.prototype.$awa = function(config) {
 </script>
 
 <style lang="scss" scoped>
-  @import '~assets/scss/base/variables';
+@import "~assets/scss/base/variables";
 /* stylelint-disable */
 
-  /*#otherTools {
-    display: none;
-  }*/
+#sideBySide {
+  display: flex;
+  justify-content: space-around;
+  height: 100vh;
+  background-image: url("~/assets/images/homepage-background.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 
-  .mastHead {
-    margin-top: 3em;
-    margin-bottom: 9.2em;
-  }
-
-  #errorBox {
-    color: red;
-    position: absolute;
-    margin-top: 5px;
-  }
-
-  .proTag {
-    font-size: 22px;
-    margin: 100px 138px 0 138px;
-
-  }
-
-  .proTag a,
-  .proTag a:visited {
-    color: $color-brand-quintary;
-    font-size: 16px;
-  }
-
-  .proTag h3 {
-    color: $color-brand-primary;
-    font-size: 24px;
-  }
-
-  #whatMakesBlock,
-  #otherTools {
-    padding-bottom: 48px;
-    padding-left: 68px;
-    padding-right: 68px;
-    padding-top: 65px;
-  }
-
-  #quickBlockText {
-    color: $color-brand-quintary;
-    font-size: 36px;
-    margin: 0;
-  }
-  
-  #quickBlockPlaceholder {
-    color: $color-brand-quintary;
-    font-size: 24px;
-  }
-
-  .l-generator-step {
-    padding: 0;
-  }
-
-  #bottomBlock {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin-left: 68px;
-    margin-bottom: 3em;
-  }
-
-  #getStartedBlock {
+  #leftSide {
+    height: 100%;
+    flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    width: 100%;
-  }
+    width: 1em;
+    justify-content: center;
 
-  p {
-    font-size: 16px;
-  }
+    footer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-  #quickTextBlock {
-    margin-bottom: 27px;
-    margin-top: 22px;
-  }
+    footer p {
+      text-align: center;
+      width: 376px;
+      font-size: 12px;
+      color: #3c3c3c;
+    }
 
-  #quickTextBlock,
-  #leftBlock,
-  #alreadyPWA {
+    header {
+      display: flex;
+      align-items: center;
+      padding-left: 68px;
+      margin-top: 32px;
 
-  }
-  
-  #getStartedInput {
-    border: solid 1px grey;
-    border-radius: 1px;
-    font-size: 14px;
-    padding: 10px;
+      #headerText {
+        font-size: 28px;
+        font-weight: normal;
+      }
 
-  }
-
-  #goodPWAHeaderBlock {
-    color: $color-brand-primary;
-    font-size: 16px;
-    line-height: 24px;
-    margin-left: 138px;
-    margin-top: 100px;
-
-
-    h2 {
-      color: $color-brand-primary;
-      font-size: 24px;
+      #logo {
+        margin-right: 12px;
+        width: 10em;
+      }
     }
   }
 
-  #getStartedButton {
-    background-color: $color-brand-quintary;
-    border: none;
-    border-radius: 1px;
-    color: $color-brand-primary;
-    font-size: 14px;
-    margin-left: 8px;
-    padding: 10px;
-    text-align: center;
+  #rightSide {
+    height: 100%;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
   }
 
-  #otherTool {
-    margin-top: 41px;
+  #introContainer {
+    padding-right: 100px;
+    padding-left: 164px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 2;
+    justify-content: center;
 
+    h2 {
+      font-size: 36px;
+      color: black;
+      font-weight: bold;
+      width: 376px;
+    }
+
+    p {
+      margin-top: 30px;
+      font-size: 18px;
+      margin-bottom: 20px;
+      width: 376px;
+      text-align: left;
+    }
+
+    #moreInfoButton {
+      width: 184px;
+      border-radius: 20px;
+      border: none;
+      font-weight: bold;
+      padding-top: 13px;
+      padding-bottom: 12px;
+      margin-top: 40px;
+    }
   }
 
-  #otherTool p {
+  #formContainer {
+    width: 376px;
 
+    #expertModeBlock {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      margin-top: 144px;
+      margin-right: 72px;
+
+      #expertModeButton {
+        width: 200px;
+        font-weight: bold;
+        font-size: 18px;
+        border: none;
+        border-radius: 22px;
+        padding-top: 9px;
+        padding-bottom: 11px;
+        background-image: linear-gradient(to right, #7644c2, #11999e);
+        color: white;
+        height: 44px;
+      }
+
+      p {
+        margin-top: 9px;
+        font-size: 14px;
+        text-align: center;
+      }
+    }
+
+    form {
+      display: flex;
+    }
+
+    input {
+      padding-top: 13px;
+      padding-bottom: 12px;
+      font-weight: bold;
+      font-size: 18px;
+      border: none;
+      width: 24em;
+      border-bottom: solid 1px rgba(60, 60, 60, 0.3);
+      margin-right: 0.3em;
+      margin-top: 20px;
+      outline: none;
+    }
+
+    input:focus {
+      border-bottom: solid 1px rgba(60, 60, 60, 1);
+    }
+
+    #getStartedButton {
+      border: none;
+      font-weight: bold;
+      font-size: 18px;
+      border-radius: 22px;
+      padding-top: 9px;
+      padding-bottom: 11px;
+      padding-left: 23px;
+      padding-right: 23px;
+      background: grey;
+      height: 44px;
+      align-self: flex-end;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      background: $color-button-primary-purple-variant;
+      color: white;
+      width: 88px;
+      justify-content: center;
+    }
+  }
+}
+
+@media (max-width: 1282px) {
+  #sideBySide #introContainer {
+    padding-top: 4em;
+    padding-left: 4em;
+  }
+}
+
+/*#otherTools {
+    display: none;
   }
 
-  #otherTool img {
-    height: 184px;
+.mastHead {
+  margin-top: 3em;
+  margin-bottom: 9.2em;
+}
 
+#errorBox {
+  color: $color-brand-secondary;
+  position: absolute;
+  margin-top: 5px;
+}
+
+.proTag {
+  font-size: 22px;
+  margin: 100px 138px 0 138px;
+}
+
+.proTag a,
+.proTag a:visited {
+  color: $color-brand-quintary;
+  font-size: 16px;
+}
+
+.proTag h3 {
+  color: $color-button-primary-purple-variant;
+  font-size: 24px;
+}
+
+#whatMakesBlock,
+#otherTools {
+  padding-bottom: 48px;
+  padding-left: 68px;
+  padding-right: 68px;
+  padding-top: 65px;
+}
+
+#quickBlockText {
+  color: $color-brand-quintary;
+  font-size: 36px;
+  margin: 0;
+}
+
+#quickBlockPlaceholder {
+  color: $color-brand-quintary;
+  font-size: 24px;
+}
+
+.l-generator-step {
+  padding: 0;
+}
+
+#bottomBlock {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-left: 68px;
+  margin-bottom: 3em;
+}
+
+#getStartedBlock {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+}
+
+p {
+  font-size: 16px;
+}
+
+#quickTextBlock {
+  margin-bottom: 27px;
+  margin-top: 22px;
+}
+
+#getStartedInput {
+  border: solid 1px $color-brand-tertiary;
+  border-radius: 1px;
+  font-size: 14px;
+  padding: 10px;
+}
+
+#goodPWAHeaderBlock {
+  color: $color-button-primary-purple-variant;
+  font-size: 16px;
+  line-height: 24px;
+  margin-left: 138px;
+  margin-top: 100px;
+
+  h2 {
+    color: $color-button-primary-purple-variant;
+    font-size: 24px;
   }
+}
+
+#getStartedButton {
+  background-color: $color-brand-quintary;
+  border: none;
+  border-radius: 1px;
+  color: $color-button-primary-purple-variant;
+  font-size: 14px;
+  margin-left: 8px;
+  padding: 10px;
+  text-align: center;
+}
+
+#otherTool {
+  margin-top: 41px;
+}
+
+#otherTool p {
+}
+
+#otherTool img {
+  height: 184px;
+}*/
 </style>
 
