@@ -327,6 +327,7 @@ import GoodPWA from "~/components/GoodPWA.vue";
 import Loading from "~/components/Loading.vue";
 
 import * as generator from "~/store/modules/generator";
+import { constants } from "perf_hooks";
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorAction = namespace(generator.name, Action);
@@ -533,27 +534,53 @@ export default class extends Vue {
 
   private calcGrade() {
     return new Promise(resolve => {
-      if (
-        this.swScore > 90 &&
-        this.manifestScore > 90 &&
-        this.securityScore > 90
-      ) {
+      console.log(this.swScore);
+      console.log(this.manifestScore);
+      console.log(this.securityScore);
+
+      var totalGrade = (this.swScore + this.manifestScore + this.securityScore)/3;
+
+
+      switch(true) {
+        case (totalGrade > 90):
         this.overallGrade = "A";
-      } else if (
-        this.swScore > 80 &&
-        this.manifestScore > 80 &&
-        this.securityScore > 80
-      ) {
+        break;
+        case (totalGrade > 80):
         this.overallGrade = "B";
-      } else if (
-        this.swScore > 70 &&
-        this.manifestScore > 70 &&
-        this.securityScore > 70
-      ) {
+        break;
+        case (totalGrade > 70):
         this.overallGrade = "C";
-      } else {
+        break;
+        case (totalGrade > 60):
         this.overallGrade = "D";
-      }
+        break;
+        case (totalGrade > 29):
+        this.overallGrade = "E";
+        break;
+        default:
+        this.overallGrade = "--";
+        }
+      // if (
+      //   this.swScore > 90 &&
+      //   this.manifestScore > 90 &&
+      //   this.securityScore > 90
+      // ) {
+      //   this.overallGrade = "A";
+      // } else if (
+      //   this.swScore > 80 &&
+      //   this.manifestScore > 80 &&
+      //   this.securityScore > 80
+      // ) {
+      //   this.overallGrade = "B";
+      // } else if (
+      //   this.swScore > 70 &&
+      //   this.manifestScore > 70 &&
+      //   this.securityScore > 70
+      // ) {
+      //   this.overallGrade = "C";
+      // } else {
+      //   this.overallGrade = "D";
+      // }
 
       sessionStorage.setItem("overallGrade", this.overallGrade);
 
