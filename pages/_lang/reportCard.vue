@@ -327,7 +327,6 @@ import GoodPWA from "~/components/GoodPWA.vue";
 import Loading from "~/components/Loading.vue";
 
 import * as generator from "~/store/modules/generator";
-import { constants } from "perf_hooks";
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorAction = namespace(generator.name, Action);
@@ -421,8 +420,7 @@ export default class extends Vue {
 
         resolve();
       }
-
-      if (this.manifest.generated === 'undefined') {
+      else {
         this.manifestScore = this.manifestScore + 50;
       }
 
