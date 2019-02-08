@@ -418,7 +418,8 @@ export default class extends Vue {
         this.manifestAnalyzing = false;
         this.calcGrade();
         this.noManifest = true;
-        return;
+
+        resolve();
       }
 
       if (this.manifest.generated === 'undefined') {
@@ -917,6 +918,7 @@ p {
 
 #noSWP {
   flex-grow: 2;
+  margin-bottom: 2em;
 }
 </style>
 
