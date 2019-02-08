@@ -440,10 +440,12 @@ export default class extends Vue {
         this.manifestScore = this.manifestScore + 10;
       }
 
-      if (this.manifest.start_url !== undefined) {
+      if (this.manifest.start_url !== true) {
         this.manifestScore = this.manifestScore + 10;
       }
-
+      if (this.manifest.generated === true) {
+        this.manifestScore = 0;
+      }
       this.manifestAnalyzing = false;
       
       this.calcGrade();
@@ -550,11 +552,8 @@ export default class extends Vue {
         case (totalGrade > 70):
         this.overallGrade = "C";
         break;
-        case (totalGrade > 60):
+        case (totalGrade > 55):
         this.overallGrade = "D";
-        break;
-        case (totalGrade > 29):
-        this.overallGrade = "E";
         break;
         default:
         this.overallGrade = "--";
