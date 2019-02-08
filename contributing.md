@@ -35,7 +35,6 @@ To run e2e test coverage and build your changes (in production mode) you must al
 * `git clone <repository-url>` this repository
 * navigate inside the new directory
 * `npm install`
-
 ### Running in Development mode
 
 * `npm run dev`
@@ -46,7 +45,6 @@ To run e2e test coverage and build your changes (in production mode) you must al
 ### Running Unit Test Coverage
 
 * `npm test`
-
 ### Running e2e Test Coverage
 
 * `npm install selenium-standalone@latest -g` _only once_
@@ -66,6 +64,20 @@ However, production mode has a different build process outlined below:
 
 * `npm start` (doesn't compile the code)
 
+# Frequently Asked Questions
+
+## Who can contribute?
+
+Anyone who wants to be part of bringing PWAs to the web can contribute to PWABuilder! Skill level doesn't matter. All contributions big and small help us out. We have reviewers who can help you through the process the first few times.
+
+## Why does Microsoft need contributors?
+
+PWABuilder was founded by Microsoft, but it's only moved forward because of the community's help.  We open-sourced this because Microsoft wants to support the cross-platform development ecosystem and work with the community to direct the future of PWAs.
+
+## What kind of contributions is PWABuilder seeking?
+
+No contribution is too small or too big. Bigger tasks take longer to review while smaller ones get feedback more quickly. Most contributors start with a small update, a bug fix, or docs improvement, and then move on to bigger tasks as they gain more familiarity with PWABuilder.
+
 ## Where should I start contributing?
 
 PWABuilder is split into multiple repositories. We recommend you get started with the following repos:
@@ -77,6 +89,7 @@ PWABuilder is split into multiple repositories. We recommend you get started wit
 * https://github.com/pwa-builder/pwabuilder-snippits: This is the repo for the features snippits used by the PWABuilder site.
 
 ## What should I check before submitting a pull request?
+
 For every contribution, you must:
 
 * Test your code
@@ -88,14 +101,17 @@ If adding a new feature,
 
 Once you have opened your PR, feel free to add a reviewer (Github should recommend people on the team). When the PR has been reviewed and is good to go, a team member will merge it.
 
-
-## Have questions?
-Please do not open issues for general support questions and keep our GitHub issues for bug reports and feature requests. There is a much better chance of getting your question answered on [StackOverflow](https://stackoverflow.com/questions/tagged/pwabuilder) where questions should be tagged with `pwabuilder`
+## After my pull request gets merged, when does it become part of a PWABuilder release?
+ 
+We will usually add fixes in the next planned release, but sometimes it makes sense to add a contribution in a later update to ensure the quality and performance of the next release.
 
 ## Found bugs?
 If you find a bug, you can help us by
 [submitting an issue](https://github.com/pwa-builder/PWABuilder/issues). Even better, you can
 [submit a Pull Request](#pr) with a fix.
+
+## Have other questions?
+Please do not open issues for general support questions and keep our GitHub issues for bug reports and feature requests. There is a much better chance of getting your question answered on [StackOverflow](https://stackoverflow.com/questions/tagged/pwabuilder) where questions should be tagged with `pwabuilder`
 
 ## Special thanks
 This contributing doc was inspired by our friends' version at the [Windows Community Toolkit](https://github.com/windows-toolkit/WindowsCommunityToolkit/).
