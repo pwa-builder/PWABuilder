@@ -99,7 +99,7 @@
       </section>
 
       <section id="rightSide">
-        <div id="topTitle">Add this code to your index.html page</div>
+        <div id="topTitle">Add this code to your landing page in a &lt;script&gt; tag:</div>
         <CodeViewer
           class="topViewer"
           color="#F0F0F0"
@@ -117,7 +117,7 @@
           >{{ $t("serviceworker.next_step") }}</nuxt-link>
         </CodeViewer>
 
-        <div id="bottomTitle">Add this code to your service worker file</div>
+        <div id="bottomTitle">Add this code to a file named "pwabuider-sw.js" on your site root:</div>
         <CodeViewer
           class="bottomViewer"
           color="#F0F0F0"

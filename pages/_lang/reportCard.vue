@@ -74,7 +74,7 @@
               
               <span v-if="manifest">
                 <i class="fas fa-check"></i>
-                <span>10 pts</span>
+                <span>50 pts</span>
               </span>
               <span v-if="!manifest">
                 <i class="fas fa-times"></i>
@@ -157,7 +157,50 @@
             </li>
           </ul>
 
-          <div id="noSWP" v-if="noManifest">No Manifest found, we will generate one for you</div>
+          <ul id="noSWP" v-if="noManifest">
+            <li>
+              <span>Web Manifest properly attached</span>
+              <span>
+                <i class="fas fa-times"></i>
+                <span>0 pts</span>
+              </span>
+            </li>
+            <li>
+              <span>Display property utilized</span>
+              <span>
+                <i class="fas fa-times"></i>
+                <span>0 pts</span>
+              </span>
+            </li>
+            <li>
+              <span>Lists icons for add to home screen</span>
+              <span>
+                <i class="fas fa-times"></i>
+                <span>0 pts</span>
+              </span>
+            </li>
+            <li>
+              <span>Contains app_name property</span>
+              <span>
+                <i class="fas fa-times"></i>
+                <span>0 pts</span>
+              </span>
+            </li>
+            <li>
+              <span>Contains short_name property</span>
+              <span>
+                <i class="fas fa-times"></i>
+                <span>0 pts</span>
+              </span>
+            </li>
+            <li>
+              <span>Designates a start_url</span>
+              <span>
+                <i class="fas fa-times"></i>
+                <span>0 pts</span>
+              </span>
+            </li>
+          </ul>
 
           <!--<button>Edit</button>-->
           <div class="editDiv">
@@ -194,7 +237,7 @@
               <span>Has a Service Worker</span>
               <span v-if="serviceWorkerData && serviceWorkerData.hasSW">
                 <i class="fas fa-check"></i>
-                <span>10 pts</span>
+                <span>50 pts</span>
               </span>
               <span v-if="serviceWorkerData && !serviceWorkerData.hasSW">
                 <i class="fas fa-times"></i>
@@ -205,7 +248,7 @@
               <span>Service Worker has cache handlers</span>
               <span v-if="serviceWorkerData && serviceWorkerData.cache">
                 <i class="fas fa-check"></i>
-                <span>10 pts</span>
+                <span>20 pts</span>
               </span>
               <span v-if="serviceWorkerData && !serviceWorkerData.cache">
                 <i class="fas fa-times"></i>
@@ -216,7 +259,7 @@
               <span>Service Worker has the correct scope</span>
               <span v-if="serviceWorkerData && serviceWorkerData.scope">
                 <i class="fas fa-check"></i>
-                <span>10 pts</span>
+                <span>20 pts</span>
               </span>
               <span v-if="serviceWorkerData && !serviceWorkerData.scope">
                 <i class="fas fa-times"></i>
@@ -251,7 +294,36 @@
             </li>
           </ul>
 
-          <div id="noSWP" v-if="noServiceWorker">No Service Worker found</div>
+          <ul id="noSWP" v-if="noServiceWorker">
+            <li>
+              <span>Has a Service Worker</span>
+              <span>
+                <i class="fas fa-times"></i>
+                <span>0 pts</span>
+              </span>
+            </li>
+            <li>
+              <span>Service Worker has cache handlers</span>
+              <span>
+                <i class="fas fa-times"></i>
+                <span>0 pts</span>
+              </span>
+            </li>
+            <li>
+              <span>Service Worker has the correct scope</span>
+              <span>
+                <i class="fas fa-times"></i>
+                <span>0 pts</span>
+              </span>
+            </li>
+            <li>
+              <span>Service Worker has a push registration</span>
+              <span>
+                <i class="fas fa-times"></i>
+                <span>0 pts</span>
+              </span>
+            </li>
+          </ul>
 
           <!--<button>Edit</button>-->
           <div class="editDiv">
@@ -502,7 +574,7 @@ export default class extends Vue {
         console.log(hasCache);
 
         if (hasCache === true) {
-          this.swScore = this.swScore + 30;
+          this.swScore = this.swScore + 20;
         }
       }
 
@@ -511,7 +583,7 @@ export default class extends Vue {
         +10 points to user
       */
       if (this.serviceWorkerData.pushReg !== null) {
-        this.swScore = this.swScore + 10;
+        this.swScore = this.swScore + 20;
       }
 
       /*
