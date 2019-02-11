@@ -75,6 +75,7 @@
               <span v-if="manifest">
                 <i class="fas fa-check"></i>
                 <span>50 pts</span>
+
               </span>
               <span v-if="!manifest">
                 <i class="fas fa-times"></i>
