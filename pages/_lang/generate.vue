@@ -496,6 +496,13 @@
       </section>
 
       <section id="rightSide">
+        <div id="exampleDiv">
+          <a href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps/get-started#web-app-manifest">
+          Check our docs
+          </a>
+
+          for more info on how to use this manifest
+        </div>
         <CodeViewer
           code-type="json"
           v-on:invalidManifest="invalidManifest()"
@@ -926,6 +933,11 @@ export default class extends Vue {
     width: 4em;
     height: 110.4vh;
     background: #F0F0F0;
+  }
+
+  #exampleDiv {
+    padding: 1em;
+    font-weight: bold;
   }
 }
 
