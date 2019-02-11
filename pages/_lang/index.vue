@@ -47,7 +47,9 @@
       <footer>
         <p>
           PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
-          Our Privacy Statement
+          <a
+          href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
+        >Our Privacy Statement</a>
         </p>
       </footer>
     </section>
