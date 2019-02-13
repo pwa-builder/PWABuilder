@@ -58,12 +58,11 @@
       v-on:modalClosed="modalClosed()"
       v-on:modalSubmit="modalSelected()"
       :showSubmitButton="false"
-      title="Add Feature"
+      title="Simple auth with the Microsoft Graph"
       ref="addFeatureModal"
     >
       <div class="feature-viewer">
         <div class="code-samples">
-          <div id="codeHeader">Usage Example</div>
           <div class="code-top">
             <CodeViewer
               code-type="javascript"
@@ -74,10 +73,11 @@
               :showToolbar="true"
               :title="$t('windows.codeTitle')"
               :showHeader="true"
-            ></CodeViewer>
+            >
+              <div>Usage Example</div>
+            </CodeViewer>
           </div>
           <div class="code-bottom">
-            <div id="bottomCodeHeader">Snippit</div>
             <CodeViewer
               code-type="javascript"
               :size="viewerSize"
@@ -86,20 +86,21 @@
               :showToolbar="true"
               :showHeader="true"
               :title="$t('windows.sourceTitle')"
-            />
+            > 
+              <div>Snippit</div>
+            </CodeViewer>
           </div>
         </div>
       </div>
 
-      <button
+      <!--<button
         slot="extraButton"
         id="addBundleButton"
         v-on:click="addBundle()"
-      >{{ $t("windows.add") }}</button>
-
+      >{{ $t("windows.add") }}</button>-->
       <p v-if="sample" slot="extraP" id="sampleDescP">{{sample.description}}</p>
 
-      <div v-if="sample" class="feature-content" slot="featureContentSlot">
+      <!--<div v-if="sample" class="feature-content" slot="featureContentSlot">
         <div class="side_panel">
           <div class="properties" v-if="sample">
             <h1>Required Properties</h1>
@@ -110,6 +111,38 @@
             </div>
           </div>
         </div>
+      </div>-->
+      <div class="feature-content" slot="featureContentSlot">
+        <h2>How to</h2>
+
+        <section>
+          <ul>
+            <li>
+              <h3>Register an app to get a clientID
+                <a
+                  href="https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app"
+                >here</a>
+              </h3>
+              <p>The snippit will use this ID to intialize the auth flow for your app.</p>
+            </li>
+
+            <li>
+              <h3>Copy the usage example and put it in a JavaScript file</h3>
+
+              <p>The top snippit will call the function in the bottom snippit to start the auth workflow.</p>
+            </li>
+
+            <li>
+              <h3>Copy the bottom snippit and place it in the same JavaScript file</h3>
+
+              <p>The bottom snippit is the function that handles the auth workflow.</p>
+            </li>
+
+            <div id="specialPublishBlock">
+              <nuxt-link id="specialPublishButton" to="/publish">Publish</nuxt-link>
+            </div>
+          </ul>
+        </section>
       </div>
     </Modal>
   </main>
@@ -242,13 +275,11 @@ export default class extends Vue {
       await this.selectSample(this.currentPendingSample);
 
       if (this.selectedSamples.indexOf(this.sample) == -1) {
-        console.log('pushing', this.currentPendingSample);
+        console.log("pushing", this.currentPendingSample);
         this.selectedSamples.push(this
           .currentPendingSample as windowsStore.Sample);
-        console.log('selectedSamples', this.selectedSamples);
+        console.log("selectedSamples", this.selectedSamples);
       }
-
-
 
       this.hasNative = true;
       this.modalClosed();
@@ -453,7 +484,7 @@ header {
   padding-right: 164px;
   margin-top: 60px;
   margin-bottom: 60px;
-  
+
   .fakeCard {
     display: flex;
     justify-content: center;
@@ -561,6 +592,44 @@ header {
 
   .code_viewer {
     background: #f0f0f0;
+    height: 110%
   }
+}
+
+.feature-content {
+  margin-top: 2em;
+
+  h2 {
+    font-weight: bold;
+    font-size: 24px;
+  }
+
+  h3 {
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+}
+
+#specialPublishBlock {
+  display: flex;
+  justify-content: center;
+}
+
+#specialPublishButton {
+  font-weight: bold;
+  color: white;
+  background: $color-button-primary-purple-variant;
+  font-size: 18px;
+  border-radius: 22px;
+  width: 130px;
+  height: 44px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
