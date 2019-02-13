@@ -2,11 +2,14 @@
   <section class="code_viewer">
     <div v-if="showHeader" id="codeHeader">
       <slot></slot>
+
+      <button v-if="showCopyButton" @click="copy()" id="copyButton">
+        <i id="platformIcon" class="fas fa-copy"></i>
+        Copy
+      </button>
     </div>
 
     <div class="code_viewer-pre" ref="monacoDiv"></div>
-
-    <div id="copyDiv"></div>
 
     <div v-if="textCopied" id="copyToast">Code Copied</div>
 
@@ -29,11 +32,6 @@
     </div>
 
     <div v-if="showToolbar" id="toolbar">
-      <button v-if="showCopyButton" @click="copy()" id="copyButton">
-        <i id="platformIcon" class="fas fa-copy"></i>
-        Copy
-      </button>
-      
       <div v-if="errorNumber">
         <button @click="showErrorOverlay()" id="errorsButton">
           <i class="fas fa-exclamation-triangle"></i>
@@ -98,12 +96,12 @@ export default class extends Vue {
   public showCopyButton;
 
   @Prop() showToolbar: boolean;
-  @Prop({ type: String, default: "#F0F0F0"})
+  @Prop({ type: String, default: "#F0F0F0" })
   public color;
 
-  @Prop({type: String, default: "lighter"}) theme: string;
+  @Prop({ type: String, default: "lighter" }) theme: string;
 
-  @Prop({ type: Boolean, default: false}) public showHeader;
+  @Prop({ type: Boolean, default: false }) public showHeader;
 
   public readonly warningsId = "warnings_list";
   public readonly suggestionsId = "suggestions_list";
@@ -242,6 +240,9 @@ export default class extends Vue {
     padding-left: 1em;
     padding-bottom: 1em;
     padding-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .active {
@@ -259,6 +260,7 @@ export default class extends Vue {
     padding-bottom: 5px;
     padding-right: 9px;
     padding-left: 9px;
+    margin-right: 2em;
   }
 
   #copyDiv {
@@ -293,7 +295,7 @@ export default class extends Vue {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    border-top: solid 1px #C5C5C5;
+    border-top: solid 1px #c5c5c5;
 
     #errorsButton {
       background: $color-brand-warning;
@@ -333,7 +335,7 @@ export default class extends Vue {
     width: 49.4%;
     right: 0;
     bottom: 2.2em;
-    border-top: solid 1px #C5C5C5;
+    border-top: solid 1px #c5c5c5;
 
     #errorButtonDiv {
       display: flex;
