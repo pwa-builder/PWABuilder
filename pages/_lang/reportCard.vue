@@ -433,15 +433,9 @@ export default class extends Vue {
       this.manifestAnalyzing = true;
       this.swAnalyzing = true;
 
-      /*await this.lookAtSecurity();
-      await this.lookAtManifest();
-      await this.lookAtSW();
-      await this.calcGrade();*/
-
       this.lookAtSW();
       this.lookAtSecurity();
       this.lookAtManifest();
-      // this.calcGrade();
     }
   }
 
