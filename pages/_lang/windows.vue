@@ -456,7 +456,7 @@ header {
     height: 209px;
     align-items: center;
     font-size: 4em;
-    background: linear-gradient(-45deg, grey, lightgrey, white);
+    background: lightgrey;
   }
 }
 
