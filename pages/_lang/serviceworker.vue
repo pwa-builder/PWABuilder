@@ -99,7 +99,6 @@
       </section>
 
       <section id="rightSide">
-        <div id="topTitle">Add this code to your landing page in a &lt;script&gt; tag:</div>
         <CodeViewer
           class="topViewer"
           color="#F0F0F0"
@@ -109,15 +108,16 @@
           :code="webPreview"
           :title="$t('serviceworker.code_preview_web')"
           :showToolbar="true"
+          :showHeader="true"
         >
-          <nuxt-link
+          <div>Add this code to your landing page in a &lt;script&gt; tag:</div>
+          <!-- <nuxt-link
             :to="$i18n.path('publish')"
             class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header"
             @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})"
-          >{{ $t("serviceworker.next_step") }}</nuxt-link>
+          >{{ $t("serviceworker.next_step") }}</nuxt-link>-->
         </CodeViewer>
 
-        <div id="bottomTitle">Add this code to a file named "pwabuider-sw.js" on your site root:</div>
         <CodeViewer
           class="bottomViewer"
           color="#F0F0F0"
@@ -127,7 +127,10 @@
           :code="serviceworkerPreview"
           :title="$t('serviceworker.code_preview_serviceworker')"
           :showToolbar="true"
-        ></CodeViewer>
+          :showHeader="true"
+        >
+          <div>Add this code to a file named "pwabuider-sw.js" on your site root:</div>
+        </CodeViewer>
       </section>
     </main>
   </div>
@@ -380,7 +383,7 @@ export default class extends Vue {
         font-size: 36px;
         font-weight: bold;
         color: black;
-        width: 376px
+        width: 376px;
       }
 
       p {
@@ -456,6 +459,10 @@ export default class extends Vue {
     background: #f0f0f0;
     overflow-y: auto;
 
+    .bottomViewer {
+      margin-top: 2em;
+    }
+
     #topTitle {
       background: #f0f0f0;
       font-weight: bold;
@@ -464,7 +471,7 @@ export default class extends Vue {
     }
 
     #bottomTitle {
-      background: #E2E2E2;
+      background: #e2e2e2;
       font-weight: bold;
       padding: 1em;
       margin-left: 0px;

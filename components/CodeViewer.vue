@@ -1,5 +1,9 @@
 <template>
   <section class="code_viewer">
+    <div v-if="showHeader" id="codeHeader">
+      <slot></slot>
+    </div>
+
     <div class="code_viewer-pre" ref="monacoDiv"></div>
 
     <div id="copyDiv"></div>
@@ -98,6 +102,8 @@ export default class extends Vue {
   public color;
 
   @Prop({type: String, default: "lighter"}) theme: string;
+
+  @Prop({ type: Boolean, default: false}) public showHeader;
 
   public readonly warningsId = "warnings_list";
   public readonly suggestionsId = "suggestions_list";
@@ -230,6 +236,13 @@ export default class extends Vue {
   flex-direction: column;
   padding: 10px;
   height: 100%;
+
+  #codeHeader {
+    font-weight: bold;
+    padding-left: 1em;
+    padding-bottom: 1em;
+    padding-top: 14px;
+  }
 
   .active {
     color: $color-brand-quartary;
