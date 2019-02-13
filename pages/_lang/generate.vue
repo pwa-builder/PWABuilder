@@ -622,6 +622,7 @@ export default class extends Vue {
           border-radius: 20px;
           width: 92px;
           height: 32px;
+          box-shadow: none;
         }
 
         .active {
