@@ -835,6 +835,7 @@ p {
     background: white;
     display: flex;
     flex-direction: column;
+    max-width: 576px;
 
     .catHeader {
       display: flex;
