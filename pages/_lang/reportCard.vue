@@ -1,20 +1,6 @@
 
 <template>
   <main>
-    <!--<div class="mastHead">
-      <h2>You're already on your way to creating a pwa!</h2>
-      <p>
-        We've had a look over your site and it's looking good. 
-        You've already got a manifest, which forms the base of a PWA,
-        but we highly recommend you add some features like 
-        Service Workers to make the experience even better for your users.
-      </p>
-    </div>
-
-    <div class="chooseContainer">
-      <h2>Your App Results</h2>
-      <GoodPWA :isHttps="true" :allGoodWithText="true" />
-    </div>-->
     <div id="scoreSideBySide">
       <nuxt-link to="/">
         <header>
@@ -44,7 +30,6 @@
       </section>
 
       <section id="scoreSection">
-        <!--<img id="reportGraphic" src="~/assets/images/report_card.svg">-->
         <div id="scoreDiv">
           {{overallGrade}}
           <span>overall grade</span>
@@ -203,7 +188,6 @@
             </li>
           </ul>
 
-          <!--<button>Edit</button>-->
           <div class="editDiv">
             <nuxt-link v-if="!noManifest" class="editButton" to="generate">Edit Manifest</nuxt-link>
             <nuxt-link v-if="noManifest" class="editButton" to="generate">See Generated Manifest</nuxt-link>
@@ -211,15 +195,6 @@
         </section>
 
         <section class="catSection">
-          <!--<h2>Service Worker</h2>
-
-        <span v-if="!swAnalyzing" class="score">
-          {{swScore}}
-          <span class="scoreSubText">out of 100</span>
-        </span>
-        <span v-if="swAnalyzing" class="score">
-          <Loading active class="u-display-inline_block u-margin-left-sm"/>
-          </span>-->
           <div class="catHeader">
             <h2>Service Worker</h2>
 
@@ -392,7 +367,6 @@
 
 <script lang='ts'>
 import Vue from "vue";
-// import axios from "axios";
 import Component from "nuxt-class-component";
 import { Action, State, namespace } from "vuex-class";
 
@@ -631,27 +605,6 @@ export default class extends Vue {
         default:
         this.overallGrade = "--";
         }
-      // if (
-      //   this.swScore > 90 &&
-      //   this.manifestScore > 90 &&
-      //   this.securityScore > 90
-      // ) {
-      //   this.overallGrade = "A";
-      // } else if (
-      //   this.swScore > 80 &&
-      //   this.manifestScore > 80 &&
-      //   this.securityScore > 80
-      // ) {
-      //   this.overallGrade = "B";
-      // } else if (
-      //   this.swScore > 70 &&
-      //   this.manifestScore > 70 &&
-      //   this.securityScore > 70
-      // ) {
-      //   this.overallGrade = "C";
-      // } else {
-      //   this.overallGrade = "D";
-      // }
 
       sessionStorage.setItem("overallGrade", this.overallGrade);
 
@@ -682,19 +635,6 @@ export default class extends Vue {
 <style lang="scss" scoped>
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
-
-/*.mastHead {
-  margin-bottom: 12em;
-}
-
-.chooseContainer {
-  margin-top: 118px;
-
-  h2 {
-    margin-left: 68px;
-    margin-bottom: 28px;
-  }
-}*/
 
 main {
   background-image: url("~/assets/images/homepage-background.svg");
@@ -900,12 +840,6 @@ p {
       justify-content: space-between;
       margin-bottom: 1em;
     }
-
-    /*@media (max-width: 1300px) {
-      .catHeader {
-        width: 29em;
-      }
-    }*/
 
     ul {
       flex-grow: 2;

@@ -2,66 +2,12 @@
   <div>
     <ScoreHeader></ScoreHeader>
     <main id="sideBySide">
-      <!--<div ref='mainDiv' class="mainDiv service-workers">
-    <div class="mastHead">
-      <h2>{{ $t('serviceworker.title') }}</h2>
-      <p>{{ $t('serviceworker.summary') }}</p>
-    </div>
-    <div class="l-generator-semipadded pure-g">
-      <div class="pure-u-1 pure-u-md-1-2 generator-section">
-
-        <form @submit.prevent="download" @keydown.enter.prevent="download">
-          <div class="l-generator-field checkbox" v-for="sw in serviceworkers" :key="sw.id">
-            <input type="radio" :value="sw.id" v-model="serviceworker$" :disabled="sw.disable" :id="sw.id" />
-            <label class="l-generator-label" :for="sw.id">
-              <h4>{{ sw.title }} </h4> <span v-if="sw.disable">(coming soon)</span>
-            </label>
-            <span class="l-generator-description">{{ sw.description }}</span>
-          </div>
-          <div class="l-generator-wrapper pure-u-2-5">
-
-           
-            <a class="work-button"  @click="onClickShowGBB()" href="#">I'm done</a>
-          
-          </div>
-          <div class="pure-u-3-5">
-            <p class="l-generator-error" v-if="error"><span class="icon-exclamation"></span> {{ $t(error) }}</p>
-          </div>
-        </form>
-
-      </div>
-      <div class="serviceworker-preview pure-u-1 pure-u-md-1-2 generator-section">
-        <CodeViewer codeType="javascript" :size="viewerSize" :code="webPreview" :title="$t('serviceworker.code_preview_web')">
-          <nuxt-link :to="$i18n.path('publish')" class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})">
-            {{ $t("serviceworker.next_step") }}
-          </nuxt-link>
-        </CodeViewer>
-        <CodeViewer class="bottomViewer" codeType="javascript" :size="bottomViewerSize" :code="serviceworkerPreview" :title="$t('serviceworker.code_preview_serviceworker')"></CodeViewer>
-            <p class="download-text">{{ $t('serviceworker.download_link') }}
-          <a class="" href="https://github.com/pwa-builder/serviceworkers" target="_blank">GitHub</a>.
-          </p>
-      </div>
-
-    </div>
-  </div>
-
-  <!--<Modal title="Next" ref="nextStepModal" @submit="onSubmitIconModal" @cancel="onCancelIconModal">
-    <GoodPWA :hasWorker="hasSW"/>
-      </Modal>-->
-      <!--<Modal v-on:modalOpened="modalOpened()" v-on:modalClosed="modalClosed()" title="" ref="nextStepModal">
-    <GoodPWA :hasWorker="hasSW" :hasBetterWorker="betterSW"/>
-    <a class="cancelText" href="#" @click="onClickHideGBB(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
-      {{$t("modal.goBack")}}
-    </a>
-
-      </Modal>-->
       <section id="leftSide">
         <header class="mastHead">
           <h2>{{ $t("serviceworker.title") }}</h2>
           <p>{{ $t("serviceworker.summary") }}</p>
 
           <div id="doneDiv">
-            <!--<button id="doneButton">Done</button>-->
             <nuxt-link
               @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})"
               id="doneButton"
@@ -111,11 +57,6 @@
           :showHeader="true"
         >
           <div>Add this code to your landing page in a &lt;script&gt; tag:</div>
-          <!-- <nuxt-link
-            :to="$i18n.path('publish')"
-            class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header"
-            @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})"
-          >{{ $t("serviceworker.next_step") }}</nuxt-link>-->
         </CodeViewer>
 
         <CodeViewer
@@ -246,14 +187,12 @@ export default class extends Vue {
   }
 
   public modalOpened() {
-    //(this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(25px)';
     (this.$root.$el.closest("body") as HTMLBodyElement).classList.add(
       "modal-screen"
     );
   }
 
   public modalClosed() {
-    //(this.$refs.mainDiv as HTMLDivElement).style.filter = 'blur(0px)';
     (this.$root.$el.closest("body") as HTMLBodyElement).classList.remove(
       "modal-screen"
     );
@@ -265,104 +204,6 @@ export default class extends Vue {
 /* stylelint-disable */
 
 @import "~assets/scss/base/variables";
-
-/*.mastHead {
-  margin-bottom: 12em;
-}
-
-.serviceworker {
-  &-preview {
-    margin-top: 2rem;
-  }
-}
-.download-text {
-  color: $color-button-primary-purple-variant;
-  font-size: 14px;
-  margin-right: 68px;
-  text-align: right;
-
-  a,
-  a:visited {
-    color: $color-brand-quartary;
-  }
-}
-.serviceworker-preview {
-  .code_viewer {
-    min-height: 300px;
-    max-height: 700px;
-    margin-bottom: 100px;
-    margin-right: 68px;
-  }
-  .bottomViewer {
-    min-height: 700px;
-    max-height: 900px;
-  }
-}
-
-.service-workers {
-  h4 {
-    display: block;
-  }
-
-  .l-generator-description {
-    font-size: 16px;
-    line-height: 24px;
-    color: $color-button-primary-purple-variant;
-    padding-right: 34px;
-    display: block;
-    margin-bottom: 40px;
-  }
-
-  .l-generator-label {
-    display: block;
-    margin-bottom: 12px;
-  }
-
-  [type="radio"]:checked,
-  [type="radio"]:not(:checked) {
-    opacity: 0;
-  }
-  [type="radio"]:checked + label,
-  [type="radio"]:not(:checked) + label {
-    position: relative;
-    padding-left: 32px;
-    cursor: pointer;
-    line-height: 24px;
-  }
-  [type="radio"]:checked + label:before,
-  [type="radio"]:not(:checked) + label:before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 28px;
-    height: 28px;
-    background-image: url("~/assets/images/unChecked.png");
-    background-repeat: no-repeat;
-    background-size: 26px;
-  }
-  [type="radio"]:checked + label:after,
-  [type="radio"]:not(:checked) + label:after {
-    content: "";
-    width: 16px;
-    height: 16px;
-    background-image: url("~/assets/images/checked.png");
-    background-repeat: no-repeat;
-    background-size: 16px;
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    border-radius: 100%;
-    transition: all 0.2s ease;
-  }
-  [type="radio"]:not(:checked) + label:after {
-    opacity: 0;
-    transform: scale(0);
-  }
-  [type="radio"]:checked + label:after {
-    opacity: 1;
-    transform: scale(1);
-  }*/
 
 #sideBySide {
   display: flex;
