@@ -73,6 +73,7 @@
               v-if="sample"
               :showToolbar="true"
               :title="$t('windows.codeTitle')"
+              :showHeader="true"
             ></CodeViewer>
           </div>
           <div class="code-bottom">
@@ -83,6 +84,7 @@
               :code="sample.source"
               v-if="sample"
               :showToolbar="true"
+              :showHeader="true"
               :title="$t('windows.sourceTitle')"
             />
           </div>
