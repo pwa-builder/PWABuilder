@@ -31,8 +31,8 @@
 
       <section id="scoreSection">
         <div id="scoreDiv">
-          {{overallGrade}}
-          <span>overall grade</span>
+          <span id="gradeSpan">{{overallGrade}}</span>
+          <span id="overallSpan">overall grade</span>
         </div>
       </section>
     </div>
@@ -618,6 +618,9 @@ export default class extends Vue {
     this.manifestAnalyzing = true;
     this.swAnalyzing = true;
 
+    this.noServiceWorker = false;
+    this.noManifest = false;
+
     this.manifestScore = 0;
     this.swScore = 0;
     this.securityScore = 0;
@@ -795,7 +798,7 @@ p {
       margin-bottom: 1.2em;
       flex-direction: column;
 
-      span {
+      #overallSpan {
         font-size: 18px;
         position: relative;
         bottom: 8px;
