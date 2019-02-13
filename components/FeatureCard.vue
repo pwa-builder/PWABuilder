@@ -28,16 +28,16 @@ import * as windowsStore from "~/store/modules/windows";
 @Component({})
 export default class extends Vue {
   @Prop({}) sample: windowsStore.Sample;
-  @Prop({}) showRemoveButton: boolean;
+  @Prop({}) showRemoveButton: boolean = false;
 
   onClickSample(sample: windowsStore.Sample) {
     this.$emit("selected", sample);
-
-    // this.selected = true;
   }
 
   onClickRemoveSample(sample: windowsStore.Sample) {
+    console.log('here');
     this.$emit("removed", sample);
+    this.showRemoveButton = false;
   }
 }
 </script>

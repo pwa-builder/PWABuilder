@@ -35,6 +35,8 @@
         v-for="sample in selectedSamples"
         :sample="sample"
         :key="sample.id"
+        v-on:selected="onSelected"
+        v-on:removed="onRemoved"
         :showRemoveButton="true"
       ></FeatureCard>
     </section>
