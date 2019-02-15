@@ -243,6 +243,10 @@ export default class extends Vue {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    div {
+      width: 20em;
+    }
   }
 
   .active {
@@ -288,14 +292,13 @@ export default class extends Vue {
 
   #toolbar {
     position: fixed;
-    background: #ebebeb;
-    width: 49.4%;
+    background: #f0f0f0;
+    width: 48.8vw;
     bottom: 0;
     right: 0;
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    border-top: solid 1px #c5c5c5;
 
     #errorsButton {
       background: $color-brand-warning;

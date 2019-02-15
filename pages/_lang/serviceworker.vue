@@ -300,8 +300,12 @@ export default class extends Vue {
     background: #f0f0f0;
     overflow-y: auto;
 
+    .topViewer {
+      height: 50vh;
+    }
+
     .bottomViewer {
-      margin-top: 2em;
+      height: 50vh;
     }
 
     #topTitle {
@@ -323,6 +327,17 @@ export default class extends Vue {
     .code_viewer {
       background: #f0f0f0;
     }
+  }
+}
+
+@media (min-width: 2559px) {
+  .inputContainer {
+    width: 534px !important;
+    margin-top: 30px !important;
+  }
+  
+  .swDesc {
+    width: initial !important;
   }
 }
 </style>
