@@ -816,10 +816,8 @@ p {
 }
 
 #catsContainer {
-  padding-left: 6.4em;
-  padding-right: 8em;
-  position: relative;
-  bottom: 1em;
+  display: flex;
+  justify-content: center;
 }
 
 #cats {
@@ -912,12 +910,6 @@ p {
   width: 376px;
 }
 
-
-@media (max-width: 1300px) {
-  #cats {
-    grid-template-columns: none;
-  }
-}
 
 #extrasP {
   flex-grow: 2;
