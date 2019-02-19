@@ -29,7 +29,9 @@
           <section class="animatedSection" v-if="showBasicSection">
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 v-bind:class="{ fieldName: activeFormField === 'appName' }">{{ $t("generate.name") }}</h4>
+                <h4
+                  v-bind:class="{ fieldName: activeFormField === 'appName' }"
+                >{{ $t("generate.name") }}</h4>
                 <p>Used for App lists or Store listings</p>
               </label>
               
@@ -44,7 +46,9 @@
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 v-bind:class="{ fieldName: activeFormField === 'shortName' }">{{ $t("generate.short_name") }}</h4>
+                <h4
+                  v-bind:class="{ fieldName: activeFormField === 'shortName' }"
+                >{{ $t("generate.short_name") }}</h4>
                 <p>Used for tiles or home screens</p>
               </label>
               
@@ -60,7 +64,9 @@
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 v-bind:class="{ fieldName: activeFormField === 'appDesc' }">{{ $t("generate.description") }}</h4>
+                <h4
+                  v-bind:class="{ fieldName: activeFormField === 'appDesc' }"
+                >{{ $t("generate.description") }}</h4>
                 <p>Used for App listings</p>
               </label>
               
@@ -76,7 +82,9 @@
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 v-bind:class="{ fieldName: activeFormField === 'startURL' }">{{ $t("generate.start_url") }}</h4>
+                <h4
+                  v-bind:class="{ fieldName: activeFormField === 'startURL' }"
+                >{{ $t("generate.start_url") }}</h4>
                 <p>This will be the first page that loads in your PWA.</p>
               </label>
               
@@ -153,7 +161,9 @@
           <section class="animatedSection" v-if="showSettingsSection">
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 v-bind:class="{ fieldName: activeFormField === 'appScope' }">{{ $t("generate.scope") }}</h4>
+                <h4
+                  v-bind:class="{ fieldName: activeFormField === 'appScope' }"
+                >{{ $t("generate.scope") }}</h4>
                 <p>scope determins what part of your website runs in the PWA</p>
               </label>
               
@@ -168,7 +178,9 @@
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4  v-bind:class="{ fieldName: activeFormField === 'displayMode' }">{{ $t("generate.display") }}</h4>
+                <h4
+                  v-bind:class="{ fieldName: activeFormField === 'displayMode' }"
+                >{{ $t("generate.display") }}</h4>
                 <p>Display indetifies the browser components that should be included in your. "Standalone" appears as a traditional app</p>
               </label>
               
@@ -184,7 +196,9 @@
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 v-bind:class="{ fieldName: activeFormField === 'appOrientation' }">{{ $t("generate.orientation") }}</h4>
+                <h4
+                  v-bind:class="{ fieldName: activeFormField === 'appOrientation' }"
+                >{{ $t("generate.orientation") }}</h4>
                 <p>Orientation determines the perfered flow of your application</p>
               </label>
               
@@ -204,7 +218,9 @@
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 v-bind:class="{ fieldName: activeFormField === 'appLang' }">{{ $t("generate.language") }}</h4>
+                <h4
+                  v-bind:class="{ fieldName: activeFormField === 'appLang' }"
+                >{{ $t("generate.language") }}</h4>
                 <p>declare the language of your PWA</p>
               </label>
               
@@ -250,13 +266,31 @@
       </section>
 
       <section id="rightSide">
-        <div id="exampleDiv">
+        <!--<div id="exampleDiv">
           <a href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps/get-started#web-app-manifest">
           Check our docs
           </a>
 
           for more info on how to use this manifest
+        </div>-->
+        <div id="exampleDiv">
+          <div id="hoverDiv">
+            Instructions
+            <span id="exampleSpan">hover for more</span>
+          </div>
+
+          <div id="collapseDiv">
+            <p>Add this line to your html page:</p>
+            <code>&lt;link rel='manifest' href=&quot;manifest.webmanifest&quot;&gt;</code>
+            <p>and add the below code to a file named manifest.webmanifest in your app</p>
+          </div>
         </div>
+
+        <!--<div id="collapseDiv">
+          <p>Add this line to your html page:</p>
+          <code>&lt;link rel='manifest' href=&quot;manifest.webmanifest&quot;&gt;</code>
+          <p>and add the below code to a file named manifest.webmanifest in your app</p>
+        </div>-->
         <CodeViewer
           code-type="json"
           v-on:invalidManifest="invalidManifest()"
@@ -387,7 +421,7 @@ export default class extends Vue {
 
   public onChangeSimpleInput(): void {
     try {
-      console.log(this.manifest$)
+      console.log(this.manifest$);
       this.updateManifest(this.manifest$);
       // this.manifest$ = this.manifest;
     } catch (e) {
@@ -608,7 +642,7 @@ export default class extends Vue {
         margin-bottom: 2em;
         justify-content: space-between;
         width: 292px;
-        background: #E2E2E2;
+        background: #e2e2e2;
         border-radius: 22px;
 
         button {
@@ -616,7 +650,7 @@ export default class extends Vue {
           border: none;
           font-weight: bold;
           font-size: 14px;
-          color: #8A8A8A;
+          color: #8a8a8a;
           padding-top: 6px;
           padding-bottom: 7px;
           border-radius: 20px;
@@ -642,7 +676,7 @@ export default class extends Vue {
       h4 {
         font-size: 18px;
         font-weight: bold;
-        color: #2C2C2C;
+        color: #2c2c2c;
         padding-top: 30px;
       }
 
@@ -684,12 +718,36 @@ export default class extends Vue {
     flex: 1;
     width: 4em;
     height: 110.4vh;
-    background: #F0F0F0;
+    background: #f0f0f0;
   }
 
   #exampleDiv {
     padding: 1em;
     font-weight: bold;
+    height: 2.6em;
+    transition: height 0.2s;
+    cursor: pointer;
+  }
+
+  #exampleDiv:hover {
+    height: 10em;
+  }
+
+  #exampleSpan {
+    margin-right: 1em;
+    font-size: 12px;
+  }
+
+  #hoverDiv {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  #collapseDiv {
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 0;
   }
 }
 </style>
