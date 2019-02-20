@@ -691,5 +691,11 @@ export default class extends Vue {
     padding: 1em;
     font-weight: bold;
   }
+
+  @media (min-width: 2559px) {
+    .mastHead p {
+      width: 534px !important;
+    }
+  }
 }
 </style>

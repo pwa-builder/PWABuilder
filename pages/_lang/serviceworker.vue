@@ -62,7 +62,7 @@
           :size="viewerSize"
           :code="webPreview"
           :title="$t('serviceworker.code_preview_web')"
-          :showToolbar="true"
+          :showToolbar="false"
           :showHeader="true"
         >
           <div>Add this code to your landing page in a &lt;script&gt; tag:</div>
@@ -76,7 +76,7 @@
           :size="bottomViewerSize"
           :code="serviceworkerPreview"
           :title="$t('serviceworker.code_preview_serviceworker')"
-          :showToolbar="true"
+          :showToolbar="false"
           :showHeader="true"
         >
           <div>Add this code to a file named "pwabuider-sw.js" on your site root:</div>
@@ -308,7 +308,7 @@ export default class extends Vue {
 
   #rightSide {
     flex: 1;
-    height: 104.4vh;
+    height: 114.4vh;
     width: 50%;
     display: flex;
     flex-direction: column;

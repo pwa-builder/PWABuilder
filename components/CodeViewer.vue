@@ -232,8 +232,8 @@ export default class extends Vue {
 .code_viewer {
   display: flex;
   flex-direction: column;
-  padding: 10px;
-  height: 100%;
+  background: #f1f1f1;
+  height: 110vh;
 
   #codeHeader {
     font-weight: bold;
@@ -293,7 +293,7 @@ export default class extends Vue {
   #toolbar {
     position: fixed;
     background: #f0f0f0;
-    width: 48.8vw;
+    // width: 50vw;
     bottom: 0;
     right: 0;
     display: flex;
