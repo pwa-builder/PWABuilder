@@ -7,13 +7,13 @@
           <h2>{{ $t("serviceworker.title") }}</h2>
           <p>{{ $t("serviceworker.summary") }}</p>
 
-          <div id="doneDiv">
+          <!--<div id="doneDiv">
             <nuxt-link
               @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})"
               id="doneButton"
               to="reportCard"
             >Done</nuxt-link>
-          </div>
+          </div>-->
         </header>
 
         <div id="inputSection">
@@ -41,6 +41,15 @@
               </p>
             </div>
           </form>
+        </div>
+
+        <div id="doneDiv">
+          <button @click="download()" id="downloadSWButton">
+            <span v-if="!isBuilding">{{ $t('serviceworker.download') }}</span>
+            <span v-if="isBuilding">
+              <Loading :active="true" class="u-display-inline_block u-margin-left-sm"/>
+            </span>
+          </button>
         </div>
       </section>
 
@@ -152,17 +161,23 @@ export default class extends Vue {
   public async download(): Promise<void> {
     this.isBuilding = true;
     try {
-      await this.downloadServiceWorker(this.serviceworker$);
+      if (this.serviceworker$) {
+        const cleanedSW = this.serviceworker$.toString();
+        console.log(cleanedSW);
+        await this.downloadServiceWorker(cleanedSW);
+      }
     } catch (e) {
+      console.error(e);
       this.error = e;
     }
+
     if (this.archive) {
       window.location.href = this.archive;
     }
 
-    this.$awa({
+    /*this.$awa({
       referrerUri: "https://preview.pwabuilder.com/serviceworker-download"
-    });
+    });*/
     this.isBuilding = false;
   }
 
@@ -269,24 +284,25 @@ export default class extends Vue {
       }
     }
 
+    #downloadSWButton {
+      background: $color-button-primary-purple-variant;
+      width: 184px;
+      height: 44px;
+      border-radius: 20px;
+      border: none;
+      font-weight: bold;
+      font-size: 18px;
+      margin-top: 30px;
+      margin-bottom: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+
     #doneDiv {
       display: flex;
-
-      #doneButton {
-        background: $color-button-primary-purple-variant;
-        width: 184px;
-        height: 44px;
-        border-radius: 20px;
-        border: none;
-        font-weight: bold;
-        font-size: 18px;
-        margin-top: 30px;
-        margin-bottom: 40px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: white;
-      }
+      justify-content: center;
     }
   }
 
@@ -335,7 +351,7 @@ export default class extends Vue {
     width: 534px !important;
     margin-top: 30px !important;
   }
-  
+
   .swDesc {
     width: initial !important;
   }
