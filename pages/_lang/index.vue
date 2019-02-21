@@ -313,5 +313,11 @@ Vue.prototype.$awa = function(config) {
     padding-left: 4em;
   }
 }
+
+@media (max-height: 700px) {
+  #sideBySide #leftSide header {
+    margin-top: 156px;
+  }
+}
 </style>
 
