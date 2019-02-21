@@ -683,7 +683,7 @@ export default class extends Vue {
   #rightSide {
     flex: 1;
     width: 4em;
-    height: 110.4vh;
+    height: 120vh;
     background: #F0F0F0;
   }
 
@@ -695,6 +695,12 @@ export default class extends Vue {
   @media (min-width: 2559px) {
     .mastHead p {
       width: 534px !important;
+    }
+  }
+
+  @media (max-width: 1290px) {
+    #rightSide {
+      height: 136vh;
     }
   }
 }

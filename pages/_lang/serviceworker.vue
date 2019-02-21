@@ -308,7 +308,7 @@ export default class extends Vue {
 
   #rightSide {
     flex: 1;
-    height: 114.4vh;
+    height: 110vh;
     width: 50%;
     display: flex;
     flex-direction: column;
@@ -354,6 +354,16 @@ export default class extends Vue {
 
   .swDesc {
     width: initial !important;
+  }
+}
+
+@media (max-width: 1290px) {
+  #sideBySide #rightSide .topViewer {
+    height: 57vh;
+  }
+
+  #rightSide {
+    height: 123vh;
   }
 }
 </style>

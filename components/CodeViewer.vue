@@ -294,7 +294,7 @@ export default class extends Vue {
     position: fixed;
     background: #f0f0f0;
     // width: 50vw;
-    bottom: 0;
+    bottom: 16px;
     right: 0;
     display: flex;
     justify-content: flex-end;
