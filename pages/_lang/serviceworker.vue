@@ -363,7 +363,7 @@ export default class extends Vue {
   }
 
   #rightSide {
-    height: 123vh;
+    height: 123vh !important;
   }
 }
 </style>
