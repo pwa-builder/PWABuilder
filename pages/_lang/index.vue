@@ -28,10 +28,7 @@
               @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/build/manifest-scan' })"
               id="getStartedButton"
             >
-              <div v-if="!inProgress">{{ $t('generator.start') }}</div>
-              <div v-if="inProgress" id="loadingDiv">
-                <Loading :active="inProgress"/>
-              </div>
+              <div>{{ $t('generator.start') }}</div>
             </button>
           </form>
 

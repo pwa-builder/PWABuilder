@@ -32,7 +32,7 @@
       <section id="scoreSection">
         <div id="scoreDiv">
           <span id="gradeSpan">{{overallGrade}}</span>
-          <span id="overallSpan">overall grade</span>
+          <span id="overallSpan">{{gradeText}}</span>
         </div>
       </section>
     </div>
@@ -398,6 +398,7 @@ export default class extends Vue {
   manifestScore = 0;
   securityScore = 0;
   overallGrade = "--";
+  gradeText = "overall grade";
 
   swAnalyzing = false;
   manifestAnalyzing = false;
@@ -581,29 +582,29 @@ export default class extends Vue {
 
   private calcGrade() {
     return new Promise(resolve => {
-      console.log(this.swScore);
-      console.log(this.manifestScore);
-      console.log(this.securityScore);
-
-      var totalGrade = (this.swScore + this.manifestScore + this.securityScore)/3;
-
+      const totalGrade = (this.swScore + this.manifestScore + this.securityScore) / 3;
 
       switch(true) {
         case (totalGrade > 90):
         this.overallGrade = "A";
+        this.gradeText = "overall grade";
         break;
         case (totalGrade > 80):
         this.overallGrade = "B";
+        this.gradeText = "overall grade";
         break;
         case (totalGrade > 70):
         this.overallGrade = "C";
+        this.gradeText = "overall grade";
         break;
         case (totalGrade > 55):
         this.overallGrade = "D";
+        this.gradeText = "overall grade";
         break;
         default:
         this.overallGrade = "--";
-        }
+        this.gradeText = "pending";
+      }
 
       sessionStorage.setItem("overallGrade", this.overallGrade);
 
