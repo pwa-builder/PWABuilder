@@ -7,13 +7,6 @@
           <h2>{{ $t("serviceworker.title") }}</h2>
           <p>{{ $t("serviceworker.summary") }}</p>
 
-          <!--<div id="doneDiv">
-            <nuxt-link
-              @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})"
-              id="doneButton"
-              to="reportCard"
-            >Done</nuxt-link>
-          </div>-->
         </header>
 
         <div id="inputSection">
@@ -79,7 +72,7 @@
           :showToolbar="false"
           :showHeader="true"
         >
-          <div>Add this code to a file named "pwabuider-sw.js" on your site root:</div>
+          <div>Add this code to a file named "pwabuilder-sw.js" on your site root:</div>
         </CodeViewer>
       </section>
     </main>
