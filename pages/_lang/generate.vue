@@ -717,8 +717,8 @@ export default class extends Vue {
   #rightSide {
     flex: 1;
     width: 4em;
-    height: 110.4vh;
-    background: #f0f0f0;
+    height: 120vh;
+    background: #F0F0F0;
   }
 
   #exampleDiv {
@@ -748,6 +748,18 @@ export default class extends Vue {
     font-weight: normal;
     font-size: 14px;
     line-height: 0;
+  }
+
+  @media (min-width: 2559px) {
+    .mastHead p {
+      width: 534px !important;
+    }
+  }
+
+  @media (max-width: 1290px) {
+    #rightSide {
+      height: 136vh;
+    }
   }
 }
 </style>

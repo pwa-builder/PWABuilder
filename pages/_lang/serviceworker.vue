@@ -7,13 +7,13 @@
           <h2>{{ $t("serviceworker.title") }}</h2>
           <p>{{ $t("serviceworker.summary") }}</p>
 
-          <div id="doneDiv">
+          <!--<div id="doneDiv">
             <nuxt-link
               @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/generator-nextStep-trigger'})"
               id="doneButton"
               to="reportCard"
             >Done</nuxt-link>
-          </div>
+          </div>-->
         </header>
 
         <div id="inputSection">
@@ -42,6 +42,15 @@
             </div>
           </form>
         </div>
+
+        <div id="doneDiv">
+          <button @click="download()" id="downloadSWButton">
+            <span v-if="!isBuilding">{{ $t('serviceworker.download') }}</span>
+            <span v-if="isBuilding">
+              <Loading :active="true" class="u-display-inline_block u-margin-left-sm"/>
+            </span>
+          </button>
+        </div>
       </section>
 
       <section id="rightSide">
@@ -53,7 +62,7 @@
           :size="viewerSize"
           :code="webPreview"
           :title="$t('serviceworker.code_preview_web')"
-          :showToolbar="true"
+          :showToolbar="false"
           :showHeader="true"
         >
           <div>Add this code to your landing page in a &lt;script&gt; tag:</div>
@@ -67,7 +76,7 @@
           :size="bottomViewerSize"
           :code="serviceworkerPreview"
           :title="$t('serviceworker.code_preview_serviceworker')"
-          :showToolbar="true"
+          :showToolbar="false"
           :showHeader="true"
         >
           <div>Add this code to a file named "pwabuider-sw.js" on your site root:</div>
@@ -152,17 +161,24 @@ export default class extends Vue {
   public async download(): Promise<void> {
     this.isBuilding = true;
     try {
-      await this.downloadServiceWorker(this.serviceworker$);
+      if (this.serviceworker$) {
+        const cleanedSW = this.serviceworker$.toString();
+
+        this.$router.push({
+          name: 'reportCard'
+        });
+
+        await this.downloadServiceWorker(cleanedSW);
+      }
     } catch (e) {
+      console.error(e);
       this.error = e;
     }
+
     if (this.archive) {
       window.location.href = this.archive;
     }
 
-    this.$awa({
-      referrerUri: "https://preview.pwabuilder.com/serviceworker-download"
-    });
     this.isBuilding = false;
   }
 
@@ -269,30 +285,31 @@ export default class extends Vue {
       }
     }
 
+    #downloadSWButton {
+      background: $color-button-primary-purple-variant;
+      width: 184px;
+      height: 44px;
+      border-radius: 20px;
+      border: none;
+      font-weight: bold;
+      font-size: 18px;
+      margin-top: 30px;
+      margin-bottom: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+
     #doneDiv {
       display: flex;
-
-      #doneButton {
-        background: $color-button-primary-purple-variant;
-        width: 184px;
-        height: 44px;
-        border-radius: 20px;
-        border: none;
-        font-weight: bold;
-        font-size: 18px;
-        margin-top: 30px;
-        margin-bottom: 40px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: white;
-      }
+      justify-content: center;
     }
   }
 
   #rightSide {
     flex: 1;
-    height: 104.4vh;
+    height: 110vh;
     width: 50%;
     display: flex;
     flex-direction: column;
@@ -335,9 +352,19 @@ export default class extends Vue {
     width: 534px !important;
     margin-top: 30px !important;
   }
-  
+
   .swDesc {
     width: initial !important;
+  }
+}
+
+@media (max-width: 1290px) {
+  #sideBySide #rightSide .topViewer {
+    height: 57vh;
+  }
+
+  #rightSide {
+    height: 123vh !important;
   }
 }
 </style>

@@ -79,8 +79,8 @@
   "serviceworker": {
     "title": "Service Workers",
     "summary": "Service workers can make your site work offline, run faster, or both. Choose the functionality from our service workers below.",
-    "download": "Download service worker",
-    "building": "Building package...",
+    "download": "Download",
+    "building": "downloading...",
     "next_step": "Next Step",
     "code_preview_web": "Code for website",
     "code_preview_serviceworker":"Service worker code",
