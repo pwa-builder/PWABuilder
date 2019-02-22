@@ -163,7 +163,11 @@ export default class extends Vue {
     try {
       if (this.serviceworker$) {
         const cleanedSW = this.serviceworker$.toString();
-        console.log(cleanedSW);
+
+        this.$router.push({
+          name: 'reportCard'
+        });
+
         await this.downloadServiceWorker(cleanedSW);
       }
     } catch (e) {
@@ -175,9 +179,6 @@ export default class extends Vue {
       window.location.href = this.archive;
     }
 
-    /*this.$awa({
-      referrerUri: "https://preview.pwabuilder.com/serviceworker-download"
-    });*/
     this.isBuilding = false;
   }
 
