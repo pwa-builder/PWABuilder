@@ -307,6 +307,10 @@ Vue.prototype.$awa = function(config) {
   }
 }
 
+footer a {
+  box-shadow: none;
+}
+
 @media (max-width: 1282px) {
   #sideBySide #introContainer {
     padding-top: 4em;
