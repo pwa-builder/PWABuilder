@@ -511,14 +511,17 @@ export default class extends Vue {
         const data = await response.json();
         console.log("lookAtSW", data);
 
-        this.serviceWorkerData = data;
+        this.serviceWorkerData = data.swURL;
       } else {
+        console.log("fetching sw");
         const response = await fetch(`${apiUrl}=${this.url}`);
         const data = await response.json();
-        console.log("lookAtSW", data.data);
+        console.log("lookAtSW", data.swURL);
 
-        this.serviceWorkerData = data;
+        this.serviceWorkerData = data.swURL;
       }
+
+      console.log(this.serviceWorkerData);
 
       if (this.serviceWorkerData === false) {
         this.swScore = 0;
