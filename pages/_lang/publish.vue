@@ -57,7 +57,7 @@
                 <i id="platformIcon" class="fab fa-android"></i>
                 <Download
                   id="platformDownloadButton"
-                  platform="Android"
+                  platform="android"
                   :message="$t('publish.download')"
                 />
               </div>
