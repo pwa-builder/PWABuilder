@@ -2,6 +2,79 @@
   <main>
     <ScoreHeader></ScoreHeader>
 
+    <Modal
+      :title="$t('publish.generate_appx')"
+      ref="appxModal"
+      @modalSubmit="onSubmitAppxModal"
+      @cancel="onCancelAppxModal"
+      v-if="appxForm"
+    >
+      <section id="appxModalBody">
+        <div>
+          <label id="topLabel">
+            {{ $t('publish.enter_your') }}
+            <a
+              href="https://developer.microsoft.com/en-us/windows"
+              target="_blank"
+            >{{ $t('publish.dev_center') }}</a>
+            {{ $t('publish.publisher_details') }}
+          </label>
+        </div>
+
+        <div>
+          <label>{{ $t('publish.label_publisher') }}</label>
+        </div>
+
+        <input
+          class="l-generator-input l-generator-input--largest"
+          :placeholder="$t('publish.placeholder_publisher')"
+          type="text"
+          v-model="appxForm.publisher"
+          requied
+        >
+
+        <div class="form-item">
+          <label>{{ $t('publish.label_identity') }}</label>
+          <label>{{ $t('publish.label_publisher_id') }}</label>
+        </div>
+
+        <input
+          class="l-generator-input l-generator-input--largest"
+          :placeholder="$t('publish.placeholder_identity')"
+          type="text"
+          v-model="appxForm.publisher_id"
+          requied
+        >
+
+        <div class="form-item">
+          <label>{{ $t('publish.label_package') }}</label>
+        </div>
+        <input
+          class="l-generator-input l-generator-input--largest"
+          :placeholder="$t('publish.placeholder_package')"
+          type="text"
+          v-model="appxForm.package"
+          requied
+        >
+
+        <div class="form-item">
+          <label>{{ $t('publish.label_version') }}</label>
+        </div>
+        <input
+          class="l-generator-input l-generator-input--largest"
+          :placeholder="$t('publish.placeholder_version')"
+          type="text"
+          v-model="appxForm.version"
+          requied
+        >
+
+        <p class="l-generator-error" v-if="appxError">
+          <span class="icon-exclamation"></span>
+          {{ $t(appxError) }}
+        </p>
+      </section>
+    </Modal>
+
     <section id="sideBySide">
       <section id="leftSide">
         <div id="introContainer">
@@ -22,14 +95,19 @@
       <section id="rightSide">
         <div id="platformsListContainer">
           <ul>
-            <li>
-              <div id="platformButtonBlock">
+            <li id="windowsListItem">
+              <div id="platformButtonBlock" class="windowsActionsBlock">
                 <i id="platformIcon" class="fab fa-windows"></i>
                 <Download
                   id="platformDownloadButton"
                   platform="windows10"
                   :message="$t('publish.download')"
                 />
+
+                <button
+                  id="platformDownloadButton"
+                  @click="openAppXModal();  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/publish/windows10-appx' })"
+                >Generate</button>
               </div>
 
               <span>
@@ -190,6 +268,7 @@ export default class extends Vue {
   }
 
   public async onSubmitAppxModal(): Promise<void> {
+    console.log("here");
     const $appxModal = this.$refs.appxModal as Modal;
     $appxModal.showLoading();
 
@@ -220,6 +299,30 @@ export default class extends Vue {
 /* stylelint-disable */
 
 @import "~assets/scss/base/variables";
+
+#appxModalBody {
+  height: 6em;
+  padding-left: 2em;
+  padding-right: 10em;
+
+  input {
+    padding: initial;
+  }
+
+  div {
+    margin-top: 40px;
+
+    #topLabel {
+      font-weight: initial;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 20px;
+      display: block;
+    }
+  }
+}
 
 #sideBySide {
   display: flex;
@@ -309,6 +412,10 @@ export default class extends Vue {
         list-style: none;
         padding: 0;
         margin: 0;
+
+        #windowsListItem {
+          height: 100px;
+        }
 
         li {
           display: flex;
