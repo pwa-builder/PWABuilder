@@ -156,7 +156,7 @@
                 <!--<Download platform="windows10" :message="$t('publish.download')"/>-->
                 <Download
                   id="platformDownloadButton"
-                  platform="Android"
+                  platform="android"
                   :message="$t('publish.download')"
                 />
               </div>
