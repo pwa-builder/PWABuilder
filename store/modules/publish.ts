@@ -1,7 +1,7 @@
 import { ActionTree, MutationTree, GetterTree, ActionContext } from 'vuex';
 import { RootState } from 'store';
 
-const apiUrl = `https://manifold-api-pre.azurewebsites.net/manifests`;
+const apiUrl = `${process.env.apiUrl}/manifests`;
 const platforms = {
     web: 'web',
     windows10: 'windows10',
