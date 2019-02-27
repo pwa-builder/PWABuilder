@@ -9,7 +9,7 @@
         <div>
           <h1 id="featurePageHeader">Extras</h1>
 
-          <p>Add that special something to supercharge your PWA. Consider connecting your website with these API's to enable magical cross-platform experiences.</p>
+          <p>Add that special something to supercharge your PWA. These cross-platform features can make your website work more like an app.</p>
 
           <div id="featureActionsBlock">
             <button @click="clearSelected()" id="clearButton">Clear</button>

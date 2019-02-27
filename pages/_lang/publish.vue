@@ -78,16 +78,17 @@
     <section id="sideBySide">
       <section id="leftSide">
         <div id="introContainer">
-          <h2>Download and publish your shiny new app</h2>
+          <h2>Everything you need to make your PWA</h2>
 
           <p>
-            You have a few different options to publish your app. You can download the
-            files and deploy them to your site, or you can download pre-populated app projects for the major app
-            platforms from the links below.
+            If you haven’t already, download the content below and publish it to your website. 
+            Making these changes to your website is all you need to become a PWA. 
+            You may also want to publish your PWAs to the different app markets, 
+            you will find the packages for each of these on the right.
           </p>
 
           <div id="publishActionsContainer">
-            <button id="downloadAllButton">Download All</button>
+            <button id="downloadAllButton">Download your PWA files</button>
           </div>
         </div>
       </section>
@@ -111,9 +112,8 @@
               </div>
 
               <span>
-                Service Worker support requires RS4 or above. You'll get a copy of each PWAbuilder component as well as
-                a side-loadable version of your PWA (requires Win10 in dev mode). The Generate Appx button can be used to
-                generate a PWA package to submit to the Microsoft Store.
+                You'll get a side-loadable version of your PWA (requires Win10 in dev mode) to test your PWA right away. 
+                The Generate Appx button can be used to generate a PWA package to submit to the Microsoft Store.
               </span>
             </li>
 
@@ -381,7 +381,7 @@ export default class extends Vue {
 
         button {
           border: none;
-          width: 184px;
+          width: 264px;
           border-radius: 20px;
           font-size: 18px;
           font-weight: bold;

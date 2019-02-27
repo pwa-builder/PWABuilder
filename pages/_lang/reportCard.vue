@@ -10,21 +10,20 @@
 
       <section id="headerSection">
         <div class="mast">
-          <h1 id="reportCardHeader">How am I doing so far?</h1>
+          <h1 id="reportCardHeader">How are you doing so far?</h1>
 
           <div id="urlTested">URL Tested:
             <p>{{url}}</p>
           </div>
 
           <p id="reportCardInfo">
-            See how well your website supports PWA features and learn how to improve your website's score by addressing the feedback below.
-            Click Build to let us help you add what you need. When you've pushed your changes,
-            try re-scanning your website to track your progress.
+            We have taken a look at how well your website supports PWA features and provided simple tools to help you fill in the gaps.
+            When you’re ready, click “build my PWA” to finish up.
           </p>
 
           <div id="reportActionsBlock">
             <button @click="rescan()" id="rescanButton">Rescan</button>
-            <nuxt-link id="publishButton" to="/publish">Build My App</nuxt-link>
+            <nuxt-link id="publishButton" to="/publish">Build My PWA</nuxt-link>
           </div>
         </div>
       </section>
