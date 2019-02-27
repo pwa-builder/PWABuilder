@@ -81,14 +81,15 @@
           <h2>Everything you need to make your PWA</h2>
 
           <p>
-            If you haven’t already, download the content below and publish it to your website. 
-            Making these changes to your website is all you need to become a PWA. 
-            You may also want to publish your PWAs to the different app markets, 
+            If you haven’t already, download the content below and publish it to your website.
+            Making these changes to your website is all you need to become a PWA.
+            You may also want to publish your PWAs to the different app markets,
             you will find the packages for each of these on the right.
           </p>
 
           <div id="publishActionsContainer">
-            <button id="downloadAllButton">Download your PWA files</button>
+            <!--<button id="downloadAllButton">Download your PWA files</button>-->
+            <Download id="downloadAllButton" platform="web" message="Download your PWA files"/>
           </div>
         </div>
       </section>
@@ -112,7 +113,7 @@
               </div>
 
               <span>
-                You'll get a side-loadable version of your PWA (requires Win10 in dev mode) to test your PWA right away. 
+                You'll get a side-loadable version of your PWA (requires Win10 in dev mode) to test your PWA right away.
                 The Generate Appx button can be used to generate a PWA package to submit to the Microsoft Store.
               </span>
             </li>
@@ -156,7 +157,7 @@
               <span>PWAs are available through the browser on iOS, however your PWA can also be submitted to the app store by submitting the package you get below.</span>
             </li>
 
-            <li>
+            <!--<li>
               <div id="platformButtonBlock">
                 <i id="platformIcon" class="fab fa-edge"></i>
                 <Download
@@ -167,7 +168,7 @@
               </div>
 
               <span>Download these files and add them to your website. Different browsers will detect your Progressive Web App in different ways, but the manifest and service workers are required for each of them.</span>
-            </li>
+            </li>-->
           </ul>
         </div>
       </section>
@@ -358,16 +359,15 @@ export default class extends Vue {
     }
 
     #introContainer {
-      padding-top: 6em;
-      padding-right: 10em;
-      padding-left: 10em;
+      padding-top: 4em;
+      padding-right: 14em;
+      padding-left: 4em;
       display: flex;
       flex-direction: column;
       align-items: center;
 
       h2 {
         font-size: 36px;
-        color: black;
         font-weight: bold;
       }
 
@@ -393,6 +393,14 @@ export default class extends Vue {
           margin-right: 11px;
           background: $color-button-primary-purple-variant;
           color: white;
+          width: 264px;
+          border-radius: 20px;
+          font-size: 18px;
+          padding-top: 9px;
+          padding-bottom: 11px;
+          font-weight: bold;
+          display: flex;
+          justify-content: center;
         }
       }
     }
@@ -495,6 +503,12 @@ export default class extends Vue {
 
   #bottomImageSection {
     flex: 1;
+  }
+}
+
+@media(max-width: 1280px) {
+  #sideBySide #leftSide #introContainer {
+    padding-right: 9em;
   }
 }
 </style>
