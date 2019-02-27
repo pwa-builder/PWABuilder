@@ -227,7 +227,7 @@ export default class extends Vue {
     .mastHead {
       padding-top: 40px;
       padding-right: 100px;
-      padding-left: 164px;
+      padding-left: 4em;
 
       h2 {
         font-size: 36px;
@@ -245,7 +245,7 @@ export default class extends Vue {
 
     #inputSection {
       padding-right: 100px;
-      padding-left: 164px;
+      padding-left: 4em;
 
       .inputContainer {
         margin-top: 20px;

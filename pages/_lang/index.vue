@@ -161,11 +161,12 @@ Vue.prototype.$awa = function(config) {
       display: flex;
       justify-content: center;
       align-items: center;
+      width: 27em;
     }
 
     footer p {
       text-align: center;
-      width: 376px;
+      width: 320px;
       font-size: 12px;
       color: #3c3c3c;
     }
@@ -198,8 +199,8 @@ Vue.prototype.$awa = function(config) {
   }
 
   #introContainer {
-    padding-right: 100px;
-    padding-left: 164px;
+    padding-left: 6em;
+    padding-right: 13em;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -208,16 +209,15 @@ Vue.prototype.$awa = function(config) {
 
     h2 {
       font-size: 36px;
-      color: black;
       font-weight: bold;
-      width: 376px;
+      width: 424px;
     }
 
     p {
       margin-top: 30px;
       font-size: 18px;
       margin-bottom: 20px;
-      width: 376px;
+      width: 424px;
       text-align: left;
     }
 
@@ -233,7 +233,7 @@ Vue.prototype.$awa = function(config) {
   }
 
   #formContainer {
-    width: 376px;
+    width: 424px;
 
     #expertModeBlock {
       display: flex;
@@ -313,8 +313,9 @@ footer a {
 
 @media (max-width: 1282px) {
   #sideBySide #introContainer {
-    padding-top: 4em;
-    padding-left: 4em;
+    padding-top: 3em;
+    padding-left: 8em;
+    padding-right: 13em;
   }
 }
 

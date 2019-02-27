@@ -710,7 +710,7 @@ p {
     }
 
     div.mast {
-      padding-left: 8em;
+      padding-left: 4em;
     }
 
     /*button#rescanButton {
