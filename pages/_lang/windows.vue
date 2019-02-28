@@ -369,7 +369,7 @@ header {
 
   #headerSection {
     flex: 1;
-    padding-left: 164px;
+    padding-left: 4em;
     padding-right: 164px;
     padding-top: 40px;
 
@@ -449,8 +449,8 @@ header {
 #fakeCardBlock {
   display: grid;
   grid-template-columns: auto auto auto;
-  padding-left: 164px;
-  padding-right: 164px;
+  padding-left: 4em;
+  padding-right: 4em;
   margin-top: 60px;
   margin-bottom: 60px;
   
