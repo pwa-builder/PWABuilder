@@ -161,7 +161,7 @@ Vue.prototype.$awa = function(config) {
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 27em;
+      width: 42em;
     }
 
     footer p {
@@ -199,8 +199,6 @@ Vue.prototype.$awa = function(config) {
   }
 
   #introContainer {
-    padding-left: 6em;
-    padding-right: 13em;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -310,6 +308,7 @@ Vue.prototype.$awa = function(config) {
 footer a {
   box-shadow: none;
 }
+
 
 @media (max-width: 1282px) {
   #sideBySide #introContainer {
