@@ -301,6 +301,12 @@ export default class extends Vue {
 
 @import "~assets/scss/base/variables";
 
+@media( max-height: 700px) {
+  #scoreSideBySide header {
+    top: 51px;
+  }
+}
+
 #appxModalBody {
   height: 6em;
   padding-left: 2em;

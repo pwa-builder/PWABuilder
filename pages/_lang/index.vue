@@ -161,7 +161,7 @@ Vue.prototype.$awa = function(config) {
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 42em;
+      width: 27em;
     }
 
     footer p {
@@ -208,14 +208,14 @@ Vue.prototype.$awa = function(config) {
     h2 {
       font-size: 36px;
       font-weight: bold;
-      width: 424px;
+      width: 386px;
     }
 
     p {
       margin-top: 30px;
       font-size: 18px;
       margin-bottom: 20px;
-      width: 424px;
+      width: 386px;
       text-align: left;
     }
 
@@ -231,7 +231,7 @@ Vue.prototype.$awa = function(config) {
   }
 
   #formContainer {
-    width: 424px;
+    width: 386px;
 
     #expertModeBlock {
       display: flex;
@@ -321,6 +321,20 @@ footer a {
 @media (max-height: 700px) {
   #sideBySide #leftSide header {
     margin-top: 156px;
+  }
+}
+
+@media (min-width: 1400px) {
+  #sideBySide #introContainer {
+    padding-right: 6em;
+  }
+
+  #sideBySide #leftSide header {
+    padding-left: 111px;
+  }
+
+  #sideBySide #leftSide footer {
+    width: 31em;
   }
 }
 </style>

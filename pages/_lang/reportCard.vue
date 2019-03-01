@@ -922,5 +922,15 @@ p {
   flex-grow: 2;
   margin-bottom: 2em;
 }
+
+@media(min-width: 1400px) {
+  #headerSection {
+    padding-left: 2em;
+  }
+
+  #scoreSideBySide header {
+    left: 102px;
+  }
+}
 </style>
 
