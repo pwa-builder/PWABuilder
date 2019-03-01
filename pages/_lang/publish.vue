@@ -9,18 +9,18 @@
       @cancel="onCancelAppxModal"
       v-if="appxForm"
     >
-      <section id="appxModalBody">
-        <div>
-          <label id="topLabel">
-            {{ $t('publish.enter_your') }}
-            <a
-              href="https://developer.microsoft.com/en-us/windows"
-              target="_blank"
-            >{{ $t('publish.dev_center') }}</a>
-            {{ $t('publish.publisher_details') }}
-          </label>
-        </div>
+      <div id="topLabelBox" slot="extraP">
+        <label id="topLabel">
+          {{ $t('publish.enter_your') }}
+          <a
+            href="https://developer.microsoft.com/en-us/windows"
+            target="_blank"
+          >{{ $t('publish.dev_center') }}</a>
+          {{ $t('publish.publisher_details') }}
+        </label>
+      </div>
 
+      <section id="appxModalBody">
         <div>
           <label>{{ $t('publish.label_publisher') }}</label>
         </div>
@@ -471,6 +471,12 @@ export default class extends Vue {
   }
 }
 
+
+#topLabelBox {
+  margin-bottom: 1em;
+};
+
+
 #bottomSection {
   // display: flex;
   display: none;
@@ -506,7 +512,7 @@ export default class extends Vue {
   }
 }
 
-@media(max-width: 1280px) {
+@media (max-width: 1280px) {
   #sideBySide #leftSide #introContainer {
     padding-right: 9em;
   }
