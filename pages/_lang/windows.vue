@@ -63,7 +63,6 @@
     >
       <div class="feature-viewer">
         <div class="code-samples">
-          <div id="codeHeader">Usage Example</div>
           <div class="code-top">
             <CodeViewer
               code-type="javascript"
@@ -71,22 +70,23 @@
               :code="loadCode()"
               v-on:editorValue="updateCode($event)"
               v-if="sample"
-              :showToolbar="true"
-              :title="$t('windows.codeTitle')"
+              :showToolbar="false"
               :showHeader="true"
-            ></CodeViewer>
+            >
+              <div>{{$t('windows.codeTitle')}}</div>
+            </CodeViewer>
           </div>
           <div class="code-bottom">
-            <div id="bottomCodeHeader">Snippit</div>
             <CodeViewer
               code-type="javascript"
               :size="viewerSize"
               :code="sample.source"
               v-if="sample"
-              :showToolbar="true"
+              :showToolbar="false"
               :showHeader="true"
-              :title="$t('windows.sourceTitle')"
-            />
+            >
+              <div>{{$t('windows.sourceTitle')}}</div>
+            </CodeViewer>
           </div>
         </div>
       </div>
@@ -467,17 +467,19 @@ header {
 .code-samples {
   display: flex;
   flex-direction: column;
-  height: 90vh;
+  height: 100vh;
   width: 100%;
   flex: 1;
 }
 
 .code-top {
   flex: 1;
+  height: 50vh;
 }
 
 .code-bottom {
   flex: 1;
+  height: 50vh;
 }
 
 .properties {
@@ -518,6 +520,7 @@ header {
   background: lightgrey;
   font-weight: bold;
   padding: 1em;
+  z-index: 9999;
 }
 
 #addBundleButton {
@@ -537,7 +540,7 @@ header {
 
 .feature-viewer {
   flex: 1;
-  height: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   padding-top: 2px;

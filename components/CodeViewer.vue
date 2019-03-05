@@ -243,6 +243,7 @@ export default class extends Vue {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    z-index: 9999;
 
     div {
       width: 20em;
