@@ -94,7 +94,7 @@ export default class extends Vue {
 
   public skipCheckUrl(): void {
     this.$router.push({
-      name: "serviceworker"
+      name: "features"
     });
   }
 
