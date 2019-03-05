@@ -48,15 +48,15 @@ module.exports = {
         extractCSS: true,
         vendor: ['babel-polyfill', 'vuex-class', 'nuxt-class-component', 'vue-i18n', 'prismjs'],
         plugins: [
-            new StyleLintPlugin({
-                files: ['**/*.scss', '**/*.vue'],
-                failOnError: false,
-                syntax: 'scss'
-            }),
-            new ForkTsCheckerWebpackPlugin({
+            /*new StyleLintPlugin({
+                files: ['**///*.scss', '**/*.vue'],
+                //failOnError: false,
+                //syntax: 'scss'
+            //}),
+            /*new ForkTsCheckerWebpackPlugin({
               tslint: true,
               vue: true
-            }),
+            }),*/
             new MonacoWebpackPlugin()
         ]
     },
