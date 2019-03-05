@@ -354,7 +354,7 @@
           </ul>
 
           <div class="editDiv">
-            <nuxt-link to="windows" class="editButton">Add More</nuxt-link>
+            <nuxt-link to="/features" class="editButton">Add More</nuxt-link>
           </div>
         </section>
       </section>

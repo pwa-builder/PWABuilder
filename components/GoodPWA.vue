@@ -63,7 +63,7 @@
         <li v-bind:class="{ good: statusState.hasNativeFeatures || allGood }">
           <h3>{{ $t('home.quality_high_list_1') }}</h3>
           <p class='paramText'>The Best PWAs can replace native apps.  Add app like functionality for the best PWA experience. 
-           <nuxt-link to="/windows">
+           <nuxt-link to="/features">
              Add App-like features
            </nuxt-link>
           </p>
