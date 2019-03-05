@@ -257,7 +257,7 @@ export default class extends Vue {
   @PublishAction buildAppx;
 
   public appxError: string | null = null;
-  public modalStatus: boolean = false;
+  public modalStatus = false;
 
   public created(): void {
     this.updateStatus();

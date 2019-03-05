@@ -20,7 +20,7 @@ export const mutations: MutationTree<State> = {
         state.suggestions = result.suggestions;
         state.warnings = result.warnings;
         state.errors = result.errors;
-        state.generated = result.generated ? result.generated : false
+        state.generated = result.generated ? result.generated : false;
     },
 
     [types.OVERWRITE_MANIFEST](state, result): void {

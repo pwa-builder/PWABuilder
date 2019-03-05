@@ -32,6 +32,13 @@
             </button>
           </form>
 
+          <div id="backToOld">
+            Having issues with the new version of PWABuilder? Use the previous version 
+            <a href="https://manifold-site-prod.azurewebsites.net/">here</a>
+            and consider opening an issue on our <a href="https://github.com/pwa-builder/PWABuilder">Github</a>.
+            Thanks!
+          </div>
+
           <div id="expertModeBlock">
             <button @click="skipCheckUrl()" id="expertModeButton">Expert Mode</button>
             <p>Already have a PWA? Skip ahead!</p>
@@ -140,6 +147,20 @@ Vue.prototype.$awa = function(config) {
 @import "~assets/scss/base/variables";
 /* stylelint-disable */
 
+#backToOld {
+  font-size: 12px;
+  line-height: 18px;
+  margin-top: 20px;
+  margin-bottom: 0px;
+
+  a {
+    color: inherit;
+    box-shadow: none;
+    color: inherit;
+    text-decoration: underline;
+  }
+}
+
 #sideBySide {
   display: flex;
   justify-content: space-around;
@@ -169,6 +190,7 @@ Vue.prototype.$awa = function(config) {
       width: 320px;
       font-size: 12px;
       color: #3c3c3c;
+      line-height: 18px;
     }
 
     header {

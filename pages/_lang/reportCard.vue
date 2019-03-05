@@ -595,7 +595,7 @@ export default class extends Vue {
     return new Promise(resolve => {
       const totalGrade = (this.swScore + this.manifestScore + this.securityScore) / 3;
 
-      switch(true) {
+      switch (true) {
         case (totalGrade > 90):
         this.overallGrade = "A";
         this.gradeText = "overall grade";

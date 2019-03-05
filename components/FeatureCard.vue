@@ -28,7 +28,7 @@ import * as windowsStore from "~/store/modules/windows";
 @Component({})
 export default class extends Vue {
   @Prop({}) sample: windowsStore.Sample;
-  @Prop({}) showRemoveButton: boolean = false;
+  @Prop({}) showRemoveButton = false;
 
   onClickSample(sample: windowsStore.Sample) {
     this.$emit("selected", sample);

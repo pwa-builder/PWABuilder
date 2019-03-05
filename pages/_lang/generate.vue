@@ -387,7 +387,7 @@ export default class extends Vue {
 
   public onChangeSimpleInput(): void {
     try {
-      console.log(this.manifest$)
+      console.log(this.manifest$);
       this.updateManifest(this.manifest$);
       // this.manifest$ = this.manifest;
     } catch (e) {

@@ -158,7 +158,7 @@ export default class extends Vue {
   @WindowsAction getSamples;
   @WindowsAction selectSample;
 
-  modalStatus: boolean = false;
+  modalStatus = false;
 
   async mounted() {
     console.log(this.samples.length);
