@@ -392,6 +392,7 @@ export default class extends Vue {
   @GeneratorState manifest: any;
 
   @GeneratorAction getManifestInformation;
+  @GeneratorAction updateLink;
 
   swScore = 0;
   manifestScore = 0;
@@ -405,16 +406,24 @@ export default class extends Vue {
 
   serviceWorkerData: any = null;
   noServiceWorker = false;
+  $url: any = null;
 
   noManifest = false;
 
   abortController: AbortController;
 
-  public async created(): Promise<void> {
-    await this.start();
-  }
 
-  public mounted() {
+  public async mounted() {
+    if (this.url) {
+      sessionStorage.setItem('pwaBuilderURL', this.url);
+      this.$url = this.url;
+    } else if (sessionStorage.getItem('pwaBuilderURL') !== undefined) {
+      this.$url = (sessionStorage.getItem('pwaBuilderURL') as string);
+      this.updateLink(this.$url);
+    }
+
+    await this.start();
+
     if ("AbortController" in window) {
       this.abortController = new AbortController();
     }
@@ -427,7 +436,7 @@ export default class extends Vue {
   }
 
   private async start() {
-    if (this.url) {
+    if (this.$url) {
       // this.analyzing = true;
       this.securityAnalyzing = true;
       this.manifestAnalyzing = true;
@@ -441,7 +450,7 @@ export default class extends Vue {
 
   private lookAtSecurity(): Promise<void> {
     return new Promise(resolve => {
-      if (this.url.includes("https")) {
+      if (this.$url.includes("https")) {
         this.securityScore = this.securityScore + 100;
       }
 
@@ -501,19 +510,19 @@ export default class extends Vue {
   }
 
   private async lookAtSW(): Promise<void> {
-    if (this.url) {
+    if (this.$url) {
       if (this.abortController) {
         const signal = this.abortController.signal;
         // const data = await axios.get(`${apiUrl}=${this.url}`, { signal });
         console.log("fetching sw");
-        const response = await fetch(`${apiUrl}=${this.url}`, { signal });
+        const response = await fetch(`${apiUrl}=${this.$url}`, { signal });
         const data = await response.json();
         console.log("lookAtSW", data);
 
         this.serviceWorkerData = data.swURL;
       } else {
         console.log("fetching sw");
-        const response = await fetch(`${apiUrl}=${this.url}`);
+        const response = await fetch(`${apiUrl}=${this.$url}`);
         const data = await response.json();
         console.log("lookAtSW", data.swURL);
 
