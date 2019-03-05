@@ -211,6 +211,8 @@ export default class extends Vue {
   animation-name: opened;
   animation-duration: 250ms;
 
+  will-change: opacity transform;
+
   @keyframes opened {
     from {
       transform: scale(0.4, 0.4);

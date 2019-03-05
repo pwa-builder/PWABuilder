@@ -353,7 +353,20 @@ export default class extends Vue {
   background: grey;
   opacity: 0.7;
   z-index: 98999;
+  animation-name: opened;
+  animation-duration: 250ms;
+  will-change: opacity;
 }
+
+@keyframes opened {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 0.7;
+    }
+  }
 
 header {
   display: flex;
