@@ -2,11 +2,11 @@
   <section>
     <div class="modal" v-if="showModal">
       <div class="modal-box">
-        <!-- <div class="pure-u-1-1 modal-tablec">
+        <div class="closeButtonDiv">
         <span class="l-generator-close" @click="onClickCancel()">
           <span class="icon-times"></span>
         </span>
-        </div>-->
+        </div>
         <div class="modal-body">
           <div id="titleBox">
             <h5 class="modal-title modal-title--normal">{{title}}</h5>
@@ -119,6 +119,7 @@ export default class extends Vue {
 
 @import "~assets/scss/base/variables";
 .modal {
+
   /*align-items: flex-start;
   xbackground: rgba($color-brand-quartary, .25);
   display: flex;
@@ -199,18 +200,53 @@ export default class extends Vue {
     width: 100%;
   }*/
 
+  background: white;
+  position: fixed;
+  top: 5em;
+  right: 5em;
+  bottom: 5em;
+  left: 5em;
+  z-index: 99999;
+  overflow-y: auto;
+  animation-name: opened;
+  animation-duration: 250ms;
+
+  @keyframes opened {
+    from {
+      transform: scale(0.4, 0.4);
+      opacity: 0.4;
+    }
+
+    to {
+      transform: scale(1, 1);
+      opacity: 1;
+    }
+  }
+
+  .modalBackground {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: grey;
+    opacity: 0.8;
+    z-index: 98999;
+  }
+
+  .closeButtonDiv {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+
+    .icon-times {
+      font-size: 1.6em;
+    }
+  }
+
   .modal-body {
     display: flex;
   }
-
-  background: white;
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 9999;
-  overflow-y: auto;
 
   .modal-title {
     font-size: 32px;

@@ -2,6 +2,8 @@
   <main>
     <ScoreHeader></ScoreHeader>
 
+    <div v-if="modalStatus" id="modalBackground"></div>
+
     <img id="featuresBG" src="~/assets/images/features_bg.svg">
 
     <div id="sideBySide">
@@ -156,6 +158,8 @@ export default class extends Vue {
   @WindowsAction getSamples;
   @WindowsAction selectSample;
 
+  modalStatus: boolean = false;
+
   async mounted() {
     console.log(this.samples.length);
     await this.getSamples();
@@ -169,9 +173,7 @@ export default class extends Vue {
   }
 
   async destroyed() {
-    (this.$root.$el.closest("body") as HTMLBodyElement).classList.remove(
-      "modal-screen"
-    );
+    this.modalStatus = false;
   }
 
   // @ts-ignore TS6133 onSelected
@@ -325,16 +327,14 @@ export default class extends Vue {
   }
 
   public modalOpened() {
+    console.log("modal opened");
     window.scrollTo(0, 0);
-    (this.$root.$el.closest("body") as HTMLBodyElement).classList.add(
-      "modal-screen"
-    );
+    this.modalStatus = true;
   }
 
   public modalClosed() {
-    (this.$root.$el.closest("body") as HTMLBodyElement).classList.remove(
-      "modal-screen"
-    );
+    console.log("modal closed");
+    this.modalStatus = false;
   }
 }
 </script>
@@ -343,6 +343,17 @@ export default class extends Vue {
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
 @import "~assets/scss/base/animations";
+
+#modalBackground {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: grey;
+  opacity: 0.7;
+  z-index: 98999;
+}
 
 header {
   display: flex;

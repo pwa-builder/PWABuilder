@@ -2,11 +2,15 @@
   <main>
     <ScoreHeader></ScoreHeader>
 
+    <div v-if="modalStatus" id="modalBackground"></div>
+
     <Modal
       :title="$t('publish.generate_appx')"
       ref="appxModal"
       @modalSubmit="onSubmitAppxModal"
       @cancel="onCancelAppxModal"
+      v-on:modalOpened="modalOpened()"
+      v-on:modalClosed="modalClosed()"
       v-if="appxForm"
     >
       <div id="topLabelBox" slot="extraP">
@@ -253,6 +257,7 @@ export default class extends Vue {
   @PublishAction buildAppx;
 
   public appxError: string | null = null;
+  public modalStatus: boolean = false;
 
   public created(): void {
     this.updateStatus();
@@ -293,6 +298,17 @@ export default class extends Vue {
       version: null
     };
   }
+
+  public modalOpened() {
+    console.log("modal opened");
+    window.scrollTo(0, 0);
+    this.modalStatus = true;
+  }
+
+  public modalClosed() {
+    console.log("modal closed");
+    this.modalStatus = false;
+  }
 }
 </script>
 
@@ -305,6 +321,17 @@ export default class extends Vue {
   #scoreSideBySide header {
     top: 51px;
   }
+}
+
+#modalBackground {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: grey;
+  opacity: 0.7;
+  z-index: 98999;
 }
 
 #appxModalBody {
