@@ -112,7 +112,7 @@
 
                 <button
                   id="platformDownloadButton"
-                  @click="openAppXModal();  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/publish/windows10-appx' })"
+                  @click="openAppXModal();  $awa( { 'referrerUri': 'https://www.pwabuilder.com/publish/windows10-appx' })"
                 >Generate</button>
               </div>
 

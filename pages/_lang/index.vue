@@ -25,7 +25,7 @@
             >
             
             <button
-              @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/build/manifest-scan' })"
+              @click=" $awa( { 'referrerUri': 'https://www.pwabuilder.com/build/reportCard' })"
               id="getStartedButton"
             >
               <div>{{ $t('generator.start') }}</div>

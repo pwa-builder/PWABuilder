@@ -16,13 +16,13 @@
             <div v-if="title != ''" class="modal-buttons">
               <button
                 id="modalCancelButton"
-                @click="onClickCancel(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });"
+                @click="onClickCancel(); $awa( { 'referrerUri': 'https://www.pwabuilder.com/manifest/add-member' });"
               >{{$t("modal.cancel")}}</button>
 
               <button
                 v-if="showSubmitButton"
                 id="modalAddButton"
-                @click="onClickSubmit();  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });"
+                @click="onClickSubmit();  $awa( { 'referrerUri': 'https://www.pwabuilder.com/manifest/add-member' });"
               >
                 {{$t("modal.submit")}}
                 <Loading :active="isLoading" class="u-display-inline_block u-margin-left-sm"/>
