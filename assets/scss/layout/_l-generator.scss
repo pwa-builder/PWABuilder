@@ -1,76 +1,15 @@
 @import '../base/variables';
 @import '../mixins/action';
 
+/* stylelint-disable */
+
 .l-generator {
-  $step-padding: 2rem;
-  $toggle-space: -.2rem;
-  $tab-color-off: $color-brand-brighter;
-  $tab-color-on: $color-brand;
-  $tab-size: 16rem;
-  $max-size: 90%;
-  $sizec: 60%;
-  $marginc: 20%;
-
-  &-title {
-    font-family: Bitter;
-    font-size: $font-size-xl;
-    font-weight: $font-weight-bold;
-    padding-bottom: $font-size-xl / 2;
-
-    &--centered {
-      text-align: center;
-    }
-  }
-
-  &-subtitle {
-    font-family: Bitter;
-    font-size: $font-size-l;
-    font-weight: $font-weight-regular;
-    margin: 0;
-
-    &--last {
-      margin-bottom: 2rem;
-    }
-
-    &--toggleable {
-      color: $color-foreground-darker;
-      cursor: pointer;
-      margin: .5rem 0;
-      max-width: 90%;
-      transition: color $animation-speed-default;
-
-      &:hover {
-        color: $color-foreground-darkest;
-        transition: color $animation-speed-default;
-      }
-
-      &::after {
-        content: '\f107';
-        display: inline-block;
-        font-family: Icomoon;
-        font-size: 1.5rem;
-        margin-left: .5rem;
-        text-rendering: auto;
-        transform: translateY(0);
-        transition: all $animation-speed-default;
-      }
-    }
-
-    &--complementary {
-      color: $color-brand-dark;
-      margin-top: 1rem;
-    }
-  }
-
+ 
   &-toggle {
     display: block;
     margin: 1rem 0;
   }
 
-  &-togglecheck:checked ~ &-toggle &-subtitle--toggleable::after {
-    transform: translateY($toggle-space) rotate(180deg);
-    transition: all $animation-speed-default;
-  }
 
   &-togglecheck ~ &-field--toggle {
     display: none;
@@ -81,19 +20,13 @@
   }
 
   &-step {
-    background-color: $color-background-bright;
-    color: $color-foreground-darker;
-    padding: $step-padding 0 $step-padding * 2 0;
+    font-size: 24px;
+    line-height: 32px;
 
     &--big {
       min-height: 50vh;
     }
 
-    @media screen and (max-width: $media-screen-s) {
-      $padding: 1rem;
-
-      padding: $step-padding $padding $step-padding * 2 $padding;
-    }
   }
 
   &-align {
@@ -102,38 +35,13 @@
 
   &-padded {
     padding-left: 18vw;
-
-    @media screen and (max-width: $media-screen-l) {
-      padding-left: 15vw;
-    }
-
-    @media screen and (max-width: $media-screen-m) {
-      padding-left: 5vw;
-    }
-
-    @media screen and (max-width: $media-screen-s) {
-      padding-left: 0;
-    }
   }
 
   &-semipadded {
-    padding-left: 9vw;
-
-    @media screen and (max-width: $media-screen-l) {
-      padding-left: 6vw;
-    }
-
-    @media screen and (max-width: $media-screen-m) {
-      padding-left: 2vw;
-    }
-
-    @media screen and (max-width: $media-screen-s) {
-      padding-left: 1vw;
-    }
+    padding-left: 68px;
   }
 
   &-field {
-    margin-bottom: 1em;
     width: 100%;
 
     &--padded {
@@ -141,34 +49,43 @@
     }
   }
 
-  &-label {
-    color: $color-foreground-darker;
-    display: block;
-    font-family: Bitter;
-    font-size: $font-size-m;
+  &-form {
+    padding-right: 4em;
+    width: 50%;
+
+    p {
+      color: rgba(44,62,80, .6);
+      margin: 0;
+      font-size: 14px;
+    }
   }
 
-  &-input {
-    background-color: $color-background-brighter;
-    border: .15rem solid $color-foreground-dark;
-    border-radius: .25rem;
-    color: $color-foreground-darker;
-    font-family: 'FiraSans';
-    font-size: $font-size-m;
-    margin: .75rem 0 1.5rem 0;
-    padding: 1rem .75rem;
-    width: $max-size;
+
+  &-textarea {
+    width:100%;
+  }
+  
+  &-button {
+    width: 200px;
+  }
+
+  &-input,
+  &-textarea {
+    border-width: 0 0 1px 0;
+    font-size: 18px;
+    border-color: #f4f4f4;
+    line-height: 19px;
+    font-family: "Segoe UI";
+    background-color: transparent;
+    padding: .5em;
 
     &--select {
-      background-color: $color-background-dark;
       cursor: pointer;
-      text-transform: capitalize;
     }
 
     &--fake {
       cursor: pointer;
       display: inline-block;
-      width: 100%;
     }
 
     &--small {
@@ -180,71 +97,38 @@
     }
 
     &--tiny {
-      $margin: .5rem;
 
       height: 2.5rem;
-      margin-right: $margin;
       padding: 0;
-      transform: translateY($margin);
       width: 3rem;
     }
 
-    &:focus {
-      background-color: $color-background-brighter;
-      border-color: $color-brand;
-      outline: 0;
-    }
-
-    &:disabled,
-    &.is-disabled {
-      background-color: $color-background-dark;
-    }
   }
 
   &-wrapper {
     height: 4rem;
     position: relative;
 
-    @media screen and (max-width: $media-screen-s) {
-      height: 5rem;
-    }
-
     &--padded {
       padding-top: 1rem;
     }
   }
 
-  &-error {
-    color: $color-error;
-  }
 
   &-loading {
     display: inline-block;
-    font-size: $font-size-m;
     padding-left: .25rem;
     transform: translateY(-10%);
   }
 
   &-table {
-    background-color: $color-background-brighter;
     border-radius: .5rem;
     margin: 2rem 0;
     padding: 1rem;
-    width: $max-size;
 
-    @media screen and (max-width: $media-screen-s) {
-      margin: 3rem 0;
-    }
-  }
-
-  &-tableh {
-    font-family: Bitter;
-    font-size: $font-size-l;
   }
 
   &-tablec {
-    font-family: Bitter;
-    font-size: $font-size-m;
     text-transform: capitalize;
 
     img {
@@ -257,16 +141,12 @@
   }
 
   &-close {
-    color: $color-foreground-darker;
     cursor: pointer;
 
-    &:hover {
-      color: $color-complementary;
-    }
   }
 
   &-buttons {
-    margin-top: 2rem;
+    margin-left: 68px;
 
     &--centered {
       padding: 0 0 2rem 0;
@@ -279,18 +159,11 @@
   }
 
   &-messages {
-    background-color: $color-background-brighter;
     padding: 1rem;
 
     &--code {
-      background-color: $color-background-darker;
-      color: $color-foreground-brighter;
-      font-size: $font-size-s;
       padding: 3rem 1rem;
 
-      @media screen and (max-width: $media-screen-l) {
-        padding-top: 5rem;
-      }
     }
   }
 
@@ -303,7 +176,6 @@
   }
 
   &-code {
-    background-color: $color-background-darker;
     margin: 0;
     min-height: 4rem;
     padding: 1rem 0 0 0;
@@ -326,34 +198,9 @@
   }
 
   &-description {
-    color: $color-foreground-darker;
-    display: inline-block;
-    margin: .25rem 0 2rem;
-    width: $max-size;
-
-    &--fixed {
-      font-size: $font-size-m;
-      line-height: $font-size-m * 1.4;
-    }
-
     &--context {
       max-width: 30rem;
     }
-  }
-
-  &-issue {
-    line-height: $font-size-m;
-  }
-
-  &-topic {
-    color: $color-secondary-darker;
-    font-size: $font-size-m;
-    font-weight: $font-weight-regular;
-    margin-left: -.3rem;
-  }
-
-  &-link {
-    @include action-link ($color-complementary, $color-complementary-dark, .1rem, false);
   }
 
   &-content {
@@ -364,16 +211,6 @@
   &-contentright {
     display: inline-block;
     float: right;
-  }
-
-  &-container {
-    margin-left: $marginc;
-    width: $sizec;
-
-    @media screen and (max-width: $media-screen-xl) {
-      margin-left: $marginc / 2;
-      width: $sizec / 3 + $sizec;
-    }
   }
 
   &-box {
@@ -387,4 +224,10 @@
   &-space_top {
     padding-top: 1rem;
   }
+
 }
+
+
+
+
+

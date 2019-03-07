@@ -1,5 +1,5 @@
 import { ActionTree, ActionContext } from 'vuex';
-import { Manifest, Icon, RelatedApplication, CustomMember, ColorOptions, types, helpers, state, State } from '~/store/modules/generator';
+import { Manifest, Icon, RelatedApplication, CustomMember, ColorOptions, types, helpers, State } from '~/store/modules/generator';
 import { RootState } from 'store';
 
 const apiUrl = `${process.env.apiUrl}/manifests`;
@@ -71,6 +71,7 @@ export const actions: Actions<State, RootState> = {
 
         try {
             const result = await this.$axios.$post(apiUrl, options);
+            console.log('result', result);
             // Convert color if necessary
             result.background_color = helpers.fixColorFromServer(result.background_color);
 
@@ -130,7 +131,7 @@ export const actions: Actions<State, RootState> = {
         }
     },
 
-    async uploadIcon({ commit, state, dispatch }, iconFile: File): Promise<void> {
+    async uploadIcon({ commit, dispatch }, iconFile: File): Promise<void> {
         const dataUri: string = await helpers.getImageDataURI(iconFile);
         const sizes = await helpers.getImageIconSize(dataUri);
         commit(types.ADD_ICON, { src: dataUri, sizes: `${sizes.width}x${sizes.height}` });
@@ -163,8 +164,9 @@ export const actions: Actions<State, RootState> = {
         dispatch('update');
     },
 
+    // @ts-ignore TS6133
     changePreferRelatedApplication({ commit, dispatch }, status: boolean): void {
-        commit(types.UPDATE_PREFER_RELATED_APPLICATION, state);
+        commit(types.UPDATE_PREFER_RELATED_APPLICATION, status);
         dispatch('update');
     },
 

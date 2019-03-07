@@ -17,11 +17,11 @@
             "check-whitespace"
         ],
         "no-var-keyword": true,
-        "quotemark": [
+        /*"quotemark": [
             true,
             "single",
             "avoid-escape"
-        ],
+        ],*/
         "semicolon": [
             true,
             "ignore-bound-class-methods"
@@ -49,7 +49,6 @@
         "no-trailing-whitespace": false,
         "no-inferrable-types": true,
         "no-null-keyword": false,
-        "no-unused-variable": true,
         "prefer-const": false
     }
 }

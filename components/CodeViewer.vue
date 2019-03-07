@@ -1,51 +1,64 @@
 <template>
-<section class="code_viewer">
-  <header class="code_viewer-header">
-    <div class="code_viewer-title pure-u-1-2">
-      {{title}}
-    </div>
-    <div class="code_viewer-title pure-u-1-2">
-      <slot/>
-    </div>
-  </header>
+  <section class="code_viewer">
+    <div v-if="showHeader" id="codeHeader">
+      <slot></slot>
 
-  <div class="code_viewer-content" :style="{ height: size }">
-    <div class="code_viewer-copy js-clipboard" :data-clipboard-text="code" ref="code">
-      {{ $t('code_viewer.' + copyTextKey) }}
+      <button v-if="showCopyButton" @click="copy()" id="copyButton">
+        <i id="platformIcon" class="fas fa-copy"></i>
+        Copy
+      </button>
     </div>
-    <div class="code_viewer-padded" v-if="warnings || suggestions">
-      <div class="code_viewer-header code_viewer-header--rounded">
-        <SkipLink v-if="warnings" class="pwa-button pwa-button--simple pwa-button--margin pwa-button--warning" :anchor="'#' + warningsId">
-          {{ $t("code_viewer.warnings") }} ({{warningsTotal}})
-        </SkipLink>
-        <SkipLink v-if="suggestions" class="pwa-button pwa-button--simple pwa-button--margin" :anchor="'#' + suggestionsId">
-          {{ $t("code_viewer.suggestions") }} ({{suggestionsTotal}})
-        </SkipLink>
 
-        <Download platform="web" :is-right="true" :message="$t('publish.download')" />
+    <div class="code_viewer-pre" ref="monacoDiv"></div>
+
+    <div v-if="textCopied" id="copyToast">Code Copied</div>
+
+    <div v-if="showOverlay" id="errorOverlay">
+      <h2>Errors</h2>
+
+      <ul>
+        <li v-for="error in errors">
+          <span>Line #{{ error.startLineNumber}}:</span>
+          {{ error.message }}
+        </li>
+      </ul>
+
+      <div id="errorButtonDiv">
+        <button id="closeButton" @click="closeOverlay()">
+          Close
+          <i class="fas fa-times"></i>
+        </button>
       </div>
     </div>
-    <pre class="code_viewer-pre language-javascript" :style="{ height: size }" v-if="highlightedCode"><code class="code_viewer-code language-javascript" v-html="highlightedCode"></code></pre>
 
-    <div class="l-generator-messages l-generator-messages--code" v-if="warningsTotal > 0 || suggestionsTotal > 0">
-      <IssuesList :errors="warnings" :title="$t('code_viewer.warnings')" :id="warningsId" :total="warningsTotal" v-if="warningsTotal > 0"/>
-      <IssuesList :errors="suggestions" :title="$t('code_viewer.suggestions')" :id="suggestionsId" :total="suggestionsTotal" v-if="suggestionsTotal > 0"/>
+    <div v-if="showToolbar" id="toolbar">
+      <div v-if="errorNumber">
+        <button @click="showErrorOverlay()" id="errorsButton">
+          <i class="fas fa-exclamation-triangle"></i>
+          {{this.errorNumber}} errors
+        </button>
+      </div>
+      <div v-if="!errorNumber || errorNumber ===0">
+        <button id="noErrorsButton">
+          <i class="fas fa-exclamation-triangle"></i>
+          0 Errors
+        </button>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 </template>
 
-<script lang="ts">
-import Vue from 'vue';
-import Clipboard from 'clipboard';
-import Prism from 'prismjs';
-import Component from 'nuxt-class-component';
-import { Prop, Watch } from 'vue-property-decorator';
+<script lang='ts'>
+import Vue from "vue";
+import * as monaco from "monaco-editor";
+import Component from "nuxt-class-component";
+import { Prop, Watch } from "vue-property-decorator";
+import Clipboard from "clipboard";
 
-import SkipLink from '~/components/SkipLink.vue';
-import IssuesList from '~/components/IssuesList.vue';
-import Download from '~/components/Download.vue';
-import { CodeError } from '~/store/modules/generator';
+import SkipLink from "~/components/SkipLink.vue";
+import IssuesList from "~/components/IssuesList.vue";
+import Download from "~/components/Download.vue";
+import { CodeError } from "~/store/modules/generator";
 
 @Component({
   components: {
@@ -55,13 +68,13 @@ import { CodeError } from '~/store/modules/generator';
   }
 })
 export default class extends Vue {
-  @Prop({ type: String, default: '' })
+  @Prop({ type: String, default: "" })
   public title: string;
 
-  @Prop({ type: String, default: '' })
-  public code: string | null;
+  @Prop({ type: String, default: "" })
+  public code: string;
 
-  @Prop({ type: String, default: 'auto' })
+  @Prop({ type: String, default: "auto" })
   public size: string | null;
 
   @Prop({ type: Array, default: null })
@@ -76,120 +89,328 @@ export default class extends Vue {
   @Prop({ type: Number, default: 0 })
   public suggestionsTotal: number;
 
-  public highlightedCode: string | null = null;
-  public copyTextKey = 'copy';
-  public readonly warningsId = 'warnings_list';
-  public readonly suggestionsId = 'suggestions_list';
+  @Prop({ type: String, default: "javascript" })
+  public codeType: string;
+
+  @Prop({ type: Boolean, default: true })
+  public showCopyButton;
+
+  @Prop() showToolbar: boolean;
+  @Prop({ type: String, default: "#F0F0F0" })
+  public color;
+
+  @Prop({ type: String, default: "lighter" }) theme: string;
+
+  @Prop({ type: Boolean, default: false }) public showHeader;
+
+  public readonly warningsId = "warnings_list";
+  public readonly suggestionsId = "suggestions_list";
   public isReady = true;
-  public downloadButtonMessage = 'publish.download_manifest';
+  public downloadButtonMessage = "publish.download_manifest";
+  public errorNumber = 0;
+
+  public editor: monaco.editor.IStandaloneCodeEditor;
+
+  showOverlay = false;
+  errors: any[] = [];
+  textCopied = false;
 
   public mounted(): void {
-    if (this.code) {
-      this.highlightedCode = Prism.highlight(
-        this.code,
-        Prism.languages.javascript
-      );
-    }
-
-    let clipboard = new Clipboard(this.$refs.code);
-    clipboard.on('success', e => {
-      this.copyTextKey = 'copied';
+    console.log(this.color);
+    monaco.editor.defineTheme(`${this.theme}Theme`, {
+      base: "vs",
+      inherit: true,
+      rules: [],
+      colors: {
+        "editor.background": this.color
+      }
     });
 
-    clipboard.on('error', e => {
-      this.copyTextKey = 'error';
+    this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
+      value: this.code,
+      // Turn line numbers on so that line numbers in errors make sense
+      lineNumbers: "on",
+      language: this.codeType,
+      fixedOverflowWidgets: true,
+      wordWrap: "wordWrapColumn",
+      wordWrapColumn: 50,
+      scrollBeyondLastLine: false,
+      // Set this to false to not auto word wrap minified files
+      wordWrapMinified: true,
+      theme: `${this.theme}Theme`,
+
+      // try "same", "indent" or "none"
+      wrappingIndent: "indent",
+      fontSize: 16,
+      minimap: {
+        enabled: false
+      }
+    });
+
+    const model = this.editor.getModel();
+
+    model.onDidChangeContent(() => {
+      const value = model.getValue();
+      this.$emit("editorValue", value);
+    });
+
+    model.onDidChangeDecorations(() => {
+      this.errors = (<any>window).monaco.editor.getModelMarkers({});
+      this.errorNumber = this.errors.length;
+
+      console.log(this.errors);
+
+      if (this.errors.length > 0) {
+        this.$emit("invalidManifest");
+      }
     });
   }
 
-  @Watch('code')
+  @Watch("code")
   onCodeChanged() {
-    if (this.code) {
-      this.copyTextKey = 'copy';
-      this.highlightedCode = Prism.highlight(
-        this.code,
-        Prism.languages.javascript
-      );
+    if (this.editor) {
+      this.editor.setValue(this.code);
     }
+  }
+
+  // @ts-ignore TS6133
+  private async copy() {
+    const code = this.editor.getValue();
+
+    if ((navigator as any).clipboard) {
+      try {
+        await (navigator as any).clipboard.writeText(code);
+        this.textCopied = true;
+
+        setTimeout(() => {
+          this.textCopied = false;
+        }, 1000);
+      } catch (err) {
+        console.error(err);
+      }
+    } else {
+      let clipboard = new Clipboard(code);
+
+      clipboard.on("success", e => {
+        console.info("Action:", e.action);
+        console.info("Text:", e.text);
+        console.info("Trigger:", e.trigger);
+
+        this.textCopied = true;
+
+        setTimeout(() => {
+          this.textCopied = false;
+        }, 1000);
+        e.clearSelection();
+      });
+
+      clipboard.on("error", e => {
+        console.error("Action:", e.action);
+        console.error("Trigger:", e.trigger);
+      });
+    }
+  }
+
+  // @ts-ignore TS6133
+  private showErrorOverlay() {
+    this.showOverlay = !this.showOverlay;
+  }
+
+  // @ts-ignore TS6133
+  private closeOverlay() {
+    this.showOverlay = false;
   }
 }
-
-
-
 </script>
 
-<style lang="scss" scoped>
+<style lang='scss' scoped>
+/* stylelint-disable */
+
 @import "~assets/scss/base/variables";
+@import "~assets/scss/base/animations";
 
 .code_viewer {
-  font-size: 0;
+  display: flex;
+  flex-direction: column;
+  background: #f1f1f1;
+  height: 110vh;
+
+  #codeHeader {
+    font-weight: bold;
+    padding-left: 1em;
+    padding-bottom: 1em;
+    padding-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 9999;
+
+    div {
+      width: 20em;
+    }
+  }
+
+  .active {
+    color: $color-brand-quartary;
+  }
+
+  #copyButton {
+    background: #c5c5c5;
+    color: #3c3c3c;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 12px;
+    padding-top: 3px;
+    padding-bottom: 5px;
+    padding-right: 9px;
+    padding-left: 9px;
+    margin-right: 2em;
+  }
+
+  #copyDiv {
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 1.2em;
+    position: relative;
+    bottom: 1em;
+    right: 12px;
+    z-index: 9999;
+  }
 
   @media screen and (max-width: $media-screen-s) {
     margin-top: 4rem;
   }
 
-  &-padded {
-    padding-top: 1rem;
+  #codeViewerTitle {
+    margin-bottom: 15px;
+    margin-left: 10px;
   }
 
-  &-header {
-    background-color: $color-brand;
-    line-height: 1.5;
-    padding: 1.5rem 1.5rem 1.1rem 1.5rem;
+  .code_viewer-pre {
+    height: 100%;
+  }
 
-    &--rounded {
-      background-color: $color-background-brighter;
-      border-radius: .5rem;
-      margin: 0 auto;
-      padding: 1rem 1rem;
-      text-align: left;
-      width: 90%;
+  #toolbar {
+    position: fixed;
+    background: #f0f0f0;
+    // width: 50vw;
+    bottom: 16px;
+    right: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    #errorsButton {
+      background: $color-brand-warning;
+      color: white;
+    }
+
+    #noErrorsButton {
+      background: $color-brand-secondary;
+      color: white;
+    }
+
+    #settingsButton {
+      width: 112px;
+    }
+
+    button {
+      border: none;
+      margin: 10px;
+      border-radius: 20px;
+      width: 97px;
+      font-size: 12px;
+      font-weight: bold;
+      padding-top: 8px;
+      padding-bottom: 8px;
+      padding-left: 10px;
+      padding-right: 10px;
     }
   }
 
-  &-title {
-    color: $color-foreground-darker;
-    font-family: Bitter;
-    font-size: $font-size-l;
-  }
+  #errorOverlay {
+    background: #ebebeb;
+    padding: 40px;
+    animation-name: overlayUp;
+    animation-duration: 350ms;
+    animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: fixed;
+    width: 49.4%;
+    right: 0;
+    bottom: 2.2em;
+    border-top: solid 1px #c5c5c5;
 
-  &-pre {
-    overflow: auto;
-    padding: 1rem;
-  }
+    #errorButtonDiv {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      margin-top: 70px;
+    }
 
-  &-code {
-    font-size: 1rem;
-    white-space: pre-wrap;
-  }
+    h2 {
+      font-weight: bold;
+      font-size: 18px;
+      margin: 0;
+      padding: 0;
+      margin-bottom: 20px;
+    }
 
-  &-copy {
-    background-color: $color-background-semidark;
-    border-radius: .5em;
-    box-shadow: 0 2px 0 0 rgba($color-background-darkest, .2);
-    color: $color-foreground-brightest;
-    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-    font-size: $font-size-s;
+    #closeButton {
+      border: none;
+      background: #3c3c3c;
+      border-radius: 20px;
+      color: white;
+      font-weight: bold;
+      font-size: 18px;
+      padding-top: 8px;
+      padding-bottom: 8px;
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        font-size: 14px;
+        padding: 2px;
+      }
+
+      li span {
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+#copyToast {
+  background: grey;
+  color: white;
+  position: fixed;
+  bottom: 16px;
+  right: 32px;
+  z-index: 9999;
+  font-weight: bold;
+  width: 16em;
+  padding: 1em;
+  border-radius: 10px;
+  animation-name: toastUp;
+  animation-duration: 250ms;
+  animation-timing-function: ease;
+}
+
+@keyframes toastUp {
+  from {
     opacity: 0;
-    padding: 0 .5em;
-    position: absolute;
-    right: 2rem;
-    top: 1rem;
-    transition: opacity 1s;
-
-    &:hover {
-      cursor: pointer;
-    }
+    transform: translateY(50px);
   }
 
-  &-content {
-    background-color: $color-background-darker;
-    margin: 0;
-    min-height: 4rem;
-    position: relative;
-  }
-
-  &-content:hover &-copy {
+  to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 </style>

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #6dbcdb;
+      }
+
+      .cls-2 {
+        fill: #fff;
+      }
+    </style>
+  </defs>
+  <g id="Check_mark" data-name="Check mark" transform="translate(-72 -1152)">
+    <g id="Group_118" data-name="Group 118" transform="translate(72 1152)">
+      <path id="Path_284" data-name="Path 284" class="cls-1" d="M1240,856l16-8,16,8v16l-16,8-16-8Z" transform="translate(-1240 -848)"/>
+    </g>
+    <path id="Path_339" data-name="Path 339" class="cls-2" d="M1300,5343l8,4,8-16-4-2-6,12-4-2Z" transform="translate(-1220 -4169.75)"/>
+  </g>
+</svg>

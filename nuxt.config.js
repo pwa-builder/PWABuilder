@@ -3,6 +3,9 @@ const StyleLintPlugin = require('stylelint-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const env = require(`./environments/${process.env.NODE_ENV}`);
 
+// Webpack plugin for Monaco
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+
 console.log(`Environment: ${process.env.NODE_ENV}`);
 
 module.exports = {
@@ -21,7 +24,7 @@ module.exports = {
         ],
         link: [
             { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-            { rel: 'manifest', href: '/manifest.json' },
+            { rel: 'manifest', href: '/manifest.webmanifest' },
             { rel: 'apple-touch-icon', href: '/Images/assets/icons/apple-icon-06144a2a7b5101d447ecb4832502e73e.png' },
             { rel: 'apple-touch-icon', sizes: '57x57', href: '/Images/assets/icons/apple-icon-57x57-b82ef058b133f3197df61c326fa7cd6d.png' },
             { rel: 'apple-touch-icon', sizes: '72x72', href: '/Images/assets/icons/apple-icon-72x72-66bbf8447788cee426eebcddfa8eede8.png' },
@@ -45,19 +48,20 @@ module.exports = {
         extractCSS: true,
         vendor: ['babel-polyfill', 'vuex-class', 'nuxt-class-component', 'vue-i18n', 'prismjs'],
         plugins: [
-            new StyleLintPlugin({
-                files: ['**/*.scss', '**/*.vue'],
-                failOnError: false,
-                syntax: 'scss'
-            }),
-            new ForkTsCheckerWebpackPlugin({
+            /*new StyleLintPlugin({
+                files: ['**///*.scss', '**/*.vue'],
+                //failOnError: false,
+                //syntax: 'scss'
+            //}),
+            /*new ForkTsCheckerWebpackPlugin({
               tslint: true,
               vue: true
-            })
+            }),*/
+            new MonacoWebpackPlugin()
         ]
     },
     router: {
-        middleware: 'i18n'
+        middleware: ['i18n', 'default']
     },
     plugins: ['~/plugins/i18n.js'],
     modules: [

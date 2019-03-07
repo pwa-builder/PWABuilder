@@ -2,7 +2,8 @@
 @import
   'base/fonts',
   'base/states',
-  'base/utilities';
+  'base/utilities',
+  'base/animations';
 
 // Base Files
 @import
@@ -19,8 +20,8 @@
   'layout/l-header',
   'layout/l-footer',
   'layout/l-main',
-  'layout/l-generator',
-  'layout/l-imagegenerator';
+  'layout/l-generator';
+//'layout/l-imageGenerator';
 
 // Private SASS components (without logic)
 @import

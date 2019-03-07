@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 220 187">
+  <defs>
+    <style>
+      .cls-1 {
+        opacity: 0.5;
+      }
+
+      .cls-2 {
+        fill: #d7dadb;
+      }
+
+      .cls-3 {
+        fill: #fff;
+      }
+
+      .cls-4 {
+        fill: #2c3e50;
+      }
+
+      .cls-5 {
+        fill: #6dbcdb;
+      }
+
+      .cls-6 {
+        filter: url(#Path_289);
+      }
+
+      .cls-7 {
+        filter: url(#Path_290);
+      }
+    </style>
+    <filter id="Path_290" x="0" y="59" width="220" height="128" filterUnits="userSpaceOnUse">
+      <feOffset input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feFlood flood-opacity="0.251"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="Path_289" x="30.667" y="12.667" width="158.666" height="97.333" filterUnits="userSpaceOnUse">
+      <feOffset input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="6" result="blur-2"/>
+      <feFlood flood-opacity="0.251"/>
+      <feComposite operator="in" in2="blur-2"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Group_111" data-name="Group 111" class="cls-1" transform="translate(-626 -168.333)">
+    <g id="Group_89" data-name="Group 89" transform="translate(644 214.667)">
+      <g class="cls-7" transform="matrix(1, 0, 0, 1, -18, -46.33)">
+        <path id="Path_290-2" data-name="Path 290" class="cls-2" d="M1240,894l92-46,92,46-92,46Z" transform="translate(-1222 -771)"/>
+      </g>
+      <path id="Path_277" data-name="Path 277" class="cls-3" d="M1240,894l92-46,92,46-92,46Z" transform="translate(-1240 -848)"/>
+      <path id="Path_276" data-name="Path 276" class="cls-4" d="M1348,886.667l-92,46V902l92-46Z" transform="translate(-1164 -810)"/>
+      <path id="Path_279" data-name="Path 279" class="cls-5" d="M1240,886.667l92,46V902l-92-46Z" transform="translate(-1240 -810)"/>
+    </g>
+    <g id="Group_90" data-name="Group 90" transform="translate(674.667 168.333)">
+      <g class="cls-6" transform="matrix(1, 0, 0, 1, -48.67, 0)">
+        <path id="Path_289-2" data-name="Path 289" class="cls-2" d="M1240,878.666,1301.333,848l61.333,30.667-61.333,30.667Z" transform="translate(-1191.33 -817.33)"/>
+      </g>
+      <path id="Path_281" data-name="Path 281" class="cls-3" d="M1240,878.666,1301.333,848l61.333,30.667-61.333,30.667Z" transform="translate(-1240 -848)"/>
+      <path id="Path_278" data-name="Path 278" class="cls-4" d="M1317.333,886.667,1256,917.333V886.667L1317.333,856Z" transform="translate(-1194.667 -825.333)"/>
+      <path id="Path_280" data-name="Path 280" class="cls-5" d="M1240,886.667l61.333,30.667V886.667L1240,856Z" transform="translate(-1240 -825.333)"/>
+    </g>
+  </g>
+</svg>

@@ -1,78 +1,85 @@
+
 <template>
-<section>
-  <GeneratorMenu :first-link-path="true" />
-  <div class="l-generator-step">
-    <div class="pure-g l-generator-padded">
-      <div class="pure-u-1 pure-u-md-3-5 pure-u-lg-2-5">
-        <header class="l-generator-header l-generator-header--minimal">
-          <h2 class="l-generator-title">{{ $t('generator.title') }}</h2>
-          <h4 class="l-generator-subtitle">
-            {{ $t('generator.subtitle') }}
-          </h4>
-        </header>
+  <main id="sideBySide">
+    <section id="leftSide">
+      <header>
+        <img id="logo" src="~/assets/images/logo.png">
+      </header>
 
-        <div class="l-generator-form">
+      <div id="introContainer">
+        <h2>{{ $t('home.mast_title') }}</h2>
+
+        <p>{{ $t('home.mast_tag') }}</p>
+
+        <div id="formContainer">
           <form @submit.prevent="checkUrlAndGenerate" @keydown.enter.prevent="checkUrlAndGenerate">
-            <div class="l-generator-field">
-              <label class="l-generator-label" for="siteUrl">{{ $t('generator.url') }}</label>
-              <input class="l-generator-input" :placeholder="$t('generator.placeholder_url')" name="siteUrl" id="siteUrl" type="text" ref="url"
-                v-model="url$" autofocus>
-            </div>
-
-            <div class="pure-g l-breath">
-              <div class="l-generator-wrapper pure-u-3-5">
-                <button type="submit" class="get-started pwa-button isEnabled next-step" @click=" $awa( { 'referrerUri': 'https://preview.pwabuilder.com/build/manifest-scan' })">
-                  {{ $t('generator.start') }}
-                  <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm"/>
-                </button>
-              </div>
-
-              <div class="pure-u-2-5">
-              </div>
-                
-              <div class="pure-u-1">
-                <p class="l-generator-error" v-if="error">
-                  <span class="icon-exclamation"></span>
-                  {{ $t(error) }}
-                </p>
-              </div>
-
-              <div class="l-generator-wrapper pure-u-1">
-                <button @click="skipCheckUrl(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/skip/service-worker' })"
-                  class="pwa-button pwa-button--simple">
-                  {{ $t('generator.skip') }}
-                </button>
-              </div>
-            </div>
-            <p class="l-narrow">{{ $t('generator.skip_description') }}</p>
+            <input
+              id="getStartedInput"
+              :aria-label="$t('generator.url')"
+              :placeholder="$t('generator.placeholder_url')"
+              name="siteUrl"
+              type="text"
+              ref="url"
+              v-model="url$"
+              autofocus
+            >
+            
+            <button
+              @click=" $awa( { 'referrerUri': 'https://www.pwabuilder.com/build/reportCard' })"
+              id="getStartedButton"
+            >
+              <div>{{ $t('generator.start') }}</div>
+            </button>
           </form>
+
+          <div id="backToOld">
+            Having issues with the new version of PWABuilder? Use the previous version 
+            <a href="https://manifold-site-prod.azurewebsites.net/">here</a>
+            and consider opening an issue on our <a href="https://github.com/pwa-builder/PWABuilder">Github</a>.
+            Thanks!
+          </div>
+
+          <div id="expertModeBlock">
+            <button @click="skipCheckUrl()" id="expertModeButton">Expert Mode</button>
+            <p>Already have a PWA? Skip ahead!</p>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-  <TwoWays/>
-</section>
+
+      <footer>
+        <p>
+          PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
+          <a
+          href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
+        >Our Privacy Statement</a>
+        </p>
+      </footer>
+    </section>
+
+    <section id="rightSide"></section>
+  </main>
 </template>
 
+
+
 <script lang='ts'>
-import Vue from 'vue';
-import Component from 'nuxt-class-component';
-import { Action, State, namespace } from 'vuex-class';
+import Vue from "vue";
+import Component from "nuxt-class-component";
+import { Action, State, namespace } from "vuex-class";
 
-import GeneratorMenu from '~/components/GeneratorMenu.vue';
-import TwoWays from '~/components/TwoWays.vue';
-import Loading from '~/components/Loading.vue';
-
-import * as generator from '~/store/modules/generator';
+import GeneratorMenu from "~/components/GeneratorMenu.vue";
+import GoodPWA from "~/components/GoodPWA.vue";
+import Loading from "~/components/Loading.vue";
+import * as generator from "~/store/modules/generator";
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorAction = namespace(generator.name, Action);
 
 @Component({
   components: {
-    TwoWays,
     GeneratorMenu,
-    Loading
+    Loading,
+    GoodPWA
   }
 })
 export default class extends Vue {
@@ -94,7 +101,7 @@ export default class extends Vue {
 
   public skipCheckUrl(): void {
     this.$router.push({
-      name: 'serviceworker'
+      name: "features"
     });
   }
 
@@ -103,31 +110,254 @@ export default class extends Vue {
     this.error = null;
 
     try {
-      this.updateLink(this.url$);
-
       if (!this.url$) {
+        this.error = "You must enter a URL to get started";
         return;
       }
 
+      this.updateLink(this.url$);
+
       this.url$ = this.url;
-      await this.getManifestInformation();
 
       this.$router.push({
-        name: 'generate'
+        name: "reportCard"
       });
     } catch (e) {
-      this.error = e;
+      if (e.message) {
+        this.error = e.message;
+      } else {
+        // No error message
+        // so just show error directly
+        this.error = e;
+      }
     }
   }
 }
 
 declare var awa: any;
 
-
-Vue.prototype.$awa = function (config) { 
- 
+Vue.prototype.$awa = function(config) {
   awa.ct.capturePageView(config);
 
   return;
 };
 </script>
+
+<style lang="scss" scoped>
+@import "~assets/scss/base/variables";
+/* stylelint-disable */
+
+#backToOld {
+  font-size: 12px;
+  line-height: 18px;
+  margin-top: 20px;
+  margin-bottom: 0px;
+
+  a {
+    color: inherit;
+    box-shadow: none;
+    color: inherit;
+    text-decoration: underline;
+  }
+}
+
+#sideBySide {
+  display: flex;
+  justify-content: space-around;
+  height: 100vh;
+  background-image: url("~/assets/images/homepage-background.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  #leftSide {
+    height: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 1em;
+    justify-content: center;
+
+    footer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 27em;
+    }
+
+    footer p {
+      text-align: center;
+      width: 320px;
+      font-size: 12px;
+      color: #3c3c3c;
+      line-height: 18px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      padding-left: 68px;
+      margin-top: 32px;
+
+      #headerText {
+        font-size: 28px;
+        font-weight: normal;
+      }
+
+      #logo {
+        margin-right: 12px;
+        width: 10em;
+      }
+    }
+  }
+
+  #rightSide {
+    height: 100%;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  #introContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 2;
+    justify-content: center;
+
+    h2 {
+      font-size: 36px;
+      font-weight: bold;
+      width: 386px;
+    }
+
+    p {
+      margin-top: 30px;
+      font-size: 18px;
+      margin-bottom: 20px;
+      width: 386px;
+      text-align: left;
+    }
+
+    #moreInfoButton {
+      width: 184px;
+      border-radius: 20px;
+      border: none;
+      font-weight: bold;
+      padding-top: 13px;
+      padding-bottom: 12px;
+      margin-top: 40px;
+    }
+  }
+
+  #formContainer {
+    width: 386px;
+
+    #expertModeBlock {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      margin-top: 144px;
+      margin-right: 72px;
+
+      #expertModeButton {
+        width: 200px;
+        font-weight: bold;
+        font-size: 18px;
+        border: none;
+        border-radius: 22px;
+        padding-top: 9px;
+        padding-bottom: 11px;
+        background-image: linear-gradient(to right, #7644c2, #11999e);
+        color: white;
+        height: 44px;
+      }
+
+      p {
+        margin-top: 9px;
+        font-size: 14px;
+        text-align: center;
+      }
+    }
+
+    form {
+      display: flex;
+    }
+
+    input {
+      padding-top: 13px;
+      padding-bottom: 12px;
+      font-weight: bold;
+      font-size: 18px;
+      border: none;
+      width: 24em;
+      border-bottom: solid 1px rgba(60, 60, 60, 0.3);
+      margin-right: 0.3em;
+      margin-top: 20px;
+      outline: none;
+    }
+
+    input:focus {
+      border-bottom: solid 1px rgba(60, 60, 60, 1);
+    }
+
+    #getStartedButton {
+      border: none;
+      font-weight: bold;
+      font-size: 18px;
+      border-radius: 22px;
+      padding-top: 9px;
+      padding-bottom: 11px;
+      padding-left: 23px;
+      padding-right: 23px;
+      background: grey;
+      height: 44px;
+      align-self: flex-end;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      background: $color-button-primary-purple-variant;
+      color: white;
+      width: 88px;
+      justify-content: center;
+    }
+  }
+}
+
+footer a {
+  box-shadow: none;
+}
+
+
+@media (max-width: 1282px) {
+  #sideBySide #introContainer {
+    padding-top: 3em;
+    padding-left: 8em;
+    padding-right: 13em;
+  }
+}
+
+@media (max-height: 700px) {
+  #sideBySide #leftSide header {
+    margin-top: 156px;
+  }
+}
+
+@media (min-width: 1400px) {
+  #sideBySide #introContainer {
+    padding-right: 6em;
+  }
+
+  #sideBySide #leftSide header {
+    padding-left: 111px;
+  }
+
+  #sideBySide #leftSide footer {
+    width: 31em;
+  }
+}
+</style>
+

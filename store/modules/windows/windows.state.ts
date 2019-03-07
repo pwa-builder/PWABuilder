@@ -17,6 +17,7 @@ export interface Sample {
   included: boolean | false;
   snippet: string | null;
   source: string | null;
+  usercode?: string | null;
 }
 
 export interface State {

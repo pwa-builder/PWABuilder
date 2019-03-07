@@ -1,10 +1,10 @@
 <template>
-<div class="pwa-button pwa-button--simple" 
+<div
     :class="{'pwa-button--brand': isBrand, 'pwa-button--total_right': isRight}"
-    @click="buildArchive(platform);  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/download/{platform}' });">
+    @click="buildArchive(platform, parameters);  $awa( { 'referrerUri': 'https://www.pwabuilder.com/download/{platform}' });">
 
   <span v-if="isReady">{{ message$ }}</span>
-  <span v-if="!isReady">{{ $t('publish.building_package') }}
+  <span v-if="!isReady">
     <Loading :active="true" class="u-display-inline_block u-margin-left-sm" />
   </span>
 </div>
@@ -22,6 +22,14 @@ import * as publish from '~/store/modules/publish';
 const PublishState = namespace(publish.name, State);
 const PublishAction = namespace(publish.name, Action);
 
+declare var awa: any;
+
+Vue.prototype.$awa = function (config) { 
+  awa.ct.capturePageView(config);
+
+  return;
+};
+
 @Component({
   components: {
     Loading
@@ -32,6 +40,9 @@ export default class extends Vue {
 
   @Prop({ type: String, default: '' })
   public readonly platform: string;
+
+  @Prop({ type: Array, default: function () { return []; }})
+  public readonly parameters: string[];
 
   @Prop({ type: Boolean, default: false })
   public readonly isBrand: boolean;
@@ -50,7 +61,7 @@ export default class extends Vue {
     this.message$ = this.message;
   }
 
-  public async buildArchive(platform: string): Promise<void> {
+  public async buildArchive(platform: string, parameters: string[]): Promise<void> {
     if (!this.isReady) {
       return;
     }
@@ -58,7 +69,7 @@ export default class extends Vue {
     this.isReady = false;
 
     try {
-      await this.build(platform);
+      await this.build({platform: platform, options: parameters});
       if (this.archiveLink) {
         window.location.href = this.archiveLink;
       }

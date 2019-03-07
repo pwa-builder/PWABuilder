@@ -7,10 +7,12 @@ export const mutations: MutationTree<State> = {
     },
 
     [types.UPDATE_MANIFEST](state, manifest: Manifest): void {
+      console.log('im here in update');
         state.manifest = manifest;
     },
 
     [types.UPDATE_WITH_MANIFEST](state, result): void {
+      console.log('result 2', result);
         state.manifest = result.content;
         state.manifestId = result.id;
         state.siteServiceWorkers = result.siteServiceWorkers;
@@ -18,6 +20,7 @@ export const mutations: MutationTree<State> = {
         state.suggestions = result.suggestions;
         state.warnings = result.warnings;
         state.errors = result.errors;
+        state.generated = result.generated ? result.generated : false;
     },
 
     [types.OVERWRITE_MANIFEST](state, result): void {
@@ -30,9 +33,13 @@ export const mutations: MutationTree<State> = {
             return;
         }
 
+        console.log('setting defaults payload', payload);
+        console.log('setting defaults state', state);
+
         state.manifest.lang = state.manifest.lang || '';
         state.manifest.display = state.manifest.display || payload.defaultDisplay;
         state.manifest.orientation = state.manifest.orientation || payload.defaultOrientation;
+        state.manifest.generated = state.generated || payload.generated;
     },
 
     [types.UPDATE_ICONS](state, icons: Icon[]): void {

@@ -21,7 +21,7 @@
   </div>
 
   <div class="button-holder">
-    <button class="pwa-button pwa-button--text pwa-button--right" @click="onClickAdd(); $awa( { 'referrerUri': 'https://preview.pwabuilder.com/manifest/add-member' });">
+    <button class="pwa-button pwa-button--text pwa-button--right" @click="onClickAdd(); $awa( { 'referrerUri': 'https://www.pwabuilder.com/manifest/add-member' });">
       {{ $t("related_applications.add") }}
     </button>
   </div>
@@ -71,7 +71,7 @@ import * as generator from '~/store/modules/generator';
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
 
-@Component()
+@Component({})
 export default class extends Vue {
   public manifest$: generator.Manifest | null = null;
   public platform: string | null = null;

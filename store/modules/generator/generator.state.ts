@@ -12,6 +12,7 @@ export interface Manifest {
     short_name: string | null;
     start_url: string | null;
     theme_color: string | null;
+    generated: boolean | null;
 }
 
 export interface StaticContent {
@@ -68,6 +69,7 @@ export interface State {
     warnings: CodeError[] | null;
     errors: string[] | null;
     assets: Asset[] | null;
+    generated: boolean | null;
 }
 
 export const state = (): State => ({
@@ -80,5 +82,6 @@ export const state = (): State => ({
     suggestions: null,
     warnings: null,
     errors: null,
-    assets: null
+    assets: null,
+    generated: null
 });

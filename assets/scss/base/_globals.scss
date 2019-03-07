@@ -1,11 +1,14 @@
 @import 'variables';
+@import url('https://fonts.googleapis.com/css?family=Bungee');
+/* stylelint-disable */
 
 html,
-body {
-  $font-size: 16px;
+body,
+input {
+  $font-size: 18px;
+  color: #3c3c3c;
 
-  background: $color-background-bright;
-  font-family: Bitter;
+  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
   font-size: $font-size;
   height: 100%;
   width: 100%;
@@ -19,6 +22,133 @@ body {
   }
 }
 
-.stop-scroll {
-  overflow: hidden;
+input::placeholder {
+  color: #3C3C3C;
+  opacity: 0.4;
 }
+
+html {
+  overflow-x: hidden;
+}
+
+button {
+  cursor: pointer;
+  outline: none;
+  transition: box-shadow 0.3s;
+}
+
+button:hover {
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+a {
+  transition: box-shadow 0.3s;
+}
+
+a:hover {
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-size: 24px;
+  font-weight: normal;
+  margin: 0;
+  margin-block-end: 0;
+  margin-block-start: 0;
+}
+
+h1 {
+  margin-bottom: 30px;
+}
+
+h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+h3 {
+  color: $color-button-primary-purple-variant;
+}
+
+p {
+  font-size: 18px;
+  line-height: 28px;
+}
+
+a {
+  color: $color-button-primary-purple-variant;
+}
+
+.modal-screen {
+
+
+  .l-footer {
+    filter: blur(30px);
+  }
+  .bgArt {
+    z-index: 144;
+  }
+
+  .mainDiv {
+    filter: blur(30px);
+  }
+  .done-button {
+    filter: blur(30px);
+  }
+
+  .modal-color {
+    display: flex;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    // background: white;
+    z-index: 100;
+    left:0;
+    right: 0;
+    
+  }
+}
+
+.modal {
+  #wrapper {
+    padding-bottom: 0;
+  }
+
+  .cancelText {
+    display: block;
+    text-align: center;
+    padding-bottom: 3em;
+  }
+}
+
+.modal-body {
+  .l-generator-box,
+  .l-generator-field {
+    margin: 2em 8em;
+    line-height: 28px;
+
+    .l-generator-label {
+      padding: 0 1em;
+    }
+  }
+}
+
+/* Buttons */
+.work-button {
+  color: $color-brand-quintary;
+  background-color: $color-brand-secondary;
+  background-size: 240px 41px;
+  background-repeat: no-repeat;
+  display: inline-block;
+  width: 240px;
+  line-height: 41px;
+  text-align: center;
+  font-size: 16px;
+  border: none;
+}
+

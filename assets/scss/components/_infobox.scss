@@ -1,22 +1,12 @@
 @import '../base/variables';
+/* stylelint-disable */
 
 .pwa-infobox {
-  background-color: $color-background-dark;
 
   &--transparent {
     background-color: transparent;
   }
 
-  &-title {
-    font-family: Bitter;
-    font-size: $font-size-xl;
-    font-weight: $font-weight-regular;
-    padding-bottom: $font-size-xl / 2;
-
-    &--centered {
-      text-align: center;
-    }
-  }
 
   &-subtitle {
     font-family: Bitter;
@@ -31,28 +21,17 @@
   }
 
   &-box {
-    background-color: $color-background-brighter;
     border-radius: .5rem;
-    box-shadow: 0 .8rem 2rem .2rem rgba($color-background-darkest, .2);
     margin: .5vw .75vw;
     padding: 2.5rem;
 
-    @media screen and (max-width: $media-screen-s) {
-      margin-bottom: 2vw;
-    }
+
 
     &--flat {
       box-shadow: none;
       min-height: 25rem;
       text-align: center;
 
-      @media screen and (max-width: $media-screen-m) {
-        min-height: 28rem;
-      }
-
-      @media screen and (max-width: $media-screen-s) {
-        min-height: auto;
-      }
     }
   }
 
@@ -62,11 +41,9 @@
   }
 
   &-action {
-    @include action-link ($color-complementary-bright, $color-complementary, .2rem, false);
 
     font-family: Bitter;
-    font-size: $font-size-l;
-    font-weight: $font-weight-regular;
+
   }
 
   &-padded {

@@ -1,6 +1,6 @@
 <template>
-<section>
-  <div class="loading" v-if="active"></div>
+<section v-if="active">
+  <div class="lds-dual-ring"></div>
 </section>
 </template>
 
@@ -9,7 +9,7 @@ import Vue from 'vue';
 import { Prop } from 'vue-property-decorator';
 import Component from 'nuxt-class-component';
 
-@Component()
+@Component({})
 export default class extends Vue {
   @Prop({ type: Boolean, default: false })
   public active: boolean;
@@ -17,14 +17,16 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
+/*stylelint-disable*/
 @import "~assets/scss/base/variables";
 
 // From: https://projects.lukehaas.me/css-loaders/
-.loading {
+/*.loading {
   $size: 1.1em;
 
   animation: spin 1.3s linear infinite;
-  border-color: $color-foreground-brighter transparent;
+  border: solid .12em white;
+  border-color: blue;
   border-radius: 50%;
   border-style: solid;
   border-width: .12em;
@@ -42,5 +44,34 @@ export default class extends Vue {
       transform: rotate(360deg);
     }
   }
+}*/
+
+.lds-dual-ring {
+  display: inline-block;
+  width: 1.1em;
+  height: 1.1em;
 }
+
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 1.1em;
+  height: 1.1em;
+  margin: 1px;
+  border-radius: 50%;
+  border: 5px solid #fff;
+  border-color: $color-brand-secondary transparent $color-brand-secondary transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
 </style>

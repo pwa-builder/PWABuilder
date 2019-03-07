@@ -8,6 +8,28 @@
     "generate": "Generate",
     "windows" : "Windows APIs"
   },
+  "home": {
+    "mast_title":"Quickly and easily turn your website into an app!",
+    "mast_tag": "Enter the URL of your website below.",
+    "empty_tag":"With Progressive Web Apps (or simply PWAs) you don't have to decide between using cross-platform web technologies and providing your users with a native app-like experience.",
+    "how_works_title": "What is a PWA?",
+    "how_works_body": "A Progressive Web App (or simply PWA) is a web site that acts, looks, and feels like a native app. Your web app runs in a browser just like it does today, but on platforms that support it, the app can be installed on the device and have the behavior and privlages of a native app.",
+    "how_works_body_2": "Why build native apps for every platform when your PWA can run on iOS, Windows, Android, and now MacOS",
+    "what_makes_title":"What makes a good PWA?",
+    "what_makes_body":"A good PWA is indistinguishable from a good native app.  A good PWA works whether you are connected to the internet or working offline, on a phone or a powerful PC, and works great with a mouse as well as touch.  But don't stop at good, we can help make your PWA great!",
+    "quality_low_title":"Good",
+    "quality_mid_title":"Better",
+    "quality_high_title":"Best",
+    "quality_low_list_1":"HTTPS",
+    "quality_low_list_2":"Has a W3C manifest",
+    "quality_low_list_3":"Works offline",
+    "quality_mid_list_1":"Service worker for performance and offline",
+    "quality_mid_list_2":"Advanced Manifest with images",
+    "quality_mid_list_3":"Works with different inputs and screen sizes",
+    "quality_high_list_1":"Advanced \"app like\" features",
+    "quality_high_list_2":"Uses advanced \"app like\" features"
+
+  },
   "footer": {
     "copyright": "PWABuilder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.",
     "privacy": "Our Privacy Statement"
@@ -17,18 +39,18 @@
     "subtitle": "Provide your URL and we'll help fill in the gaps if there are any.",
     "url": "URL",
     "placeholder_url": "Enter a URL",
-    "start": "Get started",
+    "start": "Start",
     "skip": "Skip to Build Service Worker",
     "skip_description": "If you already have the Manifest and want to download the service worker source code you can skip the first step."
   },
   "generate": {
-    "subtitle": "Here are the values we picked up from your site.",
-    "instructions": "Update or add any details below.",
+    "subtitle": "Your W3C Manifest",
+    "instructions": "You can use our tools to enhance your manifest, and download or copy the results for your site.",
     "name": "Name",
     "short_name": "Short Name",
     "description": "Description",
     "icon_url": "Icon Url",
-    "upload": "Or upload an image...",
+    "upload": "Upload an image",
     "add_icon": "Add icon",
     "preview": "Preview",
     "size": "Size",
@@ -55,10 +77,10 @@
     "w3c_manifest": "W3C Manifest"
   },
   "serviceworker": {
-    "title": "Select the service worker functionality for your app.",
-    "download": "Download service worker",
-    "building": "Building package...",
-    "download_link": "You can also download the source code directly from",
+    "title": "Service Worker",
+    "summary": "Service workers can make your site work offline, run faster, or both. Choose the functionality from our service workers below.",
+    "download": "Download",
+    "building": "downloading...",
     "next_step": "Next Step",
     "code_preview_web": "Code for website",
     "code_preview_serviceworker":"Service worker code",
@@ -120,8 +142,11 @@
     "subtitle": "Create your own Win10 app"
   },
   "windows": {
-    "download": "Download code",
-    "title": "Select the Windows feature for your app",
+    "add": "Add",
+    "download_bundle": "Download code Bundle",
+    "download_sample": "Download sample",
+    "title": "Be the Best PWA you can be with advanced APIs",
+    "summary": "now that you are a pwa, you should take advantage of app-like features that will win over your users.",
     "sourceTitle": "Source Code",
     "codeTitle": "Code Configuration"
   },
@@ -134,6 +159,7 @@
   },
   "modal": {
     "submit": "Submit",
+    "goBack": "I'm not done yet, take me back to editing",
     "cancel": "Cancel"
   },
   "code_viewer": {
@@ -149,6 +175,11 @@
    "id": "Id",
    "add": "Add Related Application",
    "prefer": "Prefer related applications"
+  },
+  "general": {
+    "github_source": "You can also download the source code directly from",
+    "next_page": "I'm done",
+    "loading": "Please wait, Loading..."
   },
   "error": {
     "url_empty": "Url is empty",

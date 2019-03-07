@@ -1,6 +1,6 @@
-# PWABuilder site
+# PWABuilder
 
-Node/Vue/Nuxt for PWABuilder
+Node/Vue/Nuxt site for PWABuilder!
 
 ## Prerequisites
 
@@ -14,7 +14,7 @@ You will need the following things properly installed on your computer.
 
 ## Installation
 
-* `git clone <repository-url>` this repository
+* `git clone https://github.com/pwa-builder/PWABuilder.git`, this repository
 * change into the new directory
 * `npm install`
 
@@ -35,9 +35,9 @@ You will need the following things properly installed on your computer.
 
 * `npm install selenium-standalone@latest -g` _only once_
 * `selenium-standalone install` _only once_
-* `npm run e2e`
+* `npm run e2e` 
 
-> You need to have installed [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+> You need to have installed [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) 
 
 ### Building
 

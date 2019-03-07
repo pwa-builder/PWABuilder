@@ -1,20 +1,20 @@
 @import '../base/variables';
 
 @mixin button-shadow($rad) {
-  box-shadow: 0 $rad 2 * $rad 0 rgba($color-background-darkest, .2);
+  // box-shadow: 0 $rad 2 * $rad 0 rgba($color-button-primary-purple-variant, .2);
   transition: all $animation-speed-default $animation-ease-default;
 }
 
 @mixin button-brand {
-  background-color: $color-complementary;
-  color: $color-foreground-brighter;
+  background-color: $color-button-primary;
+  color: $color-button-primary;
 
   &:hover {
-    background-color: $color-complementary-bright;
+    background-color: $color-button-primary;
   }
 
   &:active {
-    background-color: $color-complementary;
+    background-color: $color-button-primary;
   }
 }
 
@@ -35,16 +35,14 @@
   padding: $button-pad 3rem;
   text-align: center;
 
-  &:hover {
-    @include button-shadow($shadow * 2);
-  }
+  &:not(:disabled) {
+    &:hover {
+      @include button-shadow($shadow * 2);
+    }
 
-  &:active {
-    @include button-shadow($shadow);
-  }
-
-  &:focus {
-    outline: 0;
+    &:active {
+      @include button-shadow($shadow);
+    }
   }
 
   @media screen and (max-width: $media-screen-l) {
@@ -53,15 +51,22 @@
   }
 
   &--simple {
-    background-color: $color-background-semidark;
+    background-color: $color-button-primary-purple-variant;
     font-size: $font-size-m;
 
-    &:hover {
-      background-color: lighten($color-background-semidark, 5%);
+    &:disabled {
+      background-color: lighten($color-button-primary, 25%);
+      cursor: default;
     }
 
-    &:active {
-      background-color: $color-background-semidark;
+    &:not(:disabled) {
+      &:hover {
+        background-color: lighten($color-button-primary, 5%);
+      }
+
+      &:active {
+        background-color: $color-button-primary;
+      }
     }
 
     @media screen and (max-width: $media-screen-xxl) {
@@ -75,37 +80,37 @@
   }
 
   &--warning {
-    background-color: $color-error;
-    color: $color-foreground-brighter;
+    background-color: $color-button-primary;
+    color: $color-button-primary;
 
     &:hover {
-      background-color: $color-error-bright;
+      background-color: $color-button-primary;
     }
 
     &:active {
-      background-color: $color-error;
+      background-color: $color-button-primary;
     }
   }
 
   &--text {
     background-color: transparent;
-    border-bottom: solid .15rem $color-complementary;
+    border-bottom: solid .15rem $color-button-primary;
     border-radius: 0;
     box-shadow: none;
-    color: $color-complementary;
+    color: $color-button-primary;
     font-size: $font-size-m;
     padding: .3rem .8rem;
 
     &:hover {
       background-color: transparent;
       box-shadow: none;
-      color: $color-complementary-bright;
+      color: $color-button-primary;
     }
 
     &:active {
       background-color: transparent;
       box-shadow: none;
-      color: $color-complementary;
+      color: $color-button-primary;
     }
 
     &:disabled {

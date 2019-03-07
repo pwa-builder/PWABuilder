@@ -1,117 +1,236 @@
 <template>
-<section>
-  <GeneratorMenu/>
-  <div v-if="status">
-    <div class="pwa-infobox pwa-infobox--transparent l-pad l-pad--thin">
-      <div class="pure-g">
-        <div class="pure-u-1">
-          <h2 class="pwa-infobox-title pwa-infobox-title--centered">{{ $t('publish.title') }}</h2>
+  <main>
+    <ScoreHeader></ScoreHeader>
+
+    <div v-if="modalStatus" id="modalBackground"></div>
+
+    <Modal
+      :title="$t('publish.generate_appx')"
+      ref="appxModal"
+      @modalSubmit="onSubmitAppxModal"
+      @cancel="onCancelAppxModal"
+      v-on:modalOpened="modalOpened()"
+      v-on:modalClosed="modalClosed()"
+      v-if="appxForm"
+    >
+      <div id="topLabelBox" slot="extraP">
+        <label id="topLabel">
+          {{ $t('publish.enter_your') }}
+          <a
+            href="https://developer.microsoft.com/en-us/windows"
+            target="_blank"
+          >{{ $t('publish.dev_center') }}</a>
+          {{ $t('publish.publisher_details') }}
+        </label>
+      </div>
+
+      <section id="appxModalBody">
+        <div>
+          <label>{{ $t('publish.label_publisher') }}</label>
         </div>
 
-        <div class="pure-u-1 pure-u-md-1-2">
-          <div class="pwa-infobox-box pwa-infobox-box--flat">
-            <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.web') }}</h4>
-            <p class="l-generator-description l-generator-description--fixed">
-              {{ $t('publish.web_description') }}
-            </p>
-            <span class="button-holder download-archive">
-              <Download platform="web" :message="$t('publish.download')" :is-brand="true" />
-            </span>
-          </div>
+        <input
+          class="l-generator-input l-generator-input--largest"
+          :placeholder="$t('publish.placeholder_publisher')"
+          type="text"
+          v-model="appxForm.publisher"
+          requied
+        >
+
+        <div class="form-item">
+          <label>{{ $t('publish.label_identity') }}</label>
+          <label>{{ $t('publish.label_publisher_id') }}</label>
         </div>
 
-        <div class="pure-u-1 pure-u-md-1-2">
-          <div class="pwa-infobox-box pwa-infobox-box--flat">
-            <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.windows') }}</h4>
-            <p class="l-generator-description l-generator-description--fixed">{{ $t('publish.windows_description') }}  <a href="http://docs.pwabuilder.com/quickstart/2018/02/03/quick-start-sideload-pwa-win10.html" target="blank">{{ $t('publish.sideload_instructions') }}</a></p>
-            <span class="button-holder download-archive">
-              <Download platform="windows10" :message="$t('publish.download')" />
-            </span>
-            <p>
-              <button class="pwa-button pwa-button--simple pwa-button--brand" @click="openAppXModal();  $awa( { 'referrerUri': 'https://preview.pwabuilder.com/publish/windows10-appx' })"> {{ $t('publish.generate_appx') }}</button>
-            </p>
+        <input
+          class="l-generator-input l-generator-input--largest"
+          :placeholder="$t('publish.placeholder_identity')"
+          type="text"
+          v-model="appxForm.publisher_id"
+          requied
+        >
+
+        <div class="form-item">
+          <label>{{ $t('publish.label_package') }}</label>
+        </div>
+        <input
+          class="l-generator-input l-generator-input--largest"
+          :placeholder="$t('publish.placeholder_package')"
+          type="text"
+          v-model="appxForm.package"
+          requied
+        >
+
+        <div class="form-item">
+          <label>{{ $t('publish.label_version') }}</label>
+        </div>
+        <input
+          class="l-generator-input l-generator-input--largest"
+          :placeholder="$t('publish.placeholder_version')"
+          type="text"
+          v-model="appxForm.version"
+          requied
+        >
+
+        <p class="l-generator-error" v-if="appxError">
+          <span class="icon-exclamation"></span>
+          {{ $t(appxError) }}
+        </p>
+      </section>
+    </Modal>
+
+    <section id="sideBySide">
+      <section id="leftSide">
+        <div id="introContainer">
+          <h2>Everything you need to make your PWA</h2>
+
+          <p>
+            If you haven’t already, download the content below and publish it to your website.
+            Making these changes to your website is all you need to become a PWA.
+            You may also want to publish your PWAs to the different app markets,
+            you will find the packages for each of these on the right.
+          </p>
+
+          <div id="publishActionsContainer">
+            <!--<button id="downloadAllButton">Download your PWA files</button>-->
+            <Download id="downloadAllButton" platform="web" message="Download your PWA files"/>
           </div>
         </div>
-        <Modal :title="$t('publish.generate_appx')" ref="appxModal" @submit="onSubmitAppxModal" @cancel="onCancelAppxModal" v-if="appxForm">
-          <div class="l-generator-box">
-            <label class="l-generator-label">{{ $t('publish.enter_your') }}
-              <a href="https://developer.microsoft.com/en-us/windows" target="_blank">{{ $t('publish.dev_center') }}</a> {{ $t('publish.publisher_details') }}</label>
-          </div>
-          <div class="l-generator-box">
-            <label class="l-generator-label">{{ $t('publish.label_publisher') }}</label>
-          </div>
-          <input class="l-generator-input l-generator-input--largest" :placeholder="$t('publish.placeholder_publisher')" type="text"
-            v-model="appxForm.publisher" requied>
+      </section>
 
-          <div class="l-generator-box form-item">
-            <label class="l-generator-label">{{ $t('publish.label_identity') }}</label>
-            <label class="l-generator-label">{{ $t('publish.label_publisher_id') }}</label>
-          </div>
-          <input class="l-generator-input l-generator-input--largest" :placeholder="$t('publish.placeholder_identity')" type="text"
-            v-model="appxForm.publisher_id" requied>
+      <section id="rightSide">
+        <div id="platformsListContainer">
+          <ul>
+            <li id="windowsListItem">
+              <div id="platformButtonBlock" class="windowsActionsBlock">
+                <i id="platformIcon" class="fab fa-windows"></i>
+                <Download
+                  id="platformDownloadButton"
+                  platform="windows10"
+                  :message="$t('publish.download')"
+                />
 
-          <div class="l-generator-box form-item">
-            <label class="l-generator-label">{{ $t('publish.label_package') }}</label>
-          </div>
-          <input class="l-generator-input l-generator-input--largest" :placeholder="$t('publish.placeholder_package')" type="text"
-            v-model="appxForm.package" requied>
-
-          <div class="l-generator-box form-item">
-            <label class="l-generator-label">{{ $t('publish.label_version') }}</label>
-          </div>
-          <input class="l-generator-input l-generator-input--largest" :placeholder="$t('publish.placeholder_version')" type="text"
-            v-model="appxForm.version" requied>
-          <p class="l-generator-error" v-if="appxError"><span class="icon-exclamation"></span> {{ $t(appxError) }}</p>
-        </Modal>
-        <div class="pure-u-1">
-          <div class="pwa-infobox-box pwa-infobox-box--flat">
-            <div class="pwa-infobox-padded">
-              <h4 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.android') }}</h4>
-              <p class="l-generator-description l-generator-description--fixed l-generator-description--context">{{ $t('publish.android_description') }}</p>
-              <div>
-                <Download platform="android" :message="$t('publish.download')" />
+                <button
+                  id="platformDownloadButton"
+                  @click="openAppXModal();  $awa( { 'referrerUri': 'https://www.pwabuilder.com/publish/windows10-appx' })"
+                >Generate</button>
               </div>
-            </div>
-            <h2 class="pwa-infobox-subtitle pwa-infobox-subtitle--thin">{{ $t('publish.ios') }}</h2>
-            <Download platform="ios" :message="$t('publish.download')" />
+
+              <span>
+                You'll get a side-loadable version of your PWA (requires Win10 in dev mode) to test your PWA right away.
+                The Generate Appx button can be used to generate a PWA package to submit to the Microsoft Store.
+              </span>
+            </li>
+
+            <li>
+              <div id="platformButtonBlock">
+                <i id="platformIcon" class="fab fa-apple"></i>
+                <Download
+                  id="platformDownloadButton"
+                  platform="MacOS"
+                  :message="$t('publish.download')"
+                />
+              </div>
+
+              <span>You can use Xcode to build this package to produce an app that runs on MacOS.</span>
+            </li>
+
+            <li>
+              <div id="platformButtonBlock">
+                <i id="platformIcon" class="fab fa-android"></i>
+                <Download
+                  id="platformDownloadButton"
+                  platform="android"
+                  :message="$t('publish.download')"
+                />
+              </div>
+
+              <span>PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.</span>
+            </li>
+
+            <li>
+              <div id="platformButtonBlock">
+                <i id="platformIcon" class="fab fa-apple"></i>
+                <Download
+                  id="platformDownloadButton"
+                  platform="ios"
+                  :message="$t('publish.download')"
+                />
+              </div>
+
+              <span>PWAs are available through the browser on iOS, however your PWA can also be submitted to the app store by submitting the package you get below.</span>
+            </li>
+
+            <!--<li>
+              <div id="platformButtonBlock">
+                <i id="platformIcon" class="fab fa-edge"></i>
+                <Download
+                  id="platformDownloadButton"
+                  platform="web"
+                  :message="$t('publish.download')"
+                />
+              </div>
+
+              <span>Download these files and add them to your website. Different browsers will detect your Progressive Web App in different ways, but the manifest and service workers are required for each of them.</span>
+            </li>-->
+          </ul>
+        </div>
+      </section>
+    </section>
+
+    <section id="bottomSection">
+      <div id="coolPWAs">
+        <h2>Scope out rad PWAs</h2>
+
+        <p>Pinterest, Spotify, and more built some PWAs and they are like whoa! Check them out by clicking on the image or logos. Love doing PWAs? Submit your own!</p>
+
+        <div id="iconGrid">
+          <div>
+            <i id="platformIcon" class="fab fa-pinterest"></i>
+          </div>
+          <div>
+            <i id="platformIcon" class="fab fa-spotify"></i>
+          </div>
+          <div>
+            <i id="platformIcon" class="fab fa-microsoft"></i>
           </div>
         </div>
       </div>
-    </div>
-    <StartOver />
-  </div>
 
-  <div class="l-generator-buttons l-generator-buttons--centered" v-if="!status">
-    <p class="instructions">{{ $t('publish.manifest_needed') }}</p>
-    <button @click="goToHome" class="pwa-button pwa-button--simple">{{ $t('publish.first_step') }}</button>
-  </div>
-  <TwoWays/>
-</section>
+      <div id="bottomImageSection">
+        <span>I will hold things</span>
+      </div>
+    </section>
+  </main>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Component from 'nuxt-class-component';
-import { Action, State, namespace } from 'vuex-class';
+import Vue from "vue";
+import Component from "nuxt-class-component";
+import { Action, State, namespace } from "vuex-class";
 
-import GeneratorMenu from '~/components/GeneratorMenu.vue';
-import TwoWays from '~/components/TwoWays.vue';
-import StartOver from '~/components/StartOver.vue';
-import Download from '~/components/Download.vue';
-import Modal from '~/components/Modal.vue';
+import GeneratorMenu from "~/components/GeneratorMenu.vue";
+import StartOver from "~/components/StartOver.vue";
+import Download from "~/components/Download.vue";
+import Modal from "~/components/Modal.vue";
+import PublishCard from "~/components/PublishCard.vue";
+import Toolbar from "~/components/Toolbar.vue";
+import ScoreHeader from "~/components/ScoreHeader.vue";
 
-import * as publish from '~/store/modules/publish';
+import * as publish from "~/store/modules/publish";
 
 const PublishState = namespace(publish.name, State);
 const PublishAction = namespace(publish.name, Action);
 
 @Component({
   components: {
-    TwoWays,
     GeneratorMenu,
     Download,
     StartOver,
-    Modal
+    Modal,
+    PublishCard,
+    Toolbar,
+    ScoreHeader
   }
 })
 export default class extends Vue {
@@ -122,13 +241,23 @@ export default class extends Vue {
     version: null
   };
 
-  @PublishState status: boolean;
+  // Set default web checked items
+  public files: any[] = [
+    "manifest",
+    "serviceWorkers",
+    "apiSamples",
+    "windows10Package"
+  ];
+
+  // @PublishState status: boolean;
+  @PublishState status = true;
   @PublishState appXLink: string;
 
   @PublishAction updateStatus;
   @PublishAction buildAppx;
 
   public appxError: string | null = null;
+  public modalStatus = false;
 
   public created(): void {
     this.updateStatus();
@@ -136,7 +265,7 @@ export default class extends Vue {
 
   public goToHome(): void {
     this.$router.push({
-      path: this.$i18n.path('')
+      path: this.$i18n.path("")
     });
   }
 
@@ -145,6 +274,7 @@ export default class extends Vue {
   }
 
   public async onSubmitAppxModal(): Promise<void> {
+    console.log("here");
     const $appxModal = this.$refs.appxModal as Modal;
     $appxModal.showLoading();
 
@@ -168,5 +298,270 @@ export default class extends Vue {
       version: null
     };
   }
+
+  public modalOpened() {
+    console.log("modal opened");
+    window.scrollTo(0, 0);
+    this.modalStatus = true;
+  }
+
+  public modalClosed() {
+    console.log("modal closed");
+    this.modalStatus = false;
+  }
 }
 </script>
+
+<style lang="scss" scoped>
+/* stylelint-disable */
+
+@import "~assets/scss/base/variables";
+
+@media( max-height: 700px) {
+  #scoreSideBySide header {
+    top: 51px;
+  }
+}
+
+#modalBackground {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: grey;
+  opacity: 0.7;
+  z-index: 98999;
+  animation-name: opened;
+  animation-duration: 250ms;
+  will-change: opacity;
+}
+
+@keyframes opened {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 0.7;
+    }
+  }
+
+#appxModalBody {
+  height: 6em;
+  padding-left: 2em;
+  padding-right: 10em;
+
+  input {
+    padding: initial;
+  }
+
+  div {
+    margin-top: 40px;
+
+    #topLabel {
+      font-weight: initial;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 20px;
+      display: block;
+    }
+  }
+}
+
+#sideBySide {
+  display: flex;
+  justify-content: space-around;
+  height: 100vh;
+  background-image: url("~/assets/images/bg_publish.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  #leftSide {
+    height: 100%;
+    flex: 1;
+
+    header {
+      display: flex;
+      align-items: center;
+      padding-left: 68px;
+      margin-top: 32px;
+
+      #headerText {
+        font-size: 28px;
+        font-weight: normal;
+      }
+
+      #logo {
+        background: lightgrey;
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        margin-right: 12px;
+      }
+    }
+
+    #introContainer {
+      padding-top: 4em;
+      padding-right: 14em;
+      padding-left: 4em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      h2 {
+        font-size: 36px;
+        font-weight: bold;
+      }
+
+      p {
+        font-size: 18px;
+      }
+
+      #publishActionsContainer {
+        display: flex;
+        width: 100%;
+
+        button {
+          border: none;
+          width: 264px;
+          border-radius: 20px;
+          font-size: 18px;
+          font-weight: bold;
+          padding-top: 9px;
+          padding-bottom: 11px;
+        }
+
+        #downloadAllButton {
+          margin-right: 11px;
+          background: $color-button-primary-purple-variant;
+          color: white;
+          width: 264px;
+          border-radius: 20px;
+          font-size: 18px;
+          padding-top: 9px;
+          padding-bottom: 11px;
+          font-weight: bold;
+          display: flex;
+          justify-content: center;
+        }
+      }
+    }
+  }
+
+  #rightSide {
+    height: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    #platformsListContainer {
+      padding-top: 6.7em;
+      padding-right: 8em;
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        #windowsListItem {
+          height: 100px;
+        }
+
+        li {
+          display: flex;
+          height: 84px;
+          margin-bottom: 30px;
+
+          span {
+            margin-left: 19px;
+            font-size: 14px;
+            font-weight: normal;
+            width: 476px;
+          }
+
+          #platformButtonBlock {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            #platformIcon {
+              font-size: 44px;
+            }
+
+            #platformDownloadButton {
+              border: none;
+              border-radius: 20px;
+              font-size: 12px;
+              font-weight: bold;
+              padding-bottom: 5px;
+              padding-top: 3px;
+              padding-left: 11px;
+              padding-right: 11px;
+              margin-top: 11px;
+              background: grey;
+              color: white;
+              cursor: pointer;
+              width: 6.7em;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+#topLabelBox {
+  margin-bottom: 1em;
+};
+
+
+#bottomSection {
+  // display: flex;
+  display: none;
+
+  #coolPWAs {
+    padding-left: 10em;
+    flex: 1;
+
+    h2 {
+      font-size: 36px;
+      font-weight: bold;
+    }
+
+    p {
+      width: 392px;
+      font-size: 18px;
+    }
+
+    #iconGrid {
+      display: grid;
+      grid-template-columns: auto auto auto;
+      width: 392px;
+      margin-top: 36px;
+
+      svg {
+        font-size: 64px;
+      }
+    }
+  }
+
+  #bottomImageSection {
+    flex: 1;
+  }
+}
+
+@media (max-width: 1280px) {
+  #sideBySide #leftSide #introContainer {
+    padding-right: 9em;
+  }
+}
+</style>
+

@@ -1,15 +1,11 @@
 <template>
-  <section class="tiles">
-    <div v-bind:controls="controls" v-for="item in controls" :key="item.id" class="card" v-on:click="focus(item, $event)">
-      <div class="cardinside">
-        <div class="thumbnail">
-          <img :src=item.image />
-        </div>
-          <h1 class="title">{{ item.title }}</h1>
-          <p class="description">{{ item.description }}</p>
-      </div>
+  <div class="card">
+    <div class="cardInside">
+      <h1 class="title">{{ this.title }}</h1>
+      <p class="description">{{ this.description }}</p>
+      <button class="learnMoreButton">Learn More</button>
     </div>
-  </section>
+  </div>
 </template>
 
 <script lang="ts">
@@ -17,14 +13,44 @@ import Vue from 'vue';
 import Component from 'nuxt-class-component';
 import { Prop } from 'vue-property-decorator';
 
-@Component()
+@Component({})
 export default class extends Vue {
-  @Prop({})
-  controls: any;
+  @Prop({}) title: string;
+  @Prop({}) description: string;
 }
 </script>
 
-<style>
-/* $base-background: #00CC99; */
+<style lang="scss" scoped>
+@import '~assets/scss/base/variables';
 
+.card {
+  box-shadow: 0 20px 40px 0 $color-secondary, 0 14px 12px 0 $color-secondary;
+  margin: 69px;
+}
+
+.learnMoreButton {
+  background: transparent;
+  border: #979797 solid 2px;
+  border-radius: 2px;
+  color: $color-brand;
+  height: 40px;
+  width: 110px;
+}
+
+.cardInside {
+  border-radius: 5px;
+  padding-bottom: 60px;
+  padding-left: 40px;
+  padding-right: 50px;
+  padding-top: 137px;
+}
+
+.title {
+  color: #8B8B8B;
+  font-size: 22px;
+}
+
+.description {
+  color: #8B8B8B;
+}
 </style>
