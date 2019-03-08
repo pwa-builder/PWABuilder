@@ -3,7 +3,7 @@
   <main id="sideBySide">
     <section id="leftSide">
       <header>
-        <img id="logo" src="~/assets/images/logo.png">
+        <img id="logo" src="~/assets/images/new-logo.svg">
       </header>
 
       <div id="introContainer">
