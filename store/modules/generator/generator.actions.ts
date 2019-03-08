@@ -48,13 +48,17 @@ export const actions: Actions<State, RootState> = {
         dispatch('update');
     },
 
-    updateLink({ commit }, url: string): void {
+    async updateLink({ commit }, url: string): Promise<any> {
+      console.log('here');
         if (url && !url.startsWith('http')) {
             url = 'https://' + url;
         }
 
-        if (!helpers.isValidUrl(url)) {
-            throw 'error.provide_url';
+        /*const test = await helpers.isValidUrl(url);
+        console.log('test', test);*/
+
+        if (await helpers.isValidUrl(url) !== true) {
+          throw 'error.provide_url';
         }
 
         commit(types.UPDATE_LINK, url);

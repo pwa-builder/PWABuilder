@@ -30,12 +30,19 @@
             >
               <div>{{ $t('generator.start') }}</div>
             </button>
+
+            <div id="urlErr">{{this.error}}</div>
           </form>
 
           <div id="backToOld">
-            Having issues with the new version of PWABuilder? Use the previous version 
-            <a href="https://manifold-site-prod.azurewebsites.net/">here</a>
-            and consider opening an issue on our <a href="https://github.com/pwa-builder/PWABuilder">Github</a>.
+            Having issues with the new version of PWABuilder? Use the previous version
+            <a
+              href="https://manifold-site-prod.azurewebsites.net/"
+            >here</a>
+            and consider opening an issue on our
+            <a
+              href="https://github.com/pwa-builder/PWABuilder"
+            >Github</a>.
             Thanks!
           </div>
 
@@ -50,8 +57,8 @@
         <p>
           PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
           <a
-          href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
-        >Our Privacy Statement</a>
+            href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
+          >Our Privacy Statement</a>
         </p>
       </footer>
     </section>
@@ -109,26 +116,28 @@ export default class extends Vue {
     this.generatorReady = false;
     this.error = null;
 
-    try {
-      if (!this.url$) {
-        this.error = "You must enter a URL to get started";
-        return;
-      }
+    if (!this.url$) {
+      this.error = "You must enter a URL to get started";
+      return;
+    }
 
-      this.updateLink(this.url$);
+    try {
+      await this.updateLink(this.url$);
 
       this.url$ = this.url;
 
       this.$router.push({
         name: "reportCard"
       });
-    } catch (e) {
-      if (e.message) {
-        this.error = e.message;
+    } catch (err) {
+      console.error("url error", err);
+
+      if (err.message) {
+        this.error = err.message;
       } else {
         // No error message
         // so just show error directly
-        this.error = e;
+        this.error = err;
       }
     }
   }
@@ -331,6 +340,11 @@ footer a {
   box-shadow: none;
 }
 
+#urlErr {
+  color: red;
+  margin-top: 1em;
+  margin-left: 1em;
+}
 
 @media (max-width: 1282px) {
   #sideBySide #introContainer {
