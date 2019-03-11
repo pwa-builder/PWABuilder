@@ -206,7 +206,7 @@ Vue.prototype.$awa = function(config) {
       display: flex;
       align-items: center;
       padding-left: 68px;
-      margin-top: 32px;
+      margin-top: 30px;
 
       #headerText {
         font-size: 28px;

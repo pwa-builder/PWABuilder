@@ -690,7 +690,7 @@ p {
 
   header {
     position: absolute;
-    top: 30px;
+    top: 24px;
     left: 68px;
 
     img {
