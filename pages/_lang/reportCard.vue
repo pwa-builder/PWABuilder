@@ -694,7 +694,7 @@ p {
     left: 68px;
 
     img {
-      height: 48px;
+      width: 10em;
     }
   }
 
