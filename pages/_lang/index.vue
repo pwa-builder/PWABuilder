@@ -51,16 +51,16 @@
             <p>Already have a PWA? Skip ahead!</p>
           </div>
         </div>
-      </div>
 
-      <footer>
-        <p>
-          PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
-          <a
-            href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
-          >Our Privacy Statement</a>
-        </p>
-      </footer>
+        <footer>
+          <p>
+            PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
+            <a
+              href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
+            >Our Privacy Statement</a>
+          </p>
+        </footer>
+      </div>
     </section>
 
     <section id="rightSide"></section>
@@ -191,7 +191,6 @@ Vue.prototype.$awa = function(config) {
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 27em;
     }
 
     footer p {
@@ -200,6 +199,7 @@ Vue.prototype.$awa = function(config) {
       font-size: 12px;
       color: #3c3c3c;
       line-height: 18px;
+      margin-right: 2em;
     }
 
     header {
@@ -358,9 +358,15 @@ footer a {
   #introContainer {
     padding-top: 3em;
   }
-  
+
   #expertModeBlock {
     margin-top: 31px !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  #sideBySide #leftSide footer p {
+    margin-right: 5em;
   }
 }
 
