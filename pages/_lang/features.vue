@@ -181,7 +181,7 @@ export default class extends Vue {
     try {
       await this.selectSample(sample);
       // this.selectedSamples.push(sample);
-      // this.currentPendingSample = sample;
+      this.currentPendingSample = sample;
       // this.currentPendingSample = sample;
 
       (this.$refs.addFeatureModal as Modal).show();
@@ -194,11 +194,11 @@ export default class extends Vue {
     try {
       console.log("sample selected");
       await this.selectSample(this.currentPendingSample);
-      this.selectedSamples.push(this
-        .currentPendingSample as windowsStore.Sample);
+      /*this.selectedSamples.push(this
+        .currentPendingSample as windowsStore.Sample);*/
 
       // force a re-render
-      this.selectedSamples = this.selectedSamples;
+      // this.selectedSamples = this.selectedSamples;
       console.log(this.selectedSamples);
     } catch (e) {
       this.error = e;
@@ -211,7 +211,7 @@ export default class extends Vue {
   }
 
   // @ts-ignore TS6133 onSelected
-  /*public onRemoved(sample: windowsStore.Sample) {
+  public onRemoved(sample: windowsStore.Sample) {
     if (this.selectedSamples.indexOf(sample) != -1) {
       sample.usercode = null;
 
@@ -223,7 +223,7 @@ export default class extends Vue {
       // We're adding a sample via checkbox
       this.hasNative = true;
     }
-  }*/
+  }
 
   loadCode() {
     let index = this.selectedSamples.indexOf(this.sample);

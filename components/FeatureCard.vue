@@ -5,15 +5,9 @@
 
     <div id="featureCardActionsBlock">
       <button
-        v-if="!showRemoveButton"
         @click="onClickSample(sample)"
         id="featureCardAddButton"
       >View</button>
-      <span
-        v-if="showRemoveButton"
-        @click="onClickRemoveSample(sample)"
-        id="featureCardRemoveButton"
-      >Remove</span>
     </div>
   </div>
 </template>
@@ -28,7 +22,6 @@ import * as windowsStore from "~/store/modules/windows";
 @Component({})
 export default class extends Vue {
   @Prop({}) sample: windowsStore.Sample;
-  @Prop({}) showRemoveButton = false;
 
   onClickSample(sample: windowsStore.Sample) {
     this.$emit("selected", sample);
@@ -37,7 +30,6 @@ export default class extends Vue {
   onClickRemoveSample(sample: windowsStore.Sample) {
     console.log('here');
     this.$emit("removed", sample);
-    this.showRemoveButton = false;
   }
 }
 </script>
