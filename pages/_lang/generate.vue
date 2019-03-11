@@ -274,7 +274,7 @@
           <nuxt-link
             :to="$i18n.path('serviceworker')"
             class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header"
-            @click=" $awa( { 'referrerUri': 'https://www.pwabuilder.com/generator-nextStep-trigger' })"
+            @click=" $awa( { 'uri': 'https://www.pwabuilder.com/generator-nextStep-trigger' })"
           >{{ $t("serviceworker.next_step") }}</nuxt-link>
         </CodeViewer>
       </section>
