@@ -354,13 +354,17 @@ footer a {
   }
 }
 
-@media (max-height: 700px) {
-  #sideBySide #leftSide header {
-    margin-top: 156px;
+@media (max-height: 715px) {
+  #introContainer {
+    padding-top: 3em;
+  }
+  
+  #expertModeBlock {
+    margin-top: 31px !important;
   }
 }
 
-@media (min-width: 1400px) {
+@media (min-width: 1290px) {
   #sideBySide #introContainer {
     padding-right: 6em;
   }
