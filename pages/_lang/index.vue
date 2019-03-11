@@ -3,7 +3,7 @@
   <main id="sideBySide">
     <section id="leftSide">
       <header>
-        <img id="logo" src="~/assets/images/new-logo.svg">
+        <img id="logo" src="~/assets/images/new-logo.svg" alt="App Logo">
       </header>
 
       <div id="introContainer">

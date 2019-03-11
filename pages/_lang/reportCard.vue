@@ -4,7 +4,7 @@
     <div id="scoreSideBySide">
       <nuxt-link to="/">
         <header>
-          <img id="logo" src="~/assets/images/new-logo.svg">
+          <img id="logo" src="~/assets/images/new-logo.svg" alt="App Logo">
         </header>
       </nuxt-link>
 
