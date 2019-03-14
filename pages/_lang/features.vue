@@ -1,6 +1,6 @@
 <template>
   <main>
-    <ScoreHeader></ScoreHeader>
+      <HubHeader></HubHeader>
 
     <div v-if="modalStatus" id="modalBackground"></div>
 
@@ -15,7 +15,7 @@
 
           <div id="featureActionsBlock">
             <!--<button @click="clearSelected()" id="clearButton">Clear</button>-->
-            <nuxt-link id="doneButton" to="/reportCard">Done</nuxt-link>
+            <nuxt-link id="doneButton" to="/">Done</nuxt-link>
           </div>
         </div>
       </section>
@@ -30,6 +30,7 @@
         v-on:selected="onSelected"
         v-on:removed="onRemoved"
         :showRemoveButton="false"
+        :showAddButton="true"
       ></FeatureCard>
 
       <FeatureCard
@@ -40,6 +41,7 @@
         v-on:selected="onSelected"
         v-on:removed="onRemoved"
         :showRemoveButton="true"
+        :showAddButton="true"
       ></FeatureCard>
     </section>
 
@@ -125,7 +127,7 @@ import { Action, State, namespace } from "vuex-class";
 import Modal from "~/components/Modal.vue";
 import Loading from "~/components/Loading.vue";
 import FeatureCard from "~/components/FeatureCard.vue";
-import ScoreHeader from "~/components/ScoreHeader.vue";
+import HubHeader from "~/components/HubHeader.vue";
 import CodeViewer from "~/components/CodeViewer.vue";
 
 import * as windowsStore from "~/store/modules/windows";
@@ -138,7 +140,7 @@ const WindowsAction = namespace(windowsStore.name, Action);
     Modal,
     Loading,
     FeatureCard,
-    ScoreHeader,
+    HubHeader,
     CodeViewer
   }
 })
@@ -372,7 +374,7 @@ export default class extends Vue {
 header {
   display: flex;
   align-items: center;
-  padding-left: 68px;
+  padding-left: 159px;
   margin-top: 32px;
 
   #headerText {
@@ -394,7 +396,7 @@ header {
 
   #headerSection {
     flex: 1;
-    padding-left: 4em;
+    padding-left: 159px;
     padding-right: 164px;
     padding-top: 40px;
 
@@ -474,8 +476,8 @@ header {
 #fakeCardBlock {
   display: grid;
   grid-template-columns: auto auto auto;
-  padding-left: 4em;
-  padding-right: 4em;
+  padding-left: 159px;
+  padding-right: 159px;
   margin-top: 60px;
   margin-bottom: 60px;
   
@@ -487,6 +489,11 @@ header {
     font-size: 4em;
     background: lightgrey;
   }
+}
+
+#featureListBlock .card {
+  height: 277px;
+  width: 377px;
 }
 
 .code-samples {

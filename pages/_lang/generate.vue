@@ -1,6 +1,7 @@
 <template>
   <div>
-    <ScoreHeader></ScoreHeader>
+    <HubHeader :showSubHeader="true"></HubHeader>
+
     <main id="sideBySide">
       <section id="leftSide">
         <header class="mastHead">
@@ -322,7 +323,7 @@ import CustomMembers from "~/components/CustomMembers.vue";
 import StartOver from "~/components/StartOver.vue";
 import ColorSelector from "~/components/ColorSelector.vue";
 import GoodPWA from "~/components/GoodPWA.vue";
-import ScoreHeader from "~/components/ScoreHeader.vue";
+import HubHeader from "~/components/HubHeader.vue";
 
 import * as generator from "~/store/modules/generator";
 
@@ -340,7 +341,7 @@ const GeneratorGetters = namespace(generator.name, Getter);
     StartOver,
     Modal,
     GoodPWA,
-    ScoreHeader
+    HubHeader
   }
 })
 export default class extends Vue {

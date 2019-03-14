@@ -1,6 +1,6 @@
 <template>
   <main>
-    <ScoreHeader></ScoreHeader>
+    <HubHeader></HubHeader>
 
     <div v-if="modalStatus" id="modalBackground"></div>
 
@@ -215,7 +215,7 @@ import Download from "~/components/Download.vue";
 import Modal from "~/components/Modal.vue";
 import PublishCard from "~/components/PublishCard.vue";
 import Toolbar from "~/components/Toolbar.vue";
-import ScoreHeader from "~/components/ScoreHeader.vue";
+import HubHeader from "~/components/HubHeader.vue";
 
 import * as publish from "~/store/modules/publish";
 
@@ -230,7 +230,7 @@ const PublishAction = namespace(publish.name, Action);
     Modal,
     PublishCard,
     Toolbar,
-    ScoreHeader
+    HubHeader
   }
 })
 export default class extends Vue {
@@ -387,7 +387,7 @@ export default class extends Vue {
     header {
       display: flex;
       align-items: center;
-      padding-left: 68px;
+      padding-left: 159px;
       margin-top: 32px;
 
       #headerText {
@@ -407,7 +407,7 @@ export default class extends Vue {
     #introContainer {
       padding-top: 4em;
       padding-right: 14em;
-      padding-left: 4em;
+      padding-left: 159px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -460,7 +460,7 @@ export default class extends Vue {
 
     #platformsListContainer {
       padding-top: 6.7em;
-      padding-right: 8em;
+      padding-right: 159px;
 
       ul {
         list-style: none;

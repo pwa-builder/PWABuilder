@@ -50,7 +50,7 @@
 
 <script lang='ts'>
 import Vue from "vue";
-import * as monaco from "monaco-editor";
+import * as monaco from 'monaco-editor';
 import Component from "nuxt-class-component";
 import { Prop, Watch } from "vue-property-decorator";
 import Clipboard from "clipboard";

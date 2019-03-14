@@ -1,12 +1,12 @@
 <template>
   <div>
-    <ScoreHeader></ScoreHeader>
+    <HubHeader :showSubHeader="true"></HubHeader>
+
     <main id="sideBySide">
       <section id="leftSide">
         <header class="mastHead">
           <h2>{{ $t("serviceworker.title") }}</h2>
           <p>{{ $t("serviceworker.summary") }}</p>
-
         </header>
 
         <div id="inputSection">
@@ -91,7 +91,7 @@ import CodeViewer from "~/components/CodeViewer.vue";
 import StartOver from "~/components/StartOver.vue";
 import GoodPWA from "~/components/GoodPWA.vue";
 import Modal from "~/components/Modal.vue";
-import ScoreHeader from "~/components/ScoreHeader.vue";
+import HubHeader from "~/components/HubHeader.vue";
 
 import * as serviceworker from "~/store/modules/serviceworker";
 import { ServiceWorker } from "~/store/modules/serviceworker";
@@ -107,7 +107,7 @@ const ServiceworkerAction = namespace(serviceworker.name, Action);
     CodeViewer,
     GoodPWA,
     Modal,
-    ScoreHeader
+    HubHeader
   }
 })
 export default class extends Vue {
@@ -158,7 +158,7 @@ export default class extends Vue {
         const cleanedSW = this.serviceworker$.toString();
 
         this.$router.push({
-          name: 'reportCard'
+          name: "reportCard"
         });
 
         await this.downloadServiceWorker(cleanedSW);
@@ -227,7 +227,7 @@ export default class extends Vue {
     .mastHead {
       padding-top: 40px;
       padding-right: 100px;
-      padding-left: 4em;
+      padding-left: 159px;
 
       h2 {
         font-size: 36px;
@@ -245,7 +245,7 @@ export default class extends Vue {
 
     #inputSection {
       padding-right: 100px;
-      padding-left: 4em;
+      padding-left: 159px;
 
       .inputContainer {
         margin-top: 20px;

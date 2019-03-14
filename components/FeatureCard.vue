@@ -3,7 +3,7 @@
     <h4>{{sample.title}}</h4>
     <p>{{ sample.description }}</p>
 
-    <div id="featureCardActionsBlock">
+    <div v-if="showAddButton" id="featureCardActionsBlock">
       <button
         @click="onClickSample(sample)"
         id="featureCardAddButton"
@@ -22,6 +22,7 @@ import * as windowsStore from "~/store/modules/windows";
 @Component({})
 export default class extends Vue {
   @Prop({}) sample: windowsStore.Sample;
+  @Prop({}) showAddButton;
 
   onClickSample(sample: windowsStore.Sample) {
     this.$emit("selected", sample);
@@ -44,6 +45,8 @@ export default class extends Vue {
   padding: 20px;
   border: solid #C5C5C5 1px;
   background: white;
+  height: 233px;
+  width: 233px;
 
   h4 {
     font-size: 18px;
@@ -51,7 +54,6 @@ export default class extends Vue {
   }
 
   p {
-    width: 277px;
     flex: 2;
     font-size: 14px;
     line-height: 20px;
