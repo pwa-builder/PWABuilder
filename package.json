@@ -3,10 +3,10 @@
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development nuxt",
-    "build-production": "cross-env NODE_ENV=production nuxt build --max_old_space_size=5048",
-    "build-preview": "cross-env NODE_ENV=preview nuxt build --max_old_space_size=5048",
+    "build-production": "cross-env NODE_ENV=production nuxt build -- --max_old_space_size=5048",
+    "build-preview": "cross-env NODE_ENV=preview nuxt build -- --max_old_space_size=5048",
     "start-production": "cross-env NODE_ENV=production node server.js",
-    "start-preview": "cross-env NODE_ENV=preview node --max_old_space_size=2048 server.js",
+    "start-preview": "cross-env NODE_ENV=preview node server.js",
     "test": "mocha --opts mocha.opts",
     "pree2e": "npm run build",
     "e2e": "concurrently \"npm start\" \"selenium-standalone start\" \"wait-on http://localhost:4444 && wait-on http://localhost:3000 && cross-env NODE_ENV=development nightwatch --config nightwatch.js\" --names \"📦,⚙️,🦉\" --prefix name --kill-others",
