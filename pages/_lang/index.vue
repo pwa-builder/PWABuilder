@@ -124,6 +124,8 @@ export default class extends Vue {
     try {
       await this.updateLink(this.url$);
 
+      this.updateLink(this.url$);
+
       this.url$ = this.url;
 
       this.$router.push({
