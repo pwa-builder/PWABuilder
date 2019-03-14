@@ -526,8 +526,10 @@ export default class extends Vue {
         const data = await response.json();
         console.log("lookAtSW", data.swURL);
 
-        this.serviceWorkerData = data.swURL;
+        this.serviceWorkerData = data;
       }
+
+      console.log(this.serviceWorkerData);
 
       console.log(this.serviceWorkerData);
 
