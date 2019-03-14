@@ -3,7 +3,7 @@
   <main id="sideBySide">
     <section id="leftSide">
       <header>
-        <img id="logo" src="~/assets/images/logo.png">
+        <img id="logo" src="~/assets/images/new-logo.svg" alt="App Logo">
       </header>
 
       <div id="introContainer">
@@ -30,12 +30,19 @@
             >
               <div>{{ $t('generator.start') }}</div>
             </button>
+
+            <div id="urlErr">{{this.error}}</div>
           </form>
 
           <div id="backToOld">
-            Having issues with the new version of PWABuilder? Use the previous version 
-            <a href="https://manifold-site-prod.azurewebsites.net/">here</a>
-            and consider opening an issue on our <a href="https://github.com/pwa-builder/PWABuilder">Github</a>.
+            Having issues with the new version of PWABuilder? Use the previous version
+            <a
+              href="https://manifold-site-prod.azurewebsites.net/"
+            >here</a>
+            and consider opening an issue on our
+            <a
+              href="https://github.com/pwa-builder/PWABuilder"
+            >Github</a>.
             Thanks!
           </div>
 
@@ -44,16 +51,16 @@
             <p>Already have a PWA? Skip ahead!</p>
           </div>
         </div>
-      </div>
 
-      <footer>
-        <p>
-          PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
-          <a
-          href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
-        >Our Privacy Statement</a>
-        </p>
-      </footer>
+        <footer>
+          <p>
+            PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
+            <a
+              href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
+            >Our Privacy Statement</a>
+          </p>
+        </footer>
+      </div>
     </section>
 
     <section id="rightSide"></section>
@@ -109,11 +116,13 @@ export default class extends Vue {
     this.generatorReady = false;
     this.error = null;
 
+    if (!this.url$) {
+      this.error = "You must enter a URL to get started";
+      return;
+    }
+
     try {
-      if (!this.url$) {
-        this.error = "You must enter a URL to get started";
-        return;
-      }
+      await this.updateLink(this.url$);
 
       this.updateLink(this.url$);
 
@@ -122,13 +131,15 @@ export default class extends Vue {
       this.$router.push({
         name: "reportCard"
       });
-    } catch (e) {
-      if (e.message) {
-        this.error = e.message;
+    } catch (err) {
+      console.error("url error", err);
+
+      if (err.message) {
+        this.error = err.message;
       } else {
         // No error message
         // so just show error directly
-        this.error = e;
+        this.error = err;
       }
     }
   }
@@ -182,7 +193,6 @@ Vue.prototype.$awa = function(config) {
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 27em;
     }
 
     footer p {
@@ -191,13 +201,14 @@ Vue.prototype.$awa = function(config) {
       font-size: 12px;
       color: #3c3c3c;
       line-height: 18px;
+      margin-right: 2em;
     }
 
     header {
       display: flex;
       align-items: center;
       padding-left: 68px;
-      margin-top: 32px;
+      margin-top: 30px;
 
       #headerText {
         font-size: 28px;
@@ -331,6 +342,11 @@ footer a {
   box-shadow: none;
 }
 
+#urlErr {
+  color: red;
+  margin-top: 1em;
+  margin-left: 1em;
+}
 
 @media (max-width: 1282px) {
   #sideBySide #introContainer {
@@ -340,13 +356,23 @@ footer a {
   }
 }
 
-@media (max-height: 700px) {
-  #sideBySide #leftSide header {
-    margin-top: 156px;
+@media (max-height: 715px) {
+  #introContainer {
+    padding-top: 3em;
+  }
+
+  #expertModeBlock {
+    margin-top: 31px !important;
   }
 }
 
-@media (min-width: 1400px) {
+@media (min-width: 1280px) {
+  #sideBySide #leftSide footer p {
+    margin-right: 5em;
+  }
+}
+
+@media (min-width: 1290px) {
   #sideBySide #introContainer {
     padding-right: 6em;
   }

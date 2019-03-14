@@ -184,7 +184,7 @@ export default class extends Vue {
 
         setTimeout(() => {
           this.textCopied = false;
-        }, 1000);
+        }, 1300);
       } catch (err) {
         console.error(err);
       }
@@ -200,7 +200,7 @@ export default class extends Vue {
 
         setTimeout(() => {
           this.textCopied = false;
-        }, 1000);
+        }, 1300);
         e.clearSelection();
       });
 
@@ -396,7 +396,7 @@ export default class extends Vue {
   font-weight: bold;
   width: 16em;
   padding: 1em;
-  border-radius: 10px;
+  border-radius: 20px;
   animation-name: toastUp;
   animation-duration: 250ms;
   animation-timing-function: ease;

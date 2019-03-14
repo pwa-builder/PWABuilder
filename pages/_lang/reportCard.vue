@@ -4,7 +4,7 @@
     <div id="scoreSideBySide">
       <nuxt-link to="/">
         <header>
-          <img id="logo" src="~/assets/images/logo.png">
+          <img id="logo" src="~/assets/images/new-logo.svg" alt="App Logo">
         </header>
       </nuxt-link>
 
@@ -526,8 +526,10 @@ export default class extends Vue {
         const data = await response.json();
         console.log("lookAtSW", data.swURL);
 
-        this.serviceWorkerData = data.swURL;
+        this.serviceWorkerData = data;
       }
+
+      console.log(this.serviceWorkerData);
 
       console.log(this.serviceWorkerData);
 
@@ -690,11 +692,11 @@ p {
 
   header {
     position: absolute;
-    top: 30px;
+    top: 24px;
     left: 68px;
 
     img {
-      height: 48px;
+      width: 10em;
     }
   }
 

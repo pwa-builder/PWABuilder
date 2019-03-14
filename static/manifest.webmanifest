@@ -6,10 +6,10 @@
     "display": "standalone",
     "start_url": "https://www.pwabuilder.com/",
     "short_name": "PWABuilder",
-    "theme_color": "#1FC2C8",
+    "theme_color": "#9337D8",
     "description": "All the tools you need to build and deploy your Progressive Web Apps.",
     "orientation": "any",
-    "background_color": "#1FC2C8",
+    "background_color": "#9337D8",
     "related_applications": [],
     "prefer_related_applications": false,
     "icons": [
