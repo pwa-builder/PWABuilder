@@ -492,8 +492,7 @@ header {
 }
 
 #featureListBlock .card {
-  height: 277px;
-  width: 377px;
+  width: initial !important;
 }
 
 .code-samples {
