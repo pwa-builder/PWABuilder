@@ -46,7 +46,7 @@ export default class extends Vue {
   border: solid #C5C5C5 1px;
   background: white;
   height: 233px;
-  width: 233px;
+  width: 24%;
 
   h4 {
     font-size: 18px;

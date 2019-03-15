@@ -419,7 +419,7 @@ export default class extends Vue {
   background: white;
   display: flex;
   flex-direction: column;
-  width: 390px;
+  width: 32%;
   height: 339px;
 
   h3 {

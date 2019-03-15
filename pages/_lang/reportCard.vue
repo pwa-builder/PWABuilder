@@ -227,8 +227,11 @@ export default class extends Vue {
 
 .topFeatures {
   margin-bottom: 2em;
-  height: 252px;
-  width: 266px;
+
+  .card {
+    height: 252px;
+    width: 266px;
+  }
 }
 
 main {
@@ -253,11 +256,6 @@ main {
 .cardBlock {
   display: flex;
   justify-content: space-between;
-
-  .middleCard {
-    margin-left: 30px;
-    margin-right: 30px;
-  }
 }
 
 #toolkitSection {
