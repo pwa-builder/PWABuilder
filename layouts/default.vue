@@ -47,7 +47,6 @@ export default class extends Vue {
 @import "~assets/scss/base/variables";
 
 #baseContainer {
-  width: 1280px;
 
   #scrollTarget {
     width: 100%;
@@ -58,9 +57,6 @@ export default class extends Vue {
   }
 }
 
-.container {
-  width: 100vw;
-}
 
 header {
   display: none !important;
