@@ -28,8 +28,10 @@
 
       <div id="subHeaderExtras">
         <div id="urlTested">
-          <span>URL Tested <i class="fas fa-external-link-alt"></i></span>
-          <a :href="url">{{url.replace('http://','').replace('https://','').split(/[/?#]/)[0]}}</a>
+          <a :href="url">
+            <span>URL Tested <i class="fas fa-external-link-alt"></i></span>
+            {{url.replace('http://','').replace('https://','').split(/[/?#]/)[0]}}
+          </a>
         </div>
 
         <div id="overallScore">
@@ -209,16 +211,18 @@ header {
 #urlTested span {
   font-weight: bold;
   font-size: 12px;
+  color: #C5C5C5;
 }
 
 #urlTested a {
-  width: 6em;
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 12px;
   font-weight: normal;
+  display: flex;
+  flex-direction: column;
 }
 
 header #logo {
