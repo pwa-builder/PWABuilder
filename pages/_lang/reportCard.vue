@@ -70,15 +70,15 @@
             category="Manifest"
           ></ScoreCard>
           <ScoreCard
+            v-on:serviceWorkerTestDone="swTestDone($event)"
+            :url="url"
+            category="Service Worker"
+          ></ScoreCard>
+          <ScoreCard
             class="middleCard"
             v-on:securityTestDone="securityTestDone($event)"
             :url="url"
             category="Security"
-          ></ScoreCard>
-          <ScoreCard
-            v-on:serviceWorkerTestDone="swTestDone($event)"
-            :url="url"
-            category="Service Worker"
           ></ScoreCard>
         </div>
       </section>
@@ -86,11 +86,6 @@
       <section v-if="topSamples.length > 0" id="toolkitWrapper">
         <div id="toolkitSection">
           <h2>PWA Toolkit</h2>
-
-          <nuxt-link to="/features">
-            View More
-            <i class="fas fa-angle-right"></i>
-          </nuxt-link>
         </div>
 
         <div class="cardBlock">
@@ -104,8 +99,15 @@
             v-for="sample in topSamples"
             :sample="sample"
             :key="sample.id"
-            :showAddButton="false"
+            :showAddButton="true"
           ></FeatureCard>
+        </div>
+
+        <div id="moreFeaturesBlock">
+          <nuxt-link to="/features">
+            View More
+            <i class="fas fa-angle-right"></i>
+          </nuxt-link>
         </div>
 
       </section>
@@ -217,7 +219,6 @@ export default class extends Vue {
     console.log("sw test is done", ev);
     this.overallScore = this.overallScore + ev.score;
   }
-
 }
 </script>
 
@@ -241,10 +242,15 @@ main {
 }
 
 #hubContainer {
-  background-image: url("~/assets/images/homepage-background.svg");
-  background-size: cover;
-  background-position: center;
+  background-image: url("~/assets/images/background.svg");
+  background-position: top center;
   background-repeat: no-repeat;
+  background-color: #f0f0f0;
+  height: 130vh;
+}
+
+#bottomWrapper {
+  color: white;
 }
 
 #bottomWrapper,
@@ -295,6 +301,7 @@ p {
 #inputSection {
   width: 20em;
   margin-top: 100px;
+  color: white;
 
   #backToOld {
     font-size: 12px;
@@ -315,8 +322,8 @@ p {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    margin-top: 144px;
-    margin-right: 72px;
+    margin-top: 65px;
+    margin-right: 1em;
 
     #expertModeButton {
       width: 200px;
@@ -348,7 +355,7 @@ p {
     text-align: center;
     width: 320px;
     font-size: 12px;
-    color: #3c3c3c;
+    color: white;
     line-height: 18px;
     margin-right: 2em;
   }
@@ -364,10 +371,11 @@ p {
     font-size: 18px;
     border: none;
     width: 24em;
-    border-bottom: solid 1px rgba(60, 60, 60, 0.3);
     margin-right: 0.3em;
     margin-top: 20px;
     outline: none;
+    border-radius: 24px;
+    padding-left: 14px;
   }
 
   input:focus {
@@ -396,6 +404,23 @@ p {
   }
 }
 
+#moreFeaturesBlock{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  a {
+    color: #3c3c3c;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 14px;
+    border: solid 1px #E2E2E2;
+    border-radius: 24px;
+    padding: 10px;
+  }
+}
+
 footer a {
   box-shadow: none;
 }
@@ -404,6 +429,16 @@ footer a {
   color: red;
   margin-top: 1em;
   margin-left: 1em;
+}
+
+@media (min-width: 1400px) {
+  #hubContainer {
+    height: 120vh;
+  }
+
+  #toolkitSection {
+    margin-top: 70px;
+  }
 }
 
 @keyframes slideup {

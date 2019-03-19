@@ -7,7 +7,7 @@
       <button
         @click="onClickSample(sample)"
         id="featureCardAddButton"
-      >View</button>
+      >View Snippit</button>
     </div>
   </div>
 </template>
@@ -43,20 +43,29 @@ export default class extends Vue {
   display: flex;
   flex-direction: column;
   padding: 20px;
-  border: solid #C5C5C5 1px;
   background: white;
-  height: 233px;
   width: 24%;
+  border-radius: 4px;
 
   h4 {
-    font-size: 18px;
+    font-size: 14px;
     font-weight: bold;
   }
 
   p {
-    flex: 2;
+    flex: 1;
     font-size: 14px;
     line-height: 20px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  #featureCardActionsBlock {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1em;
   }
 
   #featureCardActionsBlock {
@@ -64,13 +73,14 @@ export default class extends Vue {
       border: none;
       border-radius: 20px;
       padding-top: 11px;
-      padding-bottom: 11px;
-      padding-left: 27px;
-      padding-right: 27px;
-      font-size: 18px;
-      font-weight: bold;
-      background: $color-button-primary-purple-variant;
-      color: white;
+
+      color: #9337d8;
+      background: none;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      text-transform: uppercase;
     }
 
     #featureCardRemoveButton {

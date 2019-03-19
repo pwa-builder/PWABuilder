@@ -1,103 +1,120 @@
 <template>
   <div id="scoreCard">
-    <h3>{{category}}</h3>
+    <div id="headerDiv">
+      <h3>{{category}}</h3>
+
+      <div v-if="category === 'Manifest'" class="cardScore">
+        <span class="subScore">{{manifestScore}}</span> / 100
+      </div>
+
+      <div v-else-if="category === 'Service Worker'" class="cardScore">
+        <span class="subScore">{{swScore}}</span> / 100
+      </div>
+
+      <div v-else-if="category === 'Security'" class="cardScore">
+        <span class="subScore">100</span> / 100
+      </div>
+    </div>
 
     <div id="cardContent">
       <!-- Security section -->
       <ul v-if="category === 'Security'">
-        <li>
+        <li class="good">
+          <span class="cardIcon" v-if="hasHTTPS">
+            <i class="fas fa-check"></i>
+          </span>
+          
+          <span class="cardIcon" v-else>
+            <i class="fas fa-times"></i>
+          </span>
+          
           <span>Uses HTTPS URL</span>
-          <span v-if="hasHTTPS">
+        </li>
+        <li class="good">
+          <span class="cardIcon" v-if="validSSL">
             <i class="fas fa-check"></i>
           </span>
           
-          <span v-else>
+          <span class="cardIcon" v-else>
             <i class="fas fa-times"></i>
           </span>
-        </li>
-        <li>
+          
           <span>Valid SSL certificate is use</span>
-          <span v-if="validSSL">
-            <i class="fas fa-check"></i>
-          </span>
-          
-          <span v-else>
-            <i class="fas fa-times"></i>
-          </span>
         </li>
-        <li>
-          <span>No "mixed" content on page</span>
-          <span v-if="noMixedContent">
+        <li class="good">
+          <span class="cardIcon" v-if="noMixedContent">
             <i class="fas fa-check"></i>
           </span>
           
-          <span v-else>
+          <span class="cardIcon" v-else>
             <i class="fas fa-times"></i>
           </span>
+          
+          <span>No "mixed" content on page</span>
         </li>
       </ul>
 
       <!-- Manifest section -->
       <ul v-if="category === 'Manifest' && manifest && !noManifest">
         <li v-bind:class="{ good: manifest }">
-          <span>Web Manifest properly attached</span>
-          
-          <span v-if="manifest">
+          <span class="cardIcon" v-if="manifest">
             <i class="fas fa-check"></i>
           </span>
-          <span v-if="!manifest">
+          <span class="cardIcon" v-if="!manifest">
             <i class="fas fa-times"></i>
           </span>
+          
+          <span>Web Manifest properly attached</span>
         </li>
         <li v-bind:class="{ good: manifest && manifest.display }">
-          <span>Display property utilized</span>
-          
-          <span v-if="manifest && manifest.display">
+          <span class="cardIcon" v-if="manifest && manifest.display">
             <i class="fas fa-check"></i>
           </span>
-          <span v-if="manifest && !manifest.display">
+          <span class="cardIcon" v-if="manifest && !manifest.display">
             <i class="fas fa-times"></i>
           </span>
+          
+          <span>Display property utilized</span>
         </li>
         <li v-bind:class="{ good: manifest && manifest.icons }">
-          <span>Lists icons for add to home screen</span>
-          
-          <span v-if="manifest && manifest.icons">
+          <span class="cardIcon" v-if="manifest && manifest.icons">
             <i class="fas fa-check"></i>
           </span>
-          <span v-if="manifest && !manifest.icons">
+          <span class="cardIcon" v-if="manifest && !manifest.icons">
             <i class="fas fa-times"></i>
           </span>
+          
+          <span>Lists icons for add to home screen</span>
         </li>
         <li v-bind:class="{ good: manifest && manifest.name }">
-          <span>Contains app_name property</span>
-          
-          <span v-if="manifest && manifest.name">
+          <span class="cardIcon" v-if="manifest && manifest.name">
             <i class="fas fa-check"></i>
           </span>
-          <span v-if="manifest && !manifest.name">
+          <span class="cardIcon" v-if="manifest && !manifest.name">
             <i class="fas fa-times"></i>
           </span>
+          
+          <span>Contains app_name property</span>
         </li>
         <li v-bind:class="{ good: manifest && manifest.short_name }">
-          <span>Contains short_name property</span>
-          
-          <span v-if="manifest && manifest.short_name">
+          <span class="cardIcon" v-if="manifest && manifest.short_name">
             <i class="fas fa-check"></i>
           </span>
-          <span v-if="manifest && !manifest.short_name">
+          <span class="cardIcon" v-if="manifest && !manifest.short_name">
             <i class="fas fa-times"></i>
           </span>
+          
+          <span>Contains short_name property</span>
         </li>
         <li v-bind:class="{ good: manifest && manifest.start_url }">
-          <span>Designates a start_url</span>
-          
-          <span v-if="manifest && manifest.start_url">
+          <span class="cardIcon" v-if="manifest && manifest.start_url">
             <i class="fas fa-check"></i>
           </span>
-          <span v-if="manifest && !manifest.start_url">
+          <span class="cardIcon" v-if="manifest && !manifest.start_url">
             <i class="fas fa-times"></i>
           </span>
+          
+          <span>Designates a start_url</span>
         </li>
       </ul>
 
@@ -118,80 +135,90 @@
 
       <ul id="noSWP" v-if="category === 'Manifest' && noManifest">
         <li>
+          <span class="cardIcon">
+            <i class="fas fa-times"></i>
+          </span>
+          
           <span>Web Manifest properly attached</span>
-          <span>
-            <i class="fas fa-times"></i>
-          </span>
         </li>
         <li>
+          <span class="cardIcon">
+            <i class="fas fa-times"></i>
+          </span>
+          
           <span>Display property utilized</span>
-          <span>
-            <i class="fas fa-times"></i>
-          </span>
         </li>
         <li>
+          <span class="cardIcon">
+            <i class="fas fa-times"></i>
+          </span>
+          
           <span>Lists icons for add to home screen</span>
-          <span>
-            <i class="fas fa-times"></i>
-          </span>
         </li>
         <li>
+          <span class="cardIcon">
+            <i class="fas fa-times"></i>
+          </span>
+          
           <span>Contains app_name property</span>
-          <span>
-            <i class="fas fa-times"></i>
-          </span>
         </li>
         <li>
+          <span class="cardIcon">
+            <i class="fas fa-times"></i>
+          </span>
+          
           <span>Contains short_name property</span>
-          <span>
-            <i class="fas fa-times"></i>
-          </span>
         </li>
         <li>
-          <span>Designates a start_url</span>
-          <span>
+          <span class="cardIcon">
             <i class="fas fa-times"></i>
           </span>
+          
+          <span>Designates a start_url</span>
         </li>
       </ul>
 
       <!-- service worker section -->
       <ul v-if="category === 'Service Worker' && serviceWorkerData">
         <li v-bind:class="{ good: serviceWorkerData.hasSW }">
-          <span>Has a Service Worker</span>
-          <span v-if="serviceWorkerData && serviceWorkerData.hasSW">
+          <span class="cardIcon" v-if="serviceWorkerData && serviceWorkerData.hasSW">
             <i class="fas fa-check"></i>
           </span>
-          <span v-if="serviceWorkerData && !serviceWorkerData.hasSW">
+          <span class="cardIcon" v-if="serviceWorkerData && !serviceWorkerData.hasSW">
             <i class="fas fa-times"></i>
           </span>
+          
+          <span>Has a Service Worker</span>
         </li>
         <li v-bind:class="{ good: serviceWorkerData.cache }">
-          <span>Service Worker has cache handlers</span>
-          <span v-if="serviceWorkerData && serviceWorkerData.cache">
+          <span class="cardIcon" v-if="serviceWorkerData && serviceWorkerData.cache">
             <i class="fas fa-check"></i>
           </span>
-          <span v-if="serviceWorkerData && !serviceWorkerData.cache">
+          <span class="cardIcon" v-if="serviceWorkerData && !serviceWorkerData.cache">
             <i class="fas fa-times"></i>
           </span>
+          
+          <span>Service Worker has cache handlers</span>
         </li>
         <li v-bind:class="{ good: serviceWorkerData.scope }">
-          <span>Service Worker has the correct scope</span>
-          <span v-if="serviceWorkerData && serviceWorkerData.scope">
+          <span class="cardIcon" v-if="serviceWorkerData && serviceWorkerData.scope">
             <i class="fas fa-check"></i>
           </span>
-          <span v-if="serviceWorkerData && !serviceWorkerData.scope">
+          <span class="cardIcon" v-if="serviceWorkerData && !serviceWorkerData.scope">
             <i class="fas fa-times"></i>
           </span>
+          
+          <span>Service Worker has the correct scope</span>
         </li>
         <li v-bind:class="{ good: serviceWorkerData.pushReg }">
-          <span>Service Worker has a push registration</span>
-          <span v-if="serviceWorkerData && serviceWorkerData.pushReg">
+          <span class="cardIcon" v-if="serviceWorkerData && serviceWorkerData.pushReg">
             <i class="fas fa-check"></i>
           </span>
-          <span v-if="serviceWorkerData && !serviceWorkerData.pushReg">
+          <span class="cardIcon" v-if="serviceWorkerData && !serviceWorkerData.pushReg">
             <i class="fas fa-times"></i>
           </span>
+          
+          <span>Service Worker has a push registration</span>
         </li>
       </ul>
 
@@ -212,30 +239,51 @@
 
       <ul id="noSWP" v-if="category === 'Service Worker' && noServiceWorker">
         <li>
+          <span class="cardIcon">
+            <i class="fas fa-times"></i>
+          </span>
+          
           <span>Has a Service Worker</span>
-          <span>
-            <i class="fas fa-times"></i>
-          </span>
         </li>
         <li>
+          <span class="cardIcon">
+            <i class="fas fa-times"></i>
+          </span>
+          
           <span>Service Worker has cache handlers</span>
-          <span>
-            <i class="fas fa-times"></i>
-          </span>
         </li>
         <li>
+          <span class="cardIcon">
+            <i class="fas fa-times"></i>
+          </span>
+          
           <span>Service Worker has the correct scope</span>
-          <span>
-            <i class="fas fa-times"></i>
-          </span>
         </li>
         <li>
-          <span>Service Worker has a push registration</span>
-          <span>
+          <span class="cardIcon">
             <i class="fas fa-times"></i>
           </span>
+          
+          <span>Service Worker has a push registration</span>
         </li>
       </ul>
+    </div>
+
+    <div id="cardEditBlock">
+    
+      <nuxt-link v-if="category === 'Service Worker'" to="/serviceworker">
+        <button id="editButton">
+          Edit Service Worker
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </nuxt-link>
+
+      <nuxt-link v-else-if="category === 'Manifest'" to="/generate">
+        <button id="editButton">
+          Edit Manifest
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </nuxt-link>
     </div>
   </div>
 </template>
@@ -271,6 +319,10 @@ export default class extends Vue {
 
   serviceWorkerData: any = null;
   noServiceWorker: boolean | null = null;
+
+  manifestScore: number = 0;
+  swScore: number = 0;
+  securityScore: number = 0;
 
   mounted() {
     console.log("im a card");
@@ -315,33 +367,33 @@ export default class extends Vue {
       } else {
         this.noManifest = false;
 
-        let manifestScore = 0;
+        this.manifestScore = 0;
 
         if (this.manifest.display !== undefined) {
-          manifestScore = manifestScore + 7.7;
+          this.manifestScore = this.manifestScore + 7.7;
         }
 
         if (this.manifest.icons !== undefined) {
-          manifestScore = manifestScore + 7.7;
+          this.manifestScore = this.manifestScore + 7.7;
         }
 
         if (this.manifest.name !== undefined) {
-          manifestScore = manifestScore + 7.7;
+          this.manifestScore = this.manifestScore + 7.7;
         }
 
         if (this.manifest.short_name !== undefined) {
-          manifestScore = manifestScore + 7.7;
+          this.manifestScore = this.manifestScore + 7.7;
         }
 
         if (this.manifest.start_url !== true) {
-          manifestScore = manifestScore + 7.7;
+          this.manifestScore = this.manifestScore + 7.7;
         }
 
         if (this.manifest.generated === true) {
-          manifestScore = 0;
+          this.manifestScore = 0;
         }
 
-        this.$emit("manifestTestDone", { score: manifestScore });
+        this.$emit("manifestTestDone", { score: this.manifestScore });
         resolve();
       }
     });
@@ -364,13 +416,13 @@ export default class extends Vue {
     } else {
       this.noServiceWorker = false;
 
-      let swScore = 0;
+      this.swScore = 0;
       /*
         Has service worker
         +50 points to user
       */
       if (this.serviceWorkerData.hasSW !== null) {
-        swScore = swScore + 7.7;
+        this.swScore = this.swScore + 7.7;
       }
       /*
         Caches stuff
@@ -382,7 +434,7 @@ export default class extends Vue {
         );
         console.log(hasCache);
         if (hasCache === true) {
-          swScore = swScore + 7.7;
+          this.swScore = this.swScore + 7.7;
         }
       }
       /*
@@ -390,7 +442,7 @@ export default class extends Vue {
         +10 points to user
       */
       if (this.serviceWorkerData.pushReg !== null) {
-        swScore = swScore + 7.7;
+        this.swScore = this.swScore + 7.7;
       }
       /*
         Has scope that points to root
@@ -402,10 +454,10 @@ export default class extends Vue {
           new URL(this.serviceWorkerData.scope).origin
       ) {
         console.log("has scope");
-        swScore = swScore + 7.7;
+        this.swScore = this.swScore + 7.7;
       }
 
-      this.$emit('serviceWorkerTestDone', { score: swScore });
+      this.$emit("serviceWorkerTestDone", { score: this.swScore });
       return;
     }
   }
@@ -413,19 +465,59 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
+.cardScore {
+  color: #c5c5c5;
+  font-weight: bold;
+  font-size: 12px;
+
+  .subScore {
+    color: #707070;
+    font-size: 24px;
+  }
+}
+
+#cardContent {
+  flex: 1;
+}
+
 #scoreCard {
-  border: solid #C5C5C5 1px;
-  padding: 11px;
   background: white;
   display: flex;
   flex-direction: column;
   width: 32%;
   height: 339px;
+  border-radius: 4px;
+  padding-top: 24px;
+  padding-left: 30px;
+  padding-right: 30px;
+
+  #cardEditBlock {
+    display: flex;
+    justify-content: center;
+
+    button {
+      color: #9337d8;
+      background: none;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+  }
+
+  #headerDiv {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    align-items: center;
+  }
 
   h3 {
     font-size: 16px;
     font-weight: bold;
-    margin-bottom: 8px;
+    color: #707070;
+    border-bottom: solid 1px #c5c5c5;
+    padding-bottom: 7px;
   }
 
   ul {
@@ -435,16 +527,29 @@ export default class extends Vue {
     margin: 0;
     margin-bottom: 42px;
 
+    li.good {
+      font-weight: normal;
+      color: initial;
+
+      .cardIcon {
+        margin-right: 8px;
+        color: initial;
+      }
+    }
+
     li {
-      font-size: 18px;
+      font-size: 14px;
+      font-weight: bold;
       padding: 0.5em;
       padding-left: 0;
       display: flex;
       flex-direction: row;
-      justify-content: space-between;
+      color: #3c3c3c;
+      align-items: center;
 
-      span {
-        margin-left: 8px;
+      .cardIcon {
+        color: red;
+        margin-right: 8px;
       }
     }
   }
