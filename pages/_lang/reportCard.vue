@@ -103,7 +103,9 @@
             :sample="sample"
             :key="sample.id"
             :showAddButton="true"
-          ></FeatureCard>
+          >
+            <i slot="iconSlot" class="fas fa-rocket"></i>
+          </FeatureCard>
         </div>
 
         <div id="moreFeaturesBlock">
@@ -414,11 +416,11 @@ p {
   align-items: center;
 
   a {
-    color: #3c3c3c;
+    color: #9b47db;
     text-transform: uppercase;
     font-weight: bold;
     font-size: 14px;
-    border: solid 1px #e2e2e2;
+    border: solid 1px #9337d8;
     border-radius: 24px;
     padding: 10px;
   }
@@ -436,7 +438,7 @@ footer a {
 
 @media (min-width: 1400px) {
   #hubContainer {
-    height: 120vh;
+    height: 128vh;
   }
 
   #toolkitSection {

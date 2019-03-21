@@ -1,6 +1,11 @@
 <template>
   <div v-if="sample" class="card">
-    <h4>{{sample.title}}</h4>
+    <div id="featureCardTitleBlock">
+      <h4>{{sample.title}}</h4>
+
+      <slot name="iconSlot"></slot>
+    </div>
+
     <p>{{ sample.description }}</p>
 
     <div v-if="showAddButton" id="featureCardActionsBlock">
@@ -50,6 +55,11 @@ export default class extends Vue {
   h4 {
     font-size: 14px;
     font-weight: bold;
+  }
+
+  #featureCardTitleBlock {
+    display: flex;
+    justify-content: space-between;
   }
 
   p {
