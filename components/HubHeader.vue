@@ -29,13 +29,16 @@
       <div id="subHeaderExtras">
         <div id="urlTested">
           <a :href="url">
-            <span>URL Tested <i class="fas fa-external-link-alt"></i></span>
+            <span>
+              URL Tested
+              <i class="fas fa-external-link-alt"></i>
+            </span>
             {{url.replace('http://','').replace('https://','').split(/[/?#]/)[0]}}
           </a>
         </div>
 
         <div id="overallScore">
-          {{score || localScore}}
+          {{calcedScore}}
           <span>Your Score</span>
         </div>
 
@@ -47,7 +50,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Prop } from "vue-property-decorator";
+import { Prop, Watch } from "vue-property-decorator";
 import Component from "nuxt-class-component";
 import { State, namespace } from "vuex-class";
 
@@ -58,17 +61,62 @@ const GeneratorState = namespace(generator.name, State);
 @Component({})
 export default class extends Vue {
   @Prop({}) showSubHeader: string;
-  @Prop({}) score: number | string;
+  @Prop({ default: 0 }) score: number | string;
 
   @GeneratorState url: string;
 
-  public localScore: number | string = "i";
+  public localScore: number = 0;
+  public calcedScore: number = 0;
 
   mounted() {
-    this.localScore = sessionStorage.getItem("overallGrade") || "i";
+    const storedScore = sessionStorage.getItem("overallGrade") || null;
+
+    if (storedScore) {
+      this.localScore = parseInt(storedScore);
+    }
+
+    console.log(this.score);
+
+    if (this.score < 100 || this.localScore < 100) {
+      this.calcedScore = 60;
+    } else if (
+      (this.score > 100 && this.score < 150) ||
+      (this.localScore > 100 && this.localScore < 150)
+    ) {
+      this.calcedScore = 80;
+    } else if (
+      (this.score > 150 && this.score < 200) ||
+      (this.localScore > 150 && this.localScore < 200)
+    ) {
+      this.calcedScore = 90;
+    } else if (this.score === 200 || this.localScore === 200) {
+      this.calcedScore = 100;
+    }
+  }
+
+  @Watch("score")
+  onScoreChanged() {
+    console.log("score changed", this.score);
+
+    if (this.score < 100 || this.localScore < 100) {
+      this.calcedScore = 60;
+    } else if (
+      (this.score > 100 && this.score < 150) ||
+      (this.localScore > 100 && this.localScore < 150)
+    ) {
+      this.calcedScore = 80;
+    } else if (
+      (this.score > 150 && this.score < 200) ||
+      (this.localScore > 150 && this.localScore < 200)
+    ) {
+      this.calcedScore = 90;
+    } else if (this.score === 200 || this.localScore === 200) {
+      this.calcedScore = 100;
+    }
   }
 
   updated() {
+    console.log("updated", this.score);
     if ("requestIdleCallback" in window) {
       // Use requestIdleCallback to schedule this since its not "necessary" work
       // and we dont want this running in the middle of animations or user input
@@ -205,13 +253,13 @@ header {
 }
 
 #urlTested {
-  color: #C5C5C5;
+  color: #c5c5c5;
 }
 
 #urlTested span {
   font-weight: bold;
   font-size: 12px;
-  color: #C5C5C5;
+  color: #c5c5c5;
 }
 
 #urlTested a {

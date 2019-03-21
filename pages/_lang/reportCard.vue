@@ -18,7 +18,7 @@
             v-model="url$"
             autofocus
           >
-          
+
           <button
             @click=" $awa( { 'referrerUri': 'https://www.pwabuilder.com/build/reportCard' })"
             id="getStartedButton"
@@ -60,7 +60,10 @@
         <div id="infoSection">
           <h2>Hub</h2>
 
-          <p>We have taken a look at how well your website supports PWA features and provided simple tools to help you fill in the gaps. When you’re ready, click “build my PWA” to finish up</p>
+          <p>
+            We have taken a look at how well your website supports PWA features and provided simple tools to help you fill in the gaps.
+            When you’re ready, click “build my PWA” to finish up.
+          </p>
         </div>
 
         <div class="cardBlock">
@@ -109,7 +112,6 @@
             <i class="fas fa-angle-right"></i>
           </nuxt-link>
         </div>
-
       </section>
     </main>
   </div>
@@ -158,7 +160,7 @@ export default class extends Vue {
   public gotURL = false;
   public url$: string | null = null;
   public error: string | null = null;
-  public overallScore: number | string = 0;
+  public overallScore: number = 0;
   public topSamples: Array<any> = [];
 
   public async created() {
@@ -218,6 +220,7 @@ export default class extends Vue {
   public swTestDone(ev) {
     console.log("sw test is done", ev);
     this.overallScore = this.overallScore + ev.score;
+    console.log(this.overallScore);
   }
 }
 </script>
@@ -246,7 +249,7 @@ main {
   background-position: top center;
   background-repeat: no-repeat;
   background-color: #f0f0f0;
-  height: 130vh;
+  height: 138vh;
 }
 
 #bottomWrapper {
@@ -404,7 +407,7 @@ p {
   }
 }
 
-#moreFeaturesBlock{
+#moreFeaturesBlock {
   width: 100%;
   display: flex;
   justify-content: center;
@@ -415,7 +418,7 @@ p {
     text-transform: uppercase;
     font-weight: bold;
     font-size: 14px;
-    border: solid 1px #E2E2E2;
+    border: solid 1px #e2e2e2;
     border-radius: 24px;
     padding: 10px;
   }
