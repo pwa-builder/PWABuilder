@@ -88,7 +88,7 @@
 
       <section v-if="topSamples.length > 0" id="toolkitWrapper">
         <div id="toolkitSection">
-          <h2>PWA Toolkit</h2>
+          <h2>Add app features...</h2>
         </div>
 
         <div class="cardBlock">
