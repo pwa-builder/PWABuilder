@@ -9,10 +9,13 @@
     <p>{{ sample.description }}</p>
 
     <div v-if="showAddButton" id="featureCardActionsBlock">
-      <button
+      <!--<button
         @click="onClickSample(sample)"
         id="featureCardAddButton"
-      >View Snippit</button>
+      >View Snippit</button>-->
+      <nuxt-link id="featureCardAddButton" v-bind:to="`/feature/${sample.title}`">
+        View Snippit
+      </nuxt-link>
     </div>
   </div>
 </template>
