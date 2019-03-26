@@ -6,6 +6,11 @@
       <i class="fas fa-chevron-left"></i>
     </button>
 
+    <button @click="share()" id="featDetailShareButton">
+      <i class="fas fa-share"></i>
+      <span>Share</span>
+    </button>
+
     <main id="docsMain" v-html="docsContent"></main>
   </div>
 </template>
@@ -21,6 +26,7 @@ import SnippitCode from "~/components/snippitCode.vue";
 import * as windowsStore from "~/store/modules/windows";
 
 import * as marked from "marked";
+import Clipboard from "clipboard";
 
 const WindowsState = namespace(windowsStore.name, State);
 const WindowsAction = namespace(windowsStore.name, Action);
@@ -98,12 +104,67 @@ export default class extends Vue {
   goBack() {
     window.history.back();
   }
+
+  async share() {
+    if ((navigator as any).share) {
+      try {
+        await (navigator as any).share({
+          title: "PWABuilder Feature",
+          text: "Check out this cool feature you can add to your PWA",
+          url: location.href
+        });
+      } catch (err) {
+        console.error("trouble sharing with the web share api", err);
+      }
+    } else {
+      if ((navigator as any).clipboard) {
+        try {
+          await (navigator as any).clipboard.writeText(location.href);
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        let clipboard = new Clipboard(location.href);
+
+        clipboard.on("success", e => {
+          console.info("Action:", e.action);
+          console.info("Text:", e.text);
+          console.info("Trigger:", e.trigger);
+          e.clearSelection();
+        });
+
+        clipboard.on("error", e => {
+          console.error("Action:", e.action);
+          console.error("Trigger:", e.trigger);
+        });
+      }
+    }
+  }
 }
 </script>
 
 <style lang="scss">
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
+
+#featDetailShareButton {
+  background: white;
+  border: none;
+  border-radius: 24px;
+  position: absolute;
+  right: 11em;
+  top: 5em;
+  width: 99px;
+  height: 42px;
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+
+  span {
+    margin-left: 10px;
+  }
+}
 
 #docsMain {
   background: white;
