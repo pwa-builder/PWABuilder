@@ -23,6 +23,8 @@ import { Action, State, namespace } from "vuex-class";
 import HubHeader from "~/components/HubHeader.vue";
 import SnippitCode from "~/components/snippitCode.vue";
 
+// import 'sharebutton';
+
 import * as windowsStore from "~/store/modules/windows";
 
 import * as marked from "marked";
@@ -53,6 +55,18 @@ export default class extends Vue {
     {
       realName: "graphAuth",
       mappedName: "Create MSFT Graph Authentication"
+    },
+    {
+      realName: "graphContacts",
+      mappedName: "Create MSFT Graph Contacts API"
+    },
+    {
+      realName: "graphCalendar",
+      mappedName: "Create MSFT Graph Calendar API"
+    },
+    {
+      realName: "graphCreateActivity",
+      mappedName: "Create MSFT Graph Activity API"
     }
   ];
 
@@ -146,6 +160,15 @@ export default class extends Vue {
 <style lang="scss">
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
+
+.codeBlockHeader {
+  background: #E2E2E2;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 54px;
+  padding-right: 20px;
+}
 
 #featDetailShareButton {
   background: white;

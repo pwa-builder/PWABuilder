@@ -29,6 +29,7 @@
     "nuxt": "1.1.1",
     "nuxt-class-component": "^1.2.1",
     "prismjs": "^1.15.0",
+    "sharebutton": "0.6.3",
     "ttf2woff": "^2.0.1",
     "vue": "^2.5.17",
     "vue-class-component": "^6.2.0",
