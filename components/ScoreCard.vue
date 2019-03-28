@@ -4,15 +4,15 @@
       <h3>{{category}}</h3>
 
       <div v-if="category === 'Manifest'" class="cardScore">
-        <span class="subScore">{{Math.round(manifestScore)}}</span> / 100
+        <span class="subScore">{{Math.round(manifestScore)}}</span> / 40
       </div>
 
       <div v-else-if="category === 'Service Worker'" class="cardScore">
-        <span class="subScore">{{swScore}}</span> / 100
+        <span class="subScore">{{swScore}}</span> / 40
       </div>
 
       <div v-else-if="category === 'Security'" class="cardScore">
-        <span class="subScore">100</span> / 100
+        <span class="subScore">20</span> / 20
       </div>
     </div>
 
@@ -32,7 +32,7 @@
             <span>Uses HTTPS URL</span>
           </div>
 
-          <span class="subScoreSpan" v-if="hasHTTPS">33</span>
+          <span class="subScoreSpan" v-if="hasHTTPS">10</span>
 
           <span class="subScoreSpan" v-else-if="!hasHTTPS">0</span>
         </li>
@@ -49,7 +49,7 @@
             <span>Valid SSL certificate is use</span>
           </div>
 
-          <span class="subScoreSpan" v-if="validSSL">33</span>
+          <span class="subScoreSpan" v-if="validSSL">5</span>
 
           <span class="subScoreSpan" v-else-if="!validSSL">0</span>
         </li>
@@ -66,7 +66,7 @@
             <span>No "mixed" content on page</span>
           </div>
 
-          <span class="subScoreSpan" v-if="noMixedContent">33</span>
+          <span class="subScoreSpan" v-if="noMixedContent">5</span>
 
           <span class="subScoreSpan" v-else-if="!noMixedContent">0</span>
         </li>
@@ -86,7 +86,7 @@
             <span>Web Manifest properly attached</span>
           </div>
 
-          <span class="subScoreSpan" v-if="manifest">16</span>
+          <span class="subScoreSpan" v-if="manifest">15</span>
 
           <span class="subScoreSpan" v-else-if="!manifest">0</span>
         </li>
@@ -99,10 +99,10 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Display property utilized</span>
+            <span><code>display</code> property utilized</span>
           </div>
 
-          <span class="subScoreSpan" v-if="manifest.display">16</span>
+          <span class="subScoreSpan" v-if="manifest.display">5</span>
 
           <span class="subScoreSpan" v-else-if="!manifest.display">0</span>
         </li>
@@ -115,10 +115,10 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Lists icons for add to home screen</span>
+            <span>Lists <code>icons</code> for add to home screen</span>
           </div>
 
-          <span class="subScoreSpan" v-if="manifest.icons">16</span>
+          <span class="subScoreSpan" v-if="manifest.icons">5</span>
 
           <span class="subScoreSpan" v-else-if="!manifest.icons">0</span>
         </li>
@@ -131,10 +131,10 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Contains app_name property</span>
+            <span>Contains <code>name</code> property</span>
           </div>
 
-          <span class="subScoreSpan" v-if="manifest.name">16</span>
+          <span class="subScoreSpan" v-if="manifest.name">5</span>
 
           <span class="subScoreSpan" v-else-if="!manifest.name">0</span>
         </li>
@@ -147,10 +147,10 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Contains short_name property</span>
+            <span>Contains <code>short_name</code> property</span>
           </div>
 
-          <span class="subScoreSpan" v-if="manifest.short_name">16</span>
+          <span class="subScoreSpan" v-if="manifest.short_name">5</span>
 
           <span class="subScoreSpan" v-else-if="!manifest.short_name">0</span>
         </li>
@@ -164,10 +164,10 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Designates a start_url</span>
+            <span>Designates a <code>start_url</code></span>
           </div>
 
-          <span class="subScoreSpan" v-if="manifest.start_url">16</span>
+          <span class="subScoreSpan" v-if="manifest.start_url">5</span>
 
           <span class="subScoreSpan" v-else-if="!manifest.start_url">0</span>
         </li>
@@ -206,7 +206,7 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Display property utilized</span>
+            <span><code>display</code> property utilized</span>
           </div>
 
           <span class="subScoreSpan">0</span>
@@ -217,7 +217,7 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Lists icons for add to home screen</span>
+            <span>Lists <code>icons</code> for add to home screen</span>
           </div>
 
           <span class="subScoreSpan">0</span>
@@ -228,7 +228,7 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Contains app_name property</span>
+            <span>Contains <code>name</code> property</span>
           </div>
 
           <span class="subScoreSpan">0</span>
@@ -239,7 +239,7 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Contains short_name property</span>
+            <span>Contains <code>short_name</code> property</span>
           </div>
 
           <span class="subScoreSpan">0</span>
@@ -250,7 +250,7 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Designates a start_url</span>
+            <span>Designates a <code>start_url</code></span>
           </div>
 
           <span class="subScoreSpan">0</span>
@@ -271,7 +271,7 @@
             <span>Has a Service Worker</span>
           </div>
 
-          <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.hasSW">25</span>
+          <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.hasSW">20</span>
 
           <span class="subScoreSpan" v-if="!serviceWorkerData && !serviceWorkerData.hasSW">0</span>
         </li>
@@ -287,7 +287,7 @@
             <span>Service Worker has cache handlers</span>
           </div>
 
-          <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.cache">25</span>
+          <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.cache">10</span>
 
           <span class="subScoreSpan" v-if="!serviceWorkerData && !serviceWorkerData.cache">0</span>
         </li>
@@ -300,10 +300,10 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Service Worker has the correct scope</span>
+            <span>Service Worker has the correct <code>scope</code></span>
           </div>
 
-          <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.scope">25</span>
+          <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.scope">5</span>
 
           <span class="subScoreSpan" v-if="!serviceWorkerData && !serviceWorkerData.scope">0</span>
         </li>
@@ -316,10 +316,10 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Service Worker has a push registration</span>
+            <span>Service Worker has a <code>pushManager</code> registration</span>
           </div>
 
-          <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.pushReg">25</span>
+          <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.pushReg">5</span>
 
           <span class="subScoreSpan" v-if="serviceWorkerData && !serviceWorkerData.pushReg">0</span>
         </li>
@@ -369,7 +369,7 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Service Worker has the correct scope</span>
+            <span>Service Worker has the correct <code>scope</code></span>
           </div>
 
           <span class="subScoreSpan">0</span>
@@ -380,7 +380,7 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Service Worker has a push registration</span>
+            <span>Service Worker has a <code>pushManager</code> registration</span>
           </div>
 
           <span class="subScoreSpan">0</span>
@@ -479,7 +479,7 @@ export default class extends Vue {
       }
 
       console.log("looking at security");
-      this.$emit("securityTestDone", { score: 23.1 });
+      this.$emit("securityTestDone", { score: 20 });
       resolve();
     });
   }
@@ -495,26 +495,26 @@ export default class extends Vue {
       } else {
         this.noManifest = false;
 
-        this.manifestScore = 0;
-
+        this.manifestScore = 15;
+//scoring set by Jeff: 40 for manifest, 40 for sw and 20 for sc
         if (this.manifest.display !== undefined) {
-          this.manifestScore = this.manifestScore + 17.7;
+          this.manifestScore = this.manifestScore + 5;
         }
 
         if (this.manifest.icons !== undefined) {
-          this.manifestScore = this.manifestScore + 17.7;
+          this.manifestScore = this.manifestScore + 5;
         }
 
         if (this.manifest.name !== undefined) {
-          this.manifestScore = this.manifestScore + 17.7;
+          this.manifestScore = this.manifestScore + 5;
         }
 
         if (this.manifest.short_name !== undefined) {
-          this.manifestScore = this.manifestScore + 17.7;
+          this.manifestScore = this.manifestScore + 5;
         }
 
         if (this.manifest.start_url !== true) {
-          this.manifestScore = this.manifestScore + 17.7;
+          this.manifestScore = this.manifestScore + 5;
         }
 
         if (this.manifest.generated === true) {
@@ -545,44 +545,42 @@ export default class extends Vue {
       this.noServiceWorker = false;
 
       this.swScore = 0;
-      /*
-        Has service worker
-        +50 points to user
-      */
+//scoring set by Jeff: 40 for manifest, 40 for sw and 20 for sc
+
       if (this.serviceWorkerData.hasSW !== null) {
-        this.swScore = this.swScore + 25;
+        this.swScore = this.swScore + 20;
       }
       /*
         Caches stuff
-        +30 points to user
+        +10 points to user
       */
       if (this.serviceWorkerData.cache) {
         const hasCache = this.serviceWorkerData.cache.some(
           entry => entry.fromSW === true
         );
-        console.log(hasCache);
+
         if (hasCache === true) {
-          this.swScore = this.swScore + 25;
+          this.swScore = this.swScore + 10;
         }
       }
       /*
         Has push reg
-        +10 points to user
+        +5 points to user
       */
       if (this.serviceWorkerData.pushReg !== null) {
-        this.swScore = this.swScore + 25;
+        this.swScore = this.swScore + 5;
       }
       /*
         Has scope that points to root
-        +10 points to user
+        +5 points to user
       */
       if (
-        this.serviceWorkerData.scope &&
-        this.serviceWorkerData.scope.slice(0, -1) ===
-          new URL(this.serviceWorkerData.scope).origin
+        this.serviceWorkerData.scope //&&
+       // this.serviceWorkerData.scope.slice(0, -1) ===
+         // new URL(this.serviceWorkerData.scope).origin  //slice isn't working and score not showing up, TODO: look at how to validate scope
       ) {
         console.log("has scope");
-        this.swScore = this.swScore + 25;
+        this.swScore = this.swScore + 5;
       }
 
       this.$emit("serviceWorkerTestDone", { score: this.swScore });
@@ -602,6 +600,7 @@ export default class extends Vue {
     color: #707070;
     font-size: 24px;
   }
+
 }
 
 #cardContent {
@@ -697,6 +696,10 @@ export default class extends Vue {
       .cardIcon {
         color: red;
         margin-right: 8px;
+      }
+      code {
+        background-color: #eeeddd;
+        padding: 3px;
       }
     }
   }
