@@ -49,17 +49,17 @@ module.exports = {
   css: ['~/assets/scss/app.scss'],
   build: {
     extractCSS: true,
-    vendor: ['babel-polyfill', 'vuex-class', 'nuxt-class-component', 'vue-i18n'],
+    vendor: ['babel-polyfill', 'vuex-class', 'nuxt-class-component', 'vue-i18n', 'monaco-editor'],
     plugins: [
       /*new StyleLintPlugin({
           files: ['**///*.scss', '**/*.vue'],
       //failOnError: false,
       //syntax: 'scss'
       //}),
-      /*new ForkTsCheckerWebpackPlugin({
+      new ForkTsCheckerWebpackPlugin({
         tslint: true,
         vue: true
-      }),*/
+      }),
       new MonacoWebpackPlugin({
         languages: [
           "typescript", "javascript", "html", "json"
