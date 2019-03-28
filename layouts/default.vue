@@ -76,9 +76,7 @@ header {
   display: flex;
   flex-direction: row;
   font-size: 14px;
-  justify-content: space-between;
-  z-index: 9999;
-  position: absolute;
+  justify-content: space-around;
   left: 0;
   right: 0;
   padding-left: 24px;
@@ -93,6 +91,7 @@ header {
   #closeButton {
     border: none;
     background: none;
+    color: #1FC2C8;
 
     i {
       font-style: normal;
@@ -170,22 +169,3 @@ header {
     </footer>-->
   </div>
 </template>
-
-<style lang="scss" scoped>
-  @import "~assets/scss/base/variables";
-
-  #gdprDiv {
-    align-items: center;
-    background: #F2F2F2;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    z-index: 9999;
-  }
-
-  #gdprDiv button {
-    background: transparent;
-    border: none;
-    color: #1FC2C8;
-  }
-</style>
