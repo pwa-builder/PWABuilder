@@ -56,10 +56,10 @@ module.exports = {
       //failOnError: false,
       //syntax: 'scss'
       //}),
-      new ForkTsCheckerWebpackPlugin({
+      /*new ForkTsCheckerWebpackPlugin({
         tslint: true,
         vue: true
-      }),
+      }),*/
       new MonacoWebpackPlugin({
         languages: [
           "typescript", "javascript", "html", "json"
