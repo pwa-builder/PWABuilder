@@ -10,6 +10,8 @@ tmpl.innerHTML = `
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
+      outline: none;
     }
 
     button svg {
