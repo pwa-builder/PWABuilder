@@ -7,9 +7,11 @@
     </button>
 
     <button @click="share()" id="featDetailShareButton">
-      <i class="fas fa-share"></i>
+      <i class="fas fa-share-alt"></i>
       <span>Share</span>
     </button>
+
+    <div v-if="shared" id="shareToast">URL copied for sharing</div>
 
     <main id="docsMain" v-html="docsContent"></main>
   </div>
@@ -50,6 +52,8 @@ export default class extends Vue {
   currentSample: any = null;
 
   codeSnippits: any = null;
+
+  shared: boolean = false;
 
   snippitMap = [
     {
@@ -119,6 +123,15 @@ export default class extends Vue {
     window.history.back();
   }
 
+  showToast() {
+    // show toast
+    this.shared = true;
+
+    setTimeout(() => {
+      this.shared = false;
+    }, 1200);
+  }
+
   async share() {
     if ((navigator as any).share) {
       try {
@@ -134,6 +147,9 @@ export default class extends Vue {
       if ((navigator as any).clipboard) {
         try {
           await (navigator as any).clipboard.writeText(location.href);
+    
+          this.showToast();
+
         } catch (err) {
           console.error(err);
         }
@@ -144,6 +160,9 @@ export default class extends Vue {
           console.info("Action:", e.action);
           console.info("Text:", e.text);
           console.info("Trigger:", e.trigger);
+
+          this.showToast();
+
           e.clearSelection();
         });
 
@@ -162,7 +181,7 @@ export default class extends Vue {
 @import "~assets/scss/base/variables";
 
 .codeBlockHeader {
-  background: #E2E2E2;
+  background: #e2e2e2;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -187,6 +206,36 @@ export default class extends Vue {
   span {
     margin-left: 10px;
   }
+}
+
+#shareToast {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  background: #3c3c3c;
+  color: white;
+  padding: 1em;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 4px;
+  padding-left: 1.4em;
+  padding-right: 1.4em;
+  animation-name: fadein;
+  animation-duration: .3s;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1
+  }
+}
+
+.codeBlock code {
+  font-size: 13px;
 }
 
 #docsMain {
