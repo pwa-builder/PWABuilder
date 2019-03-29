@@ -1,10 +1,10 @@
 <template>
   <div>
-    <header :class="{ 'smaller-header': showSubHeader }">
+    <header :class="{ 'smaller-header': !expanded }">
       <nuxt-link id="logoLink" to="/">
         <img id="logo" src="~/assets/images/new-logo.svg" alt="App Logo"
              class="logo-size"
-             :class="{ 'smaller-logo': showSubHeader }">
+             :class="{ 'smaller-logo': !expanded }">
       </nuxt-link>
 
       <div id="mainTabsBar">
@@ -62,6 +62,7 @@ const GeneratorState = namespace(generator.name, State);
 
 @Component({})
 export default class extends Vue {
+  @Prop({ default: false }) expanded: boolean;
   @Prop({}) showSubHeader: string;
   @Prop({ default: 0 }) score: number | string;
 
