@@ -11,6 +11,11 @@
       <span>Share</span>
     </button>
 
+    <button @click="goToGithub()" id="githubSnippitButton">
+      <i class="fab fa-github"></i>
+      <span>Github</span>
+    </button>
+
     <div v-if="shared" id="shareToast">URL copied for sharing</div>
 
     <main id="docsMain" v-html="docsContent"></main>
@@ -84,6 +89,8 @@ export default class extends Vue {
 
     this.snippitMap.forEach(async snippit => {
       if (snippit.mappedName === this.$route.params.featureDetail) {
+        this.currentSample = snippit;
+
         const response = await fetch(
           `${this.baseURL}/${snippit.realName}/${snippit.realName}.md`
         );
@@ -117,6 +124,10 @@ export default class extends Vue {
         this.currentSample = sample;
       }
     });*/
+  }
+
+  goToGithub() {
+    window.open(`https://github.com/pwa-builder/pwabuilder-snippits/tree/master/src/${this.currentSample.realName}/${this.currentSample.realName}.md`, '_blank');
   }
 
   goBack() {
@@ -189,6 +200,11 @@ export default class extends Vue {
   padding-right: 20px;
 }
 
+#docsMain #contentContainer p {
+  font-size: 16px;
+  line-height: 22px;
+}
+
 #featDetailShareButton {
   background: white;
   border: none;
@@ -202,6 +218,23 @@ export default class extends Vue {
   font-weight: bold;
   display: flex;
   justify-content: center;
+
+  span {
+    margin-left: 10px;
+  }
+}
+
+#githubSnippitButton {
+  border: none;
+  position: absolute;
+  right: 19em;
+  top: 5em;
+  height: 42px;
+  width: 99px;
+  background: white;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: bold;
 
   span {
     margin-left: 10px;
@@ -246,7 +279,7 @@ export default class extends Vue {
     height: 80px;
     display: flex;
     align-items: center;
-    padding-left: 220px;
+    padding-left: 163px;
 
     h2 {
       font-weight: bold;
@@ -325,7 +358,7 @@ export default class extends Vue {
 #backButton {
   position: absolute;
   top: 5em;
-  left: 11em;
+  left: 7em;
   background: white;
   border-radius: 50%;
   border: none;
