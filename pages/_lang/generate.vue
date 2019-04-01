@@ -94,7 +94,7 @@
             <div class="l-generator-field logo-upload">
               <label class="l-generator-label">
                 <h4 class="fieldName">{{ $t("generate.icon_url") }}</h4>
-                <p>We suggest at least one image 512x512 or larger</p>
+                <p>We suggest at least one image 512×512 or larger</p>
               </label>
 
               <div>
@@ -154,7 +154,7 @@
             <div class="l-generator-field">
               <label class="l-generator-label">
                 <h4 v-bind:class="{ fieldName: activeFormField === 'appScope' }">{{ $t("generate.scope") }}</h4>
-                <p>scope determins what part of your website runs in the PWA</p>
+                <p>Scope determines what part of your website runs in the PWA</p>
               </label>
               
               <input
@@ -169,7 +169,7 @@
             <div class="l-generator-field">
               <label class="l-generator-label">
                 <h4  v-bind:class="{ fieldName: activeFormField === 'displayMode' }">{{ $t("generate.display") }}</h4>
-                <p>Display indetifies the browser components that should be included in your. "Standalone" appears as a traditional app</p>
+                <p>Display indetifies the browser components that should be included in your. "Standalone" appears as a traditional app.</p>
               </label>
               
               <select
@@ -185,7 +185,7 @@
             <div class="l-generator-field">
               <label class="l-generator-label">
                 <h4 v-bind:class="{ fieldName: activeFormField === 'appOrientation' }">{{ $t("generate.orientation") }}</h4>
-                <p>Orientation determines the perfered flow of your application</p>
+                <p>Orientation determines the perfered flow of your application.</p>
               </label>
               
               <select
@@ -205,7 +205,7 @@
             <div class="l-generator-field">
               <label class="l-generator-label">
                 <h4 v-bind:class="{ fieldName: activeFormField === 'appLang' }">{{ $t("generate.language") }}</h4>
-                <p>declare the language of your PWA</p>
+                <p>Declare the language of your PWA</p>
               </label>
               
               <select class="l-generator-input l-generator-input--select" v-model="manifest$.lang">
@@ -274,7 +274,7 @@
           <nuxt-link
             :to="$i18n.path('serviceworker')"
             class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header"
-            @click=" $awa( { 'referrerUri': 'https://www.pwabuilder.com/generator-nextStep-trigger' })"
+            @click=" $awa( { 'uri': 'https://www.pwabuilder.com/generator-nextStep-trigger' })"
           >{{ $t("serviceworker.next_step") }}</nuxt-link>
         </CodeViewer>
       </section>

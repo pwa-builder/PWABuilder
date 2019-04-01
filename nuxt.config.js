@@ -17,14 +17,16 @@ module.exports = {
             { name: 'viewport', content: 'width=device-width, initial-scale=1' },
             { hid: 'description', name: 'description', content: 'All the tools you need to build and deploy your Progressive Web Apps.' },
             { name: 'msapplication-TileImage', content: '/Images/assets/icons/ms-icon-144x144-487a503e5cb29bbe0df7296db4093b7e.png' },
-            { name: 'msapplication-TileColor', content: '#1FC2C8' },
-            { name: 'theme-color', content: '#1FC2C8' },
+            { name: 'msapplication-TileColor', content: '#9337D8' },
+            { name: 'theme-color', content: '#9337D8' },
             { name: 'ms.appid', content: 'PWABuilder' }
             
         ],
         link: [
             { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
             { rel: 'manifest', href: '/manifest.webmanifest' },
+            { rel: 'preconnect', href: 'https://web.vortex.data.microsoft.com'},
+            { rel: 'preload', type: 'image', href: '~/assets/images/homepage-background.svg'},
             { rel: 'apple-touch-icon', href: '/Images/assets/icons/apple-icon-06144a2a7b5101d447ecb4832502e73e.png' },
             { rel: 'apple-touch-icon', sizes: '57x57', href: '/Images/assets/icons/apple-icon-57x57-b82ef058b133f3197df61c326fa7cd6d.png' },
             { rel: 'apple-touch-icon', sizes: '72x72', href: '/Images/assets/icons/apple-icon-72x72-66bbf8447788cee426eebcddfa8eede8.png' },
@@ -38,7 +40,7 @@ module.exports = {
         script: [
             { src: '/pwabuilder-sw-register.js' }, 
             { src: 'https://az725175.vo.msecnd.net/scripts/jsll-4.js'},
-            { src: "https://use.fontawesome.com/releases/v5.0.10/js/all.js" },
+            { src: "https://use.fontawesome.com/releases/v5.0.10/js/all.js", async: true, defer: true },
             { src: '/awa-register.js'}
         ]
     },

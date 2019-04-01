@@ -14,7 +14,7 @@
           <p>Add that special something to supercharge your PWA. These cross-platform features can make your website work more like an app.</p>
 
           <div id="featureActionsBlock">
-            <button @click="clearSelected()" id="clearButton">Clear</button>
+            <!--<button @click="clearSelected()" id="clearButton">Clear</button>-->
             <nuxt-link id="doneButton" to="/reportCard">Done</nuxt-link>
           </div>
         </div>
@@ -97,7 +97,7 @@
         slot="extraButton"
         id="addBundleButton"
         v-on:click="addBundle()"
-      >{{ $t("windows.add") }}</button>
+      >{{ $t("windows.download_sample") }}</button>
 
       <p v-if="sample" slot="extraP" id="sampleDescP">{{sample.description}}</p>
 
@@ -182,6 +182,7 @@ export default class extends Vue {
       await this.selectSample(sample);
       // this.selectedSamples.push(sample);
       this.currentPendingSample = sample;
+      // this.currentPendingSample = sample;
 
       (this.$refs.addFeatureModal as Modal).show();
     } catch (e) {
@@ -193,11 +194,11 @@ export default class extends Vue {
     try {
       console.log("sample selected");
       await this.selectSample(this.currentPendingSample);
-      this.selectedSamples.push(this
-        .currentPendingSample as windowsStore.Sample);
+      /*this.selectedSamples.push(this
+        .currentPendingSample as windowsStore.Sample);*/
 
       // force a re-render
-      this.selectedSamples = this.selectedSamples;
+      // this.selectedSamples = this.selectedSamples;
       console.log(this.selectedSamples);
     } catch (e) {
       this.error = e;
@@ -250,7 +251,7 @@ export default class extends Vue {
         console.log('selectedSamples', this.selectedSamples);
       }
 
-
+      await this.download();
 
       this.hasNative = true;
       this.modalClosed();
@@ -441,7 +442,7 @@ header {
         padding-bottom: 11px;
         margin-top: 40px;
         color: white;
-        background: $color-button-primary-purple-variant;
+        background: $color-brand-secondary;
         display: flex;
         justify-content: center;
         align-items: center;

@@ -139,7 +139,7 @@ header {
           href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
         >Learn More</a>
         
-        <button id="closeButton" @click="close()">
+        <button id="closeButton" aria-label="Close Button" @click="close()">
           <i aria-hidden="true">✕</i>
         </button>
       </div>
