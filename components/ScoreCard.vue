@@ -644,7 +644,7 @@ export default class extends Vue {
     font-weight: bold;
     color: #707070;
     border-bottom: solid 1px #c5c5c5;
-    padding-bottom: 7px;
+    padding-bottom: 10px;
   }
 
   ul {
