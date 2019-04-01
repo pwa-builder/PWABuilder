@@ -206,8 +206,8 @@ export default class extends Vue {
 }
 
 #featDetailShareButton {
-  background: white;
-  border: none;
+  background: transparent;
+  border: solid 1px white;
   border-radius: 24px;
   position: absolute;
   right: 11em;
@@ -218,6 +218,7 @@ export default class extends Vue {
   font-weight: bold;
   display: flex;
   justify-content: center;
+  color: white;
 
   span {
     margin-left: 10px;
@@ -225,16 +226,17 @@ export default class extends Vue {
 }
 
 #githubSnippitButton {
-  border: none;
+  border: solid 1px white;
   position: absolute;
   right: 19em;
   top: 5em;
   height: 42px;
   width: 99px;
-  background: white;
+  background: transparent;
   border-radius: 24px;
   font-size: 14px;
   font-weight: bold;
+  color: white;
 
   span {
     margin-left: 10px;
@@ -275,7 +277,14 @@ export default class extends Vue {
   background: white;
 
   #headerDiv {
-    background: #f0f0f0;
+    background: rgba(31,194,200,1);
+    background: -moz-linear-gradient(left, rgba(31,194,200,1) 0%, rgba(147,55,216,1) 100%);
+    background: -webkit-gradient(left top, right top, color-stop(0%, rgba(31,194,200,1)), color-stop(100%, rgba(147,55,216,1)));
+    background: -webkit-linear-gradient(left, rgba(31,194,200,1) 0%, rgba(147,55,216,1) 100%);
+    background: -o-linear-gradient(left, rgba(31,194,200,1) 0%, rgba(147,55,216,1) 100%);
+    background: -ms-linear-gradient(left, rgba(31,194,200,1) 0%, rgba(147,55,216,1) 100%);
+    background: linear-gradient(to right, rgba(31,194,200,1) 0%, rgba(147,55,216,1) 100%);
+
     height: 80px;
     display: flex;
     align-items: center;
@@ -284,6 +293,7 @@ export default class extends Vue {
     h2 {
       font-weight: bold;
       font-size: 24px;
+      color: white;
       margin-bottom: 0px;
     }
   }
