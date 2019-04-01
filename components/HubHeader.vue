@@ -1,8 +1,10 @@
 <template>
   <div>
-    <header>
+    <header :class="{ 'smaller-header': !expanded }">
       <nuxt-link id="logoLink" to="/">
-        <img id="logo" src="~/assets/images/new-logo.svg" alt="App Logo">
+        <img id="logo" src="~/assets/images/new-logo.svg" alt="App Logo"
+             class="logo-size"
+             :class="{ 'smaller-logo': !expanded }">
       </nuxt-link>
 
       <div id="mainTabsBar">
@@ -60,6 +62,7 @@ const GeneratorState = namespace(generator.name, State);
 
 @Component({})
 export default class extends Vue {
+  @Prop({ default: false }) expanded: boolean;
   @Prop({}) showSubHeader: string;
   @Prop({ default: 0 }) score: number | string;
 
@@ -165,9 +168,17 @@ export default class extends Vue {
   align-items: center;
 }
 
-header {
-  background: black;
+.smaller-header {
+  background-color: black;
   height: 52px;
+}
+
+header {
+  background-color: rgba(0, 0, 0, 0.7);  
+  height: 104px;
+
+  transition: background-color 500ms, height 500ms ease-in-out;
+
   display: flex;
   align-items: center;
   padding-left: 160px;
@@ -201,7 +212,7 @@ header {
 }
 
 #subHeader {
-  background: #3c3c3c;
+  background: rgba(60, 60, 60, 0.8);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -273,9 +284,16 @@ header {
   flex-direction: column;
 }
 
-header #logo {
+.logo-size {
+  height: 52px;
+  width: 140px;
+
+  transition: height 500ms ease-in-out, width 500ms ease-in-out;
+}
+
+.smaller-logo {
   height: 32px;
-  width: 86px;
+  width: 86px;  
 }
 
 header #logoLink {

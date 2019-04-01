@@ -1,7 +1,7 @@
 
 <template>
   <div id="hubContainer">
-    <HubHeader :score="overallScore" :showSubHeader="gotURL"></HubHeader>
+    <HubHeader :score="overallScore" :showSubHeader="gotURL" :expanded="!gotURL"></HubHeader>
 
     <main>
       <div v-if="!gotURL" id="inputSection">
