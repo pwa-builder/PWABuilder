@@ -211,6 +211,13 @@ header {
   }
 }
 
+@media (max-width: 1336px) {
+  header {
+    padding-left: 35px;
+    padding-right: 35px;
+  }
+}
+
 #subHeader {
   background: rgba(60, 60, 60, 0.8);
   display: flex;
