@@ -214,7 +214,7 @@ export default class extends Vue {
   border: solid 1px white;
   border-radius: 24px;
   position: absolute;
-  right: 11em;
+  right: 12.4em;
   top: 5em;
   width: 99px;
   height: 42px;
@@ -232,7 +232,7 @@ export default class extends Vue {
 #githubSnippitButton {
   border: solid 1px white;
   position: absolute;
-  right: 19em;
+  right: 21em;
   top: 5em;
   height: 42px;
   width: 99px;
