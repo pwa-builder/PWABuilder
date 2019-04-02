@@ -99,7 +99,9 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span><code>display</code> property utilized</span>
+            <span>
+              <code>display</code> property utilized
+            </span>
           </div>
 
           <span class="subScoreSpan" v-if="manifest.display">5</span>
@@ -115,7 +117,10 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Lists <code>icons</code> for add to home screen</span>
+            <span>
+              Lists
+              <code>icons</code> for add to home screen
+            </span>
           </div>
 
           <span class="subScoreSpan" v-if="manifest.icons">5</span>
@@ -131,7 +136,10 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Contains <code>name</code> property</span>
+            <span>
+              Contains
+              <code>name</code> property
+            </span>
           </div>
 
           <span class="subScoreSpan" v-if="manifest.name">5</span>
@@ -147,7 +155,10 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Contains <code>short_name</code> property</span>
+            <span>
+              Contains
+              <code>short_name</code> property
+            </span>
           </div>
 
           <span class="subScoreSpan" v-if="manifest.short_name">5</span>
@@ -164,7 +175,10 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Designates a <code>start_url</code></span>
+            <span>
+              Designates a
+              <code>start_url</code>
+            </span>
           </div>
 
           <span class="subScoreSpan" v-if="manifest.start_url">5</span>
@@ -206,7 +220,9 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span><code>display</code> property utilized</span>
+            <span>
+              <code>display</code> property utilized
+            </span>
           </div>
 
           <span class="subScoreSpan">0</span>
@@ -217,7 +233,10 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Lists <code>icons</code> for add to home screen</span>
+            <span>
+              Lists
+              <code>icons</code> for add to home screen
+            </span>
           </div>
 
           <span class="subScoreSpan">0</span>
@@ -228,7 +247,10 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Contains <code>name</code> property</span>
+            <span>
+              Contains
+              <code>name</code> property
+            </span>
           </div>
 
           <span class="subScoreSpan">0</span>
@@ -239,7 +261,10 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Contains <code>short_name</code> property</span>
+            <span>
+              Contains
+              <code>short_name</code> property
+            </span>
           </div>
 
           <span class="subScoreSpan">0</span>
@@ -250,7 +275,10 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Designates a <code>start_url</code></span>
+            <span>
+              Designates a
+              <code>start_url</code>
+            </span>
           </div>
 
           <span class="subScoreSpan">0</span>
@@ -300,7 +328,10 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Service Worker has the correct <code>scope</code></span>
+            <span>
+              Service Worker has the correct
+              <code>scope</code>
+            </span>
           </div>
 
           <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.scope">5</span>
@@ -316,7 +347,10 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Service Worker has a <code>pushManager</code> registration</span>
+            <span>
+              Service Worker has a
+              <code>pushManager</code> registration
+            </span>
           </div>
 
           <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.pushReg">5</span>
@@ -369,7 +403,10 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Service Worker has the correct <code>scope</code></span>
+            <span>
+              Service Worker has the correct
+              <code>scope</code>
+            </span>
           </div>
 
           <span class="subScoreSpan">0</span>
@@ -380,7 +417,10 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Service Worker has a <code>pushManager</code> registration</span>
+            <span>
+              Service Worker has a
+              <code>pushManager</code> registration
+            </span>
           </div>
 
           <span class="subScoreSpan">0</span>
@@ -452,7 +492,7 @@ export default class extends Vue {
   swScore: number = 0;
   securityScore: number = 0;
 
-  mounted() {
+  created() {
     console.log("im a card");
 
     switch (this.category) {
@@ -496,7 +536,7 @@ export default class extends Vue {
         this.noManifest = false;
 
         this.manifestScore = 15;
-//scoring set by Jeff: 40 for manifest, 40 for sw and 20 for sc
+        //scoring set by Jeff: 40 for manifest, 40 for sw and 20 for sc
         if (this.manifest.display !== undefined) {
           this.manifestScore = this.manifestScore + 5;
         }
@@ -528,63 +568,85 @@ export default class extends Vue {
   }
 
   private async lookAtSW() {
-    console.log("fetching sw");
-    const response = await fetch(`${apiUrl}=${this.url}`);
-    const data = await response.json();
-    console.log("lookAtSW", data);
+    const savedData = sessionStorage.getItem("serviceWorkerData");
+    const savedScore = sessionStorage.getItem("swScore");
 
-    this.serviceWorkerData = data;
+    if (savedData) {
+      let cleanedData = JSON.parse(savedData);
+      this.serviceWorkerData = cleanedData;
 
-    console.log("this.serviceWorkerData", this.serviceWorkerData);
-    console.log(this.serviceWorkerData);
+      if (savedScore) {
+        let cleanedScore = JSON.parse(savedScore);
+        this.swScore = cleanedScore;
 
-    if (this.serviceWorkerData === false) {
-      this.noServiceWorker = true;
-      return;
-    } else {
-      this.noServiceWorker = false;
-
-      this.swScore = 0;
-//scoring set by Jeff: 40 for manifest, 40 for sw and 20 for sc
-
-      if (this.serviceWorkerData.hasSW !== null) {
-        this.swScore = this.swScore + 20;
+        this.$emit("serviceWorkerTestDone", { score: this.swScore });
       }
-      /*
+    } else {
+      console.log("fetching sw");
+      const response = await fetch(`${apiUrl}=${this.url}`);
+      const data = await response.json();
+      console.log("lookAtSW", data);
+
+      this.serviceWorkerData = data;
+
+      sessionStorage.setItem(
+        "serviceWorkerData",
+        JSON.stringify(this.serviceWorkerData)
+      );
+
+      console.log("this.serviceWorkerData", this.serviceWorkerData);
+      console.log(this.serviceWorkerData);
+
+      if (this.serviceWorkerData === false) {
+        this.noServiceWorker = true;
+        return;
+      } else {
+        this.noServiceWorker = false;
+
+        this.swScore = 0;
+        //scoring set by Jeff: 40 for manifest, 40 for sw and 20 for sc
+
+        if (this.serviceWorkerData.hasSW !== null) {
+          this.swScore = this.swScore + 20;
+        }
+        /*
         Caches stuff
         +10 points to user
       */
-      if (this.serviceWorkerData.cache) {
-        const hasCache = this.serviceWorkerData.cache.some(
-          entry => entry.fromSW === true
-        );
+        if (this.serviceWorkerData.cache) {
+          const hasCache = this.serviceWorkerData.cache.some(
+            entry => entry.fromSW === true
+          );
 
-        if (hasCache === true) {
-          this.swScore = this.swScore + 10;
+          if (hasCache === true) {
+            this.swScore = this.swScore + 10;
+          }
         }
-      }
-      /*
+        /*
         Has push reg
         +5 points to user
       */
-      if (this.serviceWorkerData.pushReg !== null) {
-        this.swScore = this.swScore + 5;
-      }
-      /*
+        if (this.serviceWorkerData.pushReg !== null) {
+          this.swScore = this.swScore + 5;
+        }
+        /*
         Has scope that points to root
         +5 points to user
       */
-      if (
-        this.serviceWorkerData.scope //&&
-       // this.serviceWorkerData.scope.slice(0, -1) ===
-         // new URL(this.serviceWorkerData.scope).origin  //slice isn't working and score not showing up, TODO: look at how to validate scope
-      ) {
-        console.log("has scope");
-        this.swScore = this.swScore + 5;
-      }
+        if (
+          this.serviceWorkerData.scope //&&
+          // this.serviceWorkerData.scope.slice(0, -1) ===
+          // new URL(this.serviceWorkerData.scope).origin  //slice isn't working and score not showing up, TODO: look at how to validate scope
+        ) {
+          console.log("has scope");
+          this.swScore = this.swScore + 5;
+        }
 
-      this.$emit("serviceWorkerTestDone", { score: this.swScore });
-      return;
+        sessionStorage.setItem('swScore', JSON.stringify(this.swScore));
+
+        this.$emit("serviceWorkerTestDone", { score: this.swScore });
+        return;
+      }
     }
   }
 }
@@ -600,7 +662,6 @@ export default class extends Vue {
     color: #707070;
     font-size: 24px;
   }
-
 }
 
 #cardContent {

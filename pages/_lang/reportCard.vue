@@ -168,7 +168,7 @@ export default class extends Vue {
   public async created() {
     this.url$ = this.url;
 
-    if (this.url$) {
+    if (this.url$ || this.url) {
       this.gotURL = true;
       this.getTopSamples();
     }
