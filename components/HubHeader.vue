@@ -204,13 +204,6 @@ header {
   }
 }
 
-@media (max-width: 1336px) {
-  header {
-    padding-left: 35px;
-    padding-right: 35px;
-  }
-}
-
 #subHeader {
   @include grid;
 
