@@ -22,6 +22,10 @@ input {
   }
 }
 
+body {
+  background: #f0f0f0;
+}
+
 input::placeholder {
   color: #3C3C3C;
   opacity: 0.4;
