@@ -446,6 +446,12 @@ footer a {
   }
 }
 
+@media (max-height: 780px) {
+  #hubContainer {
+    height: 162vh;
+  }
+}
+
 @keyframes slideup {
   from {
     opacity: 0;
