@@ -6,7 +6,7 @@
       <slot name="iconSlot"></slot>
     </div>
 
-    <p>{{ sample.description }}</p>
+    <p v-bind:class="{textWrap: wrapText}">{{ sample.description }}</p>
 
     <div v-if="showAddButton" id="featureCardActionsBlock">
       <!--<button
@@ -31,6 +31,7 @@ import * as windowsStore from "~/store/modules/windows";
 export default class extends Vue {
   @Prop({}) sample: windowsStore.Sample;
   @Prop({}) showAddButton;
+  @Prop({ default: false }) wrapText;
 
   onClickSample(sample: windowsStore.Sample) {
     this.$emit("selected", sample);
@@ -69,6 +70,10 @@ export default class extends Vue {
     font-size: 14px;
     line-height: 20px;
     overflow: hidden;
+  }
+
+  .textWrap {
+    white-space: initial !important;
   }
 
   #featureCardActionsBlock {

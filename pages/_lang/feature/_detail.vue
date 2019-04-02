@@ -127,7 +127,12 @@ export default class extends Vue {
   }
 
   goToGithub() {
-    window.open(`https://github.com/pwa-builder/pwabuilder-snippits/tree/master/src/${this.currentSample.realName}/${this.currentSample.realName}.md`, '_blank');
+    window.open(
+      `https://github.com/pwa-builder/pwabuilder-snippits/tree/master/src/${
+        this.currentSample.realName
+      }/${this.currentSample.realName}.md`,
+      "_blank"
+    );
   }
 
   goBack() {
@@ -158,9 +163,8 @@ export default class extends Vue {
       if ((navigator as any).clipboard) {
         try {
           await (navigator as any).clipboard.writeText(location.href);
-    
-          this.showToast();
 
+          this.showToast();
         } catch (err) {
           console.error(err);
         }
@@ -198,6 +202,7 @@ export default class extends Vue {
   align-items: center;
   height: 54px;
   padding-right: 20px;
+  border-radius: 4px 4px 0px 0px;
 }
 
 #docsMain #contentContainer p {
@@ -206,11 +211,11 @@ export default class extends Vue {
 }
 
 #featDetailShareButton {
-  background: white;
-  border: none;
+  background: transparent;
+  border: solid 1px white;
   border-radius: 24px;
   position: absolute;
-  right: 11em;
+  right: 12.4em;
   top: 5em;
   width: 99px;
   height: 42px;
@@ -218,6 +223,7 @@ export default class extends Vue {
   font-weight: bold;
   display: flex;
   justify-content: center;
+  color: white;
 
   span {
     margin-left: 10px;
@@ -225,19 +231,30 @@ export default class extends Vue {
 }
 
 #githubSnippitButton {
-  border: none;
+  border: solid 1px white;
   position: absolute;
-  right: 19em;
+  right: 21em;
   top: 5em;
   height: 42px;
   width: 99px;
-  background: white;
+  background: transparent;
   border-radius: 24px;
   font-size: 14px;
   font-weight: bold;
+  color: white;
 
   span {
     margin-left: 10px;
+  }
+}
+
+@media (max-width: 1336px) {
+  #featDetailShareButton {
+    right: 3em;
+  }
+
+  #githubSnippitButton {
+    right: 11em;
   }
 }
 
@@ -254,7 +271,7 @@ export default class extends Vue {
   padding-left: 1.4em;
   padding-right: 1.4em;
   animation-name: fadein;
-  animation-duration: .3s;
+  animation-duration: 0.3s;
 }
 
 @keyframes fadein {
@@ -263,7 +280,7 @@ export default class extends Vue {
   }
 
   to {
-    opacity: 1
+    opacity: 1;
   }
 }
 
@@ -275,7 +292,39 @@ export default class extends Vue {
   background: white;
 
   #headerDiv {
-    background: #f0f0f0;
+    background: rgba(31, 194, 200, 1);
+    background: -moz-linear-gradient(
+      left,
+      rgba(31, 194, 200, 1) 0%,
+      rgba(147, 55, 216, 1) 100%
+    );
+    background: -webkit-gradient(
+      left top,
+      right top,
+      color-stop(0%, rgba(31, 194, 200, 1)),
+      color-stop(100%, rgba(147, 55, 216, 1))
+    );
+    background: -webkit-linear-gradient(
+      left,
+      rgba(31, 194, 200, 1) 0%,
+      rgba(147, 55, 216, 1) 100%
+    );
+    background: -o-linear-gradient(
+      left,
+      rgba(31, 194, 200, 1) 0%,
+      rgba(147, 55, 216, 1) 100%
+    );
+    background: -ms-linear-gradient(
+      left,
+      rgba(31, 194, 200, 1) 0%,
+      rgba(147, 55, 216, 1) 100%
+    );
+    background: linear-gradient(
+      to right,
+      rgba(31, 194, 200, 1) 0%,
+      rgba(147, 55, 216, 1) 100%
+    );
+
     height: 80px;
     display: flex;
     align-items: center;
@@ -284,7 +333,15 @@ export default class extends Vue {
     h2 {
       font-weight: bold;
       font-size: 24px;
+      color: white;
       margin-bottom: 0px;
+    }
+  }
+
+  @media (max-width: 1336px) {
+    #headerDiv {
+      padding-left: 88px;
+      padding-right: 35px;
     }
   }
 
@@ -293,6 +350,7 @@ export default class extends Vue {
     background: #f0f0f0;
     padding: 24px;
     height: 190px;
+    border-radiuS: 0px 0px 4px 4px;
   }
 
   #leftSide th {
@@ -353,6 +411,13 @@ export default class extends Vue {
       }
     }
   }
+
+  @media (max-width: 1336px) {
+    #contentContainer {
+      padding-left: 35px;
+      padding-right: 35px;
+    }
+  }
 }
 
 #backButton {
@@ -365,5 +430,11 @@ export default class extends Vue {
   font-size: 14px;
   height: 42px;
   width: 42px;
+}
+
+@media (max-width: 1336px) {
+  #backButton {
+    left: 30px;
+  }
 }
 </style>

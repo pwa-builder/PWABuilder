@@ -1,25 +1,18 @@
 <template>
   <main>
-      <HubHeader></HubHeader>
+    <HubHeader></HubHeader>
 
     <div v-if="modalStatus" id="modalBackground"></div>
 
-    <img id="featuresBG" src="~/assets/images/features_bg.svg">
+    <!--<img id="featuresBG" src="~/assets/images/featureBG.svg">-->
 
-    <div id="sideBySide">
-      <section id="headerSection">
-        <div>
-          <h1 id="featurePageHeader">Extras</h1>
+    <section id="headerSection">
+      <div>
+        <h1 id="featurePageHeader">Extras</h1>
 
-          <p>Add that special something to supercharge your PWA. These cross-platform features can make your website work more like an app.</p>
-
-          <div id="featureActionsBlock">
-            <!--<button @click="clearSelected()" id="clearButton">Clear</button>-->
-            <nuxt-link id="doneButton" to="/">Done</nuxt-link>
-          </div>
-        </div>
-      </section>
-    </div>
+        <p>Add that special something to supercharge your PWA. These cross-platform features can make your website work more like an app.</p>
+      </div>
+    </section>
 
     <section id="featureListBlock">
       <FeatureCard
@@ -31,7 +24,10 @@
         v-on:removed="onRemoved"
         :showRemoveButton="false"
         :showAddButton="true"
-      ></FeatureCard>
+        :wrapText="true"
+      >
+        <i slot="iconSlot" class="fas fa-rocket"></i>
+      </FeatureCard>
 
       <FeatureCard
         v-if="selectedSamples.length > 0"
@@ -42,7 +38,10 @@
         v-on:removed="onRemoved"
         :showRemoveButton="true"
         :showAddButton="true"
-      ></FeatureCard>
+        :wrapText="true"
+      >
+        <i slot="iconSlot" class="fas fa-rocket"></i>
+      </FeatureCard>
     </section>
 
     <section id="fakeCardBlock" v-if="samples.length === 0">
@@ -247,10 +246,10 @@ export default class extends Vue {
       await this.selectSample(this.currentPendingSample);
 
       if (this.selectedSamples.indexOf(this.sample) == -1) {
-        console.log('pushing', this.currentPendingSample);
+        console.log("pushing", this.currentPendingSample);
         this.selectedSamples.push(this
           .currentPendingSample as windowsStore.Sample);
-        console.log('selectedSamples', this.selectedSamples);
+        console.log("selectedSamples", this.selectedSamples);
       }
 
       await this.download();
@@ -361,15 +360,27 @@ export default class extends Vue {
   will-change: opacity;
 }
 
-@keyframes opened {
-    from {
-      opacity: 0;
-    }
+#featureListBlock .card {
+  margin: 10px;
+}
 
-    to {
-      opacity: 0.7;
-    }
+main {
+  background-image: url("~/assets/images/featureBG.svg");
+  background-size: cover;
+  background-position: center;
+  background-color: #F0F0F0;
+  height: 100vh;
+}
+
+@keyframes opened {
+  from {
+    opacity: 0;
   }
+
+  to {
+    opacity: 0.7;
+  }
+}
 
 header {
   display: flex;
@@ -391,84 +402,22 @@ header {
   }
 }
 
-#sideBySide {
-  display: flex;
+#headerSection {
+  padding-left: 159px;
+  padding-right: 159px;
 
-  #headerSection {
-    flex: 1;
-    padding-left: 159px;
-    padding-right: 164px;
-    padding-top: 40px;
-
-    #featurePageHeader {
-      font-size: 32px;
-      font-weight: bold;
-    }
-
-    p {
-      font-size: 18px;
-      width: 376px;
-      padding-bottom: 30px;
-      margin: 0;
-    }
-
-    #featureActionsBlock {
-      display: flex;
-      padding-bottom: 30px;
-
-      #clearButton {
-        width: 130px;
-        height: 44px;
-        border-radius: 22px;
-        border: none;
-        background: grey;
-        font-weight: bold;
-        font-size: 18px;
-        padding-top: 9px;
-        padding-bottom: 11px;
-        margin-top: 40px;
-        color: white;
-        background: $color-brand-secondary;
-        margin-right: 10px;
-      }
-
-      #doneButton {
-        width: 130px;
-        height: 44px;
-        border-radius: 22px;
-        border: none;
-        background: grey;
-        font-weight: bold;
-        font-size: 18px;
-        padding-top: 9px;
-        padding-bottom: 11px;
-        margin-top: 40px;
-        color: white;
-        background: $color-brand-secondary;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-    }
+  h1 {
+    color: white;
+    font-weight: bold;
+    font-size: 24px;
+    margin-top: 30px;
   }
 
-  #scoreSection {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex: 1;
-
-    #scoreDiv {
-      height: 260px;
-      width: 280px;
-      background: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 92px;
-      font-weight: bold;
-      border-radius: 32px;
-    }
+  p {
+    font-size: 16px;
+    color: white;
+    width: 465px;
+    padding-top: 35px;
   }
 }
 
@@ -480,7 +429,7 @@ header {
   padding-right: 159px;
   margin-top: 60px;
   margin-bottom: 60px;
-  
+
   .fakeCard {
     display: flex;
     justify-content: center;
