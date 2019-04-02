@@ -202,6 +202,7 @@ export default class extends Vue {
   align-items: center;
   height: 54px;
   padding-right: 20px;
+  border-radius: 4px 4px 0px 0px;
 }
 
 #docsMain #contentContainer p {
@@ -349,6 +350,7 @@ export default class extends Vue {
     background: #f0f0f0;
     padding: 24px;
     height: 190px;
+    border-radiuS: 0px 0px 4px 4px;
   }
 
   #leftSide th {
