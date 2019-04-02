@@ -169,14 +169,14 @@ header {
   z-index: 1;
 
   #logoLink {
-    grid-column: 2 / span 2;
+    grid-column: 1 / span 2;
 
     border: none;
   }
 
   /* TODO: Can some of this be shared with tabsBar below at all? */
   #mainTabsBar {
-    grid-column: 4 / span 6;
+    grid-column: 3 / span 8;
     justify-self: center;
     width: 14em; /* TODO: Adjust to put padding between elements instead. */
 
@@ -194,7 +194,7 @@ header {
   }
 
   #icons {
-    grid-column: 10 / span 2;    
+    grid-column: 11 / span 2;    
     width: 4em; /* TODO: Padding between instead of width? */
 
     display: flex;
@@ -218,7 +218,7 @@ header {
   width: 100%;
 
   #tabsBar {
-    grid-column: 2 / span 5;
+    grid-column: 1 / span 7;
     width: 26em; /* TODO: Adjust to put padding between elements instead. */
 
     display: flex;
@@ -235,7 +235,7 @@ header {
   }
 
   #urlTested {
-    grid-column: 7 / span 2;
+    grid-column: 8 / span 2;
 
     color: #c5c5c5;
     
@@ -258,7 +258,7 @@ header {
   }
 
   #overallScore {
-    grid-column: 9;
+    grid-column: 10;
 
     display: flex;
     flex-direction: column;
@@ -273,7 +273,7 @@ header {
   }
 
   #publishButton {
-    grid-column: 10 / span 2;
+    grid-column: 11 / span 2;
     justify-self: right;
 
     height: 42px;
