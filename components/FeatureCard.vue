@@ -61,6 +61,12 @@ export default class extends Vue {
     font-weight: bold;
   }
 
+  @media (max-width: 1336px) {
+    h4 {
+      width: 16em;
+    }
+  }
+
   #featureCardTitleBlock {
     display: flex;
     justify-content: space-between;

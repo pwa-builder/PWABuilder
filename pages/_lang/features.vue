@@ -368,8 +368,14 @@ main {
   background-image: url("~/assets/images/featureBG.svg");
   background-size: cover;
   background-position: center;
-  background-color: #F0F0F0;
+  background-color: #f0f0f0;
   height: 100vh;
+}
+
+@media (max-height: 805px) {
+  main {
+    height: 116vh;
+  }
 }
 
 @keyframes opened {
@@ -421,6 +427,12 @@ header {
   }
 }
 
+@media (max-width: 1336px) {
+  #headerSection {
+    padding-left: 52px;
+  }
+}
+
 #featureListBlock,
 #fakeCardBlock {
   display: grid;
@@ -442,6 +454,13 @@ header {
 
 #featureListBlock .card {
   width: initial !important;
+}
+
+@media (max-width: 1336px) {
+  #featureListBlock {
+    padding-left: 35px;
+    padding-right: 35px;
+  }
 }
 
 .code-samples {
