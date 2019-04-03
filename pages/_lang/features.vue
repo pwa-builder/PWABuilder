@@ -433,6 +433,17 @@ header {
   }
 }
 
+@media (max-width: 430px) {
+  #headerSection {
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+
+  #headerSection p {
+    width: initial;
+  }
+}
+
 #featureListBlock,
 #fakeCardBlock {
   display: grid;
@@ -460,6 +471,14 @@ header {
   #featureListBlock {
     padding-left: 35px;
     padding-right: 35px;
+  }
+}
+
+@media (max-width: 430px) {
+  #featureListBlock {
+    padding-left: 16px;
+    padding-right: 16px;
+    display: block;
   }
 }
 
