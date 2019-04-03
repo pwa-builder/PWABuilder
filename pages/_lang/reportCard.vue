@@ -1,6 +1,7 @@
 
 <template>
-  <div id="hubContainer">
+  <div id="hubContainer"
+       :class="{ 'backgroundReport': gotURL, 'backgroundIndex': !gotURL }">
     <HubHeader :score="overallScore" :showSubHeader="gotURL" :expanded="!gotURL"></HubHeader>
 
     <main>
@@ -231,11 +232,27 @@ export default class extends Vue {
 @import "~assets/scss/base/variables";
 
 #hubContainer {
-  background-image: url("~/assets/images/background.svg");
-  background-position: top center;
-  background-repeat: no-repeat;
-  background-color: #f0f0f0;
-  height: 138vh;
+  height: 100vh;
+}
+
+.backgroundIndex {
+  background: 
+    linear-gradient(-18deg, #F0F0F0, #F0F0F0 50vh, rgba(255, 0, 0, 0) 50.1vh), 
+    linear-gradient(10deg, #F0F0F0, #F0F0F0 51.8vh, rgba(255, 0, 0, 0) 51.9vh),     
+    linear-gradient(-66deg, #9337D8, #1FC2C8);
+  background-size: 20.01% 100%, 80.01% 100%, 100% 100%;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-position: left, right, center;
+}
+
+.backgroundReport {
+  background:     
+    linear-gradient(-8deg, #F0F0F0, #F0F0F0 50vh, rgba(255, 0, 0, 0) 50.1vh), 
+    linear-gradient(19deg, #F0F0F0, #F0F0F0 47.7vh, rgba(255, 0, 0, 0) 47.8vh), 
+    linear-gradient(-66deg, #9337D8, #1FC2C8);
+  background-size: 80.01% 100%, 20.01% 100%, 100% 100%;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-position: left, right, center;
 }
 
 #bottomWrapper {
@@ -280,7 +297,7 @@ h2:after {
   color: white;
 
   display: grid;
-  grid-template-rows: 60% 40%;
+  grid-template-rows: 65% 35%;
 
   #topHalfHome {
     grid-row: 1;
@@ -482,19 +499,19 @@ h2:after {
 }
 
 @media (min-width: 1400px) {
-  #hubContainer {
+/*   #hubContainer {
     height: 128vh;
   }
-
+ */
   #toolkitSection {
     margin-top: 70px;
   }
 }
 
 @media (max-height: 780px) {
-  #hubContainer {
+/*   #hubContainer {
     height: 162vh;
-  }
+  } */
 }
 
 @keyframes slideup {
