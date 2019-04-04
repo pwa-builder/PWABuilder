@@ -236,23 +236,11 @@ export default class extends Vue {
 }
 
 .backgroundIndex {
-  background: 
-    linear-gradient(-18deg, #F0F0F0, #F0F0F0 50vh, rgba(255, 0, 0, 0) 50.1vh), 
-    linear-gradient(10deg, #F0F0F0, #F0F0F0 51.8vh, rgba(255, 0, 0, 0) 51.9vh),     
-    linear-gradient(-66deg, #9337D8, #1FC2C8);
-  background-size: 20.01% 100%, 80.01% 100%, 100% 100%;
-  background-repeat: no-repeat, no-repeat, no-repeat;
-  background-position: left, right, center;
+  @include backgroundLeftPoint(20%, 50vh);
 }
 
 .backgroundReport {
-  background:     
-    linear-gradient(-8deg, #F0F0F0, #F0F0F0 50vh, rgba(255, 0, 0, 0) 50.1vh), 
-    linear-gradient(19deg, #F0F0F0, #F0F0F0 47.7vh, rgba(255, 0, 0, 0) 47.8vh), 
-    linear-gradient(-66deg, #9337D8, #1FC2C8);
-  background-size: 80.01% 100%, 20.01% 100%, 100% 100%;
-  background-repeat: no-repeat, no-repeat, no-repeat;
-  background-position: left, right, center;
+  @include backgroundRightPoint(80%, 50vh);
 }
 
 #bottomWrapper {
