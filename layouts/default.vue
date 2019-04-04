@@ -1,4 +1,57 @@
-  <script lang="ts">
+
+
+<template>
+  <div id="baseContainer">
+    <div id="scrollTarget"></div>
+
+    <div class="modal-color"></div>
+    <h1 class="logoText">PWA Builder</h1>
+
+    <div v-if="seen" id="gdprDiv">
+      <div>
+        <p>This site uses cookies for analytics, personalized content and ads. By continuing to browse this site, you agree to this use.</p>
+
+        <a
+          href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
+        >Learn More</a>
+      </div>
+
+      <button id="closeButton" aria-label="Close Button" @click="close()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <Toolbar/>
+
+    <div class="container">
+      <nuxt/>
+    </div>
+
+    <!--<footer class="l-footer pure-g is-small">
+      <div class="pure-u-1-2 pure-u-md-1-5">
+      </div>
+      <div class="pure-u-1-2 pure-u-md-1-5">
+     
+      </div>
+      <div class="l-footer-social pure-u-1 pure-u-md-3-5">
+        <a class="l-footer-logo_action" href="https://github.com/pwa-builder" target="_blank">
+          <img class="l-footer-logo" src="~/assets/images/logo_github.svg">
+        </a>
+        <a class="l-footer-logo_action" href="https://www.npmjs.com/package/pwabuilder" target="_blank">
+          <img class="l-footer-logo l-footer-logo--big" src="~/assets/images/logo_npm.svg">
+        </a>
+        <a class="l-footer-logo_action" href="http://stackoverflow.com/questions/tagged/pwabuilder" target="_blank">
+          <img class="l-footer-logo l-footer-logo--small" src="~/assets/images/logo_stackoverflow.svg">
+        </a>
+      </div>
+      <div class="pure-u-1 l-footer-copy">
+        {{ $t('footer.copyright') }}<span class="divider">|</span> <a href="https://go.microsoft.com/fwlink/?LinkId=521839" target="_blank" class="l-footer-action">{{ $t('footer.privacy') }}</a>
+      </div>
+    </footer>-->
+  </div>
+</template>
+
+<script lang="ts">
 import Vue from "vue";
 import Component from "nuxt-class-component";
 
@@ -47,7 +100,6 @@ export default class extends Vue {
 @import "~assets/scss/base/variables";
 
 #baseContainer {
-
   #scrollTarget {
     width: 100%;
     height: 1em;
@@ -56,7 +108,6 @@ export default class extends Vue {
     pointer-events: none;
   }
 }
-
 
 header {
   display: none !important;
@@ -72,26 +123,43 @@ header {
 
 #gdprDiv {
   align-items: center;
-  background: #f2f2f2;
   display: flex;
   flex-direction: row;
-  font-size: 14px;
-  justify-content: space-around;
+  font-size: 12px;
   left: 0;
   right: 0;
   padding-left: 24px;
   padding-right: 24px;
+  background: #9337d8;
+  color: white;
+  justify-content: center;
+  height: 52px;
+
+  a {
+    color: white;
+    font-weight: bold;
+    text-decoration: underline;
+  }
 
   div {
     display: flex;
     justify-content: space-between;
-    width: 8em;
+    align-items: center;
+    width: 60em;
+
+    p {
+      font-size: 12px;
+    }
   }
 
   #closeButton {
     border: none;
     background: none;
-    color: #1FC2C8;
+    position: relative;
+    left: 11.6em;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
 
     i {
       font-style: normal;
@@ -118,54 +186,3 @@ header {
    
   }*/
 </style>
-
-<template>
-  <div id="baseContainer">
-    <div id="scrollTarget"></div>
-
-    <div class="modal-color"></div>
-    <h1 class="logoText">PWA Builder</h1>
-
-    <div v-if="seen" id="gdprDiv">
-      <p>This site uses cookies for analytics, personalized content and ads. By continuing to browse this site, you agree to this use.</p>
-
-      <div>
-        <a
-          href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
-        >Learn More</a>
-        
-        <button id="closeButton" aria-label="Close Button" @click="close()">
-          <i aria-hidden="true">✕</i>
-        </button>
-      </div>
-    </div>
-
-    <Toolbar/>
-
-    <div class="container">
-      <nuxt/>
-    </div>
-
-    <!--<footer class="l-footer pure-g is-small">
-      <div class="pure-u-1-2 pure-u-md-1-5">
-      </div>
-      <div class="pure-u-1-2 pure-u-md-1-5">
-     
-      </div>
-      <div class="l-footer-social pure-u-1 pure-u-md-3-5">
-        <a class="l-footer-logo_action" href="https://github.com/pwa-builder" target="_blank">
-          <img class="l-footer-logo" src="~/assets/images/logo_github.svg">
-        </a>
-        <a class="l-footer-logo_action" href="https://www.npmjs.com/package/pwabuilder" target="_blank">
-          <img class="l-footer-logo l-footer-logo--big" src="~/assets/images/logo_npm.svg">
-        </a>
-        <a class="l-footer-logo_action" href="http://stackoverflow.com/questions/tagged/pwabuilder" target="_blank">
-          <img class="l-footer-logo l-footer-logo--small" src="~/assets/images/logo_stackoverflow.svg">
-        </a>
-      </div>
-      <div class="pure-u-1 l-footer-copy">
-        {{ $t('footer.copyright') }}<span class="divider">|</span> <a href="https://go.microsoft.com/fwlink/?LinkId=521839" target="_blank" class="l-footer-action">{{ $t('footer.privacy') }}</a>
-      </div>
-    </footer>-->
-  </div>
-</template>
