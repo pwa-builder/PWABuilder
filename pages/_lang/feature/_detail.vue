@@ -195,14 +195,25 @@ export default class extends Vue {
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
 
+
+#docsMain #contentContainer img {
+  width: 100%;
+}
+
 .codeBlockHeader {
-  background: #e2e2e2;
+  background: #F0F0F0;
   display: flex;
   justify-content: flex-end;
   align-items: center;
   height: 54px;
   padding-right: 20px;
   border-radius: 4px 4px 0px 0px;
+}
+
+.codeBlockHeader p {
+  margin-left: 24px;
+  font-weight: bold;
+  font-size: 14px !important;
 }
 
 #docsMain #contentContainer p {
@@ -351,6 +362,7 @@ export default class extends Vue {
     padding: 24px;
     height: 190px;
     border-radiuS: 0px 0px 4px 4px;
+    margin-bottom: 2em;
   }
 
   #leftSide th {
