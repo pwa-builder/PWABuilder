@@ -4,8 +4,6 @@
 
     <div v-if="modalStatus" id="modalBackground"></div>
 
-    <!--<img id="featuresBG" src="~/assets/images/featureBG.svg">-->
-
     <section id="headerSection">
       <div>
         <h1 id="featurePageHeader">Extras</h1>
@@ -365,10 +363,7 @@ export default class extends Vue {
 }
 
 main {
-  background-image: url("~/assets/images/featureBG.svg");
-  background-size: cover;
-  background-position: center;
-  background-color: #f0f0f0;
+  @include backgroundRightPoint(80%, 50vh);
   height: 100vh;
 }
 
