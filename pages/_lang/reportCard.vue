@@ -251,6 +251,10 @@ export default class extends Vue {
   .backgroundIndex {
     @include backgroundLeftPoint(30%, 80vh);
   }
+
+  .backgroundReport {
+    @include backgroundRightPoint(80%, 80vh);
+  }
 }
 
 @media (max-height: 780px) {
@@ -264,6 +268,10 @@ export default class extends Vue {
 
   .backgroundIndex {
     @include backgroundLeftPoint(30%, 90vh);
+  }
+
+  .backgroundReport {
+    @include backgroundRightPoint(80%, 88vh);
   }
 }
 
@@ -440,14 +448,26 @@ h2:after {
   grid-column: 1 / span 5;
 
   color: white;
+
+  @media (max-width: 900px) {
+    grid-column: 1 / span 12;
+  }
 }
 
 .scoreCard {
   grid-column: span 4;
+
+  @media (max-width: 900px) {
+    grid-column: 1 / span 12;
+  }
 }
 
 .firstCard {
   grid-column: 1 / span 4;
+
+  @media (max-width: 900px) {
+    grid-column: 1 / span 12;
+  }
 }
 
 #toolkitSection {
@@ -479,10 +499,18 @@ h2:after {
   .card {
     height: 252px;
   }
+
+  @media (max-width: 900px) {
+    grid-column: span 6;
+  }
 }
 
 .firstFeature {
   grid-column: 1 / span 3;
+
+  @media (max-width: 900px) {
+    grid-column: 1 / span 6;
+  }
 }
 
 #moreFeaturesBlock {
