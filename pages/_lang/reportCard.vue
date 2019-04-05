@@ -243,6 +243,30 @@ export default class extends Vue {
   @include backgroundRightPoint(80%, 50vh);
 }
 
+@media (min-width: 1336px) {
+  #hubContainer {
+    height: 128vh;
+  }  
+
+  .backgroundIndex {
+    @include backgroundLeftPoint(30%, 80vh);
+  }
+}
+
+@media (max-height: 780px) {
+  #hubContainer {
+    height: 162vh;
+  }
+
+  #inputSection {
+    grid-template-rows: 80% 20%;
+  }
+
+  .backgroundIndex {
+    @include backgroundLeftPoint(30%, 90vh);
+  }
+}
+
 #bottomWrapper {
   color: white;
 }
@@ -285,7 +309,7 @@ h2:after {
   color: white;
 
   display: grid;
-  grid-template-rows: 65% 35%;
+  grid-template-rows: 70% 30%;
 
   #topHalfHome {
     grid-row: 1;
@@ -484,22 +508,6 @@ h2:after {
   color: red;
   margin-top: 1em;
   margin-left: 1em;
-}
-
-@media (min-width: 1400px) {
-/*   #hubContainer {
-    height: 128vh;
-  }
- */
-  #toolkitSection {
-    margin-top: 70px;
-  }
-}
-
-@media (max-height: 780px) {
-/*   #hubContainer {
-    height: 162vh;
-  } */
 }
 
 @keyframes slideup {
