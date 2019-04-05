@@ -28,22 +28,24 @@
         <nuxt-link to="/features">Security</nuxt-link>
       </div>
 
-      <div id="urlTested">
-        <a :href="url">
-          <span>
-            URL Tested
-            <i class="fas fa-external-link-alt"></i>
-          </span>
-          {{url.replace('http://','').replace('https://','').split(/[/?#]/)[0]}}
-        </a>
-      </div>
+      <div id="scoreZone">
+        <div id="urlTested">
+          <a :href="url">
+            <span>
+              URL Tested
+              <i class="fas fa-external-link-alt"></i>
+            </span>
+            {{url.replace('http://','').replace('https://','').split(/[/?#]/)[0]}}
+          </a>
+        </div>
 
-      <div id="overallScore">
-        {{calcedScore}}
-        <span>Your Score</span>
-      </div>
+        <div id="overallScore">
+          {{calcedScore}}
+          <span>Your Score</span>
+        </div>
 
-      <nuxt-link id="publishButton" to="/publish">Build My PWA</nuxt-link>
+        <nuxt-link id="publishButton" to="/publish">Build My PWA</nuxt-link>
+      </div>
     </div>
   </div>
 </template>
@@ -234,10 +236,18 @@ header {
     }
   }
 
-  #urlTested {
-    grid-column: 8 / span 2;
+  #scoreZone {
+    grid-column: 8 / span 5;
 
+    display: flex;
+    justify-self: right;
+    align-items: center;
+  }
+
+  #urlTested {
     color: #c5c5c5;
+
+    padding-right: 32px;
     
     span {
       font-weight: bold;
@@ -258,14 +268,13 @@ header {
   }
 
   #overallScore {
-    grid-column: 10;
-
     display: flex;
     flex-direction: column;
     align-items: center;
     font-size: 28px;
     font-weight: bold;
     color: white;
+    padding-right: 32px;
 
     span {
       font-size: 10px;
@@ -273,7 +282,6 @@ header {
   }
 
   #publishButton {
-    grid-column: 11 / span 2;
     justify-self: right;
 
     height: 42px;
