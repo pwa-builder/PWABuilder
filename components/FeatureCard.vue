@@ -53,7 +53,6 @@ export default class extends Vue {
   flex-direction: column;
   padding: 20px;
   background: white;
-  width: 24%;
   border-radius: 4px;
 
   h4 {
@@ -77,8 +76,6 @@ export default class extends Vue {
     font-size: 14px;
     line-height: 20px;
     overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
   }
 
   .textWrap {

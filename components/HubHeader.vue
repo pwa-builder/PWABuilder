@@ -28,7 +28,7 @@
         <nuxt-link to="/features">Security</nuxt-link>
       </div>
 
-      <div id="subHeaderExtras">
+      <div id="scoreZone">
         <div id="urlTested">
           <a :href="url">
             <span>
@@ -151,47 +151,40 @@ export default class extends Vue {
   color: white !important;
 }
 
-#publishButton {
-  height: 42px;
-  width: 120px;
-  border-radius: 22px;
-  border: none;
-  background: grey;
-  font-weight: bold;
-  font-size: 14px;
-  padding-top: 9px;
-  padding-bottom: 11px;
-  color: white;
-  background: $color-button-primary-purple-variant;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .smaller-header {
   background-color: black;
   height: 52px;
 }
 
 header {
-  background-color: rgba(0, 0, 0, 0.7);  
+  background-color: rgba(0, 0, 0, 0.2);  
   height: 104px;
 
   transition: background-color 500ms, height 500ms ease-in-out;
 
-  display: flex;
+  @include grid;
+  grid-template-rows: auto;
+
   align-items: center;
-  padding-left: 160px;
-  padding-right: 160px;
   justify-content: space-between;
   color: white;
   z-index: 1;
 
+  #logoLink {
+    grid-column: 1 / span 2;
+
+    border: none;
+  }
+
+  /* TODO: Can some of this be shared with tabsBar below at all? */
   #mainTabsBar {
+    grid-column: 3 / span 8;
+    justify-self: center;
+    width: 14em; /* TODO: Adjust to put padding between elements instead. */
+
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 14em;
     font-weight: bold;
     text-transform: uppercase;
     font-size: 14px;
@@ -203,24 +196,20 @@ header {
   }
 
   #icons {
-    width: 4em;
+    grid-column: 11 / span 2;    
+    width: 4em; /* TODO: Padding between instead of width? */
+
     display: flex;
     justify-content: space-around;
+    justify-self: right;
     align-items: center;
-    margin-right: 10px;
-  }
-}
-
-@media (max-width: 1336px) {
-  header {
-    padding-left: 35px;
-    padding-right: 35px;
   }
 }
 
 #subHeader {
+  @include grid;
+
   background: rgba(60, 60, 60, 0.8);
-  display: flex;
   align-items: center;
   justify-content: space-between;
   height: 52px;
@@ -229,13 +218,12 @@ header {
   animation-iteration-count: 1;
   z-index: -1;
   width: 100%;
-  padding-left: 160px;
-  padding-right: 160px;
-  z-index: -1;
 
   #tabsBar {
+    grid-column: 1 / span 7;
+    width: 26em; /* TODO: Adjust to put padding between elements instead. */
+
     display: flex;
-    width: 26em;
     justify-content: space-between;
     padding-top: 10px;
     padding-bottom: 10px;
@@ -248,47 +236,69 @@ header {
     }
   }
 
-  #subHeaderExtras {
-    display: flex;
-    align-items: center;
-    width: 20em;
-    justify-content: space-between;
-    margin-left: 9em;
+  #scoreZone {
+    grid-column: 8 / span 5;
 
-    #overallScore {
+    display: flex;
+    justify-self: right;
+    align-items: center;
+  }
+
+  #urlTested {
+    color: #c5c5c5;
+
+    padding-right: 32px;
+    
+    span {
+      font-weight: bold;
+      font-size: 12px;
+      color: #c5c5c5;
+    }
+
+    a {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 12px;
+      font-weight: normal;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      font-size: 28px;
-      font-weight: bold;
-      color: white;
-
-      span {
-        font-size: 10px;
-      }
     }
   }
-}
 
-#urlTested {
-  color: #c5c5c5;
-}
+  #overallScore {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: white;
+    padding-right: 32px;
 
-#urlTested span {
-  font-weight: bold;
-  font-size: 12px;
-  color: #c5c5c5;
-}
+    span {
+      font-size: 10px;
+    }
+  }
 
-#urlTested a {
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 12px;
-  font-weight: normal;
-  display: flex;
-  flex-direction: column;
+  #publishButton {
+    justify-self: right;
+
+    height: 42px;
+    width: 120px;
+    border-radius: 22px;
+    border: none;
+    background: grey;
+    font-weight: bold;
+    font-size: 14px;
+    padding-top: 9px;
+    padding-bottom: 11px;
+    color: white;
+    background: $color-button-primary-purple-variant;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 .logo-size {
@@ -301,10 +311,6 @@ header {
 .smaller-logo {
   height: 32px;
   width: 86px;  
-}
-
-header #logoLink {
-  border: none;
 }
 
 a {
