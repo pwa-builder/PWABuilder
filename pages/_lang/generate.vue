@@ -284,8 +284,8 @@
         v-on:modalClosed="modalClosed()"
         :title="$t('generate.upload_title')"
         ref="iconsModal"
-        @submit="onSubmitIconModal"
-        @cancel="onCancelIconModal"
+        v-on:modalSubmit="onSubmitIconModal"
+        v-on:cancel="onCancelIconModal"
       >
         <div class="l-generator-box image-upload">
           <span class="l-generator-label">{{ $t("generate.upload_image") }}</span>
