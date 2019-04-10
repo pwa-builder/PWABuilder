@@ -350,7 +350,7 @@ export default class extends Vue {
   bottom: 0;
   left: 0;
   right: 0;
-  background: grey;
+  background: lightgrey;
   opacity: 0.7;
   z-index: 98999;
   animation-name: opened;
@@ -359,6 +359,10 @@ export default class extends Vue {
 }
 
 #featureListBlock .card {
+  margin: 10px;
+}
+
+#fakeCardBlock .fakeCard {
   margin: 10px;
 }
 
@@ -463,14 +467,16 @@ header {
 }
 
 @media (max-width: 1336px) {
-  #featureListBlock {
+  #featureListBlock,
+  #fakeCardBlock {
     padding-left: 35px;
     padding-right: 35px;
   }
 }
 
 @media (max-width: 430px) {
-  #featureListBlock {
+  #featureListBlock,
+  #fakeCardBlock {
     padding-left: 16px;
     padding-right: 16px;
     display: block;
