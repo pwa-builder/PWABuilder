@@ -9,7 +9,10 @@
         <div id="topHalfHome">
           <h2>Enter a URL to test your PWA</h2>
 
-          <form @submit.prevent="checkUrlAndGenerate" @keydown.enter.prevent="checkUrlAndGenerate">
+          <div id="urlErr">{{ $t(this.error) }}</div>
+
+          <form @submit.prevent="checkUrlAndGenerate" @keydown.enter.prevent="checkUrlAndGenerate"
+                :class="{ 'formErr': error != null }">
             <input
               id="getStartedInput"
               :aria-label="$t('generator.url')"
@@ -19,16 +22,16 @@
               ref="url"
               v-model="url$"
               autofocus
+              autocomplete="off"
             >
 
             <button
               @click=" $awa( { 'referrerUri': 'https://www.pwabuilder.com/build/reportCard' })"
+              :class="{ 'btnErr': error != null }"
               id="getStartedButton"
             >
-              <div>{{ $t('generator.start') }}</div>
+              <div :class="{ 'btnErrText': error != null }">{{ $t('generator.start') }}</div>
             </button>
-
-            <div id="urlErr">{{this.error}}</div>
           </form>
 
           <div id="backToOld">
@@ -324,6 +327,10 @@ h2:after {
 
     form {
       display: flex;
+
+      &.formErr {
+        animation: shake 0.2s ease-in-out 0s 2;
+      }
     }
 
     input {
@@ -533,9 +540,29 @@ h2:after {
 }
 
 #urlErr {
-  color: red;
-  margin-top: 1em;
-  margin-left: 1em;
+  height: 1em;
+  font-weight: 500;
+  padding-top: 1em;
+}
+
+.btnErr {
+  width: 42px !important;
+  padding: 0px !important;
+}
+
+.btnErrText {
+  visibility: hidden;
+
+  &:after {
+    content: '!';
+    color: red;
+    font-weight: bold;
+    display: block;
+    position: relative;
+    visibility: visible;
+    top: -11px;
+    left: 1px;
+  }
 }
 
 @keyframes slideup {
@@ -548,6 +575,13 @@ h2:after {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes shake {
+  0% { margin-left: 0rem; }
+  25% { margin-left: 0.5rem; }
+  75% { margin-left: -0.5rem; }
+  100% { margin-left: 0rem; }
 }
 </style>
 
