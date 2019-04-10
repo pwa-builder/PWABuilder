@@ -380,7 +380,7 @@ h2:after {
     #backToOld {
       font-size: 12px;
       line-height: 18px;
-      margin-top: 20px;
+      margin-top: 12px;
       margin-bottom: 0px;
 
       a {
