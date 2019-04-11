@@ -1,7 +1,48 @@
 <html>
-  <head></head>
 
-  <body>
-    <h1>This app requires an active internet connection to function.</h1>
-  </body>
+<head>
+
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      font-family: sans-serif;
+    }
+
+    h1 {
+      margin: 0;
+      padding: 0;
+    }
+
+    button {
+      width: 200px;
+      font-weight: bold;
+      font-size: 18px;
+      border: none;
+      border-radius: 22px;
+      padding-top: 9px;
+      padding-bottom: 11px;
+      background-image: linear-gradient(to right, #7644c2, #11999e);
+      color: white;
+      height: 44px;
+      margin-top: 2em;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>PWABuilder requires an active internet connection to function.</h1>
+
+  <button onclick="reload()">Reload</button>
+
+  <script>
+    function reload() {
+      console.log("reloading");
+      location.reload();
+    }
+  </script>
+</body>
+
 </html>
