@@ -322,7 +322,6 @@ import RelatedApplications from "~/components/RelatedApplications.vue";
 import CustomMembers from "~/components/CustomMembers.vue";
 import StartOver from "~/components/StartOver.vue";
 import ColorSelector from "~/components/ColorSelector.vue";
-import GoodPWA from "~/components/GoodPWA.vue";
 import HubHeader from "~/components/HubHeader.vue";
 
 import * as generator from "~/store/modules/generator";
@@ -340,7 +339,6 @@ const GeneratorGetters = namespace(generator.name, Getter);
     CodeViewer,
     StartOver,
     Modal,
-    GoodPWA,
     HubHeader
   }
 })

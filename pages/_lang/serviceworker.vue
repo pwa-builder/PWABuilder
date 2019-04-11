@@ -89,7 +89,6 @@ import GeneratorMenu from "~/components/GeneratorMenu.vue";
 import Loading from "~/components/Loading.vue";
 import CodeViewer from "~/components/CodeViewer.vue";
 import StartOver from "~/components/StartOver.vue";
-import GoodPWA from "~/components/GoodPWA.vue";
 import Modal from "~/components/Modal.vue";
 import HubHeader from "~/components/HubHeader.vue";
 
@@ -105,7 +104,6 @@ const ServiceworkerAction = namespace(serviceworker.name, Action);
     Loading,
     StartOver,
     CodeViewer,
-    GoodPWA,
     Modal,
     HubHeader
   }
