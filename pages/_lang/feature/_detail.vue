@@ -76,6 +76,10 @@ export default class extends Vue {
     {
       realName: "graphCreateActivity",
       mappedName: "Create MSFT Graph Activity API"
+    },
+    {
+      realName: "share",
+      mappedName: "Create Share"
     }
   ];
 
@@ -85,11 +89,14 @@ export default class extends Vue {
   docsContent: string | null = null;
 
   async mounted() {
-    console.log(this.$route.params.featureDetail);
+    console.log('route param', this.$route.params.featureDetail);
 
     this.snippitMap.forEach(async snippit => {
+      console.log('snippit.mappedName', snippit.mappedName)
       if (snippit.mappedName === this.$route.params.featureDetail) {
         this.currentSample = snippit;
+
+        console.log(snippit);
 
         const response = await fetch(
           `${this.baseURL}/${snippit.realName}/${snippit.realName}.md`
