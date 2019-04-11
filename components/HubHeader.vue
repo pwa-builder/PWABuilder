@@ -64,7 +64,7 @@ const GeneratorState = namespace(generator.name, State);
 export default class extends Vue {
   @Prop({ default: false }) expanded: boolean;
   @Prop({}) showSubHeader: string;
-  @Prop({ default: 0 }) score: number | string;
+  @Prop({ default: 0 }) score: number;
 
   @GeneratorState url: string;
 
@@ -78,44 +78,12 @@ export default class extends Vue {
       this.localScore = parseInt(storedScore);
     }
 
-    console.log(this.score);
-
-    if (this.score < 100 || this.localScore < 100) {
-      this.calcedScore = 60;
-    } else if (
-      (this.score > 100 && this.score < 150) ||
-      (this.localScore > 100 && this.localScore < 150)
-    ) {
-      this.calcedScore = 80;
-    } else if (
-      (this.score > 150 && this.score < 200) ||
-      (this.localScore > 150 && this.localScore < 200)
-    ) {
-      this.calcedScore = 90;
-    } else if (this.score === 200 || this.localScore === 200) {
-      this.calcedScore = 100;
-    }
+    this.calcedScore = this.score;
   }
 
   @Watch("score")
   onScoreChanged() {
-    console.log("score changed", this.score);
-
-    if (this.score < 100 || this.localScore < 100) {
-      this.calcedScore = 60;
-    } else if (
-      (this.score > 100 && this.score < 150) ||
-      (this.localScore > 100 && this.localScore < 150)
-    ) {
-      this.calcedScore = 80;
-    } else if (
-      (this.score > 150 && this.score < 200) ||
-      (this.localScore > 150 && this.localScore < 200)
-    ) {
-      this.calcedScore = 90;
-    } else if (this.score === 200 || this.localScore === 200) {
-      this.calcedScore = 100;
-    }
+    this.calcedScore = this.score;
   }
 
   updated() {

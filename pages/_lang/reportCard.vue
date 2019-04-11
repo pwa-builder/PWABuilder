@@ -215,11 +215,13 @@ export default class extends Vue {
   public securityTestDone(ev) {
     console.log("testDone", ev);
     this.overallScore = this.overallScore + ev.score;
+    console.log(this.overallScore);
   }
 
   public manifestTestDone(ev) {
     console.log("manifest test done", ev);
     this.overallScore = this.overallScore + ev.score;
+    console.log(this.overallScore);
   }
 
   public swTestDone(ev) {
