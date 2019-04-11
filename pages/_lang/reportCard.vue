@@ -34,17 +34,6 @@
             </button>
           </form>
 
-          <div id="backToOld">
-            Having issues with the new version of PWABuilder? Use the previous version
-            <a
-              href="https://manifold-site-prod.azurewebsites.net/"
-            >here</a>
-            and consider opening an issue on our
-            <a
-              href="https://github.com/pwa-builder/PWABuilder"
-            >Github</a>.
-            Thanks!
-          </div>
         </div>
 
         <div id="bottomHalfHome">
@@ -377,20 +366,6 @@ h2:after {
       align-items: center;      
       width: 88px;
       justify-content: center;
-    }
-
-    #backToOld {
-      font-size: 12px;
-      line-height: 18px;
-      margin-top: 12px;
-      margin-bottom: 0px;
-
-      a {
-        color: inherit;
-        box-shadow: none;
-        color: inherit;
-        text-decoration: underline;
-      }
     }
   }
 
