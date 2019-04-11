@@ -9,7 +9,7 @@
     "theme_color": "#000000",
     "description": "All the tools you need to build and deploy your Progressive Web Apps.",
     "orientation": "any",
-    "background_color": "#11999E",
+    "background_color": "#000000",
     "related_applications": [],
     "prefer_related_applications": false,
     "icons": [
