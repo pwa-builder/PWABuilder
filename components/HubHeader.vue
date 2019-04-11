@@ -1,11 +1,14 @@
 <template>
   <div>
     <header :class="{ 'smaller-header': !expanded }">
-      <nuxt-link id="logoLink" to="/">
-        <img id="logo" src="~/assets/images/new-logo.svg" alt="App Logo"
-             class="logo-size"
-             :class="{ 'smaller-logo': !expanded }">
-      </nuxt-link>
+      <img
+        id="logo"
+        src="~/assets/images/new-logo.svg"
+        alt="App Logo"
+        class="logo-size"
+        :class="{ 'smaller-logo': !expanded }"
+        @click="reset()"
+      >
 
       <div id="mainTabsBar">
         <nuxt-link to="/">My Hub</nuxt-link>
@@ -107,6 +110,16 @@ export default class extends Vue {
       }
     }
   }
+
+  reset() {
+    console.log('here');
+    if (location.pathname === "/") {
+      this.$emit("reset");
+    }
+    else {
+      history.back();
+    }
+  }
 }
 </script>
 
@@ -125,7 +138,7 @@ export default class extends Vue {
 }
 
 header {
-  background-color: rgba(0, 0, 0, 0.2);  
+  background-color: rgba(0, 0, 0, 0.2);
   height: 104px;
 
   transition: background-color 500ms, height 500ms ease-in-out;
@@ -164,7 +177,7 @@ header {
   }
 
   #icons {
-    grid-column: 11 / span 2;    
+    grid-column: 11 / span 2;
     width: 4em; /* TODO: Padding between instead of width? */
 
     display: flex;
@@ -216,7 +229,7 @@ header {
     color: #c5c5c5;
 
     padding-right: 32px;
-    
+
     span {
       font-weight: bold;
       font-size: 12px;
@@ -278,7 +291,7 @@ header {
 
 .smaller-logo {
   height: 32px;
-  width: 86px;  
+  width: 86px;
 }
 
 a {

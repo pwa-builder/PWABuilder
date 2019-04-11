@@ -2,7 +2,7 @@
 <template>
   <div id="hubContainer"
        :class="{ 'backgroundReport': gotURL, 'backgroundIndex': !gotURL }">
-    <HubHeader :score="overallScore" :showSubHeader="gotURL" :expanded="!gotURL"></HubHeader>
+    <HubHeader v-on:reset="reset()" :score="overallScore" :showSubHeader="gotURL" :expanded="!gotURL"></HubHeader>
 
     <main>
       <div v-if="!gotURL" id="inputSection">
@@ -217,6 +217,13 @@ export default class extends Vue {
     console.log("sw test is done", ev);
     this.overallScore = this.overallScore + ev.score;
     console.log(this.overallScore);
+  }
+
+  public reset() {
+    console.log('resetting');
+    this.gotURL = false;
+    this.overallScore = 0;
+    this.topSamples = [];
   }
 }
 </script>
