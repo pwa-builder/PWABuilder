@@ -39,8 +39,13 @@
 
   <script>
     function reload() {
-      console.log("reloading");
-      location.reload();
+      if (navigator.onLine) {
+        console.log("reloading");
+        location.reload();
+      }
+      else {
+        window.alert("you are still offline")
+      }
     }
   </script>
 </body>
