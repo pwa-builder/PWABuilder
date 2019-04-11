@@ -568,10 +568,11 @@ export default class extends Vue {
   }
 
   private async lookAtSW() {
-    const savedData = sessionStorage.getItem("serviceWorkerData");
+    const savedData = sessionStorage.getItem(this.url);
     const savedScore = sessionStorage.getItem("swScore");
 
     if (savedData) {
+      console.log('not making a request');
       let cleanedData = JSON.parse(savedData);
       this.serviceWorkerData = cleanedData;
 
@@ -589,10 +590,12 @@ export default class extends Vue {
 
       this.serviceWorkerData = data;
 
-      sessionStorage.setItem(
-        "serviceWorkerData",
-        JSON.stringify(this.serviceWorkerData)
-      );
+      if (this.serviceWorkerData !== false) {
+        sessionStorage.setItem(
+          this.url,
+          JSON.stringify(this.serviceWorkerData)
+        );
+      }
 
       console.log("this.serviceWorkerData", this.serviceWorkerData);
       console.log(this.serviceWorkerData);
@@ -642,7 +645,7 @@ export default class extends Vue {
           this.swScore = this.swScore + 5;
         }
 
-        sessionStorage.setItem('swScore', JSON.stringify(this.swScore));
+        sessionStorage.setItem("swScore", JSON.stringify(this.swScore));
 
         this.$emit("serviceWorkerTestDone", { score: this.swScore });
         return;
