@@ -36,6 +36,7 @@ import * as windowsStore from "~/store/modules/windows";
 
 import * as marked from "marked";
 import Clipboard from "clipboard";
+import hljs from 'highlight.js';
 
 const WindowsState = namespace(windowsStore.name, State);
 const WindowsAction = namespace(windowsStore.name, Action);
@@ -103,7 +104,11 @@ export default class extends Vue {
         );
         const docsFile = await response.text();
 
-        this.docsContent = marked(docsFile);
+        this.docsContent = marked(docsFile, {
+          highlight: function(docsFile) {
+                      return require('highlight.js').highlightAuto(docsFile).value;
+                    }
+        });
         console.log(docsFile);
       }
     });
@@ -201,6 +206,7 @@ export default class extends Vue {
 <style lang="scss">
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
+@import "~assets/scss/vendor/highlightjs2";
 
 
 #docsMain #contentContainer img {
@@ -212,7 +218,7 @@ export default class extends Vue {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  height: 54px;
+  height: 44px;
   padding-right: 20px;
   border-radius: 4px 4px 0px 0px;
 }
@@ -304,7 +310,14 @@ export default class extends Vue {
 
 .codeBlock code {
   font-size: 13px;
+  white-space: pre-wrap;
 }
+
+.codeBlock pre {
+  margin: 0;
+}
+
+
 
 #docsMain {
   background: white;
@@ -366,9 +379,8 @@ export default class extends Vue {
   .codeBlock {
     overflow: auto;
     background: #f0f0f0;
-    padding: 24px;
-    height: 190px;
-    border-radiuS: 0px 0px 4px 4px;
+    padding: 0px 24px 10px;
+    border-radius: 0px 0px 4px 4px;
     margin-bottom: 2em;
   }
 

@@ -22,6 +22,7 @@
     "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
     "clipboard": "^2.0.1",
+    "highlight.js": "^9.15.6",
     "manup": "^1.0.1",
     "marked": "0.6.1",
     "monaco-editor": "^0.14.3",
