@@ -288,6 +288,10 @@ header {
   transition: height 500ms ease-in-out, width 500ms ease-in-out;
 }
 
+#logo:hover {
+  cursor: pointer;
+}
+
 .smaller-logo {
   height: 32px;
   width: 86px;
