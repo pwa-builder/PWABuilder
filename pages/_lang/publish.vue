@@ -448,6 +448,10 @@ export default class extends Vue {
           display: flex;
           justify-content: center;
         }
+
+        #downloadAllButton:hover {
+          cursor: pointer;
+        }
       }
     }
   }

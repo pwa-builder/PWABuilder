@@ -388,6 +388,11 @@ export default class extends Vue {
     text-align: start;
   }
 
+  #leftSide a {
+    font-weight: bold;
+    text-decoration: underline;
+  }
+
   #leftSide > table > tbody > tr:nth-child(1) > td:nth-child(1),
   #leftSide > table > tbody > tr:nth-child(2) > td:nth-child(1) {
     font-size: 12px;

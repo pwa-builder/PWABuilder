@@ -16,7 +16,7 @@
       </div>
 
       <div id="icons">
-        <a href="https://github.com/pwa-builder" target="_blank">
+        <a href="https://github.com/pwa-builder" target="_blank" rel="noopener noreferrer">
           <i class="fab fa-github"></i>
         </a>
         <i class="fab fa-twitter"></i>
@@ -32,7 +32,7 @@
 
       <div id="scoreZone">
         <div id="urlTested">
-          <a :href="url">
+          <a target="_blank" rel="noopener noreferrer" :href="url">
             <span>
               URL Tested
               <i class="fas fa-external-link-alt"></i>
