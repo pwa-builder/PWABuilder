@@ -28,7 +28,6 @@
         <nuxt-link to="/">Overview</nuxt-link>
         <nuxt-link to="/generate">Manifest</nuxt-link>
         <nuxt-link to="/serviceworker">Service Worker</nuxt-link>
-        <nuxt-link to="/features">Security</nuxt-link>
       </div>
 
       <div id="scoreZone">
@@ -202,7 +201,7 @@ header {
 
   #tabsBar {
     grid-column: 1 / span 7;
-    width: 26em; /* TODO: Adjust to put padding between elements instead. */
+    width: 24em; /* TODO: Adjust to put padding between elements instead. */
 
     display: flex;
     justify-content: space-between;
