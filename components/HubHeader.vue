@@ -192,7 +192,7 @@ header {
   background: rgba(60, 60, 60, 0.8);
   align-items: center;
   justify-content: space-between;
-  height: 52px;
+  height: 56px;
   animation-name: slidedown;
   animation-duration: 300ms;
   animation-iteration-count: 1;
