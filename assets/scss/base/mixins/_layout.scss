@@ -3,10 +3,11 @@
   grid-template-columns: repeat(12, 1fr);
   column-gap: 10px;
 
-  padding: 0 7.5%;
+  padding: 0 52px;
 
   @media screen and (min-width: 1336px) {
-    padding: 0 calc((100% - 1130px) / 2);
+    padding-left: 154px;
+    padding-right: 154px;
   }
 }
 
