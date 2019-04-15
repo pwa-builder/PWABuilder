@@ -58,6 +58,7 @@ export default class extends Vue {
   h4 {
     font-size: 14px;
     font-weight: bold;
+    width: 80%;
   }
 
   @media (max-width: 1336px) {
