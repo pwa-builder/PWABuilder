@@ -23,7 +23,7 @@
       </div>
     </header>
 
-    <div v-if="showSubHeader" id="subHeader">
+    <div class="has-acrylic-80 is-dark has-reveal-background" v-if="showSubHeader" id="subHeader">
       <div id="tabsBar">
         <nuxt-link to="/">Overview</nuxt-link>
         <nuxt-link to="/generate">Manifest</nuxt-link>
@@ -189,7 +189,7 @@ header {
 #subHeader {
   @include grid;
 
-  background: rgba(60, 60, 60, 0.8);
+  // background: rgba(60, 60, 60, 0.8);
   align-items: center;
   justify-content: space-between;
   height: 56px;
