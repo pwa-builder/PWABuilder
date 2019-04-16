@@ -85,7 +85,7 @@
       ></ScoreCard>
 
       <div id="toolkitSection" v-if="topSamples.length > 0">
-        <h2>Add app features...</h2>
+        <h2>Add features to my PWA...</h2>
       </div>
 
       <FeatureCard
