@@ -88,7 +88,7 @@ export default class extends Vue {
     },
     {
       realName: "clipboard",
-      mappedName: "Copy To Clipboard"
+      mappedName: "Copy to Clipboard"
     }
   ];
 
