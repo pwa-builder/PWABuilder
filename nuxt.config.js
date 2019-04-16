@@ -23,7 +23,8 @@ module.exports = {
 
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      // { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'icon', type: 'image/png', href: 'Images/favicon-32x32.png'},
       { rel: 'manifest', href: '/manifest.webmanifest' },
       { rel: 'preconnect', href: 'https://web.vortex.data.microsoft.com' },
       { rel: 'apple-touch-icon', href: '/Images/assets/icons/apple-icon-06144a2a7b5101d447ecb4832502e73e.png' },
