@@ -162,7 +162,7 @@ export default class extends Vue {
   async mounted() {
     console.log(this.samples.length);
     await this.getSamples();
-    console.log(this.samples);
+    console.log("samples", this.samples);
 
     const score = sessionStorage.getItem("overallGrade");
     console.log(score);

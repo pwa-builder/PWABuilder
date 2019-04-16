@@ -81,6 +81,14 @@ export default class extends Vue {
     {
       realName: "share",
       mappedName: "Create Share"
+    },
+    {
+      realName: "geolocation",
+      mappedName: "Use Geolocation"
+    },
+    {
+      realName: "clipboard",
+      mappedName: "Copy To Clipboard"
     }
   ];
 

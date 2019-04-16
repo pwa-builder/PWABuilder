@@ -52,6 +52,17 @@ export const actions: Actions<State, RootState> = {
           
                 let results = new Array<Sample>();
 
+                results.push(
+                  ({
+                    title: "Use Geolocation",
+                    description: "A simple script that uses the Gelocation API to allow your app to ask for the users current location"
+                  } as any),
+                  ({
+                    title: "Copy to Clipboard",
+                    description: "A simple script that uses the Clipboard API to allow your app to copy text to the users clipboard"
+                  } as any)
+                );
+
                 if (res.Sources) {
                   for (let s = 0; s < res.Sources.length; s++) {
                     let source = res.Sources[s];
