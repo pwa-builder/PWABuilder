@@ -469,7 +469,7 @@ main {
     flex-direction: column;
 
     #platformsListContainer {
-      padding-top: 6.7em;
+      padding-top: 4em;
       padding-right: 159px;
       color: white;
 
