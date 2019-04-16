@@ -323,6 +323,11 @@ export default class extends Vue {
   }
 }
 
+main {
+  @include backgroundRightPoint(80%, 25vh);
+  height: 100vh;
+}
+
 #modalBackground {
   position: fixed;
   top: 0;
@@ -375,10 +380,10 @@ export default class extends Vue {
   display: flex;
   justify-content: space-around;
   height: 100vh;
-  background-image: url("~/assets/images/bg_publish.svg");
+  /*background-image: url("~/assets/images/bg_publish.svg");
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
+  background-repeat: no-repeat;*/
 
   #leftSide {
     height: 100%;
@@ -411,6 +416,7 @@ export default class extends Vue {
       display: flex;
       flex-direction: column;
       align-items: center;
+      color: white;
 
       h2 {
         font-size: 36px;
@@ -465,6 +471,7 @@ export default class extends Vue {
     #platformsListContainer {
       padding-top: 6.7em;
       padding-right: 159px;
+      color: white;
 
       ul {
         list-style: none;
@@ -506,10 +513,11 @@ export default class extends Vue {
               padding-left: 11px;
               padding-right: 11px;
               margin-top: 11px;
-              background: grey;
-              color: white;
+              background: white;
+              color: #9337d8;
               cursor: pointer;
-              width: 6.7em;
+              width: 7.7em;
+              height: 4em;
               display: flex;
               justify-content: center;
               align-items: center;
@@ -565,6 +573,12 @@ export default class extends Vue {
 @media (max-width: 1280px) {
   #sideBySide #leftSide #introContainer {
     padding-right: 9em;
+    color: white;
+    padding-left: 52px;
+  }
+
+  #sideBySide #rightSide #platformsListContainer {
+    padding-right: 52px;
   }
 }
 </style>
