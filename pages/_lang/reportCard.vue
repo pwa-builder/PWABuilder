@@ -1,365 +1,114 @@
 
 <template>
-  <main>
-    <div id="scoreSideBySide">
-      <nuxt-link to="/">
-        <header>
-          <img id="logo" src="~/assets/images/new-logo.svg" alt="App Logo">
-        </header>
-      </nuxt-link>
+  <div id="hubContainer"
+       :class="{ 'backgroundReport': gotURL, 'backgroundIndex': !gotURL }">
+    <HubHeader v-on:reset="reset()" :score="overallScore" :showSubHeader="gotURL" :expanded="!gotURL"></HubHeader>
 
-      <section id="headerSection">
-        <div class="mast">
-          <h1 id="reportCardHeader">How are you doing so far?</h1>
+    <main>
+      <div v-if="!gotURL" id="inputSection">
+        <div id="topHalfHome">
+          <h2>Enter a URL to test your PWA</h2>
 
-          <div id="urlTested">URL Tested:
-            <p>{{url}}</p>
-          </div>
+          <div id="urlErr">{{ $t(this.error) }}</div>
 
-          <p id="reportCardInfo">
-            We have taken a look at how well your website supports PWA features and provided simple tools to help you fill in the gaps.
-            When you’re ready, click “build my PWA” to finish up.
-          </p>
+          <form @submit.prevent="checkUrlAndGenerate" @keydown.enter.prevent="checkUrlAndGenerate"
+                :class="{ 'formErr': error != null }">
+            <input
+              id="getStartedInput"
+              :aria-label="$t('generator.url')"
+              :placeholder="$t('generator.placeholder_url')"
+              name="siteUrl"
+              type="text"
+              ref="url"
+              v-model="url$"
+              autofocus
+              autocomplete="off"
+            >
 
-          <div id="reportActionsBlock">
-            <button @click="rescan()" id="rescanButton">Rescan</button>
-            <nuxt-link id="publishButton" to="/publish">Build My PWA</nuxt-link>
-          </div>
+            <button
+              @click=" $awa( { 'referrerUri': 'https://www.pwabuilder.com/build/reportCard' })"
+              :class="{ 'btnErr': error != null }"
+              id="getStartedButton"
+            >
+              <div :class="{ 'btnErrText': error != null }">{{ $t('generator.start') }}</div>
+            </button>
+          </form>
+
         </div>
-      </section>
 
-      <section id="scoreSection">
-        <div id="scoreDiv">
-          <span id="gradeSpan">{{overallGrade}}</span>
-          <span id="overallSpan">{{gradeText}}</span>
+        <div id="bottomHalfHome">
+          <div id="expertModeBlock">
+            <button @click="skipCheckUrl()" id="expertModeButton">Expert Mode</button>
+            <p>Already have a PWA? Skip ahead!</p>
+          </div>
+
+          <footer>
+            <p>
+              PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
+              <a
+                href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
+              >Our Privacy Statement</a>
+            </p>
+          </footer>
         </div>
-      </section>
-    </div>
+      </div>
 
-    <div id="catsContainer">
-      <section id="cats">
-        <section class="catSection">
-          <div class="catHeader">
-            <h2>Manifest</h2>
+      <div v-if="gotURL" id="infoSection">
+        <h2>Hub</h2>
 
-            <span v-if="!manifestAnalyzing" class="score">
-              {{manifestScore}}
-              <span class="scoreSubText">out of 100</span>
-            </span>
-            
-            <span v-if="manifestAnalyzing" class="score">
-              <Loading active class="u-display-inline_block u-margin-left-sm"/>
-            </span>
-          </div>
+        <p>
+          We have taken a look at how well your website supports PWA features and provided simple tools to help you fill in the gaps.
+          When you’re ready, click “build my PWA” to finish up.
+        </p>
+      </div>
 
-          <ul v-if="manifest && !noManifest">
-            <li v-bind:class="{ good: manifest }">
-              <span>Web Manifest properly attached</span>
-              
-              <span v-if="manifest">
-                <i class="fas fa-check"></i>
-                <span>50 pts</span>
+      <ScoreCard
+        v-if="gotURL"
+        v-on:manifestTestDone="manifestTestDone($event)"
+        :url="url"
+        category="Manifest"
+        class="firstCard"
+      ></ScoreCard>
+      <ScoreCard
+        v-if="gotURL"
+        v-on:serviceWorkerTestDone="swTestDone($event)"
+        :url="url"
+        category="Service Worker"
+        class="scoreCard"
+      ></ScoreCard>
+      <ScoreCard
+        v-if="gotURL"
+        v-on:securityTestDone="securityTestDone($event)"
+        :url="url"
+        category="Security"
+        class="scoreCard"
+      ></ScoreCard>
 
-              </span>
-              <span v-if="!manifest">
-                <i class="fas fa-times"></i>
-                <span>0 pts</span>
-              </span>
-            </li>
-            <li v-bind:class="{ good: manifest && manifest.display }">
-              <span>Display property utilized</span>
-              
-              <span v-if="manifest && manifest.display">
-                <i class="fas fa-check"></i>
-                <span>10 pts</span>
-              </span>
-              <span v-if="manifest && !manifest.display">
-                <i class="fas fa-times"></i>
-                <span>0 pts</span>
-              </span>
-            </li>
-            <li v-bind:class="{ good: manifest && manifest.icons }">
-              <span>Lists icons for add to home screen</span>
-              
-              <span v-if="manifest && manifest.icons">
-                <i class="fas fa-check"></i>
-                <span>10 pts</span>
-              </span>
-              <span v-if="manifest && !manifest.icons">
-                <i class="fas fa-times"></i>
-                <span>0 pts</span>
-              </span>
-            </li>
-            <li v-bind:class="{ good: manifest && manifest.name }">
-              <span>Contains app_name property</span>
-              
-              <span v-if="manifest && manifest.name">
-                <i class="fas fa-check"></i>
-                <span>10 pts</span>
-              </span>
-              <span v-if="manifest && !manifest.name">
-                <i class="fas fa-times"></i>
-                <span>0 pts</span>
-              </span>
-            </li>
-            <li v-bind:class="{ good: manifest && manifest.short_name }">
-              <span>Contains short_name property</span>
-              
-              <span v-if="manifest && manifest.short_name">
-                <i class="fas fa-check"></i>
-                <span>10 pts</span>
-              </span>
-              <span v-if="manifest && !manifest.short_name">
-                <i class="fas fa-times"></i>
-                <span>0 pts</span>
-              </span>
-            </li>
-            <li v-bind:class="{ good: manifest && manifest.start_url }">
-              <span>Designates a start_url</span>
-              
-              <span v-if="manifest && manifest.start_url">
-                <i class="fas fa-check"></i>
-                <span>10 pts</span>
-              </span>
-              <span v-if="manifest && !manifest.start_url">
-                <i class="fas fa-times"></i>
-                <span>0 pts</span>
-              </span>
-            </li>
-          </ul>
-          <ul v-if="!manifest && !noManifest">
-            <li>
-              <span class="skeletonSpan"></span>
-            </li>
-            <li>
-              <span class="skeletonSpan"></span>
-            </li>
-            <li>
-              <span class="skeletonSpan"></span>
-            </li>
-            <li>
-              <span class="skeletonSpan"></span>
-            </li>
-          </ul>
+      <div id="toolkitSection" v-if="topSamples.length > 0">
+        <h2>Add features to my PWA...</h2>
+      </div>
 
-          <ul id="noSWP" v-if="noManifest">
-            <li>
-              <span>Web Manifest properly attached</span>
-              <span>
-                <i class="fas fa-times"></i>
-                <span>0 pts</span>
-              </span>
-            </li>
-            <li>
-              <span>Display property utilized</span>
-              <span>
-                <i class="fas fa-times"></i>
-                <span>0 pts</span>
-              </span>
-            </li>
-            <li>
-              <span>Lists icons for add to home screen</span>
-              <span>
-                <i class="fas fa-times"></i>
-                <span>0 pts</span>
-              </span>
-            </li>
-            <li>
-              <span>Contains app_name property</span>
-              <span>
-                <i class="fas fa-times"></i>
-                <span>0 pts</span>
-              </span>
-            </li>
-            <li>
-              <span>Contains short_name property</span>
-              <span>
-                <i class="fas fa-times"></i>
-                <span>0 pts</span>
-              </span>
-            </li>
-            <li>
-              <span>Designates a start_url</span>
-              <span>
-                <i class="fas fa-times"></i>
-                <span>0 pts</span>
-              </span>
-            </li>
-          </ul>
+      <FeatureCard
+        class="topFeatures"
+        v-if="topSamples.length > 0"
+        v-for="(sample, index) in topSamples"
+        :class="{ 'firstFeature' : index === 0 }"
+        :sample="sample"
+        :key="sample.id"
+        :showAddButton="true"
+      >
+        <i slot="iconSlot" class="fas fa-rocket"></i>
+      </FeatureCard>
 
-          <div class="editDiv">
-            <nuxt-link v-if="!noManifest" class="editButton" to="generate">Edit Manifest</nuxt-link>
-            <nuxt-link v-if="noManifest" class="editButton" to="generate">See Generated Manifest</nuxt-link>
-          </div>
-        </section>
-
-        <section class="catSection">
-          <div class="catHeader">
-            <h2>Service Worker</h2>
-
-            <span v-if="!swAnalyzing" class="score">
-              {{swScore}}
-              <span class="scoreSubText">out of 100</span>
-            </span>
-            
-            <span v-if="swAnalyzing" class="score">
-              <Loading active class="u-display-inline_block u-margin-left-sm"/>
-            </span>
-          </div>
-
-          <ul v-if="serviceWorkerData">
-            <li v-bind:class="{ good: serviceWorkerData.hasSW }">
-              <span>Has a Service Worker</span>
-              <span v-if="serviceWorkerData && serviceWorkerData.hasSW">
-                <i class="fas fa-check"></i>
-                <span>50 pts</span>
-              </span>
-              <span v-if="serviceWorkerData && !serviceWorkerData.hasSW">
-                <i class="fas fa-times"></i>
-                <span>0 pts</span>
-              </span>
-            </li>
-            <li v-bind:class="{ good: serviceWorkerData.cache }">
-              <span>Service Worker has cache handlers</span>
-              <span v-if="serviceWorkerData && serviceWorkerData.cache">
-                <i class="fas fa-check"></i>
-                <span>20 pts</span>
-              </span>
-              <span v-if="serviceWorkerData && !serviceWorkerData.cache">
-                <i class="fas fa-times"></i>
-                <span>0 pts</span>
-              </span>
-            </li>
-            <li v-bind:class="{ good: serviceWorkerData.scope }">
-              <span>Service Worker has the correct scope</span>
-              <span v-if="serviceWorkerData && serviceWorkerData.scope">
-                <i class="fas fa-check"></i>
-                <span>20 pts</span>
-              </span>
-              <span v-if="serviceWorkerData && !serviceWorkerData.scope">
-                <i class="fas fa-times"></i>
-                <span>0 pts</span>
-              </span>
-            </li>
-            <li v-bind:class="{ good: serviceWorkerData.pushReg }">
-              <span>Service Worker has a push registration</span>
-              <span v-if="serviceWorkerData && serviceWorkerData.pushReg">
-                <i class="fas fa-check"></i>
-                <span>10 pts</span>
-              </span>
-              <span v-if="serviceWorkerData && !serviceWorkerData.pushReg">
-                <i class="fas fa-times"></i>
-                <span>0 pts</span>
-              </span>
-            </li>
-          </ul>
-
-          <ul v-if="!serviceWorkerData && !noServiceWorker">
-            <li>
-              <span class="skeletonSpan"></span>
-            </li>
-            <li>
-              <span class="skeletonSpan"></span>
-            </li>
-            <li>
-              <span class="skeletonSpan"></span>
-            </li>
-            <li>
-              <span class="skeletonSpan"></span>
-            </li>
-          </ul>
-
-          <ul id="noSWP" v-if="noServiceWorker">
-            <li>
-              <span>Has a Service Worker</span>
-              <span>
-                <i class="fas fa-times"></i>
-                <span>0 pts</span>
-              </span>
-            </li>
-            <li>
-              <span>Service Worker has cache handlers</span>
-              <span>
-                <i class="fas fa-times"></i>
-                <span>0 pts</span>
-              </span>
-            </li>
-            <li>
-              <span>Service Worker has the correct scope</span>
-              <span>
-                <i class="fas fa-times"></i>
-                <span>0 pts</span>
-              </span>
-            </li>
-            <li>
-              <span>Service Worker has a push registration</span>
-              <span>
-                <i class="fas fa-times"></i>
-                <span>0 pts</span>
-              </span>
-            </li>
-          </ul>
-
-          <!--<button>Edit</button>-->
-          <div class="editDiv">
-            <nuxt-link to="serviceworker" class="editButton">Choose Service Worker</nuxt-link>
-          </div>
-        </section>
-
-        <section class="catSection">
-          <div class="catHeader">
-            <h2>Security</h2>
-
-            <span v-if="!securityAnalyzing" class="score">
-              {{securityScore}}
-              <span class="scoreSubText">out of 100</span>
-            </span>
-            <span v-if="securityAnalyzing" class="score">
-              <Loading active class="u-display-inline_block u-margin-left-sm"/>
-            </span>
-          </div>
-
-          <ul>
-            <li>
-              <span>Uses HTTPS URL</span>
-              <span>
-                <i class="fas fa-check"></i>
-                <span>10 pts</span>
-              </span>
-            </li>
-            <li>
-              <span>Valid SSL certificate is use</span>
-              <span>
-                <i class="fas fa-check"></i>
-                <span>10 pts</span>
-              </span>
-            </li>
-            <li>
-              <span>No "mixed" content on page</span>
-              <span>
-                <i class="fas fa-check"></i>
-                <span>10 pts</span>
-              </span>
-            </li>
-          </ul>
-        </section>
-
-        <section class="catSection">
-          <h2>Extras</h2>
-
-          <ul>
-            <li id="extrasP">
-            Your PWA should look, feel, and work like an application. If you don't already have features like authentication, personalization, or platform integrations, check out on "bonus" Extras!     
-            </li>
-          </ul>
-
-          <div class="editDiv">
-            <nuxt-link to="/features" class="editButton">Add More</nuxt-link>
-          </div>
-        </section>
-      </section>
-    </div>
-  </main>
+      <div id="moreFeaturesBlock" 
+           v-if="topSamples.length > 0">
+        <nuxt-link to="/features">
+          View More
+          <i class="fas fa-angle-right"></i>
+        </nuxt-link>
+      </div>
+    </main>
+  </div>
 </template>
 
 
@@ -369,281 +118,112 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 import { Action, State, namespace } from "vuex-class";
 
-import GoodPWA from "~/components/GoodPWA.vue";
-import Loading from "~/components/Loading.vue";
+import HubHeader from "~/components/HubHeader.vue";
+import ScoreCard from "~/components/ScoreCard.vue";
+import FeatureCard from "~/components/FeatureCard.vue";
 
 import * as generator from "~/store/modules/generator";
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorAction = namespace(generator.name, Action);
 
-const apiUrl = `${
-  process.env.apiUrl
-}/serviceworkers/getServiceWorkerFromUrl?siteUrl`;
+import * as windowsStore from "~/store/modules/windows";
+
+const WindowsState = namespace(windowsStore.name, State);
+const WindowsAction = namespace(windowsStore.name, Action);
 
 @Component({
   components: {
-    GoodPWA,
-    Loading
+    HubHeader,
+    ScoreCard,
+    FeatureCard
   }
 })
 export default class extends Vue {
   @GeneratorState url: string;
   @GeneratorState manifest: any;
 
-  @GeneratorAction getManifestInformation;
   @GeneratorAction updateLink;
+  @GeneratorAction getManifestInformation;
 
-  swScore = 0;
-  manifestScore = 0;
-  securityScore = 0;
-  overallGrade = "--";
-  gradeText = "overall grade";
+  @WindowsState sample: windowsStore.Sample;
+  @WindowsState samples: windowsStore.Sample[];
 
-  swAnalyzing = false;
-  manifestAnalyzing = false;
-  securityAnalyzing = false;
+  @WindowsAction getSamples;
 
-  serviceWorkerData: any = null;
-  noServiceWorker = false;
-  $url: any = null;
+  public gotURL = false;
+  public url$: string | null = null;
+  public error: string | null = null;
+  public overallScore: number = 0;
+  public topSamples: Array<any> = [];
 
-  noManifest = false;
+  public async created() {
+    this.url$ = this.url;
 
-  abortController: AbortController;
-
-
-  public async mounted() {
-    if (this.url) {
-      sessionStorage.setItem('pwaBuilderURL', this.url);
-      this.$url = this.url;
-    } else if (sessionStorage.getItem('pwaBuilderURL') !== undefined) {
-      this.$url = (sessionStorage.getItem('pwaBuilderURL') as string);
-      this.updateLink(this.$url);
-    }
-
-    await this.start();
-
-    if ("AbortController" in window) {
-      this.abortController = new AbortController();
+    if (this.url$ || this.url) {
+      this.gotURL = true;
+      this.getTopSamples();
     }
   }
 
-  public beforeDestroy() {
-    if (this.abortController) {
-      this.abortController.abort();
-    }
-  }
+  public async checkUrlAndGenerate() {
+    this.error = null;
 
-  private async start() {
-    if (this.$url) {
-      // this.analyzing = true;
-      this.securityAnalyzing = true;
-      this.manifestAnalyzing = true;
-      this.swAnalyzing = true;
-
-      this.lookAtSW();
-      this.lookAtSecurity();
-      this.lookAtManifest();
-    }
-  }
-
-  private lookAtSecurity(): Promise<void> {
-    return new Promise(resolve => {
-      if (this.$url.includes("https")) {
-        this.securityScore = this.securityScore + 100;
-      }
-
-      this.securityAnalyzing = false;
-      this.calcGrade();
-      resolve();
-    });
-  }
-
-  private lookAtManifest(): Promise<void> {
-    return new Promise(async resolve => {
-      let data = await this.getManifestInformation();
-      console.log(data);
-
-      console.log("manifestInfo", this.manifest);
-
-      if (this.manifest.generated === true) {
-        this.manifestScore = 0;
-        this.manifestAnalyzing = false;
-        this.calcGrade();
-        this.noManifest = true;
-
-        resolve();
-      }
-      else {
-        this.manifestScore = this.manifestScore + 50;
-      }
-
-      if (this.manifest.display !== undefined) {
-        this.manifestScore = this.manifestScore + 10;
-      }
-
-      if (this.manifest.icons !== undefined) {
-        this.manifestScore = this.manifestScore + 10;
-      }
-
-      if (this.manifest.name !== undefined) {
-        this.manifestScore = this.manifestScore + 10;
-      }
-
-      if (this.manifest.short_name !== undefined) {
-        this.manifestScore = this.manifestScore + 10;
-      }
-
-      if (this.manifest.start_url !== true) {
-        this.manifestScore = this.manifestScore + 10;
-      }
-      if (this.manifest.generated === true) {
-        this.manifestScore = 0;
-      }
-      this.manifestAnalyzing = false;
-      
-      this.calcGrade();
-
-      resolve();
-    });
-  }
-
-  private async lookAtSW(): Promise<void> {
-    if (this.$url) {
-      if (this.abortController) {
-        const signal = this.abortController.signal;
-        // const data = await axios.get(`${apiUrl}=${this.url}`, { signal });
-        console.log("fetching sw");
-        const response = await fetch(`${apiUrl}=${this.$url}`, { signal });
-        const data = await response.json();
-        console.log("lookAtSW", data);
-
-        this.serviceWorkerData = data.swURL;
-      } else {
-        console.log("fetching sw");
-        const response = await fetch(`${apiUrl}=${this.$url}`);
-        const data = await response.json();
-        console.log("lookAtSW", data.swURL);
-
-        this.serviceWorkerData = data;
-      }
-
-      console.log(this.serviceWorkerData);
-
-      console.log(this.serviceWorkerData);
-
-      if (this.serviceWorkerData === false) {
-        this.swScore = 0;
-        this.calcGrade();
-        this.swAnalyzing = false;
-        this.noServiceWorker = true;
-
-        return;
-      }
-
-      /*
-        Has service worker
-        +50 points to user
-      */
-      if (this.serviceWorkerData.hasSW !== null) {
-        this.swScore = this.swScore + 50;
-      }
-
-      /*
-        Caches stuff
-        +30 points to user
-      */
-
-      if (this.serviceWorkerData.cache) {
-        const hasCache = this.serviceWorkerData.cache.some(
-          entry => entry.fromSW === true
-        );
-        console.log(hasCache);
-
-        if (hasCache === true) {
-          this.swScore = this.swScore + 20;
-        }
-      }
-
-      /*
-        Has push reg
-        +10 points to user
-      */
-      if (this.serviceWorkerData.pushReg !== null) {
-        this.swScore = this.swScore + 20;
-      }
-
-      /*
-        Has scope that points to root
-        +10 points to user
-      */
-      if (
-        this.serviceWorkerData.scope &&
-        this.serviceWorkerData.scope.slice(0, -1) ===
-          new URL(this.serviceWorkerData.scope).origin
-      ) {
-        console.log("has scope");
-        this.swScore = this.swScore + 10;
-      }
-    }
-
-    this.calcGrade();
-
-    this.swAnalyzing = false;
-  }
-
-  private calcGrade() {
-    return new Promise(resolve => {
-      const totalGrade = (this.swScore + this.manifestScore + this.securityScore) / 3;
-
-      switch (true) {
-        case (totalGrade > 90):
-        this.overallGrade = "A";
-        this.gradeText = "overall grade";
-        break;
-        case (totalGrade > 80):
-        this.overallGrade = "B";
-        this.gradeText = "overall grade";
-        break;
-        case (totalGrade > 70):
-        this.overallGrade = "C";
-        this.gradeText = "overall grade";
-        break;
-        case (totalGrade > 55):
-        this.overallGrade = "D";
-        this.gradeText = "overall grade";
-        break;
-        default:
-        this.overallGrade = "--";
-        this.gradeText = "pending";
-      }
-
-      sessionStorage.setItem("overallGrade", this.overallGrade);
-
-      resolve();
-    });
-  }
-
-  public async rescan(): Promise<void> {
-    // reset scores and rescan the site
-    this.securityAnalyzing = true;
-    this.manifestAnalyzing = true;
-    this.swAnalyzing = true;
-
-    this.noServiceWorker = false;
-    this.noManifest = false;
-
-    this.manifestScore = 0;
-    this.swScore = 0;
-    this.securityScore = 0;
+    console.log("here");
 
     try {
-      await this.getManifestInformation();
-      await this.start();
-    } catch (e) {
-      console.error(e);
+      console.log("in try block");
+      await this.updateLink(this.url$);
+      this.url$ = this.url;
+
+      this.gotURL = true;
+
+      this.getTopSamples();
+    } catch (err) {
+      console.error("url error", err);
+
+      if (err.message) {
+        this.error = err.message;
+      } else {
+        // No error message
+        // so just show error directly
+        this.error = err;
+      }
     }
+  }
+
+  public async getTopSamples() {
+    await this.getSamples();
+    console.log(this.samples);
+    const cleanedSamples = this.samples.slice(0, 4);
+    console.log("cleanedSamples", cleanedSamples);
+
+    this.topSamples = cleanedSamples;
+  }
+
+  public securityTestDone(ev) {
+    console.log("testDone", ev);
+    this.overallScore = this.overallScore + ev.score;
+    console.log(this.overallScore);
+  }
+
+  public manifestTestDone(ev) {
+    console.log("manifest test done", ev);
+    this.overallScore = this.overallScore + ev.score;
+    console.log(this.overallScore);
+  }
+
+  public swTestDone(ev) {
+    console.log("sw test is done", ev);
+    this.overallScore = this.overallScore + ev.score;
+    console.log(this.overallScore);
+  }
+
+  public reset() {
+    console.log('resetting');
+    this.gotURL = false;
+    this.overallScore = 0;
+    this.topSamples = [];
   }
 }
 </script>
@@ -652,296 +232,340 @@ export default class extends Vue {
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
 
+#hubContainer {
+  height: 100vh;
+}
+
+.backgroundIndex {
+  @include backgroundLeftPoint(20%, 50vh);
+}
+
+.backgroundReport {
+  @include backgroundRightPoint(80%, 50vh);
+}
+
+@media (min-width: 1336px) {
+  #hubContainer {
+    height: 128vh;
+  }  
+
+  .backgroundIndex {
+    @include backgroundLeftPoint(30%, 80vh);
+  }
+
+  .backgroundReport {
+    @include backgroundRightPoint(80%, 80vh);
+  }
+}
+
+@media (max-height: 780px) {
+  #hubContainer {
+    height: 162vh;
+  }
+
+  #inputSection {
+    grid-template-rows: 80% 20%;
+  }
+
+  .backgroundIndex {
+    @include backgroundLeftPoint(30%, 90vh);
+  }
+
+  .backgroundReport {
+    @include backgroundRightPoint(80%, 88vh);
+  }
+}
+
+#bottomWrapper {
+  color: white;
+}
+
+#bottomWrapper,
+#toolkitWrapper {
+  animation-name: slideup;
+  animation-duration: 300ms;
+
+  grid-column: 1 / span 12;
+
+}
+
 main {
-  background-image: url("~/assets/images/homepage-background.svg");
-  background-position: top;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
+  @include grid;
 
-p {
-  margin: 0;
-  padding: 0;
-}
-
-.fa-check {
-  color: #41807D;
-}
-
-.fa-times {
-  color: red;
-}
-
-#gradeLoading {
-  display: flex;
-  justify-content: center;
-}
-
-.skeletonSpan {
-  background-image: linear-gradient(to right, grey, white);
-  width: 40%;
-  display: block;
-  height: 1em;
-  opacity: 0.6;
-  margin: 5px;
-}
-
-#scoreSideBySide {
-  display: flex;
-  height: 34em;
-
-  header {
-    position: absolute;
-    top: 24px;
-    left: 68px;
-
-    img {
-      width: 10em;
-    }
-  }
-
-  section {
-    flex: 1;
-  }
-
-  #headerSection {
-    padding-top: 124px;
-
-    #urlTested {
-      font-weight: bold;
-      margin-top: 0;
-      margin-bottom: 0.2em;
-
-      p {
-        width: 376px;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-      }
-    }
-
-    div.mast {
-      padding-left: 4em;
-    }
-
-    /*button#rescanButton {
-      margin-top: 0;
-      font-size: 12px;
-      padding-top: 3px;
-      padding-bottom: 4px;
-      width: 70px;
-    }*/
-
-    #reportActionsBlock {
-      display: flex;
-      padding-left: 0;
-    }
-
-    #reportCardHeader {
-      font-weight: bold;
-      font-size: 36px;
-      width: 376px;
-    }
-
-    #reportCardInfo {
-      width: 376px;
-      line-height: 28px;
-      margin-top: 20px;
-    }
-
-    #rescanButton {
-      background: #45ada8;
-      height: 44px;
-      margin-top: 40px;
-      margin-right: 8px;
-      border: none;
-      border-radius: 22px;
-      color: white;
-      font-size: 18px;
-      font-weight: bold;
-      width: 130px;
-    }
-
-    #publishButton {
-      width: 184px;
-      border-radius: 22px;
-      border: none;
-      background: grey;
-      font-weight: bold;
-      font-size: 18px;
-      padding-top: 9px;
-      padding-bottom: 11px;
-      margin-top: 40px;
-      color: white;
-      background: $color-button-primary-purple-variant;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-  }
-
-  #scoreSection {
-    background-color: $color-button-primary-purple-variant;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    height: 100%;
-    margin-top: 60px;
-
-    img {
-      position: absolute;
-      top: -25em;
-      right: -2.2em;
-      bottom: 0;
-      z-index: -2;
-      bottom: 0;
-    }
-
-    #scoreDiv {
-      width: 221px;
-      height: 221px;
-      border-radius: 35px;
-      background: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 92px;
-      font-weight: bold;
-      margin-bottom: 1.2em;
-      flex-direction: column;
-
-      #overallSpan {
-        font-size: 18px;
-        position: relative;
-        bottom: 8px;
-        color: #8a8a8a;
-        margin-top: 10px;
-        font-weight: bold;
-      }
-
-      section {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-    }
-  }
-}
-
-#catsContainer {
-  display: flex;
-  justify-content: center;
-}
-
-#cats {
-  display: grid;
-  grid-template-rows: auto auto;
-  grid-template-columns: auto auto;
-
-  .catSection {
-    border: solid 1px grey;
-    padding: 30px;
-    margin: 30px;
-    // background: rgba(255, 255, 255, 0.5);
-    background: white;
-    display: flex;
-    flex-direction: column;
-    max-width: 576px;
-
-    .catHeader {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1em;
-    }
-
-    ul {
-      flex-grow: 2;
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      margin-bottom: 42px;
-
-      li {
-        font-size: 18px;
-        padding: 0.5em;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-
-        span {
-          margin-left: 1em;
-        }
-      }
-    }
-
-    h2 {
-      font-size: 24px;
-      font-weight: bold;
-      width: 420px;
-    }
-
-    .editDiv {
-      display: flex;
-    }
-
-    .editButton {
-      border-radius: 22px;
-      border: none;
-      height: 44px;
-      background: grey;
-      font-weight: bold;
-      font-size: 18px;
-      padding-top: 9px;
-      padding-bottom: 11px;
-      padding-left: 20px;
-      padding-right: 20px;
-      display: flex;
-      justify-content: center;
-      color: white;
-      background: $color-button-primary-purple-variant;
-    }
-
-    .score {
-      font-size: 36px;
-      font-weight: bold;
-      display: flex;
-      justify-content: space-between;
-      color: black;
-
-      .scoreSubText {
-        color: #8A8A8A;
-        font-size: 12px;
-        width: 32px;
-        text-align: center;
-      }
-    }
-  }
-}
-
-.l-generator-field {
-  width: 376px;
-}
-
-
-#extrasP {
-  flex-grow: 2;
-}
-
-#noSWP {
-  flex-grow: 2;
   margin-bottom: 2em;
 }
 
-@media(min-width: 1400px) {
-  #headerSection {
-    padding-left: 2em;
+h2 {
+  margin-top: 2em;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 17px;
+}
+
+/* horizontal bar after heading */
+h2:after {
+  content: "";
+  display: block;
+
+  width: 19%; /* TODO: Not part of Grid */
+  padding-top: 17px;
+  border-bottom: solid 1px rgba(255, 255, 255, 0.3);
+}
+
+#inputSection {
+  grid-column: 1 / span 5;
+
+  color: white;
+
+  display: grid;
+  grid-template-rows: 70% 30%;
+
+  #topHalfHome {
+    grid-row: 1;
+
+    form {
+      display: flex;
+
+      &.formErr {
+        animation: shake 0.2s ease-in-out 0s 2;
+      }
+    }
+
+    input {
+      background: transparent;
+      color: white;
+
+      padding-top: 13px;
+      padding-bottom: 12px;
+      font-weight: bold;
+      font-size: 18px;
+      border: none;
+      border-bottom: solid 1px rgba(255, 255, 255, 0.4);
+      margin-right: 0.3em;
+      margin-top: 20px;
+      outline: none;
+      
+      &::placeholder {
+        color: white;
+      }
+
+      &:hover, &:focus {
+        border-bottom: solid 1px white;
+      }
+    }
+
+    #getStartedButton {
+      border: none;
+      font-weight: bold;
+      font-size: 18px;
+      border-radius: 22px;
+      padding-top: 9px;
+      padding-bottom: 11px;
+      padding-left: 23px;
+      padding-right: 23px;
+      background: linear-gradient(to right, white, rgba(255, 255, 255, 0.7));
+      border: solid 1px white;
+      color: #3C3C3C;
+      height: 44px;
+      align-self: flex-end;
+      display: flex;
+      flex-direction: row;
+      align-items: center;      
+      width: 88px;
+      justify-content: center;
+    }
   }
 
-  #scoreSideBySide header {
-    left: 102px;
+  #bottomHalfHome {
+    grid-row: 2;
+
+    color: #333333;
+
+    #expertModeBlock {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      margin-top: 65px;
+      margin-right: 1em;
+
+      #expertModeButton {
+        width: 200px;
+        font-weight: bold;
+        font-size: 18px;
+        border: none;
+        border-radius: 22px;
+        padding-top: 9px;
+        padding-bottom: 11px;
+        background-image: linear-gradient(to right, #7644c2, #11999e);
+        color: white;
+        height: 44px;
+      }
+
+      p {
+        margin-top: 9px;
+        font-size: 14px;
+        text-align: center;
+      }
+    }
+
+    footer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      color: rgba(60, 60, 60, 0.6);
+      
+      p {
+        text-align: center;
+        width: 320px;
+        font-size: 12px;
+        line-height: 18px;
+        margin-right: 2em;
+      }
+
+      a {
+        box-shadow: none;
+
+        color: inherit;
+
+        text-decoration: underline;
+      }
+    }
   }
+}
+
+#infoSection {
+  grid-column: 1 / span 5;
+
+  color: white;
+
+  @media (max-width: 900px) {
+    grid-column: 1 / span 12;
+  }
+}
+
+.scoreCard {
+  grid-column: span 4;
+
+  @media (max-width: 900px) {
+    grid-column: 1 / span 12;
+  }
+}
+
+.firstCard {
+  grid-column: 1 / span 4;
+
+  @media (max-width: 900px) {
+    grid-column: 1 / span 12;
+  }
+}
+
+#toolkitSection {
+  grid-column: 1/ span 5;
+
+  margin-top: 36px;
+  display: flex;
+  align-items: center;
+
+  a {
+    margin-left: 10px;
+    color: black;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: bold;
+    border-bottom: solid 2px;
+  }
+
+  a:hover {
+    box-shadow: none;
+  }
+}
+
+.topFeatures {
+  grid-column: span 3;
+
+  margin-bottom: 2em;
+
+  .card {
+    height: 252px;
+  }
+
+  @media (max-width: 900px) {
+    grid-column: span 6;
+  }
+}
+
+.firstFeature {
+  grid-column: 1 / span 3;
+
+  @media (max-width: 900px) {
+    grid-column: 1 / span 6;
+  }
+}
+
+#moreFeaturesBlock {
+  grid-column: 1 / span 12;
+
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  a {
+    color: #9b47db;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 14px;
+    border: solid 1px #9337d8;
+    border-radius: 24px;
+    padding: 10px;
+  }
+}
+
+#urlErr {
+  height: 1em;
+  font-weight: 500;
+  padding-top: 1em;
+}
+
+.btnErr {
+  width: 42px !important;
+  padding: 0px !important;
+}
+
+.btnErrText {
+  visibility: hidden;
+
+  &:after {
+    content: '!';
+    color: red;
+    font-weight: bold;
+    display: block;
+    position: relative;
+    visibility: visible;
+    top: -11px;
+    left: 1px;
+  }
+}
+
+@keyframes slideup {
+  from {
+    opacity: 0;
+    transform: translateY(200px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0% { margin-left: 0rem; }
+  25% { margin-left: 0.5rem; }
+  75% { margin-left: -0.5rem; }
+  100% { margin-left: 0rem; }
 }
 </style>
 

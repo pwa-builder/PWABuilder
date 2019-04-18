@@ -1,0 +1,41 @@
+@mixin grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: 10px;
+
+  padding: 0 52px;
+
+  @media screen and (min-width: 1336px) {
+    padding-left: 154px;
+    padding-right: 154px;
+  }
+}
+
+/* TODO: Be able to generalize the linear equation based on the two input angles as well. */
+@mixin backgroundLeftPoint($x-break-percent, $view-height) {
+  background: 
+    linear-gradient(-18deg, #F0F0F0, #F0F0F0 $view-height, rgba(255,0,0,0) $view-height+0.1vh),  
+    linear-gradient(10deg, #F0F0F0, #F0F0F0 _newHeight-backgroundLeftPoint($view-height), rgba(255,0,0,0) _newHeight-backgroundLeftPoint($view-height)+0.1vh),    
+    linear-gradient(-32deg, #9337D8, #1FC2C8);
+  background-size: ($x-break-percent + 0.05%) 100%, (100 - $x-break-percent + 0.05%) 100%, 100% 100%;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-position: left, right, center;
+}
+
+@function _newHeight-backgroundLeftPoint($height) {
+  @return $height + (0.03529362 * $height) - 0.02056302vh;
+}
+
+@mixin backgroundRightPoint($x-break-percent, $view-height) {
+  background: 
+    linear-gradient(-8deg, #F0F0F0, #F0F0F0 $view-height, rgba(255,0,0,0) $view-height+0.1vh),  
+    linear-gradient(19deg, #F0F0F0, #F0F0F0 _newHeight-backgroundRightPoint($view-height), rgba(255,0,0,0) _newHeight-backgroundRightPoint($view-height)+0.1vh),
+    linear-gradient(-32deg, #9337D8, #1FC2C8);
+  background-size: ($x-break-percent + 0.05%) 100%, (100 - $x-break-percent + 0.05%) 100%, 100% 100%;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-position: left, right, center;
+}
+  
+@function _newHeight-backgroundRightPoint($height) {
+  @return $height + (-0.04438402 * $height) - 0.02623998vh;
+}

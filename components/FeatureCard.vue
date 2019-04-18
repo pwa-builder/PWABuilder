@@ -1,13 +1,21 @@
 <template>
   <div v-if="sample" class="card">
-    <h4>{{sample.title}}</h4>
-    <p>{{ sample.description }}</p>
+    <div id="featureCardTitleBlock">
+      <h4>{{sample.title}}</h4>
 
-    <div id="featureCardActionsBlock">
-      <button
+      <slot name="iconSlot"></slot>
+    </div>
+
+    <p v-bind:class="{textWrap: wrapText}">{{ sample.description }}</p>
+
+    <div v-if="showAddButton" id="featureCardActionsBlock">
+      <!--<button
         @click="onClickSample(sample)"
         id="featureCardAddButton"
-      >View</button>
+      >View Snippit</button>-->
+      <nuxt-link id="featureCardAddButton" v-bind:to="`/feature/${sample.title}`">
+        View Snippit
+      </nuxt-link>
     </div>
   </div>
 </template>
@@ -22,6 +30,8 @@ import * as windowsStore from "~/store/modules/windows";
 @Component({})
 export default class extends Vue {
   @Prop({}) sample: windowsStore.Sample;
+  @Prop({}) showAddButton;
+  @Prop({ default: false }) wrapText;
 
   onClickSample(sample: windowsStore.Sample) {
     this.$emit("selected", sample);
@@ -42,19 +52,42 @@ export default class extends Vue {
   display: flex;
   flex-direction: column;
   padding: 20px;
-  border: solid #C5C5C5 1px;
   background: white;
+  border-radius: 4px;
 
   h4 {
-    font-size: 18px;
+    font-size: 14px;
     font-weight: bold;
+    width: 80%;
+  }
+
+  @media (max-width: 1336px) {
+    h4 {
+      width: 16em;
+    }
+  }
+
+  #featureCardTitleBlock {
+    display: flex;
+    justify-content: space-between;
   }
 
   p {
-    width: 277px;
-    flex: 2;
+    flex: 1;
     font-size: 14px;
     line-height: 20px;
+    overflow: hidden;
+  }
+
+  .textWrap {
+    white-space: initial !important;
+  }
+
+  #featureCardActionsBlock {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1em;
   }
 
   #featureCardActionsBlock {
@@ -62,13 +95,14 @@ export default class extends Vue {
       border: none;
       border-radius: 20px;
       padding-top: 11px;
-      padding-bottom: 11px;
-      padding-left: 27px;
-      padding-right: 27px;
-      font-size: 18px;
-      font-weight: bold;
-      background: $color-button-primary-purple-variant;
-      color: white;
+
+      color: #9337d8;
+      background: none;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      text-transform: uppercase;
     }
 
     #featureCardRemoveButton {

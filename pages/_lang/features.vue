@@ -1,25 +1,16 @@
 <template>
   <main>
-    <ScoreHeader></ScoreHeader>
+    <HubHeader></HubHeader>
 
     <div v-if="modalStatus" id="modalBackground"></div>
 
-    <img id="featuresBG" src="~/assets/images/features_bg.svg">
+    <section id="headerSection">
+      <div>
+        <h1 id="featurePageHeader">Extras</h1>
 
-    <div id="sideBySide">
-      <section id="headerSection">
-        <div>
-          <h1 id="featurePageHeader">Extras</h1>
-
-          <p>Add that special something to supercharge your PWA. These cross-platform features can make your website work more like an app.</p>
-
-          <div id="featureActionsBlock">
-            <!--<button @click="clearSelected()" id="clearButton">Clear</button>-->
-            <nuxt-link id="doneButton" to="/reportCard">Done</nuxt-link>
-          </div>
-        </div>
-      </section>
-    </div>
+        <p>Add that special something to supercharge your PWA. These cross-platform features can make your website work more like an app.</p>
+      </div>
+    </section>
 
     <section id="featureListBlock">
       <FeatureCard
@@ -30,7 +21,11 @@
         v-on:selected="onSelected"
         v-on:removed="onRemoved"
         :showRemoveButton="false"
-      ></FeatureCard>
+        :showAddButton="true"
+        :wrapText="true"
+      >
+        <i slot="iconSlot" class="fas fa-rocket"></i>
+      </FeatureCard>
 
       <FeatureCard
         v-if="selectedSamples.length > 0"
@@ -40,7 +35,11 @@
         v-on:selected="onSelected"
         v-on:removed="onRemoved"
         :showRemoveButton="true"
-      ></FeatureCard>
+        :showAddButton="true"
+        :wrapText="true"
+      >
+        <i slot="iconSlot" class="fas fa-rocket"></i>
+      </FeatureCard>
     </section>
 
     <section id="fakeCardBlock" v-if="samples.length === 0">
@@ -125,7 +124,7 @@ import { Action, State, namespace } from "vuex-class";
 import Modal from "~/components/Modal.vue";
 import Loading from "~/components/Loading.vue";
 import FeatureCard from "~/components/FeatureCard.vue";
-import ScoreHeader from "~/components/ScoreHeader.vue";
+import HubHeader from "~/components/HubHeader.vue";
 import CodeViewer from "~/components/CodeViewer.vue";
 
 import * as windowsStore from "~/store/modules/windows";
@@ -138,7 +137,7 @@ const WindowsAction = namespace(windowsStore.name, Action);
     Modal,
     Loading,
     FeatureCard,
-    ScoreHeader,
+    HubHeader,
     CodeViewer
   }
 })
@@ -163,7 +162,7 @@ export default class extends Vue {
   async mounted() {
     console.log(this.samples.length);
     await this.getSamples();
-    console.log(this.samples);
+    console.log("samples", this.samples);
 
     const score = sessionStorage.getItem("overallGrade");
     console.log(score);
@@ -245,10 +244,10 @@ export default class extends Vue {
       await this.selectSample(this.currentPendingSample);
 
       if (this.selectedSamples.indexOf(this.sample) == -1) {
-        console.log('pushing', this.currentPendingSample);
+        console.log("pushing", this.currentPendingSample);
         this.selectedSamples.push(this
           .currentPendingSample as windowsStore.Sample);
-        console.log('selectedSamples', this.selectedSamples);
+        console.log("selectedSamples", this.selectedSamples);
       }
 
       await this.download();
@@ -351,7 +350,7 @@ export default class extends Vue {
   bottom: 0;
   left: 0;
   right: 0;
-  background: grey;
+  background: lightgrey;
   opacity: 0.7;
   z-index: 98999;
   animation-name: opened;
@@ -359,20 +358,39 @@ export default class extends Vue {
   will-change: opacity;
 }
 
-@keyframes opened {
-    from {
-      opacity: 0;
-    }
+#featureListBlock .card {
+  margin: 10px;
+}
 
-    to {
-      opacity: 0.7;
-    }
+#fakeCardBlock .fakeCard {
+  margin: 10px;
+}
+
+main {
+  @include backgroundRightPoint(80%, 50vh);
+  height: 100vh;
+}
+
+@media (max-height: 805px) {
+  main {
+    height: 116vh;
   }
+}
+
+@keyframes opened {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 0.7;
+  }
+}
 
 header {
   display: flex;
   align-items: center;
-  padding-left: 68px;
+  padding-left: 159px;
   margin-top: 32px;
 
   #headerText {
@@ -389,84 +407,39 @@ header {
   }
 }
 
-#sideBySide {
-  display: flex;
+#headerSection {
+  padding-left: 159px;
+  padding-right: 159px;
 
-  #headerSection {
-    flex: 1;
-    padding-left: 4em;
-    padding-right: 164px;
-    padding-top: 40px;
-
-    #featurePageHeader {
-      font-size: 32px;
-      font-weight: bold;
-    }
-
-    p {
-      font-size: 18px;
-      width: 376px;
-      padding-bottom: 30px;
-      margin: 0;
-    }
-
-    #featureActionsBlock {
-      display: flex;
-      padding-bottom: 30px;
-
-      #clearButton {
-        width: 130px;
-        height: 44px;
-        border-radius: 22px;
-        border: none;
-        background: grey;
-        font-weight: bold;
-        font-size: 18px;
-        padding-top: 9px;
-        padding-bottom: 11px;
-        margin-top: 40px;
-        color: white;
-        background: $color-brand-secondary;
-        margin-right: 10px;
-      }
-
-      #doneButton {
-        width: 130px;
-        height: 44px;
-        border-radius: 22px;
-        border: none;
-        background: grey;
-        font-weight: bold;
-        font-size: 18px;
-        padding-top: 9px;
-        padding-bottom: 11px;
-        margin-top: 40px;
-        color: white;
-        background: $color-brand-secondary;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-    }
+  h1 {
+    color: white;
+    font-weight: bold;
+    font-size: 24px;
+    margin-top: 30px;
   }
 
-  #scoreSection {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex: 1;
+  p {
+    font-size: 16px;
+    color: white;
+    width: 465px;
+    padding-top: 35px;
+  }
+}
 
-    #scoreDiv {
-      height: 260px;
-      width: 280px;
-      background: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 92px;
-      font-weight: bold;
-      border-radius: 32px;
-    }
+@media (max-width: 1336px) {
+  #headerSection {
+    padding-left: 52px;
+  }
+}
+
+@media (max-width: 430px) {
+  #headerSection {
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+
+  #headerSection p {
+    width: initial;
   }
 }
 
@@ -474,18 +447,39 @@ header {
 #fakeCardBlock {
   display: grid;
   grid-template-columns: auto auto auto;
-  padding-left: 4em;
-  padding-right: 4em;
+  padding-left: 159px;
+  padding-right: 159px;
   margin-top: 60px;
   margin-bottom: 60px;
-  
+
   .fakeCard {
     display: flex;
     justify-content: center;
     height: 209px;
     align-items: center;
     font-size: 4em;
-    background: lightgrey;
+    background: white;
+  }
+}
+
+#featureListBlock .card {
+  width: initial !important;
+}
+
+@media (max-width: 1336px) {
+  #featureListBlock,
+  #fakeCardBlock {
+    padding-left: 35px;
+    padding-right: 35px;
+  }
+}
+
+@media (max-width: 430px) {
+  #featureListBlock,
+  #fakeCardBlock {
+    padding-left: 16px;
+    padding-right: 16px;
+    display: block;
   }
 }
 

@@ -1,6 +1,6 @@
 <template>
   <main>
-    <ScoreHeader></ScoreHeader>
+    <HubHeader></HubHeader>
 
     <div v-if="modalStatus" id="modalBackground"></div>
 
@@ -215,7 +215,7 @@ import Download from "~/components/Download.vue";
 import Modal from "~/components/Modal.vue";
 import PublishCard from "~/components/PublishCard.vue";
 import Toolbar from "~/components/Toolbar.vue";
-import ScoreHeader from "~/components/ScoreHeader.vue";
+import HubHeader from "~/components/HubHeader.vue";
 
 import * as publish from "~/store/modules/publish";
 
@@ -230,7 +230,7 @@ const PublishAction = namespace(publish.name, Action);
     Modal,
     PublishCard,
     Toolbar,
-    ScoreHeader
+    HubHeader
   }
 })
 export default class extends Vue {
@@ -323,6 +323,11 @@ export default class extends Vue {
   }
 }
 
+main {
+  @include backgroundRightPoint(80%, 25vh);
+  height: 100vh;
+}
+
 #modalBackground {
   position: fixed;
   top: 0;
@@ -375,10 +380,10 @@ export default class extends Vue {
   display: flex;
   justify-content: space-around;
   height: 100vh;
-  background-image: url("~/assets/images/bg_publish.svg");
+  /*background-image: url("~/assets/images/bg_publish.svg");
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
+  background-repeat: no-repeat;*/
 
   #leftSide {
     height: 100%;
@@ -387,7 +392,7 @@ export default class extends Vue {
     header {
       display: flex;
       align-items: center;
-      padding-left: 68px;
+      padding-left: 159px;
       margin-top: 32px;
 
       #headerText {
@@ -407,10 +412,11 @@ export default class extends Vue {
     #introContainer {
       padding-top: 4em;
       padding-right: 14em;
-      padding-left: 4em;
+      padding-left: 159px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      color: white;
 
       h2 {
         font-size: 36px;
@@ -448,6 +454,10 @@ export default class extends Vue {
           display: flex;
           justify-content: center;
         }
+
+        #downloadAllButton:hover {
+          cursor: pointer;
+        }
       }
     }
   }
@@ -459,8 +469,9 @@ export default class extends Vue {
     flex-direction: column;
 
     #platformsListContainer {
-      padding-top: 6.7em;
-      padding-right: 8em;
+      padding-top: 4em;
+      padding-right: 159px;
+      color: white;
 
       ul {
         list-style: none;
@@ -502,10 +513,11 @@ export default class extends Vue {
               padding-left: 11px;
               padding-right: 11px;
               margin-top: 11px;
-              background: grey;
-              color: white;
+              background: white;
+              color: #9337d8;
               cursor: pointer;
-              width: 6.7em;
+              width: 7.7em;
+              height: 4em;
               display: flex;
               justify-content: center;
               align-items: center;
@@ -561,6 +573,12 @@ export default class extends Vue {
 @media (max-width: 1280px) {
   #sideBySide #leftSide #introContainer {
     padding-right: 9em;
+    color: white;
+    padding-left: 52px;
+  }
+
+  #sideBySide #rightSide #platformsListContainer {
+    padding-right: 52px;
   }
 }
 </style>
