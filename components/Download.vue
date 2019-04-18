@@ -7,6 +7,10 @@
   <span v-if="!isReady">
     <Loading :active="true" class="u-display-inline_block u-margin-left-sm" />
   </span>
+
+  <div id="errorDiv" v-if="errorMessage">
+    {{ errorMessage }}
+  </div>
 </div>
 </template>
 
@@ -37,6 +41,7 @@ Vue.prototype.$awa = function (config) {
 })
 export default class extends Vue {
   public isReady = true;
+  public errorMessage = '';
 
   @Prop({ type: String, default: '' })
   public readonly platform: string;
@@ -77,8 +82,29 @@ export default class extends Vue {
       // Because browser delay
       setTimeout(() => this.isReady = true, 3000);
     } catch (e) {
+      this.isReady = true;
+      this.errorMessage = e;
       this.message$ = this.$t('publish.try_again') as string;
     }
   }
 }
 </script>
+
+
+<style lang="scss" scoped>
+  #errorDiv {
+    position: absolute;
+    color: red;
+    width: 15em;
+    text-align: start;
+    font-size: 14px;
+    bottom: 24em;
+    left: 5.4em;
+  }
+
+  @media (max-height: 890px) {
+    #errorDiv {
+      bottom: 10em;
+    }
+  }
+</style>

@@ -8,9 +8,26 @@
       <div>
         <h1 id="featurePageHeader">Extras</h1>
 
+<<<<<<< HEAD
         <p>Add that special something to supercharge your PWA. These cross-platform features can make your website work more like an app.</p>
       </div>
     </section>
+=======
+    <div id="sideBySide">
+      <section id="headerSection">
+        <div>
+          <h1 id="featurePageHeader">Extras</h1>
+
+          <p>Add that special something to supercharge your PWA. These cross-platform features can make your website work more like an app.</p>
+
+          <div id="featureActionsBlock">
+            <!--<button @click="clearSelected()" id="clearButton">Clear</button>-->
+            <nuxt-link id="doneButton" to="/reportCard">Done</nuxt-link>
+          </div>
+        </div>
+      </section>
+    </div>
+>>>>>>> master
 
     <section id="featureListBlock">
       <FeatureCard
