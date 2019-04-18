@@ -30,11 +30,8 @@ import * as windowsStore from "~/store/modules/windows";
 @Component({})
 export default class extends Vue {
   @Prop({}) sample: windowsStore.Sample;
-<<<<<<< HEAD
   @Prop({}) showAddButton;
   @Prop({ default: false }) wrapText;
-=======
->>>>>>> master
 
   onClickSample(sample: windowsStore.Sample) {
     this.$emit("selected", sample);
