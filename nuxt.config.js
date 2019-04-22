@@ -27,6 +27,7 @@ module.exports = {
       { rel: 'icon', type: 'image/png', href: 'Images/favicon-32x32.png'},
       { rel: 'manifest', href: '/manifest.webmanifest' },
       { rel: 'preconnect', href: 'https://web.vortex.data.microsoft.com' },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css?family=Poppins:600,700"},
       { rel: 'apple-touch-icon', href: '/Images/assets/icons/apple-icon-06144a2a7b5101d447ecb4832502e73e.png' },
       { rel: 'apple-touch-icon', sizes: '57x57', href: '/Images/assets/icons/apple-icon-57x57-b82ef058b133f3197df61c326fa7cd6d.png' },
       { rel: 'apple-touch-icon', sizes: '72x72', href: '/Images/assets/icons/apple-icon-72x72-66bbf8447788cee426eebcddfa8eede8.png' },

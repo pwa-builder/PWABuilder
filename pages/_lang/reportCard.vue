@@ -7,7 +7,9 @@
     <main>
       <div v-if="!gotURL" id="inputSection">
         <div id="topHalfHome">
-          <h2>Enter a URL to test your PWA</h2>
+          <h1>Quickly and easily turn your website into an app!</h1>
+
+          <p>It's super easy to get started. Just enter the URL of your website below</p>
 
           <div id="urlErr">{{ $t(this.error) }}</div>
 
@@ -237,11 +239,11 @@ export default class extends Vue {
 }
 
 .backgroundIndex {
-  @include backgroundLeftPoint(20%, 50vh);
+  @include backgroundLeftPoint(20%, 40vh);
 }
 
 .backgroundReport {
-  @include backgroundRightPoint(80%, 50vh);
+  @include backgroundRightPoint(80%, 40vh);
 }
 
 @media (min-width: 1336px) {
@@ -250,11 +252,11 @@ export default class extends Vue {
   }  
 
   .backgroundIndex {
-    @include backgroundLeftPoint(30%, 80vh);
+    @include backgroundLeftPoint(26%, 70vh);
   }
 
   .backgroundReport {
-    @include backgroundRightPoint(80%, 80vh);
+    @include backgroundRightPoint(80%, 70vh);
   }
 }
 
@@ -323,6 +325,8 @@ h2:after {
   #topHalfHome {
     grid-row: 1;
 
+    margin-top: 68px;
+
     form {
       display: flex;
 
@@ -386,20 +390,21 @@ h2:after {
       justify-content: center;
       align-items: center;
       flex-direction: column;
-      margin-top: 65px;
-      margin-right: 1em;
+      margin-top: 100px;
+      margin-right: 3em;
 
       #expertModeButton {
-        width: 200px;
-        font-weight: bold;
-        font-size: 18px;
+        width: 136px;
+        font-weight: 500;
+        font-size: 14px;
+        font-family: "Poppins", sans-serif;
         border: none;
         border-radius: 22px;
         padding-top: 9px;
         padding-bottom: 11px;
-        background-image: linear-gradient(to right, #7644c2, #11999e);
+        background-image: linear-gradient(to right, #1FC2C8, #9337D8);
         color: white;
-        height: 44px;
+        height: 42px;
       }
 
       p {
@@ -409,16 +414,24 @@ h2:after {
       }
     }
 
+    @media (max-width: 1280px) {
+      #expertModeBlock {
+        margin-top: 80px;
+      }
+    }
+
     footer {
       display: flex;
       justify-content: center;
       align-items: center;
 
+      width: 465px;
+      margin-top: 86px;
+
       color: rgba(60, 60, 60, 0.6);
       
       p {
         text-align: center;
-        width: 320px;
         font-size: 12px;
         line-height: 18px;
         margin-right: 2em;
@@ -430,6 +443,12 @@ h2:after {
         color: inherit;
 
         text-decoration: underline;
+      }
+    }
+
+    @media (max-width: 1280px) {
+      footer {
+        margin-top: 56px;
       }
     }
   }
