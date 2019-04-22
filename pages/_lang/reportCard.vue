@@ -227,6 +227,12 @@ export default class extends Vue {
     this.overallScore = 0;
     this.topSamples = [];
   }
+
+  public skipCheckUrl(): void {
+    this.$router.push({
+      name: 'features'
+    });
+  }
 }
 </script>
 
