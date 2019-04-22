@@ -19,7 +19,7 @@
         <a href="https://github.com/pwa-builder" target="_blank" rel="noopener noreferrer">
           <i class="fab fa-github"></i>
         </a>
-        <i class="fab fa-twitter"></i>
+        <!--<i class="fab fa-twitter"></i>-->
       </div>
     </header>
 
@@ -32,6 +32,8 @@
 
       <div id="scoreZone">
         <div id="urlTested">
+          <img src="~/assets/images/score-icon.png" alt="score icon">
+
           <a target="_blank" rel="noopener noreferrer" :href="url">
             <span>
               URL Tested
@@ -111,11 +113,10 @@ export default class extends Vue {
   }
 
   reset() {
-    console.log('here');
+    console.log("here");
     if (location.pathname === "/") {
       this.$emit("reset");
-    }
-    else {
+    } else {
       history.back();
     }
   }
@@ -225,8 +226,15 @@ header {
 
   #urlTested {
     color: #c5c5c5;
+    display: flex;
+    align-items: center;
 
     padding-right: 32px;
+
+    img {
+      height: 2em;
+      margin-right: 12px;
+    }
 
     span {
       font-weight: bold;
