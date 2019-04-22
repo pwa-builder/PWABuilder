@@ -419,6 +419,7 @@ export default class extends Vue {
     padding-top: 30px;
     padding-left: 159px;
     padding-right: 159px;
+    min-height: 100vh;
 
     #leftSide {
       flex: 1;
