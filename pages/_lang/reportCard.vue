@@ -1,8 +1,12 @@
 
 <template>
-  <div id="hubContainer"
-       :class="{ 'backgroundReport': gotURL, 'backgroundIndex': !gotURL }">
-    <HubHeader v-on:reset="reset()" :score="overallScore" :showSubHeader="gotURL" :expanded="!gotURL"></HubHeader>
+  <div id="hubContainer" :class="{ 'backgroundReport': gotURL, 'backgroundIndex': !gotURL }">
+    <HubHeader
+      v-on:reset="reset()"
+      :score="overallScore"
+      :showSubHeader="gotURL"
+      :expanded="!gotURL"
+    ></HubHeader>
 
     <main>
       <div v-if="!gotURL" id="inputSection">
@@ -13,8 +17,11 @@
 
           <div id="urlErr">{{ $t(this.error) }}</div>
 
-          <form @submit.prevent="checkUrlAndGenerate" @keydown.enter.prevent="checkUrlAndGenerate"
-                :class="{ 'formErr': error != null }">
+          <form
+            @submit.prevent="checkUrlAndGenerate"
+            @keydown.enter.prevent="checkUrlAndGenerate"
+            :class="{ 'formErr': error != null }"
+          >
             <input
               id="getStartedInput"
               :aria-label="$t('generator.url')"
@@ -35,7 +42,6 @@
               <div :class="{ 'btnErrText': error != null }">{{ $t('generator.start') }}</div>
             </button>
           </form>
-
         </div>
 
         <div id="bottomHalfHome">
@@ -102,14 +108,22 @@
         <i slot="iconSlot" class="fas fa-rocket"></i>
       </FeatureCard>
 
-      <div id="moreFeaturesBlock" 
-           v-if="topSamples.length > 0">
+      <div id="moreFeaturesBlock" v-if="topSamples.length > 0">
         <nuxt-link to="/features">
           View More
           <i class="fas fa-angle-right"></i>
         </nuxt-link>
       </div>
     </main>
+
+    <footer v-if="gotURL" id="hubFooter">
+      <p>
+        PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
+        <a
+          href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
+        >Our Privacy Statement</a>
+      </p>
+    </footer>
   </div>
 </template>
 
@@ -222,7 +236,7 @@ export default class extends Vue {
   }
 
   public reset() {
-    console.log('resetting');
+    console.log("resetting");
     this.gotURL = false;
     this.overallScore = 0;
     this.topSamples = [];
@@ -230,7 +244,7 @@ export default class extends Vue {
 
   public skipCheckUrl(): void {
     this.$router.push({
-      name: 'features'
+      name: "features"
     });
   }
 }
@@ -239,6 +253,15 @@ export default class extends Vue {
 <style lang="scss" scoped>
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
+
+#hubFooter {
+  display: flex;
+  justify-content: center;
+  padding-left: 16em;
+  padding-right: 16em;
+  font-size: 12px;
+  color: rgba(60, 60, 60, 0.5);
+}
 
 #hubContainer {
   height: 100vh;
@@ -255,7 +278,7 @@ export default class extends Vue {
 @media (min-width: 1336px) {
   #hubContainer {
     height: 128vh;
-  }  
+  }
 
   .backgroundIndex {
     @include backgroundLeftPoint(26%, 70vh);
@@ -294,7 +317,6 @@ export default class extends Vue {
   animation-duration: 300ms;
 
   grid-column: 1 / span 12;
-
 }
 
 main {
@@ -344,12 +366,13 @@ h2 {
       margin-right: 0.3em;
       margin-top: 20px;
       outline: none;
-      
+
       &::placeholder {
         color: white;
       }
 
-      &:hover, &:focus {
+      &:hover,
+      &:focus {
         border-bottom: solid 1px white;
       }
     }
@@ -365,12 +388,12 @@ h2 {
       padding-right: 23px;
       background: linear-gradient(to right, white, rgba(255, 255, 255, 0.7));
       border: solid 1px white;
-      color: #3C3C3C;
+      color: #3c3c3c;
       height: 44px;
       align-self: flex-end;
       display: flex;
       flex-direction: row;
-      align-items: center;      
+      align-items: center;
       width: 88px;
       justify-content: center;
     }
@@ -398,7 +421,7 @@ h2 {
         border-radius: 22px;
         padding-top: 9px;
         padding-bottom: 11px;
-        background-image: linear-gradient(to right, #1FC2C8, #9337D8);
+        background-image: linear-gradient(to right, #1fc2c8, #9337d8);
         color: white;
         height: 42px;
       }
@@ -425,7 +448,7 @@ h2 {
       margin-top: 86px;
 
       color: rgba(60, 60, 60, 0.6);
-      
+
       p {
         text-align: center;
         font-size: 12px;
@@ -483,7 +506,7 @@ h2 {
 }
 
 #toolkitSection {
-  grid-column: 1/ span 5;
+  grid-column: 1 / span 5;
 
   margin-top: 36px;
   display: flex;
@@ -559,7 +582,7 @@ h2 {
   visibility: hidden;
 
   &:after {
-    content: '!';
+    content: "!";
     color: red;
     font-weight: bold;
     display: block;
@@ -583,10 +606,18 @@ h2 {
 }
 
 @keyframes shake {
-  0% { margin-left: 0rem; }
-  25% { margin-left: 0.5rem; }
-  75% { margin-left: -0.5rem; }
-  100% { margin-left: 0rem; }
+  0% {
+    margin-left: 0rem;
+  }
+  25% {
+    margin-left: 0.5rem;
+  }
+  75% {
+    margin-left: -0.5rem;
+  }
+  100% {
+    margin-left: 0rem;
+  }
 }
 </style>
 
