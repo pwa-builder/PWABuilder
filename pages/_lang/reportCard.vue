@@ -304,16 +304,6 @@ h2 {
   margin-bottom: 17px;
 }
 
-/* horizontal bar after heading */
-h2:after {
-  content: "";
-  display: block;
-
-  width: 19%; /* TODO: Not part of Grid */
-  padding-top: 17px;
-  border-bottom: solid 1px rgba(255, 255, 255, 0.3);
-}
-
 #inputSection {
   grid-column: 1 / span 5;
 
@@ -459,9 +449,15 @@ h2:after {
 
   color: white;
 
+  margin-bottom: 24px;
+
   @media (max-width: 900px) {
     grid-column: 1 / span 12;
   }
+}
+
+#infoSection p {
+  line-height: 28px;
 }
 
 .scoreCard {

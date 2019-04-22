@@ -72,6 +72,10 @@ export default class extends Vue {
     justify-content: space-between;
   }
 
+  #featureCardTitleBlock svg {
+    color: #C5C5C5;
+  }
+
   p {
     flex: 1;
     font-size: 14px;

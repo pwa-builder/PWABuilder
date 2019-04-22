@@ -127,7 +127,6 @@ export default class extends Vue {
 @import "~assets/scss/base/variables";
 
 .nuxt-link-exact-active {
-  border-bottom: solid 2px #1fc2c8;
   color: white !important;
 }
 
