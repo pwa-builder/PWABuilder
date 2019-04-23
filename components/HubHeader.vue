@@ -186,6 +186,16 @@ header {
   }
 }
 
+@media(max-width: 425px) {
+  header {
+    padding: 0 0px;
+  }
+
+  #logo {
+    height: 36px;
+  }
+}
+
 #subHeader {
   @include grid;
 
@@ -307,6 +317,12 @@ header {
 a {
   color: white;
   text-decoration: none;
+}
+
+@media (max-width: 425px) {
+  #icons a {
+    display: none;
+  }
 }
 
 a:hover {

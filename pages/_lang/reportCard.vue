@@ -399,6 +399,13 @@ h2 {
     }
   }
 
+  @media(max-width: 425px) {
+    #topHalfHome {
+      padding-left: 25px;
+      padding-right: 25px;
+    }
+  }
+
   #bottomHalfHome {
     grid-row: 2;
 
@@ -439,6 +446,13 @@ h2 {
       }
     }
 
+    @media (max-width: 425px) {
+      #expertModeBlock {
+        margin-top: 180px;
+        margin-right: initial;
+      }
+    }
+
     footer {
       display: flex;
       justify-content: center;
@@ -465,11 +479,28 @@ h2 {
       }
     }
 
+    @media (max-width: 425px) {
+      footer p {
+        width: 62%;
+        margin-right: 4em;
+      }
+    }
+
     @media (max-width: 1280px) {
       footer {
         margin-top: 56px;
       }
     }
+  }
+}
+
+@media (max-width: 425px) {
+  #inputSection {
+    display: initial;
+  }
+
+  main {
+    display: initial;
   }
 }
 
