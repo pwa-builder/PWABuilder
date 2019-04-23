@@ -569,7 +569,7 @@ export default class extends Vue {
   #leftSide {
     flex: 1;
     background: white;
-    min-height: 120vh;
+    min-height: 144vh;
 
     .mastHead {
       padding-top: 40px;
