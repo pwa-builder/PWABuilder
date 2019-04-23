@@ -194,6 +194,10 @@ header {
   #logo {
     height: 36px;
   }
+
+  .smaller-header {
+    padding-left: 25px;
+  }
 }
 
 #subHeader {
@@ -295,6 +299,18 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+}
+
+@media (max-width: 425px) {
+  #subHeader #tabsBar, #subHeader #urlTested {
+    display: none;
+  }
+
+  #subHeader {
+    display: flex;
+    padding: 0 0px;
+    justify-content: space-around;
   }
 }
 

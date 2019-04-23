@@ -516,6 +516,45 @@ h2 {
   }
 }
 
+@media (max-width: 425px) {
+  #infoSection {
+    margin-left: 25px;
+    margin-right: 25px;
+  }
+
+  #scoreCard {
+    margin-left: 25px;
+    margin-right: 25px;
+    margin-bottom: 20px;
+  }
+
+  #toolkitSection {
+    margin-left: 25px;
+    margin-right: 25px;
+  }
+
+  .topFeatures {
+    margin-left: 25px;
+    margin-right: 25px;
+  }
+
+  #hubFooter {
+    padding-left: 25px;
+    padding-right: 25px;
+    text-align: center;
+  }
+
+  #tabsBar {
+    display: none;
+  }
+
+  #subHeader #scoreZone {
+    display: flex;
+    justify-content: space-around;
+    height: 95%;
+  }
+}
+
 #infoSection p {
   line-height: 28px;
 }

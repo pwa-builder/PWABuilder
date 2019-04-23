@@ -465,6 +465,28 @@ export default class extends Vue {
   }
 }
 
+@media (max-width: 425px) {
+  #docsMain #contentContainer {
+    flex-direction: column;
+    padding-left: 25px;
+    padding-right: 25px;
+  }
+
+  #docsMain #contentContainer #leftSide, #docsMain #contentContainer #rightSide {
+    width: 100%;
+    margin-right: 0px;
+    margin-left: 0px;
+  }
+
+  #docsMain #headerDiv h2 {
+    display: none;
+  }
+
+  #docsMain #contentContainer #rightSide {
+    margin-top: 4em;
+  }
+}
+
 #backButton {
   position: absolute;
   top: 5em;
