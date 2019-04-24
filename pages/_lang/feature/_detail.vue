@@ -36,7 +36,7 @@ import * as windowsStore from "~/store/modules/windows";
 
 import * as marked from "marked";
 import Clipboard from "clipboard";
-import hljs from 'highlight.js';
+import hljs from "highlight.js";
 
 const WindowsState = namespace(windowsStore.name, State);
 const WindowsAction = namespace(windowsStore.name, Action);
@@ -98,10 +98,10 @@ export default class extends Vue {
   docsContent: string | null = null;
 
   async mounted() {
-    console.log('route param', this.$route.params.featureDetail);
+    console.log("route param", this.$route.params.featureDetail);
 
     this.snippitMap.forEach(async snippit => {
-      console.log('snippit.mappedName', snippit.mappedName)
+      console.log("snippit.mappedName", snippit.mappedName);
       if (snippit.mappedName === this.$route.params.featureDetail) {
         this.currentSample = snippit;
 
@@ -114,8 +114,8 @@ export default class extends Vue {
 
         this.docsContent = marked(docsFile, {
           highlight: function(docsFile) {
-                      return require('highlight.js').highlightAuto(docsFile).value;
-                    }
+            return require("highlight.js").highlightAuto(docsFile).value;
+          }
         });
         console.log(docsFile);
       }
@@ -216,13 +216,12 @@ export default class extends Vue {
 @import "~assets/scss/base/variables";
 @import "~assets/scss/vendor/highlightjs2";
 
-
 #docsMain #contentContainer img {
   width: 100%;
 }
 
 .codeBlockHeader {
-  background: #F0F0F0;
+  background: #f0f0f0;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -324,8 +323,6 @@ export default class extends Vue {
 .codeBlock pre {
   margin: 0;
 }
-
-
 
 #docsMain {
   background: white;
@@ -465,28 +462,6 @@ export default class extends Vue {
   }
 }
 
-@media (max-width: 425px) {
-  #docsMain #contentContainer {
-    flex-direction: column;
-    padding-left: 25px;
-    padding-right: 25px;
-  }
-
-  #docsMain #contentContainer #leftSide, #docsMain #contentContainer #rightSide {
-    width: 100%;
-    margin-right: 0px;
-    margin-left: 0px;
-  }
-
-  #docsMain #headerDiv h2 {
-    display: none;
-  }
-
-  #docsMain #contentContainer #rightSide {
-    margin-top: 4em;
-  }
-}
-
 #backButton {
   position: absolute;
   top: 5em;
@@ -502,6 +477,29 @@ export default class extends Vue {
 @media (max-width: 1336px) {
   #backButton {
     left: 30px;
+  }
+}
+
+@media (max-width: 425px) {
+  #docsMain #contentContainer {
+    flex-direction: column;
+    padding-left: 25px;
+    padding-right: 25px;
+  }
+
+  #docsMain #contentContainer #leftSide,
+  #docsMain #contentContainer #rightSide {
+    width: 100%;
+    margin-right: 0px;
+    margin-left: 0px;
+  }
+
+  #docsMain #headerDiv h2 {
+    display: none;
+  }
+
+  #docsMain #contentContainer #rightSide {
+    margin-top: 4em;
   }
 }
 </style>
