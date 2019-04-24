@@ -12,9 +12,9 @@
       <!--<button
         @click="onClickSample(sample)"
         id="featureCardAddButton"
-      >View Snippit</button>-->
+      >View Snippet</button>-->
       <nuxt-link id="featureCardAddButton" v-bind:to="`/feature/${sample.title}`">
-        View Snippit
+        View Snippet
       </nuxt-link>
     </div>
   </div>
