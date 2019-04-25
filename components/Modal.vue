@@ -8,7 +8,7 @@
         </span>
         </div>
         <div class="modal-body">
-          <div id="titleBox">
+          <div v-if="showTitleBox" id="titleBox">
             <h5 class="modal-title modal-title--normal">{{title}}</h5>
 
             <slot name="extraP"></slot>
@@ -58,6 +58,7 @@ export default class extends Vue {
 
   @Prop({ type: String, default: "" }) public title: string;
   @Prop({ type: Boolean, default: true }) public showSubmitButton;
+  @Prop({ type: Boolean, default: true }) public showTitleBox;
   //public showButtons: string;
 
   public beforeDestroy() {
@@ -114,7 +115,7 @@ export default class extends Vue {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 /* stylelint-disable */
 
 @import "~assets/scss/base/variables";

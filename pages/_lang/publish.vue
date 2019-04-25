@@ -4,6 +4,7 @@
 
     <div v-if="modalStatus" id="modalBackground"></div>
 
+    <!-- appx modal -->
     <Modal
       :title="$t('publish.generate_appx')"
       ref="appxModal"
@@ -79,6 +80,39 @@
       </section>
     </Modal>
 
+    <!-- android platform modal -->
+    <Modal
+      title="Android Platform"
+      ref="androidModal"
+      class="androidModal"
+      :showSubmitButton="false"
+      :showTitleBox="false"
+      v-on:modalOpened="modalOpened()"
+      v-on:modalClosed="modalClosed()"
+    >
+      <div id="topLabelBox" slot="extraP"></div>
+
+      <section id="androidModalBody">
+        <div>
+          <p id="androidModalP">
+            You can choose to package your PWA as a
+            <a
+              href="https://developers.google.com/web/updates/2019/02/using-twa"
+            >Trusted Web Activity</a>
+            or in a
+            <a
+              href="https://developer.android.com/reference/android/webkit/WebView"
+            >traditional Webview</a>.
+          </p>
+        </div>
+
+        <div id="androidModalButtonSection">
+          <Download id="androidDownloadButton" platform="androidTWA" message="Download TWA"/>
+          <Download id="androidDownloadButton" platform="android" message="Download WebView"/>
+        </div>
+      </section>
+    </Modal>
+
     <section id="sideBySide">
       <section id="leftSide">
         <div id="introContainer">
@@ -138,15 +172,29 @@
             <li>
               <div id="platformButtonBlock">
                 <i id="platformIcon" class="fab fa-android"></i>
-                <Download
+                <!--<Download
                   id="platformDownloadButton"
                   platform="android"
+                  :message="$t('publish.download')"
+                />-->
+                <button @click="openAndroidModal()" id="androidPlatformButton">Download</button>
+              </div>
+
+              <span>PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.</span>
+            </li>
+
+            <!--<li>
+              <div id="platformButtonBlock">
+                <i id="platformIcon" class="fab fa-android"></i>
+                <Download
+                  id="platformDownloadButton"
+                  platform="androidTWA"
                   :message="$t('publish.download')"
                 />
               </div>
 
               <span>PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.</span>
-            </li>
+            </li>-->
 
             <li>
               <div id="platformButtonBlock">
@@ -273,6 +321,10 @@ export default class extends Vue {
     (this.$refs.appxModal as Modal).show();
   }
 
+  public openAndroidModal(): void {
+    (this.$refs.androidModal as Modal).show();
+  }
+
   public async onSubmitAppxModal(): Promise<void> {
     console.log("here");
     const $appxModal = this.$refs.appxModal as Modal;
@@ -317,7 +369,7 @@ export default class extends Vue {
 
 @import "~assets/scss/base/variables";
 
-@media( max-height: 700px) {
+@media (max-height: 700px) {
   #scoreSideBySide header {
     top: 51px;
   }
@@ -343,14 +395,14 @@ main {
 }
 
 @keyframes opened {
-    from {
-      opacity: 0;
-    }
-
-    to {
-      opacity: 0.7;
-    }
+  from {
+    opacity: 0;
   }
+
+  to {
+    opacity: 0.7;
+  }
+}
 
 #appxModalBody {
   height: 6em;
@@ -529,11 +581,9 @@ main {
   }
 }
 
-
 #topLabelBox {
   margin-bottom: 1em;
-};
-
+}
 
 #bottomSection {
   // display: flex;
@@ -568,6 +618,48 @@ main {
   #bottomImageSection {
     flex: 1;
   }
+}
+
+#androidModalBody {
+  margin-top: 66px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-left: 112px;
+  padding-right: 112px;
+}
+
+#androidModalP {
+  font-size: 1em;
+  font-weight: bold;
+}
+
+#androidModalButtonSection {
+  display: flex;
+  justify-content: space-around;
+}
+
+#androidDownloadButton {
+  background: #9337d8;
+  color: white;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 20px;
+  padding-left: 14px;
+  padding-right: 14px;
+}
+
+#androidDownloadButton:hover {
+  cursor: pointer;
+}
+
+.androidModal .modal {
+  top: 16em;
+  right: 20em;
+  bottom: 16em;
+  left: 20em;
 }
 
 @media (max-width: 1280px) {
