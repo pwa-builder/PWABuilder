@@ -600,7 +600,7 @@ export default class extends Vue {
       console.log("this.serviceWorkerData", this.serviceWorkerData);
       console.log(this.serviceWorkerData);
 
-      if (this.serviceWorkerData === false) {
+      if (this.serviceWorkerData === false || this.serviceWorkerData.swURL === false) {
         this.noServiceWorker = true;
         return;
       } else {
