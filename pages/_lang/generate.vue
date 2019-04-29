@@ -252,11 +252,9 @@
 
       <section id="rightSide">
         <div id="exampleDiv">
-          <a href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps/get-started#web-app-manifest">
-          Check our docs
-          </a>
-
-          for more info on how to use this manifest
+          <code>
+            &lt;link rel="manifest" href="/manifest.json"&gt;
+          </code>
         </div>
         <CodeViewer
           code-type="json"
@@ -689,6 +687,10 @@ export default class extends Vue {
   #exampleDiv {
     padding: 1em;
     font-weight: bold;
+  }
+
+  #exampleDiv code {
+    margin-left: 16px;
   }
 
   @media (min-width: 2559px) {
