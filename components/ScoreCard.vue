@@ -529,7 +529,7 @@ export default class extends Vue {
       await this.getManifestInformation();
       console.log("manifestInfo", this.manifest);
 
-      if (this.manifest.generated === true) {
+      if (this.manifest && this.manifest.generated === true) {
         this.noManifest = true;
         resolve();
       } else {
