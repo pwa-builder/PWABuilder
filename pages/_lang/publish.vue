@@ -130,6 +130,12 @@
               href="https://developer.android.com/reference/android/webkit/WebView"
             >traditional Webview</a>.
           </p>
+
+          <a href="https://developers.google.com/web/updates/2019/02/using-twa#establish_an_association_from_the_website_to_the_app" id="androidModalSubText">
+            Note: For Trusted Web Activities you will need Android Studio to associate your PWA with your TWA
+
+            <i class="fas fa-external-link-alt"></i>
+          </a>
         </div>
 
         <div id="androidModalButtonSection">
@@ -669,7 +675,17 @@ main {
   font-size: 1em;
   font-weight: bold;
   text-align: center;
-  margin-bottom: 2.4em;
+  margin-bottom: 1.4em;
+}
+
+#androidModalBody #androidModalSubText {
+  text-align: center;
+  color: grey;
+  font-size: 14px;
+  display: block;
+  margin-left: 62px;
+  margin-right: 62px;
+  margin-bottom: 2em;
 }
 
 #androidModalButtonSection {
