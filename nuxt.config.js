@@ -62,12 +62,7 @@ module.exports = {
         tslint: true,
         vue: true
       }),*/
-      new MonacoWebpackPlugin({
-        languages: [
-          "typescript", "javascript", "html", "json"
-        ],
-        features: ['accessibilityHelp', 'bracketMatching', 'caretOperations', 'coreCommands', 'cursorUndo', 'dnd', 'folding', 'format', 'hover', 'iPadShowKeyboard', 'linesOperations', 'links', 'multicursor', 'smartSelect', 'transpose', 'wordHighlighter', 'wordOperations', 'wordPartOperations']
-      })
+      new MonacoWebpackPlugin()
     ]
   },
   router: {
