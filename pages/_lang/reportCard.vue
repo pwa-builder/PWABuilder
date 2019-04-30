@@ -263,6 +263,10 @@ export default class extends Vue {
   color: rgba(60, 60, 60, 0.5);
 }
 
+#hubFooter p {
+  text-align: center;
+}
+
 #hubContainer {
   height: 100vh;
 }
