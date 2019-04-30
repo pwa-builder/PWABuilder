@@ -679,7 +679,7 @@ export default class extends Vue {
   padding-top: 24px;
   padding-left: 30px;
   padding-right: 30px;
-  min-height: 404px
+  min-height: 404px;
 
   #cardEditBlock {
     display: flex;
