@@ -182,6 +182,28 @@ export default class extends Vue {
     }
   }
 
+  public mounted() {
+    if ((window as any).CSS && (window as any).CSS.registerProperty) {
+      try {
+        (CSS as any).registerProperty({
+          name: "--color-stop-hub",
+          syntax: "<color>",
+          inherits: false,
+          initialValue: "transparent"
+        });
+
+        (CSS as any).registerProperty({
+          name: "--color-start-hub",
+          syntax: "<color>",
+          inherits: false,
+          initialValue: "transparent"
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+
   public async checkUrlAndGenerate() {
     this.error = null;
 
@@ -403,7 +425,7 @@ h2 {
     }
   }
 
-  @media(max-width: 425px) {
+  @media (max-width: 425px) {
     #topHalfHome {
       padding-left: 25px;
       padding-right: 25px;
@@ -424,6 +446,9 @@ h2 {
       margin-right: 3em;
 
       #expertModeButton {
+        --color-stop-hub: #1fc2c8;
+        --color-start-hub: #9337d8;
+
         width: 136px;
         font-weight: 500;
         font-size: 14px;
@@ -432,9 +457,20 @@ h2 {
         border-radius: 22px;
         padding-top: 9px;
         padding-bottom: 11px;
-        background-image: linear-gradient(to right, #1fc2c8, #9337d8);
+        background-image: linear-gradient(
+          to right,
+          var(--color-stop-hub),
+          var(--color-start-hub)
+        );
         color: white;
         height: 42px;
+
+        transition: --color-stop-hub 0.3s, --color-start-hub 0.3s;
+      }
+
+      #expertModeButton:hover {
+        --color-stop-hub: #9337d8;
+        --color-start-hub: #1fc2c8;
       }
 
       p {

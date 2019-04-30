@@ -83,6 +83,26 @@ export default class extends Vue {
     }
 
     this.calcedScore = this.score;
+
+    if ((window as any).CSS && (window as any).CSS.registerProperty) {
+      try {
+        (CSS as any).registerProperty({
+          name: "--color-stop",
+          syntax: "<color>",
+          inherits: false,
+          initialValue: "transparent"
+        });
+
+        (CSS as any).registerProperty({
+          name: "--color-start",
+          syntax: "<color>",
+          inherits: false,
+          initialValue: "transparent"
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
   }
 
   @Watch("score")
@@ -186,7 +206,7 @@ header {
   }
 }
 
-@media(max-width: 425px) {
+@media (max-width: 425px) {
   header {
     padding: 0 0px;
   }
@@ -283,6 +303,9 @@ header {
   }
 
   #publishButton {
+    --color-stop: #11999e;
+    --color-start: #7644c2;
+
     justify-self: right;
 
     clip-path: polygon(0 0, 0 100%, 89% 100%, 100% 52%, 100% 0%);
@@ -296,15 +319,27 @@ header {
     padding-top: 9px;
     padding-bottom: 11px;
     color: white;
-    background: $color-button-primary-purple-variant;
+    background: linear-gradient(
+      to right,
+      var(--color-start),
+      var(--color-stop)
+    );
     display: flex;
     justify-content: center;
     align-items: center;
+
+    transition: --color-stop 0.3s, --color-start 0.3s;
+  }
+
+  #publishButton:hover {
+    --color-stop: #7644c2;
+    --color-start: #11999e;
   }
 }
 
 @media (max-width: 425px) {
-  #subHeader #tabsBar, #subHeader #urlTested {
+  #subHeader #tabsBar,
+  #subHeader #urlTested {
     display: none;
   }
 
