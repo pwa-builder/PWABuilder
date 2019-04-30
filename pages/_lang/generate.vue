@@ -323,6 +323,7 @@ import ColorSelector from "~/components/ColorSelector.vue";
 import HubHeader from "~/components/HubHeader.vue";
 
 import * as generator from "~/store/modules/generator";
+import "monaco-editor";
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
@@ -567,7 +568,7 @@ export default class extends Vue {
   #leftSide {
     flex: 1;
     background: white;
-    min-height: 144vh;
+    min-height: 164vh;
 
     .mastHead {
       padding-top: 40px;
