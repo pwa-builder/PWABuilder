@@ -741,6 +741,13 @@ main {
   #sideBySide #rightSide #platformsListContainer {
     padding-right: 52px;
   }
+
+  #androidPlatModal {
+    top: 15em;
+    right: 16em;
+    bottom: 12em;
+    left: 16em;
+  }
 }
 </style>
 
