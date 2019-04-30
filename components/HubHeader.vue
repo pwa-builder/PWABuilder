@@ -285,6 +285,7 @@ header {
   #publishButton {
     justify-self: right;
 
+    clip-path: polygon(0 0, 0 100%, 89% 100%, 100% 52%, 100% 0%);
     height: 42px;
     width: 120px;
     border-radius: 22px;
