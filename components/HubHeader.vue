@@ -197,7 +197,7 @@ header {
 
   #icons {
     grid-column: 11 / span 2;
-    width: 4em; /* TODO: Padding between instead of width? */
+    width: 2em; /* TODO: Padding between instead of width? */
 
     display: flex;
     justify-content: space-around;
