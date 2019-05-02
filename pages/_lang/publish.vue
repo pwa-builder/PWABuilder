@@ -217,6 +217,19 @@
 
             <!--<li>
               <div id="platformButtonBlock">
+                <i id="platformIcon" class="fab fa-samsung"></i>
+                <Download
+                  id="platformDownloadButton"
+                  platform="samsung"
+                  :message="$t('publish.download')"
+                />
+              </div>
+
+              <span>PWAs are available through the browser on iOS, however your PWA can also be submitted to the app store by submitting the package you get below.</span>
+            </li>-->
+
+            <!--<li>
+              <div id="platformButtonBlock">
                 <i id="platformIcon" class="fab fa-android"></i>
                 <Download
                   id="platformDownloadButton"
