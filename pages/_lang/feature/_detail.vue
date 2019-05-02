@@ -89,6 +89,10 @@ export default class extends Vue {
     {
       realName: "clipboard",
       mappedName: "Copy to Clipboard"
+    },
+    {
+      realName: "installButton",
+      mappedName: "Install your PWA"
     }
   ];
 
