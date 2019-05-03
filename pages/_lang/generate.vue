@@ -30,10 +30,12 @@
           <section class="animatedSection" v-if="showBasicSection">
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 v-bind:class="{ fieldName: activeFormField === 'appName' }">{{ $t("generate.name") }}</h4>
+                <h4
+                  v-bind:class="{ fieldName: activeFormField === 'appName' }"
+                >{{ $t("generate.name") }}</h4>
                 <p>Used for App lists or Store listings</p>
               </label>
-              
+
               <input
                 class="l-generator-input"
                 v-model="manifest$.name"
@@ -45,10 +47,12 @@
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 v-bind:class="{ fieldName: activeFormField === 'shortName' }">{{ $t("generate.short_name") }}</h4>
+                <h4
+                  v-bind:class="{ fieldName: activeFormField === 'shortName' }"
+                >{{ $t("generate.short_name") }}</h4>
                 <p>Used for tiles or home screens</p>
               </label>
-              
+
               <input
                 class="l-generator-input"
                 v-model="manifest$.short_name"
@@ -61,10 +65,12 @@
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 v-bind:class="{ fieldName: activeFormField === 'appDesc' }">{{ $t("generate.description") }}</h4>
+                <h4
+                  v-bind:class="{ fieldName: activeFormField === 'appDesc' }"
+                >{{ $t("generate.description") }}</h4>
                 <p>Used for App listings</p>
               </label>
-              
+
               <textarea
                 class="l-generator-textarea"
                 v-model="manifest$.description"
@@ -77,10 +83,12 @@
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 v-bind:class="{ fieldName: activeFormField === 'startURL' }">{{ $t("generate.start_url") }}</h4>
+                <h4
+                  v-bind:class="{ fieldName: activeFormField === 'startURL' }"
+                >{{ $t("generate.start_url") }}</h4>
                 <p>This will be the first page that loads in your PWA.</p>
               </label>
-              
+
               <input
                 class="l-generator-input"
                 v-model="manifest$.start_url"
@@ -154,10 +162,12 @@
           <section class="animatedSection" v-if="showSettingsSection">
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 v-bind:class="{ fieldName: activeFormField === 'appScope' }">{{ $t("generate.scope") }}</h4>
+                <h4
+                  v-bind:class="{ fieldName: activeFormField === 'appScope' }"
+                >{{ $t("generate.scope") }}</h4>
                 <p>Scope determines what part of your website runs in the PWA</p>
               </label>
-              
+
               <input
                 class="l-generator-input"
                 v-model="manifest$.scope"
@@ -169,10 +179,12 @@
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4  v-bind:class="{ fieldName: activeFormField === 'displayMode' }">{{ $t("generate.display") }}</h4>
+                <h4
+                  v-bind:class="{ fieldName: activeFormField === 'displayMode' }"
+                >{{ $t("generate.display") }}</h4>
                 <p>Display indetifies the browser components that should be included in your. "Standalone" appears as a traditional app.</p>
               </label>
-              
+
               <select
                 class="l-generator-input l-generator-input--select"
                 v-model="manifest$.display"
@@ -185,10 +197,12 @@
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 v-bind:class="{ fieldName: activeFormField === 'appOrientation' }">{{ $t("generate.orientation") }}</h4>
+                <h4
+                  v-bind:class="{ fieldName: activeFormField === 'appOrientation' }"
+                >{{ $t("generate.orientation") }}</h4>
                 <p>Orientation determines the perfered flow of your application.</p>
               </label>
-              
+
               <select
                 class="l-generator-input l-generator-input--select"
                 v-model="manifest$.orientation"
@@ -205,10 +219,12 @@
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 v-bind:class="{ fieldName: activeFormField === 'appLang' }">{{ $t("generate.language") }}</h4>
+                <h4
+                  v-bind:class="{ fieldName: activeFormField === 'appLang' }"
+                >{{ $t("generate.language") }}</h4>
                 <p>Declare the language of your PWA</p>
               </label>
-              
+
               <select class="l-generator-input l-generator-input--select" v-model="manifest$.lang">
                 <option
                   v-for="language in languagesNames"
@@ -230,7 +246,7 @@
                 id="related-applications-field"
                 class="l-generator-togglecheck is-hidden"
               >
-              
+
               <label class="l-generator-toggle" for="related-applications-field">
                 <p
                   class="l-generator-subtitle l-generator-subtitle--toggleable"
@@ -252,10 +268,11 @@
 
       <section id="rightSide">
         <div id="exampleDiv">
-          <code>
-            &lt;link rel="manifest" href="/manifest.json"&gt;
-          </code>
+          <h3>Add this code to your start page:</h3>
+
+          <code>&lt;link rel="manifest" href="/manifest.json"&gt;</code>
         </div>
+
         <CodeViewer
           code-type="json"
           v-on:invalidManifest="invalidManifest()"
@@ -268,13 +285,10 @@
           :warnings="warnings"
           :warningsTotal="warningsTotal"
           :showToolbar="true"
+          :showHeader="true"
           :showCopyButton="true"
         >
-          <nuxt-link
-            :to="$i18n.path('serviceworker')"
-            class="pwa-button pwa-button--simple pwa-button--brand pwa-button--header"
-            @click=" $awa( { 'uri': 'https://www.pwabuilder.com/generator-nextStep-trigger' })"
-          >{{ $t("serviceworker.next_step") }}</nuxt-link>
+          <h3>Add this code to your manifest.webmanifest file</h3>
         </CodeViewer>
       </section>
 
@@ -564,11 +578,11 @@ export default class extends Vue {
   display: flex;
   justify-content: space-around;
   height: 100vh;
+  background: white;
 
   #leftSide {
     flex: 1;
     background: white;
-    min-height: 164vh;
 
     .mastHead {
       padding-top: 40px;
@@ -576,14 +590,16 @@ export default class extends Vue {
       padding-left: 164px;
 
       h2 {
-        font-size: 32px;
-        font-weight: bold;
-        color: black;
-        width: 376px;
+        font-family: Poppins;
+        font-style: normal;
+        font-weight: 600;
+        font-size: 24px;
+        line-height: 54px;
+        letter-spacing: -0.02em;
       }
 
       p {
-        margin-top: 20px;
+        margin-top: 16px;
         font-size: 18px;
         line-height: 28px;
         width: 376px;
@@ -606,7 +622,7 @@ export default class extends Vue {
         margin-bottom: 2em;
         justify-content: space-between;
         width: 292px;
-        background: #E2E2E2;
+        background: #e2e2e2;
         border-radius: 22px;
 
         button {
@@ -614,7 +630,7 @@ export default class extends Vue {
           border: none;
           font-weight: bold;
           font-size: 14px;
-          color: #8A8A8A;
+          color: #8a8a8a;
           padding-top: 6px;
           padding-bottom: 7px;
           border-radius: 20px;
@@ -640,7 +656,7 @@ export default class extends Vue {
       h4 {
         font-size: 18px;
         font-weight: bold;
-        color: #2C2C2C;
+        color: #2c2c2c;
         padding-top: 30px;
       }
 
@@ -682,16 +698,33 @@ export default class extends Vue {
     flex: 1;
     width: 4em;
     height: 120vh;
-    background: #F0F0F0;
+    background: white;
+    margin-right: 128px;
   }
 
   #exampleDiv {
     padding: 1em;
     font-weight: bold;
+    margin-top: 40px;
+    margin-bottom: 16px;
+    background: #f1f1f1;
   }
 
   #exampleDiv code {
+    font-family: sans-serif;
+    font-size: 12px;
+    line-height: 20px;
+    color: #9337d8;
     margin-left: 16px;
+  }
+
+  #exampleDiv h3 {
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 24px;
+    padding-left: 1em;
   }
 
   @media (min-width: 2559px) {
