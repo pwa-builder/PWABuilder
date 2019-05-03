@@ -250,6 +250,7 @@ export default class extends Vue {
       font-size: 16px;
       line-height: 24px;
       padding-left: 1em;
+      width: 60%;
     }
 
     div {

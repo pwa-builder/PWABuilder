@@ -58,7 +58,7 @@
           :showToolbar="false"
           :showHeader="true"
         >
-          <div>Add this code to your landing page in a &lt;script&gt; tag:</div>
+          <h3>Add this code to your landing page in a &lt;script&gt; tag:</h3>
         </CodeViewer>
 
         <CodeViewer
@@ -72,7 +72,7 @@
           :showToolbar="false"
           :showHeader="true"
         >
-          <div>Add this code to a file named "pwabuilder-sw.js" on your site root:</div>
+          <h3>Add this code to a file named "pwabuilder-sw.js" on your site root:</h3>
         </CodeViewer>
       </section>
     </main>
@@ -215,7 +215,8 @@ export default class extends Vue {
 #sideBySide {
   display: flex;
   justify-content: space-around;
-  height: 100vh;
+  height: 185vh;
+  padding-right: 162px;
 
   #leftSide {
     flex: 1;
@@ -228,15 +229,18 @@ export default class extends Vue {
       padding-left: 159px;
 
       h2 {
-        font-size: 36px;
-        font-weight: bold;
-        color: black;
-        width: 376px;
+        font-family: Poppins;
+        font-style: normal;
+        font-weight: 600;
+        font-size: 24px;
+        line-height: 54px;
+        letter-spacing: -0.02em;
       }
 
       p {
-        margin-top: 20px;
+        margin-top: 16px;
         font-size: 18px;
+        line-height: 28px;
         width: 376px;
       }
     }
@@ -300,20 +304,18 @@ export default class extends Vue {
 
   #rightSide {
     flex: 1;
-    height: 110vh;
     width: 50%;
     display: flex;
     flex-direction: column;
     padding-top: 2px;
-    background: #f0f0f0;
-    overflow-y: auto;
+    background: white;
 
     .topViewer {
-      height: 50vh;
+      margin-top: 40px;
     }
 
     .bottomViewer {
-      height: 50vh;
+      margin-top: 5em;
     }
 
     #topTitle {

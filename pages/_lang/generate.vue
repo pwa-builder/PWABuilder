@@ -575,19 +575,17 @@ export default class extends Vue {
 /* stylelint-disable */
 
 #sideBySide {
-  display: flex;
-  justify-content: space-around;
-  height: 100vh;
   background: white;
+  margin-left: 154px;
+  margin-right: 128px;
+  display: flex;
 
   #leftSide {
-    flex: 1;
     background: white;
+    width: 45%;
 
     .mastHead {
       padding-top: 40px;
-      padding-right: 100px;
-      padding-left: 164px;
 
       h2 {
         font-family: Poppins;
@@ -608,8 +606,6 @@ export default class extends Vue {
 
     #dataSection {
       padding-top: 40px;
-      padding-left: 164px;
-      width: 642px;
 
       #dataButtonsBlock {
         display: flex;
@@ -696,10 +692,8 @@ export default class extends Vue {
 
   #rightSide {
     flex: 1;
-    width: 4em;
     height: 120vh;
     background: white;
-    margin-right: 128px;
   }
 
   #exampleDiv {
