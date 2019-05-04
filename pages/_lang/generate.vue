@@ -576,13 +576,14 @@ export default class extends Vue {
 
 #sideBySide {
   background: white;
-  margin-left: 154px;
-  margin-right: 128px;
+  padding-left: 154px;
+  padding-right: 128px;
   display: flex;
 
   #leftSide {
     background: white;
     width: 45%;
+    margin-right: 110px;
 
     .mastHead {
       padding-top: 40px;

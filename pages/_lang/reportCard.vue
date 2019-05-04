@@ -303,7 +303,7 @@ export default class extends Vue {
 
 @media (min-width: 1336px) {
   #hubContainer {
-    height: 128vh;
+    height: 146vh;
   }
 
   .backgroundIndex {
