@@ -442,7 +442,7 @@ h2 {
       justify-content: center;
       align-items: center;
       flex-direction: column;
-      margin-top: 100px;
+      margin-top: 142px;
       margin-right: 3em;
 
       #expertModeButton {
@@ -499,7 +499,7 @@ h2 {
       align-items: center;
 
       width: 465px;
-      margin-top: 86px;
+      margin-top: 54px;
 
       color: rgba(60, 60, 60, 0.6);
 
@@ -618,7 +618,7 @@ h2 {
 #toolkitSection {
   grid-column: 1 / span 5;
 
-  margin-top: 36px;
+  margin-top: 76px;
   display: flex;
   align-items: center;
 
@@ -633,6 +633,12 @@ h2 {
 
   a:hover {
     box-shadow: none;
+  }
+}
+
+@media(max-height: 924px) {
+  #toolkitSection {
+    margin-top: 36px;
   }
 }
 
