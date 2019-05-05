@@ -716,6 +716,9 @@ main {
   border-radius: 20px;
   padding-left: 14px;
   padding-right: 14px;
+  width: 174px;
+  display: flex;
+  justify-content: center;
 }
 
 #androidDownloadButton:hover {
