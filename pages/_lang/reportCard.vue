@@ -442,7 +442,7 @@ h2 {
       justify-content: center;
       align-items: center;
       flex-direction: column;
-      margin-top: 142px;
+      margin-top: 180px;
       margin-right: 3em;
 
       #expertModeButton {
@@ -499,7 +499,7 @@ h2 {
       align-items: center;
 
       width: 465px;
-      margin-top: 54px;
+      margin-top: 34px;
 
       color: rgba(60, 60, 60, 0.6);
 
@@ -507,7 +507,6 @@ h2 {
         text-align: center;
         font-size: 12px;
         line-height: 18px;
-        margin-right: 2em;
       }
 
       a {

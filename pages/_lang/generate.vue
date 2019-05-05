@@ -734,4 +734,11 @@ export default class extends Vue {
     }
   }
 }
+
+@media (max-width: 1290px) {
+  #sideBySide {
+    padding-left: 54px;
+    padding-right: 52px;
+  }
+}
 </style>
