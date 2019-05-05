@@ -360,5 +360,28 @@ export default class extends Vue {
   #rightSide {
     height: 123vh !important;
   }
+
+  #sideBySide {
+    padding-left: 54px;
+    padding-right: 52px;
+    height: 202vh;
+  }
+
+  #sideBySide #leftSide .mastHead {
+    padding-left: initial;
+  }
+
+  #sideBySide #leftSide #inputSection {
+    padding-left: initial;
+  }
+
+  #sideBySide #leftSide #doneDiv {
+    width: 56%;
+  }
+
+  #sideBySide #rightSide .bottomViewer {
+    margin-top: 18em;
+  }
 }
+
 </style>
