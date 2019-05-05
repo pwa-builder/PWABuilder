@@ -1,18 +1,27 @@
 
 <template>
-  <div id="hubContainer"
-       :class="{ 'backgroundReport': gotURL, 'backgroundIndex': !gotURL }">
-    <HubHeader v-on:reset="reset()" :score="overallScore" :showSubHeader="gotURL" :expanded="!gotURL"></HubHeader>
+  <div id="hubContainer" :class="{ 'backgroundReport': gotURL, 'backgroundIndex': !gotURL }">
+    <HubHeader
+      v-on:reset="reset()"
+      :score="overallScore"
+      :showSubHeader="gotURL"
+      :expanded="!gotURL"
+    ></HubHeader>
 
     <main>
       <div v-if="!gotURL" id="inputSection">
         <div id="topHalfHome">
-          <h2>Enter a URL to test your PWA</h2>
+          <h1>Quickly and easily turn your website into an app!</h1>
+
+          <p>It's super easy to get started. Just enter the URL of your website below</p>
 
           <div id="urlErr">{{ $t(this.error) }}</div>
 
-          <form @submit.prevent="checkUrlAndGenerate" @keydown.enter.prevent="checkUrlAndGenerate"
-                :class="{ 'formErr': error != null }">
+          <form
+            @submit.prevent="checkUrlAndGenerate"
+            @keydown.enter.prevent="checkUrlAndGenerate"
+            :class="{ 'formErr': error != null }"
+          >
             <input
               id="getStartedInput"
               :aria-label="$t('generator.url')"
@@ -33,7 +42,6 @@
               <div :class="{ 'btnErrText': error != null }">{{ $t('generator.start') }}</div>
             </button>
           </form>
-
         </div>
 
         <div id="bottomHalfHome">
@@ -100,14 +108,21 @@
         <i slot="iconSlot" class="fas fa-rocket"></i>
       </FeatureCard>
 
-      <div id="moreFeaturesBlock" 
-           v-if="topSamples.length > 0">
+      <div id="moreFeaturesBlock" v-if="topSamples.length > 0">
         <nuxt-link to="/features">
           View More
           <i class="fas fa-angle-right"></i>
         </nuxt-link>
       </div>
     </main>
+    <footer v-if="gotURL" id="hubFooter">
+      <p>
+        PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
+        <a
+          href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
+        >Our Privacy Statement</a>
+      </p>
+    </footer>
   </div>
 </template>
 
@@ -166,6 +181,28 @@ export default class extends Vue {
     }
   }
 
+  public mounted() {
+    if ((window as any).CSS && (window as any).CSS.registerProperty) {
+      try {
+        (CSS as any).registerProperty({
+          name: "--color-stop-hub",
+          syntax: "<color>",
+          inherits: false,
+          initialValue: "transparent"
+        });
+
+        (CSS as any).registerProperty({
+          name: "--color-start-hub",
+          syntax: "<color>",
+          inherits: false,
+          initialValue: "transparent"
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+
   public async checkUrlAndGenerate() {
     this.error = null;
 
@@ -220,10 +257,16 @@ export default class extends Vue {
   }
 
   public reset() {
-    console.log('resetting');
+    console.log("resetting");
     this.gotURL = false;
     this.overallScore = 0;
     this.topSamples = [];
+  }
+
+  public skipCheckUrl(): void {
+    this.$router.push({
+      name: "features"
+    });
   }
 }
 </script>
@@ -232,29 +275,42 @@ export default class extends Vue {
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
 
+#hubFooter {
+  display: flex;
+  justify-content: center;
+  padding-left: 16em;
+  padding-right: 16em;
+  font-size: 12px;
+  color: rgba(60, 60, 60, 0.5);
+}
+
+#hubFooter p {
+  text-align: center;
+}
+
 #hubContainer {
   height: 100vh;
 }
 
 .backgroundIndex {
-  @include backgroundLeftPoint(20%, 50vh);
+  @include backgroundLeftPoint(20%, 40vh);
 }
 
 .backgroundReport {
-  @include backgroundRightPoint(80%, 50vh);
+  @include backgroundRightPoint(80%, 40vh);
 }
 
 @media (min-width: 1336px) {
   #hubContainer {
-    height: 128vh;
-  }  
+    height: 146vh;
+  }
 
   .backgroundIndex {
-    @include backgroundLeftPoint(30%, 80vh);
+    @include backgroundLeftPoint(26%, 70vh);
   }
 
   .backgroundReport {
-    @include backgroundRightPoint(80%, 80vh);
+    @include backgroundRightPoint(80%, 70vh);
   }
 }
 
@@ -284,9 +340,7 @@ export default class extends Vue {
 #toolkitWrapper {
   animation-name: slideup;
   animation-duration: 300ms;
-
   grid-column: 1 / span 12;
-
 }
 
 main {
@@ -302,16 +356,6 @@ h2 {
   margin-bottom: 17px;
 }
 
-/* horizontal bar after heading */
-h2:after {
-  content: "";
-  display: block;
-
-  width: 19%; /* TODO: Not part of Grid */
-  padding-top: 17px;
-  border-bottom: solid 1px rgba(255, 255, 255, 0.3);
-}
-
 #inputSection {
   grid-column: 1 / span 5;
 
@@ -322,6 +366,8 @@ h2:after {
 
   #topHalfHome {
     grid-row: 1;
+
+    margin-top: 68px;
 
     form {
       display: flex;
@@ -344,12 +390,13 @@ h2:after {
       margin-right: 0.3em;
       margin-top: 20px;
       outline: none;
-      
+
       &::placeholder {
         color: white;
       }
 
-      &:hover, &:focus {
+      &:hover,
+      &:focus {
         border-bottom: solid 1px white;
       }
     }
@@ -365,14 +412,21 @@ h2:after {
       padding-right: 23px;
       background: linear-gradient(to right, white, rgba(255, 255, 255, 0.7));
       border: solid 1px white;
-      color: #3C3C3C;
+      color: #3c3c3c;
       height: 44px;
       align-self: flex-end;
       display: flex;
       flex-direction: row;
-      align-items: center;      
+      align-items: center;
       width: 88px;
       justify-content: center;
+    }
+  }
+
+  @media (max-width: 425px) {
+    #topHalfHome {
+      padding-left: 25px;
+      padding-right: 25px;
     }
   }
 
@@ -386,20 +440,35 @@ h2:after {
       justify-content: center;
       align-items: center;
       flex-direction: column;
-      margin-top: 65px;
-      margin-right: 1em;
+      margin-top: 180px;
+      margin-right: 3em;
 
       #expertModeButton {
-        width: 200px;
-        font-weight: bold;
-        font-size: 18px;
+        --color-stop-hub: #1fc2c8;
+        --color-start-hub: #9337d8;
+
+        width: 136px;
+        font-weight: 500;
+        font-size: 14px;
+        font-family: "Poppins", sans-serif;
         border: none;
         border-radius: 22px;
         padding-top: 9px;
         padding-bottom: 11px;
-        background-image: linear-gradient(to right, #7644c2, #11999e);
+        background-image: linear-gradient(
+          to right,
+          var(--color-stop-hub),
+          var(--color-start-hub)
+        );
         color: white;
-        height: 44px;
+        height: 42px;
+
+        transition: --color-stop-hub 0.3s, --color-start-hub 0.3s;
+      }
+
+      #expertModeButton:hover {
+        --color-stop-hub: #9337d8;
+        --color-start-hub: #1fc2c8;
       }
 
       p {
@@ -409,19 +478,32 @@ h2:after {
       }
     }
 
+    @media (max-width: 1280px) {
+      #expertModeBlock {
+        margin-top: 80px;
+      }
+    }
+
+    @media (max-width: 425px) {
+      #expertModeBlock {
+        margin-top: 180px;
+        margin-right: initial;
+      }
+    }
+
     footer {
       display: flex;
       justify-content: center;
       align-items: center;
+      width: 465px;
+      margin-top: 34px;
 
       color: rgba(60, 60, 60, 0.6);
-      
+
       p {
         text-align: center;
-        width: 320px;
         font-size: 12px;
         line-height: 18px;
-        margin-right: 2em;
       }
 
       a {
@@ -432,6 +514,29 @@ h2:after {
         text-decoration: underline;
       }
     }
+
+    @media (max-width: 425px) {
+      footer p {
+        width: 62%;
+        margin-right: 4em;
+      }
+    }
+
+    @media (max-width: 1280px) {
+      footer {
+        margin-top: 56px;
+      }
+    }
+  }
+}
+
+@media (max-width: 425px) {
+  #inputSection {
+    display: initial;
+  }
+
+  main {
+    display: initial;
   }
 }
 
@@ -440,9 +545,54 @@ h2:after {
 
   color: white;
 
+  margin-bottom: 24px;
+
   @media (max-width: 900px) {
     grid-column: 1 / span 12;
   }
+}
+
+@media (max-width: 425px) {
+  #infoSection {
+    margin-left: 25px;
+    margin-right: 25px;
+  }
+
+  #scoreCard {
+    margin-left: 25px;
+    margin-right: 25px;
+    margin-bottom: 20px;
+  }
+
+  #toolkitSection {
+    margin-left: 25px;
+    margin-right: 25px;
+  }
+
+  .topFeatures {
+    margin-left: 25px;
+    margin-right: 25px;
+  }
+
+  #hubFooter {
+    padding-left: 25px;
+    padding-right: 25px;
+    text-align: center;
+  }
+
+  #tabsBar {
+    display: none;
+  }
+
+  #subHeader #scoreZone {
+    display: flex;
+    justify-content: space-around;
+    height: 95%;
+  }
+}
+
+#infoSection p {
+  line-height: 28px;
 }
 
 .scoreCard {
@@ -462,9 +612,9 @@ h2:after {
 }
 
 #toolkitSection {
-  grid-column: 1/ span 5;
+  grid-column: 1 / span 5;
 
-  margin-top: 36px;
+  margin-top: 76px;
   display: flex;
   align-items: center;
 
@@ -479,6 +629,12 @@ h2:after {
 
   a:hover {
     box-shadow: none;
+  }
+}
+
+@media(max-height: 924px) {
+  #toolkitSection {
+    margin-top: 36px;
   }
 }
 
@@ -520,6 +676,59 @@ h2:after {
     border: solid 1px #9337d8;
     border-radius: 24px;
     padding: 10px;
+  }
+}
+
+#urlErr {
+  height: 1em;
+  font-weight: 500;
+  padding-top: 1em;
+}
+
+.btnErr {
+  width: 42px !important;
+  padding: 0px !important;
+}
+
+.btnErrText {
+  visibility: hidden;
+
+  &:after {
+    content: "!";
+    color: red;
+    font-weight: bold;
+    display: block;
+    position: relative;
+    visibility: visible;
+    top: -11px;
+    left: 1px;
+  }
+}
+
+@keyframes slideup {
+  from {
+    opacity: 0;
+    transform: translateY(200px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0% {
+    margin-left: 0rem;
+  }
+  25% {
+    margin-left: 0.5rem;
+  }
+  75% {
+    margin-left: -0.5rem;
+  }
+  100% {
+    margin-left: 0rem;
   }
 }
 

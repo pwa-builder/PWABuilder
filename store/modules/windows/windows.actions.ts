@@ -60,6 +60,10 @@ export const actions: Actions<State, RootState> = {
                   ({
                     title: "Copy to Clipboard",
                     description: "A simple script that uses the Clipboard API to allow your app to copy text to the users clipboard"
+                  } as any),
+                  ({
+                    title: "Install your PWA",
+                    description: "A simple script that gives users a button to install your PWA directly from the browser"
                   } as any)
                 );
 

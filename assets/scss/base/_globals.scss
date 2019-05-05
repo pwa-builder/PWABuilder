@@ -1,5 +1,5 @@
 @import 'variables';
-@import url('https://fonts.googleapis.com/css?family=Bungee');
+
 @import url('https://fluentweb-nightly-static.netlify.com/fluentweb/fluentweb.css');
 /* stylelint-disable */
 
@@ -60,10 +60,11 @@ h4 {
 
 h1 {
   margin-bottom: 30px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 24px;
 }
 
 h2 {
-  margin-bottom: 20px;
   font-size: 24px;
 }
 
@@ -72,8 +73,8 @@ h3 {
 }
 
 p {
-  font-size: 18px;
-  line-height: 28px;
+  font-size: 16px;
+  line-height: 21px;
 }
 
 a {

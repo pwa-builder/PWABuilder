@@ -2,8 +2,9 @@
   <main>
     <HubHeader></HubHeader>
 
-    <div v-if="modalStatus" id="modalBackground"></div>
+    <div v-if="openAndroid" id="modalBackground"></div>
 
+    <!-- appx modal -->
     <Modal
       :title="$t('publish.generate_appx')"
       ref="appxModal"
@@ -79,6 +80,71 @@
       </section>
     </Modal>
 
+    <!-- android platform modal -->
+    <!--<Modal
+      title="Android Platform"
+      ref="androidModal"
+      class="androidModal"
+      :showSubmitButton="false"
+      :showTitleBox="false"
+      v-on:modalOpened="modalOpened()"
+      v-on:modalClosed="modalClosed()"
+    >
+      <div id="topLabelBox" slot="extraP"></div>
+
+      <section id="androidModalBody">
+        <div>
+          <p id="androidModalP">
+            You can choose to package your PWA as a
+            <a
+              href="https://developers.google.com/web/updates/2019/02/using-twa"
+            >Trusted Web Activity</a>
+            or in a
+            <a
+              href="https://developer.android.com/reference/android/webkit/WebView"
+            >traditional Webview</a>.
+          </p>
+        </div>
+
+        <div id="androidModalButtonSection">
+          <Download id="androidDownloadButton" platform="androidTWA" message="Download TWA"/>
+          <Download id="androidDownloadButton" platform="android" message="Download WebView"/>
+        </div>
+      </section>
+    </Modal>-->
+
+    <div v-if="openAndroid" ref="androidModal" id="androidPlatModal">
+      <button @click="closeAndroidModal()" id="closeAndroidPlatButton">
+        <i class="fas fa-times"></i>
+      </button>
+
+      <section id="androidModalBody">
+        <div>
+          <p id="androidModalP">
+            You can choose to package your PWA as a
+            <a
+              href="https://developers.google.com/web/updates/2019/02/using-twa"
+            >Trusted Web Activity</a>
+            or in a
+            <a
+              href="https://developer.android.com/reference/android/webkit/WebView"
+            >traditional Webview</a>.
+          </p>
+
+          <a href="https://developers.google.com/web/updates/2019/02/using-twa#establish_an_association_from_the_website_to_the_app" id="androidModalSubText">
+            Note: For Trusted Web Activities you will need Android Studio to associate your PWA with your TWA
+
+            <i class="fas fa-external-link-alt"></i>
+          </a>
+        </div>
+
+        <div id="androidModalButtonSection">
+          <Download id="androidDownloadButton" platform="androidTWA" message="Download TWA"/>
+          <Download id="androidDownloadButton" platform="android" message="Download WebView"/>
+        </div>
+      </section>
+    </div>
+
     <section id="sideBySide">
       <section id="leftSide">
         <div id="introContainer">
@@ -138,15 +204,42 @@
             <li>
               <div id="platformButtonBlock">
                 <i id="platformIcon" class="fab fa-android"></i>
-                <Download
+                <!--<Download
                   id="platformDownloadButton"
                   platform="android"
+                  :message="$t('publish.download')"
+                />-->
+                <button id="platformDownloadButton" @click="openAndroidModal()">Download</button>
+              </div>
+
+              <span>PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.</span>
+            </li>
+
+            <!--<li>
+              <div id="platformButtonBlock">
+                <i id="platformIcon" class="fab fa-samsung"></i>
+                <Download
+                  id="platformDownloadButton"
+                  platform="samsung"
+                  :message="$t('publish.download')"
+                />
+              </div>
+
+              <span>PWAs are available through the browser on iOS, however your PWA can also be submitted to the app store by submitting the package you get below.</span>
+            </li>-->
+
+            <!--<li>
+              <div id="platformButtonBlock">
+                <i id="platformIcon" class="fab fa-android"></i>
+                <Download
+                  id="platformDownloadButton"
+                  platform="androidTWA"
                   :message="$t('publish.download')"
                 />
               </div>
 
               <span>PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.</span>
-            </li>
+            </li>-->
 
             <li>
               <div id="platformButtonBlock">
@@ -258,6 +351,7 @@ export default class extends Vue {
 
   public appxError: string | null = null;
   public modalStatus = false;
+  public openAndroid: boolean = false;
 
   public created(): void {
     this.updateStatus();
@@ -271,6 +365,14 @@ export default class extends Vue {
 
   public openAppXModal(): void {
     (this.$refs.appxModal as Modal).show();
+  }
+
+  public openAndroidModal(): void {
+    this.openAndroid = true;
+  }
+
+  public closeAndroidModal(): void {
+    this.openAndroid = false;
   }
 
   public async onSubmitAppxModal(): Promise<void> {
@@ -317,7 +419,7 @@ export default class extends Vue {
 
 @import "~assets/scss/base/variables";
 
-@media( max-height: 700px) {
+@media (max-height: 700px) {
   #scoreSideBySide header {
     top: 51px;
   }
@@ -337,20 +439,18 @@ main {
   background: grey;
   opacity: 0.7;
   z-index: 98999;
-  animation-name: opened;
-  animation-duration: 250ms;
   will-change: opacity;
 }
 
 @keyframes opened {
-    from {
-      opacity: 0;
-    }
-
-    to {
-      opacity: 0.7;
-    }
+  from {
+    opacity: 0;
   }
+
+  to {
+    opacity: 0.7;
+  }
+}
 
 #appxModalBody {
   height: 6em;
@@ -529,11 +629,9 @@ main {
   }
 }
 
-
 #topLabelBox {
   margin-bottom: 1em;
-};
-
+}
 
 #bottomSection {
   // display: flex;
@@ -570,6 +668,101 @@ main {
   }
 }
 
+#androidModalBody {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-left: 112px;
+  padding-right: 112px;
+}
+
+#closeAndroidPlatButton {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  padding: 1em;
+}
+
+#androidModalP {
+  font-size: 1em;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1.4em;
+}
+
+#androidModalBody #androidModalSubText {
+  text-align: center;
+  color: grey;
+  font-size: 14px;
+  display: block;
+  margin-left: 62px;
+  margin-right: 62px;
+  margin-bottom: 2em;
+}
+
+#androidModalButtonSection {
+  display: flex;
+  justify-content: space-around;
+  width: 80%;
+}
+
+#androidDownloadButton {
+  background: #9337d8;
+  color: white;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 20px;
+  padding-left: 14px;
+  padding-right: 14px;
+  width: 174px;
+  display: flex;
+  justify-content: center;
+}
+
+#androidDownloadButton:hover {
+  cursor: pointer;
+}
+
+#androidPlatModal {
+  background: white;
+  position: fixed;
+  top: 15em;
+  right: 20em;
+  bottom: 15em;
+  left: 20em;
+  z-index: 99999;
+  overflow-y: auto;
+  animation-name: opened;
+  animation-duration: 250ms;
+
+  will-change: opacity transform;
+}
+
+@keyframes opened {
+  from {
+    transform: scale(0.4, 0.4);
+    opacity: 0.4;
+  }
+
+  to {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+}
+
+.modalBackground {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: grey;
+  opacity: 0.8;
+  z-index: 98999;
+}
+
 @media (max-width: 1280px) {
   #sideBySide #leftSide #introContainer {
     padding-right: 9em;
@@ -579,6 +772,13 @@ main {
 
   #sideBySide #rightSide #platformsListContainer {
     padding-right: 52px;
+  }
+
+  #androidPlatModal {
+    top: 15em;
+    right: 16em;
+    bottom: 12em;
+    left: 16em;
   }
 }
 </style>

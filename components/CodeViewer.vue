@@ -230,13 +230,11 @@ export default class extends Vue {
 @import "~assets/scss/base/animations";
 
 .code_viewer {
-  display: flex;
-  flex-direction: column;
   background: #f1f1f1;
-  height: 110vh;
+  height: 668px;
+  border-radius: 4px;
 
   #codeHeader {
-    font-weight: bold;
     padding-left: 1em;
     padding-bottom: 1em;
     padding-top: 14px;
@@ -244,6 +242,16 @@ export default class extends Vue {
     justify-content: space-between;
     align-items: center;
     z-index: 9999;
+
+    h3 {
+      font-family: Poppins;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 24px;
+      padding-left: 1em;
+      width: 60%;
+    }
 
     div {
       width: 20em;
@@ -288,11 +296,13 @@ export default class extends Vue {
   }
 
   .code_viewer-pre {
-    height: 100%;
+    height: 668px;
+    overflow: hidden;
+    border-radius: 4px;
+    background: #f1f1f1;
   }
 
   #toolbar {
-    position: fixed;
     background: #f0f0f0;
     // width: 50vw;
     bottom: 16px;

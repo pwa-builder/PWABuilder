@@ -529,7 +529,7 @@ export default class extends Vue {
       await this.getManifestInformation();
       console.log("manifestInfo", this.manifest);
 
-      if (this.manifest.generated === true) {
+      if (this.manifest && this.manifest.generated === true) {
         this.noManifest = true;
         resolve();
       } else {
@@ -600,7 +600,7 @@ export default class extends Vue {
       console.log("this.serviceWorkerData", this.serviceWorkerData);
       console.log(this.serviceWorkerData);
 
-      if (this.serviceWorkerData === false) {
+      if (this.serviceWorkerData === false || this.serviceWorkerData.swURL === false) {
         this.noServiceWorker = true;
         return;
       } else {
@@ -675,11 +675,11 @@ export default class extends Vue {
   background: white;
   display: flex;
   flex-direction: column;
-  height: 390px;
   border-radius: 4px;
   padding-top: 24px;
   padding-left: 30px;
   padding-right: 30px;
+  min-height: 404px;
 
   #cardEditBlock {
     display: flex;
@@ -703,11 +703,9 @@ export default class extends Vue {
   }
 
   h3 {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bold;
     color: #707070;
-    border-bottom: solid 1px #c5c5c5;
-    padding-bottom: 10px;
   }
 
   ul {
@@ -722,7 +720,7 @@ export default class extends Vue {
       color: initial;
 
       .cardIcon {
-        margin-right: 8px;
+        margin-right: 16px;
         color: initial;
       }
 
@@ -743,6 +741,7 @@ export default class extends Vue {
       color: #3c3c3c;
       align-items: center;
       justify-content: space-between;
+      margin-bottom: 12px;
 
       .listSubDiv {
         display: flex;
@@ -760,8 +759,9 @@ export default class extends Vue {
         color: red;
         margin-right: 8px;
       }
+
       code {
-        background-color: #eeeddd;
+        background-color: rgba(60,60,60,0.05);
         padding: 3px;
       }
     }

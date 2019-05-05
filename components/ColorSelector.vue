@@ -1,29 +1,42 @@
 <template>
-<div class="l-generator-field">
-  <label class="l-generator-label">
-    {{ $t("generate.background_color") }}
-    <p>select the background color for your splash screen and tile</p>
-  </label>
-  <div class="l-generator-options">
-    <label class="l-generator-label" v-for="colorOption in colorOptions" :key="colorOption">
-      <input type="radio" :value="colorOption" :name='id' @change="onChangeColor(colorOption)" :checked="isColorChecked(colorOption)"> {{ $t("generate." + colorOption) }}
+  <div>
+    <label>
+      <h4 id="colorHeader">{{ $t("generate.background_color") }}</h4>
+      <p id="colorDetail">select the background color for your splash screen and tile</p>
     </label>
+    <div>
+      <label class="optionLabel" v-for="colorOption in colorOptions" :key="colorOption">
+        <div>{{ $t("generate." + colorOption) }}</div>
+        <input
+          type="radio"
+          :value="colorOption"
+          :name="id"
+          @change="onChangeColor(colorOption)"
+          :checked="isColorChecked(colorOption)"
+        >
+      </label>
 
-    <div v-if="canChooseColor">
-      <input class="l-generator-input l-generator-input--tiny" type="color" name="background_color" v-model="color">
-      <input v-if="checkInputColor" class="l-generator-input l-generator-input--small" type="text" placeholder="#000000" name="background_color"
-        v-model="color">
+      <div id="colorPickerInput" v-if="canChooseColor">
+        <input id="actualColorInput" type="color" name="background_color" v-model="color">
+        <input
+          v-if="checkInputColor"
+          type="text"
+          id="colorHex"
+          placeholder="#000000"
+          name="background_color"
+          v-model="color"
+        >
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Component from 'nuxt-class-component';
-import { Action, State, namespace } from 'vuex-class';
+import Vue from "vue";
+import Component from "nuxt-class-component";
+import { Action, State, namespace } from "vuex-class";
 
-import * as generator from '~/store/modules/generator';
+import * as generator from "~/store/modules/generator";
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
@@ -41,33 +54,38 @@ export default class extends Vue {
   @GeneratorActions updateColor;
 
   public get checkInputColor(): boolean {
-    if (typeof document === 'undefined') {
+    if (typeof document === "undefined") {
       return false;
     }
 
-    let i = document.createElement('input');
-    i.setAttribute('type', 'color');
-    return i.type !== 'text';
+    let i = document.createElement("input");
+    i.setAttribute("type", "color");
+    return i.type !== "text";
   }
 
   public created(): void {
-    this.id = 'color-selector' + Date.now();
+    this.id = "color-selector" + Date.now();
     this.manifest$ = { ...this.manifest };
 
     this.updateCanChooseColor();
 
     // Check manifest from server color
     if (this.canChooseColor) {
-      this.color = this.color || this.manifest$.theme_color || this.manifest$.background_color;
+      this.color =
+        this.color ||
+        this.manifest$.theme_color ||
+        this.manifest$.background_color;
     }
   }
 
   private updateCanChooseColor(): void {
     if (!this.manifest$) {
-        return;
+      return;
     }
 
-    this.canChooseColor = this.manifest$.background_color !== this.colorOptions.none && this.manifest$.background_color !== this.colorOptions.transparent;
+    this.canChooseColor =
+      this.manifest$.background_color !== this.colorOptions.none &&
+      this.manifest$.background_color !== this.colorOptions.transparent;
   }
 
   public isColorChecked(colorOption: string): boolean {
@@ -75,7 +93,11 @@ export default class extends Vue {
       return false;
     }
 
-    if (colorOption === this.colorOptions.pick && this.manifest$.background_color !== this.colorOptions.none && this.manifest$.background_color !== this.colorOptions.transparent) {
+    if (
+      colorOption === this.colorOptions.pick &&
+      this.manifest$.background_color !== this.colorOptions.none &&
+      this.manifest$.background_color !== this.colorOptions.transparent
+    ) {
       return true;
     }
 
@@ -83,7 +105,10 @@ export default class extends Vue {
   }
 
   public onChangeColor(colorOption: string): void {
-    const colorOptions: generator.ColorOptions = { colorOption, color: this.color || colorOption };
+    const colorOptions: generator.ColorOptions = {
+      colorOption,
+      color: this.color || colorOption
+    };
     this.updateColor(colorOptions);
 
     this.manifest$ = { ...this.manifest };
@@ -92,3 +117,49 @@ export default class extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+#colorHeader {
+  font-size: 18px;
+  font-weight: bold;
+  color: #2c2c2c;
+  padding-top: 30px;
+}
+
+#colorDetail {
+  font-size: 14px;
+  color: grey;
+}
+
+.optionLabel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: grey;
+}
+
+.optionLabel input {
+  height: 20px;
+  width: 16px;
+}
+
+#colorPickerInput {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#colorPickerInput #actualColorInput {
+  height: 2.6em;
+  width: 5.6em;
+  border: none;
+}
+
+#colorPickerInput #colorHex {
+  width: 3.6em;
+  border: none;
+}
+</style>

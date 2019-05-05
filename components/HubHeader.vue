@@ -19,7 +19,7 @@
         <a href="https://github.com/pwa-builder" target="_blank" rel="noopener noreferrer">
           <i class="fab fa-github"></i>
         </a>
-        <i class="fab fa-twitter"></i>
+        <!--<i class="fab fa-twitter"></i>-->
       </div>
     </header>
 
@@ -32,6 +32,8 @@
 
       <div id="scoreZone">
         <div id="urlTested">
+          <img src="~/assets/images/score-icon.png" alt="score icon">
+
           <a target="_blank" rel="noopener noreferrer" :href="url">
             <span>
               URL Tested
@@ -81,6 +83,25 @@ export default class extends Vue {
     }
 
     this.calcedScore = this.score;
+    if ((window as any).CSS && (window as any).CSS.registerProperty) {
+      try {
+        (CSS as any).registerProperty({
+          name: "--color-stop",
+          syntax: "<color>",
+          inherits: false,
+          initialValue: "transparent"
+        });
+
+        (CSS as any).registerProperty({
+          name: "--color-start",
+          syntax: "<color>",
+          inherits: false,
+          initialValue: "transparent"
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
   }
 
   @Watch("score")
@@ -111,11 +132,10 @@ export default class extends Vue {
   }
 
   reset() {
-    console.log('here');
+    console.log("here");
     if (location.pathname === "/") {
       this.$emit("reset");
-    }
-    else {
+    } else {
       history.back();
     }
   }
@@ -127,7 +147,6 @@ export default class extends Vue {
 @import "~assets/scss/base/variables";
 
 .nuxt-link-exact-active {
-  border-bottom: solid 2px #1fc2c8;
   color: white !important;
 }
 
@@ -186,6 +205,20 @@ header {
   }
 }
 
+@media (max-width: 425px) {
+  header {
+    padding: 0 0px;
+  }
+
+  #logo {
+    height: 36px;
+  }
+
+  .smaller-header {
+    padding-left: 25px;
+  }
+}
+
 #subHeader {
   @include grid;
 
@@ -226,8 +259,15 @@ header {
 
   #urlTested {
     color: #c5c5c5;
+    display: flex;
+    align-items: center;
 
     padding-right: 32px;
+
+    img {
+      height: 2em;
+      margin-right: 12px;
+    }
 
     span {
       font-weight: bold;
@@ -262,8 +302,12 @@ header {
   }
 
   #publishButton {
+    --color-stop: #11999e;
+    --color-start: #7644c2;
+
     justify-self: right;
 
+    clip-path: polygon(0 0, 0 100%, 89% 100%, 100% 52%, 100% 0%);
     height: 42px;
     width: 120px;
     border-radius: 22px;
@@ -274,10 +318,34 @@ header {
     padding-top: 9px;
     padding-bottom: 11px;
     color: white;
-    background: $color-button-primary-purple-variant;
+    background: linear-gradient(
+      to right,
+      var(--color-start),
+      var(--color-stop)
+    );
     display: flex;
     justify-content: center;
     align-items: center;
+
+    transition: --color-stop 0.3s, --color-start 0.3s;
+  }
+
+  #publishButton:hover {
+    --color-stop: #7644c2;
+    --color-start: #11999e;
+  }
+}
+
+@media (max-width: 425px) {
+  #subHeader #tabsBar,
+  #subHeader #urlTested {
+    display: none;
+  }
+
+  #subHeader {
+    display: flex;
+    padding: 0 0px;
+    justify-content: space-around;
   }
 }
 
@@ -300,6 +368,12 @@ header {
 a {
   color: white;
   text-decoration: none;
+}
+
+@media (max-width: 425px) {
+  #icons a {
+    display: none;
+  }
 }
 
 a:hover {

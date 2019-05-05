@@ -8,6 +8,8 @@ const platforms = {
     windows: 'windows',
     ios: 'ios',
     android: 'android',
+    androidTWA: 'android-twa',
+    samsung: 'samsung',
     all: 'All'
 };
 
@@ -74,7 +76,7 @@ export const actions: Actions<State, RootState> = {
 
             let platformsList: string[] = [];
             if (params.platform === platforms.all) {
-                platformsList = [ platforms.web, platforms.windows10, platforms.windows, platforms.ios, platforms.android ];
+                platformsList = [ platforms.web, platforms.windows10, platforms.windows, platforms.ios, platforms.android, platforms.androidTWA, platforms.samsung ];
             } else {
                 platformsList = [ params.platform ];
             }

@@ -9,10 +9,6 @@
     <p v-bind:class="{textWrap: wrapText}">{{ sample.description }}</p>
 
     <div v-if="showAddButton" id="featureCardActionsBlock">
-      <!--<button
-        @click="onClickSample(sample)"
-        id="featureCardAddButton"
-      >View Snippet</button>-->
       <nuxt-link id="featureCardAddButton" v-bind:to="`/feature/${sample.title}`">
         View Snippet
       </nuxt-link>
@@ -70,6 +66,10 @@ export default class extends Vue {
   #featureCardTitleBlock {
     display: flex;
     justify-content: space-between;
+  }
+
+  #featureCardTitleBlock svg {
+    color: #C5C5C5;
   }
 
   p {
