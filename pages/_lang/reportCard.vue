@@ -115,7 +115,6 @@
         </nuxt-link>
       </div>
     </main>
-
     <footer v-if="gotURL" id="hubFooter">
       <p>
         PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
@@ -341,7 +340,6 @@ export default class extends Vue {
 #toolkitWrapper {
   animation-name: slideup;
   animation-duration: 300ms;
-
   grid-column: 1 / span 12;
 }
 
@@ -497,7 +495,6 @@ h2 {
       display: flex;
       justify-content: center;
       align-items: center;
-
       width: 465px;
       margin-top: 34px;
 
@@ -733,6 +730,51 @@ h2 {
   100% {
     margin-left: 0rem;
   }
+}
+
+#urlErr {
+  height: 1em;
+  font-weight: 500;
+  padding-top: 1em;
+}
+
+.btnErr {
+  width: 42px !important;
+  padding: 0px !important;
+}
+
+.btnErrText {
+  visibility: hidden;
+
+  &:after {
+    content: '!';
+    color: red;
+    font-weight: bold;
+    display: block;
+    position: relative;
+    visibility: visible;
+    top: -11px;
+    left: 1px;
+  }
+}
+
+@keyframes slideup {
+  from {
+    opacity: 0;
+    transform: translateY(200px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0% { margin-left: 0rem; }
+  25% { margin-left: 0.5rem; }
+  75% { margin-left: -0.5rem; }
+  100% { margin-left: 0rem; }
 }
 </style>
 

@@ -83,7 +83,6 @@ export default class extends Vue {
     }
 
     this.calcedScore = this.score;
-
     if ((window as any).CSS && (window as any).CSS.registerProperty) {
       try {
         (CSS as any).registerProperty({
@@ -197,7 +196,7 @@ header {
 
   #icons {
     grid-column: 11 / span 2;
-    width: 2em; /* TODO: Padding between instead of width? */
+    width: 4em; /* TODO: Padding between instead of width? */
 
     display: flex;
     justify-content: space-around;

@@ -115,4 +115,4 @@ Please do not open issues for general support questions and keep our GitHub issu
 
 ## Special thanks
 This contributing doc was inspired by our friends' version at the [Windows Community Toolkit](https://github.com/windows-toolkit/WindowsCommunityToolkit/).
-
+thank you!

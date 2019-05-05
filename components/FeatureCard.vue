@@ -9,12 +9,8 @@
     <p v-bind:class="{textWrap: wrapText}">{{ sample.description }}</p>
 
     <div v-if="showAddButton" id="featureCardActionsBlock">
-      <!--<button
-        @click="onClickSample(sample)"
-        id="featureCardAddButton"
-      >View Snippit</button>-->
       <nuxt-link id="featureCardAddButton" v-bind:to="`/feature/${sample.title}`">
-        View Snippit
+        View Snippet
       </nuxt-link>
     </div>
   </div>
