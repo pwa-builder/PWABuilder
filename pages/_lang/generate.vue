@@ -310,9 +310,9 @@
         </div>
 
         <div class="l-generator-field">
-          <label>
-            <input type="checkbox" v-model="iconCheckMissing">
+          <label id="genMissingLabel">
             {{ $t("generate.generate_missing") }}
+            <input type="checkbox" v-model="iconCheckMissing">
           </label>
         </div>
       </Modal>
@@ -573,6 +573,15 @@ export default class extends Vue {
 <style lang="scss" scoped>
 @import "~assets/scss/base/variables";
 /* stylelint-disable */
+
+#genMissingLabel {
+  display: flex;
+  width: 29%;
+}
+
+#genMissingLabel input {
+  height: 2em;
+}
 
 #sideBySide {
   background: white;

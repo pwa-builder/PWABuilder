@@ -249,6 +249,8 @@ export default class extends Vue {
 
   .modal-body {
     display: flex;
+    flex-direction: column;
+    padding-left: 164px;
   }
 
   .modal-title {
@@ -290,7 +292,6 @@ export default class extends Vue {
   }
 
   #titleBox {
-    padding-left: 164px;
     padding-right: 100px;
     width: 50%;
   }
