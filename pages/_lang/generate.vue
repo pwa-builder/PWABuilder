@@ -2,6 +2,8 @@
   <div>
     <HubHeader :showSubHeader="true"></HubHeader>
 
+    <div v-if="showingIconModal" id="modalBackground"></div>
+
     <main id="sideBySide">
       <section id="leftSide">
         <header class="mastHead">
@@ -367,6 +369,7 @@ export default class extends Vue {
   public showImagesSection = false;
   public showSettingsSection = false;
   public activeFormField = null;
+  public showingIconModal = false;
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
@@ -483,6 +486,7 @@ export default class extends Vue {
 
   public onClickUploadIcon(): void {
     (this.$refs.iconsModal as Modal).show();
+    this.showingIconModal = true;
   }
 
   public onClickShowGBB(): void {
@@ -511,10 +515,12 @@ export default class extends Vue {
     $iconsModal.hide();
     $iconsModal.hideLoading();
     this.iconFile = null;
+    this.showingIconModal = false;
   }
 
   public onCancelIconModal(): void {
     this.iconFile = null;
+    this.showingIconModal = false;
   }
 
   public seeManifest() {
@@ -566,6 +572,7 @@ export default class extends Vue {
     (this.$root.$el.closest("body") as HTMLBodyElement).classList.remove(
       "modal-screen"
     );
+    this.showingIconModal = false;
   }
 }
 </script>
@@ -573,6 +580,18 @@ export default class extends Vue {
 <style lang="scss" scoped>
 @import "~assets/scss/base/variables";
 /* stylelint-disable */
+
+#modalBackground {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: grey;
+  opacity: 0.7;
+  z-index: 98999;
+  will-change: opacity;
+}
 
 #genMissingLabel {
   display: flex;
