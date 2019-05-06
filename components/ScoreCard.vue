@@ -619,13 +619,11 @@ export default class extends Vue {
         +10 points to user
       */
         if (this.serviceWorkerData.cache) {
-          const hasCache = this.serviceWorkerData.cache.some(
+          /*const hasCache = this.serviceWorkerData.cache.some(
             entry => entry.fromSW === true
-          );
+          );*/
 
-          if (hasCache === true) {
-            this.swScore = this.swScore + 10;
-          }
+          this.swScore = this.swScore + 10;
         }
         /*
         Has push reg
