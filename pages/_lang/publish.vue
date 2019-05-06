@@ -2,7 +2,7 @@
   <main>
     <HubHeader></HubHeader>
 
-    <div v-if="openAndroid" id="modalBackground"></div>
+    <div v-if="openAndroid" class="has-acrylic-40 is-dark" id="modalBackground"></div>
 
     <!-- appx modal -->
     <Modal
@@ -440,8 +440,6 @@ main {
   bottom: 0;
   left: 0;
   right: 0;
-  background: grey;
-  opacity: 0.7;
   z-index: 98999;
   will-change: opacity;
 }
