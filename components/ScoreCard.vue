@@ -575,6 +575,7 @@ export default class extends Vue {
       console.log('not making a request');
       let cleanedData = JSON.parse(savedData);
       this.serviceWorkerData = cleanedData;
+      console.log('saved data', cleanedData);
 
       if (savedScore) {
         let cleanedScore = JSON.parse(savedScore);
@@ -588,7 +589,8 @@ export default class extends Vue {
       const data = await response.json();
       console.log("lookAtSW", data);
 
-      this.serviceWorkerData = data;
+      this.serviceWorkerData = data.swURL;
+      console.log('data', data);
 
       if (this.serviceWorkerData !== false) {
         sessionStorage.setItem(
