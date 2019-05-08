@@ -2,7 +2,7 @@
   <main>
     <HubHeader></HubHeader>
 
-    <div v-if="openAndroid" id="modalBackground"></div>
+    <div v-if="openAndroid" class="has-acrylic-40 is-dark" id="modalBackground"></div>
 
     <!-- appx modal -->
     <Modal
@@ -131,16 +131,20 @@
             >traditional Webview</a>.
           </p>
 
-          <a href="https://developers.google.com/web/updates/2019/02/using-twa#establish_an_association_from_the_website_to_the_app" id="androidModalSubText">
+          <a
+            href="https://developers.google.com/web/updates/2019/02/using-twa#establish_an_association_from_the_website_to_the_app"
+            id="androidModalSubText"
+          >
             Note: For Trusted Web Activities you will need Android Studio to associate your PWA with your TWA
-
-            <i class="fas fa-external-link-alt"></i>
+            <i
+              class="fas fa-external-link-alt"
+            ></i>
           </a>
         </div>
 
         <div id="androidModalButtonSection">
           <Download id="androidDownloadButton" platform="androidTWA" message="Download TWA"/>
-          <Download id="androidDownloadButton" platform="android" message="Download WebView"/>
+          <Download id="androidDownloadButton" class="webviewButton" platform="android" message="Download WebView"/>
         </div>
       </section>
     </div>
@@ -436,8 +440,6 @@ main {
   bottom: 0;
   left: 0;
   right: 0;
-  background: grey;
-  opacity: 0.7;
   z-index: 98999;
   will-change: opacity;
 }
@@ -673,32 +675,48 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-left: 112px;
-  padding-right: 112px;
+  padding-left: 60px;
+  padding-right: 60px;
 }
 
 #closeAndroidPlatButton {
-  background: none;
+  top: 10px;
   border: none;
-  font-size: 1.2em;
-  padding: 1em;
+  float: right;
+  height: 32px;
+  background: #3c3c3c;
+  color: white;
+  border-radius: 50%;
+  width: 32px;
+  margin-top: 10px;
+  margin-right: 10px;
+  right: 10px;
+  position: absolute;
+  font-size: 14px;
 }
 
 #androidModalP {
-  font-size: 1em;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 1.4em;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -0.02em;
+  margin-top: 40px;
+}
+
+#androidModalP a {
+  color: #9337D8;
 }
 
 #androidModalBody #androidModalSubText {
-  text-align: center;
-  color: grey;
-  font-size: 14px;
+  color: #3c3c3c;
   display: block;
-  margin-left: 62px;
-  margin-right: 62px;
   margin-bottom: 2em;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 21px;
 }
 
 #androidModalButtonSection {
@@ -712,13 +730,22 @@ main {
   color: white;
   padding: 10px;
   font-size: 14px;
-  font-weight: bold;
   border-radius: 20px;
-  padding-left: 14px;
-  padding-right: 14px;
-  width: 174px;
+  width: 150px;
+  height: 40px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 600;
   display: flex;
   justify-content: center;
+  align-items: center;
+}
+
+#androidDownloadButton.webviewButton {
+  width: 183px;
+  background: #3C3C3C;
 }
 
 #androidDownloadButton:hover {
@@ -729,13 +756,17 @@ main {
   background: white;
   position: fixed;
   top: 15em;
-  right: 20em;
+  right: 18em;
   bottom: 15em;
-  left: 20em;
+  left: 24em;
   z-index: 99999;
   overflow-y: auto;
   animation-name: opened;
   animation-duration: 250ms;
+  border-radius: 4px;
+
+  width: 590px;
+  height: 266px;
 
   will-change: opacity transform;
 }
@@ -776,9 +807,15 @@ main {
 
   #androidPlatModal {
     top: 15em;
-    right: 16em;
+    right: 18em;
     bottom: 12em;
-    left: 16em;
+    left: 18em;
+  }
+}
+
+@media (min-width: 1445px) {
+  #androidPlatModal {
+    left: 26em;
   }
 }
 </style>
