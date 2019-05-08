@@ -14,10 +14,7 @@
         <div id="dataSection">
           <div id="dataButtonsBlock">
             <div id="dataButtons">
-              <button
-                v-bind:class="{ active: showBasicSection }"
-                @click="showBasicsSection()"
-              >Basic Info</button>
+              <button v-bind:class="{ active: showBasicSection }" @click="showBasicsSection()">Info</button>
               <button
                 v-bind:class="{ active: showImagesSection }"
                 @click="showImageSection()"
@@ -610,8 +607,6 @@ export default class extends Vue {
 
   #leftSide {
     background: white;
-    width: 45%;
-    margin-right: 110px;
 
     .mastHead {
       padding-top: 40px;
@@ -629,7 +624,6 @@ export default class extends Vue {
         margin-top: 16px;
         font-size: 18px;
         line-height: 28px;
-        width: 376px;
       }
     }
 
@@ -639,39 +633,34 @@ export default class extends Vue {
       #dataButtonsBlock {
         display: flex;
         justify-content: center;
-        padding-right: 6em;
       }
 
       #dataButtons {
         display: flex;
-        margin-bottom: 2em;
         justify-content: space-between;
-        width: 292px;
-        background: #e2e2e2;
-        border-radius: 22px;
+        border-bottom: solid 1px rgba(60, 60, 60, 0.3);
 
         button {
           background: none;
           border: none;
           font-weight: bold;
           font-size: 14px;
-          color: #8a8a8a;
-          padding-top: 6px;
-          padding-bottom: 7px;
-          border-radius: 20px;
-          width: 92px;
+          color: rgba(60, 60, 60, 0.6);
+          width: 110px;
           height: 32px;
           box-shadow: none;
+          text-transform: uppercase;
         }
 
         .active {
-          background: $color-button-primary-purple-variant;
-          color: white;
+          color: #9337d8;
         }
       }
     }
 
     .animatedSection {
+      width: 500px;
+
       .fieldName {
         color: $color-button-primary;
         font-size: 18px;
@@ -700,7 +689,6 @@ export default class extends Vue {
       display: flex;
       justify-content: center;
       margin-bottom: 62px;
-      padding-left: 100px;
 
       #doneButton {
         background: $color-button-primary-purple-variant;
@@ -720,9 +708,8 @@ export default class extends Vue {
   }
 
   #rightSide {
-    flex: 1;
-    height: 120vh;
-    background: white;
+    width: 870px;
+    margin-left: 60px;
   }
 
   #exampleDiv {
@@ -753,12 +740,6 @@ export default class extends Vue {
   @media (min-width: 2559px) {
     .mastHead p {
       width: 534px !important;
-    }
-  }
-
-  @media (max-width: 1290px) {
-    #rightSide {
-      height: 136vh;
     }
   }
 }
