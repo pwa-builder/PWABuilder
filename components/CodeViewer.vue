@@ -3,7 +3,13 @@
     <div v-if="showHeader" id="codeHeader">
       <slot></slot>
 
-      <button v-if="showCopyButton" @click="copy()" id="copyButton">
+      <button
+        v-if="showCopyButton"
+        @click="copy()"
+        id="copyButton"
+        ref="codeCopyButton"
+        :data-clipboard-text="this.code"
+      >
         <i id="platformIcon" class="fas fa-copy"></i>
       </button>
     </div>
@@ -32,14 +38,10 @@
 
     <div v-if="showToolbar" id="toolbar">
       <div v-if="errorNumber">
-        <button @click="showErrorOverlay()" id="errorsButton">
-          {{this.errorNumber}} errors
-        </button>
+        <button @click="showErrorOverlay()" id="errorsButton">{{this.errorNumber}} errors</button>
       </div>
       <div v-if="!errorNumber || errorNumber ===0">
-        <button id="noErrorsButton">
-          0 Errors
-        </button>
+        <button id="noErrorsButton">0 Errors</button>
       </div>
     </div>
   </section>
@@ -172,6 +174,8 @@ export default class extends Vue {
 
   // @ts-ignore TS6133
   private async copy() {
+    console.log("copy button clicked", this.code);
+
     const code = this.editor.getValue();
 
     if ((navigator as any).clipboard) {
@@ -186,25 +190,39 @@ export default class extends Vue {
         console.error(err);
       }
     } else {
-      let clipboard = new Clipboard(code);
+      console.log("dont have clipboard api");
 
-      clipboard.on("success", e => {
-        console.info("Action:", e.action);
-        console.info("Text:", e.text);
-        console.info("Trigger:", e.trigger);
+      this.copyToClipboard(code);
 
-        this.textCopied = true;
+    }
+  }
 
-        setTimeout(() => {
-          this.textCopied = false;
-        }, 1300);
-        e.clearSelection();
-      });
+  copyToClipboard(str) {
+    if (document) {
+      const el = document.createElement("textarea"); // Create a <textarea> element
+      el.value = str; // Set its value to the string that you want copied
+      el.setAttribute("readonly", ""); // Make it readonly to be tamper-proof
+      el.style.position = "absolute";
+      el.style.left = "-9999px"; // Move outside the screen to make it invisible
+      document.body.appendChild(el); // Append the <textarea> element to the HTML document
+      const selected =
+        document.getSelection().rangeCount > 0 // Check if there is any content selected previously
+          ? document.getSelection().getRangeAt(0) // Store selection if found
+          : false; // Mark as false to know no selection existed before
+      el.select(); // Select the <textarea> content
+      document.execCommand("copy"); // Copy - only works as a result of a user action (e.g. click events)
+      document.body.removeChild(el); // Remove the <textarea> element
+      if (selected && document) {
+        // If a selection existed before copying
+        document.getSelection().removeAllRanges(); // Unselect everything on the HTML document
+        document.getSelection().addRange(selected); // Restore the original selection
+      }
 
-      clipboard.on("error", e => {
-        console.error("Action:", e.action);
-        console.error("Trigger:", e.trigger);
-      });
+      this.textCopied = true;
+
+      setTimeout(() => {
+        this.textCopied = false;
+      }, 1300);
     }
   }
 
@@ -302,7 +320,7 @@ export default class extends Vue {
   }
 
   #toolbar {
-    background: #E2E2E2;
+    background: #e2e2e2;
     // width: 50vw;
     bottom: 16px;
     right: 0;
@@ -311,12 +329,12 @@ export default class extends Vue {
     align-items: center;
 
     #errorsButton {
-      background: #8A8A8A;
+      background: #8a8a8a;
       color: white;
     }
 
     #noErrorsButton {
-      background: #8A8A8A;
+      background: #8a8a8a;
       color: white;
     }
 
