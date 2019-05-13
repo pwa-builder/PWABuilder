@@ -79,27 +79,28 @@ export default class extends Vue {
     const storedScore = sessionStorage.getItem("overallGrade") || null;
 
     if (storedScore) {
-      this.localScore = parseInt(storedScore);
-    }
+      this.calcedScore = parseInt(storedScore);
+    } else {
+      this.calcedScore = this.score;
+      
+      if ((window as any).CSS && (window as any).CSS.registerProperty) {
+        try {
+          (CSS as any).registerProperty({
+            name: "--color-stop",
+            syntax: "<color>",
+            inherits: false,
+            initialValue: "transparent"
+          });
 
-    this.calcedScore = this.score;
-    if ((window as any).CSS && (window as any).CSS.registerProperty) {
-      try {
-        (CSS as any).registerProperty({
-          name: "--color-stop",
-          syntax: "<color>",
-          inherits: false,
-          initialValue: "transparent"
-        });
-
-        (CSS as any).registerProperty({
-          name: "--color-start",
-          syntax: "<color>",
-          inherits: false,
-          initialValue: "transparent"
-        });
-      } catch (err) {
-        console.error(err);
+          (CSS as any).registerProperty({
+            name: "--color-start",
+            syntax: "<color>",
+            inherits: false,
+            initialValue: "transparent"
+          });
+        } catch (err) {
+          console.error(err);
+        }
       }
     }
   }
