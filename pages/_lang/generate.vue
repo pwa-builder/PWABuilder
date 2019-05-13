@@ -607,6 +607,7 @@ export default class extends Vue {
 
   #leftSide {
     background: white;
+    min-height: 974px;
 
     .mastHead {
       padding-top: 40px;
