@@ -700,7 +700,6 @@ export default class extends Vue {
         font-weight: 600;
         font-size: 14px;
 
-        width: 130px;
         height: 44px;
         border-radius: 20px;
         border: none;
