@@ -654,6 +654,7 @@ export default class extends Vue {
 
         .active {
           color: #9337d8;
+          border-bottom: solid 4px #9337d8;
         }
       }
     }
@@ -691,13 +692,18 @@ export default class extends Vue {
       margin-bottom: 62px;
 
       #doneButton {
-        background: $color-button-primary-purple-variant;
+        background: #3c3c3c;
+        width: 97px;
+        font-family: Poppins;
+        font-style: normal;
+        font-weight: 600;
+        font-size: 14px;
+
         width: 130px;
         height: 44px;
         border-radius: 20px;
         border: none;
-        font-weight: bold;
-        font-size: 18px;
+
         margin-top: 24px;
         display: flex;
         justify-content: center;

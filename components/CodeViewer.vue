@@ -5,7 +5,6 @@
 
       <button v-if="showCopyButton" @click="copy()" id="copyButton">
         <i id="platformIcon" class="fas fa-copy"></i>
-        Copy
       </button>
     </div>
 
@@ -34,13 +33,11 @@
     <div v-if="showToolbar" id="toolbar">
       <div v-if="errorNumber">
         <button @click="showErrorOverlay()" id="errorsButton">
-          <i class="fas fa-exclamation-triangle"></i>
           {{this.errorNumber}} errors
         </button>
       </div>
       <div v-if="!errorNumber || errorNumber ===0">
         <button id="noErrorsButton">
-          <i class="fas fa-exclamation-triangle"></i>
           0 Errors
         </button>
       </div>
@@ -50,7 +47,7 @@
 
 <script lang='ts'>
 import Vue from "vue";
-import * as monaco from 'monaco-editor';
+import * as monaco from "monaco-editor";
 import Component from "nuxt-class-component";
 import { Prop, Watch } from "vue-property-decorator";
 import Clipboard from "clipboard";
@@ -263,10 +260,12 @@ export default class extends Vue {
   }
 
   #copyButton {
-    background: #c5c5c5;
+    background: rgba(60, 60, 60, 0.1);
     color: #3c3c3c;
+    width: 32px;
+    height: 32px;
     border: none;
-    border-radius: 20px;
+    border-radius: 50%;
     font-weight: bold;
     font-size: 12px;
     padding-top: 3px;
@@ -303,7 +302,7 @@ export default class extends Vue {
   }
 
   #toolbar {
-    background: #f0f0f0;
+    background: #E2E2E2;
     // width: 50vw;
     bottom: 16px;
     right: 0;
@@ -312,12 +311,12 @@ export default class extends Vue {
     align-items: center;
 
     #errorsButton {
-      background: $color-brand-warning;
+      background: #8A8A8A;
       color: white;
     }
 
     #noErrorsButton {
-      background: $color-brand-secondary;
+      background: #8A8A8A;
       color: white;
     }
 
@@ -329,8 +328,8 @@ export default class extends Vue {
       border: none;
       margin: 10px;
       border-radius: 20px;
-      width: 97px;
-      font-size: 12px;
+      width: 86px;
+      font-size: 14px;
       font-weight: bold;
       padding-top: 8px;
       padding-bottom: 8px;
