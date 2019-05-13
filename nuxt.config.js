@@ -43,8 +43,9 @@ module.exports = {
       { src: 'https://az725175.vo.msecnd.net/scripts/jsll-4.js' },
       { src: "https://use.fontawesome.com/releases/v5.0.10/js/all.js", async: true, defer: true },
       { src: '/awa-register.js' },
-      { src: '/copyButton.js'},
       { src: "https://fluentweb-nightly-static.netlify.com/fluentweb/fluentweb.js", async: true, defer: true },
+      { src: "https://unpkg.com/@webcomponents/webcomponentsjs@2.2.10/webcomponents-loader.js" },
+      { src: '/copyButton.js'},
     ]
   },
   loading: { color: '#1FC2C8' },
