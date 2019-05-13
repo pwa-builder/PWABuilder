@@ -159,7 +159,7 @@ export default class extends Vue {
 }
 
 #colorPickerInput #colorHex {
-  width: 3.6em;
+  width: 4em;
   border: none;
 }
 </style>
