@@ -100,26 +100,29 @@
 
           <section class="animatedSection" v-if="showImagesSection">
             <div class="l-generator-field logo-upload">
-              <label class="l-generator-label">
-                <h4 class="fieldName">{{ $t("generate.icon_url") }}</h4>
-                <p>We suggest at least one image 512×512 or larger</p>
-              </label>
+              <div id="uploadNewSection">
+                <label class="l-generator-label">
+                  <h4 class="iconUploadHeader">Upload app icons for your PWA</h4>
+                  <p>We suggest at least one image 512×512 or larger</p>
+                </label>
 
-              <div>
                 <div class="button-holder icons">
                   <div class="l-inline">
                     <button
+                      id="iconUploadButton"
                       class="work-button l-generator-button"
                       @click="onClickUploadIcon()"
-                    >{{ $t("generate.upload") }}</button>
+                    >Upload</button>
                   </div>
                 </div>
 
-                <p class="l-generator-error" v-if="error">
+                <!--<p class="l-generator-error" v-if="error">
                   <span class="icon-exclamation"></span>
                   {{ $t(error) }}
-                </p>
+                </p>-->
+              </div>
 
+              <div>
                 <div id="iconGrid" class="pure-g l-generator-table">
                   <!--<div class="pure-u-10-24 l-generator-tableh">{{ $t("generate.preview") }}</div>
                   <div class="pure-u-8-24 l-generator-tableh">{{ $t("generate.size") }}</div>
@@ -410,6 +413,9 @@ export default class extends Vue {
 
   public onClickRemoveIcon(icon: generator.Icon): void {
     this.removeIcon(icon);
+
+    console.log('this.manifest$', this.manifest$);
+    console.log('this.manifest', this.manifest);
   }
 
   public onClickAddIcon(): void {
@@ -539,6 +545,7 @@ export default class extends Vue {
     console.log(this.basicManifest);
     if (this.basicManifest !== false) {
       this.manifest$ = ev;
+      this.updateManifest(this.manifest$)
     }
   }
 
@@ -584,7 +591,7 @@ export default class extends Vue {
   grid-template-columns: auto auto auto;
   display: grid;
   grid-template-columns: auto auto auto;
-  grid-gap: 70px;
+  grid-gap: 54px;
 
   #iconItem {
     display: flex;
@@ -613,8 +620,43 @@ export default class extends Vue {
         font-size: 14px;
         margin-right: 12px;
       }
-
     }
+  }
+}
+
+#uploadNewSection {
+  background: #f0f0f0;
+  border-radius: 4px;
+  margin-top: 24px;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-top: 24px;
+  padding-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .iconUploadHeader {
+    padding-top: 0px !important;
+    font-size: 16px;
+  }
+
+  #iconUploadButton {
+    width: 104px;
+    height: 40px;
+    background: transparent;
+    color: #3c3c3c;
+    font-weight: bold;
+    border-radius: 20px;
+    border: 1px solid #3c3c3c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
   }
 }
 
