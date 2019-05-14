@@ -120,20 +120,32 @@
                   {{ $t(error) }}
                 </p>
 
-                <div class="pure-g l-generator-table">
-                  <div class="pure-u-10-24 l-generator-tableh">{{ $t("generate.preview") }}</div>
+                <div id="iconGrid" class="pure-g l-generator-table">
+                  <!--<div class="pure-u-10-24 l-generator-tableh">{{ $t("generate.preview") }}</div>
                   <div class="pure-u-8-24 l-generator-tableh">{{ $t("generate.size") }}</div>
                   <div class="pure-u-1-8"></div>
-                  <div class="pure-u-1-8"></div>
+                  <div class="pure-u-1-8"></div>-->
 
-                  <div class="pure-u-1" v-for="icon in icons" :key="icon.src">
-                    <div class="pure-u-10-24 l-generator-tablec">
+                  <div id="iconItem" class="pure-u-1" v-for="icon in icons" :key="icon.src">
+                    <div id="iconDivItem" class="pure-u-10-24 l-generator-tablec">
                       <a target="_blank" :href="icon.src">
                         <img class="icon-preview" :src="icon.src">
                       </a>
-                    </div>
 
-                    <div class="pure-u-8-24 l-generator-tablec">{{icon.sizes}}</div>
+                      <div id="iconSize" class="pure-u-8-24 l-generator-tablec">
+                        <div id="iconSizeText">{{icon.sizes}}</div>
+
+                        <div
+                          id="removeIconDiv"
+                          class="pure-u-1-8 l-generator-tablec l-generator-tablec--right"
+                          @click="onClickRemoveIcon(icon)"
+                        >
+                          <span class="l-generator-close" :title="$t('generate.remove_icon')">
+                            <i class="fas fa-trash-alt"></i>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
 
                     <!--<div
                       class="pure-u-1-8 l-generator-tablec"
@@ -141,17 +153,6 @@
                     >
                       <span class="icon-magic" ng-if="icon.generated"></span>
                     </div>-->
-
-                    <div
-                      class="pure-u-1-8 l-generator-tablec l-generator-tablec--right"
-                      @click="onClickRemoveIcon(icon)"
-                    >
-                      <span class="l-generator-close" :title="$t('generate.remove_icon')">
-                        <i aria-hidden="true">
-                          <span class="icon-times"></span>
-                        </i>
-                      </span>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -577,6 +578,50 @@ export default class extends Vue {
 <style lang="scss" scoped>
 @import "~assets/scss/base/variables";
 /* stylelint-disable */
+
+#iconGrid {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-gap: 70px;
+
+  #iconItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 128px;
+    width: 128px;
+
+    #iconDivItem {
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #iconSize {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-top: 17px;
+
+      #iconSizeText {
+        font-size: 14px;
+        margin-right: 12px;
+      }
+
+    }
+  }
+}
+
+#removeIconDiv svg {
+  height: 14px;
+  width: 14px;
+}
 
 #modalBackground {
   position: fixed;
