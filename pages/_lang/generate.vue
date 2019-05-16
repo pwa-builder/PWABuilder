@@ -2,7 +2,7 @@
   <div>
     <HubHeader :showSubHeader="true"></HubHeader>
 
-    <div v-if="showingIconModal" id="modalBackground"></div>
+    <div v-if="showingIconModal" class="has-acrylic-40 is-dark" id="modalBackground"></div>
 
     <main id="sideBySide">
       <section id="leftSide">
@@ -303,21 +303,26 @@
         v-on:modalSubmit="onSubmitIconModal"
         v-on:cancel="onCancelIconModal"
       >
-        <div class="l-generator-box image-upload">
-          <span class="l-generator-label">{{ $t("generate.upload_image") }}</span>
-          <label
-            class="l-generator-input l-generator-input--fake is-disabled"
-            for="modal-file"
-          >{{ iconFile && iconFile.name ? iconFile.name : $t("generate.choose_file") }}</label>
-          <input id="modal-file" @change="onFileIconChange" class="l-hidden" type="file">
-        </div>
+        <section id="imageModalSection">
+          <div class="l-generator-box image-upload">
+            <span class="l-generator-label">{{ $t("generate.upload_image") }}</span>
+            <label
+              class="l-generator-input l-generator-input--fake is-disabled"
+              for="modal-file"
+            >{{ iconFile && iconFile.name ? iconFile.name : $t("generate.choose_file") }}</label>
+            <input id="modal-file" @change="onFileIconChange" class="l-hidden" type="file">
+          </div>
 
-        <div class="l-generator-field">
-          <label id="genMissingLabel">
-            {{ $t("generate.generate_missing") }}
-            <input type="checkbox" v-model="iconCheckMissing">
-          </label>
-        </div>
+          <div class="l-generator-field">
+            <label id="genMissingLabel">
+              {{ $t("generate.generate_missing") }}
+              <input
+                type="checkbox"
+                v-model="iconCheckMissing"
+              >
+            </label>
+          </div>
+        </section>
       </Modal>
     </main>
   </div>
@@ -414,8 +419,8 @@ export default class extends Vue {
   public onClickRemoveIcon(icon: generator.Icon): void {
     this.removeIcon(icon);
 
-    console.log('this.manifest$', this.manifest$);
-    console.log('this.manifest', this.manifest);
+    console.log("this.manifest$", this.manifest$);
+    console.log("this.manifest", this.manifest);
   }
 
   public onClickAddIcon(): void {
@@ -545,7 +550,7 @@ export default class extends Vue {
     console.log(this.basicManifest);
     if (this.basicManifest !== false) {
       this.manifest$ = ev;
-      this.updateManifest(this.manifest$)
+      this.updateManifest(this.manifest$);
     }
   }
 
@@ -671,19 +676,30 @@ export default class extends Vue {
   bottom: 0;
   left: 0;
   right: 0;
-  background: grey;
   opacity: 0.7;
   z-index: 98999;
   will-change: opacity;
+  background: #3C3C3C;
+}
+
+#imageModalSection {
+  display: flex;
 }
 
 #genMissingLabel {
   display: flex;
-  width: 29%;
+
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -0.02em;
 }
 
 #genMissingLabel input {
   height: 2em;
+  width: 2em;
 }
 
 #sideBySide {
