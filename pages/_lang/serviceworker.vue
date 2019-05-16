@@ -216,7 +216,7 @@ export default class extends Vue {
   display: flex;
   justify-content: space-around;
   height: 185vh;
-  padding-right: 162px;
+  padding-right: 128px;
   background: white;
 
   #leftSide {
