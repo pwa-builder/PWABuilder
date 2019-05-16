@@ -16,6 +16,8 @@
       </div>
 
       <div id="icons">
+        <InstallButton />
+
         <a href="https://github.com/pwa-builder" target="_blank" rel="noopener noreferrer">
           <i class="fab fa-github"></i>
         </a>
@@ -62,9 +64,15 @@ import { State, namespace } from "vuex-class";
 
 import * as generator from "~/store/modules/generator";
 
+import InstallButton from "~/components/InstallButton.vue"
+
 const GeneratorState = namespace(generator.name, State);
 
-@Component({})
+@Component({
+  components: {
+    InstallButton
+  }
+})
 export default class extends Vue {
   @Prop({ default: false }) expanded: boolean;
   @Prop({}) showSubHeader: string;
@@ -197,7 +205,6 @@ header {
 
   #icons {
     grid-column: 11 / span 2;
-    width: 4em; /* TODO: Padding between instead of width? */
 
     display: flex;
     justify-content: space-around;
