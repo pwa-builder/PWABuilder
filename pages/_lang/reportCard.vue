@@ -45,10 +45,10 @@
         </div>
 
         <div id="bottomHalfHome">
-          <div id="expertModeBlock">
+          <!--<div id="expertModeBlock">
             <button @click="skipCheckUrl()" id="expertModeButton">Expert Mode</button>
             <p>Already have a PWA? Skip ahead!</p>
-          </div>
+          </div>-->
 
           <footer>
             <p>
@@ -497,6 +497,8 @@ h2 {
       align-items: center;
       width: 465px;
       margin-top: 34px;
+      position: absolute;
+      bottom: 10px;
 
       color: rgba(60, 60, 60, 0.6);
 
