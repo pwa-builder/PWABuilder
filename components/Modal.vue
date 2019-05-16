@@ -28,7 +28,9 @@
               @click="onClickSubmit();  $awa( { 'referrerUri': 'https://www.pwabuilder.com/manifest/add-member' });"
             >
               <span v-if="!isLoading">{{$t("modal.submit")}}</span>
-              <span vif="isLoading"><Loading :active="isLoading" class="u-display-inline_block u-margin-left-sm"/></span>
+              <span vif="isLoading">
+                <Loading :active="isLoading" class="u-display-inline_block u-margin-left-sm"/>
+              </span>
             </button>
 
             <slot name="extraButton"></slot>
@@ -230,7 +232,7 @@ export default class extends Vue {
     left: 0;
     right: 0;
     bottom: 0;
-    background: #3C3C3C;
+    background: #3c3c3c;
     opacity: 0.8;
     z-index: 98999;
   }
@@ -291,7 +293,7 @@ export default class extends Vue {
       margin-right: 10px;
       border: none;
 
-      background: #3C3C3C;
+      background: #3c3c3c;
       color: white;
       padding: 10px;
       font-size: 14px;
@@ -330,6 +332,19 @@ export default class extends Vue {
 
   #titleBox {
     padding-right: 100px;
+  }
+}
+
+@media (min-width: 1445px) {
+  .modal {
+    left: 27em;
+    right: 27em;
+    bottom: 22em;
+  }
+
+  .modal .modal-body {
+    padding-left: 30px;
+    padding-right: 22px;
   }
 }
 </style>
