@@ -282,13 +282,15 @@ export default class extends Vue {
     }
 
     #downloadSWButton {
-      background: $color-button-primary-purple-variant;
-      width: 184px;
+      background: #3c3c3c;
+      width: 128px;
       height: 44px;
       border-radius: 20px;
       border: none;
-      font-weight: bold;
-      font-size: 18px;
+      font-family: Poppins;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 14px;
       margin-top: 30px;
       margin-bottom: 40px;
       display: flex;
@@ -383,5 +385,4 @@ export default class extends Vue {
     margin-top: 18em;
   }
 }
-
 </style>
