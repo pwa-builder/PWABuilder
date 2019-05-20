@@ -4,7 +4,9 @@
     @click="buildArchive(platform, parameters);  $awa( { 'referrerUri': 'https://www.pwabuilder.com/download/{platform}' });"
   >
     <span v-if="isReady">
-      <i class="fas fa-long-arrow-alt-down"></i>
+      <i v-if="!showMessage" class="fas fa-long-arrow-alt-down"></i>
+
+      <span v-if="showMessage">{{ message$ }}</span>
     </span>
 
     <div v-if="!isReady">
@@ -69,6 +71,9 @@ export default class extends Vue {
   @Prop({ type: String, default: "" })
   private readonly message: string;
   public message$ = "";
+
+  @Prop({ type: Boolean, default: false })
+  public showMessage: boolean;
 
   @PublishState archiveLink: string;
   @PublishAction build;

@@ -143,8 +143,9 @@
         </div>
 
         <div id="androidModalButtonSection">
-          <Download id="androidDownloadButton" platform="androidTWA" message="Download TWA"/>
+          <Download :showMessage="true" id="androidDownloadButton" platform="androidTWA" message="Download TWA"/>
           <Download
+            :showMessage="true"
             id="androidDownloadButton"
             class="webviewButton"
             platform="android"
@@ -791,6 +792,7 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
+  border: none;
 }
 
 #androidDownloadButton.webviewButton {
