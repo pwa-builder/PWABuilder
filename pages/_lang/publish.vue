@@ -479,6 +479,10 @@ main {
   #leftSide {
     height: 100%;
     flex: 1;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
     /*background-image: url("~/assets/images/publish-bg.svg");
     background-size: contain;
     background-repeat: no-repeat;
@@ -505,7 +509,6 @@ main {
     }
 
     #introContainer {
-      padding-top: 13em;
       padding-right: 5em;
       padding-left: 159px;
       color: white;
@@ -561,6 +564,9 @@ main {
     display: flex;
     flex-direction: column;
     background: white;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 100px;
 
     #platformsListContainer {
       padding-top: 4em;
