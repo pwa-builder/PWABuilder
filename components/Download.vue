@@ -12,7 +12,7 @@
         <div class="colorbands"></div>
       </div>
       <div class="icon">
-        <i class="fas fa-long-arrow-alt-down"></i>
+        <div class="lds-dual-ring"></div>
       </div>
     </div
 
@@ -160,6 +160,33 @@ export default class extends Vue {
   position: relative;
   color: white;
   top: -27px;
+
+  .lds-dual-ring {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+  }
+
+  .lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 16px;
+    height: 16px;
+    margin: 1px;
+    border-radius: 50%;
+    border: 5px solid #fff;
+    border-color: #fff transparent #fff transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+  }
+
+  @keyframes lds-dual-ring {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
 }
 
 @media (max-height: 890px) {
