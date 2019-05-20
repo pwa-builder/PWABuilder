@@ -6,9 +6,15 @@
     <span v-if="isReady">
       <i class="fas fa-long-arrow-alt-down"></i>
     </span>
-    <span v-if="!isReady">
-      <Loading :active="true" class="u-display-inline_block u-margin-left-sm"/>
-    </span>
+
+    <div v-if="!isReady">
+      <div class="flavor">
+        <div class="colorbands"></div>
+      </div>
+      <div class="icon">
+        <i class="fas fa-long-arrow-alt-down"></i>
+      </div>
+    </div
 
     <div id="errorDiv" v-if="errorMessage">{{ errorMessage }}</div>
   </button>
@@ -75,14 +81,16 @@ export default class extends Vue {
     platform: string,
     parameters: string[]
   ): Promise<void> {
+    console.log("this.isReady", this.isReady);
     if (!this.isReady) {
       return;
     }
 
-    this.isReady = false;
-
     try {
+      this.isReady = false;
+
       await this.build({ platform: platform, options: parameters });
+
       if (this.archiveLink) {
         window.location.href = this.archiveLink;
       }
@@ -108,6 +116,50 @@ export default class extends Vue {
   font-size: 14px;
   bottom: 24em;
   left: 5.4em;
+}
+
+.flavor {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 40px;
+  overflow: hidden;
+  left: -7px;
+  top: -2px;
+}
+
+.flavor > .colorbands {
+  position: relative;
+  top: 0%;
+  left: -20%;
+
+  width: 140%;
+  height: 800%;
+
+  background-image: linear-gradient(
+    0deg,
+    #1fc2c8 25%,
+    #9337d8 50%,
+    #9337d8 75%,
+    #1fc2c8 100%
+  );
+  background-position: 0px 0px;
+  background-repeat: repeat-y;
+
+  animation: colorbands 100s linear infinite;
+  transform: rotate(180deg);
+}
+
+@keyframes colorbands {
+  to {
+    background-position: 0 -1000vh;
+  }
+}
+
+.icon {
+  position: relative;
+  color: white;
+  top: -27px;
 }
 
 @media (max-height: 890px) {
