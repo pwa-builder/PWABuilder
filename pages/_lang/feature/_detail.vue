@@ -35,7 +35,6 @@ import SnippitCode from "~/components/snippitCode.vue";
 import * as windowsStore from "~/store/modules/windows";
 
 import * as marked from "marked";
-import Clipboard from "clipboard";
 import hljs from "highlight.js";
 
 const WindowsState = namespace(windowsStore.name, State);
@@ -193,22 +192,31 @@ export default class extends Vue {
           console.error(err);
         }
       } else {
-        let clipboard = new Clipboard(location.href);
+        this.copyToClipboard(location.href);
+        this.showToast();
+      }
+    }
+  }
 
-        clipboard.on("success", e => {
-          console.info("Action:", e.action);
-          console.info("Text:", e.text);
-          console.info("Trigger:", e.trigger);
-
-          this.showToast();
-
-          e.clearSelection();
-        });
-
-        clipboard.on("error", e => {
-          console.error("Action:", e.action);
-          console.error("Trigger:", e.trigger);
-        });
+  copyToClipboard(str) {
+    if (document) {
+      const el = document.createElement("textarea"); // Create a <textarea> element
+      el.value = str; // Set its value to the string that you want copied
+      el.setAttribute("readonly", ""); // Make it readonly to be tamper-proof
+      el.style.position = "absolute";
+      el.style.left = "-9999px"; // Move outside the screen to make it invisible
+      document.body.appendChild(el); // Append the <textarea> element to the HTML document
+      const selected =
+        document.getSelection().rangeCount > 0 // Check if there is any content selected previously
+          ? document.getSelection().getRangeAt(0) // Store selection if found
+          : false; // Mark as false to know no selection existed before
+      el.select(); // Select the <textarea> content
+      document.execCommand("copy"); // Copy - only works as a result of a user action (e.g. click events)
+      document.body.removeChild(el); // Remove the <textarea> element
+      if (selected && document) {
+        // If a selection existed before copying
+        document.getSelection().removeAllRanges(); // Unselect everything on the HTML document
+        document.getSelection().addRange(selected); // Restore the original selection
       }
     }
   }
