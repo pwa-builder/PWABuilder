@@ -39,13 +39,13 @@ module.exports = {
       { rel: 'apple-touch-icon', sizes: '180x180', href: '/Images/assets/icons/apple-icon-180x180-f0f5be1ded11c7ec66b00dd23c277a5d.png' }
     ],
     script: [
-      { src: '/pwabuilder-sw-register.js' },
+      { src: '/pwabuilder-sw-register.js', async: true, defer: true },
       { src: 'https://az725175.vo.msecnd.net/scripts/jsll-4.js' },
       { src: "https://use.fontawesome.com/releases/v5.0.10/js/all.js", async: true, defer: true },
       { src: '/awa-register.js' },
       { src: "https://fluentweb-nightly-static.netlify.com/fluentweb/fluentweb.js", async: true, defer: true },
       { src: "https://unpkg.com/@webcomponents/webcomponentsjs@2.2.10/webcomponents-loader.js" },
-      { src: '/copyButton.js'},
+      { src: '/copyButton.js', async: true, defer: true},
     ]
   },
   loading: { color: '#1FC2C8' },
