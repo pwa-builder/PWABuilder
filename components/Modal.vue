@@ -288,6 +288,7 @@ export default class extends Vue {
     justify-content: center;
 
     margin-top: 5em;
+    margin-bottom: 4em;
 
     #modalCancelButton {
       margin-right: 10px;

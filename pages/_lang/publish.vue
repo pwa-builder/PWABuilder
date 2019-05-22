@@ -2,7 +2,7 @@
   <main>
     <HubHeader></HubHeader>
 
-    <div v-if="openAndroid" class="has-acrylic-40 is-dark" id="modalBackground"></div>
+    <div v-if="openAndroid || openWindows || showBackground" class="has-acrylic-40 is-dark" id="modalBackground"></div>
 
     <!-- appx modal -->
     <Modal
@@ -143,7 +143,12 @@
         </div>
 
         <div id="androidModalButtonSection">
-          <Download :showMessage="true" id="androidDownloadButton" platform="androidTWA" message="Download TWA"/>
+          <Download
+            :showMessage="true"
+            id="androidDownloadButton"
+            platform="androidTWA"
+            message="Download TWA"
+          />
           <Download
             :showMessage="true"
             id="androidDownloadButton"
@@ -151,6 +156,34 @@
             platform="android"
             message="Download WebView"
           />
+        </div>
+      </section>
+    </div>
+
+    <div v-if="openWindows" ref="windowsModal" id="androidPlatModal">
+      <button @click="closeAndroidModal()" id="closeAndroidPlatButton">
+        <i class="fas fa-times"></i>
+      </button>
+
+      <section id="androidModalBody">
+        <div>
+          <p id="androidModalP">
+            You'll get a side-loadable version of your PWA (requires Win10 in dev mode) to test your PWA right away.
+            The Generate Appx button can be used to generate a PWA package to submit to the Microsoft Store.
+          </p>
+        </div>
+
+        <div id="androidModalButtonSection">
+          <Download
+            id="androidDownloadButton"
+            platform="windows10"
+            :message="$t('publish.download')"
+            :showMessage="true"
+          />
+          <button
+            id="androidDownloadButton"
+            @click="openAppXModal();  $awa( { 'referrerUri': 'https://www.pwabuilder.com/publish/windows10-appx' })"
+          >Generate</button>
         </div>
       </section>
     </div>
@@ -219,11 +252,9 @@
                   <h2>Windows</h2>
                 </div>
 
-                <Download
-                  class="platformDownloadButton"
-                  platform="windows10"
-                  :message="$t('publish.download')"
-                />
+                <button class="platformDownloadButton" @click="openWindowsModal()">
+                  <i class="fas fa-long-arrow-alt-down"></i>
+                </button>
               </div>
 
               <p>You'll get a side-loadable version of your PWA (requires Win10 in dev mode) to test your PWA right away. To generate an AppX PWA package and submit to the Microsoft Store, click here</p>
@@ -340,6 +371,8 @@ export default class extends Vue {
   public appxError: string | null = null;
   public modalStatus = false;
   public openAndroid: boolean = false;
+  public openWindows: boolean = false;
+  public showBackground: boolean = false;
 
   public created(): void {
     this.updateStatus();
@@ -352,6 +385,7 @@ export default class extends Vue {
   }
 
   public openAppXModal(): void {
+    this.openWindows = false;
     (this.$refs.appxModal as Modal).show();
   }
 
@@ -361,6 +395,15 @@ export default class extends Vue {
 
   public closeAndroidModal(): void {
     this.openAndroid = false;
+    this.openWindows = false;
+  }
+
+  public openWindowsModal(): void {
+    this.openWindows = true;
+  }
+
+  public closeWindowsModal(): void {
+    this.openWindows = false;
   }
 
   public async onSubmitAppxModal(): Promise<void> {
@@ -392,12 +435,16 @@ export default class extends Vue {
   public modalOpened() {
     console.log("modal opened");
     window.scrollTo(0, 0);
+
     this.modalStatus = true;
+    this.showBackground = true;
   }
 
   public modalClosed() {
     console.log("modal closed");
+
     this.modalStatus = false;
+    this.showBackground = false;
   }
 }
 </script>
@@ -439,9 +486,6 @@ main {
 }
 
 #appxModalBody {
-  height: 6em;
-  padding-left: 2em;
-  padding-right: 10em;
 
   input {
     padding: initial;
@@ -480,7 +524,7 @@ main {
   #leftSide {
     height: 100%;
     flex: 1;
-    
+
     display: flex;
     justify-content: center;
     align-items: center;
@@ -876,5 +920,6 @@ main {
     left: 26em;
   }
 }
+
 </style>
 
