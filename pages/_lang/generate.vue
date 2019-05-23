@@ -228,13 +228,16 @@
                 <p>Declare the language of your PWA</p>
               </label>
 
-              <select class="l-generator-input l-generator-input--select" v-model="manifest$.lang">
+              <select
+                class="l-generator-input l-generator-input--select"
+                v-model="manifest$.lang"
+                @change="onChangeSimpleInput()"
+                v-on:change="activeFormField = 'appLang'"
+              >
                 <option
                   v-for="language in languagesNames"
                   :value="language"
                   :key="language"
-                  @change="onChangeSimpleInput()"
-                  v-on:change="activeFormField = 'appLang'"
                 >{{language}}</option>
               </select>
             </div>
@@ -407,6 +410,7 @@ export default class extends Vue {
   }
 
   public onChangeSimpleInput(): void {
+    console.log("here");
     try {
       console.log(this.manifest$);
       this.updateManifest(this.manifest$);
@@ -679,7 +683,7 @@ export default class extends Vue {
   opacity: 0.7;
   z-index: 98999;
   will-change: opacity;
-  background: #3C3C3C;
+  background: #3c3c3c;
 }
 
 #imageModalSection {
