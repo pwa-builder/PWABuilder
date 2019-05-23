@@ -17,7 +17,7 @@
       </label>
 
       <div id="colorPickerInput" v-if="canChooseColor">
-        <input id="actualColorInput" type="color" name="background_color" v-model="color">
+        <input id="actualColorInput" type="color" name="background_color" v-model="color" @change="onChangeColor(color)">
         <input
           v-if="checkInputColor"
           type="text"
