@@ -401,6 +401,9 @@ export default class extends Vue {
 
   public created(): void {
     this.manifest$ = { ...this.manifest };
+    // this.basicManifest = true;
+
+    console.log('display names', this.displaysNames);
   }
 
   async destroyed() {
@@ -410,11 +413,21 @@ export default class extends Vue {
   }
 
   public onChangeSimpleInput(): void {
-    console.log("here");
+
     try {
-      console.log(this.manifest$);
+
       this.updateManifest(this.manifest$);
-      // this.manifest$ = this.manifest;
+
+      this.manifest$ = { ...this.manifest };
+      console.log(this.manifest$);
+
+      console.log('display names after update', this.displaysNames);
+
+      // this.manifest = (this.manifest$ as generator.Manifest);
+
+      // this.basicManifest = true;
+
+      // this.manifest = this.manifest$;
     } catch (e) {
       this.error = e;
     }
@@ -520,9 +533,19 @@ export default class extends Vue {
     $iconsModal.showLoading();
 
     if (this.iconCheckMissing) {
-      await this.generateMissingImages(this.iconFile);
+      const data = await this.generateMissingImages(this.iconFile);
+      console.log('data in gen missing images', data);
+      console.log('generate missing images', this.manifest);
+
+      this.manifest$ = this.manifest;
+
+      console.log('update manifest this.manifest$', this.manifest$);
+      this.updateManifest(this.manifest$);
+
     } else {
       await this.uploadIcon(this.iconFile);
+      console.log('update manifest this.manifest$', this.manifest$)
+      this.updateManifest(this.manifest$);
     }
 
     $iconsModal.hide();
@@ -552,8 +575,9 @@ export default class extends Vue {
   public handleEditorValue(ev) {
     console.log(ev);
     console.log(this.basicManifest);
+
     if (this.basicManifest !== false) {
-      this.manifest$ = ev;
+      // this.manifest = ev;
       this.updateManifest(this.manifest$);
     }
   }

@@ -148,7 +148,8 @@ export default class extends Vue {
     const model = this.editor.getModel();
 
     model.onDidChangeContent(() => {
-      const value = model.getValue();
+      const value = this.editor.getValue();
+      console.log('editor.value', value);
       this.$emit("editorValue", value);
     });
 
@@ -167,6 +168,7 @@ export default class extends Vue {
   @Watch("code")
   onCodeChanged() {
     if (this.editor) {
+      console.log('this.code', this.code);
       this.editor.setValue(this.code);
     }
   }
