@@ -69,12 +69,13 @@ export default class extends Vue {
 
     this.updateCanChooseColor();
 
+
     // Check manifest from server color
     if (this.canChooseColor) {
       this.color =
         this.color ||
-        this.manifest$.theme_color ||
-        this.manifest$.background_color;
+        this.manifest$.background_color || 
+        this.manifest$.theme_color;
     }
   }
 
@@ -82,6 +83,7 @@ export default class extends Vue {
     if (!this.manifest$) {
       return;
     }
+
 
     this.canChooseColor =
       this.manifest$.background_color !== this.colorOptions.none &&
