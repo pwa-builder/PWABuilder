@@ -11,16 +11,22 @@
 
         <div id="inputSection">
           <form @submit.prevent="download" @keydown.enter.prevent="download">
-            <div class="inputContainer" v-for="sw in serviceworkers" :key="sw.id">
+            <div
+              id="inputContainer"
+              v-for="sw in serviceworkers"
+              :key="sw.id"
+              @click="selectServiceWorker(sw.id)"
+              v-bind:class="{ active: serviceworker$ === sw.id }"
+            >
               <label class="l-generator-label" :for="sw.id">
                 <div id="inputDiv">
-                  <input
+                  <!--<input
                     type="radio"
                     :value="sw.id"
                     v-model="serviceworker$"
                     :disabled="sw.disable"
                     :id="sw.id"
-                  >
+                  >-->
                   <h4>{{ sw.title }}</h4>
                   <span v-if="sw.disable">(coming soon)</span>
                 </div>
@@ -110,7 +116,7 @@ const ServiceworkerAction = namespace(serviceworker.name, Action);
 })
 export default class extends Vue {
   public isBuilding = false;
-  public serviceworker$: number | null = null;
+  public serviceworker$: number = 0;
   public serviceworkers$: ServiceWorker[];
   public error: string | null = null;
   public viewerSize = "10rem";
@@ -132,6 +138,11 @@ export default class extends Vue {
     await this.getServiceworkers();
     this.serviceworker$ = this.serviceworkers[0].id;
     await this.getCode(this.serviceworker$);
+  }
+
+  public selectServiceWorker(id: number) {
+    console.log(id);
+    this.serviceworker$ = id;
   }
 
   async destroyed() {
@@ -220,14 +231,16 @@ export default class extends Vue {
   background: white;
 
   #leftSide {
-    flex: 1;
+    // flex: 1;
+    width: 590px;
     background: white;
     min-height: 140vh;
+    margin-left: 151px;
 
     .mastHead {
       padding-top: 40px;
-      padding-right: 100px;
-      padding-left: 159px;
+      /*padding-right: 100px;
+      padding-left: 159px;*/
 
       h2 {
         font-family: Poppins;
@@ -240,25 +253,31 @@ export default class extends Vue {
 
       p {
         margin-top: 16px;
-        font-size: 18px;
+        font-size: 16px;
         line-height: 28px;
-        width: 376px;
+        // width: 376px;
       }
     }
 
     #inputSection {
-      padding-right: 100px;
-      padding-left: 159px;
+      /*padding-right: 100px;
+      padding-left: 159px;*/
 
-      .inputContainer {
-        margin-top: 20px;
+      #inputContainer {
         cursor: pointer;
-        width: 376px;
+        border-radius: 4px;
+        padding-top: 24px;
+        padding-bottom: 24px;
+        padding-left: 28px;
+        padding-right: 64px;
+        // width: 376px;
 
         .swDesc {
-          font-size: 14px;
+          font-style: normal;
           font-weight: normal;
-          width: 376px;
+          font-size: 14px;
+          line-height: 21px;
+          //  width: 376px;
         }
 
         #inputDiv {
@@ -272,11 +291,21 @@ export default class extends Vue {
 
           h4 {
             flex: 22;
-            font-size: 18px;
-            font-weight: bold;
             margin-bottom: 10px;
-            margin-left: 10px;
+
+            font-style: normal;
+            font-weight: bold;
+            font-size: 16px;
+            line-height: 24px;
           }
+        }
+      }
+
+      .active {
+        background: #f0f0f0;
+
+        h4 {
+          color: #9337d8;
         }
       }
     }
@@ -306,8 +335,10 @@ export default class extends Vue {
   }
 
   #rightSide {
-    flex: 1;
-    width: 50%;
+    /*flex: 1;
+    width: 50%;*/
+    // width: 760px;
+    margin-left: 100px;
     display: flex;
     flex-direction: column;
     padding-top: 2px;
@@ -344,13 +375,23 @@ export default class extends Vue {
 }
 
 @media (min-width: 2559px) {
-  .inputContainer {
+  #inputContainer {
     width: 534px !important;
     margin-top: 30px !important;
   }
 
   .swDesc {
     width: initial !important;
+  }
+}
+
+@media (max-width: 1440px) {
+  #sideBySide #rightSide {
+    margin-left: 51px;
+  }
+
+  #sideBySide #leftSide {
+    width: 520px;
   }
 }
 
@@ -361,6 +402,7 @@ export default class extends Vue {
 
   #rightSide {
     height: 123vh !important;
+    margin-left: 59px;
   }
 
   #sideBySide {
@@ -377,12 +419,13 @@ export default class extends Vue {
     padding-left: initial;
   }
 
-  #sideBySide #leftSide #doneDiv {
-    width: 56%;
-  }
-
   #sideBySide #rightSide .bottomViewer {
     margin-top: 18em;
+  }
+
+  #sideBySide #leftSide {
+    width: 557px;
+    margin-left: initial;
   }
 }
 </style>
