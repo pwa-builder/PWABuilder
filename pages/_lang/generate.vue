@@ -403,7 +403,7 @@ export default class extends Vue {
     this.manifest$ = { ...this.manifest };
     // this.basicManifest = true;
 
-    console.log('display names', this.displaysNames);
+    console.log("display names", this.displaysNames);
   }
 
   async destroyed() {
@@ -413,15 +413,13 @@ export default class extends Vue {
   }
 
   public onChangeSimpleInput(): void {
-
     try {
-
       this.updateManifest(this.manifest$);
 
       this.manifest$ = { ...this.manifest };
       console.log(this.manifest$);
 
-      console.log('display names after update', this.displaysNames);
+      console.log("display names after update", this.displaysNames);
 
       // this.manifest = (this.manifest$ as generator.Manifest);
 
@@ -534,17 +532,16 @@ export default class extends Vue {
 
     if (this.iconCheckMissing) {
       const data = await this.generateMissingImages(this.iconFile);
-      console.log('data in gen missing images', data);
-      console.log('generate missing images', this.manifest);
+      console.log("data in gen missing images", data);
+      console.log("generate missing images", this.manifest);
 
       this.manifest$ = this.manifest;
 
-      console.log('update manifest this.manifest$', this.manifest$);
+      console.log("update manifest this.manifest$", this.manifest$);
       this.updateManifest(this.manifest$);
-
     } else {
       await this.uploadIcon(this.iconFile);
-      console.log('update manifest this.manifest$', this.manifest$)
+      console.log("update manifest this.manifest$", this.manifest$);
       this.updateManifest(this.manifest$);
     }
 
@@ -753,14 +750,15 @@ export default class extends Vue {
       }
 
       p {
-        margin-top: 16px;
-        font-size: 18px;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 16px;
         line-height: 28px;
       }
     }
 
     #dataSection {
-      padding-top: 40px;
+      padding-top: 32px;
 
       #dataButtonsBlock {
         display: flex;

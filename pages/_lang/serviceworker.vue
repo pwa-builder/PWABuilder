@@ -27,7 +27,13 @@
                     :disabled="sw.disable"
                     :id="sw.id"
                   >-->
-                  <h4>{{ sw.title }}</h4>
+
+                  <div id="titleBox">
+                    <h4>{{ sw.title }}</h4>
+
+                    <!--<i v-pre v-if="serviceworker$ === sw.id" class="fas fa-check"></i>-->
+                  </div>
+
                   <span v-if="sw.disable">(coming soon)</span>
                 </div>
               </label>
@@ -263,6 +269,8 @@ export default class extends Vue {
       /*padding-right: 100px;
       padding-left: 159px;*/
 
+      min-height: 800px;
+
       #inputContainer {
         cursor: pointer;
         border-radius: 4px;
@@ -287,6 +295,18 @@ export default class extends Vue {
           input {
             height: 1.2em;
             flex: 1;
+          }
+
+          #titleBox {
+            display: flex;
+            justify-content: space-between;
+          }
+
+          #titleBox svg {
+            height: 24px;
+            margin-left: 10px;
+            font-size: 16px;
+            color: #9337d8;
           }
 
           h4 {
