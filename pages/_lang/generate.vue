@@ -887,4 +887,14 @@ export default class extends Vue {
     padding-right: 52px;
   }
 }
+
+@media (min-width: 1480px) {
+  #leftSide {
+    width: 760px !important;
+  }
+
+  #rightSide {
+    width: 760px !important;
+  }
+}
 </style>
