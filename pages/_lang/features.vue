@@ -6,7 +6,7 @@
 
     <section id="headerSection">
       <div>
-        <h1 id="featurePageHeader">Extras</h1>
+        <h1 id="featurePageHeader">Features</h1>
 
         <p>Add that special something to supercharge your PWA. These cross-platform features can make your website work more like an app.</p>
       </div>
