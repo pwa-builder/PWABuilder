@@ -64,6 +64,10 @@ export const actions: Actions<State, RootState> = {
                   ({
                     title: "Install your PWA",
                     description: "A simple script that gives users a button to install your PWA directly from the browser"
+                  } as any),
+                  ({
+                    title: "Web MIDI",
+                    description: "A simple script that gives your app the ability to connect to a MIDI device such as a keyboard"
                   } as any)
                 );
 

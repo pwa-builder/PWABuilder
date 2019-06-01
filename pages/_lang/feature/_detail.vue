@@ -92,6 +92,10 @@ export default class extends Vue {
     {
       realName: "installButton",
       mappedName: "Install your PWA"
+    },
+    {
+      realName: "midi",
+      mappedName: "Web MIDI"
     }
   ];
 
