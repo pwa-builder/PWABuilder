@@ -12,11 +12,14 @@
 
       <div id="mainTabsBar">
         <nuxt-link to="/">My Hub</nuxt-link>
-        <nuxt-link to="/features">Feature Store</nuxt-link>
+        <nuxt-link
+          @click="$awa( { 'referrerUri': `https://www.pwabuilder.com/featureStore` })"
+          to="/features"
+        >Feature Store</nuxt-link>
       </div>
 
       <div id="icons">
-        <InstallButton />
+        <InstallButton/>
 
         <a href="https://github.com/pwa-builder" target="_blank" rel="noopener noreferrer">
           <i class="fab fa-github"></i>
@@ -64,7 +67,7 @@ import { State, namespace } from "vuex-class";
 
 import * as generator from "~/store/modules/generator";
 
-import InstallButton from "~/components/InstallButton.vue"
+import InstallButton from "~/components/InstallButton.vue";
 
 const GeneratorState = namespace(generator.name, State);
 
@@ -90,7 +93,7 @@ export default class extends Vue {
       this.calcedScore = parseInt(storedScore);
     } else {
       this.calcedScore = this.score;
-      
+
       if ((window as any).CSS && (window as any).CSS.registerProperty) {
         try {
           (CSS as any).registerProperty({
@@ -149,6 +152,14 @@ export default class extends Vue {
     }
   }
 }
+
+declare var awa: any;
+
+Vue.prototype.$awa = function(config) {
+  awa.ct.capturePageView(config);
+
+  return;
+};
 </script>
 
 <style lang="scss" scoped>
