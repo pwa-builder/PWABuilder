@@ -1,7 +1,7 @@
 <template>
   <button
     :class="{'pwa-button--brand': isBrand, 'pwa-button--total_right': isRight}"
-    @click="buildArchive(platform, parameters);  $awa( { 'referrerUri': 'https://www.pwabuilder.com/download/{platform}' });"
+    @click="buildArchive(platform, parameters);  $awa( { 'referrerUri': `https://www.pwabuilder.com/download/${platform}` });"
   >
     <span v-if="isReady">
       <i v-if="!showMessage" class="fas fa-long-arrow-alt-down"></i>
