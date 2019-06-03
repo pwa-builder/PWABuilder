@@ -269,6 +269,14 @@ export default class extends Vue {
     });
   }
 }
+
+Vue.prototype.$awa = function(config) {
+  awa.ct.capturePageView(config);
+
+  return;
+};
+
+declare var awa: any;
 </script>
 
 <style lang="scss" scoped>
@@ -634,7 +642,7 @@ h2 {
   }
 }
 
-@media(max-height: 924px) {
+@media (max-height: 924px) {
   #toolkitSection {
     margin-top: 36px;
   }
@@ -749,7 +757,7 @@ h2 {
   visibility: hidden;
 
   &:after {
-    content: '!';
+    content: "!";
     color: red;
     font-weight: bold;
     display: block;
@@ -773,10 +781,18 @@ h2 {
 }
 
 @keyframes shake {
-  0% { margin-left: 0rem; }
-  25% { margin-left: 0.5rem; }
-  75% { margin-left: -0.5rem; }
-  100% { margin-left: 0rem; }
+  0% {
+    margin-left: 0rem;
+  }
+  25% {
+    margin-left: 0.5rem;
+  }
+  75% {
+    margin-left: -0.5rem;
+  }
+  100% {
+    margin-left: 0rem;
+  }
 }
 </style>
 
