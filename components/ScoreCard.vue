@@ -777,8 +777,17 @@ export default class extends Vue {
       }
 
       code {
-        background-color: rgba(60, 60, 60, 0.05);
         padding: 3px;
+        background: rgba(60, 60, 60, 0.05);
+        border-radius: 4px;
+        height: 24px;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 12px;
+        line-height: 14px;
+        padding-left: 8px;
+        padding-right: 8px;
+        color: #000000;
       }
     }
   }
