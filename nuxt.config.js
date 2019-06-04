@@ -52,7 +52,7 @@ module.exports = {
   css: ['~/assets/scss/app.scss'],
   build: {
     extractCSS: true,
-    vendor: ['babel-polyfill', 'vuex-class', 'nuxt-class-component', 'vue-i18n', 'monaco-editor'],
+    vendor: ['babel-polyfill', 'vuex-class', 'nuxt-class-component', 'vue-i18n'],
     plugins: [
       /*new StyleLintPlugin({
           files: ['**///*.scss', '**/*.vue'],
