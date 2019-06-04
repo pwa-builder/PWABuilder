@@ -321,36 +321,25 @@ header {
   }
 
   #publishButton {
-    --color-stop: #11999e;
-    --color-start: #7644c2;
-
     justify-self: right;
-
-    height: 42px;
-    width: 120px;
     border-radius: 22px;
     border: none;
-    background: grey;
-    font-weight: bold;
-    font-size: 14px;
-    padding-top: 9px;
-    padding-bottom: 11px;
-    color: white;
-    background: linear-gradient(
-      to right,
-      var(--color-start),
-      var(--color-stop)
-    );
+    background: linear-gradient(to right, #1FC2C8, #9337D8 116%);
     display: flex;
     justify-content: center;
+
+    padding-left: 20px;
+    padding-right: 20px;
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
+    display: flex;
     align-items: center;
-
-    transition: --color-stop 0.3s, --color-start 0.3s;
-  }
-
-  #publishButton:hover {
-    --color-stop: #7644c2;
-    --color-start: #11999e;
+    text-align: center;
+    color: #FFFFFF;
+    height: 40px;
   }
 }
 
