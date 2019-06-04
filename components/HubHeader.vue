@@ -210,7 +210,16 @@ header {
 
     a {
       padding-bottom: 6px;
-      color: #c5c5c5;
+      font-family: Poppins;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 21px;
+      display: flex;
+      align-items: center;
+      text-align: center;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.7);
     }
   }
 
