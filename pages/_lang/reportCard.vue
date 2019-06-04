@@ -310,7 +310,7 @@ declare var awa: any;
 
 @media (min-width: 1336px) {
   #hubContainer {
-    height: 146vh;
+    height: 130vh;
   }
 
   .backgroundIndex {
