@@ -363,9 +363,15 @@ main {
 
 h2 {
   margin-top: 2em;
-  font-size: 32px;
-  font-weight: 700;
   margin-bottom: 17px;
+
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 54px;
+  letter-spacing: -0.02em;
+  height: 36px;
 }
 
 #inputSection {
@@ -608,6 +614,9 @@ h2 {
 }
 
 #infoSection p {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
   line-height: 28px;
 }
 
