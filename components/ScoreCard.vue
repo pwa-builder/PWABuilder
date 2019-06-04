@@ -703,9 +703,15 @@ export default class extends Vue {
   }
 
   h3 {
-    font-size: 14px;
-    font-weight: bold;
     color: #707070;
+
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 18px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
 
   ul {
@@ -732,16 +738,20 @@ export default class extends Vue {
     }
 
     li {
+      color: #707070;
       font-size: 14px;
       font-weight: bold;
       padding: 0.5em;
       padding-left: 0;
       display: flex;
       flex-direction: row;
-      color: #3c3c3c;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 10px;
+
+      span {
+        color: #707070; 
+      }
 
       .listSubDiv {
         display: flex;
