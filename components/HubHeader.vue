@@ -167,7 +167,7 @@ Vue.prototype.$awa = function(config) {
 @import "~assets/scss/base/variables";
 
 .nuxt-link-exact-active {
-  color: white !important;
+  color: rgba(255, 255, 255, 1) !important;
 }
 
 .smaller-header {
@@ -264,7 +264,12 @@ header {
 
     a {
       padding-bottom: 6px;
-      color: #c5c5c5;
+      color: rgba(255, 255, 255, 0.7);
+
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 19px;
+      text-align: center;
     }
   }
 
@@ -324,7 +329,7 @@ header {
     justify-self: right;
     border-radius: 22px;
     border: none;
-    background: linear-gradient(to right, #1FC2C8, #9337D8 116%);
+    background: linear-gradient(to right, #1fc2c8, #9337d8 116%);
     display: flex;
     justify-content: center;
 
@@ -338,7 +343,7 @@ header {
     display: flex;
     align-items: center;
     text-align: center;
-    color: #FFFFFF;
+    color: #ffffff;
     height: 40px;
   }
 }

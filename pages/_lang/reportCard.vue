@@ -419,6 +419,7 @@ h2 {
       &:hover,
       &:focus {
         border-bottom: solid 1px white;
+        color: white !important;
       }
     }
 
