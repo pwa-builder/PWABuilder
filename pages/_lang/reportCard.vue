@@ -309,16 +309,20 @@ declare var awa: any;
 }
 
 @media (min-width: 1336px) {
-  #hubContainer {
+  /*#hubContainer {
     height: 130vh;
-  }
+  }*/
 
   .backgroundIndex {
     @include backgroundLeftPoint(26%, 70vh);
+
+    background-size: 26.05% 146%, 74.05% 146%, 100% 100% !important;
   }
 
   .backgroundReport {
     @include backgroundRightPoint(80%, 70vh);
+
+    background-size: 80.05% 146%, 20.05% 146%, 100% 100% !important;
   }
 }
 
