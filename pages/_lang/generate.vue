@@ -348,7 +348,6 @@ import ColorSelector from "~/components/ColorSelector.vue";
 import HubHeader from "~/components/HubHeader.vue";
 
 import * as generator from "~/store/modules/generator";
-import "monaco-editor";
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
