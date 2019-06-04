@@ -440,7 +440,7 @@ export default class extends Vue {
   }
 
   #sideBySide #rightSide .bottomViewer {
-    margin-top: 18em;
+    margin-top: 3em;
   }
 
   #sideBySide #leftSide {

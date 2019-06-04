@@ -247,7 +247,7 @@ export default class extends Vue {
 
 .code_viewer {
   background: #f1f1f1;
-  height: 668px;
+  height: 50vh;
   border-radius: 4px;
 
   #codeHeader {
@@ -314,8 +314,8 @@ export default class extends Vue {
   }
 
   .code_viewer-pre {
-    height: 668px;
-    overflow: hidden;
+    height: 50vh;
+    overflow: scroll;
     border-radius: 4px;
     background: #f1f1f1;
   }
