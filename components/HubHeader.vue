@@ -295,7 +295,7 @@ header {
   }
 
   #urlTested {
-    color: #c5c5c5;
+    color: rgba(255, 255, 255, 0.7);
     display: flex;
     align-items: center;
 
@@ -307,9 +307,16 @@ header {
     }
 
     span {
-      font-weight: bold;
+      color: rgba(255, 255, 255, 0.7);
+
+      font-style: normal;
+      font-weight: normal;
       font-size: 12px;
-      color: #c5c5c5;
+      line-height: 16px;
+    }
+
+    span svg {
+      margin-left: 5px;
     }
 
     a {
@@ -321,7 +328,20 @@ header {
       font-weight: normal;
       display: flex;
       flex-direction: column;
+      font-weight: bold;
+      color: rgba(255, 255, 255, .7);
     }
+  }
+
+  #urlTested:hover {
+
+    span, a {
+      color: rgba(255, 255, 255, 1);
+    }
+  }
+
+  #urlTested span:hover {
+    color: rgba(255, 255, 255, 1);
   }
 
   #overallScore {
