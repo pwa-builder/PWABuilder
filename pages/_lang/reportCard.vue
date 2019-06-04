@@ -316,7 +316,7 @@ declare var awa: any;
   .backgroundIndex {
     @include backgroundLeftPoint(26%, 70vh);
 
-    background-size: 26.05% 146%, 74.05% 146%, 100% 100% !important;
+    background-size: 26.05% 162%, 74.05% 162%, 100% 100% !important;
   }
 
   .backgroundReport {
