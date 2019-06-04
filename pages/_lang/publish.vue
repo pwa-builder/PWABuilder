@@ -1,11 +1,12 @@
 <template>
-  <main>
+  <main id="publishMain">
     <HubHeader></HubHeader>
 
     <div v-if="openAndroid || openWindows || showBackground" class="has-acrylic-40 is-dark" id="modalBackground"></div>
 
     <!-- appx modal -->
     <Modal
+      id="appxModal"
       :title="$t('publish.generate_appx')"
       ref="appxModal"
       @modalSubmit="onSubmitAppxModal"
@@ -188,8 +189,8 @@
       </section>
     </div>
 
-    <section id="sideBySide">
-      <section id="leftSide">
+    <section id="publishSideBySide">
+      <section id="publishLeftSide">
         <div id="introContainer">
           <h2>Everything you need to make your PWA</h2>
 
@@ -207,7 +208,7 @@
         </div>
       </section>
 
-      <section id="rightSide">
+      <section id="publishRightSide">
         <div id="platformsListContainer">
           <ul>
             <div id="pwaMainCard" class="pwaCard">
@@ -449,18 +450,18 @@ export default class extends Vue {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 /* stylelint-disable */
 
 @import "~assets/scss/base/variables";
 
 @media (max-height: 700px) {
-  #scoreSideBySide header {
+  #scorepublishSideBySide header {
     top: 51px;
   }
 }
 
-main {
+#publishMain {
   // @include backgroundRightPoint(80%, 25vh);
   height: 100vh;
 }
@@ -473,6 +474,13 @@ main {
   right: 0;
   z-index: 98999;
   will-change: opacity;
+}
+
+#appxModal .modal {
+  top: 8em;
+  right: 10em;
+  bottom: 8em;
+  left: 10em;
 }
 
 @keyframes opened {
@@ -506,7 +514,7 @@ main {
   }
 }
 
-#sideBySide {
+#publishSideBySide {
   display: flex;
   justify-content: space-around;
   height: 100vh;
@@ -521,7 +529,7 @@ main {
   background-position: -45px;
   background-color: white;
 
-  #leftSide {
+  #publishLeftSide {
     height: 100%;
     flex: 1;
 
@@ -603,7 +611,7 @@ main {
     }
   }
 
-  #rightSide {
+  #publishRightSide {
     height: 100%;
     flex: 1;
     display: flex;
@@ -892,13 +900,13 @@ main {
 }
 
 @media (max-width: 1280px) {
-  #sideBySide #leftSide #introContainer {
+  #publishSideBySide #publishLeftSide #introContainer {
     padding-right: 9em;
     color: white;
     padding-left: 52px;
   }
 
-  #sideBySide #rightSide #platformsListContainer {
+  #publishSideBySide #publishRightSide #platformsListContainer {
     padding-right: 52px;
   }
 
@@ -911,7 +919,7 @@ main {
 }
 
 @media (max-width: 1441px) {
-  #sideBySide {
+  #publishSideBySide {
     background-position: -86px;
   }
 }
