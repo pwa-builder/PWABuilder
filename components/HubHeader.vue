@@ -314,14 +314,29 @@ header {
   #overallScore {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    font-size: 28px;
-    font-weight: bold;
-    color: white;
     padding-right: 32px;
 
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 800;
+    font-size: 32px;
+    line-height: 26px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #ffffff;
+
     span {
-      font-size: 10px;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 12px;
+      line-height: 16px;
+      display: flex;
+      align-items: center;
+      text-align: center;
+      letter-spacing: -0.04em;
+      color: #ffffff;
+      text-transform: lowercase;
     }
   }
 
