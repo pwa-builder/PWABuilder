@@ -930,5 +930,17 @@ export default class extends Vue {
   }
 }
 
+@media (max-height: 840px) {
+  #publishSideBySide #publishLeftSide #introContainer {
+    padding-right: 6em;
+  }
+}
+
+@media (max-height: 765px) {
+  #publishSideBySide #publishLeftSide #introContainer {
+    padding-right: 10em;
+  }
+}
+
 </style>
 
