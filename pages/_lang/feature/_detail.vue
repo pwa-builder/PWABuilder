@@ -35,7 +35,6 @@ import SnippitCode from "~/components/snippitCode.vue";
 import * as windowsStore from "~/store/modules/windows";
 
 import * as marked from "marked";
-import hljs from "highlight.js";
 
 const WindowsState = namespace(windowsStore.name, State);
 const WindowsAction = namespace(windowsStore.name, Action);

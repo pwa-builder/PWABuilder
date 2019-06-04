@@ -18,7 +18,6 @@
         v-for="sample in samples"
         :sample="sample"
         :key="sample.id"
-        v-on:selected="onSelected"
         v-on:removed="onRemoved"
         :showRemoveButton="false"
         :showAddButton="true"
@@ -32,7 +31,6 @@
         v-for="sample in selectedSamples"
         :sample="sample"
         :key="sample.id"
-        v-on:selected="onSelected"
         v-on:removed="onRemoved"
         :showRemoveButton="true"
         :showAddButton="true"
@@ -54,7 +52,7 @@
       </div>
     </section>
 
-    <Modal
+    <!--<Modal
       v-on:modalOpened="modalOpened()"
       v-on:modalClosed="modalClosed()"
       v-on:modalSubmit="modalSelected()"
@@ -112,7 +110,7 @@
           </div>
         </div>
       </div>
-    </Modal>
+    </Modal>-->
   </main>
 </template>
 
@@ -121,11 +119,10 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 import { Action, State, namespace } from "vuex-class";
 
-import Modal from "~/components/Modal.vue";
 import Loading from "~/components/Loading.vue";
 import FeatureCard from "~/components/FeatureCard.vue";
 import HubHeader from "~/components/HubHeader.vue";
-import CodeViewer from "~/components/CodeViewer.vue";
+// import CodeViewer from "~/components/CodeViewer.vue";
 
 import * as windowsStore from "~/store/modules/windows";
 
@@ -134,11 +131,11 @@ const WindowsAction = namespace(windowsStore.name, Action);
 
 @Component({
   components: {
-    Modal,
+    // Modal,
     Loading,
     FeatureCard,
     HubHeader,
-    CodeViewer
+    // CodeViewer
   }
 })
 export default class extends Vue {
@@ -176,7 +173,7 @@ export default class extends Vue {
   }
 
   // @ts-ignore TS6133 onSelected
-  public async onSelected(sample: windowsStore.Sample) {
+ /* public async onSelected(sample: windowsStore.Sample) {
     try {
       await this.selectSample(sample);
       // this.selectedSamples.push(sample);
@@ -187,7 +184,7 @@ export default class extends Vue {
     } catch (e) {
       this.error = e;
     }
-  }
+  }*/
 
   public async modalSelected() {
     try {
@@ -238,7 +235,7 @@ export default class extends Vue {
     this.sample.usercode = ev;
   }
 
-  async addBundle() {
+  /*async addBundle() {
     try {
       console.log("sample selected", this.currentPendingSample);
       await this.selectSample(this.currentPendingSample);
@@ -260,7 +257,7 @@ export default class extends Vue {
       (this.$refs.addFeatureModal as Modal).hide();
       this.error = e;
     }
-  }
+  }*/
 
   async download(all = false) {
     let that = this;
