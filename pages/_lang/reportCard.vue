@@ -397,17 +397,20 @@ h2 {
 
     input {
       background: transparent;
-      color: white;
 
       padding-top: 13px;
       padding-bottom: 12px;
-      font-weight: bold;
-      font-size: 18px;
       border: none;
       border-bottom: solid 1px rgba(255, 255, 255, 0.4);
       margin-right: 0.3em;
       margin-top: 20px;
       outline: none;
+
+      font-style: normal;
+      font-weight: normal;
+      font-size: 16px;
+      line-height: 33px;
+      color: rgba(255, 255, 255, 0.7);
 
       &::placeholder {
         color: white;
