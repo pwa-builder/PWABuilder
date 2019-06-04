@@ -78,6 +78,7 @@ Vue.prototype.$awa = function(config) {
 
   #featureCardTitleBlock svg {
     color: #C5C5C5;
+    font-size: 24px;
   }
 
   p {

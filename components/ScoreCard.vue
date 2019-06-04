@@ -572,10 +572,10 @@ export default class extends Vue {
     const savedScore = sessionStorage.getItem("swScore");
 
     if (savedData) {
-      console.log('not making a request');
+      console.log("not making a request");
       let cleanedData = JSON.parse(savedData);
       this.serviceWorkerData = cleanedData;
-      console.log('saved data', cleanedData);
+      console.log("saved data", cleanedData);
 
       if (savedScore) {
         let cleanedScore = JSON.parse(savedScore);
@@ -590,7 +590,7 @@ export default class extends Vue {
       console.log("lookAtSW", data);
 
       this.serviceWorkerData = data.swURL;
-      console.log('data', data);
+      console.log("data", data);
 
       if (this.serviceWorkerData !== false) {
         sessionStorage.setItem(
@@ -602,7 +602,10 @@ export default class extends Vue {
       console.log("this.serviceWorkerData", this.serviceWorkerData);
       console.log(this.serviceWorkerData);
 
-      if (this.serviceWorkerData === false || this.serviceWorkerData.swURL === false) {
+      if (
+        this.serviceWorkerData === false ||
+        this.serviceWorkerData.swURL === false
+      ) {
         this.noServiceWorker = true;
         return;
       } else {
@@ -728,6 +731,8 @@ export default class extends Vue {
       .cardIcon {
         margin-right: 16px;
         color: initial;
+        color: #707070;
+        font-size: 12px;
       }
 
       .subScoreSpan {
@@ -750,7 +755,7 @@ export default class extends Vue {
       margin-bottom: 10px;
 
       span {
-        color: #707070; 
+        color: #707070;
       }
 
       .listSubDiv {
@@ -762,16 +767,17 @@ export default class extends Vue {
       .subScoreSpan {
         font-size: 14px;
         font-weight: bold;
-        color: red;
+        color: #db3457;
       }
 
       .cardIcon {
-        color: red;
+        color: #db3457;
         margin-right: 8px;
+        font-size: 12px;
       }
 
       code {
-        background-color: rgba(60,60,60,0.05);
+        background-color: rgba(60, 60, 60, 0.05);
         padding: 3px;
       }
     }
