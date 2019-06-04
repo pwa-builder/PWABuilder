@@ -415,23 +415,25 @@ h2 {
 
     #getStartedButton {
       border: none;
-      font-weight: bold;
-      font-size: 18px;
       border-radius: 22px;
-      padding-top: 9px;
-      padding-bottom: 11px;
-      padding-left: 23px;
-      padding-right: 23px;
       background: linear-gradient(to right, white, rgba(255, 255, 255, 0.7));
-      border: solid 1px white;
       color: #3c3c3c;
-      height: 44px;
       align-self: flex-end;
       display: flex;
       flex-direction: row;
-      align-items: center;
-      width: 88px;
       justify-content: center;
+
+      height: 40px;
+      padding-left: 20px;
+      padding-right: 20px;
+      font-family: Poppins;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 21px;
+      display: flex;
+      align-items: center;
+      text-align: center;
     }
   }
 
