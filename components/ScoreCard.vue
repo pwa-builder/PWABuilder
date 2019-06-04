@@ -741,7 +741,7 @@ export default class extends Vue {
       color: #3c3c3c;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
 
       .listSubDiv {
         display: flex;
