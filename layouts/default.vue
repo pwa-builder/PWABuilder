@@ -156,10 +156,10 @@ header {
     border: none;
     background: none;
     position: relative;
-    left: 11.6em;
     color: white;
     font-weight: bold;
     font-size: 14px;
+    margin-left: 30px;
 
     i {
       font-style: normal;
