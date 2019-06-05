@@ -410,16 +410,27 @@ header {
 
   h1 {
     color: white;
-    font-weight: bold;
+
+    margin-top: 2em;
+    margin-bottom: 17px;
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 600;
     font-size: 24px;
-    margin-top: 30px;
+    line-height: 54px;
+    letter-spacing: -0.02em;
+    height: 36px;
   }
 
   p {
-    font-size: 16px;
     color: white;
     width: 465px;
     padding-top: 35px;
+
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 28px;
   }
 }
 
