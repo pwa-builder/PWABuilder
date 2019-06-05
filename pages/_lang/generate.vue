@@ -792,6 +792,7 @@ export default class extends Vue {
         display: flex;
         justify-content: space-between;
         border-bottom: solid 1px rgba(60, 60, 60, 0.3);
+        width: 20em;
 
         button {
           background: none;
@@ -809,9 +810,16 @@ export default class extends Vue {
           line-height: 16px;
         }
 
+        button:hover {
+          color: #3c3c3c;
+          border-bottom: solid 4px #9337d8;
+          border-image: linear-gradient(to right, #1fc2c8, #9337d8 116%) 10;
+        }
+
         .active {
           color: #9337d8;
           border-bottom: solid 4px #9337d8;
+          border-image: linear-gradient(to right, #1fc2c8, #9337d8 116%) 10;
         }
       }
     }
