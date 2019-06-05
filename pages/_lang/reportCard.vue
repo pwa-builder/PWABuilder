@@ -111,7 +111,6 @@
       <div id="moreFeaturesBlock" v-if="topSamples.length > 0">
         <nuxt-link to="/features">
           View More
-          <i class="fas fa-angle-right"></i>
         </nuxt-link>
       </div>
     </main>
@@ -698,13 +697,20 @@ h2 {
   align-items: center;
 
   a {
-    color: #9b47db;
-    text-transform: uppercase;
-    font-weight: bold;
+    background: rgba(60, 60, 60, 0.6);
+    color: white;
+    border-radius: 20px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 600;
     font-size: 14px;
-    border: solid 1px #9337d8;
-    border-radius: 24px;
-    padding: 10px;
+    line-height: 21px;
   }
 }
 
