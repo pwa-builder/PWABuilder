@@ -71,6 +71,7 @@
               </label>
 
               <textarea
+                id="descText"
                 class="l-generator-textarea"
                 v-model="manifest$.description"
                 @change="onChangeSimpleInput()"
@@ -653,6 +654,11 @@ export default class extends Vue {
   }
 }
 
+#descText {
+  line-height: 24px;
+  height: 5em;
+}
+
 #uploadNewSection {
   background: #f0f0f0;
   border-radius: 4px;
@@ -746,6 +752,7 @@ export default class extends Vue {
         font-size: 24px;
         line-height: 54px;
         letter-spacing: -0.02em;
+        color: #3c3c3c;
       }
 
       p {
@@ -772,13 +779,17 @@ export default class extends Vue {
         button {
           background: none;
           border: none;
-          font-weight: bold;
-          font-size: 14px;
           color: rgba(60, 60, 60, 0.6);
           width: 110px;
           height: 32px;
           box-shadow: none;
           text-transform: uppercase;
+
+          font-family: Poppins;
+          font-style: normal;
+          font-weight: 600;
+          font-size: 14px;
+          line-height: 16px;
         }
 
         .active {
@@ -792,16 +803,17 @@ export default class extends Vue {
       width: 500px;
 
       .fieldName {
-        color: $color-button-primary;
-        font-size: 18px;
+        color: #9337d8;
+        font-size: 16px;
         font-weight: bold;
       }
 
       h4 {
-        font-size: 18px;
+        font-style: normal;
+        line-height: 24px;
+        font-size: 16px;
         font-weight: bold;
-        color: #2c2c2c;
-        padding-top: 30px;
+        margin-top: 32px;
       }
 
       p {
