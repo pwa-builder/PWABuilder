@@ -231,7 +231,7 @@ export default class extends Vue {
 
 #sideBySide {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   height: 185vh;
   padding-right: 128px;
   background: white;
