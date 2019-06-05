@@ -41,6 +41,7 @@
                 @change="onChangeSimpleInput()"
                 type="text"
                 v-on:focus="activeFormField = 'appName'"
+                placeholder="App Name"
               >
             </div>
 
@@ -59,6 +60,7 @@
                 name="short_name"
                 type="text"
                 v-on:focus="activeFormField = 'shortName'"
+                placeholder="App Short Name"
               >
             </div>
 
@@ -78,6 +80,7 @@
                 name="description"
                 type="text"
                 v-on:focus="activeFormField = 'appDesc'"
+                placeholder="App Description"
               ></textarea>
             </div>
 
@@ -95,6 +98,7 @@
                 @change="onChangeSimpleInput()"
                 type="text"
                 v-on:focus="activeFormField = 'startURL'"
+                placeholder="Start URL"
               >
             </div>
           </section>
@@ -177,6 +181,7 @@
                 v-model="manifest$.scope"
                 @change="onChangeSimpleInput()"
                 type="text"
+                placeholder="App Scope"
                 v-on:focus="activeFormField = 'appScope'"
               >
             </div>
@@ -834,8 +839,18 @@ export default class extends Vue {
       }
 
       input {
-        font-size: 18px;
         padding-left: 0;
+        width: 28em;
+
+        font-style: normal;
+        font-weight: normal;
+        font-size: 16px;
+        line-height: 33px;
+      }
+
+      input:focus {
+        border-color: #9337d8;
+        outline: none;
       }
     }
 
