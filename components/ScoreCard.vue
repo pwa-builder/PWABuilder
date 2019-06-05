@@ -743,7 +743,6 @@ export default class extends Vue {
     }
 
     li {
-      color: #707070;
       font-size: 14px;
       font-weight: bold;
       padding: 0.5em;
@@ -752,10 +751,15 @@ export default class extends Vue {
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 10px;
+      margin-bottom: 5px;
+      color: #3C3C3C
 
       span {
-        color: #707070;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 18px;
+        color: #3c3c3c;
       }
 
       .listSubDiv {
