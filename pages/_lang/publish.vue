@@ -942,5 +942,41 @@ export default class extends Vue {
   }
 }
 
+@media (min-width: 1500px) {
+  #publishSideBySide #publishLeftSide #introContainer {
+    padding-right: 12em;
+  }
+}
+
+@media (min-width: 1700px) {
+  #publishSideBySide #publishLeftSide #introContainer {
+    padding-right: 17em;
+  }
+}
+
+@media (min-width: 1900px) {
+  #publishSideBySide #publishLeftSide #introContainer {
+    padding-right: 22em;
+  }
+}
+
+@media (min-width: 2000px) {
+  #publishSideBySide #publishLeftSide #introContainer {
+    padding-right: 28em;
+  }
+}
+
+@media (min-width: 2300px) {
+  #publishSideBySide #publishLeftSide #introContainer {
+    padding-right: 32em;
+  }
+}
+
+@media (min-width: 2450px) {
+  #publishSideBySide #publishLeftSide #introContainer {
+    padding-right: 38em;
+  }
+}
+
 </style>
 
