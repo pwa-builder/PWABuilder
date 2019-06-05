@@ -274,11 +274,23 @@
       </section>
 
       <section id="rightSide">
-        <div id="exampleDiv">
+        <!--<div id="exampleDiv">
           <h3>Add this code to your start page:</h3>
 
           <code>&lt;link rel="manifest" href="/manifest.json"&gt;</code>
-        </div>
+        </div>-->
+
+        <CodeViewer
+          code-type="html"
+          v-if="seeEditor"
+          title="Add this code to your start page"
+          code="<link rel='manifest' href='/manifest.json'>"
+          :showHeader="true"
+          :showCopyButton="true"
+          id="manifestHTML"
+        >
+          <h3>Add this code to your start page:</h3>
+        </CodeViewer>
 
         <CodeViewer
           code-type="json"
@@ -612,7 +624,7 @@ export default class extends Vue {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import "~assets/scss/base/variables";
 /* stylelint-disable */
 
@@ -856,6 +868,16 @@ export default class extends Vue {
   #rightSide {
     width: 870px;
     margin-left: 60px;
+  }
+
+  #manifestHTML {
+    height: 4em;
+    margin-top: 3em;
+    margin-bottom: 5em;
+  }
+
+  #manifestHTML .code_viewer-pre {
+    height: 4em !important;
   }
 
   #exampleDiv {

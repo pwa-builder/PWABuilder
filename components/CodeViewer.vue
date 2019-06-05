@@ -149,7 +149,7 @@ export default class extends Vue {
 
     model.onDidChangeContent(() => {
       const value = this.editor.getValue();
-      console.log('editor.value', value);
+      console.log("editor.value", value);
       this.$emit("editorValue", value);
     });
 
@@ -168,7 +168,7 @@ export default class extends Vue {
   @Watch("code")
   onCodeChanged() {
     if (this.editor) {
-      console.log('this.code', this.code);
+      console.log("this.code", this.code);
       this.editor.setValue(this.code);
     }
   }
@@ -194,7 +194,6 @@ export default class extends Vue {
       console.log("dont have clipboard api");
 
       this.copyToClipboard(code);
-
     }
   }
 
@@ -239,7 +238,7 @@ export default class extends Vue {
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang='scss'>
 /* stylelint-disable */
 
 @import "~assets/scss/base/variables";
@@ -266,7 +265,6 @@ export default class extends Vue {
       font-size: 16px;
       line-height: 24px;
       padding-left: 1em;
-      width: 60%;
     }
 
     div {
