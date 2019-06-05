@@ -109,9 +109,7 @@
       </FeatureCard>
 
       <div id="moreFeaturesBlock" v-if="topSamples.length > 0">
-        <nuxt-link to="/features">
-          View More
-        </nuxt-link>
+        <nuxt-link to="/features">View More</nuxt-link>
       </div>
     </main>
     <footer v-if="gotURL" id="hubFooter">
@@ -293,6 +291,16 @@ declare var awa: any;
 
 #hubFooter p {
   text-align: center;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 18px;
+  color: #707070;
+}
+
+#hubFooter a {
+  color: #707070;
+  text-decoration: underline;
 }
 
 #hubContainer {
