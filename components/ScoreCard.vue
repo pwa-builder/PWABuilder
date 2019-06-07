@@ -526,9 +526,14 @@ export default class extends Vue {
 
   private lookAtManifest(): Promise<void> {
     return new Promise(async resolve => {
+      try{
       await this.getManifestInformation();
       console.log("manifestInfo", this.manifest);
-
+      } catch{
+        this.noManifest = true;
+        resolve();
+        return;
+      }
       if (this.manifest && this.manifest.generated === true) {
         this.noManifest = true;
         resolve();

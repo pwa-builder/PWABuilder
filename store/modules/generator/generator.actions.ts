@@ -76,6 +76,9 @@ export const actions: Actions<State, RootState> = {
         try {
             const result = await this.$axios.$post(apiUrl, options);
             console.log('result', result);
+            if(!result){
+                throw 'error.Manifest_notFound';
+            }
             // Convert color if necessary
             result.background_color = helpers.fixColorFromServer(result.background_color);
 
