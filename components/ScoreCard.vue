@@ -430,12 +430,7 @@
 
     <div id="cardEditBlock">
       <nuxt-link v-if="category === 'Service Worker'" to="/serviceworker">
-        <button v-if="!noServiceWorker" id="editButton">
-          View Service Worker
-          <i class="fas fa-arrow-right"></i>
-        </button>
-
-        <button v-else-if="noServiceWorker">
+        <button>
           Choose a Service Worker
           <i class="fas fa-arrow-right"></i>
         </button>
