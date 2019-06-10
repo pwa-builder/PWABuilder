@@ -27,7 +27,7 @@ export const helpers = {
       });
     }
     catch (err) {
-      console.log(err, err.message);
+      console.log('error in helpers', err, err.message);
       return err;
     }
   },

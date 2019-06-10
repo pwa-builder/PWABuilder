@@ -526,10 +526,10 @@ export default class extends Vue {
 
   private lookAtManifest(): Promise<void> {
     return new Promise(async resolve => {
-      try{
-      await this.getManifestInformation();
-      console.log("manifestInfo", this.manifest);
-      } catch{
+      try {
+        await this.getManifestInformation();
+        console.log("manifestInfo", this.manifest);
+      } catch {
         this.noManifest = true;
         resolve();
         return;
@@ -757,9 +757,7 @@ export default class extends Vue {
       align-items: center;
       justify-content: space-between;
       margin-bottom: 5px;
-      color: #3C3C3C
-
-      span {
+      color: #3c3c3c span {
         font-style: normal;
         font-weight: normal;
         font-size: 14px;
