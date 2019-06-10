@@ -936,6 +936,40 @@ export default class extends Vue {
   }
 }
 
+@media (max-width: 425px) {
+  #rightSide {
+    display: none;
+  }
+
+  #sideBySide {
+    flex-direction: column;
+    padding-left: 31px !important;
+    padding-right: 24px !important;
+  }
+
+  #sideBySide #leftSide .animatedSection {
+    width: initial;
+  }
+
+  #sideBySide #leftSide .animatedSection input {
+    width: initial;
+  }
+
+  #iconGrid {
+    display: grid;
+    grid-gap: initial;
+    padding-left: 0px;
+  }
+
+  #uploadNewSection {
+    display: none;
+  }
+
+  .l-generator-input--select {
+    max-width: 210px;
+  }
+}
+
 @media (max-width: 1290px) {
   #sideBySide {
     padding-left: 54px;

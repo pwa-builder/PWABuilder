@@ -449,4 +449,25 @@ export default class extends Vue {
     margin-left: initial;
   }
 }
+
+@media (max-width: 425px) {
+  #rightSide {
+    display: none !important;
+  }
+
+  #sideBySide {
+    flex-direction: column;
+    padding-left: 31px !important;
+    padding-right: 24px !important;
+  }
+
+  #sideBySide #leftSide {
+    width: initial;
+  }
+
+  #sideBySide #leftSide #inputSection #inputContainer {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+}
 </style>
