@@ -2,7 +2,11 @@
   <main id="publishMain">
     <HubHeader></HubHeader>
 
-    <div v-if="openAndroid || openWindows || showBackground" class="has-acrylic-40 is-dark" id="modalBackground"></div>
+    <div
+      v-if="openAndroid || openWindows || showBackground"
+      class="has-acrylic-40 is-dark"
+      id="modalBackground"
+    ></div>
 
     <!-- appx modal -->
     <Modal
@@ -214,7 +218,7 @@
             <div id="pwaMainCard" class="pwaCard">
               <div class="pwaCardHeaderBlock">
                 <div class="pwaCardIconBlock">
-                  <i id="platformIcon" class="fab fa-edge"></i>
+                  <img id="pwaIcon" src="~/assets/images/pwaLogo.svg">
                   <h2>Progressive Web App</h2>
                 </div>
 
@@ -455,6 +459,11 @@ export default class extends Vue {
 
 @import "~assets/scss/base/variables";
 
+#pwaIcon {
+  height: 22px;
+  margin-right: 10px;
+}
+
 @media (max-height: 700px) {
   #scorepublishSideBySide header {
     top: 51px;
@@ -494,7 +503,6 @@ export default class extends Vue {
 }
 
 #appxModalBody {
-
   input {
     padding: initial;
   }
@@ -850,7 +858,7 @@ export default class extends Vue {
 
 #androidDownloadButton.webviewButton {
   width: 183px;
-  background: #3C3C3C;
+  background: #3c3c3c;
 }
 
 #androidDownloadButton:hover {
@@ -983,6 +991,5 @@ export default class extends Vue {
     padding-right: 38em;
   }
 }
-
 </style>
 
