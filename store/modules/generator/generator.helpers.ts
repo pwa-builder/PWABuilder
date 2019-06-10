@@ -10,15 +10,24 @@ export const helpers = {
   },
 
   async isValidUrl(siteUrl: string): Promise<any> {
-    try {
-      const test = await fetch(siteUrl, {
+    /*try {
+      return await fetch(siteUrl, {
         mode: 'no-cors'
       });
-      console.log('test error', test);
-      return /^(http|https):\/\/[^ "]+$/.test(siteUrl);
+
+      // return /^(http|https):\/\/[^ "]+$/.test(siteUrl);
     }
     catch(err) {
       console.error('error in helper', err, err.message);
+      return err;
+    }*/
+    try {
+      return await fetch(siteUrl, {
+        mode: 'no-cors'
+      });
+    }
+    catch (err) {
+      console.log(err, err.message);
       return err;
     }
   },

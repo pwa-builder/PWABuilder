@@ -15,7 +15,7 @@
 
           <p>It's super easy to get started. Just enter the URL of your website below</p>
 
-          <div id="urlErr">{{ $t(this.error) }}</div>
+          <div v-if="this.error" id="urlErr">{{ $t(this.error) }}</div>
 
           <form
             @submit.prevent="checkUrlAndGenerate"
@@ -726,6 +726,7 @@ h2 {
   height: 1em;
   font-weight: 500;
   padding-top: 1em;
+  padding-bottom: 1em;
 }
 
 .btnErr {
@@ -773,12 +774,6 @@ h2 {
   100% {
     margin-left: 0rem;
   }
-}
-
-#urlErr {
-  height: 1em;
-  font-weight: 500;
-  padding-top: 1em;
 }
 
 .btnErr {
