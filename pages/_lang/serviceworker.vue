@@ -234,6 +234,7 @@ export default class extends Vue {
   justify-content: space-between;
   height: 185vh;
   padding-right: 128px;
+  padding-left: 128px;
   background: white;
 
   #leftSide {
