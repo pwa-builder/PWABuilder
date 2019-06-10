@@ -850,7 +850,7 @@ export default class extends Vue {
 
 #androidDownloadButton.webviewButton {
   width: 183px;
-  background: #3c3c3c;
+  background: #3C3C3C;
 }
 
 #androidDownloadButton:hover {
@@ -915,6 +915,12 @@ export default class extends Vue {
     right: 18em;
     bottom: 12em;
     left: 18em;
+  }
+}
+
+@media (min-width: 1445px) {
+  #androidPlatModal {
+    left: 26em;
   }
 }
 
