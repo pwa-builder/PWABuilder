@@ -55,9 +55,6 @@ export const actions: Actions<State, RootState> = {
     }
 
     const test = await helpers.isValidUrl(url);
-    console.log('test in actions', test);
-    console.log('second test in actions', test.error);
-    console.log('third test in actions', test.message);
 
     if (test.message !== undefined) {
       throw `${test.message}: this error means that you may have a bad https cert or the url may not be correct`;
