@@ -411,21 +411,19 @@ header {
   h1 {
     color: white;
 
-    margin-top: 2em;
-    margin-bottom: 17px;
+    margin-top: 48px;
+    margin-bottom: 16px;
     font-family: Poppins;
     font-style: normal;
     font-weight: 600;
     font-size: 24px;
     line-height: 54px;
     letter-spacing: -0.02em;
-    height: 36px;
   }
 
   p {
     color: white;
-    width: 465px;
-    padding-top: 35px;
+    width: 630px;
 
     font-style: normal;
     font-weight: normal;
@@ -457,7 +455,7 @@ header {
   grid-template-columns: auto auto auto;
   padding-left: 159px;
   padding-right: 159px;
-  margin-top: 60px;
+  margin-top: 24px;
   margin-bottom: 60px;
 
   .fakeCard {
