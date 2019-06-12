@@ -871,7 +871,6 @@ export default class extends Vue {
 
       input {
         padding-left: 0;
-        width: 28em;
 
         font-style: normal;
         font-weight: normal;
