@@ -113,11 +113,20 @@
 
                 <div class="button-holder icons">
                   <div class="l-inline">
-                    <button
+                    <!--<button
                       id="iconUploadButton"
                       class="work-button l-generator-button"
                       @click="onClickUploadIcon()"
-                    >Upload</button>
+                    >Upload</button>-->
+                    <input
+                      accept="image/png, image/jpeg"
+                      type="file"
+                      name="file"
+                      id="file"
+                      class="inputfile"
+                      @change="onFileIconChange"
+                    >
+                    <label id="iconUploadButton" for="file">Upload</label>
                   </div>
                 </div>
 
@@ -465,7 +474,7 @@ export default class extends Vue {
     }
   }
 
-  public onFileIconChange(e: Event): void {
+  public async onFileIconChange(e: Event) {
     const target = e.target as HTMLInputElement;
 
     if (!target.files) {
@@ -473,6 +482,15 @@ export default class extends Vue {
     }
 
     this.iconFile = target.files[0];
+
+    if (this.iconFile) {
+      await this.generateMissingImages(this.iconFile);
+
+      this.manifest$ = this.manifest;
+
+      console.log("update manifest this.manifest$", this.manifest$);
+      this.updateManifest(this.manifest$);
+    }
   }
 
   private getIcons(): string {
@@ -526,8 +544,8 @@ export default class extends Vue {
   }
 
   public onClickUploadIcon(): void {
-    (this.$refs.iconsModal as Modal).show();
-    this.showingIconModal = true;
+    /*(this.$refs.iconsModal as Modal).show();
+    this.showingIconModal = true;*/
   }
 
   public onClickShowGBB(): void {
@@ -691,6 +709,15 @@ export default class extends Vue {
   .iconUploadHeader {
     padding-top: 0px !important;
     font-size: 16px;
+  }
+
+  #file {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
   }
 
   #iconUploadButton {
