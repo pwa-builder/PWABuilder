@@ -7,7 +7,6 @@ export const mutations: MutationTree<State> = {
     },
 
     [types.UPDATE_MANIFEST](state, manifest: Manifest): void {
-      console.log('im here in update');
         state.manifest = manifest;
     },
 
@@ -40,6 +39,7 @@ export const mutations: MutationTree<State> = {
         state.manifest.display = state.manifest.display || payload.defaultDisplay;
         state.manifest.orientation = state.manifest.orientation || payload.defaultOrientation;
         state.manifest.generated = state.generated || payload.generated;
+        state.icons = state.icons || payload.icons;
     },
 
     [types.UPDATE_ICONS](state, icons: Icon[]): void {

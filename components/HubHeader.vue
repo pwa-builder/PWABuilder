@@ -12,10 +12,15 @@
 
       <div id="mainTabsBar">
         <nuxt-link to="/">My Hub</nuxt-link>
-        <nuxt-link to="/features">Feature Store</nuxt-link>
+        <nuxt-link
+          @click="$awa( { 'referrerUri': `https://www.pwabuilder.com/featureStore` })"
+          to="/features"
+        >Feature Store</nuxt-link>
       </div>
 
       <div id="icons">
+        <InstallButton/>
+
         <a href="https://github.com/pwa-builder" target="_blank" rel="noopener noreferrer">
           <i class="fab fa-github"></i>
         </a>
@@ -62,9 +67,15 @@ import { State, namespace } from "vuex-class";
 
 import * as generator from "~/store/modules/generator";
 
+import InstallButton from "~/components/InstallButton.vue";
+
 const GeneratorState = namespace(generator.name, State);
 
-@Component({})
+@Component({
+  components: {
+    InstallButton
+  }
+})
 export default class extends Vue {
   @Prop({ default: false }) expanded: boolean;
   @Prop({}) showSubHeader: string;
@@ -79,27 +90,28 @@ export default class extends Vue {
     const storedScore = sessionStorage.getItem("overallGrade") || null;
 
     if (storedScore) {
-      this.localScore = parseInt(storedScore);
-    }
+      this.calcedScore = parseInt(storedScore);
+    } else {
+      this.calcedScore = this.score;
 
-    this.calcedScore = this.score;
-    if ((window as any).CSS && (window as any).CSS.registerProperty) {
-      try {
-        (CSS as any).registerProperty({
-          name: "--color-stop",
-          syntax: "<color>",
-          inherits: false,
-          initialValue: "transparent"
-        });
+      if ((window as any).CSS && (window as any).CSS.registerProperty) {
+        try {
+          (CSS as any).registerProperty({
+            name: "--color-stop",
+            syntax: "<color>",
+            inherits: false,
+            initialValue: "transparent"
+          });
 
-        (CSS as any).registerProperty({
-          name: "--color-start",
-          syntax: "<color>",
-          inherits: false,
-          initialValue: "transparent"
-        });
-      } catch (err) {
-        console.error(err);
+          (CSS as any).registerProperty({
+            name: "--color-start",
+            syntax: "<color>",
+            inherits: false,
+            initialValue: "transparent"
+          });
+        } catch (err) {
+          console.error(err);
+        }
       }
     }
   }
@@ -140,6 +152,14 @@ export default class extends Vue {
     }
   }
 }
+
+declare var awa: any;
+
+Vue.prototype.$awa = function(config) {
+  awa.ct.capturePageView(config);
+
+  return;
+};
 </script>
 
 <style lang="scss" scoped>
@@ -147,7 +167,7 @@ export default class extends Vue {
 @import "~assets/scss/base/variables";
 
 .nuxt-link-exact-active {
-  color: white !important;
+  color: rgba(255, 255, 255, 1) !important;
 }
 
 .smaller-header {
@@ -190,13 +210,25 @@ header {
 
     a {
       padding-bottom: 6px;
-      color: #c5c5c5;
+      font-family: Poppins;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 21px;
+      display: flex;
+      align-items: center;
+      text-align: center;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    a:hover {
+      color: white !important;
     }
   }
 
   #icons {
     grid-column: 11 / span 2;
-    width: 4em; /* TODO: Padding between instead of width? */
 
     display: flex;
     justify-content: space-around;
@@ -245,7 +277,12 @@ header {
 
     a {
       padding-bottom: 6px;
-      color: #c5c5c5;
+      color: rgba(255, 255, 255, 0.7);
+
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 19px;
+      text-align: center;
     }
   }
 
@@ -258,7 +295,7 @@ header {
   }
 
   #urlTested {
-    color: #c5c5c5;
+    color: rgba(255, 255, 255, 0.7);
     display: flex;
     align-items: center;
 
@@ -270,9 +307,16 @@ header {
     }
 
     span {
-      font-weight: bold;
+      color: rgba(255, 255, 255, 0.7);
+
+      font-style: normal;
+      font-weight: normal;
       font-size: 12px;
-      color: #c5c5c5;
+      line-height: 16px;
+    }
+
+    span svg {
+      margin-left: 5px;
     }
 
     a {
@@ -284,55 +328,71 @@ header {
       font-weight: normal;
       display: flex;
       flex-direction: column;
+      font-weight: bold;
+      color: rgba(255, 255, 255, .7);
     }
+  }
+
+  #urlTested:hover {
+
+    span, a {
+      color: rgba(255, 255, 255, 1);
+    }
+  }
+
+  #urlTested span:hover {
+    color: rgba(255, 255, 255, 1);
   }
 
   #overallScore {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    font-size: 28px;
-    font-weight: bold;
-    color: white;
     padding-right: 32px;
 
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 800;
+    font-size: 32px;
+    line-height: 26px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #ffffff;
+
     span {
-      font-size: 10px;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 12px;
+      line-height: 16px;
+      display: flex;
+      align-items: center;
+      text-align: center;
+      letter-spacing: -0.04em;
+      color: #ffffff;
+      text-transform: lowercase;
     }
   }
 
   #publishButton {
-    --color-stop: #11999e;
-    --color-start: #7644c2;
-
     justify-self: right;
-
-    clip-path: polygon(0 0, 0 100%, 89% 100%, 100% 52%, 100% 0%);
-    height: 42px;
-    width: 120px;
     border-radius: 22px;
     border: none;
-    background: grey;
-    font-weight: bold;
-    font-size: 14px;
-    padding-top: 9px;
-    padding-bottom: 11px;
-    color: white;
-    background: linear-gradient(
-      to right,
-      var(--color-start),
-      var(--color-stop)
-    );
+    background: linear-gradient(to right, #1fc2c8, #9337d8 116%);
     display: flex;
     justify-content: center;
+
+    padding-left: 20px;
+    padding-right: 20px;
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
+    display: flex;
     align-items: center;
-
-    transition: --color-stop 0.3s, --color-start 0.3s;
-  }
-
-  #publishButton:hover {
-    --color-stop: #7644c2;
-    --color-start: #11999e;
+    text-align: center;
+    color: #ffffff;
+    height: 40px;
   }
 }
 

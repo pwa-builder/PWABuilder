@@ -6,7 +6,7 @@
 
     <section id="headerSection">
       <div>
-        <h1 id="featurePageHeader">Extras</h1>
+        <h1 id="featurePageHeader">Features</h1>
 
         <p>Add that special something to supercharge your PWA. These cross-platform features can make your website work more like an app.</p>
       </div>
@@ -18,7 +18,6 @@
         v-for="sample in samples"
         :sample="sample"
         :key="sample.id"
-        v-on:selected="onSelected"
         v-on:removed="onRemoved"
         :showRemoveButton="false"
         :showAddButton="true"
@@ -32,7 +31,6 @@
         v-for="sample in selectedSamples"
         :sample="sample"
         :key="sample.id"
-        v-on:selected="onSelected"
         v-on:removed="onRemoved"
         :showRemoveButton="true"
         :showAddButton="true"
@@ -54,7 +52,7 @@
       </div>
     </section>
 
-    <Modal
+    <!--<Modal
       v-on:modalOpened="modalOpened()"
       v-on:modalClosed="modalClosed()"
       v-on:modalSubmit="modalSelected()"
@@ -112,7 +110,7 @@
           </div>
         </div>
       </div>
-    </Modal>
+    </Modal>-->
   </main>
 </template>
 
@@ -121,11 +119,10 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 import { Action, State, namespace } from "vuex-class";
 
-import Modal from "~/components/Modal.vue";
 import Loading from "~/components/Loading.vue";
 import FeatureCard from "~/components/FeatureCard.vue";
 import HubHeader from "~/components/HubHeader.vue";
-import CodeViewer from "~/components/CodeViewer.vue";
+// import CodeViewer from "~/components/CodeViewer.vue";
 
 import * as windowsStore from "~/store/modules/windows";
 
@@ -134,11 +131,11 @@ const WindowsAction = namespace(windowsStore.name, Action);
 
 @Component({
   components: {
-    Modal,
+    // Modal,
     Loading,
     FeatureCard,
     HubHeader,
-    CodeViewer
+    // CodeViewer
   }
 })
 export default class extends Vue {
@@ -176,7 +173,7 @@ export default class extends Vue {
   }
 
   // @ts-ignore TS6133 onSelected
-  public async onSelected(sample: windowsStore.Sample) {
+ /* public async onSelected(sample: windowsStore.Sample) {
     try {
       await this.selectSample(sample);
       // this.selectedSamples.push(sample);
@@ -187,7 +184,7 @@ export default class extends Vue {
     } catch (e) {
       this.error = e;
     }
-  }
+  }*/
 
   public async modalSelected() {
     try {
@@ -238,7 +235,7 @@ export default class extends Vue {
     this.sample.usercode = ev;
   }
 
-  async addBundle() {
+  /*async addBundle() {
     try {
       console.log("sample selected", this.currentPendingSample);
       await this.selectSample(this.currentPendingSample);
@@ -260,7 +257,7 @@ export default class extends Vue {
       (this.$refs.addFeatureModal as Modal).hide();
       this.error = e;
     }
-  }
+  }*/
 
   async download(all = false) {
     let that = this;
@@ -413,16 +410,25 @@ header {
 
   h1 {
     color: white;
-    font-weight: bold;
+
+    margin-top: 48px;
+    margin-bottom: 16px;
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 600;
     font-size: 24px;
-    margin-top: 30px;
+    line-height: 54px;
+    letter-spacing: -0.02em;
   }
 
   p {
-    font-size: 16px;
     color: white;
-    width: 465px;
-    padding-top: 35px;
+    width: 630px;
+
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 28px;
   }
 }
 
@@ -449,7 +455,7 @@ header {
   grid-template-columns: auto auto auto;
   padding-left: 159px;
   padding-right: 159px;
-  margin-top: 60px;
+  margin-top: 24px;
   margin-bottom: 60px;
 
   .fakeCard {

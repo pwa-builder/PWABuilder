@@ -1,11 +1,16 @@
 <template>
-  <main>
+  <main id="publishMain">
     <HubHeader></HubHeader>
 
-    <div v-if="openAndroid" class="has-acrylic-40 is-dark" id="modalBackground"></div>
+    <div
+      v-if="openAndroid || openWindows || showBackground"
+      class="has-acrylic-40 is-dark"
+      id="modalBackground"
+    ></div>
 
     <!-- appx modal -->
     <Modal
+      id="appxModal"
       :title="$t('publish.generate_appx')"
       ref="appxModal"
       @modalSubmit="onSubmitAppxModal"
@@ -143,14 +148,53 @@
         </div>
 
         <div id="androidModalButtonSection">
-          <Download id="androidDownloadButton" platform="androidTWA" message="Download TWA"/>
-          <Download id="androidDownloadButton" class="webviewButton" platform="android" message="Download WebView"/>
+          <Download
+            :showMessage="true"
+            id="androidDownloadButton"
+            platform="androidTWA"
+            message="Download TWA"
+          />
+          <Download
+            :showMessage="true"
+            id="androidDownloadButton"
+            class="webviewButton"
+            platform="android"
+            message="Download WebView"
+          />
         </div>
       </section>
     </div>
 
-    <section id="sideBySide">
-      <section id="leftSide">
+    <div v-if="openWindows" ref="windowsModal" id="androidPlatModal">
+      <button @click="closeAndroidModal()" id="closeAndroidPlatButton">
+        <i class="fas fa-times"></i>
+      </button>
+
+      <section id="androidModalBody">
+        <div>
+          <p id="androidModalP">
+            You'll get a side-loadable version of your PWA (requires Win10 in dev mode) to test your PWA right away.
+            The Generate Appx button can be used to generate a PWA package to submit to the Microsoft Store.
+          </p>
+        </div>
+
+        <div id="androidModalButtonSection">
+          <Download
+            id="androidDownloadButton"
+            platform="windows10"
+            :message="$t('publish.download')"
+            :showMessage="true"
+          />
+          <button
+            id="androidDownloadButton"
+            @click="openAppXModal();  $awa( { 'referrerUri': 'https://www.pwabuilder.com/publish/windows10-appx' })"
+          >Generate</button>
+        </div>
+      </section>
+    </div>
+
+    <section id="publishSideBySide">
+      <section id="publishLeftSide">
         <div id="introContainer">
           <h2>Everything you need to make your PWA</h2>
 
@@ -161,115 +205,91 @@
             you will find the packages for each of these on the right.
           </p>
 
-          <div id="publishActionsContainer">
-            <!--<button id="downloadAllButton">Download your PWA files</button>-->
-            <Download id="downloadAllButton" platform="web" message="Download your PWA files"/>
-          </div>
+          <!--<div id="publishActionsContainer">
+          <!--<button id="downloadAllButton">Download your PWA files</button>-->
+          <!--<Download id="downloadAllButton" platform="web" message="Download your PWA files"/>
+          </div>-->
         </div>
       </section>
 
-      <section id="rightSide">
+      <section id="publishRightSide">
         <div id="platformsListContainer">
           <ul>
-            <li id="windowsListItem">
-              <div id="platformButtonBlock" class="windowsActionsBlock">
-                <i id="platformIcon" class="fab fa-windows"></i>
+            <div id="pwaMainCard" class="pwaCard">
+              <div class="pwaCardHeaderBlock">
+                <div class="pwaCardIconBlock">
+                  <img id="pwaIcon" src="~/assets/images/pwaLogo.svg">
+                  <h2>Progressive Web App</h2>
+                </div>
+
                 <Download
-                  id="platformDownloadButton"
-                  platform="windows10"
-                  :message="$t('publish.download')"
-                />
-
-                <button
-                  id="platformDownloadButton"
-                  @click="openAppXModal();  $awa( { 'referrerUri': 'https://www.pwabuilder.com/publish/windows10-appx' })"
-                >Generate</button>
-              </div>
-
-              <span>
-                You'll get a side-loadable version of your PWA (requires Win10 in dev mode) to test your PWA right away.
-                The Generate Appx button can be used to generate a PWA package to submit to the Microsoft Store.
-              </span>
-            </li>
-
-            <li>
-              <div id="platformButtonBlock">
-                <i id="platformIcon" class="fab fa-apple"></i>
-                <Download
-                  id="platformDownloadButton"
-                  platform="MacOS"
-                  :message="$t('publish.download')"
-                />
-              </div>
-
-              <span>You can use Xcode to build this package to produce an app that runs on MacOS.</span>
-            </li>
-
-            <li>
-              <div id="platformButtonBlock">
-                <i id="platformIcon" class="fab fa-android"></i>
-                <!--<Download
-                  id="platformDownloadButton"
-                  platform="android"
-                  :message="$t('publish.download')"
-                />-->
-                <button id="platformDownloadButton" @click="openAndroidModal()">Download</button>
-              </div>
-
-              <span>PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.</span>
-            </li>
-
-            <!--<li>
-              <div id="platformButtonBlock">
-                <i id="platformIcon" class="fab fa-samsung"></i>
-                <Download
-                  id="platformDownloadButton"
-                  platform="samsung"
-                  :message="$t('publish.download')"
-                />
-              </div>
-
-              <span>PWAs are available through the browser on iOS, however your PWA can also be submitted to the app store by submitting the package you get below.</span>
-            </li>-->
-
-            <!--<li>
-              <div id="platformButtonBlock">
-                <i id="platformIcon" class="fab fa-android"></i>
-                <Download
-                  id="platformDownloadButton"
-                  platform="androidTWA"
-                  :message="$t('publish.download')"
-                />
-              </div>
-
-              <span>PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.</span>
-            </li>-->
-
-            <li>
-              <div id="platformButtonBlock">
-                <i id="platformIcon" class="fab fa-apple"></i>
-                <Download
-                  id="platformDownloadButton"
-                  platform="ios"
-                  :message="$t('publish.download')"
-                />
-              </div>
-
-              <span>PWAs are available through the browser on iOS, however your PWA can also be submitted to the app store by submitting the package you get below.</span>
-            </li>
-
-            <!--<li>
-              <div id="platformButtonBlock">
-                <i id="platformIcon" class="fab fa-edge"></i>
-                <Download
-                  id="platformDownloadButton"
+                  class="platformDownloadButton"
                   platform="web"
-                  :message="$t('publish.download')"
+                  message="Download your PWA files"
                 />
               </div>
 
-              <span>Download these files and add them to your website. Different browsers will detect your Progressive Web App in different ways, but the manifest and service workers are required for each of them.</span>
-            </li>-->
+              <p>
+                If you haven’t already, download these files and publish it to your website.
+                Making these changes to your website is all you need to become a PWA.
+              </p>
+            </div>
+
+            <div id="pwaAndroidCard" class="pwaCard">
+              <div class="pwaCardHeaderBlock">
+                <div class="pwaCardIconBlock">
+                  <i id="platformIcon" class="fab fa-android"></i>
+                  <h2>Android</h2>
+                </div>
+
+                <button class="platformDownloadButton" @click="openAndroidModal()">
+                  <i class="fas fa-long-arrow-alt-down"></i>
+                </button>
+              </div>
+
+              <p>PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.</p>
+            </div>
+
+            <div id="pwaWindowsCard" class="pwaCard">
+              <div class="pwaCardHeaderBlock">
+                <div class="pwaCardIconBlock">
+                  <i id="platformIcon" class="fab fa-windows"></i>
+                  <h2>Windows</h2>
+                </div>
+
+                <button class="platformDownloadButton" @click="openWindowsModal()">
+                  <i class="fas fa-long-arrow-alt-down"></i>
+                </button>
+              </div>
+
+              <p>You'll get a side-loadable version of your PWA (requires Win10 in dev mode) to test your PWA right away. To generate an AppX PWA package and submit to the Microsoft Store, click here</p>
+            </div>
+
+            <div id="pwaMacosCard" class="pwaCard">
+              <div class="pwaCardHeaderBlock">
+                <div class="pwaCardIconBlock">
+                  <i id="platformIcon" class="fab fa-apple"></i>
+                  <h2>MacOS</h2>
+                </div>
+
+                <Download class="platformDownloadButton" platform="macos" message="Download"/>
+              </div>
+
+              <p>You can use Xcode to build this package to produce an app that runs on MacOS.</p>
+            </div>
+
+            <div id="pwaIosCard" class="pwaCard">
+              <div class="pwaCardHeaderBlock">
+                <div class="pwaCardIconBlock">
+                  <i id="platformIcon" class="fab fa-apple"></i>
+                  <h2>iOS</h2>
+                </div>
+
+                <Download class="platformDownloadButton" platform="ios" message="Download"/>
+              </div>
+
+              <p>PWAs are available through the browser. You can submit this app package to the iOS App Store</p>
+            </div>
           </ul>
         </div>
       </section>
@@ -356,6 +376,8 @@ export default class extends Vue {
   public appxError: string | null = null;
   public modalStatus = false;
   public openAndroid: boolean = false;
+  public openWindows: boolean = false;
+  public showBackground: boolean = false;
 
   public created(): void {
     this.updateStatus();
@@ -368,6 +390,7 @@ export default class extends Vue {
   }
 
   public openAppXModal(): void {
+    this.openWindows = false;
     (this.$refs.appxModal as Modal).show();
   }
 
@@ -377,6 +400,15 @@ export default class extends Vue {
 
   public closeAndroidModal(): void {
     this.openAndroid = false;
+    this.openWindows = false;
+  }
+
+  public openWindowsModal(): void {
+    this.openWindows = true;
+  }
+
+  public closeWindowsModal(): void {
+    this.openWindows = false;
   }
 
   public async onSubmitAppxModal(): Promise<void> {
@@ -408,29 +440,38 @@ export default class extends Vue {
   public modalOpened() {
     console.log("modal opened");
     window.scrollTo(0, 0);
+
     this.modalStatus = true;
+    this.showBackground = true;
   }
 
   public modalClosed() {
     console.log("modal closed");
+
     this.modalStatus = false;
+    this.showBackground = false;
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 /* stylelint-disable */
 
 @import "~assets/scss/base/variables";
 
+#pwaIcon {
+  height: 22px;
+  margin-right: 10px;
+}
+
 @media (max-height: 700px) {
-  #scoreSideBySide header {
+  #scorepublishSideBySide header {
     top: 51px;
   }
 }
 
-main {
-  @include backgroundRightPoint(80%, 25vh);
+#publishMain {
+  // @include backgroundRightPoint(80%, 25vh);
   height: 100vh;
 }
 
@@ -444,6 +485,13 @@ main {
   will-change: opacity;
 }
 
+#appxModal .modal {
+  top: 8em;
+  right: 10em;
+  bottom: 8em;
+  left: 10em;
+}
+
 @keyframes opened {
   from {
     opacity: 0;
@@ -455,10 +503,6 @@ main {
 }
 
 #appxModalBody {
-  height: 6em;
-  padding-left: 2em;
-  padding-right: 10em;
-
   input {
     padding: initial;
   }
@@ -478,7 +522,7 @@ main {
   }
 }
 
-#sideBySide {
+#publishSideBySide {
   display: flex;
   justify-content: space-around;
   height: 100vh;
@@ -487,9 +531,23 @@ main {
   background-position: center;
   background-repeat: no-repeat;*/
 
-  #leftSide {
+  background-image: url("~/assets/images/publish-bg.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: -45px;
+  background-color: white;
+
+  #publishLeftSide {
     height: 100%;
     flex: 1;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /*background-image: url("~/assets/images/publish-bg.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: left;*/
 
     header {
       display: flex;
@@ -512,17 +570,14 @@ main {
     }
 
     #introContainer {
-      padding-top: 4em;
-      padding-right: 14em;
+      padding-right: 5em;
       padding-left: 159px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       color: white;
 
       h2 {
-        font-size: 36px;
-        font-weight: bold;
+        font-family: poppins;
+        font-weight: 600;
+        font-size: 24px;
       }
 
       p {
@@ -564,21 +619,97 @@ main {
     }
   }
 
-  #rightSide {
+  #publishRightSide {
     height: 100%;
     flex: 1;
     display: flex;
     flex-direction: column;
+    background: white;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 100px;
 
     #platformsListContainer {
       padding-top: 4em;
       padding-right: 159px;
+      padding-left: 52px;
       color: white;
 
       ul {
         list-style: none;
         padding: 0;
         margin: 0;
+
+        display: grid;
+        grid-template-areas: "header header" "windows android" "macos ios";
+        grid-gap: 10px;
+
+        .pwaCard {
+          background: #f0f0f0;
+          border-radius: 4px;
+          color: #3c3c3c;
+          padding-left: 24px;
+          padding-right: 24px;
+          padding-top: 20px;
+          padding-bottom: 20px;
+
+          .pwaCardHeaderBlock {
+            display: flex;
+            justify-content: space-between;
+          }
+
+          .pwaCardHeaderBlock h2 {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 16px;
+            line-height: 24px;
+          }
+
+          .pwaCardIconBlock {
+            display: flex;
+            align-items: center;
+          }
+
+          .platformDownloadButton {
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: rgba(60, 60, 60, 0.1);
+          }
+
+          #platformIcon {
+            font-size: 32px;
+            margin-right: 10px;
+          }
+
+          p {
+            font-style: normal;
+            font-weight: normal;
+            font-size: 14px;
+            line-height: 21px;
+          }
+        }
+
+        #pwaMainCard {
+          grid-area: header;
+        }
+
+        #pwaAndroidCard {
+          grid-area: android;
+        }
+
+        #pwaMacosCard {
+          grid-area: macos;
+        }
+
+        #pwaWindowsCard {
+          grid-area: windows;
+        }
+
+        #pwaIosCard {
+          grid-area: ios;
+        }
 
         #windowsListItem {
           height: 100px;
@@ -603,26 +734,6 @@ main {
 
             #platformIcon {
               font-size: 44px;
-            }
-
-            #platformDownloadButton {
-              border: none;
-              border-radius: 20px;
-              font-size: 12px;
-              font-weight: bold;
-              padding-bottom: 5px;
-              padding-top: 3px;
-              padding-left: 11px;
-              padding-right: 11px;
-              margin-top: 11px;
-              background: white;
-              color: #9337d8;
-              cursor: pointer;
-              width: 7.7em;
-              height: 4em;
-              display: flex;
-              justify-content: center;
-              align-items: center;
             }
           }
         }
@@ -706,7 +817,7 @@ main {
 }
 
 #androidModalP a {
-  color: #9337D8;
+  color: #9337d8;
 }
 
 #androidModalBody #androidModalSubText {
@@ -723,6 +834,7 @@ main {
   display: flex;
   justify-content: space-around;
   width: 80%;
+  margin-top: 1em;
 }
 
 #androidDownloadButton {
@@ -741,11 +853,12 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
+  border: none;
 }
 
 #androidDownloadButton.webviewButton {
   width: 183px;
-  background: #3C3C3C;
+  background: #3c3c3c;
 }
 
 #androidDownloadButton:hover {
@@ -795,13 +908,13 @@ main {
 }
 
 @media (max-width: 1280px) {
-  #sideBySide #leftSide #introContainer {
+  #publishSideBySide #publishLeftSide #introContainer {
     padding-right: 9em;
     color: white;
     padding-left: 52px;
   }
 
-  #sideBySide #rightSide #platformsListContainer {
+  #publishSideBySide #publishRightSide #platformsListContainer {
     padding-right: 52px;
   }
 
@@ -816,6 +929,66 @@ main {
 @media (min-width: 1445px) {
   #androidPlatModal {
     left: 26em;
+  }
+}
+
+@media (max-width: 1441px) {
+  #publishSideBySide {
+    background-position: -86px;
+  }
+}
+
+@media (min-width: 1445px) {
+  #androidPlatModal {
+    left: 26em;
+  }
+}
+
+@media (max-height: 840px) {
+  #publishSideBySide #publishLeftSide #introContainer {
+    padding-right: 6em;
+  }
+}
+
+@media (max-height: 765px) {
+  #publishSideBySide #publishLeftSide #introContainer {
+    padding-right: 10em;
+  }
+}
+
+@media (min-width: 1500px) {
+  #publishSideBySide #publishLeftSide #introContainer {
+    padding-right: 12em;
+  }
+}
+
+@media (min-width: 1700px) {
+  #publishSideBySide #publishLeftSide #introContainer {
+    padding-right: 17em;
+  }
+}
+
+@media (min-width: 1900px) {
+  #publishSideBySide #publishLeftSide #introContainer {
+    padding-right: 22em;
+  }
+}
+
+@media (min-width: 2000px) {
+  #publishSideBySide #publishLeftSide #introContainer {
+    padding-right: 28em;
+  }
+}
+
+@media (min-width: 2300px) {
+  #publishSideBySide #publishLeftSide #introContainer {
+    padding-right: 32em;
+  }
+}
+
+@media (min-width: 2450px) {
+  #publishSideBySide #publishLeftSide #introContainer {
+    padding-right: 38em;
   }
 }
 </style>

@@ -6,7 +6,6 @@
     </label>
     <div>
       <label class="optionLabel" v-for="colorOption in colorOptions" :key="colorOption">
-        <div>{{ $t("generate." + colorOption) }}</div>
         <input
           type="radio"
           :value="colorOption"
@@ -14,10 +13,10 @@
           @change="onChangeColor(colorOption)"
           :checked="isColorChecked(colorOption)"
         >
+        <div class="colorOptionDiv">{{ $t("generate." + colorOption) }}</div>
       </label>
 
       <div id="colorPickerInput" v-if="canChooseColor">
-        <input id="actualColorInput" type="color" name="background_color" v-model="color">
         <input
           v-if="checkInputColor"
           type="text"
@@ -25,6 +24,13 @@
           placeholder="#000000"
           name="background_color"
           v-model="color"
+        >
+        <input
+          id="actualColorInput"
+          type="color"
+          name="background_color"
+          v-model="color"
+          @change="onChangeColor(color)"
         >
       </div>
     </div>
@@ -73,8 +79,8 @@ export default class extends Vue {
     if (this.canChooseColor) {
       this.color =
         this.color ||
-        this.manifest$.theme_color ||
-        this.manifest$.background_color;
+        this.manifest$.background_color ||
+        this.manifest$.theme_color;
     }
   }
 
@@ -133,7 +139,7 @@ export default class extends Vue {
 
 .optionLabel {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   margin-bottom: 10px;
   font-size: 16px;
@@ -146,10 +152,15 @@ export default class extends Vue {
   width: 16px;
 }
 
+.optionLabel .colorOptionDiv {
+  margin-left: 12px;
+}
+
 #colorPickerInput {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 20em;
 }
 
 #colorPickerInput #actualColorInput {
@@ -159,7 +170,7 @@ export default class extends Vue {
 }
 
 #colorPickerInput #colorHex {
-  width: 3.6em;
+  width: 4em;
   border: none;
 }
 </style>

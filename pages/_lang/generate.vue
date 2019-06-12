@@ -2,7 +2,7 @@
   <div>
     <HubHeader :showSubHeader="true"></HubHeader>
 
-    <div v-if="showingIconModal" id="modalBackground"></div>
+    <div v-if="showingIconModal" class="has-acrylic-40 is-dark" id="modalBackground"></div>
 
     <main id="sideBySide">
       <section id="leftSide">
@@ -14,10 +14,7 @@
         <div id="dataSection">
           <div id="dataButtonsBlock">
             <div id="dataButtons">
-              <button
-                v-bind:class="{ active: showBasicSection }"
-                @click="showBasicsSection()"
-              >Basic Info</button>
+              <button v-bind:class="{ active: showBasicSection }" @click="showBasicsSection()">Info</button>
               <button
                 v-bind:class="{ active: showImagesSection }"
                 @click="showImageSection()"
@@ -44,6 +41,7 @@
                 @change="onChangeSimpleInput()"
                 type="text"
                 v-on:focus="activeFormField = 'appName'"
+                placeholder="App Name"
               >
             </div>
 
@@ -62,6 +60,7 @@
                 name="short_name"
                 type="text"
                 v-on:focus="activeFormField = 'shortName'"
+                placeholder="App Short Name"
               >
             </div>
 
@@ -74,12 +73,14 @@
               </label>
 
               <textarea
+                id="descText"
                 class="l-generator-textarea"
                 v-model="manifest$.description"
                 @change="onChangeSimpleInput()"
                 name="description"
                 type="text"
                 v-on:focus="activeFormField = 'appDesc'"
+                placeholder="App Description"
               ></textarea>
             </div>
 
@@ -97,46 +98,71 @@
                 @change="onChangeSimpleInput()"
                 type="text"
                 v-on:focus="activeFormField = 'startURL'"
+                placeholder="Start URL"
               >
             </div>
           </section>
 
           <section class="animatedSection" v-if="showImagesSection">
             <div class="l-generator-field logo-upload">
-              <label class="l-generator-label">
-                <h4 class="fieldName">{{ $t("generate.icon_url") }}</h4>
-                <p>We suggest at least one image 512×512 or larger</p>
-              </label>
+              <div id="uploadNewSection">
+                <label class="l-generator-label">
+                  <h4 class="iconUploadHeader">Upload app icons for your PWA</h4>
+                  <p>We suggest at least one image 512×512 or larger</p>
+                </label>
 
-              <div>
                 <div class="button-holder icons">
                   <div class="l-inline">
-                    <button
+                    <!--<button
+                      id="iconUploadButton"
                       class="work-button l-generator-button"
                       @click="onClickUploadIcon()"
-                    >{{ $t("generate.upload") }}</button>
+                    >Upload</button>-->
+                    <input
+                      accept="image/png, image/jpeg"
+                      type="file"
+                      name="file"
+                      id="file"
+                      class="inputfile"
+                      @change="onFileIconChange"
+                    >
+                    <label id="iconUploadButton" for="file">Upload</label>
                   </div>
                 </div>
 
-                <p class="l-generator-error" v-if="error">
+                <!--<p class="l-generator-error" v-if="error">
                   <span class="icon-exclamation"></span>
                   {{ $t(error) }}
-                </p>
+                </p>-->
+              </div>
 
-                <div class="pure-g l-generator-table">
-                  <div class="pure-u-10-24 l-generator-tableh">{{ $t("generate.preview") }}</div>
+              <div>
+                <div id="iconGrid" class="pure-g l-generator-table">
+                  <!--<div class="pure-u-10-24 l-generator-tableh">{{ $t("generate.preview") }}</div>
                   <div class="pure-u-8-24 l-generator-tableh">{{ $t("generate.size") }}</div>
                   <div class="pure-u-1-8"></div>
-                  <div class="pure-u-1-8"></div>
+                  <div class="pure-u-1-8"></div>-->
 
-                  <div class="pure-u-1" v-for="icon in icons" :key="icon.src">
-                    <div class="pure-u-10-24 l-generator-tablec">
+                  <div id="iconItem" class="pure-u-1" v-for="icon in icons" :key="icon.src">
+                    <div id="iconDivItem" class="pure-u-10-24 l-generator-tablec">
                       <a target="_blank" :href="icon.src">
                         <img class="icon-preview" :src="icon.src">
                       </a>
-                    </div>
 
-                    <div class="pure-u-8-24 l-generator-tablec">{{icon.sizes}}</div>
+                      <div id="iconSize" class="pure-u-8-24 l-generator-tablec">
+                        <div id="iconSizeText">{{icon.sizes}}</div>
+
+                        <div
+                          id="removeIconDiv"
+                          class="pure-u-1-8 l-generator-tablec l-generator-tablec--right"
+                          @click="onClickRemoveIcon(icon)"
+                        >
+                          <span class="l-generator-close" :title="$t('generate.remove_icon')">
+                            <i class="fas fa-trash-alt"></i>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
 
                     <!--<div
                       class="pure-u-1-8 l-generator-tablec"
@@ -144,17 +170,6 @@
                     >
                       <span class="icon-magic" ng-if="icon.generated"></span>
                     </div>-->
-
-                    <div
-                      class="pure-u-1-8 l-generator-tablec l-generator-tablec--right"
-                      @click="onClickRemoveIcon(icon)"
-                    >
-                      <span class="l-generator-close" :title="$t('generate.remove_icon')">
-                        <i aria-hidden="true">
-                          <span class="icon-times"></span>
-                        </i>
-                      </span>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -175,6 +190,7 @@
                 v-model="manifest$.scope"
                 @change="onChangeSimpleInput()"
                 type="text"
+                placeholder="App Scope"
                 v-on:focus="activeFormField = 'appScope'"
               >
             </div>
@@ -184,7 +200,7 @@
                 <h4
                   v-bind:class="{ fieldName: activeFormField === 'displayMode' }"
                 >{{ $t("generate.display") }}</h4>
-                <p>Display indetifies the browser components that should be included in your. "Standalone" appears as a traditional app.</p>
+                <p>Display identifies the browser components that should be included in your app. "Standalone" appears as a traditional app.</p>
               </label>
 
               <select
@@ -227,13 +243,16 @@
                 <p>Declare the language of your PWA</p>
               </label>
 
-              <select class="l-generator-input l-generator-input--select" v-model="manifest$.lang">
+              <select
+                class="l-generator-input l-generator-input--select"
+                v-model="manifest$.lang"
+                @change="onChangeSimpleInput()"
+                v-on:change="activeFormField = 'appLang'"
+              >
                 <option
                   v-for="language in languagesNames"
                   :value="language"
                   :key="language"
-                  @change="onChangeSimpleInput()"
-                  v-on:change="activeFormField = 'appLang'"
                 >{{language}}</option>
               </select>
             </div>
@@ -261,19 +280,26 @@
             </div>
           </section>
         </div>
-
-        <div id="doneDiv">
-          <!--<button id="doneButton">Done</button>-->
-          <nuxt-link id="doneButton" to="reportCard">Done</nuxt-link>
-        </div>
       </section>
 
       <section id="rightSide">
-        <div id="exampleDiv">
+        <!--<div id="exampleDiv">
           <h3>Add this code to your start page:</h3>
 
           <code>&lt;link rel="manifest" href="/manifest.json"&gt;</code>
-        </div>
+        </div>-->
+
+        <CodeViewer
+          code-type="html"
+          v-if="seeEditor"
+          title="Add this code to your start page"
+          code="<link rel='manifest' href='/manifest.json'>"
+          :showHeader="true"
+          :showCopyButton="true"
+          id="manifestHTML"
+        >
+          <h3>Add this code to your start page:</h3>
+        </CodeViewer>
 
         <CodeViewer
           code-type="json"
@@ -302,21 +328,26 @@
         v-on:modalSubmit="onSubmitIconModal"
         v-on:cancel="onCancelIconModal"
       >
-        <div class="l-generator-box image-upload">
-          <span class="l-generator-label">{{ $t("generate.upload_image") }}</span>
-          <label
-            class="l-generator-input l-generator-input--fake is-disabled"
-            for="modal-file"
-          >{{ iconFile && iconFile.name ? iconFile.name : $t("generate.choose_file") }}</label>
-          <input id="modal-file" @change="onFileIconChange" class="l-hidden" type="file">
-        </div>
+        <section id="imageModalSection">
+          <div class="l-generator-box image-upload">
+            <span class="l-generator-label">{{ $t("generate.upload_image") }}</span>
+            <label
+              class="l-generator-input l-generator-input--fake is-disabled"
+              for="modal-file"
+            >{{ iconFile && iconFile.name ? iconFile.name : $t("generate.choose_file") }}</label>
+            <input id="modal-file" @change="onFileIconChange" class="l-hidden" type="file">
+          </div>
 
-        <div class="l-generator-field">
-          <label id="genMissingLabel">
-            {{ $t("generate.generate_missing") }}
-            <input type="checkbox" v-model="iconCheckMissing">
-          </label>
-        </div>
+          <div class="l-generator-field">
+            <label id="genMissingLabel">
+              {{ $t("generate.generate_missing") }}
+              <input
+                type="checkbox"
+                v-model="iconCheckMissing"
+              >
+            </label>
+          </div>
+        </section>
       </Modal>
     </main>
   </div>
@@ -339,7 +370,6 @@ import ColorSelector from "~/components/ColorSelector.vue";
 import HubHeader from "~/components/HubHeader.vue";
 
 import * as generator from "~/store/modules/generator";
-import "monaco-editor";
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
@@ -392,6 +422,9 @@ export default class extends Vue {
 
   public created(): void {
     this.manifest$ = { ...this.manifest };
+    // this.basicManifest = true;
+
+    console.log("display names", this.displaysNames);
   }
 
   async destroyed() {
@@ -402,9 +435,18 @@ export default class extends Vue {
 
   public onChangeSimpleInput(): void {
     try {
-      console.log(this.manifest$);
       this.updateManifest(this.manifest$);
-      // this.manifest$ = this.manifest;
+
+      this.manifest$ = { ...this.manifest };
+      console.log(this.manifest$);
+
+      console.log("display names after update", this.displaysNames);
+
+      // this.manifest = (this.manifest$ as generator.Manifest);
+
+      // this.basicManifest = true;
+
+      // this.manifest = this.manifest$;
     } catch (e) {
       this.error = e;
     }
@@ -412,6 +454,9 @@ export default class extends Vue {
 
   public onClickRemoveIcon(icon: generator.Icon): void {
     this.removeIcon(icon);
+
+    console.log("this.manifest$", this.manifest$);
+    console.log("this.manifest", this.manifest);
   }
 
   public onClickAddIcon(): void {
@@ -424,7 +469,7 @@ export default class extends Vue {
     }
   }
 
-  public onFileIconChange(e: Event): void {
+  public async onFileIconChange(e: Event) {
     const target = e.target as HTMLInputElement;
 
     if (!target.files) {
@@ -432,6 +477,15 @@ export default class extends Vue {
     }
 
     this.iconFile = target.files[0];
+
+    if (this.iconFile) {
+      await this.generateMissingImages(this.iconFile);
+
+      this.manifest$ = this.manifest;
+
+      console.log("update manifest this.manifest$", this.manifest$);
+      this.updateManifest(this.manifest$);
+    }
   }
 
   private getIcons(): string {
@@ -485,8 +539,8 @@ export default class extends Vue {
   }
 
   public onClickUploadIcon(): void {
-    (this.$refs.iconsModal as Modal).show();
-    this.showingIconModal = true;
+    /*(this.$refs.iconsModal as Modal).show();
+    this.showingIconModal = true;*/
   }
 
   public onClickShowGBB(): void {
@@ -507,9 +561,18 @@ export default class extends Vue {
     $iconsModal.showLoading();
 
     if (this.iconCheckMissing) {
-      await this.generateMissingImages(this.iconFile);
+      const data = await this.generateMissingImages(this.iconFile);
+      console.log("data in gen missing images", data);
+      console.log("generate missing images", this.manifest);
+
+      this.manifest$ = this.manifest;
+
+      console.log("update manifest this.manifest$", this.manifest$);
+      this.updateManifest(this.manifest$);
     } else {
       await this.uploadIcon(this.iconFile);
+      console.log("update manifest this.manifest$", this.manifest$);
+      this.updateManifest(this.manifest$);
     }
 
     $iconsModal.hide();
@@ -539,8 +602,10 @@ export default class extends Vue {
   public handleEditorValue(ev) {
     console.log(ev);
     console.log(this.basicManifest);
+
     if (this.basicManifest !== false) {
-      this.manifest$ = ev;
+      // this.manifest = ev;
+      this.updateManifest(this.manifest$);
     }
   }
 
@@ -577,9 +642,102 @@ export default class extends Vue {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import "~assets/scss/base/variables";
 /* stylelint-disable */
+
+#iconGrid {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-gap: 54px;
+
+  #iconItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 128px;
+    width: 128px;
+
+    #iconDivItem {
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #iconSize {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-top: 17px;
+
+      #iconSizeText {
+        font-size: 14px;
+        margin-right: 12px;
+      }
+    }
+  }
+}
+
+#descText {
+  line-height: 24px;
+  height: 5em;
+}
+
+#uploadNewSection {
+  background: #f0f0f0;
+  border-radius: 4px;
+  margin-top: 24px;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-top: 24px;
+  padding-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .iconUploadHeader {
+    padding-top: 0px !important;
+    font-size: 16px;
+  }
+
+  #file {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+  }
+
+  #iconUploadButton {
+    width: 104px;
+    height: 40px;
+    background: transparent;
+    color: #3c3c3c;
+    font-weight: bold;
+    border-radius: 20px;
+    border: 1px solid #3c3c3c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
+  }
+}
+
+#removeIconDiv svg {
+  height: 14px;
+  width: 14px;
+}
 
 #modalBackground {
   position: fixed;
@@ -587,19 +745,30 @@ export default class extends Vue {
   bottom: 0;
   left: 0;
   right: 0;
-  background: grey;
   opacity: 0.7;
   z-index: 98999;
   will-change: opacity;
+  background: #3c3c3c;
+}
+
+#imageModalSection {
+  display: flex;
 }
 
 #genMissingLabel {
   display: flex;
-  width: 29%;
+
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -0.02em;
 }
 
 #genMissingLabel input {
   height: 2em;
+  width: 2em;
 }
 
 #sideBySide {
@@ -607,11 +776,11 @@ export default class extends Vue {
   padding-left: 154px;
   padding-right: 128px;
   display: flex;
+  justify-content: space-between;
 
   #leftSide {
     background: white;
-    width: 45%;
-    margin-right: 110px;
+    min-height: 974px;
 
     .mastHead {
       padding-top: 40px;
@@ -623,66 +792,76 @@ export default class extends Vue {
         font-size: 24px;
         line-height: 54px;
         letter-spacing: -0.02em;
+        color: #3c3c3c;
       }
 
       p {
-        margin-top: 16px;
-        font-size: 18px;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 16px;
         line-height: 28px;
-        width: 376px;
       }
     }
 
     #dataSection {
-      padding-top: 40px;
+      padding-top: 32px;
 
       #dataButtonsBlock {
         display: flex;
         justify-content: center;
-        padding-right: 6em;
       }
 
       #dataButtons {
         display: flex;
-        margin-bottom: 2em;
         justify-content: space-between;
-        width: 292px;
-        background: #e2e2e2;
-        border-radius: 22px;
+        border-bottom: solid 1px rgba(60, 60, 60, 0.3);
+        width: 20em;
 
         button {
           background: none;
           border: none;
-          font-weight: bold;
-          font-size: 14px;
-          color: #8a8a8a;
-          padding-top: 6px;
-          padding-bottom: 7px;
-          border-radius: 20px;
-          width: 92px;
+          color: rgba(60, 60, 60, 0.6);
+          width: 110px;
           height: 32px;
           box-shadow: none;
+          text-transform: uppercase;
+
+          font-family: Poppins;
+          font-style: normal;
+          font-weight: 600;
+          font-size: 14px;
+          line-height: 16px;
+        }
+
+        button:hover {
+          color: #3c3c3c;
+          border-bottom: solid 4px #9337d8;
+          border-image: linear-gradient(to right, #1fc2c8, #9337d8 116%) 10;
         }
 
         .active {
-          background: $color-button-primary-purple-variant;
-          color: white;
+          color: #9337d8;
+          border-bottom: solid 4px #9337d8;
+          border-image: linear-gradient(to right, #1fc2c8, #9337d8 116%) 10;
         }
       }
     }
 
     .animatedSection {
+      width: 500px;
+
       .fieldName {
-        color: $color-button-primary;
-        font-size: 18px;
+        color: #9337d8;
+        font-size: 16px;
         font-weight: bold;
       }
 
       h4 {
-        font-size: 18px;
+        font-style: normal;
+        line-height: 24px;
+        font-size: 16px;
         font-weight: bold;
-        color: #2c2c2c;
-        padding-top: 30px;
+        margin-top: 32px;
       }
 
       p {
@@ -691,8 +870,17 @@ export default class extends Vue {
       }
 
       input {
-        font-size: 18px;
         padding-left: 0;
+
+        font-style: normal;
+        font-weight: normal;
+        font-size: 16px;
+        line-height: 33px;
+      }
+
+      input:focus {
+        border-color: #9337d8;
+        outline: none;
       }
     }
 
@@ -700,16 +888,19 @@ export default class extends Vue {
       display: flex;
       justify-content: center;
       margin-bottom: 62px;
-      padding-left: 100px;
 
       #doneButton {
-        background: $color-button-primary-purple-variant;
-        width: 130px;
+        background: #3c3c3c;
+        width: 97px;
+        font-family: Poppins;
+        font-style: normal;
+        font-weight: 600;
+        font-size: 14px;
+
         height: 44px;
         border-radius: 20px;
         border: none;
-        font-weight: bold;
-        font-size: 18px;
+
         margin-top: 24px;
         display: flex;
         justify-content: center;
@@ -720,9 +911,18 @@ export default class extends Vue {
   }
 
   #rightSide {
-    flex: 1;
-    height: 120vh;
-    background: white;
+    width: 870px;
+    margin-left: 60px;
+  }
+
+  #manifestHTML {
+    height: 4em;
+    margin-top: 3em;
+    margin-bottom: 5em;
+  }
+
+  #manifestHTML .code_viewer-pre {
+    height: 4em !important;
   }
 
   #exampleDiv {
@@ -755,11 +955,39 @@ export default class extends Vue {
       width: 534px !important;
     }
   }
+}
 
-  @media (max-width: 1290px) {
-    #rightSide {
-      height: 136vh;
-    }
+@media (max-width: 425px) {
+  #rightSide {
+    display: none;
+  }
+
+  #sideBySide {
+    flex-direction: column;
+    padding-left: 31px !important;
+    padding-right: 24px !important;
+  }
+
+  #sideBySide #leftSide .animatedSection {
+    width: initial;
+  }
+
+  #sideBySide #leftSide .animatedSection input {
+    width: initial;
+  }
+
+  #iconGrid {
+    display: grid;
+    grid-gap: initial;
+    padding-left: 0px;
+  }
+
+  #uploadNewSection {
+    display: none;
+  }
+
+  .l-generator-input--select {
+    max-width: 210px;
   }
 }
 
@@ -767,6 +995,16 @@ export default class extends Vue {
   #sideBySide {
     padding-left: 54px;
     padding-right: 52px;
+  }
+}
+
+@media (min-width: 1480px) {
+  #leftSide {
+    width: 760px !important;
+  }
+
+  #rightSide {
+    width: 760px !important;
   }
 }
 </style>
