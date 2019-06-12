@@ -191,7 +191,7 @@
                 <h4
                   v-bind:class="{ fieldName: activeFormField === 'displayMode' }"
                 >{{ $t("generate.display") }}</h4>
-                <p>Display indetifies the browser components that should be included in your. "Standalone" appears as a traditional app.</p>
+                <p>Display identifies the browser components that should be included in your app. "Standalone" appears as a traditional app.</p>
               </label>
 
               <select
