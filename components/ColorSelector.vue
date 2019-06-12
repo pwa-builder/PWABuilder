@@ -160,6 +160,7 @@ export default class extends Vue {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 20em;
 }
 
 #colorPickerInput #actualColorInput {
