@@ -8,7 +8,7 @@
         Copy
       </button>
     </div>
-    <monaco-editor class="code_viewer-pre" v-model="code" language="javascript"></monaco-editor>
+    <MonacoEditor :options="monacoOptions" class="code_viewer-pre" :code="code"></MonacoEditor>
     <div v-if="textCopied" id="copyToast">Code Copied</div>
 
     <div v-if="showOverlay" id="errorOverlay">
@@ -107,47 +107,32 @@ export default class extends Vue {
   public downloadButtonMessage = "publish.download_manifest";
   public errorNumber = 0;
 
-  public editor: MonacoEditor.editor.IStandaloneCodeEditor;
+  public editor : MonacoEditor;
+
+  public monacoOptions = {
+    lineNumbers: "on",
+    language: this.codeType,
+    fixedOverflowWidgets: true,
+    wordWrap: "wordWrapColumn",
+    wordWrapColumn: 50,
+    scrollBeyondLastLine: false,
+    wordWrapMinified: true,
+    theme: `${this.theme}`,
+    wrappingIndent: "indent",
+    fontSize: 16,
+    minimap: {
+      enabled: false
+    }
+  };
+
+
 
   showOverlay = false;
   errors: any[] = [];
   textCopied = false;
 
   public mounted(): void {
-    console.log(this.color);
-    // MonacoEditor.editor.defineTheme(`${this.theme}Theme`, {
-    //   base: "vs",
-    //   inherit: true,
-    //   rules: [],
-    //   colors: {
-    //     "editor.background": this.color
-    //   }
-    // });
-
-    //  this.editor = MonacoEditor.editor.create(
-    //   this.$refs.monacoDiv as HTMLElement,
-    //   {
-    //     value: this.code,
-    //     // Turn line numbers on so that line numbers in errors make sense
-    //     lineNumbers: "on",
-    //     language: this.codeType,
-    //     fixedOverflowWidgets: true,
-    //     wordWrap: "wordWrapColumn",
-    //     wordWrapColumn: 50,
-    //     scrollBeyondLastLine: false,
-    //     // Set this to false to not auto word wrap minified files
-    //     wordWrapMinified: true,
-    //     theme: `${this.theme}Theme`,
-
-    //     // try "same", "indent" or "none"
-    //     wrappingIndent: "indent",
-    //     fontSize: 16,
-    //     minimap: {
-    //       enabled: false
-    //     }
-    //   }
-    // );
-
+    /*
     const model = this.editor.getModel();
 
     model.onDidChangeModelContent(() => {
@@ -165,6 +150,7 @@ export default class extends Vue {
         this.$emit("invalidManifest");
       }
     });
+    */
   }
 
   @Watch("code")
