@@ -53,7 +53,7 @@
           <span>Your Score</span>
         </div>
 
-        <nuxt-link id="publishButton" to="/publish">Build My PWA</nuxt-link>
+        <nuxt-link :class="!hasManifest ? 'disabled' : 'enabled'" id="publishButton" to="/publish">Build My PWA</nuxt-link>
       </div>
     </div>
   </div>
@@ -63,13 +63,14 @@
 import Vue from "vue";
 import { Prop, Watch } from "vue-property-decorator";
 import Component from "nuxt-class-component";
-import { State, namespace } from "vuex-class";
+import {Action, State, namespace } from "vuex-class";
 
 import * as generator from "~/store/modules/generator";
 
 import InstallButton from "~/components/InstallButton.vue";
 
 const GeneratorState = namespace(generator.name, State);
+const GeneratorAction = namespace(generator.name, Action);
 
 @Component({
   components: {
@@ -82,9 +83,11 @@ export default class extends Vue {
   @Prop({ default: 0 }) score: number;
 
   @GeneratorState url: string;
-
+  @GeneratorAction getManifestInformation;
   public localScore: number = 0;
   public calcedScore: number = 0;
+  hasManifest: boolean = false;
+  @GeneratorState manifest: any;
 
   mounted() {
     const storedScore = sessionStorage.getItem("overallGrade") || null;
@@ -121,8 +124,18 @@ export default class extends Vue {
     this.calcedScore = this.score;
   }
 
-  updated() {
+  async updated() {
     console.log("updated", this.score);
+    try {
+        await this.getManifestInformation();
+        console.log("manifestInfo", this.manifest);
+        if(this.manifest){
+          this.hasManifest=true;
+        }
+      } catch {
+        this.hasManifest = false;
+        return;
+      }
     if ("requestIdleCallback" in window) {
       // Use requestIdleCallback to schedule this since its not "necessary" work
       // and we dont want this running in the middle of animations or user input
@@ -377,10 +390,8 @@ header {
     justify-self: right;
     border-radius: 22px;
     border: none;
-    background: linear-gradient(to right, #1fc2c8, #9337d8 116%);
     display: flex;
     justify-content: center;
-
     padding-left: 20px;
     padding-right: 20px;
     font-family: Poppins;
@@ -391,10 +402,10 @@ header {
     display: flex;
     align-items: center;
     text-align: center;
-    color: #ffffff;
     height: 40px;
   }
 }
+
 
 @media (max-width: 425px) {
   #subHeader #tabsBar,
@@ -440,6 +451,17 @@ a:hover {
   box-shadow: none;
 }
 
+.disabled {
+  background: linear-gradient(to right, #b3d2d3, #cbb9d8 116%);
+  color:#878489;
+  pointer-events: none;
+}
+
+.enabled{
+      background: linear-gradient(to right, #1fc2c8, #9337d8 116%);
+      color: #ffffff;
+}
+
 @keyframes slidedown {
   from {
     opacity: 0;
@@ -451,4 +473,5 @@ a:hover {
     transform: translateY(0);
   }
 }
+
 </style>
