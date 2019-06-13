@@ -442,10 +442,14 @@
           <i class="fas fa-arrow-right"></i>
         </button>
 
-        <button v-else-if="noManifest">
+        <button v-else-if="noManifest && !brokenManifest">
           View Generated Manifest
           <i class="fas fa-arrow-right"></i>
         </button>
+        <div
+          class="brkManifestError"
+          v-if="brokenManifest"
+        >The manifest is declared but cannot be reached</div>
       </nuxt-link>
     </div>
   </div>
@@ -479,7 +483,7 @@ export default class extends Vue {
   noMixedContent: boolean | null = null;
 
   noManifest: boolean | null = null;
-
+  brokenManifest: boolean | null = null;
   serviceWorkerData: any = null;
   noServiceWorker: boolean | null = null;
 
@@ -525,6 +529,9 @@ export default class extends Vue {
         await this.getManifestInformation();
         console.log("manifestInfo", this.manifest);
       } catch {
+        if (this.manifest === null) {
+          this.brokenManifest = true;
+        }
         this.noManifest = true;
         resolve();
         return;
@@ -828,6 +835,13 @@ export default class extends Vue {
     100% {
       background-position: 468px 0;
     }
+  }
+
+  .brkManifestError {
+    color: red;
+    font-weight: bold;
+    padding-top: 1em;
+    padding-bottom: 1em;
   }
 }
 </style>
