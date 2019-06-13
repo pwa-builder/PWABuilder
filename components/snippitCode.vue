@@ -16,7 +16,8 @@
       </button>
     </div>
 
-    <div id="codeDiv" ref="monacoDiv"></div>
+    <monaco-editor class="codeDiv" v-model="actualCode" language="typescript"></monaco-editor>
+
   </div>
 </template>
 
@@ -24,9 +25,9 @@
 import Vue from "vue";
 import { Prop } from "vue-property-decorator";
 import Component from "nuxt-class-component";
+import MonacoEditor from "vue-monaco";
 
 import Clipboard from "clipboard";
-import * as monaco from "monaco-editor";
 
 @Component({})
 export default class extends Vue {
@@ -34,7 +35,7 @@ export default class extends Vue {
   @Prop({ type: String, default: null }) codeType;
 
   public actualCode: string = "";
-  public editor: monaco.editor.IStandaloneCodeEditor;
+  public editor: MonacoEditor.editor.IStandaloneCodeEditor;
 
   async mounted() {
     const response = await fetch(this.snippitURL);
@@ -45,35 +46,35 @@ export default class extends Vue {
 
     this.actualCode = data;
 
-    monaco.editor.defineTheme(`snippitTheme`, {
-      base: "vs",
-      inherit: true,
-      rules: [],
-      colors: {
-        "editor.background": "#F0F0F0"
-      }
-    });
+    // monaco.editor.defineTheme(`snippitTheme`, {
+    //   base: "vs",
+    //   inherit: true,
+    //   rules: [],
+    //   colors: {
+    //     "editor.background": "#F0F0F0"
+    //   }
+    // });
 
-    this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
-      value: this.actualCode,
-      // Turn line numbers on so that line numbers in errors make sense
-      language: this.codeType,
-      lineNumbers: "on",
-      fixedOverflowWidgets: true,
-      wordWrap: "wordWrapColumn",
-      wordWrapColumn: 50,
-      scrollBeyondLastLine: false,
-      // Set this to false to not auto word wrap minified files
-      wordWrapMinified: true,
+  //   this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
+  //     value: this.actualCode,
+  //     // Turn line numbers on so that line numbers in errors make sense
+  //     language: this.codeType,
+  //     lineNumbers: "on",
+  //     fixedOverflowWidgets: true,
+  //     wordWrap: "wordWrapColumn",
+  //     wordWrapColumn: 50,
+  //     scrollBeyondLastLine: false,
+  //     // Set this to false to not auto word wrap minified files
+  //     wordWrapMinified: true,
 
-      // try "same", "indent" or "none"
-      wrappingIndent: "indent",
-      fontSize: 16,
-      theme: "snippitTheme",
-      minimap: {
-        enabled: false
-      }
-    });
+  //     // try "same", "indent" or "none"
+  //     wrappingIndent: "indent",
+  //     fontSize: 16,
+  //     theme: "snippitTheme",
+  //     minimap: {
+  //       enabled: false
+  //     }
+  //   });
   }
 
   goToGithub() {
