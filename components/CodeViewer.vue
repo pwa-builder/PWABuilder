@@ -274,7 +274,7 @@ export default class extends Vue {
     margin-left: 10px;
   }
 
-  #code_viewer-pre {
+  .code_viewer-pre {
     height: 668px;
     overflow: hidden;
     border-radius: 4px;
