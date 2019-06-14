@@ -13,6 +13,8 @@
       @change="onCodeChange" 
       @modelDecorations="onDecorationsChange" 
       @editorDidMount="editorMount"
+      :theme="`${theme}Theme`"
+      :language="codeType"
       >
     </MonacoEditor>
 
@@ -117,13 +119,11 @@ export default class extends Vue {
 
   public monacoOptions = {
     lineNumbers: "on",
-    language: this.codeType,
     fixedOverflowWidgets: true,
     wordWrap: "wordWrapColumn",
     wordWrapColumn: 50,
     scrollBeyondLastLine: false,
     wordWrapMinified: true,
-    theme: this.theme,
     wrappingIndent: "indent",
     fontSize: 16,
     minimap: {
@@ -135,6 +135,17 @@ export default class extends Vue {
   showOverlay = false;
   errors: any[] = [];
   textCopied = false;
+
+  mounted():void {
+    (<any>window).monaco.editor.defineTheme(`${this.theme}Theme`, {
+      base: "vs",
+      inherit: true,
+      rules: [],
+      colors: {
+        "editor.background": this.color
+      }
+    });
+  }
 
   onCodeChange(value):void {
     this.$emit("editorValue", value);
