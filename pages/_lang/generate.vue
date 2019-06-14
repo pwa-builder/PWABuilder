@@ -113,20 +113,11 @@
 
                 <div class="button-holder icons">
                   <div class="l-inline">
-                    <!--<button
+                    <button
                       id="iconUploadButton"
                       class="work-button l-generator-button"
                       @click="onClickUploadIcon()"
-                    >Upload</button>-->
-                    <input
-                      accept="image/png, image/jpeg"
-                      type="file"
-                      name="file"
-                      id="file"
-                      class="inputfile"
-                      @change="onFileIconChange"
-                    >
-                    <label id="iconUploadButton" for="file">Upload</label>
+                    >Upload</button>
                   </div>
                 </div>
 
@@ -200,7 +191,7 @@
                 <h4
                   v-bind:class="{ fieldName: activeFormField === 'displayMode' }"
                 >{{ $t("generate.display") }}</h4>
-                <p>Display identifies the browser components that should be included in your app. "Standalone" appears as a traditional app.</p>
+                <p>Display indetifies the browser components that should be included in your. "Standalone" appears as a traditional app.</p>
               </label>
 
               <select
@@ -280,12 +271,16 @@
             </div>
           </section>
         </div>
+
+        <div id="doneDiv">
+          <!--<button id="doneButton">Done</button>-->
+          <nuxt-link @click.native="saveChanges" id="doneButton" to="reportCard">Done</nuxt-link>
+        </div>
       </section>
 
       <section id="rightSide">
         <!--<div id="exampleDiv">
           <h3>Add this code to your start page:</h3>
-
           <code>&lt;link rel="manifest" href="/manifest.json"&gt;</code>
         </div>-->
 
@@ -359,7 +354,6 @@
 import Vue from "vue";
 import Component from "nuxt-class-component";
 import { Action, State, Getter, namespace } from "vuex-class";
-
 import GeneratorMenu from "~/components/GeneratorMenu.vue";
 import Modal from "~/components/Modal.vue";
 import CodeViewer from "~/components/CodeViewer.vue";
@@ -368,13 +362,10 @@ import CustomMembers from "~/components/CustomMembers.vue";
 import StartOver from "~/components/StartOver.vue";
 import ColorSelector from "~/components/ColorSelector.vue";
 import HubHeader from "~/components/HubHeader.vue";
-
 import * as generator from "~/store/modules/generator";
-
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
 const GeneratorGetters = namespace(generator.name, Getter);
-
 @Component({
   components: {
     GeneratorMenu,
@@ -400,65 +391,54 @@ export default class extends Vue {
   public showSettingsSection = false;
   public activeFormField = null;
   public showingIconModal = false;
-
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
   @GeneratorState icons: generator.Icon[];
   @GeneratorState suggestions: string[];
   @GeneratorState warnings: string[];
-
   @Getter orientationsNames: string[];
   @Getter languagesNames: string[];
   @Getter displaysNames: string[];
-
   @GeneratorActions removeIcon;
   @GeneratorActions addIconFromUrl;
   @GeneratorActions updateManifest;
   @GeneratorActions uploadIcon;
   @GeneratorActions generateMissingImages;
-
   @GeneratorGetters suggestionsTotal;
   @GeneratorGetters warningsTotal;
-
   public created(): void {
     this.manifest$ = { ...this.manifest };
     // this.basicManifest = true;
-
     console.log("display names", this.displaysNames);
   }
-
   async destroyed() {
     (this.$root.$el.closest("body") as HTMLBodyElement).classList.remove(
       "modal-screen"
     );
   }
-
+  public saveChanges(): void {
+    this.updateManifest(this.manifest$);
+    this.manifest$ = { ...this.manifest };
+  }
   public onChangeSimpleInput(): void {
     try {
       this.updateManifest(this.manifest$);
-
       this.manifest$ = { ...this.manifest };
       console.log(this.manifest$);
-
       console.log("display names after update", this.displaysNames);
-
       // this.manifest = (this.manifest$ as generator.Manifest);
-
       // this.basicManifest = true;
-
       // this.manifest = this.manifest$;
     } catch (e) {
       this.error = e;
     }
   }
-
   public onClickRemoveIcon(icon: generator.Icon): void {
     this.removeIcon(icon);
-
+    this.updateManifest(this.manifest$);
     console.log("this.manifest$", this.manifest$);
     console.log("this.manifest", this.manifest);
   }
-
   public onClickAddIcon(): void {
     try {
       console.log("trying to add icon from URL", this.newIconSrc);
@@ -468,26 +448,13 @@ export default class extends Vue {
       console.error(e);
     }
   }
-
-  public async onFileIconChange(e: Event) {
+  public onFileIconChange(e: Event): void {
     const target = e.target as HTMLInputElement;
-
     if (!target.files) {
       return;
     }
-
     this.iconFile = target.files[0];
-
-    if (this.iconFile) {
-      await this.generateMissingImages(this.iconFile);
-
-      this.manifest$ = this.manifest;
-
-      console.log("update manifest this.manifest$", this.manifest$);
-      this.updateManifest(this.manifest$);
-    }
   }
-
   private getIcons(): string {
     let icons = this.icons.map(icon => {
       return `
@@ -498,15 +465,12 @@ export default class extends Vue {
             "sizes": "${icon.sizes}"
         }`;
     });
-
     return icons.toString();
   }
-
   private getCustomMembers(): string {
     if (this.members.length < 1) {
       return "";
     }
-
     let membersString = `,`;
     this.members.forEach((member, i) => {
       if (i === this.members.length - 1) {
@@ -516,10 +480,8 @@ export default class extends Vue {
     `;
       }
     });
-
     return membersString;
   }
-
   private getManifestProperties(): string {
     let manifest = "";
     for (let property in this.manifest) {
@@ -533,40 +495,30 @@ export default class extends Vue {
     manifest += this.getCustomMembers();
     return `{${manifest}}`;
   }
-
   public getCode(): string | null {
     return this.manifest ? this.getManifestProperties() : null;
   }
-
   public onClickUploadIcon(): void {
-    /*(this.$refs.iconsModal as Modal).show();
-    this.showingIconModal = true;*/
+    (this.$refs.iconsModal as Modal).show();
+    this.showingIconModal = true;
   }
-
   public onClickShowGBB(): void {
     (this.$refs.nextStepModal as Modal).show();
   }
-
   public onClickHideGBB(): void {
     (this.$refs.nextStepModal as Modal).hide();
   }
-
   public async onSubmitIconModal(): Promise<void> {
     const $iconsModal = this.$refs.iconsModal as Modal;
-
     if (!this.iconFile) {
       return;
     }
-
     $iconsModal.showLoading();
-
     if (this.iconCheckMissing) {
       const data = await this.generateMissingImages(this.iconFile);
       console.log("data in gen missing images", data);
       console.log("generate missing images", this.manifest);
-
       this.manifest$ = this.manifest;
-
       console.log("update manifest this.manifest$", this.manifest$);
       this.updateManifest(this.manifest$);
     } else {
@@ -574,65 +526,53 @@ export default class extends Vue {
       console.log("update manifest this.manifest$", this.manifest$);
       this.updateManifest(this.manifest$);
     }
-
     $iconsModal.hide();
     $iconsModal.hideLoading();
     this.iconFile = null;
     this.showingIconModal = false;
   }
-
   public onCancelIconModal(): void {
     this.iconFile = null;
     this.showingIconModal = false;
   }
-
   public seeManifest() {
     this.seeEditor = true;
   }
-
   public seeGuidance() {
     this.seeEditor = false;
   }
-
   public invalidManifest() {
     console.log("invalid");
     this.basicManifest = false;
   }
-
   public handleEditorValue(ev) {
     console.log(ev);
     console.log(this.basicManifest);
-
     if (this.basicManifest !== false) {
       // this.manifest = ev;
       this.updateManifest(this.manifest$);
     }
   }
-
   public showBasicsSection() {
     this.showBasicSection = true;
     this.showImagesSection = false;
     this.showSettingsSection = false;
   }
-
   public showImageSection() {
     this.showImagesSection = true;
     this.showBasicSection = false;
     this.showSettingsSection = false;
   }
-
   public showSettingSection() {
     this.showSettingsSection = true;
     this.showImagesSection = false;
     this.showBasicSection = false;
   }
-
   public modalOpened() {
     (this.$root.$el.closest("body") as HTMLBodyElement).classList.add(
       "modal-screen"
     );
   }
-
   public modalClosed() {
     (this.$root.$el.closest("body") as HTMLBodyElement).classList.remove(
       "modal-screen"
@@ -645,14 +585,12 @@ export default class extends Vue {
 <style lang="scss">
 @import "~assets/scss/base/variables";
 /* stylelint-disable */
-
 #iconGrid {
   display: grid;
   grid-template-columns: auto auto auto;
   display: grid;
   grid-template-columns: auto auto auto;
   grid-gap: 54px;
-
   #iconItem {
     display: flex;
     flex-direction: column;
@@ -660,7 +598,6 @@ export default class extends Vue {
     justify-content: center;
     height: 128px;
     width: 128px;
-
     #iconDivItem {
       width: 100%;
       justify-content: center;
@@ -668,14 +605,12 @@ export default class extends Vue {
       display: flex;
       flex-direction: column;
     }
-
     #iconSize {
       display: flex;
       align-items: center;
       justify-content: center;
       width: 100%;
       margin-top: 17px;
-
       #iconSizeText {
         font-size: 14px;
         margin-right: 12px;
@@ -683,12 +618,10 @@ export default class extends Vue {
     }
   }
 }
-
 #descText {
   line-height: 24px;
   height: 5em;
 }
-
 #uploadNewSection {
   background: #f0f0f0;
   border-radius: 4px;
@@ -700,21 +633,10 @@ export default class extends Vue {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   .iconUploadHeader {
     padding-top: 0px !important;
     font-size: 16px;
   }
-
-  #file {
-    width: 0.1px;
-    height: 0.1px;
-    opacity: 0;
-    overflow: hidden;
-    position: absolute;
-    z-index: -1;
-  }
-
   #iconUploadButton {
     width: 104px;
     height: 40px;
@@ -733,12 +655,10 @@ export default class extends Vue {
     line-height: 21px;
   }
 }
-
 #removeIconDiv svg {
   height: 14px;
   width: 14px;
 }
-
 #modalBackground {
   position: fixed;
   top: 0;
@@ -750,14 +670,11 @@ export default class extends Vue {
   will-change: opacity;
   background: #3c3c3c;
 }
-
 #imageModalSection {
   display: flex;
 }
-
 #genMissingLabel {
   display: flex;
-
   font-family: Poppins;
   font-style: normal;
   font-weight: 400;
@@ -765,26 +682,21 @@ export default class extends Vue {
   line-height: 24px;
   letter-spacing: -0.02em;
 }
-
 #genMissingLabel input {
   height: 2em;
   width: 2em;
 }
-
 #sideBySide {
   background: white;
   padding-left: 154px;
   padding-right: 128px;
   display: flex;
   justify-content: space-between;
-
   #leftSide {
     background: white;
     min-height: 974px;
-
     .mastHead {
       padding-top: 40px;
-
       h2 {
         font-family: Poppins;
         font-style: normal;
@@ -794,7 +706,6 @@ export default class extends Vue {
         letter-spacing: -0.02em;
         color: #3c3c3c;
       }
-
       p {
         font-style: normal;
         font-weight: normal;
@@ -802,21 +713,17 @@ export default class extends Vue {
         line-height: 28px;
       }
     }
-
     #dataSection {
       padding-top: 32px;
-
       #dataButtonsBlock {
         display: flex;
         justify-content: center;
       }
-
       #dataButtons {
         display: flex;
         justify-content: space-between;
         border-bottom: solid 1px rgba(60, 60, 60, 0.3);
         width: 20em;
-
         button {
           background: none;
           border: none;
@@ -825,20 +732,17 @@ export default class extends Vue {
           height: 32px;
           box-shadow: none;
           text-transform: uppercase;
-
           font-family: Poppins;
           font-style: normal;
           font-weight: 600;
           font-size: 14px;
           line-height: 16px;
         }
-
         button:hover {
           color: #3c3c3c;
           border-bottom: solid 4px #9337d8;
           border-image: linear-gradient(to right, #1fc2c8, #9337d8 116%) 10;
         }
-
         .active {
           color: #9337d8;
           border-bottom: solid 4px #9337d8;
@@ -846,16 +750,13 @@ export default class extends Vue {
         }
       }
     }
-
     .animatedSection {
       width: 500px;
-
       .fieldName {
         color: #9337d8;
         font-size: 16px;
         font-weight: bold;
       }
-
       h4 {
         font-style: normal;
         line-height: 24px;
@@ -863,32 +764,27 @@ export default class extends Vue {
         font-weight: bold;
         margin-top: 32px;
       }
-
       p {
         font-size: 14px;
         color: grey;
       }
-
       input {
         padding-left: 0;
-
+        width: 28em;
         font-style: normal;
         font-weight: normal;
         font-size: 16px;
         line-height: 33px;
       }
-
       input:focus {
         border-color: #9337d8;
         outline: none;
       }
     }
-
     #doneDiv {
       display: flex;
       justify-content: center;
       margin-bottom: 62px;
-
       #doneButton {
         background: #3c3c3c;
         width: 97px;
@@ -896,11 +792,9 @@ export default class extends Vue {
         font-style: normal;
         font-weight: 600;
         font-size: 14px;
-
         height: 44px;
         border-radius: 20px;
         border: none;
-
         margin-top: 24px;
         display: flex;
         justify-content: center;
@@ -909,22 +803,18 @@ export default class extends Vue {
       }
     }
   }
-
   #rightSide {
     width: 870px;
     margin-left: 60px;
   }
-
   #manifestHTML {
     height: 4em;
     margin-top: 3em;
     margin-bottom: 5em;
   }
-
   #manifestHTML .code_viewer-pre {
     height: 4em !important;
   }
-
   #exampleDiv {
     padding: 1em;
     font-weight: bold;
@@ -932,7 +822,6 @@ export default class extends Vue {
     margin-bottom: 16px;
     background: #f1f1f1;
   }
-
   #exampleDiv code {
     font-family: sans-serif;
     font-size: 12px;
@@ -940,7 +829,6 @@ export default class extends Vue {
     color: #9337d8;
     margin-left: 16px;
   }
-
   #exampleDiv h3 {
     font-family: Poppins;
     font-style: normal;
@@ -949,60 +837,49 @@ export default class extends Vue {
     line-height: 24px;
     padding-left: 1em;
   }
-
   @media (min-width: 2559px) {
     .mastHead p {
       width: 534px !important;
     }
   }
 }
-
 @media (max-width: 425px) {
   #rightSide {
     display: none;
   }
-
   #sideBySide {
     flex-direction: column;
     padding-left: 31px !important;
     padding-right: 24px !important;
   }
-
   #sideBySide #leftSide .animatedSection {
     width: initial;
   }
-
   #sideBySide #leftSide .animatedSection input {
     width: initial;
   }
-
   #iconGrid {
     display: grid;
     grid-gap: initial;
     padding-left: 0px;
   }
-
   #uploadNewSection {
     display: none;
   }
-
   .l-generator-input--select {
     max-width: 210px;
   }
 }
-
 @media (max-width: 1290px) {
   #sideBySide {
     padding-left: 54px;
     padding-right: 52px;
   }
 }
-
 @media (min-width: 1480px) {
   #leftSide {
     width: 760px !important;
   }
-
   #rightSide {
     width: 760px !important;
   }

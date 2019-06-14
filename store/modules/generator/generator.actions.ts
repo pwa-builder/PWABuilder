@@ -24,29 +24,37 @@ export interface Actions<S, R> extends ActionTree<S, R> {
 
 export const actions: Actions<State, RootState> = {
   async update({ commit, state, rootState }): Promise<void> {
-    if (!state.manifestId) {
-      // Create
-      await this.$axios.$post(apiUrl, { siteUrl: state.url });
-    }
+          if (!state.manifestId) {
+              // Create
+              await this.$axios.$post(apiUrl, { siteUrl: state.url});
+              console.log('Creating Manifest');
+          }
 
-    // Update
-    const customManifest: any = state.manifest;
-    state.members.forEach(member => {
-      customManifest[member.name] = member.value;
-    });
-    const result = await this.$axios.$put(`${apiUrl}/${state.manifestId}`, customManifest);
+      // Update
+      const customManifest: any = Object.assign({}, state.manifest);
+      state.members.forEach(member => {
+        customManifest[member.name] = member.value;
+      });
 
-    commit(types.UPDATE_WITH_MANIFEST, result);
-    commit(types.SET_DEFAULTS_MANIFEST, {
-      displays: rootState.displays ? rootState.displays[0].name : '',
-      orientations: rootState.orientations ? rootState.orientations[0].name : ''
-    });
-  },
+      customManifest["icons"] = [];
+
+      state.icons.forEach(icon => {
+        customManifest["icons"].push(Object.assign({}, icon));
+      })
+
+      const result = await this.$axios.$put(`${apiUrl}/${state.manifestId}`, customManifest);
+
+      commit(types.UPDATE_WITH_MANIFEST, result);
+      commit(types.SET_DEFAULTS_MANIFEST, {
+        displays: rootState.displays ? rootState.displays[0].name : '',
+        orientations: rootState.orientations ? rootState.orientations[0].name : ''
+      });
+    },
 
   updateManifest({ commit, dispatch }, manifest): void {
     commit(types.UPDATE_MANIFEST, manifest);
-    dispatch('update');
-  },
+      dispatch('update');
+    },
 
   async updateLink({ commit }, url: string): Promise<any> {
     console.log('here');
@@ -61,37 +69,38 @@ export const actions: Actions<State, RootState> = {
     }
 
     commit(types.UPDATE_LINK, url);
-  },
+    },
 
   async getManifestInformation({ commit, state, rootState }): Promise<void> {
-    if (!state.url) {
-      throw 'error.url_empty';
+  if (!state.url) {
+    throw 'error.url_empty';
+  }
+  if(state.manifest){
+    return;
+  }
+  const options = {
+    siteUrl: state.url
+  };
+
+  try {
+    const result = await this.$axios.$post(apiUrl, options);
+    console.log('result', result);
+    if (!result) {
+      throw 'error.Manifest_notFound';
     }
+    // Convert color if necessary
+    result.background_color = helpers.fixColorFromServer(result.background_color);
 
-    const options = {
-      siteUrl: state.url
-    };
-
-    try {
-      const result = await this.$axios.$post(apiUrl, options);
-      console.log('result', result);
-      if (!result) {
-        throw 'error.Manifest_notFound';
-      }
-      // Convert color if necessary
-      result.background_color = helpers.fixColorFromServer(result.background_color);
-
-      commit(types.UPDATE_WITH_MANIFEST, result);
-      commit(types.SET_DEFAULTS_MANIFEST, {
-        displays: rootState.displays ? rootState.displays[0].name : '',
-        orientations: rootState.orientations ? rootState.orientations[0].name : ''
-      });
-
-      return;
-    } catch (e) {
-      let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
-      throw errorMessage;
-    }
+    commit(types.UPDATE_WITH_MANIFEST, result);
+    commit(types.SET_DEFAULTS_MANIFEST, {
+      displays: rootState.displays ? rootState.displays[0].name : '',
+      orientations: rootState.orientations ? rootState.orientations[0].name : ''
+    });
+    return;
+  } catch (e) {
+    let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
+    throw errorMessage;
+  }
   },
 
   removeIcon({ commit, state, dispatch }, icon: Icon): void {
@@ -104,13 +113,12 @@ export const actions: Actions<State, RootState> = {
       icons.splice(index, 1);
       commit(types.UPDATE_ICONS, icons);
     }
+    dispatch('update', {root: true});
+    },
 
-    dispatch('update');
-  },
-
-  resetStates({ commit }): void {
+    resetStates({ commit }): void {
     commit(types.RESET_STATES);
-  },
+    },
 
   async addIconFromUrl({ commit, state, dispatch }, newIconSrc: string): Promise<void> {
     let src = newIconSrc;
@@ -135,14 +143,14 @@ export const actions: Actions<State, RootState> = {
     } catch (e) {
       throw e;
     }
-  },
+    },
 
   async uploadIcon({ commit, dispatch }, iconFile: File): Promise<void> {
     const dataUri: string = await helpers.getImageDataURI(iconFile);
     const sizes = await helpers.getImageIconSize(dataUri);
     commit(types.ADD_ICON, { src: dataUri, sizes: `${sizes.width}x${sizes.height}` });
     dispatch('update');
-  },
+    },
 
   async generateMissingImages({ commit, state, dispatch }, iconFile: File): Promise<void> {
     let formData = new FormData();
@@ -152,62 +160,62 @@ export const actions: Actions<State, RootState> = {
     commit(types.OVERWRITE_MANIFEST, result);
     commit(types.ADD_ASSETS, result.assets);
     dispatch('update');
-  },
+    },
 
-  addRelatedApplication({ commit, dispatch }, payload: RelatedApplication): void {
-    const errors = helpers.hasRelatedApplicationErrors(payload);
+addRelatedApplication({ commit, dispatch }, payload: RelatedApplication): void {
+const errors = helpers.hasRelatedApplicationErrors(payload);
 
-    if (errors) {
-      throw errors;
-    }
+if (errors) {
+  throw errors;
+}
 
-    commit(types.ADD_RELATED_APPLICATION, payload);
-    dispatch('update');
-  },
+commit(types.ADD_RELATED_APPLICATION, payload);
+dispatch('update');
+},
 
-  removeRelatedApplication({ commit, dispatch }, id: string): void {
-    commit(types.REMOVE_RELATED_APPLICATION, id);
-    dispatch('update');
-  },
+removeRelatedApplication({ commit, dispatch }, id: string): void {
+commit(types.REMOVE_RELATED_APPLICATION, id);
+dispatch('update');
+},
 
-  // @ts-ignore TS6133
-  changePreferRelatedApplication({ commit, dispatch }, status: boolean): void {
-    commit(types.UPDATE_PREFER_RELATED_APPLICATION, status);
-    dispatch('update');
-  },
+// @ts-ignore TS6133
+changePreferRelatedApplication({ commit, dispatch }, status: boolean): void {
+commit(types.UPDATE_PREFER_RELATED_APPLICATION, status);
+dispatch('update');
+},
 
-  addCustomMember({ commit, state, dispatch }, payload: CustomMember): void {
+addCustomMember({ commit, state, dispatch }, payload: CustomMember): void {
 
-    if (state.members.find(member => member.name === payload.name)) {
-      throw 'error.custom_value';
-    }
+if (state.members.find(member => member.name === payload.name)) {
+  throw 'error.custom_value';
+}
 
-    if (!payload.name.includes('_')) {
-      payload.name = helpers.MEMBER_PREFIX + payload.name;
-    }
+if (!payload.name.includes('_')) {
+  payload.name = helpers.MEMBER_PREFIX + payload.name;
+}
 
-    try {
-      payload.value = JSON.parse(payload.value);
-      commit(types.ADD_CUSTOM_MEMBER, payload);
-      dispatch('update');
-    } catch (e) {
-      throw 'error.parsing_value';
-    }
-  },
+try {
+  payload.value = JSON.parse(payload.value);
+  commit(types.ADD_CUSTOM_MEMBER, payload);
+  dispatch('update');
+} catch (e) {
+  throw 'error.parsing_value';
+}
+},
 
-  removeCustomMember({ commit, dispatch }, name: string): void {
-    commit(types.REMOVE_CUSTOM_MEMBER, name);
-    dispatch('update');
-  },
+removeCustomMember({ commit, dispatch }, name: string): void {
+commit(types.REMOVE_CUSTOM_MEMBER, name);
+dispatch('update');
+},
 
-  updateColor({ commit, dispatch }, payload: ColorOptions): void {
-    let color = payload.colorOption;
+updateColor({ commit, dispatch }, payload: ColorOptions): void {
+let color = payload.colorOption;
 
-    if (color === helpers.COLOR_OPTIONS.pick) {
-      color = payload.color;
-    }
+if (color === helpers.COLOR_OPTIONS.pick) {
+  color = payload.color;
+}
 
-    commit(types.UPDATE_COLOR, color);
-    dispatch('update');
-  }
+commit(types.UPDATE_COLOR, color);
+dispatch('update');
+}
 };
