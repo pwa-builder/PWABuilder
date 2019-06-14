@@ -86,12 +86,10 @@ export default class extends Vue {
   @Prop({ default: 0 }) score: number;
 
   @GeneratorState url: string;
-  //@GeneratorAction getManifestInformation;
   public localScore: number = 0;
   public calcedScore: number = 0;
   readyToPublish: boolean = false;
   @GeneratorState manifest: any;
-  @GeneratorState siteServiceWorkers: any;
 
   mounted() {
     const storedScore = sessionStorage.getItem("overallGrade") || null;
