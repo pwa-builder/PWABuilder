@@ -8,7 +8,7 @@
         Copy
       </button>
     </div>
-    <MonacoEditor :options="monacoOptions" class="code_viewer-pre" :code="code" @change="onCodeChange"></MonacoEditor>
+    <MonacoEditor :options="monacoOptions" class="code_viewer-pre" @change="onCodeChange" @modelDecorations="onDecorationsChange" @editorDidMount="editorMount"></MonacoEditor>
     <div v-if="textCopied" id="copyToast">Code Copied</div>
 
     <div v-if="showOverlay" id="errorOverlay">
@@ -50,7 +50,7 @@
 import Vue from "vue";
 import MonacoEditor from "vue-monaco";
 import Component from "nuxt-class-component";
-import { Prop, Watch } from "vue-property-decorator";
+import { Prop } from "vue-property-decorator";
 import Clipboard from "clipboard";
 import SkipLink from "~/components/SkipLink.vue";
 import IssuesList from "~/components/IssuesList.vue";
@@ -107,17 +107,19 @@ export default class extends Vue {
   public downloadButtonMessage = "publish.download_manifest";
   public errorNumber = 0;
 
-  public editor : MonacoEditor;
+  public editor : MonacoEditor.editor;
+  public model;
 
   public monacoOptions = {
     lineNumbers: "on",
+    code: this.code,
     language: this.codeType,
     fixedOverflowWidgets: true,
     wordWrap: "wordWrapColumn",
     wordWrapColumn: 50,
     scrollBeyondLastLine: false,
     wordWrapMinified: true,
-    theme: `${this.theme}`,
+    theme: this.theme,
     wrappingIndent: "indent",
     fontSize: 16,
     minimap: {
@@ -129,26 +131,24 @@ export default class extends Vue {
   errors: any[] = [];
   textCopied = false;
 
-  public onCodeChange(value):void {
+  onCodeChange(value):void {
     this.$emit("editorValue", value);
   }
 
-  public mounted(): void {
-    /*
-    model.onDidChangeModelDecorations(() => {
-      this.errors = (<any>window).MonacoEditor.editor.getModelMarkers({});
-      this.errorNumber = this.errors.length;
+  onDecorationsChange():void {
+    this.errors = (<any>window).monaco.editor.getModelMarkers({});
+    this.errorNumber = this.errors.length;
 
-      console.log(this.errors);
-
-      if (this.errors.length > 0) {
+    if (this.errors.length > 0) {
         this.$emit("invalidManifest");
-      }
-    });
-    */
+    }
   }
-  
-  private async copy() {
+
+  editorMount(editor):void{
+    this.editor = editor;
+  }
+ 
+  async copy() {
     const code = this.editor.getValue();
 
     if ((navigator as any).clipboard) {
