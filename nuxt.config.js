@@ -149,7 +149,7 @@ module.exports = {
   router: {
     middleware: ['i18n', 'default']
   },
-  plugins: ['~/plugins/i18n.js'],
+  plugins: ['~/plugins/i18n.js', { src: '~/plugins/vuex-persist', ssr: false }],
   modules: [
     '~/modules/typescript',
     '@nuxtjs/axios'

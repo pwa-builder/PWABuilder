@@ -15,6 +15,7 @@
       @editorDidMount="editorMount"
       :theme="`${theme}Theme`"
       :language="codeType"
+      v-model="code"
       >
     </MonacoEditor>
 
@@ -115,7 +116,6 @@ export default class extends Vue {
   public errorNumber = 0;
 
   public editor : MonacoEditor.editor;
-  public model;
 
   public monacoOptions = {
     lineNumbers: "on",
@@ -128,8 +128,7 @@ export default class extends Vue {
     fontSize: 16,
     minimap: {
       enabled: false
-    },
-    value: this.code
+    }
   };
 
   showOverlay = false;
@@ -160,7 +159,7 @@ export default class extends Vue {
     }
   }
 
-  editorMount(editor):void{
+  editorMount(editor):void {
     this.editor = editor;
   }
  
