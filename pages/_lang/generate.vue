@@ -383,6 +383,7 @@ const GeneratorGetters = namespace(generator.name, Getter);
     HubHeader
   }
 })
+
 export default class extends Vue {
   public manifest$: generator.Manifest | null = null;
   public newIconSrc = "";
@@ -450,7 +451,6 @@ export default class extends Vue {
 
   public onClickRemoveIcon(icon: generator.Icon): void {
     this.removeIcon(icon);
-
     console.log("this.manifest$", this.manifest$);
     console.log("this.manifest", this.manifest);
   }
