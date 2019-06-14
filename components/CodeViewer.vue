@@ -8,8 +8,13 @@
         Copy
       </button>
     </div>
-    <MonacoEditor :options="monacoOptions" class="code_viewer-pre" @change="onCodeChange" @modelDecorations="onDecorationsChange" @editorDidMount="editorMount"></MonacoEditor>
     <div v-if="textCopied" id="copyToast">Code Copied</div>
+    <MonacoEditor :options="monacoOptions" class="code_viewer-pre" 
+      @change="onCodeChange" 
+      @modelDecorations="onDecorationsChange" 
+      @editorDidMount="editorMount"
+      >
+    </MonacoEditor>
 
     <div v-if="showOverlay" id="errorOverlay">
       <h2>Errors</h2>
@@ -112,7 +117,6 @@ export default class extends Vue {
 
   public monacoOptions = {
     lineNumbers: "on",
-    code: this.code,
     language: this.codeType,
     fixedOverflowWidgets: true,
     wordWrap: "wordWrapColumn",
@@ -124,7 +128,8 @@ export default class extends Vue {
     fontSize: 16,
     minimap: {
       enabled: false
-    }
+    },
+    value: this.code
   };
 
   showOverlay = false;
