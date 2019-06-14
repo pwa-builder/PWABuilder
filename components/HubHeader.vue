@@ -53,7 +53,11 @@
           <span>Your Score</span>
         </div>
 
-        <nuxt-link :class="!hasManifest ? 'disabled' : 'enabled'" id="publishButton" to="/publish">Build My PWA</nuxt-link>
+        <nuxt-link
+          :class="!readyToPublish ? 'disabled' : 'enabled'"
+          id="publishButton"
+          to="/publish"
+        >Build My PWA</nuxt-link>
       </div>
     </div>
   </div>
@@ -63,14 +67,13 @@
 import Vue from "vue";
 import { Prop, Watch } from "vue-property-decorator";
 import Component from "nuxt-class-component";
-import {Action, State, namespace } from "vuex-class";
+import { State, namespace } from "vuex-class"; //Action
 
 import * as generator from "~/store/modules/generator";
 
 import InstallButton from "~/components/InstallButton.vue";
 
 const GeneratorState = namespace(generator.name, State);
-const GeneratorAction = namespace(generator.name, Action);
 
 @Component({
   components: {
@@ -83,11 +86,12 @@ export default class extends Vue {
   @Prop({ default: 0 }) score: number;
 
   @GeneratorState url: string;
-  @GeneratorAction getManifestInformation;
+  //@GeneratorAction getManifestInformation;
   public localScore: number = 0;
   public calcedScore: number = 0;
-  hasManifest: boolean = false;
+  readyToPublish: boolean = false;
   @GeneratorState manifest: any;
+  @GeneratorState siteServiceWorkers: any;
 
   mounted() {
     const storedScore = sessionStorage.getItem("overallGrade") || null;
@@ -124,18 +128,11 @@ export default class extends Vue {
     this.calcedScore = this.score;
   }
 
-  async updated() {
+  updated() {
     console.log("updated", this.score);
-    try {
-        await this.getManifestInformation();
-        console.log("manifestInfo", this.manifest);
-        if(this.manifest){
-          this.hasManifest=true;
-        }
-      } catch {
-        this.hasManifest = false;
-        return;
-      }
+    if (this.manifest) {
+      this.readyToPublish = true;
+    } 
     if ("requestIdleCallback" in window) {
       // Use requestIdleCallback to schedule this since its not "necessary" work
       // and we dont want this running in the middle of animations or user input
@@ -342,13 +339,13 @@ header {
       display: flex;
       flex-direction: column;
       font-weight: bold;
-      color: rgba(255, 255, 255, .7);
+      color: rgba(255, 255, 255, 0.7);
     }
   }
 
   #urlTested:hover {
-
-    span, a {
+    span,
+    a {
       color: rgba(255, 255, 255, 1);
     }
   }
@@ -406,7 +403,6 @@ header {
   }
 }
 
-
 @media (max-width: 425px) {
   #subHeader #tabsBar,
   #subHeader #urlTested {
@@ -453,13 +449,13 @@ a:hover {
 
 .disabled {
   background: linear-gradient(to right, #b3d2d3, #cbb9d8 116%);
-  color:#878489;
+  color: #878489;
   pointer-events: none;
 }
 
-.enabled{
-      background: linear-gradient(to right, #1fc2c8, #9337d8 116%);
-      color: #ffffff;
+.enabled {
+  background: linear-gradient(to right, #1fc2c8, #9337d8 116%);
+  color: #ffffff;
 }
 
 @keyframes slidedown {
@@ -473,5 +469,4 @@ a:hover {
     transform: translateY(0);
   }
 }
-
 </style>
