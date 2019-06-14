@@ -8,7 +8,7 @@
         Copy
       </button>
     </div>
-    <MonacoEditor :options="monacoOptions" class="code_viewer-pre" :code="code"></MonacoEditor>
+    <MonacoEditor :options="monacoOptions" class="code_viewer-pre" :code="code" @change="onCodeChange"></MonacoEditor>
     <div v-if="textCopied" id="copyToast">Code Copied</div>
 
     <div v-if="showOverlay" id="errorOverlay">
@@ -125,21 +125,16 @@ export default class extends Vue {
     }
   };
 
-
-
   showOverlay = false;
   errors: any[] = [];
   textCopied = false;
 
+  public onCodeChange(value):void {
+    this.$emit("editorValue", value);
+  }
+
   public mounted(): void {
     /*
-    const model = this.editor.getModel();
-
-    model.onDidChangeModelContent(() => {
-      const value = model.getValue();
-      this.$emit("editorValue", value);
-    });
-
     model.onDidChangeModelDecorations(() => {
       this.errors = (<any>window).MonacoEditor.editor.getModelMarkers({});
       this.errorNumber = this.errors.length;
@@ -152,14 +147,7 @@ export default class extends Vue {
     });
     */
   }
-
-  @Watch("code")
-  onCodeChanged() {
-    if (this.editor) {
-      this.editor.setValue(this.code);
-    }
-  }
-
+  
   private async copy() {
     const code = this.editor.getValue();
 
