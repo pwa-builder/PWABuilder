@@ -113,11 +113,20 @@
 
                 <div class="button-holder icons">
                   <div class="l-inline">
-                    <button
+                    <!--<button
                       id="iconUploadButton"
                       class="work-button l-generator-button"
                       @click="onClickUploadIcon()"
-                    >Upload</button>
+                    >Upload</button>-->
+                    <input
+                      accept="image/png, image/jpeg"
+                      type="file"
+                      name="file"
+                      id="file"
+                      class="inputfile"
+                      @change="onFileIconChange"
+                    >
+                    <label id="iconUploadButton" for="file">Upload</label>
                   </div>
                 </div>
 
@@ -191,7 +200,7 @@
                 <h4
                   v-bind:class="{ fieldName: activeFormField === 'displayMode' }"
                 >{{ $t("generate.display") }}</h4>
-                <p>Display indetifies the browser components that should be included in your. "Standalone" appears as a traditional app.</p>
+                <p>Display identifies the browser components that should be included in your app. "Standalone" appears as a traditional app.</p>
               </label>
 
               <select
@@ -276,6 +285,7 @@
           <!--<button id="doneButton">Done</button>-->
           <nuxt-link @click.native="saveChanges" id="doneButton" to="reportCard">Done</nuxt-link>
         </div>
+
       </section>
 
       <section id="rightSide">
@@ -471,13 +481,22 @@ export default class extends Vue {
     }
   }
 
-  public onFileIconChange(e: Event): void {
+  public async onFileIconChange(e: Event) {
     const target = e.target as HTMLInputElement;
 
     if (!target.files) {
       return;
     }
     this.iconFile = target.files[0];
+
+    if (this.iconFile) {
+      await this.generateMissingImages(this.iconFile);
+
+      this.manifest$ = this.manifest;
+
+      console.log("update manifest this.manifest$", this.manifest$);
+      this.updateManifest(this.manifest$);
+    }
   }
 
   private getIcons(): string {
@@ -531,8 +550,8 @@ export default class extends Vue {
   }
 
   public onClickUploadIcon(): void {
-    (this.$refs.iconsModal as Modal).show();
-    this.showingIconModal = true;
+    /*(this.$refs.iconsModal as Modal).show();
+    this.showingIconModal = true;*/
   }
 
   public onClickShowGBB(): void {
@@ -698,6 +717,15 @@ export default class extends Vue {
     font-size: 16px;
   }
 
+  #file {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+  }
+
   #iconUploadButton {
     width: 104px;
     height: 40px;
@@ -854,7 +882,6 @@ export default class extends Vue {
 
       input {
         padding-left: 0;
-        width: 28em;
 
         font-style: normal;
         font-weight: normal;

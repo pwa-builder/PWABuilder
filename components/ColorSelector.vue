@@ -6,7 +6,6 @@
     </label>
     <div>
       <label class="optionLabel" v-for="colorOption in colorOptions" :key="colorOption">
-        <div>{{ $t("generate." + colorOption) }}</div>
         <input
           type="radio"
           :value="colorOption"
@@ -14,10 +13,10 @@
           @change="onChangeColor(colorOption)"
           :checked="isColorChecked(colorOption)"
         >
+        <div class="colorOptionDiv">{{ $t("generate." + colorOption) }}</div>
       </label>
 
       <div id="colorPickerInput" v-if="canChooseColor">
-        <input id="actualColorInput" type="color" name="background_color" v-model="color" @change="onChangeColor(color)">
         <input
           v-if="checkInputColor"
           type="text"
@@ -25,6 +24,13 @@
           placeholder="#000000"
           name="background_color"
           v-model="color"
+        >
+        <input
+          id="actualColorInput"
+          type="color"
+          name="background_color"
+          v-model="color"
+          @change="onChangeColor(color)"
         >
       </div>
     </div>
@@ -69,12 +75,11 @@ export default class extends Vue {
 
     this.updateCanChooseColor();
 
-
     // Check manifest from server color
     if (this.canChooseColor) {
       this.color =
         this.color ||
-        this.manifest$.background_color || 
+        this.manifest$.background_color ||
         this.manifest$.theme_color;
     }
   }
@@ -83,7 +88,6 @@ export default class extends Vue {
     if (!this.manifest$) {
       return;
     }
-
 
     this.canChooseColor =
       this.manifest$.background_color !== this.colorOptions.none &&
@@ -135,7 +139,7 @@ export default class extends Vue {
 
 .optionLabel {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   margin-bottom: 10px;
   font-size: 16px;
@@ -148,10 +152,15 @@ export default class extends Vue {
   width: 16px;
 }
 
+.optionLabel .colorOptionDiv {
+  margin-left: 12px;
+}
+
 #colorPickerInput {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 20em;
 }
 
 #colorPickerInput #actualColorInput {

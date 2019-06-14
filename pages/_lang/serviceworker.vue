@@ -271,6 +271,7 @@ export default class extends Vue {
       padding-left: 159px;*/
 
       min-height: 800px;
+      margin-left: -27px;
 
       #inputContainer {
         cursor: pointer;
