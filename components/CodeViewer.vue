@@ -3,9 +3,14 @@
     <div v-if="showHeader" id="codeHeader">
       <slot></slot>
 
-      <button v-if="showCopyButton" @click="copy()" id="copyButton">
+      <button
+        v-if="showCopyButton"
+        @click="copy()"
+        id="copyButton"
+        ref="codeCopyButton"
+        :data-clipboard-text="this.code"
+      >
         <i id="platformIcon" class="fas fa-copy"></i>
-        Copy
       </button>
     </div>
 
@@ -33,16 +38,10 @@
 
     <div v-if="showToolbar" id="toolbar">
       <div v-if="errorNumber">
-        <button @click="showErrorOverlay()" id="errorsButton">
-          <i class="fas fa-exclamation-triangle"></i>
-          {{this.errorNumber}} errors
-        </button>
+        <button @click="showErrorOverlay()" id="errorsButton">{{this.errorNumber}} errors</button>
       </div>
       <div v-if="!errorNumber || errorNumber ===0">
-        <button id="noErrorsButton">
-          <i class="fas fa-exclamation-triangle"></i>
-          0 Errors
-        </button>
+        <button id="noErrorsButton">0 Errors</button>
       </div>
     </div>
   </section>
@@ -50,10 +49,9 @@
 
 <script lang='ts'>
 import Vue from "vue";
-import * as monaco from 'monaco-editor';
+import * as monaco from "monaco-editor";
 import Component from "nuxt-class-component";
 import { Prop, Watch } from "vue-property-decorator";
-import Clipboard from "clipboard";
 import SkipLink from "~/components/SkipLink.vue";
 import IssuesList from "~/components/IssuesList.vue";
 import Download from "~/components/Download.vue";
@@ -128,8 +126,10 @@ export default class extends Vue {
       }
     });
     const model = this.editor.getModel();
+
     model.onDidChangeContent(() => {
-      const value = model.getValue();
+      const value = this.editor.getValue();
+      console.log("editor.value", value);
       this.$emit("editorValue", value);
     });
     model.onDidChangeDecorations(() => {
@@ -141,14 +141,17 @@ export default class extends Vue {
       }
     });
   }
+  
   @Watch("code")
   onCodeChanged() {
     if (this.editor) {
+      console.log("this.code", this.code);
       this.editor.setValue(this.code);
     }
   }
   // @ts-ignore TS6133
   private async copy() {
+    console.log("copy button clicked", this.code);
     const code = this.editor.getValue();
     if ((navigator as any).clipboard) {
       try {
@@ -161,21 +164,34 @@ export default class extends Vue {
         console.error(err);
       }
     } else {
-      let clipboard = new Clipboard(code);
-      clipboard.on("success", e => {
-        console.info("Action:", e.action);
-        console.info("Text:", e.text);
-        console.info("Trigger:", e.trigger);
-        this.textCopied = true;
-        setTimeout(() => {
-          this.textCopied = false;
-        }, 1300);
-        e.clearSelection();
-      });
-      clipboard.on("error", e => {
-        console.error("Action:", e.action);
-        console.error("Trigger:", e.trigger);
-      });
+      console.log("dont have clipboard api");
+      this.copyToClipboard(code);
+    }
+  }
+  copyToClipboard(str) {
+    if (document) {
+      const el = document.createElement("textarea"); // Create a <textarea> element
+      el.value = str; // Set its value to the string that you want copied
+      el.setAttribute("readonly", ""); // Make it readonly to be tamper-proof
+      el.style.position = "absolute";
+      el.style.left = "-9999px"; // Move outside the screen to make it invisible
+      document.body.appendChild(el); // Append the <textarea> element to the HTML document
+      const selected =
+        document.getSelection().rangeCount > 0 // Check if there is any content selected previously
+          ? document.getSelection().getRangeAt(0) // Store selection if found
+          : false; // Mark as false to know no selection existed before
+      el.select(); // Select the <textarea> content
+      document.execCommand("copy"); // Copy - only works as a result of a user action (e.g. click events)
+      document.body.removeChild(el); // Remove the <textarea> element
+      if (selected && document) {
+        // If a selection existed before copying
+        document.getSelection().removeAllRanges(); // Unselect everything on the HTML document
+        document.getSelection().addRange(selected); // Restore the original selection
+      }
+      this.textCopied = true;
+      setTimeout(() => {
+        this.textCopied = false;
+      }, 1300);
     }
   }
   // @ts-ignore TS6133
@@ -189,13 +205,13 @@ export default class extends Vue {
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang='scss'>
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
 @import "~assets/scss/base/animations";
 .code_viewer {
   background: #f1f1f1;
-  height: 668px;
+  height: 50vh;
   border-radius: 4px;
   #codeHeader {
     padding-left: 1em;
@@ -212,7 +228,6 @@ export default class extends Vue {
       font-size: 16px;
       line-height: 24px;
       padding-left: 1em;
-      width: 60%;
     }
     div {
       width: 20em;
@@ -222,10 +237,12 @@ export default class extends Vue {
     color: $color-brand-quartary;
   }
   #copyButton {
-    background: #c5c5c5;
+    background: rgba(60, 60, 60, 0.1);
     color: #3c3c3c;
+    width: 32px;
+    height: 32px;
     border: none;
-    border-radius: 20px;
+    border-radius: 50%;
     font-weight: bold;
     font-size: 12px;
     padding-top: 3px;
@@ -251,13 +268,13 @@ export default class extends Vue {
     margin-left: 10px;
   }
   .code_viewer-pre {
-    height: 668px;
-    overflow: hidden;
+    height: 50vh;
+    overflow: scroll;
     border-radius: 4px;
     background: #f1f1f1;
   }
   #toolbar {
-    background: #f0f0f0;
+    background: #e2e2e2;
     // width: 50vw;
     bottom: 16px;
     right: 0;
@@ -265,11 +282,11 @@ export default class extends Vue {
     justify-content: flex-end;
     align-items: center;
     #errorsButton {
-      background: $color-brand-warning;
+      background: #8a8a8a;
       color: white;
     }
     #noErrorsButton {
-      background: $color-brand-secondary;
+      background: #8a8a8a;
       color: white;
     }
     #settingsButton {
@@ -279,8 +296,8 @@ export default class extends Vue {
       border: none;
       margin: 10px;
       border-radius: 20px;
-      width: 97px;
-      font-size: 12px;
+      width: 86px;
+      font-size: 14px;
       font-weight: bold;
       padding-top: 8px;
       padding-bottom: 8px;
