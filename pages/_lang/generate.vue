@@ -274,7 +274,7 @@
 
         <div id="doneDiv">
           <!--<button id="doneButton">Done</button>-->
-          <nuxt-link id="doneButton" to="reportCard">Done</nuxt-link>
+          <nuxt-link @click.native="saveChanges" id="doneButton" to="reportCard">Done</nuxt-link>
         </div>
       </section>
 
@@ -430,6 +430,11 @@ export default class extends Vue {
     );
   }
 
+  public saveChanges(): void {
+    this.updateManifest(this.manifest$);
+    this.manifest$ = { ...this.manifest };
+  }
+
   public onChangeSimpleInput(): void {
     try {
       this.updateManifest(this.manifest$);
@@ -451,6 +456,7 @@ export default class extends Vue {
 
   public onClickRemoveIcon(icon: generator.Icon): void {
     this.removeIcon(icon);
+    this.updateManifest(this.manifest$);
     console.log("this.manifest$", this.manifest$);
     console.log("this.manifest", this.manifest);
   }
@@ -471,7 +477,6 @@ export default class extends Vue {
     if (!target.files) {
       return;
     }
-
     this.iconFile = target.files[0];
   }
 

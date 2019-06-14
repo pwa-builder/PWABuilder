@@ -3,12 +3,19 @@
     <div v-if="showHeader" id="codeHeader">
       <slot></slot>
 
-      <button v-if="showCopyButton" @click="copy()" id="copyButton">
+      <button
+        v-if="showCopyButton"
+        @click="copy()"
+        id="copyButton"
+        ref="codeCopyButton"
+        :data-clipboard-text="this.code"
+      >
         <i id="platformIcon" class="fas fa-copy"></i>
-        Copy
       </button>
     </div>
-    <monaco-editor class="code_viewer-pre" v-model="code" language="javascript"></monaco-editor>
+
+    <div class="code_viewer-pre" ref="monacoDiv"></div>
+
     <div v-if="textCopied" id="copyToast">Code Copied</div>
 
     <div v-if="showOverlay" id="errorOverlay">
@@ -31,16 +38,10 @@
 
     <div v-if="showToolbar" id="toolbar">
       <div v-if="errorNumber">
-        <button @click="showErrorOverlay()" id="errorsButton">
-          <i class="fas fa-exclamation-triangle"></i>
-          {{this.errorNumber}} errors
-        </button>
+        <button @click="showErrorOverlay()" id="errorsButton">{{this.errorNumber}} errors</button>
       </div>
       <div v-if="!errorNumber || errorNumber ===0">
-        <button id="noErrorsButton">
-          <i class="fas fa-exclamation-triangle"></i>
-          0 Errors
-        </button>
+        <button id="noErrorsButton">0 Errors</button>
       </div>
     </div>
   </section>
@@ -48,140 +49,114 @@
 
 <script lang='ts'>
 import Vue from "vue";
-import MonacoEditor from "vue-monaco";
+import * as monaco from "monaco-editor";
 import Component from "nuxt-class-component";
 import { Prop, Watch } from "vue-property-decorator";
-import Clipboard from "clipboard";
 import SkipLink from "~/components/SkipLink.vue";
 import IssuesList from "~/components/IssuesList.vue";
 import Download from "~/components/Download.vue";
 import { CodeError } from "~/store/modules/generator";
-
 @Component({
   components: {
     SkipLink,
     Download,
-    IssuesList,
-    MonacoEditor
+    IssuesList
   }
 })
 export default class extends Vue {
   @Prop({ type: String, default: "" })
   public title: string;
-
   @Prop({ type: String, default: "" })
   public code: string;
-
   @Prop({ type: String, default: "auto" })
   public size: string | null;
-
   @Prop({ type: Array, default: null })
   public suggestions: CodeError[] | null;
-
   @Prop({ type: Array, default: null })
   public warnings: CodeError[];
-
   @Prop({ type: Number, default: 0 })
   public warningsTotal: number;
-
   @Prop({ type: Number, default: 0 })
   public suggestionsTotal: number;
-
   @Prop({ type: String, default: "javascript" })
   public codeType: string;
-
   @Prop({ type: Boolean, default: true })
   public showCopyButton;
-
   @Prop() showToolbar: boolean;
   @Prop({ type: String, default: "#F0F0F0" })
   public color;
-
   @Prop({ type: String, default: "lighter" }) theme: string;
-
   @Prop({ type: Boolean, default: false }) public showHeader;
-
   public readonly warningsId = "warnings_list";
   public readonly suggestionsId = "suggestions_list";
   public isReady = true;
   public downloadButtonMessage = "publish.download_manifest";
   public errorNumber = 0;
-
-  public editor: MonacoEditor.editor.IStandaloneCodeEditor;
-
+  public editor: monaco.editor.IStandaloneCodeEditor;
   showOverlay = false;
   errors: any[] = [];
   textCopied = false;
-
   public mounted(): void {
     console.log(this.color);
-    // MonacoEditor.editor.defineTheme(`${this.theme}Theme`, {
-    //   base: "vs",
-    //   inherit: true,
-    //   rules: [],
-    //   colors: {
-    //     "editor.background": this.color
-    //   }
-    // });
-
-    //  this.editor = MonacoEditor.editor.create(
-    //   this.$refs.monacoDiv as HTMLElement,
-    //   {
-    //     value: this.code,
-    //     // Turn line numbers on so that line numbers in errors make sense
-    //     lineNumbers: "on",
-    //     language: this.codeType,
-    //     fixedOverflowWidgets: true,
-    //     wordWrap: "wordWrapColumn",
-    //     wordWrapColumn: 50,
-    //     scrollBeyondLastLine: false,
-    //     // Set this to false to not auto word wrap minified files
-    //     wordWrapMinified: true,
-    //     theme: `${this.theme}Theme`,
-
-    //     // try "same", "indent" or "none"
-    //     wrappingIndent: "indent",
-    //     fontSize: 16,
-    //     minimap: {
-    //       enabled: false
-    //     }
-    //   }
-    // );
-
+    monaco.editor.defineTheme(`${this.theme}Theme`, {
+      base: "vs",
+      inherit: true,
+      rules: [],
+      colors: {
+        "editor.background": this.color
+      }
+    });
+    this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
+      value: this.code,
+      // Turn line numbers on so that line numbers in errors make sense
+      lineNumbers: "on",
+      language: this.codeType,
+      fixedOverflowWidgets: true,
+      wordWrap: "wordWrapColumn",
+      wordWrapColumn: 50,
+      scrollBeyondLastLine: false,
+      // Set this to false to not auto word wrap minified files
+      wordWrapMinified: true,
+      theme: `${this.theme}Theme`,
+      // try "same", "indent" or "none"
+      wrappingIndent: "indent",
+      fontSize: 16,
+      minimap: {
+        enabled: false
+      }
+    });
     const model = this.editor.getModel();
 
-    model.onDidChangeModelContent(() => {
-      const value = model.getValue();
+    model.onDidChangeContent(() => {
+      const value = this.editor.getValue();
+      console.log("editor.value", value);
       this.$emit("editorValue", value);
     });
-
-    model.onDidChangeModelDecorations(() => {
-      this.errors = (<any>window).MonacoEditor.editor.getModelMarkers({});
+    model.onDidChangeDecorations(() => {
+      this.errors = (<any>window).monaco.editor.getModelMarkers({});
       this.errorNumber = this.errors.length;
-
       console.log(this.errors);
-
       if (this.errors.length > 0) {
         this.$emit("invalidManifest");
       }
     });
   }
-
+  
   @Watch("code")
   onCodeChanged() {
     if (this.editor) {
+      console.log("this.code", this.code);
       this.editor.setValue(this.code);
     }
   }
-
+  // @ts-ignore TS6133
   private async copy() {
+    console.log("copy button clicked", this.code);
     const code = this.editor.getValue();
-
     if ((navigator as any).clipboard) {
       try {
         await (navigator as any).clipboard.writeText(code);
         this.textCopied = true;
-
         setTimeout(() => {
           this.textCopied = false;
         }, 1300);
@@ -189,33 +164,40 @@ export default class extends Vue {
         console.error(err);
       }
     } else {
-      let clipboard = new Clipboard(code);
-
-      clipboard.on("success", e => {
-        console.info("Action:", e.action);
-        console.info("Text:", e.text);
-        console.info("Trigger:", e.trigger);
-
-        this.textCopied = true;
-
-        setTimeout(() => {
-          this.textCopied = false;
-        }, 1300);
-        e.clearSelection();
-      });
-
-      clipboard.on("error", e => {
-        console.error("Action:", e.action);
-        console.error("Trigger:", e.trigger);
-      });
+      console.log("dont have clipboard api");
+      this.copyToClipboard(code);
     }
   }
-
+  copyToClipboard(str) {
+    if (document) {
+      const el = document.createElement("textarea"); // Create a <textarea> element
+      el.value = str; // Set its value to the string that you want copied
+      el.setAttribute("readonly", ""); // Make it readonly to be tamper-proof
+      el.style.position = "absolute";
+      el.style.left = "-9999px"; // Move outside the screen to make it invisible
+      document.body.appendChild(el); // Append the <textarea> element to the HTML document
+      const selected =
+        document.getSelection().rangeCount > 0 // Check if there is any content selected previously
+          ? document.getSelection().getRangeAt(0) // Store selection if found
+          : false; // Mark as false to know no selection existed before
+      el.select(); // Select the <textarea> content
+      document.execCommand("copy"); // Copy - only works as a result of a user action (e.g. click events)
+      document.body.removeChild(el); // Remove the <textarea> element
+      if (selected && document) {
+        // If a selection existed before copying
+        document.getSelection().removeAllRanges(); // Unselect everything on the HTML document
+        document.getSelection().addRange(selected); // Restore the original selection
+      }
+      this.textCopied = true;
+      setTimeout(() => {
+        this.textCopied = false;
+      }, 1300);
+    }
+  }
   // @ts-ignore TS6133
   private showErrorOverlay() {
     this.showOverlay = !this.showOverlay;
   }
-
   // @ts-ignore TS6133
   private closeOverlay() {
     this.showOverlay = false;
@@ -223,17 +205,14 @@ export default class extends Vue {
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang='scss'>
 /* stylelint-disable */
-
 @import "~assets/scss/base/variables";
 @import "~assets/scss/base/animations";
-
 .code_viewer {
   background: #f1f1f1;
-  height: 668px;
+  height: 50vh;
   border-radius: 4px;
-
   #codeHeader {
     padding-left: 1em;
     padding-bottom: 1em;
@@ -242,7 +221,6 @@ export default class extends Vue {
     justify-content: space-between;
     align-items: center;
     z-index: 9999;
-
     h3 {
       font-family: Poppins;
       font-style: normal;
@@ -250,23 +228,21 @@ export default class extends Vue {
       font-size: 16px;
       line-height: 24px;
       padding-left: 1em;
-      width: 60%;
     }
-
     div {
       width: 20em;
     }
   }
-
   .active {
     color: $color-brand-quartary;
   }
-
   #copyButton {
-    background: #c5c5c5;
+    background: rgba(60, 60, 60, 0.1);
     color: #3c3c3c;
+    width: 32px;
+    height: 32px;
     border: none;
-    border-radius: 20px;
+    border-radius: 50%;
     font-weight: bold;
     font-size: 12px;
     padding-top: 3px;
@@ -275,7 +251,6 @@ export default class extends Vue {
     padding-left: 9px;
     margin-right: 2em;
   }
-
   #copyDiv {
     display: flex;
     justify-content: flex-end;
@@ -285,52 +260,44 @@ export default class extends Vue {
     right: 12px;
     z-index: 9999;
   }
-
   @media screen and (max-width: $media-screen-s) {
     margin-top: 4rem;
   }
-
   #codeViewerTitle {
     margin-bottom: 15px;
     margin-left: 10px;
   }
-
-  #code_viewer-pre {
-    height: 668px;
-    overflow: hidden;
+  .code_viewer-pre {
+    height: 50vh;
+    overflow: scroll;
     border-radius: 4px;
     background: #f1f1f1;
   }
-
   #toolbar {
-    background: #f0f0f0;
+    background: #e2e2e2;
     // width: 50vw;
     bottom: 16px;
     right: 0;
     display: flex;
     justify-content: flex-end;
     align-items: center;
-
     #errorsButton {
-      background: $color-brand-warning;
+      background: #8a8a8a;
       color: white;
     }
-
     #noErrorsButton {
-      background: $color-brand-secondary;
+      background: #8a8a8a;
       color: white;
     }
-
     #settingsButton {
       width: 112px;
     }
-
     button {
       border: none;
       margin: 10px;
       border-radius: 20px;
-      width: 97px;
-      font-size: 12px;
+      width: 86px;
+      font-size: 14px;
       font-weight: bold;
       padding-top: 8px;
       padding-bottom: 8px;
@@ -338,7 +305,6 @@ export default class extends Vue {
       padding-right: 10px;
     }
   }
-
   #errorOverlay {
     background: #ebebeb;
     padding: 40px;
@@ -350,14 +316,12 @@ export default class extends Vue {
     right: 0;
     bottom: 2.2em;
     border-top: solid 1px #c5c5c5;
-
     #errorButtonDiv {
       display: flex;
       justify-content: center;
       width: 100%;
       margin-top: 70px;
     }
-
     h2 {
       font-weight: bold;
       font-size: 18px;
@@ -365,7 +329,6 @@ export default class extends Vue {
       padding: 0;
       margin-bottom: 20px;
     }
-
     #closeButton {
       border: none;
       background: #3c3c3c;
@@ -378,24 +341,20 @@ export default class extends Vue {
       padding-left: 20px;
       padding-right: 20px;
     }
-
     ul {
       list-style: none;
       padding: 0;
       margin: 0;
-
       li {
         font-size: 14px;
         padding: 2px;
       }
-
       li span {
         font-weight: bold;
       }
     }
   }
 }
-
 #copyToast {
   background: grey;
   color: white;
@@ -411,13 +370,11 @@ export default class extends Vue {
   animation-duration: 250ms;
   animation-timing-function: ease;
 }
-
 @keyframes toastUp {
   from {
     opacity: 0;
     transform: translateY(50px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);

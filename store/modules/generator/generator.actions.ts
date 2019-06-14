@@ -23,146 +23,144 @@ export interface Actions<S, R> extends ActionTree<S, R> {
 }
 
 export const actions: Actions<State, RootState> = {
-    async update({ commit, state, rootState }): Promise<void> {
-        if (!state.manifestId) {
-            // Create
-            await this.$axios.$post(apiUrl, { siteUrl: state.url});
-        }
+  async update({ commit, state, rootState }): Promise<void> {
+          if (!state.manifestId) {
+              // Create
+              await this.$axios.$post(apiUrl, { siteUrl: state.url});
+              console.log('Creating Manifest');
+          }
 
-// Update
-const customManifest: any = state.manifest;
-state.members.forEach(member => {
-  customManifest[member.name] = member.value;
-});
+      // Update
+      const customManifest: any = Object.assign({}, state.manifest);
+      state.members.forEach(member => {
+        customManifest[member.name] = member.value;
+      });
 
-const icons = Object.assign({}, state.icons);
+      customManifest["icons"] = [];
 
-customManifest["icons"] = icons.map(icon => ({
-  src: icon.src,
-  sizes: icon.sizes
-}));
+      state.icons.forEach(icon => {
+        customManifest["icons"].push(Object.assign({}, icon));
+      })
 
-const result = await this.$axios.$put(`${apiUrl}/${state.manifestId}`, customManifest);
+      const result = await this.$axios.$put(`${apiUrl}/${state.manifestId}`, customManifest);
 
-commit(types.UPDATE_WITH_MANIFEST, result);
-commit(types.SET_DEFAULTS_MANIFEST, {
-  displays: rootState.displays ? rootState.displays[0].name : '',
-  orientations: rootState.orientations ? rootState.orientations[0].name : ''
-});
-},
+      commit(types.UPDATE_WITH_MANIFEST, result);
+      commit(types.SET_DEFAULTS_MANIFEST, {
+        displays: rootState.displays ? rootState.displays[0].name : '',
+        orientations: rootState.orientations ? rootState.orientations[0].name : ''
+      });
+    },
 
-updateManifest({ commit, dispatch }, manifest): void {
-commit(types.UPDATE_MANIFEST, manifest);
-dispatch('update');
-},
+  updateManifest({ commit, dispatch }, manifest): void {
+    commit(types.UPDATE_MANIFEST, manifest);
+      dispatch('update');
+    },
 
-async updateLink({ commit }, url: string): Promise<any> {
-console.log('here');
-if (url && !url.startsWith('http')) {
-  url = 'https://' + url;
-}
+  async updateLink({ commit }, url: string): Promise<any> {
+    console.log('here');
+    if (url && !url.startsWith('http')) {
+      url = 'https://' + url;
+    }
 
-const test = await helpers.isValidUrl(url);
+    const test = await helpers.isValidUrl(url);
 
-if (test.message !== undefined) {
-  throw `${test.message}: this error means that you may have a bad https cert or the url may not be correct`;
-}
+    if (test.message !== undefined) {
+      throw `${test.message}: this error means that you may have a bad https cert or the url may not be correct`;
+    }
 
-commit(types.UPDATE_LINK, url);
-},
+    commit(types.UPDATE_LINK, url);
+    },
 
-async getManifestInformation({ commit, state, rootState }): Promise<void> {
-if (!state.url) {
-  throw 'error.url_empty';
-}
-if(state.manifest){
-  return;
-}
-const options = {
-  siteUrl: state.url
-};
-
-try {
-  const result = await this.$axios.$post(apiUrl, options);
-  console.log('result', result);
-  if (!result) {
-    throw 'error.Manifest_notFound';
+  async getManifestInformation({ commit, state, rootState }): Promise<void> {
+  if (!state.url) {
+    throw 'error.url_empty';
   }
-  // Convert color if necessary
-  result.background_color = helpers.fixColorFromServer(result.background_color);
+  if(state.manifest){
+    return;
+  }
+  const options = {
+    siteUrl: state.url
+  };
 
-  commit(types.UPDATE_WITH_MANIFEST, result);
-  commit(types.SET_DEFAULTS_MANIFEST, {
-    displays: rootState.displays ? rootState.displays[0].name : '',
-    orientations: rootState.orientations ? rootState.orientations[0].name : ''
-  });
+  try {
+    const result = await this.$axios.$post(apiUrl, options);
+    console.log('result', result);
+    if (!result) {
+      throw 'error.Manifest_notFound';
+    }
+    // Convert color if necessary
+    result.background_color = helpers.fixColorFromServer(result.background_color);
 
-  return;
-} catch (e) {
-  let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
-  throw errorMessage;
-}
-},
+    commit(types.UPDATE_WITH_MANIFEST, result);
+    commit(types.SET_DEFAULTS_MANIFEST, {
+      displays: rootState.displays ? rootState.displays[0].name : '',
+      orientations: rootState.orientations ? rootState.orientations[0].name : ''
+    });
+    return;
+  } catch (e) {
+    let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
+    throw errorMessage;
+  }
+  },
 
-removeIcon({ commit, state, dispatch }, icon: Icon): void {
-let icons = [...state.icons];
-const index = icons.findIndex(i => {
-  return i.src === icon.src;
-});
+  removeIcon({ commit, state, dispatch }, icon: Icon): void {
+    let icons = [...state.icons];
+    const index = icons.findIndex(i => {
+      return i.src === icon.src;
+    });
 
-if (index > -1) {
-  icons.splice(index, 1);
-  commit(types.UPDATE_ICONS, icons);
-}
-commit(types.UPDATE_MANIFEST, this.manifest);
-dispatch('update');
-},
+    if (index > -1) {
+      icons.splice(index, 1);
+      commit(types.UPDATE_ICONS, icons);
+    }
+    dispatch('update', {root: true});
+    },
 
-resetStates({ commit }): void {
-commit(types.RESET_STATES);
-},
+    resetStates({ commit }): void {
+    commit(types.RESET_STATES);
+    },
 
-async addIconFromUrl({ commit, state, dispatch }, newIconSrc: string): Promise<void> {
-let src = newIconSrc;
+  async addIconFromUrl({ commit, state, dispatch }, newIconSrc: string): Promise<void> {
+    let src = newIconSrc;
 
-if (!src) {
-  return;
-}
+    if (!src) {
+      return;
+    }
 
-if (src.charAt(0) === '/') {
-  src = src.slice(1);
-}
+    if (src.charAt(0) === '/') {
+      src = src.slice(1);
+    }
 
-if (!src.includes('http')) {
-  let prefix = state.manifest ? state.manifest.start_url : state.url;
-  src = (prefix || '') + src;
-}
+    if (!src.includes('http')) {
+      let prefix = state.manifest ? state.manifest.start_url : state.url;
+      src = (prefix || '') + src;
+    }
 
-try {
-  const sizes = await helpers.getImageIconSize(src);
-  commit(types.ADD_ICON, { src, sizes: `${sizes.width}x${sizes.height}` });
-  dispatch('update');
-} catch (e) {
-  throw e;
-}
-},
+    try {
+      const sizes = await helpers.getImageIconSize(src);
+      commit(types.ADD_ICON, { src, sizes: `${sizes.width}x${sizes.height}` });
+      dispatch('update');
+    } catch (e) {
+      throw e;
+    }
+    },
 
-async uploadIcon({ commit, dispatch }, iconFile: File): Promise<void> {
-const dataUri: string = await helpers.getImageDataURI(iconFile);
-const sizes = await helpers.getImageIconSize(dataUri);
-commit(types.ADD_ICON, { src: dataUri, sizes: `${sizes.width}x${sizes.height}` });
-dispatch('update');
-},
+  async uploadIcon({ commit, dispatch }, iconFile: File): Promise<void> {
+    const dataUri: string = await helpers.getImageDataURI(iconFile);
+    const sizes = await helpers.getImageIconSize(dataUri);
+    commit(types.ADD_ICON, { src: dataUri, sizes: `${sizes.width}x${sizes.height}` });
+    dispatch('update');
+    },
 
-async generateMissingImages({ commit, state, dispatch }, iconFile: File): Promise<void> {
-let formData = new FormData();
-formData.append('file', iconFile);
+  async generateMissingImages({ commit, state, dispatch }, iconFile: File): Promise<void> {
+    let formData = new FormData();
+    formData.append('file', iconFile);
 
-const result = await this.$axios.$post(`${apiUrl}/${state.manifestId}/generatemissingimages`, formData);
-commit(types.OVERWRITE_MANIFEST, result);
-commit(types.ADD_ASSETS, result.assets);
-dispatch('update');
-},
+    const result = await this.$axios.$post(`${apiUrl}/${state.manifestId}/generatemissingimages`, formData);
+    commit(types.OVERWRITE_MANIFEST, result);
+    commit(types.ADD_ASSETS, result.assets);
+    dispatch('update');
+    },
 
 addRelatedApplication({ commit, dispatch }, payload: RelatedApplication): void {
 const errors = helpers.hasRelatedApplicationErrors(payload);
