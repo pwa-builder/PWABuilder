@@ -293,6 +293,7 @@ header {
       font-size: 14px;
       line-height: 19px;
       text-align: center;
+      font-family: 'Open Sans', sans-serif;
     }
   }
 
