@@ -775,6 +775,7 @@ export default class extends Vue {
         display: flex;
         margin-right: 11px;
         align-items: center;
+        font-family: 'Open Sans', sans-serif;
       }
 
       .subScoreSpan {
