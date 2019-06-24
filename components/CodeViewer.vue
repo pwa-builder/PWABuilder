@@ -144,6 +144,8 @@ export default class extends Vue {
         "editor.background": this.color
       }
     });
+
+    (<any>window).monaco.editor.setTheme('lighterTheme');
   }
 
   onCodeChange(value):void {

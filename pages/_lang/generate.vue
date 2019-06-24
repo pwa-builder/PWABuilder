@@ -391,6 +391,7 @@ export default class extends Vue {
   public showSettingsSection = false;
   public activeFormField = null;
   public showingIconModal = false;
+
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
   @GeneratorState icons: generator.Icon[];
@@ -406,20 +407,25 @@ export default class extends Vue {
   @GeneratorActions generateMissingImages;
   @GeneratorGetters suggestionsTotal;
   @GeneratorGetters warningsTotal;
+
+
   public created(): void {
     this.manifest$ = { ...this.manifest };
     // this.basicManifest = true;
     console.log("display names", this.displaysNames);
   }
+
   async destroyed() {
     (this.$root.$el.closest("body") as HTMLBodyElement).classList.remove(
       "modal-screen"
     );
   }
+
   public saveChanges(): void {
     this.updateManifest(this.manifest$);
     this.manifest$ = { ...this.manifest };
   }
+
   public onChangeSimpleInput(): void {
     try {
       this.updateManifest(this.manifest$);
@@ -433,12 +439,14 @@ export default class extends Vue {
       this.error = e;
     }
   }
+
   public onClickRemoveIcon(icon: generator.Icon): void {
     this.removeIcon(icon);
     this.updateManifest(this.manifest$);
     console.log("this.manifest$", this.manifest$);
     console.log("this.manifest", this.manifest);
   }
+
   public onClickAddIcon(): void {
     try {
       console.log("trying to add icon from URL", this.newIconSrc);
@@ -448,6 +456,7 @@ export default class extends Vue {
       console.error(e);
     }
   }
+
   public onFileIconChange(e: Event): void {
     const target = e.target as HTMLInputElement;
     if (!target.files) {
@@ -455,6 +464,7 @@ export default class extends Vue {
     }
     this.iconFile = target.files[0];
   }
+
   private getIcons(): string {
     let icons = this.icons.map(icon => {
       return `
@@ -467,6 +477,7 @@ export default class extends Vue {
     });
     return icons.toString();
   }
+
   private getCustomMembers(): string {
     if (this.members.length < 1) {
       return "";
@@ -482,6 +493,7 @@ export default class extends Vue {
     });
     return membersString;
   }
+
   private getManifestProperties(): string {
     let manifest = "";
     for (let property in this.manifest) {
@@ -495,19 +507,24 @@ export default class extends Vue {
     manifest += this.getCustomMembers();
     return `{${manifest}}`;
   }
+
   public getCode(): string | null {
     return this.manifest ? this.getManifestProperties() : null;
   }
+
   public onClickUploadIcon(): void {
     (this.$refs.iconsModal as Modal).show();
     this.showingIconModal = true;
   }
+
   public onClickShowGBB(): void {
     (this.$refs.nextStepModal as Modal).show();
   }
+
   public onClickHideGBB(): void {
     (this.$refs.nextStepModal as Modal).hide();
   }
+
   public async onSubmitIconModal(): Promise<void> {
     const $iconsModal = this.$refs.iconsModal as Modal;
     if (!this.iconFile) {
@@ -531,20 +548,25 @@ export default class extends Vue {
     this.iconFile = null;
     this.showingIconModal = false;
   }
+
   public onCancelIconModal(): void {
     this.iconFile = null;
     this.showingIconModal = false;
   }
+
   public seeManifest() {
     this.seeEditor = true;
   }
+
   public seeGuidance() {
     this.seeEditor = false;
   }
+
   public invalidManifest() {
     console.log("invalid");
     this.basicManifest = false;
   }
+
   public handleEditorValue(ev) {
     console.log(ev);
     console.log(this.basicManifest);
@@ -553,26 +575,31 @@ export default class extends Vue {
       this.updateManifest(this.manifest$);
     }
   }
+
   public showBasicsSection() {
     this.showBasicSection = true;
     this.showImagesSection = false;
     this.showSettingsSection = false;
   }
+
   public showImageSection() {
     this.showImagesSection = true;
     this.showBasicSection = false;
     this.showSettingsSection = false;
   }
+
   public showSettingSection() {
     this.showSettingsSection = true;
     this.showImagesSection = false;
     this.showBasicSection = false;
   }
+
   public modalOpened() {
     (this.$root.$el.closest("body") as HTMLBodyElement).classList.add(
       "modal-screen"
     );
   }
+  
   public modalClosed() {
     (this.$root.$el.closest("body") as HTMLBodyElement).classList.remove(
       "modal-screen"
