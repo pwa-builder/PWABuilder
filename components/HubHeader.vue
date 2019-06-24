@@ -55,7 +55,11 @@
           <span>Your Score</span>
         </div>
 
-        <nuxt-link id="publishButton" to="/publish">Build My PWA</nuxt-link>
+        <nuxt-link
+          :class="!readyToPublish ? 'disabled' : 'enabled'"
+          id="publishButton"
+          to="/publish"
+        >Build My PWA</nuxt-link>
       </div>
     </div>
   </div>
@@ -65,7 +69,7 @@
 import Vue from "vue";
 import { Prop, Watch } from "vue-property-decorator";
 import Component from "nuxt-class-component";
-import { State, namespace } from "vuex-class";
+import { State, namespace } from "vuex-class"; //Action
 
 import * as generator from "~/store/modules/generator";
 
@@ -84,9 +88,10 @@ export default class extends Vue {
   @Prop({ default: 0 }) score: number;
 
   @GeneratorState url: string;
-
   public localScore: number = 0;
   public calcedScore: number = 0;
+  readyToPublish: boolean = false;
+  @GeneratorState manifest: any;
 
   mounted() {
     const storedScore = sessionStorage.getItem("overallGrade") || null;
@@ -125,6 +130,9 @@ export default class extends Vue {
 
   updated() {
     console.log("updated", this.score);
+    if (this.manifest) {
+      this.readyToPublish = true;
+    } 
     if ("requestIdleCallback" in window) {
       // Use requestIdleCallback to schedule this since its not "necessary" work
       // and we dont want this running in the middle of animations or user input
@@ -331,13 +339,13 @@ header {
       display: flex;
       flex-direction: column;
       font-weight: bold;
-      color: rgba(255, 255, 255, .7);
+      color: rgba(255, 255, 255, 0.7);
     }
   }
 
   #urlTested:hover {
-
-    span, a {
+    span,
+    a {
       color: rgba(255, 255, 255, 1);
     }
   }
@@ -379,10 +387,8 @@ header {
     justify-self: right;
     border-radius: 22px;
     border: none;
-    background: linear-gradient(to right, #1fc2c8, #9337d8 116%);
     display: flex;
     justify-content: center;
-
     padding-left: 20px;
     padding-right: 20px;
     font-family: Poppins;
@@ -393,7 +399,6 @@ header {
     display: flex;
     align-items: center;
     text-align: center;
-    color: #ffffff;
     height: 40px;
   }
 }
@@ -440,6 +445,17 @@ a {
 
 a:hover {
   box-shadow: none;
+}
+
+.disabled {
+  background: linear-gradient(to right, #b3d2d3, #cbb9d8 116%);
+  color: #878489;
+  pointer-events: none;
+}
+
+.enabled {
+  background: linear-gradient(to right, #1fc2c8, #9337d8 116%);
+  color: #ffffff;
 }
 
 @keyframes slidedown {
