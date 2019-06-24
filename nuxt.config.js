@@ -57,7 +57,11 @@ module.exports = {
       },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css?family=Poppins:600,700"
+        href: "https://fonts.googleapis.com/css?family=Poppins:600,700&display=swap"
+      },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css?family=Open+Sans:400,600,700&display=swap"
       },
       {
         rel: 'apple-touch-icon',

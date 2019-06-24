@@ -125,7 +125,7 @@ header {
   align-items: center;
   display: flex;
   flex-direction: row;
-  font-size: 12px;
+  font-size: 13px;
   left: 0;
   right: 0;
   padding-left: 24px;
@@ -134,21 +134,22 @@ header {
   color: white;
   justify-content: center;
   height: 52px;
+  font-family: 'Open Sans', sans-serif;
 
   a {
     color: white;
     font-weight: bold;
     text-decoration: underline;
+    font-size: 13px;
   }
 
   div {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    width: 60em;
 
     p {
-      font-size: 12px;
+      font-size: 13px;
+      margin-right: 20px;
     }
   }
 
@@ -159,7 +160,8 @@ header {
     color: white;
     font-weight: bold;
     font-size: 14px;
-    margin-left: 30px;
+    margin-left: 10px;
+    margin-top: 0;
 
     i {
       font-style: normal;
