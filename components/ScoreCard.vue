@@ -475,6 +475,8 @@ export default class extends Vue {
   @GeneratorAction getManifestInformation;
   @GeneratorState manifest: any;
 
+  @GeneratorAction updateManifest;
+
   @Prop() public category;
   @Prop() public url;
 
@@ -536,6 +538,7 @@ export default class extends Vue {
         resolve();
         return;
       }
+
       if (this.manifest && this.manifest.generated === true) {
         this.noManifest = true;
         resolve();
@@ -568,6 +571,7 @@ export default class extends Vue {
           this.manifestScore = 0;
         }
 
+        this.updateManifest(this.manifest);
         this.$emit("manifestTestDone", { score: this.manifestScore });
         resolve();
       }
