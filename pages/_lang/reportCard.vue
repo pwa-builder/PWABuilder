@@ -625,6 +625,7 @@ h2 {
 }
 
 #infoSection p {
+  font-family: 'Open Sans', sans-serif;
   font-style: normal;
   font-weight: normal;
   font-size: 16px;
