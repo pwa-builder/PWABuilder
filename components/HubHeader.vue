@@ -372,7 +372,7 @@ header {
 
     span {
       font-style: normal;
-      font-weight: normal;
+      font-weight: bold;
       font-size: 12px;
       line-height: 16px;
       display: flex;
@@ -381,6 +381,8 @@ header {
       letter-spacing: -0.04em;
       color: #ffffff;
       text-transform: lowercase;
+      letter-spacing: -0.04em;
+      font-family: 'Open Sans', sans-serif;
     }
   }
 
