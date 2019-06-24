@@ -44,7 +44,9 @@
               URL Tested
               <i class="fas fa-external-link-alt"></i>
             </span>
-            {{url.replace('http://','').replace('https://','').split(/[/?#]/)[0]}}
+            <span v-if="url">
+              {{url.replace('http://','').replace('https://','').split(/[/?#]/)[0]}}
+            </span>      
           </a>
         </div>
 
