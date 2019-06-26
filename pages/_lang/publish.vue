@@ -250,6 +250,20 @@
               <p>PWAs are available through the browser on Android, however your PWA can also be submitted to the play store by submitting the package you get below.</p>
             </div>
 
+            <!--samsung platform-->
+            <div id="pwaSamsungCard" class="pwaCard">
+              <div class="pwaCardHeaderBlock">
+                <div class="pwaCardIconBlock">
+                  <i id="platformIcon" class="fab fa-android"></i>
+                  <h2>Samsung</h2>
+                </div>
+
+                <Download class="platformDownloadButton" platform="samsung" message="Download"/>
+              </div>
+
+              <p>PWAs are available through the browser on Samsung devices, however your PWA can also be submitted to the Galaxy store by submitting the package you get below.</p>
+            </div>
+
             <div id="pwaWindowsCard" class="pwaCard">
               <div class="pwaCardHeaderBlock">
                 <div class="pwaCardIconBlock">
@@ -525,7 +539,7 @@ export default class extends Vue {
 #publishSideBySide {
   display: flex;
   justify-content: space-around;
-  height: 100vh;
+  height: 108vh;
   /*background-image: url("~/assets/images/bg_publish.svg");
   background-size: cover;
   background-position: center;
@@ -630,7 +644,7 @@ export default class extends Vue {
     padding-bottom: 100px;
 
     #platformsListContainer {
-      padding-top: 4em;
+      padding-top: 6em;
       padding-right: 159px;
       padding-left: 52px;
       color: white;
@@ -934,7 +948,7 @@ export default class extends Vue {
 
 @media (max-width: 1441px) {
   #publishSideBySide {
-    background-position: -86px;
+    background-position: -122px;
   }
 }
 
