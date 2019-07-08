@@ -539,6 +539,8 @@ export default class extends Vue {
         return;
       }
 
+      console.log('generated', this.manifest.generated);
+
       if (this.manifest && this.manifest.generated === true) {
         this.noManifest = true;
         resolve();

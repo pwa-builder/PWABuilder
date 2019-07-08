@@ -22,9 +22,9 @@ export const mutations: MutationTree<State> = {
 
   [types.UPDATE_WITH_MANIFEST](state, result): void {
     console.log('result 2', result);
-    if (result.content.generated) {
+    /*if (result.content.generated) {
       delete result.content.generated;
-    }
+    }*/
 
     if (typeof (result.content.related_applications) === "string") {
       result.content.related_applications = [];
@@ -37,7 +37,7 @@ export const mutations: MutationTree<State> = {
     state.suggestions = result.suggestions;
     state.warnings = result.warnings;
     state.errors = result.errors;
-    // state.generated = result.generated ? result.generated : false;
+    state.generated = result.generated ? result.generated : false;
   },
 
   [types.OVERWRITE_MANIFEST](state, result): void {

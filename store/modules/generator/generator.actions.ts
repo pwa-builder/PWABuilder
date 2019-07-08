@@ -43,7 +43,6 @@ export const actions: Actions<State, RootState> = {
 
       // Create
       await this.$axios.$post(apiUrl, { siteUrl: state.url });
-      console.log('Creating Manifest');
     }
 
     // Update
