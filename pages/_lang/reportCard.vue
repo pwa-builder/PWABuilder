@@ -32,7 +32,7 @@
               v-model="url$"
               autofocus
               autocomplete="off"
-            >
+            />
 
             <button
               @click=" $awa( { 'referrerUri': 'https://www.pwabuilder.com/build/reportCard' })"
@@ -464,6 +464,14 @@ h2 {
   #bottomHalfHome {
     grid-row: 2;
 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 465px;
+    margin-top: 34px;
+    position: absolute;
+    bottom: 10px;
+
     color: #333333;
 
     #expertModeBlock {
@@ -523,14 +531,6 @@ h2 {
     }
 
     footer {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 465px;
-      margin-top: 34px;
-      position: absolute;
-      bottom: 10px;
-
       color: rgba(60, 60, 60, 0.6);
 
       p {
@@ -625,7 +625,7 @@ h2 {
 }
 
 #infoSection p {
-  font-family: 'Open Sans', sans-serif;
+  font-family: "Open Sans", sans-serif;
   font-style: normal;
   font-weight: normal;
   font-size: 16px;
