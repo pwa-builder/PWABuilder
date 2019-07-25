@@ -5,6 +5,41 @@
     <div v-if="modalStatus" id="modalBackground"></div>
 
     <section id="headerSection">
+      <div id="graphToolkitSection">
+        <div>
+          <div id="toolkitHeaderDiv">
+            <h1 id="featurePageHeader">Microsoft Graph Toolkit</h1>
+
+            <a
+              href="https://github.com/microsoftgraph/microsoft-graph-toolkit"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <i class="fab fa-github"></i>
+            </a>
+          </div>
+
+          <p>The Microsoft Graph Toolkit is a collection of framework-agnostic web components and helpers for accessing and working with Microsoft Graph. All components can access Microsoft Graph without any customization required.</p>
+
+          <div id="graphActions">
+            <a
+              id="graphStartedA"
+              href="https://docs.microsoft.com/en-us/graph/toolkit/overview"
+            >Get Started</a>
+
+            <a id="authStartedA">Auth with Graph</a>
+          </div>
+        </div>
+
+        <div>
+          <h1>Example</h1>
+
+          <script async src="//jsfiddle.net/metulev/9phqxLd5/embed/html,result/"></script>
+        </div>
+      </div>
+    </section>
+
+    <section id="headerSection">
       <div>
         <h1 id="featurePageHeader">Features</h1>
 
@@ -51,66 +86,6 @@
         <Loading active></Loading>
       </div>
     </section>
-
-    <!--<Modal
-      v-on:modalOpened="modalOpened()"
-      v-on:modalClosed="modalClosed()"
-      v-on:modalSubmit="modalSelected()"
-      :showSubmitButton="false"
-      title="Add Feature"
-      ref="addFeatureModal"
-    >
-      <div class="feature-viewer">
-        <div class="code-samples">
-          <div class="code-top">
-            <CodeViewer
-              code-type="javascript"
-              :size="viewerSize"
-              :code="loadCode()"
-              v-on:editorValue="updateCode($event)"
-              v-if="sample"
-              :showToolbar="false"
-              :showHeader="true"
-            >
-              <div>{{$t('windows.codeTitle')}}</div>
-            </CodeViewer>
-          </div>
-          <div class="code-bottom">
-            <CodeViewer
-              code-type="javascript"
-              :size="viewerSize"
-              :code="sample.source"
-              v-if="sample"
-              :showToolbar="false"
-              :showHeader="true"
-            >
-              <div>{{$t('windows.sourceTitle')}}</div>
-            </CodeViewer>
-          </div>
-        </div>
-      </div>
-
-      <button
-        slot="extraButton"
-        id="addBundleButton"
-        v-on:click="addBundle()"
-      >{{ $t("windows.download_sample") }}</button>
-
-      <p v-if="sample" slot="extraP" id="sampleDescP">{{sample.description}}</p>
-
-      <div v-if="sample" class="feature-content" slot="featureContentSlot">
-        <div class="side_panel">
-          <div class="properties" v-if="sample">
-            <h1>Required Properties</h1>
-
-            <div v-for="prop in sample.parms" :key="prop.id">
-              <h3>{{prop.name}}</h3>
-              <p class="propDescription" :id="prop.id">{{prop.description}}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Modal>-->
   </main>
 </template>
 
@@ -134,7 +109,7 @@ const WindowsAction = namespace(windowsStore.name, Action);
     // Modal,
     Loading,
     FeatureCard,
-    HubHeader,
+    HubHeader
     // CodeViewer
   }
 })
@@ -173,7 +148,7 @@ export default class extends Vue {
   }
 
   // @ts-ignore TS6133 onSelected
- /* public async onSelected(sample: windowsStore.Sample) {
+  /* public async onSelected(sample: windowsStore.Sample) {
     try {
       await this.selectSample(sample);
       // this.selectedSamples.push(sample);
@@ -435,6 +410,7 @@ header {
 @media (max-width: 1336px) {
   #headerSection {
     padding-left: 52px;
+    padding-right: 35px;
   }
 }
 
@@ -590,5 +566,79 @@ header {
   .code_viewer {
     background: #f0f0f0;
   }
+}
+
+#graphToolkitSection {
+  display: flex;
+  justify-content: space-between;
+}
+
+#graphToolkitSection #graphStartedA {
+  border-radius: 22px;
+  border: none;
+  display: flex;
+  justify-content: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  height: 40px;
+  width: 132px;
+  background: white;
+  margin-top: 2em;
+}
+
+#graphToolkitSection > div {
+  flex: 1;
+}
+
+#graphToolkitSection p {
+  width: 538px;
+}
+
+#toolkitHeaderDiv {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 520px;
+}
+
+#toolkitHeaderDiv a {
+  color: white;
+  margin-top: 28px;
+}
+
+#graphActions {
+  display: flex;
+  align-items: center;
+}
+
+#authStartedA {
+  border-radius: 22px;
+  border: none;
+  display: flex;
+  justify-content: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  height: 40px;
+  width: 158px;
+  background: black;
+  margin-top: 2em;
+  color: white;
+  margin-left: 12px;
 }
 </style>
