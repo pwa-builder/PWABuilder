@@ -52,7 +52,7 @@
           <button @click="download()" id="downloadSWButton">
             <span v-if="!isBuilding">{{ $t('serviceworker.download') }}</span>
             <span v-if="isBuilding">
-              <Loading :active="true" class="u-display-inline_block u-margin-left-sm"/>
+              <Loading :active="true" class="u-display-inline_block u-margin-left-sm" />
             </span>
           </button>
         </div>
@@ -332,6 +332,12 @@ export default class extends Vue {
       }
     }
 
+    @media (max-width: 425px) {
+      #inputSection {
+        margin-left: initial;
+      }
+    }
+
     #downloadSWButton {
       background: #3c3c3c;
       width: 128px;
@@ -413,7 +419,7 @@ export default class extends Vue {
   }
 
   #sideBySide #leftSide {
-    width: 520px;
+    width: 628px;
   }
 }
 

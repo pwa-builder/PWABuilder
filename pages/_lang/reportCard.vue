@@ -551,7 +551,6 @@ h2 {
     @media (max-width: 425px) {
       footer p {
         width: 62%;
-        margin-right: 4em;
       }
     }
 
@@ -570,6 +569,16 @@ h2 {
 
   main {
     display: initial;
+  }
+
+  #inputSection #bottomHalfHome {
+    width: initial;
+  }
+
+  footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 

@@ -407,8 +407,11 @@ header {
 }
 
 @media (max-width: 425px) {
-  #subHeader #tabsBar,
-  #subHeader #urlTested {
+  #subHeader #tabsBar {
+    display: none;
+  }
+
+  #subHeader #publishButton {
     display: none;
   }
 
