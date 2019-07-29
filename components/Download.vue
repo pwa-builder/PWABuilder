@@ -9,14 +9,14 @@
       <span v-if="showMessage">{{ message$ }}</span>
     </span>
 
-    <div v-if="!isReady">
+    <div id="colorSpinner" v-if="!isReady">
       <div class="flavor">
         <div class="colorbands"></div>
       </div>
       <div class="icon">
         <div class="lds-dual-ring"></div>
       </div>
-    </div
+    </div>
 
     <div id="errorDiv" v-if="errorMessage">{{ errorMessage }}</div>
   </button>
@@ -86,7 +86,6 @@ export default class extends Vue {
     platform: string,
     parameters: string[]
   ): Promise<void> {
-    console.log("this.isReady", this.isReady);
     if (!this.isReady) {
       return;
     }
@@ -101,7 +100,7 @@ export default class extends Vue {
       }
 
       // Because browser delay
-      setTimeout(() => (this.isReady = true), 3000);
+      // setTimeout(() => (this.isReady = true), 3000);
     } catch (e) {
       this.isReady = true;
       this.errorMessage = e;
@@ -121,6 +120,18 @@ export default class extends Vue {
   font-size: 14px;
   bottom: 24em;
   left: 5.4em;
+}
+
+#colorSpinner {
+  margin-top: -4px;
+  margin-left: 12px;
+}
+
+@-moz-document url-prefix() {
+  #colorSpinner {
+    margin-top: 38px !important;
+    margin-left: 10px !important;
+  }
 }
 
 .flavor {
