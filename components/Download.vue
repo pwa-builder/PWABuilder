@@ -100,7 +100,7 @@ export default class extends Vue {
       }
 
       // Because browser delay
-      // setTimeout(() => (this.isReady = true), 3000);
+      setTimeout(() => (this.isReady = true), 3000);
     } catch (e) {
       this.isReady = true;
       this.errorMessage = e;
