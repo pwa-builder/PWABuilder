@@ -729,6 +729,10 @@ export default class extends Vue {
 
         #pwaMainCard {
           grid-area: header;
+
+          p {
+            margin-right: 1.9em;
+          }
         }
 
         #pwaAndroidCard {
