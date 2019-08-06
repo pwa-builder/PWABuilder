@@ -291,6 +291,20 @@
               </section>
             </div>
 
+            <div id="pwaTeamsCard" class="pwaCard">
+              <div class="pwaCardHeaderBlock">
+                <i id="platformIcon" class="fab fa-windows"></i>
+
+                <h2>Teams</h2>
+              </div>
+
+              <p>PWAs are available directly in Microsoft Teams as a Teams app. To generate a package for Microsoft Teams, click here</p>
+
+              <section class="platformDownloadBar">
+                <Download class="platformDownloadButton" platform="windows" message="Download" />
+              </section>
+            </div>
+
             <div id="pwaMacosCard" class="pwaCard">
               <div class="pwaCardHeaderBlock">
                 <i id="platformIcon" class="fab fa-apple"></i>
