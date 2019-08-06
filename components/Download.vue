@@ -123,8 +123,8 @@ export default class extends Vue {
 }
 
 #colorSpinner {
-  margin-top: -4px;
-  margin-left: 12px;
+  /*margin-top: -4px;
+  margin-left: 12px;*/
 }
 
 @-moz-document url-prefix() {

@@ -295,7 +295,7 @@
               <div class="pwaCardHeaderBlock">
                 <i id="platformIcon" class="fab fa-windows"></i>
 
-                <h2>Teams</h2>
+                <h2>Microsoft Teams</h2>
               </div>
 
               <p>PWAs are available directly in Microsoft Teams as a Teams app. To generate a package for Microsoft Teams, click here</p>
@@ -565,7 +565,7 @@ export default class extends Vue {
 #publishSideBySide {
   display: flex;
   justify-content: space-around;
-  height: 108vh;
+  height: 147vh;
   /*background-image: url("~/assets/images/bg_publish.svg");
   background-size: cover;
   background-position: center;
@@ -613,7 +613,7 @@ export default class extends Vue {
       padding-right: 5em;
       padding-left: 159px;
       color: white;
-      margin-bottom: 8em;
+      margin-bottom: 28em;
 
       h2 {
         font-family: poppins;
@@ -671,7 +671,7 @@ export default class extends Vue {
     padding-bottom: 100px;
 
     #platformsListContainer {
-      padding-top: 6em;
+      // padding-top: 6em;
       padding-right: 159px;
       padding-left: 52px;
       color: white;
@@ -682,7 +682,7 @@ export default class extends Vue {
         margin: 0;
 
         display: grid;
-        grid-template-areas: "header header" "windows samsung" "android ios" "macos macos";
+        grid-template-areas: "header header" "windows samsung" "teams teams" "android ios" "macos macos";
         grid-gap: 10px;
 
         .pwaCard {
@@ -712,6 +712,7 @@ export default class extends Vue {
             position: absolute;
             bottom: 20px;
             right: 20px;
+            height: 30px;
           }
 
           .pwaCardIconBlock {
@@ -749,6 +750,14 @@ export default class extends Vue {
           }
         }
 
+        #pwaTeamsCard {
+          grid-area: teams;
+
+          p {
+            margin-bottom: 30px;
+          }
+        }
+
         #pwaAndroidCard {
           grid-area: android;
 
@@ -760,6 +769,8 @@ export default class extends Vue {
         #pwaMacosCard {
           grid-area: macos;
         }
+
+
 
         #pwaWindowsCard {
           grid-area: windows;
@@ -1017,7 +1028,13 @@ export default class extends Vue {
 
 @media (max-width: 1441px) {
   #publishSideBySide {
-    background-position: -122px;
+    background-position: -455px;
+  }
+}
+
+@media (max-width: 1439px) {
+  #publishSideBySide {
+    background-position: -410px;
   }
 }
 
