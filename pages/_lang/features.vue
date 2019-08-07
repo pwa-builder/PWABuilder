@@ -5,41 +5,6 @@
     <div v-if="modalStatus" id="modalBackground"></div>
 
     <section id="headerSection">
-      <div id="graphToolkitSection">
-        <div>
-          <div id="toolkitHeaderDiv">
-            <h1 id="featurePageHeader">Microsoft Graph Toolkit</h1>
-
-            <a
-              href="https://github.com/microsoftgraph/microsoft-graph-toolkit"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <i class="fab fa-github"></i>
-            </a>
-          </div>
-
-          <p>The Microsoft Graph Toolkit is a collection of framework-agnostic web components and helpers for accessing and working with Microsoft Graph. All components can access Microsoft Graph without any customization required.</p>
-
-          <div id="graphActions">
-            <a
-              id="graphStartedA"
-              href="https://docs.microsoft.com/en-us/graph/toolkit/overview"
-            >Get Started</a>
-
-            <a id="authStartedA">Auth with Graph</a>
-          </div>
-        </div>
-
-        <div>
-          <h1>Example</h1>
-
-          <script async src="//jsfiddle.net/metulev/9phqxLd5/embed/html,result/"></script>
-        </div>
-      </div>
-    </section>
-
-    <section id="headerSection">
       <div>
         <h1 id="featurePageHeader">Features</h1>
 
@@ -84,6 +49,33 @@
       </div>
       <div class="fakeCard">
         <Loading active></Loading>
+      </div>
+    </section>
+
+    <section id="headerSection">
+          <div id="graphToolkitSection">
+            <div>
+              <div id="toolkitHeaderDiv">
+                <h1 id="featurePageHeader">Microsoft Graph Toolkit</h1>
+              </div>
+
+              <p>The Microsoft Graph Toolkit is a collection of framework-agnostic web components and helpers for accessing and working with Microsoft Graph. All components can access Microsoft Graph without any customization required.</p>
+
+              <div id="graphActions">
+                <a
+                  id="graphStartedA"
+                  href="https://docs.microsoft.com/en-us/graph/toolkit/overview"
+                >Get Started</a>
+
+                <a id="authStartedA">Auth with Graph</a>
+              </div>
+            </div>
+          <div>
+          
+          <h1 id="graphExampleHeader">Example</h1>
+
+          <script async src="//jsfiddle.net/metulev/9phqxLd5/embed/html,result/"></script>
+        </div>
       </div>
     </section>
   </main>
@@ -571,6 +563,17 @@ header {
 #graphToolkitSection {
   display: flex;
   justify-content: space-between;
+
+  background: white;
+  padding-left: 2em;
+  padding-right: 2em;
+  padding-bottom: 3em;
+  margin-bottom: 2em;
+  color: black;
+}
+
+#graphExampleHeader {
+  color: black !important;
 }
 
 #graphToolkitSection #graphStartedA {
@@ -600,6 +603,7 @@ header {
 
 #graphToolkitSection p {
   width: 538px;
+  color: black;
 }
 
 #toolkitHeaderDiv {
@@ -609,8 +613,12 @@ header {
   width: 520px;
 }
 
+#toolkitHeaderDiv h1 {
+  color: black;
+}
+
 #toolkitHeaderDiv a {
-  color: white;
+  color: black;
   margin-top: 28px;
 }
 
