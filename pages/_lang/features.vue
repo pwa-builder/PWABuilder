@@ -92,7 +92,14 @@
                 href="https://docs.microsoft.com/en-us/graph/toolkit/overview"
               >Get Started</a>
 
-              <a id="authStartedA">Auth with Graph</a>
+              <!--<a id="authStartedA">Auth with Graph</a>
+              <a id="authStartedA">Get Contacts</a>-->
+              <nuxt-link v-bind:to="`/feature/${'Microsoft Graph Authentication'}`" id="authStartedA">
+                Auth With Graph
+              </nuxt-link>
+              <nuxt-link v-bind:to="`/feature/${'Microsoft Graph Contacts API'}`" id="authStartedA">
+                Get Contacts
+              </nuxt-link>
             </div>
           </div>
           <div>
