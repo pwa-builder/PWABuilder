@@ -10,7 +10,7 @@
 
     <div v-if="showAddButton" id="featureCardActionsBlock">
       <nuxt-link @click="$awa( { 'referrerUri': `https://www.pwabuilder.com/features/${sample.title}` })" id="featureCardAddButton" v-bind:to="`/feature/${sample.title}`">
-        View Snippet
+        View Feature
       </nuxt-link>
     </div>
   </div>

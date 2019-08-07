@@ -12,6 +12,12 @@
       </div>
     </section>
 
+    <no-ssr>
+      <div id="seeMoreBlock" ref="seeMoreBlock">
+        <button @click="scrollToToolkit()">Microsoft Graph Toolkit</button>
+      </div>
+    </no-ssr>
+
     <section id="featureListBlock">
       <FeatureCard
         v-if="samples.length > 0 && !selectedSamples.includes(sample)"
@@ -50,34 +56,53 @@
       <div class="fakeCard">
         <Loading active></Loading>
       </div>
-    </section>
-
-    <section id="headerSection">
-          <div id="graphToolkitSection">
-            <div>
-              <div id="toolkitHeaderDiv">
-                <h1 id="featurePageHeader">Microsoft Graph Toolkit</h1>
-              </div>
-
-              <p>The Microsoft Graph Toolkit is a collection of framework-agnostic web components and helpers for accessing and working with Microsoft Graph. All components can access Microsoft Graph without any customization required.</p>
-
-              <div id="graphActions">
-                <a
-                  id="graphStartedA"
-                  href="https://docs.microsoft.com/en-us/graph/toolkit/overview"
-                >Get Started</a>
-
-                <a id="authStartedA">Auth with Graph</a>
-              </div>
-            </div>
-          <div>
-          
-          <h1 id="graphExampleHeader">Example</h1>
-
-          <script async src="//jsfiddle.net/metulev/9phqxLd5/embed/html,result/"></script>
-        </div>
+      <div class="fakeCard">
+        <Loading active></Loading>
+      </div>
+      <div class="fakeCard">
+        <Loading active></Loading>
+      </div>
+      <div class="fakeCard">
+        <Loading active></Loading>
+      </div>
+      <div class="fakeCard">
+        <Loading active></Loading>
+      </div>
+      <div class="fakeCard">
+        <Loading active></Loading>
+      </div>
+      <div class="fakeCard">
+        <Loading active></Loading>
       </div>
     </section>
+
+    <no-ssr>
+      <section id="headerSection">
+        <div id="graphToolkitSection" ref="toolkitSection">
+          <div>
+            <div id="toolkitHeaderDiv">
+              <h1 id="featurePageHeader">Microsoft Graph Toolkit</h1>
+            </div>
+
+            <p>The Microsoft Graph Toolkit is a collection of framework-agnostic web components and helpers for accessing and working with Microsoft Graph. All components can access Microsoft Graph without any customization required.</p>
+
+            <div id="graphActions">
+              <a
+                id="graphStartedA"
+                href="https://docs.microsoft.com/en-us/graph/toolkit/overview"
+              >Get Started</a>
+
+              <a id="authStartedA">Auth with Graph</a>
+            </div>
+          </div>
+          <div>
+            <h1 id="graphExampleHeader">Example</h1>
+
+            <script async src="//jsfiddle.net/metulev/9phqxLd5/embed/html,result/"></script>
+          </div>
+        </div>
+      </section>
+    </no-ssr>
   </main>
 </template>
 
@@ -125,6 +150,7 @@ export default class extends Vue {
 
   async mounted() {
     console.log(this.samples.length);
+
     await this.getSamples();
     console.log("samples", this.samples);
 
@@ -133,6 +159,49 @@ export default class extends Vue {
     if (score) {
       this.overallGrade = score;
     }
+
+    await this.setUpScrollingHide();
+  }
+
+  scrollToToolkit() {
+    (this.$refs.toolkitSection as Element).scrollIntoView({behavior: "smooth"});
+  }
+
+  setUpScrollingHide() {
+    return new Promise(resolve => {
+      const observer = new IntersectionObserver(
+        entries => {
+          console.log(entries);
+          console.log(this.$refs.seeMoreBlock);
+
+          if (entries[0].isIntersecting) {
+            (this.$refs.seeMoreBlock as Element).animate(
+              [
+                {
+                  transform: "translateY(0)",
+                },
+                {
+                  transform: "translateY(100px)",
+                }
+              ],
+              {
+                duration: 300,
+                fill: "forwards"
+              }
+            );
+
+            observer.disconnect();
+          }
+        },
+        {
+          threshold: 0.4
+        }
+      );
+
+      observer.observe(this.$refs.toolkitSection as Element);
+
+      resolve();
+    });
   }
 
   async destroyed() {
@@ -308,6 +377,41 @@ export default class extends Vue {
 @import "~assets/scss/base/variables";
 @import "~assets/scss/base/animations";
 
+#seeMoreBlock {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 4em;
+  background: linear-gradient(
+    180deg,
+    rgba(240, 240, 240, 0) 0%,
+    #f0f0f0 50.38%
+  );
+}
+
+#seeMoreBlock button {
+  background: linear-gradient(
+    270deg,
+    rgb(36, 36, 36) 23.15%,
+    rgb(60, 60, 60) 57.68%
+  );
+  color: white;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  border: none;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 20px;
+}
+
 #modalBackground {
   position: fixed;
   top: 0;
@@ -425,6 +529,7 @@ header {
   padding-right: 159px;
   margin-top: 24px;
   margin-bottom: 60px;
+  min-height: 600px;
 
   .fakeCard {
     display: flex;
@@ -565,6 +670,7 @@ header {
   justify-content: space-between;
 
   background: white;
+  border-radius: 4px;
   padding-left: 2em;
   padding-right: 2em;
   padding-bottom: 3em;
