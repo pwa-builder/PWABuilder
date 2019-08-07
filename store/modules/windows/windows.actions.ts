@@ -84,6 +84,13 @@ export const actions: Actions<State, RootState> = {
                   }
                 }
 
+                /*for(let i = 0; i < results.length; i++) {
+                  console.log('title includes graph', (results[i].title as string).toLowerCase().includes('graph'));
+                  if ((results[i].title as string).toLowerCase().includes('graph')) {
+                    results.splice(i, 1);
+                  }
+                }*/
+
                 return results;
               });
 

@@ -12,11 +12,11 @@
       </div>
     </section>
 
-    <no-ssr>
-      <div id="seeMoreBlock" ref="seeMoreBlock">
-        <button @click="scrollToToolkit()">Microsoft Graph Toolkit</button>
-      </div>
-    </no-ssr>
+    <div id="featureTabsBar">
+      <button v-bind:class="{ active: showPWASamples }" @click="pwaSamples()">Device / PWA</button>
+      <button v-bind:class="{ active: showAuthSamples }" @click="showAuthSamplesMethod()">Graph</button>
+      <button>Facebook</button>
+    </div>
 
     <section id="fakeCardBlock" v-if="samples.length === 0">
       <div class="fakeCard">
@@ -48,10 +48,10 @@
       </div>
     </section>
 
-    <section id="featureListBlock">
+    <section v-if="showPWASamples" id="featureListBlock">
       <FeatureCard
-        v-if="samples.length > 0 && !selectedSamples.includes(sample)"
-        v-for="sample in samples"
+        v-if="cleanedPWASamples.length > 0 && !selectedSamples.includes(sample)"
+        v-for="sample in cleanedPWASamples"
         :sample="sample"
         :key="sample.id"
         v-on:removed="onRemoved"
@@ -76,7 +76,22 @@
       </FeatureCard>
     </section>
 
-    <section id="headerSection">
+    <section v-if="showAuthSamples" id="featureListBlock">
+      <FeatureCard
+        v-if="authSamples.length > 0 && !selectedSamples.includes(sample)"
+        v-for="sample in authSamples"
+        :sample="sample"
+        :key="sample.id"
+        v-on:removed="onRemoved"
+        :showRemoveButton="false"
+        :showAddButton="true"
+        :wrapText="true"
+      >
+        <i slot="iconSlot" class="fas fa-rocket"></i>
+      </FeatureCard>
+    </section>
+
+    <!--<section class="toolkitBlock" id="headerSection">
       <div id="graphToolkitSection" ref="toolkitSection">
         <div>
           <div id="toolkitHeaderDiv">
@@ -91,8 +106,6 @@
               href="https://docs.microsoft.com/en-us/graph/toolkit/overview"
             >Get Started</a>
 
-            <!--<a id="authStartedA">Auth with Graph</a>
-            <a id="authStartedA">Get Contacts</a>-->
             <nuxt-link
               v-bind:to="`/feature/${'Microsoft Graph Authentication'}`"
               id="authStartedA"
@@ -109,7 +122,7 @@
           <script async src="//jsfiddle.net/metulev/9phqxLd5/embed/html,result/"></script>
         </div>
       </div>
-    </section>
+    </section>-->
   </main>
 </template>
 
@@ -143,10 +156,14 @@ export default class extends Vue {
   public viewerSize = "5rem";
   public viewerSizeBottom = "55rem";
   overallGrade: string | null = null;
+  showPWASamples = true;
+  showAuthSamples = false;
 
   currentPendingSample: windowsStore.Sample | null = null;
 
   selectedSamples: windowsStore.Sample[] = [];
+  authSamples: any[] = [];
+  cleanedPWASamples: any[] = [];
   @WindowsState sample: windowsStore.Sample;
   @WindowsState samples: windowsStore.Sample[];
 
@@ -161,55 +178,42 @@ export default class extends Vue {
     await this.getSamples();
     console.log("samples", this.samples);
 
+    this.cleanedPWASamples = this.samples.filter(sample => {
+      if((sample.title as string).toLowerCase().includes("graph") === false) {
+        return sample;
+      }
+    });
+
+    console.log(this.cleanedPWASamples);
+
     const score = sessionStorage.getItem("overallGrade");
     console.log(score);
     if (score) {
       this.overallGrade = score;
     }
+  }
 
-    await this.setUpScrollingHide();
+  pwaSamples() {
+    this.cleanedPWASamples = this.samples.filter(sample => {
+      if((sample.title as string).toLowerCase().includes("graph") === false) {
+        return sample;
+      }
+    });
+    this.showPWASamples = true;
+    this.showAuthSamples = false;
+  }
+
+  showAuthSamplesMethod() {
+    this.authSamples = this.samples.filter(sample =>
+      (sample.title as string).toLowerCase().includes("graph")
+    );
+    this.showAuthSamples = true;
+    this.showPWASamples = false;
   }
 
   scrollToToolkit() {
     (this.$refs.toolkitSection as Element).scrollIntoView({
       behavior: "smooth"
-    });
-  }
-
-  setUpScrollingHide() {
-    return new Promise(resolve => {
-      const observer = new IntersectionObserver(
-        entries => {
-          console.log(entries);
-          console.log(this.$refs.seeMoreBlock);
-
-          if (entries[0].isIntersecting) {
-            (this.$refs.seeMoreBlock as Element).animate(
-              [
-                {
-                  transform: "translateY(0)"
-                },
-                {
-                  transform: "translateY(100px)"
-                }
-              ],
-              {
-                duration: 300,
-                fill: "forwards"
-              }
-            );
-
-            observer.disconnect();
-          }
-        },
-        {
-          threshold: 0.4
-        }
-      );
-
-      observer.observe(this.$refs.toolkitSection as Element);
-
-      resolve();
     });
   }
 
@@ -386,6 +390,37 @@ export default class extends Vue {
 @import "~assets/scss/base/variables";
 @import "~assets/scss/base/animations";
 
+#featureTabsBar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#featureTabsBar button {
+  background: linear-gradient(
+    270deg,
+    rgb(36, 36, 36) 23.15%,
+    rgb(60, 60, 60) 57.68%
+  );
+  color: white;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  border: none;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 20px;
+  margin: 10px;
+}
+
+#featureTabsBar button.active {
+  background: linear-gradient(270deg, #622392 17.15%, #9337d8 52.68%);
+}
+
 #seeMoreBlock {
   position: fixed;
   bottom: 0;
@@ -538,7 +573,7 @@ header {
   padding-right: 159px;
   margin-top: 24px;
   margin-bottom: 60px;
-  min-height: 600px;
+  min-height: 450px;
 
   .fakeCard {
     display: flex;
