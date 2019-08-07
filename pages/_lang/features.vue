@@ -18,34 +18,6 @@
       </div>
     </no-ssr>
 
-    <section id="featureListBlock">
-      <FeatureCard
-        v-if="samples.length > 0 && !selectedSamples.includes(sample)"
-        v-for="sample in samples"
-        :sample="sample"
-        :key="sample.id"
-        v-on:removed="onRemoved"
-        :showRemoveButton="false"
-        :showAddButton="true"
-        :wrapText="true"
-      >
-        <i slot="iconSlot" class="fas fa-rocket"></i>
-      </FeatureCard>
-
-      <FeatureCard
-        v-if="selectedSamples.length > 0"
-        v-for="sample in selectedSamples"
-        :sample="sample"
-        :key="sample.id"
-        v-on:removed="onRemoved"
-        :showRemoveButton="true"
-        :showAddButton="true"
-        :wrapText="true"
-      >
-        <i slot="iconSlot" class="fas fa-rocket"></i>
-      </FeatureCard>
-    </section>
-
     <section id="fakeCardBlock" v-if="samples.length === 0">
       <div class="fakeCard">
         <Loading active></Loading>
@@ -76,40 +48,68 @@
       </div>
     </section>
 
-    <no-ssr>
-      <section id="headerSection">
-        <div id="graphToolkitSection" ref="toolkitSection">
-          <div>
-            <div id="toolkitHeaderDiv">
-              <h1 id="featurePageHeader">Microsoft Graph Toolkit</h1>
-            </div>
+    <section id="featureListBlock">
+      <FeatureCard
+        v-if="samples.length > 0 && !selectedSamples.includes(sample)"
+        v-for="sample in samples"
+        :sample="sample"
+        :key="sample.id"
+        v-on:removed="onRemoved"
+        :showRemoveButton="false"
+        :showAddButton="true"
+        :wrapText="true"
+      >
+        <i slot="iconSlot" class="fas fa-rocket"></i>
+      </FeatureCard>
 
-            <p>The Microsoft Graph Toolkit is a collection of framework-agnostic web components and helpers for accessing and working with Microsoft Graph. All components can access Microsoft Graph without any customization required.</p>
+      <FeatureCard
+        v-if="selectedSamples.length > 0"
+        v-for="sample in selectedSamples"
+        :sample="sample"
+        :key="sample.id"
+        v-on:removed="onRemoved"
+        :showRemoveButton="true"
+        :showAddButton="true"
+        :wrapText="true"
+      >
+        <i slot="iconSlot" class="fas fa-rocket"></i>
+      </FeatureCard>
+    </section>
 
-            <div id="graphActions">
-              <a
-                id="graphStartedA"
-                href="https://docs.microsoft.com/en-us/graph/toolkit/overview"
-              >Get Started</a>
-
-              <!--<a id="authStartedA">Auth with Graph</a>
-              <a id="authStartedA">Get Contacts</a>-->
-              <nuxt-link v-bind:to="`/feature/${'Microsoft Graph Authentication'}`" id="authStartedA">
-                Auth With Graph
-              </nuxt-link>
-              <nuxt-link v-bind:to="`/feature/${'Microsoft Graph Contacts API'}`" id="authStartedA">
-                Get Contacts
-              </nuxt-link>
-            </div>
+    <section id="headerSection">
+      <div id="graphToolkitSection" ref="toolkitSection">
+        <div>
+          <div id="toolkitHeaderDiv">
+            <h1 id="featurePageHeader">Microsoft Graph Toolkit</h1>
           </div>
-          <div>
-            <h1 id="graphExampleHeader">Example</h1>
 
-            <script async src="//jsfiddle.net/metulev/9phqxLd5/embed/html,result/"></script>
+          <p>The Microsoft Graph Toolkit is a collection of framework-agnostic web components and helpers for accessing and working with Microsoft Graph. All components can access Microsoft Graph without any customization required.</p>
+
+          <div id="graphActions">
+            <a
+              id="graphStartedA"
+              href="https://docs.microsoft.com/en-us/graph/toolkit/overview"
+            >Get Started</a>
+
+            <!--<a id="authStartedA">Auth with Graph</a>
+            <a id="authStartedA">Get Contacts</a>-->
+            <nuxt-link
+              v-bind:to="`/feature/${'Microsoft Graph Authentication'}`"
+              id="authStartedA"
+            >Auth With Graph</nuxt-link>
+            <nuxt-link
+              v-bind:to="`/feature/${'Microsoft Graph Contacts API'}`"
+              id="authStartedA"
+            >Get Contacts</nuxt-link>
           </div>
         </div>
-      </section>
-    </no-ssr>
+        <div>
+          <h1 id="graphExampleHeader">Example</h1>
+
+          <script async src="//jsfiddle.net/metulev/9phqxLd5/embed/html,result/"></script>
+        </div>
+      </div>
+    </section>
   </main>
 </template>
 
@@ -171,7 +171,9 @@ export default class extends Vue {
   }
 
   scrollToToolkit() {
-    (this.$refs.toolkitSection as Element).scrollIntoView({behavior: "smooth"});
+    (this.$refs.toolkitSection as Element).scrollIntoView({
+      behavior: "smooth"
+    });
   }
 
   setUpScrollingHide() {
@@ -185,10 +187,10 @@ export default class extends Vue {
             (this.$refs.seeMoreBlock as Element).animate(
               [
                 {
-                  transform: "translateY(0)",
+                  transform: "translateY(0)"
                 },
                 {
-                  transform: "translateY(100px)",
+                  transform: "translateY(100px)"
                 }
               ],
               {
