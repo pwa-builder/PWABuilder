@@ -298,7 +298,9 @@
                 <h2>Microsoft Teams</h2>
               </div>
 
-              <p>PWAs are available directly in Microsoft Teams as a Teams app. To generate a package for Microsoft Teams, click here</p>
+              <p>
+                Did you know your PWA can run directly inside of Microsoft Teams as an app? Download the app package to submit to the Teams developer portal
+              </p>
 
               <section class="platformDownloadBar">
                 <Download class="platformDownloadButton" platform="windows" message="Download" />
