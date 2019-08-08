@@ -1093,5 +1093,20 @@ export default class extends Vue {
     padding-right: 38em;
   }
 }
+
+@media (min-width: 1600px) {
+  #publishSideBySide {
+    background-position: -33em;
+    height: 164vh;
+  }
+
+  #publishSideBySide #publishLeftSide #introContainer {
+    margin-bottom: 48em;
+  }
+
+  #publishSideBySide #publishRightSide #platformsListContainer {
+    margin-bottom: 18em;
+  }
+}
 </style>
 
