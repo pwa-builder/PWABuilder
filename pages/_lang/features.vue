@@ -14,8 +14,9 @@
 
     <div id="featureTabsBar">
       <button v-bind:class="{ active: showPWASamples }" @click="pwaSamples()">Device / PWA</button>
-      <button v-bind:class="{ active: showAuthSamples }" @click="showAuthSamplesMethod()">Graph</button>
-      <button>Facebook</button>
+      <button v-bind:class="{ active: showAuthSamples }" @click="showAuthSamplesMethod()">Authentication</button>
+      <button v-bind:class="{ active: showEduSamples }" @click="showEduSamplesMethod()">Education</button>
+      <button v-bind:class="{ active: showBusSamples }" @click="showBusSamplesMethod()">Business</button>
     </div>
 
     <section id="fakeCardBlock" v-if="samples.length === 0">
@@ -50,8 +51,8 @@
 
     <section v-if="showPWASamples" id="featureListBlock">
       <FeatureCard
-        v-if="cleanedPWASamples.length > 0 && !selectedSamples.includes(sample)"
-        v-for="sample in cleanedPWASamples"
+        v-if="samples.length > 0 && !selectedSamples.includes(sample)"
+        v-for="sample in samples"
         :sample="sample"
         :key="sample.id"
         v-on:removed="onRemoved"
@@ -80,6 +81,36 @@
       <FeatureCard
         v-if="authSamples.length > 0 && !selectedSamples.includes(sample)"
         v-for="sample in authSamples"
+        :sample="sample"
+        :key="sample.id"
+        v-on:removed="onRemoved"
+        :showRemoveButton="false"
+        :showAddButton="true"
+        :wrapText="true"
+      >
+        <i slot="iconSlot" class="fas fa-rocket"></i>
+      </FeatureCard>
+    </section>
+
+    <section v-if="showEduSamples" id="featureListBlock">
+      <FeatureCard
+        v-if="eduSamples.length > 0 && !selectedSamples.includes(sample)"
+        v-for="sample in eduSamples"
+        :sample="sample"
+        :key="sample.id"
+        v-on:removed="onRemoved"
+        :showRemoveButton="false"
+        :showAddButton="true"
+        :wrapText="true"
+      >
+        <i slot="iconSlot" class="fas fa-rocket"></i>
+      </FeatureCard>
+    </section>
+
+    <section v-if="showBusSamples" id="featureListBlock">
+      <FeatureCard
+        v-if="busSamples.length > 0 && !selectedSamples.includes(sample)"
+        v-for="sample in busSamples"
         :sample="sample"
         :key="sample.id"
         v-on:removed="onRemoved"
@@ -158,12 +189,17 @@ export default class extends Vue {
   overallGrade: string | null = null;
   showPWASamples = true;
   showAuthSamples = false;
+  showEduSamples = false;
+  showBusSamples = false;
 
   currentPendingSample: windowsStore.Sample | null = null;
 
   selectedSamples: windowsStore.Sample[] = [];
   authSamples: any[] = [];
   cleanedPWASamples: any[] = [];
+  eduSamples: any[] = [];
+  busSamples: any[] = [];
+
   @WindowsState sample: windowsStore.Sample;
   @WindowsState samples: windowsStore.Sample[];
 
@@ -199,16 +235,53 @@ export default class extends Vue {
         return sample;
       }
     });
+
     this.showPWASamples = true;
     this.showAuthSamples = false;
+    this.showEduSamples = false;
+    this.showBusSamples = false;
   }
 
   showAuthSamplesMethod() {
     this.authSamples = this.samples.filter(sample =>
-      (sample.title as string).toLowerCase().includes("graph")
+      (sample.title as string).toLowerCase().includes("authentication") || (sample.title as string).toLowerCase().includes("contacts")
     );
+
     this.showAuthSamples = true;
     this.showPWASamples = false;
+    this.showEduSamples = false;
+    this.showBusSamples = false;
+  }
+
+  showEduSamplesMethod() {
+    this.eduSamples = this.samples.filter(sample => {
+      if ((sample.title as string).toLowerCase().includes("graph") || (sample.title as string).toLowerCase().includes("midi")) {
+        console.log(sample);
+        return sample;
+      }
+    });
+
+    this.showAuthSamples = false;
+    this.showPWASamples = false;
+    this.showEduSamples = true;
+    this.showBusSamples = false;
+  }
+
+  showBusSamplesMethod() {
+    this.busSamples = this.samples.filter(sample => {
+      if ((sample.title as string).toLowerCase().includes("graph") ||
+       (sample.title as string).toLowerCase().includes('install') ||
+       (sample.title as string).toLowerCase().includes('clipboard')
+      ) {
+        console.log('sample', sample);
+        return sample;
+      }
+    });
+
+    this.showAuthSamples = false;
+    this.showPWASamples = false;
+    this.showEduSamples = false;
+    this.showBusSamples = true;
   }
 
   scrollToToolkit() {
@@ -587,6 +660,7 @@ header {
 
 #featureListBlock .card {
   width: initial !important;
+  max-height: 240px;
 }
 
 @media (max-width: 1336px) {
