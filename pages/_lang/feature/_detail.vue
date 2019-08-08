@@ -99,7 +99,7 @@ export default class extends Vue {
   ];
 
   baseURL =
-    "https://raw.githubusercontent.com/pwa-builder/pwabuilder-snippits/master/src";
+    "https://raw.githubusercontent.com/pwa-builder/pwabuilder-snippits/demo/src";
 
   docsContent: string | null = null;
 
