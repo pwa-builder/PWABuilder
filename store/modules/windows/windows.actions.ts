@@ -68,6 +68,18 @@ export const actions: Actions<State, RootState> = {
                   ({
                     title: "Web MIDI",
                     description: "A simple script that gives your app the ability to connect to a MIDI device such as a keyboard"
+                  } as any),
+                  ({
+                    title: "Pick the right people with the Microsoft Graph",
+                    description: "The People Picker component enables the user to view, add, or remove people objects from a dynamic drop-down list as they type."
+                  } as any),
+                  ({
+                    title: "Visualize people from the Microsoft Graph",
+                    description: "The person component is used to display a person or contact by using their photo, name, and/or email address."
+                  } as any),
+                  ({
+                    title: "Manage tasks through the Microsoft Graph",
+                    description: "The Tasks component enables the user to view, add, remove, complete, or edit tasks. It works with tasks in Microsoft Planner or Microsoft To-Do."
                   } as any)
                 );
 

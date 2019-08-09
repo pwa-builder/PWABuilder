@@ -554,6 +554,7 @@ export default class extends Vue {
 main {
   @include backgroundRightPoint(80%, 50vh);
   height: 100vh;
+  overflow: scroll;
 }
 
 @media (max-height: 805px) {
@@ -645,7 +646,7 @@ header {
   padding-left: 159px;
   padding-right: 159px;
   margin-top: 24px;
-  margin-bottom: 60px;
+  margin-bottom: 104px;
   min-height: 450px;
 
   .fakeCard {

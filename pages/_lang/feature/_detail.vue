@@ -104,6 +104,18 @@ export default class extends Vue {
     {
       realName: "midi",
       mappedName: "Web MIDI"
+    },
+    {
+      realName: "graphPeoplePicker",
+      mappedName: "Pick the right people with the Microsoft Graph"
+    },
+    {
+      realName: "graphPerson",
+      mappedName: "Visualize people from the Microsoft Graph"
+    },
+    {
+      realName: "graphTasks",
+      mappedName: "Manage tasks through the Microsoft Graph"
     }
   ];
 
@@ -186,7 +198,7 @@ export default class extends Vue {
 
   goToGithub() {
     window.open(
-      `https://github.com/pwa-builder/pwabuilder-snippits/tree/master/src/${this.currentSample.realName}/${this.currentSample.realName}.md`,
+      `https://github.com/pwa-builder/pwabuilder-snippits/tree/demo/src/${this.currentSample.realName}/${this.currentSample.realName}.md`,
       "_blank"
     );
   }
