@@ -189,7 +189,7 @@ export default class extends Vue {
 
     for (let i = 0; i < els.length; i++) {
       if ((els[i] as any).textContent.toLowerCase().includes("client")) {
-        els[i].textContent = '"asdfasdfj23"';
+        els[i].textContent = '"a974dfa0-9f57-49b9-95db-90f04ce2111a"';
       }
     }
     
