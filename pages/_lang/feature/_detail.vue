@@ -2,6 +2,11 @@
   <div id="mainDiv">
     <HubHeader></HubHeader>
 
+    <div v-if="onAuth" id="clientIdBlock">
+      <button v-if="!idGenerated" @click="generateID()">Generate Client ID</button>
+      <div id="generatedDiv" v-else @click="generateID()">ID Generated</div>
+    </div>
+
     <button @click="goBack()" id="backButton">
       <i class="fas fa-chevron-left"></i>
     </button>
@@ -59,6 +64,10 @@ export default class extends Vue {
 
   shared: boolean = false;
 
+  onAuth: boolean = false;
+
+  idGenerated: boolean = false;
+
   snippitMap = [
     {
       realName: "graphAuth",
@@ -111,6 +120,17 @@ export default class extends Vue {
       if (snippit.mappedName === this.$route.params.featureDetail) {
         this.currentSample = snippit;
 
+        console.log("feature detail", this.$route.params.featureDetail);
+
+        // temporary for demo
+        if (
+          this.$route.params.featureDetail === "Microsoft Graph Authentication"
+        ) {
+          this.onAuth = true;
+        } else {
+          this.onAuth = false;
+        }
+
         console.log(snippit);
 
         const response = await fetch(
@@ -152,11 +172,21 @@ export default class extends Vue {
     });*/
   }
 
+  generateID() {
+    const els = document.querySelectorAll(".hljs-string");
+
+    for (let i = 0; i < els.length; i++) {
+      if ((els[i] as any).textContent.toLowerCase().includes("client")) {
+        els[i].textContent = '"asdfasdfj23"';
+      }
+    }
+
+    this.idGenerated = true;
+  }
+
   goToGithub() {
     window.open(
-      `https://github.com/pwa-builder/pwabuilder-snippits/tree/master/src/${
-        this.currentSample.realName
-      }/${this.currentSample.realName}.md`,
+      `https://github.com/pwa-builder/pwabuilder-snippits/tree/master/src/${this.currentSample.realName}/${this.currentSample.realName}.md`,
       "_blank"
     );
   }
@@ -230,6 +260,52 @@ export default class extends Vue {
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
 @import "~assets/scss/vendor/highlightjs2";
+
+#clientIdBlock {
+  position: absolute;
+  left: 38.8%;
+  top: 14.4em;
+}
+
+#clientIdBlock button {
+  background: linear-gradient(
+    270deg,
+    rgb(36, 36, 36) 23.15%,
+    rgb(60, 60, 60) 57.68%
+  );
+  color: white;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 21px;
+  border: none;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 20px;
+}
+
+#clientIdBlock #generatedDiv {
+  color: white;
+  width: 150.33px;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 21px;
+  border: none;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 20px;
+  background: linear-gradient(to right, #1fc2c8, #9337d8 116%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 #docsMain #contentContainer img {
   width: 100%;
