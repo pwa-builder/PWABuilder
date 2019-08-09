@@ -192,8 +192,11 @@ export default class extends Vue {
         els[i].textContent = '"asdfasdfj23"';
       }
     }
+    
 
-    this.idGenerated = true;
+    setTimeout(() => {
+      this.idGenerated = true;
+    }, 700);
   }
 
   goToGithub() {
