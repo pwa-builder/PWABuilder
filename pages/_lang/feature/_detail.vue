@@ -312,11 +312,11 @@ export default class extends Vue {
 }
 
 .codeBlockHeader {
-  background: #f0f0f0;
+  background: #cececead;
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  height: 44px;
+  height: 34px;
   padding-right: 20px;
   border-radius: 4px 4px 0px 0px;
 }

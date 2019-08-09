@@ -6,7 +6,7 @@ tmpl.innerHTML = `
       border: none;
       fill: black;
       border-radius: 50%;
-      padding: 8px;
+      padding: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -15,8 +15,8 @@ tmpl.innerHTML = `
     }
 
     button svg {
-      height: 20px;
-      width: 20px;
+      height: 14px;
+      width: 14px;
     }
   </style>
 
