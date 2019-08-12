@@ -64,6 +64,10 @@ module.exports = {
         href: "https://fonts.googleapis.com/css?family=Open+Sans:400,600,700&display=swap"
       },
       {
+        rel: "stylesheet",
+        href: "https://unpkg.com/@ionic/core@latest/css/ionic.bundle.css"
+      },
+      {
         rel: 'apple-touch-icon',
         href: '/Images/assets/icons/apple-icon-06144a2a7b5101d447ecb4832502e73e.png'
       },
@@ -126,10 +130,16 @@ module.exports = {
         src: '/copyButton.js'
       },
       {
+        src: '/platformPop.js'
+      },
+      {
         src: "https://fluentweb-nightly-static.netlify.com/fluentweb/fluentweb.js",
         async: true,
         defer: true
       },
+      {
+        src: 'https://unpkg.com/@ionic/core@latest/dist/ionic.js'
+      }
     ]
   },
   loading: {

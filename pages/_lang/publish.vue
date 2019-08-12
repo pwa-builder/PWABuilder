@@ -212,11 +212,17 @@
         </div>
       </section>
 
+      <ion-popover-controller></ion-popover-controller>
+
       <section id="publishRightSide">
         <div id="platformsListContainer">
           <ul>
-            <div id="pwaMainCard" class="pwaCard">
-              <div class="pwaCardHeaderBlock">
+            <div
+              id="pwaMainCard"
+              class="pwaCard"
+
+            >
+              <div @mouseenter="presentPopover($event)" @mouseleave="closePopover()" class="pwaCardHeaderBlock">
                 <img id="pwaIcon" src="~/assets/images/pwaLogo.svg" />
                 <h2>Progressive Web App</h2>
               </div>
@@ -236,7 +242,7 @@
             </div>
 
             <div id="pwaAndroidCard" class="pwaCard">
-              <div class="pwaCardHeaderBlock">
+              <div @mouseenter="presentPopover($event)" @mouseleave="closePopover()" class="pwaCardHeaderBlock">
                 <i id="platformIcon" class="fab fa-android"></i>
                 <h2>Android</h2>
               </div>
@@ -252,7 +258,7 @@
 
             <!--samsung platform-->
             <div id="pwaSamsungCard" class="pwaCard">
-              <div class="pwaCardHeaderBlock">
+              <div @mouseenter="presentPopover($event)" @mouseleave="closePopover()" class="pwaCardHeaderBlock">
                 <svg
                   width="89"
                   height="30"
@@ -277,7 +283,7 @@
             </div>
 
             <div id="pwaWindowsCard" class="pwaCard">
-              <div class="pwaCardHeaderBlock">
+              <div @mouseenter="presentPopover($event)" @mouseleave="closePopover()" class="pwaCardHeaderBlock">
                 <i id="platformIcon" class="fab fa-windows"></i>
                 <h2>Windows</h2>
               </div>
@@ -292,15 +298,13 @@
             </div>
 
             <div id="pwaTeamsCard" class="pwaCard">
-              <div class="pwaCardHeaderBlock">
+              <div @mouseenter="presentPopover($event)" @mouseleave="closePopover()" class="pwaCardHeaderBlock">
                 <i id="platformIcon" class="fab fa-windows"></i>
 
                 <h2>Microsoft Teams</h2>
               </div>
 
-              <p>
-                Did you know your PWA can run directly inside of Microsoft Teams as an app? Download the app package to submit to the Teams developer portal
-              </p>
+              <p>Did you know your PWA can run directly inside of Microsoft Teams as an app? Download the app package to submit to the Teams developer portal</p>
 
               <section class="platformDownloadBar">
                 <Download class="platformDownloadButton" platform="windows" message="Download" />
@@ -308,7 +312,7 @@
             </div>
 
             <div id="pwaMacosCard" class="pwaCard">
-              <div class="pwaCardHeaderBlock">
+              <div @mouseenter="presentPopover($event)" @mouseleave="closePopover()" class="pwaCardHeaderBlock">
                 <i id="platformIcon" class="fab fa-apple"></i>
                 <h2>MacOS</h2>
               </div>
@@ -321,7 +325,7 @@
             </div>
 
             <div id="pwaIosCard" class="pwaCard">
-              <div class="pwaCardHeaderBlock">
+              <div @mouseenter="presentPopover($event)" @mouseleave="closePopover()" class="pwaCardHeaderBlock">
                 <i id="platformIcon" class="fab fa-apple"></i>
                 <h2>iOS</h2>
               </div>
@@ -420,9 +424,50 @@ export default class extends Vue {
   public openAndroid: boolean = false;
   public openWindows: boolean = false;
   public showBackground: boolean = false;
+  public platPop: any = null;
 
   public created(): void {
     this.updateStatus();
+  }
+
+  async presentPopover(ev) {
+    console.log(ev.target.innerText);
+
+    const popoverController = document.querySelector("ion-popover-controller");
+    await (popoverController as any).componentOnReady();
+    console.log(this.platPop);
+
+    if (this.platPop === null) {
+      this.platPop = "";
+
+      this.platPop = await (popoverController as any).create({
+        component: "platform-pop",
+        componentProps: {
+          'platform': ev.target.innerText
+        },
+        event: ev,
+        translucent: true,
+        showBackdrop: false
+      });
+      await this.platPop.present();
+
+      /*setTimeout(async () => {
+        if (this.platPop) {
+          await this.platPop.dismiss();
+        }
+      }, 800);*/
+    }
+  }
+
+  async closePopover() {
+    setTimeout(async () => {
+      console.log("mouseleave");
+
+      if (this.platPop) {
+        await this.platPop.dismiss();
+        this.platPop = null;
+      }
+    }, 1200);
   }
 
   public goToHome(): void {
@@ -772,8 +817,6 @@ export default class extends Vue {
           grid-area: macos;
         }
 
-
-
         #pwaWindowsCard {
           grid-area: windows;
 
@@ -800,7 +843,6 @@ export default class extends Vue {
 
         #pwaSamsungCard {
           grid-area: samsung;
-
         }
 
         #windowsListItem {
@@ -1017,7 +1059,8 @@ export default class extends Vue {
     left: 18em;
   }
 
-  #pwaAndroidCard p, #pwaWindowsCard p {
+  #pwaAndroidCard p,
+  #pwaWindowsCard p {
     min-height: 10em !important;
   }
 }
