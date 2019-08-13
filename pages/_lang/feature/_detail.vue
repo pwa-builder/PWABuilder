@@ -21,7 +21,7 @@
       <span>Github</span>
     </button>
 
-    <button @click="goToDocs()" id="featDetailDocsButton">
+    <button v-if="onGraph" @click="goToDocs()" id="featDetailDocsButton">
       <i class="fas fa-book"></i>
       <span>Docs</span>
     </button>
@@ -70,6 +70,7 @@ export default class extends Vue {
   shared: boolean = false;
 
   onAuth: boolean = false;
+  onGraph: boolean = false;
 
   idGenerated: boolean = false;
 
@@ -152,6 +153,13 @@ export default class extends Vue {
           this.onAuth = true;
         } else {
           this.onAuth = false;
+        }
+
+        if (this.$route.params.featureDetail.toLowerCase().includes('graph')) {
+          this.onGraph = true;
+        }
+        else {
+          this.onGraph = false;
         }
 
         console.log(snippit);
