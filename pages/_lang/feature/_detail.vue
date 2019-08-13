@@ -21,6 +21,11 @@
       <span>Github</span>
     </button>
 
+    <button @click="goToDocs()" id="featDetailDocsButton">
+      <i class="fas fa-book"></i>
+      <span>Docs</span>
+    </button>
+
     <div v-if="shared" id="shareToast">URL copied for sharing</div>
 
     <main id="docsMain" v-html="docsContent"></main>
@@ -71,15 +76,18 @@ export default class extends Vue {
   snippitMap = [
     {
       realName: "graphAuth",
-      mappedName: "Microsoft Graph Authentication"
+      mappedName: "Microsoft Graph Authentication",
+      docsName: "login"
     },
     {
       realName: "graphContacts",
-      mappedName: "Microsoft Graph Contacts API"
+      mappedName: "Microsoft Graph Contacts API",
+      docsName: "people"
     },
     {
       realName: "graphCalendar",
-      mappedName: "Microsoft Graph Calendar API"
+      mappedName: "Microsoft Graph Calendar API",
+      docsName: "agenda"
     },
     {
       realName: "graphCreateActivity",
@@ -111,16 +119,20 @@ export default class extends Vue {
     },
     {
       realName: "graphPerson",
-      mappedName: "Visualize people from the Microsoft Graph"
+      mappedName: "Visualize people from the Microsoft Graph",
+      docsName: "person"
     },
     {
       realName: "graphTasks",
-      mappedName: "Manage tasks through the Microsoft Graph"
+      mappedName: "Manage tasks through the Microsoft Graph",
+      docsName: "tasks"
     }
   ];
 
   baseURL =
     "https://raw.githubusercontent.com/pwa-builder/pwabuilder-snippits/demo/src";
+  
+  baseGraphDocsURL = "https://docs.microsoft.com/en-us/graph/toolkit/components";
 
   docsContent: string | null = null;
 
@@ -134,7 +146,6 @@ export default class extends Vue {
 
         console.log("feature detail", this.$route.params.featureDetail);
 
-        // temporary for demo
         if (
           this.$route.params.featureDetail === "Microsoft Graph Authentication"
         ) {
@@ -192,7 +203,6 @@ export default class extends Vue {
         els[i].textContent = '"a974dfa0-9f57-49b9-95db-90f04ce2111a"';
       }
     }
-    
 
     setTimeout(() => {
       this.idGenerated = true;
@@ -204,6 +214,13 @@ export default class extends Vue {
       `https://github.com/pwa-builder/pwabuilder-snippits/tree/demo/src/${this.currentSample.realName}/${this.currentSample.realName}.md`,
       "_blank"
     );
+  }
+
+  goToDocs() {
+    window.open(
+      `${this.baseGraphDocsURL}/${this.currentSample.docsName}`,
+      "_blank"
+    )
   }
 
   goBack() {
@@ -275,6 +292,24 @@ export default class extends Vue {
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
 @import "~assets/scss/vendor/highlightjs2";
+
+#featDetailDocsButton {
+  border: solid 1px white;
+  position: absolute;
+  right: 29.6em;
+  top: 5em;
+  width: 99px;
+  height: 42px;
+  background: transparent;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+}
+
+#featDetailDocsButton span {
+  margin-left: 10px;
+}
 
 #clientIdBlock {
   position: absolute;
@@ -392,6 +427,10 @@ export default class extends Vue {
 
   #githubSnippitButton {
     right: 11em;
+  }
+
+  #featDetailDocsButton {
+    right: 19em !important;
   }
 }
 
