@@ -8,10 +8,16 @@
         Copy
       </button>
     </div>
-
-    <div class="code_viewer-pre" ref="monacoDiv"></div>
-
     <div v-if="textCopied" id="copyToast">Code Copied</div>
+    <MonacoEditor :options="monacoOptions" class="code_viewer-pre" 
+      @change="onCodeChange" 
+      @modelDecorations="onDecorationsChange" 
+      @editorDidMount="editorMount"
+      :theme="`${theme}Theme`"
+      :language="codeType"
+      v-model="code"
+      >
+    </MonacoEditor>
 
     <div v-if="showOverlay" id="errorOverlay">
       <h2>Errors</h2>
@@ -50,11 +56,10 @@
 
 <script lang='ts'>
 import Vue from "vue";
-import * as monaco from 'monaco-editor';
+import MonacoEditor from "vue-monaco";
 import Component from "nuxt-class-component";
-import { Prop, Watch } from "vue-property-decorator";
+import { Prop } from "vue-property-decorator";
 import Clipboard from "clipboard";
-
 import SkipLink from "~/components/SkipLink.vue";
 import IssuesList from "~/components/IssuesList.vue";
 import Download from "~/components/Download.vue";
@@ -64,7 +69,8 @@ import { CodeError } from "~/store/modules/generator";
   components: {
     SkipLink,
     Download,
-    IssuesList
+    IssuesList,
+    MonacoEditor
   }
 })
 export default class extends Vue {
@@ -109,15 +115,28 @@ export default class extends Vue {
   public downloadButtonMessage = "publish.download_manifest";
   public errorNumber = 0;
 
-  public editor: monaco.editor.IStandaloneCodeEditor;
+  public editor : MonacoEditor.editor;
+
+  public monacoOptions = {
+    lineNumbers: "on",
+    fixedOverflowWidgets: true,
+    wordWrap: "wordWrapColumn",
+    wordWrapColumn: 50,
+    scrollBeyondLastLine: false,
+    wordWrapMinified: true,
+    wrappingIndent: "indent",
+    fontSize: 16,
+    minimap: {
+      enabled: false
+    }
+  };
 
   showOverlay = false;
   errors: any[] = [];
   textCopied = false;
 
-  public mounted(): void {
-    console.log(this.color);
-    monaco.editor.defineTheme(`${this.theme}Theme`, {
+  mounted():void {
+    (<any>window).monaco.editor.defineTheme(`${this.theme}Theme`, {
       base: "vs",
       inherit: true,
       rules: [],
@@ -126,55 +145,27 @@ export default class extends Vue {
       }
     });
 
-    this.editor = monaco.editor.create(this.$refs.monacoDiv as HTMLElement, {
-      value: this.code,
-      // Turn line numbers on so that line numbers in errors make sense
-      lineNumbers: "on",
-      language: this.codeType,
-      fixedOverflowWidgets: true,
-      wordWrap: "wordWrapColumn",
-      wordWrapColumn: 50,
-      scrollBeyondLastLine: false,
-      // Set this to false to not auto word wrap minified files
-      wordWrapMinified: true,
-      theme: `${this.theme}Theme`,
-
-      // try "same", "indent" or "none"
-      wrappingIndent: "indent",
-      fontSize: 16,
-      minimap: {
-        enabled: false
-      }
-    });
-
-    const model = this.editor.getModel();
-
-    model.onDidChangeContent(() => {
-      const value = model.getValue();
-      this.$emit("editorValue", value);
-    });
-
-    model.onDidChangeDecorations(() => {
-      this.errors = (<any>window).monaco.editor.getModelMarkers({});
-      this.errorNumber = this.errors.length;
-
-      console.log(this.errors);
-
-      if (this.errors.length > 0) {
-        this.$emit("invalidManifest");
-      }
-    });
+    (<any>window).monaco.editor.setTheme('lighterTheme');
   }
 
-  @Watch("code")
-  onCodeChanged() {
-    if (this.editor) {
-      this.editor.setValue(this.code);
+  onCodeChange(value):void {
+    this.$emit("editorValue", value);
+  }
+
+  onDecorationsChange():void {
+    this.errors = (<any>window).monaco.editor.getModelMarkers({});
+    this.errorNumber = this.errors.length;
+
+    if (this.errors.length > 0) {
+        this.$emit("invalidManifest");
     }
   }
 
-  // @ts-ignore TS6133
-  private async copy() {
+  editorMount(editor):void {
+    this.editor = editor;
+  }
+ 
+  async copy() {
     const code = this.editor.getValue();
 
     if ((navigator as any).clipboard) {

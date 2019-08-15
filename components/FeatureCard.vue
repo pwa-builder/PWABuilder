@@ -9,7 +9,7 @@
     <p v-bind:class="{textWrap: wrapText}">{{ sample.description }}</p>
 
     <div v-if="showAddButton" id="featureCardActionsBlock">
-      <nuxt-link id="featureCardAddButton" v-bind:to="`/feature/${sample.title}`">
+      <nuxt-link @click="$awa( { 'referrerUri': `https://www.pwabuilder.com/features/${sample.title}` })" id="featureCardAddButton" v-bind:to="`/feature/${sample.title}`">
         View Snippet
       </nuxt-link>
     </div>
@@ -38,6 +38,14 @@ export default class extends Vue {
     this.$emit("removed", sample);
   }
 }
+
+declare var awa: any;
+
+Vue.prototype.$awa = function(config) {
+  awa.ct.capturePageView(config);
+
+  return;
+};
 </script>
 
 <style lang="scss" scoped>
@@ -70,6 +78,7 @@ export default class extends Vue {
 
   #featureCardTitleBlock svg {
     color: #C5C5C5;
+    font-size: 24px;
   }
 
   p {

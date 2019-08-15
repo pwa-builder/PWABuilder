@@ -430,12 +430,7 @@
 
     <div id="cardEditBlock">
       <nuxt-link v-if="category === 'Service Worker'" to="/serviceworker">
-        <button v-if="!noServiceWorker" id="editButton">
-          View Service Worker
-          <i class="fas fa-arrow-right"></i>
-        </button>
-
-        <button v-else-if="noServiceWorker">
+        <button>
           Choose a Service Worker
           <i class="fas fa-arrow-right"></i>
         </button>
@@ -447,10 +442,14 @@
           <i class="fas fa-arrow-right"></i>
         </button>
 
-        <button v-else-if="noManifest">
+        <button v-else-if="noManifest && !brokenManifest">
           View Generated Manifest
           <i class="fas fa-arrow-right"></i>
         </button>
+        <div
+          class="brkManifestError"
+          v-if="brokenManifest"
+        >The manifest is declared but cannot be reached</div>
       </nuxt-link>
     </div>
   </div>
@@ -476,6 +475,8 @@ export default class extends Vue {
   @GeneratorAction getManifestInformation;
   @GeneratorState manifest: any;
 
+  @GeneratorAction updateManifest;
+
   @Prop() public category;
   @Prop() public url;
 
@@ -484,7 +485,7 @@ export default class extends Vue {
   noMixedContent: boolean | null = null;
 
   noManifest: boolean | null = null;
-
+  brokenManifest: boolean | null = null;
   serviceWorkerData: any = null;
   noServiceWorker: boolean | null = null;
 
@@ -526,8 +527,19 @@ export default class extends Vue {
 
   private lookAtManifest(): Promise<void> {
     return new Promise(async resolve => {
-      await this.getManifestInformation();
-      console.log("manifestInfo", this.manifest);
+      try {
+        await this.getManifestInformation();
+        console.log("manifestInfo", this.manifest);
+      } catch {
+        if (this.manifest === null) {
+          this.brokenManifest = true;
+        }
+        this.noManifest = true;
+        resolve();
+        return;
+      }
+
+      console.log('generated', this.manifest.generated);
 
       if (this.manifest && this.manifest.generated === true) {
         this.noManifest = true;
@@ -561,6 +573,7 @@ export default class extends Vue {
           this.manifestScore = 0;
         }
 
+        this.updateManifest(this.manifest);
         this.$emit("manifestTestDone", { score: this.manifestScore });
         resolve();
       }
@@ -572,10 +585,10 @@ export default class extends Vue {
     const savedScore = sessionStorage.getItem("swScore");
 
     if (savedData) {
-      console.log('not making a request');
+      console.log("not making a request");
       let cleanedData = JSON.parse(savedData);
       this.serviceWorkerData = cleanedData;
-      console.log('saved data', cleanedData);
+      console.log("saved data", cleanedData);
 
       if (savedScore) {
         let cleanedScore = JSON.parse(savedScore);
@@ -590,7 +603,7 @@ export default class extends Vue {
       console.log("lookAtSW", data);
 
       this.serviceWorkerData = data.swURL;
-      console.log('data', data);
+      console.log("data", data);
 
       if (this.serviceWorkerData !== false) {
         sessionStorage.setItem(
@@ -602,7 +615,10 @@ export default class extends Vue {
       console.log("this.serviceWorkerData", this.serviceWorkerData);
       console.log(this.serviceWorkerData);
 
-      if (this.serviceWorkerData === false || this.serviceWorkerData.swURL === false) {
+      if (
+        this.serviceWorkerData === false ||
+        this.serviceWorkerData.swURL === false
+      ) {
         this.noServiceWorker = true;
         return;
       } else {
@@ -703,9 +719,15 @@ export default class extends Vue {
   }
 
   h3 {
-    font-size: 14px;
-    font-weight: bold;
     color: #707070;
+
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 18px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
 
   ul {
@@ -722,6 +744,8 @@ export default class extends Vue {
       .cardIcon {
         margin-right: 16px;
         color: initial;
+        color: #707070;
+        font-size: 12px;
       }
 
       .subScoreSpan {
@@ -738,31 +762,48 @@ export default class extends Vue {
       padding-left: 0;
       display: flex;
       flex-direction: row;
-      color: #3c3c3c;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
+      margin-bottom: 5px;
+      color: #3c3c3c span {
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 18px;
+        color: #3c3c3c;
+      }
 
       .listSubDiv {
         display: flex;
         margin-right: 11px;
         align-items: center;
+        font-family: 'Open Sans', sans-serif;
       }
 
       .subScoreSpan {
         font-size: 14px;
         font-weight: bold;
-        color: red;
+        color: #db3457;
       }
 
       .cardIcon {
-        color: red;
+        color: #db3457;
         margin-right: 8px;
+        font-size: 12px;
       }
 
       code {
-        background-color: rgba(60,60,60,0.05);
         padding: 3px;
+        background: rgba(60, 60, 60, 0.05);
+        border-radius: 4px;
+        height: 24px;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 12px;
+        line-height: 14px;
+        padding-left: 8px;
+        padding-right: 8px;
+        color: #000000;
       }
     }
   }
@@ -801,6 +842,13 @@ export default class extends Vue {
     100% {
       background-position: 468px 0;
     }
+  }
+
+  .brkManifestError {
+    color: red;
+    font-weight: bold;
+    padding-top: 1em;
+    padding-bottom: 1em;
   }
 }
 </style>

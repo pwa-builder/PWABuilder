@@ -12,10 +12,15 @@
 
       <div id="mainTabsBar">
         <nuxt-link to="/">My Hub</nuxt-link>
-        <nuxt-link to="/features">Feature Store</nuxt-link>
+        <nuxt-link
+          @click="$awa( { 'referrerUri': `https://www.pwabuilder.com/featureStore` })"
+          to="/features"
+        >Feature Store</nuxt-link>
       </div>
 
       <div id="icons">
+        <InstallButton/>
+
         <a href="https://github.com/pwa-builder" target="_blank" rel="noopener noreferrer">
           <i class="fab fa-github"></i>
         </a>
@@ -39,7 +44,9 @@
               URL Tested
               <i class="fas fa-external-link-alt"></i>
             </span>
-            {{url.replace('http://','').replace('https://','').split(/[/?#]/)[0]}}
+            <span v-if="url">
+              {{url.replace('http://','').replace('https://','').split(/[/?#]/)[0]}}
+            </span>      
           </a>
         </div>
 
@@ -48,7 +55,11 @@
           <span>Your Score</span>
         </div>
 
-        <nuxt-link id="publishButton" to="/publish">Build My PWA</nuxt-link>
+        <nuxt-link
+          class="enabled"
+          id="publishButton"
+          to="/publish"
+        >Build My PWA</nuxt-link>
       </div>
     </div>
   </div>
@@ -58,48 +69,56 @@
 import Vue from "vue";
 import { Prop, Watch } from "vue-property-decorator";
 import Component from "nuxt-class-component";
-import { State, namespace } from "vuex-class";
+import { State, namespace } from "vuex-class"; //Action
 
 import * as generator from "~/store/modules/generator";
 
+import InstallButton from "~/components/InstallButton.vue";
+
 const GeneratorState = namespace(generator.name, State);
 
-@Component({})
+@Component({
+  components: {
+    InstallButton
+  }
+})
 export default class extends Vue {
   @Prop({ default: false }) expanded: boolean;
   @Prop({}) showSubHeader: string;
   @Prop({ default: 0 }) score: number;
 
   @GeneratorState url: string;
-
   public localScore: number = 0;
   public calcedScore: number = 0;
+  readyToPublish: boolean = false;
+  @GeneratorState manifest: any;
 
   mounted() {
     const storedScore = sessionStorage.getItem("overallGrade") || null;
 
     if (storedScore) {
-      this.localScore = parseInt(storedScore);
-    }
+      this.calcedScore = parseInt(storedScore);
+    } else {
+      this.calcedScore = this.score;
 
-    this.calcedScore = this.score;
-    if ((window as any).CSS && (window as any).CSS.registerProperty) {
-      try {
-        (CSS as any).registerProperty({
-          name: "--color-stop",
-          syntax: "<color>",
-          inherits: false,
-          initialValue: "transparent"
-        });
+      if ((window as any).CSS && (window as any).CSS.registerProperty) {
+        try {
+          (CSS as any).registerProperty({
+            name: "--color-stop",
+            syntax: "<color>",
+            inherits: false,
+            initialValue: "transparent"
+          });
 
-        (CSS as any).registerProperty({
-          name: "--color-start",
-          syntax: "<color>",
-          inherits: false,
-          initialValue: "transparent"
-        });
-      } catch (err) {
-        console.error(err);
+          (CSS as any).registerProperty({
+            name: "--color-start",
+            syntax: "<color>",
+            inherits: false,
+            initialValue: "transparent"
+          });
+        } catch (err) {
+          console.error(err);
+        }
       }
     }
   }
@@ -111,6 +130,9 @@ export default class extends Vue {
 
   updated() {
     console.log("updated", this.score);
+    if (this.manifest) {
+      this.readyToPublish = true;
+    } 
     if ("requestIdleCallback" in window) {
       // Use requestIdleCallback to schedule this since its not "necessary" work
       // and we dont want this running in the middle of animations or user input
@@ -140,6 +162,14 @@ export default class extends Vue {
     }
   }
 }
+
+declare var awa: any;
+
+Vue.prototype.$awa = function(config) {
+  awa.ct.capturePageView(config);
+
+  return;
+};
 </script>
 
 <style lang="scss" scoped>
@@ -147,7 +177,7 @@ export default class extends Vue {
 @import "~assets/scss/base/variables";
 
 .nuxt-link-exact-active {
-  color: white !important;
+  color: rgba(255, 255, 255, 1) !important;
 }
 
 .smaller-header {
@@ -190,13 +220,25 @@ header {
 
     a {
       padding-bottom: 6px;
-      color: #c5c5c5;
+      font-family: Poppins;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 21px;
+      display: flex;
+      align-items: center;
+      text-align: center;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    a:hover {
+      color: white !important;
     }
   }
 
   #icons {
     grid-column: 11 / span 2;
-    width: 4em; /* TODO: Padding between instead of width? */
 
     display: flex;
     justify-content: space-around;
@@ -245,7 +287,13 @@ header {
 
     a {
       padding-bottom: 6px;
-      color: #c5c5c5;
+      color: rgba(255, 255, 255, 0.7);
+
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 19px;
+      text-align: center;
+      font-family: 'Open Sans', sans-serif;
     }
   }
 
@@ -258,7 +306,7 @@ header {
   }
 
   #urlTested {
-    color: #c5c5c5;
+    color: rgba(255, 255, 255, 0.7);
     display: flex;
     align-items: center;
 
@@ -270,9 +318,16 @@ header {
     }
 
     span {
-      font-weight: bold;
+      color: rgba(255, 255, 255, 0.7);
+
+      font-style: normal;
+      font-weight: normal;
       font-size: 12px;
-      color: #c5c5c5;
+      line-height: 16px;
+    }
+
+    span svg {
+      margin-left: 5px;
     }
 
     a {
@@ -284,61 +339,79 @@ header {
       font-weight: normal;
       display: flex;
       flex-direction: column;
+      font-weight: bold;
+      color: rgba(255, 255, 255, 0.7);
     }
+  }
+
+  #urlTested:hover {
+    span,
+    a {
+      color: rgba(255, 255, 255, 1);
+    }
+  }
+
+  #urlTested span:hover {
+    color: rgba(255, 255, 255, 1);
   }
 
   #overallScore {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    font-size: 28px;
-    font-weight: bold;
-    color: white;
     padding-right: 32px;
 
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 800;
+    font-size: 32px;
+    line-height: 26px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #ffffff;
+
     span {
-      font-size: 10px;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 12px;
+      line-height: 16px;
+      display: flex;
+      align-items: center;
+      text-align: center;
+      letter-spacing: -0.04em;
+      color: #ffffff;
+      text-transform: lowercase;
+      letter-spacing: -0.04em;
+      font-family: 'Open Sans', sans-serif;
     }
   }
 
   #publishButton {
-    --color-stop: #11999e;
-    --color-start: #7644c2;
-
     justify-self: right;
-
-    clip-path: polygon(0 0, 0 100%, 89% 100%, 100% 52%, 100% 0%);
-    height: 42px;
-    width: 120px;
     border-radius: 22px;
     border: none;
-    background: grey;
-    font-weight: bold;
-    font-size: 14px;
-    padding-top: 9px;
-    padding-bottom: 11px;
-    color: white;
-    background: linear-gradient(
-      to right,
-      var(--color-start),
-      var(--color-stop)
-    );
     display: flex;
     justify-content: center;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
+    display: flex;
     align-items: center;
-
-    transition: --color-stop 0.3s, --color-start 0.3s;
-  }
-
-  #publishButton:hover {
-    --color-stop: #7644c2;
-    --color-start: #11999e;
+    text-align: center;
+    height: 40px;
   }
 }
 
 @media (max-width: 425px) {
-  #subHeader #tabsBar,
-  #subHeader #urlTested {
+  #subHeader #tabsBar {
+    display: none;
+  }
+
+  #subHeader #publishButton {
     display: none;
   }
 
@@ -378,6 +451,17 @@ a {
 
 a:hover {
   box-shadow: none;
+}
+
+.disabled {
+  background: linear-gradient(to right, #b3d2d3, #cbb9d8 116%);
+  color: #878489;
+  pointer-events: none;
+}
+
+.enabled {
+  background: linear-gradient(to right, #1fc2c8, #9337d8 116%);
+  color: #ffffff;
 }
 
 @keyframes slidedown {
