@@ -56,7 +56,7 @@
         </div>
 
         <nuxt-link
-          :class="!readyToPublish ? 'disabled' : 'enabled'"
+          class="enabled"
           id="publishButton"
           to="/publish"
         >Build My PWA</nuxt-link>
