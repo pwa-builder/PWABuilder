@@ -56,7 +56,7 @@
         </div>
 
         <nuxt-link
-          :class="!readyToPublish ? 'disabled' : 'enabled'"
+          class="enabled"
           id="publishButton"
           to="/publish"
         >Build My PWA</nuxt-link>
@@ -69,7 +69,7 @@
 import Vue from "vue";
 import { Prop, Watch } from "vue-property-decorator";
 import Component from "nuxt-class-component";
-import { State, namespace } from "vuex-class"; //Action
+import { State, namespace } from "vuex-class";
 
 import * as generator from "~/store/modules/generator";
 
