@@ -108,7 +108,7 @@ export default class extends Vue {
     width: 100%;
     height: 1em;
     position: absolute;
-    top: 5em;
+    top: 0;
     pointer-events: none;
   }
 }

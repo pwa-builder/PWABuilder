@@ -12,7 +12,8 @@
       </div>
     </section>
 
-    <div id="featureTabsBar">
+    <div ref="scrollTarget" id="scrollTarget"></div>
+    <div id="featureTabsBar" ref="featureTabsBar">
       <button v-bind:class="{ active: showPWASamples }" @click="pwaSamples()">Device / PWA</button>
       <button v-bind:class="{ active: showAuthSamples }" @click="showAuthSamplesMethod()">Authentication</button>
       <button v-bind:class="{ active: showEduSamples }" @click="showEduSamplesMethod()">Education</button>
@@ -227,6 +228,21 @@ export default class extends Vue {
     if (score) {
       this.overallGrade = score;
     }
+
+    this.doInterObserve();
+  }
+
+  doInterObserve() {
+    let observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        (this.$refs.featureTabsBar as HTMLElement).style.background = 'transparent';
+      }
+      else {
+        (this.$refs.featureTabsBar as HTMLElement).style.background = '#36363633';
+      }
+    });
+
+    observer.observe((this.$refs.scrollTarget as Element));
   }
 
   pwaSamples() {
@@ -464,10 +480,18 @@ export default class extends Vue {
 @import "~assets/scss/base/variables";
 @import "~assets/scss/base/animations";
 
+#scrollTarget {
+    width: 100%;
+    height: 1em;
+    pointer-events: none;
+  }
+
 #featureTabsBar {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: sticky;
+  top: 0;
 }
 
 #featureTabsBar button {
