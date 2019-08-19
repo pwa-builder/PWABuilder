@@ -69,7 +69,7 @@
 import Vue from "vue";
 import { Prop, Watch } from "vue-property-decorator";
 import Component from "nuxt-class-component";
-import { State, namespace } from "vuex-class"; //Action
+import { State, namespace } from "vuex-class";S
 
 import * as generator from "~/store/modules/generator";
 
