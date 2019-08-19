@@ -245,6 +245,7 @@ export default class extends Vue {
   showAuthSamplesMethod() {
     this.authSamples = this.samples.filter(sample =>
       (sample.title as string).toLowerCase().includes("authentication") || (sample.title as string).toLowerCase().includes("contacts")
+      || (sample.title as string).toLowerCase().includes("people") || (sample.title as string).toLowerCase().includes("person")
     );
 
     this.showAuthSamples = true;
@@ -662,6 +663,7 @@ header {
 #featureListBlock .card {
   width: initial !important;
   max-height: 240px;
+  max-width: 327px;
 }
 
 @media (max-width: 1336px) {
