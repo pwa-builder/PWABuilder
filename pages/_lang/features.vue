@@ -663,7 +663,8 @@ header {
 #featureListBlock .card {
   width: initial !important;
   max-height: 240px;
-  max-width: 327px;
+  min-width: 320px;
+  max-width: 370px;
 }
 
 @media (max-width: 1336px) {
