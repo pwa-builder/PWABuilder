@@ -688,7 +688,6 @@ header {
   width: initial !important;
   max-height: 240px;
   min-width: 320px;
-  max-width: 370px;
 }
 
 @media (max-width: 1336px) {
