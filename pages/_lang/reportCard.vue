@@ -8,6 +8,13 @@
       :expanded="!gotURL"
     ></HubHeader>
 
+    <div v-if="gotURL" id="reportShareButtonContainer">
+      <button @click="shareReport">
+        <i class="fas fa-share-alt"></i>
+        Share your Results
+      </button>
+    </div>
+
     <main>
       <div v-if="!gotURL" id="inputSection">
         <div id="topHalfHome">
@@ -168,6 +175,7 @@ export default class extends Vue {
   public error: string | null = null;
   public overallScore: number = 0;
   public topSamples: Array<any> = [];
+  public cleanedURL: string | null = null;
 
   public async created() {
     this.url$ = this.url;
@@ -175,6 +183,20 @@ export default class extends Vue {
     if (this.url$ || this.url) {
       this.gotURL = true;
       this.getTopSamples();
+    } else {
+      console.log("no url");
+      if (window.location.search) {
+        const url = window.location.search.split("=")[1];
+        console.log(url);
+        this.cleanedURL = decodeURIComponent(url);
+        this.url = this.cleanedURL;
+
+        // this.gotURL = true;
+
+        setTimeout(async () => {
+          await this.checkUrlAndGenerate();
+        }, 500);
+      }
     }
   }
 
@@ -200,13 +222,44 @@ export default class extends Vue {
     }
   }
 
+  public async shareReport() {
+    console.log("trying to share", `${location.href}?url=${this.cleanedURL}`, this.url, this.url$);
+
+    if ((navigator as any).share) {
+      try {
+        await (navigator as any).share({
+          title: "PWABuilder results",
+          text: "Check out how good my PWA did!",
+          url: `${location.href}?url=${this.url}`
+        });
+      } catch (err) {
+        console.error("trouble sharing with the web share api", err);
+      }
+    } else {
+      if ((navigator as any).clipboard) {
+        try {
+          await (navigator as any).clipboard.writeText(`${location.href}?url=${this.url}`);
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        window.open(`${location.href}?url=${this.url}`, '__blank');
+      }
+    }
+  }
+
   public async checkUrlAndGenerate() {
     this.error = null;
 
     console.log("here");
 
     try {
-      console.log("in try block");
+      if (this.url$ === null || this.url$ === undefined) {
+        this.url$ = this.cleanedURL;
+      }
+
+      console.log("in try block", this.url$);
+
       await this.updateLink(this.url$);
       this.url$ = this.url;
 
@@ -305,6 +358,39 @@ declare var awa: any;
 
 #hubContainer {
   height: 100vh;
+}
+
+#reportShareButtonContainer {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 9em;
+  position: relative;
+  top: 12em;
+}
+
+#reportShareButtonContainer button {
+  background: #3c3c3c87;
+  width: 188px;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  height: 44px;
+  border-radius: 20px;
+  border: none;
+  margin-top: 24px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  color: white;
+  cursor: pointer;
+}
+
+@media (max-width: 1281px) {
+  #reportShareButtonContainer {
+    padding-right: 3em;
+  }
 }
 
 .backgroundIndex {
