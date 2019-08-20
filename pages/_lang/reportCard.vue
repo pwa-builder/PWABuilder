@@ -118,6 +118,8 @@
       <div id="moreFeaturesBlock" v-if="topSamples.length > 0">
         <nuxt-link to="/features">View More</nuxt-link>
       </div>
+
+      <div v-if="shared" id="shareToast">URL copied for sharing</div>
     </main>
     <footer v-if="gotURL" id="hubFooter">
       <p>
@@ -176,6 +178,7 @@ export default class extends Vue {
   public overallScore: number = 0;
   public topSamples: Array<any> = [];
   public cleanedURL: string | null = null;
+  public shared: boolean = false;
 
   public async created() {
     this.url$ = this.url;
@@ -239,6 +242,7 @@ export default class extends Vue {
       if ((navigator as any).clipboard) {
         try {
           await (navigator as any).clipboard.writeText(`${location.href}?url=${this.url}`);
+          this.showToast();
         } catch (err) {
           console.error(err);
         }
@@ -246,6 +250,15 @@ export default class extends Vue {
         window.open(`${location.href}?url=${this.url}`, '__blank');
       }
     }
+  }
+
+  showToast() {
+    // show toast
+    this.shared = true;
+
+    setTimeout(() => {
+      this.shared = false;
+    }, 1200);
   }
 
   public async checkUrlAndGenerate() {
@@ -332,6 +345,32 @@ declare var awa: any;
 <style lang="scss" scoped>
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
+
+#shareToast {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  background: #3c3c3c;
+  color: white;
+  padding: 1em;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 4px;
+  padding-left: 1.4em;
+  padding-right: 1.4em;
+  animation-name: fadein;
+  animation-duration: 0.3s;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
 
 #hubFooter {
   display: flex;
