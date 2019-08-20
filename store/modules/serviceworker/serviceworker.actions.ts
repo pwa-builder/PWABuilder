@@ -16,7 +16,7 @@ export const actions: Actions<State, RootState> = {
   async downloadServiceWorker({ commit }, serviceworker: number): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       if (!serviceworker) {
-        reject ('error.serviceworker_not_defined');
+        reject('error.serviceworker_not_defined');
       }
 
       commit(types.UPDATE_SERVICEWORKER, serviceworker);
@@ -27,7 +27,7 @@ export const actions: Actions<State, RootState> = {
         resolve();
       } catch (e) {
         let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
-        reject (errorMessage);
+        reject(errorMessage);
       }
     });
   },
@@ -44,21 +44,41 @@ export const actions: Actions<State, RootState> = {
         resolve();
       } catch (e) {
         let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
-        reject (errorMessage);
+        reject(errorMessage);
       }
     });
   },
   async getServiceworkers({ commit }): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       try {
-        await this.$axios.$get(`${apiUrl}/getServiceWorkersDescription`).then( data => {
+        await this.$axios.$get(`${apiUrl}/getServiceWorkersDescription`).then(data => {
+          console.log(data.serviceworkers);
+
+          // temp for demo
+          data.serviceworkers.push(
+            {
+              id: 6,
+              title: "Push notifications",
+              description: "Service Workers not only do caching, but also enable features like Push Notifications on the web! This Service Worker has all the code needed to display push notifications to your users."
+            },
+            {
+              id: 7,
+              title: "Push notifications with cache-first caching",
+              description: "The ultimate Service Worker. This Service Worker implements the the cache-first caching strategy along with serving push notifications!"
+            }
+          );
+
+          console.log(data.serviceworkers);
+
+
+
           commit(types.UPDATE_SERVICEWORKERS, data.serviceworkers);
           resolve();
         });
       }
       catch (e) {
         let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
-        reject (errorMessage);             
+        reject(errorMessage);
       }
     });
   },

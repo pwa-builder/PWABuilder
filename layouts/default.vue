@@ -101,6 +101,7 @@ export default class extends Vue {
 
 .container {
   overflow: scroll;
+  height: 100vh;
 }
 
 #baseContainer {
