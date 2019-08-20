@@ -14,6 +14,7 @@
 
     <div ref="scrollTarget" id="scrollTarget"></div>
     <div id="featureTabsBar" ref="featureTabsBar">
+      <button v-bind:class="{ active: showAllSamplesBool }" @click="showAllSamples()">All</button>
       <button v-bind:class="{ active: showPWASamples }" @click="pwaSamples()">Device / PWA</button>
       <button v-bind:class="{ active: showAuthSamples }" @click="showAuthSamplesMethod()">Authentication</button>
       <button v-bind:class="{ active: showEduSamples }" @click="showEduSamplesMethod()">Education</button>
@@ -50,10 +51,25 @@
       </div>
     </section>
 
-    <section v-if="showPWASamples" id="featureListBlock">
+    <section v-if="showAllSamplesBool" id="featureListBlock">
       <FeatureCard
         v-if="samples.length > 0 && !selectedSamples.includes(sample)"
         v-for="sample in samples"
+        :sample="sample"
+        :key="sample.id"
+        v-on:removed="onRemoved"
+        :showRemoveButton="false"
+        :showAddButton="true"
+        :wrapText="true"
+      >
+        <i slot="iconSlot" class="fas fa-rocket"></i>
+      </FeatureCard>
+    </section>
+
+    <section v-if="showPWASamples" id="featureListBlock">
+      <FeatureCard
+        v-if="cleanedPWASamples.length > 0 && !selectedSamples.includes(sample)"
+        v-for="sample in cleanedPWASamples"
         :sample="sample"
         :key="sample.id"
         v-on:removed="onRemoved"
@@ -188,10 +204,11 @@ export default class extends Vue {
   public viewerSize = "5rem";
   public viewerSizeBottom = "55rem";
   overallGrade: string | null = null;
-  showPWASamples = true;
+  showPWASamples = false;
   showAuthSamples = false;
   showEduSamples = false;
   showBusSamples = false;
+  showAllSamplesBool = true;
 
   currentPendingSample: windowsStore.Sample | null = null;
 
@@ -214,14 +231,6 @@ export default class extends Vue {
 
     await this.getSamples();
     console.log("samples", this.samples);
-
-    this.cleanedPWASamples = this.samples.filter(sample => {
-      if((sample.title as string).toLowerCase().includes("graph") === false) {
-        return sample;
-      }
-    });
-
-    console.log(this.cleanedPWASamples);
 
     const score = sessionStorage.getItem("overallGrade");
     console.log(score);
@@ -256,6 +265,16 @@ export default class extends Vue {
     this.showAuthSamples = false;
     this.showEduSamples = false;
     this.showBusSamples = false;
+    this.showAllSamplesBool = false;
+  }
+
+  showAllSamples() {
+    this.showAllSamplesBool = true;
+
+    this.showPWASamples = false;
+    this.showAuthSamples = false;
+    this.showEduSamples = false;
+    this.showBusSamples = false;
   }
 
   showAuthSamplesMethod() {
@@ -268,6 +287,7 @@ export default class extends Vue {
     this.showPWASamples = false;
     this.showEduSamples = false;
     this.showBusSamples = false;
+    this.showAllSamplesBool = false;
   }
 
   showEduSamplesMethod() {
@@ -282,6 +302,7 @@ export default class extends Vue {
     this.showPWASamples = false;
     this.showEduSamples = true;
     this.showBusSamples = false;
+    this.showAllSamplesBool = false;
   }
 
   showBusSamplesMethod() {
@@ -299,6 +320,7 @@ export default class extends Vue {
     this.showPWASamples = false;
     this.showEduSamples = false;
     this.showBusSamples = true;
+    this.showAllSamplesBool = false;
   }
 
   scrollToToolkit() {
