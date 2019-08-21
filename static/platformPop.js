@@ -41,16 +41,16 @@ class PlatformPop extends HTMLElement {
       this.setAttribute('platform', val);
 
       if (val === 'Samsung' || val === 'Android' || val === 'ios') {
-        this.shadowRoot.querySelector('img').src="~/assets/images/android-screen.png";
+        this.shadowRoot.querySelector('img').src="/static/Images/android-screen.png";
       }
       else if (val === 'Progressive Web App') {
-        this.shadowRoot.querySelector('img').src="~/assets/images/pwa-screen.png";
+        this.shadowRoot.querySelector('img').src="/static/Images/pwa-screen.png";
       }
       else if (val === 'Microsoft Teams') {
-        this.shadowRoot.querySelector('img').src="~/assets/images/teams-screen.png";
+        this.shadowRoot.querySelector('img').src="/static/Images/teams-screen.png";
       }
       else {
-        this.shadowRoot.querySelector('img').src="~/assets/images/pwabuilder-screen.png";
+        this.shadowRoot.querySelector('img').src="/static/Images/pwabuilder-screen.png";
       }
     } else {
       this.removeAttribute('platform');
