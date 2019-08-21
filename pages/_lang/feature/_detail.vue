@@ -2,6 +2,8 @@
   <div id="mainDiv">
     <HubHeader></HubHeader>
 
+    <ion-toast-controller></ion-toast-controller>
+
     <div v-if="onAuth" id="clientIdBlock">
       <button v-if="!idGenerated" @click="generateID()">Generate Client ID</button>
       <div id="generatedDiv" v-else @click="generateID()">ID Generated</div>
@@ -132,8 +134,9 @@ export default class extends Vue {
 
   baseURL =
     "https://raw.githubusercontent.com/pwa-builder/pwabuilder-snippits/demo/src";
-  
-  baseGraphDocsURL = "https://docs.microsoft.com/en-us/graph/toolkit/components";
+
+  baseGraphDocsURL =
+    "https://docs.microsoft.com/en-us/graph/toolkit/components";
 
   docsContent: string | null = null;
 
@@ -155,10 +158,9 @@ export default class extends Vue {
           this.onAuth = false;
         }
 
-        if (this.$route.params.featureDetail.toLowerCase().includes('graph')) {
+        if (this.$route.params.featureDetail.toLowerCase().includes("graph")) {
           this.onGraph = true;
-        }
-        else {
+        } else {
           this.onGraph = false;
         }
 
@@ -228,20 +230,30 @@ export default class extends Vue {
     window.open(
       `${this.baseGraphDocsURL}/${this.currentSample.docsName}`,
       "_blank"
-    )
+    );
   }
 
   goBack() {
     window.history.back();
   }
 
-  showToast() {
+  async showToast() {
     // show toast
-    this.shared = true;
+    /*this.shared = true;
 
     setTimeout(() => {
       this.shared = false;
-    }, 1200);
+    }, 1200);*/
+
+    const toastCtrl = document.querySelector("ion-toast-controller");
+    await (toastCtrl as any).componentOnReady();
+
+    const toast = await (toastCtrl as any).create({
+      duration: 1300,
+      message: "URL copied for sharing"
+    });
+
+    await toast.present();
   }
 
   async share() {

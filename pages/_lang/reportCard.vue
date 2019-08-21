@@ -8,6 +8,8 @@
       :expanded="!gotURL"
     ></HubHeader>
 
+    <ion-toast-controller></ion-toast-controller>
+
     <div v-if="gotURL" id="reportShareButtonContainer">
       <button @click="shareReport">
         <i class="fas fa-share-alt"></i>
@@ -252,13 +254,23 @@ export default class extends Vue {
     }
   }
 
-  showToast() {
+  async showToast() {
     // show toast
-    this.shared = true;
+    /*this.shared = true;
 
     setTimeout(() => {
       this.shared = false;
-    }, 1200);
+    }, 1200);*/
+
+    const toastCtrl = document.querySelector("ion-toast-controller");
+    await (toastCtrl as any).componentOnReady();
+
+    const toast = await (toastCtrl as any).create({
+      duration: 1300,
+      message: "URL copied for sharing"
+    });
+
+    await toast.present();
   }
 
   public async checkUrlAndGenerate() {
