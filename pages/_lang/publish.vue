@@ -299,7 +299,7 @@
 
             <div id="pwaTeamsCard" class="pwaCard">
               <div @mouseenter="presentPopover($event)" @mouseleave="closePopover()" class="pwaCardHeaderBlock">
-                <i id="platformIcon" class="fab fa-windows"></i>
+                <img id="teamsIconImg" src="~/assets/images/teams-icon.png">
 
                 <h2>Microsoft Teams</h2>
               </div>
@@ -549,6 +549,11 @@ export default class extends Vue {
 #pwaIcon {
   height: 22px;
   margin-right: 10px;
+}
+
+#teamsIconImg {
+  height: 40px;
+  width: 42px;
 }
 
 @media (max-height: 700px) {
