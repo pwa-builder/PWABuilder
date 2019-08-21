@@ -217,12 +217,8 @@
       <section id="publishRightSide">
         <div id="platformsListContainer">
           <ul>
-            <div
-              id="pwaMainCard"
-              class="pwaCard"
-
-            >
-              <div @mouseenter="presentPopover($event)" @mouseleave="closePopover()" class="pwaCardHeaderBlock">
+            <div id="pwaMainCard" class="pwaCard">
+              <div @mouseenter="presentPopover($event)" class="pwaCardHeaderBlock">
                 <img id="pwaIcon" src="~/assets/images/pwaLogo.svg" />
                 <h2>Progressive Web App</h2>
               </div>
@@ -242,7 +238,10 @@
             </div>
 
             <div id="pwaAndroidCard" class="pwaCard">
-              <div @mouseenter="presentPopover($event)" @mouseleave="closePopover()" class="pwaCardHeaderBlock">
+              <div
+                @mouseenter="presentPopover($event)"
+                class="pwaCardHeaderBlock"
+              >
                 <i id="platformIcon" class="fab fa-android"></i>
                 <h2>Android</h2>
               </div>
@@ -258,7 +257,10 @@
 
             <!--samsung platform-->
             <div id="pwaSamsungCard" class="pwaCard">
-              <div @mouseenter="presentPopover($event)" @mouseleave="closePopover()" class="pwaCardHeaderBlock">
+              <div
+                @mouseenter="presentPopover($event)"
+                class="pwaCardHeaderBlock"
+              >
                 <svg
                   width="89"
                   height="30"
@@ -283,7 +285,10 @@
             </div>
 
             <div id="pwaWindowsCard" class="pwaCard">
-              <div @mouseenter="presentPopover($event)" @mouseleave="closePopover()" class="pwaCardHeaderBlock">
+              <div
+                @mouseenter="presentPopover($event)"
+                class="pwaCardHeaderBlock"
+              >
                 <i id="platformIcon" class="fab fa-windows"></i>
                 <h2>Windows</h2>
               </div>
@@ -298,8 +303,11 @@
             </div>
 
             <div id="pwaTeamsCard" class="pwaCard">
-              <div @mouseenter="presentPopover($event)" @mouseleave="closePopover()" class="pwaCardHeaderBlock">
-                <img id="teamsIconImg" src="~/assets/images/teams-icon.png">
+              <div
+                @mouseenter="presentPopover($event)"
+                class="pwaCardHeaderBlock"
+              >
+                <img id="teamsIconImg" src="~/assets/images/teams-icon.png" />
 
                 <h2>Microsoft Teams</h2>
               </div>
@@ -312,7 +320,10 @@
             </div>
 
             <div id="pwaMacosCard" class="pwaCard">
-              <div @mouseenter="presentPopover($event)" @mouseleave="closePopover()" class="pwaCardHeaderBlock">
+              <div
+                @mouseenter="presentPopover($event)"
+                class="pwaCardHeaderBlock"
+              >
                 <i id="platformIcon" class="fab fa-apple"></i>
                 <h2>MacOS</h2>
               </div>
@@ -325,7 +336,10 @@
             </div>
 
             <div id="pwaIosCard" class="pwaCard">
-              <div @mouseenter="presentPopover($event)" @mouseleave="closePopover()" class="pwaCardHeaderBlock">
+              <div
+                @mouseenter="presentPopover($event)"
+                class="pwaCardHeaderBlock"
+              >
                 <i id="platformIcon" class="fab fa-apple"></i>
                 <h2>iOS</h2>
               </div>
@@ -424,7 +438,7 @@ export default class extends Vue {
   public openAndroid: boolean = false;
   public openWindows: boolean = false;
   public showBackground: boolean = false;
-  public platPop: any = null;
+  // public platPop: any = null;
 
   public created(): void {
     this.updateStatus();
@@ -432,42 +446,28 @@ export default class extends Vue {
 
   async presentPopover(ev) {
     console.log(ev.target.innerText);
+    console.log(ev);
 
     const popoverController = document.querySelector("ion-popover-controller");
     await (popoverController as any).componentOnReady();
-    console.log(this.platPop);
 
-    if (this.platPop === null) {
-      this.platPop = "";
+    const platPop = await (popoverController as any).create({
+      component: "platform-pop",
+      componentProps: {
+        platform: ev.target.innerText
+      },
+      event: ev,
+      translucent: true,
+      showBackdrop: false
+    });
 
-      this.platPop = await (popoverController as any).create({
-        component: "platform-pop",
-        componentProps: {
-          'platform': ev.target.innerText
-        },
-        event: ev,
-        translucent: true,
-        showBackdrop: false
-      });
-      await this.platPop.present();
+    await platPop.present();
 
-      /*setTimeout(async () => {
-        if (this.platPop) {
-          await this.platPop.dismiss();
-        }
-      }, 800);*/
-    }
-  }
-
-  async closePopover() {
     setTimeout(async () => {
-      console.log("mouseleave");
-
-      if (this.platPop) {
-        await this.platPop.dismiss();
-        this.platPop = null;
+      if (platPop) {
+        await platPop.dismiss();
       }
-    }, 1200);
+    }, 1400);
   }
 
   public goToHome(): void {
