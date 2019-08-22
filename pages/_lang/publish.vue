@@ -212,13 +212,11 @@
         </div>
       </section>
 
-      <ion-popover-controller></ion-popover-controller>
-
       <section id="publishRightSide">
         <div id="platformsListContainer">
           <ul>
-            <div id="pwaMainCard" class="pwaCard">
-              <div @mouseenter="presentPopover($event)" class="pwaCardHeaderBlock">
+            <div @mouseover="platCardHover($event)" @mouseleave="platCardUnHover($event)" id="pwaMainCard" class="pwaCard">
+              <div class="pwaCardHeaderBlock">
                 <img id="pwaIcon" src="~/assets/images/pwaLogo.svg" />
                 <h2>Progressive Web App</h2>
               </div>
@@ -237,9 +235,8 @@
               </section>
             </div>
 
-            <div id="pwaAndroidCard" class="pwaCard">
+            <div @mouseover="platCardHover($event)" @mouseleave="platCardUnHover($event)" id="pwaAndroidCard" class="pwaCard">
               <div
-                @mouseenter="presentPopover($event)"
                 class="pwaCardHeaderBlock"
               >
                 <i id="platformIcon" class="fab fa-android"></i>
@@ -256,9 +253,8 @@
             </div>
 
             <!--samsung platform-->
-            <div id="pwaSamsungCard" class="pwaCard">
+            <div @mouseover="platCardHover($event)" @mouseleave="platCardUnHover($event)" id="pwaSamsungCard" class="pwaCard">
               <div
-                @mouseenter="presentPopover($event)"
                 class="pwaCardHeaderBlock"
               >
                 <svg
@@ -284,9 +280,8 @@
               </section>
             </div>
 
-            <div id="pwaWindowsCard" class="pwaCard">
+            <div @mouseover="platCardHover($event)" @mouseleave="platCardUnHover($event)" id="pwaWindowsCard" class="pwaCard">
               <div
-                @mouseenter="presentPopover($event)"
                 class="pwaCardHeaderBlock"
               >
                 <i id="platformIcon" class="fab fa-windows"></i>
@@ -302,9 +297,8 @@
               </section>
             </div>
 
-            <div id="pwaTeamsCard" class="pwaCard">
+            <div @mouseover="platCardHover($event)" @mouseleave="platCardUnHover($event)" id="pwaTeamsCard" class="pwaCard">
               <div
-                @mouseenter="presentPopover($event)"
                 class="pwaCardHeaderBlock"
               >
                 <img id="teamsIconImg" src="~/assets/images/teams-icon.png" />
@@ -319,9 +313,8 @@
               </section>
             </div>
 
-            <div id="pwaMacosCard" class="pwaCard">
+            <div @mouseover="platCardHover($event)" @mouseleave="platCardUnHover($event)" id="pwaMacosCard" class="pwaCard">
               <div
-                @mouseenter="presentPopover($event)"
                 class="pwaCardHeaderBlock"
               >
                 <i id="platformIcon" class="fab fa-apple"></i>
@@ -335,9 +328,8 @@
               </section>
             </div>
 
-            <div id="pwaIosCard" class="pwaCard">
+            <div @mouseover="platCardHover($event)" @mouseleave="platCardUnHover($event)" id="pwaIosCard" class="pwaCard">
               <div
-                @mouseenter="presentPopover($event)"
                 class="pwaCardHeaderBlock"
               >
                 <i id="platformIcon" class="fab fa-apple"></i>
@@ -438,36 +430,30 @@ export default class extends Vue {
   public openAndroid: boolean = false;
   public openWindows: boolean = false;
   public showBackground: boolean = false;
-  // public platPop: any = null;
 
   public created(): void {
     this.updateStatus();
   }
 
-  async presentPopover(ev) {
-    console.log(ev.target.innerText);
-    console.log(ev);
+  platCardHover(ev) {
+    console.log('hello world', ev);
+    const targetButton: HTMLButtonElement = ev.target.children[2].children[0];
+    console.log(targetButton);
 
-    const popoverController = document.querySelector("ion-popover-controller");
-    await (popoverController as any).componentOnReady();
+    if (targetButton) {
+      targetButton.classList.add('platformDownloadButtonHover');
+    }
+  }
 
-    const platPop = await (popoverController as any).create({
-      component: "platform-pop",
-      componentProps: {
-        platform: ev.target.innerText
-      },
-      event: ev,
-      translucent: true,
-      showBackdrop: false
-    });
+  platCardUnHover(ev) {
+    console.log('hello world', ev);
 
-    await platPop.present();
+    const targetButton: HTMLButtonElement = ev.target.children[2].children[0];
+    console.log(targetButton);
 
-    setTimeout(async () => {
-      if (platPop) {
-        await platPop.dismiss();
-      }
-    }, 1400);
+    if (targetButton) {
+      targetButton.classList.remove('platformDownloadButtonHover');
+    }
   }
 
   public goToHome(): void {
@@ -746,6 +732,7 @@ export default class extends Vue {
           padding-top: 20px;
           padding-bottom: 20px;
           position: relative;
+          transition: box-shadow 0.3s;
 
           .pwaCardHeaderBlock {
             display: flex;
@@ -780,6 +767,15 @@ export default class extends Vue {
             background: rgba(60, 60, 60, 0.1);
           }
 
+          .platformDownloadButtonHover {
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            border: none;
+            background-image: linear-gradient(to right, #1fc2c8, #9337d8 116%);
+            color: white;
+          }
+
           #platformIcon {
             font-size: 32px;
             margin-right: 10px;
@@ -792,6 +788,10 @@ export default class extends Vue {
             line-height: 21px;
             margin-top: 15px;
           }
+        }
+
+        .pwaCard:hover {
+          box-shadow: 0 1px 8px 4px #9a989869;
         }
 
         #pwaMainCard {

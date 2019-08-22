@@ -190,7 +190,7 @@ export default class extends Vue {
       this.getTopSamples();
     } else {
       console.log("no url");
-      if (window.location.search) {
+      if (window && window.location.search) {
         const url = window.location.search.split("=")[1];
         console.log(url);
         this.cleanedURL = decodeURIComponent(url);
