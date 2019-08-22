@@ -100,7 +100,7 @@ export default class extends Vue {
 @import "~assets/scss/base/variables";
 
 .container {
-  overflow: scroll;
+  overflow-y: scroll;
   height: 100vh;
 }
 
