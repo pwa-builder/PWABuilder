@@ -417,7 +417,7 @@ declare var awa: any;
   justify-content: flex-end;
   padding-right: 9em;
   position: relative;
-  top: 12em;
+  top: 9em;
 }
 
 #reportShareButtonContainer button {
@@ -506,7 +506,7 @@ main {
 }
 
 h2 {
-  margin-top: 2em;
+  margin-top: 0em;
   margin-bottom: 17px;
 
   font-family: Poppins;
