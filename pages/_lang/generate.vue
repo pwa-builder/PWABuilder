@@ -288,7 +288,7 @@
           code-type="html"
           v-if="seeEditor"
           title="Add this code to your start page"
-          code="<link rel='manifest' href='/manifest.json'>"
+          code="<link rel='manifest' href='/manifest.webmanifest'>"
           :showHeader="true"
           :showCopyButton="true"
           id="manifestHTML"
