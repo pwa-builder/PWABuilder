@@ -103,15 +103,29 @@ Vue.prototype.$awa = function(config) {
     #featureCardAddButton {
       border: none;
       border-radius: 20px;
-      padding-top: 11px;
+      height: 2em;
+      width: 10em;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
 
       color: #9337d8;
-      background: none;
+      background-color: white;
       border: none;
       font-size: 14px;
       font-weight: 600;
       margin-bottom: 20px;
       text-transform: uppercase;
+
+      transition: background-color 0.4s;
+    }
+
+    #featureCardAddButton:hover {
+      background-color: #9337d8;
+      color: white;
+      width: 10em;
+      height: 2em;
     }
 
     #featureCardRemoveButton {
