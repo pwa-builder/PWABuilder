@@ -601,7 +601,6 @@ export default class extends Vue {
 main {
   @include backgroundRightPoint(80%, 50vh);
   height: 100vh;
-  overflow: scroll;
 }
 
 @media (max-height: 805px) {
