@@ -16,9 +16,11 @@
     <div id="featureTabsBar" ref="featureTabsBar">
       <button v-bind:class="{ active: showAllSamplesBool }" @click="showAllSamples()">All</button>
       <button v-bind:class="{ active: showPWASamples }" @click="pwaSamples()">Device / PWA</button>
+      <button v-bind:class="{ active: showGraphSamples }" @click="graphSamples()">Microsoft Graph</button>
       <button v-bind:class="{ active: showAuthSamples }" @click="showAuthSamplesMethod()">Authentication</button>
       <button v-bind:class="{ active: showEduSamples }" @click="showEduSamplesMethod()">Education</button>
-      <button v-bind:class="{ active: showBusSamples }" @click="showBusSamplesMethod()">Business</button>
+      <button v-bind:class="{ active: showBusSamples }" @click="showBusSamplesMethod()">Samsung</button>
+      <button>Microsoft Teams</button>
     </div>
 
     <section id="fakeCardBlock" v-if="samples.length === 0">
@@ -98,6 +100,21 @@
       <FeatureCard
         v-if="authSamples.length > 0 && !selectedSamples.includes(sample)"
         v-for="sample in authSamples"
+        :sample="sample"
+        :key="sample.id"
+        v-on:removed="onRemoved"
+        :showRemoveButton="false"
+        :showAddButton="true"
+        :wrapText="true"
+      >
+        <i slot="iconSlot" class="fas fa-rocket"></i>
+      </FeatureCard>
+    </section>
+
+    <section v-if="showGraphSamples" id="featureListBlock">
+      <FeatureCard
+        v-if="sortedGraphSamples.length > 0 && !selectedSamples.includes(sample)"
+        v-for="sample in sortedGraphSamples"
         :sample="sample"
         :key="sample.id"
         v-on:removed="onRemoved"
@@ -208,6 +225,7 @@ export default class extends Vue {
   showAuthSamples = false;
   showEduSamples = false;
   showBusSamples = false;
+  showGraphSamples = false;
   showAllSamplesBool = true;
 
   currentPendingSample: windowsStore.Sample | null = null;
@@ -217,6 +235,7 @@ export default class extends Vue {
   cleanedPWASamples: any[] = [];
   eduSamples: any[] = [];
   busSamples: any[] = [];
+  sortedGraphSamples: any[] = [];
 
   @WindowsState sample: windowsStore.Sample;
   @WindowsState samples: windowsStore.Sample[];
@@ -266,6 +285,22 @@ export default class extends Vue {
     this.showEduSamples = false;
     this.showBusSamples = false;
     this.showAllSamplesBool = false;
+    this.showGraphSamples = false;
+  }
+
+  graphSamples() {
+    this.sortedGraphSamples = this.samples.filter(sample => {
+      if ((sample.title as string).toLowerCase().includes("graph") === true) {
+        return sample;
+      }
+    });
+
+    this.showPWASamples = false;
+    this.showAuthSamples = false;
+    this.showEduSamples = false;
+    this.showBusSamples = false;
+    this.showAllSamplesBool = false;
+    this.showGraphSamples = true;
   }
 
   showAllSamples() {
@@ -275,6 +310,7 @@ export default class extends Vue {
     this.showAuthSamples = false;
     this.showEduSamples = false;
     this.showBusSamples = false;
+    this.showGraphSamples = false;
   }
 
   showAuthSamplesMethod() {
@@ -288,6 +324,7 @@ export default class extends Vue {
     this.showEduSamples = false;
     this.showBusSamples = false;
     this.showAllSamplesBool = false;
+    this.showGraphSamples = false;
   }
 
   showEduSamplesMethod() {
@@ -303,6 +340,7 @@ export default class extends Vue {
     this.showEduSamples = true;
     this.showBusSamples = false;
     this.showAllSamplesBool = false;
+    this.showGraphSamples = false;
   }
 
   showBusSamplesMethod() {
@@ -321,6 +359,7 @@ export default class extends Vue {
     this.showEduSamples = false;
     this.showBusSamples = true;
     this.showAllSamplesBool = false;
+    this.showGraphSamples = false;
   }
 
   scrollToToolkit() {
