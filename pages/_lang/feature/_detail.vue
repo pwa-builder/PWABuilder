@@ -118,16 +118,16 @@ export default class extends Vue {
     },
     {
       realName: "graphPeoplePicker",
-      mappedName: "People Picker Component"
+      mappedName: "People Picker Graph Component"
     },
     {
       realName: "graphPerson",
-      mappedName: "Person Component",
+      mappedName: "Person Graph Component",
       docsName: "person"
     },
     {
       realName: "graphTasks",
-      mappedName: "Tasks Component",
+      mappedName: "Tasks Graph Component",
       docsName: "tasks"
     }
   ];
