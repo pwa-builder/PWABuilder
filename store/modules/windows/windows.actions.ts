@@ -84,7 +84,15 @@ export const actions: Actions<State, RootState> = {
                   ({
                     title: "Tasks Graph Component",
                     description: "The Tasks component enables the user to view, add, remove, complete, or edit tasks. It works with tasks in Microsoft Planner or Microsoft To-Do."
-                  } as any)
+                  } as any),
+                  ({
+                    title: "Samsung Smart View",
+                    description: "A Smart View enabled app provides separate views which are connected and running on different devices."
+                  } as any),
+                  ({
+                    title: "Samsung Pay",
+                    description: "Samsung Pay can be used for mobile web payments too, to make secure purchases across the web in eligible countries. No more clunky forms and input fields!"
+                  } as any),
                 );
 
                 if (res.Sources) {

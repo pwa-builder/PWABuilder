@@ -19,7 +19,7 @@
       <button v-bind:class="{ active: showGraphSamples }" @click="graphSamples()">Microsoft Graph</button>
       <button v-bind:class="{ active: showAuthSamples }" @click="showAuthSamplesMethod()">Authentication</button>
       <button v-bind:class="{ active: showEduSamples }" @click="showEduSamplesMethod()">Education</button>
-      <button v-bind:class="{ active: showBusSamples }" @click="showBusSamplesMethod()">Samsung</button>
+      <button v-bind:class="{ active: showSamsungSamples }" @click="doSamsungSamples()">Samsung</button>
       <button>Microsoft Teams</button>
     </div>
 
@@ -100,6 +100,21 @@
       <FeatureCard
         v-if="authSamples.length > 0 && !selectedSamples.includes(sample)"
         v-for="sample in authSamples"
+        :sample="sample"
+        :key="sample.id"
+        v-on:removed="onRemoved"
+        :showRemoveButton="false"
+        :showAddButton="true"
+        :wrapText="true"
+      >
+        <i slot="iconSlot" class="fas fa-rocket"></i>
+      </FeatureCard>
+    </section>
+
+    <section v-if="showSamsungSamples" id="featureListBlock">
+      <FeatureCard
+        v-if="sortedSamsungSamples.length > 0 && !selectedSamples.includes(sample)"
+        v-for="sample in sortedSamsungSamples"
         :sample="sample"
         :key="sample.id"
         v-on:removed="onRemoved"
@@ -227,6 +242,7 @@ export default class extends Vue {
   showBusSamples = false;
   showGraphSamples = false;
   showAllSamplesBool = true;
+  showSamsungSamples = false;
 
   currentPendingSample: windowsStore.Sample | null = null;
 
@@ -236,6 +252,7 @@ export default class extends Vue {
   eduSamples: any[] = [];
   busSamples: any[] = [];
   sortedGraphSamples: any[] = [];
+  sortedSamsungSamples: any[] = [];
 
   @WindowsState sample: windowsStore.Sample;
   @WindowsState samples: windowsStore.Sample[];
@@ -273,6 +290,22 @@ export default class extends Vue {
     observer.observe((this.$refs.scrollTarget as Element));
   }
 
+  doSamsungSamples() {
+    this.sortedSamsungSamples = this.samples.filter(sample => {
+      if ((sample.title as string).toLowerCase().includes("samsung")) {
+        return sample;
+      }
+    });
+
+    this.showPWASamples = false;
+    this.showAuthSamples = false;
+    this.showEduSamples = false;
+    this.showBusSamples = false;
+    this.showAllSamplesBool = false;
+    this.showGraphSamples = false;
+    this.showSamsungSamples = true;
+  }
+
   pwaSamples() {
     this.cleanedPWASamples = this.samples.filter(sample => {
       if((sample.title as string).toLowerCase().includes("graph") === false) {
@@ -286,6 +319,7 @@ export default class extends Vue {
     this.showBusSamples = false;
     this.showAllSamplesBool = false;
     this.showGraphSamples = false;
+    this.showSamsungSamples = false;
   }
 
   graphSamples() {
@@ -301,6 +335,7 @@ export default class extends Vue {
     this.showBusSamples = false;
     this.showAllSamplesBool = false;
     this.showGraphSamples = true;
+    this.showSamsungSamples = false;
   }
 
   showAllSamples() {
@@ -311,6 +346,7 @@ export default class extends Vue {
     this.showEduSamples = false;
     this.showBusSamples = false;
     this.showGraphSamples = false;
+    this.showSamsungSamples = false;
   }
 
   showAuthSamplesMethod() {
@@ -325,6 +361,7 @@ export default class extends Vue {
     this.showBusSamples = false;
     this.showAllSamplesBool = false;
     this.showGraphSamples = false;
+    this.showSamsungSamples = false;
   }
 
   showEduSamplesMethod() {
@@ -341,6 +378,7 @@ export default class extends Vue {
     this.showBusSamples = false;
     this.showAllSamplesBool = false;
     this.showGraphSamples = false;
+    this.showSamsungSamples = false;
   }
 
   showBusSamplesMethod() {
@@ -360,6 +398,7 @@ export default class extends Vue {
     this.showBusSamples = true;
     this.showAllSamplesBool = false;
     this.showGraphSamples = false;
+    this.showSamsungSamples = false;
   }
 
   scrollToToolkit() {
