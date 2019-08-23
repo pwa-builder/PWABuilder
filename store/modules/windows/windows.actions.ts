@@ -55,15 +55,19 @@ export const actions: Actions<State, RootState> = {
                 results.push(
                   ({
                     title: "Use Geolocation",
-                    description: "A simple script that uses the Gelocation API to allow your app to ask for the users current location"
+                    description: "A simple component that uses the Gelocation API to allow your app to ask for the users current location"
                   } as any),
                   ({
                     title: "Copy to Clipboard",
-                    description: "A simple script that uses the Clipboard API to allow your app to copy text to the users clipboard"
+                    description: "A simple component that uses the Clipboard API to allow your app to copy text to the users clipboard"
                   } as any),
                   ({
                     title: "Install your PWA",
-                    description: "A simple script that gives users a button to install your PWA directly from the browser"
+                    description: "A simple component that gives users a button to install your PWA directly from the browser"
+                  } as any),
+                  ({
+                    title: "Adaptive Cards",
+                    description: " A component that helps you take advantage of Adaptive Cards."
                   } as any),
                   ({
                     title: "Web MIDI",

@@ -290,7 +290,7 @@ export default class extends Vue {
 
   graphSamples() {
     this.sortedGraphSamples = this.samples.filter(sample => {
-      if ((sample.title as string).toLowerCase().includes("graph") === true) {
+      if ((sample.title as string).toLowerCase().includes("graph") === true || (sample.title as string).toLowerCase().includes("adaptive cards")) {
         return sample;
       }
     });
