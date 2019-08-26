@@ -20,7 +20,7 @@
       <button v-bind:class="{ active: showAuthSamples }" @click="showAuthSamplesMethod()">Authentication</button>
       <button v-bind:class="{ active: showEduSamples }" @click="showEduSamplesMethod()">Education</button>
       <button v-bind:class="{ active: showSamsungSamples }" @click="doSamsungSamples()">Samsung</button>
-      <button>Microsoft Teams</button>
+      <button v-bind:class="{ active: showTeamsSamples }" @click="doTeamsSamples()">Microsoft Teams</button>
     </div>
 
     <section id="fakeCardBlock" v-if="samples.length === 0">
@@ -89,6 +89,21 @@
         :key="sample.id"
         v-on:removed="onRemoved"
         :showRemoveButton="true"
+        :showAddButton="true"
+        :wrapText="true"
+      >
+        <i slot="iconSlot" class="fas fa-rocket"></i>
+      </FeatureCard>
+    </section>
+
+    <section v-if="showTeamsSamples" id="featureListBlock">
+      <FeatureCard
+        v-if="sortedTeamsSamples.length > 0 && !selectedSamples.includes(sample)"
+        v-for="sample in sortedTeamsSamples"
+        :sample="sample"
+        :key="sample.id"
+        v-on:removed="onRemoved"
+        :showRemoveButton="false"
         :showAddButton="true"
         :wrapText="true"
       >
@@ -243,6 +258,7 @@ export default class extends Vue {
   showGraphSamples = false;
   showAllSamplesBool = true;
   showSamsungSamples = false;
+  showTeamsSamples = false;
 
   currentPendingSample: windowsStore.Sample | null = null;
 
@@ -253,6 +269,7 @@ export default class extends Vue {
   busSamples: any[] = [];
   sortedGraphSamples: any[] = [];
   sortedSamsungSamples: any[] = [];
+  sortedTeamsSamples: any[] = [];
 
   @WindowsState sample: windowsStore.Sample;
   @WindowsState samples: windowsStore.Sample[];
@@ -290,6 +307,23 @@ export default class extends Vue {
     observer.observe((this.$refs.scrollTarget as Element));
   }
 
+  doTeamsSamples() {
+    this.sortedTeamsSamples = this.samples.filter(sample => {
+      if ((sample.title as string).toLowerCase().includes("teams")) {
+        return sample;
+      }
+    });
+
+    this.showPWASamples = false;
+    this.showAuthSamples = false;
+    this.showEduSamples = false;
+    this.showBusSamples = false;
+    this.showAllSamplesBool = false;
+    this.showGraphSamples = false;
+    this.showSamsungSamples = false;
+    this.showTeamsSamples = true;
+  }
+
   doSamsungSamples() {
     this.sortedSamsungSamples = this.samples.filter(sample => {
       if ((sample.title as string).toLowerCase().includes("samsung")) {
@@ -304,6 +338,7 @@ export default class extends Vue {
     this.showAllSamplesBool = false;
     this.showGraphSamples = false;
     this.showSamsungSamples = true;
+    this.showTeamsSamples = false;
   }
 
   pwaSamples() {
@@ -320,6 +355,7 @@ export default class extends Vue {
     this.showAllSamplesBool = false;
     this.showGraphSamples = false;
     this.showSamsungSamples = false;
+    this.showTeamsSamples = false;
   }
 
   graphSamples() {
@@ -336,6 +372,7 @@ export default class extends Vue {
     this.showAllSamplesBool = false;
     this.showGraphSamples = true;
     this.showSamsungSamples = false;
+    this.showTeamsSamples = false;
   }
 
   showAllSamples() {
@@ -347,6 +384,7 @@ export default class extends Vue {
     this.showBusSamples = false;
     this.showGraphSamples = false;
     this.showSamsungSamples = false;
+    this.showTeamsSamples = false;
   }
 
   showAuthSamplesMethod() {
@@ -362,6 +400,7 @@ export default class extends Vue {
     this.showAllSamplesBool = false;
     this.showGraphSamples = false;
     this.showSamsungSamples = false;
+    this.showTeamsSamples = false;
   }
 
   showEduSamplesMethod() {
@@ -379,6 +418,7 @@ export default class extends Vue {
     this.showAllSamplesBool = false;
     this.showGraphSamples = false;
     this.showSamsungSamples = false;
+    this.showTeamsSamples = false;
   }
 
   showBusSamplesMethod() {
@@ -399,6 +439,7 @@ export default class extends Vue {
     this.showAllSamplesBool = false;
     this.showGraphSamples = false;
     this.showSamsungSamples = false;
+    this.showTeamsSamples = false;
   }
 
   scrollToToolkit() {

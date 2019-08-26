@@ -93,6 +93,18 @@ export const actions: Actions<State, RootState> = {
                     title: "Samsung Pay",
                     description: "Samsung Pay can be used for mobile web payments too, to make secure purchases across the web in eligible countries. No more clunky forms and input fields!"
                   } as any),
+                  ({
+                    title: "Get Channels from Microsoft Teams",
+                    description: "This component lets you get the channels for a signed in user"
+                  } as any),
+                  ({
+                    title: "Create a new Channel in Microsoft Teams",
+                    description: "Allow a user to easily create a new channel in Teams."
+                  } as any),
+                  ({
+                    title: "Get teams from Microsoft Teams",
+                    description: "Get the teams a signed in user is a member of in Teams"
+                  } as any)
                 );
 
                 if (res.Sources) {
