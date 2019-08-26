@@ -153,6 +153,10 @@ export default class extends Vue {
     {
       realName: "teamsNewChannel",
       mappedName: "Create a new Channel in Microsoft Teams"
+    },
+    {
+      realName: "immersiveReader",
+      mappedName: "Immersive Reader"
     }
   ];
 
