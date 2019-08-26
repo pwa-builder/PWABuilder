@@ -118,6 +118,19 @@ export const actions: Actions<State, RootState> = {
                     for (let f = 0; f < source.Parsed.Functions.length; f++) {
                       let fn = source.Parsed.Functions[f];
                       let newItem = fromItem(fn, file, source);
+
+                      if (newItem.title === "Microsoft Graph Authentication") {
+                        newItem.title = "Login Graph Component";
+                      }
+                      else if (newItem.title === "Microsoft Graph Contacts API") {
+                        newItem.title = "People Graph Component";
+                      }
+                      else if (newItem.title === "Microsoft Graph Calendar API") {
+                        newItem.title = "Agenda Graph Component";
+                      }
+                      else if (newItem.title === "Microsoft Graph Activity API") {
+                        newItem.title = "Activity Graph Component";
+                      }
           
                       results.push(newItem);
                     }

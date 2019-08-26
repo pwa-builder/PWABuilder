@@ -79,22 +79,22 @@ export default class extends Vue {
   snippitMap = [
     {
       realName: "graphAuth",
-      mappedName: "Microsoft Graph Authentication",
+      mappedName: "Login Graph Component",
       docsName: "login"
     },
     {
       realName: "graphContacts",
-      mappedName: "Microsoft Graph Contacts API",
+      mappedName: "People Graph Component",
       docsName: "people"
     },
     {
       realName: "graphCalendar",
-      mappedName: "Microsoft Graph Calendar API",
+      mappedName: "Agenda Graph Component",
       docsName: "agenda"
     },
     {
       realName: "graphCreateActivity",
-      mappedName: "Microsoft Graph Activity API"
+      mappedName: "Activity Graph Component"
     },
     {
       realName: "share",
