@@ -104,6 +104,10 @@ export const actions: Actions<State, RootState> = {
                   ({
                     title: "Get teams from Microsoft Teams",
                     description: "Get the teams a signed in user is a member of in Teams"
+                  } as any),
+                  ({
+                    title: "Immersive Reader",
+                    description: "Immersive Reader mode makes it easier for users to read your content on the web"
                   } as any)
                 );
 
