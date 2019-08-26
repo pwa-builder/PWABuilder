@@ -133,6 +133,26 @@ export default class extends Vue {
       realName: "graphTasks",
       mappedName: "Tasks Graph Component",
       docsName: "tasks"
+    },
+    {
+      realName: "samsungPay",
+      mappedName: "Samsung Pay"
+    },
+    {
+      realName: "samsungSmartView",
+      mappedName: "Samsung Smart View"
+    },
+    {
+      realName: "teamsChannels",
+      mappedName: "Get Channels from Microsoft Teams"
+    },
+    {
+      realName: "teamsTeam",
+      mappedName: "Get teams from Microsoft Teams"
+    },
+    {
+      realName: "teamsNewChannel",
+      mappedName: "Create a new Channel in Microsoft Teams"
     }
   ];
 
