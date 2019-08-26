@@ -1522,7 +1522,7 @@ export default class extends Vue {
   }
 
   #publishSideBySide #publishLeftSide #introContainer {
-    margin-bottom: 48em;
+    margin-bottom: em39;
   }
 
   #publishSideBySide #publishRightSide #platformsListContainer {
