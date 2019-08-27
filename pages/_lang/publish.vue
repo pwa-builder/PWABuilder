@@ -488,11 +488,8 @@ export default class extends Vue {
   }
 
   platCardHover(ev, device?) {
-    console.log("hello world", ev);
     const targetButton: HTMLButtonElement = ev.target.children[2].children[0];
-    console.log(targetButton);
 
-    console.log(device);
     if (device === "pc") {
       this.samsungDevice = false;
       this.androidDevice = false;
