@@ -244,6 +244,12 @@ export default class extends Vue {
       width: 60%;
     }
 
+    @media(max-width: 1079px) {
+      h3 {
+        font-size: 12px;
+      }
+    }
+
     div {
       width: 20em;
     }

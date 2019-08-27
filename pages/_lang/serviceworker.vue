@@ -58,7 +58,7 @@
         </div>
       </section>
 
-      <section id="rightSide">
+      <section id="rightSide" class="swRightSide">
         <CodeViewer
           class="topViewer"
           color="#F0F0F0"
@@ -483,6 +483,16 @@ export default class extends Vue {
   #sideBySide #leftSide #inputSection #inputContainer {
     padding-left: 14px;
     padding-right: 14px;
+  }
+}
+
+@media (max-width: 1079px) {
+  .swRightSide {
+    width: 27em !important;
+  }
+
+  #sideBySide #rightSide .bottomViewer {
+    margin-top: 20em;
   }
 }
 </style>
