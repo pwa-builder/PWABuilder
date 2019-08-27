@@ -657,7 +657,7 @@ export default class extends Vue {
   }
 
   img {
-    height: 24em;
+    height: 20em;
   }
 }
 
