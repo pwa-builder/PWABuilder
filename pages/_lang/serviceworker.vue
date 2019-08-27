@@ -444,7 +444,7 @@ export default class extends Vue {
   #sideBySide {
     padding-left: 54px;
     padding-right: 52px;
-    height: 202vh;
+    height: 235vh;
   }
 
   #sideBySide #leftSide .mastHead {
