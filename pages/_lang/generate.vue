@@ -42,7 +42,7 @@
                 type="text"
                 v-on:focus="activeFormField = 'appName'"
                 placeholder="App Name"
-              >
+              />
             </div>
 
             <div class="l-generator-field">
@@ -61,7 +61,7 @@
                 type="text"
                 v-on:focus="activeFormField = 'shortName'"
                 placeholder="App Short Name"
-              >
+              />
             </div>
 
             <div class="l-generator-field">
@@ -99,7 +99,7 @@
                 type="text"
                 v-on:focus="activeFormField = 'startURL'"
                 placeholder="Start URL"
-              >
+              />
             </div>
           </section>
 
@@ -137,7 +137,7 @@
                   <div id="iconItem" class="pure-u-1" v-for="icon in icons" :key="icon.src">
                     <div id="iconDivItem" class="pure-u-10-24 l-generator-tablec">
                       <a target="_blank" :href="icon.src">
-                        <img class="icon-preview" :src="icon.src">
+                        <img class="icon-preview" :src="icon.src" />
                       </a>
 
                       <div id="iconSize" class="pure-u-8-24 l-generator-tablec">
@@ -183,7 +183,7 @@
                 type="text"
                 placeholder="App Scope"
                 v-on:focus="activeFormField = 'appScope'"
-              >
+              />
             </div>
 
             <div class="l-generator-field">
@@ -249,7 +249,7 @@
             </div>
 
             <div>
-              <ColorSelector/>
+              <ColorSelector />
             </div>
 
             <div>
@@ -257,7 +257,7 @@
                 type="checkbox"
                 id="related-applications-field"
                 class="l-generator-togglecheck is-hidden"
-              >
+              />
 
               <label class="l-generator-toggle" for="related-applications-field">
                 <p
@@ -266,7 +266,7 @@
               </label>
 
               <div class="l-generator-field l-generator-field--toggle">
-                <RelatedApplications/>
+                <RelatedApplications />
               </div>
             </div>
           </section>
@@ -330,7 +330,7 @@
               class="l-generator-input l-generator-input--fake is-disabled"
               for="modal-file"
             >{{ iconFile && iconFile.name ? iconFile.name : $t("generate.choose_file") }}</label>
-            <input id="modal-file" @change="onFileIconChange" class="l-hidden" type="file">
+            <input id="modal-file" @change="onFileIconChange" class="l-hidden" type="file" />
           </div>
 
           <div class="l-generator-field">
@@ -339,12 +339,21 @@
               <input
                 type="checkbox"
                 v-model="iconCheckMissing"
-              >
+              />
             </label>
           </div>
         </section>
       </Modal>
     </main>
+
+    <footer>
+      <p>
+        PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
+        <a
+          href="https://privacy.microsoft.com/en-us/privacystatement"
+        >Our Privacy Statement</a>
+      </p>
+    </footer>
   </div>
 </template>
 
@@ -407,7 +416,6 @@ export default class extends Vue {
   @GeneratorActions generateMissingImages;
   @GeneratorGetters suggestionsTotal;
   @GeneratorGetters warningsTotal;
-
 
   public created(): void {
     this.manifest$ = { ...this.manifest };
@@ -599,7 +607,7 @@ export default class extends Vue {
       "modal-screen"
     );
   }
-  
+
   public modalClosed() {
     (this.$root.$el.closest("body") as HTMLBodyElement).classList.remove(
       "modal-screen"
@@ -611,6 +619,31 @@ export default class extends Vue {
 
 <style lang="scss">
 @import "~assets/scss/base/variables";
+
+footer {
+  display: flex;
+  justify-content: center;
+  padding-left: 16em;
+  padding-right: 16em;
+  font-size: 12px;
+  color: rgba(60, 60, 60, 0.5);
+  background: white;
+}
+
+footer p {
+  text-align: center;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 18px;
+  color: #707070;
+}
+
+footer a {
+  color: #707070;
+  text-decoration: underline;
+}
+
 /* stylelint-disable */
 #iconGrid {
   display: grid;

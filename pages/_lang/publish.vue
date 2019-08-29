@@ -41,7 +41,7 @@
           type="text"
           v-model="appxForm.publisher"
           requied
-        >
+        />
 
         <div class="form-item">
           <label>{{ $t('publish.label_identity') }}</label>
@@ -54,7 +54,7 @@
           type="text"
           v-model="appxForm.publisher_id"
           requied
-        >
+        />
 
         <div class="form-item">
           <label>{{ $t('publish.label_package') }}</label>
@@ -65,7 +65,7 @@
           type="text"
           v-model="appxForm.package"
           requied
-        >
+        />
 
         <div class="form-item">
           <label>{{ $t('publish.label_version') }}</label>
@@ -76,7 +76,7 @@
           type="text"
           v-model="appxForm.version"
           requied
-        >
+        />
 
         <p class="l-generator-error" v-if="appxError">
           <span class="icon-exclamation"></span>
@@ -218,7 +218,7 @@
             <div id="pwaMainCard" class="pwaCard">
               <div class="pwaCardHeaderBlock">
                 <div class="pwaCardIconBlock">
-                  <img id="pwaIcon" src="~/assets/images/pwaLogo.svg">
+                  <img id="pwaIcon" src="~/assets/images/pwaLogo.svg" />
                   <h2>Progressive Web App</h2>
                 </div>
 
@@ -272,7 +272,7 @@
                   <h2>MacOS</h2>
                 </div>
 
-                <Download class="platformDownloadButton" platform="macos" message="Download"/>
+                <Download class="platformDownloadButton" platform="macos" message="Download" />
               </div>
 
               <p>You can use Xcode to build this package to produce an app that runs on MacOS.</p>
@@ -285,7 +285,7 @@
                   <h2>iOS</h2>
                 </div>
 
-                <Download class="platformDownloadButton" platform="ios" message="Download"/>
+                <Download class="platformDownloadButton" platform="ios" message="Download" />
               </div>
 
               <p>PWAs are available through the browser. You can submit this app package to the iOS App Store</p>
@@ -318,6 +318,15 @@
         <span>I will hold things</span>
       </div>
     </section>
+
+    <footer>
+      <p>
+        PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
+        <a
+          href="https://privacy.microsoft.com/en-us/privacystatement"
+        >Our Privacy Statement</a>
+      </p>
+    </footer>
   </main>
 </template>
 
@@ -458,6 +467,30 @@ export default class extends Vue {
 /* stylelint-disable */
 
 @import "~assets/scss/base/variables";
+
+footer {
+  display: flex;
+  justify-content: center;
+  padding-left: 16em;
+  padding-right: 16em;
+  font-size: 12px;
+  color: rgba(60, 60, 60, 0.5);
+  background: white;
+}
+
+footer p {
+  text-align: center;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 18px;
+  color: #707070;
+}
+
+footer a {
+  color: #707070;
+  text-decoration: underline;
+}
 
 #pwaIcon {
   height: 22px;
