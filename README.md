@@ -7,7 +7,7 @@ Node/Vue/Nuxt site for PWABuilder!
 You will need the following things properly installed on your computer.
 
 * [Git](http://git-scm.com/)
-* [Node.js](http://nodejs.org/) (with NPM)
+* [Node.js](http://nodejs.org/) LTS version (with NPM)
 * [NPM](http://npmjs.com/)
 * [Python 2](https://www.python.org/)
 * If on Windows [Visual Studio](https://visualstudio.microsoft.com/)
