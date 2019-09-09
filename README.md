@@ -10,7 +10,7 @@ You will need the following things properly installed on your computer.
 * [Node.js](http://nodejs.org/) LTS version (with NPM)
 * [NPM](http://npmjs.com/)
 * [Python 2](https://www.python.org/)
-* If on Windows [Visual Studio](https://visualstudio.microsoft.com/)
+* If on Windows, run as administrator: `npm install -g --production windows-build-tools --vs2015`
 
 ## Installation
 
