@@ -8,6 +8,7 @@
     "start-production": "cross-env NODE_ENV=production node server.js",
     "start-preview": "cross-env NODE_ENV=preview node server.js",
     "setup": "npm install && npm-install-peers",
+    "build": "nuxt build",
     "build-docker-dev": "docker build -t dev-site --target build-dev .",
     "run-docker-dev": "docker run -p 3000:80 dev-site"
   },
