@@ -430,6 +430,10 @@ export default class extends Vue {
 
       if (this.appXLink) {
         window.location.href = this.appXLink;
+
+        $appxModal.hideLoading();
+
+        (this.$refs.appxModal as Modal).hide();
       }
     } catch (e) {
       this.appxError = e;
