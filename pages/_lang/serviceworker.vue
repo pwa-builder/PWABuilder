@@ -181,10 +181,6 @@ export default class extends Vue {
       if (this.serviceworker$) {
         const cleanedSW = this.serviceworker$.toString();
 
-        this.$router.push({
-          name: "reportCard"
-        });
-
         await this.downloadServiceWorker(cleanedSW);
       }
     } catch (e) {
