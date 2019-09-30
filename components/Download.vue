@@ -104,7 +104,6 @@ export default class extends Vue {
     } catch (e) {
       this.isReady = true;
       this.errorMessage = e;
-      this.message$ = this.$t("publish.try_again") as string;
     }
   }
 }
@@ -118,8 +117,12 @@ export default class extends Vue {
   width: 15em;
   text-align: start;
   font-size: 14px;
-  bottom: 24em;
-  left: 5.4em;
+  position: fixed;
+  bottom: 2em;
+  right: 2em;
+  background: white;
+  padding: 1em;
+  border-radius: 4px;
 }
 
 #colorSpinner {
@@ -205,9 +208,4 @@ export default class extends Vue {
   }
 }
 
-@media (max-height: 890px) {
-  #errorDiv {
-    bottom: 10em;
-  }
-}
 </style>
