@@ -180,7 +180,6 @@ export default class extends Vue {
     try {
       if (this.serviceworker$) {
         const cleanedSW = this.serviceworker$.toString();
-
         await this.downloadServiceWorker(cleanedSW);
       }
     } catch (e) {
@@ -190,6 +189,9 @@ export default class extends Vue {
 
     if (this.archive) {
       window.location.href = this.archive;
+    }
+    else {
+      console.error("no archive");
     }
 
     this.isBuilding = false;
