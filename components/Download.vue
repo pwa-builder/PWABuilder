@@ -113,14 +113,14 @@ export default class extends Vue {
 <style lang="scss" scoped>
 #errorDiv {
   position: absolute;
-  color: red;
+  color: white;
   width: 15em;
   text-align: start;
   font-size: 14px;
   position: fixed;
   bottom: 2em;
   right: 2em;
-  background: white;
+  background: #3C3C3C;
   padding: 1em;
   border-radius: 4px;
 }
