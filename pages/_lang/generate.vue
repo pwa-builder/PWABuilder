@@ -42,7 +42,7 @@
                 type="text"
                 v-on:focus="activeFormField = 'appName'"
                 placeholder="App Name"
-              >
+              />
             </div>
 
             <div class="l-generator-field">
@@ -61,7 +61,7 @@
                 type="text"
                 v-on:focus="activeFormField = 'shortName'"
                 placeholder="App Short Name"
-              >
+              />
             </div>
 
             <div class="l-generator-field">
@@ -99,7 +99,7 @@
                 type="text"
                 v-on:focus="activeFormField = 'startURL'"
                 placeholder="Start URL"
-              >
+              />
             </div>
           </section>
 
@@ -137,7 +137,7 @@
                   <div id="iconItem" class="pure-u-1" v-for="icon in icons" :key="icon.src">
                     <div id="iconDivItem" class="pure-u-10-24 l-generator-tablec">
                       <a target="_blank" :href="icon.src">
-                        <img class="icon-preview" :src="icon.src">
+                        <img class="icon-preview" :src="icon.src" />
                       </a>
 
                       <div id="iconSize" class="pure-u-8-24 l-generator-tablec">
@@ -183,7 +183,7 @@
                 type="text"
                 placeholder="App Scope"
                 v-on:focus="activeFormField = 'appScope'"
-              >
+              />
             </div>
 
             <div class="l-generator-field">
@@ -249,7 +249,7 @@
             </div>
 
             <div>
-              <ColorSelector/>
+              <ColorSelector />
             </div>
 
             <div>
@@ -257,7 +257,7 @@
                 type="checkbox"
                 id="related-applications-field"
                 class="l-generator-togglecheck is-hidden"
-              >
+              />
 
               <label class="l-generator-toggle" for="related-applications-field">
                 <p
@@ -266,7 +266,7 @@
               </label>
 
               <div class="l-generator-field l-generator-field--toggle">
-                <RelatedApplications/>
+                <RelatedApplications />
               </div>
             </div>
           </section>
@@ -288,7 +288,7 @@
           code-type="html"
           v-if="seeEditor"
           title="Add this code to your start page"
-          code="<link rel='manifest' href='/manifest.json'>"
+          code="<link rel='manifest' href='/manifest.webmanifest'>"
           :showHeader="true"
           :showCopyButton="true"
           id="manifestHTML"
@@ -330,7 +330,7 @@
               class="l-generator-input l-generator-input--fake is-disabled"
               for="modal-file"
             >{{ iconFile && iconFile.name ? iconFile.name : $t("generate.choose_file") }}</label>
-            <input id="modal-file" @change="onFileIconChange" class="l-hidden" type="file">
+            <input id="modal-file" @change="onFileIconChange" class="l-hidden" type="file" />
           </div>
 
           <div class="l-generator-field">
@@ -339,12 +339,21 @@
               <input
                 type="checkbox"
                 v-model="iconCheckMissing"
-              >
+              />
             </label>
           </div>
         </section>
       </Modal>
     </main>
+
+    <footer>
+      <p>
+        PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
+        <a
+          href="https://privacy.microsoft.com/en-us/privacystatement"
+        >Our Privacy Statement</a>
+      </p>
+    </footer>
   </div>
 </template>
 
@@ -395,6 +404,7 @@ export default class extends Vue {
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
   @GeneratorState icons: generator.Icon[];
+  @GeneratorState screenshots: generator.Screenshot[];
   @GeneratorState suggestions: string[];
   @GeneratorState warnings: string[];
   @Getter orientationsNames: string[];
@@ -407,7 +417,6 @@ export default class extends Vue {
   @GeneratorActions generateMissingImages;
   @GeneratorGetters suggestionsTotal;
   @GeneratorGetters warningsTotal;
-
 
   public created(): void {
     this.manifest$ = { ...this.manifest };
@@ -467,13 +476,14 @@ export default class extends Vue {
 
   private getIcons(): string {
     let icons = this.icons.map(icon => {
-      return `
-        {
-            "src": "${
-              icon.src.includes("data:image") ? "[Embedded]" : icon.src
-            }",
-            "sizes": "${icon.sizes}"
-        }`;
+      return `\n\t\t{\n\t\t\t"src": "${icon.src.includes("data:image") ? "[Embedded]" : icon.src}",\n\t\t\t"sizes": "${icon.sizes}"\n\t\t}`;
+    });
+    return icons.toString();
+  }
+
+  private getScreenshots(): string {
+    let icons = this.screenshots.map(screenshot => {
+      return `\n\t\t{\n\t\t\t"src": "${screenshot.src.includes("data:image") ? "[Embedded]" : screenshot.src}",\n\t\t\t"description": "${screenshot.description}",\n\t\t\t"size": "${screenshot.size}"\n\t\t}`;
     });
     return icons.toString();
   }
@@ -487,8 +497,7 @@ export default class extends Vue {
       if (i === this.members.length - 1) {
         membersString += `"${member.name}" : "${member.value}"`;
       } else {
-        membersString += `"${member.name}" : "${member.value}",
-    `;
+        membersString += `"${member.name}" : "${member.value}",\n`;
       }
     });
     return membersString;
@@ -497,15 +506,22 @@ export default class extends Vue {
   private getManifestProperties(): string {
     let manifest = "";
     for (let property in this.manifest) {
-      if (property !== "icons") {
-        manifest += `"${property}" : "${this.manifest[property]}",
-    `;
+      switch (property) {
+        case "icons":
+          manifest += `\t"icons" : [${this.getIcons()}],\n`;
+          break;
+        case "screenshots":
+          manifest += `\t"screenshots" : [${this.getScreenshots()}],\n`;
+          break;
+        default:
+          manifest += `\t"${property}" : "${this.manifest[property]}",\n`;
+          break;
       }
     }
-    manifest += `"icons" : [${this.getIcons()}
-    ]`;
+    // Removing the last ',' 
+    manifest = manifest.substring(0, manifest.length-2);
     manifest += this.getCustomMembers();
-    return `{${manifest}}`;
+    return `{\n${manifest}\n}`;
   }
 
   public getCode(): string | null {
@@ -599,7 +615,7 @@ export default class extends Vue {
       "modal-screen"
     );
   }
-  
+
   public modalClosed() {
     (this.$root.$el.closest("body") as HTMLBodyElement).classList.remove(
       "modal-screen"
@@ -611,6 +627,31 @@ export default class extends Vue {
 
 <style lang="scss">
 @import "~assets/scss/base/variables";
+
+footer {
+  display: flex;
+  justify-content: center;
+  padding-left: 16em;
+  padding-right: 16em;
+  font-size: 12px;
+  color: rgba(60, 60, 60, 0.5);
+  background: white;
+}
+
+footer p {
+  text-align: center;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 18px;
+  color: #707070;
+}
+
+footer a {
+  color: #707070;
+  text-decoration: underline;
+}
+
 /* stylelint-disable */
 #iconGrid {
   display: grid;

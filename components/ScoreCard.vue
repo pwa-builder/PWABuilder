@@ -530,7 +530,8 @@ export default class extends Vue {
       try {
         await this.getManifestInformation();
         console.log("manifestInfo", this.manifest);
-      } catch {
+      } catch (ex) {
+        debugger;
         if (this.manifest === null) {
           this.brokenManifest = true;
         }
