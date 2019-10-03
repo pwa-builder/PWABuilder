@@ -76,6 +76,7 @@
                 id="descText"
                 class="l-generator-textarea"
                 v-model="manifest$.description"
+                @keydown.enter.exact.prevent
                 @change="onChangeSimpleInput()"
                 name="description"
                 type="text"
