@@ -430,10 +430,14 @@
 
     <div id="cardEditBlock">
       <nuxt-link v-if="category === 'Service Worker'" to="/serviceworker">
-        <button>
+        <button v-if="!noServiceWorker">
           Choose a Service Worker
           <i class="fas fa-arrow-right"></i>
         </button>
+
+        <div class="brkManifestError" v-if="noServiceWorker && !validSSL">
+          The Service Worker cannot be reached
+        </div>
       </nuxt-link>
 
       <nuxt-link v-else-if="category === 'Manifest'" to="/generate">
@@ -618,7 +622,10 @@ export default class extends Vue {
       const data = await response.json();
       console.log("lookAtSW", data);
 
-      this.serviceWorkerData = data.swURL;
+      if (data.swURL) {
+        this.serviceWorkerData = data.swURL;
+      }
+
       console.log("data", data);
 
       if (this.serviceWorkerData && this.serviceWorkerData !== false) {
@@ -629,10 +636,14 @@ export default class extends Vue {
       }
 
       if (
-        (this.serviceWorkerData && this.serviceWorkerData === false) ||
+        !this.serviceWorkerData || this.serviceWorkerData.swURL === null ||
         this.serviceWorkerData.swURL === false
       ) {
         this.noServiceWorker = true;
+
+        this.swScore = 0;
+        this.$emit("serviceWorkerTestDone", { score: 0 });
+
         return;
       } else {
         this.noServiceWorker = false;
