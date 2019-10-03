@@ -404,6 +404,7 @@ export default class extends Vue {
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
   @GeneratorState icons: generator.Icon[];
+  @GeneratorState screenshots: generator.Screenshot[];
   @GeneratorState suggestions: string[];
   @GeneratorState warnings: string[];
   @Getter orientationsNames: string[];
@@ -475,13 +476,14 @@ export default class extends Vue {
 
   private getIcons(): string {
     let icons = this.icons.map(icon => {
-      return `
-        {
-            "src": "${
-              icon.src.includes("data:image") ? "[Embedded]" : icon.src
-            }",
-            "sizes": "${icon.sizes}"
-        }`;
+      return `\n\t\t{\n\t\t\t"src": "${icon.src.includes("data:image") ? "[Embedded]" : icon.src}",\n\t\t\t"sizes": "${icon.sizes}"\n\t\t}`;
+    });
+    return icons.toString();
+  }
+
+  private getScreenshots(): string {
+    let icons = this.screenshots.map(screenshot => {
+      return `\n\t\t{\n\t\t\t"src": "${screenshot.src.includes("data:image") ? "[Embedded]" : screenshot.src}",\n\t\t\t"description": "${screenshot.description}",\n\t\t\t"size": "${screenshot.size}"\n\t\t}`;
     });
     return icons.toString();
   }
@@ -495,8 +497,7 @@ export default class extends Vue {
       if (i === this.members.length - 1) {
         membersString += `"${member.name}" : "${member.value}"`;
       } else {
-        membersString += `"${member.name}" : "${member.value}",
-    `;
+        membersString += `"${member.name}" : "${member.value}",\n`;
       }
     });
     return membersString;
@@ -505,15 +506,22 @@ export default class extends Vue {
   private getManifestProperties(): string {
     let manifest = "";
     for (let property in this.manifest) {
-      if (property !== "icons") {
-        manifest += `"${property}" : "${this.manifest[property]}",
-    `;
+      switch (property) {
+        case "icons":
+          manifest += `\t"icons" : [${this.getIcons()}],\n`;
+          break;
+        case "screenshots":
+          manifest += `\t"screenshots" : [${this.getScreenshots()}],\n`;
+          break;
+        default:
+          manifest += `\t"${property}" : "${this.manifest[property]}",\n`;
+          break;
       }
     }
-    manifest += `"icons" : [${this.getIcons()}
-    ]`;
+    // Removing the last ',' 
+    manifest = manifest.substring(0, manifest.length-2);
     manifest += this.getCustomMembers();
-    return `{${manifest}}`;
+    return `{\n${manifest}\n}`;
   }
 
   public getCode(): string | null {
