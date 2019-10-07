@@ -225,6 +225,8 @@ export default class extends Vue {
     } catch (err) {
       console.error("url error", err);
 
+      this.url$ = this.url;
+
       if (err.message) {
         this.error = err.message;
       } else {
@@ -232,6 +234,8 @@ export default class extends Vue {
         // so just show error directly
         this.error = err;
       }
+
+      this.gotURL = true;
     }
   }
 

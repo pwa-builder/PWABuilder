@@ -12,7 +12,7 @@
       </div>
 
       <div v-else-if="category === 'Security'" class="cardScore">
-        <span class="subScore">20</span> / 20
+        <span class="subScore">{{Math.round(manifestScore)}}</span> / 20
       </div>
     </div>
 
@@ -430,10 +430,14 @@
 
     <div id="cardEditBlock">
       <nuxt-link v-if="category === 'Service Worker'" to="/serviceworker">
-        <button>
+        <button v-if="!noServiceWorker">
           Choose a Service Worker
           <i class="fas fa-arrow-right"></i>
         </button>
+
+        <div class="brkManifestError" v-if="noServiceWorker && !validSSL">
+          The Service Worker cannot be reached
+        </div>
       </nuxt-link>
 
       <nuxt-link v-else-if="category === 'Manifest'" to="/generate">
@@ -451,6 +455,11 @@
           v-if="brokenManifest"
         >The manifest is declared but cannot be reached</div>
       </nuxt-link>
+
+      <div
+        class="brkManifestError"
+        v-if="category === 'Security' && !validSSL"
+      >Site could not be reached, check your https cert please</div>
     </div>
   </div>
 </template>
@@ -466,9 +475,7 @@ import * as generator from "~/store/modules/generator";
 const GeneratorState = namespace(generator.name, State);
 const GeneratorAction = namespace(generator.name, Action);
 
-const apiUrl = `${
-  process.env.apiUrl
-}/serviceworkers/getServiceWorkerFromUrl?siteUrl`;
+const apiUrl = `${process.env.apiUrl}/serviceworkers/getServiceWorkerFromUrl?siteUrl`;
 
 @Component({})
 export default class extends Vue {
@@ -519,6 +526,8 @@ export default class extends Vue {
         this.noMixedContent = true;
       }
 
+      this.securityScore = 20;
+
       console.log("looking at security");
       this.$emit("securityTestDone", { score: 20 });
       resolve();
@@ -531,16 +540,23 @@ export default class extends Vue {
         await this.getManifestInformation();
         console.log("manifestInfo", this.manifest);
       } catch (ex) {
-        debugger;
         if (this.manifest === null) {
           this.brokenManifest = true;
+
+          this.hasHTTPS = false;
+          this.validSSL = false;
+          this.noMixedContent = false;
+
+          this.securityScore = 0;
+
+          this.$emit("securityTestDone", { score: 0 });
         }
+
         this.noManifest = true;
         resolve();
         return;
       }
 
-      console.log('generated', this.manifest.generated);
 
       if (this.manifest && this.manifest.generated === true) {
         this.noManifest = true;
@@ -586,10 +602,14 @@ export default class extends Vue {
     const savedScore = sessionStorage.getItem("swScore");
 
     if (savedData) {
-      console.log("not making a request");
-      let cleanedData = JSON.parse(savedData);
-      this.serviceWorkerData = cleanedData;
-      console.log("saved data", cleanedData);
+      try {
+        let cleanedData = JSON.parse(savedData);
+        this.serviceWorkerData = cleanedData;
+      } catch (err) {
+        this.$emit("serviceWorkerTestDone", { score: 0 });
+        this.noServiceWorker = true;
+        this.swScore = 0;
+      }
 
       if (savedScore) {
         let cleanedScore = JSON.parse(savedScore);
@@ -603,24 +623,28 @@ export default class extends Vue {
       const data = await response.json();
       console.log("lookAtSW", data);
 
-      this.serviceWorkerData = data.swURL;
+      if (data.swURL) {
+        this.serviceWorkerData = data.swURL;
+      }
+
       console.log("data", data);
 
-      if (this.serviceWorkerData !== false) {
+      if (this.serviceWorkerData && this.serviceWorkerData !== false) {
         sessionStorage.setItem(
           this.url,
           JSON.stringify(this.serviceWorkerData)
         );
       }
 
-      console.log("this.serviceWorkerData", this.serviceWorkerData);
-      console.log(this.serviceWorkerData);
-
       if (
-        this.serviceWorkerData === false ||
+        !this.serviceWorkerData || this.serviceWorkerData.swURL === null ||
         this.serviceWorkerData.swURL === false
       ) {
         this.noServiceWorker = true;
+
+        this.swScore = 0;
+        this.$emit("serviceWorkerTestDone", { score: 0 });
+
         return;
       } else {
         this.noServiceWorker = false;
@@ -778,7 +802,7 @@ export default class extends Vue {
         display: flex;
         margin-right: 11px;
         align-items: center;
-        font-family: 'Open Sans', sans-serif;
+        font-family: "Open Sans", sans-serif;
       }
 
       .subScoreSpan {
@@ -850,6 +874,8 @@ export default class extends Vue {
     font-weight: bold;
     padding-top: 1em;
     padding-bottom: 1em;
+    font-size: 14px;
+    text-align: center;
   }
 }
 </style>
