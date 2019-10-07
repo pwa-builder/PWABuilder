@@ -45,7 +45,7 @@ export const getters: GetterTree<State, RootState> = {};
 export interface Actions<S, R> extends ActionTree<S, R> {
     resetAppData(context: ActionContext<S, R>): void;
     updateStatus(context: ActionContext<S, R>): void;
-    build(context: ActionContext<S, R>, params: { platform: string, options?: string[]}): Promise<void>;
+    build(context: ActionContext<S, R>, params: { platform: string, href: string, options?: string[]}): Promise<void>;
     buildAppx(context: ActionContext<S, R>, params: AppxParams): Promise<void>;
 }
 
@@ -61,7 +61,7 @@ export const actions: Actions<State, RootState> = {
         commit(types.UPDATE_STATUS, status);
     },
 
-    async build({ commit, rootState }, params: { platform: string, options?: string[] }): Promise<void> {
+    async build({ commit, rootState }, params: { platform: string, href: string, options?: string[] }): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
             const manifestId = rootState.generator.manifestId;
             const serviceworker = rootState.serviceworker.serviceworker;
@@ -84,7 +84,7 @@ export const actions: Actions<State, RootState> = {
             try {
                 const options = { platforms: platformsList, dirSuffix: params.platform, parameters: params.options };
                 console.log(options);
-                const result = await this.$axios.$post(`${apiUrl}/${manifestId}/build?ids=${serviceworker}`, options);
+                const result = await this.$axios.$post(`${apiUrl}/${manifestId}/build?ids=${serviceworker}&href=${params.href}`, options);
                 commit(types.UPDATE_ARCHIVELINK, result.archive);
                 resolve();
             } catch (e) {
