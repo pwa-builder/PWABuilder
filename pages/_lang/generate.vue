@@ -76,7 +76,8 @@
                 id="descText"
                 class="l-generator-textarea"
                 v-model="manifest$.description"
-                @keydown.enter.exact.prevent="sendMessage"
+                @keydown.enter.exact.prevent="textareaError"
+                @keypress="textareaCheck"
                 @change="onChangeSimpleInput()"
                 name="description"
                 type="text"
@@ -453,13 +454,18 @@ export default class extends Vue {
     }
   }
 
-  public sendMessage(): void {
-    console.log("testing");
-    this.ifEntered = true;
+  public textareaError(): void {
+    // This method is called when Enter is pressed in the textarea
+    console.log("Enter pressed in textarea: newline not allowed");
+    this.ifEntered = true; // This property is used to determine whether or not an error message should be displayed
     this.textareaOutlineColor = 'red solid 2px';
-    //document.querySelector('textarea_error').value = 'newline not allowed';
-    //$('#textarea_message').text('Newline not allowed');
   }
+  public textareaCheck(): void {
+    // If the user presses any key other than Enter, then reset ifEntered values to remove error message
+    // This method is only called on keypress (not when entered is clicked)
+    this.ifEntered = false;
+    this.textareaOutlineColor = '';
+  } 
 
   public onClickRemoveIcon(icon: generator.Icon): void {
     this.removeIcon(icon);
