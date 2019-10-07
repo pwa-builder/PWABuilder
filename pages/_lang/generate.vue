@@ -76,12 +76,17 @@
                 id="descText"
                 class="l-generator-textarea"
                 v-model="manifest$.description"
+                @keydown.enter.exact.prevent="textareaError"
+                @keypress="textareaCheck"
                 @change="onChangeSimpleInput()"
                 name="description"
                 type="text"
                 v-on:focus="activeFormField = 'appDesc'"
                 placeholder="App Description"
+                v-bind:style="{ outline: textareaOutlineColor}"
               ></textarea>
+              <span v-if="ifEntered" class="hint" id="textarea_error">Newline not allowed</span>
+              <span v-else class="hint" id="textarea_error"></span>
             </div>
 
             <div class="l-generator-field">
@@ -357,8 +362,6 @@
   </div>
 </template>
 
-
-
 <script lang="ts">
 import Vue from "vue";
 import Component from "nuxt-class-component";
@@ -400,6 +403,8 @@ export default class extends Vue {
   public showSettingsSection = false;
   public activeFormField = null;
   public showingIconModal = false;
+  public ifEntered = false;
+  public  textareaOutlineColor = '';
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
@@ -437,6 +442,7 @@ export default class extends Vue {
 
   public onChangeSimpleInput(): void {
     try {
+      console.log("on change simple input");
       this.updateManifest(this.manifest$);
       this.manifest$ = { ...this.manifest };
       console.log(this.manifest$);
@@ -448,6 +454,19 @@ export default class extends Vue {
       this.error = e;
     }
   }
+
+  public textareaError(): void {
+    // This method is called when Enter is pressed in the textarea
+    console.log("Enter pressed in textarea: newline not allowed");
+    this.ifEntered = true; // This property is used to determine whether or not an error message should be displayed
+    this.textareaOutlineColor = 'red solid 2px';
+  }
+  public textareaCheck(): void {
+    // If the user presses any key other than Enter, then reset ifEntered values to remove error message
+    // This method is only called on keypress (not when entered is clicked)
+    this.ifEntered = false;
+    this.textareaOutlineColor = '';
+  } 
 
   public onClickRemoveIcon(icon: generator.Icon): void {
     this.removeIcon(icon);
@@ -627,6 +646,10 @@ export default class extends Vue {
 
 <style lang="scss">
 @import "~assets/scss/base/variables";
+
+#textarea_error {
+  color: red;
+}
 
 footer {
   display: flex;
