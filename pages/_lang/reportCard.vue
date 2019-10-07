@@ -179,7 +179,7 @@ export default class extends Vue {
   }
 
   public mounted() {
-    if (this.url$) {
+    if (this.url) {
       sessionStorage.setItem('currentURL', this.url);
     }
 
