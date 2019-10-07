@@ -214,6 +214,10 @@ export default class extends Vue {
       await this.updateLink(this.url$);
       this.url$ = this.url;
 
+      if (this.url) {
+        sessionStorage.setItem('currentURL', this.url);
+      }
+
       this.gotURL = true;
 
       this.getTopSamples();
