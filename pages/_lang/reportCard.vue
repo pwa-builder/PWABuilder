@@ -179,6 +179,10 @@ export default class extends Vue {
   }
 
   public mounted() {
+    if (this.url$) {
+      sessionStorage.setItem('currentURL', this.url);
+    }
+    
     if ((window as any).CSS && (window as any).CSS.registerProperty) {
       try {
         (CSS as any).registerProperty({

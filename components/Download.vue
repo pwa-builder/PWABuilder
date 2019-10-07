@@ -50,6 +50,7 @@ Vue.prototype.$awa = function(config) {
 export default class extends Vue {
   public isReady = true;
   public errorMessage = "";
+  public siteHref: string = "/";
 
   @Prop({ type: String, default: "" })
   public readonly platform: string;
@@ -80,11 +81,17 @@ export default class extends Vue {
 
   public created(): void {
     this.message$ = this.message;
+
+    const sessionRef = sessionStorage.getItem('currentURL');
+    if (sessionRef) {
+      this.siteHref = sessionRef;
+      console.log('this.siteHref', this.siteHref);
+    }
   }
 
   public async buildArchive(
     platform: string,
-    parameters: string[]
+    parameters: string[],
   ): Promise<void> {
     if (!this.isReady) {
       return;
@@ -93,7 +100,7 @@ export default class extends Vue {
     try {
       this.isReady = false;
 
-      await this.build({ platform: platform, options: parameters });
+      await this.build({ platform: platform, href: this.siteHref, options: parameters });
 
       if (this.archiveLink) {
         window.location.href = this.archiveLink;
