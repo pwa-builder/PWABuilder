@@ -82,6 +82,7 @@
                 type="text"
                 v-on:focus="activeFormField = 'appDesc'"
                 placeholder="App Description"
+                v-bind:style="{ outline: textareaOutlineColor}"
               ></textarea>
               <span v-if="ifEntered" class="hint" id="textarea_error">Newline not allowed</span>
               <span v-else class="hint" id="textarea_error"></span>
@@ -402,6 +403,7 @@ export default class extends Vue {
   public activeFormField = null;
   public showingIconModal = false;
   public ifEntered = false;
+  public  textareaOutlineColor = '';
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
@@ -454,6 +456,7 @@ export default class extends Vue {
   public sendMessage(): void {
     console.log("testing");
     this.ifEntered = true;
+    this.textareaOutlineColor = 'red solid 2px';
     //document.querySelector('textarea_error').value = 'newline not allowed';
     //$('#textarea_message').text('Newline not allowed');
   }
