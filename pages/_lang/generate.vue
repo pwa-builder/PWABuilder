@@ -76,13 +76,15 @@
                 id="descText"
                 class="l-generator-textarea"
                 v-model="manifest$.description"
-                @keydown.enter.exact.prevent
+                @keydown.enter.exact.prevent="sendMessage"
                 @change="onChangeSimpleInput()"
                 name="description"
                 type="text"
                 v-on:focus="activeFormField = 'appDesc'"
                 placeholder="App Description"
               ></textarea>
+              <span v-if="ifEntered" class="hint" id="textarea_error">Newline not allowed</span>
+              <span v-else class="hint" id="textarea_error"></span>
             </div>
 
             <div class="l-generator-field">
@@ -358,8 +360,6 @@
   </div>
 </template>
 
-
-
 <script lang="ts">
 import Vue from "vue";
 import Component from "nuxt-class-component";
@@ -401,6 +401,7 @@ export default class extends Vue {
   public showSettingsSection = false;
   public activeFormField = null;
   public showingIconModal = false;
+  public ifEntered = false;
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
@@ -437,6 +438,7 @@ export default class extends Vue {
 
   public onChangeSimpleInput(): void {
     try {
+      console.log("on change simple input");
       this.updateManifest(this.manifest$);
       this.manifest$ = { ...this.manifest };
       console.log(this.manifest$);
@@ -447,6 +449,13 @@ export default class extends Vue {
     } catch (e) {
       this.error = e;
     }
+  }
+
+  public sendMessage(): void {
+    console.log("testing");
+    this.ifEntered = true;
+    //document.querySelector('textarea_error').value = 'newline not allowed';
+    //$('#textarea_message').text('Newline not allowed');
   }
 
   public onClickRemoveIcon(icon: generator.Icon): void {
@@ -620,6 +629,10 @@ export default class extends Vue {
 
 <style lang="scss">
 @import "~assets/scss/base/variables";
+
+#textarea_error {
+  color: red;
+}
 
 footer {
   display: flex;
