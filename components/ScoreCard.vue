@@ -538,7 +538,8 @@ export default class extends Vue {
     return new Promise(async resolve => {
       try {
         await this.getManifestInformation();
-      } catch {
+        console.log("manifestInfo", this.manifest);
+      } catch (ex) {
         if (this.manifest === null) {
           this.brokenManifest = true;
 

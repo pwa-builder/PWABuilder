@@ -179,6 +179,11 @@ export default class extends Vue {
   }
 
   public mounted() {
+
+    if (this.url) {
+      sessionStorage.setItem('currentURL', this.url);
+    }
+    
     if ((window as any).CSS && (window as any).CSS.registerProperty) {
       try {
         (CSS as any).registerProperty({
@@ -209,6 +214,10 @@ export default class extends Vue {
       console.log("in try block");
       await this.updateLink(this.url$);
       this.url$ = this.url;
+
+      if (this.url) {
+        sessionStorage.setItem('currentURL', this.url);
+      }
 
       this.gotURL = true;
 

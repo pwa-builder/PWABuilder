@@ -57,6 +57,12 @@ export const actions: Actions<State, RootState> = {
       customManifest["icons"].push(Object.assign({}, icon));
     });
 
+    customManifest["screenshots"] = [];
+
+    state.screenshots.forEach(icon => {
+      customManifest["screenshots"].push(Object.assign({}, icon));
+    });
+
     console.log('customManifest', customManifest);
 
     if (typeof (customManifest.related_applications) === 'string') {
