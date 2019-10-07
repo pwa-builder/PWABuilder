@@ -50,7 +50,7 @@ Vue.prototype.$awa = function(config) {
 export default class extends Vue {
   public isReady = true;
   public errorMessage = "";
-  public siteHref: string = "/";
+  public siteHref: string = "";
 
   @Prop({ type: String, default: "" })
   public readonly platform: string;
@@ -79,7 +79,7 @@ export default class extends Vue {
   @PublishState archiveLink: string;
   @PublishAction build;
 
-  public created(): void {
+  public mounted(): void {
     this.message$ = this.message;
 
     const sessionRef = sessionStorage.getItem('currentURL');
