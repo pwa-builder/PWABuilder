@@ -430,14 +430,15 @@
 
     <div id="cardEditBlock">
       <nuxt-link v-if="category === 'Service Worker'" to="/serviceworker">
-        <button v-if="!noServiceWorker">
+
+        <div class="brkManifestError" v-if="!validSSL">
+          The Service Worker cannot be reached
+        </div>
+        <button v-else>
           Choose a Service Worker
           <i class="fas fa-arrow-right"></i>
         </button>
 
-        <div class="brkManifestError" v-if="noServiceWorker && !validSSL">
-          The Service Worker cannot be reached
-        </div>
       </nuxt-link>
 
       <nuxt-link v-else-if="category === 'Manifest'" to="/generate">
@@ -488,7 +489,7 @@ export default class extends Vue {
   @Prop() public url;
 
   hasHTTPS: boolean | null = null;
-  validSSL: boolean | null = null;
+  validSSL: boolean = true;
   noMixedContent: boolean | null = null;
 
   noManifest: boolean | null = null;
