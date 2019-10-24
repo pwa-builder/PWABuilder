@@ -696,7 +696,7 @@ footer a {
     padding-bottom: 100px;
 
     #platformsListContainer {
-      padding-top: 4em;
+      padding-top: 0em;
       padding-right: 159px;
       padding-left: 52px;
       color: white;
@@ -982,6 +982,7 @@ footer a {
 
   #publishSideBySide #publishRightSide #platformsListContainer {
     padding-right: 52px;
+    padding-top: 0;
   }
 
   #androidPlatModal {
