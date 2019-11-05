@@ -12,14 +12,14 @@
       </div>
 
       <div v-else-if="category === 'Security'" class="cardScore">
-        <span class="subScore">{{Math.round(manifestScore)}}</span> / 20
+        <span class="subScore">{{Math.round(securityScore)}}</span> / 20
       </div>
     </div>
 
     <div id="cardContent">
       <!-- Security section -->
       <ul v-if="category === 'Security'">
-        <li class="good">
+        <li v-bind:class="{ good: hasHTTPS }">
           <div>
             <span class="cardIcon" v-if="hasHTTPS">
               <i class="fas fa-check"></i>
@@ -36,13 +36,12 @@
 
           <span class="subScoreSpan" v-else-if="!hasHTTPS">0</span>
         </li>
-        <li class="good">
+        <li v-bind:class="{ good: validSSL }">
           <div>
             <span class="cardIcon" v-if="validSSL">
               <i class="fas fa-check"></i>
             </span>
-
-            <span class="cardIcon" v-else>
+            <span class="cardIcon" v-else-if="!validSSL">
               <i class="fas fa-times"></i>
             </span>
 
@@ -53,7 +52,7 @@
 
           <span class="subScoreSpan" v-else-if="!validSSL">0</span>
         </li>
-        <li class="good">
+        <li v-bind:class="{ good: noMixedContent }">
           <div>
             <span class="cardIcon" v-if="noMixedContent">
               <i class="fas fa-check"></i>
@@ -431,10 +430,7 @@
     <div id="cardEditBlock">
       <nuxt-link v-if="category === 'Service Worker'" to="/serviceworker">
 
-        <div class="brkManifestError" v-if="!validSSL">
-          The Service Worker cannot be reached
-        </div>
-        <button v-else>
+        <button>
           Choose a Service Worker
           <i class="fas fa-arrow-right"></i>
         </button>
@@ -489,7 +485,7 @@ export default class extends Vue {
   @Prop() public url;
 
   hasHTTPS: boolean | null = null;
-  validSSL: boolean = true;
+  validSSL: boolean | null = null;
   noMixedContent: boolean | null = null;
 
   noManifest: boolean | null = null;
@@ -502,7 +498,6 @@ export default class extends Vue {
   securityScore: number = 0;
 
   created() {
-    console.log("im a card");
 
     switch (this.category) {
       case "Security":
@@ -525,11 +520,10 @@ export default class extends Vue {
         this.hasHTTPS = true;
         this.validSSL = true;
         this.noMixedContent = true;
+
+        this.securityScore = 20;
       }
 
-      this.securityScore = 20;
-
-      console.log("looking at security");
       this.$emit("securityTestDone", { score: 20 });
       resolve();
     });
@@ -539,7 +533,6 @@ export default class extends Vue {
     return new Promise(async resolve => {
       try {
         await this.getManifestInformation();
-        console.log("manifestInfo", this.manifest);
       } catch (ex) {
         if (this.manifest === null) {
           this.brokenManifest = true;
@@ -619,16 +612,13 @@ export default class extends Vue {
         this.$emit("serviceWorkerTestDone", { score: this.swScore });
       }
     } else {
-      console.log("fetching sw");
       const response = await fetch(`${apiUrl}=${this.url}`);
       const data = await response.json();
-      console.log("lookAtSW", data);
 
       if (data.swURL) {
         this.serviceWorkerData = data.swURL;
       }
 
-      console.log("data", data);
 
       if (this.serviceWorkerData && this.serviceWorkerData !== false) {
         sessionStorage.setItem(
@@ -683,7 +673,6 @@ export default class extends Vue {
           // this.serviceWorkerData.scope.slice(0, -1) ===
           // new URL(this.serviceWorkerData.scope).origin  //slice isn't working and score not showing up, TODO: look at how to validate scope
         ) {
-          console.log("has scope");
           this.swScore = this.swScore + 5;
         }
 
