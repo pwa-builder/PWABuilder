@@ -84,7 +84,8 @@ export const actions: Actions<State, RootState> = {
             try {
                 const options = { platforms: platformsList, dirSuffix: params.platform, parameters: params.options };
                 console.log(options);
-                const result = await this.$axios.$post(`${apiUrl}/${manifestId}/build?ids=${serviceworker}&href=${params.href}`, options);
+                const result = await this.$axios.$post(`${apiUrl}/${manifestId}/build?ids=${serviceworker}&href=${params.href}
+                `, options);
                 commit(types.UPDATE_ARCHIVELINK, result.archive);
                 resolve();
             } catch (e) {

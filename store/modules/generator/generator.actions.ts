@@ -57,6 +57,12 @@ export const actions: Actions<State, RootState> = {
       customManifest["icons"].push(Object.assign({}, icon));
     });
 
+    customManifest["screenshots"] = [];
+
+    state.screenshots.forEach(icon => {
+      customManifest["screenshots"].push(Object.assign({}, icon));
+    });
+
     console.log('customManifest', customManifest);
 
     if (typeof (customManifest.related_applications) === 'string') {
@@ -122,6 +128,39 @@ export const actions: Actions<State, RootState> = {
           manifest.related_applications = [];
           rootState.generator.manifest.related_applications = [];
         }
+      }
+
+      const result = await this.$axios.$post(apiUrl, options);
+      console.log('result', result);
+      if (!result) {
+        throw 'error.Manifest_notFound';
+      }
+      // Convert color if necessary
+      result.background_color = helpers.fixColorFromServer(result.background_color);
+
+      // Fix common issues with the manifest
+      if (typeof (result.content.related_applications) === 'string') {
+        result.content.related_applications = [];
+      }
+
+      if (result.content.generated) {
+        delete result.content.generated;
+      }
+
+      console.log('getManifestInformation', rootState, state, result);
+
+
+      commit(types.UPDATE_WITH_MANIFEST, result);
+      commit(types.SET_DEFAULTS_MANIFEST, {
+        displays: rootState.displays ? rootState.displays[0].name : '',
+        orientations: rootState.orientations ? rootState.orientations[0].name : ''
+      });
+      return;
+    } catch (e) {
+      let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
+      throw errorMessage;
+    }
+  },
 
         if (manifest.generated) {
           delete manifest.generated;

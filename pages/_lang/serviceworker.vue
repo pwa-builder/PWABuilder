@@ -88,6 +88,15 @@
         </CodeViewer>
       </section>
     </main>
+
+    <footer>
+      <p>
+        PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
+        <a
+          href="https://privacy.microsoft.com/en-us/privacystatement"
+        >Our Privacy Statement</a>
+      </p>
+    </footer>
   </div>
 </template>
 
@@ -171,11 +180,6 @@ export default class extends Vue {
     try {
       if (this.serviceworker$) {
         const cleanedSW = this.serviceworker$.toString();
-
-        this.$router.push({
-          name: "reportCard"
-        });
-
         await this.downloadServiceWorker(cleanedSW);
       }
     } catch (e) {
@@ -185,6 +189,9 @@ export default class extends Vue {
 
     if (this.archive) {
       window.location.href = this.archive;
+    }
+    else {
+      console.error("no archive");
     }
 
     this.isBuilding = false;
@@ -228,6 +235,30 @@ export default class extends Vue {
 /* stylelint-disable */
 
 @import "~assets/scss/base/variables";
+
+footer {
+  display: flex;
+  justify-content: center;
+  padding-left: 16em;
+  padding-right: 16em;
+  font-size: 12px;
+  color: rgba(60, 60, 60, 0.5);
+  background: white;
+}
+
+footer p {
+  text-align: center;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 18px;
+  color: #707070;
+}
+
+footer a {
+  color: #707070;
+  text-decoration: underline;
+}
 
 #sideBySide {
   display: flex;

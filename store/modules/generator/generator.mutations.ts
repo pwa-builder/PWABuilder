@@ -1,5 +1,6 @@
 import { MutationTree } from 'vuex';
 import { types, Manifest, helpers, Icon, Asset, RelatedApplication, CustomMember, State } from '~/store/modules/generator';
+import { Screenshot } from './generator.state';
 
 export const mutations: MutationTree<State> = {
   [types.UPDATE_LINK](state, url: string): void {
@@ -33,7 +34,12 @@ export const mutations: MutationTree<State> = {
     state.manifest = result.content;
     state.manifestId = result.id;
     state.siteServiceWorkers = result.siteServiceWorkers;
-    state.icons = helpers.prepareIconsUrls(result.content.icons, state.manifest && state.manifest.start_url ? state.manifest.start_url : '') || [];
+    if (result && result.content && result.content.icons) {
+      state.icons = <Icon[]>helpers.prepareIconsUrls(result.content.icons, state.manifest && state.manifest.start_url ? state.manifest.start_url : '') || [];
+    }
+    if (result && result.content && result.content.screenshots) {
+      state.screenshots = <Screenshot[]>helpers.prepareIconsUrls(result.content.screenshots, state.manifest && state.manifest.start_url ? state.manifest.start_url : '') || [];
+    }
     state.suggestions = result.suggestions;
     state.warnings = result.warnings;
     state.errors = result.errors;

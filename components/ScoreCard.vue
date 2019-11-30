@@ -12,14 +12,14 @@
       </div>
 
       <div v-else-if="category === 'Security'" class="cardScore">
-        <span class="subScore">20</span> / 20
+        <span class="subScore">{{Math.round(securityScore)}}</span> / 20
       </div>
     </div>
 
     <div id="cardContent">
       <!-- Security section -->
       <ul v-if="category === 'Security'">
-        <li class="good">
+        <li v-bind:class="{ good: hasHTTPS }">
           <div>
             <span class="cardIcon" v-if="hasHTTPS">
               <i class="fas fa-check"></i>
@@ -36,13 +36,12 @@
 
           <span class="subScoreSpan" v-else-if="!hasHTTPS">0</span>
         </li>
-        <li class="good">
+        <li v-bind:class="{ good: validSSL }">
           <div>
             <span class="cardIcon" v-if="validSSL">
               <i class="fas fa-check"></i>
             </span>
-
-            <span class="cardIcon" v-else>
+            <span class="cardIcon" v-else-if="!validSSL">
               <i class="fas fa-times"></i>
             </span>
 
@@ -53,7 +52,7 @@
 
           <span class="subScoreSpan" v-else-if="!validSSL">0</span>
         </li>
-        <li class="good">
+        <li v-bind:class="{ good: noMixedContent }">
           <div>
             <span class="cardIcon" v-if="noMixedContent">
               <i class="fas fa-check"></i>
@@ -434,6 +433,7 @@
           Choose a Service Worker
           <i class="fas fa-arrow-right"></i>
         </button>
+
       </nuxt-link>
 
       <nuxt-link v-else-if="category === 'Manifest'" to="/generate">
@@ -451,6 +451,11 @@
           v-if="brokenManifest"
         >The manifest is declared but cannot be reached</div>
       </nuxt-link>
+
+      <div
+        class="brkManifestError"
+        v-if="category === 'Security' && !validSSL"
+      >Site could not be reached, check your https cert please</div>
     </div>
   </div>
 </template>
@@ -466,9 +471,7 @@ import * as generator from "~/store/modules/generator";
 const GeneratorState = namespace(generator.name, State);
 const GeneratorAction = namespace(generator.name, Action);
 
-const apiUrl = `${
-  process.env.apiUrl
-}/serviceworkers/getServiceWorkerFromUrl?siteUrl`;
+const apiUrl = `${process.env.apiUrl}/serviceworkers/getServiceWorkerFromUrl?siteUrl`;
 
 @Component({})
 export default class extends Vue {
@@ -494,7 +497,6 @@ export default class extends Vue {
   securityScore: number = 0;
 
   created() {
-    console.log("im a card");
 
     switch (this.category) {
       case "Security":
@@ -517,9 +519,10 @@ export default class extends Vue {
         this.hasHTTPS = true;
         this.validSSL = true;
         this.noMixedContent = true;
+
+        this.securityScore = 20;
       }
 
-      console.log("looking at security");
       this.$emit("securityTestDone", { score: 20 });
       resolve();
     });
@@ -529,17 +532,22 @@ export default class extends Vue {
     return new Promise(async resolve => {
       try {
         await this.getManifestInformation();
-        console.log("manifestInfo", this.manifest);
-      } catch {
+      } catch (ex) {
         if (this.manifest === null) {
           this.brokenManifest = true;
+
+          this.hasHTTPS = false;
+          this.validSSL = false;
+          this.noMixedContent = false;
+
+          this.securityScore = 0;
+
+          this.$emit("securityTestDone", { score: 0 });
         }
         this.noManifest = true;
         resolve();
         return;
       }
-
-      console.log('generated', this.manifest.generated);
 
       if (this.manifest && this.manifest.generated === true) {
         this.noManifest = true;
@@ -585,10 +593,15 @@ export default class extends Vue {
     const savedScore = sessionStorage.getItem("swScore");
 
     if (savedData) {
-      console.log("not making a request");
-      let cleanedData = JSON.parse(savedData);
-      this.serviceWorkerData = cleanedData;
-      console.log("saved data", cleanedData);
+
+      try {
+        let cleanedData = JSON.parse(savedData);
+        this.serviceWorkerData = cleanedData;
+      } catch (err) {
+        this.$emit("serviceWorkerTestDone", { score: 0 });
+        this.noServiceWorker = true;
+        this.swScore = 0;
+      }
 
       if (savedScore) {
         let cleanedScore = JSON.parse(savedScore);
@@ -597,29 +610,29 @@ export default class extends Vue {
         this.$emit("serviceWorkerTestDone", { score: this.swScore });
       }
     } else {
-      console.log("fetching sw");
       const response = await fetch(`${apiUrl}=${this.url}`);
       const data = await response.json();
-      console.log("lookAtSW", data);
 
-      this.serviceWorkerData = data.swURL;
-      console.log("data", data);
+      if (data.swURL) {
+        this.serviceWorkerData = data.swURL;
+      }
 
-      if (this.serviceWorkerData !== false) {
+      if (this.serviceWorkerData && this.serviceWorkerData !== false) {
         sessionStorage.setItem(
           this.url,
           JSON.stringify(this.serviceWorkerData)
         );
       }
 
-      console.log("this.serviceWorkerData", this.serviceWorkerData);
-      console.log(this.serviceWorkerData);
-
       if (
-        this.serviceWorkerData === false ||
+        !this.serviceWorkerData || this.serviceWorkerData.swURL === null ||
         this.serviceWorkerData.swURL === false
       ) {
         this.noServiceWorker = true;
+
+        this.swScore = 0;
+        this.$emit("serviceWorkerTestDone", { score: 0 });
+
         return;
       } else {
         this.noServiceWorker = false;
@@ -657,7 +670,6 @@ export default class extends Vue {
           // this.serviceWorkerData.scope.slice(0, -1) ===
           // new URL(this.serviceWorkerData.scope).origin  //slice isn't working and score not showing up, TODO: look at how to validate scope
         ) {
-          console.log("has scope");
           this.swScore = this.swScore + 5;
         }
 
@@ -777,7 +789,7 @@ export default class extends Vue {
         display: flex;
         margin-right: 11px;
         align-items: center;
-        font-family: 'Open Sans', sans-serif;
+        font-family: "Open Sans", sans-serif;
       }
 
       .subScoreSpan {
@@ -849,6 +861,8 @@ export default class extends Vue {
     font-weight: bold;
     padding-top: 1em;
     padding-bottom: 1em;
+    font-size: 14px;
+    text-align: center;
   }
 }
 </style>

@@ -342,6 +342,15 @@
         <span>I will hold things</span>
       </div>
     </section>
+
+    <footer>
+      <p>
+        PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
+        <a
+          href="https://privacy.microsoft.com/en-us/privacystatement"
+        >Our Privacy Statement</a>
+      </p>
+    </footer>
   </main>
 </template>
 
@@ -445,6 +454,10 @@ export default class extends Vue {
 
       if (this.appXLink) {
         window.location.href = this.appXLink;
+
+        $appxModal.hideLoading();
+
+        (this.$refs.appxModal as Modal).hide();
       }
     } catch (e) {
       this.appxError = e;
@@ -483,6 +496,30 @@ export default class extends Vue {
 
 @import "~assets/scss/base/variables";
 
+footer {
+  display: flex;
+  justify-content: center;
+  padding-left: 16em;
+  padding-right: 16em;
+  font-size: 12px;
+  color: rgba(60, 60, 60, 0.5);
+  background: white;
+}
+
+footer p {
+  text-align: center;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 18px;
+  color: #707070;
+}
+
+footer a {
+  color: #707070;
+  text-decoration: underline;
+}
+
 #pwaIcon {
   height: 22px;
   margin-right: 10px;
@@ -496,7 +533,7 @@ export default class extends Vue {
 
 #publishMain {
   // @include backgroundRightPoint(80%, 25vh);
-  height: 100vh;
+  height: 120vh;
 }
 
 #modalBackground {
@@ -551,9 +588,9 @@ export default class extends Vue {
 }
 
 #publishSideBySide {
-  height: 104vh;
   display: flex;
   justify-content: space-around;
+  height: 120vh;
   /*background-image: url("~/assets/images/bg_publish.svg");
   background-size: cover;
   background-position: center;
@@ -601,6 +638,7 @@ export default class extends Vue {
       padding-right: 5em;
       padding-left: 159px;
       color: white;
+      margin-bottom: 12em;
 
       h2 {
         font-family: poppins;
@@ -658,7 +696,7 @@ export default class extends Vue {
     padding-bottom: 100px;
 
     #platformsListContainer {
-      padding-top: 6em;
+      padding-top: 0em;
       padding-right: 159px;
       padding-left: 52px;
       color: white;
@@ -944,6 +982,7 @@ export default class extends Vue {
 
   #publishSideBySide #publishRightSide #platformsListContainer {
     padding-right: 52px;
+    padding-top: 0;
   }
 
   #androidPlatModal {
@@ -962,7 +1001,7 @@ export default class extends Vue {
 
 @media (max-width: 1441px) {
   #publishSideBySide {
-    background-position: -86px;
+    background-position: -200px;
   }
 }
 

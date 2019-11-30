@@ -50,7 +50,7 @@ Vue.prototype.$awa = function(config) {
 export default class extends Vue {
   public isReady = true;
   public errorMessage = "";
-  public siteHref: string = "";
+  public siteHref: string = "/";
 
   @Prop({ type: String, default: "" })
   public readonly platform: string;
@@ -91,7 +91,7 @@ export default class extends Vue {
 
   public async buildArchive(
     platform: string,
-    parameters: string[]
+    parameters: string[],
   ): Promise<void> {
     if (!this.isReady) {
       return;
@@ -121,12 +121,16 @@ export default class extends Vue {
 <style lang="scss" scoped>
 #errorDiv {
   position: absolute;
-  color: red;
+  color: white;
   width: 15em;
   text-align: start;
   font-size: 14px;
-  bottom: 24em;
-  left: 5.4em;
+  position: fixed;
+  bottom: 2em;
+  right: 2em;
+  background: #3C3C3C;
+  padding: 1em;
+  border-radius: 4px;
 }
 
 #colorSpinner {
@@ -188,6 +192,12 @@ export default class extends Vue {
     width: 32px;
     height: 32px;
   }
+}
+
+.icon {
+  position: relative;
+  color: white;
+  top: -27px;
 
   .lds-dual-ring:after {
     content: " ";
