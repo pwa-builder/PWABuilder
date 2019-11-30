@@ -50,6 +50,7 @@ Vue.prototype.$awa = function(config) {
 export default class extends Vue {
   public isReady = true;
   public errorMessage = "";
+  public siteHref: string = "/";
 
   @Prop({ type: String, default: "" })
   public readonly platform: string;
@@ -80,11 +81,17 @@ export default class extends Vue {
 
   public created(): void {
     this.message$ = this.message;
+
+    const sessionRef = sessionStorage.getItem('currentURL');
+    if (sessionRef) {
+      this.siteHref = sessionRef;
+      console.log('this.siteHref', this.siteHref);
+    }
   }
 
   public async buildArchive(
     platform: string,
-    parameters: string[]
+    parameters: string[],
   ): Promise<void> {
     if (!this.isReady) {
       return;
@@ -93,7 +100,7 @@ export default class extends Vue {
     try {
       this.isReady = false;
 
-      await this.build({ platform: platform, options: parameters });
+      await this.build({ platform: platform, href: this.siteHref, options: parameters });
 
       if (this.archiveLink) {
         window.location.href = this.archiveLink;
@@ -104,7 +111,6 @@ export default class extends Vue {
     } catch (e) {
       this.isReady = true;
       this.errorMessage = e;
-      this.message$ = this.$t("publish.try_again") as string;
     }
   }
 }
@@ -114,17 +120,20 @@ export default class extends Vue {
 <style lang="scss" scoped>
 #errorDiv {
   position: absolute;
-  color: red;
+  color: white;
   width: 15em;
   text-align: start;
   font-size: 14px;
-  bottom: 24em;
-  left: 5.4em;
+  position: fixed;
+  bottom: 2em;
+  right: 2em;
+  background: #3C3C3C;
+  padding: 1em;
+  border-radius: 4px;
 }
 
 #colorSpinner {
-  /*margin-top: -4px;
-  margin-left: 12px;*/
+  margin-top: -4px;
 }
 
 @-moz-document url-prefix() {
@@ -205,9 +214,4 @@ export default class extends Vue {
   }
 }
 
-@media (max-height: 890px) {
-  #errorDiv {
-    bottom: 10em;
-  }
-}
 </style>

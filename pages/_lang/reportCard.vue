@@ -206,6 +206,11 @@ export default class extends Vue {
   }
 
   public mounted() {
+
+    if (this.url) {
+      sessionStorage.setItem('currentURL', this.url);
+    }
+    
     if ((window as any).CSS && (window as any).CSS.registerProperty) {
       try {
         (CSS as any).registerProperty({
@@ -288,11 +293,17 @@ export default class extends Vue {
       await this.updateLink(this.url$);
       this.url$ = this.url;
 
+      if (this.url) {
+        sessionStorage.setItem('currentURL', this.url);
+      }
+
       this.gotURL = true;
 
       this.getTopSamples();
     } catch (err) {
       console.error("url error", err);
+
+      this.url$ = this.url;
 
       if (err.message) {
         this.error = err.message;
@@ -301,6 +312,8 @@ export default class extends Vue {
         // so just show error directly
         this.error = err;
       }
+
+      this.gotURL = true;
     }
   }
 

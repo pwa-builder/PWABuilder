@@ -217,7 +217,16 @@
           <script async src="//jsfiddle.net/metulev/9phqxLd5/embed/html,result/"></script>
         </div>
       </div>
-    </section>-->
+    </Modal>-->
+
+    <footer>
+      <p>
+        PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
+        <a
+          href="https://privacy.microsoft.com/en-us/privacystatement"
+        >Our Privacy Statement</a>
+      </p>
+    </footer>
   </main>
 </template>
 
@@ -693,6 +702,30 @@ export default class extends Vue {
   padding-left: 20px;
   padding-right: 20px;
   border-radius: 20px;
+}
+
+footer {
+  display: flex;
+  justify-content: center;
+  padding-left: 16em;
+  padding-right: 16em;
+  font-size: 12px;
+  color: rgba(60, 60, 60, 0.5);
+  background: #F0F0F0;
+}
+
+footer p {
+  text-align: center;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 18px;
+  color: #707070;
+}
+
+footer a {
+  color: #707070;
+  text-decoration: underline;
 }
 
 #modalBackground {
