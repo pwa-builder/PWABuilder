@@ -85,7 +85,7 @@ export const actions: Actions<State, RootState> = {
                     title: "Tasks Graph Component",
                     description: "The Tasks component enables the user to view, add, remove, complete, or edit tasks. It works with tasks in Microsoft Planner or Microsoft To-Do."
                   } as any),
-                  ({
+                  /*({
                     title: "Samsung Smart View",
                     description: "A Smart View enabled app provides separate views which are connected and running on different devices."
                   } as any),
@@ -104,7 +104,7 @@ export const actions: Actions<State, RootState> = {
                   ({
                     title: "Get teams from Microsoft Teams",
                     description: "Get the teams a signed in user is a member of in Teams"
-                  } as any),
+                  } as any),*/
                   ({
                     title: "Immersive Reader",
                     description: "Immersive Reader mode makes it easier for users to read your content on the web"
@@ -136,13 +136,6 @@ export const actions: Actions<State, RootState> = {
                     }
                   }
                 }
-
-                /*for(let i = 0; i < results.length; i++) {
-                  console.log('title includes graph', (results[i].title as string).toLowerCase().includes('graph'));
-                  if ((results[i].title as string).toLowerCase().includes('graph')) {
-                    results.splice(i, 1);
-                  }
-                }*/
 
                 return results;
               });
