@@ -222,44 +222,7 @@
           </div>-->
 
           <!--temp impl for demo-->
-          <div id="devicePreviews">
-            <div id="mobileDevicePreview" v-if="iphoneDevice">
-              <img
-                src="~/assets/images/platformScreens/ios.png"
-                alt="iphone device preview"
-              />
-            </div>
-            <div id="mobileDevicePreview" v-else-if="androidDevice">
-              <img
-                src="~/assets/images/platformScreens/samsung.png"
-                alt="android device preview"
-              />
-            </div>
-            <div id="mobileDevicePreview" v-else-if="samsungDevice">
-              <img
-                src="~/assets/images/platformScreens/samsung.png"
-                alt="android device preview"
-              />
-            </div>
-            <div id="desktopDevicePreview" v-else-if="pcDevice">
-              <img
-                src="~/assets/images/platformScreens/pc.png"
-                alt="pc device preview"
-              />
-            </div>
-            <div id="teamsDevicePreview" v-else-if="teamsDevice">
-              <img
-                src="~/assets/images/platformScreens/teams.png"
-                alt="teams device preview"
-              />
-            </div>
-            <div id="macDevicePreview" v-else-if="macDevice">
-              <img
-                src="~/assets/images/platformScreens/mac.png"
-                alt="mac device preview"
-              />
-            </div>
-          </div>
+         
         </div>
       </section>
 
@@ -360,8 +323,12 @@
               </section>
             </div>
 
-
-            <div id="pwaWindowsCard" class="pwaCard">
+            <div
+              id="pwaWindowsCard"
+              class="pwaCard"
+              @mouseover="platCardHover($event, 'pc')"
+              @mouseleave="platCardUnHover($event, 'pc')"
+            >
               <div class="pwaCardHeaderBlock">
                 <i id="platformIcon" class="fab fa-windows"></i>
                 <h2>Windows</h2>
@@ -735,15 +702,15 @@ export default class extends Vue {
   }
 }
 
-  footer {
-    display: flex;
-    justify-content: center;
-    padding-left: 16em;
-    padding-right: 16em;
-    font-size: 12px;
-    color: rgba(60, 60, 60, 0.5);
-    background: white;
-  }
+footer {
+  display: flex;
+  justify-content: center;
+  padding-left: 16em;
+  padding-right: 16em;
+  font-size: 12px;
+  color: rgba(60, 60, 60, 0.5);
+  background: white;
+}
 
 footer p {
   text-align: center;
@@ -1067,6 +1034,12 @@ footer a {
 
         #pwaIosCard {
           grid-area: ios;
+        }
+
+        #pwaIosCard #pwaCardIconBlock {
+          width: 100%;
+          justify-content: space-between;
+          align-items: center;
         }
 
         #pwaSamsungCard {
