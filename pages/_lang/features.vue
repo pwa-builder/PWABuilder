@@ -19,8 +19,8 @@
       <button v-bind:class="{ active: showGraphSamples }" @click="graphSamples()">Microsoft Graph</button>
       <button v-bind:class="{ active: showAuthSamples }" @click="showAuthSamplesMethod()">Authentication</button>
       <button v-bind:class="{ active: showEduSamples }" @click="showEduSamplesMethod()">Education</button>
-      <button v-bind:class="{ active: showSamsungSamples }" @click="doSamsungSamples()">Samsung</button>
-      <button v-bind:class="{ active: showTeamsSamples }" @click="doTeamsSamples()">Microsoft Teams</button>
+      <!--<button v-bind:class="{ active: showSamsungSamples }" @click="doSamsungSamples()">Samsung</button>
+      <button v-bind:class="{ active: showTeamsSamples }" @click="doTeamsSamples()">Microsoft Teams</button>-->
     </div>
 
     <section id="fakeCardBlock" v-if="samples.length === 0">
@@ -96,40 +96,10 @@
       </FeatureCard>
     </section>
 
-    <section v-if="showTeamsSamples" id="featureListBlock">
-      <FeatureCard
-        v-if="sortedTeamsSamples.length > 0 && !selectedSamples.includes(sample)"
-        v-for="sample in sortedTeamsSamples"
-        :sample="sample"
-        :key="sample.id"
-        v-on:removed="onRemoved"
-        :showRemoveButton="false"
-        :showAddButton="true"
-        :wrapText="true"
-      >
-        <i slot="iconSlot" class="fas fa-rocket"></i>
-      </FeatureCard>
-    </section>
-
     <section v-if="showAuthSamples" id="featureListBlock">
       <FeatureCard
         v-if="authSamples.length > 0 && !selectedSamples.includes(sample)"
         v-for="sample in authSamples"
-        :sample="sample"
-        :key="sample.id"
-        v-on:removed="onRemoved"
-        :showRemoveButton="false"
-        :showAddButton="true"
-        :wrapText="true"
-      >
-        <i slot="iconSlot" class="fas fa-rocket"></i>
-      </FeatureCard>
-    </section>
-
-    <section v-if="showSamsungSamples" id="featureListBlock">
-      <FeatureCard
-        v-if="sortedSamsungSamples.length > 0 && !selectedSamples.includes(sample)"
-        v-for="sample in sortedSamsungSamples"
         :sample="sample"
         :key="sample.id"
         v-on:removed="onRemoved"
@@ -663,6 +633,7 @@ export default class extends Vue {
   padding-right: 20px;
   border-radius: 20px;
   margin: 10px;
+  width: 158px;
 }
 
 #featureTabsBar button.active {
