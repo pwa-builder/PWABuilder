@@ -85,6 +85,18 @@ export default class extends Vue {
     this.url$ = this.url;
   }
 
+  public mounted(): void {
+    const overrideValues = {
+      isAuto: false,
+      behavior: 0,
+      uri: window.location.href,
+      pageName: "manifestGenerator",
+      pageHeight: window.innerHeight
+    };
+
+    awa.ct.capturePageView(overrideValues);
+  }
+
   public get inProgress(): boolean {
     return !this.generatorReady && !this.error;
   }
@@ -120,11 +132,4 @@ export default class extends Vue {
 
 declare var awa: any;
 
-
-Vue.prototype.$awa = function (config) { 
- 
-  awa.ct.capturePageView(config);
-
-  return;
-};
 </script>

@@ -1,6 +1,8 @@
-
 <template>
-  <div id="hubContainer" :class="{ 'backgroundReport': gotURL, 'backgroundIndex': !gotURL }">
+  <div
+    id="hubContainer"
+    :class="{ backgroundReport: gotURL, backgroundIndex: !gotURL }"
+  >
     <HubHeader
       v-on:reset="reset()"
       :score="overallScore"
@@ -22,14 +24,17 @@
         <div id="topHalfHome">
           <h1>Quickly and easily turn your website into an app!</h1>
 
-          <p>It's super easy to get started. Just enter the URL of your website below</p>
+          <p>
+            It's super easy to get started. Just enter the URL of your website
+            below
+          </p>
 
           <div v-if="this.error" id="urlErr">{{ $t(this.error) }}</div>
 
           <form
             @submit.prevent="checkUrlAndGenerate"
             @keydown.enter.prevent="checkUrlAndGenerate"
-            :class="{ 'formErr': error != null }"
+            :class="{ formErr: error != null }"
           >
             <input
               id="getStartedInput"
@@ -43,12 +48,10 @@
               autocomplete="off"
             />
 
-            <button
-              @click=" $awa( { 'referrerUri': 'https://www.pwabuilder.com/build/reportCard' })"
-              :class="{ 'btnErr': error != null }"
-              id="getStartedButton"
-            >
-              <div :class="{ 'btnErrText': error != null }">{{ $t('generator.start') }}</div>
+            <button :class="{ btnErr: error != null }" id="getStartedButton">
+              <div :class="{ btnErrText: error != null }">
+                {{ $t("generator.start") }}
+              </div>
             </button>
           </form>
         </div>
@@ -61,10 +64,11 @@
 
           <footer>
             <p>
-              PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
-              <a
-                href="https://privacy.microsoft.com/en-us/privacystatement"
-              >Our Privacy Statement</a>
+              PWA Builder was founded by Microsoft as a community guided, open
+              source project to help move PWA adoption forward.
+              <a href="https://privacy.microsoft.com/en-us/privacystatement"
+                >Our Privacy Statement</a
+              >
             </p>
           </footer>
         </div>
@@ -74,8 +78,9 @@
         <h2>Hub</h2>
 
         <p>
-          We have taken a look at how well your website supports PWA features and provided simple tools to help you fill in the gaps.
-          When you’re ready, click “build my PWA” to finish up.
+          We have taken a look at how well your website supports PWA features
+          and provided simple tools to help you fill in the gaps. When you’re
+          ready, click “build my PWA” to finish up.
         </p>
       </div>
 
@@ -109,7 +114,7 @@
         class="topFeatures"
         v-if="topSamples.length > 0"
         v-for="(sample, index) in topSamples"
-        :class="{ 'firstFeature' : index === 0 }"
+        :class="{ firstFeature: index === 0 }"
         :sample="sample"
         :key="sample.id"
         :showAddButton="true"
@@ -125,18 +130,18 @@
     </main>
     <footer v-if="gotURL" id="hubFooter">
       <p>
-        PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
+        PWA Builder was founded by Microsoft as a community guided, open source
+        project to help move PWA adoption forward.
         <a
           href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
-        >Our Privacy Statement</a>
+          >Our Privacy Statement</a
+        >
       </p>
     </footer>
   </div>
 </template>
 
-
-
-<script lang='ts'>
+<script lang="ts">
 import Vue from "vue";
 import Component from "nuxt-class-component";
 import { Action, State, namespace } from "vuex-class";
@@ -206,11 +211,10 @@ export default class extends Vue {
   }
 
   public mounted() {
-
     if (this.url) {
-      sessionStorage.setItem('currentURL', this.url);
+      sessionStorage.setItem("currentURL", this.url);
     }
-    
+
     if ((window as any).CSS && (window as any).CSS.registerProperty) {
       try {
         (CSS as any).registerProperty({
@@ -230,10 +234,25 @@ export default class extends Vue {
         console.error(err);
       }
     }
+
+    const overrideValues = {
+      isAuto: false,
+      behavior: 0,
+      uri: window.location.href,
+      pageName: "homePage",
+      pageHeight: window.innerHeight
+    };
+
+    awa.ct.capturePageView(overrideValues);
   }
 
   public async shareReport() {
-    console.log("trying to share", `${location.href}?url=${this.cleanedURL}`, this.url, this.url$);
+    console.log(
+      "trying to share",
+      `${location.href}?url=${this.cleanedURL}`,
+      this.url,
+      this.url$
+    );
 
     if ((navigator as any).share) {
       try {
@@ -248,13 +267,15 @@ export default class extends Vue {
     } else {
       if ((navigator as any).clipboard) {
         try {
-          await (navigator as any).clipboard.writeText(`${location.href}?url=${this.url}`);
+          await (navigator as any).clipboard.writeText(
+            `${location.href}?url=${this.url}`
+          );
           this.showToast();
         } catch (err) {
           console.error(err);
         }
       } else {
-        window.open(`${location.href}?url=${this.url}`, '__blank');
+        window.open(`${location.href}?url=${this.url}`, "__blank");
       }
     }
   }
@@ -294,7 +315,7 @@ export default class extends Vue {
       this.url$ = this.url;
 
       if (this.url) {
-        sessionStorage.setItem('currentURL', this.url);
+        sessionStorage.setItem("currentURL", this.url);
       }
 
       this.gotURL = true;
@@ -357,12 +378,6 @@ export default class extends Vue {
     });
   }
 }
-
-Vue.prototype.$awa = function(config) {
-  awa.ct.capturePageView(config);
-
-  return;
-};
 
 declare var awa: any;
 </script>
@@ -983,4 +998,3 @@ h2 {
   }
 }
 </style>
-

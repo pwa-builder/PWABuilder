@@ -155,6 +155,18 @@ export default class extends Vue {
     await this.getCode(this.serviceworker$);
   }
 
+  mounted() {
+    const overrideValues = {
+      isAuto: false,
+      behavior: 0,
+      uri: window.location.href,
+      pageName: "serviceWorkerPage",
+      pageHeight: window.innerHeight
+    };
+
+    awa.ct.capturePageView(overrideValues);
+  }
+
   public selectServiceWorker(id: number) {
     console.log(id);
     this.serviceworker$ = id;
@@ -237,6 +249,8 @@ export default class extends Vue {
     );
   }
 }
+
+declare var awa: any;
 </script>
 
 <style lang="scss" scoped>

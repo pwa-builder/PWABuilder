@@ -1,6 +1,6 @@
 <template>
   <button
-    @click="install(); $awa( { 'referrerUri': 'https://www.pwabuilder.com/installToHomescreen' });"
+    @click="install()"
     v-if="this.$route.path !== '/' && this.installPrompt !== null"
     id="installButton"
   >Install PWABuilder</button>
@@ -47,14 +47,6 @@ export default class extends Vue {
     }
   }
 }
-
-Vue.prototype.$awa = function(config) {
-  awa.ct.capturePageView(config);
-
-  return;
-};
-
-declare var awa: any;
 </script>
 
 <style lang="scss" scoped>

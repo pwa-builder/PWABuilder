@@ -35,7 +35,7 @@
             <input id="getStartedInput" :aria-label="$t('generator.url')" :placeholder="$t('generator.placeholder_url')" name="siteUrl" type="text" ref="url"
                 v-model="url$" autofocus />
 
-            <button @click=" $awa( { 'referrerUri': 'https://www.pwabuilder.com/build/manifest-scan' })" id="getStartedButton">{{ $t('generator.start') }}
+            <button id="getStartedButton">{{ $t('generator.start') }}
              <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm"/>
             </button>
           </form>
@@ -101,15 +101,6 @@ export default class extends Vue {
     }
   }
 }
-
-declare var awa: any;
-
-
-Vue.prototype.$awa = function (config) { 
-  awa.ct.capturePageView(config);
-
-  return;
-};
 </script>
 
 <style lang="scss" scoped>
