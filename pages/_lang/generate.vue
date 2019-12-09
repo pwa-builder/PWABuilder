@@ -429,6 +429,18 @@ export default class extends Vue {
     console.log("display names", this.displaysNames);
   }
 
+  public mounted() {
+    const overrideValues = {
+      isAuto: false,
+      behavior: 0,
+      uri: window.location.href,
+      pageName: "manifestPage",
+      pageHeight: window.innerHeight
+    };
+
+    awa.ct.capturePageView(overrideValues);
+  }
+
   async destroyed() {
     (this.$root.$el.closest("body") as HTMLBodyElement).classList.remove(
       "modal-screen"
@@ -642,6 +654,8 @@ export default class extends Vue {
     this.showingIconModal = false;
   }
 }
+
+declare var awa: any;
 </script>
 
 <style lang="scss">

@@ -2,11 +2,12 @@
 
 var config = {
       autoCapture: {
-            lineage:true
+            lineage:true,
+            pageView: false
       },
       coreData: {
             appId: "PWABuilder",
-            market: "en-us"
+            pageName: "index"
       }
 };
 awa.init(config);

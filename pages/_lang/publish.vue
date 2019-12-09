@@ -517,6 +517,18 @@ export default class extends Vue {
     this.updateStatus();
   }
 
+  public mounted(): void {
+    const overrideValues = {
+      isAuto: false,
+      behavior: 0,
+      uri: window.location.href,
+      pageName: "publishPage",
+      pageHeight: window.innerHeight
+    };
+
+    awa.ct.capturePageView(overrideValues);
+  }
+
   platCardHover(ev, device?) {
     const targetButton: HTMLButtonElement = ev.target.children[2].children[0];
 
@@ -653,6 +665,8 @@ export default class extends Vue {
     this.showBackground = false;
   }
 }
+
+declare var awa: any;
 </script>
 
 <style lang="scss">

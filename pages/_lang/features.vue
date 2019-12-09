@@ -271,6 +271,16 @@ export default class extends Vue {
     }
 
     this.doInterObserve();
+
+    const overrideValues = {
+      isAuto: false,
+      behavior: 0,
+      uri: window.location.href,
+      pageName: "featuresPage",
+      pageHeight: window.innerHeight
+    };
+
+    awa.ct.capturePageView(overrideValues);
   }
 
   doInterObserve() {
@@ -594,6 +604,8 @@ export default class extends Vue {
     this.modalStatus = false;
   }
 }
+
+declare var awa: any;
 </script>
 
 <style lang="scss" scoped>
