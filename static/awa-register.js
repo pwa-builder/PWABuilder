@@ -2,11 +2,11 @@
 
 var config = {
       autoCapture: {
-            lineage:true,
-            pageView: false
+            lineage:true
       },
       coreData: {
             appId: "PWABuilder",
+            market: "en-us",
             pageName: "index"
       }
 };
