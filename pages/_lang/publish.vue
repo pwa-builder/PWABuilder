@@ -526,7 +526,7 @@ export default class extends Vue {
       pageHeight: window.innerHeight
     };
 
-    awa.ct.capturePageView(overrideValues);
+    this.$awa(overrideValues);
   }
 
   platCardHover(ev, device?) {
@@ -665,6 +665,12 @@ export default class extends Vue {
     this.showBackground = false;
   }
 }
+
+Vue.prototype.$awa = function(config) {
+  console.log(config);
+  awa.ct.capturePageView(config);
+  return;
+};
 
 declare var awa: any;
 </script>

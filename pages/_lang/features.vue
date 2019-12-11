@@ -605,6 +605,12 @@ export default class extends Vue {
   }
 }
 
+Vue.prototype.$awa = function(config) {
+  console.log(config);
+  awa.ct.capturePageView(config);
+  return;
+};
+
 declare var awa: any;
 </script>
 
