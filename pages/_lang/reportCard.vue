@@ -236,14 +236,13 @@ export default class extends Vue {
     }
 
     const overrideValues = {
-      isAuto: false,
       behavior: 0,
       uri: window.location.href,
       pageName: "homePage",
       pageHeight: window.innerHeight
     };
 
-    awa.ct.capturePageView(overrideValues);
+    this.$awa(overrideValues);
   }
 
   public async shareReport() {
@@ -378,6 +377,12 @@ export default class extends Vue {
     });
   }
 }
+
+
+Vue.prototype.$awa = function(config) {
+  awa.ct.capturePageView(config);
+  return;
+};
 
 declare var awa: any;
 </script>
