@@ -58,7 +58,7 @@
           class="enabled"
           id="publishButton"
           to="/publish"
-        >Build My PWA</nuxt-link>
+        ></nuxt-link>
       </div>
     </div>
   </div>
@@ -196,6 +196,10 @@ header {
     border: none;
   }
 
+  img {
+    max-width: none;
+  }
+
   /* TODO: Can some of this be shared with tabsBar below at all? */
   #mainTabsBar {
     grid-column: 3 / span 8;
@@ -255,6 +259,7 @@ header {
 #subHeader {
   @include grid;
 
+  grid-template-columns: 3fr 2fr;
   // background: rgba(60, 60, 60, 0.8);
   align-items: center;
   justify-content: space-between;
@@ -294,6 +299,42 @@ header {
     display: flex;
     justify-self: right;
     align-items: center;
+  }
+
+  @media (max-width: 960px) {
+    #scoreZone {
+      grid-column: 7 / span 6;
+    }
+
+    #tabsBar {
+      grid-column: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 806px) {
+    #urlTested {
+      display: none !important;
+    }
+
+    #scoreZone {
+      grid-column: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 1138px) {
+    #overallScore span {
+      display: none !important;
+    }
+
+    #overallScore:after {
+      content: 'score';
+      font-size: 12px;
+      line-height: 16px;
+    }
   }
 
   #urlTested {
@@ -395,11 +436,26 @@ header {
     text-align: center;
     height: 40px;
   }
+
+  #publishButton:after {
+    content: 'Build My PWA';
+  }
+
+  @media (max-width: 630px) {
+    #publishButton:after {
+      content: 'Build';
+    }
+  }
 }
 
 @media (max-width: 425px) {
-  #subHeader #tabsBar {
-    display: none;
+  // #subHeader #tabsBar {
+  //   display: none;
+  // }
+
+  #overallScore {
+    padding-right: 0px !important;
+    padding-left: 20px;
   }
 
   #subHeader #publishButton {
