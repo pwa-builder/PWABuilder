@@ -529,7 +529,7 @@ declare var awa: any;
 
 @media (max-height: 600px) {
   .backgroundIndex {
-    @include backgroundLeftPoint(30%, 20vh);
+    @include backgroundLeftPoint(30%, 23vh);
   }
 
   .backgroundReport {
@@ -648,6 +648,18 @@ h2 {
       display: flex;
       align-items: center;
       text-align: center;
+    }
+  }
+
+  @media (max-height: 375px) {
+    #topHalfHome {
+      margin-top: 24px;
+    }
+  }
+
+  @media (max-height: 320px) {
+    #topHalfHome {
+      margin-top: 4px;
     }
   }
 
@@ -790,6 +802,10 @@ h2 {
     grid-column: 1 / span 12;
   }
 }
+
+  #scoreCard {
+    margin-bottom: 20px;
+    }
 
 @media (max-width: 425px) {
   #infoSection {

@@ -697,8 +697,8 @@ declare var awa: any;
 footer {
   display: flex;
   justify-content: center;
-  padding-left: 16em;
-  padding-right: 16em;
+  padding-left: 15%;
+  padding-right: 15%;
   font-size: 12px;
   color: rgba(60, 60, 60, 0.5);
   background: #F0F0F0;
