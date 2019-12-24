@@ -741,6 +741,7 @@ h2 {
 
     footer {
       color: rgba(60, 60, 60, 0.6);
+      background: transparent;
 
       p {
         text-align: center;
@@ -833,6 +834,7 @@ h2 {
     padding-left: 25px;
     padding-right: 25px;
     text-align: center;
+    background: transparent;
   }
 
   #tabsBar {

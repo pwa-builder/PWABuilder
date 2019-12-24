@@ -745,11 +745,11 @@ main {
   height: 100vh;
 }
 
-@media (max-height: 805px) {
-  main {
-    height: 116vh;
-  }
-}
+// @media (max-height: 805px) {
+//   main {
+//     height: 116vh;
+//   }
+// }
 
 @keyframes opened {
   from {
@@ -829,13 +829,15 @@ header {
 
 #featureListBlock,
 #fakeCardBlock {
-  display: grid;
-  grid-template-columns: auto auto auto;
-  padding-left: 159px;
-  padding-right: 159px;
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  flex-wrap: wrap;
   margin-top: 24px;
   margin-bottom: 104px;
-  min-height: 450px;
+  justify-content: center;
+  padding-left: 12px;
+  padding-right: 12px;
 
   .fakeCard {
     display: flex;
@@ -848,25 +850,12 @@ header {
 }
 
 #featureListBlock .card {
-  width: initial !important;
-  max-height: 240px;
-  min-width: 320px;
+  width: 320px;
 }
 
-@media (max-width: 1336px) {
-  #featureListBlock,
-  #fakeCardBlock {
-    padding-left: 35px;
-    padding-right: 35px;
-  }
-}
-
-@media (max-width: 430px) {
-  #featureListBlock,
-  #fakeCardBlock {
-    padding-left: 16px;
-    padding-right: 16px;
-    display: block;
+@media (max-width: 1024px) {
+  #featureListBlock .card {
+    width: 280px;
   }
 }
 

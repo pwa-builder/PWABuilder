@@ -315,6 +315,7 @@
           :showToolbar="true"
           :showHeader="true"
           :showCopyButton="true"
+          id="manifestCode"
         >
           <h3>Add this code to your manifest.webmanifest file</h3>
         </CodeViewer>
@@ -666,6 +667,10 @@ declare var awa: any;
 
 <style lang="scss">
 @import "~assets/scss/base/variables";
+
+#manifestCode {
+  width: 100%;
+}
 
 #textarea_error {
   color: red;

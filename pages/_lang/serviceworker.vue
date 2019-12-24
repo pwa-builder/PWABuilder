@@ -261,8 +261,8 @@ declare var awa: any;
 footer {
   display: flex;
   justify-content: center;
-  padding-left: 16em;
-  padding-right: 16em;
+  padding-left: 15%;
+  padding-right: 15%;
   font-size: 12px;
   color: rgba(60, 60, 60, 0.5);
   background: white;
@@ -285,22 +285,16 @@ footer a {
 #sideBySide {
   display: flex;
   justify-content: space-between;
-  height: 185vh;
-  padding-right: 128px;
-  padding-left: 128px;
+  height: 100%;
+  padding-right: 3%;
+  padding-left: 3%;
   background: white;
 
   #leftSide {
-    // flex: 1;
-    width: 590px;
     background: white;
-    min-height: 140vh;
-    // margin-left: 151px;
 
     .mastHead {
       padding-top: 40px;
-      /*padding-right: 100px;
-      padding-left: 159px;*/
 
       h2 {
         font-family: Poppins;
@@ -315,16 +309,11 @@ footer a {
         margin-top: 16px;
         font-size: 16px;
         line-height: 28px;
-        // width: 376px;
       }
     }
 
     #inputSection {
-      /*padding-right: 100px;
-      padding-left: 159px;*/
 
-      min-height: 800px;
-      margin-left: -27px;
 
       #inputContainer {
         cursor: pointer;
@@ -332,15 +321,13 @@ footer a {
         padding-top: 24px;
         padding-bottom: 24px;
         padding-left: 28px;
-        padding-right: 64px;
-        // width: 376px;
+        padding-right: 28px;
 
         .swDesc {
           font-style: normal;
           font-weight: normal;
           font-size: 14px;
           line-height: 21px;
-          //  width: 376px;
         }
 
         #inputDiv {
@@ -416,10 +403,6 @@ footer a {
   }
 
   #rightSide {
-    /*flex: 1;
-    width: 50%;*/
-    // width: 760px;
-    margin-left: 100px;
     display: flex;
     flex-direction: column;
     padding-top: 2px;
@@ -430,7 +413,7 @@ footer a {
     }
 
     .bottomViewer {
-      margin-top: 5em;
+      margin-top: 20px;
     }
 
     #topTitle {
@@ -455,64 +438,20 @@ footer a {
   }
 }
 
-@media (min-width: 2559px) {
-  #inputContainer {
-    width: 534px !important;
-    margin-top: 30px !important;
-  }
-
-  .swDesc {
-    width: initial !important;
-  }
+#rightSide {
+  width: 55%;
+  max-height: 80%; 
+}
+#leftSide {
+  width: 40%;
 }
 
-@media (max-width: 1440px) {
-  #sideBySide #rightSide {
-    margin-left: 51px;
-  }
-
-  #sideBySide #leftSide {
-    width: 628px;
-  }
-}
-
-@media (max-width: 1290px) {
-  #sideBySide #rightSide .topViewer {
-    height: 57vh;
-  }
-
-  #rightSide {
-    height: 123vh !important;
-    margin-left: 59px;
-  }
-
-  #sideBySide {
-    padding-left: 54px;
-    padding-right: 52px;
-    height: 235vh;
-  }
-
-  #sideBySide #leftSide .mastHead {
-    padding-left: initial;
-  }
-
-  #sideBySide #leftSide #inputSection {
-    padding-left: initial;
-  }
-
-  #sideBySide #rightSide .bottomViewer {
-    margin-top: 17em;
-  }
-
-  #sideBySide #leftSide {
-    width: 557px;
-    margin-left: initial;
-  }
-}
-
-@media (max-width: 425px) {
+@media (max-width: 1180px) {
   #rightSide {
     display: none !important;
+  }
+  #leftSide {
+    width: 100%;
   }
 
   #sideBySide {
@@ -528,16 +467,6 @@ footer a {
   #sideBySide #leftSide #inputSection #inputContainer {
     padding-left: 14px;
     padding-right: 14px;
-  }
-}
-
-@media (max-width: 1079px) {
-  .swRightSide {
-    width: 27em !important;
-  }
-
-  #sideBySide #rightSide .bottomViewer {
-    margin-top: 20em;
   }
 }
 </style>
