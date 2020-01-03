@@ -27,6 +27,28 @@
       </div>
     </header>
 
+    <div id="featureDetailButtons" v-if="showFeatureDetailButton">
+      <button id="backButton">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <div id="featDetailTitle"></div>
+
+      <button v-if="showFeatureDetailGraphButton" id="featDetailDocsButton" class="featDetailButton">
+        <i class="fas fa-book"></i>
+        <span>Docs</span>
+      </button>
+
+      <button id="githubSnippitButton" class="featDetailButton">
+        <i class="fab fa-github"></i>
+        <span>Github</span>
+      </button>
+
+      <button id="featDetailShareButton" class="featDetailButton">
+        <i class="fas fa-share-alt"></i>
+        <span>Share</span>
+      </button>
+    </div>
+
     <div class="has-acrylic-80 is-dark has-reveal-background" v-if="showSubHeader" id="subHeader">
       <div id="tabsBar">
         <nuxt-link to="/">Overview</nuxt-link>
@@ -84,6 +106,8 @@ const GeneratorState = namespace(generator.name, State);
 export default class extends Vue {
   @Prop({ default: false }) expanded: boolean;
   @Prop({}) showSubHeader: string;
+  @Prop({ default: false }) showFeatureDetailButton: boolean;
+  @Prop({ default: false }) showFeatureDetailGraphButton: boolean;
   @Prop({ default: 0 }) score: number;
 
   @GeneratorState url: string;

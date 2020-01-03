@@ -1,6 +1,6 @@
 <template>
   <div id="mainDiv">
-    <HubHeader></HubHeader>
+    <HubHeader showFeatureDetailButton="true" :showFeatureDetailGraphButton="onGraph"></HubHeader>
 
     <ion-toast-controller></ion-toast-controller>
 
@@ -8,25 +8,6 @@
       <button v-if="!idGenerated" @click="generateID()">Generate Client ID</button>
       <div id="generatedDiv" v-else @click="generateID()">ID Generated</div>
     </div>
-
-    <button @click="goBack()" id="backButton">
-      <i class="fas fa-chevron-left"></i>
-    </button>
-
-    <button @click="share()" id="featDetailShareButton">
-      <i class="fas fa-share-alt"></i>
-      <span>Share</span>
-    </button>
-
-    <button @click="goToGithub()" id="githubSnippitButton">
-      <i class="fab fa-github"></i>
-      <span>Github</span>
-    </button>
-
-    <button v-if="onGraph" @click="goToDocs()" id="featDetailDocsButton">
-      <i class="fas fa-book"></i>
-      <span>Docs</span>
-    </button>
 
     <div v-if="shared" id="shareToast">URL copied for sharing</div>
 
@@ -122,7 +103,8 @@ export default class extends Vue {
     },
     {
       realName: "graphPeoplePicker",
-      mappedName: "People Picker Graph Component"
+      mappedName: "People Picker Graph Component",
+      docsName: "people-picker"
     },
     {
       realName: "graphPerson",
@@ -134,26 +116,7 @@ export default class extends Vue {
       mappedName: "Tasks Graph Component",
       docsName: "tasks"
     },
-    /*{
-      realName: "samsungPay",
-      mappedName: "Samsung Pay"
-    },
-    {
-      realName: "samsungSmartView",
-      mappedName: "Samsung Smart View"
-    },
-    {
-      realName: "teamsChannels",
-      mappedName: "Get Channels from Microsoft Teams"
-    },
-    {
-      realName: "teamsTeam",
-      mappedName: "Get teams from Microsoft Teams"
-    },
-    {
-      realName: "teamsNewChannel",
-      mappedName: "Create a new Channel in Microsoft Teams"
-    },*/
+
     {
       realName: "immersiveReader",
       mappedName: "Immersive Reader"
@@ -169,14 +132,18 @@ export default class extends Vue {
   docsContent: string | null = null;
 
   async mounted() {
-    console.log("route param", this.$route.params.featureDetail);
+    (<HTMLButtonElement>document.getElementById("backButton")).addEventListener("click", this.goBack);
+    (<HTMLButtonElement>document.getElementById("featDetailShareButton")).addEventListener("click", this.share);
+    (<HTMLButtonElement>document.getElementById("githubSnippitButton")).addEventListener("click", this.goToGithub);
+    this.$nextTick(function () {
+      if (this.onGraph) {
+        (<HTMLButtonElement>document.getElementById("featDetailDocsButton")).addEventListener("click", this.goToDocs);
+      }
+    })
 
     this.snippitMap.forEach(async snippit => {
-      console.log("snippit.mappedName", snippit.mappedName);
       if (snippit.mappedName === this.$route.params.featureDetail) {
         this.currentSample = snippit;
-
-        console.log("feature detail", this.$route.params.featureDetail);
 
         if (
           this.$route.params.featureDetail === "Microsoft Graph Authentication"
@@ -192,8 +159,6 @@ export default class extends Vue {
           this.onGraph = false;
         }
 
-        console.log(snippit);
-
         const response = await fetch(
           `${this.baseURL}/${snippit.realName}/${snippit.realName}.md`
         );
@@ -204,33 +169,8 @@ export default class extends Vue {
             return require("highlight.js").highlightAuto(docsFile).value;
           }
         });
-        console.log(docsFile);
       }
     });
-    /*const response = await fetch(
-      `${baseURL}=${this.$route.params.featureDetail}`
-    );
-    const data = await response.json();
-
-    this.codeSnippits = data.snippets;
-
-    console.log('codeSnippits', this.codeSnippits);
-
-    await this.getSamples();
-    console.log('this.samples', this.samples);
-
-    this.samples.forEach(sample => {
-      console.log(this.codeSnippits[0]);
-      console.log("sample.image", sample.image);
-      console.log('this.$route.params.featureDetail', this.$route.params.featureDetail);
-
-      if (
-        sample.image && sample.image.includes(this.$route.params.featureDetail) === true
-      ) {
-        console.log("inside finder", sample);
-        this.currentSample = sample;
-      }
-    });*/
   }
 
   generateID() {
@@ -266,13 +206,6 @@ export default class extends Vue {
   }
 
   async showToast() {
-    // show toast
-    /*this.shared = true;
-
-    setTimeout(() => {
-      this.shared = false;
-    }, 1200);*/
-
     const toastCtrl = document.querySelector("ion-toast-controller");
     await (toastCtrl as any).componentOnReady();
 
@@ -341,22 +274,23 @@ export default class extends Vue {
 @import "~assets/scss/base/variables";
 @import "~assets/scss/vendor/highlightjs2";
 
-#featDetailDocsButton {
+.featDetailButton {
+  margin-left: 10px;
+  background: transparent;
   border: solid 1px white;
-  position: absolute;
-  right: 29.6em;
-  top: 5em;
+  border-radius: 24px;
   width: 99px;
   height: 42px;
-  background: transparent;
-  border-radius: 24px;
   font-size: 14px;
   font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: white;
-}
 
-#featDetailDocsButton span {
-  margin-left: 10px;
+  span {
+    margin-left: 10px;
+  } 
 }
 
 #clientIdBlock {
@@ -430,58 +364,6 @@ export default class extends Vue {
   line-height: 22px;
 }
 
-#featDetailShareButton {
-  background: transparent;
-  border: solid 1px white;
-  border-radius: 24px;
-  position: absolute;
-  right: 12.4em;
-  top: 5em;
-  width: 99px;
-  height: 42px;
-  font-size: 14px;
-  font-weight: bold;
-  display: flex;
-  justify-content: center;
-  color: white;
-
-  span {
-    margin-left: 10px;
-  }
-}
-
-#githubSnippitButton {
-  border: solid 1px white;
-  position: absolute;
-  right: 21em;
-  top: 5em;
-  height: 42px;
-  width: 99px;
-  background: transparent;
-  border-radius: 24px;
-  font-size: 14px;
-  font-weight: bold;
-  color: white;
-
-  span {
-    margin-left: 10px;
-  }
-}
-
-@media (max-width: 1336px) {
-  #featDetailShareButton {
-    right: 3em;
-  }
-
-  #githubSnippitButton {
-    right: 11em;
-  }
-
-  #featDetailDocsButton {
-    right: 19em !important;
-  }
-}
-
 #shareToast {
   position: absolute;
   bottom: 16px;
@@ -519,6 +401,7 @@ export default class extends Vue {
 
 #docsMain {
   background: white;
+  margin-top: -80px;
 
   #headerDiv {
     background: rgba(31, 194, 200, 1);
@@ -564,6 +447,7 @@ export default class extends Vue {
       font-size: 24px;
       color: white;
       margin-bottom: 0px;
+      width: 55%;
     }
   }
 
@@ -655,10 +539,17 @@ export default class extends Vue {
   }
 }
 
+#featureDetailButtons {
+    width: 100%;
+    height: 80px;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
 #backButton {
-  position: absolute;
-  top: 5em;
-  left: 7em;
   background: white;
   border-radius: 50%;
   border: none;
@@ -667,13 +558,23 @@ export default class extends Vue {
   width: 42px;
 }
 
-@media (max-width: 1336px) {
-  #backButton {
-    left: 30px;
+#featDetailTitle {
+  flex-grow: 4;
+}
+
+@media (max-width: 800px) { 
+  #docsMain #headerDiv h2 {
+    width: 45%;
   }
 }
 
-@media (max-width: 425px) {
+@media (max-width: 700px) { 
+  #docsMain #headerDiv h2 {
+    width: 40%;
+  }
+}
+
+@media (max-width: 650px) { 
   #docsMain #contentContainer {
     flex-direction: column;
     padding-left: 25px;
@@ -687,12 +588,29 @@ export default class extends Vue {
     margin-left: 0px;
   }
 
+  #docsMain #contentContainer #rightSide {
+    margin-top: 4em;
+  }
+}
+
+@media (max-width: 630px) { 
   #docsMain #headerDiv h2 {
     display: none;
   }
+}
 
-  #docsMain #contentContainer #rightSide {
-    margin-top: 4em;
+@media (max-width: 420px) { 
+  #featureDetailButtons :nth-child(5) {
+    display: none;
+  }
+}
+
+@media (max-width: 300px) { 
+  #featDetailDocsButton {
+    display: none;
+  }
+  #featDetailShareButton {
+    display: none;
   }
 }
 </style>

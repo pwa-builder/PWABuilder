@@ -285,11 +285,13 @@ export default class extends Vue {
 
   doInterObserve() {
     let observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        (this.$refs.featureTabsBar as HTMLElement).style.background = 'transparent';
-      }
-      else {
-        (this.$refs.featureTabsBar as HTMLElement).style.background = '#36363633';
+      if (this.$refs && this.$refs.featureTabsBar) {
+        if (entries[0].isIntersecting) {
+          (this.$refs.featureTabsBar as HTMLElement).style.background = 'transparent';
+        }
+        else {
+          (this.$refs.featureTabsBar as HTMLElement).style.background = '#36363633';
+        }
       }
     });
 
@@ -631,6 +633,7 @@ declare var awa: any;
   align-items: center;
   position: sticky;
   top: 0;
+  flex-wrap: wrap;
 }
 
 #featureTabsBar button {
@@ -745,12 +748,6 @@ main {
   height: 100vh;
 }
 
-// @media (max-height: 805px) {
-//   main {
-//     height: 116vh;
-//   }
-// }
-
 @keyframes opened {
   from {
     opacity: 0;
@@ -800,7 +797,6 @@ header {
 
   p {
     color: white;
-    width: 630px;
 
     font-style: normal;
     font-weight: normal;
@@ -820,10 +816,6 @@ header {
   #headerSection {
     padding-left: 28px;
     padding-right: 28px;
-  }
-
-  #headerSection p {
-    width: initial;
   }
 }
 
