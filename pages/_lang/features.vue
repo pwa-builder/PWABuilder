@@ -285,11 +285,13 @@ export default class extends Vue {
 
   doInterObserve() {
     let observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        (this.$refs.featureTabsBar as HTMLElement).style.background = 'transparent';
-      }
-      else {
-        (this.$refs.featureTabsBar as HTMLElement).style.background = '#36363633';
+      if (this.$refs && this.$refs.featureTabsBar) {
+        if (entries[0].isIntersecting) {
+          (this.$refs.featureTabsBar as HTMLElement).style.background = 'transparent';
+        }
+        else {
+          (this.$refs.featureTabsBar as HTMLElement).style.background = '#36363633';
+        }
       }
     });
 
@@ -631,6 +633,7 @@ declare var awa: any;
   align-items: center;
   position: sticky;
   top: 0;
+  flex-wrap: wrap;
 }
 
 #featureTabsBar button {
@@ -697,8 +700,8 @@ declare var awa: any;
 footer {
   display: flex;
   justify-content: center;
-  padding-left: 16em;
-  padding-right: 16em;
+  padding-left: 15%;
+  padding-right: 15%;
   font-size: 12px;
   color: rgba(60, 60, 60, 0.5);
   background: #F0F0F0;
@@ -743,12 +746,6 @@ footer a {
 main {
   @include backgroundRightPoint(80%, 50vh);
   height: 100vh;
-}
-
-@media (max-height: 805px) {
-  main {
-    height: 116vh;
-  }
 }
 
 @keyframes opened {
@@ -800,7 +797,6 @@ header {
 
   p {
     color: white;
-    width: 630px;
 
     font-style: normal;
     font-weight: normal;
@@ -821,21 +817,19 @@ header {
     padding-left: 28px;
     padding-right: 28px;
   }
-
-  #headerSection p {
-    width: initial;
-  }
 }
 
 #featureListBlock,
 #fakeCardBlock {
-  display: grid;
-  grid-template-columns: auto auto auto;
-  padding-left: 159px;
-  padding-right: 159px;
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  flex-wrap: wrap;
   margin-top: 24px;
   margin-bottom: 104px;
-  min-height: 450px;
+  justify-content: center;
+  padding-left: 12px;
+  padding-right: 12px;
 
   .fakeCard {
     display: flex;
@@ -848,25 +842,12 @@ header {
 }
 
 #featureListBlock .card {
-  width: initial !important;
-  max-height: 240px;
-  min-width: 320px;
+  width: 320px;
 }
 
-@media (max-width: 1336px) {
-  #featureListBlock,
-  #fakeCardBlock {
-    padding-left: 35px;
-    padding-right: 35px;
-  }
-}
-
-@media (max-width: 430px) {
-  #featureListBlock,
-  #fakeCardBlock {
-    padding-left: 16px;
-    padding-right: 16px;
-    display: block;
+@media (max-width: 1024px) {
+  #featureListBlock .card {
+    width: 280px;
   }
 }
 

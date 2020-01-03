@@ -315,6 +315,7 @@
           :showToolbar="true"
           :showHeader="true"
           :showCopyButton="true"
+          id="manifestCode"
         >
           <h3>Add this code to your manifest.webmanifest file</h3>
         </CodeViewer>
@@ -667,6 +668,10 @@ declare var awa: any;
 <style lang="scss">
 @import "~assets/scss/base/variables";
 
+#manifestCode {
+  width: 100%;
+}
+
 #textarea_error {
   color: red;
 }
@@ -674,8 +679,8 @@ declare var awa: any;
 footer {
   display: flex;
   justify-content: center;
-  padding-left: 16em;
-  padding-right: 16em;
+  padding-left: 15%;
+  padding-right: 15%;
   font-size: 12px;
   color: rgba(60, 60, 60, 0.5);
   background: white;
@@ -703,6 +708,8 @@ footer a {
   grid-template-columns: auto auto auto;
   grid-gap: 54px;
   #iconItem {
+    margin-left: auto;
+    margin-right: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -799,8 +806,8 @@ footer a {
 }
 #sideBySide {
   background: white;
-  padding-left: 154px;
-  padding-right: 128px;
+  padding-left: 3%;
+  padding-right: 3%;
   display: flex;
   justify-content: space-between;
   #leftSide {
@@ -881,7 +888,8 @@ footer a {
       }
       input {
         padding-left: 0;
-        width: 28em;
+        // width: 28em;
+        width: 100%;
         font-style: normal;
         font-weight: normal;
         font-size: 16px;
@@ -913,10 +921,6 @@ footer a {
         color: white;
       }
     }
-  }
-  #rightSide {
-    width: 870px;
-    margin-left: 60px;
   }
   #manifestHTML {
     height: 4em;
@@ -954,9 +958,18 @@ footer a {
     }
   }
 }
-@media (max-width: 425px) {
+  #rightSide {
+    width: 55%; 
+  }
+  #leftSide {
+    width: 40%;
+  }
+@media (max-width: 1180px) {
   #rightSide {
     display: none;
+  }
+  #leftSide {
+    width: 100%;
   }
   #sideBySide {
     flex-direction: column;
@@ -964,15 +977,14 @@ footer a {
     padding-right: 24px !important;
   }
   #sideBySide #leftSide .animatedSection {
-    width: initial;
+    width: 100%;
   }
   #sideBySide #leftSide .animatedSection input {
-    width: initial;
+    width: 100%;
   }
   #iconGrid {
     display: grid;
     grid-gap: initial;
-    padding-left: 0px;
   }
   #uploadNewSection {
     display: none;
@@ -981,24 +993,7 @@ footer a {
     max-width: 210px;
   }
 }
-@media (max-width: 1290px) {
-  #sideBySide {
-    padding-left: 54px;
-    padding-right: 52px;
+  #sideBySide #leftSide .animatedSection input[type="radio"] {
+    width: auto;
   }
-}
-@media (min-width: 1480px) {
-  #leftSide {
-    width: 760px !important;
-  }
-  #rightSide {
-    width: 760px !important;
-  }
-}
-
-@media (max-width: 1079px) {
-  #sideBySide #leftSide {
-    width: 25em !important;
-  }
-}
 </style>

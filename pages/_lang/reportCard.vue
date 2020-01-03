@@ -477,12 +477,18 @@ declare var awa: any;
   }
 }
 
+@media (max-width: 905px) {
+  #reportShareButtonContainer {
+    top: 0em;
+  }
+}
+
 .backgroundIndex {
-  @include backgroundLeftPoint(20%, 40vh);
+   @include backgroundLeftPoint(20%, 40vh); 
 }
 
 .backgroundReport {
-  @include backgroundRightPoint(80%, 40vh);
+  @include backgroundRightPoint(80%, 49vh);
 }
 
 @media (min-width: 1336px) {
@@ -505,7 +511,7 @@ declare var awa: any;
 
 @media (max-height: 780px) {
   #hubContainer {
-    height: 162vh;
+    height: 100vh;
   }
 
   #inputSection {
@@ -513,11 +519,31 @@ declare var awa: any;
   }
 
   .backgroundIndex {
-    @include backgroundLeftPoint(30%, 90vh);
+    @include backgroundLeftPoint(30%, 30vh);
   }
 
   .backgroundReport {
-    @include backgroundRightPoint(80%, 88vh);
+    @include backgroundRightPoint(80%, 30vh);
+  }
+}
+
+@media (max-height: 600px) {
+  .backgroundIndex {
+    @include backgroundLeftPoint(30%, 23vh);
+  }
+
+  .backgroundReport {
+    @include backgroundRightPoint(80%, 20vh);
+  }
+}
+
+@media (max-height: 530px) {
+  .backgroundIndex {
+    @include backgroundLeftPoint(30%, 0vh);  
+  }
+
+  footer {
+    display: none;
   }
 }
 
@@ -533,7 +559,7 @@ declare var awa: any;
 }
 
 main {
-  @include grid;
+  @include grid; 
 
   margin-bottom: 2em;
 }
@@ -552,7 +578,8 @@ h2 {
 }
 
 #inputSection {
-  grid-column: 1 / span 5;
+  grid-column: 1 / span 12;
+  max-width: 800px;
 
   color: white;
 
@@ -621,6 +648,18 @@ h2 {
       display: flex;
       align-items: center;
       text-align: center;
+    }
+  }
+
+  @media (max-height: 375px) {
+    #topHalfHome {
+      margin-top: 24px;
+    }
+  }
+
+  @media (max-height: 320px) {
+    #topHalfHome {
+      margin-top: 4px;
     }
   }
 
@@ -702,6 +741,7 @@ h2 {
 
     footer {
       color: rgba(60, 60, 60, 0.6);
+      background: transparent;
 
       p {
         text-align: center;
@@ -764,6 +804,10 @@ h2 {
   }
 }
 
+  #scoreCard {
+    margin-bottom: 20px;
+    }
+
 @media (max-width: 425px) {
   #infoSection {
     margin-left: 25px;
@@ -790,6 +834,7 @@ h2 {
     padding-left: 25px;
     padding-right: 25px;
     text-align: center;
+    background: transparent;
   }
 
   #tabsBar {

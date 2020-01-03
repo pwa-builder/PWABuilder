@@ -5,6 +5,10 @@
 
   padding: 0 52px;
 
+  @media (max-width: 880px) {
+      padding: 0 32px;
+  }
+
   @media screen and (min-width: 1336px) {
     padding-left: 154px;
     padding-right: 154px;
