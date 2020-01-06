@@ -146,7 +146,7 @@ module.exports = {
         src: 'https://unpkg.com/@ionic/core@latest/dist/ionic.js'
       },
       {
-        src: 'https://cdn.jsdelivr.net/npm/@pwabuilder/pwainstall@v1.1.5',
+        src: 'https://cdn.jsdelivr.net/npm/@pwabuilder/pwainstall',
         type: 'module'
       }
     ]
