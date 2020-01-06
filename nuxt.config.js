@@ -127,7 +127,7 @@ module.exports = {
         src: '/awa-register.js'
       },
       {
-        src: 'https://unpkg.com/browse/@webcomponents/webcomponentsjs@2.4.0/webcomponents-loader.js'
+        src: 'https://unpkg.com/@webcomponents/webcomponentsjs@2.4.0/webcomponents-loader.js'
       },
       {
         src: '/copyButton.js',
