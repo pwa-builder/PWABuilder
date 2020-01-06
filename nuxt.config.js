@@ -127,10 +127,12 @@ module.exports = {
         src: '/awa-register.js'
       },
       {
-        src: '/copyButton.js'
+        src: '/copyButton.js',
+        type: 'module'
       },
       {
-        src: '/platformPop.js'
+        src: '/platformPop.js',
+        type: 'module'
       },
       {
         src: "https://fluentweb-nightly-static.netlify.com/fluentweb/fluentweb.js",
