@@ -376,33 +376,6 @@
                 />
               </section>
             </div>
-
-            <div
-              @mouseover="platCardHover($event, 'iphone')"
-              @mouseleave="platCardUnHover($event, 'iphone')"
-              id="pwaIosCard"
-              class="pwaCard"
-            >
-              <div class="pwaCardHeaderBlock">
-                <div class="pwaCardIconBlock">
-                  <i id="platformIcon" class="fab fa-apple"></i>
-                  <h2>iOS</h2>
-                </div>
-              </div>
-
-              <p>
-                PWAs are available through the browser. You can submit this app
-                package to the iOS App Store
-              </p>
-
-              <section class="platformDownloadBar">
-                <Download
-                  class="platformDownloadButton"
-                  platform="ios"
-                  message="Download"
-                />
-              </section>
-            </div>
           </ul>
         </div>
       </section>
@@ -938,7 +911,7 @@ footer a {
         margin: 0;
 
         display: grid;
-        grid-template-areas: "header header" "windows samsung" "android ios" "macos macos";
+        grid-template-areas: "header header" "windows samsung" "android android" "macos macos";
         grid-gap: 10px;
 
         .pwaCard {
@@ -1050,16 +1023,6 @@ footer a {
           h2 {
             margin-right: -96px;
           }
-        }
-
-        #pwaIosCard {
-          grid-area: ios;
-        }
-
-        #pwaIosCard #pwaCardIconBlock {
-          width: 100%;
-          justify-content: space-between;
-          align-items: center;
         }
 
         #pwaSamsungCard {
@@ -1283,7 +1246,7 @@ footer a {
 
   #pwaAndroidCard p,
   #pwaWindowsCard p {
-    min-height: 10em !important;
+    min-height: 6em !important;
   }
 }
 
