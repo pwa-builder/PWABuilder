@@ -25,6 +25,11 @@ input {
 
 body {
   background: #f0f0f0;
+  overflow-y: auto;
+}
+
+#__nuxt, #__layout {
+  height: 100%;
 }
 
 input::placeholder {

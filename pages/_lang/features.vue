@@ -745,7 +745,19 @@ footer a {
 
 main {
   @include backgroundRightPoint(80%, 50vh);
-  height: 100vh;
+  height: 100%;
+}
+
+@media (max-height: 500px) {
+  main {
+    @include backgroundRightPoint(80%, 40vh);
+  }
+}
+
+@media (max-height: 425px) {
+  main {
+    @include backgroundRightPoint(80%, 10vh);
+  }
 }
 
 @keyframes opened {
@@ -854,7 +866,7 @@ header {
 .code-samples {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
   width: 100%;
   flex: 1;
 }
@@ -922,12 +934,12 @@ header {
   top: 0;
   right: 0;
   z-index: -1;
-  height: 100vh;
+  height: 100%;
 }
 
 .feature-viewer {
   flex: 1;
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   padding-top: 2px;
