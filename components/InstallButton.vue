@@ -1,13 +1,14 @@
 <template>
-  <div>
+  <div v-if="this.$route.path !== '/'">
     <button
       @click="install()"
-      v-if="this.$route.path !== '/'"
       id="installButton"
     >
     </button>
 
-    <pwa-install usecustom manifestpath="/manifest.webmanifest"></pwa-install>
+    <pwa-install usecustom manifestpath="/manifest.webmanifest">
+      
+    </pwa-install>
   </div>
 </template>
 
@@ -21,7 +22,6 @@ export default class extends Vue {
     const pwaInstall: any = this.$el.querySelector(
       "pwa-install"
     ) as HTMLElement;
-    console.log();
 
     pwaInstall.openPrompt();
   }
