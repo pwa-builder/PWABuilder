@@ -285,6 +285,7 @@ export default class extends Vue {
   font-weight: bold;
   display: flex;
   justify-content: center;
+  align-self: center;
   align-items: center;
   color: white;
 
@@ -493,7 +494,6 @@ export default class extends Vue {
     padding-top: 30px;
     padding-left: 159px;
     padding-right: 159px;
-    min-height: 100vh;
 
     #leftSide {
       flex: 1;
@@ -556,6 +556,7 @@ export default class extends Vue {
   font-size: 14px;
   height: 42px;
   width: 42px;
+  align-self: center;
 }
 
 #featDetailTitle {

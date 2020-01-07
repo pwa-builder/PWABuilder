@@ -964,7 +964,7 @@ footer a {
   #leftSide {
     width: 40%;
   }
-@media (max-width: 1180px) {
+@media (max-width: 1280px) {
   #rightSide {
     display: none;
   }

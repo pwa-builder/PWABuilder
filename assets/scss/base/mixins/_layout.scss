@@ -21,7 +21,7 @@
     linear-gradient(-18deg, #F0F0F0, #F0F0F0 $view-height, rgba(255,0,0,0) $view-height+0.1vh),  
     linear-gradient(10deg, #F0F0F0, #F0F0F0 _newHeight-backgroundLeftPoint($view-height), rgba(255,0,0,0) _newHeight-backgroundLeftPoint($view-height)+0.1vh),    
     linear-gradient(-32deg, #9337D8, #1FC2C8);
-  background-size: ($x-break-percent + 0.05%) 100%, (100 - $x-break-percent + 0.05%) 100%, 100% 100%;
+  background-size: ($x-break-percent + 0.07%) 100%, (100 - $x-break-percent + 0.05%) 100%, 100% 100%;
   background-repeat: no-repeat, no-repeat, no-repeat;
   background-position: left, right, center;
 }
