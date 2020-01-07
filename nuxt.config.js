@@ -138,6 +138,10 @@ module.exports = {
         type: 'module'
       },
       {
+        src: '/pushComp.js',
+        type: 'module'
+      },
+      {
         src: "https://fluentweb-nightly-static.netlify.com/fluentweb/fluentweb.js",
         async: true,
         defer: true
