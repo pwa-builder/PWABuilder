@@ -997,7 +997,7 @@ footer a {
           grid-area: android;
 
           p {
-            min-height: 14em;
+            min-height: 6em;
           }
         }
 
