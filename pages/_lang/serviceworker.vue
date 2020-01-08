@@ -378,7 +378,7 @@ footer a {
   right: 0;
   background: rgba(51, 58, 83, 0.61);
   backdrop-filter: blur(59px);
-  z-index: 0;
+  z-index: 1;
 }
 
 #pushModalContent {
