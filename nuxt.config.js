@@ -138,7 +138,7 @@ module.exports = {
         type: 'module'
       },
       {
-        src: '/pushComp.js',
+        src: '/pwab-push.js',
         type: 'module'
       },
       {
