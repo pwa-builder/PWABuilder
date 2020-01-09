@@ -273,14 +273,12 @@ export default class extends Vue {
     this.doInterObserve();
 
     const overrideValues = {
-      isAuto: false,
-      behavior: 0,
       uri: window.location.href,
       pageName: "featuresPage",
       pageHeight: window.innerHeight
     };
 
-    awa.ct.capturePageView(overrideValues);
+    this.$awa(overrideValues);
   }
 
   doInterObserve() {
@@ -608,7 +606,7 @@ export default class extends Vue {
 }
 
 Vue.prototype.$awa = function(config) {
-  console.log(config);
+  console.log('config', config);
   awa.ct.capturePageView(config);
   return;
 };

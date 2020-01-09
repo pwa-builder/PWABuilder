@@ -13,6 +13,7 @@
       <div id="mainTabsBar">
         <nuxt-link to="/">My Hub</nuxt-link>
         <nuxt-link
+          @click="$awa( { 'referrerUri': `https://pwabuilder.com/features` })"
           to="/features"
         >Feature Store</nuxt-link>
       </div>
@@ -185,6 +186,13 @@ export default class extends Vue {
     }
   }
 }
+
+declare var awa: any;
+
+Vue.prototype.$awa = function(config) {
+  awa.ct.capturePageView(config);
+  return;
+};
 </script>
 
 <style lang="scss" scoped>

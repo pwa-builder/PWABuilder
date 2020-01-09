@@ -490,8 +490,6 @@ export default class extends Vue {
 
   public mounted(): void {
     const overrideValues = {
-      isAuto: false,
-      behavior: 0,
       uri: window.location.href,
       pageName: "publishPage",
       pageHeight: window.innerHeight

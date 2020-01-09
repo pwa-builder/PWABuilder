@@ -6,8 +6,7 @@ var config = {
       },
       coreData: {
             appId: "PWABuilder",
-            market: "en-us",
-            pageName: "index"
+            market: "en-us"
       }
 };
 awa.init(config);

@@ -157,14 +157,12 @@ export default class extends Vue {
 
   mounted() {
     const overrideValues = {
-      isAuto: false,
-      behavior: 0,
       uri: window.location.href,
       pageName: "serviceWorkerPage",
       pageHeight: window.innerHeight
     };
 
-    awa.ct.capturePageView(overrideValues);
+    this.$awa(overrideValues);
   }
 
   public selectServiceWorker(id: number) {
@@ -251,6 +249,12 @@ export default class extends Vue {
 }
 
 declare var awa: any;
+
+Vue.prototype.$awa = function(config) {
+  console.log(config);
+  awa.ct.capturePageView(config);
+  return;
+};
 </script>
 
 <style lang="scss" scoped>
