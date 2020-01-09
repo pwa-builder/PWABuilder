@@ -357,10 +357,8 @@
               class="pwaCard"
             >
               <div class="pwaCardHeaderBlock">
-                <div class="pwaCardIconBlock">
                   <i id="platformIcon" class="fab fa-apple"></i>
                   <h2>MacOS</h2>
-                </div>
               </div>
 
               <p>
@@ -698,8 +696,8 @@ declare var awa: any;
 footer {
   display: flex;
   justify-content: center;
-  padding-left: 16em;
-  padding-right: 16em;
+  padding-left: 10px;
+  padding-right: 10px;
   font-size: 12px;
   color: rgba(60, 60, 60, 0.5);
   background: white;
@@ -736,8 +734,7 @@ footer a {
 }
 
 #publishMain {
-  // @include backgroundRightPoint(80%, 25vh);
-  height: 120vh;
+
 }
 
 #modalBackground {
@@ -787,24 +784,9 @@ footer a {
   }
 }
 
-#pwaSamsungCard {
-  grid-area: samsung;
-}
-
 #publishSideBySide {
   display: flex;
-  justify-content: space-around;
-  height: 120vh;
-  /*background-image: url("~/assets/images/bg_publish.svg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;*/
-
-  background-image: url("~/assets/images/publish-bg.svg");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: -45px;
-  background-color: white;
+  background: linear-gradient(-32deg, #9337D8, #1FC2C8);
 
   #publishLeftSide {
     height: 100%;
@@ -812,11 +794,9 @@ footer a {
 
     display: flex;
     justify-content: center;
+    align-self: center;
     align-items: center;
-    /*background-image: url("~/assets/images/publish-bg.svg");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: left;*/
+    
 
     header {
       display: flex;
@@ -839,10 +819,9 @@ footer a {
     }
 
     #introContainer {
-      padding-right: 5em;
-      padding-left: 159px;
       color: white;
-      margin-bottom: 12em;
+      margin-left: 20px;
+      margin-right: 20px;
 
       h2 {
         font-family: poppins;
@@ -891,7 +870,7 @@ footer a {
 
   #publishRightSide {
     height: 100%;
-    flex: 1;
+    flex: 2;
     display: flex;
     flex-direction: column;
     background: white;
@@ -900,9 +879,9 @@ footer a {
     padding-bottom: 100px;
 
     #platformsListContainer {
-      padding-top: 0em;
-      padding-right: 159px;
-      padding-left: 52px;
+      padding-top: 20px;
+      padding-right: 20px;
+      padding-left: 20px;
       color: white;
 
       ul {
@@ -911,8 +890,8 @@ footer a {
         margin: 0;
 
         display: grid;
-        grid-template-areas: "header header" "windows samsung" "android android" "macos macos";
-        grid-gap: 10px;
+        // flex-direction: column;
+        // flex-wrap: wrap;
 
         .pwaCard {
           background: #f0f0f0;
@@ -921,13 +900,14 @@ footer a {
           padding-left: 24px;
           padding-right: 24px;
           padding-top: 20px;
-          padding-bottom: 20px;
+          padding-bottom: 40px;
+          margin: 10px;
           position: relative;
           transition: box-shadow 0.3s;
 
           .pwaCardHeaderBlock {
             display: flex;
-            justify-content: space-between;
+            align-items: center;
           }
 
           .pwaCardHeaderBlock h2 {
@@ -986,48 +966,22 @@ footer a {
         }
 
         #pwaMainCard {
-          grid-area: header;
-
-          p {
-            margin-right: 1.9em;
-          }
+          grid-column-start: span 2;
         }
 
-        #pwaAndroidCard {
-          grid-area: android;
+        // #pwaWindowsCard {
+        //   #platformIcon {
+        //     margin-right: 42px;
+        //   }
 
-          p {
-            min-height: 6em;
-          }
-        }
+        //   .pwaCardHeaderBlock {
+        //     margin-right: 100px;
+        //   }
 
-        #pwaMacosCard {
-          grid-area: macos;
-        }
-
-        #pwaWindowsCard {
-          grid-area: windows;
-
-          p {
-            min-height: 14em;
-          }
-
-          #platformIcon {
-            margin-right: 42px;
-          }
-
-          .pwaCardHeaderBlock {
-            margin-right: 100px;
-          }
-
-          h2 {
-            margin-right: -96px;
-          }
-        }
-
-        #pwaSamsungCard {
-          grid-area: samsung;
-        }
+        //   h2 {
+        //     margin-right: -96px;
+        //   }
+        // }
 
         #windowsListItem {
           height: 100px;
@@ -1065,7 +1019,6 @@ footer a {
 }
 
 #bottomSection {
-  // display: flex;
   display: none;
 
   #coolPWAs {
@@ -1225,124 +1178,22 @@ footer a {
   z-index: 98999;
 }
 
-@media (max-width: 1280px) {
-  #publishSideBySide #publishLeftSide #introContainer {
-    padding-right: 9em;
-    color: white;
-    padding-left: 52px;
-  }
-
-  #publishSideBySide #publishRightSide #platformsListContainer {
-    padding-right: 52px;
-    padding-top: 0;
-  }
-
-  #androidPlatModal {
-    top: 15em;
-    right: 18em;
-    bottom: 12em;
-    left: 18em;
-  }
-
-  #pwaAndroidCard p,
-  #pwaWindowsCard p {
-    min-height: 6em !important;
-  }
-}
-
-@media (min-width: 1445px) {
-  #androidPlatModal {
-    left: 26em;
-  }
-}
-
-@media (max-width: 1441px) {
+@media (max-width: 920px) {
   #publishSideBySide {
-    background-position: -200px;
+    flex-direction: column;
+  }
+
+   #publishSideBySide #publishLeftSide  #introContainer {
+      margin-top: 20px;
+      margin-left: 30px;
+      margin-right: 30px;
   }
 }
 
-@media (min-width: 1445px) {
-  #androidPlatModal {
-    left: 26em;
-  }
-}
-
-@media (max-height: 840px) {
-  #publishSideBySide #publishLeftSide #introContainer {
-    padding-right: 6em;
-  }
-}
-
-@media (max-height: 765px) {
-  #publishSideBySide #publishLeftSide #introContainer {
-    padding-right: 10em;
-  }
-}
-
-@media (min-width: 1500px) {
-  #publishSideBySide #publishLeftSide #introContainer {
-    padding-right: 12em;
-  }
-}
-
-@media (min-width: 1700px) {
-  #publishSideBySide #publishLeftSide #introContainer {
-    padding-right: 17em;
-  }
-}
-
-@media (min-width: 1900px) {
-  #publishSideBySide #publishLeftSide #introContainer {
-    padding-right: 22em;
-  }
-}
-
-@media (min-width: 2000px) {
-  #publishSideBySide #publishLeftSide #introContainer {
-    padding-right: 28em;
-  }
-}
-
-@media (min-width: 2300px) {
-  #publishSideBySide #publishLeftSide #introContainer {
-    padding-right: 32em;
-  }
-}
-
-@media (min-width: 2450px) {
-  #publishSideBySide #publishLeftSide #introContainer {
-    padding-right: 38em;
-  }
-}
-
-@media (min-width: 1600px) {
-  #publishSideBySide {
-    background-position: -33em;
-    height: 164vh;
-  }
-
-  #publishSideBySide #publishLeftSide #introContainer {
-    margin-bottom: 38em;
-  }
-
-  #publishSideBySide #publishRightSide #platformsListContainer {
-    margin-bottom: 18em;
-  }
-}
-
-@media (max-width: 1079px) {
-  #publishSideBySide {
-    height: 156vh;
-    background-position: -444px;
-  }
-
-  #publishSideBySide #publishLeftSide #introContainer {
-    margin-bottom: 10em;
-  }
-
-  #publishSideBySide #publishRightSide {
-    padding-top: 4em;
+@media (max-width: 550px) {
+  #publishSideBySide #publishRightSide #platformsListContainer ul {
+      display: flex;
+      flex-direction: column;
   }
 }
 </style>

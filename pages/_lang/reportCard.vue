@@ -465,7 +465,7 @@ declare var awa: any;
   border: none;
   margin-top: 24px;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-around;
   align-items: center;
   color: white;
   cursor: pointer;

@@ -520,6 +520,7 @@ export default class extends Vue {
     }
 
     #rightSide {
+      display: initial;
       flex: 1;
       width: 50%;
       margin-left: 20px;
