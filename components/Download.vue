@@ -89,6 +89,14 @@ export default class extends Vue {
       return;
     }
 
+    const overrideValues = {
+      uri: window.location.href,
+      pageName: `download/${platform}`,
+      pageHeight: window.innerHeight
+    };
+
+    this.$awa(overrideValues);
+
     try {
       this.isReady = false;
 
@@ -106,6 +114,13 @@ export default class extends Vue {
     }
   }
 }
+
+declare var awa: any;
+
+Vue.prototype.$awa = function(config) {
+  awa.ct.capturePageView(config);
+  return;
+};
 </script>
 
 
