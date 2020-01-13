@@ -230,8 +230,8 @@
         <div id="platformsListContainer">
           <ul>
             <div
-              @mouseover="platCardHover($event, 'pc')"
-              @mouseleave="platCardUnHover($event, 'pc')"
+              @mouseover="platCardHover($event)"
+              @mouseleave="platCardUnHover($event)"
               id="pwaMainCard"
               class="pwaCard"
             >
@@ -258,8 +258,8 @@
             </div>
 
             <div
-              @mouseover="platCardHover($event, 'android')"
-              @mouseleave="platCardUnHover($event, 'android')"
+              @mouseover="platCardHover($event)"
+              @mouseleave="platCardUnHover($event)"
               id="pwaAndroidCard"
               class="pwaCard"
             >
@@ -286,8 +286,8 @@
 
             <!--samsung platform-->
             <div
-              @mouseover="platCardHover($event, 'samsung')"
-              @mouseleave="platCardUnHover($event, 'samsung')"
+              @mouseover="platCardHover($event)"
+              @mouseleave="platCardUnHover($event)"
               id="pwaSamsungCard"
               class="pwaCard"
             >
@@ -326,8 +326,8 @@
             <div
               id="pwaWindowsCard"
               class="pwaCard"
-              @mouseover="platCardHover($event, 'pc')"
-              @mouseleave="platCardUnHover($event, 'pc')"
+              @mouseover="platCardHover($event)"
+              @mouseleave="platCardUnHover($event)"
             >
               <div class="pwaCardHeaderBlock">
                 <i id="platformIcon" class="fab fa-windows"></i>
@@ -351,8 +351,8 @@
             </div>
 
             <div
-              @mouseover="platCardHover($event, 'mac')"
-              @mouseleave="platCardUnHover($event, 'mac')"
+              @mouseover="platCardHover($event)"
+              @mouseleave="platCardUnHover($event)"
               id="pwaMacosCard"
               class="pwaCard"
             >
@@ -498,60 +498,25 @@ export default class extends Vue {
     this.$awa(overrideValues);
   }
 
-  platCardHover(ev, device?) {
-    const targetButton: HTMLButtonElement = ev.target.children[2].children[0];
+  platCardHover(ev) {
+    console.log(ev.target.children[2].children);
+    if (ev.target) {
+      const parent = ev.target.children[2];
 
-    if (device === "pc") {
-      this.samsungDevice = false;
-      this.androidDevice = false;
-      this.iphoneDevice = false;
-      this.pcDevice = true;
-      this.macDevice = false;
-      this.teamsDevice = false;
-    } else if (device === "android") {
-      this.samsungDevice = false;
-      this.androidDevice = true;
-      this.iphoneDevice = false;
-      this.pcDevice = false;
-      this.macDevice = false;
-      this.teamsDevice = false;
-    } else if (device === "iphone") {
-      this.samsungDevice = false;
-      this.androidDevice = false;
-      this.iphoneDevice = true;
-      this.pcDevice = false;
-      this.macDevice = false;
-      this.teamsDevice = false;
-    } else if (device === "teams") {
-      this.samsungDevice = false;
-      this.androidDevice = false;
-      this.iphoneDevice = false;
-      this.pcDevice = false;
-      this.macDevice = false;
-      this.teamsDevice = true;
-    } else if (device === "samsung") {
-      this.samsungDevice = true;
-      this.androidDevice = false;
-      this.iphoneDevice = false;
-      this.pcDevice = false;
-      this.macDevice = false;
-      this.teamsDevice = false;
-    } else if (device === "mac") {
-      this.samsungDevice = false;
-      this.androidDevice = false;
-      this.iphoneDevice = false;
-      this.pcDevice = false;
-      this.macDevice = true;
-      this.teamsDevice = false;
-    }
+      let targetButton: HTMLButtonElement | null = null;
 
-    if (targetButton) {
-      targetButton.classList.add("platformDownloadButtonHover");
+      if (parent) {
+        targetButton = ev.target.children[2].children[0];
+      }
+
+      if (targetButton) {
+        targetButton.classList.add("platformDownloadButtonHover");
+      }
     }
   }
 
-  platCardUnHover(ev, device?) {
-    console.log("hello world", ev, device);
+  platCardUnHover(ev) {
+    console.log("hello world", ev);
 
     const targetButton: HTMLButtonElement = ev.target.children[2].children[0];
     console.log(targetButton);
