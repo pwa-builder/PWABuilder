@@ -845,6 +845,7 @@ header {
     display: flex;
     justify-content: center;
     height: 209px;
+    width: 320px;
     align-items: center;
     font-size: 4em;
     background: white;
