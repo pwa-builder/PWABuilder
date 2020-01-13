@@ -261,7 +261,19 @@ export default class extends Vue {
           url: `${location.href}?url=${this.url}`
         });
       } catch (err) {
-        console.error("trouble sharing with the web share api", err);
+        // fallback to legacy share if ^ fails
+        if ((navigator as any).clipboard) {
+          try {
+            await (navigator as any).clipboard.writeText(
+              `${location.href}?url=${this.url}`
+            );
+            this.showToast();
+          } catch (err) {
+            console.error(err);
+          }
+        } else {
+          window.open(`${location.href}?url=${this.url}`, "__blank");
+        }
       }
     } else {
       if ((navigator as any).clipboard) {
@@ -280,18 +292,11 @@ export default class extends Vue {
   }
 
   async showToast() {
-    // show toast
-    /*this.shared = true;
-
-    setTimeout(() => {
-      this.shared = false;
-    }, 1200);*/
-
     const toastCtrl = document.querySelector("ion-toast-controller");
     await (toastCtrl as any).componentOnReady();
 
     const toast = await (toastCtrl as any).create({
-      duration: 1300,
+      duration: 2300,
       message: "URL copied for sharing"
     });
 
