@@ -1176,6 +1176,16 @@ footer a {
   z-index: 98999;
 }
 
+@media (min-width: 1200px) {
+  #publishMain {
+    height: 100vh;
+  }
+
+  #publishSideBySide {
+    height: 100vh;
+  }
+}
+
 @media (max-width: 920px) {
   #publishSideBySide {
     flex-direction: column;
