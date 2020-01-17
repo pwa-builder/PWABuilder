@@ -83,13 +83,11 @@ export const actions: Actions<State, RootState> = {
 
             try {
                 const options = { platforms: platformsList, dirSuffix: params.platform, parameters: params.options };
-                console.log(options);
                 const result = await this.$axios.$post(`${apiUrl}/${manifestId}/build?ids=${serviceworker}&href=${params.href}
                 `, options);
                 commit(types.UPDATE_ARCHIVELINK, result.archive);
                 resolve();
             } catch (e) {
-              console.log(e);
                 let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
                 reject(errorMessage);
             }

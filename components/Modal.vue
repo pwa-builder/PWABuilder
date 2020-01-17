@@ -74,7 +74,6 @@ export default class extends Vue {
   public async show(): Promise<void> {
     // stop scrolling on the body when the modal is open
     // (this.$root.$el.closest('body') as HTMLBodyElement).style.overflowY = 'hidden';
-    console.log("set style to hidden");
 
     this.showModal = true;
     // have to put a setTimeout here because Edge

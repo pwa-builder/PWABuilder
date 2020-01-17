@@ -259,13 +259,11 @@ export default class extends Vue {
   modalStatus = false;
 
   async mounted() {
-    console.log(this.samples.length);
 
     await this.getSamples();
-    console.log("samples", this.samples);
 
     const score = sessionStorage.getItem("overallGrade");
-    console.log(score);
+
     if (score) {
       this.overallGrade = score;
     }
@@ -396,7 +394,6 @@ export default class extends Vue {
   showEduSamplesMethod() {
     this.eduSamples = this.samples.filter(sample => {
       if ((sample.title as string).toLowerCase().includes("graph") || (sample.title as string).toLowerCase().includes("midi")) {
-        console.log(sample);
         return sample;
       }
     });
@@ -417,7 +414,7 @@ export default class extends Vue {
        (sample.title as string).toLowerCase().includes('install') ||
        (sample.title as string).toLowerCase().includes('clipboard')
       ) {
-        console.log('sample', sample);
+
         return sample;
       }
     });
@@ -458,14 +455,7 @@ export default class extends Vue {
 
   public async modalSelected() {
     try {
-      console.log("sample selected");
       await this.selectSample(this.currentPendingSample);
-      /*this.selectedSamples.push(this
-        .currentPendingSample as windowsStore.Sample);*/
-
-      // force a re-render
-      // this.selectedSamples = this.selectedSamples;
-      console.log(this.selectedSamples);
     } catch (e) {
       this.error = e;
     }
@@ -504,30 +494,6 @@ export default class extends Vue {
     // TODO: Need to pass this into bundle somehow in download method?
     this.sample.usercode = ev;
   }
-
-  /*async addBundle() {
-    try {
-      console.log("sample selected", this.currentPendingSample);
-      await this.selectSample(this.currentPendingSample);
-
-      if (this.selectedSamples.indexOf(this.sample) == -1) {
-        console.log("pushing", this.currentPendingSample);
-        this.selectedSamples.push(this
-          .currentPendingSample as windowsStore.Sample);
-        console.log("selectedSamples", this.selectedSamples);
-      }
-
-      await this.download();
-
-      this.hasNative = true;
-      this.modalClosed();
-      (this.$refs.addFeatureModal as Modal).hide();
-    } catch (e) {
-      this.modalClosed();
-      (this.$refs.addFeatureModal as Modal).hide();
-      this.error = e;
-    }
-  }*/
 
   async download(all = false) {
     let that = this;
@@ -594,19 +560,16 @@ export default class extends Vue {
   }
 
   public modalOpened() {
-    console.log("modal opened");
     window.scrollTo(0, 0);
     this.modalStatus = true;
   }
 
   public modalClosed() {
-    console.log("modal closed");
     this.modalStatus = false;
   }
 }
 
 Vue.prototype.$awa = function(config) {
-  console.log('config', config);
   awa.ct.capturePageView(config);
   return;
 };

@@ -52,7 +52,6 @@ export const actions: Actions<State, RootState> = {
     return new Promise<void>(async (resolve, reject) => {
       try {
         await this.$axios.$get(`${apiUrl}/getServiceWorkersDescription`).then(data => {
-          console.log(data.serviceworkers);
 
           // temp for demo
           data.serviceworkers.push(
@@ -68,7 +67,6 @@ export const actions: Actions<State, RootState> = {
             }
           );
 
-          console.log(data.serviceworkers);
 
 
 

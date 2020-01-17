@@ -499,7 +499,6 @@ export default class extends Vue {
   }
 
   platCardHover(ev) {
-    console.log(ev.target.children[2].children);
     if (ev.target) {
       const parent = ev.target.children[2];
 
@@ -516,10 +515,7 @@ export default class extends Vue {
   }
 
   platCardUnHover(ev) {
-    console.log("hello world", ev);
-
     const targetButton: HTMLButtonElement = ev.target.children[2].children[0];
-    console.log(targetButton);
 
     if (targetButton) {
       targetButton.classList.remove("platformDownloadButtonHover");
@@ -555,7 +551,7 @@ export default class extends Vue {
   }
 
   public async onSubmitAppxModal(): Promise<void> {
-    console.log("here");
+
     const $appxModal = this.$refs.appxModal as Modal;
     $appxModal.showLoading();
 
@@ -585,7 +581,6 @@ export default class extends Vue {
   }
 
   public modalOpened() {
-    console.log("modal opened");
     window.scrollTo(0, 0);
 
     this.modalStatus = true;
@@ -593,15 +588,12 @@ export default class extends Vue {
   }
 
   public modalClosed() {
-    console.log("modal closed");
-
     this.modalStatus = false;
     this.showBackground = false;
   }
 }
 
 Vue.prototype.$awa = function(config) {
-  console.log(config);
   awa.ct.capturePageView(config);
   return;
 };

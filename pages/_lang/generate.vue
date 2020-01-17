@@ -454,14 +454,8 @@ export default class extends Vue {
 
   public onChangeSimpleInput(): void {
     try {
-      console.log("on change simple input");
       this.updateManifest(this.manifest$);
       this.manifest$ = { ...this.manifest };
-      console.log(this.manifest$);
-      console.log("display names after update", this.displaysNames);
-      // this.manifest = (this.manifest$ as generator.Manifest);
-      // this.basicManifest = true;
-      // this.manifest = this.manifest$;
     } catch (e) {
       this.error = e;
     }
@@ -469,7 +463,6 @@ export default class extends Vue {
 
   public textareaError(): void {
     // This method is called when Enter is pressed in the textarea
-    console.log("Enter pressed in textarea: newline not allowed");
     this.ifEntered = true; // This property is used to determine whether or not an error message should be displayed
     this.textareaOutlineColor = 'red solid 2px';
   }
@@ -483,13 +476,10 @@ export default class extends Vue {
   public onClickRemoveIcon(icon: generator.Icon): void {
     this.removeIcon(icon);
     this.updateManifest(this.manifest$);
-    console.log("this.manifest$", this.manifest$);
-    console.log("this.manifest", this.manifest);
   }
 
   public onClickAddIcon(): void {
     try {
-      console.log("trying to add icon from URL", this.newIconSrc);
       this.addIconFromUrl(this.newIconSrc);
     } catch (e) {
       this.error = e;
@@ -591,15 +581,12 @@ export default class extends Vue {
     }
     $iconsModal.showLoading();
     if (this.iconCheckMissing) {
-      const data = await this.generateMissingImages(this.iconFile);
-      console.log("data in gen missing images", data);
-      console.log("generate missing images", this.manifest);
+      await this.generateMissingImages(this.iconFile);
+
       this.manifest$ = this.manifest;
-      console.log("update manifest this.manifest$", this.manifest$);
       this.updateManifest(this.manifest$);
     } else {
       await this.uploadIcon(this.iconFile);
-      console.log("update manifest this.manifest$", this.manifest$);
       this.updateManifest(this.manifest$);
     }
     $iconsModal.hide();
@@ -622,13 +609,10 @@ export default class extends Vue {
   }
 
   public invalidManifest() {
-    console.log("invalid");
     this.basicManifest = false;
   }
 
-  public handleEditorValue(ev) {
-    console.log(ev);
-    console.log(this.basicManifest);
+  public handleEditorValue() {
     if (this.basicManifest !== false) {
       // this.manifest = ev;
       this.updateManifest(this.manifest$);
@@ -668,7 +652,6 @@ export default class extends Vue {
 }
 
 Vue.prototype.$awa = function(config) {
-  console.log(config);
   awa.ct.capturePageView(config);
   return;
 };

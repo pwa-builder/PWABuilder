@@ -36,10 +36,8 @@ class CopyButton extends HTMLElement {
     shadowRoot.appendChild(tmpl.content.cloneNode(true));
     
     shadowRoot.querySelector('button').addEventListener('click', () => {
-      console.log('hello world');
       
       if (this.codeurl) {
-        console.log(this.getAttribute('codeurl'));
         this.getCode();
       }
     });
@@ -75,18 +73,13 @@ class CopyButton extends HTMLElement {
         this.shadowRoot.appendChild(clipScript);
         
         clipScript.addEventListener('load', () => {
-          console.log('here');
           let realClip = new ClipboardJS(this.shadowRoot.querySelector('button'));
 
           realClip.on("success", e => {
-            console.info("Action:", e.action);
-            console.info("Text:", e.text);
-            console.info("Trigger:", e.trigger);
             e.clearSelection();
           });
 
           realClip.on("error", e => {
-            console.error("Action:", e.action);
             console.error("Trigger:", e.trigger);
           });
         })
@@ -101,7 +94,6 @@ class CopyButton extends HTMLElement {
       const response = await fetch(codeURL);
       const data = await response.text();
       
-      console.log(data);
       
       this.shadowRoot.querySelector('button').setAttribute('data-clipboard-text', data);
       
