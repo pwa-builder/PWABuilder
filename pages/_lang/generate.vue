@@ -426,8 +426,6 @@ export default class extends Vue {
 
   public created(): void {
     this.manifest$ = { ...this.manifest };
-    // this.basicManifest = true;
-    console.log("display names", this.displaysNames);
   }
 
   public mounted() {
@@ -544,6 +542,12 @@ export default class extends Vue {
           break;
         case "screenshots":
           manifest += `\t"screenshots" : [${this.getScreenshots()}],\n`;
+          break;
+        case "related_applications":
+          manifest += `\t"related_applications" : [${this.manifest.related_applications || []}],\n`
+          break;
+        case "prefer_related_applications":
+          manifest += `\t"prefer_related_applications" : ${this.manifest.prefer_related_applications},\n`
           break;
         default:
           manifest += `\t"${property}" : "${this.manifest[property]}",\n`;
