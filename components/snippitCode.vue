@@ -39,10 +39,7 @@ export default class extends Vue {
 
   async mounted() {
     const response = await fetch(this.snippitURL);
-    console.log(response);
     const data = await response.text();
-
-    console.log("snippit data", data);
 
     this.actualCode = data;
 

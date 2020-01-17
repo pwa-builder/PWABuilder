@@ -291,7 +291,6 @@ export default class extends Vue {
 }
 
 Vue.prototype.$awa = function(config) {
-  console.log("config", config);
   awa.ct.capturePageView(config);
   return;
 };

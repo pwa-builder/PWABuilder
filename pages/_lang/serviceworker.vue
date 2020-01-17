@@ -166,7 +166,6 @@ export default class extends Vue {
   }
 
   public selectServiceWorker(id: number) {
-    console.log(id);
     this.serviceworker$ = id;
   }
 
@@ -219,7 +218,6 @@ export default class extends Vue {
   @Watch("serviceworker$")
   async onServiceworker$Changed(): Promise<void> {
     try {
-      console.log(this.serviceworker$);
 
       // temp check for demo
       if (this.serviceworker$ === 6 || this.serviceworker$ === 7) {
@@ -251,7 +249,6 @@ export default class extends Vue {
 declare var awa: any;
 
 Vue.prototype.$awa = function(config) {
-  console.log(config);
   awa.ct.capturePageView(config);
   return;
 };

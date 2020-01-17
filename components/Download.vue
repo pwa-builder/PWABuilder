@@ -77,7 +77,6 @@ export default class extends Vue {
     const sessionRef = sessionStorage.getItem('currentURL');
     if (sessionRef) {
       this.siteHref = sessionRef;
-      console.log('this.siteHref', this.siteHref);
     }
   }
 

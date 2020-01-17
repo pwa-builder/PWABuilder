@@ -44,7 +44,6 @@ class SnippitPop extends HTMLElement {
         this.shadowRoot.appendChild(clipScript);
         
         clipScript.addEventListener('load', () => {
-          console.log('here');
           let realClip = new ClipboardJS(this.shadowRoot.querySelector('button'));
 
           realClip.on("success", e => {
@@ -69,8 +68,6 @@ class SnippitPop extends HTMLElement {
     if (snippitImage) {
       const response = await fetch(snippitImage);
       const data = await response.text();
-      
-      console.log(data);
       
       this.shadowRoot.querySelector('button').setAttribute('data-clipboard-text', data);
       

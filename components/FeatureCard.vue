@@ -34,7 +34,6 @@ export default class extends Vue {
   }
 
   onClickRemoveSample(sample: windowsStore.Sample) {
-    console.log('here');
     this.$emit("removed", sample);
   }
 }

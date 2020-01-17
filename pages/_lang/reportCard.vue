@@ -194,10 +194,9 @@ export default class extends Vue {
       this.gotURL = true;
       this.getTopSamples();
     } else {
-      console.log("no url");
       if (window && window.location.search) {
         const url = window.location.search.split("=")[1];
-        console.log(url);
+        
         this.cleanedURL = decodeURIComponent(url);
         this.url = this.cleanedURL;
 
@@ -246,13 +245,6 @@ export default class extends Vue {
   }
 
   public async shareReport() {
-    console.log(
-      "trying to share",
-      `${location.href}?url=${this.cleanedURL}`,
-      this.url,
-      this.url$
-    );
-
     if ((navigator as any).share) {
       try {
         await (navigator as any).share({
@@ -306,14 +298,10 @@ export default class extends Vue {
   public async checkUrlAndGenerate() {
     this.error = null;
 
-    console.log("here");
-
     try {
       if (this.url$ === null || this.url$ === undefined) {
         this.url$ = this.cleanedURL;
       }
-
-      console.log("in try block", this.url$);
 
       await this.updateLink(this.url$);
       this.url$ = this.url;
@@ -344,33 +332,24 @@ export default class extends Vue {
 
   public async getTopSamples() {
     await this.getSamples();
-    console.log(this.samples);
     const cleanedSamples = this.samples.slice(0, 4);
-    console.log("cleanedSamples", cleanedSamples);
 
     this.topSamples = cleanedSamples;
   }
 
   public securityTestDone(ev) {
-    console.log("testDone", ev);
     this.overallScore = this.overallScore + ev.score;
-    console.log(this.overallScore);
   }
 
   public manifestTestDone(ev) {
-    console.log("manifest test done", ev);
     this.overallScore = this.overallScore + ev.score;
-    console.log(this.overallScore);
   }
 
   public swTestDone(ev) {
-    console.log("sw test is done", ev);
     this.overallScore = this.overallScore + ev.score;
-    console.log(this.overallScore);
   }
 
   public reset() {
-    console.log("resetting");
     this.gotURL = false;
     this.overallScore = 0;
     this.topSamples = [];
@@ -385,7 +364,6 @@ export default class extends Vue {
 
 
 Vue.prototype.$awa = function(config) {
-  console.log('config', config);
   awa.ct.capturePageView(config);
   return;
 };

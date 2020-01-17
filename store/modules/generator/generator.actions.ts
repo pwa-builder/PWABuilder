@@ -26,7 +26,6 @@ export const actions: Actions<State, RootState> = {
   async update({ commit, state, rootState }): Promise<void> {
     if (!state.manifestId) {
       
-      console.log('state in update', commit, state, rootState);
 
       if (state.manifest && rootState.generator.manifest) {
         // Fix common issues with the manifest
@@ -63,7 +62,6 @@ export const actions: Actions<State, RootState> = {
       customManifest["screenshots"].push(Object.assign({}, icon));
     });
 
-    console.log('customManifest', customManifest);
 
     if (typeof (customManifest.related_applications) === 'string') {
       customManifest.related_applications = [];
@@ -73,7 +71,6 @@ export const actions: Actions<State, RootState> = {
       delete customManifest.generated;
     }
 
-    console.log(customManifest);
 
     const result = await this.$axios.$put(`${apiUrl}/${state.manifestId}`, customManifest);
 
@@ -85,13 +82,11 @@ export const actions: Actions<State, RootState> = {
   },
 
   updateManifest({ commit, dispatch }, manifest): void {
-    console.log('update manifest');
     commit(types.UPDATE_MANIFEST, manifest);
     dispatch('update');
   },
 
   async updateLink({ commit }, url: string): Promise<any> {
-    console.log('here');
     if (url && !url.startsWith('http')) {
       url = 'https://' + url;
     }
@@ -106,7 +101,6 @@ export const actions: Actions<State, RootState> = {
   },
 
   async getManifestInformation({ commit, state, rootState }): Promise<void> {
-    console.log('getManifestInformation', rootState, state);
     if (!state.url) {
       throw 'error.url_empty';
     }
@@ -118,7 +112,6 @@ export const actions: Actions<State, RootState> = {
     };
 
     try {
-      console.log('options in getManifestInfo', options);
 
       const manifest: any = state.manifest;
 
@@ -136,7 +129,6 @@ export const actions: Actions<State, RootState> = {
       }
 
       const result = await this.$axios.$post(apiUrl, options);
-      console.log('result', result);
       if (!result) {
         throw 'error.Manifest_notFound';
       }
@@ -152,7 +144,6 @@ export const actions: Actions<State, RootState> = {
         delete result.content.generated;
       }
 
-      console.log('getManifestInformation', rootState, state, result);
 
 
       commit(types.UPDATE_WITH_MANIFEST, result);
