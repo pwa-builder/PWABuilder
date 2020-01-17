@@ -314,7 +314,7 @@
           :warningsTotal="warningsTotal"
           :showToolbar="true"
           :showHeader="true"
-          :showCopyButton="true"
+          :showCopyButton="showCopy"
           id="manifestCode"
         >
           <h3>Add this code to your manifest.webmanifest file</h3>
@@ -406,6 +406,7 @@ export default class extends Vue {
   public showingIconModal = false;
   public ifEntered = false;
   public  textareaOutlineColor = '';
+  public showCopy = true;
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
@@ -505,6 +506,12 @@ export default class extends Vue {
   }
 
   private getIcons(): string {
+    // check for embedded icons
+    // if embedded dont show the copy button;
+    if (this.icons.length > 0 && this.icons[0].src.includes("data:image")) {
+      this.showCopy = false;
+    }
+
     let icons = this.icons.map(icon => {
       return `\n\t\t{\n\t\t\t"src": "${icon.src.includes("data:image") ? "[Embedded]" : icon.src}",\n\t\t\t"sizes": "${icon.sizes}"\n\t\t}`;
     });
