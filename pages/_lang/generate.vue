@@ -980,13 +980,17 @@ footer a {
     display: grid;
     grid-gap: initial;
   }
-  #uploadNewSection {
-    display: none;
-  }
   .l-generator-input--select {
     max-width: 210px;
   }
 }
+
+@media (max-width: 630px) {
+  #uploadNewSection {
+    display: none;
+  }
+}
+
   #sideBySide #leftSide .animatedSection input[type="radio"] {
     width: auto;
   }

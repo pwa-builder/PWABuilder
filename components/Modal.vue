@@ -119,92 +119,14 @@ export default class extends Vue {
 
 @import "~assets/scss/base/variables";
 .modal {
-  /*align-items: flex-start;
-  xbackground: rgba($color-brand-quartary, .25);
-  display: flex;
-   xheight: 150%; /*this is a hack, we should put modal at lower level */
-  /*justify-content: center;
-  left: 0;
-  padding: 32px 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
-  z-index: 100;
-  xbottom: 0;
-
-  &-box {
-    filter: blur(0px);
-    position: relative;
-    width: 100%;
-    margin-top: 300px;
-    z-index: 110;
-
-    &.error {
-      max-height: 480px;
-      min-height: 320px;
-
-      @media screen and (max-width: $media-screen-l) {
-        min-height: 320px;
-      }
-
-      @media screen and (max-width: $media-screen-m) {
-        min-height: 320px;
-      }
-
-      .pwa-generator-box_buttons {
-        margin-top: 25px;
-      }
-    }
-
-    @media screen and (max-width: $media-screen-l) {
-
-    }
-
-    @media screen and (max-width: $media-screen-m) {
-      $w: 80vw;
-
-      width: $w;
-    }
-  }
-
-  &-title {
-    font-family: Bitter;
-    font-size: $font-size-l;
-    font-weight: $font-weight-semibold;
-    margin-top: 0;
-    text-align: center;
-    width: 100%;
-  }
-
-  &-body {
-  }
-
-  &-tablec {
-    $padding: 1.5rem;
-
-    font-family: Bitter;
-    font-size: $font-size-m;
-    padding-right: $padding;
-    padding-top: $padding;
-    text-align: right;
-    text-transform: capitalize;
-
-    img {
-      max-width: 90%;
-    }
-  }
-
-  &-buttons {
-    text-align: center;
-    width: 100%;
-  }*/
-
-  background: white;
   position: fixed;
-  top: 13em;
-  right: 16em;
-  bottom: 19em;
-  left: 20em;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  left: 0;
   z-index: 99999;
   overflow-y: auto;
   animation-name: opened;
@@ -330,21 +252,14 @@ export default class extends Vue {
     }
   }
 
+  .modal-box {
+    background: white;
+    width: 70%;
+  }
+
   #titleBox {
     padding-right: 100px;
   }
 }
 
-@media (min-width: 1445px) {
-  .modal {
-    left: 27em;
-    right: 27em;
-    bottom: 22em;
-  }
-
-  .modal .modal-body {
-    padding-left: 30px;
-    padding-right: 22px;
-  }
-}
 </style>
