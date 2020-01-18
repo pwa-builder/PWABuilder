@@ -1016,7 +1016,8 @@ footer a {
 }
 
 #androidModalBody {
-  width: 100%;
+  width: 70%;
+  background: white;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1069,12 +1070,12 @@ footer a {
   justify-content: space-around;
   width: 80%;
   margin-top: 1em;
+  margin-bottom: 20px;
 }
 
 #androidDownloadButton {
   background: #9337d8;
   color: white;
-  padding: 10px;
   font-size: 14px;
   border-radius: 20px;
   width: 150px;
@@ -1100,21 +1101,17 @@ footer a {
 }
 
 #androidPlatModal {
-  background: white;
+  background: transparent;
   position: fixed;
-  top: 15em;
-  right: 18em;
-  bottom: 15em;
-  left: 24em;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   z-index: 99999;
-  overflow-y: auto;
   animation-name: opened;
   animation-duration: 250ms;
   border-radius: 4px;
-
-  width: 590px;
-  height: 266px;
-
   will-change: opacity transform;
 }
 
