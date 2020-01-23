@@ -6,7 +6,7 @@ let page;
 
 before(async () => {
   browser = await puppeteer.launch({
-    headless: false
+    headless: true
   });
 
   page = await browser.newPage();
