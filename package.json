@@ -10,7 +10,8 @@
     "setup": "npm install && npm-install-peers",
     "build": "nuxt build",
     "build-docker-dev": "docker build -t dev-site --target build-dev .",
-    "run-docker-dev": "docker run -p 3000:80 dev-site"
+    "run-docker-dev": "docker run -p 3000:80 dev-site",
+    "test": "mocha --recursive --timeout 20000 uitest"
   },
   "dependencies": {
     "@nuxtjs/axios": "^4.5.2",
@@ -60,6 +61,7 @@
     "npm-install-peers": "^1.2.1",
     "nyc": "^13.3.0",
     "opener": "^1.5.1",
+    "puppeteer": "^2.0.0",
     "sass-loader": "^7.1.0",
     "selenium-standalone": "^6.15.3",
     "sinon": "^6.3.5",
