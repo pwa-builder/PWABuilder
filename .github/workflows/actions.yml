@@ -13,6 +13,6 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: run npm install
-      run: npm install
+      run: npm install mocha chai puppeteer
     - name: run UI tests
       run: npm run test
