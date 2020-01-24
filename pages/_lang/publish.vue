@@ -1016,6 +1016,7 @@ footer a {
   padding-left: 60px;
   padding-right: 60px;
   border-radius: 12px;
+  text-align: center;
 }
 
 #closeAndroidPlatButton {
