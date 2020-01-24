@@ -1083,6 +1083,11 @@ footer a {
   border: none;
 }
 
+#androidDownloadButton #colorSpinner {
+  margin-top: 4px;
+  margin-left: 4px;
+}
+
 #androidDownloadButton.webviewButton {
   width: 183px;
   background: #3c3c3c;
