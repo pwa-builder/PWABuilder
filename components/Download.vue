@@ -88,6 +88,61 @@ export default class extends Vue {
     }
   }
 
+  async handleTWA() {
+    this.isReady = false;
+
+    const goodIcon = (this.manifest as any).icons.find(
+      icon => icon.sizes.includes("512") || icon.sizes.includes("192")
+    );
+
+    const body = JSON.stringify({
+      packageId: "com.mycompany.myapp",
+      host: new URL(this.siteHref).hostname,
+      name: this.manifest.short_name || this.manifest.name,
+      themeColor: this.manifest.theme_color || this.manifest.background_color,
+      navigationColor:
+        this.manifest.theme_color || this.manifest.background_color,
+      backgroundColor:
+        this.manifest.background_color || this.manifest.theme_color,
+      startUrl: "/",
+      iconUrl: goodIcon.src,
+      maskableIconUrl: goodIcon.src,
+      appVersion: "1.0.0",
+      useBrowserOnChromeOS: true,
+      splashScreenFadeOutDuration: 300,
+      enableNotifications: false,
+      shortcuts: "[]",
+      signingInfo: {
+        fullName: "John Doe",
+        organization: "Contoso",
+        organizationalUnit: "Engineering Department",
+        countryCode: "US"
+      }
+    });
+
+    try {
+      const response = await fetch(
+        "https://pwabuilder-cloudapk.azurewebsites.net/generateSignedApk",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: body
+        }
+      );
+      const data = await response.blob();
+
+      let url = window.URL.createObjectURL(data);
+      window.location.assign(url);
+
+      this.isReady = true;
+    } catch (err) {
+      this.isReady = true;
+      this.errorMessage = err.message || err;
+    }
+  }
+
   public async buildArchive(
     platform: string,
     parameters: string[]
@@ -105,58 +160,7 @@ export default class extends Vue {
     this.$awa(overrideValues);
 
     if (platform === "androidTWA") {
-      this.isReady = false;
-
-      const goodIcon = (this.manifest as any).icons.find(icon =>
-        icon.sizes.includes("512")
-      );
-
-      try {
-        const response = await fetch(
-         /* "realUrl/generateSignedApk"*/'',
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              packageId: "com.mycompany.myapp",
-              host: new URL(this.siteHref).hostname,
-              name: this.manifest.short_name || this.manifest.name,
-              themeColor:
-                this.manifest.theme_color || this.manifest.background_color,
-              navigationColor:
-                this.manifest.theme_color || this.manifest.background_color,
-              backgroundColor:
-                this.manifest.background_color || this.manifest.theme_color,
-              startUrl: '/',
-              iconUrl: goodIcon.src,
-              maskableIconUrl: goodIcon.src,
-              appVersion: "1.0.0",
-              useBrowserOnChromeOS: true,
-              splashScreenFadeOutDuration: 300,
-              enableNotifications: false,
-              shortcuts: "[]",
-              signingInfo: {
-                fullName: "John Doe",
-                organization: "Contoso",
-                organizationalUnit: "Engineering Department",
-                countryCode: "US"
-              }
-            })
-          }
-        );
-        const data = await response.blob();
-        console.log(data);
-
-        let url  = window.URL.createObjectURL(data);
-        window.location.assign(url);
-
-        this.isReady = true;
-      } catch (err) {
-        this.isReady = true;
-        this.errorMessage = err;
-      }
+      await this.handleTWA();
     } else {
       try {
         this.isReady = false;
