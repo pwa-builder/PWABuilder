@@ -1008,7 +1008,7 @@ footer a {
 }
 
 #androidModalBody {
-  width: 70%;
+  width: 34em;
   background: white;
   display: flex;
   flex-direction: column;
