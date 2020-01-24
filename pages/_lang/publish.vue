@@ -1008,13 +1008,15 @@ footer a {
 }
 
 #androidModalBody {
-  width: 70%;
+  width: 34em;
   background: white;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-left: 60px;
   padding-right: 60px;
+  border-radius: 12px;
+  text-align: center;
 }
 
 #closeAndroidPlatButton {
@@ -1081,6 +1083,11 @@ footer a {
   justify-content: center;
   align-items: center;
   border: none;
+}
+
+#androidDownloadButton #colorSpinner {
+  margin-top: 4px;
+  margin-left: 4px;
 }
 
 #androidDownloadButton.webviewButton {

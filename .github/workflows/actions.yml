@@ -4,6 +4,8 @@ on:
   push:
     branches:
     - master
+  pull_request:
+    
 
 jobs:
   build:
@@ -13,6 +15,6 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: run npm install
-      run: npm install
+      run: npm install -f
     - name: run UI tests
       run: npm run test
