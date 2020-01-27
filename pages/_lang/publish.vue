@@ -129,7 +129,7 @@
           <p id="androidModalP">
             You can choose to package your PWA as a
             <a
-              href="https://developers.google.com/web/updates/2019/02/using-twa"
+              href="https://developers.google.com/web/updates/2019/08/twas-quickstart"
               >Trusted Web Activity</a
             >
             or in a
@@ -143,8 +143,7 @@
             href="https://developers.google.com/web/updates/2019/02/using-twa#establish_an_association_from_the_website_to_the_app"
             id="androidModalSubText"
           >
-            Note: For Trusted Web Activities you will need Android Studio to
-            associate your PWA with your TWA
+            Note: Next steps for each package can be seen in the Next-steps.md file in the downloaded zip folder.
             <i class="fas fa-external-link-alt"></i>
           </a>
         </div>
