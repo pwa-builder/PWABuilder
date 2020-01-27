@@ -122,7 +122,7 @@ export default class extends Vue {
 
     try {
       const response = await fetch(
-        "https://pwabuilder-cloudapk.azurewebsites.net/generateSignedApk",
+        "https://pwabuilder-cloudapk.azurewebsites.net/generateSignedApkZip",
         {
           method: "POST",
           headers: {
