@@ -86,38 +86,6 @@
       </section>
     </Modal>
 
-    <!-- android platform modal -->
-    <!--<Modal
-      title="Android Platform"
-      ref="androidModal"
-      class="androidModal"
-      :showSubmitButton="false"
-      :showTitleBox="false"
-      v-on:modalOpened="modalOpened()"
-      v-on:modalClosed="modalClosed()"
-    >
-      <div id="topLabelBox" slot="extraP"></div>
-
-      <section id="androidModalBody">
-        <div>
-          <p id="androidModalP">
-            You can choose to package your PWA as a
-            <a
-              href="https://developers.google.com/web/updates/2019/02/using-twa"
-            >Trusted Web Activity</a>
-            or in a
-            <a
-              href="https://developer.android.com/reference/android/webkit/WebView"
-            >traditional Webview</a>.
-          </p>
-        </div>
-
-        <div id="androidModalButtonSection">
-          <Download id="androidDownloadButton" platform="androidTWA" message="Download TWA"/>
-          <Download id="androidDownloadButton" platform="android" message="Download WebView"/>
-        </div>
-      </section>
-    </Modal>-->
 
     <div v-if="openAndroid" ref="androidModal" id="androidPlatModal">
       <button @click="closeAndroidModal()" id="closeAndroidPlatButton">
@@ -127,23 +95,20 @@
       <section id="androidModalBody">
         <div>
           <p id="androidModalP">
-            You can choose to package your PWA as a
+            Download your
             <a
               href="https://developers.google.com/web/updates/2019/08/twas-quickstart"
-              >Trusted Web Activity</a
+              >PWA package</a
             >
-            or in a
-            <a
-              href="https://developer.android.com/reference/android/webkit/WebView"
-              >traditional Webview</a
-            >.
+            for Google Play
           </p>
 
           <a
             href="https://developers.google.com/web/updates/2019/02/using-twa#establish_an_association_from_the_website_to_the_app"
             id="androidModalSubText"
           >
-            Note: Next steps for each package can be seen in the Next-steps.md file in the downloaded zip folder.
+            Your download will contain instructions for how to submit your app
+            to the Google Play store
             <i class="fas fa-external-link-alt"></i>
           </a>
         </div>
@@ -153,15 +118,21 @@
             :showMessage="true"
             id="androidDownloadButton"
             platform="androidTWA"
-            message="Download TWA"
+            message="Download"
           />
-          <Download
-            :showMessage="true"
-            id="androidDownloadButton"
-            class="webviewButton"
-            platform="android"
-            message="Download WebView"
-          />
+        </div>
+
+        <div id="extraSection">
+          <p>
+            Your PWA will be a Trusted Web Activity.
+            <Download
+              :showMessage="true"
+              id="legacyDownloadButton"
+              class="webviewButton"
+              platform="android"
+              message="Use a legacy webview instead (not recommended)"
+            />
+          </p>
         </div>
       </section>
     </div>
@@ -221,7 +192,6 @@
           </div>-->
 
           <!--temp impl for demo-->
-         
         </div>
       </section>
 
@@ -356,8 +326,8 @@
               class="pwaCard"
             >
               <div class="pwaCardHeaderBlock">
-                  <i id="platformIcon" class="fab fa-apple"></i>
-                  <h2>MacOS</h2>
+                <i id="platformIcon" class="fab fa-apple"></i>
+                <h2>MacOS</h2>
               </div>
 
               <p>
@@ -550,7 +520,6 @@ export default class extends Vue {
   }
 
   public async onSubmitAppxModal(): Promise<void> {
-
     const $appxModal = this.$refs.appxModal as Modal;
     $appxModal.showLoading();
 
@@ -688,7 +657,6 @@ footer a {
 }
 
 #publishMain {
-
 }
 
 #modalBackground {
@@ -740,7 +708,7 @@ footer a {
 
 #publishSideBySide {
   display: flex;
-  background: linear-gradient(-32deg, #9337D8, #1FC2C8);
+  background: linear-gradient(-32deg, #9337d8, #1fc2c8);
 
   #publishLeftSide {
     height: 100%;
@@ -750,7 +718,6 @@ footer a {
     justify-content: center;
     align-self: center;
     align-items: center;
-    
 
     header {
       display: flex;
@@ -1006,6 +973,17 @@ footer a {
   }
 }
 
+#androidModalBody #extraSection p {
+  color: grey;
+  font-size: 10px;
+}
+
+#androidModalBody #extraSection #legacyDownloadButton {
+  color: grey;
+  font-size: 10px;
+  background: transparent;
+}
+
 #androidModalBody {
   width: 34em;
   background: white;
@@ -1151,17 +1129,17 @@ footer a {
     flex-direction: column;
   }
 
-   #publishSideBySide #publishLeftSide  #introContainer {
-      margin-top: 20px;
-      margin-left: 30px;
-      margin-right: 30px;
+  #publishSideBySide #publishLeftSide #introContainer {
+    margin-top: 20px;
+    margin-left: 30px;
+    margin-right: 30px;
   }
 }
 
 @media (max-width: 550px) {
   #publishSideBySide #publishRightSide #platformsListContainer ul {
-      display: flex;
-      flex-direction: column;
+    display: flex;
+    flex-direction: column;
   }
 }
 </style>
