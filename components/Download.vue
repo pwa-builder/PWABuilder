@@ -96,7 +96,7 @@ export default class extends Vue {
     );
 
     const body = JSON.stringify({
-      packageId: "com.mycompany.myapp",
+      packageId: `com.myapp.${this.manifest.short_name || this.manifest.name}`,
       host: new URL(this.siteHref).hostname,
       name: this.manifest.short_name || this.manifest.name,
       themeColor: this.manifest.theme_color || this.manifest.background_color,
