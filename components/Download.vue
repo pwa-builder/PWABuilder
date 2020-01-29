@@ -1,6 +1,9 @@
 <template>
   <button
-    :class="{'pwa-button--brand': isBrand, 'pwa-button--total_right': isRight}"
+    :class="{
+      'pwa-button--brand': isBrand,
+      'pwa-button--total_right': isRight
+    }"
     @click="buildArchive(platform, parameters)"
   >
     <span v-if="isReady">
@@ -33,6 +36,9 @@ import * as publish from "~/store/modules/publish";
 
 const PublishState = namespace(publish.name, State);
 const PublishAction = namespace(publish.name, Action);
+
+import * as generator from "~/store/modules/generator";
+const GeneratorState = namespace(generator.name, State);
 
 @Component({
   components: {
@@ -71,18 +77,75 @@ export default class extends Vue {
   @PublishState archiveLink: string;
   @PublishAction build;
 
+  @GeneratorState manifest: generator.Manifest;
+
   public created(): void {
     this.message$ = this.message;
 
-    const sessionRef = sessionStorage.getItem('currentURL');
+    const sessionRef = sessionStorage.getItem("currentURL");
     if (sessionRef) {
       this.siteHref = sessionRef;
     }
   }
 
+  async handleTWA() {
+    this.isReady = false;
+
+    const goodIcon = (this.manifest as any).icons.find(
+      icon => icon.sizes.includes("512") || icon.sizes.includes("192")
+    );
+
+    const body = JSON.stringify({
+      packageId: `com.myapp.${this.manifest.short_name || this.manifest.name}`,
+      host: new URL(this.siteHref).hostname,
+      name: this.manifest.short_name || this.manifest.name,
+      themeColor: this.manifest.theme_color || this.manifest.background_color,
+      navigationColor:
+        this.manifest.theme_color || this.manifest.background_color,
+      backgroundColor:
+        this.manifest.background_color || this.manifest.theme_color,
+      startUrl: "/",
+      iconUrl: goodIcon.src,
+      maskableIconUrl: goodIcon.src,
+      appVersion: "1.0.0",
+      useBrowserOnChromeOS: true,
+      splashScreenFadeOutDuration: 300,
+      enableNotifications: false,
+      shortcuts: "[]",
+      signingInfo: {
+        fullName: "John Doe",
+        organization: "Contoso",
+        organizationalUnit: "Engineering Department",
+        countryCode: "US"
+      }
+    });
+
+    try {
+      const response = await fetch(
+        "https://pwabuilder-cloudapk.azurewebsites.net/generateSignedApkZip",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: body
+        }
+      );
+      const data = await response.blob();
+
+      let url = window.URL.createObjectURL(data);
+      window.location.assign(url);
+
+      this.isReady = true;
+    } catch (err) {
+      this.isReady = true;
+      this.errorMessage = err.message || err;
+    }
+  }
+
   public async buildArchive(
     platform: string,
-    parameters: string[],
+    parameters: string[]
   ): Promise<void> {
     if (!this.isReady) {
       return;
@@ -96,20 +159,28 @@ export default class extends Vue {
 
     this.$awa(overrideValues);
 
-    try {
-      this.isReady = false;
+    if (platform === "androidTWA") {
+      await this.handleTWA();
+    } else {
+      try {
+        this.isReady = false;
 
-      await this.build({ platform: platform, href: this.siteHref, options: parameters });
+        await this.build({
+          platform: platform,
+          href: this.siteHref,
+          options: parameters
+        });
 
-      if (this.archiveLink) {
-        window.location.href = this.archiveLink;
+        if (this.archiveLink) {
+          window.location.href = this.archiveLink;
+        }
+
+        // Because browser delay
+        setTimeout(() => (this.isReady = true), 3000);
+      } catch (e) {
+        this.isReady = true;
+        this.errorMessage = e;
       }
-
-      // Because browser delay
-      setTimeout(() => (this.isReady = true), 3000);
-    } catch (e) {
-      this.isReady = true;
-      this.errorMessage = e;
     }
   }
 }
@@ -122,7 +193,6 @@ Vue.prototype.$awa = function(config) {
 };
 </script>
 
-
 <style lang="scss" scoped>
 #errorDiv {
   position: absolute;
@@ -133,7 +203,7 @@ Vue.prototype.$awa = function(config) {
   position: fixed;
   bottom: 2em;
   right: 2em;
-  background: #3C3C3C;
+  background: #3c3c3c;
   padding: 1em;
   border-radius: 4px;
 }
@@ -219,5 +289,4 @@ Vue.prototype.$awa = function(config) {
     }
   }
 }
-
 </style>
