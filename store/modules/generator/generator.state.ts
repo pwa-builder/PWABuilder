@@ -13,6 +13,7 @@ export interface Manifest {
     start_url: string | null;
     theme_color: string | null;
     generated: boolean | null;
+    url: string | null;
 }
 
 export interface StaticContent {

@@ -144,7 +144,7 @@ export const actions: Actions<State, RootState> = {
         delete result.content.generated;
       }
 
-
+      result.content.url = state.url;
 
       commit(types.UPDATE_WITH_MANIFEST, result);
       commit(types.SET_DEFAULTS_MANIFEST, {
