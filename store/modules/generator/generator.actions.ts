@@ -104,7 +104,7 @@ export const actions: Actions<State, RootState> = {
     if (!state.url) {
       throw 'error.url_empty';
     }
-    if (state.manifest) {
+    if (state.manifest && state.manifest.url === state.url) {
       return;
     }
     const options = {
