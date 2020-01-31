@@ -224,7 +224,12 @@ export default class extends Vue {
   }
 
   goBack() {
-    window.history.back();
+    if (document.referrer.indexOf(window.location.origin) === 0) {
+      window.history.back();
+    } else {
+      // If the current document was not opened through a link (for example, user navigated to the page directly or through a bookmark)
+      window.location.href = `${window.location.origin}/features`;
+    }
   }
 
   async showToast() {
