@@ -104,7 +104,7 @@ export default class extends Vue {
         this.manifest.theme_color || this.manifest.background_color,
       backgroundColor:
         this.manifest.background_color || this.manifest.theme_color,
-      startUrl: "/",
+      startUrl: this.manifest.start_url || "/",
       iconUrl: goodIcon.src,
       maskableIconUrl: goodIcon.src,
       appVersion: "1.0.0",
