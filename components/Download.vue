@@ -40,6 +40,8 @@ const PublishAction = namespace(publish.name, Action);
 import * as generator from "~/store/modules/generator";
 const GeneratorState = namespace(generator.name, State);
 
+import { generatePackageId } from '../utils/packageID';
+
 @Component({
   components: {
     Loading
@@ -95,8 +97,10 @@ export default class extends Vue {
       icon => icon.sizes.includes("512") || icon.sizes.includes("192")
     );
 
+    const packageid = generatePackageId((this.manifest.short_name as string) || (this.manifest.name as string));
+
     const body = JSON.stringify({
-      packageId: `com.myapp.${(this.manifest.short_name as string).split(' ').join('_') || (this.manifest.name as string).split(' ').join('_')}`,
+      packageId: `com.${packageid.split(' ').join('_').toLowerCase()}`,
       host: new URL(this.siteHref).hostname,
       name: this.manifest.short_name || this.manifest.name,
       themeColor: this.manifest.theme_color || this.manifest.background_color,
@@ -104,7 +108,7 @@ export default class extends Vue {
         this.manifest.theme_color || this.manifest.background_color,
       backgroundColor:
         this.manifest.background_color || this.manifest.theme_color,
-      startUrl: this.manifest.start_url || "/",
+      startUrl: '/',
       iconUrl: goodIcon.src,
       maskableIconUrl: goodIcon.src,
       appVersion: "1.0.0",
