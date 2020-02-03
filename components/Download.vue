@@ -100,7 +100,6 @@ export default class extends Vue {
     const packageid = generatePackageId((this.manifest.short_name as string) || (this.manifest.name as string));
 
     let startURL = (this.manifest.start_url as string).replace(`https://${new URL(this.siteHref).hostname}`, "")
-    console.log(startURL);
 
 
     const body = JSON.stringify({
