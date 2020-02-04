@@ -99,6 +99,9 @@ export default class extends Vue {
 
     const packageid = generatePackageId((this.manifest.short_name as string) || (this.manifest.name as string));
 
+    let startURL = (this.manifest.start_url as string).replace(`https://${new URL(this.siteHref).hostname}`, "")
+
+
     const body = JSON.stringify({
       packageId: `com.${packageid.split(' ').join('_').toLowerCase()}`,
       host: new URL(this.siteHref).hostname,
@@ -108,7 +111,7 @@ export default class extends Vue {
         this.manifest.theme_color || this.manifest.background_color,
       backgroundColor:
         this.manifest.background_color || this.manifest.theme_color,
-      startUrl: '/',
+      startUrl: startURL,
       iconUrl: goodIcon.src,
       maskableIconUrl: goodIcon.src,
       appVersion: "1.0.0",
