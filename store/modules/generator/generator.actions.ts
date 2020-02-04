@@ -104,7 +104,7 @@ export const actions: Actions<State, RootState> = {
     if (!state.url) {
       throw 'error.url_empty';
     }
-    if (state.manifest) {
+    if (state.manifest && state.manifest.url === state.url) {
       return;
     }
     const options = {
@@ -144,7 +144,7 @@ export const actions: Actions<State, RootState> = {
         delete result.content.generated;
       }
 
-
+      result.content.url = state.url;
 
       commit(types.UPDATE_WITH_MANIFEST, result);
       commit(types.SET_DEFAULTS_MANIFEST, {
