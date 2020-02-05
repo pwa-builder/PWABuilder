@@ -154,11 +154,11 @@ export default class extends Vue {
   }
 
   reset() {
-    console.log("here");
+      console.log("here");
     if (location.pathname === "/") {
       this.$emit("reset");
     } else {
-      history.back();
+      window.location.href = window.location.origin;
     }
   }
 }
