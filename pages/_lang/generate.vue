@@ -293,7 +293,7 @@
           code-type="html"
           v-if="seeEditor"
           title="Add this code to your start page"
-          code="<link rel='manifest' href='/manifest.webmanifest'>"
+          code="<link rel='manifest' href='/manifest.json'>"
           :showHeader="true"
           :showCopyButton="true"
           id="manifestHTML"
@@ -317,7 +317,7 @@
           :showCopyButton="showCopy"
           id="manifestCode"
         >
-          <h3>Add this code to your manifest.webmanifest file</h3>
+          <h3>Add this code to your manifest.json file</h3>
         </CodeViewer>
       </section>
 
