@@ -129,7 +129,6 @@ export default class extends Vue {
   }
 
   updated() {
-    console.log("updated", this.score);
     if (this.manifest) {
       this.readyToPublish = true;
     } 
@@ -154,11 +153,10 @@ export default class extends Vue {
   }
 
   reset() {
-    console.log("here");
     if (location.pathname === "/") {
       this.$emit("reset");
     } else {
-      history.back();
+      window.location.href = window.location.origin;
     }
   }
 }
