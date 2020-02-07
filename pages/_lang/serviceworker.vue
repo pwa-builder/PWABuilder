@@ -218,15 +218,8 @@ export default class extends Vue {
   @Watch("serviceworker$")
   async onServiceworker$Changed(): Promise<void> {
     try {
-
-      // temp check for demo
-      if (this.serviceworker$ === 6 || this.serviceworker$ === 7) {
-        await this.getCode(4);
-      }
-      else {
-        await this.getCode(this.serviceworker$);
-      }
-
+      await this.getCode(this.serviceworker$);
+      
       this.analyze();
     } catch (e) {
       this.error = e;
