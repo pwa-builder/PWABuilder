@@ -52,31 +52,13 @@ export const actions: Actions<State, RootState> = {
     return new Promise<void>(async (resolve, reject) => {
       try {
         await this.$axios.$get(`${apiUrl}/getServiceWorkersDescription`).then(data => {
-
-          // temp for demo
-          data.serviceworkers.push(
-            {
-              id: 6,
-              title: "Push notifications",
-              description: "Service Workers not only do caching, but also enable features like Push Notifications on the web! This Service Worker has all the code needed to display push notifications to your users."
-            },
-            {
-              id: 7,
-              title: "Push notifications with cache-first caching",
-              description: "The ultimate Service Worker. This Service Worker implements the the cache-first caching strategy along with serving push notifications!"
-            }
-          );
-
-
-
-
           commit(types.UPDATE_SERVICEWORKERS, data.serviceworkers);
           resolve();
         });
       }
       catch (e) {
         let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
-        reject(errorMessage);
+        reject(errorMessage);             
       }
     });
   },
