@@ -486,13 +486,24 @@ header {
   }
 
   #subHeader #publishButton {
-    display: none;
+    position: absolute;
+    left: 5vw;
+  }
+
+  #tabsBar :first-child {
+    visibility: hidden;
   }
 
   #subHeader {
     display: flex;
     padding: 0 0px;
     justify-content: space-around;
+  }
+}
+
+@media (max-width: 320px) {
+  #subHeader #publishButton {
+    width: 60px;
   }
 }
 
