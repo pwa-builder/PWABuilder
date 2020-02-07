@@ -479,19 +479,23 @@ header {
   }
 }
 
-@media (max-width: 425px) {
+@media (max-width: 530px) {
   #overallScore {
     padding-right: 0px !important;
-    padding-left: 20px;
+    padding-left: 0px;
+  }
+
+  #subHeader #tabsBar {
+    grid-template-columns: 10fr 10fr 1fr;
   }
 
   #subHeader #publishButton {
-    position: absolute;
-    left: 5vw;
+    margin-left: 12px;
+    margin-right: 12px;
   }
 
   #tabsBar :first-child {
-    visibility: hidden;
+    display: none;
   }
 
   #subHeader {
