@@ -88,13 +88,12 @@
         </div>
 
         <p>
-          Your PWA is ready to go! Tap "Build My PWA" to package your PWA for the app stores
-          or tap "Feature Store" to check out the latest web components from the PWABuilder team!
+          Ready to build your PWA? Tap "Build My PWA" to package your PWA for the app stores
+          or tap "Feature Store" to check out the latest web components from the PWABuilder team to improve your PWA even further!
         </p>
 
         <div id="attachSectionActions">
           <nuxt-link id="buildLink" to="/publish">Build My PWA</nuxt-link>
-
           <nuxt-link id="featuresLink" to="/features">Feature Store</nuxt-link>
         </div>
       </div>
