@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="hubContainer"
-    :class="{ backgroundReport: gotURL, backgroundIndex: !gotURL }"
-  >
+  <div id="hubContainer" :class="{ backgroundReport: gotURL, backgroundIndex: !gotURL }">
     <HubHeader
       v-on:reset="reset()"
       :score="overallScore"
@@ -12,7 +9,7 @@
 
     <ion-toast-controller></ion-toast-controller>
 
-    <div v-if="gotURL" id="reportShareButtonContainer">
+    <div v-if="gotURL && overallScore < 80" id="reportShareButtonContainer">
       <button @click="shareReport">
         <i class="fas fa-share-alt"></i>
         Share your Results
@@ -49,9 +46,7 @@
             />
 
             <button :class="{ btnErr: error != null }" id="getStartedButton">
-              <div :class="{ btnErrText: error != null }">
-                {{ $t("generator.start") }}
-              </div>
+              <div :class="{ btnErrText: error != null }">{{ $t("generator.start") }}</div>
             </button>
           </form>
         </div>
@@ -61,20 +56,19 @@
             <button @click="skipCheckUrl()" id="expertModeButton">Expert Mode</button>
             <p>Already have a PWA? Skip ahead!</p>
           </div>-->
-
         </div>
         <footer>
           <p>
             PWA Builder was founded by Microsoft as a community guided, open
             source project to help move PWA adoption forward.
-            <a href="https://privacy.microsoft.com/en-us/privacystatement"
-              >Our Privacy Statement</a
-            >
+            <a
+              href="https://privacy.microsoft.com/en-us/privacystatement"
+            >Our Privacy Statement</a>
           </p>
         </footer>
       </div>
 
-      <div v-if="gotURL" id="infoSection">
+      <div v-if="gotURL && overallScore < 80" id="infoSection">
         <h2>Hub</h2>
 
         <p>
@@ -82,6 +76,27 @@
           and provided simple tools to help you fill in the gaps. When you’re
           ready, click “build my PWA” to finish up.
         </p>
+      </div>
+
+      <div v-if="gotURL && overallScore >= 80" id="attachSection">
+        <div id="attachHeader">
+          <h2>Nice job!</h2>
+
+          <button id="attachShare" @click="shareReport">
+            <i class="fas fa-share-alt"></i>
+          </button>
+        </div>
+
+        <p>
+          Your PWA is ready to go! Tap "Build My PWA" to package your PWA for the app stores
+          or tap "Feature Store" to check out the latest web components from the PWABuilder team!
+        </p>
+
+        <div id="attachSectionActions">
+          <nuxt-link id="buildLink" to="/publish">Build My PWA</nuxt-link>
+
+          <nuxt-link id="featuresLink" to="/features">Feature Store</nuxt-link>
+        </div>
       </div>
 
       <ScoreCard
@@ -134,8 +149,7 @@
         project to help move PWA adoption forward.
         <a
           href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
-          >Our Privacy Statement</a
-        >
+        >Our Privacy Statement</a>
       </p>
     </footer>
   </div>
@@ -196,7 +210,7 @@ export default class extends Vue {
     } else {
       if (window && window.location.search) {
         const url = window.location.search.split("=")[1];
-        
+
         this.cleanedURL = decodeURIComponent(url);
         this.url = this.cleanedURL;
 
@@ -362,7 +376,6 @@ export default class extends Vue {
   }
 }
 
-
 Vue.prototype.$awa = function(config) {
   awa.ct.capturePageView(config);
   return;
@@ -374,6 +387,78 @@ declare var awa: any;
 <style lang="scss" scoped>
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
+
+#attachSection {
+  grid-column: 3 / span 8;
+  background: white;
+  padding: 20px;
+  border-radius: 4px;
+  margin-bottom: 2em;
+  margin-top: 4em;
+  min-height: 12em;
+
+  animation-name: fadein;
+  animation-duration: 300ms;
+}
+
+#attachSectionActions {
+  height: 3em;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+#attachSectionActions #buildLink {
+  justify-content: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  background: linear-gradient(to right, #1fc2c8, #9337d8 116%);
+  color: white;
+  border-radius: 20px;
+  height: 40px;
+}
+
+#attachSectionActions #featuresLink {
+  justify-content: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  background: black;
+  color: white;
+  border-radius: 20px;
+  height: 40px;
+  margin-left: 12px;
+}
+
+#attachSection #attachHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#attachShare {
+  border-radius: 50%;
+  width: 2.4em;
+  height: 2.4em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 #shareToast {
   position: absolute;
@@ -468,7 +553,7 @@ declare var awa: any;
 }
 
 .backgroundIndex {
-   @include backgroundLeftPoint(26%, 20vh); 
+  @include backgroundLeftPoint(26%, 20vh);
 }
 
 .backgroundReport {
@@ -487,7 +572,7 @@ declare var awa: any;
 }
 
 main {
-  @include grid; 
+  @include grid;
 
   margin-bottom: 2em;
 }
@@ -599,35 +684,35 @@ h2 {
   }
 
   footer {
-      position: absolute;
-      bottom: 10px;
-      margin-right: 32px;
-      color: rgba(60, 60, 60, 0.6);
-      background: transparent;
+    position: absolute;
+    bottom: 10px;
+    margin-right: 32px;
+    color: rgba(60, 60, 60, 0.6);
+    background: transparent;
 
-      p {
-        text-align: center;
-        font-size: 12px;
-        line-height: 18px;
-      }
-
-      a {
-        box-shadow: none;
-        color: inherit;
-        text-decoration: underline;
-      }
+    p {
+      text-align: center;
+      font-size: 12px;
+      line-height: 18px;
     }
 
-    @media (max-width: 425px) {
-      footer {
-        margin-right: initial;
-        margin-left: initial;
-      }
-      footer p {
-        width: 75%;
-        margin-bottom: 0px;
-      }
+    a {
+      box-shadow: none;
+      color: inherit;
+      text-decoration: underline;
     }
+  }
+
+  @media (max-width: 425px) {
+    footer {
+      margin-right: initial;
+      margin-left: initial;
+    }
+    footer p {
+      width: 75%;
+      margin-bottom: 0px;
+    }
+  }
 
   #bottomHalfHome {
     grid-row: 2;
@@ -696,8 +781,6 @@ h2 {
         margin-right: initial;
       }
     }
-
-
   }
 }
 
@@ -733,11 +816,16 @@ h2 {
   }
 }
 
-  #scoreCard {
-    margin-bottom: 20px;
-    }
+#scoreCard {
+  margin-bottom: 20px;
+}
 
 @media (max-width: 425px) {
+  #attachSection {
+    margin-left: 25px;
+    margin-right: 25px;
+  }
+
   #infoSection {
     margin-left: 25px;
     margin-right: 25px;
@@ -979,7 +1067,7 @@ h2 {
 
 @media (max-height: 600px) {
   .backgroundIndex {
-    @include backgroundLeftPoint(30%, 0vh);  
+    @include backgroundLeftPoint(30%, 0vh);
   }
 
   .backgroundReport {
