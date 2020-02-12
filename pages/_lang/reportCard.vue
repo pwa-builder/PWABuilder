@@ -93,8 +93,8 @@
         </p>
 
         <div id="attachSectionActions">
-          <nuxt-link id="buildLink" to="/publish">Build My PWA</nuxt-link>
-          <nuxt-link id="featuresLink" to="/features">Feature Store</nuxt-link>
+          <nuxt-link @click="$awa( { 'referrerUri': 'https://www.pwabuilder.com/publish?fromHome' });" id="buildLink" to="/publish">Build My PWA</nuxt-link>
+          <nuxt-link @click="$awa( { 'referrerUri': 'https://www.pwabuilder.com/features?fromHome' });" id="featuresLink" to="/features">Feature Store</nuxt-link>
         </div>
       </div>
 
