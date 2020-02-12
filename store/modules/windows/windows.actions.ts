@@ -55,19 +55,59 @@ export const actions: Actions<State, RootState> = {
                 results.push(
                   ({
                     title: "Use Geolocation",
-                    description: "A simple script that uses the Gelocation API to allow your app to ask for the users current location"
+                    description: "A simple component that uses the Gelocation API to allow your app to ask for the users current location"
                   } as any),
                   ({
                     title: "Copy to Clipboard",
-                    description: "A simple script that uses the Clipboard API to allow your app to copy text to the users clipboard"
+                    description: "A simple component that uses the Clipboard API to allow your app to copy text to the users clipboard"
                   } as any),
                   ({
                     title: "Install your PWA",
-                    description: "A simple script that gives users a button to install your PWA directly from the browser"
+                    description: "A simple component that gives users a button to install your PWA directly from the browser"
+                  } as any),
+                  ({
+                    title: "Adaptive Cards",
+                    description: " A component that helps you take advantage of Adaptive Cards."
                   } as any),
                   ({
                     title: "Web MIDI",
                     description: "A simple script that gives your app the ability to connect to a MIDI device such as a keyboard"
+                  } as any),
+                  ({
+                    title: "People Picker Graph Component",
+                    description: "The People Picker component enables the user to view, add, or remove people objects from a dynamic drop-down list as they type."
+                  } as any),
+                  ({
+                    title: "Person Graph Component",
+                    description: "The person component is used to display a person or contact by using their photo, name, and/or email address."
+                  } as any),
+                  ({
+                    title: "Tasks Graph Component",
+                    description: "The Tasks component enables the user to view, add, remove, complete, or edit tasks. It works with tasks in Microsoft Planner or Microsoft To-Do."
+                  } as any),
+                  /*({
+                    title: "Samsung Smart View",
+                    description: "A Smart View enabled app provides separate views which are connected and running on different devices."
+                  } as any),
+                  ({
+                    title: "Samsung Pay",
+                    description: "Samsung Pay can be used for mobile web payments too, to make secure purchases across the web in eligible countries. No more clunky forms and input fields!"
+                  } as any),
+                  ({
+                    title: "Get Channels from Microsoft Teams",
+                    description: "This component lets you get the channels for a signed in user"
+                  } as any),
+                  ({
+                    title: "Create a new Channel in Microsoft Teams",
+                    description: "Allow a user to easily create a new channel in Teams."
+                  } as any),
+                  ({
+                    title: "Get teams from Microsoft Teams",
+                    description: "Get the teams a signed in user is a member of in Teams"
+                  } as any),*/
+                  ({
+                    title: "Immersive Reader",
+                    description: "Immersive Reader mode makes it easier for users to read your content on the web"
                   } as any)
                 );
 
@@ -78,6 +118,19 @@ export const actions: Actions<State, RootState> = {
                     for (let f = 0; f < source.Parsed.Functions.length; f++) {
                       let fn = source.Parsed.Functions[f];
                       let newItem = fromItem(fn, file, source);
+
+                      if (newItem.title === "Microsoft Graph Authentication") {
+                        newItem.title = "Login Graph Component";
+                      }
+                      else if (newItem.title === "Microsoft Graph Contacts API") {
+                        newItem.title = "People Graph Component";
+                      }
+                      else if (newItem.title === "Microsoft Graph Calendar API") {
+                        newItem.title = "Agenda Graph Component";
+                      }
+                      else if (newItem.title === "Microsoft Graph Activity API") {
+                        newItem.title = "Activity Graph Component";
+                      }
           
                       results.push(newItem);
                     }

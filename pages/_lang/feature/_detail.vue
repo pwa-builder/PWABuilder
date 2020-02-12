@@ -1,20 +1,18 @@
 <template>
   <div id="mainDiv">
-    <HubHeader></HubHeader>
+    <HubHeader
+      showFeatureDetailButton="true"
+      :showFeatureDetailGraphButton="onGraph"
+    ></HubHeader>
 
-    <button @click="goBack()" id="backButton">
-      <i class="fas fa-chevron-left"></i>
-    </button>
+    <ion-toast-controller></ion-toast-controller>
 
-    <button @click="share()" id="featDetailShareButton">
-      <i class="fas fa-share-alt"></i>
-      <span>Share</span>
-    </button>
-
-    <button @click="goToGithub()" id="githubSnippitButton">
-      <i class="fab fa-github"></i>
-      <span>Github</span>
-    </button>
+    <div v-if="onAuth" id="clientIdBlock">
+      <button v-if="!idGenerated" @click="generateID()">
+        Generate Client ID
+      </button>
+      <div id="generatedDiv" v-else @click="generateID()">ID Generated</div>
+    </div>
 
     <div v-if="shared" id="shareToast">URL copied for sharing</div>
 
@@ -59,22 +57,30 @@ export default class extends Vue {
 
   shared: boolean = false;
 
+  onAuth: boolean = false;
+  onGraph: boolean = false;
+
+  idGenerated: boolean = false;
+
   snippitMap = [
     {
       realName: "graphAuth",
-      mappedName: "Microsoft Graph Authentication"
+      mappedName: "Login Graph Component",
+      docsName: "login"
     },
     {
       realName: "graphContacts",
-      mappedName: "Microsoft Graph Contacts API"
+      mappedName: "People Graph Component",
+      docsName: "people"
     },
     {
       realName: "graphCalendar",
-      mappedName: "Microsoft Graph Calendar API"
+      mappedName: "Agenda Graph Component",
+      docsName: "agenda"
     },
     {
       realName: "graphCreateActivity",
-      mappedName: "Microsoft Graph Activity API"
+      mappedName: "Activity Graph Component"
     },
     {
       realName: "share",
@@ -89,29 +95,91 @@ export default class extends Vue {
       mappedName: "Copy to Clipboard"
     },
     {
+      realName: "adaptiveCards",
+      mappedName: "Adaptive Cards"
+    },
+    {
       realName: "installButton",
       mappedName: "Install your PWA"
     },
     {
       realName: "midi",
       mappedName: "Web MIDI"
+    },
+    {
+      realName: "graphPeoplePicker",
+      mappedName: "People Picker Graph Component",
+      docsName: "people-picker"
+    },
+    {
+      realName: "graphPerson",
+      mappedName: "Person Graph Component",
+      docsName: "person"
+    },
+    {
+      realName: "graphTasks",
+      mappedName: "Tasks Graph Component",
+      docsName: "tasks"
+    },
+
+    {
+      realName: "immersiveReader",
+      mappedName: "Immersive Reader"
     }
   ];
 
   baseURL =
-    "https://raw.githubusercontent.com/pwa-builder/pwabuilder-snippits/master/src";
+    "https://raw.githubusercontent.com/pwa-builder/pwabuilder-snippits/demo/src";
+
+  baseGraphDocsURL =
+    "https://docs.microsoft.com/en-us/graph/toolkit/components";
 
   docsContent: string | null = null;
 
   async mounted() {
-    console.log("route param", this.$route.params.featureDetail);
+    (<HTMLButtonElement>document.getElementById("backButton")).addEventListener(
+      "click",
+      this.goBack
+    );
+    (<HTMLButtonElement>(
+      document.getElementById("featDetailShareButton")
+    )).addEventListener("click", this.share);
+    (<HTMLButtonElement>(
+      document.getElementById("githubSnippitButton")
+    )).addEventListener("click", this.goToGithub);
+    this.$nextTick(function() {
+      if (this.onGraph) {
+        (<HTMLButtonElement>(
+          document.getElementById("featDetailDocsButton")
+        )).addEventListener("click", this.goToDocs);
+      }
+    });
+
+    const overrideValues = {
+      uri: window.location.href,
+      pageName: this.$route.params.featureDetail,
+      pageHeight: window.innerHeight
+    };
+
+    this.$awa(overrideValues);
 
     this.snippitMap.forEach(async snippit => {
-      console.log("snippit.mappedName", snippit.mappedName);
       if (snippit.mappedName === this.$route.params.featureDetail) {
         this.currentSample = snippit;
 
-        console.log(snippit);
+        if (
+          this.$route.params.featureDetail === "Microsoft Graph Authentication"
+        ) {
+          this.onAuth = true;
+        } else {
+          this.onAuth = false;
+        }
+
+        if (this.$route.params.featureDetail.toLowerCase().includes("graph")) {
+          this.onGraph = true;
+        } else {
+          this.onGraph = false;
+        }
 
         const response = await fetch(
           `${this.baseURL}/${snippit.realName}/${snippit.realName}.md`
@@ -123,55 +191,57 @@ export default class extends Vue {
             return require("highlight.js").highlightAuto(docsFile).value;
           }
         });
-        console.log(docsFile);
       }
     });
-    /*const response = await fetch(
-      `${baseURL}=${this.$route.params.featureDetail}`
-    );
-    const data = await response.json();
+  }
 
-    this.codeSnippits = data.snippets;
+  generateID() {
+    const els = document.querySelectorAll(".hljs-string");
 
-    console.log('codeSnippits', this.codeSnippits);
-
-    await this.getSamples();
-    console.log('this.samples', this.samples);
-
-    this.samples.forEach(sample => {
-      console.log(this.codeSnippits[0]);
-      console.log("sample.image", sample.image);
-      console.log('this.$route.params.featureDetail', this.$route.params.featureDetail);
-
-      if (
-        sample.image && sample.image.includes(this.$route.params.featureDetail) === true
-      ) {
-        console.log("inside finder", sample);
-        this.currentSample = sample;
+    for (let i = 0; i < els.length; i++) {
+      if ((els[i] as any).textContent.toLowerCase().includes("client")) {
+        els[i].textContent = '"a974dfa0-9f57-49b9-95db-90f04ce2111a"';
       }
-    });*/
+    }
+
+    setTimeout(() => {
+      this.idGenerated = true;
+    }, 700);
   }
 
   goToGithub() {
     window.open(
-      `https://github.com/pwa-builder/pwabuilder-snippits/tree/master/src/${
-        this.currentSample.realName
-      }/${this.currentSample.realName}.md`,
+      `https://github.com/pwa-builder/pwabuilder-snippits/tree/demo/src/${this.currentSample.realName}/${this.currentSample.realName}.md`,
+      "_blank"
+    );
+  }
+
+  goToDocs() {
+    window.open(
+      `${this.baseGraphDocsURL}/${this.currentSample.docsName}`,
       "_blank"
     );
   }
 
   goBack() {
-    window.history.back();
+    if (document.referrer.indexOf(window.location.origin) === 0) {
+      window.history.back();
+    } else {
+      // If the current document was not opened through a link (for example, user navigated to the page directly or through a bookmark)
+      window.location.href = `${window.location.origin}/features`;
+    }
   }
 
-  showToast() {
-    // show toast
-    this.shared = true;
+  async showToast() {
+    const toastCtrl = document.querySelector("ion-toast-controller");
+    await (toastCtrl as any).componentOnReady();
 
-    setTimeout(() => {
-      this.shared = false;
-    }, 1200);
+    const toast = await (toastCtrl as any).create({
+      duration: 1300,
+      message: "URL copied for sharing"
+    });
+
+    await toast.present();
   }
 
   async share() {
@@ -224,6 +294,13 @@ export default class extends Vue {
     }
   }
 }
+
+Vue.prototype.$awa = function(config) {
+  awa.ct.capturePageView(config);
+  return;
+};
+
+declare var awa: any;
 </script>
 
 <style lang="scss">
@@ -231,16 +308,82 @@ export default class extends Vue {
 @import "~assets/scss/base/variables";
 @import "~assets/scss/vendor/highlightjs2";
 
+.featDetailButton {
+  margin-left: 10px;
+  background: transparent;
+  border: solid 1px white;
+  border-radius: 24px;
+  width: 99px;
+  height: 42px;
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-self: center;
+  align-items: center;
+  color: white;
+
+  span {
+    margin-left: 10px;
+  }
+}
+
+#clientIdBlock {
+  position: absolute;
+  left: 38.8%;
+  top: 14.4em;
+}
+
+#clientIdBlock button {
+  background: linear-gradient(
+    270deg,
+    rgb(36, 36, 36) 23.15%,
+    rgb(60, 60, 60) 57.68%
+  );
+  color: white;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 21px;
+  border: none;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 20px;
+}
+
+#clientIdBlock #generatedDiv {
+  color: white;
+  width: 150.33px;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 21px;
+  border: none;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 20px;
+  background: linear-gradient(to right, #1fc2c8, #9337d8 116%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 #docsMain #contentContainer img {
   width: 100%;
 }
 
 .codeBlockHeader {
-  background: #f0f0f0;
+  background: #cececead;
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  height: 44px;
+  height: 34px;
   padding-right: 20px;
   border-radius: 4px 4px 0px 0px;
 }
@@ -254,54 +397,6 @@ export default class extends Vue {
 #docsMain #contentContainer p {
   font-size: 16px;
   line-height: 22px;
-}
-
-#featDetailShareButton {
-  background: transparent;
-  border: solid 1px white;
-  border-radius: 24px;
-  position: absolute;
-  right: 12.4em;
-  top: 5em;
-  width: 99px;
-  height: 42px;
-  font-size: 14px;
-  font-weight: bold;
-  display: flex;
-  justify-content: center;
-  color: white;
-
-  span {
-    margin-left: 10px;
-  }
-}
-
-#githubSnippitButton {
-  border: solid 1px white;
-  position: absolute;
-  right: 21em;
-  top: 5em;
-  height: 42px;
-  width: 99px;
-  background: transparent;
-  border-radius: 24px;
-  font-size: 14px;
-  font-weight: bold;
-  color: white;
-
-  span {
-    margin-left: 10px;
-  }
-}
-
-@media (max-width: 1336px) {
-  #featDetailShareButton {
-    right: 3em;
-  }
-
-  #githubSnippitButton {
-    right: 11em;
-  }
 }
 
 #shareToast {
@@ -341,6 +436,7 @@ export default class extends Vue {
 
 #docsMain {
   background: white;
+  margin-top: -80px;
 
   #headerDiv {
     background: rgba(31, 194, 200, 1);
@@ -386,6 +482,7 @@ export default class extends Vue {
       font-size: 24px;
       color: white;
       margin-bottom: 0px;
+      width: 55%;
     }
   }
 
@@ -431,7 +528,6 @@ export default class extends Vue {
     padding-top: 30px;
     padding-left: 159px;
     padding-right: 159px;
-    min-height: 100vh;
 
     #leftSide {
       flex: 1;
@@ -458,6 +554,7 @@ export default class extends Vue {
     }
 
     #rightSide {
+      display: initial;
       flex: 1;
       width: 50%;
       margin-left: 20px;
@@ -477,25 +574,43 @@ export default class extends Vue {
   }
 }
 
+#featureDetailButtons {
+  width: 100%;
+  height: 80px;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  padding-right: 20px;
+  padding-left: 20px;
+}
+
 #backButton {
-  position: absolute;
-  top: 5em;
-  left: 7em;
   background: white;
   border-radius: 50%;
   border: none;
   font-size: 14px;
   height: 42px;
   width: 42px;
+  align-self: center;
 }
 
-@media (max-width: 1336px) {
-  #backButton {
-    left: 30px;
+#featDetailTitle {
+  flex-grow: 4;
+}
+
+@media (max-width: 800px) {
+  #docsMain #headerDiv h2 {
+    width: 45%;
   }
 }
 
-@media (max-width: 425px) {
+@media (max-width: 700px) {
+  #docsMain #headerDiv h2 {
+    width: 40%;
+  }
+}
+
+@media (max-width: 650px) {
   #docsMain #contentContainer {
     flex-direction: column;
     padding-left: 25px;
@@ -509,12 +624,29 @@ export default class extends Vue {
     margin-left: 0px;
   }
 
+  #docsMain #contentContainer #rightSide {
+    margin-top: 4em;
+  }
+}
+
+@media (max-width: 630px) {
   #docsMain #headerDiv h2 {
     display: none;
   }
+}
 
-  #docsMain #contentContainer #rightSide {
-    margin-top: 4em;
+@media (max-width: 420px) {
+  #featureDetailButtons :nth-child(5) {
+    display: none;
+  }
+}
+
+@media (max-width: 300px) {
+  #featDetailDocsButton {
+    display: none;
+  }
+  #featDetailShareButton {
+    display: none;
   }
 }
 </style>

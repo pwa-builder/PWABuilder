@@ -25,6 +25,11 @@ input {
 
 body {
   background: #f0f0f0;
+  overflow-y: auto;
+}
+
+#__nuxt, #__layout {
+  height: 100%;
 }
 
 input::placeholder {
@@ -46,6 +51,9 @@ button {
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }*/
 
+.popover-content {
+  width: 18em !important;
+}
 
 h1,
 h2,

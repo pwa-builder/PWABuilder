@@ -593,7 +593,6 @@ export default class extends Vue {
     const savedScore = sessionStorage.getItem("swScore");
 
     if (savedData) {
-
       try {
         let cleanedData = JSON.parse(savedData);
         this.serviceWorkerData = cleanedData;

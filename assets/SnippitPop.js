@@ -1,10 +1,10 @@
 let tmpl = document.createElement('template');
 tmpl.innerHTML = `
-  <button>Copy Button</button>
+  <h1>Hello world</h1>
 `;
 
 
-class CopyButton extends HTMLElement {
+class SnippitPop extends HTMLElement {
   
   constructor() {
     super(); // always call super() first in the constructor.
@@ -12,30 +12,21 @@ class CopyButton extends HTMLElement {
     // Attach a shadow root to the element.
     let shadowRoot = this.attachShadow({mode: 'open'});
     shadowRoot.appendChild(tmpl.content.cloneNode(true));
-    
-    shadowRoot.querySelector('button').addEventListener('click', () => {
-      console.log('hello world');
-      
-      if (this.codeurl) {
-        console.log(this.getAttribute('codeurl'));
-        this.getCode();
-      }
-    });
   }
   
   static get observedAttributes() {
-    return ['codeurl'];
+    return ['snippitImage'];
   }
   
-  get codeurl() {
-    return this.hasAttribute('codeurl');
+  get snippitImage() {
+    return this.hasAttribute('snippitImage');
   }
 
-  set codeurl(val) {
+  set snippitImage(val) {
     if (val) {
-      this.setAttribute('codeurl', val);
+      this.setAttribute('snippitImage', val);
     } else {
-      this.removeAttribute('codeurl');
+      this.removeAttribute('snippitImage');
     }
   }
   
@@ -53,7 +44,6 @@ class CopyButton extends HTMLElement {
         this.shadowRoot.appendChild(clipScript);
         
         clipScript.addEventListener('load', () => {
-          console.log('here');
           let realClip = new ClipboardJS(this.shadowRoot.querySelector('button'));
 
           realClip.on("success", e => {
@@ -73,13 +63,11 @@ class CopyButton extends HTMLElement {
   }
   
   async getCode() {
-    const codeURL = this.getAttribute('codeurl');
+    const snippitImage = this.getAttribute('snippitImage');
     
-    if (codeURL) {
-      const response = await fetch(codeURL);
+    if (snippitImage) {
+      const response = await fetch(snippitImage);
       const data = await response.text();
-      
-      console.log(data);
       
       this.shadowRoot.querySelector('button').setAttribute('data-clipboard-text', data);
       

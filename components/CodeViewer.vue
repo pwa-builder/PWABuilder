@@ -120,8 +120,9 @@ export default class extends Vue {
   public monacoOptions = {
     lineNumbers: "on",
     fixedOverflowWidgets: true,
-    wordWrap: "wordWrapColumn",
-    wordWrapColumn: 50,
+    wordWrap: "on",
+    // wordWrap: "wordWrapColumn",
+    // wordWrapColumn: 50,
     scrollBeyondLastLine: false,
     wordWrapMinified: true,
     wrappingIndent: "indent",
@@ -222,7 +223,7 @@ export default class extends Vue {
 
 .code_viewer {
   background: #f1f1f1;
-  height: 668px;
+  // height: 668px;
   border-radius: 4px;
 
   #codeHeader {
@@ -242,6 +243,12 @@ export default class extends Vue {
       line-height: 24px;
       padding-left: 1em;
       width: 60%;
+    }
+
+    @media(max-width: 1079px) {
+      h3 {
+        font-size: 12px;
+      }
     }
 
     div {

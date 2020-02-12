@@ -1,6 +1,8 @@
-
 <template>
-  <div id="hubContainer" :class="{ 'backgroundReport': gotURL, 'backgroundIndex': !gotURL }">
+  <div
+    id="hubContainer"
+    :class="{ backgroundReport: gotURL, backgroundIndex: !gotURL }"
+  >
     <HubHeader
       v-on:reset="reset()"
       :score="overallScore"
@@ -8,19 +10,31 @@
       :expanded="!gotURL"
     ></HubHeader>
 
+    <ion-toast-controller></ion-toast-controller>
+
+    <div v-if="gotURL" id="reportShareButtonContainer">
+      <button @click="shareReport">
+        <i class="fas fa-share-alt"></i>
+        Share your Results
+      </button>
+    </div>
+
     <main>
       <div v-if="!gotURL" id="inputSection">
         <div id="topHalfHome">
           <h1>Quickly and easily turn your website into an app!</h1>
 
-          <p>It's super easy to get started. Just enter the URL of your website below</p>
+          <p>
+            It's super easy to get started. Just enter the URL of your website
+            below
+          </p>
 
           <div v-if="this.error" id="urlErr">{{ $t(this.error) }}</div>
 
           <form
             @submit.prevent="checkUrlAndGenerate"
             @keydown.enter.prevent="checkUrlAndGenerate"
-            :class="{ 'formErr': error != null }"
+            :class="{ formErr: error != null }"
           >
             <input
               id="getStartedInput"
@@ -34,12 +48,10 @@
               autocomplete="off"
             />
 
-            <button
-              @click=" $awa( { 'referrerUri': 'https://www.pwabuilder.com/build/reportCard' })"
-              :class="{ 'btnErr': error != null }"
-              id="getStartedButton"
-            >
-              <div :class="{ 'btnErrText': error != null }">{{ $t('generator.start') }}</div>
+            <button :class="{ btnErr: error != null }" id="getStartedButton">
+              <div :class="{ btnErrText: error != null }">
+                {{ $t("generator.start") }}
+              </div>
             </button>
           </form>
         </div>
@@ -50,23 +62,25 @@
             <p>Already have a PWA? Skip ahead!</p>
           </div>-->
 
-          <footer>
-            <p>
-              PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
-              <a
-                href="https://privacy.microsoft.com/en-us/privacystatement"
-              >Our Privacy Statement</a>
-            </p>
-          </footer>
         </div>
+        <footer>
+          <p>
+            PWA Builder was founded by Microsoft as a community guided, open
+            source project to help move PWA adoption forward.
+            <a href="https://privacy.microsoft.com/en-us/privacystatement"
+              >Our Privacy Statement</a
+            >
+          </p>
+        </footer>
       </div>
 
       <div v-if="gotURL" id="infoSection">
         <h2>Hub</h2>
 
         <p>
-          We have taken a look at how well your website supports PWA features and provided simple tools to help you fill in the gaps.
-          When you’re ready, click “build my PWA” to finish up.
+          We have taken a look at how well your website supports PWA features
+          and provided simple tools to help you fill in the gaps. When you’re
+          ready, click “build my PWA” to finish up.
         </p>
       </div>
 
@@ -100,7 +114,7 @@
         class="topFeatures"
         v-if="topSamples.length > 0"
         v-for="(sample, index) in topSamples"
-        :class="{ 'firstFeature' : index === 0 }"
+        :class="{ firstFeature: index === 0 }"
         :sample="sample"
         :key="sample.id"
         :showAddButton="true"
@@ -111,21 +125,23 @@
       <div id="moreFeaturesBlock" v-if="topSamples.length > 0">
         <nuxt-link to="/features">View More</nuxt-link>
       </div>
+
+      <div v-if="shared" id="shareToast">URL copied for sharing</div>
     </main>
     <footer v-if="gotURL" id="hubFooter">
       <p>
-        PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
+        PWA Builder was founded by Microsoft as a community guided, open source
+        project to help move PWA adoption forward.
         <a
           href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
-        >Our Privacy Statement</a>
+          >Our Privacy Statement</a
+        >
       </p>
     </footer>
   </div>
 </template>
 
-
-
-<script lang='ts'>
+<script lang="ts">
 import Vue from "vue";
 import Component from "nuxt-class-component";
 import { Action, State, namespace } from "vuex-class";
@@ -168,6 +184,8 @@ export default class extends Vue {
   public error: string | null = null;
   public overallScore: number = 0;
   public topSamples: Array<any> = [];
+  public cleanedURL: string | null = null;
+  public shared: boolean = false;
 
   public async created() {
     this.url$ = this.url;
@@ -175,14 +193,27 @@ export default class extends Vue {
     if (this.url$ || this.url) {
       this.gotURL = true;
       this.getTopSamples();
+    } else {
+      if (window && window.location.search) {
+        const url = window.location.search.split("=")[1];
+        
+        this.cleanedURL = decodeURIComponent(url);
+        this.url = this.cleanedURL;
+
+        // this.gotURL = true;
+
+        setTimeout(async () => {
+          await this.checkUrlAndGenerate();
+        }, 500);
+      }
     }
   }
 
   public mounted() {
     if (this.url) {
-      sessionStorage.setItem('currentURL', this.url);
+      sessionStorage.setItem("currentURL", this.url);
     }
-    
+
     if ((window as any).CSS && (window as any).CSS.registerProperty) {
       try {
         (CSS as any).registerProperty({
@@ -202,20 +233,81 @@ export default class extends Vue {
         console.error(err);
       }
     }
+
+    const overrideValues = {
+      behavior: 0,
+      uri: window.location.href,
+      pageName: "homePage",
+      pageHeight: window.innerHeight
+    };
+
+    this.$awa(overrideValues);
+  }
+
+  public async shareReport() {
+    if ((navigator as any).share) {
+      try {
+        await (navigator as any).share({
+          title: "PWABuilder results",
+          text: "Check out how good my PWA did!",
+          url: `${location.href}?url=${this.url}`
+        });
+      } catch (err) {
+        // fallback to legacy share if ^ fails
+        if ((navigator as any).clipboard) {
+          try {
+            await (navigator as any).clipboard.writeText(
+              `${location.href}?url=${this.url}`
+            );
+            this.showToast();
+          } catch (err) {
+            console.error(err);
+          }
+        } else {
+          window.open(`${location.href}?url=${this.url}`, "__blank");
+        }
+      }
+    } else {
+      if ((navigator as any).clipboard) {
+        try {
+          await (navigator as any).clipboard.writeText(
+            `${location.href}?url=${this.url}`
+          );
+          this.showToast();
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        window.open(`${location.href}?url=${this.url}`, "__blank");
+      }
+    }
+  }
+
+  async showToast() {
+    const toastCtrl = document.querySelector("ion-toast-controller");
+    await (toastCtrl as any).componentOnReady();
+
+    const toast = await (toastCtrl as any).create({
+      duration: 2300,
+      message: "URL copied for sharing"
+    });
+
+    await toast.present();
   }
 
   public async checkUrlAndGenerate() {
     this.error = null;
 
-    console.log("here");
-
     try {
-      console.log("in try block");
+      if (this.url$ === null || this.url$ === undefined) {
+        this.url$ = this.cleanedURL;
+      }
+
       await this.updateLink(this.url$);
       this.url$ = this.url;
 
       if (this.url) {
-        sessionStorage.setItem('currentURL', this.url);
+        sessionStorage.setItem("currentURL", this.url);
       }
 
       this.gotURL = true;
@@ -240,33 +332,24 @@ export default class extends Vue {
 
   public async getTopSamples() {
     await this.getSamples();
-    console.log(this.samples);
     const cleanedSamples = this.samples.slice(0, 4);
-    console.log("cleanedSamples", cleanedSamples);
 
     this.topSamples = cleanedSamples;
   }
 
   public securityTestDone(ev) {
-    console.log("testDone", ev);
     this.overallScore = this.overallScore + ev.score;
-    console.log(this.overallScore);
   }
 
   public manifestTestDone(ev) {
-    console.log("manifest test done", ev);
     this.overallScore = this.overallScore + ev.score;
-    console.log(this.overallScore);
   }
 
   public swTestDone(ev) {
-    console.log("sw test is done", ev);
     this.overallScore = this.overallScore + ev.score;
-    console.log(this.overallScore);
   }
 
   public reset() {
-    console.log("resetting");
     this.gotURL = false;
     this.overallScore = 0;
     this.topSamples = [];
@@ -279,9 +362,9 @@ export default class extends Vue {
   }
 }
 
+
 Vue.prototype.$awa = function(config) {
   awa.ct.capturePageView(config);
-
   return;
 };
 
@@ -291,6 +374,32 @@ declare var awa: any;
 <style lang="scss" scoped>
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
+
+#shareToast {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  background: #3c3c3c;
+  color: white;
+  padding: 1em;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 4px;
+  padding-left: 1.4em;
+  padding-right: 1.4em;
+  animation-name: fadein;
+  animation-duration: 0.3s;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
 
 #hubFooter {
   display: flex;
@@ -316,51 +425,54 @@ declare var awa: any;
 }
 
 #hubContainer {
-  height: 100vh;
+  height: 100%;
+}
+
+#reportShareButtonContainer {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 9em;
+  position: relative;
+  top: 9em;
+}
+
+#reportShareButtonContainer button {
+  background: #3c3c3c87;
+  width: 188px;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  height: 44px;
+  border-radius: 20px;
+  border: none;
+  margin-top: 24px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  color: white;
+  cursor: pointer;
+}
+
+@media (max-width: 1281px) {
+  #reportShareButtonContainer {
+    padding-right: 3em;
+  }
+}
+
+@media (max-width: 905px) {
+  #reportShareButtonContainer {
+    top: 0em;
+  }
 }
 
 .backgroundIndex {
-  @include backgroundLeftPoint(20%, 40vh);
+   @include backgroundLeftPoint(26%, 20vh); 
 }
 
 .backgroundReport {
-  @include backgroundRightPoint(80%, 40vh);
-}
-
-@media (min-width: 1336px) {
-  /*#hubContainer {
-    height: 130vh;
-  }*/
-
-  .backgroundIndex {
-    @include backgroundLeftPoint(26%, 70vh);
-
-    background-size: 26.05% 162%, 74.05% 162%, 100% 100% !important;
-  }
-
-  .backgroundReport {
-    @include backgroundRightPoint(80%, 70vh);
-
-    background-size: 80.05% 146%, 20.05% 146%, 100% 100% !important;
-  }
-}
-
-@media (max-height: 780px) {
-  #hubContainer {
-    height: 162vh;
-  }
-
-  #inputSection {
-    grid-template-rows: 80% 20%;
-  }
-
-  .backgroundIndex {
-    @include backgroundLeftPoint(30%, 90vh);
-  }
-
-  .backgroundReport {
-    @include backgroundRightPoint(80%, 88vh);
-  }
+  @include backgroundRightPoint(80%, 37vh);
 }
 
 #bottomWrapper {
@@ -375,13 +487,13 @@ declare var awa: any;
 }
 
 main {
-  @include grid;
+  @include grid; 
 
   margin-bottom: 2em;
 }
 
 h2 {
-  margin-top: 2em;
+  margin-top: 0em;
   margin-bottom: 17px;
 
   font-family: Poppins;
@@ -394,7 +506,8 @@ h2 {
 }
 
 #inputSection {
-  grid-column: 1 / span 5;
+  grid-column: 1 / span 12;
+  max-width: 800px;
 
   color: white;
 
@@ -466,6 +579,18 @@ h2 {
     }
   }
 
+  @media (max-height: 375px) {
+    #topHalfHome {
+      margin-top: 24px;
+    }
+  }
+
+  @media (max-height: 320px) {
+    #topHalfHome {
+      margin-top: 4px;
+    }
+  }
+
   @media (max-width: 425px) {
     #topHalfHome {
       padding-left: 25px;
@@ -473,13 +598,43 @@ h2 {
     }
   }
 
+  footer {
+      position: absolute;
+      bottom: 10px;
+      margin-right: 32px;
+      color: rgba(60, 60, 60, 0.6);
+      background: transparent;
+
+      p {
+        text-align: center;
+        font-size: 12px;
+        line-height: 18px;
+      }
+
+      a {
+        box-shadow: none;
+        color: inherit;
+        text-decoration: underline;
+      }
+    }
+
+    @media (max-width: 425px) {
+      footer {
+        margin-right: initial;
+        margin-left: initial;
+      }
+      footer p {
+        width: 75%;
+        margin-bottom: 0px;
+      }
+    }
+
   #bottomHalfHome {
     grid-row: 2;
 
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 465px;
     margin-top: 34px;
     position: absolute;
     bottom: 10px;
@@ -542,35 +697,7 @@ h2 {
       }
     }
 
-    footer {
-      color: rgba(60, 60, 60, 0.6);
 
-      p {
-        text-align: center;
-        font-size: 12px;
-        line-height: 18px;
-      }
-
-      a {
-        box-shadow: none;
-
-        color: inherit;
-
-        text-decoration: underline;
-      }
-    }
-
-    @media (max-width: 425px) {
-      footer p {
-        width: 62%;
-      }
-    }
-
-    @media (max-width: 1280px) {
-      footer {
-        margin-top: 56px;
-      }
-    }
   }
 }
 
@@ -606,6 +733,10 @@ h2 {
   }
 }
 
+  #scoreCard {
+    margin-bottom: 20px;
+    }
+
 @media (max-width: 425px) {
   #infoSection {
     margin-left: 25px;
@@ -632,6 +763,7 @@ h2 {
     padding-left: 25px;
     padding-right: 25px;
     text-align: center;
+    background: transparent;
   }
 
   #tabsBar {
@@ -844,5 +976,24 @@ h2 {
     margin-left: 0rem;
   }
 }
-</style>
 
+@media (max-height: 600px) {
+  .backgroundIndex {
+    @include backgroundLeftPoint(30%, 0vh);  
+  }
+
+  .backgroundReport {
+    @include backgroundRightPoint(80%, 25vh);
+  }
+
+  footer {
+    display: none;
+  }
+}
+
+@media (max-height: 475px) {
+  .backgroundReport {
+    @include backgroundRightPoint(80%, 0vh);
+  }
+}
+</style>
