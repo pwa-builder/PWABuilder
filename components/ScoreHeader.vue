@@ -138,14 +138,6 @@ export default class extends Vue {
     window.history.back();
   }
 }
-
-declare var awa: any;
-
-Vue.prototype.$awa = function(config) {
-  awa.ct.capturePageView(config);
-
-  return;
-};
 </script>
 
 <style lang="scss" scoped>

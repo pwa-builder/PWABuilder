@@ -13,7 +13,7 @@
       <div id="mainTabsBar">
         <nuxt-link to="/">My Hub</nuxt-link>
         <nuxt-link
-          @click="$awa( { 'referrerUri': `https://www.pwabuilder.com/featureStore` })"
+          @click="$awa( { 'referrerUri': `https://pwabuilder.com/features` })"
           to="/features"
         >Feature Store</nuxt-link>
       </div>
@@ -27,6 +27,28 @@
         <!--<i class="fab fa-twitter"></i>-->
       </div>
     </header>
+
+    <div id="featureDetailButtons" v-if="showFeatureDetailButton">
+      <button id="backButton">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <div id="featDetailTitle"></div>
+
+      <button v-if="showFeatureDetailGraphButton" id="featDetailDocsButton" class="featDetailButton">
+        <i class="fas fa-book"></i>
+        <span>Docs</span>
+      </button>
+
+      <button id="githubSnippitButton" class="featDetailButton">
+        <i class="fab fa-github"></i>
+        <span>Github</span>
+      </button>
+
+      <button id="featDetailShareButton" class="featDetailButton">
+        <i class="fas fa-share-alt"></i>
+        <span>Share</span>
+      </button>
+    </div>
 
     <div class="has-acrylic-80 is-dark has-reveal-background" v-if="showSubHeader" id="subHeader">
       <div id="tabsBar">
@@ -59,7 +81,7 @@
           class="enabled"
           id="publishButton"
           to="/publish"
-        >Build My PWA</nuxt-link>
+        ></nuxt-link>
       </div>
     </div>
   </div>
@@ -69,7 +91,7 @@
 import Vue from "vue";
 import { Prop, Watch } from "vue-property-decorator";
 import Component from "nuxt-class-component";
-import { State, namespace } from "vuex-class"; //Action
+import { State, namespace } from "vuex-class";
 
 import * as generator from "~/store/modules/generator";
 
@@ -85,6 +107,8 @@ const GeneratorState = namespace(generator.name, State);
 export default class extends Vue {
   @Prop({ default: false }) expanded: boolean;
   @Prop({}) showSubHeader: string;
+  @Prop({ default: false }) showFeatureDetailButton: boolean;
+  @Prop({ default: false }) showFeatureDetailGraphButton: boolean;
   @Prop({ default: 0 }) score: number;
 
   @GeneratorState url: string;
@@ -129,7 +153,6 @@ export default class extends Vue {
   }
 
   updated() {
-    console.log("updated", this.score);
     if (this.manifest) {
       this.readyToPublish = true;
     } 
@@ -154,11 +177,10 @@ export default class extends Vue {
   }
 
   reset() {
-    console.log("here");
     if (location.pathname === "/") {
       this.$emit("reset");
     } else {
-      history.back();
+      window.location.href = window.location.origin;
     }
   }
 }
@@ -167,7 +189,6 @@ declare var awa: any;
 
 Vue.prototype.$awa = function(config) {
   awa.ct.capturePageView(config);
-
   return;
 };
 </script>
@@ -203,6 +224,10 @@ header {
     grid-column: 1 / span 2;
 
     border: none;
+  }
+
+  img {
+    max-width: none;
   }
 
   /* TODO: Can some of this be shared with tabsBar below at all? */
@@ -264,6 +289,7 @@ header {
 #subHeader {
   @include grid;
 
+  grid-template-columns: 3fr 2fr;
   // background: rgba(60, 60, 60, 0.8);
   align-items: center;
   justify-content: space-between;
@@ -303,6 +329,43 @@ header {
     display: flex;
     justify-self: right;
     align-items: center;
+  }
+
+  @media (max-width: 960px) {
+    #scoreZone {
+      grid-column: 7 / span 6;
+    }
+
+    #tabsBar {
+      grid-column: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      align-items: center;
+    }
+  }
+
+  @media (max-width: 806px) {
+    #urlTested {
+      display: none !important;
+    }
+
+    #scoreZone {
+      grid-column: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 1138px) {
+    #overallScore span {
+      display: none !important;
+    }
+
+    #overallScore:after {
+      content: 'score';
+      font-size: 12px;
+      line-height: 16px;
+    }
   }
 
   #urlTested {
@@ -404,14 +467,34 @@ header {
     text-align: center;
     height: 40px;
   }
+
+  #publishButton:after {
+    content: 'Build My PWA';
+  }
+
+  @media (max-width: 630px) {
+    #publishButton:after {
+      content: 'Build';
+    }
+  }
 }
 
-@media (max-width: 425px) {
+@media (max-width: 530px) {
+  #overallScore {
+    padding-right: 0px !important;
+    padding-left: 0px;
+  }
+
   #subHeader #tabsBar {
-    display: none;
+    grid-template-columns: 10fr 10fr 1fr;
   }
 
   #subHeader #publishButton {
+    margin-left: 12px;
+    margin-right: 12px;
+  }
+
+  #tabsBar :first-child {
     display: none;
   }
 
@@ -419,6 +502,12 @@ header {
     display: flex;
     padding: 0 0px;
     justify-content: space-around;
+  }
+}
+
+@media (max-width: 320px) {
+  #subHeader #publishButton {
+    width: 60px;
   }
 }
 
@@ -444,6 +533,22 @@ a {
 }
 
 @media (max-width: 425px) {
+  #icons a {
+    position: fixed;
+    left: 5px;
+    bottom: 10px;
+    width: 16px;
+    height: 16px;
+  }
+
+  #icons a svg {
+    width: 100%;
+    height: 100%;
+    color: black;
+  }
+}
+
+@media (max-height: 350px) {
   #icons a {
     display: none;
   }

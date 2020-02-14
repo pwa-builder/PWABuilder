@@ -6,7 +6,7 @@ tmpl.innerHTML = `
       border: none;
       fill: black;
       border-radius: 50%;
-      padding: 8px;
+      padding: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -15,13 +15,20 @@ tmpl.innerHTML = `
     }
 
     button svg {
-      height: 20px;
-      width: 20px;
+      height: 14px;
+      width: 14px;
+    }
+
+    .copied {
+      padding-left: 1em;
+      padding-right: 1em;
+      border-radius: 14px;
+      font-weight: bold;
     }
   </style>
 
   <button>
-  <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="copy" class="svg-inline--fa fa-copy fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"></path></svg>
+    <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="copy" class="svg-inline--fa fa-copy fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"></path></svg>
   </button>
 `;
 
@@ -36,10 +43,8 @@ class CopyButton extends HTMLElement {
     shadowRoot.appendChild(tmpl.content.cloneNode(true));
     
     shadowRoot.querySelector('button').addEventListener('click', () => {
-      console.log('hello world');
       
       if (this.codeurl) {
-        console.log(this.getAttribute('codeurl'));
         this.getCode();
       }
     });
@@ -75,18 +80,13 @@ class CopyButton extends HTMLElement {
         this.shadowRoot.appendChild(clipScript);
         
         clipScript.addEventListener('load', () => {
-          console.log('here');
           let realClip = new ClipboardJS(this.shadowRoot.querySelector('button'));
 
           realClip.on("success", e => {
-            console.info("Action:", e.action);
-            console.info("Text:", e.text);
-            console.info("Trigger:", e.trigger);
             e.clearSelection();
           });
 
           realClip.on("error", e => {
-            console.error("Action:", e.action);
             console.error("Trigger:", e.trigger);
           });
         })
@@ -101,12 +101,14 @@ class CopyButton extends HTMLElement {
       const response = await fetch(codeURL);
       const data = await response.text();
       
-      console.log(data);
       
       this.shadowRoot.querySelector('button').setAttribute('data-clipboard-text', data);
       
       setTimeout(() => {
         this.copyCode(data);
+
+        this.shadowRoot.querySelector('button').classList.add('copied');
+        this.shadowRoot.querySelector('button').textContent = "Copied!"
       }, 500)
       
     }

@@ -99,12 +99,18 @@ export default class extends Vue {
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
 
+.container {
+  overflow-y: scroll;
+  height: 100%;
+}
+
 #baseContainer {
+  height: 100%;
   #scrollTarget {
     width: 100%;
     height: 1em;
     position: absolute;
-    top: 5em;
+    top: 0;
     pointer-events: none;
   }
 }

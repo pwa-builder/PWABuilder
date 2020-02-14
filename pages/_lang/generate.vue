@@ -196,7 +196,7 @@
                 <h4
                   v-bind:class="{ fieldName: activeFormField === 'displayMode' }"
                 >{{ $t("generate.display") }}</h4>
-                <p>Display indetifies the browser components that should be included in your. "Standalone" appears as a traditional app.</p>
+                <p>Display identifies the browser components that should be included in your. "Standalone" appears as a traditional app.</p>
               </label>
 
               <select
@@ -275,7 +275,7 @@
           code-type="html"
           v-if="seeEditor"
           title="Add this code to your start page"
-          code="<link rel='manifest' href='/manifest.webmanifest'>"
+          code="<link rel='manifest' href='/manifest.json'>"
           :showHeader="true"
           :showCopyButton="true"
           id="manifestHTML"
@@ -296,9 +296,10 @@
           :warningsTotal="warningsTotal"
           :showToolbar="true"
           :showHeader="true"
-          :showCopyButton="true"
+          :showCopyButton="showCopy"
+          id="manifestCode"
         >
-          <h3>Add this code to your manifest.webmanifest file</h3>
+          <h3>Add this code to your manifest.json file</h3>
         </CodeViewer>
       </section>
 
@@ -327,7 +328,6 @@
                 type="checkbox"
                 v-model="iconCheckMissing"
               />
-
             </label>
           </div>
         </section>
@@ -388,6 +388,7 @@ export default class extends Vue {
   public showingIconModal = false;
   public ifEntered = false;
   public  textareaOutlineColor = '';
+  public showCopy = true;
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
@@ -406,11 +407,20 @@ export default class extends Vue {
   @GeneratorGetters suggestionsTotal;
   @GeneratorGetters warningsTotal;
 
-
   public created(): void {
     this.manifest$ = { ...this.manifest };
-    // this.basicManifest = true;
-    console.log("display names", this.displaysNames);
+  }
+
+  public mounted() {
+    const overrideValues = {
+      isAuto: false,
+      behavior: 0,
+      uri: window.location.href,
+      pageName: "manifestPage",
+      pageHeight: window.innerHeight
+    };
+
+    awa.ct.capturePageView(overrideValues);
   }
 
   async destroyed() {
@@ -428,11 +438,6 @@ export default class extends Vue {
     try {
       this.updateManifest(this.manifest$);
       this.manifest$ = { ...this.manifest };
-      console.log(this.manifest$);
-      console.log("display names after update", this.displaysNames);
-      // this.manifest = (this.manifest$ as generator.Manifest);
-      // this.basicManifest = true;
-      // this.manifest = this.manifest$;
     } catch (e) {
       this.error = e;
     }
@@ -440,7 +445,6 @@ export default class extends Vue {
 
   public textareaError(): void {
     // This method is called when Enter is pressed in the textarea
-    console.log("Enter pressed in textarea: newline not allowed");
     this.ifEntered = true; // This property is used to determine whether or not an error message should be displayed
     this.textareaOutlineColor = 'red solid 2px';
   }
@@ -454,13 +458,10 @@ export default class extends Vue {
   public onClickRemoveIcon(icon: generator.Icon): void {
     this.removeIcon(icon);
     this.updateManifest(this.manifest$);
-    console.log("this.manifest$", this.manifest$);
-    console.log("this.manifest", this.manifest);
   }
 
   public onClickAddIcon(): void {
     try {
-      console.log("trying to add icon from URL", this.newIconSrc);
       this.addIconFromUrl(this.newIconSrc);
     } catch (e) {
       this.error = e;
@@ -477,6 +478,12 @@ export default class extends Vue {
   }
 
   private getIcons(): string {
+    // check for embedded icons
+    // if embedded dont show the copy button;
+    if (this.icons.length > 0 && this.icons[0].src.includes("data:image")) {
+      this.showCopy = false;
+    }
+
     let icons = this.icons.map(icon => {
       return `\n\t\t{\n\t\t\t"src": "${icon.src.includes("data:image") ? "[Embedded]" : icon.src}",\n\t\t\t"sizes": "${icon.sizes}"\n\t\t}`;
     });
@@ -515,6 +522,12 @@ export default class extends Vue {
         case "screenshots":
           manifest += `\t"screenshots" : [${this.getScreenshots()}],\n`;
           break;
+        case "related_applications":
+          manifest += `\t"related_applications" : [${this.manifest.related_applications || []}],\n`
+          break;
+        case "prefer_related_applications":
+          manifest += `\t"prefer_related_applications" : ${this.manifest.prefer_related_applications},\n`
+          break;
         default:
           manifest += `\t"${property}" : "${this.manifest[property]}",\n`;
           break;
@@ -550,15 +563,12 @@ export default class extends Vue {
     }
     $iconsModal.showLoading();
     if (this.iconCheckMissing) {
-      const data = await this.generateMissingImages(this.iconFile);
-      console.log("data in gen missing images", data);
-      console.log("generate missing images", this.manifest);
+      await this.generateMissingImages(this.iconFile);
+
       this.manifest$ = this.manifest;
-      console.log("update manifest this.manifest$", this.manifest$);
       this.updateManifest(this.manifest$);
     } else {
       await this.uploadIcon(this.iconFile);
-      console.log("update manifest this.manifest$", this.manifest$);
       this.updateManifest(this.manifest$);
     }
     $iconsModal.hide();
@@ -581,13 +591,10 @@ export default class extends Vue {
   }
 
   public invalidManifest() {
-    console.log("invalid");
     this.basicManifest = false;
   }
 
-  public handleEditorValue(ev) {
-    console.log(ev);
-    console.log(this.basicManifest);
+  public handleEditorValue() {
     if (this.basicManifest !== false) {
       // this.manifest = ev;
       this.updateManifest(this.manifest$);
@@ -617,7 +624,7 @@ export default class extends Vue {
       "modal-screen"
     );
   }
-  
+
   public modalClosed() {
     (this.$root.$el.closest("body") as HTMLBodyElement).classList.remove(
       "modal-screen"
@@ -625,10 +632,21 @@ export default class extends Vue {
     this.showingIconModal = false;
   }
 }
+
+Vue.prototype.$awa = function(config) {
+  awa.ct.capturePageView(config);
+  return;
+};
+
+declare var awa: any;
 </script>
 
 <style lang="scss">
 @import "~assets/scss/base/variables";
+
+#manifestCode {
+  width: 100%;
+}
 
 #textarea_error {
   color: red;
@@ -637,8 +655,8 @@ export default class extends Vue {
 footer {
   display: flex;
   justify-content: center;
-  padding-left: 16em;
-  padding-right: 16em;
+  padding-left: 15%;
+  padding-right: 15%;
   font-size: 12px;
   color: rgba(60, 60, 60, 0.5);
   background: white;
@@ -666,6 +684,8 @@ footer a {
   grid-template-columns: auto auto auto;
   grid-gap: 54px;
   #iconItem {
+    margin-left: auto;
+    margin-right: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -762,8 +782,8 @@ footer a {
 }
 #sideBySide {
   background: white;
-  padding-left: 154px;
-  padding-right: 128px;
+  padding-left: 3%;
+  padding-right: 3%;
   display: flex;
   justify-content: space-between;
   #leftSide {
@@ -844,7 +864,8 @@ footer a {
       }
       input {
         padding-left: 0;
-        width: 28em;
+        // width: 28em;
+        width: 100%;
         font-style: normal;
         font-weight: normal;
         font-size: 16px;
@@ -876,10 +897,6 @@ footer a {
         color: white;
       }
     }
-  }
-  #rightSide {
-    width: 870px;
-    margin-left: 60px;
   }
   #manifestHTML {
     height: 4em;
@@ -917,9 +934,18 @@ footer a {
     }
   }
 }
-@media (max-width: 425px) {
+  #rightSide {
+    width: 55%; 
+  }
+  #leftSide {
+    width: 40%;
+  }
+@media (max-width: 1280px) {
   #rightSide {
     display: none;
+  }
+  #leftSide {
+    width: 100%;
   }
   #sideBySide {
     flex-direction: column;
@@ -927,35 +953,27 @@ footer a {
     padding-right: 24px !important;
   }
   #sideBySide #leftSide .animatedSection {
-    width: initial;
+    width: 100%;
   }
   #sideBySide #leftSide .animatedSection input {
-    width: initial;
+    width: 100%;
   }
   #iconGrid {
     display: grid;
     grid-gap: initial;
-    padding-left: 0px;
-  }
-  #uploadNewSection {
-    display: none;
   }
   .l-generator-input--select {
     max-width: 210px;
   }
 }
-@media (max-width: 1290px) {
-  #sideBySide {
-    padding-left: 54px;
-    padding-right: 52px;
+
+@media (max-width: 630px) {
+  #uploadNewSection {
+    display: none;
   }
 }
-@media (min-width: 1480px) {
-  #leftSide {
-    width: 760px !important;
+
+  #sideBySide #leftSide .animatedSection input[type="radio"] {
+    width: auto;
   }
-  #rightSide {
-    width: 760px !important;
-  }
-}
 </style>

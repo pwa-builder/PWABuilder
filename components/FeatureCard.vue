@@ -9,8 +9,8 @@
     <p v-bind:class="{textWrap: wrapText}">{{ sample.description }}</p>
 
     <div v-if="showAddButton" id="featureCardActionsBlock">
-      <nuxt-link @click="$awa( { 'referrerUri': `https://www.pwabuilder.com/features/${sample.title}` })" id="featureCardAddButton" v-bind:to="`/feature/${sample.title}`">
-        View Snippet
+      <nuxt-link id="featureCardAddButton" v-bind:to="`/feature/${sample.title}`">
+        View Feature
       </nuxt-link>
     </div>
   </div>
@@ -34,18 +34,9 @@ export default class extends Vue {
   }
 
   onClickRemoveSample(sample: windowsStore.Sample) {
-    console.log('here');
     this.$emit("removed", sample);
   }
 }
-
-declare var awa: any;
-
-Vue.prototype.$awa = function(config) {
-  awa.ct.capturePageView(config);
-
-  return;
-};
 </script>
 
 <style lang="scss" scoped>
@@ -103,15 +94,29 @@ Vue.prototype.$awa = function(config) {
     #featureCardAddButton {
       border: none;
       border-radius: 20px;
-      padding-top: 11px;
+      height: 2em;
+      width: 10em;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
 
       color: #9337d8;
-      background: none;
+      background-color: white;
       border: none;
       font-size: 14px;
       font-weight: 600;
       margin-bottom: 20px;
       text-transform: uppercase;
+
+      transition: background-color 0.4s;
+    }
+
+    #featureCardAddButton:hover {
+      background-color: #9337d8;
+      color: white;
+      width: 10em;
+      height: 2em;
     }
 
     #featureCardRemoveButton {

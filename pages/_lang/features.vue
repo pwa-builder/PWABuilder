@@ -12,10 +12,66 @@
       </div>
     </section>
 
-    <section id="featureListBlock">
+    <div ref="scrollTarget" id="scrollTarget"></div>
+    <div id="featureTabsBar" ref="featureTabsBar">
+      <button v-bind:class="{ active: showAllSamplesBool }" @click="showAllSamples()">All</button>
+      <button v-bind:class="{ active: showPWASamples }" @click="pwaSamples()">Device / PWA</button>
+      <button v-bind:class="{ active: showGraphSamples }" @click="graphSamples()">Microsoft Graph</button>
+      <button v-bind:class="{ active: showAuthSamples }" @click="showAuthSamplesMethod()">Authentication</button>
+      <button v-bind:class="{ active: showEduSamples }" @click="showEduSamplesMethod()">Education</button>
+      <!--<button v-bind:class="{ active: showSamsungSamples }" @click="doSamsungSamples()">Samsung</button>
+      <button v-bind:class="{ active: showTeamsSamples }" @click="doTeamsSamples()">Microsoft Teams</button>-->
+    </div>
+
+    <section id="fakeCardBlock" v-if="samples.length === 0">
+      <div class="fakeCard">
+        <Loading active></Loading>
+      </div>
+      <div class="fakeCard">
+        <Loading active></Loading>
+      </div>
+      <div class="fakeCard">
+        <Loading active></Loading>
+      </div>
+      <div class="fakeCard">
+        <Loading active></Loading>
+      </div>
+      <div class="fakeCard">
+        <Loading active></Loading>
+      </div>
+      <div class="fakeCard">
+        <Loading active></Loading>
+      </div>
+      <div class="fakeCard">
+        <Loading active></Loading>
+      </div>
+      <div class="fakeCard">
+        <Loading active></Loading>
+      </div>
+      <div class="fakeCard">
+        <Loading active></Loading>
+      </div>
+    </section>
+
+    <section v-if="showAllSamplesBool" id="featureListBlock">
       <FeatureCard
         v-if="samples.length > 0 && !selectedSamples.includes(sample)"
         v-for="sample in samples"
+        :sample="sample"
+        :key="sample.id"
+        v-on:removed="onRemoved"
+        :showRemoveButton="false"
+        :showAddButton="true"
+        :wrapText="true"
+      >
+        <i slot="iconSlot" class="fas fa-rocket"></i>
+      </FeatureCard>
+    </section>
+
+    <section v-if="showPWASamples" id="featureListBlock">
+      <FeatureCard
+        v-if="cleanedPWASamples.length > 0 && !selectedSamples.includes(sample)"
+        v-for="sample in cleanedPWASamples"
         :sample="sample"
         :key="sample.id"
         v-on:removed="onRemoved"
@@ -40,74 +96,95 @@
       </FeatureCard>
     </section>
 
-    <section id="fakeCardBlock" v-if="samples.length === 0">
-      <div class="fakeCard">
-        <Loading active></Loading>
-      </div>
-      <div class="fakeCard">
-        <Loading active></Loading>
-      </div>
-      <div class="fakeCard">
-        <Loading active></Loading>
-      </div>
+    <section v-if="showAuthSamples" id="featureListBlock">
+      <FeatureCard
+        v-if="authSamples.length > 0 && !selectedSamples.includes(sample)"
+        v-for="sample in authSamples"
+        :sample="sample"
+        :key="sample.id"
+        v-on:removed="onRemoved"
+        :showRemoveButton="false"
+        :showAddButton="true"
+        :wrapText="true"
+      >
+        <i slot="iconSlot" class="fas fa-rocket"></i>
+      </FeatureCard>
     </section>
 
-    <!--<Modal
-      v-on:modalOpened="modalOpened()"
-      v-on:modalClosed="modalClosed()"
-      v-on:modalSubmit="modalSelected()"
-      :showSubmitButton="false"
-      title="Add Feature"
-      ref="addFeatureModal"
-    >
-      <div class="feature-viewer">
-        <div class="code-samples">
-          <div class="code-top">
-            <CodeViewer
-              code-type="javascript"
-              :size="viewerSize"
-              :code="loadCode()"
-              v-on:editorValue="updateCode($event)"
-              v-if="sample"
-              :showToolbar="false"
-              :showHeader="true"
-            >
-              <div>{{$t('windows.codeTitle')}}</div>
-            </CodeViewer>
+    <section v-if="showGraphSamples" id="featureListBlock">
+      <FeatureCard
+        v-if="sortedGraphSamples.length > 0 && !selectedSamples.includes(sample)"
+        v-for="sample in sortedGraphSamples"
+        :sample="sample"
+        :key="sample.id"
+        v-on:removed="onRemoved"
+        :showRemoveButton="false"
+        :showAddButton="true"
+        :wrapText="true"
+      >
+        <i slot="iconSlot" class="fas fa-rocket"></i>
+      </FeatureCard>
+    </section>
+
+    <section v-if="showEduSamples" id="featureListBlock">
+      <FeatureCard
+        v-if="eduSamples.length > 0 && !selectedSamples.includes(sample)"
+        v-for="sample in eduSamples"
+        :sample="sample"
+        :key="sample.id"
+        v-on:removed="onRemoved"
+        :showRemoveButton="false"
+        :showAddButton="true"
+        :wrapText="true"
+      >
+        <i slot="iconSlot" class="fas fa-rocket"></i>
+      </FeatureCard>
+    </section>
+
+    <section v-if="showBusSamples" id="featureListBlock">
+      <FeatureCard
+        v-if="busSamples.length > 0 && !selectedSamples.includes(sample)"
+        v-for="sample in busSamples"
+        :sample="sample"
+        :key="sample.id"
+        v-on:removed="onRemoved"
+        :showRemoveButton="false"
+        :showAddButton="true"
+        :wrapText="true"
+      >
+        <i slot="iconSlot" class="fas fa-rocket"></i>
+      </FeatureCard>
+    </section>
+
+    <!--<section class="toolkitBlock" id="headerSection">
+      <div id="graphToolkitSection" ref="toolkitSection">
+        <div>
+          <div id="toolkitHeaderDiv">
+            <h1 id="featurePageHeader">Microsoft Graph Toolkit</h1>
           </div>
-          <div class="code-bottom">
-            <CodeViewer
-              code-type="javascript"
-              :size="viewerSize"
-              :code="sample.source"
-              v-if="sample"
-              :showToolbar="false"
-              :showHeader="true"
-            >
-              <div>{{$t('windows.sourceTitle')}}</div>
-            </CodeViewer>
+
+          <p>The Microsoft Graph Toolkit is a collection of framework-agnostic web components and helpers for accessing and working with Microsoft Graph. All components can access Microsoft Graph without any customization required.</p>
+
+          <div id="graphActions">
+            <a
+              id="graphStartedA"
+              href="https://docs.microsoft.com/en-us/graph/toolkit/overview"
+            >Get Started</a>
+
+            <nuxt-link
+              v-bind:to="`/feature/${'Microsoft Graph Authentication'}`"
+              id="authStartedA"
+            >Auth With Graph</nuxt-link>
+            <nuxt-link
+              v-bind:to="`/feature/${'Microsoft Graph Contacts API'}`"
+              id="authStartedA"
+            >Get Contacts</nuxt-link>
           </div>
         </div>
-      </div>
+        <div>
+          <h1 id="graphExampleHeader">Example</h1>
 
-      <button
-        slot="extraButton"
-        id="addBundleButton"
-        v-on:click="addBundle()"
-      >{{ $t("windows.download_sample") }}</button>
-
-      <p v-if="sample" slot="extraP" id="sampleDescP">{{sample.description}}</p>
-
-      <div v-if="sample" class="feature-content" slot="featureContentSlot">
-        <div class="side_panel">
-          <div class="properties" v-if="sample">
-            <h1>Required Properties</h1>
-
-            <div v-for="prop in sample.parms" :key="prop.id">
-              <h3>{{prop.name}}</h3>
-              <p class="propDescription" :id="prop.id">{{prop.description}}</p>
-            </div>
-          </div>
+          <script async src="//jsfiddle.net/metulev/9phqxLd5/embed/html,result/"></script>
         </div>
       </div>
     </Modal>-->
@@ -142,7 +219,7 @@ const WindowsAction = namespace(windowsStore.name, Action);
     // Modal,
     Loading,
     FeatureCard,
-    HubHeader,
+    HubHeader
     // CodeViewer
   }
 })
@@ -152,10 +229,26 @@ export default class extends Vue {
   public viewerSize = "5rem";
   public viewerSizeBottom = "55rem";
   overallGrade: string | null = null;
+  showPWASamples = false;
+  showAuthSamples = false;
+  showEduSamples = false;
+  showBusSamples = false;
+  showGraphSamples = false;
+  showAllSamplesBool = true;
+  showSamsungSamples = false;
+  showTeamsSamples = false;
 
   currentPendingSample: windowsStore.Sample | null = null;
 
   selectedSamples: windowsStore.Sample[] = [];
+  authSamples: any[] = [];
+  cleanedPWASamples: any[] = [];
+  eduSamples: any[] = [];
+  busSamples: any[] = [];
+  sortedGraphSamples: any[] = [];
+  sortedSamsungSamples: any[] = [];
+  sortedTeamsSamples: any[] = [];
+
   @WindowsState sample: windowsStore.Sample;
   @WindowsState samples: windowsStore.Sample[];
 
@@ -165,15 +258,180 @@ export default class extends Vue {
   modalStatus = false;
 
   async mounted() {
-    console.log(this.samples.length);
+
     await this.getSamples();
-    console.log("samples", this.samples);
 
     const score = sessionStorage.getItem("overallGrade");
-    console.log(score);
+
     if (score) {
       this.overallGrade = score;
     }
+
+    this.doInterObserve();
+
+    const overrideValues = {
+      uri: window.location.href,
+      pageName: "featuresPage",
+      pageHeight: window.innerHeight
+    };
+
+    this.$awa(overrideValues);
+  }
+
+  doInterObserve() {
+    let observer = new IntersectionObserver((entries) => {
+      if (this.$refs && this.$refs.featureTabsBar) {
+        if (entries[0].isIntersecting) {
+          (this.$refs.featureTabsBar as HTMLElement).style.background = 'transparent';
+        }
+        else {
+          (this.$refs.featureTabsBar as HTMLElement).style.background = '#36363633';
+        }
+      }
+    });
+
+    observer.observe((this.$refs.scrollTarget as Element));
+  }
+
+  doTeamsSamples() {
+    this.sortedTeamsSamples = this.samples.filter(sample => {
+      if ((sample.title as string).toLowerCase().includes("teams")) {
+        return sample;
+      }
+    });
+
+    this.showPWASamples = false;
+    this.showAuthSamples = false;
+    this.showEduSamples = false;
+    this.showBusSamples = false;
+    this.showAllSamplesBool = false;
+    this.showGraphSamples = false;
+    this.showSamsungSamples = false;
+    this.showTeamsSamples = true;
+  }
+
+  doSamsungSamples() {
+    this.sortedSamsungSamples = this.samples.filter(sample => {
+      if ((sample.title as string).toLowerCase().includes("samsung")) {
+        return sample;
+      }
+    });
+
+    this.showPWASamples = false;
+    this.showAuthSamples = false;
+    this.showEduSamples = false;
+    this.showBusSamples = false;
+    this.showAllSamplesBool = false;
+    this.showGraphSamples = false;
+    this.showSamsungSamples = true;
+    this.showTeamsSamples = false;
+  }
+
+  pwaSamples() {
+    this.cleanedPWASamples = this.samples.filter(sample => {
+      if((sample.title as string).toLowerCase().includes("graph") === false) {
+        return sample;
+      }
+    });
+
+    this.showPWASamples = true;
+    this.showAuthSamples = false;
+    this.showEduSamples = false;
+    this.showBusSamples = false;
+    this.showAllSamplesBool = false;
+    this.showGraphSamples = false;
+    this.showSamsungSamples = false;
+    this.showTeamsSamples = false;
+  }
+
+  graphSamples() {
+    this.sortedGraphSamples = this.samples.filter(sample => {
+      if ((sample.title as string).toLowerCase().includes("graph") === true || (sample.title as string).toLowerCase().includes("adaptive cards")) {
+        return sample;
+      }
+    });
+
+    this.showPWASamples = false;
+    this.showAuthSamples = false;
+    this.showEduSamples = false;
+    this.showBusSamples = false;
+    this.showAllSamplesBool = false;
+    this.showGraphSamples = true;
+    this.showSamsungSamples = false;
+    this.showTeamsSamples = false;
+  }
+
+  showAllSamples() {
+    this.showAllSamplesBool = true;
+
+    this.showPWASamples = false;
+    this.showAuthSamples = false;
+    this.showEduSamples = false;
+    this.showBusSamples = false;
+    this.showGraphSamples = false;
+    this.showSamsungSamples = false;
+    this.showTeamsSamples = false;
+  }
+
+  showAuthSamplesMethod() {
+    this.authSamples = this.samples.filter(sample =>
+      (sample.title as string).toLowerCase().includes("authentication") || (sample.title as string).toLowerCase().includes("contacts")
+      || (sample.title as string).toLowerCase().includes("people") || (sample.title as string).toLowerCase().includes("person")
+      || (sample.title as string).toLowerCase().includes("login")
+    );
+
+    this.showAuthSamples = true;
+    this.showPWASamples = false;
+    this.showEduSamples = false;
+    this.showBusSamples = false;
+    this.showAllSamplesBool = false;
+    this.showGraphSamples = false;
+    this.showSamsungSamples = false;
+    this.showTeamsSamples = false;
+  }
+
+  showEduSamplesMethod() {
+    this.eduSamples = this.samples.filter(sample => {
+      if ((sample.title as string).toLowerCase().includes("graph") || (sample.title as string).toLowerCase().includes("midi")) {
+        return sample;
+      }
+    });
+
+    this.showAuthSamples = false;
+    this.showPWASamples = false;
+    this.showEduSamples = true;
+    this.showBusSamples = false;
+    this.showAllSamplesBool = false;
+    this.showGraphSamples = false;
+    this.showSamsungSamples = false;
+    this.showTeamsSamples = false;
+  }
+
+  showBusSamplesMethod() {
+    this.busSamples = this.samples.filter(sample => {
+      if ((sample.title as string).toLowerCase().includes("graph") ||
+       (sample.title as string).toLowerCase().includes('install') ||
+       (sample.title as string).toLowerCase().includes('clipboard')
+      ) {
+
+        return sample;
+      }
+    });
+
+    this.showAuthSamples = false;
+    this.showPWASamples = false;
+    this.showEduSamples = false;
+    this.showBusSamples = true;
+    this.showAllSamplesBool = false;
+    this.showGraphSamples = false;
+    this.showSamsungSamples = false;
+    this.showTeamsSamples = false;
+  }
+
+  scrollToToolkit() {
+    (this.$refs.toolkitSection as Element).scrollIntoView({
+      behavior: "smooth"
+    });
   }
 
   async destroyed() {
@@ -181,7 +439,7 @@ export default class extends Vue {
   }
 
   // @ts-ignore TS6133 onSelected
- /* public async onSelected(sample: windowsStore.Sample) {
+  /* public async onSelected(sample: windowsStore.Sample) {
     try {
       await this.selectSample(sample);
       // this.selectedSamples.push(sample);
@@ -196,14 +454,7 @@ export default class extends Vue {
 
   public async modalSelected() {
     try {
-      console.log("sample selected");
       await this.selectSample(this.currentPendingSample);
-      /*this.selectedSamples.push(this
-        .currentPendingSample as windowsStore.Sample);*/
-
-      // force a re-render
-      // this.selectedSamples = this.selectedSamples;
-      console.log(this.selectedSamples);
     } catch (e) {
       this.error = e;
     }
@@ -242,30 +493,6 @@ export default class extends Vue {
     // TODO: Need to pass this into bundle somehow in download method?
     this.sample.usercode = ev;
   }
-
-  /*async addBundle() {
-    try {
-      console.log("sample selected", this.currentPendingSample);
-      await this.selectSample(this.currentPendingSample);
-
-      if (this.selectedSamples.indexOf(this.sample) == -1) {
-        console.log("pushing", this.currentPendingSample);
-        this.selectedSamples.push(this
-          .currentPendingSample as windowsStore.Sample);
-        console.log("selectedSamples", this.selectedSamples);
-      }
-
-      await this.download();
-
-      this.hasNative = true;
-      this.modalClosed();
-      (this.$refs.addFeatureModal as Modal).hide();
-    } catch (e) {
-      this.modalClosed();
-      (this.$refs.addFeatureModal as Modal).hide();
-      this.error = e;
-    }
-  }*/
 
   async download(all = false) {
     let that = this;
@@ -332,16 +559,21 @@ export default class extends Vue {
   }
 
   public modalOpened() {
-    console.log("modal opened");
     window.scrollTo(0, 0);
     this.modalStatus = true;
   }
 
   public modalClosed() {
-    console.log("modal closed");
     this.modalStatus = false;
   }
 }
+
+Vue.prototype.$awa = function(config) {
+  awa.ct.capturePageView(config);
+  return;
+};
+
+declare var awa: any;
 </script>
 
 <style lang="scss" scoped>
@@ -349,11 +581,87 @@ export default class extends Vue {
 @import "~assets/scss/base/variables";
 @import "~assets/scss/base/animations";
 
+#scrollTarget {
+    width: 100%;
+    height: 1em;
+    pointer-events: none;
+  }
+
+#featureTabsBar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  flex-wrap: wrap;
+}
+
+#featureTabsBar button {
+  background: linear-gradient(
+    270deg,
+    rgb(36, 36, 36) 23.15%,
+    rgb(60, 60, 60) 57.68%
+  );
+  color: white;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  border: none;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 20px;
+  margin: 10px;
+  width: 158px;
+}
+
+#featureTabsBar button.active {
+  background: linear-gradient(270deg, #622392 17.15%, #9337d8 52.68%);
+}
+
+#seeMoreBlock {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 4em;
+  background: linear-gradient(
+    180deg,
+    rgba(240, 240, 240, 0) 0%,
+    #f0f0f0 50.38%
+  );
+}
+
+#seeMoreBlock button {
+  background: linear-gradient(
+    270deg,
+    rgb(36, 36, 36) 23.15%,
+    rgb(60, 60, 60) 57.68%
+  );
+  color: white;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  border: none;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 20px;
+}
+
 footer {
   display: flex;
   justify-content: center;
-  padding-left: 16em;
-  padding-right: 16em;
+  padding-left: 15%;
+  padding-right: 15%;
   font-size: 12px;
   color: rgba(60, 60, 60, 0.5);
   background: #F0F0F0;
@@ -397,12 +705,18 @@ footer a {
 
 main {
   @include backgroundRightPoint(80%, 50vh);
-  height: 100vh;
+  height: 100%;
 }
 
-@media (max-height: 805px) {
+@media (max-height: 500px) {
   main {
-    height: 116vh;
+    @include backgroundRightPoint(80%, 40vh);
+  }
+}
+
+@media (max-height: 425px) {
+  main {
+    @include backgroundRightPoint(80%, 10vh);
   }
 }
 
@@ -455,7 +769,6 @@ header {
 
   p {
     color: white;
-    width: 630px;
 
     font-style: normal;
     font-weight: normal;
@@ -467,6 +780,7 @@ header {
 @media (max-width: 1336px) {
   #headerSection {
     padding-left: 52px;
+    padding-right: 35px;
   }
 }
 
@@ -475,25 +789,25 @@ header {
     padding-left: 28px;
     padding-right: 28px;
   }
-
-  #headerSection p {
-    width: initial;
-  }
 }
 
 #featureListBlock,
 #fakeCardBlock {
-  display: grid;
-  grid-template-columns: auto auto auto;
-  padding-left: 159px;
-  padding-right: 159px;
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  flex-wrap: wrap;
   margin-top: 24px;
-  margin-bottom: 60px;
+  margin-bottom: 104px;
+  justify-content: center;
+  padding-left: 12px;
+  padding-right: 12px;
 
   .fakeCard {
     display: flex;
     justify-content: center;
     height: 209px;
+    width: 320px;
     align-items: center;
     font-size: 4em;
     background: white;
@@ -501,30 +815,19 @@ header {
 }
 
 #featureListBlock .card {
-  width: initial !important;
+  width: 320px;
 }
 
-@media (max-width: 1336px) {
-  #featureListBlock,
-  #fakeCardBlock {
-    padding-left: 35px;
-    padding-right: 35px;
-  }
-}
-
-@media (max-width: 430px) {
-  #featureListBlock,
-  #fakeCardBlock {
-    padding-left: 16px;
-    padding-right: 16px;
-    display: block;
+@media (max-width: 1024px) {
+  #featureListBlock .card {
+    width: 280px;
   }
 }
 
 .code-samples {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
   width: 100%;
   flex: 1;
 }
@@ -592,12 +895,12 @@ header {
   top: 0;
   right: 0;
   z-index: -1;
-  height: 100vh;
+  height: 100%;
 }
 
 .feature-viewer {
   flex: 1;
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   padding-top: 2px;
@@ -622,5 +925,96 @@ header {
   .code_viewer {
     background: #f0f0f0;
   }
+}
+
+#graphToolkitSection {
+  display: flex;
+  justify-content: space-between;
+
+  background: white;
+  border-radius: 4px;
+  padding-left: 2em;
+  padding-right: 2em;
+  padding-bottom: 3em;
+  margin-bottom: 2em;
+  color: black;
+}
+
+#graphExampleHeader {
+  color: black !important;
+}
+
+#graphToolkitSection #graphStartedA {
+  border-radius: 22px;
+  border: none;
+  display: flex;
+  justify-content: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  height: 40px;
+  width: 132px;
+  background: white;
+  margin-top: 2em;
+}
+
+#graphToolkitSection > div {
+  flex: 1;
+}
+
+#graphToolkitSection p {
+  width: 538px;
+  color: black;
+}
+
+#toolkitHeaderDiv {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 520px;
+}
+
+#toolkitHeaderDiv h1 {
+  color: black;
+}
+
+#toolkitHeaderDiv a {
+  color: black;
+  margin-top: 28px;
+}
+
+#graphActions {
+  display: flex;
+  align-items: center;
+}
+
+#authStartedA {
+  border-radius: 22px;
+  border: none;
+  display: flex;
+  justify-content: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  height: 40px;
+  width: 158px;
+  background: black;
+  margin-top: 2em;
+  color: white;
+  margin-left: 12px;
 }
 </style>

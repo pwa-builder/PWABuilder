@@ -4,12 +4,10 @@ import { Screenshot } from './generator.state';
 
 export const mutations: MutationTree<State> = {
   [types.UPDATE_LINK](state, url: string): void {
-    console.log('update_link', state);
     state.url = url;
   },
 
   [types.UPDATE_MANIFEST](state, manifest: Manifest): void {
-    console.log('update_manifest', manifest, state);
     if (manifest.generated) {
       delete manifest.generated;
     }
@@ -22,7 +20,6 @@ export const mutations: MutationTree<State> = {
   },
 
   [types.UPDATE_WITH_MANIFEST](state, result): void {
-    console.log('result 2', result);
     /*if (result.content.generated) {
       delete result.content.generated;
     }*/
@@ -65,8 +62,6 @@ export const mutations: MutationTree<State> = {
       return;
     }
 
-    console.log('setting defaults payload', payload);
-    console.log('setting defaults state', state);
 
         // fix some common issues with manifest
         if (state.manifest.generated) {
@@ -108,7 +103,6 @@ export const mutations: MutationTree<State> = {
   },
 
   [types.ADD_RELATED_APPLICATION](state, payload: RelatedApplication): void {
-    console.log('related apps');
     if (!state.manifest || !state.manifest.related_applications) {
       return;
     }

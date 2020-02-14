@@ -1,9 +1,15 @@
 <template>
-  <button
-    @click="install(); $awa( { 'referrerUri': 'https://www.pwabuilder.com/installToHomescreen' });"
-    v-if="this.$route.path !== '/' && this.installPrompt !== null"
-    id="installButton"
-  >Install PWABuilder</button>
+  <div v-if="this.$route.path !== '/'">
+    <button
+      @click="install()"
+      id="installButton"
+    >
+    </button>
+
+    <pwa-install usecustom manifestpath="/manifest.webmanifest">
+      
+    </pwa-install>
+  </div>
 </template>
 
 <script lang="ts">
@@ -12,49 +18,14 @@ import Component from "nuxt-class-component";
 
 @Component({})
 export default class extends Vue {
-  installPrompt: any = null;
-
-  public mounted() {
-    console.log("install button mounted", (window as any).installEvent);
-    if ((window as any).installEvent) {
-      console.log("setting prompt");
-      this.installPrompt = (window as any).installPrompt;
-    }
-
-    window.addEventListener("beforeinstallprompt", e => {
-      console.log("got install prompt");
-      // Prevent Chrome 67 and earlier from automatically showing the prompt
-      e.preventDefault();
-      // Stash the event so it can be triggered later.
-      (window as any).installEvent = e;
-    });
-  }
-
   install() {
-    if ((window as any).installEvent) {
-      (window as any).installEvent.prompt();
+    const pwaInstall: any = this.$el.querySelector(
+      "pwa-install"
+    ) as HTMLElement;
 
-      console.log((window as any).installEvent);
-      (window as any).installEvent.userChoice.then(choiceResult => {
-        if (choiceResult.outcome === "accepted") {
-          console.log("Your PWA has been installed");
-        } else {
-          console.log("User chose to not install your PWA");
-        }
-
-        (window as any).installEvent = null;
-      });
-    }
+    pwaInstall.openPrompt();
   }
 }
-
-Vue.prototype.$awa = function(config) {
-  awa.ct.capturePageView(config);
-
-  return;
-};
-
-declare var awa: any;
 </script>
 
 <style lang="scss" scoped>
@@ -74,9 +45,41 @@ declare var awa: any;
   margin-right: 20px;
 }
 
-@media (max-width: 425px) {
+#installButton::after {
+  content: 'Install PWABuilder';
+}
+
+@media (max-width: 820px) {
+  #installButton::after {
+    content: 'Install';
+  }
+
   #installButton {
-    display: none;
+      padding-left: 10px;
+      padding-right: 10px;
+      width: auto;
   }
 }
+
+@media (max-width: 560px) {
+  #installButton::after {
+    content: '';
+  }
+
+  #installButton {
+      width: 16px;
+      height: 16px;
+      padding-left: initial;
+      padding-right: initial;
+      background-image: url('~/assets/images/downloadicon.png');
+      background-size: 70%;
+      background-repeat: no-repeat;
+      background-position: center;
+      position: fixed;
+      bottom: 10px;
+      right: 5px;
+      margin-right: 0px;
+  }
+}
+
 </style>

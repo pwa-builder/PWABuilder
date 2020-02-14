@@ -1,7 +1,10 @@
 <template>
   <button
-    :class="{'pwa-button--brand': isBrand, 'pwa-button--total_right': isRight}"
-    @click="buildArchive(platform, parameters);  $awa( { 'referrerUri': `https://www.pwabuilder.com/download/${platform}` });"
+    :class="{
+      'pwa-button--brand': isBrand,
+      'pwa-button--total_right': isRight
+    }"
+    @click="buildArchive(platform, parameters)"
   >
     <span v-if="isReady">
       <i v-if="!showMessage" class="fas fa-long-arrow-alt-down"></i>
@@ -34,13 +37,10 @@ import * as publish from "~/store/modules/publish";
 const PublishState = namespace(publish.name, State);
 const PublishAction = namespace(publish.name, Action);
 
-declare var awa: any;
+import * as generator from "~/store/modules/generator";
+const GeneratorState = namespace(generator.name, State);
 
-Vue.prototype.$awa = function(config) {
-  awa.ct.capturePageView(config);
-
-  return;
-};
+import { generatePackageId } from '../utils/packageID';
 
 @Component({
   components: {
@@ -79,44 +79,126 @@ export default class extends Vue {
   @PublishState archiveLink: string;
   @PublishAction build;
 
-  public mounted(): void {
+  @GeneratorState manifest: generator.Manifest;
+
+  public created(): void {
     this.message$ = this.message;
 
-    const sessionRef = sessionStorage.getItem('currentURL');
+    const sessionRef = sessionStorage.getItem("currentURL");
     if (sessionRef) {
       this.siteHref = sessionRef;
-      console.log('this.siteHref', this.siteHref);
+    }
+  }
+
+  async handleTWA() {
+    this.isReady = false;
+
+    const goodIcon = (this.manifest as any).icons.find(
+      icon => icon.sizes.includes("512") || icon.sizes.includes("192")
+    );
+
+    const packageid = generatePackageId((this.manifest.short_name as string) || (this.manifest.name as string));
+
+    let startURL = (this.manifest.start_url as string).replace(`https://${new URL(this.siteHref).hostname}`, "")
+
+
+    const body = JSON.stringify({
+      packageId: `com.${packageid.split(' ').join('_').toLowerCase()}`,
+      host: new URL(this.siteHref).hostname,
+      name: this.manifest.short_name || this.manifest.name,
+      themeColor: this.manifest.theme_color || this.manifest.background_color,
+      navigationColor:
+        this.manifest.theme_color || this.manifest.background_color,
+      backgroundColor:
+        this.manifest.background_color || this.manifest.theme_color,
+      startUrl: startURL,
+      iconUrl: goodIcon.src,
+      maskableIconUrl: goodIcon.src,
+      appVersion: "1.0.0",
+      useBrowserOnChromeOS: true,
+      splashScreenFadeOutDuration: 300,
+      enableNotifications: false,
+      shortcuts: "[]",
+      signingInfo: {
+        fullName: "John Doe",
+        organization: "Contoso",
+        organizationalUnit: "Engineering Department",
+        countryCode: "US"
+      }
+    });
+
+    try {
+      const response = await fetch(
+        "https://pwabuilder-cloudapk.azurewebsites.net/generateSignedApkZip",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: body
+        }
+      );
+      const data = await response.blob();
+
+      let url = window.URL.createObjectURL(data);
+      window.location.assign(url);
+
+      this.isReady = true;
+    } catch (err) {
+      this.isReady = true;
+      this.errorMessage = err.message || err;
     }
   }
 
   public async buildArchive(
     platform: string,
-    parameters: string[],
+    parameters: string[]
   ): Promise<void> {
     if (!this.isReady) {
       return;
     }
 
-    try {
-      this.isReady = false;
+    const overrideValues = {
+      uri: window.location.href,
+      pageName: `download/${platform}`,
+      pageHeight: window.innerHeight
+    };
 
-      await this.build({ platform: platform, href: this.siteHref, options: parameters });
+    this.$awa(overrideValues);
 
-      if (this.archiveLink) {
-        window.location.href = this.archiveLink;
+    if (platform === "androidTWA") {
+      await this.handleTWA();
+    } else {
+      try {
+        this.isReady = false;
+
+        await this.build({
+          platform: platform,
+          href: this.siteHref,
+          options: parameters
+        });
+
+        if (this.archiveLink) {
+          window.location.href = this.archiveLink;
+        }
+
+        // Because browser delay
+        setTimeout(() => (this.isReady = true), 3000);
+      } catch (e) {
+        this.isReady = true;
+        this.errorMessage = e;
       }
-
-      // Because browser delay
-      setTimeout(() => (this.isReady = true), 3000);
-    } catch (e) {
-      this.isReady = true;
-      this.errorMessage = e;
-      this.message$ = this.$t("publish.try_again") as string;
     }
   }
 }
-</script>
 
+declare var awa: any;
+
+Vue.prototype.$awa = function(config) {
+  awa.ct.capturePageView(config);
+  return;
+};
+</script>
 
 <style lang="scss" scoped>
 #errorDiv {
@@ -128,7 +210,7 @@ export default class extends Vue {
   position: fixed;
   bottom: 2em;
   right: 2em;
-  background: #3C3C3C;
+  background: #3c3c3c;
   padding: 1em;
   border-radius: 4px;
 }
@@ -192,12 +274,6 @@ export default class extends Vue {
     width: 32px;
     height: 32px;
   }
-}
-
-.icon {
-  position: relative;
-  color: white;
-  top: -27px;
 
   .lds-dual-ring:after {
     content: " ";
@@ -218,12 +294,6 @@ export default class extends Vue {
     100% {
       transform: rotate(360deg);
     }
-  }
-}
-
-@media (max-height: 890px) {
-  #errorDiv {
-    bottom: 10em;
   }
 }
 </style>

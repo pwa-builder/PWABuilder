@@ -64,6 +64,10 @@ module.exports = {
         href: "https://fonts.googleapis.com/css?family=Open+Sans:400,600,700&display=swap"
       },
       {
+        rel: "stylesheet",
+        href: "https://unpkg.com/@ionic/core@latest/css/ionic.bundle.css"
+      },
+      {
         rel: 'apple-touch-icon',
         href: '/Images/assets/icons/apple-icon-06144a2a7b5101d447ecb4832502e73e.png'
       },
@@ -112,7 +116,7 @@ module.exports = {
         src: '/pwabuilder-sw-register.js'
       },
       {
-        src: 'https://az725175.vo.msecnd.net/scripts/jsll-4.js'
+        src: "https://az725175.vo.msecnd.net/scripts/jsll-4.js"
       },
       {
         src: "https://use.fontawesome.com/releases/v5.0.10/js/all.js",
@@ -123,13 +127,28 @@ module.exports = {
         src: '/awa-register.js'
       },
       {
-        src: '/copyButton.js'
+        src: 'https://unpkg.com/@webcomponents/webcomponentsjs@2.4.0/webcomponents-loader.js'
+      },
+      {
+        src: '/copyButton.js',
+        type: 'module'
+      },
+      {
+        src: '/platformPop.js',
+        type: 'module'
       },
       {
         src: "https://fluentweb-nightly-static.netlify.com/fluentweb/fluentweb.js",
         async: true,
         defer: true
       },
+      {
+        src: 'https://unpkg.com/@ionic/core@latest/dist/ionic.js'
+      },
+      {
+        src: 'https://cdn.jsdelivr.net/npm/@pwabuilder/pwainstall@1.2.10',
+        type: 'module'
+      }
     ]
   },
   loading: {
