@@ -60,6 +60,7 @@
 
       <section id="rightSide" class="swRightSide">
         <CodeViewer
+          v-if="codeViewerLoadingDelayTop"
           class="topViewer"
           color="#F0F0F0"
           theme="lighter"
@@ -74,6 +75,7 @@
         </CodeViewer>
 
         <CodeViewer
+          v-if="codeViewerLoadingDelayBottom"
           class="bottomViewer"
           color="#F0F0F0"
           theme="darker"
@@ -138,6 +140,8 @@ export default class extends Vue {
   public bottomViewerSize = "10rem";
   public hasSW = false;
   public betterSW = false;
+  public codeViewerLoadingDelayTop = false;
+  public codeViewerLoadingDelayBottom = false;
 
   @ServiceworkerState serviceworkers: ServiceWorker[];
   @ServiceworkerState serviceworker: number;
@@ -156,6 +160,14 @@ export default class extends Vue {
   }
 
   mounted() {
+    setTimeout(() => {
+      this.codeViewerLoadingDelayTop = true;
+    }, 300);
+
+    setTimeout(() => {
+      this.codeViewerLoadingDelayBottom = true;
+    }, 600);
+
     const overrideValues = {
       uri: window.location.href,
       pageName: "serviceWorkerPage",
