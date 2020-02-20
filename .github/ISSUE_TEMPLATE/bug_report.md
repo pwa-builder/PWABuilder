@@ -1,6 +1,7 @@
 ---
 name: Bug report
 about: Create a bug report to help us improve PWABuilder!
+labels: "bug :bug:"
 
 ---
 
