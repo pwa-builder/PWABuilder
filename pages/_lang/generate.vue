@@ -257,23 +257,6 @@
               <ColorSelector />
             </div>
 
-            <div>
-              <input
-                type="checkbox"
-                id="related-applications-field"
-                class="l-generator-togglecheck is-hidden"
-              />
-
-              <label class="l-generator-toggle" for="related-applications-field">
-                <p
-                  class="l-generator-subtitle l-generator-subtitle--toggleable"
-                >{{ $t("generate.specify_application") }}</p>
-              </label>
-
-              <div class="l-generator-field l-generator-field--toggle">
-                <RelatedApplications />
-              </div>
-            </div>
           </section>
         </div>
 
