@@ -257,23 +257,6 @@
               <ColorSelector />
             </div>
 
-            <div>
-              <input
-                type="checkbox"
-                id="related-applications-field"
-                class="l-generator-togglecheck is-hidden"
-              />
-
-              <label class="l-generator-toggle" for="related-applications-field">
-                <p
-                  class="l-generator-subtitle l-generator-subtitle--toggleable"
-                >{{ $t("generate.specify_application") }}</p>
-              </label>
-
-              <div class="l-generator-field l-generator-field--toggle">
-                <RelatedApplications />
-              </div>
-            </div>
           </section>
         </div>
 
@@ -515,6 +498,13 @@ export default class extends Vue {
     return icons.toString();
   }
 
+  private relatedApplications(): string {
+    let relatedApplicationscons = this.manifest.related_applications.map(app => {
+      return `\n\t\t{\n\t\t\t"platform": "${app.platform}",\n\t\t\t"url": "${app.url}"\n\t\t}`;
+    });
+    return relatedApplicationscons.toString();
+  }
+  
   private getCustomMembers(): string {
     if (this.members.length < 1) {
       return "";
@@ -541,7 +531,7 @@ export default class extends Vue {
           manifest += `\t"screenshots" : [${this.getScreenshots()}],\n`;
           break;
         case "related_applications":
-          manifest += `\t"related_applications" : [${this.manifest.related_applications || []}],\n`
+          manifest += `\t"related_applications" : [${this.relatedApplications() || []}],\n`
           break;
         case "prefer_related_applications":
           manifest += `\t"prefer_related_applications" : ${this.manifest.prefer_related_applications},\n`
