@@ -537,7 +537,7 @@ export default class extends Vue {
           manifest += `\t"prefer_related_applications" : ${this.manifest.prefer_related_applications},\n`
           break;
         default:
-          manifest += `\t"${property}" : "${this.manifest[property]}",\n`;
+          manifest += `\t"${property}" : "${this.manifest[property] ? this.manifest[property] : ''}",\n`;
           break;
       }
     }
