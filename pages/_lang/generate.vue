@@ -38,7 +38,7 @@
               <input
                 class="l-generator-input"
                 v-model="manifest$.name"
-                @change="onChangeSimpleInput()"
+                @keyup="onChangeSimpleInput()"
                 type="text"
                 v-on:focus="activeFormField = 'appName'"
                 placeholder="App Name"
@@ -56,7 +56,7 @@
               <input
                 class="l-generator-input"
                 v-model="manifest$.short_name"
-                @change="onChangeSimpleInput()"
+                @keyup="onChangeSimpleInput()"
                 name="short_name"
                 type="text"
                 v-on:focus="activeFormField = 'shortName'"
@@ -78,7 +78,7 @@
                 v-model="manifest$.description"
                 @keydown.enter.exact.prevent="textareaError"
                 @keypress="textareaCheck"
-                @change="onChangeSimpleInput()"
+                @keyup="onChangeSimpleInput()"
                 name="description"
                 type="text"
                 v-on:focus="activeFormField = 'appDesc'"
@@ -100,7 +100,7 @@
               <input
                 class="l-generator-input"
                 v-model="manifest$.start_url"
-                @change="onChangeSimpleInput()"
+                @keyup="onChangeSimpleInput()"
                 type="text"
                 v-on:focus="activeFormField = 'startURL'"
                 placeholder="Start URL"
@@ -184,7 +184,7 @@
               <input
                 class="l-generator-input"
                 v-model="manifest$.scope"
-                @change="onChangeSimpleInput()"
+                @keyup="onChangeSimpleInput()"
                 type="text"
                 placeholder="App Scope"
                 v-on:focus="activeFormField = 'appScope'"
