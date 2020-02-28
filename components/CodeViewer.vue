@@ -9,16 +9,17 @@
       </button>
     </div>
     <div v-if="textCopied" id="copyToast">Code Copied</div>
-    <MonacoEditor :options="monacoOptions" class="code_viewer-pre" 
-      @change="onCodeChange" 
-      @modelDecorations="onDecorationsChange" 
-      @editorDidMount="editorMount"
-      :theme="`${theme}Theme`"
-      :language="codeType"
-      v-model="code"
-      >
-    </MonacoEditor>
-
+    <div :id="`${monacoId}`">
+      <MonacoEditor :options="monacoOptions" class="code_viewer-pre"
+        @change="onCodeChange"
+        @modelDecorations="onDecorationsChange"
+        @editorDidMount="editorMount"
+        :theme="`${theme}Theme`"
+        :language="codeType"
+        v-model="code"
+        >
+      </MonacoEditor>
+    </div>
     <div v-if="showOverlay" id="errorOverlay">
       <h2>Errors</h2>
 
@@ -108,6 +109,9 @@ export default class extends Vue {
   @Prop({ type: String, default: "lighter" }) theme: string;
 
   @Prop({ type: Boolean, default: false }) public showHeader;
+
+  @Prop({ type: String, default: "" })
+  public monacoId: string;
 
   public readonly warningsId = "warnings_list";
   public readonly suggestionsId = "suggestions_list";
