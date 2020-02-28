@@ -279,6 +279,7 @@
           code="<link rel='manifest' href='/manifest.json'>"
           :showHeader="true"
           :showCopyButton="true"
+          monaco-id="manifestHTMLId"
           id="manifestHTML"
         >
           <h3>Add this code to your start page:</h3>
@@ -298,6 +299,7 @@
           :showToolbar="true"
           :showHeader="true"
           :showCopyButton="showCopy"
+          monaco-id="manifestCodeId"
           id="manifestCode"
         >
           <h3>Add this code to your manifest.json file</h3>
