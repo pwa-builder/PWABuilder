@@ -855,7 +855,7 @@ footer a {
       }
     }
     .animatedSection {
-      width: 500px;
+      width: 100%;
       .fieldName {
         color: #9337d8;
         font-size: 16px;
@@ -914,6 +914,9 @@ footer a {
     margin-bottom: 5em;
   }
   #manifestHTML .code_viewer-pre {
+    height: 4em !important;
+  }
+  #manifestHTMLId {
     height: 4em !important;
   }
   #exampleDiv {

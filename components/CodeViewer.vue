@@ -256,6 +256,7 @@ export default class extends Vue {
 .code_viewer {
   background: #f1f1f1;
   // height: 668px;
+  width: 100%;
   border-radius: 4px;
 
   #codeHeader {
@@ -327,7 +328,36 @@ export default class extends Vue {
 
   .code_viewer-pre {
     height: 668px;
-    overflow: hidden;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-radius: 4px;
+    background: #f1f1f1;
+  }
+
+  #manifestCodeId {
+    height: 668px;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-radius: 4px;
+    background: #f1f1f1;
+  }
+
+  #topViewerId {
+    height: 668px;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-radius: 4px;
+    background: #f1f1f1;
+  }
+
+  #bottomViewerId {
+    height: 668px;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
     border-radius: 4px;
     background: #f1f1f1;
   }
