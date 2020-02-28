@@ -99,8 +99,13 @@ export default class extends Vue {
 
     const packageid = generatePackageId((this.manifest.short_name as string) || (this.manifest.name as string));
 
-    let startURL = (this.manifest.start_url as string).replace(`https://${new URL(this.siteHref).hostname}`, "")
+    let startURL = (this.manifest.start_url as string).replace(`https://${new URL(this.siteHref).hostname}`, "");
 
+    let manifestURL = new URL((this.manifest.start_url as string));
+
+    if (manifestURL.search && startURL.length > 0) {
+      startURL = `${startURL}${manifestURL.search}`
+    };
 
     const body = JSON.stringify({
       packageId: `com.${packageid.split(' ').join('_').toLowerCase()}`,
@@ -111,7 +116,7 @@ export default class extends Vue {
         this.manifest.theme_color || this.manifest.background_color,
       backgroundColor:
         this.manifest.background_color || this.manifest.theme_color,
-      startUrl: startURL,
+      startUrl: startURL && startURL.length > 0 ? startURL : `${manifestURL.search ? '/' + manifestURL.search : "/"}`,
       iconUrl: goodIcon.src,
       maskableIconUrl: goodIcon.src,
       appVersion: "1.0.0",
