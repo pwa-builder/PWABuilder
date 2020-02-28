@@ -151,6 +151,11 @@ export default class extends Vue {
     });
 
     (<any>window).monaco.editor.setTheme('lighterTheme');
+    (<any>window).addEventListener('resize', this.onResize);
+  }
+
+  beforeDestroy() {
+    (<any>window).removeEventListener("resize", this.onResize);
   }
 
   onCodeChange(value):void {
@@ -164,6 +169,35 @@ export default class extends Vue {
     if (this.errors.length > 0) {
         this.$emit("invalidManifest");
     }
+  }
+
+  public onResize(): void {
+    var item = this.monacoId && document.getElementById(this.monacoId);
+    while (item && item.hasChildNodes()) {   
+      item.firstChild && item.removeChild(item.firstChild);
+    }
+    this.monacoId && (<any>window).monaco.editor.create(document.getElementById(this.monacoId), {
+            language: this.codeType,
+            value: this.code,
+            lineNumbers: "on",
+            fixedOverflowWidgets: true,
+            wordWrap: "on",
+            scrollBeyondLastLine: false,
+            wordWrapMinified: true,
+            wrappingIndent: "indent",
+            fontSize: 16,
+            minimap: { enabled: false },
+        });
+        
+    (<any>window).monaco.editor.defineTheme(`${this.theme}Theme`, {
+      base: "vs",
+      inherit: true,
+      rules: [],
+      colors: {
+        "editor.background": this.color
+      }
+    });
+    (<any>window).monaco.editor.setTheme('lighterTheme');
   }
 
   editorMount(editor):void {
