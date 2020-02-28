@@ -65,6 +65,7 @@ import SkipLink from "~/components/SkipLink.vue";
 import IssuesList from "~/components/IssuesList.vue";
 import Download from "~/components/Download.vue";
 import { CodeError } from "~/store/modules/generator";
+import { Watch } from "vue-property-decorator";
 
 @Component({
   components: {
@@ -163,10 +164,18 @@ export default class extends Vue {
   }
 
   public onResize(): void {
+    this.removeEditor();
+    this.reloadEditor();
+  }
+
+  public removeEditor(): void {
     var item = this.monacoId && document.getElementById(this.monacoId);
     while (item && item.hasChildNodes()) {   
       item.firstChild && item.removeChild(item.firstChild);
     }
+  }
+
+  public reloadEditor(): void {
     this.monacoId && (<any>window).monaco.editor.create(document.getElementById(this.monacoId), {
             language: this.codeType,
             value: this.code,
@@ -192,6 +201,12 @@ export default class extends Vue {
       }
     });
     (<any>window).monaco.editor.setTheme('lighterTheme');
+  }
+
+  @Watch("code")
+  public setMonacoValue():void {
+    this.removeEditor();
+    this.reloadEditor();
   }
 
   editorMount(editor):void {
@@ -255,7 +270,6 @@ export default class extends Vue {
 
 .code_viewer {
   background: #f1f1f1;
-  // height: 668px;
   width: 100%;
   border-radius: 4px;
 
