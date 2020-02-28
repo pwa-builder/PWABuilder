@@ -141,16 +141,7 @@ export default class extends Vue {
   textCopied = false;
 
   mounted():void {
-    (<any>window).monaco.editor.defineTheme(`${this.theme}Theme`, {
-      base: "vs",
-      inherit: true,
-      rules: [],
-      colors: {
-        "editor.background": this.color
-      }
-    });
-
-    (<any>window).monaco.editor.setTheme('lighterTheme');
+    this.defineTheme();
     (<any>window).addEventListener('resize', this.onResize);
   }
 
@@ -188,7 +179,10 @@ export default class extends Vue {
             fontSize: 16,
             minimap: { enabled: false },
         });
-        
+    this.defineTheme();
+  }
+
+  public defineTheme():void {
     (<any>window).monaco.editor.defineTheme(`${this.theme}Theme`, {
       base: "vs",
       inherit: true,
