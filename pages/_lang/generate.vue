@@ -513,7 +513,7 @@ export default class extends Vue {
 
   private relatedApplications(): string {
     let relatedApplicationscons = this.manifest.related_applications.map(app => {
-      return `\n\t\t{\n\t\t\t"platform": "${app.platform}",\n\t\t\t"url": "${app.url}"\n\t\t}`;
+      return `\n\t\t{\n\t\t\t"platform": "${app.platform ? app.platform : ""}",\n\t\t\t"url": "${app.url ? app.url : ""}"\n\t\t}`;
     });
     return relatedApplicationscons.toString();
   }
