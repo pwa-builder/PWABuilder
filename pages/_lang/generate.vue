@@ -202,7 +202,7 @@
               <select
                 class="l-generator-input l-generator-input--select"
                 v-model="manifest$.display"
-                @change="onChangeSimpleInput()"
+                @change="onChangeSimpleInput(), update()"
                 v-on:focus="activeFormField = 'displayMode'"
               >
                 <option v-for="display in displaysNames" :value="display" :key="display">{{display}}</option>
@@ -220,7 +220,7 @@
               <select
                 class="l-generator-input l-generator-input--select"
                 v-model="manifest$.orientation"
-                @change="onChangeSimpleInput()"
+                @change="onChangeSimpleInput(), update()"
                 v-on:focus="activeFormField = 'appOrientation'"
               >
                 <option
@@ -242,7 +242,7 @@
               <select
                 class="l-generator-input l-generator-input--select"
                 v-model="manifest$.lang"
-                @change="onChangeSimpleInput()"
+                @change="onChangeSimpleInput(), update()"
                 v-on:change="activeFormField = 'appLang'"
               >
                 <option
@@ -361,6 +361,7 @@ import StartOver from "~/components/StartOver.vue";
 import ColorSelector from "~/components/ColorSelector.vue";
 import HubHeader from "~/components/HubHeader.vue";
 import * as generator from "~/store/modules/generator";
+import helper from '~/utils/helper';
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
 const GeneratorGetters = namespace(generator.name, Getter);
@@ -405,6 +406,8 @@ export default class extends Vue {
   @GeneratorActions removeIcon;
   @GeneratorActions addIconFromUrl;
   @GeneratorActions updateManifest;
+  @GeneratorActions update;
+  @GeneratorActions commitManifest;
   @GeneratorActions uploadIcon;
   @GeneratorActions generateMissingImages;
   @GeneratorGetters suggestionsTotal;
@@ -423,6 +426,14 @@ export default class extends Vue {
       pageHeight: window.innerHeight
     };
 
+    var updateFn = helper.debounce(this.update, 3000, false);
+
+    document && document.querySelectorAll('.l-generator-input').forEach(item => {
+      item.addEventListener('keyup', updateFn)
+    });
+    document && document.querySelectorAll('.l-generator-textarea').forEach(item => {
+      item.addEventListener('keyup', updateFn)
+    });
     awa.ct.capturePageView(overrideValues);
   }
 
@@ -439,7 +450,7 @@ export default class extends Vue {
 
   public onChangeSimpleInput(): void {
     try {
-      this.updateManifest(this.manifest$);
+      this.commitManifest(this.manifest$);
       this.manifest$ = { ...this.manifest };
     } catch (e) {
       this.error = e;
