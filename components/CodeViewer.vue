@@ -187,6 +187,9 @@ export default class extends Vue {
             wrappingIndent: "indent",
             fontSize: 16,
             minimap: { enabled: false },
+            onCodeChange: this.onCodeChange,
+            onDidChangeModelDecorations: this.onDecorationsChange,
+            editorDidMount: this.editorMount
         });
     this.defineTheme();
   }
@@ -205,6 +208,7 @@ export default class extends Vue {
 
   @Watch("code")
   public setMonacoValue():void {
+    // this logic will be changed when editing "from manifest to form" is in place.
     this.removeEditor();
     this.reloadEditor();
   }
