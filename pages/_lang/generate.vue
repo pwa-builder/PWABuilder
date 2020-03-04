@@ -38,7 +38,7 @@
               <input
                 class="l-generator-input"
                 v-model="manifest$.name"
-                @change="onChangeSimpleInput()"
+                @keyup="onChangeSimpleInput()"
                 type="text"
                 v-on:focus="activeFormField = 'appName'"
                 placeholder="App Name"
@@ -56,7 +56,7 @@
               <input
                 class="l-generator-input"
                 v-model="manifest$.short_name"
-                @change="onChangeSimpleInput()"
+                @keyup="onChangeSimpleInput()"
                 name="short_name"
                 type="text"
                 v-on:focus="activeFormField = 'shortName'"
@@ -78,7 +78,7 @@
                 v-model="manifest$.description"
                 @keydown.enter.exact.prevent="textareaError"
                 @keypress="textareaCheck"
-                @change="onChangeSimpleInput()"
+                @keyup="onChangeSimpleInput()"
                 name="description"
                 type="text"
                 v-on:focus="activeFormField = 'appDesc'"
@@ -100,7 +100,7 @@
               <input
                 class="l-generator-input"
                 v-model="manifest$.start_url"
-                @change="onChangeSimpleInput()"
+                @keyup="onChangeSimpleInput()"
                 type="text"
                 v-on:focus="activeFormField = 'startURL'"
                 placeholder="Start URL"
@@ -184,7 +184,7 @@
               <input
                 class="l-generator-input"
                 v-model="manifest$.scope"
-                @change="onChangeSimpleInput()"
+                @keyup="onChangeSimpleInput()"
                 type="text"
                 placeholder="App Scope"
                 v-on:focus="activeFormField = 'appScope'"
@@ -202,7 +202,7 @@
               <select
                 class="l-generator-input l-generator-input--select"
                 v-model="manifest$.display"
-                @change="onChangeSimpleInput()"
+                @change="onChangeSimpleInput(), update()"
                 v-on:focus="activeFormField = 'displayMode'"
               >
                 <option v-for="display in displaysNames" :value="display" :key="display">{{display}}</option>
@@ -220,7 +220,7 @@
               <select
                 class="l-generator-input l-generator-input--select"
                 v-model="manifest$.orientation"
-                @change="onChangeSimpleInput()"
+                @change="onChangeSimpleInput(), update()"
                 v-on:focus="activeFormField = 'appOrientation'"
               >
                 <option
@@ -242,7 +242,7 @@
               <select
                 class="l-generator-input l-generator-input--select"
                 v-model="manifest$.lang"
-                @change="onChangeSimpleInput()"
+                @change="onChangeSimpleInput(), update()"
                 v-on:change="activeFormField = 'appLang'"
               >
                 <option
@@ -279,6 +279,7 @@
           code="<link rel='manifest' href='/manifest.json'>"
           :showHeader="true"
           :showCopyButton="true"
+          monaco-id="manifestHTMLId"
           id="manifestHTML"
         >
           <h3>Add this code to your start page:</h3>
@@ -298,6 +299,7 @@
           :showToolbar="true"
           :showHeader="true"
           :showCopyButton="showCopy"
+          monaco-id="manifestCodeId"
           id="manifestCode"
         >
           <h3>Add this code to your manifest.json file</h3>
@@ -359,6 +361,7 @@ import StartOver from "~/components/StartOver.vue";
 import ColorSelector from "~/components/ColorSelector.vue";
 import HubHeader from "~/components/HubHeader.vue";
 import * as generator from "~/store/modules/generator";
+import helper from '~/utils/helper';
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
 const GeneratorGetters = namespace(generator.name, Getter);
@@ -403,6 +406,8 @@ export default class extends Vue {
   @GeneratorActions removeIcon;
   @GeneratorActions addIconFromUrl;
   @GeneratorActions updateManifest;
+  @GeneratorActions update;
+  @GeneratorActions commitManifest;
   @GeneratorActions uploadIcon;
   @GeneratorActions generateMissingImages;
   @GeneratorGetters suggestionsTotal;
@@ -421,6 +426,14 @@ export default class extends Vue {
       pageHeight: window.innerHeight
     };
 
+    var updateFn = helper.debounce(this.update, 3000, false);
+
+    document && document.querySelectorAll('.l-generator-input').forEach(item => {
+      item.addEventListener('keyup', updateFn)
+    });
+    document && document.querySelectorAll('.l-generator-textarea').forEach(item => {
+      item.addEventListener('keyup', updateFn)
+    });
     awa.ct.capturePageView(overrideValues);
   }
 
@@ -437,7 +450,7 @@ export default class extends Vue {
 
   public onChangeSimpleInput(): void {
     try {
-      this.updateManifest(this.manifest$);
+      this.commitManifest(this.manifest$);
       this.manifest$ = { ...this.manifest };
     } catch (e) {
       this.error = e;
@@ -500,7 +513,7 @@ export default class extends Vue {
 
   private relatedApplications(): string {
     let relatedApplicationscons = this.manifest.related_applications.map(app => {
-      return `\n\t\t{\n\t\t\t"platform": "${app.platform}",\n\t\t\t"url": "${app.url}"\n\t\t}`;
+      return `\n\t\t{\n\t\t\t"platform": "${app.platform ? app.platform : ""}",\n\t\t\t"url": "${app.url ? app.url : ""}"\n\t\t}`;
     });
     return relatedApplicationscons.toString();
   }
@@ -537,7 +550,7 @@ export default class extends Vue {
           manifest += `\t"prefer_related_applications" : ${this.manifest.prefer_related_applications},\n`
           break;
         default:
-          manifest += `\t"${property}" : "${this.manifest[property]}",\n`;
+          manifest += `\t"${property}" : "${this.manifest[property] ? this.manifest[property] : ''}",\n`;
           break;
       }
     }
@@ -853,7 +866,7 @@ footer a {
       }
     }
     .animatedSection {
-      width: 500px;
+      width: 100%;
       .fieldName {
         color: #9337d8;
         font-size: 16px;
@@ -912,6 +925,9 @@ footer a {
     margin-bottom: 5em;
   }
   #manifestHTML .code_viewer-pre {
+    height: 4em !important;
+  }
+  #manifestHTMLId {
     height: 4em !important;
   }
   #exampleDiv {

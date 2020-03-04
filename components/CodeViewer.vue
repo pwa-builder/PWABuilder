@@ -9,16 +9,17 @@
       </button>
     </div>
     <div v-if="textCopied" id="copyToast">Code Copied</div>
-    <MonacoEditor :options="monacoOptions" class="code_viewer-pre" 
-      @change="onCodeChange" 
-      @modelDecorations="onDecorationsChange" 
-      @editorDidMount="editorMount"
-      :theme="`${theme}Theme`"
-      :language="codeType"
-      v-model="code"
-      >
-    </MonacoEditor>
-
+    <div :id="`${monacoId}`">
+      <MonacoEditor :options="monacoOptions" class="code_viewer-pre"
+        @change="onCodeChange"
+        @modelDecorations="onDecorationsChange"
+        @editorDidMount="editorMount"
+        :theme="`${theme}Theme`"
+        :language="codeType"
+        v-model="code"
+        >
+      </MonacoEditor>
+    </div>
     <div v-if="showOverlay" id="errorOverlay">
       <h2>Errors</h2>
 
@@ -64,6 +65,7 @@ import SkipLink from "~/components/SkipLink.vue";
 import IssuesList from "~/components/IssuesList.vue";
 import Download from "~/components/Download.vue";
 import { CodeError } from "~/store/modules/generator";
+import { Watch } from "vue-property-decorator";
 
 @Component({
   components: {
@@ -109,6 +111,9 @@ export default class extends Vue {
 
   @Prop({ type: Boolean, default: false }) public showHeader;
 
+  @Prop({ type: String, default: "" })
+  public monacoId: string;
+
   public readonly warningsId = "warnings_list";
   public readonly suggestionsId = "suggestions_list";
   public isReady = true;
@@ -137,16 +142,12 @@ export default class extends Vue {
   textCopied = false;
 
   mounted():void {
-    (<any>window).monaco.editor.defineTheme(`${this.theme}Theme`, {
-      base: "vs",
-      inherit: true,
-      rules: [],
-      colors: {
-        "editor.background": this.color
-      }
-    });
+    this.defineTheme();
+    (<any>window).addEventListener('resize', this.onResize);
+  }
 
-    (<any>window).monaco.editor.setTheme('lighterTheme');
+  beforeDestroy() {
+    (<any>window).removeEventListener("resize", this.onResize);
   }
 
   onCodeChange(value):void {
@@ -160,6 +161,56 @@ export default class extends Vue {
     if (this.errors.length > 0) {
         this.$emit("invalidManifest");
     }
+  }
+
+  public onResize(): void {
+    this.removeEditor();
+    this.reloadEditor();
+  }
+
+  public removeEditor(): void {
+    var item = this.monacoId && document.getElementById(this.monacoId);
+    while (item && item.hasChildNodes()) {   
+      item.firstChild && item.removeChild(item.firstChild);
+    }
+  }
+
+  public reloadEditor(): void {
+    this.monacoId && (<any>window).monaco.editor.create(document.getElementById(this.monacoId), {
+            language: this.codeType,
+            value: this.code,
+            lineNumbers: "on",
+            fixedOverflowWidgets: true,
+            wordWrap: "on",
+            scrollBeyondLastLine: false,
+            wordWrapMinified: true,
+            wrappingIndent: "indent",
+            fontSize: 16,
+            minimap: { enabled: false },
+            onCodeChange: this.onCodeChange,
+            onDidChangeModelDecorations: this.onDecorationsChange,
+            editorDidMount: this.editorMount
+        });
+    this.defineTheme();
+  }
+
+  public defineTheme():void {
+    (<any>window).monaco.editor.defineTheme(`${this.theme}Theme`, {
+      base: "vs",
+      inherit: true,
+      rules: [],
+      colors: {
+        "editor.background": this.color
+      }
+    });
+    (<any>window).monaco.editor.setTheme('lighterTheme');
+  }
+
+  @Watch("code")
+  public setMonacoValue():void {
+    // this logic will be changed when editing "from manifest to form" is in place.
+    this.removeEditor();
+    this.reloadEditor();
   }
 
   editorMount(editor):void {
@@ -223,7 +274,7 @@ export default class extends Vue {
 
 .code_viewer {
   background: #f1f1f1;
-  // height: 668px;
+  width: 100%;
   border-radius: 4px;
 
   #codeHeader {
@@ -295,7 +346,36 @@ export default class extends Vue {
 
   .code_viewer-pre {
     height: 668px;
-    overflow: hidden;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-radius: 4px;
+    background: #f1f1f1;
+  }
+
+  #manifestCodeId {
+    height: 668px;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-radius: 4px;
+    background: #f1f1f1;
+  }
+
+  #topViewerId {
+    height: 668px;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-radius: 4px;
+    background: #f1f1f1;
+  }
+
+  #bottomViewerId {
+    height: 668px;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
     border-radius: 4px;
     background: #f1f1f1;
   }
