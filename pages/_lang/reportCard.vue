@@ -201,24 +201,12 @@ export default class extends Vue {
   public shared: boolean = false;
 
   public async created() {
-    this.url$ = this.url;
+    if (this.checkQueryString()) {
+      const url = window.location.search.split("=")[1];
 
-    if (this.url$ || this.url) {
-      this.gotURL = true;
-      this.getTopSamples();
-    } else {
-      if (window && window.location.search) {
-        const url = window.location.search.split("=")[1];
-
-        this.cleanedURL = decodeURIComponent(url);
-        this.url = this.cleanedURL;
-
-        // this.gotURL = true;
-
-        setTimeout(async () => {
-          await this.checkUrlAndGenerate();
-        }, 500);
-      }
+      this.cleanedURL = decodeURIComponent(url);
+      this.url = this.cleanedURL;
+      await this.checkUrlAndGenerate();
     }
   }
 
