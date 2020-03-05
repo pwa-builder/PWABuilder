@@ -178,9 +178,8 @@ export default class extends Vue {
   }
 
   reset() {
-    if (location.pathname === "/") {
+    if (window.location.href !== `${window.location.origin}/`) {
       this.$emit("reset");
-    } else {
       window.location.href = window.location.origin;
     }
   }
