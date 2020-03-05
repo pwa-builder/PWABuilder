@@ -11,7 +11,8 @@
       >
 
       <div id="mainTabsBar">
-        <nuxt-link to="/">My Hub</nuxt-link>
+        <nuxt-link v-if="this.url" :to="{name: 'index', query:{url:this.url}}">My Hub</nuxt-link>
+        <nuxt-link v-if="!this.url" to="/">My Hub</nuxt-link>
         <nuxt-link
           @click="$awa( { 'referrerUri': `https://pwabuilder.com/features` })"
           to="/features"
@@ -52,7 +53,7 @@
 
     <div class="has-acrylic-80 is-dark has-reveal-background" v-if="showSubHeader" id="subHeader">
       <div id="tabsBar">
-        <nuxt-link to="/">Overview</nuxt-link>
+        <nuxt-link :to="{name: 'index', query:{url:this.url}}">Overview</nuxt-link>
         <nuxt-link to="/generate">Manifest</nuxt-link>
         <nuxt-link to="/serviceworker">Service Worker</nuxt-link>
       </div>
