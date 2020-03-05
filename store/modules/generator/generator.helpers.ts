@@ -23,7 +23,8 @@ export const helpers = {
     }*/
     try {
       return await fetch(siteUrl, {
-        mode: 'no-cors'
+        mode: 'no-cors',
+        credentials: 'include'
       });
     }
     catch (err) {
