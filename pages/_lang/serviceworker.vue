@@ -70,6 +70,7 @@
           :title="$t('serviceworker.code_preview_web')"
           :showToolbar="false"
           :showHeader="true"
+          monaco-id="topViewerId"
         >
           <h3>Add this code to your landing page in a &lt;script&gt; tag:</h3>
         </CodeViewer>
@@ -85,6 +86,7 @@
           :title="$t('serviceworker.code_preview_serviceworker')"
           :showToolbar="false"
           :showHeader="true"
+          monaco-id="bottomViewerId"
         >
           <h3>Add this code to a file named "pwabuilder-sw.js" on your site root:</h3>
         </CodeViewer>

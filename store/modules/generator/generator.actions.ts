@@ -86,6 +86,10 @@ export const actions: Actions<State, RootState> = {
     dispatch('update');
   },
 
+  commitManifest({ commit }, manifest): void {
+    commit(types.UPDATE_MANIFEST, manifest);
+  },
+
   async updateLink({ commit }, url: string): Promise<any> {
     if (url && !url.startsWith('http')) {
       url = 'https://' + url;
