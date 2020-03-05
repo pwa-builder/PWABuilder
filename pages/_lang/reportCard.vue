@@ -310,36 +310,41 @@ export default class extends Vue {
 
   public async checkUrlAndGenerate() {
     this.error = null;
+    if (this.checkQueryString()) {
+      try {
+        if (this.url$ === null || this.url$ === undefined) {
+          this.url$ = this.cleanedURL;
+        }
 
-    try {
-      if (this.url$ === null || this.url$ === undefined) {
-        this.url$ = this.cleanedURL;
+        await this.updateLink(this.url$);
+        this.url$ = this.url;
+
+        if (this.url) {
+          sessionStorage.setItem("currentURL", this.url);
+        }
+
+        this.gotURL = true;
+
+        this.getTopSamples();
+      } catch (err) {
+        console.error("url error", err);
+
+        this.url$ = this.url;
+
+        if (err.message) {
+          this.error = err.message;
+        } else {
+          // No error message
+          // so just show error directly
+          this.error = err;
+        }
+
+        this.gotURL = true;
       }
-
-      await this.updateLink(this.url$);
-      this.url$ = this.url;
-
-      if (this.url) {
-        sessionStorage.setItem("currentURL", this.url);
-      }
-
-      this.gotURL = true;
-
-      this.getTopSamples();
-    } catch (err) {
-      console.error("url error", err);
-
-      this.url$ = this.url;
-
-      if (err.message) {
-        this.error = err.message;
-      } else {
-        // No error message
-        // so just show error directly
-        this.error = err;
-      }
-
-      this.gotURL = true;
+    }
+    else {
+      if (this.url$ !== null || this.url$ === undefined)
+        window.location.href = `${window.location.origin}/?url=${encodeURIComponent(this.url$)}`;
     }
   }
 
