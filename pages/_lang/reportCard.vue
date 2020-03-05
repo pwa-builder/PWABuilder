@@ -343,6 +343,17 @@ export default class extends Vue {
     }
   }
 
+  public checkQueryString() {
+    var queryString = window && window.location.search ? decodeURIComponent(window.location.search.split("=")[1]) : null;
+    if (queryString && this.url$ === null ) {
+      return true;
+    }
+    else if (queryString !== null && this.url$ !== null && queryString === this.url$){
+      return true;
+    }
+    return false;
+  }
+
   public async getTopSamples() {
     await this.getSamples();
     const cleanedSamples = this.samples.slice(0, 4);
