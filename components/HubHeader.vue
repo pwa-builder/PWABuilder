@@ -52,7 +52,7 @@
 
     <div class="has-acrylic-80 is-dark has-reveal-background" v-if="showSubHeader" id="subHeader">
       <div id="tabsBar">
-        <nuxt-link to="/">Overview</nuxt-link>
+        <nuxt-link :to="{name: 'index', query:{url:this.url}}">Overview</nuxt-link>
         <nuxt-link to="/generate">Manifest</nuxt-link>
         <nuxt-link to="/serviceworker">Service Worker</nuxt-link>
       </div>
@@ -177,11 +177,8 @@ export default class extends Vue {
   }
 
   reset() {
-    if (location.pathname === "/") {
-      this.$emit("reset");
-    } else {
-      window.location.href = window.location.origin;
-    }
+    this.$emit("reset");
+    this.$router.push({ name: 'index'}) 
   }
 }
 
