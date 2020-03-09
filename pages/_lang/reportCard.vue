@@ -206,12 +206,11 @@ export default class extends Vue {
     if (this.url$ || this.url) {
       this.gotURL = true;
       this.getTopSamples();
-    }
-    else {
+    } else {
       if (window && window.location.search) {
         this.processQueryString();
       }
-    }    
+    }
   }
 
   public mounted() {
@@ -325,6 +324,7 @@ export default class extends Vue {
       }
 
       await this.updateLink(this.url$);
+      this.url$ = this.url;
 
       if (this.url) {
         sessionStorage.setItem("currentURL", this.url);
@@ -353,7 +353,7 @@ export default class extends Vue {
   public async processQueryString() {
       const url = window.location.search.split("=")[1];
       this.cleanedURL = decodeURIComponent(url);
-      await this.updateLink(this.cleanedURL);
+      this.url = this.cleanedURL;
       this.checkUrlAndGenerate();
   }
 
@@ -380,7 +380,6 @@ export default class extends Vue {
     this.gotURL = false;
     this.overallScore = 0;
     this.topSamples = [];
-    // this.url$ = null;
   }
 
   public skipCheckUrl(): void {
