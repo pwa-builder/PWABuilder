@@ -201,13 +201,17 @@ export default class extends Vue {
   public shared: boolean = false;
 
   public async created() {
-    if (this.checkQueryString()) {
-      const url = window.location.search.split("=")[1];
+    this.url$ = this.url;
 
-      this.cleanedURL = decodeURIComponent(url);
-      this.url = this.cleanedURL;
-      await this.checkUrlAndGenerate();
+    if (this.url$ || this.url) {
+      this.gotURL = true;
+      this.getTopSamples();
     }
+    else {
+      if (window && window.location.search) {
+        this.processQueryString();
+      }
+    }    
   }
 
   public mounted() {
@@ -243,6 +247,20 @@ export default class extends Vue {
     };
 
     this.$awa(overrideValues);
+    window.addEventListener("popstate", this.backAndForth);
+  }
+
+  beforeDestroy() {
+    (<any>window).removeEventListener("popstate", this.backAndForth);
+  }
+  
+  public async backAndForth(e) {
+    e.preventDefault();
+    if (window.location.href === `${window.location.origin}/`) {
+      this.reset();
+    } else if (window.location.pathname === '/') {
+      this.processQueryString();
+    } 
   }
 
   public async shareReport() {
@@ -298,53 +316,45 @@ export default class extends Vue {
 
   public async checkUrlAndGenerate() {
     this.error = null;
-    if (this.checkQueryString()) {
-      try {
-        if (this.url$ === null || this.url$ === undefined) {
-          this.url$ = this.cleanedURL;
-        }
-
-        await this.updateLink(this.url$);
-        this.url$ = this.url;
-
-        if (this.url) {
-          sessionStorage.setItem("currentURL", this.url);
-        }
-
-        this.gotURL = true;
-
-        this.getTopSamples();
-      } catch (err) {
-        console.error("url error", err);
-
-        this.url$ = this.url;
-
-        if (err.message) {
-          this.error = err.message;
-        } else {
-          // No error message
-          // so just show error directly
-          this.error = err;
-        }
-
-        this.gotURL = true;
+    try {
+      if (window && !window.location.search && (this.url$ !== null || this.url$ !== undefined)) {
+        this.$router.push({ name: 'index', query: { url: this.url$ }})
       }
-    }
-    else {
-      if (this.url$ !== null || this.url$ === undefined)
-        window.location.href = `${window.location.origin}/?url=${encodeURIComponent(this.url$)}`;
+      else {
+        this.url$ = this.cleanedURL;
+      }
+
+      await this.updateLink(this.url$);
+
+      if (this.url) {
+        sessionStorage.setItem("currentURL", this.url);
+      }
+
+      this.gotURL = true;
+
+      this.getTopSamples();
+    } catch (err) {
+      console.error("url error", err);
+
+      this.url$ = this.url;
+
+      if (err.message) {
+        this.error = err.message;
+      } else {
+        // No error message
+        // so just show error directly
+        this.error = err;
+      }
+
+      this.gotURL = true;
     }
   }
 
-  public checkQueryString() {
-    var queryString = window && window.location.search ? decodeURIComponent(window.location.search.split("=")[1]) : null;
-    if (queryString && this.url$ === null ) {
-      return true;
-    }
-    else if (queryString !== null && this.url$ !== null && queryString === this.url$){
-      return true;
-    }
-    return false;
+  public async processQueryString() {
+      const url = window.location.search.split("=")[1];
+      this.cleanedURL = decodeURIComponent(url);
+      await this.updateLink(this.cleanedURL);
+      this.checkUrlAndGenerate();
   }
 
   public async getTopSamples() {
@@ -370,6 +380,7 @@ export default class extends Vue {
     this.gotURL = false;
     this.overallScore = 0;
     this.topSamples = [];
+    // this.url$ = null;
   }
 
   public skipCheckUrl(): void {

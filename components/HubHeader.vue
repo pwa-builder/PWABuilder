@@ -11,8 +11,7 @@
       >
 
       <div id="mainTabsBar">
-        <nuxt-link v-if="this.url" :to="{name: 'index', query:{url:this.url}}">My Hub</nuxt-link>
-        <nuxt-link v-if="!this.url" to="/">My Hub</nuxt-link>
+        <nuxt-link to="/">My Hub</nuxt-link>
         <nuxt-link
           @click="$awa( { 'referrerUri': `https://pwabuilder.com/features` })"
           to="/features"
@@ -178,10 +177,8 @@ export default class extends Vue {
   }
 
   reset() {
-    if (window.location.href !== `${window.location.origin}/`) {
-      this.$emit("reset");
-      window.location.href = window.location.origin;
-    }
+    this.$emit("reset");
+    this.$router.push({ name: 'index'}) 
   }
 }
 
