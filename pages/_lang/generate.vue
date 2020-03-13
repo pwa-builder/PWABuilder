@@ -113,7 +113,8 @@
               <div id="uploadNewSection">
                 <label class="l-generator-label">
                   <h4 class="iconUploadHeader">Upload app icons for your PWA</h4>
-                  <p>We suggest at least one image 512×512 or larger</p>
+                  <p v-if="!isImageBroken">We suggest at least one image 512×512 or larger</p>
+                  <p class="brokenImage" v-if="isImageBroken">If you want a bigger images, we suggest to you to upload at least one image 512×512 or larger</p>
                 </label>
 
                 <div class="button-holder icons">
@@ -393,6 +394,7 @@ export default class extends Vue {
   public ifEntered = false;
   public  textareaOutlineColor = '';
   public showCopy = true;
+  public isImageBroken: boolean = false;
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
@@ -462,6 +464,15 @@ export default class extends Vue {
       if (!icon.generated || icon.src.indexOf('data') === 0)
       {
         return icon;
+      }
+    });
+  }
+
+  public checkBrokenImage(icons): any { 
+    icons.forEach(icon => {
+      if (icon.generated && icon.src.indexOf('data') !== 0)
+      {
+        this.isImageBroken = true;
       }
     });
   }
@@ -601,6 +612,7 @@ export default class extends Vue {
       await this.uploadIcon(this.iconFile);
       this.updateManifest(this.manifest$);
     }
+    this.checkBrokenImage(this.icons)
     $iconsModal.hide();
     $iconsModal.hideLoading();
     this.iconFile = null;
@@ -680,6 +692,11 @@ declare var awa: any;
 
 #textarea_error {
   color: red;
+}
+
+.brokenImage {
+  font-size: 14px;
+  color: #db3457 !important;
 }
 
 footer {
