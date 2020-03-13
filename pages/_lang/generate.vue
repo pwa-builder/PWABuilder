@@ -139,7 +139,7 @@
                   <div class="pure-u-1-8"></div>
                   <div class="pure-u-1-8"></div>-->
 
-                  <div id="iconItem" class="pure-u-1" v-for="icon in icons" :key="icon.src">
+                  <div id="iconItem" class="pure-u-1" v-for="icon in filterIcons(icons)" :key="icon.src">
                     <div id="iconDivItem" class="pure-u-10-24 l-generator-tablec">
                       <a target="_blank" :href="icon.src">
                         <img class="icon-preview" :src="icon.src" />
@@ -455,6 +455,15 @@ export default class extends Vue {
     } catch (e) {
       this.error = e;
     }
+  }
+
+  public filterIcons(icons): any {
+    return icons.filter(icon => { 
+      if (!icon.generated || icon.src.indexOf('data') === 0)
+      {
+        return icon;
+      }
+    });
   }
 
   public textareaError(): void {
