@@ -181,6 +181,14 @@ export default class extends Vue {
 
   public selectServiceWorker(id: number) {
     this.serviceworker$ = id;
+
+    const overrideValues = {
+      uri: window.location.href,
+      pageName: `serviceWorker${id}`,
+      pageHeight: window.innerHeight
+    };
+
+    this.$awa(overrideValues);
   }
 
   async destroyed() {
