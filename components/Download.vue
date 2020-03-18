@@ -155,6 +155,38 @@ export default class extends Vue {
     }
   }
 
+  public async getGoodIcon(): Promise<any> { 
+    var test;
+    var goodIcon = (this.manifest as any).icons.find(
+      icon => icon.sizes.includes("512") || icon.sizes.includes("192")
+    );
+
+    if(goodIcon) {
+      await this.isValidUrl(goodIcon.src).then(response => {
+        if (response && response.isValidUrl) {
+          return goodIcon;
+        }
+      });
+    }
+
+    let i = 0;
+    for (i; i < (this.manifest as any).icons.length; i++) {
+      goodIcon = (this.manifest as any).icons[i];
+      test = await this.isValidUrl(goodIcon.src).then(response => {
+        return response;
+      });
+      if (test && test.isValidUrl) {
+          break;
+      }
+    }
+    if(i === (this.manifest as any).icons.length) {
+      return test;
+    }
+    else {
+      return goodIcon;
+    }
+  }
+  
   public async isValidUrl(url): Promise<any> { 
     // CORS Anywhere is a NodeJS proxy which adds CORS headers to the proxied request.
     const response = await fetch('https://cors-anywhere.herokuapp.com/' + url)
