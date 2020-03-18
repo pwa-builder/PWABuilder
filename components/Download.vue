@@ -92,11 +92,17 @@ export default class extends Vue {
 
   async handleTWA() {
     this.isReady = false;
+    this.getGoodIcon().then(goodIcon => {
+      if (goodIcon.message !== undefined) {
+        this.isReady = true;
+        this.errorMessage = goodIcon.message;
+      }
+      else {
+        this.callTWA(goodIcon);
+    }});
+  }
 
-    const goodIcon = (this.manifest as any).icons.find(
-      icon => icon.sizes.includes("512") || icon.sizes.includes("192")
-    );
-
+  public async callTWA(goodIcon) {
     const packageid = generatePackageId((this.manifest.short_name as string) || (this.manifest.name as string));
 
     let startURL = (this.manifest.start_url as string).replace(`https://${new URL(this.siteHref).hostname}`, "");
@@ -143,15 +149,21 @@ export default class extends Vue {
           body: body
         }
       );
-      const data = await response.blob();
+      
+      if(response.status === 200) {
+        const data = await response.blob();
 
-      let url = window.URL.createObjectURL(data);
-      window.location.assign(url);
+        let url = window.URL.createObjectURL(data);
+        window.location.assign(url);
+      }
+      else {
+        this.errorMessage = `Status code: ${response.status}, Error: ${response.statusText}`;
+      }
 
       this.isReady = true;
     } catch (err) {
       this.isReady = true;
-      this.errorMessage = err.message || err;
+      this.errorMessage = `Status code: ${err.status}, Error: ${err.statusText}` || err;
     }
   }
 
