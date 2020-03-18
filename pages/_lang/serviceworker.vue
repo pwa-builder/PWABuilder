@@ -212,6 +212,14 @@ export default class extends Vue {
       if (this.serviceworker$) {
         const cleanedSW = this.serviceworker$.toString();
         await this.downloadServiceWorker(cleanedSW);
+
+        const overrideValues = {
+          uri: window.location.href,
+          pageName: `serviceWorkerDownloaded${this.serviceworker$}`,
+          pageHeight: window.innerHeight
+        };
+
+        this.$awa(overrideValues);
       }
     } catch (e) {
       console.error(e);
