@@ -155,6 +155,21 @@ export default class extends Vue {
     }
   }
 
+  public async isValidUrl(url): Promise<any> { 
+    // CORS Anywhere is a NodeJS proxy which adds CORS headers to the proxied request.
+    const response = await fetch('https://cors-anywhere.herokuapp.com/' + url)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Status code: ${response.status}, Error: ${response.statusText}`);
+        }
+        return {'isValidUrl': true }
+      })
+      .catch((error) => {
+        return { 'isValidUrl': false, 'message' : `There has been a problem with fetch operation: ${error}`};
+      });
+    return response;
+  }
+
   public async buildArchive(
     platform: string,
     parameters: string[]
