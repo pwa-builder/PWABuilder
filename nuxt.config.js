@@ -113,7 +113,8 @@ module.exports = {
       }
     ],
     script: [{
-        src: '/pwabuilder-sw-register.js'
+        src: '/pwabuilder-sw-register.js',
+        type: 'module'
       },
       {
         src: "https://az725175.vo.msecnd.net/scripts/jsll-4.js"
