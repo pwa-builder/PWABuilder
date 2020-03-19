@@ -168,11 +168,10 @@ export default class extends Vue {
   }
 
   public async getGoodIcon(): Promise<any> { 
-    var test;
+    var test =  {'isValidUrl': false, 'message' : "Icons do not have a src property with url"};
     var goodIcon = (this.manifest as any).icons.find(
-      icon => icon.sizes.includes("512") || icon.sizes.includes("192")
+      icon => (icon.sizes.includes("512") || icon.sizes.includes("192")) && !icon.src.includes("data:image")
     );
-
     if(goodIcon) {
       await this.isValidUrl(goodIcon.src).then(response => {
         if (response && response.isValidUrl) {
@@ -184,11 +183,14 @@ export default class extends Vue {
     let i = 0;
     for (i; i < (this.manifest as any).icons.length; i++) {
       goodIcon = (this.manifest as any).icons[i];
-      test = await this.isValidUrl(goodIcon.src).then(response => {
-        return response;
-      });
-      if (test && test.isValidUrl) {
-          break;
+      if (!goodIcon.src.includes("data:image"))
+      {
+        test = await this.isValidUrl(goodIcon.src).then(response => {
+          return response;
+        });
+        if (test && test.isValidUrl) {
+            break;
+        }
       }
     }
     if(i === (this.manifest as any).icons.length) {
