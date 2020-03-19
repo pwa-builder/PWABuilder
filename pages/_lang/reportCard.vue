@@ -93,8 +93,8 @@
         </p>
 
         <div id="attachSectionActions">
-          <nuxt-link @click="$awa( { 'referrerUri': 'https://www.pwabuilder.com/publish?fromHome' });" id="buildLink" to="/publish">Build My PWA</nuxt-link>
-          <nuxt-link @click="$awa( { 'referrerUri': 'https://www.pwabuilder.com/features?fromHome' });" id="featuresLink" to="/features">Feature Store</nuxt-link>
+          <nuxt-link @click="$awa( { 'referrerUri': 'https://www.pwabuilder.com/publishFromHome' });" id="buildLink" to="/publish">Build My PWA</nuxt-link>
+          <nuxt-link @click="$awa( { 'referrerUri': 'https://www.pwabuilder.com/featuresFromHome' });" id="featuresLink" to="/features">Feature Store</nuxt-link>
         </div>
       </div>
 
@@ -208,16 +208,7 @@ export default class extends Vue {
       this.getTopSamples();
     } else {
       if (window && window.location.search) {
-        const url = window.location.search.split("=")[1];
-
-        this.cleanedURL = decodeURIComponent(url);
-        this.url = this.cleanedURL;
-
-        // this.gotURL = true;
-
-        setTimeout(async () => {
-          await this.checkUrlAndGenerate();
-        }, 500);
+        this.processQueryString();
       }
     }
   }
@@ -255,6 +246,20 @@ export default class extends Vue {
     };
 
     this.$awa(overrideValues);
+    window.addEventListener("popstate", this.backAndForth);
+  }
+
+  beforeDestroy() {
+    (<any>window).removeEventListener("popstate", this.backAndForth);
+  }
+  
+  public async backAndForth(e) {
+    e.preventDefault();
+    if (window.location.href === `${window.location.origin}/`) {
+      this.reset();
+    } else if (window.location.pathname === '/') {
+      this.processQueryString();
+    } 
   }
 
   public async shareReport() {
@@ -310,9 +315,11 @@ export default class extends Vue {
 
   public async checkUrlAndGenerate() {
     this.error = null;
-
     try {
-      if (this.url$ === null || this.url$ === undefined) {
+      if (window && !window.location.search && (this.url$ !== null || this.url$ !== undefined)) {
+        this.$router.push({ name: 'index', query: { url: this.url$ }})
+      }
+      else {
         this.url$ = this.cleanedURL;
       }
 
@@ -341,6 +348,13 @@ export default class extends Vue {
 
       this.gotURL = true;
     }
+  }
+
+  public async processQueryString() {
+      const url = window.location.search.split("=")[1];
+      this.cleanedURL = decodeURIComponent(url);
+      this.url = this.cleanedURL;
+      this.checkUrlAndGenerate();
   }
 
   public async getTopSamples() {

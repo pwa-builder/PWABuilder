@@ -60,22 +60,6 @@
 
       <section id="rightSide" class="swRightSide">
         <CodeViewer
-          v-if="codeViewerLoadingDelayTop"
-          class="topViewer"
-          color="#F0F0F0"
-          theme="lighter"
-          code-type="javascript"
-          :size="viewerSize"
-          :code="webPreview"
-          :title="$t('serviceworker.code_preview_web')"
-          :showToolbar="false"
-          :showHeader="true"
-          monaco-id="topViewerId"
-        >
-          <h3>Add this code to your landing page in a &lt;script&gt; tag:</h3>
-        </CodeViewer>
-
-        <CodeViewer
           v-if="codeViewerLoadingDelayBottom"
           class="bottomViewer"
           color="#F0F0F0"
@@ -89,6 +73,22 @@
           monaco-id="bottomViewerId"
         >
           <h3>Add this code to a file named "pwabuilder-sw.js" on your site root:</h3>
+        </CodeViewer>
+
+        <CodeViewer
+          v-if="codeViewerLoadingDelayTop"
+          class="topViewer"
+          color="#F0F0F0"
+          theme="lighter"
+          code-type="javascript"
+          :size="viewerSize"
+          :code="webPreview"
+          :title="$t('serviceworker.code_preview_web')"
+          :showToolbar="false"
+          :showHeader="true"
+          monaco-id="topViewerId"
+        >
+          <h3>Add this code to your landing page in a &lt;script&gt; tag:</h3>
         </CodeViewer>
       </section>
     </main>
@@ -181,6 +181,14 @@ export default class extends Vue {
 
   public selectServiceWorker(id: number) {
     this.serviceworker$ = id;
+
+    const overrideValues = {
+      uri: window.location.href,
+      pageName: `serviceWorker${id}`,
+      pageHeight: window.innerHeight
+    };
+
+    this.$awa(overrideValues);
   }
 
   async destroyed() {
@@ -204,6 +212,14 @@ export default class extends Vue {
       if (this.serviceworker$) {
         const cleanedSW = this.serviceworker$.toString();
         await this.downloadServiceWorker(cleanedSW);
+
+        const overrideValues = {
+          uri: window.location.href,
+          pageName: `serviceWorkerDownloaded${this.serviceworker$}`,
+          pageHeight: window.innerHeight
+        };
+
+        this.$awa(overrideValues);
       }
     } catch (e) {
       console.error(e);
@@ -212,8 +228,7 @@ export default class extends Vue {
 
     if (this.archive) {
       window.location.href = this.archive;
-    }
-    else {
+    } else {
       console.error("no archive");
     }
 
@@ -233,7 +248,7 @@ export default class extends Vue {
   async onServiceworker$Changed(): Promise<void> {
     try {
       await this.getCode(this.serviceworker$);
-      
+
       this.analyze();
     } catch (e) {
       this.error = e;
@@ -321,8 +336,6 @@ footer a {
     }
 
     #inputSection {
-
-
       #inputContainer {
         cursor: pointer;
         border-radius: 4px;
@@ -448,7 +461,7 @@ footer a {
 
 #rightSide {
   width: 55%;
-  max-height: 80%; 
+  max-height: 80%;
 }
 #leftSide {
   width: 40%;
