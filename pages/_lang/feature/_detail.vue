@@ -341,7 +341,7 @@ declare var awa: any;
     rgb(60, 60, 60) 57.68%
   );
   color: white;
-  font-family: Poppins;
+  font-family: sans-serif;
   font-style: normal;
   font-weight: 600;
   font-size: 12px;
@@ -357,7 +357,7 @@ declare var awa: any;
 #clientIdBlock #generatedDiv {
   color: white;
   width: 150.33px;
-  font-family: Poppins;
+  font-family: sans-serif;
   font-style: normal;
   font-weight: 600;
   font-size: 12px;
