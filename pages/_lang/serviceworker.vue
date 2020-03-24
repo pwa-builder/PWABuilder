@@ -320,7 +320,7 @@ footer a {
       padding-top: 40px;
 
       h2 {
-        font-family: Poppins;
+        font-family: sans-serif;
         font-style: normal;
         font-weight: 600;
         font-size: 24px;
@@ -405,7 +405,7 @@ footer a {
       height: 44px;
       border-radius: 20px;
       border: none;
-      font-family: Poppins;
+      font-family: sans-serif;
       font-style: normal;
       font-weight: 600;
       font-size: 14px;

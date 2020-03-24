@@ -242,7 +242,7 @@ header {
 
     a {
       padding-bottom: 6px;
-      font-family: Poppins;
+      font-family: sans-serif;
       font-style: normal;
       font-weight: 600;
       font-size: 14px;
@@ -420,7 +420,7 @@ header {
     flex-direction: column;
     padding-right: 32px;
 
-    font-family: Poppins;
+    font-family: sans-serif;
     font-style: normal;
     font-weight: 800;
     font-size: 32px;
@@ -454,7 +454,7 @@ header {
     justify-content: center;
     padding-left: 20px;
     padding-right: 20px;
-    font-family: Poppins;
+    font-family: sans-serif;
     font-style: normal;
     font-weight: 600;
     font-size: 14px;

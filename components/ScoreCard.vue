@@ -736,7 +736,7 @@ export default class extends Vue {
   h3 {
     color: #707070;
 
-    font-family: Poppins;
+    font-family: sans-serif;
     font-style: normal;
     font-weight: 600;
     font-size: 12px;
