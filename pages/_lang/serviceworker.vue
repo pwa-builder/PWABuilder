@@ -60,22 +60,6 @@
 
       <section id="rightSide" class="swRightSide">
         <CodeViewer
-          v-if="codeViewerLoadingDelayTop"
-          class="topViewer"
-          color="#F0F0F0"
-          theme="lighter"
-          code-type="javascript"
-          :size="viewerSize"
-          :code="webPreview"
-          :title="$t('serviceworker.code_preview_web')"
-          :showToolbar="false"
-          :showHeader="true"
-          monaco-id="topViewerId"
-        >
-          <h3>Add this code to your landing page in a &lt;script&gt; tag:</h3>
-        </CodeViewer>
-
-        <CodeViewer
           v-if="codeViewerLoadingDelayBottom"
           class="bottomViewer"
           color="#F0F0F0"
@@ -89,6 +73,22 @@
           monaco-id="bottomViewerId"
         >
           <h3>Add this code to a file named "pwabuilder-sw.js" on your site root:</h3>
+        </CodeViewer>
+
+        <CodeViewer
+          v-if="codeViewerLoadingDelayTop"
+          class="topViewer"
+          color="#F0F0F0"
+          theme="lighter"
+          code-type="javascript"
+          :size="viewerSize"
+          :code="webPreview"
+          :title="$t('serviceworker.code_preview_web')"
+          :showToolbar="false"
+          :showHeader="true"
+          monaco-id="topViewerId"
+        >
+          <h3>Add this code to your landing page in a &lt;script&gt; tag:</h3>
         </CodeViewer>
       </section>
     </main>
