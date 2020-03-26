@@ -19,7 +19,7 @@
     <main>
       <div v-if="!gotURL" id="inputSection">
         <div id="topHalfHome">
-          <h1>Quickly and easily turn your website into an app!</h1>
+          <h1 id="topHalfHeader">Quickly and easily turn your website into an app!</h1>
 
           <p>
             It's super easy to get started. Just enter the URL of your website
@@ -601,6 +601,10 @@ h2 {
   line-height: 54px;
   letter-spacing: -0.02em;
   height: 36px;
+}
+
+#topHalfHeader {
+  font-weight: bold;
 }
 
 #inputSection {
