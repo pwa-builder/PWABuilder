@@ -6,9 +6,15 @@
 
     <section id="headerSection">
       <div>
-        <h1 id="featurePageHeader">Features</h1>
+        <h1 v-if="!fromStarter" id="featurePageHeader">Features</h1>
+        <h1 v-if="fromStarter">Congrats!</h1>
 
-        <p>Add that special something to supercharge your PWA. These cross-platform features can make your website work more like an app.</p>
+        <p v-if="!fromStarter">Add that special something to supercharge your PWA. These cross-platform features can make your website work more like an app.</p>
+
+        <p v-if="fromStarter">
+          You have downloaded the PWABuilder pwa-starter and are now ready to start building! Check out the <a href="https://github.com/pwa-builder/pwa-starter/blob/master/README.md">README.md</a> file in the downloaded folder for info on getting started.
+          You can also check out our features below to start adding even more functionality to your new PWA!
+        </p>
       </div>
     </section>
 
@@ -239,6 +245,8 @@ export default class extends Vue {
   showSamsungSamples = false;
   showTeamsSamples = false;
 
+  fromStarter = false;
+
   currentPendingSample: windowsStore.Sample | null = null;
 
   selectedSamples: windowsStore.Sample[] = [];
@@ -277,6 +285,22 @@ export default class extends Vue {
     };
 
     this.$awa(overrideValues);
+
+    this.observeURL();
+  }
+
+  observeURL() {
+    // features?from=starter
+
+    const url = window.location.search.split("=")[1];
+
+    if (url) {
+      const code = decodeURIComponent(url);
+
+      if (code === "starter") {
+        this.fromStarter = true;
+      }
+    }
   }
 
   doInterObserve() {
@@ -775,6 +799,12 @@ header {
     font-weight: normal;
     font-size: 16px;
     line-height: 28px;
+
+    max-width: 32em;
+
+    a {
+      color: #622392;
+    }
   }
 }
 

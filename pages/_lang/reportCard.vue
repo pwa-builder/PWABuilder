@@ -329,6 +329,8 @@ export default class extends Vue {
     anchor.click();
 
     window.URL.revokeObjectURL(url);
+
+    this.$router.push('/features?from=starter');
   }
 
   async showToast() {
