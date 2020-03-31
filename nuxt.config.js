@@ -57,11 +57,7 @@ module.exports = {
       },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css?family=Poppins:600,700&display=swap"
-      },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css?family=Open+Sans:400,600,700&display=swap"
+        href: "/css/all.css"
       },
       {
         rel: "stylesheet",
@@ -120,11 +116,6 @@ module.exports = {
         src: "https://az725175.vo.msecnd.net/scripts/jsll-4.js"
       },
       {
-        src: "https://use.fontawesome.com/releases/v5.0.10/js/all.js",
-        async: true,
-        defer: true
-      },
-      {
         src: '/awa-register.js'
       },
       {
@@ -137,11 +128,6 @@ module.exports = {
       {
         src: '/platformPop.js',
         type: 'module'
-      },
-      {
-        src: "https://fluentweb-nightly-static.netlify.com/fluentweb/fluentweb.js",
-        async: true,
-        defer: true
       },
       {
         src: 'https://unpkg.com/@ionic/core@latest/dist/ionic.js'

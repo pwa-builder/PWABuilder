@@ -745,7 +745,7 @@ footer a {
       margin-right: 20px;
 
       h2 {
-        font-family: poppins;
+        font-family: sans-serif;
         font-weight: 600;
         font-size: 24px;
       }
@@ -1013,7 +1013,7 @@ footer a {
 }
 
 #androidModalP {
-  font-family: Poppins;
+  font-family: sans-serif;
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
@@ -1053,7 +1053,7 @@ footer a {
   height: 40px;
   padding-left: 20px;
   padding-right: 20px;
-  font-family: Poppins;
+  font-family: sans-serif;
   font-style: normal;
   font-weight: 600;
   display: flex;

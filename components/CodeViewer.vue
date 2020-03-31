@@ -287,7 +287,7 @@ export default class extends Vue {
     z-index: 9999;
 
     h3 {
-      font-family: Poppins;
+      font-family: sans-serif;
       font-style: normal;
       font-weight: 600;
       font-size: 16px;
