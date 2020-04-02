@@ -330,6 +330,15 @@ export default class extends Vue {
 
     window.URL.revokeObjectURL(url);
 
+    const overrideValues = {
+      behavior: 0,
+      uri: window.location.href,
+      pageName: "downloadedStarter",
+      pageHeight: window.innerHeight
+    };
+
+    this.$awa(overrideValues);
+
     this.$router.push('/features?from=starter');
   }
 
