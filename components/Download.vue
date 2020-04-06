@@ -92,7 +92,7 @@ export default class extends Vue {
 
   async handleTWA() {
     this.isReady = false;
-    this.getGoodIcon().then(goodIcon => {
+    await this.getGoodIcon().then(goodIcon => {
       if (goodIcon.message !== undefined) {
         this.isReady = true;
         this.errorMessage = goodIcon.message;
@@ -168,52 +168,79 @@ export default class extends Vue {
   }
 
   public async getGoodIcon(): Promise<any> { 
-    var test =  {'isValidUrl': false, 'message' : "Icons do not have a src property with url"};
     var goodIcon = (this.manifest as any).icons.find(
       icon => (icon.sizes.includes("512") || icon.sizes.includes("192")) && !icon.src.includes("data:image")
     );
     if(goodIcon) {
-      await this.isValidUrl(goodIcon.src).then(response => {
-        if (response && response.isValidUrl) {
-          return goodIcon;
+      await this.isValidUrl(goodIcon.src).then(
+        function fulfilled() {
+            return goodIcon;
+        },
+        
+        function rejected() {
+          // Continue to iterate icons collection to find a good icon.
         }
-      });
+      );
     }
 
     let i = 0;
     for (i; i < (this.manifest as any).icons.length; i++) {
       goodIcon = (this.manifest as any).icons[i];
+      var imageFound = false;
       if (!goodIcon.src.includes("data:image"))
       {
-        test = await this.isValidUrl(goodIcon.src).then(response => {
-          return response;
-        });
-        if (test && test.isValidUrl) {
+        await this.isValidUrl(goodIcon.src).then(      
+          function fulfilled() {
+            imageFound = true;
+          },
+
+          function rejected() {
+            imageFound = false;
+          }
+        );
+        if (imageFound) {
             break;
         }
       }
     }
+
     if(i === (this.manifest as any).icons.length) {
-      return test;
+      return { 'isValidUrl': false, 'message' : `${goodIcon.src} is not found`};
     }
     else {
       return goodIcon;
     }
   }
   
-  public async isValidUrl(url): Promise<any> { 
-    // CORS Anywhere is a NodeJS proxy which adds CORS headers to the proxied request.
-    const response = await fetch('https://cors-anywhere.herokuapp.com/' + url)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Status code: ${response.status}, Error: ${response.statusText}`);
-        }
-        return {'isValidUrl': true }
-      })
-      .catch((error) => {
-        return { 'isValidUrl': false, 'message' : `There has been a problem with fetch operation: ${error}`};
-      });
-    return response;
+
+  public isValidUrl(url) { 
+    const imgPromise = new Promise(function imgPromise(resolve, reject) {
+
+        const imgElement = new Image();
+
+        // When image is loaded, resolve the promise
+        imgElement.addEventListener('load', function imgOnLoad() {
+            resolve(this);
+        });
+
+        // When there's an error during load, reject the promise
+        imgElement.addEventListener('error', function imgOnError() {
+            reject();
+        })
+
+        imgElement.src = url;
+
+    });
+
+    return imgPromise;
+  }
+
+  public imageFound() {
+      return {'isValidUrl': true };
+  }
+
+  public imageNotFound() {
+      return { 'isValidUrl': false};
   }
 
   public async buildArchive(
