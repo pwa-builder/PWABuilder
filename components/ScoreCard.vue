@@ -612,7 +612,8 @@ export default class extends Vue {
         this.$emit("serviceWorkerTestDone", { score: this.swScore });
       }
     } else {
-      const response = await fetch(`${apiUrl}=${this.url}`);
+      var cleanUrl = this.trimSuffixChar(this.url, '.');
+      const response = await fetch(`${apiUrl}=${cleanUrl}`);
       const data = await response.json();
 
       if (data.swURL) {
@@ -682,6 +683,13 @@ export default class extends Vue {
         return;
       }
     }
+  }
+
+  private trimSuffixChar(string, charToRemove) {
+    while(string.charAt(string.length-1) === charToRemove) {
+        string = string.substring(0, string.length-1);
+    }
+    return string;
   }
 }
 </script>
