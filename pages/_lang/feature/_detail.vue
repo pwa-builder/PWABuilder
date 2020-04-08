@@ -103,6 +103,10 @@ export default class extends Vue {
       mappedName: "Install your PWA"
     },
     {
+      realName: "authButton",
+      mappedName: "Sign In with Microsoft, Google, Facebook"
+    },
+    {
       realName: "midi",
       mappedName: "Web MIDI"
     },
@@ -272,7 +276,9 @@ export default class extends Vue {
   }
 
   copyToClipboard(str) {
-    if (document) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(str);
+    } else if (document) {
       const el = document.createElement("textarea"); // Create a <textarea> element
       el.value = str; // Set its value to the string that you want copied
       el.setAttribute("readonly", ""); // Make it readonly to be tamper-proof
@@ -375,7 +381,38 @@ declare var awa: any;
 }
 
 #docsMain #contentContainer img {
+  // responsive images
+  max-width: 100%;
+  height: auto;
+}
+
+#docsMain #contentContainer table {
+  display: block;
   width: 100%;
+  overflow: auto;
+
+  thead {
+    box-sizing: border-box;
+
+    th {
+      text-align: center;
+      font-size: 1.1em !important;
+      font-weight: 600;
+      padding: 10px;
+    }
+  }
+
+  tr {
+    background-color: white;
+    border: 1px solid #dfe2e5;
+    border-spacing: 0;
+    border-collapse: collapse;
+  }
+
+  td {
+    padding: 6px 13px;
+    border: 1px solid #dfe2e5;
+  }
 }
 
 .codeBlockHeader {
@@ -510,18 +547,18 @@ declare var awa: any;
     text-decoration: underline;
   }
 
-  #leftSide > table > tbody > tr:nth-child(1) > td:nth-child(1),
-  #leftSide > table > tbody > tr:nth-child(2) > td:nth-child(1) {
-    font-size: 12px;
-    font-weight: bold;
-    width: 140px;
-  }
+  // #leftSide > table > tbody > tr:nth-child(1) > td:nth-child(1),
+  // #leftSide > table > tbody > tr:nth-child(2) > td:nth-child(1) {
+  //   font-size: 12px;
+  //   font-weight: bold;
+  //   width: 140px;
+  // }
 
-  #leftSide > table > tbody > tr:nth-child(1) > td:nth-child(2),
-  #leftSide > table > tbody > tr:nth-child(2) > td:nth-child(2) {
-    font-size: 14px;
-    font-weight: normal;
-  }
+  // #leftSide > table > tbody > tr:nth-child(1) > td:nth-child(2),
+  // #leftSide > table > tbody > tr:nth-child(2) > td:nth-child(2) {
+  //   font-size: 14px;
+  //   font-weight: normal;
+  // }
 
   #contentContainer {
     display: flex;
@@ -535,8 +572,15 @@ declare var awa: any;
       margin-right: 20px;
 
       h3 {
-        font-size: 18px;
+        font-size: 24px;
         font-weight: bold;
+        margin: 24px 0 16px 0;
+      }
+
+      h4 {
+        font-size: 20px;
+        font-weight: bold;
+        margin: 24px 0 16px 0;
       }
 
       p {
@@ -560,8 +604,9 @@ declare var awa: any;
       margin-left: 20px;
 
       h3 {
-        font-size: 18px;
+        font-size: 24px;
         font-weight: bold;
+        margin: 24px 0 16px 0;
       }
     }
   }
