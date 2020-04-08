@@ -168,52 +168,54 @@ export default class extends Vue {
   }
 
   public async getGoodIcon(): Promise<any> { 
-    var goodIcon = (this.manifest as any).icons.find(
-      icon => (icon.sizes.includes("512") || icon.sizes.includes("192")) && !icon.src.includes("data:image")
-    );
-    if(goodIcon) {
-      await this.isValidUrl(goodIcon.src).then(
-        function fulfilled() {
-            return goodIcon;
-        },
-        
-        function rejected() {
-          // Continue to iterate icons collection to find a good icon.
-        }
+    return new Promise<any>(async resolve => {
+      var goodIcon = (this.manifest as any).icons.find(
+        icon => (icon.sizes.includes("512") || icon.sizes.includes("192")) && !icon.src.includes("data:image")
       );
-    }
-
-    let i = 0;
-    for (i; i < (this.manifest as any).icons.length; i++) {
-      goodIcon = (this.manifest as any).icons[i];
-      var imageFound = false;
-      if (!goodIcon.src.includes("data:image"))
-      {
-        await this.isValidUrl(goodIcon.src).then(      
+      if(goodIcon) {
+        await this.isValidUrl(goodIcon.src).then(
           function fulfilled() {
-            imageFound = true;
+              resolve(goodIcon);
           },
-
+          
           function rejected() {
-            imageFound = false;
+            // Continue to iterate icons collection to find a good icon.
           }
         );
-        if (imageFound) {
-            break;
+      }
+
+      let i = 0;
+      for (i; i < (this.manifest as any).icons.length; i++) {
+        goodIcon = (this.manifest as any).icons[i];
+        var imageFound = false;
+        if (!goodIcon.src.includes("data:image"))
+        {
+          await this.isValidUrl(goodIcon.src).then(      
+            function fulfilled() {
+              imageFound = true;
+            },
+
+            function rejected() {
+              imageFound = false;
+            }
+          );
+          if (imageFound) {
+              break;
+          }
         }
       }
-    }
 
-    if(i === (this.manifest as any).icons.length) {
-      return { 'isValidUrl': false, 'message' : `${goodIcon.src} is not found`};
-    }
-    else {
-      return goodIcon;
-    }
+      if(i === (this.manifest as any).icons.length) {
+        resolve({'isValidUrl': false, 'message' : `${goodIcon.src} is not found`});
+      }
+      else {
+        resolve(goodIcon);
+      }
+    });
   }
   
 
-  public isValidUrl(url) { 
+  public async isValidUrl(url) {
     const imgPromise = new Promise(function imgPromise(resolve, reject) {
 
         const imgElement = new Image();
