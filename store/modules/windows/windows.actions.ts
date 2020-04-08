@@ -50,41 +50,47 @@ export const actions: Actions<State, RootState> = {
                   return result;
                 };
           
-                let results = new Array<Sample>();
-
-                results.push(
-                  ({
-                    title: "Use Geolocation",
-                    description: "A simple component that uses the Gelocation API to allow your app to ask for the users current location"
-                  } as any),
-                  ({
-                    title: "Copy to Clipboard",
-                    description: "A simple component that uses the Clipboard API to allow your app to copy text to the users clipboard"
-                  } as any),
-                  ({
+                let results = [
+                  {
                     title: "Install your PWA",
                     description: "A simple component that gives users a button to install your PWA directly from the browser"
-                  } as any),
-                  ({
+                  },
+                  {
+                    title: "Sign In with Microsoft, Google, Facebook",
+                    description: "Web component that lets your users sign-in using their Microsoft, Google, or Facebook account. Your app receives their email address, name, and profile picture."
+                  },
+                  {
+                    title: "Copy to Clipboard",
+                    description: "A simple component that uses the Clipboard API to allow your app to copy text to the users clipboard"
+                  },
+                  {
+                    title: "Use Geolocation",
+                    description: "A simple component that uses the Gelocation API to allow your app to ask for the users current location"
+                  },
+                  {
                     title: "Adaptive Cards",
                     description: " A component that helps you take advantage of Adaptive Cards."
-                  } as any),
-                  ({
+                  },
+                  {
+                    title: "Immersive Reader",
+                    description: "Immersive Reader mode makes it easier for users to read your content on the web"
+                  },
+                  {
                     title: "Web MIDI",
                     description: "A simple script that gives your app the ability to connect to a MIDI device such as a keyboard"
-                  } as any),
-                  ({
+                  },
+                  {
                     title: "People Picker Graph Component",
                     description: "The People Picker component enables the user to view, add, or remove people objects from a dynamic drop-down list as they type."
-                  } as any),
-                  ({
+                  },
+                  {
                     title: "Person Graph Component",
                     description: "The person component is used to display a person or contact by using their photo, name, and/or email address."
-                  } as any),
-                  ({
+                  },
+                  {
                     title: "Tasks Graph Component",
                     description: "The Tasks component enables the user to view, add, remove, complete, or edit tasks. It works with tasks in Microsoft Planner or Microsoft To-Do."
-                  } as any),
+                  },
                   /*({
                     title: "Samsung Smart View",
                     description: "A Smart View enabled app provides separate views which are connected and running on different devices."
@@ -105,11 +111,7 @@ export const actions: Actions<State, RootState> = {
                     title: "Get teams from Microsoft Teams",
                     description: "Get the teams a signed in user is a member of in Teams"
                   } as any),*/
-                  ({
-                    title: "Immersive Reader",
-                    description: "Immersive Reader mode makes it easier for users to read your content on the web"
-                  } as any)
-                );
+                ];
 
                 if (res.Sources) {
                   for (let s = 0; s < res.Sources.length; s++) {
@@ -132,7 +134,7 @@ export const actions: Actions<State, RootState> = {
                         newItem.title = "Activity Graph Component";
                       }
           
-                      results.push(newItem);
+                      results.push(newItem as any);
                     }
                   }
                 }
