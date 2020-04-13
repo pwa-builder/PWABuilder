@@ -637,7 +637,7 @@ export default class extends Vue {
   }
 
   public handleEditorValue(value) {
-    if (this.basicManifest !== false) {
+    if (helper.isValidJson(value)){
       var editedManifest = JSON.parse(value);
       this.updateManifest(editedManifest);
       this.manifest$ = { ...this.manifest };
