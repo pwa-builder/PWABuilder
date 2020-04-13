@@ -636,10 +636,11 @@ export default class extends Vue {
     this.basicManifest = false;
   }
 
-  public handleEditorValue() {
+  public handleEditorValue(value) {
     if (this.basicManifest !== false) {
-      // this.manifest = ev;
-      this.updateManifest(this.manifest$);
+      var editedManifest = JSON.parse(value);
+      this.updateManifest(editedManifest);
+      this.manifest$ = { ...this.manifest };
     }
   }
 
