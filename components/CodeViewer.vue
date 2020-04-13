@@ -16,7 +16,7 @@
         @editorDidMount="editorMount"
         :theme="`${theme}Theme`"
         :language="codeType"
-        v-model="code"
+        v-model="data$"
         >
       </MonacoEditor>
     </div>
@@ -119,7 +119,7 @@ export default class extends Vue {
   public isReady = true;
   public downloadButtonMessage = "publish.download_manifest";
   public errorNumber = 0;
-
+  public data$  = "";
   public editor : MonacoEditor.editor;
 
   public monacoOptions = {
@@ -141,6 +141,10 @@ export default class extends Vue {
   errors: any[] = [];
   textCopied = false;
 
+  public created(): void {
+    this.data$ = this.code ;
+  }
+
   mounted():void {
     this.defineTheme();
     (<any>window).addEventListener('resize', this.onResize);
@@ -150,8 +154,8 @@ export default class extends Vue {
     (<any>window).removeEventListener("resize", this.onResize);
   }
 
-  onCodeChange(value):void {
-    this.$emit("editorValue", value);
+  onCodeChange():void {
+    this.$emit("editorValue", this.data$);
   }
 
   onDecorationsChange():void {
@@ -178,7 +182,7 @@ export default class extends Vue {
   public reloadEditor(): void {
     this.monacoId && (<any>window).monaco.editor.create(document.getElementById(this.monacoId), {
             language: this.codeType,
-            value: this.code,
+            value: this.data$,
             lineNumbers: "on",
             fixedOverflowWidgets: true,
             wordWrap: "on",
@@ -208,9 +212,7 @@ export default class extends Vue {
 
   @Watch("code")
   public setMonacoValue():void {
-    // this logic will be changed when editing "from manifest to form" is in place.
-    this.removeEditor();
-    this.reloadEditor();
+    this.data$ = this.code ;
   }
 
   editorMount(editor):void {
