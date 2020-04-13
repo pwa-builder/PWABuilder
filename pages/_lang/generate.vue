@@ -289,7 +289,7 @@
         <CodeViewer
           code-type="json"
           v-on:invalidManifest="invalidManifest()"
-          v-on:editorValue="handleEditorValue($event)"
+          v-on:editorValue="updateManifestFn($event)"
           v-if="seeEditor"
           :code="getCode()"
           :title="$t('generate.w3c_manifest')"
@@ -395,6 +395,7 @@ export default class extends Vue {
   public  textareaOutlineColor = '';
   public showCopy = true;
   public isImageBroken: boolean = false;
+  public updateManifestFn = helper.debounce(this.handleEditorValue, 3000, false);
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
