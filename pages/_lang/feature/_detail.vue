@@ -87,18 +87,6 @@ export default class extends Vue {
       mappedName: "Create Share"
     },
     {
-      realName: "geolocation",
-      mappedName: "Use Geolocation"
-    },
-    {
-      realName: "clipboard",
-      mappedName: "Copy to Clipboard"
-    },
-    {
-      realName: "adaptiveCards",
-      mappedName: "Adaptive Cards"
-    },
-    {
       realName: "installButton",
       mappedName: "Install your PWA"
     },
@@ -547,28 +535,15 @@ declare var awa: any;
     text-decoration: underline;
   }
 
-  // #leftSide > table > tbody > tr:nth-child(1) > td:nth-child(1),
-  // #leftSide > table > tbody > tr:nth-child(2) > td:nth-child(1) {
-  //   font-size: 12px;
-  //   font-weight: bold;
-  //   width: 140px;
-  // }
-
-  // #leftSide > table > tbody > tr:nth-child(1) > td:nth-child(2),
-  // #leftSide > table > tbody > tr:nth-child(2) > td:nth-child(2) {
-  //   font-size: 14px;
-  //   font-weight: normal;
-  // }
-
   #contentContainer {
     display: flex;
-    padding-top: 30px;
     padding-left: 159px;
     padding-right: 159px;
+    flex-direction: column-reverse;
 
     #leftSide {
       flex: 1;
-      width: 50%;
+      // width: 50%;
       margin-right: 20px;
 
       h3 {
@@ -600,8 +575,7 @@ declare var awa: any;
     #rightSide {
       display: initial;
       flex: 1;
-      width: 50%;
-      margin-left: 20px;
+      margin-top: 28px;
 
       h3 {
         font-size: 24px;
@@ -657,7 +631,6 @@ declare var awa: any;
 
 @media (max-width: 650px) {
   #docsMain #contentContainer {
-    flex-direction: column;
     padding-left: 25px;
     padding-right: 25px;
   }
@@ -667,10 +640,6 @@ declare var awa: any;
     width: 100%;
     margin-right: 0px;
     margin-left: 0px;
-  }
-
-  #docsMain #contentContainer #rightSide {
-    margin-top: 4em;
   }
 }
 
@@ -693,5 +662,19 @@ declare var awa: any;
   #featDetailShareButton {
     display: none;
   }
+}
+
+div#rightSide::before {
+    content: "Quick startup guide";
+    font-size: 28px;
+    font-weight: bold;
+    margin: 28px 0px 16px 0;
+}
+
+div#leftSide::before {
+    content: "Documentation";
+    font-size: 28px;
+    font-weight: bold;
+    margin: 28px 0px 16px 0;
 }
 </style>

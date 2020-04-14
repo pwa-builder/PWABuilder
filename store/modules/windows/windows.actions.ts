@@ -60,18 +60,6 @@ export const actions: Actions<State, RootState> = {
                     description: "Web component that lets your users sign-in using their Microsoft, Google, or Facebook account. Your app receives their email address, name, and profile picture."
                   },
                   {
-                    title: "Copy to Clipboard",
-                    description: "A simple component that uses the Clipboard API to allow your app to copy text to the users clipboard"
-                  },
-                  {
-                    title: "Use Geolocation",
-                    description: "A simple component that uses the Gelocation API to allow your app to ask for the users current location"
-                  },
-                  {
-                    title: "Adaptive Cards",
-                    description: " A component that helps you take advantage of Adaptive Cards."
-                  },
-                  {
                     title: "Immersive Reader",
                     description: "Immersive Reader mode makes it easier for users to read your content on the web"
                   },
