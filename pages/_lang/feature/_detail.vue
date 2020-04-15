@@ -153,8 +153,6 @@ export default class extends Vue {
       pageHeight: window.innerHeight
     };
 
-    this.$awa(overrideValues);
-
     this.snippitMap.forEach(async snippit => {
       if (snippit.mappedName === this.$route.params.featureDetail) {
         this.currentSample = snippit;
@@ -185,6 +183,8 @@ export default class extends Vue {
         });
       }
     });
+
+    this.$awa(overrideValues);
   }
 
   generateID() {
