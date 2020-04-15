@@ -120,6 +120,14 @@
                 <div class="button-holder icons">
                   <div class="l-inline">
                     <button
+                      id="iconDownloadButton"
+                      class="work-button l-generator-button"
+                      @click="onClickDownloadAll()"
+                    >Download All</button>
+                  </div>
+                  <div class="l-inline">
+
+                    <button
                       id="iconUploadButton"
                       class="work-button l-generator-button"
                       @click="onClickUploadIcon()"
@@ -450,6 +458,11 @@ export default class extends Vue {
     this.manifest$ = { ...this.manifest };
   }
 
+  public onClickDownloadAll(): void {
+    // TODO
+    console.log("clicked download all")
+  }
+
   public onChangeSimpleInput(): void {
     try {
       this.commitManifest(this.manifest$);
@@ -460,7 +473,7 @@ export default class extends Vue {
   }
 
   public filterIcons(icons): any {
-    return icons.filter(icon => { 
+    return icons.filter(icon => {
       if (!icon.generated || icon.src.indexOf('data') === 0)
       {
         return icon;
@@ -468,7 +481,7 @@ export default class extends Vue {
     });
   }
 
-  public checkBrokenImage(icons): any { 
+  public checkBrokenImage(icons): any {
     icons.forEach(icon => {
       if (icon.generated && icon.src.indexOf('data') !== 0)
       {
@@ -487,7 +500,7 @@ export default class extends Vue {
     // This method is only called on keypress (not when entered is clicked)
     this.ifEntered = false;
     this.textareaOutlineColor = '';
-  } 
+  }
 
   public onClickRemoveIcon(icon: generator.Icon): void {
     this.removeIcon(icon);
@@ -537,7 +550,7 @@ export default class extends Vue {
     });
     return relatedApplicationscons.toString();
   }
-  
+
   private getCustomMembers(): string {
     if (this.members.length < 1) {
       return "";
@@ -574,7 +587,7 @@ export default class extends Vue {
           break;
       }
     }
-    // Removing the last ',' 
+    // Removing the last ','
     manifest = manifest.substring(0, manifest.length-2);
     manifest += this.getCustomMembers();
     return `{\n${manifest}\n}`;
@@ -774,9 +787,33 @@ footer a {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  .button-holder.icons {
+    height: 90px;
+    display: flex;
+    align-items: center;
+    flex-flow: column;
+    justify-content: space-between;
+  }
   .iconUploadHeader {
     padding-top: 0px !important;
     font-size: 16px;
+  }
+  #iconDownloadButton {
+    width: 116px;
+    height: 40px;
+    background: transparent;
+    color: #3c3c3c;
+    font-weight: bold;
+    border-radius: 20px;
+    border: 1px solid #3c3c3c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
   }
   #iconUploadButton {
     width: 104px;
@@ -985,7 +1022,7 @@ footer a {
   }
 }
   #rightSide {
-    width: 55%; 
+    width: 55%;
   }
   #leftSide {
     width: 40%;
