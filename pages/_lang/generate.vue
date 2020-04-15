@@ -371,6 +371,14 @@ import ColorSelector from "~/components/ColorSelector.vue";
 import HubHeader from "~/components/HubHeader.vue";
 import * as generator from "~/store/modules/generator";
 import helper from '~/utils/helper';
+import JSZip from "jszip";
+import { saveAs } from 'file-saver';
+import { Icon } from "~/store/modules/generator";
+
+// Just for testin
+window.JSZip = JSZip;
+window.saveAs = saveAs;
+
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
 const GeneratorGetters = namespace(generator.name, Getter);
@@ -459,8 +467,59 @@ export default class extends Vue {
   }
 
   public onClickDownloadAll(): void {
-    // TODO
-    console.log("clicked download all")
+    const zip = new JSZip();
+
+    let index = 0;
+    let length = this.icons.length
+    let count = 0;
+    for (; index < length; index++) {
+      const metadata = this.icons[index]
+      const filename = this.generateFilename(metadata)
+      const file = this.getData(metadata)
+      const options = this.jsZipOptions(metadata)
+
+      console.log(metadata, filename, file, options)
+
+      // accepts promises... but doesn't seem to be handling them properly
+      zip.file(filename, file, options);
+      count++;
+    }
+
+    // no point in returning an empty zip
+    if (count > 0) {
+      zip
+        .generateAsync({type: 'blob'})
+        .then(function (content) {
+          saveAs(content, "pwa_icons.zip")
+        })
+    }
+  }
+
+  private generateFilename(metadata: Icon): string {
+    return "icon-" + metadata.sizes + ".png"
+  }
+
+  private getData(metadata: Icon): string | Blob | Promise<Blob> {
+    return fetch(metadata.src, {
+        method: 'GET',
+        credentials: 'include',
+        mode: 'no-cors',
+        cache: 'default',
+      })
+        .then(res => {
+          return res.blob()
+        })
+        .catch(error => {
+          console.log(error)
+          return new Blob()
+        })
+  }
+
+  private jsZipOptions(metadata: Icon): any {
+    if (metadata.src.startsWith("data:")) {
+      return undefined
+    }
+    // support base64 + atob()
   }
 
   public onChangeSimpleInput(): void {
