@@ -24,6 +24,7 @@ export interface StaticContent {
 export interface Icon {
     src: string;
     generated?: boolean;
+    type: string;
     sizes: string;
 }
 
