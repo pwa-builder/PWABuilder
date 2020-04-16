@@ -375,11 +375,9 @@ export default class extends Vue {
   }
 
   showAuthSamplesMethod() {
-    this.authSamples = this.samples.filter(sample =>
-      (sample.title as string).toLowerCase().includes("authentication") || (sample.title as string).toLowerCase().includes("contacts")
-      || (sample.title as string).toLowerCase().includes("people") || (sample.title as string).toLowerCase().includes("person")
-      || (sample.title as string).toLowerCase().includes("login")
-    );
+    const authIndicators = ["authentication", "people", "login", "sign in", "person", "contacts"];
+    this.authSamples = this.samples.filter(sample => 
+      authIndicators.some(indicator => sample.title && sample.title.toLowerCase().includes(indicator)));
 
     this.showAuthSamples = true;
     this.showPWASamples = false;
