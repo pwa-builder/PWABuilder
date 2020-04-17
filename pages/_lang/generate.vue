@@ -371,13 +371,9 @@ import ColorSelector from "~/components/ColorSelector.vue";
 import HubHeader from "~/components/HubHeader.vue";
 import * as generator from "~/store/modules/generator";
 import helper from '~/utils/helper';
-import JSZip from "jszip";
+// import JSZip from "jszip";
 import { saveAs } from 'file-saver';
 import { Icon } from "~/store/modules/generator";
-
-// Just for testin
-window.JSZip = JSZip;
-window.saveAs = saveAs;
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
@@ -466,60 +462,40 @@ export default class extends Vue {
     this.manifest$ = { ...this.manifest };
   }
 
-  public onClickDownloadAll(): void {
-    const zip = new JSZip();
+  // TODO make async work properly
+  public async onClickDownloadAll(): void {
+    const downloadAllUrl = "" //TODO
+    const response = fetch(downloadAllUrl, {
+      method: 'GET',
+      credentials: 'include',
+      mode: 'no-cors',
+      cache: 'default',
+      body: JSON.stringify(this.icons),
+    }).then(res => {
+      return res.blob()
+    }).catch(error => {
+        console.log(error)
+    })
 
-    let index = 0;
-    let length = this.icons.length
-    let count = 0;
-    for (; index < length; index++) {
-      const metadata = this.icons[index]
-      const filename = this.generateFilename(metadata)
-      const file = this.getData(metadata)
-      const options = this.jsZipOptions(metadata)
-
-      console.log(metadata, filename, file, options)
-
-      // accepts promises... but doesn't seem to be handling them properly
-      zip.file(filename, file, options);
-      count++;
+    if (window.chooseFileSystemEntries) {
+      const opts = {
+        type: 'save-file',
+        accepts: [{
+          description: 'Text file',
+          extensions: ['txt'],
+          mimeTypes: ['text/plain'],
+        }],
+      };
+      const fileHandle = await window.chooseFileSystemEntries(opts);
+      // Create a FileSystemWritableFileStream to write to.
+      const writable = await fileHandle.createWritable();
+      // Write the contents of the file to the stream.
+      await writable.write(response);
+      // Close the file and write the contents to disk.
+      await writable.close();
+    } else {
+      saveAs(response, "pwa_icons.zip")
     }
-
-    // no point in returning an empty zip
-    if (count > 0) {
-      zip
-        .generateAsync({type: 'blob'})
-        .then(function (content) {
-          saveAs(content, "pwa_icons.zip")
-        })
-    }
-  }
-
-  private generateFilename(metadata: Icon): string {
-    return "icon-" + metadata.sizes + ".png"
-  }
-
-  private getData(metadata: Icon): string | Blob | Promise<Blob> {
-    return fetch(metadata.src, {
-        method: 'GET',
-        credentials: 'include',
-        mode: 'no-cors',
-        cache: 'default',
-      })
-        .then(res => {
-          return res.blob()
-        })
-        .catch(error => {
-          console.log(error)
-          return new Blob()
-        })
-  }
-
-  private jsZipOptions(metadata: Icon): any {
-    if (metadata.src.startsWith("data:")) {
-      return undefined
-    }
-    // support base64 + atob()
   }
 
   public onChangeSimpleInput(): void {
