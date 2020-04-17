@@ -371,9 +371,8 @@ import ColorSelector from "~/components/ColorSelector.vue";
 import HubHeader from "~/components/HubHeader.vue";
 import * as generator from "~/store/modules/generator";
 import helper from '~/utils/helper';
-// import JSZip from "jszip";
 import { saveAs } from 'file-saver';
-import { Icon } from "~/store/modules/generator";
+import axios from 'axios';
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
@@ -463,30 +462,31 @@ export default class extends Vue {
   }
 
   // TODO make async work properly
-  public async onClickDownloadAll(): void {
+  public async onClickDownloadAll() {
     const downloadAllUrl = "" //TODO
-    const response = fetch(downloadAllUrl, {
-      method: 'GET',
-      credentials: 'include',
-      mode: 'no-cors',
-      cache: 'default',
-      body: JSON.stringify(this.icons),
-    }).then(res => {
-      return res.blob()
-    }).catch(error => {
-        console.log(error)
+
+    const response = await axios.post(downloadAllUrl, this.icons, {
+      responseType: 'blob',
+      headers: {
+        'content-type': 'application/json; application/octet-stream',
+      },
+    }).then(res => new Blob([res.data], {
+      type: "application/zip"
+    })).catch(err => {
+      //TODO
+      console.log(err)
     })
 
     if (window.chooseFileSystemEntries) {
-      const opts = {
+      const fsOpts = {
         type: 'save-file',
         accepts: [{
-          description: 'Text file',
-          extensions: ['txt'],
-          mimeTypes: ['text/plain'],
+          description: 'PWA Builder Image Zip',
+          extensions: ['zip'],
+          mimeTypes: ['application/zip'],
         }],
       };
-      const fileHandle = await window.chooseFileSystemEntries(opts);
+      const fileHandle = await window.chooseFileSystemEntries(fsOpts);
       // Create a FileSystemWritableFileStream to write to.
       const writable = await fileHandle.createWritable();
       // Write the contents of the file to the stream.
