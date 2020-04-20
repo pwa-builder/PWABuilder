@@ -34,7 +34,7 @@ export default class extends Vue {
   color: white;
   border-radius: 16px;
   border: none;
-  font-family: Poppins;
+  font-family: sans-serif;
   font-style: normal;
   font-weight: 600;
   font-size: 14px;

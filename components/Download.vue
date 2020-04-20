@@ -123,7 +123,7 @@ export default class extends Vue {
       useBrowserOnChromeOS: true,
       splashScreenFadeOutDuration: 300,
       enableNotifications: false,
-      shortcuts: "[]",
+      shortcuts: [],
       signingInfo: {
         fullName: "John Doe",
         organization: "Contoso",

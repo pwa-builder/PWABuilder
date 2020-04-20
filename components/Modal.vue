@@ -196,7 +196,7 @@ export default class extends Vue {
     padding-top: 1em;
     margin-bottom: 30px;
 
-    font-family: Poppins;
+    font-family: sans-serif;
     font-style: normal;
     font-weight: 600;
     font-size: 25px;
@@ -224,7 +224,7 @@ export default class extends Vue {
       height: 40px;
       padding-left: 20px;
       padding-right: 20px;
-      font-family: Poppins;
+      font-family: sans-serif;
       font-style: normal;
       font-weight: 600;
       display: flex;
@@ -243,7 +243,7 @@ export default class extends Vue {
       height: 40px;
       padding-left: 20px;
       padding-right: 20px;
-      font-family: Poppins;
+      font-family: sans-serif;
       font-style: normal;
       font-weight: 600;
       display: flex;

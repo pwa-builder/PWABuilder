@@ -789,7 +789,7 @@ footer a {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: Poppins;
+    font-family: sans-serif;
     font-style: normal;
     font-weight: 600;
     font-size: 14px;
@@ -816,7 +816,7 @@ footer a {
 }
 #genMissingLabel {
   display: flex;
-  font-family: Poppins;
+  font-family: sans-serif;
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -839,7 +839,7 @@ footer a {
     .mastHead {
       padding-top: 40px;
       h2 {
-        font-family: Poppins;
+        font-family: sans-serif;
         font-style: normal;
         font-weight: 600;
         font-size: 24px;
@@ -873,7 +873,7 @@ footer a {
           height: 32px;
           box-shadow: none;
           text-transform: uppercase;
-          font-family: Poppins;
+          font-family: sans-serif;
           font-style: normal;
           font-weight: 600;
           font-size: 14px;
@@ -930,7 +930,7 @@ footer a {
       #doneButton {
         background: #3c3c3c;
         width: 97px;
-        font-family: Poppins;
+        font-family: sans-serif;
         font-style: normal;
         font-weight: 600;
         font-size: 14px;
@@ -971,7 +971,7 @@ footer a {
     margin-left: 16px;
   }
   #exampleDiv h3 {
-    font-family: Poppins;
+    font-family: sans-serif;
     font-style: normal;
     font-weight: 600;
     font-size: 16px;

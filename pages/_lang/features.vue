@@ -399,11 +399,9 @@ export default class extends Vue {
   }
 
   showAuthSamplesMethod() {
-    this.authSamples = this.samples.filter(sample =>
-      (sample.title as string).toLowerCase().includes("authentication") || (sample.title as string).toLowerCase().includes("contacts")
-      || (sample.title as string).toLowerCase().includes("people") || (sample.title as string).toLowerCase().includes("person")
-      || (sample.title as string).toLowerCase().includes("login")
-    );
+    const authIndicators = ["authentication", "people", "login", "sign in", "person", "contacts"];
+    this.authSamples = this.samples.filter(sample => 
+      authIndicators.some(indicator => sample.title && sample.title.toLowerCase().includes(indicator)));
 
     this.showAuthSamples = true;
     this.showPWASamples = false;
@@ -628,7 +626,7 @@ declare var awa: any;
     rgb(60, 60, 60) 57.68%
   );
   color: white;
-  font-family: Poppins;
+  font-family: sans-serif;
   font-style: normal;
   font-weight: 600;
   font-size: 14px;
@@ -669,7 +667,7 @@ declare var awa: any;
     rgb(60, 60, 60) 57.68%
   );
   color: white;
-  font-family: Poppins;
+  font-family: sans-serif;
   font-style: normal;
   font-weight: 600;
   font-size: 14px;
@@ -784,7 +782,7 @@ header {
 
     margin-top: 48px;
     margin-bottom: 16px;
-    font-family: Poppins;
+    font-family: sans-serif;
     font-style: normal;
     font-weight: 600;
     font-size: 24px;
@@ -982,7 +980,7 @@ header {
   justify-content: center;
   padding-left: 20px;
   padding-right: 20px;
-  font-family: Poppins;
+  font-family: sans-serif;
   font-style: normal;
   font-weight: 600;
   font-size: 14px;
@@ -1033,7 +1031,7 @@ header {
   justify-content: center;
   padding-left: 20px;
   padding-right: 20px;
-  font-family: Poppins;
+  font-family: sans-serif;
   font-style: normal;
   font-weight: 600;
   font-size: 14px;
