@@ -463,7 +463,7 @@ export default class extends Vue {
 
   // TODO make async work properly
   public async onClickDownloadAll() {
-    const downloadAllUrl = "" //TODO
+    const downloadAllUrl = "http://localhost:7071/api/src"
 
     const response = await axios.post(downloadAllUrl, this.icons, {
       responseType: 'blob',
