@@ -45,7 +45,7 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Valid SSL certificate is use</span>
+            <span>Valid SSL certificate is used</span>
           </div>
 
           <span class="subScoreSpan" v-if="validSSL">5</span>
