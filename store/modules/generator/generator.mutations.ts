@@ -32,10 +32,22 @@ export const mutations: MutationTree<State> = {
     state.manifestId = result.id;
     state.siteServiceWorkers = result.siteServiceWorkers;
     if (result && result.content && result.content.icons) {
-      state.icons = <Icon[]>helpers.prepareIconsUrls(result.content.icons, state.manifest && state.manifest.start_url ? state.manifest.start_url : '') || [];
+      if(result.generatedUrl)
+      {
+        state.icons = <Icon[]>helpers.prepareIconsUrls(result.content.icons, result.generatedUrl) || [];
+      }
+      else {
+        state.icons = <Icon[]>helpers.prepareIconsUrls(result.content.icons, state.manifest && state.manifest.start_url ? state.manifest.start_url : '') || [];
+      }
     }
     if (result && result.content && result.content.screenshots) {
-      state.screenshots = <Screenshot[]>helpers.prepareIconsUrls(result.content.screenshots, state.manifest && state.manifest.start_url ? state.manifest.start_url : '') || [];
+      if(result.generatedUrl)
+      {
+        state.screenshots = <Screenshot[]>helpers.prepareIconsUrls(result.content.screenshots, result.generatedUrl) || [];
+      }
+      else {
+        state.screenshots = <Screenshot[]>helpers.prepareIconsUrls(result.content.screenshots, state.manifest && state.manifest.start_url ? state.manifest.start_url : '') || [];
+      }
     }
     state.suggestions = result.suggestions;
     state.warnings = result.warnings;
