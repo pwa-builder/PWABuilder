@@ -114,7 +114,10 @@
                 <label class="l-generator-label">
                   <h4 class="iconUploadHeader">Upload app icons for your PWA</h4>
                   <p v-if="!isImageBroken">We suggest at least one image 512×512 or larger</p>
-                  <p class="brokenImage" v-if="isImageBroken">If you want a bigger images, we suggest to you to upload at least one image 512×512 or larger</p>
+                  <p
+                    class="brokenImage"
+                    v-if="isImageBroken"
+                  >If you want a bigger images, we suggest to you to upload at least one image 512×512 or larger</p>
                 </label>
 
                 <div class="button-holder icons">
@@ -126,7 +129,6 @@
                     >Download All</button>
                   </div>
                   <div class="l-inline">
-
                     <button
                       id="iconUploadButton"
                       class="work-button l-generator-button"
@@ -148,7 +150,12 @@
                   <div class="pure-u-1-8"></div>
                   <div class="pure-u-1-8"></div>-->
 
-                  <div id="iconItem" class="pure-u-1" v-for="icon in filterIcons(icons)" :key="icon.src">
+                  <div
+                    id="iconItem"
+                    class="pure-u-1"
+                    v-for="icon in filterIcons(icons)"
+                    :key="icon.src"
+                  >
                     <div id="iconDivItem" class="pure-u-10-24 l-generator-tablec">
                       <a target="_blank" :href="icon.src">
                         <img class="icon-preview" :src="icon.src" />
@@ -265,7 +272,6 @@
             <div>
               <ColorSelector />
             </div>
-
           </section>
         </div>
 
@@ -462,40 +468,43 @@ export default class extends Vue {
   }
 
   // TODO make async work properly
-  public async onClickDownloadAll() {
-    const downloadAllUrl = "http://localhost:7071/api/src"
+  public onClickDownloadAll() {
+    const downloadAllUrl = "http://localhost:7071/api/src";
 
-    const response = await axios.post(downloadAllUrl, this.icons, {
-      responseType: 'blob',
-      headers: {
-        'content-type': 'application/json; application/octet-stream',
-      },
-    }).then(res => new Blob([res.data], {
-      type: "application/zip"
-    })).catch(err => {
-      //TODO
-      console.log(err)
-    })
-
-    if (window.chooseFileSystemEntries) {
-      const fsOpts = {
-        type: 'save-file',
-        accepts: [{
-          description: 'PWA Builder Image Zip',
-          extensions: ['zip'],
-          mimeTypes: ['application/zip'],
-        }],
-      };
-      const fileHandle = await window.chooseFileSystemEntries(fsOpts);
-      // Create a FileSystemWritableFileStream to write to.
-      const writable = await fileHandle.createWritable();
-      // Write the contents of the file to the stream.
-      await writable.write(response);
-      // Close the file and write the contents to disk.
-      await writable.close();
-    } else {
-      saveAs(response, "pwa_icons.zip")
-    }
+    axios.post(downloadAllUrl, this.icons, {
+        responseType: "blob",
+        headers: {
+          "content-type": "application/json; application/octet-stream"
+        }
+      })
+      .then(async res => {
+        const blob = new Blob([res.data], { type: "application/zip" });
+        if (window.chooseFileSystemEntries) {
+          const fsOpts = {
+            type: "save-file",
+            accepts: [
+              {
+                description: "PWA Builder Image Zip",
+                extensions: ["zip"],
+                mimeTypes: ["application/zip"]
+              }
+            ]
+          };
+          const fileHandle = await window.chooseFileSystemEntries(fsOpts);
+          // Create a FileSystemWritableFileStream to write to.
+          const writable = await fileHandle.createWritable();
+          // Write the contents of the file to the stream.
+          await writable.write(blob);
+          // Close the file and write the contents to disk.
+          await writable.close();
+        } else {
+          saveAs(blob, "pwa_icons.zip");
+        }
+      })
+      .catch(err => {
+        //TODO
+        console.log(err);
+      });
   }
 
   public onChangeSimpleInput(): void {
