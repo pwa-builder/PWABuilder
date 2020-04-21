@@ -49,6 +49,12 @@ export default class extends Vue {
   content: 'Install PWABuilder';
 }
 
+@media (display-mode: standalone) {
+  #installButton {
+    display: none;
+  }
+}
+
 @media (max-width: 820px) {
   #installButton::after {
     content: 'Install';

@@ -56,6 +56,15 @@
             <button @click="skipCheckUrl()" id="expertModeButton">Expert Mode</button>
             <p>Already have a PWA? Skip ahead!</p>
           </div>-->
+
+          <div id="starterSection">
+            <h3>...Or, dont even have a website yet?</h3>
+            <p>Get started from scratch with our <a href="https://github.com/pwa-builder/pwa-starter">PWA Starter!</a></p>
+
+            <div id="starterActions">
+              <button @click="downloadStarter">Download and Get Started!</button>
+            </div>
+          </div>
         </div>
         <footer>
           <p>
@@ -93,8 +102,16 @@
         </p>
 
         <div id="attachSectionActions">
-          <nuxt-link @click="$awa( { 'referrerUri': 'https://www.pwabuilder.com/publishFromHome' });" id="buildLink" to="/publish">Build My PWA</nuxt-link>
-          <nuxt-link @click="$awa( { 'referrerUri': 'https://www.pwabuilder.com/featuresFromHome' });" id="featuresLink" to="/features">Feature Store</nuxt-link>
+          <nuxt-link
+            @click="$awa( { 'referrerUri': 'https://www.pwabuilder.com/publishFromHome' });"
+            id="buildLink"
+            to="/publish"
+          >Build My PWA</nuxt-link>
+          <nuxt-link
+            @click="$awa( { 'referrerUri': 'https://www.pwabuilder.com/featuresFromHome' });"
+            id="featuresLink"
+            to="/features"
+          >Feature Store</nuxt-link>
         </div>
       </div>
 
@@ -252,14 +269,14 @@ export default class extends Vue {
   beforeDestroy() {
     (<any>window).removeEventListener("popstate", this.backAndForth);
   }
-  
+
   public async backAndForth(e) {
     e.preventDefault();
     if (window.location.href === `${window.location.origin}/`) {
       this.reset();
-    } else if (window.location.pathname === '/') {
+    } else if (window.location.pathname === "/") {
       this.processQueryString();
-    } 
+    }
   }
 
   public async shareReport() {
@@ -301,6 +318,30 @@ export default class extends Vue {
     }
   }
 
+  public async downloadStarter() {
+    const response = await fetch('/data/pwa-starter-master.zip');
+    const data = await response.blob();
+    const url = URL.createObjectURL(data);
+    
+    const anchor = document.createElement("a");
+    anchor.href = url
+    anchor.download = "pwa-starter.zip";
+    anchor.click();
+
+    window.URL.revokeObjectURL(url);
+
+    const overrideValues = {
+      behavior: 0,
+      uri: window.location.href,
+      pageName: "downloadedStarter",
+      pageHeight: window.innerHeight
+    };
+
+    this.$awa(overrideValues);
+
+    this.$router.push('/features?from=starter');
+  }
+
   async showToast() {
     const toastCtrl = document.querySelector("ion-toast-controller");
     await (toastCtrl as any).componentOnReady();
@@ -316,10 +357,13 @@ export default class extends Vue {
   public async checkUrlAndGenerate() {
     this.error = null;
     try {
-      if (window && !window.location.search && (this.url$ !== null || this.url$ !== undefined)) {
-        this.$router.push({ name: 'index', query: { url: this.url$ }})
-      }
-      else {
+      if (
+        window &&
+        !window.location.search &&
+        (this.url$ !== null || this.url$ !== undefined)
+      ) {
+        this.$router.push({ name: "index", query: { url: this.url$ } });
+      } else {
         this.url$ = this.cleanedURL;
       }
 
@@ -351,10 +395,10 @@ export default class extends Vue {
   }
 
   public async processQueryString() {
-      const url = window.location.search.split("=")[1];
-      this.cleanedURL = decodeURIComponent(url);
-      this.url = this.cleanedURL;
-      this.checkUrlAndGenerate();
+    const url = window.location.search.split("=")[1];
+    this.cleanedURL = decodeURIComponent(url);
+    this.url = this.cleanedURL;
+    this.checkUrlAndGenerate();
   }
 
   public async getTopSamples() {
@@ -734,70 +778,55 @@ h2 {
   #bottomHalfHome {
     grid-row: 2;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 34px;
-    position: absolute;
-    bottom: 10px;
+    #starterSection {
+      background: white;
+      color: black;
+      padding: 1.4em;
+      border-radius: 6px;
+      width: 24em;
 
-    color: #333333;
-
-    #expertModeBlock {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      margin-top: 180px;
-      margin-right: 3em;
-
-      #expertModeButton {
-        --color-stop-hub: #1fc2c8;
-        --color-start-hub: #9337d8;
-
-        width: 136px;
-        font-weight: 500;
-        font-size: 14px;
-        font-family: "sans-serif", sans-serif;
-        border: none;
-        border-radius: 22px;
-        padding-top: 9px;
-        padding-bottom: 11px;
-        background-image: linear-gradient(
-          to right,
-          var(--color-stop-hub),
-          var(--color-start-hub)
-        );
-        color: white;
-        height: 42px;
-
-        transition: --color-stop-hub 0.3s, --color-start-hub 0.3s;
+      h3 {
+        font-weight: bold;
+        font-size: 20px;
       }
 
-      #expertModeButton:hover {
-        --color-stop-hub: #9337d8;
-        --color-start-hub: #1fc2c8;
-      }
+      #starterActions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 28px;
 
-      p {
-        margin-top: 9px;
-        font-size: 14px;
-        text-align: center;
-      }
-    }
-
-    @media (max-width: 1280px) {
-      #expertModeBlock {
-        margin-top: 80px;
+        button {
+          border-radius: 20px;
+          height: 40px;
+          padding-left: 20px;
+          padding-right: 20px;
+          font-weight: 600;
+          font-size: 14px;
+          line-height: 21px;
+          color: white;
+          background: black;
+        }
       }
     }
 
     @media (max-width: 425px) {
-      #expertModeBlock {
-        margin-top: 180px;
-        margin-right: initial;
+      #starterSection {
+        display: none;
       }
     }
+  }
+}
+
+@media (min-width: 1380px) {
+  #inputSection {
+    display: flex;
+    align-items: center;
+    max-width: 100vw;
+    justify-content: space-between;
+  }
+
+  #starterSection {
+    margin-top: 3em;
   }
 }
 
