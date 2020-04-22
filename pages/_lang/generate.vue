@@ -678,7 +678,10 @@ export default class extends Vue {
 }
 
 Vue.prototype.$awa = function(config) {
-  awa.ct.capturePageView(config);
+  if (awa) {
+    awa.ct.capturePageView(config);
+  }
+  
   return;
 };
 

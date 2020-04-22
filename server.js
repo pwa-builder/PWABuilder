@@ -27,6 +27,9 @@ if (config.dev) {
 app.use(nuxt.render)
 console.log('app is using nuxt renderer')
 
+// Add the nosniff header for every request, per security guidelines
+const dontSniffMimetype = require('dont-sniff-mimetype')
+app.use(dontSniffMimetype());
 
 // Start express server
 app.listen(process.env.PORT, process.env.HOST);

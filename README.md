@@ -1,5 +1,7 @@
 # PWABuilder
 
+[![Build Status](https://dev.azure.com/PWABuilder/pwabuilder-site-pre/_apis/build/status/PWA%20Builder%20Site%20-%20Prod?branchName=master)](https://dev.azure.com/PWABuilder/pwabuilder-site-pre/_build/latest?definitionId=2&branchName=master)
+
 Node/Vue/Nuxt site for PWABuilder!
 
 ## Prerequisites
