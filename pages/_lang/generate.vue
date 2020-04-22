@@ -125,7 +125,9 @@
                     <button
                       id="iconDownloadButton"
                       class="work-button l-generator-button"
+                      :class="{ disabled: zipRequested }"
                       @click="onClickDownloadAll()"
+                      :disabled="zipRequested"
                     >Download All</button>
                   </div>
                   <div class="l-inline">
@@ -412,6 +414,7 @@ export default class extends Vue {
   public  textareaOutlineColor = '';
   public showCopy = true;
   public isImageBroken: boolean = false;
+  private zipRequested = false;
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
@@ -858,6 +861,10 @@ footer a {
     font-weight: 600;
     font-size: 14px;
     line-height: 21px;
+  }
+  #iconDownloadButton.disabled {
+    color: lightgray;
+    border: 1px solid lightgray;
   }
   #iconUploadButton {
     width: 104px;
