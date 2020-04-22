@@ -12,5 +12,13 @@ export default {
             timeout = setTimeout(later, wait);
             if (callNow) func.apply(context, args);
         };
+    },
+    isValidJson: function (json) {
+        try {
+            JSON.parse(json);
+            return true;
+        } catch (e) {
+            return false;
+        }
     }
 };
