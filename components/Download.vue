@@ -40,7 +40,7 @@ const PublishAction = namespace(publish.name, Action);
 import * as generator from "~/store/modules/generator";
 const GeneratorState = namespace(generator.name, State);
 
-import { generatePackageId } from '../utils/packageID';
+import { generatePackageId } from "../utils/packageID";
 
 @Component({
   components: {
@@ -97,18 +97,26 @@ export default class extends Vue {
       icon => icon.sizes.includes("512") || icon.sizes.includes("192")
     );
 
-    const packageid = generatePackageId((this.manifest.short_name as string) || (this.manifest.name as string));
+    const packageid = generatePackageId(
+      (this.manifest.short_name as string) || (this.manifest.name as string)
+    );
 
-    let startURL = (this.manifest.start_url as string).replace(`https://${new URL(this.siteHref).hostname}`, "");
+    let startURL = (this.manifest.start_url as string).replace(
+      `https://${new URL(this.siteHref).hostname}`,
+      ""
+    );
 
-    let manifestURL = new URL((this.manifest.start_url as string));
+    let manifestURL = new URL(this.manifest.start_url as string);
 
     if (manifestURL.search && startURL.length > 0) {
-      startURL = `${startURL}${manifestURL.search}`
-    };
+      startURL = `${startURL}${manifestURL.search}`;
+    }
 
     const body = JSON.stringify({
-      packageId: `com.${packageid.split(' ').join('_').toLowerCase()}`,
+      packageId: `com.${packageid
+        .split(" ")
+        .join("_")
+        .toLowerCase()}`,
       host: new URL(this.siteHref).hostname,
       name: this.manifest.short_name || this.manifest.name,
       themeColor: this.manifest.theme_color || this.manifest.background_color,
@@ -116,7 +124,10 @@ export default class extends Vue {
         this.manifest.theme_color || this.manifest.background_color,
       backgroundColor:
         this.manifest.background_color || this.manifest.theme_color,
-      startUrl: startURL && startURL.length > 0 ? startURL : `${manifestURL.search ? '/' + manifestURL.search : "/"}`,
+      startUrl:
+        startURL && startURL.length > 0
+          ? startURL
+          : `${manifestURL.search ? "/" + manifestURL.search : "/"}`,
       iconUrl: goodIcon.src,
       maskableIconUrl: goodIcon.src,
       appVersion: "1.0.0",
@@ -163,14 +174,6 @@ export default class extends Vue {
       return;
     }
 
-    const overrideValues = {
-      uri: window.location.href,
-      pageName: `download/${platform}`,
-      pageHeight: window.innerHeight
-    };
-
-    this.$awa(overrideValues);
-
     if (platform === "androidTWA") {
       await this.handleTWA();
     } else {
@@ -194,13 +197,26 @@ export default class extends Vue {
         this.errorMessage = e;
       }
     }
+
+    const overrideValues = {
+      uri: window.location.href,
+      pageName: `download/${platform}`,
+      pageHeight: window.innerHeight
+    };
+
+    if (this.$awa) {
+      this.$awa(overrideValues);
+    }
   }
 }
 
 declare var awa: any;
 
 Vue.prototype.$awa = function(config) {
-  awa.ct.capturePageView(config);
+  if (awa) {
+    awa.ct.capturePageView(config);
+  }
+  
   return;
 };
 </script>
