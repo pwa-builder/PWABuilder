@@ -95,15 +95,17 @@ export default class extends Vue {
 
     const goodIcon = await this.getGoodIcon();
 
+    let maskIcon = this.getMaskableIcon();
+
     if (goodIcon.message !== undefined) {
       this.isReady = true;
       this.errorMessage = goodIcon.message;
     } else {
-      this.callTWA(goodIcon);
+      this.callTWA(goodIcon, maskIcon);
     }
   }
 
-  public async callTWA(goodIcon) {
+  public async callTWA(goodIcon, maskIcon) {
     const packageid = generatePackageId(
       (this.manifest.short_name as string) || (this.manifest.name as string)
     );
@@ -136,7 +138,7 @@ export default class extends Vue {
           ? startURL
           : `${manifestURL.search ? "/" + manifestURL.search : "/"}`,
       iconUrl: goodIcon.src,
-      maskableIconUrl: goodIcon.src,
+      maskableIconUrl: maskIcon ? maskIcon.src : null,
       appVersion: "1.0.0",
       useBrowserOnChromeOS: true,
       splashScreenFadeOutDuration: 300,
@@ -177,6 +179,21 @@ export default class extends Vue {
       this.errorMessage =
         `Status code: ${err.status}, Error: ${err.statusText}` || err;
     }
+  }
+
+  public getMaskableIcon() {
+    // make copy of icons so nuxt does not complain
+    const icons = [...(this.manifest as any).icons];
+
+    let found;
+
+    icons.forEach((icon) => {
+      if (icon.purpose && icon.purpose === "maskable") {
+        found = icon;
+      }
+    })
+
+    return found;
   }
 
   public async getGoodIcon(): Promise<any> {
