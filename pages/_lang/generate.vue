@@ -378,9 +378,9 @@ import StartOver from "~/components/StartOver.vue";
 import ColorSelector from "~/components/ColorSelector.vue";
 import HubHeader from "~/components/HubHeader.vue";
 import * as generator from "~/store/modules/generator";
-import helper from '~/utils/helper';
-import { saveAs } from 'file-saver';
-import axios from 'axios';
+import helper from "~/utils/helper";
+import { saveAs } from "file-saver";
+import axios from "axios";
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
@@ -470,18 +470,25 @@ export default class extends Vue {
     this.manifest$ = { ...this.manifest };
   }
 
-  // TODO make async work properly
   public onClickDownloadAll() {
-    const downloadAllUrl = "http://localhost:7071/api/src";
+
+    // local azure function
+    const downloadAllUrl = "https://azure-express-zip-creator.azurewebsites.net/api";
+    this.zipRequested = true;
 
     axios.post(downloadAllUrl, this.icons, {
+        method: "POST",
+        // mode: "no-cors",
+        // cache: "default",
         responseType: "blob",
         headers: {
-          "content-type": "application/json; application/octet-stream"
+          "content-type": "application/json; application/octet-stream",
+          // "Accept":"application/zip",
         }
       })
+      // .then(res => res.blob())
       .then(async res => {
-        const blob = new Blob([res.data], { type: "application/zip" });
+        // const blob = new Blob([res/*.data*/], { type: "application/zip" });
         if (window.chooseFileSystemEntries) {
           const fsOpts = {
             type: "save-file",
@@ -497,16 +504,18 @@ export default class extends Vue {
           // Create a FileSystemWritableFileStream to write to.
           const writable = await fileHandle.createWritable();
           // Write the contents of the file to the stream.
-          await writable.write(blob);
+          await writable.write(res);
           // Close the file and write the contents to disk.
           await writable.close();
         } else {
-          saveAs(blob, "pwa_icons.zip");
+          saveAs(res, "pwa_icons.zip");
         }
+        this.zipRequested = false;
       })
       .catch(err => {
         //TODO
         console.log(err);
+        this.zipRequested = false;
       });
   }
 
