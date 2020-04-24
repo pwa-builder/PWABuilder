@@ -92,7 +92,7 @@ export default class extends Vue {
     },
     {
       realName: "authButton",
-      mappedName: "Sign In with Microsoft, Google, Facebook"
+      mappedName: "Sign In with Microsoft, Google, Facebook, Apple"
     },
     {
       realName: "midi",
