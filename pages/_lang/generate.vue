@@ -476,17 +476,13 @@ export default class extends Vue {
     const downloadAllUrl = "https://azure-express-zip-creator.azurewebsites.net/api";
     this.zipRequested = true;
 
-    axios.post(downloadAllUrl, this.icons, {
+    fetch(downloadAllUrl, {
         method: "POST",
-        // mode: "no-cors",
-        // cache: "default",
-        responseType: "blob",
+        body: JSON.stringify({ images: this.icons }),
         headers: {
           "content-type": "application/json; application/octet-stream",
-          // "Accept":"application/zip",
         }
       })
-      // .then(res => res.blob())
       .then(async res => {
         // const blob = new Blob([res/*.data*/], { type: "application/zip" });
         if (window.chooseFileSystemEntries) {
