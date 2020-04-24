@@ -379,8 +379,8 @@ import ColorSelector from "~/components/ColorSelector.vue";
 import HubHeader from "~/components/HubHeader.vue";
 import * as generator from "~/store/modules/generator";
 import helper from "~/utils/helper";
-import { saveAs } from "file-saver";
 import axios from "axios";
+import download from "downloadjs";
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
@@ -473,88 +473,50 @@ export default class extends Vue {
   public onClickDownloadAll() {
 
     // local azure function
-    const downloadAllUrl = "https://azure-express-zip-creator.azurewebsites.net/api";
     this.zipRequested = true;
+    const images: generator.Icon[] = [];
+    const length = this.icons.length;
+    // prevent the passing of the observer objects in the body.
+    for (let i = 0; i < length; i++) {
+      images.push({ ...this.icons[i] })
+    }
 
-    fetch("https://azure-express-zip-creator.azurewebsites.net/api", {
+    axios.post("https://azure-express-zip-creator.azurewebsites.net/api", JSON.stringify({ images }), {
       "method": "POST",
+      "responseType": "blob",
       "headers": {
         "content-type": "application/json"
-      },
-      "body": JSON.stringify({
-        "images": [
-          {
-            "src": "https://pwabuilder.com/Images/assets/newIcons/icon_512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-          },
-          {
-            "src": "https://pwabuilder.com/Images/assets/newIcons/icon_190.png",
-            "sizes": "256x256",
-            "type": "image/png"
-          },
-          {
-            "src": "https://pwabuilder.com/Images/assets/newIcons/icon_120.png",
-            "sizes": "128x128",
-            "type": "image/png"
-          },
-          {
-            "src": "https://pwabuilder.com/Images/assets/newIcons/icon_60.png",
-            "sizes": "64x64",
-            "type": "image/png"
-          },
-          {
-            "src": "https://pwabuilder.com/Images/assets/newIcons/icon_57.png",
-            "sizes": "48x48",
-            "type": "image/png"
-          }
-        ]
-      })
+      }
     })
-    .then(response => {
-      console.log(response);
+    .then(async res => {
+      // const blob = new Blob([res/*.data*/], { type: "application/zip" });
+      if (window.chooseFileSystemEntries) {
+        const fsOpts = {
+          type: "save-file",
+          accepts: [
+            {
+              description: "PWA Builder Image Zip",
+              extensions: ["zip"],
+              mimeTypes: ["application/zip"]
+            }
+          ]
+        };
+        const fileHandle = await window.chooseFileSystemEntries(fsOpts);
+        // Create a FileSystemWritableFileStream to write to.
+        const writable = await fileHandle.createWritable();
+        // Write the contents of the file to the stream.
+        await writable.write(res);
+        // Close the file and write the contents to disk.
+        await writable.close();
+      } else {
+        download(res, "pwa-icons.zip", "application/zip");
+      }
+      this.zipRequested = false;
     })
     .catch(err => {
       console.log(err);
+      this.zipRequested = false;
     });
-
-    // fetch("https://azure-express-zip-creator.azurewebsites.net/api", {
-    //     method: "POST",
-    //     body: JSON.stringify({ images: this.icons }),
-    //     headers: {
-    //       "content-type": "application/json; application/octet-stream",
-    //     }
-    //   })
-    //   .then(async res => {
-    //     // const blob = new Blob([res/*.data*/], { type: "application/zip" });
-    //     if (window.chooseFileSystemEntries) {
-    //       const fsOpts = {
-    //         type: "save-file",
-    //         accepts: [
-    //           {
-    //             description: "PWA Builder Image Zip",
-    //             extensions: ["zip"],
-    //             mimeTypes: ["application/zip"]
-    //           }
-    //         ]
-    //       };
-    //       const fileHandle = await window.chooseFileSystemEntries(fsOpts);
-    //       // Create a FileSystemWritableFileStream to write to.
-    //       const writable = await fileHandle.createWritable();
-    //       // Write the contents of the file to the stream.
-    //       await writable.write(res);
-    //       // Close the file and write the contents to disk.
-    //       await writable.close();
-    //     } else {
-    //       saveAs(res, "pwa_icons.zip");
-    //     }
-    //     this.zipRequested = false;
-    //   })
-    //   .catch(err => {
-    //     //TODO
-    //     console.log(err);
-    //     this.zipRequested = false;
-    //   });
   }
 
   public onChangeSimpleInput(): void {
