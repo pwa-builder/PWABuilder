@@ -489,7 +489,6 @@ export default class extends Vue {
       }
     })
     .then(async res => {
-      // const blob = new Blob([res/*.data*/], { type: "application/zip" });
       if (window.chooseFileSystemEntries) {
         const fsOpts = {
           type: "save-file",
@@ -509,7 +508,7 @@ export default class extends Vue {
         // Close the file and write the contents to disk.
         await writable.close();
       } else {
-        download(res, "pwa-icons.zip", "application/zip");
+        download(res.data, "pwa-icons.zip", "application/zip");
       }
       this.zipRequested = false;
     })
