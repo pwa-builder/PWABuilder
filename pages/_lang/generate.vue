@@ -411,7 +411,7 @@ export default class extends Vue {
   public activeFormField = null;
   public showingIconModal = false;
   public ifEntered = false;
-  public  textareaOutlineColor = '';
+  public textareaOutlineColor = "";
   public showCopy = true;
   public isImageBroken: boolean = false;
   private zipRequested = false;
@@ -450,12 +450,14 @@ export default class extends Vue {
 
     var updateFn = helper.debounce(this.update, 3000, false);
 
-    document && document.querySelectorAll('.l-generator-input').forEach(item => {
-      item.addEventListener('keyup', updateFn)
-    });
-    document && document.querySelectorAll('.l-generator-textarea').forEach(item => {
-      item.addEventListener('keyup', updateFn)
-    });
+    document &&
+      document.querySelectorAll(".l-generator-input").forEach(item => {
+        item.addEventListener("keyup", updateFn);
+      });
+    document &&
+      document.querySelectorAll(".l-generator-textarea").forEach(item => {
+        item.addEventListener("keyup", updateFn);
+      });
     awa.ct.capturePageView(overrideValues);
   }
 
@@ -478,12 +480,10 @@ export default class extends Vue {
 
     axios.post(downloadAllUrl, this.icons, {
         method: "POST",
-        // mode: "no-cors",
-        // cache: "default",
         responseType: "blob",
         headers: {
           "content-type": "application/json; application/octet-stream",
-          // "Accept":"application/zip",
+          "Accept":"application/zip",
         }
       })
       // .then(res => res.blob())
@@ -530,8 +530,7 @@ export default class extends Vue {
 
   public filterIcons(icons): any {
     return icons.filter(icon => {
-      if (!icon.generated || icon.src.indexOf('data') === 0)
-      {
+      if (!icon.generated || icon.src.indexOf("data") === 0) {
         return icon;
       }
     });
@@ -539,8 +538,7 @@ export default class extends Vue {
 
   public checkBrokenImage(icons): any {
     icons.forEach(icon => {
-      if (icon.generated && icon.src.indexOf('data') !== 0)
-      {
+      if (icon.generated && icon.src.indexOf("data") !== 0) {
         this.isImageBroken = true;
       }
     });
@@ -549,13 +547,13 @@ export default class extends Vue {
   public textareaError(): void {
     // This method is called when Enter is pressed in the textarea
     this.ifEntered = true; // This property is used to determine whether or not an error message should be displayed
-    this.textareaOutlineColor = 'red solid 2px';
+    this.textareaOutlineColor = "red solid 2px";
   }
   public textareaCheck(): void {
     // If the user presses any key other than Enter, then reset ifEntered values to remove error message
     // This method is only called on keypress (not when entered is clicked)
     this.ifEntered = false;
-    this.textareaOutlineColor = '';
+    this.textareaOutlineColor = "";
   }
 
   public onClickRemoveIcon(icon: generator.Icon): void {
@@ -588,22 +586,30 @@ export default class extends Vue {
     }
 
     let icons = this.icons.map(icon => {
-      return `\n\t\t{\n\t\t\t"src": "${icon.src.includes("data:image") ? "[Embedded]" : icon.src}",\n\t\t\t"sizes": "${icon.sizes}"\n\t\t}`;
+      return `\n\t\t{\n\t\t\t"src": "${
+        icon.src.includes("data:image") ? "[Embedded]" : icon.src
+      }",\n\t\t\t"sizes": "${icon.sizes}"\n\t\t}`;
     });
     return icons.toString();
   }
 
   private getScreenshots(): string {
     let icons = this.screenshots.map(screenshot => {
-      return `\n\t\t{\n\t\t\t"src": "${screenshot.src.includes("data:image") ? "[Embedded]" : screenshot.src}",\n\t\t\t"description": "${screenshot.description}",\n\t\t\t"size": "${screenshot.size}"\n\t\t}`;
+      return `\n\t\t{\n\t\t\t"src": "${
+        screenshot.src.includes("data:image") ? "[Embedded]" : screenshot.src
+      }",\n\t\t\t"description": "${screenshot.description}",\n\t\t\t"size": "${
+        screenshot.size
+      }"\n\t\t}`;
     });
     return icons.toString();
   }
 
   private relatedApplications(): string {
-    let relatedApplicationscons = this.manifest.related_applications.map(app => {
-      return `\n\t\t{\n\t\t\t"platform": "${app.platform}",\n\t\t\t"url": "${app.url}"\n\t\t}`;
-    });
+    let relatedApplicationscons = this.manifest.related_applications.map(
+      app => {
+        return `\n\t\t{\n\t\t\t"platform": "${app.platform}",\n\t\t\t"url": "${app.url}"\n\t\t}`;
+      }
+    );
     return relatedApplicationscons.toString();
   }
 
@@ -633,18 +639,21 @@ export default class extends Vue {
           manifest += `\t"screenshots" : [${this.getScreenshots()}],\n`;
           break;
         case "related_applications":
-          manifest += `\t"related_applications" : [${this.relatedApplications() || []}],\n`
+          manifest += `\t"related_applications" : [${this.relatedApplications() ||
+            []}],\n`;
           break;
         case "prefer_related_applications":
-          manifest += `\t"prefer_related_applications" : ${this.manifest.prefer_related_applications},\n`
+          manifest += `\t"prefer_related_applications" : ${this.manifest.prefer_related_applications},\n`;
           break;
         default:
-          manifest += `\t"${property}" : "${this.manifest[property] ? this.manifest[property] : ''}",\n`;
+          manifest += `\t"${property}" : "${
+            this.manifest[property] ? this.manifest[property] : ""
+          }",\n`;
           break;
       }
     }
     // Removing the last ','
-    manifest = manifest.substring(0, manifest.length-2);
+    manifest = manifest.substring(0, manifest.length - 2);
     manifest += this.getCustomMembers();
     return `{\n${manifest}\n}`;
   }
@@ -681,7 +690,7 @@ export default class extends Vue {
       await this.uploadIcon(this.iconFile);
       this.updateManifest(this.manifest$);
     }
-    this.checkBrokenImage(this.icons)
+    this.checkBrokenImage(this.icons);
     $iconsModal.hide();
     $iconsModal.hideLoading();
     this.iconFile = null;
@@ -1081,12 +1090,12 @@ footer a {
     }
   }
 }
-  #rightSide {
-    width: 55%;
-  }
-  #leftSide {
-    width: 40%;
-  }
+#rightSide {
+  width: 55%;
+}
+#leftSide {
+  width: 40%;
+}
 @media (max-width: 1280px) {
   #rightSide {
     display: none;
@@ -1120,7 +1129,7 @@ footer a {
   }
 }
 
-  #sideBySide #leftSide .animatedSection input[type="radio"] {
-    width: auto;
-  }
+#sideBySide #leftSide .animatedSection input[type="radio"] {
+  width: auto;
+}
 </style>
