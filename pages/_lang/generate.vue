@@ -305,7 +305,7 @@
         <CodeViewer
           code-type="json"
           v-on:invalidManifest="invalidManifest()"
-          v-on:editorValue="handleEditorValue($event)"
+          v-on:editorValue="updateManifestFn($event)"
           v-if="seeEditor"
           :code="getCode()"
           :title="$t('generate.w3c_manifest')"
@@ -414,6 +414,7 @@ export default class extends Vue {
   public  textareaOutlineColor = '';
   public showCopy = true;
   public isImageBroken: boolean = false;
+  public updateManifestFn = helper.debounce(this.handleEditorValue, 3000, false);
   private zipRequested = false;
 
   @GeneratorState manifest: generator.Manifest;
@@ -704,10 +705,11 @@ export default class extends Vue {
     this.basicManifest = false;
   }
 
-  public handleEditorValue() {
-    if (this.basicManifest !== false) {
-      // this.manifest = ev;
-      this.updateManifest(this.manifest$);
+  public handleEditorValue(value) {
+    if (helper.isValidJson(value)){
+      var editedManifest = JSON.parse(value);
+      this.updateManifest(editedManifest);
+      this.manifest$ = { ...this.manifest };
     }
   }
 
@@ -744,7 +746,10 @@ export default class extends Vue {
 }
 
 Vue.prototype.$awa = function(config) {
-  awa.ct.capturePageView(config);
+  if (awa) {
+    awa.ct.capturePageView(config);
+  }
+
   return;
 };
 
