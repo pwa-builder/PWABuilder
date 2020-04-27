@@ -56,8 +56,8 @@ export const actions: Actions<State, RootState> = {
                     description: "A simple component that gives users a button to install your PWA directly from the browser"
                   },
                   {
-                    title: "Sign In with Microsoft, Google, Facebook",
-                    description: "Web component that lets your users sign-in using their Microsoft, Google, or Facebook account. Your app receives their email address, name, and profile picture."
+                    title: "Sign In with Microsoft, Google, Facebook, Apple",
+                    description: "Web component that lets your users sign-in using their Microsoft, Google, Facebook, or Apple account. Your app receives their email address, name, and profile picture."
                   },
                   {
                     title: "Immersive Reader",

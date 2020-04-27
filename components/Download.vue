@@ -92,6 +92,15 @@ export default class extends Vue {
 
   async handleTWA() {
     this.isReady = false;
+    await this.getGoodIcon().then(goodIcon => {
+      if (goodIcon.message !== undefined) {
+        this.isReady = true;
+        this.errorMessage = goodIcon.message;
+      }
+      else {
+        this.callTWA(goodIcon);
+    }});
+  }
 
     const goodIcon = await this.getGoodIcon();
 
@@ -163,19 +172,21 @@ export default class extends Vue {
           body: body
         }
       );
-
-      if (response.status === 200) {
+      
+      if(response.status === 200) {
         const data = await response.blob();
 
         let url = window.URL.createObjectURL(data);
         window.location.assign(url);
-      } else {
+      }
+      else {
         this.errorMessage = `Status code: ${response.status}, Error: ${response.statusText}`;
       }
 
       this.isReady = true;
     } catch (err) {
       this.isReady = true;
+
       this.errorMessage =
         `Status code: ${err.status}, Error: ${err.statusText}` || err;
     }
@@ -258,6 +269,7 @@ export default class extends Vue {
           }
         }
       }
+
 
       if (i === (this.manifest as any).icons.length) {
         resolve({ isValidUrl: false, message: `${goodIcon.src} is not found` });
