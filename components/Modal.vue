@@ -27,7 +27,7 @@
               id="modalAddButton"
               @click="onClickSubmit();  $awa( { 'referrerUri': 'https://www.pwabuilder.com/manifest/add-member' });"
             >
-              <span v-if="!isLoading">{{$t("modal.submit")}}</span>
+              <span v-if="!isLoading">{{button_name}}</span>
               <span vif="isLoading">
                 <Loading :active="isLoading" class="u-display-inline_block u-margin-left-sm"/>
               </span>
@@ -59,6 +59,7 @@ export default class extends Vue {
   @Prop({ type: String, default: "" }) public title: string;
   @Prop({ type: Boolean, default: true }) public showSubmitButton;
   @Prop({ type: Boolean, default: true }) public showTitleBox;
+  @Prop({ type: String, default: "modal.submit" }) public button_name: string;
   //public showButtons: string;
 
   public beforeDestroy() {
