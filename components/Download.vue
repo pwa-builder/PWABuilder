@@ -92,16 +92,6 @@ export default class extends Vue {
 
   async handleTWA() {
     this.isReady = false;
-    await this.getGoodIcon().then(goodIcon => {
-      if (goodIcon.message !== undefined) {
-        this.isReady = true;
-        this.errorMessage = goodIcon.message;
-      }
-      else {
-        this.callTWA(goodIcon);
-    }});
-  }
-
     const goodIcon = await this.getGoodIcon();
 
     let maskIcon = this.getMaskableIcon();
@@ -172,14 +162,13 @@ export default class extends Vue {
           body: body
         }
       );
-      
-      if(response.status === 200) {
+
+      if (response.status === 200) {
         const data = await response.blob();
 
         let url = window.URL.createObjectURL(data);
         window.location.assign(url);
-      }
-      else {
+      } else {
         this.errorMessage = `Status code: ${response.status}, Error: ${response.statusText}`;
       }
 
@@ -198,44 +187,46 @@ export default class extends Vue {
 
     let found;
 
-    icons.forEach((icon) => {
+    icons.forEach(icon => {
       if (icon.purpose && icon.purpose === "maskable") {
         found = icon;
       }
-    })
+    });
 
     return found;
   }
 
   public async getGoodIcon(): Promise<any> {
     return new Promise<any>(async resolve => {
-
       // make copy of icons so nuxt does not complain
       const icons = [...(this.manifest as any).icons];
 
       // we prefer large icons first, so sort array from largest to smallest
       const sortedIcons = icons.sort((a, b) => {
         // convert icon.sizes to a legit integer we can use to sort
-        let aSize = parseInt(a.sizes.split('x').pop());
-        let bSize = parseInt(b.sizes.split('x').pop());
+        let aSize = parseInt(a.sizes.split("x").pop());
+        let bSize = parseInt(b.sizes.split("x").pop());
 
         return bSize - aSize;
       });
 
       let goodIcon = sortedIcons.find(icon => {
-          // look for 512 icon first, this is the best case
-          if (icon.sizes.includes("512") && !icon.src.includes("data:image")) {
-            return icon;
-          }
-          // 192 icon up next if we cant find a 512. This may end up with the icon on the splashscreen
-          // looking a little blurry, but better than no icon
-          else if (icon.sizes.includes("192") && !icon.src.includes("data:image")) {
-            return icon;
-          }
-          // cant find a good icon
-          else {
-            return null;
-          }
+        // look for 512 icon first, this is the best case
+        if (icon.sizes.includes("512") && !icon.src.includes("data:image")) {
+          return icon;
+        }
+        // 192 icon up next if we cant find a 512. This may end up with the icon on the splashscreen
+        // looking a little blurry, but better than no icon
+        else if (
+          icon.sizes.includes("192") &&
+          !icon.src.includes("data:image")
+        ) {
+          return icon;
+        }
+        // cant find a good icon
+        else {
+          return null;
+        }
       });
 
       if (goodIcon) {
@@ -269,7 +260,6 @@ export default class extends Vue {
           }
         }
       }
-
 
       if (i === (this.manifest as any).icons.length) {
         resolve({ isValidUrl: false, message: `${goodIcon.src} is not found` });
