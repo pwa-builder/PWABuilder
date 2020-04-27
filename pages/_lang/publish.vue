@@ -120,6 +120,12 @@
             platform="androidTWA"
             message="Download"
           />
+          <button
+            id="androidDownloadButton"
+            @click="openAndroidOptionModal();"
+          >
+            Options
+          </button>
         </div>
 
         <div id="extraSection">
@@ -500,6 +506,10 @@ export default class extends Vue {
   public openAppXModal(): void {
     this.openWindows = false;
     (this.$refs.appxModal as Modal).show();
+  }
+
+  public openAndroidOptionModal(): void {
+
   }
 
   public openAndroidModal(): void {
