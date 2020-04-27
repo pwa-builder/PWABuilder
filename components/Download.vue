@@ -55,6 +55,9 @@ export default class extends Vue {
   @Prop({ type: String, default: "" })
   public readonly platform: string;
 
+  @Prop({ type: String, default: "" })
+  public readonly fileName: string;
+
   @Prop({
     type: Array,
     default: function() {
@@ -144,7 +147,8 @@ export default class extends Vue {
         organization: "Contoso",
         organizationalUnit: "Engineering Department",
         countryCode: "US"
-      }
+      },
+      fileName: this.fileName
     });
 
     try {

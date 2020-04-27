@@ -153,6 +153,7 @@
         <div id="androidModalButtonSection">
           <Download
             :showMessage="true"
+            :fileName="this.androidForm.package_name"
             id="androidDownloadButton"
             platform="androidTWA"
             message="Download"
