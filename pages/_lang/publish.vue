@@ -3,7 +3,7 @@
     <HubHeader></HubHeader>
 
     <div
-      v-if="openAndroid || openWindows || showBackground"
+      v-if="openAndroid || openWindows || openTeams || showBackground"
       class="has-acrylic-40 is-dark"
       id="modalBackground"
     ></div>
@@ -173,6 +173,45 @@
       </section>
     </div>
 
+    <div v-if="openTeams" ref="teamsModal" class="platModal">
+      <button @click="closeTeamsModal()" class="closeModalPlatButton">
+        <i class="fas fa-times"></i>
+      </button>
+
+      <section class="platModalBody">
+        <div>
+          <p class="platModalP">
+            The teams integration requires a few details to convert your web manifest:
+            1. Icon background color
+            2. Two images pertaining to the icon that appears on teams:
+              - A 192x192 svg or png with a single background color.
+              - A 32x32 svg or png of a white silhouette of the icon with an invisible background.
+          </p>
+        </div>
+
+        <!-- TODO starts from here -->
+        <div class="platModalButtonSection">
+          <Download
+            class="platModalDownloadButton"
+            platform="windows10"
+            :message="$t('publish.download')"
+            :showMessage="true"
+          />
+          <button
+            class="platModalDownloadButton"
+            @click="
+              openAppXModal();
+              $awa({
+                referrerUri: ''
+              });
+            "
+          >
+            Generate
+          </button>
+        </div>
+      </section>
+    </div>
+
     <section id="publishSideBySide">
       <section id="publishLeftSide">
         <div id="introContainer">
@@ -223,6 +262,34 @@
                   platform="web"
                   message="Download your PWA files"
                 />
+              </section>
+            </div>
+
+            <!-- Microsoft Teams Integration -->
+            <div
+              @mouseover="platCardHover($event)"
+              @mouseleave="platCardUnHover($event)"
+              id="pwaTeamsCard"
+              class="pwaCard"
+            >
+              <div class="pwaCardHeaderBlock">
+                <div class="pwaCardIconBlock">
+                  <img id="teamsIconImg" src="~/assets/images/teams-icon.png" />
+                  <h2>Microsoft Teams</h2>
+                </div>
+              </div>
+
+              <p>
+                Submit your PWA for further engagement on Microsoft Teams.
+              </p>
+
+              <section class="platformDownloadBar">
+                <button
+                  class="platformDownloadButton"
+                  @click="openTeamsModal()"
+                >
+                  <i class="fas fa-long-arrow-alt-down"></i>
+                </button>
               </section>
             </div>
 
@@ -444,6 +511,7 @@ export default class extends Vue {
   public modalStatus = false;
   public openAndroid: boolean = false;
   public openWindows: boolean = false;
+  public openTeams: boolean = false;
   public showBackground: boolean = false;
 
   public samsungDevice: boolean = false;
@@ -515,8 +583,16 @@ export default class extends Vue {
     this.openWindows = true;
   }
 
+  public openTeamsModal(): void {
+    this.openTeams = true;
+  }
+
   public closeWindowsModal(): void {
     this.openWindows = false;
+  }
+
+  public closeTeamsModal(): void {
+    this.openTeams = false;
   }
 
   public async onSubmitAppxModal(): Promise<void> {
@@ -565,7 +641,7 @@ Vue.prototype.$awa = function(config) {
   if (awa) {
     awa.ct.capturePageView(config);
   }
-  
+
   return;
 };
 
@@ -893,6 +969,10 @@ footer a {
           grid-column-start: span 2;
         }
 
+        #pwaTeamsCard {
+          grid-column-start: span 2;
+        }
+
         // #pwaWindowsCard {
         //   #platformIcon {
         //     margin-right: 42px;
@@ -1080,6 +1160,125 @@ footer a {
 }
 
 #androidPlatModal {
+  background: transparent;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+  animation-name: opened;
+  animation-duration: 250ms;
+  border-radius: 4px;
+  will-change: opacity transform;
+}
+
+
+.platModalBody #extraSection p {
+  color: grey;
+  font-size: 10px;
+}
+
+.platModalBody #extraSection #legacyDownloadButton {
+  color: grey;
+  font-size: 10px;
+  background: transparent;
+}
+
+.platModalBody {
+  width: 34em;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-left: 60px;
+  padding-right: 60px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.closeModalPlatButton {
+  top: 10px;
+  border: none;
+  float: right;
+  height: 32px;
+  background: #3c3c3c;
+  color: white;
+  border-radius: 50%;
+  width: 32px;
+  margin-top: 10px;
+  margin-right: 10px;
+  right: 10px;
+  position: absolute;
+  font-size: 14px;
+}
+
+.platModalP {
+  font-family: sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -0.02em;
+  margin-top: 40px;
+}
+
+.platModalP a {
+  color: #9337d8;
+}
+
+.platModalBody .platModalSubText {
+  color: #3c3c3c;
+  display: block;
+  margin-bottom: 2em;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 21px;
+}
+
+.platModalButtonSection {
+  display: flex;
+  justify-content: space-around;
+  width: 80%;
+  margin-top: 1em;
+  margin-bottom: 20px;
+}
+
+.platModalDownloadButton {
+  background: #9337d8;
+  color: white;
+  font-size: 14px;
+  border-radius: 20px;
+  width: 150px;
+  height: 40px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+}
+
+.platModalDownloadButton #colorSpinner {
+  margin-top: 4px;
+  margin-left: 4px;
+}
+
+.platModalDownloadButton.webviewButton {
+  width: 183px;
+  background: #3c3c3c;
+}
+
+.platModalDownloadButton:hover {
+  cursor: pointer;
+}
+
+.platModal {
   background: transparent;
   position: fixed;
   width: 100%;
