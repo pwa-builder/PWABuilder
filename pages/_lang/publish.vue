@@ -103,6 +103,8 @@
       </div>
 
       <section id="#androidModalBody">
+
+        <!-- package name -->
         <div>
           <label>{{ $t("publish.label_package_name") }}</label>
         </div>
@@ -112,8 +114,24 @@
           :placeholder="$t('publish.placeholder_package_name')"
           type="text"
           v-model="androidForm.package_name"
-          requied
+          required
         />
+
+        <!-- key -->
+
+        <div>
+          <label>{{ $t("publish.android_key") }}</label>
+        </div>
+
+        <input
+          class="l-generator-input l-generator-input--largest"
+          :placeholder="$t('publish.placeholder_android_key')"
+          type="text"
+          v-model="androidForm.android_key"
+          required
+        />
+
+
         <p class="l-generator-error" v-if="androidPWAError">
           <span class="icon-exclamation"></span>
           {{ $t(androidPWAError) }}
@@ -145,6 +163,7 @@
             to the Google Play store
             <i class="fas fa-external-link-alt"></i>
           </a>
+
           <p v-if="this.androidForm.package_name">
             <span>Package Name: </span>   {{ $t(this.androidForm.package_name) }}
           </p>
@@ -154,6 +173,7 @@
           <Download
             :showMessage="true"
             :fileName="this.androidForm.package_name"
+            :apkKey="this.androiForm.android_key"
             id="androidDownloadButton"
             platform="androidTWA"
             message="Download"
@@ -470,7 +490,8 @@ export default class extends Vue {
   };
 
   public androidForm: publish.AndroidParams = {
-    package_name: null
+    package_name: null,
+    android_key: null
   };
 
   // Set default web checked items
@@ -612,7 +633,7 @@ export default class extends Vue {
   }
 
   public onCancelAndroidPWAModal() {
-    this.androidForm = { package_name: null };
+    this.androidForm = { package_name: null, android_key: null };
     (this.$refs.androidPWAModal as Modal).hide();
     this.openAndroid = true;
   }

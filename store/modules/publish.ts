@@ -36,6 +36,7 @@ export interface AppxParams {
 
 export interface AndroidParams {
     package_name: string | null;
+    android_key: string | null;
 }
 
 export const state = (): State => ({
