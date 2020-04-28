@@ -56,7 +56,7 @@ export default class extends Vue {
   public readonly platform: string;
 
   @Prop({ type: String, default: "" })
-  public readonly fileName: string;
+  public readonly packageName: string;
 
   @Prop({
     type: Array,
@@ -106,7 +106,7 @@ export default class extends Vue {
   }
 
   public async callTWA(goodIcon) {
-    const packageid = generatePackageId((this.manifest.short_name as string) || (this.manifest.name as string));
+    const packageid = this.packageName || generatePackageId((this.manifest.short_name as string) || (this.manifest.name as string));
 
     let startURL = (this.manifest.start_url as string).replace(
       `https://${new URL(this.siteHref).hostname}`,
@@ -120,7 +120,7 @@ export default class extends Vue {
     }
 
     const body = JSON.stringify({
-      packageId: `com.${packageid
+      packageId: this.packageName ||  `com.${packageid
         .split(" ")
         .join("_")
         .toLowerCase()}`,
@@ -147,8 +147,7 @@ export default class extends Vue {
         organization: "Contoso",
         organizationalUnit: "Engineering Department",
         countryCode: "US"
-      },
-      fileName: this.fileName
+      }
     });
 
     try {
