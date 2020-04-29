@@ -9,6 +9,7 @@ before(async () => {
     headless: true,
     slowMo: 100
   });
+
   page = await browser.newPage();
   await page.goto('https://pwabuilder-site-prod-staging.azurewebsites.net');
 });
