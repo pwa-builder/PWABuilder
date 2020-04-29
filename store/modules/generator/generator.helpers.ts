@@ -70,7 +70,7 @@ export const helpers = {
         }
         baseUrl = protocol + '//' + host + additionnalPath;
 
-        //avoid duplication on additionPath if it already exists
+        //avoid duplication on the path if the icon src already has it
         icon.src = icon.src.replace(additionnalPath, '');
 
         //remove posible trailing/leading slashes
