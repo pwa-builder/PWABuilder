@@ -6,9 +6,9 @@ let page;
 
 before(async () => {
   browser = await puppeteer.launch({
-    headless: true
+    headless: true,
+    slowMo: 100
   });
-
   page = await browser.newPage();
   await page.goto('https://pwabuilder-site-prod-staging.azurewebsites.net');
 });
@@ -27,7 +27,7 @@ describe('report card page', () => {
     await page.waitFor('#getStartedInput');
 
     await page.click('#getStartedInput');
-    
+
     await page.type('#getStartedInput', 'https://webboard.app');
 
     await page.click('#getStartedButton');
@@ -41,7 +41,7 @@ describe('report card page', () => {
     await page.waitFor('#getStartedInput');
 
     await page.click('#getStartedInput');
-    
+
     await page.type('#getStartedInput', 'https://self-signed.badssl.com/');
 
     await page.click('#getStartedButton');
