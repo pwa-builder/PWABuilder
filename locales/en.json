@@ -196,7 +196,8 @@
     "manifest_required": "Manifest is required.",
     "platform_required": "Platform is required.",
     "fields_required": "All fields are required.",
-    "serviceworker_not_defined": "Serviceworker is not defined."
+    "serviceworker_not_defined": "Serviceworker is not defined.",
+    "package_name_required": "Package name is required."
   },
   "custom_members": {
     "name": "Member Name",

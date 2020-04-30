@@ -595,6 +595,9 @@ export default class extends Vue {
 
   public async onDoneAndroidPWAModal(): Promise<void> {
     try {
+      if(!this.androidForm.package_name) {
+        throw 'error.package_name_required'; 
+      }
       var KeyWordFound = this.containsKeyWord()
       if(KeyWordFound.length > 0) {
         this.androidPWAError = this.ConstructErrorMessage(KeyWordFound); 
