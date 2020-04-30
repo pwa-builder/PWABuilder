@@ -59,7 +59,7 @@ export default class extends Vue {
   @Prop({ type: String, default: "" }) public title: string;
   @Prop({ type: Boolean, default: true }) public showSubmitButton;
   @Prop({ type: Boolean, default: true }) public showTitleBox;
-  @Prop({ type: String, default: "modal.submit" }) public button_name: string;
+  @Prop({ type: String, default: "Submit" }) public button_name: string;
   //public showButtons: string;
 
   public beforeDestroy() {

@@ -595,10 +595,35 @@ export default class extends Vue {
 
   public async onDoneAndroidPWAModal(): Promise<void> {
     try {
-      (this.$refs.androidPWAModal as Modal).hide();
-      this.openAndroid = true;
+      var KeyWordFound = this.containsKeyWord()
+      if(KeyWordFound.length > 0) {
+        this.androidPWAError = this.ConstructErrorMessage(KeyWordFound); 
+      }
+      else {
+        (this.$refs.androidPWAModal as Modal).hide();
+        this.openAndroid = true;
+        this.androidPWAError = null;
+      }
     } catch (e) {
       this.androidPWAError = e;
+    }
+  }
+
+  public containsKeyWord()
+  {
+      const package_name = this.androidForm.package_name.split(".");
+      const keywords = ["abstract","assert","boolean","break","byte","case","catch","char","class","const","continue","default","do","double","else","enum","extends","final","finally","float","for","goto","if","implements","import","instanceof","int","interface","long","native","new","package","private","protected","public","return","short","static","strictfp","super","switch","synchronized","this","throw","throws","transient","try","void","volatile","while"];
+      var result = keywords.filter(function(item){ return package_name.indexOf(item) > -1});   
+      return result;  
+  }
+
+  public ConstructErrorMessage(list)
+  {
+    if(list.length === 1) {
+      return `Invalid package name. "${list[0]}" is a keyword.`;
+    }
+    else {
+      return `Invalid package name. "${list.slice(0, list.length - 1).join(", ")} and ${list[list.length - 1]}" are keywords`;
     }
   }
   
@@ -613,6 +638,7 @@ export default class extends Vue {
 
   public onCancelAndroidPWAModal() {
     this.androidForm = { package_name: null };
+    this.androidPWAError = null;
     (this.$refs.androidPWAModal as Modal).hide();
     this.openAndroid = true;
   }
