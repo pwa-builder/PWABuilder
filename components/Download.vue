@@ -58,8 +58,8 @@ export default class extends Vue {
   @Prop({ type: String, default: "" })
   public readonly fileName: string;
 
-  @Prop({ type: String, default: "" })
-  public readonly apkKey: string;
+  @Prop({ type: File, default: null })
+  public readonly apkKey: File | null;
 
   @Prop({ type: String, default: "" })
   public readonly keyName: string;
@@ -72,6 +72,15 @@ export default class extends Vue {
 
   @Prop({ type: String, default: "" })
   public readonly keyCode: string;
+
+  @Prop({ type: String, default: "" })
+  public readonly keyAlias: string;
+
+  @Prop({ type: String, default: "" })
+  public readonly keyPass: string;
+
+  @Prop({ type: String, default: "" })
+  public readonly keyStorePass: string;
 
   @Prop({
     type: Array,
@@ -160,14 +169,28 @@ export default class extends Vue {
       enableNotifications: false,
       shortcuts: [],
       signingInfo: {
-        fullName: this.keyName.length > 1 ? this.keyName :  "John Doe",
+        fullName: this.keyName.length > 1 ? this.keyName : "John Doe",
         organization: this.keyOrg.length > 1 ? this.keyOrg : "Contoso",
-        organizationalUnit: this.keyOrgUnit.length > 1 ? this.keyOrgUnit : "Engineering Department",
-        countryCode: this.keyCountryCode.length > 1 ? this.keyCountryCode : "US"
+        organizationalUnit:
+          this.keyOrgUnit.length > 1
+            ? this.keyOrgUnit
+            : "Engineering Department",
+        countryCode: this.keyCode.length > 1 ? this.keyCode : "US",
+        keyPass: this.keyPass.length > 1 ? this.keyPass : null,
+        keyStorePass: this.keyStorePass.length > 1 ? this.keyStorePass : null,
+        keyAlias: this.keyAlias.length > 1 ? this.keyAlias : null
       },
       fileName: this.fileName,
-      signingKey: this.apkKey.length > 1 ? this.apkKey : null
     });
+
+    const blob = new Blob([body], {
+      type: "application/json"
+    });
+
+    let formData = new FormData();
+    formData.append("data", blob);
+    console.log('apkKey', this.apkKey);
+    // formData.append("keystore", this.apkKey, "keystore.KEYSTORE")
 
     try {
       const response = await fetch(
@@ -175,10 +198,7 @@ export default class extends Vue {
         "http://localhost:8080/generateSignedApkZip",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: body
+          body: formData
         }
       );
 

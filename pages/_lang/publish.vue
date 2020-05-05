@@ -126,8 +126,9 @@
         <input
           class="l-generator-input l-generator-input--largest"
           :placeholder="$t('publish.placeholder_android_key')"
-          type="text"
-          v-model="androidForm.android_key"
+          type="file"
+          name="keystore"
+          @change="handleFiles"
           required
         />
 
@@ -179,6 +180,43 @@
           required
         />
 
+        <div>
+          <label>{{ $t("publish.android_keyalias") }}</label>
+        </div>
+
+        <input
+          class="l-generator-input l-generator-input--largest"
+          :placeholder="$t('publish.placeholder_android_keyalias')"
+          type="text"
+          v-model="androidForm.android_keyalias"
+          required
+        />
+
+        <div>
+          <label>{{ $t("publish.android_keypass") }}</label>
+        </div>
+
+        <input
+          class="l-generator-input l-generator-input--largest"
+          :placeholder="$t('publish.placeholder_android_keypass')"
+          type="text"
+          v-model="androidForm.android_keypass"
+          required
+        />
+
+        <div>
+          <label>{{ $t("publish.android_keystorepass") }}</label>
+        </div>
+
+        <input
+          class="l-generator-input l-generator-input--largest"
+          :placeholder="$t('publish.placeholder_android_keystorepass')"
+          type="text"
+          v-model="androidForm.android_keystorepass"
+          required
+        />
+
+
 
         <p class="l-generator-error" v-if="androidPWAError">
           <span class="icon-exclamation"></span>
@@ -226,6 +264,9 @@
             :keyOrg="this.androidForm.android_keyorg"
             :keyOrgUnit="this.androidForm.android_keyorgunit"
             :keyCountryCode="this.androidForm.android_keycode"
+            :keyAlias="this.androidForm.android_keyalias"
+            :keyPass="this.androidForm.android_keypass"
+            :keyStorePass="this.androidForm.android_keystorepass"
             id="androidDownloadButton"
             platform="androidTWA"
             message="Download"
@@ -591,6 +632,11 @@ export default class extends Vue {
     };
 
     this.$awa(overrideValues);
+  }
+
+  handleFiles(event) {
+    console.log('file', event.target.files[0]);
+    this.androidForm.android_key = event.target.files[0];
   }
 
   platCardHover(ev) {
