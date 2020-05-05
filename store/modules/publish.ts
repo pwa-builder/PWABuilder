@@ -37,6 +37,10 @@ export interface AppxParams {
 export interface AndroidParams {
     package_name: string | null;
     android_key: string | null;
+    keyorg: string | null;
+    keyorgunit: string | null;
+    keycode: string | null;
+    keyname: string | null;
 }
 
 export const state = (): State => ({

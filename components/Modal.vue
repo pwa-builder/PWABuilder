@@ -256,6 +256,7 @@ export default class extends Vue {
   .modal-box {
     background: white;
     width: 70%;
+    border-radius: 12px;
   }
 
   #titleBox {

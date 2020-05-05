@@ -102,7 +102,7 @@
         </label>
       </div>
 
-      <section id="#androidModalBody">
+      <section id="androidModalBody" class="androidOptionsModalBody">
 
         <!-- package name -->
         <div>
@@ -128,6 +128,54 @@
           :placeholder="$t('publish.placeholder_android_key')"
           type="text"
           v-model="androidForm.android_key"
+          required
+        />
+
+        <div>
+          <label>{{ $t("publish.android_keyname") }}</label>
+        </div>
+
+        <input
+          class="l-generator-input l-generator-input--largest"
+          :placeholder="$t('publish.placeholder_android_keyname')"
+          type="text"
+          v-model="androidForm.android_keyname"
+          required
+        />
+
+        <div>
+          <label>{{ $t("publish.android_keyorg") }}</label>
+        </div>
+
+        <input
+          class="l-generator-input l-generator-input--largest"
+          :placeholder="$t('publish.placeholder_android_keyorg')"
+          type="text"
+          v-model="androidForm.android_keyorg"
+          required
+        />
+
+        <div>
+          <label>{{ $t("publish.android_keyorgunit") }}</label>
+        </div>
+
+        <input
+          class="l-generator-input l-generator-input--largest"
+          :placeholder="$t('publish.placeholder_android_keyorgunit')"
+          type="text"
+          v-model="androidForm.android_keyorgunit"
+          required
+        />
+
+        <div>
+          <label>{{ $t("publish.android_keycode") }}</label>
+        </div>
+
+        <input
+          class="l-generator-input l-generator-input--largest"
+          :placeholder="$t('publish.placeholder_android_keycode')"
+          type="text"
+          v-model="androidForm.android_keycode"
           required
         />
 
@@ -173,7 +221,11 @@
           <Download
             :showMessage="true"
             :fileName="this.androidForm.package_name"
-            :apkKey="this.androiForm.android_key"
+            :apkKey="this.androidForm.android_key"
+            :keyName="this.androidForm.android_keyname"
+            :keyOrg="this.androidForm.android_keyorg"
+            :keyOrgUnit="this.androidForm.android_keyorgunit"
+            :keyCountryCode="this.androidForm.android_keycode"
             id="androidDownloadButton"
             platform="androidTWA"
             message="Download"
@@ -491,7 +543,11 @@ export default class extends Vue {
 
   public androidForm: publish.AndroidParams = {
     package_name: null,
-    android_key: null
+    android_key: null,
+    keyorg: null,
+    keyorgunit: null,
+    keyname: null,
+    keycode: null
   };
 
   // Set default web checked items
@@ -633,7 +689,7 @@ export default class extends Vue {
   }
 
   public onCancelAndroidPWAModal() {
-    this.androidForm = { package_name: null, android_key: null };
+    this.androidForm = { package_name: null, android_key: null, keyorg: null, keyorgunit: null, keycode: null, keyname: null };
     (this.$refs.androidPWAModal as Modal).hide();
     this.openAndroid = true;
   }
@@ -1093,6 +1149,26 @@ footer a {
   padding-right: 60px;
   border-radius: 12px;
   text-align: center;
+}
+
+#androidModalBody.androidOptionsModalBody {
+  width: 100%;
+  align-items: start;
+  padding-left: 0;
+}
+
+#androidModalBody.androidOptionsModalBody input {
+  margin-bottom: 12px;
+  border-color: #00000075;
+}
+
+#androidModalBody.androidOptionsModalBody label {
+  font-weight: bold;
+}
+
+#androidModalBody.androidOptionsModalBody + .modal-buttons {
+  margin-top: 2em;
+  margin-bottom: 2em;
 }
 
 #closeAndroidPlatButton {

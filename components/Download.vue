@@ -58,8 +58,20 @@ export default class extends Vue {
   @Prop({ type: String, default: "" })
   public readonly fileName: string;
 
-   @Prop({ type: String, default: "" })
+  @Prop({ type: String, default: "" })
   public readonly apkKey: string;
+
+  @Prop({ type: String, default: "" })
+  public readonly keyName: string;
+
+  @Prop({ type: String, default: "" })
+  public readonly keyOrg: string;
+
+  @Prop({ type: String, default: "" })
+  public readonly keyOrgUnit: string;
+
+  @Prop({ type: String, default: "" })
+  public readonly keyCode: string;
 
   @Prop({
     type: Array,
@@ -102,14 +114,16 @@ export default class extends Vue {
       if (goodIcon.message !== undefined) {
         this.isReady = true;
         this.errorMessage = goodIcon.message;
-      }
-      else {
+      } else {
         this.callTWA(goodIcon);
-    }});
+      }
+    });
   }
 
   public async callTWA(goodIcon) {
-    const packageid = generatePackageId((this.manifest.short_name as string) || (this.manifest.name as string));
+    const packageid = generatePackageId(
+      (this.manifest.short_name as string) || (this.manifest.name as string)
+    );
 
     let startURL = (this.manifest.start_url as string).replace(
       `https://${new URL(this.siteHref).hostname}`,
@@ -146,18 +160,19 @@ export default class extends Vue {
       enableNotifications: false,
       shortcuts: [],
       signingInfo: {
-        fullName: "John Doe",
-        organization: "Contoso",
-        organizationalUnit: "Engineering Department",
-        countryCode: "US"
+        fullName: this.keyName.length > 1 ? this.keyName :  "John Doe",
+        organization: this.keyOrg.length > 1 ? this.keyOrg : "Contoso",
+        organizationalUnit: this.keyOrgUnit.length > 1 ? this.keyOrgUnit : "Engineering Department",
+        countryCode: this.keyCountryCode.length > 1 ? this.keyCountryCode : "US"
       },
       fileName: this.fileName,
-      signingKey: this.apkKey
+      signingKey: this.apkKey.length > 1 ? this.apkKey : null
     });
 
     try {
       const response = await fetch(
-        "https://pwabuilder-cloudapk.azurewebsites.net/generateSignedApkZip",
+        // "https://pwabuilder-cloudapk.azurewebsites.net/generateSignedApkZip",
+        "http://localhost:8080/generateSignedApkZip",
         {
           method: "POST",
           headers: {
@@ -166,35 +181,37 @@ export default class extends Vue {
           body: body
         }
       );
-      
-      if(response.status === 200) {
+
+      if (response.status === 200) {
         const data = await response.blob();
 
         let url = window.URL.createObjectURL(data);
         window.location.assign(url);
-      }
-      else {
+      } else {
         this.errorMessage = `Status code: ${response.status}, Error: ${response.statusText}`;
       }
 
       this.isReady = true;
     } catch (err) {
       this.isReady = true;
-      this.errorMessage = `Status code: ${err.status}, Error: ${err.statusText}` || err;
+      this.errorMessage =
+        `Status code: ${err.status}, Error: ${err.statusText}` || err;
     }
   }
 
-  public async getGoodIcon(): Promise<any> { 
+  public async getGoodIcon(): Promise<any> {
     return new Promise<any>(async resolve => {
       var goodIcon = (this.manifest as any).icons.find(
-        icon => (icon.sizes.includes("512") || icon.sizes.includes("192")) && !icon.src.includes("data:image")
+        icon =>
+          (icon.sizes.includes("512") || icon.sizes.includes("192")) &&
+          !icon.src.includes("data:image")
       );
-      if(goodIcon) {
+      if (goodIcon) {
         await this.isValidUrl(goodIcon.src).then(
           function fulfilled() {
-              resolve(goodIcon);
+            resolve(goodIcon);
           },
-          
+
           function rejected() {
             // Continue to iterate icons collection to find a good icon.
           }
@@ -205,9 +222,8 @@ export default class extends Vue {
       for (i; i < (this.manifest as any).icons.length; i++) {
         goodIcon = (this.manifest as any).icons[i];
         var imageFound = false;
-        if (!goodIcon.src.includes("data:image"))
-        {
-          await this.isValidUrl(goodIcon.src).then(      
+        if (!goodIcon.src.includes("data:image")) {
+          await this.isValidUrl(goodIcon.src).then(
             function fulfilled() {
               imageFound = true;
             },
@@ -217,49 +233,45 @@ export default class extends Vue {
             }
           );
           if (imageFound) {
-              break;
+            break;
           }
         }
       }
 
-      if(i === (this.manifest as any).icons.length) {
-        resolve({'isValidUrl': false, 'message' : `${goodIcon.src} is not found`});
-      }
-      else {
+      if (i === (this.manifest as any).icons.length) {
+        resolve({ isValidUrl: false, message: `${goodIcon.src} is not found` });
+      } else {
         resolve(goodIcon);
       }
     });
   }
-  
 
   public async isValidUrl(url) {
     const imgPromise = new Promise(function imgPromise(resolve, reject) {
+      const imgElement = new Image();
 
-        const imgElement = new Image();
+      // When image is loaded, resolve the promise
+      imgElement.addEventListener("load", function imgOnLoad() {
+        resolve(this);
+      });
 
-        // When image is loaded, resolve the promise
-        imgElement.addEventListener('load', function imgOnLoad() {
-            resolve(this);
-        });
+      // When there's an error during load, reject the promise
+      imgElement.addEventListener("error", function imgOnError() {
+        reject();
+      });
 
-        // When there's an error during load, reject the promise
-        imgElement.addEventListener('error', function imgOnError() {
-            reject();
-        })
-
-        imgElement.src = url;
-
+      imgElement.src = url;
     });
 
     return imgPromise;
   }
 
   public imageFound() {
-      return {'isValidUrl': true };
+    return { isValidUrl: true };
   }
 
   public imageNotFound() {
-      return { 'isValidUrl': false};
+    return { isValidUrl: false };
   }
 
   public async buildArchive(
@@ -312,7 +324,7 @@ Vue.prototype.$awa = function(config) {
   if (awa) {
     awa.ct.capturePageView(config);
   }
-  
+
   return;
 };
 </script>
