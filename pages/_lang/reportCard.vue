@@ -73,11 +73,20 @@
             </p>
 
             <div id="starterActions">
-              <button @click="starterDrop">Get Started!</button>
+              <button @click="starterDrop" id="mainStartButton">
+                Get Started!
+                <i class="fas fa-chevron-down"></i>
+              </button>
 
               <div v-if="openDrop" id="starterDropdown">
-                <button id="starterDownloadButton" @click="downloadStarter">Download</button>
-                <button @click="cloneStarter">Clone from Github</button>
+                <button id="starterDownloadButton" @click="downloadStarter">
+                  <i class="fas fa-arrow-down"></i>
+                  Download
+                </button>
+                <button @click="cloneStarter">
+                  <i class="fab fa-github"></i>
+                  Clone from Github
+                </button>
               </div>
             </div>
           </div>
@@ -380,13 +389,12 @@ export default class extends Vue {
     }
   }
 
-  
   async showCopiedToast() {
     this.showCopyToast = true;
 
     setTimeout(() => {
       this.showCopyToast = false;
-    }, 2300)
+    }, 2300);
   }
 
   async showToast() {
@@ -394,7 +402,7 @@ export default class extends Vue {
 
     setTimeout(() => {
       this.showShareToast = false;
-    }, 2300)
+    }, 2300);
   }
 
   public async checkUrlAndGenerate() {
@@ -493,23 +501,36 @@ declare var awa: any;
 
 #starterDropdown {
   position: absolute;
-  height: 6em;
   background: white;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding-left: 12px;
   justify-content: space-between;
+  align-items: flex-start;
 
-  margin-top: 3.4em;
-  margin-left: 1.39em;
-  border-radius: 0 0 8px 8px;
+  border-radius: 6px;
+  margin-top: 2em;
+  width: 10em;
+  margin-left: 1.8em;
 
   animation-name: slidedown;
   animation-duration: 200ms;
+
+  box-shadow: 0 0 4px 1px #0000002e;
 }
 
-#starterDropdown #starterDownloadButton {
-  background: linear-gradient(90deg, #1fc2c8, #9337d8 116%) !important;
+#starterActions .fa, #starterActions .fas {
+  margin-right: 4px;
+}
+
+#starterActions #mainStartButton {
+  background: black !important;
+  color: white !important;
+  width: 11em;
+}
+
+#mainStartButton .fa, #mainStartButton .fas {
+  margin-left: 6px;
 }
 
 #gitCopyToast {
@@ -879,13 +900,14 @@ h2 {
         button {
           border-radius: 20px;
           height: 40px;
-          padding-left: 20px;
-          padding-right: 20px;
           font-weight: 600;
           font-size: 14px;
           line-height: 21px;
-          color: white;
-          background: black;
+
+          background: none;
+          color: black;
+          padding-left: 0;
+          padding-right: 0;
         }
       }
     }
@@ -1121,7 +1143,7 @@ h2 {
 @keyframes slidedown {
   from {
     opacity: 0;
-    transform: translateY(-50px);
+    transform: translateY(-10px);
   }
 
   to {
