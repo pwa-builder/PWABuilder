@@ -34,6 +34,10 @@ export interface AppxParams {
     version: string | null;
 }
 
+export interface AndroidParams {
+    package_name: string | null;
+}
+
 export const state = (): State => ({
     status: null,
     archiveLink: null,
