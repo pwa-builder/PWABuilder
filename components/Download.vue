@@ -55,6 +55,9 @@ export default class extends Vue {
   @Prop({ type: String, default: "" })
   public readonly platform: string;
 
+  @Prop({ type: String, default: "" })
+  public readonly packageName: string;
+
   @Prop({
     type: Array,
     default: function() {
@@ -92,6 +95,7 @@ export default class extends Vue {
 
   async handleTWA() {
     this.isReady = false;
+
     const goodIcon = await this.getGoodIcon();
 
     let maskIcon = this.getMaskableIcon();
@@ -104,10 +108,8 @@ export default class extends Vue {
     }
   }
 
-  public async callTWA(goodIcon, maskIcon) {
-    const packageid = generatePackageId(
-      (this.manifest.short_name as string) || (this.manifest.name as string)
-    );
+  public async callTWA(goodIcon) {
+    const packageid = this.packageName || generatePackageId((this.manifest.short_name as string) || (this.manifest.name as string));
 
     let startURL = (this.manifest.start_url as string).replace(
       `https://${new URL(this.siteHref).hostname}`,
@@ -121,7 +123,7 @@ export default class extends Vue {
     }
 
     const body = JSON.stringify({
-      packageId: `com.${packageid
+      packageId: this.packageName ||  `com.${packageid
         .split(" ")
         .join("_")
         .toLowerCase()}`,
@@ -162,13 +164,14 @@ export default class extends Vue {
           body: body
         }
       );
-
-      if (response.status === 200) {
+      
+      if(response.status === 200) {
         const data = await response.blob();
 
         let url = window.URL.createObjectURL(data);
         window.location.assign(url);
-      } else {
+      }
+      else {
         this.errorMessage = `Status code: ${response.status}, Error: ${response.statusText}`;
       }
 
@@ -260,6 +263,7 @@ export default class extends Vue {
           }
         }
       }
+
 
       if (i === (this.manifest as any).icons.length) {
         resolve({ isValidUrl: false, message: `${goodIcon.src} is not found` });
