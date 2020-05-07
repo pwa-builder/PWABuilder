@@ -55,6 +55,9 @@ export default class extends Vue {
   @Prop({ type: String, default: "" })
   public readonly platform: string;
 
+  @Prop({ type: String, default: "" })
+  public readonly packageName: string;
+
   @Prop({
     type: Array,
     default: function() {
@@ -102,22 +105,8 @@ export default class extends Vue {
     }});
   }
 
-    const goodIcon = await this.getGoodIcon();
-
-    let maskIcon = this.getMaskableIcon();
-
-    if (goodIcon.message !== undefined) {
-      this.isReady = true;
-      this.errorMessage = goodIcon.message;
-    } else {
-      this.callTWA(goodIcon, maskIcon);
-    }
-  }
-
-  public async callTWA(goodIcon, maskIcon) {
-    const packageid = generatePackageId(
-      (this.manifest.short_name as string) || (this.manifest.name as string)
-    );
+  public async callTWA(goodIcon) {
+    const packageid = this.packageName || generatePackageId((this.manifest.short_name as string) || (this.manifest.name as string));
 
     let startURL = (this.manifest.start_url as string).replace(
       `https://${new URL(this.siteHref).hostname}`,
@@ -131,7 +120,7 @@ export default class extends Vue {
     }
 
     const body = JSON.stringify({
-      packageId: `com.${packageid
+      packageId: this.packageName ||  `com.${packageid
         .split(" ")
         .join("_")
         .toLowerCase()}`,
