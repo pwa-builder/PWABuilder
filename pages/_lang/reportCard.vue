@@ -7,7 +7,13 @@
       :expanded="!gotURL"
     ></HubHeader>
 
-    <ion-toast-controller></ion-toast-controller>
+    <div v-if="showCopyToast" id="gitCopyToast">
+      <span>git clone command copied to your clipboard</span>
+    </div>
+
+    <div v-if="showShareToast" id="gitCopyToast">
+      <span>URL copied for sharing</span>
+    </div>
 
     <div v-if="gotURL && overallScore < 80" id="reportShareButtonContainer">
       <button @click="shareReport">
@@ -59,10 +65,29 @@
 
           <div id="starterSection">
             <h3>...Or, dont even have a website yet?</h3>
-            <p>Get started from scratch with our <a href="https://github.com/pwa-builder/pwa-starter">PWA Starter!</a></p>
+            <p>
+              Get started from scratch with our
+              <a
+                href="https://github.com/pwa-builder/pwa-starter"
+              >PWA Starter!</a>
+            </p>
 
             <div id="starterActions">
-              <button @click="downloadStarter">Download and Get Started!</button>
+              <button @click="starterDrop" id="mainStartButton">
+                Get Started!
+                <i class="fas fa-chevron-down"></i>
+              </button>
+
+              <div v-if="openDrop" id="starterDropdown">
+                <button id="starterDownloadButton" @click="downloadStarter">
+                  <i class="fas fa-arrow-down"></i>
+                  Download
+                </button>
+                <button @click="cloneStarter">
+                  <i class="fab fa-github"></i>
+                  Clone from Github
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -216,6 +241,9 @@ export default class extends Vue {
   public topSamples: Array<any> = [];
   public cleanedURL: string | null = null;
   public shared: boolean = false;
+  public openDrop: boolean = false;
+  public showCopyToast: boolean = false;
+  public showShareToast: boolean = false;
 
   public async created() {
     this.url$ = this.url;
@@ -318,13 +346,17 @@ export default class extends Vue {
     }
   }
 
-  public async downloadStarter() {
-    const response = await fetch('/data/pwa-starter-master.zip');
+  public async starterDrop() {
+    this.openDrop = !this.openDrop;
+  }
+
+  async downloadStarter() {
+    const response = await fetch("/data/pwa-starter-master.zip");
     const data = await response.blob();
     const url = URL.createObjectURL(data);
-    
+
     const anchor = document.createElement("a");
-    anchor.href = url
+    anchor.href = url;
     anchor.download = "pwa-starter.zip";
     anchor.click();
 
@@ -339,19 +371,38 @@ export default class extends Vue {
 
     this.$awa(overrideValues);
 
-    this.$router.push('/features?from=starter');
+    this.$router.push("/features?from=starter");
+  }
+
+  async cloneStarter() {
+    const cloneCommand =
+      "git clone https://github.com/pwa-builder/pwa-starter.git";
+
+    try {
+      await (navigator as any).clipboard.writeText(cloneCommand);
+
+      this.openDrop = false;
+
+      await this.showCopiedToast();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async showCopiedToast() {
+    this.showCopyToast = true;
+
+    setTimeout(() => {
+      this.showCopyToast = false;
+    }, 2300);
   }
 
   async showToast() {
-    const toastCtrl = document.querySelector("ion-toast-controller");
-    await (toastCtrl as any).componentOnReady();
+    this.showShareToast = true;
 
-    const toast = await (toastCtrl as any).create({
-      duration: 2300,
-      message: "URL copied for sharing"
-    });
-
-    await toast.present();
+    setTimeout(() => {
+      this.showShareToast = false;
+    }, 2300);
   }
 
   public async checkUrlAndGenerate() {
@@ -437,7 +488,7 @@ Vue.prototype.$awa = function(config) {
   if (awa) {
     awa.ct.capturePageView(config);
   }
-  
+
   return;
 };
 
@@ -447,6 +498,55 @@ declare var awa: any;
 <style lang="scss" scoped>
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
+
+#starterDropdown {
+  position: absolute;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  padding-left: 12px;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  border-radius: 6px;
+  margin-top: 2em;
+  width: 10em;
+  margin-left: 1.8em;
+
+  animation-name: slidedown;
+  animation-duration: 200ms;
+
+  box-shadow: 0 0 4px 1px #0000002e;
+}
+
+#starterActions .fa, #starterActions .fas {
+  margin-right: 4px;
+}
+
+#starterActions #mainStartButton {
+  background: black !important;
+  color: white !important;
+  width: 11em;
+}
+
+#mainStartButton .fa, #mainStartButton .fas {
+  margin-left: 6px;
+}
+
+#gitCopyToast {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  background: #3c3c3c;
+  color: white;
+  padding: 1em;
+  font-size: 14px;
+  border-radius: 4px;
+  padding-left: 1.4em;
+  padding-right: 1.4em;
+  animation-name: fadein;
+  animation-duration: 0.3s;
+}
 
 #attachSection {
   grid-column: 3 / span 8;
@@ -528,7 +628,6 @@ declare var awa: any;
   color: white;
   padding: 1em;
   font-size: 14px;
-  font-weight: bold;
   border-radius: 4px;
   padding-left: 1.4em;
   padding-right: 1.4em;
@@ -801,13 +900,14 @@ h2 {
         button {
           border-radius: 20px;
           height: 40px;
-          padding-left: 20px;
-          padding-right: 20px;
           font-weight: 600;
           font-size: 14px;
           line-height: 21px;
-          color: white;
-          background: black;
+
+          background: none;
+          color: black;
+          padding-left: 0;
+          padding-right: 0;
         }
       }
     }
@@ -1037,6 +1137,18 @@ h2 {
     visibility: visible;
     top: -11px;
     left: 1px;
+  }
+}
+
+@keyframes slidedown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
