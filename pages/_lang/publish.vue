@@ -1198,6 +1198,59 @@ footer a {
   text-align: center;
 }
 
+.platModalForm {
+  .platModalField {
+    width: 100%;
+    text-align: left;
+
+    label {
+      h4 {
+        font-size: 16px;
+        line-height: 19px;
+
+        color: #000000;
+      }
+
+      p {
+        font-size: 14px;
+        line-height: 16px;
+        color: #808080;
+      }
+    }
+
+    input, textarea {
+      width: 100%;
+      border-color: #f4f4f4;
+
+      &:focus {
+        border-color: #9337d8;
+        outline: none;
+      }
+    }
+
+    input {
+      border-width: 0 0 1px;
+    }
+
+    textarea {
+      resize: none;
+    }
+
+    .file-chooser {
+      button {
+        color: #000000;
+        border: 1px solid #3C3D3E;
+      }
+
+      .file-description {
+        font-size: 16px;
+        line-height: 19px;
+        color: #808080;
+      }
+    }
+  }
+}
+
 .closeModalPlatButton {
   top: 10px;
   border: none;
