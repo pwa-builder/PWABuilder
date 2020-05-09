@@ -182,26 +182,44 @@
           <label for="package-name">
             <h4>Package name</h4>
           </label>
-          <input  type="text" name="package-name" placeholder="packagename" />
+          <input
+            type="text"
+            name="package-name"
+            placeholder="packagename"
+            :value="teamsForm.packageName"
+          />
         </div>
         <div class="platModalField">
-          <label for="app-description">
+          <label for="description">
             <h4>Short app description</h4>
             <p>Describe your app in 200 charactes or less</p>
           </label>
-          <textarea name="app-description"></textarea>
+          <textarea
+            name="description"
+            :value="teamsForm.description">
+          </textarea>
         </div>
         <div class="platModalField">
-          <label for="privacy-url">
+          <label for="privacy">
             <h4>Privacy URL</h4>
           </label>
-          <input name="privacy-url" type="text" placeholder="www.somewebsite/privacy" />
+          <input
+            name="privacy"
+            type="text"
+            placeholder="www.somewebsite/privacy"
+            :value="teamsForm.privacyUrl"
+          />
         </div>
         <div class="platModalField">
-          <label>
+          <label for="terms">
             <h4>Terms of Use URL</h4>
           </label>
-          <input type="text" placeholder="www.somewebsite/termsofuse" />
+          <input
+            names="terms"
+            type="text"
+            placeholder="www.somewebsite/termsofuse"
+            :value="teamsForm.termsUrl"
+          />
         </div>
 
         <div class="platModalField file-chooser">
@@ -209,11 +227,10 @@
             <h4>App Image</h4>
             <p>TODO: Description of the type of image needed</p>
           </label>
-          <button id="uploadIconImage" name="upload-image">Choose File</button>
+          <button id="uploadIconImage" name="upload-image" @click="clickUploadFileInput()">Choose File</button>
+          <input id="upload-file-input" name="upload-image" type="file"  />
           <p class="file-description">No file chosen</p>
         </div>
-
-        <!-- TODO starts from here -->
         <div class="platModalButtonSection">
           <Download
             class="platModalDownloadButton"
@@ -238,10 +255,10 @@
             on the right.
           </p>
 
-          <!--<div id="publishActionsContainer">
+          <!--<div id="publishActionsContainer">-->
           <!--<button id="downloadAllButton">Download your PWA files</button>-->
-          <!--<Download id="downloadAllButton" platform="web" message="Download your PWA files"/>
-          </div>-->
+          <!--<Download id="downloadAllButton" platform="web" message="Download your PWA files"/>-->
+          <!--</div>-->
 
           <!--temp impl for demo-->
         </div>
@@ -482,9 +499,12 @@ import Toolbar from "~/components/Toolbar.vue";
 import HubHeader from "~/components/HubHeader.vue";
 
 import * as publish from "~/store/modules/publish";
+import { name as generatorName, Icon } from "~/store/modules/generator";
 
 const PublishState = namespace(publish.name, State);
 const PublishAction = namespace(publish.name, Action);
+const GeneratorState = namespace(generatorName, State);
+const GeneratorAction = namespace(generatorName, Action);
 
 @Component({
   components: {
@@ -505,6 +525,14 @@ export default class extends Vue {
     version: null
   };
 
+  public teamsForm: publish.TeamsParams = {
+    packageName: null,
+    description: null,
+    privacyUrl: null,
+    termsUrl: null,
+    appImage: null
+  };
+
   // Set default web checked items
   public files: any[] = [
     "manifest",
@@ -513,12 +541,18 @@ export default class extends Vue {
     "windows10Package"
   ];
 
+  @GeneratorState icons: Icon[];
+  @GeneratorAction generateMissingImages;
+  @GeneratorAction updateManifest;
+
   // @PublishState status: boolean;
   @PublishState status = true;
   @PublishState appXLink: string;
+  @PublishState teamsLink: string;
 
   @PublishAction updateStatus;
   @PublishAction buildAppx;
+  @PublishAction buildTeams;
 
   public appxError: string | null = null;
   public modalStatus = false;
@@ -606,6 +640,27 @@ export default class extends Vue {
 
   public closeTeamsModal(): void {
     this.openTeams = false;
+  }
+
+  public clickUploadFileInput(): void {
+    // const el = document.getElementById("upload-file-input");
+  }
+
+  public uploadIconImage(): void {
+    // const
+  }
+
+  public async onSubmitTeamsModal(): Promise<void> {
+    try {
+      await this.buildTeams(this.teamsForm);
+
+      if (this.teamsLink) {
+        window.location.href = this.teamsLink;
+      }
+    } catch (e) {
+      // Can I reuse this component?
+      this.appxError = e;
+    }
   }
 
   public async onSubmitAppxModal(): Promise<void> {
@@ -1275,6 +1330,10 @@ footer a {
         &:focus {
           border-color: #9337d8;
         }
+      }
+
+      #upload-file-input {
+        display: none;
       }
 
       .file-description {
