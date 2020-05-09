@@ -173,41 +173,54 @@
       </section>
     </div>
 
-    <div v-if="openTeams" ref="teamsModal" class="platModal">
+    <div v-if="openTeams" ref="teamsModal" id="teamsModal" class="platModal">
       <button @click="closeTeamsModal()" class="closeModalPlatButton">
         <i class="fas fa-times"></i>
       </button>
+      <section class="platModalBody platModalForm">
+        <div class="platModalField">
+          <label for="package-name">
+            <h4>Package name</h4>
+          </label>
+          <input  type="text" name="package-name" placeholder="packagename" />
+        </div>
+        <div class="platModalField">
+          <label for="app-description">
+            <h4>Short app description</h4>
+            <p>Describe your app in 200 charactes or less</p>
+          </label>
+          <textarea name="app-description"></textarea>
+        </div>
+        <div class="platModalField">
+          <label for="privacy-url">
+            <h4>Privacy URL</h4>
+          </label>
+          <input name="privacy-url" type="text" placeholder="www.somewebsite/privacy" />
+        </div>
+        <div class="platModalField">
+          <label>
+            <h4>Terms of Use URL</h4>
+          </label>
+          <input type="text" placeholder="www.somewebsite/termsofuse" />
+        </div>
 
-      <section class="platModalBody">
-        <div>
-          <p class="platModalP">
-            The teams integration requires a few details to convert your web manifest:
-            1. Icon background color
-            2. Two images pertaining to the icon that appears on teams:
-              - A 192x192 svg or png with a single background color.
-              - A 32x32 svg or png of a white silhouette of the icon with an invisible background.
-          </p>
+        <div class="platModalField file-chooser">
+          <label for="upload-image">
+            <h4>App Image</h4>
+            <p>TODO: Description of the type of image needed</p>
+          </label>
+          <button id="uploadIconImage" name="upload-image">Choose File</button>
+          <p class="file-description">No file chosen</p>
         </div>
 
         <!-- TODO starts from here -->
         <div class="platModalButtonSection">
           <Download
             class="platModalDownloadButton"
-            platform="windows10"
+            platform="teams"
             :message="$t('publish.download')"
             :showMessage="true"
           />
-          <button
-            class="platModalDownloadButton"
-            @click="
-              openAppXModal();
-              $awa({
-                referrerUri: ''
-              });
-            "
-          >
-            Generate
-          </button>
         </div>
       </section>
     </div>
@@ -1199,9 +1212,16 @@ footer a {
 }
 
 .platModalForm {
+  height: 80%;
+  padding-top: 8px;
+  overflow: scroll;
+  justify-content: space-evenly;
+  align-content: space-between;
+
   .platModalField {
     width: 100%;
     text-align: left;
+    flex: 0 0;
 
     label {
       h4 {
@@ -1212,10 +1232,13 @@ footer a {
       }
 
       p {
+        margin: 8px 0;
         font-size: 14px;
         line-height: 16px;
         color: #808080;
       }
+
+      margin-bottom: 16px;
     }
 
     input, textarea {
@@ -1229,22 +1252,36 @@ footer a {
     }
 
     input {
+      height: 35px;
+      padding: 8px 8px 8px 0;
       border-width: 0 0 1px;
     }
 
     textarea {
+      height: 120px;
       resize: none;
     }
 
-    .file-chooser {
-      button {
+    &.file-chooser {
+      #uploadIconImage {
+        font-size: 14px;
+        line-height: 16px;
+        text-align: center;
+        display: inline-block;
+        padding: 8px 32px;
         color: #000000;
         border: 1px solid #3C3D3E;
+
+        &:focus {
+          border-color: #9337d8;
+        }
       }
 
       .file-description {
-        font-size: 16px;
-        line-height: 19px;
+        display: inline-block;
+        margin-left: 14px;
+        font-size: 14px;
+        line-height: 16px;
         color: #808080;
       }
     }
