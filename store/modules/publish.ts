@@ -10,6 +10,7 @@ const platforms = {
     android: 'android',
     androidTWA: 'android-twa',
     samsung: 'samsung',
+    msteams: 'teams',
     all: 'All'
 };
 
@@ -25,6 +26,7 @@ export interface State {
     status: boolean | null;
     archiveLink: string | null;
     appXLink: string | null;
+    teamsLink: string | null;
 }
 
 export interface AppxParams {
@@ -34,10 +36,19 @@ export interface AppxParams {
     version: string | null;
 }
 
+export interface TeamsParams {
+    packageName: string | null;
+    description: string | null;
+    privacyUrl: string | null;
+    termsUrl: string | null;
+    appImage: string | null;
+}
+
 export const state = (): State => ({
     status: null,
     archiveLink: null,
-    appXLink: null
+    appXLink: null,
+    teamsLink: null
 });
 
 export const getters: GetterTree<State, RootState> = {};
@@ -47,6 +58,7 @@ export interface Actions<S, R> extends ActionTree<S, R> {
     updateStatus(context: ActionContext<S, R>): void;
     build(context: ActionContext<S, R>, params: { platform: string, href: string, options?: string[]}): Promise<void>;
     buildAppx(context: ActionContext<S, R>, params: AppxParams): Promise<void>;
+    buildTeams(context: ActionContext<S, R>, params: TeamsParams): Promise<void>;
 }
 
 export const actions: Actions<State, RootState> = {
@@ -126,6 +138,30 @@ export const actions: Actions<State, RootState> = {
                 reject(errorMessage);
             }
         });
+    },
+
+    async buildTeams({ commit, rootState }, params: TeamsParams): Promise<void> {
+        return new Promise<void>(async (resolve, reject) => {
+            const manifestId = rootState.generator.manifestId;
+
+            if (!manifestId) {
+                reject('error.manifest_required');
+            }
+            if (!params.packageName || !params.description || !params.privacyUrl || !params.termsUrl || !params.appImage) {
+                reject('error.fields_required');
+            }
+
+            try {
+                const options = {};
+                const result = await this.$axios.$post(`${apiUrl}/${manifestId}/teams`, options);
+
+                //commit();
+                resolve();
+            } catch(e) {
+                let errorMessage = '';
+                reject(errorMessage);
+            }
+        })
     }
 };
 
