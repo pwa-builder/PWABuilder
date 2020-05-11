@@ -505,7 +505,7 @@ import Toolbar from "~/components/Toolbar.vue";
 import HubHeader from "~/components/HubHeader.vue";
 
 import * as publish from "~/store/modules/publish";
-import { name as generatorName, Icon } from "~/store/modules/generator";
+import { name as generatorName, Icon, Manifest } from "~/store/modules/generator";
 
 const PublishState = namespace(publish.name, State);
 const PublishAction = namespace(publish.name, Action);
@@ -548,7 +548,9 @@ export default class extends Vue {
     "windows10Package"
   ];
 
+  @GeneratorState manifest: Manifest;
   @GeneratorState icons: Icon[];
+  @GeneratorAction uploadIcon;
   @GeneratorAction generateMissingImages;
   @GeneratorAction updateManifest;
 
@@ -656,16 +658,16 @@ export default class extends Vue {
     }
   }
 
-  public handleUploadIcon(): void {
-    const el = <HTMLInputElement> document.getElementById("upload-file-input");
+  public async handleUploadIcon(e: Event): Promise<void> {
+    const el = e.target as HTMLInputElement;
     if (el && el.files) {
       this.teamsForm.appImageFile = el.files[0];
       this.teamsForm.appImagePath = el.value;
     }
-  }
 
-  public uploadIconImage(): void {
-    // const
+    await this.generateMissingImages(this.teamsForm.appImageFile);
+    await this.uploadIcon(this.teamsForm.appImageFile);
+    this.updateManifest(this.manifest);
   }
 
   public async onSubmitTeamsModal(): Promise<void> {
@@ -678,6 +680,16 @@ export default class extends Vue {
     } catch (e) {
       // Can I reuse this component?
       this.appxError = e;
+    } finally {
+      this.teamsForm = {
+        packageName: null,
+        description: null,
+        privacyUrl: null,
+        termsUrl: null,
+        appImageFile: null,
+        appImagePath: null,
+      };
+      this.openTeams = false;
     }
   }
 
