@@ -41,7 +41,8 @@ export interface TeamsParams {
     description: string | null;
     privacyUrl: string | null;
     termsUrl: string | null;
-    appImage: string | null;
+    appImageFile: File | null;
+    appImagePath: string | null;
 }
 
 export const state = (): State => ({
