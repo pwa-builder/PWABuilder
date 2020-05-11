@@ -186,7 +186,7 @@
             type="text"
             name="package-name"
             placeholder="packagename"
-            :value="teamsForm.packageName"
+            v-model="teamsForm.packageName"
           />
         </div>
         <div class="platModalField">
@@ -196,7 +196,8 @@
           </label>
           <textarea
             name="description"
-            :value="teamsForm.description">
+            v-model="teamsForm.description"
+          >
           </textarea>
         </div>
         <div class="platModalField">
@@ -207,7 +208,7 @@
             name="privacy"
             type="text"
             placeholder="www.somewebsite/privacy"
-            :value="teamsForm.privacyUrl"
+            v-model="teamsForm.privacyUrl"
           />
         </div>
         <div class="platModalField">
@@ -218,7 +219,7 @@
             names="terms"
             type="text"
             placeholder="www.somewebsite/termsofuse"
-            :value="teamsForm.termsUrl"
+            v-model="teamsForm.termsUrl"
           />
         </div>
 
@@ -228,8 +229,13 @@
             <p>TODO: Description of the type of image needed</p>
           </label>
           <button id="uploadIconImage" name="upload-image" @click="clickUploadFileInput()">Choose File</button>
-          <input id="upload-file-input" name="upload-image" type="file"  />
-          <p class="file-description">No file chosen</p>
+          <input id="upload-file-input"
+            name="upload-image"
+            type="file"
+            accept="image/jpeg image/png image/svg+xml"
+            @change="handleUploadIcon()"
+          />
+          <p class="file-description">{{ this.teamsForm.appImageFile ? this.teamsForm.appImageFile.name : "No file chosen" }}</p>
         </div>
         <div class="platModalButtonSection">
           <Download
@@ -530,7 +536,8 @@ export default class extends Vue {
     description: null,
     privacyUrl: null,
     termsUrl: null,
-    appImage: null
+    appImageFile: null,
+    appImagePath: null
   };
 
   // Set default web checked items
@@ -643,7 +650,18 @@ export default class extends Vue {
   }
 
   public clickUploadFileInput(): void {
-    // const el = document.getElementById("upload-file-input");
+    const el = document.getElementById("upload-file-input");
+    if (el) {
+      el.click();
+    }
+  }
+
+  public handleUploadIcon(): void {
+    const el = <HTMLInputElement> document.getElementById("upload-file-input");
+    if (el && el.files) {
+      this.teamsForm.appImageFile = el.files[0];
+      this.teamsForm.appImagePath = el.value;
+    }
   }
 
   public uploadIconImage(): void {
