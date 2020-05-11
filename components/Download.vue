@@ -108,7 +108,7 @@ export default class extends Vue {
     }
   }
 
-  public async callTWA(goodIcon) {
+  public async callTWA(goodIcon, maskIcon) {
     const packageid = this.packageName || generatePackageId((this.manifest.short_name as string) || (this.manifest.name as string));
 
     let startURL = (this.manifest.start_url as string).replace(
