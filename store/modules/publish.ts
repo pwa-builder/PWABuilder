@@ -26,7 +26,6 @@ export interface State {
     status: boolean | null;
     archiveLink: string | null;
     appXLink: string | null;
-    teamsLink: string | null;
 }
 
 export interface AppxParams {
@@ -47,8 +46,7 @@ export interface TeamsParams {
 export const state = (): State => ({
     status: null,
     archiveLink: null,
-    appXLink: null,
-    teamsLink: null
+    appXLink: null
 });
 
 export const getters: GetterTree<State, RootState> = {};

@@ -557,11 +557,9 @@ export default class extends Vue {
   // @PublishState status: boolean;
   @PublishState status = true;
   @PublishState appXLink: string;
-  @PublishState teamsLink: string;
 
   @PublishAction updateStatus;
   @PublishAction buildAppx;
-  @PublishAction buildTeams;
 
   public appxError: string | null = null;
   public modalStatus = false;
@@ -658,8 +656,8 @@ export default class extends Vue {
     }
   }
 
-  public async handleUploadIcon(e: Event): Promise<void> {
-    const el = e.target as HTMLInputElement;
+  public async handleUploadIcon(): Promise<void> {
+    const el = <HTMLInputElement> document.getElementById("upload-file-input");
     if (el && el.files) {
       this.teamsForm.appImageFile = el.files[0];
     }
