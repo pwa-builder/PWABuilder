@@ -240,7 +240,8 @@
         <div class="platModalButtonSection">
           <Download
             class="platModalDownloadButton"
-            platform="teams"
+            platform="msteams"
+            :parameters="[JSON.stringify(this.teamsForm)]"
             :message="$t('publish.download')"
             :showMessage="true"
           />
@@ -536,8 +537,7 @@ export default class extends Vue {
     description: null,
     privacyUrl: null,
     termsUrl: null,
-    appImageFile: null,
-    appImagePath: null
+    appImageFile: null
   };
 
   // Set default web checked items
@@ -662,35 +662,11 @@ export default class extends Vue {
     const el = e.target as HTMLInputElement;
     if (el && el.files) {
       this.teamsForm.appImageFile = el.files[0];
-      this.teamsForm.appImagePath = el.value;
     }
 
     await this.generateMissingImages(this.teamsForm.appImageFile);
     await this.uploadIcon(this.teamsForm.appImageFile);
     this.updateManifest(this.manifest);
-  }
-
-  public async onSubmitTeamsModal(): Promise<void> {
-    try {
-      await this.buildTeams(this.teamsForm);
-
-      if (this.teamsLink) {
-        window.location.href = this.teamsLink;
-      }
-    } catch (e) {
-      // Can I reuse this component?
-      this.appxError = e;
-    } finally {
-      this.teamsForm = {
-        packageName: null,
-        description: null,
-        privacyUrl: null,
-        termsUrl: null,
-        appImageFile: null,
-        appImagePath: null,
-      };
-      this.openTeams = false;
-    }
   }
 
   public async onSubmitAppxModal(): Promise<void> {
