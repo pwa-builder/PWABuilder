@@ -86,6 +86,40 @@
       </section>
     </Modal>
 
+  <Modal
+    :title="$t('publish.package_name')"
+    :button_name="$t('modal.done')"
+    ref="androidPWAModal"
+    @modalSubmit="onDoneAndroidPWAModal"
+    @cancel="onCancelAndroidPWAModal"
+    v-on:modalOpened="modalOpened()"
+    v-on:modalClosed="androidModalClosed()"
+    v-if="androidForm"
+    >
+      <div id="topLabelBox" slot="extraP">
+        <label id="topLabel">
+          {{ $t("publish.package_name_detail") }}
+        </label>
+      </div>
+
+      <section id="#androidModalBody">
+        <div>
+          <label>{{ $t("publish.label_package_name") }}</label>
+        </div>
+
+        <input
+          class="l-generator-input l-generator-input--largest"
+          :placeholder="$t('publish.placeholder_package_name')"
+          type="text"
+          v-model="androidForm.package_name"
+          requied
+        />
+        <p class="l-generator-error" v-if="androidPWAError">
+          <span class="icon-exclamation"></span>
+          {{ $t(androidPWAError) }}
+        </p>
+      </section>
+    </Modal>
 
     <div v-if="openAndroid" ref="androidModal" id="androidPlatModal">
       <button @click="closeAndroidModal()" id="closeAndroidPlatButton">
@@ -111,15 +145,25 @@
             to the Google Play store
             <i class="fas fa-external-link-alt"></i>
           </a>
+          <p v-if="this.androidForm.package_name">
+            <span>Package Name: </span>   {{ $t(this.androidForm.package_name) }}
+          </p>
         </div>
 
         <div id="androidModalButtonSection">
           <Download
             :showMessage="true"
+            :packageName="this.androidForm.package_name"
             id="androidDownloadButton"
             platform="androidTWA"
             message="Download"
           />
+          <button
+            id="androidDownloadButton"
+            @click="openAndroidOptionModal();"
+          >
+            Options
+          </button>
         </div>
 
         <div id="extraSection">
@@ -532,13 +576,17 @@ export default class extends Vue {
     version: null
   };
 
+  public androidForm: publish.AndroidParams = {
+    package_name: null
+  };
+
   public teamsForm: publish.TeamsParams = {
     packageName: null,
     description: null,
     privacyUrl: null,
     termsUrl: null,
     appImageFile: null
-  };
+  }
 
   // Set default web checked items
   public files: any[] = [
@@ -562,6 +610,7 @@ export default class extends Vue {
   @PublishAction buildAppx;
 
   public appxError: string | null = null;
+  public androidPWAError: string | null = null;
   public modalStatus = false;
   public openAndroid: boolean = false;
   public openWindows: boolean = false;
@@ -622,6 +671,11 @@ export default class extends Vue {
   public openAppXModal(): void {
     this.openWindows = false;
     (this.$refs.appxModal as Modal).show();
+  }
+
+  public openAndroidOptionModal(): void {
+    this.openAndroid = false;
+    (this.$refs.androidPWAModal as Modal).show();
   }
 
   public openAndroidModal(): void {
@@ -687,6 +741,43 @@ export default class extends Vue {
     }
   }
 
+  public async onDoneAndroidPWAModal(): Promise<void> {
+    try {
+      if(!this.androidForm.package_name) {
+        throw 'error.package_name_required';
+      }
+      var KeyWordFound = this.containsKeyWord()
+      if(KeyWordFound.length > 0) {
+        this.androidPWAError = this.ConstructErrorMessage(KeyWordFound);
+      }
+      else {
+        (this.$refs.androidPWAModal as Modal).hide();
+        this.openAndroid = true;
+        this.androidPWAError = null;
+      }
+    } catch (e) {
+      this.androidPWAError = e;
+    }
+  }
+
+  public containsKeyWord()
+  {
+      const package_name = this.androidForm.package_name.split(".");
+      const keywords = ["abstract","assert","boolean","break","byte","case","catch","char","class","const","continue","default","do","double","else","enum","extends","final","finally","float","for","goto","if","implements","import","instanceof","int","interface","long","native","new","package","private","protected","public","return","short","static","strictfp","super","switch","synchronized","this","throw","throws","transient","try","void","volatile","while"];
+      var result = keywords.filter(function(item){ return package_name.indexOf(item) > -1});
+      return result;
+  }
+
+  public ConstructErrorMessage(list)
+  {
+    if(list.length === 1) {
+      return `Invalid package name. "${list[0]}" is a keyword.`;
+    }
+    else {
+      return `Invalid package name. "${list.slice(0, list.length - 1).join(", ")} and ${list[list.length - 1]}" are keywords`;
+    }
+  }
+
   public onCancelAppxModal(): void {
     this.appxForm = {
       publisher: null,
@@ -694,6 +785,13 @@ export default class extends Vue {
       package: null,
       version: null
     };
+  }
+
+  public onCancelAndroidPWAModal() {
+    this.androidForm = { package_name: null };
+    this.androidPWAError = null;
+    (this.$refs.androidPWAModal as Modal).hide();
+    this.openAndroid = true;
   }
 
   public modalOpened() {
@@ -706,6 +804,12 @@ export default class extends Vue {
   public modalClosed() {
     this.modalStatus = false;
     this.showBackground = false;
+  }
+
+  public androidModalClosed() {
+    this.modalStatus = false;
+    this.showBackground = false;
+    this.openAndroid = true;
   }
 }
 

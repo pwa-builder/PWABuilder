@@ -35,6 +35,10 @@ export interface AppxParams {
     version: string | null;
 }
 
+export interface AndroidParams {
+    package_name: string | null;
+}
+
 export interface TeamsParams {
     packageName: string | null;
     description: string | null;
