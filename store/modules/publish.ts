@@ -10,7 +10,7 @@ const platforms = {
     android: 'android',
     androidTWA: 'android-twa',
     samsung: 'samsung',
-    msteams: 'teams',
+    msteams: 'msteams',
     all: 'All'
 };
 
@@ -42,7 +42,6 @@ export interface TeamsParams {
     privacyUrl: string | null;
     termsUrl: string | null;
     appImageFile: File | null;
-    appImagePath: string | null;
 }
 
 export const state = (): State => ({
@@ -59,7 +58,7 @@ export interface Actions<S, R> extends ActionTree<S, R> {
     updateStatus(context: ActionContext<S, R>): void;
     build(context: ActionContext<S, R>, params: { platform: string, href: string, options?: string[]}): Promise<void>;
     buildAppx(context: ActionContext<S, R>, params: AppxParams): Promise<void>;
-    buildTeams(context: ActionContext<S, R>, params: TeamsParams): Promise<void>;
+    buildTeams(context: ActionContext<S, R>, params: { href: string, options?: string[]}): Promise<void>;
 }
 
 export const actions: Actions<State, RootState> = {
@@ -89,7 +88,7 @@ export const actions: Actions<State, RootState> = {
 
             let platformsList: string[] = [];
             if (params.platform === platforms.all) {
-                platformsList = [ platforms.web, platforms.windows10, platforms.windows, platforms.ios, platforms.android, platforms.androidTWA, platforms.samsung ];
+                platformsList = [ platforms.web, platforms.windows10, platforms.windows, platforms.ios, platforms.android, platforms.androidTWA, platforms.samsung, platforms.msteams ];
             } else {
                 platformsList = [ params.platform ];
             }
@@ -141,27 +140,20 @@ export const actions: Actions<State, RootState> = {
         });
     },
 
-    async buildTeams({ commit, rootState }, params: TeamsParams): Promise<void> {
+    async buildTeams(context: ActionContext<State, RootState>, params: { href: string, options?: string[] }): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
-            const manifestId = rootState.generator.manifestId;
+            const manifestId = context.rootState.generator.manifestId;
 
             if (!manifestId) {
                 reject('error.manifest_required');
             }
-            if (!params.packageName || !params.description || !params.privacyUrl || !params.termsUrl || !params.appImage) {
+
+            const { packageName, description, privacyUrl, termsUrl, appImage } = JSON.parse(params.options ? params.options[0] : "{}")
+            if (!packageName || !description || !privacyUrl || !termsUrl || !appImage) {
                 reject('error.fields_required');
             }
 
-            try {
-                const options = {};
-                const result = await this.$axios.$post(`${apiUrl}/${manifestId}/teams`, options);
-
-                //commit();
-                resolve();
-            } catch(e) {
-                let errorMessage = '';
-                reject(errorMessage);
-            }
+            return actions.build(context, { platform: platforms.msteams, href: "/", options: params.options })
         })
     }
 };
