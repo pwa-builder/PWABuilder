@@ -78,6 +78,7 @@ export default class extends Vue {
 
   @PublishState archiveLink: string;
   @PublishAction build;
+  @PublishAction buildTeams;
 
   @GeneratorState manifest: generator.Manifest;
 
@@ -311,11 +312,18 @@ export default class extends Vue {
       try {
         this.isReady = false;
 
-        await this.build({
-          platform: platform,
-          href: this.siteHref,
-          options: parameters
-        });
+        if (platform === "msteams") {
+          await this.buildTeams({
+            href: this.siteHref,
+            options: parameters
+          });
+        } else {
+          await this.build({
+            platform: platform,
+            href: this.siteHref,
+            options: parameters
+          });
+        }
 
         if (this.archiveLink) {
           window.location.href = this.archiveLink;
