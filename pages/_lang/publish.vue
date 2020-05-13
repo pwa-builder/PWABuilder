@@ -1523,7 +1523,7 @@ footer a {
 }
 
 .platModalDownloadButton #colorSpinner {
-  margin-top: 4px;
+  margin-top: 4px !important;
   margin-left: 4px;
 }
 

@@ -143,20 +143,22 @@ export const actions: Actions<State, RootState> = {
         });
     },
 
-    async buildTeams(context: ActionContext<State, RootState>, params: { href: string, options?: string[] }): Promise<void> {
+    async buildTeams({ dispatch, rootState }, params: { href: string, options?: string[] }): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
-            const manifestId = context.rootState.generator.manifestId;
+            const manifestId = rootState.generator.manifestId;
 
             if (!manifestId) {
                 reject('error.manifest_required');
             }
 
-            const { name, description, privacyUrl, termsOfUseUrl, appImageFile } = JSON.parse(params.options ? params.options[0] : "{}")
+            const { name, description, privacyUrl, termsOfUseUrl, appImageFile } = JSON.parse(params.options ? params.options[0] : "{}");
             if (!name || !description || !privacyUrl || !termsOfUseUrl || !appImageFile) {
                 reject('error.fields_required');
             }
 
-            return actions.build(context, { platform: platforms.msteams, href: params.href, options: params.options })
+            resolve();
+        }).then(() => {
+            return dispatch("build", { platform: platforms.msteams, href: params.href, options: params.options });
         })
     }
 };
