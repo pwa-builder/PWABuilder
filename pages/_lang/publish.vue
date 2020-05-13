@@ -230,7 +230,7 @@
             type="text"
             name="package-name"
             placeholder="packagename"
-            v-model="teamsForm.packageName"
+            v-model="teamsForm.name"
           />
         </div>
         <div class="platModalField">
@@ -263,7 +263,7 @@
             names="terms"
             type="text"
             placeholder="www.somewebsite/termsofuse"
-            v-model="teamsForm.termsUrl"
+            v-model="teamsForm.termsOfUseUrl"
           />
         </div>
 
@@ -285,6 +285,7 @@
           <Download
             class="platModalDownloadButton"
             platform="msteams"
+            :packageName="this.teamsForm.name"
             :parameters="[JSON.stringify(this.teamsForm)]"
             :message="$t('publish.download')"
             :showMessage="true"
@@ -581,10 +582,10 @@ export default class extends Vue {
   };
 
   public teamsForm: publish.TeamsParams = {
-    packageName: null,
+    name: null,
     description: null,
     privacyUrl: null,
-    termsUrl: null,
+    termsOfUseUrl: null,
     appImageFile: null
   }
 

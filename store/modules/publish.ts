@@ -40,10 +40,10 @@ export interface AndroidParams {
 }
 
 export interface TeamsParams {
-    packageName: string | null;
+    name: string | null;
     description: string | null;
     privacyUrl: string | null;
-    termsUrl: string | null;
+    termsOfUseUrl: string | null;
     appImageFile: File | null;
 }
 
@@ -103,6 +103,7 @@ export const actions: Actions<State, RootState> = {
                 resolve();
             } catch (e) {
                 let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
+
                 reject(errorMessage);
             }
         });
@@ -150,12 +151,12 @@ export const actions: Actions<State, RootState> = {
                 reject('error.manifest_required');
             }
 
-            const { packageName, description, privacyUrl, termsUrl, appImage } = JSON.parse(params.options ? params.options[0] : "{}")
-            if (!packageName || !description || !privacyUrl || !termsUrl || !appImage) {
+            const { name, description, privacyUrl, termsOfUseUrl, appImageFile } = JSON.parse(params.options ? params.options[0] : "{}")
+            if (!name || !description || !privacyUrl || !termsOfUseUrl || !appImageFile) {
                 reject('error.fields_required');
             }
 
-            return actions.build(context, { platform: platforms.msteams, href: "/", options: params.options })
+            return actions.build(context, { platform: platforms.msteams, href: params.href, options: params.options })
         })
     }
 };
