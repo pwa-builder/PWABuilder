@@ -2,8 +2,9 @@
   <button
     :class="{
       'pwa-button--brand': isBrand,
-      'pwa-button--total_right': isRight
+      'pwa-button--total_right': isRight,
     }"
+    :disabled="downloadDisabled"
     @click="buildArchive(platform, parameters)"
   >
     <span v-if="isReady">
@@ -80,6 +81,8 @@ export default class extends Vue {
   public showMessage: boolean;
 
   @PublishState archiveLink: string;
+  @PublishState downloadDisabled: boolean;
+
   @PublishAction build;
   @PublishAction buildTeams;
 
@@ -165,7 +168,7 @@ export default class extends Vue {
           body: body
         }
       );
-      
+
       if(response.status === 200) {
         const data = await response.blob();
 
@@ -365,6 +368,11 @@ Vue.prototype.$awa = function(config) {
 </script>
 
 <style lang="scss" scoped>
+button:disabled {
+  background: rgba(60, 60, 60, .1);
+  cursor: pointer;
+}
+
 #errorDiv {
   position: absolute;
   color: white;
