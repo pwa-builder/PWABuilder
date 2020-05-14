@@ -19,13 +19,15 @@ export const name = 'publish';
 export const types = {
     UPDATE_STATUS: 'UPDATE_STATUS',
     UPDATE_ARCHIVELINK: 'UPDATE_ARCHIVELINK',
-    UPDATE_APPXLINK: 'UPDATE_APPXLINK'
+    UPDATE_APPXLINK: 'UPDATE_APPXLINK',
+    UPDATE_DOWNLOAD_DISABLED: "UPDATE_DOWNLOAD_DISABLED"
 };
 
 export interface State {
     status: boolean | null;
     archiveLink: string | null;
     appXLink: string | null;
+    downloadDisabled: boolean;
 }
 
 export interface AppxParams {
@@ -41,16 +43,19 @@ export interface AndroidParams {
 
 export interface TeamsParams {
     name: string | null;
-    description: string | null;
+    shortDescription: string | null;
+    longDescription: string | null;
     privacyUrl: string | null;
     termsOfUseUrl: string | null;
-    appImageFile: File | null;
+    colorImageFile:  File | null;
+    outlineImageFile:  File | null;
 }
 
 export const state = (): State => ({
     status: null,
     archiveLink: null,
-    appXLink: null
+    appXLink: null,
+    downloadDisabled: false
 });
 
 export const getters: GetterTree<State, RootState> = {};
@@ -61,6 +66,8 @@ export interface Actions<S, R> extends ActionTree<S, R> {
     build(context: ActionContext<S, R>, params: { platform: string, href: string, options?: string[]}): Promise<void>;
     buildAppx(context: ActionContext<S, R>, params: AppxParams): Promise<void>;
     buildTeams(context: ActionContext<S, R>, params: { href: string, options?: string[]}): Promise<void>;
+    disableDownloadButton(context: ActionContext<S, R>): Promise<void>;
+    enableDownloadButton(context: ActionContext<S, R>): Promise<void>;
 }
 
 export const actions: Actions<State, RootState> = {
@@ -151,8 +158,8 @@ export const actions: Actions<State, RootState> = {
                 reject('error.manifest_required');
             }
 
-            const { name, description, privacyUrl, termsOfUseUrl, appImageFile } = JSON.parse(params.options ? params.options[0] : "{}");
-            if (!name || !description || !privacyUrl || !termsOfUseUrl || !appImageFile) {
+            const { name, longDescription, shortDescription, privacyUrl, termsOfUseUrl, colorImageFile, outlineImageFile } = JSON.parse(params.options ? params.options[0] : "{}");
+            if (!name || !longDescription || !shortDescription || !privacyUrl || !termsOfUseUrl || !colorImageFile || !outlineImageFile) {
                 reject('error.fields_required');
             }
 
@@ -160,6 +167,14 @@ export const actions: Actions<State, RootState> = {
         }).then(() => {
             return dispatch("build", { platform: platforms.msteams, href: params.href, options: params.options });
         })
+    },
+
+    async disableDownloadButton({commit}): Promise<void> {
+        commit(types.UPDATE_DOWNLOAD_DISABLED, true);
+    },
+
+    async enableDownloadButton({commit}): Promise<void> {
+        commit(types.UPDATE_DOWNLOAD_DISABLED, false);
     }
 };
 
@@ -172,6 +187,9 @@ export const mutations: MutationTree<State> = {
     },
     [types.UPDATE_APPXLINK](state, url: string): void {
         state.appXLink = url;
+    },
+    [types.UPDATE_DOWNLOAD_DISABLED](state, disabled: boolean): void {
+        state.downloadDisabled = disabled;
     }
 };
 
