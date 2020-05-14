@@ -71,10 +71,10 @@ export const helpers = {
         baseUrl = protocol + '//' + host + additionnalPath;
 
         //avoid duplication on the path if the icon src already has it
-        icon.src = icon.src.replace(additionnalPath, '');
+        icon.src = new URL(icon.src, baseUrl).href;
 
         //remove posible trailing/leading slashes
-        icon.src = `${baseUrl.replace(/\/$/, '')}/${icon.src.replace(/^\/+/g, '')}`;
+        icon.src = `${icon.src.replace(/^\/+/g, '')}`;
       }
       return icon;
     });
