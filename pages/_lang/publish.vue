@@ -231,16 +231,33 @@
             name="package-name"
             placeholder="packagename"
             v-model="teamsForm.name"
+            @change="validateTeamsForm()"
           />
         </div>
         <div class="platModalField">
-          <label for="description">
-            <h4>Short app description</h4>
+          <label for="long-description">
+            <h4>Long app description</h4>
             <p>Describe your app in 200 charactes or less</p>
           </label>
           <textarea
-            name="description"
-            v-model="teamsForm.description"
+            name="long-description"
+            v-model="teamsForm.longDescription"
+            @change="validateTeamsForm()"
+            :class="{ 'error': teamsForm.longDescription !== null && teamsForm.longDescription.length > 200 }"
+          >
+          </textarea>
+        </div>
+        <div class="platModalField">
+          <label for="short-description">
+            <h4>Short app description</h4>
+            <p>Describe your app in 80 charactes or less</p>
+          </label>
+          <textarea
+            name="short-description"
+            class="short"
+            :class="{ 'error': teamsForm.shortDescription !== null && teamsForm.shortDescription.length > 80 }"
+            v-model="teamsForm.shortDescription"
+            @change="validateTeamsForm()"
           >
           </textarea>
         </div>
@@ -253,6 +270,7 @@
             type="text"
             placeholder="www.somewebsite/privacy"
             v-model="teamsForm.privacyUrl"
+            @change="validateTeamsForm()"
           />
         </div>
         <div class="platModalField">
@@ -264,23 +282,40 @@
             type="text"
             placeholder="www.somewebsite/termsofuse"
             v-model="teamsForm.termsOfUseUrl"
+            @change="validateTeamsForm()"
           />
         </div>
 
         <div class="platModalField file-chooser">
-          <label for="upload-image">
+          <label for="upload-image-color">
             <h4>App Image</h4>
-            <p>TODO: Description of the type of image needed</p>
+            <p>The image needs to be 192x192, a solid background color, preferably the same as your w3c manifest background color.</p>
           </label>
-          <button id="uploadIconImage" name="upload-image" @click="clickUploadFileInput()">Choose File</button>
-          <input id="upload-file-input"
-            name="upload-image"
+          <button id="uploadIconImage-color" name="upload-image-color" @click="clickUploadColorFileInput()">Choose File</button>
+          <input id="upload-file-input-color"
+            name="upload-image-color"
             type="file"
             accept="image/jpeg image/png image/svg+xml"
-            @change="handleUploadIcon()"
+            @change="handleUploadColorIcon()"
           />
-          <p class="file-description">{{ this.teamsForm.appImageFile ? this.teamsForm.appImageFile.name : "No file chosen" }}</p>
+          <p class="file-description">{{ this.teamsForm.colorImageFile ? this.teamsForm.colorImageFile.name : "No file chosen" }}</p>
         </div>
+
+        <div class="platModalField file-chooser">
+          <label for="upload-image-outline">
+            <h4>Teams Silhouette</h4>
+            <p>This image needs to be 32x32, the background transparent, and the silhouette of your app icon in white.</p>
+          </label>
+          <button id="uploadIconImage-outline" name="upload-image-outline" @click="clickUploadOutlineFileInput()">Choose File</button>
+          <input id="upload-file-input-outline"
+            name="upload-image-outline"
+            type="file"
+            accept="image/jpeg image/png image/svg+xml"
+            @change="handleUploadOutlineIcon()"
+          />
+          <p class="file-description">{{ this.teamsForm.outlineImageFile ? this.teamsForm.outlineImageFile.name : "No file chosen" }}</p>
+        </div>
+
         <div class="platModalButtonSection">
           <Download
             class="platModalDownloadButton"
@@ -583,10 +618,12 @@ export default class extends Vue {
 
   public teamsForm: publish.TeamsParams = {
     name: null,
-    description: null,
+    shortDescription: null,
+    longDescription: null,
     privacyUrl: null,
     termsOfUseUrl: null,
-    appImageFile: null
+    colorImageFile: null,
+    outlineImageFile: null
   }
 
   // Set default web checked items
@@ -606,9 +643,12 @@ export default class extends Vue {
   // @PublishState status: boolean;
   @PublishState status = true;
   @PublishState appXLink: string;
+  @PublishState downloadDisabled: boolean;
 
   @PublishAction updateStatus;
   @PublishAction buildAppx;
+  @PublishAction disableDownloadButton;
+  @PublishAction enableDownloadButton;
 
   public appxError: string | null = null;
   public androidPWAError: string | null = null;
@@ -635,6 +675,14 @@ export default class extends Vue {
       pageName: "publishPage",
       pageHeight: window.innerHeight
     };
+
+    if (this.manifest && this.manifest.description) {
+      if (this.manifest.description.length > 80) {
+        this.teamsForm.longDescription = this.manifest.description;
+      } else {
+        this.teamsForm.shortDescription = this.manifest.description;
+      }
+    }
 
     this.$awa(overrideValues);
   }
@@ -694,6 +742,7 @@ export default class extends Vue {
 
   public openTeamsModal(): void {
     this.openTeams = true;
+    this.disableDownloadButton();
   }
 
   public closeWindowsModal(): void {
@@ -702,24 +751,82 @@ export default class extends Vue {
 
   public closeTeamsModal(): void {
     this.openTeams = false;
+
+    this.teamsForm = {
+      name: null,
+      shortDescription: null,
+      longDescription: null,
+      privacyUrl: null,
+      termsOfUseUrl: null,
+      colorImageFile: null,
+      outlineImageFile: null
+    }
+
+    if (this.manifest && this.manifest.description) {
+      if (this.manifest.description.length > 80) {
+        this.teamsForm.longDescription = this.manifest.description;
+      } else {
+        this.teamsForm.shortDescription = this.manifest.description;
+      }
+    }
+
+    this.enableDownloadButton();
   }
 
-  public clickUploadFileInput(): void {
-    const el = document.getElementById("upload-file-input");
+  public async handleUploadColorIcon(): Promise<void> {
+    const el = <HTMLInputElement> document.getElementById("upload-file-input-color");
+    if (el && el.files) {
+      this.teamsForm.colorImageFile = el.files[0];
+    }
+
+    await this.generateMissingImages(this.teamsForm.colorImageFile);
+    await this.uploadIcon(this.teamsForm.colorImageFile);
+    this.updateManifest(this.manifest);
+    this.validateTeamsForm();
+  }
+
+  public clickUploadColorFileInput(): void {
+    const el = document.getElementById("upload-file-input-color");
     if (el) {
       el.click();
     }
   }
 
-  public async handleUploadIcon(): Promise<void> {
-    const el = <HTMLInputElement> document.getElementById("upload-file-input");
+  public async handleUploadOutlineIcon(): Promise<void> {
+    const el = <HTMLInputElement> document.getElementById("upload-file-input-outline");
     if (el && el.files) {
-      this.teamsForm.appImageFile = el.files[0];
+      this.teamsForm.outlineImageFile = el.files[0];
     }
 
-    await this.generateMissingImages(this.teamsForm.appImageFile);
-    await this.uploadIcon(this.teamsForm.appImageFile);
+    await this.generateMissingImages(this.teamsForm.outlineImageFile);
+    await this.uploadIcon(this.teamsForm.outlineImageFile);
     this.updateManifest(this.manifest);
+    this.validateTeamsForm();
+  }
+
+  public clickUploadOutlineFileInput(): void {
+    const el = document.getElementById("upload-file-input-outline");
+    if (el) {
+      el.click();
+    }
+  }
+
+  public validateTeamsForm(): void {
+    const buttonDisabled = this.downloadDisabled;
+    const formFilled = (
+      typeof this.teamsForm.name === "string" &&
+      typeof this.teamsForm.shortDescription === "string" &&
+      typeof this.teamsForm.longDescription === "string" &&
+      typeof this.teamsForm.privacyUrl === "string" &&
+      typeof this.teamsForm.termsOfUseUrl === "string" &&
+      this.teamsForm.colorImageFile !== null &&
+      this.teamsForm.outlineImageFile !== null);
+
+    if (buttonDisabled && formFilled) {
+      this.enableDownloadButton();
+    } else if (!buttonDisabled && !formFilled) {
+      this.disableDownloadButton();
+    }
   }
 
   public async onSubmitAppxModal(): Promise<void> {
@@ -1413,6 +1520,10 @@ footer a {
         border-color: #9337d8;
         outline: none;
       }
+
+      &.error {
+        border-color: #a80000;
+      }
     }
 
     input {
@@ -1424,10 +1535,14 @@ footer a {
     textarea {
       height: 120px;
       resize: none;
+
+      &.short {
+        height: 40px;
+      }
     }
 
     &.file-chooser {
-      #uploadIconImage {
+      #uploadIconImage-color, #uploadIconImage-outline {
         font-size: 14px;
         line-height: 16px;
         text-align: center;
@@ -1441,7 +1556,7 @@ footer a {
         }
       }
 
-      #upload-file-input {
+      #upload-file-input-color, #upload-file-input-outline {
         display: none;
       }
 
