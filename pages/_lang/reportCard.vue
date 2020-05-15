@@ -1235,6 +1235,10 @@ h2 {
     @include backgroundRightPoint(80%, 25vh);
   }
 
+  #starterSection {
+    display: none;
+  }
+
   footer {
     display: none;
   }
