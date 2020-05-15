@@ -1483,16 +1483,21 @@ footer a {
 }
 
 .platModalForm {
-  height: 80%;
-  padding-top: 8px;
+  max-height: 800px;
+  padding: 36px 60px;
   overflow: scroll;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-content: space-between;
 
   .platModalField {
     width: 100%;
     text-align: left;
     flex: 0 0;
+
+    &:not(:first-child) {
+      margin-top: 14px;
+    }
+
 
     label {
       h4 {
@@ -1514,6 +1519,7 @@ footer a {
 
     input, textarea {
       width: 100%;
+      font-size: 14px;
       border-color: #f4f4f4;
 
       &:focus {
@@ -1664,6 +1670,10 @@ footer a {
   animation-duration: 250ms;
   border-radius: 4px;
   will-change: opacity transform;
+}
+
+#teamsModal {
+  align-items: baseline;
 }
 
 @keyframes opened {
