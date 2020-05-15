@@ -69,8 +69,12 @@ export const helpers = {
           }
         }
         baseUrl = protocol + '//' + host + additionnalPath;
-        //remove posible trailing/leading slashes 
-        icon.src = `${baseUrl.replace(/\/$/, '')}/${icon.src.replace(/^\/+/g, '')}`;
+
+        //avoid duplication on the path if the icon src already has it
+        icon.src = new URL(icon.src, baseUrl).href;
+
+        //remove posible trailing/leading slashes
+        icon.src = `${icon.src.replace(/^\/+/g, '')}`;
       }
       return icon;
     });
