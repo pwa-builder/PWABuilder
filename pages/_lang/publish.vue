@@ -235,22 +235,9 @@
           />
         </div>
         <div class="platModalField">
-          <label for="long-description">
-            <h4>Long app description</h4>
-            <p>Describe your app in 200 charactes or less</p>
-          </label>
-          <textarea
-            name="long-description"
-            v-model="teamsForm.longDescription"
-            @change="validateTeamsForm()"
-            :class="{ 'error': teamsForm.longDescription !== null && teamsForm.longDescription.length > 200 }"
-          >
-          </textarea>
-        </div>
-        <div class="platModalField">
           <label for="short-description">
             <h4>Short app description</h4>
-            <p>Describe your app in 80 charactes or less</p>
+            <p>Describe your app in 80 characters or less</p>
           </label>
           <textarea
             name="short-description"
@@ -258,6 +245,20 @@
             :class="{ 'error': teamsForm.shortDescription !== null && teamsForm.shortDescription.length > 80 }"
             v-model="teamsForm.shortDescription"
             @change="validateTeamsForm()"
+            :class="{ 'error': teamsForm.longDescription !== null && teamsForm.longDescription.length > 200 }"
+          >
+          </textarea>
+        </div>
+        <div class="platModalField">
+          <label for="long-description">
+            <h4>Long app description</h4>
+            <p>Describe your app in 4000 characters or less</p>
+          </label>
+          <textarea
+            name="long-description"
+            v-model="teamsForm.longDescription"
+            @change="validateTeamsForm()"
+            :class="{ 'error': teamsForm.longDescription !== null && teamsForm.longDescription.length > 4000 }"
           >
           </textarea>
         </div>
