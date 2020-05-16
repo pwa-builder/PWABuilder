@@ -245,7 +245,6 @@
             :class="{ 'error': teamsForm.shortDescription !== null && teamsForm.shortDescription.length > 80 }"
             v-model="teamsForm.shortDescription"
             @change="validateTeamsForm()"
-            :class="{ 'error': teamsForm.longDescription !== null && teamsForm.longDescription.length > 200 }"
           >
           </textarea>
         </div>
@@ -256,9 +255,9 @@
           </label>
           <textarea
             name="long-description"
+            :class="{ 'error': teamsForm.longDescription !== null && teamsForm.longDescription.length > 4000 }"
             v-model="teamsForm.longDescription"
             @change="validateTeamsForm()"
-            :class="{ 'error': teamsForm.longDescription !== null && teamsForm.longDescription.length > 4000 }"
           >
           </textarea>
         </div>
@@ -299,7 +298,8 @@
             accept="image/jpeg image/png image/svg+xml"
             @change="handleUploadColorIcon()"
           />
-          <p class="file-description">{{ this.teamsForm.colorImageFile ? this.teamsForm.colorImageFile.name : "No file chosen" }}</p>
+          <Loading :active="true" class="image-upload-loader" v-show="this.uploadColorLoaderActive"/>
+          <p class="file-description" v-show="!this.uploadColorLoaderActive">{{ this.teamsForm.colorImageFile ? this.teamsForm.colorImageFile.name : "No file chosen" }}</p>
         </div>
 
         <div class="platModalField file-chooser">
@@ -314,7 +314,8 @@
             accept="image/jpeg image/png image/svg+xml"
             @change="handleUploadOutlineIcon()"
           />
-          <p class="file-description">{{ this.teamsForm.outlineImageFile ? this.teamsForm.outlineImageFile.name : "No file chosen" }}</p>
+          <Loading :active="true" class="image-upload-loader" v-show="this.uploadOutlineLoaderActive"/>
+          <p class="file-description" v-show="!this.uploadOutlineLoaderActive">{{ this.teamsForm.outlineImageFile ? this.teamsForm.outlineImageFile.name : "No file chosen" }}</p>
         </div>
 
         <div class="platModalButtonSection">
@@ -581,6 +582,7 @@ import { Action, State, namespace } from "vuex-class";
 import GeneratorMenu from "~/components/GeneratorMenu.vue";
 import StartOver from "~/components/StartOver.vue";
 import Download from "~/components/Download.vue";
+import Loading from "~/components/Loading.vue";
 import Modal from "~/components/Modal.vue";
 import PublishCard from "~/components/PublishCard.vue";
 import Toolbar from "~/components/Toolbar.vue";
@@ -597,6 +599,7 @@ const GeneratorAction = namespace(generatorName, Action);
 @Component({
   components: {
     GeneratorMenu,
+    Loading,
     Download,
     StartOver,
     Modal,
@@ -665,6 +668,9 @@ export default class extends Vue {
   public pcDevice: boolean = true;
   public macDevice: boolean = false;
   public teamsDevice: boolean = false;
+
+  public uploadColorLoaderActive: boolean = false;
+  public uploadOutlineLoaderActive: boolean = false;
 
   public created(): void {
     this.updateStatus();
@@ -775,6 +781,7 @@ export default class extends Vue {
   }
 
   public async handleUploadColorIcon(): Promise<void> {
+    this.uploadColorLoaderActive = true;
     const el = <HTMLInputElement> document.getElementById("upload-file-input-color");
     if (el && el.files) {
       this.teamsForm.colorImageFile = el.files[0];
@@ -784,6 +791,7 @@ export default class extends Vue {
     await this.uploadIcon(this.teamsForm.colorImageFile);
     this.updateManifest(this.manifest);
     this.validateTeamsForm();
+    this.uploadColorLoaderActive = false;
   }
 
   public clickUploadColorFileInput(): void {
@@ -794,6 +802,7 @@ export default class extends Vue {
   }
 
   public async handleUploadOutlineIcon(): Promise<void> {
+    this.uploadOutlineLoaderActive = true;
     const el = <HTMLInputElement> document.getElementById("upload-file-input-outline");
     if (el && el.files) {
       this.teamsForm.outlineImageFile = el.files[0];
@@ -803,6 +812,7 @@ export default class extends Vue {
     await this.uploadIcon(this.teamsForm.outlineImageFile);
     this.updateManifest(this.manifest);
     this.validateTeamsForm();
+    this.uploadOutlineLoaderActive = false;
   }
 
   public clickUploadOutlineFileInput(): void {
@@ -1472,6 +1482,7 @@ footer a {
 }
 
 .platModalBody {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   width: 34em;
   background: white;
   display: flex;
@@ -1546,6 +1557,12 @@ footer a {
       &.short {
         height: 40px;
       }
+    }
+
+    .image-upload-loader {
+      display: inline-block;
+      margin-left: 8px;
+      vertical-align: middle;
     }
 
     &.file-chooser {
