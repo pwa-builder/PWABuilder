@@ -229,7 +229,7 @@
           <input
             type="text"
             name="package-name"
-            placeholder="packagename"
+            placeholder="publisher name"
             v-model="teamsForm.publisherName"
             @change="validateTeamsForm()"
           />
