@@ -15,7 +15,7 @@
       <span>URL copied for sharing</span>
     </div>
 
-    <div v-if="gotURL && overallScore < 80" id="reportShareButtonContainer">
+    <div v-if="gotURL" id="reportShareButtonContainer">
       <button @click="shareReport">
         <i class="fas fa-share-alt"></i>
         Share your Results
@@ -678,7 +678,6 @@ declare var awa: any;
   justify-content: flex-end;
   padding-right: 9em;
   position: relative;
-  top: 9em;
 }
 
 #reportShareButtonContainer button {
