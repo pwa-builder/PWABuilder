@@ -12,10 +12,10 @@
 
       <div id="mainTabsBar">
         <nuxt-link to="/">My Hub</nuxt-link>
-        <nuxt-link
+        <a
           @click="$awa( { 'referrerUri': `https://pwabuilder.com/features` })"
-          to="/features"
-        >Feature Store</nuxt-link>
+          href="https://pwafeatures.z22.web.core.windows.net/"
+        >Feature Store</a>
       </div>
 
       <div id="icons">
