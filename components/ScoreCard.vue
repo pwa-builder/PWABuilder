@@ -450,13 +450,19 @@
         <div
           class="brkManifestError"
           v-if="brokenManifest"
-        >The manifest is declared but cannot be reached</div>
+        >Couldn't find an <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest">app manifest</a></div>
       </nuxt-link>
 
       <div
         class="brkManifestError"
         v-if="category === 'Security' && !validSSL"
-      >Site could not be reached, check your https cert please</div>
+      >
+        <p>HTTPS not detected.</p>
+        <p class="brkManifestHelp">
+          <i class="fas fa-info-circle"></i>
+          You can use <a href="https://letsencrypt.org/">LetsEncrypt</a> to get a free HTTPS certificate, or <a href="https://azure.microsoft.com/en-us/get-started/web-app/">publish to Azure</a> to get HTTPS support out of the box
+        </p>
+      </div>
     </div>
   </div>
 </template>
@@ -592,6 +598,14 @@ export default class extends Vue {
   }
 
   private async lookAtSW() {
+    // If we have no URL, it means there was an issue parsing the URL,
+    // for example, malformed URL or HTTP url tried to be parsed while we're in an HTTPS context.
+    // In such case, punt; there is no service worker.
+    if (!this.url) {
+      this.noSwScore();
+      return;
+    }
+
     const savedData = sessionStorage.getItem(this.url);
     const savedScore = sessionStorage.getItem("swScore");
 
@@ -600,9 +614,7 @@ export default class extends Vue {
         let cleanedData = JSON.parse(savedData);
         this.serviceWorkerData = cleanedData;
       } catch (err) {
-        this.$emit("serviceWorkerTestDone", { score: 0 });
-        this.noServiceWorker = true;
-        this.swScore = 0;
+        this.noSwScore();
       }
 
       if (savedScore) {
@@ -632,10 +644,7 @@ export default class extends Vue {
         !this.serviceWorkerData || this.serviceWorkerData.swURL === null ||
         this.serviceWorkerData.swURL === false
       ) {
-        this.noServiceWorker = true;
-
-        this.swScore = 0;
-        this.$emit("serviceWorkerTestDone", { score: 0 });
+        this.noSwScore();
 
         return;
       } else {
@@ -683,6 +692,12 @@ export default class extends Vue {
         return;
       }
     }
+  }
+
+  private noSwScore() {
+    this.$emit("serviceWorkerTestDone", { score: 0 });
+    this.noServiceWorker = true;
+    this.swScore = 0;
   }
 
   private trimSuffixChar(string, charToRemove) {
@@ -874,6 +889,11 @@ export default class extends Vue {
     padding-bottom: 1em;
     font-size: 14px;
     text-align: center;
+  }
+
+  .brkManifestHelp {
+    color:rgb(92, 92, 92);
+    font-size: 13px;
   }
 }
 </style>
