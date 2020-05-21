@@ -599,9 +599,10 @@ export default class extends Vue {
 
   private async lookAtSW() {
     // If we have no URL, it means there was an issue parsing the URL,
-    // for example, malformed URL or HTTP url tried to be parsed while we're in an HTTPS context.
+    // for example, malformed URL.
     // In such case, punt; there is no service worker.
-    if (!this.url) {
+    const isHttp = typeof(this.url) === "string" && this.url.startsWith("http://");
+    if (!this.url || isHttp) {
       this.noSwScore();
       return;
     }

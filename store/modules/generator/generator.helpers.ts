@@ -28,6 +28,7 @@ export const helpers = {
       });
     }
     catch (err) {
+      console.log("zanz", err);
       return err;
     }
   },
