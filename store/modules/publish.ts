@@ -42,7 +42,7 @@ export interface AndroidParams {
 }
 
 export interface TeamsParams {
-    name: string | null;
+    publisherName: string | null;
     shortDescription: string | null;
     longDescription: string | null;
     privacyUrl: string | null;

@@ -224,13 +224,13 @@
       <section class="platModalBody platModalForm">
         <div class="platModalField">
           <label for="package-name">
-            <h4>Package name</h4>
+            <h4>Publisher name</h4>
           </label>
           <input
             type="text"
             name="package-name"
             placeholder="packagename"
-            v-model="teamsForm.name"
+            v-model="teamsForm.publisherName"
             @change="validateTeamsForm()"
           />
         </div>
@@ -322,7 +322,7 @@
           <Download
             class="platModalDownloadButton"
             platform="msteams"
-            :packageName="this.teamsForm.name"
+            :packageName="this.teamsForm.publisherName"
             :parameters="[JSON.stringify(this.teamsForm)]"
             :message="$t('publish.download')"
             :showMessage="true"
@@ -621,7 +621,7 @@ export default class extends Vue {
   };
 
   public teamsForm: publish.TeamsParams = {
-    name: null,
+    publisherName: null,
     shortDescription: null,
     longDescription: null,
     privacyUrl: null,
@@ -760,7 +760,7 @@ export default class extends Vue {
     this.openTeams = false;
 
     this.teamsForm = {
-      name: null,
+      developerName: null,
       shortDescription: null,
       longDescription: null,
       privacyUrl: null,
@@ -825,7 +825,7 @@ export default class extends Vue {
   public validateTeamsForm(): void {
     const buttonDisabled = this.downloadDisabled;
     const formFilled = (
-      typeof this.teamsForm.name === "string" &&
+      typeof this.teamsForm.publisherName === "string" &&
       typeof this.teamsForm.shortDescription === "string" &&
       typeof this.teamsForm.longDescription === "string" &&
       typeof this.teamsForm.privacyUrl === "string" &&
