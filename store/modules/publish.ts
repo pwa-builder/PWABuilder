@@ -158,8 +158,8 @@ export const actions: Actions<State, RootState> = {
                 reject('error.manifest_required');
             }
 
-            const { name, longDescription, shortDescription, privacyUrl, termsOfUseUrl, colorImageFile, outlineImageFile } = JSON.parse(params.options ? params.options[0] : "{}");
-            if (!name || !longDescription || !shortDescription || !privacyUrl || !termsOfUseUrl || !colorImageFile || !outlineImageFile) {
+            const { publisherName, longDescription, shortDescription, privacyUrl, termsOfUseUrl, colorImageFile, outlineImageFile }: TeamsParams = JSON.parse(params.options ? params.options[0] : "{}");
+            if (!publisherName || !longDescription || !shortDescription || !privacyUrl || !termsOfUseUrl || !colorImageFile || !outlineImageFile) {
                 reject('error.fields_required');
             }
 
