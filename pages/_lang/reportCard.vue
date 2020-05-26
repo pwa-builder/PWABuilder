@@ -76,9 +76,8 @@
               <button @click="starterDrop" id="mainStartButton">
                 Get Started!
                 <i class="fas fa-chevron-down"></i>
-              </button>
 
-              <div v-if="openDrop" id="starterDropdown">
+                <div v-if="openDrop" id="starterDropdown">
                 <button id="starterDownloadButton" @click="downloadStarter">
                   <i class="fas fa-arrow-down"></i>
                   Download
@@ -88,6 +87,8 @@
                   Clone from Github
                 </button>
               </div>
+              </button>
+
             </div>
           </div>
         </div>
@@ -509,8 +510,8 @@ declare var awa: any;
   align-items: flex-start;
 
   border-radius: 6px;
-  margin-top: 2em;
-  width: 10em;
+  margin-top: 0;
+  width: 14em;
   margin-left: 1.8em;
 
   animation-name: slidedown;
@@ -527,10 +528,6 @@ declare var awa: any;
   background: black !important;
   color: white !important;
   width: 11em;
-}
-
-#mainStartButton .fa, #mainStartButton .fas {
-  margin-left: 6px;
 }
 
 #gitCopyToast {
