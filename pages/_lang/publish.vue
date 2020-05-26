@@ -760,7 +760,7 @@ export default class extends Vue {
     this.openTeams = false;
 
     this.teamsForm = {
-      developerName: null,
+      publisherName: null,
       shortDescription: null,
       longDescription: null,
       privacyUrl: null,
