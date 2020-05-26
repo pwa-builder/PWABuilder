@@ -787,7 +787,6 @@ export default class extends Vue {
       this.teamsForm.colorImageFile = el.files[0];
     }
 
-    await this.generateMissingImages(this.teamsForm.colorImageFile);
     await this.uploadIcon(this.teamsForm.colorImageFile);
     this.updateManifest(this.manifest);
     this.validateTeamsForm();
@@ -808,7 +807,6 @@ export default class extends Vue {
       this.teamsForm.outlineImageFile = el.files[0];
     }
 
-    await this.generateMissingImages(this.teamsForm.outlineImageFile);
     await this.uploadIcon(this.teamsForm.outlineImageFile);
     this.updateManifest(this.manifest);
     this.validateTeamsForm();
