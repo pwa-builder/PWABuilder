@@ -224,12 +224,12 @@
       <section class="platModalBody platModalForm">
         <div class="platModalField">
           <label for="package-name">
-            <h4>Publisher name</h4>
+            <h4>Publisher Name</h4>
           </label>
           <input
             type="text"
             name="package-name"
-            placeholder="publisher name"
+            placeholder="Publisher Name"
             v-model="teamsForm.publisherName"
             @change="validateTeamsForm()"
           />
