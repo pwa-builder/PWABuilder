@@ -60,10 +60,6 @@ module.exports = {
         href: "/css/all.css"
       },
       {
-        rel: "stylesheet",
-        href: "https://unpkg.com/@ionic/core@latest/css/ionic.bundle.css"
-      },
-      {
         rel: 'apple-touch-icon',
         href: '/Images/assets/icons/apple-icon-06144a2a7b5101d447ecb4832502e73e.png'
       },
@@ -119,7 +115,7 @@ module.exports = {
         src: '/awa-register.js'
       },
       {
-        src: 'https://unpkg.com/@webcomponents/webcomponentsjs@2.4.0/webcomponents-loader.js'
+        src: '/webcomponents-polyfill.js'
       },
       {
         src: '/copyButton.js',
@@ -130,10 +126,7 @@ module.exports = {
         type: 'module'
       },
       {
-        src: 'https://unpkg.com/@ionic/core@latest/dist/ionic.js'
-      },
-      {
-        src: 'https://cdn.jsdelivr.net/npm/@pwabuilder/pwainstall@1.5.0',
+        src: '/pwa-install.js',
         type: 'module'
       }
     ]

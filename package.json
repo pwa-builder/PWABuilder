@@ -58,7 +58,7 @@
     "cross-env": "^5.2.0",
     "mocha": "^5.2.0",
     "nightwatch": "^0.9.21",
-    "node-sass": "^4.13.1",
+    "node-sass": "^4.14.1",
     "npm-install-peers": "^1.2.1",
     "nyc": "^13.3.0",
     "opener": "^1.5.1",
