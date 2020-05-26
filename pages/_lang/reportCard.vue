@@ -528,6 +528,7 @@ declare var awa: any;
   background: black !important;
   color: white !important;
   width: 11em;
+  border: none;
 }
 
 #gitCopyToast {
@@ -615,6 +616,7 @@ declare var awa: any;
   display: flex;
   justify-content: center;
   align-items: center;
+  border: none;
 }
 
 #shareToast {
@@ -904,6 +906,7 @@ h2 {
           color: black;
           padding-left: 0;
           padding-right: 0;
+          border: none;
         }
       }
     }
