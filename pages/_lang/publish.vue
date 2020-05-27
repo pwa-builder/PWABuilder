@@ -304,7 +304,7 @@
 
         <div class="platModalField file-chooser">
           <label for="upload-image-outline">
-            <h4>Teams Silhouette</h4>
+            <h4>Teams Silhouette (optional)</h4>
             <p>This image needs to be 32x32, the background transparent, and the silhouette of your app icon in white.</p>
           </label>
           <button id="uploadIconImage-outline" name="upload-image-outline" @click="clickUploadOutlineFileInput()">Choose File</button>
@@ -828,8 +828,7 @@ export default class extends Vue {
       typeof this.teamsForm.longDescription === "string" &&
       typeof this.teamsForm.privacyUrl === "string" &&
       typeof this.teamsForm.termsOfUseUrl === "string" &&
-      this.teamsForm.colorImageFile !== null &&
-      this.teamsForm.outlineImageFile !== null);
+      this.teamsForm.colorImageFile !== null);
 
     if (buttonDisabled && formFilled) {
       this.enableDownloadButton();
