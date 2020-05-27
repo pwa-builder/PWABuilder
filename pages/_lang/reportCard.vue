@@ -135,7 +135,7 @@
           <a
             @click="$awa( { 'referrerUri': 'https://www.pwabuilder.com/featuresFromHome' });"
             id="featuresLink"
-            href="https://pwafeatures.z22.web.core.windows.net/"
+            href="https://pwabuilderfeatures.z22.web.core.windows.net/"
           >Feature Store</a>
         </div>
       </div>

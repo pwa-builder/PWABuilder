@@ -14,7 +14,7 @@
         <nuxt-link to="/">My Hub</nuxt-link>
         <a
           @click="$awa( { 'referrerUri': `https://pwabuilder.com/features` })"
-          href="https://pwafeatures.z22.web.core.windows.net/"
+          href="https://pwabuilderfeatures.z22.web.core.windows.net/"
         >Feature Store</a>
       </div>
 
