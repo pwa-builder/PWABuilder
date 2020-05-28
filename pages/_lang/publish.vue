@@ -3,7 +3,7 @@
     <HubHeader></HubHeader>
 
     <div
-      v-if="openAndroid || openWindows || showBackground"
+      v-if="openAndroid || openWindows || openTeams || showBackground"
       class="has-acrylic-40 is-dark"
       id="modalBackground"
     ></div>
@@ -217,6 +217,120 @@
       </section>
     </div>
 
+    <div v-if="openTeams" ref="teamsModal" id="teamsModal" class="platModal">
+      <button @click="closeTeamsModal()" class="closeModalPlatButton">
+        <i class="fas fa-times"></i>
+      </button>
+      <section class="platModalBody platModalForm">
+        <div class="platModalField">
+          <label for="package-name">
+            <h4>Publisher Name</h4>
+          </label>
+          <input
+            type="text"
+            name="package-name"
+            placeholder="Publisher Name"
+            v-model="teamsForm.publisherName"
+            @change="validateTeamsForm()"
+          />
+        </div>
+        <div class="platModalField">
+          <label for="short-description">
+            <h4>Short app description</h4>
+            <p>Describe your app in 80 characters or less</p>
+          </label>
+          <textarea
+            name="short-description"
+            class="short"
+            :class="{ 'error': teamsForm.shortDescription !== null && teamsForm.shortDescription.length > 80 }"
+            v-model="teamsForm.shortDescription"
+            @change="validateTeamsForm()"
+          >
+          </textarea>
+        </div>
+        <div class="platModalField">
+          <label for="long-description">
+            <h4>Long app description</h4>
+            <p>Describe your app in 4000 characters or less</p>
+          </label>
+          <textarea
+            name="long-description"
+            :class="{ 'error': teamsForm.longDescription !== null && teamsForm.longDescription.length > 4000 }"
+            v-model="teamsForm.longDescription"
+            @change="validateTeamsForm()"
+          >
+          </textarea>
+        </div>
+        <div class="platModalField">
+          <label for="privacy">
+            <h4>Privacy URL</h4>
+          </label>
+          <input
+            name="privacy"
+            type="text"
+            placeholder="www.somewebsite/privacy"
+            v-model="teamsForm.privacyUrl"
+            @change="validateTeamsForm()"
+          />
+        </div>
+        <div class="platModalField">
+          <label for="terms">
+            <h4>Terms of Use URL</h4>
+          </label>
+          <input
+            names="terms"
+            type="text"
+            placeholder="www.somewebsite/termsofuse"
+            v-model="teamsForm.termsOfUseUrl"
+            @change="validateTeamsForm()"
+          />
+        </div>
+
+        <div class="platModalField file-chooser">
+          <label for="upload-image-color">
+            <h4>App Image</h4>
+            <p>The image needs to be 192x192, a solid background color, preferably the same as your w3c manifest background color.</p>
+          </label>
+          <button id="uploadIconImage-color" name="upload-image-color" @click="clickUploadColorFileInput()">Choose File</button>
+          <input id="upload-file-input-color"
+            name="upload-image-color"
+            type="file"
+            accept="image/jpeg image/png image/svg+xml"
+            @change="handleUploadColorIcon()"
+          />
+          <Loading :active="true" class="image-upload-loader" v-show="this.uploadColorLoaderActive"/>
+          <p class="file-description" v-show="!this.uploadColorLoaderActive">{{ this.teamsForm.colorImageFile ? this.teamsForm.colorImageFile.name : "No file chosen" }}</p>
+        </div>
+
+        <div class="platModalField file-chooser">
+          <label for="upload-image-outline">
+            <h4>Teams Silhouette (optional)</h4>
+            <p>This image needs to be 32x32, the background transparent, and the silhouette of your app icon in white.</p>
+          </label>
+          <button id="uploadIconImage-outline" name="upload-image-outline" @click="clickUploadOutlineFileInput()">Choose File</button>
+          <input id="upload-file-input-outline"
+            name="upload-image-outline"
+            type="file"
+            accept="image/jpeg image/png image/svg+xml"
+            @change="handleUploadOutlineIcon()"
+          />
+          <Loading :active="true" class="image-upload-loader" v-show="this.uploadOutlineLoaderActive"/>
+          <p class="file-description" v-show="!this.uploadOutlineLoaderActive">{{ this.teamsForm.outlineImageFile ? this.teamsForm.outlineImageFile.name : "No file chosen" }}</p>
+        </div>
+
+        <div class="platModalButtonSection">
+          <Download
+            class="platModalDownloadButton"
+            platform="msteams"
+            :packageName="this.teamsForm.publisherName"
+            :parameters="[JSON.stringify(this.teamsForm)]"
+            :message="$t('publish.download')"
+            :showMessage="true"
+          />
+        </div>
+      </section>
+    </div>
+
     <section id="publishSideBySide">
       <section id="publishLeftSide">
         <div id="introContainer">
@@ -230,10 +344,10 @@
             on the right.
           </p>
 
-          <!--<div id="publishActionsContainer">
+          <!--<div id="publishActionsContainer">-->
           <!--<button id="downloadAllButton">Download your PWA files</button>-->
-          <!--<Download id="downloadAllButton" platform="web" message="Download your PWA files"/>
-          </div>-->
+          <!--<Download id="downloadAllButton" platform="web" message="Download your PWA files"/>-->
+          <!--</div>-->
 
           <!--temp impl for demo-->
         </div>
@@ -267,6 +381,34 @@
                   platform="web"
                   message="Download your PWA files"
                 />
+              </section>
+            </div>
+
+            <!-- Microsoft Teams Integration -->
+            <div
+              @mouseover="platCardHover($event)"
+              @mouseleave="platCardUnHover($event)"
+              id="pwaTeamsCard"
+              class="pwaCard"
+            >
+              <div class="pwaCardHeaderBlock">
+                <div class="pwaCardIconBlock">
+                  <img id="teamsIconImg" src="~/assets/images/teams-icon.png" />
+                  <h2>Microsoft Teams</h2>
+                </div>
+              </div>
+
+              <p>
+                Submit your PWA for further engagement on Microsoft Teams.
+              </p>
+
+              <section class="platformDownloadBar">
+                <button
+                  class="platformDownloadButton"
+                  @click="openTeamsModal()"
+                >
+                  <i class="fas fa-long-arrow-alt-down"></i>
+                </button>
               </section>
             </div>
 
@@ -440,19 +582,24 @@ import { Action, State, namespace } from "vuex-class";
 import GeneratorMenu from "~/components/GeneratorMenu.vue";
 import StartOver from "~/components/StartOver.vue";
 import Download from "~/components/Download.vue";
+import Loading from "~/components/Loading.vue";
 import Modal from "~/components/Modal.vue";
 import PublishCard from "~/components/PublishCard.vue";
 import Toolbar from "~/components/Toolbar.vue";
 import HubHeader from "~/components/HubHeader.vue";
 
 import * as publish from "~/store/modules/publish";
+import { name as generatorName, Icon, Manifest } from "~/store/modules/generator";
 
 const PublishState = namespace(publish.name, State);
 const PublishAction = namespace(publish.name, Action);
+const GeneratorState = namespace(generatorName, State);
+const GeneratorAction = namespace(generatorName, Action);
 
 @Component({
   components: {
     GeneratorMenu,
+    Loading,
     Download,
     StartOver,
     Modal,
@@ -473,6 +620,16 @@ export default class extends Vue {
     package_name: null
   };
 
+  public teamsForm: publish.TeamsParams = {
+    publisherName: null,
+    shortDescription: null,
+    longDescription: null,
+    privacyUrl: null,
+    termsOfUseUrl: null,
+    colorImageFile: null,
+    outlineImageFile: null
+  }
+
   // Set default web checked items
   public files: any[] = [
     "manifest",
@@ -481,18 +638,28 @@ export default class extends Vue {
     "windows10Package"
   ];
 
+  @GeneratorState manifest: Manifest;
+  @GeneratorState icons: Icon[];
+  @GeneratorAction uploadIcon;
+  @GeneratorAction generateMissingImages;
+  @GeneratorAction updateManifest;
+
   // @PublishState status: boolean;
   @PublishState status = true;
   @PublishState appXLink: string;
+  @PublishState downloadDisabled: boolean;
 
   @PublishAction updateStatus;
   @PublishAction buildAppx;
+  @PublishAction disableDownloadButton;
+  @PublishAction enableDownloadButton;
 
   public appxError: string | null = null;
   public androidPWAError: string | null = null;
   public modalStatus = false;
   public openAndroid: boolean = false;
   public openWindows: boolean = false;
+  public openTeams: boolean = false;
   public showBackground: boolean = false;
 
   public samsungDevice: boolean = false;
@@ -501,6 +668,9 @@ export default class extends Vue {
   public pcDevice: boolean = true;
   public macDevice: boolean = false;
   public teamsDevice: boolean = false;
+
+  public uploadColorLoaderActive: boolean = false;
+  public uploadOutlineLoaderActive: boolean = false;
 
   public created(): void {
     this.updateStatus();
@@ -512,6 +682,14 @@ export default class extends Vue {
       pageName: "publishPage",
       pageHeight: window.innerHeight
     };
+
+    if (this.manifest && this.manifest.description) {
+      if (this.manifest.description.length > 80) {
+        this.teamsForm.longDescription = this.manifest.description;
+      } else {
+        this.teamsForm.shortDescription = this.manifest.description;
+      }
+    }
 
     this.$awa(overrideValues);
   }
@@ -569,8 +747,94 @@ export default class extends Vue {
     this.openWindows = true;
   }
 
+  public openTeamsModal(): void {
+    this.openTeams = true;
+    this.disableDownloadButton();
+  }
+
   public closeWindowsModal(): void {
     this.openWindows = false;
+  }
+
+  public closeTeamsModal(): void {
+    this.openTeams = false;
+
+    this.teamsForm = {
+      publisherName: null,
+      shortDescription: null,
+      longDescription: null,
+      privacyUrl: null,
+      termsOfUseUrl: null,
+      colorImageFile: null,
+      outlineImageFile: null
+    }
+
+    if (this.manifest && this.manifest.description) {
+      if (this.manifest.description.length > 80) {
+        this.teamsForm.longDescription = this.manifest.description;
+      } else {
+        this.teamsForm.shortDescription = this.manifest.description;
+      }
+    }
+
+    this.enableDownloadButton();
+  }
+
+  public async handleUploadColorIcon(): Promise<void> {
+    this.uploadColorLoaderActive = true;
+    const el = <HTMLInputElement> document.getElementById("upload-file-input-color");
+    if (el && el.files) {
+      this.teamsForm.colorImageFile = el.files[0];
+    }
+
+    await this.uploadIcon(this.teamsForm.colorImageFile);
+    await this.updateManifest(this.manifest);
+    this.validateTeamsForm();
+    this.uploadColorLoaderActive = false;
+  }
+
+  public clickUploadColorFileInput(): void {
+    const el = document.getElementById("upload-file-input-color");
+    if (el) {
+      el.click();
+    }
+  }
+
+  public async handleUploadOutlineIcon(): Promise<void> {
+    this.uploadOutlineLoaderActive = true;
+    const el = <HTMLInputElement> document.getElementById("upload-file-input-outline");
+    if (el && el.files) {
+      this.teamsForm.outlineImageFile = el.files[0];
+    }
+
+    await this.uploadIcon(this.teamsForm.outlineImageFile);
+    await this.updateManifest(this.manifest);
+    this.validateTeamsForm();
+    this.uploadOutlineLoaderActive = false;
+  }
+
+  public clickUploadOutlineFileInput(): void {
+    const el = document.getElementById("upload-file-input-outline");
+    if (el) {
+      el.click();
+    }
+  }
+
+  public validateTeamsForm(): void {
+    const buttonDisabled = this.downloadDisabled;
+    const formFilled = (
+      typeof this.teamsForm.publisherName === "string" &&
+      typeof this.teamsForm.shortDescription === "string" &&
+      typeof this.teamsForm.longDescription === "string" &&
+      typeof this.teamsForm.privacyUrl === "string" &&
+      typeof this.teamsForm.termsOfUseUrl === "string" &&
+      this.teamsForm.colorImageFile !== null);
+
+    if (buttonDisabled && formFilled) {
+      this.enableDownloadButton();
+    } else if (!buttonDisabled && !formFilled) {
+      this.disableDownloadButton();
+    }
   }
 
   public async onSubmitAppxModal(): Promise<void> {
@@ -596,11 +860,11 @@ export default class extends Vue {
   public async onDoneAndroidPWAModal(): Promise<void> {
     try {
       if(!this.androidForm.package_name) {
-        throw 'error.package_name_required'; 
+        throw 'error.package_name_required';
       }
       var KeyWordFound = this.containsKeyWord()
       if(KeyWordFound.length > 0) {
-        this.androidPWAError = this.ConstructErrorMessage(KeyWordFound); 
+        this.androidPWAError = this.ConstructErrorMessage(KeyWordFound);
       }
       else {
         (this.$refs.androidPWAModal as Modal).hide();
@@ -616,8 +880,8 @@ export default class extends Vue {
   {
       const package_name = this.androidForm.package_name.split(".");
       const keywords = ["abstract","assert","boolean","break","byte","case","catch","char","class","const","continue","default","do","double","else","enum","extends","final","finally","float","for","goto","if","implements","import","instanceof","int","interface","long","native","new","package","private","protected","public","return","short","static","strictfp","super","switch","synchronized","this","throw","throws","transient","try","void","volatile","while"];
-      var result = keywords.filter(function(item){ return package_name.indexOf(item) > -1});   
-      return result;  
+      var result = keywords.filter(function(item){ return package_name.indexOf(item) > -1});
+      return result;
   }
 
   public ConstructErrorMessage(list)
@@ -629,7 +893,7 @@ export default class extends Vue {
       return `Invalid package name. "${list.slice(0, list.length - 1).join(", ")} and ${list[list.length - 1]}" are keywords`;
     }
   }
-  
+
   public onCancelAppxModal(): void {
     this.appxForm = {
       publisher: null,
@@ -669,7 +933,7 @@ Vue.prototype.$awa = function(config) {
   if (awa) {
     awa.ct.capturePageView(config);
   }
-  
+
   return;
 };
 
@@ -1002,6 +1266,10 @@ footer a {
           grid-column-start: span 2;
         }
 
+        #pwaTeamsCard {
+          grid-column-start: span 2;
+        }
+
         // #pwaWindowsCard {
         //   #platformIcon {
         //     margin-right: 42px;
@@ -1201,6 +1469,232 @@ footer a {
   animation-duration: 250ms;
   border-radius: 4px;
   will-change: opacity transform;
+}
+
+
+.platModalBody #extraSection p {
+  color: grey;
+  font-size: 10px;
+}
+
+.platModalBody #extraSection #legacyDownloadButton {
+  color: grey;
+  font-size: 10px;
+  background: transparent;
+}
+
+.platModalBody {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  width: 34em;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-left: 60px;
+  padding-right: 60px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.platModalForm {
+  max-height: 800px;
+  padding: 36px 60px;
+  overflow: scroll;
+  justify-content: space-between;
+  align-content: space-between;
+
+  .platModalField {
+    width: 100%;
+    text-align: left;
+    flex: 0 0;
+
+    &:not(:first-child) {
+      margin-top: 14px;
+    }
+
+
+    label {
+      h4 {
+        font-size: 16px;
+        line-height: 19px;
+
+        color: #000000;
+      }
+
+      p {
+        margin: 8px 0;
+        font-size: 14px;
+        line-height: 16px;
+        color: #808080;
+      }
+
+      margin-bottom: 16px;
+    }
+
+    input, textarea {
+      width: 100%;
+      font-size: 14px;
+      border-color: #f4f4f4;
+
+      &:focus {
+        border-color: #9337d8;
+        outline: none;
+      }
+
+      &.error {
+        border-color: #a80000;
+      }
+    }
+
+    input {
+      height: 35px;
+      padding: 8px 8px 8px 0;
+      border-width: 0 0 1px;
+    }
+
+    textarea {
+      height: 120px;
+      resize: none;
+
+      &.short {
+        height: 40px;
+      }
+    }
+
+    .image-upload-loader {
+      display: inline-block;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    &.file-chooser {
+      #uploadIconImage-color, #uploadIconImage-outline {
+        font-size: 14px;
+        line-height: 16px;
+        text-align: center;
+        display: inline-block;
+        padding: 8px 32px;
+        color: #000000;
+        border: 1px solid #3C3D3E;
+
+        &:focus {
+          border-color: #9337d8;
+        }
+      }
+
+      #upload-file-input-color, #upload-file-input-outline {
+        display: none;
+      }
+
+      .file-description {
+        display: inline-block;
+        margin-left: 14px;
+        font-size: 14px;
+        line-height: 16px;
+        color: #808080;
+      }
+    }
+  }
+}
+
+.closeModalPlatButton {
+  top: 10px;
+  border: none;
+  float: right;
+  height: 32px;
+  background: #3c3c3c;
+  color: white;
+  border-radius: 50%;
+  width: 32px;
+  margin-top: 10px;
+  margin-right: 10px;
+  right: 10px;
+  position: absolute;
+  font-size: 14px;
+}
+
+.platModalP {
+  font-family: sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -0.02em;
+  margin-top: 40px;
+}
+
+.platModalP a {
+  color: #9337d8;
+}
+
+.platModalBody .platModalSubText {
+  color: #3c3c3c;
+  display: block;
+  margin-bottom: 2em;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 21px;
+}
+
+.platModalButtonSection {
+  display: flex;
+  justify-content: space-around;
+  width: 80%;
+  margin-top: 1em;
+  margin-bottom: 20px;
+}
+
+.platModalDownloadButton {
+  background: #9337d8;
+  color: white;
+  font-size: 14px;
+  border-radius: 20px;
+  width: 150px;
+  height: 40px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+}
+
+.platModalDownloadButton #colorSpinner {
+  height: 32px;
+  margin-top: 4px !important;
+  margin-left: 4px;
+}
+
+.platModalDownloadButton.webviewButton {
+  width: 183px;
+  background: #3c3c3c;
+}
+
+.platModalDownloadButton:hover {
+  cursor: pointer;
+}
+
+.platModal {
+  background: transparent;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+  animation-name: opened;
+  animation-duration: 250ms;
+  border-radius: 4px;
+  will-change: opacity transform;
+}
+
+#teamsModal {
+  align-items: baseline;
 }
 
 @keyframes opened {

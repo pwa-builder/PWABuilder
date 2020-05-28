@@ -89,6 +89,10 @@ export default class extends Vue {
       mappedName: "Install your PWA"
     },
     {
+      realName: "inking",
+      mappedName: "Enable 2D inking on the web"
+    },
+    {
       realName: "authButton",
       mappedName: "Sign In with Microsoft, Google, Facebook, Apple"
     },

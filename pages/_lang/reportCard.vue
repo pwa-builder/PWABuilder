@@ -133,11 +133,11 @@
             id="buildLink"
             to="/publish"
           >Build My PWA</nuxt-link>
-          <nuxt-link
+          <a
             @click="$awa( { 'referrerUri': 'https://www.pwabuilder.com/featuresFromHome' });"
             id="featuresLink"
-            to="/features"
-          >Feature Store</nuxt-link>
+            href="https://pwabuilderfeatures.z22.web.core.windows.net/"
+          >Feature Store</a>
         </div>
       </div>
 

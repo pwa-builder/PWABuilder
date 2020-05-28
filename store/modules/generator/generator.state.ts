@@ -14,6 +14,15 @@ export interface Manifest {
     theme_color: string | null;
     generated: boolean | null;
     url: string | null;
+    shortcuts?: ShortcutItem[];
+}
+
+export interface ShortcutItem {
+    name: string;
+    url: string;
+    description?: string;
+    short_name?: string;
+    icons?: Icon[];
 }
 
 export interface StaticContent {
@@ -24,7 +33,11 @@ export interface StaticContent {
 export interface Icon {
     src: string;
     generated?: boolean;
-    sizes: string;
+    type?: string;
+    sizes?: string;
+    purpose?: string;
+    platform?: string;
+
 }
 
 export interface Screenshot {

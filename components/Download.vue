@@ -2,8 +2,9 @@
   <button
     :class="{
       'pwa-button--brand': isBrand,
-      'pwa-button--total_right': isRight
+      'pwa-button--total_right': isRight,
     }"
+    :disabled="downloadDisabled"
     @click="buildArchive(platform, parameters)"
   >
     <span v-if="isReady">
@@ -80,7 +81,10 @@ export default class extends Vue {
   public showMessage: boolean;
 
   @PublishState archiveLink: string;
+  @PublishState downloadDisabled: boolean;
+
   @PublishAction build;
+  @PublishAction buildTeams;
 
   @GeneratorState manifest: generator.Manifest;
 
@@ -144,7 +148,7 @@ export default class extends Vue {
       useBrowserOnChromeOS: true,
       splashScreenFadeOutDuration: 300,
       enableNotifications: false,
-      shortcuts: [],
+      shortcuts: this.manifest.shortcuts || [],
       signingInfo: {
         fullName: "John Doe",
         organization: "Contoso",
@@ -164,7 +168,7 @@ export default class extends Vue {
           body: body
         }
       );
-      
+
       if(response.status === 200) {
         const data = await response.blob();
 
@@ -315,11 +319,18 @@ export default class extends Vue {
       try {
         this.isReady = false;
 
-        await this.build({
-          platform: platform,
-          href: this.siteHref,
-          options: parameters
-        });
+        if (platform === "msteams") {
+          await this.buildTeams({
+            href: this.siteHref,
+            options: parameters
+          });
+        } else {
+          await this.build({
+            platform: platform,
+            href: this.siteHref,
+            options: parameters
+          });
+        }
 
         if (this.archiveLink) {
           window.location.href = this.archiveLink;
@@ -357,6 +368,11 @@ Vue.prototype.$awa = function(config) {
 </script>
 
 <style lang="scss" scoped>
+button:disabled {
+  background: rgba(60, 60, 60, .1);
+  cursor: pointer;
+}
+
 #errorDiv {
   position: absolute;
   color: white;
