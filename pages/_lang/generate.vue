@@ -114,10 +114,22 @@
                 <label class="l-generator-label">
                   <h4 class="iconUploadHeader">Upload app icons for your PWA</h4>
                   <p v-if="!isImageBroken">We suggest at least one image 512×512 or larger</p>
-                  <p class="brokenImage" v-if="isImageBroken">If you want a bigger images, we suggest to you to upload at least one image 512×512 or larger</p>
+                  <p
+                    class="brokenImage"
+                    v-if="isImageBroken"
+                  >If you want a bigger images, we suggest to you to upload at least one image 512×512 or larger</p>
                 </label>
 
                 <div class="button-holder icons">
+                  <div class="l-inline">
+                    <button
+                      id="iconDownloadButton"
+                      class="work-button l-generator-button"
+                      :class="{ disabled: zipRequested }"
+                      @click="onClickDownloadAll()"
+                      :disabled="zipRequested"
+                    >Download All</button>
+                  </div>
                   <div class="l-inline">
                     <button
                       id="iconUploadButton"
@@ -140,7 +152,12 @@
                   <div class="pure-u-1-8"></div>
                   <div class="pure-u-1-8"></div>-->
 
-                  <div id="iconItem" class="pure-u-1" v-for="icon in filterIcons(icons)" :key="icon.src">
+                  <div
+                    id="iconItem"
+                    class="pure-u-1"
+                    v-for="icon in filterIcons(icons)"
+                    :key="icon.src"
+                  >
                     <div id="iconDivItem" class="pure-u-10-24 l-generator-tablec">
                       <a target="_blank" :href="icon.src">
                         <img class="icon-preview" :src="icon.src" />
@@ -257,7 +274,6 @@
             <div>
               <ColorSelector />
             </div>
-
           </section>
         </div>
 
@@ -362,7 +378,10 @@ import StartOver from "~/components/StartOver.vue";
 import ColorSelector from "~/components/ColorSelector.vue";
 import HubHeader from "~/components/HubHeader.vue";
 import * as generator from "~/store/modules/generator";
-import helper from '~/utils/helper';
+import helper from "~/utils/helper";
+import axios from "axios";
+import download from "downloadjs";
+
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
 const GeneratorGetters = namespace(generator.name, Getter);
@@ -396,6 +415,7 @@ export default class extends Vue {
   public showCopy = true;
   public isImageBroken: boolean = false;
   public updateManifestFn = helper.debounce(this.handleEditorValue, 3000, false);
+  private zipRequested = false;
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
@@ -451,6 +471,54 @@ export default class extends Vue {
     this.manifest$ = { ...this.manifest };
   }
 
+  public onClickDownloadAll() {
+
+    // local azure function
+    this.zipRequested = true;
+    const images: generator.Icon[] = [];
+    const length = this.icons.length;
+    // prevent the passing of the observer objects in the body.
+    for (let i = 0; i < length; i++) {
+      images.push({ ...this.icons[i] })
+    }
+
+    axios.post("https://azure-express-zip-creator.azurewebsites.net/api", JSON.stringify({ images }), {
+      "method": "POST",
+      "responseType": "blob",
+      "headers": {
+        "content-type": "application/json"
+      }
+    })
+    .then(async res => {
+      if (window.chooseFileSystemEntries) {
+        const fsOpts = {
+          type: "save-file",
+          accepts: [
+            {
+              description: "PWA Builder Image Zip",
+              extensions: ["zip"],
+              mimeTypes: ["application/zip"]
+            }
+          ]
+        };
+        const fileHandle = await window.chooseFileSystemEntries(fsOpts);
+        // Create a FileSystemWritableFileStream to write to.
+        const writable = await fileHandle.createWritable();
+        // Write the contents of the file to the stream.
+        await writable.write(res);
+        // Close the file and write the contents to disk.
+        await writable.close();
+      } else {
+        download(res.data, "pwa-icons.zip", "application/zip");
+      }
+      this.zipRequested = false;
+    })
+    .catch(err => {
+      console.log(err);
+      this.zipRequested = false;
+    });
+  }
+
   public onChangeSimpleInput(): void {
     try {
       this.commitManifest(this.manifest$);
@@ -461,7 +529,7 @@ export default class extends Vue {
   }
 
   public filterIcons(icons): any {
-    return icons.filter(icon => { 
+    return icons.filter(icon => {
       if (!icon.generated || icon.src.indexOf('data') === 0)
       {
         return icon;
@@ -469,7 +537,7 @@ export default class extends Vue {
     });
   }
 
-  public checkBrokenImage(icons): any { 
+  public checkBrokenImage(icons): any {
     icons.forEach(icon => {
       if (icon.generated && icon.src.indexOf('data') !== 0)
       {
@@ -488,7 +556,7 @@ export default class extends Vue {
     // This method is only called on keypress (not when entered is clicked)
     this.ifEntered = false;
     this.textareaOutlineColor = '';
-  } 
+  }
 
   public onClickRemoveIcon(icon: generator.Icon): void {
     this.removeIcon(icon);
@@ -538,7 +606,7 @@ export default class extends Vue {
     });
     return relatedApplicationscons.toString();
   }
-  
+
   private getCustomMembers(): string {
     if (this.members.length < 1) {
       return "";
@@ -575,7 +643,7 @@ export default class extends Vue {
           break;
       }
     }
-    // Removing the last ',' 
+    // Removing the last ','
     manifest = manifest.substring(0, manifest.length-2);
     manifest += this.getCustomMembers();
     return `{\n${manifest}\n}`;
@@ -681,7 +749,7 @@ Vue.prototype.$awa = function(config) {
   if (awa) {
     awa.ct.capturePageView(config);
   }
-  
+
   return;
 };
 
@@ -779,9 +847,37 @@ footer a {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  .button-holder.icons {
+    height: 90px;
+    display: flex;
+    align-items: center;
+    flex-flow: column;
+    justify-content: space-between;
+  }
   .iconUploadHeader {
     padding-top: 0px !important;
     font-size: 16px;
+  }
+  #iconDownloadButton {
+    width: 116px;
+    height: 40px;
+    background: transparent;
+    color: #3c3c3c;
+    font-weight: bold;
+    border-radius: 20px;
+    border: 1px solid #3c3c3c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
+  }
+  #iconDownloadButton.disabled {
+    color: lightgray;
+    border: 1px solid lightgray;
   }
   #iconUploadButton {
     width: 104px;
@@ -990,7 +1086,7 @@ footer a {
   }
 }
   #rightSide {
-    width: 55%; 
+    width: 55%;
   }
   #leftSide {
     width: 40%;
