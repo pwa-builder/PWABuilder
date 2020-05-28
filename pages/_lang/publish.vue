@@ -777,10 +777,15 @@ footer a {
 }
 
 #appxModal .modal {
-  top: 8em;
-  right: 10em;
-  bottom: 8em;
-  left: 10em;
+  @media (max-width: 640px) {
+    .modal-box {
+      width: 100%;
+
+      .closeButtonDiv {
+        margin-top: 20px;
+      }
+    }
+  }
 }
 
 @keyframes opened {
