@@ -788,7 +788,7 @@ export default class extends Vue {
     }
 
     await this.uploadIcon(this.teamsForm.colorImageFile);
-    this.updateManifest(this.manifest);
+    await this.updateManifest(this.manifest);
     this.validateTeamsForm();
     this.uploadColorLoaderActive = false;
   }
@@ -808,7 +808,7 @@ export default class extends Vue {
     }
 
     await this.uploadIcon(this.teamsForm.outlineImageFile);
-    this.updateManifest(this.manifest);
+    await this.updateManifest(this.manifest);
     this.validateTeamsForm();
     this.uploadOutlineLoaderActive = false;
   }
@@ -1659,6 +1659,7 @@ footer a {
 }
 
 .platModalDownloadButton #colorSpinner {
+  height: 32px;
   margin-top: 4px !important;
   margin-left: 4px;
 }
