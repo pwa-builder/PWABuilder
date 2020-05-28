@@ -25,7 +25,7 @@ export interface Actions<S, R> extends ActionTree<S, R> {
 export const actions: Actions<State, RootState> = {
   async update({ commit, state, rootState }): Promise<void> {
     if (!state.manifestId) {
-      
+
 
       if (state.manifest && rootState.generator.manifest) {
         // Fix common issues with the manifest
@@ -207,7 +207,8 @@ export const actions: Actions<State, RootState> = {
   async uploadIcon({ commit, dispatch }, iconFile: File): Promise<void> {
     const dataUri: string = await helpers.getImageDataURI(iconFile);
     const sizes = await helpers.getImageIconSize(dataUri);
-    commit(types.ADD_ICON, { src: dataUri, sizes: `${sizes.width}x${sizes.height}` });
+    commit(types.ADD_ICON, { src: dataUri, sizes: `${sizes.width}x${sizes.height}`, fileName: iconFile.name });
+
     dispatch('update');
   },
 
@@ -216,6 +217,7 @@ export const actions: Actions<State, RootState> = {
     formData.append('file', iconFile);
 
     const result = await this.$axios.$post(`${apiUrl}/${state.manifestId}/generatemissingimages`, formData);
+
     commit(types.OVERWRITE_MANIFEST, result);
     commit(types.ADD_ASSETS, result.assets);
     dispatch('update');

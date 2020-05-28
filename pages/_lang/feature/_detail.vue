@@ -5,8 +5,6 @@
       :showFeatureDetailGraphButton="onGraph"
     ></HubHeader>
 
-    <ion-toast-controller></ion-toast-controller>
-
     <div v-if="onAuth" id="clientIdBlock">
       <button v-if="!idGenerated" @click="generateID()">
         Generate Client ID
@@ -228,18 +226,6 @@ export default class extends Vue {
     }
   }
 
-  async showToast() {
-    const toastCtrl = document.querySelector("ion-toast-controller");
-    await (toastCtrl as any).componentOnReady();
-
-    const toast = await (toastCtrl as any).create({
-      duration: 1300,
-      message: "URL copied for sharing"
-    });
-
-    await toast.present();
-  }
-
   async share() {
     if ((navigator as any).share) {
       try {
@@ -255,14 +241,11 @@ export default class extends Vue {
       if ((navigator as any).clipboard) {
         try {
           await (navigator as any).clipboard.writeText(location.href);
-
-          this.showToast();
         } catch (err) {
           console.error(err);
         }
       } else {
         this.copyToClipboard(location.href);
-        this.showToast();
       }
     }
   }
