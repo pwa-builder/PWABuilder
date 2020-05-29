@@ -911,7 +911,7 @@ h2 {
       }
     }
 
-    @media (max-width: 425px) {
+    @media (max-width: 640px) {
       #starterSection {
         display: none;
       }
