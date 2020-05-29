@@ -388,7 +388,9 @@ button:disabled {
 }
 
 #colorSpinner {
-  margin-top: -4px;
+  margin-top: -1px !important;
+  margin-left: -7px;
+  height: 32px;
 }
 
 @-moz-document url-prefix() {
@@ -399,13 +401,10 @@ button:disabled {
 }
 
 .flavor {
-  position: relative;
   width: 32px;
   height: 32px;
   border-radius: 40px;
   overflow: hidden;
-  left: -7px;
-  top: -2px;
 }
 
 .flavor > .colorbands {
@@ -439,7 +438,8 @@ button:disabled {
 .icon {
   position: relative;
   color: white;
-  top: -27px;
+  top: -25px;
+  left: 7px;
 
   .lds-dual-ring {
     display: inline-block;

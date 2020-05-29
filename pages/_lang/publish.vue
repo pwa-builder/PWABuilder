@@ -154,12 +154,12 @@
           <Download
             :showMessage="true"
             :packageName="this.androidForm.package_name"
-            id="androidDownloadButton"
+            class="androidDownloadButton"
             platform="androidTWA"
             message="Download"
           />
           <button
-            id="androidDownloadButton"
+            class="androidDownloadButton"
             @click="openAndroidOptionModal();"
           >
             Options
@@ -197,13 +197,13 @@
 
         <div id="androidModalButtonSection">
           <Download
-            id="androidDownloadButton"
+            class="androidDownloadButton"
             platform="windows10"
             :message="$t('publish.download')"
             :showMessage="true"
           />
           <button
-            id="androidDownloadButton"
+            class="androidDownloadButton"
             @click="
               openAppXModal();
               $awa({
@@ -1424,7 +1424,7 @@ footer a {
   margin-bottom: 20px;
 }
 
-#androidDownloadButton {
+.androidDownloadButton {
   background: #9337d8;
   color: white;
   font-size: 14px;
@@ -1442,17 +1442,17 @@ footer a {
   border: none;
 }
 
-#androidDownloadButton #colorSpinner {
+.androidDownloadButton #colorSpinner {
   margin-top: 4px;
   margin-left: 4px;
 }
 
-#androidDownloadButton.webviewButton {
+.androidDownloadButton.webviewButton {
   width: 183px;
   background: #3c3c3c;
 }
 
-#androidDownloadButton:hover {
+.androidDownloadButton:hover {
   cursor: pointer;
 }
 
