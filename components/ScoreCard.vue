@@ -85,7 +85,7 @@
             <span>Web Manifest properly attached</span>
           </div>
 
-          <span class="subScoreSpan" v-if="manifest">15</span>
+          <span class="subScoreSpan" v-if="manifest">6</span>
 
           <span class="subScoreSpan" v-else-if="!manifest">0</span>
         </li>
@@ -103,7 +103,7 @@
             </span>
           </div>
 
-          <span class="subScoreSpan" v-if="manifest.display">5</span>
+          <span class="subScoreSpan" v-if="manifest.display">2</span>
 
           <span class="subScoreSpan" v-else-if="!manifest.display">0</span>
         </li>
@@ -122,7 +122,7 @@
             </span>
           </div>
 
-          <span class="subScoreSpan" v-if="manifest.icons">5</span>
+          <span class="subScoreSpan" v-if="manifest.icons">2</span>
 
           <span class="subScoreSpan" v-else-if="!manifest.icons">0</span>
         </li>
@@ -141,7 +141,7 @@
             </span>
           </div>
 
-          <span class="subScoreSpan" v-if="manifest.name">5</span>
+          <span class="subScoreSpan" v-if="manifest.name">2</span>
 
           <span class="subScoreSpan" v-else-if="!manifest.name">0</span>
         </li>
@@ -160,11 +160,10 @@
             </span>
           </div>
 
-          <span class="subScoreSpan" v-if="manifest.short_name">5</span>
+          <span class="subScoreSpan" v-if="manifest.short_name">2</span>
 
           <span class="subScoreSpan" v-else-if="!manifest.short_name">0</span>
         </li>
-
         <li v-bind:class="{ good: manifest && manifest.start_url }">
           <div class="listSubDiv">
             <span class="cardIcon" v-if="manifest && manifest.start_url">
@@ -180,9 +179,218 @@
             </span>
           </div>
 
-          <span class="subScoreSpan" v-if="manifest.start_url">5</span>
+          <span class="subScoreSpan" v-if="manifest.start_url">2</span>
 
           <span class="subScoreSpan" v-else-if="!manifest.start_url">0</span>
+        </li>
+        <li v-bind:class="{ good: manifest && manifest.short_cut }">
+          <div class="listSubDiv">
+            <span class="cardIcon" v-if="manifest && manifest.short_cut">
+              <i class="fas fa-check"></i>
+            </span>
+            <span class="cardIcon" v-if="manifest && !manifest.short_cut">
+              <i class="fas fa-times"></i>
+            </span>
+
+            <span>
+              Lists of
+              <code>short_cut</code> that provide access to key tasks
+            </span>
+          </div>
+
+          <span class="subScoreSpan" v-if="manifest.short_cut">2</span>
+
+          <span class="subScoreSpan" v-else-if="!manifest.short_cut">0</span>
+        </li>
+        <li v-bind:class="{ good: manifest && manifest.maskable_icon }">
+          <div class="listSubDiv">
+            <span class="cardIcon" v-if="manifest && manifest.maskable_icon">
+              <i class="fas fa-check"></i>
+            </span>
+            <span class="cardIcon" v-if="manifest && !manifest.maskable_icon">
+              <i class="fas fa-times"></i>
+            </span>
+
+            <span>
+              Lists of
+              <code>maskable_icon</code> that designed with icon masks.
+            </span>
+          </div>
+
+          <span class="subScoreSpan" v-if="manifest.maskable_icon">2</span>
+
+          <span class="subScoreSpan" v-else-if="!manifest.maskable_icon">0</span>
+        </li>
+        <li v-bind:class="{ good: manifest && manifest.background_color }">
+          <div class="listSubDiv">
+            <span class="cardIcon" v-if="manifest && manifest.background_color">
+              <i class="fas fa-check"></i>
+            </span>
+            <span class="cardIcon" v-if="manifest && !manifest.background_color">
+              <i class="fas fa-times"></i>
+            </span>
+
+            <span>
+              Contains
+              <code>background_color</code> property
+            </span>
+          </div>
+
+          <span class="subScoreSpan" v-if="manifest.background_color">2</span>
+
+          <span class="subScoreSpan" v-else-if="!manifest.background_color">0</span>
+        </li>
+        <li v-bind:class="{ good: manifest && manifest.theme_color }">
+          <div class="listSubDiv">
+            <span class="cardIcon" v-if="manifest && manifest.theme_color">
+              <i class="fas fa-check"></i>
+            </span>
+            <span class="cardIcon" v-if="manifest && !manifest.theme_color">
+              <i class="fas fa-times"></i>
+            </span>
+
+            <span>
+              Contains
+              <code>theme_color</code> property
+            </span>
+          </div>
+
+          <span class="subScoreSpan" v-if="manifest.theme_color">2</span>
+
+          <span class="subScoreSpan" v-else-if="!manifest.theme_color">0</span>
+        </li>
+        <li v-bind:class="{ good: manifest && manifest.description }">
+          <div class="listSubDiv">
+            <span class="cardIcon" v-if="manifest && manifest.description">
+              <i class="fas fa-check"></i>
+            </span>
+            <span class="cardIcon" v-if="manifest && !manifest.description">
+              <i class="fas fa-times"></i>
+            </span>
+
+            <span>
+              Contains
+              <code>description</code> property
+            </span>
+          </div>
+
+          <span class="subScoreSpan" v-if="manifest.description">2</span>
+
+          <span class="subScoreSpan" v-else-if="!manifest.description">0</span>
+        </li>
+        <li v-bind:class="{ good: manifest && manifest.categories }">
+          <div class="listSubDiv">
+            <span class="cardIcon" v-if="manifest && manifest.categories">
+              <i class="fas fa-check"></i>
+            </span>
+            <span class="cardIcon" v-if="manifest && !manifest.categories">
+              <i class="fas fa-times"></i>
+            </span>
+
+            <span>
+              Contains
+              <code>categories</code> property
+            </span>
+          </div>
+
+          <span class="subScoreSpan" v-if="manifest.categories">2</span>
+
+          <span class="subScoreSpan" v-else-if="!manifest.categories">0</span>
+        </li>
+        <li v-bind:class="{ good: manifest && manifest.screenshots }">
+          <div class="listSubDiv">
+            <span class="cardIcon" v-if="manifest && manifest.screenshots">
+              <i class="fas fa-check"></i>
+            </span>
+            <span class="cardIcon" v-if="manifest && !manifest.screenshots">
+              <i class="fas fa-times"></i>
+            </span>
+
+            <span>
+              Lists
+              <code>screenshots</code> for representing the web application
+            </span>
+          </div>
+
+          <span class="subScoreSpan" v-if="manifest.screenshots">2</span>
+
+          <span class="subScoreSpan" v-else-if="!manifest.screenshots">0</span>
+        </li>
+        <li v-bind:class="{ good: manifest && manifest.IARC_rating }">
+          <div class="listSubDiv">
+            <span class="cardIcon" v-if="manifest && manifest.IARC_rating">
+              <i class="fas fa-check"></i>
+            </span>
+            <span class="cardIcon" v-if="manifest && !manifest.IARC_rating">
+              <i class="fas fa-times"></i>
+            </span>
+
+            <span>
+              Contains
+              <code>IARC rating</code> property
+            </span>
+          </div>
+
+          <span class="subScoreSpan" v-if="manifest.IARC_rating">2</span>
+
+          <span class="subScoreSpan" v-else-if="!manifest.IARC_rating">0</span>
+        </li>
+        <li v-bind:class="{ good: manifest && manifest.related_applications }">
+          <div class="listSubDiv">
+            <span class="cardIcon" v-if="manifest && manifest.related_applications">
+              <i class="fas fa-check"></i>
+            </span>
+            <span class="cardIcon" v-if="manifest && !manifest.related_applications">
+              <i class="fas fa-times"></i>
+            </span>
+
+            <span>
+              Contains
+              <code>related_applications</code> property
+            </span>
+          </div>
+
+          <span class="subScoreSpan" v-if="manifest.related_applications">2</span>
+
+          <span class="subScoreSpan" v-else-if="!manifest.related_applications">0</span>
+        </li>
+        <li v-bind:class="{ good: manifest && manifest.prefer_related_applications }">
+          <div class="listSubDiv">
+            <span class="cardIcon" v-if="manifest && manifest.prefer_related_applications">
+              <i class="fas fa-check"></i>
+            </span>
+            <span class="cardIcon" v-if="manifest && !manifest.prefer_related_applications">
+              <i class="fas fa-times"></i>
+            </span>
+
+            <span>
+              Contains
+              <code>prefer_related_applications</code> property
+            </span>
+          </div>
+
+          <span class="subScoreSpan" v-if="manifest.prefer_related_applications">2</span>
+
+          <span class="subScoreSpan" v-else-if="!manifest.prefer_related_applications">0</span>
+        </li>
+        <li v-bind:class="{ good: manifest && manifest.orientation }">
+          <div class="listSubDiv">
+            <span class="cardIcon" v-if="manifest && manifest.orientation">
+              <i class="fas fa-check"></i>
+            </span>
+            <span class="cardIcon" v-if="manifest && !manifest.orientation">
+              <i class="fas fa-times"></i>
+            </span>
+
+            <span>
+              Contains
+              <code>orientation</code> property
+            </span>
+          </div>
+
+          <span class="subScoreSpan" v-if="manifest.orientation">2</span>
+
+          <span class="subScoreSpan" v-else-if="!manifest.orientation">0</span>
         </li>
       </ul>
 
@@ -277,6 +485,160 @@
             <span>
               Designates a
               <code>start_url</code>
+            </span>
+          </div>
+
+          <span class="subScoreSpan">0</span>
+        </li>
+        <li>
+          <div class="listSubDiv">
+            <span class="cardIcon">
+              <i class="fas fa-times"></i>
+            </span>
+
+            <span>
+              Lists of
+              <code>short_cut</code> that provide access to key tasks
+            </span>
+          </div>
+
+          <span class="subScoreSpan">0</span>
+        </li>
+        <li>
+          <div class="listSubDiv">
+            <span class="cardIcon">
+              <i class="fas fa-times"></i>
+            </span>
+
+            <span>
+              Lists of
+              <code>maskable_icon</code> that designed with icon masks.
+            </span>
+          </div>
+
+          <span class="subScoreSpan">0</span>
+        </li>
+        <li>
+          <div class="listSubDiv">
+            <span class="cardIcon">
+              <i class="fas fa-times"></i>
+            </span>
+
+            <span>
+              Contains
+              <code>background_color</code> property
+            </span>
+          </div>
+
+          <span class="subScoreSpan">0</span>
+        </li>
+        <li>
+          <div class="listSubDiv">
+            <span class="cardIcon">
+              <i class="fas fa-times"></i>
+            </span>
+
+            <span>
+              Contains
+              <code>theme_color</code> property
+            </span>
+          </div>
+
+          <span class="subScoreSpan">0</span>
+        </li>
+        <li>
+          <div class="listSubDiv">
+            <span class="cardIcon">
+              <i class="fas fa-times"></i>
+            </span>
+
+            <span>
+              Contains
+              <code>description</code> property
+            </span>
+          </div>
+
+          <span class="subScoreSpan">0</span>
+        </li>
+        <li>
+          <div class="listSubDiv">
+            <span class="cardIcon">
+              <i class="fas fa-times"></i>
+            </span>
+
+            <span>
+              Contains
+              <code>categories</code> property
+            </span>
+          </div>
+
+          <span class="subScoreSpan">0</span>
+        </li>
+        <li>
+          <div class="listSubDiv">
+            <span class="cardIcon">
+              <i class="fas fa-times"></i>
+            </span>
+
+            <span>
+              Lists
+              <code>screenshots</code> for representing the web application
+            </span>
+          </div>
+
+          <span class="subScoreSpan">0</span>
+        </li>
+        <li>
+          <div class="listSubDiv">
+            <span class="cardIcon">
+              <i class="fas fa-times"></i>
+            </span>
+
+            <span>
+              Contains
+              <code>IARC rating</code> property
+            </span>
+          </div>
+
+          <span class="subScoreSpan">0</span>
+        </li>
+        <li>
+          <div class="listSubDiv">
+            <span class="cardIcon">
+              <i class="fas fa-times"></i>
+            </span>
+
+            <span>
+              Contains
+              <code>related_applications</code> property
+            </span>
+          </div>
+
+          <span class="subScoreSpan">0</span>
+        </li>
+        <li>
+          <div class="listSubDiv">
+            <span class="cardIcon">
+              <i class="fas fa-times"></i>
+            </span>
+
+            <span>
+              Contains
+              <code>prefer_related_applications</code> property
+            </span>
+          </div>
+
+          <span class="subScoreSpan">0</span>
+        </li>
+        <li>
+          <div class="listSubDiv">
+            <span class="cardIcon">
+              <i class="fas fa-times"></i>
+            </span>
+
+            <span>
+              Contains
+              <code>orientation</code> property
             </span>
           </div>
 
@@ -564,26 +926,70 @@ export default class extends Vue {
       } else {
         this.noManifest = false;
 
-        this.manifestScore = 15;
+        this.manifestScore = 6;
         //scoring set by Jeff: 40 for manifest, 40 for sw and 20 for sc
         if (this.manifest.display !== undefined) {
-          this.manifestScore = this.manifestScore + 5;
+          this.manifestScore = this.manifestScore + 2;
         }
 
         if (this.manifest.icons !== undefined) {
-          this.manifestScore = this.manifestScore + 5;
+          this.manifestScore = this.manifestScore + 2;
         }
 
         if (this.manifest.name !== undefined) {
-          this.manifestScore = this.manifestScore + 5;
+          this.manifestScore = this.manifestScore + 2;
         }
 
         if (this.manifest.short_name !== undefined) {
-          this.manifestScore = this.manifestScore + 5;
+          this.manifestScore = this.manifestScore + 2;
         }
 
         if (this.manifest.start_url !== true) {
-          this.manifestScore = this.manifestScore + 5;
+          this.manifestScore = this.manifestScore + 2;
+        }
+
+        if (this.manifest.short_cut !== undefined) {
+          this.manifestScore = this.manifestScore + 2;
+        }
+
+        if (this.manifest.maskable_icon !== undefined) {
+          this.manifestScore = this.manifestScore + 2;
+        }
+
+        if (this.manifest.background_color !== undefined) {
+          this.manifestScore = this.manifestScore + 2;
+        }
+
+        if (this.manifest.theme_color !== undefined) {
+          this.manifestScore = this.manifestScore + 2;
+        }
+
+        if (this.manifest.description !== undefined) {
+          this.manifestScore = this.manifestScore + 2;
+        }
+
+        if (this.manifest.categories !== undefined) {
+          this.manifestScore = this.manifestScore + 2;
+        }
+
+        if (this.manifest.screenshots !== undefined) {
+          this.manifestScore = this.manifestScore + 2;
+        }
+
+        if (this.manifest.IARC_rating !== undefined) {
+          this.manifestScore = this.manifestScore + 2;
+        }
+
+        if (this.manifest.related_applications !== undefined) {
+          this.manifestScore = this.manifestScore + 2;
+        }
+
+        if (this.manifest.prefer_related_applications !== undefined) {
+          this.manifestScore = this.manifestScore + 2;
+        }
+
+        if (this.manifest.orientation !== undefined) {
+          this.manifestScore = this.manifestScore + 2;
         }
 
         if (this.manifest.generated === true) {
