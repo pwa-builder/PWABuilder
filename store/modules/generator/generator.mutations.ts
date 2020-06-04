@@ -29,6 +29,7 @@ export const mutations: MutationTree<State> = {
     }
 
     state.manifest = result.content;
+    state.manifestUrl = result.generatedUrl;
     state.manifestId = result.id;
     state.siteServiceWorkers = result.siteServiceWorkers;
     if (result && result.content && result.content.icons) {
@@ -66,6 +67,7 @@ export const mutations: MutationTree<State> = {
     }
     
     state.manifest = result.content;
+    state.manifestUrl = result.generatedUrl;
     state.icons = result.content.icons;
   },
 
@@ -106,6 +108,7 @@ export const mutations: MutationTree<State> = {
   [types.RESET_STATES](state): void {
     state.url = null;
     state.manifest = null;
+    state.manifestUrl = null;
     state.manifestId = null;
     state.siteServiceWorkers = null;
     state.icons = [];

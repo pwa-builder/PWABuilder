@@ -87,6 +87,7 @@ export default class extends Vue {
   @PublishAction buildTeams;
 
   @GeneratorState manifest: generator.Manifest;
+  @GeneratorState manifestUrl: string;
 
   public created(): void {
     this.message$ = this.message;
@@ -120,10 +121,9 @@ export default class extends Vue {
       ""
     );
 
-    let manifestURL = new URL(this.manifest.start_url as string);
-
-    if (manifestURL.search && startURL.length > 0) {
-      startURL = `${startURL}${manifestURL.search}`;
+    let manifestStartUrl = new URL(this.manifest.start_url as string);
+    if (manifestStartUrl.search && startURL.length > 0) {
+      startURL = `${startURL}${manifestStartUrl.search}`;
     }
 
     const body = JSON.stringify({
@@ -141,7 +141,7 @@ export default class extends Vue {
       startUrl:
         startURL && startURL.length > 0
           ? startURL
-          : `${manifestURL.search ? "/" + manifestURL.search : "/"}`,
+          : `${manifestStartUrl.search ? "/" + manifestStartUrl.search : "/"}`,
       iconUrl: goodIcon.src,
       maskableIconUrl: maskIcon ? maskIcon.src : null,
       appVersion: "1.0.0",
@@ -149,9 +149,10 @@ export default class extends Vue {
       splashScreenFadeOutDuration: 300,
       enableNotifications: false,
       shortcuts: this.manifest.shortcuts || [],
+      webManifestUrl: this.manifestUrl,
       signingInfo: {
-        fullName: "John Doe",
-        organization: "Contoso",
+        fullName: "PWABuilder User",
+        organization: "pwabuilder",
         organizationalUnit: "Engineering Department",
         countryCode: "US"
       }
