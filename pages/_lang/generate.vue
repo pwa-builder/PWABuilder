@@ -114,7 +114,10 @@
                 <label class="l-generator-label">
                   <h4 class="iconUploadHeader">Upload app icons for your PWA</h4>
                   <p v-if="!isImageBroken">We suggest at least one image 512×512 or larger</p>
-                  <p class="brokenImage" v-if="isImageBroken">If you want a bigger images, we suggest to you to upload at least one image 512×512 or larger</p>
+                  <p
+                    class="brokenImage"
+                    v-if="isImageBroken"
+                  >If you want a bigger images, we suggest to you to upload at least one image 512×512 or larger</p>
                 </label>
 
                 <div class="button-holder icons">
@@ -132,7 +135,6 @@
                   {{ $t(error) }}
                 </p>-->
               </div>
-
               <div>
                 <div id="iconGrid" class="pure-g l-generator-table">
                   <!--<div class="pure-u-10-24 l-generator-tableh">{{ $t("generate.preview") }}</div>
@@ -140,7 +142,12 @@
                   <div class="pure-u-1-8"></div>
                   <div class="pure-u-1-8"></div>-->
 
-                  <div id="iconItem" class="pure-u-1" v-for="icon in filterIcons(icons)" :key="icon.src">
+                  <div
+                    id="iconItem"
+                    class="pure-u-1"
+                    v-for="icon in filterIcons(icons)"
+                    :key="icon.src"
+                  >
                     <div id="iconDivItem" class="pure-u-10-24 l-generator-tablec">
                       <a target="_blank" :href="icon.src">
                         <img class="icon-preview" :src="icon.src" />
@@ -150,7 +157,7 @@
                         <div id="iconSizeText">{{icon.sizes}}</div>
 
                         <div
-                          id="removeIconDiv"
+                          id="removeIconsDiv"
                           class="pure-u-1-8 l-generator-tablec l-generator-tablec--right"
                           @click="onClickRemoveIcon(icon)"
                         >
@@ -169,6 +176,98 @@
                     </div>-->
                   </div>
                 </div>
+              </div>
+            </div>
+            <div id="screenshotsTool">
+              <div class="l-generator-field">
+                <label class="l-generator-label">
+                  <h4
+                    v-bind:class="{ fieldName: activeFormField === 'screenshot' }"
+                  >Enter URL to add screenshots to the manifest</h4>
+                  <p>You may enter up to 8</p>
+                </label>
+                <div
+                  id="screenshotsUrlsContainer"
+                  class="form-group"
+                  v-for="(url,k) in urlsForScreenshot"
+                  :key="k"
+                >
+                  <input
+                    class="screenshot-input l-generator-input"
+                    v-model="urlsForScreenshotValues[k]"
+                    name="screenshot"
+                    type="text"
+                    v-on:focus="activeFormField = 'screenshot'"
+                    placeholder="URL"
+                  />
+                  <span>
+                    <i
+                      class="fas fa-minus-circle"
+                      @click="removeUrlForScreenshots(k)"
+                      v-show="k || ( !k && urlsForScreenshot.length > 1)"
+                    ></i>
+                    <i
+                      class="fas fa-plus-circle"
+                      @click="addUrlForScreenshots(k)"
+                      v-show="k == urlsForScreenshot.length-1 && screenshots.length + k <= 6"
+                    ></i>
+                  </span>
+                </div>
+              </div>
+              <div>
+                <button
+                  id="screenshotDownloadButton"
+                  class="work-button l-generator-button"
+                  @click="onClickScreenshotFetch()"
+                >
+                  <span v-if="!screenshotLoading">Upload Screenshots</span>
+                  <span v-if="screenshotLoading">
+                    <Loading
+                      :active="screenshotLoading"
+                      class="u-display-inline_block u-margin-left-sm"
+                    />
+                  </span>
+                </button>
+              </div>
+            </div>
+            <div id="screenshotsOuterDiv" v-show="screenshots.length>0">
+              <div id="screenshotsContainer">
+                <button @click="scrollToLeft()" v-show="screenshots.length>=2">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path
+                      d="M401.4 224h-214l83-79.4c11.9-12.5 11.9-32.7 0-45.2s-31.2-12.5-43.2 0L89 233.4c-6 5.8-9 13.7-9 22.4v.4c0 8.7 3 16.6 9 22.4l138.1 134c12 12.5 31.3 12.5 43.2 0 11.9-12.5 11.9-32.7 0-45.2l-83-79.4h214c16.9 0 30.6-14.3 30.6-32 .1-18-13.6-32-30.5-32z"
+                    />
+                  </svg>
+                </button>
+                <section id="screenshots" ref="screenshots">
+                  <div
+                    class="screenshotItem"
+                    v-for="(screenshot,k) in filterIcons(screenshots)"
+                    :key="screenshot.src"
+                  >
+                    <img :src="screenshot.src" />
+                    <div id="screenshotsToolbar">
+                      <div width="2em"></div>
+                      <span>{{`${k+1} / ${screenshots.length}`}}</span>
+                      <button
+                        id="removeScreenshotsDiv"
+                        class="pure-u-1-8 l-generator-tablec l-generator-tablec--right"
+                        @click="onClickRemoveScreenshot(screenshot)"
+                      >
+                        <span class="l-generator-close" :title="$t('remove screenshot')">
+                          <i class="fas fa-trash-alt"></i>
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </section>
+                <button @click="scrollToRight()" v-show="screenshots.length>=2">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path
+                      d="M284.9 412.6l138.1-134c6-5.8 9-13.7 9-22.4v-.4c0-8.7-3-16.6-9-22.4l-138.1-134c-12-12.5-31.3-12.5-43.2 0-11.9 12.5-11.9 32.7 0 45.2l83 79.4h-214c-17 0-30.7 14.3-30.7 32 0 18 13.7 32 30.6 32h214l-83 79.4c-11.9 12.5-11.9 32.7 0 45.2 12 12.5 31.3 12.5 43.3 0z"
+                    />
+                  </svg>
+                </button>
               </div>
             </div>
           </section>
@@ -257,7 +356,6 @@
             <div>
               <ColorSelector />
             </div>
-
           </section>
         </div>
 
@@ -362,7 +460,8 @@ import StartOver from "~/components/StartOver.vue";
 import ColorSelector from "~/components/ColorSelector.vue";
 import HubHeader from "~/components/HubHeader.vue";
 import * as generator from "~/store/modules/generator";
-import helper from '~/utils/helper';
+import helper from "~/utils/helper";
+import Loading from "~/components/Loading.vue";
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
 const GeneratorGetters = namespace(generator.name, Getter);
@@ -375,13 +474,17 @@ const GeneratorGetters = namespace(generator.name, Getter);
     CodeViewer,
     StartOver,
     Modal,
-    HubHeader
+    HubHeader,
+    Loading
   }
 })
 export default class extends Vue {
   public manifest$: generator.Manifest | null = null;
+  public screenshotLoading: boolean = false;
   public newIconSrc = "";
   public iconCheckMissing = true;
+  public urlsForScreenshot = [{ value: "" }];
+  public urlsForScreenshotValues = [];
   private iconFile: File | null = null;
   public error: string | null = null;
   public seeEditor = true;
@@ -392,10 +495,14 @@ export default class extends Vue {
   public activeFormField = null;
   public showingIconModal = false;
   public ifEntered = false;
-  public  textareaOutlineColor = '';
+  public textareaOutlineColor = "";
   public showCopy = true;
   public isImageBroken: boolean = false;
-  public updateManifestFn = helper.debounce(this.handleEditorValue, 3000, false);
+  public updateManifestFn = helper.debounce(
+    this.handleEditorValue,
+    3000,
+    false
+  );
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
@@ -407,17 +514,20 @@ export default class extends Vue {
   @Getter languagesNames: string[];
   @Getter displaysNames: string[];
   @GeneratorActions removeIcon;
+  @GeneratorActions removeScreenshot;
   @GeneratorActions addIconFromUrl;
   @GeneratorActions updateManifest;
   @GeneratorActions update;
   @GeneratorActions commitManifest;
   @GeneratorActions uploadIcon;
+  @GeneratorActions addScreenshotsFromUrl;
   @GeneratorActions generateMissingImages;
   @GeneratorGetters suggestionsTotal;
   @GeneratorGetters warningsTotal;
 
   public created(): void {
     this.manifest$ = { ...this.manifest };
+    this.urlsForScreenshotValues[0] = "";
   }
 
   public mounted() {
@@ -431,12 +541,14 @@ export default class extends Vue {
 
     var updateFn = helper.debounce(this.update, 3000, false);
 
-    document && document.querySelectorAll('.l-generator-input').forEach(item => {
-      item.addEventListener('keyup', updateFn)
-    });
-    document && document.querySelectorAll('.l-generator-textarea').forEach(item => {
-      item.addEventListener('keyup', updateFn)
-    });
+    document &&
+      document.querySelectorAll(".l-generator-input").forEach(item => {
+        item.addEventListener("keyup", updateFn);
+      });
+    document &&
+      document.querySelectorAll(".l-generator-textarea").forEach(item => {
+        item.addEventListener("keyup", updateFn);
+      });
     awa.ct.capturePageView(overrideValues);
   }
 
@@ -460,19 +572,37 @@ export default class extends Vue {
     }
   }
 
+  public scrollToLeft(): void {
+    const screenshotsDiv = this.$refs.screenshots as HTMLDivElement;
+    screenshotsDiv.scrollBy({
+      // left: -15,
+      left: -screenshotsDiv.clientWidth,
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+  public scrollToRight(): void {
+    const screenshotsDiv = this.$refs.screenshots as HTMLDivElement;
+    // screenshotsDiv.scrollBy(10, 0);
+    screenshotsDiv.scrollBy({
+      // left: 15,
+      left: screenshotsDiv.clientWidth,
+      top: 0,
+      behavior: "smooth"
+    });
+  }
   public filterIcons(icons): any {
-    return icons.filter(icon => { 
-      if (!icon.generated || icon.src.indexOf('data') === 0)
-      {
+    return icons.filter(icon => {
+      if (!icon.generated || icon.src.indexOf("data") === 0) {
         return icon;
       }
     });
   }
 
-  public checkBrokenImage(icons): any { 
+  public checkBrokenImage(icons): any {
     icons.forEach(icon => {
-      if (icon.generated && icon.src.indexOf('data') !== 0)
-      {
+      if (icon.generated && icon.src.indexOf("data") !== 0) {
         this.isImageBroken = true;
       }
     });
@@ -481,20 +611,52 @@ export default class extends Vue {
   public textareaError(): void {
     // This method is called when Enter is pressed in the textarea
     this.ifEntered = true; // This property is used to determine whether or not an error message should be displayed
-    this.textareaOutlineColor = 'red solid 2px';
+    this.textareaOutlineColor = "red solid 2px";
   }
   public textareaCheck(): void {
     // If the user presses any key other than Enter, then reset ifEntered values to remove error message
     // This method is only called on keypress (not when entered is clicked)
     this.ifEntered = false;
-    this.textareaOutlineColor = '';
-  } 
+    this.textareaOutlineColor = "";
+  }
+
+  public onClickRemoveScreenshot(screenshot: generator.Screenshot): void {
+    //console.log("old screenshots length", this.screenshots.length);
+    this.removeScreenshot(screenshot);
+    this.updateManifest(this.manifest$);
+    //console.log("new screenshots length", this.screenshots.length);
+  }
 
   public onClickRemoveIcon(icon: generator.Icon): void {
     this.removeIcon(icon);
     this.updateManifest(this.manifest$);
   }
 
+  public async onClickScreenshotFetch(): Promise<void> {
+    let urls: string[] = [];
+    this.screenshotLoading = true;
+    urls = this.urlsForScreenshotValues.filter(url => {
+      return url !== null && url !== undefined && url !== "";
+    });
+    console.log(urls);
+    if (urls.length == 0) return;
+    else
+      try {
+        //Downloads screenshots and adds the sources to the manifest
+        await this.addScreenshotsFromUrl(urls);
+      } catch (err) {
+        console.log("Something wrong with the URL");
+      }
+    this.screenshotLoading = false;
+  }
+
+  public addUrlForScreenshots(index) {
+    this.urlsForScreenshot.push({ value: "" });
+  }
+  public removeUrlForScreenshots(index) {
+    this.urlsForScreenshot.splice(index, 1);
+    this.urlsForScreenshotValues.splice(index, 1);
+  }
   public onClickAddIcon(): void {
     try {
       this.addIconFromUrl(this.newIconSrc);
@@ -518,27 +680,38 @@ export default class extends Vue {
     if (this.icons.length > 0 && this.icons[0].src.includes("data:image")) {
       this.showCopy = false;
     }
-
+    console.log(this.icons);
     let icons = this.icons.map(icon => {
-      return `\n\t\t{\n\t\t\t"src": "${icon.src.includes("data:image") ? "[Embedded]" : icon.src}",\n\t\t\t"sizes": "${icon.sizes}"\n\t\t}`;
+      return `\n\t\t{\n\t\t\t"src": "${
+        icon.src.includes("data:image") ? "[Embedded]" : icon.src
+      }",\n\t\t\t"sizes": "${icon.sizes}"\n\t\t}`;
     });
     return icons.toString();
   }
 
   private getScreenshots(): string {
-    let icons = this.screenshots.map(screenshot => {
-      return `\n\t\t{\n\t\t\t"src": "${screenshot.src.includes("data:image") ? "[Embedded]" : screenshot.src}",\n\t\t\t"description": "${screenshot.description}",\n\t\t\t"size": "${screenshot.size}"\n\t\t}`;
+    console.log("Inside getScreenshots");
+    console.log(this.screenshots);
+
+    let screenshots = this.screenshots.map(screenshot => {
+      return `\n\t\t{\n\t\t\t"src": "${
+        screenshot.src.includes("base64") ? "[Embedded]" : screenshot.src
+      }",\n\t\t\t"sizes": "${screenshot.sizes}",\n\t\t\t"type": "${
+        screenshot.type
+      }"\n\t\t}`;
     });
-    return icons.toString();
+    return screenshots.toString();
   }
 
   private relatedApplications(): string {
-    let relatedApplicationscons = this.manifest.related_applications.map(app => {
-      return `\n\t\t{\n\t\t\t"platform": "${app.platform}",\n\t\t\t"url": "${app.url}"\n\t\t}`;
-    });
+    let relatedApplicationscons = this.manifest.related_applications.map(
+      app => {
+        return `\n\t\t{\n\t\t\t"platform": "${app.platform}",\n\t\t\t"url": "${app.url}"\n\t\t}`;
+      }
+    );
     return relatedApplicationscons.toString();
   }
-  
+
   private getCustomMembers(): string {
     if (this.members.length < 1) {
       return "";
@@ -565,18 +738,21 @@ export default class extends Vue {
           manifest += `\t"screenshots" : [${this.getScreenshots()}],\n`;
           break;
         case "related_applications":
-          manifest += `\t"related_applications" : [${this.relatedApplications() || []}],\n`
+          manifest += `\t"related_applications" : [${this.relatedApplications() ||
+            []}],\n`;
           break;
         case "prefer_related_applications":
-          manifest += `\t"prefer_related_applications" : ${this.manifest.prefer_related_applications},\n`
+          manifest += `\t"prefer_related_applications" : ${this.manifest.prefer_related_applications},\n`;
           break;
         default:
-          manifest += `\t"${property}" : "${this.manifest[property] ? this.manifest[property] : ''}",\n`;
+          manifest += `\t"${property}" : "${
+            this.manifest[property] ? this.manifest[property] : ""
+          }",\n`;
           break;
       }
     }
-    // Removing the last ',' 
-    manifest = manifest.substring(0, manifest.length-2);
+    // Removing the last ','
+    manifest = manifest.substring(0, manifest.length - 2);
     manifest += this.getCustomMembers();
     return `{\n${manifest}\n}`;
   }
@@ -613,7 +789,7 @@ export default class extends Vue {
       await this.uploadIcon(this.iconFile);
       this.updateManifest(this.manifest$);
     }
-    this.checkBrokenImage(this.icons)
+    this.checkBrokenImage(this.icons);
     $iconsModal.hide();
     $iconsModal.hideLoading();
     this.iconFile = null;
@@ -638,7 +814,7 @@ export default class extends Vue {
   }
 
   public handleEditorValue(value) {
-    if (helper.isValidJson(value)){
+    if (helper.isValidJson(value)) {
       var editedManifest = JSON.parse(value);
       this.updateManifest(editedManifest);
       this.manifest$ = { ...this.manifest };
@@ -681,7 +857,7 @@ Vue.prototype.$awa = function(config) {
   if (awa) {
     awa.ct.capturePageView(config);
   }
-  
+
   return;
 };
 
@@ -801,6 +977,28 @@ footer a {
     line-height: 21px;
   }
 }
+
+#screenshotsTool {
+  padding-bottom: 41px;
+}
+#screenshotDownloadButton {
+  width: 156px;
+  height: 40px;
+  background: transparent;
+  color: #3c3c3c;
+  font-weight: bold;
+  border-radius: 20px;
+  border: 1px solid #3c3c3c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+}
+
 #removeIconDiv svg {
   height: 14px;
   width: 14px;
@@ -929,6 +1127,7 @@ footer a {
       }
     }
     #doneDiv {
+      padding-top: 12px;
       display: flex;
       justify-content: center;
       margin-bottom: 62px;
@@ -989,12 +1188,12 @@ footer a {
     }
   }
 }
-  #rightSide {
-    width: 55%; 
-  }
-  #leftSide {
-    width: 40%;
-  }
+#rightSide {
+  width: 55%;
+}
+#leftSide {
+  width: 40%;
+}
 @media (max-width: 1280px) {
   #rightSide {
     display: none;
@@ -1017,9 +1216,92 @@ footer a {
     display: grid;
     grid-gap: initial;
   }
+  .screenshot-input {
+    width: 95% !important;
+  }
   .l-generator-input--select {
     max-width: 210px;
   }
+}
+#screenshotsOuterDiv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30em;
+}
+#screenshotsUrlsContainer {
+  padding-bottom: 24px;
+}
+#screenshotsContainer {
+  width: 100%;
+  display: flex;
+  background: #efefef;
+  height: 32em;
+  justify-content: column;
+}
+
+#screenshotsContainer button {
+  border: none;
+  width: 4em;
+  transition: background-color 0.2s;
+}
+#screenshotsContainer button:focus,
+#screenshotsContainer button:hover {
+  background-color: #bbbbbb;
+}
+#screenshotsContainer button svg {
+  width: 28px;
+  fill: #6b6969;
+}
+
+#removeScreenshotDiv {
+  display: flex;
+  justify-content: center;
+  width: 2em;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+}
+#screenshots {
+  display: flex;
+  height: 100%;
+  scroll-snap-type: x mandatory;
+  flex-wrap: wrap;
+  flex-direction: column;
+  overflow-x: scroll;
+  width: 100%;
+  padding-top: 3%;
+  -webkit-overflow-scrolling: touch;
+}
+
+#screenshots .screenshotItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scroll-snap-align: start;
+  width: 100%;
+  background: #efefef;
+  height: 100%;
+  flex-direction: column;
+}
+#screenshots img {
+  padding-bottom: 3%;
+  height: 100%;
+  object-fit: contain;
+}
+#screenshots::-webkit-scrollbar {
+  display: none;
+}
+
+#screenshotsToolbar {
+  position: sticky;
+  bottom: 0px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 6px;
+  background: #efefef;
 }
 
 @media (max-width: 630px) {
@@ -1028,7 +1310,7 @@ footer a {
   }
 }
 
-  #sideBySide #leftSide .animatedSection input[type="radio"] {
-    width: auto;
-  }
+#sideBySide #leftSide .animatedSection input[type="radio"] {
+  width: auto;
+}
 </style>

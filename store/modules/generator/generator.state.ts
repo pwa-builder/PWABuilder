@@ -1,96 +1,97 @@
 export interface Manifest {
-    background_color: string | null;
-    description: string | null;
-    dir: string | null;
-    display: string;
-    lang: string | null;
-    name: string | null;
-    orientation: string | null;
-    prefer_related_applications: boolean;
-    related_applications: RelatedApplication[];
-    scope: string | null;
-    short_name: string | null;
-    start_url: string | null;
-    theme_color: string | null;
-    generated: boolean | null;
-    url: string | null;
+  background_color: string | null;
+  description: string | null;
+  dir: string | null;
+  display: string;
+  lang: string | null;
+  name: string | null;
+  orientation: string | null;
+  prefer_related_applications: boolean;
+  related_applications: RelatedApplication[];
+  scope: string | null;
+  short_name: string | null;
+  start_url: string | null;
+  theme_color: string | null;
+  generated: boolean | null;
+  url: string | null;
 }
 
 export interface StaticContent {
-    code: string;
-    name: string;
+  code: string;
+  name: string;
 }
 
 export interface Icon {
-    src: string;
-    generated?: boolean;
-    sizes: string;
+  src: string;
+  generated?: boolean;
+  sizes: string;
 }
 
 export interface Screenshot {
-    src: string;
-    size: string;
-    description: string;
+  src: string;
+  sizes: string;
+  type: string;
+  description?: string;
 }
 
 export interface Asset {
-    filename: string;
-    data: Blob;
+  filename: string;
+  data: Blob;
 }
 
 export interface RelatedApplication {
-    platform: string | null;
-    url: string | null;
-    id: string | null;
+  platform: string | null;
+  url: string | null;
+  id: string | null;
 }
 
 export interface CustomMember {
-    name: string;
-    value: string;
+  name: string;
+  value: string;
 }
 
 export interface ColorOptions {
-    colorOption: string;
-    color: string;
+  colorOption: string;
+  color: string;
 }
 
 export interface CodeIssue {
-    code: string;
-    description: string;
-    platform: string;
+  code: string;
+  description: string;
+  platform: string;
 }
 
 export interface CodeError {
-    member: string;
-    issues: CodeIssue[];
+  member: string;
+  issues: CodeIssue[];
 }
 
 export interface State {
-    url: string | null;
-    manifest: Manifest | null;
-    manifestId: string | null;
-    siteServiceWorkers: any;
-    icons: Icon[];
-    screenshots: Screenshot[];
-    members: CustomMember[];
-    suggestions: CodeError[] | null;
-    warnings: CodeError[] | null;
-    errors: string[] | null;
-    assets: Asset[] | null;
-    generated: boolean | null;
+  url: string | null;
+  manifest: Manifest | null;
+  manifestId: string | null;
+  siteServiceWorkers: any;
+  icons: Icon[];
+  screenshots: Screenshot[];
+  members: CustomMember[];
+  suggestions: CodeError[] | null;
+  warnings: CodeError[] | null;
+  errors: string[] | null;
+  assets: Asset[] | null;
+  generated: boolean | null;
 }
 
 export const state = (): State => ({
-    url: null,
-    manifest: null,
-    manifestId: null,
-    siteServiceWorkers: null,
-    icons: [],
-    screenshots: [],
-    members: [],
-    suggestions: null,
-    warnings: null,
-    errors: null,
-    assets: null,
-    generated: null
+  url: null,
+  manifest: null,
+  manifestId: null,
+  siteServiceWorkers: null,
+  icons: [],
+  screenshots: [],
+  members: [],
+  suggestions: null,
+  warnings: null,
+  errors: null,
+  assets: null,
+  generated: null,
 });
