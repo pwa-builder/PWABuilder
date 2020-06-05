@@ -31,7 +31,7 @@
       <div class="pure-u-1-2 pure-u-md-1-5">
       </div>
       <div class="pure-u-1-2 pure-u-md-1-5">
-     
+
       </div>
       <div class="l-footer-social pure-u-1 pure-u-md-3-5">
         <a class="l-footer-logo_action" href="https://github.com/pwa-builder" target="_blank">
@@ -173,24 +173,28 @@ header {
       font-style: normal;
     }
   }
+
+  @media (max-width: 640px) {
+    height: auto;
+  }
 }
 
 /*body[data-location='gettingStarted']{
-  
+
   }
 
     body[data-location='generate']{
-   
+
   }
   body[data-location='serviceworker']{
-     
+
   }
 
   body[data-location='publish']{
-    
+
   }
 
   body[data-location='windows']{
-   
+
   }*/
 </style>

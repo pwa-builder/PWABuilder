@@ -124,7 +124,10 @@ export const actions: Actions<State, RootState> = {
 
     const test = await helpers.isValidUrl(url);
 
-    if (test.message !== undefined) {
+    if (
+      test.message !== undefined &&
+      !url.toLowerCase().startsWith('http://')
+    ) {
       throw `${
         test.message
       }: this error means that you may have a bad https cert or the url may not be correct`;

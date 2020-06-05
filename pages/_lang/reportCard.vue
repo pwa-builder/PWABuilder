@@ -15,7 +15,7 @@
       <span>URL copied for sharing</span>
     </div>
 
-    <div v-if="gotURL && overallScore < 80" id="reportShareButtonContainer">
+    <div v-if="gotURL" id="reportShareButtonContainer">
       <button @click="shareReport">
         <i class="fas fa-share-alt"></i>
         Share your Results
@@ -76,9 +76,8 @@
               <button @click="starterDrop" id="mainStartButton">
                 Get Started!
                 <i class="fas fa-chevron-down"></i>
-              </button>
 
-              <div v-if="openDrop" id="starterDropdown">
+                <div v-if="openDrop" id="starterDropdown">
                 <button id="starterDownloadButton" @click="downloadStarter">
                   <i class="fas fa-arrow-down"></i>
                   Download
@@ -88,6 +87,8 @@
                   Clone from Github
                 </button>
               </div>
+              </button>
+
             </div>
           </div>
         </div>
@@ -509,8 +510,8 @@ declare var awa: any;
   align-items: flex-start;
 
   border-radius: 6px;
-  margin-top: 2em;
-  width: 10em;
+  margin-top: 0;
+  width: 14em;
   margin-left: 1.8em;
 
   animation-name: slidedown;
@@ -527,10 +528,7 @@ declare var awa: any;
   background: black !important;
   color: white !important;
   width: 11em;
-}
-
-#mainStartButton .fa, #mainStartButton .fas {
-  margin-left: 6px;
+  border: none;
 }
 
 #gitCopyToast {
@@ -618,6 +616,7 @@ declare var awa: any;
   display: flex;
   justify-content: center;
   align-items: center;
+  border: none;
 }
 
 #shareToast {
@@ -678,7 +677,6 @@ declare var awa: any;
   justify-content: flex-end;
   padding-right: 9em;
   position: relative;
-  top: 9em;
 }
 
 #reportShareButtonContainer button {
@@ -908,11 +906,12 @@ h2 {
           color: black;
           padding-left: 0;
           padding-right: 0;
+          border: none;
         }
       }
     }
 
-    @media (max-width: 425px) {
+    @media (max-width: 640px) {
       #starterSection {
         display: none;
       }
