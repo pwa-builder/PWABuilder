@@ -94,7 +94,9 @@ export default class extends Vue {
       pageHeight: window.innerHeight
     };
 
-    awa.ct.capturePageView(overrideValues);
+    if (awa) {
+      awa.ct.capturePageView(overrideValues);
+    }
   }
 
   public get inProgress(): boolean {

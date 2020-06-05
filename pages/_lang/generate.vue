@@ -457,7 +457,10 @@ export default class extends Vue {
     document && document.querySelectorAll('.l-generator-textarea').forEach(item => {
       item.addEventListener('keyup', updateFn)
     });
-    awa.ct.capturePageView(overrideValues);
+
+    if (awa) {
+      awa.ct.capturePageView(overrideValues);
+    }
   }
 
   async destroyed() {
