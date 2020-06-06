@@ -2,36 +2,49 @@
   <div>
     <HubHeader :showSubHeader="true"></HubHeader>
 
-    <div v-if="showingIconModal" class="has-acrylic-40 is-dark" id="modalBackground"></div>
+    <div
+      v-if="showingIconModal"
+      class="has-acrylic-40 is-dark"
+      id="modalBackground"
+    ></div>
 
     <main id="sideBySide">
       <section id="leftSide">
         <header class="mastHead">
-          <h2>{{ $t("generate.subtitle") }}</h2>
-          <p>{{ $t("generate.instructions") }}</p>
+          <h2>{{ $t('generate.subtitle') }}</h2>
+          <p>{{ $t('generate.instructions') }}</p>
         </header>
 
         <div id="dataSection">
           <div id="dataButtonsBlock">
             <div id="dataButtons">
-              <button v-bind:class="{ active: showBasicSection }" @click="showBasicsSection()">Info</button>
+              <button
+                v-bind:class="{ active: showBasicSection }"
+                @click="showBasicsSection()"
+              >
+                Info
+              </button>
               <button
                 v-bind:class="{ active: showImagesSection }"
                 @click="showImageSection()"
-              >Images</button>
+              >
+                Images
+              </button>
               <button
                 v-bind:class="{ active: showSettingsSection }"
                 @click="showSettingSection()"
-              >Settings</button>
+              >
+                Settings
+              </button>
             </div>
           </div>
 
           <section class="animatedSection" v-if="showBasicSection">
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4
-                  v-bind:class="{ fieldName: activeFormField === 'appName' }"
-                >{{ $t("generate.name") }}</h4>
+                <h4 v-bind:class="{ fieldName: activeFormField === 'appName' }">
+                  {{ $t('generate.name') }}
+                </h4>
                 <p>Used for App lists or Store listings</p>
               </label>
 
@@ -49,7 +62,9 @@
               <label class="l-generator-label">
                 <h4
                   v-bind:class="{ fieldName: activeFormField === 'shortName' }"
-                >{{ $t("generate.short_name") }}</h4>
+                >
+                  {{ $t('generate.short_name') }}
+                </h4>
                 <p>Used for tiles or home screens</p>
               </label>
 
@@ -66,9 +81,9 @@
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4
-                  v-bind:class="{ fieldName: activeFormField === 'appDesc' }"
-                >{{ $t("generate.description") }}</h4>
+                <h4 v-bind:class="{ fieldName: activeFormField === 'appDesc' }">
+                  {{ $t('generate.description') }}
+                </h4>
                 <p>Used for App listings</p>
               </label>
 
@@ -83,9 +98,11 @@
                 type="text"
                 v-on:focus="activeFormField = 'appDesc'"
                 placeholder="App Description"
-                v-bind:style="{ outline: textareaOutlineColor}"
+                v-bind:style="{ outline: textareaOutlineColor }"
               ></textarea>
-              <span v-if="ifEntered" class="hint" id="textarea_error">Newline not allowed</span>
+              <span v-if="ifEntered" class="hint" id="textarea_error"
+                >Newline not allowed</span
+              >
               <span v-else class="hint" id="textarea_error"></span>
             </div>
 
@@ -93,7 +110,9 @@
               <label class="l-generator-label">
                 <h4
                   v-bind:class="{ fieldName: activeFormField === 'startURL' }"
-                >{{ $t("generate.start_url") }}</h4>
+                >
+                  {{ $t('generate.start_url') }}
+                </h4>
                 <p>This will be the first page that loads in your PWA.</p>
               </label>
 
@@ -112,12 +131,16 @@
             <div class="l-generator-field logo-upload">
               <div id="uploadNewSection">
                 <label class="l-generator-label">
-                  <h4 class="iconUploadHeader">Upload app icons for your PWA</h4>
-                  <p v-if="!isImageBroken">We suggest at least one image 512×512 or larger</p>
-                  <p
-                    class="brokenImage"
-                    v-if="isImageBroken"
-                  >If you want a bigger images, we suggest to you to upload at least one image 512×512 or larger</p>
+                  <h4 class="iconUploadHeader">
+                    Upload app icons for your PWA
+                  </h4>
+                  <p v-if="!isImageBroken">
+                    We suggest at least one image 512×512 or larger
+                  </p>
+                  <p class="brokenImage" v-if="isImageBroken">
+                    If you want a bigger images, we suggest to you to upload at
+                    least one image 512×512 or larger
+                  </p>
                 </label>
 
                 <div class="button-holder icons">
@@ -126,7 +149,9 @@
                       id="iconUploadButton"
                       class="work-button l-generator-button"
                       @click="onClickUploadIcon()"
-                    >Upload</button>
+                    >
+                      Upload
+                    </button>
                   </div>
                 </div>
 
@@ -148,20 +173,26 @@
                     v-for="icon in filterIcons(icons)"
                     :key="icon.src"
                   >
-                    <div id="iconDivItem" class="pure-u-10-24 l-generator-tablec">
+                    <div
+                      id="iconDivItem"
+                      class="pure-u-10-24 l-generator-tablec"
+                    >
                       <a target="_blank" :href="icon.src">
                         <img class="icon-preview" :src="icon.src" />
                       </a>
 
                       <div id="iconSize" class="pure-u-8-24 l-generator-tablec">
-                        <div id="iconSizeText">{{icon.sizes}}</div>
+                        <div id="iconSizeText">{{ icon.sizes }}</div>
 
                         <div
                           id="removeIconsDiv"
                           class="pure-u-1-8 l-generator-tablec l-generator-tablec--right"
                           @click="onClickRemoveIcon(icon)"
                         >
-                          <span class="l-generator-close" :title="$t('generate.remove_icon')">
+                          <span
+                            class="l-generator-close"
+                            :title="$t('generate.remove_icon')"
+                          >
                             <i class="fas fa-trash-alt"></i>
                           </span>
                         </div>
@@ -182,14 +213,18 @@
               <div class="l-generator-field">
                 <label class="l-generator-label">
                   <h4
-                    v-bind:class="{ fieldName: activeFormField === 'screenshot' }"
-                  >Enter URL to add screenshots to the manifest</h4>
+                    v-bind:class="{
+                      fieldName: activeFormField === 'screenshot',
+                    }"
+                  >
+                    Enter URL to add screenshots to the manifest
+                  </h4>
                   <p>You may enter up to 8</p>
                 </label>
                 <div
                   id="screenshotsUrlsContainer"
                   class="form-group"
-                  v-for="(url,k) in urlsForScreenshot"
+                  v-for="(url, k) in urlsForScreenshot"
                   :key="k"
                 >
                   <input
@@ -204,12 +239,15 @@
                     <i
                       class="fas fa-minus-circle"
                       @click="removeUrlForScreenshots(k)"
-                      v-show="k || ( !k && urlsForScreenshot.length > 1)"
+                      v-show="k || (!k && urlsForScreenshot.length > 1)"
                     ></i>
                     <i
                       class="fas fa-plus-circle"
                       @click="addUrlForScreenshots(k)"
-                      v-show="k == urlsForScreenshot.length-1 && screenshots.length + k <= 6"
+                      v-show="
+                        k == urlsForScreenshot.length - 1 &&
+                          screenshots.length + k <= 6
+                      "
                     ></i>
                   </span>
                 </div>
@@ -230,9 +268,12 @@
                 </button>
               </div>
             </div>
-            <div id="screenshotsOuterDiv" v-show="screenshots.length>0">
+            <div id="screenshotsOuterDiv" v-show="screenshots.length > 0">
               <div id="screenshotsContainer">
-                <button @click="scrollToLeft()" v-show="screenshots.length>=2">
+                <button
+                  @click="scrollToLeft()"
+                  v-show="screenshots.length >= 2"
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                     <path
                       d="M401.4 224h-214l83-79.4c11.9-12.5 11.9-32.7 0-45.2s-31.2-12.5-43.2 0L89 233.4c-6 5.8-9 13.7-9 22.4v.4c0 8.7 3 16.6 9 22.4l138.1 134c12 12.5 31.3 12.5 43.2 0 11.9-12.5 11.9-32.7 0-45.2l-83-79.4h214c16.9 0 30.6-14.3 30.6-32 .1-18-13.6-32-30.5-32z"
@@ -242,26 +283,32 @@
                 <section id="screenshots" ref="screenshots">
                   <div
                     class="screenshotItem"
-                    v-for="(screenshot,k) in filterIcons(screenshots)"
+                    v-for="(screenshot, k) in filterIcons(screenshots)"
                     :key="screenshot.src"
                   >
                     <img :src="screenshot.src" />
                     <div id="screenshotsToolbar">
                       <div width="2em"></div>
-                      <span>{{`${k+1} / ${screenshots.length}`}}</span>
+                      <span>{{ `${k + 1} / ${screenshots.length}` }}</span>
                       <button
                         id="removeScreenshotsDiv"
                         class="pure-u-1-8 l-generator-tablec l-generator-tablec--right"
                         @click="onClickRemoveScreenshot(screenshot)"
                       >
-                        <span class="l-generator-close" :title="$t('remove screenshot')">
+                        <span
+                          class="l-generator-close"
+                          :title="$t('remove screenshot')"
+                        >
                           <i class="fas fa-trash-alt"></i>
                         </span>
                       </button>
                     </div>
                   </div>
                 </section>
-                <button @click="scrollToRight()" v-show="screenshots.length>=2">
+                <button
+                  @click="scrollToRight()"
+                  v-show="screenshots.length >= 2"
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                     <path
                       d="M284.9 412.6l138.1-134c6-5.8 9-13.7 9-22.4v-.4c0-8.7-3-16.6-9-22.4l-138.1-134c-12-12.5-31.3-12.5-43.2 0-11.9 12.5-11.9 32.7 0 45.2l83 79.4h-214c-17 0-30.7 14.3-30.7 32 0 18 13.7 32 30.6 32h214l-83 79.4c-11.9 12.5-11.9 32.7 0 45.2 12 12.5 31.3 12.5 43.3 0z"
@@ -277,8 +324,12 @@
               <label class="l-generator-label">
                 <h4
                   v-bind:class="{ fieldName: activeFormField === 'appScope' }"
-                >{{ $t("generate.scope") }}</h4>
-                <p>Scope determines what part of your website runs in the PWA</p>
+                >
+                  {{ $t('generate.scope') }}
+                </h4>
+                <p>
+                  Scope determines what part of your website runs in the PWA
+                </p>
               </label>
 
               <input
@@ -294,9 +345,16 @@
             <div class="l-generator-field">
               <label class="l-generator-label">
                 <h4
-                  v-bind:class="{ fieldName: activeFormField === 'displayMode' }"
-                >{{ $t("generate.display") }}</h4>
-                <p>Display identifies the browser components that should be included in your. "Standalone" appears as a traditional app.</p>
+                  v-bind:class="{
+                    fieldName: activeFormField === 'displayMode',
+                  }"
+                >
+                  {{ $t('generate.display') }}
+                </h4>
+                <p>
+                  Display identifies the browser components that should be
+                  included in your. "Standalone" appears as a traditional app.
+                </p>
               </label>
 
               <select
@@ -305,16 +363,27 @@
                 @change="onChangeSimpleInput(), update()"
                 v-on:focus="activeFormField = 'displayMode'"
               >
-                <option v-for="display in displaysNames" :value="display" :key="display">{{display}}</option>
+                <option
+                  v-for="display in displaysNames"
+                  :value="display"
+                  :key="display"
+                  >{{ display }}</option
+                >
               </select>
             </div>
 
             <div class="l-generator-field">
               <label class="l-generator-label">
                 <h4
-                  v-bind:class="{ fieldName: activeFormField === 'appOrientation' }"
-                >{{ $t("generate.orientation") }}</h4>
-                <p>Orientation determines the perfered flow of your application.</p>
+                  v-bind:class="{
+                    fieldName: activeFormField === 'appOrientation',
+                  }"
+                >
+                  {{ $t('generate.orientation') }}
+                </h4>
+                <p>
+                  Orientation determines the perfered flow of your application.
+                </p>
               </label>
 
               <select
@@ -327,15 +396,16 @@
                   v-for="orientation in orientationsNames"
                   :value="orientation"
                   :key="orientation"
-                >{{orientation}}</option>
+                  >{{ orientation }}</option
+                >
               </select>
             </div>
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4
-                  v-bind:class="{ fieldName: activeFormField === 'appLang' }"
-                >{{ $t("generate.language") }}</h4>
+                <h4 v-bind:class="{ fieldName: activeFormField === 'appLang' }">
+                  {{ $t('generate.language') }}
+                </h4>
                 <p>Declare the language of your PWA</p>
               </label>
 
@@ -349,7 +419,8 @@
                   v-for="language in languagesNames"
                   :value="language"
                   :key="language"
-                >{{language}}</option>
+                  >{{ language }}</option
+                >
               </select>
             </div>
 
@@ -361,7 +432,9 @@
 
         <div id="doneDiv">
           <!--<button id="doneButton">Done</button>-->
-          <nuxt-link @click.native="saveChanges" id="doneButton" to="reportCard">Done</nuxt-link>
+          <nuxt-link @click.native="saveChanges" id="doneButton" to="reportCard"
+            >Done</nuxt-link
+          >
         </div>
       </section>
 
@@ -415,21 +488,30 @@
       >
         <section id="imageModalSection">
           <div class="l-generator-box image-upload">
-            <span class="l-generator-label">{{ $t("generate.upload_image") }}</span>
+            <span class="l-generator-label">{{
+              $t('generate.upload_image')
+            }}</span>
             <label
               class="l-generator-input l-generator-input--fake is-disabled"
               for="modal-file"
-            >{{ iconFile && iconFile.name ? iconFile.name : $t("generate.choose_file") }}</label>
-            <input id="modal-file" @change="onFileIconChange" class="l-hidden" type="file" />
+              >{{
+                iconFile && iconFile.name
+                  ? iconFile.name
+                  : $t('generate.choose_file')
+              }}</label
+            >
+            <input
+              id="modal-file"
+              @change="onFileIconChange"
+              class="l-hidden"
+              type="file"
+            />
           </div>
 
           <div class="l-generator-field">
             <label id="genMissingLabel">
-              {{ $t("generate.generate_missing") }}
-              <input
-                type="checkbox"
-                v-model="iconCheckMissing"
-              />
+              {{ $t('generate.generate_missing') }}
+              <input type="checkbox" v-model="iconCheckMissing" />
             </label>
           </div>
         </section>
@@ -438,30 +520,31 @@
 
     <footer>
       <p>
-        PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
-        <a
-          href="https://privacy.microsoft.com/en-us/privacystatement"
-        >Our Privacy Statement</a>
+        PWA Builder was founded by Microsoft as a community guided, open source
+        project to help move PWA adoption forward.
+        <a href="https://privacy.microsoft.com/en-us/privacystatement"
+          >Our Privacy Statement</a
+        >
       </p>
     </footer>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Component from "nuxt-class-component";
-import { Action, State, Getter, namespace } from "vuex-class";
-import GeneratorMenu from "~/components/GeneratorMenu.vue";
-import Modal from "~/components/Modal.vue";
-import CodeViewer from "~/components/CodeViewer.vue";
-import RelatedApplications from "~/components/RelatedApplications.vue";
-import CustomMembers from "~/components/CustomMembers.vue";
-import StartOver from "~/components/StartOver.vue";
-import ColorSelector from "~/components/ColorSelector.vue";
-import HubHeader from "~/components/HubHeader.vue";
-import * as generator from "~/store/modules/generator";
-import helper from "~/utils/helper";
-import Loading from "~/components/Loading.vue";
+import Vue from 'vue';
+import Component from 'nuxt-class-component';
+import { Action, State, Getter, namespace } from 'vuex-class';
+import GeneratorMenu from '~/components/GeneratorMenu.vue';
+import Modal from '~/components/Modal.vue';
+import CodeViewer from '~/components/CodeViewer.vue';
+import RelatedApplications from '~/components/RelatedApplications.vue';
+import CustomMembers from '~/components/CustomMembers.vue';
+import StartOver from '~/components/StartOver.vue';
+import ColorSelector from '~/components/ColorSelector.vue';
+import HubHeader from '~/components/HubHeader.vue';
+import * as generator from '~/store/modules/generator';
+import helper from '~/utils/helper';
+import Loading from '~/components/Loading.vue';
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
 const GeneratorGetters = namespace(generator.name, Getter);
@@ -475,15 +558,15 @@ const GeneratorGetters = namespace(generator.name, Getter);
     StartOver,
     Modal,
     HubHeader,
-    Loading
-  }
+    Loading,
+  },
 })
 export default class extends Vue {
   public manifest$: generator.Manifest | null = null;
   public screenshotLoading: boolean = false;
-  public newIconSrc = "";
+  public newIconSrc = '';
   public iconCheckMissing = true;
-  public urlsForScreenshot = [{ value: "" }];
+  public urlsForScreenshot = [{ value: '' }];
   public urlsForScreenshotValues = [];
   private iconFile: File | null = null;
   public error: string | null = null;
@@ -495,7 +578,7 @@ export default class extends Vue {
   public activeFormField = null;
   public showingIconModal = false;
   public ifEntered = false;
-  public textareaOutlineColor = "";
+  public textareaOutlineColor = '';
   public showCopy = true;
   public isImageBroken: boolean = false;
   public updateManifestFn = helper.debounce(
@@ -527,7 +610,7 @@ export default class extends Vue {
 
   public created(): void {
     this.manifest$ = { ...this.manifest };
-    this.urlsForScreenshotValues[0] = "";
+    this.urlsForScreenshotValues[0] = '';
   }
 
   public mounted() {
@@ -535,26 +618,27 @@ export default class extends Vue {
       isAuto: false,
       behavior: 0,
       uri: window.location.href,
-      pageName: "manifestPage",
-      pageHeight: window.innerHeight
+      pageName: 'manifestPage',
+      pageHeight: window.innerHeight,
     };
 
+    // might be the issue
     var updateFn = helper.debounce(this.update, 3000, false);
 
     document &&
-      document.querySelectorAll(".l-generator-input").forEach(item => {
-        item.addEventListener("keyup", updateFn);
+      document.querySelectorAll('.l-generator-input').forEach((item) => {
+        item.addEventListener('keyup', updateFn);
       });
     document &&
-      document.querySelectorAll(".l-generator-textarea").forEach(item => {
-        item.addEventListener("keyup", updateFn);
+      document.querySelectorAll('.l-generator-textarea').forEach((item) => {
+        item.addEventListener('keyup', updateFn);
       });
     awa.ct.capturePageView(overrideValues);
   }
 
   async destroyed() {
-    (this.$root.$el.closest("body") as HTMLBodyElement).classList.remove(
-      "modal-screen"
+    (this.$root.$el.closest('body') as HTMLBodyElement).classList.remove(
+      'modal-screen'
     );
   }
 
@@ -578,7 +662,7 @@ export default class extends Vue {
       // left: -15,
       left: -screenshotsDiv.clientWidth,
       top: 0,
-      behavior: "smooth"
+      behavior: 'smooth',
     });
   }
 
@@ -589,20 +673,20 @@ export default class extends Vue {
       // left: 15,
       left: screenshotsDiv.clientWidth,
       top: 0,
-      behavior: "smooth"
+      behavior: 'smooth',
     });
   }
   public filterIcons(icons): any {
-    return icons.filter(icon => {
-      if (!icon.generated || icon.src.indexOf("data") === 0) {
+    return icons.filter((icon) => {
+      if (!icon.generated || icon.src.indexOf('data') === 0) {
         return icon;
       }
     });
   }
 
   public checkBrokenImage(icons): any {
-    icons.forEach(icon => {
-      if (icon.generated && icon.src.indexOf("data") !== 0) {
+    icons.forEach((icon) => {
+      if (icon.generated && icon.src.indexOf('data') !== 0) {
         this.isImageBroken = true;
       }
     });
@@ -611,20 +695,20 @@ export default class extends Vue {
   public textareaError(): void {
     // This method is called when Enter is pressed in the textarea
     this.ifEntered = true; // This property is used to determine whether or not an error message should be displayed
-    this.textareaOutlineColor = "red solid 2px";
+    this.textareaOutlineColor = 'red solid 2px';
   }
   public textareaCheck(): void {
     // If the user presses any key other than Enter, then reset ifEntered values to remove error message
     // This method is only called on keypress (not when entered is clicked)
     this.ifEntered = false;
-    this.textareaOutlineColor = "";
+    this.textareaOutlineColor = '';
   }
 
   public onClickRemoveScreenshot(screenshot: generator.Screenshot): void {
-    //console.log("old screenshots length", this.screenshots.length);
+    console.log('old screenshots length', this.screenshots.length);
     this.removeScreenshot(screenshot);
     this.updateManifest(this.manifest$);
-    //console.log("new screenshots length", this.screenshots.length);
+    console.log('new screenshots length', this.screenshots.length);
   }
 
   public onClickRemoveIcon(icon: generator.Icon): void {
@@ -635,8 +719,8 @@ export default class extends Vue {
   public async onClickScreenshotFetch(): Promise<void> {
     let urls: string[] = [];
     this.screenshotLoading = true;
-    urls = this.urlsForScreenshotValues.filter(url => {
-      return url !== null && url !== undefined && url !== "";
+    urls = this.urlsForScreenshotValues.filter((url) => {
+      return url !== null && url !== undefined && url !== '';
     });
     console.log(urls);
     if (urls.length == 0) return;
@@ -645,13 +729,13 @@ export default class extends Vue {
         //Downloads screenshots and adds the sources to the manifest
         await this.addScreenshotsFromUrl(urls);
       } catch (err) {
-        console.log("Something wrong with the URL");
+        console.log('Something wrong with the URL');
       }
     this.screenshotLoading = false;
   }
 
   public addUrlForScreenshots(index) {
-    this.urlsForScreenshot.push({ value: "" });
+    this.urlsForScreenshot.push({ value: '' });
   }
   public removeUrlForScreenshots(index) {
     this.urlsForScreenshot.splice(index, 1);
@@ -677,25 +761,25 @@ export default class extends Vue {
   private getIcons(): string {
     // check for embedded icons
     // if embedded dont show the copy button;
-    if (this.icons.length > 0 && this.icons[0].src.includes("data:image")) {
+    if (this.icons.length > 0 && this.icons[0].src.includes('data:image')) {
       this.showCopy = false;
     }
     console.log(this.icons);
-    let icons = this.icons.map(icon => {
+    let icons = this.icons.map((icon) => {
       return `\n\t\t{\n\t\t\t"src": "${
-        icon.src.includes("data:image") ? "[Embedded]" : icon.src
+        icon.src.includes('data:image') ? '[Embedded]' : icon.src
       }",\n\t\t\t"sizes": "${icon.sizes}"\n\t\t}`;
     });
     return icons.toString();
   }
 
   private getScreenshots(): string {
-    console.log("Inside getScreenshots");
+    console.log('Inside getScreenshots');
     console.log(this.screenshots);
 
-    let screenshots = this.screenshots.map(screenshot => {
+    let screenshots = this.screenshots.map((screenshot) => {
       return `\n\t\t{\n\t\t\t"src": "${
-        screenshot.src.includes("base64") ? "[Embedded]" : screenshot.src
+        screenshot.src.includes('base64') ? '[Embedded]' : screenshot.src
       }",\n\t\t\t"sizes": "${screenshot.sizes}",\n\t\t\t"type": "${
         screenshot.type
       }"\n\t\t}`;
@@ -705,8 +789,10 @@ export default class extends Vue {
 
   private relatedApplications(): string {
     let relatedApplicationscons = this.manifest.related_applications.map(
-      app => {
-        return `\n\t\t{\n\t\t\t"platform": "${app.platform}",\n\t\t\t"url": "${app.url}"\n\t\t}`;
+      (app) => {
+        return `\n\t\t{\n\t\t\t"platform": "${app.platform}",\n\t\t\t"url": "${
+          app.url
+        }"\n\t\t}`;
       }
     );
     return relatedApplicationscons.toString();
@@ -714,7 +800,7 @@ export default class extends Vue {
 
   private getCustomMembers(): string {
     if (this.members.length < 1) {
-      return "";
+      return '';
     }
     let membersString = `,`;
     this.members.forEach((member, i) => {
@@ -728,25 +814,27 @@ export default class extends Vue {
   }
 
   private getManifestProperties(): string {
-    let manifest = "";
+    let manifest = '';
     for (let property in this.manifest) {
       switch (property) {
-        case "icons":
+        case 'icons':
           manifest += `\t"icons" : [${this.getIcons()}],\n`;
           break;
-        case "screenshots":
+        case 'screenshots':
           manifest += `\t"screenshots" : [${this.getScreenshots()}],\n`;
           break;
-        case "related_applications":
+        case 'related_applications':
           manifest += `\t"related_applications" : [${this.relatedApplications() ||
             []}],\n`;
           break;
-        case "prefer_related_applications":
-          manifest += `\t"prefer_related_applications" : ${this.manifest.prefer_related_applications},\n`;
+        case 'prefer_related_applications':
+          manifest += `\t"prefer_related_applications" : ${
+            this.manifest.prefer_related_applications
+          },\n`;
           break;
         default:
           manifest += `\t"${property}" : "${
-            this.manifest[property] ? this.manifest[property] : ""
+            this.manifest[property] ? this.manifest[property] : ''
           }",\n`;
           break;
       }
@@ -840,14 +928,14 @@ export default class extends Vue {
   }
 
   public modalOpened() {
-    (this.$root.$el.closest("body") as HTMLBodyElement).classList.add(
-      "modal-screen"
+    (this.$root.$el.closest('body') as HTMLBodyElement).classList.add(
+      'modal-screen'
     );
   }
 
   public modalClosed() {
-    (this.$root.$el.closest("body") as HTMLBodyElement).classList.remove(
-      "modal-screen"
+    (this.$root.$el.closest('body') as HTMLBodyElement).classList.remove(
+      'modal-screen'
     );
     this.showingIconModal = false;
   }
@@ -865,7 +953,7 @@ declare var awa: any;
 </script>
 
 <style lang="scss">
-@import "~assets/scss/base/variables";
+@import '~assets/scss/base/variables';
 
 #manifestCode {
   width: 100%;
@@ -1310,7 +1398,7 @@ footer a {
   }
 }
 
-#sideBySide #leftSide .animatedSection input[type="radio"] {
+#sideBySide #leftSide .animatedSection input[type='radio'] {
   width: auto;
 }
 </style>

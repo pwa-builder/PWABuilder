@@ -80,8 +80,8 @@ export const actions: Actions<State, RootState> = {
 
     console.log('state', state.screenshots.length);
     if (state.screenshots !== undefined) {
-      state.screenshots.forEach((icon) => {
-        customManifest['screenshots'].push(Object.assign({}, icon));
+      state.screenshots.forEach((screenshot) => {
+        customManifest['screenshots'].push(Object.assign({}, screenshot));
       });
     } else {
       state.screenshots = [];
