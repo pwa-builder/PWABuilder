@@ -712,7 +712,7 @@ export default class extends Vue {
 
 <style lang="scss" scoped>
 .cardScore {
-  color: #c5c5c5;
+  color: #707070;
   font-weight: bold;
   font-size: 12px;
 

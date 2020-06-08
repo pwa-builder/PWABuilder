@@ -1,6 +1,6 @@
 <template>
   <div v-if="sample" class="card">
-    <div id="featureCardTitleBlock">
+    <div class="featureCardTitleBlock">
       <h4>{{sample.title}}</h4>
 
       <slot name="iconSlot"></slot>
@@ -8,8 +8,8 @@
 
     <p v-bind:class="{textWrap: wrapText}">{{ sample.description }}</p>
 
-    <div v-if="showAddButton" id="featureCardActionsBlock">
-      <nuxt-link id="featureCardAddButton" v-bind:to="`/feature/${sample.title}`">
+    <div v-if="showAddButton" class="featureCardActionsBlock">
+      <nuxt-link class="featureCardAddButton" v-bind:to="`/feature/${sample.title}`">
         View Feature
       </nuxt-link>
     </div>
@@ -62,12 +62,12 @@ export default class extends Vue {
     }
   }
 
-  #featureCardTitleBlock {
+  .featureCardTitleBlock {
     display: flex;
     justify-content: space-between;
   }
 
-  #featureCardTitleBlock svg {
+  .featureCardTitleBlock svg {
     color: #C5C5C5;
     font-size: 24px;
   }
@@ -83,15 +83,15 @@ export default class extends Vue {
     white-space: initial !important;
   }
 
-  #featureCardActionsBlock {
+  .featureCardActionsBlock {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-top: 1em;
   }
 
-  #featureCardActionsBlock {
-    #featureCardAddButton {
+  .featureCardActionsBlock {
+    .featureCardAddButton {
       border: none;
       border-radius: 20px;
       height: 2em;
@@ -112,7 +112,7 @@ export default class extends Vue {
       transition: background-color 0.4s;
     }
 
-    #featureCardAddButton:hover {
+    .featureCardAddButton:hover {
       background-color: #9337d8;
       color: white;
       width: 10em;
