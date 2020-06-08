@@ -47,12 +47,6 @@ export interface Icon {
     platform?: string;
 }
 
-export interface Screenshot {
-    src: string;
-    size: string;
-    description: string;
-}
-
 export interface Asset {
     filename: string;
     data: Blob;
@@ -94,7 +88,8 @@ export interface State {
     manifestId: string | null;
     siteServiceWorkers: any;
     icons: Icon[];
-    screenshots: Screenshot[];
+    screenshots: Icon[];
+    shortcuts: ShortcutItem[];
     members: CustomMember[];
     suggestions: CodeError[] | null;
     warnings: CodeError[] | null;
@@ -111,6 +106,7 @@ export const state = (): State => ({
     siteServiceWorkers: null,
     icons: [],
     screenshots: [],
+    shortcuts: [],
     members: [],
     suggestions: null,
     warnings: null,

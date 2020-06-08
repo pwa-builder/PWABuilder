@@ -1,6 +1,5 @@
 import { MutationTree } from 'vuex';
 import { types, Manifest, helpers, Icon, Asset, RelatedApplication, CustomMember, State } from '~/store/modules/generator';
-import { Screenshot } from './generator.state';
 
 export const mutations: MutationTree<State> = {
   [types.UPDATE_LINK](state, url: string): void {
@@ -32,24 +31,34 @@ export const mutations: MutationTree<State> = {
     state.manifestUrl = result.generatedUrl;
     state.manifestId = result.id;
     state.siteServiceWorkers = result.siteServiceWorkers;
-    if (result && result.content && result.content.icons) {
-      if(result.generatedUrl)
-      {
-        state.icons = <Icon[]>helpers.prepareIconsUrls(result.content.icons, result.generatedUrl) || [];
+    if (result && result.content) {
+
+      // Set icons
+      if (result.content.icons) {
+        if(result.generatedUrl)
+        {
+          state.icons = <Icon[]>helpers.prepareIconsUrls(result.content.icons, result.generatedUrl) || [];
+        }
+        else {
+          state.icons = <Icon[]>helpers.prepareIconsUrls(result.content.icons, state.manifest && state.manifest.start_url ? state.manifest.start_url : '') || [];
+        }
       }
-      else {
-        state.icons = <Icon[]>helpers.prepareIconsUrls(result.content.icons, state.manifest && state.manifest.start_url ? state.manifest.start_url : '') || [];
+
+      // Set screenshots
+      if (result.content.screenshots) {
+        if(result.generatedUrl)
+        {
+          state.screenshots = helpers.prepareIconsUrls(result.content.screenshots, result.generatedUrl) || [];
+        }
+        else {
+          state.screenshots = helpers.prepareIconsUrls(result.content.screenshots, state.manifest && state.manifest.start_url ? state.manifest.start_url : '') || [];
+        }
       }
+
+      // Set shortcuts
+      state.shortcuts = result.content.shortcuts || [];
     }
-    if (result && result.content && result.content.screenshots) {
-      if(result.generatedUrl)
-      {
-        state.screenshots = <Screenshot[]>helpers.prepareIconsUrls(result.content.screenshots, result.generatedUrl) || [];
-      }
-      else {
-        state.screenshots = <Screenshot[]>helpers.prepareIconsUrls(result.content.screenshots, state.manifest && state.manifest.start_url ? state.manifest.start_url : '') || [];
-      }
-    }
+
     state.suggestions = result.suggestions;
     state.warnings = result.warnings;
     state.errors = result.errors;

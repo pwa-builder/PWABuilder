@@ -381,6 +381,7 @@ import * as generator from "~/store/modules/generator";
 import helper from "~/utils/helper";
 import axios from "axios";
 import download from "downloadjs";
+import { Screenshot } from "~/store/modules/generator";
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
@@ -416,12 +417,13 @@ export default class extends Vue {
   public isImageBroken: boolean = false;
   public updateManifestFn = helper.debounce(this.handleEditorValue, 3000, false);
   private zipRequested = false;
-
+  
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
   @GeneratorState icons: generator.Icon[];
   @GeneratorState screenshots: generator.Screenshot[];
   @GeneratorState suggestions: string[];
+  @GeneratorState shortcuts: generator.ShortcutItem[];
   @GeneratorState warnings: string[];
   @Getter orientationsNames: string[];
   @Getter languagesNames: string[];
@@ -583,31 +585,23 @@ export default class extends Vue {
     this.iconFile = target.files[0];
   }
 
-  private getIcons(): string {
-    // check for embedded icons
-    // if embedded dont show the copy button;
-    if (this.icons.length > 0 && this.icons[0].src.includes("data:image")) {
-      this.showCopy = false;
-    }
+  private getImagesWithEmbedded(icons: generator.Icon[]): generator.Icon[] {
+    // Creates a clone of icons but replaces any embedded image data 
+    // (eg. "src: data:image/png;base64,...") with "[Embedded]"
+    const w3cIconProps = ["src", "sizes", "type", "purpose", "platform"];
+    return icons
+      .map(i => {
+        const clone = { ...i };
+        // Only include W3C props
+        Object.keys(clone)
+          .filter(prop => !w3cIconProps.includes(prop))
+          .forEach(prop => delete clone[prop]);
 
-    let icons = this.icons.map(icon => {
-      return `\n\t\t{\n\t\t\t"src": "${icon.src.includes("data:image") ? "[Embedded]" : icon.src}",\n\t\t\t"sizes": "${icon.sizes}"\n\t\t}`;
-    });
-    return icons.toString();
-  }
-
-  private getScreenshots(): string {
-    let icons = this.screenshots.map(screenshot => {
-      return `\n\t\t{\n\t\t\t"src": "${screenshot.src.includes("data:image") ? "[Embedded]" : screenshot.src}",\n\t\t\t"description": "${screenshot.description}",\n\t\t\t"size": "${screenshot.size}"\n\t\t}`;
-    });
-    return icons.toString();
-  }
-
-  private relatedApplications(): string {
-    let relatedApplicationscons = this.manifest.related_applications.map(app => {
-      return `\n\t\t{\n\t\t\t"platform": "${app.platform}",\n\t\t\t"url": "${app.url}"\n\t\t}`;
-    });
-    return relatedApplicationscons.toString();
+        // Swap embedded images with "[Embedded]" string literal.
+        const isEmbeddedImg = i.src.startsWith("data:image");
+        clone.src = isEmbeddedImg ? "[Embedded]" : clone.src;
+        return clone;
+      });
   }
 
   private getCustomMembers(): string {
@@ -625,35 +619,53 @@ export default class extends Vue {
     return membersString;
   }
 
-  private getManifestProperties(): string {
-    let manifest = "";
-    for (let property in this.manifest) {
-      switch (property) {
-        case "icons":
-          manifest += `\t"icons" : [${this.getIcons()}],\n`;
-          break;
-        case "screenshots":
-          manifest += `\t"screenshots" : [${this.getScreenshots()}],\n`;
-          break;
-        case "related_applications":
-          manifest += `\t"related_applications" : [${this.relatedApplications() || []}],\n`
-          break;
-        case "prefer_related_applications":
-          manifest += `\t"prefer_related_applications" : ${this.manifest.prefer_related_applications},\n`
-          break;
+  private getManifestProperties(): string {   
+    const ignoredMembers = ["generated"];
+    const manifestMembers = Object.keys(this.manifest)
+      .filter(property => !ignoredMembers.includes(property))
+      .filter(property => this.manifest[property] !== undefined)
+      .map(property => `"${property}": ${this.getManifestPropValue(property)}`)
+      .join(",\n");
+  
+    return `{ ${manifestMembers} ${this.getCustomMembers()} }`;
+  }
+
+  private getManifestPropValue(property: string): string {
+    switch (property) {
+        case "icons": return JSON.stringify(this.getImagesWithEmbedded(this.icons));
+        case "screenshots": return JSON.stringify(this.getImagesWithEmbedded(this.screenshots));
         default:
-          manifest += `\t"${property}" : "${this.manifest[property] ? this.manifest[property] : ''}",\n`;
-          break;
+          // Use JSON.stringify if it's an object.
+          const propValue = this.manifest[property];
+          const propType = typeof(propValue);
+          let stringifiedValue = propType === "object" ? JSON.stringify(propValue, undefined, 4) : propValue;
+          let quoteCharOrEmpty = propType === "string" ? `"` : ``;
+          return `${quoteCharOrEmpty}${stringifiedValue}${quoteCharOrEmpty}`;
       }
-    }
-    // Removing the last ','
-    manifest = manifest.substring(0, manifest.length-2);
-    manifest += this.getCustomMembers();
-    return `{\n${manifest}\n}`;
+
+      return "";
   }
 
   public getCode(): string | null {
-    return this.manifest ? this.getManifestProperties() : null;
+    if (this.manifest) {
+      // Grab the manifest code, format it, and send it back.
+      const manifestProps = this.getManifestProperties();
+      
+      // Parse it into an object we can format.
+      let manifestPropsObj: Object | null = null;
+      try {
+        manifestPropsObj = JSON.parse(manifestProps);
+      } catch (parseErr) {
+        // Manifest props string isn't a valid JSON object. Woops
+        console.warn("App manifest is invalid; unable to parse JSON object", parseErr, "\n\nHere is the raw JSON:\n", manifestProps);
+        return manifestProps;
+      }
+
+      // Format it.
+      return JSON.stringify(manifestPropsObj, undefined, 4);
+    }
+    
+    return null;
   }
 
   public onClickUploadIcon(): void {
