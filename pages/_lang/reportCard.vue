@@ -146,7 +146,8 @@
         v-on:manifestTestDone="manifestTestDone($event)"
         :url="url"
         category="Manifest"
-        class="firstCard"
+        id="firstCard"
+        class="scoreCard"
       ></ScoreCard>
       <ScoreCard
         v-if="gotURL"
@@ -964,7 +965,7 @@ h2 {
   }
 }
 
-#scoreCard {
+.scoreCard {
   margin-bottom: 20px;
 }
 
@@ -979,7 +980,7 @@ h2 {
     margin-right: 25px;
   }
 
-  #scoreCard {
+  .scoreCard {
     margin-left: 25px;
     margin-right: 25px;
     margin-bottom: 20px;
@@ -1029,7 +1030,7 @@ h2 {
   }
 }
 
-.firstCard {
+#firstCard {
   grid-column: 1 / span 4;
 
   @media (max-width: 900px) {
