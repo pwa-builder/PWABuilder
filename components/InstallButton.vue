@@ -3,6 +3,7 @@
     <button
       @click="install()"
       id="installButton"
+      aria-label="Install PWABuilder"
     >
     </button>
 
