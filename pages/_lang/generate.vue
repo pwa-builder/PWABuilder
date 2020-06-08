@@ -42,6 +42,7 @@
                 type="text"
                 v-on:focus="activeFormField = 'appName'"
                 placeholder="App Name"
+                aria-label="App Name"
               />
             </div>
 
@@ -61,6 +62,7 @@
                 type="text"
                 v-on:focus="activeFormField = 'shortName'"
                 placeholder="App Short Name"
+                aria-label="App Short Name"
               />
             </div>
 
@@ -84,6 +86,7 @@
                 v-on:focus="activeFormField = 'appDesc'"
                 placeholder="App Description"
                 v-bind:style="{ outline: textareaOutlineColor}"
+                aria-label="App Description"
               ></textarea>
               <span v-if="ifEntered" class="hint" id="textarea_error">Newline not allowed</span>
               <span v-else class="hint" id="textarea_error"></span>
@@ -104,6 +107,7 @@
                 type="text"
                 v-on:focus="activeFormField = 'startURL'"
                 placeholder="Start URL"
+                aria-label="Start URL"
               />
             </div>
           </section>
@@ -206,6 +210,7 @@
                 type="text"
                 placeholder="App Scope"
                 v-on:focus="activeFormField = 'appScope'"
+                aria-label="App Scope"
               />
             </div>
 
@@ -222,6 +227,7 @@
                 v-model="manifest$.display"
                 @change="onChangeSimpleInput(), update()"
                 v-on:focus="activeFormField = 'displayMode'"
+                aria-label="Display Mode"
               >
                 <option v-for="display in displaysNames" :value="display" :key="display">{{display}}</option>
               </select>
@@ -240,6 +246,7 @@
                 v-model="manifest$.orientation"
                 @change="onChangeSimpleInput(), update()"
                 v-on:focus="activeFormField = 'appOrientation'"
+                aria-label="App Orientation"
               >
                 <option
                   v-for="orientation in orientationsNames"
@@ -262,6 +269,7 @@
                 v-model="manifest$.lang"
                 @change="onChangeSimpleInput(), update()"
                 v-on:change="activeFormField = 'appLang'"
+                aria-label="App Language"
               >
                 <option
                   v-for="language in languagesNames"
@@ -984,7 +992,7 @@ footer a {
         button {
           background: none;
           border: none;
-          color: rgba(60, 60, 60, 0.6);
+          color: rgba(60, 60, 60, 0.8);
           width: 110px;
           height: 32px;
           box-shadow: none;
@@ -1023,7 +1031,7 @@ footer a {
       }
       p {
         font-size: 14px;
-        color: grey;
+        color: #606060;
       }
       input {
         padding-left: 0;

@@ -117,7 +117,7 @@
         <div id="attachHeader">
           <h2>Nice job!</h2>
 
-          <button id="attachShare" @click="shareReport">
+          <button id="attachShare" aria-label="Share Report" @click="shareReport">
             <i class="fas fa-share-alt"></i>
           </button>
         </div>
@@ -146,7 +146,8 @@
         v-on:manifestTestDone="manifestTestDone($event)"
         :url="url"
         category="Manifest"
-        class="firstCard"
+        id="firstCard"
+        class="scoreCard"
       ></ScoreCard>
       <ScoreCard
         v-if="gotURL"
@@ -659,11 +660,11 @@ declare var awa: any;
   font-weight: normal;
   font-size: 12px;
   line-height: 18px;
-  color: #707070;
+  color: #606060;
 }
 
 #hubFooter a {
-  color: #707070;
+  color: #606060;
   text-decoration: underline;
 }
 
@@ -964,7 +965,7 @@ h2 {
   }
 }
 
-#scoreCard {
+.scoreCard {
   margin-bottom: 20px;
 }
 
@@ -979,7 +980,7 @@ h2 {
     margin-right: 25px;
   }
 
-  #scoreCard {
+  .scoreCard {
     margin-left: 25px;
     margin-right: 25px;
     margin-bottom: 20px;
@@ -1029,7 +1030,7 @@ h2 {
   }
 }
 
-.firstCard {
+#firstCard {
   grid-column: 1 / span 4;
 
   @media (max-width: 900px) {
@@ -1095,7 +1096,7 @@ h2 {
   align-items: center;
 
   a {
-    background: rgba(60, 60, 60, 0.6);
+    background: rgba(60, 60, 60, 0.8);
     color: white;
     border-radius: 20px;
     height: 40px;

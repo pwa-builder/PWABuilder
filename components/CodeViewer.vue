@@ -1,10 +1,10 @@
 <template>
   <section class="code_viewer">
-    <div v-if="showHeader" id="codeHeader">
+    <div v-if="showHeader" class="codeHeader">
       <slot></slot>
 
-      <button v-if="showCopyButton" @click="copy()" id="copyButton">
-        <i id="platformIcon" class="fas fa-copy"></i>
+      <button v-if="showCopyButton" @click="copy()" class="copyButton">
+        <i class="fas fa-copy platformIcon"></i>
         Copy
       </button>
     </div>
@@ -279,7 +279,7 @@ export default class extends Vue {
   width: 100%;
   border-radius: 4px;
 
-  #codeHeader {
+  .codeHeader {
     padding-left: 1em;
     padding-bottom: 1em;
     padding-top: 14px;
@@ -313,7 +313,7 @@ export default class extends Vue {
     color: $color-brand-quartary;
   }
 
-  #copyButton {
+  .copyButton {
     background: #c5c5c5;
     color: #3c3c3c;
     border: none;
