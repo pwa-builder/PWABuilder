@@ -21,7 +21,7 @@
       <div id="icons">
         <InstallButton/>
 
-        <a href="https://github.com/pwa-builder" target="_blank" rel="noopener noreferrer">
+        <a href="https://github.com/pwa-builder" aria-label="PWABuilder Github" target="_blank" rel="noopener noreferrer">
           <i class="fab fa-github"></i>
         </a>
         <!--<i class="fab fa-twitter"></i>-->
