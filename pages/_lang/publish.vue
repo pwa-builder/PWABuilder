@@ -419,7 +419,7 @@
               class="pwaCard"
             >
               <div class="pwaCardHeaderBlock">
-                <i id="platformIcon" class="fab fa-android"></i>
+                <i class="fab fa-android platformIcon"></i>
                 <h2>Android</h2>
               </div>
 
@@ -485,7 +485,7 @@
               @mouseleave="platCardUnHover($event)"
             >
               <div class="pwaCardHeaderBlock">
-                <i id="platformIcon" class="fab fa-windows"></i>
+                <i class="fab fa-windows platformIcon"></i>
                 <h2>Windows</h2>
               </div>
 
@@ -512,7 +512,7 @@
               class="pwaCard"
             >
               <div class="pwaCardHeaderBlock">
-                <i id="platformIcon" class="fab fa-apple"></i>
+                <i class="fab fa-apple platformIcon"></i>
                 <h2>MacOS</h2>
               </div>
 
@@ -546,13 +546,13 @@
 
         <div id="iconGrid">
           <div>
-            <i id="platformIcon" class="fab fa-pinterest"></i>
+            <i class="fab fa-pinterest platformIcon"></i>
           </div>
           <div>
-            <i id="platformIcon" class="fab fa-spotify"></i>
+            <i class="fab fa-spotify platformIcon"></i>
           </div>
           <div>
-            <i id="platformIcon" class="fab fa-microsoft"></i>
+            <i class="fab fa-microsoft platformIcon"></i>
           </div>
         </div>
       </div>
@@ -1244,7 +1244,7 @@ footer a {
             color: white;
           }
 
-          #platformIcon {
+          .platformIcon {
             font-size: 32px;
             margin-right: 10px;
           }
@@ -1305,7 +1305,7 @@ footer a {
             flex-direction: column;
             align-items: center;
 
-            #platformIcon {
+            .platformIcon {
               font-size: 44px;
             }
           }

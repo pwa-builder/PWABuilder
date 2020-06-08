@@ -7,7 +7,7 @@
     </div>
 
     <div id="monacoHeader">
-      <button @click="copy()" id="copyButton">
+      <button @click="copy()" class="copyButton">
         <i class="fas fa-copy"></i>
       </button>
 
@@ -143,7 +143,7 @@ p {
     background: white;
   }
 
-  #copyButton {
+  .copyButton {
     width: 32px;
     border: none;
     height: 32px;
