@@ -117,7 +117,7 @@
         <div id="attachHeader">
           <h2>Nice job!</h2>
 
-          <button id="attachShare" @click="shareReport">
+          <button id="attachShare" aria-label="Share Report" @click="shareReport">
             <i class="fas fa-share-alt"></i>
           </button>
         </div>
