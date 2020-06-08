@@ -80,6 +80,7 @@
         <nuxt-link
           class="enabled"
           id="publishButton"
+          aria-label="Build My PWA"
           to="/publish"
         ></nuxt-link>
       </div>
