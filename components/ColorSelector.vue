@@ -12,6 +12,7 @@
           :name="id"
           @change="onChangeColor(colorOption)"
           :checked="isColorChecked(colorOption)"
+          aria-label="Color Option"
         >
         <div class="colorOptionDiv">{{ $t("generate." + colorOption) }}</div>
       </label>
@@ -24,6 +25,7 @@
           placeholder="#000000"
           name="background_color"
           v-model="color"
+          aria-label="Background Color"
         >
         <input
           id="actualColorInput"
@@ -31,6 +33,7 @@
           name="background_color"
           v-model="color"
           @change="onChangeColor(color)"
+          aria-label="Background Color"
         >
       </div>
     </div>

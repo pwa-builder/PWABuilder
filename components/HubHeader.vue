@@ -21,7 +21,7 @@
       <div id="icons">
         <InstallButton/>
 
-        <a href="https://github.com/pwa-builder" target="_blank" rel="noopener noreferrer">
+        <a href="https://github.com/pwa-builder" aria-label="PWABuilder Github" target="_blank" rel="noopener noreferrer">
           <i class="fab fa-github"></i>
         </a>
         <!--<i class="fab fa-twitter"></i>-->
@@ -80,6 +80,7 @@
         <nuxt-link
           class="enabled"
           id="publishButton"
+          aria-label="Build My PWA"
           to="/publish"
         ></nuxt-link>
       </div>
@@ -313,7 +314,7 @@ header {
 
     a {
       padding-bottom: 6px;
-      color: rgba(255, 255, 255, 0.7);
+      color: rgba(255, 255, 255, 0.9);
 
       font-weight: normal;
       font-size: 14px;
@@ -369,7 +370,7 @@ header {
   }
 
   #urlTested {
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.9);
     display: flex;
     align-items: center;
 
@@ -381,7 +382,7 @@ header {
     }
 
     span {
-      color: rgba(255, 255, 255, 0.7);
+      color: rgba(255, 255, 255, 0.9);
 
       font-style: normal;
       font-weight: normal;
@@ -403,7 +404,7 @@ header {
       display: flex;
       flex-direction: column;
       font-weight: bold;
-      color: rgba(255, 255, 255, 0.7);
+      color: rgba(255, 255, 255, 0.9);
     }
   }
 

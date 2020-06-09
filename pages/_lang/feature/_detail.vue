@@ -453,7 +453,7 @@ declare var awa: any;
   background: white;
   margin-top: -80px;
 
-  #headerDiv {
+  .headerDiv {
     background: rgba(31, 194, 200, 1);
     background: -moz-linear-gradient(
       left,
@@ -502,7 +502,7 @@ declare var awa: any;
   }
 
   @media (max-width: 1336px) {
-    #headerDiv {
+    .headerDiv {
       padding-left: 88px;
       padding-right: 35px;
     }
@@ -608,13 +608,13 @@ declare var awa: any;
 }
 
 @media (max-width: 800px) {
-  #docsMain #headerDiv h2 {
+  #docsMain .headerDiv h2 {
     width: 45%;
   }
 }
 
 @media (max-width: 700px) {
-  #docsMain #headerDiv h2 {
+  #docsMain .headerDiv h2 {
     width: 40%;
   }
 }
@@ -634,7 +634,7 @@ declare var awa: any;
 }
 
 @media (max-width: 630px) {
-  #docsMain #headerDiv h2 {
+  #docsMain .headerDiv h2 {
     display: none;
   }
 }

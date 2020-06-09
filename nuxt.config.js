@@ -9,6 +9,9 @@ console.log(`Environment: ${process.env.NODE_ENV}`);
 module.exports = {
   env: env,
   head: {
+    htmlAttrs: {
+      lang: 'en'
+    },
     title: 'PWABuilder',
     meta: [{
         charset: 'utf-8'

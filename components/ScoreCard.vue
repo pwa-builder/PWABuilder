@@ -1,6 +1,6 @@
 <template>
-  <div id="scoreCard">
-    <div id="headerDiv">
+  <div class="scoreCard">
+    <div class="headerDiv">
       <h3>{{category}}</h3>
 
       <div v-if="category === 'Manifest'" class="cardScore">
@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <div id="cardContent">
+    <div class="cardContent">
       <!-- Security section -->
       <ul v-if="category === 'Security'">
         <li v-bind:class="{ good: hasHTTPS }">
@@ -427,7 +427,7 @@
       </ul>
     </div>
 
-    <div id="cardEditBlock">
+    <div class="cardEditBlock">
       <nuxt-link v-if="category === 'Service Worker'" to="/serviceworker">
 
         <button>
@@ -712,7 +712,7 @@ export default class extends Vue {
 
 <style lang="scss" scoped>
 .cardScore {
-  color: #c5c5c5;
+  color: #707070;
   font-weight: bold;
   font-size: 12px;
 
@@ -722,11 +722,11 @@ export default class extends Vue {
   }
 }
 
-#cardContent {
+.cardContent {
   flex: 1;
 }
 
-#scoreCard {
+.scoreCard {
   background: white;
   display: flex;
   flex-direction: column;
@@ -736,7 +736,7 @@ export default class extends Vue {
   padding-right: 30px;
   min-height: 404px;
 
-  #cardEditBlock {
+  .cardEditBlock {
     display: flex;
     justify-content: center;
 
@@ -750,7 +750,7 @@ export default class extends Vue {
     }
   }
 
-  #headerDiv {
+  .headerDiv {
     display: flex;
     justify-content: space-between;
     margin-bottom: 24px;
