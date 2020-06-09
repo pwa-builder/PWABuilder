@@ -550,6 +550,7 @@ import Modal from '~/components/Modal.vue';
 import CodeViewer from '~/components/CodeViewer.vue';
 import RelatedApplications from '~/components/RelatedApplications.vue';
 import CustomMembers from '~/components/CustomMembers.vue';
+import Loading from '~/components/Loading.vue';
 import StartOver from '~/components/StartOver.vue';
 import ColorSelector from '~/components/ColorSelector.vue';
 import HubHeader from '~/components/HubHeader.vue';
