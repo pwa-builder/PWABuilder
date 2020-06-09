@@ -5,15 +5,32 @@ export interface Manifest {
   display: string;
   lang: string | null;
   name: string | null;
-  orientation: string | null;
-  prefer_related_applications: boolean;
-  related_applications: RelatedApplication[];
+  orientation?: string | null;
+  prefer_related_applications?: boolean;
+  related_applications?: RelatedApplication[];
   scope: string | null;
   short_name: string | null;
   start_url: string | null;
   theme_color: string | null;
   generated: boolean | null;
   url: string | null;
+  shortcuts?: ShortcutItem[];
+  categories?: string[];
+  screenshots?: Icon[];
+  iarc_rating_id?: string;
+}
+
+export interface ShortcutItem {
+  name: string;
+  url: string;
+  description?: string;
+  short_name?: string;
+  icons?: Icon[];
+}
+
+export interface Fingerprint {
+  type: string;
+  value: string;
 }
 
 export interface StaticContent {
@@ -24,14 +41,10 @@ export interface StaticContent {
 export interface Icon {
   src: string;
   generated?: boolean;
-  sizes: string;
-}
-
-export interface Screenshot {
-  src: string;
-  sizes: string;
-  type: string;
-  description?: string;
+  type?: string;
+  sizes?: string;
+  purpose?: string;
+  platform?: string;
 }
 
 export interface Asset {
@@ -40,9 +53,11 @@ export interface Asset {
 }
 
 export interface RelatedApplication {
-  platform: string | null;
-  url: string | null;
-  id: string | null;
+  platform: string;
+  url?: string | null;
+  id?: string | null;
+  min_version?: string | null;
+  fingerprints?: Fingerprint[];
 }
 
 export interface CustomMember {
@@ -69,10 +84,12 @@ export interface CodeError {
 export interface State {
   url: string | null;
   manifest: Manifest | null;
+  manifestUrl: string | null;
   manifestId: string | null;
   siteServiceWorkers: any;
   icons: Icon[];
-  screenshots: Screenshot[];
+  screenshots: Icon[];
+  shortcuts: ShortcutItem[];
   members: CustomMember[];
   suggestions: CodeError[] | null;
   warnings: CodeError[] | null;
@@ -84,10 +101,12 @@ export interface State {
 export const state = (): State => ({
   url: null,
   manifest: null,
+  manifestUrl: null,
   manifestId: null,
   siteServiceWorkers: null,
   icons: [],
   screenshots: [],
+  shortcuts: [],
   members: [],
   suggestions: null,
   warnings: null,

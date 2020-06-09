@@ -35,8 +35,9 @@
             <input id="getStartedInput" :aria-label="$t('generator.url')" :placeholder="$t('generator.placeholder_url')" name="siteUrl" type="text" ref="url"
                 v-model="url$" autofocus />
 
-            <button id="getStartedButton">{{ $t('generator.start') }}
-             <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm"/>
+            <button id="getStartedButton">
+              {{ $t('generator.start') }}
+              <Loading :active="inProgress" class="u-display-inline_block u-margin-left-sm"/>
             </button>
           </form>
         </div>

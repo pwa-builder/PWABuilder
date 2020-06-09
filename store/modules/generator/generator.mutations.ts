@@ -9,7 +9,6 @@ import {
   CustomMember,
   State,
 } from '~/store/modules/generator';
-import { Screenshot } from './generator.state';
 
 export const mutations: MutationTree<State> = {
   [types.UPDATE_LINK](state, url: string): void {
@@ -38,47 +37,56 @@ export const mutations: MutationTree<State> = {
     }
 
     state.manifest = result.content;
+    state.manifestUrl = result.generatedUrl;
     state.manifestId = result.id;
     state.siteServiceWorkers = result.siteServiceWorkers;
-    if (result && result.content && result.content.icons) {
-      if (result.generatedUrl) {
-        state.icons =
-          <Icon[]>(
-            helpers.prepareIconsUrls(result.content.icons, result.generatedUrl)
-          ) || [];
-      } else {
-        state.icons =
-          <Icon[]>(
-            helpers.prepareIconsUrls(
-              result.content.icons,
-              state.manifest && state.manifest.start_url
-                ? state.manifest.start_url
-                : ''
-            )
-          ) || [];
+    if (result && result.content) {
+      // Set icons
+      if (result.content.icons) {
+        if (result.generatedUrl) {
+          state.icons =
+            <Icon[]>(
+              helpers.prepareIconsUrls(
+                result.content.icons,
+                result.generatedUrl
+              )
+            ) || [];
+        } else {
+          state.icons =
+            <Icon[]>(
+              helpers.prepareIconsUrls(
+                result.content.icons,
+                state.manifest && state.manifest.start_url
+                  ? state.manifest.start_url
+                  : ''
+              )
+            ) || [];
+        }
       }
-    }
-    if (result && result.content && result.content.screenshots) {
-      if (result.generatedUrl) {
-        state.screenshots =
-          <Screenshot[]>(
+
+      // Set screenshots
+      if (result.content.screenshots) {
+        if (result.generatedUrl) {
+          state.screenshots =
             helpers.prepareIconsUrls(
               result.content.screenshots,
               result.generatedUrl
-            )
-          ) || [];
-      } else {
-        state.screenshots =
-          <Screenshot[]>(
+            ) || [];
+        } else {
+          state.screenshots =
             helpers.prepareIconsUrls(
               result.content.screenshots,
               state.manifest && state.manifest.start_url
                 ? state.manifest.start_url
                 : ''
-            )
-          ) || [];
+            ) || [];
+        }
       }
+
+      // Set shortcuts
+      state.shortcuts = result.content.shortcuts || [];
     }
+
     state.suggestions = result.suggestions;
     state.warnings = result.warnings;
     state.errors = result.errors;
@@ -96,6 +104,7 @@ export const mutations: MutationTree<State> = {
     }
 
     state.manifest = result.content;
+    state.manifestUrl = result.generatedUrl;
     state.icons = result.content.icons;
     state.screenshots = result.content.screenshots;
   },
@@ -145,6 +154,7 @@ export const mutations: MutationTree<State> = {
   [types.RESET_STATES](state): void {
     state.url = null;
     state.manifest = null;
+    state.manifestUrl = null;
     state.manifestId = null;
     state.siteServiceWorkers = null;
     state.icons = [];

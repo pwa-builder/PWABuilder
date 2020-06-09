@@ -146,6 +146,17 @@
                 <div class="button-holder icons">
                   <div class="l-inline">
                     <button
+                      id="iconDownloadButton"
+                      class="work-button l-generator-button"
+                      :class="{ disabled: zipRequested }"
+                      @click="onClickDownloadAll()"
+                      :disabled="zipRequested"
+                    >
+                      Download All
+                    </button>
+                  </div>
+                  <div class="l-inline">
+                    <button
                       id="iconUploadButton"
                       class="work-button l-generator-button"
                       @click="onClickUploadIcon()"
@@ -544,7 +555,10 @@ import ColorSelector from '~/components/ColorSelector.vue';
 import HubHeader from '~/components/HubHeader.vue';
 import * as generator from '~/store/modules/generator';
 import helper from '~/utils/helper';
-import Loading from '~/components/Loading.vue';
+import axios from 'axios';
+import download from 'downloadjs';
+import { Screenshot } from '~/store/modules/generator';
+
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
 const GeneratorGetters = namespace(generator.name, Getter);
@@ -586,12 +600,14 @@ export default class extends Vue {
     3000,
     false
   );
+  private zipRequested = false;
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
   @GeneratorState icons: generator.Icon[];
   @GeneratorState screenshots: generator.Screenshot[];
   @GeneratorState suggestions: string[];
+  @GeneratorState shortcuts: generator.ShortcutItem[];
   @GeneratorState warnings: string[];
   @Getter orientationsNames: string[];
   @Getter languagesNames: string[];
@@ -633,7 +649,10 @@ export default class extends Vue {
       document.querySelectorAll('.l-generator-textarea').forEach((item) => {
         item.addEventListener('keyup', updateFn);
       });
-    awa.ct.capturePageView(overrideValues);
+
+    if (awa) {
+      awa.ct.capturePageView(overrideValues);
+    }
   }
 
   async destroyed() {
@@ -645,6 +664,58 @@ export default class extends Vue {
   public saveChanges(): void {
     this.updateManifest(this.manifest$);
     this.manifest$ = { ...this.manifest };
+  }
+
+  public onClickDownloadAll() {
+    // local azure function
+    this.zipRequested = true;
+    const images: generator.Icon[] = [];
+    const length = this.icons.length;
+    // prevent the passing of the observer objects in the body.
+    for (let i = 0; i < length; i++) {
+      images.push({ ...this.icons[i] });
+    }
+
+    axios
+      .post(
+        'https://azure-express-zip-creator.azurewebsites.net/api',
+        JSON.stringify({ images }),
+        {
+          method: 'POST',
+          responseType: 'blob',
+          headers: {
+            'content-type': 'application/json',
+          },
+        }
+      )
+      .then(async (res) => {
+        if (window.chooseFileSystemEntries) {
+          const fsOpts = {
+            type: 'save-file',
+            accepts: [
+              {
+                description: 'PWA Builder Image Zip',
+                extensions: ['zip'],
+                mimeTypes: ['application/zip'],
+              },
+            ],
+          };
+          const fileHandle = await window.chooseFileSystemEntries(fsOpts);
+          // Create a FileSystemWritableFileStream to write to.
+          const writable = await fileHandle.createWritable();
+          // Write the contents of the file to the stream.
+          await writable.write(res);
+          // Close the file and write the contents to disk.
+          await writable.close();
+        } else {
+          download(res.data, 'pwa-icons.zip', 'application/zip');
+        }
+        this.zipRequested = false;
+      })
+      .catch((err) => {
+        console.log(err);
+        this.zipRequested = false;
+      });
   }
 
   public onChangeSimpleInput(): void {
@@ -758,44 +829,22 @@ export default class extends Vue {
     this.iconFile = target.files[0];
   }
 
-  private getIcons(): string {
-    // check for embedded icons
-    // if embedded dont show the copy button;
-    if (this.icons.length > 0 && this.icons[0].src.includes('data:image')) {
-      this.showCopy = false;
-    }
-    console.log(this.icons);
-    let icons = this.icons.map((icon) => {
-      return `\n\t\t{\n\t\t\t"src": "${
-        icon.src.includes('data:image') ? '[Embedded]' : icon.src
-      }",\n\t\t\t"sizes": "${icon.sizes}"\n\t\t}`;
+  private getImagesWithEmbedded(icons: generator.Icon[]): generator.Icon[] {
+    // Creates a clone of icons but replaces any embedded image data
+    // (eg. "src: data:image/png;base64,...") with "[Embedded]"
+    const w3cIconProps = ['src', 'sizes', 'type', 'purpose', 'platform'];
+    return icons.map((i) => {
+      const clone = { ...i };
+      // Only include W3C props
+      Object.keys(clone)
+        .filter((prop) => !w3cIconProps.includes(prop))
+        .forEach((prop) => delete clone[prop]);
+
+      // Swap embedded images with "[Embedded]" string literal.
+      const isEmbeddedImg = i.src.startsWith('data:image');
+      clone.src = isEmbeddedImg ? '[Embedded]' : clone.src;
+      return clone;
     });
-    return icons.toString();
-  }
-
-  private getScreenshots(): string {
-    console.log('Inside getScreenshots');
-    console.log(this.screenshots);
-
-    let screenshots = this.screenshots.map((screenshot) => {
-      return `\n\t\t{\n\t\t\t"src": "${
-        screenshot.src.includes('base64') ? '[Embedded]' : screenshot.src
-      }",\n\t\t\t"sizes": "${screenshot.sizes}",\n\t\t\t"type": "${
-        screenshot.type
-      }"\n\t\t}`;
-    });
-    return screenshots.toString();
-  }
-
-  private relatedApplications(): string {
-    let relatedApplicationscons = this.manifest.related_applications.map(
-      (app) => {
-        return `\n\t\t{\n\t\t\t"platform": "${app.platform}",\n\t\t\t"url": "${
-          app.url
-        }"\n\t\t}`;
-      }
-    );
-    return relatedApplicationscons.toString();
   }
 
   private getCustomMembers(): string {
@@ -814,39 +863,64 @@ export default class extends Vue {
   }
 
   private getManifestProperties(): string {
-    let manifest = '';
-    for (let property in this.manifest) {
-      switch (property) {
-        case 'icons':
-          manifest += `\t"icons" : [${this.getIcons()}],\n`;
-          break;
-        case 'screenshots':
-          manifest += `\t"screenshots" : [${this.getScreenshots()}],\n`;
-          break;
-        case 'related_applications':
-          manifest += `\t"related_applications" : [${this.relatedApplications() ||
-            []}],\n`;
-          break;
-        case 'prefer_related_applications':
-          manifest += `\t"prefer_related_applications" : ${
-            this.manifest.prefer_related_applications
-          },\n`;
-          break;
-        default:
-          manifest += `\t"${property}" : "${
-            this.manifest[property] ? this.manifest[property] : ''
-          }",\n`;
-          break;
-      }
+    const ignoredMembers = ['generated'];
+    const manifestMembers = Object.keys(this.manifest)
+      .filter((property) => !ignoredMembers.includes(property))
+      .filter((property) => this.manifest[property] !== undefined)
+      .map(
+        (property) => `"${property}": ${this.getManifestPropValue(property)}`
+      )
+      .join(',\n');
+
+    return `{ ${manifestMembers} ${this.getCustomMembers()} }`;
+  }
+
+  private getManifestPropValue(property: string): string {
+    switch (property) {
+      case 'icons':
+        return JSON.stringify(this.getImagesWithEmbedded(this.icons));
+      case 'screenshots':
+        return JSON.stringify(this.getImagesWithEmbedded(this.screenshots));
+      default:
+        // Use JSON.stringify if it's an object.
+        const propValue = this.manifest[property];
+        const propType = typeof propValue;
+        let stringifiedValue =
+          propType === 'object'
+            ? JSON.stringify(propValue, undefined, 4)
+            : propValue;
+        let quoteCharOrEmpty = propType === 'string' ? `"` : ``;
+        return `${quoteCharOrEmpty}${stringifiedValue}${quoteCharOrEmpty}`;
     }
-    // Removing the last ','
-    manifest = manifest.substring(0, manifest.length - 2);
-    manifest += this.getCustomMembers();
-    return `{\n${manifest}\n}`;
+
+    return '';
   }
 
   public getCode(): string | null {
-    return this.manifest ? this.getManifestProperties() : null;
+    if (this.manifest) {
+      // Grab the manifest code, format it, and send it back.
+      const manifestProps = this.getManifestProperties();
+
+      // Parse it into an object we can format.
+      let manifestPropsObj: Object | null = null;
+      try {
+        manifestPropsObj = JSON.parse(manifestProps);
+      } catch (parseErr) {
+        // Manifest props string isn't a valid JSON object. Woops
+        console.warn(
+          'App manifest is invalid; unable to parse JSON object',
+          parseErr,
+          '\n\nHere is the raw JSON:\n',
+          manifestProps
+        );
+        return manifestProps;
+      }
+
+      // Format it.
+      return JSON.stringify(manifestPropsObj, undefined, 4);
+    }
+
+    return null;
   }
 
   public onClickUploadIcon(): void {
@@ -1043,9 +1117,37 @@ footer a {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  .button-holder.icons {
+    height: 90px;
+    display: flex;
+    align-items: center;
+    flex-flow: column;
+    justify-content: space-between;
+  }
   .iconUploadHeader {
     padding-top: 0px !important;
     font-size: 16px;
+  }
+  #iconDownloadButton {
+    width: 116px;
+    height: 40px;
+    background: transparent;
+    color: #3c3c3c;
+    font-weight: bold;
+    border-radius: 20px;
+    border: 1px solid #3c3c3c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
+  }
+  #iconDownloadButton.disabled {
+    color: lightgray;
+    border: 1px solid lightgray;
   }
   #iconUploadButton {
     width: 104px;

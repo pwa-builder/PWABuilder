@@ -2,8 +2,9 @@
   <button
     :class="{
       'pwa-button--brand': isBrand,
-      'pwa-button--total_right': isRight
+      'pwa-button--total_right': isRight,
     }"
+    :disabled="downloadDisabled"
     @click="buildArchive(platform, parameters)"
   >
     <span v-if="isReady">
@@ -80,9 +81,13 @@ export default class extends Vue {
   public showMessage: boolean;
 
   @PublishState archiveLink: string;
+  @PublishState downloadDisabled: boolean;
+
   @PublishAction build;
+  @PublishAction buildTeams;
 
   @GeneratorState manifest: generator.Manifest;
+  @GeneratorState manifestUrl: string;
 
   public created(): void {
     this.message$ = this.message;
@@ -116,10 +121,9 @@ export default class extends Vue {
       ""
     );
 
-    let manifestURL = new URL(this.manifest.start_url as string);
-
-    if (manifestURL.search && startURL.length > 0) {
-      startURL = `${startURL}${manifestURL.search}`;
+    let manifestStartUrl = new URL(this.manifest.start_url as string);
+    if (manifestStartUrl.search && startURL.length > 0) {
+      startURL = `${startURL}${manifestStartUrl.search}`;
     }
 
     const body = JSON.stringify({
@@ -137,17 +141,18 @@ export default class extends Vue {
       startUrl:
         startURL && startURL.length > 0
           ? startURL
-          : `${manifestURL.search ? "/" + manifestURL.search : "/"}`,
+          : `${manifestStartUrl.search ? "/" + manifestStartUrl.search : "/"}`,
       iconUrl: goodIcon.src,
       maskableIconUrl: maskIcon ? maskIcon.src : null,
       appVersion: "1.0.0",
       useBrowserOnChromeOS: true,
       splashScreenFadeOutDuration: 300,
       enableNotifications: false,
-      shortcuts: [],
+      shortcuts: this.manifest.shortcuts || [],
+      webManifestUrl: this.manifestUrl,
       signingInfo: {
-        fullName: "John Doe",
-        organization: "Contoso",
+        fullName: "PWABuilder User",
+        organization: "pwabuilder",
         organizationalUnit: "Engineering Department",
         countryCode: "US"
       }
@@ -164,7 +169,7 @@ export default class extends Vue {
           body: body
         }
       );
-      
+
       if(response.status === 200) {
         const data = await response.blob();
 
@@ -315,11 +320,18 @@ export default class extends Vue {
       try {
         this.isReady = false;
 
-        await this.build({
-          platform: platform,
-          href: this.siteHref,
-          options: parameters
-        });
+        if (platform === "msteams") {
+          await this.buildTeams({
+            href: this.siteHref,
+            options: parameters
+          });
+        } else {
+          await this.build({
+            platform: platform,
+            href: this.siteHref,
+            options: parameters
+          });
+        }
 
         if (this.archiveLink) {
           window.location.href = this.archiveLink;
@@ -357,6 +369,11 @@ Vue.prototype.$awa = function(config) {
 </script>
 
 <style lang="scss" scoped>
+button:disabled {
+  background: rgba(60, 60, 60, .1);
+  cursor: pointer;
+}
+
 #errorDiv {
   position: absolute;
   color: white;
@@ -372,7 +389,9 @@ Vue.prototype.$awa = function(config) {
 }
 
 #colorSpinner {
-  margin-top: -4px;
+  margin-top: -1px !important;
+  margin-left: -7px;
+  height: 32px;
 }
 
 @-moz-document url-prefix() {
@@ -383,13 +402,10 @@ Vue.prototype.$awa = function(config) {
 }
 
 .flavor {
-  position: relative;
   width: 32px;
   height: 32px;
   border-radius: 40px;
   overflow: hidden;
-  left: -7px;
-  top: -2px;
 }
 
 .flavor > .colorbands {
@@ -423,7 +439,8 @@ Vue.prototype.$awa = function(config) {
 .icon {
   position: relative;
   color: white;
-  top: -27px;
+  top: -25px;
+  left: 7px;
 
   .lds-dual-ring {
     display: inline-block;
