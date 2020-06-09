@@ -1,5 +1,6 @@
 module.exports = {
-    apiUrl: 'https://pwabuilder-api-pre.azurewebsites.net',
-    analytics: 'UA-98003629-1',
-    apiUrl2: 'https://appimagegenerator-pre.azurewebsites.net'
-}
+  apiUrl: 'https://pwabuilder-api-pre.azurewebsites.net',
+  screenshotsUrl: 'https://pwa-screenshots.azurewebsites.net',
+  analytics: 'UA-98003629-1',
+  apiUrl2: 'https://appimagegenerator-pre.azurewebsites.net',
+};
