@@ -2,11 +2,7 @@
   <div>
     <HubHeader :showSubHeader="true"></HubHeader>
 
-    <div
-      v-if="showingIconModal"
-      class="has-acrylic-40 is-dark"
-      id="modalBackground"
-    ></div>
+    <div v-if="showingIconModal" class="has-acrylic-40 is-dark" id="modalBackground"></div>
 
     <main id="sideBySide">
       <section id="leftSide">
@@ -18,33 +14,24 @@
         <div id="dataSection">
           <div id="dataButtonsBlock">
             <div id="dataButtons">
-              <button
-                v-bind:class="{ active: showBasicSection }"
-                @click="showBasicsSection()"
-              >
-                Info
-              </button>
+              <button v-bind:class="{ active: showBasicSection }" @click="showBasicsSection()">Info</button>
               <button
                 v-bind:class="{ active: showImagesSection }"
                 @click="showImageSection()"
-              >
-                Images
-              </button>
+              >Images</button>
               <button
                 v-bind:class="{ active: showSettingsSection }"
                 @click="showSettingSection()"
-              >
-                Settings
-              </button>
+              >Settings</button>
             </div>
           </div>
 
           <section class="animatedSection" v-if="showBasicSection">
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 v-bind:class="{ fieldName: activeFormField === 'appName' }">
-                  {{ $t('generate.name') }}
-                </h4>
+                <h4
+                  v-bind:class="{ fieldName: activeFormField === 'appName' }"
+                >{{ $t('generate.name') }}</h4>
                 <p>Used for App lists or Store listings</p>
               </label>
 
@@ -63,9 +50,7 @@
               <label class="l-generator-label">
                 <h4
                   v-bind:class="{ fieldName: activeFormField === 'shortName' }"
-                >
-                  {{ $t('generate.short_name') }}
-                </h4>
+                >{{ $t('generate.short_name') }}</h4>
                 <p>Used for tiles or home screens</p>
               </label>
 
@@ -83,9 +68,9 @@
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 v-bind:class="{ fieldName: activeFormField === 'appDesc' }">
-                  {{ $t('generate.description') }}
-                </h4>
+                <h4
+                  v-bind:class="{ fieldName: activeFormField === 'appDesc' }"
+                >{{ $t('generate.description') }}</h4>
                 <p>Used for App listings</p>
               </label>
 
@@ -103,9 +88,7 @@
                 v-bind:style="{ outline: textareaOutlineColor}"
                 aria-label="App Description"
               ></textarea>
-              <span v-if="ifEntered" class="hint" id="textarea_error"
-                >Newline not allowed</span
-              >
+              <span v-if="ifEntered" class="hint" id="textarea_error">Newline not allowed</span>
               <span v-else class="hint" id="textarea_error"></span>
             </div>
 
@@ -113,9 +96,7 @@
               <label class="l-generator-label">
                 <h4
                   v-bind:class="{ fieldName: activeFormField === 'startURL' }"
-                >
-                  {{ $t('generate.start_url') }}
-                </h4>
+                >{{ $t('generate.start_url') }}</h4>
                 <p>This will be the first page that loads in your PWA.</p>
               </label>
 
@@ -135,12 +116,8 @@
             <div class="l-generator-field logo-upload">
               <div id="uploadNewSection">
                 <label class="l-generator-label">
-                  <h4 class="iconUploadHeader">
-                    Upload app icons for your PWA
-                  </h4>
-                  <p v-if="!isImageBroken">
-                    We suggest at least one image 512×512 or larger
-                  </p>
+                  <h4 class="iconUploadHeader">Upload app icons for your PWA</h4>
+                  <p v-if="!isImageBroken">We suggest at least one image 512×512 or larger</p>
                   <p class="brokenImage" v-if="isImageBroken">
                     If you want a bigger images, we suggest to you to upload at
                     least one image 512×512 or larger
@@ -155,18 +132,14 @@
                       :class="{ disabled: zipRequested }"
                       @click="onClickDownloadAll()"
                       :disabled="zipRequested"
-                    >
-                      Download All
-                    </button>
+                    >Download All</button>
                   </div>
                   <div class="l-inline">
                     <button
                       id="iconUploadButton"
                       class="work-button l-generator-button"
                       @click="onClickUploadIcon()"
-                    >
-                      Upload
-                    </button>
+                    >Upload</button>
                   </div>
                 </div>
 
@@ -188,10 +161,7 @@
                     v-for="icon in filterIcons(icons)"
                     :key="icon.src"
                   >
-                    <div
-                      id="iconDivItem"
-                      class="pure-u-10-24 l-generator-tablec"
-                    >
+                    <div id="iconDivItem" class="pure-u-10-24 l-generator-tablec">
                       <a target="_blank" :href="icon.src">
                         <img class="icon-preview" :src="icon.src" />
                       </a>
@@ -204,10 +174,7 @@
                           class="pure-u-1-8 l-generator-tablec l-generator-tablec--right"
                           @click="onClickRemoveIcon(icon)"
                         >
-                          <span
-                            class="l-generator-close"
-                            :title="$t('generate.remove_icon')"
-                          >
+                          <span class="l-generator-close" :title="$t('generate.remove_icon')">
                             <i class="fas fa-trash-alt"></i>
                           </span>
                         </div>
@@ -231,9 +198,7 @@
                     v-bind:class="{
                       fieldName: activeFormField === 'screenshot',
                     }"
-                  >
-                    Enter URL to add screenshots to the manifest
-                  </h4>
+                  >Enter URL to add screenshots to the manifest</h4>
                   <p>You may enter up to 8</p>
                 </label>
                 <div
@@ -285,10 +250,7 @@
             </div>
             <div id="screenshotsOuterDiv" v-show="screenshots.length > 0">
               <div id="screenshotsContainer">
-                <button
-                  @click="scrollToLeft()"
-                  v-show="screenshots.length >= 2"
-                >
+                <button @click="scrollToLeft()" v-show="screenshots.length >= 2">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                     <path
                       d="M401.4 224h-214l83-79.4c11.9-12.5 11.9-32.7 0-45.2s-31.2-12.5-43.2 0L89 233.4c-6 5.8-9 13.7-9 22.4v.4c0 8.7 3 16.6 9 22.4l138.1 134c12 12.5 31.3 12.5 43.2 0 11.9-12.5 11.9-32.7 0-45.2l-83-79.4h214c16.9 0 30.6-14.3 30.6-32 .1-18-13.6-32-30.5-32z"
@@ -303,27 +265,21 @@
                   >
                     <img :src="screenshot.src" />
                     <div id="screenshotsToolbar">
-                      <div width="2em"></div>
+                      <div style="width:27px;"></div>
                       <span>{{ `${k + 1} / ${screenshots.length}` }}</span>
                       <button
                         id="removeScreenshotsDiv"
                         class="pure-u-1-8 l-generator-tablec l-generator-tablec--right"
                         @click="onClickRemoveScreenshot(screenshot)"
                       >
-                        <span
-                          class="l-generator-close"
-                          :title="$t('remove screenshot')"
-                        >
+                        <span class="l-generator-close" :title="$t('remove screenshot')">
                           <i class="fas fa-trash-alt"></i>
                         </span>
                       </button>
                     </div>
                   </div>
                 </section>
-                <button
-                  @click="scrollToRight()"
-                  v-show="screenshots.length >= 2"
-                >
+                <button @click="scrollToRight()" v-show="screenshots.length >= 2">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                     <path
                       d="M284.9 412.6l138.1-134c6-5.8 9-13.7 9-22.4v-.4c0-8.7-3-16.6-9-22.4l-138.1-134c-12-12.5-31.3-12.5-43.2 0-11.9 12.5-11.9 32.7 0 45.2l83 79.4h-214c-17 0-30.7 14.3-30.7 32 0 18 13.7 32 30.6 32h214l-83 79.4c-11.9 12.5-11.9 32.7 0 45.2 12 12.5 31.3 12.5 43.3 0z"
@@ -339,12 +295,8 @@
               <label class="l-generator-label">
                 <h4
                   v-bind:class="{ fieldName: activeFormField === 'appScope' }"
-                >
-                  {{ $t('generate.scope') }}
-                </h4>
-                <p>
-                  Scope determines what part of your website runs in the PWA
-                </p>
+                >{{ $t('generate.scope') }}</h4>
+                <p>Scope determines what part of your website runs in the PWA</p>
               </label>
 
               <input
@@ -364,9 +316,7 @@
                   v-bind:class="{
                     fieldName: activeFormField === 'displayMode',
                   }"
-                >
-                  {{ $t('generate.display') }}
-                </h4>
+                >{{ $t('generate.display') }}</h4>
                 <p>
                   Display identifies the browser components that should be
                   included in your. "Standalone" appears as a traditional app.
@@ -384,8 +334,7 @@
                   v-for="display in displaysNames"
                   :value="display"
                   :key="display"
-                  >{{ display }}</option
-                >
+                >{{ display }}</option>
               </select>
             </div>
 
@@ -395,12 +344,8 @@
                   v-bind:class="{
                     fieldName: activeFormField === 'appOrientation',
                   }"
-                >
-                  {{ $t('generate.orientation') }}
-                </h4>
-                <p>
-                  Orientation determines the perfered flow of your application.
-                </p>
+                >{{ $t('generate.orientation') }}</h4>
+                <p>Orientation determines the perfered flow of your application.</p>
               </label>
 
               <select
@@ -414,16 +359,15 @@
                   v-for="orientation in orientationsNames"
                   :value="orientation"
                   :key="orientation"
-                  >{{ orientation }}</option
-                >
+                >{{ orientation }}</option>
               </select>
             </div>
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4 v-bind:class="{ fieldName: activeFormField === 'appLang' }">
-                  {{ $t('generate.language') }}
-                </h4>
+                <h4
+                  v-bind:class="{ fieldName: activeFormField === 'appLang' }"
+                >{{ $t('generate.language') }}</h4>
                 <p>Declare the language of your PWA</p>
               </label>
 
@@ -438,8 +382,7 @@
                   v-for="language in languagesNames"
                   :value="language"
                   :key="language"
-                  >{{ language }}</option
-                >
+                >{{ language }}</option>
               </select>
             </div>
 
@@ -451,9 +394,7 @@
 
         <div id="doneDiv">
           <!--<button id="doneButton">Done</button>-->
-          <nuxt-link @click.native="saveChanges" id="doneButton" to="reportCard"
-            >Done</nuxt-link
-          >
+          <nuxt-link @click.native="saveChanges" id="doneButton" to="reportCard">Done</nuxt-link>
         </div>
       </section>
 
@@ -507,30 +448,28 @@
       >
         <section id="imageModalSection">
           <div class="l-generator-box image-upload">
-            <span class="l-generator-label">{{
+            <span class="l-generator-label">
+              {{
               $t('generate.upload_image')
-            }}</span>
-            <label
-              class="l-generator-input l-generator-input--fake is-disabled"
-              for="modal-file"
-              >{{
-                iconFile && iconFile.name
-                  ? iconFile.name
-                  : $t('generate.choose_file')
-              }}</label
-            >
-            <input
-              id="modal-file"
-              @change="onFileIconChange"
-              class="l-hidden"
-              type="file"
-            />
+              }}
+            </span>
+            <label class="l-generator-input l-generator-input--fake is-disabled" for="modal-file">
+              {{
+              iconFile && iconFile.name
+              ? iconFile.name
+              : $t('generate.choose_file')
+              }}
+            </label>
+            <input id="modal-file" @change="onFileIconChange" class="l-hidden" type="file" />
           </div>
 
           <div class="l-generator-field">
             <label id="genMissingLabel">
               {{ $t('generate.generate_missing') }}
-              <input type="checkbox" v-model="iconCheckMissing" />
+              <input
+                type="checkbox"
+                v-model="iconCheckMissing"
+              />
             </label>
           </div>
         </section>
@@ -541,32 +480,32 @@
       <p>
         PWA Builder was founded by Microsoft as a community guided, open source
         project to help move PWA adoption forward.
-        <a href="https://privacy.microsoft.com/en-us/privacystatement"
-          >Our Privacy Statement</a
-        >
+        <a
+          href="https://privacy.microsoft.com/en-us/privacystatement"
+        >Our Privacy Statement</a>
       </p>
     </footer>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Component from 'nuxt-class-component';
-import { Action, State, Getter, namespace } from 'vuex-class';
-import GeneratorMenu from '~/components/GeneratorMenu.vue';
-import Modal from '~/components/Modal.vue';
-import CodeViewer from '~/components/CodeViewer.vue';
-import RelatedApplications from '~/components/RelatedApplications.vue';
-import CustomMembers from '~/components/CustomMembers.vue';
-import Loading from '~/components/Loading.vue';
-import StartOver from '~/components/StartOver.vue';
-import ColorSelector from '~/components/ColorSelector.vue';
-import HubHeader from '~/components/HubHeader.vue';
-import * as generator from '~/store/modules/generator';
-import helper from '~/utils/helper';
-import axios from 'axios';
-import download from 'downloadjs';
-import { Screenshot } from '~/store/modules/generator';
+import Vue from "vue";
+import Component from "nuxt-class-component";
+import { Action, State, Getter, namespace } from "vuex-class";
+import GeneratorMenu from "~/components/GeneratorMenu.vue";
+import Modal from "~/components/Modal.vue";
+import CodeViewer from "~/components/CodeViewer.vue";
+import RelatedApplications from "~/components/RelatedApplications.vue";
+import CustomMembers from "~/components/CustomMembers.vue";
+import Loading from "~/components/Loading.vue";
+import StartOver from "~/components/StartOver.vue";
+import ColorSelector from "~/components/ColorSelector.vue";
+import HubHeader from "~/components/HubHeader.vue";
+import * as generator from "~/store/modules/generator";
+import helper from "~/utils/helper";
+import axios from "axios";
+import download from "downloadjs";
+import { Screenshot } from "~/store/modules/generator";
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
@@ -581,15 +520,15 @@ const GeneratorGetters = namespace(generator.name, Getter);
     StartOver,
     Modal,
     HubHeader,
-    Loading,
-  },
+    Loading
+  }
 })
 export default class extends Vue {
   public manifest$: generator.Manifest | null = null;
   public screenshotLoading: boolean = false;
-  public newIconSrc = '';
+  public newIconSrc = "";
   public iconCheckMissing = true;
-  public urlsForScreenshot = [{ value: '' }];
+  public urlsForScreenshot = [{ value: "" }];
   public urlsForScreenshotValues = [];
   private iconFile: File | null = null;
   public error: string | null = null;
@@ -601,7 +540,7 @@ export default class extends Vue {
   public activeFormField = null;
   public showingIconModal = false;
   public ifEntered = false;
-  public textareaOutlineColor = '';
+  public textareaOutlineColor = "";
   public showCopy = true;
   public isImageBroken: boolean = false;
   public updateManifestFn = helper.debounce(
@@ -635,7 +574,7 @@ export default class extends Vue {
 
   public created(): void {
     this.manifest$ = { ...this.manifest };
-    this.urlsForScreenshotValues[0] = '';
+    this.urlsForScreenshotValues[0] = "";
   }
 
   public mounted() {
@@ -643,20 +582,20 @@ export default class extends Vue {
       isAuto: false,
       behavior: 0,
       uri: window.location.href,
-      pageName: 'manifestPage',
-      pageHeight: window.innerHeight,
+      pageName: "manifestPage",
+      pageHeight: window.innerHeight
     };
 
     // might be the issue
     var updateFn = helper.debounce(this.update, 3000, false);
 
     document &&
-      document.querySelectorAll('.l-generator-input').forEach((item) => {
-        item.addEventListener('keyup', updateFn);
+      document.querySelectorAll(".l-generator-input").forEach(item => {
+        item.addEventListener("keyup", updateFn);
       });
     document &&
-      document.querySelectorAll('.l-generator-textarea').forEach((item) => {
-        item.addEventListener('keyup', updateFn);
+      document.querySelectorAll(".l-generator-textarea").forEach(item => {
+        item.addEventListener("keyup", updateFn);
       });
 
     if (awa) {
@@ -665,8 +604,8 @@ export default class extends Vue {
   }
 
   async destroyed() {
-    (this.$root.$el.closest('body') as HTMLBodyElement).classList.remove(
-      'modal-screen'
+    (this.$root.$el.closest("body") as HTMLBodyElement).classList.remove(
+      "modal-screen"
     );
   }
 
@@ -687,27 +626,27 @@ export default class extends Vue {
 
     axios
       .post(
-        'https://azure-express-zip-creator.azurewebsites.net/api',
+        "https://azure-express-zip-creator.azurewebsites.net/api",
         JSON.stringify({ images }),
         {
-          method: 'POST',
-          responseType: 'blob',
+          method: "POST",
+          responseType: "blob",
           headers: {
-            'content-type': 'application/json',
-          },
+            "content-type": "application/json"
+          }
         }
       )
-      .then(async (res) => {
+      .then(async res => {
         if (window.chooseFileSystemEntries) {
           const fsOpts = {
-            type: 'save-file',
+            type: "save-file",
             accepts: [
               {
-                description: 'PWA Builder Image Zip',
-                extensions: ['zip'],
-                mimeTypes: ['application/zip'],
-              },
-            ],
+                description: "PWA Builder Image Zip",
+                extensions: ["zip"],
+                mimeTypes: ["application/zip"]
+              }
+            ]
           };
           const fileHandle = await window.chooseFileSystemEntries(fsOpts);
           // Create a FileSystemWritableFileStream to write to.
@@ -717,11 +656,11 @@ export default class extends Vue {
           // Close the file and write the contents to disk.
           await writable.close();
         } else {
-          download(res.data, 'pwa-icons.zip', 'application/zip');
+          download(res.data, "pwa-icons.zip", "application/zip");
         }
         this.zipRequested = false;
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
         this.zipRequested = false;
       });
@@ -742,7 +681,7 @@ export default class extends Vue {
       // left: -15,
       left: -screenshotsDiv.clientWidth,
       top: 0,
-      behavior: 'smooth',
+      behavior: "smooth"
     });
   }
 
@@ -753,20 +692,20 @@ export default class extends Vue {
       // left: 15,
       left: screenshotsDiv.clientWidth,
       top: 0,
-      behavior: 'smooth',
+      behavior: "smooth"
     });
   }
   public filterIcons(icons): any {
-    return icons.filter((icon) => {
-      if (!icon.generated || icon.src.indexOf('data') === 0) {
+    return icons.filter(icon => {
+      if (!icon.generated || icon.src.indexOf("data") === 0) {
         return icon;
       }
     });
   }
 
   public checkBrokenImage(icons): any {
-    icons.forEach((icon) => {
-      if (icon.generated && icon.src.indexOf('data') !== 0) {
+    icons.forEach(icon => {
+      if (icon.generated && icon.src.indexOf("data") !== 0) {
         this.isImageBroken = true;
       }
     });
@@ -775,20 +714,20 @@ export default class extends Vue {
   public textareaError(): void {
     // This method is called when Enter is pressed in the textarea
     this.ifEntered = true; // This property is used to determine whether or not an error message should be displayed
-    this.textareaOutlineColor = 'red solid 2px';
+    this.textareaOutlineColor = "red solid 2px";
   }
   public textareaCheck(): void {
     // If the user presses any key other than Enter, then reset ifEntered values to remove error message
     // This method is only called on keypress (not when entered is clicked)
     this.ifEntered = false;
-    this.textareaOutlineColor = '';
+    this.textareaOutlineColor = "";
   }
 
   public onClickRemoveScreenshot(screenshot: generator.Screenshot): void {
-    console.log('old screenshots length', this.screenshots.length);
+    console.log("old screenshots length", this.screenshots.length);
     this.removeScreenshot(screenshot);
     this.updateManifest(this.manifest$);
-    console.log('new screenshots length', this.screenshots.length);
+    console.log("new screenshots length", this.screenshots.length);
   }
 
   public onClickRemoveIcon(icon: generator.Icon): void {
@@ -799,8 +738,8 @@ export default class extends Vue {
   public async onClickScreenshotFetch(): Promise<void> {
     let urls: string[] = [];
     this.screenshotLoading = true;
-    urls = this.urlsForScreenshotValues.filter((url) => {
-      return url !== null && url !== undefined && url !== '';
+    urls = this.urlsForScreenshotValues.filter(url => {
+      return url !== null && url !== undefined && url !== "";
     });
     console.log(urls);
     if (urls.length == 0) return;
@@ -809,13 +748,13 @@ export default class extends Vue {
         //Downloads screenshots and adds the sources to the manifest
         await this.addScreenshotsFromUrl(urls);
       } catch (err) {
-        console.log('Something wrong with the URL');
+        console.log("Something wrong with the URL");
       }
     this.screenshotLoading = false;
   }
 
   public addUrlForScreenshots(index) {
-    this.urlsForScreenshot.push({ value: '' });
+    this.urlsForScreenshot.push({ value: "" });
   }
   public removeUrlForScreenshots(index) {
     this.urlsForScreenshot.splice(index, 1);
@@ -841,24 +780,24 @@ export default class extends Vue {
   private getImagesWithEmbedded(icons: generator.Icon[]): generator.Icon[] {
     // Creates a clone of icons but replaces any embedded image data
     // (eg. "src: data:image/png;base64,...") with "[Embedded]"
-    const w3cIconProps = ['src', 'sizes', 'type', 'purpose', 'platform'];
-    return icons.map((i) => {
+    const w3cIconProps = ["src", "sizes", "type", "purpose", "platform"];
+    return icons.map(i => {
       const clone = { ...i };
       // Only include W3C props
       Object.keys(clone)
-        .filter((prop) => !w3cIconProps.includes(prop))
-        .forEach((prop) => delete clone[prop]);
+        .filter(prop => !w3cIconProps.includes(prop))
+        .forEach(prop => delete clone[prop]);
 
       // Swap embedded images with "[Embedded]" string literal.
-      const isEmbeddedImg = i.src.startsWith('data:image');
-      clone.src = isEmbeddedImg ? '[Embedded]' : clone.src;
+      const isEmbeddedImg = i.src.startsWith("data:image");
+      clone.src = isEmbeddedImg ? "[Embedded]" : clone.src;
       return clone;
     });
   }
 
   private getCustomMembers(): string {
     if (this.members.length < 1) {
-      return '';
+      return "";
     }
     let membersString = `,`;
     this.members.forEach((member, i) => {
@@ -872,37 +811,35 @@ export default class extends Vue {
   }
 
   private getManifestProperties(): string {
-    const ignoredMembers = ['generated'];
+    const ignoredMembers = ["generated"];
     const manifestMembers = Object.keys(this.manifest)
-      .filter((property) => !ignoredMembers.includes(property))
-      .filter((property) => this.manifest[property] !== undefined)
-      .map(
-        (property) => `"${property}": ${this.getManifestPropValue(property)}`
-      )
-      .join(',\n');
+      .filter(property => !ignoredMembers.includes(property))
+      .filter(property => this.manifest[property] !== undefined)
+      .map(property => `"${property}": ${this.getManifestPropValue(property)}`)
+      .join(",\n");
 
     return `{ ${manifestMembers} ${this.getCustomMembers()} }`;
   }
 
   private getManifestPropValue(property: string): string {
     switch (property) {
-      case 'icons':
+      case "icons":
         return JSON.stringify(this.getImagesWithEmbedded(this.icons));
-      case 'screenshots':
+      case "screenshots":
         return JSON.stringify(this.getImagesWithEmbedded(this.screenshots));
       default:
         // Use JSON.stringify if it's an object.
         const propValue = this.manifest[property];
         const propType = typeof propValue;
         let stringifiedValue =
-          propType === 'object'
+          propType === "object"
             ? JSON.stringify(propValue, undefined, 4)
             : propValue;
-        let quoteCharOrEmpty = propType === 'string' ? `"` : ``;
+        let quoteCharOrEmpty = propType === "string" ? `"` : ``;
         return `${quoteCharOrEmpty}${stringifiedValue}${quoteCharOrEmpty}`;
     }
 
-    return '';
+    return "";
   }
 
   public getCode(): string | null {
@@ -917,9 +854,9 @@ export default class extends Vue {
       } catch (parseErr) {
         // Manifest props string isn't a valid JSON object. Woops
         console.warn(
-          'App manifest is invalid; unable to parse JSON object',
+          "App manifest is invalid; unable to parse JSON object",
           parseErr,
-          '\n\nHere is the raw JSON:\n',
+          "\n\nHere is the raw JSON:\n",
           manifestProps
         );
         return manifestProps;
@@ -1011,14 +948,14 @@ export default class extends Vue {
   }
 
   public modalOpened() {
-    (this.$root.$el.closest('body') as HTMLBodyElement).classList.add(
-      'modal-screen'
+    (this.$root.$el.closest("body") as HTMLBodyElement).classList.add(
+      "modal-screen"
     );
   }
 
   public modalClosed() {
-    (this.$root.$el.closest('body') as HTMLBodyElement).classList.remove(
-      'modal-screen'
+    (this.$root.$el.closest("body") as HTMLBodyElement).classList.remove(
+      "modal-screen"
     );
     this.showingIconModal = false;
   }
@@ -1036,7 +973,7 @@ declare var awa: any;
 </script>
 
 <style lang="scss">
-@import '~assets/scss/base/variables';
+@import "~assets/scss/base/variables";
 
 #manifestCode {
   width: 100%;
@@ -1426,7 +1363,6 @@ footer a {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 30em;
 }
 #screenshotsUrlsContainer {
   padding-bottom: 24px;
@@ -1435,7 +1371,7 @@ footer a {
   width: 100%;
   display: flex;
   background: #efefef;
-  height: 32em;
+  height: 16em;
   justify-content: column;
 }
 
@@ -1453,10 +1389,10 @@ footer a {
   fill: #6b6969;
 }
 
-#removeScreenshotDiv {
+#removeScreenshotsDiv {
   display: flex;
   justify-content: center;
-  width: 2em;
+  width: fit-content !important;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -1509,7 +1445,7 @@ footer a {
   }
 }
 
-#sideBySide #leftSide .animatedSection input[type='radio'] {
+#sideBySide #leftSide .animatedSection input[type="radio"] {
   width: auto;
 }
 </style>
