@@ -12,14 +12,14 @@
         <div id="inputSection">
           <form @submit.prevent="download" @keydown.enter.prevent="download">
             <div
-              id="inputContainer"
+              class="inputContainer"
               v-for="sw in serviceworkers"
               :key="sw.title"
               @click="selectServiceWorker(sw.id)"
               v-bind:class="{ active: serviceworker$ === sw.id }"
             >
               <label class="l-generator-label" :for="sw.id">
-                <div id="inputDiv">
+                <div class="inputDiv">
                   <!--<input
                     type="radio"
                     :value="sw.id"
@@ -28,7 +28,7 @@
                     :id="sw.id"
                   >-->
 
-                  <div id="titleBox">
+                  <div class="titleBox">
                     <h4>{{ sw.title }}</h4>
 
                     <!--<i v-pre v-if="serviceworker$ === sw.id" class="fas fa-check"></i>-->
@@ -339,7 +339,7 @@ footer a {
     }
 
     #inputSection {
-      #inputContainer {
+      .inputContainer {
         cursor: pointer;
         border-radius: 4px;
         padding-top: 24px;
@@ -354,7 +354,7 @@ footer a {
           line-height: 21px;
         }
 
-        #inputDiv {
+        .inputDiv {
           display: flex;
           align-items: unset;
 
@@ -363,12 +363,12 @@ footer a {
             flex: 1;
           }
 
-          #titleBox {
+          .titleBox {
             display: flex;
             justify-content: space-between;
           }
 
-          #titleBox svg {
+          .titleBox svg {
             height: 24px;
             margin-left: 10px;
             font-size: 16px;
@@ -488,7 +488,7 @@ footer a {
     width: initial;
   }
 
-  #sideBySide #leftSide #inputSection #inputContainer {
+  #sideBySide #leftSide #inputSection .inputContainer {
     padding-left: 14px;
     padding-right: 14px;
   }

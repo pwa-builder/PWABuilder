@@ -107,10 +107,10 @@
     "windows_description": "Service Worker support requires RS4 or above.  The Download button below will create a copy of each PWAbuilder component as well as a side-loadable version your PWA (requires win10 in dev mode).  The Generate Appx button can be used to generate a PWA package to submit to the Microsoft Store.",
     "sideload_instructions": "sideload instructions",
     "generate_appx": "Generate AppX",
-    "package_name": "Android Options",
+    "package_name": "Android Package Name",
     "label_package_name": "Package Name",
     "placeholder_package_name": "Enter a Package Name (Ex. companytopleveldomain.companyname.pwaname)",
-    "package_name_detail": "An android app package will be created using the following package name and key.",
+    "package_name_detail": "An android app package will be created using the following package name.",
     "android_key": "Signing key",
     "placeholder_android_key": "Enter your signing key",
     "android_keycode": "Signing key country code",
@@ -212,7 +212,8 @@
     "manifest_required": "Manifest is required.",
     "platform_required": "Platform is required.",
     "fields_required": "All fields are required.",
-    "serviceworker_not_defined": "Serviceworker is not defined."
+    "serviceworker_not_defined": "Serviceworker is not defined.",
+    "package_name_required": "Package name is required."
   },
   "custom_members": {
     "name": "Member Name",

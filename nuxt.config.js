@@ -9,6 +9,9 @@ console.log(`Environment: ${process.env.NODE_ENV}`);
 module.exports = {
   env: env,
   head: {
+    htmlAttrs: {
+      lang: 'en'
+    },
     title: 'PWABuilder',
     meta: [{
         charset: 'utf-8'
@@ -58,10 +61,6 @@ module.exports = {
       {
         rel: "stylesheet",
         href: "/css/all.css"
-      },
-      {
-        rel: "stylesheet",
-        href: "https://unpkg.com/@ionic/core@latest/css/ionic.bundle.css"
       },
       {
         rel: 'apple-touch-icon',
@@ -119,7 +118,7 @@ module.exports = {
         src: '/awa-register.js'
       },
       {
-        src: 'https://unpkg.com/@webcomponents/webcomponentsjs@2.4.0/webcomponents-loader.js'
+        src: '/webcomponents-polyfill.js'
       },
       {
         src: '/copyButton.js',
@@ -130,10 +129,7 @@ module.exports = {
         type: 'module'
       },
       {
-        src: 'https://unpkg.com/@ionic/core@latest/dist/ionic.js'
-      },
-      {
-        src: 'https://cdn.jsdelivr.net/npm/@pwabuilder/pwainstall@1.5.0',
+        src: '/pwa-install.js',
         type: 'module'
       }
     ]

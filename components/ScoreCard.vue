@@ -1,6 +1,6 @@
 <template>
-  <div id="scoreCard">
-    <div id="headerDiv">
+  <div class="scoreCard">
+    <div class="headerDiv">
       <h3>{{category}}</h3>
 
       <div v-if="category === 'Manifest'" class="cardScore">
@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <div id="cardContent">
+    <div class="cardContent">
       <!-- Security section -->
       <ul v-if="category === 'Security'">
         <li v-bind:class="{ good: hasHTTPS }">
@@ -427,7 +427,7 @@
       </ul>
     </div>
 
-    <div id="cardEditBlock">
+    <div class="cardEditBlock">
       <nuxt-link v-if="category === 'Service Worker'" to="/serviceworker">
 
         <button>
@@ -450,13 +450,19 @@
         <div
           class="brkManifestError"
           v-if="brokenManifest"
-        >The manifest is declared but cannot be reached</div>
+        >Couldn't find an <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest">app manifest</a></div>
       </nuxt-link>
 
       <div
         class="brkManifestError"
         v-if="category === 'Security' && !validSSL"
-      >Site could not be reached, check your https cert please</div>
+      >
+        <p>HTTPS not detected.</p>
+        <p class="brkManifestHelp">
+          <i class="fas fa-info-circle"></i>
+          You can use <a href="https://letsencrypt.org/">LetsEncrypt</a> to get a free HTTPS certificate, or <a href="https://azure.microsoft.com/en-us/get-started/web-app/">publish to Azure</a> to get HTTPS support out of the box
+        </p>
+      </div>
     </div>
   </div>
 </template>
@@ -592,6 +598,15 @@ export default class extends Vue {
   }
 
   private async lookAtSW() {
+    // If we have no URL, it means there was an issue parsing the URL,
+    // for example, malformed URL.
+    // In such case, punt; there is no service worker.
+    const isHttp = typeof(this.url) === "string" && this.url.startsWith("http://");
+    if (!this.url || isHttp) {
+      this.noSwScore();
+      return;
+    }
+
     const savedData = sessionStorage.getItem(this.url);
     const savedScore = sessionStorage.getItem("swScore");
 
@@ -600,9 +615,7 @@ export default class extends Vue {
         let cleanedData = JSON.parse(savedData);
         this.serviceWorkerData = cleanedData;
       } catch (err) {
-        this.$emit("serviceWorkerTestDone", { score: 0 });
-        this.noServiceWorker = true;
-        this.swScore = 0;
+        this.noSwScore();
       }
 
       if (savedScore) {
@@ -632,10 +645,7 @@ export default class extends Vue {
         !this.serviceWorkerData || this.serviceWorkerData.swURL === null ||
         this.serviceWorkerData.swURL === false
       ) {
-        this.noServiceWorker = true;
-
-        this.swScore = 0;
-        this.$emit("serviceWorkerTestDone", { score: 0 });
+        this.noSwScore();
 
         return;
       } else {
@@ -685,6 +695,12 @@ export default class extends Vue {
     }
   }
 
+  private noSwScore() {
+    this.$emit("serviceWorkerTestDone", { score: 0 });
+    this.noServiceWorker = true;
+    this.swScore = 0;
+  }
+
   private trimSuffixChar(string, charToRemove) {
     while(string.charAt(string.length-1) === charToRemove) {
         string = string.substring(0, string.length-1);
@@ -696,7 +712,7 @@ export default class extends Vue {
 
 <style lang="scss" scoped>
 .cardScore {
-  color: #c5c5c5;
+  color: #707070;
   font-weight: bold;
   font-size: 12px;
 
@@ -706,11 +722,11 @@ export default class extends Vue {
   }
 }
 
-#cardContent {
+.cardContent {
   flex: 1;
 }
 
-#scoreCard {
+.scoreCard {
   background: white;
   display: flex;
   flex-direction: column;
@@ -720,7 +736,7 @@ export default class extends Vue {
   padding-right: 30px;
   min-height: 404px;
 
-  #cardEditBlock {
+  .cardEditBlock {
     display: flex;
     justify-content: center;
 
@@ -734,7 +750,7 @@ export default class extends Vue {
     }
   }
 
-  #headerDiv {
+  .headerDiv {
     display: flex;
     justify-content: space-between;
     margin-bottom: 24px;
@@ -874,6 +890,11 @@ export default class extends Vue {
     padding-bottom: 1em;
     font-size: 14px;
     text-align: center;
+  }
+
+  .brkManifestHelp {
+    color:rgb(92, 92, 92);
+    font-size: 13px;
   }
 }
 </style>

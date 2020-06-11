@@ -1,5 +1,5 @@
 import colorConverter from '~/utils/color-converter';
-import { Icon, Screenshot, RelatedApplication, CodeError } from '~/store/modules/generator';
+import { Icon, RelatedApplication, CodeError } from '~/store/modules/generator';
 
 export const helpers = {
   MEMBER_PREFIX: 'mjs_',
@@ -50,7 +50,7 @@ export const helpers = {
     });
   },
 
-  prepareIconsUrls(icons: (Icon | Screenshot)[], baseUrl: string) {
+  prepareIconsUrls(icons: Icon[], baseUrl: string) {
     return icons.map(icon => {
       if (!icon.src.includes('http') && !icon.src.includes('data:image')) {
         const pathArray = baseUrl.split('/');
@@ -69,8 +69,12 @@ export const helpers = {
           }
         }
         baseUrl = protocol + '//' + host + additionnalPath;
-        //remove posible trailing/leading slashes 
-        icon.src = `${baseUrl.replace(/\/$/, '')}/${icon.src.replace(/^\/+/g, '')}`;
+
+        //avoid duplication on the path if the icon src already has it
+        icon.src = new URL(icon.src, baseUrl).href;
+
+        //remove posible trailing/leading slashes
+        icon.src = `${icon.src.replace(/^\/+/g, '')}`;
       }
       return icon;
     });

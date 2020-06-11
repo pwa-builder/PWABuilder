@@ -5,8 +5,6 @@
       :showFeatureDetailGraphButton="onGraph"
     ></HubHeader>
 
-    <ion-toast-controller></ion-toast-controller>
-
     <div v-if="onAuth" id="clientIdBlock">
       <button v-if="!idGenerated" @click="generateID()">
         Generate Client ID
@@ -91,8 +89,12 @@ export default class extends Vue {
       mappedName: "Install your PWA"
     },
     {
+      realName: "inking",
+      mappedName: "Enable 2D inking on the web"
+    },
+    {
       realName: "authButton",
-      mappedName: "Sign In with Microsoft, Google, Facebook"
+      mappedName: "Sign In with Microsoft, Google, Facebook, Apple"
     },
     {
       realName: "midi",
@@ -224,18 +226,6 @@ export default class extends Vue {
     }
   }
 
-  async showToast() {
-    const toastCtrl = document.querySelector("ion-toast-controller");
-    await (toastCtrl as any).componentOnReady();
-
-    const toast = await (toastCtrl as any).create({
-      duration: 1300,
-      message: "URL copied for sharing"
-    });
-
-    await toast.present();
-  }
-
   async share() {
     if ((navigator as any).share) {
       try {
@@ -251,14 +241,11 @@ export default class extends Vue {
       if ((navigator as any).clipboard) {
         try {
           await (navigator as any).clipboard.writeText(location.href);
-
-          this.showToast();
         } catch (err) {
           console.error(err);
         }
       } else {
         this.copyToClipboard(location.href);
-        this.showToast();
       }
     }
   }
@@ -466,7 +453,7 @@ declare var awa: any;
   background: white;
   margin-top: -80px;
 
-  #headerDiv {
+  .headerDiv {
     background: rgba(31, 194, 200, 1);
     background: -moz-linear-gradient(
       left,
@@ -515,7 +502,7 @@ declare var awa: any;
   }
 
   @media (max-width: 1336px) {
-    #headerDiv {
+    .headerDiv {
       padding-left: 88px;
       padding-right: 35px;
     }
@@ -621,13 +608,13 @@ declare var awa: any;
 }
 
 @media (max-width: 800px) {
-  #docsMain #headerDiv h2 {
+  #docsMain .headerDiv h2 {
     width: 45%;
   }
 }
 
 @media (max-width: 700px) {
-  #docsMain #headerDiv h2 {
+  #docsMain .headerDiv h2 {
     width: 40%;
   }
 }
@@ -647,7 +634,7 @@ declare var awa: any;
 }
 
 @media (max-width: 630px) {
-  #docsMain #headerDiv h2 {
+  #docsMain .headerDiv h2 {
     display: none;
   }
 }

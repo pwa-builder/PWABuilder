@@ -10,6 +10,7 @@ const platforms = {
     android: 'android',
     androidTWA: 'android-twa',
     samsung: 'samsung',
+    msteams: 'msteams',
     all: 'All'
 };
 
@@ -18,13 +19,15 @@ export const name = 'publish';
 export const types = {
     UPDATE_STATUS: 'UPDATE_STATUS',
     UPDATE_ARCHIVELINK: 'UPDATE_ARCHIVELINK',
-    UPDATE_APPXLINK: 'UPDATE_APPXLINK'
+    UPDATE_APPXLINK: 'UPDATE_APPXLINK',
+    UPDATE_DOWNLOAD_DISABLED: "UPDATE_DOWNLOAD_DISABLED"
 };
 
 export interface State {
     status: boolean | null;
     archiveLink: string | null;
     appXLink: string | null;
+    downloadDisabled: boolean;
 }
 
 export interface AppxParams {
@@ -43,10 +46,21 @@ export interface AndroidParams {
     keyname: string | null;
 }
 
+export interface TeamsParams {
+    publisherName: string | null;
+    shortDescription: string | null;
+    longDescription: string | null;
+    privacyUrl: string | null;
+    termsOfUseUrl: string | null;
+    colorImageFile:  File | null;
+    outlineImageFile:  File | null;
+}
+
 export const state = (): State => ({
     status: null,
     archiveLink: null,
-    appXLink: null
+    appXLink: null,
+    downloadDisabled: false
 });
 
 export const getters: GetterTree<State, RootState> = {};
@@ -56,6 +70,9 @@ export interface Actions<S, R> extends ActionTree<S, R> {
     updateStatus(context: ActionContext<S, R>): void;
     build(context: ActionContext<S, R>, params: { platform: string, href: string, options?: string[]}): Promise<void>;
     buildAppx(context: ActionContext<S, R>, params: AppxParams): Promise<void>;
+    buildTeams(context: ActionContext<S, R>, params: { href: string, options?: string[]}): Promise<void>;
+    disableDownloadButton(context: ActionContext<S, R>): Promise<void>;
+    enableDownloadButton(context: ActionContext<S, R>): Promise<void>;
 }
 
 export const actions: Actions<State, RootState> = {
@@ -85,7 +102,7 @@ export const actions: Actions<State, RootState> = {
 
             let platformsList: string[] = [];
             if (params.platform === platforms.all) {
-                platformsList = [ platforms.web, platforms.windows10, platforms.windows, platforms.ios, platforms.android, platforms.androidTWA, platforms.samsung ];
+                platformsList = [ platforms.web, platforms.windows10, platforms.windows, platforms.ios, platforms.android, platforms.androidTWA, platforms.samsung, platforms.msteams ];
             } else {
                 platformsList = [ params.platform ];
             }
@@ -98,6 +115,7 @@ export const actions: Actions<State, RootState> = {
                 resolve();
             } catch (e) {
                 let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
+
                 reject(errorMessage);
             }
         });
@@ -135,6 +153,33 @@ export const actions: Actions<State, RootState> = {
                 reject(errorMessage);
             }
         });
+    },
+
+    async buildTeams({ dispatch, rootState }, params: { href: string, options?: string[] }): Promise<void> {
+        return new Promise<void>(async (resolve, reject) => {
+            const manifestId = rootState.generator.manifestId;
+
+            if (!manifestId) {
+                reject('error.manifest_required');
+            }
+
+            const { publisherName, longDescription, shortDescription, privacyUrl, termsOfUseUrl, colorImageFile }: TeamsParams = JSON.parse(params.options ? params.options[0] : "{}");
+            if (!publisherName || !longDescription || !shortDescription || !privacyUrl || !termsOfUseUrl || !colorImageFile) {
+                reject('error.fields_required');
+            }
+
+            resolve();
+        }).then(() => {
+            return dispatch("build", { platform: platforms.msteams, href: params.href, options: params.options });
+        })
+    },
+
+    async disableDownloadButton({commit}): Promise<void> {
+        commit(types.UPDATE_DOWNLOAD_DISABLED, true);
+    },
+
+    async enableDownloadButton({commit}): Promise<void> {
+        commit(types.UPDATE_DOWNLOAD_DISABLED, false);
     }
 };
 
@@ -147,6 +192,9 @@ export const mutations: MutationTree<State> = {
     },
     [types.UPDATE_APPXLINK](state, url: string): void {
         state.appXLink = url;
+    },
+    [types.UPDATE_DOWNLOAD_DISABLED](state, disabled: boolean): void {
+        state.downloadDisabled = disabled;
     }
 };
 

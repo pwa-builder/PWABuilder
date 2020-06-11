@@ -1,6 +1,14 @@
 import { MutationTree } from 'vuex';
-import { types, Manifest, helpers, Icon, Asset, RelatedApplication, CustomMember, State } from '~/store/modules/generator';
-import { Screenshot } from './generator.state';
+import {
+  types,
+  Manifest,
+  helpers,
+  Icon,
+  Asset,
+  RelatedApplication,
+  CustomMember,
+  State,
+} from '~/store/modules/generator';
 
 export const mutations: MutationTree<State> = {
   [types.UPDATE_LINK](state, url: string): void {
@@ -12,7 +20,7 @@ export const mutations: MutationTree<State> = {
       delete manifest.generated;
     }
 
-    if (typeof (manifest.related_applications) === "string") {
+    if (typeof manifest.related_applications === 'string') {
       manifest.related_applications = [];
     }
 
@@ -24,31 +32,61 @@ export const mutations: MutationTree<State> = {
       delete result.content.generated;
     }*/
 
-    if (typeof (result.content.related_applications) === "string") {
+    if (typeof result.content.related_applications === 'string') {
       result.content.related_applications = [];
     }
 
     state.manifest = result.content;
+    state.manifestUrl = result.generatedUrl;
     state.manifestId = result.id;
     state.siteServiceWorkers = result.siteServiceWorkers;
-    if (result && result.content && result.content.icons) {
-      if(result.generatedUrl)
-      {
-        state.icons = <Icon[]>helpers.prepareIconsUrls(result.content.icons, result.generatedUrl) || [];
+    if (result && result.content) {
+      // Set icons
+      if (result.content.icons) {
+        if (result.generatedUrl) {
+          state.icons =
+            <Icon[]>(
+              helpers.prepareIconsUrls(
+                result.content.icons,
+                result.generatedUrl
+              )
+            ) || [];
+        } else {
+          state.icons =
+            <Icon[]>(
+              helpers.prepareIconsUrls(
+                result.content.icons,
+                state.manifest && state.manifest.start_url
+                  ? state.manifest.start_url
+                  : ''
+              )
+            ) || [];
+        }
       }
-      else {
-        state.icons = <Icon[]>helpers.prepareIconsUrls(result.content.icons, state.manifest && state.manifest.start_url ? state.manifest.start_url : '') || [];
+
+      // Set screenshots
+      if (result.content.screenshots) {
+        if (result.generatedUrl) {
+          state.screenshots =
+            helpers.prepareIconsUrls(
+              result.content.screenshots,
+              result.generatedUrl
+            ) || [];
+        } else {
+          state.screenshots =
+            helpers.prepareIconsUrls(
+              result.content.screenshots,
+              state.manifest && state.manifest.start_url
+                ? state.manifest.start_url
+                : ''
+            ) || [];
+        }
       }
+
+      // Set shortcuts
+      state.shortcuts = result.content.shortcuts || [];
     }
-    if (result && result.content && result.content.screenshots) {
-      if(result.generatedUrl)
-      {
-        state.screenshots = <Screenshot[]>helpers.prepareIconsUrls(result.content.screenshots, result.generatedUrl) || [];
-      }
-      else {
-        state.screenshots = <Screenshot[]>helpers.prepareIconsUrls(result.content.screenshots, state.manifest && state.manifest.start_url ? state.manifest.start_url : '') || [];
-      }
-    }
+
     state.suggestions = result.suggestions;
     state.warnings = result.warnings;
     state.errors = result.errors;
@@ -56,17 +94,19 @@ export const mutations: MutationTree<State> = {
   },
 
   [types.OVERWRITE_MANIFEST](state, result): void {
-
+    console.log('Inside state', result.content.screenshots);
     if (result.content.generated) {
       delete result.content.generated;
     }
 
-    if (typeof (result.content.related_applications) === "string") {
+    if (typeof result.content.related_applications === 'string') {
       result.content.related_applications = [];
     }
-    
+
     state.manifest = result.content;
+    state.manifestUrl = result.generatedUrl;
     state.icons = result.content.icons;
+    state.screenshots = result.content.screenshots;
   },
 
   [types.SET_DEFAULTS_MANIFEST](state, payload): void {
@@ -74,25 +114,29 @@ export const mutations: MutationTree<State> = {
       return;
     }
 
+    // fix some common issues with manifest
+    if (state.manifest.generated) {
+      delete state.manifest.generated;
+    }
 
-        // fix some common issues with manifest
-        if (state.manifest.generated) {
-          delete state.manifest.generated;
-        }
-    
-        if (typeof (state.manifest.related_applications) === "string") {
-          state.manifest.related_applications = [];
-        }
+    if (typeof state.manifest.related_applications === 'string') {
+      state.manifest.related_applications = [];
+    }
 
     state.manifest.lang = state.manifest.lang || '';
     state.manifest.display = state.manifest.display || payload.defaultDisplay;
-    state.manifest.orientation = state.manifest.orientation || payload.defaultOrientation;
+    state.manifest.orientation =
+      state.manifest.orientation || payload.defaultOrientation;
     state.manifest.generated = state.generated || payload.generated;
     state.icons = state.icons || payload.icons;
   },
 
   [types.UPDATE_ICONS](state, icons: Icon[]): void {
     state.icons = icons;
+  },
+
+  [types.UPDATE_SCREENSHOTS](state, screenshots: Screenshot[]): void {
+    state.screenshots = screenshots;
   },
 
   [types.ADD_ASSETS](state, assets: Asset[]): void {
@@ -103,9 +147,14 @@ export const mutations: MutationTree<State> = {
     state.icons.push(icon);
   },
 
+  [types.ADD_SCREENSHOT](state, screenshot: Screenshot): void {
+    state.screenshots.push(screenshot);
+  },
+
   [types.RESET_STATES](state): void {
     state.url = null;
     state.manifest = null;
+    state.manifestUrl = null;
     state.manifestId = null;
     state.siteServiceWorkers = null;
     state.icons = [];
@@ -119,7 +168,8 @@ export const mutations: MutationTree<State> = {
       return;
     }
 
-    state.manifest.related_applications = state.manifest.related_applications || [];
+    state.manifest.related_applications =
+      state.manifest.related_applications || [];
 
     state.manifest.related_applications.push(payload);
   },
@@ -129,9 +179,10 @@ export const mutations: MutationTree<State> = {
       return;
     }
 
-    state.manifest.related_applications = state.manifest.related_applications || [];
+    state.manifest.related_applications =
+      state.manifest.related_applications || [];
 
-    const index = state.manifest.related_applications.findIndex(app => {
+    const index = state.manifest.related_applications.findIndex((app) => {
       return app.id === id;
     });
 
@@ -163,7 +214,7 @@ export const mutations: MutationTree<State> = {
       return;
     }
 
-    const index = state.members.findIndex(member => {
+    const index = state.members.findIndex((member) => {
       return member.name === name;
     });
 
