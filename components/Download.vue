@@ -126,7 +126,7 @@ export default class extends Vue {
       startURL = `${startURL}${manifestStartUrl.search}`;
     }
 
-    const body = JSON.stringify({
+    const packageGenArgs = JSON.stringify({
       packageId: this.packageName ||  `com.${packageid
         .split(" ")
         .join("_")
@@ -158,18 +158,16 @@ export default class extends Vue {
       }
     });
 
-    try {
-      const response = await fetch(
-        "https://pwabuilder-cloudapk.azurewebsites.net/generateSignedApkZip",
-        {
+    const packageGenUrl = new URL("/generateSignedApkZip", process.env.androidPackageGeneratorUrl);
+    const postBody = {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
           },
-          body: body
-        }
-      );
-
+          body: packageGenArgs
+    };
+    try {
+      const response = await fetch(packageGenUrl.toString(), postBody);
       if(response.status === 200) {
         const data = await response.blob();
 
@@ -179,13 +177,11 @@ export default class extends Vue {
       else {
         this.errorMessage = `Status code: ${response.status}, Error: ${response.statusText}`;
       }
-
-      this.isReady = true;
     } catch (err) {
-      this.isReady = true;
-
       this.errorMessage =
         `Status code: ${err.status}, Error: ${err.statusText}` || err;
+    } finally {
+      this.isReady = true;
     }
   }
 
