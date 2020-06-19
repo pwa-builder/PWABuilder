@@ -3,7 +3,10 @@
     <HubHeader :showSubHeader="true"></HubHeader>
 
     <div v-if="showingIconModal" class="has-acrylic-40 is-dark" id="modalBackground"></div>
-
+    <div
+      v-if="isInvalidScreenshotUrl"
+      id="invalidUrlToast"
+    >Invalid url(s): {{`${invalidScreenshotUrlValues}`}}. Please try again.</div>
     <main id="sideBySide">
       <section id="leftSide">
         <header class="mastHead">
@@ -198,8 +201,8 @@
                     v-bind:class="{
                       fieldName: activeFormField === 'screenshot',
                     }"
-                  >Enter URL to add screenshots to the manifest</h4>
-                  <p>You may enter up to 8</p>
+                  >Generate screenshots for your PWA</h4>
+                  <p>Specify the URLs to generate screenshots from. You may add up to 8 screenshots.</p>
                 </label>
                 <div
                   id="screenshotsUrlsContainer"
@@ -238,7 +241,7 @@
                   class="work-button l-generator-button"
                   @click="onClickScreenshotFetch()"
                 >
-                  <span v-if="!screenshotLoading">Upload Screenshots</span>
+                  <span v-if="!screenshotLoading">Generate Screenshots</span>
                   <span v-if="screenshotLoading">
                     <Loading
                       :active="screenshotLoading"
@@ -265,14 +268,16 @@
                   >
                     <img :src="screenshot.src" />
                     <div id="screenshotsToolbar">
-                      <div style="width:27px;"></div>
+                      <div style="width:27px;">
+                        <span>{{`${screenshot.sizes}`}}</span>
+                      </div>
                       <span>{{ `${k + 1} / ${screenshots.length}` }}</span>
                       <button
                         id="removeScreenshotsDiv"
                         class="pure-u-1-8 l-generator-tablec l-generator-tablec--right"
                         @click="onClickRemoveScreenshot(screenshot)"
                       >
-                        <span class="l-generator-close" :title="$t('remove screenshot')">
+                        <span class="l-generator-close" :title="$t('Remove Screenshot')">
                           <i class="fas fa-trash-alt"></i>
                         </span>
                       </button>
@@ -526,6 +531,8 @@ const GeneratorGetters = namespace(generator.name, Getter);
 export default class extends Vue {
   public manifest$: generator.Manifest | null = null;
   public screenshotLoading: boolean = false;
+  public isInvalidScreenshotUrl: boolean = false;
+  public invalidScreenshotUrlValues: string[] = [];
   public newIconSrc = "";
   public iconCheckMissing = true;
   public urlsForScreenshot = [{ value: "" }];
@@ -567,6 +574,7 @@ export default class extends Vue {
   @GeneratorActions update;
   @GeneratorActions commitManifest;
   @GeneratorActions uploadIcon;
+  @GeneratorActions isValidUrls;
   @GeneratorActions addScreenshotsFromUrl;
   @GeneratorActions generateMissingImages;
   @GeneratorGetters suggestionsTotal;
@@ -574,7 +582,8 @@ export default class extends Vue {
 
   public created(): void {
     this.manifest$ = { ...this.manifest };
-    this.urlsForScreenshotValues[0] = "";
+    this.urlsForScreenshotValues[0] =
+      this.manifest$.url !== undefined ? this.manifest$.url : "";
   }
 
   public mounted() {
@@ -737,20 +746,28 @@ export default class extends Vue {
 
   public async onClickScreenshotFetch(): Promise<void> {
     let urls: string[] = [];
-    this.screenshotLoading = true;
+    this.invalidScreenshotUrlValues = [];
+    //
     urls = this.urlsForScreenshotValues.filter(url => {
       return url !== null && url !== undefined && url !== "";
     });
     console.log(urls);
-    if (urls.length == 0) return;
-    else
-      try {
-        //Downloads screenshots and adds the sources to the manifest
-        await this.addScreenshotsFromUrl(urls);
-      } catch (err) {
-        console.log("Something wrong with the URL");
-      }
-    this.screenshotLoading = false;
+    this.invalidScreenshotUrlValues = await this.isValidUrls(urls);
+    if (this.invalidScreenshotUrlValues.length > 0) {
+      this.isInvalidScreenshotUrl = true;
+    } else {
+      this.isInvalidScreenshotUrl = false;
+      if (urls.length == 0) return;
+      else
+        try {
+          this.screenshotLoading = true;
+          //Downloads screenshots and adds the sources to the manifest
+          await this.addScreenshotsFromUrl(urls);
+        } catch (err) {
+          console.log("Something wrong with the URL");
+        }
+      this.screenshotLoading = false;
+    }
   }
 
   public addUrlForScreenshots(index) {
@@ -1118,7 +1135,7 @@ footer a {
   padding-bottom: 41px;
 }
 #screenshotDownloadButton {
-  width: 156px;
+  width: 174px;
   height: 40px;
   background: transparent;
   color: #3c3c3c;
@@ -1134,7 +1151,32 @@ footer a {
   font-size: 14px;
   line-height: 21px;
 }
+#invalidUrlToast {
+  background: grey;
+  color: white;
+  position: fixed;
+  bottom: 16px;
+  right: 32px;
+  z-index: 9999;
+  font-weight: bold;
+  width: 16em;
+  padding: 1em;
+  border-radius: 20px;
+  animation-name: toastUp;
+  animation-duration: 250ms;
+  animation-timing-function: ease;
+}
+@keyframes toastUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
 
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 #removeIconDiv svg {
   height: 14px;
   width: 14px;
