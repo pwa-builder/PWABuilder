@@ -269,7 +269,7 @@
                     <img :src="screenshot.src" />
                     <div id="screenshotsToolbar">
                       <div style="width:27px;">
-                        <span>{{`${screenshot.sizes}`}}</span>
+                        <span v-if="screenshot.sizes!==undefined">{{`${screenshot.sizes}`}}</span>
                       </div>
                       <span>{{ `${k + 1} / ${screenshots.length}` }}</span>
                       <button
@@ -745,6 +745,7 @@ export default class extends Vue {
   }
 
   public async onClickScreenshotFetch(): Promise<void> {
+    this.isInvalidScreenshotUrl = false;
     let urls: string[] = [];
     this.invalidScreenshotUrlValues = [];
     //
@@ -752,6 +753,10 @@ export default class extends Vue {
       return url !== null && url !== undefined && url !== "";
     });
     console.log(urls);
+    urls = urls.map(url => {
+      return this.validateScreenshotUrl(url);
+    });
+    console.log("Validated urls", urls);
     this.invalidScreenshotUrlValues = await this.isValidUrls(urls);
     if (this.invalidScreenshotUrlValues.length > 0) {
       this.isInvalidScreenshotUrl = true;
@@ -770,6 +775,14 @@ export default class extends Vue {
     }
   }
 
+  public validateScreenshotUrl(url: string) {
+    if (url) {
+      if (!url.startsWith("http")) {
+        url = "https://" + url;
+      }
+    }
+    return url;
+  }
   public addUrlForScreenshots(index) {
     this.urlsForScreenshot.push({ value: "" });
   }
