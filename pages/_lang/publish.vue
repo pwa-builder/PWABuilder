@@ -650,9 +650,9 @@ export default class extends Vue {
   @GeneratorAction uploadIcon;
   @GeneratorAction generateMissingImages;
   @GeneratorAction updateManifest;
+  @GeneratorAction updateLinkFromStorage;
+  @GeneratorAction getManifestInformation;
 
-  // @PublishState status: boolean;
-  @PublishState status = true;
   @PublishState appXLink: string;
   @PublishState downloadDisabled: boolean;
 
@@ -696,6 +696,23 @@ export default class extends Vue {
       } else {
         this.teamsForm.shortDescription = this.manifest.description;
       }
+    }
+
+    if (!this.manifest) {
+      const currentURL = sessionStorage.getItem('currentURL');
+      if (currentURL) {
+        try {
+          this.updateLinkFromStorage(currentURL);
+          this.getManifestInformation();
+          this.enableDownloadButton();
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        this.disableDownloadButton();
+      }
+    } else {
+      this.enableDownloadButton();
     }
 
     this.$awa(overrideValues);
