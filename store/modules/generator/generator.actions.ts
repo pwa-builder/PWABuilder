@@ -19,6 +19,7 @@ const screenshotsUrl = `${process.env.screenshotsUrl}`;
 export interface Actions<S, R> extends ActionTree<S, R> {
   update(context: ActionContext<S, R>): void;
   updateManifest(context: ActionContext<S, R>, manifest: Manifest): void;
+  updateLinkFromStorage(context: ActionContext<S, R>, url: string): void;
   updateLink(context: ActionContext<S, R>, url: string): void;
   getManifestInformation(context: ActionContext<S, R>): Promise<void>;
   removeIcon(context: ActionContext<S, R>, icon: Icon): void;
@@ -115,6 +116,10 @@ export const actions: Actions<State, RootState> = {
 
   commitManifest({ commit }, manifest): void {
     commit(types.UPDATE_MANIFEST, manifest);
+  },
+
+  updateLinkFromStorage({ commit }, url: string): void {
+    commit(types.UPDATE_LINK, url);
   },
 
   async updateLink({ commit }, url: string): Promise<any> {
