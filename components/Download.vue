@@ -386,7 +386,6 @@ button:disabled {
 
 #colorSpinner {
   margin-top: -1px !important;
-  margin-left: -7px;
   height: 32px;
 }
 

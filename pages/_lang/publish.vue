@@ -1034,9 +1034,6 @@ footer a {
   }
 }
 
-#publishMain {
-}
-
 #modalBackground {
   position: fixed;
   top: 0;
@@ -1451,7 +1448,6 @@ footer a {
 
 .androidDownloadButton #colorSpinner {
   margin-top: 4px;
-  margin-left: 4px;
 }
 
 .androidDownloadButton.webviewButton {
@@ -1673,7 +1669,6 @@ footer a {
 .platModalDownloadButton #colorSpinner {
   height: 32px;
   margin-top: 4px !important;
-  margin-left: 4px;
 }
 
 .platModalDownloadButton.webviewButton {
