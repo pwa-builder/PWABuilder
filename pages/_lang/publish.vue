@@ -354,7 +354,7 @@
       </section>
 
       <section id="publishRightSide">
-        <div id="platformsListContainer">
+        <div id="platformsListContainer" v-if="manifest">
           <ul>
             <div
               @mouseover="platCardHover($event)"
@@ -536,6 +536,22 @@
                 />
               </section>
             </div>
+          </ul>
+        </div>
+        <div id="skeletonSpan" v-if="!manifest">
+          <ul>
+            <li>
+              <span class="skeletonSpan"></span>
+            </li> 
+            <li>
+              <span class="skeletonSpan"></span>
+            </li>
+            <li>
+              <span class="skeletonSpan"></span>
+            </li>
+            <li>
+              <span class="skeletonSpan"></span>
+            </li>
           </ul>
         </div>
       </section>
@@ -968,6 +984,65 @@ declare var awa: any;
 /* stylelint-disable */
 
 @import "~assets/scss/base/variables";
+
+#skeletonSpan {
+  width: 30em;
+  justify-content: center;
+
+  ul {
+    flex-grow: 2;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 42px;
+
+    li {
+      font-size: 14px;
+      font-weight: bold;
+      padding: 0.5em;
+      padding-left: 0;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 5px;
+      color: #3c3c3c span {
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 18px;
+        color: #3c3c3c;
+      }
+    }
+  }
+
+  .skeletonSpan {
+    background: linear-gradient(
+      to right,
+      rgba(140, 140, 140, 0.8),
+      rgba(140, 140, 140, 0.18),
+      rgba(140, 140, 140, 0.33)
+    );
+    background-size: 800px 104px;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: shimmer;
+    animation-timing-function: linear;
+    height: 1em;
+    width: 100%;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -468px 0;
+    }
+
+    100% {
+      background-position: 468px 0;
+    }
+  }
+}
 
 #devicePreviews {
   height: 504px;
