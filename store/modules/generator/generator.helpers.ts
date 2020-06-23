@@ -62,10 +62,14 @@ export const helpers = {
         if (pathsNumber > 3) {
           // Removing possible filename at the end of the URL or # or duplication on the path if the icon src already has it
           var index = 1;
-          while (pathArray[pathArray.length - index].indexOf('.') !== -1 || pathArray[pathArray.length - index].indexOf('#') !== -1 || icon.src.split('/')[1] === pathArray[pathArray.length - index]) {
-            pathsNumber--;
-            index++;
+          for (let i = 3; i < pathArray.length; i++) {
+            if(pathArray[pathArray.length - index].indexOf('.') !== -1 || pathArray[pathArray.length - index].indexOf('#') !== -1 
+            || pathArray[pathArray.length - index] === icon.src.split('/')[1]) {
+              pathsNumber--;
+              index++;
+            }
           }
+
           for (let i = 3; i < pathsNumber; i++) {
             additionnalPath += '/' + pathArray[i];
           }
