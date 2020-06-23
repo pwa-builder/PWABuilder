@@ -21,18 +21,30 @@ export const helpers = {
       console.error('error in helper', err, err.message);
       return err;
     }*/
-    console.log('SITE URL', siteUrl);
+
     try {
       return await fetch(siteUrl, {
         mode: 'no-cors',
         credentials: 'include',
       });
     } catch (err) {
-      // console.log(siteUrl, 'ERRORRRR');
       return err;
     }
   },
 
+  async isValidScreenshotUrl(siteUrl: string): Promise<any> {
+    console.log('SiteURL', siteUrl);
+    try {
+      var response = await fetch(siteUrl, {
+        mode: 'no-cors',
+        credentials: 'include',
+      });
+      if (response.status > 400) return false;
+      else return true;
+    } catch (err) {
+      return false;
+    }
+  },
   getImageIconSize(aSrc: string): Promise<{ width: number; height: number }> {
     return new Promise((resolve) => {
       if (typeof document === 'undefined') {

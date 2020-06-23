@@ -272,11 +272,10 @@ export const actions: Actions<State, RootState> = {
   async isValidUrls({}, urls: string[]) {
     var invalidUrls: string[] = [];
     for (var i = 0; i < urls.length; i++) {
-      const test = await helpers.isValidUrl(urls[i]);
-      console.log(i);
-      if (test.message !== undefined) invalidUrls.push(urls[i]);
+      const test = await helpers.isValidScreenshotUrl(urls[i]);
+      if (!test) invalidUrls.push(urls[i]);
     }
-
+    console.log(invalidUrls);
     return invalidUrls;
   },
 
