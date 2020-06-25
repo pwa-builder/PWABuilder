@@ -22,7 +22,7 @@ class SnippitPop extends HTMLElement {
     return this.hasAttribute('snippitImage');
   }
 
-  set snippitImage(val) {
+  set snippitImage(val: any) {
     if (val) {
       this.setAttribute('snippitImage', val);
     } else {
@@ -31,35 +31,35 @@ class SnippitPop extends HTMLElement {
   }
   
   async copyCode(data) {
-    if (!navigator.clipboard) {
-        try {
-          await navigator.clipboard.writeText(data);
-        } catch (err) {
-          console.error(err);
-        }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try {
+        await navigator.clipboard.writeText(data);
+      } catch (err) {
+        console.error(err);
       }
-      else {
-        const clipScript = document.createElement('script');
-        clipScript.src = "https://unpkg.com/clipboard@2/dist/clipboard.min.js";
-        this.shadowRoot.appendChild(clipScript);
-        
-        clipScript.addEventListener('load', () => {
-          let realClip = new ClipboardJS(this.shadowRoot.querySelector('button'));
+    } else {
+      const clipScript = document.createElement('script');
+      clipScript.src = "https://unpkg.com/clipboard@2/dist/clipboard.min.js";
+      this.shadowRoot!.appendChild(clipScript);
 
-          realClip.on("success", e => {
-            console.info("Action:", e.action);
-            console.info("Text:", e.text);
-            console.info("Trigger:", e.trigger);
-            e.clearSelection();
-          });
+      clipScript.addEventListener('load', () => {
+        let ClipboardJS = window["ClipboardJS"];
+        let realClip = new ClipboardJS(this.shadowRoot!.querySelector('button'));
 
-          realClip.on("error", e => {
-            console.error("Action:", e.action);
-            console.error("Trigger:", e.trigger);
-          });
-        })
-        
-      }
+        realClip.on("success", e => {
+          console.info("Action:", e.action);
+          console.info("Text:", e.text);
+          console.info("Trigger:", e.trigger);
+          e.clearSelection();
+        });
+
+        realClip.on("error", e => {
+          console.error("Action:", e.action);
+          console.error("Trigger:", e.trigger);
+        });
+      })
+
+    }
   }
   
   async getCode() {
@@ -69,7 +69,7 @@ class SnippitPop extends HTMLElement {
       const response = await fetch(snippitImage);
       const data = await response.text();
       
-      this.shadowRoot.querySelector('button').setAttribute('data-clipboard-text', data);
+      this.shadowRoot!.querySelector('button')!.setAttribute('data-clipboard-text', data);
       
       setTimeout(() => {
         this.copyCode(data);

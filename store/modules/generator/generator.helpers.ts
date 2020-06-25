@@ -1,12 +1,12 @@
 import colorConverter from '~/utils/color-converter';
-import { Icon, Screenshot, RelatedApplication, CodeError } from '~/store/modules/generator';
+import { Icon, RelatedApplication, CodeError } from '~/store/modules/generator';
 
 export const helpers = {
   MEMBER_PREFIX: 'mjs_',
   COLOR_OPTIONS: {
     none: 'none',
     transparent: 'transparent',
-    pick: 'pick'
+    pick: 'pick',
   },
 
   async isValidUrl(siteUrl: string): Promise<any> {
@@ -21,19 +21,32 @@ export const helpers = {
       console.error('error in helper', err, err.message);
       return err;
     }*/
+
     try {
       return await fetch(siteUrl, {
         mode: 'no-cors',
-        credentials: 'include'
+        credentials: 'include',
       });
-    }
-    catch (err) {
+    } catch (err) {
       return err;
     }
   },
 
-  getImageIconSize(aSrc: string): Promise<{ width: number, height: number }> {
-    return new Promise(resolve => {
+  async isValidScreenshotUrl(siteUrl: string): Promise<any> {
+    console.log('SiteURL', siteUrl);
+    try {
+      var response = await fetch(siteUrl, {
+        mode: 'no-cors',
+        credentials: 'include',
+      });
+      if (response.status > 400) return false;
+      else return true;
+    } catch (err) {
+      return false;
+    }
+  },
+  getImageIconSize(aSrc: string): Promise<{ width: number; height: number }> {
+    return new Promise((resolve) => {
       if (typeof document === 'undefined') {
         resolve({ width: -1, height: -1 });
       }
@@ -42,7 +55,7 @@ export const helpers = {
       tmpImg.onload = () => {
         resolve({
           width: tmpImg.width,
-          height: tmpImg.height
+          height: tmpImg.height,
         });
       };
 
@@ -50,8 +63,8 @@ export const helpers = {
     });
   },
 
-  prepareIconsUrls(icons: (Icon | Screenshot)[], baseUrl: string) {
-    return icons.map(icon => {
+  prepareIconsUrls(icons: Icon[], baseUrl: string) {
+    return icons.map((icon) => {
       if (!icon.src.includes('http') && !icon.src.includes('data:image')) {
         const pathArray = baseUrl.split('/');
         const protocol = pathArray[0];
@@ -61,7 +74,10 @@ export const helpers = {
         // Images are not directly stored at the root level
         if (pathsNumber > 3) {
           // Removing possible filename at the end of the URL or #
-          if (pathArray[pathArray.length - 1].indexOf('.') !== -1 || pathArray[pathArray.length - 1].indexOf('#') !== -1) {
+          if (
+            pathArray[pathArray.length - 1].indexOf('.') !== -1 ||
+            pathArray[pathArray.length - 1].indexOf('#') !== -1
+          ) {
             pathsNumber--;
           }
           for (let i = 3; i < pathsNumber; i++) {
@@ -81,7 +97,7 @@ export const helpers = {
   },
 
   async getImageDataURI(file: File): Promise<string> {
-    return new Promise<string>(resolve => {
+    return new Promise<string>((resolve) => {
       const reader = new FileReader();
 
       reader.onload = (aImg: any) => {
@@ -124,12 +140,12 @@ export const helpers = {
     }
 
     let total = 0;
-    errors.forEach(error => {
+    errors.forEach((error) => {
       if (error.issues && error.issues.length) {
         total += error.issues.length;
       }
     });
 
     return total;
-  }
+  },
 };

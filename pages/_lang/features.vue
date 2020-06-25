@@ -908,7 +908,7 @@ header {
   padding: 1em;
 }
 
-#codeHeader {
+.codeHeader {
   background: lightgrey;
   font-weight: bold;
   padding: 1em;
