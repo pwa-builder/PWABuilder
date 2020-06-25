@@ -385,35 +385,6 @@
               </section>
             </div>
 
-            <!-- Microsoft Teams Integration -->
-            <div
-              @mouseover="platCardHover($event)"
-              @mouseleave="platCardUnHover($event)"
-              id="pwaTeamsCard"
-              class="pwaCard"
-            >
-              <div class="pwaCardHeaderBlock">
-                <div class="pwaCardIconBlock">
-                  <img id="teamsIconImg" src="~/assets/images/teams-icon.png" alt="Teams Logo" />
-                  <h2>Microsoft Teams</h2>
-                </div>
-              </div>
-
-              <p>
-                Submit your PWA for further engagement on Microsoft Teams.
-              </p>
-
-              <section class="platformDownloadBar">
-                <button
-                  class="platformDownloadButton"
-                  @click="openTeamsModal()"
-                  aria-label="Open Teams Modal"
-                >
-                  <i class="fas fa-long-arrow-alt-down" aria-label="Open Teams Icon"></i>
-                </button>
-              </section>
-            </div>
-
             <div
               @mouseover="platCardHover($event)"
               @mouseleave="platCardUnHover($event)"
