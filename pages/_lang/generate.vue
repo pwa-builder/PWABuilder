@@ -451,21 +451,16 @@
         v-on:modalSubmit="onSubmitIconModal"
         v-on:cancel="onCancelIconModal"
       >
-        <section id="imageModalSection">
-          <div class="l-generator-box image-upload">
-            <span class="l-generator-label">
-              {{
-              $t('generate.upload_image')
-              }}
-            </span>
-            <label class="l-generator-input l-generator-input--fake is-disabled" for="modal-file">
+        <section>
+          <div class="custom-file-upload">
+            <input id="modal-file" @change="onFileIconChange" class="custom-file-input" type="file">
+            <label class="custom-file-label l-generator-input l-generator-input--fake is-disabled">
               {{
               iconFile && iconFile.name
               ? iconFile.name
               : $t('generate.choose_file')
               }}
             </label>
-            <input id="modal-file" @change="onFileIconChange" class="l-hidden" type="file" />
           </div>
 
           <div class="l-generator-field">
@@ -1005,6 +1000,66 @@ declare var awa: any;
 <style lang="scss">
 @import "~assets/scss/base/variables";
 
+.custom-file-upload {
+  label {
+    display: block;
+  }
+
+  input, label {
+      margin: .4rem 0;
+  }
+
+  .image-upload {
+    margin-bottom: 10px;
+    height: 40px;
+  }
+
+  .custom-file-label {
+    width: 620px;
+    float: right;
+    font-size: 16px;
+    padding-top: 13px;
+    cursor: default;
+  }
+  
+  .custom-file-input {
+    color: transparent;
+    width: 155px;
+    cursor: pointer;
+  }
+
+  .custom-file-input::-webkit-file-upload-button {
+    visibility: hidden;
+  }
+
+  .custom-file-input::before {
+    content: 'Choose File';
+    width: 154px;
+    height: 40px;
+    background: transparent;
+    color: #3c3c3c;
+    font-weight: bold;
+    border-radius: 20px;
+    border: 1px solid #3c3c3c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
+  }
+
+  .custom-file-input:hover::before {
+    border-color: #9337d8;
+  }
+
+  .custom-file-input:active, :focus {
+    outline: 0;
+  }
+}
+
 #manifestCode {
   width: 100%;
 }
@@ -1218,8 +1273,10 @@ footer a {
   letter-spacing: -0.02em;
 }
 #genMissingLabel input {
-  height: 2em;
-  width: 2em;
+  height: 1em;
+  width: 1em;
+  margin-left: 15px;
+  margin-top: 5px;
 }
 #sideBySide {
   background: white;
