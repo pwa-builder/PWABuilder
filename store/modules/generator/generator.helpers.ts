@@ -73,21 +73,29 @@ export const helpers = {
         let additionnalPath = '';
         // Images are not directly stored at the root level
         if (pathsNumber > 3) {
-          // Removing possible filename at the end of the URL or #
-          if (
-            pathArray[pathArray.length - 1].indexOf('.') !== -1 ||
-            pathArray[pathArray.length - 1].indexOf('#') !== -1
-          ) {
-            pathsNumber--;
+          // Removing possible filename at the end of the URL or # or duplication on the path if the icon src already has it
+          var index = 1;
+          for (let i = 3; i < pathArray.length; i++) {
+            if(pathArray[pathArray.length - index].indexOf('.') !== -1 || pathArray[pathArray.length - index].indexOf('#') !== -1 
+            || pathArray[pathArray.length - index] === icon.src.split('/')[1]) {
+              pathsNumber--;
+              index++;
+            }
           }
+
           for (let i = 3; i < pathsNumber; i++) {
             additionnalPath += '/' + pathArray[i];
           }
         }
         baseUrl = protocol + '//' + host + additionnalPath;
 
-        //avoid duplication on the path if the icon src already has it
-        icon.src = new URL(icon.src, baseUrl).href;
+        //Avoid duplication of forward slash on the path
+        if(icon.src.startsWith('/')) {
+          icon.src = new URL(baseUrl + icon.src).href;
+        }
+        else {
+          icon.src = new URL(baseUrl + '/' +  icon.src).href;
+        }
 
         //remove posible trailing/leading slashes
         icon.src = `${icon.src.replace(/^\/+/g, '')}`;
