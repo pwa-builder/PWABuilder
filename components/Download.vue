@@ -92,9 +92,13 @@ export default class extends Vue {
   public created(): void {
     this.message$ = this.message;
 
-    const sessionRef = sessionStorage.getItem("currentURL");
-    if (sessionRef) {
-      this.siteHref = sessionRef;
+    try {
+      const sessionRef = sessionStorage.getItem("currentURL");
+      if (sessionRef) {
+        this.siteHref = sessionRef;
+      }
+    } catch (err) {
+      console.error(err);
     }
   }
 
@@ -386,7 +390,6 @@ button:disabled {
 
 #colorSpinner {
   margin-top: -1px !important;
-  margin-left: -7px;
   height: 32px;
 }
 

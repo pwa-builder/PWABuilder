@@ -180,7 +180,7 @@ export default class extends Vue {
   }
 
   public reloadEditor(): void {
-    this.monacoId && (<any>window).monaco.editor.create(document.getElementById(this.monacoId), {
+    this.editor = this.monacoId && (<any>window).monaco.editor.create(document.getElementById(this.monacoId), {
             language: this.codeType,
             value: this.data$,
             lineNumbers: "on",

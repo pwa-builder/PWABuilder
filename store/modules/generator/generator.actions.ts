@@ -19,6 +19,7 @@ const screenshotsUrl = `${process.env.screenshotsUrl}`;
 export interface Actions<S, R> extends ActionTree<S, R> {
   update(context: ActionContext<S, R>): void;
   updateManifest(context: ActionContext<S, R>, manifest: Manifest): void;
+  updateLinkFromStorage(context: ActionContext<S, R>, url: string): void;
   updateLink(context: ActionContext<S, R>, url: string): void;
   getManifestInformation(context: ActionContext<S, R>): Promise<void>;
   removeIcon(context: ActionContext<S, R>, icon: Icon): void;
@@ -47,8 +48,6 @@ export interface Actions<S, R> extends ActionTree<S, R> {
 export const actions: Actions<State, RootState> = {
   async update({ commit, state, rootState }): Promise<void> {
     if (!state.manifestId) {
-
-
       if (state.manifest && rootState.generator.manifest) {
         // Fix common issues with the manifest
         if (typeof state.manifest.related_applications === 'string') {
@@ -117,6 +116,10 @@ export const actions: Actions<State, RootState> = {
 
   commitManifest({ commit }, manifest): void {
     commit(types.UPDATE_MANIFEST, manifest);
+  },
+
+  updateLinkFromStorage({ commit }, url: string): void {
+    commit(types.UPDATE_LINK, url);
   },
 
   async updateLink({ commit }, url: string): Promise<any> {
@@ -262,9 +265,23 @@ export const actions: Actions<State, RootState> = {
   async uploadIcon({ commit, dispatch }, iconFile: File): Promise<void> {
     const dataUri: string = await helpers.getImageDataURI(iconFile);
     const sizes = await helpers.getImageIconSize(dataUri);
-    commit(types.ADD_ICON, { src: dataUri, sizes: `${sizes.width}x${sizes.height}`, fileName: iconFile.name });
+    commit(types.ADD_ICON, {
+      src: dataUri,
+      sizes: `${sizes.width}x${sizes.height}`,
+      fileName: iconFile.name,
+    });
 
     dispatch('update');
+  },
+
+  async isValidUrls({}, urls: string[]) {
+    var invalidUrls: string[] = [];
+    for (var i = 0; i < urls.length; i++) {
+      const test = await helpers.isValidScreenshotUrl(urls[i]);
+      if (!test) invalidUrls.push(urls[i]);
+    }
+    console.log(invalidUrls);
+    return invalidUrls;
   },
 
   async addScreenshotsFromUrl(
@@ -308,7 +325,10 @@ export const actions: Actions<State, RootState> = {
     let formData = new FormData();
     formData.append('file', iconFile);
 
-    const result = await this.$axios.$post(`${apiUrl}/${state.manifestId}/generatemissingimages`, formData);
+    const result = await this.$axios.$post(
+      `${apiUrl}/${state.manifestId}/generatemissingimages`,
+      formData
+    );
 
     commit(types.OVERWRITE_MANIFEST, result);
     commit(types.ADD_ASSETS, result.assets);
