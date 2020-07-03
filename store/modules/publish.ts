@@ -38,12 +38,32 @@ export interface AppxParams {
 }
 
 export interface AndroidParams {
-    package_name: string | null;
-    android_key: string | null;
-    keyorg: string | null;
-    keyorgunit: string | null;
-    keycode: string | null;
-    keyname: string | null;
+    packageId: string;
+    appName: string;
+    appVersion: string;
+    display: "standalone" | "fullscreen";
+    host: string;
+    startUrl: string;
+    manifestUrl: string;
+    themeColor: string;
+    navigationColor: string;
+    backgroundColor: string;
+    iconUrl: string;
+    maskableIconUrl: string;
+    monochromeIconUrl: string;
+    signingMode: "new" | "none" | "mine";
+    signing: {
+        alias: string;
+        fullName: string;
+        organization: string;
+        organizationalUnit: string;
+        countryCode: string;
+        keyPassword: string;
+        storePassword: string;
+    } | null;
+    fallbackType: "customtabs" | "webview";
+    splashScreenFadeDuration: number;
+    enableNotifications: boolean;
 }
 
 export interface TeamsParams {
