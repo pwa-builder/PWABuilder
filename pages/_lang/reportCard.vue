@@ -73,16 +73,17 @@
             </p>
 
             <div id="starterActions">
-              <button @click="starterDrop" id="mainStartButton">
+              <button @click="starterDrop" id="mainStartButton" 
+                type="button" role="menuitem" aria-haspop="true" aria-expanded="false"> 
                 Get Started!
                 <i class="fas fa-chevron-down"></i>
 
-                <div v-if="openDrop" id="starterDropdown">
-                <button id="starterDownloadButton" @click="downloadStarter">
+                <div v-if="openDrop" id="starterDropdown" aria-live="polite">
+                <button id="starterDownloadButton" @click="downloadStarter" type="button">
                   <i class="fas fa-arrow-down"></i>
                   Download
                 </button>
-                <button @click="cloneStarter">
+                <button @click="cloneStarter" type="button">
                   <i class="fab fa-github"></i>
                   Clone from Github
                 </button>
