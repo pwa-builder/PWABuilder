@@ -4,7 +4,7 @@
       <img
         id="logo"
         src="~/assets/images/new-logo.svg"
-        alt="App Logo"
+        alt="PWABuilder App Logo"
         class="logo-size"
         :class="{ 'smaller-logo': !expanded }"
         @click="reset()"
