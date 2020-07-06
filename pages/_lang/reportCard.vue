@@ -73,16 +73,52 @@
             </p>
 
             <div id="starterActions">
-              <button @click="starterDrop" id="mainStartButton">
+              <nav aria-label="Get Started menu options">
+                <ul id="menubar1"
+                    role="menubar"
+                    aria-label="Get Started menu options">
+                  <li role="none">
+                    <button @click="starterDrop" 
+                            id="mainStartButton" 
+                            type="button" 
+                            role="menuitem" 
+                            aria-haspop="true" 
+                            aria-expanded="false" 
+                            tabindex="0"> 
+                          Get Started!
+                       <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <ul role="menu" aria-label="Get Started">
+                      <li role="none">
+                        <a id="starterDownloadButton"
+                          role="menuitem"
+                          href="#"
+                          tabindex="-1">
+                          Download
+                        </a>
+                      </li>
+                      <li role="none">
+                        <a role="menuitem"
+                          href="#"
+                          tabindex="-1">
+                          Clone from Github
+                        </a>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </nav>
+              <button @click="starterDrop" id="mainStartButton" 
+                type="button" role="menuitem" aria-haspop="true" aria-expanded="false" tabindex="0"> 
                 Get Started!
                 <i class="fas fa-chevron-down"></i>
 
                 <div v-if="openDrop" id="starterDropdown">
-                <button id="starterDownloadButton" @click="downloadStarter">
+                <button id="starterDownloadButton" @click="downloadStarter" type="button" tabindex="-1">
                   <i class="fas fa-arrow-down"></i>
                   Download
                 </button>
-                <button @click="cloneStarter">
+                <button @click="cloneStarter" type="button" tabindex="-1">
                   <i class="fab fa-github"></i>
                   Clone from Github
                 </button>
