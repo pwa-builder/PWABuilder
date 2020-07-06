@@ -37,7 +37,7 @@
   "generator": {
     "title": "Provide a URL",
     "subtitle": "Provide your URL and we'll help fill in the gaps if there are any.",
-    "url": "URL",
+    "url": "Enter a URL to your website",
     "placeholder_url": "Enter a URL",
     "start": "Start",
     "skip": "Skip to Build Service Worker",
