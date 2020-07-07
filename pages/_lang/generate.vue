@@ -955,6 +955,8 @@ export default class extends Vue {
 
   public onCancelIconModal(): void {
     this.iconFile = null;
+    this.iconFileErrorNoneUploaded = false;
+    this.iconFileErrorIncorrectType = false;
     this.showingIconModal = false;
   }
 
