@@ -472,10 +472,12 @@
               />
             </label>
           </div>
-          
-          <div class="l-generator-field">
-            <p id="uploadImageError" role="alert">{{ $t('generate.upload_image_error') }}</p>
+          <div v-if="this.iconFileErrorNoneUploaded" class="l-generator-field">
+            <p id="uploadImageError" role="alert">{{ $t('generate.upload_image_error_none_uploaded') }}</p>
           </div>
+          <div v-if="this.iconFileErrorIncorrectType" class="l-generator-field">
+            <p id="uploadImageError" role="alert">{{ $t('generate.upload_image_error_incorrect_type') }}</p>
+          </div>      
         </section>
       </Modal>
     </main>
@@ -537,6 +539,8 @@ export default class extends Vue {
   public urlsForScreenshot = [{ value: "" }];
   public urlsForScreenshotValues = [];
   private iconFile: File | null = null;
+  public iconFileErrorNoneUploaded = false;
+  public iconFileErrorIncorrectType = false;
   public error: string | null = null;
   public seeEditor = true;
   public basicManifest = false;
@@ -804,6 +808,19 @@ export default class extends Vue {
       return;
     }
     this.iconFile = target.files[0];
+    // Check if file type is an image
+    if (this.iconFile && this.iconFile.name) {
+      const supportedFileTypes = ['.png', '.jpg', '.svg'];
+      var found = supportedFileTypes.find(fileType => this.iconFile.name.endsWith(fileType));
+      if (!found) {
+        this.iconFileErrorIncorrectType = true;
+      } else {
+        this.iconFileErrorIncorrectType = false;
+      }
+    } else {
+      this.iconFileErrorIncorrectType = false;
+    }
+
   }
 
   private getImagesWithEmbedded(icons: generator.Icon[]): generator.Icon[] {
@@ -914,8 +931,11 @@ export default class extends Vue {
   public async onSubmitIconModal(): Promise<void> {
     const $iconsModal = this.$refs.iconsModal as Modal;
     if (!this.iconFile) {
+      this.iconFileErrorNoneUploaded = true;
+      console.log('iconFileErrorNoneUploaded = ', this.iconFileErrorNoneUploaded);
       return;
     }
+    this.iconFileErrorNoneUploaded = false;
     $iconsModal.showLoading();
     if (this.iconCheckMissing) {
       await this.generateMissingImages(this.iconFile);
