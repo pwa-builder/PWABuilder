@@ -472,6 +472,10 @@
               />
             </label>
           </div>
+          
+          <div class="l-generator-field">
+            <p id="uploadImageError" role="alert">{{ $t('generate.upload_image_error') }}</p>
+          </div>
         </section>
       </Modal>
     </main>
@@ -1277,6 +1281,16 @@ footer a {
   width: 1em;
   margin-left: 15px;
   margin-top: 5px;
+}
+#uploadImageError {
+  display: flex;
+  font-family: sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -0.02em;
+  color: #db3457;
 }
 #sideBySide {
   background: white;
