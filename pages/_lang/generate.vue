@@ -808,6 +808,7 @@ export default class extends Vue {
       return;
     }
     this.iconFile = target.files[0];
+    this.iconFileErrorNoneUploaded = false;
     // Check if file type is an image
     if (this.iconFile && this.iconFile.name) {
       const supportedFileTypes = ['.png', '.jpg', '.svg'];
