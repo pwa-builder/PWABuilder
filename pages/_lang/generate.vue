@@ -932,7 +932,6 @@ export default class extends Vue {
     const $iconsModal = this.$refs.iconsModal as Modal;
     if (!this.iconFile) {
       this.iconFileErrorNoneUploaded = true;
-      console.log('iconFileErrorNoneUploaded = ', this.iconFileErrorNoneUploaded);
       return;
     }
     this.iconFileErrorNoneUploaded = false;
