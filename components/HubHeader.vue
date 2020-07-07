@@ -62,11 +62,11 @@
           <img src="~/assets/images/score-icon.png" alt="score icon">
 
           <a target="_blank" rel="noopener noreferrer" :href="url">
-            <span>
+            <span aria-hidden="true">
               URL Tested
               <i class="fas fa-external-link-alt"></i>
             </span>
-            <span v-if="url">
+            <span aria-hidden="true" v-if="url">
               {{url.replace('http://','').replace('https://','').split(/[/?#]/)[0]}}
             </span>      
           </a>
