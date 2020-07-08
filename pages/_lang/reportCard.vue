@@ -12,7 +12,7 @@
     </div>
 
     <div v-if="showShareToast" id="gitCopyToast">
-      <span>URL copied for sharing</span>
+      <span role="alert">URL copied for sharing</span>
     </div>
 
     <div v-if="gotURL" id="reportShareButtonContainer">
