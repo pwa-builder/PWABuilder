@@ -2,7 +2,7 @@
   <section>
     <div class="modal" v-if="showModal">
       <div class="modal-box">
-        <button class="closeButtonDiv" @click="onClickCancel()">
+        <button aria-label="Close" class="closeButtonDiv" @click="onClickCancel()">
           <i class="fas fa-times"></i>
         </button>
         <div class="modal-body">
