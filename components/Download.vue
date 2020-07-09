@@ -57,34 +57,6 @@ export default class extends Vue {
 
   @Prop({ type: String, default: "" })
 
-  public readonly fileName: string;
-
-  @Prop({ type: File, default: null })
-  public readonly apkKey: File | null;
-
-  @Prop({ type: String, default: "" })
-  public readonly keyName: string;
-
-  @Prop({ type: String, default: "" })
-  public readonly keyOrg: string;
-
-  @Prop({ type: String, default: "" })
-  public readonly keyOrgUnit: string;
-
-  @Prop({ type: String, default: "" })
-  public readonly keyCode: string;
-
-  @Prop({ type: String, default: "" })
-  public readonly keyAlias: string;
-
-  @Prop({ type: String, default: "" })
-  public readonly keyPass: string;
-
-  @Prop({ type: String, default: "" })
-  public readonly keyStorePass: string;
-
-  public readonly packageName: string;
-
   @Prop({ type: Object })
   public readonly androidOptions: publish.AndroidApkOptions | null;
 
