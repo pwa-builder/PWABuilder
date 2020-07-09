@@ -40,7 +40,7 @@ export interface AppxParams {
 
 /**
  * Settings for the Android APK generation. This is the raw data passed to the CloudApk service.
- * It should match the CloudApk service's ApkSettings interface: https://github.com/pwa-builder/CloudAPK/blob/master/build/apkSettings.ts
+ * It should match the CloudApk service's ApkSettings interface: https://github.com/pwa-builder/CloudAPK/blob/master/build/apkOptions.ts
  */
 export interface AndroidApkOptions {
     packageId: string;
