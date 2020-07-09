@@ -117,7 +117,7 @@
                   {{ $t("publish.label_package_name") }}
                   <i class="fas fa-info-circle" title="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname" aria-label="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname" role="definition"></i>
                 </label>
-                <input class="form-control" :placeholder="$t('publish.placeholder_package_name')" type="text" required v-model="androidForm.packageId" />
+                <input id="packageIdInput" class="form-control" :placeholder="$t('publish.placeholder_package_name')" type="text" required v-model="androidForm.packageId" />
               </div>
 
               <div class="row">
@@ -288,7 +288,7 @@
               </div>
 
               <div class="form-group">
-                <label for="iconUrlInput">Signing key</label>
+                <label>Signing key</label>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="signingInput" id="generateSigningKeyInput" value="new" v-model="androidForm.signingMode">
                   <label class="form-check-label" for="generateSigningKeyInput">
@@ -339,11 +339,11 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="signingKeyOrgInput">
+                  <label for="signingKeyCountryCodeInput">
                     Key country code
                     <i class="fas fa-info-circle" title="The 2 letter country code to list on the signing key" aria-label="The 2 letter country code to list on the signing key" role="definition"></i>
                   </label>
-                  <input type="text" class="form-control" id="signingKeyOrgInput" required placeholder="US" v-model="androidForm.signing.countryCode" />
+                  <input type="text" class="form-control" id="signingKeyCountryCodeInput" required placeholder="US" v-model="androidForm.signing.countryCode" />
                 </div>
 
                 <div class="form-group">
@@ -2054,6 +2054,7 @@ footer a {
   color: grey;
   font-size: 10px;
   background: transparent;
+  
 }
 
 .platModalBody {
