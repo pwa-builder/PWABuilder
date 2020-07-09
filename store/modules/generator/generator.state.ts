@@ -18,6 +18,7 @@ export interface Manifest {
   categories?: string[];
   screenshots?: Icon[];
   iarc_rating_id?: string;
+  icons?: Icon[];
 }
 
 export interface ShortcutItem {
@@ -43,7 +44,7 @@ export interface Icon {
   generated?: boolean;
   type?: string;
   sizes?: string;
-  purpose?: string;
+  purpose?: "any" | "maskable" | "monochrome";
   platform?: string;
 }
 

@@ -4,4 +4,5 @@ module.exports = {
   screenshotsUrl: 'https://pwa-screenshots.azurewebsites.net',
   analytics: 'UA-111887945-1',
   apiUrl2: 'https://appimagegenerator-pre.azurewebsites.net',
+  androidPackageGeneratorUrl: 'https://pwabuilder-cloudapk-pre.azurewebsites.net'
 };
