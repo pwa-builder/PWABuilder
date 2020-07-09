@@ -12,7 +12,7 @@
     </div>
 
     <div v-if="showShareToast" id="gitCopyToast">
-      <span>URL copied for sharing</span>
+      <span role="alert">URL copied for sharing</span>
     </div>
 
     <div v-if="gotURL" id="reportShareButtonContainer">
@@ -64,7 +64,7 @@
           </div>-->
 
           <div id="starterSection">
-            <h3>...Or, dont even have a website yet?</h3>
+            <h2>...Or, dont even have a website yet?</h2>
             <p>
               Get started from scratch with our
               <a
@@ -136,7 +136,7 @@
           <a
             @click="$awa( { 'referrerUri': 'https://www.pwabuilder.com/featuresFromHome' });"
             id="featuresLink"
-            href="https://pwabuilderfeatures.z22.web.core.windows.net/"
+            href="https://components.pwabuilder.com"
           >Feature Store</a>
         </div>
       </div>
@@ -886,9 +886,17 @@ h2 {
       border-radius: 6px;
       width: 24em;
 
-      h3 {
-        font-weight: bold;
+      h2 {
+        margin: 0;
+        margin-block-end: 0;
+        margin-block-start: 0;
+        font-weight: 700;
         font-size: 20px;
+        line-height: initial;
+      }
+
+      p {
+        margin-top: 0;
       }
 
       #starterActions {

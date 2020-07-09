@@ -4,7 +4,7 @@
       <img
         id="logo"
         src="~/assets/images/new-logo.svg"
-        alt="App Logo"
+        alt="PWABuilder App Logo"
         class="logo-size"
         :class="{ 'smaller-logo': !expanded }"
         @click="reset()"
@@ -14,7 +14,7 @@
         <nuxt-link to="/">My Hub</nuxt-link>
         <a
           @click="$awa( { 'referrerUri': `https://pwabuilder.com/features` })"
-          href="https://pwabuilderfeatures.z22.web.core.windows.net/"
+          href="https://components.pwabuilder.com"
         >Feature Store</a>
       </div>
 

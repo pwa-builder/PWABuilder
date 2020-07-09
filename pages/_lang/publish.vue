@@ -648,7 +648,7 @@
       </section>
 
       <section id="publishRightSide">
-        <div id="platformsListContainer">
+        <div id="platformsListContainer" v-if="manifest">
           <ul>
             <div
               @mouseover="platCardHover($event)"
@@ -680,42 +680,6 @@
                   message="Download your PWA files"
                   aria-label="Download your PWA files"
                 />
-              </section>
-            </div>
-
-            <!-- Microsoft Teams Integration -->
-            <div
-              @mouseover="platCardHover($event)"
-              @mouseleave="platCardUnHover($event)"
-              id="pwaTeamsCard"
-              class="pwaCard"
-            >
-              <div class="pwaCardHeaderBlock">
-                <div class="pwaCardIconBlock">
-                  <img
-                    id="teamsIconImg"
-                    src="~/assets/images/teams-icon.png"
-                    alt="Teams Logo"
-                  />
-                  <h2>Microsoft Teams</h2>
-                </div>
-              </div>
-
-              <p>
-                Submit your PWA for further engagement on Microsoft Teams.
-              </p>
-
-              <section class="platformDownloadBar">
-                <button
-                  class="platformDownloadButton"
-                  @click="openTeamsModal()"
-                  aria-label="Open Teams Modal"
-                >
-                  <i
-                    class="fas fa-long-arrow-alt-down"
-                    aria-label="Open Teams Icon"
-                  ></i>
-                </button>
               </section>
             </div>
 
@@ -858,6 +822,22 @@
             </div>
           </ul>
         </div>
+        <div id="skeletonSpan" v-if="!manifest">
+          <ul>
+            <li>
+              <span class="skeletonSpan"></span>
+            </li> 
+            <li>
+              <span class="skeletonSpan"></span>
+            </li>
+            <li>
+              <span class="skeletonSpan"></span>
+            </li>
+            <li>
+              <span class="skeletonSpan"></span>
+            </li>
+          </ul>
+        </div>
       </section>
     </section>
 
@@ -958,9 +938,9 @@ export default class extends Vue {
   @GeneratorAction uploadIcon;
   @GeneratorAction generateMissingImages;
   @GeneratorAction updateManifest;
+  @GeneratorAction updateLinkFromStorage;
+  @GeneratorAction getManifestInformation;
 
-  // @PublishState status: boolean;
-  @PublishState status = true;
   @PublishState appXLink: string;
   @PublishState downloadDisabled: boolean;
 
@@ -1083,6 +1063,23 @@ export default class extends Vue {
       } else {
         this.teamsForm.shortDescription = this.manifest.description;
       }
+    }
+
+    if (!this.manifest) {
+      const currentURL = sessionStorage.getItem('currentURL');
+      if (currentURL) {
+        try {
+          this.updateLinkFromStorage(currentURL);
+          this.getManifestInformation();
+          this.enableDownloadButton();
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        this.disableDownloadButton();
+      }
+    } else {
+      this.enableDownloadButton();
     }
 
     this.$awa(overrideValues);
@@ -1429,6 +1426,65 @@ declare var awa: any;
 /* stylelint-disable */
 
 @import "~assets/scss/base/variables";
+
+#skeletonSpan {
+  width: 30em;
+  justify-content: center;
+
+  ul {
+    flex-grow: 2;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 42px;
+
+    li {
+      font-size: 14px;
+      font-weight: bold;
+      padding: 0.5em;
+      padding-left: 0;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 5px;
+      color: #3c3c3c span {
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 18px;
+        color: #3c3c3c;
+      }
+    }
+  }
+
+  .skeletonSpan {
+    background: linear-gradient(
+      to right,
+      rgba(140, 140, 140, 0.8),
+      rgba(140, 140, 140, 0.18),
+      rgba(140, 140, 140, 0.33)
+    );
+    background-size: 800px 104px;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: shimmer;
+    animation-timing-function: linear;
+    height: 1em;
+    width: 100%;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -468px 0;
+    }
+
+    100% {
+      background-position: 468px 0;
+    }
+  }
+}
 
 #devicePreviews {
   height: 504px;
@@ -1963,7 +2019,6 @@ footer a {
 
 .androidDownloadButton #colorSpinner {
   margin-top: 4px;
-  margin-left: 4px;
 }
 
 .androidDownloadButton.webviewButton {
@@ -2186,7 +2241,6 @@ footer a {
 .platModalDownloadButton #colorSpinner {
   height: 32px;
   margin-top: 4px !important;
-  margin-left: 4px;
 }
 
 .platModalDownloadButton.webviewButton {
