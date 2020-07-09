@@ -1,12 +1,6 @@
-/*
-Code below originally from the Bubblewrap project https://github.com/GoogleChromeLabs/bubblewrap/blob/master/packages/core/src/lib/util.ts
-I'ts 
-*/
-
 import { AndroidApkOptions, AndroidSigningOptions } from "~/store/modules/publish";
 
 const DISALLOWED_ANDROID_PACKAGE_CHARS_REGEX = /[^a-zA-Z0-9_]/g;
-
 export function generatePackageId(host: string): string {
   const parts = host
     .split(".")
