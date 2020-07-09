@@ -8,7 +8,7 @@ input {
   $font-size: 18px;
   color: #3c3c3c;
 
-  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+  font-family: $font-family-l3;
   font-size: $font-size;
   height: 100%;
   width: 100%;
@@ -1336,3 +1336,76 @@ a {
     transition: transform 0.12s ease-out; }
   .has-tilt:active > * {
     transform: perspective(400px) translateZ(var(--tilt-offset-z)) rotateY(var(--tilt-rotation-y)) rotateX(var(--tilt-rotation-x)); }
+
+/* Forms */
+form {
+  font-family: $font-family-l3;
+  
+  .form-group {
+      margin-bottom: 1rem;
+
+      label {
+          display: inline-block;
+      }
+
+      .form-control {
+          display: block;
+          width: 100%;
+          height: calc(1.5em + .75rem + 2px);
+          padding: .375rem .75rem;
+          font-size: 1rem;
+          font-weight:  400;
+          line-height: 1.5;
+          color: $color-brand-tertiary;
+          background-color: #fff;
+          background-clip: padding-box;
+          border: 1px solid #ced4da;
+          border-radius: .25rem;
+          transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+      }
+
+      .form-text {
+          display: block;
+          margin-top: .25rem;
+      }
+
+      .form-check {
+        position: relative;
+        display: block;
+        padding-left: 2rem;
+      }
+      
+      .form-check-input {
+        position: absolute;
+        margin-top: -3px;
+        margin-left: -1.25rem;
+        width: 13px;
+        height: 30px;
+      }
+      
+      .form-check-input[disabled] ~ .form-check-label,
+      .form-check-input:disabled ~ .form-check-label {
+        color: #6c757d;
+      }
+      
+      .form-check-label {
+        margin-bottom: 0;
+      }
+      
+      .form-check-inline {
+        display: -ms-inline-flexbox;
+        display: inline-flex;
+        -ms-flex-align: center;
+        align-items: center;
+        padding-left: 0;
+        margin-right: 0.75rem;
+      }
+      
+      .form-check-inline .form-check-input {
+        position: static;
+        margin-top: 0;
+        margin-right: 0.3125rem;
+        margin-left: 0;
+      }
+  }
+}
