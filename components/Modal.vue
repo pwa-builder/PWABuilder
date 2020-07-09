@@ -191,6 +191,14 @@ export default class extends Vue {
     padding-right: 60px;
   }
 
+  /* On smaller screens, reduce the padding on modals */
+@media(max-width: $media-screen-m) {
+  .modal-body {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
   .modal-title {
     font-size: 32px;
     margin: 0;
@@ -256,6 +264,7 @@ export default class extends Vue {
   .modal-box {
     background: white;
     width: 70%;
+    border-radius: 12px;
   }
 
   #titleBox {

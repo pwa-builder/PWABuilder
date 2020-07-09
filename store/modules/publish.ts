@@ -1,5 +1,6 @@
 import { ActionTree, MutationTree, GetterTree, ActionContext } from 'vuex';
 import { RootState } from 'store';
+import { ShortcutItem } from './generator';
 
 const apiUrl = `${process.env.apiUrl}/manifests`;
 const platforms = {
@@ -37,8 +38,51 @@ export interface AppxParams {
     version: string | null;
 }
 
-export interface AndroidParams {
-    package_name: string | null;
+/**
+ * Settings for the Android APK generation. This is the raw data passed to the CloudApk service.
+ * It should match the CloudApk service's ApkSettings interface: https://github.com/pwa-builder/CloudAPK/blob/master/build/apkOptions.ts
+ */
+export interface AndroidApkOptions {
+    packageId: string;
+    name: string;
+    launcherName: string;
+    appVersion: string;
+    appVersionCode: number;
+    display: "standalone" | "fullscreen";
+    host: string;
+    startUrl: string;
+    webManifestUrl: string;
+    themeColor: string;
+    navigationColor: string;
+    backgroundColor: string;
+    iconUrl: string;
+    maskableIconUrl: string | null;
+    monochromeIconUrl: string | null;
+    shortcuts: ShortcutItem[];
+    signingMode: "new" | "none" | "mine";
+    signing: AndroidSigningOptions | null;
+    fallbackType: "customtabs" | "webview";
+    splashScreenFadeOutDuration: number;
+    enableNotifications: boolean;
+}
+
+/**
+ * Signing options for Android APK generation. This is sent to the Cloud APK service as part of AndroidApkOptions.
+ * It should generally match the CloudApk service's SigningOptions interface: https://github.com/pwa-builder/CloudAPK/blob/master/build/signingOptions.ts
+ */
+export interface AndroidSigningOptions {
+    /**
+     * The base64 encoded contents of the Android .keystore file.
+     * This can be null when signing mode is "none" or "new".
+     */
+    file: string | null;
+    alias: string;
+    fullName: string;
+    organization: string;
+    organizationalUnit: string;
+    countryCode: string;
+    keyPassword: string;
+    storePassword: string;
 }
 
 export interface TeamsParams {
