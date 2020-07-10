@@ -454,7 +454,7 @@ export default class extends Vue {
   }
 
   public async getTopSamples() {
-    const resp = await fetch('/static/data/featured.json');
+    const resp = await fetch('/data/featured.json');
     const top = await resp.json();
 
     this.topSamples = top;

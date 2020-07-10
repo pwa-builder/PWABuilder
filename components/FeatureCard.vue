@@ -9,9 +9,9 @@
     <p v-bind:class="{textWrap: wrapText}">{{ sample.desc }}</p>
 
     <div v-if="showAddButton" class="featureCardActionsBlock">
-      <nuxt-link class="featureCardAddButton" v-bind:to="`https://components.pwabuilder.com/component/${sample.ID}`">
+      <a class="featureCardAddButton" :href="`https://components.pwabuilder.com/component/${sample.ID}`">
         View Feature
-      </nuxt-link>
+      </a>
     </div>
   </div>
 </template>
