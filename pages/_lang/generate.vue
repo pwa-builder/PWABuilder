@@ -451,16 +451,21 @@
         v-on:modalSubmit="onSubmitIconModal"
         v-on:cancel="onCancelIconModal"
       >
-        <section>
-          <div class="custom-file-upload">
-            <input id="modal-file" @change="onFileIconChange" class="custom-file-input" type="file">
-            <label class="custom-file-label l-generator-input l-generator-input--fake is-disabled">
+        <section id="imageModalSection">
+          <div class="l-generator-box image-upload">
+            <span class="l-generator-label">
+              {{
+              $t('generate.upload_image')
+              }}
+            </span>
+            <label class="l-generator-input l-generator-input--fake is-disabled" for="modal-file">
               {{
               iconFile && iconFile.name
               ? iconFile.name
               : $t('generate.choose_file')
               }}
             </label>
+            <input id="modal-file" @change="onFileIconChange" class="l-hidden" type="file" />
           </div>
 
           <div class="l-generator-field">

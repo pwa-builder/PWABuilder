@@ -111,7 +111,7 @@ export default class extends Vue {
     }
     
     this.isReady = false;
-    const generateApkUrl = `${process.env.androidPackageGenerator}/generateApkZip`;
+    const generateApkUrl = `${process.env.androidPackageGeneratorUrl}/generateApkZip`;
     try {
       const response = await fetch(generateApkUrl, {
         method: "POST",
