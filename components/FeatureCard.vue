@@ -1,15 +1,15 @@
 <template>
   <div v-if="sample" class="card">
     <div class="featureCardTitleBlock">
-      <h4>{{sample.title}}</h4>
+      <h4>{{sample.name}}</h4>
 
       <slot name="iconSlot"></slot>
     </div>
 
-    <p v-bind:class="{textWrap: wrapText}">{{ sample.description }}</p>
+    <p v-bind:class="{textWrap: wrapText}">{{ sample.desc }}</p>
 
     <div v-if="showAddButton" class="featureCardActionsBlock">
-      <nuxt-link class="featureCardAddButton" v-bind:to="`/feature/${sample.title}`">
+      <nuxt-link class="featureCardAddButton" v-bind:to="`https://components.pwabuilder.com/component/${sample.ID}`">
         View Feature
       </nuxt-link>
     </div>
