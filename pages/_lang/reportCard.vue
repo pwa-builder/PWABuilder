@@ -78,17 +78,16 @@
                 <i class="fas fa-chevron-down"></i>
 
                 <div v-if="openDrop" id="starterDropdown">
-                <button id="starterDownloadButton" @click="downloadStarter">
-                  <i class="fas fa-arrow-down"></i>
-                  Download
-                </button>
-                <button @click="cloneStarter">
-                  <i class="fab fa-github"></i>
-                  Clone from Github
-                </button>
-              </div>
+                  <button id="starterDownloadButton" @click="downloadStarter">
+                    <i class="fas fa-arrow-down"></i>
+                    Download
+                  </button>
+                  <button @click="cloneStarter">
+                    <i class="fab fa-github"></i>
+                    Clone from Github
+                  </button>
+                </div>
               </button>
-
             </div>
           </div>
         </div>
@@ -455,10 +454,10 @@ export default class extends Vue {
   }
 
   public async getTopSamples() {
-    await this.getSamples();
-    const cleanedSamples = this.samples.slice(0, 4);
+    const resp = await fetch('/data/featured.json');
+    const top = await resp.json();
 
-    this.topSamples = cleanedSamples;
+    this.topSamples = top;
   }
 
   public securityTestDone(ev) {
@@ -521,7 +520,8 @@ declare var awa: any;
   box-shadow: 0 0 4px 1px #0000002e;
 }
 
-#starterActions .fa, #starterActions .fas {
+#starterActions .fa,
+#starterActions .fas {
   margin-right: 4px;
 }
 
