@@ -125,6 +125,10 @@ module.exports = {
         type: 'module'
       },
       {
+        src: 'androidInstall.js',
+        type: 'module'
+      },
+      {
         src: '/platformPop.js',
         type: 'module'
       },
