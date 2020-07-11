@@ -16,7 +16,7 @@
     </div>
 
     <div v-if="gotURL" id="reportShareButtonContainer">
-      <button @click="shareReport">
+      <button @click="shareReport" id="shareResults">
         <i class="fas fa-share-alt"></i>
         Share your Results
       </button>
@@ -635,6 +635,10 @@ declare var awa: any;
   padding-right: 1.4em;
   animation-name: fadein;
   animation-duration: 0.3s;
+}
+
+#shareResults:focus{
+  outline: auto;
 }
 
 @keyframes fadein {
