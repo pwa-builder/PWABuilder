@@ -450,7 +450,7 @@
         <div
           class="brkManifestError"
           v-if="brokenManifest"
-        >Couldn't find an <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest">app manifest</a></div>
+        >Couldn't find an <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest" tabindex="-1">app manifest</a></div>
       </nuxt-link>
 
       <div
