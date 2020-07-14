@@ -719,7 +719,8 @@
         </div>
 
         <div id="androidInstallWrapper" v-if="apkDownloaded">
-          <android-install></android-install>
+          <button class="androidDownloadButton" @click="connectDevice()">Connect to Device</button>
+          <button :disabled="!connected" class="androidInstallButton" @click="installAPK()">Install APK</button>
         </div>
 
         <div id="extraSection">
@@ -1262,6 +1263,10 @@ export default class extends Vue {
 
   private readonly maxKeyFileSizeInBytes = 2097152; // 2MB. Typically, Android keystore files are ~3KB.
 
+  private webadb: any;
+  private connected: boolean = false;
+  private apk: Blob;
+
   public created(): void {
     this.updateStatus();
     this.androidForm = this.createAndroidParamsFromManifest();
@@ -1271,7 +1276,74 @@ export default class extends Vue {
     console.log(event);
     this.apkDownloaded = true;
 
-    // (this.$el.querySelector('android-install') as any).apk = event.detail;
+    this.apk = event.detail;
+
+    /*setTimeout(() => {
+      const androidInstall = (this.$el.querySelector('android-install') as any);
+      console.log(androidInstall);
+
+      if (androidInstall) {
+        androidInstall.apk = event.detail;
+      }
+    }, 300)*/
+  }
+
+  async connectDevice() {
+    // await import('./webadb.js');
+
+    try {
+      let webusb = await (window as any).Adb.open("WebUSB");
+      let adb = await webusb.connectAdb("host::");
+
+      this.webadb = adb;
+
+      console.log(this.webadb);
+
+      this.connected = true;
+      console.log(this.connected);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async installAPK() {
+    if (this.webadb) {
+      let sync = await this.webadb.sync();
+
+      let start_time = Date.now();
+      console.log(start_time);
+
+      console.log(this.apk);
+
+      await sync.push(
+        this.apk,
+        `/data/local/tmp/pwabuilder`,
+        "0644",
+        async (done, total) => {
+          console.log(done);
+          console.log(total);
+        }
+      );
+
+      await sync.quit();
+
+      let shell = await this.webadb.shell(
+        `pm install -r /data/local/tmp/pwabuilder`
+      );
+      let r = await shell.receive();
+
+      let decoder = new TextDecoder();
+
+      while (r.cmd == "WRTE") {
+        if (r.data != null) {
+          // Log the data decoder.decode(r.data)
+          console.log(decoder.decode(r.data));
+        }
+
+        shell.send("OKAY");
+        r = await shell.receive();
+      }
+    }
   }
 
   createAndroidParamsFromManifest(): publish.AndroidApkOptions {

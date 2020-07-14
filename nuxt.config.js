@@ -125,8 +125,7 @@ module.exports = {
         type: 'module'
       },
       {
-        src: 'androidInstall.js',
-        type: 'module'
+        src: 'webadb.js'
       },
       {
         src: '/platformPop.js',
