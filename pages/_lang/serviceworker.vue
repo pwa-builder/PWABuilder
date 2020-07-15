@@ -7,16 +7,60 @@
         <header class="mastHead">
           <h2>{{ $t("serviceworker.title") }}</h2>
           <p>{{ $t("serviceworker.summary") }}</p>
+
+          <button id="pushLink" @click="openPushModal()">
+            <img src="/Images/test.png" />
+            Add support for push notifications
+          </button>
+
+          <div v-if="openModal" id="pushModal">
+            <div id="pushModalBackground"></div>
+
+            <div id="pushModalContent">
+              <div id="pushModalContentHeader">
+                <h3>Setup Push Notifications</h3>
+                <p id="pushHeaderP">Is this a new or existing setup?</p>
+              </div>
+
+              <div id="pushModalContentOptions">
+                <nuxt-link to="/push" aria-labelledby="createPushSetup">
+                  <img src="/Images/newSetup.png" />
+
+                  <div>
+                    <h4 id="createPushSetup">Create a New Setup</h4>
+                    <p>Create a new push notification setup</p>
+                  </div>
+                </nuxt-link>
+
+                <nuxt-link to="/test" aria-labelledby="testPushSetup">
+                  <img src="/Images/pushTest.png" />
+
+                  <div>
+                    <h4 id="testPushSetup">Test Push Notifications</h4>
+                    <p>Already setup push notifications? Test them out here</p>
+                  </div>
+                </nuxt-link>
+              </div>
+
+              <div id="pushModalCancelWrapper">
+                <button id="pushModalCancel" @click="closePushModal()">Cancel</button>
+              </div>
+            </div>
+          </div>
         </header>
 
         <div id="inputSection">
-          <form @submit.prevent="download" @keydown.enter.prevent="download">
+          <form @submit.prevent="download" @keydown.enter.prevent="download" role="radiogroup">
             <div
               class="inputContainer"
               v-for="sw in serviceworkers"
               :key="sw.title"
               @click="selectServiceWorker(sw.id)"
               v-bind:class="{ active: serviceworker$ === sw.id }"
+              :aria-labelledby="'serviceWorkerOption' + sw.id"
+              :aria-checked="serviceworker$ === sw.id"
+              role="radio"
+              tabindex="0"
             >
               <label class="l-generator-label" :for="sw.id">
                 <div class="inputDiv">
@@ -29,7 +73,7 @@
                   >-->
 
                   <div class="titleBox">
-                    <h4>{{ sw.title }}</h4>
+                    <h4 :id="'serviceWorkerOption' + sw.id">{{ sw.title }}</h4>
 
                     <!--<i v-pre v-if="serviceworker$ === sw.id" class="fas fa-check"></i>-->
                   </div>
@@ -52,7 +96,12 @@
           <button @click="download()" id="downloadSWButton">
             <span v-if="!isBuilding">{{ $t('serviceworker.download') }}</span>
             <span v-if="isBuilding">
-              <Loading :active="true" class="u-display-inline_block u-margin-left-sm" />
+              <Loading
+                :active="true"
+                &#x26;#x26;#x26;#x26;#x26;#x26;#x26;#x26;#x26;#x3C;Loading
+                class="u-display-inline_block u-margin-left-sm"
+                aria-label="loading"
+              />
             </span>
           </button>
         </div>
@@ -88,7 +137,9 @@
           :showHeader="true"
           monaco-id="topViewerId"
         >
-          <h3>Add this code to your landing page in a &lt;script&gt; tag:</h3>
+          <h3>
+            <h3>Add this code to your landing page in a &lt;script&gt; tag:</h3>
+          </h3>
         </CodeViewer>
       </section>
     </main>
@@ -274,7 +325,7 @@ Vue.prototype.$awa = function(config) {
   if (awa) {
     awa.ct.capturePageView(config);
   }
-  
+
   return;
 };
 </script>
@@ -306,6 +357,173 @@ footer p {
 footer a {
   color: #707070;
   text-decoration: underline;
+}
+
+#swHeader {
+  margin-bottom: 40px;
+}
+
+#pushLink {
+  color: #9337d8;
+  font-weight: bold;
+  font-size: 12px;
+  line-height: 28px;
+
+  display: flex;
+  align-items: center;
+
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+#pushLink img {
+  margin-right: 16px;
+  height: 40px;
+}
+
+#pushModal {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#pushModalBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(51, 58, 83, 0.61);
+  backdrop-filter: blur(59px);
+  z-index: 1;
+
+  animation-name: fadein;
+  animation-duration: 300ms;
+}
+
+#pushModalContent {
+  background: #ffffff;
+  box-shadow: 0px 25px 26px rgba(32, 36, 50, 0.25),
+    0px 5px 9px rgba(51, 58, 83, 0.53);
+  border-radius: 10px;
+
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-bottom: 22px;
+  padding-top: 24px;
+
+  z-index: 2;
+
+  animation-name: fadein;
+  animation-duration: 300ms;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+#pushModalContentHeader h3 {
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 36px;
+  letter-spacing: -0.02em;
+  color: #3c3c3c;
+}
+
+#pushModalContent #pushModalContentHeader #pushHeaderP {
+  color: #3c3c3c;
+  font-size: 16px;
+  line-height: 22px;
+  margin-top: 8px;
+  margin-bottom: 18px;
+}
+
+#pushModalContentOptions {
+  display: flex;
+  flex-direction: column;
+}
+
+#pushModalContentOptions a {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+  margin-right: 126px;
+  max-width: 350px;
+  margin-bottom: 29px;
+}
+
+#pushModalContentOptions a h4 {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 22px;
+  color: #9337d8;
+}
+
+#pushModalContentOptions a p {
+  color: #3c3c3c;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+#pushModalContentOptions a h4,
+#pushModalContentOptions a p {
+  margin-bottom: 0;
+  margin-top: 0 !important;
+}
+
+#pushModalContentOptions a img {
+  margin-right: 17px;
+}
+
+@media (max-width: 430px) {
+  #pushModalContent {
+    margin-left: 3em;
+    margin-right: 3em;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  #pushModalContentOptions a {
+    margin-right: 18px;
+  }
+
+  #pushModalContentHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+#pushModalCancelWrapper {
+  display: flex;
+  justify-content: center;
+}
+
+#pushModalCancelWrapper button {
+  background: none;
+  color: #3c3c3c;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  opacity: 0.6;
+}
+
+#pushModalCancel {
+  border: none;
 }
 
 #sideBySide {
