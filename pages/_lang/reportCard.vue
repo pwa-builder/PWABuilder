@@ -64,7 +64,7 @@
           </div>-->
 
           <div id="starterSection">
-            <h2>...Or, dont even have a website yet?</h2>
+            <h2>...Or, don't even have a website yet?</h2>
             <p>
               Get started from scratch with our
               <a
