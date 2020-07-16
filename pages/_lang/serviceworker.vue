@@ -98,7 +98,6 @@
             <span v-if="isBuilding">
               <Loading
                 :active="true"
-                &#x26;#x26;#x26;#x26;#x26;#x26;#x26;#x26;#x26;#x26;#x3C;Loading
                 class="u-display-inline_block u-margin-left-sm"
                 aria-label="loading"
               />
