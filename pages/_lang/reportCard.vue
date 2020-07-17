@@ -73,33 +73,41 @@
             </p>
 
             <div id="starterActions">
-              <button
-                @click="starterDrop"
-                id="mainStartButton"
-                type="button"
-                role="menuitem"
-                aria-haspop="true"
-                aria-expanded="false"
-              >
-                Get Started!
-                <i class="fas fa-chevron-down" aria-hidden="true"></i>
-
-                <div v-if="openDrop" id="starterDropdown" aria-live="polite" role="menubar">
+              <div class="dropdown dropdown-menu">
+                <button
+                  @click="starterDrop"
+                  id="mainStartButton"
+                  type="button"
+                  aria-controls="starterDropdown"
+                  aria-haspop="true"
+                  aria-expanded="false"
+                >
+                  Get Started!
+                  <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                </button>
+                <div
+                  v-if="openDrop"
+                  id="starterDropdown"
+                  aria-live="polite"
+                  aria-labelledby="mainStartButton"
+                  role="menu"
+                  tabindex="-1"
+                >
                   <button
                     id="starterDownloadButton"
                     @click="downloadStarter"
                     type="button"
                     role="menuitem"
                   >
-                    <i class="fas fa-arrow-down"></i>
+                    <i class="fas fa-arrow-down" aria-hidden="true"></i>
                     Download
                   </button>
                   <button @click="cloneStarter" type="button" role="menuitem">
-                    <i class="fab fa-github"></i>
+                    <i class="fab fa-github" aria-hidden="true"></i>
                     Clone from Github
                   </button>
                 </div>
-              </button>
+              </div>
             </div>
           </div>
         </div>
@@ -524,7 +532,7 @@ declare var awa: any;
   border-radius: 6px;
   margin-top: 0;
   width: 14em;
-  margin-left: 1.8em;
+  margin-left: 1.6em;
 
   animation-name: slidedown;
   animation-duration: 200ms;
