@@ -719,8 +719,29 @@
         </div>
 
         <div id="androidInstallWrapper" v-if="apkDownloaded">
-          <button class="androidDownloadButton" @click="connectDevice()">Connect to Device</button>
-          <button :disabled="!connected" class="androidInstallButton" @click="installAPK()">Install APK</button>
+          <p>Quickly install your APK to your device for testing! All you need to do is plug in your device via a USB cord.</p>
+
+          <div id="androidInstallActions">
+            <button class="androidDownloadButton" @click="connectDevice()">Connect to Device</button>
+            <button
+              :disabled="!connected"
+              class="androidInstallButton"
+              @click="installAPK()"
+            >
+            <span v-if="!installing">Install APK</span>
+
+              <div v-if="installing">
+                <div id="installSpinner" v-if="!isReady">
+                  <div class="flavor">
+                    <div class="colorbands"></div>
+                  </div>
+                  <div class="icon">
+                    <div class="lds-dual-ring"></div>
+                  </div>
+                </div>
+              </div>
+            </button>
+          </div>
         </div>
 
         <div id="extraSection">
@@ -1266,6 +1287,7 @@ export default class extends Vue {
   private webadb: any;
   private connected: boolean = false;
   private apk: Blob;
+  installing: boolean = false;
 
   public created(): void {
     this.updateStatus();
@@ -1273,24 +1295,13 @@ export default class extends Vue {
   }
 
   showInstall(event) {
-    console.log(event);
-    this.apkDownloaded = true;
-
-    this.apk = event.detail;
-
-    /*setTimeout(() => {
-      const androidInstall = (this.$el.querySelector('android-install') as any);
-      console.log(androidInstall);
-
-      if (androidInstall) {
-        androidInstall.apk = event.detail;
-      }
-    }, 300)*/
+    if ((navigator as any).usb) {
+      this.apkDownloaded = true;
+      this.apk = event.detail;
+    }
   }
 
   async connectDevice() {
-    // await import('./webadb.js');
-
     try {
       let webusb = await (window as any).Adb.open("WebUSB");
       let adb = await webusb.connectAdb("host::");
@@ -1303,45 +1314,51 @@ export default class extends Vue {
       console.log(this.connected);
     } catch (err) {
       console.error(err);
+
+      this.androidPWAError = err;
     }
   }
 
   async installAPK() {
     if (this.webadb) {
-      let sync = await this.webadb.sync();
+      try {
+        this.installing = true;
 
-      let start_time = Date.now();
-      console.log(start_time);
+        let sync = await this.webadb.sync();
 
-      console.log(this.apk);
+        await sync.push(
+          this.apk,
+          `/data/local/tmp/pwabuilder`,
+          "0644",
+          async (done, total) => {
+            console.log(done);
+            console.log(total);
+          }
+        );
 
-      await sync.push(
-        this.apk,
-        `/data/local/tmp/pwabuilder`,
-        "0644",
-        async (done, total) => {
-          console.log(done);
-          console.log(total);
+        await sync.quit();
+
+        let shell = await this.webadb.shell(
+          `pm install -r /data/local/tmp/pwabuilder`
+        );
+        let r = await shell.receive();
+
+        let decoder = new TextDecoder();
+
+        while (r.cmd == "WRTE") {
+          if (r.data != null) {
+            // Log the data decoder.decode(r.data)
+            console.log(decoder.decode(r.data));
+          }
+
+          shell.send("OKAY");
+          r = await shell.receive();
         }
-      );
 
-      await sync.quit();
-
-      let shell = await this.webadb.shell(
-        `pm install -r /data/local/tmp/pwabuilder`
-      );
-      let r = await shell.receive();
-
-      let decoder = new TextDecoder();
-
-      while (r.cmd == "WRTE") {
-        if (r.data != null) {
-          // Log the data decoder.decode(r.data)
-          console.log(decoder.decode(r.data));
-        }
-
-        shell.send("OKAY");
-        r = await shell.receive();
+        this.installing = false;
+      } catch (err) {
+        this.androidPWAError = err;
+        this.installing = false;
       }
     }
   }
@@ -1850,14 +1867,134 @@ declare var awa: any;
 
 #androidInstallWrapper {
   padding: 10px;
-  border: solid 1px #9337d8;
+  border: solid 1px #3c3c3c;
   border-radius: 10px;
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   text-align: center;
   padding-bottom: 24px;
+  flex-direction: column;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+#androidInstallWrapper p {
+  color: #3c3c3c;
+  display: block;
+  margin-bottom: 2em;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 21px;
+}
+
+#androidInstallActions {
+  display: flex;
+}
+
+.androidInstallButton {
+  background: #3c3c3c;
+  color: white;
+  font-size: 14px;
+  border-radius: 20px;
+  width: 150px;
+  height: 40px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  margin-left: 12px;
+  border: none;
+}
+
+.androidInstallButton:disabled {
+  background: #8a8a8a;
+}
+
+#installSpinner {
+  margin-top: -1px !important;
+  height: 32px;
+  display: inline-block;
+  padding-top: 4px;
+}
+
+@-moz-document url-prefix() {
+  #installSpinner {
+    margin-top: 38px !important;
+    margin-left: 10px !important;
+  }
+}
+
+.flavor {
+  width: 32px;
+  height: 32px;
+  border-radius: 40px;
+  overflow: hidden;
+}
+
+.flavor > .colorbands {
+  position: relative;
+  top: 0%;
+  left: -20%;
+
+  width: 140%;
+  height: 800%;
+
+  background-image: linear-gradient(
+    0deg,
+    #1fc2c8 25%,
+    #9337d8 50%,
+    #9337d8 75%,
+    #1fc2c8 100%
+  );
+  background-position: 0px 0px;
+  background-repeat: repeat-y;
+
+  animation: colorbands 100s linear infinite;
+  transform: rotate(180deg);
+}
+
+@keyframes colorbands {
+  to {
+    background-position: 0 -1000vh;
+  }
+}
+
+.icon {
+  position: relative;
+  color: white;
+  top: -25px;
+  left: 7px;
+
+  .lds-dual-ring {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+  }
+
+  .lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 16px;
+    height: 16px;
+    margin: 1px;
+    border-radius: 50%;
+    border: 5px solid #fff;
+    border-color: #fff transparent #fff transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+  }
+
+  @keyframes lds-dual-ring {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
 }
 
 #skeletonSpan {
@@ -2449,7 +2586,7 @@ footer a {
   border: none;
 }
 
-.androidDownloadButton #colorSpinner {
+.androidDownloadButton #installSpinner {
   margin-top: 4px;
 }
 
@@ -2670,7 +2807,7 @@ footer a {
   border: none;
 }
 
-.platModalDownloadButton #colorSpinner {
+.platModalDownloadButton #installSpinner {
   height: 32px;
   margin-top: 4px !important;
 }
