@@ -4,21 +4,22 @@
       <slot></slot>
 
       <button v-if="showCopyButton" @click="copy()" class="copyButton">
-        <i class="fas fa-copy platformIcon"></i>
+        <i class="fas fa-copy platformIcon" aria-hidden="true"></i>
         Copy
       </button>
     </div>
     <div v-if="textCopied" id="copyToast">Code Copied</div>
     <div :id="`${monacoId}`">
-      <MonacoEditor :options="monacoOptions" class="code_viewer-pre"
+      <MonacoEditor
+        :options="monacoOptions"
+        class="code_viewer-pre"
         @change="onCodeChange"
         @modelDecorations="onDecorationsChange"
         @editorDidMount="editorMount"
         :theme="`${theme}Theme`"
         :language="codeType"
         v-model="data$"
-        >
-      </MonacoEditor>
+      ></MonacoEditor>
     </div>
     <div v-if="showOverlay" id="errorOverlay">
       <h2>Errors</h2>
