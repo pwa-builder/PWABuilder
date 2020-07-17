@@ -42,7 +42,6 @@ html {
 
 button {
   cursor: pointer;
-  outline: none;
   transition: box-shadow 0.3s;
 }
 
@@ -114,7 +113,7 @@ a {
     z-index: 100;
     left:0;
     right: 0;
-    
+
   }
 }
 
@@ -1340,7 +1339,7 @@ a {
 /* Forms */
 form {
   font-family: $font-family-l3;
-  
+
   .form-group {
       margin-bottom: 1rem;
 
@@ -1374,7 +1373,7 @@ form {
         display: block;
         padding-left: 2rem;
       }
-      
+
       .form-check-input {
         position: absolute;
         margin-top: -3px;
@@ -1382,16 +1381,16 @@ form {
         width: 13px;
         height: 30px;
       }
-      
+
       .form-check-input[disabled] ~ .form-check-label,
       .form-check-input:disabled ~ .form-check-label {
         color: #6c757d;
       }
-      
+
       .form-check-label {
         margin-bottom: 0;
       }
-      
+
       .form-check-inline {
         display: -ms-inline-flexbox;
         display: inline-flex;
@@ -1400,7 +1399,7 @@ form {
         padding-left: 0;
         margin-right: 0.75rem;
       }
-      
+
       .form-check-inline .form-check-input {
         position: static;
         margin-top: 0;
