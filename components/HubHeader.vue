@@ -1,6 +1,6 @@
 <template>
   <div>
-    <header :class="{ 'smaller-header': !expanded }">
+    <header :class="{ 'smaller-header': !expanded }" role="presentation">
       <img
         id="logo"
         src="~/assets/images/new-logo.svg"
