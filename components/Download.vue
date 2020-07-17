@@ -123,6 +123,11 @@ export default class extends Vue {
         const data = await response.blob();
         const url = window.URL.createObjectURL(data);
         window.location.assign(url);
+
+        this.$emit('apkDownloaded', {
+          detail: data
+        })
+
       } else {
         const responseText = await response.text();
         this.errorMessage = `Status code: ${response.status}, Error: ${response.statusText}, Details: ${responseText}`;
