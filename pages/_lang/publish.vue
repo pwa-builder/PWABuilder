@@ -502,18 +502,7 @@
               <div class="form-group">
                 <label>Signing key</label>
                 <div class="form-check">
-<<<<<<< Updated upstream
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="signingInput"
-                    id="generateSigningKeyInput"
-                    value="new"
-                    v-model="androidForm.signingMode"
-                  />
-=======
                   <input class="form-check-input" type="radio" name="signingInput" id="generateSigningKeyInput" value="new" v-model="androidForm.signingMode" @change="androidSigningModeChanged">
->>>>>>> Stashed changes
                   <label class="form-check-label" for="generateSigningKeyInput">
                     Create new
                     <i
@@ -525,18 +514,7 @@
                   </label>
                 </div>
                 <div class="form-check">
-<<<<<<< Updated upstream
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="signingInput"
-                    id="unsignedInput"
-                    value="none"
-                    v-model="androidForm.signingMode"
-                  />
-=======
                   <input class="form-check-input" type="radio" name="signingInput" id="unsignedInput" value="none" v-model="androidForm.signingMode" @change="androidSigningModeChanged">
->>>>>>> Stashed changes
                   <label class="form-check-label" for="unsignedInput">
                     None
                     <i
@@ -548,18 +526,7 @@
                   </label>
                 </div>
                 <div class="form-check">
-<<<<<<< Updated upstream
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="signingInput"
-                    id="useMySigningInput"
-                    value="mine"
-                    v-model="androidForm.signingMode"
-                  />
-=======
                   <input class="form-check-input" type="radio" name="signingInput" id="useMySigningInput" value="mine" v-model="androidForm.signingMode" @change="androidSigningModeChanged">
->>>>>>> Stashed changes
                   <label class="form-check-label" for="useMySigningInput">
                     Use mine
                     <i
@@ -659,32 +626,12 @@
 
                 <div class="form-group">
                   <label for="signingKeyPasswordInput">Key password</label>
-<<<<<<< Updated upstream
-                  <input
-                    type="password"
-                    class="form-control"
-                    id="signingKeyPasswordInput"
-                    required
-                    v-model="androidForm.signing.keyPassword"
-                  />
-=======
                   <input type="password" class="form-control" id="signingKeyPasswordInput" v-model="androidForm.signing.keyPassword" :placeholder="androidPasswordPlaceholder" />
->>>>>>> Stashed changes
                 </div>
 
                 <div class="form-group">
                   <label for="signingKeyStorePasswordInput">Key store password</label>
-<<<<<<< Updated upstream
-                  <input
-                    type="password"
-                    class="form-control"
-                    id="signingKeyStorePasswordInput"
-                    required
-                    v-model="androidForm.signing.storePassword"
-                  />
-=======
                   <input type="password" class="form-control" id="signingKeyStorePasswordInput" v-model="androidForm.signing.storePassword" :placeholder="androidPasswordPlaceholder" />
->>>>>>> Stashed changes
                 </div>
               </div>
             </div>
