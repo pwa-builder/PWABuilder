@@ -534,6 +534,11 @@ declare var awa: any;
   border: none;
 }
 
+#starterActions #mainStartButton:focus {
+  outline: auto;  
+  outline-color: black;
+}
+
 #gitCopyToast {
   position: absolute;
   bottom: 16px;
@@ -825,6 +830,10 @@ h2 {
       display: flex;
       align-items: center;
       text-align: center;
+    }
+
+    #getStartedButton:focus {
+      outline: auto;
     }
   }
 
