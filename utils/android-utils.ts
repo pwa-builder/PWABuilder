@@ -12,10 +12,10 @@ export function generatePackageId(host: string): string {
   return parts.join(".");
 }
 
-export function validateAndroidOptions(options: Partial<AndroidApkOptions | null>): { field: keyof AndroidApkOptions | null, error: string }[] { 
+export function validateAndroidOptions(options: Partial<AndroidApkOptions | null>): { field: keyof AndroidApkOptions | null, error: string }[] {
   const validationErrors: { field: keyof AndroidApkOptions | null, error: string }[] = [];
   if (!options) {
-    validationErrors.push({ field: null, error: "No options specified "});
+    validationErrors.push({ field: null, error: "No options specified " });
     return validationErrors;
   }
 
@@ -52,7 +52,7 @@ export function validateAndroidOptions(options: Partial<AndroidApkOptions | null
   }
 
   if (!options.host) {
-    validationErrors.push({ field: "host", error: "Host must be specified"});
+    validationErrors.push({ field: "host", error: "Host must be specified" });
   } else {
     const hostUrlError = validateUrl(options.host);
     if (hostUrlError) {
@@ -90,7 +90,7 @@ export function validateAndroidOptions(options: Partial<AndroidApkOptions | null
     }
   }
 
-  // monochrome icon is also option.
+  // monochrome icon is also optional.
   if (options.monochromeIconUrl) {
     const monochromeIconError = validateUrl(options.monochromeIconUrl, options.host);
     if (monochromeIconError) {
@@ -107,28 +107,35 @@ export function validateAndroidOptions(options: Partial<AndroidApkOptions | null
     if (!options.signing) {
       validationErrors.push({ field: "signing", error: "Signing information must be supplied." });
     } else {
-      // All the signing properties are required, except file.
+      // All the signing properties are required, except file, storePassword, and keyPassword.
       // File is required only signingMode === "mine"
+      // Store password and key password are required only if signingMode === "mine"; otherwise, they're optional and CloudAPK will generate a new password for you.
       const requiredSigningFields: Array<keyof AndroidSigningOptions> = [
-        "alias", "fullName", "organization", "organizationalUnit", "countryCode", "keyPassword", "storePassword"
+        "alias",
+        "fullName",
+        "organization",
+        "organizationalUnit",
+        "countryCode"
       ];
       if (options.signingMode === "mine") {
         requiredSigningFields.push("file");
+        requiredSigningFields.push("keyPassword");
+        requiredSigningFields.push("storePassword");
       }
+
       requiredSigningFields
         .filter(prop => !options.signing![prop])
         .forEach(prop => validationErrors.push({ field: "signing", error: `Signing key ${prop} must be specified` }));
 
-      if (!options.signing.countryCode) {
-        validationErrors.push({ field: "signing", error: "Signing key country code must be specified" });
-      } else if (options.signing.countryCode.length !== 2) {
-        validationErrors.push({ field: "signing", error: "Country Code must be 2 letters" });
+      // Ensure country code is 2 chars
+      if (options.signing.countryCode && options.signing.countryCode.length !== 2) {
+        validationErrors.push({ field: "signing", error: "Signing key country code must be 2 letters" });
       }
     }
   }
 
   if (options.splashScreenFadeOutDuration === null || options.splashScreenFadeOutDuration === undefined || options.splashScreenFadeOutDuration < 0) {
-    validationErrors.push({ field: "splashScreenFadeOutDuration", error: "Splash screen fade duration must be 0 or greater"})
+    validationErrors.push({ field: "splashScreenFadeOutDuration", error: "Splash screen fade duration must be 0 or greater" })
   }
 
   if (!options.startUrl) {
