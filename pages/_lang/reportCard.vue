@@ -73,22 +73,32 @@
             </p>
 
             <div id="starterActions">
-              <button @click="starterDrop" id="mainStartButton" 
-                type="button" role="menuitem" aria-haspop="true" aria-expanded="false"> 
+              <button
+                @click="starterDrop"
+                id="mainStartButton"
+                type="button"
+                role="menuitem"
+                aria-haspop="true"
+                aria-expanded="false"
+              >
                 Get Started!
-                <i class="fas fa-chevron-down"></i>
+                <i class="fas fa-chevron-down" aria-hidden="true"></i>
 
-                <div v-if="openDrop" id="starterDropdown" aria-live="polite">
-                <button id="starterDownloadButton" @click="downloadStarter" type="button">
-                  <i class="fas fa-arrow-down"></i>
-                  Download
-                </button>
-                <button @click="cloneStarter" type="button">
-                  <i class="fab fa-github"></i>
-                  Clone from Github
-                </button>
-              </div>
-              
+                <div v-if="openDrop" id="starterDropdown" aria-live="polite" role="menubar">
+                  <button
+                    id="starterDownloadButton"
+                    @click="downloadStarter"
+                    type="button"
+                    role="menuitem"
+                  >
+                    <i class="fas fa-arrow-down"></i>
+                    Download
+                  </button>
+                  <button @click="cloneStarter" type="button" role="menuitem">
+                    <i class="fab fa-github"></i>
+                    Clone from Github
+                  </button>
+                </div>
               </button>
             </div>
           </div>
@@ -456,7 +466,7 @@ export default class extends Vue {
   }
 
   public async getTopSamples() {
-    const resp = await fetch('/data/featured.json');
+    const resp = await fetch("/data/featured.json");
     const top = await resp.json();
 
     this.topSamples = top;
@@ -535,7 +545,7 @@ declare var awa: any;
 }
 
 #starterActions #mainStartButton:focus {
-  outline: auto;  
+  outline: auto;
   outline-color: black;
 }
 
@@ -642,7 +652,7 @@ declare var awa: any;
   animation-duration: 0.3s;
 }
 
-#shareResults:focus{
+#shareResults:focus {
   outline: auto;
 }
 
