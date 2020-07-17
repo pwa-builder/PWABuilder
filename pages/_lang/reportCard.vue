@@ -16,7 +16,7 @@
     </div>
 
     <div v-if="gotURL" id="reportShareButtonContainer">
-      <button @click="shareReport">
+      <button @click="shareReport" id="shareResults">
         <i class="fas fa-share-alt"></i>
         Share your Results
       </button>
@@ -64,7 +64,7 @@
           </div>-->
 
           <div id="starterSection">
-            <h2>...Or, dont even have a website yet?</h2>
+            <h2>...Or, don't even have a website yet?</h2>
             <p>
               Get started from scratch with our
               <a
@@ -534,6 +534,11 @@ declare var awa: any;
   border: none;
 }
 
+#starterActions #mainStartButton:focus {
+  outline: auto;  
+  outline-color: black;
+}
+
 #gitCopyToast {
   position: absolute;
   bottom: 16px;
@@ -635,6 +640,10 @@ declare var awa: any;
   padding-right: 1.4em;
   animation-name: fadein;
   animation-duration: 0.3s;
+}
+
+#shareResults:focus{
+  outline: auto;
 }
 
 @keyframes fadein {
@@ -825,6 +834,10 @@ h2 {
       display: flex;
       align-items: center;
       text-align: center;
+    }
+
+    #getStartedButton:focus {
+      outline: auto;
     }
   }
 
