@@ -447,7 +447,7 @@
         </button>
         <div class="brkManifestError" v-if="brokenManifest">
           Couldn't find an
-          <a
+          <a tabindex="-1"
             href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
           >app manifest</a>
         </div>
