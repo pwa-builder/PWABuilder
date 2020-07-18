@@ -17,7 +17,7 @@
 
     <div v-if="gotURL" id="reportShareButtonContainer">
       <button @click="shareReport" id="shareResults">
-        <i class="fas fa-share-alt"></i>
+        <i class="fas fa-share-alt" alt="share icon" aria-hidden="true"></i>
         Share your Results
       </button>
     </div>

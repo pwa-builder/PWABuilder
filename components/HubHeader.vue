@@ -59,16 +59,17 @@
 
       <div id="scoreZone">
         <div id="urlTested">
-          <img src="~/assets/images/score-icon.png" alt="score icon">
+          <img src="~/assets/images/score-icon.png" alt="score icon" aria-hidden="true" />
 
-          <a target="_blank" rel="noopener noreferrer" :href="url">
+          <a target="_blank" rel="noopener noreferrer" :href="url" aria-label="Url Tested">
             <span aria-hidden="true">
               URL Tested
               <i class="fas fa-external-link-alt"></i>
             </span>
-            <span aria-hidden="true" v-if="url">
-              {{url.replace('http://','').replace('https://','').split(/[/?#]/)[0]}}
-            </span>      
+            <span
+              aria-hidden="true"
+              v-if="url"
+            >{{url.replace('http://','').replace('https://','').split(/[/?#]/)[0]}}</span>
           </a>
         </div>
 
