@@ -337,7 +337,7 @@
 
           <span class="subScoreSpan" v-if="!serviceWorkerData && !serviceWorkerData.scope">0</span>
         </li>
-        <li v-bind:class="{ good: serviceWorkerData.pushReg }">
+        <!-- <li v-bind:class="{ good: serviceWorkerData.pushReg }">
           <div class="listSubDiv">
             <span class="cardIcon" v-if="serviceWorkerData && serviceWorkerData.pushReg">
               <i class="fas fa-check"></i>
@@ -355,7 +355,7 @@
           <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.pushReg">5</span>
 
           <span class="subScoreSpan" v-if="serviceWorkerData && !serviceWorkerData.pushReg">0</span>
-        </li>
+        </li> -->
       </ul>
 
       <ul v-if="category === 'Service Worker' && !serviceWorkerData && !noServiceWorker">
@@ -410,7 +410,7 @@
 
           <span class="subScoreSpan">0</span>
         </li>
-        <li>
+        <!-- <li>
           <div class="listSubDiv">
             <span class="cardIcon">
               <i class="fas fa-times"></i>
@@ -423,7 +423,7 @@
           </div>
 
           <span class="subScoreSpan">0</span>
-        </li>
+        </li> -->
       </ul>
     </div>
 
