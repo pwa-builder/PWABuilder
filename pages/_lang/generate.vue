@@ -16,15 +16,21 @@
 
         <div id="dataSection">
           <div id="dataButtonsBlock">
-            <div id="dataButtons">
-              <button v-bind:class="{ active: showBasicSection }" @click="showBasicsSection()">Info</button>
+            <div id="dataButtons" role="tablist">
+              <button
+                v-bind:class="{ active: showBasicSection }"
+                @click="showBasicsSection()"
+                role="tab"
+              >Info</button>
               <button
                 v-bind:class="{ active: showImagesSection }"
                 @click="showImageSection()"
+                role="tab"
               >Images</button>
               <button
                 v-bind:class="{ active: showSettingsSection }"
                 @click="showSettingSection()"
+                role="tab"
               >Settings</button>
             </div>
           </div>
@@ -478,11 +484,17 @@
             </label>
           </div>
           <div v-if="this.iconFileErrorNoneUploaded" class="l-generator-field">
-            <p id="uploadImageError" role="alert">{{ $t('generate.upload_image_error_none_uploaded') }}</p>
+            <p
+              id="uploadImageError"
+              role="alert"
+            >{{ $t('generate.upload_image_error_none_uploaded') }}</p>
           </div>
           <div v-if="this.iconFileErrorIncorrectType" class="l-generator-field">
-            <p id="uploadImageError" role="alert">{{ $t('generate.upload_image_error_incorrect_type') }}</p>
-          </div>      
+            <p
+              id="uploadImageError"
+              role="alert"
+            >{{ $t('generate.upload_image_error_incorrect_type') }}</p>
+          </div>
         </section>
       </Modal>
     </main>
@@ -816,8 +828,10 @@ export default class extends Vue {
     this.iconFileErrorNoneUploaded = false;
     // Check if file type is an image
     if (this.iconFile && this.iconFile.name) {
-      const supportedFileTypes = ['.png', '.jpg', '.svg'];
-      var found = supportedFileTypes.find(fileType => this.iconFile.name.endsWith(fileType));
+      const supportedFileTypes = [".png", ".jpg", ".svg"];
+      var found = supportedFileTypes.find(fileType =>
+        this.iconFile.name.endsWith(fileType)
+      );
       if (!found) {
         this.iconFileErrorIncorrectType = true;
       } else {
@@ -826,7 +840,6 @@ export default class extends Vue {
     } else {
       this.iconFileErrorIncorrectType = false;
     }
-
   }
 
   private getImagesWithEmbedded(icons: generator.Icon[]): generator.Icon[] {
@@ -1036,8 +1049,9 @@ declare var awa: any;
     display: block;
   }
 
-  input, label {
-      margin: .4rem 0;
+  input,
+  label {
+    margin: 0.4rem 0;
   }
 
   .image-upload {
@@ -1052,7 +1066,7 @@ declare var awa: any;
     padding-top: 13px;
     cursor: default;
   }
-  
+
   .custom-file-input {
     color: transparent;
     width: 155px;
@@ -1064,7 +1078,7 @@ declare var awa: any;
   }
 
   .custom-file-input::before {
-    content: 'Choose File';
+    content: "Choose File";
     width: 154px;
     height: 40px;
     background: transparent;
@@ -1086,7 +1100,8 @@ declare var awa: any;
     border-color: #9337d8;
   }
 
-  .custom-file-input:active, :focus {
+  .custom-file-input:active,
+  :focus {
     outline: 0;
   }
 }
