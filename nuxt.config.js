@@ -125,6 +125,9 @@ module.exports = {
         type: 'module'
       },
       {
+        src: 'webadb.js'
+      },
+      {
         src: '/platformPop.js',
         type: 'module'
       },
