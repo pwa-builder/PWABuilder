@@ -333,7 +333,7 @@
             </span>
           </div>
 
-          <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.scope">5</span>
+          <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.scope">10</span>
 
           <span class="subScoreSpan" v-if="!serviceWorkerData && !serviceWorkerData.scope">0</span>
         </li>
@@ -672,9 +672,9 @@ export default class extends Vue {
         Has push reg
         +5 points to user
       */
-        if (this.serviceWorkerData.pushReg !== null) {
-          this.swScore = this.swScore + 5;
-        }
+        // if (this.serviceWorkerData.pushReg !== null) {
+        //   this.swScore = this.swScore + 5;
+        // }
         /*
         Has scope that points to root
         +5 points to user
@@ -684,7 +684,7 @@ export default class extends Vue {
           // this.serviceWorkerData.scope.slice(0, -1) ===
           // new URL(this.serviceWorkerData.scope).origin  //slice isn't working and score not showing up, TODO: look at how to validate scope
         ) {
-          this.swScore = this.swScore + 5;
+          this.swScore = this.swScore + 10;
         }
 
         sessionStorage.setItem("swScore", JSON.stringify(this.swScore));
