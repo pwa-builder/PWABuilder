@@ -685,7 +685,8 @@
           <button class="androidDownloadButton" @click="openAndroidOptionModal()">Options</button>
         </div>
 
-        <div id="androidInstallWrapper" v-if="apkDownloaded">
+        <!-- justin revisit -->
+        <!--<div id="androidInstallWrapper" v-if="apkDownloaded">
           <p>Quickly install your APK to your device for testing! All you need to do is plug in your device via a USB cord.</p>
 
           <div id="androidInstallActions">
@@ -709,7 +710,7 @@
               </div>
             </button>
           </div>
-        </div>
+        </div>-->
 
         <div id="extraSection">
           <p>
