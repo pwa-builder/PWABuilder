@@ -16,7 +16,7 @@ jobs:
         steps:
         - uses: actions/checkout@v2
         - name: Build the Docker image
-          run: docker build . --file Dockerfile --target build-prod --tag pwabuilder.azurecr.io/pwabuilder-site-container:latest
+          run: docker build . --file dockerfile --target build-prod --tag pwabuilder.azurecr.io/pwabuilder-site-container:latest
       
         - name: Login
           run: docker login pwabuilder.azurecr.io -u pwabuilder --password ${{secrets.azure}}
