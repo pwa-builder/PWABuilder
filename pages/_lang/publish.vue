@@ -655,16 +655,11 @@
             for Google Play
           </p>
 
-          <a
-            href="https://developers.google.com/web/updates/2019/02/using-twa#establish_an_association_from_the_website_to_the_app"
-            id="androidModalSubText"
-          >
-            Your download will contain instructions for how to submit your app
-            to the Google Play store
-            <i
-              class="fas fa-external-link-alt"
-            ></i>
-          </a>
+          <p>
+            Your download will contain 
+            <a href="https://github.com/pwa-builder/CloudAPK/blob/master/Next-steps.md">instructions</a> 
+            for submitting your app to the Google Play store.
+          </p>
 
           <p v-if="this.androidForm.package_name">
             <span>Package Name:</span>
