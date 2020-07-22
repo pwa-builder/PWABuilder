@@ -394,7 +394,7 @@ export default class extends Vue {
   }
 
   #topViewerId {
-    height: 300px;
+    height: 450px;
     width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
