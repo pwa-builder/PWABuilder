@@ -553,7 +553,6 @@ declare var awa: any;
 }
 
 #starterActions #mainStartButton:focus {
-  outline: auto;
   outline-color: black;
 }
 
@@ -658,10 +657,6 @@ declare var awa: any;
   padding-right: 1.4em;
   animation-name: fadein;
   animation-duration: 0.3s;
-}
-
-#shareResults:focus {
-  outline: auto;
 }
 
 @keyframes fadein {
@@ -852,10 +847,6 @@ h2 {
       display: flex;
       align-items: center;
       text-align: center;
-    }
-
-    #getStartedButton:focus {
-      outline: auto;
     }
   }
 
