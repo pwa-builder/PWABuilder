@@ -1577,6 +1577,8 @@ footer a {
   padding-bottom: 3%;
   height: 100%;
   object-fit: contain;
+  width: -moz-available;  
+  width: -webkit-fill-available; 
 }
 #screenshots::-webkit-scrollbar {
   display: none;
