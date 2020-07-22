@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HubHeader :showSubHeader="true"></HubHeader>
+    <HubHeader :showSubHeader="true" :disableHeader="showingIconModal"></HubHeader>
 
     <div v-if="showingIconModal" class="has-acrylic-40 is-dark" id="modalBackground"></div>
     <div
@@ -8,7 +8,7 @@
       id="invalidUrlToast"
     >Invalid url(s): {{`${invalidScreenshotUrlValues}`}}. Please try again.</div>
     <main id="sideBySide">
-      <section id="leftSide">
+      <section id="leftSide" :aria-hidden="ariaHidden">
         <header class="mastHead">
           <h2>{{ $t('generate.subtitle') }}</h2>
           <p>{{ $t('generate.instructions') }}</p>
@@ -17,14 +17,22 @@
         <div id="dataSection">
           <div id="dataButtonsBlock">
             <div id="dataButtons">
-              <button v-bind:class="{ active: showBasicSection }" @click="showBasicsSection()">Info</button>
+              <button
+                v-bind:class="{ active: showBasicSection }"
+                @click="showBasicsSection()"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
+              >Info</button>
               <button
                 v-bind:class="{ active: showImagesSection }"
                 @click="showImageSection()"
+                :tabindex="bodyTabIndex"
               >Images</button>
               <button
                 v-bind:class="{ active: showSettingsSection }"
                 @click="showSettingSection()"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               >Settings</button>
             </div>
           </div>
@@ -46,6 +54,8 @@
                 v-on:focus="activeFormField = 'appName'"
                 placeholder="App Name"
                 aria-label="App Name"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               />
             </div>
 
@@ -66,6 +76,8 @@
                 v-on:focus="activeFormField = 'shortName'"
                 placeholder="App Short Name"
                 aria-label="App Short Name"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               />
             </div>
 
@@ -90,6 +102,8 @@
                 placeholder="App Description"
                 v-bind:style="{ outline: textareaOutlineColor}"
                 aria-label="App Description"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               ></textarea>
               <span v-if="ifEntered" class="hint" id="textarea_error">Newline not allowed</span>
               <span v-else class="hint" id="textarea_error"></span>
@@ -111,6 +125,8 @@
                 v-on:focus="activeFormField = 'startURL'"
                 placeholder="Start URL"
                 aria-label="Start URL"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               />
             </div>
           </section>
@@ -135,6 +151,8 @@
                       :class="{ disabled: zipRequested }"
                       @click="onClickDownloadAll()"
                       :disabled="zipRequested"
+                      :tabindex="bodyTabIndex"
+                      :aria-hidden="ariaHidden"
                     >Download All</button>
                   </div>
                   <div class="l-inline">
@@ -142,6 +160,8 @@
                       id="iconUploadButton"
                       class="work-button l-generator-button"
                       @click="onClickUploadIcon()"
+                      :tabindex="bodyTabIndex"
+                      :aria-hidden="ariaHidden"
                     >Upload</button>
                   </div>
                 </div>
@@ -165,8 +185,13 @@
                     :key="icon.src"
                   >
                     <div id="iconDivItem" class="pure-u-10-24 l-generator-tablec">
-                      <a target="_blank" :href="icon.src">
-                        <img class="icon-preview" :src="icon.src" />
+                      <a
+                        target="_blank"
+                        :href="icon.src"
+                        :tabindex="bodyTabIndex"
+                        :aria-hidden="ariaHidden"
+                      >
+                        <img class="icon-preview" :src="icon.src" :aria-label="icon.src" />
                       </a>
 
                       <div id="iconSize" class="pure-u-8-24 l-generator-tablec">
@@ -175,7 +200,11 @@
                         <div
                           id="removeIconsDiv"
                           class="pure-u-1-8 l-generator-tablec l-generator-tablec--right"
+                          role="button"
                           @click="onClickRemoveIcon(icon)"
+                          :tabindex="bodyTabIndex"
+                          :aria-label="'delete icon of size ' + icon.sizes"
+                          :aria-hidden="ariaHidden"
                         >
                           <span class="l-generator-close" :title="$t('generate.remove_icon')">
                             <i class="fas fa-trash-alt"></i>
@@ -194,7 +223,7 @@
                 </div>
               </div>
             </div>
-            <div id="screenshotsTool">
+            <div id="screenshotsTool" :tabindex="bodyTabIndex" :aria-hidden="ariaHidden">
               <div class="l-generator-field">
                 <label class="l-generator-label">
                   <h4
@@ -217,6 +246,8 @@
                     type="text"
                     v-on:focus="activeFormField = 'screenshot'"
                     placeholder="URL"
+                    :tabindex="bodyTabIndex"
+                    :aria-hidden="ariaHidden"
                   />
                   <span>
                     <i
@@ -240,6 +271,8 @@
                   id="screenshotDownloadButton"
                   class="work-button l-generator-button"
                   @click="onClickScreenshotFetch()"
+                  :tabindex="bodyTabIndex"
+                  :aria-hidden="ariaHidden"
                 >
                   <span v-if="!screenshotLoading">Generate Screenshots</span>
                   <span v-if="screenshotLoading">
@@ -251,9 +284,15 @@
                 </button>
               </div>
             </div>
+
             <div id="screenshotsOuterDiv" v-show="screenshots.length > 0">
               <div id="screenshotsContainer">
-                <button @click="scrollToLeft()" v-show="screenshots.length >= 2">
+                <button
+                  @click="scrollToLeft()"
+                  v-show="screenshots.length >= 2"
+                  :tabindex="bodyTabIndex"
+                  :aria-hidden="ariaHidden"
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                     <path
                       d="M401.4 224h-214l83-79.4c11.9-12.5 11.9-32.7 0-45.2s-31.2-12.5-43.2 0L89 233.4c-6 5.8-9 13.7-9 22.4v.4c0 8.7 3 16.6 9 22.4l138.1 134c12 12.5 31.3 12.5 43.2 0 11.9-12.5 11.9-32.7 0-45.2l-83-79.4h214c16.9 0 30.6-14.3 30.6-32 .1-18-13.6-32-30.5-32z"
@@ -276,6 +315,8 @@
                         id="removeScreenshotsDiv"
                         class="pure-u-1-8 l-generator-tablec l-generator-tablec--right"
                         @click="onClickRemoveScreenshot(screenshot)"
+                        :tabindex="bodyTabIndex"
+                        :aria-hidden="ariaHidden"
                       >
                         <span class="l-generator-close" :title="$t('Remove Screenshot')">
                           <i class="fas fa-trash-alt"></i>
@@ -284,7 +325,12 @@
                     </div>
                   </div>
                 </section>
-                <button @click="scrollToRight()" v-show="screenshots.length >= 2">
+                <button
+                  @click="scrollToRight()"
+                  v-show="screenshots.length >= 2"
+                  :tabindex="bodyTabIndex"
+                  :aria-hidden="ariaHidden"
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                     <path
                       d="M284.9 412.6l138.1-134c6-5.8 9-13.7 9-22.4v-.4c0-8.7-3-16.6-9-22.4l-138.1-134c-12-12.5-31.3-12.5-43.2 0-11.9 12.5-11.9 32.7 0 45.2l83 79.4h-214c-17 0-30.7 14.3-30.7 32 0 18 13.7 32 30.6 32h214l-83 79.4c-11.9 12.5-11.9 32.7 0 45.2 12 12.5 31.3 12.5 43.3 0z"
@@ -312,6 +358,8 @@
                 placeholder="App Scope"
                 v-on:focus="activeFormField = 'appScope'"
                 aria-label="App Scope"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               />
             </div>
 
@@ -334,6 +382,8 @@
                 @change="onChangeSimpleInput(), update()"
                 v-on:focus="activeFormField = 'displayMode'"
                 aria-label="Display Mode"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               >
                 <option
                   v-for="display in displaysNames"
@@ -359,6 +409,8 @@
                 @change="onChangeSimpleInput(), update()"
                 v-on:focus="activeFormField = 'appOrientation'"
                 aria-label="App Orientation"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               >
                 <option
                   v-for="orientation in orientationsNames"
@@ -382,6 +434,8 @@
                 @change="onChangeSimpleInput(), update()"
                 v-on:change="activeFormField = 'appLang'"
                 aria-label="App Language"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               >
                 <option
                   v-for="language in languagesNames"
@@ -399,48 +453,14 @@
 
         <div id="doneDiv">
           <!--<button id="doneButton">Done</button>-->
-          <nuxt-link @click.native="saveChanges" id="doneButton" to="reportCard">Done</nuxt-link>
+          <nuxt-link
+            @click.native="saveChanges"
+            id="doneButton"
+            to="reportCard"
+            :tabindex="bodyTabIndex"
+            :aria-hidden="ariaHidden"
+          >Done</nuxt-link>
         </div>
-      </section>
-
-      <section id="rightSide">
-        <!--<div id="exampleDiv">
-          <h3>Add this code to your start page:</h3>
-          <code>&lt;link rel="manifest" href="/manifest.json"&gt;</code>
-        </div>-->
-
-        <CodeViewer
-          code-type="html"
-          v-if="seeEditor"
-          title="Add this code to your start page"
-          code="<link rel='manifest' href='/manifest.json'>"
-          :showHeader="true"
-          :showCopyButton="true"
-          monaco-id="manifestHTMLId"
-          id="manifestHTML"
-        >
-          <h3>Add this code to your start page:</h3>
-        </CodeViewer>
-
-        <CodeViewer
-          code-type="json"
-          v-on:invalidManifest="invalidManifest()"
-          v-on:editorValue="updateManifestFn($event)"
-          v-if="seeEditor"
-          :code="getCode()"
-          :title="$t('generate.w3c_manifest')"
-          :suggestions="suggestions"
-          :suggestionsTotal="suggestionsTotal"
-          :warnings="warnings"
-          :warningsTotal="warningsTotal"
-          :showToolbar="true"
-          :showHeader="true"
-          :showCopyButton="showCopy"
-          monaco-id="manifestCodeId"
-          id="manifestCode"
-        >
-          <h3>Add this code to your manifest.json file</h3>
-        </CodeViewer>
       </section>
 
       <Modal
@@ -478,13 +498,63 @@
             </label>
           </div>
           <div v-if="this.iconFileErrorNoneUploaded" class="l-generator-field">
-            <p id="uploadImageError" role="alert">{{ $t('generate.upload_image_error_none_uploaded') }}</p>
+            <p
+              id="uploadImageError"
+              role="alert"
+            >{{ $t('generate.upload_image_error_none_uploaded') }}</p>
           </div>
           <div v-if="this.iconFileErrorIncorrectType" class="l-generator-field">
-            <p id="uploadImageError" role="alert">{{ $t('generate.upload_image_error_incorrect_type') }}</p>
-          </div>      
+            <p
+              id="uploadImageError"
+              role="alert"
+            >{{ $t('generate.upload_image_error_incorrect_type') }}</p>
+          </div>
         </section>
       </Modal>
+
+      <section id="rightSide" :tabindex="bodyTabIndex" :aria-hidden="ariaHidden">
+        <!--<div id="exampleDiv">
+          <h3>Add this code to your start page:</h3>
+          <code>&lt;link rel="manifest" href="/manifest.json"&gt;</code>
+        </div>-->
+
+        <CodeViewer
+          code-type="html"
+          v-if="seeEditor"
+          title="Add this code to your start page"
+          code="<link rel='manifest' href='/manifest.json'>"
+          :showHeader="true"
+          :showCopyButton="true"
+          monaco-id="manifestHTMLId"
+          id="manifestHTML"
+          :tabindex="bodyTabIndex"
+          :aria-hidden="ariaHidden"
+        >
+          <h3>Add this code to your start page:</h3>
+        </CodeViewer>
+
+        <CodeViewer
+          code-type="json"
+          v-on:invalidManifest="invalidManifest()"
+          v-on:editorValue="updateManifestFn($event)"
+          v-if="seeEditor"
+          :code="getCode()"
+          :title="$t('generate.w3c_manifest')"
+          :suggestions="suggestions"
+          :suggestionsTotal="suggestionsTotal"
+          :warnings="warnings"
+          :warningsTotal="warningsTotal"
+          :showToolbar="true"
+          :showHeader="true"
+          :showCopyButton="showCopy"
+          monaco-id="manifestCodeId"
+          id="manifestCode"
+          :tabindex="bodyTabIndex"
+          :aria-hidden="ariaHidden"
+        >
+          <h3>Add this code to your manifest.json file</h3>
+        </CodeViewer>
+      </section>
     </main>
 
     <footer>
@@ -493,6 +563,8 @@
         project to help move PWA adoption forward.
         <a
           href="https://privacy.microsoft.com/en-us/privacystatement"
+          :tabindex="bodyTabIndex"
+          :aria-hidden="ariaHidden"
         >Our Privacy Statement</a>
       </p>
     </footer>
@@ -564,6 +636,14 @@ export default class extends Vue {
     false
   );
   private zipRequested = false;
+
+  get bodyTabIndex() {
+    return this.showingIconModal ? -1 : 0;
+  }
+
+  get ariaHidden() {
+    return this.showingIconModal ? true : false;
+  }
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
@@ -816,8 +896,10 @@ export default class extends Vue {
     this.iconFileErrorNoneUploaded = false;
     // Check if file type is an image
     if (this.iconFile && this.iconFile.name) {
-      const supportedFileTypes = ['.png', '.jpg', '.svg'];
-      var found = supportedFileTypes.find(fileType => this.iconFile.name.endsWith(fileType));
+      const supportedFileTypes = [".png", ".jpg", ".svg"];
+      var found = supportedFileTypes.find(fileType =>
+        this.iconFile.name.endsWith(fileType)
+      );
       if (!found) {
         this.iconFileErrorIncorrectType = true;
       } else {
@@ -826,7 +908,6 @@ export default class extends Vue {
     } else {
       this.iconFileErrorIncorrectType = false;
     }
-
   }
 
   private getImagesWithEmbedded(icons: generator.Icon[]): generator.Icon[] {
@@ -1036,8 +1117,9 @@ declare var awa: any;
     display: block;
   }
 
-  input, label {
-      margin: .4rem 0;
+  input,
+  label {
+    margin: 0.4rem 0;
   }
 
   .image-upload {
@@ -1052,7 +1134,7 @@ declare var awa: any;
     padding-top: 13px;
     cursor: default;
   }
-  
+
   .custom-file-input {
     color: transparent;
     width: 155px;
@@ -1064,7 +1146,7 @@ declare var awa: any;
   }
 
   .custom-file-input::before {
-    content: 'Choose File';
+    content: "Choose File";
     width: 154px;
     height: 40px;
     background: transparent;
@@ -1086,7 +1168,8 @@ declare var awa: any;
     border-color: #9337d8;
   }
 
-  .custom-file-input:active, :focus {
+  .custom-file-input:active,
+  :focus {
     outline: 0;
   }
 }
