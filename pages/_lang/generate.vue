@@ -1812,23 +1812,14 @@ footer a {
 
 #screenshots a {
   height: inherit;
-  //display: contents;
-  //outline: auto;
   display: flex;
   -webkit-box-align: center;
   -ms-flex-align: center;
-  /* display: inline; */
-  /* align-items: center; */
   width: inherit;
   height: inherit;
-  /* -webkit-box-pack: center; */
   -ms-flex-pack: center;
-  /* justify-content: center; */
-  /* scroll-snap-align: start; */
-  /* width: 100%; */
   background: #efefef;
   outline: none;
-  /* height: 100%; */
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
