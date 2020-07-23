@@ -1302,7 +1302,7 @@ export default class extends Vue {
   }
 
   getReportErrorUrl(errorMessage: string, platform: string): string {
-    if (!platform) {
+    if (!errorMessage) {
       return "https://github.com/pwa-builder/pwabuilder/issues/new";
     }
 
