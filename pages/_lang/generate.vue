@@ -18,13 +18,6 @@
           <div id="dataButtonsBlock">
             <div id="dataButtons">
               <button
-                v-bind:class="{ active: showBasicSection }"
-                @click="showBasicsSection()"
-                role="tablist"
-                :tabindex="bodyTabIndex"
-                :aria-hidden="ariaHidden"
-              >Info</button>
-              <button
                 id="infoTabButton"
                 v-bind:class="{ active: showBasicSection }"
                 @click="showBasicsSection()"
@@ -228,7 +221,8 @@
                           class="icon-preview"
                           :src="icon.src"
                           :aria-label="icon.src"
-                          :alt="icon.src"
+                          alt="linter place holder"
+                          :alt="'icon representing an image from uri: ' + icon.src"
                         />
                       </a>
 
