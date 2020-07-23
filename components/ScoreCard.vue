@@ -333,11 +333,11 @@
             </span>
           </div>
 
-          <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.scope">5</span>
+          <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.scope">10</span>
 
           <span class="subScoreSpan" v-if="!serviceWorkerData && !serviceWorkerData.scope">0</span>
         </li>
-        <li v-bind:class="{ good: serviceWorkerData.pushReg }">
+        <!-- <li v-bind:class="{ good: serviceWorkerData.pushReg }">
           <div class="listSubDiv">
             <span class="cardIcon" v-if="serviceWorkerData && serviceWorkerData.pushReg">
               <i class="fas fa-check"></i>
@@ -355,7 +355,7 @@
           <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.pushReg">5</span>
 
           <span class="subScoreSpan" v-if="serviceWorkerData && !serviceWorkerData.pushReg">0</span>
-        </li>
+        </li> -->
       </ul>
 
       <ul v-if="category === 'Service Worker' && !serviceWorkerData && !noServiceWorker">
@@ -410,7 +410,7 @@
 
           <span class="subScoreSpan">0</span>
         </li>
-        <li>
+        <!-- <li>
           <div class="listSubDiv">
             <span class="cardIcon">
               <i class="fas fa-times"></i>
@@ -423,21 +423,19 @@
           </div>
 
           <span class="subScoreSpan">0</span>
-        </li>
+        </li> -->
       </ul>
     </div>
 
     <div class="cardEditBlock">
-      <nuxt-link v-if="category === 'Service Worker'" to="/serviceworker">
-
+      <nuxt-link v-if="category === 'Service Worker'" to="/serviceworker" tabindex="-1">
         <button>
           Choose a Service Worker
           <i class="fas fa-arrow-right"></i>
         </button>
-
       </nuxt-link>
 
-      <nuxt-link v-else-if="category === 'Manifest'" to="/generate">
+      <nuxt-link v-else-if="category === 'Manifest'" to="/generate" tabindex="-1">
         <button v-if="!noManifest" id="editButton">
           View Manifest
           <i class="fas fa-arrow-right"></i>
@@ -447,20 +445,23 @@
           View Generated Manifest
           <i class="fas fa-arrow-right"></i>
         </button>
-        <div
-          class="brkManifestError"
-          v-if="brokenManifest"
-        >Couldn't find an <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest">app manifest</a></div>
+        <div class="brkManifestError" v-if="brokenManifest">
+          Couldn't find an
+          <a tabindex="-1"
+            href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
+          >app manifest</a>
+        </div>
       </nuxt-link>
 
-      <div
-        class="brkManifestError"
-        v-if="category === 'Security' && !validSSL"
-      >
+      <div class="brkManifestError" v-if="category === 'Security' && !validSSL">
         <p>HTTPS not detected.</p>
         <p class="brkManifestHelp">
           <i class="fas fa-info-circle"></i>
-          You can use <a href="https://letsencrypt.org/">LetsEncrypt</a> to get a free HTTPS certificate, or <a href="https://azure.microsoft.com/en-us/get-started/web-app/">publish to Azure</a> to get HTTPS support out of the box
+          You can use
+          <a href="https://letsencrypt.org/">LetsEncrypt</a> to get a free HTTPS certificate, or
+          <a
+            href="https://azure.microsoft.com/en-us/get-started/web-app/"
+          >publish to Azure</a> to get HTTPS support out of the box
         </p>
       </div>
     </div>
@@ -504,7 +505,6 @@ export default class extends Vue {
   securityScore: number = 0;
 
   created() {
-
     switch (this.category) {
       case "Security":
         this.lookAtSecurity();
@@ -557,7 +557,6 @@ export default class extends Vue {
         return;
       }
 
-
       if (this.manifest && this.manifest.generated === true) {
         this.noManifest = true;
         resolve();
@@ -601,7 +600,8 @@ export default class extends Vue {
     // If we have no URL, it means there was an issue parsing the URL,
     // for example, malformed URL.
     // In such case, punt; there is no service worker.
-    const isHttp = typeof(this.url) === "string" && this.url.startsWith("http://");
+    const isHttp =
+      typeof this.url === "string" && this.url.startsWith("http://");
     if (!this.url || isHttp) {
       this.noSwScore();
       return;
@@ -625,14 +625,13 @@ export default class extends Vue {
         this.$emit("serviceWorkerTestDone", { score: this.swScore });
       }
     } else {
-      var cleanUrl = this.trimSuffixChar(this.url, '.');
+      var cleanUrl = this.trimSuffixChar(this.url, ".");
       const response = await fetch(`${apiUrl}=${cleanUrl}`);
       const data = await response.json();
 
       if (data.swURL) {
         this.serviceWorkerData = data.swURL;
       }
-
 
       if (this.serviceWorkerData && this.serviceWorkerData !== false) {
         sessionStorage.setItem(
@@ -642,7 +641,8 @@ export default class extends Vue {
       }
 
       if (
-        !this.serviceWorkerData || this.serviceWorkerData.swURL === null ||
+        !this.serviceWorkerData ||
+        this.serviceWorkerData.swURL === null ||
         this.serviceWorkerData.swURL === false
       ) {
         this.noSwScore();
@@ -672,9 +672,9 @@ export default class extends Vue {
         Has push reg
         +5 points to user
       */
-        if (this.serviceWorkerData.pushReg !== null) {
-          this.swScore = this.swScore + 5;
-        }
+        // if (this.serviceWorkerData.pushReg !== null) {
+        //   this.swScore = this.swScore + 5;
+        // }
         /*
         Has scope that points to root
         +5 points to user
@@ -684,7 +684,7 @@ export default class extends Vue {
           // this.serviceWorkerData.scope.slice(0, -1) ===
           // new URL(this.serviceWorkerData.scope).origin  //slice isn't working and score not showing up, TODO: look at how to validate scope
         ) {
-          this.swScore = this.swScore + 5;
+          this.swScore = this.swScore + 10;
         }
 
         sessionStorage.setItem("swScore", JSON.stringify(this.swScore));
@@ -702,8 +702,8 @@ export default class extends Vue {
   }
 
   private trimSuffixChar(string, charToRemove) {
-    while(string.charAt(string.length-1) === charToRemove) {
-        string = string.substring(0, string.length-1);
+    while (string.charAt(string.length - 1) === charToRemove) {
+      string = string.substring(0, string.length - 1);
     }
     return string;
   }
@@ -893,7 +893,7 @@ export default class extends Vue {
   }
 
   .brkManifestHelp {
-    color:rgb(92, 92, 92);
+    color: rgb(92, 92, 92);
     font-size: 13px;
   }
 }

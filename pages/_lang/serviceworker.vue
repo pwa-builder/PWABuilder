@@ -10,13 +10,17 @@
         </header>
 
         <div id="inputSection">
-          <form @submit.prevent="download" @keydown.enter.prevent="download">
+          <form @submit.prevent="download" @keydown.enter.prevent="download" role="radiogroup">
             <div
               class="inputContainer"
               v-for="sw in serviceworkers"
               :key="sw.title"
               @click="selectServiceWorker(sw.id)"
               v-bind:class="{ active: serviceworker$ === sw.id }"
+              :aria-labelledby="'serviceWorkerOption' + sw.id"
+              :aria-checked="serviceworker$ === sw.id"
+              role="radio"
+              tabindex="0"
             >
               <label class="l-generator-label" :for="sw.id">
                 <div class="inputDiv">
@@ -29,7 +33,7 @@
                   >-->
 
                   <div class="titleBox">
-                    <h4>{{ sw.title }}</h4>
+                    <h4 :id="'serviceWorkerOption' + sw.id">{{ sw.title }}</h4>
 
                     <!--<i v-pre v-if="serviceworker$ === sw.id" class="fas fa-check"></i>-->
                   </div>
@@ -52,7 +56,11 @@
           <button @click="download()" id="downloadSWButton">
             <span v-if="!isBuilding">{{ $t('serviceworker.download') }}</span>
             <span v-if="isBuilding">
-              <Loading :active="true" class="u-display-inline_block u-margin-left-sm" />
+              <Loading
+                :active="true"
+                class="u-display-inline_block u-margin-left-sm"
+                aria-label="loading"
+              />
             </span>
           </button>
         </div>
@@ -88,7 +96,9 @@
           :showHeader="true"
           monaco-id="topViewerId"
         >
-          <h3>Add this code to your landing page in a &lt;script&gt; tag:</h3>
+          <h3>
+            <h3>Add this code to your landing page in a &lt;script&gt; tag:</h3>
+          </h3>
         </CodeViewer>
       </section>
     </main>
@@ -274,7 +284,7 @@ Vue.prototype.$awa = function(config) {
   if (awa) {
     awa.ct.capturePageView(config);
   }
-  
+
   return;
 };
 </script>

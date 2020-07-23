@@ -8,6 +8,7 @@ $color-brand-tertiary: #3C3C3C;
 $color-brand-quartary:#F49C45;
 $color-brand-quintary:white;
 $color-brand-warning: #D95050;
+$color-muted: #8c949b;
 
 // $color-button-primary-green-variant: #21ABA5;
 $color-button-primary-purple-variant: linear-gradient(to right, #7644C2, #11999E);
@@ -34,7 +35,7 @@ $font-size-s: .85rem;    // 13.6px
 $font-size-m: 1rem;      // 16px
 $font-size-l: 1.5rem;    // 24px
 $font-size-xl: 2.5rem;   // 40px
-$font-family-l3: 'Segoe UI';
+$font-family-l3: "Segoe UI",Roboto,-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
 
 // Medias
 $media-screen-xxs: 22.5em; // 360px

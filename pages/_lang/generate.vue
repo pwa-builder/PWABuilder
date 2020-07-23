@@ -16,20 +16,47 @@
 
         <div id="dataSection">
           <div id="dataButtonsBlock">
-            <div id="dataButtons">
-              <button v-bind:class="{ active: showBasicSection }" @click="showBasicsSection()">Info</button>
+            <div id="dataButtons" role="tablist">
               <button
+                id="infoTabButton"
+                v-bind:class="{ active: showBasicSection }"
+                @click="showBasicsSection()"
+                role="tab"
+                aria-controls="infoTab"
+                aria-label="Info"
+                :aria-selected="showBasicSection ? 'true' : 'false'"
+                tabindex="0"
+              >Info</button>
+              <button
+                id="imagesTabButton"
                 v-bind:class="{ active: showImagesSection }"
                 @click="showImageSection()"
+                role="tab"
+                aria-label="Images"
+                aria-controls="imagesTab"
+                :aria-selected="showImagesSection ? 'true' : 'false'"
+                tabindex="0"
               >Images</button>
               <button
+                id="settingsTabButton"
                 v-bind:class="{ active: showSettingsSection }"
                 @click="showSettingSection()"
+                role="tab"
+                aria-label="Settings"
+                aria-controls="settingsTab"
+                :aria-selected="showSettingsSection ? 'true' : 'false'"
+                tabindex="0"
               >Settings</button>
             </div>
           </div>
 
-          <section class="animatedSection" v-if="showBasicSection">
+          <section
+            id="infoTab"
+            class="animatedSection"
+            role="tabpanel"
+            aria-labelledby="infoTabButton"
+            v-if="showBasicSection"
+          >
             <div class="l-generator-field">
               <label class="l-generator-label">
                 <h4
@@ -115,7 +142,13 @@
             </div>
           </section>
 
-          <section class="animatedSection" v-if="showImagesSection">
+          <section
+            id="imagesTab"
+            class="animatedSection"
+            role="tabpanel"
+            aria-labelledby="imagesTabButton"
+            v-if="showImagesSection"
+          >
             <div class="l-generator-field logo-upload">
               <div id="uploadNewSection">
                 <label class="l-generator-label">
@@ -370,7 +403,13 @@
             </div>
           </section>
 
-          <section class="animatedSection" v-if="showSettingsSection">
+          <section
+            id="settingsTag"
+            class="animatedSection"
+            role="tabpanel"
+            aria-labelledby="settingsTabButton"
+            v-if="showSettingsSection"
+          >
             <div class="l-generator-field">
               <label class="l-generator-label">
                 <h4
@@ -532,16 +571,21 @@
         v-on:modalSubmit="onSubmitIconModal"
         v-on:cancel="onCancelIconModal"
       >
-        <section>
-          <div class="custom-file-upload">
-            <input id="modal-file" @change="onFileIconChange" class="custom-file-input" type="file" />
-            <label class="custom-file-label l-generator-input l-generator-input--fake is-disabled">
+        <section id="imageModalSection">
+          <div class="l-generator-box image-upload">
+            <span class="l-generator-label">
+              {{
+              $t('generate.upload_image')
+              }}
+            </span>
+            <label class="l-generator-input l-generator-input--fake is-disabled" for="modal-file">
               {{
               iconFile && iconFile.name
               ? iconFile.name
               : $t('generate.choose_file')
               }}
             </label>
+            <input id="modal-file" @change="onFileIconChange" class="l-hidden" type="file" />
           </div>
 
           <div class="l-generator-field">
@@ -552,6 +596,18 @@
                 v-model="iconCheckMissing"
               />
             </label>
+          </div>
+          <div v-if="this.iconFileErrorNoneUploaded" class="l-generator-field">
+            <p
+              id="uploadImageError"
+              role="alert"
+            >{{ $t('generate.upload_image_error_none_uploaded') }}</p>
+          </div>
+          <div v-if="this.iconFileErrorIncorrectType" class="l-generator-field">
+            <p
+              id="uploadImageError"
+              role="alert"
+            >{{ $t('generate.upload_image_error_incorrect_type') }}</p>
           </div>
         </section>
       </Modal>
@@ -615,6 +671,8 @@ export default class extends Vue {
   public urlsForScreenshot = [{ value: "" }];
   public urlsForScreenshotValues = [];
   private iconFile: File | null = null;
+  public iconFileErrorNoneUploaded = false;
+  public iconFileErrorIncorrectType = false;
   public error: string | null = null;
   public seeEditor = true;
   public basicManifest = false;
@@ -952,6 +1010,21 @@ export default class extends Vue {
       return;
     }
     this.iconFile = target.files[0];
+    this.iconFileErrorNoneUploaded = false;
+    // Check if file type is an image
+    if (this.iconFile && this.iconFile.name) {
+      const supportedFileTypes = [".png", ".jpg", ".svg"];
+      var found = supportedFileTypes.find((fileType) =>
+        this.iconFile.name.endsWith(fileType)
+      );
+      if (!found) {
+        this.iconFileErrorIncorrectType = true;
+      } else {
+        this.iconFileErrorIncorrectType = false;
+      }
+    } else {
+      this.iconFileErrorIncorrectType = false;
+    }
   }
 
   private getImagesWithEmbedded(icons: generator.Icon[]): generator.Icon[] {
@@ -1064,8 +1137,10 @@ export default class extends Vue {
   public async onSubmitIconModal(): Promise<void> {
     const $iconsModal = this.$refs.iconsModal as Modal;
     if (!this.iconFile) {
+      this.iconFileErrorNoneUploaded = true;
       return;
     }
+    this.iconFileErrorNoneUploaded = false;
     $iconsModal.showLoading();
     if (this.iconCheckMissing) {
       await this.generateMissingImages(this.iconFile);
@@ -1085,6 +1160,8 @@ export default class extends Vue {
 
   public onCancelIconModal(): void {
     this.iconFile = null;
+    this.iconFileErrorNoneUploaded = false;
+    this.iconFileErrorIncorrectType = false;
     this.showingIconModal = false;
   }
 
@@ -1462,6 +1539,16 @@ footer a {
   width: 1em;
   margin-left: 15px;
   margin-top: 5px;
+}
+#uploadImageError {
+  display: flex;
+  font-family: sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -0.02em;
+  color: #db3457;
 }
 #sideBySide {
   background: white;

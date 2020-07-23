@@ -12,12 +12,12 @@
     </div>
 
     <div v-if="showShareToast" id="gitCopyToast">
-      <span>URL copied for sharing</span>
+      <span role="alert">URL copied for sharing</span>
     </div>
 
     <div v-if="gotURL" id="reportShareButtonContainer">
-      <button @click="shareReport">
-        <i class="fas fa-share-alt"></i>
+      <button @click="shareReport" id="shareResults">
+        <i class="fas fa-share-alt" alt="share icon" aria-hidden="true"></i>
         Share your Results
       </button>
     </div>
@@ -64,7 +64,7 @@
           </div>-->
 
           <div id="starterSection">
-            <h2>...Or, dont even have a website yet?</h2>
+            <h2>...Or, don't even have a website yet?</h2>
             <p>
               Get started from scratch with our
               <a
@@ -73,22 +73,41 @@
             </p>
 
             <div id="starterActions">
-              <button @click="starterDrop" id="mainStartButton">
-                Get Started!
-                <i class="fas fa-chevron-down"></i>
-
-                <div v-if="openDrop" id="starterDropdown">
-                <button id="starterDownloadButton" @click="downloadStarter">
-                  <i class="fas fa-arrow-down"></i>
-                  Download
+              <div class="dropdown dropdown-menu">
+                <button
+                  @click="starterDrop"
+                  id="mainStartButton"
+                  type="button"
+                  aria-controls="starterDropdown"
+                  aria-haspop="true"
+                  aria-expanded="false"
+                >
+                  Get Started!
+                  <i class="fas fa-chevron-down" aria-hidden="true"></i>
                 </button>
-                <button @click="cloneStarter">
-                  <i class="fab fa-github"></i>
-                  Clone from Github
-                </button>
+                <div
+                  v-if="openDrop"
+                  id="starterDropdown"
+                  aria-live="polite"
+                  aria-labelledby="mainStartButton"
+                  role="menu"
+                  tabindex="-1"
+                >
+                  <button
+                    id="starterDownloadButton"
+                    @click="downloadStarter"
+                    type="button"
+                    role="menuitem"
+                  >
+                    <i class="fas fa-arrow-down" aria-hidden="true"></i>
+                    Download
+                  </button>
+                  <button @click="cloneStarter" type="button" role="menuitem">
+                    <i class="fab fa-github" aria-hidden="true"></i>
+                    Clone from Github
+                  </button>
+                </div>
               </div>
-              </button>
-
             </div>
           </div>
         </div>
@@ -455,10 +474,10 @@ export default class extends Vue {
   }
 
   public async getTopSamples() {
-    await this.getSamples();
-    const cleanedSamples = this.samples.slice(0, 4);
+    const resp = await fetch("/data/featured.json");
+    const top = await resp.json();
 
-    this.topSamples = cleanedSamples;
+    this.topSamples = top;
   }
 
   public securityTestDone(ev) {
@@ -513,7 +532,7 @@ declare var awa: any;
   border-radius: 6px;
   margin-top: 0;
   width: 14em;
-  margin-left: 1.8em;
+  margin-left: 1.6em;
 
   animation-name: slidedown;
   animation-duration: 200ms;
@@ -521,7 +540,8 @@ declare var awa: any;
   box-shadow: 0 0 4px 1px #0000002e;
 }
 
-#starterActions .fa, #starterActions .fas {
+#starterActions .fa,
+#starterActions .fas {
   margin-right: 4px;
 }
 
@@ -530,6 +550,10 @@ declare var awa: any;
   color: white !important;
   width: 11em;
   border: none;
+}
+
+#starterActions #mainStartButton:focus {
+  outline-color: black;
 }
 
 #gitCopyToast {
