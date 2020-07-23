@@ -224,7 +224,12 @@
                         :tabindex="bodyTabIndex"
                         :aria-hidden="ariaHidden"
                       >
-                        <img class="icon-preview" :src="icon.src" :aria-label="icon.src" />
+                        <img
+                          class="icon-preview"
+                          :src="icon.src"
+                          :aria-label="icon.src"
+                          :alt="icon.src"
+                        />
                       </a>
 
                       <div id="iconSize" class="pure-u-8-24 l-generator-tablec">
