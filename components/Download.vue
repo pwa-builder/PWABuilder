@@ -103,7 +103,7 @@ export default class extends Vue {
   public async generateAndroidPackage() {    
     const validationErrors = validateAndroidOptions(this.androidOptions);
     if (validationErrors.length > 0 || !this.androidOptions) {
-      this.showErrorMessage("Invalid Android options. " + validationErrors.map(a => a.error).join(", "));
+      this.showErrorMessage("Invalid Android options. " + validationErrors.map(a => a.error).join("\n"));
       return;
     }
     
@@ -168,7 +168,7 @@ export default class extends Vue {
         setTimeout(() => (this.isReady = true), 3000);
       } catch (e) {
         this.isReady = true;
-        this.showErrorMessage("Error building package. " + e);
+        this.showErrorMessage(`Error building package.\n${e}`);
       }
     } 
 
