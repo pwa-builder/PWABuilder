@@ -221,7 +221,7 @@
                     <span
                       class="outlineontab"
                       role="button"
-                      aria-label="Remove Screenshot"
+                      aria-label="Remove Screenshot URL"
                       tabindex="0"
                       @click="removeUrlForScreenshots(k)"
                       @keyup.enter="removeUrlForScreenshots(k)"
@@ -237,7 +237,7 @@
                     <span
                       class="outlineontab"
                       role="button"
-                      aria-label="Add Screenshot"
+                      aria-label="Add Screenshot URL"
                       tabindex="0"
                       @click="addUrlForScreenshots(k)"
                       @keyup.enter="addUrlForScreenshots(k)"
@@ -306,7 +306,7 @@
                       :href="screenshot.src"
                       class="screenshotImage"
                       ref="screenshotImage"
-                      aria-label="screenshot image"
+                      aria-label="Screenshot image"
                       aria-describedby="pageNumber"
                       @keydown.tab="handleTabPressOnScreenshot($event)"
                     >
@@ -316,10 +316,10 @@
                       v-if="screenshot.src.startsWith('data:image')"
                       aria-hidden="false"
                       target="_blank"
-                      :href="'javascript:document.write(\'<img src=' + screenshot.src + ' />\')'"
+                      :href="'javascript:document.write(\'<img src=' + screenshot.src + ' style=' + generatedImageStyle + ' />\')'"
                       class="screenshotImage"
                       ref="screenshotImage"
-                      aria-label="screenshot image"
+                      aria-label="Screenshot image"
                       aria-describedby="pageNumber"
                       @keydown.tab="handleTabPressOnScreenshot($event)"
                     >
@@ -340,6 +340,7 @@
                       </span>
                       <button
                         @keydown.tab="handleTabPressOnTrash($event)"
+                        aria-label="Delete screenshot"
                         ref="removeScreenshotsButton"
                         class="pure-u-1-8 l-generator-tablec l-generator-tablec--right removeScreenshotsButton"
                         @click="onClickRemoveScreenshot($event, screenshot, k)"
@@ -600,8 +601,8 @@ const GeneratorGetters = namespace(generator.name, Getter);
     StartOver,
     Modal,
     HubHeader,
-    Loading
-  }
+    Loading,
+  },
 })
 export default class extends Vue {
   public manifest$: generator.Manifest | null = null;
@@ -631,6 +632,9 @@ export default class extends Vue {
     3000,
     false
   );
+  public generatedImageStyle =
+    '"display:block;margin-left:auto;margin-right:auto;height:50%"';
+
   private zipRequested = false;
 
   @GeneratorState manifest: generator.Manifest;
@@ -668,18 +672,18 @@ export default class extends Vue {
       behavior: 0,
       uri: window.location.href,
       pageName: "manifestPage",
-      pageHeight: window.innerHeight
+      pageHeight: window.innerHeight,
     };
 
     // might be the issue
     var updateFn = helper.debounce(this.update, 3000, false);
 
     document &&
-      document.querySelectorAll(".l-generator-input").forEach(item => {
+      document.querySelectorAll(".l-generator-input").forEach((item) => {
         item.addEventListener("keyup", updateFn);
       });
     document &&
-      document.querySelectorAll(".l-generator-textarea").forEach(item => {
+      document.querySelectorAll(".l-generator-textarea").forEach((item) => {
         item.addEventListener("keyup", updateFn);
       });
 
@@ -717,11 +721,11 @@ export default class extends Vue {
           method: "POST",
           responseType: "blob",
           headers: {
-            "content-type": "application/json"
-          }
+            "content-type": "application/json",
+          },
         }
       )
-      .then(async res => {
+      .then(async (res) => {
         if (window.chooseFileSystemEntries) {
           const fsOpts = {
             type: "save-file",
@@ -729,9 +733,9 @@ export default class extends Vue {
               {
                 description: "PWA Builder Image Zip",
                 extensions: ["zip"],
-                mimeTypes: ["application/zip"]
-              }
-            ]
+                mimeTypes: ["application/zip"],
+              },
+            ],
           };
           const fileHandle = await window.chooseFileSystemEntries(fsOpts);
           // Create a FileSystemWritableFileStream to write to.
@@ -745,7 +749,7 @@ export default class extends Vue {
         }
         this.zipRequested = false;
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
         this.zipRequested = false;
       });
@@ -766,7 +770,7 @@ export default class extends Vue {
       // left: -15,
       left: -screenshotsDiv.clientWidth,
       top: 0,
-      behavior: "smooth"
+      behavior: "smooth",
     });
     if (this.screenshotNumber > 0) {
       this.screenshotNumber -= 1;
@@ -779,7 +783,7 @@ export default class extends Vue {
       // left: 15,
       left: screenshotsDiv.clientWidth,
       top: 0,
-      behavior: "smooth"
+      behavior: "smooth",
     });
     if (this.screenshotNumber < this.screenshots.length - 1) {
       this.screenshotNumber += 1;
@@ -837,7 +841,7 @@ export default class extends Vue {
   }
 
   public filterIcons(icons): any {
-    return icons.filter(icon => {
+    return icons.filter((icon) => {
       if (!icon.generated || icon.src.indexOf("data") === 0) {
         return icon;
       }
@@ -845,7 +849,7 @@ export default class extends Vue {
   }
 
   public checkBrokenImage(icons): any {
-    icons.forEach(icon => {
+    icons.forEach((icon) => {
       if (icon.generated && icon.src.indexOf("data") !== 0) {
         this.isImageBroken = true;
       }
@@ -892,11 +896,11 @@ export default class extends Vue {
     let urls: string[] = [];
     this.invalidScreenshotUrlValues = [];
     //
-    urls = this.urlsForScreenshotValues.filter(url => {
+    urls = this.urlsForScreenshotValues.filter((url) => {
       return url !== null && url !== undefined && url !== "";
     });
     console.log(urls);
-    urls = urls.map(url => {
+    urls = urls.map((url) => {
       return this.validateScreenshotUrl(url);
     });
     console.log("Validated urls", urls);
@@ -954,12 +958,12 @@ export default class extends Vue {
     // Creates a clone of icons but replaces any embedded image data
     // (eg. "src: data:image/png;base64,...") with "[Embedded]"
     const w3cIconProps = ["src", "sizes", "type", "purpose", "platform"];
-    return icons.map(i => {
+    return icons.map((i) => {
       const clone = { ...i };
       // Only include W3C props
       Object.keys(clone)
-        .filter(prop => !w3cIconProps.includes(prop))
-        .forEach(prop => delete clone[prop]);
+        .filter((prop) => !w3cIconProps.includes(prop))
+        .forEach((prop) => delete clone[prop]);
 
       // Swap embedded images with "[Embedded]" string literal.
       const isEmbeddedImg = i.src.startsWith("data:image");
@@ -986,9 +990,11 @@ export default class extends Vue {
   private getManifestProperties(): string {
     const ignoredMembers = ["generated"];
     const manifestMembers = Object.keys(this.manifest)
-      .filter(property => !ignoredMembers.includes(property))
-      .filter(property => this.manifest[property] !== undefined)
-      .map(property => `"${property}": ${this.getManifestPropValue(property)}`)
+      .filter((property) => !ignoredMembers.includes(property))
+      .filter((property) => this.manifest[property] !== undefined)
+      .map(
+        (property) => `"${property}": ${this.getManifestPropValue(property)}`
+      )
       .join(",\n");
 
     return `{ ${manifestMembers} ${this.getCustomMembers()} }`;
@@ -1134,7 +1140,7 @@ export default class extends Vue {
   }
 }
 
-Vue.prototype.$awa = function(config) {
+Vue.prototype.$awa = function (config) {
   if (awa) {
     awa.ct.capturePageView(config);
   }
@@ -1356,6 +1362,7 @@ footer a {
 #screenshotDownloadButton {
   background: transparent;
   border: none;
+  outline: none;
 }
 #screenshotDownloadButton_content {
   width: 174px;
@@ -1386,7 +1393,7 @@ footer a {
 }
 
 #screenshotDownloadButton:focus,
-#screenshotDownloadButton {
+#screenshotDownloadButton_content:focus {
   outline: none;
 }
 .outlineontab:focus > .outlineontab_content {
@@ -1733,11 +1740,16 @@ footer a {
   /* scroll-snap-align: start; */
   /* width: 100%; */
   background: #efefef;
+  outline: none;
   /* height: 100%; */
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
   flex-direction: column;
+}
+#screenshots a:focus {
+  background-color: #bbbbbb;
+  outline: none;
 }
 #screenshots::-webkit-scrollbar {
   display: none;
