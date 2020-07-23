@@ -8,6 +8,28 @@
       id="modalBackground"
     ></div>
 
+    <!-- Toast notification for package download errors -->
+    <div class="packageError" role="alert" aria-live="assertive" aria-atomic="true" v-if="packageErrorMessage">
+      <div class="errorHeader">
+        <strong class="errorTitle">
+          <i class="fa fa-exclamation-circle text-danger"></i>
+          Error creating package
+        </strong>
+        <button type="button" class="closeBtn" aria-label="Close" @click="packageErrorMessage = null">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="errorBody">
+        <pre>{{packageErrorMessage}}</pre>
+      </div>
+      <div class="errorFooter">
+        <a target="_blank" rel="noopener" :href="reportPackageErrorUrl">
+          <i class="fa fa-bug"></i>
+          Report a problem
+        </a>
+      </div>
+    </div>
+
     <!-- appx modal -->
     <Modal
       id="appxModal"
@@ -676,6 +698,7 @@
             platform="androidTWA"
             message="Download"
             v-on:apkDownloaded="showInstall($event)"
+            v-on:downloadPackageError="showPackageDownloadError($event)"
           />
           <button class="androidDownloadButton" @click="openAndroidOptionModal()">Options</button>
         </div>
@@ -716,6 +739,7 @@
               class="webviewButton"
               platform="android"
               message="Use a legacy webview instead (not recommended)"
+              v-on:downloadPackageError="showPackageDownloadError($event)"
             />
           </p>
         </div>
@@ -742,6 +766,7 @@
             platform="windows10"
             :message="$t('publish.download')"
             :showMessage="true"
+            v-on:downloadPackageError="showPackageDownloadError($event)"
           />
           <button
             class="androidDownloadButton"
@@ -908,6 +933,7 @@
             :parameters="[JSON.stringify(this.teamsForm)]"
             :message="$t('publish.download')"
             :showMessage="true"
+            v-on:downloadPackageError="showPackageDownloadError($event)"
           />
         </div>
       </section>
@@ -963,6 +989,7 @@
                   platform="web"
                   message="Download your PWA files"
                   aria-label="Download your PWA files"
+                  v-on:downloadPackageError="showPackageDownloadError($event)"
                 />
               </section>
             </div>
@@ -1032,6 +1059,7 @@
                   platform="samsung"
                   message="Download"
                   aria-label="Download Samsung Package"
+                  v-on:downloadPackageError="showPackageDownloadError($event)"
                 />
               </section>
             </div>
@@ -1086,6 +1114,7 @@
                   platform="macos"
                   message="Download"
                   aria-label="Download"
+                  v-on:downloadPackageError="showPackageDownloadError($event)"
                 />
               </section>
             </div>
@@ -1250,6 +1279,8 @@ export default class extends Vue {
   private webadb: any;
   private connected: boolean = false;
   private apk: Blob;
+  private packageErrorMessage: string | null = null;
+  private reportPackageErrorUrl: string | null;
   installing: boolean = false;
 
   public created(): void {
@@ -1262,6 +1293,23 @@ export default class extends Vue {
       this.apkDownloaded = true;
       this.apk = event.detail;
     }
+  }
+
+  showPackageDownloadError(e: any) {
+    this.packageErrorMessage = e.detail;
+    this.reportPackageErrorUrl = this.getReportErrorUrl(e.detail, e.platform);
+    console.error(this.packageErrorMessage, this.reportPackageErrorUrl);
+  }
+
+  getReportErrorUrl(errorMessage: string, platform: string): string {
+    if (!platform) {
+      return "https://github.com/pwa-builder/pwabuilder/issues/new";
+    }
+
+    const quotedError = ">" + errorMessage.split('\n').join("\n>"); // Append the Github markdown for quotes to each line.
+    const title = encodeURIComponent(`Error generating ${platform} package`);
+    const message = encodeURIComponent(`I received the following error when generating a package for ${this.manifest.url || 'my app'}\n\n${quotedError}`);
+    return `https://github.com/pwa-builder/pwabuilder/issues/new?title=${title}&body=${message}`;
   }
 
   async connectDevice() {
@@ -2865,6 +2913,67 @@ footer a {
   background: grey;
   opacity: 0.8;
   z-index: 98999;
+}
+
+.packageError {
+  position: fixed;
+  bottom: 2em;
+  right: 2em;
+  max-width: 350px;
+  overflow: hidden;
+  font-size: .875rem;
+  background-color: rgba(255, 255, 255, .85);
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, .1);
+  box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,.3);
+  backdrop-filter: blur(10px);
+  border-radius: .25rem;
+  z-index: 999999;
+
+  .errorHeader {
+    display: flex;
+    align-items: center;
+    padding: .25rem .75rem;
+    color: #6c757d;
+    background-color: rgba(255, 255, 255, .85);
+    border-bottom: 1px solid rgba(0, 0, 0, .05);
+
+    .errorTitle {
+      flex-grow: 1;
+    }
+
+    .closeBtn {
+      opacity: .5;
+      border: 0;
+      background-color: transparent;
+      padding: 0;
+      font-size: 1.5rem;
+      font-weight: bold;
+
+      &:hover {
+        color: #000;
+        opacity: .75;
+      }
+    }
+  }
+
+  .errorBody {
+    padding: 0 12px;
+    max-height: 300px;
+    overflow: auto;
+
+    pre {
+      font-family: $font-family-l3;
+    }
+  }
+
+  .errorFooter {
+    padding: 12px;
+    display: flex;
+    justify-content: flex-end;
+    font-size: 90%;
+    color:rgba(140, 140, 140, 0.18);
+  }
 }
 
 @media (min-width: 1200px) {
