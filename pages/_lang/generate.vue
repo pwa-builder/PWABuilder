@@ -16,7 +16,7 @@
 
         <div id="dataSection">
           <div id="dataButtonsBlock">
-            <div id="dataButtons">
+            <div id="dataButtons" role="tablist">
               <button
                 id="infoTabButton"
                 v-bind:class="{ active: showBasicSection }"
