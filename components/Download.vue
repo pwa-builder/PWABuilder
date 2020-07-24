@@ -21,8 +21,6 @@
         <div class="lds-dual-ring"></div>
       </div>
     </div>
-
-    <div id="errorDiv" v-if="errorMessage">{{ errorMessage }}</div>
   </button>
 </template>
 
@@ -49,7 +47,6 @@ const GeneratorState = namespace(generator.name, State);
 })
 export default class extends Vue {
   public isReady = true;
-  public errorMessage = "";
   public siteHref: string = "/";
 
   @Prop({ type: String, default: "" })
@@ -106,7 +103,7 @@ export default class extends Vue {
   public async generateAndroidPackage() {    
     const validationErrors = validateAndroidOptions(this.androidOptions);
     if (validationErrors.length > 0 || !this.androidOptions) {
-      this.errorMessage = "Invalid Android options. " + validationErrors.map(a => a.error).join(", ");
+      this.showErrorMessage("Invalid Android options. " + validationErrors.map(a => a.error).join("\n"));
       return;
     }
     
@@ -126,23 +123,20 @@ export default class extends Vue {
 
         this.$emit('apkDownloaded', {
           detail: data
-        })
+        });
 
       } else {
         const responseText = await response.text();
-        this.errorMessage = `Status code: ${response.status}, Error: ${response.statusText}, Details: ${responseText}`;
+        this.showErrorMessage(`Error generating Android package.\n\nStatus code: ${response.status}\n\nError: ${response.statusText}\n\nDetails: ${responseText}`);
       }
     } catch (err) {
-      this.errorMessage = `Status code: ${err.status}, Error: ${err.statusText}` || err;
+      this.showErrorMessage(`Error generating Android platform due to HTTP error.\n\nStatus code: ${err.status}\n\nError: ${err.statusText}\n\nDetails: ${err}`);
     } finally {
       this.isReady = true;
     }
   }
 
-  public async buildArchive(
-    platform: string,
-    parameters: string[]
-  ): Promise<void> {
+  public async buildArchive(platform: string, parameters: string[]): Promise<void> {
     if (!this.isReady) {
       return;
     }
@@ -174,20 +168,26 @@ export default class extends Vue {
         setTimeout(() => (this.isReady = true), 3000);
       } catch (e) {
         this.isReady = true;
-        this.errorMessage = e;
+        this.showErrorMessage(`Error building package.\n${e}`);
       }
-    }
-
-    const overrideValues = {
-      uri: window.location.href,
-      pageName: `download/${platform}`,
-      pageHeight: window.innerHeight
-    };
+    } 
 
     if (this.$awa) {
+      const overrideValues = {
+        uri: window.location.href,
+        pageName: `download/${platform}`,
+        pageHeight: window.innerHeight
+      };
       this.$awa(overrideValues);
     }
   }
+
+  private showErrorMessage(errorMessage: string) {
+    this.$emit('downloadPackageError', { 
+      detail: errorMessage,
+      platform: this.platform
+    });
+  }  
 }
 
 declare var awa: any;
@@ -205,20 +205,6 @@ Vue.prototype.$awa = function(config) {
 button:disabled {
   background: rgba(60, 60, 60, .1);
   cursor: pointer;
-}
-
-#errorDiv {
-  position: absolute;
-  color: white;
-  width: 15em;
-  text-align: start;
-  font-size: 14px;
-  position: fixed;
-  bottom: 2em;
-  right: 2em;
-  background: #3c3c3c;
-  padding: 1em;
-  border-radius: 4px;
 }
 
 #colorSpinner {

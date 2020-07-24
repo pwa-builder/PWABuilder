@@ -6,7 +6,7 @@
     <div
       v-if="isInvalidScreenshotUrl"
       id="invalidUrlToast"
-    >Invalid url(s): {{`${invalidScreenshotUrlValues}`}}. Please try again.</div>
+    >Invalid url(s): {{ `${invalidScreenshotUrlValues}` }}. Please try again.</div>
     <main id="sideBySide">
       <section id="leftSide" :aria-hidden="ariaHidden">
         <header class="mastHead">
@@ -120,7 +120,7 @@
                 type="text"
                 v-on:focus="activeFormField = 'appDesc'"
                 placeholder="App Description"
-                v-bind:style="{ outline: textareaOutlineColor}"
+                v-bind:style="{ outline: textareaOutlineColor }"
                 aria-label="App Description"
                 :tabindex="bodyTabIndex"
                 :aria-hidden="ariaHidden"
@@ -258,12 +258,11 @@
             <div id="screenshotsTool" :tabindex="bodyTabIndex" :aria-hidden="ariaHidden">
               <div class="l-generator-field">
                 <label class="l-generator-label">
-                  <h4
-                    v-bind:class="{
-                      fieldName: activeFormField === 'screenshot',
-                    }"
-                  >Generate screenshots for your PWA</h4>
-                  <p>Specify the URLs to generate screenshots from. You may add up to 8 screenshots.</p>
+                  <h4>Generate screenshots for your PWA</h4>
+                  <p>
+                    Specify the URLs to generate desktop and mobile screenshots
+                    from. You may add up to 8 screenshots.
+                  </p>
                 </label>
                 <div
                   id="screenshotsUrlsContainer"
@@ -282,19 +281,41 @@
                     :aria-hidden="ariaHidden"
                   />
                   <span>
-                    <i
-                      class="fas fa-minus-circle"
+                    <span
+                      class="outlineontab"
+                      role="button"
+                      aria-label="Remove Screenshot URL"
+                      tabindex="0"
                       @click="removeUrlForScreenshots(k)"
+                      @keyup.enter="removeUrlForScreenshots(k)"
                       v-show="k || (!k && urlsForScreenshot.length > 1)"
-                    ></i>
-                    <i
-                      class="fas fa-plus-circle"
+                    >
+                      <i
+                        class="fas fa-minus-circle outlineontab_content"
+                        aria-hidden="true"
+                        style="cursor:pointer"
+                        tabindex="-1"
+                      ></i>
+                    </span>
+                    <span
+                      class="outlineontab"
+                      role="button"
+                      aria-label="Add Screenshot URL"
+                      tabindex="0"
                       @click="addUrlForScreenshots(k)"
+                      @keyup.enter="addUrlForScreenshots(k)"
                       v-show="
                         k == urlsForScreenshot.length - 1 &&
                           screenshots.length + k <= 6
                       "
-                    ></i>
+                    >
+                      <i
+                        class="fas fa-plus-circle outlineontab_content"
+                        aria-hidden="true"
+                        style="cursor:pointer"
+                        tabindex="-1"
+                      ></i>
+                    </span>
                   </span>
                 </div>
               </div>
@@ -302,12 +323,21 @@
                 <button
                   id="screenshotDownloadButton"
                   class="work-button l-generator-button"
+                  role="button"
                   @click="onClickScreenshotFetch()"
                   :tabindex="bodyTabIndex"
                   :aria-hidden="ariaHidden"
                 >
-                  <span v-if="!screenshotLoading">Generate Screenshots</span>
-                  <span v-if="screenshotLoading">
+                  <span
+                    v-if="!screenshotLoading"
+                    id="screenshotDownloadButton_content"
+                    tabindex="-1"
+                  >Generate Screenshots</span>
+                  <span
+                    v-if="screenshotLoading"
+                    tabindex="-1"
+                    id="screenshotDownloadButton_content"
+                  >
                     <Loading
                       :active="screenshotLoading"
                       class="u-display-inline_block u-margin-left-sm"
@@ -320,10 +350,14 @@
             <div id="screenshotsOuterDiv" v-show="screenshots.length > 0">
               <div id="screenshotsContainer">
                 <button
-                  @click="scrollToLeft()"
                   v-show="screenshots.length >= 2"
                   :tabindex="bodyTabIndex"
                   :aria-hidden="ariaHidden"
+                  aria-label="scroll left"
+                  role="button"
+                  ref="scrollLeft"
+                  @keydown.tab.exact="handleTabPressLeft($event)"
+                  @click="scrollToLeft()"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                     <path
@@ -337,20 +371,56 @@
                     v-for="(screenshot, k) in filterIcons(screenshots)"
                     :key="screenshot.src"
                   >
-                    <img :src="screenshot.src" />
+                    <a
+                      v-if="!screenshot.src.startsWith('data:image')"
+                      aria-hidden="false"
+                      target="_blank"
+                      :href="screenshot.src"
+                      class="screenshotImage"
+                      ref="screenshotImage"
+                      aria-label="Screenshot image"
+                      aria-describedby="pageNumber"
+                      @keydown.tab="handleTabPressOnScreenshot($event)"
+                    >
+                      <img alt="screenshot image" :src="screenshot.src" />
+                    </a>
+                    <a
+                      v-if="screenshot.src.startsWith('data:image')"
+                      aria-hidden="false"
+                      target="_blank"
+                      :href="'javascript:document.write(\'<img src=' + screenshot.src + ' style=' + generatedImageStyle + ' />\')'"
+                      class="screenshotImage"
+                      ref="screenshotImage"
+                      aria-label="Screenshot image"
+                      aria-describedby="pageNumber"
+                      @keydown.tab="handleTabPressOnScreenshot($event)"
+                    >
+                      <img alt="screenshot image" :src="screenshot.src" />
+                    </a>
                     <div id="screenshotsToolbar">
                       <div style="width:27px;">
-                        <span v-if="screenshot.sizes!==undefined">{{`${screenshot.sizes}`}}</span>
+                        <span v-if="screenshot.sizes !== undefined">
+                          {{
+                          `${screenshot.sizes}`
+                          }}
+                        </span>
                       </div>
-                      <span>{{ `${k + 1} / ${screenshots.length}` }}</span>
+                      <span aria-hidden="true" id="pageNumber">
+                        {{
+                        `${k + 1} of ${screenshots.length}`
+                        }}
+                      </span>
                       <button
                         id="removeScreenshotsDiv"
-                        class="pure-u-1-8 l-generator-tablec l-generator-tablec--right"
-                        @click="onClickRemoveScreenshot(screenshot)"
+                        class="pure-u-1-8 l-generator-tablec l-generator-tablec--right removeScreenshotsButton"
+                        ref="removeScreenshotsButton"
+                        aria-label="Delete screenshot"
+                        @click="onClickRemoveScreenshot($event, screenshot, k)"
+                        @keydown.tab="handleTabPressOnTrash($event)"
                         :tabindex="bodyTabIndex"
                         :aria-hidden="ariaHidden"
                       >
-                        <span class="l-generator-close" :title="$t('Remove Screenshot')">
+                        <span class="l-generator-close">
                           <i class="fas fa-trash-alt"></i>
                         </span>
                       </button>
@@ -360,8 +430,11 @@
                 <button
                   @click="scrollToRight()"
                   v-show="screenshots.length >= 2"
+                  role="button"
+                  aria-label="scroll right"
                   :tabindex="bodyTabIndex"
                   :aria-hidden="ariaHidden"
+                  @keydown.tab="handleTabPressRight($event)"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                     <path
@@ -492,11 +565,12 @@
         <div id="doneDiv">
           <!--<button id="doneButton">Done</button>-->
           <nuxt-link
-            @click.native="saveChanges"
             id="doneButton"
             to="reportCard"
+            ref="doneButton"
             :tabindex="bodyTabIndex"
             :aria-hidden="ariaHidden"
+            @click.native="saveChanges"
           >Done</nuxt-link>
         </div>
       </section>
@@ -647,6 +721,7 @@ const GeneratorGetters = namespace(generator.name, Getter);
 export default class extends Vue {
   public manifest$: generator.Manifest | null = null;
   public screenshotLoading: boolean = false;
+  public screenshotNumber: number = 0;
   public isInvalidScreenshotUrl: boolean = false;
   public invalidScreenshotUrlValues: string[] = [];
   public newIconSrc = "";
@@ -673,6 +748,9 @@ export default class extends Vue {
     3000,
     false
   );
+  public generatedImageStyle =
+    '"display:block;margin-left:auto;margin-right:auto;height:50%"';
+
   private zipRequested = false;
 
   get bodyTabIndex() {
@@ -818,8 +896,10 @@ export default class extends Vue {
       top: 0,
       behavior: "smooth"
     });
+    if (this.screenshotNumber > 0) {
+      this.screenshotNumber -= 1;
+    }
   }
-
   public scrollToRight(): void {
     const screenshotsDiv = this.$refs.screenshots as HTMLDivElement;
     // screenshotsDiv.scrollBy(10, 0);
@@ -829,7 +909,61 @@ export default class extends Vue {
       top: 0,
       behavior: "smooth"
     });
+    if (this.screenshotNumber < this.screenshots.length - 1) {
+      this.screenshotNumber += 1;
+    }
   }
+  public handleTabPressLeft(e): void {
+    console.log("Screenshot number on tab left", this.screenshotNumber);
+    e.preventDefault();
+
+    (this.$refs.screenshotImage[this.screenshotNumber] as HTMLElement).focus();
+  }
+
+  public handleTabPressOnScreenshot(e): void {
+    if (this.screenshots.length > 1) {
+      console.log("Screenshot number on tab screenshot", this.screenshotNumber);
+      e.preventDefault();
+      if (e.shiftKey) {
+        (this.$refs.scrollLeft as HTMLElement).focus();
+      } else {
+        (this.$refs.scrollRight as HTMLElement).focus();
+      }
+    }
+  }
+  public handleTabPressRight(e): void {
+    e.preventDefault();
+    console.log("Screenshot number on tab right", this.screenshotNumber);
+    if (e.shiftKey) {
+      (this.$refs.scrollLeft as HTMLElement).focus();
+    } else {
+      (this.$refs.removeScreenshotsButton[
+        this.screenshotNumber
+      ] as HTMLElement).focus();
+    }
+  }
+
+  handleTabPressOnTrash(e): void {
+    console.log("Screenshot number on tab trash", this.screenshotNumber);
+    if (this.screenshots.length > 1) {
+      e.preventDefault();
+      if (e.shiftKey) {
+        (this.$refs.scrollRight as HTMLElement).focus();
+      } else {
+        console.log(document.querySelector("#doneButton") as HTMLElement);
+        (document.querySelector("#doneButton") as HTMLElement).focus();
+      }
+    } else if (this.screenshots.length == 1) {
+      if (e.shiftKey) {
+        e.preventDefault();
+        this.screenshotNumber = 0;
+        (this.$refs.screenshotImage[
+          this.screenshotNumber
+        ] as HTMLElement).focus();
+      }
+    }
+  }
+
   public filterIcons(icons): any {
     return icons.filter(icon => {
       if (!icon.generated || icon.src.indexOf("data") === 0) {
@@ -858,11 +992,22 @@ export default class extends Vue {
     this.textareaOutlineColor = "";
   }
 
-  public onClickRemoveScreenshot(screenshot: generator.Screenshot): void {
-    console.log("old screenshots length", this.screenshots.length);
+  public onClickRemoveScreenshot(
+    e: Event,
+    screenshot: generator.Screenshot,
+    k: number
+  ): void {
+    e.preventDefault();
     this.removeScreenshot(screenshot);
     this.updateManifest(this.manifest$);
-    console.log("new screenshots length", this.screenshots.length);
+
+    if (k == this.screenshots.length && this.screenshots.length > 0) {
+      console.log(this.screenshotNumber);
+      this.screenshotNumber -= 1;
+    }
+    (this.$refs.removeScreenshotsButton[
+      this.screenshotNumber
+    ] as HTMLElement).focus();
   }
 
   public onClickRemoveIcon(icon: generator.Icon): void {
@@ -1354,7 +1499,13 @@ footer a {
 #screenshotsTool {
   padding-bottom: 41px;
 }
+
 #screenshotDownloadButton {
+  background: transparent;
+  border: none;
+  outline: none;
+}
+#screenshotDownloadButton_content {
   width: 174px;
   height: 40px;
   background: transparent;
@@ -1370,6 +1521,29 @@ footer a {
   font-weight: 600;
   font-size: 14px;
   line-height: 21px;
+}
+
+.screenshotImage:focus {
+  outline: auto;
+}
+.screenshotImage {
+  outline: none;
+}
+#screenshotDownloadButton:focus > #screenshotDownloadButton_content {
+  outline: auto;
+}
+
+#screenshotDownloadButton:focus,
+#screenshotDownloadButton_content:focus {
+  outline: none;
+}
+.outlineontab:focus > .outlineontab_content {
+  outline: auto;
+}
+
+.outlineontab:focus,
+.outlineontab_content:focus {
+  outline: none;
 }
 #invalidUrlToast {
   background: grey;
@@ -1663,7 +1837,7 @@ footer a {
   fill: #6b6969;
 }
 
-#removeScreenshotsDiv {
+.removeScreenshotsButton {
   display: flex;
   justify-content: center;
   width: fit-content !important;
@@ -1698,6 +1872,26 @@ footer a {
   padding-bottom: 3%;
   height: 100%;
   object-fit: contain;
+}
+
+#screenshots a {
+  height: inherit;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  width: inherit;
+  height: inherit;
+  -ms-flex-pack: center;
+  background: #efefef;
+  outline: none;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+#screenshots a:focus {
+  background-color: #bbbbbb;
+  outline: none;
 }
 #screenshots::-webkit-scrollbar {
   display: none;
