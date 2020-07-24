@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HubHeader :showSubHeader="true"></HubHeader>
+    <HubHeader :showSubHeader="true" :disableHeader="showingIconModal"></HubHeader>
 
     <div v-if="showingIconModal" class="has-acrylic-40 is-dark" id="modalBackground"></div>
     <div
@@ -8,7 +8,7 @@
       id="invalidUrlToast"
     >Invalid url(s): {{ `${invalidScreenshotUrlValues}` }}. Please try again.</div>
     <main id="sideBySide">
-      <section id="leftSide">
+      <section id="leftSide" :aria-hidden="ariaHidden">
         <header class="mastHead">
           <h2>{{ $t('generate.subtitle') }}</h2>
           <p>{{ $t('generate.instructions') }}</p>
@@ -35,7 +35,7 @@
                 aria-label="Images"
                 aria-controls="imagesTab"
                 :aria-selected="showImagesSection ? 'true' : 'false'"
-                tabindex="0"
+                :tabindex="bodyTabIndex"
               >Images</button>
               <button
                 id="settingsTabButton"
@@ -45,7 +45,8 @@
                 aria-label="Settings"
                 aria-controls="settingsTab"
                 :aria-selected="showSettingsSection ? 'true' : 'false'"
-                tabindex="0"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               >Settings</button>
             </div>
           </div>
@@ -73,6 +74,8 @@
                 v-on:focus="activeFormField = 'appName'"
                 placeholder="App Name"
                 aria-label="App Name"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               />
             </div>
 
@@ -93,6 +96,8 @@
                 v-on:focus="activeFormField = 'shortName'"
                 placeholder="App Short Name"
                 aria-label="App Short Name"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               />
             </div>
 
@@ -117,6 +122,8 @@
                 placeholder="App Description"
                 v-bind:style="{ outline: textareaOutlineColor }"
                 aria-label="App Description"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               ></textarea>
               <span v-if="ifEntered" class="hint" id="textarea_error">Newline not allowed</span>
               <span v-else class="hint" id="textarea_error"></span>
@@ -138,6 +145,8 @@
                 v-on:focus="activeFormField = 'startURL'"
                 placeholder="Start URL"
                 aria-label="Start URL"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               />
             </div>
           </section>
@@ -168,6 +177,8 @@
                       :class="{ disabled: zipRequested }"
                       @click="onClickDownloadAll()"
                       :disabled="zipRequested"
+                      :tabindex="bodyTabIndex"
+                      :aria-hidden="ariaHidden"
                     >Download All</button>
                   </div>
                   <div class="l-inline">
@@ -175,6 +186,8 @@
                       id="iconUploadButton"
                       class="work-button l-generator-button"
                       @click="onClickUploadIcon()"
+                      :tabindex="bodyTabIndex"
+                      :aria-hidden="ariaHidden"
                     >Upload</button>
                   </div>
                 </div>
@@ -198,8 +211,19 @@
                     :key="icon.src"
                   >
                     <div id="iconDivItem" class="pure-u-10-24 l-generator-tablec">
-                      <a target="_blank" :href="icon.src">
-                        <img class="icon-preview" :src="icon.src" />
+                      <a
+                        target="_blank"
+                        :href="icon.src"
+                        :tabindex="bodyTabIndex"
+                        :aria-hidden="ariaHidden"
+                      >
+                        <img
+                          class="icon-preview"
+                          :src="icon.src"
+                          :aria-label="icon.src"
+                          alt="linter place holder"
+                          :alt="'icon representing an image from uri: ' + icon.src"
+                        />
                       </a>
 
                       <div id="iconSize" class="pure-u-8-24 l-generator-tablec">
@@ -208,7 +232,11 @@
                         <div
                           id="removeIconsDiv"
                           class="pure-u-1-8 l-generator-tablec l-generator-tablec--right"
+                          role="button"
                           @click="onClickRemoveIcon(icon)"
+                          :tabindex="bodyTabIndex"
+                          :aria-label="'delete icon of size ' + icon.sizes"
+                          :aria-hidden="ariaHidden"
                         >
                           <span class="l-generator-close" :title="$t('generate.remove_icon')">
                             <i class="fas fa-trash-alt"></i>
@@ -227,7 +255,7 @@
                 </div>
               </div>
             </div>
-            <div id="screenshotsTool">
+            <div id="screenshotsTool" :tabindex="bodyTabIndex" :aria-hidden="ariaHidden">
               <div class="l-generator-field">
                 <label class="l-generator-label">
                   <h4>Generate screenshots for your PWA</h4>
@@ -249,6 +277,8 @@
                     type="text"
                     v-on:focus="activeFormField = 'screenshot'"
                     placeholder="URL"
+                    :tabindex="bodyTabIndex"
+                    :aria-hidden="ariaHidden"
                   />
                   <span>
                     <span
@@ -289,36 +319,45 @@
                   </span>
                 </div>
               </div>
-
-              <button
-                id="screenshotDownloadButton"
-                class="work-button l-generator-button"
-                @click="onClickScreenshotFetch()"
-                role="button"
-                tabindex="0"
-              >
-                <span
-                  v-if="!screenshotLoading"
-                  id="screenshotDownloadButton_content"
-                  tabindex="-1"
-                >Generate Screenshots</span>
-                <span v-if="screenshotLoading" tabindex="-1" id="screenshotDownloadButton_content">
-                  <Loading
-                    :active="screenshotLoading"
-                    class="u-display-inline_block u-margin-left-sm"
-                  />
-                </span>
-              </button>
+              <div>
+                <button
+                  id="screenshotDownloadButton"
+                  class="work-button l-generator-button"
+                  role="button"
+                  @click="onClickScreenshotFetch()"
+                  :tabindex="bodyTabIndex"
+                  :aria-hidden="ariaHidden"
+                >
+                  <span
+                    v-if="!screenshotLoading"
+                    id="screenshotDownloadButton_content"
+                    tabindex="-1"
+                  >Generate Screenshots</span>
+                  <span
+                    v-if="screenshotLoading"
+                    tabindex="-1"
+                    id="screenshotDownloadButton_content"
+                  >
+                    <Loading
+                      :active="screenshotLoading"
+                      class="u-display-inline_block u-margin-left-sm"
+                    />
+                  </span>
+                </button>
+              </div>
             </div>
+
             <div id="screenshotsOuterDiv" v-show="screenshots.length > 0">
               <div id="screenshotsContainer">
                 <button
+                  v-show="screenshots.length >= 2"
+                  :tabindex="bodyTabIndex"
+                  :aria-hidden="ariaHidden"
                   aria-label="scroll left"
                   role="button"
+                  ref="scrollLeft"
                   @keydown.tab.exact="handleTabPressLeft($event)"
                   @click="scrollToLeft()"
-                  v-show="screenshots.length >= 2"
-                  ref="scrollLeft"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                     <path
@@ -372,11 +411,14 @@
                         }}
                       </span>
                       <button
-                        @keydown.tab="handleTabPressOnTrash($event)"
-                        aria-label="Delete screenshot"
-                        ref="removeScreenshotsButton"
+                        id="removeScreenshotsDiv"
                         class="pure-u-1-8 l-generator-tablec l-generator-tablec--right removeScreenshotsButton"
+                        ref="removeScreenshotsButton"
+                        aria-label="Delete screenshot"
                         @click="onClickRemoveScreenshot($event, screenshot, k)"
+                        @keydown.tab="handleTabPressOnTrash($event)"
+                        :tabindex="bodyTabIndex"
+                        :aria-hidden="ariaHidden"
                       >
                         <span class="l-generator-close">
                           <i class="fas fa-trash-alt"></i>
@@ -387,10 +429,11 @@
                 </section>
                 <button
                   @click="scrollToRight()"
-                  aria-label="scroll right"
-                  role="button"
                   v-show="screenshots.length >= 2"
-                  ref="scrollRight"
+                  role="button"
+                  aria-label="scroll right"
+                  :tabindex="bodyTabIndex"
+                  :aria-hidden="ariaHidden"
                   @keydown.tab="handleTabPressRight($event)"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -426,6 +469,8 @@
                 placeholder="App Scope"
                 v-on:focus="activeFormField = 'appScope'"
                 aria-label="App Scope"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               />
             </div>
 
@@ -448,6 +493,8 @@
                 @change="onChangeSimpleInput(), update()"
                 v-on:focus="activeFormField = 'displayMode'"
                 aria-label="Display Mode"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               >
                 <option
                   v-for="display in displaysNames"
@@ -473,6 +520,8 @@
                 @change="onChangeSimpleInput(), update()"
                 v-on:focus="activeFormField = 'appOrientation'"
                 aria-label="App Orientation"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               >
                 <option
                   v-for="orientation in orientationsNames"
@@ -496,6 +545,8 @@
                 @change="onChangeSimpleInput(), update()"
                 v-on:change="activeFormField = 'appLang'"
                 aria-label="App Language"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               >
                 <option
                   v-for="language in languagesNames"
@@ -514,53 +565,14 @@
         <div id="doneDiv">
           <!--<button id="doneButton">Done</button>-->
           <nuxt-link
-            tabindex="0"
-            ref="doneButton"
-            @click.native="saveChanges"
             id="doneButton"
             to="reportCard"
+            ref="doneButton"
+            :tabindex="bodyTabIndex"
+            :aria-hidden="ariaHidden"
+            @click.native="saveChanges"
           >Done</nuxt-link>
         </div>
-      </section>
-
-      <section id="rightSide">
-        <!--<div id="exampleDiv">
-          <h3>Add this code to your start page:</h3>
-          <code>&lt;link rel="manifest" href="/manifest.json"&gt;</code>
-        </div>-->
-
-        <CodeViewer
-          code-type="html"
-          v-if="seeEditor"
-          title="Add this code to your start page"
-          code="<link rel='manifest' href='/manifest.json'>"
-          :showHeader="true"
-          :showCopyButton="true"
-          monaco-id="manifestHTMLId"
-          id="manifestHTML"
-        >
-          <h3>Add this code to your start page:</h3>
-        </CodeViewer>
-
-        <CodeViewer
-          code-type="json"
-          v-on:invalidManifest="invalidManifest()"
-          v-on:editorValue="updateManifestFn($event)"
-          v-if="seeEditor"
-          :code="getCode()"
-          :title="$t('generate.w3c_manifest')"
-          :suggestions="suggestions"
-          :suggestionsTotal="suggestionsTotal"
-          :warnings="warnings"
-          :warningsTotal="warningsTotal"
-          :showToolbar="true"
-          :showHeader="true"
-          :showCopyButton="showCopy"
-          monaco-id="manifestCodeId"
-          id="manifestCode"
-        >
-          <h3>Add this code to your manifest.json file</h3>
-        </CodeViewer>
       </section>
 
       <Modal
@@ -611,6 +623,50 @@
           </div>
         </section>
       </Modal>
+
+      <section id="rightSide" :tabindex="bodyTabIndex" :aria-hidden="ariaHidden">
+        <!--<div id="exampleDiv">
+          <h3>Add this code to your start page:</h3>
+          <code>&lt;link rel="manifest" href="/manifest.json"&gt;</code>
+        </div>-->
+
+        <CodeViewer
+          code-type="html"
+          v-if="seeEditor"
+          title="Add this code to your start page"
+          code="<link rel='manifest' href='/manifest.json'>"
+          :showHeader="true"
+          :showCopyButton="true"
+          monaco-id="manifestHTMLId"
+          id="manifestHTML"
+          :tabindex="bodyTabIndex"
+          :aria-hidden="ariaHidden"
+        >
+          <h3>Add this code to your start page:</h3>
+        </CodeViewer>
+
+        <CodeViewer
+          code-type="json"
+          v-on:invalidManifest="invalidManifest()"
+          v-on:editorValue="updateManifestFn($event)"
+          v-if="seeEditor"
+          :code="getCode()"
+          :title="$t('generate.w3c_manifest')"
+          :suggestions="suggestions"
+          :suggestionsTotal="suggestionsTotal"
+          :warnings="warnings"
+          :warningsTotal="warningsTotal"
+          :showToolbar="true"
+          :showHeader="true"
+          :showCopyButton="showCopy"
+          monaco-id="manifestCodeId"
+          id="manifestCode"
+          :tabindex="bodyTabIndex"
+          :aria-hidden="ariaHidden"
+        >
+          <h3>Add this code to your manifest.json file</h3>
+        </CodeViewer>
+      </section>
     </main>
 
     <footer>
@@ -619,6 +675,8 @@
         project to help move PWA adoption forward.
         <a
           href="https://privacy.microsoft.com/en-us/privacystatement"
+          :tabindex="bodyTabIndex"
+          :aria-hidden="ariaHidden"
         >Our Privacy Statement</a>
       </p>
     </footer>
@@ -657,8 +715,8 @@ const GeneratorGetters = namespace(generator.name, Getter);
     StartOver,
     Modal,
     HubHeader,
-    Loading,
-  },
+    Loading
+  }
 })
 export default class extends Vue {
   public manifest$: generator.Manifest | null = null;
@@ -695,6 +753,14 @@ export default class extends Vue {
 
   private zipRequested = false;
 
+  get bodyTabIndex() {
+    return this.showingIconModal ? -1 : 0;
+  }
+
+  get ariaHidden() {
+    return this.showingIconModal ? true : false;
+  }
+
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
   @GeneratorState icons: generator.Icon[];
@@ -730,18 +796,18 @@ export default class extends Vue {
       behavior: 0,
       uri: window.location.href,
       pageName: "manifestPage",
-      pageHeight: window.innerHeight,
+      pageHeight: window.innerHeight
     };
 
     // might be the issue
     var updateFn = helper.debounce(this.update, 3000, false);
 
     document &&
-      document.querySelectorAll(".l-generator-input").forEach((item) => {
+      document.querySelectorAll(".l-generator-input").forEach(item => {
         item.addEventListener("keyup", updateFn);
       });
     document &&
-      document.querySelectorAll(".l-generator-textarea").forEach((item) => {
+      document.querySelectorAll(".l-generator-textarea").forEach(item => {
         item.addEventListener("keyup", updateFn);
       });
 
@@ -779,11 +845,11 @@ export default class extends Vue {
           method: "POST",
           responseType: "blob",
           headers: {
-            "content-type": "application/json",
-          },
+            "content-type": "application/json"
+          }
         }
       )
-      .then(async (res) => {
+      .then(async res => {
         if (window.chooseFileSystemEntries) {
           const fsOpts = {
             type: "save-file",
@@ -791,9 +857,9 @@ export default class extends Vue {
               {
                 description: "PWA Builder Image Zip",
                 extensions: ["zip"],
-                mimeTypes: ["application/zip"],
-              },
-            ],
+                mimeTypes: ["application/zip"]
+              }
+            ]
           };
           const fileHandle = await window.chooseFileSystemEntries(fsOpts);
           // Create a FileSystemWritableFileStream to write to.
@@ -807,7 +873,7 @@ export default class extends Vue {
         }
         this.zipRequested = false;
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
         this.zipRequested = false;
       });
@@ -828,7 +894,7 @@ export default class extends Vue {
       // left: -15,
       left: -screenshotsDiv.clientWidth,
       top: 0,
-      behavior: "smooth",
+      behavior: "smooth"
     });
     if (this.screenshotNumber > 0) {
       this.screenshotNumber -= 1;
@@ -841,7 +907,7 @@ export default class extends Vue {
       // left: 15,
       left: screenshotsDiv.clientWidth,
       top: 0,
-      behavior: "smooth",
+      behavior: "smooth"
     });
     if (this.screenshotNumber < this.screenshots.length - 1) {
       this.screenshotNumber += 1;
@@ -899,7 +965,7 @@ export default class extends Vue {
   }
 
   public filterIcons(icons): any {
-    return icons.filter((icon) => {
+    return icons.filter(icon => {
       if (!icon.generated || icon.src.indexOf("data") === 0) {
         return icon;
       }
@@ -907,7 +973,7 @@ export default class extends Vue {
   }
 
   public checkBrokenImage(icons): any {
-    icons.forEach((icon) => {
+    icons.forEach(icon => {
       if (icon.generated && icon.src.indexOf("data") !== 0) {
         this.isImageBroken = true;
       }
@@ -954,11 +1020,11 @@ export default class extends Vue {
     let urls: string[] = [];
     this.invalidScreenshotUrlValues = [];
     //
-    urls = this.urlsForScreenshotValues.filter((url) => {
+    urls = this.urlsForScreenshotValues.filter(url => {
       return url !== null && url !== undefined && url !== "";
     });
     console.log(urls);
-    urls = urls.map((url) => {
+    urls = urls.map(url => {
       return this.validateScreenshotUrl(url);
     });
     console.log("Validated urls", urls);
@@ -1014,7 +1080,7 @@ export default class extends Vue {
     // Check if file type is an image
     if (this.iconFile && this.iconFile.name) {
       const supportedFileTypes = [".png", ".jpg", ".svg"];
-      var found = supportedFileTypes.find((fileType) =>
+      var found = supportedFileTypes.find(fileType =>
         this.iconFile.name.endsWith(fileType)
       );
       if (!found) {
@@ -1031,12 +1097,12 @@ export default class extends Vue {
     // Creates a clone of icons but replaces any embedded image data
     // (eg. "src: data:image/png;base64,...") with "[Embedded]"
     const w3cIconProps = ["src", "sizes", "type", "purpose", "platform"];
-    return icons.map((i) => {
+    return icons.map(i => {
       const clone = { ...i };
       // Only include W3C props
       Object.keys(clone)
-        .filter((prop) => !w3cIconProps.includes(prop))
-        .forEach((prop) => delete clone[prop]);
+        .filter(prop => !w3cIconProps.includes(prop))
+        .forEach(prop => delete clone[prop]);
 
       // Swap embedded images with "[Embedded]" string literal.
       const isEmbeddedImg = i.src.startsWith("data:image");
@@ -1063,11 +1129,9 @@ export default class extends Vue {
   private getManifestProperties(): string {
     const ignoredMembers = ["generated"];
     const manifestMembers = Object.keys(this.manifest)
-      .filter((property) => !ignoredMembers.includes(property))
-      .filter((property) => this.manifest[property] !== undefined)
-      .map(
-        (property) => `"${property}": ${this.getManifestPropValue(property)}`
-      )
+      .filter(property => !ignoredMembers.includes(property))
+      .filter(property => this.manifest[property] !== undefined)
+      .map(property => `"${property}": ${this.getManifestPropValue(property)}`)
       .join(",\n");
 
     return `{ ${manifestMembers} ${this.getCustomMembers()} }`;
@@ -1217,7 +1281,7 @@ export default class extends Vue {
   }
 }
 
-Vue.prototype.$awa = function (config) {
+Vue.prototype.$awa = function(config) {
   if (awa) {
     awa.ct.capturePageView(config);
   }
