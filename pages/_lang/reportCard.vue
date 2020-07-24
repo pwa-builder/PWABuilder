@@ -73,7 +73,7 @@
             </p>
 
             <div id="starterActions">
-              <div class="dropdown dropdown-menu">
+              <div class="dropdown dropdown-menu" @keyup.esc="closeDropDown">
                 <button
                   @click="starterDrop"
                   id="mainStartButton"
@@ -369,6 +369,12 @@ export default class extends Vue {
 
   public async starterDrop() {
     this.openDrop = !this.openDrop;
+  }
+
+  public async closeDropDown() {
+    if (this.openDrop) {
+      this.openDrop = !this.openDrop;
+    }
   }
 
   async downloadStarter() {
