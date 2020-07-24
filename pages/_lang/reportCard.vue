@@ -80,7 +80,7 @@
                   type="button"
                   aria-controls="starterDropdown"
                   aria-haspop="true"
-                  aria-expanded="false"
+                  :aria-expanded="openDrop ? true : false"
                 >
                   Get Started!
                   <i class="fas fa-chevron-down" aria-hidden="true"></i>
