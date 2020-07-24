@@ -100,11 +100,11 @@
                     role="menuitem"
                   >
                     <i class="fas fa-arrow-down" aria-hidden="true"></i>
-                    Download
+                    <span aria-hidden="true">Download</span>
                   </button>
                   <button @click="cloneStarter" type="button" role="menuitem">
                     <i class="fab fa-github" aria-hidden="true"></i>
-                    Clone from Github
+                    <span aria-hidden="true">Clone from Github</span>
                   </button>
                 </div>
               </div>
@@ -720,6 +720,14 @@ declare var awa: any;
   align-items: center;
   color: white;
   cursor: pointer;
+}
+
+.dropdown-menu {
+  #starterDropdown {
+    i {
+      margin-right: 4px;
+    }
+  }
 }
 
 @media (max-width: 1281px) {
