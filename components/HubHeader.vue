@@ -1,6 +1,7 @@
 <template>
   <div>
     <header :class="{ 'smaller-header': !expanded }" role="presentation">
+      <a id="go-to-main" tabindex="0" @click="goToMain" v-on:keyup.enter="goToMain">Skip to content</a>
       <img
         id="logo"
         src="~/assets/images/new-logo.svg"
@@ -147,8 +148,8 @@ const GeneratorState = namespace(generator.name, State);
 
 @Component({
   components: {
-    InstallButton
-  }
+    InstallButton,
+  },
 })
 export default class extends Vue {
   @Prop({ default: false }) expanded: boolean;
@@ -186,14 +187,14 @@ export default class extends Vue {
             name: "--color-stop",
             syntax: "<color>",
             inherits: false,
-            initialValue: "transparent"
+            initialValue: "transparent",
           });
 
           (CSS as any).registerProperty({
             name: "--color-start",
             syntax: "<color>",
             inherits: false,
-            initialValue: "transparent"
+            initialValue: "transparent",
           });
         } catch (err) {
           console.error(err);
@@ -220,7 +221,7 @@ export default class extends Vue {
             sessionStorage.setItem("overallGrade", this.score.toString());
           },
           {
-            timeout: 2000
+            timeout: 2000,
           }
         );
       }
@@ -235,11 +236,19 @@ export default class extends Vue {
     this.$emit("reset");
     this.$router.push({ name: "index" });
   }
+
+  goToMain() {
+    console.log("go to main");
+    const main = document.getElementById("main");
+    if (main) {
+      main.focus();
+    }
+  }
 }
 
 declare var awa: any;
 
-Vue.prototype.$awa = function(config) {
+Vue.prototype.$awa = function (config) {
   if (awa) {
     awa.ct.capturePageView(config);
   }
@@ -251,6 +260,20 @@ Vue.prototype.$awa = function(config) {
 <style lang="scss" scoped>
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
+
+#go-to-main {
+  display: block;
+  position: absolute;
+  color: #0078d4;
+  left: 0;
+  padding: 16px;
+  z-index: -2;
+}
+
+#go-to-main:focus,
+#go-to-main:active {
+  z-index: 800;
+}
 
 .nuxt-link-exact-active {
   color: rgba(255, 255, 255, 1) !important;

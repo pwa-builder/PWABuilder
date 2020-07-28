@@ -2,7 +2,7 @@
   <div>
     <HubHeader :showSubHeader="true"></HubHeader>
 
-    <main id="sideBySide">
+    <main id="main">
       <section id="leftSide">
         <header class="mastHead">
           <h2>{{ $t("serviceworker.title") }}</h2>
@@ -318,7 +318,7 @@ footer a {
   text-decoration: underline;
 }
 
-#sideBySide {
+#main {
   display: flex;
   justify-content: space-between;
   height: 100%;
@@ -488,17 +488,17 @@ footer a {
     width: 100%;
   }
 
-  #sideBySide {
+  #main {
     flex-direction: column;
     padding-left: 31px !important;
     padding-right: 24px !important;
   }
 
-  #sideBySide #leftSide {
+  #main #leftSide {
     width: initial;
   }
 
-  #sideBySide #leftSide #inputSection .inputContainer {
+  #main #leftSide #inputSection .inputContainer {
     padding-left: 14px;
     padding-right: 14px;
   }
