@@ -1,7 +1,13 @@
 <template>
   <div>
     <header :class="{ 'smaller-header': !expanded }" role="presentation">
-      <a id="go-to-main" tabindex="0" @click="goToMain" v-on:keyup.enter="goToMain">Skip to content</a>
+      <a
+        id="go-to-main"
+        href="#main"
+        tabindex="0"
+        @click="goToMain"
+        v-on:keyup.enter="goToMain"
+      >Skip to content</a>
       <img
         id="logo"
         src="~/assets/images/new-logo.svg"
@@ -237,11 +243,17 @@ export default class extends Vue {
     this.$router.push({ name: "index" });
   }
 
-  goToMain() {
-    console.log("go to main");
+  goToMain(evt) {
+    evt.preventDefault();
+
+    //TODO
+
     const main = document.getElementById("main");
     if (main) {
-      main.focus();
+      main.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     }
   }
 }
