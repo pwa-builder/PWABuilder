@@ -1,6 +1,6 @@
 <template>
   <div>
-    <header :class="{ 'smaller-header': !expanded }" role="presentation">
+    <header :class="{ 'smaller-header': !expanded, 'wide': wide }" role="presentation">
       <img
         id="logo"
         src="~/assets/images/new-logo.svg"
@@ -11,6 +11,8 @@
         :tabindex="headerTabIndex"
         :aria-hidden="ariaHidden"
       />
+
+      <h1 v-if="title">{{title}}</h1>
 
       <div id="mainTabsBar">
         <nuxt-link to="/">My Hub</nuxt-link>
@@ -147,12 +149,14 @@ const GeneratorState = namespace(generator.name, State);
 
 @Component({
   components: {
-    InstallButton
-  }
+    InstallButton,
+  },
 })
 export default class extends Vue {
   @Prop({ default: false }) expanded: boolean;
+  @Prop({ type: Boolean, default: false }) wide: boolean;
   @Prop({}) showSubHeader: string;
+  @Prop({ type: String }) title: string;
   @Prop({ type: Boolean, default: false }) noInteraction: boolean;
   @Prop({ default: false }) showFeatureDetailButton: boolean;
   @Prop({ default: false }) showFeatureDetailGraphButton: boolean;
@@ -186,14 +190,14 @@ export default class extends Vue {
             name: "--color-stop",
             syntax: "<color>",
             inherits: false,
-            initialValue: "transparent"
+            initialValue: "transparent",
           });
 
           (CSS as any).registerProperty({
             name: "--color-start",
             syntax: "<color>",
             inherits: false,
-            initialValue: "transparent"
+            initialValue: "transparent",
           });
         } catch (err) {
           console.error(err);
@@ -220,7 +224,7 @@ export default class extends Vue {
             sessionStorage.setItem("overallGrade", this.score.toString());
           },
           {
-            timeout: 2000
+            timeout: 2000,
           }
         );
       }
@@ -239,7 +243,7 @@ export default class extends Vue {
 
 declare var awa: any;
 
-Vue.prototype.$awa = function(config) {
+Vue.prototype.$awa = function (config) {
   if (awa) {
     awa.ct.capturePageView(config);
   }
@@ -261,6 +265,15 @@ Vue.prototype.$awa = function(config) {
   height: 52px;
 }
 
+body {
+  font-family: helvetica, arial, sans-serif;
+  background: linear-gradient(#1fc2c8, #9337d8);
+  background-repeat: no-repeat;
+  background-color: #9337d8;
+  color: white;
+  margin: 0;
+}
+
 header {
   background-color: rgba(0, 0, 0, 0.2);
   height: 104px;
@@ -275,14 +288,26 @@ header {
   color: white;
   z-index: 1;
 
-  #logoLink {
-    grid-column: 1 / span 2;
+  &.wide {
+    // grid-template-columns: repeat(12, 1fr);
 
-    border: none;
+    #logo {
+      grid-template-columns: 1fr 1fr;
+    }
   }
 
   img {
     max-width: none;
+  }
+
+  #main {
+    margin: 16px;
+  }
+
+  .pwa-generator-form {
+    &:first {
+      padding-right: 16px;
+    }
   }
 
   /* TODO: Can some of this be shared with tabsBar below at all? */
