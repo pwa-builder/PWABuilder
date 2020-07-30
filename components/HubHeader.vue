@@ -300,16 +300,6 @@ header {
     max-width: none;
   }
 
-  #main {
-    margin: 16px;
-  }
-
-  .pwa-generator-form {
-    &:first {
-      padding-right: 16px;
-    }
-  }
-
   /* TODO: Can some of this be shared with tabsBar below at all? */
   #mainTabsBar {
     grid-column: 3 / span 8;

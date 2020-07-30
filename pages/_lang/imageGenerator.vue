@@ -239,3 +239,22 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+#main {
+  margin: 16px;
+}
+
+// flex so cannot do that
+.pwa-generator-form {
+  &:first-child {
+    padding-right: 16px;
+  }
+}
+
+#downloadButton,
+#selectPlatforms {
+  color: #fff;
+  background: linear-gradient(90deg, #1fc2c8, #9337d8 116%);
+}
+</style>
