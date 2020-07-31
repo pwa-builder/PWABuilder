@@ -13,33 +13,50 @@
           ref="form"
         >
           <section class="form-left">
-            <h4>Image Details</h4>
+            <h2>Image Details</h2>
             <p>Specify the image details below.</p>
-            <div>
+            <div class="image-section">
               <h3>Input Image</h3>
-              <label id="fileNameLabel" for="fileName" ref="fileNameLabel">{{labelFileName}}</label>
-              <input id="fileName" name="fileName" type="file" ref="fileName" @change="changeLabel" />
-              <button id="inputFile" class="utility" @click="selectInputFile">Choose File</button>
+              <input
+                id="fileName"
+                class="file-chooser"
+                name="fileName"
+                type="file"
+                ref="fileName"
+                aria-label="Choose File"
+                @change="changeLabel"
+              />
             </div>
-            <div>
+            <div class="padding-section">
               <h3>Padding</h3>
-              <input name="padding" type="number" value="0.3" min="0" step="any" />
+              <input
+                class="padding-input"
+                name="padding"
+                type="number"
+                value="0.3"
+                min="0"
+                step="any"
+              />
               <small>0 is no padding, 1 is 100% of the source image. 0.3 is a typical value for most icons</small>
             </div>
             <div class="color-section">
               <h3>Background Color</h3>
 
               <div class="color-radio">
-                <input type="radio" name="colorOption" checked="checked" value="transparent" />
-                <label for="transparent">Transparent</label>
-                <input type="radio" name="colorOption" value="choose" />
-                <label for="choose">Custom color</label>
+                <label aria-label="Transparent">
+                  <input type="radio" name="colorOption" checked="checked" value="transparent" />
+                  Transparent
+                </label>
+
+                <label aria-label="Custom Color">
+                  <input type="radio" name="colorOption" value="choose" />
+                  Custom color
+                </label>
               </div>
 
               <div class="color-chooser">
-                <input type="color" />
-                <input placeholder="#000000" name="color" id="color" type="text" />
-                <input type="hidden" name="colorChanged" id="colorChanged" value="0" />
+                <input id="colorPicker" class="color-picker" type="color" />
+                <input id="color" class="color-text" type="text" name="color" placeholder="#000000" />
                 <small>Choose a color for the background (leave blank to default to the pixel at the top left)</small>
               </div>
             </div>
@@ -47,54 +64,38 @@
           <section class="form-right">
             <h4>Platforms</h4>
             <p>Select the platforms to generate images for.</p>
-            <p>(*) windows platform generates images for Windows 8.1 and Windows Phone 8.1 apps.</p>
-            <div>
-              <div ref="checkPlatforms">
-                <div>
-                  <label>
-                    <input type="checkbox" name="platform" value="windows10" v-model="platforms" />
-                    windows10
-                  </label>
-                </div>
-                <div>
-                  <label>
-                    <input type="checkbox" name="platform" value="windows" v-model="platforms" />
-                    windows *
-                  </label>
-                </div>
-                <div>
-                  <label>
-                    <input type="checkbox" name="platform" value="android" v-model="platforms" />
-                    android
-                  </label>
-                </div>
-                <div>
-                  <label>
-                    <input type="checkbox" name="platform" value="ios" v-model="platforms" />
-                    ios
-                  </label>
-                </div>
-                <div>
-                  <label>
-                    <input type="checkbox" name="platform" value="chrome" v-model="platforms" />
-                    chrome
-                  </label>
-                </div>
-                <div>
-                  <label>
-                    <input type="checkbox" name="platform" value="firefox" v-model="platforms" />
-                    firefox
-                  </label>
-                </div>
-                <div>
-                  <button
-                    id="selectPlatforms"
-                    class="secondary"
-                    @click.prevent="checkAll"
-                  >Select/Clear All</button>
-                </div>
-              </div>
+            <small>(*) windows platform generates images for Windows 8.1 and Windows Phone 8.1 apps.</small>
+            <div class="platform-list" ref="checkPlatforms">
+              <label>
+                <input type="checkbox" name="platform" value="windows10" v-model="platforms" />
+                windows10
+              </label>
+              <label>
+                <input type="checkbox" name="platform" value="windows" v-model="platforms" />
+                windows *
+              </label>
+              <label>
+                <input type="checkbox" name="platform" value="android" v-model="platforms" />
+                android
+              </label>
+              <label>
+                <input type="checkbox" name="platform" value="ios" v-model="platforms" />
+                ios
+              </label>
+              <label>
+                <input type="checkbox" name="platform" value="chrome" v-model="platforms" />
+                chrome
+              </label>
+              <label>
+                <input type="checkbox" name="platform" value="firefox" v-model="platforms" />
+                firefox
+              </label>
             </div>
+            <button
+              id="selectPlatforms"
+              class="secondary"
+              @click.prevent="checkAll"
+            >Select/Clear All</button>
           </section>
           <section id="submit" class="form-bottom">
             <button
@@ -208,12 +209,33 @@ export default {
 </script>
 
 <style lang="scss">
+html,
+body {
+  height: 100%;
+}
+
+h3 {
+  margin-bottom: 16px;
+}
+
 input {
   height: auto;
   width: auto;
 }
 
+small {
+  display: block;
+}
+
+.container > div,
+.main {
+  height: calc(100% - 104px);
+}
+
 body {
+  display: flex;
+  flex-direction: column;
+
   font-family: helvetica, arial, sans-serif;
   color: white;
   // background: linear-gradient(#1fc2c8, #9337d8);
@@ -262,6 +284,7 @@ body {
 }
 
 .main {
+  flex: 1 0 auto;
   padding: 0 154px;
 
   button {
@@ -295,6 +318,10 @@ body {
   @media screen and (max-width: 425px) {
     padding: 0 16px;
   }
+
+  @media screen and (max-height: 600) {
+    flex: 1 1 auto;
+  }
 }
 
 .form {
@@ -313,13 +340,27 @@ body {
 }
 
 .footer {
-  bottom: 0;
-  position: fixed;
+  flex-shrink: 0;
   display: flex;
   padding: 0 16px;
   color: #3c3c3c;
   background: #f0f0f0;
   justify-content: center;
+
+  @media screen and (max-width: 425px) {
+    display: none;
+  }
+}
+
+.image-section,
+.padding-section {
+  margin-bottom: 16px;
+}
+
+.padding-section {
+  .padding-input {
+    width: 60px;
+  }
 }
 
 .color-chooser {
@@ -332,8 +373,19 @@ body {
     margin-right: 8px;
   }
 
-  small {
+  input {
+    width: 120px;
+  }
+}
+
+.color-radio,
+.platform-list {
+  display: flex;
+  flex-direction: column;
+
+  label {
     display: block;
+    margin-top: 8px;
   }
 }
 </style>
