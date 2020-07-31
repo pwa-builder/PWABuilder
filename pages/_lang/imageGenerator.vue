@@ -61,7 +61,7 @@
               </div>
             </div>
           </section>
-          <section class="form-right">
+          <section class="form-right platforms-section">
             <h4>Platforms</h4>
             <p>Select the platforms to generate images for.</p>
             <small>(*) windows platform generates images for Windows 8.1 and Windows Phone 8.1 apps.</small>
@@ -215,7 +215,7 @@ body {
 }
 
 h3 {
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 input {
@@ -225,6 +225,7 @@ input {
 
 small {
   display: block;
+  margin: 8px 0;
 }
 
 .container > div,
@@ -385,7 +386,16 @@ body {
 
   label {
     display: block;
+  }
+
+  label + label {
     margin-top: 8px;
+  }
+}
+
+.platforms-section {
+  button {
+    margin-top: 16px;
   }
 }
 </style>
