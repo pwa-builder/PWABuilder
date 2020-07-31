@@ -316,13 +316,10 @@ body {
   bottom: 0;
   position: fixed;
   display: flex;
+  padding: 0 16px;
   color: #3c3c3c;
   background: #f0f0f0;
   justify-content: center;
-
-  @media screen and (max-width: 768px) {
-    padding: 0 16px;
-  }
 }
 
 .color-chooser {
