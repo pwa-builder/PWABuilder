@@ -91,7 +91,7 @@
             <h4>Platforms</h4>
             <p>Select the platforms to generate images for.</p>
             <small>(*) windows platform generates images for Windows 8.1 and Windows Phone 8.1 apps.</small>
-            <div class="platform-list" ref="checkPlatforms">
+            <div class="platform-list" ref="checkPlatforms" role="group">
               <label>
                 <input type="checkbox" name="platform" value="windows10" v-model="platforms" />
                 windows10
@@ -101,12 +101,12 @@
                 windows *
               </label>
               <label>
-                <input type="checkbox" name="platform" value="android" v-model="platforms" />
-                android
+                <input type="checkbox" name="platform" value="msteams" v-model="platforms" />
+                microsoft teams
               </label>
               <label>
-                <input type="checkbox" name="platform" value="ios" v-model="platforms" />
-                ios
+                <input type="checkbox" name="platform" value="android" v-model="platforms" />
+                android
               </label>
               <label>
                 <input type="checkbox" name="platform" value="chrome" v-model="platforms" />
@@ -171,6 +171,7 @@ export default {
       platforms: [
         "windows10",
         "windows",
+        "msteams",
         "android",
         "ios",
         "chrome",
@@ -185,6 +186,9 @@ export default {
 
       const urlUseAPI = process.env.apiUrl2 + "/";
       const formData = new FormData(this.$refs.form);
+
+      // TODO
+      console.log("check if this form is good", formData);
 
       axios.post(urlUseAPI + "api/image", formData).then((result) => {
         const fileUri = result.data.Uri;
@@ -209,8 +213,8 @@ export default {
         this.platforms = [
           "windows10",
           "windows",
+          "msteams",
           "android",
-          "ios",
           "chrome",
           "firefox",
         ];
@@ -335,6 +339,13 @@ body {
       // background: linear-gradient(90deg, #1fc2c8, #9337d8 116%);
       color: #3c3c3c;
       background: linear-gradient(90deg, #fff, hsla(0, 0%, 100%, 0.7));
+
+      &:disabled {
+        cursor: not-allowed;
+        color: #989898;
+        border: 1px solid #989898;
+        background: linear-gradient(90deg, #fff, hsla(0, 0%, 100%, 0.3));
+      }
     }
     &.secondary {
       background: #3c3c3c;
@@ -375,11 +386,14 @@ body {
 }
 
 .footer {
-  flex-shrink: 0;
   display: flex;
   padding: 0 16px;
   color: #3c3c3c;
   background: #f0f0f0;
+  font-size: 12px;
+  line-height: 18px;
+  flex-shrink: 0;
+  text-align: center;
   justify-content: center;
 
   @media screen and (max-width: 425px) {
@@ -402,6 +416,11 @@ body {
   padding: 8px 0;
   vertical-align: middle;
 
+  input[type="text"],
+  input[type="color"] {
+    vertical-align: middle;
+  }
+
   input[type="color"] {
     height: 26px;
     width: 26px;
@@ -420,6 +439,11 @@ body {
 
   label {
     display: block;
+
+    input[type="radio"],
+    input[type="checkbox"] {
+      vertical-align: middle;
+    }
   }
 
   label + label {
