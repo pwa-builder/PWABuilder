@@ -131,10 +131,10 @@
               v-on:click.prevent="useAPI"
               :disabled="disableDownload"
             >
-              Download
               <span v-if="isLoading">
-                <i aria-hidden="true"></i>
+                <Loading :active="true"></Loading>
               </span>
+              <span v-else>Download</span>
             </button>
           </section>
         </form>
@@ -156,9 +156,10 @@
 import axios from "axios";
 import HubHeader from "~/components/HubHeader.vue";
 import GeneratorMenu from "~/components/GeneratorMenu.vue";
+import Loading from "~/components/Loading.vue";
 
 export default {
-  components: { HubHeader, GeneratorMenu },
+  components: { HubHeader, GeneratorMenu, Loading },
 
   data() {
     return {
@@ -237,11 +238,11 @@ export default {
   },
   computed: {
     disableDownload() {
-      if (this.labelFileName != "Choose File") {
-        return false;
-      } else {
+      if (this.labelFileName === "Choose File" || this.isLoading) {
         return true;
       }
+
+      return false;
     },
   },
 };
@@ -265,6 +266,14 @@ input {
 small {
   display: block;
   margin: 8px 0;
+}
+
+#selectPlatforms {
+  width: 130px;
+}
+
+#downloadButton {
+  width: 110px;
 }
 
 .container > div,
