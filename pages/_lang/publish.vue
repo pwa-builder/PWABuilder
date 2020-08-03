@@ -1,5 +1,5 @@
 <template>
-  <main id="publishMain">
+  <main id="main">
     <HubHeader></HubHeader>
 
     <div
@@ -678,8 +678,8 @@
           </p>
 
           <p>
-            Your download will contain 
-            <a href="https://github.com/pwa-builder/CloudAPK/blob/master/Next-steps.md">instructions</a> 
+            Your download will contain
+            <a href="https://github.com/pwa-builder/CloudAPK/blob/master/Next-steps.md">instructions</a>
             for submitting your app to the Google Play store.
           </p>
 
@@ -1548,7 +1548,7 @@ export default class extends Vue {
 
     if (this.androidForm.signingMode === "new") {
       return "Type a new password or leave empty to use a generated one";
-    } 
+    }
 
     return "";
   }
@@ -2977,7 +2977,7 @@ footer a {
 }
 
 @media (min-width: 1200px) {
-  #publishMain {
+  #main {
     height: 100vh;
   }
 

@@ -201,7 +201,7 @@
         </li>
       </ul>
 
-      <ul id="noSWP" v-if="category === 'Manifest' && noManifest">
+      <ul id="noManifest" v-if="category === 'Manifest' && noManifest">
         <li>
           <div class="listSubDiv">
             <span class="cardIcon">
@@ -355,7 +355,7 @@
           <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.pushReg">5</span>
 
           <span class="subScoreSpan" v-if="serviceWorkerData && !serviceWorkerData.pushReg">0</span>
-        </li> -->
+        </li>-->
       </ul>
 
       <ul v-if="category === 'Service Worker' && !serviceWorkerData && !noServiceWorker">
@@ -423,7 +423,7 @@
           </div>
 
           <span class="subScoreSpan">0</span>
-        </li> -->
+        </li>-->
       </ul>
     </div>
 
@@ -447,7 +447,8 @@
         </button>
         <div class="brkManifestError" v-if="brokenManifest">
           Couldn't find an
-          <a tabindex="-1"
+          <a
+            tabindex="-1"
             href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
           >app manifest</a>
         </div>
@@ -521,7 +522,7 @@ export default class extends Vue {
   }
 
   private lookAtSecurity(): Promise<void> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       if (this.url && this.url.includes("https")) {
         this.hasHTTPS = true;
         this.validSSL = true;
@@ -536,7 +537,7 @@ export default class extends Vue {
   }
 
   private lookAtManifest(): Promise<void> {
-    return new Promise(async resolve => {
+    return new Promise(async (resolve) => {
       try {
         await this.getManifestInformation();
       } catch (ex) {
@@ -851,7 +852,8 @@ export default class extends Vue {
     flex-grow: 2;
   }
 
-  #noSWP {
+  #noSWP,
+  #noManifest {
     flex-grow: 2;
     margin-bottom: 2em;
   }

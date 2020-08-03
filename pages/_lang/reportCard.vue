@@ -22,7 +22,7 @@
       </button>
     </div>
 
-    <main>
+    <main id="main">
       <div v-if="!gotURL" id="inputSection">
         <div id="topHalfHome">
           <h1 id="topHalfHeader">Quickly and easily turn your website into an app!</h1>
@@ -240,8 +240,8 @@ const WindowsAction = namespace(windowsStore.name, Action);
   components: {
     HubHeader,
     ScoreCard,
-    FeatureCard
-  }
+    FeatureCard,
+  },
 })
 export default class extends Vue {
   @GeneratorState url: string;
@@ -290,14 +290,14 @@ export default class extends Vue {
           name: "--color-stop-hub",
           syntax: "<color>",
           inherits: false,
-          initialValue: "transparent"
+          initialValue: "transparent",
         });
 
         (CSS as any).registerProperty({
           name: "--color-start-hub",
           syntax: "<color>",
           inherits: false,
-          initialValue: "transparent"
+          initialValue: "transparent",
         });
       } catch (err) {
         console.error(err);
@@ -308,7 +308,7 @@ export default class extends Vue {
       behavior: 0,
       uri: window.location.href,
       pageName: "homePage",
-      pageHeight: window.innerHeight
+      pageHeight: window.innerHeight,
     };
 
     this.$awa(overrideValues);
@@ -334,7 +334,7 @@ export default class extends Vue {
         await (navigator as any).share({
           title: "PWABuilder results",
           text: "Check out how good my PWA did!",
-          url: `${location.href}?url=${this.url}`
+          url: `${location.href}?url=${this.url}`,
         });
       } catch (err) {
         // fallback to legacy share if ^ fails
@@ -393,7 +393,7 @@ export default class extends Vue {
       behavior: 0,
       uri: window.location.href,
       pageName: "downloadedStarter",
-      pageHeight: window.innerHeight
+      pageHeight: window.innerHeight,
     };
 
     this.$awa(overrideValues);
@@ -506,12 +506,12 @@ export default class extends Vue {
 
   public skipCheckUrl(): void {
     this.$router.push({
-      name: "features"
+      name: "features",
     });
   }
 }
 
-Vue.prototype.$awa = function(config) {
+Vue.prototype.$awa = function (config) {
   if (awa) {
     awa.ct.capturePageView(config);
   }

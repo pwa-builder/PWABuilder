@@ -1,6 +1,13 @@
 <template>
   <div>
     <header :class="{ 'smaller-header': !expanded, 'wide': wide }" role="presentation">
+      <a
+        id="go-to-main"
+        href="#main"
+        tabindex="0"
+        @click="goToMain"
+        v-on:keyup.enter="goToMain"
+      >Skip to content</a>
       <img
         id="logo"
         src="~/assets/images/new-logo.svg"
@@ -239,6 +246,20 @@ export default class extends Vue {
     this.$emit("reset");
     this.$router.push({ name: "index" });
   }
+
+  goToMain(evt) {
+    evt.preventDefault();
+
+    //TODO
+
+    const main = document.getElementById("main");
+    if (main) {
+      main.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }
 }
 
 declare var awa: any;
@@ -255,6 +276,20 @@ Vue.prototype.$awa = function (config) {
 <style lang="scss" scoped>
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
+
+#go-to-main {
+  display: block;
+  position: absolute;
+  color: #0078d4;
+  left: 0;
+  padding: 16px;
+  z-index: -2;
+}
+
+#go-to-main:focus,
+#go-to-main:active {
+  z-index: 800;
+}
 
 .nuxt-link-exact-active {
   color: rgba(255, 255, 255, 1) !important;
