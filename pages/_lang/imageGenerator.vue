@@ -31,11 +31,12 @@
               <h3>Padding</h3>
               <input
                 class="padding-input"
-                name="padding"
                 type="number"
+                name="padding"
                 value="0.3"
                 min="0"
-                step="any"
+                step="0.1"
+                aria-label="padding amount"
               />
               <small>0 is no padding, 1 is 100% of the source image. 0.3 is a typical value for most icons</small>
             </div>
@@ -43,26 +44,28 @@
               <h3>Background Color</h3>
 
               <div class="color-radio">
-                <label aria-label="Transparent">
+                <label>
                   <input
                     type="radio"
                     name="colorOption"
                     value="transparent"
+                    aria-label="transparent background"
                     @change="colorRadioChanged"
                     :checked="colorRadio === 'transparent'"
                   />
-                  Transparent
+                  <span aria-hidden="true">Transparent</span>
                 </label>
 
-                <label aria-label="Custom Color">
+                <label>
                   <input
                     type="radio"
                     name="colorOption"
                     value="choose"
+                    aria-label="custom color background"
                     @change="colorRadioChanged"
                     :checked="colorRadio === 'choose'"
                   />
-                  Custom color
+                  <span aria-hidden="true">Custom color</span>
                 </label>
               </div>
 
@@ -71,6 +74,7 @@
                   id="colorPicker"
                   class="color-picker"
                   type="color"
+                  aria-label="color picker"
                   :value="colorPickerColor"
                   @change="colorPickerChanged"
                 />
@@ -79,6 +83,7 @@
                   class="color-text"
                   type="text"
                   name="color"
+                  aria-label="color picker text"
                   placeholder="#000000"
                   @change="colorPickerChanged"
                   :value="colorPickerColor"
@@ -266,6 +271,21 @@ input {
 small {
   display: block;
   margin: 8px 0;
+}
+
+#go-to-main {
+  display: none;
+  position: absolute;
+  color: #0078d4;
+  left: 0;
+  padding: 16px;
+  z-index: -2;
+}
+
+#go-to-main:focus,
+#go-to-main:active {
+  display: block;
+  z-index: 800;
 }
 
 #selectPlatforms {
