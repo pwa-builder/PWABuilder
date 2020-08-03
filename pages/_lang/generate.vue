@@ -7,7 +7,7 @@
       v-if="isInvalidScreenshotUrl"
       id="invalidUrlToast"
     >Invalid url(s): {{ `${invalidScreenshotUrlValues}` }}. Please try again.</div>
-    <main id="sideBySide">
+    <main id="main">
       <section id="leftSide" :aria-hidden="ariaHidden">
         <header class="mastHead">
           <h2>{{ $t('generate.subtitle') }}</h2>
@@ -1614,7 +1614,7 @@ footer a {
   letter-spacing: -0.02em;
   color: #db3457;
 }
-#sideBySide {
+#main {
   background: white;
   padding-left: 3%;
   padding-right: 3%;
@@ -1785,15 +1785,15 @@ footer a {
   #leftSide {
     width: 100%;
   }
-  #sideBySide {
+  #main {
     flex-direction: column;
     padding-left: 31px !important;
     padding-right: 24px !important;
   }
-  #sideBySide #leftSide .animatedSection {
+  #main #leftSide .animatedSection {
     width: 100%;
   }
-  #sideBySide #leftSide .animatedSection input {
+  #main #leftSide .animatedSection input {
     width: 100%;
   }
   #iconGrid {
@@ -1913,7 +1913,7 @@ footer a {
   }
 }
 
-#sideBySide #leftSide .animatedSection input[type="radio"] {
+#main #leftSide .animatedSection input[type="radio"] {
   width: auto;
 }
 </style>
