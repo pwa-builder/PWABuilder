@@ -44,19 +44,45 @@
 
               <div class="color-radio">
                 <label aria-label="Transparent">
-                  <input type="radio" name="colorOption" checked="checked" value="transparent" />
+                  <input
+                    type="radio"
+                    name="colorOption"
+                    value="transparent"
+                    @change="colorRadioChanged"
+                    :checked="colorRadio === 'transparent'"
+                  />
                   Transparent
                 </label>
 
                 <label aria-label="Custom Color">
-                  <input type="radio" name="colorOption" value="choose" />
+                  <input
+                    type="radio"
+                    name="colorOption"
+                    value="choose"
+                    @change="colorRadioChanged"
+                    :checked="colorRadio === 'choose'"
+                  />
                   Custom color
                 </label>
               </div>
 
-              <div class="color-chooser">
-                <input id="colorPicker" class="color-picker" type="color" />
-                <input id="color" class="color-text" type="text" name="color" placeholder="#000000" />
+              <div class="color-chooser" v-if="colorRadio === 'choose'">
+                <input
+                  id="colorPicker"
+                  class="color-picker"
+                  type="color"
+                  :value="colorPickerColor"
+                  @change="colorPickerChanged"
+                />
+                <input
+                  id="color"
+                  class="color-text"
+                  type="text"
+                  name="color"
+                  placeholder="#000000"
+                  @change="colorPickerChanged"
+                  :value="colorPickerColor"
+                />
                 <small>Choose a color for the background (leave blank to default to the pixel at the top left)</small>
               </div>
             </div>
@@ -140,6 +166,8 @@ export default {
       labelFileName: "Choose File",
       isLoading: false,
       isAllChecked: true,
+      colorRadio: "transparent",
+      colorPickerColor: "",
       platforms: [
         "windows10",
         "windows",
@@ -194,6 +222,12 @@ export default {
       if (fileInput) {
         fileInput.click();
       }
+    },
+    colorRadioChanged(evt) {
+      this.colorRadio = evt.currentTarget.value;
+    },
+    colorPickerChanged(evt) {
+      this.colorPickerColor = evt.currentTarget.value;
     },
   },
   computed: {
