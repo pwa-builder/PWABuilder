@@ -187,8 +187,9 @@ export default {
       const urlUseAPI = process.env.apiUrl2 + "/";
       const formData = new FormData(this.$refs.form);
 
-      // TODO
-      console.log("check if this form is good", formData);
+      if (formData.get("color")) {
+        formData.append("colorChanged", "1");
+      }
 
       axios.post(urlUseAPI + "api/image", formData).then((result) => {
         const fileUri = result.data.Uri;
@@ -395,6 +396,20 @@ body {
   flex-shrink: 0;
   text-align: center;
   justify-content: center;
+
+  p,
+  a {
+    color: rgba(60, 60, 60, 0.6);
+    text-align: center;
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  a {
+    box-shadow: none;
+    color: inherit;
+    text-decoration: underline;
+  }
 
   @media screen and (max-width: 425px) {
     display: none;
