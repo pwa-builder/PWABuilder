@@ -201,7 +201,7 @@ export default class extends Vue {
     width: 149px;
   }
 
-  #getStartedInput {
+  # {
     background: $color-brand-quintary;
     border: none;
     border-radius: 10px;
@@ -211,6 +211,8 @@ export default class extends Vue {
     padding-left: 23px;
     width: 491px;
   }
+
+  #getStartedInput:placeholder-shown { border-color: purple; text-overflow: ellipsis; }  {
 
   #placeholderText {
     margin-bottom: 33px;
