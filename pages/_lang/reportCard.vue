@@ -822,6 +822,7 @@ h2 {
 
       &::placeholder {
         color: white;
+        opacity: 1;
       }
 
       &:hover,
