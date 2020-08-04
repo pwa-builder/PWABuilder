@@ -105,7 +105,7 @@ export default class extends Vue {
   public showCopyButton;
 
   @Prop() showToolbar: boolean;
-  @Prop({ type: String, default: "#F0F0F0" })
+  @Prop({ type: String, default: "#f9f9f9" })
   public color;
 
   @Prop({ type: String, default: "lighter" }) theme: string;
@@ -288,6 +288,7 @@ export default class extends Vue {
     justify-content: space-between;
     align-items: center;
     z-index: 9999;
+    background: #f9f9f9;
 
     h3 {
       font-family: sans-serif;
