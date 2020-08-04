@@ -203,9 +203,12 @@ export default class extends Vue {
     (<any>window).monaco.editor.defineTheme(`${this.theme}Theme`, {
       base: "vs",
       inherit: true,
-      rules: [],
+      rules: [
+        { token: 'attribute.name.html', foreground: '#A31515' },
+      ],
       colors: {
-        "editor.background": this.color
+        "editor.background": this.color,
+        
       }
     });
     (<any>window).monaco.editor.setTheme('lighterTheme');
