@@ -3,22 +3,31 @@
     <div v-if="showHeader" class="codeHeader">
       <slot></slot>
 
-      <button v-if="showCopyButton" @click="copy()" class="copyButton">
-        <i class="fas fa-copy platformIcon"></i>
+      <button
+        v-if="showCopyButton"
+        @click="copy()"
+        class="copyButton"
+        :tabindex="tabIndex"
+        :aria-hidden="ariaHidden"
+      >
+        <i class="fas fa-copy platformIcon" aria-hidden="true"></i>
         Copy
       </button>
     </div>
     <div v-if="textCopied" id="copyToast">Code Copied</div>
     <div :id="`${monacoId}`">
-      <MonacoEditor :options="monacoOptions" class="code_viewer-pre"
+      <MonacoEditor
+        :options="monacoOptions"
+        class="code_viewer-pre"
         @change="onCodeChange"
         @modelDecorations="onDecorationsChange"
         @editorDidMount="editorMount"
         :theme="`${theme}Theme`"
         :language="codeType"
+        :tabindex="tabIndex"
+        :aria-hidden="ariaHidden"
         v-model="data$"
-        >
-      </MonacoEditor>
+      ></MonacoEditor>
     </div>
     <div v-if="showOverlay" id="errorOverlay">
       <h2>Errors</h2>
@@ -40,13 +49,18 @@
 
     <div v-if="showToolbar" id="toolbar">
       <div v-if="errorNumber">
-        <button @click="showErrorOverlay()" id="errorsButton">
+        <button
+          @click="showErrorOverlay()"
+          id="errorsButton"
+          :tabindex="tabIndex"
+          :aria-hidden="ariaHidden"
+        >
           <i class="fas fa-exclamation-triangle"></i>
           {{this.errorNumber}} errors
         </button>
       </div>
       <div v-if="!errorNumber || errorNumber ===0">
-        <button id="noErrorsButton">
+        <button id="noErrorsButton" :tabindex="tabIndex" :aria-hidden="ariaHidden">
           <i class="fas fa-exclamation-triangle"></i>
           0 Errors
         </button>
@@ -114,13 +128,15 @@ export default class extends Vue {
   @Prop({ type: String, default: "" })
   public monacoId: string;
 
+  @Prop({ type: Boolean, default: false }) noInteraction;
+
   public readonly warningsId = "warnings_list";
   public readonly suggestionsId = "suggestions_list";
   public isReady = true;
   public downloadButtonMessage = "publish.download_manifest";
   public errorNumber = 0;
-  public data$  = "";
-  public editor : MonacoEditor.editor;
+  public data$ = "";
+  public editor: MonacoEditor.editor;
 
   public monacoOptions = {
     lineNumbers: "on",
@@ -141,29 +157,37 @@ export default class extends Vue {
   errors: any[] = [];
   textCopied = false;
 
-  public created(): void {
-    this.data$ = this.code ;
+  get tabIndex() {
+    return this.noInteraction ? -1 : 0;
   }
 
-  mounted():void {
+  get ariaHidden() {
+    return this.noInteraction ? true : false;
+  }
+
+  public created(): void {
+    this.data$ = this.code;
+  }
+
+  mounted(): void {
     this.defineTheme();
-    (<any>window).addEventListener('resize', this.onResize);
+    (<any>window).addEventListener("resize", this.onResize);
   }
 
   beforeDestroy() {
     (<any>window).removeEventListener("resize", this.onResize);
   }
 
-  onCodeChange():void {
+  onCodeChange(): void {
     this.$emit("editorValue", this.data$);
   }
 
-  onDecorationsChange():void {
+  onDecorationsChange(): void {
     this.errors = (<any>window).monaco.editor.getModelMarkers({});
     this.errorNumber = this.errors.length;
 
     if (this.errors.length > 0) {
-        this.$emit("invalidManifest");
+      this.$emit("invalidManifest");
     }
   }
 
@@ -174,31 +198,36 @@ export default class extends Vue {
 
   public removeEditor(): void {
     var item = this.monacoId && document.getElementById(this.monacoId);
-    while (item && item.hasChildNodes()) {   
+    while (item && item.hasChildNodes()) {
       item.firstChild && item.removeChild(item.firstChild);
     }
   }
 
   public reloadEditor(): void {
-    this.editor = this.monacoId && (<any>window).monaco.editor.create(document.getElementById(this.monacoId), {
-            language: this.codeType,
-            value: this.data$,
-            lineNumbers: "on",
-            fixedOverflowWidgets: true,
-            wordWrap: "on",
-            scrollBeyondLastLine: false,
-            wordWrapMinified: true,
-            wrappingIndent: "indent",
-            fontSize: 16,
-            minimap: { enabled: false },
-            onCodeChange: this.onCodeChange,
-            onDidChangeModelDecorations: this.onDecorationsChange,
-            editorDidMount: this.editorMount
-        });
+    this.editor =
+      this.monacoId &&
+      (<any>window).monaco.editor.create(
+        document.getElementById(this.monacoId),
+        {
+          language: this.codeType,
+          value: this.data$,
+          lineNumbers: "on",
+          fixedOverflowWidgets: true,
+          wordWrap: "on",
+          scrollBeyondLastLine: false,
+          wordWrapMinified: true,
+          wrappingIndent: "indent",
+          fontSize: 16,
+          minimap: { enabled: false },
+          onCodeChange: this.onCodeChange,
+          onDidChangeModelDecorations: this.onDecorationsChange,
+          editorDidMount: this.editorMount
+        }
+      );
     this.defineTheme();
   }
 
-  public defineTheme():void {
+  public defineTheme(): void {
     (<any>window).monaco.editor.defineTheme(`${this.theme}Theme`, {
       base: "vs",
       inherit: true,
@@ -207,18 +236,18 @@ export default class extends Vue {
         "editor.background": this.color
       }
     });
-    (<any>window).monaco.editor.setTheme('lighterTheme');
+    (<any>window).monaco.editor.setTheme("lighterTheme");
   }
 
   @Watch("code")
-  public setMonacoValue():void {
-    this.data$ = this.code ;
+  public setMonacoValue(): void {
+    this.data$ = this.code;
   }
 
-  editorMount(editor):void {
+  editorMount(editor): void {
     this.editor = editor;
   }
- 
+
   async copy() {
     const code = this.editor.getValue();
 
@@ -298,7 +327,7 @@ export default class extends Vue {
       width: 60%;
     }
 
-    @media(max-width: 1079px) {
+    @media (max-width: 1079px) {
       h3 {
         font-size: 12px;
       }
@@ -365,7 +394,7 @@ export default class extends Vue {
   }
 
   #topViewerId {
-    height: 300px;
+    height: 450px;
     width: 100%;
     overflow-x: auto;
     overflow-y: hidden;

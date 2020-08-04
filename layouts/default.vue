@@ -5,7 +5,7 @@
     <div id="scrollTarget"></div>
 
     <div class="modal-color"></div>
-    <h1 class="logoText">PWA Builder</h1>
+    <h1 class="logoText" aria-hidden="true">PWA Builder</h1>
 
     <div v-if="seen" id="gdprDiv">
       <div>

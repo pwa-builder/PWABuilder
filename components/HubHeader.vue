@@ -1,6 +1,13 @@
 <template>
   <div>
-    <header :class="{ 'smaller-header': !expanded }">
+    <header :class="{ 'smaller-header': !expanded }" role="presentation">
+      <a
+        id="go-to-main"
+        href="#main"
+        tabindex="0"
+        @click="goToMain"
+        v-on:keyup.enter="goToMain"
+      >Skip to content</a>
       <img
         id="logo"
         src="~/assets/images/new-logo.svg"
@@ -8,20 +15,31 @@
         class="logo-size"
         :class="{ 'smaller-logo': !expanded }"
         @click="reset()"
-      >
+        :tabindex="headerTabIndex"
+        :aria-hidden="ariaHidden"
+      />
 
       <div id="mainTabsBar">
         <nuxt-link to="/">My Hub</nuxt-link>
         <a
           @click="$awa( { 'referrerUri': `https://pwabuilder.com/features` })"
           href="https://components.pwabuilder.com"
+          :tabindex="headerTabIndex"
+          :aria-hidden="ariaHidden"
         >Feature Store</a>
       </div>
 
       <div id="icons">
-        <InstallButton/>
+        <InstallButton :noInteraction="noInteraction" />
 
-        <a href="https://github.com/pwa-builder" aria-label="PWABuilder Github" target="_blank" rel="noopener noreferrer">
+        <a
+          href="https://github.com/pwa-builder"
+          aria-label="PWABuilder Github"
+          target="_blank"
+          rel="noopener noreferrer"
+          :tabindex="headerTabIndex"
+          :aria-hidden="ariaHidden"
+        >
           <i class="fab fa-github"></i>
         </a>
         <!--<i class="fab fa-twitter"></i>-->
@@ -29,22 +47,38 @@
     </header>
 
     <div id="featureDetailButtons" v-if="showFeatureDetailButton">
-      <button id="backButton">
+      <button id="backButton" :tabindex="headerTabIndex" :aria-hidden="ariaHidden">
         <i class="fas fa-chevron-left"></i>
       </button>
       <div id="featDetailTitle"></div>
 
-      <button v-if="showFeatureDetailGraphButton" id="featDetailDocsButton" class="featDetailButton">
+      <button
+        v-if="showFeatureDetailGraphButton"
+        id="featDetailDocsButton"
+        class="featDetailButton"
+        :tabindex="headerTabIndex"
+        :aria-hidden="ariaHidden"
+      >
         <i class="fas fa-book"></i>
         <span>Docs</span>
       </button>
 
-      <button id="githubSnippitButton" class="featDetailButton">
+      <button
+        id="githubSnippitButton"
+        class="featDetailButton"
+        :tabindex="headerTabIndex"
+        :aria-hidden="ariaHidden"
+      >
         <i class="fab fa-github"></i>
         <span>Github</span>
       </button>
 
-      <button id="featDetailShareButton" class="featDetailButton">
+      <button
+        id="featDetailShareButton"
+        class="featDetailButton"
+        :tabindex="headerTabIndex"
+        :aria-hidden="ariaHidden"
+      >
         <i class="fas fa-share-alt"></i>
         <span>Share</span>
       </button>
@@ -52,23 +86,39 @@
 
     <div class="has-acrylic-80 is-dark has-reveal-background" v-if="showSubHeader" id="subHeader">
       <div id="tabsBar">
-        <nuxt-link :to="{name: 'index', query:{url:this.url}}">Overview</nuxt-link>
-        <nuxt-link to="/generate">Manifest</nuxt-link>
-        <nuxt-link to="/serviceworker">Service Worker</nuxt-link>
+        <nuxt-link
+          :to="{name: 'index', query:{url:this.url}}"
+          :tabindex="headerTabIndex"
+          :aria-hidden="ariaHidden"
+        >Overview</nuxt-link>
+        <nuxt-link to="/generate" :tabindex="headerTabIndex" :aria-hidden="ariaHidden">Manifest</nuxt-link>
+        <nuxt-link
+          to="/serviceworker"
+          :tabindex="headerTabIndex"
+          :aria-hidden="ariaHidden"
+        >Service Worker</nuxt-link>
       </div>
 
       <div id="scoreZone">
         <div id="urlTested">
-          <img src="~/assets/images/score-icon.png" alt="score icon">
+          <img src="~/assets/images/score-icon.png" alt="score icon" aria-hidden="true" />
 
-          <a target="_blank" rel="noopener noreferrer" :href="url">
-            <span>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            :href="url"
+            aria-label="Url Tested"
+            :tabindex="headerTabIndex"
+            :aria-hidden="ariaHidden"
+          >
+            <span aria-hidden="true">
               URL Tested
               <i class="fas fa-external-link-alt"></i>
             </span>
-            <span v-if="url">
-              {{url.replace('http://','').replace('https://','').split(/[/?#]/)[0]}}
-            </span>      
+            <span
+              aria-hidden="true"
+              v-if="url"
+            >{{url.replace('http://','').replace('https://','').split(/[/?#]/)[0]}}</span>
           </a>
         </div>
 
@@ -82,6 +132,8 @@
           id="publishButton"
           aria-label="Build My PWA"
           to="/publish"
+          :tabindex="headerTabIndex"
+          :aria-hidden="ariaHidden"
         ></nuxt-link>
       </div>
     </div>
@@ -102,12 +154,13 @@ const GeneratorState = namespace(generator.name, State);
 
 @Component({
   components: {
-    InstallButton
-  }
+    InstallButton,
+  },
 })
 export default class extends Vue {
   @Prop({ default: false }) expanded: boolean;
   @Prop({}) showSubHeader: string;
+  @Prop({ type: Boolean, default: false }) noInteraction: boolean;
   @Prop({ default: false }) showFeatureDetailButton: boolean;
   @Prop({ default: false }) showFeatureDetailGraphButton: boolean;
   @Prop({ default: 0 }) score: number;
@@ -117,6 +170,14 @@ export default class extends Vue {
   public calcedScore: number = 0;
   readyToPublish: boolean = false;
   @GeneratorState manifest: any;
+
+  get headerTabIndex() {
+    return this.noInteraction ? -1 : 0;
+  }
+
+  get ariaHidden() {
+    return this.noInteraction ? true : false;
+  }
 
   mounted() {
     const storedScore = sessionStorage.getItem("overallGrade") || null;
@@ -132,14 +193,14 @@ export default class extends Vue {
             name: "--color-stop",
             syntax: "<color>",
             inherits: false,
-            initialValue: "transparent"
+            initialValue: "transparent",
           });
 
           (CSS as any).registerProperty({
             name: "--color-start",
             syntax: "<color>",
             inherits: false,
-            initialValue: "transparent"
+            initialValue: "transparent",
           });
         } catch (err) {
           console.error(err);
@@ -156,7 +217,7 @@ export default class extends Vue {
   updated() {
     if (this.manifest) {
       this.readyToPublish = true;
-    } 
+    }
     if ("requestIdleCallback" in window) {
       // Use requestIdleCallback to schedule this since its not "necessary" work
       // and we dont want this running in the middle of animations or user input
@@ -166,7 +227,7 @@ export default class extends Vue {
             sessionStorage.setItem("overallGrade", this.score.toString());
           },
           {
-            timeout: 2000
+            timeout: 2000,
           }
         );
       }
@@ -179,13 +240,27 @@ export default class extends Vue {
 
   reset() {
     this.$emit("reset");
-    this.$router.push({ name: 'index'}) 
+    this.$router.push({ name: "index" });
+  }
+
+  goToMain(evt) {
+    evt.preventDefault();
+
+    //TODO
+
+    const main = document.getElementById("main");
+    if (main) {
+      main.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
   }
 }
 
 declare var awa: any;
 
-Vue.prototype.$awa = function(config) {
+Vue.prototype.$awa = function (config) {
   if (awa) {
     awa.ct.capturePageView(config);
   }
@@ -197,6 +272,20 @@ Vue.prototype.$awa = function(config) {
 <style lang="scss" scoped>
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
+
+#go-to-main {
+  display: block;
+  position: absolute;
+  color: #0078d4;
+  left: 0;
+  padding: 16px;
+  z-index: -2;
+}
+
+#go-to-main:focus,
+#go-to-main:active {
+  z-index: 800;
+}
 
 .nuxt-link-exact-active {
   color: rgba(255, 255, 255, 1) !important;
@@ -320,7 +409,7 @@ header {
       font-size: 14px;
       line-height: 19px;
       text-align: center;
-      font-family: 'Open Sans', sans-serif;
+      font-family: "Open Sans", sans-serif;
     }
   }
 
@@ -363,7 +452,7 @@ header {
     }
 
     #overallScore:after {
-      content: 'score';
+      content: "score";
       font-size: 12px;
       line-height: 16px;
     }
@@ -446,7 +535,7 @@ header {
       color: #ffffff;
       text-transform: lowercase;
       letter-spacing: -0.04em;
-      font-family: 'Open Sans', sans-serif;
+      font-family: "Open Sans", sans-serif;
     }
   }
 
@@ -470,12 +559,12 @@ header {
   }
 
   #publishButton:after {
-    content: 'Build My PWA';
+    content: "Build My PWA";
   }
 
   @media (max-width: 630px) {
     #publishButton:after {
-      content: 'Build';
+      content: "Build";
     }
   }
 }
