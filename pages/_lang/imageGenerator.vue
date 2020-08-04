@@ -274,9 +274,8 @@ small {
 }
 
 #go-to-main {
-  display: none;
   position: absolute;
-  color: #0078d4;
+  color: #1fc2c8 !important;
   left: 0;
   padding: 16px;
   z-index: -2;
@@ -284,7 +283,7 @@ small {
 
 #go-to-main:focus,
 #go-to-main:active {
-  display: block;
+  color: #0078d4 !important;
   z-index: 800;
 }
 
