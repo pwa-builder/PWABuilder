@@ -295,6 +295,12 @@ small {
   width: 110px;
 }
 
+.container {
+  @media screen and (max-width: 640px) {
+    height: auto !important;
+  }
+}
+
 .container > div,
 .main {
   height: calc(100% - 104px);
@@ -390,7 +396,7 @@ body {
     padding: 0 32px;
   }
 
-  @media screen and (max-width: 425px) {
+  @media screen and (max-width: 640px) {
     padding: 0 16px;
   }
 
@@ -406,6 +412,12 @@ body {
   row-gap: 16px;
   padding: 0 52px;
   margin-bottom: 2em;
+
+  @media screen and (max-width: 640px) {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+  }
 }
 
 .form-bottom {
