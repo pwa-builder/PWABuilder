@@ -200,7 +200,7 @@
       </FeatureCard>
 
       <div id="moreFeaturesBlock" v-if="topSamples.length > 0">
-        <nuxt-link to="/features">View More</nuxt-link>
+        <a href="https://components.pwabuilder.com/">View more</a>
       </div>
 
       <div v-if="shared" id="shareToast">URL copied for sharing</div>
@@ -822,6 +822,7 @@ h2 {
 
       &::placeholder {
         color: white;
+        opacity: 1;
       }
 
       &:hover,
