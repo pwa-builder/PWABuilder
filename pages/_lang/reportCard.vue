@@ -73,7 +73,7 @@
             </p>
 
             <div id="starterActions">
-              <div class="dropdown dropdown-menu" @keyup.esc="closeDropDown">
+              <div class="dropdown dropdown-menu" @keyup.esc="closeDropDown" @focusout="menuFocus">
                 <button
                   @click="starterDrop"
                   id="mainStartButton"
@@ -95,14 +95,21 @@
                 >
                   <button
                     id="starterDownloadButton"
-                    @click="downloadStarter"
                     type="button"
                     role="menuitem"
+                    aria-label="Download start project"
+                    @click="downloadStarter"
                   >
                     <i class="fas fa-arrow-down" aria-hidden="true"></i>
                     <span aria-hidden="true">Download</span>
                   </button>
-                  <button @click="cloneStarter" type="button" role="menuitem">
+                  <button
+                    id="githubCloneCommand"
+                    type="button"
+                    role="menuitem"
+                    aria-label="Command line clone command"
+                    @click="cloneStarter"
+                  >
                     <i class="fab fa-github" aria-hidden="true"></i>
                     <span aria-hidden="true">Clone from Github</span>
                   </button>
@@ -374,6 +381,16 @@ export default class extends Vue {
   public async closeDropDown() {
     if (this.openDrop) {
       this.openDrop = !this.openDrop;
+    }
+  }
+
+  public async menuFocus(event) {
+    var menuInFocus =
+      event.relatedTarget.id === "mainStartButton" ||
+      event.relatedTarget.id === "starterDownloadButton" ||
+      event.relatedTarget.id === "githubCloneCommand";
+    if (!menuInFocus) {
+      this.closeDropDown();
     }
   }
 
