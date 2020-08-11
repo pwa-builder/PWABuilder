@@ -492,8 +492,15 @@ export default class extends Vue {
   public async processQueryString() {
     const url = window.location.search.split("=")[1];
     this.cleanedURL = decodeURIComponent(url);
-    this.url = this.cleanedURL;
-    this.checkUrlAndGenerate();
+
+    /*
+      Handle edge case where this.cleanedURL is set to the string undefined (decodeURIComponent returns a string).
+      This edge case is not very likely to pop up, but stops issues such as https://github.com/pwa-builder/PWABuilder/issues/833
+    */
+    if (this.cleanedURL && this.cleanedURL !== "undefined") {
+      this.url = this.cleanedURL;
+      this.checkUrlAndGenerate();
+    }
   }
 
   public async getTopSamples() {
