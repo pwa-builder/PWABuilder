@@ -207,7 +207,7 @@
       </FeatureCard>
 
       <div id="moreFeaturesBlock" v-if="topSamples.length > 0">
-        <nuxt-link to="/features">View More</nuxt-link>
+        <a href="https://components.pwabuilder.com/">View more</a>
       </div>
 
       <div v-if="shared" id="shareToast">URL copied for sharing</div>
@@ -682,6 +682,10 @@ declare var awa: any;
   animation-duration: 0.3s;
 }
 
+#shareResults:focus {
+  outline: auto;
+}
+
 @keyframes fadein {
   from {
     opacity: 0;
@@ -848,6 +852,7 @@ h2 {
 
       &::placeholder {
         color: white;
+        opacity: 1;
       }
 
       &:hover,
@@ -878,6 +883,10 @@ h2 {
       display: flex;
       align-items: center;
       text-align: center;
+    }
+
+    #getStartedButton:focus {
+      outline: auto;
     }
   }
 
