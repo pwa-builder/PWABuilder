@@ -884,7 +884,7 @@ export default class extends Vue {
   }
 
   .brkManifestError {
-    color: red;
+    color: #c90005;
     font-weight: bold;
     padding-top: 1em;
     padding-bottom: 1em;
