@@ -26,3 +26,8 @@
 @import
   'components/button',
   'components/infobox';
+
+// Global CSS for error page
+.__nuxt-error-page .description, .__nuxt-error-page a {
+  color: #47494E !important;
+}

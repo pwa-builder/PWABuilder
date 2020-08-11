@@ -207,7 +207,7 @@
       </FeatureCard>
 
       <div id="moreFeaturesBlock" v-if="topSamples.length > 0">
-        <nuxt-link to="/features">View More</nuxt-link>
+        <a href="https://components.pwabuilder.com/">View more</a>
       </div>
 
       <div v-if="shared" id="shareToast">URL copied for sharing</div>
@@ -492,8 +492,15 @@ export default class extends Vue {
   public async processQueryString() {
     const url = window.location.search.split("=")[1];
     this.cleanedURL = decodeURIComponent(url);
-    this.url = this.cleanedURL;
-    this.checkUrlAndGenerate();
+
+    /*
+      Handle edge case where this.cleanedURL is set to the string undefined (decodeURIComponent returns a string).
+      This edge case is not very likely to pop up, but stops issues such as https://github.com/pwa-builder/PWABuilder/issues/833
+    */
+    if (this.cleanedURL && this.cleanedURL !== "undefined") {
+      this.url = this.cleanedURL;
+      this.checkUrlAndGenerate();
+    }
   }
 
   public async getTopSamples() {
@@ -682,6 +689,10 @@ declare var awa: any;
   animation-duration: 0.3s;
 }
 
+#shareResults:focus {
+  outline: auto;
+}
+
 @keyframes fadein {
   from {
     opacity: 0;
@@ -851,6 +862,7 @@ h2 {
 
       &::placeholder {
         color: white;
+        opacity: 1;
       }
 
       &:hover,
@@ -881,6 +893,10 @@ h2 {
       display: flex;
       align-items: center;
       text-align: center;
+    }
+
+    #getStartedButton:focus {
+      outline: auto;
     }
   }
 
