@@ -1,8 +1,8 @@
 
 
 <template>
-  <div id="baseContainer">
-    <div id="scrollTarget"></div>
+  <div id="baseContainer" role="presentation">
+    <div id="scrollTarget" role="presentation"></div>
 
     <div class="modal-color"></div>
     <h1 class="logoText" aria-hidden="true">PWA Builder</h1>

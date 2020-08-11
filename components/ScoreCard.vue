@@ -201,7 +201,7 @@
         </li>
       </ul>
 
-      <ul id="noSWP" v-if="category === 'Manifest' && noManifest">
+      <ul id="noManifest" v-if="category === 'Manifest' && noManifest">
         <li>
           <div class="listSubDiv">
             <span class="cardIcon">
@@ -333,7 +333,7 @@
             </span>
           </div>
 
-          <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.scope">5</span>
+          <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.scope">10</span>
 
           <span class="subScoreSpan" v-if="!serviceWorkerData && !serviceWorkerData.scope">0</span>
         </li>
@@ -355,7 +355,7 @@
           <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.pushReg">5</span>
 
           <span class="subScoreSpan" v-if="serviceWorkerData && !serviceWorkerData.pushReg">0</span>
-        </li> -->
+        </li>-->
       </ul>
 
       <ul v-if="category === 'Service Worker' && !serviceWorkerData && !noServiceWorker">
@@ -423,7 +423,7 @@
           </div>
 
           <span class="subScoreSpan">0</span>
-        </li> -->
+        </li>-->
       </ul>
     </div>
 
@@ -447,7 +447,8 @@
         </button>
         <div class="brkManifestError" v-if="brokenManifest">
           Couldn't find an
-          <a tabindex="-1"
+          <a
+            tabindex="-1"
             href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
           >app manifest</a>
         </div>
@@ -521,7 +522,7 @@ export default class extends Vue {
   }
 
   private lookAtSecurity(): Promise<void> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       if (this.url && this.url.includes("https")) {
         this.hasHTTPS = true;
         this.validSSL = true;
@@ -535,65 +536,66 @@ export default class extends Vue {
     });
   }
 
-  private lookAtManifest(): Promise<void> {
-    return new Promise(async resolve => {
-      try {
-        await this.getManifestInformation();
-      } catch (ex) {
-        if (this.manifest === null) {
-          this.brokenManifest = true;
+  private async lookAtManifest(): Promise<void> {
+    try {
+      await this.getManifestInformation();
+    } catch (ex) {
+      if (this.manifest === null) {
+        this.brokenManifest = true;
 
-          this.hasHTTPS = false;
-          this.validSSL = false;
-          this.noMixedContent = false;
+        this.hasHTTPS = false;
+        this.validSSL = false;
+        this.noMixedContent = false;
 
-          this.securityScore = 0;
+        this.securityScore = 0;
 
-          this.$emit("securityTestDone", { score: 0 });
-        }
-
-        this.noManifest = true;
-        resolve();
-        return;
+        this.$emit("securityTestDone", { score: 0 });
       }
 
-      if (this.manifest && this.manifest.generated === true) {
-        this.noManifest = true;
-        resolve();
-      } else {
-        this.noManifest = false;
+      this.noManifest = true;
+      return;
+    }
 
-        this.manifestScore = 15;
-        //scoring set by Jeff: 40 for manifest, 40 for sw and 20 for sc
-        if (this.manifest.display !== undefined) {
+    if (this.manifest && this.manifest.generated === true) {
+      this.noManifest = true;
+      return;
+    } else {
+      this.noManifest = false;
+
+      console.log(this.url);
+
+      const response = await fetch(
+        `https://pwabuilder-tests.azurewebsites.net/api/WebManifest?site=${this.url}`
+      );
+      const manifestScoreData = await response.json();
+
+      this.manifestScore = 15;
+
+      if (manifestScoreData.data !== null) {
+        if (manifestScoreData.data.required.start_url === true) {
           this.manifestScore = this.manifestScore + 5;
         }
 
-        if (this.manifest.icons !== undefined) {
+        if (manifestScoreData.data.required.short_name === true) {
           this.manifestScore = this.manifestScore + 5;
         }
 
-        if (this.manifest.name !== undefined) {
+        if (manifestScoreData.data.required.name === true) {
           this.manifestScore = this.manifestScore + 5;
         }
 
-        if (this.manifest.short_name !== undefined) {
+        if (manifestScoreData.data.required.icons === true) {
           this.manifestScore = this.manifestScore + 5;
         }
 
-        if (this.manifest.start_url !== true) {
+        if (manifestScoreData.data.required.display === true) {
           this.manifestScore = this.manifestScore + 5;
-        }
-
-        if (this.manifest.generated === true) {
-          this.manifestScore = 0;
         }
 
         this.updateManifest(this.manifest);
         this.$emit("manifestTestDone", { score: this.manifestScore });
-        resolve();
       }
-    });
+    }
   }
 
   private async lookAtSW() {
@@ -672,9 +674,9 @@ export default class extends Vue {
         Has push reg
         +5 points to user
       */
-        if (this.serviceWorkerData.pushReg !== null) {
-          this.swScore = this.swScore + 5;
-        }
+        // if (this.serviceWorkerData.pushReg !== null) {
+        //   this.swScore = this.swScore + 5;
+        // }
         /*
         Has scope that points to root
         +5 points to user
@@ -684,7 +686,7 @@ export default class extends Vue {
           // this.serviceWorkerData.scope.slice(0, -1) ===
           // new URL(this.serviceWorkerData.scope).origin  //slice isn't working and score not showing up, TODO: look at how to validate scope
         ) {
-          this.swScore = this.swScore + 5;
+          this.swScore = this.swScore + 10;
         }
 
         sessionStorage.setItem("swScore", JSON.stringify(this.swScore));
@@ -851,7 +853,8 @@ export default class extends Vue {
     flex-grow: 2;
   }
 
-  #noSWP {
+  #noSWP,
+  #noManifest {
     flex-grow: 2;
     margin-bottom: 2em;
   }
