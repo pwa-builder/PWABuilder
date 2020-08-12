@@ -7,7 +7,7 @@
       v-if="isInvalidScreenshotUrl"
       id="invalidUrlToast"
     >Invalid url(s): {{ `${invalidScreenshotUrlValues}` }}. Please try again.</div>
-    <main id="main">
+    <main id="main" role="presentation">
       <section id="leftSide" :aria-hidden="ariaHidden">
         <header class="mastHead">
           <h2>{{ $t('generate.subtitle') }}</h2>
