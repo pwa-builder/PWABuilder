@@ -592,13 +592,6 @@
               $t('generate.upload_image')
               }}
             </span>
-            <label class="l-generator-input l-generator-input--fake is-disabled" for="modal-file">
-              {{
-              iconFile && iconFile.name
-              ? iconFile.name
-              : $t('generate.choose_file')
-              }}
-            </label>
             <input id="modal-file" @change="onFileIconChange" class="l-hidden" type="file" />
           </div>
 
@@ -1082,7 +1075,7 @@ export default class extends Vue {
     // Check if file type is an image
     if (this.iconFile && this.iconFile.name) {
       const supportedFileTypes = [".png", ".jpg", ".svg"];
-      var found = supportedFileTypes.find(fileType =>
+      var found = supportedFileTypes.find((fileType) =>
         this.iconFile.name.endsWith(fileType)
       );
       if (!found) {
@@ -1876,8 +1869,8 @@ footer a {
   padding-bottom: 3%;
   height: 100%;
   object-fit: contain;
-  width: -moz-available;  
-  width: -webkit-fill-available; 
+  width: -moz-available;
+  width: -webkit-fill-available;
 }
 
 #screenshots a {
