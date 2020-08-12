@@ -592,7 +592,13 @@
               $t('generate.upload_image')
               }}
             </span>
-            <input id="modal-file" @change="onFileIconChange" class="l-hidden" type="file" />
+            <input
+              id="modal-file"
+              @change="onFileIconChange"
+              class="l-hidden"
+              type="file"
+              aria-label="choose file"
+            />
           </div>
 
           <div class="l-generator-field">
