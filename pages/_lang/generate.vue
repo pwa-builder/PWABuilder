@@ -7,7 +7,7 @@
       v-if="isInvalidScreenshotUrl"
       id="invalidUrlToast"
     >Invalid url(s): {{ `${invalidScreenshotUrlValues}` }}. Please try again.</div>
-    <main id="main">
+    <main id="main" role="presentation">
       <section id="leftSide" :aria-hidden="ariaHidden">
         <header class="mastHead">
           <h2>{{ $t('generate.subtitle') }}</h2>
@@ -285,7 +285,7 @@
                       class="outlineontab"
                       role="button"
                       aria-label="Remove Screenshot URL"
-                      tabindex="0"
+                      :tabindex="bodyTabIndex"
                       @click="removeUrlForScreenshots(k)"
                       @keyup.enter="removeUrlForScreenshots(k)"
                       v-show="k || (!k && urlsForScreenshot.length > 1)"
@@ -301,7 +301,7 @@
                       class="outlineontab"
                       role="button"
                       aria-label="Add Screenshot URL"
-                      tabindex="0"
+                      :tabindex="bodyTabIndex"
                       @click="addUrlForScreenshots(k)"
                       @keyup.enter="addUrlForScreenshots(k)"
                       v-show="
@@ -376,6 +376,7 @@
                       aria-hidden="false"
                       target="_blank"
                       :href="screenshot.src"
+                      :tabindex="bodyTabIndex"
                       class="screenshotImage"
                       ref="screenshotImage"
                       aria-label="Screenshot image"
@@ -389,6 +390,7 @@
                       aria-hidden="false"
                       target="_blank"
                       :href="'javascript:document.write(\'<img src=' + screenshot.src + ' style=' + generatedImageStyle + ' />\')'"
+                      :tabindex="bodyTabIndex"
                       class="screenshotImage"
                       ref="screenshotImage"
                       aria-label="Screenshot image"
@@ -590,14 +592,13 @@
               $t('generate.upload_image')
               }}
             </span>
-            <label class="l-generator-input l-generator-input--fake is-disabled" for="modal-file">
-              {{
-              iconFile && iconFile.name
-              ? iconFile.name
-              : $t('generate.choose_file')
-              }}
-            </label>
-            <input id="modal-file" @change="onFileIconChange" class="l-hidden" type="file" />
+            <input
+              id="modal-file"
+              @change="onFileIconChange"
+              class="l-hidden"
+              type="file"
+              aria-label="choose file"
+            />
           </div>
 
           <div class="l-generator-field">
@@ -1080,7 +1081,7 @@ export default class extends Vue {
     // Check if file type is an image
     if (this.iconFile && this.iconFile.name) {
       const supportedFileTypes = [".png", ".jpg", ".svg"];
-      var found = supportedFileTypes.find(fileType =>
+      var found = supportedFileTypes.find((fileType) =>
         this.iconFile.name.endsWith(fileType)
       );
       if (!found) {
@@ -1874,8 +1875,8 @@ footer a {
   padding-bottom: 3%;
   height: 100%;
   object-fit: contain;
-  width: -moz-available;  
-  width: -webkit-fill-available; 
+  width: -moz-available;
+  width: -webkit-fill-available;
 }
 
 #screenshots a {
