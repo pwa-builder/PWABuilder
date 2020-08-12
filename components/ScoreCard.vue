@@ -562,10 +562,8 @@ export default class extends Vue {
     } else {
       this.noManifest = false;
 
-      console.log(this.url);
-
       const response = await fetch(
-        `https://pwabuilder-tests.azurewebsites.net/api/WebManifest?site=${this.url}`
+        `${process.env.testAPIUrl}/WebManifest?site=${this.url}`
       );
       const manifestScoreData = await response.json();
 
@@ -627,12 +625,13 @@ export default class extends Vue {
         this.$emit("serviceWorkerTestDone", { score: this.swScore });
       }
     } else {
-      var cleanUrl = this.trimSuffixChar(this.url, ".");
-      const response = await fetch(`${apiUrl}=${cleanUrl}`);
-      const data = await response.json();
+      let cleanUrl = this.trimSuffixChar(this.url, ".");
 
-      if (data.swURL) {
-        this.serviceWorkerData = data.swURL;
+      const response = await fetch(`${process.env.testAPIUrl}/ServiceWorker?site=${cleanUrl}`);
+      const swResponse = await response.json();
+
+      if (swResponse.data) {
+        this.serviceWorkerData = swResponse.data;
       }
 
       if (this.serviceWorkerData && this.serviceWorkerData !== false) {
