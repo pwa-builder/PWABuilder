@@ -1,8 +1,13 @@
 <template>
-  <section>
+  <dialog :open="showModal">
     <div class="modal" v-if="showModal">
       <div class="modal-box">
-        <button aria-label="Close" class="closeButtonDiv" @click="onClickCancel()">
+        <button
+          id="modalCloseButton"
+          aria-label="Close"
+          class="closeButtonDiv"
+          @click="onClickCancel()"
+        >
           <i class="fas fa-times"></i>
         </button>
         <div class="modal-body">
@@ -14,7 +19,7 @@
             <slot name="featureContentSlot"></slot>
           </div>
 
-          <slot/>
+          <slot />
 
           <div v-if="title != ''" class="modal-buttons">
             <button
@@ -29,7 +34,7 @@
             >
               <span v-if="!isLoading">{{button_name}}</span>
               <span vif="isLoading">
-                <Loading :active="isLoading" class="u-display-inline_block u-margin-left-sm"/>
+                <Loading :active="isLoading" class="u-display-inline_block u-margin-left-sm" />
               </span>
             </button>
 
@@ -38,7 +43,7 @@
         </div>
       </div>
     </div>
-  </section>
+  </dialog>
 </template>
 
 <script lang="ts">
@@ -49,8 +54,8 @@ import Loading from "~/components/Loading.vue";
 
 @Component({
   components: {
-    Loading
-  }
+    Loading,
+  },
 })
 export default class extends Vue {
   public showModal = false;
@@ -61,6 +66,20 @@ export default class extends Vue {
   @Prop({ type: Boolean, default: true }) public showTitleBox;
   @Prop({ type: String, default: "Submit" }) public button_name: string;
   //public showButtons: string;
+
+  public updated() {
+    console.log("updated");
+    console.log(this.$el);
+
+    console.log(this.$el.getElementsByClassName("closeButtonDiv")[0]);
+
+    const closeButton = <HTMLElement>(
+      this.$el.getElementsByClassName("closeButtonDiv")[0]
+    );
+    if (closeButton) {
+      closeButton.focus();
+    }
+  }
 
   public beforeDestroy() {
     // Set scrolling to normal here too just to avoid
@@ -192,12 +211,12 @@ export default class extends Vue {
   }
 
   /* On smaller screens, reduce the padding on modals */
-@media(max-width: $media-screen-m) {
-  .modal-body {
-    padding-left: 10px;
-    padding-right: 10px;
+  @media (max-width: $media-screen-m) {
+    .modal-body {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
   }
-}
 
   .modal-title {
     font-size: 32px;
@@ -271,5 +290,4 @@ export default class extends Vue {
     padding-right: 100px;
   }
 }
-
 </style>
