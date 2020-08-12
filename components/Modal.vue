@@ -1,5 +1,5 @@
 <template>
-  <dialog :open="showModal">
+  <dialog :open="showModal" @keyup.esc="onClickCancel">
     <div class="modal" v-if="showModal">
       <div class="modal-box">
         <button
@@ -138,6 +138,11 @@ export default class extends Vue {
 /* stylelint-disable */
 
 @import "~assets/scss/base/variables";
+dialog {
+  background: transparent;
+  border: none;
+}
+
 .modal {
   position: fixed;
   display: flex;
