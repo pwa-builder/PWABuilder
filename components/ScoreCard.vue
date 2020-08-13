@@ -480,8 +480,6 @@ import * as generator from "~/store/modules/generator";
 const GeneratorState = namespace(generator.name, State);
 const GeneratorAction = namespace(generator.name, Action);
 
-const apiUrl = `${process.env.apiUrl}/serviceworkers/getServiceWorkerFromUrl?siteUrl`;
-
 @Component({})
 export default class extends Vue {
   @GeneratorAction getManifestInformation;
@@ -521,19 +519,41 @@ export default class extends Vue {
     }
   }
 
-  private lookAtSecurity(): Promise<void> {
-    return new Promise((resolve) => {
-      if (this.url && this.url.includes("https")) {
-        this.hasHTTPS = true;
-        this.validSSL = true;
-        this.noMixedContent = true;
+  private async lookAtSecurity(): Promise<void> {
+    try {
+      const response = await fetch(
+        `${process.env.testAPIUrl}/Security?site=${this.url}`
+      );
 
-        this.securityScore = 20;
+      const securityData = await response.json();
+
+      if (securityData.data) {
+        if (securityData.data.isHTTPS) {
+          this.hasHTTPS = true;
+
+          this.securityScore = this.securityScore + 10;
+        }
+
+        if (securityData.data.validProtocol) {
+          this.validSSL = true;
+
+          this.securityScore = this.securityScore + 5;
+        }
+
+        if (securityData.data.valid) {
+          this.noMixedContent = true;
+
+          this.securityScore = this.securityScore + 5;
+        }
+
+        this.$emit("securityTestDone", { score: this.securityScore });
+
       }
-
-      this.$emit("securityTestDone", { score: 20 });
-      resolve();
-    });
+    }
+    catch (err) {
+      this.securityScore = 0;
+      this.$emit("securityTestDone", { score: this.securityScore });
+    }
   }
 
   private async lookAtManifest(): Promise<void> {
