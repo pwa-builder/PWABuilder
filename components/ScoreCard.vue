@@ -564,7 +564,6 @@ export default class extends Vue {
       }
 
       await this.testManifest();
-      this.updateManifest(this.manifest);
     } catch (ex) {
       if (this.manifest === null) {
         this.brokenManifest = true;
@@ -582,6 +581,7 @@ export default class extends Vue {
       return;
     } finally {
       this.$emit("manifestTestDone", { score: this.manifestScore });
+      this.updateManifest(this.manifest);
     }
   }
 
