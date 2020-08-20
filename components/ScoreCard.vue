@@ -579,7 +579,9 @@ export default class extends Vue {
     if (this.manifest && this.manifest.generated === true) {
       this.noManifest = true;
       return;
-    } else {
+    }
+
+    try {
       this.noManifest = false;
 
       const response = await fetch(
@@ -609,11 +611,14 @@ export default class extends Vue {
         if (manifestScoreData.data.required.display === true) {
           this.manifestScore = this.manifestScore + 5;
         }
-
-        this.updateManifest(this.manifest);
-        this.$emit("manifestTestDone", { score: this.manifestScore });
       }
+      this.updateManifest(this.manifest);
+    } catch (e) {
+      console.log();
+    } finally {
+      this.$emit("manifestTestDone", { score: this.manifestScore });
     }
+  }
   }
 
   private async lookAtSW() {
