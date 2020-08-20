@@ -619,7 +619,6 @@ export default class extends Vue {
       this.$emit("manifestTestDone", { score: this.manifestScore });
     }
   }
-  }
 
   private async lookAtSW() {
     // If we have no URL, it means there was an issue parsing the URL,
