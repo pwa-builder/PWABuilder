@@ -564,6 +564,7 @@ export default class extends Vue {
       }
 
       await this.testManifest();
+      this.updateManifest(this.manifest);
     } catch (ex) {
       if (this.manifest === null) {
         this.brokenManifest = true;
@@ -615,7 +616,6 @@ export default class extends Vue {
         this.manifestScore = this.manifestScore + 5;
       }
     }
-    this.updateManifest(this.manifest);
   }
 
   private async lookAtSW() {
@@ -630,23 +630,28 @@ export default class extends Vue {
     }
 
     const savedData = sessionStorage.getItem(this.url);
-    const savedScore = sessionStorage.getItem("swScore");
+    const sessionSavedScore = sessionStorage.getItem("swScore");
+    const savedScore = sessionSavedScore ? JSON.parse(sessionSavedScore) : 0;
 
     if (savedData) {
       try {
         let cleanedData = JSON.parse(savedData);
         this.serviceWorkerData = cleanedData;
+
+        if (savedScore) {
+          let cleanedScore = JSON.parse(savedScore);
+          this.swScore = cleanedScore;
+
+          this.$emit("serviceWorkerTestDone", { score: this.swScore });
+        }
       } catch (err) {
         this.noSwScore();
+      } finally {
+        return;
       }
+    }
 
-      if (savedScore) {
-        let cleanedScore = JSON.parse(savedScore);
-        this.swScore = cleanedScore;
-
-        this.$emit("serviceWorkerTestDone", { score: this.swScore });
-      }
-    } else {
+    try {
       let cleanUrl = this.trimSuffixChar(this.url, ".");
 
       const response = await fetch(
@@ -658,13 +663,6 @@ export default class extends Vue {
         this.serviceWorkerData = swResponse.data;
       }
 
-      if (this.serviceWorkerData && this.serviceWorkerData !== false) {
-        sessionStorage.setItem(
-          this.url,
-          JSON.stringify(this.serviceWorkerData)
-        );
-      }
-
       if (
         !this.serviceWorkerData ||
         this.serviceWorkerData.swURL === null ||
@@ -673,50 +671,57 @@ export default class extends Vue {
         this.noSwScore();
 
         return;
-      } else {
-        this.noServiceWorker = false;
+      }
 
-        this.swScore = 0;
-        //scoring set by Jeff: 40 for manifest, 40 for sw and 20 for sc
+      this.scoreServiceWorker();
+      sessionStorage.setItem(this.url, JSON.stringify(this.serviceWorkerData));
+    } catch (e) {
+      this.noSwScore();
+    } finally {
+      if (savedScore !== this.swScore) {
+        sessionStorage.setItem("swScore", JSON.stringify(this.swScore));
+        this.$emit("serviceWorkerTestDone", { score: this.swScore });
+      }
+    }
+  }
 
-        if (this.serviceWorkerData.hasSW !== null) {
-          this.swScore = this.swScore + 20;
-        }
-        /*
+  private scoreServiceWorker() {
+    this.noServiceWorker = false;
+
+    this.swScore = 0;
+    //scoring set by Jeff: 40 for manifest, 40 for sw and 20 for sc
+
+    if (this.serviceWorkerData.hasSW !== null) {
+      this.swScore = this.swScore + 20;
+    }
+    /*
         Caches stuff
         +10 points to user
       */
-        if (this.serviceWorkerData.cache) {
-          /*const hasCache = this.serviceWorkerData.cache.some(
+    if (this.serviceWorkerData.cache) {
+      /*const hasCache = this.serviceWorkerData.cache.some(
             entry => entry.fromSW === true
           );*/
 
-          this.swScore = this.swScore + 10;
-        }
-        /*
+      this.swScore = this.swScore + 10;
+    }
+    /*
         Has push reg
         +5 points to user
       */
-        // if (this.serviceWorkerData.pushReg !== null) {
-        //   this.swScore = this.swScore + 5;
-        // }
-        /*
+    // if (this.serviceWorkerData.pushReg !== null) {
+    //   this.swScore = this.swScore + 5;
+    // }
+    /*
         Has scope that points to root
         +5 points to user
       */
-        if (
-          this.serviceWorkerData.scope //&&
-          // this.serviceWorkerData.scope.slice(0, -1) ===
-          // new URL(this.serviceWorkerData.scope).origin  //slice isn't working and score not showing up, TODO: look at how to validate scope
-        ) {
-          this.swScore = this.swScore + 10;
-        }
-
-        sessionStorage.setItem("swScore", JSON.stringify(this.swScore));
-
-        this.$emit("serviceWorkerTestDone", { score: this.swScore });
-        return;
-      }
+    if (
+      this.serviceWorkerData.scope //&&
+      // this.serviceWorkerData.scope.slice(0, -1) ===
+      // new URL(this.serviceWorkerData.scope).origin  //slice isn't working and score not showing up, TODO: look at how to validate scope
+    ) {
+      this.swScore = this.swScore + 10;
     }
   }
 
