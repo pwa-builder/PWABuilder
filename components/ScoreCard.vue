@@ -547,10 +547,8 @@ export default class extends Vue {
         }
 
         this.$emit("securityTestDone", { score: this.securityScore });
-
       }
-    }
-    catch (err) {
+    } catch (err) {
       this.securityScore = 0;
       this.$emit("securityTestDone", { score: this.securityScore });
     }
