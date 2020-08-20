@@ -569,7 +569,7 @@ export default class extends Vue {
 
         this.securityScore = 0;
 
-        this.$emit("securityTestDone", { score: 0 });
+        this.$emit("manifestTestDone", { score: 0 });
       }
 
       this.noManifest = true;
