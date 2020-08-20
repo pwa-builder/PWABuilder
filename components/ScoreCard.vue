@@ -557,6 +557,13 @@ export default class extends Vue {
   private async lookAtManifest(): Promise<void> {
     try {
       await this.getManifestInformation();
+
+      if (this.manifest && this.manifest.generated === true) {
+        this.noManifest = true;
+        return;
+      }
+
+      await this.testManifest();
     } catch (ex) {
       if (this.manifest === null) {
         this.brokenManifest = true;
@@ -567,55 +574,48 @@ export default class extends Vue {
 
         this.securityScore = 0;
 
-        this.$emit("manifestTestDone", { score: 0 });
+        this.$emit("securityTestDone", { score: 0 });
       }
 
       this.noManifest = true;
       return;
-    }
-
-    if (this.manifest && this.manifest.generated === true) {
-      this.noManifest = true;
-      return;
-    }
-
-    try {
-      this.noManifest = false;
-
-      const response = await fetch(
-        `${process.env.testAPIUrl}/WebManifest?site=${this.url}`
-      );
-      const manifestScoreData = await response.json();
-
-      this.manifestScore = 15;
-
-      if (manifestScoreData.data !== null) {
-        if (manifestScoreData.data.required.start_url === true) {
-          this.manifestScore = this.manifestScore + 5;
-        }
-
-        if (manifestScoreData.data.required.short_name === true) {
-          this.manifestScore = this.manifestScore + 5;
-        }
-
-        if (manifestScoreData.data.required.name === true) {
-          this.manifestScore = this.manifestScore + 5;
-        }
-
-        if (manifestScoreData.data.required.icons === true) {
-          this.manifestScore = this.manifestScore + 5;
-        }
-
-        if (manifestScoreData.data.required.display === true) {
-          this.manifestScore = this.manifestScore + 5;
-        }
-      }
-      this.updateManifest(this.manifest);
-    } catch (e) {
-      console.log();
     } finally {
       this.$emit("manifestTestDone", { score: this.manifestScore });
     }
+  }
+
+  private async testManifest() {
+    this.noManifest = false;
+
+    const response = await fetch(
+      `${process.env.testAPIUrl}/WebManifest?site=${this.url}`
+    );
+    const manifestScoreData = await response.json();
+
+    this.manifestScore = 15;
+
+    if (manifestScoreData.data !== null) {
+      if (manifestScoreData.data.required.start_url === true) {
+        this.manifestScore = this.manifestScore + 5;
+      }
+
+      if (manifestScoreData.data.required.short_name === true) {
+        this.manifestScore = this.manifestScore + 5;
+      }
+
+      if (manifestScoreData.data.required.name === true) {
+        this.manifestScore = this.manifestScore + 5;
+      }
+
+      if (manifestScoreData.data.required.icons === true) {
+        this.manifestScore = this.manifestScore + 5;
+      }
+
+      if (manifestScoreData.data.required.display === true) {
+        this.manifestScore = this.manifestScore + 5;
+      }
+    }
+    this.updateManifest(this.manifest);
   }
 
   private async lookAtSW() {
@@ -649,7 +649,9 @@ export default class extends Vue {
     } else {
       let cleanUrl = this.trimSuffixChar(this.url, ".");
 
-      const response = await fetch(`${process.env.testAPIUrl}/ServiceWorker?site=${cleanUrl}`);
+      const response = await fetch(
+        `${process.env.testAPIUrl}/ServiceWorker?site=${cleanUrl}`
+      );
       const swResponse = await response.json();
 
       if (swResponse.data) {
