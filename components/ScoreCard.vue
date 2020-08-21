@@ -555,6 +555,7 @@ export default class extends Vue {
   }
 
   private async lookAtManifest(): Promise<void> {
+    // Gets manifest from api, then scores if not generated.
     try {
       await this.getManifestInformation();
 
@@ -565,6 +566,7 @@ export default class extends Vue {
 
       await this.testManifest();
     } catch (ex) {
+      // If manifest is not retrieved or DNE will fall in here. Mostly effects Security Score
       if (this.manifest === null) {
         this.brokenManifest = true;
 
@@ -580,6 +582,7 @@ export default class extends Vue {
       this.noManifest = true;
       return;
     } finally {
+      // Regardless notify parent and update manifest call.
       this.$emit("manifestTestDone", { score: this.manifestScore });
       this.updateManifest(this.manifest);
     }
@@ -629,6 +632,7 @@ export default class extends Vue {
       return;
     }
 
+    // Check cache and use cached version.
     const savedData = sessionStorage.getItem(this.url);
     const sessionSavedScore = sessionStorage.getItem("swScore");
     const savedScore = sessionSavedScore ? JSON.parse(sessionSavedScore) : 0;
@@ -651,6 +655,7 @@ export default class extends Vue {
       }
     }
 
+    // Section with
     try {
       let cleanUrl = this.trimSuffixChar(this.url, ".");
 
