@@ -492,8 +492,15 @@ export default class extends Vue {
   public async processQueryString() {
     const url = window.location.search.split("=")[1];
     this.cleanedURL = decodeURIComponent(url);
-    this.url = this.cleanedURL;
-    this.checkUrlAndGenerate();
+
+    /*
+      Handle edge case where this.cleanedURL is set to the string undefined (decodeURIComponent returns a string).
+      This edge case is not very likely to pop up, but stops issues such as https://github.com/pwa-builder/PWABuilder/issues/833
+    */
+    if (this.cleanedURL && this.cleanedURL !== "undefined") {
+      this.url = this.cleanedURL;
+      this.checkUrlAndGenerate();
+    }
   }
 
   public async getTopSamples() {
@@ -791,7 +798,9 @@ declare var awa: any;
 main {
   @include grid;
 
-  margin-bottom: 2em;
+  @media (min-width: 801px) {
+    margin-bottom: 2em;
+  }
 }
 
 h2 {
@@ -804,7 +813,10 @@ h2 {
   font-size: 24px;
   line-height: 54px;
   letter-spacing: -0.02em;
-  height: 36px;
+
+  @media (min-width: 801px) {
+    height: 36px;
+  }
 }
 
 #topHalfHeader {
@@ -822,8 +834,6 @@ h2 {
 
   #topHalfHome {
     grid-row: 1;
-
-    margin-top: 68px;
 
     form {
       display: flex;
@@ -890,16 +900,8 @@ h2 {
     }
   }
 
-  @media (max-height: 375px) {
-    #topHalfHome {
-      margin-top: 24px;
-    }
-  }
-
-  @media (max-height: 320px) {
-    #topHalfHome {
-      margin-top: 4px;
-    }
+  @media (min-width: 801px) {
+    margin-top: 68px;
   }
 
   @media (max-width: 425px) {
@@ -948,7 +950,6 @@ h2 {
       color: black;
       padding: 1.4em;
       border-radius: 6px;
-      width: 24em;
 
       h2 {
         margin: 0;
@@ -982,11 +983,9 @@ h2 {
           border: none;
         }
       }
-    }
 
-    @media (max-width: 640px) {
-      #starterSection {
-        display: none;
+      @media (min-width: 641px) {
+        width: 24em;
       }
     }
   }
@@ -1005,6 +1004,34 @@ h2 {
   }
 }
 
+@media (max-width: 800px) {
+  #main {
+    display: flex;
+    grid-template-columns: none;
+    margin-bottom: 0;
+  }
+
+  #inputSection {
+    display: flex;
+    grid-template-rows: none;
+    flex-direction: column;
+  }
+
+  #bottomHalfHome {
+    margin-top: 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  #topHalfHome {
+    margin-top: 4px;
+  }
+
+  #starterSection {
+    width: 100%;
+  }
+}
+
 @media (max-width: 425px) {
   #inputSection {
     display: initial;
@@ -1016,6 +1043,7 @@ h2 {
 
   #inputSection #bottomHalfHome {
     width: initial;
+    padding: 0 25px;
   }
 
   footer {
@@ -1305,10 +1333,6 @@ h2 {
 
   .backgroundReport {
     @include backgroundRightPoint(80%, 25vh);
-  }
-
-  #starterSection {
-    display: none;
   }
 
   footer {

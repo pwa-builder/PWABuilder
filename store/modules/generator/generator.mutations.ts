@@ -55,7 +55,7 @@ export const mutations: MutationTree<State> = {
           state.icons =
             <Icon[]>(
               helpers.prepareIconsUrls(
-                result.content.icons,
+                [],
                 state.manifest && state.manifest.start_url
                   ? state.manifest.start_url
                   : ''
@@ -75,7 +75,7 @@ export const mutations: MutationTree<State> = {
         } else {
           state.screenshots =
             helpers.prepareIconsUrls(
-              result.content.screenshots,
+              [],
               state.manifest && state.manifest.start_url
                 ? state.manifest.start_url
                 : ''

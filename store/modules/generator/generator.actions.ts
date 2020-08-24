@@ -197,10 +197,14 @@ export const actions: Actions<State, RootState> = {
       });
       return;
     } catch (e) {
-      let errorMessage = e.response.data
-        ? e.response.data.error
-        : e.response.data || e.response.statusText;
-      throw errorMessage;
+      if (e.response && e.response.data) {
+        let errorMessage = e.response.data
+          ? e.response.data.error
+          : e.response.data || e.response.statusText;
+        throw errorMessage;
+      }
+
+      throw e;
     }
   },
 
