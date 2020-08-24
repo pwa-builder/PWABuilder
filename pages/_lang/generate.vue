@@ -1,14 +1,14 @@
 <template>
   <div>
-    <HubHeader :showSubHeader="true"></HubHeader>
+    <HubHeader :showSubHeader="true" :disableHeader="showingIconModal"></HubHeader>
 
     <div v-if="showingIconModal" class="has-acrylic-40 is-dark" id="modalBackground"></div>
     <div
       v-if="isInvalidScreenshotUrl"
       id="invalidUrlToast"
-    >Invalid url(s): {{`${invalidScreenshotUrlValues}`}}. Please try again.</div>
-    <main id="sideBySide">
-      <section id="leftSide">
+    >Invalid url(s): {{ `${invalidScreenshotUrlValues}` }}. Please try again.</div>
+    <main id="main" role="presentation">
+      <section id="leftSide" :aria-hidden="ariaHidden">
         <header class="mastHead">
           <h2>{{ $t('generate.subtitle') }}</h2>
           <p>{{ $t('generate.instructions') }}</p>
@@ -16,20 +16,48 @@
 
         <div id="dataSection">
           <div id="dataButtonsBlock">
-            <div id="dataButtons">
-              <button v-bind:class="{ active: showBasicSection }" @click="showBasicsSection()">Info</button>
+            <div id="dataButtons" role="tablist">
               <button
+                id="infoTabButton"
+                v-bind:class="{ active: showBasicSection }"
+                @click="showBasicsSection()"
+                role="tab"
+                aria-controls="infoTab"
+                aria-label="Info"
+                :aria-selected="showBasicSection ? 'true' : 'false'"
+                tabindex="0"
+              >Info</button>
+              <button
+                id="imagesTabButton"
                 v-bind:class="{ active: showImagesSection }"
                 @click="showImageSection()"
+                role="tab"
+                aria-label="Images"
+                aria-controls="imagesTab"
+                :aria-selected="showImagesSection ? 'true' : 'false'"
+                :tabindex="bodyTabIndex"
               >Images</button>
               <button
+                id="settingsTabButton"
                 v-bind:class="{ active: showSettingsSection }"
                 @click="showSettingSection()"
+                role="tab"
+                aria-label="Settings"
+                aria-controls="settingsTab"
+                :aria-selected="showSettingsSection ? 'true' : 'false'"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               >Settings</button>
             </div>
           </div>
 
-          <section class="animatedSection" v-if="showBasicSection">
+          <section
+            id="infoTab"
+            class="animatedSection"
+            role="tabpanel"
+            aria-labelledby="infoTabButton"
+            v-if="showBasicSection"
+          >
             <div class="l-generator-field">
               <label class="l-generator-label">
                 <h4
@@ -46,6 +74,8 @@
                 v-on:focus="activeFormField = 'appName'"
                 placeholder="App Name"
                 aria-label="App Name"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               />
             </div>
 
@@ -66,6 +96,8 @@
                 v-on:focus="activeFormField = 'shortName'"
                 placeholder="App Short Name"
                 aria-label="App Short Name"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               />
             </div>
 
@@ -88,8 +120,10 @@
                 type="text"
                 v-on:focus="activeFormField = 'appDesc'"
                 placeholder="App Description"
-                v-bind:style="{ outline: textareaOutlineColor}"
+                v-bind:style="{ outline: textareaOutlineColor }"
                 aria-label="App Description"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               ></textarea>
               <span v-if="ifEntered" class="hint" id="textarea_error">Newline not allowed</span>
               <span v-else class="hint" id="textarea_error"></span>
@@ -111,11 +145,19 @@
                 v-on:focus="activeFormField = 'startURL'"
                 placeholder="Start URL"
                 aria-label="Start URL"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               />
             </div>
           </section>
 
-          <section class="animatedSection" v-if="showImagesSection">
+          <section
+            id="imagesTab"
+            class="animatedSection"
+            role="tabpanel"
+            aria-labelledby="imagesTabButton"
+            v-if="showImagesSection"
+          >
             <div class="l-generator-field logo-upload">
               <div id="uploadNewSection">
                 <label class="l-generator-label">
@@ -135,6 +177,8 @@
                       :class="{ disabled: zipRequested }"
                       @click="onClickDownloadAll()"
                       :disabled="zipRequested"
+                      :tabindex="bodyTabIndex"
+                      :aria-hidden="ariaHidden"
                     >Download All</button>
                   </div>
                   <div class="l-inline">
@@ -142,6 +186,8 @@
                       id="iconUploadButton"
                       class="work-button l-generator-button"
                       @click="onClickUploadIcon()"
+                      :tabindex="bodyTabIndex"
+                      :aria-hidden="ariaHidden"
                     >Upload</button>
                   </div>
                 </div>
@@ -165,8 +211,19 @@
                     :key="icon.src"
                   >
                     <div id="iconDivItem" class="pure-u-10-24 l-generator-tablec">
-                      <a target="_blank" :href="icon.src">
-                        <img class="icon-preview" :src="icon.src" />
+                      <a
+                        target="_blank"
+                        :href="icon.src"
+                        :tabindex="bodyTabIndex"
+                        :aria-hidden="ariaHidden"
+                      >
+                        <img
+                          class="icon-preview"
+                          :src="icon.src"
+                          :aria-label="icon.src"
+                          alt="linter place holder"
+                          :alt="'icon representing an image from uri: ' + icon.src"
+                        />
                       </a>
 
                       <div id="iconSize" class="pure-u-8-24 l-generator-tablec">
@@ -175,7 +232,11 @@
                         <div
                           id="removeIconsDiv"
                           class="pure-u-1-8 l-generator-tablec l-generator-tablec--right"
+                          role="button"
                           @click="onClickRemoveIcon(icon)"
+                          :tabindex="bodyTabIndex"
+                          :aria-label="'delete icon of size ' + icon.sizes"
+                          :aria-hidden="ariaHidden"
                         >
                           <span class="l-generator-close" :title="$t('generate.remove_icon')">
                             <i class="fas fa-trash-alt"></i>
@@ -194,15 +255,14 @@
                 </div>
               </div>
             </div>
-            <div id="screenshotsTool">
+            <div id="screenshotsTool" :tabindex="bodyTabIndex" :aria-hidden="ariaHidden">
               <div class="l-generator-field">
                 <label class="l-generator-label">
-                  <h4
-                    v-bind:class="{
-                      fieldName: activeFormField === 'screenshot',
-                    }"
-                  >Generate screenshots for your PWA</h4>
-                  <p>Specify the URLs to generate screenshots from. You may add up to 8 screenshots.</p>
+                  <h4>Generate screenshots for your PWA</h4>
+                  <p>
+                    Specify the URLs to generate desktop and mobile screenshots
+                    from. You may add up to 8 screenshots.
+                  </p>
                 </label>
                 <div
                   id="screenshotsUrlsContainer"
@@ -217,21 +277,45 @@
                     type="text"
                     v-on:focus="activeFormField = 'screenshot'"
                     placeholder="URL"
+                    :tabindex="bodyTabIndex"
+                    :aria-hidden="ariaHidden"
                   />
                   <span>
-                    <i
-                      class="fas fa-minus-circle"
+                    <span
+                      class="outlineontab"
+                      role="button"
+                      aria-label="Remove Screenshot URL"
+                      :tabindex="bodyTabIndex"
                       @click="removeUrlForScreenshots(k)"
+                      @keyup.enter="removeUrlForScreenshots(k)"
                       v-show="k || (!k && urlsForScreenshot.length > 1)"
-                    ></i>
-                    <i
-                      class="fas fa-plus-circle"
+                    >
+                      <i
+                        class="fas fa-minus-circle outlineontab_content"
+                        aria-hidden="true"
+                        style="cursor:pointer"
+                        tabindex="-1"
+                      ></i>
+                    </span>
+                    <span
+                      class="outlineontab"
+                      role="button"
+                      aria-label="Add Screenshot URL"
+                      :tabindex="bodyTabIndex"
                       @click="addUrlForScreenshots(k)"
+                      @keyup.enter="addUrlForScreenshots(k)"
                       v-show="
                         k == urlsForScreenshot.length - 1 &&
                           screenshots.length + k <= 6
                       "
-                    ></i>
+                    >
+                      <i
+                        class="fas fa-plus-circle outlineontab_content"
+                        aria-hidden="true"
+                        style="cursor:pointer"
+                        tabindex="-1"
+                      ></i>
+                    </span>
                   </span>
                 </div>
               </div>
@@ -239,10 +323,21 @@
                 <button
                   id="screenshotDownloadButton"
                   class="work-button l-generator-button"
+                  role="button"
                   @click="onClickScreenshotFetch()"
+                  :tabindex="bodyTabIndex"
+                  :aria-hidden="ariaHidden"
                 >
-                  <span v-if="!screenshotLoading">Generate Screenshots</span>
-                  <span v-if="screenshotLoading">
+                  <span
+                    v-if="!screenshotLoading"
+                    id="screenshotDownloadButton_content"
+                    tabindex="-1"
+                  >Generate Screenshots</span>
+                  <span
+                    v-if="screenshotLoading"
+                    tabindex="-1"
+                    id="screenshotDownloadButton_content"
+                  >
                     <Loading
                       :active="screenshotLoading"
                       class="u-display-inline_block u-margin-left-sm"
@@ -251,9 +346,19 @@
                 </button>
               </div>
             </div>
+
             <div id="screenshotsOuterDiv" v-show="screenshots.length > 0">
               <div id="screenshotsContainer">
-                <button @click="scrollToLeft()" v-show="screenshots.length >= 2">
+                <button
+                  v-show="screenshots.length >= 2"
+                  :tabindex="bodyTabIndex"
+                  :aria-hidden="ariaHidden"
+                  aria-label="scroll left"
+                  role="button"
+                  ref="scrollLeft"
+                  @keydown.tab.exact="handleTabPressLeft($event)"
+                  @click="scrollToLeft()"
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                     <path
                       d="M401.4 224h-214l83-79.4c11.9-12.5 11.9-32.7 0-45.2s-31.2-12.5-43.2 0L89 233.4c-6 5.8-9 13.7-9 22.4v.4c0 8.7 3 16.6 9 22.4l138.1 134c12 12.5 31.3 12.5 43.2 0 11.9-12.5 11.9-32.7 0-45.2l-83-79.4h214c16.9 0 30.6-14.3 30.6-32 .1-18-13.6-32-30.5-32z"
@@ -266,25 +371,73 @@
                     v-for="(screenshot, k) in filterIcons(screenshots)"
                     :key="screenshot.src"
                   >
-                    <img :src="screenshot.src" />
+                    <a
+                      v-if="!screenshot.src.startsWith('data:image')"
+                      aria-hidden="false"
+                      target="_blank"
+                      :href="screenshot.src"
+                      :tabindex="bodyTabIndex"
+                      class="screenshotImage"
+                      ref="screenshotImage"
+                      aria-label="Screenshot image"
+                      aria-describedby="pageNumber"
+                      @keydown.tab="handleTabPressOnScreenshot($event)"
+                    >
+                      <img alt="screenshot image" :src="screenshot.src" />
+                    </a>
+                    <a
+                      v-if="screenshot.src.startsWith('data:image')"
+                      aria-hidden="false"
+                      target="_blank"
+                      :href="'javascript:document.write(\'<img src=' + screenshot.src + ' style=' + generatedImageStyle + ' />\')'"
+                      :tabindex="bodyTabIndex"
+                      class="screenshotImage"
+                      ref="screenshotImage"
+                      aria-label="Screenshot image"
+                      aria-describedby="pageNumber"
+                      @keydown.tab="handleTabPressOnScreenshot($event)"
+                    >
+                      <img alt="screenshot image" :src="screenshot.src" />
+                    </a>
                     <div id="screenshotsToolbar">
                       <div style="width:27px;">
-                        <span v-if="screenshot.sizes!==undefined">{{`${screenshot.sizes}`}}</span>
+                        <span v-if="screenshot.sizes !== undefined">
+                          {{
+                          `${screenshot.sizes}`
+                          }}
+                        </span>
                       </div>
-                      <span>{{ `${k + 1} / ${screenshots.length}` }}</span>
+                      <span aria-hidden="true" id="pageNumber">
+                        {{
+                        `${k + 1} of ${screenshots.length}`
+                        }}
+                      </span>
                       <button
                         id="removeScreenshotsDiv"
-                        class="pure-u-1-8 l-generator-tablec l-generator-tablec--right"
-                        @click="onClickRemoveScreenshot(screenshot)"
+                        class="pure-u-1-8 l-generator-tablec l-generator-tablec--right removeScreenshotsButton"
+                        ref="removeScreenshotsButton"
+                        aria-label="Delete screenshot"
+                        @click="onClickRemoveScreenshot($event, screenshot, k)"
+                        @keydown.tab="handleTabPressOnTrash($event)"
+                        :tabindex="bodyTabIndex"
+                        :aria-hidden="ariaHidden"
                       >
-                        <span class="l-generator-close" :title="$t('Remove Screenshot')">
+                        <span class="l-generator-close">
                           <i class="fas fa-trash-alt"></i>
                         </span>
                       </button>
                     </div>
                   </div>
                 </section>
-                <button @click="scrollToRight()" v-show="screenshots.length >= 2">
+                <button
+                  @click="scrollToRight()"
+                  v-show="screenshots.length >= 2"
+                  role="button"
+                  aria-label="scroll right"
+                  :tabindex="bodyTabIndex"
+                  :aria-hidden="ariaHidden"
+                  @keydown.tab="handleTabPressRight($event)"
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                     <path
                       d="M284.9 412.6l138.1-134c6-5.8 9-13.7 9-22.4v-.4c0-8.7-3-16.6-9-22.4l-138.1-134c-12-12.5-31.3-12.5-43.2 0-11.9 12.5-11.9 32.7 0 45.2l83 79.4h-214c-17 0-30.7 14.3-30.7 32 0 18 13.7 32 30.6 32h214l-83 79.4c-11.9 12.5-11.9 32.7 0 45.2 12 12.5 31.3 12.5 43.3 0z"
@@ -295,7 +448,13 @@
             </div>
           </section>
 
-          <section class="animatedSection" v-if="showSettingsSection">
+          <section
+            id="settingsTag"
+            class="animatedSection"
+            role="tabpanel"
+            aria-labelledby="settingsTabButton"
+            v-if="showSettingsSection"
+          >
             <div class="l-generator-field">
               <label class="l-generator-label">
                 <h4
@@ -312,6 +471,8 @@
                 placeholder="App Scope"
                 v-on:focus="activeFormField = 'appScope'"
                 aria-label="App Scope"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               />
             </div>
 
@@ -334,6 +495,8 @@
                 @change="onChangeSimpleInput(), update()"
                 v-on:focus="activeFormField = 'displayMode'"
                 aria-label="Display Mode"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               >
                 <option
                   v-for="display in displaysNames"
@@ -359,6 +522,8 @@
                 @change="onChangeSimpleInput(), update()"
                 v-on:focus="activeFormField = 'appOrientation'"
                 aria-label="App Orientation"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               >
                 <option
                   v-for="orientation in orientationsNames"
@@ -382,6 +547,8 @@
                 @change="onChangeSimpleInput(), update()"
                 v-on:change="activeFormField = 'appLang'"
                 aria-label="App Language"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
               >
                 <option
                   v-for="language in languagesNames"
@@ -399,11 +566,66 @@
 
         <div id="doneDiv">
           <!--<button id="doneButton">Done</button>-->
-          <nuxt-link @click.native="saveChanges" id="doneButton" to="reportCard">Done</nuxt-link>
+          <nuxt-link
+            id="doneButton"
+            to="reportCard"
+            ref="doneButton"
+            :tabindex="bodyTabIndex"
+            :aria-hidden="ariaHidden"
+            @click.native="saveChanges"
+          >Done</nuxt-link>
         </div>
       </section>
 
-      <section id="rightSide">
+      <Modal
+        v-on:modalOpened="modalOpened()"
+        v-on:modalClosed="modalClosed()"
+        :title="$t('generate.upload_title')"
+        ref="iconsModal"
+        v-on:modalSubmit="onSubmitIconModal"
+        v-on:cancel="onCancelIconModal"
+      >
+        <section id="imageModalSection">
+          <div class="l-generator-box image-upload">
+            <span class="l-generator-label">
+              {{
+              $t('generate.upload_image')
+              }}
+            </span>
+            <input
+              id="modal-file"
+              @change="onFileIconChange"
+              class="l-hidden"
+              type="file"
+              aria-label="choose file"
+            />
+          </div>
+
+          <div class="l-generator-field">
+            <label id="genMissingLabel">
+              {{ $t('generate.generate_missing') }}
+              <input
+                type="checkbox"
+                v-model="iconCheckMissing"
+              />
+            </label>
+          </div>
+          <div v-if="this.iconFileErrorNoneUploaded" class="l-generator-field">
+            <p
+              id="uploadImageError"
+              role="alert"
+            >{{ $t('generate.upload_image_error_none_uploaded') }}</p>
+          </div>
+          <div v-if="this.iconFileErrorIncorrectType" class="l-generator-field">
+            <p
+              id="uploadImageError"
+              role="alert"
+            >{{ $t('generate.upload_image_error_incorrect_type') }}</p>
+          </div>
+        </section>
+      </Modal>
+
+      <section id="rightSide" :tabindex="bodyTabIndex" :aria-hidden="ariaHidden">
         <!--<div id="exampleDiv">
           <h3>Add this code to your start page:</h3>
           <code>&lt;link rel="manifest" href="/manifest.json"&gt;</code>
@@ -418,6 +640,8 @@
           :showCopyButton="true"
           monaco-id="manifestHTMLId"
           id="manifestHTML"
+          :tabindex="bodyTabIndex"
+          :aria-hidden="ariaHidden"
         >
           <h3>Add this code to your start page:</h3>
         </CodeViewer>
@@ -438,53 +662,12 @@
           :showCopyButton="showCopy"
           monaco-id="manifestCodeId"
           id="manifestCode"
+          :tabindex="bodyTabIndex"
+          :aria-hidden="ariaHidden"
         >
           <h3>Add this code to your manifest.json file</h3>
         </CodeViewer>
       </section>
-
-      <Modal
-        v-on:modalOpened="modalOpened()"
-        v-on:modalClosed="modalClosed()"
-        :title="$t('generate.upload_title')"
-        ref="iconsModal"
-        v-on:modalSubmit="onSubmitIconModal"
-        v-on:cancel="onCancelIconModal"
-      >
-        <section id="imageModalSection">
-          <div class="l-generator-box image-upload">
-            <span class="l-generator-label">
-              {{
-              $t('generate.upload_image')
-              }}
-            </span>
-            <label class="l-generator-input l-generator-input--fake is-disabled" for="modal-file">
-              {{
-              iconFile && iconFile.name
-              ? iconFile.name
-              : $t('generate.choose_file')
-              }}
-            </label>
-            <input id="modal-file" @change="onFileIconChange" class="l-hidden" type="file" />
-          </div>
-
-          <div class="l-generator-field">
-            <label id="genMissingLabel">
-              {{ $t('generate.generate_missing') }}
-              <input
-                type="checkbox"
-                v-model="iconCheckMissing"
-              />
-            </label>
-          </div>
-          <div v-if="this.iconFileErrorNoneUploaded" class="l-generator-field">
-            <p id="uploadImageError" role="alert">{{ $t('generate.upload_image_error_none_uploaded') }}</p>
-          </div>
-          <div v-if="this.iconFileErrorIncorrectType" class="l-generator-field">
-            <p id="uploadImageError" role="alert">{{ $t('generate.upload_image_error_incorrect_type') }}</p>
-          </div>      
-        </section>
-      </Modal>
     </main>
 
     <footer>
@@ -493,6 +676,8 @@
         project to help move PWA adoption forward.
         <a
           href="https://privacy.microsoft.com/en-us/privacystatement"
+          :tabindex="bodyTabIndex"
+          :aria-hidden="ariaHidden"
         >Our Privacy Statement</a>
       </p>
     </footer>
@@ -531,12 +716,13 @@ const GeneratorGetters = namespace(generator.name, Getter);
     StartOver,
     Modal,
     HubHeader,
-    Loading
-  }
+    Loading,
+  },
 })
 export default class extends Vue {
   public manifest$: generator.Manifest | null = null;
   public screenshotLoading: boolean = false;
+  public screenshotNumber: number = 0;
   public isInvalidScreenshotUrl: boolean = false;
   public invalidScreenshotUrlValues: string[] = [];
   public newIconSrc = "";
@@ -563,7 +749,18 @@ export default class extends Vue {
     3000,
     false
   );
+  public generatedImageStyle =
+    '"display:block;margin-left:auto;margin-right:auto;height:50%"';
+
   private zipRequested = false;
+
+  get bodyTabIndex() {
+    return this.showingIconModal ? -1 : 0;
+  }
+
+  get ariaHidden() {
+    return this.showingIconModal ? true : false;
+  }
 
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
@@ -600,18 +797,18 @@ export default class extends Vue {
       behavior: 0,
       uri: window.location.href,
       pageName: "manifestPage",
-      pageHeight: window.innerHeight
+      pageHeight: window.innerHeight,
     };
 
     // might be the issue
     var updateFn = helper.debounce(this.update, 3000, false);
 
     document &&
-      document.querySelectorAll(".l-generator-input").forEach(item => {
+      document.querySelectorAll(".l-generator-input").forEach((item) => {
         item.addEventListener("keyup", updateFn);
       });
     document &&
-      document.querySelectorAll(".l-generator-textarea").forEach(item => {
+      document.querySelectorAll(".l-generator-textarea").forEach((item) => {
         item.addEventListener("keyup", updateFn);
       });
 
@@ -649,11 +846,11 @@ export default class extends Vue {
           method: "POST",
           responseType: "blob",
           headers: {
-            "content-type": "application/json"
-          }
+            "content-type": "application/json",
+          },
         }
       )
-      .then(async res => {
+      .then(async (res) => {
         if (window.chooseFileSystemEntries) {
           const fsOpts = {
             type: "save-file",
@@ -661,9 +858,9 @@ export default class extends Vue {
               {
                 description: "PWA Builder Image Zip",
                 extensions: ["zip"],
-                mimeTypes: ["application/zip"]
-              }
-            ]
+                mimeTypes: ["application/zip"],
+              },
+            ],
           };
           const fileHandle = await window.chooseFileSystemEntries(fsOpts);
           // Create a FileSystemWritableFileStream to write to.
@@ -677,7 +874,7 @@ export default class extends Vue {
         }
         this.zipRequested = false;
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
         this.zipRequested = false;
       });
@@ -698,10 +895,12 @@ export default class extends Vue {
       // left: -15,
       left: -screenshotsDiv.clientWidth,
       top: 0,
-      behavior: "smooth"
+      behavior: "smooth",
     });
+    if (this.screenshotNumber > 0) {
+      this.screenshotNumber -= 1;
+    }
   }
-
   public scrollToRight(): void {
     const screenshotsDiv = this.$refs.screenshots as HTMLDivElement;
     // screenshotsDiv.scrollBy(10, 0);
@@ -709,11 +908,65 @@ export default class extends Vue {
       // left: 15,
       left: screenshotsDiv.clientWidth,
       top: 0,
-      behavior: "smooth"
+      behavior: "smooth",
     });
+    if (this.screenshotNumber < this.screenshots.length - 1) {
+      this.screenshotNumber += 1;
+    }
   }
+  public handleTabPressLeft(e): void {
+    console.log("Screenshot number on tab left", this.screenshotNumber);
+    e.preventDefault();
+
+    (this.$refs.screenshotImage[this.screenshotNumber] as HTMLElement).focus();
+  }
+
+  public handleTabPressOnScreenshot(e): void {
+    if (this.screenshots.length > 1) {
+      console.log("Screenshot number on tab screenshot", this.screenshotNumber);
+      e.preventDefault();
+      if (e.shiftKey) {
+        (this.$refs.scrollLeft as HTMLElement).focus();
+      } else {
+        (this.$refs.scrollRight as HTMLElement).focus();
+      }
+    }
+  }
+  public handleTabPressRight(e): void {
+    e.preventDefault();
+    console.log("Screenshot number on tab right", this.screenshotNumber);
+    if (e.shiftKey) {
+      (this.$refs.scrollLeft as HTMLElement).focus();
+    } else {
+      (this.$refs.removeScreenshotsButton[
+        this.screenshotNumber
+      ] as HTMLElement).focus();
+    }
+  }
+
+  handleTabPressOnTrash(e): void {
+    console.log("Screenshot number on tab trash", this.screenshotNumber);
+    if (this.screenshots.length > 1) {
+      e.preventDefault();
+      if (e.shiftKey) {
+        (this.$refs.scrollRight as HTMLElement).focus();
+      } else {
+        console.log(document.querySelector("#doneButton") as HTMLElement);
+        (document.querySelector("#doneButton") as HTMLElement).focus();
+      }
+    } else if (this.screenshots.length == 1) {
+      if (e.shiftKey) {
+        e.preventDefault();
+        this.screenshotNumber = 0;
+        (this.$refs.screenshotImage[
+          this.screenshotNumber
+        ] as HTMLElement).focus();
+      }
+    }
+  }
+
   public filterIcons(icons): any {
-    return icons.filter(icon => {
+    return icons.filter((icon) => {
       if (!icon.generated || icon.src.indexOf("data") === 0) {
         return icon;
       }
@@ -721,7 +974,7 @@ export default class extends Vue {
   }
 
   public checkBrokenImage(icons): any {
-    icons.forEach(icon => {
+    icons.forEach((icon) => {
       if (icon.generated && icon.src.indexOf("data") !== 0) {
         this.isImageBroken = true;
       }
@@ -740,11 +993,22 @@ export default class extends Vue {
     this.textareaOutlineColor = "";
   }
 
-  public onClickRemoveScreenshot(screenshot: generator.Screenshot): void {
-    console.log("old screenshots length", this.screenshots.length);
+  public onClickRemoveScreenshot(
+    e: Event,
+    screenshot: generator.Screenshot,
+    k: number
+  ): void {
+    e.preventDefault();
     this.removeScreenshot(screenshot);
     this.updateManifest(this.manifest$);
-    console.log("new screenshots length", this.screenshots.length);
+
+    if (k == this.screenshots.length && this.screenshots.length > 0) {
+      console.log(this.screenshotNumber);
+      this.screenshotNumber -= 1;
+    }
+    (this.$refs.removeScreenshotsButton[
+      this.screenshotNumber
+    ] as HTMLElement).focus();
   }
 
   public onClickRemoveIcon(icon: generator.Icon): void {
@@ -757,11 +1021,11 @@ export default class extends Vue {
     let urls: string[] = [];
     this.invalidScreenshotUrlValues = [];
     //
-    urls = this.urlsForScreenshotValues.filter(url => {
+    urls = this.urlsForScreenshotValues.filter((url) => {
       return url !== null && url !== undefined && url !== "";
     });
     console.log(urls);
-    urls = urls.map(url => {
+    urls = urls.map((url) => {
       return this.validateScreenshotUrl(url);
     });
     console.log("Validated urls", urls);
@@ -816,8 +1080,10 @@ export default class extends Vue {
     this.iconFileErrorNoneUploaded = false;
     // Check if file type is an image
     if (this.iconFile && this.iconFile.name) {
-      const supportedFileTypes = ['.png', '.jpg', '.svg'];
-      var found = supportedFileTypes.find(fileType => this.iconFile.name.endsWith(fileType));
+      const supportedFileTypes = [".png", ".jpg", ".svg"];
+      var found = supportedFileTypes.find((fileType) =>
+        this.iconFile.name.endsWith(fileType)
+      );
       if (!found) {
         this.iconFileErrorIncorrectType = true;
       } else {
@@ -826,19 +1092,18 @@ export default class extends Vue {
     } else {
       this.iconFileErrorIncorrectType = false;
     }
-
   }
 
   private getImagesWithEmbedded(icons: generator.Icon[]): generator.Icon[] {
     // Creates a clone of icons but replaces any embedded image data
     // (eg. "src: data:image/png;base64,...") with "[Embedded]"
     const w3cIconProps = ["src", "sizes", "type", "purpose", "platform"];
-    return icons.map(i => {
+    return icons.map((i) => {
       const clone = { ...i };
       // Only include W3C props
       Object.keys(clone)
-        .filter(prop => !w3cIconProps.includes(prop))
-        .forEach(prop => delete clone[prop]);
+        .filter((prop) => !w3cIconProps.includes(prop))
+        .forEach((prop) => delete clone[prop]);
 
       // Swap embedded images with "[Embedded]" string literal.
       const isEmbeddedImg = i.src.startsWith("data:image");
@@ -865,9 +1130,11 @@ export default class extends Vue {
   private getManifestProperties(): string {
     const ignoredMembers = ["generated"];
     const manifestMembers = Object.keys(this.manifest)
-      .filter(property => !ignoredMembers.includes(property))
-      .filter(property => this.manifest[property] !== undefined)
-      .map(property => `"${property}": ${this.getManifestPropValue(property)}`)
+      .filter((property) => !ignoredMembers.includes(property))
+      .filter((property) => this.manifest[property] !== undefined)
+      .map(
+        (property) => `"${property}": ${this.getManifestPropValue(property)}`
+      )
       .join(",\n");
 
     return `{ ${manifestMembers} ${this.getCustomMembers()} }`;
@@ -1017,7 +1284,7 @@ export default class extends Vue {
   }
 }
 
-Vue.prototype.$awa = function(config) {
+Vue.prototype.$awa = function (config) {
   if (awa) {
     awa.ct.capturePageView(config);
   }
@@ -1036,8 +1303,9 @@ declare var awa: any;
     display: block;
   }
 
-  input, label {
-      margin: .4rem 0;
+  input,
+  label {
+    margin: 0.4rem 0;
   }
 
   .image-upload {
@@ -1052,7 +1320,7 @@ declare var awa: any;
     padding-top: 13px;
     cursor: default;
   }
-  
+
   .custom-file-input {
     color: transparent;
     width: 155px;
@@ -1064,7 +1332,7 @@ declare var awa: any;
   }
 
   .custom-file-input::before {
-    content: 'Choose File';
+    content: "Choose File";
     width: 154px;
     height: 40px;
     background: transparent;
@@ -1086,7 +1354,8 @@ declare var awa: any;
     border-color: #9337d8;
   }
 
-  .custom-file-input:active, :focus {
+  .custom-file-input:active,
+  :focus {
     outline: 0;
   }
 }
@@ -1233,7 +1502,13 @@ footer a {
 #screenshotsTool {
   padding-bottom: 41px;
 }
+
 #screenshotDownloadButton {
+  background: transparent;
+  border: none;
+  outline: none;
+}
+#screenshotDownloadButton_content {
   width: 174px;
   height: 40px;
   background: transparent;
@@ -1249,6 +1524,29 @@ footer a {
   font-weight: 600;
   font-size: 14px;
   line-height: 21px;
+}
+
+.screenshotImage:focus {
+  outline: auto;
+}
+.screenshotImage {
+  outline: none;
+}
+#screenshotDownloadButton:focus > #screenshotDownloadButton_content {
+  outline: auto;
+}
+
+#screenshotDownloadButton:focus,
+#screenshotDownloadButton_content:focus {
+  outline: none;
+}
+.outlineontab:focus > .outlineontab_content {
+  outline: auto;
+}
+
+.outlineontab:focus,
+.outlineontab_content:focus {
+  outline: none;
 }
 #invalidUrlToast {
   background: grey;
@@ -1319,7 +1617,7 @@ footer a {
   letter-spacing: -0.02em;
   color: #db3457;
 }
-#sideBySide {
+#main {
   background: white;
   padding-left: 3%;
   padding-right: 3%;
@@ -1490,15 +1788,15 @@ footer a {
   #leftSide {
     width: 100%;
   }
-  #sideBySide {
+  #main {
     flex-direction: column;
     padding-left: 31px !important;
     padding-right: 24px !important;
   }
-  #sideBySide #leftSide .animatedSection {
+  #main #leftSide .animatedSection {
     width: 100%;
   }
-  #sideBySide #leftSide .animatedSection input {
+  #main #leftSide .animatedSection input {
     width: 100%;
   }
   #iconGrid {
@@ -1542,7 +1840,7 @@ footer a {
   fill: #6b6969;
 }
 
-#removeScreenshotsDiv {
+.removeScreenshotsButton {
   display: flex;
   justify-content: center;
   width: fit-content !important;
@@ -1577,8 +1875,28 @@ footer a {
   padding-bottom: 3%;
   height: 100%;
   object-fit: contain;
-  width: -moz-available;  
-  width: -webkit-fill-available; 
+  width: -moz-available;
+  width: -webkit-fill-available;
+}
+
+#screenshots a {
+  height: inherit;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  width: inherit;
+  height: inherit;
+  -ms-flex-pack: center;
+  background: #efefef;
+  outline: none;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+#screenshots a:focus {
+  background-color: #bbbbbb;
+  outline: none;
 }
 #screenshots::-webkit-scrollbar {
   display: none;
@@ -1600,7 +1918,7 @@ footer a {
   }
 }
 
-#sideBySide #leftSide .animatedSection input[type="radio"] {
+#main #leftSide .animatedSection input[type="radio"] {
   width: auto;
 }
 </style>

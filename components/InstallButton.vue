@@ -4,21 +4,31 @@
       @click="install()"
       id="installButton"
       aria-label="Install PWABuilder"
-    >
-    </button>
+      :tabindex="tabIndex"
+      :aria-hidden="ariaHidden"
+    ></button>
 
-    <pwa-install usecustom manifestpath="/manifest.webmanifest">
-      
-    </pwa-install>
+    <pwa-install usecustom manifestpath="/manifest.webmanifest"></pwa-install>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import Component from "nuxt-class-component";
+import { Prop } from "vue-property-decorator";
 
 @Component({})
 export default class extends Vue {
+  @Prop({ type: Boolean, default: false }) noInteraction;
+
+  get tabIndex() {
+    return this.noInteraction ? -1 : 0;
+  }
+
+  get ariaHidden() {
+    return this.noInteraction ? true : false;
+  }
+
   install() {
     const pwaInstall: any = this.$el.querySelector(
       "pwa-install"
@@ -47,7 +57,7 @@ export default class extends Vue {
 }
 
 #installButton::after {
-  content: 'Install PWABuilder';
+  content: "Install PWABuilder";
 }
 
 @media (display-mode: standalone) {
@@ -58,35 +68,34 @@ export default class extends Vue {
 
 @media (max-width: 820px) {
   #installButton::after {
-    content: 'Install';
+    content: "Install";
   }
 
   #installButton {
-      padding-left: 10px;
-      padding-right: 10px;
-      width: auto;
+    padding-left: 10px;
+    padding-right: 10px;
+    width: auto;
   }
 }
 
 @media (max-width: 560px) {
   #installButton::after {
-    content: '';
+    content: "";
   }
 
   #installButton {
-      width: 16px;
-      height: 16px;
-      padding-left: initial;
-      padding-right: initial;
-      background-image: url('~/assets/images/downloadicon.png');
-      background-size: 70%;
-      background-repeat: no-repeat;
-      background-position: center;
-      position: fixed;
-      bottom: 10px;
-      right: 5px;
-      margin-right: 0px;
+    width: 16px;
+    height: 16px;
+    padding-left: initial;
+    padding-right: initial;
+    background-image: url("~/assets/images/downloadicon.png");
+    background-size: 70%;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: fixed;
+    bottom: 10px;
+    right: 5px;
+    margin-right: 0px;
   }
 }
-
 </style>

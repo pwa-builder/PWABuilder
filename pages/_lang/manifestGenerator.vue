@@ -29,7 +29,7 @@
 
               <div class="pure-u-2-5">
               </div>
-                
+
               <div class="pure-u-1">
                 <p class="l-generator-error" v-if="error">
                   <span class="icon-exclamation"></span>

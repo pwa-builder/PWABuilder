@@ -1,0 +1,40 @@
+name: CI
+
+on:
+    push:
+        branches: [ master, dev ]
+    pull:
+        branches: [ master ]
+
+jobs:
+
+    build:
+        runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/master'
+    
+        steps:
+        - uses: actions/checkout@v2
+        - name: Build the production Docker image
+          run: docker build . --file dockerfile --target build-prod --tag pwabuilder.azurecr.io/pwabuilder-site-container:latest
+      
+        - name: Login
+          run: docker login pwabuilder.azurecr.io -u pwabuilder --password ${{secrets.azure}}
+          
+        - name: Push
+          run: docker push pwabuilder.azurecr.io/pwabuilder-site-container:latest
+      
+    build-preview: 
+        runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/dev'
+        
+        steps:
+        - uses: actions/checkout@v2
+        - name: Build the preview Docker image
+          run: docker build . --file dockerfile --target build-preview --tag pwabuilder.azurecr.io/pwabuilder-site-preview-container:latest
+      
+        - name: Login
+          run: docker login pwabuilder.azurecr.io -u pwabuilder --password ${{secrets.azure}}
+          
+        - name: Push
+          run: docker push pwabuilder.azurecr.io/pwabuilder-site-preview-container:latest
+        

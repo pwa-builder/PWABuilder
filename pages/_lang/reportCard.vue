@@ -22,7 +22,7 @@
       </button>
     </div>
 
-    <main>
+    <main id="main">
       <div v-if="!gotURL" id="inputSection">
         <div id="topHalfHome">
           <h1 id="topHalfHeader">Quickly and easily turn your website into an app!</h1>
@@ -73,14 +73,14 @@
             </p>
 
             <div id="starterActions">
-              <div class="dropdown dropdown-menu">
+              <div class="dropdown dropdown-menu" @keyup.esc="closeDropDown" @focusout="menuFocus">
                 <button
                   @click="starterDrop"
                   id="mainStartButton"
                   type="button"
                   aria-controls="starterDropdown"
                   aria-haspop="true"
-                  aria-expanded="false"
+                  :aria-expanded="openDrop ? true : false"
                 >
                   Get Started!
                   <i class="fas fa-chevron-down" aria-hidden="true"></i>
@@ -95,16 +95,23 @@
                 >
                   <button
                     id="starterDownloadButton"
-                    @click="downloadStarter"
                     type="button"
                     role="menuitem"
+                    aria-label="Download start project"
+                    @click="downloadStarter"
                   >
                     <i class="fas fa-arrow-down" aria-hidden="true"></i>
-                    Download
+                    <span aria-hidden="true">Download</span>
                   </button>
-                  <button @click="cloneStarter" type="button" role="menuitem">
+                  <button
+                    id="githubCloneCommand"
+                    type="button"
+                    role="menuitem"
+                    aria-label="Command line clone command"
+                    @click="cloneStarter"
+                  >
                     <i class="fab fa-github" aria-hidden="true"></i>
-                    Clone from Github
+                    <span aria-hidden="true">Clone from Github</span>
                   </button>
                 </div>
               </div>
@@ -240,8 +247,8 @@ const WindowsAction = namespace(windowsStore.name, Action);
   components: {
     HubHeader,
     ScoreCard,
-    FeatureCard
-  }
+    FeatureCard,
+  },
 })
 export default class extends Vue {
   @GeneratorState url: string;
@@ -290,14 +297,14 @@ export default class extends Vue {
           name: "--color-stop-hub",
           syntax: "<color>",
           inherits: false,
-          initialValue: "transparent"
+          initialValue: "transparent",
         });
 
         (CSS as any).registerProperty({
           name: "--color-start-hub",
           syntax: "<color>",
           inherits: false,
-          initialValue: "transparent"
+          initialValue: "transparent",
         });
       } catch (err) {
         console.error(err);
@@ -308,7 +315,7 @@ export default class extends Vue {
       behavior: 0,
       uri: window.location.href,
       pageName: "homePage",
-      pageHeight: window.innerHeight
+      pageHeight: window.innerHeight,
     };
 
     this.$awa(overrideValues);
@@ -334,7 +341,7 @@ export default class extends Vue {
         await (navigator as any).share({
           title: "PWABuilder results",
           text: "Check out how good my PWA did!",
-          url: `${location.href}?url=${this.url}`
+          url: `${location.href}?url=${this.url}`,
         });
       } catch (err) {
         // fallback to legacy share if ^ fails
@@ -371,6 +378,22 @@ export default class extends Vue {
     this.openDrop = !this.openDrop;
   }
 
+  public async closeDropDown() {
+    if (this.openDrop) {
+      this.openDrop = !this.openDrop;
+    }
+  }
+
+  public async menuFocus(event) {
+    var menuInFocus =
+      event.relatedTarget.id === "mainStartButton" ||
+      event.relatedTarget.id === "starterDownloadButton" ||
+      event.relatedTarget.id === "githubCloneCommand";
+    if (!menuInFocus) {
+      this.closeDropDown();
+    }
+  }
+
   async downloadStarter() {
     const response = await fetch("/data/pwa-starter-master.zip");
     const data = await response.blob();
@@ -387,7 +410,7 @@ export default class extends Vue {
       behavior: 0,
       uri: window.location.href,
       pageName: "downloadedStarter",
-      pageHeight: window.innerHeight
+      pageHeight: window.innerHeight,
     };
 
     this.$awa(overrideValues);
@@ -469,8 +492,15 @@ export default class extends Vue {
   public async processQueryString() {
     const url = window.location.search.split("=")[1];
     this.cleanedURL = decodeURIComponent(url);
-    this.url = this.cleanedURL;
-    this.checkUrlAndGenerate();
+
+    /*
+      Handle edge case where this.cleanedURL is set to the string undefined (decodeURIComponent returns a string).
+      This edge case is not very likely to pop up, but stops issues such as https://github.com/pwa-builder/PWABuilder/issues/833
+    */
+    if (this.cleanedURL && this.cleanedURL !== "undefined") {
+      this.url = this.cleanedURL;
+      this.checkUrlAndGenerate();
+    }
   }
 
   public async getTopSamples() {
@@ -500,12 +530,12 @@ export default class extends Vue {
 
   public skipCheckUrl(): void {
     this.$router.push({
-      name: "features"
+      name: "features",
     });
   }
 }
 
-Vue.prototype.$awa = function(config) {
+Vue.prototype.$awa = function (config) {
   if (awa) {
     awa.ct.capturePageView(config);
   }
@@ -553,7 +583,6 @@ declare var awa: any;
 }
 
 #starterActions #mainStartButton:focus {
-  outline: auto;
   outline-color: black;
 }
 
@@ -727,6 +756,14 @@ declare var awa: any;
   cursor: pointer;
 }
 
+.dropdown-menu {
+  #starterDropdown {
+    i {
+      margin-right: 4px;
+    }
+  }
+}
+
 @media (max-width: 1281px) {
   #reportShareButtonContainer {
     padding-right: 3em;
@@ -761,7 +798,9 @@ declare var awa: any;
 main {
   @include grid;
 
-  margin-bottom: 2em;
+  @media (min-width: 801px) {
+    margin-bottom: 2em;
+  }
 }
 
 h2 {
@@ -774,7 +813,10 @@ h2 {
   font-size: 24px;
   line-height: 54px;
   letter-spacing: -0.02em;
-  height: 36px;
+
+  @media (min-width: 801px) {
+    height: 36px;
+  }
 }
 
 #topHalfHeader {
@@ -792,8 +834,6 @@ h2 {
 
   #topHalfHome {
     grid-row: 1;
-
-    margin-top: 68px;
 
     form {
       display: flex;
@@ -860,16 +900,8 @@ h2 {
     }
   }
 
-  @media (max-height: 375px) {
-    #topHalfHome {
-      margin-top: 24px;
-    }
-  }
-
-  @media (max-height: 320px) {
-    #topHalfHome {
-      margin-top: 4px;
-    }
+  @media (min-width: 801px) {
+    margin-top: 68px;
   }
 
   @media (max-width: 425px) {
@@ -918,7 +950,6 @@ h2 {
       color: black;
       padding: 1.4em;
       border-radius: 6px;
-      width: 24em;
 
       h2 {
         margin: 0;
@@ -952,11 +983,9 @@ h2 {
           border: none;
         }
       }
-    }
 
-    @media (max-width: 640px) {
-      #starterSection {
-        display: none;
+      @media (min-width: 641px) {
+        width: 24em;
       }
     }
   }
@@ -975,6 +1004,34 @@ h2 {
   }
 }
 
+@media (max-width: 800px) {
+  #main {
+    display: flex;
+    grid-template-columns: none;
+    margin-bottom: 0;
+  }
+
+  #inputSection {
+    display: flex;
+    grid-template-rows: none;
+    flex-direction: column;
+  }
+
+  #bottomHalfHome {
+    margin-top: 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  #topHalfHome {
+    margin-top: 4px;
+  }
+
+  #starterSection {
+    width: 100%;
+  }
+}
+
 @media (max-width: 425px) {
   #inputSection {
     display: initial;
@@ -986,6 +1043,7 @@ h2 {
 
   #inputSection #bottomHalfHome {
     width: initial;
+    padding: 0 25px;
   }
 
   footer {
@@ -1275,10 +1333,6 @@ h2 {
 
   .backgroundReport {
     @include backgroundRightPoint(80%, 25vh);
-  }
-
-  #starterSection {
-    display: none;
   }
 
   footer {

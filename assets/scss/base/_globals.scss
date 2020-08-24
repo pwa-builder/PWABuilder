@@ -43,6 +43,14 @@ html {
 button {
   cursor: pointer;
   transition: box-shadow 0.3s;
+
+  &:focus {
+    outline: 1px dotted rgba(220,220,220, .7);
+  }
+}
+
+a:focus {
+  outline: 1px dotted rgba(220,220,220, .7);
 }
 
 /*button:hover {
@@ -1407,4 +1415,8 @@ form {
         margin-left: 0;
       }
   }
+}
+
+.text-danger {
+  color: $color-brand-warning;
 }
