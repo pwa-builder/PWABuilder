@@ -547,19 +547,26 @@ export default class extends Vue {
         }
 
         this.$emit("securityTestDone", { score: this.securityScore });
-
       }
-    }
-    catch (err) {
+    } catch (err) {
       this.securityScore = 0;
       this.$emit("securityTestDone", { score: this.securityScore });
     }
   }
 
   private async lookAtManifest(): Promise<void> {
+    // Gets manifest from api, then scores if not generated.
     try {
       await this.getManifestInformation();
+
+      if (this.manifest && this.manifest.generated === true) {
+        this.noManifest = true;
+        return;
+      }
+
+      await this.testManifest();
     } catch (ex) {
+      // If manifest is not retrieved or DNE will fall in here. Mostly effects Security Score
       if (this.manifest === null) {
         this.brokenManifest = true;
 
@@ -574,44 +581,42 @@ export default class extends Vue {
 
       this.noManifest = true;
       return;
+    } finally {
+      // Regardless notify parent and update manifest call.
+      this.$emit("manifestTestDone", { score: this.manifestScore });
+      this.updateManifest(this.manifest);
     }
+  }
 
-    if (this.manifest && this.manifest.generated === true) {
-      this.noManifest = true;
-      return;
-    } else {
-      this.noManifest = false;
+  private async testManifest() {
+    this.noManifest = false;
 
-      const response = await fetch(
-        `${process.env.testAPIUrl}/WebManifest?site=${this.url}`
-      );
-      const manifestScoreData = await response.json();
+    const response = await fetch(
+      `${process.env.testAPIUrl}/WebManifest?site=${this.url}`
+    );
+    const manifestScoreData = await response.json();
 
-      this.manifestScore = 15;
+    this.manifestScore = 15;
 
-      if (manifestScoreData.data !== null) {
-        if (manifestScoreData.data.required.start_url === true) {
-          this.manifestScore = this.manifestScore + 5;
-        }
+    if (manifestScoreData.data !== null) {
+      if (manifestScoreData.data.required.start_url === true) {
+        this.manifestScore = this.manifestScore + 5;
+      }
 
-        if (manifestScoreData.data.required.short_name === true) {
-          this.manifestScore = this.manifestScore + 5;
-        }
+      if (manifestScoreData.data.required.short_name === true) {
+        this.manifestScore = this.manifestScore + 5;
+      }
 
-        if (manifestScoreData.data.required.name === true) {
-          this.manifestScore = this.manifestScore + 5;
-        }
+      if (manifestScoreData.data.required.name === true) {
+        this.manifestScore = this.manifestScore + 5;
+      }
 
-        if (manifestScoreData.data.required.icons === true) {
-          this.manifestScore = this.manifestScore + 5;
-        }
+      if (manifestScoreData.data.required.icons === true) {
+        this.manifestScore = this.manifestScore + 5;
+      }
 
-        if (manifestScoreData.data.required.display === true) {
-          this.manifestScore = this.manifestScore + 5;
-        }
-
-        this.updateManifest(this.manifest);
-        this.$emit("manifestTestDone", { score: this.manifestScore });
+      if (manifestScoreData.data.required.display === true) {
+        this.manifestScore = this.manifestScore + 5;
       }
     }
   }
@@ -627,38 +632,40 @@ export default class extends Vue {
       return;
     }
 
+    // Check cache and use cached version.
     const savedData = sessionStorage.getItem(this.url);
-    const savedScore = sessionStorage.getItem("swScore");
+    const sessionSavedScore = sessionStorage.getItem("swScore");
+    const savedScore = sessionSavedScore ? JSON.parse(sessionSavedScore) : 0;
 
     if (savedData) {
       try {
         let cleanedData = JSON.parse(savedData);
         this.serviceWorkerData = cleanedData;
+
+        if (savedScore) {
+          let cleanedScore = JSON.parse(savedScore);
+          this.swScore = cleanedScore;
+
+          this.$emit("serviceWorkerTestDone", { score: this.swScore });
+        }
       } catch (err) {
         this.noSwScore();
+      } finally {
+        return;
       }
+    }
 
-      if (savedScore) {
-        let cleanedScore = JSON.parse(savedScore);
-        this.swScore = cleanedScore;
-
-        this.$emit("serviceWorkerTestDone", { score: this.swScore });
-      }
-    } else {
+    // Section with
+    try {
       let cleanUrl = this.trimSuffixChar(this.url, ".");
 
-      const response = await fetch(`${process.env.testAPIUrl}/ServiceWorker?site=${cleanUrl}`);
+      const response = await fetch(
+        `${process.env.testAPIUrl}/ServiceWorker?site=${cleanUrl}`
+      );
       const swResponse = await response.json();
 
       if (swResponse.data) {
         this.serviceWorkerData = swResponse.data;
-      }
-
-      if (this.serviceWorkerData && this.serviceWorkerData !== false) {
-        sessionStorage.setItem(
-          this.url,
-          JSON.stringify(this.serviceWorkerData)
-        );
       }
 
       if (
@@ -669,50 +676,57 @@ export default class extends Vue {
         this.noSwScore();
 
         return;
-      } else {
-        this.noServiceWorker = false;
+      }
 
-        this.swScore = 0;
-        //scoring set by Jeff: 40 for manifest, 40 for sw and 20 for sc
+      this.scoreServiceWorker();
+      sessionStorage.setItem(this.url, JSON.stringify(this.serviceWorkerData));
+    } catch (e) {
+      this.noSwScore();
+    } finally {
+      if (savedScore !== this.swScore) {
+        sessionStorage.setItem("swScore", JSON.stringify(this.swScore));
+        this.$emit("serviceWorkerTestDone", { score: this.swScore });
+      }
+    }
+  }
 
-        if (this.serviceWorkerData.hasSW !== null) {
-          this.swScore = this.swScore + 20;
-        }
-        /*
+  private scoreServiceWorker() {
+    this.noServiceWorker = false;
+
+    this.swScore = 0;
+    //scoring set by Jeff: 40 for manifest, 40 for sw and 20 for sc
+
+    if (this.serviceWorkerData.hasSW !== null) {
+      this.swScore = this.swScore + 20;
+    }
+    /*
         Caches stuff
         +10 points to user
       */
-        if (this.serviceWorkerData.cache) {
-          /*const hasCache = this.serviceWorkerData.cache.some(
+    if (this.serviceWorkerData.cache) {
+      /*const hasCache = this.serviceWorkerData.cache.some(
             entry => entry.fromSW === true
           );*/
 
-          this.swScore = this.swScore + 10;
-        }
-        /*
+      this.swScore = this.swScore + 10;
+    }
+    /*
         Has push reg
         +5 points to user
       */
-        // if (this.serviceWorkerData.pushReg !== null) {
-        //   this.swScore = this.swScore + 5;
-        // }
-        /*
+    // if (this.serviceWorkerData.pushReg !== null) {
+    //   this.swScore = this.swScore + 5;
+    // }
+    /*
         Has scope that points to root
         +5 points to user
       */
-        if (
-          this.serviceWorkerData.scope //&&
-          // this.serviceWorkerData.scope.slice(0, -1) ===
-          // new URL(this.serviceWorkerData.scope).origin  //slice isn't working and score not showing up, TODO: look at how to validate scope
-        ) {
-          this.swScore = this.swScore + 10;
-        }
-
-        sessionStorage.setItem("swScore", JSON.stringify(this.swScore));
-
-        this.$emit("serviceWorkerTestDone", { score: this.swScore });
-        return;
-      }
+    if (
+      this.serviceWorkerData.scope //&&
+      // this.serviceWorkerData.scope.slice(0, -1) ===
+      // new URL(this.serviceWorkerData.scope).origin  //slice isn't working and score not showing up, TODO: look at how to validate scope
+    ) {
+      this.swScore = this.swScore + 10;
     }
   }
 
