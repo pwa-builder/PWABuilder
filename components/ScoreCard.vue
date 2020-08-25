@@ -517,7 +517,7 @@
         </div>
       </nuxt-link>
 
-      <div class="brkManifestError" v-if="category === 'Security' && !validSSL">
+      <div class="brkManifestError" v-if="category === 'Security' && validSSL === false">
         <p>HTTPS not detected.</p>
         <p class="brkManifestHelp">
           <i class="fas fa-info-circle"></i>
@@ -583,50 +583,49 @@ export default class extends Vue {
   }
 
   private async lookAtSecurity(): Promise<void> {
-    try {
-      const response = await fetch(
-        `${process.env.testAPIUrl}/Security?site=${this.url}`
-      );
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetch(
+          `${process.env.testAPIUrl}/Security?site=${this.url}`
+        );
 
-      const securityData = await response.json();
+        const securityData = await response.json();
 
-      if (securityData.data) {
-        if (securityData.data.isHTTPS) {
-          this.hasHTTPS = true;
+        if (securityData.data) {
+          if (securityData.data.isHTTPS) {
+            this.hasHTTPS = true;
 
-          this.securityScore = this.securityScore + 10;
+            this.securityScore = this.securityScore + 10;
+          }
+
+          if (securityData.data.validProtocol) {
+            this.validSSL = true;
+
+            this.securityScore = this.securityScore + 5;
+          }
+
+          if (securityData.data.valid) {
+            this.noMixedContent = true;
+
+            this.securityScore = this.securityScore + 5;
+          }
+
+          this.$emit("securityTestDone", { score: this.securityScore });
         }
 
-        if (securityData.data.validProtocol) {
-          this.validSSL = true;
-
-          this.securityScore = this.securityScore + 5;
-        }
-
-        if (securityData.data.valid) {
-          this.noMixedContent = true;
-
-          this.securityScore = this.securityScore + 5;
-        }
-
+        resolve();
+      } catch (err) {
+        this.securityScore = 0;
         this.$emit("securityTestDone", { score: this.securityScore });
+
+        reject(err);
       }
-    } catch (err) {
-      this.securityScore = 0;
-      this.$emit("securityTestDone", { score: this.securityScore });
-    }
+    });
   }
 
   private async lookAtManifest(): Promise<void> {
     // Gets manifest from api, then scores if not generated.
     try {
-      await this.getManifestInformation();
-
-      if (this.manifest && this.manifest.generated === true) {
-        this.noManifest = true;
-        return;
-      }
-
       await this.testManifest();
     } catch (ex) {
       // If manifest is not retrieved or DNE will fall in here. Mostly effects Security Score
@@ -652,36 +651,51 @@ export default class extends Vue {
   }
 
   private async testManifest() {
-    this.noManifest = false;
+    return new Promise(async (resolve, reject) => {
+      this.noManifest = false;
 
-    const response = await fetch(
-      `${process.env.testAPIUrl}/WebManifest?site=${this.url}`
-    );
-    const manifestScoreData = await response.json();
+      try {
+        const response = await fetch(
+          `${process.env.testAPIUrl}/WebManifest?site=${this.url}`
+        );
+        const manifestScoreData = await response.json();
 
-    this.manifestScore = 15;
+        this.manifestScore = 15;
 
-    if (manifestScoreData.data !== null) {
-      if (manifestScoreData.data.required.start_url === true) {
-        this.manifestScore = this.manifestScore + 5;
+        if (manifestScoreData.data !== null) {
+          if (manifestScoreData.data.required.start_url === true) {
+            this.manifestScore = this.manifestScore + 5;
+          }
+
+          if (manifestScoreData.data.required.short_name === true) {
+            this.manifestScore = this.manifestScore + 5;
+          }
+
+          if (manifestScoreData.data.required.name === true) {
+            this.manifestScore = this.manifestScore + 5;
+          }
+
+          if (manifestScoreData.data.required.icons === true) {
+            this.manifestScore = this.manifestScore + 5;
+          }
+
+          if (manifestScoreData.data.required.display === true) {
+            this.manifestScore = this.manifestScore + 5;
+          }
+
+          await this.getManifestInformation();
+
+          if (this.manifest && this.manifest.generated === true) {
+            this.noManifest = true;
+            return;
+          }
+
+          resolve();
+        }
+      } catch (err) {
+        reject(err);
       }
-
-      if (manifestScoreData.data.required.short_name === true) {
-        this.manifestScore = this.manifestScore + 5;
-      }
-
-      if (manifestScoreData.data.required.name === true) {
-        this.manifestScore = this.manifestScore + 5;
-      }
-
-      if (manifestScoreData.data.required.icons === true) {
-        this.manifestScore = this.manifestScore + 5;
-      }
-
-      if (manifestScoreData.data.required.display === true) {
-        this.manifestScore = this.manifestScore + 5;
-      }
-    }
+    });
   }
 
   private async lookAtSW() {
@@ -716,81 +730,92 @@ export default class extends Vue {
       } finally {
         return;
       }
-    }
-
-    // Section with
-    try {
-      let cleanUrl = this.trimSuffixChar(this.url, ".");
-
-      const response = await fetch(
-        `${process.env.testAPIUrl}/ServiceWorker?site=${cleanUrl}`
-      );
-      const swResponse = await response.json();
-
-      if (swResponse.data) {
-        this.serviceWorkerData = swResponse.data;
-      }
-
-      if (
-        !this.serviceWorkerData ||
-        this.serviceWorkerData.swURL === null ||
-        this.serviceWorkerData.swURL === false
-      ) {
+    } else {
+      try {
+        this.scoreServiceWorker();
+      } catch (e) {
         this.noSwScore();
-
-        return;
-      }
-
-      this.scoreServiceWorker();
-      sessionStorage.setItem(this.url, JSON.stringify(this.serviceWorkerData));
-    } catch (e) {
-      this.noSwScore();
-    } finally {
-      if (savedScore !== this.swScore) {
-        sessionStorage.setItem("swScore", JSON.stringify(this.swScore));
-        this.$emit("serviceWorkerTestDone", { score: this.swScore });
+      } finally {
+        if (savedScore !== this.swScore) {
+          sessionStorage.setItem("swScore", JSON.stringify(this.swScore));
+          this.$emit("serviceWorkerTestDone", { score: this.swScore });
+        }
       }
     }
   }
 
-  private scoreServiceWorker() {
-    this.noServiceWorker = false;
+  private async scoreServiceWorker() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let cleanUrl = this.trimSuffixChar(this.url, ".");
 
-    this.swScore = 0;
-    //scoring set by Jeff: 40 for manifest, 40 for sw and 20 for sc
+        const response = await fetch(
+          `${process.env.testAPIUrl}/ServiceWorker?site=${cleanUrl}`
+        );
+        const swResponse = await response.json();
 
-    if (this.serviceWorkerData.hasSW !== null) {
-      this.swScore = this.swScore + 20;
-    }
-    /*
+        if (swResponse.data) {
+          this.serviceWorkerData = swResponse.data;
+
+          sessionStorage.setItem(
+            this.url,
+            JSON.stringify(this.serviceWorkerData)
+          );
+        }
+
+        if (
+          !this.serviceWorkerData ||
+          this.serviceWorkerData.swURL === null ||
+          this.serviceWorkerData.swURL === false
+        ) {
+          this.noSwScore();
+
+          return;
+        }
+
+        this.noServiceWorker = false;
+
+        this.swScore = 0;
+        //scoring set by Jeff: 40 for manifest, 40 for sw and 20 for sc
+
+        if (this.serviceWorkerData.hasSW !== null) {
+          this.swScore = this.swScore + 20;
+        }
+        /*
         Caches stuff
         +10 points to user
       */
-    if (this.serviceWorkerData.cache) {
-      /*const hasCache = this.serviceWorkerData.cache.some(
+        if (this.serviceWorkerData.cache) {
+          /*const hasCache = this.serviceWorkerData.cache.some(
             entry => entry.fromSW === true
           );*/
 
-      this.swScore = this.swScore + 10;
-    }
-    /*
+          this.swScore = this.swScore + 10;
+        }
+        /*
         Has push reg
         +5 points to user
       */
-    // if (this.serviceWorkerData.pushReg !== null) {
-    //   this.swScore = this.swScore + 5;
-    // }
-    /*
+        // if (this.serviceWorkerData.pushReg !== null) {
+        //   this.swScore = this.swScore + 5;
+        // }
+        /*
         Has scope that points to root
         +5 points to user
       */
-    if (
-      this.serviceWorkerData.scope //&&
-      // this.serviceWorkerData.scope.slice(0, -1) ===
-      // new URL(this.serviceWorkerData.scope).origin  //slice isn't working and score not showing up, TODO: look at how to validate scope
-    ) {
-      this.swScore = this.swScore + 10;
-    }
+        if (
+          this.serviceWorkerData.scope //&&
+          // this.serviceWorkerData.scope.slice(0, -1) ===
+          // new URL(this.serviceWorkerData.scope).origin  //slice isn't working and score not showing up, TODO: look at how to validate scope
+        ) {
+          this.swScore = this.swScore + 10;
+        }
+
+        resolve();
+      } catch (err) {
+        reject(err);
+      }
+    });
   }
 
   private noSwScore() {
