@@ -504,6 +504,37 @@
           <span class="subScoreSpan">0</span>
         </li>-->
       </ul>
+
+      <!-- extras section -->
+      <div id="extrasBlock" v-if="category === 'Extras'">
+        <h4>Extras to check for...</h4>
+
+        <ul>
+          <li>
+            <div class="listSubDiv">
+              <span>
+                <a href="https://docs.microsoft.com/en-us/microsoft-edge/devtools-guide-chromium/accessibility/reference">Accessibility</a>
+              </span>
+            </div>
+          </li>
+
+          <li>
+            <div class="listSubDiv">
+              <span>
+                <a href="https://docs.microsoft.com/en-us/dual-screen/web/">Dual Screen device support</a>
+              </span>
+            </div>
+          </li>
+
+          <li>
+            <div class="listSubDiv">
+              <span>
+                <a href="https://components.pwabuilder.com/component/install_pwa">Browser Install Experience</a>
+              </span>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <div class="cardEditBlock">
@@ -996,7 +1027,8 @@ export default class extends Vue {
 
   #securityBlock h4,
   #manifestBlock h4,
-  #serviceWorkerBlock h4 {
+  #serviceWorkerBlock h4,
+  #extrasBlock h4 {
     font-size: 16px;
     font-weight: bold;
     margin-bottom: 12px;

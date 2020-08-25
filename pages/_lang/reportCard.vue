@@ -190,6 +190,14 @@
         class="scoreCard"
       ></ScoreCard>
 
+      <ScoreCard
+        v-if="gotURL"
+        v-on:securityTestDone="securityTestDone($event)"
+        :url="url"
+        category="Extras"
+        class="scoreCard"
+      ></ScoreCard>
+
       <div id="toolkitSection" v-if="topSamples.length > 0">
         <h2>Add features to my PWA...</h2>
       </div>
@@ -605,7 +613,7 @@ declare var awa: any;
 }
 
 #attachSection {
-  grid-column: 3 / span 8;
+  grid-column: 4 / span 10;
   background: white;
   padding: 20px;
   border-radius: 4px;
@@ -1012,6 +1020,9 @@ h2 {
     display: flex;
     grid-template-columns: none;
     margin-bottom: 0;
+
+    flex-direction: column;
+    padding: 0px;
   }
 
   #inputSection {
@@ -1137,7 +1148,7 @@ h2 {
   grid-column: 1 / span 4;
 
   @media (max-width: 900px) {
-    grid-column: 1 / span 12;
+    grid-column: 1 / span 4;
   }
 }
 
@@ -1169,7 +1180,7 @@ h2 {
 }
 
 .topFeatures {
-  grid-column: span 3;
+  grid-column: span 4;
 
   margin-bottom: 2em;
 
@@ -1183,7 +1194,7 @@ h2 {
 }
 
 .firstFeature {
-  grid-column: 1 / span 3;
+  grid-column: 1 / span 4;
 
   @media (max-width: 900px) {
     grid-column: 1 / span 6;
@@ -1191,7 +1202,7 @@ h2 {
 }
 
 #moreFeaturesBlock {
-  grid-column: 1 / span 12;
+  grid-column: 3 / span 12;
 
   width: 100%;
   display: flex;
