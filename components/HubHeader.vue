@@ -132,7 +132,7 @@
         <nuxt-link
           class="enabled"
           id="publishButton"
-          aria-label="Build My PWA"
+          aria-label="Package My PWA"
           to="/publish"
           :tabindex="headerTabIndex"
           :aria-hidden="ariaHidden"
@@ -574,7 +574,7 @@ header {
   }
 
   #publishButton:after {
-    content: "Build My PWA";
+    content: "Package My PWA";
   }
 
   @media (max-width: 630px) {

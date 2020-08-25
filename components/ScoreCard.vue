@@ -17,10 +17,8 @@
     </div>
 
     <div class="cardContent">
-
       <!-- Security section -->
       <div id="securityBlock" v-if="category === 'Security'">
-
         <h4>Required</h4>
 
         <ul>
@@ -79,7 +77,6 @@
 
       <!-- Manifest section -->
       <div id="manifestBlock" v-if="category === 'Manifest' && manifest && !noManifest">
-
         <h4>Required</h4>
 
         <ul>
@@ -227,7 +224,7 @@
         </ul>
 
         <h4>Optional</h4>
-        
+
         <ul>
           <li v-bind:class="{ good: manifest && manifest.shortcuts }">
             <div class="listSubDiv">
@@ -243,7 +240,7 @@
           </li>
         </ul>
       </div>
-      
+
       <ul v-if="category === 'Manifest' && !manifest && !noManifest">
         <li>
           <span class="skeletonSpan"></span>
@@ -344,7 +341,6 @@
 
       <!-- service worker section -->
       <div id="serviceWorkerBlock" v-if="category === 'Service Worker' && serviceWorkerData">
-
         <h4>Required</h4>
 
         <ul>
@@ -418,6 +414,26 @@
 
             <span class="subScoreSpan" v-if="serviceWorkerData && !serviceWorkerData.pushReg">0</span>
           </li>-->
+        </ul>
+
+        <h4>Optional</h4>
+
+        <ul>
+          <li v-bind:class="{ good: serviceWorkerData.pushReg }">
+            <div class="listSubDiv">
+              <span class="cardIcon" v-if="serviceWorkerData && serviceWorkerData.pushReg">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" v-if="serviceWorkerData && !serviceWorkerData.pushReg">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>
+                Service Worker has a
+                <code>pushManager</code> registration
+              </span>
+            </div>
+          </li>
         </ul>
       </div>
 
@@ -735,11 +751,6 @@ export default class extends Vue {
         this.scoreServiceWorker();
       } catch (e) {
         this.noSwScore();
-      } finally {
-        if (savedScore !== this.swScore) {
-          sessionStorage.setItem("swScore", JSON.stringify(this.swScore));
-          this.$emit("serviceWorkerTestDone", { score: this.swScore });
-        }
       }
     }
   }
@@ -810,6 +821,9 @@ export default class extends Vue {
         ) {
           this.swScore = this.swScore + 10;
         }
+
+        sessionStorage.setItem("swScore", JSON.stringify(this.swScore));
+        this.$emit("serviceWorkerTestDone", { score: this.swScore });
 
         resolve();
       } catch (err) {
@@ -897,7 +911,7 @@ export default class extends Vue {
     list-style: none;
     padding: 0;
     margin: 0;
-    margin-bottom: 42px;
+    margin-bottom: 20px;
 
     li.good {
       font-weight: normal;
@@ -980,7 +994,9 @@ export default class extends Vue {
     margin-bottom: 2em;
   }
 
-  #securityBlock h4, #manifestBlock h4, #serviceWorkerBlock h4 {
+  #securityBlock h4,
+  #manifestBlock h4,
+  #serviceWorkerBlock h4 {
     font-size: 16px;
     font-weight: bold;
     margin-bottom: 12px;

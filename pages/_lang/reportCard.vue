@@ -135,7 +135,7 @@
         <p>
           We have taken a look at how well your website supports PWA features
           and provided simple tools to help you fill in the gaps. When you’re
-          ready, click “build my PWA” to finish up.
+          ready, click “Package My PWA” to finish up.
         </p>
       </div>
 
@@ -149,7 +149,7 @@
         </div>
 
         <p>
-          Ready to build your PWA? Tap "Build My PWA" to package your PWA for the app stores
+          Congrats! Tap "Package My PWA" to package your PWA for the app stores
           or tap "Feature Store" to check out the latest web components from the PWABuilder team to improve your PWA even further!
         </p>
 
@@ -158,7 +158,7 @@
             @click="$awa( { 'referrerUri': 'https://www.pwabuilder.com/publishFromHome' });"
             id="buildLink"
             to="/publish"
-          >Build My PWA</nuxt-link>
+          >Package My PWA</nuxt-link>
           <a
             @click="$awa( { 'referrerUri': 'https://www.pwabuilder.com/featuresFromHome' });"
             id="featuresLink"
@@ -511,15 +511,18 @@ export default class extends Vue {
   }
 
   public securityTestDone(ev) {
-    this.overallScore = this.overallScore + ev.score;
+    const newScore = this.overallScore + ev.score;
+    this.overallScore = newScore;
   }
 
   public manifestTestDone(ev) {
-    this.overallScore = this.overallScore + ev.score;
+    const newScore = this.overallScore + ev.score;
+    this.overallScore = newScore;
   }
 
   public swTestDone(ev) {
-    this.overallScore = this.overallScore + ev.score;
+    const newScore = this.overallScore + ev.score;
+    this.overallScore = newScore;
   }
 
   public reset() {
