@@ -658,11 +658,12 @@ export default class extends Vue {
       }
 
       this.noManifest = true;
-      return;
     } finally {
       // Regardless notify parent and update manifest call.
       this.$emit("manifestTestDone", { score: this.manifestScore });
-      this.updateManifest(this.manifest);
+      if (this.manifest) {
+        this.updateManifest(this.manifest);
+      }
     }
   }
 
