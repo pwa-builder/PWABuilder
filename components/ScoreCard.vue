@@ -195,6 +195,53 @@
             <span class="subScoreSpan" v-else-if="!manifest.start_url">0</span>
           </li>
         </ul>
+
+        <h4>Recommended</h4>
+
+        <ul>
+          <li v-bind:class="{ good: manifest && manifest.screenshots }">
+            <div class="listSubDiv">
+              <span class="cardIcon" v-if="manifest.screenshots">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" v-if="!manifest.screenshots">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>Has Screenshots</span>
+            </div>
+          </li>
+
+          <li v-bind:class="{ good: manifest && manifest.categories }">
+            <div class="listSubDiv">
+              <span class="cardIcon" v-if="manifest.categories">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" v-if="!manifest.categories">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>Has Categories</span>
+            </div>
+          </li>
+        </ul>
+
+        <h4>Optional</h4>
+        
+        <ul>
+          <li v-bind:class="{ good: manifest && manifest.shortcuts }">
+            <div class="listSubDiv">
+              <span class="cardIcon" v-if="manifest.shortcuts">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" v-if="!manifest.shortcuts">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>Uses Shortcuts</span>
+            </div>
+          </li>
+        </ul>
       </div>
       
       <ul v-if="category === 'Manifest' && !manifest && !noManifest">
@@ -814,7 +861,7 @@ export default class extends Vue {
     font-family: sans-serif;
     font-style: normal;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 16px;
     line-height: 18px;
     letter-spacing: 0.04em;
     text-transform: uppercase;

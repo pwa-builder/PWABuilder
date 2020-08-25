@@ -141,7 +141,7 @@
 
       <div v-if="gotURL && overallScore >= 80" id="attachSection">
         <div id="attachHeader">
-          <h2>Nice job!</h2>
+          <h2>Store Ready!</h2>
 
           <button id="attachShare" aria-label="Share Report" @click="shareReport">
             <i class="fas fa-share-alt"></i>
