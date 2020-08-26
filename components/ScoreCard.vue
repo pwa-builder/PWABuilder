@@ -221,6 +221,97 @@
               <span>Has Categories</span>
             </div>
           </li>
+
+          <li v-bind:class="{ good: manifest && manifest.background_color }">
+            <div class="listSubDiv">
+              <span class="cardIcon" v-if="manifest.background_color">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" v-if="!manifest.background_color">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>Defines a Background Color</span>
+            </div>
+          </li>
+
+          <li v-bind:class="{ good: manifest && manifest.theme_color }">
+            <div class="listSubDiv">
+              <span class="cardIcon" v-if="manifest.theme_color">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" v-if="!manifest.theme_color">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>Defines a Theme Color</span>
+            </div>
+          </li>
+
+          <li v-bind:class="{ good: manifest && manifest.description }">
+            <div class="listSubDiv">
+              <span class="cardIcon" v-if="manifest.description">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" v-if="!manifest.description">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>Has a Description</span>
+            </div>
+          </li>
+
+          <li v-bind:class="{ good: manifest && manifest.orientation }">
+            <div class="listSubDiv">
+              <span class="cardIcon" v-if="manifest.orientation">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" v-if="!manifest.orientation">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>Defines a preferred Orientation</span>
+            </div>
+          </li>
+
+          <li v-bind:class="{ good: manifest && manifest.prefer_related_applications }">
+            <div class="listSubDiv">
+              <span class="cardIcon" v-if="manifest.prefer_related_applications">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" v-if="!manifest.prefer_related_applications">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>Defines Prefer Related Applications preference</span>
+            </div>
+          </li>
+
+          <li v-bind:class="{ good: manifest && manifest.related_applications }">
+            <div class="listSubDiv">
+              <span class="cardIcon" v-if="manifest.related_applications">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" v-if="!manifest.related_applications">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>Defines Related Applications list</span>
+            </div>
+          </li>
+
+          <li v-bind:class="{ good: manifest && manifest.iarc_rating }">
+            <div class="listSubDiv">
+              <span class="cardIcon" v-if="manifest.iarc_rating">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" v-if="!manifest.iarc_rating">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>Includes IARC Rating ID</span>
+            </div>
+          </li>
         </ul>
 
         <h4>Optional</h4>
