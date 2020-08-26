@@ -153,6 +153,13 @@
           or tap "Feature Store" to check out the latest web components from the PWABuilder team to improve your PWA even further!
         </p>
 
+        <p>
+          Along with app stores, your PWA also meets the requirements for <a href="Browser Install in supported browsers">Browser Install in supported browsers</a>!
+          To enhance this experience even further, be sure to check out our <a href="https://components.pwabuilder.com/component/install_pwa">pwa-install component</a>. 
+        </p>
+
+        <img src="~/assets/images/browserInstall.png" alt="Screenshot of the browser install experience in Edge">
+
         <div id="attachSectionActions">
           <nuxt-link
             @click="$awa( { 'referrerUri': 'https://www.pwabuilder.com/publishFromHome' });"
@@ -618,7 +625,7 @@ declare var awa: any;
   padding: 20px;
   border-radius: 4px;
   margin-bottom: 2em;
-  margin-top: 4em;
+  margin-top: 2em;
   min-height: 12em;
 
   animation-name: fadein;
@@ -673,6 +680,12 @@ declare var awa: any;
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+#attachSection img {
+  width: 13em;
+  height: 7.2em;
+  object-fit: cover;
 }
 
 #attachShare {
@@ -1087,6 +1100,11 @@ h2 {
   #attachSection {
     margin-left: 25px;
     margin-right: 25px;
+  }
+  
+
+  #attachSection img {
+    margin-bottom: 2em;
   }
 
   #infoSection {
