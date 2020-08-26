@@ -835,7 +835,7 @@ h2 {
 }
 
 #inputSection {
-  grid-column: 1 / span 12;
+  grid-column: 1 / span 16;
   max-width: 800px;
 
   color: white;
