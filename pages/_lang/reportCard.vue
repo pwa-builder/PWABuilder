@@ -1009,6 +1009,10 @@ h2 {
     display: flex;
     grid-template-columns: none;
     margin-bottom: 0;
+
+    display: flex;
+    flex-direction: column;
+    padding: 0px;
   }
 
   #inputSection {
