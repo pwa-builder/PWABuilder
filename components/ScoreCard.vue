@@ -416,6 +416,26 @@
           </li>-->
         </ul>
 
+        <h4>Recommended</h4>
+
+        <ul>
+          <li>
+            <div class="listSubDiv">
+              <span>
+                <a href="https://components.pwabuilder.com/demo/background_fetch">Background Sync</a>
+              </span>
+            </div>
+          </li>
+
+          <li>
+            <div class="listSubDiv">
+              <span>
+                <a href="https://components.pwabuilder.com/demo/periodic_sync">Periodic Sync</a>
+              </span>
+            </div>
+          </li>
+        </ul>
+
         <h4>Optional</h4>
 
         <ul>
