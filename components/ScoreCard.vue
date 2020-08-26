@@ -1106,7 +1106,7 @@ export default class extends Vue {
 
       .cardIcon {
         color: #db3457;
-        margin-right: 8px;
+        margin-right: 20px;
         font-size: 12px;
       }
 
