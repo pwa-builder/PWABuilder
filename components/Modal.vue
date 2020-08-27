@@ -59,6 +59,7 @@ import Loading from "~/components/Loading.vue";
 })
 export default class extends Vue {
   public showModal = false;
+  private focusedOnModal = false;
   private loadingCount = 0;
 
   @Prop({ type: String, default: "" }) public title: string;
@@ -68,16 +69,17 @@ export default class extends Vue {
   //public showButtons: string;
 
   public updated() {
-    console.log("updated");
-    console.log(this.$el);
+    if (this.showModal && !this.focusedOnModal) {
+      const closeButton = <HTMLElement>(
+        this.$el.getElementsByClassName("closeButtonDiv")[0]
+      );
+      if (closeButton) {
+        closeButton.focus();
+      }
 
-    console.log(this.$el.getElementsByClassName("closeButtonDiv")[0]);
-
-    const closeButton = <HTMLElement>(
-      this.$el.getElementsByClassName("closeButtonDiv")[0]
-    );
-    if (closeButton) {
-      closeButton.focus();
+      this.focusedOnModal = true;
+    } else if (!this.showModal && this.focusedOnModal) {
+      this.focusedOnModal = false;
     }
   }
 
