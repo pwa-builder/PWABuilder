@@ -42,8 +42,8 @@ const GeneratorState = namespace(generator.name, State);
 
 @Component({
   components: {
-    Loading
-  }
+    Loading,
+  },
 })
 export default class extends Vue {
   public isReady = true;
@@ -53,15 +53,14 @@ export default class extends Vue {
   public readonly platform: string;
 
   @Prop({ type: String, default: "" })
-
   @Prop({ type: Object })
   public readonly androidOptions: publish.AndroidApkOptions | null;
 
   @Prop({
     type: Array,
-    default: function() {
+    default: function () {
       return [];
-    }
+    },
   })
   public readonly parameters: string[];
 
@@ -100,20 +99,23 @@ export default class extends Vue {
     }
   }
 
-  public async generateAndroidPackage() {    
+  public async generateAndroidPackage() {
     const validationErrors = validateAndroidOptions(this.androidOptions);
     if (validationErrors.length > 0 || !this.androidOptions) {
-      this.showErrorMessage("Invalid Android options. " + validationErrors.map(a => a.error).join("\n"));
+      this.showErrorMessage(
+        "Invalid Android options. " +
+          validationErrors.map((a) => a.error).join("\n")
+      );
       return;
     }
-    
+
     this.isReady = false;
     const generateApkUrl = `${process.env.androidPackageGeneratorUrl}/generateApkZip`;
     try {
       const response = await fetch(generateApkUrl, {
         method: "POST",
-        headers: new Headers({'content-type': 'application/json'}),
-        body: JSON.stringify(this.androidOptions)
+        headers: new Headers({ "content-type": "application/json" }),
+        body: JSON.stringify(this.androidOptions),
       });
 
       if (response.status === 200) {
@@ -121,28 +123,69 @@ export default class extends Vue {
         const url = window.URL.createObjectURL(data);
         window.location.assign(url);
 
-        this.$emit('apkDownloaded', {
-          detail: data
+        this.$emit("apkDownloaded", {
+          detail: data,
         });
-
       } else {
         const responseText = await response.text();
-        this.showErrorMessage(`Error generating Android package.\n\nStatus code: ${response.status}\n\nError: ${response.statusText}\n\nDetails: ${responseText}`);
+        this.showErrorMessage(
+          `Error generating Android package.\n\nStatus code: ${response.status}\n\nError: ${response.statusText}\n\nDetails: ${responseText}`
+        );
       }
     } catch (err) {
-      this.showErrorMessage(`Error generating Android platform due to HTTP error.\n\nStatus code: ${err.status}\n\nError: ${err.statusText}\n\nDetails: ${err}`);
+      this.showErrorMessage(
+        `Error generating Android platform due to HTTP error.\n\nStatus code: ${err.status}\n\nError: ${err.statusText}\n\nDetails: ${err}`
+      );
     } finally {
       this.isReady = true;
     }
   }
 
-  public async buildArchive(platform: string, parameters: string[]): Promise<void> {
+  public async generateWindowsEdgePackage() {
+    this.isReady = false;
+
+    try {
+      const response = await fetch("http://pwabuilder-win-chromium-platfom.centralus.cloudapp.azure.com/msix/generatezip", {
+        method: "POST",
+        body: JSON.stringify({
+          packageId: this.manifest.name,
+          url: this.siteHref,
+          version: "1.0.0.0",
+        }),
+        headers: new Headers({ "content-type": "application/json" }),
+      });
+      if (response.status === 200) {
+        const data = await response.blob();
+        const url = window.URL.createObjectURL(data);
+        window.location.assign(url);
+
+        setTimeout(() => (this.isReady = true), 3000);
+      } else {
+        const responseText = await response.text();
+        this.showErrorMessage(
+          `Failed. Status code ${response.status}, Error: ${response.statusText}, Details: ${responseText}`
+        );
+
+        this.isReady = true;
+      }
+    } catch (err) {
+      this.showErrorMessage("Failed. Error: " + err);
+      this.isReady = true;
+    }
+  }
+
+  public async buildArchive(
+    platform: string,
+    parameters: string[]
+  ): Promise<void> {
     if (!this.isReady) {
       return;
     }
 
     if (platform === "androidTWA") {
       await this.generateAndroidPackage();
+    } else if (platform === "windows10") {
+      await this.generateWindowsEdgePackage();
     } else {
       try {
         this.isReady = false;
@@ -150,13 +193,13 @@ export default class extends Vue {
         if (platform === "msteams") {
           await this.buildTeams({
             href: this.siteHref,
-            options: parameters
+            options: parameters,
           });
         } else {
           await this.build({
             platform: platform,
             href: this.siteHref,
-            options: parameters
+            options: parameters,
           });
         }
 
@@ -170,29 +213,29 @@ export default class extends Vue {
         this.isReady = true;
         this.showErrorMessage(`Error building package.\n${e}`);
       }
-    } 
+    }
 
     if (this.$awa) {
       const overrideValues = {
         uri: window.location.href,
         pageName: `download/${platform}`,
-        pageHeight: window.innerHeight
+        pageHeight: window.innerHeight,
       };
       this.$awa(overrideValues);
     }
   }
 
   private showErrorMessage(errorMessage: string) {
-    this.$emit('downloadPackageError', { 
+    this.$emit("downloadPackageError", {
       detail: errorMessage,
-      platform: this.platform
+      platform: this.platform,
     });
-  }  
+  }
 }
 
 declare var awa: any;
 
-Vue.prototype.$awa = function(config) {
+Vue.prototype.$awa = function (config) {
   if (awa) {
     awa.ct.capturePageView(config);
   }
@@ -203,7 +246,7 @@ Vue.prototype.$awa = function(config) {
 
 <style lang="scss" scoped>
 button:disabled {
-  background: rgba(60, 60, 60, .1);
+  background: rgba(60, 60, 60, 0.1);
   cursor: pointer;
 }
 

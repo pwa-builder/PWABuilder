@@ -754,9 +754,13 @@
       <section id="androidModalBody">
         <div>
           <p id="androidModalP">
-            You'll get a side-loadable version of your PWA (requires Win10 in
-            dev mode) to test your PWA right away. The Generate Appx button can
-            be used to generate a PWA package to submit to the Microsoft Store.
+            Download your Microsoft Edge PWA package for Windows! 
+          </p>
+
+          <p>
+            You'll get a package with your side-loadable PWA to test right away. Your PWA will
+            be running on the new <a href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/">Chromium based Edge</a>, giving you access to all of the latest APIs
+            available in Edge!
           </p>
         </div>
 
@@ -777,7 +781,7 @@
                   'https://www.pwabuilder.com/publish/windows10-appx',
               });
             "
-          >Generate</button>
+          >Options</button>
         </div>
       </section>
     </div>
@@ -1070,15 +1074,19 @@
               @mouseover="platCardHover($event)"
               @mouseleave="platCardUnHover($event)"
             >
-              <div class="pwaCardHeaderBlock">
-                <i class="fab fa-windows platformIcon" aria-label="Windows Icon"></i>
-                <h2>Windows</h2>
+              <div class="pwaCardHeaderBlock" id="windowsCardHeaderBlock">
+                <div id="windowsCardHeader">
+                  <i class="fab fa-windows platformIcon" aria-label="Windows Icon"></i>
+                  <h2>Windows</h2>
+                </div>
+
+                <span>beta</span>
               </div>
 
               <p>
-                You'll get a side-loadable version of your PWA (requires Win10
-                in dev mode) to test your PWA right away. To generate an AppX
-                PWA package and submit to the Microsoft Store, click here
+                You'll get a package with your side-loadable PWA to test right away. Your PWA will
+                be running on the new <a href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/">Chromium based Edge</a>, giving you access to all of the latest APIs
+                available in Edge!
               </p>
 
               <section class="platformDownloadBar">
@@ -2373,6 +2381,20 @@ footer a {
             font-size: 16px;
             line-height: 24px;
             color: rgba(60, 60, 60, 0.9);
+          }
+
+          .pwaCardHeaderBlock #windowsCardHeader {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          #windowsCardHeaderBlock {
+            justify-content: space-between;
+          }
+
+          #windowsCardHeaderBlock span {
+            font-weight: bold;
           }
 
           .platformDownloadBar {
