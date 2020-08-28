@@ -514,24 +514,23 @@
         </button>
       </nuxt-link>
 
-      <nuxt-link v-else-if="category === 'Manifest'" to="/generate" tabindex="-1">
+      <nuxt-link v-else-if="category === 'Manifest' && !brokenManifest" to="/generate" tabindex="-1">
         <button v-if="!noManifest" id="editButton">
           View Manifest
           <i class="fas fa-arrow-right"></i>
         </button>
 
-        <button v-else-if="noManifest && !brokenManifest">
+        <button v-else-if="noManifest">
           View Generated Manifest
           <i class="fas fa-arrow-right"></i>
         </button>
-        <div class="brkManifestError" v-if="brokenManifest">
-          Couldn't find an
-          <a
-            tabindex="-1"
-            href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
-          >app manifest</a>
-        </div>
       </nuxt-link>
+      <div class="brkManifestError" v-if="brokenManifest">
+        Couldn't find an app manifest.<br/>
+        <a
+          href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
+        >Learn about manifests here</a>
+      </div>
 
       <div class="brkManifestError" v-if="category === 'Security' && validSSL === false">
         <p>HTTPS not detected.</p>
