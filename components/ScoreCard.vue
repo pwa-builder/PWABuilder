@@ -24,11 +24,11 @@
         <ul>
           <li v-bind:class="{ good: hasHTTPS }">
             <div>
-              <span class="cardIcon" v-if="hasHTTPS">
+              <span class="cardIcon" aria-hidden="true" v-if="hasHTTPS">
                 <i class="fas fa-check"></i>
               </span>
 
-              <span class="cardIcon" v-else>
+              <span class="cardIcon" aria-hidden="true" v-else>
                 <i class="fas fa-times"></i>
               </span>
 
@@ -41,10 +41,10 @@
           </li>
           <li v-bind:class="{ good: validSSL }">
             <div>
-              <span class="cardIcon" v-if="validSSL">
+              <span class="cardIcon" aria-hidden="true" v-if="validSSL">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" v-else-if="!validSSL">
+              <span class="cardIcon" aria-hidden="true" v-else-if="!validSSL">
                 <i class="fas fa-times"></i>
               </span>
 
@@ -57,11 +57,11 @@
           </li>
           <li v-bind:class="{ good: noMixedContent }">
             <div>
-              <span class="cardIcon" v-if="noMixedContent">
+              <span class="cardIcon" aria-hidden="true" v-if="noMixedContent">
                 <i class="fas fa-check"></i>
               </span>
 
-              <span class="cardIcon" v-else>
+              <span class="cardIcon" aria-hidden="true" v-else>
                 <i class="fas fa-times"></i>
               </span>
 
@@ -82,10 +82,10 @@
         <ul>
           <li v-bind:class="{ good: manifest }">
             <div class="listSubDiv">
-              <span class="cardIcon" v-if="manifest">
+              <span class="cardIcon" aria-hidden="true" v-if="manifest">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" v-if="!manifest">
+              <span class="cardIcon" aria-hidden="true" v-if="!manifest">
                 <i class="fas fa-times"></i>
               </span>
 
@@ -98,10 +98,10 @@
           </li>
           <li v-bind:class="{ good: manifest && manifest.display }">
             <div class="listSubDiv">
-              <span class="cardIcon" v-if="manifest && manifest.display">
+              <span class="cardIcon" aria-hidden="true" v-if="manifest && manifest.display">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" v-if="manifest && !manifest.display">
+              <span class="cardIcon" aria-hidden="true" v-if="manifest && !manifest.display">
                 <i class="fas fa-times"></i>
               </span>
 
@@ -116,10 +116,10 @@
           </li>
           <li v-bind:class="{ good: manifest && manifest.icons }">
             <div class="listSubDiv">
-              <span class="cardIcon" v-if="manifest && manifest.icons">
+              <span class="cardIcon" aria-hidden="true" v-if="manifest && manifest.icons">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" v-if="manifest && !manifest.icons">
+              <span class="cardIcon" aria-hidden="true" v-if="manifest && !manifest.icons">
                 <i class="fas fa-times"></i>
               </span>
 
@@ -135,10 +135,10 @@
           </li>
           <li v-bind:class="{ good: manifest && manifest.name }">
             <div class="listSubDiv">
-              <span class="cardIcon" v-if="manifest && manifest.name">
+              <span class="cardIcon" aria-hidden="true" v-if="manifest && manifest.name">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" v-if="manifest && !manifest.name">
+              <span class="cardIcon" aria-hidden="true" v-if="manifest && !manifest.name">
                 <i class="fas fa-times"></i>
               </span>
 
@@ -154,10 +154,10 @@
           </li>
           <li v-bind:class="{ good: manifest && manifest.short_name }">
             <div class="listSubDiv">
-              <span class="cardIcon" v-if="manifest && manifest.short_name">
+              <span class="cardIcon" aria-hidden="true" v-if="manifest && manifest.short_name">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" v-if="manifest && !manifest.short_name">
+              <span class="cardIcon" aria-hidden="true" v-if="manifest && !manifest.short_name">
                 <i class="fas fa-times"></i>
               </span>
 
@@ -174,10 +174,10 @@
 
           <li v-bind:class="{ good: manifest && manifest.start_url }">
             <div class="listSubDiv">
-              <span class="cardIcon" v-if="manifest && manifest.start_url">
+              <span class="cardIcon" aria-hidden="true" v-if="manifest && manifest.start_url">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" v-if="manifest && !manifest.start_url">
+              <span class="cardIcon" aria-hidden="true" v-if="manifest && !manifest.start_url">
                 <i class="fas fa-times"></i>
               </span>
 
@@ -198,10 +198,10 @@
         <ul>
           <li v-bind:class="{ good: manifest && manifest.screenshots }">
             <div class="listSubDiv">
-              <span class="cardIcon" v-if="manifest.screenshots">
+              <span class="cardIcon" aria-hidden="true" v-if="manifest.screenshots">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" v-if="!manifest.screenshots">
+              <span class="cardIcon" aria-hidden="true" v-if="!manifest.screenshots">
                 <i class="fas fa-times"></i>
               </span>
 
@@ -211,10 +211,10 @@
 
           <li v-bind:class="{ good: manifest && manifest.categories }">
             <div class="listSubDiv">
-              <span class="cardIcon" v-if="manifest.categories">
+              <span class="cardIcon" aria-hidden="true" v-if="manifest.categories">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" v-if="!manifest.categories">
+              <span class="cardIcon" aria-hidden="true" v-if="!manifest.categories">
                 <i class="fas fa-times"></i>
               </span>
 
@@ -228,10 +228,10 @@
         <ul>
           <li v-bind:class="{ good: manifest && manifest.shortcuts }">
             <div class="listSubDiv">
-              <span class="cardIcon" v-if="manifest.shortcuts">
+              <span class="cardIcon" aria-hidden="true" v-if="manifest.shortcuts">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" v-if="!manifest.shortcuts">
+              <span class="cardIcon" aria-hidden="true" v-if="!manifest.shortcuts">
                 <i class="fas fa-times"></i>
               </span>
 
@@ -259,7 +259,7 @@
       <ul id="noManifest" v-if="category === 'Manifest' && noManifest">
         <li>
           <div class="listSubDiv">
-            <span class="cardIcon">
+            <span class="cardIcon" aria-hidden="true">
               <i class="fas fa-times"></i>
             </span>
 
@@ -283,7 +283,7 @@
         </li>
         <li>
           <div class="listSubDiv">
-            <span class="cardIcon">
+            <span class="cardIcon" aria-hidden="true">
               <i class="fas fa-times"></i>
             </span>
 
@@ -297,7 +297,7 @@
         </li>
         <li>
           <div class="listSubDiv">
-            <span class="cardIcon">
+            <span class="cardIcon" aria-hidden="true">
               <i class="fas fa-times"></i>
             </span>
 
@@ -311,7 +311,7 @@
         </li>
         <li>
           <div class="listSubDiv">
-            <span class="cardIcon">
+            <span class="cardIcon" aria-hidden="true">
               <i class="fas fa-times"></i>
             </span>
 
@@ -325,7 +325,7 @@
         </li>
         <li>
           <div class="listSubDiv">
-            <span class="cardIcon">
+            <span class="cardIcon" aria-hidden="true">
               <i class="fas fa-times"></i>
             </span>
 
@@ -346,10 +346,10 @@
         <ul>
           <li v-bind:class="{ good: serviceWorkerData.hasSW }">
             <div class="listSubDiv">
-              <span class="cardIcon" v-if="serviceWorkerData && serviceWorkerData.hasSW">
+              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && serviceWorkerData.hasSW">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" v-if="serviceWorkerData && !serviceWorkerData.hasSW">
+              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && !serviceWorkerData.hasSW">
                 <i class="fas fa-times"></i>
               </span>
 
@@ -362,10 +362,10 @@
           </li>
           <li v-bind:class="{ good: serviceWorkerData.cache }">
             <div class="listSubDiv">
-              <span class="cardIcon" v-if="serviceWorkerData && serviceWorkerData.cache">
+              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && serviceWorkerData.cache">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" v-if="serviceWorkerData && !serviceWorkerData.cache">
+              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && !serviceWorkerData.cache">
                 <i class="fas fa-times"></i>
               </span>
 
@@ -378,10 +378,10 @@
           </li>
           <li v-bind:class="{ good: serviceWorkerData.scope }">
             <div class="listSubDiv">
-              <span class="cardIcon" v-if="serviceWorkerData && serviceWorkerData.scope">
+              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && serviceWorkerData.scope">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" v-if="serviceWorkerData && !serviceWorkerData.scope">
+              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && !serviceWorkerData.scope">
                 <i class="fas fa-times"></i>
               </span>
 
@@ -397,10 +397,10 @@
           </li>
           <!-- <li v-bind:class="{ good: serviceWorkerData.pushReg }">
             <div class="listSubDiv">
-              <span class="cardIcon" v-if="serviceWorkerData && serviceWorkerData.pushReg">
+              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && serviceWorkerData.pushReg">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" v-if="serviceWorkerData && !serviceWorkerData.pushReg">
+              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && !serviceWorkerData.pushReg">
                 <i class="fas fa-times"></i>
               </span>
 
@@ -421,10 +421,10 @@
         <ul>
           <li v-bind:class="{ good: serviceWorkerData.pushReg }">
             <div class="listSubDiv">
-              <span class="cardIcon" v-if="serviceWorkerData && serviceWorkerData.pushReg">
+              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && serviceWorkerData.pushReg">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" v-if="serviceWorkerData && !serviceWorkerData.pushReg">
+              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && !serviceWorkerData.pushReg">
                 <i class="fas fa-times"></i>
               </span>
 
@@ -455,7 +455,7 @@
       <ul id="noSWP" v-if="category === 'Service Worker' && noServiceWorker">
         <li>
           <div class="listSubDiv">
-            <span class="cardIcon">
+            <span class="cardIcon" aria-hidden="true">
               <i class="fas fa-times"></i>
             </span>
 
@@ -466,7 +466,7 @@
         </li>
         <li>
           <div class="listSubDiv">
-            <span class="cardIcon">
+            <span class="cardIcon" aria-hidden="true">
               <i class="fas fa-times"></i>
             </span>
 
@@ -477,7 +477,7 @@
         </li>
         <li>
           <div class="listSubDiv">
-            <span class="cardIcon">
+            <span class="cardIcon" aria-hidden="true">
               <i class="fas fa-times"></i>
             </span>
 
@@ -536,7 +536,7 @@
       <div class="brkManifestError" v-if="category === 'Security' && validSSL === false">
         <p>HTTPS not detected.</p>
         <p class="brkManifestHelp">
-          <i class="fas fa-info-circle"></i>
+          <i class="fas fa-info-circle" aria-hidden="true"></i>
           You can use
           <a href="https://letsencrypt.org/">LetsEncrypt</a> to get a free HTTPS certificate, or
           <a
