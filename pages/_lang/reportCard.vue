@@ -7,22 +7,22 @@
       :expanded="!gotURL"
     ></HubHeader>
 
-    <div v-if="showCopyToast" id="gitCopyToast">
+    <div v-if="showCopyToast" id="gitCopyToast" role="alert">
       <span>git clone command copied to your clipboard</span>
     </div>
 
-    <div v-if="showShareToast" id="gitCopyToast">
-      <span role="alert">URL copied for sharing</span>
+    <div v-if="showShareToast" id="gitCopyToast" role="alert">
+      <span>URL copied for sharing</span>
     </div>
 
     <div v-if="gotURL" id="reportShareButtonContainer">
-      <button @click="shareReport" id="shareResults">
+      <button @click="shareReport" id="shareResults" controls="gitCopyToast">
         <i class="fas fa-share-alt" alt="share icon" aria-hidden="true"></i>
         Share your Results
       </button>
     </div>
 
-    <main id="main">
+    <main id="main" role="presentation">
       <div v-if="!gotURL" id="inputSection">
         <div id="topHalfHome">
           <h1 id="topHalfHeader">Quickly and easily turn your website into an app!</h1>
@@ -79,7 +79,7 @@
                   id="mainStartButton"
                   type="button"
                   aria-controls="starterDropdown"
-                  aria-haspop="true"
+                  aria-haspopup="true"
                   :aria-expanded="openDrop ? true : false"
                 >
                   Get Started!
@@ -91,7 +91,6 @@
                   aria-live="polite"
                   aria-labelledby="mainStartButton"
                   role="menu"
-                  tabindex="-1"
                 >
                   <button
                     id="starterDownloadButton"
@@ -108,6 +107,7 @@
                     type="button"
                     role="menuitem"
                     aria-label="Command line clone command"
+                    aria-controls="gitCopyToast"
                     @click="cloneStarter"
                   >
                     <i class="fab fa-github" aria-hidden="true"></i>
