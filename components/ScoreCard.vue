@@ -717,6 +717,8 @@ export default class extends Vue {
 
   noManifest: boolean | null = null;
   brokenManifest: boolean | null = null;
+  manifestScoreData: any | null = null;
+
   serviceWorkerData: any = null;
   noServiceWorker: boolean | null = null;
 
@@ -802,8 +804,17 @@ export default class extends Vue {
       this.noManifest = true;
       return;
     } finally {
+      // look at required, recommended
+      console.log(this.manifestScoreData.data.required);
+      const requiredValues = new Set(Object.values(this.manifestScoreData.data.required));
+
+      const requiredPassed: boolean = requiredValues.has(false);
+
+      const recommendedValues = new Set(Object.values(this.manifestScoreData.data.recommended));
+      const recommendedPassed: boolean = recommendedValues.has(false);
+
       // Regardless notify parent and update manifest call.
-      this.$emit("manifestTestDone", { score: this.manifestScore });
+      this.$emit("manifestTestDone", { score: this.manifestScore, required: !requiredPassed, recommended: !recommendedPassed });
       this.updateManifest(this.manifest);
     }
   }
@@ -816,28 +827,26 @@ export default class extends Vue {
         const response = await fetch(
           `${process.env.testAPIUrl}/WebManifest?site=${this.url}`
         );
-        const manifestScoreData = await response.json();
+        this.manifestScoreData = await response.json();
 
-        this.manifestScore = 15;
-
-        if (manifestScoreData.data !== null) {
-          if (manifestScoreData.data.required.start_url === true) {
+        if (this.manifestScoreData.data !== null) {
+          if (this.manifestScoreData.data.required.start_url === true) {
             this.manifestScore = this.manifestScore + 5;
           }
 
-          if (manifestScoreData.data.required.short_name === true) {
+          if (this.manifestScoreData.data.required.short_name === true) {
             this.manifestScore = this.manifestScore + 5;
           }
 
-          if (manifestScoreData.data.required.name === true) {
+          if (this.manifestScoreData.data.required.name === true) {
             this.manifestScore = this.manifestScore + 5;
           }
 
-          if (manifestScoreData.data.required.icons === true) {
+          if (this.manifestScoreData.data.required.icons === true) {
             this.manifestScore = this.manifestScore + 5;
           }
 
-          if (manifestScoreData.data.required.display === true) {
+          if (this.manifestScoreData.data.required.display === true) {
             this.manifestScore = this.manifestScore + 5;
           }
 
@@ -845,7 +854,14 @@ export default class extends Vue {
 
           if (this.manifest && this.manifest.generated === true) {
             this.noManifest = true;
-            return;
+
+            this.manifestScore = 0;
+          }
+          else if (!this.manifest) {
+            this.manifestScore = 0;
+          }
+          else {
+            this.manifestScore = this.manifestScore + 15;
           }
 
           resolve();

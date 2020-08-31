@@ -531,6 +531,7 @@ export default class extends Vue {
   }
 
   public manifestTestDone(ev) {
+    console.log(ev);
     const newScore = this.overallScore + ev.score;
     this.overallScore = newScore;
   }
