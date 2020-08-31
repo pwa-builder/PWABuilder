@@ -129,6 +129,30 @@
         </footer>
       </div>
 
+      <div v-if="gotURL && overallScore < 80 && !requiredMet" id="attachSection">
+        <div id="attachHeader">
+          <h2>Your app is a not a PWA</h2>
+
+          <button id="attachShare" aria-label="Share Report" @click="shareReport">
+            <i class="fas fa-share-alt"></i>
+          </button>
+        </div>
+
+        <p>But PWABuilder can help! Tap Upgrade to PWA below to see what your missing and get started!</p>
+
+        <p>
+          Also, if you want to build a PWA from scratch,
+          <a
+            href="https://github.com/pwa-builder/pwa-starter"
+          >tap here</a> to get started with the
+          PWABuilder pwa-starter!
+        </p>
+
+        <div id="attachSectionActions">
+          <button @click="upgradeToPWA" id="upgradeButton" to="/publish">Upgrade to PWA</button>
+        </div>
+      </div>
+
       <div v-if="gotURL && overallScore >= 80 && requiredMet" id="attachSection">
         <div id="attachHeader">
           <h2>Your app is a PWA!</h2>
@@ -139,23 +163,25 @@
         </div>
 
         <p>
-          Congrats, your PWA meets the requirements for <a href="Browser Install in supported browsers">Browser Install in supported browsers</a>!
-          To enhance this experience even further, be sure to check out our <a href="https://components.pwabuilder.com/component/install_pwa">pwa-install component</a>. 
+          Congrats, your PWA meets the requirements for
+          <a
+            href="Browser Install in supported browsers"
+          >Browser Install in supported browsers</a>!
         </p>
 
-        <img src="~/assets/images/browserInstall.png" alt="Screenshot of the browser install experience in Edge">
+        <img
+          src="~/assets/images/browserInstall.png"
+          alt="Screenshot of the browser install experience in Edge"
+        />
 
         <p>
           You can also tap "Package My PWA" to package your PWA for the app stores, but we recommend making sure your manifest meets our
-          recommended fields first. <nuxt-link to="/generate">Tap Here</nuxt-link> to use PWABuilder to upgrade your manifest!
+          recommended fields first.
+          <nuxt-link to="/generate">Tap Here</nuxt-link>to use PWABuilder to upgrade your manifest!
         </p>
 
-
         <div id="attachSectionActions">
-          <nuxt-link
-            id="buildLink"
-            to="/generate"
-          >Upgrade My Manifest</nuxt-link>
+          <nuxt-link id="buildLink" to="/generate">Upgrade My Manifest</nuxt-link>
 
           <nuxt-link
             @click="$awa( { 'referrerUri': 'https://www.pwabuilder.com/publishFromHome' });"
@@ -180,11 +206,20 @@
         </p>
 
         <p>
-          Along with app stores, your PWA also meets the requirements for <a href="Browser Install in supported browsers">Browser Install in supported browsers</a>!
-          To enhance this experience even further, be sure to check out our <a href="https://components.pwabuilder.com/component/install_pwa">pwa-install component</a>. 
+          Along with app stores, your PWA also meets the requirements for
+          <a
+            href="Browser Install in supported browsers"
+          >Browser Install in supported browsers</a>!
+          To enhance this experience even further, be sure to check out our
+          <a
+            href="https://components.pwabuilder.com/component/install_pwa"
+          >pwa-install component</a>.
         </p>
 
-        <img src="~/assets/images/browserInstall.png" alt="Screenshot of the browser install experience in Edge">
+        <img
+          src="~/assets/images/browserInstall.png"
+          alt="Screenshot of the browser install experience in Edge"
+        />
 
         <div id="attachSectionActions">
           <nuxt-link
@@ -223,30 +258,26 @@
         class="scoreCard"
       ></ScoreCard>
 
-      <ScoreCard
-        v-if="gotURL"
-        :url="url"
-        category="Extras"
-        class="scoreCard"
-      ></ScoreCard>
+      <ScoreCard v-if="gotURL" :url="url" category="Extras" class="scoreCard"></ScoreCard>
 
-      <div id="toolkitSection" v-if="topSamples.length > 0">
+      <div id="toolkitSection" v-if="topSamples.length > 0 && gotURL && overallScore >= 80 && requiredMet">
         <h2>Add features to my PWA...</h2>
       </div>
 
-      <FeatureCard
-        class="topFeatures"
-        v-if="topSamples.length > 0"
-        v-for="(sample, index) in topSamples"
-        :class="{ firstFeature: index === 0 }"
-        :sample="sample"
-        :key="sample.id"
-        :showAddButton="true"
-      >
-        <i slot="iconSlot" class="fas fa-rocket"></i>
-      </FeatureCard>
+      <div v-if="topSamples.length > 0 && gotURL && overallScore >= 80 && requiredMet">
+        <FeatureCard
+          class="topFeatures"
+          v-for="(sample, index) in topSamples"
+          :class="{ firstFeature: index === 0 }"
+          :sample="sample"
+          :key="sample.id"
+          :showAddButton="true"
+        >
+          <i slot="iconSlot" class="fas fa-rocket"></i>
+        </FeatureCard>
+      </div>
 
-      <div id="moreFeaturesBlock" v-if="topSamples.length > 0">
+      <div id="moreFeaturesBlock" v-if="topSamples.length > 0 && gotURL && overallScore >= 80 && requiredMet">
         <a href="https://components.pwabuilder.com/">View more</a>
       </div>
 
@@ -317,7 +348,6 @@ export default class extends Vue {
   public requiredMet: boolean = false;
   public recommendedMet: boolean = false;
 
-
   public async created() {
     this.url$ = this.url;
 
@@ -369,6 +399,14 @@ export default class extends Vue {
 
   beforeDestroy() {
     (<any>window).removeEventListener("popstate", this.backAndForth);
+  }
+
+  public upgradeToPWA() {
+    const firstCardEl = this.$el.querySelector("#firstCard");
+
+    if (firstCardEl) {
+      firstCardEl.scrollIntoView();
+    }
   }
 
   public async backAndForth(e) {
@@ -708,6 +746,25 @@ declare var awa: any;
   border-radius: 20px;
   height: 40px;
   margin-left: 12px;
+}
+
+#attachSectionActions #upgradeButton {
+  justify-content: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  background: linear-gradient(to right, #1fc2c8, #9337d8 116%);
+  color: white;
+  border-radius: 20px;
+  height: 40px;
+  border: none;
 }
 
 #attachSection #attachHeader {
@@ -1139,7 +1196,6 @@ h2 {
     margin-left: 25px;
     margin-right: 25px;
   }
-  
 
   #attachSection img {
     margin-bottom: 2em;

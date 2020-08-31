@@ -790,7 +790,6 @@ export default class extends Vue {
     } catch (ex) {
       // If manifest is not retrieved or DNE will fall in here. Mostly effects Security Score
       if (this.manifest === null) {
-        this.brokenManifest = true;
 
         this.hasHTTPS = false;
         this.validSSL = false;
