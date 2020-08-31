@@ -139,7 +139,43 @@
         </p>
       </div>
 
-      <div v-if="gotURL && overallScore >= 80" id="attachSection">
+      <div v-if="gotURL && overallScore >= 80 && requiredMet" id="attachSection">
+        <div id="attachHeader">
+          <h2>Your app is a PWA!</h2>
+
+          <button id="attachShare" aria-label="Share Report" @click="shareReport">
+            <i class="fas fa-share-alt"></i>
+          </button>
+        </div>
+
+        <p>
+          Congrats, your PWA meets the requirements for <a href="Browser Install in supported browsers">Browser Install in supported browsers</a>!
+          To enhance this experience even further, be sure to check out our <a href="https://components.pwabuilder.com/component/install_pwa">pwa-install component</a>. 
+        </p>
+
+        <img src="~/assets/images/browserInstall.png" alt="Screenshot of the browser install experience in Edge">
+
+        <p>
+          You can also tap "Package My PWA" to package your PWA for the app stores, but we recommend making sure your manifest meets our
+          recommended fields first. <nuxt-link to="/generate">Tap Here</nuxt-link> to use PWABuilder to upgrade your manifest!
+        </p>
+
+
+        <div id="attachSectionActions">
+          <nuxt-link
+            id="buildLink"
+            to="/generate"
+          >Upgrade My Manifest</nuxt-link>
+
+          <nuxt-link
+            @click="$awa( { 'referrerUri': 'https://www.pwabuilder.com/publishFromHome' });"
+            id="featuresLink"
+            to="/publish"
+          >Package My PWA</nuxt-link>
+        </div>
+      </div>
+
+      <div v-if="gotURL && overallScore >= 80 && requiredMet && recommendedMet" id="attachSection">
         <div id="attachHeader">
           <h2>Store Ready!</h2>
 
@@ -199,7 +235,6 @@
 
       <ScoreCard
         v-if="gotURL"
-        v-on:securityTestDone="securityTestDone($event)"
         :url="url"
         category="Extras"
         class="scoreCard"
@@ -285,8 +320,13 @@ export default class extends Vue {
   public cleanedURL: string | null = null;
   public shared: boolean = false;
   public openDrop: boolean = false;
+
   public showCopyToast: boolean = false;
   public showShareToast: boolean = false;
+
+  public requiredMet: boolean = false;
+  public recommendedMet: boolean = false;
+
 
   public async created() {
     this.url$ = this.url;
@@ -534,6 +574,9 @@ export default class extends Vue {
     console.log(ev);
     const newScore = this.overallScore + ev.score;
     this.overallScore = newScore;
+
+    this.requiredMet = ev.required;
+    this.recommendedMet = ev.recommended;
   }
 
   public swTestDone(ev) {
