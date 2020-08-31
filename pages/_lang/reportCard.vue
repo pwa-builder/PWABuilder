@@ -52,7 +52,7 @@
             />
 
             <button :class="{ btnErr: error != null }" id="getStartedButton">
-              <div :class="{ btnErrText: error != null }">{{ $t("generator.start") }}</div>
+              {{ $t("generator.start") }}
             </button>
           </form>
         </div>
@@ -840,6 +840,7 @@ h2 {
 
     form {
       display: flex;
+      vertical-align: baseline;
 
       &.formErr {
         animation: shake 0.2s ease-in-out 0s 2;
@@ -847,13 +848,13 @@ h2 {
     }
 
     input {
-      background: transparent;
+      background: hsla(270,0%,20%,0.5);
 
-      padding-top: 13px;
-      padding-bottom: 12px;
-      border: none;
+      padding: 12px 16px;
+      border: solid 1px transparent;
       border-bottom: solid 1px rgba(255, 255, 255, 0.4);
-      margin-right: 0.3em;
+      border-radius: 22px;
+      margin-right: 8px;
       margin-top: 20px;
       outline: none;
 
@@ -861,7 +862,7 @@ h2 {
       font-weight: normal;
       font-size: 16px;
       line-height: 33px;
-      color: rgba(255, 255, 255, 0.7);
+      color: rgba(255, 255, 255, .7);
 
       &::placeholder {
         color: white;
@@ -870,7 +871,7 @@ h2 {
 
       &:hover,
       &:focus {
-        border-bottom: solid 1px white;
+        border: solid 1px white;
         color: white !important;
       }
     }
@@ -899,7 +900,7 @@ h2 {
     }
 
     #getStartedButton:focus {
-      outline: auto;
+      outline: 1px dotted hsla(0,0%,86%,.7);
     }
   }
 
