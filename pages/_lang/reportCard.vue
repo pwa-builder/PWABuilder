@@ -177,7 +177,7 @@
         <p>
           You can also tap "Package My PWA" to package your PWA for the app stores, but we recommend making sure your manifest meets our
           recommended fields first.
-          <nuxt-link to="/generate">Tap Here</nuxt-link>to use PWABuilder to upgrade your manifest!
+          <nuxt-link to="/generate">Tap Here</nuxt-link> to use PWABuilder to upgrade your manifest!
         </p>
 
         <div id="attachSectionActions">
@@ -264,7 +264,7 @@
         <h2>Add features to my PWA...</h2>
       </div>
 
-      <div v-if="topSamples.length > 0 && gotURL && overallScore >= 80 && requiredMet">
+      <div id="featureCardBlock" v-if="topSamples.length > 0 && gotURL && overallScore >= 80 && requiredMet">
         <FeatureCard
           class="topFeatures"
           v-for="(sample, index) in topSamples"
@@ -639,6 +639,10 @@ declare var awa: any;
 <style lang="scss" scoped>
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
+
+#featureCardBlock {
+  display: contents;
+}
 
 #starterDropdown {
   position: absolute;
