@@ -129,16 +129,6 @@
         </footer>
       </div>
 
-      <div v-if="gotURL && overallScore < 80" id="infoSection">
-        <h2>Hub</h2>
-
-        <p>
-          We have taken a look at how well your website supports PWA features
-          and provided simple tools to help you fill in the gaps. When you’re
-          ready, click “Package My PWA” to finish up.
-        </p>
-      </div>
-
       <div v-if="gotURL && overallScore >= 80 && requiredMet" id="attachSection">
         <div id="attachHeader">
           <h2>Your app is a PWA!</h2>
@@ -724,6 +714,10 @@ declare var awa: any;
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+#attachSection #attachHeader p {
+  color: black;
 }
 
 #attachSection img {
