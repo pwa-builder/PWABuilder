@@ -177,8 +177,20 @@
         <p>
           You can also tap "Package My PWA" to package your PWA for the app stores, but we recommend making sure your manifest meets our
           recommended fields first.
-          <nuxt-link to="/generate">Tap Here</nuxt-link> to use PWABuilder to upgrade your manifest!
+          <nuxt-link to="/generate">Tap Here</nuxt-link>to use PWABuilder to upgrade your manifest!
         </p>
+
+        <p>
+          Also, if you include our recommended fields you can then enhance this experience even further with the PWABuilder
+          <a
+            href="https://components.pwabuilder.com/component/install_pwa"
+          >pwa-install component</a>.
+        </p>
+
+        <img
+          src="~/assets/images/browserInstall.png"
+          alt="Screenshot of the browser install experience in Edge"
+        />
 
         <div id="attachSectionActions">
           <nuxt-link id="buildLink" to="/generate">Upgrade My Manifest</nuxt-link>
@@ -260,11 +272,17 @@
 
       <ScoreCard v-if="gotURL" :url="url" category="Extras" class="scoreCard"></ScoreCard>
 
-      <div id="toolkitSection" v-if="topSamples.length > 0 && gotURL && overallScore >= 80 && requiredMet">
+      <div
+        id="toolkitSection"
+        v-if="topSamples.length > 0 && gotURL && overallScore >= 80 && requiredMet"
+      >
         <h2>Add features to my PWA...</h2>
       </div>
 
-      <div id="featureCardBlock" v-if="topSamples.length > 0 && gotURL && overallScore >= 80 && requiredMet">
+      <div
+        id="featureCardBlock"
+        v-if="topSamples.length > 0 && gotURL && overallScore >= 80 && requiredMet"
+      >
         <FeatureCard
           class="topFeatures"
           v-for="(sample, index) in topSamples"
@@ -277,7 +295,10 @@
         </FeatureCard>
       </div>
 
-      <div id="moreFeaturesBlock" v-if="topSamples.length > 0 && gotURL && overallScore >= 80 && requiredMet">
+      <div
+        id="moreFeaturesBlock"
+        v-if="topSamples.length > 0 && gotURL && overallScore >= 80 && requiredMet"
+      >
         <a href="https://components.pwabuilder.com/">View more</a>
       </div>
 
