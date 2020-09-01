@@ -177,7 +177,8 @@
         <p>
           You can also tap "Package My PWA" to package your PWA for the app stores, but we recommend making sure your manifest meets our
           recommended fields first.
-          <nuxt-link to="/generate">Tap Here</nuxt-link>to use PWABuilder to upgrade your manifest!
+          <nuxt-link to="/generate">Tap Here</nuxt-link> 
+           to use PWABuilder to upgrade your manifest!
         </p>
 
         <p>
@@ -186,11 +187,6 @@
             href="https://components.pwabuilder.com/component/install_pwa"
           >pwa-install component</a>.
         </p>
-
-        <img
-          src="~/assets/images/browserInstall.png"
-          alt="Screenshot of the browser install experience in Edge"
-        />
 
         <div id="attachSectionActions">
           <nuxt-link id="buildLink" to="/generate">Upgrade My Manifest</nuxt-link>
