@@ -261,6 +261,19 @@
             </div>
           </li>
 
+          <li v-bind:class="{ good: manifest && this.manifestScoreData.data.recommended.maskable_icon }">
+            <div class="listSubDiv">
+              <span class="cardIcon" v-if="manifest && this.manifestScoreData.data.recommended.maskable_icon">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" v-if="!this.manifestScoreData.data.recommended.maskable_icon">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>Has a maskable icon</span>
+            </div>
+          </li>
+
           <li v-bind:class="{ good: manifest && manifest.orientation }">
             <div class="listSubDiv">
               <span class="cardIcon" v-if="manifest.orientation">
@@ -804,7 +817,7 @@ export default class extends Vue {
       return;
     } finally {
       // look at required, recommended
-      console.log(this.manifestScoreData.data.required);
+      console.log(this.manifestScoreData.data);
       const requiredValues = new Set(Object.values(this.manifestScoreData.data.required));
 
       const requiredPassed: boolean = requiredValues.has(false);
