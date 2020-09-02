@@ -814,7 +814,7 @@ export default class extends Vue {
   @GeneratorGetters suggestionsTotal;
   @GeneratorGetters warningsTotal;
 
-  public async created() {
+  public created(): void {
     this.manifest$ = { ...this.manifest };
     this.urlsForScreenshotValues[0] =
       this.manifest$.url !== undefined ? this.manifest$.url : "";
