@@ -616,7 +616,6 @@ export default class extends Vue {
   }
 
   public manifestTestDone(ev) {
-    console.log(ev);
     const newScore = this.overallScore + ev.score;
     this.overallScore = newScore;
 
@@ -1473,6 +1472,29 @@ h2 {
   }
 }
 
+@media (max-height: 800px) {
+  main#main {
+    display: block;
+
+    #inputSection {
+      display: block;
+    }
+
+    #topHalfHome,
+    #bottomHalfHome,
+    & > footer {
+      position: relative;
+      bottom: unset;
+      left: unset;
+      padding-bottom: 16px;
+    }
+  }
+
+  #inputSection > footer {
+    position: relative;
+  }
+}
+
 @media (max-height: 600px) {
   .backgroundIndex {
     @include backgroundLeftPoint(30%, 0vh);
@@ -1490,6 +1512,29 @@ h2 {
 @media (max-height: 475px) {
   .backgroundReport {
     @include backgroundRightPoint(80%, 0vh);
+  }
+}
+
+@media (min-resolution: 300dpi) {
+  #hubContainer {
+    overflow: scroll;
+  }
+
+  main#main {
+    display: block;
+
+    #inputSection {
+      display: block;
+    }
+
+    #topHalfHome,
+    #bottomHalfHome,
+    & > footer {
+      position: relative;
+      bottom: unset;
+      left: unset;
+      padding-bottom: 16px;
+    }
   }
 }
 </style>
