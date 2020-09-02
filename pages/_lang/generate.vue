@@ -7,7 +7,7 @@
       v-if="isInvalidScreenshotUrl"
       id="invalidUrlToast"
     >Invalid url(s): {{ `${invalidScreenshotUrlValues}` }}. Please try again.</div>
-    <main id="main" role="presentation">
+    <main id="generateMain" role="presentation">
       <section id="leftSide" :aria-hidden="ariaHidden">
         <header class="mastHead">
           <h2>{{ $t('generate.subtitle') }}</h2>
@@ -558,6 +558,34 @@
               </select>
             </div>
 
+            <!-- categories-->
+            <div class="l-generator-field">
+              <label class="l-generator-label">
+                <h4
+                  v-bind:class="{
+                    fieldName: activeFormField === 'appCategories',
+                  }"
+                >Categories</h4>
+                <p>The categories your PWA fits into.</p>
+              </label>
+
+              <select
+                class="l-generator-input l-generator-input--select"
+                
+                @change="onChangeSimpleInput(), update()"
+                v-on:focus="activeFormField = 'appCategories'"
+                aria-label="App Categories"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
+              >
+                <option
+                  v-for="category in categoriesNames"
+                  :value="category"
+                  :key="category"
+                >{{ category }}</option>
+              </select>
+            </div>
+
             <div>
               <ColorSelector />
             </div>
@@ -770,6 +798,7 @@ export default class extends Vue {
   @GeneratorState shortcuts: generator.ShortcutItem[];
   @GeneratorState warnings: string[];
   @Getter orientationsNames: string[];
+  @Getter categoriesNames: string[];
   @Getter languagesNames: string[];
   @Getter displaysNames: string[];
   @GeneratorActions removeIcon;
@@ -789,6 +818,7 @@ export default class extends Vue {
     this.manifest$ = { ...this.manifest };
     this.urlsForScreenshotValues[0] =
       this.manifest$.url !== undefined ? this.manifest$.url : "";
+
   }
 
   public mounted() {
@@ -1617,7 +1647,7 @@ footer a {
   letter-spacing: -0.02em;
   color: #db3457;
 }
-#main {
+#generateMain {
   background: white;
   padding-left: 3%;
   padding-right: 3%;
@@ -1788,15 +1818,15 @@ footer a {
   #leftSide {
     width: 100%;
   }
-  #main {
+  #generateMain {
     flex-direction: column;
     padding-left: 31px !important;
     padding-right: 24px !important;
   }
-  #main #leftSide .animatedSection {
+  #generateMain #leftSide .animatedSection {
     width: 100%;
   }
-  #main #leftSide .animatedSection input {
+  #generateMain #leftSide .animatedSection input {
     width: 100%;
   }
   #iconGrid {
@@ -1918,7 +1948,7 @@ footer a {
   }
 }
 
-#main #leftSide .animatedSection input[type="radio"] {
+#generateMain #leftSide .animatedSection input[type="radio"] {
   width: auto;
 }
 </style>

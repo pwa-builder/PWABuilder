@@ -317,6 +317,7 @@ header {
 
   @include grid;
   grid-template-rows: auto;
+  grid-template-columns: repeat(12, 1fr);
 
   align-items: center;
   justify-content: space-between;

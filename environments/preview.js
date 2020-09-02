@@ -5,5 +5,5 @@ module.exports = {
   apiUrl2: 'https://appimagegenerator-pre.azurewebsites.net',
   androidPackageGeneratorUrl: 'https://pwabuilder-cloudapk-pre.azurewebsites.net',
   windowsPackageGeneratorUrl: 'http://pwabuilder-win-chromium-platfom.centralus.cloudapp.azure.com/msix',
-  testAPIUrl: 'https://pwabuilder-tests.azurewebsites.net/api'
+  testAPIUrl: 'https://pwabuilder-tests-dev.azurewebsites.net/api'
 };
