@@ -145,7 +145,7 @@ export default class extends Vue {
     this.isReady = false;
 
     try {
-      const response = await fetch("http://pwabuilder-win-chromium-platfom.centralus.cloudapp.azure.com/msix/generatezip", {
+      const response = await fetch(`${process.env.windowsPackageGeneratorUrl}/generatezip`, {
         method: "POST",
         body: JSON.stringify({
           packageId: this.manifest.name,
