@@ -558,6 +558,34 @@
               </select>
             </div>
 
+            <!-- categories-->
+            <div class="l-generator-field">
+              <label class="l-generator-label">
+                <h4
+                  v-bind:class="{
+                    fieldName: activeFormField === 'appCategories',
+                  }"
+                >Categories</h4>
+                <p>The categories your PWA fits into.</p>
+              </label>
+
+              <select
+                class="l-generator-input l-generator-input--select"
+                
+                @change="onChangeSimpleInput(), update()"
+                v-on:focus="activeFormField = 'appCategories'"
+                aria-label="App Categories"
+                :tabindex="bodyTabIndex"
+                :aria-hidden="ariaHidden"
+              >
+                <option
+                  v-for="category in categoriesNames"
+                  :value="category"
+                  :key="category"
+                >{{ category }}</option>
+              </select>
+            </div>
+
             <div>
               <ColorSelector />
             </div>
@@ -770,6 +798,7 @@ export default class extends Vue {
   @GeneratorState shortcuts: generator.ShortcutItem[];
   @GeneratorState warnings: string[];
   @Getter orientationsNames: string[];
+  @Getter categoriesNames: string[];
   @Getter languagesNames: string[];
   @Getter displaysNames: string[];
   @GeneratorActions removeIcon;
@@ -785,10 +814,11 @@ export default class extends Vue {
   @GeneratorGetters suggestionsTotal;
   @GeneratorGetters warningsTotal;
 
-  public created(): void {
+  public async created() {
     this.manifest$ = { ...this.manifest };
     this.urlsForScreenshotValues[0] =
       this.manifest$.url !== undefined ? this.manifest$.url : "";
+
   }
 
   public mounted() {

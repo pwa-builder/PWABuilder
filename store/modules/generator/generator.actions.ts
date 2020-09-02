@@ -106,6 +106,7 @@ export const actions: Actions<State, RootState> = {
       orientations: rootState.orientations
         ? rootState.orientations[0].name
         : '',
+      categories: rootState.categories ? rootState.categories[0].name : '',
     });
   },
 
@@ -194,6 +195,7 @@ export const actions: Actions<State, RootState> = {
         orientations: rootState.orientations
           ? rootState.orientations[0].name
           : '',
+        categories: rootState.categories ? rootState.categories[0].name : '',
       });
       return;
     } catch (e) {
