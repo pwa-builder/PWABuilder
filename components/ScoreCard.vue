@@ -221,6 +221,110 @@
               <span>Has Categories</span>
             </div>
           </li>
+
+          <li v-bind:class="{ good: manifest && manifest.background_color }">
+            <div class="listSubDiv">
+              <span class="cardIcon" v-if="manifest.background_color">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" v-if="!manifest.background_color">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>Defines a Background Color</span>
+            </div>
+          </li>
+
+          <li v-bind:class="{ good: manifest && manifest.theme_color }">
+            <div class="listSubDiv">
+              <span class="cardIcon" v-if="manifest.theme_color">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" v-if="!manifest.theme_color">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>Defines a Theme Color</span>
+            </div>
+          </li>
+
+          <li v-bind:class="{ good: manifest && manifest.description }">
+            <div class="listSubDiv">
+              <span class="cardIcon" v-if="manifest.description">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" v-if="!manifest.description">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>Has a Description</span>
+            </div>
+          </li>
+
+          <li v-bind:class="{ good: manifest && this.manifestScoreData.data.recommended.maskable_icon }">
+            <div class="listSubDiv">
+              <span class="cardIcon" v-if="manifest && this.manifestScoreData.data.recommended.maskable_icon">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" v-if="!this.manifestScoreData.data.recommended.maskable_icon">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>Has a maskable icon</span>
+            </div>
+          </li>
+
+          <li v-bind:class="{ good: manifest && manifest.orientation }">
+            <div class="listSubDiv">
+              <span class="cardIcon" v-if="manifest.orientation">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" v-if="!manifest.orientation">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>Defines a preferred Orientation</span>
+            </div>
+          </li>
+
+          <li v-bind:class="{ good: manifest && manifest.prefer_related_applications }">
+            <div class="listSubDiv">
+              <span class="cardIcon" v-if="manifest.prefer_related_applications">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" v-if="!manifest.prefer_related_applications">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>Defines Prefer Related Applications preference</span>
+            </div>
+          </li>
+
+          <li v-bind:class="{ good: manifest && manifest.related_applications }">
+            <div class="listSubDiv">
+              <span class="cardIcon" v-if="manifest.related_applications">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" v-if="!manifest.related_applications">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>Defines Related Applications list</span>
+            </div>
+          </li>
+
+          <li v-bind:class="{ good: manifest && manifest.iarc_rating }">
+            <div class="listSubDiv">
+              <span class="cardIcon" v-if="manifest.iarc_rating">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" v-if="!manifest.iarc_rating">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>Includes IARC Rating ID</span>
+            </div>
+          </li>
         </ul>
 
         <h4>Optional</h4>
@@ -416,6 +520,26 @@
           </li>-->
         </ul>
 
+        <h4>Recommended</h4>
+
+        <ul>
+          <li>
+            <div class="listSubDiv">
+              <span>
+                <a href="https://components.pwabuilder.com/demo/background_fetch">Background Sync</a>
+              </span>
+            </div>
+          </li>
+
+          <li>
+            <div class="listSubDiv">
+              <span>
+                <a href="https://components.pwabuilder.com/demo/periodic_sync">Periodic Sync</a>
+              </span>
+            </div>
+          </li>
+        </ul>
+
         <h4>Optional</h4>
 
         <ul>
@@ -504,6 +628,37 @@
           <span class="subScoreSpan">0</span>
         </li>-->
       </ul>
+
+      <!-- extras section -->
+      <div id="extrasBlock" v-if="category === 'Extras'">
+        <h4>Extras to check for...</h4>
+
+        <ul>
+          <li>
+            <div class="listSubDiv">
+              <span>
+                <a href="https://docs.microsoft.com/en-us/microsoft-edge/devtools-guide-chromium/accessibility/reference">Accessibility</a>
+              </span>
+            </div>
+          </li>
+
+          <li>
+            <div class="listSubDiv">
+              <span>
+                <a href="https://docs.microsoft.com/en-us/dual-screen/web/">Dual Screen device support</a>
+              </span>
+            </div>
+          </li>
+
+          <li>
+            <div class="listSubDiv">
+              <span>
+                <a href="https://components.pwabuilder.com/component/install_pwa">Browser Install Experience</a>
+              </span>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <div class="cardEditBlock">
@@ -574,6 +729,8 @@ export default class extends Vue {
 
   noManifest: boolean | null = null;
   brokenManifest: boolean | null = null;
+  manifestScoreData: any | null = null;
+
   serviceWorkerData: any = null;
   noServiceWorker: boolean | null = null;
 
@@ -645,7 +802,6 @@ export default class extends Vue {
     } catch (ex) {
       // If manifest is not retrieved or DNE will fall in here. Mostly effects Security Score
       if (this.manifest === null) {
-        this.brokenManifest = true;
 
         this.hasHTTPS = false;
         this.validSSL = false;
@@ -658,11 +814,18 @@ export default class extends Vue {
 
       this.noManifest = true;
     } finally {
+      // look at required, recommended
+      console.log(this.manifestScoreData.data);
+      const requiredValues = new Set(Object.values(this.manifestScoreData.data.required));
+
+      const requiredPassed: boolean = requiredValues.has(false);
+
+      const recommendedValues = new Set(Object.values(this.manifestScoreData.data.recommended));
+      const recommendedPassed: boolean = recommendedValues.has(false);
+
       // Regardless notify parent and update manifest call.
-      this.$emit("manifestTestDone", { score: this.manifestScore });
-      if (this.manifest) {
-        this.updateManifest(this.manifest);
-      }
+      this.$emit("manifestTestDone", { score: this.manifestScore, required: !requiredPassed, recommended: !recommendedPassed });
+      this.updateManifest(this.manifest);
     }
   }
 
@@ -674,28 +837,26 @@ export default class extends Vue {
         const response = await fetch(
           `${process.env.testAPIUrl}/WebManifest?site=${this.url}`
         );
-        const manifestScoreData = await response.json();
+        this.manifestScoreData = await response.json();
 
-        this.manifestScore = 15;
-
-        if (manifestScoreData.data !== null) {
-          if (manifestScoreData.data.required.start_url === true) {
+        if (this.manifestScoreData.data !== null) {
+          if (this.manifestScoreData.data.required.start_url === true) {
             this.manifestScore = this.manifestScore + 5;
           }
 
-          if (manifestScoreData.data.required.short_name === true) {
+          if (this.manifestScoreData.data.required.short_name === true) {
             this.manifestScore = this.manifestScore + 5;
           }
 
-          if (manifestScoreData.data.required.name === true) {
+          if (this.manifestScoreData.data.required.name === true) {
             this.manifestScore = this.manifestScore + 5;
           }
 
-          if (manifestScoreData.data.required.icons === true) {
+          if (this.manifestScoreData.data.required.icons === true) {
             this.manifestScore = this.manifestScore + 5;
           }
 
-          if (manifestScoreData.data.required.display === true) {
+          if (this.manifestScoreData.data.required.display === true) {
             this.manifestScore = this.manifestScore + 5;
           }
 
@@ -703,7 +864,14 @@ export default class extends Vue {
 
           if (this.manifest && this.manifest.generated === true) {
             this.noManifest = true;
-            return;
+
+            this.manifestScore = 0;
+          }
+          else if (!this.manifest) {
+            this.manifestScore = 0;
+          }
+          else {
+            this.manifestScore = this.manifestScore + 15;
           }
 
           resolve();
@@ -964,7 +1132,7 @@ export default class extends Vue {
 
       .cardIcon {
         color: #db3457;
-        margin-right: 8px;
+        margin-right: 20px;
         font-size: 12px;
       }
 
@@ -996,7 +1164,8 @@ export default class extends Vue {
 
   #securityBlock h4,
   #manifestBlock h4,
-  #serviceWorkerBlock h4 {
+  #serviceWorkerBlock h4,
+  #extrasBlock h4 {
     font-size: 16px;
     font-weight: bold;
     margin-bottom: 12px;

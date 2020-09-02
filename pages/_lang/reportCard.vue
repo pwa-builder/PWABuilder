@@ -129,17 +129,77 @@
         </footer>
       </div>
 
-      <div v-if="gotURL && overallScore < 80" id="infoSection">
-        <h2>Hub</h2>
+      <div v-if="gotURL && overallScore < 80 && !requiredMet" id="attachSection">
+        <div id="attachHeader">
+          <h2>Your app is a not a PWA</h2>
+
+          <button id="attachShare" aria-label="Share Report" @click="shareReport">
+            <i class="fas fa-share-alt"></i>
+          </button>
+        </div>
+
+        <p>But PWABuilder can help! Tap Upgrade to PWA below to see what your missing and get started!</p>
 
         <p>
-          We have taken a look at how well your website supports PWA features
-          and provided simple tools to help you fill in the gaps. When you’re
-          ready, click “Package My PWA” to finish up.
+          Also, if you want to build a PWA from scratch,
+          <a
+            href="https://github.com/pwa-builder/pwa-starter"
+          >tap here</a> to get started with the
+          PWABuilder pwa-starter!
         </p>
+
+        <div id="attachSectionActions">
+          <button @click="upgradeToPWA" id="upgradeButton" to="/publish">Upgrade to PWA</button>
+        </div>
       </div>
 
-      <div v-if="gotURL && overallScore >= 80" id="attachSection">
+      <div v-if="gotURL && overallScore >= 80 && requiredMet" id="attachSection">
+        <div id="attachHeader">
+          <h2>Your app is a PWA!</h2>
+
+          <button id="attachShare" aria-label="Share Report" @click="shareReport">
+            <i class="fas fa-share-alt"></i>
+          </button>
+        </div>
+
+        <p>
+          Congrats, your PWA meets the requirements for
+          <a
+            href="Browser Install in supported browsers"
+          >Browser Install in supported browsers</a>!
+        </p>
+
+        <img
+          src="~/assets/images/browserInstall.png"
+          alt="Screenshot of the browser install experience in Edge"
+        />
+
+        <p>
+          You can also tap "Package My PWA" to package your PWA for the app stores, but we recommend making sure your manifest meets our
+          recommended fields first.
+          <nuxt-link to="/generate">Tap Here</nuxt-link> 
+           to use PWABuilder to upgrade your manifest!
+        </p>
+
+        <p>
+          Also, if you include our recommended fields you can then enhance this experience even further with the PWABuilder
+          <a
+            href="https://components.pwabuilder.com/component/install_pwa"
+          >pwa-install component</a>.
+        </p>
+
+        <div id="attachSectionActions">
+          <nuxt-link id="buildLink" to="/generate">Upgrade My Manifest</nuxt-link>
+
+          <nuxt-link
+            @click="$awa( { 'referrerUri': 'https://www.pwabuilder.com/publishFromHome' });"
+            id="featuresLink"
+            to="/publish"
+          >Package My PWA</nuxt-link>
+        </div>
+      </div>
+
+      <div v-if="gotURL && overallScore >= 80 && requiredMet && recommendedMet" id="attachSection">
         <div id="attachHeader">
           <h2>Store Ready!</h2>
 
@@ -152,6 +212,22 @@
           Congrats! Tap "Package My PWA" to package your PWA for the app stores
           or tap "Feature Store" to check out the latest web components from the PWABuilder team to improve your PWA even further!
         </p>
+
+        <p>
+          Along with app stores, your PWA also meets the requirements for
+          <a
+            href="Browser Install in supported browsers"
+          >Browser Install in supported browsers</a>!
+          To enhance this experience even further, be sure to check out our
+          <a
+            href="https://components.pwabuilder.com/component/install_pwa"
+          >pwa-install component</a>.
+        </p>
+
+        <img
+          src="~/assets/images/browserInstall.png"
+          alt="Screenshot of the browser install experience in Edge"
+        />
 
         <div id="attachSectionActions">
           <nuxt-link
@@ -190,23 +266,35 @@
         class="scoreCard"
       ></ScoreCard>
 
-      <div id="toolkitSection" v-if="topSamples.length > 0">
+      <ScoreCard v-if="gotURL" :url="url" category="Extras" class="scoreCard"></ScoreCard>
+
+      <div
+        id="toolkitSection"
+        v-if="topSamples.length > 0 && gotURL && overallScore >= 80 && requiredMet"
+      >
         <h2>Add features to my PWA...</h2>
       </div>
 
-      <FeatureCard
-        class="topFeatures"
-        v-if="topSamples.length > 0"
-        v-for="(sample, index) in topSamples"
-        :class="{ firstFeature: index === 0 }"
-        :sample="sample"
-        :key="sample.id"
-        :showAddButton="true"
+      <div
+        id="featureCardBlock"
+        v-if="topSamples.length > 0 && gotURL && overallScore >= 80 && requiredMet"
       >
-        <i slot="iconSlot" class="fas fa-rocket"></i>
-      </FeatureCard>
+        <FeatureCard
+          class="topFeatures"
+          v-for="(sample, index) in topSamples"
+          :class="{ firstFeature: index === 0 }"
+          :sample="sample"
+          :key="sample.id"
+          :showAddButton="true"
+        >
+          <i slot="iconSlot" class="fas fa-rocket"></i>
+        </FeatureCard>
+      </div>
 
-      <div id="moreFeaturesBlock" v-if="topSamples.length > 0">
+      <div
+        id="moreFeaturesBlock"
+        v-if="topSamples.length > 0 && gotURL && overallScore >= 80 && requiredMet"
+      >
         <a href="https://components.pwabuilder.com/">View more</a>
       </div>
 
@@ -270,8 +358,12 @@ export default class extends Vue {
   public cleanedURL: string | null = null;
   public shared: boolean = false;
   public openDrop: boolean = false;
+
   public showCopyToast: boolean = false;
   public showShareToast: boolean = false;
+
+  public requiredMet: boolean = false;
+  public recommendedMet: boolean = false;
 
   public async created() {
     this.url$ = this.url;
@@ -324,6 +416,14 @@ export default class extends Vue {
 
   beforeDestroy() {
     (<any>window).removeEventListener("popstate", this.backAndForth);
+  }
+
+  public upgradeToPWA() {
+    const firstCardEl = this.$el.querySelector("#firstCard");
+
+    if (firstCardEl) {
+      firstCardEl.scrollIntoView();
+    }
   }
 
   public async backAndForth(e) {
@@ -518,6 +618,9 @@ export default class extends Vue {
   public manifestTestDone(ev) {
     const newScore = this.overallScore + ev.score;
     this.overallScore = newScore;
+
+    this.requiredMet = ev.required;
+    this.recommendedMet = ev.recommended;
   }
 
   public swTestDone(ev) {
@@ -552,6 +655,10 @@ declare var awa: any;
 <style lang="scss" scoped>
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
+
+#featureCardBlock {
+  display: contents;
+}
 
 #starterDropdown {
   position: absolute;
@@ -605,12 +712,12 @@ declare var awa: any;
 }
 
 #attachSection {
-  grid-column: 3 / span 8;
+  grid-column: 4 / span 10;
   background: white;
   padding: 20px;
   border-radius: 4px;
   margin-bottom: 2em;
-  margin-top: 4em;
+  margin-top: 2em;
   min-height: 12em;
 
   animation-name: fadein;
@@ -661,10 +768,39 @@ declare var awa: any;
   margin-left: 12px;
 }
 
+#attachSectionActions #upgradeButton {
+  justify-content: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  background: linear-gradient(to right, #1fc2c8, #9337d8 116%);
+  color: white;
+  border-radius: 20px;
+  height: 40px;
+  border: none;
+}
+
 #attachSection #attachHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+#attachSection #attachHeader p {
+  color: black;
+}
+
+#attachSection img {
+  width: 13em;
+  height: 7.2em;
+  object-fit: cover;
 }
 
 #attachShare {
@@ -827,7 +963,7 @@ h2 {
 }
 
 #inputSection {
-  grid-column: 1 / span 12;
+  grid-column: 1 / span 16;
   max-width: 800px;
 
   color: white;
@@ -1013,6 +1149,9 @@ h2 {
     display: flex;
     grid-template-columns: none;
     margin-bottom: 0;
+
+    flex-direction: column;
+    padding: 0px;
   }
 
   #inputSection {
@@ -1079,6 +1218,10 @@ h2 {
     margin-right: 25px;
   }
 
+  #attachSection img {
+    margin-bottom: 2em;
+  }
+
   #infoSection {
     margin-left: 25px;
     margin-right: 25px;
@@ -1138,7 +1281,7 @@ h2 {
   grid-column: 1 / span 4;
 
   @media (max-width: 900px) {
-    grid-column: 1 / span 12;
+    grid-column: 1 / span 4;
   }
 }
 
@@ -1170,7 +1313,7 @@ h2 {
 }
 
 .topFeatures {
-  grid-column: span 3;
+  grid-column: span 4;
 
   margin-bottom: 2em;
 
@@ -1184,7 +1327,7 @@ h2 {
 }
 
 .firstFeature {
-  grid-column: 1 / span 3;
+  grid-column: 1 / span 4;
 
   @media (max-width: 900px) {
     grid-column: 1 / span 6;
@@ -1192,7 +1335,7 @@ h2 {
 }
 
 #moreFeaturesBlock {
-  grid-column: 1 / span 12;
+  grid-column: 3 / span 12;
 
   width: 100%;
   display: flex;

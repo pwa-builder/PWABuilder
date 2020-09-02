@@ -1,6 +1,6 @@
 @mixin grid {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: repeat(16, 1fr);
   column-gap: 10px;
 
   padding: 0 52px;
@@ -10,8 +10,8 @@
   }
 
   @media screen and (min-width: 1336px) {
-    padding-left: 154px;
-    padding-right: 154px;
+    padding-left: 100px;
+    padding-right: 100px;
   }
 }
 

@@ -28,12 +28,14 @@ describe('store root', () => {
             const state = {
                 languages: collection,
                 displays: collection,
-                orientations: collection
+                orientations: collection,
+                categories: collection,
             };
             
             expect(root.getters.languagesNames(state, null, {} as RootState, null)[0]).to.be.equal(collection[0].name);
             expect(root.getters.displaysNames(state, null, {} as RootState, null)[0]).to.be.equal(collection[0].name);
             expect(root.getters.orientationsNames(state, null, {} as RootState, null)[0]).to.be.equal(collection[0].name);
+            expect(root.getters.categoriesNames(state, null, {} as RootState, null)[0]).to.be.equal(collection[0].name);
         });
     });
 });

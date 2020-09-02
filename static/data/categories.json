@@ -1,0 +1,92 @@
+[
+  {
+    "name": "all"
+  },
+  {
+    "name": "books"
+  },
+  {
+    "name": "business"
+  },
+  {
+    "name": "camera"
+  },
+  {
+    "name": "education"
+  },
+  {
+    "name": "entertainment"
+  },
+  {
+    "name": "finance"
+  },
+  {
+    "name": "fitness"
+  },
+  {
+    "name": "food"
+  },
+  {
+    "name": "games"
+  },
+  {
+    "name": "government"
+  },
+  {
+    "name": "health"
+  },
+  {
+    "name": "kids"
+  },
+  {
+    "name": "lifestyle"
+  },
+  {
+    "name": "magazines"
+  },
+  {
+    "name": "medical"
+  },
+  {
+    "name": "music"
+  },
+  {
+    "name": "navigation"
+  },
+  {
+    "name": "news"
+  },
+  {
+    "name": "personalization"
+  },
+  {
+    "name": "photo"
+  },
+  {
+    "name": "politics"
+  },
+  {
+    "name": "productivity"
+  },
+  {
+    "name": "security"
+  },
+  {
+    "name": "shopping"
+  },
+  {
+    "name": "social"
+  },
+  {
+    "name": "sports"
+  },
+  {
+    "name": "travel"
+  },
+  {
+    "name": "utilities"
+  },
+  {
+    "name": "weather"
+  }
+]
