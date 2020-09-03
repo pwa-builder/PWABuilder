@@ -1793,10 +1793,10 @@ footer a {
     padding-left: 31px !important;
     padding-right: 24px !important;
   }
-  #main #leftSide .animatedSection {
+  #generateMain #leftSide .animatedSection {
     width: 100%;
   }
-  #main #leftSide .animatedSection input {
+  #generateMain #leftSide .animatedSection input {
     width: 100%;
   }
   #iconGrid {
