@@ -7,7 +7,7 @@
       v-if="isInvalidScreenshotUrl"
       id="invalidUrlToast"
     >Invalid url(s): {{ `${invalidScreenshotUrlValues}` }}. Please try again.</div>
-    <main id="main" role="presentation">
+    <main id="generateMain" role="presentation">
       <section id="leftSide" :aria-hidden="ariaHidden">
         <header class="mastHead">
           <h2>{{ $t('generate.subtitle') }}</h2>
@@ -1617,7 +1617,7 @@ footer a {
   letter-spacing: -0.02em;
   color: #db3457;
 }
-#main {
+#generateMain {
   background: white;
   padding-left: 3%;
   padding-right: 3%;
@@ -1788,7 +1788,7 @@ footer a {
   #leftSide {
     width: 100%;
   }
-  #main {
+  #generateMain {
     flex-direction: column;
     padding-left: 31px !important;
     padding-right: 24px !important;
