@@ -56,7 +56,7 @@ export default class extends Vue {
 
   mounted(): void {
     this.url$ = this.url;
-    this.score = sessionStorage.getItem("overallGrade");
+    // this.score = sessionStorage.getItem("overallGrade");
     this.scrollTarget = document.querySelector("#scrollTarget");
 
     if (this.scrollTarget && "animate" in this.$el) {

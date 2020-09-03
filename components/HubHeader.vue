@@ -184,31 +184,25 @@ export default class extends Vue {
   }
 
   mounted() {
-    const storedScore = sessionStorage.getItem("overallGrade") || null;
+    this.calcedScore = this.score;
 
-    if (storedScore) {
-      this.calcedScore = parseInt(storedScore);
-    } else {
-      this.calcedScore = this.score;
+    if ((window as any).CSS && (window as any).CSS.registerProperty) {
+      try {
+        (CSS as any).registerProperty({
+          name: "--color-stop",
+          syntax: "<color>",
+          inherits: false,
+          initialValue: "transparent",
+        });
 
-      if ((window as any).CSS && (window as any).CSS.registerProperty) {
-        try {
-          (CSS as any).registerProperty({
-            name: "--color-stop",
-            syntax: "<color>",
-            inherits: false,
-            initialValue: "transparent",
-          });
-
-          (CSS as any).registerProperty({
-            name: "--color-start",
-            syntax: "<color>",
-            inherits: false,
-            initialValue: "transparent",
-          });
-        } catch (err) {
-          console.error(err);
-        }
+        (CSS as any).registerProperty({
+          name: "--color-start",
+          syntax: "<color>",
+          inherits: false,
+          initialValue: "transparent",
+        });
+      } catch (err) {
+        console.error(err);
       }
     }
   }
@@ -221,24 +215,6 @@ export default class extends Vue {
   updated() {
     if (this.manifest) {
       this.readyToPublish = true;
-    }
-    if ("requestIdleCallback" in window) {
-      // Use requestIdleCallback to schedule this since its not "necessary" work
-      // and we dont want this running in the middle of animations or user input
-      if (this.score) {
-        (window as any).requestIdleCallback(
-          () => {
-            sessionStorage.setItem("overallGrade", this.score.toString());
-          },
-          {
-            timeout: 2000,
-          }
-        );
-      }
-    } else {
-      if (this.score) {
-        sessionStorage.setItem("overallGrade", this.score.toString());
-      }
     }
   }
 

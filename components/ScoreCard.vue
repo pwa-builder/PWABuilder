@@ -557,13 +557,6 @@ export default class extends Vue {
   private async lookAtManifest(): Promise<void> {
     // Gets manifest from api, then scores if not generated.
     try {
-      await this.getManifestInformation();
-
-      if (this.manifest && this.manifest.generated === true) {
-        this.noManifest = true;
-        return;
-      }
-
       await this.testManifest();
     } catch (ex) {
       // If manifest is not retrieved or DNE will fall in here. Mostly effects Security Score
@@ -591,33 +584,44 @@ export default class extends Vue {
   private async testManifest() {
     this.noManifest = false;
 
-    const response = await fetch(
-      `${process.env.testAPIUrl}/WebManifest?site=${this.url}`
-    );
-    const manifestScoreData = await response.json();
+    await this.getManifestInformation();
 
-    this.manifestScore = 15;
+    try {
+      const response = await fetch(
+        `${process.env.testAPIUrl}/WebManifest?site=${this.url}`
+      );
+      const manifestScoreData = await response.json();
 
-    if (manifestScoreData.data !== null) {
-      if (manifestScoreData.data.required.start_url === true) {
-        this.manifestScore = this.manifestScore + 5;
+      this.manifestScore = 15;
+
+      if (manifestScoreData.data !== null) {
+        if (manifestScoreData.data.required.start_url === true) {
+          this.manifestScore = this.manifestScore + 5;
+        }
+
+        if (manifestScoreData.data.required.short_name === true) {
+          this.manifestScore = this.manifestScore + 5;
+        }
+
+        if (manifestScoreData.data.required.name === true) {
+          this.manifestScore = this.manifestScore + 5;
+        }
+
+        if (manifestScoreData.data.required.icons === true) {
+          this.manifestScore = this.manifestScore + 5;
+        }
+
+        if (manifestScoreData.data.required.display === true) {
+          this.manifestScore = this.manifestScore + 5;
+        }
+
+        if (this.manifest && this.manifest.generated === true) {
+          this.noManifest = true;
+          return;
+        }
       }
-
-      if (manifestScoreData.data.required.short_name === true) {
-        this.manifestScore = this.manifestScore + 5;
-      }
-
-      if (manifestScoreData.data.required.name === true) {
-        this.manifestScore = this.manifestScore + 5;
-      }
-
-      if (manifestScoreData.data.required.icons === true) {
-        this.manifestScore = this.manifestScore + 5;
-      }
-
-      if (manifestScoreData.data.required.display === true) {
-        this.manifestScore = this.manifestScore + 5;
-      }
+    } catch (err) {
+      console.error(err);
     }
   }
 
