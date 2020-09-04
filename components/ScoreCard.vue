@@ -631,7 +631,7 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>Service Worker has cache handlers</span>
+            <span>Works Offline</span>
           </div>
 
           <span class="subScoreSpan">0</span>
