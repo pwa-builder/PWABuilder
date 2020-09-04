@@ -261,9 +261,14 @@
             </div>
           </li>
 
-          <li v-bind:class="{ good: manifest && this.manifestScoreData.data.recommended.maskable_icon }">
+          <li
+            v-bind:class="{ good: manifest && this.manifestScoreData.data.recommended.maskable_icon }"
+          >
             <div class="listSubDiv">
-              <span class="cardIcon" v-if="manifest && this.manifestScoreData.data.recommended.maskable_icon">
+              <span
+                class="cardIcon"
+                v-if="manifest && this.manifestScoreData.data.recommended.maskable_icon"
+              >
                 <i class="fas fa-check"></i>
               </span>
               <span class="cardIcon" v-if="!this.manifestScoreData.data.recommended.maskable_icon">
@@ -450,10 +455,18 @@
         <ul>
           <li v-bind:class="{ good: serviceWorkerData.hasSW }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && serviceWorkerData.hasSW">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="serviceWorkerData && serviceWorkerData.hasSW"
+              >
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && !serviceWorkerData.hasSW">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="serviceWorkerData && !serviceWorkerData.hasSW"
+              >
                 <i class="fas fa-times"></i>
               </span>
 
@@ -464,28 +477,44 @@
 
             <span class="subScoreSpan" v-if="!serviceWorkerData && !serviceWorkerData.hasSW">0</span>
           </li>
-          <li v-bind:class="{ good: serviceWorkerData.cache }">
+          <li v-bind:class="{ good: this.worksOffline }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && serviceWorkerData.cache">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="serviceWorkerData && this.worksOffline"
+              >
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && !serviceWorkerData.cache">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="serviceWorkerData && !this.worksOffline"
+              >
                 <i class="fas fa-times"></i>
               </span>
 
-              <span>Service Worker has cache handlers</span>
+              <span>Works offline</span>
             </div>
 
-            <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.cache">10</span>
+            <span class="subScoreSpan" v-if="serviceWorkerData && this.worksOffline">10</span>
 
-            <span class="subScoreSpan" v-if="!serviceWorkerData && !serviceWorkerData.cache">0</span>
+            <span class="subScoreSpan" v-if="!serviceWorkerData && !this.worksOffline">0</span>
           </li>
           <li v-bind:class="{ good: serviceWorkerData.scope }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && serviceWorkerData.scope">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="serviceWorkerData && serviceWorkerData.scope"
+              >
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && !serviceWorkerData.scope">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="serviceWorkerData && !serviceWorkerData.scope"
+              >
                 <i class="fas fa-times"></i>
               </span>
 
@@ -545,10 +574,18 @@
         <ul>
           <li v-bind:class="{ good: serviceWorkerData.pushReg }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && serviceWorkerData.pushReg">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="serviceWorkerData && serviceWorkerData.pushReg"
+              >
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && !serviceWorkerData.pushReg">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="serviceWorkerData && !serviceWorkerData.pushReg"
+              >
                 <i class="fas fa-times"></i>
               </span>
 
@@ -637,7 +674,9 @@
           <li>
             <div class="listSubDiv">
               <span>
-                <a href="https://docs.microsoft.com/en-us/microsoft-edge/devtools-guide-chromium/accessibility/reference">Accessibility</a>
+                <a
+                  href="https://docs.microsoft.com/en-us/microsoft-edge/devtools-guide-chromium/accessibility/reference"
+                >Accessibility</a>
               </span>
             </div>
           </li>
@@ -645,7 +684,9 @@
           <li>
             <div class="listSubDiv">
               <span>
-                <a href="https://docs.microsoft.com/en-us/dual-screen/web/">Dual Screen device support</a>
+                <a
+                  href="https://docs.microsoft.com/en-us/dual-screen/web/"
+                >Dual Screen device support</a>
               </span>
             </div>
           </li>
@@ -653,7 +694,9 @@
           <li>
             <div class="listSubDiv">
               <span>
-                <a href="https://components.pwabuilder.com/component/install_pwa">Browser Install Experience</a>
+                <a
+                  href="https://components.pwabuilder.com/component/install_pwa"
+                >Browser Install Experience</a>
               </span>
             </div>
           </li>
@@ -669,7 +712,11 @@
         </button>
       </nuxt-link>
 
-      <nuxt-link v-else-if="category === 'Manifest' && !brokenManifest" to="/generate" tabindex="-1">
+      <nuxt-link
+        v-else-if="category === 'Manifest' && !brokenManifest"
+        to="/generate"
+        tabindex="-1"
+      >
         <button v-if="!noManifest" id="editButton">
           View Manifest
           <i class="fas fa-arrow-right"></i>
@@ -681,10 +728,9 @@
         </button>
       </nuxt-link>
       <div class="brkManifestError" v-if="brokenManifest">
-        Couldn't find an app manifest.<br/>
-        <a
-          href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
-        >Learn about manifests here</a>
+        Couldn't find an app manifest.
+        <br />
+        <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest">Learn about manifests here</a>
       </div>
 
       <div class="brkManifestError" v-if="category === 'Security' && validSSL === false">
@@ -733,6 +779,7 @@ export default class extends Vue {
 
   serviceWorkerData: any = null;
   noServiceWorker: boolean | null = null;
+  worksOffline: boolean | null = null;
 
   manifestScore: number = 0;
   swScore: number = 0;
@@ -802,7 +849,6 @@ export default class extends Vue {
     } catch (ex) {
       // If manifest is not retrieved or DNE will fall in here. Mostly effects Security Score
       if (this.manifest === null) {
-
         this.hasHTTPS = false;
         this.validSSL = false;
         this.noMixedContent = false;
@@ -815,16 +861,23 @@ export default class extends Vue {
       this.noManifest = true;
     } finally {
       // look at required, recommended
-      console.log(this.manifestScoreData.data);
-      const requiredValues = new Set(Object.values(this.manifestScoreData.data.required));
+      const requiredValues = new Set(
+        Object.values(this.manifestScoreData.data.required)
+      );
 
       const requiredPassed: boolean = requiredValues.has(false);
 
-      const recommendedValues = new Set(Object.values(this.manifestScoreData.data.recommended));
+      const recommendedValues = new Set(
+        Object.values(this.manifestScoreData.data.recommended)
+      );
       const recommendedPassed: boolean = recommendedValues.has(false);
 
       // Regardless notify parent and update manifest call.
-      this.$emit("manifestTestDone", { score: this.manifestScore, required: !requiredPassed, recommended: !recommendedPassed });
+      this.$emit("manifestTestDone", {
+        score: this.manifestScore,
+        required: !requiredPassed,
+        recommended: !recommendedPassed,
+      });
       this.updateManifest(this.manifest);
     }
   }
@@ -866,11 +919,9 @@ export default class extends Vue {
             this.noManifest = true;
 
             this.manifestScore = 0;
-          }
-          else if (!this.manifest) {
+          } else if (!this.manifest) {
             this.manifestScore = 0;
-          }
-          else {
+          } else {
             this.manifestScore = this.manifestScore + 15;
           }
 
@@ -893,33 +944,10 @@ export default class extends Vue {
       return;
     }
 
-    // Check cache and use cached version.
-    const savedData = sessionStorage.getItem(this.url);
-    const sessionSavedScore = sessionStorage.getItem("swScore");
-    const savedScore = sessionSavedScore ? JSON.parse(sessionSavedScore) : 0;
-
-    if (savedData) {
-      try {
-        let cleanedData = JSON.parse(savedData);
-        this.serviceWorkerData = cleanedData;
-
-        if (savedScore) {
-          let cleanedScore = JSON.parse(savedScore);
-          this.swScore = cleanedScore;
-
-          this.$emit("serviceWorkerTestDone", { score: this.swScore });
-        }
-      } catch (err) {
-        this.noSwScore();
-      } finally {
-        return;
-      }
-    } else {
-      try {
-        this.scoreServiceWorker();
-      } catch (e) {
-        this.noSwScore();
-      }
+    try {
+      this.scoreServiceWorker();
+    } catch (e) {
+      this.noSwScore();
     }
   }
 
@@ -964,24 +992,24 @@ export default class extends Vue {
         Caches stuff
         +10 points to user
       */
-        if (this.serviceWorkerData.cache) {
-          /*const hasCache = this.serviceWorkerData.cache.some(
-            entry => entry.fromSW === true
-          );*/
 
-          this.swScore = this.swScore + 10;
+        if (this.serviceWorkerData.hasSW !== null) {
+          try {
+            const cacheCheckResponse = await fetch(
+              `${process.env.testAPIUrl}/Offline?site=${cleanUrl}`
+            );
+            const offlineCheckData = await cacheCheckResponse.json();
+
+            if ((offlineCheckData.data as string) === "loaded") {
+              this.worksOffline = true;
+
+              this.swScore = this.swScore + 10;
+            }
+          } catch (err) {
+            console.error("Site does not load offline");
+          }
         }
-        /*
-        Has push reg
-        +5 points to user
-      */
-        // if (this.serviceWorkerData.pushReg !== null) {
-        //   this.swScore = this.swScore + 5;
-        // }
-        /*
-        Has scope that points to root
-        +5 points to user
-      */
+
         if (
           this.serviceWorkerData.scope //&&
           // this.serviceWorkerData.scope.slice(0, -1) ===
