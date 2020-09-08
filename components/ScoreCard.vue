@@ -18,173 +18,228 @@
 
     <div class="cardContent">
       <!-- Security section -->
-      <ul v-if="category === 'Security'">
-        <li v-bind:class="{ good: hasHTTPS }">
-          <div>
-            <span class="cardIcon" v-if="hasHTTPS">
-              <i class="fas fa-check"></i>
-            </span>
+      <div id="securityBlock" v-if="category === 'Security'">
+        <h4>Required</h4>
 
-            <span class="cardIcon" v-else>
-              <i class="fas fa-times"></i>
-            </span>
+        <ul>
+          <li v-bind:class="{ good: hasHTTPS }">
+            <div>
+              <span class="cardIcon" aria-hidden="true" v-if="hasHTTPS">
+                <i class="fas fa-check"></i>
+              </span>
 
-            <span>Uses HTTPS URL</span>
-          </div>
+              <span class="cardIcon" aria-hidden="true" v-else>
+                <i class="fas fa-times"></i>
+              </span>
 
-          <span class="subScoreSpan" v-if="hasHTTPS">10</span>
+              <span>Uses HTTPS URL</span>
+            </div>
 
-          <span class="subScoreSpan" v-else-if="!hasHTTPS">0</span>
-        </li>
-        <li v-bind:class="{ good: validSSL }">
-          <div>
-            <span class="cardIcon" v-if="validSSL">
-              <i class="fas fa-check"></i>
-            </span>
-            <span class="cardIcon" v-else-if="!validSSL">
-              <i class="fas fa-times"></i>
-            </span>
+            <span class="subScoreSpan" v-if="hasHTTPS">10</span>
 
-            <span>Valid SSL certificate is used</span>
-          </div>
+            <span class="subScoreSpan" v-else-if="!hasHTTPS">0</span>
+          </li>
+          <li v-bind:class="{ good: validSSL }">
+            <div>
+              <span class="cardIcon" aria-hidden="true" v-if="validSSL">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" aria-hidden="true" v-else-if="!validSSL">
+                <i class="fas fa-times"></i>
+              </span>
 
-          <span class="subScoreSpan" v-if="validSSL">5</span>
+              <span>Valid SSL certificate is used</span>
+            </div>
 
-          <span class="subScoreSpan" v-else-if="!validSSL">0</span>
-        </li>
-        <li v-bind:class="{ good: noMixedContent }">
-          <div>
-            <span class="cardIcon" v-if="noMixedContent">
-              <i class="fas fa-check"></i>
-            </span>
+            <span class="subScoreSpan" v-if="validSSL">5</span>
 
-            <span class="cardIcon" v-else>
-              <i class="fas fa-times"></i>
-            </span>
+            <span class="subScoreSpan" v-else-if="!validSSL">0</span>
+          </li>
+          <li v-bind:class="{ good: noMixedContent }">
+            <div>
+              <span class="cardIcon" aria-hidden="true" v-if="noMixedContent">
+                <i class="fas fa-check"></i>
+              </span>
 
-            <span>No "mixed" content on page</span>
-          </div>
+              <span class="cardIcon" aria-hidden="true" v-else>
+                <i class="fas fa-times"></i>
+              </span>
 
-          <span class="subScoreSpan" v-if="noMixedContent">5</span>
+              <span>No "mixed" content on page</span>
+            </div>
 
-          <span class="subScoreSpan" v-else-if="!noMixedContent">0</span>
-        </li>
-      </ul>
+            <span class="subScoreSpan" v-if="noMixedContent">5</span>
+
+            <span class="subScoreSpan" v-else-if="!noMixedContent">0</span>
+          </li>
+        </ul>
+      </div>
 
       <!-- Manifest section -->
-      <ul v-if="category === 'Manifest' && manifest && !noManifest">
-        <li v-bind:class="{ good: manifest }">
-          <div class="listSubDiv">
-            <span class="cardIcon" v-if="manifest">
-              <i class="fas fa-check"></i>
-            </span>
-            <span class="cardIcon" v-if="!manifest">
-              <i class="fas fa-times"></i>
-            </span>
+      <div id="manifestBlock" v-if="category === 'Manifest' && manifest && !noManifest">
+        <h4>Required</h4>
 
-            <span>Web Manifest properly attached</span>
-          </div>
+        <ul>
+          <li v-bind:class="{ good: manifest }">
+            <div class="listSubDiv">
+              <span class="cardIcon" aria-hidden="true" v-if="manifest">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" aria-hidden="true" v-if="!manifest">
+                <i class="fas fa-times"></i>
+              </span>
 
-          <span class="subScoreSpan" v-if="manifest">15</span>
+              <span>Web Manifest properly attached</span>
+            </div>
 
-          <span class="subScoreSpan" v-else-if="!manifest">0</span>
-        </li>
-        <li v-bind:class="{ good: manifest && manifest.display }">
-          <div class="listSubDiv">
-            <span class="cardIcon" v-if="manifest && manifest.display">
-              <i class="fas fa-check"></i>
-            </span>
-            <span class="cardIcon" v-if="manifest && !manifest.display">
-              <i class="fas fa-times"></i>
-            </span>
+            <span class="subScoreSpan" v-if="manifest">15</span>
 
-            <span>
-              <code>display</code> property utilized
-            </span>
-          </div>
+            <span class="subScoreSpan" v-else-if="!manifest">0</span>
+          </li>
+          <li v-bind:class="{ good: manifest && manifest.display }">
+            <div class="listSubDiv">
+              <span class="cardIcon" aria-hidden="true" v-if="manifest && manifest.display">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" aria-hidden="true" v-if="manifest && !manifest.display">
+                <i class="fas fa-times"></i>
+              </span>
 
-          <span class="subScoreSpan" v-if="manifest.display">5</span>
+              <span>
+                <code>display</code> property utilized
+              </span>
+            </div>
 
-          <span class="subScoreSpan" v-else-if="!manifest.display">0</span>
-        </li>
-        <li v-bind:class="{ good: manifest && manifest.icons }">
-          <div class="listSubDiv">
-            <span class="cardIcon" v-if="manifest && manifest.icons">
-              <i class="fas fa-check"></i>
-            </span>
-            <span class="cardIcon" v-if="manifest && !manifest.icons">
-              <i class="fas fa-times"></i>
-            </span>
+            <span class="subScoreSpan" v-if="manifest.display">5</span>
 
-            <span>
-              Lists
-              <code>icons</code> for add to home screen
-            </span>
-          </div>
+            <span class="subScoreSpan" v-else-if="!manifest.display">0</span>
+          </li>
+          <li v-bind:class="{ good: manifest && manifest.icons }">
+            <div class="listSubDiv">
+              <span class="cardIcon" aria-hidden="true" v-if="manifest && manifest.icons">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" aria-hidden="true" v-if="manifest && !manifest.icons">
+                <i class="fas fa-times"></i>
+              </span>
 
-          <span class="subScoreSpan" v-if="manifest.icons">5</span>
+              <span>
+                Lists
+                <code>icons</code> for add to home screen
+              </span>
+            </div>
 
-          <span class="subScoreSpan" v-else-if="!manifest.icons">0</span>
-        </li>
-        <li v-bind:class="{ good: manifest && manifest.name }">
-          <div class="listSubDiv">
-            <span class="cardIcon" v-if="manifest && manifest.name">
-              <i class="fas fa-check"></i>
-            </span>
-            <span class="cardIcon" v-if="manifest && !manifest.name">
-              <i class="fas fa-times"></i>
-            </span>
+            <span class="subScoreSpan" v-if="manifest.icons">5</span>
 
-            <span>
-              Contains
-              <code>name</code> property
-            </span>
-          </div>
+            <span class="subScoreSpan" v-else-if="!manifest.icons">0</span>
+          </li>
+          <li v-bind:class="{ good: manifest && manifest.name }">
+            <div class="listSubDiv">
+              <span class="cardIcon" aria-hidden="true" v-if="manifest && manifest.name">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" aria-hidden="true" v-if="manifest && !manifest.name">
+                <i class="fas fa-times"></i>
+              </span>
 
-          <span class="subScoreSpan" v-if="manifest.name">5</span>
+              <span>
+                Contains
+                <code>name</code> property
+              </span>
+            </div>
 
-          <span class="subScoreSpan" v-else-if="!manifest.name">0</span>
-        </li>
-        <li v-bind:class="{ good: manifest && manifest.short_name }">
-          <div class="listSubDiv">
-            <span class="cardIcon" v-if="manifest && manifest.short_name">
-              <i class="fas fa-check"></i>
-            </span>
-            <span class="cardIcon" v-if="manifest && !manifest.short_name">
-              <i class="fas fa-times"></i>
-            </span>
+            <span class="subScoreSpan" v-if="manifest.name">5</span>
 
-            <span>
-              Contains
-              <code>short_name</code> property
-            </span>
-          </div>
+            <span class="subScoreSpan" v-else-if="!manifest.name">0</span>
+          </li>
+          <li v-bind:class="{ good: manifest && manifest.short_name }">
+            <div class="listSubDiv">
+              <span class="cardIcon" aria-hidden="true" v-if="manifest && manifest.short_name">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" aria-hidden="true" v-if="manifest && !manifest.short_name">
+                <i class="fas fa-times"></i>
+              </span>
 
-          <span class="subScoreSpan" v-if="manifest.short_name">5</span>
+              <span>
+                Contains
+                <code>short_name</code> property
+              </span>
+            </div>
 
-          <span class="subScoreSpan" v-else-if="!manifest.short_name">0</span>
-        </li>
+            <span class="subScoreSpan" v-if="manifest.short_name">5</span>
 
-        <li v-bind:class="{ good: manifest && manifest.start_url }">
-          <div class="listSubDiv">
-            <span class="cardIcon" v-if="manifest && manifest.start_url">
-              <i class="fas fa-check"></i>
-            </span>
-            <span class="cardIcon" v-if="manifest && !manifest.start_url">
-              <i class="fas fa-times"></i>
-            </span>
+            <span class="subScoreSpan" v-else-if="!manifest.short_name">0</span>
+          </li>
 
-            <span>
-              Designates a
-              <code>start_url</code>
-            </span>
-          </div>
+          <li v-bind:class="{ good: manifest && manifest.start_url }">
+            <div class="listSubDiv">
+              <span class="cardIcon" aria-hidden="true" v-if="manifest && manifest.start_url">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" aria-hidden="true" v-if="manifest && !manifest.start_url">
+                <i class="fas fa-times"></i>
+              </span>
 
-          <span class="subScoreSpan" v-if="manifest.start_url">5</span>
+              <span>
+                Designates a
+                <code>start_url</code>
+              </span>
+            </div>
 
-          <span class="subScoreSpan" v-else-if="!manifest.start_url">0</span>
-        </li>
-      </ul>
+            <span class="subScoreSpan" v-if="manifest.start_url">5</span>
+
+            <span class="subScoreSpan" v-else-if="!manifest.start_url">0</span>
+          </li>
+        </ul>
+
+        <h4>Recommended</h4>
+
+        <ul>
+          <li v-bind:class="{ good: manifest && manifest.screenshots }">
+            <div class="listSubDiv">
+              <span class="cardIcon" aria-hidden="true" v-if="manifest.screenshots">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" aria-hidden="true" v-if="!manifest.screenshots">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>Has Screenshots</span>
+            </div>
+          </li>
+
+          <li v-bind:class="{ good: manifest && manifest.categories }">
+            <div class="listSubDiv">
+              <span class="cardIcon" aria-hidden="true" v-if="manifest.categories">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" aria-hidden="true" v-if="!manifest.categories">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>Has Categories</span>
+            </div>
+          </li>
+        </ul>
+
+        <h4>Optional</h4>
+
+        <ul>
+          <li v-bind:class="{ good: manifest && manifest.shortcuts }">
+            <div class="listSubDiv">
+              <span class="cardIcon" aria-hidden="true" v-if="manifest.shortcuts">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" aria-hidden="true" v-if="!manifest.shortcuts">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>Uses Shortcuts</span>
+            </div>
+          </li>
+        </ul>
+      </div>
 
       <ul v-if="category === 'Manifest' && !manifest && !noManifest">
         <li>
@@ -204,7 +259,7 @@
       <ul id="noManifest" v-if="category === 'Manifest' && noManifest">
         <li>
           <div class="listSubDiv">
-            <span class="cardIcon">
+            <span class="cardIcon" aria-hidden="true">
               <i class="fas fa-times"></i>
             </span>
 
@@ -228,7 +283,7 @@
         </li>
         <li>
           <div class="listSubDiv">
-            <span class="cardIcon">
+            <span class="cardIcon" aria-hidden="true">
               <i class="fas fa-times"></i>
             </span>
 
@@ -242,7 +297,7 @@
         </li>
         <li>
           <div class="listSubDiv">
-            <span class="cardIcon">
+            <span class="cardIcon" aria-hidden="true">
               <i class="fas fa-times"></i>
             </span>
 
@@ -256,7 +311,7 @@
         </li>
         <li>
           <div class="listSubDiv">
-            <span class="cardIcon">
+            <span class="cardIcon" aria-hidden="true">
               <i class="fas fa-times"></i>
             </span>
 
@@ -270,7 +325,7 @@
         </li>
         <li>
           <div class="listSubDiv">
-            <span class="cardIcon">
+            <span class="cardIcon" aria-hidden="true">
               <i class="fas fa-times"></i>
             </span>
 
@@ -285,78 +340,102 @@
       </ul>
 
       <!-- service worker section -->
-      <ul v-if="category === 'Service Worker' && serviceWorkerData">
-        <li v-bind:class="{ good: serviceWorkerData.hasSW }">
-          <div class="listSubDiv">
-            <span class="cardIcon" v-if="serviceWorkerData && serviceWorkerData.hasSW">
-              <i class="fas fa-check"></i>
-            </span>
-            <span class="cardIcon" v-if="serviceWorkerData && !serviceWorkerData.hasSW">
-              <i class="fas fa-times"></i>
-            </span>
+      <div id="serviceWorkerBlock" v-if="category === 'Service Worker' && serviceWorkerData">
+        <h4>Required</h4>
 
-            <span>Has a Service Worker</span>
-          </div>
+        <ul>
+          <li v-bind:class="{ good: serviceWorkerData.hasSW }">
+            <div class="listSubDiv">
+              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && serviceWorkerData.hasSW">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && !serviceWorkerData.hasSW">
+                <i class="fas fa-times"></i>
+              </span>
 
-          <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.hasSW">20</span>
+              <span>Has a Service Worker</span>
+            </div>
 
-          <span class="subScoreSpan" v-if="!serviceWorkerData && !serviceWorkerData.hasSW">0</span>
-        </li>
-        <li v-bind:class="{ good: serviceWorkerData.cache }">
-          <div class="listSubDiv">
-            <span class="cardIcon" v-if="serviceWorkerData && serviceWorkerData.cache">
-              <i class="fas fa-check"></i>
-            </span>
-            <span class="cardIcon" v-if="serviceWorkerData && !serviceWorkerData.cache">
-              <i class="fas fa-times"></i>
-            </span>
+            <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.hasSW">20</span>
 
-            <span>Service Worker has cache handlers</span>
-          </div>
+            <span class="subScoreSpan" v-if="!serviceWorkerData && !serviceWorkerData.hasSW">0</span>
+          </li>
+          <li v-bind:class="{ good: serviceWorkerData.cache }">
+            <div class="listSubDiv">
+              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && serviceWorkerData.cache">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && !serviceWorkerData.cache">
+                <i class="fas fa-times"></i>
+              </span>
 
-          <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.cache">10</span>
+              <span>Service Worker has cache handlers</span>
+            </div>
 
-          <span class="subScoreSpan" v-if="!serviceWorkerData && !serviceWorkerData.cache">0</span>
-        </li>
-        <li v-bind:class="{ good: serviceWorkerData.scope }">
-          <div class="listSubDiv">
-            <span class="cardIcon" v-if="serviceWorkerData && serviceWorkerData.scope">
-              <i class="fas fa-check"></i>
-            </span>
-            <span class="cardIcon" v-if="serviceWorkerData && !serviceWorkerData.scope">
-              <i class="fas fa-times"></i>
-            </span>
+            <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.cache">10</span>
 
-            <span>
-              Service Worker has the correct
-              <code>scope</code>
-            </span>
-          </div>
+            <span class="subScoreSpan" v-if="!serviceWorkerData && !serviceWorkerData.cache">0</span>
+          </li>
+          <li v-bind:class="{ good: serviceWorkerData.scope }">
+            <div class="listSubDiv">
+              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && serviceWorkerData.scope">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && !serviceWorkerData.scope">
+                <i class="fas fa-times"></i>
+              </span>
 
-          <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.scope">10</span>
+              <span>
+                Service Worker has the correct
+                <code>scope</code>
+              </span>
+            </div>
 
-          <span class="subScoreSpan" v-if="!serviceWorkerData && !serviceWorkerData.scope">0</span>
-        </li>
-        <!-- <li v-bind:class="{ good: serviceWorkerData.pushReg }">
-          <div class="listSubDiv">
-            <span class="cardIcon" v-if="serviceWorkerData && serviceWorkerData.pushReg">
-              <i class="fas fa-check"></i>
-            </span>
-            <span class="cardIcon" v-if="serviceWorkerData && !serviceWorkerData.pushReg">
-              <i class="fas fa-times"></i>
-            </span>
+            <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.scope">10</span>
 
-            <span>
-              Service Worker has a
-              <code>pushManager</code> registration
-            </span>
-          </div>
+            <span class="subScoreSpan" v-if="!serviceWorkerData && !serviceWorkerData.scope">0</span>
+          </li>
+          <!-- <li v-bind:class="{ good: serviceWorkerData.pushReg }">
+            <div class="listSubDiv">
+              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && serviceWorkerData.pushReg">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && !serviceWorkerData.pushReg">
+                <i class="fas fa-times"></i>
+              </span>
 
-          <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.pushReg">5</span>
+              <span>
+                Service Worker has a
+                <code>pushManager</code> registration
+              </span>
+            </div>
 
-          <span class="subScoreSpan" v-if="serviceWorkerData && !serviceWorkerData.pushReg">0</span>
-        </li>-->
-      </ul>
+            <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.pushReg">5</span>
+
+            <span class="subScoreSpan" v-if="serviceWorkerData && !serviceWorkerData.pushReg">0</span>
+          </li>-->
+        </ul>
+
+        <h4>Optional</h4>
+
+        <ul>
+          <li v-bind:class="{ good: serviceWorkerData.pushReg }">
+            <div class="listSubDiv">
+              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && serviceWorkerData.pushReg">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && !serviceWorkerData.pushReg">
+                <i class="fas fa-times"></i>
+              </span>
+
+              <span>
+                Service Worker has a
+                <code>pushManager</code> registration
+              </span>
+            </div>
+          </li>
+        </ul>
+      </div>
 
       <ul v-if="category === 'Service Worker' && !serviceWorkerData && !noServiceWorker">
         <li>
@@ -376,7 +455,7 @@
       <ul id="noSWP" v-if="category === 'Service Worker' && noServiceWorker">
         <li>
           <div class="listSubDiv">
-            <span class="cardIcon">
+            <span class="cardIcon" aria-hidden="true">
               <i class="fas fa-times"></i>
             </span>
 
@@ -387,7 +466,7 @@
         </li>
         <li>
           <div class="listSubDiv">
-            <span class="cardIcon">
+            <span class="cardIcon" aria-hidden="true">
               <i class="fas fa-times"></i>
             </span>
 
@@ -398,7 +477,7 @@
         </li>
         <li>
           <div class="listSubDiv">
-            <span class="cardIcon">
+            <span class="cardIcon" aria-hidden="true">
               <i class="fas fa-times"></i>
             </span>
 
@@ -435,29 +514,28 @@
         </button>
       </nuxt-link>
 
-      <nuxt-link v-else-if="category === 'Manifest'" to="/generate" tabindex="-1">
+      <nuxt-link v-else-if="category === 'Manifest' && !brokenManifest" to="/generate" tabindex="-1">
         <button v-if="!noManifest" id="editButton">
           View Manifest
           <i class="fas fa-arrow-right"></i>
         </button>
 
-        <button v-else-if="noManifest && !brokenManifest">
+        <button v-else-if="noManifest">
           View Generated Manifest
           <i class="fas fa-arrow-right"></i>
         </button>
-        <div class="brkManifestError" v-if="brokenManifest">
-          Couldn't find an
-          <a
-            tabindex="-1"
-            href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
-          >app manifest</a>
-        </div>
       </nuxt-link>
+      <div class="brkManifestError" v-if="brokenManifest">
+        Couldn't find an app manifest.<br/>
+        <a
+          href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
+        >Learn about manifests here</a>
+      </div>
 
       <div class="brkManifestError" v-if="category === 'Security' && !validSSL">
         <p>HTTPS not detected.</p>
         <p class="brkManifestHelp">
-          <i class="fas fa-info-circle"></i>
+          <i class="fas fa-info-circle" aria-hidden="true"></i>
           You can use
           <a href="https://letsencrypt.org/">LetsEncrypt</a> to get a free HTTPS certificate, or
           <a
@@ -580,11 +658,12 @@ export default class extends Vue {
       }
 
       this.noManifest = true;
-      return;
     } finally {
       // Regardless notify parent and update manifest call.
       this.$emit("manifestTestDone", { score: this.manifestScore });
-      this.updateManifest(this.manifest);
+      if (this.manifest) {
+        this.updateManifest(this.manifest);
+      }
     }
   }
 
@@ -792,16 +871,22 @@ export default class extends Vue {
     align-items: center;
   }
 
-  h3 {
-    color: #707070;
+  h4, h3 {
+    color: black;
 
     font-family: sans-serif;
     font-style: normal;
     font-weight: 600;
-    font-size: 12px;
+    font-size: 15px;
     line-height: 18px;
     letter-spacing: 0.04em;
     text-transform: uppercase;
+  }
+
+  h4 {
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 12px;
   }
 
   ul {
