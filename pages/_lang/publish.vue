@@ -62,7 +62,7 @@
           :placeholder="$t('publish.placeholder_publisher')"
           type="text"
           v-model="appxForm.publisher"
-          requied
+          required
         />
 
         <div class="form-item">
@@ -75,7 +75,7 @@
           :placeholder="$t('publish.placeholder_identity')"
           type="text"
           v-model="appxForm.publisher_id"
-          requied
+          required
         />
 
         <div class="form-item">
@@ -86,7 +86,7 @@
           :placeholder="$t('publish.placeholder_package')"
           type="text"
           v-model="appxForm.package"
-          requied
+          required
         />
 
         <div class="form-item">
@@ -97,7 +97,7 @@
           :placeholder="$t('publish.placeholder_version')"
           type="text"
           v-model="appxForm.version"
-          requied
+          required
         />
 
         <p class="l-generator-error" v-if="appxError">

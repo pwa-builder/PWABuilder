@@ -7,22 +7,22 @@
       :expanded="!gotURL"
     ></HubHeader>
 
-    <div v-if="showCopyToast" id="gitCopyToast">
+    <div v-if="showCopyToast" id="gitCopyToast" role="alert">
       <span>git clone command copied to your clipboard</span>
     </div>
 
-    <div v-if="showShareToast" id="gitCopyToast">
-      <span role="alert">URL copied for sharing</span>
+    <div v-if="showShareToast" id="gitCopyToast" role="alert">
+      <span>URL copied for sharing</span>
     </div>
 
     <div v-if="gotURL" id="reportShareButtonContainer">
-      <button @click="shareReport" id="shareResults">
+      <button @click="shareReport" id="shareResults" controls="gitCopyToast">
         <i class="fas fa-share-alt" alt="share icon" aria-hidden="true"></i>
         Share your Results
       </button>
     </div>
 
-    <main id="main">
+    <main id="main" role="presentation">
       <div v-if="!gotURL" id="inputSection">
         <div id="topHalfHome">
           <h1 id="topHalfHeader">Quickly and easily turn your website into an app!</h1>
@@ -52,7 +52,7 @@
             />
 
             <button :class="{ btnErr: error != null }" id="getStartedButton">
-              <div :class="{ btnErrText: error != null }">{{ $t("generator.start") }}</div>
+              {{ $t("generator.start") }}
             </button>
           </form>
         </div>
@@ -79,7 +79,7 @@
                   id="mainStartButton"
                   type="button"
                   aria-controls="starterDropdown"
-                  aria-haspop="true"
+                  aria-haspopup="true"
                   :aria-expanded="openDrop ? true : false"
                 >
                   Get Started!
@@ -91,7 +91,6 @@
                   aria-live="polite"
                   aria-labelledby="mainStartButton"
                   role="menu"
-                  tabindex="-1"
                 >
                   <button
                     id="starterDownloadButton"
@@ -108,6 +107,7 @@
                     type="button"
                     role="menuitem"
                     aria-label="Command line clone command"
+                    aria-controls="gitCopyToast"
                     @click="cloneStarter"
                   >
                     <i class="fab fa-github" aria-hidden="true"></i>
@@ -837,6 +837,7 @@ h2 {
 
     form {
       display: flex;
+      vertical-align: baseline;
 
       &.formErr {
         animation: shake 0.2s ease-in-out 0s 2;
@@ -844,13 +845,13 @@ h2 {
     }
 
     input {
-      background: transparent;
+      background: hsla(270,0%,20%,0.5);
 
-      padding-top: 13px;
-      padding-bottom: 12px;
-      border: none;
+      padding: 12px 16px;
+      border: solid 1px transparent;
       border-bottom: solid 1px rgba(255, 255, 255, 0.4);
-      margin-right: 0.3em;
+      border-radius: 22px;
+      margin-right: 8px;
       margin-top: 20px;
       outline: none;
 
@@ -858,7 +859,7 @@ h2 {
       font-weight: normal;
       font-size: 16px;
       line-height: 33px;
-      color: rgba(255, 255, 255, 0.7);
+      color: rgba(255, 255, 255, .7);
 
       &::placeholder {
         color: white;
@@ -867,7 +868,7 @@ h2 {
 
       &:hover,
       &:focus {
-        border-bottom: solid 1px white;
+        border: solid 1px white;
         color: white !important;
       }
     }
@@ -896,7 +897,7 @@ h2 {
     }
 
     #getStartedButton:focus {
-      outline: auto;
+      outline: 1px dotted hsla(0,0%,86%,.7);
     }
   }
 
@@ -1326,6 +1327,29 @@ h2 {
   }
 }
 
+@media (max-height: 800px) {
+  main#main {
+    display: block;
+
+    #inputSection {
+      display: block;
+    }
+
+    #topHalfHome,
+    #bottomHalfHome,
+    & > footer {
+      position: relative;
+      bottom: unset;
+      left: unset;
+      padding-bottom: 16px;
+    }
+  }
+
+  #inputSection > footer {
+    position: relative;
+  }
+}
+
 @media (max-height: 600px) {
   .backgroundIndex {
     @include backgroundLeftPoint(30%, 0vh);
@@ -1343,6 +1367,29 @@ h2 {
 @media (max-height: 475px) {
   .backgroundReport {
     @include backgroundRightPoint(80%, 0vh);
+  }
+}
+
+@media (min-resolution: 300dpi) {
+  #hubContainer {
+    overflow: scroll;
+  }
+
+  main#main {
+    display: block;
+
+    #inputSection {
+      display: block;
+    }
+
+    #topHalfHome,
+    #bottomHalfHome,
+    & > footer {
+      position: relative;
+      bottom: unset;
+      left: unset;
+      padding-bottom: 16px;
+    }
   }
 }
 </style>
