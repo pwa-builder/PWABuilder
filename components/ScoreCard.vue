@@ -665,14 +665,15 @@ export default class extends Vue {
         this.securityScore = 0;
 
         this.$emit("securityTestDone", { score: 0 });
+        this.$emit("manifestDetectionBroke", {});
       }
 
-      this.$emit("manifestDetectionBroke", {});
+      this.$emit("manifestTestDone", { score: 0 });
+
 
       this.noManifest = true;
     } finally {
-      // Regardless notify parent and update manifest call.
-      this.$emit("manifestTestDone", { score: this.manifestScore });
+      // Regardless update manifest call.
       if (this.manifest) {
         this.updateManifest(this.manifest);
       }
@@ -710,6 +711,8 @@ export default class extends Vue {
         this.manifestScore = this.manifestScore + 5;
       }
     }
+
+    this.$emit("manifestTestDone", { score: this.manifestScore });
   }
 
   private async lookAtSW() {
@@ -723,41 +726,6 @@ export default class extends Vue {
       return;
     }
 
-    // Check cache and use cached version.
-    const savedData = sessionStorage.getItem(this.url);
-    const sessionSavedScore = sessionStorage.getItem("swScore");
-    const savedScore = sessionSavedScore ? JSON.parse(sessionSavedScore) : 0;
-
-    const savedOfflineCheck = sessionStorage.getItem("offlineCheck");
-
-    if (savedData && savedOfflineCheck) {
-      try {
-        let cleanedData = JSON.parse(savedData);
-        this.serviceWorkerData = cleanedData;
-
-        let parsedOfflineCheck = JSON.parse(savedOfflineCheck);
-
-        if (savedScore && parsedOfflineCheck) {
-          let cleanedScore = JSON.parse(savedScore);
-
-          if (parsedOfflineCheck === true) {
-            cleanedScore = cleanedScore + 10;
-
-            this.worksOffline = true;
-          }
-
-          this.swScore = cleanedScore;
-
-          this.$emit("serviceWorkerTestDone", { score: this.swScore });
-        }
-      } catch (err) {
-        this.noSwScore();
-      } finally {
-        return;
-      }
-    }
-
-    // Section with
     try {
       let cleanUrl = this.trimSuffixChar(this.url, ".");
 
@@ -767,9 +735,11 @@ export default class extends Vue {
       const swResponse = await response.json();
 
       if (swResponse.data) {
+        await this.scoreServiceWorker(cleanUrl, swResponse.data);
+
         this.serviceWorkerData = swResponse.data;
 
-        await this.scoreServiceWorker(cleanUrl);
+        this.noServiceWorker = false;
       }
 
       if (
@@ -783,30 +753,26 @@ export default class extends Vue {
       }
 
       sessionStorage.setItem(this.url, JSON.stringify(this.serviceWorkerData));
+
+      this.$emit("serviceWorkerTestDone", { score: this.swScore });
     } catch (e) {
       this.noSwScore();
-    } finally {
-      if (savedScore !== this.swScore) {
-        sessionStorage.setItem("swScore", JSON.stringify(this.swScore));
-        this.$emit("serviceWorkerTestDone", { score: this.swScore });
-      }
     }
   }
 
-  private async scoreServiceWorker(url) {
-    this.noServiceWorker = false;
+  private async scoreServiceWorker(url, data) {
 
     this.swScore = 0;
     //scoring set by Jeff: 40 for manifest, 40 for sw and 20 for sc
 
-    if (this.serviceWorkerData.hasSW !== null) {
+    if (data.hasSW !== null) {
       this.swScore = this.swScore + 20;
     }
     /*
         Caches stuff
         +10 points to user
       */
-        if (this.serviceWorkerData.hasSW !== null) {
+        if (data.hasSW !== null) {
           try {
             const cacheCheckResponse = await fetch(
               `${process.env.testAPIUrl}/Offline?site=${url}`
@@ -835,7 +801,7 @@ export default class extends Vue {
         +5 points to user
       */
     if (
-      this.serviceWorkerData.scope //&&
+      data.scope //&&
       // this.serviceWorkerData.scope.slice(0, -1) ===
       // new URL(this.serviceWorkerData.scope).origin  //slice isn't working and score not showing up, TODO: look at how to validate scope
     ) {
