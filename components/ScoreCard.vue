@@ -76,32 +76,32 @@
       </div>
 
       <!-- Manifest section -->
-      <div id="manifestBlock" v-if="category === 'Manifest' && manifest && !noManifest">
+      <div id="manifestBlock" v-if="category === 'Manifest' && manifestData && !noManifest">
         <h4>Required</h4>
 
         <ul>
-          <li v-bind:class="{ good: manifest }">
+          <li v-bind:class="{ good: manifestData }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="manifest">
+              <span class="cardIcon" aria-hidden="true" v-if="manifestData">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="!manifest">
+              <span class="cardIcon" aria-hidden="true" v-if="!manifestData">
                 <i class="fas fa-times"></i>
               </span>
 
               <span>Web Manifest properly attached</span>
             </div>
 
-            <span class="subScoreSpan" v-if="manifest">15</span>
+            <span class="subScoreSpan" v-if="manifestData">15</span>
 
-            <span class="subScoreSpan" v-else-if="!manifest">0</span>
+            <span class="subScoreSpan" v-else-if="!manifestData">0</span>
           </li>
-          <li v-bind:class="{ good: manifest && manifest.display }">
+          <li v-bind:class="{ good: manifestData && manifestData.display }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="manifest && manifest.display">
+              <span class="cardIcon" aria-hidden="true" v-if="manifestData && manifestData.display">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="manifest && !manifest.display">
+              <span class="cardIcon" aria-hidden="true" v-if="manifestData && !manifestData.display">
                 <i class="fas fa-times"></i>
               </span>
 
@@ -110,16 +110,16 @@
               </span>
             </div>
 
-            <span class="subScoreSpan" v-if="manifest.display">5</span>
+            <span class="subScoreSpan" v-if="manifestData.display">5</span>
 
-            <span class="subScoreSpan" v-else-if="!manifest.display">0</span>
+            <span class="subScoreSpan" v-else-if="!manifestData.display">0</span>
           </li>
-          <li v-bind:class="{ good: manifest && manifest.icons }">
+          <li v-bind:class="{ good: manifestData && manifestData.icons }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="manifest && manifest.icons">
+              <span class="cardIcon" aria-hidden="true" v-if="manifestData && manifestData.icons">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="manifest && !manifest.icons">
+              <span class="cardIcon" aria-hidden="true" v-if="manifestData && !manifestData.icons">
                 <i class="fas fa-times"></i>
               </span>
 
@@ -129,16 +129,16 @@
               </span>
             </div>
 
-            <span class="subScoreSpan" v-if="manifest.icons">5</span>
+            <span class="subScoreSpan" v-if="manifestData.icons">5</span>
 
-            <span class="subScoreSpan" v-else-if="!manifest.icons">0</span>
+            <span class="subScoreSpan" v-else-if="!manifestData.icons">0</span>
           </li>
-          <li v-bind:class="{ good: manifest && manifest.name }">
+          <li v-bind:class="{ good: manifestData && manifest.name }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="manifest && manifest.name">
+              <span class="cardIcon" aria-hidden="true" v-if="manifestData && manifestData.name">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="manifest && !manifest.name">
+              <span class="cardIcon" aria-hidden="true" v-if="manifestData && !manifestData.name">
                 <i class="fas fa-times"></i>
               </span>
 
@@ -148,16 +148,16 @@
               </span>
             </div>
 
-            <span class="subScoreSpan" v-if="manifest.name">5</span>
+            <span class="subScoreSpan" v-if="manifestData.name">5</span>
 
-            <span class="subScoreSpan" v-else-if="!manifest.name">0</span>
+            <span class="subScoreSpan" v-else-if="!manifestData.name">0</span>
           </li>
-          <li v-bind:class="{ good: manifest && manifest.short_name }">
+          <li v-bind:class="{ good: manifestData && manifestData.short_name }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="manifest && manifest.short_name">
+              <span class="cardIcon" aria-hidden="true" v-if="manifestData && manifestData.short_name">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="manifest && !manifest.short_name">
+              <span class="cardIcon" aria-hidden="true" v-if="manifestData && !manifestData.short_name">
                 <i class="fas fa-times"></i>
               </span>
 
@@ -167,17 +167,17 @@
               </span>
             </div>
 
-            <span class="subScoreSpan" v-if="manifest.short_name">5</span>
+            <span class="subScoreSpan" v-if="manifestData.short_name">5</span>
 
-            <span class="subScoreSpan" v-else-if="!manifest.short_name">0</span>
+            <span class="subScoreSpan" v-else-if="!manifestData.short_name">0</span>
           </li>
 
-          <li v-bind:class="{ good: manifest && manifest.start_url }">
+          <li v-bind:class="{ good: manifestData && manifestData.start_url }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="manifest && manifest.start_url">
+              <span class="cardIcon" aria-hidden="true" v-if="manifestData && manifestData.start_url">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="manifest && !manifest.start_url">
+              <span class="cardIcon" aria-hidden="true" v-if="manifestData && !manifestData.start_url">
                 <i class="fas fa-times"></i>
               </span>
 
@@ -187,21 +187,21 @@
               </span>
             </div>
 
-            <span class="subScoreSpan" v-if="manifest.start_url">5</span>
+            <span class="subScoreSpan" v-if="manifestData.start_url">5</span>
 
-            <span class="subScoreSpan" v-else-if="!manifest.start_url">0</span>
+            <span class="subScoreSpan" v-else-if="!manifestData.start_url">0</span>
           </li>
         </ul>
 
         <h4>Recommended</h4>
 
         <ul>
-          <li v-bind:class="{ good: manifest && manifest.screenshots }">
+          <li v-bind:class="{ good: manifestData && manifestData.screenshots }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="manifest.screenshots">
+              <span class="cardIcon" aria-hidden="true" v-if="manifestData.screenshots">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="!manifest.screenshots">
+              <span class="cardIcon" aria-hidden="true" v-if="!manifestData.screenshots">
                 <i class="fas fa-times"></i>
               </span>
 
@@ -209,12 +209,12 @@
             </div>
           </li>
 
-          <li v-bind:class="{ good: manifest && manifest.categories }">
+          <li v-bind:class="{ good: manifestData && manifestData.categories }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="manifest.categories">
+              <span class="cardIcon" aria-hidden="true" v-if="manifestData.categories">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="!manifest.categories">
+              <span class="cardIcon" aria-hidden="true" v-if="!manifestData.categories">
                 <i class="fas fa-times"></i>
               </span>
 
@@ -226,12 +226,12 @@
         <h4>Optional</h4>
 
         <ul>
-          <li v-bind:class="{ good: manifest && manifest.shortcuts }">
+          <li v-bind:class="{ good: manifestData && manifestData.shortcuts }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="manifest.shortcuts">
+              <span class="cardIcon" aria-hidden="true" v-if="manifestData.shortcuts">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="!manifest.shortcuts">
+              <span class="cardIcon" aria-hidden="true" v-if="!manifestData.shortcuts">
                 <i class="fas fa-times"></i>
               </span>
 
@@ -241,7 +241,7 @@
         </ul>
       </div>
 
-      <ul v-if="category === 'Manifest' && !manifest && !noManifest">
+      <ul v-if="category === 'Manifest' && !manifestData && !noManifest">
         <li>
           <span class="skeletonSpan"></span>
         </li>
@@ -360,21 +360,29 @@
 
             <span class="subScoreSpan" v-if="!serviceWorkerData && !serviceWorkerData.hasSW">0</span>
           </li>
-          <li v-bind:class="{ good: serviceWorkerData.cache }">
+          <li v-bind:class="{ good: this.worksOffline }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && serviceWorkerData.cache">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="serviceWorkerData && this.worksOffline"
+              >
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && !serviceWorkerData.cache">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="serviceWorkerData && !this.worksOffline"
+              >
                 <i class="fas fa-times"></i>
               </span>
 
-              <span>Service Worker has cache handlers</span>
+              <span>Works offline</span>
             </div>
 
-            <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.cache">10</span>
+            <span class="subScoreSpan" v-if="serviceWorkerData && this.worksOffline">10</span>
 
-            <span class="subScoreSpan" v-if="!serviceWorkerData && !serviceWorkerData.cache">0</span>
+            <span class="subScoreSpan" v-if="!serviceWorkerData && !this.worksOffline">0</span>
           </li>
           <li v-bind:class="{ good: serviceWorkerData.scope }">
             <div class="listSubDiv">
@@ -554,6 +562,7 @@ import Component from "nuxt-class-component";
 import { Action, State, namespace } from "vuex-class";
 
 import * as generator from "~/store/modules/generator";
+import { Manifest } from "~/store/modules/generator";
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorAction = namespace(generator.name, Action);
@@ -572,10 +581,13 @@ export default class extends Vue {
   validSSL: boolean | null = null;
   noMixedContent: boolean | null = null;
 
+  manifestData: Manifest | null = null;
   noManifest: boolean | null = null;
   brokenManifest: boolean | null = null;
+
   serviceWorkerData: any = null;
   noServiceWorker: boolean | null = null;
+  worksOffline: boolean | null = null;
 
   manifestScore: number = 0;
   swScore: number = 0;
@@ -655,12 +667,15 @@ export default class extends Vue {
         this.securityScore = 0;
 
         this.$emit("securityTestDone", { score: 0 });
+        this.$emit("manifestDetectionBroke", {});
       }
+
+      this.$emit("manifestTestDone", { score: 0 });
+
 
       this.noManifest = true;
     } finally {
-      // Regardless notify parent and update manifest call.
-      this.$emit("manifestTestDone", { score: this.manifestScore });
+      // Regardless update manifest call.
       if (this.manifest) {
         this.updateManifest(this.manifest);
       }
@@ -698,6 +713,10 @@ export default class extends Vue {
         this.manifestScore = this.manifestScore + 5;
       }
     }
+
+    this.manifestData = this.manifest;
+
+    this.$emit("manifestTestDone", { score: this.manifestScore });
   }
 
   private async lookAtSW() {
@@ -711,30 +730,6 @@ export default class extends Vue {
       return;
     }
 
-    // Check cache and use cached version.
-    const savedData = sessionStorage.getItem(this.url);
-    const sessionSavedScore = sessionStorage.getItem("swScore");
-    const savedScore = sessionSavedScore ? JSON.parse(sessionSavedScore) : 0;
-
-    if (savedData) {
-      try {
-        let cleanedData = JSON.parse(savedData);
-        this.serviceWorkerData = cleanedData;
-
-        if (savedScore) {
-          let cleanedScore = JSON.parse(savedScore);
-          this.swScore = cleanedScore;
-
-          this.$emit("serviceWorkerTestDone", { score: this.swScore });
-        }
-      } catch (err) {
-        this.noSwScore();
-      } finally {
-        return;
-      }
-    }
-
-    // Section with
     try {
       let cleanUrl = this.trimSuffixChar(this.url, ".");
 
@@ -744,7 +739,11 @@ export default class extends Vue {
       const swResponse = await response.json();
 
       if (swResponse.data) {
+        await this.scoreServiceWorker(cleanUrl, swResponse.data);
+
         this.serviceWorkerData = swResponse.data;
+
+        this.noServiceWorker = false;
       }
 
       if (
@@ -757,38 +756,43 @@ export default class extends Vue {
         return;
       }
 
-      this.scoreServiceWorker();
       sessionStorage.setItem(this.url, JSON.stringify(this.serviceWorkerData));
+
+      this.$emit("serviceWorkerTestDone", { score: this.swScore });
     } catch (e) {
       this.noSwScore();
-    } finally {
-      if (savedScore !== this.swScore) {
-        sessionStorage.setItem("swScore", JSON.stringify(this.swScore));
-        this.$emit("serviceWorkerTestDone", { score: this.swScore });
-      }
     }
   }
 
-  private scoreServiceWorker() {
-    this.noServiceWorker = false;
+  private async scoreServiceWorker(url, data) {
 
     this.swScore = 0;
     //scoring set by Jeff: 40 for manifest, 40 for sw and 20 for sc
 
-    if (this.serviceWorkerData.hasSW !== null) {
+    if (data.hasSW !== null) {
       this.swScore = this.swScore + 20;
     }
     /*
         Caches stuff
         +10 points to user
       */
-    if (this.serviceWorkerData.cache) {
-      /*const hasCache = this.serviceWorkerData.cache.some(
-            entry => entry.fromSW === true
-          );*/
+        if (data.hasSW !== null) {
+          try {
+            const cacheCheckResponse = await fetch(
+              `${process.env.testAPIUrl}/Offline?site=${url}`
+            );
 
-      this.swScore = this.swScore + 10;
-    }
+            const offlineCheckData = await cacheCheckResponse.json();
+            if ((offlineCheckData.data as string) === "loaded") {
+              this.worksOffline = true;
+              this.swScore = this.swScore + 10;
+
+              sessionStorage.setItem("offlineCheck", JSON.stringify(this.worksOffline));
+            }
+          } catch (err) {
+            console.error("Site does not load offline");
+          }
+        }
     /*
         Has push reg
         +5 points to user
@@ -801,7 +805,7 @@ export default class extends Vue {
         +5 points to user
       */
     if (
-      this.serviceWorkerData.scope //&&
+      data.scope //&&
       // this.serviceWorkerData.scope.slice(0, -1) ===
       // new URL(this.serviceWorkerData.scope).origin  //slice isn't working and score not showing up, TODO: look at how to validate scope
     ) {
