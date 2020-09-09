@@ -360,21 +360,29 @@
 
             <span class="subScoreSpan" v-if="!serviceWorkerData && !serviceWorkerData.hasSW">0</span>
           </li>
-          <li v-bind:class="{ good: serviceWorkerData.cache }">
+          <li v-bind:class="{ good: this.worksOffline }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && serviceWorkerData.cache">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="serviceWorkerData && this.worksOffline"
+              >
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && !serviceWorkerData.cache">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="serviceWorkerData && !this.worksOffline"
+              >
                 <i class="fas fa-times"></i>
               </span>
 
-              <span>Service Worker has cache handlers</span>
+              <span>Works offline</span>
             </div>
 
-            <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.cache">10</span>
+            <span class="subScoreSpan" v-if="serviceWorkerData && this.worksOffline">10</span>
 
-            <span class="subScoreSpan" v-if="!serviceWorkerData && !serviceWorkerData.cache">0</span>
+            <span class="subScoreSpan" v-if="!serviceWorkerData && !this.worksOffline">0</span>
           </li>
           <li v-bind:class="{ good: serviceWorkerData.scope }">
             <div class="listSubDiv">
@@ -574,8 +582,10 @@ export default class extends Vue {
 
   noManifest: boolean | null = null;
   brokenManifest: boolean | null = null;
+
   serviceWorkerData: any = null;
   noServiceWorker: boolean | null = null;
+  worksOffline: boolean | null = null;
 
   manifestScore: number = 0;
   swScore: number = 0;
@@ -657,6 +667,8 @@ export default class extends Vue {
         this.$emit("securityTestDone", { score: 0 });
       }
 
+      this.$emit("manifestDetectionBroke", {});
+
       this.noManifest = true;
     } finally {
       // Regardless notify parent and update manifest call.
@@ -716,13 +728,24 @@ export default class extends Vue {
     const sessionSavedScore = sessionStorage.getItem("swScore");
     const savedScore = sessionSavedScore ? JSON.parse(sessionSavedScore) : 0;
 
-    if (savedData) {
+    const savedOfflineCheck = sessionStorage.getItem("offlineCheck");
+
+    if (savedData && savedOfflineCheck) {
       try {
         let cleanedData = JSON.parse(savedData);
         this.serviceWorkerData = cleanedData;
 
-        if (savedScore) {
+        let parsedOfflineCheck = JSON.parse(savedOfflineCheck);
+
+        if (savedScore && parsedOfflineCheck) {
           let cleanedScore = JSON.parse(savedScore);
+
+          if (parsedOfflineCheck === true) {
+            cleanedScore = cleanedScore + 10;
+
+            this.worksOffline = true;
+          }
+
           this.swScore = cleanedScore;
 
           this.$emit("serviceWorkerTestDone", { score: this.swScore });
@@ -745,6 +768,8 @@ export default class extends Vue {
 
       if (swResponse.data) {
         this.serviceWorkerData = swResponse.data;
+
+        await this.scoreServiceWorker(cleanUrl);
       }
 
       if (
@@ -757,7 +782,6 @@ export default class extends Vue {
         return;
       }
 
-      this.scoreServiceWorker();
       sessionStorage.setItem(this.url, JSON.stringify(this.serviceWorkerData));
     } catch (e) {
       this.noSwScore();
@@ -769,7 +793,7 @@ export default class extends Vue {
     }
   }
 
-  private scoreServiceWorker() {
+  private async scoreServiceWorker(url) {
     this.noServiceWorker = false;
 
     this.swScore = 0;
@@ -782,13 +806,23 @@ export default class extends Vue {
         Caches stuff
         +10 points to user
       */
-    if (this.serviceWorkerData.cache) {
-      /*const hasCache = this.serviceWorkerData.cache.some(
-            entry => entry.fromSW === true
-          );*/
+        if (this.serviceWorkerData.hasSW !== null) {
+          try {
+            const cacheCheckResponse = await fetch(
+              `${process.env.testAPIUrl}/Offline?site=${url}`
+            );
 
-      this.swScore = this.swScore + 10;
-    }
+            const offlineCheckData = await cacheCheckResponse.json();
+            if ((offlineCheckData.data as string) === "loaded") {
+              this.worksOffline = true;
+              this.swScore = this.swScore + 10;
+
+              sessionStorage.setItem("offlineCheck", JSON.stringify(this.worksOffline));
+            }
+          } catch (err) {
+            console.error("Site does not load offline");
+          }
+        }
     /*
         Has push reg
         +5 points to user

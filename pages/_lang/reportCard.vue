@@ -170,6 +170,7 @@
       <ScoreCard
         v-if="gotURL"
         v-on:manifestTestDone="manifestTestDone($event)"
+        v-on:manifestDetectionBroke="manifestTestBroke()"
         :url="url"
         category="Manifest"
         id="firstCard"
@@ -516,6 +517,10 @@ export default class extends Vue {
 
   public manifestTestDone(ev) {
     this.overallScore = this.overallScore + ev.score;
+  }
+
+  public manifestTestBroke() {
+    console.log('here');
   }
 
   public swTestDone(ev) {
