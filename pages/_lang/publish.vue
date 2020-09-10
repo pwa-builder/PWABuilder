@@ -1451,7 +1451,7 @@ export default class extends Vue {
       webManifestUrl: this.manifestUrl,
       themeColor: this.manifest.theme_color || "#FFFFFF",
       navigationColor:
-        this.manifest.theme_color || this.manifest.background_color || "000000",
+        this.manifest.theme_color || this.manifest.background_color || "#000000",
       backgroundColor:
         this.manifest.background_color ||
         this.manifest.theme_color ||

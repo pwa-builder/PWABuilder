@@ -24,7 +24,7 @@
     "downloadjs": "^1.4.7",
     "highlight.js": "^9.15.6",
     "manup": "^1.0.1",
-    "marked": "0.6.1",
+    "marked": "0.7.0",
     "monaco-editor": "^0.17.0",
     "monaco-editor-webpack-plugin": "^1.7.0",
     "normalize-scss": "^7.0.1",
