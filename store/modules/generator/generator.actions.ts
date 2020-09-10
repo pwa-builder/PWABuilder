@@ -134,7 +134,7 @@ export const actions: Actions<State, RootState> = {
       !url.toLowerCase().startsWith('http://')
     ) {
       throw `${
-        test.message
+      test.message
       }: this error means that you may have a bad https cert or the url may not be correct`;
     }
 
@@ -168,10 +168,31 @@ export const actions: Actions<State, RootState> = {
         }
       }
 
-      const result = await this.$axios.$post(apiUrl, options);
-      if (!result) {
-        throw 'error.Manifest_notFound';
+      let result;
+
+      try {
+        result = await this.$axios.$post(apiUrl, options);
       }
+      catch (err) {
+        console.error('Error getting manifest, retrying', err, manifest);
+
+        const response = await fetch(`${process.env.testAPIUrl}/WebManifest?site=${state.url}`);
+        const responseData = await response.json();
+
+        if (responseData) {
+          const mani = new File([JSON.stringify(responseData.content)], 'test.json');
+
+          const formData = new FormData();
+          formData.append("file", mani);
+
+          result = await this.$axios.$post(apiUrl, formData);
+        }
+        else {
+          throw("Cant get manifest");
+        }
+
+      }
+
       // Convert color if necessary
       result.background_color = helpers.fixColorFromServer(
         result.background_color
@@ -278,7 +299,7 @@ export const actions: Actions<State, RootState> = {
     dispatch('update');
   },
 
-  async isValidUrls({}, urls: string[]) {
+  async isValidUrls({ }, urls: string[]) {
     var invalidUrls: string[] = [];
     for (var i = 0; i < urls.length; i++) {
       const test = await helpers.isValidScreenshotUrl(urls[i]);

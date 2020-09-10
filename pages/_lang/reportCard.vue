@@ -15,6 +15,10 @@
       <span>URL copied for sharing</span>
     </div>
 
+    <div v-if="testing" id="gitCopyToast" role="alert">
+      <span>Analyzing your app...</span>
+    </div>
+
     <div v-if="gotURL" id="reportShareButtonContainer">
       <button @click="shareReport" id="shareResults" controls="gitCopyToast">
         <i class="fas fa-share-alt" alt="share icon" aria-hidden="true"></i>
@@ -51,9 +55,10 @@
               autocomplete="off"
             />
 
-            <button :class="{ btnErr: error != null }" id="getStartedButton">
-              {{ $t("generator.start") }}
-            </button>
+            <button
+              :class="{ btnErr: error != null }"
+              id="getStartedButton"
+            >{{ $t("generator.start") }}</button>
           </form>
         </div>
 
@@ -129,7 +134,15 @@
         </footer>
       </div>
 
-      <div v-if="gotURL && overallScore < 80" id="infoSection">
+      <div v-if="gotURL && testing === true" id="infoSection">
+        <h2>Tests in progress...</h2>
+
+        <p>
+          We are taking a look at your website to evaluate if it is a PWA, we should be done soon!
+        </p>
+      </div>
+
+      <div v-else-if="gotURL && overallScore < 80 && testing === false" id="infoSection">
         <h2>Hub</h2>
 
         <p>
@@ -138,8 +151,7 @@
           ready, click “build my PWA” to finish up.
         </p>
       </div>
-
-      <div v-if="gotURL && overallScore >= 80" id="attachSection">
+      <div v-else-if="gotURL && overallScore >= 80 && testing === false" id="attachSection">
         <div id="attachHeader">
           <h2>Nice job!</h2>
 
@@ -170,6 +182,7 @@
       <ScoreCard
         v-if="gotURL"
         v-on:manifestTestDone="manifestTestDone($event)"
+        v-on:manifestDetectionBroke="manifestTestBroke()"
         :url="url"
         category="Manifest"
         id="firstCard"
@@ -272,6 +285,7 @@ export default class extends Vue {
   public openDrop: boolean = false;
   public showCopyToast: boolean = false;
   public showShareToast: boolean = false;
+  testing: boolean = false;
 
   public async created() {
     this.url$ = this.url;
@@ -457,10 +471,12 @@ export default class extends Vue {
         !window.location.search &&
         (this.url$ !== null || this.url$ !== undefined)
       ) {
-        this.$router.push({ name: "index", query: { url: this.url$ } });
+        this.$router.push({ name: "index", query: { url: this.url$ || "" } });
       } else {
         this.url$ = this.cleanedURL;
       }
+
+      this.testing = true;
 
       await this.updateLink(this.url$);
       this.url$ = this.url;
@@ -511,15 +527,27 @@ export default class extends Vue {
   }
 
   public securityTestDone(ev) {
-    this.overallScore = this.overallScore + ev.score;
+    return new Promise((resolve) => {
+      this.overallScore = this.overallScore + ev.score;
+      resolve();
+    });
   }
 
   public manifestTestDone(ev) {
     this.overallScore = this.overallScore + ev.score;
   }
 
+  public manifestTestBroke() {
+    console.log("here");
+  }
+
   public swTestDone(ev) {
     this.overallScore = this.overallScore + ev.score;
+
+    // service worker test normally ends last
+    // so turn testing to false here
+    console.log('doing stuff');
+    this.testing = false;
   }
 
   public reset() {
@@ -845,7 +873,7 @@ h2 {
     }
 
     input {
-      background: hsla(270,0%,20%,0.5);
+      background: hsla(270, 0%, 20%, 0.5);
 
       padding: 12px 16px;
       border: solid 1px transparent;
@@ -859,7 +887,7 @@ h2 {
       font-weight: normal;
       font-size: 16px;
       line-height: 33px;
-      color: rgba(255, 255, 255, .7);
+      color: rgba(255, 255, 255, 0.7);
 
       &::placeholder {
         color: white;
@@ -897,7 +925,7 @@ h2 {
     }
 
     #getStartedButton:focus {
-      outline: 1px dotted hsla(0,0%,86%,.7);
+      outline: 1px dotted hsla(0, 0%, 86%, 0.7);
     }
   }
 
