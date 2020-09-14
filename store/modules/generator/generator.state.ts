@@ -115,3 +115,16 @@ export const state = (): State => ({
   assets: null,
   generated: null,
 });
+
+export interface ManifestDetectionResult {
+  content: Manifest,
+  format: "w3c" | "chromeos" | "edgeextension" | "windows10" | "firefox",
+  generatedUrl: string,
+  default: {
+      short_name: string
+  },
+  id: string,
+  errors: [],
+  suggestions: [],
+  warnings: []
+}
