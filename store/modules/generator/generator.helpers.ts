@@ -134,7 +134,7 @@ export const helpers = {
     return;
   },
 
-  fixColorFromServer(color: string): string {
+  fixColorFromServer(color: string | null): string {
     if (!color) {
       return '';
     }
