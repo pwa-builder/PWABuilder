@@ -662,7 +662,7 @@ export default class extends Vue {
     try {
       let securityData: any | null = null;
 
-      const cachedData = await getCache("security");
+      const cachedData = await getCache("security", this.url);
 
       if (cachedData) {
         securityData = cachedData;
@@ -673,7 +673,7 @@ export default class extends Vue {
 
         securityData = await response.json();
 
-        await setCache("security", securityData);
+        await setCache("security", this.url, securityData);
       }
 
       if (securityData && securityData.data) {
@@ -706,7 +706,7 @@ export default class extends Vue {
   private async lookAtManifest(): Promise<void> {
     // Gets manifest from api, then scores if not generated.
     try {
-      const cachedData = await getCache("manifest");
+      const cachedData = await getCache("manifest", this.url);
 
       if (cachedData) {
         this.manifest = cachedData;
@@ -715,7 +715,7 @@ export default class extends Vue {
       }
       else {
          await this.getManifestInformation();
-         await setCache("manifest", this.manifest);
+         await setCache("manifest", this.url, this.manifest);
       }
 
       if (this.manifest && this.manifest.generated === true) {
@@ -755,7 +755,7 @@ export default class extends Vue {
 
     let manifestScoreData: any | null = null;
 
-    const cachedData = await getCache("manifestScoreData");
+    const cachedData = await getCache("manifestScoreData", this.url);
 
     if (cachedData) {
       manifestScoreData = cachedData;
@@ -766,7 +766,7 @@ export default class extends Vue {
       );
       manifestScoreData = await response.json();
 
-      await setCache("manifestScoreData", manifestScoreData);
+      await setCache("manifestScoreData", this.url, manifestScoreData);
     }
 
     this.manifestScore = 15;
@@ -814,7 +814,7 @@ export default class extends Vue {
 
       let swResponse: any | null = null;
 
-      const cachedData = await getCache("sw");
+      const cachedData = await getCache("sw", this.url);
 
       if (cachedData) {
         swResponse = cachedData;
@@ -825,7 +825,7 @@ export default class extends Vue {
 
         swResponse = await response.json();
 
-        await setCache("sw", swResponse);
+        await setCache("sw", this.url, swResponse);
       }
 
       if (swResponse && swResponse.data) {
@@ -867,7 +867,7 @@ export default class extends Vue {
       try {
         let offlineCheckData: any | null = null;
 
-        const cachedData = await getCache("offline");
+        const cachedData = await getCache("offline", this.url);
 
         if (cachedData) {
           offlineCheckData = cachedData;
@@ -878,7 +878,7 @@ export default class extends Vue {
 
           offlineCheckData = await cacheCheckResponse.json();
 
-          await setCache("offline", offlineCheckData);
+          await setCache("offline", this.url, offlineCheckData);
         }
 
         if (
