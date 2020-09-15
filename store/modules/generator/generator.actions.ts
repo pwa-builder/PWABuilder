@@ -2,7 +2,6 @@ import { ActionTree, ActionContext } from 'vuex';
 import {
   Manifest,
   Icon,
-  Screenshot,
   RelatedApplication,
   CustomMember,
   ColorOptions,
@@ -11,7 +10,7 @@ import {
   State,
 } from '~/store/modules/generator';
 import { RootState } from 'store';
-import { createCommaList } from 'typescript';
+import { ManifestFetcher } from '~/utils/manifest-fetcher';
 
 const apiUrl = `${process.env.apiUrl}/manifests`;
 const screenshotsUrl = `${process.env.screenshotsUrl}`;
@@ -148,10 +147,7 @@ export const actions: Actions<State, RootState> = {
     if (state.manifest && state.manifest.url === state.url) {
       return;
     }
-    const options = {
-      siteUrl: state.url,
-    };
-
+    
     try {
       const manifest: any = state.manifest;
 
@@ -168,35 +164,12 @@ export const actions: Actions<State, RootState> = {
         }
       }
 
-      let result;
-
-      try {
-        result = await this.$axios.$post(apiUrl, options);
-      }
-      catch (err) {
-        console.error('Error getting manifest, retrying', err, manifest);
-
-        const response = await fetch(`${process.env.testAPIUrl}/WebManifest?site=${state.url}`);
-        const responseData = await response.json();
-
-        if (responseData) {
-          const mani = new File([JSON.stringify(responseData.content)], 'test.json');
-
-          const formData = new FormData();
-          formData.append("file", mani);
-
-          result = await this.$axios.$post(apiUrl, formData);
-        }
-        else {
-          throw("Cant get manifest");
-        }
-
-      }
+      // Grab the manifest.
+      const manifestFetcher = new ManifestFetcher(state.url, this.$axios);
+      const result = await manifestFetcher.fetch();
 
       // Convert color if necessary
-      result.background_color = helpers.fixColorFromServer(
-        result.background_color
-      );
+      result.content.background_color = helpers.fixColorFromServer(result.content.background_color);
 
       // Fix common issues with the manifest
       if (typeof result.content.related_applications === 'string') {
@@ -242,7 +215,7 @@ export const actions: Actions<State, RootState> = {
     dispatch('update', { root: true });
   },
 
-  removeScreenshot({ commit, state, dispatch }, screenshot: Screenshot): void {
+  removeScreenshot({ commit, state, dispatch }, screenshot: Icon): void {
     let screenshots = [...state.screenshots];
     const index = screenshots.findIndex((i) => {
       return i.src === screenshot.src;

@@ -101,7 +101,11 @@
               <span class="cardIcon" aria-hidden="true" v-if="manifestData && manifestData.display">
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="manifestData && !manifestData.display">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="manifestData && !manifestData.display"
+              >
                 <i class="fas fa-times"></i>
               </span>
 
@@ -154,10 +158,18 @@
           </li>
           <li v-bind:class="{ good: manifestData && manifestData.short_name }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="manifestData && manifestData.short_name">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="manifestData && manifestData.short_name"
+              >
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="manifestData && !manifestData.short_name">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="manifestData && !manifestData.short_name"
+              >
                 <i class="fas fa-times"></i>
               </span>
 
@@ -174,10 +186,18 @@
 
           <li v-bind:class="{ good: manifestData && manifestData.start_url }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="manifestData && manifestData.start_url">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="manifestData && manifestData.start_url"
+              >
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="manifestData && !manifestData.start_url">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="manifestData && !manifestData.start_url"
+              >
                 <i class="fas fa-times"></i>
               </span>
 
@@ -346,10 +366,18 @@
         <ul>
           <li v-bind:class="{ good: serviceWorkerData.hasSW }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && serviceWorkerData.hasSW">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="serviceWorkerData && serviceWorkerData.hasSW"
+              >
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && !serviceWorkerData.hasSW">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="serviceWorkerData && !serviceWorkerData.hasSW"
+              >
                 <i class="fas fa-times"></i>
               </span>
 
@@ -386,10 +414,18 @@
           </li>
           <li v-bind:class="{ good: serviceWorkerData.scope }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && serviceWorkerData.scope">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="serviceWorkerData && serviceWorkerData.scope"
+              >
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && !serviceWorkerData.scope">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="serviceWorkerData && !serviceWorkerData.scope"
+              >
                 <i class="fas fa-times"></i>
               </span>
 
@@ -429,10 +465,18 @@
         <ul>
           <li v-bind:class="{ good: serviceWorkerData.pushReg }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && serviceWorkerData.pushReg">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="serviceWorkerData && serviceWorkerData.pushReg"
+              >
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && !serviceWorkerData.pushReg">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="serviceWorkerData && !serviceWorkerData.pushReg"
+              >
                 <i class="fas fa-times"></i>
               </span>
 
@@ -522,7 +566,11 @@
         </button>
       </nuxt-link>
 
-      <nuxt-link v-else-if="category === 'Manifest' && !brokenManifest" to="/generate" tabindex="-1">
+      <nuxt-link
+        v-else-if="category === 'Manifest' && !brokenManifest"
+        to="/generate"
+        tabindex="-1"
+      >
         <button v-if="!noManifest" id="editButton">
           View Manifest
           <i class="fas fa-arrow-right"></i>
@@ -534,10 +582,9 @@
         </button>
       </nuxt-link>
       <div class="brkManifestError" v-if="brokenManifest">
-        Couldn't find an app manifest.<br/>
-        <a
-          href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
-        >Learn about manifests here</a>
+        Couldn't find an app manifest.
+        <br />
+        <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest">Learn about manifests here</a>
       </div>
 
       <div class="brkManifestError" v-if="category === 'Security' && !validSSL">
@@ -563,6 +610,8 @@ import { Action, State, namespace } from "vuex-class";
 
 import * as generator from "~/store/modules/generator";
 import { Manifest } from "~/store/modules/generator";
+
+import { getCache, setCache } from "~/utils/caching";
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorAction = namespace(generator.name, Action);
@@ -611,13 +660,23 @@ export default class extends Vue {
 
   private async lookAtSecurity(): Promise<void> {
     try {
-      const response = await fetch(
-        `${process.env.testAPIUrl}/Security?site=${this.url}`
-      );
+      let securityData: any | null = null;
 
-      const securityData = await response.json();
+      const cachedData = await getCache("security", this.url);
 
-      if (securityData.data) {
+      if (cachedData) {
+        securityData = cachedData;
+      } else {
+        const response = await fetch(
+          `${process.env.testAPIUrl}/Security?site=${this.url}`
+        );
+
+        securityData = await response.json();
+
+        await setCache("security", this.url, securityData);
+      }
+
+      if (securityData && securityData.data) {
         if (securityData.data.isHTTPS) {
           this.hasHTTPS = true;
 
@@ -647,7 +706,17 @@ export default class extends Vue {
   private async lookAtManifest(): Promise<void> {
     // Gets manifest from api, then scores if not generated.
     try {
-      await this.getManifestInformation();
+      const cachedData = await getCache("manifest", this.url);
+
+      if (cachedData) {
+        this.manifest = cachedData;
+
+        await this.getManifestInformation();
+      }
+      else {
+         await this.getManifestInformation();
+         await setCache("manifest", this.url, this.manifest);
+      }
 
       if (this.manifest && this.manifest.generated === true) {
         this.noManifest = true;
@@ -672,7 +741,6 @@ export default class extends Vue {
 
       this.$emit("manifestTestDone", { score: 0 });
 
-
       this.noManifest = true;
     } finally {
       // Regardless update manifest call.
@@ -685,10 +753,21 @@ export default class extends Vue {
   private async testManifest() {
     this.noManifest = false;
 
-    const response = await fetch(
-      `${process.env.testAPIUrl}/WebManifest?site=${this.url}`
-    );
-    const manifestScoreData = await response.json();
+    let manifestScoreData: any | null = null;
+
+    const cachedData = await getCache("manifestScoreData", this.url);
+
+    if (cachedData) {
+      manifestScoreData = cachedData;
+    }
+    else {
+      const response = await fetch(
+        `${process.env.testAPIUrl}/WebManifest?site=${this.url}`
+      );
+      manifestScoreData = await response.json();
+
+      await setCache("manifestScoreData", this.url, manifestScoreData);
+    }
 
     this.manifestScore = 15;
 
@@ -733,12 +812,23 @@ export default class extends Vue {
     try {
       let cleanUrl = this.trimSuffixChar(this.url, ".");
 
-      const response = await fetch(
-        `${process.env.testAPIUrl}/ServiceWorker?site=${cleanUrl}`
-      );
-      const swResponse = await response.json();
+      let swResponse: any | null = null;
 
-      if (swResponse.data) {
+      const cachedData = await getCache("sw", this.url);
+
+      if (cachedData) {
+        swResponse = cachedData;
+      } else {
+        const response = await fetch(
+          `${process.env.testAPIUrl}/ServiceWorker?site=${cleanUrl}`
+        );
+
+        swResponse = await response.json();
+
+        await setCache("sw", this.url, swResponse);
+      }
+
+      if (swResponse && swResponse.data) {
         await this.scoreServiceWorker(cleanUrl, swResponse.data);
 
         this.serviceWorkerData = swResponse.data;
@@ -756,8 +846,6 @@ export default class extends Vue {
         return;
       }
 
-      sessionStorage.setItem(this.url, JSON.stringify(this.serviceWorkerData));
-
       this.$emit("serviceWorkerTestDone", { score: this.swScore });
     } catch (e) {
       this.noSwScore();
@@ -765,7 +853,6 @@ export default class extends Vue {
   }
 
   private async scoreServiceWorker(url, data) {
-
     this.swScore = 0;
     //scoring set by Jeff: 40 for manifest, 40 for sw and 20 for sc
 
@@ -776,23 +863,34 @@ export default class extends Vue {
         Caches stuff
         +10 points to user
       */
-        if (data.hasSW !== null) {
-          try {
-            const cacheCheckResponse = await fetch(
-              `${process.env.testAPIUrl}/Offline?site=${url}`
-            );
+    if (data.hasSW !== null) {
+      try {
+        let offlineCheckData: any | null = null;
 
-            const offlineCheckData = await cacheCheckResponse.json();
-            if ((offlineCheckData.data as string) === "loaded") {
-              this.worksOffline = true;
-              this.swScore = this.swScore + 10;
+        const cachedData = await getCache("offline", this.url);
 
-              sessionStorage.setItem("offlineCheck", JSON.stringify(this.worksOffline));
-            }
-          } catch (err) {
-            console.error("Site does not load offline");
-          }
+        if (cachedData) {
+          offlineCheckData = cachedData;
+        } else {
+          const cacheCheckResponse = await fetch(
+            `${process.env.testAPIUrl}/Offline?site=${url}`
+          );
+
+          offlineCheckData = await cacheCheckResponse.json();
+
+          await setCache("offline", this.url, offlineCheckData);
         }
+
+        if (
+          (offlineCheckData && (offlineCheckData.data as string)) === "loaded"
+        ) {
+          this.worksOffline = true;
+          this.swScore = this.swScore + 10;
+        }
+      } catch (err) {
+        console.error("Site does not load offline");
+      }
+    }
     /*
         Has push reg
         +5 points to user
@@ -875,7 +973,8 @@ export default class extends Vue {
     align-items: center;
   }
 
-  h4, h3 {
+  h4,
+  h3 {
     color: black;
 
     font-family: sans-serif;
