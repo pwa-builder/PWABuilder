@@ -261,18 +261,124 @@
         </ul>
       </div>
 
+      <!-- loading experience -->
       <ul v-if="category === 'Manifest' && !manifestData && !noManifest">
         <li>
-          <span class="skeletonSpan"></span>
+          <div class="listSubDiv">
+            <span
+              class="cardIcon"
+              aria-hidden="true"
+            >
+              
+            </span>
+
+            <span>
+                Web Manifest is properly attached
+              </span>
+          </div>
+
+          <span class="subScoreSpan" >
+            <i class="fas fa-spinner"></i>
+          </span>
         </li>
+        
         <li>
-          <span class="skeletonSpan"></span>
+          <div class="listSubDiv">
+            <span
+              class="cardIcon"
+              aria-hidden="true"
+            >
+              
+            </span>
+
+            <span>
+                <code>display</code> property utilized
+              </span>
+          </div>
+
+          <span class="subScoreSpan" >
+            <i class="fas fa-spinner"></i>
+          </span>
         </li>
+
         <li>
-          <span class="skeletonSpan"></span>
+          <div class="listSubDiv">
+            <span
+              class="cardIcon"
+              aria-hidden="true"
+            >
+              
+            </span>
+
+            <span>
+                Lists
+                <code>icons</code> for add to home screen
+              </span>
+          </div>
+
+          <span class="subScoreSpan" >
+            <i class="fas fa-spinner"></i>
+          </span>
         </li>
+
         <li>
-          <span class="skeletonSpan"></span>
+          <div class="listSubDiv">
+            <span
+              class="cardIcon"
+              aria-hidden="true"
+            >
+              
+            </span>
+
+            <span>
+                Contains
+                <code>name</code> property
+              </span>
+          </div>
+
+          <span class="subScoreSpan" >
+            <i class="fas fa-spinner"></i>
+          </span>
+        </li>
+
+        <li>
+          <div class="listSubDiv">
+            <span
+              class="cardIcon"
+              aria-hidden="true"
+            >
+              
+            </span>
+
+            <span>
+                Contains
+                <code>short_name</code> property
+              </span>
+          </div>
+
+          <span class="subScoreSpan" >
+            <i class="fas fa-spinner"></i>
+          </span>
+        </li>
+
+        <li>
+          <div class="listSubDiv">
+            <span
+              class="cardIcon"
+              aria-hidden="true"
+            >
+              
+            </span>
+
+            <span>
+                Designates a
+                <code>start_url</code>
+              </span>
+          </div>
+
+          <span class="subScoreSpan" >
+            <i class="fas fa-spinner"></i>
+          </span>
         </li>
       </ul>
 
@@ -489,19 +595,62 @@
         </ul>
       </div>
 
+      <!-- loading experience -->
       <ul v-if="category === 'Service Worker' && !serviceWorkerData && !noServiceWorker">
         <li>
-          <span class="skeletonSpan"></span>
+          <div class="listSubDiv">
+            <span
+              class="cardIcon"
+              aria-hidden="true"
+            >
+              
+            </span>
+
+            <span>Has a Service Worker</span>
+          </div>
+
+          <span class="subScoreSpan" >
+            <i class="fas fa-spinner"></i>
+          </span>
         </li>
+
         <li>
-          <span class="skeletonSpan"></span>
+          <div class="listSubDiv">
+            <span
+              class="cardIcon"
+              aria-hidden="true"
+            >
+              
+            </span>
+
+            <span>Works offline</span>
+          </div>
+
+          <span class="subScoreSpan" >
+            <i class="fas fa-spinner"></i>
+          </span>
         </li>
+
         <li>
-          <span class="skeletonSpan"></span>
+          <div class="listSubDiv">
+            <span
+              class="cardIcon"
+              aria-hidden="true"
+            >
+              
+            </span>
+
+            <span>
+                Service Worker has the correct
+                <code>scope</code>
+              </span>
+          </div>
+
+          <span class="subScoreSpan" >
+            <i class="fas fa-spinner"></i>
+          </span>
         </li>
-        <li>
-          <span class="skeletonSpan"></span>
-        </li>
+
       </ul>
 
       <ul id="noSWP" v-if="category === 'Service Worker' && noServiceWorker">
@@ -559,12 +708,21 @@
     </div>
 
     <div class="cardEditBlock">
-      <nuxt-link v-if="category === 'Service Worker'" to="/serviceworker" tabindex="-1">
+      <nuxt-link v-if="category === 'Service Worker' && serviceWorkerData" to="/serviceworker" tabindex="-1">
         <button>
           Choose a Service Worker
           <i class="fas fa-arrow-right"></i>
         </button>
       </nuxt-link>
+
+      <div class="waitingText" v-if="category === 'Service Worker' && !serviceWorkerData && !noServiceWorker">
+        Loading your site in the background...this may take a minute
+        <br />
+      </div>
+      <div class="waitingText" v-else-if="category === 'Manifest' && !manifestData && !brokenManifest">
+        Loading your site in the background...this may take a minute
+        <br />
+      </div>
 
       <nuxt-link
         v-else-if="category === 'Manifest' && !brokenManifest"
@@ -712,10 +870,9 @@ export default class extends Vue {
         this.manifest = cachedData;
 
         await this.getManifestInformation();
-      }
-      else {
-         await this.getManifestInformation();
-         await setCache("manifest", this.url, this.manifest);
+      } else {
+        await this.getManifestInformation();
+        await setCache("manifest", this.url, this.manifest);
       }
 
       if (this.manifest && this.manifest.generated === true) {
@@ -759,8 +916,7 @@ export default class extends Vue {
 
     if (cachedData) {
       manifestScoreData = cachedData;
-    }
-    else {
+    } else {
       const response = await fetch(
         `${process.env.testAPIUrl}/WebManifest?site=${this.url}`
       );
@@ -1109,6 +1265,15 @@ export default class extends Vue {
 
   .brkManifestError {
     color: #c90005;
+    font-weight: bold;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .waitingText {
+    color: black;
     font-weight: bold;
     padding-top: 1em;
     padding-bottom: 1em;
