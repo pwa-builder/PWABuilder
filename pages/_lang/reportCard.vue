@@ -538,7 +538,7 @@ export default class extends Vue {
   }
 
   public manifestTestBroke() {
-    console.log("here");
+    
   }
 
   public swTestDone(ev) {
@@ -546,7 +546,6 @@ export default class extends Vue {
 
     // service worker test normally ends last
     // so turn testing to false here
-    console.log('doing stuff');
     this.testing = false;
   }
 

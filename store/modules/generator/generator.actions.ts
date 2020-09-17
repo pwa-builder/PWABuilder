@@ -61,7 +61,7 @@ export const actions: Actions<State, RootState> = {
       }
 
       // Create
-      await this.$axios.$post(apiUrl, { siteUrl: state.url });
+      await new ManifestFetcher(state.url!, this.$axios).fetch();
     }
 
     // Update
@@ -78,7 +78,6 @@ export const actions: Actions<State, RootState> = {
 
     customManifest['screenshots'] = [];
 
-    console.log('state', state.screenshots.length);
     if (state.screenshots !== undefined) {
       state.screenshots.forEach((screenshot) => {
         customManifest['screenshots'].push(Object.assign({}, screenshot));

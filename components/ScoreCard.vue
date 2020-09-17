@@ -913,13 +913,17 @@ export default class extends Vue {
     let manifestScoreData: any | null = null;
 
     const cachedData = await getCache("manifestScoreData", this.url);
-
     if (cachedData) {
       manifestScoreData = cachedData;
     } else {
-      const response = await fetch(
-        `${process.env.testAPIUrl}/WebManifest?site=${this.url}`
-      );
+      // We'll need to analyze the manifest.
+      // Send along the manifest contents if we've got 'em.
+      const manifestContents = this.getManifestContentsFromSessionStorage();
+      const manifestAnalysisUrl = `${process.env.testAPIUrl}/WebManifest?site=${this.url}`;
+      const response = await fetch(manifestAnalysisUrl, {
+        method: "POST",
+        body: manifestContents ? JSON.stringify({ manifest: manifestContents }) : ""
+      });
       manifestScoreData = await response.json();
 
       await setCache("manifestScoreData", this.url, manifestScoreData);
@@ -952,6 +956,14 @@ export default class extends Vue {
     this.manifestData = this.manifest;
 
     this.$emit("manifestTestDone", { score: this.manifestScore });
+  }
+
+  private getManifestContentsFromSessionStorage(): string | null {
+    if (sessionStorage && this.url) {
+      return sessionStorage.getItem("manifest/" + this.url);
+    }
+
+    return null;
   }
 
   private async lookAtSW() {
