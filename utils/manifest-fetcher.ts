@@ -1,7 +1,7 @@
 import { ManifestDetectionResult, Manifest } from "~/store/modules/generator/generator.state";
 
 /**
- * Fetches web manifests from a URL. Wraps up logic that uses multiple fallbacks to find and parse a web manifest.
+ * Fetches web manifests from a URL. Wraps up logic that uses multiple services to find the manifest.
  */
 export class ManifestFetcher {
     private readonly apiUrl = `${process.env.apiUrl}/manifests`;
@@ -11,30 +11,36 @@ export class ManifestFetcher {
     }
 
     async fetch(): Promise<ManifestDetectionResult> {
-        // Best case: use our API directly
-        try {
-            return await this.getManifestViaApi();
-        } catch (apiError) {
-            console.error("Failed to fetch manifest via API. Trying manifest fetch fallbacks.", apiError);
-        }
 
-        // Fallback: try our fallbacks simulatenously and see any of them can fetch the manifest.
-        try {
-            const fallbacks = [this.getManifestViaFilePost(), this.getManifestViaHtmlParse()];
+        // Manifest detection is surprisingly tricky due to redirects, dynamic code generation, SSL problems, and other issues.
+        // We have 3 techniques to detect the manifest:
+        // 1. The legacy PWABuilder API
+        // 2. An Azure function that uses Chrome Puppeteer to fetch the manifest
+        // 3. An Azure function that parses the HTML to find the manifest.
+        // This fetch() function runs all 3 manifest detection schemes concurrently and returns the first one that succeeds.
 
-            // Promise.any(...) may not exist. Use our polyfill if needed.
-            const promiseAnyOrPolyfill: (promises: Promise<ManifestDetectionResult>[]) => Promise<ManifestDetectionResult> = 
-                (promises) => Promise["any"] ? Promise["any"](promises) : this.promiseAny(promises);
-            return await promiseAnyOrPolyfill(fallbacks);
-        } catch (fallbackError) {
-            console.error("Manifest detection fallbacks also failed. Manifest not detected.", fallbackError);
+        const manifestDetectors = [
+            this.getManifestViaApi(), 
+            this.getManifestViaFilePost(), 
+            this.getManifestViaHtmlParse()
+        ];
+
+        // We want to use Promise.any(...), but browser support is too low at the time of this writing: https://caniuse.com/mdn-javascript_builtins_promise_any
+        // Use our polyfill if needed.
+        const promiseAnyOrPolyfill: (promises: Promise<ManifestDetectionResult>[]) => Promise<ManifestDetectionResult> = 
+            (promises) => Promise["any"] ? Promise["any"](promises) : this.promiseAny(promises);
+
+        try {
+            return await promiseAnyOrPolyfill(manifestDetectors);
+        } catch (manifestDetectionError) {
+            console.error("All manifest detectors failed.", manifestDetectionError);
 
             // Well, we sure tried.
-            throw fallbackError;
+            throw manifestDetectionError;
         }    
     }
 
-    // This is a polyfill for Promise.any(...), which isn't well supported yet at the time of this writing.        
+    // This is a polyfill for Promise.any(...), which isn't well supported yet at the time of this writing: https://caniuse.com/mdn-javascript_builtins_promise_any   
     private promiseAny(promises: Promise<ManifestDetectionResult>[]): Promise<ManifestDetectionResult> {
         if (promises.length === 0) {
             return Promise.reject("No promises supplied");

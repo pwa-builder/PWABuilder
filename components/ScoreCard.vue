@@ -913,7 +913,6 @@ export default class extends Vue {
     let manifestScoreData: any | null = null;
 
     const cachedData = await getCache("manifestScoreData", this.url);
-
     if (cachedData) {
       manifestScoreData = cachedData;
     } else {
