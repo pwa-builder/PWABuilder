@@ -15,25 +15,50 @@ export class ManifestFetcher {
         try {
             return await this.getManifestViaApi();
         } catch (apiError) {
-            console.error("Failed to fetch manifest via API. Falling back to manifest file POST.", apiError);
+            console.error("Failed to fetch manifest via API. Trying manifest fetch fallbacks.", apiError);
         }
 
-        // Fallback: use our Puppeteer microservice to fetch the manifest and send it into the API as a file POST.
+        // Fallback: try our fallbacks simulatenously and see any of them can fetch the manifest.
         try {
-            return await this.getManifestViaFilePost();
-        } catch (filePostError) {
-            console.error("Failed to fetch manifest via file POST. Falling back to HTML parsing service.", filePostError);
-        }
-
-        // Fallback: use our HTML parsing service that loads and parses the HTML in order to find and fetch the manifest.
-        try {
-            return await this.getManifestViaHtmlParse();
-        } catch (htmlParseError) {
-            console.error("Failed to fetch manifest via html parse service. Manifest detection failed.", htmlParseError);
+            // Promise.any(...) may not exist. Use our polyfill if needed.
+            const promiseAnyOrPolyfill: (promises: Promise<ManifestDetectionResult>[]) => Promise<ManifestDetectionResult> = 
+                (promises) => Promise["any"] ? Promise["any"](promises) : this.promiseAny(promises);
+            return await promiseAnyOrPolyfill([this.getManifestViaFilePost(), this.getManifestViaHtmlParse()])
+        } catch (fallbackError) {
+            console.error("Manifest detection fallbacks also failed. Manifest not detected.", fallbackError);
 
             // Well, we sure tried.
-            throw htmlParseError;
+            throw fallbackError;
+        }    
+    }
+
+    // This is a polyfill for Promise.any(...), which isn't well supported yet at the time of this writing.        
+    private promiseAny(promises: Promise<ManifestDetectionResult>[]): Promise<ManifestDetectionResult> {
+        if (promises.length === 0) {
+            return Promise.reject("No promises supplied");
         }
+        let errors: unknown[] = [];
+        
+        return new Promise<ManifestDetectionResult>((resolve, reject) => {
+            let completedCount = 0;
+            let hasSucceeded = false;
+
+            for (let promise of promises) {
+                promise.then(result => {
+                    if (!hasSucceeded) {
+                        hasSucceeded = true;
+                        resolve(result);
+                    }
+                });
+                promise.catch(error => errors.push(error));
+                promise.finally(() => {
+                    completedCount++;
+                    if (completedCount === promises.length && !hasSucceeded) {
+                        reject("All promises failed: " + errors.join("\n"))
+                    }
+                })
+            }  
+        });
     }
 
     // Uses PWABuilder API to fetch the manifest
@@ -48,7 +73,9 @@ export class ManifestFetcher {
     // Uses Azure manifest Puppeteer service to fetch the manifest, then POSTS it to the API.
     private async getManifestViaFilePost(): Promise<ManifestDetectionResult> {
         const manifestTestUrl = `${process.env.testAPIUrl}/WebManifest?site=${encodeURIComponent(this.url)}`;
-        const response = await fetch(manifestTestUrl);
+        const response = await fetch(manifestTestUrl, {
+            method: "POST"
+        });
         if (!response.ok) {
             throw new Error(`Unable to fetch response using ${manifestTestUrl}. Response status  ${response.status}`);  
         }

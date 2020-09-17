@@ -12,7 +12,7 @@ export interface Manifest {
   short_name: string | null;
   start_url: string | null;
   theme_color: string | null;
-  generated: boolean | null;
+  generated?: boolean | null;
   url: string | null;
   shortcuts?: ShortcutItem[];
   categories?: string[];
