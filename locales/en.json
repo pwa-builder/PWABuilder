@@ -89,7 +89,7 @@
     "titles": {
       "offline_page": "Offline page",
       "offline_copy": "Offline copy of pages",
-      "offline_copy_backup": "Offline copy with Backup offline page",
+      "offline_copy_backup": "Offline copy with backup offline page",
       "cache_first": "Cache-first network",
       "advanced": "Advanced Pre-cache (coming soon)"
     },
