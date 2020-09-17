@@ -91,7 +91,7 @@
                   <i class="fas fa-chevron-down" aria-hidden="true"></i>
                 </button>
                 <div
-                  v-if="openDrop"
+                  v-show="openDrop"
                   id="starterDropdown"
                   aria-live="polite"
                   aria-labelledby="mainStartButton"
