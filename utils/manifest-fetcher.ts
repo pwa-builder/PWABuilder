@@ -75,7 +75,9 @@ export class ManifestFetcher {
           siteUrl: this.url,
         };
         
-        return this.axios.$post(this.apiUrl, options);
+        const postResult = this.axios.$post(this.apiUrl, options);
+        postResult.then((r: ManifestDetectionResult) => console.info("Fetching manifest via API succeeded", r));
+        return postResult;
     }
 
     // Uses Azure manifest Puppeteer service to fetch the manifest, then POSTS it to the API.
@@ -85,11 +87,13 @@ export class ManifestFetcher {
             method: "POST"
         });
         if (!response.ok) {
-            throw new Error(`Unable to fetch response using ${manifestTestUrl}. Response status  ${response.status}`);  
+            console.warn("Fetching manifest via API v2 file POST failed", response.statusText);
+            throw new Error(`Unable to fetch response using ${manifestTestUrl}. Response status  ${response}`);  
         }
         const responseData = await response.json();
         if (!responseData) {
-          throw new Error(`Unable to get JSON from ${manifestTestUrl}`);
+            console.warn("Fetching manifest via API v2 file POST failed due to no response data", response);
+            throw new Error(`Unable to get JSON from ${manifestTestUrl}`);
         }
     
         const manifestFile = new File([JSON.stringify(responseData.content)], 'test.json');
@@ -97,7 +101,9 @@ export class ManifestFetcher {
         const formData = new FormData();
         formData.append("file", manifestFile);
     
-        return await this.axios.$post(this.apiUrl, formData);
+        const filePostResult: Promise<ManifestDetectionResult> = await this.axios.$post(this.apiUrl, formData);
+        filePostResult.then(r => console.info("Manifest detection succeeded via API v2 file POST", r));
+        return filePostResult;
     }
 
     // Uses Azure HTML parsing microservice to fetch the manifest, then hands it to the API.
@@ -111,13 +117,16 @@ export class ManifestFetcher {
         const manifestTestUrl = `${process.env.manifestFinderUrl}?url=${encodeURIComponent(this.url)}`;
         const response = await fetch(manifestTestUrl);
         if (!response.ok) {
+            console.warn("Fetching manifest via HTML parsing service failed", response);
             throw new Error(`Error fetching from ${manifestTestUrl}`);
         }
         const responseData: ManifestFinderResult = await response.json();
         if (responseData.error || !responseData.manifestContents) {
+            console.warn("Fetching manifest via HTML parsing service failed due to no response data", response);
             throw new Error(responseData.error || "Manifest couldn't be fetched");
         }
 
+        console.info("Manifest detection succeeded via HTML parse service", responseData);
         return {
             content: responseData.manifestContents,
             format: "w3c",
