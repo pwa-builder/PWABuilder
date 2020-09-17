@@ -20,8 +20,9 @@ export class ManifestFetcher {
 
         // Fallback: try our fallbacks simulatenously and see any of them can fetch the manifest.
         try {
-            // Promise.any(...) may not exist. Use our polyfill if needed.
             const fallbacks = [this.getManifestViaFilePost(), this.getManifestViaHtmlParse()];
+
+            // Promise.any(...) may not exist. Use our polyfill if needed.
             const promiseAnyOrPolyfill: (promises: Promise<ManifestDetectionResult>[]) => Promise<ManifestDetectionResult> = 
                 (promises) => Promise["any"] ? Promise["any"](promises) : this.promiseAny(promises);
             return await promiseAnyOrPolyfill(fallbacks);
