@@ -265,118 +265,86 @@
       <ul v-if="category === 'Manifest' && !manifestData && !noManifest">
         <li>
           <div class="listSubDiv">
-            <span
-              class="cardIcon"
-              aria-hidden="true"
-            >
-              
-            </span>
+            <span class="cardIcon" aria-hidden="true"></span>
 
-            <span>
-                Web Manifest is properly attached
-              </span>
+            <span>Web Manifest is properly attached</span>
           </div>
 
-          <span class="subScoreSpan" >
-            <i class="fas fa-spinner"></i>
-          </span>
-        </li>
-        
-        <li>
-          <div class="listSubDiv">
-            <span
-              class="cardIcon"
-              aria-hidden="true"
-            >
-              
-            </span>
-
-            <span>
-                <code>display</code> property utilized
-              </span>
-          </div>
-
-          <span class="subScoreSpan" >
+          <span class="subScoreSpan">
             <i class="fas fa-spinner"></i>
           </span>
         </li>
 
         <li>
           <div class="listSubDiv">
-            <span
-              class="cardIcon"
-              aria-hidden="true"
-            >
-              
-            </span>
+            <span class="cardIcon" aria-hidden="true"></span>
 
             <span>
-                Lists
-                <code>icons</code> for add to home screen
-              </span>
+              <code>display</code> property utilized
+            </span>
           </div>
 
-          <span class="subScoreSpan" >
+          <span class="subScoreSpan">
             <i class="fas fa-spinner"></i>
           </span>
         </li>
 
         <li>
           <div class="listSubDiv">
-            <span
-              class="cardIcon"
-              aria-hidden="true"
-            >
-              
-            </span>
+            <span class="cardIcon" aria-hidden="true"></span>
 
             <span>
-                Contains
-                <code>name</code> property
-              </span>
+              Lists
+              <code>icons</code> for add to home screen
+            </span>
           </div>
 
-          <span class="subScoreSpan" >
+          <span class="subScoreSpan">
             <i class="fas fa-spinner"></i>
           </span>
         </li>
 
         <li>
           <div class="listSubDiv">
-            <span
-              class="cardIcon"
-              aria-hidden="true"
-            >
-              
-            </span>
+            <span class="cardIcon" aria-hidden="true"></span>
 
             <span>
-                Contains
-                <code>short_name</code> property
-              </span>
+              Contains
+              <code>name</code> property
+            </span>
           </div>
 
-          <span class="subScoreSpan" >
+          <span class="subScoreSpan">
             <i class="fas fa-spinner"></i>
           </span>
         </li>
 
         <li>
           <div class="listSubDiv">
-            <span
-              class="cardIcon"
-              aria-hidden="true"
-            >
-              
-            </span>
+            <span class="cardIcon" aria-hidden="true"></span>
 
             <span>
-                Designates a
-                <code>start_url</code>
-              </span>
+              Contains
+              <code>short_name</code> property
+            </span>
           </div>
 
-          <span class="subScoreSpan" >
+          <span class="subScoreSpan">
+            <i class="fas fa-spinner"></i>
+          </span>
+        </li>
+
+        <li>
+          <div class="listSubDiv">
+            <span class="cardIcon" aria-hidden="true"></span>
+
+            <span>
+              Designates a
+              <code>start_url</code>
+            </span>
+          </div>
+
+          <span class="subScoreSpan">
             <i class="fas fa-spinner"></i>
           </span>
         </li>
@@ -599,58 +567,42 @@
       <ul v-if="category === 'Service Worker' && !serviceWorkerData && !noServiceWorker">
         <li>
           <div class="listSubDiv">
-            <span
-              class="cardIcon"
-              aria-hidden="true"
-            >
-              
-            </span>
+            <span class="cardIcon" aria-hidden="true"></span>
 
             <span>Has a Service Worker</span>
           </div>
 
-          <span class="subScoreSpan" >
+          <span class="subScoreSpan">
             <i class="fas fa-spinner"></i>
           </span>
         </li>
 
         <li>
           <div class="listSubDiv">
-            <span
-              class="cardIcon"
-              aria-hidden="true"
-            >
-              
-            </span>
+            <span class="cardIcon" aria-hidden="true"></span>
 
             <span>Works offline</span>
           </div>
 
-          <span class="subScoreSpan" >
+          <span class="subScoreSpan">
             <i class="fas fa-spinner"></i>
           </span>
         </li>
 
         <li>
           <div class="listSubDiv">
-            <span
-              class="cardIcon"
-              aria-hidden="true"
-            >
-              
-            </span>
+            <span class="cardIcon" aria-hidden="true"></span>
 
             <span>
-                Service Worker has the correct
-                <code>scope</code>
-              </span>
+              Service Worker has the correct
+              <code>scope</code>
+            </span>
           </div>
 
-          <span class="subScoreSpan" >
+          <span class="subScoreSpan">
             <i class="fas fa-spinner"></i>
           </span>
         </li>
-
       </ul>
 
       <ul id="noSWP" v-if="category === 'Service Worker' && noServiceWorker">
@@ -708,18 +660,35 @@
     </div>
 
     <div class="cardEditBlock">
-      <nuxt-link v-if="category === 'Service Worker' && serviceWorkerData" to="/serviceworker" tabindex="-1">
+      <nuxt-link
+        v-if="category === 'Service Worker' && serviceWorkerData"
+        to="/serviceworker"
+        tabindex="-1"
+      >
         <button>
           Choose a Service Worker
           <i class="fas fa-arrow-right"></i>
         </button>
       </nuxt-link>
 
-      <div class="waitingText" v-if="category === 'Service Worker' && !serviceWorkerData && !noServiceWorker">
+      <div
+        class="waitingText"
+        v-if="category === 'Service Worker' && !serviceWorkerData && !noServiceWorker && this.timedOutSW === false"
+      >
         Loading your site in the background...this may take a minute
         <br />
       </div>
-      <div class="waitingText" v-else-if="category === 'Manifest' && !manifestData && !brokenManifest">
+      <div
+        class="waitingText"
+        v-else-if="category === 'Service Worker' && this.timedOutSW === true">
+        We could not detect your service worker. If you are sure you have a Service Worker
+        registered you may move forward, however be aware that your Service Worker may be caching
+        more data than necessary.
+      </div>
+      <div
+        class="waitingText"
+        v-else-if="category === 'Manifest' && !manifestData && !brokenManifest"
+      >
         Loading your site in the background...this may take a minute
         <br />
       </div>
@@ -794,6 +763,7 @@ export default class extends Vue {
 
   serviceWorkerData: any = null;
   noServiceWorker: boolean | null = null;
+  timedOutSW: boolean = false;
   worksOffline: boolean | null = null;
 
   manifestScore: number = 0;
@@ -922,7 +892,9 @@ export default class extends Vue {
       const manifestAnalysisUrl = `${process.env.testAPIUrl}/WebManifest?site=${this.url}`;
       const response = await fetch(manifestAnalysisUrl, {
         method: "POST",
-        body: manifestContents ? JSON.stringify({ manifest: manifestContents }) : ""
+        body: manifestContents
+          ? JSON.stringify({ manifest: manifestContents })
+          : "",
       });
       manifestScoreData = await response.json();
 
@@ -987,13 +959,33 @@ export default class extends Vue {
       if (cachedData) {
         swResponse = cachedData;
       } else {
-        const response = await fetch(
-          `${process.env.testAPIUrl}/ServiceWorker?site=${cleanUrl}`
-        );
+        let response: Response | null = null;
 
-        swResponse = await response.json();
+        try {
+          response = await fetch(
+            `${process.env.testAPIUrl}/ServiceWorker?site=${cleanUrl}`
+          );
 
-        await setCache("sw", this.url, swResponse);
+          if (response.status === 500) {
+            this.timedOutSW = true;
+            this.swScore = 0;
+            
+            this.$emit("serviceWorkerTestDone", { score: 0 });
+            return;
+          }
+          else {
+            swResponse = await response.json();
+            await setCache("sw", this.url, swResponse);
+          }
+
+        } catch (err) {
+          this.timedOutSW = true;
+          this.swScore = 0;
+
+          this.$emit("serviceWorkerTestDone", { score: 0 });
+          return;
+        }
+
       }
 
       if (swResponse && swResponse.data) {
