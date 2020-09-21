@@ -5,5 +5,6 @@ module.exports = {
   apiUrl2: 'https://appimagegenerator-pre.azurewebsites.net',
   androidPackageGeneratorUrl: 'https://pwabuilder-cloudapk.azurewebsites.net',
   testAPIUrl: 'https://pwabuilder-tests.azurewebsites.net/api',
-  manifestFinderUrl: "https://pwabuilder-manifest-finder.azurewebsites.net/api/findmanifest"
+  manifestFinderUrl: "https://pwabuilder-manifest-finder.azurewebsites.net/api/findmanifest",
+  windowsPackageGeneratorUrl: 'https://pwabuilder-win-chromium-platform.centralus.cloudapp.azure.com/msix/generatezip',
 };
