@@ -932,7 +932,7 @@ h2 {
     margin-top: 68px;
   }
 
-  @media (max-width: 425px) {
+  @media (max-width: 542px) {
     #topHalfHome {
       padding-left: 25px;
       padding-right: 25px;
@@ -959,7 +959,7 @@ h2 {
     }
   }
 
-  @media (max-width: 425px) {
+  @media (max-width: 542px) {
     footer {
       margin-right: initial;
       margin-left: initial;
@@ -1064,7 +1064,7 @@ h2 {
   }
 }
 
-@media (max-width: 425px) {
+@media (max-width: 542px) {
   #inputSection {
     display: initial;
   }
@@ -1101,7 +1101,7 @@ h2 {
   margin-bottom: 20px;
 }
 
-@media (max-width: 425px) {
+@media (max-width: 542px) {
   #attachSection {
     margin-left: 25px;
     margin-right: 25px;
