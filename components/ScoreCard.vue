@@ -893,7 +893,7 @@ export default class extends Vue {
       const response = await fetch(manifestAnalysisUrl, {
         method: "POST",
         body: manifestContents
-          ? JSON.stringify({ manifest: manifestContents })
+          ? JSON.stringify({ manifest: manifestContents, maniurl: this.url })
           : "",
       });
       manifestScoreData = await response.json();
