@@ -32,6 +32,7 @@ import { Prop } from "vue-property-decorator";
 import { Action, State, namespace } from "vuex-class";
 import * as publish from "~/store/modules/publish";
 import { validateAndroidOptions } from "../utils/android-utils";
+import { validatePackageID } from "../utils/windows-utils";
 
 const PublishState = namespace(publish.name, State);
 const PublishAction = namespace(publish.name, Action);
@@ -143,13 +144,18 @@ export default class extends Vue {
 
   public async generateWindowsEdgePackage() {
     this.isReady = false;
+
     try {
+      const name: string = (this.manifest.short_name as string) || (this.manifest.name as string);
+
+      const packageID = validatePackageID(name);
+
       const response = await fetch(
         `${process.env.windowsPackageGeneratorUrl}`,
         {
           method: "POST",
           body: JSON.stringify({
-            packageId: this.manifest.name,
+            packageId: packageID,
             url: this.siteHref,
             version: "1.0.0.0",
           }),
