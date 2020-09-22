@@ -271,7 +271,7 @@
           </div>
 
           <span class="subScoreSpan">
-            <i class="fas fa-spinner"></i>
+            <i class="fas fa-spinner fa-spin"></i>
           </span>
         </li>
 
@@ -285,7 +285,7 @@
           </div>
 
           <span class="subScoreSpan">
-            <i class="fas fa-spinner"></i>
+            <i class="fas fa-spinner fa-spin"></i>
           </span>
         </li>
 
@@ -300,7 +300,7 @@
           </div>
 
           <span class="subScoreSpan">
-            <i class="fas fa-spinner"></i>
+            <i class="fas fa-spinner fa-spin"></i>
           </span>
         </li>
 
@@ -315,7 +315,7 @@
           </div>
 
           <span class="subScoreSpan">
-            <i class="fas fa-spinner"></i>
+            <i class="fas fa-spinner fa-spin"></i>
           </span>
         </li>
 
@@ -330,7 +330,7 @@
           </div>
 
           <span class="subScoreSpan">
-            <i class="fas fa-spinner"></i>
+            <i class="fas fa-spinner fa-spin"></i>
           </span>
         </li>
 
@@ -345,7 +345,7 @@
           </div>
 
           <span class="subScoreSpan">
-            <i class="fas fa-spinner"></i>
+            <i class="fas fa-spinner fa-spin"></i>
           </span>
         </li>
       </ul>
@@ -573,7 +573,7 @@
           </div>
 
           <span class="subScoreSpan">
-            <i class="fas fa-spinner"></i>
+            <i class="fas fa-spinner fa-spin"></i>
           </span>
         </li>
 
@@ -585,7 +585,7 @@
           </div>
 
           <span class="subScoreSpan">
-            <i class="fas fa-spinner"></i>
+            <i class="fas fa-spinner fa-spin"></i>
           </span>
         </li>
 
@@ -600,7 +600,7 @@
           </div>
 
           <span class="subScoreSpan">
-            <i class="fas fa-spinner"></i>
+            <i class="fas fa-spinner fa-spin"></i>
           </span>
         </li>
       </ul>
