@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <div class="cardContent">
+    <div class="cardContent" v-if="this.timedOutSW !== true">
       <!-- Security section -->
       <div id="securityBlock" v-if="category === 'Security'">
         <h4>Required</h4>
@@ -679,11 +679,14 @@
         <br />
       </div>
       <div
-        class="waitingText"
+        id="timedOutText"
         v-else-if="category === 'Service Worker' && this.timedOutSW === true">
-        We could not detect your service worker. If you are sure you have a Service Worker
+
+        <i class="fas fa-exclamation-circle"></i>
+
+        <span>We could not detect your service worker. If you are sure you have a Service Worker
         registered you may move forward, however be aware that your Service Worker may be caching
-        more data than necessary.
+        more data than necessary.</span>
       </div>
       <div
         class="waitingText"
@@ -1283,6 +1286,19 @@ export default class extends Vue {
     padding-bottom: 1em;
     font-size: 14px;
     text-align: center;
+  }
+
+  #timedOutText {
+    color: #ff7300;
+    font-weight: normal;
+    padding-bottom: 1em;
+    font-size: 14px;
+    display: flex;
+  }
+
+  #timedOutText i {
+    margin-right: 6px;
+    font-size: 18px;
   }
 
   .brkManifestHelp {
