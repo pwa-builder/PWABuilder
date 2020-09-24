@@ -191,7 +191,7 @@ export default class extends Vue {
     if (platform === "androidTWA") {
       await this.generateAndroidPackage();
     } 
-    else if (platform === "windows10") {
+    else if (platform === "windows10New") {
       await this.generateWindowsEdgePackage();
     }
     else {
