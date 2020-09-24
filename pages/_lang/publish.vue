@@ -814,12 +814,21 @@
           </p>
         </div>
 
-        <div id="androidModalButtonSection">
+        <div id="androidModalButtonSection" class="edgeBlock">
           <Download
             class="androidDownloadButton"
-            platform="windows10"
+            platform="windows10New"
             :message="$t('publish.download')"
             :showMessage="true"
+            v-on:downloadPackageError="showPackageDownloadError($event)"
+          />
+
+          <Download
+            :showMessage="true"
+            id="legacyDownloadButton"
+            class="webviewButton"
+            platform="windows10"
+            message="Use a legacy webview instead (not recommended)"
             v-on:downloadPackageError="showPackageDownloadError($event)"
           />
         </div>
@@ -1125,7 +1134,10 @@
 
               <p>
                 You'll get a package with your side-loadable PWA to test right away. Your PWA will
-                be running on the new <a href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/">Chromium based Edge</a>, giving you access to all of the latest APIs
+                be running on the new
+                <a
+                  href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/"
+                >Chromium based Edge</a>, giving you access to all of the latest APIs
                 available in Edge!
               </p>
 
@@ -2591,12 +2603,20 @@ footer a {
   font-size: 10px;
 }
 
-#androidModalBody #extraSection #legacyDownloadButton {
+#androidModalBody #extraSection #legacyDownloadButton, #androidModalBody #androidModalButtonSection #legacyDownloadButton {
   color: grey;
   font-size: 10px;
   background: transparent;
   padding-left: 0;
   border: none;
+  margin-top: 1em;
+}
+
+.edgeBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 }
 
 #androidModalBody {
