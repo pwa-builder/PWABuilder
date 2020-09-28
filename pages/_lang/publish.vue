@@ -295,7 +295,7 @@
                 />
               </div>
               <div class="row">
-                <div class="col-lg-4 col-md-12">
+                <div class="col-lg-6 col-md-12">
                   <div class="form-group">
                     <label for="themeColorInput">
                       Status bar color
@@ -315,27 +315,7 @@
                   </div>
                 </div>
 
-                <div class="col-lg-4 col-md-12">
-                  <div class="form-group">
-                    <label for="navigationColorInput">
-                      Nav bar color
-                      <i
-                        class="fas fa-info-circle"
-                        title="The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
-                        aria-label="The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
-                        role="definition"
-                      ></i>
-                    </label>
-                    <input
-                      type="color"
-                      class="form-control"
-                      id="navigationColorInput"
-                      v-model="androidForm.navigationColor"
-                    />
-                  </div>
-                </div>
-
-                <div class="col-lg-4 col-md-12">
+                <div class="col-lg-6 col-md-12">
                   <div class="form-group">
                     <label for="bgColorInput">
                       Splash color
@@ -355,7 +335,102 @@
                   </div>
                 </div>
               </div>
+
+              <!-- second row of colors -->
+              <div class="row">
+
+                <!-- Nav bar color -->
+                <div class="col-lg-6 col-md-12">
+                  <div class="form-group">
+                    <label for="navigationColorInput">
+                      Nav bar color
+                      <i
+                        class="fas fa-info-circle"
+                        title="The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
+                        aria-label="The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
+                        role="definition"
+                      ></i>
+                    </label>
+                    <input
+                      type="color"
+                      class="form-control"
+                      id="navigationColorInput"
+                      v-model="androidForm.navigationColor"
+                    />
+                  </div>
+                </div>
+
+                <!-- Nav bar dark color -->
+                <div class="col-lg-6 col-md-12">
+                  <div class="form-group">
+                    <label for="navigationColorDarkInput">
+                      Nav bar dark color
+                      <i
+                        class="fas fa-info-circle"
+                        title="The color of the Android navigation bar in your app when Android is in dark mode."
+                        aria-label="The color of the Android navigation bar in your app when Android is in dark mode."
+                        role="definition"
+                      ></i>
+                    </label>
+                    <input
+                      type="color"
+                      class="form-control"
+                      id="navigationColorDarkInput"
+                      v-model="androidForm.navigationColorDark"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- third row of colors -->
+              <div class="row">
+
+                <!-- Nav bar divider color -->
+                <div class="col-lg-6 col-md-12">
+                  <div class="form-group">
+                    <label for="navigationDividerColorInput">
+                      Nav bar divider color
+                      <i
+                        class="fas fa-info-circle"
+                        title="The color of the Android navigation bar divider in your app."
+                        aria-label="The color of the Android navigation bar divider in your app."
+                        role="definition"
+                      ></i>
+                    </label>
+                    <input
+                      type="color"
+                      class="form-control"
+                      id="navigationDividerColorInput"
+                      v-model="androidForm.navigationDividerColor"
+                    />
+                  </div>
+                </div>
+
+                <!-- Nav bar divider dark color -->
+                <div class="col-lg-6 col-md-12">
+                  <div class="form-group">
+                    <label for="navigationDividerColorDarkInput">
+                      Nav bar divider dark color
+                      <i
+                        class="fas fa-info-circle"
+                        title="The color of the Android navigation navigation bar divider in your app when Android is in dark mode."
+                        aria-label="The color of the Android navigation bar divider in your app when Android is in dark mode."
+                        role="definition"
+                      ></i>
+                    </label>
+                    <input
+                      type="color"
+                      class="form-control"
+                      id="navigationDividerColorDarkInput"
+                      v-model="androidForm.navigationDividerColorDark"
+                    />
+                  </div>
+                </div>
+              </div>
+
             </div>
+
+            <!-- right half of the options dialog -->
             <div class="col-lg-6 col-md-12">
               <div class="form-group">
                 <label for="iconUrlInput">Icon URL</label>
@@ -525,7 +600,28 @@
                     <i
                       class="fas fa-info-circle"
                       title="Whether to enable Push Notification Delegation. If enabled, your PWA can send push notifications without browser permission prompts."
-                      aria-label
+                      aria-label="Whether to enable Push Notification Delegation. If enabled, your PWA can send push notifications without browser permission prompts."
+                      role="definition"
+                    ></i>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Settings Shortcut</label>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="enableSettingsShortcutInput"
+                    v-model="androidForm.enableSiteSettingsShortcut"
+                  />
+                  <label class="form-check-label" for="enableSettingsShortcutInput">
+                    Enable
+                    <i
+                      class="fas fa-info-circle"
+                      title="If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app."
+                      aria-label="If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app."
                       role="definition"
                     ></i>
                   </label>
@@ -1503,29 +1599,35 @@ export default class extends Vue {
       ) ||
       null;
 
+    const navColorOrFallback = 
+      this.manifest.theme_color ||
+        this.manifest.background_color ||
+        "#000000";
     return {
-      packageId: packageName,
-      name: appName,
-      launcherName: this.manifest.short_name || appName, // launcher name should be the short name. If none is available, fallback to the full app name.
       appVersion: "1.0.0.0",
       appVersionCode: 1,
-      display: display,
-      host: pwaUrl,
-      startUrl: relativeStartUrl,
-      webManifestUrl: this.manifestUrl,
-      themeColor: this.manifest.theme_color || "#FFFFFF",
-      navigationColor:
-        this.manifest.theme_color ||
-        this.manifest.background_color ||
-        "#000000",
       backgroundColor:
         this.manifest.background_color ||
         this.manifest.theme_color ||
         "#FFFFFF",
+      display: display,
+      enableNotifications: false,
+      enableSiteSettingsShortcut: true,
+      fallbackType: "customtabs",
+      features: undefined,
+      host: pwaUrl,
       iconUrl: icon ? icon.src : "",
+      isChromeOSOnly: false,
+      launcherName: this.manifest.short_name || appName, // launcher name should be the short name. If none is available, fallback to the full app name.
       maskableIconUrl: maskableIcon ? maskableIcon.src : "",
       monochromeIconUrl: monochromeIcon ? monochromeIcon.src : "",
-      signingMode: "new",
+      name: appName,
+      navigationColor: navColorOrFallback,
+      navigationColorDark: navColorOrFallback,
+      navigationDividerColor: navColorOrFallback,
+      navigationDividerColorDark: navColorOrFallback,
+      packageId: packageName,
+      startUrl: relativeStartUrl,
       signing: {
         file: null,
         alias: "my-key-alias",
@@ -1538,10 +1640,11 @@ export default class extends Vue {
         keyPassword: "", // If empty, one will be generated by CloudAPK service
         storePassword: "", // If empty, one will be generated by CloudAPK service
       },
+      signingMode: "new",
       shortcuts: this.manifest.shortcuts || [],
-      fallbackType: "customtabs",
       splashScreenFadeOutDuration: 300,
-      enableNotifications: false,
+      themeColor: this.manifest.theme_color || "#FFFFFF",
+      webManifestUrl: this.manifestUrl,
     };
   }
 
@@ -2663,6 +2766,7 @@ footer a {
 
 #androidModalBody.androidOptionsModalBody .fa-info-circle {
   color: $color-muted;
+  cursor: help;
 }
 
 #closeAndroidPlatButton {

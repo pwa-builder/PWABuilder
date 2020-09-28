@@ -40,30 +40,38 @@ export interface AppxParams {
 
 /**
  * Settings for the Android APK generation. This is the raw data passed to the CloudApk service.
- * It should match the CloudApk service's ApkSettings interface: https://github.com/pwa-builder/CloudAPK/blob/master/build/apkOptions.ts
+ * It should match the CloudApk service's AndroidPackageOptions interface: https://github.com/pwa-builder/CloudAPK/blob/master/build/androidPackageOptions.ts
  */
 export interface AndroidApkOptions {
-    packageId: string;
-    name: string;
-    launcherName: string;
     appVersion: string;
     appVersionCode: number;
-    display: "standalone" | "fullscreen";
-    host: string;
-    startUrl: string;
-    webManifestUrl: string;
-    themeColor: string;
-    navigationColor: string;
     backgroundColor: string;
+    display: "standalone" | "fullscreen";
+    enableNotifications: boolean;
+    enableSiteSettingsShortcut: boolean;
+    fallbackType: "customtabs" | "webview";
+    features?: {
+        appsFlyer?: unknown;
+    }
+    host: string;
     iconUrl: string;
+    isChromeOSOnly: boolean;
+    launcherName: string;
     maskableIconUrl: string | null;
     monochromeIconUrl: string | null;
+    name: string;
+    navigationColor: string;
+    navigationColorDark: string;
+    navigationDividerColor: string;
+    navigationDividerColorDark: string;
+    packageId: string;
     shortcuts: ShortcutItem[];
-    signingMode: "new" | "none" | "mine";
     signing: AndroidSigningOptions | null;
-    fallbackType: "customtabs" | "webview";
+    signingMode: "new" | "none" | "mine";
     splashScreenFadeOutDuration: number;
-    enableNotifications: boolean;
+    startUrl: string;
+    themeColor: string;
+    webManifestUrl: string;
 }
 
 /**
