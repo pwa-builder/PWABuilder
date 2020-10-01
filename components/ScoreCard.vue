@@ -895,6 +895,9 @@ export default class extends Vue {
       const manifestAnalysisUrl = `${process.env.testAPIUrl}/WebManifest?site=${this.url}`;
       const response = await fetch(manifestAnalysisUrl, {
         method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: manifestContents
           ? JSON.stringify({ manifest: manifestContents, maniurl: this.url })
           : "",
