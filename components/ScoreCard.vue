@@ -1,18 +1,18 @@
 <template>
   <div class="scoreCard">
     <div class="headerDiv">
-      <h3>{{category}}</h3>
+      <h3>{{ category }}</h3>
 
       <div v-if="category === 'Manifest'" class="cardScore">
-        <span class="subScore">{{Math.round(manifestScore)}}</span> / 40
+        <span class="subScore">{{ Math.round(manifestScore) }}</span> / 40
       </div>
 
       <div v-else-if="category === 'Service Worker'" class="cardScore">
-        <span class="subScore">{{swScore}}</span> / 40
+        <span class="subScore">{{ swScore }}</span> / 40
       </div>
 
       <div v-else-if="category === 'Security'" class="cardScore">
-        <span class="subScore">{{Math.round(securityScore)}}</span> / 20
+        <span class="subScore">{{ Math.round(securityScore) }}</span> / 20
       </div>
     </div>
 
@@ -76,7 +76,10 @@
       </div>
 
       <!-- Manifest section -->
-      <div id="manifestBlock" v-if="category === 'Manifest' && manifestData && !noManifest">
+      <div
+        id="manifestBlock"
+        v-if="category === 'Manifest' && manifestData && !noManifest"
+      >
         <h4>Required</h4>
 
         <ul>
@@ -98,7 +101,11 @@
           </li>
           <li v-bind:class="{ good: manifestData && manifestData.display }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="manifestData && manifestData.display">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="manifestData && manifestData.display"
+              >
                 <i class="fas fa-check"></i>
               </span>
               <span
@@ -109,21 +116,29 @@
                 <i class="fas fa-times"></i>
               </span>
 
-              <span>
-                <code>display</code> property utilized
-              </span>
+              <span> <code>display</code> property utilized </span>
             </div>
 
             <span class="subScoreSpan" v-if="manifestData.display">5</span>
 
-            <span class="subScoreSpan" v-else-if="!manifestData.display">0</span>
+            <span class="subScoreSpan" v-else-if="!manifestData.display"
+              >0</span
+            >
           </li>
           <li v-bind:class="{ good: manifestData && manifestData.icons }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="manifestData && manifestData.icons">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="manifestData && manifestData.icons"
+              >
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="manifestData && !manifestData.icons">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="manifestData && !manifestData.icons"
+              >
                 <i class="fas fa-times"></i>
               </span>
 
@@ -139,10 +154,18 @@
           </li>
           <li v-bind:class="{ good: manifestData && manifest.name }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="manifestData && manifestData.name">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="manifestData && manifestData.name"
+              >
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="manifestData && !manifestData.name">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="manifestData && !manifestData.name"
+              >
                 <i class="fas fa-times"></i>
               </span>
 
@@ -181,7 +204,9 @@
 
             <span class="subScoreSpan" v-if="manifestData.short_name">5</span>
 
-            <span class="subScoreSpan" v-else-if="!manifestData.short_name">0</span>
+            <span class="subScoreSpan" v-else-if="!manifestData.short_name"
+              >0</span
+            >
           </li>
 
           <li v-bind:class="{ good: manifestData && manifestData.start_url }">
@@ -209,7 +234,9 @@
 
             <span class="subScoreSpan" v-if="manifestData.start_url">5</span>
 
-            <span class="subScoreSpan" v-else-if="!manifestData.start_url">0</span>
+            <span class="subScoreSpan" v-else-if="!manifestData.start_url"
+              >0</span
+            >
           </li>
         </ul>
 
@@ -218,10 +245,18 @@
         <ul>
           <li v-bind:class="{ good: manifestData && manifestData.screenshots }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="manifestData.screenshots">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="manifestData.screenshots"
+              >
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="!manifestData.screenshots">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="!manifestData.screenshots"
+              >
                 <i class="fas fa-times"></i>
               </span>
 
@@ -231,10 +266,18 @@
 
           <li v-bind:class="{ good: manifestData && manifestData.categories }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="manifestData.categories">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="manifestData.categories"
+              >
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="!manifestData.categories">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="!manifestData.categories"
+              >
                 <i class="fas fa-times"></i>
               </span>
 
@@ -248,10 +291,18 @@
         <ul>
           <li v-bind:class="{ good: manifestData && manifestData.shortcuts }">
             <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="manifestData.shortcuts">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="manifestData.shortcuts"
+              >
                 <i class="fas fa-check"></i>
               </span>
-              <span class="cardIcon" aria-hidden="true" v-if="!manifestData.shortcuts">
+              <span
+                class="cardIcon"
+                aria-hidden="true"
+                v-if="!manifestData.shortcuts"
+              >
                 <i class="fas fa-times"></i>
               </span>
 
@@ -279,9 +330,7 @@
           <div class="listSubDiv">
             <span class="cardIcon" aria-hidden="true"></span>
 
-            <span>
-              <code>display</code> property utilized
-            </span>
+            <span> <code>display</code> property utilized </span>
           </div>
 
           <span class="subScoreSpan">
@@ -368,9 +417,7 @@
               <i class="fas fa-times"></i>
             </span>
 
-            <span>
-              <code>display</code> property utilized
-            </span>
+            <span> <code>display</code> property utilized </span>
           </div>
 
           <span class="subScoreSpan">0</span>
@@ -434,7 +481,10 @@
       </ul>
 
       <!-- service worker section -->
-      <div id="serviceWorkerBlock" v-if="category === 'Service Worker' && serviceWorkerData">
+      <div
+        id="serviceWorkerBlock"
+        v-if="category === 'Service Worker' && serviceWorkerData"
+      >
         <h4>Required</h4>
 
         <ul>
@@ -458,9 +508,17 @@
               <span>Has a Service Worker</span>
             </div>
 
-            <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.hasSW">20</span>
+            <span
+              class="subScoreSpan"
+              v-if="serviceWorkerData && serviceWorkerData.hasSW"
+              >20</span
+            >
 
-            <span class="subScoreSpan" v-if="!serviceWorkerData && !serviceWorkerData.hasSW">0</span>
+            <span
+              class="subScoreSpan"
+              v-if="!serviceWorkerData && !serviceWorkerData.hasSW"
+              >0</span
+            >
           </li>
           <li v-bind:class="{ good: this.worksOffline }">
             <div class="listSubDiv">
@@ -482,9 +540,17 @@
               <span>Works offline</span>
             </div>
 
-            <span class="subScoreSpan" v-if="serviceWorkerData && this.worksOffline">10</span>
+            <span
+              class="subScoreSpan"
+              v-if="serviceWorkerData && this.worksOffline"
+              >10</span
+            >
 
-            <span class="subScoreSpan" v-if="!serviceWorkerData && !this.worksOffline">0</span>
+            <span
+              class="subScoreSpan"
+              v-if="!serviceWorkerData && !this.worksOffline"
+              >0</span
+            >
           </li>
           <li v-bind:class="{ good: serviceWorkerData.scope }">
             <div class="listSubDiv">
@@ -509,9 +575,17 @@
               </span>
             </div>
 
-            <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.scope">10</span>
+            <span
+              class="subScoreSpan"
+              v-if="serviceWorkerData && serviceWorkerData.scope"
+              >10</span
+            >
 
-            <span class="subScoreSpan" v-if="!serviceWorkerData && !serviceWorkerData.scope">0</span>
+            <span
+              class="subScoreSpan"
+              v-if="!serviceWorkerData && !serviceWorkerData.scope"
+              >0</span
+            >
           </li>
           <!-- <li v-bind:class="{ good: serviceWorkerData.pushReg }">
             <div class="listSubDiv">
@@ -564,7 +638,13 @@
       </div>
 
       <!-- loading experience -->
-      <ul v-if="category === 'Service Worker' && !serviceWorkerData && !noServiceWorker">
+      <ul
+        v-if="
+          category === 'Service Worker' &&
+          !serviceWorkerData &&
+          !noServiceWorker
+        "
+      >
         <li>
           <div class="listSubDiv">
             <span class="cardIcon" aria-hidden="true"></span>
@@ -673,20 +753,27 @@
 
       <div
         class="waitingText"
-        v-if="category === 'Service Worker' && !serviceWorkerData && !noServiceWorker && this.timedOutSW === false"
+        v-if="
+          category === 'Service Worker' &&
+          !serviceWorkerData &&
+          !noServiceWorker &&
+          this.timedOutSW === false
+        "
       >
         Loading your site in the background...this may take a minute
         <br />
       </div>
       <div
         id="timedOutText"
-        v-else-if="category === 'Service Worker' && this.timedOutSW === true">
-
+        v-else-if="category === 'Service Worker' && this.timedOutSW === true"
+      >
         <i class="fas fa-exclamation-circle"></i>
 
-        <span>We could not detect your service worker. If you are sure you have a Service Worker
-        registered you may move forward, however be aware that your Service Worker may be caching
-        more data than necessary.</span>
+        <span
+          >We could not detect your service worker. If you are sure you have a
+          Service Worker registered you may move forward, however be aware that
+          your Service Worker may be caching more data than necessary.</span
+        >
       </div>
       <div
         class="waitingText"
@@ -714,7 +801,9 @@
       <div class="brkManifestError" v-if="brokenManifest">
         Couldn't find an app manifest.
         <br />
-        <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest">Learn about manifests here</a>
+        <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
+          >Learn about manifests here</a
+        >
       </div>
 
       <div class="brkManifestError" v-if="category === 'Security' && !validSSL">
@@ -722,10 +811,12 @@
         <p class="brkManifestHelp">
           <i class="fas fa-info-circle" aria-hidden="true"></i>
           You can use
-          <a href="https://letsencrypt.org/">LetsEncrypt</a> to get a free HTTPS certificate, or
-          <a
-            href="https://azure.microsoft.com/en-us/get-started/web-app/"
-          >publish to Azure</a> to get HTTPS support out of the box
+          <a href="https://letsencrypt.org/">LetsEncrypt</a> to get a free HTTPS
+          certificate, or
+          <a href="https://azure.microsoft.com/en-us/get-started/web-app/"
+            >publish to Azure</a
+          >
+          to get HTTPS support out of the box
         </p>
       </div>
     </div>
@@ -773,16 +864,16 @@ export default class extends Vue {
   swScore: number = 0;
   securityScore: number = 0;
 
-  created() {
+  async created() {
     switch (this.category) {
       case "Security":
-        this.lookAtSecurity();
+        await this.lookAtSecurity();
         break;
       case "Manifest":
-        this.lookAtManifest();
+        await this.lookAtManifest();
         break;
       case "Service Worker":
-        this.lookAtSW();
+        await this.lookAtSW();
         break;
       default:
         console.log("no data");
@@ -840,9 +931,9 @@ export default class extends Vue {
       const cachedData = await getCache("manifest", this.url);
 
       if (cachedData) {
-        this.manifest = cachedData;
-
-        await this.getManifestInformation();
+        // this.manifest = cachedData;
+        this.updateManifest(cachedData);
+        // await this.getManifestInformation();
       } else {
         await this.getManifestInformation();
         await setCache("manifest", this.url, this.manifest);
@@ -883,57 +974,74 @@ export default class extends Vue {
   private async testManifest() {
     this.noManifest = false;
 
-    let manifestScoreData: any | null = null;
+    return new Promise(async (resolve, reject) => {
+      let manifestScoreData: any | null = null;
 
-    const cachedData = await getCache("manifestScoreData", this.url);
-    if (cachedData) {
-      manifestScoreData = cachedData;
-    } else {
-      // We'll need to analyze the manifest.
-      // Send along the manifest contents if we've got 'em.
-      const manifestContents = this.getManifestContentsFromSessionStorage();
-      const manifestAnalysisUrl = `${process.env.testAPIUrl}/WebManifest?site=${this.url}`;
-      const response = await fetch(manifestAnalysisUrl, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: manifestContents
-          ? JSON.stringify({ manifest: manifestContents, maniurl: this.url })
-          : "",
-      });
-      manifestScoreData = await response.json();
+      const cachedData = await getCache("manifestScoreData", this.url);
+      if (cachedData) {
+        manifestScoreData = cachedData;
+      } else {
+        // We'll need to analyze the manifest.
+        // Send along the manifest contents if we've got 'em.
+        const manifestContents = this.getManifestContentsFromSessionStorage();
 
-      await setCache("manifestScoreData", this.url, manifestScoreData);
-    }
+        try {
+          const manifestAnalysisUrl = `${process.env.testAPIUrl}/WebManifest?site=${this.url}`;
+          const response = await fetch(manifestAnalysisUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: manifestContents
+              ? JSON.stringify({
+                  manifest: manifestContents,
+                  maniurl: this.url,
+                })
+              : "",
+          });
+          manifestScoreData = await response.json();
 
-    this.manifestScore = 15;
-
-    if (manifestScoreData.data !== null) {
-      if (manifestScoreData.data.required.start_url === true) {
-        this.manifestScore = this.manifestScore + 5;
+          await setCache("manifestScoreData", this.url, manifestScoreData);
+        } catch (err) {
+          reject(err);
+        }
       }
 
-      if (manifestScoreData.data.required.short_name === true) {
-        this.manifestScore = this.manifestScore + 5;
+      let maniDetailScore = 15;
+
+      const manifestJson = JSON.parse(manifestScoreData.content.json);
+
+      if (manifestScoreData.data !== null || manifestJson) {
+        if (manifestScoreData.data.required.start_url === true || manifestJson.start_url) {
+          maniDetailScore = maniDetailScore + 5;
+        }
+
+        if (manifestScoreData.data.required.short_name === true || manifestJson.short_name) {
+          maniDetailScore = maniDetailScore + 5;
+        }
+
+        if (manifestScoreData.data.required.name === true || manifestJson.required_name) {
+          maniDetailScore = maniDetailScore + 5;
+        }
+
+        if (manifestScoreData.data.required.icons === true || manifestJson.icons) {
+          maniDetailScore = maniDetailScore + 5;
+        }
+
+        if (manifestScoreData.data.required.display === true || manifestJson.display) {
+          maniDetailScore = maniDetailScore + 5;
+        }
       }
 
-      if (manifestScoreData.data.required.name === true) {
-        this.manifestScore = this.manifestScore + 5;
-      }
+      this.manifestScore = maniDetailScore;
 
-      if (manifestScoreData.data.required.icons === true) {
-        this.manifestScore = this.manifestScore + 5;
-      }
+      // this.manifestScore = this.manifestScore;
 
-      if (manifestScoreData.data.required.display === true) {
-        this.manifestScore = this.manifestScore + 5;
-      }
-    }
+      this.manifestData = this.manifest;
 
-    this.manifestData = this.manifest;
-
-    this.$emit("manifestTestDone", { score: this.manifestScore });
+      this.$emit("manifestTestDone", { score: this.manifestScore });
+      resolve();
+    });
   }
 
   private getManifestContentsFromSessionStorage(): string | null {
@@ -975,15 +1083,13 @@ export default class extends Vue {
           if (response.status === 500) {
             this.timedOutSW = true;
             this.swScore = 0;
-            
+
             this.$emit("serviceWorkerTestDone", { score: 0 });
             return;
-          }
-          else {
+          } else {
             swResponse = await response.json();
             await setCache("sw", this.url, swResponse);
           }
-
         } catch (err) {
           this.timedOutSW = true;
           this.swScore = 0;
@@ -991,7 +1097,6 @@ export default class extends Vue {
           this.$emit("serviceWorkerTestDone", { score: 0 });
           return;
         }
-
       }
 
       if (swResponse && swResponse.data) {
