@@ -805,6 +805,283 @@
       </section>
     </Modal>
 
+    <!-- New Edge Modal -->
+
+    <Modal
+      title="Windows Package Options"
+      :button_name="$t('modal.done')"
+      ref="windowsPWAModal"
+      @modalSubmit="windowsOptionsModalSubmitted"
+      @cancel="windowsOptionsModalCancelled"
+      v-on:modalOpened="modalOpened()"
+      v-on:modalClosed="windowsModalClosed()"
+      v-if="windowsForm"
+    >
+      <div id="topLabelBox" slot="extraP">
+        <label id="topLabel">Customize your Windows Package below</label>
+        <p class="l-generator-error" v-if="androidPWAError">
+          <i class="fas fa-exclamation-circle"></i>
+          {{ $t(androidPWAError) }}
+        </p>
+      </div>
+
+      <section id="androidModalBody" class="androidOptionsModalBody">
+        <form style="width: 100%">
+          <div class="row">
+            <div class="col-lg-6 col-md-12">
+              <div class="form-group">
+                <label for="packageIdInput">
+                  {{ $t("publish.label_package_name") }}
+                  <i
+                    class="fas fa-info-circle"
+                    title="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
+                    aria-label="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
+                    role="definition"
+                  ></i>
+                </label>
+                <input
+                  id="packageIdInput"
+                  class="form-control"
+                  :placeholder="$t('publish.placeholder_package_name')"
+                  type="text"
+                  required
+                  v-model="windowsForm.packageId"
+                />
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6 col-md-12">
+                  <div class="form-group">
+                    <label for="appNameInput">App name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="appNameInput"
+                      placeholder="My Awesome PWA"
+                      required
+                      v-model="windowsForm.name"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6 col-md-12">
+                  <div class="form-group">
+                    <label for="appVersionInput">
+                      App version
+                      <i
+                        class="fas fa-info-circle"
+                        title="The version of your app displayed to users. This is a string, typically in the form of '1.0.0.0'."
+                        aria-label
+                        role="definition"
+                      ></i>
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="appVersionInput"
+                      placeholder="1.0.0.0"
+                      required
+                      v-model="windowsForm.version"
+                    />
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="form-group">
+                <label for="startUrlInput">
+                  URL
+                  <i
+                    class="fas fa-info-circle"
+                    title="This is the URL for your PWA."
+                    aria-label="This is the URL for your PWA."
+                    role="definition"
+                  ></i>
+                </label>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="startUrlInput"
+                  placeholder="/index.html"
+                  required
+                  v-model="windowsForm.url"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="manifestUrlInput">Manifest URL</label>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="manifestUrlInput"
+                  placeholder="https://mysite.com/manifest.json"
+                  required
+                  v-model="windowsForm.manifestUrl"
+                />
+              </div>
+
+            </div>
+
+            <!-- right half of the options dialog -->
+            <div class="col-lg-6 col-md-12">
+              <div class="form-group">
+                <label for="iconUrlInput">Icon URL</label>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="iconUrlInput"
+                  placeholder="https://myawesomepwa.com/512x512.png"
+                  v-model="windowsForm.images.baseImage"
+                />
+              </div>
+
+              <div class="form-group">
+                  <label for="signingKeyCountryCodeInput">
+                    Display Name
+                    <i
+                      class="fas fa-info-circle"
+                      title="The Display Name of the publisher"
+                      aria-label="The Display Name of the publisher"
+                      role="definition"
+                    ></i>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="signingKeyCountryCodeInput"
+                    required
+                    placeholder="US"
+                    v-model="windowsForm.publisher.displayName"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="signingKeyCountryCodeInput">
+                    Common Name
+                    <i
+                      class="fas fa-info-circle"
+                      title="The Common Name of the publisher"
+                      aria-label="The Common Name of the publisher"
+                      role="definition"
+                    ></i>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="signingKeyCountryCodeInput"
+                    required
+                    placeholder="US"
+                    v-model="windowsForm.publisher.commonName"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="signingKeyCountryCodeInput">
+                    Organization
+                    <i
+                      class="fas fa-info-circle"
+                      title="The Organization of the publisher"
+                      aria-label="The Organization of the publisher"
+                      role="definition"
+                    ></i>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="signingKeyCountryCodeInput"
+                    required
+                    placeholder="US"
+                    v-model="windowsForm.publisher.organization"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="signingKeyCountryCodeInput">
+                    Organizational Unit
+                    <i
+                      class="fas fa-info-circle"
+                      title="The Organizational Unit of the publisher"
+                      aria-label="The Organizational Unit of the publisher"
+                      role="definition"
+                    ></i>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="signingKeyCountryCodeInput"
+                    required
+                    placeholder="US"
+                    v-model="windowsForm.publisher.organizationalUnit"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="signingKeyCountryCodeInput">
+                    Country
+                    <i
+                      class="fas fa-info-circle"
+                      title="The 2 letter country code for the publisher"
+                      aria-label="The 2 letter country code for the publisher"
+                      role="definition"
+                    ></i>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="signingKeyCountryCodeInput"
+                    required
+                    placeholder="US"
+                    v-model="windowsForm.publisher.country"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="signingKeyCountryCodeInput">
+                    State or Province
+                    <i
+                      class="fas fa-info-circle"
+                      title="The State or Province for the publisher"
+                      aria-label="The State or Province for the publisher"
+                      role="definition"
+                    ></i>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="signingKeyCountryCodeInput"
+                    required
+                    placeholder="US"
+                    v-model="windowsForm.publisher.stateOrProvince"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="signingKeyCountryCodeInput">
+                    Street Address
+                    <i
+                      class="fas fa-info-circle"
+                      title="The Street Address for the publisher"
+                      aria-label="The Street Address for the publisher"
+                      role="definition"
+                    ></i>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="signingKeyCountryCodeInput"
+                    required
+                    placeholder="US"
+                    v-model="windowsForm.publisher.streetAddress"
+                  />
+                </div>
+            </div>
+          </div>
+        </form>
+      </section>
+    </Modal>
+
     <div v-if="openAndroid" ref="androidModal" id="androidPlatModal">
       <button @click="closeAndroidModal()" id="closeAndroidPlatButton">
         <i class="fas fa-times"></i>
@@ -913,20 +1190,14 @@
         <div id="androidModalButtonSection" class="edgeBlock">
           <Download
             class="androidDownloadButton"
+            :windowsOptions="this.windowsForm"
             platform="windows10New"
             :message="$t('publish.download')"
             :showMessage="true"
             v-on:downloadPackageError="showPackageDownloadError($event)"
           />
 
-          <Download
-            :showMessage="true"
-            id="legacyDownloadButton"
-            class="webviewButton"
-            platform="windows10"
-            message="Use a legacy webview instead (not recommended)"
-            v-on:downloadPackageError="showPackageDownloadError($event)"
-          />
+          <button class="androidDownloadButton" @click="openWindowsOptionsModal()">Options</button>
         </div>
       </section>
     </div>
@@ -1358,6 +1629,8 @@ import {
   generatePackageId,
 } from "~/utils/android-utils";
 
+import { validateWindowsOptions, generateWindowsPackageId } from "~/utils/windows-utils";
+
 const PublishState = namespace(publish.name, State);
 const PublishAction = namespace(publish.name, Action);
 const GeneratorState = namespace(generatorName, State);
@@ -1430,6 +1703,9 @@ export default class extends Vue {
   public androidFormCopyForCancellation: publish.AndroidApkOptions | null = null;
   public teamsForm: publish.TeamsParams | null = null;
 
+  public windowsForm: publish.WindowsPackageOptions | null = null;
+  public windowsFormCopyForCancellation: publish.WindowsPackageOptions | null = null;
+
   private readonly maxKeyFileSizeInBytes = 2097152; // 2MB. Typically, Android keystore files are ~3KB.
 
   private webadb: any;
@@ -1442,6 +1718,8 @@ export default class extends Vue {
   public created(): void {
     this.updateStatus();
     this.androidForm = this.createAndroidParamsFromManifest();
+
+    this.windowsForm = this.createWindowsParamsFromManifest();
   }
 
   showInstall(event) {
@@ -1530,6 +1808,60 @@ export default class extends Vue {
       } catch (err) {
         this.androidPWAError = err;
         this.installing = false;
+      }
+    }
+  }
+
+  createWindowsParamsFromManifest(): publish.WindowsPackageOptions {
+    const pwaUrl = this.manifest.url;
+    if (!pwaUrl) {
+      throw new Error("Can't find the current URL");
+    }
+
+    const name = this.manifest.short_name || this.manifest.name || "mypwa";
+    const packageID = generateWindowsPackageId(new URL(pwaUrl).hostname);
+
+    const allowSigning = false;
+    const edgeChannel = "stable";
+
+    const manifest = this.manifest;
+
+    const version = "1.0.1";
+
+    const icon =
+      this.findSuitableIcon(this.manifest.icons || [], "any", 512, 512, true) ||
+      this.findSuitableIcon(this.manifest.icons || [], "any", 192, 192, true) ||
+      this.findSuitableIcon(this.manifest.icons || [], "any", 0, 0, true); // If we can't find a suitably large icon, punt to any available icon
+
+    return {
+      "name": name,
+      "packageId": packageID,
+      "url": pwaUrl,
+      "version": version,
+      "allowSigning": allowSigning,
+      "publisher": {
+          "displayName": "Chonk Company, Inc.",
+          "commonName": "3a54a224-05dd-42aa-85bd-3f3c1478fdca",
+          "organization": "Chonk Company",
+          "organizationalUnit": "Engineering Department",
+          "country": "US",
+          "stateOrProvince": "Washington",
+          "streetAddress": "123 Any Street"
+      },
+      "classicPackage": {
+          "generate": true,
+          "version": "1.0",
+          "url": pwaUrl,
+      },
+      "edgeChannel": edgeChannel,
+      "edgeLaunchArgs": "--ignore-certificate-errors --unsafely-treat-insecure-origin-as-secure=* --auto-select-desktop-capture-source=\"Entire screen\"",
+      "appUserModelId": "Microsoft.MicrosoftEdge.stable_8wekyb3d8bbwe!MSEDGE",
+      "manifestUrl": this.manifestUrl,
+      "manifest": manifest,
+      "images": {
+          "baseImage": icon.src || "",
+          "backgroundColor": "transparent",
+          "padding": 0.3
       }
     }
   }
@@ -1886,6 +2218,17 @@ export default class extends Vue {
     this.openWindows = true;
   }
 
+  public openWindowsOptionsModal(): void {
+    this.openWindows = false;
+
+   // Create a copy of the Windows form. If the user cancels the dialog, we'll revert back to this copy.
+    if (this.androidForm) {
+      this.windowsFormCopyForCancellation = { ...this.windowsForm };
+    }
+
+    (this.$refs.windowsPWAModal as Modal).show();
+  }
+
   public openTeamsModal(): void {
     this.openTeams = true;
     this.disableDownloadButton();
@@ -2037,6 +2380,33 @@ export default class extends Vue {
     this.openAndroid = true;
   }
 
+  public windowsOptionsModalCancelled() {
+    this.windowsForm =
+      this.windowsFormCopyForCancellation ||
+      this.createWindowsParamsFromManifest();
+
+    this.androidPWAError = null;
+
+    (this.$refs.windowsPWAModal as Modal).hide();
+    this.openWindows = true;
+  }
+
+  public windowsOptionsModalSubmitted() {
+   if (!this.windowsForm) {
+      return;
+    }
+
+    const validationErrors = validateWindowsOptions(this.windowsForm);
+    if (validationErrors.length > 0) {
+      this.androidPWAError = validationErrors.map((e) => e.error).join(", ");
+      return;
+    }
+
+    (this.$refs.windowsPWAModal as Modal).hide();
+    this.openWindows = true;
+    this.androidPWAError = null;
+  }
+
   public ConstructErrorMessage(list) {
     if (list.length === 1) {
       return `Invalid package name. "${list[0]}" is a keyword.`;
@@ -2072,6 +2442,12 @@ export default class extends Vue {
     this.modalStatus = false;
     this.showBackground = false;
     this.openAndroid = true;
+  }
+
+  public windowsModalClosed() {
+    this.modalStatus = false;
+    this.showBackground = false;
+    this.openWindows = true;
   }
 }
 
@@ -2717,7 +3093,7 @@ footer a {
 
 .edgeBlock {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
 }

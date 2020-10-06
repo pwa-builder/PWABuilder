@@ -154,7 +154,7 @@ export function validateAndroidOptions(options: Partial<AndroidApkOptions | null
   return validationErrors;
 }
 
-function validateUrl(url: string, base?: string): string | null {
+export function validateUrl(url: string, base?: string): string | null {
   try {
     new URL(url, base);
     return null;

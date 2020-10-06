@@ -32,7 +32,7 @@ import { Prop } from "vue-property-decorator";
 import { Action, State, namespace } from "vuex-class";
 import * as publish from "~/store/modules/publish";
 import { validateAndroidOptions } from "../utils/android-utils";
-import { validatePackageID } from "../utils/windows-utils";
+import { validatePackageID, validateWindowsOptions } from "../utils/windows-utils";
 
 const PublishState = namespace(publish.name, State);
 const PublishAction = namespace(publish.name, Action);
@@ -56,6 +56,9 @@ export default class extends Vue {
   @Prop({ type: String, default: "" })
   @Prop({ type: Object })
   public readonly androidOptions: publish.AndroidApkOptions | null;
+
+  @Prop({ type: Object })
+  public readonly windowsOptions: publish.WindowsPackageOptions | null;
 
   @Prop({
     type: Array,
@@ -143,22 +146,23 @@ export default class extends Vue {
   }
 
   public async generateWindowsEdgePackage() {
+    const validationErrors = validateWindowsOptions(this.windowsOptions);
+    if (validationErrors.length > 0 || !this.windowsOptions) {
+      this.showErrorMessage(
+        "Invalid Windows options. " +
+          validationErrors.map((a) => a.error).join("\n")
+      );
+      return;
+    }
+
     this.isReady = false;
 
     try {
-      const name: string = (this.manifest.short_name as string) || (this.manifest.name as string);
-
-      const packageID = validatePackageID(name);
-
       const response = await fetch(
         `${process.env.windowsPackageGeneratorUrl}`,
         {
           method: "POST",
-          body: JSON.stringify({
-            packageId: packageID,
-            url: this.siteHref,
-            version: "1.0.0.0",
-          }),
+          body: JSON.stringify(this.windowsOptions),
           headers: new Headers({ "content-type": "application/json" }),
         }
       );
