@@ -41,7 +41,10 @@ export function validateWindowsOptions(options) {
   }
 
   if (!options.name || options.name.trim().length === 0) {
-    validationErrors.push({ field: "name", error: "Must have a valid app name" });
+    validationErrors.push({ field: "name", error: "Must have an app name" });
+  }
+  else if (options.name.trim().length > 256) {
+    validationErrors.push({ field: "name", error: "App name must be less than 256 characters" });
   }
 
   if (!options.version || options.version.trim().length === 0 && !options.classicPackage.version || options.classicPackage.version.trim().length === 0) {
