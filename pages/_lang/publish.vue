@@ -136,7 +136,7 @@
         </p>
       </div>
 
-      <section id="androidModalBody" class="androidOptionsModalBody">
+      <section class="androidModalBody androidOptionsModalBody">
         <form style="width: 100%">
           <div class="row">
             <div class="col-lg-6 col-md-12">
@@ -825,12 +825,12 @@
         </p>
       </div>
 
-      <section id="androidModalBody" class="androidOptionsModalBody">
+      <section class="androidModalBody androidOptionsModalBody">
         <form style="width: 100%">
           <div class="row">
             <div class="col-lg-6 col-md-12">
               <div class="form-group">
-                <label for="packageIdInput">
+                <label for="windowsPackageIdInput">
                   {{ $t("publish.label_package_name") }}
                   <i
                     class="fas fa-info-circle"
@@ -840,7 +840,7 @@
                   ></i>
                 </label>
                 <input
-                  id="packageIdInput"
+                  id="windowsPackageIdInput"
                   class="form-control"
                   :placeholder="$t('publish.placeholder_package_name')"
                   type="text"
@@ -852,11 +852,11 @@
               <div class="row">
                 <div class="col-lg-6 col-md-12">
                   <div class="form-group">
-                    <label for="appNameInput">App name</label>
+                    <label for="windowsAppNameInput">App name</label>
                     <input
                       type="text"
                       class="form-control"
-                      id="appNameInput"
+                      id="windowsAppNameInput"
                       placeholder="My Awesome PWA"
                       required
                       v-model="windowsForm.name"
@@ -868,7 +868,7 @@
               <div class="row">
                 <div class="col-lg-6 col-md-12">
                   <div class="form-group">
-                    <label for="appVersionInput">
+                    <label for="windowsAppVersionInput">
                       App version
                       <i
                         class="fas fa-info-circle"
@@ -880,7 +880,7 @@
                     <input
                       type="text"
                       class="form-control"
-                      id="appVersionInput"
+                      id="windowsAppVersionInput"
                       placeholder="1.0.1"
                       required
                       v-model="windowsForm.version"
@@ -893,7 +893,7 @@
               <div class="row">
                 <div class="col-lg-6 col-md-12">
                   <div class="form-group">
-                    <label for="appVersionInput">
+                    <label for="windowsClassicAppVersionInput">
                       Classic Package version
                       <i
                         class="fas fa-info-circle"
@@ -905,7 +905,7 @@
                     <input
                       type="text"
                       class="form-control"
-                      id="appVersionInput"
+                      id="windowsClassicAppVersionInput"
                       placeholder="1.0.0"
                       required
                       v-model="windowsForm.classicPackage.version"
@@ -916,7 +916,7 @@
               </div>
 
               <div class="form-group">
-                <label for="startUrlInput">
+                <label for="windowsStartUrlInput">
                   URL
                   <i
                     class="fas fa-info-circle"
@@ -928,7 +928,7 @@
                 <input
                   type="url"
                   class="form-control"
-                  id="startUrlInput"
+                  id="windowsStartUrlInput"
                   placeholder="/index.html"
                   required
                   v-model="windowsForm.url"
@@ -936,11 +936,11 @@
               </div>
 
               <div class="form-group">
-                <label for="manifestUrlInput">Manifest URL</label>
+                <label for="windowsManifestUrlInput">Manifest URL</label>
                 <input
                   type="url"
                   class="form-control"
-                  id="manifestUrlInput"
+                  id="windowsManifestUrlInput"
                   placeholder="https://mysite.com/manifest.json"
                   required
                   v-model="windowsForm.manifestUrl"
@@ -952,18 +952,18 @@
             <!-- right half of the options dialog -->
             <div class="col-lg-6 col-md-12">
               <div class="form-group">
-                <label for="iconUrlInput">Icon URL</label>
+                <label for="windowsIconUrlInput">Icon URL</label>
                 <input
                   type="url"
                   class="form-control"
-                  id="iconUrlInput"
+                  id="windowsIconUrlInput"
                   placeholder="https://myawesomepwa.com/512x512.png"
                   v-model="windowsForm.images.baseImage"
                 />
               </div>
 
               <div class="form-group">
-                  <label for="signingKeyCountryCodeInput">
+                  <label for="windowsDisplayNameInput">
                     Display Name
                     <i
                       class="fas fa-info-circle"
@@ -975,7 +975,7 @@
                   <input
                     type="text"
                     class="form-control"
-                    id="signingKeyCountryCodeInput"
+                    for="windowsDisplayNameInput"
                     required
                     placeholder="US"
                     v-model="windowsForm.publisher.displayName"
@@ -983,7 +983,7 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="signingKeyCountryCodeInput">
+                  <label for="windowsPublisherIdInput">
                     <a href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md">
                       Publisher Id
                       <i
@@ -997,7 +997,7 @@
                   <input
                     type="text"
                     class="form-control"
-                    id="signingKeyCountryCodeInput"
+                    id="windowsPublisherIdInput"
                     required
                     placeholder="CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca"
                     v-model="windowsForm.publisher.commonName"
@@ -1005,7 +1005,7 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="signingKeyCountryCodeInput">
+                  <label for="windowsOrgCodeInput">
                     Organization
                     <i
                       class="fas fa-info-circle"
@@ -1017,7 +1017,7 @@
                   <input
                     type="text"
                     class="form-control"
-                    id="signingKeyCountryCodeInput"
+                    id="windowsOrgCodeInput"
                     required
                     placeholder="US"
                     v-model="windowsForm.publisher.organization"
@@ -1025,7 +1025,7 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="signingKeyCountryCodeInput">
+                  <label for="windowsOrgUnitInput">
                     Organizational Unit
                     <i
                       class="fas fa-info-circle"
@@ -1037,7 +1037,7 @@
                   <input
                     type="text"
                     class="form-control"
-                    id="signingKeyCountryCodeInput"
+                    id="windowsOrgUnitInput"
                     required
                     placeholder="US"
                     v-model="windowsForm.publisher.organizationalUnit"
@@ -1045,7 +1045,7 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="signingKeyCountryCodeInput">
+                  <label for="windowsSigningKeyCountryCodeInput">
                     Country
                     <i
                       class="fas fa-info-circle"
@@ -1057,7 +1057,7 @@
                   <input
                     type="text"
                     class="form-control"
-                    id="signingKeyCountryCodeInput"
+                    id="windowsSigningKeyCountryCodeInput"
                     required
                     placeholder="US"
                     v-model="windowsForm.publisher.country"
@@ -1065,7 +1065,7 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="signingKeyCountryCodeInput">
+                  <label for="windowsStateInput">
                     State or Province
                     <i
                       class="fas fa-info-circle"
@@ -1077,7 +1077,7 @@
                   <input
                     type="text"
                     class="form-control"
-                    id="signingKeyCountryCodeInput"
+                    id="windowsStateInput"
                     required
                     placeholder="US"
                     v-model="windowsForm.publisher.stateOrProvince"
@@ -1085,7 +1085,7 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="signingKeyCountryCodeInput">
+                  <label for="windowsAddressInput">
                     Street Address
                     <i
                       class="fas fa-info-circle"
@@ -1097,7 +1097,7 @@
                   <input
                     type="text"
                     class="form-control"
-                    id="signingKeyCountryCodeInput"
+                    id="windowsAddressInput"
                     required
                     placeholder="US"
                     v-model="windowsForm.publisher.streetAddress"
@@ -1114,7 +1114,7 @@
         <i class="fas fa-times"></i>
       </button>
 
-      <section id="androidModalBody">
+      <section class="androidModalBody">
         <div>
           <p class="androidModalP">
             Download your
@@ -1200,7 +1200,7 @@
         <i class="fas fa-times"></i>
       </button>
 
-      <section id="androidModalBody">
+      <section class="androidModalBody">
         <div>
           <p class="androidModalP">Download your Microsoft Edge PWA package for Windows!</p>
 
@@ -3104,12 +3104,12 @@ footer a {
   }
 }
 
-#androidModalBody #extraSection p {
+.androidModalBody #extraSection p {
   color: grey;
   font-size: 10px;
 }
 
-#androidModalBody #extraSection #legacyDownloadButton, #androidModalBody #androidModalButtonSection #legacyDownloadButton {
+.androidModalBody #extraSection #legacyDownloadButton, .androidModalBody #androidModalButtonSection #legacyDownloadButton {
   color: grey;
   font-size: 10px;
   background: transparent;
@@ -3125,7 +3125,7 @@ footer a {
   justify-content: space-between;
 }
 
-#androidModalBody {
+.androidModalBody {
   width: 34em;
   background: white;
   display: flex;
@@ -3136,7 +3136,7 @@ footer a {
   border-radius: 12px;
 }
 
-#androidModalBody.androidOptionsModalBody {
+.androidModalBody.androidOptionsModalBody {
   width: 100%;
   align-items: start;
   padding-left: 0;
@@ -3146,28 +3146,28 @@ footer a {
 
 /* On smaller screens, reduce the padding on modals */
 @media (max-width: $media-screen-m) {
-  #androidModalBody.androidOptionsModalBody {
+  .androidModalBody.androidOptionsModalBody {
     padding-left: 10px;
     padding-right: 10px;
   }
 }
 
-#androidModalBody.androidOptionsModalBody input {
+.androidModalBody.androidOptionsModalBody input {
   margin-bottom: 12px;
   border-color: #00000075;
 }
 
-#androidModalBody.androidOptionsModalBody label {
+.androidModalBody.androidOptionsModalBody label {
   display: block;
   margin-bottom: 10px;
 }
 
-#androidModalBody.androidOptionsModalBody + .modal-buttons {
+.androidModalBody.androidOptionsModalBody + .modal-buttons {
   margin-top: 2em;
   margin-bottom: 2em;
 }
 
-#androidModalBody.androidOptionsModalBody .fa-info-circle {
+.androidModalBody.androidOptionsModalBody .fa-info-circle {
   color: $color-muted;
   cursor: help;
 }
@@ -3202,7 +3202,7 @@ footer a {
   color: #9337d8;
 }
 
-#androidModalBody #androidModalSubText {
+.androidModalBody #androidModalSubText {
   color: #3c3c3c;
   display: block;
   margin-bottom: 2em;
