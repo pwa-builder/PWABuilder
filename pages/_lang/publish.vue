@@ -959,20 +959,22 @@
 
                 <div class="form-group">
                   <label for="signingKeyCountryCodeInput">
-                    Common Name
-                    <i
-                      class="fas fa-info-circle"
-                      title="The Common Name of the publisher"
-                      aria-label="The Common Name of the publisher"
-                      role="definition"
-                    ></i>
+                    <a href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md">
+                      Publisher Id
+                      <i
+                        class="fas fa-info-circle"
+                        title="The Publisher Id of the publisher"
+                        aria-label="The Publisher Id of the publisher"
+                        role="definition"
+                      ></i>
+                    </a>
                   </label>
                   <input
                     type="text"
                     class="form-control"
                     id="signingKeyCountryCodeInput"
                     required
-                    placeholder="US"
+                    placeholder="CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca"
                     v-model="windowsForm.publisher.commonName"
                   />
                 </div>
@@ -1841,7 +1843,7 @@ export default class extends Vue {
       "allowSigning": allowSigning,
       "publisher": {
           "displayName": "Chonk Company, Inc.",
-          "commonName": "3a54a224-05dd-42aa-85bd-3f3c1478fdca",
+          "commonName": "CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca",
           "organization": "Chonk Company",
           "organizationalUnit": "Engineering Department",
           "country": "US",
