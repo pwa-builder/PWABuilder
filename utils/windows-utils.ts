@@ -52,18 +52,13 @@ export function validateWindowsOptions(options) {
   if (!options.publisher) {
     validationErrors.push({ field: "publisher", error: "Publisher information must be supplied." });
   } else {
-    // All the publisher properties are required.
-    const requiredSigningFields: Array<keyof WindowsPublisherOptions> = [
+    // commonName and displayName are required, all other publisher fields are optional
+    const requiredPublisherFields: Array<keyof WindowsPublisherOptions> = [
       "displayName",
-      "commonName",
-      "organization",
-      "organizationalUnit",
-      "country",
-      "stateOrProvince",
-      "streetAddress"
+      "commonName"
     ];
 
-    requiredSigningFields
+    requiredPublisherFields
       .filter(prop => !options.publisher![prop])
       .forEach(() => validationErrors.push({ field: "publisher", error: `Publisher info must be specified` }));
 
