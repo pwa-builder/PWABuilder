@@ -48,32 +48,28 @@ export function validateWindowsOptions(options) {
     validationErrors.push({ field: "version", error: "Must have a valid app version" });
   }
 
-  // Validating signing options when we have a signing mode 
-  if (options.publisher) {
-    if (!options.publisher) {
-      validationErrors.push({ field: "publisher", error: "Publisher information must be supplied." });
-    } else {
-      // All the signing properties are required, except file, storePassword, and keyPassword.
-      // File is required only signingMode === "mine"
-      // Store password and key password are required only if signingMode === "mine"; otherwise, they're optional and CloudAPK will generate a new password for you.
-      const requiredSigningFields: Array<keyof WindowsPublisherOptions> = [
-        "displayName",
-        "commonName",
-        "organization",
-        "organizationalUnit",
-        "country",
-        "stateOrProvince",
-        "streetAddress"
-      ];
+  // Validating publisher options when we have publisher data
+  if (!options.publisher) {
+    validationErrors.push({ field: "publisher", error: "Publisher information must be supplied." });
+  } else {
+    // All the publisher properties are required.
+    const requiredSigningFields: Array<keyof WindowsPublisherOptions> = [
+      "displayName",
+      "commonName",
+      "organization",
+      "organizationalUnit",
+      "country",
+      "stateOrProvince",
+      "streetAddress"
+    ];
 
-      requiredSigningFields
-        .filter(prop => !options.publisher![prop])
-        .forEach(() => validationErrors.push({ field: "publisher", error: `Publisher info must be specified` }));
+    requiredSigningFields
+      .filter(prop => !options.publisher![prop])
+      .forEach(() => validationErrors.push({ field: "publisher", error: `Publisher info must be specified` }));
 
-      // Ensure country code is 2 chars
-      if (options.publisher.country && options.publisher.country.length !== 2) {
-        validationErrors.push({ field: "publisher", error: "Publisher country code must be 2 letters" });
-      }
+    // Ensure country code is 2 chars
+    if (options.publisher.country && options.publisher.country.length !== 2) {
+      validationErrors.push({ field: "publisher", error: "Publisher country code must be 2 letters" });
     }
   }
 
