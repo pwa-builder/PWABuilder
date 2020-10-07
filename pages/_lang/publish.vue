@@ -2222,7 +2222,7 @@ export default class extends Vue {
     this.openWindows = false;
 
    // Create a copy of the Windows form. If the user cancels the dialog, we'll revert back to this copy.
-    if (this.androidForm) {
+    if (this.windowsForm) {
       this.windowsFormCopyForCancellation = { ...this.windowsForm };
     }
 
