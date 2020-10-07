@@ -52,6 +52,10 @@ export interface WindowsPackageOptions {
   manifestUrl: string;
   manifest: object;
   version: string;
+  classicPackage: {
+    generate: boolean;
+    version: string;
+  },
   images: {
     baseImage: string | null
   };

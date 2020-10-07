@@ -44,8 +44,11 @@ export function validateWindowsOptions(options) {
     validationErrors.push({ field: "name", error: "Must have a valid app name" });
   }
 
-  if (!options.version || options.version.trim().length === 0 || options.version.trim().length < 2) {
-    validationErrors.push({ field: "version", error: "Must have a valid app version" });
+  if (!options.version || options.version.trim().length === 0 && !options.classicPackage.version || options.classicPackage.version.trim().length === 0) {
+    validationErrors.push({ field: "version", error: "Must have an app version and a Classic Package version" });
+  }
+  else {
+    validateWindowsPackageVersion(options.version, options.classicPackage.version, validationErrors);
   }
 
   // Validating publisher options when we have publisher data
@@ -78,4 +81,36 @@ export function validateWindowsOptions(options) {
   }
 
   return validationErrors;
+}
+
+function validateWindowsPackageVersion(version: string, classicVersion: string, validationErrors: { field: keyof WindowsPackageOptions | null, error: string }[]) {
+  console.log(version.trim(), version.trim().length);
+
+  /**
+   * Version must be in this form: "1.0.0"; a 3 segment version. 
+   * 4 segment versions (e.g. 1.0.0.0) are invalid due to Store restrictions; 
+   * the Store reserves the 4th segment for internal use.
+   * 
+   * versions in the 3 segment version should always only have 5 characters
+   */
+  if (version.trim().length !== 5) {
+    validationErrors.push({ field: "version", error: "Version must be in this form: 1.0.0; a 3 segment version." });
+  }
+
+  /**
+   * Version must be 1.0.0 or greater; Store doesn't support versions starting with zero.
+   */
+  const firstChar = version.trim().substr(0, 1);
+
+  if (firstChar && parseInt(firstChar) < 1) {
+    validationErrors.push({ field: "version", error: "Version must be 1.0.0 or greater; Store doesn't support versions starting with zero." });
+  }
+
+  /**
+   * classic package version should always be lower than app version
+   */
+
+  if (parseFloat(version.trim()) < parseFloat(classicVersion.trim())) {
+    validationErrors.push({ field: "version", error: "Classic package version must always be lower than the App version" });
+  }
 }

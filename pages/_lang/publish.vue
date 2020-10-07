@@ -881,9 +881,34 @@
                       type="text"
                       class="form-control"
                       id="appVersionInput"
-                      placeholder="1.0.0.0"
+                      placeholder="1.0.1"
                       required
                       v-model="windowsForm.version"
+                    />
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6 col-md-12">
+                  <div class="form-group">
+                    <label for="appVersionInput">
+                      Classic Package version
+                      <i
+                        class="fas fa-info-circle"
+                        title="The version of your app displayed to users on older version of Windows 10"
+                        aria-label
+                        role="definition"
+                      ></i>
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="appVersionInput"
+                      placeholder="1.0.0"
+                      required
+                      v-model="windowsForm.classicPackage.version"
                     />
                   </div>
                 </div>
@@ -1852,7 +1877,7 @@ export default class extends Vue {
       },
       "classicPackage": {
           "generate": true,
-          "version": "1.0",
+          "version": "1.0.0",
           "url": pwaUrl,
       },
       "edgeChannel": edgeChannel,
