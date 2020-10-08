@@ -1202,29 +1202,48 @@
 
       <section class="androidModalBody">
         <div>
-          <p class="androidModalP">Download your Microsoft Edge PWA package for Windows!</p>
+          <p class="androidModalP">Download your PWA package for Windows!</p>
 
           <p>
-            You'll get a package with your side-loadable PWA to test right away. Your PWA will
-            be running on the new
-            <a
-              href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/"
-            >Chromium based Edge</a>, giving you access to all of the latest APIs
-            available in Edge!
+            You'll get a side-loadable version of your PWA (requires Win10 in dev mode) to test your PWA right away. The Generate Appx button can be used to generate a PWA package to submit to the Microsoft Store.
           </p>
         </div>
 
         <div id="androidModalButtonSection" class="edgeBlock">
           <Download
             class="androidDownloadButton"
-            :windowsOptions="this.windowsForm"
-            platform="windows10New"
+            platform="windows10"
             :message="$t('publish.download')"
             :showMessage="true"
             v-on:downloadPackageError="showPackageDownloadError($event)"
           />
+          <button
+            class="androidDownloadButton"
+            @click="
+              openAppXModal();
+              $awa({
+                referrerUri:
+                  'https://www.pwabuilder.com/publish/windows10-appx',
+              });
+            "
+          >Generate</button>
+        </div>
 
-          <button class="androidDownloadButton" @click="openWindowsOptionsModal()">Options</button>
+        <div id="extraSection">
+          <p>
+            Try the beta of the New Edge platform!
+
+            <Download
+              :showMessage="true"
+              id="newEdgeBetaDownloadButton"
+              class="webviewButton"
+              platform="windows10new"
+              message="Download"
+              v-on:downloadPackageError="showPackageDownloadError($event)"
+            />
+
+            <button class="newEdgeBetaOptionsButton" @click="openWindowsOptionsModal()">Open options for New Edge Platform</button>
+          </p>
         </div>
       </section>
     </div>
@@ -1522,17 +1541,10 @@
                   <i class="fab fa-windows platformIcon" aria-label="Windows Icon"></i>
                   <h2>Windows</h2>
                 </div>
-
-                <span>beta</span>
               </div>
 
               <p>
-                You'll get a package with your side-loadable PWA to test right away. Your PWA will
-                be running on the new
-                <a
-                  href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/"
-                >Chromium based Edge</a>, giving you access to all of the latest APIs
-                available in Edge!
+                You'll get a side-loadable version of your PWA (requires Win10 in dev mode) to test your PWA right away. To generate an PWA package and submit to the Microsoft Store, click here.
               </p>
 
               <section class="platformDownloadBar">
@@ -3109,13 +3121,20 @@ footer a {
   font-size: 10px;
 }
 
-.androidModalBody #extraSection #legacyDownloadButton, .androidModalBody #androidModalButtonSection #legacyDownloadButton {
+.androidModalBody #extraSection #legacyDownloadButton, .androidModalBody #androidModalButtonSection #legacyDownloadButton, #newEdgeBetaDownloadButton, .newEdgeBetaOptionsButton {
   color: grey;
   font-size: 10px;
   background: transparent;
   padding-left: 0;
   border: none;
   margin-top: 1em;
+}
+
+#newEdgeBetaDownloadButton, .newEdgeBetaOptionsButton {
+  color: #9337d8;
+  border: solid 1px;
+  padding: 4px;
+  margin-right: 4px;
 }
 
 .edgeBlock {
