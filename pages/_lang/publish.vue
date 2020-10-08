@@ -1240,7 +1240,7 @@
 
         <div id="extraSection">
           <p>
-            <button class="newEdgeBetaOptionsButton" @click="openWindowsOptionsModal()">Try the beta of the New Edge Platform!</button>
+            <button class="newEdgeBetaOptionsButton" @click="openWindowsOptionsModal()">Try the preview of the New Edge Platform!</button>
           </p>
         </div>
       </section>
