@@ -811,6 +811,7 @@
       title="Windows Package Options"
       :button_name="$t('modal.done')"
       ref="windowsPWAModal"
+      :showSubmitButton="false"
       @modalSubmit="windowsOptionsModalSubmitted"
       @cancel="windowsOptionsModalCancelled"
       v-on:modalOpened="modalOpened()"
@@ -1107,6 +1108,14 @@
           </div>
         </form>
       </section>
+
+      <Download
+        :showMessage="true"
+        platform="windows10new"
+        message="Download"
+        slot="extraButton"
+        v-on:downloadPackageError="showPackageDownloadError($event)"
+            />
     </Modal>
 
     <div v-if="openAndroid" ref="androidModal" id="androidPlatModal">
@@ -1231,18 +1240,7 @@
 
         <div id="extraSection">
           <p>
-            Try the beta of the New Edge platform!
-
-            <Download
-              :showMessage="true"
-              id="newEdgeBetaDownloadButton"
-              class="webviewButton"
-              platform="windows10new"
-              message="Download"
-              v-on:downloadPackageError="showPackageDownloadError($event)"
-            />
-
-            <button class="newEdgeBetaOptionsButton" @click="openWindowsOptionsModal()">Open options for New Edge Platform</button>
+            <button class="newEdgeBetaOptionsButton" @click="openWindowsOptionsModal()">Try the beta of the New Edge Platform!</button>
           </p>
         </div>
       </section>
