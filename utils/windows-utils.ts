@@ -95,7 +95,7 @@ function validateWindowsPackageVersion(version: string, classicVersion: string, 
    * the Store reserves the 4th segment for internal use.
    * 
    */
-  if (version.trim().split(".").length > 2) {
+  if (version.trim().split(".").length > 3 || version.trim().split(".").length < 3) {
     validationErrors.push({ field: "version", error: "Version must be in this form: 1.0.0; a 3 segment version." });
   }
 
@@ -112,7 +112,7 @@ function validateWindowsPackageVersion(version: string, classicVersion: string, 
    * classic package version should always be lower than app version
    */
 
-  if (parseFloat(version.trim()) < parseFloat(classicVersion.trim())) {
+  if (version.trim() < classicVersion.trim()) {
     validationErrors.push({ field: "version", error: "Classic package version must always be lower than the App version" });
   }
 }
