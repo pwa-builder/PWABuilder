@@ -3042,6 +3042,10 @@ footer a {
   margin-right: 4px;
 }
 
+#newEdgeBetaDownloadButton {
+  width: 150px;
+}
+
 .edgeBlock {
   display: flex;
   flex-direction: row;

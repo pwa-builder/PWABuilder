@@ -157,7 +157,7 @@ export default class extends Vue {
       return;
     }
 
-    this.isReady = false;
+    this.message$ = 'Generating...';
 
     try {
       const response = await fetch(
@@ -180,9 +180,12 @@ export default class extends Vue {
         );
         this.isReady = true;
       }
+
+      this.message$ = this.message;
     } catch (err) {
       this.showErrorMessage("Failed. Error: " + err);
-      this.isReady = true;
+      
+      this.message$ = this.message;
     }
   }
 
