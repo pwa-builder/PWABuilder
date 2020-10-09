@@ -811,7 +811,7 @@
       title="Windows Package Options"
       :button_name="$t('modal.done')"
       ref="windowsPWAModal"
-      :showSubmitButton="false"
+      :showSubmitButton="true"
       @modalSubmit="windowsOptionsModalSubmitted"
       @cancel="windowsOptionsModalCancelled"
       v-on:modalOpened="modalOpened()"
@@ -1108,14 +1108,6 @@
           </div>
         </form>
       </section>
-
-      <Download
-        :showMessage="true"
-        platform="windows10new"
-        message="Download"
-        slot="extraButton"
-        v-on:downloadPackageError="showPackageDownloadError($event)"
-            />
     </Modal>
 
     <div v-if="openAndroid" ref="androidModal" id="androidPlatModal">
@@ -1247,11 +1239,11 @@
               id="newEdgeBetaDownloadButton"
               class="webviewButton"
               platform="windows10new"
-              message="Download"
+              :message="this.windowsOptionsApplied ? 'Download Store ready package' : 'Download Test Package'"
               v-on:downloadPackageError="showPackageDownloadError($event)"
             />
 
-            <button class="newEdgeBetaOptionsButton" @click="openWindowsOptionsModal()">Open options for New Edge Platform</button>
+            <button class="newEdgeBetaOptionsButton" @click="openWindowsOptionsModal()">Open Store Options</button>
           </p>
         </div>
       </section>
@@ -1753,6 +1745,7 @@ export default class extends Vue {
 
   public windowsForm: publish.WindowsPackageOptions | null = null;
   public windowsFormCopyForCancellation: publish.WindowsPackageOptions | null = null;
+  public windowsOptionsApplied: boolean = false;
 
   private readonly maxKeyFileSizeInBytes = 2097152; // 2MB. Typically, Android keystore files are ~3KB.
 
@@ -2453,6 +2446,8 @@ export default class extends Vue {
     (this.$refs.windowsPWAModal as Modal).hide();
     this.openWindows = true;
     this.androidPWAError = null;
+
+    this.windowsOptionsApplied = true;
   }
 
   public ConstructErrorMessage(list) {
