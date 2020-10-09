@@ -1240,7 +1240,18 @@
 
         <div id="extraSection">
           <p>
-            <button class="newEdgeBetaOptionsButton" @click="openWindowsOptionsModal()">Try the preview of the New Edge Platform!</button>
+            Try the beta of the New Edge platform!
+
+            <Download
+              :showMessage="true"
+              id="newEdgeBetaDownloadButton"
+              class="webviewButton"
+              platform="windows10new"
+              message="Download"
+              v-on:downloadPackageError="showPackageDownloadError($event)"
+            />
+
+            <button class="newEdgeBetaOptionsButton" @click="openWindowsOptionsModal()">Open options for New Edge Platform</button>
           </p>
         </div>
       </section>
