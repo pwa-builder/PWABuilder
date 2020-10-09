@@ -1792,8 +1792,6 @@ export default class extends Vue {
               "url": pwaUrl,
           },
           "edgeChannel": edgeChannel,
-          "edgeLaunchArgs": "--ignore-certificate-errors --unsafely-treat-insecure-origin-as-secure=* --auto-select-desktop-capture-source=\"Entire screen\"",
-          "appUserModelId": "Microsoft.MicrosoftEdge.stable_8wekyb3d8bbwe!MSEDGE",
           "manifestUrl": this.manifestUrl,
           "manifest": manifest,
           "images": {

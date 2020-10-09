@@ -49,8 +49,6 @@ export interface WindowsPackageOptions {
   url: string;
   allowSigning: boolean;
   edgeChannel: string;
-  edgeLaunchArgs: string;
-  appUserModelId: string;
   manifestUrl: string;
   manifest: object;
   version: string;
