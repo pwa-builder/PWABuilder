@@ -49,15 +49,20 @@ export interface WindowsPackageOptions {
   url: string;
   allowSigning: boolean;
   edgeChannel: string;
+  edgeLaunchArgs: string;
+  appUserModelId: string;
   manifestUrl: string;
   manifest: object;
   version: string;
   classicPackage: {
     generate: boolean;
     version: string;
+    url: string;
   },
   images: {
-    baseImage: string | null
+    baseImage: string | null;
+    backgroundColor: string;
+    padding: number;
   };
   publisher: WindowsPublisherOptions | null;
 }
@@ -68,11 +73,6 @@ export interface WindowsPackageOptions {
 export interface WindowsPublisherOptions {
   displayName: string;
   commonName: string;
-  organization: string;
-  organizationalUnit: string;
-  country: string;
-  stateOrProvince: string;
-  streetAddress: string;
 }
 
 

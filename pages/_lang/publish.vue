@@ -1004,106 +1004,6 @@
                     v-model="windowsForm.publisher.commonName"
                   />
                 </div>
-
-                <div class="form-group">
-                  <label for="windowsOrgCodeInput">
-                    Organization
-                    <i
-                      class="fas fa-info-circle"
-                      title="The Organization of the publisher"
-                      aria-label="The Organization of the publisher"
-                      role="definition"
-                    ></i>
-                  </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="windowsOrgCodeInput"
-                    required
-                    placeholder="US"
-                    v-model="windowsForm.publisher.organization"
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label for="windowsOrgUnitInput">
-                    Organizational Unit
-                    <i
-                      class="fas fa-info-circle"
-                      title="The Organizational Unit of the publisher"
-                      aria-label="The Organizational Unit of the publisher"
-                      role="definition"
-                    ></i>
-                  </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="windowsOrgUnitInput"
-                    required
-                    placeholder="US"
-                    v-model="windowsForm.publisher.organizationalUnit"
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label for="windowsSigningKeyCountryCodeInput">
-                    Country
-                    <i
-                      class="fas fa-info-circle"
-                      title="The 2 letter country code for the publisher"
-                      aria-label="The 2 letter country code for the publisher"
-                      role="definition"
-                    ></i>
-                  </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="windowsSigningKeyCountryCodeInput"
-                    required
-                    placeholder="US"
-                    v-model="windowsForm.publisher.country"
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label for="windowsStateInput">
-                    State or Province
-                    <i
-                      class="fas fa-info-circle"
-                      title="The State or Province for the publisher"
-                      aria-label="The State or Province for the publisher"
-                      role="definition"
-                    ></i>
-                  </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="windowsStateInput"
-                    required
-                    placeholder="US"
-                    v-model="windowsForm.publisher.stateOrProvince"
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label for="windowsAddressInput">
-                    Street Address
-                    <i
-                      class="fas fa-info-circle"
-                      title="The Street Address for the publisher"
-                      aria-label="The Street Address for the publisher"
-                      role="definition"
-                    ></i>
-                  </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="windowsAddressInput"
-                    required
-                    placeholder="US"
-                    v-model="windowsForm.publisher.streetAddress"
-                  />
-                </div>
             </div>
           </div>
         </form>
@@ -1874,37 +1774,37 @@ export default class extends Vue {
       this.findSuitableIcon(this.manifest.icons || [], "any", 192, 192, true) ||
       this.findSuitableIcon(this.manifest.icons || [], "any", 0, 0, true); // If we can't find a suitably large icon, punt to any available icon
 
-    return {
-      "name": name,
-      "packageId": packageID,
-      "url": pwaUrl,
-      "version": version,
-      "allowSigning": allowSigning,
-      "publisher": {
-          "displayName": "Chonk Company, Inc.",
-          "commonName": "CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca",
-          "organization": "Chonk Company",
-          "organizationalUnit": "Engineering Department",
-          "country": "US",
-          "stateOrProvince": "Washington",
-          "streetAddress": "123 Any Street"
-      },
-      "classicPackage": {
-          "generate": true,
-          "version": "1.0.0",
+      if (icon) {
+        return {
+          "name": name,
+          "packageId": packageID,
           "url": pwaUrl,
-      },
-      "edgeChannel": edgeChannel,
-      "edgeLaunchArgs": "--ignore-certificate-errors --unsafely-treat-insecure-origin-as-secure=* --auto-select-desktop-capture-source=\"Entire screen\"",
-      "appUserModelId": "Microsoft.MicrosoftEdge.stable_8wekyb3d8bbwe!MSEDGE",
-      "manifestUrl": this.manifestUrl,
-      "manifest": manifest,
-      "images": {
-          "baseImage": icon.src || "",
-          "backgroundColor": "transparent",
-          "padding": 0.3
+          "version": version,
+          "allowSigning": allowSigning,
+          "publisher": {
+              "displayName": "Contoso, Inc.",
+              "commonName": "CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca"
+          },
+          "classicPackage": {
+              "generate": true,
+              "version": "1.0.0",
+              "url": pwaUrl,
+          },
+          "edgeChannel": edgeChannel,
+          "edgeLaunchArgs": "--ignore-certificate-errors --unsafely-treat-insecure-origin-as-secure=* --auto-select-desktop-capture-source=\"Entire screen\"",
+          "appUserModelId": "Microsoft.MicrosoftEdge.stable_8wekyb3d8bbwe!MSEDGE",
+          "manifestUrl": this.manifestUrl,
+          "manifest": manifest,
+          "images": {
+              "baseImage": icon.src || "",
+              "backgroundColor": "transparent",
+              "padding": 0.3
+          }
+        }
       }
-    }
+      else {
+        throw new Error("Cant find an icon to send");
+      }
   }
 
   createAndroidParamsFromManifest(): publish.AndroidApkOptions {
