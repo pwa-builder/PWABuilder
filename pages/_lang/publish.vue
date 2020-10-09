@@ -832,13 +832,15 @@
             <div class="col-lg-6 col-md-12">
               <div class="form-group">
                 <label for="windowsPackageIdInput">
-                  {{ $t("publish.label_package_name") }}
-                  <i
-                    class="fas fa-info-circle"
-                    title="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
-                    aria-label="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
-                    role="definition"
-                  ></i>
+                  <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md">
+                    {{ $t("publish.label_package_name") }}
+                    <i
+                      class="fas fa-info-circle"
+                      title="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
+                      aria-label="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
+                      role="definition"
+                    ></i>
+                  </a>
                 </label>
                 <input
                   id="windowsPackageIdInput"
@@ -965,13 +967,15 @@
 
               <div class="form-group">
                   <label for="windowsDisplayNameInput">
-                    Display Name
-                    <i
-                      class="fas fa-info-circle"
-                      title="The Display Name of the publisher"
-                      aria-label="The Display Name of the publisher"
-                      role="definition"
-                    ></i>
+                    <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md">
+                      Publisher Display Name
+                      <i
+                        class="fas fa-info-circle"
+                        title="The Display Name of the publisher"
+                        aria-label="The Display Name of the publisher"
+                        role="definition"
+                      ></i>
+                    </a>
                   </label>
                   <input
                     type="text"
@@ -985,7 +989,7 @@
 
                 <div class="form-group">
                   <label for="windowsPublisherIdInput">
-                    <a href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md">
+                    <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md">
                       Publisher Id
                       <i
                         class="fas fa-info-circle"
