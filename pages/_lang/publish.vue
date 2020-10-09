@@ -1763,7 +1763,6 @@ export default class extends Vue {
     const name = this.manifest.short_name || this.manifest.name || "mypwa";
     const packageID = generateWindowsPackageId(new URL(pwaUrl).hostname);
 
-    const allowSigning = false;
     const edgeChannel = "stable";
 
     const manifest = this.manifest;
@@ -1781,7 +1780,7 @@ export default class extends Vue {
           "packageId": packageID,
           "url": pwaUrl,
           "version": version,
-          "allowSigning": allowSigning,
+          "allowSigning": true,
           "publisher": {
               "displayName": "Contoso, Inc.",
               "commonName": "CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca"
