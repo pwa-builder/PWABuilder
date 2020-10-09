@@ -94,9 +94,8 @@ function validateWindowsPackageVersion(version: string, classicVersion: string, 
    * 4 segment versions (e.g. 1.0.0.0) are invalid due to Store restrictions; 
    * the Store reserves the 4th segment for internal use.
    * 
-   * versions in the 3 segment version should always only have 5 characters
    */
-  if (version.trim().length !== 5) {
+  if (version.trim().split(".").length > 2) {
     validationErrors.push({ field: "version", error: "Version must be in this form: 1.0.0; a 3 segment version." });
   }
 
