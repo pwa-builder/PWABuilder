@@ -32,7 +32,7 @@ import { Prop } from "vue-property-decorator";
 import { Action, State, namespace } from "vuex-class";
 import * as publish from "~/store/modules/publish";
 import { validateAndroidOptions } from "../utils/android-utils";
-import { validatePackageID, validateWindowsOptions } from "../utils/windows-utils";
+import { validateWindowsOptions } from "../utils/windows-utils";
 
 const PublishState = namespace(publish.name, State);
 const PublishAction = namespace(publish.name, Action);
@@ -57,6 +57,7 @@ export default class extends Vue {
   @Prop({ type: Object })
   public readonly androidOptions: publish.AndroidApkOptions | null;
 
+  @Prop({ type: String, default: "" })
   @Prop({ type: Object })
   public readonly windowsOptions: publish.WindowsPackageOptions | null;
 
@@ -146,6 +147,7 @@ export default class extends Vue {
   }
 
   public async generateWindowsEdgePackage() {
+    console.log(this.windowsOptions);
     const validationErrors = validateWindowsOptions(this.windowsOptions);
     if (validationErrors.length > 0 || !this.windowsOptions) {
       this.showErrorMessage(
@@ -195,7 +197,7 @@ export default class extends Vue {
     if (platform === "androidTWA") {
       await this.generateAndroidPackage();
     } 
-    else if (platform === "windows10New") {
+    else if (platform === "windows10new") {
       await this.generateWindowsEdgePackage();
     }
     else {

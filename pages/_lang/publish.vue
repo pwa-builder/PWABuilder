@@ -1139,6 +1139,7 @@
               id="newEdgeBetaDownloadButton"
               class="webviewButton"
               platform="windows10new"
+              :windowsOptions="this.windowsForm"
               :message="this.windowsOptionsApplied ? 'Download Store ready package' : 'Download Test Package'"
               v-on:downloadPackageError="showPackageDownloadError($event)"
             />
