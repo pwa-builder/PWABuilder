@@ -1132,7 +1132,7 @@
 
         <div id="extraSection">
           <p>
-            Try the beta of the New Edge platform!
+            Try the preview of the New Edge platform!
 
             <Download
               :showMessage="true"
