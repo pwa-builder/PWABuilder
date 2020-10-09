@@ -136,7 +136,7 @@
         </p>
       </div>
 
-      <section id="androidModalBody" class="androidOptionsModalBody">
+      <section class="androidModalBody androidOptionsModalBody">
         <form style="width: 100%">
           <div class="row">
             <div class="col-lg-6 col-md-12">
@@ -805,12 +805,221 @@
       </section>
     </Modal>
 
+    <!-- New Edge Modal -->
+
+    <Modal
+      title="Windows Package Options"
+      :button_name="$t('modal.done')"
+      ref="windowsPWAModal"
+      :showSubmitButton="true"
+      @modalSubmit="windowsOptionsModalSubmitted"
+      @cancel="windowsOptionsModalCancelled"
+      v-on:modalOpened="modalOpened()"
+      v-on:modalClosed="windowsModalClosed()"
+      v-if="windowsForm"
+    >
+      <div id="topLabelBox" slot="extraP">
+        <label id="topLabel">Customize your Windows Package below</label>
+        <p class="l-generator-error" v-if="androidPWAError">
+          <i class="fas fa-exclamation-circle"></i>
+          {{ $t(androidPWAError) }}
+        </p>
+      </div>
+
+      <section class="androidModalBody androidOptionsModalBody">
+        <form style="width: 100%">
+          <div class="row">
+            <div class="col-lg-6 col-md-12">
+              <div class="form-group">
+                <label for="windowsPackageIdInput">
+                  <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md">
+                    {{ $t("publish.label_package_name") }}
+                    <i
+                      class="fas fa-info-circle"
+                      title="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
+                      aria-label="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
+                      role="definition"
+                    ></i>
+                  </a>
+                </label>
+                <input
+                  id="windowsPackageIdInput"
+                  class="form-control"
+                  :placeholder="$t('publish.placeholder_package_name')"
+                  type="text"
+                  required
+                  v-model="windowsForm.packageId"
+                />
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6 col-md-12">
+                  <div class="form-group">
+                    <label for="windowsAppNameInput">App name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="windowsAppNameInput"
+                      placeholder="My Awesome PWA"
+                      required
+                      v-model="windowsForm.name"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6 col-md-12">
+                  <div class="form-group">
+                    <label for="windowsAppVersionInput">
+                      App version
+                      <i
+                        class="fas fa-info-circle"
+                        title="The version of your app displayed to users. This is a string, typically in the form of '1.0.0.0'."
+                        aria-label
+                        role="definition"
+                      ></i>
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="windowsAppVersionInput"
+                      placeholder="1.0.1"
+                      required
+                      v-model="windowsForm.version"
+                    />
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6 col-md-12">
+                  <div class="form-group">
+                    <label for="windowsClassicAppVersionInput">
+                      Classic Package version
+                      <i
+                        class="fas fa-info-circle"
+                        title="The version of your app displayed to users on older version of Windows 10"
+                        aria-label
+                        role="definition"
+                      ></i>
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="windowsClassicAppVersionInput"
+                      placeholder="1.0.0"
+                      required
+                      v-model="windowsForm.classicPackage.version"
+                    />
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="form-group">
+                <label for="windowsStartUrlInput">
+                  URL
+                  <i
+                    class="fas fa-info-circle"
+                    title="This is the URL for your PWA."
+                    aria-label="This is the URL for your PWA."
+                    role="definition"
+                  ></i>
+                </label>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="windowsStartUrlInput"
+                  placeholder="/index.html"
+                  required
+                  v-model="windowsForm.url"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="windowsManifestUrlInput">Manifest URL</label>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="windowsManifestUrlInput"
+                  placeholder="https://mysite.com/manifest.json"
+                  required
+                  v-model="windowsForm.manifestUrl"
+                />
+              </div>
+
+            </div>
+
+            <!-- right half of the options dialog -->
+            <div class="col-lg-6 col-md-12">
+              <div class="form-group">
+                <label for="windowsIconUrlInput">Icon URL</label>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="windowsIconUrlInput"
+                  placeholder="https://myawesomepwa.com/512x512.png"
+                  v-model="windowsForm.images.baseImage"
+                />
+              </div>
+
+              <div class="form-group">
+                  <label for="windowsDisplayNameInput">
+                    <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md">
+                      Publisher Display Name
+                      <i
+                        class="fas fa-info-circle"
+                        title="The Display Name of the publisher"
+                        aria-label="The Display Name of the publisher"
+                        role="definition"
+                      ></i>
+                    </a>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    for="windowsDisplayNameInput"
+                    required
+                    placeholder="US"
+                    v-model="windowsForm.publisher.displayName"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="windowsPublisherIdInput">
+                    <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md">
+                      Publisher Id
+                      <i
+                        class="fas fa-info-circle"
+                        title="The Publisher Id of the publisher"
+                        aria-label="The Publisher Id of the publisher"
+                        role="definition"
+                      ></i>
+                    </a>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="windowsPublisherIdInput"
+                    required
+                    placeholder="CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca"
+                    v-model="windowsForm.publisher.commonName"
+                  />
+                </div>
+            </div>
+          </div>
+        </form>
+      </section>
+    </Modal>
+
     <div v-if="openAndroid" ref="androidModal" id="androidPlatModal">
       <button @click="closeAndroidModal()" id="closeAndroidPlatButton">
         <i class="fas fa-times"></i>
       </button>
 
-      <section id="androidModalBody">
+      <section class="androidModalBody">
         <div>
           <p class="androidModalP">
             Download your
@@ -896,37 +1105,51 @@
         <i class="fas fa-times"></i>
       </button>
 
-      <section id="androidModalBody">
+      <section class="androidModalBody">
         <div>
-          <p class="androidModalP">Download your Microsoft Edge PWA package for Windows!</p>
+          <p class="androidModalP">Download your PWA package for Windows!</p>
 
           <p>
-            You'll get a package with your side-loadable PWA to test right away. Your PWA will
-            be running on the new
-            <a
-              href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/"
-            >Chromium based Edge</a>, giving you access to all of the latest APIs
-            available in Edge!
+            You'll get a side-loadable version of your PWA (requires Win10 in dev mode) to test your PWA right away. The Generate Appx button can be used to generate a PWA package to submit to the Microsoft Store.
           </p>
         </div>
 
         <div id="androidModalButtonSection" class="edgeBlock">
           <Download
             class="androidDownloadButton"
-            platform="windows10New"
+            platform="windows10"
             :message="$t('publish.download')"
             :showMessage="true"
             v-on:downloadPackageError="showPackageDownloadError($event)"
           />
+          <button
+            class="androidDownloadButton"
+            @click="
+              openAppXModal();
+              $awa({
+                referrerUri:
+                  'https://www.pwabuilder.com/publish/windows10-appx',
+              });
+            "
+          >Generate</button>
+        </div>
 
-          <Download
-            :showMessage="true"
-            id="legacyDownloadButton"
-            class="webviewButton"
-            platform="windows10"
-            message="Use a legacy webview instead (not recommended)"
-            v-on:downloadPackageError="showPackageDownloadError($event)"
-          />
+        <div id="extraSection">
+          <p>
+            Try the preview of the New Edge platform!
+
+            <Download
+              :showMessage="true"
+              id="newEdgeBetaDownloadButton"
+              class="webviewButton"
+              platform="windows10new"
+              :windowsOptions="this.windowsForm"
+              :message="this.windowsOptionsApplied ? 'Download Store ready package' : 'Download Test Package'"
+              v-on:downloadPackageError="showPackageDownloadError($event)"
+            />
+
+            <button class="newEdgeBetaOptionsButton" @click="openWindowsOptionsModal()">Open Store Options</button>
+          </p>
         </div>
       </section>
     </div>
@@ -1224,17 +1447,10 @@
                   <i class="fab fa-windows platformIcon" aria-label="Windows Icon"></i>
                   <h2>Windows</h2>
                 </div>
-
-                <span>beta</span>
               </div>
 
               <p>
-                You'll get a package with your side-loadable PWA to test right away. Your PWA will
-                be running on the new
-                <a
-                  href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/"
-                >Chromium based Edge</a>, giving you access to all of the latest APIs
-                available in Edge!
+                You'll get a side-loadable version of your PWA (requires Win10 in dev mode) to test your PWA right away. To generate an PWA package and submit to the Microsoft Store, click here.
               </p>
 
               <section class="platformDownloadBar">
@@ -1358,6 +1574,8 @@ import {
   generatePackageId,
 } from "~/utils/android-utils";
 
+import { validateWindowsOptions, generateWindowsPackageId } from "~/utils/windows-utils";
+
 const PublishState = namespace(publish.name, State);
 const PublishAction = namespace(publish.name, Action);
 const GeneratorState = namespace(generatorName, State);
@@ -1430,6 +1648,10 @@ export default class extends Vue {
   public androidFormCopyForCancellation: publish.AndroidApkOptions | null = null;
   public teamsForm: publish.TeamsParams | null = null;
 
+  public windowsForm: publish.WindowsPackageOptions | null = null;
+  public windowsFormCopyForCancellation: publish.WindowsPackageOptions | null = null;
+  public windowsOptionsApplied: boolean = false;
+
   private readonly maxKeyFileSizeInBytes = 2097152; // 2MB. Typically, Android keystore files are ~3KB.
 
   private webadb: any;
@@ -1442,6 +1664,8 @@ export default class extends Vue {
   public created(): void {
     this.updateStatus();
     this.androidForm = this.createAndroidParamsFromManifest();
+
+    this.windowsForm = this.createWindowsParamsFromManifest();
   }
 
   showInstall(event) {
@@ -1532,6 +1756,57 @@ export default class extends Vue {
         this.installing = false;
       }
     }
+  }
+
+  createWindowsParamsFromManifest(): publish.WindowsPackageOptions {
+    const pwaUrl = this.manifest.url;
+    if (!pwaUrl) {
+      throw new Error("Can't find the current URL");
+    }
+
+    const name = this.manifest.short_name || this.manifest.name || "mypwa";
+    const packageID = generateWindowsPackageId(new URL(pwaUrl).hostname);
+
+    const edgeChannel = "stable";
+
+    const manifest = this.manifest;
+
+    const version = "1.0.1";
+
+    const icon =
+      this.findSuitableIcon(this.manifest.icons || [], "any", 512, 512, true) ||
+      this.findSuitableIcon(this.manifest.icons || [], "any", 192, 192, true) ||
+      this.findSuitableIcon(this.manifest.icons || [], "any", 0, 0, true); // If we can't find a suitably large icon, punt to any available icon
+
+      if (icon) {
+        return {
+          "name": name,
+          "packageId": packageID,
+          "url": pwaUrl,
+          "version": version,
+          "allowSigning": true,
+          "publisher": {
+              "displayName": "Contoso, Inc.",
+              "commonName": "CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca"
+          },
+          "classicPackage": {
+              "generate": true,
+              "version": "1.0.0",
+              "url": pwaUrl,
+          },
+          "edgeChannel": edgeChannel,
+          "manifestUrl": this.manifestUrl,
+          "manifest": manifest,
+          "images": {
+              "baseImage": icon.src || "",
+              "backgroundColor": "transparent",
+              "padding": 0.3
+          }
+        }
+      }
+      else {
+        throw new Error("Cant find an icon to send");
+      }
   }
 
   createAndroidParamsFromManifest(): publish.AndroidApkOptions {
@@ -1886,6 +2161,17 @@ export default class extends Vue {
     this.openWindows = true;
   }
 
+  public openWindowsOptionsModal(): void {
+    this.openWindows = false;
+
+   // Create a copy of the Windows form. If the user cancels the dialog, we'll revert back to this copy.
+    if (this.windowsForm) {
+      this.windowsFormCopyForCancellation = { ...this.windowsForm };
+    }
+
+    (this.$refs.windowsPWAModal as Modal).show();
+  }
+
   public openTeamsModal(): void {
     this.openTeams = true;
     this.disableDownloadButton();
@@ -2037,6 +2323,35 @@ export default class extends Vue {
     this.openAndroid = true;
   }
 
+  public windowsOptionsModalCancelled() {
+    this.windowsForm =
+      this.windowsFormCopyForCancellation ||
+      this.createWindowsParamsFromManifest();
+
+    this.androidPWAError = null;
+
+    (this.$refs.windowsPWAModal as Modal).hide();
+    this.openWindows = true;
+  }
+
+  public windowsOptionsModalSubmitted() {
+   if (!this.windowsForm) {
+      return;
+    }
+
+    const validationErrors = validateWindowsOptions(this.windowsForm);
+    if (validationErrors.length > 0) {
+      this.androidPWAError = validationErrors.map((e) => e.error).join(", ");
+      return;
+    }
+
+    (this.$refs.windowsPWAModal as Modal).hide();
+    this.openWindows = true;
+    this.androidPWAError = null;
+
+    this.windowsOptionsApplied = true;
+  }
+
   public ConstructErrorMessage(list) {
     if (list.length === 1) {
       return `Invalid package name. "${list[0]}" is a keyword.`;
@@ -2072,6 +2387,12 @@ export default class extends Vue {
     this.modalStatus = false;
     this.showBackground = false;
     this.openAndroid = true;
+  }
+
+  public windowsModalClosed() {
+    this.modalStatus = false;
+    this.showBackground = false;
+    this.openWindows = true;
   }
 }
 
@@ -2701,12 +3022,12 @@ footer a {
   }
 }
 
-#androidModalBody #extraSection p {
+.androidModalBody #extraSection p {
   color: grey;
   font-size: 10px;
 }
 
-#androidModalBody #extraSection #legacyDownloadButton, #androidModalBody #androidModalButtonSection #legacyDownloadButton {
+.androidModalBody #extraSection #legacyDownloadButton, .androidModalBody #androidModalButtonSection #legacyDownloadButton, #newEdgeBetaDownloadButton, .newEdgeBetaOptionsButton {
   color: grey;
   font-size: 10px;
   background: transparent;
@@ -2715,14 +3036,25 @@ footer a {
   margin-top: 1em;
 }
 
+#newEdgeBetaDownloadButton, .newEdgeBetaOptionsButton {
+  color: #9337d8;
+  border: solid 1px;
+  padding: 4px;
+  margin-right: 4px;
+}
+
+#newEdgeBetaDownloadButton {
+  width: 150px;
+}
+
 .edgeBlock {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
 }
 
-#androidModalBody {
+.androidModalBody {
   width: 34em;
   background: white;
   display: flex;
@@ -2733,7 +3065,7 @@ footer a {
   border-radius: 12px;
 }
 
-#androidModalBody.androidOptionsModalBody {
+.androidModalBody.androidOptionsModalBody {
   width: 100%;
   align-items: start;
   padding-left: 0;
@@ -2743,28 +3075,28 @@ footer a {
 
 /* On smaller screens, reduce the padding on modals */
 @media (max-width: $media-screen-m) {
-  #androidModalBody.androidOptionsModalBody {
+  .androidModalBody.androidOptionsModalBody {
     padding-left: 10px;
     padding-right: 10px;
   }
 }
 
-#androidModalBody.androidOptionsModalBody input {
+.androidModalBody.androidOptionsModalBody input {
   margin-bottom: 12px;
   border-color: #00000075;
 }
 
-#androidModalBody.androidOptionsModalBody label {
+.androidModalBody.androidOptionsModalBody label {
   display: block;
   margin-bottom: 10px;
 }
 
-#androidModalBody.androidOptionsModalBody + .modal-buttons {
+.androidModalBody.androidOptionsModalBody + .modal-buttons {
   margin-top: 2em;
   margin-bottom: 2em;
 }
 
-#androidModalBody.androidOptionsModalBody .fa-info-circle {
+.androidModalBody.androidOptionsModalBody .fa-info-circle {
   color: $color-muted;
   cursor: help;
 }
@@ -2799,7 +3131,7 @@ footer a {
   color: #9337d8;
 }
 
-#androidModalBody #androidModalSubText {
+.androidModalBody #androidModalSubText {
   color: #3c3c3c;
   display: block;
   margin-bottom: 2em;
