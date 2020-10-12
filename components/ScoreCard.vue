@@ -931,9 +931,8 @@ export default class extends Vue {
       const cachedData = await getCache("manifest", this.url);
 
       if (cachedData) {
-        // this.manifest = cachedData;
+        this.manifest = cachedData;
         this.updateManifest(cachedData);
-        // await this.getManifestInformation();
       } else {
         await this.getManifestInformation();
         await setCache("manifest", this.url, this.manifest);
@@ -1012,6 +1011,7 @@ export default class extends Vue {
       const manifestJson = JSON.parse(manifestScoreData.content.json);
 
       if (manifestScoreData.data !== null || manifestJson) {
+
         if (manifestScoreData.data.required.start_url === true || manifestJson.start_url) {
           maniDetailScore = maniDetailScore + 5;
         }
@@ -1020,7 +1020,7 @@ export default class extends Vue {
           maniDetailScore = maniDetailScore + 5;
         }
 
-        if (manifestScoreData.data.required.name === true || manifestJson.required_name) {
+        if (manifestScoreData.data.required.name === true || manifestJson.name) {
           maniDetailScore = maniDetailScore + 5;
         }
 
@@ -1034,9 +1034,6 @@ export default class extends Vue {
       }
 
       this.manifestScore = maniDetailScore;
-
-      // this.manifestScore = this.manifestScore;
-
       this.manifestData = this.manifest;
 
       this.$emit("manifestTestDone", { score: this.manifestScore });
