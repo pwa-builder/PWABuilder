@@ -103,10 +103,10 @@ export class ManifestFetcher {
     
         const filePostResult: Promise<ManifestDetectionResult> = await this.axios.$post(this.apiUrl, formData);
         filePostResult.then(r => console.info("Manifest detection succeeded via API v2 file POST", r));
-        return filePostResult;
+        return this.syncRedis(await filePostResult);
     }
 
-    // Uses Azure HTML parsing microservice to fetch the manifest, then hands it to the API.
+    // Uses Azurez HTML parsing microservice to fetch the manifest, then hands it to the API.
     private async getManifestViaHtmlParse(): Promise<ManifestDetectionResult> {
         type ManifestFinderResult = {
             manifestUrl: string | null,
@@ -125,19 +125,30 @@ export class ManifestFetcher {
             console.warn("Fetching manifest via HTML parsing service failed due to no response data", response);
             throw new Error(responseData.error || "Manifest couldn't be fetched");
         }
+        console.info(
+          "Manifest detection succeeded via HTML parse service",
+          responseData
+        );
+        return this.syncRedis({
+          content: responseData.manifestContents,
+          format: "w3c",
+          generatedUrl: responseData.manifestUrl || this.url,
+          default: {
+            short_name: responseData.manifestContents.short_name || "",
+          },
+          id: "",
+          errors: [],
+          suggestions: [],
+          warnings: [],
+        });
+    }
 
-        console.info("Manifest detection succeeded via HTML parse service", responseData);
-        return {
-            content: responseData.manifestContents,
-            format: "w3c",
-            generatedUrl: responseData.manifestUrl || this.url,
-            default: {
-                short_name: responseData.manifestContents.short_name || ""
-            },
-            id: "",
-            errors: [],
-            suggestions: [],
-            warnings: []
-        }
+    private async syncRedis(manifestData: ManifestDetectionResult): Promise<ManifestDetectionResult> {
+        return this.axios.$post(this.apiUrl, manifestData)
+            .then(res => (res.json() as unknown) as ManifestDetectionResult)
+            .then(res => {
+                console.log("sync redis called: ", res);
+                return res;
+            })
     }
 }
