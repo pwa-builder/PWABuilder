@@ -1014,6 +1014,7 @@ export default class extends Vue {
       const manifestJson = JSON.parse(manifestScoreData.content.json);
 
       if (manifestScoreData.data !== null || manifestJson) {
+
         if (manifestScoreData.data.required.start_url === true || manifestJson.start_url) {
           maniDetailScore = maniDetailScore + 5;
         }
@@ -1022,7 +1023,7 @@ export default class extends Vue {
           maniDetailScore = maniDetailScore + 5;
         }
 
-        if (manifestScoreData.data.required.name === true || manifestJson.required_name) {
+        if (manifestScoreData.data.required.name === true || manifestJson.name) {
           maniDetailScore = maniDetailScore + 5;
         }
 
@@ -1036,9 +1037,6 @@ export default class extends Vue {
       }
 
       this.manifestScore = maniDetailScore;
-
-      // this.manifestScore = this.manifestScore;
-
       this.manifestData = this.manifest;
 
       this.$emit("manifestTestDone", { score: this.manifestScore });
