@@ -932,7 +932,10 @@ export default class extends Vue {
 
       if (cachedData) {
         this.manifest = cachedData;
-        this.updateManifest(cachedData);
+
+        // Still call this in the background to get manifest
+        // into the redux flow for packaging
+        await this.getManifestInformation();
       } else {
         await this.getManifestInformation();
         await setCache("manifest", this.url, this.manifest);
