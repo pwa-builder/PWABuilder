@@ -20,22 +20,22 @@
     },
     {
       "src": "/Images/assets/newIcons/icon_190.png",
-      "sizes": "256x256",
+      "sizes": "190x190",
       "type": "image/png"
     },
     {
       "src": "/Images/assets/newIcons/icon_120.png",
-      "sizes": "128x128",
+      "sizes": "120x120",
       "type": "image/png"
     },
     {
       "src": "/Images/assets/newIcons/icon_60.png",
-      "sizes": "64x64",
+      "sizes": "60x60",
       "type": "image/png"
     },
     {
       "src": "/Images/assets/newIcons/icon_57.png",
-      "sizes": "48x48",
+      "sizes": "57x57",
       "type": "image/png"
     }
   ],

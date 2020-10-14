@@ -190,7 +190,7 @@ export default {
     useAPI() {
       this.isLoading = true;
 
-      const urlUseAPI = process.env.apiUrl2 + "/";
+      const urlUseAPI = process.env.imageGeneratorUrl + "/";
       const formData = new FormData(this.$refs.form);
 
       if (formData.get("color")) {

@@ -101,9 +101,10 @@ export class ManifestFetcher {
         const formData = new FormData();
         formData.append("file", manifestFile);
     
-        const filePostResult: Promise<ManifestDetectionResult> = await this.axios.$post(this.apiUrl, formData);
-        filePostResult.then(r => console.info("Manifest detection succeeded via API v2 file POST", r));
-        return this.syncRedis(await filePostResult);
+        const filePostTask: Promise<ManifestDetectionResult> = this.axios.$post(this.apiUrl, formData);
+        filePostTask.then(r => console.info("Manifest detection succeeded via API v2 file POST.", r));
+        const filePostResult = await filePostTask;
+        return await this.syncRedis(filePostResult);
     }
 
     // Uses Azurez HTML parsing microservice to fetch the manifest, then hands it to the API.
@@ -129,7 +130,8 @@ export class ManifestFetcher {
           "Manifest detection succeeded via HTML parse service",
           responseData
         );
-        return this.syncRedis({
+
+        return await this.syncRedis({
           content: responseData.manifestContents,
           format: "w3c",
           generatedUrl: responseData.manifestUrl || this.url,
@@ -143,12 +145,8 @@ export class ManifestFetcher {
         });
     }
 
-    private async syncRedis(manifestData: ManifestDetectionResult): Promise<ManifestDetectionResult> {
+    private syncRedis(manifestData: ManifestDetectionResult): Promise<ManifestDetectionResult> {
         return this.axios.$post(this.apiUrl, manifestData)
-            .then(res => (res.json() as unknown) as ManifestDetectionResult)
-            .then(res => {
-                console.log("sync redis called: ", res);
-                return res;
-            })
+            .then(res => res.json() as ManifestDetectionResult);
     }
 }
