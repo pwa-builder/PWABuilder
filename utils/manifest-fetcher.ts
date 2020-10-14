@@ -145,8 +145,18 @@ export class ManifestFetcher {
         });
     }
 
-    private syncRedis(manifestData: ManifestDetectionResult): Promise<ManifestDetectionResult> {
-        return this.axios.$post(this.apiUrl, manifestData)
-            .then(res => res.json() as ManifestDetectionResult);
+    private async syncRedis(manifestData: ManifestDetectionResult): Promise<ManifestDetectionResult> {
+        const fetchResult = await fetch(this.apiUrl, {
+           method: "POST",
+           body: JSON.stringify(manifestData),
+           headers: new Headers({ "content-type": "application/json" }),
+        });
+
+        if (!fetchResult.ok) {
+            throw new Error(`Unable to sync redis, status code ${fetchResult.status}, status text ${fetchResult.statusText}`);
+        }
+        
+        const manifestResult: ManifestDetectionResult = await fetchResult.json();
+        return manifestResult;
     }
 }
