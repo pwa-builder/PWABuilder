@@ -343,7 +343,7 @@
                 <div class="col-lg-6 col-md-12">
                   <div class="form-group">
                     <label for="navigationColorInput">
-                      Nav bar color
+                      Nav color
                       <i
                         class="fas fa-info-circle"
                         title="The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
@@ -364,7 +364,7 @@
                 <div class="col-lg-6 col-md-12">
                   <div class="form-group">
                     <label for="navigationColorDarkInput">
-                      Nav bar dark color
+                      Nav dark color
                       <i
                         class="fas fa-info-circle"
                         title="The color of the Android navigation bar in your app when Android is in dark mode."
@@ -389,7 +389,7 @@
                 <div class="col-lg-6 col-md-12">
                   <div class="form-group">
                     <label for="navigationDividerColorInput">
-                      Nav bar divider color
+                      Nav divider color
                       <i
                         class="fas fa-info-circle"
                         title="The color of the Android navigation bar divider in your app."
@@ -410,7 +410,7 @@
                 <div class="col-lg-6 col-md-12">
                   <div class="form-group">
                     <label for="navigationDividerColorDarkInput">
-                      Nav bar divider dark color
+                      Nav divider dark color
                       <i
                         class="fas fa-info-circle"
                         title="The color of the Android navigation navigation bar divider in your app when Android is in dark mode."
@@ -629,6 +629,27 @@
               </div>
 
               <div class="form-group">
+                <label>Include source code</label>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="includeSourceCodeInput"
+                    v-model="androidForm.includeSourceCode"
+                  />
+                  <label class="form-check-label" for="includeSourceCodeInput">
+                    Enable
+                    <i
+                      class="fas fa-info-circle"
+                      title="If enabled, your download will include the source code for your Android app."
+                      aria-label="If enabled, your download will include the source code for your Android app."
+                      role="definition"
+                    ></i>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group">
                 <label>Signing key</label>
                 <div class="form-check">
                   <input
@@ -778,7 +799,15 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="signingKeyPasswordInput">Key password</label>
+                  <label for="signingKeyPasswordInput">
+                    Key password
+                    <i
+                        class="fas fa-info-circle"
+                        title="The password for the signing key. Type a new password or leave empty to use a generated password."
+                        aria-label="The password for the signing key. Type a new password or leave empty to use a generated password."
+                        role="definition"
+                      ></i>
+                  </label>
                   <input
                     type="password"
                     class="form-control"
@@ -789,7 +818,15 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="signingKeyStorePasswordInput">Key store password</label>
+                  <label for="signingKeyStorePasswordInput">
+                    Key store password
+                    <i
+                        class="fas fa-info-circle"
+                        title="The password for the key store. Type a new password or leave empty to use a generated password."
+                        aria-label="The password for the key store. Type a new password or leave empty to use a generated password."
+                        role="definition"
+                      ></i>
+                  </label>
                   <input
                     type="password"
                     class="form-control"
@@ -1892,6 +1929,7 @@ export default class extends Vue {
       features: undefined,
       host: pwaUrl,
       iconUrl: icon ? icon.src : "",
+      includeSourceCode: false,
       isChromeOSOnly: false,
       launcherName: this.manifest.short_name || appName, // launcher name should be the short name. If none is available, fallback to the full app name.
       maskableIconUrl: maskableIcon ? maskableIcon.src : "",
@@ -1996,7 +2034,7 @@ export default class extends Vue {
     }
 
     if (this.androidForm.signingMode === "new") {
-      return "Type a new password or leave empty to use a generated one";
+      return "Type a new password or leave empty to generate one";
     }
 
     return "";

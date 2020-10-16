@@ -91,6 +91,7 @@ export interface AndroidApkOptions {
   }
   host: string;
   iconUrl: string;
+  includeSourceCode: boolean;
   isChromeOSOnly: boolean;
   launcherName: string;
   maskableIconUrl: string | null;
