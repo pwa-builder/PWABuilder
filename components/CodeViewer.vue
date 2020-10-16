@@ -33,7 +33,7 @@
       <h2>Errors</h2>
 
       <ul>
-        <li v-for="error in errors">
+        <li v-for="error in errors" v-bind:key="error">
           <span>Line #{{ error.startLineNumber}}:</span>
           {{ error.message }}
         </li>
