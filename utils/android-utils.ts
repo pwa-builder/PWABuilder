@@ -12,8 +12,8 @@ export function generatePackageId(host: string): string {
   return parts.join(".");
 }
 
-export function validateAndroidOptions(options: Partial<AndroidApkOptions | null>): { field: keyof AndroidApkOptions | null, error: string }[] {
-  const validationErrors: { field: keyof AndroidApkOptions | null, error: string }[] = [];
+export function validateAndroidOptions(options: Partial<AndroidApkOptions | null>): { field: keyof AndroidApkOptions | keyof AndroidSigningOptions | null, error: string }[] {
+  const validationErrors: { field: keyof AndroidApkOptions | null | keyof AndroidSigningOptions, error: string }[] = [];
   if (!options) {
     validationErrors.push({ field: null, error: "No options specified " });
     return validationErrors;
@@ -107,26 +107,22 @@ export function validateAndroidOptions(options: Partial<AndroidApkOptions | null
     if (!options.signing) {
       validationErrors.push({ field: "signing", error: "Signing information must be supplied." });
     } else {
-      // All the signing properties are required, except file, storePassword, and keyPassword.
+      // Full name, organization, organizational unit, and country are required if signingMode !== mine
       // File is required only signingMode === "mine"
       // Store password and key password are required only if signingMode === "mine"; otherwise, they're optional and CloudAPK will generate a new password for you.
       const requiredSigningFields: Array<keyof AndroidSigningOptions> = [
-        "alias",
-        "fullName",
-        "organization",
-        "organizationalUnit",
-        "countryCode"
+        "alias"
       ];
       if (options.signingMode === "mine") {
-        requiredSigningFields.push("file");
-        requiredSigningFields.push("keyPassword");
-        requiredSigningFields.push("storePassword");
+        requiredSigningFields.push("file", "keyPassword", "storePassword");
+      } else if (options.signingMode === "new") {
+        // New key? We require these details to create the key.
+        requiredSigningFields.push("fullName", "organization", "organizationalUnit", "countryCode");
       }
 
       requiredSigningFields
         .filter(prop => !options.signing![prop])
-        .forEach(prop => validationErrors.push({ field: "signing", error: `Signing key ${prop} must be specified` }));
-
+        .forEach(prop => validationErrors.push({ field: prop, error: `Signing key ${prop} must be specified` }));
         
       // If key password and store password are specified, they must be >= 6 chars in length.
       if (options.signing.keyPassword && options.signing.keyPassword.length < 6) {
