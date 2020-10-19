@@ -1040,7 +1040,6 @@ h2 {
 
     display: flex;
     flex-direction: column;
-    padding: 0px;
   }
 
   #inputSection {
@@ -1071,6 +1070,7 @@ h2 {
 
   main {
     display: initial;
+    padding: 0 25px;
   }
 
   #inputSection #bottomHalfHome {
@@ -1102,32 +1102,6 @@ h2 {
 }
 
 @media (max-width: 542px) {
-  #attachSection {
-    margin-left: 25px;
-    margin-right: 25px;
-  }
-
-  #infoSection {
-    margin-left: 25px;
-    margin-right: 25px;
-  }
-
-  .scoreCard {
-    margin-left: 25px;
-    margin-right: 25px;
-    margin-bottom: 20px;
-  }
-
-  #toolkitSection {
-    margin-left: 25px;
-    margin-right: 25px;
-  }
-
-  .topFeatures {
-    margin-left: 25px;
-    margin-right: 25px;
-  }
-
   #hubFooter {
     padding-left: 25px;
     padding-right: 25px;
