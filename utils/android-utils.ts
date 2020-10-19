@@ -122,7 +122,7 @@ export function validateAndroidOptions(options: Partial<AndroidApkOptions | null
 
       requiredSigningFields
         .filter(prop => !options.signing![prop])
-        .forEach(prop => validationErrors.push({ field: prop, error: `Signing key ${prop} must be specified` }));
+        .forEach(prop => validationErrors.push({ field: prop, error: `${prop} must be specified` }));
         
       // If key password and store password are specified, they must be >= 6 chars in length.
       if (options.signing.keyPassword && options.signing.keyPassword.length < 6) {
