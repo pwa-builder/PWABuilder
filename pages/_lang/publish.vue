@@ -745,7 +745,7 @@
                   />
                 </div>
 
-                <div class="form-group" v-if="androidForm.signingMode !== 'mine'">
+                <div class="form-group" v-if="androidForm.signingMode === 'new'">
                   <label for="signingKeyFullNameInput">Key full name</label>
                   <input
                     type="text"
@@ -757,7 +757,7 @@
                   />
                 </div>
 
-                <div class="form-group" v-if="androidForm.signingMode !== 'mine'">
+                <div class="form-group" v-if="androidForm.signingMode === 'new'">
                   <label for="signingKeyOrgInput">Key organization</label>
                   <input
                     type="text"
@@ -769,7 +769,7 @@
                   />
                 </div>
 
-                <div class="form-group" v-if="androidForm.signingMode !== 'mine'">
+                <div class="form-group" v-if="androidForm.signingMode === 'new'">
                   <label for="signingKeyOrgUnitInput">Key organizational unit</label>
                   <input
                     type="text"
@@ -781,7 +781,7 @@
                   />
                 </div>
 
-                <div class="form-group" v-if="androidForm.signingMode !== 'mine'">
+                <div class="form-group" v-if="androidForm.signingMode === 'new'">
                   <label for="signingKeyCountryCodeInput">
                     Key country code
                     <i
