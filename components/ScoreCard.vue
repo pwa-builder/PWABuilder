@@ -864,16 +864,16 @@ export default class extends Vue {
   swScore: number = 0;
   securityScore: number = 0;
 
-  async created() {
+  created() {
     switch (this.category) {
       case "Security":
-        await this.lookAtSecurity();
+        this.lookAtSecurity();
         break;
       case "Manifest":
-        await this.lookAtManifest();
+        this.lookAtManifest();
         break;
       case "Service Worker":
-        await this.lookAtSW();
+        this.lookAtSW();
         break;
       default:
         console.log("no data");
