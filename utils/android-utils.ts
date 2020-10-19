@@ -133,7 +133,7 @@ export function validateAndroidOptions(options: Partial<AndroidApkOptions | null
       }
 
       // Ensure country code is 2 chars
-      if (options.signing.countryCode && options.signing.countryCode.length !== 2) {
+      if (options.signingMode === "new" && options.signing.countryCode && options.signing.countryCode.length !== 2) {
         validationErrors.push({ field: "countryCode", error: "Signing key country code must be 2 letters" });
       }
     }
