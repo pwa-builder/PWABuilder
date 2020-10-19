@@ -130,10 +130,13 @@
     >
       <div id="topLabelBox" slot="extraP">
         <label id="topLabel">{{ $t("publish.package_name_detail") }}</label>
-        <p class="l-generator-error" v-if="androidPWAError">
-          <i class="fas fa-exclamation-circle"></i>
-          {{ $t(androidPWAError) }}
-        </p>
+        <ul class="l-generator-error" v-if="androidPWAErrors.length">
+          <li v-for="error in androidPWAErrors" v-bind:key="error">
+            <i class="fas fa-exclamation-circle"></i>
+            &nbsp;
+            <span>{{ $t(error) }}</span>
+          </li>
+        </ul>
       </div>
 
       <section class="androidModalBody androidOptionsModalBody">
@@ -820,10 +823,13 @@
     >
       <div id="topLabelBox" slot="extraP">
         <label id="topLabel">Customize your Windows Package below</label>
-        <p class="l-generator-error" v-if="androidPWAError">
-          <i class="fas fa-exclamation-circle"></i>
-          {{ $t(androidPWAError) }}
-        </p>
+        <ul class="l-generator-error" v-if="windowsOptionsErrors.length">
+          <li v-for="error in windowsOptionsErrors" v-bind:key="error">
+            <i class="fas fa-exclamation-circle"></i>
+            &nbsp;
+            <span>{{ $t(error) }}</span>
+          </li>
+        </ul>
       </div>
 
       <section class="androidModalBody androidOptionsModalBody">
@@ -1627,7 +1633,7 @@ export default class extends Vue {
   @PublishAction enableDownloadButton;
 
   public appxError: string | null = null;
-  public androidPWAError: string | null = null;
+  public androidPWAErrors: string[] = [];
   public apkDownloaded: boolean = false;
   public modalStatus = false;
   public openAndroid: boolean = false;
@@ -1650,6 +1656,7 @@ export default class extends Vue {
 
   public windowsForm: publish.WindowsPackageOptions | null = null;
   public windowsFormCopyForCancellation: publish.WindowsPackageOptions | null = null;
+  public windowsOptionsErrors: string[] = [];
   public windowsOptionsApplied: boolean = false;
 
   private readonly maxKeyFileSizeInBytes = 2097152; // 2MB. Typically, Android keystore files are ~3KB.
@@ -1710,7 +1717,7 @@ export default class extends Vue {
     } catch (err) {
       console.error(err);
 
-      this.androidPWAError = err;
+      this.androidPWAErrors = [err];
     }
   }
 
@@ -1752,7 +1759,7 @@ export default class extends Vue {
 
         this.installing = false;
       } catch (err) {
-        this.androidPWAError = err;
+        this.androidPWAErrors = [err];
         this.installing = false;
       }
     }
@@ -2305,20 +2312,20 @@ export default class extends Vue {
 
     const validationErrors = validateAndroidOptions(this.androidForm);
     if (validationErrors.length > 0) {
-      this.androidPWAError = validationErrors.map((e) => e.error).join(", ");
+      this.androidPWAErrors = validationErrors.map((e) => e.error);
       return;
     }
 
     (this.$refs.androidPWAModal as Modal).hide();
     this.openAndroid = true;
-    this.androidPWAError = null;
+    this.androidPWAErrors = [];
   }
 
   public androidOptionsModalCancelled() {
     this.androidForm =
       this.androidFormCopyForCancellation ||
       this.createAndroidParamsFromManifest();
-    this.androidPWAError = null;
+    this.androidPWAErrors = [];
     (this.$refs.androidPWAModal as Modal).hide();
     this.openAndroid = true;
   }
@@ -2328,7 +2335,7 @@ export default class extends Vue {
       this.windowsFormCopyForCancellation ||
       this.createWindowsParamsFromManifest();
 
-    this.androidPWAError = null;
+    this.windowsOptionsErrors = [];
 
     (this.$refs.windowsPWAModal as Modal).hide();
     this.openWindows = true;
@@ -2341,13 +2348,13 @@ export default class extends Vue {
 
     const validationErrors = validateWindowsOptions(this.windowsForm);
     if (validationErrors.length > 0) {
-      this.androidPWAError = validationErrors.map((e) => e.error).join(", ");
+      this.windowsOptionsErrors = validationErrors.map((e) => e.error);
       return;
     }
 
     (this.$refs.windowsPWAModal as Modal).hide();
     this.openWindows = true;
-    this.androidPWAError = null;
+    this.windowsOptionsErrors = [];
 
     this.windowsOptionsApplied = true;
   }

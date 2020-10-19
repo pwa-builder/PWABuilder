@@ -127,6 +127,15 @@ export function validateAndroidOptions(options: Partial<AndroidApkOptions | null
         .filter(prop => !options.signing![prop])
         .forEach(prop => validationErrors.push({ field: "signing", error: `Signing key ${prop} must be specified` }));
 
+        
+      // If key password and store password are specified, they must be >= 6 chars in length.
+      if (options.signing.keyPassword && options.signing.keyPassword.length < 6) {
+        validationErrors.push({ field: "signing" , error: "Key password must be at least 6 characters" });
+      }
+      if (options.signing.storePassword && options.signing.storePassword.length < 6) {
+        validationErrors.push({ field: "signing" , error: "Key store password must be at least 6 characters" });
+      }
+
       // Ensure country code is 2 chars
       if (options.signing.countryCode && options.signing.countryCode.length !== 2) {
         validationErrors.push({ field: "signing", error: "Signing key country code must be 2 letters" });
