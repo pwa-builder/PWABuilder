@@ -943,7 +943,7 @@ h2 {
     position: absolute;
     bottom: 10px;
     margin-right: 32px;
-    color: rgba(60, 60, 60, 0.6);
+    color: #000000;
     background: transparent;
 
     p {
@@ -1348,10 +1348,6 @@ h2 {
       left: unset;
       padding-bottom: 16px;
     }
-  }
-
-  #inputSection > footer {
-    position: relative;
   }
 }
 
