@@ -377,7 +377,7 @@ header {
   }
 }
 
-@media (max-width: 425px) {
+@media (max-width: 542px) {
   header {
     padding: 0 0px;
   }
@@ -637,7 +637,7 @@ a {
   text-decoration: none;
 }
 
-@media (max-width: 425px) {
+@media (max-width: 542px) {
   #icons a {
     position: fixed;
     left: 5px;

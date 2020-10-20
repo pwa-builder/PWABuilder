@@ -9,13 +9,24 @@
     ></div>
 
     <!-- Toast notification for package download errors -->
-    <div class="packageError" role="alert" aria-live="assertive" aria-atomic="true" v-if="packageErrorMessage">
+    <div
+      class="packageError"
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+      v-if="packageErrorMessage"
+    >
       <div class="errorHeader">
         <strong class="errorTitle">
           <i class="fa fa-exclamation-circle text-danger"></i>
           Error creating package
         </strong>
-        <button type="button" class="closeBtn" aria-label="Close" @click="packageErrorMessage = null">
+        <button
+          type="button"
+          class="closeBtn"
+          aria-label="Close"
+          @click="packageErrorMessage = null"
+        >
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -119,13 +130,16 @@
     >
       <div id="topLabelBox" slot="extraP">
         <label id="topLabel">{{ $t("publish.package_name_detail") }}</label>
-        <p class="l-generator-error" v-if="androidPWAError">
-          <i class="fas fa-exclamation-circle"></i>
-          {{ $t(androidPWAError) }}
-        </p>
+        <ul class="l-generator-error" v-if="androidPWAErrors.length">
+          <li v-for="error in androidPWAErrors" v-bind:key="error">
+            <i class="fas fa-exclamation-circle"></i>
+            &nbsp;
+            <span>{{ $t(error) }}</span>
+          </li>
+        </ul>
       </div>
 
-      <section id="androidModalBody" class="androidOptionsModalBody">
+      <section class="androidModalBody androidOptionsModalBody">
         <form style="width: 100%">
           <div class="row">
             <div class="col-lg-6 col-md-12">
@@ -284,7 +298,7 @@
                 />
               </div>
               <div class="row">
-                <div class="col-lg-4 col-md-12">
+                <div class="col-lg-6 col-md-12">
                   <div class="form-group">
                     <label for="themeColorInput">
                       Status bar color
@@ -304,27 +318,7 @@
                   </div>
                 </div>
 
-                <div class="col-lg-4 col-md-12">
-                  <div class="form-group">
-                    <label for="navigationColorInput">
-                      Nav bar color
-                      <i
-                        class="fas fa-info-circle"
-                        title="The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
-                        aria-label="The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
-                        role="definition"
-                      ></i>
-                    </label>
-                    <input
-                      type="color"
-                      class="form-control"
-                      id="navigationColorInput"
-                      v-model="androidForm.navigationColor"
-                    />
-                  </div>
-                </div>
-
-                <div class="col-lg-4 col-md-12">
+                <div class="col-lg-6 col-md-12">
                   <div class="form-group">
                     <label for="bgColorInput">
                       Splash color
@@ -344,7 +338,102 @@
                   </div>
                 </div>
               </div>
+
+              <!-- second row of colors -->
+              <div class="row">
+
+                <!-- Nav bar color -->
+                <div class="col-lg-6 col-md-12">
+                  <div class="form-group">
+                    <label for="navigationColorInput">
+                      Nav color
+                      <i
+                        class="fas fa-info-circle"
+                        title="The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
+                        aria-label="The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
+                        role="definition"
+                      ></i>
+                    </label>
+                    <input
+                      type="color"
+                      class="form-control"
+                      id="navigationColorInput"
+                      v-model="androidForm.navigationColor"
+                    />
+                  </div>
+                </div>
+
+                <!-- Nav bar dark color -->
+                <div class="col-lg-6 col-md-12">
+                  <div class="form-group">
+                    <label for="navigationColorDarkInput">
+                      Nav dark color
+                      <i
+                        class="fas fa-info-circle"
+                        title="The color of the Android navigation bar in your app when Android is in dark mode."
+                        aria-label="The color of the Android navigation bar in your app when Android is in dark mode."
+                        role="definition"
+                      ></i>
+                    </label>
+                    <input
+                      type="color"
+                      class="form-control"
+                      id="navigationColorDarkInput"
+                      v-model="androidForm.navigationColorDark"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- third row of colors -->
+              <div class="row">
+
+                <!-- Nav bar divider color -->
+                <div class="col-lg-6 col-md-12">
+                  <div class="form-group">
+                    <label for="navigationDividerColorInput">
+                      Nav divider color
+                      <i
+                        class="fas fa-info-circle"
+                        title="The color of the Android navigation bar divider in your app."
+                        aria-label="The color of the Android navigation bar divider in your app."
+                        role="definition"
+                      ></i>
+                    </label>
+                    <input
+                      type="color"
+                      class="form-control"
+                      id="navigationDividerColorInput"
+                      v-model="androidForm.navigationDividerColor"
+                    />
+                  </div>
+                </div>
+
+                <!-- Nav bar divider dark color -->
+                <div class="col-lg-6 col-md-12">
+                  <div class="form-group">
+                    <label for="navigationDividerColorDarkInput">
+                      Nav divider dark color
+                      <i
+                        class="fas fa-info-circle"
+                        title="The color of the Android navigation navigation bar divider in your app when Android is in dark mode."
+                        aria-label="The color of the Android navigation bar divider in your app when Android is in dark mode."
+                        role="definition"
+                      ></i>
+                    </label>
+                    <input
+                      type="color"
+                      class="form-control"
+                      id="navigationDividerColorDarkInput"
+                      v-model="androidForm.navigationDividerColorDark"
+                    />
+                  </div>
+                </div>
+              </div>
+
             </div>
+
+            <!-- right half of the options dialog -->
             <div class="col-lg-6 col-md-12">
               <div class="form-group">
                 <label for="iconUrlInput">Icon URL</label>
@@ -514,7 +603,49 @@
                     <i
                       class="fas fa-info-circle"
                       title="Whether to enable Push Notification Delegation. If enabled, your PWA can send push notifications without browser permission prompts."
-                      aria-label
+                      aria-label="Whether to enable Push Notification Delegation. If enabled, your PWA can send push notifications without browser permission prompts."
+                      role="definition"
+                    ></i>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Settings Shortcut</label>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="enableSettingsShortcutInput"
+                    v-model="androidForm.enableSiteSettingsShortcut"
+                  />
+                  <label class="form-check-label" for="enableSettingsShortcutInput">
+                    Enable
+                    <i
+                      class="fas fa-info-circle"
+                      title="If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app."
+                      aria-label="If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app."
+                      role="definition"
+                    ></i>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Include source code</label>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="includeSourceCodeInput"
+                    v-model="androidForm.includeSourceCode"
+                  />
+                  <label class="form-check-label" for="includeSourceCodeInput">
+                    Enable
+                    <i
+                      class="fas fa-info-circle"
+                      title="If enabled, your download will include the source code for your Android app."
+                      aria-label="If enabled, your download will include the source code for your Android app."
                       role="definition"
                     ></i>
                   </label>
@@ -524,7 +655,15 @@
               <div class="form-group">
                 <label>Signing key</label>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="signingInput" id="generateSigningKeyInput" value="new" v-model="androidForm.signingMode" @change="androidSigningModeChanged">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="signingInput"
+                    id="generateSigningKeyInput"
+                    value="new"
+                    v-model="androidForm.signingMode"
+                    @change="androidSigningModeChanged"
+                  />
                   <label class="form-check-label" for="generateSigningKeyInput">
                     Create new
                     <i
@@ -536,7 +675,15 @@
                   </label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="signingInput" id="unsignedInput" value="none" v-model="androidForm.signingMode" @change="androidSigningModeChanged">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="signingInput"
+                    id="unsignedInput"
+                    value="none"
+                    v-model="androidForm.signingMode"
+                    @change="androidSigningModeChanged"
+                  />
                   <label class="form-check-label" for="unsignedInput">
                     None
                     <i
@@ -548,7 +695,15 @@
                   </label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="signingInput" id="useMySigningInput" value="mine" v-model="androidForm.signingMode" @change="androidSigningModeChanged">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="signingInput"
+                    id="useMySigningInput"
+                    value="mine"
+                    v-model="androidForm.signingMode"
+                    @change="androidSigningModeChanged"
+                  />
                   <label class="form-check-label" for="useMySigningInput">
                     Use mine
                     <i
@@ -590,7 +745,7 @@
                   />
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" v-if="androidForm.signingMode === 'new'">
                   <label for="signingKeyFullNameInput">Key full name</label>
                   <input
                     type="text"
@@ -602,7 +757,7 @@
                   />
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" v-if="androidForm.signingMode === 'new'">
                   <label for="signingKeyOrgInput">Key organization</label>
                   <input
                     type="text"
@@ -614,7 +769,7 @@
                   />
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" v-if="androidForm.signingMode === 'new'">
                   <label for="signingKeyOrgUnitInput">Key organizational unit</label>
                   <input
                     type="text"
@@ -626,7 +781,7 @@
                   />
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" v-if="androidForm.signingMode === 'new'">
                   <label for="signingKeyCountryCodeInput">
                     Key country code
                     <i
@@ -647,15 +802,255 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="signingKeyPasswordInput">Key password</label>
-                  <input type="password" class="form-control" id="signingKeyPasswordInput" v-model="androidForm.signing.keyPassword" :placeholder="androidPasswordPlaceholder" />
+                  <label for="signingKeyPasswordInput">
+                    Key password
+                    <i
+                        class="fas fa-info-circle"
+                        title="The password for the signing key. Type a new password or leave empty to use a generated password."
+                        aria-label="The password for the signing key. Type a new password or leave empty to use a generated password."
+                        role="definition"
+                      ></i>
+                  </label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="signingKeyPasswordInput"
+                    v-model="androidForm.signing.keyPassword"
+                    :placeholder="androidPasswordPlaceholder"
+                  />
                 </div>
 
                 <div class="form-group">
-                  <label for="signingKeyStorePasswordInput">Key store password</label>
-                  <input type="password" class="form-control" id="signingKeyStorePasswordInput" v-model="androidForm.signing.storePassword" :placeholder="androidPasswordPlaceholder" />
+                  <label for="signingKeyStorePasswordInput">
+                    Key store password
+                    <i
+                        class="fas fa-info-circle"
+                        title="The password for the key store. Type a new password or leave empty to use a generated password."
+                        aria-label="The password for the key store. Type a new password or leave empty to use a generated password."
+                        role="definition"
+                      ></i>
+                  </label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="signingKeyStorePasswordInput"
+                    v-model="androidForm.signing.storePassword"
+                    :placeholder="androidPasswordPlaceholder"
+                  />
                 </div>
               </div>
+            </div>
+          </div>
+        </form>
+      </section>
+    </Modal>
+
+    <!-- New Edge Modal -->
+
+    <Modal
+      title="Windows Package Options"
+      :button_name="$t('modal.done')"
+      ref="windowsPWAModal"
+      :showSubmitButton="true"
+      @modalSubmit="windowsOptionsModalSubmitted"
+      @cancel="windowsOptionsModalCancelled"
+      v-on:modalOpened="modalOpened()"
+      v-on:modalClosed="windowsModalClosed()"
+      v-if="windowsForm"
+    >
+      <div id="topLabelBox" slot="extraP">
+        <label id="topLabel">Customize your Windows Package below</label>
+        <ul class="l-generator-error" v-if="windowsOptionsErrors.length">
+          <li v-for="error in windowsOptionsErrors" v-bind:key="error">
+            <i class="fas fa-exclamation-circle"></i>
+            &nbsp;
+            <span>{{ $t(error) }}</span>
+          </li>
+        </ul>
+      </div>
+
+      <section class="androidModalBody androidOptionsModalBody">
+        <form style="width: 100%">
+          <div class="row">
+            <div class="col-lg-6 col-md-12">
+              <div class="form-group">
+                <label for="windowsPackageIdInput">
+                  <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md">
+                    {{ $t("publish.label_package_name") }}
+                    <i
+                      class="fas fa-info-circle"
+                      title="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
+                      aria-label="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
+                      role="definition"
+                    ></i>
+                  </a>
+                </label>
+                <input
+                  id="windowsPackageIdInput"
+                  class="form-control"
+                  :placeholder="$t('publish.placeholder_package_name')"
+                  type="text"
+                  required
+                  v-model="windowsForm.packageId"
+                />
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6 col-md-12">
+                  <div class="form-group">
+                    <label for="windowsAppNameInput">App name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="windowsAppNameInput"
+                      placeholder="My Awesome PWA"
+                      required
+                      v-model="windowsForm.name"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6 col-md-12">
+                  <div class="form-group">
+                    <label for="windowsAppVersionInput">
+                      App version
+                      <i
+                        class="fas fa-info-circle"
+                        title="The version of your app displayed to users. This is a string, typically in the form of '1.0.0.0'."
+                        aria-label
+                        role="definition"
+                      ></i>
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="windowsAppVersionInput"
+                      placeholder="1.0.1"
+                      required
+                      v-model="windowsForm.version"
+                    />
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6 col-md-12">
+                  <div class="form-group">
+                    <label for="windowsClassicAppVersionInput">
+                      Classic Package version
+                      <i
+                        class="fas fa-info-circle"
+                        title="The version of your app displayed to users on older version of Windows 10"
+                        aria-label
+                        role="definition"
+                      ></i>
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="windowsClassicAppVersionInput"
+                      placeholder="1.0.0"
+                      required
+                      v-model="windowsForm.classicPackage.version"
+                    />
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="form-group">
+                <label for="windowsStartUrlInput">
+                  URL
+                  <i
+                    class="fas fa-info-circle"
+                    title="This is the URL for your PWA."
+                    aria-label="This is the URL for your PWA."
+                    role="definition"
+                  ></i>
+                </label>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="windowsStartUrlInput"
+                  placeholder="/index.html"
+                  required
+                  v-model="windowsForm.url"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="windowsManifestUrlInput">Manifest URL</label>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="windowsManifestUrlInput"
+                  placeholder="https://mysite.com/manifest.json"
+                  required
+                  v-model="windowsForm.manifestUrl"
+                />
+              </div>
+
+            </div>
+
+            <!-- right half of the options dialog -->
+            <div class="col-lg-6 col-md-12">
+              <div class="form-group">
+                <label for="windowsIconUrlInput">Icon URL</label>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="windowsIconUrlInput"
+                  placeholder="https://myawesomepwa.com/512x512.png"
+                  v-model="windowsForm.images.baseImage"
+                />
+              </div>
+
+              <div class="form-group">
+                  <label for="windowsDisplayNameInput">
+                    <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md">
+                      Publisher Display Name
+                      <i
+                        class="fas fa-info-circle"
+                        title="The Display Name of the publisher"
+                        aria-label="The Display Name of the publisher"
+                        role="definition"
+                      ></i>
+                    </a>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    for="windowsDisplayNameInput"
+                    required
+                    placeholder="US"
+                    v-model="windowsForm.publisher.displayName"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="windowsPublisherIdInput">
+                    <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md">
+                      Publisher Id
+                      <i
+                        class="fas fa-info-circle"
+                        title="The Publisher Id of the publisher"
+                        aria-label="The Publisher Id of the publisher"
+                        role="definition"
+                      ></i>
+                    </a>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="windowsPublisherIdInput"
+                    required
+                    placeholder="CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca"
+                    v-model="windowsForm.publisher.commonName"
+                  />
+                </div>
             </div>
           </div>
         </form>
@@ -667,9 +1062,9 @@
         <i class="fas fa-times"></i>
       </button>
 
-      <section id="androidModalBody">
+      <section class="androidModalBody">
         <div>
-          <p id="androidModalP">
+          <p class="androidModalP">
             Download your
             <a
               href="https://developers.google.com/web/updates/2019/08/twas-quickstart"
@@ -679,7 +1074,9 @@
 
           <p>
             Your download will contain
-            <a href="https://github.com/pwa-builder/CloudAPK/blob/master/Next-steps.md">instructions</a>
+            <a
+              href="https://github.com/pwa-builder/CloudAPK/blob/master/Next-steps.md"
+            >instructions</a>
             for submitting your app to the Google Play store.
           </p>
 
@@ -751,16 +1148,16 @@
         <i class="fas fa-times"></i>
       </button>
 
-      <section id="androidModalBody">
+      <section class="androidModalBody">
         <div>
-          <p id="androidModalP">
-            You'll get a side-loadable version of your PWA (requires Win10 in
-            dev mode) to test your PWA right away. The Generate Appx button can
-            be used to generate a PWA package to submit to the Microsoft Store.
+          <p class="androidModalP">Download your PWA package for Windows!</p>
+
+          <p>
+            You'll get a side-loadable version of your PWA (requires Win10 in dev mode) to test your PWA right away. The Generate Appx button can be used to generate a PWA package to submit to the Microsoft Store.
           </p>
         </div>
 
-        <div id="androidModalButtonSection">
+        <div id="androidModalButtonSection" class="edgeBlock">
           <Download
             class="androidDownloadButton"
             platform="windows10"
@@ -778,6 +1175,24 @@
               });
             "
           >Generate</button>
+        </div>
+
+        <div id="extraSection">
+          <p>
+            Try the preview of the New Edge platform!
+
+            <Download
+              :showMessage="true"
+              id="newEdgeBetaDownloadButton"
+              class="webviewButton"
+              platform="windows10new"
+              :windowsOptions="this.windowsForm"
+              :message="this.windowsOptionsApplied ? 'Download Store ready package' : 'Download Test Package'"
+              v-on:downloadPackageError="showPackageDownloadError($event)"
+            />
+
+            <button class="newEdgeBetaOptionsButton" @click="openWindowsOptionsModal()">Open Store Options</button>
+          </p>
         </div>
       </section>
     </div>
@@ -1070,15 +1485,15 @@
               @mouseover="platCardHover($event)"
               @mouseleave="platCardUnHover($event)"
             >
-              <div class="pwaCardHeaderBlock">
-                <i class="fab fa-windows platformIcon" aria-label="Windows Icon"></i>
-                <h2>Windows</h2>
+              <div class="pwaCardHeaderBlock" id="windowsCardHeaderBlock">
+                <div id="windowsCardHeader">
+                  <i class="fab fa-windows platformIcon" aria-label="Windows Icon"></i>
+                  <h2>Windows</h2>
+                </div>
               </div>
 
               <p>
-                You'll get a side-loadable version of your PWA (requires Win10
-                in dev mode) to test your PWA right away. To generate an AppX
-                PWA package and submit to the Microsoft Store, click here
+                You'll get a side-loadable version of your PWA (requires Win10 in dev mode) to test your PWA right away. To generate an PWA package and submit to the Microsoft Store, click here.
               </p>
 
               <section class="platformDownloadBar">
@@ -1195,12 +1610,14 @@ import * as publish from "~/store/modules/publish";
 import {
   name as generatorName,
   Icon,
-  Manifest
+  Manifest,
 } from "~/store/modules/generator";
 import {
   validateAndroidOptions,
-  generatePackageId
+  generatePackageId,
 } from "~/utils/android-utils";
+
+import { validateWindowsOptions, generateWindowsPackageId } from "~/utils/windows-utils";
 
 const PublishState = namespace(publish.name, State);
 const PublishAction = namespace(publish.name, Action);
@@ -1216,15 +1633,15 @@ const GeneratorAction = namespace(generatorName, Action);
     Modal,
     PublishCard,
     Toolbar,
-    HubHeader
-  }
+    HubHeader,
+  },
 })
 export default class extends Vue {
   public appxForm: publish.AppxParams = {
     publisher: null,
     publisher_id: null,
     package: null,
-    version: null
+    version: null,
   };
 
   // Set default web checked items
@@ -1232,7 +1649,7 @@ export default class extends Vue {
     "manifest",
     "serviceWorkers",
     "apiSamples",
-    "windows10Package"
+    "windows10Package",
   ];
 
   @GeneratorState manifest: Manifest;
@@ -1253,7 +1670,7 @@ export default class extends Vue {
   @PublishAction enableDownloadButton;
 
   public appxError: string | null = null;
-  public androidPWAError: string | null = null;
+  public androidPWAErrors: string[] = [];
   public apkDownloaded: boolean = false;
   public modalStatus = false;
   public openAndroid: boolean = false;
@@ -1274,6 +1691,11 @@ export default class extends Vue {
   public androidFormCopyForCancellation: publish.AndroidApkOptions | null = null;
   public teamsForm: publish.TeamsParams | null = null;
 
+  public windowsForm: publish.WindowsPackageOptions | null = null;
+  public windowsFormCopyForCancellation: publish.WindowsPackageOptions | null = null;
+  public windowsOptionsErrors: string[] = [];
+  public windowsOptionsApplied: boolean = false;
+
   private readonly maxKeyFileSizeInBytes = 2097152; // 2MB. Typically, Android keystore files are ~3KB.
 
   private webadb: any;
@@ -1286,6 +1708,8 @@ export default class extends Vue {
   public created(): void {
     this.updateStatus();
     this.androidForm = this.createAndroidParamsFromManifest();
+
+    this.windowsForm = this.createWindowsParamsFromManifest();
   }
 
   showInstall(event) {
@@ -1306,9 +1730,13 @@ export default class extends Vue {
       return "https://github.com/pwa-builder/pwabuilder/issues/new";
     }
 
-    const quotedError = ">" + errorMessage.split('\n').join("\n>"); // Append the Github markdown for quotes to each line.
+    const quotedError = ">" + errorMessage.split("\n").join("\n>"); // Append the Github markdown for quotes to each line.
     const title = encodeURIComponent(`Error generating ${platform} package`);
-    const message = encodeURIComponent(`I received the following error when generating a package for ${this.manifest.url || 'my app'}\n\n${quotedError}`);
+    const message = encodeURIComponent(
+      `I received the following error when generating a package for ${
+        this.manifest.url || "my app"
+      }\n\n${quotedError}`
+    );
     return `https://github.com/pwa-builder/pwabuilder/issues/new?title=${title}&body=${message}`;
   }
 
@@ -1326,7 +1754,7 @@ export default class extends Vue {
     } catch (err) {
       console.error(err);
 
-      this.androidPWAError = err;
+      this.androidPWAErrors = [err];
     }
   }
 
@@ -1368,10 +1796,61 @@ export default class extends Vue {
 
         this.installing = false;
       } catch (err) {
-        this.androidPWAError = err;
+        this.androidPWAErrors = [err];
         this.installing = false;
       }
     }
+  }
+
+  createWindowsParamsFromManifest(): publish.WindowsPackageOptions {
+    const pwaUrl = this.manifest.url;
+    if (!pwaUrl) {
+      throw new Error("Can't find the current URL");
+    }
+
+    const name = this.manifest.short_name || this.manifest.name || "mypwa";
+    const packageID = generateWindowsPackageId(new URL(pwaUrl).hostname);
+
+    const edgeChannel = "stable";
+
+    const manifest = this.manifest;
+
+    const version = "1.0.1";
+
+    const icon =
+      this.findSuitableIcon(this.manifest.icons || [], "any", 512, 512, true) ||
+      this.findSuitableIcon(this.manifest.icons || [], "any", 192, 192, true) ||
+      this.findSuitableIcon(this.manifest.icons || [], "any", 0, 0, true); // If we can't find a suitably large icon, punt to any available icon
+
+      if (icon) {
+        return {
+          "name": name,
+          "packageId": packageID,
+          "url": pwaUrl,
+          "version": version,
+          "allowSigning": true,
+          "publisher": {
+              "displayName": "Contoso, Inc.",
+              "commonName": "CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca"
+          },
+          "classicPackage": {
+              "generate": true,
+              "version": "1.0.0",
+              "url": pwaUrl,
+          },
+          "edgeChannel": edgeChannel,
+          "manifestUrl": this.manifestUrl,
+          "manifest": manifest,
+          "images": {
+              "baseImage": icon.src || "",
+              "backgroundColor": "transparent",
+              "padding": 0.3
+          }
+        }
+      }
+      else {
+        throw new Error("Cant find an icon to send");
+      }
   }
 
   createAndroidParamsFromManifest(): publish.AndroidApkOptions {
@@ -1439,41 +1918,53 @@ export default class extends Vue {
       ) ||
       null;
 
+    const navColorOrFallback = 
+      this.manifest.theme_color ||
+        this.manifest.background_color ||
+        "#000000";
     return {
-      packageId: packageName,
-      name: appName,
-      launcherName: this.manifest.short_name || appName, // launcher name should be the short name. If none is available, fallback to the full app name.
       appVersion: "1.0.0.0",
       appVersionCode: 1,
-      display: display,
-      host: pwaUrl,
-      startUrl: relativeStartUrl,
-      webManifestUrl: this.manifestUrl,
-      themeColor: this.manifest.theme_color || "#FFFFFF",
-      navigationColor:
-        this.manifest.theme_color || this.manifest.background_color || "#000000",
       backgroundColor:
         this.manifest.background_color ||
         this.manifest.theme_color ||
         "#FFFFFF",
+      display: display,
+      enableNotifications: false,
+      enableSiteSettingsShortcut: true,
+      fallbackType: "customtabs",
+      features: undefined,
+      host: pwaUrl,
       iconUrl: icon ? icon.src : "",
+      includeSourceCode: false,
+      isChromeOSOnly: false,
+      launcherName: this.manifest.short_name || appName, // launcher name should be the short name. If none is available, fallback to the full app name.
       maskableIconUrl: maskableIcon ? maskableIcon.src : "",
       monochromeIconUrl: monochromeIcon ? monochromeIcon.src : "",
-      signingMode: "new",
+      name: appName,
+      navigationColor: navColorOrFallback,
+      navigationColorDark: navColorOrFallback,
+      navigationDividerColor: navColorOrFallback,
+      navigationDividerColorDark: navColorOrFallback,
+      packageId: packageName,
+      startUrl: relativeStartUrl,
       signing: {
         file: null,
         alias: "my-key-alias",
-        fullName: `${this.manifest.short_name || this.manifest.name || "App"} Admin`,
+        fullName: `${
+          this.manifest.short_name || this.manifest.name || "App"
+        } Admin`,
         organization: this.manifest.name || "PWABuilder",
         organizationalUnit: "Engineering",
         countryCode: "US",
         keyPassword: "", // If empty, one will be generated by CloudAPK service
-        storePassword: "" // If empty, one will be generated by CloudAPK service
+        storePassword: "", // If empty, one will be generated by CloudAPK service
       },
+      signingMode: "new",
       shortcuts: this.manifest.shortcuts || [],
-      fallbackType: "customtabs",
       splashScreenFadeOutDuration: 300,
-      enableNotifications: false
+      themeColor: this.manifest.theme_color || "#FFFFFF",
+      webManifestUrl: this.manifestUrl,
     };
   }
 
@@ -1481,7 +1972,7 @@ export default class extends Vue {
     const overrideValues = {
       uri: window.location.href,
       pageName: "publishPage",
-      pageHeight: window.innerHeight
+      pageHeight: window.innerHeight,
     };
 
     if (this.manifest && this.manifest.description && this.teamsForm) {
@@ -1531,8 +2022,11 @@ export default class extends Vue {
       this.androidForm.signing.storePassword = "";
     } else if (this.androidForm.signingMode === "new") {
       this.androidForm.signing.alias = "my-key-alias";
-      this.androidForm.signing.fullName = `${this.manifest.short_name || this.manifest.name || "App"} Admin`;
-      this.androidForm.signing.organization = this.manifest.name || "PWABuilder";
+      this.androidForm.signing.fullName = `${
+        this.manifest.short_name || this.manifest.name || "App"
+      } Admin`;
+      this.androidForm.signing.organization =
+        this.manifest.name || "PWABuilder";
       this.androidForm.signing.organizationalUnit = "Engineering";
       this.androidForm.signing.countryCode = "US";
       this.androidForm.signing.keyPassword = "";
@@ -1547,7 +2041,7 @@ export default class extends Vue {
     }
 
     if (this.androidForm.signingMode === "new") {
-      return "Type a new password or leave empty to use a generated one";
+      return "Type a new password or leave empty to generate one";
     }
 
     return "";
@@ -1570,7 +2064,7 @@ export default class extends Vue {
       if (keyFile.size > this.maxKeyFileSizeInBytes) {
         console.error("Keystore file is too large.", {
           maxSize: this.maxKeyFileSizeInBytes,
-          fileSize: keyFile.size
+          fileSize: keyFile.size,
         });
         this.androidForm.signingMode = "none";
       }
@@ -1578,7 +2072,7 @@ export default class extends Vue {
       // Read it in as a Uint8Array and store it in our signing object.
       const fileReader = new FileReader();
       fileReader.onload = () => (signing.file = fileReader.result as string);
-      fileReader.onerror = progressEvent => {
+      fileReader.onerror = (progressEvent) => {
         console.error(
           "Unable to read keystore file",
           fileReader.error,
@@ -1610,14 +2104,14 @@ export default class extends Vue {
 
     const desiredSize = `${desiredWidth}x${desiredHeight}`;
     const iconHasPurpose = (i: Icon) =>
-      (i.purpose || "any").split(" ").some(p => p === purpose);
+      (i.purpose || "any").split(" ").some((p) => p === purpose);
     const iconHasSize = (i: Icon) =>
-      (i.sizes || "0x0").split(" ").some(size => size === desiredSize);
+      (i.sizes || "0x0").split(" ").some((size) => size === desiredSize);
     const iconIsEmbedded = (i: Icon) => i.src.includes("data:image");
 
     // See if we have an exact match for size and purpose.
     const exactMatch = icons.find(
-      i => iconHasPurpose(i) && iconHasSize(i) && !iconIsEmbedded(i)
+      (i) => iconHasPurpose(i) && iconHasSize(i) && !iconIsEmbedded(i)
     );
     if (exactMatch) {
       return exactMatch;
@@ -1626,21 +2120,21 @@ export default class extends Vue {
     // Find a larger one if we're able.
     if (allowLarger) {
       const getIconDimensions = (i: Icon) =>
-        (i.sizes || "0x0").split(" ").map(size => {
+        (i.sizes || "0x0").split(" ").map((size) => {
           const dimensions = size.split("x");
           return {
             width: Number.parseInt(dimensions[0] || "0"),
-            height: Number.parseInt(dimensions[1] || "0")
+            height: Number.parseInt(dimensions[1] || "0"),
           };
         });
       const iconIsLarger = (i: Icon) =>
         getIconDimensions(i).some(
-          dimensions =>
+          (dimensions) =>
             dimensions.width >= desiredWidth &&
             dimensions.height >= desiredHeight
         );
       const largerIcon = icons.find(
-        i => iconHasPurpose(i) && iconIsLarger(i) && !iconIsEmbedded(i)
+        (i) => iconHasPurpose(i) && iconIsLarger(i) && !iconIsEmbedded(i)
       );
       return largerIcon || null;
     }
@@ -1674,7 +2168,7 @@ export default class extends Vue {
 
   public goToHome(): void {
     this.$router.push({
-      path: this.$i18n.path("")
+      path: this.$i18n.path(""),
     });
   }
 
@@ -1691,7 +2185,7 @@ export default class extends Vue {
       this.androidFormCopyForCancellation = { ...this.androidForm };
       if (this.androidForm.signing) {
         this.androidFormCopyForCancellation.signing = {
-          ...this.androidForm.signing
+          ...this.androidForm.signing,
         };
       }
     }
@@ -1710,6 +2204,17 @@ export default class extends Vue {
 
   public openWindowsModal(): void {
     this.openWindows = true;
+  }
+
+  public openWindowsOptionsModal(): void {
+    this.openWindows = false;
+
+   // Create a copy of the Windows form. If the user cancels the dialog, we'll revert back to this copy.
+    if (this.windowsForm) {
+      this.windowsFormCopyForCancellation = { ...this.windowsForm };
+    }
+
+    (this.$refs.windowsPWAModal as Modal).show();
   }
 
   public openTeamsModal(): void {
@@ -1731,7 +2236,7 @@ export default class extends Vue {
       privacyUrl: null,
       termsOfUseUrl: null,
       colorImageFile: null,
-      outlineImageFile: null
+      outlineImageFile: null,
     };
 
     if (this.manifest && this.manifest.description) {
@@ -1845,22 +2350,51 @@ export default class extends Vue {
 
     const validationErrors = validateAndroidOptions(this.androidForm);
     if (validationErrors.length > 0) {
-      this.androidPWAError = validationErrors.map(e => e.error).join(", ");
+      this.androidPWAErrors = validationErrors.map((e) => e.error);
       return;
     }
 
     (this.$refs.androidPWAModal as Modal).hide();
     this.openAndroid = true;
-    this.androidPWAError = null;
+    this.androidPWAErrors = [];
   }
 
   public androidOptionsModalCancelled() {
     this.androidForm =
       this.androidFormCopyForCancellation ||
       this.createAndroidParamsFromManifest();
-    this.androidPWAError = null;
+    this.androidPWAErrors = [];
     (this.$refs.androidPWAModal as Modal).hide();
     this.openAndroid = true;
+  }
+
+  public windowsOptionsModalCancelled() {
+    this.windowsForm =
+      this.windowsFormCopyForCancellation ||
+      this.createWindowsParamsFromManifest();
+
+    this.windowsOptionsErrors = [];
+
+    (this.$refs.windowsPWAModal as Modal).hide();
+    this.openWindows = true;
+  }
+
+  public windowsOptionsModalSubmitted() {
+   if (!this.windowsForm) {
+      return;
+    }
+
+    const validationErrors = validateWindowsOptions(this.windowsForm);
+    if (validationErrors.length > 0) {
+      this.windowsOptionsErrors = validationErrors.map((e) => e.error);
+      return;
+    }
+
+    (this.$refs.windowsPWAModal as Modal).hide();
+    this.openWindows = true;
+    this.windowsOptionsErrors = [];
+
+    this.windowsOptionsApplied = true;
   }
 
   public ConstructErrorMessage(list) {
@@ -1878,7 +2412,7 @@ export default class extends Vue {
       publisher: null,
       publisher_id: null,
       package: null,
-      version: null
+      version: null,
     };
   }
 
@@ -1899,9 +2433,15 @@ export default class extends Vue {
     this.showBackground = false;
     this.openAndroid = true;
   }
+
+  public windowsModalClosed() {
+    this.modalStatus = false;
+    this.showBackground = false;
+    this.openWindows = true;
+  }
 }
 
-Vue.prototype.$awa = function(config) {
+Vue.prototype.$awa = function (config) {
   if (awa) {
     awa.ct.capturePageView(config);
   }
@@ -1916,6 +2456,20 @@ declare var awa: any;
 /* stylelint-disable */
 
 @import "~assets/scss/base/variables";
+
+.pwaCardHeaderBlock #windowsCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#windowsCardHeaderBlock {
+  justify-content: space-between;
+}
+
+#windowsCardHeaderBlock span {
+  font-weight: bold;
+}
 
 #androidInstallWrapper {
   padding: 10px;
@@ -2513,20 +3067,39 @@ footer a {
   }
 }
 
-#androidModalBody #extraSection p {
+.androidModalBody #extraSection p {
   color: grey;
   font-size: 10px;
 }
 
-#androidModalBody #extraSection #legacyDownloadButton {
+.androidModalBody #extraSection #legacyDownloadButton, .androidModalBody #androidModalButtonSection #legacyDownloadButton, #newEdgeBetaDownloadButton, .newEdgeBetaOptionsButton {
   color: grey;
   font-size: 10px;
   background: transparent;
   padding-left: 0;
   border: none;
+  margin-top: 1em;
 }
 
-#androidModalBody {
+#newEdgeBetaDownloadButton, .newEdgeBetaOptionsButton {
+  color: #9337d8;
+  border: solid 1px;
+  padding: 4px;
+  margin-right: 4px;
+}
+
+#newEdgeBetaDownloadButton {
+  width: 150px;
+}
+
+.edgeBlock {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.androidModalBody {
   width: 34em;
   background: white;
   display: flex;
@@ -2537,7 +3110,7 @@ footer a {
   border-radius: 12px;
 }
 
-#androidModalBody.androidOptionsModalBody {
+.androidModalBody.androidOptionsModalBody {
   width: 100%;
   align-items: start;
   padding-left: 0;
@@ -2547,29 +3120,30 @@ footer a {
 
 /* On smaller screens, reduce the padding on modals */
 @media (max-width: $media-screen-m) {
-  #androidModalBody.androidOptionsModalBody {
+  .androidModalBody.androidOptionsModalBody {
     padding-left: 10px;
     padding-right: 10px;
   }
 }
 
-#androidModalBody.androidOptionsModalBody input {
+.androidModalBody.androidOptionsModalBody input {
   margin-bottom: 12px;
   border-color: #00000075;
 }
 
-#androidModalBody.androidOptionsModalBody label {
+.androidModalBody.androidOptionsModalBody label {
   display: block;
   margin-bottom: 10px;
 }
 
-#androidModalBody.androidOptionsModalBody + .modal-buttons {
+.androidModalBody.androidOptionsModalBody + .modal-buttons {
   margin-top: 2em;
   margin-bottom: 2em;
 }
 
-#androidModalBody.androidOptionsModalBody .fa-info-circle {
+.androidModalBody.androidOptionsModalBody .fa-info-circle {
   color: $color-muted;
+  cursor: help;
 }
 
 #closeAndroidPlatButton {
@@ -2588,7 +3162,7 @@ footer a {
   font-size: 14px;
 }
 
-#androidModalP {
+.androidModalP {
   font-family: sans-serif;
   font-style: normal;
   font-weight: 600;
@@ -2598,11 +3172,11 @@ footer a {
   margin-top: 40px;
 }
 
-#androidModalP a {
+.androidModalP a {
   color: #9337d8;
 }
 
-#androidModalBody #androidModalSubText {
+.androidModalBody #androidModalSubText {
   color: #3c3c3c;
   display: block;
   margin-bottom: 2em;
@@ -2921,29 +3495,29 @@ footer a {
   right: 2em;
   max-width: 350px;
   overflow: hidden;
-  font-size: .875rem;
-  background-color: rgba(255, 255, 255, .85);
+  font-size: 0.875rem;
+  background-color: rgba(255, 255, 255, 0.85);
   background-clip: padding-box;
-  border: 1px solid rgba(0, 0, 0, .1);
-  box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,.3);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
-  border-radius: .25rem;
+  border-radius: 0.25rem;
   z-index: 999999;
 
   .errorHeader {
     display: flex;
     align-items: center;
-    padding: .25rem .75rem;
+    padding: 0.25rem 0.75rem;
     color: #6c757d;
-    background-color: rgba(255, 255, 255, .85);
-    border-bottom: 1px solid rgba(0, 0, 0, .05);
+    background-color: rgba(255, 255, 255, 0.85);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 
     .errorTitle {
       flex-grow: 1;
     }
 
     .closeBtn {
-      opacity: .5;
+      opacity: 0.5;
       border: 0;
       background-color: transparent;
       padding: 0;
@@ -2952,7 +3526,7 @@ footer a {
 
       &:hover {
         color: #000;
-        opacity: .75;
+        opacity: 0.75;
       }
     }
   }
@@ -2972,7 +3546,7 @@ footer a {
     display: flex;
     justify-content: flex-end;
     font-size: 90%;
-    color:rgba(140, 140, 140, 0.18);
+    color: rgba(140, 140, 140, 0.18);
   }
 }
 

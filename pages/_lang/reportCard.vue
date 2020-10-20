@@ -538,7 +538,7 @@ export default class extends Vue {
   }
 
   public manifestTestBroke() {
-    console.log("here");
+    
   }
 
   public swTestDone(ev) {
@@ -546,7 +546,6 @@ export default class extends Vue {
 
     // service worker test normally ends last
     // so turn testing to false here
-    console.log('doing stuff');
     this.testing = false;
   }
 
@@ -933,7 +932,7 @@ h2 {
     margin-top: 68px;
   }
 
-  @media (max-width: 425px) {
+  @media (max-width: 542px) {
     #topHalfHome {
       padding-left: 25px;
       padding-right: 25px;
@@ -960,7 +959,7 @@ h2 {
     }
   }
 
-  @media (max-width: 425px) {
+  @media (max-width: 542px) {
     footer {
       margin-right: initial;
       margin-left: initial;
@@ -1041,7 +1040,6 @@ h2 {
 
     display: flex;
     flex-direction: column;
-    padding: 0px;
   }
 
   #inputSection {
@@ -1065,13 +1063,14 @@ h2 {
   }
 }
 
-@media (max-width: 425px) {
+@media (max-width: 542px) {
   #inputSection {
     display: initial;
   }
 
   main {
     display: initial;
+    padding: 0 25px;
   }
 
   #inputSection #bottomHalfHome {
@@ -1102,33 +1101,7 @@ h2 {
   margin-bottom: 20px;
 }
 
-@media (max-width: 425px) {
-  #attachSection {
-    margin-left: 25px;
-    margin-right: 25px;
-  }
-
-  #infoSection {
-    margin-left: 25px;
-    margin-right: 25px;
-  }
-
-  .scoreCard {
-    margin-left: 25px;
-    margin-right: 25px;
-    margin-bottom: 20px;
-  }
-
-  #toolkitSection {
-    margin-left: 25px;
-    margin-right: 25px;
-  }
-
-  .topFeatures {
-    margin-left: 25px;
-    margin-right: 25px;
-  }
-
+@media (max-width: 542px) {
   #hubFooter {
     padding-left: 25px;
     padding-right: 25px;

@@ -190,7 +190,7 @@ export default {
     useAPI() {
       this.isLoading = true;
 
-      const urlUseAPI = process.env.apiUrl2 + "/";
+      const urlUseAPI = process.env.imageGeneratorUrl + "/";
       const formData = new FormData(this.$refs.form);
 
       if (formData.get("color")) {
@@ -451,7 +451,7 @@ body {
     text-decoration: underline;
   }
 
-  @media screen and (max-width: 425px) {
+  @media screen and (max-width: 542px) {
     display: none;
   }
 }
