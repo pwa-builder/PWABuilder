@@ -370,14 +370,6 @@ export default class extends Vue {
     z-index: 9999;
   }
 
-  .monaco-editor .line-numbers {
-    color: #174f61 !important;
-  }
-
-  .monaco-editor .current-line ~ .line-numbers {
-    color: #0b216f !important;
-  }
-
   @media screen and (max-width: $media-screen-s) {
     margin-top: 4rem;
   }

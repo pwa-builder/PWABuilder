@@ -152,6 +152,13 @@ a {
 }
 
 
+.monaco-editor .line-numbers {
+  color: #174f61 !important;
+}
+
+.monaco-editor .current-line ~ .line-numbers {
+  color: #0b216f !important;
+}
 
 // fluent web
 
