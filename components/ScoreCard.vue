@@ -18,7 +18,7 @@
 
     <div class="cardContent" v-if="this.timedOutSW !== true">
       <!-- Security section -->
-      <div id="securityBlock" v-if="category === 'Security'">
+      <div id="securityBlock" v-if="category === 'Security' && this.securityTestDone === true">
         <h4>Required</h4>
 
         <ul>
@@ -74,6 +74,45 @@
           </li>
         </ul>
       </div>
+
+      <!-- loading experience -->
+      <ul v-if="category === 'Security' && this.securityTestDone === false">
+        <li>
+          <div class="listSubDiv">
+            <span class="cardIcon" aria-hidden="true"></span>
+
+            <span>Uses HTTPS URL</span>
+          </div>
+
+          <span class="subScoreSpan">
+            <i class="fas fa-spinner fa-spin"></i>
+          </span>
+        </li>
+
+        <li>
+          <div class="listSubDiv">
+            <span class="cardIcon" aria-hidden="true"></span>
+
+            <span>Valid SSL certificate is used</span>
+          </div>
+
+          <span class="subScoreSpan">
+            <i class="fas fa-spinner fa-spin"></i>
+          </span>
+        </li>
+
+        <li>
+          <div class="listSubDiv">
+            <span class="cardIcon" aria-hidden="true"></span>
+
+            <span>No "mixed" content on page</span>
+          </div>
+
+          <span class="subScoreSpan">
+            <i class="fas fa-spinner fa-spin"></i>
+          </span>
+        </li>
+      </ul>
 
       <!-- Manifest section -->
       <div
@@ -850,6 +889,7 @@ export default class extends Vue {
   hasHTTPS: boolean | null = null;
   validSSL: boolean | null = null;
   noMixedContent: boolean | null = null;
+  securityTestDone: boolean = false;
 
   manifestData: Manifest | null = null;
   noManifest: boolean | null = null;
@@ -918,10 +958,14 @@ export default class extends Vue {
         }
 
         this.$emit("securityTestDone", { score: this.securityScore });
+
+        this.securityTestDone = true;
       }
     } catch (err) {
       this.securityScore = 0;
+
       this.$emit("securityTestDone", { score: this.securityScore });
+      this.securityTestDone = true;
     }
   }
 
@@ -1014,24 +1058,38 @@ export default class extends Vue {
       const manifestJson = JSON.parse(manifestScoreData.content.json);
 
       if (manifestScoreData.data !== null || manifestJson) {
-
-        if (manifestScoreData.data.required.start_url === true || manifestJson.start_url) {
+        if (
+          manifestScoreData.data.required.start_url === true ||
+          manifestJson.start_url
+        ) {
           maniDetailScore = maniDetailScore + 5;
         }
 
-        if (manifestScoreData.data.required.short_name === true || manifestJson.short_name) {
+        if (
+          manifestScoreData.data.required.short_name === true ||
+          manifestJson.short_name
+        ) {
           maniDetailScore = maniDetailScore + 5;
         }
 
-        if (manifestScoreData.data.required.name === true || manifestJson.name) {
+        if (
+          manifestScoreData.data.required.name === true ||
+          manifestJson.name
+        ) {
           maniDetailScore = maniDetailScore + 5;
         }
 
-        if (manifestScoreData.data.required.icons === true || manifestJson.icons) {
+        if (
+          manifestScoreData.data.required.icons === true ||
+          manifestJson.icons
+        ) {
           maniDetailScore = maniDetailScore + 5;
         }
 
-        if (manifestScoreData.data.required.display === true || manifestJson.display) {
+        if (
+          manifestScoreData.data.required.display === true ||
+          manifestJson.display
+        ) {
           maniDetailScore = maniDetailScore + 5;
         }
       }
