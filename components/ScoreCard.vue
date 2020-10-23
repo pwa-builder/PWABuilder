@@ -18,7 +18,7 @@
 
     <div class="cardContent" v-if="this.timedOutSW !== true">
       <!-- Security section -->
-      <div id="securityBlock" v-if="category === 'Security'">
+      <div id="securityBlock" v-if="category === 'Security' && this.securityTestDone === true">
         <h4>Required</h4>
 
         <ul>
@@ -76,7 +76,7 @@
       </div>
 
       <!-- loading experience -->
-      <ul v-if="category === 'Security'">
+      <ul v-if="category === 'Security' && this.securityTestDone === false">
         <li>
           <div class="listSubDiv">
             <span class="cardIcon" aria-hidden="true"></span>
@@ -889,6 +889,7 @@ export default class extends Vue {
   hasHTTPS: boolean | null = null;
   validSSL: boolean | null = null;
   noMixedContent: boolean | null = null;
+  securityTestDone: boolean = false;
 
   manifestData: Manifest | null = null;
   noManifest: boolean | null = null;
@@ -957,10 +958,14 @@ export default class extends Vue {
         }
 
         this.$emit("securityTestDone", { score: this.securityScore });
+
+        this.securityTestDone = true;
       }
     } catch (err) {
       this.securityScore = 0;
+
       this.$emit("securityTestDone", { score: this.securityScore });
+      this.securityTestDone = true;
     }
   }
 
