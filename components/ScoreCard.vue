@@ -75,6 +75,45 @@
         </ul>
       </div>
 
+      <!-- loading experience -->
+      <ul v-if="category === 'Manifest' && !manifestData && !noManifest">
+        <li>
+          <div class="listSubDiv">
+            <span class="cardIcon" aria-hidden="true"></span>
+
+            <span>Web Manifest is properly attached</span>
+          </div>
+
+          <span class="subScoreSpan">
+            <i class="fas fa-spinner fa-spin"></i>
+          </span>
+        </li>
+
+        <li>
+          <div class="listSubDiv">
+            <span class="cardIcon" aria-hidden="true"></span>
+
+            <span>Web Manifest is properly attached</span>
+          </div>
+
+          <span class="subScoreSpan">
+            <i class="fas fa-spinner fa-spin"></i>
+          </span>
+        </li>
+
+        <li>
+          <div class="listSubDiv">
+            <span class="cardIcon" aria-hidden="true"></span>
+
+            <span>Web Manifest is properly attached</span>
+          </div>
+
+          <span class="subScoreSpan">
+            <i class="fas fa-spinner fa-spin"></i>
+          </span>
+        </li>
+      </ul>
+
       <!-- Manifest section -->
       <div
         id="manifestBlock"
@@ -1014,24 +1053,38 @@ export default class extends Vue {
       const manifestJson = JSON.parse(manifestScoreData.content.json);
 
       if (manifestScoreData.data !== null || manifestJson) {
-
-        if (manifestScoreData.data.required.start_url === true || manifestJson.start_url) {
+        if (
+          manifestScoreData.data.required.start_url === true ||
+          manifestJson.start_url
+        ) {
           maniDetailScore = maniDetailScore + 5;
         }
 
-        if (manifestScoreData.data.required.short_name === true || manifestJson.short_name) {
+        if (
+          manifestScoreData.data.required.short_name === true ||
+          manifestJson.short_name
+        ) {
           maniDetailScore = maniDetailScore + 5;
         }
 
-        if (manifestScoreData.data.required.name === true || manifestJson.name) {
+        if (
+          manifestScoreData.data.required.name === true ||
+          manifestJson.name
+        ) {
           maniDetailScore = maniDetailScore + 5;
         }
 
-        if (manifestScoreData.data.required.icons === true || manifestJson.icons) {
+        if (
+          manifestScoreData.data.required.icons === true ||
+          manifestJson.icons
+        ) {
           maniDetailScore = maniDetailScore + 5;
         }
 
-        if (manifestScoreData.data.required.display === true || manifestJson.display) {
+        if (
+          manifestScoreData.data.required.display === true ||
+          manifestJson.display
+        ) {
           maniDetailScore = maniDetailScore + 5;
         }
       }
