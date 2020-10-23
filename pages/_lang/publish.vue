@@ -879,8 +879,8 @@
                     {{ $t("publish.label_package_name") }}
                     <i
                       class="fas fa-info-circle"
-                      title="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
-                      aria-label="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
+                      title="The Microsoft Store's unique identifier for your app. You can find this value in Windows Partner Center. Click to learn more."
+                      aria-label="The Microsoft Store's unique identifier for your app. You can find this value in Windows Partner Center. Click to learn more."
                       role="definition"
                     ></i>
                   </a>
@@ -915,13 +915,15 @@
                 <div class="col-lg-6 col-md-12">
                   <div class="form-group">
                     <label for="windowsAppVersionInput">
-                      App version
-                      <i
-                        class="fas fa-info-circle"
-                        title="The version of your app displayed to users. This is a string, typically in the form of '1.0.0.0'."
-                        aria-label
-                        role="definition"
-                      ></i>
+                      <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/classic-package.md">
+                        App version
+                        <i
+                          class="fas fa-info-circle"
+                          title="Your app version in the form of '1.0.0'. This must be greater than classic package version. Click to learn more."
+                          aria-label="Your app version in the form of '1.0.0'. This must be greater than classic package version. Click to learn more."
+                          role="definition"
+                        ></i>
+                      </a>
                     </label>
                     <input
                       type="text"
@@ -940,13 +942,15 @@
                 <div class="col-lg-6 col-md-12">
                   <div class="form-group">
                     <label for="windowsClassicAppVersionInput">
-                      Classic Package version
-                      <i
-                        class="fas fa-info-circle"
-                        title="The version of your app displayed to users on older version of Windows 10"
-                        aria-label
-                        role="definition"
-                      ></i>
+                      <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/classic-package.md">
+                        Classic package version
+                        <i
+                          class="fas fa-info-circle"
+                          title="The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0'. Must be less than app version. Click to learn more."
+                          aria-label="The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0'. Must be less than app version. Click to learn more."
+                          role="definition"
+                        ></i>
+                      </a>
                     </label>
                     <input
                       type="text"
@@ -982,7 +986,15 @@
               </div>
 
               <div class="form-group">
-                <label for="windowsManifestUrlInput">Manifest URL</label>
+                <label for="windowsManifestUrlInput">
+                  Manifest URL
+                  <i
+                    class="fas fa-info-circle"
+                    title="The URL to your app manifest."
+                    aria-label="The URL to your app manifest."
+                    role="definition"
+                  ></i>
+                </label>
                 <input
                   type="url"
                   class="form-control"
@@ -998,7 +1010,17 @@
             <!-- right half of the options dialog -->
             <div class="col-lg-6 col-md-12">
               <div class="form-group">
-                <label for="windowsIconUrlInput">Icon URL</label>
+                <label for="windowsIconUrlInput">
+                  <a href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md" target="_blank">
+                    Icon URL
+                    <i
+                      class="fas fa-info-circle"
+                      title="A large, square, PNG image from which PWABuilder will generate all required Windows app icons. Should be 512x512 or larger. Click to learn more."
+                      aria-label="A large, square, PNG image from which PWABuilder will generate all required Windows app icons. Should be 512x512 or larger. Click to learn more."
+                      role="definition"
+                    ></i>
+                  </a>
+                </label>
                 <input
                   type="url"
                   class="form-control"
@@ -1011,11 +1033,11 @@
               <div class="form-group">
                   <label for="windowsDisplayNameInput">
                     <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md">
-                      Publisher Display Name
+                      Publisher display name
                       <i
                         class="fas fa-info-circle"
-                        title="The Display Name of the publisher"
-                        aria-label="The Display Name of the publisher"
+                        title="The display name of your app's publisher. You can find this in Windows Partner Center. Click to learn more."
+                        aria-label="The display name of your app's publisher. You can find this in Windows Partner Center. Click to learn more."
                         role="definition"
                       ></i>
                     </a>
@@ -1033,11 +1055,11 @@
                 <div class="form-group">
                   <label for="windowsPublisherIdInput">
                     <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md">
-                      Publisher Id
+                      Publisher ID
                       <i
                         class="fas fa-info-circle"
-                        title="The Publisher Id of the publisher"
-                        aria-label="The Publisher Id of the publisher"
+                        title="Your Windows Publisher ID. You can find this value in Windows Partner Center. Click to learn more."
+                        aria-label="Your Windows Publisher ID. You can find this value in Windows Partner Center. Click to learn more."
                         role="definition"
                       ></i>
                     </a>
@@ -1187,7 +1209,7 @@
               class="webviewButton"
               platform="windows10new"
               :windowsOptions="this.windowsForm"
-              :message="this.windowsOptionsApplied ? 'Download Store ready package' : 'Download Test Package'"
+              :message="this.windowsOptionsApplied ? 'Download Store-ready package' : 'Download Test Package'"
               v-on:downloadPackageError="showPackageDownloadError($event)"
             />
 
@@ -3088,10 +3110,6 @@ footer a {
   margin-right: 4px;
 }
 
-#newEdgeBetaDownloadButton {
-  width: 150px;
-}
-
 .edgeBlock {
   display: flex;
   flex-direction: row;
@@ -3144,6 +3162,10 @@ footer a {
 .androidModalBody.androidOptionsModalBody .fa-info-circle {
   color: $color-muted;
   cursor: help;
+}
+
+.androidModalBody.androidOptionsModalBody a .fa-info-circle {
+  cursor: pointer;
 }
 
 #closeAndroidPlatButton {
