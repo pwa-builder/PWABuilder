@@ -76,12 +76,12 @@
       </div>
 
       <!-- loading experience -->
-      <ul v-if="category === 'Manifest' && !manifestData && !noManifest">
+      <ul v-if="category === 'Security'">
         <li>
           <div class="listSubDiv">
             <span class="cardIcon" aria-hidden="true"></span>
 
-            <span>Web Manifest is properly attached</span>
+            <span>Uses HTTPS URL</span>
           </div>
 
           <span class="subScoreSpan">
@@ -93,7 +93,7 @@
           <div class="listSubDiv">
             <span class="cardIcon" aria-hidden="true"></span>
 
-            <span>Web Manifest is properly attached</span>
+            <span>Valid SSL certificate is used</span>
           </div>
 
           <span class="subScoreSpan">
@@ -105,7 +105,7 @@
           <div class="listSubDiv">
             <span class="cardIcon" aria-hidden="true"></span>
 
-            <span>Web Manifest is properly attached</span>
+            <span>No "mixed" content on page</span>
           </div>
 
           <span class="subScoreSpan">
