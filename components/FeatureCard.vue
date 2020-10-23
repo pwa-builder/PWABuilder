@@ -9,7 +9,7 @@
     <p v-bind:class="{textWrap: wrapText}">{{ sample.desc }}</p>
 
     <div v-if="showAddButton" class="featureCardActionsBlock">
-      <a class="featureCardAddButton" :href="`https://components.pwabuilder.com/component/${sample.ID}`">
+      <a class="featureCardAddButton" :href="`https://components.pwabuilder.com/component/${sample.ID}`" :aria-label="'View ' + sample.name + ' Component link'">
         View Feature
       </a>
     </div>
