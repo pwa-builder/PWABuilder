@@ -879,8 +879,8 @@
                     {{ $t("publish.label_package_name") }}
                     <i
                       class="fas fa-info-circle"
-                      title="The unique identifier of your app. You can find this value in Windows Partner Center. Click to learn more."
-                      aria-label="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
+                      title="The Microsoft Store's unique identifier for your app. You can find this value in Windows Partner Center. Click to learn more."
+                      aria-label="The Microsoft Store's unique identifier for your app. You can find this value in Windows Partner Center. Click to learn more."
                       role="definition"
                     ></i>
                   </a>
@@ -946,8 +946,8 @@
                         Classic package version
                         <i
                           class="fas fa-info-circle"
-                          title="The version of your app that runs on older versions of Windows. This should be less than app version. Click to learn more."
-                          aria-label="The version of your app that runs on older versions of Windows. This should be less than app version. Click to learn more."
+                          title="The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0'. Must be less than app version. Click to learn more."
+                          aria-label="The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0'. Must be less than app version. Click to learn more."
                           role="definition"
                         ></i>
                       </a>
