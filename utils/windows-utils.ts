@@ -6,6 +6,12 @@ type WindowsPackageValidationError = {
     error: string;
 };
 
+type WindowsVersionInfo = {
+    name: keyof WindowsPackageOptions | keyof WindowsPublisherOptions | null;
+    label: string;
+    value: string | null; 
+};
+
 export function validatePackageID(id: string) {
   if (id && id.length >= 2) {
     try {
@@ -34,7 +40,7 @@ export function generateWindowsPackageId(host: string): string {
   return parts.join(".");
 }
 
-export function validateWindowsOptions(options: WindowsPackageOptions): WindowsPackageValidationError[] {
+export function validateWindowsOptions(options: WindowsPackageOptions, configuration: "anaheim" | "spartan"): WindowsPackageValidationError[] {
   const validationErrors: WindowsPackageValidationError[] = [];
   if (!options) {
     validationErrors.push({ field: null, error: "No options specified " });
@@ -52,10 +58,22 @@ export function validateWindowsOptions(options: WindowsPackageOptions): WindowsP
     validationErrors.push({ field: "name", error: "App name must be less than 256 characters" });
   }
 
-  if (!options.version || options.version.trim().length === 0 && !options.classicPackage.version || options.classicPackage.version.trim().length === 0) {
-    validationErrors.push({ field: "version", error: "Must have an app version and a Classic Package version" });
+  const versionTrimmed = (options.version || "").trim();
+  // For Anaheim packages, we need to validate both version and classic version.
+  if (configuration === "anaheim") {
+    if (!options.classicPackage) {
+      validationErrors.push({ field: "classicPackage", error: "Must have classic package information" });
+    } else {
+      const classicVersionTrimmed = (options.classicPackage.version || "").trim();
+      if (!versionTrimmed || !classicVersionTrimmed) {
+        validationErrors.push({ field: "version", error: "Must have an app version and a classic package version" });
+      } else {
+        validationErrors.push(...validateWindowsAnaheimPackageVersions(versionTrimmed, classicVersionTrimmed));
+      }
+    }
   } else {
-    validationErrors.push(...validateWindowsPackageVersion(options.version.trim(), options.classicPackage.version.trim()));
+    // Spartan package: just validate the version; skip classic version.
+    validationErrors.push(...validateVersion({ name: "version", label: "Version", value: versionTrimmed }));
   }
 
   // Validating publisher options
@@ -83,36 +101,44 @@ export function validateWindowsOptions(options: WindowsPackageOptions): WindowsP
   return validationErrors;
 }
 
-function validateWindowsPackageVersion(version: string, classicVersion: string): WindowsPackageValidationError[] {
+function validateWindowsAnaheimPackageVersions(version: string, classicVersion: string): WindowsPackageValidationError[] {
   const versionErrors: WindowsPackageValidationError[] = [];
   
   // Common validation run on both version and classic version.
-  const versionInfos = [
-    { name: "version" as keyof WindowsPackageOptions, label: "Version", value: version },
-    { name: "classicVersion" as keyof WindowsPackageOptions, label: "Classic version", value: classicVersion }
+  const versionInfos: WindowsVersionInfo[] = [
+    { name: "version", label: "Version", value: version },
+    { name: "classicPackage", label: "Classic version", value: classicVersion }
   ];
   for (let versionInfo of versionInfos) {
-    // Version must be 3 segments ("1.0.0") - the 4th segment is reserved for Store use.
-    const segments = versionInfo.value.split(".");
-    if (segments.length !== 3) {
-      versionErrors.push({ field: versionInfo.name, error: `${versionInfo.label} must have 3 segments: 1.0.0.` });
-    }
-
-    // All the segments must be numbers.
-    if (segments.some(s => !s.match(/^(0|[1-9][0-9]*)$/))) {
-      versionErrors.push({ field: versionInfo.name, error: `${versionInfo.label} must only contain integers separated by periods.`})
-    }
-
-    // Version must be 1.0.0 or greater; Store doesn't support versions starting with zero.
-    const segmentValues = segments.map(s => parseInt(s));
-    if (segmentValues.length > 0 && segmentValues[0] <= 0) {
-      versionErrors.push({ field: versionInfo.name, error: `${versionInfo.label} must start with an integer >= 1.` })
-    }
+    versionErrors.push(...validateVersion(versionInfo));
   }
 
   // Make sure the version is > classic version
   if (version <= classicVersion) {
     versionErrors.push({ field: "version", error: "App version must be greater than classic package version" });
+  }
+
+  return versionErrors;
+}
+
+function validateVersion(versionInfo: WindowsVersionInfo): WindowsPackageValidationError[] {
+  const versionErrors: WindowsPackageValidationError[] = [];
+
+  // Version must be 3 segments ("1.0.0") - the 4th segment is reserved for Store use.
+  const segments = versionInfo.value ? versionInfo.value.split(".") : [];
+  if (segments.length !== 3) {
+    versionErrors.push({ field: versionInfo.name, error: `${versionInfo.label} must have 3 segments: 1.0.0.` });
+  }
+
+  // All the segments must be numbers.
+  if (segments.some(s => !s.match(/^(0|[1-9][0-9]*)$/))) {
+    versionErrors.push({ field: versionInfo.name, error: `${versionInfo.label} must only contain integers separated by periods.`})
+  }
+
+  // Version must be 1.0.0 or greater; Store doesn't support versions starting with zero.
+  const segmentValues = segments.map(s => parseInt(s));
+  if (segmentValues.length > 0 && segmentValues[0] <= 0) {
+    versionErrors.push({ field: versionInfo.name, error: `${versionInfo.label} must start with an integer >= 1.` })
   }
 
   return versionErrors;

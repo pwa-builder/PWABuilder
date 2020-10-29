@@ -53,13 +53,11 @@ export default class extends Vue {
   @Prop({ type: String, default: "" })
   public readonly platform: string;
 
-  @Prop({ type: String, default: "" })
-  @Prop({ type: Object })
-  public readonly androidOptions: publish.AndroidApkOptions | null;
+  @Prop(Object)
+  public androidOptions: publish.AndroidApkOptions | null;
 
-  @Prop({ type: String, default: "" })
-  @Prop({ type: Object })
-  public readonly windowsOptions: publish.WindowsPackageOptions | null;
+  @Prop(Object)
+  public windowsOptions: publish.WindowsPackageOptions | null;
 
   @Prop({
     type: Array,
@@ -146,18 +144,24 @@ export default class extends Vue {
     }
   }
 
-  public async generateWindowsEdgePackage() {
-    console.log(this.windowsOptions);
-    const validationErrors = validateWindowsOptions(this.windowsOptions);
+  public async generateWindowsPackage(configuration: "anaheim" | "spartan") {
+    if (!this.windowsOptions) {
+      this.showErrorMessage("Invalid Windows options. No options specified.");
+      return;
+    }
+    
+    const validationErrors = validateWindowsOptions(this.windowsOptions, configuration);
     if (validationErrors.length > 0 || !this.windowsOptions) {
       this.showErrorMessage(
         "Invalid Windows options. " +
           validationErrors.map((a) => a.error).join("\n")
       );
+
       return;
     }
 
     this.message$ = 'Generating...';
+    this.isReady = false;
 
     try {
       const response = await fetch(
@@ -178,14 +182,14 @@ export default class extends Vue {
         this.showErrorMessage(
           `Failed. Status code ${response.status}, Error: ${response.statusText}, Details: ${responseText}`
         );
-        this.isReady = true;
       }
 
       this.message$ = this.message;
     } catch (err) {
       this.showErrorMessage("Failed. Error: " + err);
-      
       this.message$ = this.message;
+    } finally {
+      this.isReady = true;
     }
   }
 
@@ -199,11 +203,11 @@ export default class extends Vue {
 
     if (platform === "androidTWA") {
       await this.generateAndroidPackage();
-    } 
-    else if (platform === "windows10new") {
-      await this.generateWindowsEdgePackage();
-    }
-    else {
+    } else if (platform === "windows10") {
+      await this.generateWindowsPackage("spartan");
+    } else if (platform === "windows10new") {
+      await this.generateWindowsPackage("anaheim");
+    } else {
       try {
         this.isReady = false;
 
@@ -269,7 +273,11 @@ button:disabled {
 
 #colorSpinner {
   margin-top: -1px !important;
-  height: 32px;
+  max-height: 32px;
+}
+
+.pwaCard #colorSpinner {
+  margin-left: -6px;
 }
 
 @-moz-document url-prefix() {
