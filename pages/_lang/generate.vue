@@ -701,7 +701,6 @@ import * as generator from "~/store/modules/generator";
 import helper from "~/utils/helper";
 import axios from "axios";
 import download from "downloadjs";
-import { Screenshot } from "~/store/modules/generator";
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
@@ -728,7 +727,7 @@ export default class extends Vue {
   public newIconSrc = "";
   public iconCheckMissing = true;
   public urlsForScreenshot = [{ value: "" }];
-  public urlsForScreenshotValues = [];
+  public urlsForScreenshotValues: string[] = [];
   private iconFile: File | null = null;
   public iconFileErrorNoneUploaded = false;
   public iconFileErrorIncorrectType = false;
@@ -765,7 +764,7 @@ export default class extends Vue {
   @GeneratorState manifest: generator.Manifest;
   @GeneratorState members: generator.CustomMember[];
   @GeneratorState icons: generator.Icon[];
-  @GeneratorState screenshots: generator.Screenshot[];
+  @GeneratorState screenshots: generator.Icon[];
   @GeneratorState suggestions: string[];
   @GeneratorState shortcuts: generator.ShortcutItem[];
   @GeneratorState warnings: string[];
@@ -787,8 +786,7 @@ export default class extends Vue {
 
   public created(): void {
     this.manifest$ = { ...this.manifest };
-    this.urlsForScreenshotValues[0] =
-      this.manifest$.url !== undefined ? this.manifest$.url : "";
+    this.urlsForScreenshotValues.push(this.manifest$.url || "");
   }
 
   public mounted() {
@@ -851,7 +849,7 @@ export default class extends Vue {
         }
       )
       .then(async (res) => {
-        if (window.chooseFileSystemEntries) {
+        if (window["chooseFileSystemEntries"]) {
           const fsOpts = {
             type: "save-file",
             accepts: [
@@ -862,7 +860,7 @@ export default class extends Vue {
               },
             ],
           };
-          const fileHandle = await window.chooseFileSystemEntries(fsOpts);
+          const fileHandle = await window["chooseFileSystemEntries"](fsOpts);
           // Create a FileSystemWritableFileStream to write to.
           const writable = await fileHandle.createWritable();
           // Write the contents of the file to the stream.
@@ -995,7 +993,7 @@ export default class extends Vue {
 
   public onClickRemoveScreenshot(
     e: Event,
-    screenshot: generator.Screenshot,
+    screenshot: generator.Icon,
     k: number
   ): void {
     e.preventDefault();
@@ -1055,7 +1053,7 @@ export default class extends Vue {
     }
     return url;
   }
-  public addUrlForScreenshots(index) {
+  public addUrlForScreenshots() {
     this.urlsForScreenshot.push({ value: "" });
   }
   public removeUrlForScreenshots(index) {
@@ -1081,9 +1079,7 @@ export default class extends Vue {
     // Check if file type is an image
     if (this.iconFile && this.iconFile.name) {
       const supportedFileTypes = [".png", ".jpg", ".svg"];
-      var found = supportedFileTypes.find((fileType) =>
-        this.iconFile.name.endsWith(fileType)
-      );
+      const found = supportedFileTypes.find((fileType) => this && this.iconFile && this.iconFile.name.endsWith(fileType));
       if (!found) {
         this.iconFileErrorIncorrectType = true;
       } else {
