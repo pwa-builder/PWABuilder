@@ -1746,11 +1746,14 @@ export default class extends Vue {
     const name = this.manifest.short_name || this.manifest.name || "My PWA";
     const packageID = generateWindowsPackageId(new URL(pwaUrl).hostname);
     const icon =
-      this.findSuitableIcon(this.manifest.icons || [], "any", 512, 512, true) ||
-      this.findSuitableIcon(this.manifest.icons || [], "any", 192, 192, true) ||
-      this.findSuitableIcon(this.manifest.icons || [], "any", 0, 0, true); // If we can't find a suitably large icon, punt to any available icon
+      this.findSuitableIcon(this.manifest.icons || [], "any", 512, 512, true, "image/png") ||
+      this.findSuitableIcon(this.manifest.icons || [], "any", 192, 192, true, "image/png") ||
+      this.findSuitableIcon(this.manifest.icons || [], "any", 512, 512, true, "image/jpeg") || 
+      this.findSuitableIcon(this.manifest.icons || [], "any", 192, 192, true, "image/jpeg") ||
+      this.findSuitableIcon(this.manifest.icons || [], "any", 0, 0, true, "image/png") || // No large PNG and no large JPG? See if we have *any* PNG
+      this.findSuitableIcon(this.manifest.icons || [], "any", 0, 0, true, "image/jpeg"); // No large PNG and no large JPG? See if we have *any* JPG
     if (!icon) {
-      throw new Error("Cant find a suitable icon. Manifest must contain a 512x512 icon");
+      throw new Error("Cant find a suitable icon. To build a Windows package, you should have a PNG image 512x512 or larger. For details, see https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md");
     }
 
     const packageOptions: publish.WindowsPackageOptions = {
@@ -1800,7 +1803,7 @@ export default class extends Vue {
     // StartUrl must be relative to the host.
     // We make sure it is below.
     let relativeStartUrl: string;
-    if (!this.manifest.start_url || this.manifest.start_url === "/" || this.manifest.start_url === ".") {
+    if (!this.manifest.start_url || this.manifest.start_url === "/" || this.manifest.start_url === "." || this.manifest.start_url === "./") {
       // First, if we don't have a start_url in the manifest, or it's just "/",
       // then we can just use that.
       relativeStartUrl = "/";
@@ -1813,42 +1816,19 @@ export default class extends Vue {
     }
 
     const icon =
-      this.findSuitableIcon(this.manifest.icons || [], "any", 512, 512, true) ||
-      this.findSuitableIcon(this.manifest.icons || [], "any", 192, 192, true) ||
-      this.findSuitableIcon(this.manifest.icons || [], "any", 0, 0, true); // If we can't find a suitably large icon, punt to any available icon
+      this.findSuitableIcon(this.manifest.icons || [], "any", 512, 512, true, "image/png") ||
+      this.findSuitableIcon(this.manifest.icons || [], "any", 192, 192, true, "image/png") ||
+      this.findSuitableIcon(this.manifest.icons || [], "any", 512, 512, true, "image/jpeg") ||
+      this.findSuitableIcon(this.manifest.icons || [], "any", 192, 192, true, "image/jpeg") ||
+      this.findSuitableIcon(this.manifest.icons || [], "any", 0, 0, true); // If we can't find a suitably large PNG or JPG icon, punt to any available icon
     const maskableIcon =
-      this.findSuitableIcon(
-        this.manifest.icons || [],
-        "maskable",
-        512,
-        512,
-        true
-      ) ||
-      this.findSuitableIcon(
-        this.manifest.icons || [],
-        "maskable",
-        192,
-        192,
-        true
-      ) ||
-      null;
+      this.findSuitableIcon(this.manifest.icons || [], "maskable", 512, 512, true, "image/png") ||
+      this.findSuitableIcon(this.manifest.icons || [], "maskable", 192, 192, true, "image/png") ||
+      this.findSuitableIcon(this.manifest.icons || [], "maskable", 192, 192, true);
     const monochromeIcon =
-      this.findSuitableIcon(
-        this.manifest.icons || [],
-        "monochrome",
-        512,
-        512,
-        true
-      ) ||
-      this.findSuitableIcon(
-        this.manifest.icons || [],
-        "monochrome",
-        192,
-        192,
-        true
-      ) ||
-      null;
-
+      this.findSuitableIcon(this.manifest.icons || [], "monochrome", 512, 512, true, "image/png") ||
+      this.findSuitableIcon(this.manifest.icons || [], "monochrome", 192, 192, true, "image/png") || 
+      this.findSuitableIcon(this.manifest.icons || [], "maskable", 192, 192, true);
     const navColorOrFallback = 
       this.manifest.theme_color ||
         this.manifest.background_color ||
@@ -2021,13 +2001,15 @@ export default class extends Vue {
 
   /**
    * Finds an icon matching the specified purpose and desired dimensions.
+   * @param mimeType Should be an image mime type, e.g. "image/png", or null or empty to ignore format.
    */
   findSuitableIcon(
     icons: Icon[],
     purpose: "any" | "maskable" | "monochrome",
     desiredWidth: number,
     desiredHeight: number,
-    allowLarger: boolean
+    allowLarger: boolean,
+    mimeType: string = ""
   ): Icon | null {
     if (icons.length === 0) {
       return null;
@@ -2039,10 +2021,11 @@ export default class extends Vue {
     const iconHasSize = (i: Icon) =>
       (i.sizes || "0x0").split(" ").some((size) => size === desiredSize);
     const iconIsEmbedded = (i: Icon) => i.src.includes("data:image");
+    const iconHasMimeType = (i: Icon) => !mimeType || i.type === mimeType;
 
     // See if we have an exact match for size and purpose.
     const exactMatch = icons.find(
-      (i) => iconHasPurpose(i) && iconHasSize(i) && !iconIsEmbedded(i)
+      (i) => iconHasPurpose(i) && iconHasSize(i) && !iconIsEmbedded(i) && iconHasMimeType(i)
     );
     if (exactMatch) {
       return exactMatch;
@@ -2065,7 +2048,7 @@ export default class extends Vue {
             dimensions.height >= desiredHeight
         );
       const largerIcon = icons.find(
-        (i) => iconHasPurpose(i) && iconIsLarger(i) && !iconIsEmbedded(i)
+        (i) => iconHasPurpose(i) && iconIsLarger(i) && !iconIsEmbedded(i) && iconHasMimeType(i)
       );
       return largerIcon || null;
     }
