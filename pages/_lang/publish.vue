@@ -1747,15 +1747,15 @@ export default class extends Vue {
     const packageID = generateWindowsPackageId(new URL(pwaUrl).hostname);
     const manifestIcons = this.manifest.icons || [];
     const icon =
-      this.findSuitableIcon(manifestIcons, "any", 512, 512, "sizeOrLarger", "image/png") ||
-      this.findSuitableIcon(manifestIcons, "any", 192, 192, "sizeOrLarger", "image/png") ||
-      this.findSuitableIcon(manifestIcons, "any", 512, 512, "sizeOrLarger", "image/jpeg") || 
-      this.findSuitableIcon(manifestIcons, "any", 192, 192, "sizeOrLarger", "image/jpeg") ||
-      this.findSuitableIcon(manifestIcons, "any", 512, 512, "sizeOrLarger", undefined) || // Fallback to a 512x512 with an undefined type.
-      this.findSuitableIcon(manifestIcons, "any", 192, 192, "sizeOrLarger", undefined) || // Fallback to a 192x192 with an undefined type.
-      this.findSuitableIcon(manifestIcons, "any", 0, 0, "sizeOrLarger", "image/png") || // No large PNG and no large JPG? See if we have *any* PNG
-      this.findSuitableIcon(manifestIcons, "any", 0, 0, "sizeOrLarger", "image/jpeg") || // No large PNG and no large JPG? See if we have *any* JPG
-      this.findSuitableIcon(manifestIcons, "any", 0, 0, "sizeOrLarger", undefined); // Welp, we sure tried. Grab any image available.
+      this.findSuitableIcon(manifestIcons, "any", 512, 512, "image/png") ||
+      this.findSuitableIcon(manifestIcons, "any", 192, 192, "image/png") ||
+      this.findSuitableIcon(manifestIcons, "any", 512, 512, "image/jpeg") || 
+      this.findSuitableIcon(manifestIcons, "any", 192, 192, "image/jpeg") ||
+      this.findSuitableIcon(manifestIcons, "any", 512, 512, undefined) || // Fallback to a 512x512 with an undefined type.
+      this.findSuitableIcon(manifestIcons, "any", 192, 192, undefined) || // Fallback to a 192x192 with an undefined type.
+      this.findSuitableIcon(manifestIcons, "any", 0, 0, "image/png") || // No large PNG and no large JPG? See if we have *any* PNG
+      this.findSuitableIcon(manifestIcons, "any", 0, 0, "image/jpeg") || // No large PNG and no large JPG? See if we have *any* JPG
+      this.findSuitableIcon(manifestIcons, "any", 0, 0, undefined); // Welp, we sure tried. Grab any image available.
 
     const packageOptions: publish.WindowsPackageOptions = {
       name: name,
@@ -1818,21 +1818,21 @@ export default class extends Vue {
 
     const manifestIcons = this.manifest.icons || [];
     const icon =
-      this.findSuitableIcon(manifestIcons, "any", 512, 512, "sizeOrLarger", "image/png") ||
-      this.findSuitableIcon(manifestIcons, "any", 192, 192, "sizeOrLarger", "image/png") ||
-      this.findSuitableIcon(manifestIcons, "any", 512, 512, "sizeOrLarger", "image/jpeg") ||
-      this.findSuitableIcon(manifestIcons, "any", 192, 192, "sizeOrLarger", "image/jpeg") ||
-      this.findSuitableIcon(manifestIcons, "any", 512, 512, "sizeOrLarger", undefined) || // A 512x512 or larger image with unspecified type
-      this.findSuitableIcon(manifestIcons, "any", 192, 192, "sizeOrLarger", undefined) || // A 512x512 or larger image with unspecified type
-      this.findSuitableIcon(manifestIcons, "any", 0, 0, "sizeOrLarger", undefined); // Welp, we tried. Any image of any size, any type.
+      this.findSuitableIcon(manifestIcons, "any", 512, 512, "image/png") ||
+      this.findSuitableIcon(manifestIcons, "any", 192, 192, "image/png") ||
+      this.findSuitableIcon(manifestIcons, "any", 512, 512, "image/jpeg") ||
+      this.findSuitableIcon(manifestIcons, "any", 192, 192, "image/jpeg") ||
+      this.findSuitableIcon(manifestIcons, "any", 512, 512, undefined) || // A 512x512 or larger image with unspecified type
+      this.findSuitableIcon(manifestIcons, "any", 192, 192, undefined) || // A 512x512 or larger image with unspecified type
+      this.findSuitableIcon(manifestIcons, "any", 0, 0, undefined); // Welp, we tried. Any image of any size, any type.
     const maskableIcon =
-      this.findSuitableIcon(manifestIcons, "maskable", 512, 512, "sizeOrLarger", "image/png") ||
-      this.findSuitableIcon(manifestIcons, "maskable", 192, 192, "sizeOrLarger", "image/png") ||
-      this.findSuitableIcon(manifestIcons, "maskable", 192, 192, "sizeOrLarger", undefined);
+      this.findSuitableIcon(manifestIcons, "maskable", 512, 512, "image/png") ||
+      this.findSuitableIcon(manifestIcons, "maskable", 192, 192, "image/png") ||
+      this.findSuitableIcon(manifestIcons, "maskable", 192, 192, undefined);
     const monochromeIcon =
-      this.findSuitableIcon(manifestIcons, "monochrome", 512, 512, "sizeOrLarger", "image/png") ||
-      this.findSuitableIcon(manifestIcons, "monochrome", 192, 192, "sizeOrLarger", "image/png") || 
-      this.findSuitableIcon(manifestIcons, "maskable", 192, 192, "sizeOrLarger", undefined);
+      this.findSuitableIcon(manifestIcons, "monochrome", 512, 512, "image/png") ||
+      this.findSuitableIcon(manifestIcons, "monochrome", 192, 192, "image/png") || 
+      this.findSuitableIcon(manifestIcons, "maskable", 192, 192, undefined);
     const navColorOrFallback = 
       this.manifest.theme_color ||
         this.manifest.background_color ||
@@ -2012,7 +2012,6 @@ export default class extends Vue {
     purpose: "any" | "maskable" | "monochrome",
     desiredWidth: number,
     desiredHeight: number,
-    sizeAllowance: "exactSize" | "sizeOrLarger",
     mimeType: string | undefined
   ): Icon | null {
     if (icons.length === 0) {
@@ -2036,28 +2035,24 @@ export default class extends Vue {
     }
 
     // Find a larger one if we're able.
-    if (sizeAllowance === "sizeOrLarger") {
-      const getIconDimensions = (i: Icon) =>
-        (i.sizes || "0x0").split(" ").map((size) => {
-          const dimensions = size.split("x");
-          return {
-            width: Number.parseInt(dimensions[0] || "0"),
-            height: Number.parseInt(dimensions[1] || "0"),
-          };
-        });
-      const iconIsLarger = (i: Icon) =>
-        getIconDimensions(i).some(
-          (dimensions) =>
-            dimensions.width >= desiredWidth &&
-            dimensions.height >= desiredHeight
-        );
-      const largerIcon = icons.find(
-        (i) => iconHasPurpose(i) && iconIsLarger(i) && !iconIsEmbedded(i) && iconHasMimeType(i)
+    const getIconDimensions = (i: Icon) =>
+      (i.sizes || "0x0").split(" ").map((size) => {
+        const dimensions = size.split("x");
+        return {
+          width: Number.parseInt(dimensions[0] || "0"),
+          height: Number.parseInt(dimensions[1] || "0"),
+        };
+      });
+    const iconIsLarger = (i: Icon) =>
+      getIconDimensions(i).some(
+        (dimensions) =>
+          dimensions.width >= desiredWidth &&
+          dimensions.height >= desiredHeight
       );
-      return largerIcon || null;
-    }
-
-    return null;
+    const largerIcon = icons.find(
+      (i) => iconHasPurpose(i) && iconIsLarger(i) && !iconIsEmbedded(i) && iconHasMimeType(i)
+    );
+    return largerIcon || null;
   }
 
   platCardHover(ev) {
