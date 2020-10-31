@@ -2024,7 +2024,10 @@ export default class extends Vue {
     const iconHasSize = (i: Icon) =>
       (i.sizes || "0x0").split(" ").some((size) => size === desiredSize);
     const iconIsEmbedded = (i: Icon) => i.src.includes("data:image");
-    const iconHasMimeType = (i: Icon) => i.type === mimeType;
+    const iconHasMimeType = (i: Icon) =>
+     i.type === mimeType || 
+     (!i.type && mimeType === "image/png" && i.src && i.src.endsWith(".png")) || // best guess when the manifest doesn't specify the type of image
+     (!i.type && mimeType === "image/jpeg" && i.src && i.src.endsWith(".jpg")); // best guess when the manifest doesn't specify the type of image
 
     // See if we have an exact match for size and purpose.
     const exactMatch = icons.find(
