@@ -380,8 +380,8 @@
                   >Maskable icon</a> URL
                   <i
                     class="fas fa-info-circle"
-                    title="The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms. Optional."
-                    aria-label="The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms. Optional."
+                    title="Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms."
+                    aria-label="Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms."
                     role="definition"
                   ></i>
                 </label>
@@ -403,8 +403,8 @@
                   >Monochrome icon</a> URL
                   <i
                     class="fas fa-info-circle"
-                    title="The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings. Optional."
-                    aria-label="The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings. Optional."
+                    title="Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings."
+                    aria-label="Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings."
                     role="definition"
                   ></i>
                 </label>
@@ -1832,7 +1832,7 @@ export default class extends Vue {
     const monochromeIcon =
       this.findSuitableIcon(manifestIcons, "monochrome", 512, 512, "image/png") ||
       this.findSuitableIcon(manifestIcons, "monochrome", 192, 192, "image/png") || 
-      this.findSuitableIcon(manifestIcons, "maskable", 192, 192, undefined);
+      this.findSuitableIcon(manifestIcons, "monochrome", 192, 192, undefined);
     const navColorOrFallback = 
       this.manifest.theme_color ||
         this.manifest.background_color ||
