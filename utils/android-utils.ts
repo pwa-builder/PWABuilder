@@ -1,5 +1,10 @@
 import { AndroidApkOptions, AndroidSigningOptions } from "~/store/modules/publish";
 
+type AndroidPackageValidationError = {
+  field: keyof AndroidApkOptions | keyof AndroidSigningOptions | null;
+  error: string;
+}
+
 const DISALLOWED_ANDROID_PACKAGE_CHARS_REGEX = /[^a-zA-Z0-9_]/g;
 export function generatePackageId(host: string): string {
   const parts = host
@@ -12,8 +17,8 @@ export function generatePackageId(host: string): string {
   return parts.join(".");
 }
 
-export function validateAndroidOptions(options: Partial<AndroidApkOptions | null>): { field: keyof AndroidApkOptions | keyof AndroidSigningOptions | null, error: string }[] {
-  const validationErrors: { field: keyof AndroidApkOptions | null | keyof AndroidSigningOptions, error: string }[] = [];
+export function validateAndroidOptions(options: Partial<AndroidApkOptions | null>): AndroidPackageValidationError[] {
+  const validationErrors: AndroidPackageValidationError[] = [];
   if (!options) {
     validationErrors.push({ field: null, error: "No options specified " });
     return validationErrors;

@@ -18,7 +18,7 @@
 
     <div class="cardContent" v-if="this.timedOutSW !== true">
       <!-- Security section -->
-      <div id="securityBlock" v-if="category === 'Security'">
+      <div id="securityBlock" v-if="category === 'Security' && this.securityTestDone === true">
         <h4>Required</h4>
 
         <ul>
@@ -74,6 +74,45 @@
           </li>
         </ul>
       </div>
+
+      <!-- loading experience -->
+      <ul v-if="category === 'Security' && this.securityTestDone === false">
+        <li>
+          <div class="listSubDiv">
+            <span class="cardIcon" aria-hidden="true"></span>
+
+            <span>Uses HTTPS URL</span>
+          </div>
+
+          <span class="subScoreSpan">
+            <i class="fas fa-spinner fa-spin"></i>
+          </span>
+        </li>
+
+        <li>
+          <div class="listSubDiv">
+            <span class="cardIcon" aria-hidden="true"></span>
+
+            <span>Valid SSL certificate is used</span>
+          </div>
+
+          <span class="subScoreSpan">
+            <i class="fas fa-spinner fa-spin"></i>
+          </span>
+        </li>
+
+        <li>
+          <div class="listSubDiv">
+            <span class="cardIcon" aria-hidden="true"></span>
+
+            <span>No "mixed" content on page</span>
+          </div>
+
+          <span class="subScoreSpan">
+            <i class="fas fa-spinner fa-spin"></i>
+          </span>
+        </li>
+      </ul>
 
       <!-- Manifest section -->
       <div
@@ -260,7 +299,7 @@
                 <i class="fas fa-times"></i>
               </span>
 
-              <span>Has Screenshots</span>
+              <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots" target="_blank" rel="noopener">Has Screenshots</a>
             </div>
           </li>
 
@@ -281,7 +320,7 @@
                 <i class="fas fa-times"></i>
               </span>
 
-              <span>Has Categories</span>
+              <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest/categories" target="_blank" rel="noopener">Has Categories</a>
             </div>
           </li>
         </ul>
@@ -306,7 +345,7 @@
                 <i class="fas fa-times"></i>
               </span>
 
-              <span>Uses Shortcuts</span>
+              <a href="https://components.pwabuilder.com/demo/web_shortcuts" target="_blank" rel="noopener">Uses Shortcuts</a>
             </div>
           </li>
         </ul>
@@ -801,7 +840,7 @@
       <div class="brkManifestError" v-if="brokenManifest">
         Couldn't find an app manifest.
         <br />
-        <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
+        <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest" target="_blank" rel="noopener"
           >Learn about manifests here</a
         >
       </div>
@@ -811,9 +850,9 @@
         <p class="brkManifestHelp">
           <i class="fas fa-info-circle" aria-hidden="true"></i>
           You can use
-          <a href="https://letsencrypt.org/">LetsEncrypt</a> to get a free HTTPS
+          <a href="https://letsencrypt.org/" target="_blank" rel="noopener">LetsEncrypt</a> to get a free HTTPS
           certificate, or
-          <a href="https://azure.microsoft.com/en-us/get-started/web-app/"
+          <a href="https://azure.microsoft.com/en-us/get-started/web-app/" target="_blank" rel="noopener"
             >publish to Azure</a
           >
           to get HTTPS support out of the box
@@ -850,6 +889,7 @@ export default class extends Vue {
   hasHTTPS: boolean | null = null;
   validSSL: boolean | null = null;
   noMixedContent: boolean | null = null;
+  securityTestDone: boolean = false;
 
   manifestData: Manifest | null = null;
   noManifest: boolean | null = null;
@@ -918,10 +958,14 @@ export default class extends Vue {
         }
 
         this.$emit("securityTestDone", { score: this.securityScore });
+
+        this.securityTestDone = true;
       }
     } catch (err) {
       this.securityScore = 0;
+
       this.$emit("securityTestDone", { score: this.securityScore });
+      this.securityTestDone = true;
     }
   }
 
@@ -1014,24 +1058,38 @@ export default class extends Vue {
       const manifestJson = JSON.parse(manifestScoreData.content.json);
 
       if (manifestScoreData.data !== null || manifestJson) {
-
-        if (manifestScoreData.data.required.start_url === true || manifestJson.start_url) {
+        if (
+          manifestScoreData.data.required.start_url === true ||
+          manifestJson.start_url
+        ) {
           maniDetailScore = maniDetailScore + 5;
         }
 
-        if (manifestScoreData.data.required.short_name === true || manifestJson.short_name) {
+        if (
+          manifestScoreData.data.required.short_name === true ||
+          manifestJson.short_name
+        ) {
           maniDetailScore = maniDetailScore + 5;
         }
 
-        if (manifestScoreData.data.required.name === true || manifestJson.name) {
+        if (
+          manifestScoreData.data.required.name === true ||
+          manifestJson.name
+        ) {
           maniDetailScore = maniDetailScore + 5;
         }
 
-        if (manifestScoreData.data.required.icons === true || manifestJson.icons) {
+        if (
+          manifestScoreData.data.required.icons === true ||
+          manifestJson.icons
+        ) {
           maniDetailScore = maniDetailScore + 5;
         }
 
-        if (manifestScoreData.data.required.display === true || manifestJson.display) {
+        if (
+          manifestScoreData.data.required.display === true ||
+          manifestJson.display
+        ) {
           maniDetailScore = maniDetailScore + 5;
         }
       }

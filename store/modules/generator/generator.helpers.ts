@@ -89,13 +89,8 @@ export const helpers = {
         }
         baseUrl = protocol + '//' + host + additionnalPath;
 
-        //Avoid duplication of forward slash on the path
-        if(icon.src.startsWith('/')) {
-          icon.src = new URL(baseUrl + icon.src).href;
-        }
-        else {
-          icon.src = new URL(baseUrl + '/' +  icon.src).href;
-        }
+        // Create an absolute path to the 
+        icon.src = new URL(icon.src, baseUrl).href;
 
         //remove posible trailing/leading slashes
         icon.src = `${icon.src.replace(/^\/+/g, '')}`;

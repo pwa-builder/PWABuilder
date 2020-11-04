@@ -39,84 +39,7 @@
           Report a problem
         </a>
       </div>
-    </div>
-
-    <!-- appx modal -->
-    <Modal
-      id="appxModal"
-      :title="$t('publish.generate_appx')"
-      ref="appxModal"
-      @modalSubmit="onSubmitAppxModal"
-      @cancel="onCancelAppxModal"
-      v-on:modalOpened="modalOpened()"
-      v-on:modalClosed="modalClosed()"
-      v-if="appxForm"
-    >
-      <div id="topLabelBox" slot="extraP">
-        <label id="topLabel">
-          {{ $t("publish.enter_your") }}
-          <a
-            href="https://developer.microsoft.com/en-us/windows"
-            target="_blank"
-          >{{ $t("publish.dev_center") }}</a>
-          {{ $t("publish.publisher_details") }}
-        </label>
-      </div>
-
-      <section id="appxModalBody">
-        <div>
-          <label>{{ $t("publish.label_publisher") }}</label>
-        </div>
-
-        <input
-          class="l-generator-input l-generator-input--largest"
-          :placeholder="$t('publish.placeholder_publisher')"
-          type="text"
-          v-model="appxForm.publisher"
-          required
-        />
-
-        <div class="form-item">
-          <label>{{ $t("publish.label_identity") }}</label>
-          <label>{{ $t("publish.label_publisher_id") }}</label>
-        </div>
-
-        <input
-          class="l-generator-input l-generator-input--largest"
-          :placeholder="$t('publish.placeholder_identity')"
-          type="text"
-          v-model="appxForm.publisher_id"
-          required
-        />
-
-        <div class="form-item">
-          <label>{{ $t("publish.label_package") }}</label>
-        </div>
-        <input
-          class="l-generator-input l-generator-input--largest"
-          :placeholder="$t('publish.placeholder_package')"
-          type="text"
-          v-model="appxForm.package"
-          required
-        />
-
-        <div class="form-item">
-          <label>{{ $t("publish.label_version") }}</label>
-        </div>
-        <input
-          class="l-generator-input l-generator-input--largest"
-          :placeholder="$t('publish.placeholder_version')"
-          type="text"
-          v-model="appxForm.version"
-          required
-        />
-
-        <p class="l-generator-error" v-if="appxError">
-          <span class="icon-exclamation"></span>
-          {{ $t(appxError) }}
-        </p>
-      </section>
-    </Modal>
+    </div>    
 
     <Modal
       :title="$t('publish.package_name')"
@@ -457,8 +380,8 @@
                   >Maskable icon</a> URL
                   <i
                     class="fas fa-info-circle"
-                    title="The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms. Optional."
-                    aria-label="The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms. Optional."
+                    title="Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms."
+                    aria-label="Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms."
                     role="definition"
                   ></i>
                 </label>
@@ -480,8 +403,8 @@
                   >Monochrome icon</a> URL
                   <i
                     class="fas fa-info-circle"
-                    title="The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings. Optional."
-                    aria-label="The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings. Optional."
+                    title="Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings."
+                    aria-label="Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings."
                     role="definition"
                   ></i>
                 </label>
@@ -625,6 +548,27 @@
                       class="fas fa-info-circle"
                       title="If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app."
                       aria-label="If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app."
+                      role="definition"
+                    ></i>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>ChromeOS only</label>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="chromeOSOnlyInput"
+                    v-model="androidForm.isChromeOSOnly"
+                  />
+                  <label class="form-check-label" for="chromeOSOnlyInput">
+                    Enable
+                    <i
+                      class="fas fa-info-circle"
+                      title="If enabled, your Android package will only run on ChromeOS devices"
+                      aria-label="If enabled, your Android package will only run on ChromeOS devices"
                       role="definition"
                     ></i>
                   </label>
@@ -859,7 +803,7 @@
       v-if="windowsForm"
     >
       <div id="topLabelBox" slot="extraP">
-        <label id="topLabel">Customize your Windows Package below</label>
+        <label id="topLabel">Customize your Windows package below</label>
         <ul class="l-generator-error" v-if="windowsOptionsErrors.length">
           <li v-for="error in windowsOptionsErrors" v-bind:key="error">
             <i class="fas fa-exclamation-circle"></i>
@@ -879,8 +823,8 @@
                     {{ $t("publish.label_package_name") }}
                     <i
                       class="fas fa-info-circle"
-                      title="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
-                      aria-label="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
+                      title="The Microsoft Store's unique identifier for your app. You can find this value in Windows Partner Center. Click to learn more."
+                      aria-label="The Microsoft Store's unique identifier for your app. You can find this value in Windows Partner Center. Click to learn more."
                       role="definition"
                     ></i>
                   </a>
@@ -915,13 +859,15 @@
                 <div class="col-lg-6 col-md-12">
                   <div class="form-group">
                     <label for="windowsAppVersionInput">
-                      App version
-                      <i
-                        class="fas fa-info-circle"
-                        title="The version of your app displayed to users. This is a string, typically in the form of '1.0.0.0'."
-                        aria-label
-                        role="definition"
-                      ></i>
+                      <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/classic-package.md">
+                        App version
+                        <i
+                          class="fas fa-info-circle"
+                          title="Your app version in the form of '1.0.0'. This must be greater than classic package version. Click to learn more."
+                          aria-label="Your app version in the form of '1.0.0'. This must be greater than classic package version. Click to learn more."
+                          role="definition"
+                        ></i>
+                      </a>
                     </label>
                     <input
                       type="text"
@@ -936,17 +882,19 @@
 
               </div>
 
-              <div class="row">
+              <div class="row" v-if="windowsFormConfiguration === 'anaheim'">
                 <div class="col-lg-6 col-md-12">
                   <div class="form-group">
                     <label for="windowsClassicAppVersionInput">
-                      Classic Package version
-                      <i
-                        class="fas fa-info-circle"
-                        title="The version of your app displayed to users on older version of Windows 10"
-                        aria-label
-                        role="definition"
-                      ></i>
+                      <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/classic-package.md">
+                        Classic package version
+                        <i
+                          class="fas fa-info-circle"
+                          title="The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0'. Must be less than app version. Click to learn more."
+                          aria-label="The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0'. Must be less than app version. Click to learn more."
+                          role="definition"
+                        ></i>
+                      </a>
                     </label>
                     <input
                       type="text"
@@ -982,7 +930,15 @@
               </div>
 
               <div class="form-group">
-                <label for="windowsManifestUrlInput">Manifest URL</label>
+                <label for="windowsManifestUrlInput">
+                  Manifest URL
+                  <i
+                    class="fas fa-info-circle"
+                    title="The URL to your app manifest."
+                    aria-label="The URL to your app manifest."
+                    role="definition"
+                  ></i>
+                </label>
                 <input
                   type="url"
                   class="form-control"
@@ -998,7 +954,17 @@
             <!-- right half of the options dialog -->
             <div class="col-lg-6 col-md-12">
               <div class="form-group">
-                <label for="windowsIconUrlInput">Icon URL</label>
+                <label for="windowsIconUrlInput">
+                  <a href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md" target="_blank">
+                    Icon URL
+                    <i
+                      class="fas fa-info-circle"
+                      title="A large, square, PNG image from which PWABuilder will generate all required Windows app icons. Should be 512x512 or larger. Click to learn more."
+                      aria-label="A large, square, PNG image from which PWABuilder will generate all required Windows app icons. Should be 512x512 or larger. Click to learn more."
+                      role="definition"
+                    ></i>
+                  </a>
+                </label>
                 <input
                   type="url"
                   class="form-control"
@@ -1011,11 +977,11 @@
               <div class="form-group">
                   <label for="windowsDisplayNameInput">
                     <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md">
-                      Publisher Display Name
+                      Publisher display name
                       <i
                         class="fas fa-info-circle"
-                        title="The Display Name of the publisher"
-                        aria-label="The Display Name of the publisher"
+                        title="The display name of your app's publisher. You can find this in Windows Partner Center. Click to learn more."
+                        aria-label="The display name of your app's publisher. You can find this in Windows Partner Center. Click to learn more."
                         role="definition"
                       ></i>
                     </a>
@@ -1033,11 +999,11 @@
                 <div class="form-group">
                   <label for="windowsPublisherIdInput">
                     <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md">
-                      Publisher Id
+                      Publisher ID
                       <i
                         class="fas fa-info-circle"
-                        title="The Publisher Id of the publisher"
-                        aria-label="The Publisher Id of the publisher"
+                        title="Your Windows Publisher ID. You can find this value in Windows Partner Center. Click to learn more."
+                        aria-label="Your Windows Publisher ID. You can find this value in Windows Partner Center. Click to learn more."
                         role="definition"
                       ></i>
                     </a>
@@ -1129,13 +1095,13 @@
 
         <div id="extraSection">
           <p>
-            Your PWA will be a Trusted Web Activity.
+            Your PWA will be a <a href="https://developers.google.com/web/updates/2019/08/twas-quickstart" target="_blank" rel="noopener">Trusted Web Activity</a>.
             <Download
               :showMessage="true"
               id="legacyDownloadButton"
               class="webviewButton"
               platform="android"
-              message="Use a legacy webview instead (not recommended)"
+              message="Use a legacy webview instead"
               v-on:downloadPackageError="showPackageDownloadError($event)"
             />
           </p>
@@ -1150,10 +1116,11 @@
 
       <section class="androidModalBody">
         <div>
-          <p class="androidModalP">Download your PWA package for Windows!</p>
-
+          <p class="androidModalP">
+            Download your PWA package for Microsoft Store
+          </p>
           <p>
-            You'll get a side-loadable version of your PWA (requires Win10 in dev mode) to test your PWA right away. The Generate Appx button can be used to generate a PWA package to submit to the Microsoft Store.
+            Your download will contain <a href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps-edgehtml.md" target="_blank">instructions</a> for submitting your app to the Microsoft Store.
           </p>
         </div>
 
@@ -1161,37 +1128,33 @@
           <Download
             class="androidDownloadButton"
             platform="windows10"
+            :windowsOptions="this.windowsSpartanForm"
             :message="$t('publish.download')"
             :showMessage="true"
             v-on:downloadPackageError="showPackageDownloadError($event)"
           />
           <button
             class="androidDownloadButton"
-            @click="
-              openAppXModal();
-              $awa({
-                referrerUri:
-                  'https://www.pwabuilder.com/publish/windows10-appx',
-              });
-            "
-          >Generate</button>
+            @click="openWindowsOptionsModal('spartan')">
+            Options
+          </button>
         </div>
 
         <div id="extraSection">
           <p>
-            Try the preview of the New Edge platform!
+            Try the <a href="https://link.medium.com/7lXJkhtaKab" target="_blank" rel="noopener">new Chromium-based Edge platform preview</a>:
 
             <Download
               :showMessage="true"
               id="newEdgeBetaDownloadButton"
               class="webviewButton"
               platform="windows10new"
-              :windowsOptions="this.windowsForm"
-              :message="this.windowsOptionsApplied ? 'Download Store ready package' : 'Download Test Package'"
+              :windowsOptions="this.windowsAnaheimForm"
+              :message="'Download'"
               v-on:downloadPackageError="showPackageDownloadError($event)"
             />
 
-            <button class="newEdgeBetaOptionsButton" @click="openWindowsOptionsModal()">Open Store Options</button>
+            <button class="newEdgeBetaOptionsButton" @click="openWindowsOptionsModal('anaheim')">Options</button>
           </p>
         </div>
       </section>
@@ -1357,14 +1320,10 @@
     <section id="publishSideBySide">
       <section id="publishLeftSide">
         <div id="introContainer">
-          <h2>Everything you need to make your PWA</h2>
+          <h2>Everything you need to build and publish PWA</h2>
 
           <p>
-            If you haven’t already, download the content below and publish it to
-            your website. Making these changes to your website is all you need
-            to become a PWA. You may also want to publish your PWAs to the
-            different app markets, you will find the packages for each of these
-            on the right.
+            Publish your PWA to app stores to make your app more discoverable to users.
           </p>
 
           <!--<div id="publishActionsContainer">-->
@@ -1421,9 +1380,7 @@
               </div>
 
               <p>
-                PWAs are available through the browser on Android, however your
-                PWA can also be submitted to the play store by submitting the
-                package you get below.
+                Publish your PWA to the Google Play Store to make your app more discoverable for Android users.
               </p>
 
               <section class="platformDownloadBar">
@@ -1463,9 +1420,7 @@
               </div>
 
               <p>
-                PWAs are available through the browser on Samsung devices,
-                however your PWA can also be submitted to the Galaxy store by
-                submitting the package you get below.
+                Publish your PWA to the Samsung Galaxy Store to make your app more discoverable to users with Samsung Galaxy Android devices.
               </p>
 
               <section class="platformDownloadBar">
@@ -1493,7 +1448,7 @@
               </div>
 
               <p>
-                You'll get a side-loadable version of your PWA (requires Win10 in dev mode) to test your PWA right away. To generate an PWA package and submit to the Microsoft Store, click here.
+                Publish your PWA to the Microsoft Store to make it available to the 1 billion Windows and XBox users worldwide.
               </p>
 
               <section class="platformDownloadBar">
@@ -1519,8 +1474,7 @@
               </div>
 
               <p>
-                You can use Xcode to build this package to produce an app that
-                runs on MacOS.
+                Publish your app to the MacOS Store to make your PWA available to MacOS users. Your download will contain an Xcode project which you can build and submit to the MacOS Store.
               </p>
 
               <section class="platformDownloadBar">
@@ -1665,7 +1619,6 @@ export default class extends Vue {
   @PublishState downloadDisabled: boolean;
 
   @PublishAction updateStatus;
-  @PublishAction buildAppx;
   @PublishAction disableDownloadButton;
   @PublishAction enableDownloadButton;
 
@@ -1693,6 +1646,8 @@ export default class extends Vue {
 
   public windowsForm: publish.WindowsPackageOptions | null = null;
   public windowsFormCopyForCancellation: publish.WindowsPackageOptions | null = null;
+  private windowsAnaheimForm: publish.WindowsPackageOptions | null = null;
+  private windowsSpartanForm: publish.WindowsPackageOptions | null = null;
   public windowsOptionsErrors: string[] = [];
   public windowsOptionsApplied: boolean = false;
 
@@ -1707,9 +1662,10 @@ export default class extends Vue {
 
   public created(): void {
     this.updateStatus();
-    this.androidForm = this.createAndroidParamsFromManifest();
-
-    this.windowsForm = this.createWindowsParamsFromManifest();
+    this.androidForm = this.createAndroidPackageOptionsFromManifest();
+    this.windowsAnaheimForm = this.createWindowsPackageOptionsFromManifest("anaheim");
+    this.windowsSpartanForm = this.createWindowsPackageOptionsFromManifest("spartan");
+    this.windowsForm = this.windowsSpartanForm;
   }
 
   showInstall(event) {
@@ -1796,70 +1752,70 @@ export default class extends Vue {
 
         this.installing = false;
       } catch (err) {
-        this.androidPWAErrors = [err];
+        this.androidPWAErrors = [err.toString()];
         this.installing = false;
       }
     }
   }
 
-  createWindowsParamsFromManifest(): publish.WindowsPackageOptions {
+  createWindowsPackageOptionsFromManifest(windowsConfiguration: "anaheim" | "spartan"): publish.WindowsPackageOptions {
     const pwaUrl = this.manifest.url;
     if (!pwaUrl) {
       throw new Error("Can't find the current URL");
     }
 
-    const name = this.manifest.short_name || this.manifest.name || "mypwa";
+    const name = this.manifest.short_name || this.manifest.name || "My PWA";
     const packageID = generateWindowsPackageId(new URL(pwaUrl).hostname);
-
-    const edgeChannel = "stable";
-
-    const manifest = this.manifest;
-
-    const version = "1.0.1";
-
+    const manifestIcons = this.manifest.icons || [];
     const icon =
-      this.findSuitableIcon(this.manifest.icons || [], "any", 512, 512, true) ||
-      this.findSuitableIcon(this.manifest.icons || [], "any", 192, 192, true) ||
-      this.findSuitableIcon(this.manifest.icons || [], "any", 0, 0, true); // If we can't find a suitably large icon, punt to any available icon
+      this.findSuitableIcon(manifestIcons, "any", 512, 512, "image/png") ||
+      this.findSuitableIcon(manifestIcons, "any", 192, 192, "image/png") ||
+      this.findSuitableIcon(manifestIcons, "any", 512, 512, "image/jpeg") || 
+      this.findSuitableIcon(manifestIcons, "any", 192, 192, "image/jpeg") ||
+      this.findSuitableIcon(manifestIcons, "any", 512, 512, undefined) || // Fallback to a 512x512 with an undefined type.
+      this.findSuitableIcon(manifestIcons, "any", 192, 192, undefined) || // Fallback to a 192x192 with an undefined type.
+      this.findSuitableIcon(manifestIcons, "any", 0, 0, "image/png") || // No large PNG and no large JPG? See if we have *any* PNG
+      this.findSuitableIcon(manifestIcons, "any", 0, 0, "image/jpeg") || // No large PNG and no large JPG? See if we have *any* JPG
+      this.findSuitableIcon(manifestIcons, "any", 0, 0, undefined); // Welp, we sure tried. Grab any image available.
 
-      if (icon) {
-        return {
-          "name": name,
-          "packageId": packageID,
-          "url": pwaUrl,
-          "version": version,
-          "allowSigning": true,
-          "publisher": {
-              "displayName": "Contoso, Inc.",
-              "commonName": "CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca"
-          },
-          "classicPackage": {
-              "generate": true,
-              "version": "1.0.0",
-              "url": pwaUrl,
-          },
-          "edgeChannel": edgeChannel,
-          "manifestUrl": this.manifestUrl,
-          "manifest": manifest,
-          "images": {
-              "baseImage": icon.src || "",
-              "backgroundColor": "transparent",
-              "padding": 0.3
-          }
-        }
+    const packageOptions: publish.WindowsPackageOptions = {
+      name: name,
+      packageId: packageID,
+      url: pwaUrl,
+      version: windowsConfiguration === "spartan" ? "1.0.0" : "1.0.1",
+      allowSigning: true,
+      publisher: {
+        displayName: "Contoso, Inc.",
+        commonName: "CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca"
+      },
+      generateModernPackage: windowsConfiguration === "anaheim",
+      classicPackage: {
+        generate: windowsConfiguration === "anaheim",
+        version: "1.0.0",
+        url: pwaUrl,
+      },
+      edgeHtmlPackage: {
+        generate: windowsConfiguration === "spartan"
+      },
+      manifestUrl: this.manifestUrl,
+      manifest: this.manifest,
+      images: {
+        baseImage: icon && icon.src ? icon.src : "",
+        backgroundColor: "transparent",
+        padding: 0.3
       }
-      else {
-        throw new Error("Cant find an icon to send");
-      }
+    };
+    
+    return packageOptions;
   }
 
-  createAndroidParamsFromManifest(): publish.AndroidApkOptions {
+  createAndroidPackageOptionsFromManifest(): publish.AndroidApkOptions {
     const pwaUrl = this.manifest.url;
     if (!pwaUrl) {
       throw new Error("Can't find the current URL");
     }
 
-    const appName = this.manifest.short_name || this.manifest.name || "mypwa";
+    const appName = this.manifest.short_name || this.manifest.name || "My PWA";
     const packageName = generatePackageId(new URL(pwaUrl).hostname);
 
     // Use standalone display mode unless the manifest has fullscreen specified.
@@ -1869,7 +1825,7 @@ export default class extends Vue {
     // StartUrl must be relative to the host.
     // We make sure it is below.
     let relativeStartUrl: string;
-    if (!this.manifest.start_url || this.manifest.start_url === "/") {
+    if (!this.manifest.start_url || this.manifest.start_url === "/" || this.manifest.start_url === "." || this.manifest.start_url === "./") {
       // First, if we don't have a start_url in the manifest, or it's just "/",
       // then we can just use that.
       relativeStartUrl = "/";
@@ -1881,43 +1837,23 @@ export default class extends Vue {
         absoluteStartUrl.pathname + (absoluteStartUrl.search || "");
     }
 
+    const manifestIcons = this.manifest.icons || [];
     const icon =
-      this.findSuitableIcon(this.manifest.icons || [], "any", 512, 512, true) ||
-      this.findSuitableIcon(this.manifest.icons || [], "any", 192, 192, true) ||
-      this.findSuitableIcon(this.manifest.icons || [], "any", 0, 0, true); // If we can't find a suitably large icon, punt to any available icon
+      this.findSuitableIcon(manifestIcons, "any", 512, 512, "image/png") ||
+      this.findSuitableIcon(manifestIcons, "any", 192, 192, "image/png") ||
+      this.findSuitableIcon(manifestIcons, "any", 512, 512, "image/jpeg") ||
+      this.findSuitableIcon(manifestIcons, "any", 192, 192, "image/jpeg") ||
+      this.findSuitableIcon(manifestIcons, "any", 512, 512, undefined) || // A 512x512 or larger image with unspecified type
+      this.findSuitableIcon(manifestIcons, "any", 192, 192, undefined) || // A 512x512 or larger image with unspecified type
+      this.findSuitableIcon(manifestIcons, "any", 0, 0, undefined); // Welp, we tried. Any image of any size, any type.
     const maskableIcon =
-      this.findSuitableIcon(
-        this.manifest.icons || [],
-        "maskable",
-        512,
-        512,
-        true
-      ) ||
-      this.findSuitableIcon(
-        this.manifest.icons || [],
-        "maskable",
-        192,
-        192,
-        true
-      ) ||
-      null;
+      this.findSuitableIcon(manifestIcons, "maskable", 512, 512, "image/png") ||
+      this.findSuitableIcon(manifestIcons, "maskable", 192, 192, "image/png") ||
+      this.findSuitableIcon(manifestIcons, "maskable", 192, 192, undefined);
     const monochromeIcon =
-      this.findSuitableIcon(
-        this.manifest.icons || [],
-        "monochrome",
-        512,
-        512,
-        true
-      ) ||
-      this.findSuitableIcon(
-        this.manifest.icons || [],
-        "monochrome",
-        192,
-        192,
-        true
-      ) ||
-      null;
-
+      this.findSuitableIcon(manifestIcons, "monochrome", 512, 512, "image/png") ||
+      this.findSuitableIcon(manifestIcons, "monochrome", 192, 192, "image/png") || 
+      this.findSuitableIcon(manifestIcons, "monochrome", 192, 192, undefined);
     const navColorOrFallback = 
       this.manifest.theme_color ||
         this.manifest.background_color ||
@@ -2090,13 +2026,14 @@ export default class extends Vue {
 
   /**
    * Finds an icon matching the specified purpose and desired dimensions.
+   * @param mimeType Should be an image mime type, e.g. "image/png", or null or empty to ignore format.
    */
   findSuitableIcon(
     icons: Icon[],
     purpose: "any" | "maskable" | "monochrome",
     desiredWidth: number,
     desiredHeight: number,
-    allowLarger: boolean
+    mimeType: string | undefined
   ): Icon | null {
     if (icons.length === 0) {
       return null;
@@ -2108,38 +2045,38 @@ export default class extends Vue {
     const iconHasSize = (i: Icon) =>
       (i.sizes || "0x0").split(" ").some((size) => size === desiredSize);
     const iconIsEmbedded = (i: Icon) => i.src.includes("data:image");
+    const iconHasMimeType = (i: Icon) =>
+     i.type === mimeType || 
+     (!i.type && mimeType === "image/png" && i.src && i.src.endsWith(".png")) || // best guess when the manifest doesn't specify the type of image
+     (!i.type && mimeType === "image/jpeg" && i.src && i.src.endsWith(".jpg")); // best guess when the manifest doesn't specify the type of image
 
     // See if we have an exact match for size and purpose.
     const exactMatch = icons.find(
-      (i) => iconHasPurpose(i) && iconHasSize(i) && !iconIsEmbedded(i)
+      (i) => iconHasPurpose(i) && iconHasSize(i) && !iconIsEmbedded(i) && iconHasMimeType(i)
     );
     if (exactMatch) {
       return exactMatch;
     }
 
     // Find a larger one if we're able.
-    if (allowLarger) {
-      const getIconDimensions = (i: Icon) =>
-        (i.sizes || "0x0").split(" ").map((size) => {
-          const dimensions = size.split("x");
-          return {
-            width: Number.parseInt(dimensions[0] || "0"),
-            height: Number.parseInt(dimensions[1] || "0"),
-          };
-        });
-      const iconIsLarger = (i: Icon) =>
-        getIconDimensions(i).some(
-          (dimensions) =>
-            dimensions.width >= desiredWidth &&
-            dimensions.height >= desiredHeight
-        );
-      const largerIcon = icons.find(
-        (i) => iconHasPurpose(i) && iconIsLarger(i) && !iconIsEmbedded(i)
+    const getIconDimensions = (i: Icon) =>
+      (i.sizes || "0x0").split(" ").map((size) => {
+        const dimensions = size.split("x");
+        return {
+          width: Number.parseInt(dimensions[0] || "0"),
+          height: Number.parseInt(dimensions[1] || "0"),
+        };
+      });
+    const iconIsLarger = (i: Icon) =>
+      getIconDimensions(i).some(
+        (dimensions) =>
+          dimensions.width >= desiredWidth &&
+          dimensions.height >= desiredHeight
       );
-      return largerIcon || null;
-    }
-
-    return null;
+    const largerIcon = icons.find(
+      (i) => iconHasPurpose(i) && iconIsLarger(i) && !iconIsEmbedded(i) && iconHasMimeType(i)
+    );
+    return largerIcon || null;
   }
 
   platCardHover(ev) {
@@ -2206,8 +2143,9 @@ export default class extends Vue {
     this.openWindows = true;
   }
 
-  public openWindowsOptionsModal(): void {
+  public openWindowsOptionsModal(config: "anaheim" | "spartan"): void {
     this.openWindows = false;
+    this.windowsFormConfiguration = config;
 
    // Create a copy of the Windows form. If the user cancels the dialog, we'll revert back to this copy.
     if (this.windowsForm) {
@@ -2215,6 +2153,7 @@ export default class extends Vue {
     }
 
     (this.$refs.windowsPWAModal as Modal).show();
+    Vue.prototype.$awa({ referrerUri: 'https://www.pwabuilder.com/publish/windows10-appx' });
   }
 
   public openTeamsModal(): void {
@@ -2323,26 +2262,6 @@ export default class extends Vue {
     }
   }
 
-  public async onSubmitAppxModal(): Promise<void> {
-    const $appxModal = this.$refs.appxModal as Modal;
-    $appxModal.showLoading();
-
-    try {
-      await this.buildAppx(this.appxForm);
-
-      if (this.appXLink) {
-        window.location.href = this.appXLink;
-
-        $appxModal.hideLoading();
-
-        (this.$refs.appxModal as Modal).hide();
-      }
-    } catch (e) {
-      this.appxError = e;
-      $appxModal.hideLoading();
-    }
-  }
-
   public async androidOptionsModalSubmitted(): Promise<void> {
     if (!this.androidForm) {
       return;
@@ -2362,16 +2281,16 @@ export default class extends Vue {
   public androidOptionsModalCancelled() {
     this.androidForm =
       this.androidFormCopyForCancellation ||
-      this.createAndroidParamsFromManifest();
+      this.createAndroidPackageOptionsFromManifest();
     this.androidPWAErrors = [];
     (this.$refs.androidPWAModal as Modal).hide();
     this.openAndroid = true;
   }
 
   public windowsOptionsModalCancelled() {
-    this.windowsForm =
+    this.windowsForm = 
       this.windowsFormCopyForCancellation ||
-      this.createWindowsParamsFromManifest();
+      this.createWindowsPackageOptionsFromManifest(this.windowsFormConfiguration);
 
     this.windowsOptionsErrors = [];
 
@@ -2384,7 +2303,7 @@ export default class extends Vue {
       return;
     }
 
-    const validationErrors = validateWindowsOptions(this.windowsForm);
+    const validationErrors = validateWindowsOptions(this.windowsForm, this.windowsFormConfiguration);
     if (validationErrors.length > 0) {
       this.windowsOptionsErrors = validationErrors.map((e) => e.error);
       return;
@@ -2438,6 +2357,22 @@ export default class extends Vue {
     this.modalStatus = false;
     this.showBackground = false;
     this.openWindows = true;
+  }
+
+  get windowsFormConfiguration(): "spartan" | "anaheim" {
+    if (this.windowsForm && this.windowsForm.edgeHtmlPackage && this.windowsForm.edgeHtmlPackage.generate) {
+      return "spartan";
+    }
+
+    return "anaheim";
+  }
+
+  set windowsFormConfiguration(val: "spartan" | "anaheim") {
+    if (val === "spartan") {
+      this.windowsForm = this.windowsSpartanForm;
+    } else if (val === "anaheim") {
+      this.windowsForm = this.windowsAnaheimForm;
+    }
   }
 }
 
@@ -3069,16 +3004,32 @@ footer a {
 
 .androidModalBody #extraSection p {
   color: grey;
-  font-size: 10px;
+  font-size: 14px;
 }
 
-.androidModalBody #extraSection #legacyDownloadButton, .androidModalBody #androidModalButtonSection #legacyDownloadButton, #newEdgeBetaDownloadButton, .newEdgeBetaOptionsButton {
+.androidModalBody #extraSection #legacyDownloadButton, 
+.androidModalBody #androidModalButtonSection #legacyDownloadButton, 
+#newEdgeBetaDownloadButton, 
+.newEdgeBetaOptionsButton {
   color: grey;
-  font-size: 10px;
+  font-size: 14px;
   background: transparent;
   padding-left: 0;
   border: none;
   margin-top: 1em;
+}
+
+#legacyDownloadButton {
+  vertical-align: bottom;
+}
+
+#newEdgeBetaDownloadButton {
+  vertical-align: bottom;
+}
+
+#newEdgeBetaDownloadButton #colorSpinner {
+  transform: scale(0.5) translateY(-5px);
+  max-height: 16px;
 }
 
 #newEdgeBetaDownloadButton, .newEdgeBetaOptionsButton {
@@ -3086,10 +3037,6 @@ footer a {
   border: solid 1px;
   padding: 4px;
   margin-right: 4px;
-}
-
-#newEdgeBetaDownloadButton {
-  width: 150px;
 }
 
 .edgeBlock {
@@ -3144,6 +3091,10 @@ footer a {
 .androidModalBody.androidOptionsModalBody .fa-info-circle {
   color: $color-muted;
   cursor: help;
+}
+
+.androidModalBody.androidOptionsModalBody a .fa-info-circle {
+  cursor: pointer;
 }
 
 #closeAndroidPlatButton {

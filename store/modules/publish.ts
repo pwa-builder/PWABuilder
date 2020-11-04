@@ -1,6 +1,6 @@
 import { ActionTree, MutationTree, GetterTree, ActionContext } from 'vuex';
 import { RootState } from 'store';
-import { ShortcutItem } from './generator';
+import { Manifest, ShortcutItem } from './generator';
 
 const apiUrl = `${process.env.apiUrl}/manifests`;
 const platforms = {
@@ -40,29 +40,34 @@ export interface AppxParams {
 
 /**
  * Settings for the Windows Package generation. This is the raw data passed to the Edge Package service.
- * It should match the options listed here https://github.com/pwa-builder/pwabuilder-windows-chromium#the-api
+ * Should match server interface: https://github.com/pwa-builder/pwabuilder-windows-chromium/blob/master/Models/WindowsAppPackageOptions.cs
  */
 
 export interface WindowsPackageOptions {
   name: string;
   packageId: string;
   url: string;
-  allowSigning: boolean;
-  edgeChannel: string;
-  manifestUrl: string;
-  manifest: object;
   version: string;
-  classicPackage: {
-    generate: boolean;
-    version: string;
-    url: string;
+  allowSigning?: boolean;
+  edgeChannel?: "stable" | "beta" | "dev" | "canary" | "internal";
+  edgeLaunchArgs?: string;
+  appUserModelId?: string;
+  generateModernPackage?: boolean;
+  manifestUrl?: string;
+  manifest?: Manifest;
+  classicPackage?: {
+    generate?: boolean;
+    version?: string;
+    url?: string;
   },
-  images: {
-    baseImage: string | null;
-    backgroundColor: string;
-    padding: number;
-  };
-  publisher: WindowsPublisherOptions | null;
+  edgeHtmlPackage?: {
+    generate?: boolean;
+    version?: string;
+    url?: string;
+    urlsWithWindowsRuntimeAccess?: string[];
+  }
+  images?: WindowsImageOptions;
+  publisher: WindowsPublisherOptions;
 }
 
 /**
@@ -73,6 +78,14 @@ export interface WindowsPublisherOptions {
   commonName: string;
 }
 
+/**
+ * Images to use for a Windows PWA. Should match server implementation: https://github.com/pwa-builder/pwabuilder-windows-chromium/blob/master/Models/WindowsImages.cs
+ */
+export interface WindowsImageOptions {
+    baseImage: string | null;
+    backgroundColor?: string;
+    padding?: number;
+}
 
 /**
  * Settings for the Android APK generation. This is the raw data passed to the CloudApk service.
@@ -153,7 +166,6 @@ export interface Actions<S, R> extends ActionTree<S, R> {
   resetAppData(context: ActionContext<S, R>): void;
   updateStatus(context: ActionContext<S, R>): void;
   build(context: ActionContext<S, R>, params: { platform: string, href: string, options?: string[] }): Promise<void>;
-  buildAppx(context: ActionContext<S, R>, params: AppxParams): Promise<void>;
   buildTeams(context: ActionContext<S, R>, params: { href: string, options?: string[] }): Promise<void>;
   disableDownloadButton(context: ActionContext<S, R>): Promise<void>;
   enableDownloadButton(context: ActionContext<S, R>): Promise<void>;
@@ -200,40 +212,6 @@ export const actions: Actions<State, RootState> = {
       } catch (e) {
         let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
 
-        reject(errorMessage);
-      }
-    });
-  },
-
-  async buildAppx({ commit, rootState }, params: AppxParams): Promise<void> {
-    return new Promise<void>(async (resolve, reject) => {
-      const manifestId = rootState.generator.manifestId;
-
-      if (!manifestId) {
-        reject('error.manifest_required');
-      }
-
-      if (!params.publisher || !params.publisher_id || !params.package || !params.version) {
-        reject('error.fields_required');
-      }
-
-      try {
-        const options = { name: params.publisher, publisher: params.publisher_id, package: params.package, version: params.version };
-        const result = await this.$axios.$post(`${apiUrl}/${manifestId}/appx`, options);
-        commit(types.UPDATE_APPXLINK, result.archive);
-        resolve();
-      } catch (e) {
-        // Check for common/known errors and simplify message
-        let errorMessage = '';
-        let error = e.response.data ? e.response.data.error.toString() : e.response.toString();
-
-        if (error.includes(`@Publisher\nPackage creation failed`)) {
-          errorMessage = 'Invalid Publisher Identity.';
-        } else if (error.includes(`@Version\nPackage creation failed.`)) {
-          errorMessage = 'Invalid Version Number.';
-        } else {
-          errorMessage = 'Package building error.';
-        }
         reject(errorMessage);
       }
     });
