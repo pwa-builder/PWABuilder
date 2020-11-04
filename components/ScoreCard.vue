@@ -299,7 +299,7 @@
                 <i class="fas fa-times"></i>
               </span>
 
-              <span>Has Screenshots</span>
+              <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots" target="_blank" rel="noopener">Has Screenshots</a>
             </div>
           </li>
 
@@ -320,7 +320,7 @@
                 <i class="fas fa-times"></i>
               </span>
 
-              <span>Has Categories</span>
+              <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest/categories" target="_blank" rel="noopener">Has Categories</a>
             </div>
           </li>
         </ul>
@@ -345,7 +345,7 @@
                 <i class="fas fa-times"></i>
               </span>
 
-              <span>Uses Shortcuts</span>
+              <a href="https://components.pwabuilder.com/demo/web_shortcuts" target="_blank" rel="noopener">Uses Shortcuts</a>
             </div>
           </li>
         </ul>
@@ -840,7 +840,7 @@
       <div class="brkManifestError" v-if="brokenManifest">
         Couldn't find an app manifest.
         <br />
-        <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
+        <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest" target="_blank" rel="noopener"
           >Learn about manifests here</a
         >
       </div>
@@ -850,9 +850,9 @@
         <p class="brkManifestHelp">
           <i class="fas fa-info-circle" aria-hidden="true"></i>
           You can use
-          <a href="https://letsencrypt.org/">LetsEncrypt</a> to get a free HTTPS
+          <a href="https://letsencrypt.org/" target="_blank" rel="noopener">LetsEncrypt</a> to get a free HTTPS
           certificate, or
-          <a href="https://azure.microsoft.com/en-us/get-started/web-app/"
+          <a href="https://azure.microsoft.com/en-us/get-started/web-app/" target="_blank" rel="noopener"
             >publish to Azure</a
           >
           to get HTTPS support out of the box
