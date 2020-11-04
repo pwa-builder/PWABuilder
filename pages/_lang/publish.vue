@@ -555,6 +555,27 @@
               </div>
 
               <div class="form-group">
+                <label>ChromeOS only</label>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="chromeOSOnlyInput"
+                    v-model="androidForm.isChromeOSOnly"
+                  />
+                  <label class="form-check-label" for="chromeOSOnlyInput">
+                    Enable
+                    <i
+                      class="fas fa-info-circle"
+                      title="If enabled, your Android package will only run on ChromeOS devices"
+                      aria-label="If enabled, your Android package will only run on ChromeOS devices"
+                      role="definition"
+                    ></i>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group">
                 <label>Include source code</label>
                 <div class="form-check">
                   <input
