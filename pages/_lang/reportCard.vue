@@ -7,15 +7,15 @@
       :expanded="!gotURL"
     ></HubHeader>
 
-    <div v-if="showCopyToast" id="gitCopyToast" role="alert">
+    <div v-if="showCopyToast" class="gitCopyToast" role="alert">
       <span>git clone command copied to your clipboard</span>
     </div>
 
-    <div v-if="showShareToast" id="gitCopyToast" role="alert">
+    <div v-if="showShareToast" class="gitCopyToast" role="alert">
       <span>URL copied for sharing</span>
     </div>
 
-    <div v-if="testing" id="gitCopyToast" role="alert">
+    <div v-if="gotURL && testing" class="gitCopyToast" role="alert">
       <span>Analyzing your app...</span>
     </div>
 
@@ -63,10 +63,6 @@
         </div>
 
         <div id="bottomHalfHome">
-          <!--<div id="expertModeBlock">
-            <button @click="skipCheckUrl()" id="expertModeButton">Expert Mode</button>
-            <p>Already have a PWA? Skip ahead!</p>
-          </div>-->
 
           <div id="starterSection">
             <h2>...Or, don't even have a website yet?</h2>
@@ -151,6 +147,7 @@
           ready, click “build my PWA” to finish up.
         </p>
       </div>
+
       <div v-else-if="gotURL && overallScore >= 80 && testing === false" id="attachSection">
         <div id="attachHeader">
           <h2>Nice job!</h2>
@@ -506,13 +503,13 @@ export default class extends Vue {
   public async processQueryString() {
     const url = window.location.search.split("=")[1];
     this.cleanedURL = decodeURIComponent(url);
-
+    
     /*
       Handle edge case where this.cleanedURL is set to the string undefined (decodeURIComponent returns a string).
       This edge case is not very likely to pop up, but stops issues such as https://github.com/pwa-builder/PWABuilder/issues/833
     */
     if (this.cleanedURL && this.cleanedURL !== "undefined") {
-      this.url = this.cleanedURL;
+      this.url$ = this.cleanedURL;
       this.checkUrlAndGenerate();
     }
   }
@@ -611,7 +608,7 @@ declare var awa: any;
   outline-color: black;
 }
 
-#gitCopyToast {
+.gitCopyToast {
   position: absolute;
   bottom: 16px;
   right: 16px;
