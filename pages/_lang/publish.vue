@@ -2059,7 +2059,8 @@ export default class extends Vue {
     }
 
     // Find a larger one if we're able.
-    const getIconDimensions = (i: Icon) =>
+    type IconDimension = { width: number; height: number };
+    const getIconDimensions: (icon: Icon) => IconDimension[] = i =>
       (i.sizes || "0x0").split(" ").map((size) => {
         const dimensions = size.split("x");
         return {
@@ -2073,8 +2074,11 @@ export default class extends Vue {
           dimensions.width >= desiredWidth &&
           dimensions.height >= desiredHeight
       );
+    const isExpectingSquare = desiredWidth === desiredHeight;
+    const isSquare = (i: Icon) => getIconDimensions(i).some(d => d.width === d.height);
+    const matchesSquareRequirement = (i: Icon) => !isExpectingSquare || isSquare(i);
     const largerIcon = icons.find(
-      (i) => iconHasPurpose(i) && iconIsLarger(i) && !iconIsEmbedded(i) && iconHasMimeType(i)
+      (i) => iconHasPurpose(i) && iconIsLarger(i) && !iconIsEmbedded(i) && iconHasMimeType(i) && matchesSquareRequirement(i)
     );
     return largerIcon || null;
   }
