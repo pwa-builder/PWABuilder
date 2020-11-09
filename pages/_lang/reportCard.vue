@@ -428,8 +428,6 @@ export default class extends Vue {
     };
 
     this.$awa(overrideValues);
-
-    this.$router.push("/features?from=starter");
   }
 
   async cloneStarter() {
