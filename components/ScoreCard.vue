@@ -924,7 +924,7 @@ export default class extends Vue {
     try {
       let securityData: any | null = null;
 
-      const cachedData = await getCache("security", this.url);
+      const cachedData = getCache("security", this.url);
 
       if (cachedData) {
         securityData = cachedData;
@@ -972,7 +972,7 @@ export default class extends Vue {
   private async lookAtManifest(): Promise<void> {
     // Gets manifest from api, then scores if not generated.
     try {
-      const cachedData = await getCache("manifest", this.url);
+      const cachedData = getCache("manifest", this.url);
 
       if (cachedData) {
         this.manifest = cachedData;
@@ -1023,16 +1023,15 @@ export default class extends Vue {
     return new Promise(async (resolve, reject) => {
       let manifestScoreData: any | null = null;
 
-      const cachedData = await getCache("manifestScoreData", this.url);
+      const cachedData = getCache("manifestScoreData", this.url);
       if (cachedData) {
         manifestScoreData = cachedData;
       } else {
         // We'll need to analyze the manifest.
         // Send along the manifest contents if we've got 'em.
         const manifestContents = this.getManifestContentsFromSessionStorage();
-
         try {
-          const manifestAnalysisUrl = `${process.env.testAPIUrl}/WebManifest?site=${this.url}`;
+          const manifestAnalysisUrl = `${process.env.testAPIUrl}/WebManifest?site=${encodeURIComponent(this.url)}`;
           const response = await fetch(manifestAnalysisUrl, {
             method: "POST",
             headers: {
@@ -1045,9 +1044,14 @@ export default class extends Vue {
                 })
               : "",
           });
-          manifestScoreData = await response.json();
-
-          await setCache("manifestScoreData", this.url, manifestScoreData);
+          
+          if (!response.ok) {
+            console.warn("Failed to POST manifest to APIv2.", response, manifestContents);
+            reject("Failed to POST manifest to APIv2. " + response.statusText);
+          } else {
+            manifestScoreData = await response.json();
+            setCache("manifestScoreData", this.url, manifestScoreData);
+          }
         } catch (err) {
           reject(err);
         }
@@ -1104,7 +1108,8 @@ export default class extends Vue {
 
   private getManifestContentsFromSessionStorage(): string | null {
     if (sessionStorage && this.url) {
-      return sessionStorage.getItem("manifest/" + this.url);
+      const key = "manifest/" + this.url;
+      return sessionStorage.getItem(key);
     }
 
     return null;
@@ -1126,7 +1131,7 @@ export default class extends Vue {
 
       let swResponse: any | null = null;
 
-      const cachedData = await getCache("sw", this.url);
+      const cachedData = getCache("sw", this.url);
 
       if (cachedData) {
         swResponse = cachedData;
@@ -1196,7 +1201,7 @@ export default class extends Vue {
       try {
         let offlineCheckData: any | null = null;
 
-        const cachedData = await getCache("offline", this.url);
+        const cachedData = getCache("offline", this.url);
 
         if (cachedData) {
           offlineCheckData = cachedData;

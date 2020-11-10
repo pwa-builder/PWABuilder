@@ -66,30 +66,9 @@ export const helpers = {
   prepareIconsUrls(icons: Icon[], baseUrl: string) {
     return icons.map((icon) => {
       if (!icon.src.includes('http') && !icon.src.includes('data:image')) {
-        const pathArray = baseUrl.split('/');
-        const protocol = pathArray[0];
-        const host = pathArray[2];
-        let pathsNumber = pathArray.length;
-        let additionnalPath = '';
-        // Images are not directly stored at the root level
-        if (pathsNumber > 3) {
-          // Removing possible filename at the end of the URL or # or duplication on the path if the icon src already has it
-          var index = 1;
-          for (let i = 3; i < pathArray.length; i++) {
-            if(pathArray[pathArray.length - index].indexOf('.') !== -1 || pathArray[pathArray.length - index].indexOf('#') !== -1 
-            || pathArray[pathArray.length - index] === icon.src.split('/')[1]) {
-              pathsNumber--;
-              index++;
-            }
-          }
-
-          for (let i = 3; i < pathsNumber; i++) {
-            additionnalPath += '/' + pathArray[i];
-          }
-        }
-        baseUrl = protocol + '//' + host + additionnalPath;
-
-        // Create an absolute path to the 
+        // Create an absolute path to the icon.
+        // Developer note: changing this code? Make sure it works for images on the following URLs:
+        // - Analyzed URL https://www.sensoryapphouse.com/abstract4-pwa-xbox/index.html -> valid image https://www.sensoryapphouse.com/abstract4-pwa-xbox/images/abstract-512.png
         icon.src = new URL(icon.src, baseUrl).href;
 
         //remove posible trailing/leading slashes
