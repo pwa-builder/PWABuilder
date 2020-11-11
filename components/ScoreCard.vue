@@ -18,7 +18,10 @@
 
     <div class="cardContent" v-if="this.timedOutSW !== true">
       <!-- Security section -->
-      <div id="securityBlock" v-if="category === 'Security' && this.securityTestDone === true">
+      <div
+        id="securityBlock"
+        v-if="category === 'Security' && this.securityTestDone === true"
+      >
         <h4>Required</h4>
 
         <ul>
@@ -299,7 +302,12 @@
                 <i class="fas fa-times"></i>
               </span>
 
-              <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots" target="_blank" rel="noopener">Has Screenshots</a>
+              <a
+                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots"
+                target="_blank"
+                rel="noopener"
+                >Has Screenshots</a
+              >
             </div>
           </li>
 
@@ -320,7 +328,12 @@
                 <i class="fas fa-times"></i>
               </span>
 
-              <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest/categories" target="_blank" rel="noopener">Has Categories</a>
+              <a
+                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/categories"
+                target="_blank"
+                rel="noopener"
+                >Has Categories</a
+              >
             </div>
           </li>
         </ul>
@@ -345,7 +358,12 @@
                 <i class="fas fa-times"></i>
               </span>
 
-              <a href="https://components.pwabuilder.com/demo/web_shortcuts" target="_blank" rel="noopener">Uses Shortcuts</a>
+              <a
+                href="https://components.pwabuilder.com/demo/web_shortcuts"
+                target="_blank"
+                rel="noopener"
+                >Uses Shortcuts</a
+              >
             </div>
           </li>
         </ul>
@@ -840,7 +858,10 @@
       <div class="brkManifestError" v-if="brokenManifest">
         Couldn't find an app manifest.
         <br />
-        <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest" target="_blank" rel="noopener"
+        <a
+          href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
+          target="_blank"
+          rel="noopener"
           >Learn about manifests here</a
         >
       </div>
@@ -850,9 +871,14 @@
         <p class="brkManifestHelp">
           <i class="fas fa-info-circle" aria-hidden="true"></i>
           You can use
-          <a href="https://letsencrypt.org/" target="_blank" rel="noopener">LetsEncrypt</a> to get a free HTTPS
-          certificate, or
-          <a href="https://azure.microsoft.com/en-us/get-started/web-app/" target="_blank" rel="noopener"
+          <a href="https://letsencrypt.org/" target="_blank" rel="noopener"
+            >LetsEncrypt</a
+          >
+          to get a free HTTPS certificate, or
+          <a
+            href="https://azure.microsoft.com/en-us/get-started/web-app/"
+            target="_blank"
+            rel="noopener"
             >publish to Azure</a
           >
           to get HTTPS support out of the box
@@ -1031,7 +1057,9 @@ export default class extends Vue {
         // Send along the manifest contents if we've got 'em.
         const manifestContents = this.getManifestContentsFromSessionStorage();
         try {
-          const manifestAnalysisUrl = `${process.env.testAPIUrl}/WebManifest?site=${encodeURIComponent(this.url)}`;
+          const manifestAnalysisUrl = `${
+            process.env.testAPIUrl
+          }/WebManifest?site=${encodeURIComponent(this.url)}`;
           const response = await fetch(manifestAnalysisUrl, {
             method: "POST",
             headers: {
@@ -1044,9 +1072,13 @@ export default class extends Vue {
                 })
               : "",
           });
-          
+
           if (!response.ok) {
-            console.warn("Failed to POST manifest to APIv2.", response, manifestContents);
+            console.warn(
+              "Failed to POST manifest to APIv2.",
+              response,
+              manifestContents
+            );
             reject("Failed to POST manifest to APIv2. " + response.statusText);
           } else {
             manifestScoreData = await response.json();
@@ -1163,7 +1195,7 @@ export default class extends Vue {
       }
 
       if (swResponse && swResponse.data) {
-        await this.scoreServiceWorker(cleanUrl, swResponse.data);
+        await this.scoreServiceWorker(swResponse.data);
 
         this.serviceWorkerData = swResponse.data;
 
@@ -1186,63 +1218,42 @@ export default class extends Vue {
     }
   }
 
-  private async scoreServiceWorker(url, data) {
+  private async scoreServiceWorker(data) {
     this.swScore = 0;
     //scoring set by Jeff: 40 for manifest, 40 for sw and 20 for sc
 
-    if (data.hasSW !== null) {
-      this.swScore = this.swScore + 20;
-    }
-    /*
-        Caches stuff
-        +10 points to user
+    if (data.hasSW === true) {
+      /*
+        Has a Service Worker
+        +20 points
       */
-    if (data.hasSW !== null) {
-      try {
-        let offlineCheckData: any | null = null;
+      if (data.hasSW === true) {
+        this.swScore = this.swScore + 20;
+      }
 
-        const cachedData = getCache("offline", this.url);
+      /*
+        Works Offline
+        +10 points
+      */
 
-        if (cachedData) {
-          offlineCheckData = cachedData;
-        } else {
-          const cacheCheckResponse = await fetch(
-            `${process.env.testAPIUrl}/Offline?site=${url}`
-          );
-
-          offlineCheckData = await cacheCheckResponse.json();
-
-          await setCache("offline", this.url, offlineCheckData);
-        }
-
-        if (
-          (offlineCheckData && (offlineCheckData.data as string)) === "loaded"
-        ) {
-          this.worksOffline = true;
-          this.swScore = this.swScore + 10;
-        }
-      } catch (err) {
-        console.error("Site does not load offline");
+      if (data.offline === true) {
+        this.worksOffline = true;
+        this.swScore = this.swScore + 10;
+      } else {
+        this.worksOffline = false;
       }
     }
-    /*
-        Has push reg
-        +5 points to user
-      */
-    // if (this.serviceWorkerData.pushReg !== null) {
-    //   this.swScore = this.swScore + 5;
-    // }
+
     /*
         Has scope that points to root
-        +5 points to user
+        Lighthouse now validates this
+        +10 points
       */
-    if (
-      data.scope //&&
-      // this.serviceWorkerData.scope.slice(0, -1) ===
-      // new URL(this.serviceWorkerData.scope).origin  //slice isn't working and score not showing up, TODO: look at how to validate scope
-    ) {
+    if (data.scope) {
       this.swScore = this.swScore + 10;
     }
+
+    console.log("this.swScore", this.swScore);
   }
 
   private noSwScore() {
