@@ -1121,40 +1121,40 @@
           </p>
           <p>
             Your download will contain <a href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps-edgehtml.md" target="_blank">instructions</a> for submitting your app to the Microsoft Store.
+            Your app will be <a href="https://link.medium.com/7lXJkhtaKab" target="_blank" rel="noopener">powered by Chromium-based Edge</a> platform (preview).
           </p>
         </div>
 
         <div id="androidModalButtonSection" class="edgeBlock">
           <Download
-            class="androidDownloadButton"
-            platform="windows10"
-            :windowsOptions="this.windowsSpartanForm"
-            :message="$t('publish.download')"
-            :showMessage="true"
-            v-on:downloadPackageError="showPackageDownloadError($event)"
-          />
+              class="androidDownloadButton"
+              platform="windows10new"
+              :windowsOptions="this.windowsAnaheimForm"
+              :message="'Download'"
+              :showMessage="true"
+              v-on:downloadPackageError="showPackageDownloadError($event)"
+            />
           <button
             class="androidDownloadButton"
-            @click="openWindowsOptionsModal('spartan')">
+            @click="openWindowsOptionsModal('anaheim')">
             Options
           </button>
         </div>
 
         <div id="extraSection">
           <p>
-            Try the <a href="https://link.medium.com/7lXJkhtaKab" target="_blank" rel="noopener">new Chromium-based Edge platform preview</a>:
+            Use EdgeHTML (legacy Edge) instead:
 
             <Download
-              :showMessage="true"
-              id="newEdgeBetaDownloadButton"
+              id="legacyEdgeBetaDownloadButton"
               class="webviewButton"
-              platform="windows10new"
-              :windowsOptions="this.windowsAnaheimForm"
-              :message="'Download'"
-              v-on:downloadPackageError="showPackageDownloadError($event)"
-            />
+              platform="windows10"
+              :windowsOptions="this.windowsSpartanForm"
+              :message="$t('publish.download')"
+              :showMessage="true"
+              v-on:downloadPackageError="showPackageDownloadError($event)" />
 
-            <button class="newEdgeBetaOptionsButton" @click="openWindowsOptionsModal('anaheim')">Options</button>
+            <button class="legacyEdgeBetaOptionsButton" @click="openWindowsOptionsModal('spartan')">Options</button>
           </p>
         </div>
       </section>
@@ -2059,7 +2059,8 @@ export default class extends Vue {
     }
 
     // Find a larger one if we're able.
-    const getIconDimensions = (i: Icon) =>
+    type IconDimension = { width: number; height: number };
+    const getIconDimensions: (icon: Icon) => IconDimension[] = i =>
       (i.sizes || "0x0").split(" ").map((size) => {
         const dimensions = size.split("x");
         return {
@@ -2073,8 +2074,11 @@ export default class extends Vue {
           dimensions.width >= desiredWidth &&
           dimensions.height >= desiredHeight
       );
+    const isExpectingSquare = desiredWidth === desiredHeight;
+    const isSquare = (i: Icon) => getIconDimensions(i).some(d => d.width === d.height);
+    const matchesSquareRequirement = (i: Icon) => !isExpectingSquare || isSquare(i);
     const largerIcon = icons.find(
-      (i) => iconHasPurpose(i) && iconIsLarger(i) && !iconIsEmbedded(i) && iconHasMimeType(i)
+      (i) => iconHasPurpose(i) && iconIsLarger(i) && !iconIsEmbedded(i) && iconHasMimeType(i) && matchesSquareRequirement(i)
     );
     return largerIcon || null;
   }
@@ -3009,8 +3013,8 @@ footer a {
 
 .androidModalBody #extraSection #legacyDownloadButton, 
 .androidModalBody #androidModalButtonSection #legacyDownloadButton, 
-#newEdgeBetaDownloadButton, 
-.newEdgeBetaOptionsButton {
+#legacyEdgeBetaDownloadButton, 
+.legacyEdgeBetaOptionsButton {
   color: grey;
   font-size: 14px;
   background: transparent;
@@ -3023,16 +3027,16 @@ footer a {
   vertical-align: bottom;
 }
 
-#newEdgeBetaDownloadButton {
+#legacyEdgeBetaDownloadButton {
   vertical-align: bottom;
 }
 
-#newEdgeBetaDownloadButton #colorSpinner {
+#legacyEdgeBetaDownloadButton #colorSpinner {
   transform: scale(0.5) translateY(-5px);
   max-height: 16px;
 }
 
-#newEdgeBetaDownloadButton, .newEdgeBetaOptionsButton {
+#legacyEdgeBetaDownloadButton, .legacyEdgeBetaOptionsButton {
   color: #9337d8;
   border: solid 1px;
   padding: 4px;
