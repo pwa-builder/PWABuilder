@@ -2,7 +2,7 @@ import { ServiceWorkerDetectionResult } from "~/store/modules/generator/generato
 import { promiseAnyPolyfill } from "./promise-any-polyfill";
 
 /**
- * Runs multiple service worker detectors concurrently and 
+ * Runs multiple service worker detectors concurrently and returns the first with a successful result.
  */
 export class ServiceWorkerFetcher {
     private readonly apiV2Url = process.env.testAPIUrl;
@@ -21,7 +21,7 @@ export class ServiceWorkerFetcher {
         const promiseAny: (promises: Promise<ServiceWorkerDetectionResult>[]) => Promise<ServiceWorkerDetectionResult> = 
             (promises) => Promise["any"] ? Promise["any"](promises) : promiseAnyPolyfill(promises);
         try {
-            return promiseAny(detectors);
+            return await promiseAny(detectors);
         } catch (serviceWorkerDetectionError) {
             console.error("All service worker detectors failed.", serviceWorkerDetectionError);
             throw serviceWorkerDetectionError;
