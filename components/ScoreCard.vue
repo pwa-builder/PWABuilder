@@ -895,9 +895,10 @@ import Component from "nuxt-class-component";
 import { Action, State, namespace } from "vuex-class";
 
 import * as generator from "~/store/modules/generator";
-import { Manifest } from "~/store/modules/generator";
+import { Manifest, ServiceWorkerDetectionResult } from "~/store/modules/generator";
 
 import { getCache, setCache } from "~/utils/caching";
+import { ServiceWorkerFetcher } from "~/utils/service-worker-fetcher";
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorAction = namespace(generator.name, Action);
@@ -921,7 +922,7 @@ export default class extends Vue {
   noManifest: boolean | null = null;
   brokenManifest: boolean | null = null;
 
-  serviceWorkerData: any = null;
+  serviceWorkerData: ServiceWorkerDetectionResult | null = null;
   noServiceWorker: boolean | null = null;
   timedOutSW: boolean = false;
   worksOffline: boolean | null = null;
@@ -1158,67 +1159,36 @@ export default class extends Vue {
       return;
     }
 
-    try {
-      let cleanUrl = this.trimSuffixChar(this.url, ".");
+    const cleanUrl = this.trimSuffixChar(this.url, ".");
+    let swResponse: ServiceWorkerDetectionResult | null = null;
+    const cachedData: ServiceWorkerDetectionResult = getCache("sw", cleanUrl);
+    const swFetcher = new ServiceWorkerFetcher(this.url);
 
-      let swResponse: any | null = null;
+    if (cachedData) {
+      swResponse = cachedData;
+    } else {
+      try {
+        swResponse = await swFetcher.fetch();
+        await setCache("sw", this.url, swResponse);
+      } catch (err) {
+        this.timedOutSW = true;
+        this.swScore = 0;
 
-      const cachedData = getCache("sw", this.url);
-
-      if (cachedData) {
-        swResponse = cachedData;
-      } else {
-        let response: Response | null = null;
-
-        try {
-          response = await fetch(
-            `${process.env.testAPIUrl}/ServiceWorker?site=${cleanUrl}`
-          );
-
-          if (response.status === 500) {
-            this.timedOutSW = true;
-            this.swScore = 0;
-
-            this.$emit("serviceWorkerTestDone", { score: 0 });
-            return;
-          } else {
-            swResponse = await response.json();
-            await setCache("sw", this.url, swResponse);
-          }
-        } catch (err) {
-          this.timedOutSW = true;
-          this.swScore = 0;
-
-          this.$emit("serviceWorkerTestDone", { score: 0 });
-          return;
-        }
-      }
-
-      if (swResponse && swResponse.data) {
-        await this.scoreServiceWorker(swResponse.data);
-
-        this.serviceWorkerData = swResponse.data;
-
-        this.noServiceWorker = false;
-      }
-
-      if (
-        !this.serviceWorkerData ||
-        this.serviceWorkerData.swURL === null ||
-        this.serviceWorkerData.swURL === false
-      ) {
-        this.noSwScore();
-
+        this.$emit("serviceWorkerTestDone", { score: 0 });
         return;
       }
-
-      this.$emit("serviceWorkerTestDone", { score: this.swScore });
-    } catch (e) {
-      this.noSwScore();
     }
+
+    if (swResponse) {
+      await this.scoreServiceWorker(swResponse);
+      this.serviceWorkerData = swResponse;
+      this.noServiceWorker = false;
+    }
+
+    this.$emit("serviceWorkerTestDone", { score: this.swScore });
   }
 
-  private async scoreServiceWorker(data) {
+  private async scoreServiceWorker(data: ServiceWorkerDetectionResult) {
     this.swScore = 0;
     //scoring set by Jeff: 40 for manifest, 40 for sw and 20 for sc
 

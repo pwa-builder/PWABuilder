@@ -1,4 +1,5 @@
 import { ManifestDetectionResult, Manifest } from "~/store/modules/generator/generator.state";
+import { promiseAnyPolyfill } from "./promise-any-polyfill";
 
 /**
  * Fetches web manifests from a URL. Wraps up logic that uses multiple services to find the manifest.
@@ -28,7 +29,7 @@ export class ManifestFetcher {
         // We want to use Promise.any(...), but browser support is too low at the time of this writing: https://caniuse.com/mdn-javascript_builtins_promise_any
         // Use our polyfill if needed.
         const promiseAnyOrPolyfill: (promises: Promise<ManifestDetectionResult>[]) => Promise<ManifestDetectionResult> = 
-            (promises) => Promise["any"] ? Promise["any"](promises) : this.promiseAny(promises);
+            (promises) => Promise["any"] ? Promise["any"](promises) : promiseAnyPolyfill(promises);
 
         try {
             return await promiseAnyOrPolyfill(manifestDetectors);
@@ -39,35 +40,7 @@ export class ManifestFetcher {
             throw manifestDetectionError;
         }    
     }
-
-    // This is a polyfill for Promise.any(...), which isn't well supported yet at the time of this writing: https://caniuse.com/mdn-javascript_builtins_promise_any   
-    private promiseAny(promises: Promise<ManifestDetectionResult>[]): Promise<ManifestDetectionResult> {
-        if (promises.length === 0) {
-            return Promise.reject("No promises supplied");
-        }
-        let errors: unknown[] = [];
-        
-        return new Promise<ManifestDetectionResult>((resolve, reject) => {
-            let completedCount = 0;
-            let hasSucceeded = false;
-
-            for (let promise of promises) {
-                promise.then(result => {
-                    if (!hasSucceeded) {
-                        hasSucceeded = true;
-                        resolve(result);
-                    }
-                });
-                promise.catch(error => errors.push(error));
-                promise.finally(() => {
-                    completedCount++;
-                    if (completedCount === promises.length && !hasSucceeded) {
-                        reject("All promises failed: " + errors.join("\n"))
-                    }
-                })
-            }  
-        });
-    }
+    
 
     // Uses PWABuilder API to fetch the manifest
     private getManifestViaApi(): Promise<ManifestDetectionResult> {

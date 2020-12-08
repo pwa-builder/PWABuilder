@@ -128,3 +128,10 @@ export interface ManifestDetectionResult {
   suggestions: [],
   warnings: []
 }
+
+export interface ServiceWorkerDetectionResult {
+  hasSW: boolean;
+  scope: string | null,
+  offline: boolean;
+  hasPushRegistration: boolean | undefined;
+}
