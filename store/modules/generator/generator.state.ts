@@ -131,7 +131,9 @@ export interface ManifestDetectionResult {
 
 export interface ServiceWorkerDetectionResult {
   hasSW: boolean;
-  scope: string | null,
-  offline: boolean;
+  scope: string | null;
+  url: string | null;
   hasPushRegistration: boolean | undefined;
+  serviceWorkerDetectionTimedOut: boolean;
+  soServiceWorkerFoundDetails: string | null;
 }

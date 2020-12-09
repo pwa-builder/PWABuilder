@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <div class="cardContent" v-if="this.timedOutSW !== true">
+    <div class="cardContent">
       <!-- Security section -->
       <div
         id="securityBlock"
@@ -562,6 +562,11 @@
                 <i class="fas fa-times"></i>
               </span>
 
+              <span class="cardIcon subScoreSpan" 
+                v-if="!serviceWorkerData && !noServiceWorker">
+                <i class="fas fa-spinner fa-spin"></i>
+              </span>
+
               <span>Has a Service Worker</span>
             </div>
 
@@ -589,7 +594,7 @@
               <span
                 class="cardIcon"
                 aria-hidden="true"
-                v-if="serviceWorkerData && !this.worksOffline"
+                v-if="serviceWorkerData && this.worksOffline === false"
               >
                 <i class="fas fa-times"></i>
               </span>
@@ -644,25 +649,6 @@
               >0</span
             >
           </li>
-          <!-- <li v-bind:class="{ good: serviceWorkerData.pushReg }">
-            <div class="listSubDiv">
-              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && serviceWorkerData.pushReg">
-                <i class="fas fa-check"></i>
-              </span>
-              <span class="cardIcon" aria-hidden="true" v-if="serviceWorkerData && !serviceWorkerData.pushReg">
-                <i class="fas fa-times"></i>
-              </span>
-
-              <span>
-                Service Worker has a
-                <code>pushManager</code> registration
-              </span>
-            </div>
-
-            <span class="subScoreSpan" v-if="serviceWorkerData && serviceWorkerData.pushReg">5</span>
-
-            <span class="subScoreSpan" v-if="serviceWorkerData && !serviceWorkerData.pushReg">0</span>
-          </li>-->
         </ul>
 
         <h4>Optional</h4>
@@ -898,7 +884,7 @@ import * as generator from "~/store/modules/generator";
 import { Manifest, ServiceWorkerDetectionResult } from "~/store/modules/generator";
 
 import { getCache, setCache } from "~/utils/caching";
-import { ServiceWorkerFetcher } from "~/utils/service-worker-fetcher";
+import { ServiceWorkerChecker } from "~/utils/service-worker-checker";
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorAction = namespace(generator.name, Action);
@@ -925,7 +911,7 @@ export default class extends Vue {
   serviceWorkerData: ServiceWorkerDetectionResult | null = null;
   noServiceWorker: boolean | null = null;
   timedOutSW: boolean = false;
-  worksOffline: boolean | null = null;
+  worksOffline: boolean | null = null; // null means the test isn't complete yet
 
   manifestScore: number = 0;
   swScore: number = 0;
@@ -1152,91 +1138,84 @@ export default class extends Vue {
     // If we have no URL, it means there was an issue parsing the URL,
     // for example, malformed URL.
     // In such case, punt; there is no service worker.
-    const isHttp =
-      typeof this.url === "string" && this.url.startsWith("http://");
+    const isHttp = typeof this.url === "string" && this.url.startsWith("http://");
     if (!this.url || isHttp) {
       this.noSwScore();
       return;
     }
 
-    const cleanUrl = this.trimSuffixChar(this.url, ".");
-    let swResponse: ServiceWorkerDetectionResult | null = null;
-    const cachedData: ServiceWorkerDetectionResult = getCache("sw", cleanUrl);
-    const swFetcher = new ServiceWorkerFetcher(this.url);
+    // We run 2 checks concurrently:
+    // Detect the service worker
+    // Detect offline support
+    // 
+    // Offline support is checked separately because it is a longer-running process and
+    // we want to give quicker feedback to the user.
+    const fetcher = new ServiceWorkerChecker(this.url);
+    const detectServiceWorkerTask = fetcher.detectServiceWorker();
+    const detectOfflineTask = fetcher.detectOfflineSupport();
 
-    if (cachedData) {
-      swResponse = cachedData;
-    } else {
-      try {
-        swResponse = await swFetcher.fetch();
-        await setCache("sw", this.url, swResponse);
-      } catch (err) {
-        this.timedOutSW = true;
-        this.swScore = 0;
-
-        this.$emit("serviceWorkerTestDone", { score: 0 });
-        return;
-      }
+    // Wait for the service worker check to come in and update the score accordingly.
+    let serviceWorkerResult: ServiceWorkerDetectionResult | null = null;
+    try {
+      serviceWorkerResult = await detectServiceWorkerTask;
+      this.swScore = this.getServiceWorkerScore(serviceWorkerResult, null);
+      this.serviceWorkerData = serviceWorkerResult;
+      this.noServiceWorker = serviceWorkerResult.hasSW === false;
+      this.timedOutSW = serviceWorkerResult.serviceWorkerDetectionTimedOut;
+    } catch (err) {
+      this.noSwScore();
+      return;
     }
 
-    if (swResponse) {
-      await this.scoreServiceWorker(swResponse);
-      this.serviceWorkerData = swResponse;
-      this.noServiceWorker = false;
+    // If we've got a service worker, wait for the offline check to finish.
+    if (serviceWorkerResult && serviceWorkerResult.hasSW) {
+      try {
+console.log("zanz waiting for timeout test...");
+    await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve("OK");
+        }, 15000);
+      });
+console.log("zanz timeout test completed");
+        const offlineResult = await detectOfflineTask;
+        this.swScore = this.getServiceWorkerScore(serviceWorkerResult, offlineResult);
+        this.worksOffline = offlineResult;
+console.log("zanz offline check done", detectOfflineTask);
+      } catch (offlineDetectionError) {
+        console.warn("Error checking offline support status", offlineDetectionError);
+        this.worksOffline = false;
+      }
+    } else {
+      this.worksOffline = false;
     }
 
     this.$emit("serviceWorkerTestDone", { score: this.swScore });
   }
 
-  private async scoreServiceWorker(data: ServiceWorkerDetectionResult) {
-    this.swScore = 0;
-    //scoring set by Jeff: 40 for manifest, 40 for sw and 20 for sc
-
-    if (data.hasSW === true) {
-      /*
-        Has a Service Worker
-        +20 points
-      */
-      if (data.hasSW === true) {
-        this.swScore = this.swScore + 20;
-      }
-
-      /*
-        Works Offline
-        +10 points
-      */
-
-      if (data.offline === true) {
+  private getServiceWorkerScore(data: ServiceWorkerDetectionResult, offlineSupport: boolean | null = null): number {
+    let score = 0;
+    if (data.hasSW) {
+      score += 20;
+      
+      if (offlineSupport === true) {
         this.worksOffline = true;
         this.swScore = this.swScore + 10;
       } else {
-        this.worksOffline = false;
+        this.worksOffline = offlineSupport;
       }
     }
 
-    /*
-        Has scope that points to root
-        Lighthouse now validates this
-        +10 points
-      */
     if (data.scope) {
-      this.swScore = this.swScore + 10;
+      score += 10;
     }
 
-    console.log("this.swScore", this.swScore);
+    return score;
   }
 
   private noSwScore() {
     this.$emit("serviceWorkerTestDone", { score: 0 });
     this.noServiceWorker = true;
     this.swScore = 0;
-  }
-
-  private trimSuffixChar(string, charToRemove) {
-    while (string.charAt(string.length - 1) === charToRemove) {
-      string = string.substring(0, string.length - 1);
-    }
-    return string;
   }
 }
 </script>
