@@ -102,7 +102,6 @@ export const mutations: MutationTree<State> = {
   },
 
   [types.OVERWRITE_MANIFEST](state, result): void {
-    console.log("Inside state", result.content.screenshots);
     if (result.content.generated) {
       delete result.content.generated;
     }

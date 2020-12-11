@@ -4,5 +4,6 @@ module.exports = {
     imageGeneratorUrl: 'http://testimagegenerator.azurewebsites.net',
     androidPackageGeneratorUrl: 'https://pwabuilder-cloudapk-pre.azurewebsites.net',
     manifestFinderUrl: "https://pwabuilder-manifest-finder.azurewebsites.net/api/findmanifest",
-    macosPackageGeneratorUrl: 'https://pwabuilder-macos.azurewebsites.net/',
+    serviceWorkerDetectorUrl: 'https://pwabuilder-serviceworker-finder.centralus.cloudapp.azure.com',
+    macosPackageGeneratorUrl: 'https://pwabuilder-macos.azurewebsites.net/'
 }

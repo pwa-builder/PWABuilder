@@ -128,3 +128,12 @@ export interface ManifestDetectionResult {
   suggestions: [],
   warnings: []
 }
+
+export interface ServiceWorkerDetectionResult {
+  hasSW: boolean;
+  scope: string | null;
+  url: string | null;
+  hasPushRegistration: boolean;
+  serviceWorkerDetectionTimedOut: boolean;
+  noServiceWorkerFoundDetails: string | null;
+}

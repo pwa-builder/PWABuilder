@@ -130,15 +130,15 @@
         </footer>
       </div>
 
-      <div v-if="gotURL && testing === true" id="infoSection">
-        <h2>Tests in progress...</h2>
+      <div v-if="gotURL && testing" id="infoSection">
+        <h2><i class="fa fa-spinner fa-spin"></i> Tests in progress...</h2>
 
         <p>
           We are taking a look at your website to evaluate if it is a PWA, we should be done soon!
         </p>
       </div>
 
-      <div v-else-if="gotURL && overallScore < 80 && testing === false" id="infoSection">
+      <div v-else-if="gotURL && !meetsPwaRequirements && !testing" id="infoSection">
         <h2>Hub</h2>
 
         <p>
@@ -148,7 +148,7 @@
         </p>
       </div>
 
-      <div v-else-if="gotURL && overallScore >= 80 && testing === false" id="attachSection">
+      <div v-else-if="gotURL && meetsPwaRequirements && !testing" id="attachSection">
         <div id="attachHeader">
           <h2>Nice job!</h2>
 
@@ -176,29 +176,22 @@
         </div>
       </div>
 
-      <ScoreCard
+      <ManifestScoreCard
         v-if="gotURL"
-        v-on:manifestTestDone="manifestTestDone($event)"
-        v-on:manifestDetectionBroke="manifestTestBroke()"
+        v-on:all-checks-complete="manifestChecksCompleted($event)"
         :url="url"
-        category="Manifest"
         id="firstCard"
-        class="scoreCard"
-      ></ScoreCard>
-      <ScoreCard
+      ></ManifestScoreCard>
+      <ServiceWorkerScoreCard
         v-if="gotURL"
-        v-on:serviceWorkerTestDone="swTestDone($event)"
+        v-on:all-checks-complete="swChecksCompleted($event)"
         :url="url"
-        category="Service Worker"
-        class="scoreCard"
-      ></ScoreCard>
-      <ScoreCard
+      ></ServiceWorkerScoreCard>
+      <SecurityScoreCard
         v-if="gotURL"
-        v-on:securityTestDone="securityTestDone($event)"
+        v-on:all-checks-complete="securityChecksCompleted($event)"
         :url="url"
-        category="Security"
-        class="scoreCard"
-      ></ScoreCard>
+      ></SecurityScoreCard>
 
       <div id="toolkitSection" v-if="topSamples.length > 0">
         <h2>Add features to my PWA...</h2>
@@ -241,6 +234,9 @@ import { Action, State, namespace } from "vuex-class";
 
 import HubHeader from "~/components/HubHeader.vue";
 import ScoreCard from "~/components/ScoreCard.vue";
+import ManifestScoreCard from "~/components/ManifestScoreCard.vue";
+import ServiceWorkerScoreCard from "~/components/ServiceWorkerScorecard.vue";
+import SecurityScoreCard from "~/components/SecurityScorecard.vue";
 import FeatureCard from "~/components/FeatureCard.vue";
 
 import * as generator from "~/store/modules/generator";
@@ -249,6 +245,8 @@ const GeneratorState = namespace(generator.name, State);
 const GeneratorAction = namespace(generator.name, Action);
 
 import * as windowsStore from "~/store/modules/windows";
+import { Manifest } from "~/store/modules/generator";
+import { ScoreCardCheckCompletedEvent } from "~/utils/score-card-metric";
 
 const WindowsState = namespace(windowsStore.name, State);
 const WindowsAction = namespace(windowsStore.name, Action);
@@ -257,6 +255,9 @@ const WindowsAction = namespace(windowsStore.name, Action);
   components: {
     HubHeader,
     ScoreCard,
+    ManifestScoreCard,
+    ServiceWorkerScoreCard,
+    SecurityScoreCard,
     FeatureCard,
   },
 })
@@ -264,8 +265,9 @@ export default class extends Vue {
   @GeneratorState url: string;
   @GeneratorState manifest: any;
 
-  @GeneratorAction updateLink;
-  @GeneratorAction getManifestInformation;
+  @GeneratorAction updateManifest: (manifest: Manifest | null) => void;
+  @GeneratorAction updateLink: (url: string | null) => void;
+  @GeneratorAction getManifestInformation: () => Promise<void>;
 
   @WindowsState sample: windowsStore.Sample;
   @WindowsState samples: windowsStore.Sample[];
@@ -275,14 +277,15 @@ export default class extends Vue {
   public gotURL = false;
   public url$: string | null = null;
   public error: string | null = null;
-  public overallScore: number = 0;
   public topSamples: Array<any> = [];
   public cleanedURL: string | null = null;
   public shared: boolean = false;
   public openDrop: boolean = false;
   public showCopyToast: boolean = false;
   public showShareToast: boolean = false;
-  testing: boolean = false;
+  manifestChecksResult: ScoreCardCheckCompletedEvent | null = null;
+  serviceWorkerChecksResult: ScoreCardCheckCompletedEvent | null = null;
+  securityChecksResult: ScoreCardCheckCompletedEvent | null = null;  
 
   public async created() {
     this.url$ = this.url;
@@ -458,8 +461,34 @@ export default class extends Vue {
     }, 2300);
   }
 
+  get testing(): boolean {
+    return this.pwaChecks.some(c => !c);
+  }
+
+  get overallScore(): number {
+    return this.pwaChecks
+      .map(c => c ? c.score : 0)
+      .reduce((a, b) => a + b);
+  }
+
+  get meetsPwaRequirements(): boolean {
+    return this.pwaChecks.every(c => !!c && c.meetsRequirements);
+  }
+
+  get pwaChecks(): (ScoreCardCheckCompletedEvent | null)[] {
+    return [
+      this.manifestChecksResult,
+      this.serviceWorkerChecksResult,
+      this.securityChecksResult
+    ];
+  }
+
   public async checkUrlAndGenerate() {
     this.error = null;
+    this.securityChecksResult = null;
+    this.manifestChecksResult = null;
+    this.serviceWorkerChecksResult = null;
+
     try {
       if (
         window &&
@@ -470,8 +499,6 @@ export default class extends Vue {
       } else {
         this.url$ = this.cleanedURL;
       }
-
-      this.testing = true;
 
       await this.updateLink(this.url$);
       this.url$ = this.url;
@@ -521,32 +548,8 @@ export default class extends Vue {
     this.topSamples = top;
   }
 
-  public securityTestDone(ev) {
-    return new Promise((resolve) => {
-      this.overallScore = this.overallScore + ev.score;
-      resolve();
-    });
-  }
-
-  public manifestTestDone(ev) {
-    this.overallScore = this.overallScore + ev.score;
-  }
-
-  public manifestTestBroke() {
-    
-  }
-
-  public swTestDone(ev) {
-    this.overallScore = this.overallScore + ev.score;
-
-    // service worker test normally ends last
-    // so turn testing to false here
-    this.testing = false;
-  }
-
   public reset() {
     this.gotURL = false;
-    this.overallScore = 0;
     this.topSamples = [];
   }
 
@@ -554,6 +557,18 @@ export default class extends Vue {
     this.$router.push({
       name: "features",
     });
+  }
+
+  manifestChecksCompleted(e: ScoreCardCheckCompletedEvent) {
+    this.manifestChecksResult = e;
+  }
+
+  swChecksCompleted(e: ScoreCardCheckCompletedEvent) {
+    this.serviceWorkerChecksResult = e;
+  }
+
+  securityChecksCompleted(e: ScoreCardCheckCompletedEvent) {
+    this.securityChecksResult = e;
   }
 }
 
@@ -566,6 +581,7 @@ Vue.prototype.$awa = function (config) {
 };
 
 declare var awa: any;
+
 </script>
 
 <style lang="scss" scoped>
