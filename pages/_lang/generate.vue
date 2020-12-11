@@ -826,7 +826,7 @@ export default class extends Vue {
     this.manifest$ = { ...this.manifest };
   }
 
-  public onClickDownloadAll() {
+  public async onClickDownloadAll() {
     // local azure function
     this.zipRequested = true;
     const images: generator.Icon[] = [];
@@ -836,20 +836,18 @@ export default class extends Vue {
       images.push({ ...this.icons[i] });
     }
 
-    axios
-      .post(
-        "https://azure-express-zip-creator.azurewebsites.net/api",
-        JSON.stringify({ images }),
-        {
-          method: "POST",
-          responseType: "blob",
-          headers: {
-            "content-type": "application/json",
-          },
-        }
-      )
-      .then(async (res) => {
-        if (window["chooseFileSystemEntries"]) {
+    try {
+      const response = await fetch("https://azure-express-zip-creator.azurewebsites.net/api", {
+        method: "POST",
+        headers: new Headers({
+          "content-type": "application/json"
+        }),
+        body: JSON.stringify({ images })
+      });
+
+      const res = await response.blob();
+
+      if (window["chooseFileSystemEntries"]) {
           const fsOpts = {
             type: "save-file",
             accepts: [
@@ -868,14 +866,13 @@ export default class extends Vue {
           // Close the file and write the contents to disk.
           await writable.close();
         } else {
-          download(res.data, "pwa-icons.zip", "application/zip");
+          download(res, "pwa-icons.zip", "application/zip");
         }
         this.zipRequested = false;
-      })
-      .catch((err) => {
-        console.log(err);
-        this.zipRequested = false;
-      });
+    } catch (error) {
+      console.log(error);
+      this.zipRequested = false;
+    }
   }
 
   public onChangeSimpleInput(): void {
