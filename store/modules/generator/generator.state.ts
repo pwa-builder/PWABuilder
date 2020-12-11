@@ -133,7 +133,7 @@ export interface ServiceWorkerDetectionResult {
   hasSW: boolean;
   scope: string | null;
   url: string | null;
-  hasPushRegistration: boolean | undefined;
+  hasPushRegistration: boolean;
   serviceWorkerDetectionTimedOut: boolean;
-  soServiceWorkerFoundDetails: string | null;
+  noServiceWorkerFoundDetails: string | null;
 }
