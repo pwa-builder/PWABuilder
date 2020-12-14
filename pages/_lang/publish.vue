@@ -2396,6 +2396,11 @@ declare var awa: any;
 
 @import "~assets/scss/base/variables";
 
+// Hide macOS card for now
+#pwaMacosCard {
+  display: none;
+}
+
 .pwaCardHeaderBlock #windowsCardHeader {
   display: flex;
   align-items: center;
