@@ -16,7 +16,7 @@
     },
     {
         "name": "Graph Login Component",
-        "desc": "A simple component that gives users a button to install your PWA directly from the browser",
+        "desc": "A button and flyout control to facilitate Microsoft identity platform authentication.",
         "ID": "graph_login"
     }
 ]
