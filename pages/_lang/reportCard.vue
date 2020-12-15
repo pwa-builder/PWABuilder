@@ -235,8 +235,8 @@ import { Action, State, namespace } from "vuex-class";
 import HubHeader from "~/components/HubHeader.vue";
 import ScoreCard from "~/components/ScoreCard.vue";
 import ManifestScoreCard from "~/components/ManifestScoreCard.vue";
-import ServiceWorkerScoreCard from "~/components/ServiceWorkerScorecard.vue";
-import SecurityScoreCard from "~/components/SecurityScorecard.vue";
+import ServiceWorkerScoreCard from "~/components/ServiceWorkerScoreCard.vue";
+import SecurityScoreCard from "~/components/SecurityScoreCard.vue";
 import FeatureCard from "~/components/FeatureCard.vue";
 
 import * as generator from "~/store/modules/generator";
