@@ -227,7 +227,7 @@ export default class extends Vue {
     this.message$ = "Generating...";
     this.isReady = false;
     try {
-      const response = await fetch(`${process.env.webPackageGeneratorUrl}?siteUrl=${this.siteHref}`, {
+      const response = await fetch(`${process.env.webPackageGeneratorUrl}?siteUrl=${this.siteHref}&hasServiceWorker=${false}`, {
         method: "POST",
         body: JSON.stringify(this.manifest),
         headers: new Headers({
