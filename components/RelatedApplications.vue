@@ -87,7 +87,9 @@ export default class extends Vue {
 
   public created(): void {
     this.manifest$ = { ...this.manifest };
-    this.prefer_related_applications = this.manifest$.prefer_related_applications;
+    if (this.manifest$.prefer_related_applications) {
+      this.prefer_related_applications = this.manifest$.prefer_related_applications;
+    }
   }
 
   public onClickAdd(): void {
