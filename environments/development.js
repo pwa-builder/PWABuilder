@@ -9,5 +9,6 @@ module.exports = {
   manifestFinderUrl: "https://pwabuilder-manifest-finder.azurewebsites.net/api/findmanifest",
   windowsPackageGeneratorUrl: 'https://pwabuilder-win-chromium-platform.centralus.cloudapp.azure.com/msix/generatezip',
   serviceWorkerDetectorUrl: 'https://pwabuilder-serviceworker-finder.centralus.cloudapp.azure.com',
-  macosPackageGeneratorUrl: 'https://pwabuilder-macos.azurewebsites.net/'
+  macosPackageGeneratorUrl: 'https://pwabuilder-macos.azurewebsites.net/',
+  swServerUrl: 'https://pwabuilder-sw-server.azurewebsites.net'
 };
