@@ -10,5 +10,6 @@ module.exports = {
   windowsPackageGeneratorUrl: 'https://pwabuilder-win-chromium-platform.centralus.cloudapp.azure.com/msix/generatezip',
   serviceWorkerDetectorUrl: 'https://pwabuilder-serviceworker-finder.centralus.cloudapp.azure.com',
   macosPackageGeneratorUrl: 'https://pwabuilder-macos.azurewebsites.net/',
+  webPackageGeneratorUrl: 'https://pwabuilder-web-platform.azurewebsites.net/',
   swServerUrl: 'https://pwabuilder-sw-server.azurewebsites.net'
 };

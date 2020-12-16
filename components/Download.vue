@@ -223,6 +223,36 @@ export default class extends Vue {
     }
   }
 
+  public async generateWebPackage() {
+    this.message$ = "Generating...";
+    this.isReady = false;
+    try {
+      const response = await fetch(`${process.env.webPackageGeneratorUrl}?siteUrl=${this.siteHref}&hasServiceWorker=${false}`, {
+        method: "POST",
+        body: JSON.stringify(this.manifest),
+        headers: new Headers({
+          "content-type": "application/json"
+        })
+      });
+      if (response.status === 200) {
+        const data = await response.blob();
+        const url = window.URL.createObjectURL(data);
+        window.location.assign(url);
+        setTimeout(() => (this.isReady = true), 3000);
+      } else {
+        const responseText = await response.text();
+        this.showErrorMessage(
+          `Failed. Status code ${response.status}, Error: ${response.statusText}, Details: ${responseText}`
+        )
+      }
+    } catch (error) {
+      this.showErrorMessage("Failed. Error: " + error);
+      this.message$ = this.message;
+    } finally {
+      this.isReady = true;
+    }
+  }
+
   public async buildArchive(
     platform: string,
     parameters: string[]
@@ -231,7 +261,9 @@ export default class extends Vue {
       return;
     }
 
-    if (platform === "androidTWA") {
+    if (platform === "web") {
+      await this.generateWebPackage();
+    } else if (platform === "androidTWA") {
       await this.generateAndroidPackage();
     } else if (platform === "windows10") {
       await this.generateWindowsPackage("spartan");
