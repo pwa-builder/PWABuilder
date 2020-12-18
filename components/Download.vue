@@ -131,9 +131,19 @@ export default class extends Vue {
         });
       } else {
         const responseText = await response.text();
-        this.showErrorMessage(
-          `Error generating Android package.\n\nStatus code: ${response.status}\n\nError: ${response.statusText}\n\nDetails: ${responseText}`
-        );
+        
+        // Did it fail because images couldn't be fetched with ECONNREFUSED? E.g. https://github.com/pwa-builder/PWABuilder/issues/1312
+        // If so, retry using our safe image downloader.
+        const hasSafeImages = this.androidOptions.iconUrl && this.androidOptions.iconUrl.includes(process.env.safeImageFetcherUrl || "");
+        if (!hasSafeImages && responseText && responseText.includes("ECONNREFUSED")) {
+          console.warn("Android package generation failed with ECONNREFUSED. Retrying with safe images.", responseText);
+          this.updateAndroidOptionsWithSafeUrls(this.androidOptions);
+          await this.generateAndroidPackage();
+        } else {
+          this.showErrorMessage(
+            `Error generating Android package.\n\nStatus code: ${response.status}\n\nError: ${response.statusText}\n\nDetails: ${responseText}`
+          );
+        }
       }
     } catch (err) {
       this.showErrorMessage(
@@ -315,6 +325,24 @@ export default class extends Vue {
       detail: errorMessage,
       platform: this.platform,
     });
+  }
+
+  private updateAndroidOptionsWithSafeUrls(options: publish.AndroidApkOptions): publish.AndroidApkOptions {
+    const absoluteUrlProps: Array<keyof publish.AndroidApkOptions> = [
+      "maskableIconUrl",
+      "monochromeIconUrl",
+      "iconUrl",
+      "webManifestUrl",
+    ];
+    for (let prop of absoluteUrlProps) {
+      const url = options[prop];
+      if (url && typeof url === "string") {
+        const safeUrl = `${process.env.safeImageFetcherUrl}?url=${encodeURIComponent(url)}`;
+        (options as any)[prop] = safeUrl;
+      }
+    }
+
+    return options;
   }
 }
 
