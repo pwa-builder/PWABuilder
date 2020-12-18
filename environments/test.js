@@ -8,5 +8,5 @@ module.exports = {
     macosPackageGeneratorUrl: 'https://pwabuilder-macos.azurewebsites.net/',
     webPackageGeneratorUrl: 'https://pwabuilder-web-platform.azurewebsites.net/',
     swServerUrl: 'https://pwabuilder-sw-server.azurewebsites.net',
-    safeImageFetcherUrl: 'https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl'
+    safeUrlFetcher: 'https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl'
 }
