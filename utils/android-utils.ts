@@ -7,13 +7,16 @@ type AndroidPackageValidationError = {
 
 const DISALLOWED_ANDROID_PACKAGE_CHARS_REGEX = /[^a-zA-Z0-9_]/g;
 export function generatePackageId(host: string): string {
+
   const parts = host
     .split(".")
     .reverse()
     .map(p => p.trim().toLowerCase())
+    .map(p => withoutLeadingDigits(p)) // Android Package name parts can't begin with numbers: https://github.com/pwa-builder/PWABuilder/issues/1336#issuecomment-755029058
     .filter(p => p.length > 0)
     .map(p => p.replace(DISALLOWED_ANDROID_PACKAGE_CHARS_REGEX, "_"))
   parts.push("twa");
+
   return parts.join(".");
 }
 
@@ -171,4 +174,14 @@ export function validateUrl(url: string, base?: string): string | null {
   } catch (urlError) {
     return urlError;
   }
+}
+
+function withoutLeadingDigits(input: string): string {
+  // Check if it starts with a digit.
+  // If so, prepend "app" to it.
+  if (input.length && input[0].match(/^\d/)) {
+    return `app_${input}`
+  }
+
+  return input;
 }
