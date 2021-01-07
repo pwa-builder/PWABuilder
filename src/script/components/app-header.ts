@@ -49,7 +49,7 @@ export class AppHeader extends LitElement {
   render() {
     return html`
       <header>
-        <h1>${this.title}</h1>
+        <img id="headerIcon" src="/assets/images/header_logo.png" alt="header logo">
 
         <nav>
           <fast-anchor href="./" appearance="button">Home</fast-anchor>
