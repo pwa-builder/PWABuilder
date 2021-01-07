@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>PWA Starter</title>
+
+    <base href="/" />
+
+    <!-- This meta viewport ensures the webpage's dimensions change according to the device it's on. This is called Responsive Web Design.-->
+    <meta
+      name="viewport"
+      content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0"
+    />
+    <meta name="description" content="This is a PWA Starter app" />
+    <meta name="theme-color" content="#E1477E" />
+
+    <!-- These meta tags are Apple-specific, and set the web application to run in full-screen mode with a black status bar. Learn more at https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html-->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="PWA Starter" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+    <!-- Imports an icon to represent the document. -->
+    <link rel="icon" href="assets/icons/icon_24.png" type="image/x-icon" />
+
+    <!-- Imports the manifest to represent the web application. A web app must have a manifest to be a PWA. -->
+    <link rel="manifest" href="manifest.json" />
+
+    <!-- Microsoft Fast Components https://www.fast.design/docs/components/getting-started-->
+    <script
+      type="module"
+      src="https://unpkg.com/@microsoft/fast-components"
+    ></script>
+
+    <!-- A stylesheet to design the pages. -->
+    <link href="styles/global.css" rel="stylesheet" />
+
+    <!--<script type="module" src="/build/src/script/pages/app-index.js"></script>-->
+    <script type="module" src="src/script/pages/app-index.ts"></script>
+  </head>
+
+  <body>
+    <!-- Our app-index web component. This component is defined in src/pages/app-index.ts-->
+    <fast-design-system-provider use-defaults>
+      <app-index></app-index>
+    </fast-design-system-provider>
+
+    <script type="module" src="/pwabuilder-sw.ts"></script>
+
+    <script>
+      navigator.serviceWorker.register("/pwabuilder-sw.js");
+    </script>
+  </body>
+</html>

@@ -1,35 +1,57 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": [
-      "dom",
-      "ES2018"
-    ],
-    "module": "es2015",
+    "target": "es2017",
+    "module": "es2020",
     "moduleResolution": "node",
-    "experimentalDecorators": true,
-    "noImplicitAny": false,
-    "noImplicitThis": false,
+    "lib": [
+      "esnext.array",
+      "esnext",
+      "es2017",
+      "dom"
+    ],
+    "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "strictNullChecks": true,
-    "removeComments": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
-    "allowJs": true,
-    "paths": {
-      "~/*": ["./"],
-      "~/assets/*": ["./assets/*"],
-      "~/components/*": ["./components/*"],
-      "~/middleware/*": ["./middleware/*"],
-      "~/pages/*": ["./pages/*"],
-      "~/plugins/*": ["./plugins/*"],
-      "~/static/*": ["./static/*"],
-      "~/store/*": ["./store/*"],
-      "~/utils/*": ["./utils/*"],
-      "~/test/*": ["./test/*"]
-    }
+    "noImplicitReturns": false,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "outDir": "./dist/",
+    // Only necessary because @types/uglify-js can't find types for source-map
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "plugins": [
+      {
+        "name": "ts-lit-plugin",
+        "rules": {
+          "no-complex-attribute-binding": "error",
+          "no-expressionless-property-binding": "error",
+          "no-incompatible-property-type": "error",
+          "no-incompatible-type-binding": "error",
+          "no-invalid-attribute-name": "error",
+          "no-invalid-boolean-binding": "error",
+          "no-invalid-css": "off",
+          "no-invalid-directive-binding": "error",
+          "no-invalid-tag-name": "error",
+          "no-missing-import": "off",
+          "no-noncallable-event-binding": "error",
+          "no-nullable-attribute-binding": "off",
+          "no-unclosed-tag": "error",
+          "no-unknown-attribute": "off",
+          "no-unknown-event": "off",
+          "no-unknown-property": "error",
+          "no-unknown-property-converter": "error",
+          "no-unknown-slot": "off",
+          "no-unknown-tag-name": "error"
+        }
+      }
+    ]
   },
-  "exclude": ["./environments/*"]
+  "include": ["pwabuilder-sw.ts"],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "build/pwabuilder-sw.js"
+  ]
 }

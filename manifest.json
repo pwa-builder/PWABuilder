@@ -1,0 +1,49 @@
+{
+  "name": "PWA Starter",
+  "display": "standalone",
+  "start_url": "/",
+  "short_name": "starter",
+  "theme_color": "#E1477E",
+  "description": "This is a PWA Starter app",
+  "orientation": "any",
+  "background_color": "#E1477E",
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "assets/icons/icon_512.png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "assets/icons/icon_192.png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "assets/icons/icon_48.png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "assets/icons/icon_24.png",
+      "sizes": "24x24"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/screenshots/screen.png"
+    },
+    {
+      "src": "assets/screenshots/screen.png"
+    },
+    {
+      "src": "assets/screenshots/screen.png"
+    }
+  ],
+  "features": [
+    "Cross Platform",
+    "fast",
+    "simple"
+  ],
+  "categories": [
+    "utility"
+  ]
+}
