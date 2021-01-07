@@ -4,7 +4,7 @@ import './app-home';
 
 import { Router } from '@vaadin/router';
 
-import '../components/header';
+import '../components/app-header';
 
 @customElement('app-index')
 export class AppIndex extends LitElement {
