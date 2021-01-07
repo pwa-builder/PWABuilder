@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import Vue, { VNode } from "vue";
 import ScoreCard from "~/components/ScoreCard.vue";
 import Component from "nuxt-class-component";
 import {
@@ -167,7 +167,9 @@ export default class extends Vue {
               or <a href='/generate'><i class="fas fa-magic"></i> create a new one</a>.`;
     }
 
-    if (this.manifest) {
+    if (this.manifest) {      
+      //return `<nuxt-link to="/generate" tabindex="-1"><i class='far fa-edit'></i> Edit your manifest</nuxt-link>`;
+      //return  `<router-link to="/generate" tabindex="-1"><i class='far fa-edit'></i> Edit your manifest</router-link>`;
       return `<a href='/generate'><i class='far fa-edit'></i> Edit your manifest</a>`;
     }
 
