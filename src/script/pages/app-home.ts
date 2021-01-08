@@ -14,8 +14,6 @@ export class AppHome extends LitElement {
       content-header::part(mainContainer) {
         display: flex;
         justify-content: center;
-        padding-left: 2em;
-        padding-right: 2em;
         padding-top: 5.2em;
       }
 
@@ -23,7 +21,7 @@ export class AppHome extends LitElement {
         font-size: 38.9187px;
         line-height: 46px;
         letter-spacing: -0.015em;
-        max-width: 481px;
+        max-width: 526px;
       }
 
       #heroP {
@@ -56,6 +54,7 @@ export class AppHome extends LitElement {
 
       #inputForm {
         display: flex;
+        margin-top: 1em;
       }
 
       #inputForm fast-text-field {
@@ -65,6 +64,12 @@ export class AppHome extends LitElement {
 
       #inputForm fast-button {
         flex: 0.2;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.24);
+      }
+
+      #inputForm fast-button::part(control) {
+        font-size: 16px;
+        font-weight: var(--font-bold);
       }
 
       #inputForm fast-text-field::part(root) {
@@ -118,7 +123,7 @@ export class AppHome extends LitElement {
 
         <form id="inputForm" slot="inputContainer">
           <fast-text-field slot="inputContainer" type="text" placeholder="Enter the URL to your site to start building your PWA"></fast-text-field>
-          <fast-button>Start</fast-button>
+          <fast-button color="primary">Start</fast-button>
         </form>
       </content-header>
 

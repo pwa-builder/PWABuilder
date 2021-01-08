@@ -45,13 +45,53 @@ export class ResourceHub extends LitElement {
         padding-left: 16px;
         padding-right: 16px;
         padding-bottom: 16px;
-        margin-right: 24px;
+        margin-right: 12px;
+        margin-left: 12px;
+
+        color: black;
+        background: white;
       }
 
       fast-card img {
         width: 100%;
         object-fit: none;
         height: 188px;
+      }
+
+      fast-card h3 {
+        font-size: 22px;
+        line-height: 24px;
+        font-weight: var(--font-bold);
+      }
+
+      fast-card p {
+        color: #A6A4A4;
+      }
+
+      .cardActions fast-button::part(control) {
+        font-weight: bold;
+        font-size: 14px;
+        line-height: 20px;
+        color: black;
+      }
+
+      #resourceHubActions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        margin-top: 54px;
+        margin-bottom: 54px;
+      }
+
+      #resourceHubActions fast-button {
+        background: white;
+        color: black;
+      }
+      
+      #resourceHubActions fast-button::part(control) {
+        font-size: 16px;
+        font-weight: var(--font-bold);
       }
     `;
   }
@@ -78,7 +118,7 @@ export class ResourceHub extends LitElement {
             </p>
 
             <div class="cardActions">
-              <fast-button>View</fast-button>
+              <fast-button appearance="lightweight">View</fast-button>
             </div>
           </fast-card>
 
@@ -91,7 +131,7 @@ export class ResourceHub extends LitElement {
             </p>
 
             <div class="cardActions">
-              <fast-button>View</fast-button>
+              <fast-button appearance="lightweight">View</fast-button>
             </div>
           </fast-card>
 
@@ -104,7 +144,7 @@ export class ResourceHub extends LitElement {
             </p>
 
             <div class="cardActions">
-              <fast-button>View</fast-button>
+              <fast-button appearance="lightweight">View</fast-button>
             </div>
           </fast-card>
 
@@ -117,9 +157,13 @@ export class ResourceHub extends LitElement {
             </p>
 
             <div class="cardActions">
-              <fast-button>View</fast-button>
+              <fast-button appearance="lightweight">View</fast-button>
             </div>
           </fast-card>
+        </div>
+
+        <div id="resourceHubActions">
+          <fast-button>View all resources</fast-button>
         </div>
       </section>
     `;
