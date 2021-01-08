@@ -1,7 +1,13 @@
-import { LitElement, css, html, customElement } from 'lit-element';
+import { LitElement, css, html, customElement, property } from 'lit-element';
+import { completeCards, landingCards } from './resource-hub-cards';
+
+type ResourceHubPages = "home" | "complete"
 
 @customElement('resource-hub')
 export class ResourceHub extends LitElement {
+
+  @property({ attribute: "all", type: Boolean }) showViewAllButton = false;
+  @property({ attribute: "page", type: String }) pageName: ResourceHubPages = "home";
 
   static get styles() {
     return css`
@@ -10,7 +16,6 @@ export class ResourceHub extends LitElement {
         display: flex;
         color: white;
       }
-      
       #resource-header {
         display: flex;
         flex-direction: column;
@@ -87,8 +92,8 @@ export class ResourceHub extends LitElement {
       #resource-hub-actions fast-button {
         background: white;
         color: black;
+        border-radius: 44px;
       }
-      
       #resource-hub-actions fast-button::part(control) {
         font-size: 16px;
         font-weight: var(--font-bold);
@@ -104,68 +109,36 @@ export class ResourceHub extends LitElement {
     return html`
       <section>
         <div id="resource-header">
-          <h4>PWABuilder Resource Hub</h4>
-          <p>Ready to build your PWA? Tap "Build My PWA" to package your PWA for the app stores or tap "Feature Store" to check out the latest web components from the PWABuilder team to improve your PWA even further!</p>
+          <slot name="header"></slot>
+          <slot name="description"></slot>
         </div>
 
         <div id="cards">
-          <fast-card>
-            <img src="/assets/icons/icon_120.png" alt="card header image">
-            <h3>Blog</h3>
-
-            <p>
-              Card description. Lorem ipsum dolor sit amet, consectetur elit adipiscing
-            </p>
-
-            <div class="card-actions">
-              <fast-button appearance="lightweight">View</fast-button>
-            </div>
-          </fast-card>
-
-          <fast-card>
-            <img src="/assets/icons/icon_120.png" alt="card header image">
-            <h3>Demos</h3>
-
-            <p>
-              Card description. Lorem ipsum dolor sit amet, consectetur elit adipiscing
-            </p>
-
-            <div class="card-actions">
-              <fast-button appearance="lightweight">View</fast-button>
-            </div>
-          </fast-card>
-
-          <fast-card>
-            <img src="/assets/icons/icon_120.png" alt="card header image">
-            <h3>Components</h3>
-
-            <p>
-              Card description. Lorem ipsum dolor sit amet, consectetur elit adipiscing
-            </p>
-
-            <div class="card-actions">
-              <fast-button appearance="lightweight">View</fast-button>
-            </div>
-          </fast-card>
-
-          <fast-card>
-            <img src="/assets/icons/icon_120.png" alt="card header image">
-            <h3>Documentation</h3>
-
-            <p>
-              Card description. Lorem ipsum dolor sit amet, consectetur elit adipiscing
-            </p>
-
-            <div class="card-actions">
-              <fast-button appearance="lightweight">View</fast-button>
-            </div>
-          </fast-card>
+          ${this.renderCards()}
         </div>
 
-        <div id="resource-hub-actions">
-          <fast-button>View all resources</fast-button>
-        </div>
+        ${this.renderViewAllButton()}
       </section>
     `;
+  }
+
+  renderCards() {
+    if (this.pageName === "home") {
+      return landingCards()
+    }
+
+    if (this.pageName === "complete") {
+      return completeCards()
+    }
+  }
+
+  renderViewAllButton() {
+    if (this.showViewAllButton) {
+      return html`
+          <div id="resource-hub-actions">
+            <fast-button>View all resources</fast-button>
+          </div>
+        `
+    }
   }
 }
