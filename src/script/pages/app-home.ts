@@ -11,7 +11,7 @@ export class AppHome extends LitElement {
 
   static get styles() {
     return css`
-      content-header::part(mainContainer) {
+      content-header::part(main-container) {
         display: flex;
         justify-content: center;
         padding-top: 5.2em;
@@ -24,7 +24,7 @@ export class AppHome extends LitElement {
         max-width: 526px;
       }
 
-      #heroP {
+      #hero-p {
         font-size: 16px;
         line-height: 24px;
         letter-spacing: -0.015em;
@@ -39,40 +39,40 @@ export class AppHome extends LitElement {
         grid-template-columns: auto auto;
       }
 
-      .introGridItem {
+      .intro-grid-item {
         max-width: 200px;
       }
 
-      .introGridItem h3 {
+      .intro-grid-item h3 {
         margin-bottom: 5px;
       }
 
-      .introGridItem p {
+      .intro-grid-item p {
         margin-top: 0;
         color: #A6A4A4;
       }
 
-      #inputForm {
+      #input-form {
         display: flex;
         margin-top: 1em;
       }
 
-      #inputForm fast-text-field {
+      #input-form fast-text-field {
         flex: 0.8;
         margin-right: 10px;
       }
 
-      #inputForm fast-button {
+      #input-form fast-button {
         flex: 0.2;
         box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.24);
       }
 
-      #inputForm fast-button::part(control) {
+      #input-form fast-button::part(control) {
         font-size: 16px;
         font-weight: var(--font-bold);
       }
 
-      #inputForm fast-text-field::part(root) {
+      #input-form fast-text-field::part(root) {
         border: 1.93407px solid #E5E5E5;
         border-radius: 3px;
       }
@@ -92,37 +92,37 @@ export class AppHome extends LitElement {
   render() {
     return html`
       <content-header>
-        <h2 slot="heroContainer">Transform your website to an app at lightning speed.</h2>
-        <p id="heroP" slot="heroContainer">Ready to build your PWA? Tap "Build My PWA" to package your PWA for the app stores or tap "Feature Store".</p>
+        <h2 slot="hero-container">Transform your website to an app at lightning speed.</h2>
+        <p id="hero-p" slot="hero-container">Ready to build your PWA? Tap "Build My PWA" to package your PWA for the app stores or tap "Feature Store".</p>
 
-        <ul slot="gridContainer">
-          <div class="introGridItem">
+        <ul slot="grid-container">
+          <div class="intro-grid-item">
             <h3>Test</h3>
 
             <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut.</p>
           </div>
 
-          <div class="introGridItem">
+          <div class="intro-grid-item">
             <h3>Manage</h3>
 
             <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut.</p>
           </div>
 
-          <div class="introGridItem">
+          <div class="intro-grid-item">
             <h3>Package</h3>
 
             <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut.</p>
           </div>
 
-          <div class="introGridItem">
+          <div class="intro-grid-item">
             <h3>Explore</h3>
 
             <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut.</p>
           </div>
         </ul>
 
-        <form id="inputForm" slot="inputContainer">
-          <fast-text-field slot="inputContainer" type="text" placeholder="Enter the URL to your site to start building your PWA"></fast-text-field>
+        <form id="input-form" slot="input-container">
+          <fast-text-field slot="input-container" type="text" placeholder="Enter the URL to your site to start building your PWA"></fast-text-field>
           <fast-button color="primary">Start</fast-button>
         </form>
       </content-header>

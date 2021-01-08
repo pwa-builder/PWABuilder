@@ -9,15 +9,15 @@ export class AppIndex extends LitElement {
   static get styles() {
     return css`
 
-      #routerOutlet > * {
+      #router-outlet > * {
         width: 100% !important;
       }
 
-      #routerOutlet > .leaving {
+      #router-outlet > .leaving {
         animation: 160ms fadeOut ease-in-out;
       }
 
-      #routerOutlet > .entering {
+      #router-otlet > .entering {
         animation: 160ms fadeIn linear;
       }
 
@@ -52,7 +52,7 @@ export class AppIndex extends LitElement {
     // for more info check out the lit-element docs https://lit-element.polymer-project.org/guide/lifecycle
 
     // For more info on using the @vaadin/router check here https://vaadin.com/router
-    const router = new Router(this.shadowRoot?.querySelector('#routerOutlet'));
+    const router = new Router(this.shadowRoot?.querySelector('#router-outlet'));
     router.setRoutes([
       // temporarily cast to any because of a Type bug with the router
       {
@@ -76,7 +76,7 @@ export class AppIndex extends LitElement {
     return html`
       <div>
         <main>
-          <div id="routerOutlet"></div>
+          <div id="router-outlet"></div>
         </main>
       </div>
     `;

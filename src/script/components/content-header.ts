@@ -10,7 +10,7 @@ export class ContentHeader extends LitElement {
       :host {
       }
 
-      #mainContainer {
+      #main-container {
         display: flex;
         align-items: center;
         
@@ -31,15 +31,15 @@ export class ContentHeader extends LitElement {
     return html`
       <app-header></app-header>
 
-      <div part="mainContainer" id="mainContainer">
-        <section id="contentSide">
-          <div id="heroContainer">
-            <slot name="heroContainer"></slot>
+      <div part="main-container" id="main-container">
+        <section id="content-side">
+          <div id="hero-container">
+            <slot name="hero-container"></slot>
           </div>
 
-          <slot name="gridContainer"></slot>
+          <slot name="grid-container"></slot>
 
-          <slot name="inputContainer"></slot>
+          <slot name="input-container"></slot>
         </section>
 
         <section>

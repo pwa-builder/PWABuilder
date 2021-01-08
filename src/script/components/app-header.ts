@@ -52,7 +52,7 @@ export class AppHeader extends LitElement {
   render() {
     return html`
       <header>
-        <img id="headerIcon" src="/assets/images/header_logo.png" alt="header logo">
+        <img id="header-icon" src="/assets/images/header_logo.png" alt="header logo">
 
         <nav>
           <fast-anchor appearance="hypertext" href="./about">Resources</fast-anchor>

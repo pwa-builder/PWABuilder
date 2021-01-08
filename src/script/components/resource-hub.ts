@@ -11,7 +11,7 @@ export class ResourceHub extends LitElement {
         color: white;
       }
       
-      #resourceHeader {
+      #resource-header {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -20,7 +20,7 @@ export class ResourceHub extends LitElement {
         padding-right: 4em;
       }
 
-      #resourceHeader h4 {
+      #resource-header h4 {
         font-weight: var(--font-bold);
 
         font-size: 36px;
@@ -29,7 +29,7 @@ export class ResourceHub extends LitElement {
         margin-top: 0;
       }
 
-      #resourceHeader p {
+      #resource-header p {
         font-weight: var(--font-bold);
         text-align: center;
       }
@@ -68,14 +68,14 @@ export class ResourceHub extends LitElement {
         color: #A6A4A4;
       }
 
-      .cardActions fast-button::part(control) {
+      .card-actions fast-button::part(control) {
         font-weight: bold;
         font-size: 14px;
         line-height: 20px;
         color: black;
       }
 
-      #resourceHubActions {
+      #resource-hub-actions {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -84,12 +84,12 @@ export class ResourceHub extends LitElement {
         margin-bottom: 54px;
       }
 
-      #resourceHubActions fast-button {
+      #resource-hub-actions fast-button {
         background: white;
         color: black;
       }
       
-      #resourceHubActions fast-button::part(control) {
+      #resource-hub-actions fast-button::part(control) {
         font-size: 16px;
         font-weight: var(--font-bold);
       }
@@ -103,7 +103,7 @@ export class ResourceHub extends LitElement {
   render() {
     return html`
       <section>
-        <div id="resourceHeader">
+        <div id="resource-header">
           <h4>PWABuilder Resource Hub</h4>
           <p>Ready to build your PWA? Tap "Build My PWA" to package your PWA for the app stores or tap "Feature Store" to check out the latest web components from the PWABuilder team to improve your PWA even further!</p>
         </div>
@@ -117,7 +117,7 @@ export class ResourceHub extends LitElement {
               Card description. Lorem ipsum dolor sit amet, consectetur elit adipiscing
             </p>
 
-            <div class="cardActions">
+            <div class="card-actions">
               <fast-button appearance="lightweight">View</fast-button>
             </div>
           </fast-card>
@@ -130,7 +130,7 @@ export class ResourceHub extends LitElement {
               Card description. Lorem ipsum dolor sit amet, consectetur elit adipiscing
             </p>
 
-            <div class="cardActions">
+            <div class="card-actions">
               <fast-button appearance="lightweight">View</fast-button>
             </div>
           </fast-card>
@@ -143,7 +143,7 @@ export class ResourceHub extends LitElement {
               Card description. Lorem ipsum dolor sit amet, consectetur elit adipiscing
             </p>
 
-            <div class="cardActions">
+            <div class="card-actions">
               <fast-button appearance="lightweight">View</fast-button>
             </div>
           </fast-card>
@@ -156,13 +156,13 @@ export class ResourceHub extends LitElement {
               Card description. Lorem ipsum dolor sit amet, consectetur elit adipiscing
             </p>
 
-            <div class="cardActions">
+            <div class="card-actions">
               <fast-button appearance="lightweight">View</fast-button>
             </div>
           </fast-card>
         </div>
 
-        <div id="resourceHubActions">
+        <div id="resource-hub-actions">
           <fast-button>View all resources</fast-button>
         </div>
       </section>
