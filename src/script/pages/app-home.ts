@@ -28,7 +28,7 @@ export class AppHome extends LitElement {
         font-size: 16px;
         line-height: 24px;
         letter-spacing: -0.015em;
-        color: #A6A4A4;
+        color: #000000 50%;
         max-width: 406px;
       }
 
@@ -49,7 +49,7 @@ export class AppHome extends LitElement {
 
       .intro-grid-item p {
         margin-top: 0;
-        color: #A6A4A4;
+        color: #000000 50%;
       }
 
       #input-form {
@@ -76,6 +76,12 @@ export class AppHome extends LitElement {
       #input-form fast-text-field::part(root) {
         border: 1.93407px solid #E5E5E5;
         border-radius: var(--input-radius);
+      }
+
+      @media(max-width: 542px) {
+        content-header::part(main-container) {
+          padding-top: initial;
+        }
       }
     `;
   }

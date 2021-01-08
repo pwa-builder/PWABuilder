@@ -25,7 +25,6 @@ export class AppHeader extends LitElement {
       }
 
       nav {
-        width: 9em;
         display: flex;
         justify-content: space-between;
       }
@@ -42,6 +41,13 @@ export class AppHeader extends LitElement {
           color: black;
         }
       }
+
+      @media(max-width: 542px) {
+        header {
+          padding-left: 16px;
+        }
+      }
+
     `;
   }
 

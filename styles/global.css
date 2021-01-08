@@ -4,7 +4,7 @@
 */
 :root {
   --font-family: sans-serif;
-  --font-color: #4F4F4F;
+  --font-color: #333E49;
   --primary-background-color: white;
   --primary-color: #292C3A;
 
@@ -15,6 +15,10 @@
   --button-radius: 44px;
 
   --input-radius: 8px;
+
+  --laptop-width: 1280px;
+  --tablet-width: 1024px;
+  --phone-width: 542px;
 }
 
 html,
