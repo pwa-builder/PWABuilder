@@ -28,7 +28,7 @@ export class AppHome extends LitElement {
         font-size: 16px;
         line-height: 24px;
         letter-spacing: -0.015em;
-        color: #000000 50%;
+        color: var(--secondary-font-color);
         max-width: 406px;
       }
 
@@ -49,7 +49,7 @@ export class AppHome extends LitElement {
 
       .intro-grid-item p {
         margin-top: 0;
-        color: #000000 50%;
+        color: var(--secondary-font-color);
       }
 
       #input-form {
