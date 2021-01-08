@@ -1,6 +1,6 @@
 import { ActionTree, MutationTree, GetterTree, ActionContext } from 'vuex';
 import { RootState } from 'store';
-import { Manifest, ShortcutItem } from './generator';
+import { Manifest, ShareTarget, ShortcutItem } from './generator';
 
 const apiUrl = `${process.env.apiUrl}/manifests`;
 const platforms = {
@@ -99,8 +99,21 @@ export interface AndroidApkOptions {
   enableNotifications: boolean;
   enableSiteSettingsShortcut: boolean;
   fallbackType: "customtabs" | "webview";
-  features?: {
-    appsFlyer?: unknown;
+  features: {
+    appsFlyer?: {
+      enabled: boolean;
+      appsFlyerId: string;
+    };
+    locationDelegation?: { 
+      enabled: boolean; 
+    };
+    playBilling?: { 
+      enabled: boolean; 
+    };
+    firstRunFlag?: { 
+      enabled: boolean;
+      queryParameterName: string;
+    };
   }
   host: string;
   iconUrl: string;
@@ -114,7 +127,9 @@ export interface AndroidApkOptions {
   navigationColorDark: string;
   navigationDividerColor: string;
   navigationDividerColorDark: string;
+  orientation: "default" | "any" | "natural" | "landscape" | "portrait" | "portrait-primary" | "portrait-secondary" | "landscape-primary" | "landscape-secondary";
   packageId: string;
+  shareTarget?: ShareTarget;
   shortcuts: ShortcutItem[];
   signing: AndroidSigningOptions | null;
   signingMode: "new" | "none" | "mine";
