@@ -1,11 +1,23 @@
 import { LitElement, css, html, customElement } from 'lit-element';
 
+import './app-header';
+
 @customElement('content-header')
 export class ContentHeader extends LitElement {
 
   static get styles() {
     return css`
-      
+      :host {
+      }
+
+      #mainContainer {
+        display: flex;
+        align-items: center;
+      }
+
+      img {
+        margin-left: 30px;
+      }
     `;
   }
 
@@ -15,10 +27,23 @@ export class ContentHeader extends LitElement {
 
   render() {
     return html`
-      <section>
-        <h2>Transform your website to an app at lightning speed!</h2>
-        <p>Ready to build your PWA? Tap "Build My PWA" to package your PWA for the app stores or tap "Feature Store".</p>
-      </section>
+      <app-header></app-header>
+
+      <div part="mainContainer" id="mainContainer">
+        <section id="contentSide">
+          <div id="heroContainer">
+            <slot name="heroContainer"></slot>
+          </div>
+
+          <slot name="gridContainer"></slot>
+
+          <slot name="inputContainer"></slot>
+        </section>
+
+        <section>
+          <img src="/assets/images/pwab3d.png" alt="3d version of the PWABuilder logo">
+        </section>
+      </div>
     `;
   }
 }

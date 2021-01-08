@@ -10,11 +10,11 @@ export class AppHeader extends LitElement {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding-left: 16px;
+        padding-left: 41px;
         padding-right: 16px;
-        background: var(--app-color-primary);
+        background: transparent;
         color: white;
-        height: 4em;
+        height: 71px;
       }
 
       header h1 {
@@ -30,8 +30,11 @@ export class AppHeader extends LitElement {
         justify-content: space-between;
       }
 
-      nav fast-anchor {
-        margin-left: 10px;
+      nav fast-anchor::part(control) {
+        color: var(--font-color);
+        text-decoration: none;
+        border-bottom: none;
+        font-weight: var(--font-bold);
       }
 
       @media(prefers-color-scheme: light) {
@@ -52,8 +55,7 @@ export class AppHeader extends LitElement {
         <img id="headerIcon" src="/assets/images/header_logo.png" alt="header logo">
 
         <nav>
-          <fast-anchor href="./" appearance="button">Home</fast-anchor>
-          <fast-anchor href="./about" appearance="button">About</fast-anchor>
+          <fast-anchor appearance="hypertext" href="./about">Resources</fast-anchor>
         </nav>
       </header>
     `;

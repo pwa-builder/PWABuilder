@@ -4,25 +4,32 @@
 */
 :root {
   --font-family: sans-serif;
+  --font-color: #4F4F4F;
+  --primary-background-color: white;
+  --primary-color: #292C3A;
+
+  --font-bold: 700;
+  --font-medium: 400;
 }
 
 html,
 body {
   font-family: var(--font-family);
+  color: var(--font-color);
   padding: 0;
   margin: 0;
-  background: #edebe9;
+  background: var(--primary-background-color);
 }
 
 fast-design-system-provider {
-  color: black;
-  --background-color: #edebe9;
+  color: var(--font-color);
+  --background-color: var(--primary-background-color);
   --neutral-foreground-rest: #e5e5e5;
-  --neutral-fill-input-rest: #e5e5e5;
+  --neutral-fill-input-rest: white;
   --neutral-fill-input-hover: white;
   --neutral-fill-stealth-rest: #e5e5e5;
 
-  --neutral-fill-rest: #5d5d5d;
+  --neutral-fill-rest: var(--primary-color);
 
   --neutral-fill-input-active: #e5e5e5;
 }
