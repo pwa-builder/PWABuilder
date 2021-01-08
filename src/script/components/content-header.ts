@@ -13,6 +13,8 @@ export class ContentHeader extends LitElement {
       #mainContainer {
         display: flex;
         align-items: center;
+        
+        padding-bottom: 91px;
       }
 
       img {
