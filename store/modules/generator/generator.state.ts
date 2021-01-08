@@ -5,7 +5,7 @@ export interface Manifest {
   display: string;
   lang: string | null;
   name: string | null;
-  orientation?: string | null;
+  orientation?: "any" | "natural" | "landscape" | "portrait" | "portrait-primary" | "portrait-secondary" | "landscape-primary" | "landscape-secondary" | null;
   prefer_related_applications?: boolean;
   related_applications?: RelatedApplication[];
   scope: string | null;
@@ -19,6 +19,7 @@ export interface Manifest {
   screenshots?: Icon[];
   iarc_rating_id?: string;
   icons?: Icon[];
+  share_target?: ShareTarget;
 }
 
 export interface ShortcutItem {
@@ -59,6 +60,25 @@ export interface RelatedApplication {
   id?: string | null;
   min_version?: string | null;
   fingerprints?: Fingerprint[];
+}
+
+export interface ShareTargetParams {
+  title?: string;
+  text?: string;
+  url?: string;
+  files?: FilesParams[];
+}
+
+export interface FilesParams {
+  name: string;
+  accept: string[];
+}
+
+export interface ShareTarget {
+  action?: string;
+  method?: string;
+  enctype?: string;
+  params?: ShareTargetParams;
 }
 
 export interface CustomMember {
