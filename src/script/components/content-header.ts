@@ -9,7 +9,7 @@ export class ContentHeader extends LitElement {
     return css`
       :host {
         display: block;
-        background: url(/assets/images/background-copy.png);
+        background: url(/assets/images/background-copy.webp);
       }
 
       #main-container {
