@@ -64,7 +64,8 @@ export class AppHome extends LitElement {
 
       #input-form fast-button {
         flex: 0.2;
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.24);
+        box-shadow: var(--button-shadow);
+        border-radius: var(--button-radius);
       }
 
       #input-form fast-button::part(control) {
@@ -74,7 +75,7 @@ export class AppHome extends LitElement {
 
       #input-form fast-text-field::part(root) {
         border: 1.93407px solid #E5E5E5;
-        border-radius: 3px;
+        border-radius: var(--input-radius);
       }
     `;
   }

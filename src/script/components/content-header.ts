@@ -8,6 +8,10 @@ export class ContentHeader extends LitElement {
   static get styles() {
     return css`
       :host {
+        display: block;
+        background: url(/assets/images/background-copy.png);
+        opacity: 0.6;
+        transform: rotate(-180deg);
       }
 
       #main-container {
@@ -19,6 +23,8 @@ export class ContentHeader extends LitElement {
 
       img {
         margin-left: 30px;
+        height: 389px;
+        width: 369px;
       }
     `;
   }
