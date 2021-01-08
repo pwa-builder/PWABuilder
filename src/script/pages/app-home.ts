@@ -28,7 +28,7 @@ export class AppHome extends LitElement {
         font-size: 16px;
         line-height: 24px;
         letter-spacing: -0.015em;
-        color: #A6A4A4;
+        color: var(--secondary-font-color);
         max-width: 406px;
       }
 
@@ -49,7 +49,7 @@ export class AppHome extends LitElement {
 
       .intro-grid-item p {
         margin-top: 0;
-        color: #A6A4A4;
+        color: var(--secondary-font-color);
       }
 
       #input-form {
@@ -64,7 +64,8 @@ export class AppHome extends LitElement {
 
       #input-form fast-button {
         flex: 0.2;
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.24);
+        box-shadow: var(--button-shadow);
+        border-radius: var(--button-radius);
       }
 
       #input-form fast-button::part(control) {
@@ -74,7 +75,13 @@ export class AppHome extends LitElement {
 
       #input-form fast-text-field::part(root) {
         border: 1.93407px solid #E5E5E5;
-        border-radius: 3px;
+        border-radius: var(--input-radius);
+      }
+
+      @media(max-width: 542px) {
+        content-header::part(main-container) {
+          padding-top: initial;
+        }
       }
     `;
   }

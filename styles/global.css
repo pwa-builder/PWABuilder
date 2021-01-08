@@ -4,12 +4,18 @@
 */
 :root {
   --font-family: sans-serif;
-  --font-color: #4F4F4F;
+  --font-color: #333E49;
+  --secondary-font-color: #000000 50%;
   --primary-background-color: white;
   --primary-color: #292C3A;
 
   --font-bold: 700;
   --font-medium: 400;
+
+  --button-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
+  --button-radius: 44px;
+
+  --input-radius: 8px;
 }
 
 html,
