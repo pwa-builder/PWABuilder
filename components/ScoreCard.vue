@@ -37,7 +37,9 @@
       
     </div>
 
-    <div class="cardEditBlock" v-html="footerContent">
+    <div class="cardEditBlock">
+      <span v-html="footerContent"></span>
+      <nuxt-link v-if="footerNavUrl && footerNavContent" :to="footerNavUrl" v-html="footerNavContent"></nuxt-link>
     </div>
   </div>
 </template>
@@ -63,7 +65,8 @@ export default class extends Vue {
 
   @Prop() public category: string;
   @Prop() public footerContent: string | null;
-  @Prop() public footerUrl: string | null;
+  @Prop() public footerNavUrl: string | null;
+  @Prop() public footerNavContent: string | null;
   @Prop() public url: string;
   @Prop() public metrics: ScoreCardMetric[];
   

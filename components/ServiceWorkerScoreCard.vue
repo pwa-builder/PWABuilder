@@ -4,6 +4,8 @@
     :metrics="serviceWorkerMetrics"
     :category="'Service worker'"
     :footerContent="chooseServiceWorkerContent"
+    :footerNavUrl="'/serviceworker'"
+    :footerNavContent="serviceWorkerLinkContent"
     v-on:all-checks-complete="$emit('all-checks-complete', $event)"
     class="scoreCard"
   ></ScoreCard>
@@ -72,11 +74,25 @@ export default class extends Vue {
       this.serviceWorkerData.serviceWorkerDetectionTimedOut
     ) {
       return `<i class='fas fa-exclamation-circle'></i> We couldn't detect a service worker.
-              <a href='https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorker'>Learn more about service workers</a>, or
-              <a href='/serviceworker'><i class="fas fa-bolt"></i> choose a service worker recipe</a>.`;
+              <a href='https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorker'>Learn more about service workers</a>, or&nbsp;`;
     }
 
-    return `<a href='/serviceworker'><i class="fas fa-bolt"></i> Browse service worker recipes</a>`;
+    return "";
+  }
+
+  get serviceWorkerLinkContent(): string {
+    if (!this.serviceWorkerLoadFinished) {
+      return "";
+    }
+    
+    if (
+      !this.serviceWorkerData ||
+      this.serviceWorkerData.serviceWorkerDetectionTimedOut
+    ) {
+      return `<i class="fas fa-bolt"></i> choose a service worker recipe`;
+    }
+
+    return `<i class="fas fa-bolt"></i> Browse service worker recipes`;
   }
 
   created() {

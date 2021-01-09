@@ -305,7 +305,7 @@ export default class extends Vue {
       sessionStorage.setItem("currentURL", this.url);
     }
 
-    if ((window as any).CSS && (window as any).CSS.registerProperty) {
+    if ((window as any).CSS && (window as any).CSS.registerProperty ) {
       try {
         (CSS as any).registerProperty({
           name: "--color-stop-hub",

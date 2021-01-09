@@ -44,7 +44,7 @@
     "skip_description": "If you already have the Manifest and want to download the service worker source code you can skip the first step."
   },
   "generate": {
-    "subtitle": "Your W3C Manifest",
+    "subtitle": "Your Web Manifest",
     "instructions": "You can use our tools to enhance your manifest, and download or copy the results for your site.",
     "name": "Name",
     "short_name": "Short Name",
