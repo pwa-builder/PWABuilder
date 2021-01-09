@@ -1,7 +1,5 @@
 import { unsafeCSS, CSSResult } from 'lit-element';
 
-const constructionToken = Symbol();
-
 export function smallBreakPoint(styles: CSSResult) {
   return unsafeCSS(`
     @media screen and (max-width: 479px) {
