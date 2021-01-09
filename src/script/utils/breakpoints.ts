@@ -1,51 +1,68 @@
-import { unsafeCSS, CSSResult } from 'lit-element';
+import { css, unsafeCSS, CSSResult } from 'lit-element'
 
-const constructionToken = Symbol();
+const constructionToken = Symbol()
 
-export function smallBreakPoint(styles: CSSResult) {
-  return unsafeCSS(`
+export function smallBreakPoint(template: TemplateStringsArray, ...values: (CSSResult | number)[]) {
+  return css`
     @media screen and (max-width: 479px) {
-      ${styles}
+      ${reducer(template, ...values)}
     }
-  `);
+  `
 }
 
-export function mediumBreakPoint(styles: CSSResult) {
-  return unsafeCSS(`
+export function mediumBreakPoint(template: TemplateStringsArray, ...values: (CSSResult|number)[]) {
+  return css`
     @media screen and (min-width: 480px) and (max-width: 639px) {
-      ${styles}
+      ${reducer(template, ...values)}
     }
-  `);
+  `
 }
 
-export function largeBreakPoint(styles: CSSResult) {
-  return unsafeCSS(`
+export function largeBreakPoint(template: TemplateStringsArray, ...values: (CSSResult|number)[]) {
+  return css`
     @media screen and (min-width: 640px) and (max-width: 1023px) {
-      ${styles}
+      ${reducer(template, ...values)}
     }
-  `);
+  `
 }
 
-export function xLargeBreakPoint(styles: CSSResult) {
-  return unsafeCSS(`
+export function xLargeBreakPoint(template: TemplateStringsArray, ...values: (CSSResult|number)[]) {
+  return css`
     @media screen and (min-width: 1024px) and (max-width: 1365px) {
-      ${styles}
+      ${reducer(template, ...values)}
     }
-  `);
+  `
 }
 
-export function xxLargeBreakPoint(styles: CSSResult) {
-  return unsafeCSS(`
+export function xxLargeBreakPoint(template: TemplateStringsArray, ...values: (CSSResult|number)[]) {
+  return css`
     @media screen and (min-width: 1366px) and (max-width: 1919px) {
-      ${styles}
+      ${reducer(template, ...values)}
     }
-  `);
+  `
 }
 
-export function xxxLargeBreakPoint(styles: CSSResult) {
-  return unsafeCSS(`
+export function xxxLargeBreakPoint(template: TemplateStringsArray, ...values: (CSSResult|number)[]) {
+  return css`
     @media screen and (min-width: 1920px) {
-      ${styles}
+      ${reducer(template, ...values)}
     }
-  `);
+  `
+}
+
+function reducer(template: TemplateStringsArray, ...values: (CSSResult | number)[]) {
+  return unsafeCSS(values.reduce(
+    (acc, v, idx) => acc + templateText(v) + template[idx + 1],
+    template[0]
+  ));
+}
+
+function templateText(value: CSSResult | number) {
+  if (value instanceof CSSResult) {
+    return value.cssText
+  } else if (typeof value === "number") {
+    return String(value)
+  } else {
+    throw Error("Unsafe usage of template literal")
+  }
 }
