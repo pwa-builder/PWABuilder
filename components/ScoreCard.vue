@@ -37,7 +37,10 @@
       
     </div>
 
-    <div class="cardEditBlock" v-html="footerContent"></div>
+    <div class="cardEditBlock">
+      <span v-html="footerContent"></span>
+      <nuxt-link v-if="footerNavUrl && footerNavContent" :to="footerNavUrl" v-html="footerNavContent"></nuxt-link>
+    </div>
   </div>
 </template>
 
@@ -49,7 +52,6 @@ import { Action, State, namespace } from "vuex-class";
 
 import * as generator from "~/store/modules/generator";
 import { ScoreCardCheckCompletedEvent, ScoreCardMetric } from "~/utils/score-card-metric";
-import nuxtConfig from "nuxt.config";
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorAction = namespace(generator.name, Action);
@@ -63,7 +65,8 @@ export default class extends Vue {
 
   @Prop() public category: string;
   @Prop() public footerContent: string | null;
-  @Prop() public footerUrl: string | null;
+  @Prop() public footerNavUrl: string | null;
+  @Prop() public footerNavContent: string | null;
   @Prop() public url: string;
   @Prop() public metrics: ScoreCardMetric[];
   
@@ -84,22 +87,6 @@ export default class extends Vue {
 
     // For each metric, override its status function to check if the tests are done.
     this.metrics.forEach(m => m.statusChanged = () => this.checkForCompleted());
-
-    // The footer of the card may contain links into the app, e.g. /generate.
-    // However, Nuxt doesn't see these as nav links. So we have to handle those specially here.
-    const cardEditorLinks = document.querySelectorAll(".cardEditBlock a");
-    cardEditorLinks.forEach(i => {
-      const href = i.getAttribute("href");
-      if (href && href.startsWith("/")) {
-        i.addEventListener("click", (e) => {
-          e.preventDefault();
-          console.log("zanz navigating to", href);
-          setTimeout(() => this.$router.push({
-            name: "generate"
-          }), 3000);
-        });
-      }
-    });
   }
 
   get currentScore(): number {

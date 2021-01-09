@@ -4,6 +4,8 @@
     :metrics="manifestMetrics"
     :category="'Manifest'"
     :footerContent="editManifestContent"
+    :footerNavUrl="'/generate'"
+    :footerNavContent="editManifestLinkContent"
     v-on:all-checks-complete="$emit('all-checks-complete', $event)"
     id="firstCard"
     class="scoreCard"
@@ -11,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import Vue, { VNode } from "vue";
+import Vue from "vue";
 import ScoreCard from "~/components/ScoreCard.vue";
 import Component from "nuxt-class-component";
 import {
@@ -163,14 +165,23 @@ export default class extends Vue {
 
     if (!this.manifest || this.noManifest) {
       return `<i class="fas fa-exclamation-circle"></i> We couldn't detect a web manifest.
-              <a href='https://developer.mozilla.org/en-US/docs/Web/Manifest'>Learn more about manifests</a>, 
-              or <a href='/generate'><i class="fas fa-magic"></i> create a new one</a>.`;
+              <a href='https://developer.mozilla.org/en-US/docs/Web/Manifest'>Learn more about manifests</a>, or&nbsp;`;
+    }
+
+    return "";
+  }
+
+  get editManifestLinkContent(): string {
+    if (!this.manifestLoadFinished) {
+      return "";
+    }
+
+    if (!this.manifest || this.noManifest) {
+      return `<i class="fas fa-magic"></i> create a new one`;
     }
 
     if (this.manifest) {      
-      //return `<nuxt-link to="/generate" tabindex="-1"><i class='far fa-edit'></i> Edit your manifest</nuxt-link>`;
-      //return  `<router-link to="/generate" tabindex="-1"><i class='far fa-edit'></i> Edit your manifest</router-link>`;
-      return `<a href='/generate'><i class='far fa-edit'></i> Edit your manifest</a>`;
+      return `<i class='far fa-edit'></i> Edit your manifest`;
     }
 
     return "";
@@ -202,6 +213,7 @@ export default class extends Vue {
   }
 
   private async updateCaches(manifest: Manifest) {
+    this.updateManifest(manifest);
     await setCache("manifest", this.url, manifest);
 
     this.noManifest = false;
