@@ -14,10 +14,6 @@ export class ResourceHub extends LitElement {
   @property({ attribute: 'page', type: String }) pageName: ResourceHubPages =
     'home';
 
-  @property({ attribute: 'all', type: Boolean }) showViewAllButton = false;
-  @property({ attribute: 'page', type: String }) pageName: ResourceHubPages =
-    'home';
-
   static get styles() {
     return css`
       :host {
@@ -200,5 +196,7 @@ export class ResourceHub extends LitElement {
         </div>
       `;
     }
+
+    return undefined;
   }
 }
