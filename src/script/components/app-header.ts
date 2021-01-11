@@ -1,5 +1,10 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
 
+import {
+  mediumBreakPoint,
+  smallBreakPoint,
+} from '../utils/breakpoints';
+
 @customElement('app-header')
 export class AppHeader extends LitElement {
   @property({ type: String }) title = 'PWABuilder';
@@ -42,10 +47,18 @@ export class AppHeader extends LitElement {
         }
       }
 
-      @media(max-width: 542px) {
-        header {
-          padding-left: 16px;
-        }
+      ${
+        smallBreakPoint(css`
+          header {
+            padding-left: 16px;
+          }
+        `),
+
+        mediumBreakPoint(css`
+          header {
+            padding-left: 16px;
+          }
+        `)
       }
 
     `;

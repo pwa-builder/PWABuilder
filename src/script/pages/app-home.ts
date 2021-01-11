@@ -1,5 +1,7 @@
 import { LitElement, css, html, customElement } from 'lit-element';
 
+import { mediumBreakPoint } from '../utils/breakpoints';
+
 import '../components/content-header';
 import '../components/resource-hub';
 
@@ -78,11 +80,11 @@ export class AppHome extends LitElement {
         border-radius: var(--input-radius);
       }
 
-      @media(max-width: 542px) {
+      ${mediumBreakPoint(css`
         content-header::part(main-container) {
           padding-top: initial;
         }
-      }
+      `)}
     `;
   }
 
