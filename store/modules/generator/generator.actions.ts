@@ -20,7 +20,7 @@ export interface Actions<S, R> extends ActionTree<S, R> {
   updateManifest(context: ActionContext<S, R>, manifest: Manifest): void;
   updateLinkFromStorage(context: ActionContext<S, R>, url: string): void;
   updateLink(context: ActionContext<S, R>, url: string): void;
-  getManifestInformation(context: ActionContext<S, R>): Promise<void>;
+  getManifestInformation(context: ActionContext<S, R>): Promise<Manifest>;
   removeIcon(context: ActionContext<S, R>, icon: Icon): void;
   resetStates(context: ActionContext<S, R>): void;
   addIconFromUrl(context: ActionContext<S, R>, newIconSrc: string): void;
@@ -139,16 +139,16 @@ export const actions: Actions<State, RootState> = {
     commit(types.UPDATE_LINK, url);
   },
 
-  async getManifestInformation({ commit, state, rootState }): Promise<void> {
+  async getManifestInformation({ commit, state, rootState }): Promise<Manifest> {
     if (!state.url) {
       throw 'error.url_empty';
     }
     if (state.manifest && state.manifest.url === state.url) {
-      return;
+      return state.manifest;
     }
     
     try {
-      const manifest: any = state.manifest;
+      const manifest = state.manifest;
 
       if (manifest && rootState.generator.manifest) {
         // Fix common issues with the manifest
@@ -188,13 +188,14 @@ export const actions: Actions<State, RootState> = {
           ? rootState.orientations[0].name
           : '',
       });
-      return;
+      
+      return result.content;
     } catch (e) {
       if (e.response && e.response.data) {
         let errorMessage = e.response.data
           ? e.response.data.error
           : e.response.data || e.response.statusText;
-        throw errorMessage;
+        throw new Error(errorMessage);
       }
 
       throw e;

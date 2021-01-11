@@ -131,9 +131,19 @@ export default class extends Vue {
         });
       } else {
         const responseText = await response.text();
-        this.showErrorMessage(
-          `Error generating Android package.\n\nStatus code: ${response.status}\n\nError: ${response.statusText}\n\nDetails: ${responseText}`
-        );
+        
+        // Did it fail because images couldn't be fetched with ECONNREFUSED? E.g. https://github.com/pwa-builder/PWABuilder/issues/1312
+        // If so, retry using our downloader proxy service.
+        const hasSafeImages = this.androidOptions.iconUrl && this.androidOptions.iconUrl.includes(process.env.safeUrlFetcher || "");
+        if (!hasSafeImages && responseText && responseText.includes("ECONNREFUSED")) {
+          console.warn("Android package generation failed with ECONNREFUSED. Retrying with safe images.", responseText);
+          this.updateAndroidOptionsWithSafeUrls(this.androidOptions);
+          await this.generateAndroidPackage();
+        } else {
+          this.showErrorMessage(
+            `Error generating Android package.\n\nStatus code: ${response.status}\n\nError: ${response.statusText}\n\nDetails: ${responseText}`
+          );
+        }
       }
     } catch (err) {
       this.showErrorMessage(
@@ -193,6 +203,66 @@ export default class extends Vue {
     }
   }
 
+  public async generateMacOSPackage() {
+    this.message$ = 'Generating...';
+    this.isReady = false;
+    try {
+      const response = await fetch(`${process.env.macosPackageGeneratorUrl}?siteUrl=${this.siteHref}`, {
+        method: "POST",
+        body: JSON.stringify(this.manifest),
+        headers: new Headers({
+          "content-type": "application/json"
+        })
+      });
+      if (response.status === 200) {
+        const data = await response.blob();
+        const url = window.URL.createObjectURL(data);
+        window.location.assign(url);
+        setTimeout(() => (this.isReady = true), 3000);
+      } else {
+        const responseText = await response.text();
+        this.showErrorMessage(
+          `Failed. Status code ${response.status}, Error: ${response.statusText}, Details: ${responseText}`
+        )
+      }
+    } catch (error) {
+      this.showErrorMessage("Failed. Error: " + error);
+      this.message$ = this.message;
+    } finally {
+      this.isReady = true;
+    }
+  }
+
+  public async generateWebPackage() {
+    this.message$ = "Generating...";
+    this.isReady = false;
+    try {
+      const response = await fetch(`${process.env.webPackageGeneratorUrl}?siteUrl=${this.siteHref}&hasServiceWorker=${false}`, {
+        method: "POST",
+        body: JSON.stringify(this.manifest),
+        headers: new Headers({
+          "content-type": "application/json"
+        })
+      });
+      if (response.status === 200) {
+        const data = await response.blob();
+        const url = window.URL.createObjectURL(data);
+        window.location.assign(url);
+        setTimeout(() => (this.isReady = true), 3000);
+      } else {
+        const responseText = await response.text();
+        this.showErrorMessage(
+          `Failed. Status code ${response.status}, Error: ${response.statusText}, Details: ${responseText}`
+        )
+      }
+    } catch (error) {
+      this.showErrorMessage("Failed. Error: " + error);
+      this.message$ = this.message;
+    } finally {
+      this.isReady = true;
+    }
+  }
+
   public async buildArchive(
     platform: string,
     parameters: string[]
@@ -201,12 +271,16 @@ export default class extends Vue {
       return;
     }
 
-    if (platform === "androidTWA") {
+    if (platform === "web") {
+      await this.generateWebPackage();
+    } else if (platform === "androidTWA") {
       await this.generateAndroidPackage();
     } else if (platform === "windows10") {
       await this.generateWindowsPackage("spartan");
     } else if (platform === "windows10new") {
       await this.generateWindowsPackage("anaheim");
+    } else if (platform === "macos") {
+      await this.generateMacOSPackage();
     } else {
       try {
         this.isReady = false;
@@ -251,6 +325,24 @@ export default class extends Vue {
       detail: errorMessage,
       platform: this.platform,
     });
+  }
+
+  private updateAndroidOptionsWithSafeUrls(options: publish.AndroidApkOptions): publish.AndroidApkOptions {
+    const absoluteUrlProps: Array<keyof publish.AndroidApkOptions> = [
+      "maskableIconUrl",
+      "monochromeIconUrl",
+      "iconUrl",
+      "webManifestUrl",
+    ];
+    for (let prop of absoluteUrlProps) {
+      const url = options[prop];
+      if (url && typeof url === "string") {
+        const safeUrl = `${process.env.safeUrlFetcher}?url=${encodeURIComponent(url)}`;
+        (options as any)[prop] = safeUrl;
+      }
+    }
+
+    return options;
   }
 }
 

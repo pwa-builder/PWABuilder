@@ -10,7 +10,7 @@
         </header>
 
         <div id="inputSection">
-          <form @submit.prevent="download" @keydown.enter.prevent="download" role="radiogroup">
+          <form id="swPickerForm" @submit.prevent="download" @keydown.enter.prevent="download" role="radiogroup">
             <div
               class="inputContainer"
               v-for="sw in serviceworkers"
@@ -221,7 +221,10 @@ export default class extends Vue {
     try {
       if (this.serviceworker$) {
         const cleanedSW = this.serviceworker$.toString();
-        await this.downloadServiceWorker(cleanedSW);
+
+        if (cleanedSW) {
+          await this.downloadServiceWorker(cleanedSW);
+        }
 
         const overrideValues = {
           uri: window.location.href,
@@ -234,12 +237,6 @@ export default class extends Vue {
     } catch (e) {
       console.error(e);
       this.error = e;
-    }
-
-    if (this.archive) {
-      window.location.href = this.archive;
-    } else {
-      console.error("no archive");
     }
 
     this.isBuilding = false;
@@ -293,6 +290,10 @@ Vue.prototype.$awa = function(config) {
 /* stylelint-disable */
 
 @import "~assets/scss/base/variables";
+
+#swPickerForm {
+  min-height: 80vh;
+}
 
 footer {
   display: flex;
