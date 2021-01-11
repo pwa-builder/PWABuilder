@@ -1,6 +1,6 @@
 import { LitElement, css, html, customElement } from 'lit-element';
 
-import { mediumBreakPoint } from '../utils/breakpoints';
+import { smallBreakPoint, mediumBreakPoint } from '../utils/breakpoints';
 
 import '../components/content-header';
 import '../components/resource-hub';
@@ -80,9 +80,33 @@ export class AppHome extends LitElement {
         border-radius: var(--input-radius);
       }
 
+      ${smallBreakPoint(css`
+        content-header::part(main-container) {
+          padding-top: initial;
+        }
+
+        content-header::part(grid-container) {
+          display: none;
+        }
+
+        h2 {
+          font-size: 32px;
+          line-height: 34px;
+          margin-top: 0;
+        }
+
+        #hero-p {
+          line-height: 22px;
+        }
+      `)}
+
       ${mediumBreakPoint(css`
         content-header::part(main-container) {
           padding-top: initial;
+        }
+
+        content-header::part(grid-container) {
+          display: none;
         }
       `)}
     `;

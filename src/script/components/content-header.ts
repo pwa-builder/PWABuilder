@@ -29,11 +29,14 @@ export class ContentHeader extends LitElement {
 
       ${smallBreakPoint(css`
         #main-container {
-          flex-direction: column;
+          flex-direction: column-reverse;
         }
 
         img {
-          margin-top: 2em;
+          margin-left: 0;
+          width: 294px;
+          height: 294px;
+          margin-top: 16px;
         }
 
         #content-side {
@@ -44,6 +47,10 @@ export class ContentHeader extends LitElement {
           padding-top: initial;
         }
 
+        #hero-container {
+          text-align: center;
+        }
+
         ::slotted(ul) {
           grid-gap: 10px;
         }
@@ -51,11 +58,14 @@ export class ContentHeader extends LitElement {
 
       ${mediumBreakPoint(css`
         #main-container {
-          flex-direction: column;
+          flex-direction: column-reverse;
         }
 
         img {
-          margin-top: 2em;
+          margin-left: 0;
+          width: 294px;
+          height: 294px;
+          margin-top: 16px;
         }
 
         #content-side {

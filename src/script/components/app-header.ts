@@ -52,8 +52,10 @@ export class AppHeader extends LitElement {
           header {
             padding-left: 16px;
           }
-        `),
+        `)
+      }
 
+      ${
         mediumBreakPoint(css`
           header {
             padding-left: 16px;
