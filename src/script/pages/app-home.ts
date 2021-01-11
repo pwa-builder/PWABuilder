@@ -134,7 +134,10 @@ export class AppHome extends LitElement {
         </form>
       </content-header>
 
-      <resource-hub></resource-hub>
+      <resource-hub page="home" all>
+        <h2 slot="header">PWABuilder Resource Hub</h2>
+        <p slot="description">Ready to build your PWA? Tap "Build My PWA" to package your PWA for the app stores or tap "Feature Store" to check out the latest web components from the PWABuilder team to improve your PWA even further!</p>
+      </resource-hub>
     `;
   }
 }

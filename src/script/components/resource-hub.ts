@@ -1,7 +1,18 @@
-import { LitElement, css, html, customElement } from 'lit-element';
+import { LitElement, css, html, customElement, property } from 'lit-element';
+import { completeCards, landingCards } from './resource-hub-cards';
+import {
+  largeBreakPoint,
+  mediumBreakPoint,
+  smallBreakPoint,
+} from '../utils/breakpoints';
+
+type ResourceHubPages = 'home' | 'complete';
 
 @customElement('resource-hub')
 export class ResourceHub extends LitElement {
+  @property({ attribute: 'all', type: Boolean }) showViewAllButton = false;
+  @property({ attribute: 'page', type: String }) pageName: ResourceHubPages =
+    'home';
 
   static get styles() {
     return css`
@@ -10,7 +21,11 @@ export class ResourceHub extends LitElement {
         display: flex;
         color: white;
       }
-      
+
+      ::slotted(h2) {
+        margin: 0;
+      }
+
       #resource-header {
         display: flex;
         flex-direction: column;
@@ -20,7 +35,7 @@ export class ResourceHub extends LitElement {
         padding-right: 4em;
       }
 
-      #resource-header h4 {
+      #resource-header h2 {
         font-weight: var(--font-bold);
 
         font-size: 36px;
@@ -38,17 +53,15 @@ export class ResourceHub extends LitElement {
         display: flex;
         padding-left: 4em;
         padding-right: 4em;
-        margin-top: 2em
+        margin-top: 1em;
       }
 
       #cards fast-card {
-        padding-left: 16px;
-        padding-right: 16px;
         padding-bottom: 16px;
         margin-right: 12px;
         margin-left: 12px;
 
-        color: black;
+        color: var(--font-color);
         background: white;
       }
 
@@ -59,20 +72,30 @@ export class ResourceHub extends LitElement {
       }
 
       fast-card h3 {
-        font-size: 22px;
+        font-size: 24px;
         line-height: 24px;
         font-weight: var(--font-bold);
+        margin: 16px 16px 0 16px;
       }
 
       fast-card p {
-        color: #A6A4A4;
+        color: var(--secondary-font-color);
+        margin: 8px 16px 0 16px;
+
+        font-size: 14px;
+        line-height: 20px;
+      }
+
+      .card-actions {
+        margin-top: 8px;
       }
 
       .card-actions fast-button::part(control) {
         font-weight: bold;
         font-size: 14px;
         line-height: 20px;
-        color: black;
+        color: #679bd5;
+        padding: 0 16px;
       }
 
       #resource-hub-actions {
@@ -80,19 +103,57 @@ export class ResourceHub extends LitElement {
         align-items: center;
         justify-content: center;
 
-        margin-top: 54px;
-        margin-bottom: 54px;
+        margin-top: 32px;
+        margin-bottom: 64px;
       }
 
       #resource-hub-actions fast-button {
         background: white;
-        color: black;
+        color: var(--font-color);
+        border-radius: 44px;
+        width: 188px;
       }
-      
+
       #resource-hub-actions fast-button::part(control) {
         font-size: 16px;
         font-weight: var(--font-bold);
       }
+
+      ${smallBreakPoint(css`
+        #cards {
+          flex-direction: column;
+          align-items: center;
+          padding: 0;
+        }
+
+        #cards fast-card {
+          margin-bottom: 16px;
+        }
+      `)}
+
+      ${mediumBreakPoint(css`
+        #cards {
+          flex-direction: column;
+          align-items: center;
+          padding: 0;
+        }
+
+        #cards fast-card {
+          margin-bottom: 16px;
+        }
+      `)}
+
+      ${largeBreakPoint(css`
+        #cards {
+          flex-direction: column;
+          align-items: center;
+          padding: 0;
+        }
+
+        #cards fast-card {
+          margin-bottom: 16px;
+        }
+      `)}
     `;
   }
 
@@ -104,68 +165,38 @@ export class ResourceHub extends LitElement {
     return html`
       <section>
         <div id="resource-header">
-          <h4>PWABuilder Resource Hub</h4>
-          <p>Ready to build your PWA? Tap "Build My PWA" to package your PWA for the app stores or tap "Feature Store" to check out the latest web components from the PWABuilder team to improve your PWA even further!</p>
+          <slot name="header"></slot>
+          <slot name="description"></slot>
         </div>
 
-        <div id="cards">
-          <fast-card>
-            <img src="/assets/icons/icon_120.png" alt="card header image">
-            <h3>Blog</h3>
+        <div id="cards">${this.renderCards()}</div>
 
-            <p>
-              Card description. Lorem ipsum dolor sit amet, consectetur elit adipiscing
-            </p>
+        ${this.renderViewAllButton()}
+      </section>
+    `;
+  }
 
-            <div class="card-actions">
-              <fast-button appearance="lightweight">View</fast-button>
-            </div>
-          </fast-card>
+  renderCards() {
+    if (this.pageName === 'home') {
+      return landingCards();
+    }
 
-          <fast-card>
-            <img src="/assets/icons/icon_120.png" alt="card header image">
-            <h3>Demos</h3>
+    if (this.pageName === 'complete') {
+      return completeCards();
+    }
 
-            <p>
-              Card description. Lorem ipsum dolor sit amet, consectetur elit adipiscing
-            </p>
+    return undefined;
+  }
 
-            <div class="card-actions">
-              <fast-button appearance="lightweight">View</fast-button>
-            </div>
-          </fast-card>
-
-          <fast-card>
-            <img src="/assets/icons/icon_120.png" alt="card header image">
-            <h3>Components</h3>
-
-            <p>
-              Card description. Lorem ipsum dolor sit amet, consectetur elit adipiscing
-            </p>
-
-            <div class="card-actions">
-              <fast-button appearance="lightweight">View</fast-button>
-            </div>
-          </fast-card>
-
-          <fast-card>
-            <img src="/assets/icons/icon_120.png" alt="card header image">
-            <h3>Documentation</h3>
-
-            <p>
-              Card description. Lorem ipsum dolor sit amet, consectetur elit adipiscing
-            </p>
-
-            <div class="card-actions">
-              <fast-button appearance="lightweight">View</fast-button>
-            </div>
-          </fast-card>
-        </div>
-
+  renderViewAllButton() {
+    if (this.showViewAllButton) {
+      return html`
         <div id="resource-hub-actions">
           <fast-button>View all resources</fast-button>
         </div>
-      </section>
-    `;
+      `;
+    }
+
+    return undefined;
   }
 }
