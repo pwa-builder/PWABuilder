@@ -1,6 +1,6 @@
 import { css, unsafeCSS, CSSResult } from 'lit-element';
 
-enum BreakpointValues {
+export enum BreakpointValues {
   smallUpper = 479,
   mediumLower = 480,
   mediumUpper = 639,
