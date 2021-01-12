@@ -20,23 +20,13 @@ export class ResourceHub extends LitElement {
         background: var(--primary-color);
         display: flex;
         color: white;
+        justify-content: center;
       }
 
-      ::slotted(h2) {
+      ::slotted([slot='header']) {
         margin: 0;
-      }
-
-      #resource-header {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding-top: 80px;
-        padding-left: 4em;
-        padding-right: 4em;
-      }
-
-      #resource-header h2 {
         font-weight: var(--font-bold);
+        text-align: center;
 
         font-size: 36px;
         line-height: 39px;
@@ -44,19 +34,32 @@ export class ResourceHub extends LitElement {
         margin-top: 0;
       }
 
-      #resource-header p {
+      ::slotted([slot='description']) {
         font-weight: var(--font-bold);
         text-align: center;
       }
 
+      #resource-header {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding-top: 80px;
+        padding-left: 4em;
+        padding-right: 4em;
+      }
+
       #cards {
         display: flex;
+        justify-content: center;
         padding-left: 4em;
         padding-right: 4em;
         margin-top: 1em;
+        padding: 0 16px;
       }
 
       #cards fast-card {
+        max-width: 280px;
         padding-bottom: 16px;
         margin-right: 12px;
         margin-left: 12px;
@@ -94,7 +97,7 @@ export class ResourceHub extends LitElement {
         font-weight: bold;
         font-size: 14px;
         line-height: 20px;
-        color: #679bd5;
+        color: var(--link-color);
         padding: 0 16px;
       }
 
@@ -110,7 +113,7 @@ export class ResourceHub extends LitElement {
       #resource-hub-actions fast-button {
         background: white;
         color: var(--font-color);
-        border-radius: 44px;
+        border-radius: var(--button-radius);
         width: 188px;
       }
 
@@ -119,41 +122,72 @@ export class ResourceHub extends LitElement {
         font-weight: var(--font-bold);
       }
 
-      ${smallBreakPoint(css`
-        #cards {
-          flex-direction: column;
-          align-items: center;
-          padding: 0;
-        }
+      ${smallBreakPoint(
+        css`
+          :host {
+            background-color: #ededed;
+          }
 
-        #cards fast-card {
-          margin-bottom: 16px;
-        }
-      `)}
+          ::slotted([slot='header']) {
+            color: var(--font-color);
+          }
 
-      ${mediumBreakPoint(css`
-        #cards {
-          flex-direction: column;
-          align-items: center;
-          padding: 0;
-        }
+          ::slotted([slot='description']) {
+            color: var(--font-color);
+            font-weight: var(--font-medium);
+          }
 
-        #cards fast-card {
-          margin-bottom: 16px;
-        }
-      `)}
+          .card-actions fast-button::part(control) {
+            color: var(--mobile-link-color);
+          }
+        `
+      )}
 
-      ${largeBreakPoint(css`
-        #cards {
-          flex-direction: column;
-          align-items: center;
-          padding: 0;
-        }
+      ${mediumBreakPoint(
+        css`
+          #cards {
+            flex-direction: column;
+            align-items: center;
+          }
 
-        #cards fast-card {
-          margin-bottom: 16px;
-        }
-      `)}
+          #cards fast-card {
+            margin-bottom: 16px;
+          }
+        `,
+        'no-lower'
+      )}
+
+      ${mediumBreakPoint(
+        css`
+          #cards {
+            padding: 0 32px;
+          }
+        `
+      )}
+
+      ${largeBreakPoint(
+        css`
+          #cards fast-card {
+            max-width: 350px;
+          }
+        `,
+        'no-lower'
+      )}
+
+      ${largeBreakPoint(
+        css`
+          #cards {
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: center;
+            padding: 0;
+          }
+
+          #cards fast-card {
+            margin-bottom: 16px;
+          }
+        `
+      )}
     `;
   }
 
