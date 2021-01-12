@@ -107,7 +107,7 @@ export class ResourceHub extends LitElement {
         justify-content: center;
 
         margin-top: 32px;
-        margin-bottom: 64px;
+        margin-bottom: 74px;
       }
 
       #resource-hub-actions fast-button {
