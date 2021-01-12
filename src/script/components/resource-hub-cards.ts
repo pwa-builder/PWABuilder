@@ -40,14 +40,14 @@ const resourceCards: Array<CardData> = [
 
 // for the landing page
 export function landingCards() {
-  return resourceCards.map((data) => {
+  return resourceCards.map(data => {
     return renderResourceCard(data);
   });
 }
 
 // For the complete page
 export function completeCards() {
-  return resourceCards.slice(1).map((data) => {
+  return resourceCards.slice(1).map(data => {
     return renderResourceCard(data);
   });
 }

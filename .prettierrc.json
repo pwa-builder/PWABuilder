@@ -6,5 +6,6 @@
   "quoteProps": "consistent",
   "trailingComma": "es5",
   "endOfLine": "crlf",
-  "bracketSpacing": true
+  "bracketSpacing": true,
+  "arrowParens": "avoid"
 }
