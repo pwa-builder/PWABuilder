@@ -1,4 +1,4 @@
-import { unsafeCSS, CSSResult } from 'lit-element';
+import { css, unsafeCSS, CSSResult } from 'lit-element';
 
 enum BreakpointValues {
   smallUpper = 479,
@@ -20,6 +20,14 @@ export function customBreakPoint(
   lower: number | undefined = undefined,
   upper: number | undefined = undefined
 ) {
+  if (!lower && !upper) {
+    return css`
+      @media screen {
+        ${styles}
+      }
+    `;
+  }
+
   return unsafeCSS(`
     @media screen ${breakPoints({ lower, upper })} {
       ${styles}
@@ -112,10 +120,6 @@ interface Bound {
 
 function breakPoints({ lower, upper }: Bound) {
   const output = [];
-
-  if (!lower && !upper) {
-    return '';
-  }
 
   if (lower) {
     output.push(`(min-width: ${lower}px)`);
