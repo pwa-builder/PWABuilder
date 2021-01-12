@@ -1,6 +1,6 @@
 import { LitElement, css, html, customElement } from 'lit-element';
 
-import { mediumBreakPoint } from '../utils/breakpoints';
+import { smallBreakPoint, mediumBreakPoint, largeBreakPoint, xxLargeBreakPoint } from '../utils/breakpoints';
 
 import '../components/content-header';
 import '../components/resource-hub';
@@ -65,13 +65,13 @@ export class AppHome extends LitElement {
       }
 
       #input-form fast-button {
-        flex: 0.2;
+        flex: 0.21;
         box-shadow: var(--button-shadow);
         border-radius: var(--button-radius);
       }
 
       #input-form fast-button::part(control) {
-        font-size: 16px;
+        font-size: var(--desktop-button-font-size);
         font-weight: var(--font-bold);
       }
 
@@ -80,9 +80,108 @@ export class AppHome extends LitElement {
         border-radius: var(--input-radius);
       }
 
+      ${smallBreakPoint(css`
+        content-header::part(main-container) {
+          padding-top: initial;
+        }
+
+        content-header::part(grid-container) {
+          display: none;
+        }
+
+        h2 {
+          font-size: 32px;
+          line-height: 34px;
+          margin-top: 0;
+        }
+
+        #hero-p {
+          line-height: 22px;
+        }
+
+        #input-form {
+          flex-direction: column;
+          width: 100%;
+          align-items: center;
+        }
+
+        #input-form fast-text-field {
+          width: 100%;
+          margin-right: 0;
+        }
+
+        #input-form fast-button {
+          width: 216px;
+          margin-top: 44px;
+          border-radius: var(--mobile-button-radius);
+          height: var(--mobile-button-height);
+        }
+
+        #input-form fast-button::part(control) {
+          font-size: var(--mobile-button-font-size);
+        }
+      `)}
+
       ${mediumBreakPoint(css`
         content-header::part(main-container) {
           padding-top: initial;
+        }
+
+        content-header::part(grid-container) {
+          display: none;
+        }
+
+        h2 {
+          font-size: 32px;
+          line-height: 34px;
+          margin-top: 0;
+        }
+
+        #hero-p {
+          line-height: 22px;
+        }
+
+        #input-form {
+          flex-direction: column;
+          width: 100%;
+          align-items: center;
+        }
+
+        #input-form fast-text-field {
+          width: 100%;
+          margin-right: 0;
+        }
+
+        #input-form fast-button {
+          width: 216px;
+          margin-top: 44px;
+          border-radius: var(--mobile-button-radius);
+          height: var(--mobile-button-height);
+        }
+
+        #input-form fast-button::part(control) {
+          font-size: var(--mobile-button-font-size);
+        }
+      `)}
+
+      ${largeBreakPoint(css`
+        content-header::part(main-container) {
+          padding-left: 16px;
+          padding-top: 0%;
+        }
+      `)}
+
+      ${xxLargeBreakPoint(css`
+        .intro-grid-item {
+          max-width: 280px;
+        }
+
+        #input-form {
+          width: 32em;
+        }
+
+        h2 {
+          max-width: 600px;
         }
       `)}
     `;

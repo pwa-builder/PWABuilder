@@ -1,6 +1,7 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
 
 import {
+  largeBreakPoint,
   mediumBreakPoint,
   smallBreakPoint,
 } from '../utils/breakpoints';
@@ -52,14 +53,22 @@ export class AppHeader extends LitElement {
           header {
             padding-left: 16px;
           }
-        `),
+        `)
+      }
 
+      ${
         mediumBreakPoint(css`
           header {
             padding-left: 16px;
           }
         `)
       }
+
+      ${largeBreakPoint(css`
+        header {
+          padding-left: 16px;
+        }
+      `)}
 
     `;
   }

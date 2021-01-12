@@ -1,6 +1,6 @@
 import { LitElement, css, html, customElement } from 'lit-element';
 
-import { smallBreakPoint, mediumBreakPoint, xLargeBreakPoint } from '../utils/breakpoints';
+import { smallBreakPoint, mediumBreakPoint, largeBreakPoint, xLargeBreakPoint, xxLargeBreakPoint } from '../utils/breakpoints';
 
 import './app-header';
 
@@ -29,11 +29,14 @@ export class ContentHeader extends LitElement {
 
       ${smallBreakPoint(css`
         #main-container {
-          flex-direction: column;
+          flex-direction: column-reverse;
         }
 
         img {
-          margin-top: 2em;
+          margin-left: 0;
+          width: 294px;
+          height: 294px;
+          margin-top: 16px;
         }
 
         #content-side {
@@ -42,6 +45,11 @@ export class ContentHeader extends LitElement {
 
         #main-container {
           padding-top: initial;
+          padding-bottom: 51px;
+        }
+
+        #hero-container {
+          text-align: center;
         }
 
         ::slotted(ul) {
@@ -51,11 +59,14 @@ export class ContentHeader extends LitElement {
 
       ${mediumBreakPoint(css`
         #main-container {
-          flex-direction: column;
+          flex-direction: column-reverse;
         }
 
         img {
-          margin-top: 2em;
+          margin-left: 0;
+          width: 294px;
+          height: 294px;
+          margin-top: 16px;
         }
 
         #content-side {
@@ -67,10 +78,27 @@ export class ContentHeader extends LitElement {
         }
       `)}
 
+      ${largeBreakPoint(css`
+        ::slotted(ul) {
+          grid-gap: 10px;
+        }
+
+        img {
+          height: 282px;
+          width: 268px;
+        }
+      `)}
+
       ${xLargeBreakPoint(css`
         img {
           height: 18em;
           width: initial;
+        }
+      `)}
+
+      ${xxLargeBreakPoint(css`
+        #content-side {
+          width: 44em;
         }
       `)}
     `;
