@@ -103,7 +103,5 @@ function breakPoints({ lower, upper }: Bound) {
     output.push(`(max-width: ${upper}px)`);
   }
 
-  console.log(output.join(' and '));
-
   return 'and ' + output.join(' and ');
 }
