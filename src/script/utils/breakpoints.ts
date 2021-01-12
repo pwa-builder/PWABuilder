@@ -13,6 +13,8 @@ enum BreakpointValues {
   xxxLargeLower = 1920,
 }
 
+type BoundModification = 'both' | 'no-lower' | 'no-upper';
+
 export function customBreakPoint(
   styles: CSSResult,
   lower: number | undefined = undefined,
@@ -36,11 +38,12 @@ export function smallBreakPoint(styles: CSSResult) {
 
 export function mediumBreakPoint(
   styles: CSSResult,
-  includeLower = true,
-  includeUpper = true
+  editBound: BoundModification = 'both'
 ) {
-  const lower = includeLower ? BreakpointValues.mediumLower : undefined;
-  const upper = includeUpper ? BreakpointValues.mediumUpper : undefined;
+  const lower =
+    editBound !== 'no-lower' ? BreakpointValues.mediumLower : undefined;
+  const upper =
+    editBound !== 'no-upper' ? BreakpointValues.mediumUpper : undefined;
   return unsafeCSS(`
     @media screen ${breakPoints({ lower, upper })} {
       ${styles}
@@ -50,11 +53,12 @@ export function mediumBreakPoint(
 
 export function largeBreakPoint(
   styles: CSSResult,
-  includeLower = true,
-  includeUpper = true
+  editBound: BoundModification = 'both'
 ) {
-  const lower = includeLower ? BreakpointValues.largeLower : undefined;
-  const upper = includeUpper ? BreakpointValues.largeUpper : undefined;
+  const lower =
+    editBound !== 'no-lower' ? BreakpointValues.largeLower : undefined;
+  const upper =
+    editBound !== 'no-upper' ? BreakpointValues.largeUpper : undefined;
   return unsafeCSS(`
     @media screen ${breakPoints({ lower, upper })} {
       ${styles}
@@ -64,11 +68,12 @@ export function largeBreakPoint(
 
 export function xLargeBreakPoint(
   styles: CSSResult,
-  includeLower = true,
-  includeUpper = true
+  editBound: BoundModification = 'both'
 ) {
-  const lower = includeLower ? BreakpointValues.xLargeLower : undefined;
-  const upper = includeUpper ? BreakpointValues.xLargeUpper : undefined;
+  const lower =
+    editBound !== 'no-lower' ? BreakpointValues.xLargeLower : undefined;
+  const upper =
+    editBound !== 'no-upper' ? BreakpointValues.xLargeUpper : undefined;
   return unsafeCSS(`
     @media screen ${breakPoints({ lower, upper })} {
       ${styles}
@@ -78,11 +83,12 @@ export function xLargeBreakPoint(
 
 export function xxLargeBreakPoint(
   styles: CSSResult,
-  includeLower = true,
-  includeUpper = true
+  editBound: BoundModification = 'both'
 ) {
-  const lower = includeLower ? BreakpointValues.xxLargeLower : undefined;
-  const upper = includeUpper ? BreakpointValues.xxLargeUpper : undefined;
+  const lower =
+    editBound !== 'no-lower' ? BreakpointValues.xxLargeLower : undefined;
+  const upper =
+    editBound !== 'no-upper' ? BreakpointValues.xxLargeUpper : undefined;
   return unsafeCSS(`
     @media screen ${breakPoints({ lower, upper })} {
       ${styles}
