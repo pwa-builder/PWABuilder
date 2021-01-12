@@ -33,6 +33,8 @@ export class AppHeader extends LitElement {
       nav {
         display: flex;
         justify-content: space-between;
+        align-items: center;
+        width: 8em;
       }
 
       nav fast-anchor::part(control) {
@@ -40,6 +42,23 @@ export class AppHeader extends LitElement {
         text-decoration: none;
         border-bottom: none;
         font-weight: var(--font-bold);
+      }
+
+      nav ion-icon {
+        font-size: 2em;
+      }
+
+      #desktop-nav {
+        display: flex;
+      }
+
+      #mobile-nav {
+        display: none;
+        width: initial;
+      }
+
+      #mobile-nav fast-button::part(control) {
+        color: black;
       }
 
       @media(prefers-color-scheme: light) {
@@ -53,6 +72,14 @@ export class AppHeader extends LitElement {
           header nav {
             display: none;
           }
+
+          #desktop-nav {
+            display: none;
+          }
+
+          #mobile-nav {
+            display: flex;
+          }
         `)
       }
 
@@ -61,13 +88,25 @@ export class AppHeader extends LitElement {
           header nav {
             display: initial;
           }
+
+          #desktop-nav {
+            display: flex;
+          }
+
+          #mobile-nav {
+            display: none;
+          }
         `)
       }
 
       ${largeBreakPoint(css`
-        header nav {
-            display: initial;
-          }
+        #desktop-nav {
+          display: flex;
+        }
+
+        #mobile-nav {
+          display: none;
+        }
       `)}
 
     `;
@@ -82,8 +121,18 @@ export class AppHeader extends LitElement {
       <header>
         <img id="header-icon" src="/assets/images/header_logo.png" alt="header logo">
 
-        <nav>
+        <nav id="desktop-nav">
           <fast-anchor appearance="hypertext" href="./about">Resources</fast-anchor>
+
+          <fast-anchor appearance="hypertext" href="https://github.com/pwa-builder/PWABuilder">
+            <ion-icon name="logo-github"></ion-icon>
+          </fast-anchor>
+        </nav>
+
+        <nav id="mobile-nav">
+          <fast-button appearance="lightweight">
+            <ion-icon name="menu-outline"></ion-icon>
+          </fast-button>
         </nav>
       </header>
     `;
