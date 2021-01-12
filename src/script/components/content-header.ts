@@ -1,6 +1,6 @@
 import { LitElement, css, html, customElement } from 'lit-element';
 
-import { smallBreakPoint, mediumBreakPoint, largeBreakPoint, xLargeBreakPoint, xxLargeBreakPoint } from '../utils/breakpoints';
+import { smallBreakPoint, mediumBreakPoint, largeBreakPoint, xLargeBreakPoint, xxLargeBreakPoint, BreakpointValues } from '../utils/breakpoints';
 
 import './app-header';
 
@@ -34,8 +34,8 @@ export class ContentHeader extends LitElement {
 
         img {
           margin-left: 0;
-          width: 294px;
-          height: 294px;
+          width: 226px;
+          height: 226px;
           margin-top: 16px;
         }
 
@@ -64,13 +64,17 @@ export class ContentHeader extends LitElement {
 
         img {
           margin-left: 0;
-          width: 294px;
-          height: 294px;
+          width: 100%;
+          height: 226px;
           margin-top: 16px;
         }
 
         #content-side {
           padding: 1em;
+        }
+
+        #hero-container {
+          text-align: center;
         }
 
         #main-container {
@@ -124,7 +128,11 @@ export class ContentHeader extends LitElement {
         </section>
 
         <section>
-          <img src="/assets/images/pwab3d.png" alt="3d version of the PWABuilder logo">
+          <picture>
+            <source srcset="/assets/images/pwab3d.png" media="(max-width: ${BreakpointValues.mediumLower}px)">
+            <source srcset="/assets/images/mobile_header_logo.png" media="(max-width: ${BreakpointValues.mediumUpper}px)">
+            <img src="/assets/images/pwab3d.png" alt="3d version of the PWABuilder logo">
+          </picture>
         </section>
       </div>
     `;

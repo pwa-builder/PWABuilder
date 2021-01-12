@@ -16,7 +16,7 @@ export class AppHeader extends LitElement {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding-left: 41px;
+        padding-left: 16px;
         padding-right: 16px;
         background: transparent;
         color: white;
@@ -50,24 +50,24 @@ export class AppHeader extends LitElement {
 
       ${
         smallBreakPoint(css`
-          header {
-            padding-left: 16px;
+          header nav {
+            display: none;
           }
         `)
       }
 
       ${
         mediumBreakPoint(css`
-          header {
-            padding-left: 16px;
+          header nav {
+            display: initial;
           }
         `)
       }
 
       ${largeBreakPoint(css`
-        header {
-          padding-left: 16px;
-        }
+        header nav {
+            display: initial;
+          }
       `)}
 
     `;
