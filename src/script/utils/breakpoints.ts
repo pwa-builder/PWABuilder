@@ -1,49 +1,109 @@
 import { unsafeCSS, CSSResult } from 'lit-element';
 
+enum BreakpointValues {
+  smallUpper = 479,
+  mediumLower = 480,
+  mediumUpper = 639,
+  largeLower = 640,
+  largeUpper = 1023,
+  xLargeLower = 1024,
+  xLargeUpper = 1365,
+  xxLargeLower = 1366,
+  xxLargeUpper = 1919,
+  xxxLargeLower = 1920,
+}
+
 export function smallBreakPoint(styles: CSSResult) {
+  const upper = BreakpointValues.smallUpper;
   return unsafeCSS(`
-    @media screen and (max-width: 479px) {
+    @media screen ${breakPoints({ upper })} {
       ${styles}
     }
   `);
 }
 
-export function mediumBreakPoint(styles: CSSResult) {
+export function mediumBreakPoint(
+  styles: CSSResult,
+  includeLower = true,
+  includeUpper = true
+) {
+  const lower = includeLower ? BreakpointValues.mediumLower : undefined;
+  const upper = includeUpper ? BreakpointValues.mediumUpper : undefined;
   return unsafeCSS(`
-    @media screen and (min-width: 480px) and (max-width: 639px) {
+    @media screen ${breakPoints({ lower, upper })} {
       ${styles}
     }
   `);
 }
 
-export function largeBreakPoint(styles: CSSResult) {
+export function largeBreakPoint(
+  styles: CSSResult,
+  includeLower = true,
+  includeUpper = true
+) {
+  const lower = includeLower ? BreakpointValues.largeLower : undefined;
+  const upper = includeUpper ? BreakpointValues.largeUpper : undefined;
   return unsafeCSS(`
-    @media screen and (min-width: 640px) and (max-width: 1023px) {
+    @media screen ${breakPoints({ lower, upper })} {
       ${styles}
     }
   `);
 }
 
-export function xLargeBreakPoint(styles: CSSResult) {
+export function xLargeBreakPoint(
+  styles: CSSResult,
+  includeLower = true,
+  includeUpper = true
+) {
+  const lower = includeLower ? BreakpointValues.xLargeLower : undefined;
+  const upper = includeUpper ? BreakpointValues.xLargeUpper : undefined;
   return unsafeCSS(`
-    @media screen and (min-width: 1024px) and (max-width: 1365px) {
+    @media screen ${breakPoints({ lower, upper })} {
       ${styles}
     }
   `);
 }
 
-export function xxLargeBreakPoint(styles: CSSResult) {
+export function xxLargeBreakPoint(
+  styles: CSSResult,
+  includeLower = true,
+  includeUpper = true
+) {
+  const lower = includeLower ? BreakpointValues.xxLargeLower : undefined;
+  const upper = includeUpper ? BreakpointValues.xxLargeUpper : undefined;
   return unsafeCSS(`
-    @media screen and (min-width: 1366px) and (max-width: 1919px) {
+    @media screen ${breakPoints({ lower, upper })} {
       ${styles}
     }
   `);
 }
 
 export function xxxLargeBreakPoint(styles: CSSResult) {
+  const lower = BreakpointValues.xxxLargeLower;
   return unsafeCSS(`
-    @media screen and (min-width: 1920px) {
+    @media screen ${breakPoints({ lower })} {
       ${styles}
     }
   `);
+}
+
+interface Bound {
+  lower?: number;
+  upper?: number;
+}
+
+function breakPoints({ lower, upper }: Bound) {
+  const output = [];
+
+  if (lower) {
+    output.push(`(min-width: ${lower}px)`);
+  }
+
+  if (upper) {
+    output.push(`(max-width: ${upper}px)`);
+  }
+
+  console.log(output.join(' and '));
+
+  return 'and ' + output.join(' and ');
 }
