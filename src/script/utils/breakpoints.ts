@@ -13,6 +13,18 @@ enum BreakpointValues {
   xxxLargeLower = 1920,
 }
 
+export function customBreakPoint(
+  styles: CSSResult,
+  lower: number | undefined = undefined,
+  upper: number | undefined = undefined
+) {
+  return unsafeCSS(`
+    @media screen ${breakPoints({ lower, upper })} {
+      ${styles}
+    }
+  `);
+}
+
 export function smallBreakPoint(styles: CSSResult) {
   const upper = BreakpointValues.smallUpper;
   return unsafeCSS(`
@@ -94,6 +106,10 @@ interface Bound {
 
 function breakPoints({ lower, upper }: Bound) {
   const output = [];
+
+  if (!lower && !upper) {
+    return '';
+  }
 
   if (lower) {
     output.push(`(min-width: ${lower}px)`);
