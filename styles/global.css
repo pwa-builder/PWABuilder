@@ -4,10 +4,10 @@
 */
 :root {
   --font-family: sans-serif;
-  --font-color: #333E49;
+  --font-color: #333e49;
   --secondary-font-color: #000000 50%;
   --primary-background-color: white;
-  --primary-color: #292C3A;
+  --primary-color: #292c3a;
 
   --font-bold: 700;
   --font-medium: 400;
@@ -22,6 +22,9 @@
   --desktop-button-height: 40px;
 
   --input-radius: 8px;
+
+  --link-color: #5d5db9;
+  --mobile-link-color: #0683f9;
 }
 
 html,
