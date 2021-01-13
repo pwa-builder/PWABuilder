@@ -8,6 +8,7 @@
   --secondary-font-color: #000000 50%;
   --font-bold: 700;
   --font-medium: 400;
+  --font-size: 14px;
 
   --primary-background-color: white;
   --primary-color: #292c3a;
@@ -16,9 +17,8 @@
   --button-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
   --button-radius: 44px;
   --mobile-button-radius: 61px;
-  --mobile-button-font-size: 22px;
   --mobile-button-height: 64px;
-  --desktop-button-font-size: 16px;
+  --mobile-button-fontsize: 22px;
   --desktop-button-height: 40px;
 
   --input-radius: 8px;
@@ -38,13 +38,14 @@ body {
 
 fast-design-system-provider {
   color: var(--font-color);
+
   --background-color: var(--primary-background-color);
   --neutral-foreground-rest: #e5e5e5;
   --neutral-fill-input-rest: white;
   --neutral-fill-input-hover: white;
   --neutral-fill-stealth-rest: #e5e5e5;
 
-  --neutral-fill-rest: var(--primary-color);
+  --neutral-fill-active: #5D5DB9;
 
   --neutral-fill-input-active: #e5e5e5;
 }
