@@ -1,15 +1,31 @@
-import { LitElement, css, html, customElement } from 'lit-element';
+import {
+  LitElement,
+  css,
+  html,
+  customElement,
+  internalProperty,
+} from 'lit-element';
 
-import { smallBreakPoint, mediumBreakPoint, largeBreakPoint, xxLargeBreakPoint } from '../utils/breakpoints';
+import {
+  smallBreakPoint,
+  mediumBreakPoint,
+  largeBreakPoint,
+  xxLargeBreakPoint,
+} from '../utils/breakpoints';
+import { fetchManifest } from '../services/manifest';
 
 import '../components/content-header';
 import '../components/resource-hub';
+import '../components/loading-button';
 
 // For more info on the @pwabuilder/pwainstall component click here https://github.com/pwa-builder/pwa-install
 import '@pwabuilder/pwainstall';
+import { Router } from '@vaadin/router';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
+  @internalProperty() siteURL: string | null = null;
+  @internalProperty() gettingManifest: boolean = false;
 
   static get styles() {
     return css`
@@ -64,20 +80,26 @@ export class AppHome extends LitElement {
         margin-right: 10px;
       }
 
-      #input-form fast-button {
+      #input-form loading-button {
         flex: 0.21;
-        box-shadow: var(--button-shadow);
-        border-radius: var(--button-radius);
       }
 
-      #input-form fast-button::part(control) {
+      #input-form loading-button::part(underlying-button) {
+        display: flex;
+
+        box-shadow: var(--button-shadow);
+        border-radius: var(--button-radius);
         font-size: var(--desktop-button-font-size);
         font-weight: var(--font-bold);
       }
 
       #input-form fast-text-field::part(root) {
-        border: 1.93407px solid #E5E5E5;
+        border: 1.93407px solid #e5e5e5;
         border-radius: var(--input-radius);
+      }
+
+      #input-form fast-text-field::part(control) {
+        color: var(--font-color);
       }
 
       ${smallBreakPoint(css`
@@ -118,15 +140,17 @@ export class AppHome extends LitElement {
           font-size: 22px;
         }
 
-        #input-form fast-button {
-          width: 216px;
-          margin-top: 44px;
-          border-radius: var(--mobile-button-radius);
-          height: var(--mobile-button-height);
+        #input-form loading-button {
+          margin-top: 54px;
         }
 
-        #input-form fast-button::part(control) {
-          font-size: var(--mobile-button-font-size);
+        #input-form loading-button::part(underlying-button) {
+          display: flex;
+
+          box-shadow: var(--button-shadow);
+          border-radius: var(--button-radius);
+          font-size: var(--desktop-button-font-size);
+          font-weight: var(--font-bold);
         }
       `)}
 
@@ -170,15 +194,11 @@ export class AppHome extends LitElement {
           font-size: 22px;
         }
 
-        #input-form fast-button {
+        #input-form loading-button {
           width: 216px;
           margin-top: 44px;
           border-radius: var(--mobile-button-radius);
           height: var(--mobile-button-height);
-        }
-
-        #input-form fast-button::part(control) {
-          font-size: var(--mobile-button-font-size);
         }
       `)}
 
@@ -209,53 +229,106 @@ export class AppHome extends LitElement {
     super();
   }
 
-  async firstUpdated() {
-    // this method is a lifecycle even in lit-element
-    // for more info check out the lit-element docs https://lit-element.polymer-project.org/guide/lifecycle
-    console.log('This is your home page');
+  handleURL(inputEvent: InputEvent) {
+    if (inputEvent) {
+      this.siteURL = (inputEvent.target as any).value;
+    }
+  }
+
+  async start(inputEvent: InputEvent) {
+    inputEvent.preventDefault();
+
+    if (this.siteURL) {
+      this.gettingManifest = true;
+
+      try {
+        const data = await fetchManifest(this.siteURL);
+        console.log(data);
+        
+        Router.go(`/about?manifestID=${data.id}`);
+      } catch (err) {
+        console.error(err);
+      }
+
+      this.gettingManifest = false;
+    }
   }
 
   render() {
     return html`
       <content-header>
-        <h2 slot="hero-container">Transform your website to an app at lightning speed.</h2>
-        <p id="hero-p" slot="hero-container">Ready to build your PWA? Tap "Build My PWA" to package your PWA for the app stores or tap "Feature Store".</p>
+        <h2 slot="hero-container">
+          Transform your website to an app at lightning speed.
+        </h2>
+        <p id="hero-p" slot="hero-container">
+          Ready to build your PWA? Tap "Build My PWA" to package your PWA for
+          the app stores or tap "Feature Store".
+        </p>
 
         <ul slot="grid-container">
           <div class="intro-grid-item">
             <h3>Test</h3>
 
-            <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut.</p>
+            <p>
+              Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
+              aut.
+            </p>
           </div>
 
           <div class="intro-grid-item">
             <h3>Manage</h3>
 
-            <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut.</p>
+            <p>
+              Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
+              aut.
+            </p>
           </div>
 
           <div class="intro-grid-item">
             <h3>Package</h3>
 
-            <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut.</p>
+            <p>
+              Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
+              aut.
+            </p>
           </div>
 
           <div class="intro-grid-item">
             <h3>Explore</h3>
 
-            <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut.</p>
+            <p>
+              Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
+              aut.
+            </p>
           </div>
         </ul>
 
-        <form id="input-form" slot="input-container">
-          <fast-text-field slot="input-container" type="text" placeholder="Enter a URL"></fast-text-field>
-          <fast-button color="primary">Start</fast-button>
+        <form
+          id="input-form"
+          slot="input-container"
+          @submit="${(e: InputEvent) => this.start(e)}"
+        >
+          <fast-text-field
+            slot="input-container"
+            type="text"
+            placeholder="Enter a URL"
+            @change="${(e: InputEvent) => this.handleURL(e)}"
+          ></fast-text-field>
+          <loading-button
+            ?loading="${this.gettingManifest}"
+            @click="${(e: InputEvent) => this.start(e)}"
+            >Start</loading-button
+          >
         </form>
       </content-header>
 
       <resource-hub page="home" all>
         <h2 slot="header">PWABuilder Resource Hub</h2>
-        <p slot="description">Ready to build your PWA? Tap "Build My PWA" to package your PWA for the app stores or tap "Feature Store" to check out the latest web components from the PWABuilder team to improve your PWA even further!</p>
+        <p slot="description">
+          Ready to build your PWA? Tap "Build My PWA" to package your PWA for
+          the app stores or tap "Feature Store" to check out the latest web
+          components from the PWABuilder team to improve your PWA even further!
+        </p>
       </resource-hub>
     `;
   }
