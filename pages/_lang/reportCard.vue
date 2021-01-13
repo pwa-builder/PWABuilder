@@ -126,7 +126,7 @@
               href="https://privacy.microsoft.com/en-us/privacystatement"
             >Our Privacy Statement</a>
 
-            <a href="https://raw.githubusercontent.com/pwa-builder/PWABuilder/master/TERMS_OF_USE.txt>Terms of Use</a>
+            <a href="https://raw.githubusercontent.com/pwa-builder/PWABuilder/master/TERMS_OF_USE.txt">Terms of Use</a>
           </p>
         </footer>
       </div>
