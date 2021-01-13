@@ -121,11 +121,12 @@
         </div>
         <footer>
           <p>
-            PWA Builder was founded by Microsoft as a community guided, open
-            source project to help move PWA adoption forward.
+            PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
             <a
               href="https://privacy.microsoft.com/en-us/privacystatement"
             >Our Privacy Statement</a>
+
+            <a href="https://raw.githubusercontent.com/pwa-builder/PWABuilder/master/TERMS_OF_USE.txt>Terms of Use</a>
           </p>
         </footer>
       </div>
@@ -217,11 +218,12 @@
     </main>
     <footer v-if="gotURL" id="hubFooter">
       <p>
-        PWA Builder was founded by Microsoft as a community guided, open source
-        project to help move PWA adoption forward.
+        PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
         <a
-          href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
+          href="https://privacy.microsoft.com/en-us/privacystatement"
         >Our Privacy Statement</a>
+
+        <a href="https://raw.githubusercontent.com/pwa-builder/PWABuilder/master/TERMS_OF_USE.txt>Terms of Use</a>
       </p>
     </footer>
   </div>
