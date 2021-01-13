@@ -1,41 +1,34 @@
-import { LitElement, css, html, customElement, property } from 'lit-element';
-import { completeCards, landingCards } from './resource-hub-cards';
+import { LitElement, css, html, customElement } from 'lit-element';
 import {
   largeBreakPoint,
   mediumBreakPoint,
   smallBreakPoint,
+  BreakpointValues,
 } from '../utils/breakpoints';
-
-type ResourceHubPages = 'home' | 'complete';
 
 @customElement('blog-showcase')
 export class ResourceHub extends LitElement {
-  @property({ attribute: 'all', type: Boolean }) showViewAllButton = false;
-  @property({ attribute: 'page', type: String }) pageName: ResourceHubPages =
-    'home';
-
   static get styles() {
     return css`
       :host {
-        background: var(--primary-color);
+        background: white;
+        justify-content: center;
         display: flex;
-        color: white;
+        color: var(--font-color);
       }
 
-      ::slotted(h2) {
-        margin: 0;
+      section {
+        width: 100%;
       }
 
-      #resource-header {
+      #blog-header {
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding-top: 80px;
-        padding-left: 4em;
-        padding-right: 4em;
+        padding: 80px 32px 0 32px;
       }
 
-      #resource-header h2 {
+      #blog-header h2 {
         font-weight: var(--font-bold);
 
         font-size: 36px;
@@ -44,22 +37,20 @@ export class ResourceHub extends LitElement {
         margin-top: 0;
       }
 
-      #resource-header p {
+      #blog-header p {
         font-weight: var(--font-bold);
         text-align: center;
       }
 
-      #cards {
+      #posts {
         display: flex;
-        padding-left: 4em;
-        padding-right: 4em;
+        padding-left: 32px;
+        padding-right: 32px;
         margin-top: 1em;
       }
 
-      #cards fast-card {
+      #posts fast-card {
         padding-bottom: 16px;
-        margin-right: 12px;
-        margin-left: 12px;
 
         color: var(--font-color);
         background: white;
@@ -98,62 +89,84 @@ export class ResourceHub extends LitElement {
         padding: 0 16px;
       }
 
-      #resource-hub-actions {
+      #blog-actions {
         display: flex;
         align-items: center;
         justify-content: center;
-
-        margin-top: 32px;
-        margin-bottom: 64px;
       }
 
-      #resource-hub-actions fast-button {
-        background: white;
-        color: var(--font-color);
+      #blog-actions fast-button {
+        color: white;
         border-radius: 44px;
-        width: 188px;
+        width: 216px;
       }
 
-      #resource-hub-actions fast-button::part(control) {
-        font-size: 16px;
+      #blog-actions fast-button::part(control) {
+        font-size: 14px;
         font-weight: var(--font-bold);
       }
 
-      ${smallBreakPoint(css`
-        #cards {
-          flex-direction: column;
-          align-items: center;
-          padding: 0;
-        }
+      ${smallBreakPoint(
+        css`
+          #posts {
+            flex-direction: column;
+            align-items: center;
+            padding: 0 16px;
+          }
 
-        #cards fast-card {
-          margin-bottom: 16px;
-        }
-      `)}
+          #posts fast-card {
+            margin-bottom: 32px;
+          }
+        `
+      )}
 
-      ${mediumBreakPoint(css`
-        #cards {
-          flex-direction: column;
-          align-items: center;
-          padding: 0;
-        }
+      ${mediumBreakPoint(
+        css`
+          #posts {
+            flex-direction: column;
+            align-items: center;
+            padding: 0 32px;
+          }
 
-        #cards fast-card {
-          margin-bottom: 16px;
-        }
-      `)}
+          #posts fast-card {
+            margin-bottom: 32px;
+          }
+        `
+      )}
 
-      ${largeBreakPoint(css`
-        #cards {
-          flex-direction: column;
-          align-items: center;
-          padding: 0;
-        }
+      ${largeBreakPoint(
+        css`
+          #posts {
+            display: grid;
+            justify-content: center;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            column-gap: 16px;
+            row-gap: 16px;
+          }
 
-        #cards fast-card {
-          margin-bottom: 16px;
-        }
-      `)}
+          #posts .featured {
+            grid-area: 1 / 1 / 3 / 4;
+          }
+
+          #posts fast-card {
+            grid-column: 4 / 6;
+          }
+
+          #blog-actions {
+            flex-direction: row-reverse;
+            justify-content: flex-start;
+            padding: 0 36px;
+            margin-top: 32px;
+          }
+
+          .blog-actions fast-button {
+            display: block;
+            float: right;
+          }
+        `,
+        'no-upper'
+      )}
     `;
   }
 
@@ -164,7 +177,9 @@ export class ResourceHub extends LitElement {
   render() {
     return html`
       <section>
-        <div id="blog-header">Blog post recommended for you...</div>
+        <div id="blog-header">
+          <h2>${this.h2Text()}</h2>
+        </div>
 
         <div id="posts">${this.renderCards()}</div>
 
@@ -180,10 +195,19 @@ export class ResourceHub extends LitElement {
     return blogPosts.map((post, i) => {
       if (i === 0) {
         return html`
-          <fast-card class="focused">
-            <img src="${post.imageUrl}" alt="${post.title} card header image" />
-            <p class="date">${post.date}</p>
-            <fast-button appearance="lightweight"></fast-button>
+          <fast-card class="featured">
+            <div class="image-container">
+              <span class="date">${post.date}</span>
+              ${post.tags.map(
+                tag => html` <fast-badge class="tag">${tag}</fast-badge> `
+              )}
+              <img
+                src="${post.imageUrl}"
+                alt="${post.title} card header image"
+              />
+            </div>
+
+            <fast-button appearance="lightweight">Share</fast-button>
 
             <h2>${post.title}</h2>
           </fast-card>
@@ -195,10 +219,20 @@ export class ResourceHub extends LitElement {
           <img src="${post.imageUrl}" alt="${post.title} card header image" />
           <p class="date">${post.date}</p>
 
-          <fast-button appearance="lightweight"></fast-button>;
+          <fast-button appearance="lightweight">Share</fast-button>
+
+          <h2>${post.title}</h2>
         </fast-card>
       `;
     });
+  }
+
+  h2Text() {
+    if (window.innerWidth < BreakpointValues.largeLower) {
+      return 'Blog Posts for you...';
+    }
+
+    return 'Blog posts recommended for you...';
   }
 }
 
@@ -209,15 +243,35 @@ interface BlogPost {
   imageUrl: string;
   shareUrl: string;
   clickUrl: string;
+  tags: Array<string>;
 }
 
 const blogPosts: Array<BlogPost> = [
   {
-    title: '',
-    description: '',
-    date: '',
-    imageUrl: '',
+    title: 'temp',
+    description: 'temp',
+    date: 'temp',
+    imageUrl: '/assets/icons/icon_120.png',
     shareUrl: '',
     clickUrl: '',
+    tags: ['a', 'b'],
+  },
+  {
+    title: 'temp',
+    description: 'temp',
+    date: 'temp',
+    imageUrl: '/assets/icons/icon_120.png',
+    shareUrl: '',
+    clickUrl: '',
+    tags: ['a', 'b'],
+  },
+  {
+    title: 'temp',
+    description: 'temp',
+    date: 'temp',
+    imageUrl: '/assets/icons/icon_120.png',
+    shareUrl: '',
+    clickUrl: '',
+    tags: ['a', 'b'],
   },
 ];
