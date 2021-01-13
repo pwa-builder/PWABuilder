@@ -5,7 +5,7 @@ import { Manifest, ManifestDetectionResult } from '../utils/interfaces';
 const apiUrl = `${env.api}/manifests`;
 
 // Uses PWABuilder API to fetch the manifest
-async function getManifestViaApi(url): Promise<ManifestDetectionResult> {
+async function getManifestViaApi(url: string): Promise<ManifestDetectionResult> {
   const options = {
     siteUrl: url,
   };
@@ -21,7 +21,7 @@ async function getManifestViaApi(url): Promise<ManifestDetectionResult> {
 }
 
 // Uses Azure manifest Puppeteer service to fetch the manifest, then POSTS it to the API.
-async function getManifestViaFilePost(url): Promise<ManifestDetectionResult> {
+async function getManifestViaFilePost(url: string): Promise<ManifestDetectionResult> {
   const manifestTestUrl = `${
     env.testAPIUrl
   }/WebManifest?site=${encodeURIComponent(url)}`;
@@ -64,7 +64,7 @@ async function getManifestViaFilePost(url): Promise<ManifestDetectionResult> {
 }
 
 // Uses Azurez HTML parsing microservice to fetch the manifest, then hands it to the API.
-async function getManifestViaHtmlParse(url): Promise<ManifestDetectionResult> {
+async function getManifestViaHtmlParse(url: string): Promise<ManifestDetectionResult> {
   type ManifestFinderResult = {
     manifestUrl: string | null;
     manifestContents: Manifest | null;
@@ -95,7 +95,7 @@ async function getManifestViaHtmlParse(url): Promise<ManifestDetectionResult> {
   return await syncRedis({
     content: responseData.manifestContents,
     format: 'w3c',
-    generatedUrl: responseData.manifestUrl || this.url,
+    generatedUrl: responseData.manifestUrl || url,
     default: {
       short_name: responseData.manifestContents.short_name || '',
     },
@@ -125,7 +125,7 @@ async function syncRedis(
   return manifestResult;
 }
 
-export async function fetchManifest(url): Promise<ManifestDetectionResult> {
+export async function fetchManifest(url: string): Promise<ManifestDetectionResult> {
 
   // Manifest detection is surprisingly tricky due to redirects, dynamic code generation, SSL problems, and other issues.
   // We have 3 techniques to detect the manifest:
