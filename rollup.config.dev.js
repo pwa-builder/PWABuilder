@@ -9,6 +9,7 @@ export default {
   output: {
     dir: "build",
     format: "es",
+    sourcemap: true
   },
   plugins: [
     resolve(),
@@ -25,7 +26,7 @@ export default {
       targets: [
         { src: "assets/**/*", dest: "build/assets/" },
         { src: "styles/global.css", dest: "build/styles/" },
-        { src: "manifest.json", dest: "build/" },
+        { src: "manifest.json", dest: "build/" }
       ],
     }),
   ],

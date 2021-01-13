@@ -6,5 +6,6 @@
     "rvest.vs-code-prettier-eslint",
     "eg2.vscode-npm-script",
     "christian-kohler.npm-intellisense",
+    "msjsdiag.debugger-for-edge"
   ]
 }

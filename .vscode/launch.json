@@ -1,0 +1,22 @@
+{
+    // VS Code debugger launch file. When you press F5 in VS Code,
+    // this debugger configuration will launch.
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug in VSCode",
+            "type": "edge",
+            "request": "launch",
+            "version": "stable",
+            "url": "http://localhost:8000",
+            "webRoot": "${workspaceFolder}/build",
+            "sourceMaps": true,
+            "skipFiles": ["node_modules"],
+            "smartStep": true,
+            "pathMapping": {
+                "/": "${workspaceFolder}/build/index.html"
+            },
+            "preLaunchTask": "npm: debug"
+        }
+    ]
+}

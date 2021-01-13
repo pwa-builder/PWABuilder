@@ -12,7 +12,7 @@ export default {
   input: "build/index.html",
   output: {
     dir: "dist",
-    format: "es",
+    format: "es"
   },
   plugins: [
     resolve(),
