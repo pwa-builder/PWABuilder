@@ -1,6 +1,6 @@
 import { LitElement, css, html, customElement } from 'lit-element';
 
-import { smallBreakPoint, mediumBreakPoint, xLargeBreakPoint } from '../utils/breakpoints';
+import { smallBreakPoint, mediumBreakPoint, largeBreakPoint, xLargeBreakPoint, xxLargeBreakPoint, BreakpointValues } from '../utils/breakpoints';
 
 import './app-header';
 
@@ -29,11 +29,14 @@ export class ContentHeader extends LitElement {
 
       ${smallBreakPoint(css`
         #main-container {
-          flex-direction: column;
+          flex-direction: column-reverse;
         }
 
         img {
-          margin-top: 2em;
+          margin-left: 0;
+          width: 226px;
+          height: 226px;
+          margin-top: 16px;
         }
 
         #content-side {
@@ -42,6 +45,11 @@ export class ContentHeader extends LitElement {
 
         #main-container {
           padding-top: initial;
+          padding-bottom: 51px;
+        }
+
+        #hero-container {
+          text-align: center;
         }
 
         ::slotted(ul) {
@@ -51,15 +59,22 @@ export class ContentHeader extends LitElement {
 
       ${mediumBreakPoint(css`
         #main-container {
-          flex-direction: column;
+          flex-direction: column-reverse;
         }
 
         img {
-          margin-top: 2em;
+          margin-left: 0;
+          width: 100%;
+          height: 226px;
+          margin-top: 16px;
         }
 
         #content-side {
           padding: 1em;
+        }
+
+        #hero-container {
+          text-align: center;
         }
 
         #main-container {
@@ -67,10 +82,27 @@ export class ContentHeader extends LitElement {
         }
       `)}
 
+      ${largeBreakPoint(css`
+        ::slotted(ul) {
+          grid-gap: 10px;
+        }
+
+        img {
+          height: 282px;
+          width: 268px;
+        }
+      `)}
+
       ${xLargeBreakPoint(css`
         img {
           height: 18em;
           width: initial;
+        }
+      `)}
+
+      ${xxLargeBreakPoint(css`
+        #content-side {
+          width: 44em;
         }
       `)}
     `;
@@ -96,7 +128,11 @@ export class ContentHeader extends LitElement {
         </section>
 
         <section>
-          <img src="/assets/images/pwab3d.png" alt="3d version of the PWABuilder logo">
+          <picture>
+            <source srcset="/assets/images/pwab3d.png" media="(max-width: ${BreakpointValues.mediumLower}px)">
+            <source srcset="/assets/images/mobile_header_logo.png" media="(max-width: ${BreakpointValues.mediumUpper}px)">
+            <img src="/assets/images/pwab3d.png" alt="3d version of the PWABuilder logo">
+          </picture>
         </section>
       </div>
     `;

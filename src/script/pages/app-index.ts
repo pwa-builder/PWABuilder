@@ -8,7 +8,6 @@ import { Router } from '@vaadin/router';
 export class AppIndex extends LitElement {
   static get styles() {
     return css`
-
       #router-outlet > * {
         width: 100% !important;
       }
