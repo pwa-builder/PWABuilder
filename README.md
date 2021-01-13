@@ -22,9 +22,17 @@ We recommend the following tools for your dev setup:
 * Editor: [VSCode](https://code.visualstudio.com/)
 * Terminal: [Windows Terminal](https://www.microsoft.com/en-us/p/windows-terminal-preview/9n0dx20hk701?activetab=pivot:overviewtab) or [hyper](https://hyper.is/)
 
+Additionally, when you open the project in VS Code, you'll be prompted to install recommended extensions.
+
 ### Development
 
 Run `npm install` and then run `npm run dev`, the project should open in your default browser. From here you can start developing, your changes will be rebuilt and reloaded in the browser as you develop.
+
+### Debugging in VS Code
+
+In VS Code, install [Debugger for Microsoft Edge extension](https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-edge).
+
+In VSCode, set a breakpoint in a TypeScript file. Then press F5 to launch debugging.
 
 ### Building for Production
 
