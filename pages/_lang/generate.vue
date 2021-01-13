@@ -679,7 +679,7 @@
           :aria-hidden="ariaHidden"
         >Our Privacy Statement</a>
 
-        <a href="https://raw.githubusercontent.com/pwa-builder/PWABuilder/master/TERMS_OF_USE.txt">Terms of Use</a>
+        <a class="termsOfUse" href="https://raw.githubusercontent.com/pwa-builder/PWABuilder/master/TERMS_OF_USE.txt">Terms of Use</a>
       </p>
     </footer>
   </div>
@@ -1291,6 +1291,10 @@ declare var awa: any;
 
 <style lang="scss">
 @import "~assets/scss/base/variables";
+
+.termsOfUse {
+  margin-left: 6px;
+}
 
 .custom-file-upload {
   label {
