@@ -132,9 +132,6 @@ export class ResourceHub extends LitElement {
         --badge-fill-primary: white;
       }
 
-      fast-card.featured .share {
-      }
-
       fast-card.featured img {
         height: 100%;
       }
@@ -144,16 +141,17 @@ export class ResourceHub extends LitElement {
         --badge-color-dark: var(--font-color);
       }
 
-      .card-actions {
+      .card-content {
+        display: flex;
+        justify-content: space-between;
+        vertical-align: text-top;
         margin-top: 8px;
+        padding: 8px;
       }
 
-      .card-actions fast-button::part(control) {
-        font-weight: bold;
-        font-size: 14px;
-        line-height: 20px;
-        color: #679bd5;
-        padding: 0 16px;
+      .card-content h2 {
+        display: inline-block;
+        margin: 0;
       }
 
       #blog-actions {
@@ -220,6 +218,10 @@ export class ResourceHub extends LitElement {
           #posts fast-card {
             grid-column: 4 / 6;
             max-width: 425px;
+          }
+
+          fast-card .overlay {
+            height: 142px;
           }
 
           #blog-actions {
@@ -302,12 +304,12 @@ export class ResourceHub extends LitElement {
             </div>
           </div>
           <img src="${post.imageUrl}" alt="${post.title} card header image" />
-
-          <fast-button id="share" class="share" appearance="lightweight"
-            >Share</fast-button
-          >
-
-          <h2 class="title">${post.title}</h2>
+          <div class="card-content">
+            <h2 class="title">${post.title}</h2>
+            <fast-button id="share" class="share" appearance="lightweight"
+              >Share</fast-button
+            >
+          </div>
         </fast-card>
       `;
     });
