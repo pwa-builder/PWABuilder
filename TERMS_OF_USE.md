@@ -1,4 +1,7 @@
-PWA BUILDER TERMS OF SERVICE
+<html>
+
+<body>
+  PWA BUILDER TERMS OF SERVICE
 
 PLEASE READ THE BINDING ARBITRATION CLAUSE AND CLASS ACTION WAIVER IN SECTION 12. IT AFFECTS YOUR RIGHTS AND HOW DISPUTES ARE RESOLVED.
 Welcome to the PWA Builder web site, owned and operated by Microsoft (“PWA Builder” or “we”, “us”, or “our”). These terms of service (“Terms”) govern your (“you” or “your”) access and use of this website, located at <a href="https://www.pwabuilder.com/">https://www.pwabuilder.com</a> (“Site”) and the services we provide through the Site (collectively referred to as “Services”). By clicking “I accept”, where indicated, or by accessing and using the Services, you acknowledge that you have read, understood, and agree to be bound by these Terms. If you do not accept these Terms, you may not use the Services.  
@@ -43,3 +46,7 @@ Redmond, WA 98052-6399. We may send you notices via the email address you may pr
 (i)	Severability. If any part of Section 12 (Binding Arbitration and Class Action Waiver) is found to be illegal or unenforceable, the remainder will remain in effect (with an arbitration award issued before any court proceeding begins), except that if a finding of partial illegality or unenforceability would allow class-wide or representative arbitration, Section 12 will be unenforceable in its entirety.
 13.	Governing Law. The laws of the state of Washington without regard to principles of conflict of laws will govern these Terms and any claim or dispute that has arisen or may arise between you and PWA Builder.
 14.	Miscellaneous. PWA Builder will be excused from performance of these Terms to the extent that performance is prevented, delayed, or obstructed by causes beyond its reasonable control. These Terms (including any amendment agreed upon by the parties in writing) represent the complete agreement between you and PWA Builder concerning its subject matter, and supersede all prior agreements and representations between us. Only written waivers are effective. If any provision of these Terms is held to be unenforceable for any reason, such provision will be reformed to the extent necessary to make it enforceable to the maximum extent permissible so as to effect the intent of the parties, and the remainder of these Terms will continue in full force and effect. The United Nations Convention on Contracts for the International Sale of Goods and the Uniform Computer Information Transactions Act do not apply to these Terms. The Service is controlled by U.S. Export Regulations, and it may be not be exported to or used by embargoed countries or individuals. You may not assign or otherwise transfer any of your rights in these Terms without our prior written consent, and any such attempt is void. We expressly reserve the right to assign these Terms and to delegate any of our obligations hereunder. The relationship between PWA Builder and you is not one of a legal partnership relationship but is one of independent contractors, and we are not an agent or trustee. These Terms will be binding upon and inure to the benefit of the respective successors and assigns of the parties hereto. 
+
+</body>
+
+</html>

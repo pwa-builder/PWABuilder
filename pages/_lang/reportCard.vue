@@ -126,7 +126,7 @@
               href="https://privacy.microsoft.com/en-us/privacystatement"
             >Our Privacy Statement</a>
 
-            <a class="termsOfUse" href="https://raw.githubusercontent.com/pwa-builder/PWABuilder/master/TERMS_OF_USE.html">Terms of Use</a>
+            <a class="termsOfUse" href="https://raw.githubusercontent.com/pwa-builder/PWABuilder/master/TERMS_OF_USE.md">Terms of Use</a>
           </p>
         </footer>
       </div>
@@ -223,7 +223,7 @@
           href="https://privacy.microsoft.com/en-us/privacystatement"
         >Our Privacy Statement</a>
 
-        <a class="termsOfUse" href="https://raw.githubusercontent.com/pwa-builder/PWABuilder/master/TERMS_OF_USE.html">Terms of Use</a>
+        <a class="termsOfUse" href="https://raw.githubusercontent.com/pwa-builder/PWABuilder/master/TERMS_OF_USE.md">Terms of Use</a>
       </p>
     </footer>
   </div>
