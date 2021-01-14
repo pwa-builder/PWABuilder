@@ -672,13 +672,14 @@
 
     <footer>
       <p>
-        PWA Builder was founded by Microsoft as a community guided, open source
-        project to help move PWA adoption forward.
+        PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
         <a
           href="https://privacy.microsoft.com/en-us/privacystatement"
           :tabindex="bodyTabIndex"
           :aria-hidden="ariaHidden"
         >Our Privacy Statement</a>
+
+        <a class="termsOfUse" href="https://raw.githubusercontent.com/pwa-builder/PWABuilder/master/TERMS_OF_USE.txt">Terms of Use</a>
       </p>
     </footer>
   </div>
@@ -1290,6 +1291,10 @@ declare var awa: any;
 
 <style lang="scss">
 @import "~assets/scss/base/variables";
+
+.termsOfUse {
+  margin-left: 6px;
+}
 
 .custom-file-upload {
   label {

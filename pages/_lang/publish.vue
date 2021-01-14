@@ -1580,11 +1580,12 @@
 
     <footer>
       <p>
-        PWA Builder was founded by Microsoft as a community guided, open source
-        project to help move PWA adoption forward.
+        PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
         <a
           href="https://privacy.microsoft.com/en-us/privacystatement"
         >Our Privacy Statement</a>
+
+        <a class="termsOfUse" href="https://raw.githubusercontent.com/pwa-builder/PWABuilder/master/TERMS_OF_USE.txt">Terms of Use</a>
       </p>
     </footer>
   </main>
@@ -2388,6 +2389,10 @@ declare var awa: any;
 /* stylelint-disable */
 
 @import "~assets/scss/base/variables";
+
+.termsOfUse {
+  margin-left: 6px;
+}
 
 // Hide macOS card for now
 #pwaMacosCard {
