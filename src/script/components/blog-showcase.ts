@@ -19,6 +19,7 @@ export class ResourceHub extends LitElement {
 
       section {
         width: 100%;
+        max-width: 1060px;
       }
 
       #blog-header {
@@ -47,6 +48,7 @@ export class ResourceHub extends LitElement {
         padding-left: 32px;
         padding-right: 32px;
         margin-top: 1em;
+        max-width: 1069px;
       }
 
       #posts fast-card {
@@ -56,10 +58,12 @@ export class ResourceHub extends LitElement {
         background: white;
       }
 
+      /* Card Basics */
       fast-card img {
+        height: 142px;
         width: 100%;
         object-fit: none;
-        height: 188px;
+        height: 200px;
       }
 
       fast-card h3 {
@@ -71,10 +75,73 @@ export class ResourceHub extends LitElement {
 
       fast-card p {
         color: var(--secondary-font-color);
-        margin: 8px 16px 0 16px;
 
         font-size: 14px;
         line-height: 20px;
+      }
+
+      fast-card .top {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+
+      /* Featured Card */
+      #posts fast-card.featured {
+        padding: 0;
+      }
+
+      fast-card .overlay {
+        position: absolute;
+        width: calc(100% - 32px);
+        padding: 16px;
+      }
+
+      .overlay p {
+        margin: 0;
+      }
+
+      .overlay .date,
+      .overlay .tag-list::part(control),
+      .overlay .share::part(control) {
+        display: inline-block;
+        font-size: var(--desktop-button-font-size);
+      }
+
+      .featured .overlay .share {
+        display: inline-block;
+      }
+
+      .featured .overlay .share::part(control) {
+        vertical-align: middle;
+      }
+
+      fast-card.featured .tag-list {
+        position: absolute;
+        right: unset;
+        margin: 0 16px 8px 0;
+        bottom: 0;
+        right: 0;
+      }
+
+      fast-card.featured .tag-list .tag {
+        margin: 8px 0 0 8px;
+      }
+
+      .featured fast-badge::part(control) {
+        --badge-fill-primary: white;
+      }
+
+      fast-card.featured .share {
+      }
+
+      fast-card.featured img {
+        height: 100%;
+      }
+
+      /* Secondary Components */
+      fast-badge::part(control) {
+        --badge-color-dark: var(--font-color);
       }
 
       .card-actions {
@@ -145,12 +212,14 @@ export class ResourceHub extends LitElement {
             row-gap: 16px;
           }
 
-          #posts .featured {
+          #posts fast-card.featured {
             grid-area: 1 / 1 / 3 / 4;
+            max-width: 612px;
           }
 
           #posts fast-card {
             grid-column: 4 / 6;
+            max-width: 425px;
           }
 
           #blog-actions {
@@ -172,6 +241,10 @@ export class ResourceHub extends LitElement {
 
   constructor() {
     super();
+
+    window.addEventListener('resize', () => {
+      console.log('resize in window');
+    });
   }
 
   render() {
@@ -196,32 +269,45 @@ export class ResourceHub extends LitElement {
       if (i === 0) {
         return html`
           <fast-card class="featured">
-            <div class="image-container">
-              <span class="date">${post.date}</span>
+            <div class="overlay">
+              <div class="top">
+                <span class="date">${post.date}</span>
+                <fast-button id="share" class="share" appearance="lightweight"
+                  >Share</fast-button
+                >
+              </div>
+
+              <h2 class="title">${post.title}</h2>
+              <p class="description">${post.description}</p>
+            </div>
+
+            <div class="tag-list">
               ${post.tags.map(
                 tag => html` <fast-badge class="tag">${tag}</fast-badge> `
               )}
-              <img
-                src="${post.imageUrl}"
-                alt="${post.title} card header image"
-              />
             </div>
-
-            <fast-button appearance="lightweight">Share</fast-button>
-
-            <h2>${post.title}</h2>
+            <img src="${post.imageUrl}" alt="${post.title} card header image" />
           </fast-card>
         `;
       }
 
       return html`
         <fast-card>
+          <div class="overlay top">
+            <p class="date">${post.date}</p>
+            <div class="tag-list">
+              ${post.tags.map(
+                tag => html` <fast-badge class="tag">${tag}</fast-badge> `
+              )}
+            </div>
+          </div>
           <img src="${post.imageUrl}" alt="${post.title} card header image" />
-          <p class="date">${post.date}</p>
 
-          <fast-button appearance="lightweight">Share</fast-button>
+          <fast-button id="share" class="share" appearance="lightweight"
+            >Share</fast-button
+          >
 
-          <h2>${post.title}</h2>
+          <h2 class="title">${post.title}</h2>
         </fast-card>
       `;
     });
@@ -248,27 +334,27 @@ interface BlogPost {
 
 const blogPosts: Array<BlogPost> = [
   {
-    title: 'temp',
-    description: 'temp',
-    date: 'temp',
+    title: 'temp a',
+    description: 'description post',
+    date: 'january 13, 2021',
     imageUrl: '/assets/icons/icon_120.png',
     shareUrl: '',
     clickUrl: '',
     tags: ['a', 'b'],
   },
   {
-    title: 'temp',
-    description: 'temp',
-    date: 'temp',
+    title: 'temp b',
+    description: 'description post',
+    date: 'january 13, 2021',
     imageUrl: '/assets/icons/icon_120.png',
     shareUrl: '',
     clickUrl: '',
     tags: ['a', 'b'],
   },
   {
-    title: 'temp',
-    description: 'temp',
-    date: 'temp',
+    title: 'temp c',
+    description: 'description post',
+    date: 'january 13, 2021',
     imageUrl: '/assets/icons/icon_120.png',
     shareUrl: '',
     clickUrl: '',
