@@ -1,9 +1,11 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
+import { classMap } from 'lit-html/directives/class-map';
 import { completeCards, landingCards } from './resource-hub-cards';
 import {
   largeBreakPoint,
   mediumBreakPoint,
   smallBreakPoint,
+  BreakpointValues,
 } from '../utils/breakpoints';
 
 import '../components/app-button';
@@ -137,8 +139,35 @@ export class ResourceHub extends LitElement {
             font-weight: var(--font-medium);
           }
 
+          /* TODO make this gated to only a gallery variant */
+          #cards.horizontal {
+            overflow-y: scroll;
+            overflow-x: none;
+            white-space: nowrap;
+
+            flex-direction: row;
+            align-items: center;
+          }
+
+          #card.horizontal fast-card {
+            display: inline-block;
+            min-width: calc(100% - 32px);
+          }
+
           .card-actions fast-button::part(control) {
             color: var(--mobile-link-color);
+          }
+        `
+      )}
+
+      ${smallBreakPoint(
+        css`
+          section {
+            width: 100%;
+          }
+
+          #cards.horizontal {
+            justify-content: left;
           }
         `
       )}
@@ -193,6 +222,10 @@ export class ResourceHub extends LitElement {
 
   constructor() {
     super();
+
+    window.addEventListener('resize', () => {
+      this.requestUpdate();
+    });
   }
 
   render() {
@@ -203,7 +236,9 @@ export class ResourceHub extends LitElement {
           <slot name="description"></slot>
         </div>
 
-        <div id="cards">${this.renderCards()}</div>
+        <div id="cards" class=${classMap(this.cardsClasses())}>
+          ${this.renderCards()}
+        </div>
 
         ${this.renderViewAllButton()}
       </section>
@@ -232,5 +267,13 @@ export class ResourceHub extends LitElement {
     }
 
     return undefined;
+  }
+
+  cardsClasses() {
+    return {
+      horizontal:
+        this.pageName === 'complete' &&
+        window.innerWidth <= BreakpointValues.smallUpper,
+    };
   }
 }
