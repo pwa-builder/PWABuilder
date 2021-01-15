@@ -1,8 +1,9 @@
 import { LitElement, css, html, customElement } from 'lit-element';
 import {
-  largeBreakPoint,
-  mediumBreakPoint,
   smallBreakPoint,
+  mediumBreakPoint,
+  largeBreakPoint,
+  xxxLargeBreakPoint,
   BreakpointValues,
 } from '../utils/breakpoints';
 
@@ -101,6 +102,11 @@ export class ResourceHub extends LitElement {
         margin: 0;
       }
 
+      .share::part(control),
+      .tag::part(control) {
+        color: var(--font-color);
+      }
+
       .overlay .date,
       .overlay .tag-list::part(control),
       .overlay .share::part(control) {
@@ -108,11 +114,24 @@ export class ResourceHub extends LitElement {
         font-size: var(--desktop-button-font-size);
       }
 
+      .featured .overlay h2 {
+        font-size: 32px;
+        line-height: 34px;
+        margin: 0;
+      }
+
+      .featured .overlay p {
+        font-size: 18px;
+        line-height: 34px;
+      }
+
       .featured .overlay .share {
         display: inline-block;
       }
 
       .featured .overlay .share::part(control) {
+        font-size: 14px;
+        color: var(--font-color);
         vertical-align: middle;
       }
 
@@ -130,6 +149,7 @@ export class ResourceHub extends LitElement {
 
       .featured fast-badge::part(control) {
         --badge-fill-primary: white;
+        color: var(--font-color);
       }
 
       fast-card.featured img {
@@ -146,11 +166,17 @@ export class ResourceHub extends LitElement {
         justify-content: space-between;
         vertical-align: text-top;
         margin-top: 8px;
-        padding: 8px;
+        padding: 8px 16px 0 16px;
+      }
+
+      .card-content fast-button::part(control) {
+        text-align: text-top;
+        align-items: baseline;
       }
 
       .card-content h2 {
         display: inline-block;
+        font-size: 18px;
         margin: 0;
       }
 
@@ -174,13 +200,21 @@ export class ResourceHub extends LitElement {
       ${smallBreakPoint(
         css`
           #posts {
-            flex-direction: column;
+            overflow-x: scroll;
+            overflow-y: hidden;
+            white-space: nowrap;
+
+            flex-direction: row;
             align-items: center;
             padding: 0 16px;
+            margin-bottom: 16px;
           }
 
           #posts fast-card {
-            margin-bottom: 32px;
+            display: inline-block;
+            min-width: calc(100% - 32px);
+            margin-right: 32px;
+            margin-bottom: 16px;
           }
         `
       )}
@@ -238,6 +272,18 @@ export class ResourceHub extends LitElement {
         `,
         'no-upper'
       )}
+
+      ${xxxLargeBreakPoint(
+        css`
+          :host {
+            display: block;
+          }
+
+          #blog-header {
+            align-items: normal;
+          }
+        `
+      )}
     `;
   }
 
@@ -245,7 +291,7 @@ export class ResourceHub extends LitElement {
     super();
 
     window.addEventListener('resize', () => {
-      console.log('resize in window');
+      this.requestUpdate();
     });
   }
 
@@ -259,7 +305,7 @@ export class ResourceHub extends LitElement {
         <div id="posts">${this.renderCards()}</div>
 
         <div id="blog-actions">
-          <fast-button>View PWA Builder Blog</fast-button>
+          <fast-button>${this.viewBlogButtonText()}</fast-button>
         </div>
         ;
       </section>
@@ -268,7 +314,7 @@ export class ResourceHub extends LitElement {
 
   renderCards() {
     return blogPosts.map((post, i) => {
-      if (i === 0) {
+      if (i === 0 && window.innerWidth >= BreakpointValues.largeLower) {
         return html`
           <fast-card class="featured">
             <div class="overlay">
@@ -297,11 +343,15 @@ export class ResourceHub extends LitElement {
         <fast-card>
           <div class="overlay top">
             <p class="date">${post.date}</p>
-            <div class="tag-list">
-              ${post.tags.map(
-                tag => html` <fast-badge class="tag">${tag}</fast-badge> `
-              )}
-            </div>
+            ${window.innerWidth < BreakpointValues.mediumLower
+              ? html`
+                  <div class="tag-list">
+                    ${post.tags.map(
+                      tag => html` <fast-badge class="tag">${tag}</fast-badge> `
+                    )}
+                  </div>
+                `
+              : undefined}
           </div>
           <img src="${post.imageUrl}" alt="${post.title} card header image" />
           <div class="card-content">
@@ -322,6 +372,14 @@ export class ResourceHub extends LitElement {
 
     return 'Blog posts recommended for you...';
   }
+
+  viewBlogButtonText() {
+    if (window.innerWidth < BreakpointValues.largeLower) {
+      return 'View Blog';
+    }
+
+    return 'View PWA Builder Blog';
+  }
 }
 
 interface BlogPost {
@@ -336,27 +394,27 @@ interface BlogPost {
 
 const blogPosts: Array<BlogPost> = [
   {
-    title: 'temp a',
+    title: 'Title of Post',
     description: 'description post',
-    date: 'january 13, 2021',
+    date: 'Date of Post',
     imageUrl: '/assets/icons/icon_120.png',
     shareUrl: '',
     clickUrl: '',
     tags: ['a', 'b'],
   },
   {
-    title: 'temp b',
+    title: 'Title of Post',
     description: 'description post',
-    date: 'january 13, 2021',
+    date: 'Date of Post',
     imageUrl: '/assets/icons/icon_120.png',
     shareUrl: '',
     clickUrl: '',
     tags: ['a', 'b'],
   },
   {
-    title: 'temp c',
+    title: 'Title of Post',
     description: 'description post',
-    date: 'january 13, 2021',
+    date: 'Date of Post',
     imageUrl: '/assets/icons/icon_120.png',
     shareUrl: '',
     clickUrl: '',
