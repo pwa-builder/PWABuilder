@@ -4,6 +4,7 @@ import { fetchManifest } from '../manifest';
 export async function testManifest(
   url: string
 ): Promise<ManifestTestResults | undefined> {
+  console.info("Testing Manifest");
   const manifestData = await fetchManifest(url);
 
   if (manifestData) {

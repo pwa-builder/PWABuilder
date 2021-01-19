@@ -1,5 +1,6 @@
 import { LitElement, css, html, customElement } from 'lit-element';
 import { testManifest } from '../services/tests/manifest';
+import { testServiceWorker } from '../services/tests/service-worker';
 
 @customElement('app-about')
 export class AppAbout extends LitElement {
@@ -17,7 +18,10 @@ export class AppAbout extends LitElement {
 
     if (site) {
       const manifestTestresults = await testManifest(site);
-      console.log(manifestTestresults);
+      console.log('manifest test results', manifestTestresults);
+
+      const swTestResults = await testServiceWorker(site);
+      console.log('sw test results', swTestResults);
     }
   }
 

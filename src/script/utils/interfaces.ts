@@ -113,3 +113,12 @@ export interface ManifestTestResults {
     has_rating_id: boolean;
     has_related: boolean;
 }
+
+export interface ServiceWorkerDetectionResult {
+  hasSW: boolean;
+  scope: string | null;
+  url: string | null;
+  hasPushRegistration: boolean;
+  serviceWorkerDetectionTimedOut: boolean;
+  noServiceWorkerFoundDetails: string | null;
+}
