@@ -17,6 +17,7 @@ import { fetchManifest } from '../services/manifest';
 import '../components/content-header';
 import '../components/resource-hub';
 import '../components/loading-button';
+import '../components/app-modal';
 
 // For more info on the @pwabuilder/pwainstall component click here https://github.com/pwa-builder/pwa-install
 import '@pwabuilder/pwainstall';
@@ -243,7 +244,7 @@ export class AppHome extends LitElement {
 
       try {
         const data = await fetchManifest(this.siteURL);
-
+        
         if (data) {
           Router.go(`/about?site=${this.siteURL}`);
         }
@@ -323,6 +324,16 @@ export class AppHome extends LitElement {
           >
         </form>
       </content-header>
+
+      <app-modal
+        title="Modal Title"
+        body="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Urna, sit scelerisque vestibulum magnis. Auctor dolor, tincidunt enim."
+        ?open="${true}"
+      >
+        <div slot="modal-actions">
+          <fast-button>Button</fast-button>
+        </div>
+      </app-modal>
 
       <resource-hub page="home" all>
         <h2 slot="header">PWABuilder Resource Hub</h2>
