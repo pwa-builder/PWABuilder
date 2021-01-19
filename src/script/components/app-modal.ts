@@ -6,6 +6,9 @@ export class AppModal extends LitElement {
   @property({ type: String }) title: string = '';
   @property({ type: String }) body: string = '';
 
+  modalAni: Animation | null = null;
+  backgroundAni: Animation | null = null;
+
   static get styles() {
     return css`
       #background {
@@ -20,9 +23,6 @@ export class AppModal extends LitElement {
         display: flex;
         align-items: center;
         justify-content: center;
-
-        animation-name: fadein;
-        animation-duration: 280ms;
       }
 
       #modal {
@@ -37,9 +37,6 @@ export class AppModal extends LitElement {
         padding-bottom: 45px;
         border-radius: 8px;
         box-shadow: 0px 16px 24px rgba(0, 0, 0, 0.12);
-
-        animation-name: slideup;
-        animation-duration: 280ms;
       }
 
       #modal-header #title {
@@ -70,28 +67,6 @@ export class AppModal extends LitElement {
         width: 2em;
         color: #c2c9d1;
       }
-
-      @keyframes fadein {
-        from {
-          opacity: 0;
-        }
-
-        to {
-          opacity: 1;
-        }
-      }
-
-      @keyframes slideup {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
     `;
   }
 
@@ -99,8 +74,58 @@ export class AppModal extends LitElement {
     super();
   }
 
-  close() {
-    this.open = false;
+  firstUpdated() {
+    const modalEl = this.shadowRoot?.querySelector("#modal");
+    const backgroundEl = this.shadowRoot?.querySelector("#background")
+
+    if (modalEl) {
+      this.modalAni = modalEl.animate(
+        [
+          { transform: 'translateY(10px)', opacity: 0 },
+          {
+            transform: 'translateY(0)',
+            opacity: 1,
+          },
+        ],
+        {
+          duration: 280,
+          easing: "ease-in-out"
+        }
+      );
+    }
+
+    if (backgroundEl) {
+      this.backgroundAni = backgroundEl.animate(
+        [
+          {
+            opacity: 0
+          },
+          {
+            opacity: 1
+          }
+        ],
+        {
+          duration: 280,
+          easing: "ease-in-out"
+        }
+      )
+    }
+  }
+
+  async close() {
+    if (this.modalAni && this.backgroundAni) {
+      this.modalAni.reverse();
+      this.backgroundAni.reverse();
+
+      await this.modalAni.finished;
+      await this.backgroundAni.finished;
+
+      this.open = false;
+    } else {
+      // Should never really end up here
+      // but just in case close modal without animation
+      this.open = false;
+    }
   }
 
   render() {
