@@ -45,6 +45,10 @@ export class AppModal extends LitElement {
         line-height: 28px;
       }
 
+      #modal-body {
+        text-align: center;
+      }
+
       #modal-body p {
         font-weight: 300;
         font-size: 14px;
