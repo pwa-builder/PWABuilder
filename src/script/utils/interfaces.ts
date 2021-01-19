@@ -108,6 +108,7 @@ export interface ManifestTestResults {
     has_screenshots: boolean;
     has_square_512: boolean;
     has_maskable_icon: boolean;
+    has_shortcuts: boolean;
     has_categories: boolean;
     has_rating_id: boolean;
     has_related: boolean;
