@@ -88,10 +88,6 @@ export class AppHome extends LitElement {
       #input-form loading-button::part(underlying-button) {
         display: flex;
 
-        box-shadow: var(--button-shadow);
-        border-radius: var(--button-radius);
-        font-size: var(--desktop-button-font-size);
-        font-weight: var(--font-bold);
       }
 
       #input-form fast-text-field::part(root) {
@@ -144,15 +140,6 @@ export class AppHome extends LitElement {
         #input-form loading-button {
           margin-top: 54px;
         }
-
-        #input-form loading-button::part(underlying-button) {
-          display: flex;
-
-          box-shadow: var(--button-shadow);
-          border-radius: var(--button-radius);
-          font-size: var(--desktop-button-font-size);
-          font-weight: var(--font-bold);
-        }
       `)}
 
       ${mediumBreakPoint(css`
@@ -195,11 +182,9 @@ export class AppHome extends LitElement {
           font-size: 22px;
         }
 
-        #input-form loading-button {
+        #input-form loading-button::part(underlying-button) {
           width: 216px;
           margin-top: 44px;
-          border-radius: var(--mobile-button-radius);
-          height: var(--mobile-button-height);
         }
       `)}
 
@@ -331,7 +316,7 @@ export class AppHome extends LitElement {
         ?open="${true}"
       >
         <div slot="modal-actions">
-          <fast-button>Button</fast-button>
+          <app-button>Test Button</app-button>
         </div>
       </app-modal>
 
