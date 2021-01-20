@@ -135,7 +135,8 @@ export default class extends Vue {
         // Did it fail because images couldn't be fetched with ECONNREFUSED? E.g. https://github.com/pwa-builder/PWABuilder/issues/1312
         // If so, retry using our downloader proxy service.
         const hasSafeImages = this.androidOptions.iconUrl && this.androidOptions.iconUrl.includes(process.env.safeUrlFetcher || "");
-        if (!hasSafeImages && responseText && responseText.includes("ECONNREFUSED")) {
+        const isConnectionRefusedOrForbidden = (responseText || "").includes("ECONNREFUSED") || response.status === 403;
+        if (!hasSafeImages && isConnectionRefusedOrForbidden) {
           console.warn("Android package generation failed with ECONNREFUSED. Retrying with safe images.", responseText);
           this.updateAndroidOptionsWithSafeUrls(this.androidOptions);
           await this.generateAndroidPackage();
