@@ -1,4 +1,6 @@
 import { LitElement, css, html, customElement } from 'lit-element';
+import { testManifest } from '../services/tests/manifest';
+import { testServiceWorker } from '../services/tests/service-worker';
 
 @customElement('app-about')
 export class AppAbout extends LitElement {
@@ -8,6 +10,19 @@ export class AppAbout extends LitElement {
 
   constructor() {
     super();
+  }
+
+  async firstUpdated() {
+    const search = new URLSearchParams(location.search);
+    const site = search.get("site");
+
+    if (site) {
+      const manifestTestresults = await testManifest(site);
+      console.log('manifest test results', manifestTestresults);
+
+      const swTestResults = await testServiceWorker(site);
+      console.log('sw test results', swTestResults);
+    }
   }
 
   render() {

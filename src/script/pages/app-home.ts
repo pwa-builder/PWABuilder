@@ -244,9 +244,10 @@ export class AppHome extends LitElement {
 
       try {
         const data = await fetchManifest(this.siteURL);
-        console.log(data);
-
-        Router.go(`/about?manifestID=${data.id}`);
+        
+        if (data) {
+          Router.go(`/about?site=${this.siteURL}`);
+        }
       } catch (err) {
         console.error(err);
       }
@@ -317,6 +318,7 @@ export class AppHome extends LitElement {
           ></fast-text-field>
           <loading-button
             ?loading="${this.gettingManifest}"
+            type="submit"
             @click="${(e: InputEvent) => this.start(e)}"
             >Start</loading-button
           >

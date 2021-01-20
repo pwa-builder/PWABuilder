@@ -92,3 +92,33 @@ export interface ManifestDetectionResult {
   suggestions: [];
   warnings: [];
 }
+
+export interface ManifestTestResults {
+  has_manifest: boolean;
+    has_icons: boolean;
+    has_name: boolean;
+    has_short_name:
+      boolean;
+    has_start_url:
+      boolean;
+    has_display_mode: boolean;
+    has_background_color: boolean;
+    has_theme_color: boolean;
+    has_orientation_mode: boolean;
+    has_screenshots: boolean;
+    has_square_512: boolean;
+    has_maskable_icon: boolean;
+    has_shortcuts: boolean;
+    has_categories: boolean;
+    has_rating_id: boolean;
+    has_related: boolean;
+}
+
+export interface ServiceWorkerDetectionResult {
+  hasSW: boolean;
+  scope: string | null;
+  url: string | null;
+  hasPushRegistration: boolean;
+  serviceWorkerDetectionTimedOut: boolean;
+  noServiceWorkerFoundDetails: string | null;
+}
