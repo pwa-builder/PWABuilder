@@ -304,11 +304,7 @@ export class ResourceHub extends LitElement {
         </div>
 
         <div id="posts">${this.renderCards()}</div>
-
-        <div id="blog-actions">
-          <fast-button>${this.viewBlogButtonText()}</fast-button>
-        </div>
-        ;
+        ${this.renderBlogActions()}
       </section>
     `;
   }
@@ -364,6 +360,16 @@ export class ResourceHub extends LitElement {
         </fast-card>
       `;
     });
+  }
+
+  renderBlogActions() {
+    if (window.innerWidth > BreakpointValues.smallUpper) {
+      return html`
+        <div id="blog-actions">
+          <fast-button>${this.viewBlogButtonText()}</fast-button>
+        </div>
+      `;
+    }
   }
 
   h2Text() {
