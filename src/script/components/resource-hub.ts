@@ -167,14 +167,15 @@ export class ResourceHub extends LitElement {
           }
 
           #cards.horizontal {
-            display: flex;
-            justify-content: normal;
-            flex-wrap: nowrap;
-            overflow: auto;
+            display: block;
+            overflow-x: scroll;
+            scroll-snap-type: x proximity;
           }
 
           #cards.horizontal fast-card {
+            display: inline-block;
             flex: 0 0 auto;
+            scroll-snap-align: center;
           }
 
           #cards.horizontal fast-card p,

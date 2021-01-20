@@ -200,11 +200,11 @@ export class ResourceHub extends LitElement {
       ${smallBreakPoint(
         css`
           #posts {
+            display: block;
             overflow-x: scroll;
-            overflow-y: hidden;
+            scroll-snap-type: x proximity;
             white-space: nowrap;
 
-            flex-direction: row;
             align-items: center;
             padding: 0 16px;
             margin-bottom: 16px;
@@ -215,6 +215,7 @@ export class ResourceHub extends LitElement {
             min-width: calc(100% - 32px);
             margin-right: 32px;
             margin-bottom: 16px;
+            scroll-snap-align: center;
           }
         `
       )}
