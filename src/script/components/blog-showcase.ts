@@ -102,14 +102,14 @@ export class ResourceHub extends LitElement {
         margin: 0;
       }
 
-      .share::part(control),
+      .share::part(underlying-button),
       .tag::part(control) {
         color: var(--font-color);
       }
 
       .overlay .date,
-      .overlay .tag-list::part(control),
-      .overlay .share::part(control) {
+      .overlay .tag-list::part(underlying-button),
+      .overlay .share::part(underlying-button) {
         display: inline-block;
         font-size: var(--desktop-button-font-size);
       }
@@ -129,7 +129,7 @@ export class ResourceHub extends LitElement {
         display: inline-block;
       }
 
-      .featured .overlay .share::part(control) {
+      .featured .overlay .share::part(underlying-button) {
         font-size: 14px;
         color: var(--font-color);
         vertical-align: middle;
@@ -169,7 +169,7 @@ export class ResourceHub extends LitElement {
         padding: 8px 16px 0 16px;
       }
 
-      .card-content fast-button::part(control) {
+      .card-content app-button::part(underlying-button) {
         text-align: text-top;
         align-items: baseline;
       }
@@ -186,13 +186,12 @@ export class ResourceHub extends LitElement {
         justify-content: center;
       }
 
-      #blog-actions fast-button {
-        color: white;
+      #blog-actions app-button {
         border-radius: 44px;
         width: 216px;
       }
 
-      #blog-actions fast-button::part(control) {
+      #blog-actions app-button::part(underlying-button) {
         font-size: 14px;
         font-weight: var(--font-bold);
       }
@@ -266,7 +265,7 @@ export class ResourceHub extends LitElement {
             margin-top: 32px;
           }
 
-          .blog-actions fast-button {
+          .blog-actions app-button {
             display: block;
             float: right;
           }
@@ -317,8 +316,8 @@ export class ResourceHub extends LitElement {
             <div class="overlay">
               <div class="top">
                 <span class="date">${post.date}</span>
-                <fast-button id="share" class="share" appearance="lightweight"
-                  >Share</fast-button
+                <app-button id="share" class="share" appearance="lightweight"
+                  >Share</app-button
                 >
               </div>
 
@@ -353,8 +352,8 @@ export class ResourceHub extends LitElement {
           <img src="${post.imageUrl}" alt="${post.title} card header image" />
           <div class="card-content">
             <h2 class="title">${post.title}</h2>
-            <fast-button id="share" class="share" appearance="lightweight"
-              >Share</fast-button
+            <app-button id="share" class="share" appearance="lightweight"
+              >Share</app-button
             >
           </div>
         </fast-card>
@@ -366,7 +365,7 @@ export class ResourceHub extends LitElement {
     if (window.innerWidth > BreakpointValues.smallUpper) {
       return html`
         <div id="blog-actions">
-          <fast-button>${this.viewBlogButtonText()}</fast-button>
+          <app-button>${this.viewBlogButtonText()}</app-button>
         </div>
       `;
     }

@@ -61,7 +61,7 @@ function renderResourceCard(data: CardData) {
       <p>${data.description}</p>
 
       <div class="card-actions">
-        <fast-button appearance="lightweight">View ${data.title}</fast-button>
+        <app-button appearance="lightweight">View ${data.title}</app-button>
       </div>
     </fast-card>
   `;

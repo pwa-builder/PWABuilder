@@ -97,7 +97,7 @@ export class ResourceHub extends LitElement {
         margin-top: 8px;
       }
 
-      .card-actions fast-button::part(control) {
+      .card-actions app-button::part(underlying-button) {
         font-weight: bold;
         font-size: 14px;
         line-height: 20px;
@@ -119,7 +119,7 @@ export class ResourceHub extends LitElement {
         color: var(--font-color);
       }
 
-      #resource-hub-actions fast-button::part(control) {
+      #resource-hub-actions app-button::part(control) {
         font-size: 16px;
         font-weight: var(--font-bold);
       }
@@ -154,7 +154,7 @@ export class ResourceHub extends LitElement {
             min-width: calc(100% - 32px);
           }
 
-          .card-actions fast-button::part(control) {
+          .card-actions app-button::part(control) {
             color: var(--mobile-link-color);
           }
         `
