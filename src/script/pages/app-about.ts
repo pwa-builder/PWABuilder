@@ -15,17 +15,17 @@ export class AppAbout extends LitElement {
 
   async firstUpdated() {
     const search = new URLSearchParams(location.search);
-    const site = search.get("site");
+    const site = search.get('site');
 
     if (site) {
       const manifestTestresults = await testManifest(site);
-      console.log("manifest test results", manifestTestresults);
+      console.log('manifest test results', manifestTestresults);
 
       const swTestResults = await testServiceWorker(site);
-      console.log("sw test results", swTestResults);
+      console.log('sw test results', swTestResults);
 
       const securityTestResults = await testSecurity(site);
-      console.log("security test results", securityTestResults);
+      console.log('security test results', securityTestResults);
     }
   }
 
