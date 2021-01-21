@@ -1,3 +1,4 @@
+/* eslint-disable no-fallthrough */
 import { LitElement, css, html, customElement, property } from 'lit-element';
 import { Router } from '@vaadin/router';
 
@@ -20,7 +21,28 @@ export class AppCard extends LitElement {
   @property({ type: Boolean }) shareLink = false;
 
   static get styles() {
+    const defaultCardCss = css`
+      fast-card {
+      }
+
+      fast-card .card-actions {
+      }
+    `;
+
+    const blogCardCss = css`
+      fast-card.blog {
+      }
+    `;
+
+    const microCardCss = css`
+      fast-card.micro {
+      }
+    `;
+
     return css`
+      :host {
+      }
+
       ${defaultCardCss}
       ${blogCardCss}
       ${microCardCss}
@@ -34,9 +56,9 @@ export class AppCard extends LitElement {
   render() {
     switch (this.modes) {
       case AppCardModes.blog:
-        return this.renderBlogCard();
+      // return this.renderBlogCard();
       case AppCardModes.micro:
-        return this.renderMicroCard();
+      // return this.renderMicroCard();
       case AppCardModes.default:
       default:
         return this.renderDefault();
@@ -74,21 +96,3 @@ export class AppCard extends LitElement {
     return html``;
   }
 }
-
-const defaultCardCss = css`
-  fast-card {
-  }
-
-  fast-card .card-actions {
-  }
-`;
-
-const blogCardCss = css`
-  fast-card.blog {
-  }
-`;
-
-const microCardCss = css`
-  fast-card.micro {
-  }
-`;
