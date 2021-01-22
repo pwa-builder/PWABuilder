@@ -130,7 +130,7 @@ export class ContentHeader extends LitElement {
         <section>
           <picture>
             <source srcset="/assets/images/pwab3d.png" media="(max-width: ${BreakpointValues.mediumLower}px)">
-            <source srcset="/assets/images/mobile_header_logo.png" media="(max-width: ${BreakpointValues.mediumUpper}px)">
+            <source srcset="/assets/images/full_header_logo.png" media="(max-width: ${BreakpointValues.mediumUpper}px)">
             <img src="/assets/images/pwab3d.png" alt="3d version of the PWABuilder logo">
           </picture>
         </section>
