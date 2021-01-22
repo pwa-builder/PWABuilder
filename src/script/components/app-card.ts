@@ -8,11 +8,12 @@ export enum AppCardModes {
   default = 'default',
   blog = 'blog',
   micro = 'micro',
+  microDescription = 'micro-description',
 }
 
 @customElement('app-card')
 export class AppCard extends LitElement {
-  @property({ type: String }) modes = AppCardModes.default;
+  @property({ type: String }) mode = AppCardModes.default;
 
   @property({ attribute: 'bordered', type: Boolean })
   imageBordered = undefined;
@@ -80,12 +81,12 @@ export class AppCard extends LitElement {
         width: calc(100% - 16px);
         object-fit: none;
         max-height: 184px;
-        padding: 8px;
       }
 
       .img-overlay.bordered,
       fast-card img.bordered {
         margin: 16px;
+        padding: 8px;
         width: calc(100% - 48px);
       }
 
@@ -182,8 +183,12 @@ export class AppCard extends LitElement {
       .micro .content {
         display: inline-flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: center;
         margin: 8px;
+      }
+
+      .micro.micro-description .content {
+        justify-content: space-between;
       }
 
       .micro h3 {
@@ -223,11 +228,13 @@ export class AppCard extends LitElement {
   }
 
   render() {
-    switch (this.modes) {
+    switch (this.mode) {
       case AppCardModes.blog:
         return this.renderBlogCard();
       case AppCardModes.micro:
         return this.renderMicroCard();
+      case AppCardModes.microDescription:
+        return this.renderMicroDescriptionCard();
       case AppCardModes.default:
       default:
         return this.renderDefault();
@@ -303,6 +310,21 @@ export class AppCard extends LitElement {
     return html`
       <fast-card
         class="micro"
+        part="card"
+        @click=${() => Router.go(this.linkRoute)}
+      >
+        <img src="${this.imageUrl}" alt="${this.title} card header image" />
+        <div class="content">
+          <h3>${this.title}</h3>
+        </div>
+      </fast-card>
+    `;
+  }
+
+  renderMicroDescriptionCard() {
+    return html`
+      <fast-card
+        class="micro micro-description"
         part="card"
         @click=${() => Router.go(this.linkRoute)}
       >
