@@ -13,7 +13,7 @@ export class AppAbout extends LitElement {
 
   async firstUpdated() {
     const search = new URLSearchParams(location.search);
-    const site = search.get("site");
+    const site = search.get('site');
 
     if (site) {
       const testResults = await runAllTests(site);

@@ -122,3 +122,11 @@ export interface ServiceWorkerDetectionResult {
   serviceWorkerDetectionTimedOut: boolean;
   noServiceWorkerFoundDetails: string | null;
 }
+
+export interface SecurityDataResults {
+  data: {
+    isHTTPS: true;
+    validProtocol: true;
+    valid: true;
+  };
+}
