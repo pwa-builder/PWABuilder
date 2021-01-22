@@ -1,5 +1,5 @@
-import { SecurityDataResults } from "../../utils/interfaces";
-import { env } from "../../utils/environment";
+import { SecurityDataResults } from '../../utils/interfaces';
+import { env } from '../../utils/environment';
 
 export async function testSecurity(url: string): Promise<SecurityDataResults> {
   const encodedUrl = encodeURIComponent(url);
@@ -7,10 +7,10 @@ export async function testSecurity(url: string): Promise<SecurityDataResults> {
   const fetchResult = await fetch(securityUrl);
   if (!fetchResult.ok) {
     throw new Error(
-      "Error fetching security report: " + fetchResult.statusText
+      'Error fetching security report: ' + fetchResult.statusText
     );
   }
   const results: SecurityDataResults = await fetchResult.json();
-  console.info("Security detection completed successfully", results);
+  console.info('Security detection completed successfully', results);
   return results;
 }
