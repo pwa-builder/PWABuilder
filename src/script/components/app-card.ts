@@ -2,6 +2,7 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map';
 import { Router } from '@vaadin/router';
+import { BreakpointValues } from '../utils/breakpoints';
 
 export enum AppCardModes {
   default = 'default',
@@ -21,7 +22,10 @@ export class AppCard extends LitElement {
   @property({ type: String }) date = undefined;
   @property({ type: String }) linkText = undefined;
   @property({ type: String }) linkRoute = undefined;
+
+  @property({ type: Boolean }) featured = false;
   @property({ type: Boolean }) shareLink = false;
+  @property({ type: Array }) tags = [];
 
   static get styles() {
     const defaultCardCss = css`
@@ -31,6 +35,7 @@ export class AppCard extends LitElement {
         background: white;
         min-width: 278px;
         max-width: 416px;
+        margin: 16px;
       }
 
       fast-card.default {
@@ -56,35 +61,111 @@ export class AppCard extends LitElement {
         color: var(--link-color);
       }
 
+      fast-card .card-actions {
+        margin: 0 16px;
+      }
+
+      fast-card .tag-list {
+        display: inline-block;
+      }
+    `;
+
+    const overlayCss = css`
       .img-overlay {
         position: fixed;
       }
 
       .img-overlay,
       fast-card img {
-        width: 100%;
+        width: calc(100% - 16px);
         object-fit: none;
         max-height: 184px;
+        padding: 8px;
       }
 
       .img-overlay.bordered,
       fast-card img.bordered {
         margin: 16px;
-        width: calc(100% - 32px);
+        width: calc(100% - 48px);
       }
 
-      fast-card .card-actions {
-        margin: 0 16px;
+      .img-overlay .overlay-top {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+
+      .blog.featured img,
+      .blog.featured .img-overlay {
+        max-height: none;
+        height: calc(100% - 16px);
       }
     `;
 
     const blogCardCss = css`
-      fast-card.blog {
+      .blog {
+        color: var(--font-color);
+      }
+
+      .blog h3 {
+        line-height: 34px;
+      }
+
+      .blog .content {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        padding: 8px;
+      }
+
+      .blog .content h3 {
+        font-size: 18px;
+        margin: 0;
+      }
+
+      .blog.featured h3 {
+        font-size: 30px;
+      }
+
+      .blog.featured p {
+        font-size: 18px;
+      }
+
+      .blog.featured .tag-list {
+        position: absolute;
+        right: unset;
+        margin: 0 16px 8px 0;
+        bottom: 0;
+        right: 0;
+      }
+
+      .blog.featured .tag-list .tag {
+        margin: 8px 0 0 8px;
+      }
+
+      app-button.share::part(underlying-button) {
+        font-size: 14px;
+        color: var(--font-color);
+      }
+
+      .blog .tag,
+      .blog .date,
+      .blog .share::part(underlying-button) {
+        display: inline-block;
+        line-height: 34px;
+        font-size: var(--desktop-button-font-size);
+        vertical-align: middle;
+      }
+
+      fast-badge::part(control) {
+        --badge-fill-primary: white;
+        color: var(--font-color);
       }
     `;
 
     const microCardCss = css`
-      fast-card.micro {
+      .micro {
         display: grid;
         width: 280px;
         margin: 16px;
@@ -92,26 +173,26 @@ export class AppCard extends LitElement {
         grid-template-columns: 72px auto;
       }
 
-      fast-card.micro img {
+      .micro img {
         object-fit: fill;
         height: 72px;
         width: 73px;
       }
 
-      fast-card.micro .content {
+      .micro .content {
         display: inline-flex;
         flex-direction: column;
         justify-content: space-between;
         margin: 8px;
       }
 
-      fast-card.micro h3 {
+      .micro h3 {
         margin: 0;
         line-height: 20px;
         font-size: 14px;
       }
 
-      fast-card.micro p {
+      .micro p {
         overflow: hidden;
         text-overflow: ellipsis;
         height: 32px;
@@ -131,6 +212,7 @@ export class AppCard extends LitElement {
       }
 
       ${defaultCardCss}
+      ${overlayCss}
       ${blogCardCss}
       ${microCardCss}
     `;
@@ -143,7 +225,7 @@ export class AppCard extends LitElement {
   render() {
     switch (this.modes) {
       case AppCardModes.blog:
-      // return this.renderBlogCard();
+        return this.renderBlogCard();
       case AppCardModes.micro:
         return this.renderMicroCard();
       case AppCardModes.default:
@@ -171,7 +253,47 @@ export class AppCard extends LitElement {
             appearance="lightweight"
             @click=${() => Router.go(this.linkRoute)}
             >View ${this.title}</fast-button
-          >
+          ></app-button>
+        </div>
+      </fast-card>
+    `;
+  }
+
+  renderBlogCard() {
+    // Featured Card Html
+    if (this.featured && window.innerWidth > BreakpointValues.mediumUpper) {
+      // TODO featured card
+      return html`
+        <fast-card class="blog featured" part="card">
+          <div class="img-overlay">
+            <div class="overlay-top">
+              <span class="date">${this.date}</span>
+              ${this.renderShareButton()}
+            </div>
+            <h3>${this.title}</h3>
+            <p>${this.description}</p>
+            <slot name="overlay"></slot>
+
+            <div class="tag-list">${this.renderTagList()}</div>
+          </div>
+          <img src="${this.imageUrl}" alt="${this.title} card header image" />
+        </fast-card>
+      `;
+    }
+
+    return html`
+      <fast-card class="blog" part="card">
+        <div class="img-overlay">
+          <div class="overlay-top">
+            <span class="date">${this.date}</span>
+            <div class="tag-list">${this.renderTagList()}</div>
+          </div>
+          <slot name="overlay"></slot>
+        </div>
+        <img src="${this.imageUrl}" alt="${this.title} card header image" />
+        <div class="content">
+          <h3>${this.title}</h3>
+          ${this.renderShareButton()}
         </div>
       </fast-card>
     `;
@@ -191,6 +313,24 @@ export class AppCard extends LitElement {
         </div>
       </fast-card>
     `;
+  }
+
+  renderShareButton() {
+    return html`
+      <app-button class="share" appearance="lightweight" @click=${this.share}>
+        Share
+      </app-button>
+    `;
+  }
+
+  renderTagList() {
+    return this.tags.map(
+      tag => html` <fast-badge class="tag">${tag}</fast-badge> `
+    );
+  }
+
+  share() {
+    console.log('share');
   }
 
   imageClasses() {
