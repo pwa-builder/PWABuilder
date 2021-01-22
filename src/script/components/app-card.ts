@@ -13,6 +13,8 @@ export enum AppCardModes {
 export class AppCard extends LitElement {
   @property({ type: String }) modes = AppCardModes.default;
 
+  @property({ attribute: 'bordered', type: Boolean })
+  imageBordered = undefined;
   @property({ type: String }) imageUrl = undefined;
   @property({ type: String }) title = undefined;
   @property({ type: String }) description = undefined;
@@ -24,9 +26,55 @@ export class AppCard extends LitElement {
   static get styles() {
     const defaultCardCss = css`
       fast-card {
+        color: var(--font-color);
+        font-size: var(--font-size);
+        background: white;
+        min-width: 278px;
+        max-width: 416px;
+      }
+
+      fast-card.default {
+        margin-right: 12px;
+        margin-left: 12px;
+      }
+
+      fast-card.default h3 {
+        font-size: 24px;
+        line-height: 24px;
+        font-weight: var(--font-bold);
+        margin: 16px 16px 0px;
+      }
+
+      fast-card.default p {
+        color: var(--secondary-font-color);
+        margin: 8px 16px 0 16px;
+
+        line-height: 20px;
+      }
+
+      fast-card.default app-button::part(underlying-button) {
+        color: var(--link-color);
+      }
+
+      .img-overlay {
+        position: fixed;
+      }
+
+      .img-overlay,
+      fast-card img {
+        width: 100%;
+        object-fit: none;
+        max-height: 184px;
+      }
+
+      .img-overlay.bordered,
+      fast-card img.bordered {
+        margin: 16px;
+        width: calc(100% - 32px);
       }
 
       fast-card .card-actions {
+        margin: 0 16px;
       }
     `;
 
