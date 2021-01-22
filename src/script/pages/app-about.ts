@@ -26,8 +26,7 @@ export class AppAbout extends LitElement {
     }
   }
 
-  testAlert(ev: any) {
-    console.log(ev);
+  testAlert(ev: PointerEvent) {
     const alert: AppAlert | null | undefined = this.shadowRoot?.querySelector("app-alert");
 
     if (alert) {
@@ -40,7 +39,7 @@ export class AppAbout extends LitElement {
       <div>
         <h2>About Page</h2>
 
-        <fast-button @click="${(ev: any) => this.testAlert(ev)}">test alert</fast-button>
+        <fast-button @click="${(ev: PointerEvent) => this.testAlert(ev)}">test alert</fast-button>
 
         <app-alert title="Test Alert">
           <p>Info description. Lorem ipsum dolor sit amet, consectetur elit adipiscing, sed do eiusm tem. Ipsum dolor sit.</p>
