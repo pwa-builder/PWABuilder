@@ -30,6 +30,8 @@ export class AppTesting extends LitElement {
         flex-direction: column;
         align-items: center;
         justify-content: center;
+
+        animation: 160ms fadeIn linear;
       }
 
       #testing-container img {
@@ -52,6 +54,16 @@ export class AppTesting extends LitElement {
         font-weight: var(--font-bold);
         font-size: var(--large-font-size);
         margin-top: 12px;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+
+        to {
+          opacity: 1;
+        }
       }
     `;
   }
