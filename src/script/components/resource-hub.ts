@@ -6,6 +6,8 @@ import {
   smallBreakPoint,
 } from '../utils/breakpoints';
 
+import '../components/app-button';
+
 type ResourceHubPages = 'home' | 'complete';
 
 @customElement('resource-hub')
@@ -110,11 +112,9 @@ export class ResourceHub extends LitElement {
         margin-bottom: 74px;
       }
 
-      #resource-hub-actions fast-button {
+      #resource-hub-actions app-button::part(underlying-button) {
         background: white;
         color: var(--font-color);
-        border-radius: var(--button-radius);
-        width: 188px;
       }
 
       #resource-hub-actions fast-button::part(control) {
@@ -226,7 +226,7 @@ export class ResourceHub extends LitElement {
     if (this.showViewAllButton) {
       return html`
         <div id="resource-hub-actions">
-          <fast-button>View all resources</fast-button>
+          <app-button>View all resources</app-button>
         </div>
       `;
     }
