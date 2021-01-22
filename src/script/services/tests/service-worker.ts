@@ -24,6 +24,9 @@ export async function testServiceWorker(url: string) {
   if (swTestResults) {
     return swTestResults;
   }
+  else {
+    return null;
+  }
 }
 
 async function detectServiceWorker(url: string): Promise<ServiceWorkerDetectionResult> {
