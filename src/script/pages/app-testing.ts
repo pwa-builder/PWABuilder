@@ -79,15 +79,19 @@ export class AppTesting extends LitElement {
     if (site) {
       this.loading = true;
 
-      const testResults = await runAllTests(site);
-      console.log(testResults);
+      try {
+        const testResults = await runAllTests(site);
 
-      if (testResults) {
+        if (testResults) {
+          this.loading = false;
+          Router.go(`/reportcard?results=${JSON.stringify(testResults)}`);
+        } else {
+          this.loading = false;
+          // go back to the home page? Not sure
+        }
+      } catch (err) {
         this.loading = false;
-        Router.go(`/reportcard?results=${JSON.stringify(testResults)}`);
-      } else {
-        this.loading = false;
-        // go back to the home page? Not sure
+        console.error('Tests errored out', err);
       }
     }
   }
