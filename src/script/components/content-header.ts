@@ -1,23 +1,31 @@
-import { LitElement, css, html, customElement } from 'lit-element';
-
-import { smallBreakPoint, mediumBreakPoint, largeBreakPoint, xLargeBreakPoint, xxLargeBreakPoint, BreakpointValues } from '../utils/breakpoints';
-
+import { css, customElement, html, LitElement, property } from 'lit-element';
+import {
+  BreakpointValues,
+  largeBreakPoint,
+  mediumBreakPoint,
+  smallBreakPoint,
+  xLargeBreakPoint,
+  xxLargeBreakPoint,
+} from '../utils/breakpoints';
 import './app-header';
 
 @customElement('content-header')
 export class ContentHeader extends LitElement {
+  @property({ type: String })
+  heroImg = '/assets/images/pwab3d.png';
 
   static get styles() {
     return css`
       :host {
         display: block;
         background: url(/assets/images/background-copy.webp);
+        background-position: center;
+        background-size: cover;
       }
 
       #main-container {
         display: flex;
         align-items: center;
-
         padding-bottom: 91px;
       }
 
@@ -129,9 +137,18 @@ export class ContentHeader extends LitElement {
 
         <section>
           <picture>
-            <source srcset="/assets/images/pwab3d.png" media="(max-width: ${BreakpointValues.mediumLower}px)">
-            <source srcset="/assets/images/mobile_header_logo.png" media="(max-width: ${BreakpointValues.mediumUpper}px)">
-            <img src="/assets/images/pwab3d.png" alt="3d version of the PWABuilder logo">
+            <source
+              srcset="${this.heroImg}"
+              media="(max-width: ${BreakpointValues.mediumLower}px)"
+            />
+            <source
+              srcset="/assets/images/mobile_header_logo.png"
+              media="(max-width: ${BreakpointValues.mediumUpper}px)"
+            />
+            <img
+              src="${this.heroImg}"
+              alt="3d version of the PWABuilder logo"
+            />
           </picture>
         </section>
       </div>

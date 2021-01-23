@@ -2,6 +2,7 @@
   This file is used for all of your global styles and CSS variables.
   Check here https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties for more info on using CSS variables.
 */
+
 :root {
   --font-family: sans-serif;
   --font-color: #333e49;
@@ -12,7 +13,7 @@
 
   --primary-background-color: white;
   --primary-color: #292c3a;
-  --secondary-color: #FFFFFF;
+  --secondary-color: #ffffff;
 
   --button-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
   --button-radius: 44px;
@@ -29,23 +30,72 @@
 
 html,
 body {
+  font-size: min(max(1rem, 4vw), 22px);
+  line-height: 1.5;
   font-family: var(--font-family);
   color: var(--font-color);
+  background: var(--primary-background-color);
   padding: 0;
   margin: 0;
-  background: var(--primary-background-color);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: var(--font-bold);
+  letter-spacing: 1px;
+  line-height: 2rem;
+  margin-top: calc((1.5rem - 2rem) + 1.5rem);
+  margin-bottom: 1.5rem;
+  transition: all 200ms ease-in;
+}
+
+h1 {
+  font-size: 4.6rem;
+}
+
+h2 {
+  font-size: 3.6rem;
+}
+
+h3 {
+  font-size: 2.8rem;
+}
+
+h4 {
+  font-size: 2.2rem;
+}
+
+h5 {
+  font-size: 1.8rem;
+}
+
+h6 {
+  font-size: 1.6rem;
+}
+
+p,
+li,
+a {
+  transition: all 200ms ease-in;
+}
+
+p {
+  font-size: 1.6rem;
+  line-height: 1.6;
+  margin-bottom: 1.6rem;
 }
 
 fast-design-system-provider {
   color: var(--font-color);
-
   --background-color: var(--primary-background-color);
   --neutral-foreground-rest: #e5e5e5;
   --neutral-fill-input-rest: white;
   --neutral-fill-input-hover: white;
   --neutral-fill-stealth-rest: #e5e5e5;
-
-  --neutral-fill-active: #5D5DB9;
-
+  --neutral-fill-active: #5d5db9;
   --neutral-fill-input-active: #e5e5e5;
 }
