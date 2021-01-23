@@ -2,7 +2,7 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map';
 import { Router } from '@vaadin/router';
-import { BreakpointValues } from '../utils/breakpoints';
+import { smallBreakPoint, BreakpointValues } from '../utils/breakpoints';
 
 export enum AppCardModes {
   default = 'default',
@@ -34,14 +34,15 @@ export class AppCard extends LitElement {
         color: var(--font-color);
         font-size: var(--font-size);
         background: white;
+        border-radius: calc(var(--corner-radius) * 1px);
         min-width: 278px;
         max-width: 416px;
-        margin: 16px;
       }
 
       fast-card.default {
-        margin-right: 12px;
-        margin-left: 12px;
+        min-width: 200px;
+        max-width: 280px;
+        padding-bottom: 16px;
       }
 
       fast-card.default h3 {
@@ -69,6 +70,39 @@ export class AppCard extends LitElement {
       fast-card .tag-list {
         display: inline-block;
       }
+
+      img {
+        width: 100%;
+        object-fit: none;
+        height: 188px;
+      }
+
+      h3 {
+        font-size: 24px;
+        line-height: 24px;
+        font-weight: var(--font-bold);
+        margin: 16px 16px 0 16px;
+      }
+
+      p {
+        color: var(--secondary-font-color);
+        margin: 8px 16px 0 16px;
+
+        font-size: 14px;
+        line-height: 20px;
+      }
+
+      .card-actions {
+        margin-top: 8px;
+      }
+
+      .card-actions app-button::part(underlying-button) {
+        font-weight: bold;
+        font-size: 14px;
+        line-height: 20px;
+        color: var(--link-color);
+        padding: 0;
+      }
     `;
 
     const overlayCss = css`
@@ -85,7 +119,6 @@ export class AppCard extends LitElement {
 
       .img-overlay.bordered,
       fast-card img.bordered {
-        margin: 16px;
         padding: 8px;
         width: calc(100% - 48px);
       }

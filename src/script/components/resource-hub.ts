@@ -28,7 +28,7 @@ export class ResourceHub extends LitElement {
         justify-content: center;
       }
 
-      ::slotted([slot='header']) {
+      ::slotted([slot='title']) {
         margin: 0;
         font-weight: var(--font-bold);
         text-align: center;
@@ -64,50 +64,11 @@ export class ResourceHub extends LitElement {
       }
 
       #cards app-card {
-        max-width: 280px;
-        border-radius: calc(var(--corner-radius) * 1px);
-        margin-right: 12px;
-        margin-left: 12px;
-
-        color: var(--font-color);
-        background: white;
+        margin: 8px;
       }
 
       #cards app-card::part(card) {
         margin: 0;
-      }
-
-      app-card img {
-        width: 100%;
-        object-fit: none;
-        height: 188px;
-      }
-
-      app-card h3 {
-        font-size: 24px;
-        line-height: 24px;
-        font-weight: var(--font-bold);
-        margin: 16px 16px 0 16px;
-      }
-
-      app-card p {
-        color: var(--secondary-font-color);
-        margin: 8px 16px 0 16px;
-
-        font-size: 14px;
-        line-height: 20px;
-      }
-
-      .card-actions {
-        margin-top: 8px;
-      }
-
-      .card-actions app-button::part(underlying-button) {
-        font-weight: bold;
-        font-size: 14px;
-        line-height: 20px;
-        color: var(--link-color);
-        padding: 0 16px;
       }
 
       #resource-hub-actions {
@@ -135,15 +96,6 @@ export class ResourceHub extends LitElement {
             background-color: #ededed;
           }
 
-          ::slotted([slot='header']) {
-            color: var(--font-color);
-          }
-
-          ::slotted([slot='description']) {
-            color: var(--font-color);
-            font-weight: var(--font-medium);
-          }
-
           /* TODO make this gated to only a gallery variant */
           #cards.horizontal {
             overflow-y: scroll;
@@ -158,15 +110,16 @@ export class ResourceHub extends LitElement {
             display: inline-block;
             min-width: calc(100% - 32px);
           }
-
-          .card-actions app-button::part(control) {
-            color: var(--mobile-link-color);
-          }
         `
       )}
 
       ${smallBreakPoint(
         css`
+          ::slotted([slot='title']),
+          ::slotted([slot='description']) {
+            color: var(--font-color);
+          }
+
           section {
             width: 100%;
           }
