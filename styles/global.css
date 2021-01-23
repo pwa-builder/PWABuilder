@@ -28,6 +28,10 @@
   --mobile-link-color: #0683f9;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 html,
 body {
   font-size: min(max(1rem, 4vw), 22px);
@@ -39,54 +43,53 @@ body {
   margin: 0;
 }
 
+p,
+li,
+a {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  transition: all 200ms ease-in;
+}
+
 h1,
 h2,
 h3,
 h4,
-h5,
-h6 {
-  font-weight: var(--font-bold);
-  letter-spacing: 1px;
-  line-height: 2rem;
+h5 {
   margin-top: calc((1.5rem - 2rem) + 1.5rem);
   margin-bottom: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  line-height: 2rem;
+  font-weight: 600;
+  line-height: 1.3;
   transition: all 200ms ease-in;
+  word-break: break-word;
 }
 
 h1 {
-  font-size: 4.6rem;
+  margin-top: 0;
+  font-size: 3.052rem;
 }
 
 h2 {
-  font-size: 3.6rem;
+  font-size: 2.441rem;
 }
 
 h3 {
-  font-size: 2.8rem;
+  font-size: 1.953rem;
 }
 
 h4 {
-  font-size: 2.2rem;
+  font-size: 1.563rem;
 }
 
 h5 {
-  font-size: 1.8rem;
+  font-size: 1.25rem;
 }
 
-h6 {
-  font-size: 1.6rem;
-}
-
-p,
-li,
-a {
-  transition: all 200ms ease-in;
-}
-
-p {
-  font-size: 1.6rem;
-  line-height: 1.6;
-  margin-bottom: 1.6rem;
+small {
+  font-size: 0.8rem;
 }
 
 fast-design-system-provider {

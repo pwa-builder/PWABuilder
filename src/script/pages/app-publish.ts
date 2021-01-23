@@ -47,7 +47,7 @@ export class AppPublish extends LitElement {
       }
 
       .container {
-        width: min(100%, 1365px);
+        width: min(100%, 1440px);
         padding: 0 2rem;
       }
 
@@ -67,6 +67,16 @@ export class AppPublish extends LitElement {
         justify-content: space-between;
         align-items: center;
       }
+
+      .action-buttons {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .action-buttons > app-button {
+        margin: 1rem;
+      }
     `;
   }
 
@@ -78,7 +88,7 @@ export class AppPublish extends LitElement {
             <h3>${platform.title}</h3>
             <p>${platform.description}</p>
           </div>
-          <div class="content-actions">
+          <div>
             <app-button appearance="lightweight">Publish</app-button>
           </div>
         </div>`
@@ -112,6 +122,19 @@ export class AppPublish extends LitElement {
               </p>
             </div>
             <div>${this.renderContentCards()}</div>
+            <div class="content">
+              <h3>Up next</h3>
+              <p>
+                Ready to build your PWA? Tap "Build My PWA" to package your PWA
+                for the app stores or tap "Feature Store" to check out the
+                latest web components from the PWABuilder team to improve your
+                PWA even further!
+              </p>
+            </div>
+            <div class="action-buttons">
+              <app-button>Back</app-button>
+              <app-button>Next</app-button>
+            </div>
           </div>
         </section>
       </div>
