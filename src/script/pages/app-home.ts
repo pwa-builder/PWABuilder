@@ -152,6 +152,7 @@ export class AppHome extends LitElement {
         }
 
         h2 {
+          font-size: var(--large-font-size);
           line-height: 34px;
           margin-top: 0;
         }
@@ -241,7 +242,7 @@ export class AppHome extends LitElement {
         const data = await fetchManifest(this.siteURL);
         
         if (data) {
-          Router.go(`/about?site=${this.siteURL}`);
+          Router.go(`/testing?site=${this.siteURL}`);
         }
       } catch (err) {
         console.error(err);
