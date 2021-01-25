@@ -19,6 +19,7 @@ export class ContentHeader extends LitElement {
         align-items: center;
 
         padding-bottom: 91px;
+        padding-left: 2em;
       }
 
       img {
@@ -95,7 +96,7 @@ export class ContentHeader extends LitElement {
 
       ${xLargeBreakPoint(css`
         img {
-          height: 18em;
+          height: 100%;
           width: initial;
         }
       `)}
@@ -105,6 +106,8 @@ export class ContentHeader extends LitElement {
           width: 44em;
         }
       `)}
+
+      
     `;
   }
 
