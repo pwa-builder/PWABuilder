@@ -1,14 +1,17 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
-import { completeCards, landingCards } from './resource-hub-cards';
+import { classMap } from 'lit-html/directives/class-map';
+import { publishCards, landingCards } from './resource-hub-cards';
 import {
   largeBreakPoint,
   mediumBreakPoint,
   smallBreakPoint,
+  BreakpointValues,
 } from '../utils/breakpoints';
 
+import { AppCardModes } from '../components/app-card';
 import '../components/app-button';
 
-type ResourceHubPages = 'home' | 'complete';
+type ResourceHubPages = 'home' | 'publish';
 
 @customElement('resource-hub')
 export class ResourceHub extends LitElement {
@@ -60,9 +63,9 @@ export class ResourceHub extends LitElement {
         padding: 0 16px;
       }
 
-      #cards fast-card {
+      #cards app-card {
         max-width: 280px;
-        padding-bottom: 16px;
+        border-radius: calc(var(--corner-radius) * 1px);
         margin-right: 12px;
         margin-left: 12px;
 
@@ -70,20 +73,24 @@ export class ResourceHub extends LitElement {
         background: white;
       }
 
-      fast-card img {
+      #cards app-card::part(card) {
+        margin: 0;
+      }
+
+      app-card img {
         width: 100%;
         object-fit: none;
         height: 188px;
       }
 
-      fast-card h3 {
+      app-card h3 {
         font-size: 24px;
         line-height: 24px;
         font-weight: var(--font-bold);
         margin: 16px 16px 0 16px;
       }
 
-      fast-card p {
+      app-card p {
         color: var(--secondary-font-color);
         margin: 8px 16px 0 16px;
 
@@ -95,7 +102,7 @@ export class ResourceHub extends LitElement {
         margin-top: 8px;
       }
 
-      .card-actions fast-button::part(control) {
+      .card-actions app-button::part(underlying-button) {
         font-weight: bold;
         font-size: 14px;
         line-height: 20px;
@@ -113,11 +120,11 @@ export class ResourceHub extends LitElement {
       }
 
       #resource-hub-actions app-button::part(underlying-button) {
-        background: white;
+        background-color: white;
         color: var(--font-color);
       }
 
-      #resource-hub-actions fast-button::part(control) {
+      #resource-hub-actions app-button::part(control) {
         font-size: 16px;
         font-weight: var(--font-bold);
       }
@@ -137,8 +144,49 @@ export class ResourceHub extends LitElement {
             font-weight: var(--font-medium);
           }
 
-          .card-actions fast-button::part(control) {
+          /* TODO make this gated to only a gallery variant */
+          #cards.horizontal {
+            overflow-y: scroll;
+            overflow-x: none;
+            /* white-space: nowrap; */
+
+            flex-direction: row;
+            align-items: center;
+          }
+
+          #card.horizontal app-card {
+            display: inline-block;
+            min-width: calc(100% - 32px);
+          }
+
+          .card-actions app-button::part(control) {
             color: var(--mobile-link-color);
+          }
+        `
+      )}
+
+      ${smallBreakPoint(
+        css`
+          section {
+            width: 100%;
+          }
+
+          #cards.horizontal {
+            display: flex;
+            flex-direction: column;
+            overflow-x: scroll;
+            scroll-snap-type: x proximity;
+          }
+
+          #cards.horizontal app-card {
+            display: inline-block;
+            flex: 0 0 auto;
+            scroll-snap-align: center;
+          }
+
+          #cards.horizontal app-card p,
+          #cards.horizontal app-card h3 {
+            white-space: normal;
           }
         `
       )}
@@ -150,7 +198,7 @@ export class ResourceHub extends LitElement {
             align-items: center;
           }
 
-          #cards fast-card {
+          #cards app-card {
             margin-bottom: 16px;
           }
         `,
@@ -167,7 +215,7 @@ export class ResourceHub extends LitElement {
 
       ${largeBreakPoint(
         css`
-          #cards fast-card {
+          #cards app-card {
             max-width: 350px;
           }
         `,
@@ -183,7 +231,7 @@ export class ResourceHub extends LitElement {
             padding: 0;
           }
 
-          #cards fast-card {
+          #cards app-card {
             margin-bottom: 16px;
           }
         `
@@ -193,17 +241,21 @@ export class ResourceHub extends LitElement {
 
   constructor() {
     super();
+
+    window.addEventListener('resize', () => {
+      this.requestUpdate();
+    });
   }
 
   render() {
     return html`
       <section>
         <div id="resource-header">
-          <slot name="header"></slot>
+          <slot name="title"></slot>
           <slot name="description"></slot>
         </div>
 
-        <div id="cards">${this.renderCards()}</div>
+        <div id="cards" class=${this.cardsClasses()}>${this.renderCards()}</div>
 
         ${this.renderViewAllButton()}
       </section>
@@ -211,15 +263,25 @@ export class ResourceHub extends LitElement {
   }
 
   renderCards() {
+    const mode = this.determineCardMode();
+    let cardList;
     if (this.pageName === 'home') {
-      return landingCards();
+      cardList = landingCards();
+    } else if (this.pageName === 'publish') {
+      cardList = publishCards();
     }
 
-    if (this.pageName === 'complete') {
-      return completeCards();
-    }
-
-    return undefined;
+    return cardList.map(data => {
+      return html`
+        <app-card
+          title=${data.title}
+          description=${data.description}
+          imageUrl=${data.imageUrl}
+          mode=${mode}
+        >
+        </app-card>
+      `;
+    });
   }
 
   renderViewAllButton() {
@@ -232,5 +294,24 @@ export class ResourceHub extends LitElement {
     }
 
     return undefined;
+  }
+
+  cardsClasses() {
+    return classMap({
+      horizontal:
+        this.pageName === 'publish' &&
+        window.innerWidth <= BreakpointValues.smallUpper,
+    });
+  }
+
+  determineCardMode(): AppCardModes {
+    if (
+      this.pageName === 'publish' &&
+      window.innerWidth <= BreakpointValues.smallUpper
+    ) {
+      return AppCardModes.micro;
+    }
+
+    return AppCardModes.default;
   }
 }

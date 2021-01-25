@@ -7,7 +7,7 @@ interface CardData {
   linkUrl: string;
 }
 
-const resourceCards: Array<CardData> = [
+export const resourceCards: Array<CardData> = [
   {
     imageUrl: '/assets/icons/icon_120.png',
     title: 'Blog',
@@ -40,29 +40,10 @@ const resourceCards: Array<CardData> = [
 
 // for the landing page
 export function landingCards() {
-  return resourceCards.map(data => {
-    return renderResourceCard(data);
-  });
+  return resourceCards;
 }
 
 // For the complete page
-export function completeCards() {
-  return resourceCards.slice(1).map(data => {
-    return renderResourceCard(data);
-  });
-}
-
-function renderResourceCard(data: CardData) {
-  return html`
-    <fast-card>
-      <img src="${data.imageUrl}" alt="${data.title} card header image" />
-      <h3>${data.title}</h3>
-
-      <p>${data.description}</p>
-
-      <div class="card-actions">
-        <fast-button appearance="lightweight">View ${data.title}</fast-button>
-      </div>
-    </fast-card>
-  `;
+export function publishCards() {
+  return resourceCards.slice(1);
 }
