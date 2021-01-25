@@ -12,73 +12,78 @@ import { smallBreakPoint } from '../utils/breakpoints';
 import { runAllTests } from '../services/tests';
 import '../components/app-header';
 
+//@ts-ignore
+import style from '../../../styles/animations.css';
+
 @customElement('app-testing')
 export class AppTesting extends LitElement {
   @internalProperty() loading = false;
-  @internalProperty() currentPhrase: string = "PWABuilder is loading your PWA in the background";
+  @internalProperty() currentPhrase: string =
+    'PWABuilder is loading your PWA in the background';
 
   static get styles() {
-    return css`
-      :host {
-        display: flex;
-        flex-direction: column;
-        background: url(/assets/images/background-copy.webp);
-        height: 100vh;
-        overflow: hidden;
-      }
-
-      #testing-container {
-        flex: 0.7;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-
-        text-align: center;
-
-        animation: 160ms fadeIn linear;
-      }
-
-      #testing-container img {
-        width: 466px;
-      }
-
-      #testing-container fast-progress {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        margin-bottom: 0;
-      }
-
-      #testing-container fast-progress::part(progress) {
-        border-radius: 0;
-      }
-
-      #testing-container span {
-        font-weight: var(--font-bold);
-        font-size: var(--large-font-size);
-        margin-top: 12px;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
+    return [
+      style,
+      css`
+        :host {
+          display: flex;
+          flex-direction: column;
+          background: url(/assets/images/background-copy.webp);
+          height: 100vh;
+          overflow: hidden;
         }
 
-        to {
-          opacity: 1;
-        }
-      }
+        #testing-container {
+          flex: 0.7;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
 
-      ${
-        smallBreakPoint(css`
+          text-align: center;
+
+          animation: 160ms fadeIn linear;
+        }
+
+        #testing-container img {
+          width: 466px;
+        }
+
+        #testing-container fast-progress {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          margin-bottom: 0;
+        }
+
+        #testing-container fast-progress::part(progress) {
+          border-radius: 0;
+        }
+
+        #testing-container span {
+          font-weight: var(--font-bold);
+          font-size: var(--large-font-size);
+          margin-top: 12px;
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+
+          to {
+            opacity: 1;
+          }
+        }
+
+        ${smallBreakPoint(css`
           #testing-container img {
             width: 100%;
           }
-        `)
-      }
-    `;
+        `)}
+      `,
+    ];
   }
 
   constructor() {
@@ -107,12 +112,11 @@ export class AppTesting extends LitElement {
         // before moving on
         this.loading = false;
 
-        this.currentPhrase = "Results coming to you in 3..2..1..";
+        this.currentPhrase = 'Results coming to you in 3..2..1..';
         setTimeout(() => {
           Router.go(`/reportcard?results=${JSON.stringify(testResults)}`);
-        }, 300)
-      }
-      else {
+        }, 300);
+      } else {
         this.loading = false;
         throw new Error(`Test results could not be gathered for: ${site}`);
       }
@@ -124,9 +128,9 @@ export class AppTesting extends LitElement {
 
   async phrasePager() {
     const phrases = [
-      "PWABuilder is loading your PWA in the background...",
-      "This may take a minute...",
-      "We are analyzing your Service Worker and Web Manifest..."
+      'PWABuilder is loading your PWA in the background...',
+      'This may take a minute...',
+      'We are analyzing your Service Worker and Web Manifest...',
     ];
 
     for (let i = 0; i < phrases.length; i++) {
@@ -134,17 +138,16 @@ export class AppTesting extends LitElement {
         await this.setPhrase(phrases[i], i);
       }
     }
-
   }
 
   setPhrase = (phrase: string, i: number): Promise<void> => {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       setTimeout(() => {
         this.currentPhrase = phrase;
         resolve();
       }, i * 2000);
-    })
-  }
+    });
+  };
 
   render() {
     return html` <app-header></app-header>
