@@ -2,7 +2,12 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map';
 import { Router } from '@vaadin/router';
-import { smallBreakPoint, BreakpointValues } from '../utils/breakpoints';
+import {
+  smallBreakPoint,
+  mediumBreakPoint,
+  largeBreakPoint,
+  BreakpointValues,
+} from '../utils/breakpoints';
 
 export enum AppCardModes {
   default = 'default',
@@ -132,17 +137,72 @@ export class AppCard extends LitElement {
       .blog.featured img,
       .blog.featured .img-overlay {
         max-height: none;
-        height: calc(100% - 16px);
+        height: calc(100% - 32px);
       }
     `;
 
     const blogCardCss = css`
       .blog {
+        background: white;
         color: var(--font-color);
+        padding-bottom: 16px;
+      }
+
+      .blog img {
+        height: 142px;
+        width: 100%;
+        object-fit: none;
+        height: 200px;
       }
 
       .blog h3 {
-        line-height: 34px;
+        /* line-height: 34px; */
+        line-height: 20px;
+        font-size: 24px;
+        font-weight: var(--font-bold);
+        margin: 16px 16px 0 16px;
+      }
+
+      .blog p {
+        color: var(--secondary-font-color);
+
+        font-size: 14px;
+        line-height: 20px;
+      }
+
+      .blog .overlay-top {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+
+      .blog .img-overlay {
+        position: absolute;
+        width: calc(100% - 32px);
+        padding: 16px;
+      }
+
+      .blog .content {
+        display: flex;
+        justify-content: space-between;
+        vertical-align: text-top;
+        margin-top: 8px;
+        padding: 8px 16px 0 16px;
+      }
+
+      .blog .content app-button::part(underlying-button) {
+        text-align: text-top;
+        align-items: baseline;
+      }
+
+      .blog .content h2 {
+        display: inline-block;
+        font-size: 18px;
+        margin: 0;
+      }
+
+      .img-overlay p {
+        margin: 0;
       }
 
       .blog .content {
@@ -158,12 +218,45 @@ export class AppCard extends LitElement {
         margin: 0;
       }
 
+      .blog.featured {
+        padding: 0;
+      }
+
       .blog.featured h3 {
+        line-height: 34px;
         font-size: 30px;
+        margin: 16px 0 8px 0;
       }
 
       .blog.featured p {
         font-size: 18px;
+        line-height: 34px;
+      }
+
+      .blog.featured img {
+        height: 100%;
+      }
+
+      .blog.featured .tag-list {
+        position: absolute;
+        right: unset;
+        margin: 0 16px 8px 0;
+        bottom: 0;
+        right: 0;
+      }
+
+      .blog.featured .tag-list .tag {
+        margin: 8px 0 0 8px;
+      }
+
+      .blog.featured .img-overlay {
+        display: inline-block;
+      }
+
+      .blog.featured .img-overlay .share::part(underlying-button) {
+        font-size: 14px;
+        color: var(--font-color);
+        vertical-align: middle;
       }
 
       .blog.featured .tag-list {
@@ -192,10 +285,67 @@ export class AppCard extends LitElement {
         vertical-align: middle;
       }
 
-      fast-badge::part(control) {
+      .blog .share::part(underlying-button),
+      .blog .tag::part(control) {
+        color: var(--font-color);
+      }
+
+      .blog .img-overlay .date,
+      .blog .img-overlay .tag::part(underlying-button),
+      .blog .img-overlay .share::part(underlying-button),
+      .blog .content .share::part(underlying-button) {
+        display: inline-block;
+        font-size: var(--desktop-button-font-size);
+      }
+
+      .blog.featured fast-badge::part(control) {
         --badge-fill-primary: white;
         color: var(--font-color);
       }
+
+      fast-badge::part(control) {
+        --badge-color-dark: var(--font-color);
+        --badge-fill-primary: white;
+        color: var(--font-color);
+      }
+
+      ${smallBreakPoint(
+        css`
+          .blog {
+            display: inline-block;
+            min-width: calc(100% - 32px);
+            margin-right: 32px;
+            margin-bottom: 16px;
+            scroll-snap-align: center;
+          }
+        `
+      )}
+
+      ${mediumBreakPoint(
+        css`
+          .blog {
+            margin-bottom: 32px;
+          }
+        `
+      )}
+
+      ${largeBreakPoint(
+        css`
+          .blog.featured {
+            grid-area: 1 / 1 / 3 / 4;
+            max-width: 612px;
+          }
+
+          .blog {
+            grid-column: 4 / 6;
+            max-width: 425px;
+          }
+
+          .blog .img-overlay {
+            height: 142px;
+          }
+        `
+      )}
     `;
 
     const microCardCss = css`
@@ -243,7 +393,6 @@ export class AppCard extends LitElement {
 
     return css`
       :host {
-        background: var(--primary-color);
         display: flex;
         color: white;
         justify-content: center;
@@ -302,7 +451,6 @@ export class AppCard extends LitElement {
   renderBlogCard() {
     // Featured Card Html
     if (this.featured && window.innerWidth > BreakpointValues.mediumUpper) {
-      // TODO featured card
       return html`
         <fast-card class="blog featured" part="card">
           <div class="img-overlay">
