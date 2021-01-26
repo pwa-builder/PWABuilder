@@ -1,26 +1,11 @@
 import { css, customElement, html, LitElement } from 'lit-element';
 import '../components/app-header';
 import '../components/app-sidebar';
-import { testManifest } from '../services/tests/manifest';
-import { testServiceWorker } from '../services/tests/service-worker';
 import '../components/app-card';
 @customElement('app-publish')
 export class AppPublish extends LitElement {
   constructor() {
     super();
-  }
-
-  async firstUpdated() {
-    const search = new URLSearchParams(location.search);
-    const site = search.get('site');
-
-    if (site) {
-      const manifestTestresults = await testManifest(site);
-      console.log('manifest test results', manifestTestresults);
-
-      const swTestResults = await testServiceWorker(site);
-      console.log('sw test results', swTestResults);
-    }
   }
 
   static get styles() {
