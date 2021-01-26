@@ -35,7 +35,8 @@ export class AppCard extends LitElement {
         color: var(--font-color);
         font-size: var(--font-size);
         background: white;
-        width: max(278px, 416px);
+        min-width: 278px;
+        max-width: 416px;
         margin: 16px;
       }
 
