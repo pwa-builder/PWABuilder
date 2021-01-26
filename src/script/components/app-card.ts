@@ -2,8 +2,7 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map';
 import { Router } from '@vaadin/router';
-import { BreakpointValues } from '../utils/breakpoints';
-
+import { BreakpointValues, largeBreakPoint } from '../utils/breakpoints';
 export enum AppCardModes {
   default = 'default',
   blog = 'blog',
@@ -220,8 +219,9 @@ export class AppCard extends LitElement {
       fast-card.content-card {
         background-color: white;
         padding: 1rem 0;
-        width: min(100%, 1366px);
+        width: min(1024px, 100%);
         display: flex;
+        flex-direction: column;
         justify-content: space-between;
         align-items: center;
         box-shadow: none;
@@ -229,14 +229,34 @@ export class AppCard extends LitElement {
         border-bottom: 0.67681px solid #e5e5e5;
       }
 
-      .content-card__header {
-        margin-right: 1rem;
-        width: min(100%, 1366px);
+      .content-card .header {
+        margin-right: 0;
       }
 
-      .content-card__header p {
+      .content-card .header p {
         color: #808080;
       }
+
+      .content-card app-button {
+        margin-top: 1rem;
+      }
+
+      ${largeBreakPoint(
+        css`
+          fast-card.content-card {
+            flex-direction: row;
+          }
+
+          .content-card .header {
+            margin-right: 1rem;
+          }
+
+          .content-card app-button {
+            margin-top: 0;
+          }
+        `,
+        'no-upper'
+      )}
     `;
 
     return css`
@@ -373,13 +393,13 @@ export class AppCard extends LitElement {
 
   renderContentCard() {
     return html` <fast-card class="content-card" part="card">
-      <div class="content-card__header">
+      <div class="header">
         <h3>${this.title}</h3>
         <p>${this.description}</p>
       </div>
       ${this.isActionCard
         ? html`<div>
-            <app-button class="content-card__btn">${this.linkText}</app-button>
+            <app-button>${this.linkText}</app-button>
           </div>`
         : html``}
     </fast-card>`;

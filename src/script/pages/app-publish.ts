@@ -13,7 +13,7 @@ export class AppPublish extends LitElement {
       content-header::part(main-container) {
         display: flex;
         justify-content: center;
-        padding-top: 5.2em;
+        padding: 5.2rem 1rem 1rem;
       }
 
       .header {
@@ -21,34 +21,24 @@ export class AppPublish extends LitElement {
       }
 
       .header p {
-        max-width: min(100%, 600px);
+        width: min(100%, 600px);
       }
 
-      .main-container {
-        width: 100%;
+      .container {
+        padding: 0 2rem;
         display: flex;
         flex-direction: column;
         justify-items: center;
         align-items: center;
       }
 
-      .container {
-        width: min(100%, 1366px);
-        padding: 0 2rem;
-      }
-
-      .container p {
-        max-width: min(100%, 80%);
-        color: #808080;
-      }
-
-      .action-buttons {
+      .container .action-buttons {
         display: flex;
         justify-content: center;
         align-items: center;
       }
 
-      .action-buttons > app-button {
+      .container .action-buttons > app-button {
         margin: 1rem;
       }
     `;
@@ -86,13 +76,11 @@ export class AppPublish extends LitElement {
             </p>
           </div>
         </content-header>
-        <section class="main-container">
-          <div class="container">
-            <div>${this.renderContentCards()}</div>
-            <div class="action-buttons">
-              <app-button>Back</app-button>
-              <app-button>Next</app-button>
-            </div>
+        <section class="container">
+          <div>${this.renderContentCards()}</div>
+          <div class="action-buttons">
+            <app-button>Back</app-button>
+            <app-button>Next</app-button>
           </div>
         </section>
       </div>
