@@ -86,7 +86,10 @@ export class AppPublish extends LitElement {
   render() {
     return html`
       <div>
-        <content-header heroImg="/assets/images/store_fpo.png">
+        <content-header
+          heroImg="/assets/images/store_fpo.png"
+          mobileHeroImg="assets/images/mobile_header_logo.png"
+        >
           <div class="header" slot="hero-container">
             <h1>
               Nice! <br />

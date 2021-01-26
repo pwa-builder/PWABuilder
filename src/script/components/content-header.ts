@@ -13,6 +13,8 @@ import './app-header';
 export class ContentHeader extends LitElement {
   @property({ type: String })
   heroImg = '/assets/images/pwab3d.png';
+  @property({ type: String })
+  mobileHeroImg = '/assets/images/pwab3d.png';
 
   static get styles() {
     return css`
@@ -142,7 +144,7 @@ export class ContentHeader extends LitElement {
               media="(max-width: ${BreakpointValues.mediumLower}px)"
             />
             <source
-              srcset="/assets/images/mobile_header_logo.png"
+              srcset="${this.mobileHeroImg}"
               media="(max-width: ${BreakpointValues.mediumUpper}px)"
             />
             <img
