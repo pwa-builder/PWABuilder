@@ -321,7 +321,7 @@ export class AppHome extends LitElement {
       </app-modal>
 
       <resource-hub page="home" all>
-        <h2 slot="header">PWABuilder Resource Hub</h2>
+        <h2 slot="title">PWABuilder Resource Hub</h2>
         <p slot="description">
           Ready to build your PWA? Tap "Build My PWA" to package your PWA for
           the app stores or tap "Feature Store" to check out the latest web
