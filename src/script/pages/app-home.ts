@@ -11,6 +11,7 @@ import {
   mediumBreakPoint,
   largeBreakPoint,
   xxLargeBreakPoint,
+  xxxLargeBreakPoint
 } from '../utils/breakpoints';
 import { fetchManifest } from '../services/manifest';
 
@@ -32,12 +33,12 @@ export class AppHome extends LitElement {
     return css`
       content-header::part(main-container) {
         display: flex;
-        justify-content: center;
-        padding-top: 5.2em;
+        justify-content: space-around;
+        padding-top: 0;
       }
 
       h2 {
-        font-size: 38.9187px;
+        font-size: 44px;
         line-height: 46px;
         letter-spacing: -0.015em;
         max-width: 526px;
@@ -91,7 +92,7 @@ export class AppHome extends LitElement {
       }
 
       #input-form fast-text-field::part(root) {
-        border: 1.93407px solid #e5e5e5;
+        border: 1px solid #e5e5e5;
         border-radius: var(--input-radius);
       }
 
@@ -100,16 +101,15 @@ export class AppHome extends LitElement {
       }
 
       ${smallBreakPoint(css`
-        content-header::part(main-container) {
-          padding-top: initial;
-        }
-
         content-header::part(grid-container) {
           display: none;
         }
 
+        content-header::part(main-container) {
+          padding-left: 0;
+        }
+
         h2 {
-          font-size: 32px;
           line-height: 34px;
           margin-top: 0;
         }
@@ -143,16 +143,16 @@ export class AppHome extends LitElement {
       `)}
 
       ${mediumBreakPoint(css`
-        content-header::part(main-container) {
-          padding-top: initial;
-        }
-
         content-header::part(grid-container) {
           display: none;
         }
 
+        content-header::part(main-container) {
+          padding-left: 0;
+        }
+
         h2 {
-          font-size: 32px;
+          font-size: var(--large-font-size);
           line-height: 34px;
           margin-top: 0;
         }
@@ -191,7 +191,6 @@ export class AppHome extends LitElement {
       ${largeBreakPoint(css`
         content-header::part(main-container) {
           padding-left: 16px;
-          padding-top: 0%;
         }
       `)}
 
@@ -206,6 +205,18 @@ export class AppHome extends LitElement {
 
         h2 {
           max-width: 600px;
+        }
+
+        content-header::part(main-container) {
+          padding-left: 5em;
+          justify-content: flex-start;
+        }
+      `)}
+
+      ${xxxLargeBreakPoint(css`
+        content-header::part(main-container) {
+          padding-left: 18em;
+          justify-content: flex-start;
         }
       `)}
     `;
@@ -231,7 +242,7 @@ export class AppHome extends LitElement {
         const data = await fetchManifest(this.siteURL);
         
         if (data) {
-          Router.go(`/about?site=${this.siteURL}`);
+          Router.go(`/testing?site=${this.siteURL}`);
         }
       } catch (err) {
         console.error(err);
@@ -298,7 +309,7 @@ export class AppHome extends LitElement {
           <fast-text-field
             slot="input-container"
             type="text"
-            placeholder="Enter a URL"
+            placeholder="Enter URL"
             @change="${(e: InputEvent) => this.handleURL(e)}"
           ></fast-text-field>
           <loading-button

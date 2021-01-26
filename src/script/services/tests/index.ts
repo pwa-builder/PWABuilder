@@ -1,19 +1,17 @@
 import { testManifest } from './manifest';
+import { testSecurity } from './security';
 import { testServiceWorker } from './service-worker';
 
 export async function runAllTests(url: string) {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const manifestTestResults = testManifest(url);
-      const serviceWorkerResults = testServiceWorker(url);
+  return new Promise(async resolve => {
+    const manifestTestResults = testManifest(url);
+    const serviceWorkerTestResults = testServiceWorker(url);
+    const securityTestResults = testSecurity(url);
 
-      resolve({
-        manifest: await manifestTestResults,
-        service_worker: await serviceWorkerResults,
-      });
-    } catch (err) {
-      console.error(err);
-      reject(`Couldnt run all tests: ${err}`);
-    }
+    resolve({
+      manifest: await manifestTestResults,
+      service_worker: await serviceWorkerTestResults,
+      security: await securityTestResults,
+    });
   });
 }
