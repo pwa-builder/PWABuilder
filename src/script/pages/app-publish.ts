@@ -3,6 +3,7 @@ import '../components/app-header';
 import '../components/app-sidebar';
 import { testManifest } from '../services/tests/manifest';
 import { testServiceWorker } from '../services/tests/service-worker';
+import '../components/app-card';
 @customElement('app-publish')
 export class AppPublish extends LitElement {
   constructor() {
@@ -47,25 +48,13 @@ export class AppPublish extends LitElement {
       }
 
       .container {
-        width: min(100%, 1440px);
+        width: min(100%, 1366px);
         padding: 0 2rem;
       }
 
       .container p {
         max-width: min(100%, 80%);
         color: #808080;
-      }
-
-      .content,
-      .content-card {
-        margin: 2rem;
-        border-bottom: 0.67681px solid #e5e5e5;
-      }
-
-      .content-card {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
       }
 
       .action-buttons {
@@ -83,15 +72,14 @@ export class AppPublish extends LitElement {
   renderContentCards() {
     return platforms.map(
       platform =>
-        html` <div class="content-card">
-          <div>
-            <h3>${platform.title}</h3>
-            <p>${platform.description}</p>
-          </div>
-          <div>
-            <app-button appearance="lightweight">Publish</app-button>
-          </div>
-        </div>`
+        html`<app-card
+          linkText="Publish"
+          mode="content-card"
+          title="${platform.title}"
+          ?isActionCard=${platform.isActionCard}
+          description="${platform.description}"
+        >
+        </app-card>`
     );
   }
 
@@ -112,25 +100,7 @@ export class AppPublish extends LitElement {
         </content-header>
         <section class="main-container">
           <div class="container">
-            <div class="content">
-              <h3>Publish your PWA for Stores</h3>
-              <p>
-                Ready to build your PWA? Tap "Build My PWA" to package your PWA
-                for the app stores or tap "Feature Store" to check out the
-                latest web components from the PWABuilder team to improve your
-                PWA even further!
-              </p>
-            </div>
             <div>${this.renderContentCards()}</div>
-            <div class="content">
-              <h3>Up next</h3>
-              <p>
-                Ready to build your PWA? Tap "Build My PWA" to package your PWA
-                for the app stores or tap "Feature Store" to check out the
-                latest web components from the PWABuilder team to improve your
-                PWA even further!
-              </p>
-            </div>
             <div class="action-buttons">
               <app-button>Back</app-button>
               <app-button>Next</app-button>
@@ -145,21 +115,37 @@ export class AppPublish extends LitElement {
 export interface ICardData {
   title: string;
   description: string;
+  isActionCard: boolean;
 }
 const platforms: ICardData[] = [
+  {
+    title: 'Publish your PWA for Stores',
+    description:
+      'Ready to build your PWA? Tap "Build My PWA" to package your PWA for the app stores or tap "Feature Store" to check out the latest web components from the PWABuilder team to improve your PWA even further!',
+    isActionCard: false,
+  },
   {
     title: 'Windows',
     description:
       'Publish your PWA to the Microsoft Store to make it available to the 1 billion Windows and XBox users worldwide.',
+    isActionCard: true,
   },
   {
     title: 'Android',
     description:
       'Publish your PWA to the Google Play Store to make your app more discoverable for Android users.',
+    isActionCard: true,
   },
   {
     title: 'Samsung',
     description:
       'Publish your PWA to the Google Play Store to make your app more discoverable for Android users.',
+    isActionCard: true,
+  },
+  {
+    title: 'Up next',
+    description:
+      'Ready to build your PWA? Tap "Build My PWA" to package your PWA for the app stores or tap "Feature Store" to check out the latest web components from the PWABuilder team to improve your PWA even further!',
+    isActionCard: false,
   },
 ];
