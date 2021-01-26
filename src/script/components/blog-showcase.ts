@@ -6,6 +6,7 @@ import {
   xxxLargeBreakPoint,
   BreakpointValues,
 } from '../utils/breakpoints';
+import { hidden_all } from '../utils/css/hidden';
 
 @customElement('blog-showcase')
 export class ResourceHub extends LitElement {
@@ -52,146 +53,18 @@ export class ResourceHub extends LitElement {
         max-width: 1069px;
       }
 
-      #posts fast-card {
-        padding-bottom: 16px;
-
-        color: var(--font-color);
-        background: white;
-      }
-
-      /* Card Basics */
-      fast-card img {
-        height: 142px;
-        width: 100%;
-        object-fit: none;
-        height: 200px;
-      }
-
-      fast-card h3 {
-        font-size: 24px;
-        line-height: 24px;
-        font-weight: var(--font-bold);
-        margin: 16px 16px 0 16px;
-      }
-
-      fast-card p {
-        color: var(--secondary-font-color);
-
-        font-size: 14px;
-        line-height: 20px;
-      }
-
-      fast-card .top {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-      }
-
-      /* Featured Card */
-      #posts fast-card.featured {
-        padding: 0;
-      }
-
-      fast-card .overlay {
-        position: absolute;
-        width: calc(100% - 32px);
-        padding: 16px;
-      }
-
-      .overlay p {
-        margin: 0;
-      }
-
-      .share::part(underlying-button),
-      .tag::part(control) {
-        color: var(--font-color);
-      }
-
-      .overlay .date,
-      .overlay .tag-list::part(underlying-button),
-      .overlay .share::part(underlying-button) {
-        display: inline-block;
-        font-size: var(--desktop-button-font-size);
-      }
-
-      .featured .overlay h2 {
-        font-size: 32px;
-        line-height: 34px;
-        margin: 0;
-      }
-
-      .featured .overlay p {
-        font-size: 18px;
-        line-height: 34px;
-      }
-
-      .featured .overlay .share {
-        display: inline-block;
-      }
-
-      .featured .overlay .share::part(underlying-button) {
-        font-size: 14px;
-        color: var(--font-color);
-        vertical-align: middle;
-      }
-
-      fast-card.featured .tag-list {
-        position: absolute;
-        right: unset;
-        margin: 0 16px 8px 0;
-        bottom: 0;
-        right: 0;
-      }
-
-      fast-card.featured .tag-list .tag {
-        margin: 8px 0 0 8px;
-      }
-
-      .featured fast-badge::part(control) {
-        --badge-fill-primary: white;
-        color: var(--font-color);
-      }
-
-      fast-card.featured img {
-        height: 100%;
-      }
-
-      /* Secondary Components */
-      fast-badge::part(control) {
-        --badge-color-dark: var(--font-color);
-      }
-
-      .card-content {
-        display: flex;
-        justify-content: space-between;
-        vertical-align: text-top;
-        margin-top: 8px;
-        padding: 8px 16px 0 16px;
-      }
-
-      .card-content app-button::part(underlying-button) {
-        text-align: text-top;
-        align-items: baseline;
-      }
-
-      .card-content h2 {
-        display: inline-block;
-        font-size: 18px;
-        margin: 0;
-      }
-
-      #blog-actions {
+      .blog-actions {
         display: flex;
         align-items: center;
         justify-content: center;
       }
 
-      #blog-actions app-button {
+      .blog-actions app-button {
         border-radius: 44px;
         width: 216px;
       }
 
-      #blog-actions app-button::part(underlying-button) {
+      .blog-actions app-button::part(underlying-button) {
         font-size: 14px;
         font-weight: var(--font-bold);
       }
@@ -208,14 +81,6 @@ export class ResourceHub extends LitElement {
             padding: 0 16px;
             margin-bottom: 16px;
           }
-
-          #posts fast-card {
-            display: inline-block;
-            min-width: calc(100% - 32px);
-            margin-right: 32px;
-            margin-bottom: 16px;
-            scroll-snap-align: center;
-          }
         `
       )}
 
@@ -225,10 +90,6 @@ export class ResourceHub extends LitElement {
             flex-direction: column;
             align-items: center;
             padding: 0 32px;
-          }
-
-          #posts fast-card {
-            margin-bottom: 32px;
           }
         `
       )}
@@ -244,21 +105,7 @@ export class ResourceHub extends LitElement {
             row-gap: 16px;
           }
 
-          #posts fast-card.featured {
-            grid-area: 1 / 1 / 3 / 4;
-            max-width: 612px;
-          }
-
-          #posts fast-card {
-            grid-column: 4 / 6;
-            max-width: 425px;
-          }
-
-          fast-card .overlay {
-            height: 142px;
-          }
-
-          #blog-actions {
+          .blog-actions {
             flex-direction: row-reverse;
             justify-content: flex-start;
             padding: 0 36px;
@@ -284,107 +131,68 @@ export class ResourceHub extends LitElement {
           }
         `
       )}
+
+      ${hidden_all}
     `;
   }
 
   constructor() {
     super();
-
-    window.addEventListener('resize', () => {
-      this.requestUpdate();
-    });
   }
 
   render() {
     return html`
       <section>
-        <div id="blog-header">
-          <h2>${this.h2Text()}</h2>
-        </div>
+        <div id="blog-header">${this.renderBlogHeader()}</div>
 
         <div id="posts">${this.renderCards()}</div>
-        ${this.renderBlogActions()}
+        <div id="blog-actions" class="blog-actions hidden-sm">
+          ${this.renderBlogActionButton()}
+        </div>
       </section>
     `;
   }
 
   renderCards() {
     return blogPosts.map((post, i) => {
-      if (i === 0 && window.innerWidth >= BreakpointValues.largeLower) {
-        return html`
-          <fast-card class="featured">
-            <div class="overlay">
-              <div class="top">
-                <span class="date">${post.date}</span>
-                <app-button id="share" class="share" appearance="lightweight"
-                  >Share</app-button
-                >
-              </div>
-
-              <h2 class="title">${post.title}</h2>
-              <p class="description">${post.description}</p>
-            </div>
-
-            <div class="tag-list">
-              ${post.tags.map(
-                tag => html` <fast-badge class="tag">${tag}</fast-badge> `
-              )}
-            </div>
-            <img src="${post.imageUrl}" alt="${post.title} card header image" />
-          </fast-card>
-        `;
-      }
-
       return html`
-        <fast-card>
-          <div class="overlay top">
-            <p class="date">${post.date}</p>
-            ${window.innerWidth < BreakpointValues.mediumLower
-              ? html`
-                  <div class="tag-list">
-                    ${post.tags.map(
-                      tag => html` <fast-badge class="tag">${tag}</fast-badge> `
-                    )}
-                  </div>
-                `
-              : undefined}
-          </div>
-          <img src="${post.imageUrl}" alt="${post.title} card header image" />
-          <div class="card-content">
-            <h2 class="title">${post.title}</h2>
-            <app-button id="share" class="share" appearance="lightweight"
-              >Share</app-button
-            >
-          </div>
-        </fast-card>
+        <app-card
+          title=${post.title}
+          description=${post.description}
+          date=${post.date}
+          imageUrl=${post.imageUrl}
+          linkRoute=${post.clickUrl}
+          mode="blog"
+          shareLink
+          .tags=${post.tags}
+          .featured=${i === 0 &&
+          window.innerWidth >= BreakpointValues.largeLower}
+        >
+        </app-card>
       `;
     });
   }
 
-  renderBlogActions() {
-    if (window.innerWidth > BreakpointValues.smallUpper) {
-      return html`
-        <div id="blog-actions">
-          <app-button>${this.viewBlogButtonText()}</app-button>
-        </div>
-      `;
-    }
+  renderBlogHeader() {
+    return html`
+      <h2 class="hidden-xlrg hidden-xxlrg hidden-xxxlrg">
+        Blog Posts for you...
+      </h2>
+      <h2 class="hidden-sm hidden-med hidden-lrg">
+        Blog posts recommended for you...
+      </h2>
+    `;
   }
 
-  h2Text() {
-    if (window.innerWidth < BreakpointValues.largeLower) {
-      return 'Blog Posts for you...';
-    }
-
-    return 'Blog posts recommended for you...';
-  }
-
-  viewBlogButtonText() {
-    if (window.innerWidth < BreakpointValues.largeLower) {
-      return 'View Blog';
-    }
-
-    return 'View PWA Builder Blog';
+  renderBlogActionButton() {
+    return html`
+      <app-button>
+        <span class="hidden-xlrg hidden-xxlrg hidden-xxxlrg">View Blog</span>
+        <span class="hidden-sm hidden-med hidden-lrg"
+          >View PWA Builder Blog</span
+        >
+      </app-button>
+    `;
   }
 }
 

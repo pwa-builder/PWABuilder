@@ -96,6 +96,11 @@ export class ResourceHub extends LitElement {
             background-color: #ededed;
           }
 
+          ::slotted([slot='title']),
+          ::slotted([slot='description']) {
+            color: var(--font-color);
+          }
+
           /* TODO make this gated to only a gallery variant */
           #cards.horizontal {
             overflow-y: scroll;
@@ -109,15 +114,6 @@ export class ResourceHub extends LitElement {
           #card.horizontal app-card {
             display: inline-block;
             min-width: calc(100% - 32px);
-          }
-        `
-      )}
-
-      ${smallBreakPoint(
-        css`
-          ::slotted([slot='title']),
-          ::slotted([slot='description']) {
-            color: var(--font-color);
           }
 
           section {
@@ -194,10 +190,6 @@ export class ResourceHub extends LitElement {
 
   constructor() {
     super();
-
-    window.addEventListener('resize', () => {
-      this.requestUpdate();
-    });
   }
 
   render() {
