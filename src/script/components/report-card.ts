@@ -152,7 +152,7 @@ export class ReportCard extends LitElement {
 
       if (flipperButton) {
         if (flipperButton.classList.contains('opened')) {
-          
+
           flipperButton.animate(
             [
               {
@@ -293,7 +293,7 @@ export class ReportCard extends LitElement {
               </div>
 
               <app-button @click="${() => this.openSWOptions()}" class="options-button">Service Worker Options</app-button>
-              
+
               <score-results
                 .testResults="${this.results.service_worker}"
                 @scored="${(ev: CustomEvent) => this.handleSWScore(ev)}"
@@ -313,7 +313,7 @@ export class ReportCard extends LitElement {
                   </fast-button>
                 </div>
               </div>
-              
+
               <score-results
                 .testResults="${this.results.security}"
                 @scored="${(ev: CustomEvent) => this.handleSecurityScore(ev)}"
