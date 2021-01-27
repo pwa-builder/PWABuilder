@@ -6,6 +6,7 @@ export class ReportCard extends LitElement {
     return css`
       #report-header {
         margin-bottom: 4em;
+        margin-top: 4em;
       }
 
       .accordion-heading-block {
@@ -22,6 +23,10 @@ export class ReportCard extends LitElement {
         font-weight: var(--font-bold);
       }
 
+      .accordion-score {
+        margin-right: 12px;
+      }
+
       fast-accordion-item,
       fast-accordion {
         --neutral-divider-rest: #e5e5e5;
@@ -29,6 +34,23 @@ export class ReportCard extends LitElement {
 
       fast-accordion-item::part(button) {
         height: 6em;
+      }
+
+      .flipper-button {
+        background: white;
+        box-shadow: 0 1px 4px 0px rgb(0 0 0 / 25%);
+        border-radius: 50%;
+        color: var(--primary-color);
+      }
+
+      .flipper-button::part(control) {
+        font-size: 22px;
+      }
+
+      .score-block {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
       }
     `;
   }
@@ -56,21 +78,42 @@ export class ReportCard extends LitElement {
             <fast-accordion-item>
               <div class="accordion-heading-block" slot="heading">
                 <span class="accordion-heading">Manifest</span>
-                <span class="accordion-score">00/40</span>
+
+                <div class="score-block">
+                  <span class="accordion-score">00/40</span>
+
+                  <fast-button class="flipper-button" mode="stealth">
+                    <ion-icon name="caret-forward-outline"></ion-icon>
+                  </fast-button>
+                </div>
               </div>
               Panel one content
             </fast-accordion-item>
             <fast-accordion-item>
               <div class="accordion-heading-block" slot="heading">
                 <span class="accordion-heading">Service Worker</span>
-                <span class="accordion-score">00/40</span>
+
+                <div class="score-block">
+                  <span class="accordion-score">00/40</span>
+
+                  <fast-button class="flipper-button" mode="stealth">
+                    <ion-icon name="caret-forward-outline"></ion-icon>
+                  </fast-button>
+                </div>
               </div>
               Panel two content
             </fast-accordion-item>
             <fast-accordion-item>
               <div class="accordion-heading-block" slot="heading">
                 <span class="accordion-heading">Security</span>
-                <span class="accordion-score">00/40</span>
+
+                <div class="score-block">
+                  <span class="accordion-score">00/40</span>
+
+                  <fast-button class="flipper-button" mode="stealth">
+                    <ion-icon name="caret-forward-outline"></ion-icon>
+                  </fast-button>
+                </div>
               </div>
               Panel three content
             </fast-accordion-item>
