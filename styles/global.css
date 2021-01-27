@@ -4,7 +4,7 @@
 */
 :root {
   --font-family: sans-serif;
-  --font-color: #333e49;
+  --font-color: #292C3A;
   --secondary-font-color: #808080;
   --font-bold: 700;
   --font-medium: 400;
@@ -41,7 +41,7 @@ fast-design-system-provider {
   color: var(--font-color);
 
   --background-color: var(--primary-background-color);
-  --neutral-foreground-rest: #e5e5e5;
+  --neutral-foreground-rest: var(--font-color);
   --neutral-fill-input-rest: white;
   --neutral-fill-input-hover: white;
   --neutral-fill-stealth-rest: #e5e5e5;

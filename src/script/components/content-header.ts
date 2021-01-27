@@ -1,12 +1,18 @@
 import { LitElement, css, html, customElement } from 'lit-element';
 
-import { smallBreakPoint, mediumBreakPoint, largeBreakPoint, xLargeBreakPoint, xxLargeBreakPoint, BreakpointValues } from '../utils/breakpoints';
+import {
+  smallBreakPoint,
+  mediumBreakPoint,
+  largeBreakPoint,
+  xLargeBreakPoint,
+  xxLargeBreakPoint,
+  BreakpointValues,
+} from '../utils/breakpoints';
 
 import './app-header';
 
 @customElement('content-header')
 export class ContentHeader extends LitElement {
-
   static get styles() {
     return css`
       :host {
@@ -106,8 +112,6 @@ export class ContentHeader extends LitElement {
           width: 44em;
         }
       `)}
-
-      
     `;
   }
 
@@ -117,7 +121,7 @@ export class ContentHeader extends LitElement {
 
   render() {
     return html`
-      <app-header></app-header>
+      <app-header part="header"></app-header>
 
       <div part="main-container" id="main-container">
         <section id="content-side">
@@ -131,11 +135,22 @@ export class ContentHeader extends LitElement {
         </section>
 
         <section>
-          <picture>
-            <source srcset="/assets/images/pwab3d.png" media="(max-width: ${BreakpointValues.mediumLower}px)">
-            <source srcset="/assets/images/full_header_logo.png" media="(max-width: ${BreakpointValues.mediumUpper}px)">
-            <img src="/assets/images/pwab3d.png" alt="3d version of the PWABuilder logo">
-          </picture>
+          <slot name="picture-container">
+            <picture>
+              <source
+                srcset="/assets/images/pwab3d.png"
+                media="(max-width: ${BreakpointValues.mediumLower}px)"
+              />
+              <source
+                srcset="/assets/images/full_header_logo.png"
+                media="(max-width: ${BreakpointValues.mediumUpper}px)"
+              />
+              <img
+                src="/assets/images/pwab3d.png"
+                alt="3d version of the PWABuilder logo"
+              />
+            </picture>
+          </slot>
         </section>
       </div>
     `;
