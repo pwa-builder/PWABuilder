@@ -310,11 +310,19 @@ export class ReportCard extends LitElement {
                 </div>
               </div>
 
+              <<<<<<< HEAD
               <app-button
                 @click="${() => this.openSWOptions()}"
                 class="options-button"
                 >Service Worker Options</app-button
               >
+              =======
+              <app-button
+                @click="${() => this.openSWOptions()}"
+                class="options-button"
+                >Service Worker Options</app-button
+              >
+              >>>>>>> b1f37e3 (feat(): init report card page)
 
               <score-results
                 .testResults="${this.results.service_worker}"
