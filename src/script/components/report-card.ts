@@ -1,12 +1,20 @@
-import { LitElement, css, html, customElement } from 'lit-element';
+import { LitElement, css, html, customElement, property } from 'lit-element';
+
+import './score-results';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {
+  @property() results: any | undefined;
+
   static get styles() {
     return css`
       #report-header {
         margin-bottom: 4em;
         margin-top: 4em;
+      }
+
+      #report-content {
+        --neutral-foreground-hover: black;
       }
 
       .accordion-heading-block {
@@ -87,7 +95,8 @@ export class ReportCard extends LitElement {
                   </fast-button>
                 </div>
               </div>
-              Panel one content
+              
+              <score-results .maniTestResults="${this.results.manifest}"></score-results>
             </fast-accordion-item>
             <fast-accordion-item>
               <div class="accordion-heading-block" slot="heading">

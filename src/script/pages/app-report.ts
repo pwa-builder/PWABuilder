@@ -91,7 +91,7 @@ export class AppReport extends LitElement {
           <fast-tab class="tab" id="sw">Service Worker Options</fast-tab>
 
           <fast-tab-panel id="overviewPanel">
-            <report-card></report-card>
+            <report-card .results="${this.testResults}"></report-card>
           </fast-tab-panel>
         </fast-tabs>
       </section>
