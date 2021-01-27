@@ -1,8 +1,10 @@
 import { LitElement, css, html, customElement } from 'lit-element';
+import { classMap } from 'lit-html/directives/class-map';
 import {
   smallBreakPoint,
   mediumBreakPoint,
   largeBreakPoint,
+  xLargeBreakPoint,
   xxxLargeBreakPoint,
   BreakpointValues,
 } from '../utils/breakpoints';
@@ -20,7 +22,6 @@ export class ResourceHub extends LitElement {
       }
 
       section {
-        width: 100%;
         max-width: 1060px;
       }
 
@@ -50,7 +51,6 @@ export class ResourceHub extends LitElement {
         padding-left: 32px;
         padding-right: 32px;
         margin-top: 1em;
-        max-width: 1069px;
       }
 
       .blog-actions {
@@ -71,6 +71,14 @@ export class ResourceHub extends LitElement {
 
       ${smallBreakPoint(
         css`
+          section {
+            width: 100%;
+          }
+
+          #blog-header {
+            padding-top: 32px;
+          }
+
           #posts {
             display: block;
             overflow-x: scroll;
@@ -80,6 +88,14 @@ export class ResourceHub extends LitElement {
             align-items: center;
             padding: 0 16px;
             margin-bottom: 16px;
+          }
+
+          #posts .blog {
+            display: inline-block;
+            width: calc(100% - 32px);
+            margin-right: 32px;
+            margin-bottom: 16px;
+            scroll-snap-align: center;
           }
         `
       )}
@@ -115,6 +131,23 @@ export class ResourceHub extends LitElement {
           .blog-actions app-button {
             display: block;
             float: right;
+          }
+
+          app-card.blog.featured {
+            grid-area: 1 / 1 / 3 / 4;
+          }
+
+          app-card.blog {
+            grid-column: 4 / 6;
+          }
+        `,
+        'no-upper'
+      )}
+
+      ${xLargeBreakPoint(
+        css`
+          section {
+            max-width: 800px;
           }
         `,
         'no-upper'
@@ -155,8 +188,15 @@ export class ResourceHub extends LitElement {
 
   renderCards() {
     return blogPosts.map((post, i) => {
+      const featured =
+        i === 0 && window.innerWidth >= BreakpointValues.largeLower;
+
       return html`
         <app-card
+          class=${classMap({
+            blog: true,
+            featured,
+          })}
           title=${post.title}
           description=${post.description}
           date=${post.date}
@@ -165,8 +205,7 @@ export class ResourceHub extends LitElement {
           mode="blog"
           shareLink
           .tags=${post.tags}
-          .featured=${i === 0 &&
-          window.innerWidth >= BreakpointValues.largeLower}
+          .featured=${featured}
         >
         </app-card>
       `;

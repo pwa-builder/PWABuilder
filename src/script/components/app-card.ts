@@ -271,29 +271,36 @@ export class AppCard extends LitElement {
         margin: 8px 0 0 8px;
       }
 
-      app-button.share::part(underlying-button) {
+      .share-button-text {
+        color: var(--font-color);
+        font-weight: 400;
+      }
+
+      fast-button.share::part(control) {
         font-size: 14px;
         color: var(--font-color);
+        vertical-align: top;
       }
 
       .blog .tag,
       .blog .date,
-      .blog .share::part(underlying-button) {
+      .blog .share::part(control) {
         display: inline-block;
-        line-height: 34px;
-        font-size: var(--desktop-button-font-size);
         vertical-align: middle;
       }
 
-      .blog .share::part(underlying-button),
+      .blog .share::part(control),
       .blog .tag::part(control) {
         color: var(--font-color);
+        font-size: var(--desktop-button-font-size);
+        font-weight: 400;
+        height: fit-content;
       }
 
       .blog .img-overlay .date,
       .blog .img-overlay .tag::part(underlying-button),
-      .blog .img-overlay .share::part(underlying-button),
-      .blog .content .share::part(underlying-button) {
+      .blog .img-overlay .share::part(control),
+      .blog .content .share::part(control) {
         display: inline-block;
         font-size: var(--desktop-button-font-size);
       }
@@ -309,18 +316,6 @@ export class AppCard extends LitElement {
         color: var(--font-color);
       }
 
-      ${smallBreakPoint(
-        css`
-          .blog {
-            display: inline-block;
-            min-width: calc(100% - 32px);
-            margin-right: 32px;
-            margin-bottom: 16px;
-            scroll-snap-align: center;
-          }
-        `
-      )}
-
       ${mediumBreakPoint(
         css`
           .blog {
@@ -331,18 +326,16 @@ export class AppCard extends LitElement {
 
       ${largeBreakPoint(
         css`
+          .blog .img-overlay {
+            height: 142px;
+          }
+
           .blog.featured {
-            grid-area: 1 / 1 / 3 / 4;
-            max-width: 612px;
+            min-width: 220px;
           }
 
           .blog {
-            grid-column: 4 / 6;
-            max-width: 425px;
-          }
-
-          .blog .img-overlay {
-            height: 142px;
+            min-width: 200px;
           }
         `
       )}
@@ -520,9 +513,9 @@ export class AppCard extends LitElement {
 
   renderShareButton() {
     return html`
-      <app-button class="share" appearance="lightweight" @click=${this.share}>
-        Share
-      </app-button>
+      <fast-button class="share" appearance="lightweight" @click=${this.share}>
+        <span class="share-button-text">Share</span>
+      </fast-button>
     `;
   }
 

@@ -41,6 +41,7 @@ export class ResourceHub extends LitElement {
 
       ::slotted([slot='description']) {
         font-weight: var(--font-bold);
+        max-width: 950px;
         text-align: center;
       }
 
