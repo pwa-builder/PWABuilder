@@ -6,12 +6,35 @@ import {
   internalProperty,
 } from 'lit-element';
 
+import '../components/content-header';
+import '../components/report-card';
+
 @customElement('app-report')
 export class AppReport extends LitElement {
   @internalProperty() testResults = null;
 
   static get styles() {
-    return css``;
+    return css`
+      h2 {
+        font-size: 44px;
+        line-height: 46px;
+        max-width: 526px;
+      }
+
+      #hero-p {
+        font-size: 16px;
+        line-height: 24px;
+        max-width: 406px;
+      }
+
+      content-header::part(header) {
+        --header-background: white;
+      }
+
+      #report {
+        padding: 16px;
+      }
+    `;
   }
 
   constructor() {
@@ -30,7 +53,20 @@ export class AppReport extends LitElement {
 
   render() {
     return html` <div>
-      <h3>Hello world</h3>
+      <content-header>
+        <h2 slot="hero-container">
+          Getting down to business.
+        </h2>
+        <p id="hero-p" slot="hero-container">
+          Description about what is going to take place below and how they are on their way to build their PWA. Mention nav bar for help.
+        </p>
+
+        <img slot="picture-container" src="/assets/images/reportcard-header.svg" alt="report card header image">
+      </content-header>
+
+      <section id="report">
+        <report-card></report-card>
+      </section>
     </div>`;
   }
 }
