@@ -11,7 +11,7 @@ import {
   mediumBreakPoint,
   largeBreakPoint,
   xxLargeBreakPoint,
-  xxxLargeBreakPoint
+  xxxLargeBreakPoint,
 } from '../utils/breakpoints';
 import { fetchManifest } from '../services/manifest';
 
@@ -19,6 +19,7 @@ import '../components/content-header';
 import '../components/resource-hub';
 import '../components/loading-button';
 import '../components/app-modal';
+import '../components/dropdown-menu';
 
 // For more info on the @pwabuilder/pwainstall component click here https://github.com/pwa-builder/pwa-install
 import '@pwabuilder/pwainstall';
@@ -27,7 +28,7 @@ import { Router } from '@vaadin/router';
 @customElement('app-home')
 export class AppHome extends LitElement {
   @internalProperty() siteURL: string | null = null;
-  @internalProperty() gettingManifest: boolean = false;
+  @internalProperty() gettingManifest = false;
 
   static get styles() {
     return css`
@@ -88,7 +89,6 @@ export class AppHome extends LitElement {
 
       #input-form loading-button::part(underlying-button) {
         display: flex;
-
       }
 
       #input-form fast-text-field::part(root) {
@@ -240,7 +240,7 @@ export class AppHome extends LitElement {
 
       try {
         const data = await fetchManifest(this.siteURL);
-        
+
         if (data) {
           Router.go(`/testing?site=${this.siteURL}`);
         }
@@ -327,6 +327,8 @@ export class AppHome extends LitElement {
         ?open="${true}"
       >
         <div slot="modal-actions">
+          <app-dropdown .menuItems=${['A', 'B', 'C']}></app-dropdown>
+
           <app-button>Test Button</app-button>
         </div>
       </app-modal>
