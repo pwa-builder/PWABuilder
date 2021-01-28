@@ -46,12 +46,16 @@ export class DropdownMenu extends LitElement {
         margin: 0;
       }
 
+      fast-menu-item:active,
+      fast-menu-item:focus-visible,
       fast-menu-item:hover {
         background-color: var(--link-color);
         font-weight: 500;
         color: #ffffff;
       }
 
+      fast-menu-item:active,
+      fast-menu-item:focus-visible,
       fast-menu-item:hover,
       fast-menu-item.selected::part(content) {
         font-weight: var(--font-bold);
