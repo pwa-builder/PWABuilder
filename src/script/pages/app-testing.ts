@@ -41,6 +41,7 @@ export class AppTesting extends LitElement {
           justify-content: center;
 
           text-align: center;
+          font-size: var(--large-font-size);
 
           animation: 160ms fadeIn linear;
         }

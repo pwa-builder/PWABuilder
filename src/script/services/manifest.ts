@@ -13,7 +13,8 @@ async function getManifestViaApi(url: string): Promise<ManifestDetectionResult> 
   // const postResult = this.axios.$post(this.apiUrl, options);
   const post = await fetch(apiUrl, {
     method: "POST",
-    body: JSON.stringify(options)
+    body: JSON.stringify(options),
+    headers: new Headers({ 'content-type': 'application/json' }),
   });
   const postResult = await post.json();
 
@@ -126,6 +127,7 @@ async function syncRedis(
 }
 
 export async function fetchManifest(url: string): Promise<ManifestDetectionResult> {
+  console.log('url', url);
 
   // Manifest detection is surprisingly tricky due to redirects, dynamic code generation, SSL problems, and other issues.
   // We have 3 techniques to detect the manifest:

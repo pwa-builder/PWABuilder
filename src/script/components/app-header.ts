@@ -1,6 +1,8 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
 
 import {
+  xxLargeBreakPoint,
+  xLargeBreakPoint,
   largeBreakPoint,
   mediumBreakPoint,
   smallBreakPoint,
@@ -12,13 +14,17 @@ export class AppHeader extends LitElement {
 
   static get styles() {
     return css`
+      :host {
+        --header-background: transparent;
+      }
+
       header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding-left: 16px;
         padding-right: 16px;
-        background: transparent;
+        background: var(--header-background);
         color: white;
         height: 71px;
       }
@@ -108,6 +114,24 @@ export class AppHeader extends LitElement {
           display: none;
         }
       `)}
+
+      ${
+        xLargeBreakPoint(css`
+          header {
+            padding-left: 1em;
+            padding-right: 1em;
+          }
+        `)
+      }
+
+      ${
+        xxLargeBreakPoint(css`
+          header {
+            padding-left: 3em;
+            padding-right: 3em;
+          }
+        `)
+      }
 
     `;
   }
