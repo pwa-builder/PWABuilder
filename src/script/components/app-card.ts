@@ -2,7 +2,12 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map';
 import { Router } from '@vaadin/router';
-import { BreakpointValues } from '../utils/breakpoints';
+import {
+  smallBreakPoint,
+  mediumBreakPoint,
+  largeBreakPoint,
+  BreakpointValues,
+} from '../utils/breakpoints';
 
 export enum AppCardModes {
   default = 'default',
@@ -34,14 +39,15 @@ export class AppCard extends LitElement {
         color: var(--font-color);
         font-size: var(--font-size);
         background: white;
+        border-radius: calc(var(--corner-radius) * 1px);
         min-width: 278px;
         max-width: 416px;
-        margin: 16px;
       }
 
       fast-card.default {
-        margin-right: 12px;
-        margin-left: 12px;
+        min-width: 200px;
+        max-width: 280px;
+        padding-bottom: 16px;
       }
 
       fast-card.default h3 {
@@ -69,6 +75,39 @@ export class AppCard extends LitElement {
       fast-card .tag-list {
         display: inline-block;
       }
+
+      img {
+        width: 100%;
+        object-fit: none;
+        height: 188px;
+      }
+
+      h3 {
+        font-size: 24px;
+        line-height: 24px;
+        font-weight: var(--font-bold);
+        margin: 16px 16px 0 16px;
+      }
+
+      p {
+        color: var(--secondary-font-color);
+        margin: 8px 16px 0 16px;
+
+        font-size: 14px;
+        line-height: 20px;
+      }
+
+      .card-actions {
+        margin-top: 8px;
+      }
+
+      .card-actions app-button::part(underlying-button) {
+        font-weight: bold;
+        font-size: 14px;
+        line-height: 20px;
+        color: var(--link-color);
+        padding: 0;
+      }
     `;
 
     const overlayCss = css`
@@ -85,7 +124,6 @@ export class AppCard extends LitElement {
 
       .img-overlay.bordered,
       fast-card img.bordered {
-        margin: 16px;
         padding: 8px;
         width: calc(100% - 48px);
       }
@@ -99,17 +137,72 @@ export class AppCard extends LitElement {
       .blog.featured img,
       .blog.featured .img-overlay {
         max-height: none;
-        height: calc(100% - 16px);
+        height: calc(100% - 32px);
       }
     `;
 
     const blogCardCss = css`
       .blog {
+        background: white;
         color: var(--font-color);
+        padding-bottom: 16px;
+      }
+
+      .blog img {
+        height: 142px;
+        width: 100%;
+        object-fit: none;
+        height: 200px;
       }
 
       .blog h3 {
-        line-height: 34px;
+        /* line-height: 34px; */
+        line-height: 20px;
+        font-size: 24px;
+        font-weight: var(--font-bold);
+        margin: 16px 16px 0 16px;
+      }
+
+      .blog p {
+        color: var(--secondary-font-color);
+
+        font-size: 14px;
+        line-height: 20px;
+      }
+
+      .blog .overlay-top {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+
+      .blog .img-overlay {
+        position: absolute;
+        width: calc(100% - 32px);
+        padding: 16px;
+      }
+
+      .blog .content {
+        display: flex;
+        justify-content: space-between;
+        vertical-align: text-top;
+        margin-top: 8px;
+        padding: 8px 16px 0 16px;
+      }
+
+      .blog .content app-button::part(underlying-button) {
+        text-align: text-top;
+        align-items: baseline;
+      }
+
+      .blog .content h2 {
+        display: inline-block;
+        font-size: 18px;
+        margin: 0;
+      }
+
+      .img-overlay p {
+        margin: 0;
       }
 
       .blog .content {
@@ -125,12 +218,23 @@ export class AppCard extends LitElement {
         margin: 0;
       }
 
+      .blog.featured {
+        padding: 0;
+      }
+
       .blog.featured h3 {
+        line-height: 34px;
         font-size: 30px;
+        margin: 16px 0 8px 0;
       }
 
       .blog.featured p {
         font-size: 18px;
+        line-height: 34px;
+      }
+
+      .blog.featured img {
+        height: 100%;
       }
 
       .blog.featured .tag-list {
@@ -145,24 +249,96 @@ export class AppCard extends LitElement {
         margin: 8px 0 0 8px;
       }
 
-      app-button.share::part(underlying-button) {
+      .blog.featured .img-overlay {
+        display: inline-block;
+      }
+
+      .blog.featured .img-overlay .share::part(underlying-button) {
         font-size: 14px;
         color: var(--font-color);
+        vertical-align: middle;
+      }
+
+      .blog.featured .tag-list {
+        position: absolute;
+        right: unset;
+        margin: 0 16px 8px 0;
+        bottom: 0;
+        right: 0;
+      }
+
+      .blog.featured .tag-list .tag {
+        margin: 8px 0 0 8px;
+      }
+
+      .share-button-text {
+        color: var(--font-color);
+        font-weight: 400;
+      }
+
+      fast-button.share::part(control) {
+        font-size: 14px;
+        color: var(--font-color);
+        vertical-align: top;
       }
 
       .blog .tag,
       .blog .date,
-      .blog .share::part(underlying-button) {
+      .blog .share::part(control) {
         display: inline-block;
-        line-height: 34px;
-        font-size: var(--desktop-button-font-size);
         vertical-align: middle;
       }
 
-      fast-badge::part(control) {
+      .blog .share::part(control),
+      .blog .tag::part(control) {
+        color: var(--font-color);
+        font-size: var(--desktop-button-font-size);
+        font-weight: 400;
+        height: fit-content;
+      }
+
+      .blog .img-overlay .date,
+      .blog .img-overlay .tag::part(underlying-button),
+      .blog .img-overlay .share::part(control),
+      .blog .content .share::part(control) {
+        display: inline-block;
+        font-size: var(--desktop-button-font-size);
+      }
+
+      .blog.featured fast-badge::part(control) {
         --badge-fill-primary: white;
         color: var(--font-color);
       }
+
+      fast-badge::part(control) {
+        --badge-color-dark: var(--font-color);
+        --badge-fill-primary: white;
+        color: var(--font-color);
+      }
+
+      ${mediumBreakPoint(
+        css`
+          .blog {
+            margin-bottom: 32px;
+          }
+        `
+      )}
+
+      ${largeBreakPoint(
+        css`
+          .blog .img-overlay {
+            height: 142px;
+          }
+
+          .blog.featured {
+            min-width: 220px;
+          }
+
+          .blog {
+            min-width: 200px;
+          }
+        `
+      )}
     `;
 
     const microCardCss = css`
@@ -210,7 +386,6 @@ export class AppCard extends LitElement {
 
     return css`
       :host {
-        background: var(--primary-color);
         display: flex;
         color: white;
         justify-content: center;
@@ -269,7 +444,6 @@ export class AppCard extends LitElement {
   renderBlogCard() {
     // Featured Card Html
     if (this.featured && window.innerWidth > BreakpointValues.mediumUpper) {
-      // TODO featured card
       return html`
         <fast-card class="blog featured" part="card">
           <div class="img-overlay">
@@ -339,9 +513,9 @@ export class AppCard extends LitElement {
 
   renderShareButton() {
     return html`
-      <app-button class="share" appearance="lightweight" @click=${this.share}>
-        Share
-      </app-button>
+      <fast-button class="share" appearance="lightweight" @click=${this.share}>
+        <span class="share-button-text">Share</span>
+      </fast-button>
     `;
   }
 
