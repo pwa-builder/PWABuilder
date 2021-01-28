@@ -136,6 +136,7 @@ export default class extends Vue {
         // If so, retry using our downloader proxy service.
         const hasSafeImages = this.androidOptions.iconUrl && this.androidOptions.iconUrl.includes(process.env.safeUrlFetcher || "");
         const isConnectionRefusedOrForbidden = (responseText || "").includes("ECONNREFUSED") || response.status === 403;
+        
         if (!hasSafeImages && isConnectionRefusedOrForbidden) {
           console.warn("Android package generation failed with ECONNREFUSED. Retrying with safe images.", responseText);
           this.updateAndroidOptionsWithSafeUrls(this.androidOptions);

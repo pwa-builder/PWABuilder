@@ -109,6 +109,8 @@
         <a
           href="https://privacy.microsoft.com/en-us/privacystatement"
         >Our Privacy Statement</a>
+
+        <a class="termsOfUse" href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md">Terms of Use</a>
       </p>
     </footer>
   </div>
@@ -290,6 +292,10 @@ Vue.prototype.$awa = function(config) {
 /* stylelint-disable */
 
 @import "~assets/scss/base/variables";
+
+.termsOfUse {
+  margin-left: 6px;
+}
 
 #swPickerForm {
   min-height: 80vh;

@@ -121,11 +121,12 @@
         </div>
         <footer>
           <p>
-            PWA Builder was founded by Microsoft as a community guided, open
-            source project to help move PWA adoption forward.
+            PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
             <a
               href="https://privacy.microsoft.com/en-us/privacystatement"
             >Our Privacy Statement</a>
+
+            <a class="termsOfUse" href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md">Terms of Use</a>
           </p>
         </footer>
       </div>
@@ -217,11 +218,12 @@
     </main>
     <footer v-if="gotURL" id="hubFooter">
       <p>
-        PWA Builder was founded by Microsoft as a community guided, open source
-        project to help move PWA adoption forward.
+        PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
         <a
-          href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
+          href="https://privacy.microsoft.com/en-us/privacystatement"
         >Our Privacy Statement</a>
+
+        <a class="termsOfUse" href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md">Terms of Use</a>
       </p>
     </footer>
   </div>
@@ -587,6 +589,10 @@ declare var awa: any;
 <style lang="scss" scoped>
 /* stylelint-disable */
 @import "~assets/scss/base/variables";
+
+.termsOfUse {
+  margin-left: 6px;
+}
 
 #starterDropdown {
   position: absolute;
