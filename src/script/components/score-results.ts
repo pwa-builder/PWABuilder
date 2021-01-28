@@ -1,4 +1,5 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
+import { ManifestTestResults } from '../utils/interfaces';
 
 @customElement('score-results')
 export class ScoreResults extends LitElement {
@@ -22,7 +23,7 @@ export class ScoreResults extends LitElement {
   }
 
   firstUpdated() {
-    console.log('maniTestResults', this.maniTestResults);
+    console.log('maniTestResults', Array.from(this.maniTestResults));
   }
 
   render() {
@@ -44,10 +45,14 @@ export class ScoreResults extends LitElement {
 
             <ul>
               ${
-                this.maniTestResults && this.maniTestResults.length > 0 ? 
-                  this.maniTestResults.map((result) => {
+                this.maniTestResults && this.maniTestResults.length > 0 ?
+                  this.maniTestResults.map((result: any) => {
                     return html`
-                      <li>${result}</li>
+                      <li>
+                        <span>${result.infoString}</span>
+
+                        ${result.result === true ? html`<span class="goodScore">5</span>` : html`<span class="badScore">0</span>`}
+                      </li>
                     `
                   })
                  : null
