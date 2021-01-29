@@ -51,8 +51,19 @@ export class ReportCard extends LitElement {
         color: var(--primary-color);
       }
 
+      .flipper-button ion-icon {
+        pointer-events: none;
+      }
+
       .flipper-button::part(control) {
         font-size: 22px;
+      }
+
+      .flipper-button::part(content) {
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .score-block {
@@ -65,6 +76,52 @@ export class ReportCard extends LitElement {
 
   constructor() {
     super();
+  }
+
+  opened(targetEl: EventTarget) {
+    console.log(targetEl);
+
+    if (targetEl) {
+      const flipperButton = (targetEl as Element).classList.contains('flipper-button') ? (targetEl as Element) : (targetEl as Element).querySelector(
+        '.flipper-button'
+      );
+
+      if (flipperButton) {
+        if (flipperButton.classList.contains('opened')) {
+          
+          flipperButton.animate(
+            [
+              {
+                transform: 'rotate(0deg)'
+              }
+            ],
+            {
+              duration: 200,
+              fill: "forwards"
+            }
+          )
+
+          flipperButton.classList.remove('opened');
+        } else {
+          flipperButton.classList.add('opened');
+
+          flipperButton.animate(
+            [
+              {
+                transform: 'rotate(0deg)',
+              },
+              {
+                transform: 'rotate(90deg)',
+              },
+            ],
+            {
+              duration: 200,
+              fill: 'forwards',
+            }
+          );
+        }
+      }
+    }
   }
 
   render() {
@@ -83,7 +140,9 @@ export class ReportCard extends LitElement {
 
         <div id="report-content">
           <fast-accordion>
-            <fast-accordion-item>
+            <fast-accordion-item
+              @click="${(ev: Event) => this.opened(ev.target)}"
+            >
               <div class="accordion-heading-block" slot="heading">
                 <span class="accordion-heading">Manifest</span>
 
@@ -95,10 +154,14 @@ export class ReportCard extends LitElement {
                   </fast-button>
                 </div>
               </div>
-              
-              <score-results .maniTestResults="${this.results.manifest}"></score-results>
+
+              <score-results
+                .maniTestResults="${this.results.manifest}"
+              ></score-results>
             </fast-accordion-item>
-            <fast-accordion-item>
+            <fast-accordion-item
+              @click="${(ev: Event) => this.opened(ev.target)}"
+            >
               <div class="accordion-heading-block" slot="heading">
                 <span class="accordion-heading">Service Worker</span>
 
@@ -112,7 +175,9 @@ export class ReportCard extends LitElement {
               </div>
               Panel two content
             </fast-accordion-item>
-            <fast-accordion-item>
+            <fast-accordion-item
+              @click="${(ev: Event) => this.opened(ev.target)}"
+            >
               <div class="accordion-heading-block" slot="heading">
                 <span class="accordion-heading">Security</span>
 

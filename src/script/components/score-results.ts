@@ -11,9 +11,35 @@ export class ScoreResults extends LitElement {
         font-size: 22px;
       }
 
+      h5 {
+        font-size: 18px;
+        margin-bottom: 0;
+      }
+
       #score-grid {
         display: grid;
         grid-template-columns: auto auto;
+        grid-gap: 0 3em;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      ul li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+
+      .good-score, .bad-score {
+        font-weight: var(--font-bold);
+      }
+
+      .bad-score {
+        color: red;
       }
     `;
   }
@@ -78,7 +104,7 @@ export class ScoreResults extends LitElement {
                       <li>
                         <span>${result.infoString}</span>
 
-                        ${result.result === true ? html`<span class="goodScore">5</span>` : html`<span class="badScore">0</span>`}
+                        ${result.result === true ? html`<span class="good-score">5</span>` : html`<span class="bad-score">0</span>`}
                       </li>
                     `
                   })
@@ -97,7 +123,7 @@ export class ScoreResults extends LitElement {
                       <li>
                         <span>${result.infoString}</span>
 
-                        ${result.result === true ? html`<span class="goodScore">5</span>` : html`<span class="badScore">0</span>`}
+                        ${result.result === true ? html`<span class="good-score">5</span>` : html`<span class="bad-score">0</span>`}
                       </li>
                     `
                   })
@@ -116,7 +142,7 @@ export class ScoreResults extends LitElement {
                       <li>
                         <span>${result.infoString}</span>
 
-                        ${result.result === true ? html`<span class="goodScore">5</span>` : html`<span class="badScore">0</span>`}
+                        ${result.result === true ? html`<span class="good-score">5</span>` : html`<span class="bad-score">0</span>`}
                       </li>
                     `
                   })
