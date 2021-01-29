@@ -60,22 +60,45 @@ export class ScoreResults extends LitElement {
     const recResults: any = [];
     const optionalResults: any = [];
 
-    this.maniTestResults.map((result: any) => {
-      if (result.category === "required") {
-        reqResults.push(result);
-      }
-      else if (result.category === "recommended") {
-        recResults.push(result);
-      }
-      else {
-        optionalResults.push(result);
-      }
-    });
+    if (this.maniTestResults && this.maniTestResults.length > 0) {
+      this.overallScore(this.maniTestResults);
+
+      this.maniTestResults.map((result: any) => {
+        if (result.category === "required") {
+          reqResults.push(result);
+        }
+        else if (result.category === "recommended") {
+          recResults.push(result);
+        }
+        else {
+          optionalResults.push(result);
+        }
+      });
+    }
 
     return {
       "required": reqResults,
       "recommended": recResults,
       "optional": optionalResults
+    }
+  }
+
+  overallScore(results) {
+    let score = 0;
+
+    if (results && results.length > 0) {
+      results.map((result) => {
+        if (result.result === true) {
+          score = score + 5;
+        }
+      })
+
+      const event = new CustomEvent('scored', {
+        detail: {
+          score
+        }
+      });
+      this.dispatchEvent(event);
     }
   }
 

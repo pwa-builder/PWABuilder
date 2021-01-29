@@ -1,10 +1,12 @@
-import { LitElement, css, html, customElement, property } from 'lit-element';
+import { LitElement, css, html, customElement, property, internalProperty } from 'lit-element';
 
 import './score-results';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {
   @property() results: any | undefined;
+
+  @internalProperty() maniScore = 0;
 
   static get styles() {
     return css`
@@ -124,6 +126,15 @@ export class ReportCard extends LitElement {
     }
   }
 
+  handleManiScore(ev: CustomEvent) {
+    if (ev && ev.detail.score) {
+      this.maniScore = ev.detail.score;
+    }
+    else {
+      this.maniScore = 0;
+    }
+  }
+
   render() {
     return html`
       <div>
@@ -147,7 +158,7 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Manifest</span>
 
                 <div class="score-block">
-                  <span class="accordion-score">00/40</span>
+                  <span class="accordion-score">${this.maniScore}</span>
 
                   <fast-button class="flipper-button" mode="stealth">
                     <ion-icon name="caret-forward-outline"></ion-icon>
@@ -157,6 +168,7 @@ export class ReportCard extends LitElement {
 
               <score-results
                 .maniTestResults="${this.results.manifest}"
+                @scored="${(ev) => this.handleManiScore(ev)}"
               ></score-results>
             </fast-accordion-item>
             <fast-accordion-item
