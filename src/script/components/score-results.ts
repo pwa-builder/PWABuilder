@@ -8,7 +8,6 @@ import {
 } from 'lit-element';
 import { OrganizedResults, TestResult } from '../utils/interfaces';
 
-
 @customElement('score-results')
 export class ScoreResults extends LitElement {
   @property() testResults: Array<TestResult> | undefined;
@@ -102,25 +101,6 @@ export class ScoreResults extends LitElement {
         detail: {
           score,
         },
-      });
-      this.dispatchEvent(event);
-    }
-  }
-
-  overallScore(results) {
-    let score = 0;
-
-    if (results && results.length > 0) {
-      results.map((result) => {
-        if (result.result === true) {
-          score = score + 5;
-        }
-      })
-
-      const event = new CustomEvent('scored', {
-        detail: {
-          score
-        }
       });
       this.dispatchEvent(event);
     }
