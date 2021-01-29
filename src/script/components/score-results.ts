@@ -1,4 +1,11 @@
-import { LitElement, css, html, customElement, property, internalProperty } from 'lit-element';
+import {
+  LitElement,
+  css,
+  html,
+  customElement,
+  property,
+  internalProperty,
+} from 'lit-element';
 
 @customElement('score-results')
 export class ScoreResults extends LitElement {
@@ -35,7 +42,8 @@ export class ScoreResults extends LitElement {
         font-size: 14px;
       }
 
-      .good-score, .bad-score {
+      .good-score,
+      .bad-score {
         font-weight: var(--font-bold);
       }
 
@@ -50,8 +58,6 @@ export class ScoreResults extends LitElement {
   }
 
   firstUpdated() {
-    console.log('testResults', this.testResults);
-
     this.organizedResults = this.organize();
     console.log(this.organizedResults);
   }
@@ -65,39 +71,37 @@ export class ScoreResults extends LitElement {
       this.overallScore(this.testResults);
 
       this.testResults.map((result: any) => {
-        if (result.category === "required") {
+        if (result.category === 'required') {
           reqResults.push(result);
-        }
-        else if (result.category === "recommended") {
+        } else if (result.category === 'recommended') {
           recResults.push(result);
-        }
-        else {
+        } else {
           optionalResults.push(result);
         }
       });
     }
 
     return {
-      "required": reqResults,
-      "recommended": recResults,
-      "optional": optionalResults
-    }
+      required: reqResults,
+      recommended: recResults,
+      optional: optionalResults,
+    };
   }
 
   overallScore(results) {
     let score = 0;
 
     if (results && results.length > 0) {
-      results.map((result) => {
+      results.map(result => {
         if (result.result === true) {
           score = score + 5;
         }
-      })
+      });
 
       const event = new CustomEvent('scored', {
         detail: {
-          score
-        }
+          score,
+        },
       });
       this.dispatchEvent(event);
     }
@@ -118,61 +122,62 @@ export class ScoreResults extends LitElement {
 
         <div id="score-grid">
           <div id="required">
-            <h5>Required</h5>
+            ${this.organizedResults && this.organizedResults.required.length > 0
+              ? html` <h5>Required</h5>
 
-            <ul>
-              ${
-                this.organizedResults && this.organizedResults.required.length > 0 ?
-                  this.organizedResults.required.map((result: any) => {
-                    return html`
-                      <li>
-                        <span>${result.infoString}</span>
+                  <ul>
+                    ${this.organizedResults.required.map((result: any) => {
+                      return html`
+                        <li>
+                          <span>${result.infoString}</span>
 
-                        ${result.result === true ? html`<span class="good-score">5</span>` : html`<span class="bad-score">0</span>`}
-                      </li>
-                    `
-                  })
-                 : null
-              }
-            </ul>
+                          ${result.result === true
+                            ? html`<span class="good-score">5</span>`
+                            : html`<span class="bad-score">0</span>`}
+                        </li>
+                      `;
+                    })}
+                  </ul>`
+              : null}
           </div>
           <div id="recommended">
-            <h5>Recommended</h5>
+            ${this.organizedResults &&
+            this.organizedResults.recommended.length > 0
+              ? html` <h5>Recommended</h5>
 
-            <ul>
-              ${
-                this.organizedResults && this.organizedResults.recommended.length > 0 ?
-                  this.organizedResults.recommended.map((result: any) => {
-                    return html`
-                      <li>
-                        <span>${result.infoString}</span>
+                  <ul>
+                    ${this.organizedResults.recommended.map((result: any) => {
+                      return html`
+                        <li>
+                          <span>${result.infoString}</span>
 
-                        ${result.result === true ? html`<span class="good-score">5</span>` : html`<span class="bad-score">0</span>`}
-                      </li>
-                    `
-                  })
-                 : null
-              }
-            </ul>
+                          ${result.result === true
+                            ? html`<span class="good-score">5</span>`
+                            : html`<span class="bad-score">0</span>`}
+                        </li>
+                      `;
+                    })}
+                  </ul>`
+              : null}
           </div>
           <div id="optional">
-             <h5>Optional</h5>
+            ${this.organizedResults && this.organizedResults.optional.length > 0
+              ? html` <h5>Optional</h5>
 
-             <ul>
-              ${
-                this.organizedResults && this.organizedResults.optional.length > 0 ?
-                  this.organizedResults.optional.map((result: any) => {
-                    return html`
-                      <li>
-                        <span>${result.infoString}</span>
+                  <ul>
+                    ${this.organizedResults.optional.map((result: any) => {
+                      return html`
+                        <li>
+                          <span>${result.infoString}</span>
 
-                        ${result.result === true ? html`<span class="good-score">5</span>` : html`<span class="bad-score">0</span>`}
-                      </li>
-                    `
-                  })
-                 : null
-              }
-            </ul>
+                          ${result.result === true
+                            ? html`<span class="good-score">5</span>`
+                            : html`<span class="bad-score">0</span>`}
+                        </li>
+                      `;
+                    })}
+                  </ul>`
+              : null}
           </div>
         </div>
       </div>

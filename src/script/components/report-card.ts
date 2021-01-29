@@ -8,6 +8,7 @@ export class ReportCard extends LitElement {
 
   @internalProperty() maniScore = 0;
   @internalProperty() swScore = 0;
+  @internalProperty() securityScore = 0;
 
   static get styles() {
     return css`
@@ -145,6 +146,15 @@ export class ReportCard extends LitElement {
     }
   }
 
+  handleSecurityScore(ev: CustomEvent) {
+    if (ev && ev.detail.score) {
+      this.securityScore = ev.detail.score;
+    }
+    else {
+      this.securityScore = 0;
+    }
+  }
+
   render() {
     return html`
       <div>
@@ -168,7 +178,7 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Manifest</span>
 
                 <div class="score-block">
-                  <span class="accordion-score">${this.maniScore}</span>
+                  <span class="accordion-score">${this.maniScore} / 80</span>
 
                   <fast-button class="flipper-button" mode="stealth">
                     <ion-icon name="caret-forward-outline"></ion-icon>
@@ -188,7 +198,7 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Service Worker</span>
 
                 <div class="score-block">
-                  <span class="accordion-score">${this.swScore}</span>
+                  <span class="accordion-score">${this.swScore} / 20</span>
 
                   <fast-button class="flipper-button" mode="stealth">
                     <ion-icon name="caret-forward-outline"></ion-icon>
@@ -208,14 +218,18 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Security</span>
 
                 <div class="score-block">
-                  <span class="accordion-score">00/40</span>
+                  <span class="accordion-score">${this.securityScore} / 15</span>
 
                   <fast-button class="flipper-button" mode="stealth">
                     <ion-icon name="caret-forward-outline"></ion-icon>
                   </fast-button>
                 </div>
               </div>
-              Panel three content
+              
+              <score-results
+                .testResults="${this.results.security}"
+                @scored="${(ev) => this.handleSecurityScore(ev)}"
+              ></score-results>
             </fast-accordion-item>
           </fast-accordion>
         </div>

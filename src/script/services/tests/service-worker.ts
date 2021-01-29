@@ -10,12 +10,10 @@ export async function testServiceWorker(url: string) {
   }
 
   const swData = await detectServiceWorker(url);
-  console.log('swData', swData);
   const worksOffline = await detectOfflineSupport(url);
   const periodicSync = await detectPeriodicSyncSupport(url);
 
   const swTestResults = [
-      // data: swData,
       {
         result: swData.scope && swData.scope.length > 0 ? true : false,
         infoString: "Has the correct scope",
