@@ -24,6 +24,8 @@ export class ReportCard extends LitElement {
   maxSWSCore = 20;
   maxSecurityScore = 15;
 
+  @internalProperty() maniScore = 0;
+
   static get styles() {
     return css`
       :host {

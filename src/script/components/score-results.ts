@@ -106,6 +106,25 @@ export class ScoreResults extends LitElement {
     }
   }
 
+  overallScore(results) {
+    let score = 0;
+
+    if (results && results.length > 0) {
+      results.map((result) => {
+        if (result.result === true) {
+          score = score + 5;
+        }
+      })
+
+      const event = new CustomEvent('scored', {
+        detail: {
+          score
+        }
+      });
+      this.dispatchEvent(event);
+    }
+  }
+
   render() {
     return html`
       <div>
