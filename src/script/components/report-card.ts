@@ -74,6 +74,10 @@ export class ReportCard extends LitElement {
         pointer-events: none;
       }
 
+      .flipper-button ion-icon {
+        pointer-events: none;
+      }
+
       .flipper-button::part(control) {
         font-size: 22px;
       }
@@ -152,7 +156,6 @@ export class ReportCard extends LitElement {
 
       if (flipperButton) {
         if (flipperButton.classList.contains('opened')) {
-
           flipperButton.animate(
             [
               {
