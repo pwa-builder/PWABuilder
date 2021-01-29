@@ -25,6 +25,7 @@ export class ReportCard extends LitElement {
   maxSecurityScore = 15;
 
   @internalProperty() maniScore = 0;
+  @internalProperty() swScore = 0;
 
   static get styles() {
     return css`
@@ -251,6 +252,14 @@ export class ReportCard extends LitElement {
     this.dispatchEvent(event);
   }
 
+  handleSWScore(ev: CustomEvent) {
+    if (ev && ev.detail.score) {
+      this.swScore = ev.detail.score;
+    } else {
+      this.swScore = 0;
+    }
+  }
+
   render() {
     return html`
       <div>
@@ -311,21 +320,11 @@ export class ReportCard extends LitElement {
                   </fast-button>
                 </div>
               </div>
-
-              <<<<<<< HEAD
               <app-button
                 @click="${() => this.openSWOptions()}"
                 class="options-button"
                 >Service Worker Options</app-button
               >
-              =======
-              <app-button
-                @click="${() => this.openSWOptions()}"
-                class="options-button"
-                >Service Worker Options</app-button
-              >
-              >>>>>>> b1f37e3 (feat(): init report card page)
-
               <score-results
                 .testResults="${this.results.service_worker}"
                 @scored="${(ev: CustomEvent) => this.handleSWScore(ev)}"
