@@ -26,6 +26,7 @@ export class ReportCard extends LitElement {
 
   @internalProperty() maniScore = 0;
   @internalProperty() swScore = 0;
+  @internalProperty() securityScore = 0;
 
   static get styles() {
     return css`
@@ -257,6 +258,15 @@ export class ReportCard extends LitElement {
       this.swScore = ev.detail.score;
     } else {
       this.swScore = 0;
+    }
+  }
+
+  handleSecurityScore(ev: CustomEvent) {
+    if (ev && ev.detail.score) {
+      this.securityScore = ev.detail.score;
+    }
+    else {
+      this.securityScore = 0;
     }
   }
 
