@@ -11,11 +11,6 @@ import './app-header';
 
 @customElement('content-header')
 export class ContentHeader extends LitElement {
-  @property({ type: String })
-  heroImg = '/assets/images/pwab3d.png';
-  @property({ type: String })
-  mobileHeroImg = '/assets/images/pwab3d.png';
-
   static get styles() {
     return css`
       :host {
@@ -139,22 +134,6 @@ export class ContentHeader extends LitElement {
         </section>
 
         <section>
-          <<<<<<< HEAD
-          <picture>
-            <source
-              srcset="${this.heroImg}"
-              media="(max-width: ${BreakpointValues.mediumLower}px)"
-            />
-            <source
-              srcset="${this.mobileHeroImg}"
-              media="(max-width: ${BreakpointValues.mediumUpper}px)"
-            />
-            <img
-              src="${this.heroImg}"
-              alt="3d version of the PWABuilder logo"
-            />
-          </picture>
-          =======
           <slot name="picture-container">
             <picture>
               <source
@@ -171,7 +150,6 @@ export class ContentHeader extends LitElement {
               />
             </picture>
           </slot>
-          >>>>>>> v3.0
         </section>
       </div>
     `;

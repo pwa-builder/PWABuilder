@@ -42,8 +42,6 @@ export class AppCard extends LitElement {
         font-size: var(--font-size);
         background: white;
         border-radius: calc(var(--corner-radius) * 1px);
-        min-width: 278px;
-        max-width: 416px;
       }
 
       fast-card.default {
@@ -397,7 +395,8 @@ export class AppCard extends LitElement {
       fast-card.content-card {
         background-color: white;
         padding: 1rem 0;
-        width: min(1024px, 100%);
+        width: 100%;
+        max-width: 1024px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -422,6 +421,7 @@ export class AppCard extends LitElement {
       ${largeBreakPoint(
         css`
           fast-card.content-card {
+            width: calc(100vw - 30vw);
             flex-direction: row;
           }
 

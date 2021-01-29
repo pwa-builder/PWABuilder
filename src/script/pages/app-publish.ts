@@ -61,10 +61,7 @@ export class AppPublish extends LitElement {
   render() {
     return html`
       <div>
-        <content-header
-          heroImg="/assets/images/store_fpo.png"
-          mobileHeroImg="assets/images/mobile_header_logo.png"
-        >
+        <content-header>
           <div class="header" slot="hero-container">
             <h1>
               Nice! <br />
@@ -75,9 +72,14 @@ export class AppPublish extends LitElement {
               are on their way to build their PWA. Mention nav bar for help.
             </p>
           </div>
+          <img
+            slot="picture-container"
+            src="/assets/images/mobile_header_logo.png"
+            alt="report card header image"
+          />
         </content-header>
         <section class="container">
-          <div>${this.renderContentCards()}</div>
+          ${this.renderContentCards()}
           <div class="action-buttons">
             <app-button>Back</app-button>
             <app-button>Next</app-button>
