@@ -27,24 +27,29 @@ function doTest(manifest: Manifest): any {
     {
       infoString: 'Web Manifest Properly Attached',
       result: true,
+      category: "required"
     },
     {
       infoString: 'Lists icons for add to home screen',
       result: manifest.icons && manifest.icons.length > 0 ? true : false,
+      category: "required"
     },
     {
       infoString: 'Contains name property',
       result: manifest.name && manifest.name.length > 1 ? true : false,
+      category: "required"
     },
     {
       infoString: 'Contains short_name property',
       result:
         manifest.short_name && manifest.short_name.length > 1 ? true : false,
+        category: "required"
     },
     {
       infoString: 'Designates a start_url',
       result:
         manifest.start_url && manifest.start_url.length > 0 ? true : false,
+        category: "required"
     },
     {
       infoString: 'Specifies a display mode',
@@ -55,14 +60,17 @@ function doTest(manifest: Manifest): any {
         )
           ? true
           : false,
+      category: "recommended"
     },
     {
       infoString: 'Has a background color',
       result: manifest.background_color ? true : false,
+      category: "recommended"
     },
     {
       infoString: 'Has a theme color',
       result: manifest.theme_color ? true : false,
+      category: "recommended"
     },
     {
       infoString: 'Specifies an orientation mode',
@@ -70,18 +78,21 @@ function doTest(manifest: Manifest): any {
         manifest.orientation && isStandardOrientation(manifest.orientation)
           ? true
           : false,
+      category: "recommended"
     },
     {
       infoString: 'Contains screenshots for app store listings',
       result:
         manifest.screenshots && manifest.screenshots.length > 0 ? true : false,
+      category: "recommended"
     },
-    { infoString: 'Has a square PNG icon 512x512 or larger', result: true },
-    { infoString: 'Has a maskable PNG icon', result: true },
+    { infoString: 'Has a square PNG icon 512x512 or larger', result: true, category: "required" },
+    { infoString: 'Has a maskable PNG icon', result: true, category: "recommended" },
     {
       infoString: 'Lists shortcuts for quick access',
       result:
         manifest.shortcuts && manifest.shortcuts.length > 0 ? true : false,
+        category: "recommended"
     },
     {
       infoString: 'Contains categories to classify the app',
@@ -91,10 +102,12 @@ function doTest(manifest: Manifest): any {
         containsStandardCategory(manifest.categories)
           ? true
           : false,
+          category: "recommended"
     },
     {
       infoString: 'Contains an IARC ID',
       result: manifest.iarc_rating_id ? true : false,
+      category: "optional"
     },
     {
       infoString: 'Specifies related_application',
@@ -104,6 +117,7 @@ function doTest(manifest: Manifest): any {
         manifest.prefer_related_applications !== undefined
           ? true
           : false,
+          category: "optional"
     },
   ];
 }
