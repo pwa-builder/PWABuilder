@@ -1,5 +1,8 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map';
+import { KeyboardKeys } from '../utils/keyboard';
+
+const dropdownComponentClass = 'dropdown-component';
 
 @customElement('app-dropdown')
 export class DropdownMenu extends LitElement {
@@ -46,12 +49,16 @@ export class DropdownMenu extends LitElement {
         margin: 0;
       }
 
+      fast-menu-item:active,
+      fast-menu-item:focus-visible,
       fast-menu-item:hover {
         background-color: var(--link-color);
         font-weight: 500;
         color: #ffffff;
       }
 
+      fast-menu-item:active,
+      fast-menu-item:focus-visible,
       fast-menu-item:hover,
       fast-menu-item.selected::part(content) {
         font-weight: var(--font-bold);
@@ -65,9 +72,14 @@ export class DropdownMenu extends LitElement {
 
   render() {
     return html`
-      <div part="layout" @focusout=${this.closeMenu}>
+      <div
+        class="dropdown-menu"
+        part="layout"
+        @keyup=${this.keyupHandler}
+        @focusout=${this.closeMenu}
+      >
         <fast-button
-          class="menu-button"
+          class="menu-button ${dropdownComponentClass}"
           appearance="outline"
           @click=${this.clickMenuButton}
         >
@@ -83,8 +95,13 @@ export class DropdownMenu extends LitElement {
             const isSelectedItem = i === this.selectedIndex;
             return html` <fast-menu-item
               part="menu-item"
-              class="${isSelectedItem ? 'selected' : ''}"
+              class=${classMap({
+                'dropdown-component': true,
+                'selected': isSelectedItem,
+              })}
               @click=${() => this.clickMenuItem(i)}
+              data-index=${i}
+              tabindex="0"
             >
               ${isSelectedItem
                 ? html`<span slot="start">
@@ -115,18 +132,37 @@ export class DropdownMenu extends LitElement {
     this.openMenu = !this.openMenu;
   }
 
-  closeMenu() {
-    // this.openMenu = false;
+  keyupHandler(event: KeyboardEvent) {
+    if (event.key === KeyboardKeys.escape) {
+      this.openMenu = false;
+    } else if (event.key === KeyboardKeys.enter) {
+      const curr = event.composedPath()[0] as HTMLElement;
+
+      if (curr.tagName === 'FAST-MENU-ITEM') {
+        this.selectedIndex = Number(curr.dataset.index);
+        this.openMenu = false;
+      }
+    }
+  }
+
+  closeMenu(event: FocusEvent) {
+    const related = <Element | undefined>event.relatedTarget;
+
+    if (related?.className?.indexOf(dropdownComponentClass) === -1) {
+      this.openMenu = false;
+    }
   }
 
   clickMenuItem(index: number) {
     this.selectedIndex = index;
+    this.openMenu = false;
   }
 
   menuClassMap() {
     return classMap({
-      menu: true,
-      closed: !this.openMenu,
+      'menu': true,
+      'dropdown-component': true,
+      'closed': !this.openMenu,
     });
   }
 }
