@@ -7,6 +7,7 @@ export class ReportCard extends LitElement {
   @property() results: any | undefined;
 
   @internalProperty() maniScore = 0;
+  @internalProperty() swScore = 0;
 
   static get styles() {
     return css`
@@ -135,6 +136,15 @@ export class ReportCard extends LitElement {
     }
   }
 
+  handleSWScore(ev: CustomEvent) {
+    if (ev && ev.detail.score) {
+      this.swScore = ev.detail.score;
+    }
+    else {
+      this.swScore = 0;
+    }
+  }
+
   render() {
     return html`
       <div>
@@ -167,7 +177,7 @@ export class ReportCard extends LitElement {
               </div>
 
               <score-results
-                .maniTestResults="${this.results.manifest}"
+                .testResults="${this.results.manifest}"
                 @scored="${(ev) => this.handleManiScore(ev)}"
               ></score-results>
             </fast-accordion-item>
@@ -178,14 +188,18 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Service Worker</span>
 
                 <div class="score-block">
-                  <span class="accordion-score">00/40</span>
+                  <span class="accordion-score">${this.swScore}</span>
 
                   <fast-button class="flipper-button" mode="stealth">
                     <ion-icon name="caret-forward-outline"></ion-icon>
                   </fast-button>
                 </div>
               </div>
-              Panel two content
+              
+              <score-results
+                .testResults="${this.results.service_worker}"
+                @scored="${(ev) => this.handleSWScore(ev)}"
+              ></score-results>
             </fast-accordion-item>
             <fast-accordion-item
               @click="${(ev: Event) => this.opened(ev.target)}"

@@ -2,7 +2,7 @@ import { LitElement, css, html, customElement, property, internalProperty } from
 
 @customElement('score-results')
 export class ScoreResults extends LitElement {
-  @property() maniTestResults: any | undefined;
+  @property() testResults: any | undefined;
   @internalProperty() organizedResults: any | undefined;
 
   static get styles() {
@@ -32,6 +32,7 @@ export class ScoreResults extends LitElement {
         align-items: center;
         justify-content: space-between;
         margin-bottom: 10px;
+        font-size: 14px;
       }
 
       .good-score, .bad-score {
@@ -49,7 +50,7 @@ export class ScoreResults extends LitElement {
   }
 
   firstUpdated() {
-    console.log('maniTestResults', this.maniTestResults);
+    console.log('testResults', this.testResults);
 
     this.organizedResults = this.organize();
     console.log(this.organizedResults);
@@ -60,10 +61,10 @@ export class ScoreResults extends LitElement {
     const recResults: any = [];
     const optionalResults: any = [];
 
-    if (this.maniTestResults && this.maniTestResults.length > 0) {
-      this.overallScore(this.maniTestResults);
+    if (this.testResults && this.testResults.length > 0) {
+      this.overallScore(this.testResults);
 
-      this.maniTestResults.map((result: any) => {
+      this.testResults.map((result: any) => {
         if (result.category === "required") {
           reqResults.push(result);
         }
