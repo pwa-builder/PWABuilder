@@ -59,15 +59,13 @@ export class AppReport extends LitElement {
         margin-top: 0;
       }
 
-      ${
-        xxxLargeBreakPoint(
-          css`
-            #report {
-              max-width: 69em;
-            }
-          `
-        )
-      }
+      ${xxxLargeBreakPoint(
+        css`
+          #report {
+            max-width: 69em;
+          }
+        `
+      )}
     `;
   }
 
@@ -96,7 +94,7 @@ export class AppReport extends LitElement {
   }
 
   openOverview() {
-    const overviewTab = this.shadowRoot?.querySelector("#overview");
+    const overviewTab = this.shadowRoot?.querySelector('#overview');
     (overviewTab as HTMLButtonElement).click();
   }
 
@@ -149,7 +147,10 @@ export class AppReport extends LitElement {
             <manifest-options></manifest-options>
           </fast-tab-panel>
           <fast-tab-panel id="swPanel">
-            <sw-picker @back-to-overview="${() => this.openOverview()}" score="${this.swScore}"></sw-picker>
+            <sw-picker
+              @back-to-overview="${() => this.openOverview()}"
+              score="${this.swScore}"
+            ></sw-picker>
           </fast-tab-panel>
         </fast-tabs>
       </section>
