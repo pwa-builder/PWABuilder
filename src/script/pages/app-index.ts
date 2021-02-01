@@ -1,9 +1,7 @@
 import { LitElement, css, html, customElement } from 'lit-element';
-
+import { Router } from '@vaadin/router';
 import './app-home';
 import './app-report';
-
-import { Router } from '@vaadin/router';
 
 @customElement('app-index')
 export class AppIndex extends LitElement {
@@ -69,7 +67,14 @@ export class AppIndex extends LitElement {
           },
           {
             path: '/reportcard',
-            component: 'app-report'
+            component: 'app-report',
+          },
+          {
+            path: '/publish',
+            component: 'app-publish',
+            action: async () => {
+              await import('./app-publish');
+            },
           },
         ],
       } as any,
