@@ -1,0 +1,15 @@
+.error {
+  color: red;
+  border: 1px solid red;
+  border-radius: var(--input-radius);
+  background: #fff5f5;
+}
+
+.error-message {
+  color: red;
+  font-size: var(--small-font-size);
+}
+
+.error::part(control) {
+  background: #fff5f5;
+}

@@ -91,6 +91,7 @@ export interface ManifestDetectionResult {
   errors: [];
   suggestions: [];
   warnings: [];
+  error?: string;
 }
 
 export interface ManifestTestResults {
