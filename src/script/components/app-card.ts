@@ -14,6 +14,7 @@ export enum AppCardModes {
   blog = 'blog',
   micro = 'micro',
   microDescription = 'micro-description',
+  contentCard = 'content-card',
 }
 
 @customElement('app-card')
@@ -32,6 +33,7 @@ export class AppCard extends LitElement {
   @property({ type: Boolean }) featured = false;
   @property({ type: Boolean }) shareLink = false;
   @property({ type: Array }) tags = [];
+  @property({ type: Boolean }) isActionCard = false;
 
   static get styles() {
     const defaultCardCss = css`
@@ -40,8 +42,6 @@ export class AppCard extends LitElement {
         font-size: var(--font-size);
         background: white;
         border-radius: calc(var(--corner-radius) * 1px);
-        min-width: 278px;
-        max-width: 416px;
       }
 
       fast-card.default {
@@ -384,6 +384,59 @@ export class AppCard extends LitElement {
       }
     `;
 
+    const contentCardcss = css`
+      :host {
+        background: white;
+        display: flex;
+        color: var(--primary-color);
+        justify-content: center;
+      }
+
+      fast-card.content-card {
+        background-color: white;
+        padding: 1rem 0;
+        width: 100%;
+        max-width: 1024px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: none;
+        border-radius: 0;
+        border-bottom: 0.67681px solid #e5e5e5;
+      }
+
+      .content-card .header {
+        margin-right: 0;
+      }
+
+      .content-card .header p {
+        color: #808080;
+      }
+
+      .content-card app-button {
+        margin-top: 1rem;
+      }
+
+      ${largeBreakPoint(
+        css`
+          fast-card.content-card {
+            width: calc(100vw - 30vw);
+            flex-direction: row;
+          }
+
+          .content-card .header {
+            margin-right: 1rem;
+          }
+
+          .content-card app-button {
+            margin-top: 0;
+          }
+        `,
+        'no-upper'
+      )}
+    `;
+
     return css`
       :host {
         display: flex;
@@ -395,6 +448,7 @@ export class AppCard extends LitElement {
       ${overlayCss}
       ${blogCardCss}
       ${microCardCss}
+      ${contentCardcss}
     `;
   }
 
@@ -410,6 +464,8 @@ export class AppCard extends LitElement {
         return this.renderMicroCard();
       case AppCardModes.microDescription:
         return this.renderMicroDescriptionCard();
+      case AppCardModes.contentCard:
+        return this.renderContentCard();
       case AppCardModes.default:
       default:
         return this.renderDefault();
@@ -511,6 +567,19 @@ export class AppCard extends LitElement {
     `;
   }
 
+  renderContentCard() {
+    return html` <fast-card class="content-card" part="card">
+      <div class="header">
+        <h3>${this.title}</h3>
+        <p>${this.description}</p>
+      </div>
+      ${this.isActionCard
+        ? html`<div>
+            <app-button>${this.linkText}</app-button>
+          </div>`
+        : html``}
+    </fast-card>`;
+  }
   renderShareButton() {
     return html`
       <fast-button class="share" appearance="lightweight" @click=${this.share}>

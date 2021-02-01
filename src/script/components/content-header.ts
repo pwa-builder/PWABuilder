@@ -1,14 +1,12 @@
-import { LitElement, css, html, customElement } from 'lit-element';
-
+import { css, customElement, html, LitElement, property } from 'lit-element';
 import {
-  smallBreakPoint,
-  mediumBreakPoint,
+  BreakpointValues,
   largeBreakPoint,
+  mediumBreakPoint,
+  smallBreakPoint,
   xLargeBreakPoint,
   xxLargeBreakPoint,
-  BreakpointValues,
 } from '../utils/breakpoints';
-
 import './app-header';
 
 @customElement('content-header')
@@ -18,12 +16,13 @@ export class ContentHeader extends LitElement {
       :host {
         display: block;
         background: url(/assets/images/background-copy.webp);
+        background-position: center;
+        background-size: cover;
       }
 
       #main-container {
         display: flex;
         align-items: center;
-
         padding-bottom: 91px;
         padding-left: 2em;
       }
