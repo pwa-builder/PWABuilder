@@ -39,10 +39,14 @@ export class AppHome extends LitElement {
       }
 
       h2 {
-        font-size: 44px;
+        font-size: var(--xlarge-font-size);
         line-height: 46px;
         letter-spacing: -0.015em;
         max-width: 526px;
+      }
+
+      h3 {
+        font-size: var(--medium-font-size);
       }
 
       #hero-p {
@@ -71,6 +75,7 @@ export class AppHome extends LitElement {
       .intro-grid-item p {
         margin-top: 0;
         color: var(--secondary-font-color);
+        font-size: var(--font-size);
       }
 
       #input-form {
@@ -258,10 +263,6 @@ export class AppHome extends LitElement {
         <h2 slot="hero-container">
           Transform your website to an app at lightning speed.
         </h2>
-        <p id="hero-p" slot="hero-container">
-          Ready to build your PWA? Tap "Build My PWA" to package your PWA for
-          the app stores or tap "Feature Store".
-        </p>
 
         <ul slot="grid-container">
           <div class="intro-grid-item">
