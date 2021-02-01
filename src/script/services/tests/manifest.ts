@@ -1,9 +1,9 @@
-import { Manifest, TestResults } from '../../utils/interfaces';
+import { Manifest, TestResult } from '../../utils/interfaces';
 import { fetchManifest } from '../manifest';
 
 export async function testManifest(
   url: string
-): Promise<Array<TestResults> | undefined> {
+): Promise<Array<TestResult> | undefined> {
   console.info('Testing Manifest');
   const manifestData = await fetchManifest(url);
 
@@ -11,9 +11,9 @@ export async function testManifest(
     const manifest = manifestData.content;
 
     if (manifest) {
-      const testResults = doTest(manifest);
+      const testResult = doTest(manifest);
 
-      return testResults;
+      return testResult;
     } else {
       throw new Error('Could not test manifest');
     }
@@ -22,7 +22,7 @@ export async function testManifest(
   }
 }
 
-function doTest(manifest: Manifest): Array<TestResults> {
+function doTest(manifest: Manifest): Array<TestResult> {
   return [
     {
       infoString: 'Web Manifest Properly Attached',

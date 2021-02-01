@@ -21,8 +21,8 @@ export class AppAbout extends LitElement {
     const site = search.get('site');
 
     if (site) {
-      const testResults = await runAllTests(site);
-      console.log(testResults);
+      const TestResult = await runAllTests(site);
+      console.log(TestResult);
     }
   }
 

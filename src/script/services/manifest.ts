@@ -4,7 +4,7 @@ import { Manifest, ManifestDetectionResult } from '../utils/interfaces';
 
 const apiUrl = `${env.api}/manifests`;
 
-let manifest = null;
+let manifest: Manifest | null = null;
 
 // Uses PWABuilder API to fetch the manifest
 async function getManifestViaApi(url: string): Promise<ManifestDetectionResult> {

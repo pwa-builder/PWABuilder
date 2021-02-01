@@ -11,7 +11,7 @@ import '../components/report-card';
 
 @customElement('app-report')
 export class AppReport extends LitElement {
-  @internalProperty() testResults = null;
+  @internalProperty() TestResult = null;
 
   static get styles() {
     return css`
@@ -63,8 +63,8 @@ export class AppReport extends LitElement {
     const results = search.get('results');
 
     if (results) {
-      this.testResults = JSON.parse(results);
-      console.log('testResults', this.testResults);
+      this.TestResult = JSON.parse(results);
+      console.log('TestResult', this.TestResult);
     }
   }
 
@@ -101,7 +101,7 @@ export class AppReport extends LitElement {
           <fast-tab class="tab" id="sw">Service Worker Options</fast-tab>
 
           <fast-tab-panel id="overviewPanel">
-            <report-card @open-mani-options="${() => this.openManiOptions()}" @open-sw-options="${() => this.openSWOptions()}" .results="${this.testResults}"></report-card>
+            <report-card @open-mani-options="${() => this.openManiOptions()}" @open-sw-options="${() => this.openSWOptions()}" .results="${this.TestResult}"></report-card>
           </fast-tab-panel>
         </fast-tabs>
       </section>

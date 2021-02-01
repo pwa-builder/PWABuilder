@@ -94,9 +94,21 @@ export interface ManifestDetectionResult {
 }
 
 export interface TestResults {
+  manifest: TestResult;
+  service_worker: TestResult;
+  security: TestResult;
+}
+
+export interface TestResult {
   infoString: string;
   result: boolean;
   category: string;
+}
+
+export interface OrganizedResults {
+  required: Array<TestResult>;
+  recommended: Array<TestResult>;
+  optional: Array<TestResult>;
 }
 
 export interface ServiceWorkerDetectionResult {

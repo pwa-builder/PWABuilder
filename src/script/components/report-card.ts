@@ -5,7 +5,7 @@ import './score-results';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {
-  @property({attribute: false}) results: Array<TestResults> | undefined;
+  @property({attribute: false}) results: TestResults | undefined;
 
   @internalProperty() maniScore = 0;
   @internalProperty() swScore = 0;
@@ -252,7 +252,7 @@ export class ReportCard extends LitElement {
 
               <score-results
                 .testResults="${this.results.manifest}"
-                @scored="${(ev) => this.handleManiScore(ev)}"
+                @scored="${(ev: CustomEvent) => this.handleManiScore(ev)}"
               ></score-results>
             </fast-accordion-item>
             <fast-accordion-item
@@ -274,7 +274,7 @@ export class ReportCard extends LitElement {
               
               <score-results
                 .testResults="${this.results.service_worker}"
-                @scored="${(ev) => this.handleSWScore(ev)}"
+                @scored="${(ev: CustomEvent) => this.handleSWScore(ev)}"
               ></score-results>
             </fast-accordion-item>
             <fast-accordion-item
@@ -294,7 +294,7 @@ export class ReportCard extends LitElement {
               
               <score-results
                 .testResults="${this.results.security}"
-                @scored="${(ev) => this.handleSecurityScore(ev)}"
+                @scored="${(ev: CustomEvent) => this.handleSecurityScore(ev)}"
               ></score-results>
             </fast-accordion-item>
           </fast-accordion>

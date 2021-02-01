@@ -6,17 +6,12 @@ import {
   property,
   internalProperty,
 } from 'lit-element';
-import { TestResults } from '../utils/interfaces';
+import { TestResult, OrganizedResults } from '../utils/interfaces';
 
-interface OrganizedResults {
-  required: Array<TestResults>;
-  recommended: Array<TestResults>;
-  optional: Array<TestResults>;
-}
 
 @customElement('score-results')
 export class ScoreResults extends LitElement {
-  @property({ attribute: false }) testResults: Array<TestResults> | undefined;
+  @property({ attribute: false }) TestResult: Array<TestResult> | undefined;
   @internalProperty() organizedResults: OrganizedResults | undefined;
 
   static get styles() {
@@ -70,14 +65,14 @@ export class ScoreResults extends LitElement {
   }
 
   organize() {
-    const reqResults: Array<TestResults> = [];
-    const recResults: Array<TestResults> = [];
-    const optionalResults: Array<TestResults> = [];
+    const reqResults: Array<TestResult> = [];
+    const recResults: Array<TestResult> = [];
+    const optionalResults: Array<TestResult> = [];
 
-    if (this.testResults && this.testResults.length > 0) {
-      this.overallScore(this.testResults);
+    if (this.TestResult && this.TestResult.length > 0) {
+      this.overallScore(this.TestResult);
 
-      this.testResults.map((result: TestResults) => {
+      this.TestResult.map((result: TestResult) => {
         if (result.category === 'required') {
           reqResults.push(result);
         } else if (result.category === 'recommended') {
@@ -99,7 +94,7 @@ export class ScoreResults extends LitElement {
     let score = 0;
 
     if (results && results.length > 0) {
-      results.map(result => {
+      results.map((result: TestResult) => {
         if (result.result === true) {
           score = score + 5;
         }
@@ -133,7 +128,7 @@ export class ScoreResults extends LitElement {
               ? html` <h5>Required</h5>
 
                   <ul>
-                    ${this.organizedResults.required.map((result: TestResults) => {
+                    ${this.organizedResults.required.map((result: TestResult) => {
                       return html`
                         <li>
                           <span>${result.infoString}</span>
@@ -153,7 +148,7 @@ export class ScoreResults extends LitElement {
               ? html` <h5>Recommended</h5>
 
                   <ul>
-                    ${this.organizedResults.recommended.map((result: TestResults) => {
+                    ${this.organizedResults.recommended.map((result: TestResult) => {
                       return html`
                         <li>
                           <span>${result.infoString}</span>
@@ -172,7 +167,7 @@ export class ScoreResults extends LitElement {
               ? html` <h5>Optional</h5>
 
                   <ul>
-                    ${this.organizedResults.optional.map((result: TestResults) => {
+                    ${this.organizedResults.optional.map((result: TestResult) => {
                       return html`
                         <li>
                           <span>${result.infoString}</span>

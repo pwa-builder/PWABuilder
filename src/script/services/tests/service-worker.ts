@@ -1,7 +1,7 @@
 import { env } from '../../utils/environment';
-import { ServiceWorkerDetectionResult } from '../../utils/interfaces';
+import { ServiceWorkerDetectionResult, TestResult } from '../../utils/interfaces';
 
-export async function testServiceWorker(url: string) {
+export async function testServiceWorker(url: string): Promise<Array<TestResult>> {
   console.info('Testing Service Worker');
   const isHttp = typeof url === 'string' && url.startsWith('http://');
 
@@ -13,7 +13,7 @@ export async function testServiceWorker(url: string) {
   const worksOffline = await detectOfflineSupport(url);
   const periodicSync = await detectPeriodicSyncSupport(url);
 
-  const swTestResults = [
+  const swTestResult = [
       {
         result: swData.scope && swData.scope.length > 0 ? true : false,
         infoString: "Has the correct scope",
@@ -37,8 +37,8 @@ export async function testServiceWorker(url: string) {
       }
   ];
 
-  if (swTestResults) {
-    return swTestResults;
+  if (swTestResult) {
+    return swTestResult;
   } else {
     return null;
   }
