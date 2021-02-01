@@ -6,11 +6,18 @@ import {
   property,
   internalProperty,
 } from 'lit-element';
+import { TestResults } from '../utils/interfaces';
+
+interface OrganizedResults {
+  required: Array<TestResults>;
+  recommended: Array<TestResults>;
+  optional: Array<TestResults>;
+}
 
 @customElement('score-results')
 export class ScoreResults extends LitElement {
-  @property() testResults: any | undefined;
-  @internalProperty() organizedResults: any | undefined;
+  @property({ attribute: false }) testResults: Array<TestResults> | undefined;
+  @internalProperty() organizedResults: OrganizedResults | undefined;
 
   static get styles() {
     return css`
@@ -63,14 +70,14 @@ export class ScoreResults extends LitElement {
   }
 
   organize() {
-    const reqResults: any = [];
-    const recResults: any = [];
-    const optionalResults: any = [];
+    const reqResults: Array<TestResults> = [];
+    const recResults: Array<TestResults> = [];
+    const optionalResults: Array<TestResults> = [];
 
     if (this.testResults && this.testResults.length > 0) {
       this.overallScore(this.testResults);
 
-      this.testResults.map((result: any) => {
+      this.testResults.map((result: TestResults) => {
         if (result.category === 'required') {
           reqResults.push(result);
         } else if (result.category === 'recommended') {
@@ -126,7 +133,7 @@ export class ScoreResults extends LitElement {
               ? html` <h5>Required</h5>
 
                   <ul>
-                    ${this.organizedResults.required.map((result: any) => {
+                    ${this.organizedResults.required.map((result: TestResults) => {
                       return html`
                         <li>
                           <span>${result.infoString}</span>
@@ -146,7 +153,7 @@ export class ScoreResults extends LitElement {
               ? html` <h5>Recommended</h5>
 
                   <ul>
-                    ${this.organizedResults.recommended.map((result: any) => {
+                    ${this.organizedResults.recommended.map((result: TestResults) => {
                       return html`
                         <li>
                           <span>${result.infoString}</span>
@@ -165,7 +172,7 @@ export class ScoreResults extends LitElement {
               ? html` <h5>Optional</h5>
 
                   <ul>
-                    ${this.organizedResults.optional.map((result: any) => {
+                    ${this.organizedResults.optional.map((result: TestResults) => {
                       return html`
                         <li>
                           <span>${result.infoString}</span>

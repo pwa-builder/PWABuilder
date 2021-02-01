@@ -3,13 +3,17 @@ import { testSecurity } from './security';
 import { testServiceWorker } from './service-worker';
 
 export async function runAllTests(url: string) {
+  // disabling an eslint check here because we need async
+  // here for this function to work properly
+  // this is also valid JavaScript
+  // eslint-disable-next-line no-async-promise-executor
   return new Promise(async resolve => {
-    const manifestTestResults = testManifest(url);
+    const TestResults = testManifest(url);
     const serviceWorkerTestResults = testServiceWorker(url);
     const securityTestResults = testSecurity(url);
 
     resolve({
-      manifest: await manifestTestResults,
+      manifest: await TestResults,
       service_worker: await serviceWorkerTestResults,
       security: await securityTestResults,
     });

@@ -93,23 +93,10 @@ export interface ManifestDetectionResult {
   warnings: [];
 }
 
-export interface ManifestTestResults {
-  has_manifest: { infoString: string; result: boolean };
-  has_icons: { infoString: string; result: boolean };
-  has_name: { infoString: string; result: boolean };
-  has_short_name: { infoString: string; result: boolean };
-  has_start_url: { infoString: string; result: boolean };
-  has_display_mode: { infoString: string; result: boolean };
-  has_background_color: { infoString: string; result: boolean };
-  has_theme_color: { infoString: string; result: boolean };
-  has_orientation_mode: { infoString: string; result: boolean };
-  has_screenshots: { infoString: string; result: boolean };
-  has_square_512: { infoString: string; result: boolean };
-  has_maskable_icon: { infoString: string; result: boolean };
-  has_shortcuts: { infoString: string; result: boolean };
-  has_categories: { infoString: string; result: boolean };
-  has_rating_id: { infoString: string; result: boolean };
-  has_related: { infoString: string; result: boolean };
+export interface TestResults {
+  infoString: string;
+  result: boolean;
+  category: string;
 }
 
 export interface ServiceWorkerDetectionResult {

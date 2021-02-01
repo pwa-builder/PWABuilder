@@ -1,7 +1,7 @@
-import { SecurityDataResults } from '../../utils/interfaces';
+import { SecurityDataResults, TestResults } from '../../utils/interfaces';
 import { env } from '../../utils/environment';
 
-export async function testSecurity(url: string): Promise<any> {
+export async function testSecurity(url: string): Promise<Array<TestResults>> {
   const encodedUrl = encodeURIComponent(url);
   const securityUrl = `${env.testAPIUrl}/Security?site=${encodedUrl}`;
   const fetchResult = await fetch(securityUrl);

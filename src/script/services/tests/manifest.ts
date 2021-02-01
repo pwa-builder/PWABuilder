@@ -1,9 +1,9 @@
-import { Manifest, ManifestTestResults } from '../../utils/interfaces';
+import { Manifest, TestResults } from '../../utils/interfaces';
 import { fetchManifest } from '../manifest';
 
 export async function testManifest(
   url: string
-): Promise<ManifestTestResults | undefined> {
+): Promise<Array<TestResults> | undefined> {
   console.info('Testing Manifest');
   const manifestData = await fetchManifest(url);
 
@@ -22,7 +22,7 @@ export async function testManifest(
   }
 }
 
-function doTest(manifest: Manifest): any {
+function doTest(manifest: Manifest): Array<TestResults> {
   return [
     {
       infoString: 'Web Manifest Properly Attached',

@@ -1,10 +1,11 @@
 import { LitElement, css, html, customElement, property, internalProperty } from 'lit-element';
+import { TestResults } from '../utils/interfaces';
 
 import './score-results';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {
-  @property() results: any | undefined;
+  @property({attribute: false}) results: Array<TestResults> | undefined;
 
   @internalProperty() maniScore = 0;
   @internalProperty() swScore = 0;
