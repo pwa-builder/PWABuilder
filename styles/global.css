@@ -37,7 +37,7 @@ body {
   margin: 0;
   background: var(--primary-background-color);
 
-  overflow-y: hidden;
+  overflow-x: hidden;
 }
 
 fast-design-system-provider {

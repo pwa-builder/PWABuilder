@@ -112,10 +112,11 @@ export class ReportCard extends LitElement {
         justify-content: flex-end;
       }
 
-      #package-block {
-        app-button {
-          width: 152px;
-        }
+      #package-block fast-anchor {
+        width: 152px;
+        color: white;
+        box-shadow: var(--button-shadow);
+        border-radius: var(--button-radius);
       }
     `;
   }
@@ -306,7 +307,7 @@ export class ReportCard extends LitElement {
           </div>
 
           <div id="package-block">
-            <app-button>Package</app-button>
+            <fast-anchor appearance="button">Package</fast-anchor>
           </div>
         </div>
       </div>
