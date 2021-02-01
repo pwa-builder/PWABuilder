@@ -11,6 +11,10 @@ export class ReportCard extends LitElement {
   @internalProperty() swScore = 0;
   @internalProperty() securityScore = 0;
 
+  maxManiScore = 80;
+  maxSWSCore = 20;
+  maxSecurityScore = 15;
+
   static get styles() {
     return css`
       :host {
@@ -225,7 +229,7 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Manifest</span>
 
                 <div class="score-block">
-                  <span class="accordion-score">${this.maniScore} / 80</span>
+                  <span class="accordion-score">${this.maniScore} / ${this.maxManiScore}</span>
 
                   <fast-button class="flipper-button" mode="stealth">
                     <ion-icon name="caret-forward-outline"></ion-icon>
@@ -247,7 +251,7 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Service Worker</span>
 
                 <div class="score-block">
-                  <span class="accordion-score">${this.swScore} / 20</span>
+                  <span class="accordion-score">${this.swScore} / ${this.maxSWSCore}</span>
 
                   <fast-button class="flipper-button" mode="stealth">
                     <ion-icon name="caret-forward-outline"></ion-icon>
@@ -269,7 +273,7 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Security</span>
 
                 <div class="score-block">
-                  <span class="accordion-score">${this.securityScore} / 15</span>
+                  <span class="accordion-score">${this.securityScore} / ${this.maxSecurityScore}</span>
 
                   <fast-button class="flipper-button" mode="stealth">
                     <ion-icon name="caret-forward-outline"></ion-icon>
