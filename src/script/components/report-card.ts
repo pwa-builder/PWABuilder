@@ -173,12 +173,7 @@ export class ReportCard extends LitElement {
   }
 
   handleManiScore(ev: CustomEvent) {
-    if (ev && ev.detail.score) {
-      this.maniScore = ev.detail.score;
-    }
-    else {
-      this.maniScore = 0;
-    }
+    this.maniScore = ev?.detail?.score || 0;
   }
 
   handleSWScore(ev: CustomEvent) {
