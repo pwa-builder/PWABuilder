@@ -138,13 +138,13 @@ export async function fetchManifest(url: string): Promise<ManifestDetectionResul
 
   const manifestDetectors = [
       getManifestViaApi(url),
-      getManifestViaFilePost(url), 
+      getManifestViaFilePost(url),
       getManifestViaHtmlParse(url)
   ];
 
   // We want to use Promise.any(...), but browser support is too low at the time of this writing: https://caniuse.com/mdn-javascript_builtins_promise_any
   // Use our polyfill if needed.
-  const promiseAnyOrPolyfill: (promises: Promise<ManifestDetectionResult>[]) => Promise<ManifestDetectionResult> = 
+  const promiseAnyOrPolyfill: (promises: Promise<ManifestDetectionResult>[]) => Promise<ManifestDetectionResult> =
       (promises) => Promise["any"] ? Promise["any"](promises) : promiseAnyPolyfill(promises);
 
   try {
@@ -157,7 +157,7 @@ export async function fetchManifest(url: string): Promise<ManifestDetectionResul
 
       // Well, we sure tried.
       throw manifestDetectionError;
-  }    
+  }
 }
 
 export function getManifest() {
