@@ -177,21 +177,11 @@ export class ReportCard extends LitElement {
   }
 
   handleSWScore(ev: CustomEvent) {
-    if (ev && ev.detail.score) {
-      this.swScore = ev.detail.score;
-    }
-    else {
-      this.swScore = 0;
-    }
+    this.swScore = ev?.detail?.score || 0;
   }
 
   handleSecurityScore(ev: CustomEvent) {
-    if (ev && ev.detail.score) {
-      this.securityScore = ev.detail.score;
-    }
-    else {
-      this.securityScore = 0;
-    }
+    this.securityScore = ev?.detail?.score || 0;
   }
 
   openManiOptions() {
