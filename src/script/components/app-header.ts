@@ -41,6 +41,8 @@ export class AppHeader extends LitElement {
         justify-content: space-between;
         align-items: center;
         width: 8em;
+
+        font-size: 18px;
       }
 
       nav fast-anchor::part(control) {
