@@ -96,7 +96,7 @@ export class ReportCard extends LitElement {
         color: var(--font-color);
       }
 
-      #overall-score #total-score {
+      #total-score {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -104,7 +104,7 @@ export class ReportCard extends LitElement {
         margin-right: 1.8em;
       }
 
-      #overall-score #total-score h4 {
+      #total-score h4 {
         font-size: var(--medium-font-size);
       }
 
