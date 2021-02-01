@@ -68,6 +68,16 @@ export class AppReport extends LitElement {
     }
   }
 
+  openManiOptions() {
+    const maniTab = this.shadowRoot?.querySelector("#mani");
+    (maniTab as HTMLButtonElement).click();
+  }
+
+  openSWOptions() {
+    const maniTab = this.shadowRoot?.querySelector("#sw");
+    (maniTab as HTMLButtonElement).click();
+  }
+
   render() {
     return html` <div>
       <content-header>
@@ -91,7 +101,7 @@ export class AppReport extends LitElement {
           <fast-tab class="tab" id="sw">Service Worker Options</fast-tab>
 
           <fast-tab-panel id="overviewPanel">
-            <report-card .results="${this.testResults}"></report-card>
+            <report-card @open-mani-options="${() => this.openManiOptions()}" @open-sw-options="${() => this.openSWOptions()}" .results="${this.testResults}"></report-card>
           </fast-tab-panel>
         </fast-tabs>
       </section>

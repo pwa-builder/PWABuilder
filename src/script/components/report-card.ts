@@ -12,6 +12,11 @@ export class ReportCard extends LitElement {
 
   static get styles() {
     return css`
+      :host {
+        width: 100%;
+        display: block;
+      }
+
       #report-header {
         margin-bottom: 4em;
         margin-top: 4em;
@@ -22,7 +27,7 @@ export class ReportCard extends LitElement {
       }
 
       .accordion-heading-block {
-        width: 90vw;
+        width: 96vw;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -30,8 +35,9 @@ export class ReportCard extends LitElement {
 
       h3,
       .accordion-heading,
-      .accordion-score {
-        font-size: 28px;
+      .accordion-score,
+      #overall-score {
+        font-size: var(--medium-font-size);
         font-weight: var(--font-bold);
       }
 
@@ -52,7 +58,9 @@ export class ReportCard extends LitElement {
         background: white;
         box-shadow: 0 1px 4px 0px rgb(0 0 0 / 25%);
         border-radius: 50%;
-        color: var(--primary-color);
+        color: #5231A7;
+
+        width: 32px;
       }
 
       .flipper-button ion-icon {
@@ -74,6 +82,40 @@ export class ReportCard extends LitElement {
         display: flex;
         align-items: center;
         justify-content: space-between;
+      }
+
+      .options-button {
+        width: 217px;
+        float: right;
+        margin-right: 4em;
+      }
+
+      .options-button::part(underlying-button) {
+        background: white;
+        color: var(--font-color);
+      }
+
+      #overall-score #total-score {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        margin-right: 1.8em;
+      }
+
+      #overall-score #total-score h4 {
+        font-size: var(--medium-font-size);
+      }
+
+      #package-block {
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      #package-block {
+        app-button {
+          width: 152px;
+        }
       }
     `;
   }
@@ -155,6 +197,24 @@ export class ReportCard extends LitElement {
     }
   }
 
+  openManiOptions() {
+    const event = new CustomEvent('open-mani-options', {
+      detail: {
+        open: true
+      },
+    });
+    this.dispatchEvent(event);
+  }
+
+  openSWOptions() {
+    const event = new CustomEvent('open-sw-options', {
+      detail: {
+        open: true
+      },
+    });
+    this.dispatchEvent(event);
+  }
+
   render() {
     return html`
       <div>
@@ -186,6 +246,8 @@ export class ReportCard extends LitElement {
                 </div>
               </div>
 
+              <app-button @click="${() => this.openManiOptions()}" class="options-button">Manifest Options</app-button>
+
               <score-results
                 .testResults="${this.results.manifest}"
                 @scored="${(ev) => this.handleManiScore(ev)}"
@@ -205,6 +267,8 @@ export class ReportCard extends LitElement {
                   </fast-button>
                 </div>
               </div>
+
+              <app-button @click="${() => this.openSWOptions()}" class="options-button">Service Worker Options</app-button>
               
               <score-results
                 .testResults="${this.results.service_worker}"
@@ -232,6 +296,18 @@ export class ReportCard extends LitElement {
               ></score-results>
             </fast-accordion-item>
           </fast-accordion>
+        </div>
+
+        <div id="overall-score">
+          <div id="total-score">
+            <h4>Total Score</h4>
+
+            <span id="overall-score">00 / 100</span>
+          </div>
+
+          <div id="package-block">
+            <app-button>Package</app-button>
+          </div>
         </div>
       </div>
     `;

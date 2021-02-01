@@ -9,6 +9,7 @@
   --font-bold: 700;
   --font-medium: 400;
   --font-size: 14px;
+  --medium-font-size: 28px;
   --large-font-size: 32px;
 
   --primary-background-color: white;
@@ -35,6 +36,8 @@ body {
   padding: 0;
   margin: 0;
   background: var(--primary-background-color);
+
+  overflow-y: hidden;
 }
 
 fast-design-system-provider {
@@ -46,7 +49,8 @@ fast-design-system-provider {
   --neutral-fill-input-hover: white;
   --neutral-fill-stealth-rest: #e5e5e5;
 
-  --neutral-fill-active: #5D5DB9;
+  --neutral-fill-rest: #292C3A;
+  --neutral-fill-active: #09090a;
 
   --neutral-fill-input-active: #e5e5e5;
 }
