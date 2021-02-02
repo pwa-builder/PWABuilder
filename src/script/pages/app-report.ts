@@ -8,6 +8,7 @@ import {
 
 import '../components/content-header';
 import '../components/report-card';
+import '../components/manifest-options';
 
 @customElement('app-report')
 export class AppReport extends LitElement {
@@ -102,6 +103,9 @@ export class AppReport extends LitElement {
 
           <fast-tab-panel id="overviewPanel">
             <report-card @open-mani-options="${() => this.openManiOptions()}" @open-sw-options="${() => this.openSWOptions()}" .results="${this.TestResult}"></report-card>
+          </fast-tab-panel>
+          <fast-tab-panel id="manifestPanel">
+            <manifest-options></manifest-options>
           </fast-tab-panel>
         </fast-tabs>
       </section>
