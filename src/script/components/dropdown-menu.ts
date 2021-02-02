@@ -31,6 +31,10 @@ export class DropdownMenu extends LitElement {
         display: none;
       }
 
+      .dropdown-component {
+        z-index: 20;
+      }
+
       fast-button::part(control) {
         color: var(--secondary-font-color);
         background: rgba(128, 128, 128, 0.05);
