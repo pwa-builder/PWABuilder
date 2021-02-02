@@ -6,6 +6,8 @@ import {
   internalProperty,
 } from 'lit-element';
 
+import { classMap } from 'lit-html/directives/class-map';
+
 import {
   smallBreakPoint,
   mediumBreakPoint,
@@ -21,6 +23,9 @@ import '../components/loading-button';
 import '../components/app-modal';
 import '../components/dropdown-menu';
 
+//@ts-ignore
+import style from '../../../styles/error-styles.css';
+
 // For more info on the @pwabuilder/pwainstall component click here https://github.com/pwa-builder/pwa-install
 import '@pwabuilder/pwainstall';
 import { Router } from '@vaadin/router';
@@ -30,196 +35,214 @@ export class AppHome extends LitElement {
   @internalProperty() siteURL: string | null = null;
   @internalProperty() gettingManifest = false;
 
+  @internalProperty() errorGettingURL = false;
+  @internalProperty() errorMessage: string | undefined;
+
   static get styles() {
-    return css`
-      content-header::part(main-container) {
-        display: flex;
-        justify-content: space-around;
-        padding-top: 0;
-      }
-
-      h2 {
-        font-size: 44px;
-        line-height: 46px;
-        letter-spacing: -0.015em;
-        max-width: 526px;
-      }
-
-      #hero-p {
-        font-size: 16px;
-        line-height: 24px;
-        letter-spacing: -0.015em;
-        color: var(--secondary-font-color);
-        max-width: 406px;
-      }
-
-      ul {
-        padding: 0;
-        margin: 0;
-        display: grid;
-        grid-template-columns: auto auto;
-      }
-
-      .intro-grid-item {
-        max-width: 200px;
-      }
-
-      .intro-grid-item h3 {
-        margin-bottom: 5px;
-      }
-
-      .intro-grid-item p {
-        margin-top: 0;
-        color: var(--secondary-font-color);
-      }
-
-      #input-form {
-        display: flex;
-        margin-top: 1em;
-      }
-
-      #input-form fast-text-field {
-        flex: 0.8;
-        margin-right: 10px;
-      }
-
-      #input-form loading-button {
-        flex: 0.21;
-      }
-
-      #input-form loading-button::part(underlying-button) {
-        display: flex;
-      }
-
-      #input-form fast-text-field::part(root) {
-        border: 1px solid #e5e5e5;
-        border-radius: var(--input-radius);
-      }
-
-      #input-form fast-text-field::part(control) {
-        color: var(--font-color);
-      }
-
-      ${smallBreakPoint(css`
-        content-header::part(grid-container) {
-          display: none;
-        }
-
+    return [
+      style,
+      css`
         content-header::part(main-container) {
-          padding-left: 0;
+          display: flex;
+          justify-content: space-around;
+          padding-top: 0;
         }
 
         h2 {
-          line-height: 34px;
-          margin-top: 0;
+          font-size: var(--xlarge-font-size);
+          line-height: 46px;
+          letter-spacing: -0.015em;
+          max-width: 526px;
+        }
+
+        h3 {
+          font-size: var(--medium-font-size);
         }
 
         #hero-p {
-          line-height: 22px;
+          font-size: 16px;
+          line-height: 24px;
+          letter-spacing: -0.015em;
+          color: var(--secondary-font-color);
+          max-width: 406px;
+        }
+
+        ul {
+          padding: 0;
+          margin: 0;
+          display: grid;
+          grid-template-columns: auto auto;
+        }
+
+        .intro-grid-item {
+          max-width: 200px;
+        }
+
+        .intro-grid-item h3 {
+          margin-bottom: 5px;
+        }
+
+        .intro-grid-item p {
+          margin-top: 0;
+          color: var(--secondary-font-color);
+          font-size: var(--font-size);
         }
 
         #input-form {
-          flex-direction: column;
-          width: 100%;
-          align-items: center;
+          display: flex;
+          margin-top: 1em;
         }
 
         #input-form fast-text-field {
-          width: 100%;
-          margin-right: 0;
-        }
-
-        #input-form fast-text-field::part(root) {
-          height: 64px;
-        }
-
-        #input-form fast-text-field::part(control) {
-          font-size: 22px;
+          width: 94%;
+          margin-right: 10px;
         }
 
         #input-form loading-button {
-          margin-top: 54px;
-        }
-      `)}
-
-      ${mediumBreakPoint(css`
-        content-header::part(grid-container) {
-          display: none;
-        }
-
-        content-header::part(main-container) {
-          padding-left: 0;
-        }
-
-        h2 {
-          font-size: var(--large-font-size);
-          line-height: 34px;
-          margin-top: 0;
-        }
-
-        #hero-p {
-          line-height: 22px;
-          text-align: center;
-          max-width: initial;
-        }
-
-        #input-form {
-          flex-direction: column;
-          width: 100%;
-          align-items: center;
-        }
-
-        #input-form fast-text-field {
-          width: 100%;
-          margin-right: 0;
-        }
-
-        #input-form fast-text-field::part(root) {
-          height: 64px;
-        }
-
-        #input-form fast-text-field::part(control) {
-          font-size: 22px;
+          flex: 0.21;
         }
 
         #input-form loading-button::part(underlying-button) {
-          width: 216px;
-          margin-top: 44px;
+          display: flex;
         }
-      `)}
+
+        #input-form fast-text-field::part(root) {
+          border: 1px solid #e5e5e5;
+          border-radius: var(--input-radius);
+        }
+
+        #input-form fast-text-field::part(control) {
+          color: var(--font-color);
+        }
+
+        #input-block {
+          display: flex;
+          flex-direction: column;
+
+          flex: 0.8 1 0%;
+        }
+
+        ${smallBreakPoint(css`
+          content-header::part(grid-container) {
+            display: none;
+          }
+
+          content-header::part(main-container) {
+            padding-left: 0;
+          }
+
+          h2 {
+            line-height: 34px;
+            margin-top: 0;
+          }
+
+          #hero-p {
+            line-height: 22px;
+          }
+
+          #input-form {
+            flex-direction: column;
+            width: 100%;
+            align-items: center;
+          }
+
+          #input-form fast-text-field {
+            width: 100%;
+            margin-right: 0;
+          }
+
+          #input-form fast-text-field::part(root) {
+            height: 64px;
+          }
+
+          #input-form fast-text-field::part(control) {
+            font-size: 22px;
+          }
+
+          #input-form loading-button {
+            margin-top: 54px;
+          }
+        `)}
+
+        ${mediumBreakPoint(css`
+          content-header::part(grid-container) {
+            display: none;
+          }
+
+          content-header::part(main-container) {
+            padding-left: 0;
+          }
+
+          h2 {
+            font-size: var(--large-font-size);
+            line-height: 34px;
+            margin-top: 0;
+          }
+
+          #hero-p {
+            line-height: 22px;
+            text-align: center;
+            max-width: initial;
+          }
+
+          #input-form {
+            flex-direction: column;
+            width: 100%;
+            align-items: center;
+          }
+
+          #input-form fast-text-field {
+            width: 100%;
+            margin-right: 0;
+          }
+
+          #input-form fast-text-field::part(root) {
+            height: 64px;
+          }
+
+          #input-form fast-text-field::part(control) {
+            font-size: 22px;
+          }
+
+          #input-form loading-button::part(underlying-button) {
+            width: 216px;
+            margin-top: 44px;
+          }
+        `)}
 
       ${largeBreakPoint(css`
-        content-header::part(main-container) {
-          padding-left: 16px;
-        }
-      `)}
+          content-header::part(main-container) {
+            padding-left: 16px;
+          }
+        `)}
 
       ${xxLargeBreakPoint(css`
-        .intro-grid-item {
-          max-width: 280px;
-        }
+          .intro-grid-item {
+            max-width: 280px;
+          }
 
-        #input-form {
-          width: 32em;
-        }
+          #input-form {
+            width: 32em;
+          }
 
-        h2 {
-          max-width: 600px;
-        }
+          h2 {
+            max-width: 600px;
+          }
 
-        content-header::part(main-container) {
-          padding-left: 5em;
-          justify-content: flex-start;
-        }
-      `)}
+          content-header::part(main-container) {
+            padding-left: 5em;
+            justify-content: flex-start;
+          }
+        `)}
 
       ${xxxLargeBreakPoint(css`
-        content-header::part(main-container) {
-          padding-left: 18em;
-          justify-content: flex-start;
-        }
-      `)}
-    `;
+          content-header::part(main-container) {
+            padding-left: 18em;
+            justify-content: flex-start;
+          }
+        `)}
+      `,
+    ];
   }
 
   constructor() {
@@ -228,7 +251,7 @@ export class AppHome extends LitElement {
 
   handleURL(inputEvent: InputEvent) {
     if (inputEvent) {
-      this.siteURL = (inputEvent.target as any).value;
+      this.siteURL = (inputEvent.target as HTMLInputElement).value;
     }
   }
 
@@ -241,11 +264,20 @@ export class AppHome extends LitElement {
       try {
         const data = await fetchManifest(this.siteURL);
 
-        if (data) {
+        if (data.error) {
+          this.errorGettingURL = true;
+          this.errorMessage = data.error;
+          throw new Error(`Error getting URL: ${data.error}`);
+        } else {
+          this.errorGettingURL = false;
+          this.errorMessage = undefined;
+          
           Router.go(`/testing?site=${this.siteURL}`);
         }
       } catch (err) {
-        console.error(err);
+        console.error('Error getting site', err.message);
+
+        this.errorGettingURL = true;
       }
 
       this.gettingManifest = false;
@@ -258,10 +290,6 @@ export class AppHome extends LitElement {
         <h2 slot="hero-container">
           Transform your website to an app at lightning speed.
         </h2>
-        <p id="hero-p" slot="hero-container">
-          Ready to build your PWA? Tap "Build My PWA" to package your PWA for
-          the app stores or tap "Feature Store".
-        </p>
 
         <ul slot="grid-container">
           <div class="intro-grid-item">
@@ -306,12 +334,22 @@ export class AppHome extends LitElement {
           slot="input-container"
           @submit="${(e: InputEvent) => this.start(e)}"
         >
-          <fast-text-field
-            slot="input-container"
-            type="text"
-            placeholder="Enter URL"
-            @change="${(e: InputEvent) => this.handleURL(e)}"
-          ></fast-text-field>
+          <div id="input-block">
+            <fast-text-field
+              slot="input-container"
+              type="text"
+              placeholder="Enter URL"
+              class=${classMap({ error: this.errorGettingURL })}
+              @change="${(e: InputEvent) => this.handleURL(e)}"
+            ></fast-text-field>
+
+            ${this.errorGettingURL &&
+            this.errorMessage &&
+            this.errorMessage.length > 0
+              ? html`<span class="error-message">${this.errorMessage}</span>`
+              : null}
+          </div>
+
           <loading-button
             ?loading="${this.gettingManifest}"
             type="submit"
