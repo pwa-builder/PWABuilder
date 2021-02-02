@@ -223,6 +223,7 @@ export class AppManifest extends LitElement {
         ${this.renderToolTip('TODO')}
         <fast-radio-group
           value="none"
+          orientation="vertical"
           @change=${this.handleBackgroundRadioChange}
         >
           <fast-radio value="none">None</fast-radio>
