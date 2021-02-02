@@ -38,6 +38,22 @@ export class AppIndex extends LitElement {
           opacity: 1;
         }
       }
+      /* To handle sidebar & main */
+      .container {
+        display: grid;
+        grid-template-columns: minmax(280px, auto);
+        grid-template-areas: 'sidebar main';
+        margin: 0 auto;
+        height: 100%;
+        position: relative;
+      }
+      .container > .main {
+        width: calc(100vw - 280px);
+        grid-area: main;
+      }
+      .container > .sidebar {
+        grid-area: sidebar;
+      }
     `;
   }
 
