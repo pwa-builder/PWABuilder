@@ -107,6 +107,9 @@ export class AppReport extends LitElement {
           <fast-tab-panel id="manifestPanel">
             <manifest-options></manifest-options>
           </fast-tab-panel>
+          <fast-tab-panel id="swPanel">
+            <sw-picker></sw-picker>
+          </fast-tab-panel>
         </fast-tabs>
       </section>
     </div>`;
