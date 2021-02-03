@@ -28,6 +28,10 @@ export class SWPicker extends LitElement {
           width: 100%;
         }
 
+        ul {
+          margin-top: 4em;
+        }
+
         li {
           display: flex;
           align-items: center;
@@ -36,10 +40,21 @@ export class SWPicker extends LitElement {
 
         h4 {
           font-size: var(--medium-font-size);
+          margin-bottom: 12px;
         }
 
         h5 {
           margin-bottom: 0;
+          font-size: 22px;
+        }
+
+        #summary {
+          font-size: 22px;
+          font-weight: var(--font-bold);
+        }
+
+        #summary-block p {
+            margin-bottom: 0;
         }
 
         p {
@@ -48,15 +63,25 @@ export class SWPicker extends LitElement {
           max-width: 767px;
         }
 
-        #summary-block {
+        #header-block {
           display: flex;
           align-items: center;
           justify-content: space-between;
         }
 
+        #header-actions {
+          display: flex;
+          justify-content: flex-end;
+        }
+
         #score-block {
           font-size: var(--medium-font-size);
           font-weight: var(--font-bold);
+        }
+
+        .actions app-button::part(underlying-button) {
+          background: white;
+          color: var(--font-color);
         }
       `,
     ];
@@ -80,15 +105,25 @@ export class SWPicker extends LitElement {
       <div>
         <div id="sw-spicker-header">
           <div id="header-info">
-            <div id="summary-block">
+            <div id="header-block">
               <h4>Service Worker</h4>
 
-              <span id="score-block">00 / ${this.score}</span>
+              <span id="score-block">${this.score} / 20</span>
             </div>
           </div>
 
-          <div id="header-actions">
-            <app-button>Done</app-button>
+          <div id="summary-block">
+            <h5 id="summary">Summary</h5>
+
+            <p>
+              Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
+              aut fugit, sed quia consequuntur magni dolores eos qui ratione
+              voluptatem sequi nesciunt. ven further!
+            </p>
+
+            <div id="header-actions">
+              <app-button>Done</app-button>
+            </div>
           </div>
         </div>
 
