@@ -1,11 +1,11 @@
 import { LitElement, css, html, customElement, property, internalProperty } from 'lit-element';
-import { TestResults } from '../utils/interfaces';
+import { RawTestResult } from '../utils/interfaces';
 
 import './score-results';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {
-  @property({attribute: false}) results: TestResults | undefined;
+  @property() results: RawTestResult | undefined;
 
   @internalProperty() maniScore = 0;
   @internalProperty() swScore = 0;
@@ -297,7 +297,7 @@ export class ReportCard extends LitElement {
           </div>
 
           <div id="package-block">
-            <fast-anchor appearance="button">Package</fast-anchor>
+            <fast-anchor href="/publish" appearance="button">Package</fast-anchor>
           </div>
         </div>
       </div>

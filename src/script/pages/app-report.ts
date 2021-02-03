@@ -12,7 +12,7 @@ import '../components/manifest-options';
 
 @customElement('app-report')
 export class AppReport extends LitElement {
-  @internalProperty() TestResult = null;
+  @internalProperty() resultOfTest = null;
 
   static get styles() {
     return css`
@@ -64,8 +64,8 @@ export class AppReport extends LitElement {
     const results = search.get('results');
 
     if (results) {
-      this.TestResult = JSON.parse(results);
-      console.log('TestResult', this.TestResult);
+      this.resultOfTest = JSON.parse(results);
+      console.log('resultOfTest', this.resultOfTest);
     }
   }
 
@@ -102,7 +102,7 @@ export class AppReport extends LitElement {
           <fast-tab class="tab" id="sw">Service Worker Options</fast-tab>
 
           <fast-tab-panel id="overviewPanel">
-            <report-card @open-mani-options="${() => this.openManiOptions()}" @open-sw-options="${() => this.openSWOptions()}" .results="${this.TestResult}"></report-card>
+            <report-card @open-mani-options="${() => this.openManiOptions()}" @open-sw-options="${() => this.openSWOptions()}" .results="${this.resultOfTest}"></report-card>
           </fast-tab-panel>
           <fast-tab-panel id="manifestPanel">
             <manifest-options></manifest-options>

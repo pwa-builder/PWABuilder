@@ -94,10 +94,10 @@ export interface ManifestDetectionResult {
   error?: string;
 }
 
-export interface TestResults {
-  manifest: TestResult;
-  service_worker: TestResult;
-  security: TestResult;
+export interface RawTestResult {
+  manifest: Array<TestResult>;
+  service_worker: Array<TestResult>;
+  security: Array<TestResult>;
 }
 
 export interface TestResult {
