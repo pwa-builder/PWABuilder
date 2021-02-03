@@ -23,6 +23,11 @@ export class DropdownMenu extends LitElement {
         vertical-align: middle;
       }
 
+      .dropdown-menu,
+      fast-button {
+        width: 100%;
+      }
+
       fast-menu {
         margin-top: 4px;
       }
@@ -39,6 +44,13 @@ export class DropdownMenu extends LitElement {
         color: var(--secondary-font-color);
         background: rgba(128, 128, 128, 0.05);
         border-color: var(--secondary-font-color);
+        width: 100%;
+        justify-content: normal;
+      }
+
+      fast-button::part(content) {
+        flex-grow: 2;
+        text-align: left;
       }
 
       fast-menu {
@@ -46,6 +58,7 @@ export class DropdownMenu extends LitElement {
         padding: 0;
         background-color: #ffffff;
         color: var(--font-color);
+        width: 100%;
       }
 
       fast-menu-item {
@@ -88,7 +101,7 @@ export class DropdownMenu extends LitElement {
           @click=${this.clickMenuButton}
         >
           <span part="menu-text">${this.menuButtonText()}</span>
-          <span part="end">
+          <span part="end" slot="end">
             ${this.openMenu
               ? html`<ion-icon name="chevron-down-outline"></ion-icon>`
               : html`<ion-icon name="chevron-up-outline"></ion-icon>`}
