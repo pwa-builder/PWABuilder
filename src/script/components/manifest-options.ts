@@ -4,6 +4,7 @@ import { styleMap } from 'lit-html/directives/style-map';
 import { getManifest } from '../services/manifest';
 
 import './dropdown-menu';
+import { tooltip } from './tooltip';
 @customElement('manifest-options')
 export class AppManifest extends LitElement {
   @property({ type: Object }) manifest;
