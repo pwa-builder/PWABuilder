@@ -4,7 +4,7 @@ import { styleMap } from 'lit-html/directives/style-map';
 import { getManifest } from '../services/manifest';
 
 import './dropdown-menu';
-import { tooltip } from './tooltip';
+import { tooltip, styles as ToolTipStyles } from './tooltip';
 @customElement('manifest-options')
 export class AppManifest extends LitElement {
   @property({ type: Object }) manifest;
@@ -14,8 +14,17 @@ export class AppManifest extends LitElement {
   static get styles() {
     return [
       css`
+        fast-divider {
+          margin: 16px 0;
+        }
+
         app-button {
           max-width: 160px;
+        }
+
+        fast-text-field,
+        app-dropdown::part(layout) {
+          width: 300px;
         }
 
         .panel {
@@ -48,6 +57,22 @@ export class AppManifest extends LitElement {
           justify-content: flex-start;
         }
 
+        .info-items,
+        .setting-items {
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+          justify-content: space-between;
+          align-items: flex-start;
+
+          max-width: 800px;
+        }
+
+        .info-item,
+        .setting-item {
+          margin: 16px 0;
+        }
+
         /* .head */
 
         .info {
@@ -75,6 +100,14 @@ export class AppManifest extends LitElement {
         .item-top .tooltip {
           margin-left: 4px;
         }
+
+        .image-item {
+          background-color: gray;
+          width: 100px;
+          height: 100px;
+        }
+
+        ${ToolTipStyles}
       `,
     ];
   }
@@ -114,11 +147,11 @@ export class AppManifest extends LitElement {
             <div class="images-header">
               <div class="item-top">
                 <h3>Upload App Icons</h3>
-                ${this.renderToolTip('TODO')}
+                ${this.renderToolTip('upload-icons-tooltip', 'TODO')}
               </div>
               <app-button @click=${this.openUploadModal}>Upload</app-button>
             </div>
-            <div class="collection image-item">${this.renderIcons()}</div>
+            <div class="collection image-items">${this.renderIcons()}</div>
 
             <div class="images-actions">
               <app-button @click=${this.downloadImages}>Download</app-button>
@@ -128,7 +161,7 @@ export class AppManifest extends LitElement {
             <div class="screenshots-header">
               <div class="item-top">
                 <h3>Generate Screenshots</h3>
-                ${this.renderToolTip('TODO')}
+                ${this.renderToolTip('generate-screenshot-tooltip', 'TODO')}
               </div>
               <p>
                 Specify the URLs to generate desktop and mobile screenshots
@@ -149,7 +182,9 @@ export class AppManifest extends LitElement {
           </div>
 
           <div class="screenshots-actions">
-            <app-button @click=${this.generateScreenshots}>Generate</app-button>
+            <app-button type="submit" @click=${this.generateScreenshots}
+              >Generate</app-button
+            >
           </div>
         </section>
         <fast-divider></fast-divider>
@@ -176,7 +211,7 @@ export class AppManifest extends LitElement {
         <div class="info-item">
           <div class="item-top">
             <h3>${item.title}</h3>
-            ${this.renderToolTip(item.tooltipText)}
+            ${this.renderToolTip(item.title + '-tooltip', item.tooltipText)}
           </div>
           <p>${item.description}</p>
           <fast-text-field
@@ -201,6 +236,7 @@ export class AppManifest extends LitElement {
         field = html`<fast-text-field
           @change=${this.handleInputChange}
           data-field="${item.entry}"
+          placeholder="${item.title}"
         ></fast-text-field>`;
       }
 
@@ -208,7 +244,7 @@ export class AppManifest extends LitElement {
         <div class="setting-item">
           <div class="item-top">
             <h3>${item.title}</h3>
-            ${this.renderToolTip(item.tooltipText)}
+            ${this.renderToolTip(item.title + '-tooltip', item.tooltipText)}
           </div>
           <p>${item.description}</p>
           ${field}
@@ -219,9 +255,11 @@ export class AppManifest extends LitElement {
 
   renderBackgroundColorSettings() {
     return html`
-      <div class="settings-item inputs color">
-        <label>Background Color</label>
-        ${this.renderToolTip('TODO')}
+      <div class="setting-item inputs color">
+        <div class="item-top">
+          <h3>Background Color</h3>
+          ${this.renderToolTip('bg-color-tooltip', 'TODO')}
+        </div>
         <fast-radio-group
           value="none"
           orientation="vertical"
@@ -233,14 +271,14 @@ export class AppManifest extends LitElement {
         </fast-radio-group>
 
         <!-- TODO color input? make a separate component? -->
-        <fast-text-field></fast-text-field>
+        <fast-text-field placeholder="#XXXXXX"></fast-text-field>
       </div>
     `;
   }
 
   renderIcons() {
     return html`
-      <div class="image">
+      <div class="image-item image">
         <img />
       </div>
     `;
@@ -266,20 +304,13 @@ export class AppManifest extends LitElement {
 
   renderScreenshots() {
     return html`
-      <div class="screenshot">
+      <div class="image-item screenshot">
         <img />
       </div>
     `;
   }
 
-  renderToolTip(text: string) {
-    return html`
-      <span class="tooltip">
-        <ion-icon name="help-outline"></ion-icon>
-        <fast-tooltip>${text}</fast-tooltip>
-      </span>
-    `;
-  }
+  renderToolTip = tooltip;
 
   handleInputChange(event: InputEvent) {
     console.log(event);
