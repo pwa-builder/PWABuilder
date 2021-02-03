@@ -1,12 +1,11 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map';
 
-
 @customElement('app-button')
 export class AppButton extends LitElement {
-  @property({ type: String }) type: string = "";
-  @property({ type: String }) colorMode = "primary";
-  @property({ type: String }) appearance = "neutral";
+  @property({ type: String }) type = '';
+  @property({ type: String }) colorMode = 'primary';
+  @property({ type: String }) appearance = 'neutral';
 
   static get styles() {
     return css`
@@ -40,7 +39,6 @@ export class AppButton extends LitElement {
       fast-button.link::part(control) {
         width: auto;
         padding: 0;
-
       }
     `;
   }
@@ -51,7 +49,13 @@ export class AppButton extends LitElement {
 
   render() {
     return html`
-      <fast-button part="underlying-button" class="${this.classMap()}" .appearance="${this.appearance}" .type="${this.type}" .color="${this.colorMode}">
+      <fast-button
+        part="underlying-button"
+        class="${this.classMap()}"
+        .appearance="${this.appearance}"
+        .type="${this.type}"
+        .color="${this.colorMode}"
+      >
         <slot></slot>
       </fast-button>
     `;
@@ -59,7 +63,7 @@ export class AppButton extends LitElement {
 
   classMap() {
     return classMap({
-      link: this.appearance === 'lightweight'
-    })
+      link: this.appearance === 'lightweight',
+    });
   }
 }
