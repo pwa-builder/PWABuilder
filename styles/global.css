@@ -29,9 +29,10 @@
   --secondary-font-color: #808080;
   --font-bold: 700;
   --font-medium: 400;
+  
+  --font-size: 14px;
+  --medium-font-size: 28px;
   --small-font-size: 12px;
-  --font-size: 16px;
-  --medium-font-size: 20px;
   --large-font-size: 32px;
   --xlarge-font-size: 44px;
 
@@ -65,6 +66,9 @@ body {
   background: var(--primary-background-color);
   padding: 0;
   margin: 0;
+  background: var(--primary-background-color);
+
+  overflow-x: hidden;
 }
 
 p,
@@ -123,6 +127,7 @@ fast-design-system-provider {
   --neutral-fill-input-rest: white;
   --neutral-fill-input-hover: white;
   --neutral-fill-stealth-rest: #e5e5e5;
-  --neutral-fill-active: #5d5db9;
+  --neutral-fill-rest: #292C3A;
+  --neutral-fill-active: #09090a;
   --neutral-fill-input-active: #e5e5e5;
 }

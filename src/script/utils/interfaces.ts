@@ -94,25 +94,22 @@ export interface ManifestDetectionResult {
   error?: string;
 }
 
-export interface ManifestTestResults {
-  has_manifest: boolean;
-    has_icons: boolean;
-    has_name: boolean;
-    has_short_name:
-      boolean;
-    has_start_url:
-      boolean;
-    has_display_mode: boolean;
-    has_background_color: boolean;
-    has_theme_color: boolean;
-    has_orientation_mode: boolean;
-    has_screenshots: boolean;
-    has_square_512: boolean;
-    has_maskable_icon: boolean;
-    has_shortcuts: boolean;
-    has_categories: boolean;
-    has_rating_id: boolean;
-    has_related: boolean;
+export interface RawTestResult {
+  manifest: Array<TestResult>;
+  service_worker: Array<TestResult>;
+  security: Array<TestResult>;
+}
+
+export interface TestResult {
+  infoString: string;
+  result: boolean;
+  category: string;
+}
+
+export interface OrganizedResults {
+  required: Array<TestResult>;
+  recommended: Array<TestResult>;
+  optional: Array<TestResult>;
 }
 
 export interface ServiceWorkerDetectionResult {

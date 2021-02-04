@@ -41,7 +41,7 @@ export class AppModal extends LitElement {
 
       #modal-header #title {
         font-weight: bold;
-        font-size: 28px;
+        font-size: var(--medium-font-size);
         line-height: 28px;
       }
 

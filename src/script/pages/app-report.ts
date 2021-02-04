@@ -8,10 +8,11 @@ import {
 
 import '../components/content-header';
 import '../components/report-card';
+import '../components/manifest-options';
 
 @customElement('app-report')
 export class AppReport extends LitElement {
-  @internalProperty() testResults = null;
+  @internalProperty() resultOfTest = null;
 
   static get styles() {
     return css`
@@ -63,9 +64,19 @@ export class AppReport extends LitElement {
     const results = search.get('results');
 
     if (results) {
-      this.testResults = JSON.parse(results);
-      console.log('testResults', this.testResults);
+      this.resultOfTest = JSON.parse(results);
+      console.log('resultOfTest', this.resultOfTest);
     }
+  }
+
+  openManiOptions() {
+    const maniTab = this.shadowRoot?.querySelector("#mani");
+    (maniTab as HTMLButtonElement).click();
+  }
+
+  openSWOptions() {
+    const maniTab = this.shadowRoot?.querySelector("#sw");
+    (maniTab as HTMLButtonElement).click();
   }
 
   render() {
@@ -91,7 +102,10 @@ export class AppReport extends LitElement {
           <fast-tab class="tab" id="sw">Service Worker Options</fast-tab>
 
           <fast-tab-panel id="overviewPanel">
-            <report-card></report-card>
+            <report-card @open-mani-options="${() => this.openManiOptions()}" @open-sw-options="${() => this.openSWOptions()}" .results="${this.resultOfTest}"></report-card>
+          </fast-tab-panel>
+          <fast-tab-panel id="manifestPanel">
+            <manifest-options></manifest-options>
           </fast-tab-panel>
         </fast-tabs>
       </section>

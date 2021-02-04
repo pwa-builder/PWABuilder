@@ -1,18 +1,19 @@
-import { Manifest, ManifestTestResults } from '../../utils/interfaces';
+import { Manifest, TestResult } from '../../utils/interfaces';
 import { fetchManifest } from '../manifest';
 
 export async function testManifest(
   url: string
-): Promise<ManifestTestResults | undefined> {
-  console.info("Testing Manifest");
+): Promise<Array<TestResult> | undefined> {
+  console.info('Testing Manifest');
   const manifestData = await fetchManifest(url);
 
   if (manifestData) {
     const manifest = manifestData.content;
 
     if (manifest) {
-      const testResults = doTest(manifest);
-      return testResults;
+      const testResult = doTest(manifest);
+
+      return testResult;
     } else {
       throw new Error('Could not test manifest');
     }
@@ -21,44 +22,104 @@ export async function testManifest(
   }
 }
 
-function doTest(manifest: Manifest): ManifestTestResults {
-  return {
-    has_manifest: true,
-    has_icons: manifest.icons && manifest.icons.length > 0 ? true : false,
-    has_name: manifest.name && manifest.name.length > 1 ? true : false,
-    has_short_name:
-      manifest.short_name && manifest.short_name.length > 1 ? true : false,
-    has_start_url:
-      manifest.start_url && manifest.start_url.length > 0 ? true : false,
-    has_display_mode:
-      manifest.display &&
-      ['fullscreen', 'standalone', 'minimal-ui', 'browser'].includes(
-        manifest.display
-      ) ? true : false,
-    has_background_color: manifest.background_color ? true : false,
-    has_theme_color: manifest.theme_color ? true : false,
-    has_orientation_mode:
-      manifest.orientation && isStandardOrientation(manifest.orientation)
-        ? true
-        : false,
-    has_screenshots: manifest.screenshots && manifest.screenshots.length > 0 ? true : false,
-    has_square_512: true,
-    has_maskable_icon: true,
-    has_shortcuts: manifest.shortcuts && manifest.shortcuts.length > 0 ? true : false,
-    has_categories:
-      manifest.categories &&
-      manifest.categories.length > 0 &&
-      containsStandardCategory(manifest.categories)
-        ? true
-        : false,
-    has_rating_id: manifest.iarc_rating_id ? true : false,
-    has_related:
-      manifest.related_applications &&
-      manifest.related_applications.length > 0 &&
-      manifest.prefer_related_applications !== undefined
-        ? true
-        : false,
-  };
+function doTest(manifest: Manifest): Array<TestResult> {
+  return [
+    {
+      infoString: 'Web Manifest Properly Attached',
+      result: true,
+      category: "required"
+    },
+    {
+      infoString: 'Lists icons for add to home screen',
+      result: manifest.icons && manifest.icons.length > 0 ? true : false,
+      category: "required"
+    },
+    {
+      infoString: 'Contains name property',
+      result: manifest.name && manifest.name.length > 1 ? true : false,
+      category: "required"
+    },
+    {
+      infoString: 'Contains short_name property',
+      result:
+        manifest.short_name && manifest.short_name.length > 1 ? true : false,
+        category: "required"
+    },
+    {
+      infoString: 'Designates a start_url',
+      result:
+        manifest.start_url && manifest.start_url.length > 0 ? true : false,
+        category: "required"
+    },
+    {
+      infoString: 'Specifies a display mode',
+      result:
+        manifest.display &&
+        ['fullscreen', 'standalone', 'minimal-ui', 'browser'].includes(
+          manifest.display
+        )
+          ? true
+          : false,
+      category: "recommended"
+    },
+    {
+      infoString: 'Has a background color',
+      result: manifest.background_color ? true : false,
+      category: "recommended"
+    },
+    {
+      infoString: 'Has a theme color',
+      result: manifest.theme_color ? true : false,
+      category: "recommended"
+    },
+    {
+      infoString: 'Specifies an orientation mode',
+      result:
+        manifest.orientation && isStandardOrientation(manifest.orientation)
+          ? true
+          : false,
+      category: "recommended"
+    },
+    {
+      infoString: 'Contains screenshots for app store listings',
+      result:
+        manifest.screenshots && manifest.screenshots.length > 0 ? true : false,
+      category: "recommended"
+    },
+    { infoString: 'Has a square PNG icon 512x512 or larger', result: true, category: "required" },
+    { infoString: 'Has a maskable PNG icon', result: true, category: "recommended" },
+    {
+      infoString: 'Lists shortcuts for quick access',
+      result:
+        manifest.shortcuts && manifest.shortcuts.length > 0 ? true : false,
+        category: "recommended"
+    },
+    {
+      infoString: 'Contains categories to classify the app',
+      result:
+        manifest.categories &&
+        manifest.categories.length > 0 &&
+        containsStandardCategory(manifest.categories)
+          ? true
+          : false,
+          category: "recommended"
+    },
+    {
+      infoString: 'Contains an IARC ID',
+      result: manifest.iarc_rating_id ? true : false,
+      category: "optional"
+    },
+    {
+      infoString: 'Specifies related_application',
+      result:
+        manifest.related_applications &&
+        manifest.related_applications.length > 0 &&
+        manifest.prefer_related_applications !== undefined
+          ? true
+          : false,
+          category: "optional"
+    },
+  ];
 }
 
 function containsStandardCategory(categories: string[]): boolean {

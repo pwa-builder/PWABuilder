@@ -12,13 +12,16 @@ import { smallBreakPoint } from '../utils/breakpoints';
 import { runAllTests } from '../services/tests';
 import '../components/app-header';
 
+// have to use ts-ignore here as typescript does not understand
+// this import yet
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import style from '../../../styles/animations.css';
 
 @customElement('app-testing')
 export class AppTesting extends LitElement {
   @internalProperty() loading = false;
-  @internalProperty() currentPhrase: string =
+  @internalProperty() currentPhrase =
     'PWABuilder is loading your PWA in the background';
 
   static get styles() {
@@ -105,9 +108,9 @@ export class AppTesting extends LitElement {
 
   async runTests(site: string) {
     try {
-      const testResults = await runAllTests(site);
+      const TestResult = await runAllTests(site);
 
-      if (testResults) {
+      if (TestResult) {
         // Completes the loading phase
         // set last phrase and give 300ms to display to user
         // before moving on
@@ -115,7 +118,7 @@ export class AppTesting extends LitElement {
 
         this.currentPhrase = 'Results coming to you in 3..2..1..';
         setTimeout(() => {
-          Router.go(`/reportcard?results=${JSON.stringify(testResults)}`);
+          Router.go(`/reportcard?results=${JSON.stringify(TestResult)}`);
         }, 300);
       } else {
         this.loading = false;
