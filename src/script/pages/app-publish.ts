@@ -32,6 +32,10 @@ export class AppPublish extends LitElement {
         align-items: center;
       }
 
+      .container > .app-card {
+        width: 100%;
+      }
+
       .container .action-buttons {
         display: flex;
         justify-content: center;
@@ -48,6 +52,7 @@ export class AppPublish extends LitElement {
     return platforms.map(
       platform =>
         html`<app-card
+          class="app-card"
           linkText="Publish"
           mode="content-card"
           title="${platform.title}"
