@@ -7,6 +7,7 @@ import {
   xLargeBreakPoint,
   xxLargeBreakPoint,
 } from '../utils/breakpoints';
+import './app-header';
 
 @customElement('content-header')
 export class ContentHeader extends LitElement {
@@ -119,6 +120,8 @@ export class ContentHeader extends LitElement {
 
   render() {
     return html`
+      <app-header part="header"></app-header>
+
       <div part="main-container" id="main-container">
         <section id="content-side">
           <div id="hero-container">

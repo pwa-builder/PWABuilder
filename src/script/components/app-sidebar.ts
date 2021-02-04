@@ -14,7 +14,6 @@ export class AppSidebar extends LitElement {
         flex-direction: column;
         place-items: center;
         overflow-x: auto;
-        z-index: 1;
       }
       aside.sidebar img {
         width: calc(100% - 150px);
