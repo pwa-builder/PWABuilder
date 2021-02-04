@@ -1,15 +1,27 @@
-import { LitElement, customElement, css, html, property } from 'lit-element';
+import {
+  LitElement,
+  customElement,
+  css,
+  html,
+  property,
+  internalProperty,
+} from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map';
 import { styleMap } from 'lit-html/directives/style-map';
 import { getManifest } from '../services/manifest';
+import { arrayHasChanged, objectHasChanged } from '../utils/hasChanged';
 
 import './dropdown-menu';
 import { tooltip, styles as ToolTipStyles } from './tooltip';
 @customElement('manifest-options')
 export class AppManifest extends LitElement {
-  @property({ type: Object }) manifest;
+  @property({ type: Object, hasChanged: objectHasChanged }) manifest;
   @property({ type: Number }) manifestScore = 0;
-  @property({ type: Array }) screenshotList = [];
+  @property({ type: Array, hasChanged: arrayHasChanged }) screenshotList = [];
+
+  @internalProperty()
+  protected backgroundColorRadioValue: 'none' | 'transparent' | 'custom' =
+    'none';
 
   static get styles() {
     return [
@@ -27,6 +39,14 @@ export class AppManifest extends LitElement {
           width: 300px;
         }
 
+        fast-text-field::part(root) {
+          border-color: var(--secondary-font-color);
+        }
+
+        #bg-custom-color {
+          margin-left: 32px;
+        }
+
         .panel {
           padding: 32px;
           max-width: 1009px;
@@ -35,6 +55,17 @@ export class AppManifest extends LitElement {
         .tooltip {
           height: 16px;
           width: 16px;
+        }
+
+        .icons,
+        .screenshots {
+          margin-top: 16px;
+        }
+
+        .images-header {
+          display: flex;
+          justify-content: space-between;
+          vertical-align: middle;
         }
 
         images-header,
@@ -73,6 +104,12 @@ export class AppManifest extends LitElement {
           margin: 16px 0;
         }
 
+        .collection {
+          display: flex;
+          flex-wrap: wrap;
+          vertical-align: middle;
+        }
+
         /* .head */
 
         .info {
@@ -103,6 +140,7 @@ export class AppManifest extends LitElement {
 
         .image-item {
           background-color: gray;
+          margin: 8px;
           width: 100px;
           height: 100px;
         }
@@ -149,12 +187,16 @@ export class AppManifest extends LitElement {
                 <h3>Upload App Icons</h3>
                 ${this.renderToolTip('upload-icons-tooltip', 'TODO')}
               </div>
-              <app-button @click=${this.openUploadModal}>Upload</app-button>
+              <app-button appearance="outline" @click=${this.openUploadModal}
+                >Upload</app-button
+              >
             </div>
             <div class="collection image-items">${this.renderIcons()}</div>
 
             <div class="images-actions">
-              <app-button @click=${this.downloadImages}>Download</app-button>
+              <app-button appearance="outline" @click=${this.downloadImages}
+                >Download</app-button
+              >
             </div>
           </div>
           <div class="screenshots">
@@ -182,7 +224,10 @@ export class AppManifest extends LitElement {
           </div>
 
           <div class="screenshots-actions">
-            <app-button type="submit" @click=${this.generateScreenshots}
+            <app-button
+              appearance="outline"
+              type="submit"
+              @click=${this.generateScreenshots}
               >Generate</app-button
             >
           </div>
@@ -230,13 +275,18 @@ export class AppManifest extends LitElement {
 
       if (item.type === 'select') {
         field = html`
-          <app-dropdown .menuItems=${item.menuItems}> </dapp-dropdown>
+          <app-dropdown .menuItems=${item.menuItems} @change=${
+          this.handleInputChange
+        } .default=${item.menuItems.indexOf(
+          this.manifest[item.entry]
+        )}> </dapp-dropdown>
         `;
       } else {
         field = html`<fast-text-field
           @change=${this.handleInputChange}
           data-field="${item.entry}"
           placeholder="${item.title}"
+          .value=${this.manifest[item.entry]}
         ></fast-text-field>`;
       }
 
@@ -261,7 +311,7 @@ export class AppManifest extends LitElement {
           ${this.renderToolTip('bg-color-tooltip', 'TODO')}
         </div>
         <fast-radio-group
-          value="none"
+          value=${this.setBackgroundColorRadio()}
           orientation="vertical"
           @change=${this.handleBackgroundRadioChange}
         >
@@ -270,8 +320,14 @@ export class AppManifest extends LitElement {
           <fast-radio value="custom">Custom Color</fast-radio>
         </fast-radio-group>
 
-        <!-- TODO color input? make a separate component? -->
-        <fast-text-field placeholder="#XXXXXX"></fast-text-field>
+        ${this.backgroundColorRadioValue === 'custom'
+          ? html`<fast-text-field
+              id="bg-custom-color"
+              placeholder="#XXXXXX"
+              .value=${this.manifest?.theme_color}
+              @change=${this.handleBackgroundColorInputChange}
+            ></fast-text-field>`
+          : undefined}
       </div>
     `;
   }
@@ -280,6 +336,7 @@ export class AppManifest extends LitElement {
     return html`
       <div class="image-item image">
         <img />
+        <p>temp text icons</p>
       </div>
     `;
   }
@@ -306,6 +363,7 @@ export class AppManifest extends LitElement {
     return html`
       <div class="image-item screenshot">
         <img />
+        <p>temp text screenshot</p>
       </div>
     `;
   }
@@ -313,7 +371,9 @@ export class AppManifest extends LitElement {
   renderToolTip = tooltip;
 
   handleInputChange(event: InputEvent) {
-    console.log(event);
+    const input = <HTMLInputElement | HTMLSelectElement>event.target;
+    const fieldName = input.dataset['field'];
+    this.manifest[fieldName] = input.value;
   }
 
   handleScreenshotUrlChange(event: Event) {
@@ -321,8 +381,16 @@ export class AppManifest extends LitElement {
   }
 
   handleBackgroundRadioChange(event: Event) {
-    console.log(event);
-    console.log((<HTMLInputElement>event.target).value);
+    const value = (<any>event.target).value;
+    this.backgroundColorRadioValue = value;
+
+    if (value !== 'custom') {
+      this.manifest.theme_color = value;
+    }
+  }
+
+  handleBackgroundColorInputChange(event: Event) {
+    this.manifest.theme_color = (<HTMLInputElement>event.target).value;
   }
 
   addNewScreenshot() {
@@ -347,6 +415,16 @@ export class AppManifest extends LitElement {
 
   generateScreenshots() {
     console.log('generate screenshots', event);
+  }
+
+  setBackgroundColorRadio() {
+    if (!this.manifest?.theme_color || this.manifest?.theme_color === 'none') {
+      return 'none';
+    } else if (this.manifest?.theme_color === 'transparent') {
+      return 'transparent';
+    }
+
+    return 'custom';
   }
 }
 
