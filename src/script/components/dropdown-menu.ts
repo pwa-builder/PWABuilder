@@ -83,6 +83,10 @@ export class DropdownMenu extends LitElement {
     `;
   }
 
+  get value() {
+    return this.menuItems[this.selectedIndex ?? this.default];
+  }
+
   constructor() {
     super();
   }
