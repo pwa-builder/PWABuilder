@@ -127,8 +127,6 @@ async function syncRedis(
 }
 
 export async function fetchManifest(url: string): Promise<ManifestDetectionResult> {
-  console.log('url', url);
-
   // Manifest detection is surprisingly tricky due to redirects, dynamic code generation, SSL problems, and other issues.
   // We have 3 techniques to detect the manifest:
   // 1. The legacy PWABuilder API

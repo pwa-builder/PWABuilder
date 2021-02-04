@@ -3,8 +3,28 @@
   Check here https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties for more info on using CSS variables.
 */
 
+/*
+  for more info on font-display
+  https://web.dev/optimize-webfont-loading/#customize-the-text-rendering-delay
+*/
+@font-face {
+  font-family: "Hind";
+  src: url("/assets/fonts/Hind-Regular.ttf");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Hind";
+  src: url("/assets/fonts/Hind-Bold.ttf");
+  font-weight: 700;
+  font-style: bold;
+  font-display: swap;
+}
+
 :root {
-  --font-family: sans-serif;
+  --font-family: Hind;
   --font-color: #292C3A;
   --secondary-font-color: #808080;
   --font-bold: 700;
@@ -39,8 +59,8 @@
 html,
 body {
   font-size: min(max(1rem, 4vw), 22px);
+  font-family: var(--font-family), sans-serif;
   line-height: 1.5;
-  font-family: var(--font-family);
   color: var(--font-color);
   background: var(--primary-background-color);
   padding: 0;
