@@ -14,19 +14,21 @@ export class AppHeader extends LitElement {
 
   static get styles() {
     return css`
-      :host {
-        --header-background: transparent;
+      header {
+        background: var(--primary-background-color);
+        color: var(--primary-color);
+        height: 71px;
+        width: 100vw;
+        position: fixed;
+        z-index: 1;
       }
 
-      header {
+      header > .header-container {
+        height: 100%;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding-left: 16px;
-        padding-right: 16px;
-        background: var(--header-background);
-        color: white;
-        height: 71px;
+        padding: 0 1rem;
       }
 
       header h1 {
@@ -41,12 +43,11 @@ export class AppHeader extends LitElement {
         justify-content: space-between;
         align-items: center;
         width: 8em;
-
         font-size: 18px;
       }
 
       nav fast-anchor::part(control) {
-        color: var(--font-color);
+        color: var(--primary-color);
         text-decoration: none;
         border-bottom: none;
         font-weight: var(--font-bold);
@@ -69,43 +70,39 @@ export class AppHeader extends LitElement {
         color: black;
       }
 
-      @media(prefers-color-scheme: light) {
+      @media (prefers-color-scheme: light) {
         header {
           color: black;
         }
       }
 
-      ${
-        smallBreakPoint(css`
-          header nav {
-            display: none;
-          }
+      ${smallBreakPoint(css`
+        header nav {
+          display: none;
+        }
 
-          #desktop-nav {
-            display: none;
-          }
+        #desktop-nav {
+          display: none;
+        }
 
-          #mobile-nav {
-            display: flex;
-          }
-        `)
-      }
+        #mobile-nav {
+          display: flex;
+        }
+      `)}
 
-      ${
-        mediumBreakPoint(css`
-          header nav {
-            display: initial;
-          }
+      ${mediumBreakPoint(css`
+        header nav {
+          display: initial;
+        }
 
-          #desktop-nav {
-            display: flex;
-          }
+        #desktop-nav {
+          display: flex;
+        }
 
-          #mobile-nav {
-            display: none;
-          }
-        `)
-      }
+        #mobile-nav {
+          display: none;
+        }
+      `)}
 
       ${largeBreakPoint(css`
         #desktop-nav {
@@ -117,24 +114,19 @@ export class AppHeader extends LitElement {
         }
       `)}
 
-      ${
-        xLargeBreakPoint(css`
-          header {
-            padding-left: 1em;
-            padding-right: 1em;
-          }
-        `)
-      }
+      ${xLargeBreakPoint(css`
+        header {
+          padding-left: 1em;
+          padding-right: 1em;
+        }
+      `)}
 
-      ${
-        xxLargeBreakPoint(css`
-          header {
-            padding-left: 3em;
-            padding-right: 3em;
-          }
-        `)
-      }
-
+      ${xxLargeBreakPoint(css`
+        header {
+          padding-left: 3em;
+          padding-right: 3em;
+        }
+      `)}
     `;
   }
 
@@ -145,21 +137,32 @@ export class AppHeader extends LitElement {
   render() {
     return html`
       <header>
-        <img id="header-icon" src="/assets/images/header_logo.png" alt="header logo">
+        <div class="header-container">
+          <img
+            id="header-icon"
+            src="/assets/images/header_logo.png"
+            alt="header logo"
+          />
 
-        <nav id="desktop-nav">
-          <fast-anchor appearance="hypertext" href="./about">Resources</fast-anchor>
+          <nav id="desktop-nav">
+            <fast-anchor appearance="hypertext" href="./about"
+              >Resources</fast-anchor
+            >
 
-          <fast-anchor appearance="hypertext" href="https://github.com/pwa-builder/PWABuilder">
-            <ion-icon name="logo-github"></ion-icon>
-          </fast-anchor>
-        </nav>
+            <fast-anchor
+              appearance="hypertext"
+              href="https://github.com/pwa-builder/PWABuilder"
+            >
+              <ion-icon name="logo-github"></ion-icon>
+            </fast-anchor>
+          </nav>
 
-        <nav id="mobile-nav">
-          <fast-button appearance="lightweight">
-            <ion-icon name="menu-outline"></ion-icon>
-          </fast-button>
-        </nav>
+          <nav id="mobile-nav">
+            <fast-button appearance="lightweight">
+              <ion-icon name="menu-outline"></ion-icon>
+            </fast-button>
+          </nav>
+        </div>
       </header>
     `;
   }

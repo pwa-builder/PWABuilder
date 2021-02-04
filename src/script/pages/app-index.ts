@@ -1,8 +1,13 @@
+import { BreakpointValues } from './../utils/breakpoints';
+import { classMap } from 'lit-html/directives/class-map';
+import { styleMap } from 'lit-html/directives/style-map';
 import { LitElement, css, html, customElement } from 'lit-element';
+
 import { Router } from '@vaadin/router';
 import './app-home';
 import './app-report';
-
+import '../components/app-sidebar';
+import '../components/app-header';
 @customElement('app-index')
 export class AppIndex extends LitElement {
   static get styles() {
@@ -39,26 +44,75 @@ export class AppIndex extends LitElement {
         }
       }
       /* To handle sidebar & main */
-      .container {
+
+      #container {
         display: grid;
-        grid-template-columns: minmax(280px, auto);
-        grid-template-areas: 'sidebar main';
         margin: 0 auto;
         height: 100%;
         position: relative;
+        grid-template-rows: minmax(71px, auto);
       }
-      .container > .main {
-        width: calc(100vw - 280px);
-        grid-area: main;
+
+      .sidebar-layout {
+        grid-template-areas:
+          'header'
+          'main';
       }
-      .container > .sidebar {
+
+      .no-sidebar-layout {
+        grid-template-columns: auto;
+        grid-template-areas:
+          'header'
+          'main';
+      }
+
+      @media (min-width: ${BreakpointValues.largeUpper}px) {
+        .sidebar-layout {
+          grid-template-columns: minmax(280px, auto);
+          grid-template-areas:
+            'header header'
+            'sidebar main';
+        }
+      }
+
+      #container > .header {
+        grid-area: header;
+      }
+
+      #container > .sidebar {
         grid-area: sidebar;
+      }
+
+      #container > .main {
+        grid-area: main;
       }
     `;
   }
 
   constructor() {
     super();
+  }
+
+  getParsedUrl() {
+    const parsedUrl = new URL(window?.location?.href);
+    return parsedUrl;
+  }
+
+  isHomePage() {
+    return this.getParsedUrl().pathname === '/';
+  }
+
+  classMap() {
+    return classMap({
+      'no-sidebar-layout': this.isHomePage(),
+      'sidebar-layout': !this.isHomePage(),
+    });
+  }
+
+  styleMap() {
+    return {
+      display: this.isHomePage() ? 'none' : 'block',
+    };
   }
 
   firstUpdated() {
@@ -99,8 +153,13 @@ export class AppIndex extends LitElement {
 
   render() {
     return html`
-      <div>
-        <main>
+      <div id="container" class=${this.classMap()}>
+        <app-header class="header" part="header"></app-header>
+        <app-sidebar
+          class="sidebar"
+          style="${styleMap(this.styleMap())}"
+        ></app-sidebar>
+        <main class="main">
           <div id="router-outlet"></div>
         </main>
       </div>
