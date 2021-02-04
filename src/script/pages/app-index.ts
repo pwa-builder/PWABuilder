@@ -6,8 +6,11 @@ import { LitElement, css, html, customElement } from 'lit-element';
 import { Router } from '@vaadin/router';
 import './app-home';
 import './app-report';
+
+import '../components/app-footer';
 import '../components/app-sidebar';
 import '../components/app-header';
+
 @customElement('app-index')
 export class AppIndex extends LitElement {
   static get styles() {
@@ -162,6 +165,8 @@ export class AppIndex extends LitElement {
         <main class="main">
           <div id="router-outlet"></div>
         </main>
+
+        <app-footer></app-footer>
       </div>
     `;
   }
