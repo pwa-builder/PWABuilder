@@ -22,6 +22,11 @@ export class AppButton extends LitElement {
         box-shadow: var(--button-shadow);
       }
 
+      fast-button.secondary {
+        color: var(--font-color);
+        border-color: transparent;
+      }
+
       fast-button::part(control) {
         font-size: var(--desktop-button-font-size);
         font-weight: var(--font-bold);
@@ -64,6 +69,7 @@ export class AppButton extends LitElement {
   classMap() {
     return classMap({
       link: this.appearance === 'lightweight',
+      secondary: this.appearance === 'outline',
     });
   }
 }
