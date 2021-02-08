@@ -3,6 +3,10 @@ import { Router } from '@vaadin/router';
 import './app-home';
 import './app-report';
 
+import '../components/app-footer';
+import '../components/app-sidebar';
+import '../components/app-header';
+
 @customElement('app-index')
 export class AppIndex extends LitElement {
   static get styles() {
@@ -37,6 +41,22 @@ export class AppIndex extends LitElement {
         to {
           opacity: 1;
         }
+      }
+      /* To handle sidebar & main */
+      .container {
+        display: grid;
+        grid-template-columns: minmax(280px, auto);
+        grid-template-areas: 'sidebar main';
+        margin: 0 auto;
+        height: 100%;
+        position: relative;
+      }
+      .container > .main {
+        width: calc(100vw - 280px);
+        grid-area: main;
+      }
+      .container > .sidebar {
+        grid-area: sidebar;
       }
     `;
   }
@@ -87,6 +107,8 @@ export class AppIndex extends LitElement {
         <main>
           <div id="router-outlet"></div>
         </main>
+
+        <app-footer></app-footer>
       </div>
     `;
   }
