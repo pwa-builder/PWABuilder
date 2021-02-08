@@ -16,11 +16,7 @@ export class AppPublish extends LitElement {
         padding: 5.2rem 1rem 1rem;
       }
 
-      .header {
-        padding: 1rem 3rem;
-      }
-
-      .header p {
+      .publish p {
         width: min(100%, 600px);
       }
 
@@ -65,18 +61,16 @@ export class AppPublish extends LitElement {
 
   render() {
     return html`
-      <div>
+      <div class="publish">
         <content-header>
-          <div class="header" slot="hero-container">
-            <h1>
-              Nice! <br />
-              You're on your way!
-            </h1>
-            <p>
-              Description about what is going to take place below and how they
-              are on their way to build their PWA. Mention nav bar for help.
-            </p>
-          </div>
+          <h1 slot="hero-container">
+            Nice! <br />
+            You're on your way!
+          </h1>
+          <p slot="hero-container">
+            Description about what is going to take place below and how they are
+            on their way to build their PWA. Mention nav bar for help.
+          </p>
           <img
             slot="picture-container"
             src="/assets/images/mobile_header_logo.png"
