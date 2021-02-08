@@ -1,6 +1,8 @@
 import { LitElement, css, html, customElement, property, internalProperty } from 'lit-element';
 import { RawTestResult } from '../utils/interfaces';
 
+import { xxxLargeBreakPoint } from '../utils/breakpoints';
+
 import './score-results';
 
 @customElement('report-card')
@@ -105,7 +107,7 @@ export class ReportCard extends LitElement {
         align-items: center;
         justify-content: space-between;
 
-        margin-right: 1.8em;
+        margin-right: 1.4em;
       }
 
       #total-score h4 {
@@ -122,6 +124,16 @@ export class ReportCard extends LitElement {
         color: white;
         box-shadow: var(--button-shadow);
         border-radius: var(--button-radius);
+      }
+
+      ${
+        xxxLargeBreakPoint(
+          css`
+            .accordion-heading-block {
+              width: 113em;
+            }
+          `
+        )
       }
     `;
   }
@@ -178,14 +190,35 @@ export class ReportCard extends LitElement {
 
   handleManiScore(ev: CustomEvent) {
     this.maniScore = ev?.detail?.score || 0;
+
+    const event = new CustomEvent('mani-scored', {
+      detail: {
+        score: this.maniScore
+      }
+    });
+    this.dispatchEvent(event);
   }
 
   handleSWScore(ev: CustomEvent) {
     this.swScore = ev?.detail?.score || 0;
+
+    const event = new CustomEvent('sw-scored', {
+      detail: {
+        score: this.swScore
+      }
+    });
+    this.dispatchEvent(event);
   }
 
   handleSecurityScore(ev: CustomEvent) {
     this.securityScore = ev?.detail?.score || 0;
+
+    const event = new CustomEvent('security-scored', {
+      detail: {
+        score: this.securityScore
+      }
+    });
+    this.dispatchEvent(event);
   }
 
   openManiOptions() {

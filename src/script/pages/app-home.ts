@@ -120,6 +120,7 @@ export class AppHome extends LitElement {
           flex-direction: column;
 
           flex: 0.8 1 0%;
+          width: 100%;
         }
 
         ${smallBreakPoint(css`

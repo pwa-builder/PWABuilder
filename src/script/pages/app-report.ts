@@ -6,13 +6,19 @@ import {
   internalProperty,
 } from 'lit-element';
 
+import { xxxLargeBreakPoint } from '../utils/breakpoints';
+
 import '../components/content-header';
 import '../components/report-card';
 import '../components/manifest-options';
+import '../components/sw-picker';
 
 @customElement('app-report')
 export class AppReport extends LitElement {
   @internalProperty() resultOfTest = null;
+  @internalProperty() swScore = 0;
+  @internalProperty() maniScore = 0;
+  @internalProperty() securityScore = 0;
 
   static get styles() {
     return css`
@@ -41,7 +47,7 @@ export class AppReport extends LitElement {
         color: rgba(41, 44, 58, 1);
       }
 
-      .tab[aria-selected="true"] {
+      .tab[aria-selected='true'] {
         color: var(--font-color);
         font-weight: var(--font-bold);
       }
@@ -51,6 +57,16 @@ export class AppReport extends LitElement {
         border-radius: 0;
         height: 2px;
         margin-top: 0;
+      }
+
+      ${
+        xxxLargeBreakPoint(
+          css`
+            #report {
+              max-width: 69em;
+            }
+          `
+        )
       }
     `;
   }
@@ -70,13 +86,28 @@ export class AppReport extends LitElement {
   }
 
   openManiOptions() {
-    const maniTab = this.shadowRoot?.querySelector("#mani");
+    const maniTab = this.shadowRoot?.querySelector('#mani');
     (maniTab as HTMLButtonElement).click();
   }
 
   openSWOptions() {
-    const maniTab = this.shadowRoot?.querySelector("#sw");
+    const maniTab = this.shadowRoot?.querySelector('#sw');
     (maniTab as HTMLButtonElement).click();
+  }
+
+  openOverview() {
+    const overviewTab = this.shadowRoot?.querySelector("#overview");
+    (overviewTab as HTMLButtonElement).click();
+  }
+
+  handleScoreForDisplay(type: string, score: number) {
+    if (type === 'sw') {
+      this.swScore = score;
+    } else if (type === 'manifest') {
+      this.maniScore = score;
+    } else if (type === 'security') {
+      this.securityScore = score;
+    }
   }
 
   render() {
@@ -102,10 +133,23 @@ export class AppReport extends LitElement {
           <fast-tab class="tab" id="sw">Service Worker Options</fast-tab>
 
           <fast-tab-panel id="overviewPanel">
-            <report-card @open-mani-options="${() => this.openManiOptions()}" @open-sw-options="${() => this.openSWOptions()}" .results="${this.resultOfTest}"></report-card>
+            <report-card
+              @sw-scored="${ev =>
+                this.handleScoreForDisplay('sw', ev.detail.score)}"
+              @mani-scored="${ev =>
+                this.handleScoreForDisplay('manifest', ev.detail.score)}"
+              @security-scored="${ev =>
+                this.handleScoreForDisplay('manifest', ev.detail.score)}"
+              @open-mani-options="${() => this.openManiOptions()}"
+              @open-sw-options="${() => this.openSWOptions()}"
+              .results="${this.resultOfTest}"
+            ></report-card>
           </fast-tab-panel>
           <fast-tab-panel id="manifestPanel">
             <manifest-options></manifest-options>
+          </fast-tab-panel>
+          <fast-tab-panel id="swPanel">
+            <sw-picker @back-to-overview="${() => this.openOverview()}" score="${this.swScore}"></sw-picker>
           </fast-tab-panel>
         </fast-tabs>
       </section>
