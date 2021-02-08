@@ -31,8 +31,9 @@
   --font-medium: 400;
   
   --font-size: 14px;
-  --medium-font-size: 28px;
   --small-font-size: 12px;
+  --small-medium-font-size: 22px;
+  --medium-font-size: 28px;
   --large-font-size: 32px;
   --xlarge-font-size: 44px;
 
@@ -51,6 +52,8 @@
 
   --link-color: #5d5db9;
   --mobile-link-color: #0683f9;
+
+  --list-border: 0.67681px solid #e5e5e5;
 }
 
 * {
