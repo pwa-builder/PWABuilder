@@ -105,7 +105,7 @@ export class ReportCard extends LitElement {
         align-items: center;
         justify-content: space-between;
 
-        margin-right: 1.8em;
+        margin-right: 1.4em;
       }
 
       #total-score h4 {
