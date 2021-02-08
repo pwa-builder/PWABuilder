@@ -84,6 +84,13 @@ export class SWPicker extends LitElement {
           background: white;
           color: var(--font-color);
         }
+
+        #bottom-actions {
+          display: flex;
+          justify-content: flex-end;
+          margin-top: 64px;
+          margin-bottom: 64px;
+        }
       `,
     ];
   }
