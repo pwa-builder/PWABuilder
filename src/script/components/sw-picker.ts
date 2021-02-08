@@ -6,7 +6,7 @@ import {
   internalProperty,
   property,
 } from 'lit-element';
-import { chooseServiceWorker, getServiceWorkers } from '../services/service_worker';
+import { chooseServiceWorker, getServiceWorkers, unsetServiceWorker } from '../services/service_worker';
 
 import '../components/app-button';
 
@@ -117,6 +117,11 @@ export class SWPicker extends LitElement {
     }
   }
 
+  removeSW() {
+    unsetServiceWorker();
+    this.chosenSW = undefined;
+  }
+
   done() {
     const event = new CustomEvent('back-to-overview', {
       detail: {
@@ -164,7 +169,7 @@ export class SWPicker extends LitElement {
                 </div>
 
                 <div class="actions">
-                  ${this.chosenSW === sw.id ? html`<app-button>Remove</app-button>` : html`<app-button id="select-button" @click="${() => this.chooseSW(sw)}">Select</app-button>`}
+                  ${this.chosenSW === sw.id ? html`<app-button @click="${() => this.removeSW()}">Remove</app-button>` : html`<app-button id="select-button" @click="${() => this.chooseSW(sw)}">Select</app-button>`}
                 </div>
               </li>
             `;

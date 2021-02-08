@@ -33,8 +33,9 @@ export async function getServiceWorkerCode(serviceworker: number) {
     });
     const result = await response.json();
 
-    if (result) {
-      return result;
+    if (result && result.serviceWorker) {
+      console.log(result);
+      return result.serviceWorker;
     }
   } catch (e) {
     handleError(e);
@@ -63,6 +64,10 @@ export async function downloadServiceWorker(serviceworker: number) {
 export async function chooseServiceWorker(serviceworker: number) {
   chosenSW = serviceworker;
   return chosenSW;
+}
+
+export function unsetServiceWorker() {
+  chosenSW = undefined;
 }
 
 function handleError(e) {
