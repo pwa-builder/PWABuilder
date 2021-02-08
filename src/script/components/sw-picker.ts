@@ -117,6 +117,15 @@ export class SWPicker extends LitElement {
     }
   }
 
+  done() {
+    const event = new CustomEvent('back-to-overview', {
+      detail: {
+        open: true
+      },
+    });
+    this.dispatchEvent(event);
+  }
+
   render() {
     return html`
       <div>
@@ -139,7 +148,7 @@ export class SWPicker extends LitElement {
             </p>
 
             <div id="header-actions">
-              <app-button>Done</app-button>
+              <app-button @click="${() => this.done()}">Done</app-button>
             </div>
           </div>
         </div>
@@ -163,7 +172,7 @@ export class SWPicker extends LitElement {
         </ul>
 
         <div id="bottom-actions">
-          <app-button>Done</app-button>
+          <app-button @click="${() => this.done()}">Done</app-button>
         </div>
       </div>
     `;

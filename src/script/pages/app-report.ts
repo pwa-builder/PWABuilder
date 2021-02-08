@@ -83,6 +83,11 @@ export class AppReport extends LitElement {
     (maniTab as HTMLButtonElement).click();
   }
 
+  openOverview() {
+    const overviewTab = this.shadowRoot?.querySelector("#overview");
+    (overviewTab as HTMLButtonElement).click();
+  }
+
   handleScoreForDisplay(type: string, score: number) {
     if (type === 'sw') {
       this.swScore = score;
@@ -132,7 +137,7 @@ export class AppReport extends LitElement {
             <manifest-options></manifest-options>
           </fast-tab-panel>
           <fast-tab-panel id="swPanel">
-            <sw-picker score="${this.swScore}"></sw-picker>
+            <sw-picker @back-to-overview="${() => this.openOverview()}" score="${this.swScore}"></sw-picker>
           </fast-tab-panel>
         </fast-tabs>
       </section>
