@@ -6,7 +6,7 @@ import {
   internalProperty,
   property,
 } from 'lit-element';
-import { getServiceWorkers } from '../services/service_worker';
+import { chooseServiceWorker, getServiceWorkers } from '../services/service_worker';
 
 import '../components/app-button';
 
@@ -18,6 +18,7 @@ export class SWPicker extends LitElement {
   @property({ type: Number }) score = 0;
 
   @internalProperty() serviceWorkers: any[] | undefined;
+  @internalProperty() chosenSW: number | undefined;
 
   static get styles() {
     return [
@@ -79,7 +80,7 @@ export class SWPicker extends LitElement {
           font-weight: var(--font-bold);
         }
 
-        .actions app-button::part(underlying-button) {
+        .actions #select-button::part(underlying-button) {
           background: white;
           color: var(--font-color);
         }
@@ -97,6 +98,15 @@ export class SWPicker extends LitElement {
     if (swData) {
       this.serviceWorkers = swData.serviceworkers;
       console.log(this.serviceWorkers);
+    }
+  }
+
+  chooseSW(sw) {
+    console.log(sw);
+    this.chosenSW = sw.id;
+
+    if (this.chosenSW) {
+      chooseServiceWorker(this.chosenSW);
     }
   }
 
@@ -138,12 +148,16 @@ export class SWPicker extends LitElement {
                 </div>
 
                 <div class="actions">
-                  <app-button>Select</app-button>
+                  ${this.chosenSW === sw.id ? html`<app-button>Remove</app-button>` : html`<app-button id="select-button" @click="${() => this.chooseSW(sw)}">Select</app-button>`}
                 </div>
               </li>
             `;
           })}
         </ul>
+
+        <div id="bottom-actions">
+          <app-button>Done</app-button>
+        </div>
       </div>
     `;
   }

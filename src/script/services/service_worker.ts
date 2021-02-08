@@ -2,6 +2,8 @@ import { fileSave } from 'browser-fs-access';
 
 const apiUrl = 'https://pwabuilder-sw-server.azurewebsites.net';
 
+let chosenSW: number | undefined;
+
 export async function getServiceWorkers() {
   try {
     const response = await fetch(`${apiUrl}/listing`, {
@@ -56,6 +58,11 @@ export async function downloadServiceWorker(serviceworker: number) {
   } catch (e) {
     handleError(e);
   }
+}
+
+export async function chooseServiceWorker(serviceworker: number) {
+  chosenSW = serviceworker;
+  return chosenSW;
 }
 
 function handleError(e) {
