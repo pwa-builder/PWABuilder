@@ -37,6 +37,8 @@ export class SWPicker extends LitElement {
           display: flex;
           align-items: center;
           justify-content: space-between;
+          padding-bottom: 35px;
+          border-bottom: 0.67681px solid #E5E5E5;
         }
 
         h4 {
@@ -47,6 +49,11 @@ export class SWPicker extends LitElement {
         h5 {
           margin-bottom: 0;
           font-size: 22px;
+        }
+
+        #sw-picker-header {
+          border-bottom: 0.67681px solid rgb(229, 229, 229);
+          padding-bottom: 47px;
         }
 
         #summary {
@@ -90,6 +97,10 @@ export class SWPicker extends LitElement {
           justify-content: flex-end;
           margin-top: 64px;
           margin-bottom: 64px;
+        }
+
+        .done-button {
+          width: 108px;
         }
       `,
     ];
@@ -153,7 +164,7 @@ export class SWPicker extends LitElement {
             </p>
 
             <div id="header-actions">
-              <app-button @click="${() => this.done()}">Done</app-button>
+              <app-button class="done-button" @click="${() => this.done()}">Done</app-button>
             </div>
           </div>
         </div>
@@ -177,7 +188,7 @@ export class SWPicker extends LitElement {
         </ul>
 
         <div id="bottom-actions">
-          <app-button @click="${() => this.done()}">Done</app-button>
+          <app-button class="done-button" @click="${() => this.done()}">Done</app-button>
         </div>
       </div>
     `;

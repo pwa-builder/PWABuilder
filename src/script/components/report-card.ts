@@ -1,6 +1,8 @@
 import { LitElement, css, html, customElement, property, internalProperty } from 'lit-element';
 import { RawTestResult } from '../utils/interfaces';
 
+import { xxxLargeBreakPoint } from '../utils/breakpoints';
+
 import './score-results';
 
 @customElement('report-card')
@@ -122,6 +124,16 @@ export class ReportCard extends LitElement {
         color: white;
         box-shadow: var(--button-shadow);
         border-radius: var(--button-radius);
+      }
+
+      ${
+        xxxLargeBreakPoint(
+          css`
+            .accordion-heading-block {
+              width: 113em;
+            }
+          `
+        )
       }
     `;
   }

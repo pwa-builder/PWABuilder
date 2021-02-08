@@ -6,6 +6,8 @@ import {
   internalProperty,
 } from 'lit-element';
 
+import { xxxLargeBreakPoint } from '../utils/breakpoints';
+
 import '../components/content-header';
 import '../components/report-card';
 import '../components/manifest-options';
@@ -55,6 +57,16 @@ export class AppReport extends LitElement {
         border-radius: 0;
         height: 2px;
         margin-top: 0;
+      }
+
+      ${
+        xxxLargeBreakPoint(
+          css`
+            #report {
+              max-width: 69em;
+            }
+          `
+        )
       }
     `;
   }
