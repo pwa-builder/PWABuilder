@@ -991,10 +991,30 @@
                 />
               </div>
 
+              <div class="form-group">
+                <label for="windowsStartUrlInput">
+                  Start URL
+                  <i
+                    class="fas fa-info-circle"
+                    title="Optional. The preferred URL that should be loaded when the user launches the web app. Windows will use this to determine your app's identity, so this value should not change between releases of your app. This can be an absolute or relative path."
+                    aria-label="Optional. The preferred URL that should be loaded when the user launches the web app. Windows will use this to determine your app's identity, so this value should not change between releases of your app. This can be an absolute or relative path."
+                    role="definition"
+                  ></i>
+                </label>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="windowsStartUrlInput"
+                  placeholder="https://mysite.com/startpoint.html"
+                  v-model="windowsForm.startUrl"
+                />
+              </div>
+
             </div>
 
             <!-- right half of the options dialog -->
             <div class="col-lg-6 col-md-12">
+              
               <div class="form-group">
                 <label for="windowsIconUrlInput">
                   <a href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md" target="_blank">
@@ -1059,6 +1079,26 @@
                     v-model="windowsForm.publisher.commonName"
                   />
                 </div>
+
+              <div class="form-group">
+                <label for="windowsLanguageInput">
+                  Language
+                  <i
+                    class="fas fa-info-circle"
+                    title="Optional. The primary language for your app package. Additional languages can be specified in Partner Center. If empty, EN-US will be used." 
+                    aria-label="Optional. The primary language for your app package. Additional languages can be specified in Partner Center. If empty, EN-US will be used."
+                    role="definition"
+                  ></i>
+                </label>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="windowsLanguageInput"
+                  placeholder="EN-US"
+                  v-model="windowsForm.resourceLanguage"
+                />
+              </div>
+
             </div>
           </div>
         </form>
@@ -1847,7 +1887,9 @@ export default class extends Vue {
         baseImage: icon && icon.src ? icon.src : "",
         backgroundColor: "transparent",
         padding: 0.3
-      }
+      },
+      startUrl: this.manifest.start_url,
+      resourceLanguage: this.manifest.lang === "en" ? "EN-US" : this.manifest.lang ?? ""
     };
     
     return packageOptions;
