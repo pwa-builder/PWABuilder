@@ -18,7 +18,7 @@ import { tooltip, styles as ToolTipStyles } from './tooltip';
 export class AppManifest extends LitElement {
   @property({ type: Object, hasChanged: objectHasChanged })
   manifest = getManifest();
-  @property({ type: Number }) manifestScore = 0;
+  @property({ type: Number }) score = 0;
   @property({ type: Array, hasChanged: arrayHasChanged }) screenshotList = [];
 
   @internalProperty()
