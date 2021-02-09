@@ -952,7 +952,7 @@
               </div>
 
               <div class="form-group">
-                <label for="windowsStartUrlInput">
+                <label for="windowsUrlInput">
                   URL
                   <i
                     class="fas fa-info-circle"
@@ -964,7 +964,7 @@
                 <input
                   type="url"
                   class="form-control"
-                  id="windowsStartUrlInput"
+                  id="windowsUrlInput"
                   placeholder="/index.html"
                   required
                   v-model="windowsForm.url"
