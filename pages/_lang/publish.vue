@@ -1889,7 +1889,7 @@ export default class extends Vue {
         padding: 0.3
       },
       startUrl: this.manifest.start_url,
-      resourceLanguage: this.manifest.lang === "en" ? "EN-US" : this.manifest.lang ?? ""
+      resourceLanguage: this.manifest.lang === "en" ? "EN-US" : this.manifest.lang || ""
     };
     
     return packageOptions;
