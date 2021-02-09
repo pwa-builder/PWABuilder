@@ -144,7 +144,7 @@ export class AppReport extends LitElement {
             ></report-card>
           </fast-tab-panel>
           <fast-tab-panel id="manifestPanel">
-            <manifest-options></manifest-options>
+            <manifest-options .score=${this.maniScore}></manifest-options>
           </fast-tab-panel>
           <fast-tab-panel id="swPanel">
             <sw-picker

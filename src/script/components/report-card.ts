@@ -24,10 +24,6 @@ export class ReportCard extends LitElement {
   maxSWSCore = 20;
   maxSecurityScore = 15;
 
-  @internalProperty() maniScore = 0;
-  @internalProperty() swScore = 0;
-  @internalProperty() securityScore = 0;
-
   static get styles() {
     return css`
       :host {
@@ -141,15 +137,13 @@ export class ReportCard extends LitElement {
         border-radius: var(--button-radius);
       }
 
-      ${
-        xxxLargeBreakPoint(
-          css`
-            .accordion-heading-block {
-              width: 113em;
-            }
-          `
-        )
-      }
+      ${xxxLargeBreakPoint(
+        css`
+          .accordion-heading-block {
+            width: 113em;
+          }
+        `
+      )}
     `;
   }
 
@@ -209,8 +203,8 @@ export class ReportCard extends LitElement {
 
     const event = new CustomEvent('mani-scored', {
       detail: {
-        score: this.maniScore
-      }
+        score: this.maniScore,
+      },
     });
     this.dispatchEvent(event);
   }
@@ -220,8 +214,8 @@ export class ReportCard extends LitElement {
 
     const event = new CustomEvent('sw-scored', {
       detail: {
-        score: this.swScore
-      }
+        score: this.swScore,
+      },
     });
     this.dispatchEvent(event);
   }
@@ -231,8 +225,8 @@ export class ReportCard extends LitElement {
 
     const event = new CustomEvent('security-scored', {
       detail: {
-        score: this.securityScore
-      }
+        score: this.securityScore,
+      },
     });
     this.dispatchEvent(event);
   }
@@ -253,23 +247,6 @@ export class ReportCard extends LitElement {
       },
     });
     this.dispatchEvent(event);
-  }
-
-  handleSWScore(ev: CustomEvent) {
-    if (ev && ev.detail.score) {
-      this.swScore = ev.detail.score;
-    } else {
-      this.swScore = 0;
-    }
-  }
-
-  handleSecurityScore(ev: CustomEvent) {
-    if (ev && ev.detail.score) {
-      this.securityScore = ev.detail.score;
-    }
-    else {
-      this.securityScore = 0;
-    }
   }
 
   render() {
