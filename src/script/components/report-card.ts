@@ -24,10 +24,6 @@ export class ReportCard extends LitElement {
   maxSWSCore = 20;
   maxSecurityScore = 15;
 
-  @internalProperty() maniScore = 0;
-  @internalProperty() swScore = 0;
-  @internalProperty() securityScore = 0;
-
   static get styles() {
     return css`
       :host {
@@ -251,23 +247,6 @@ export class ReportCard extends LitElement {
       },
     });
     this.dispatchEvent(event);
-  }
-
-  handleSWScore(ev: CustomEvent) {
-    if (ev && ev.detail.score) {
-      this.swScore = ev.detail.score;
-    } else {
-      this.swScore = 0;
-    }
-  }
-
-  handleSecurityScore(ev: CustomEvent) {
-    if (ev && ev.detail.score) {
-      this.securityScore = ev.detail.score;
-    }
-    else {
-      this.securityScore = 0;
-    }
   }
 
   render() {
