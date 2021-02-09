@@ -183,7 +183,7 @@ export class AppManifest extends LitElement {
         <div class="head">
           <div class="top-section">
             <h1>Manifest</h1>
-            <h1>Score ${this.manifestScore}/40</h1>
+            <h1>Score ${this.score} / 40</h1>
           </div>
 
           <h2>Summary</h2>
