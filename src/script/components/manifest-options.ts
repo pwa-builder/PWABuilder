@@ -10,12 +10,14 @@ import { classMap } from 'lit-html/directives/class-map';
 import { styleMap } from 'lit-html/directives/style-map';
 import { getManifest } from '../services/manifest';
 import { arrayHasChanged, objectHasChanged } from '../utils/hasChanged';
+import { resolveUrl } from '../utils/url';
 
 import './dropdown-menu';
 import { tooltip, styles as ToolTipStyles } from './tooltip';
 @customElement('manifest-options')
 export class AppManifest extends LitElement {
-  @property({ type: Object, hasChanged: objectHasChanged }) manifest;
+  @property({ type: Object, hasChanged: objectHasChanged })
+  manifest = getManifest();
   @property({ type: Number }) manifestScore = 0;
   @property({ type: Array, hasChanged: arrayHasChanged }) screenshotList = [];
 
@@ -37,6 +39,14 @@ export class AppManifest extends LitElement {
         fast-text-field,
         app-dropdown::part(layout) {
           width: 300px;
+        }
+
+        fast-button::part(control) {
+          color: var(--secondary-font-color);
+        }
+
+        fast-button::part(control::before) {
+          color: var(--secondary-font-color);
         }
 
         fast-text-field::part(root) {
@@ -139,10 +149,23 @@ export class AppManifest extends LitElement {
         }
 
         .image-item {
-          background-color: gray;
+          background-color: transparent;
           margin: 8px;
+        }
+
+        .image,
+        .image img {
           width: 100px;
-          height: 100px;
+        }
+
+        .image p {
+          text-align: center;
+        }
+
+        .screenshot,
+        .screenshot img {
+          width: 205px;
+          height: 135px;
         }
 
         ${ToolTipStyles}
@@ -251,8 +274,10 @@ export class AppManifest extends LitElement {
   }
 
   renderInfoItems() {
-    return infoItems.map(
-      item => html`
+    return infoItems.map(item => {
+      const value = this.manifest ? this.manifest[item.entry] : undefined;
+
+      return html`
         <div class="info-item">
           <div class="item-top">
             <h3>${item.title}</h3>
@@ -260,33 +285,36 @@ export class AppManifest extends LitElement {
           </div>
           <p>${item.description}</p>
           <fast-text-field
-            @change=${this.handleInputChange}
             data-field="${item.entry}"
             placeholder="${item.title}"
+            .value=${value}
+            @change=${this.handleInputChange}
           ></fast-text-field>
         </div>
-      `
-    );
+      `;
+    });
   }
 
   renderSettingsItems() {
     return settingsItems.map(item => {
       let field;
+      const value = this.manifest ? this.manifest[item.entry] : undefined;
 
       if (item.type === 'select') {
         field = html`
-          <app-dropdown .menuItems=${item.menuItems} @change=${
-          this.handleInputChange
-        } .default=${item.menuItems.indexOf(
-          this.manifest[item.entry]
-        )}> </dapp-dropdown>
+          <app-dropdown
+            .menuItems=${item.menuItems}
+            .selectedIndex=${item.menuItems.indexOf(value)}
+            @change=${this.handleInputChange}
+          >
+          </app-dropdown>
         `;
       } else {
         field = html`<fast-text-field
-          @change=${this.handleInputChange}
           data-field="${item.entry}"
           placeholder="${item.title}"
-          .value=${this.manifest[item.entry]}
+          .value=${value}
+          @change=${this.handleInputChange}
         ></fast-text-field>`;
       }
 
@@ -304,6 +332,8 @@ export class AppManifest extends LitElement {
   }
 
   renderBackgroundColorSettings() {
+    const value = this.manifest ? this.manifest.theme_color : undefined;
+
     return html`
       <div class="setting-item inputs color">
         <div class="item-top">
@@ -324,7 +354,7 @@ export class AppManifest extends LitElement {
           ? html`<fast-text-field
               id="bg-custom-color"
               placeholder="#XXXXXX"
-              .value=${this.manifest?.theme_color}
+              .value=${value}
               @change=${this.handleBackgroundColorInputChange}
             ></fast-text-field>`
           : undefined}
@@ -333,12 +363,14 @@ export class AppManifest extends LitElement {
   }
 
   renderIcons() {
-    return html`
-      <div class="image-item image">
-        <img />
-        <p>temp text icons</p>
-      </div>
-    `;
+    return this.manifest?.icons?.map(icon => {
+      const url = resolveUrl(this.manifest.start_url, icon.src);
+
+      return html`<div class="image-item image">
+        <img src="${url}" alt="image text" />
+        <p>${icon.sizes}</p>
+      </div> `;
+    });
   }
 
   renderScreenshotInputUrlList() {
@@ -360,12 +392,13 @@ export class AppManifest extends LitElement {
   }
 
   renderScreenshots() {
-    return html`
-      <div class="image-item screenshot">
-        <img />
-        <p>temp text screenshot</p>
-      </div>
-    `;
+    return this.manifest?.screenshots?.map(screenshot => {
+      const url = resolveUrl(this.manifest.start_url, screenshot.src);
+
+      return html`<div class="image-item screenshot">
+        <img src="${url}" alt="image text" />
+      </div>`;
+    });
   }
 
   renderToolTip = tooltip;
@@ -384,7 +417,7 @@ export class AppManifest extends LitElement {
     const value = (<any>event.target).value;
     this.backgroundColorRadioValue = value;
 
-    if (value !== 'custom') {
+    if (value !== 'custom' && this.manifest) {
       this.manifest.theme_color = value;
     }
   }
@@ -394,10 +427,7 @@ export class AppManifest extends LitElement {
   }
 
   addNewScreenshot() {
-    console.log('addScreenshotsFromUrl');
-
     this.screenshotList.push(undefined);
-    console.log(this.screenshotList);
     this.requestUpdate();
   }
 
