@@ -53,7 +53,8 @@ export interface WindowsPackageOptions {
   edgeLaunchArgs?: string;
   appUserModelId?: string;
   generateModernPackage?: boolean;
-  manifestUrl?: string;
+  manifestUrl?: string | null;
+  startUrl?: string | null;
   manifest?: Manifest;
   classicPackage?: {
     generate?: boolean;
@@ -68,6 +69,7 @@ export interface WindowsPackageOptions {
   }
   images?: WindowsImageOptions;
   publisher: WindowsPublisherOptions;
+  resourceLanguage?: string | null;
 }
 
 /**
