@@ -8,8 +8,7 @@ const dropdownComponentClass = 'dropdown-component';
 export class DropdownMenu extends LitElement {
   @property({ type: Boolean }) openMenu = false;
   @property({ type: Array }) menuItems = [];
-  @property({ type: Number }) selectedIndex = -1;
-  @property({ type: Number }) default = 0;
+  @property({ type: Number }) selectedIndex = 0;
 
   @property({ attribute: 'static-text', type: String })
   staticButtonText = undefined;
@@ -23,6 +22,11 @@ export class DropdownMenu extends LitElement {
         vertical-align: middle;
       }
 
+      .dropdown-menu,
+      fast-button {
+        width: 100%;
+      }
+
       fast-menu {
         margin-top: 4px;
       }
@@ -31,10 +35,21 @@ export class DropdownMenu extends LitElement {
         display: none;
       }
 
+      .dropdown-component {
+        z-index: 20;
+      }
+
       fast-button::part(control) {
         color: var(--secondary-font-color);
         background: rgba(128, 128, 128, 0.05);
         border-color: var(--secondary-font-color);
+        width: 100%;
+        justify-content: normal;
+      }
+
+      fast-button::part(content) {
+        flex-grow: 2;
+        text-align: left;
       }
 
       fast-menu {
@@ -42,6 +57,7 @@ export class DropdownMenu extends LitElement {
         padding: 0;
         background-color: #ffffff;
         color: var(--font-color);
+        width: 100%;
       }
 
       fast-menu-item {
@@ -66,6 +82,10 @@ export class DropdownMenu extends LitElement {
     `;
   }
 
+  get value() {
+    return this.menuItems[this.selectedIndex];
+  }
+
   constructor() {
     super();
   }
@@ -84,7 +104,7 @@ export class DropdownMenu extends LitElement {
           @click=${this.clickMenuButton}
         >
           <span part="menu-text">${this.menuButtonText()}</span>
-          <span part="end">
+          <span part="end" slot="end">
             ${this.openMenu
               ? html`<ion-icon name="chevron-down-outline"></ion-icon>`
               : html`<ion-icon name="chevron-up-outline"></ion-icon>`}
@@ -121,11 +141,7 @@ export class DropdownMenu extends LitElement {
       return this.staticButtonText;
     }
 
-    if (this.selectedIndex >= 0) {
-      return this.menuItems[this.selectedIndex];
-    }
-
-    return 'Default';
+    return this.menuItems[this.selectedIndex];
   }
 
   clickMenuButton() {

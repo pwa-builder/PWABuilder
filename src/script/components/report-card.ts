@@ -1,4 +1,11 @@
-import { LitElement, css, html, customElement, property, internalProperty } from 'lit-element';
+import {
+  LitElement,
+  css,
+  html,
+  customElement,
+  property,
+  internalProperty,
+} from 'lit-element';
 import { RawTestResult } from '../utils/interfaces';
 
 import { xxxLargeBreakPoint } from '../utils/breakpoints';
@@ -65,9 +72,13 @@ export class ReportCard extends LitElement {
         background: white;
         box-shadow: 0 1px 4px 0px rgb(0 0 0 / 25%);
         border-radius: 50%;
-        color: #5231A7;
+        color: #5231a7;
 
         width: 32px;
+      }
+
+      .flipper-button ion-icon {
+        pointer-events: none;
       }
 
       .flipper-button ion-icon {
@@ -126,15 +137,13 @@ export class ReportCard extends LitElement {
         border-radius: var(--button-radius);
       }
 
-      ${
-        xxxLargeBreakPoint(
-          css`
-            .accordion-heading-block {
-              width: 113em;
-            }
-          `
-        )
-      }
+      ${xxxLargeBreakPoint(
+        css`
+          .accordion-heading-block {
+            width: 113em;
+          }
+        `
+      )}
     `;
   }
 
@@ -146,24 +155,25 @@ export class ReportCard extends LitElement {
     console.log(targetEl);
 
     if (targetEl) {
-      const flipperButton = (targetEl as Element).classList.contains('flipper-button') ? (targetEl as Element) : (targetEl as Element).querySelector(
-        '.flipper-button'
-      );
+      const flipperButton = (targetEl as Element).classList.contains(
+        'flipper-button'
+      )
+        ? (targetEl as Element)
+        : (targetEl as Element).querySelector('.flipper-button');
 
       if (flipperButton) {
         if (flipperButton.classList.contains('opened')) {
-          
           flipperButton.animate(
             [
               {
-                transform: 'rotate(0deg)'
-              }
+                transform: 'rotate(0deg)',
+              },
             ],
             {
               duration: 200,
-              fill: "forwards"
+              fill: 'forwards',
             }
-          )
+          );
 
           flipperButton.classList.remove('opened');
         } else {
@@ -193,8 +203,8 @@ export class ReportCard extends LitElement {
 
     const event = new CustomEvent('mani-scored', {
       detail: {
-        score: this.maniScore
-      }
+        score: this.maniScore,
+      },
     });
     this.dispatchEvent(event);
   }
@@ -204,8 +214,8 @@ export class ReportCard extends LitElement {
 
     const event = new CustomEvent('sw-scored', {
       detail: {
-        score: this.swScore
-      }
+        score: this.swScore,
+      },
     });
     this.dispatchEvent(event);
   }
@@ -215,8 +225,8 @@ export class ReportCard extends LitElement {
 
     const event = new CustomEvent('security-scored', {
       detail: {
-        score: this.securityScore
-      }
+        score: this.securityScore,
+      },
     });
     this.dispatchEvent(event);
   }
@@ -224,7 +234,7 @@ export class ReportCard extends LitElement {
   openManiOptions() {
     const event = new CustomEvent('open-mani-options', {
       detail: {
-        open: true
+        open: true,
       },
     });
     this.dispatchEvent(event);
@@ -233,7 +243,7 @@ export class ReportCard extends LitElement {
   openSWOptions() {
     const event = new CustomEvent('open-sw-options', {
       detail: {
-        open: true
+        open: true,
       },
     });
     this.dispatchEvent(event);
@@ -262,7 +272,9 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Manifest</span>
 
                 <div class="score-block">
-                  <span class="accordion-score">${this.maniScore} / ${this.maxManiScore}</span>
+                  <span class="accordion-score"
+                    >${this.maniScore} / ${this.maxManiScore}</span
+                  >
 
                   <fast-button class="flipper-button" mode="stealth">
                     <ion-icon name="caret-forward-outline"></ion-icon>
@@ -270,7 +282,11 @@ export class ReportCard extends LitElement {
                 </div>
               </div>
 
-              <app-button @click="${() => this.openManiOptions()}" class="options-button">Manifest Options</app-button>
+              <app-button
+                @click="${() => this.openManiOptions()}"
+                class="options-button"
+                >Manifest Options</app-button
+              >
 
               <score-results
                 .testResults="${this.results.manifest}"
@@ -284,7 +300,9 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Service Worker</span>
 
                 <div class="score-block">
-                  <span class="accordion-score">${this.swScore} / ${this.maxSWSCore}</span>
+                  <span class="accordion-score"
+                    >${this.swScore} / ${this.maxSWSCore}</span
+                  >
 
                   <fast-button class="flipper-button" mode="stealth">
                     <ion-icon name="caret-forward-outline"></ion-icon>
@@ -292,8 +310,12 @@ export class ReportCard extends LitElement {
                 </div>
               </div>
 
-              <app-button @click="${() => this.openSWOptions()}" class="options-button">Service Worker Options</app-button>
-              
+              <app-button
+                @click="${() => this.openSWOptions()}"
+                class="options-button"
+                >Service Worker Options</app-button
+              >
+
               <score-results
                 .testResults="${this.results.service_worker}"
                 @scored="${(ev: CustomEvent) => this.handleSWScore(ev)}"
@@ -306,14 +328,16 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Security</span>
 
                 <div class="score-block">
-                  <span class="accordion-score">${this.securityScore} / ${this.maxSecurityScore}</span>
+                  <span class="accordion-score"
+                    >${this.securityScore} / ${this.maxSecurityScore}</span
+                  >
 
                   <fast-button class="flipper-button" mode="stealth">
                     <ion-icon name="caret-forward-outline"></ion-icon>
                   </fast-button>
                 </div>
               </div>
-              
+
               <score-results
                 .testResults="${this.results.security}"
                 @scored="${(ev: CustomEvent) => this.handleSecurityScore(ev)}"
@@ -330,7 +354,9 @@ export class ReportCard extends LitElement {
           </div>
 
           <div id="package-block">
-            <fast-anchor href="/publish" appearance="button">Package</fast-anchor>
+            <fast-anchor href="/publish" appearance="button"
+              >Package</fast-anchor
+            >
           </div>
         </div>
       </div>

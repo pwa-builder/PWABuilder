@@ -8,7 +8,6 @@ import {
 } from 'lit-element';
 import { OrganizedResults, TestResult } from '../utils/interfaces';
 
-
 @customElement('score-results')
 export class ScoreResults extends LitElement {
   @property() testResults: Array<TestResult> | undefined;
