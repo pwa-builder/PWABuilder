@@ -8,8 +8,7 @@ const dropdownComponentClass = 'dropdown-component';
 export class DropdownMenu extends LitElement {
   @property({ type: Boolean }) openMenu = false;
   @property({ type: Array }) menuItems = [];
-  @property({ type: Number }) selectedIndex = -1;
-  @property({ type: Number }) default = 0;
+  @property({ type: Number }) selectedIndex = 0;
 
   @property({ attribute: 'static-text', type: String })
   staticButtonText = undefined;
@@ -84,7 +83,7 @@ export class DropdownMenu extends LitElement {
   }
 
   get value() {
-    return this.menuItems[this.selectedIndex ?? this.default];
+    return this.menuItems[this.selectedIndex];
   }
 
   constructor() {
@@ -142,11 +141,7 @@ export class DropdownMenu extends LitElement {
       return this.staticButtonText;
     }
 
-    if (this.selectedIndex >= 0) {
-      return this.menuItems[this.selectedIndex];
-    }
-
-    return 'Default';
+    return this.menuItems[this.selectedIndex];
   }
 
   clickMenuButton() {
