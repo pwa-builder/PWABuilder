@@ -2,6 +2,7 @@ import { css, customElement, html, LitElement } from 'lit-element';
 import '../components/app-header';
 import '../components/app-sidebar';
 import '../components/app-card';
+import { createWindowsPackageOptionsFromManifest, generateWindowsPackage } from '../services/publish';
 
 @customElement('app-publish')
 export class AppPublish extends LitElement {
@@ -102,6 +103,26 @@ export class AppPublish extends LitElement {
     `;
   }
 
+  async generatePackage(type: platform) {
+    switch (type) {
+      case 'windows':
+        // eslint-disable-next-line no-case-declarations
+        const options = createWindowsPackageOptionsFromManifest("anaheim");
+
+        await generateWindowsPackage("anaheim", options);
+        break;
+      case 'android':
+          console.log('android');
+          break;
+      case 'samsung':
+        console.log('samsung');
+        // expected output: "Mangoes and papayas are $2.79 a pound."
+        break;
+      default:
+        console.error(`A platform type must be passed, ${type} is not a valid platform.`);
+    }
+  }
+
   renderContentCards() {
     return platforms.map(
       platform =>
@@ -111,7 +132,7 @@ export class AppPublish extends LitElement {
             <p>${platform.description}</p>
           </div>
 
-          <app-button>Publish</app-button>
+          <app-button @click="${() => this.generatePackage((platform.title.toLowerCase() as platform))}">Publish</app-button>
         </li>`
     );
   }
@@ -170,7 +191,9 @@ export class AppPublish extends LitElement {
   }
 }
 
-export interface ICardData {
+type platform = "windows" | "android" | "samsung";
+
+interface ICardData {
   title: string;
   description: string;
   isActionCard: boolean;

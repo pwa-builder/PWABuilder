@@ -5,6 +5,7 @@ import { Manifest, ManifestDetectionResult } from '../utils/interfaces';
 const apiUrl = `${env.api}/manifests`;
 
 let manifest: Manifest | null = null;
+let maniURL: string | null = null;
 
 // Uses PWABuilder API to fetch the manifest
 async function getManifestViaApi(url: string): Promise<ManifestDetectionResult> {
@@ -151,6 +152,7 @@ export async function fetchManifest(url: string): Promise<ManifestDetectionResul
       const result = await promiseAnyOrPolyfill(manifestDetectors);
 
       manifest = result.content;
+      maniURL = result.generatedUrl;
       return result;
   } catch (manifestDetectionError) {
       console.error("All manifest detectors failed.", manifestDetectionError);
@@ -158,6 +160,10 @@ export async function fetchManifest(url: string): Promise<ManifestDetectionResul
       // Well, we sure tried.
       throw manifestDetectionError;
   }
+}
+
+export function getManiURL() {
+  return maniURL;
 }
 
 export function getManifest() {
