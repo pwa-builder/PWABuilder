@@ -8,16 +8,16 @@
   https://web.dev/optimize-webfont-loading/#customize-the-text-rendering-delay
 */
 @font-face {
-  font-family: "Hind";
-  src: url("/assets/fonts/Hind-Regular.ttf");
+  font-family: 'Hind';
+  src: url('/assets/fonts/Hind-Regular.ttf');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Hind";
-  src: url("/assets/fonts/Hind-Bold.ttf");
+  font-family: 'Hind';
+  src: url('/assets/fonts/Hind-Bold.ttf');
   font-weight: 700;
   font-style: bold;
   font-display: swap;
@@ -25,7 +25,7 @@
 
 :root {
   --font-family: Hind;
-  --font-color: #292C3A;
+  --font-color: #292c3a;
   --secondary-font-color: #808080;
   --font-bold: 700;
   --font-medium: 400;
@@ -54,6 +54,8 @@
   --mobile-link-color: #0683f9;
 
   --list-border: 0.67681px solid #e5e5e5;
+  --success-color: #a2f4cc;
+  --light-primary-color: rgba(255, 255, 255, 0.6);
 }
 
 * {
@@ -130,7 +132,7 @@ fast-design-system-provider {
   --neutral-fill-input-rest: white;
   --neutral-fill-input-hover: white;
   --neutral-fill-stealth-rest: #e5e5e5;
-  --neutral-fill-rest: #292C3A;
+  --neutral-fill-rest: #292c3a;
   --neutral-fill-active: #09090a;
   --neutral-fill-input-active: #e5e5e5;
 }
