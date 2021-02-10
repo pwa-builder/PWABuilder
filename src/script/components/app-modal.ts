@@ -146,6 +146,10 @@ export class AppModal extends LitElement {
               </fast-button>
             </div>
 
+            <div id="modal-image">
+              <slot name="modal-image"></slot>
+            </div>
+
             <section id="modal-header">
               <span id="title">${this.title}</span>
             </section>

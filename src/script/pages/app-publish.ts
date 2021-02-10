@@ -16,6 +16,7 @@ import {
   createAndroidPackageOptionsFromManifest,
   generateAndroidPackage,
 } from '../services/publish/android-publish';
+import { Router } from '@vaadin/router';
 
 @customElement('app-publish')
 export class AppPublish extends LitElement {
@@ -176,6 +177,14 @@ export class AppPublish extends LitElement {
     );
   }
 
+  returnToFix() {
+    const resultsString = sessionStorage.getItem("results-string");
+
+    // navigate back to report-card page
+    // with current manifest results
+    Router.go(`/reportcard?results=${resultsString}`);
+  }
+
   render() {
     return html`
       <content-header>
@@ -197,8 +206,10 @@ export class AppPublish extends LitElement {
         .body="${this.errorMessage || ''}"
         ?open="${this.errored}"
       >
+        <img slot="modal-image" src="/assets/warning.svg" alt="warning icon" />
+
         <div slot="modal-actions">
-          <app-button>Test Button</app-button>
+          <app-button @click="${() => this.returnToFix()}">Return to Manifest Options</app-button>
         </div>
       </app-modal>
 
