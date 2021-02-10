@@ -1,3 +1,5 @@
+// implementation based on https://github.com/bramus/css-houdini-circles
+
 class CirclesPainter {
 
     static get inputProperties() {
