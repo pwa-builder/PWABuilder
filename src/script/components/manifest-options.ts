@@ -25,6 +25,15 @@ export class AppManifest extends LitElement {
   protected backgroundColorRadioValue: 'none' | 'transparent' | 'custom' =
     'none';
 
+  protected searchParams: URLSearchParams;
+  protected get siteUrl(): string {
+    if (!this.searchParams) {
+      this.searchParams = new URLSearchParams(location.search);
+    }
+
+    return this.searchParams.get('site');
+  }
+
   static get styles() {
     return [
       css`
@@ -364,12 +373,13 @@ export class AppManifest extends LitElement {
 
   renderIcons() {
     return this.manifest?.icons?.map(icon => {
-      const url = resolveUrl(this.manifest.start_url, icon.src);
+      let url = resolveUrl(this.siteUrl, this.manifest.start_url);
+      url = resolveUrl(url, icon.src);
 
       return html`<div class="image-item image">
         <img src="${url}" alt="image text" />
         <p>${icon.sizes}</p>
-      </div> `;
+      </div>`;
     });
   }
 
