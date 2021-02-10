@@ -2,10 +2,10 @@ import { css, html } from 'lit-element';
 
 export function tooltip(id: string, text: string) {
   return html`
-    <span id="${id}" class="tooltip">
+    <fast-button id="${id}" class="tooltip" appearance="stealth">
       <ion-icon name="help-outline"></ion-icon>
-      <fast-tooltip anchor="${id}">${text}</fast-tooltip>
-    </span>
+    </fast-button>
+    <fast-tooltip anchor="${id}">${text}</fast-tooltip>
   `;
 }
 
