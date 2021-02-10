@@ -12,7 +12,7 @@ export class AppModal extends LitElement {
   static get styles() {
     return css`
       #background {
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
         right: 0;

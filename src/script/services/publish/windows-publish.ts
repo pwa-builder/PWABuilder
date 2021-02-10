@@ -1,12 +1,12 @@
 import { fileSave } from 'browser-fs-access';
-import { env } from '../utils/environment';
-import { findSuitableIcon } from '../utils/icons';
+import { env } from '../../utils/environment';
+import { findSuitableIcon } from '../../utils/icons';
 import {
   generateWindowsPackageId,
   validateWindowsOptions,
   WindowsPackageOptions,
-} from '../utils/win-validation';
-import { getManifest, getManiURL } from './manifest';
+} from '../../utils/win-validation';
+import { getManifest, getManiURL } from '../manifest';
 
 export async function generateWindowsPackage(
   configuration: 'anaheim' | 'spartan',
@@ -110,8 +110,12 @@ export function createWindowsPackageOptionsFromManifest(
     };
 
     return options;
-  }
-  else {
-      throw new Error("Could not generate options from the current apps manifest");
+  } else {
+    // temporary link until the home page has the logic to handle
+    // a query string with the URL or the app so the user could re-run
+    // the test here.
+    throw new Error(
+      `No manifest found, Double check that you have a manifest`
+    );
   }
 }
