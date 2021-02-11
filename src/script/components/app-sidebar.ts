@@ -178,7 +178,7 @@ export class AppSidebar extends LitElement {
       aside.tablet-sidebar #score-progress {
         border-right: 1px solid var(--secondary-color);
 
-        width: 50%;
+        width: 44%;
         height: 100%;
         font-size: var(--small-font-size);
       }

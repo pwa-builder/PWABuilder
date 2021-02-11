@@ -6,7 +6,11 @@ import {
   internalProperty,
 } from 'lit-element';
 
-import { xxxLargeBreakPoint } from '../utils/breakpoints';
+import {
+  largeBreakPoint,
+  xLargeBreakPoint,
+  xxxLargeBreakPoint,
+} from '../utils/breakpoints';
 
 import '../components/content-header';
 import '../components/report-card';
@@ -36,6 +40,14 @@ export class AppReport extends LitElement {
         max-width: 406px;
       }
 
+      #tablet-sidebar {
+        display: none;
+      }
+
+      #desktop-sidebar {
+        display: block;
+      }
+
       content-header::part(header) {
         display: none;
       }
@@ -63,14 +75,38 @@ export class AppReport extends LitElement {
         grid-template-columns: 232px auto;
       }
 
-      app-sidebar {
-        display: block;
-      }
-
       ${xxxLargeBreakPoint(
         css`
           #report {
             max-width: 69em;
+          }
+
+          app-sidebar {
+            display: block;
+          }
+
+          #tablet-sidebar {
+            display: none;
+          }
+
+          #desktop-sidebar {
+            display: block;
+          }
+        `
+      )}
+
+      ${largeBreakPoint(
+        css`
+          #tablet-sidebar {
+            display: block;
+          }
+
+          #desktop-sidebar {
+            display: none;
+          }
+
+          #grid {
+            display: initial;
           }
         `
       )}
@@ -135,7 +171,7 @@ export class AppReport extends LitElement {
       <app-header></app-header>
 
       <div id="grid">
-        <app-sidebar></app-sidebar>
+        <app-sidebar id="desktop-sidebar"></app-sidebar>
 
         <section id="report">
           <content-header>
@@ -151,6 +187,8 @@ export class AppReport extends LitElement {
               alt="report card header image"
             />
           </content-header>
+
+          <app-sidebar id="tablet-sidebar"></app-sidebar>
 
           <fast-tabs activeId="sections">
             <fast-tab class="tab" id="overview">Overview</fast-tab>

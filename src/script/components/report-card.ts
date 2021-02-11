@@ -8,7 +8,7 @@ import {
 } from 'lit-element';
 import { RawTestResult } from '../utils/interfaces';
 
-import { xxxLargeBreakPoint } from '../utils/breakpoints';
+import { largeBreakPoint, xLargeBreakPoint } from '../utils/breakpoints';
 
 import './score-results';
 
@@ -32,6 +32,7 @@ export class ReportCard extends LitElement {
 
         padding-left: 32px;
         padding-right: 32px;
+        padding-bottom: 32px;
       }
 
       #report-header {
@@ -141,11 +142,23 @@ export class ReportCard extends LitElement {
         border-radius: var(--button-radius);
       }
 
-      ${xxxLargeBreakPoint(
+      ${xLargeBreakPoint(
         css`
-
+        .accordion-heading-block, #report-content {
+          width: 71vw;
+        }
         `
       )}
+
+      ${
+        largeBreakPoint(
+          css`
+            .accordion-heading-block {
+              width: 90vw;
+            }
+          `
+        )
+      }
     `;
   }
 
