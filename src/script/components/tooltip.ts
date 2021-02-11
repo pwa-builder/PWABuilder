@@ -43,6 +43,10 @@ export const styles = css`
     padding: 0;
   }
 
+  .tooltip::part(content) {
+    width: 12px;
+  }
+
   .tooltip-text {
     visibility: hidden;
     color: #fff;
