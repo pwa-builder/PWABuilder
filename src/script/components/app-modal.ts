@@ -1,10 +1,15 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
 
+export interface ModalCloseEvent {
+  modalId: string;
+}
+
 @customElement('app-modal')
 export class AppModal extends LitElement {
-  @property({ type: Boolean }) open: boolean = false;
-  @property({ type: String }) title: string = '';
-  @property({ type: String }) body: string = '';
+  @property({ type: Boolean }) open = false;
+  @property({ type: String }) title = '';
+  @property({ type: String }) body = '';
+  @property({ type: String }) modalId = '';
 
   modalAni: Animation | null = null;
   backgroundAni: Animation | null = null;
@@ -79,8 +84,8 @@ export class AppModal extends LitElement {
   }
 
   firstUpdated() {
-    const modalEl = this.shadowRoot?.querySelector("#modal");
-    const backgroundEl = this.shadowRoot?.querySelector("#background")
+    const modalEl = this.shadowRoot?.querySelector('#modal');
+    const backgroundEl = this.shadowRoot?.querySelector('#background');
 
     if (modalEl) {
       this.modalAni = modalEl.animate(
@@ -93,7 +98,7 @@ export class AppModal extends LitElement {
         ],
         {
           duration: 280,
-          easing: "ease-in-out"
+          easing: 'ease-in-out',
         }
       );
     }
@@ -102,17 +107,17 @@ export class AppModal extends LitElement {
       this.backgroundAni = backgroundEl.animate(
         [
           {
-            opacity: 0
+            opacity: 0,
           },
           {
-            opacity: 1
-          }
+            opacity: 1,
+          },
         ],
         {
           duration: 280,
-          easing: "ease-in-out"
+          easing: 'ease-in-out',
         }
-      )
+      );
     }
   }
 
@@ -130,6 +135,16 @@ export class AppModal extends LitElement {
       // but just in case close modal without animation
       this.open = false;
     }
+
+    this.dispatchEvent(
+      new CustomEvent<CloseEvent>('app-modal-close', {
+        detail: {
+          modalId: this.modalId,
+        },
+        composed: true,
+        bubbles: true,
+      })
+    );
   }
 
   render() {
@@ -138,10 +153,7 @@ export class AppModal extends LitElement {
         <div id="background">
           <div id="modal">
             <div id="back-button-block">
-              <fast-button
-                @click="${() => this.close()}"
-                appearance="lightweight"
-              >
+              <fast-button @click="${() => this.close()}" appearance="stealth">
                 <ion-icon name="close"></ion-icon>
               </fast-button>
             </div>

@@ -12,6 +12,7 @@ import { getManifest } from '../services/manifest';
 import { arrayHasChanged, objectHasChanged } from '../utils/hasChanged';
 import { resolveUrl } from '../utils/url';
 
+import { ModalCloseEvent } from './app-modal';
 import './dropdown-menu';
 import { tooltip, styles as ToolTipStyles } from './tooltip';
 @customElement('manifest-options')
@@ -20,6 +21,8 @@ export class AppManifest extends LitElement {
   manifest = getManifest();
   @property({ type: Number }) score = 0;
   @property({ type: Array, hasChanged: arrayHasChanged }) screenshotList = [];
+
+  @property({ type: Boolean }) uploadModalOpen = false;
 
   @internalProperty()
   protected backgroundColorRadioValue: 'none' | 'transparent' | 'custom' =
@@ -222,6 +225,23 @@ export class AppManifest extends LitElement {
               <app-button appearance="outline" @click=${this.openUploadModal}
                 >Upload</app-button
               >
+              <app-modal
+                modalId="uploadModal"
+                title="Upload information"
+                body="This is or uploading screenshots"
+                ?open=${this.uploadModalOpen}
+                @app-modal-close=${this.uploadModalClose}
+              >
+                <div slot="modal-actions">
+                  <form>
+                    <app-about>Choose file</app-about>
+                    <fast-checkbox>
+                      Generate missing images from this image
+                    </fast-checkbox>
+                    <app-button>Upload</app-button>
+                  </form>
+                </div>
+              </app-modal>
             </div>
             <div class="collection image-items">${this.renderIcons()}</div>
 
@@ -290,7 +310,7 @@ export class AppManifest extends LitElement {
         <div class="info-item">
           <div class="item-top">
             <h3>${item.title}</h3>
-            ${this.renderToolTip(item.title + '-tooltip', item.tooltipText)}
+            ${this.renderToolTip(item.entry + '-tooltip', item.tooltipText)}
           </div>
           <p>${item.description}</p>
           <fast-text-field
@@ -331,7 +351,7 @@ export class AppManifest extends LitElement {
         <div class="setting-item">
           <div class="item-top">
             <h3>${item.title}</h3>
-            ${this.renderToolTip(item.title + '-tooltip', item.tooltipText)}
+            ${this.renderToolTip(item.entry + '-tooltip', item.tooltipText)}
           </div>
           <p>${item.description}</p>
           ${field}
@@ -446,7 +466,14 @@ export class AppManifest extends LitElement {
   }
 
   openUploadModal() {
-    console.log('open upload modal', event);
+    this.uploadModalOpen = true;
+    this.requestUpdate();
+  }
+
+  uploadModalClose(event: CustomEvent<ModalCloseEvent>) {
+    if (event.detail.modalId === 'uploadModal') {
+      this.uploadModalOpen = false;
+    }
   }
 
   downloadImages() {
