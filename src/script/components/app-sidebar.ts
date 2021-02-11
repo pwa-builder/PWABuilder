@@ -1,4 +1,3 @@
-import { classMap } from 'lit-html/directives/class-map';
 import { BreakpointValues } from './../utils/breakpoints';
 import { LitElement, css, html, customElement, property } from 'lit-element';
 
@@ -120,8 +119,25 @@ export class AppSidebar extends LitElement {
         max-width: 100%;
         display: flex;
         justify-content: space-evenly;
-        align-items: stretch;
+        align-items: center;
         padding: 0.25rem 1rem;
+      }
+
+      .tablet-sidebar #score-block {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .tablet-sidebar #score-message {
+        font-size: var(--font-size);
+        margin-top: 0;
+      }
+
+      .tablet-sidebar #your-score {
+        margin-bottom: 0px;
+        margin-top: 0px;
       }
 
       aside.tablet-sidebar > * {
@@ -133,6 +149,8 @@ export class AppSidebar extends LitElement {
 
       aside.tablet-sidebar img {
         max-width: 50px;
+        height: 24px;
+        width: 24px;
       }
       
       aside.tablet-sidebar > h6 {
@@ -157,12 +175,16 @@ export class AppSidebar extends LitElement {
         margin: 0 0.5rem;
       }
 
-      aside.tablet-sidebar > #score-progress {
+      aside.tablet-sidebar #score-progress {
         border-right: 1px solid var(--secondary-color);
+
+        width: 50%;
+        height: 100%;
+        font-size: var(--small-font-size);
       }
 
-      aside.tablet-sidebar > #score-number {
-        font-size: 1.5rem;
+      aside.tablet-sidebar #score-number {
+        font-weight: var(--font-bold);
       }
 
       /** ICON STYLES */
@@ -275,7 +297,7 @@ export class AppSidebar extends LitElement {
   renderTabletBar() {
     return html`<aside class="tablet-sidebar">
       <img src="/assets/images/sidebar-icon.svg" alt="pwd-icon" />
-      <h6 id="score-progress">PWAB Progress</h6>
+      <h4 id="score-progress">PWAB Progress</h4>
       <div class="menu">
         ${this.tabletSidebarItems.map(
           item =>
@@ -285,9 +307,12 @@ export class AppSidebar extends LitElement {
             </div>`
         )}
       </div>
-      <h6>Your PWA Score</h6>
-      <h6 id="score-number">100</h6>
-      <h6 id="score-message">Excellent!</h6>
+
+      <div id="score-block">
+        <h4 id="your-score">Your PWA Score</h4>
+        <span id="score-number">100</span>
+        <span id="score-message">Excellent score!</span>
+      </div>
     </aside>`;
   }
 
