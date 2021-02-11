@@ -1,6 +1,5 @@
 import { css, customElement, html, LitElement } from 'lit-element';
 import '../components/app-header';
-import '../components/app-sidebar';
 import '../components/app-card';
 
 @customElement('app-publish')

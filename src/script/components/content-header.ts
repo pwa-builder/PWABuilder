@@ -108,7 +108,7 @@ export class ContentHeader extends LitElement {
 
       ${xxLargeBreakPoint(css`
         #content-side {
-          width: 44em;
+          width: 28em;
         }
       `)}
     `;

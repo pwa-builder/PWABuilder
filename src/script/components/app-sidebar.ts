@@ -25,20 +25,29 @@ export class AppSidebar extends LitElement {
       aside.desktop-sidebar {
         color: var(--secondary-color);
         background: var(--primary-color);
-        display: grid;
-        grid-template-areas: none;
-        position: fixed;
-        height: 100vh;
-        width: 280px;
-        place-items: center;
-        overflow-x: auto;
-      }
-      aside.desktop-sidebar img {
-        width: calc(100% - 150px);
-        margin: 1rem auto;
-      }
-      aside.desktop-sidebar fast-menu {
+        height: 100%;
         width: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #top-of-menu {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      #website-tested, #your-score {
+        font-size: var(--small-font-size);
+        margin-top: 1em;
+      }
+
+      aside.desktop-sidebar img, aside.desktop-sidebar #score-progress  {
+        margin-top: 1em;
+        margin-bottom: 1em;
+      }
+
+      aside.desktop-sidebar fast-menu {
         margin: 0;
         padding: 0;
         border: none;
@@ -46,21 +55,21 @@ export class AppSidebar extends LitElement {
         box-shadow: none;
         display: grid;
         grid-auto-flow: row;
-        width: 280px;
+        width: 100%;
       }
+
       aside.desktop-sidebar h1,
       aside.desktop-sidebar h4,
       aside.desktop-sidebar h5,
       aside.desktop-sidebar p {
         margin: 0;
       }
-      aside.desktop-sidebar h4 {
-        margin-bottom: 0.5rem;
-      }
-      aside.desktop-sidebar > hr {
+
+      aside.desktop-sidebar  hr {
         background-color: var(--secondary-color);
-        width: 240px;
+        width: 85%;
       }
+
       fast-menu.menu > fast-menu-item {
         display: flex;
         justify-content: flex-start;
@@ -74,24 +83,33 @@ export class AppSidebar extends LitElement {
         padding: 1.1rem 2rem;
         text-transform: capitalize;
       }
+
       fast-menu.menu > fast-menu-item.heading {
         font-weight: bold;
         background: var(--light-primary-color);
       }
+
       fast-menu.menu > fast-menu-item.active {
         color: var(--primary-color);
         background: var(--secondary-color);
       }
+
       fast-menu.menu > fast-menu-item.active-cell {
         font-weight: bold;
         color: var(--secondary-color);
       }
-      .desktop-sidebar > #score-number {
-        font-size: 3rem;
+
+      .desktop-sidebar #score-number {
+        font-size: 72px;
+        font-weight: var(--font-bold);
       }
-      .desktop-sidebar > #score-message,
-      .tablet-sidebar > #score-message {
+
+      .desktop-sidebar #score-message,
+      .tablet-sidebar #score-message {
         color: var(--success-color);
+
+        font-weight: var(--font-bold);
+        margin-top: -1em;
       }
 
       /** TABLET STYLES */
@@ -105,24 +123,29 @@ export class AppSidebar extends LitElement {
         align-items: stretch;
         padding: 0.25rem 1rem;
       }
+
       aside.tablet-sidebar > * {
         padding: 0 0.25rem;
         margin: 0 0.25em;
         display: flex;
         align-items: center;
       }
+
       aside.tablet-sidebar img {
         max-width: 50px;
       }
+      
       aside.tablet-sidebar > h6 {
         font-size: 0.75rem;
       }
+
       aside.tablet-sidebar .menu {
         display: flex;
         align-items: center;
         border-right: 1px solid var(--secondary-color);
         height: 50px;
       }
+
       aside.tablet-sidebar .menu > .heading {
         display: flex;
         flex-direction: column;
@@ -133,9 +156,11 @@ export class AppSidebar extends LitElement {
         font-size: 0.7rem;
         margin: 0 0.5rem;
       }
+
       aside.tablet-sidebar > #score-progress {
         border-right: 1px solid var(--secondary-color);
       }
+
       aside.tablet-sidebar > #score-number {
         font-size: 1.5rem;
       }
@@ -144,19 +169,24 @@ export class AppSidebar extends LitElement {
       .desktop-sidebar .icon {
         margin-right: 0.25rem;
       }
+
       .tablet-sidebar .icon {
         width: 0.75rem;
         height: 0.75rem;
       }
+
       .done {
         color: var(--success-color);
       }
+
       .pending {
         color: var(--light-primary-color);
       }
+
       .desktop-sidebar .active {
         color: var(--primary-color);
       }
+
       .tablet-sidebar .active {
         color: var(--secondary-color);
       }
@@ -281,16 +311,19 @@ export class AppSidebar extends LitElement {
   renderDesktopBar() {
     return html`
       <aside class="desktop-sidebar">
-        <img src="/assets/images/sidebar-icon.svg" alt="pwd-icon" />
-        <hr />
-        <h4>URL tested:</h4>
-        <h5>www.websitetested.com</h5>
-        <hr />
-        <h5>Your PWA Score:</h5>
-        <h1 id="score-number">100</h1>
-        <h4 id="score-message">Excellent score!</h4>
-        <hr />
-        <h4 id="score-progress">PWA Builder Progress</h4>
+        <div id="top-of-menu">
+          <img src="/assets/images/sidebar-icon.svg" alt="pwd-icon" />
+          <hr />
+          <h4>URL tested:</h4>
+          <span id="website-tested">www.websitetested.com</span>
+          <hr />
+          <h4 id="your-score">Your PWA Score:</h4>
+          <span id="score-number">100</span>
+          <span id="score-message">Excellent score!</span>
+          <hr />
+          <h4 id="score-progress">PWAB Progress</h4>
+        </div>
+    
         <fast-menu class="menu"
           >${this.renderMenuItem(this.desktopSidebarItems)}
         </fast-menu>

@@ -22,6 +22,8 @@ import '../components/resource-hub';
 import '../components/loading-button';
 import '../components/app-modal';
 import '../components/dropdown-menu';
+import '../components/app-sidebar';
+
 
 //@ts-ignore
 import style from '../../../styles/error-styles.css';

@@ -27,6 +27,8 @@ export class SWPicker extends LitElement {
         :host {
           display: block;
           width: 100%;
+
+          padding: 32px;
         }
 
         ul {
@@ -44,6 +46,7 @@ export class SWPicker extends LitElement {
         h4 {
           font-size: var(--medium-font-size);
           margin-bottom: 12px;
+          margin-top: 12px;
         }
 
         h5 {

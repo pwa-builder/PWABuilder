@@ -29,6 +29,9 @@ export class ReportCard extends LitElement {
       :host {
         width: 100%;
         display: block;
+
+        padding-left: 32px;
+        padding-right: 32px;
       }
 
       #report-header {
@@ -41,7 +44,7 @@ export class ReportCard extends LitElement {
       }
 
       .accordion-heading-block {
-        width: 96vw;
+        width: 76vw;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -66,6 +69,7 @@ export class ReportCard extends LitElement {
 
       fast-accordion-item::part(button) {
         height: 6em;
+        width: 70vw;
       }
 
       .flipper-button {
@@ -139,9 +143,7 @@ export class ReportCard extends LitElement {
 
       ${xxxLargeBreakPoint(
         css`
-          .accordion-heading-block {
-            width: 113em;
-          }
+
         `
       )}
     `;

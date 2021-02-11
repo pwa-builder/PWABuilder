@@ -12,6 +12,8 @@ import '../components/content-header';
 import '../components/report-card';
 import '../components/manifest-options';
 import '../components/sw-picker';
+import '../components/app-header';
+import '../components/app-sidebar';
 
 @customElement('app-report')
 export class AppReport extends LitElement {
@@ -35,11 +37,7 @@ export class AppReport extends LitElement {
       }
 
       content-header::part(header) {
-        --header-background: white;
-      }
-
-      #report {
-        padding: 16px;
+        display: none;
       }
 
       .tab {
@@ -57,6 +55,16 @@ export class AppReport extends LitElement {
         border-radius: 0;
         height: 2px;
         margin-top: 0;
+      }
+
+      /* grid layout code*/
+      #grid {
+        display: grid;
+        grid-template-columns: 232px auto;
+      }
+
+      app-sidebar {
+        display: block;
       }
 
       ${xxxLargeBreakPoint(
@@ -110,7 +118,7 @@ export class AppReport extends LitElement {
 
   render() {
     return html` <div>
-      <content-header>
+      <!--<content-header>
         <h2 slot="hero-container">Getting down to business.</h2>
         <p id="hero-p" slot="hero-container">
           Description about what is going to take place below and how they are
@@ -122,38 +130,58 @@ export class AppReport extends LitElement {
           src="/assets/images/reportcard-header.svg"
           alt="report card header image"
         />
-      </content-header>
+      </content-header>-->
 
-      <section id="report">
-        <fast-tabs activeId="sections">
-          <fast-tab class="tab" id="overview">Overview</fast-tab>
-          <fast-tab class="tab" id="mani">Manifest Options</fast-tab>
-          <fast-tab class="tab" id="sw">Service Worker Options</fast-tab>
+      <app-header></app-header>
 
-          <fast-tab-panel id="overviewPanel">
-            <report-card
-              @sw-scored="${ev =>
-                this.handleScoreForDisplay('sw', ev.detail.score)}"
-              @mani-scored="${ev =>
-                this.handleScoreForDisplay('manifest', ev.detail.score)}"
-              @security-scored="${ev =>
-                this.handleScoreForDisplay('manifest', ev.detail.score)}"
-              @open-mani-options="${() => this.openManiOptions()}"
-              @open-sw-options="${() => this.openSWOptions()}"
-              .results="${this.resultOfTest}"
-            ></report-card>
-          </fast-tab-panel>
-          <fast-tab-panel id="manifestPanel">
-            <manifest-options .score=${this.maniScore}></manifest-options>
-          </fast-tab-panel>
-          <fast-tab-panel id="swPanel">
-            <sw-picker
-              @back-to-overview="${() => this.openOverview()}"
-              score="${this.swScore}"
-            ></sw-picker>
-          </fast-tab-panel>
-        </fast-tabs>
-      </section>
+      <div id="grid">
+        <app-sidebar></app-sidebar>
+
+        <section id="report">
+          <content-header>
+            <h2 slot="hero-container">Getting down to business.</h2>
+            <p id="hero-p" slot="hero-container">
+              Description about what is going to take place below and how they
+              are on their way to build their PWA. Mention nav bar for help.
+            </p>
+
+            <img
+              slot="picture-container"
+              src="/assets/images/reportcard-header.svg"
+              alt="report card header image"
+            />
+          </content-header>
+
+          <fast-tabs activeId="sections">
+            <fast-tab class="tab" id="overview">Overview</fast-tab>
+            <fast-tab class="tab" id="mani">Manifest Options</fast-tab>
+            <fast-tab class="tab" id="sw">Service Worker Options</fast-tab>
+
+            <fast-tab-panel id="overviewPanel">
+              <report-card
+                @sw-scored="${ev =>
+                  this.handleScoreForDisplay('sw', ev.detail.score)}"
+                @mani-scored="${ev =>
+                  this.handleScoreForDisplay('manifest', ev.detail.score)}"
+                @security-scored="${ev =>
+                  this.handleScoreForDisplay('manifest', ev.detail.score)}"
+                @open-mani-options="${() => this.openManiOptions()}"
+                @open-sw-options="${() => this.openSWOptions()}"
+                .results="${this.resultOfTest}"
+              ></report-card>
+            </fast-tab-panel>
+            <fast-tab-panel id="manifestPanel">
+              <manifest-options .score=${this.maniScore}></manifest-options>
+            </fast-tab-panel>
+            <fast-tab-panel id="swPanel">
+              <sw-picker
+                @back-to-overview="${() => this.openOverview()}"
+                score="${this.swScore}"
+              ></sw-picker>
+            </fast-tab-panel>
+          </fast-tabs>
+        </section>
+      </div>
     </div>`;
   }
 }
