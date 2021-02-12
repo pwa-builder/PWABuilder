@@ -233,13 +233,7 @@ export class AppManifest extends LitElement {
                 @app-modal-close=${this.uploadModalClose}
               >
                 <div slot="modal-actions">
-                  <form>
-                    <app-about>Choose file</app-about>
-                    <fast-checkbox>
-                      Generate missing images from this image
-                    </fast-checkbox>
-                    <app-button>Upload</app-button>
-                  </form>
+                  <form>${this.renderModalInput()}</form>
                 </div>
               </app-modal>
             </div>
@@ -432,6 +426,18 @@ export class AppManifest extends LitElement {
   }
 
   renderToolTip = tooltip;
+
+  renderModalInput() {
+    return html`
+      <app-file-input
+        inputId="modal-file-input"
+        @change=${this.handleModalInputFileChosen}
+        @input-change=${this.handleModalInputFileChange}
+      ></app-file-input>
+      <fast-checkbox> Generate missing images from this image </fast-checkbox>
+      <app-button>Upload</app-button>
+    `;
+  }
 
   handleInputChange(event: InputEvent) {
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
