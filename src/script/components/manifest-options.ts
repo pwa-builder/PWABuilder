@@ -431,7 +431,6 @@ export class AppManifest extends LitElement {
     return html`
       <app-file-input
         inputId="modal-file-input"
-        @change=${this.handleModalInputFileChosen}
         @input-change=${this.handleModalInputFileChange}
       ></app-file-input>
       <fast-checkbox> Generate missing images from this image </fast-checkbox>
@@ -460,6 +459,10 @@ export class AppManifest extends LitElement {
 
   handleBackgroundColorInputChange(event: Event) {
     this.manifest.theme_color = (<HTMLInputElement>event.target).value;
+  }
+
+  handleModalInputFileChange() {
+    console.log('handleModalInputFileChange');
   }
 
   addNewScreenshot() {
