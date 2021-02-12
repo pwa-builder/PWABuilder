@@ -1,5 +1,14 @@
 import { BreakpointValues } from './../utils/breakpoints';
-import { LitElement, css, html, customElement, property } from 'lit-element';
+import {
+  LitElement,
+  css,
+  html,
+  customElement,
+  property,
+  internalProperty,
+} from 'lit-element';
+import { getResults, getURL } from '../services/app-info';
+import { RawTestResult } from '../utils/interfaces';
 
 enum Status {
   DONE = 'done',
@@ -36,12 +45,20 @@ export class AppSidebar extends LitElement {
         align-items: center;
       }
 
-      #website-tested, #your-score {
+      #website-tested,
+      #your-score {
         font-size: var(--small-font-size);
         margin-top: 1em;
       }
 
-      aside.desktop-sidebar img, aside.desktop-sidebar #score-progress  {
+      #website-tested {
+        text-align: center;
+        color: white;
+        text-decoration: none;
+      }
+
+      aside.desktop-sidebar img,
+      aside.desktop-sidebar #score-progress {
         margin-top: 1em;
         margin-bottom: 1em;
       }
@@ -64,7 +81,7 @@ export class AppSidebar extends LitElement {
         margin: 0;
       }
 
-      aside.desktop-sidebar  hr {
+      aside.desktop-sidebar hr {
         background-color: var(--secondary-color);
         width: 85%;
       }
@@ -152,7 +169,7 @@ export class AppSidebar extends LitElement {
         height: 24px;
         width: 24px;
       }
-      
+
       aside.tablet-sidebar > h6 {
         font-size: 0.75rem;
       }
@@ -221,6 +238,46 @@ export class AppSidebar extends LitElement {
     });
   }
 
+  firstUpdated() {
+    this.current_url = getURL();
+
+    this.results = getResults();
+    console.log('results', this.results);
+
+    if (this.results) {
+      this.handleResults();
+    }
+  }
+
+  handleResults() {
+    this.desktopSidebarItems.map(item => {
+      if (item.title === 'Manifest') {
+        if (this.results && this.results.manifest) {
+          if (this.results.manifest[0].result === true) {
+            item.status = Status.DONE;
+          }
+        }
+      }
+      else if (item.title === 'Service Worker') {
+        if (this.results && this.results.service_worker) {
+          if (this.results.service_worker[0].result === true) {
+            item.status = Status.DONE;
+          }
+        }
+      }
+      else if (item.title === 'Security') {
+        if (this.results && this.results.security) {
+          if (this.results.security[0].result === true) {
+            item.status = Status.DONE;
+          }
+        }
+      }
+    });
+  }
+
+  @internalProperty() current_url: string | undefined;
+  @internalProperty() results: RawTestResult | undefined;
+
   @property({ type: Array }) tabletSidebarItems: TabLayoutItem[] = [
     {
       title: 'test',
@@ -252,14 +309,26 @@ export class AppSidebar extends LitElement {
       class: 'done',
     },
     {
-      title: 'step 1',
-      status: Status.DONE,
+      title: 'Manifest',
+      status: Status.PENDING,
+      type: ItemType.SUB_HEADING,
+      class: 'done',
+    },
+    {
+      title: 'Service Worker',
+      status: Status.PENDING,
+      type: ItemType.SUB_HEADING,
+      class: 'done',
+    },
+    {
+      title: 'Security',
+      status: Status.PENDING,
       type: ItemType.SUB_HEADING,
       class: 'done',
     },
     {
       title: 'review',
-      status: Status.ACTIVE,
+      status: Status.PENDING,
       type: ItemType.HEADING,
       class: 'active',
     },
@@ -276,9 +345,11 @@ export class AppSidebar extends LitElement {
       class: 'pending',
     },
   ];
+
   @property({ type: Object }) mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`
   );
+
   @property({ type: Boolean }) isDeskTopView = this.mql.matches;
 
   renderIcon(item: TabLayoutItem) {
@@ -340,7 +411,9 @@ export class AppSidebar extends LitElement {
           <img src="/assets/images/sidebar-icon.svg" alt="pwd-icon" />
           <hr />
           <h4>URL tested:</h4>
-          <span id="website-tested">www.websitetested.com</span>
+          <a href="${this.current_url || ''}" id="website-tested"
+            >${this.current_url}</a
+          >
           <hr />
           <h4 id="your-score">Your PWA Score:</h4>
           <span id="score-number">100</span>
@@ -348,7 +421,7 @@ export class AppSidebar extends LitElement {
           <hr />
           <h4 id="score-progress">PWAB Progress</h4>
         </div>
-    
+
         <fast-menu class="menu"
           >${this.renderMenuItem(this.desktopSidebarItems)}
         </fast-menu>

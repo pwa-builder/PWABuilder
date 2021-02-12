@@ -166,7 +166,7 @@ export class ReportCard extends LitElement {
     super();
   }
 
-  opened(targetEl: EventTarget) {
+  opened(targetEl: EventTarget | null) {
     console.log(targetEl);
 
     if (targetEl) {
@@ -304,7 +304,7 @@ export class ReportCard extends LitElement {
               >
 
               <score-results
-                .testResults="${this.results.manifest}"
+                .testResults="${this.results?.manifest}"
                 @scored="${(ev: CustomEvent) => this.handleManiScore(ev)}"
               ></score-results>
             </fast-accordion-item>
@@ -332,7 +332,7 @@ export class ReportCard extends LitElement {
               >
 
               <score-results
-                .testResults="${this.results.service_worker}"
+                .testResults="${this.results?.service_worker}"
                 @scored="${(ev: CustomEvent) => this.handleSWScore(ev)}"
               ></score-results>
             </fast-accordion-item>
@@ -354,7 +354,7 @@ export class ReportCard extends LitElement {
               </div>
 
               <score-results
-                .testResults="${this.results.security}"
+                .testResults="${this.results?.security}"
                 @scored="${(ev: CustomEvent) => this.handleSecurityScore(ev)}"
               ></score-results>
             </fast-accordion-item>

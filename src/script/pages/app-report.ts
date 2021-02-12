@@ -8,7 +8,6 @@ import {
 
 import {
   largeBreakPoint,
-  xLargeBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/breakpoints';
 
@@ -154,20 +153,6 @@ export class AppReport extends LitElement {
 
   render() {
     return html` <div>
-      <!--<content-header>
-        <h2 slot="hero-container">Getting down to business.</h2>
-        <p id="hero-p" slot="hero-container">
-          Description about what is going to take place below and how they are
-          on their way to build their PWA. Mention nav bar for help.
-        </p>
-
-        <img
-          slot="picture-container"
-          src="/assets/images/reportcard-header.svg"
-          alt="report card header image"
-        />
-      </content-header>-->
-
       <app-header></app-header>
 
       <div id="grid">
