@@ -11,7 +11,7 @@ export function isUrl(url: string): boolean {
 }
 
 export function resolveUrl(baseUrl: string, url: string): string | undefined {
-  let parsedUrl = undefined;
+  let parsedUrl: URL | undefined = undefined;
 
   try {
     parsedUrl = new URL(url);
@@ -29,5 +29,5 @@ export function resolveUrl(baseUrl: string, url: string): string | undefined {
     }
   }
 
-  return parsedUrl;
+  return parsedUrl?.origin;
 }
