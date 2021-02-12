@@ -10,8 +10,8 @@ export function isUrl(url: string): boolean {
   return false;
 }
 
-export function resolveUrl(baseUrl: string, url: string): string | undefined {
-  let parsedUrl = undefined;
+export function resolveUrl(baseUrl: string, url: string): URL | string | undefined {
+  let parsedUrl: URL | string | undefined = undefined;
 
   try {
     parsedUrl = new URL(url);
@@ -30,4 +30,13 @@ export function resolveUrl(baseUrl: string, url: string): string | undefined {
   }
 
   return parsedUrl;
+}
+
+export function validateUrl(url: string, base?: string): string | null {
+  try {
+    new URL(url, base);
+    return null;
+  } catch (urlError) {
+    return urlError;
+  }
 }
