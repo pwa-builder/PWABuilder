@@ -17,7 +17,7 @@ export class AppModal extends LitElement {
   static get styles() {
     return css`
       #background {
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
         right: 0;
@@ -156,6 +156,10 @@ export class AppModal extends LitElement {
               <fast-button @click="${() => this.close()}" appearance="stealth">
                 <ion-icon name="close"></ion-icon>
               </fast-button>
+            </div>
+
+            <div id="modal-image">
+              <slot name="modal-image"></slot>
             </div>
 
             <section id="modal-header">
