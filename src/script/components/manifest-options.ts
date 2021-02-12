@@ -17,6 +17,7 @@ import './dropdown-menu';
 import './app-file-input';
 
 import { tooltip, styles as ToolTipStyles } from './tooltip';
+
 @customElement('manifest-options')
 export class AppManifest extends LitElement {
   @property({ type: Object, hasChanged: objectHasChanged })
@@ -468,8 +469,7 @@ export class AppManifest extends LitElement {
   }
 
   addNewScreenshot() {
-    this.screenshotList.push(undefined);
-    this.requestUpdate();
+    this.screenshotList = [...this.screenshotList, undefined];
   }
 
   done() {
