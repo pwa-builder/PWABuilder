@@ -16,19 +16,12 @@ export class FileInput extends LitElement {
   static get styles() {
     return [
       css`
-        fast-button.input-button[appearance='lightweight'] {
-          --accent-foreground-active: var(--font-color);
+        fast-button.file-button {
+          --accent-foreground-active: var(--secondary-font-color);
+          --accent-foreground-hover: var(--secondary-font-color);
         }
 
         fast-button::part(control) {
-          color: var(--secondary-font-color);
-        }
-
-        fast-button::part(control) {
-          color: var(--secondary-font-color);
-        }
-
-        fast-button:active::part(control) {
           color: var(--secondary-font-color);
         }
 
