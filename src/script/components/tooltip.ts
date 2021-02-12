@@ -18,7 +18,11 @@ export function tooltip(buttonId: string, text: string) {
       appearance="stealth"
       aria-labelledby="${tooltipId}"
     >
-      <img src="assets/images/help-outline.svg" aria-hidden="true" />
+      <img
+        src="assets/images/help-outline.svg"
+        alt="help outline"
+        aria-hidden="true"
+      />
 
       <span id="${tooltipId}" class="tooltip-text"> ${text} </span>
     </fast-button>
