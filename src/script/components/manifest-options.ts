@@ -14,6 +14,8 @@ import { resolveUrl } from '../utils/url';
 
 import { ModalCloseEvent } from './app-modal';
 import './dropdown-menu';
+import './app-file-input';
+
 import { tooltip, styles as ToolTipStyles } from './tooltip';
 @customElement('manifest-options')
 export class AppManifest extends LitElement {
