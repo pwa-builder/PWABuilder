@@ -1,4 +1,10 @@
 import { css, customElement, html, LitElement } from 'lit-element';
+
+import {
+  largeBreakPoint,
+  xxxLargeBreakPoint,
+} from '../utils/breakpoints';
+
 import '../components/app-header';
 import '../components/app-card';
 
@@ -16,6 +22,14 @@ export class AppPublish extends LitElement {
 
       .header p {
         width: min(100%, 600px);
+      }
+
+      #tablet-sidebar {
+        display: none;
+      }
+
+      #desktop-sidebar {
+        display: block;
       }
 
       #summary-block {
@@ -96,8 +110,50 @@ export class AppPublish extends LitElement {
       }
 
       content-header::part(header) {
-        --header-background: white;
+        display: none;
       }
+
+      /* grid layout code*/
+      #grid {
+        display: grid;
+        grid-template-columns: 232px auto;
+      }
+
+      ${xxxLargeBreakPoint(
+        css`
+          #report {
+            max-width: 69em;
+          }
+
+          app-sidebar {
+            display: block;
+          }
+
+          #tablet-sidebar {
+            display: none;
+          }
+
+          #desktop-sidebar {
+            display: block;
+          }
+        `
+      )}
+
+      ${largeBreakPoint(
+        css`
+          #tablet-sidebar {
+            display: block;
+          }
+
+          #desktop-sidebar {
+            display: none;
+          }
+
+          #grid {
+            display: initial;
+          }
+        `
+      )}
     `;
   }
 
@@ -117,53 +173,63 @@ export class AppPublish extends LitElement {
 
   render() {
     return html`
-      <content-header>
-        <h2 slot="hero-container">Small details go a long way.</h2>
-        <p id="hero-p" slot="hero-container">
-          Description about what is going to take place below and how they are
-          on their way to build their PWA. Mention nav bar for help.
-        </p>
-
-        <img
-          slot="picture-container"
-          src="/assets/images/reportcard-header.svg"
-          alt="report card header image"
-        />
-      </content-header>
-
       <div>
-        <section id="summary-block">
-          <h3>Publish your PWA to stores</h3>
+        <app-header></app-header>
 
-          <p>
-            Ready to build your PWA? Tap "Build My PWA" to package your PWA for
-            the app stores or tap "Feature Store" to check out the latest web
-            components from the PWABuilder team to improve your PWA even
-            further!
-          </p>
-        </section>
+        <div id="grid">
+          <app-sidebar id="desktop-sidebar"></app-sidebar>
 
-        <section class="container">
-          <ul>
-            ${this.renderContentCards()}
-          </ul>
+          <div>
+            <content-header>
+              <h2 slot="hero-container">Small details go a long way.</h2>
+              <p id="hero-p" slot="hero-container">
+                Description about what is going to take place below and how they
+                are on their way to build their PWA. Mention nav bar for help.
+              </p>
 
-          <div id="up-next">
-            <h5>Up next</h5>
+              <img
+                slot="picture-container"
+                src="/assets/images/reportcard-header.svg"
+                alt="report card header image"
+              />
+            </content-header>
 
-            <p>
-              Ready to build your PWA? Tap "Build My PWA" to package your PWA
-              for the app stores or tap "Feature Store" to check out the latest
-              web components from the PWABuilder team to improve your PWA even
-              further!
-            </p>
+            <app-sidebar id="tablet-sidebar"></app-sidebar>
+
+            <section id="summary-block">
+              <h3>Publish your PWA to stores</h3>
+
+              <p>
+                Ready to build your PWA? Tap "Build My PWA" to package your PWA
+                for the app stores or tap "Feature Store" to check out the
+                latest web components from the PWABuilder team to improve your
+                PWA even further!
+              </p>
+            </section>
+
+            <section class="container">
+              <ul>
+                ${this.renderContentCards()}
+              </ul>
+
+              <div id="up-next">
+                <h5>Up next</h5>
+
+                <p>
+                  Ready to build your PWA? Tap "Build My PWA" to package your
+                  PWA for the app stores or tap "Feature Store" to check out the
+                  latest web components from the PWABuilder team to improve your
+                  PWA even further!
+                </p>
+              </div>
+
+              <div class="action-buttons">
+                <app-button>Back</app-button>
+                <app-button>Next</app-button>
+              </div>
+            </section>
           </div>
-
-          <div class="action-buttons">
-            <app-button>Back</app-button>
-            <app-button>Next</app-button>
-          </div>
-        </section>
+        </div>
       </div>
     `;
   }
