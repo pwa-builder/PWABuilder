@@ -7,6 +7,10 @@ import {
   query,
 } from 'lit-element';
 
+export interface FileInputDetails {
+  input: HTMLInputElement;
+}
+
 @customElement('app-file-input')
 export class FileInput extends LitElement {
   @property({ type: String }) inputId;
@@ -76,8 +80,10 @@ export class FileInput extends LitElement {
   handleModalInputFileChosen(evt: Event) {
     console.log('input change event', evt);
 
-    const changeEvent = new CustomEvent('input-change', {
-      detail: {},
+    const changeEvent = new CustomEvent<FileInputDetails>('input-change', {
+      detail: {
+        input: this.input,
+      },
       composed: true,
       bubbles: true,
     });

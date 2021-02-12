@@ -478,7 +478,6 @@ export class AppManifest extends LitElement {
 
   openUploadModal() {
     this.uploadModalOpen = true;
-    this.requestUpdate();
   }
 
   uploadModalClose(event: CustomEvent<ModalCloseEvent>) {
