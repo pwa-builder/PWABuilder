@@ -391,10 +391,10 @@ export class AppManifest extends LitElement {
   renderIcons() {
     return this.manifest?.icons?.map(icon => {
       let url = resolveUrl(this.siteUrl, this.manifest.start_url);
-      url = resolveUrl(url, icon.src);
+      url = resolveUrl(url.origin, icon.src);
 
       return html`<div class="image-item image">
-        <img src="${url}" alt="image text" />
+        <img src="${url.origin}" alt="image text" />
         <p>${icon.sizes}</p>
       </div>`;
     });
@@ -423,7 +423,7 @@ export class AppManifest extends LitElement {
       const url = resolveUrl(this.manifest.start_url, screenshot.src);
 
       return html`<div class="image-item screenshot">
-        <img src="${url}" alt="image text" />
+        <img src="${url.origin}" alt="image text" />
       </div>`;
     });
   }
