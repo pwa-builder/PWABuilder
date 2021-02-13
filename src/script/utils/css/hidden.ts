@@ -62,6 +62,7 @@ export const hidden_xxxlrg = css`
 `;
 
 export const hidden_all = css`
+  ${hidden}
   ${hidden_sm}
   ${hidden_med}
   ${hidden_lrg}
