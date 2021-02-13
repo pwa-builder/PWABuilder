@@ -11,7 +11,7 @@ import { styleMap } from 'lit-html/directives/style-map';
 import { getManifest } from '../services/manifest';
 import { arrayHasChanged, objectHasChanged } from '../utils/hasChanged';
 import { resolveUrl } from '../utils/url';
-import { fastCheckboxCss } from '../utils/css/fast-elements';
+import { fastButtonCss, fastCheckboxCss } from '../utils/css/fast-elements';
 
 import { ModalCloseEvent } from './app-modal';
 import { tooltip, styles as ToolTipStyles } from './tooltip';
@@ -55,18 +55,6 @@ export class AppManifest extends LitElement {
         fast-text-field,
         app-dropdown::part(layout) {
           width: 300px;
-        }
-
-        fast-button::part(control) {
-          color: var(--secondary-font-color);
-        }
-
-        fast-button::part(control::before) {
-          color: var(--secondary-font-color);
-        }
-
-        fast-text-field::part(root) {
-          border-color: var(--secondary-font-color);
         }
 
         #bg-custom-color {
@@ -176,6 +164,7 @@ export class AppManifest extends LitElement {
         }
 
         ${ToolTipStyles}
+        ${fastButtonCss}
         ${fastCheckboxCss}
       `,
     ];
