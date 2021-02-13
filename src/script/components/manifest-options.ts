@@ -11,12 +11,13 @@ import { styleMap } from 'lit-html/directives/style-map';
 import { getManifest } from '../services/manifest';
 import { arrayHasChanged, objectHasChanged } from '../utils/hasChanged';
 import { resolveUrl } from '../utils/url';
+import { fastCheckboxCss } from '../utils/css/fast-elements';
 
 import { ModalCloseEvent } from './app-modal';
+import { tooltip, styles as ToolTipStyles } from './tooltip';
+
 import './dropdown-menu';
 import './app-file-input';
-
-import { tooltip, styles as ToolTipStyles } from './tooltip';
 
 @customElement('manifest-options')
 export class AppManifest extends LitElement {
@@ -135,18 +136,9 @@ export class AppManifest extends LitElement {
           vertical-align: middle;
         }
 
-        /* .head */
-
-        .info {
-        }
-
-        .images {
-        }
-
-        .settings {
-        }
-
-        .view-code {
+        .modal-action-form {
+          display: flex;
+          flex-direction: column;
         }
 
         .item-top {
@@ -184,6 +176,7 @@ export class AppManifest extends LitElement {
         }
 
         ${ToolTipStyles}
+        ${fastCheckboxCss}
       `,
     ];
   }
@@ -236,7 +229,9 @@ export class AppManifest extends LitElement {
                 @app-modal-close=${this.uploadModalClose}
               >
                 <div slot="modal-actions">
-                  <form>${this.renderModalInput()}</form>
+                  <form class="modal-action-form">
+                    ${this.renderModalInput()}
+                  </form>
                 </div>
               </app-modal>
             </div>
@@ -391,10 +386,10 @@ export class AppManifest extends LitElement {
   renderIcons() {
     return this.manifest?.icons?.map(icon => {
       let url = resolveUrl(this.siteUrl, this.manifest.start_url);
-      url = resolveUrl(url.origin, icon.src);
+      url = resolveUrl(url?.href, icon.src);
 
       return html`<div class="image-item image">
-        <img src="${url.origin}" alt="image text" />
+        <img src="${url.href}" alt="image text" />
         <p>${icon.sizes}</p>
       </div>`;
     });
@@ -420,10 +415,11 @@ export class AppManifest extends LitElement {
 
   renderScreenshots() {
     return this.manifest?.screenshots?.map(screenshot => {
-      const url = resolveUrl(this.manifest.start_url, screenshot.src);
+      let url = resolveUrl(this.siteUrl, this.manifest.start_url);
+      url = resolveUrl(url?.href, screenshot.src);
 
       return html`<div class="image-item screenshot">
-        <img src="${url.origin}" alt="image text" />
+        <img src="${url.href}" alt="image text" />
       </div>`;
     });
   }
