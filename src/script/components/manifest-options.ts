@@ -44,6 +44,13 @@ export class AppManifest extends LitElement {
   static get styles() {
     return [
       css`
+        :host {
+        }
+      `,
+      ToolTipStyles,
+      fastButtonCss,
+      fastCheckboxCss,
+      css`
         fast-divider {
           margin: 16px 0;
         }
@@ -162,10 +169,6 @@ export class AppManifest extends LitElement {
           width: 205px;
           height: 135px;
         }
-
-        ${ToolTipStyles}
-        ${fastButtonCss}
-        ${fastCheckboxCss}
       `,
     ];
   }

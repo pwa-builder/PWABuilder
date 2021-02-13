@@ -17,7 +17,7 @@ export class DropdownMenu extends LitElement {
   static get styles() {
     return [
       css`
-        :root {
+        :host {
         }
         ion-icon {
           vertical-align: middle;
