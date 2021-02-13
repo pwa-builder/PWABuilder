@@ -1,11 +1,11 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
-import { smallBreakPoint, mediumBreakPoint } from '../utils/breakpoints';
+import { smallBreakPoint, mediumBreakPoint } from '../utils/css/breakpoints';
 
-import "../components/app-button";
+import '../components/app-button';
 
 @customElement('loading-button')
 export class LoadingButton extends LitElement {
-  @property({ type: Boolean }) loading: boolean = false;
+  @property({ type: Boolean }) loading = false;
 
   static get styles() {
     return css`

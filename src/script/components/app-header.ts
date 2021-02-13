@@ -6,7 +6,7 @@ import {
   largeBreakPoint,
   mediumBreakPoint,
   smallBreakPoint,
-} from '../utils/breakpoints';
+} from '../utils/css/breakpoints';
 
 @customElement('app-header')
 export class AppHeader extends LitElement {

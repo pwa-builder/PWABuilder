@@ -7,7 +7,7 @@ import {
   smallBreakPoint,
   xLargeBreakPoint,
   xxLargeBreakPoint,
-} from '../utils/breakpoints';
+} from '../utils/css/breakpoints';
 import './app-header';
 
 @customElement('content-header')

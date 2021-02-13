@@ -7,7 +7,7 @@ import {
 } from 'lit-element';
 import { Router } from '@vaadin/router';
 
-import { smallBreakPoint } from '../utils/breakpoints';
+import { smallBreakPoint } from '../utils/css/breakpoints';
 
 import { runAllTests } from '../services/tests';
 import '../components/app-header';

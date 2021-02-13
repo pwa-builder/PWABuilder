@@ -6,7 +6,7 @@ import {
   internalProperty,
 } from 'lit-element';
 
-import { xxxLargeBreakPoint } from '../utils/breakpoints';
+import { xxxLargeBreakPoint } from '../utils/css/breakpoints';
 
 import '../components/content-header';
 import '../components/report-card';

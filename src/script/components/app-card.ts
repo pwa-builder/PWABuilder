@@ -7,7 +7,7 @@ import {
   mediumBreakPoint,
   largeBreakPoint,
   BreakpointValues,
-} from '../utils/breakpoints';
+} from '../utils/css/breakpoints';
 
 export enum AppCardModes {
   default = 'default',
