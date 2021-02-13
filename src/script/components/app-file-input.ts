@@ -7,6 +7,9 @@ import {
   query,
 } from 'lit-element';
 
+import { hidden } from '../utils/css/hidden';
+import { fastButtonCss } from '../utils/css/fast-elements';
+
 export interface FileInputDetails {
   input: HTMLInputElement;
 }
@@ -20,20 +23,11 @@ export class FileInput extends LitElement {
   static get styles() {
     return [
       css`
-        fast-button.file-button {
-          --accent-foreground-active: var(--secondary-font-color);
-          --accent-foreground-hover: var(--secondary-font-color);
-        }
-
-        fast-button::part(control) {
-          color: var(--secondary-font-color);
-        }
-
-        .hidden {
-          display: none;
-          visibility: hidden;
+        :host {
         }
       `,
+      hidden,
+      fastButtonCss,
     ];
   }
 

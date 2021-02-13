@@ -1,5 +1,6 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map';
+import { fastMenuCss } from '../utils/css/fast-elements';
 import { KeyboardKeys } from '../utils/keyboard';
 
 const dropdownComponentClass = 'dropdown-component';
@@ -14,72 +15,75 @@ export class DropdownMenu extends LitElement {
   staticButtonText = undefined;
 
   static get styles() {
-    return css`
-      :root {
-      }
+    return [
+      css`
+        :root {
+        }
+        ion-icon {
+          vertical-align: middle;
+        }
+      `,
+      fastMenuCss,
+      css`
+        .dropdown-menu,
+        fast-button {
+          width: 100%;
+        }
 
-      ion-icon {
-        vertical-align: middle;
-      }
+        fast-menu {
+          margin-top: 4px;
+        }
 
-      .dropdown-menu,
-      fast-button {
-        width: 100%;
-      }
+        .closed {
+          display: none;
+        }
 
-      fast-menu {
-        margin-top: 4px;
-      }
+        .dropdown-component {
+          z-index: 20;
+        }
 
-      .closed {
-        display: none;
-      }
+        fast-button::part(control) {
+          color: var(--secondary-font-color);
+          background: rgba(128, 128, 128, 0.05);
+          border-color: var(--secondary-font-color);
+          width: 100%;
+          justify-content: normal;
+        }
 
-      .dropdown-component {
-        z-index: 20;
-      }
+        fast-button::part(content) {
+          flex-grow: 2;
+          text-align: left;
+        }
 
-      fast-button::part(control) {
-        color: var(--secondary-font-color);
-        background: rgba(128, 128, 128, 0.05);
-        border-color: var(--secondary-font-color);
-        width: 100%;
-        justify-content: normal;
-      }
+        fast-menu {
+          position: absolute;
+          padding: 0;
+          background-color: var(--primary-background-color);
+          color: var(--font-color);
+          width: 100%;
+        }
 
-      fast-button::part(content) {
-        flex-grow: 2;
-        text-align: left;
-      }
+        fast-menu-item {
+          color: var(--font-color);
+          margin: 0;
+        }
 
-      fast-menu {
-        position: absolute;
-        padding: 0;
-        background-color: #ffffff;
-        color: var(--font-color);
-        width: 100%;
-      }
+        fast-menu-item:active,
+        fast-menu-item:focus-visible,
+        fast-menu-item:hover {
+          background-color: var(--link-color);
+          font-weight: 500;
+          color: var(--primary-background-color);
+        }
 
-      fast-menu-item {
-        color: var(--font-color);
-        margin: 0;
-      }
-
-      fast-menu-item:active,
-      fast-menu-item:focus-visible,
-      fast-menu-item:hover {
-        background-color: var(--link-color);
-        font-weight: 500;
-        color: #ffffff;
-      }
-
-      fast-menu-item:active,
-      fast-menu-item:focus-visible,
-      fast-menu-item:hover,
-      fast-menu-item.selected::part(content) {
-        font-weight: var(--font-bold);
-      }
-    `;
+        fast-menu-item:active,
+        fast-menu-item:focus-visible,
+        fast-menu-item:hover,
+        fast-menu-item.selected::part(content) {
+          font-weight: var(--font-bold);
+        }
+      `,
+    ];
   }
 
   get value() {

@@ -11,8 +11,29 @@ export const fastButtonCss = css`
   }
 `;
 
+export const fastTextField = css`
+  fast-text-field {
+    --accent-fill-rest: var(--secondary-font-color);
+    --accent-fill-active: var(--font-color);
+    --accent-fill-hover: var(--font-color);
+  }
+`;
+
 export const fastCheckboxCss = css`
   fast-checkbox {
+    --accent-fill-rest: var(--link-color);
+    --accent-fill-active: var(--link-color);
+    --accent-fill-hover: var(--link-color);
+  }
+`;
+
+export const fastMenuCss = css`
+  fast-menu {
+  }
+
+  fast-menu-item {
+    --neutral-fill-input-rest: var(--primary-background-color);
+    --accent-foreground-cut-rest: var(--primary-backgroud-color);
     --accent-fill-rest: var(--link-color);
     --accent-fill-active: var(--link-color);
     --accent-fill-hover: var(--link-color);
