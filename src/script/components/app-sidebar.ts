@@ -1,4 +1,4 @@
-import { BreakpointValues } from './../utils/breakpoints';
+import { BreakpointValues } from './../utils/css/breakpoints';
 import {
   LitElement,
   css,

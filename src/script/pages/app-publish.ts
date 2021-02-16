@@ -20,7 +20,7 @@ import { Router } from '@vaadin/router';
 import {
   largeBreakPoint,
   xxxLargeBreakPoint,
-} from '../utils/breakpoints';
+} from '../utils/css/breakpoints';
 
 @customElement('app-publish')
 export class AppPublish extends LitElement {

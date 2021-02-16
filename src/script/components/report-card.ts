@@ -8,7 +8,7 @@ import {
 } from 'lit-element';
 import { RawTestResult } from '../utils/interfaces';
 
-import { largeBreakPoint, xLargeBreakPoint } from '../utils/breakpoints';
+import { largeBreakPoint, xLargeBreakPoint } from '../utils/css/breakpoints';
 
 import './score-results';
 
