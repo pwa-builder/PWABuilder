@@ -7,28 +7,29 @@ import {
   property,
   internalProperty,
 } from 'lit-element';
-import { getResults, getURL } from '../services/app-info';
-import { RawTestResult } from '../utils/interfaces';
+import { getProgress, getResults, getURL } from '../services/app-info';
+import { Progress, ProgressList, RawTestResult, Status } from '../utils/interfaces';
 
-enum Status {
-  DONE = 'done',
-  ACTIVE = 'active',
-  PENDING = 'pending',
-}
 enum ItemType {
   HEADING = 'done',
   SUB_HEADING = 'sub-heading',
 }
+
 interface TabLayoutItem {
   title: string;
   status: Status;
   type: ItemType;
   class?: string;
 }
+
 @customElement('app-sidebar')
 export class AppSidebar extends LitElement {
   static get styles() {
     return css`
+      fast-accordion {
+        --neutral-foreground-rest: white;
+      }
+
       /** DESKTOP STYLES */
       aside.desktop-sidebar {
         color: var(--secondary-color);
@@ -239,6 +240,8 @@ export class AppSidebar extends LitElement {
   }
 
   firstUpdated() {
+    this.menuItems = getProgress();
+
     this.current_url = getURL();
 
     this.results = getResults();
@@ -250,29 +253,34 @@ export class AppSidebar extends LitElement {
   }
 
   handleResults() {
-    this.desktopSidebarItems.map(item => {
-      if (item.title === 'Manifest') {
-        if (this.results && this.results.manifest) {
-          if (this.results.manifest[0].result === true) {
-            item.status = Status.DONE;
+    // Check where we are at
+    const loc = new URL(location.href);
+
+    // Check for all items done
+    this.menuItems?.progress.map((item) => {
+      if (item.items) {
+
+        const remaining: Array<Progress> = [];
+
+        item.items.map((innerItem) => {
+          if (innerItem.done !== Status.DONE) {
+            remaining.push(item);
           }
+        })
+
+        if (remaining.length === 0) {
+          item.done = Status.DONE
+        }
+        else if (remaining.length > 0 && loc.pathname === item.location) {
+          item.done = Status.ACTIVE
+        }
+        else {
+          item.done = Status.PENDING
         }
       }
-      else if (item.title === 'Service Worker') {
-        if (this.results && this.results.service_worker) {
-          if (this.results.service_worker[0].result === true) {
-            item.status = Status.DONE;
-          }
-        }
-      }
-      else if (item.title === 'Security') {
-        if (this.results && this.results.security) {
-          if (this.results.security[0].result === true) {
-            item.status = Status.DONE;
-          }
-        }
-      }
-    });
+    })
+
+
   }
 
   @internalProperty() current_url: string | undefined;
@@ -301,9 +309,9 @@ export class AppSidebar extends LitElement {
     },
   ];
 
-  @property({ type: Array }) desktopSidebarItems: TabLayoutItem[] = [
+  /*@property({ type: Array }) desktopSidebarItems: TabLayoutItem[] = [
     {
-      title: 'test',
+      title: 'Test',
       status: Status.DONE,
       type: ItemType.HEADING,
       class: 'done',
@@ -344,7 +352,9 @@ export class AppSidebar extends LitElement {
       type: ItemType.HEADING,
       class: 'pending',
     },
-  ];
+  ];*/
+
+  @internalProperty() menuItems: ProgressList | undefined;
 
   @property({ type: Object }) mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`
@@ -352,8 +362,8 @@ export class AppSidebar extends LitElement {
 
   @property({ type: Boolean }) isDeskTopView = this.mql.matches;
 
-  renderIcon(item: TabLayoutItem) {
-    switch (item.status) {
+  renderIcon(item) {
+    switch (item.done) {
       case 'active':
         return html`<ion-icon class="icon active" name="ellipse"></ion-icon>`;
       case 'done':
@@ -391,19 +401,23 @@ export class AppSidebar extends LitElement {
     return items.map(item => {
       if (item.type === ItemType.HEADING) {
         return html`
-          <fast-menu-item class="heading ${item.class}">
-            ${this.renderIcon(item)} <span>${item.title}</span></fast-menu-item
+          <fast-accordion-item class="heading ${item.class}">
+            ${this.renderIcon(item)}
+            <span slot="heading">${item.title}</span></fast-accordion-item
           >
         `;
       } else if (item.type === ItemType.SUB_HEADING) {
         return html`
-          <fast-menu-item class="${item.class}">
-            ${this.renderIcon(item)}<span>${item.title}</span></fast-menu-item
+          <fast-accordion-item class="${item.class || ''}">
+            ${this.renderIcon(item)}<span slot="heading"
+              >${item.title}</span
+            ></fast-accordion-item
           >
         `;
       }
     });
   }
+
   renderDesktopBar() {
     return html`
       <aside class="desktop-sidebar">
@@ -422,9 +436,33 @@ export class AppSidebar extends LitElement {
           <h4 id="score-progress">PWAB Progress</h4>
         </div>
 
-        <fast-menu class="menu"
-          >${this.renderMenuItem(this.desktopSidebarItems)}
-        </fast-menu>
+        <fast-accordion class="menu">
+          ${
+            this.menuItems?.progress.map((item) => {
+              return html`
+                <fast-accordion-item>
+                  <div slot="heading">
+                    <span>${this.renderIcon(item)}</span>
+                    <span>${item.header}</span>
+                  </div>
+                  
+                  <ul>
+                  ${
+                    item.items.map((item) => {
+                      return html`
+                        <li>
+                          <span>${this.renderIcon(item)}</span>
+                          <span>${item.name}</span>
+                        </li>
+                      `
+                    })
+                  }
+                  </ul>
+                </fast-accordion-item>
+              `
+            })
+          }
+        </fast-accordion>
       </aside>
     `;
   }

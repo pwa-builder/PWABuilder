@@ -128,3 +128,27 @@ export interface SecurityDataResults {
     valid: true;
   };
 }
+
+export enum Status {
+  DONE = 'done',
+  ACTIVE = 'active',
+  PENDING = 'pending',
+}
+
+export interface Progress {
+  header: ListHeader;
+  location: string;
+  done: Status;
+  items: Array<{ name: string; done: Status }>;
+}
+
+export interface ProgressList {
+  progress: Array<Progress>
+}
+
+export enum ListHeader {
+  TEST = 'Test',
+  REVIEW = 'Review',
+  PUBLISH = 'Package',
+  COMPLETE = 'Complete'
+}

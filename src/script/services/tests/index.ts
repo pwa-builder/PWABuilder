@@ -1,5 +1,5 @@
-import { TestResult } from '../../utils/interfaces';
-import { setResults } from '../app-info';
+import { Status, TestResult } from '../../utils/interfaces';
+import { getProgress, setProgress, setResults } from '../app-info';
 import { testManifest } from './manifest';
 import { testSecurity } from './security';
 import { testServiceWorker } from './service-worker';
@@ -28,7 +28,17 @@ export async function runAllTests(url: string): Promise<AllTestResults> {
 
     setResults(resultsObject);
 
+    const progress = getProgress();
+    updateProgress(progress)
+
     resolve(resultsObject);
   });
+}
+
+function updateProgress(progress) {
+  progress.progress[0].items[1].done = Status.DONE;
+
+  const newProgress = progress;
+  setProgress(newProgress);
 }
 
