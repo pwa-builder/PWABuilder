@@ -38,23 +38,23 @@ export async function runAllTests(url: string): Promise<AllTestResults> {
 function updateProgress(progress, results) {
   progress.progress[0].items[1].done = Status.DONE;
 
-  progress.progress[1].items.map(item => {
-    if (item.title === 'Manifest') {
+  progress.progress[1].items.map((item: { name: string, done: Status}) => {
+    if (item.name === 'Manifest') {
       if (results && results.manifest) {
         if (results.manifest[0].result === true) {
-          item.status = Status.DONE;
+          item.done = Status.DONE;
         }
       }
-    } else if (item.title === 'Service Worker') {
+    } else if (item.name === 'Service Worker') {
       if (results && results.service_worker) {
         if (results.service_worker[0].result === true) {
-          item.status = Status.DONE;
+          item.done = Status.DONE;
         }
       }
-    } else if (item.title === 'Security') {
+    } else if (item.name === 'Security') {
       if (results && results.security) {
         if (results.security[0].result === true) {
-          item.status = Status.DONE;
+          item.done = Status.DONE;
         }
       }
     }
