@@ -370,6 +370,7 @@ export class AppHome extends LitElement {
         body="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Urna, sit scelerisque vestibulum magnis. Auctor dolor, tincidunt enim."
         ?open="${true}"
       >
+
         <div slot="modal-actions">
           <app-dropdown .menuItems=${['A', 'B', 'C']}></app-dropdown>
 

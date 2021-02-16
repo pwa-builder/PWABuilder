@@ -121,6 +121,14 @@ export class AppReport extends LitElement {
     const results = search.get('results');
 
     if (results) {
+      /*
+        cache results string as we may need this farther in the flow
+        if the user needs to be redirected back here.
+        Normally this would be because of issues with their manifest
+        that are causing issues with packaging
+      */
+      sessionStorage.setItem('results-string', results);
+
       this.resultOfTest = JSON.parse(results);
       console.log('resultOfTest', this.resultOfTest);
     }

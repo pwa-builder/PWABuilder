@@ -1,15 +1,32 @@
-import { css, customElement, html, LitElement } from 'lit-element';
+import {
+  css,
+  customElement,
+  html,
+  internalProperty,
+  LitElement,
+} from 'lit-element';
+import '../components/app-header';
+import '../components/app-card';
+import {
+  createWindowsPackageOptionsFromManifest,
+  generateWindowsPackage,
+} from '../services/publish/windows-publish';
+import {
+  createAndroidPackageOptionsFromManifest,
+  generateAndroidPackage,
+} from '../services/publish/android-publish';
+import { Router } from '@vaadin/router';
 
 import {
   largeBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/breakpoints';
 
-import '../components/app-header';
-import '../components/app-card';
-
 @customElement('app-publish')
 export class AppPublish extends LitElement {
+  @internalProperty() errored = false;
+  @internalProperty() errorMessage: string | undefined;
+
   constructor() {
     super();
   }
@@ -157,6 +174,45 @@ export class AppPublish extends LitElement {
     `;
   }
 
+  async generatePackage(type: platform) {
+    console.log('generating package', type);
+    switch (type) {
+      case 'windows':
+        try {
+          // eslint-disable-next-line no-case-declarations
+          const options = createWindowsPackageOptionsFromManifest('anaheim');
+
+          await generateWindowsPackage('anaheim', options);
+        } catch (err) {
+          this.showAlertModal(err);
+        }
+        break;
+      case 'android':
+        try {
+          // eslint-disable-next-line no-case-declarations
+          const androidOptions = createAndroidPackageOptionsFromManifest();
+
+          await generateAndroidPackage(androidOptions);
+        } catch (err) {
+          this.showAlertModal(err);
+        }
+        break;
+      case 'samsung':
+        console.log('samsung');
+        break;
+      default:
+        console.error(
+          `A platform type must be passed, ${type} is not a valid platform.`
+        );
+    }
+  }
+
+  showAlertModal(errorMessage: string) {
+    this.errored = true;
+
+    this.errorMessage = errorMessage;
+  }
+
   renderContentCards() {
     return platforms.map(
       platform =>
@@ -166,13 +222,37 @@ export class AppPublish extends LitElement {
             <p>${platform.description}</p>
           </div>
 
-          <app-button>Publish</app-button>
+          <app-button
+            @click="${() =>
+              this.generatePackage(platform.title.toLowerCase() as platform)}"
+            >Publish</app-button
+          >
         </li>`
     );
   }
 
+  returnToFix() {
+    const resultsString = sessionStorage.getItem("results-string");
+
+    // navigate back to report-card page
+    // with current manifest results
+    Router.go(`/reportcard?results=${resultsString}`);
+  }
+
   render() {
     return html`
+      <app-modal
+        title="Wait a minute!"
+        .body="${this.errorMessage || ''}"
+        ?open="${this.errored}"
+      >
+        <img slot="modal-image" src="/assets/warning.svg" alt="warning icon" />
+
+        <div slot="modal-actions">
+          <app-button @click="${() => this.returnToFix()}">Return to Manifest Options</app-button>
+        </div>
+      </app-modal>
+
       <div>
         <app-header></app-header>
 
@@ -235,7 +315,9 @@ export class AppPublish extends LitElement {
   }
 }
 
-export interface ICardData {
+type platform = 'windows' | 'android' | 'samsung';
+
+interface ICardData {
   title: string;
   description: string;
   isActionCard: boolean;
