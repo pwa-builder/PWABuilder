@@ -5,11 +5,13 @@ import {
   customElement,
   internalProperty,
 } from 'lit-element';
+import { classMap } from 'lit-html/directives/class-map';
 
 import {
+  BreakpointValues,
   largeBreakPoint,
   xxxLargeBreakPoint,
-} from '../utils/breakpoints';
+} from '../utils/css/breakpoints';
 
 import '../components/content-header';
 import '../components/report-card';
@@ -18,6 +20,9 @@ import '../components/sw-picker';
 import '../components/app-header';
 import '../components/app-sidebar';
 
+//@ts-ignore
+import style from '../../../styles/layout-defaults.css';
+
 @customElement('app-report')
 export class AppReport extends LitElement {
   @internalProperty() resultOfTest = null;
@@ -25,95 +30,108 @@ export class AppReport extends LitElement {
   @internalProperty() maniScore = 0;
   @internalProperty() securityScore = 0;
 
+  @internalProperty() mql = window.matchMedia(
+    `(min-width: ${BreakpointValues.largeUpper}px)`
+  );
+
+  @internalProperty() isDeskTopView = this.mql.matches;
+
   static get styles() {
-    return css`
-      h2 {
-        font-size: 44px;
-        line-height: 46px;
-        max-width: 526px;
-      }
+    return [
+      style,
+      css`
+        h2 {
+          font-size: 44px;
+          line-height: 46px;
+          max-width: 526px;
+        }
 
-      #hero-p {
-        font-size: 16px;
-        line-height: 24px;
-        max-width: 406px;
-      }
+        #hero-p {
+          font-size: 16px;
+          line-height: 24px;
+          max-width: 406px;
+        }
 
-      #tablet-sidebar {
-        display: none;
-      }
+        #tablet-sidebar {
+          display: none;
+        }
 
-      #desktop-sidebar {
-        display: block;
-      }
+        #desktop-sidebar {
+          display: block;
+        }
 
-      content-header::part(header) {
-        display: none;
-      }
+        content-header::part(header) {
+          display: none;
+        }
 
-      .tab {
-        background: var(--background-color);
-        color: rgba(41, 44, 58, 1);
-      }
+        .tab {
+          background: var(--background-color);
+          color: rgba(41, 44, 58, 1);
+        }
 
-      .tab[aria-selected='true'] {
-        color: var(--font-color);
-        font-weight: var(--font-bold);
-      }
+        .tab[aria-selected='true'] {
+          color: var(--font-color);
+          font-weight: var(--font-bold);
+        }
 
-      fast-tabs::part(activeIndicator) {
-        background: black;
-        border-radius: 0;
-        height: 2px;
-        margin-top: 0;
-      }
+        fast-tabs::part(activeIndicator) {
+          background: black;
+          border-radius: 0;
+          height: 2px;
+          margin-top: 0;
+        }
 
-      /* grid layout code*/
-      #grid {
-        display: grid;
-        grid-template-columns: 232px auto;
-      }
+        /* grid layout code*/
+        #grid {
+          display: grid;
+          grid-template-columns: 232px auto;
+        }
 
-      ${xxxLargeBreakPoint(
-        css`
-          #report {
-            max-width: 69em;
-          }
+        ${xxxLargeBreakPoint(
+          css`
+            #report {
+              max-width: 69em;
+            }
 
-          app-sidebar {
-            display: block;
-          }
+            app-sidebar {
+              display: block;
+            }
 
-          #tablet-sidebar {
-            display: none;
-          }
+            #tablet-sidebar {
+              display: none;
+            }
 
-          #desktop-sidebar {
-            display: block;
-          }
-        `
-      )}
+            #desktop-sidebar {
+              display: block;
+            }
+          `
+        )}
 
-      ${largeBreakPoint(
-        css`
-          #tablet-sidebar {
-            display: block;
-          }
+        ${largeBreakPoint(
+          css`
+            #tablet-sidebar {
+              display: block;
+            }
 
-          #desktop-sidebar {
-            display: none;
-          }
+            #desktop-sidebar {
+              display: none;
+            }
 
-          #grid {
-            display: initial;
-          }
-        `
-      )}
-    `;
+            #grid {
+              display: initial;
+            }
+          `
+        )}
+      `,
+    ];
   }
 
   constructor() {
     super();
+
+    this.mql.addEventListener('change', e => {
+      this.isDeskTopView = e.matches;
+    });
   }
 
   firstUpdated() {
@@ -163,7 +181,12 @@ export class AppReport extends LitElement {
     return html` <div>
       <app-header></app-header>
 
-      <div id="grid">
+      <div
+        id="grid"
+        class=${classMap({
+          "grid-mobile": this.isDeskTopView == false
+        })}
+      >
         <app-sidebar id="desktop-sidebar"></app-sidebar>
 
         <section id="report">

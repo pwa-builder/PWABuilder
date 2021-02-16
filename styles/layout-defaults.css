@@ -1,0 +1,8 @@
+#grid {
+  display: grid;
+  grid-template-columns: 232px auto;
+}
+
+.grid-mobile {
+  display: initial;
+}
