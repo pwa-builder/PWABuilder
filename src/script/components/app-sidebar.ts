@@ -10,6 +10,8 @@ import {
 import { getProgress, getResults, getURL } from '../services/app-info';
 import { Progress, ProgressList, RawTestResult, Status } from '../utils/interfaces';
 
+import { classMap } from 'lit-html/directives/class-map';
+
 enum ItemType {
   HEADING = 'done',
   SUB_HEADING = 'sub-heading',
@@ -28,6 +30,32 @@ export class AppSidebar extends LitElement {
     return css`
       fast-accordion {
         --neutral-foreground-rest: white;
+      }
+
+      fast-accordion-item::part(button) {
+        font-size: 16px;
+        font-weight: var(--font-bold);
+      }
+
+      .sidebar-item-header {
+        display: flex;
+      }
+
+      .active {
+        background: white;
+        color: black;
+      }
+
+      .active::part(button) {
+        --neutral-foreground-rest: var(--primary-color);
+      }
+
+      .done, .pending {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .done::part(button) {
+        --neutral-foreground-rest: green
       }
 
       /** DESKTOP STYLES */
@@ -440,8 +468,8 @@ export class AppSidebar extends LitElement {
           ${
             this.menuItems?.progress.map((item) => {
               return html`
-                <fast-accordion-item>
-                  <div slot="heading">
+                <fast-accordion-item class=${classMap({active: item.done === Status.ACTIVE, done: item.done === Status.DONE, pending: item.done === Status.PENDING})}>
+                  <div class="sidebar-item-header" slot="heading">
                     <span>${this.renderIcon(item)}</span>
                     <span>${item.header}</span>
                   </div>
