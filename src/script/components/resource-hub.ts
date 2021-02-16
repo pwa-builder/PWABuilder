@@ -6,7 +6,7 @@ import {
   mediumBreakPoint,
   smallBreakPoint,
   BreakpointValues,
-} from '../utils/breakpoints';
+} from '../utils/css/breakpoints';
 
 import { AppCardModes } from '../components/app-card';
 import '../components/app-button';

@@ -10,14 +10,15 @@ export function isUrl(url: string): boolean {
   return false;
 }
 
-export function resolveUrl(baseUrl: string, url: string): URL | string | undefined {
-  let parsedUrl: URL | string | undefined = undefined;
+export function resolveUrl(baseUrl: string, url: string): URL | undefined {
+  let parsedUrl: URL | undefined = undefined;
 
   try {
     parsedUrl = new URL(url);
   } catch (e) {
     if (!(e instanceof TypeError)) {
       console.log('url has a problem', url);
+      console.error(e);
     }
   }
 
@@ -26,6 +27,7 @@ export function resolveUrl(baseUrl: string, url: string): URL | string | undefin
       parsedUrl = new URL(baseUrl + url);
     } catch (e) {
       console.log('url has a problem', baseUrl, url);
+      console.error(e);
     }
   }
 

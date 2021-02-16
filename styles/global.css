@@ -41,6 +41,10 @@
   --primary-color: #292c3a;
   --secondary-color: #ffffff;
 
+  --warning-color: gold;
+  --error-color: red;
+  --error-background-color: #fff5f5;
+
   --button-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
   --button-radius: 44px;
   --mobile-button-radius: 61px;

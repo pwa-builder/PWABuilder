@@ -35,6 +35,9 @@ export class AppButton extends LitElement {
       }
 
       fast-button.link {
+        --accent-foreground-active: var(--font-color);
+        --accent-foreground-hover: var(--font-color);
+
         width: auto;
 
         border-radius: unset;

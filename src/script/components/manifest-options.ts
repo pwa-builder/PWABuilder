@@ -11,9 +11,14 @@ import { styleMap } from 'lit-html/directives/style-map';
 import { getManifest } from '../services/manifest';
 import { arrayHasChanged, objectHasChanged } from '../utils/hasChanged';
 import { resolveUrl } from '../utils/url';
+import { fastButtonCss, fastCheckboxCss } from '../utils/css/fast-elements';
+
+import { ModalCloseEvent } from './app-modal';
+import { tooltip, styles as ToolTipStyles } from './tooltip';
 
 import './dropdown-menu';
-import { tooltip, styles as ToolTipStyles } from './tooltip';
+import './app-file-input';
+
 @customElement('manifest-options')
 export class AppManifest extends LitElement {
   @property({ type: Object, hasChanged: objectHasChanged })
@@ -21,12 +26,30 @@ export class AppManifest extends LitElement {
   @property({ type: Number }) score = 0;
   @property({ type: Array, hasChanged: arrayHasChanged }) screenshotList = [];
 
+  @property({ type: Boolean }) uploadModalOpen = false;
+
   @internalProperty()
   protected backgroundColorRadioValue: 'none' | 'transparent' | 'custom' =
     'none';
 
+  protected searchParams: URLSearchParams;
+  protected get siteUrl(): string {
+    if (!this.searchParams) {
+      this.searchParams = new URLSearchParams(location.search);
+    }
+
+    return this.searchParams.get('site');
+  }
+
   static get styles() {
     return [
+      css`
+        :host {
+        }
+      `,
+      ToolTipStyles,
+      fastButtonCss,
+      fastCheckboxCss,
       css`
         fast-divider {
           margin: 16px 0;
@@ -39,18 +62,6 @@ export class AppManifest extends LitElement {
         fast-text-field,
         app-dropdown::part(layout) {
           width: 300px;
-        }
-
-        fast-button::part(control) {
-          color: var(--secondary-font-color);
-        }
-
-        fast-button::part(control::before) {
-          color: var(--secondary-font-color);
-        }
-
-        fast-text-field::part(root) {
-          border-color: var(--secondary-font-color);
         }
 
         #bg-custom-color {
@@ -120,18 +131,9 @@ export class AppManifest extends LitElement {
           vertical-align: middle;
         }
 
-        /* .head */
-
-        .info {
-        }
-
-        .images {
-        }
-
-        .settings {
-        }
-
-        .view-code {
+        .modal-action-form {
+          display: flex;
+          flex-direction: column;
         }
 
         .item-top {
@@ -167,8 +169,6 @@ export class AppManifest extends LitElement {
           width: 205px;
           height: 135px;
         }
-
-        ${ToolTipStyles}
       `,
     ];
   }
@@ -213,6 +213,19 @@ export class AppManifest extends LitElement {
               <app-button appearance="outline" @click=${this.openUploadModal}
                 >Upload</app-button
               >
+              <app-modal
+                modalId="uploadModal"
+                title="Upload information"
+                body="This is or uploading screenshots"
+                ?open=${this.uploadModalOpen}
+                @app-modal-close=${this.uploadModalClose}
+              >
+                <div slot="modal-actions">
+                  <form class="modal-action-form">
+                    ${this.renderModalInput()}
+                  </form>
+                </div>
+              </app-modal>
             </div>
             <div class="collection image-items">${this.renderIcons()}</div>
 
@@ -281,7 +294,7 @@ export class AppManifest extends LitElement {
         <div class="info-item">
           <div class="item-top">
             <h3>${item.title}</h3>
-            ${this.renderToolTip(item.title + '-tooltip', item.tooltipText)}
+            ${this.renderToolTip(item.entry + '-tooltip', item.tooltipText)}
           </div>
           <p>${item.description}</p>
           <fast-text-field
@@ -322,7 +335,7 @@ export class AppManifest extends LitElement {
         <div class="setting-item">
           <div class="item-top">
             <h3>${item.title}</h3>
-            ${this.renderToolTip(item.title + '-tooltip', item.tooltipText)}
+            ${this.renderToolTip(item.entry + '-tooltip', item.tooltipText)}
           </div>
           <p>${item.description}</p>
           ${field}
@@ -364,12 +377,13 @@ export class AppManifest extends LitElement {
 
   renderIcons() {
     return this.manifest?.icons?.map(icon => {
-      const url = resolveUrl(this.manifest.start_url, icon.src);
+      let url = resolveUrl(this.siteUrl, this.manifest.start_url);
+      url = resolveUrl(url?.href, icon.src);
 
       return html`<div class="image-item image">
-        <img src="${url}" alt="image text" />
+        <img src="${url.href}" alt="image text" />
         <p>${icon.sizes}</p>
-      </div> `;
+      </div>`;
     });
   }
 
@@ -393,15 +407,27 @@ export class AppManifest extends LitElement {
 
   renderScreenshots() {
     return this.manifest?.screenshots?.map(screenshot => {
-      const url = resolveUrl(this.manifest.start_url, screenshot.src);
+      let url = resolveUrl(this.siteUrl, this.manifest.start_url);
+      url = resolveUrl(url?.href, screenshot.src);
 
       return html`<div class="image-item screenshot">
-        <img src="${url}" alt="image text" />
+        <img src="${url.href}" alt="image text" />
       </div>`;
     });
   }
 
   renderToolTip = tooltip;
+
+  renderModalInput() {
+    return html`
+      <app-file-input
+        inputId="modal-file-input"
+        @input-change=${this.handleModalInputFileChange}
+      ></app-file-input>
+      <fast-checkbox> Generate missing images from this image </fast-checkbox>
+      <app-button>Upload</app-button>
+    `;
+  }
 
   handleInputChange(event: InputEvent) {
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
@@ -426,9 +452,12 @@ export class AppManifest extends LitElement {
     this.manifest.theme_color = (<HTMLInputElement>event.target).value;
   }
 
+  handleModalInputFileChange() {
+    console.log('handleModalInputFileChange');
+  }
+
   addNewScreenshot() {
-    this.screenshotList.push(undefined);
-    this.requestUpdate();
+    this.screenshotList = [...this.screenshotList, undefined];
   }
 
   done() {
@@ -436,7 +465,13 @@ export class AppManifest extends LitElement {
   }
 
   openUploadModal() {
-    console.log('open upload modal', event);
+    this.uploadModalOpen = true;
+  }
+
+  uploadModalClose(event: CustomEvent<ModalCloseEvent>) {
+    if (event.detail.modalId === 'uploadModal') {
+      this.uploadModalOpen = false;
+    }
   }
 
   downloadImages() {

@@ -1,15 +1,15 @@
 .error {
-  color: red;
-  border: 1px solid red;
+  color: var(--error-color);
+  border: 1px solid var(--error-color);
   border-radius: var(--input-radius);
-  background: #fff5f5;
+  background: var(--error-background-color);
 }
 
 .error-message {
-  color: red;
+  color: var(--error-color);
   font-size: var(--small-font-size);
 }
 
 .error::part(control) {
-  background: #fff5f5;
+  background: var(--error-background-color);
 }

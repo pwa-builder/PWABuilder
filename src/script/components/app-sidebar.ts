@@ -1,5 +1,5 @@
 import { classMap } from 'lit-html/directives/class-map';
-import { BreakpointValues } from './../utils/breakpoints';
+import { BreakpointValues } from './../utils/css/breakpoints';
 import { LitElement, css, html, customElement, property } from 'lit-element';
 
 enum Status {
