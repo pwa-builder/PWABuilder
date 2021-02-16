@@ -324,13 +324,11 @@ export class ReportCard extends LitElement {
                   </fast-button>
                 </div>
               </div>
-
               <app-button
                 @click="${() => this.openSWOptions()}"
                 class="options-button"
                 >Service Worker Options</app-button
               >
-
               <score-results
                 .testResults="${this.results?.service_worker}"
                 @scored="${(ev: CustomEvent) => this.handleSWScore(ev)}"

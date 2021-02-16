@@ -1,6 +1,6 @@
 import { LitElement, css, html, customElement } from 'lit-element';
 
-import { mediumBreakPoint, xxxLargeBreakPoint } from '../utils/breakpoints';
+import { mediumBreakPoint, xxxLargeBreakPoint } from '../utils/css/breakpoints';
 
 @customElement('app-footer')
 export class AppFooter extends LitElement {

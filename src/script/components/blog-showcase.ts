@@ -7,7 +7,7 @@ import {
   xLargeBreakPoint,
   xxxLargeBreakPoint,
   BreakpointValues,
-} from '../utils/breakpoints';
+} from '../utils/css/breakpoints';
 import { hidden_all } from '../utils/css/hidden';
 
 @customElement('blog-showcase')

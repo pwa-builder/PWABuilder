@@ -14,7 +14,7 @@ import {
   largeBreakPoint,
   xxLargeBreakPoint,
   xxxLargeBreakPoint,
-} from '../utils/breakpoints';
+} from '../utils/css/breakpoints';
 import { fetchManifest } from '../services/manifest';
 
 import '../components/content-header';
