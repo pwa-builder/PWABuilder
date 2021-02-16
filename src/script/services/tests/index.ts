@@ -24,21 +24,42 @@ export async function runAllTests(url: string): Promise<AllTestResults> {
       manifest: await maniTestResult,
       service_worker: await serviceWorkerTestResult,
       security: await securityTestResult,
-    }
+    };
 
     setResults(resultsObject);
 
     const progress = getProgress();
-    updateProgress(progress)
+    updateProgress(progress, resultsObject);
 
     resolve(resultsObject);
   });
 }
 
-function updateProgress(progress) {
+function updateProgress(progress, results) {
   progress.progress[0].items[1].done = Status.DONE;
+
+  progress.progress[1].items.map(item => {
+    if (item.title === 'Manifest') {
+      if (results && results.manifest) {
+        if (results.manifest[0].result === true) {
+          item.status = Status.DONE;
+        }
+      }
+    } else if (item.title === 'Service Worker') {
+      if (results && results.service_worker) {
+        if (results.service_worker[0].result === true) {
+          item.status = Status.DONE;
+        }
+      }
+    } else if (item.title === 'Security') {
+      if (results && results.security) {
+        if (results.security[0].result === true) {
+          item.status = Status.DONE;
+        }
+      }
+    }
+  });
 
   const newProgress = progress;
   setProgress(newProgress);
 }
-

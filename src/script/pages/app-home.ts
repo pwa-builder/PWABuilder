@@ -32,7 +32,7 @@ import style from '../../../styles/error-styles.css';
 import '@pwabuilder/pwainstall';
 import { Router } from '@vaadin/router';
 import { getProgress, setProgress, setURL } from '../services/app-info';
-import { Progress, Status } from '../utils/interfaces';
+import { Status } from '../utils/interfaces';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
