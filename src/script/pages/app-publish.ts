@@ -5,6 +5,8 @@ import {
   internalProperty,
   LitElement,
 } from 'lit-element';
+import { classMap } from 'lit-html/directives/class-map';
+
 import '../components/app-header';
 import '../components/app-card';
 import {
@@ -17,18 +19,25 @@ import {
 } from '../services/publish/android-publish';
 import { Router } from '@vaadin/router';
 
-import {
-  largeBreakPoint,
-  xxxLargeBreakPoint,
-} from '../utils/css/breakpoints';
+import { BreakpointValues, largeBreakPoint, xxxLargeBreakPoint } from '../utils/css/breakpoints';
 
 @customElement('app-publish')
 export class AppPublish extends LitElement {
   @internalProperty() errored = false;
   @internalProperty() errorMessage: string | undefined;
 
+  @internalProperty() mql = window.matchMedia(
+    `(min-width: ${BreakpointValues.largeUpper}px)`
+  );
+
+  @internalProperty() isDeskTopView = this.mql.matches;
+
   constructor() {
     super();
+
+    this.mql.addEventListener('change', e => {
+      this.isDeskTopView = e.matches;
+    });
   }
 
   static get styles() {
@@ -130,12 +139,6 @@ export class AppPublish extends LitElement {
         display: none;
       }
 
-      /* grid layout code*/
-      #grid {
-        display: grid;
-        grid-template-columns: 232px auto;
-      }
-
       ${xxxLargeBreakPoint(
         css`
           #report {
@@ -164,10 +167,6 @@ export class AppPublish extends LitElement {
 
           #desktop-sidebar {
             display: none;
-          }
-
-          #grid {
-            display: initial;
           }
         `
       )}
@@ -232,7 +231,7 @@ export class AppPublish extends LitElement {
   }
 
   returnToFix() {
-    const resultsString = sessionStorage.getItem("results-string");
+    const resultsString = sessionStorage.getItem('results-string');
 
     // navigate back to report-card page
     // with current manifest results
@@ -249,14 +248,21 @@ export class AppPublish extends LitElement {
         <img slot="modal-image" src="/assets/warning.svg" alt="warning icon" />
 
         <div slot="modal-actions">
-          <app-button @click="${() => this.returnToFix()}">Return to Manifest Options</app-button>
+          <app-button @click="${() => this.returnToFix()}"
+            >Return to Manifest Options</app-button
+          >
         </div>
       </app-modal>
 
       <div>
         <app-header></app-header>
 
-        <div id="grid">
+        <div
+          id="grid"
+          class=${classMap({
+            'grid-mobile': this.isDeskTopView == false,
+          })}
+        >
           <app-sidebar id="desktop-sidebar"></app-sidebar>
 
           <div>

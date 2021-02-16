@@ -81,12 +81,6 @@ export class AppReport extends LitElement {
           margin-top: 0;
         }
 
-        /* grid layout code*/
-        #grid {
-          display: grid;
-          grid-template-columns: 232px auto;
-        }
-
         ${xxxLargeBreakPoint(
           css`
             #report {
@@ -115,10 +109,6 @@ export class AppReport extends LitElement {
 
             #desktop-sidebar {
               display: none;
-            }
-
-            #grid {
-              display: initial;
             }
           `
         )}

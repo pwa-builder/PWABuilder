@@ -3,6 +3,6 @@
   grid-template-columns: 232px auto;
 }
 
-.grid-mobile {
+#grid.grid-mobile {
   display: initial;
 }
