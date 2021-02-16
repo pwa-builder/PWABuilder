@@ -21,6 +21,9 @@ import { Router } from '@vaadin/router';
 
 import { BreakpointValues, largeBreakPoint, xxxLargeBreakPoint } from '../utils/css/breakpoints';
 
+//@ts-ignore
+import style from '../../../styles/layout-defaults.css';
+
 @customElement('app-publish')
 export class AppPublish extends LitElement {
   @internalProperty() errored = false;
@@ -41,7 +44,9 @@ export class AppPublish extends LitElement {
   }
 
   static get styles() {
-    return css`
+    return [
+      style,
+      css`
       .header {
         padding: 1rem 3rem;
       }
@@ -170,7 +175,7 @@ export class AppPublish extends LitElement {
           }
         `
       )}
-    `;
+    `];
   }
 
   async generatePackage(type: platform) {
