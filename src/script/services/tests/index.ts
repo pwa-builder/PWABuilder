@@ -1,4 +1,5 @@
 import { TestResult } from '../../utils/interfaces';
+import { setResults } from '../app-info';
 import { testManifest } from './manifest';
 import { testSecurity } from './security';
 import { testServiceWorker } from './service-worker';
@@ -19,10 +20,15 @@ export async function runAllTests(url: string): Promise<AllTestResults> {
     const serviceWorkerTestResult = testServiceWorker(url);
     const securityTestResult = testSecurity(url);
 
-    resolve({
+    const resultsObject = {
       manifest: await maniTestResult,
       service_worker: await serviceWorkerTestResult,
       security: await securityTestResult,
-    });
+    }
+
+    setResults(resultsObject);
+
+    resolve(resultsObject);
   });
 }
+

@@ -3,7 +3,7 @@ import { fetchManifest } from '../manifest';
 
 export async function testManifest(
   url: string
-): Promise<Array<TestResult> | undefined> {
+): Promise<Array<TestResult>> {
   console.info('Testing Manifest');
   const manifestData = await fetchManifest(url);
 

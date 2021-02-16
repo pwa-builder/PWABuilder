@@ -22,6 +22,8 @@ import '../components/resource-hub';
 import '../components/loading-button';
 import '../components/app-modal';
 import '../components/dropdown-menu';
+import '../components/app-sidebar';
+
 
 //@ts-ignore
 import style from '../../../styles/error-styles.css';
@@ -29,6 +31,7 @@ import style from '../../../styles/error-styles.css';
 // For more info on the @pwabuilder/pwainstall component click here https://github.com/pwa-builder/pwa-install
 import '@pwabuilder/pwainstall';
 import { Router } from '@vaadin/router';
+import { setURL } from '../services/app-info';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -272,6 +275,8 @@ export class AppHome extends LitElement {
         } else {
           this.errorGettingURL = false;
           this.errorMessage = undefined;
+
+          setURL(this.siteURL);
           
           Router.go(`/testing?site=${this.siteURL}`);
         }

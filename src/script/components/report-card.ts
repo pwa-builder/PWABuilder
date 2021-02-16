@@ -8,7 +8,7 @@ import {
 } from 'lit-element';
 import { RawTestResult } from '../utils/interfaces';
 
-import { xxxLargeBreakPoint } from '../utils/css/breakpoints';
+import { largeBreakPoint, xLargeBreakPoint } from '../utils/css/breakpoints';
 
 import './score-results';
 
@@ -29,6 +29,10 @@ export class ReportCard extends LitElement {
       :host {
         width: 100%;
         display: block;
+
+        padding-left: 32px;
+        padding-right: 32px;
+        padding-bottom: 32px;
       }
 
       #report-header {
@@ -41,7 +45,7 @@ export class ReportCard extends LitElement {
       }
 
       .accordion-heading-block {
-        width: 96vw;
+        width: 76vw;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -66,6 +70,7 @@ export class ReportCard extends LitElement {
 
       fast-accordion-item::part(button) {
         height: 6em;
+        width: 70vw;
       }
 
       .flipper-button {
@@ -137,13 +142,23 @@ export class ReportCard extends LitElement {
         border-radius: var(--button-radius);
       }
 
-      ${xxxLargeBreakPoint(
+      ${xLargeBreakPoint(
         css`
-          .accordion-heading-block {
-            width: 113em;
-          }
+        .accordion-heading-block, #report-content {
+          width: 71vw;
+        }
         `
       )}
+
+      ${
+        largeBreakPoint(
+          css`
+            .accordion-heading-block {
+              width: 90vw;
+            }
+          `
+        )
+      }
     `;
   }
 
@@ -151,7 +166,7 @@ export class ReportCard extends LitElement {
     super();
   }
 
-  opened(targetEl: EventTarget) {
+  opened(targetEl: EventTarget | null) {
     console.log(targetEl);
 
     if (targetEl) {
@@ -289,7 +304,7 @@ export class ReportCard extends LitElement {
               >
 
               <score-results
-                .testResults="${this.results.manifest}"
+                .testResults="${this.results?.manifest}"
                 @scored="${(ev: CustomEvent) => this.handleManiScore(ev)}"
               ></score-results>
             </fast-accordion-item>
@@ -315,7 +330,7 @@ export class ReportCard extends LitElement {
                 >Service Worker Options</app-button
               >
               <score-results
-                .testResults="${this.results.service_worker}"
+                .testResults="${this.results?.service_worker}"
                 @scored="${(ev: CustomEvent) => this.handleSWScore(ev)}"
               ></score-results>
             </fast-accordion-item>
@@ -337,7 +352,7 @@ export class ReportCard extends LitElement {
               </div>
 
               <score-results
-                .testResults="${this.results.security}"
+                .testResults="${this.results?.security}"
                 @scored="${(ev: CustomEvent) => this.handleSecurityScore(ev)}"
               ></score-results>
             </fast-accordion-item>

@@ -5,8 +5,9 @@ import {
   internalProperty,
   LitElement,
 } from 'lit-element';
+import { classMap } from 'lit-html/directives/class-map';
+
 import '../components/app-header';
-import '../components/app-sidebar';
 import '../components/app-card';
 import {
   createWindowsPackageOptionsFromManifest,
@@ -18,13 +19,25 @@ import {
 } from '../services/publish/android-publish';
 import { Router } from '@vaadin/router';
 
+import { BreakpointValues, largeBreakPoint, xxxLargeBreakPoint } from '../utils/css/breakpoints';
+
 @customElement('app-publish')
 export class AppPublish extends LitElement {
   @internalProperty() errored = false;
   @internalProperty() errorMessage: string | undefined;
 
+  @internalProperty() mql = window.matchMedia(
+    `(min-width: ${BreakpointValues.largeUpper}px)`
+  );
+
+  @internalProperty() isDeskTopView = this.mql.matches;
+
   constructor() {
     super();
+
+    this.mql.addEventListener('change', e => {
+      this.isDeskTopView = e.matches;
+    });
   }
 
   static get styles() {
@@ -35,6 +48,14 @@ export class AppPublish extends LitElement {
 
       .header p {
         width: min(100%, 600px);
+      }
+
+      #tablet-sidebar {
+        display: none;
+      }
+
+      #desktop-sidebar {
+        display: block;
       }
 
       #summary-block {
@@ -115,8 +136,40 @@ export class AppPublish extends LitElement {
       }
 
       content-header::part(header) {
-        --header-background: white;
+        display: none;
       }
+
+      ${xxxLargeBreakPoint(
+        css`
+          #report {
+            max-width: 69em;
+          }
+
+          app-sidebar {
+            display: block;
+          }
+
+          #tablet-sidebar {
+            display: none;
+          }
+
+          #desktop-sidebar {
+            display: block;
+          }
+        `
+      )}
+
+      ${largeBreakPoint(
+        css`
+          #tablet-sidebar {
+            display: block;
+          }
+
+          #desktop-sidebar {
+            display: none;
+          }
+        `
+      )}
     `;
   }
 
@@ -178,7 +231,7 @@ export class AppPublish extends LitElement {
   }
 
   returnToFix() {
-    const resultsString = sessionStorage.getItem("results-string");
+    const resultsString = sessionStorage.getItem('results-string');
 
     // navigate back to report-card page
     // with current manifest results
@@ -187,20 +240,6 @@ export class AppPublish extends LitElement {
 
   render() {
     return html`
-      <content-header>
-        <h2 slot="hero-container">Small details go a long way.</h2>
-        <p id="hero-p" slot="hero-container">
-          Description about what is going to take place below and how they are
-          on their way to build their PWA. Mention nav bar for help.
-        </p>
-
-        <img
-          slot="picture-container"
-          src="/assets/images/reportcard-header.svg"
-          alt="report card header image"
-        />
-      </content-header>
-
       <app-modal
         title="Wait a minute!"
         .body="${this.errorMessage || ''}"
@@ -209,43 +248,74 @@ export class AppPublish extends LitElement {
         <img slot="modal-image" src="/assets/warning.svg" alt="warning icon" />
 
         <div slot="modal-actions">
-          <app-button @click="${() => this.returnToFix()}">Return to Manifest Options</app-button>
+          <app-button @click="${() => this.returnToFix()}"
+            >Return to Manifest Options</app-button
+          >
         </div>
       </app-modal>
 
       <div>
-        <section id="summary-block">
-          <h3>Publish your PWA to stores</h3>
+        <app-header></app-header>
 
-          <p>
-            Ready to build your PWA? Tap "Build My PWA" to package your PWA for
-            the app stores or tap "Feature Store" to check out the latest web
-            components from the PWABuilder team to improve your PWA even
-            further!
-          </p>
-        </section>
+        <div
+          id="grid"
+          class=${classMap({
+            'grid-mobile': this.isDeskTopView == false,
+          })}
+        >
+          <app-sidebar id="desktop-sidebar"></app-sidebar>
 
-        <section class="container">
-          <ul>
-            ${this.renderContentCards()}
-          </ul>
+          <div>
+            <content-header>
+              <h2 slot="hero-container">Small details go a long way.</h2>
+              <p id="hero-p" slot="hero-container">
+                Description about what is going to take place below and how they
+                are on their way to build their PWA. Mention nav bar for help.
+              </p>
 
-          <div id="up-next">
-            <h5>Up next</h5>
+              <img
+                slot="picture-container"
+                src="/assets/images/reportcard-header.svg"
+                alt="report card header image"
+              />
+            </content-header>
 
-            <p>
-              Ready to build your PWA? Tap "Build My PWA" to package your PWA
-              for the app stores or tap "Feature Store" to check out the latest
-              web components from the PWABuilder team to improve your PWA even
-              further!
-            </p>
+            <app-sidebar id="tablet-sidebar"></app-sidebar>
+
+            <section id="summary-block">
+              <h3>Publish your PWA to stores</h3>
+
+              <p>
+                Ready to build your PWA? Tap "Build My PWA" to package your PWA
+                for the app stores or tap "Feature Store" to check out the
+                latest web components from the PWABuilder team to improve your
+                PWA even further!
+              </p>
+            </section>
+
+            <section class="container">
+              <ul>
+                ${this.renderContentCards()}
+              </ul>
+
+              <div id="up-next">
+                <h5>Up next</h5>
+
+                <p>
+                  Ready to build your PWA? Tap "Build My PWA" to package your
+                  PWA for the app stores or tap "Feature Store" to check out the
+                  latest web components from the PWABuilder team to improve your
+                  PWA even further!
+                </p>
+              </div>
+
+              <div class="action-buttons">
+                <app-button>Back</app-button>
+                <app-button>Next</app-button>
+              </div>
+            </section>
           </div>
-
-          <div class="action-buttons">
-            <app-button>Back</app-button>
-            <app-button>Next</app-button>
-          </div>
-        </section>
+        </div>
       </div>
     `;
   }

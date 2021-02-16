@@ -5,13 +5,23 @@ import {
   customElement,
   internalProperty,
 } from 'lit-element';
+import { classMap } from 'lit-html/directives/class-map';
 
-import { xxxLargeBreakPoint } from '../utils/css/breakpoints';
+import {
+  BreakpointValues,
+  largeBreakPoint,
+  xxxLargeBreakPoint,
+} from '../utils/css/breakpoints';
 
 import '../components/content-header';
 import '../components/report-card';
 import '../components/manifest-options';
 import '../components/sw-picker';
+import '../components/app-header';
+import '../components/app-sidebar';
+
+//@ts-ignore
+import style from '../../../styles/layout-defaults.css';
 
 @customElement('app-report')
 export class AppReport extends LitElement {
@@ -20,57 +30,98 @@ export class AppReport extends LitElement {
   @internalProperty() maniScore = 0;
   @internalProperty() securityScore = 0;
 
+  @internalProperty() mql = window.matchMedia(
+    `(min-width: ${BreakpointValues.largeUpper}px)`
+  );
+
+  @internalProperty() isDeskTopView = this.mql.matches;
+
   static get styles() {
-    return css`
-      h2 {
-        font-size: 44px;
-        line-height: 46px;
-        max-width: 526px;
-      }
+    return [
+      style,
+      css`
+        h2 {
+          font-size: 44px;
+          line-height: 46px;
+          max-width: 526px;
+        }
 
-      #hero-p {
-        font-size: 16px;
-        line-height: 24px;
-        max-width: 406px;
-      }
+        #hero-p {
+          font-size: 16px;
+          line-height: 24px;
+          max-width: 406px;
+        }
 
-      content-header::part(header) {
-        --header-background: white;
-      }
+        #tablet-sidebar {
+          display: none;
+        }
 
-      #report {
-        padding: 16px;
-      }
+        #desktop-sidebar {
+          display: block;
+        }
 
-      .tab {
-        background: var(--background-color);
-        color: rgba(41, 44, 58, 1);
-      }
+        content-header::part(header) {
+          display: none;
+        }
 
-      .tab[aria-selected='true'] {
-        color: var(--font-color);
-        font-weight: var(--font-bold);
-      }
+        .tab {
+          background: var(--background-color);
+          color: rgba(41, 44, 58, 1);
+        }
 
-      fast-tabs::part(activeIndicator) {
-        background: black;
-        border-radius: 0;
-        height: 2px;
-        margin-top: 0;
-      }
+        .tab[aria-selected='true'] {
+          color: var(--font-color);
+          font-weight: var(--font-bold);
+        }
 
-      ${xxxLargeBreakPoint(
-        css`
-          #report {
-            max-width: 69em;
-          }
-        `
-      )}
-    `;
+        fast-tabs::part(activeIndicator) {
+          background: black;
+          border-radius: 0;
+          height: 2px;
+          margin-top: 0;
+        }
+
+        ${xxxLargeBreakPoint(
+          css`
+            #report {
+              max-width: 69em;
+            }
+
+            app-sidebar {
+              display: block;
+            }
+
+            #tablet-sidebar {
+              display: none;
+            }
+
+            #desktop-sidebar {
+              display: block;
+            }
+          `
+        )}
+
+        ${largeBreakPoint(
+          css`
+            #tablet-sidebar {
+              display: block;
+            }
+
+            #desktop-sidebar {
+              display: none;
+            }
+          `
+        )}
+      `,
+    ];
   }
 
   constructor() {
     super();
+
+    this.mql.addEventListener('change', e => {
+      this.isDeskTopView = e.matches;
+    });
   }
 
   firstUpdated() {
@@ -118,50 +169,63 @@ export class AppReport extends LitElement {
 
   render() {
     return html` <div>
-      <content-header>
-        <h2 slot="hero-container">Getting down to business.</h2>
-        <p id="hero-p" slot="hero-container">
-          Description about what is going to take place below and how they are
-          on their way to build their PWA. Mention nav bar for help.
-        </p>
+      <app-header></app-header>
 
-        <img
-          slot="picture-container"
-          src="/assets/images/reportcard-header.svg"
-          alt="report card header image"
-        />
-      </content-header>
+      <div
+        id="grid"
+        class=${classMap({
+          "grid-mobile": this.isDeskTopView == false
+        })}
+      >
+        <app-sidebar id="desktop-sidebar"></app-sidebar>
 
-      <section id="report">
-        <fast-tabs activeId="sections">
-          <fast-tab class="tab" id="overview">Overview</fast-tab>
-          <fast-tab class="tab" id="mani">Manifest Options</fast-tab>
-          <fast-tab class="tab" id="sw">Service Worker Options</fast-tab>
+        <section id="report">
+          <content-header>
+            <h2 slot="hero-container">Getting down to business.</h2>
+            <p id="hero-p" slot="hero-container">
+              Description about what is going to take place below and how they
+              are on their way to build their PWA. Mention nav bar for help.
+            </p>
 
-          <fast-tab-panel id="overviewPanel">
-            <report-card
-              @sw-scored="${ev =>
-                this.handleScoreForDisplay('sw', ev.detail.score)}"
-              @mani-scored="${ev =>
-                this.handleScoreForDisplay('manifest', ev.detail.score)}"
-              @security-scored="${ev =>
-                this.handleScoreForDisplay('manifest', ev.detail.score)}"
-              @open-mani-options="${() => this.openManiOptions()}"
-              @open-sw-options="${() => this.openSWOptions()}"
-              .results="${this.resultOfTest}"
-            ></report-card>
-          </fast-tab-panel>
-          <fast-tab-panel id="manifestPanel">
-            <manifest-options .score=${this.maniScore}></manifest-options>
-          </fast-tab-panel>
-          <fast-tab-panel id="swPanel">
-            <sw-picker
-              @back-to-overview="${() => this.openOverview()}"
-              score="${this.swScore}"
-            ></sw-picker>
-          </fast-tab-panel>
-        </fast-tabs>
-      </section>
+            <img
+              slot="picture-container"
+              src="/assets/images/reportcard-header.svg"
+              alt="report card header image"
+            />
+          </content-header>
+
+          <app-sidebar id="tablet-sidebar"></app-sidebar>
+
+          <fast-tabs activeId="sections">
+            <fast-tab class="tab" id="overview">Overview</fast-tab>
+            <fast-tab class="tab" id="mani">Manifest Options</fast-tab>
+            <fast-tab class="tab" id="sw">Service Worker Options</fast-tab>
+
+            <fast-tab-panel id="overviewPanel">
+              <report-card
+                @sw-scored="${ev =>
+                  this.handleScoreForDisplay('sw', ev.detail.score)}"
+                @mani-scored="${ev =>
+                  this.handleScoreForDisplay('manifest', ev.detail.score)}"
+                @security-scored="${ev =>
+                  this.handleScoreForDisplay('manifest', ev.detail.score)}"
+                @open-mani-options="${() => this.openManiOptions()}"
+                @open-sw-options="${() => this.openSWOptions()}"
+                .results="${this.resultOfTest}"
+              ></report-card>
+            </fast-tab-panel>
+            <fast-tab-panel id="manifestPanel">
+              <manifest-options .score=${this.maniScore}></manifest-options>
+            </fast-tab-panel>
+            <fast-tab-panel id="swPanel">
+              <sw-picker
+                @back-to-overview="${() => this.openOverview()}"
+                score="${this.swScore}"
+              ></sw-picker>
+            </fast-tab-panel>
+          </fast-tabs>
+        </section>
+      </div>
     </div>`;
   }
 }
