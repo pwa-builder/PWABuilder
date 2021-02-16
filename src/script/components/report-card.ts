@@ -14,7 +14,7 @@ import './score-results';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {
-  @property() results: RawTestResult | undefined;
+  @property() results: RawTestResult;
 
   @internalProperty() maniScore = 0;
   @internalProperty() swScore = 0;
@@ -166,6 +166,23 @@ export class ReportCard extends LitElement {
     super();
   }
 
+  firstUpdated() {
+    if (!this.results) {
+      // Should never really end up here
+      // But just in case this component tries to render without results
+      // lets attempt to grab the last saved results
+      this.handleNoResults();
+    }
+  }
+
+  handleNoResults() {
+    const resultsData = sessionStorage.getItem('results-string');
+
+    if (resultsData) {
+      this.results = JSON.parse(resultsData);
+    }
+  }
+
   opened(targetEl: EventTarget | null) {
     console.log(targetEl);
 
@@ -304,7 +321,7 @@ export class ReportCard extends LitElement {
               >
 
               <score-results
-                .testResults="${this.results?.manifest}"
+                .testResults="${this.results.manifest}"
                 @scored="${(ev: CustomEvent) => this.handleManiScore(ev)}"
               ></score-results>
             </fast-accordion-item>
@@ -330,7 +347,7 @@ export class ReportCard extends LitElement {
                 >Service Worker Options</app-button
               >
               <score-results
-                .testResults="${this.results?.service_worker}"
+                .testResults="${this.results.service_worker}"
                 @scored="${(ev: CustomEvent) => this.handleSWScore(ev)}"
               ></score-results>
             </fast-accordion-item>
@@ -352,7 +369,7 @@ export class ReportCard extends LitElement {
               </div>
 
               <score-results
-                .testResults="${this.results?.security}"
+                .testResults="${this.results.security}"
                 @scored="${(ev: CustomEvent) => this.handleSecurityScore(ev)}"
               ></score-results>
             </fast-accordion-item>
