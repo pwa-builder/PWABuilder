@@ -113,6 +113,7 @@ export class AppTesting extends LitElement {
       const siteUrl = search.get('site');
 
       if (TestResult) {
+        console.log('testResult', TestResult);
         // Completes the loading phase
         // set last phrase and give 300ms to display to user
         // before moving on
