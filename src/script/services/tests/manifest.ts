@@ -12,7 +12,6 @@ export async function testManifest(
 
     if (manifest) {
       const testResult = doTest(manifest);
-
       return testResult;
     } else {
       throw new Error('Could not test manifest');

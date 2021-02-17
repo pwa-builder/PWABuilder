@@ -26,6 +26,8 @@ export async function runAllTests(url: string): Promise<AllTestResults> {
       security: await securityTestResult,
     }
 
+    console.log('resultsObject', resultsObject);
+
     setResults(resultsObject);
 
     resolve(resultsObject);
