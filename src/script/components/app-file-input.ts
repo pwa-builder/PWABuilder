@@ -9,10 +9,7 @@ import {
 
 import { hidden } from '../utils/css/hidden';
 import { fastButtonCss } from '../utils/css/fast-elements';
-
-export interface FileInputDetails {
-  input: HTMLInputElement;
-}
+import { FileInputDetails } from '../utils/interfaces';
 
 @customElement('app-file-input')
 export class FileInput extends LitElement {
@@ -54,7 +51,7 @@ export class FileInput extends LitElement {
           class="file-button"
           appearance="lightweight"
           @click=${this.clickModalInput}
-          >Choose File</fast-button
+          >${this.buttonText()}</fast-button
         >
         <input
           id="${this.inputId}"
@@ -71,9 +68,15 @@ export class FileInput extends LitElement {
     this.fileInput.click();
   }
 
-  handleModalInputFileChosen(evt: Event) {
-    console.log('input change event', evt);
+  buttonText() {
+    if (this.input?.files?.length > 0) {
+      return this.input?.files?.item(0)?.name;
+    }
 
+    return 'Choose File';
+  }
+
+  handleModalInputFileChosen(evt: Event) {
     const changeEvent = new CustomEvent<FileInputDetails>('input-change', {
       detail: {
         input: this.input,
@@ -83,5 +86,6 @@ export class FileInput extends LitElement {
     });
 
     this.dispatchEvent(changeEvent);
+    this.requestUpdateInternal();
   }
 }
