@@ -32,6 +32,11 @@ export class AppSidebar extends LitElement {
         --neutral-foreground-rest: white;
       }
 
+      fast-accordion-item {
+        padding-left: 23px;
+        padding-right: 23px;
+      }
+
       fast-accordion-item::part(button) {
         font-size: 16px;
         font-weight: var(--font-bold);
@@ -39,6 +44,19 @@ export class AppSidebar extends LitElement {
 
       .sidebar-item-header {
         display: flex;
+      }
+
+      .item-name {
+        padding-right: 16px;
+      }
+
+      #sidebar-subitems-list {
+        list-style: none;
+        padding-left: 0;
+      }
+
+      #sidebar-subitems-list li {
+        font-weight: var(--font-bold);
       }
 
       .active {
@@ -470,16 +488,16 @@ export class AppSidebar extends LitElement {
               return html`
                 <fast-accordion-item class=${classMap({active: item.done === Status.ACTIVE, done: item.done === Status.DONE, pending: item.done === Status.PENDING})}>
                   <div class="sidebar-item-header" slot="heading">
-                    <span>${this.renderIcon(item)}</span>
+                    <span class="item-name">${this.renderIcon(item)}</span>
                     <span>${item.header}</span>
                   </div>
                   
-                  <ul>
+                  <ul id="sidebar-subitems-list">
                   ${
                     item.items.map((item) => {
                       return html`
                         <li>
-                          <span>${this.renderIcon(item)}</span>
+                          <span class="item-name">${this.renderIcon(item)}</span>
                           <span>${item.name}</span>
                         </li>
                       `
