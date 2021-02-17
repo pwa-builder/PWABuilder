@@ -411,7 +411,7 @@ export class AppSidebar extends LitElement {
           ${
             this.menuItems?.progress.map((item) => {
               return html`
-                <fast-accordion-item class=${classMap({active: item.done === Status.ACTIVE, done: item.done === Status.DONE, pending: item.done === Status.PENDING})}>
+                <fast-accordion-item expanded class=${classMap({active: item.done === Status.ACTIVE, done: item.done === Status.DONE, pending: item.done === Status.PENDING})}>
                   <div class="sidebar-item-header" slot="heading">
                     <span class="item-name">${this.renderIcon(item)}</span>
                     <span>${item.header}</span>
