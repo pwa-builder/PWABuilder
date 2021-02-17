@@ -74,11 +74,19 @@ let progress: ProgressList = {
 };
 
 export function getProgress() {
-  return progress;
+  const current_progress = sessionStorage.getItem('current_progress');
+
+  if (current_progress) {
+    return JSON.parse(current_progress);
+  }
+  else {
+    return progress;
+  }
 }
 
 export function setProgress(newProgress: ProgressList) {
   progress = newProgress;
+  sessionStorage.setItem('current_progress', JSON.stringify(progress))
 }
 
 export function setURL(url: string) {
