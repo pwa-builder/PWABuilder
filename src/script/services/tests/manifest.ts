@@ -8,21 +8,15 @@ export async function testManifest(
   const manifestData = await fetchManifest(url);
 
   if (manifestData) {
-    console.log('in here 0', manifestData);
     const manifest = manifestData.content;
 
     if (manifest) {
       const testResult = doTest(manifest);
-
-      console.log('in here 0.5', testResult);
-
       return testResult;
     } else {
-      console.log('in here 1');
       throw new Error('Could not test manifest');
     }
   } else {
-    console.log('in here 2');
     throw new Error('Could not get manifest data');
   }
 }
