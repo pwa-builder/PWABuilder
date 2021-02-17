@@ -209,6 +209,9 @@ export class AppSidebar extends LitElement {
         align-items: center;
         border-right: 1px solid var(--secondary-color);
         height: 50px;
+
+        font-size: var(--small-font-size);
+        font-weight: var(--font-bold);
       }
 
       aside.tablet-sidebar .menu > .heading {
@@ -218,8 +221,11 @@ export class AppSidebar extends LitElement {
         align-content: center;
         text-transform: capitalize;
         color: var(--light-primary-color);
-        font-size: 0.7rem;
         margin: 0 0.5rem;
+      }
+
+      aside.tablet-sidebar .menu .active {
+        color: white;
       }
 
       aside.tablet-sidebar #score-progress {
@@ -341,51 +347,6 @@ export class AppSidebar extends LitElement {
     },
   ];
 
-  /*@property({ type: Array }) desktopSidebarItems: TabLayoutItem[] = [
-    {
-      title: 'Test',
-      status: Status.DONE,
-      type: ItemType.HEADING,
-      class: 'done',
-    },
-    {
-      title: 'Manifest',
-      status: Status.PENDING,
-      type: ItemType.SUB_HEADING,
-      class: 'done',
-    },
-    {
-      title: 'Service Worker',
-      status: Status.PENDING,
-      type: ItemType.SUB_HEADING,
-      class: 'done',
-    },
-    {
-      title: 'Security',
-      status: Status.PENDING,
-      type: ItemType.SUB_HEADING,
-      class: 'done',
-    },
-    {
-      title: 'review',
-      status: Status.PENDING,
-      type: ItemType.HEADING,
-      class: 'active',
-    },
-    {
-      title: 'publish',
-      status: Status.PENDING,
-      type: ItemType.HEADING,
-      class: 'pending',
-    },
-    {
-      title: 'complete',
-      status: Status.PENDING,
-      type: ItemType.HEADING,
-      class: 'pending',
-    },
-  ];*/
-
   @internalProperty() menuItems: ProgressList | undefined;
 
   @property({ type: Object }) mql = window.matchMedia(
@@ -405,28 +366,6 @@ export class AppSidebar extends LitElement {
       case 'pending':
         return html`<ion-icon class="icon pending" name="ellipse"></ion-icon>`;
     }
-  }
-
-  renderTabletBar() {
-    return html`<aside class="tablet-sidebar">
-      <img src="/assets/images/sidebar-icon.svg" alt="pwd-icon" />
-      <h4 id="score-progress">PWAB Progress</h4>
-      <div class="menu">
-        ${this.tabletSidebarItems.map(
-          item =>
-            html`<div class="heading">
-              ${this.renderIcon(item)}
-              <span>${item.title}</span>
-            </div>`
-        )}
-      </div>
-
-      <div id="score-block">
-        <h4 id="your-score">Your PWA Score</h4>
-        <span id="score-number">100</span>
-        <span id="score-message">Excellent score!</span>
-      </div>
-    </aside>`;
   }
 
   renderMenuItem(items: TabLayoutItem[]) {
@@ -497,6 +436,28 @@ export class AppSidebar extends LitElement {
         </fast-accordion>
       </aside>
     `;
+  }
+
+  renderTabletBar() {
+    return html`<aside class="tablet-sidebar">
+      <img src="/assets/images/sidebar-icon.svg" alt="pwd-icon" />
+      <h4 id="score-progress">PWAB Progress</h4>
+      <div class="menu">
+        ${this.menuItems?.progress.map(
+          item =>
+            html`<div class=${classMap({heading: true, active: item.done === Status.ACTIVE, done: item.done === Status.DONE, pending: item.done === Status.PENDING})}>
+              ${this.renderIcon(item)}
+              <span>${item.header}</span>
+            </div>`
+        )}
+      </div>
+
+      <div id="score-block">
+        <h4 id="your-score">Your PWA Score</h4>
+        <span id="score-number">100</span>
+        <span id="score-message">Excellent score!</span>
+      </div>
+    </aside>`;
   }
 
   renderComponent() {
