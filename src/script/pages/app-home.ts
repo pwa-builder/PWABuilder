@@ -31,7 +31,8 @@ import style from '../../../styles/error-styles.css';
 // For more info on the @pwabuilder/pwainstall component click here https://github.com/pwa-builder/pwa-install
 import '@pwabuilder/pwainstall';
 import { Router } from '@vaadin/router';
-import { setURL } from '../services/app-info';
+import { getProgress, setProgress, setURL } from '../services/app-info';
+import { Status } from '../utils/interfaces';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -277,6 +278,9 @@ export class AppHome extends LitElement {
           this.errorMessage = undefined;
 
           setURL(this.siteURL);
+
+          const progress = getProgress();
+          this.updateProgress(progress);
           
           Router.go(`/testing?site=${this.siteURL}`);
         }
@@ -288,6 +292,13 @@ export class AppHome extends LitElement {
 
       this.gettingManifest = false;
     }
+  }
+
+  updateProgress(progress) {
+    progress.progress[0].items[0].done = Status.DONE;
+
+    const newProgress = progress;
+    setProgress(newProgress);
   }
 
   render() {

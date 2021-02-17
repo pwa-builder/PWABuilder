@@ -1,5 +1,5 @@
-import { TestResult } from '../../utils/interfaces';
-import { setResults } from '../app-info';
+import { Status, TestResult } from '../../utils/interfaces';
+import { getProgress, setProgress, setResults } from '../app-info';
 import { testManifest } from './manifest';
 import { testSecurity } from './security';
 import { testServiceWorker } from './service-worker';
@@ -24,13 +24,44 @@ export async function runAllTests(url: string): Promise<AllTestResults> {
       manifest: await maniTestResult,
       service_worker: await serviceWorkerTestResult,
       security: await securityTestResult,
-    }
+    };
 
     console.log('resultsObject', resultsObject);
 
     setResults(resultsObject);
 
+    const progress = getProgress();
+    updateProgress(progress, resultsObject);
+
     resolve(resultsObject);
   });
 }
 
+function updateProgress(progress, results) {
+  progress.progress[0].items[1].done = Status.DONE;
+
+  progress.progress[1].items.map((item: { name: string, done: Status}) => {
+    if (item.name === 'Manifest') {
+      if (results && results.manifest) {
+        if (results.manifest[0].result === true) {
+          item.done = Status.DONE;
+        }
+      }
+    } else if (item.name === 'Service Worker') {
+      if (results && results.service_worker) {
+        if (results.service_worker[0].result === true) {
+          item.done = Status.DONE;
+        }
+      }
+    } else if (item.name === 'Security') {
+      if (results && results.security) {
+        if (results.security[0].result === true) {
+          item.done = Status.DONE;
+        }
+      }
+    }
+  });
+
+  const newProgress = progress;
+  setProgress(newProgress);
+}

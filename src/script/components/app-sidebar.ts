@@ -7,28 +7,58 @@ import {
   property,
   internalProperty,
 } from 'lit-element';
-import { getResults, getURL } from '../services/app-info';
-import { RawTestResult } from '../utils/interfaces';
+import { getProgress, getResults, getURL } from '../services/app-info';
+import { Progress, ProgressList, RawTestResult, Status } from '../utils/interfaces';
 
-enum Status {
-  DONE = 'done',
-  ACTIVE = 'active',
-  PENDING = 'pending',
-}
+import { classMap } from 'lit-html/directives/class-map';
+
 enum ItemType {
   HEADING = 'done',
   SUB_HEADING = 'sub-heading',
 }
+
 interface TabLayoutItem {
   title: string;
   status: Status;
   type: ItemType;
   class?: string;
 }
+
 @customElement('app-sidebar')
 export class AppSidebar extends LitElement {
   static get styles() {
     return css`
+      fast-accordion {
+        --neutral-foreground-rest: white;
+      }
+
+      fast-accordion-item::part(button) {
+        font-size: 16px;
+        font-weight: var(--font-bold);
+      }
+
+      .sidebar-item-header {
+        display: flex;
+      }
+
+      .item-name {
+        padding-right: 16px;
+      }
+
+      #sidebar-subitems-list {
+        list-style: none;
+        padding-left: 0;
+      }
+
+      #sidebar-subitems-list li {
+        font-weight: var(--font-bold);
+        padding-left: 23px;
+      }
+
+      /*.done::part(button) {
+        --neutral-foreground-rest: green
+      }*/
+
       /** DESKTOP STYLES */
       aside.desktop-sidebar {
         color: var(--secondary-color);
@@ -179,6 +209,9 @@ export class AppSidebar extends LitElement {
         align-items: center;
         border-right: 1px solid var(--secondary-color);
         height: 50px;
+
+        font-size: var(--small-font-size);
+        font-weight: var(--font-bold);
       }
 
       aside.tablet-sidebar .menu > .heading {
@@ -188,8 +221,11 @@ export class AppSidebar extends LitElement {
         align-content: center;
         text-transform: capitalize;
         color: var(--light-primary-color);
-        font-size: 0.7rem;
         margin: 0 0.5rem;
+      }
+
+      aside.tablet-sidebar .menu .active {
+        color: white;
       }
 
       aside.tablet-sidebar #score-progress {
@@ -214,7 +250,7 @@ export class AppSidebar extends LitElement {
         height: 0.75rem;
       }
 
-      .done {
+      .done ion-icon {
         color: var(--success-color);
       }
 
@@ -222,12 +258,15 @@ export class AppSidebar extends LitElement {
         color: var(--light-primary-color);
       }
 
-      .desktop-sidebar .active {
-        color: var(--primary-color);
+      .active::part(heading) {
+        background: white;
+        color: black;
+        padding-left: 23px;
       }
 
-      .tablet-sidebar .active {
-        color: var(--secondary-color);
+      .done::part(heading), .pending::part(heading) {
+        background: rgba(255, 255, 255, 0.05);
+        padding-left: 23px;
       }
     `;
   }
@@ -239,6 +278,8 @@ export class AppSidebar extends LitElement {
   }
 
   firstUpdated() {
+    this.menuItems = getProgress();
+
     this.current_url = getURL();
 
     this.results = getResults();
@@ -250,29 +291,34 @@ export class AppSidebar extends LitElement {
   }
 
   handleResults() {
-    this.desktopSidebarItems.map(item => {
-      if (item.title === 'Manifest') {
-        if (this.results && this.results.manifest) {
-          if (this.results.manifest[0].result === true) {
-            item.status = Status.DONE;
+    // Check where we are at
+    const loc = new URL(location.href);
+
+    // Check for all items done
+    this.menuItems?.progress.map((item) => {
+      if (item.items) {
+
+        const remaining: Array<Progress> = [];
+
+        item.items.map((innerItem) => {
+          if (innerItem.done !== Status.DONE) {
+            remaining.push(item);
           }
+        })
+
+        if (loc.pathname === item.location) {
+          item.done = Status.ACTIVE
+        }
+        else if (remaining.length === 0) {
+          item.done = Status.DONE
+        }
+        else {
+          item.done = Status.PENDING
         }
       }
-      else if (item.title === 'Service Worker') {
-        if (this.results && this.results.service_worker) {
-          if (this.results.service_worker[0].result === true) {
-            item.status = Status.DONE;
-          }
-        }
-      }
-      else if (item.title === 'Security') {
-        if (this.results && this.results.security) {
-          if (this.results.security[0].result === true) {
-            item.status = Status.DONE;
-          }
-        }
-      }
-    });
+    })
+
+
   }
 
   @internalProperty() current_url: string | undefined;
@@ -301,50 +347,7 @@ export class AppSidebar extends LitElement {
     },
   ];
 
-  @property({ type: Array }) desktopSidebarItems: TabLayoutItem[] = [
-    {
-      title: 'test',
-      status: Status.DONE,
-      type: ItemType.HEADING,
-      class: 'done',
-    },
-    {
-      title: 'Manifest',
-      status: Status.PENDING,
-      type: ItemType.SUB_HEADING,
-      class: 'done',
-    },
-    {
-      title: 'Service Worker',
-      status: Status.PENDING,
-      type: ItemType.SUB_HEADING,
-      class: 'done',
-    },
-    {
-      title: 'Security',
-      status: Status.PENDING,
-      type: ItemType.SUB_HEADING,
-      class: 'done',
-    },
-    {
-      title: 'review',
-      status: Status.PENDING,
-      type: ItemType.HEADING,
-      class: 'active',
-    },
-    {
-      title: 'publish',
-      status: Status.PENDING,
-      type: ItemType.HEADING,
-      class: 'pending',
-    },
-    {
-      title: 'complete',
-      status: Status.PENDING,
-      type: ItemType.HEADING,
-      class: 'pending',
-    },
-  ];
+  @internalProperty() menuItems: ProgressList | undefined;
 
   @property({ type: Object }) mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`
@@ -352,8 +355,8 @@ export class AppSidebar extends LitElement {
 
   @property({ type: Boolean }) isDeskTopView = this.mql.matches;
 
-  renderIcon(item: TabLayoutItem) {
-    switch (item.status) {
+  renderIcon(item) {
+    switch (item.done) {
       case 'active':
         return html`<ion-icon class="icon active" name="ellipse"></ion-icon>`;
       case 'done':
@@ -365,45 +368,27 @@ export class AppSidebar extends LitElement {
     }
   }
 
-  renderTabletBar() {
-    return html`<aside class="tablet-sidebar">
-      <img src="/assets/images/sidebar-icon.svg" alt="pwd-icon" />
-      <h4 id="score-progress">PWAB Progress</h4>
-      <div class="menu">
-        ${this.tabletSidebarItems.map(
-          item =>
-            html`<div class="heading">
-              ${this.renderIcon(item)}
-              <span>${item.title}</span>
-            </div>`
-        )}
-      </div>
-
-      <div id="score-block">
-        <h4 id="your-score">Your PWA Score</h4>
-        <span id="score-number">100</span>
-        <span id="score-message">Excellent score!</span>
-      </div>
-    </aside>`;
-  }
-
   renderMenuItem(items: TabLayoutItem[]) {
     return items.map(item => {
       if (item.type === ItemType.HEADING) {
         return html`
-          <fast-menu-item class="heading ${item.class}">
-            ${this.renderIcon(item)} <span>${item.title}</span></fast-menu-item
+          <fast-accordion-item class="heading ${item.class}">
+            ${this.renderIcon(item)}
+            <span slot="heading">${item.title}</span></fast-accordion-item
           >
         `;
       } else if (item.type === ItemType.SUB_HEADING) {
         return html`
-          <fast-menu-item class="${item.class}">
-            ${this.renderIcon(item)}<span>${item.title}</span></fast-menu-item
+          <fast-accordion-item class="${item.class || ''}">
+            ${this.renderIcon(item)}<span slot="heading"
+              >${item.title}</span
+            ></fast-accordion-item
           >
         `;
       }
     });
   }
+
   renderDesktopBar() {
     return html`
       <aside class="desktop-sidebar">
@@ -422,11 +407,57 @@ export class AppSidebar extends LitElement {
           <h4 id="score-progress">PWAB Progress</h4>
         </div>
 
-        <fast-menu class="menu"
-          >${this.renderMenuItem(this.desktopSidebarItems)}
-        </fast-menu>
+        <fast-accordion class="menu">
+          ${
+            this.menuItems?.progress.map((item) => {
+              return html`
+                <fast-accordion-item expanded class=${classMap({active: item.done === Status.ACTIVE, done: item.done === Status.DONE, pending: item.done === Status.PENDING})}>
+                  <div class="sidebar-item-header" slot="heading">
+                    <span class="item-name">${this.renderIcon(item)}</span>
+                    <span>${item.header}</span>
+                  </div>
+                  
+                  <ul id="sidebar-subitems-list">
+                  ${
+                    item.items.map((item) => {
+                      return html`
+                        <li>
+                          <span class="item-name">${this.renderIcon(item)}</span>
+                          <span>${item.name}</span>
+                        </li>
+                      `
+                    })
+                  }
+                  </ul>
+                </fast-accordion-item>
+              `
+            })
+          }
+        </fast-accordion>
       </aside>
     `;
+  }
+
+  renderTabletBar() {
+    return html`<aside class="tablet-sidebar">
+      <img src="/assets/images/sidebar-icon.svg" alt="pwd-icon" />
+      <h4 id="score-progress">PWAB Progress</h4>
+      <div class="menu">
+        ${this.menuItems?.progress.map(
+          item =>
+            html`<div class=${classMap({heading: true, active: item.done === Status.ACTIVE, done: item.done === Status.DONE, pending: item.done === Status.PENDING})}>
+              ${this.renderIcon(item)}
+              <span>${item.header}</span>
+            </div>`
+        )}
+      </div>
+
+      <div id="score-block">
+        <h4 id="your-score">Your PWA Score</h4>
+        <span id="score-number">100</span>
+        <span id="score-message">Excellent score!</span>
+      </div>
+    </aside>`;
   }
 
   renderComponent() {
