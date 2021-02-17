@@ -32,11 +32,6 @@ export class AppSidebar extends LitElement {
         --neutral-foreground-rest: white;
       }
 
-      fast-accordion-item {
-        padding-left: 23px;
-        padding-right: 23px;
-      }
-
       fast-accordion-item::part(button) {
         font-size: 16px;
         font-weight: var(--font-bold);
@@ -57,24 +52,12 @@ export class AppSidebar extends LitElement {
 
       #sidebar-subitems-list li {
         font-weight: var(--font-bold);
+        padding-left: 23px;
       }
 
-      .active {
-        background: white;
-        color: black;
-      }
-
-      .active::part(button) {
-        --neutral-foreground-rest: var(--primary-color);
-      }
-
-      .done, .pending {
-        background: rgba(255, 255, 255, 0.05);
-      }
-
-      .done::part(button) {
+      /*.done::part(button) {
         --neutral-foreground-rest: green
-      }
+      }*/
 
       /** DESKTOP STYLES */
       aside.desktop-sidebar {
@@ -261,7 +244,7 @@ export class AppSidebar extends LitElement {
         height: 0.75rem;
       }
 
-      .done {
+      .done ion-icon {
         color: var(--success-color);
       }
 
@@ -269,12 +252,15 @@ export class AppSidebar extends LitElement {
         color: var(--light-primary-color);
       }
 
-      .desktop-sidebar .active {
-        color: var(--primary-color);
+      .active::part(heading) {
+        background: white;
+        color: black;
+        padding-left: 23px;
       }
 
-      .tablet-sidebar .active {
-        color: var(--secondary-color);
+      .done::part(heading), .pending::part(heading) {
+        background: rgba(255, 255, 255, 0.05);
+        padding-left: 23px;
       }
     `;
   }
@@ -314,11 +300,11 @@ export class AppSidebar extends LitElement {
           }
         })
 
-        if (remaining.length === 0) {
-          item.done = Status.DONE
-        }
-        else if (remaining.length > 0 && loc.pathname === item.location) {
+        if (loc.pathname === item.location) {
           item.done = Status.ACTIVE
+        }
+        else if (remaining.length === 0) {
+          item.done = Status.DONE
         }
         else {
           item.done = Status.PENDING
