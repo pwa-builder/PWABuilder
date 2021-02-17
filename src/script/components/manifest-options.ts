@@ -11,13 +11,21 @@ import { styleMap } from 'lit-html/directives/style-map';
 import { getManifest } from '../services/manifest';
 import { arrayHasChanged, objectHasChanged } from '../utils/hasChanged';
 import { resolveUrl } from '../utils/url';
-import { fastButtonCss, fastCheckboxCss } from '../utils/css/fast-elements';
+import { FileInputDetails } from '../utils/interfaces';
+import {
+  fastTextFieldCss,
+  fastButtonCss,
+  fastCheckboxCss,
+  fastMenuCss,
+  fastRadioCss,
+} from '../utils/css/fast-elements';
 
 import { ModalCloseEvent } from './app-modal';
 import { tooltip, styles as ToolTipStyles } from './tooltip';
 
 import './dropdown-menu';
 import './app-file-input';
+import { generateMissingImages } from '../services/icon_generator';
 
 @customElement('manifest-options')
 export class AppManifest extends LitElement {
@@ -27,6 +35,9 @@ export class AppManifest extends LitElement {
   @property({ type: Array, hasChanged: arrayHasChanged }) screenshotList = [];
 
   @property({ type: Boolean }) uploadModalOpen = false;
+  @internalProperty() uploadButtonDisabled = true;
+  @internalProperty() uploadSelectedImageFile: File | undefined;
+  @internalProperty() uploadImageObjectUrl: string;
 
   @internalProperty()
   protected backgroundColorRadioValue: 'none' | 'transparent' | 'custom' =
@@ -50,6 +61,9 @@ export class AppManifest extends LitElement {
       ToolTipStyles,
       fastButtonCss,
       fastCheckboxCss,
+      fastTextFieldCss,
+      fastMenuCss,
+      fastRadioCss,
       css`
         fast-divider {
           margin: 16px 0;
@@ -170,6 +184,21 @@ export class AppManifest extends LitElement {
           height: 135px;
         }
       `,
+      // modal
+      css`
+        .modal-action-form {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .modal-action-form fast-checkbox {
+          margin: 16px 0;
+        }
+
+        .modal-img {
+          max-width: 400px;
+        }
+      `,
     ];
   }
 
@@ -279,6 +308,7 @@ export class AppManifest extends LitElement {
             <fast-accordion-item>
               <h1 slot="heading">View Code</h1>
               <!-- TODO -->
+              <p>${JSON.stringify(getManifest())}</p>
             </fast-accordion-item>
           </fast-accordion>
         </section>
@@ -424,8 +454,16 @@ export class AppManifest extends LitElement {
         inputId="modal-file-input"
         @input-change=${this.handleModalInputFileChange}
       ></app-file-input>
+      ${this.uploadSelectedImageFile
+        ? html`<img class="modal-img" src=${this.uploadImageObjectUrl} />`
+        : undefined}
+
       <fast-checkbox> Generate missing images from this image </fast-checkbox>
-      <app-button>Upload</app-button>
+      <app-button
+        @click=${this.handleIconFileUpload}
+        .disabled=${this.uploadButtonDisabled}
+        >Upload</app-button
+      >
     `;
   }
 
@@ -452,8 +490,45 @@ export class AppManifest extends LitElement {
     this.manifest.theme_color = (<HTMLInputElement>event.target).value;
   }
 
-  handleModalInputFileChange() {
-    console.log('handleModalInputFileChange');
+  async handleModalInputFileChange(evt: CustomEvent<FileInputDetails>) {
+    console.log('handleModalInputFileChange', evt);
+    const files = evt.detail.input.files;
+    console.log(files, files.item(0));
+
+    this.uploadSelectedImageFile = files.item(0);
+    this.uploadButtonDisabled = !this.validIconInput();
+
+    if (!this.uploadButtonDisabled) {
+      console.log('do something good here!');
+
+      this.uploadImageObjectUrl = URL.createObjectURL(
+        this.uploadSelectedImageFile
+      );
+    } else {
+      console.log('error state');
+    }
+  }
+
+  async handleIconFileUpload() {
+    try {
+      // TODO
+      await generateMissingImages({
+        file: this.uploadSelectedImageFile,
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  validIconInput() {
+    const supportedFileTypes = ['.png', '.jpg', '.svg'];
+
+    return supportedFileTypes.find(
+      fileType =>
+        this &&
+        this.uploadSelectedImageFile &&
+        this.uploadSelectedImageFile.name.endsWith(fileType)
+    );
   }
 
   addNewScreenshot() {

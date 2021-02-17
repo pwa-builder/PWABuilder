@@ -128,3 +128,7 @@ export interface SecurityDataResults {
     valid: true;
   };
 }
+
+export interface FileInputDetails {
+  input: HTMLInputElement;
+}
