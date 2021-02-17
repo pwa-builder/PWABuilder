@@ -1,21 +1,15 @@
-(function setEnv() {
-  // TODO config setter for environment.
-})();
-
-const imageGeneratorUrlBase =
-  'https://appimagegenerator-prod.azurewebsites.net/api/image';
-
-const generateMissingImagesBase =
-  'https://pwabuilder-api-prod.azurewebsites.net/manifests/0e43b916/generatemissingimages';
+import { env } from './environment';
 
 export const api = {
   imageGenerator: {
-    post: imageGeneratorUrlBase,
+    post: `${env.imageGeneratorUrl}`,
     download: function (id: string) {
-      return `${imageGeneratorUrlBase}/${id}`;
+      return `${env.imageGeneratorUrl}/${id}`;
     },
   },
   generateMissingImages: {
-    post: generateMissingImagesBase,
+    post: function (id: string) {
+      return `${env.api}/manifests/${id}/generatemissingimages`;
+    },
   },
 };
