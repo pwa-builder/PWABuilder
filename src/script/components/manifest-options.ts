@@ -245,7 +245,7 @@ export class AppManifest extends LitElement {
               <app-modal
                 modalId="uploadModal"
                 title="Upload information"
-                body="This is or uploading screenshots"
+                body="This is or uploading icons"
                 ?open=${this.uploadModalOpen}
                 @app-modal-close=${this.uploadModalClose}
               >
