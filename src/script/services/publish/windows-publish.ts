@@ -1,4 +1,3 @@
-import { fileSave } from 'browser-fs-access';
 import { env } from '../../utils/environment';
 import { findSuitableIcon } from '../../utils/icons';
 import {
@@ -6,6 +5,7 @@ import {
   validateWindowsOptions,
   WindowsPackageOptions,
 } from '../../utils/win-validation';
+import { getURL } from '../app-info';
 import { getManifest, getManiURL } from '../manifest';
 
 export async function generateWindowsPackage(
@@ -37,12 +37,7 @@ export async function generateWindowsPackage(
     if (response.status === 200) {
       const data = await response.blob();
 
-      await fileSave(data, {
-        fileName: 'your_windows_pwa.zip',
-        extensions: ['.zip'],
-      });
-
-      return;
+      return data;
     } else {
       const responseText = await response.text();
       throw new Error(
@@ -61,13 +56,19 @@ export function createWindowsPackageOptionsFromManifest(
   console.log('current manifest', manifest);
 
   if (manifest) {
-    const pwaUrl = getManiURL();
+    const maniURL = getManiURL();
+    const pwaURL = getURL();
 
-    if (!pwaUrl) {
+    if (!pwaURL) {
       throw new Error("Can't find the current URL");
-    }
+    };
+
+    if (!maniURL) {
+      throw new Error("Cant find the manifest URL");
+    };
+
     const name = manifest.short_name || manifest.name || 'My PWA';
-    const packageID = generateWindowsPackageId(new URL(pwaUrl).hostname);
+    const packageID = generateWindowsPackageId(new URL(pwaURL).hostname);
     const manifestIcons = manifest.icons || [];
 
     const icon =
@@ -84,7 +85,7 @@ export function createWindowsPackageOptionsFromManifest(
     const options: WindowsPackageOptions = {
       name: name,
       packageId: packageID,
-      url: pwaUrl,
+      url: pwaURL,
       version: windowsConfiguration === 'spartan' ? '1.0.0' : '1.0.1',
       allowSigning: true,
       publisher: {
@@ -95,12 +96,12 @@ export function createWindowsPackageOptionsFromManifest(
       classicPackage: {
         generate: windowsConfiguration === 'anaheim',
         version: '1.0.0',
-        url: pwaUrl,
+        url: pwaURL,
       },
       edgeHtmlPackage: {
         generate: windowsConfiguration === 'spartan',
       },
-      manifestUrl: pwaUrl,
+      manifestUrl: maniURL,
       manifest: manifest,
       images: {
         baseImage: icon && icon.src ? icon.src : '',
