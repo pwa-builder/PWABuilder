@@ -7,9 +7,4 @@ export const api = {
       return `${env.imageGeneratorUrl}/${id}`;
     },
   },
-  generateMissingImages: {
-    post: function (id: string) {
-      return `${env.api}/manifests/${id}/generatemissingimages`;
-    },
-  },
 };

@@ -169,3 +169,13 @@ export function getManiURL() {
 export function getManifest() {
   return manifest;
 }
+
+export async function updateManifest(manifestUpdates: Partial<Manifest>) {
+  manifest = {
+    ...manifest,
+    ...manifestUpdates,
+  };
+
+  console.log('TODO sync redis');
+  // return syncRedis()
+}

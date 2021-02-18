@@ -1,5 +1,8 @@
+import jszip from 'jszip';
 import { api } from '../utils/api';
 import { download } from '../utils/download';
+import { Icon } from '../utils/interfaces';
+import { getManifest } from './manifest';
 
 type Platform =
   | 'windows10'
@@ -27,6 +30,11 @@ interface IconGeneratorResponse {
   Uri: string;
 }
 
+// Only has src and sizes
+interface GeneratedImageIcons {
+  icons: Array<Partial<Icon>>;
+}
+
 export const iconGeneratorDefaults: Partial<IconGeneratorConfig> = {
   padding: 0.3,
   colorOption: 'transparent',
@@ -35,18 +43,17 @@ export const iconGeneratorDefaults: Partial<IconGeneratorConfig> = {
 
 export async function generateMissingImages(config: MissingImagesConfig) {
   try {
-    const formData = new FormData();
-    formData.append('file', config.file);
-
-    const request = await fetch(api.generateMissingImages.post, {
-      method: 'POST',
-      mode: 'no-cors',
-      cache: 'no-cache',
-      body: formData,
+    const generateIconsResult = await generateIcons({
+      fileName: config.file,
+      padding: 0,
+      platform: [],
+      colorOption: 'transparent',
     });
 
-    // TODO handle
-    const response = await request.json();
+    const manifest = getManifest();
+    console.log(manifest, generateIconsResult);
+
+    generateIconsResult.Uri;
   } catch (e) {
     console.error(e);
   }
@@ -58,7 +65,7 @@ export async function generateIcons(config: IconGeneratorConfig) {
       config.fileName,
       'generateIcons()  requires a file to generate icons with'
     );
-    if (config.fileName) {
+    if (!config.fileName) {
       const err = new Error('requires an icon');
       err.name = 'NoFileError';
 
@@ -69,31 +76,68 @@ export async function generateIcons(config: IconGeneratorConfig) {
       method: 'POST',
       mode: 'no-cors',
       cache: 'no-cache',
-      headers: new Headers({}),
+      headers: new Headers({
+        'Content-Type': 'multipart/form-data',
+      }),
       body: createForm(config),
     });
-    const response = (await request.json()) as IconGeneratorResponse;
-    await fetchIcons(response.Uri);
+
+    return (await request.json()) as IconGeneratorResponse;
   } catch (e) {
     if (e.name === 'NoFileError') {
-      console.error('This API requires an error');
+      console.error('This API requires a file', e);
     }
   }
 }
 
-export async function fetchIcons(id: string) {
+async function fetchIcons(id: string) {
   try {
-    const request = await fetch(api.imageGenerator.download(id), {
+    return fetch(api.imageGenerator.download(id), {
       method: 'GET',
       cache: 'no-cache',
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
     });
+  } catch (e) {
+    console.error(e);
+  }
+}
 
-    // TODO
-    const response = await request.blob();
-    // download({
-    //   id: `fetchIcons-${id}`
-    //   // url: response
-    // })
+export async function updateManifestWithGeneratedIcons(id: string) {
+  try {
+    const generatedIcons = await fetchIcons(id);
+    const blob = await generatedIcons.blob();
+    const zip = await jszip.loadAsync(blob);
+    const zipContents = JSON.parse(
+      await zip.file('icons.json').async('string')
+    ) as GeneratedImageIcons;
+
+    // loop through
+    // zipContents.icons
+
+    // const item = zip.file('').async('')
+    // cache, and queue
+    // const manifestEntry update
+
+    // zip
+    // batch update the manifest
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+export async function downloadZip(id: string) {
+  try {
+    const generatedIcons = await fetchIcons(id);
+
+    //TODO convert into Object URL? will that be all?
+
+    download({
+      id: '',
+      fileName: 'icons.zip',
+      url: '',
+    });
   } catch (e) {
     console.error(e);
   }

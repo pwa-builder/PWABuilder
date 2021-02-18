@@ -307,7 +307,6 @@ export class AppManifest extends LitElement {
           <fast-accordion>
             <fast-accordion-item>
               <h1 slot="heading">View Code</h1>
-              <!-- TODO -->
               <p>${JSON.stringify(getManifest())}</p>
             </fast-accordion-item>
           </fast-accordion>
@@ -499,8 +498,6 @@ export class AppManifest extends LitElement {
     this.uploadButtonDisabled = !this.validIconInput();
 
     if (!this.uploadButtonDisabled) {
-      console.log('do something good here!');
-
       this.uploadImageObjectUrl = URL.createObjectURL(
         this.uploadSelectedImageFile
       );
