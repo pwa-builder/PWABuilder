@@ -200,11 +200,6 @@ export class AppPublish extends LitElement {
           const options = createWindowsPackageOptionsFromManifest('anaheim');
 
           this.blob = await generateWindowsPackage('anaheim', options);
-
-          /*await fileSave(this.blob, {
-            fileName: 'your_windows_pwa.zip',
-            extensions: ['.zip'],
-          });*/
         } catch (err) {
           this.showAlertModal(err);
         }
@@ -214,7 +209,7 @@ export class AppPublish extends LitElement {
           // eslint-disable-next-line no-case-declarations
           const androidOptions = createAndroidPackageOptionsFromManifest();
 
-          await generateAndroidPackage(androidOptions);
+          this.blob = await generateAndroidPackage(androidOptions);
         } catch (err) {
           this.showAlertModal(err);
         }
