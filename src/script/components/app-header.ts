@@ -27,6 +27,12 @@ export class AppHeader extends LitElement {
         background: var(--header-background);
         color: white;
         height: 71px;
+
+        border-bottom: rgba(0, 0, 0, 0.25) solid 1px;
+      }
+
+      header img {
+        cursor: pointer;
       }
 
       header h1 {
@@ -142,10 +148,14 @@ export class AppHeader extends LitElement {
     super();
   }
 
+  goBack() {
+    window.history.back();
+  }
+
   render() {
     return html`
-      <header>
-        <img id="header-icon" src="/assets/images/header_logo.png" alt="header logo">
+      <header part="header">
+        <img @click="${() => this.goBack()}" id="header-icon" src="/assets/images/header_logo.png" alt="header logo">
 
         <nav id="desktop-nav">
           <fast-anchor appearance="hypertext" href="./about">Resources</fast-anchor>
