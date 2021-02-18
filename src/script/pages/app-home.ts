@@ -52,6 +52,10 @@ export class AppHome extends LitElement {
           padding-top: 0;
         }
 
+        content-header::part(header) {
+          --header-border: none;
+        }
+
         h2 {
           font-size: var(--xlarge-font-size);
           line-height: 46px;

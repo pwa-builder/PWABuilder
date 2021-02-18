@@ -16,6 +16,7 @@ export class AppHeader extends LitElement {
     return css`
       :host {
         --header-background: transparent;
+        --header-border: rgba(0, 0, 0, 0.25) solid 1px;
       }
 
       header {
@@ -28,7 +29,7 @@ export class AppHeader extends LitElement {
         color: white;
         height: 71px;
 
-        border-bottom: rgba(0, 0, 0, 0.25) solid 1px;
+        border-bottom: var(--header-border);
       }
 
       header img {
