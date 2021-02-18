@@ -144,7 +144,7 @@ export class AppHeader extends LitElement {
 
   render() {
     return html`
-      <header>
+      <header part="header">
         <img id="header-icon" src="/assets/images/header_logo.png" alt="header logo">
 
         <nav id="desktop-nav">
