@@ -10,6 +10,7 @@ import { classMap } from 'lit-html/directives/class-map';
 import '../components/app-header';
 import '../components/app-card';
 import '../components/app-modal';
+import '../components/app-button';
 import {
   createWindowsPackageOptionsFromManifest,
   generateWindowsPackage,
