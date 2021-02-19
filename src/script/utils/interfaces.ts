@@ -1,3 +1,7 @@
+export enum AppEvents {
+  manifestUpdate = 'MANIFEST_UPDATE',
+}
+
 export interface Manifest {
   background_color: string | null;
   description: string | null;

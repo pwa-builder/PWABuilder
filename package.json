@@ -16,6 +16,8 @@
     "@pwabuilder/pwainstall": "^1.6.6",
     "@vaadin/router": "^1.7.2",
     "browser-fs-access": "^0.13.1",
+    "deepmerge": "^4.2.2",
+    "jszip": "^3.6.0",
     "lit-element": "^2.4.0",
     "workbox-core": "^6.0.2",
     "workbox-precaching": "^6.0.2"
