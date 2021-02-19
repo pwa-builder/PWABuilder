@@ -2,7 +2,7 @@ import jszip from 'jszip';
 import { api } from '../utils/api';
 import { download } from '../utils/download';
 import { Icon } from '../utils/interfaces';
-import { getManifest } from './manifest';
+import { getManifest, updateManifest } from './manifest';
 
 type Platform =
   | 'windows10'
@@ -50,10 +50,7 @@ export async function generateMissingImages(config: MissingImagesConfig) {
       colorOption: 'transparent',
     });
 
-    const manifest = getManifest();
-    console.log(manifest, generateIconsResult);
-
-    generateIconsResult.Uri;
+    await updateManifestWithGeneratedIcons(generateIconsResult.Uri);
   } catch (e) {
     console.error(e);
   }
@@ -113,15 +110,21 @@ export async function updateManifestWithGeneratedIcons(id: string) {
       await zip.file('icons.json').async('string')
     ) as GeneratedImageIcons;
 
-    // loop through
-    // zipContents.icons
+    const icons = [];
+    for (let i = 0; i < zipContents.icons.length; i++) {
+      const icon = zipContents.icons[i];
+      const base64Img = await zip.file(icon.src).async('base64');
 
-    // const item = zip.file('').async('')
-    // cache, and queue
-    // const manifestEntry update
+      icon.src = base64Img;
+      icon.type = 'image/png';
+      icons.push(icon);
 
-    // zip
-    // batch update the manifest
+      // TODO cache icon separately? or the zip?
+    }
+
+    updateManifest({
+      icons,
+    });
   } catch (e) {
     console.error(e);
   }
