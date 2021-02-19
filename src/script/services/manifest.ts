@@ -1,21 +1,31 @@
+import deepmerge from 'deepmerge';
 import { promiseAnyPolyfill } from '../polyfills/promise-any';
+import { uniqueElements } from '../utils/customMerge';
 import { env } from '../utils/environment';
-import { Manifest, ManifestDetectionResult } from '../utils/interfaces';
+import {
+  AppEvents,
+  Icon,
+  Manifest,
+  ManifestDetectionResult,
+} from '../utils/interfaces';
 
 const apiUrl = `${env.api}/manifests`;
 
+export const emitter = new EventTarget();
 let manifest: Manifest | null = null;
 let maniURL: string | null = null;
 
 // Uses PWABuilder API to fetch the manifest
-async function getManifestViaApi(url: string): Promise<ManifestDetectionResult> {
+async function getManifestViaApi(
+  url: string
+): Promise<ManifestDetectionResult> {
   const options = {
     siteUrl: url,
   };
 
   // const postResult = this.axios.$post(this.apiUrl, options);
   const post = await fetch(apiUrl, {
-    method: "POST",
+    method: 'POST',
     body: JSON.stringify(options),
     headers: new Headers({ 'content-type': 'application/json' }),
   });
@@ -25,7 +35,9 @@ async function getManifestViaApi(url: string): Promise<ManifestDetectionResult> 
 }
 
 // Uses Azure manifest Puppeteer service to fetch the manifest, then POSTS it to the API.
-async function getManifestViaFilePost(url: string): Promise<ManifestDetectionResult> {
+async function getManifestViaFilePost(
+  url: string
+): Promise<ManifestDetectionResult> {
   const manifestTestUrl = `${
     env.testAPIUrl
   }/WebManifest?site=${encodeURIComponent(url)}`;
@@ -59,25 +71,27 @@ async function getManifestViaFilePost(url: string): Promise<ManifestDetectionRes
   formData.append('file', manifestFile);
 
   const filePostTask = await fetch(apiUrl, {
-    method: "POST",
-    body: JSON.stringify(formData)
-  })
+    method: 'POST',
+    body: JSON.stringify(formData),
+  });
   const filePostResult = await filePostTask.json();
 
   return await syncRedis(filePostResult);
 }
 
 // Uses Azurez HTML parsing microservice to fetch the manifest, then hands it to the API.
-async function getManifestViaHtmlParse(url: string): Promise<ManifestDetectionResult> {
+async function getManifestViaHtmlParse(
+  url: string
+): Promise<ManifestDetectionResult> {
   type ManifestFinderResult = {
     manifestUrl: string | null;
     manifestContents: Manifest | null;
     error: string | null;
   };
 
-  const manifestTestUrl = `${
-    env.manifestFinderUrl
-  }?url=${encodeURIComponent(url)}`;
+  const manifestTestUrl = `${env.manifestFinderUrl}?url=${encodeURIComponent(
+    url
+  )}`;
   const response = await fetch(manifestTestUrl);
   if (!response.ok) {
     console.warn('Fetching manifest via HTML parsing service failed', response);
@@ -129,7 +143,9 @@ async function syncRedis(
   return manifestResult;
 }
 
-export async function fetchManifest(url: string): Promise<ManifestDetectionResult> {
+export async function fetchManifest(
+  url: string
+): Promise<ManifestDetectionResult> {
   // Manifest detection is surprisingly tricky due to redirects, dynamic code generation, SSL problems, and other issues.
   // We have 3 techniques to detect the manifest:
   // 1. The legacy PWABuilder API
@@ -138,27 +154,29 @@ export async function fetchManifest(url: string): Promise<ManifestDetectionResul
   // This fetch() function runs all 3 manifest detection schemes concurrently and returns the first one that succeeds.
 
   const manifestDetectors = [
-      getManifestViaApi(url),
-      getManifestViaFilePost(url),
-      getManifestViaHtmlParse(url)
+    getManifestViaApi(url),
+    getManifestViaFilePost(url),
+    getManifestViaHtmlParse(url),
   ];
 
   // We want to use Promise.any(...), but browser support is too low at the time of this writing: https://caniuse.com/mdn-javascript_builtins_promise_any
   // Use our polyfill if needed.
-  const promiseAnyOrPolyfill: (promises: Promise<ManifestDetectionResult>[]) => Promise<ManifestDetectionResult> =
-      (promises) => Promise["any"] ? Promise["any"](promises) : promiseAnyPolyfill(promises);
+  const promiseAnyOrPolyfill: (
+    promises: Promise<ManifestDetectionResult>[]
+  ) => Promise<ManifestDetectionResult> = promises =>
+    Promise['any'] ? Promise['any'](promises) : promiseAnyPolyfill(promises);
 
   try {
-      const result = await promiseAnyOrPolyfill(manifestDetectors);
+    const result = await promiseAnyOrPolyfill(manifestDetectors);
 
-      manifest = result.content;
-      maniURL = result.generatedUrl;
-      return result;
+    manifest = result.content;
+    maniURL = result.generatedUrl;
+    return result;
   } catch (manifestDetectionError) {
-      console.error("All manifest detectors failed.", manifestDetectionError);
+    console.error('All manifest detectors failed.', manifestDetectionError);
 
-      // Well, we sure tried.
-      throw manifestDetectionError;
+    // Well, we sure tried.
+    throw manifestDetectionError;
   }
 }
 
@@ -171,11 +189,32 @@ export function getManifest() {
 }
 
 export async function updateManifest(manifestUpdates: Partial<Manifest>) {
-  manifest = {
-    ...manifest,
-    ...manifestUpdates,
-  };
+  manifest = deepmerge(manifest, manifestUpdates, {
+    customMerge: customManifestMerge,
+  });
 
-  console.log('TODO sync redis');
-  // return syncRedis()
+  emitter.dispatchEvent(
+    updateManifestEvent({
+      ...manifestUpdates,
+    })
+  );
+
+  // TODO determine if needed.
+  // return await syncRedis();
+}
+
+export function updateManifestEvent<T extends Partial<Manifest>>(detail: T) {
+  return new CustomEvent<T>(AppEvents.manifestUpdate, {
+    detail,
+    bubbles: true,
+    composed: true,
+  });
+}
+
+function customManifestMerge(key: string) {
+  if (key === 'icons') {
+    return uniqueElements<Icon>(icon => icon.sizes);
+  } else if (key === 'screenshots') {
+    return uniqueElements<Icon>(screenshot => screenshot.sizes);
+  }
 }
