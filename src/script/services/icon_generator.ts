@@ -113,10 +113,15 @@ export async function updateManifestWithGeneratedIcons(id: string) {
     const icons = [];
     for (let i = 0; i < zipContents.icons.length; i++) {
       const icon = zipContents.icons[i];
-      const base64Img = await zip.file(icon.src).async('base64');
+      const zipSrc = icon.src;
+      const [platform] = zipSrc.split('/');
+      const base64Img = await zip.file(zipSrc).async('base64');
 
       icon.src = base64Img;
       icon.type = 'image/png';
+      icon.generated = true;
+      icon.platform = platform;
+      icon.purpose = 'any';
       icons.push(icon);
 
       // TODO cache icon separately? or the zip?
