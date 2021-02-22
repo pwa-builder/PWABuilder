@@ -93,6 +93,16 @@ export class AppTesting extends LitElement {
           border-radius: 0;
         }
 
+        app-header::part(header) {
+          background: transparent;
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 2;
+          border: none;
+        }
+
         #testing-container span {
           font-weight: var(--font-bold);
           font-size: var(--large-font-size);
