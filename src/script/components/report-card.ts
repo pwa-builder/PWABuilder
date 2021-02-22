@@ -60,7 +60,7 @@ export class ReportCard extends LitElement {
       }
 
       .accordion-score {
-        margin-right: 12px;
+        margin-right: 20px;
       }
 
       fast-accordion-item,
@@ -79,7 +79,8 @@ export class ReportCard extends LitElement {
         border-radius: 50%;
         color: #5231a7;
 
-        width: 32px;
+        height: 32px;
+        min-width: 32px;
       }
 
       .flipper-button ion-icon {
@@ -91,7 +92,8 @@ export class ReportCard extends LitElement {
       }
 
       .flipper-button::part(control) {
-        font-size: 22px;
+        font-size: 18px;
+        padding: 0;
       }
 
       .flipper-button::part(content) {
@@ -105,6 +107,7 @@ export class ReportCard extends LitElement {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        padding-right: 1.2em;
       }
 
       .options-button {
