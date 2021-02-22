@@ -133,6 +133,8 @@ export class ReportCard extends LitElement {
       #package-block {
         display: flex;
         justify-content: flex-end;
+        margin-right: 1.2em;
+        margin-top: 40px;
       }
 
       #package-block fast-anchor {
