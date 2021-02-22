@@ -30,7 +30,7 @@ import style from '../../../styles/error-styles.css';
 // For more info on the @pwabuilder/pwainstall component click here https://github.com/pwa-builder/pwa-install
 import '@pwabuilder/pwainstall';
 import { Router } from '@vaadin/router';
-import { getProgress, setProgress, setURL } from '../services/app-info';
+import { getProgress, getURL, setProgress } from '../services/app-info';
 import { Status } from '../utils/interfaces';
 
 @customElement('app-home')
@@ -278,12 +278,12 @@ export class AppHome extends LitElement {
           this.errorGettingURL = false;
           this.errorMessage = undefined;
 
-          setURL(this.siteURL);
-
           const progress = getProgress();
           this.updateProgress(progress);
+
+          const goodURL = getURL();
           
-          Router.go(`/testing?site=${this.siteURL}`);
+          Router.go(`/testing?site=${goodURL}`);
         }
       } catch (err) {
         console.error('Error getting site', err.message);
