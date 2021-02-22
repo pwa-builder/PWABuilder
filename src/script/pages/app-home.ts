@@ -130,6 +130,10 @@ export class AppHome extends LitElement {
           width: 100%;
         }
 
+        #input-form loading-button::part(underlying-button) {
+            width: 109px;
+          }
+
         ${smallBreakPoint(css`
           content-header::part(grid-container) {
             display: none;
@@ -213,7 +217,6 @@ export class AppHome extends LitElement {
           }
 
           #input-form loading-button::part(underlying-button) {
-            width: 216px;
             margin-top: 44px;
           }
         `)}
@@ -227,10 +230,6 @@ export class AppHome extends LitElement {
       ${xxLargeBreakPoint(css`
           .intro-grid-item {
             max-width: 280px;
-          }
-
-          #input-form {
-            width: 32em;
           }
 
           h2 {
