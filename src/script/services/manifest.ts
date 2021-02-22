@@ -104,6 +104,7 @@ async function getManifestViaHtmlParse(url: string): Promise<ManifestDetectionRe
       short_name: responseData.manifestContents.short_name || '',
     },
     id: '',
+    generated: responseData.manifestContents ? false : true,
     errors: [],
     suggestions: [],
     warnings: [],
