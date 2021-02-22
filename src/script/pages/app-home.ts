@@ -57,7 +57,7 @@ export class AppHome extends LitElement {
 
         h2 {
           font-size: var(--xlarge-font-size);
-          line-height: 46px;
+          line-height: 48px;
           letter-spacing: -0.015em;
           max-width: 526px;
         }
@@ -144,7 +144,6 @@ export class AppHome extends LitElement {
           }
 
           h2 {
-            line-height: 34px;
             margin-top: 0;
           }
 
@@ -187,7 +186,6 @@ export class AppHome extends LitElement {
 
           h2 {
             font-size: var(--large-font-size);
-            line-height: 34px;
             margin-top: 0;
           }
 
@@ -218,6 +216,7 @@ export class AppHome extends LitElement {
 
           #input-form loading-button::part(underlying-button) {
             margin-top: 44px;
+            width: 176px;
           }
         `)}
 
