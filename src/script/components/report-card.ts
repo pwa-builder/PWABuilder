@@ -8,7 +8,7 @@ import {
 } from 'lit-element';
 import { RawTestResult } from '../utils/interfaces';
 
-import { largeBreakPoint, xLargeBreakPoint } from '../utils/css/breakpoints';
+import { largeBreakPoint, xLargeBreakPoint, smallBreakPoint } from '../utils/css/breakpoints';
 
 import './score-results';
 
@@ -29,7 +29,9 @@ export class ReportCard extends LitElement {
       :host {
         width: 100%;
         display: block;
+      }
 
+      #main-report-section {
         padding-left: 32px;
         padding-right: 32px;
         padding-bottom: 32px;
@@ -164,6 +166,17 @@ export class ReportCard extends LitElement {
           `
         )
       }
+
+      ${
+        smallBreakPoint(
+          css`
+            #main-report-section {
+              padding-left: 12px;
+              padding-right: 12px;
+            }
+          `
+        )
+      }
     `;
   }
 
@@ -288,7 +301,7 @@ export class ReportCard extends LitElement {
 
   render() {
     return html`
-      <div>
+      <div id="main-report-section">
         <div id="report-header">
           <h3>The Scoop</h3>
 

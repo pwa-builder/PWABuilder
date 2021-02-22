@@ -93,6 +93,7 @@ export class ContentHeader extends LitElement {
         #main-container {
           padding-top: initial;
           padding-bottom: 51px;
+          padding-left: 0;
         }
 
         #hero-container {
@@ -107,6 +108,8 @@ export class ContentHeader extends LitElement {
       ${mediumBreakPoint(css`
         #main-container {
           flex-direction: column-reverse;
+
+          
         }
 
         img {
