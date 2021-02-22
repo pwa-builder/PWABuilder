@@ -20,7 +20,6 @@ import { fetchManifest } from '../services/manifest';
 import '../components/content-header';
 import '../components/resource-hub';
 import '../components/loading-button';
-import '../components/app-modal';
 import '../components/dropdown-menu';
 import '../components/app-sidebar';
 
@@ -375,19 +374,6 @@ export class AppHome extends LitElement {
           >
         </form>
       </content-header>
-
-      <app-modal
-        title="Modal Title"
-        body="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Urna, sit scelerisque vestibulum magnis. Auctor dolor, tincidunt enim."
-        ?open="${true}"
-      >
-
-        <div slot="modal-actions">
-          <app-dropdown .menuItems=${['A', 'B', 'C']}></app-dropdown>
-
-          <app-button>Test Button</app-button>
-        </div>
-      </app-modal>
 
       <resource-hub page="home" all>
         <h2 slot="title">PWABuilder Resource Hub</h2>

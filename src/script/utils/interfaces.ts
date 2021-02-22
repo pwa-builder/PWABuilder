@@ -88,6 +88,7 @@ export interface ManifestDetectionResult {
     short_name: string;
   };
   id: string;
+  generated: boolean;
   errors: [];
   suggestions: [];
   warnings: [];

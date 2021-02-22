@@ -60,7 +60,6 @@ export class ScoreResults extends LitElement {
 
   firstUpdated() {
     this.organizedResults = this.organize();
-    console.log(this.organizedResults);
   }
 
   organize() {

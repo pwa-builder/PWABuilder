@@ -6,6 +6,7 @@ import {
 } from '../../utils/android-validation';
 import { env } from '../../utils/environment';
 import { findSuitableIcon } from '../../utils/icons';
+import { getURL } from '../app-info';
 import { getManifest, getManiURL } from '../manifest';
 
 export async function generateAndroidPackage(
@@ -28,11 +29,7 @@ export async function generateAndroidPackage(
     });
     if (response.status === 200) {
       const data = await response.blob();
-
-      await fileSave(data, {
-        fileName: 'your_android_pwa.zip',
-        extensions: ['.zip'],
-      });
+      return data;
     } else {
       const responseText = await response.text();
 
@@ -50,9 +47,9 @@ export async function generateAndroidPackage(
           'Android package generation failed with ECONNREFUSED. Retrying with safe images.',
           responseText
         );
-        this.updateAndroidOptionsWithSafeUrls(androidOptions);
+        const updatedOptions = updateAndroidOptionsWithSafeUrls(androidOptions);
 
-        await generateAndroidPackage(androidOptions);
+        await generateAndroidPackage(updatedOptions);
       } else {
         throw new Error(
           `Error generating Android package.\n\nStatus code: ${response.status}\n\nError: ${response.statusText}\n\nDetails: ${responseText}`
@@ -69,15 +66,22 @@ export async function generateAndroidPackage(
 export function createAndroidPackageOptionsFromManifest(): AndroidApkOptions {
   const manifest = getManifest();
 
-  if (manifest) {
-    const pwaUrl = getManiURL();
+  console.log(manifest);
 
-    if (!pwaUrl) {
+  if (manifest) {
+    const maniURL = getManiURL();
+    const pwaURL = getURL();
+
+    if (!pwaURL) {
       throw new Error("Can't find the current URL");
     }
 
+    if (!maniURL) {
+      throw new Error('Cant find the manifest URL');
+    }
+
     const appName = manifest.short_name || manifest.name || 'My PWA';
-    const packageName = generatePackageId(new URL(pwaUrl).hostname);
+    const packageName = generatePackageId(new URL(pwaURL).hostname);
     // Use standalone display mode unless the manifest has fullscreen specified.
     const display =
       manifest.display === 'fullscreen' ? 'fullscreen' : 'standalone';
@@ -96,7 +100,7 @@ export function createAndroidPackageOptionsFromManifest(): AndroidApkOptions {
     } else {
       // The start_url in the manifest is either a relative or absolute path.
       // Ensure it's a path relative to the root.
-      const absoluteStartUrl = new URL(manifest.start_url, pwaUrl);
+      const absoluteStartUrl = new URL(manifest.start_url, maniURL);
       relativeStartUrl =
         absoluteStartUrl.pathname + (absoluteStartUrl.search || '');
     }
@@ -137,7 +141,7 @@ export function createAndroidPackageOptionsFromManifest(): AndroidApkOptions {
           enabled: false,
         },
       },
-      host: pwaUrl,
+      host: maniURL,
       iconUrl: icon ? icon.src : '',
       includeSourceCode: false,
       isChromeOSOnly: false,
@@ -164,14 +168,35 @@ export function createAndroidPackageOptionsFromManifest(): AndroidApkOptions {
       },
       signingMode: 'new',
       splashScreenFadeOutDuration: 300,
-      startUrl: relativeStartUrl,
+      startUrl: (manifest.start_url as string),
       themeColor: manifest.theme_color || '#FFFFFF',
       shareTarget: manifest.share_target,
-      webManifestUrl: pwaUrl,
+      webManifestUrl: maniURL,
     };
   } else {
     throw new Error(
       'Could not generate options from the current apps manifest'
     );
   }
+}
+
+function updateAndroidOptionsWithSafeUrls(
+  options: AndroidApkOptions
+): AndroidApkOptions {
+  const absoluteUrlProps: Array<keyof AndroidApkOptions> = [
+    'maskableIconUrl',
+    'monochromeIconUrl',
+    'iconUrl',
+    'webManifestUrl',
+  ];
+  for (const prop of absoluteUrlProps) {
+    const url = options[prop];
+    if (url && typeof url === 'string') {
+      const safeUrl = `${process.env.safeUrlFetcher}?url=${encodeURIComponent(
+        url
+      )}`;
+      (options as any)[prop] = safeUrl;
+    }
+  }
+  return options;
 }
