@@ -131,8 +131,8 @@ export class AppHome extends LitElement {
         }
 
         #input-form loading-button::part(underlying-button) {
-            width: 109px;
-          }
+          width: 109px;
+        }
 
         ${smallBreakPoint(css`
           content-header::part(grid-container) {
