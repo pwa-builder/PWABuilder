@@ -8,7 +8,7 @@ import {
 } from 'lit-element';
 import { RawTestResult } from '../utils/interfaces';
 
-import { largeBreakPoint, xLargeBreakPoint } from '../utils/css/breakpoints';
+import { largeBreakPoint, xLargeBreakPoint, smallBreakPoint } from '../utils/css/breakpoints';
 
 import './score-results';
 
@@ -29,7 +29,9 @@ export class ReportCard extends LitElement {
       :host {
         width: 100%;
         display: block;
+      }
 
+      #main-report-section {
         padding-left: 32px;
         padding-right: 32px;
         padding-bottom: 32px;
@@ -60,7 +62,7 @@ export class ReportCard extends LitElement {
       }
 
       .accordion-score {
-        margin-right: 12px;
+        margin-right: 20px;
       }
 
       fast-accordion-item,
@@ -79,7 +81,8 @@ export class ReportCard extends LitElement {
         border-radius: 50%;
         color: #5231a7;
 
-        width: 32px;
+        height: 32px;
+        min-width: 32px;
       }
 
       .flipper-button ion-icon {
@@ -91,7 +94,8 @@ export class ReportCard extends LitElement {
       }
 
       .flipper-button::part(control) {
-        font-size: 22px;
+        font-size: 18px;
+        padding: 0;
       }
 
       .flipper-button::part(content) {
@@ -105,6 +109,7 @@ export class ReportCard extends LitElement {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        padding-right: 1.2em;
       }
 
       .options-button {
@@ -133,6 +138,8 @@ export class ReportCard extends LitElement {
       #package-block {
         display: flex;
         justify-content: flex-end;
+        margin-right: 1.2em;
+        margin-top: 40px;
       }
 
       #package-block fast-anchor {
@@ -155,6 +162,17 @@ export class ReportCard extends LitElement {
           css`
             .accordion-heading-block {
               width: 90vw;
+            }
+          `
+        )
+      }
+
+      ${
+        smallBreakPoint(
+          css`
+            #main-report-section {
+              padding-left: 12px;
+              padding-right: 12px;
             }
           `
         )
@@ -283,7 +301,7 @@ export class ReportCard extends LitElement {
 
   render() {
     return html`
-      <div>
+      <div id="main-report-section">
         <div id="report-header">
           <h3>The Scoop</h3>
 

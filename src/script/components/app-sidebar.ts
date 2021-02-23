@@ -250,12 +250,12 @@ export class AppSidebar extends LitElement {
         height: 0.75rem;
       }
 
-      .done ion-icon {
-        color: var(--success-color);
+      .pending, .done, .pending::part(heading), .done::part(heading) {
+        color: rgba(255, 255, 255, 0.5);
       }
 
-      .pending {
-        color: var(--light-primary-color);
+      .done ion-icon {
+        color: var(--success-color);
       }
 
       .active::part(heading) {
@@ -267,6 +267,14 @@ export class AppSidebar extends LitElement {
       .done::part(heading), .pending::part(heading) {
         background: rgba(255, 255, 255, 0.05);
         padding-left: 23px;
+      }
+
+      .active .sidebar-item-header ion-icon {
+        color: white;
+      }
+
+      .pending .sidebar-item-header ion-icon {
+        color: rgb(52 55 68);
       }
     `;
   }

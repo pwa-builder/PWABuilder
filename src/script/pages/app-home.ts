@@ -30,7 +30,7 @@ import style from '../../../styles/error-styles.css';
 // For more info on the @pwabuilder/pwainstall component click here https://github.com/pwa-builder/pwa-install
 import '@pwabuilder/pwainstall';
 import { Router } from '@vaadin/router';
-import { getProgress, setProgress, setURL } from '../services/app-info';
+import { getProgress, getURL, setProgress } from '../services/app-info';
 import { Status } from '../utils/interfaces';
 
 @customElement('app-home')
@@ -57,7 +57,7 @@ export class AppHome extends LitElement {
 
         h2 {
           font-size: var(--xlarge-font-size);
-          line-height: 46px;
+          line-height: 48px;
           letter-spacing: -0.015em;
           max-width: 526px;
         }
@@ -130,6 +130,10 @@ export class AppHome extends LitElement {
           width: 100%;
         }
 
+        #input-form loading-button::part(underlying-button) {
+          width: 109px;
+        }
+
         ${smallBreakPoint(css`
           content-header::part(grid-container) {
             display: none;
@@ -140,7 +144,6 @@ export class AppHome extends LitElement {
           }
 
           h2 {
-            line-height: 34px;
             margin-top: 0;
           }
 
@@ -183,7 +186,6 @@ export class AppHome extends LitElement {
 
           h2 {
             font-size: var(--large-font-size);
-            line-height: 34px;
             margin-top: 0;
           }
 
@@ -213,8 +215,8 @@ export class AppHome extends LitElement {
           }
 
           #input-form loading-button::part(underlying-button) {
-            width: 216px;
             margin-top: 44px;
+            width: 176px;
           }
         `)}
 
@@ -227,10 +229,6 @@ export class AppHome extends LitElement {
       ${xxLargeBreakPoint(css`
           .intro-grid-item {
             max-width: 280px;
-          }
-
-          #input-form {
-            width: 32em;
           }
 
           h2 {
@@ -280,12 +278,12 @@ export class AppHome extends LitElement {
           this.errorGettingURL = false;
           this.errorMessage = undefined;
 
-          setURL(this.siteURL);
-
           const progress = getProgress();
           this.updateProgress(progress);
+
+          const goodURL = getURL();
           
-          Router.go(`/testing?site=${this.siteURL}`);
+          Router.go(`/testing?site=${goodURL}`);
         }
       } catch (err) {
         console.error('Error getting site', err.message);

@@ -11,6 +11,7 @@ import {
   BreakpointValues,
   largeBreakPoint,
   xxxLargeBreakPoint,
+  smallBreakPoint
 } from '../utils/css/breakpoints';
 
 import '../components/content-header';
@@ -112,6 +113,16 @@ export class AppReport extends LitElement {
             }
           `
         )}
+
+        ${
+          smallBreakPoint(
+            css`
+              fast-tabs::part(tablist) {
+                display: none;
+              }
+            `
+          )
+        }
       `,
     ];
   }

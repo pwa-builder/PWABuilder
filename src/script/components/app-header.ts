@@ -1,3 +1,4 @@
+import { Router } from '@vaadin/router';
 import { LitElement, css, html, customElement, property } from 'lit-element';
 
 import {
@@ -150,7 +151,14 @@ export class AppHeader extends LitElement {
   }
 
   goBack() {
-    window.history.back();
+    const currentPlace = location.href;
+
+    if (currentPlace.includes('reportcard')) {
+      Router.go("/");
+    }
+    else {
+      window.history.back();
+    }
   }
 
   render() {
