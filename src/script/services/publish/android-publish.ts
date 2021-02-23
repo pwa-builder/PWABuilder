@@ -178,7 +178,7 @@ export function createAndroidPackageOptionsFromManifest(): AndroidApkOptions {
     themeColor: manifest.theme_color || '#FFFFFF',
     shareTarget: manifest.share_target,
     webManifestUrl: maniURL,
-  };    
+  };
 }
 
 /**
