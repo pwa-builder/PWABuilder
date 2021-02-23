@@ -19,17 +19,17 @@ export async function generateAndroidPackage(
     );
   }
 
-  const generateApkUrl = `${env.androidPackageGeneratorUrl}/generateApkZip`;
+  const generateAppUrl = `${env.androidPackageGeneratorUrl}/generateAppPackage`;
 
   try {
-    const response = await fetch(generateApkUrl, {
+    const response = await fetch(generateAppUrl, {
       method: 'POST',
       headers: new Headers({ 'content-type': 'application/json' }),
       body: JSON.stringify(androidOptions),
     });
+
     if (response.status === 200) {
-      const data = await response.blob();
-      return data;
+      return await response.blob();
     } else {
       const responseText = await response.text();
 
@@ -65,119 +65,134 @@ export async function generateAndroidPackage(
 
 export function createAndroidPackageOptionsFromManifest(): AndroidApkOptions {
   const manifest = getManifest();
-
-  console.log(manifest);
-
-  if (manifest) {
-    const maniURL = getManiURL();
-    const pwaURL = getURL();
-
-    if (!pwaURL) {
-      throw new Error("Can't find the current URL");
-    }
-
-    if (!maniURL) {
-      throw new Error('Cant find the manifest URL');
-    }
-
-    const appName = manifest.short_name || manifest.name || 'My PWA';
-    const packageName = generatePackageId(new URL(pwaURL).hostname);
-    // Use standalone display mode unless the manifest has fullscreen specified.
-    const display =
-      manifest.display === 'fullscreen' ? 'fullscreen' : 'standalone';
-    // StartUrl must be relative to the host.
-    // We make sure it is below.
-    let relativeStartUrl: string;
-    if (
-      !manifest.start_url ||
-      manifest.start_url === '/' ||
-      manifest.start_url === '.' ||
-      manifest.start_url === './'
-    ) {
-      // First, if we don't have a start_url in the manifest, or it's just "/",
-      // then we can just use that.
-      relativeStartUrl = '/';
-    } else {
-      // The start_url in the manifest is either a relative or absolute path.
-      // Ensure it's a path relative to the root.
-      const absoluteStartUrl = new URL(manifest.start_url, maniURL);
-      relativeStartUrl =
-        absoluteStartUrl.pathname + (absoluteStartUrl.search || '');
-    }
-    const manifestIcons = manifest.icons || [];
-    const icon =
-      findSuitableIcon(manifestIcons, 'any', 512, 512, 'image/png') ||
-      findSuitableIcon(manifestIcons, 'any', 192, 192, 'image/png') ||
-      findSuitableIcon(manifestIcons, 'any', 512, 512, 'image/jpeg') ||
-      findSuitableIcon(manifestIcons, 'any', 192, 192, 'image/jpeg') ||
-      findSuitableIcon(manifestIcons, 'any', 512, 512, undefined) || // A 512x512 or larger image with unspecified type
-      findSuitableIcon(manifestIcons, 'any', 192, 192, undefined) || // A 512x512 or larger image with unspecified type
-      findSuitableIcon(manifestIcons, 'any', 0, 0, undefined); // Welp, we tried. Any image of any size, any type.
-    const maskableIcon =
-      findSuitableIcon(manifestIcons, 'maskable', 512, 512, 'image/png') ||
-      findSuitableIcon(manifestIcons, 'maskable', 192, 192, 'image/png') ||
-      findSuitableIcon(manifestIcons, 'maskable', 192, 192, undefined);
-    const monochromeIcon =
-      findSuitableIcon(manifestIcons, 'monochrome', 512, 512, 'image/png') ||
-      findSuitableIcon(manifestIcons, 'monochrome', 192, 192, 'image/png') ||
-      findSuitableIcon(manifestIcons, 'monochrome', 192, 192, undefined);
-    const navColorOrFallback =
-      manifest.theme_color || manifest.background_color || '#000000';
-
-    return {
-      appVersion: '1.0.0.0',
-      appVersionCode: 1,
-      backgroundColor:
-        manifest.background_color || manifest.theme_color || '#FFFFFF',
-      display: display,
-      enableNotifications: true,
-      enableSiteSettingsShortcut: true,
-      fallbackType: 'customtabs',
-      features: {
-        locationDelegation: {
-          enabled: true,
-        },
-        playBilling: {
-          enabled: false,
-        },
-      },
-      host: maniURL,
-      iconUrl: icon ? icon.src : '',
-      includeSourceCode: false,
-      isChromeOSOnly: false,
-      launcherName: manifest.short_name || appName, // launcher name should be the short name. If none is available, fallback to the full app name.
-      maskableIconUrl: maskableIcon ? maskableIcon.src : '',
-      monochromeIconUrl: monochromeIcon ? monochromeIcon.src : '',
-      name: appName,
-      navigationColor: navColorOrFallback,
-      navigationColorDark: navColorOrFallback,
-      navigationDividerColor: navColorOrFallback,
-      navigationDividerColorDark: navColorOrFallback,
-      orientation: manifest.orientation || 'default',
-      packageId: packageName,
-      shortcuts: manifest.shortcuts || [],
-      signing: {
-        file: null,
-        alias: 'my-key-alias',
-        fullName: `${manifest.short_name || manifest.name || 'App'} Admin`,
-        organization: manifest.name || 'PWABuilder',
-        organizationalUnit: 'Engineering',
-        countryCode: 'US',
-        keyPassword: '', // If empty, one will be generated by CloudAPK service
-        storePassword: '', // If empty, one will be generated by CloudAPK service
-      },
-      signingMode: 'new',
-      splashScreenFadeOutDuration: 300,
-      startUrl: (manifest.start_url as string),
-      themeColor: manifest.theme_color || '#FFFFFF',
-      shareTarget: manifest.share_target,
-      webManifestUrl: maniURL,
-    };
-  } else {
+  if (!manifest) {
     throw new Error(
-      'Could not generate options from the current apps manifest'
+      'Could not find the web manifest'
     );
   }
+
+  const maniURL = getManiURL();
+  const pwaURL = getURL();
+
+  if (!pwaURL) {
+    throw new Error("Can't find the current URL");
+  }
+
+  if (!maniURL) {
+    throw new Error('Cant find the manifest URL');
+  }
+
+  const appName = manifest.short_name || manifest.name || 'My PWA';
+  const packageName = generatePackageId(new URL(pwaURL).hostname);
+  // Use standalone display mode unless the manifest has fullscreen specified.
+  const display =
+    manifest.display === 'fullscreen' ? 'fullscreen' : 'standalone';
+  // StartUrl must be relative to the host.
+  // We make sure it is below.
+  let relativeStartUrl: string;
+  if (
+    !manifest.start_url ||
+    manifest.start_url === '/' ||
+    manifest.start_url === '.' ||
+    manifest.start_url === './'
+  ) {
+    // First, if we don't have a start_url in the manifest, or it's just "/",
+    // then we can just use that.
+    relativeStartUrl = '/';
+  } else {
+    // The start_url in the manifest is either a relative or absolute path.
+    // Ensure it's a path relative to the root.
+    const absoluteStartUrl = new URL(manifest.start_url, maniURL);
+    relativeStartUrl =
+      absoluteStartUrl.pathname + (absoluteStartUrl.search || '');
+  }
+  const manifestIcons = manifest.icons || [];
+  const icon =
+    findSuitableIcon(manifestIcons, 'any', 512, 512, 'image/png') ||
+    findSuitableIcon(manifestIcons, 'any', 192, 192, 'image/png') ||
+    findSuitableIcon(manifestIcons, 'any', 512, 512, 'image/jpeg') ||
+    findSuitableIcon(manifestIcons, 'any', 192, 192, 'image/jpeg') ||
+    findSuitableIcon(manifestIcons, 'any', 512, 512, undefined) || // A 512x512 or larger image with unspecified type
+    findSuitableIcon(manifestIcons, 'any', 192, 192, undefined) || // A 512x512 or larger image with unspecified type
+    findSuitableIcon(manifestIcons, 'any', 0, 0, undefined); // Welp, we tried. Any image of any size, any type.
+  if (!icon) {
+    throw new Error("Can't find a suitable icon to use for the Android package. Ensure your manifest has a square, large (512x512 or better) PNG icon.");
+  }
+
+  const maskableIcon =
+    findSuitableIcon(manifestIcons, 'maskable', 512, 512, 'image/png') ||
+    findSuitableIcon(manifestIcons, 'maskable', 192, 192, 'image/png') ||
+    findSuitableIcon(manifestIcons, 'maskable', 192, 192, undefined);
+  const monochromeIcon =
+    findSuitableIcon(manifestIcons, 'monochrome', 512, 512, 'image/png') ||
+    findSuitableIcon(manifestIcons, 'monochrome', 192, 192, 'image/png') ||
+    findSuitableIcon(manifestIcons, 'monochrome', 192, 192, undefined);
+  const navColorOrFallback =
+    manifest.theme_color || manifest.background_color || '#000000';
+
+  return {
+    appVersion: '1.0.0.0',
+    appVersionCode: 1,
+    backgroundColor:
+      manifest.background_color || manifest.theme_color || '#FFFFFF',
+    display: display,
+    enableNotifications: true,
+    enableSiteSettingsShortcut: true,
+    fallbackType: 'customtabs',
+    features: {
+      locationDelegation: {
+        enabled: true,
+      },
+      playBilling: {
+        enabled: false,
+      },
+    },
+    host: maniURL,
+    iconUrl: getAbsoluteUrl(icon.src, maniURL),
+    includeSourceCode: false,
+    isChromeOSOnly: false,
+    launcherName: manifest.short_name || appName, // launcher name should be the short name. If none is available, fallback to the full app name.
+    maskableIconUrl: getAbsoluteUrl(maskableIcon?.src, maniURL),
+    monochromeIconUrl: getAbsoluteUrl(monochromeIcon?.src, maniURL),
+    name: appName,
+    navigationColor: navColorOrFallback,
+    navigationColorDark: navColorOrFallback,
+    navigationDividerColor: navColorOrFallback,
+    navigationDividerColorDark: navColorOrFallback,
+    orientation: manifest.orientation || 'default',
+    packageId: packageName,
+    shortcuts: manifest.shortcuts || [],
+    signing: {
+      file: null,
+      alias: 'my-key-alias',
+      fullName: `${manifest.short_name || manifest.name || 'App'} Admin`,
+      organization: manifest.name || 'PWABuilder',
+      organizationalUnit: 'Engineering',
+      countryCode: 'US',
+      keyPassword: '', // If empty, one will be generated by CloudAPK service
+      storePassword: '', // If empty, one will be generated by CloudAPK service
+    },
+    signingMode: 'new',
+    splashScreenFadeOutDuration: 300,
+    startUrl: (manifest.start_url as string),
+    themeColor: manifest.theme_color || '#FFFFFF',
+    shareTarget: manifest.share_target,
+    webManifestUrl: maniURL,
+  };    
+}
+
+/**
+ * Resolves a relative URL to an absolute URL based on the manifest URL.
+ * If relativeUrl is null, this will return an empty string.
+ * @param relativeUrl The relative URL to make absolute.
+ * @param manifestUrl The absolute URL to the web manifest.
+ */
+function getAbsoluteUrl(relativeUrl: string | null, manifestUrl: string): string {
+  if (!relativeUrl) {
+    return '';
+  }
+
+  return new URL(relativeUrl, manifestUrl).toString();
 }
 
 function updateAndroidOptionsWithSafeUrls(
