@@ -43,6 +43,7 @@ export class AppCard extends LitElement {
           display: flex;
           color: white;
           justify-content: center;
+          border-radius: 4px;
         }
       `,
       // default card
@@ -51,7 +52,7 @@ export class AppCard extends LitElement {
           color: var(--font-color);
           font-size: var(--font-size);
           background: white;
-          border-radius: calc(var(--corner-radius) * 1px);
+          border-radius: 4px;
         }
 
         fast-card.default {

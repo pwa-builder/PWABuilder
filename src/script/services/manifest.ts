@@ -1,6 +1,8 @@
 import { promiseAnyPolyfill } from '../polyfills/promise-any';
 import { env } from '../utils/environment';
 import { Manifest, ManifestDetectionResult } from '../utils/interfaces';
+import { cleanUrl } from '../utils/url';
+import { setURL } from './app-info';
 
 const apiUrl = `${env.api}/manifests`;
 
@@ -137,11 +139,15 @@ export async function fetchManifest(url: string): Promise<ManifestDetectionResul
   // 2. An Azure function that uses Chrome Puppeteer to fetch the manifest
   // 3. An Azure function that parses the HTML to find the manifest.
   // This fetch() function runs all 3 manifest detection schemes concurrently and returns the first one that succeeds.
+  
+  const knownGoodUrl = await cleanUrl(url);
+
+  setURL(knownGoodUrl);
 
   const manifestDetectors = [
-      getManifestViaApi(url),
-      getManifestViaFilePost(url),
-      getManifestViaHtmlParse(url)
+      getManifestViaApi(knownGoodUrl),
+      getManifestViaFilePost(knownGoodUrl),
+      getManifestViaHtmlParse(knownGoodUrl)
   ];
 
   // We want to use Promise.any(...), but browser support is too low at the time of this writing: https://caniuse.com/mdn-javascript_builtins_promise_any
@@ -170,3 +176,5 @@ export function getManiURL() {
 export function getManifest() {
   return manifest;
 }
+
+

@@ -23,6 +23,12 @@ export class LoadingButton extends LitElement {
         fast-button::part(control) {
           font-size: var(--mobile-button-fontsize);
         }
+
+        app-button::part(underlying-button) {
+          width: 176px;
+          font-size: 22px;
+          height: 64px;
+        }
       `)}
 
       ${mediumBreakPoint(css`
@@ -33,6 +39,12 @@ export class LoadingButton extends LitElement {
 
         fast-button::part(control) {
           font-size: var(--mobile-button-fontsize);
+        }
+
+        app-button::part(underlying-button) {
+          width: 176px;
+          font-size: 22px;
+          height: 64px;
         }
       `)}
     `;
