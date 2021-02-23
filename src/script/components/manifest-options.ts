@@ -492,7 +492,9 @@ export class AppManifest extends LitElement {
   async handleModalInputFileChange(evt: CustomEvent<FileInputDetails>) {
     console.log('handleModalInputFileChange', evt);
     const files = evt.detail.input.files;
-    console.log(files, files.item(0));
+
+    // const file = files.item(0);
+    // console.log(URL.createObjectURL(file), URL.createObjectURL(file));
 
     this.uploadSelectedImageFile = files.item(0);
     this.uploadButtonDisabled = !this.validIconInput();
