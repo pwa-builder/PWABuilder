@@ -11,6 +11,7 @@ type Platform =
   | 'android'
   | 'chrome'
   | 'firefox';
+
 type ColorHex = string;
 
 interface MissingImagesConfig {
@@ -153,8 +154,9 @@ export async function downloadZip(id: string) {
 
 function createForm(config: IconGeneratorConfig) {
   const formData = new FormData();
+  const fileFormat = config.fileName.name.split('.').pop();
 
-  formData.append('fileName', config.fileName);
+  formData.append('fileName', config.fileName, `source_img.${fileFormat}`);
   formData.append('padding', String(config.padding));
   formData.append('colorOption', config.colorOption);
 
