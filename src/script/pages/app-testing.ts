@@ -87,15 +87,17 @@ export class AppTesting extends LitElement {
           left: 0;
           right: 0;
           margin-bottom: 0;
+
+          --accent-foreground-rest: var(--primary-purple);
         }
 
         #testing-container fast-progress::part(progress) {
           border-radius: 0;
         }
 
-        #testing-container fast-progress::part(indeterminate-indicator-1), fast-progress::part(indeterminate-indicator-2) {
+        /*#testing-container fast-progress::part(indeterminate-indicator-1), fast-progress::part(indeterminate-indicator-2) {
           background-color: var(--primary-purple);
-        }
+        }*/
 
         app-header::part(header) {
           background: transparent;
