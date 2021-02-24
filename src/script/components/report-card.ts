@@ -19,7 +19,7 @@ import './score-results';
 @customElement('report-card')
 export class ReportCard extends LitElement {
   @property() results: RawTestResult | undefined;
-  @property() scoreCardResults: RawTestResult;
+  @property() scoreCardResults: RawTestResult | undefined;
 
   @internalProperty() maniScore = 0;
   @internalProperty() swScore = 0;
