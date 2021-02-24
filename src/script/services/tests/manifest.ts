@@ -83,6 +83,8 @@ export async function testManifest(
 ): Promise<Array<TestResult> | boolean> {
   const manifestData = await fetchManifest(url);
 
+  console.log('testing manifest');
+
   if (manifestData) {
     const manifest = manifestData;
 
@@ -98,6 +100,7 @@ export async function testManifest(
 }
 
 function doTest(manifest: ManifestDetectionResult): Array<TestResult> | boolean {
+  console.log('manifest', manifest);
   if (manifest.generated && manifest.generated === true) {
     return default_results;
   }
@@ -121,13 +124,13 @@ function doTest(manifest: ManifestDetectionResult): Array<TestResult> | boolean 
       {
         infoString: 'Contains short_name property',
         result:
-          manifest.content.short_name && manifest.content.short_name.length > 1 ? true : false,
+          manifest.content.shortName && manifest.content.shortName.length > 1 ? true : false,
           category: "required"
       },
       {
         infoString: 'Designates a start_url',
         result:
-          manifest.content.start_url && manifest.content.start_url.length > 0 ? true : false,
+          manifest.content.startUrl && manifest.content.startUrl.length > 0 ? true : false,
           category: "required"
       },
       {
@@ -143,12 +146,12 @@ function doTest(manifest: ManifestDetectionResult): Array<TestResult> | boolean 
       },
       {
         infoString: 'Has a background color',
-        result: manifest.content.background_color ? true : false,
+        result: manifest.content.backgroundColor ? true : false,
         category: "recommended"
       },
       {
         infoString: 'Has a theme color',
-        result: manifest.content.theme_color ? true : false,
+        result: manifest.content.themeColor ? true : false,
         category: "recommended"
       },
       {
@@ -185,15 +188,15 @@ function doTest(manifest: ManifestDetectionResult): Array<TestResult> | boolean 
       },
       {
         infoString: 'Contains an IARC ID',
-        result: manifest.content.iarc_rating_id ? true : false,
+        result: manifest.content.iarcRatingId ? true : false,
         category: "optional"
       },
       {
         infoString: 'Specifies related_application',
         result:
-          manifest.content.related_applications &&
-          manifest.content.related_applications.length > 0 &&
-          manifest.content.prefer_related_applications !== undefined
+          manifest.content.relatedApplications &&
+          manifest.content.relatedApplications.length > 0 &&
+          manifest.content.preferRelatedApplications !== undefined
             ? true
             : false,
             category: "optional"
