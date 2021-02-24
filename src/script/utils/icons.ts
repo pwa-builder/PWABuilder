@@ -10,9 +10,9 @@ import { Icon } from "./interfaces";
     desiredWidth: number,
     desiredHeight: number,
     mimeType: string | undefined
-  ): Icon | null {
+  ): Icon | undefined {
     if (!icons || icons.length === 0) {
-      return null;
+      return undefined;
     }
 
     const desiredSize = `${desiredWidth}x${desiredHeight}`;
@@ -22,7 +22,7 @@ import { Icon } from "./interfaces";
       (i.sizes || "0x0").split(" ").some((size) => size === desiredSize);
     const iconIsEmbedded = (i: Icon) => i.src.includes("data:image");
     const iconHasMimeType = (i: Icon) =>
-     i.type === mimeType || 
+     i.type === mimeType ||
      (!i.type && mimeType === "image/png" && i.src && i.src.endsWith(".png")) || // best guess when the manifest doesn't specify the type of image
      (!i.type && mimeType === "image/jpeg" && i.src && i.src.endsWith(".jpg")); // best guess when the manifest doesn't specify the type of image
 
@@ -56,5 +56,5 @@ import { Icon } from "./interfaces";
     const largerIcon = icons.find(
       (i) => iconHasPurpose(i) && iconIsLarger(i) && !iconIsEmbedded(i) && iconHasMimeType(i) && matchesSquareRequirement(i)
     );
-    return largerIcon || null;
+    return largerIcon || undefined;
   }

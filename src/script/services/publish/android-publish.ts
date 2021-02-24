@@ -194,7 +194,7 @@ export function createAndroidPackageOptionsFromManifest(): AndroidApkOptions {
  * @param manifestUrl The absolute URL to the web manifest.
  */
 function getAbsoluteUrl(
-  relativeUrl: string | null,
+  relativeUrl: string | undefined,
   manifestUrl: string
 ): string {
   if (!relativeUrl) {
