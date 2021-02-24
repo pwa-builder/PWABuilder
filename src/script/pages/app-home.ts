@@ -281,8 +281,6 @@ export class AppHome extends LitElement {
           const progress = getProgress();
           this.updateProgress(progress);
 
-          console.log('in here');
-
           const goodURL = getURL();
           
           Router.go(`/testing?site=${goodURL}`);
