@@ -14,6 +14,10 @@ export class LoadingButton extends LitElement {
         width: 1.8em;
       }
 
+      fast-progress-ring::part(indeterminate-indicator-1) {
+        stroke: var(--primary-purple);
+      }
+
       ${smallBreakPoint(css`
         fast-button {
           width: 176px;
