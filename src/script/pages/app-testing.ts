@@ -55,7 +55,7 @@ export class AppTesting extends LitElement {
           animation: 160ms fadeIn linear;
 
           padding-top: 2em;
-          height: 91vh;
+          height: 91.7vh;
           width: 100%;
           background: linear-gradient( 
       106.57deg
@@ -159,19 +159,19 @@ export class AppTesting extends LitElement {
   async runTests(site: string) {
     try {
       const TestResult = await runAllTests(site);
-      const search = new URLSearchParams(location.search);
-      const siteUrl = search.get('site');
+      // const search = new URLSearchParams(location.search);
+      // const siteUrl = search.get('site');
 
       if (TestResult) {
         console.log('testResult', TestResult);
         // Completes the loading phase
         // set last phrase and give 300ms to display to user
         // before moving on
-        this.loading = false;
+        // this.loading = false;
 
         this.currentPhrase = 'Results coming to you in 3..2..1..';
         setTimeout(() => {
-          Router.go(`/reportcard?site=${siteUrl}&results=${JSON.stringify(TestResult)}`);
+          // Router.go(`/reportcard?site=${siteUrl}&results=${JSON.stringify(TestResult)}`);
         }, 300);
       } else {
         this.loading = false;
