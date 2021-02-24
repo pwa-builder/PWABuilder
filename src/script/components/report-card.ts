@@ -193,7 +193,12 @@ export class ReportCard extends LitElement {
       // Should never really end up here
       // But just in case this component tries to render without results
       // lets attempt to grab the last saved results
-      this.scoreCardResults = await this.handleNoResults();
+      try {
+        this.scoreCardResults = await this.handleNoResults();
+      }
+      catch(err) {
+        throw new Error(`Error handling results: ${err}`);
+      }
     }
     else {
       this.scoreCardResults = this.results;
