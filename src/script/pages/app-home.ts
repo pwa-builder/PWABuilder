@@ -30,7 +30,7 @@ import style from '../../../styles/error-styles.css';
 import '@pwabuilder/pwainstall';
 import { Router } from '@vaadin/router';
 import { getProgress, getURL, setProgress } from '../services/app-info';
-import { Status } from '../utils/interfaces';
+import { ProgressList, Status } from '../utils/interfaces';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -300,7 +300,7 @@ export class AppHome extends LitElement {
     }
   }
 
-  updateProgress(progressData) {
+  updateProgress(progressData: ProgressList) {
     progressData.progress[0].items[0].done = Status.DONE;
 
     const newProgress = progressData;
