@@ -1,4 +1,5 @@
-import { fileSave } from 'browser-fs-access';
+// TODO Justin, potential merge conflict?
+// import { fileSave } from 'browser-fs-access';
 import {
   validateAndroidOptions,
   AndroidApkOptions,
@@ -11,7 +12,7 @@ import { getManifest, getManiURL } from '../manifest';
 
 export async function generateAndroidPackage(
   androidOptions: AndroidApkOptions
-) {
+): Promise<Blob | undefined> {
   const validationErrors = validateAndroidOptions(androidOptions);
   if (validationErrors.length > 0 || !androidOptions) {
     throw new Error(
@@ -61,6 +62,8 @@ export async function generateAndroidPackage(
       `Error generating Android platform due to HTTP error.\n\nStatus code: ${err.status}\n\nError: ${err.statusText}\n\nDetails: ${err}`
     );
   }
+
+  return undefined;
 }
 
 export function createAndroidPackageOptionsFromManifest(): AndroidApkOptions {
@@ -104,6 +107,10 @@ export function createAndroidPackageOptionsFromManifest(): AndroidApkOptions {
       relativeStartUrl =
         absoluteStartUrl.pathname + (absoluteStartUrl.search || '');
     }
+
+    // TODO Justin, looks like the usage of this has been removed?
+    console.log(relativeStartUrl);
+
     const manifestIcons = manifest.icons || [];
     const icon =
       findSuitableIcon(manifestIcons, 'any', 512, 512, 'image/png') ||
@@ -168,7 +175,7 @@ export function createAndroidPackageOptionsFromManifest(): AndroidApkOptions {
       },
       signingMode: 'new',
       splashScreenFadeOutDuration: 300,
-      startUrl: (manifest.start_url as string),
+      startUrl: manifest.start_url as string,
       themeColor: manifest.theme_color || '#FFFFFF',
       shareTarget: manifest.share_target,
       webManifestUrl: maniURL,

@@ -1,6 +1,4 @@
-import { html } from 'lit-element';
-
-interface CardData {
+export interface CardData {
   imageUrl: string;
   title: string;
   description: string;

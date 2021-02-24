@@ -16,9 +16,8 @@ export interface FileInputDetails {
 
 @customElement('app-file-input')
 export class FileInput extends LitElement {
-  @property({ type: String }) inputId;
-
-  @query('.file-input') fileInput: HTMLInputElement;
+  @property({ type: String }) inputId: string | undefined;
+  @query('.file-input') fileInput: HTMLInputElement | undefined;
 
   static get styles() {
     return [
@@ -36,11 +35,11 @@ export class FileInput extends LitElement {
   }
 
   get value() {
-    return this.fileInput.value;
+    return this.fileInput?.value;
   }
 
   get files() {
-    return this.fileInput.files;
+    return this.fileInput?.files;
   }
 
   constructor() {
@@ -68,20 +67,28 @@ export class FileInput extends LitElement {
   }
 
   clickModalInput() {
-    this.fileInput.click();
+    this.fileInput?.click();
   }
 
-  handleModalInputFileChosen(evt: Event) {
-    console.log('input change event', evt);
+  buttonText() {
+    if (this.input?.files?.length) {
+      return this.input?.files?.item(0)?.name;
+    }
 
-    const changeEvent = new CustomEvent<FileInputDetails>('input-change', {
-      detail: {
-        input: this.input,
-      },
-      composed: true,
-      bubbles: true,
-    });
+    return 'Choose File';
+  }
 
-    this.dispatchEvent(changeEvent);
+  handleModalInputFileChosen() {
+    if (this.input) {
+      const changeEvent = new CustomEvent<FileInputDetails>('input-change', {
+        detail: {
+          input: this.input,
+        },
+        composed: true,
+        bubbles: true,
+      });
+
+      this.dispatchEvent(changeEvent);
+    }
   }
 }

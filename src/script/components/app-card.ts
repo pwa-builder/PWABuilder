@@ -3,7 +3,6 @@ import { LitElement, css, html, customElement, property } from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map';
 import { Router } from '@vaadin/router';
 import {
-  smallBreakPoint,
   mediumBreakPoint,
   largeBreakPoint,
   BreakpointValues,
@@ -22,13 +21,13 @@ export class AppCard extends LitElement {
   @property({ type: String }) mode = AppCardModes.default;
 
   @property({ attribute: 'bordered', type: Boolean })
-  imageBordered = undefined;
-  @property({ type: String }) imageUrl = undefined;
-  @property({ type: String }) title = undefined;
-  @property({ type: String }) description = undefined;
-  @property({ type: String }) date = undefined;
-  @property({ type: String }) linkText = undefined;
-  @property({ type: String }) linkRoute = undefined;
+  imageBordered = false;
+  @property({ type: String }) imageUrl: string | undefined;
+  @property({ type: String }) cardTitle: string | undefined;
+  @property({ type: String }) description: string | undefined;
+  @property({ type: String }) date: string | undefined;
+  @property({ type: String }) linkText: string | undefined;
+  @property({ type: String }) linkRoute: string | undefined;
 
   @property({ type: Boolean }) featured = false;
   @property({ type: Boolean }) shareLink = false;
@@ -479,16 +478,16 @@ export class AppCard extends LitElement {
         <img
           class=${this.imageClasses()}
           src="${this.imageUrl}"
-          alt="${this.title} card header image"
+          alt="${this.cardTitle} card header image"
         />
-        <h3>${this.title}</h3>
+        <h3>${this.cardTitle}</h3>
         <p>${this.description}</p>
 
         <div class="card-actions">
           <app-button
             appearance="lightweight"
-            @click=${() => Router.go(this.linkRoute)}
-            >View ${this.title}</fast-button
+            @click=${this.route}
+            >View ${this.cardTitle}</fast-button
           ></app-button>
         </div>
       </fast-card>
@@ -505,13 +504,16 @@ export class AppCard extends LitElement {
               <span class="date">${this.date}</span>
               ${this.renderShareButton()}
             </div>
-            <h3>${this.title}</h3>
+            <h3>${this.cardTitle}</h3>
             <p>${this.description}</p>
             <slot name="overlay"></slot>
 
             <div class="tag-list">${this.renderTagList()}</div>
           </div>
-          <img src="${this.imageUrl}" alt="${this.title} card header image" />
+          <img
+            src="${this.imageUrl}"
+            alt="${this.cardTitle} card header image"
+          />
         </fast-card>
       `;
     }
@@ -525,9 +527,9 @@ export class AppCard extends LitElement {
           </div>
           <slot name="overlay"></slot>
         </div>
-        <img src="${this.imageUrl}" alt="${this.title} card header image" />
+        <img src="${this.imageUrl}" alt="${this.cardTitle} card header image" />
         <div class="content">
-          <h3>${this.title}</h3>
+          <h3>${this.cardTitle}</h3>
           ${this.renderShareButton()}
         </div>
       </fast-card>
@@ -536,14 +538,10 @@ export class AppCard extends LitElement {
 
   renderMicroCard() {
     return html`
-      <fast-card
-        class="micro"
-        part="card"
-        @click=${() => Router.go(this.linkRoute)}
-      >
-        <img src="${this.imageUrl}" alt="${this.title} card header image" />
+      <fast-card class="micro" part="card" @click=${this.route}>
+        <img src="${this.imageUrl}" alt="${this.cardTitle} card header image" />
         <div class="content">
-          <h3>${this.title}</h3>
+          <h3>${this.cardTitle}</h3>
         </div>
       </fast-card>
     `;
@@ -554,11 +552,11 @@ export class AppCard extends LitElement {
       <fast-card
         class="micro micro-description"
         part="card"
-        @click=${() => Router.go(this.linkRoute)}
+        @click=${this.route}
       >
-        <img src="${this.imageUrl}" alt="${this.title} card header image" />
+        <img src="${this.imageUrl}" alt="${this.cardTitle} card header image" />
         <div class="content">
-          <h3>${this.title}</h3>
+          <h3>${this.cardTitle}</h3>
           <p>${this.description}</p>
         </div>
       </fast-card>
@@ -568,7 +566,7 @@ export class AppCard extends LitElement {
   renderContentCard() {
     return html` <fast-card class="content-card" part="card">
       <div class="header">
-        <h3>${this.title}</h3>
+        <h3>${this.cardTitle}</h3>
         <p>${this.description}</p>
       </div>
       ${this.isActionCard
@@ -600,5 +598,9 @@ export class AppCard extends LitElement {
     return classMap({
       bordered: this.imageBordered,
     });
+  }
+
+  route() {
+    this.linkRoute && Router.go(this.linkRoute);
   }
 }

@@ -23,7 +23,6 @@ import '../components/loading-button';
 import '../components/dropdown-menu';
 import '../components/app-sidebar';
 
-
 //@ts-ignore
 import style from '../../../styles/error-styles.css';
 
@@ -31,7 +30,7 @@ import style from '../../../styles/error-styles.css';
 import '@pwabuilder/pwainstall';
 import { Router } from '@vaadin/router';
 import { getProgress, getURL, setProgress } from '../services/app-info';
-import { Status } from '../utils/interfaces';
+import { ProgressList, Status } from '../utils/interfaces';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -282,7 +281,7 @@ export class AppHome extends LitElement {
           this.updateProgress(progress);
 
           const goodURL = getURL();
-          
+
           Router.go(`/testing?site=${goodURL}`);
         }
       } catch (err) {
@@ -295,7 +294,7 @@ export class AppHome extends LitElement {
     }
   }
 
-  updateProgress(progress) {
+  updateProgress(progress: ProgressList) {
     progress.progress[0].items[0].done = Status.DONE;
 
     const newProgress = progress;

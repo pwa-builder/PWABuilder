@@ -11,7 +11,7 @@ import {
   BreakpointValues,
   largeBreakPoint,
   xxxLargeBreakPoint,
-  smallBreakPoint
+  smallBreakPoint,
 } from '../utils/css/breakpoints';
 
 import '../components/content-header';
@@ -23,6 +23,7 @@ import '../components/app-sidebar';
 
 //@ts-ignore
 import style from '../../../styles/layout-defaults.css';
+import { ScoreEvent } from '../utils/interfaces';
 
 @customElement('app-report')
 export class AppReport extends LitElement {
@@ -114,15 +115,13 @@ export class AppReport extends LitElement {
           `
         )}
 
-        ${
-          smallBreakPoint(
-            css`
-              fast-tabs::part(tablist) {
-                display: none;
-              }
-            `
-          )
-        }
+        ${smallBreakPoint(
+          css`
+            fast-tabs::part(tablist) {
+              display: none;
+            }
+          `
+        )}
       `,
     ];
   }
@@ -185,7 +184,7 @@ export class AppReport extends LitElement {
       <div
         id="grid"
         class=${classMap({
-          "grid-mobile": this.isDeskTopView == false
+          'grid-mobile': this.isDeskTopView == false,
         })}
       >
         <app-sidebar id="desktop-sidebar"></app-sidebar>
@@ -214,11 +213,11 @@ export class AppReport extends LitElement {
 
             <fast-tab-panel id="overviewPanel">
               <report-card
-                @sw-scored="${ev =>
+                @sw-scored="${(ev: CustomEvent<ScoreEvent>) =>
                   this.handleScoreForDisplay('sw', ev.detail.score)}"
-                @mani-scored="${ev =>
+                @mani-scored="${(ev: CustomEvent<ScoreEvent>) =>
                   this.handleScoreForDisplay('manifest', ev.detail.score)}"
-                @security-scored="${ev =>
+                @security-scored="${(ev: CustomEvent<ScoreEvent>) =>
                   this.handleScoreForDisplay('manifest', ev.detail.score)}"
                 @open-mani-options="${() => this.openManiOptions()}"
                 @open-sw-options="${() => this.openSWOptions()}"
