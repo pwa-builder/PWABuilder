@@ -289,6 +289,12 @@ export class AppHome extends LitElement {
         console.error('Error getting site', err.message);
 
         this.errorGettingURL = true;
+
+        // couldnt get manifest, thats ok
+        // lets continue forward with the default
+        // zeroed out results. 
+        const goodURL = getURL();
+        Router.go(`/testing?site=${goodURL}`);
       }
 
       this.gettingManifest = false;

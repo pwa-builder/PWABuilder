@@ -1,3 +1,4 @@
+import { default_timeout } from '../../utils/api';
 import { ManifestDetectionResult, TestResult } from '../../utils/interfaces';
 import { fetchManifest } from '../manifest';
 
@@ -81,21 +82,37 @@ const default_results = [
 export async function testManifest(
   url: string
 ): Promise<Array<TestResult> | boolean> {
-  const manifestData = await fetchManifest(url);
+  const manifestData = fetchManifest(url);
+
+  const twentySecondTimeout = new Promise<void>(resolve =>
+    setTimeout(() => resolve(), default_timeout)
+  );
+
+  const fetchResultOrTimeout: void | ManifestDetectionResult = await Promise.race([
+    twentySecondTimeout,
+    manifestData,
+  ]);
+
+  if (!fetchResultOrTimeout) {
+    console.warn('Manifest check timed out after 20 seconds.');
+    return default_results;
+  }
 
   console.log('testing manifest');
 
-  if (manifestData) {
-    const manifest = manifestData;
+  if (fetchResultOrTimeout) {
+    const manifest = await fetchResultOrTimeout;
 
     if (manifest) {
       const testResult = doTest(manifest);
       return testResult;
     } else {
-      throw new Error('Could not test manifest');
+      console.error('Could not test manifest, returning default results');
+      return default_results;
     }
   } else {
-    throw new Error('Could not get manifest data');
+    console.error('Could not get manifest data');
+    return default_results;
   }
 }
 
