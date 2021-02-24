@@ -1,4 +1,4 @@
-import { BreakpointValues } from './../utils/css/breakpoints';
+import { BreakpointValues, mediumBreakPoint, smallBreakPoint } from './../utils/css/breakpoints';
 import {
   LitElement,
   css,
@@ -276,6 +276,21 @@ export class AppSidebar extends LitElement {
       .pending .sidebar-item-header ion-icon {
         color: rgb(52 55 68);
       }
+
+      ${
+        mediumBreakPoint(css`
+          aside.tablet-sidebar, aside.desktop-sidebar {
+            display: none;
+          }
+        `),
+
+        smallBreakPoint(css`
+          aside.tablet-sidebar, aside.desktop-sidebar {
+            display: none;
+          }
+        `)
+      }
+
     `;
   }
   constructor() {
