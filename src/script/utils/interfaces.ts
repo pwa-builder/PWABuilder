@@ -33,6 +33,9 @@ export interface Manifest {
   iarc_rating_id?: string;
   icons?: Icon[];
   share_target?: ShareTarget;
+
+  // for custom properties as well as using object notations: manifest[key]
+  [key: string]: string | boolean | undefined | null | Array<unknown> | unknown;
 }
 
 export interface ShortcutItem {
@@ -92,6 +95,7 @@ export interface ManifestDetectionResult {
     short_name: string;
   };
   id: string;
+  generated: boolean;
   errors: [];
   suggestions: [];
   warnings: [];
@@ -131,6 +135,39 @@ export interface SecurityDataResults {
     validProtocol: true;
     valid: true;
   };
+}
+
+export enum Status {
+  DONE = 'done',
+  ACTIVE = 'active',
+  PENDING = 'pending',
+}
+
+export interface ProgressItem {
+  name: string;
+  done: Status;
+}
+
+export interface Progress {
+  header: ListHeader;
+  location: string;
+  done: Status;
+  items: Array<ProgressItem>;
+}
+
+export interface ProgressList {
+  progress: Array<Progress>;
+}
+
+export enum ListHeader {
+  TEST = 'Test',
+  REVIEW = 'Review',
+  PUBLISH = 'Package',
+  COMPLETE = 'Complete',
+}
+
+export interface ScoreEvent {
+  score: number;
 }
 
 export interface FileInputDetails {

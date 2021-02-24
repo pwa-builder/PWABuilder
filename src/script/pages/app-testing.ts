@@ -17,6 +17,7 @@ import '../components/app-header';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import style from '../../../styles/animations.css';
+import { loadPaintPolyfillIfNeeded } from '../polyfills/css-paint';
 
 @customElement('app-testing')
 export class AppTesting extends LitElement {
@@ -31,9 +32,15 @@ export class AppTesting extends LitElement {
         :host {
           display: flex;
           flex-direction: column;
-          background: url(/assets/images/background-copy.webp);
+
           height: 100vh;
           overflow: hidden;
+
+          display: block;
+          background: url(/assets/images/glass.jpg);
+          background-size: cover;
+          background-repeat: no-repeat;
+          background-position: right;
         }
 
         #testing-container {
@@ -41,16 +48,37 @@ export class AppTesting extends LitElement {
           display: flex;
           flex-direction: column;
           align-items: center;
-          justify-content: center;
 
           text-align: center;
           font-size: var(--large-font-size);
 
           animation: 160ms fadeIn linear;
+
+          padding-top: 2em;
+          height: 91vh;
+          width: 100%;
+          background: linear-gradient( 
+      106.57deg
+      , rgba(255, 255, 255, 0.616) 0%, rgba(255, 255, 255, 0.098) 100% );
+          backdrop-filter: blur(40px);
+        }
+
+        #glass {
+          --colors: #888094, #5a5ab7, #d9a0f7, #5d2863, #5b5bb9;
+          --min-radius: 30;
+          --max-radius: 100;
+          --num-circles: 15;
+          --min-opacity: 10;
+          --max-opacity: 50;
+          background-image: paint(circles);
+
+          height: 82%;
         }
 
         #testing-container img {
           width: 466px;
+
+          padding-top: 2em;
         }
 
         #testing-container fast-progress {
@@ -65,10 +93,29 @@ export class AppTesting extends LitElement {
           border-radius: 0;
         }
 
+        app-header::part(header) {
+          background: transparent;
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 2;
+          border: none;
+        }
+
         #testing-container span {
           font-weight: var(--font-bold);
           font-size: var(--large-font-size);
           margin-top: 12px;
+        }
+
+        app-header::part(header) {
+          background: transparent;
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 2;
         }
 
         @keyframes fadeIn {
@@ -104,6 +151,9 @@ export class AppTesting extends LitElement {
 
       await this.runTests(site);
     }
+
+    await loadPaintPolyfillIfNeeded();
+    (CSS as any).paintWorklet.addModule('/workers/header-paint.js');
   }
 
   async runTests(site: string) {
@@ -113,6 +163,7 @@ export class AppTesting extends LitElement {
       const siteUrl = search.get('site');
 
       if (TestResult) {
+        console.log('testResult', TestResult);
         // Completes the loading phase
         // set last phrase and give 300ms to display to user
         // before moving on
@@ -157,12 +208,17 @@ export class AppTesting extends LitElement {
 
   render() {
     return html` <app-header></app-header>
-      <div id="testing-container">
-        <img alt="PWABUilder Logo" src="/assets/images/full_header_logo.png" />
+      <div id="glass">
+        <div id="testing-container">
+          <img
+            alt="PWABUilder Logo"
+            src="/assets/images/full_header_logo.png"
+          />
 
-        <span>${this.currentPhrase}</span>
+          <span>${this.currentPhrase}</span>
 
-        ${this.loading ? html`<fast-progress></fast-progress>` : null}
+          ${this.loading ? html`<fast-progress></fast-progress>` : null}
+        </div>
       </div>`;
   }
 }

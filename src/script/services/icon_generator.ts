@@ -2,7 +2,7 @@ import jszip from 'jszip';
 import { api } from '../utils/api';
 import { download } from '../utils/download';
 import { Icon } from '../utils/interfaces';
-import { getManifest, updateManifest } from './manifest';
+import { updateManifest } from './manifest';
 
 type Platform =
   | 'windows10'

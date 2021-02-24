@@ -20,8 +20,8 @@ import { fetchManifest } from '../services/manifest';
 import '../components/content-header';
 import '../components/resource-hub';
 import '../components/loading-button';
-import '../components/app-modal';
 import '../components/dropdown-menu';
+import '../components/app-sidebar';
 
 //@ts-ignore
 import style from '../../../styles/error-styles.css';
@@ -29,6 +29,8 @@ import style from '../../../styles/error-styles.css';
 // For more info on the @pwabuilder/pwainstall component click here https://github.com/pwa-builder/pwa-install
 import '@pwabuilder/pwainstall';
 import { Router } from '@vaadin/router';
+import { getProgress, getURL, setProgress } from '../services/app-info';
+import { ProgressList, Status } from '../utils/interfaces';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -48,9 +50,13 @@ export class AppHome extends LitElement {
           padding-top: 0;
         }
 
+        content-header::part(header) {
+          --header-border: none;
+        }
+
         h2 {
           font-size: var(--xlarge-font-size);
-          line-height: 46px;
+          line-height: 48px;
           letter-spacing: -0.015em;
           max-width: 526px;
         }
@@ -123,6 +129,10 @@ export class AppHome extends LitElement {
           width: 100%;
         }
 
+        #input-form loading-button::part(underlying-button) {
+          width: 109px;
+        }
+
         ${smallBreakPoint(css`
           content-header::part(grid-container) {
             display: none;
@@ -133,7 +143,6 @@ export class AppHome extends LitElement {
           }
 
           h2 {
-            line-height: 34px;
             margin-top: 0;
           }
 
@@ -176,7 +185,6 @@ export class AppHome extends LitElement {
 
           h2 {
             font-size: var(--large-font-size);
-            line-height: 34px;
             margin-top: 0;
           }
 
@@ -206,8 +214,8 @@ export class AppHome extends LitElement {
           }
 
           #input-form loading-button::part(underlying-button) {
-            width: 216px;
             margin-top: 44px;
+            width: 176px;
           }
         `)}
 
@@ -220,10 +228,6 @@ export class AppHome extends LitElement {
       ${xxLargeBreakPoint(css`
           .intro-grid-item {
             max-width: 280px;
-          }
-
-          #input-form {
-            width: 32em;
           }
 
           h2 {
@@ -272,8 +276,13 @@ export class AppHome extends LitElement {
         } else {
           this.errorGettingURL = false;
           this.errorMessage = undefined;
-          
-          Router.go(`/testing?site=${this.siteURL}`);
+
+          const progress = getProgress();
+          this.updateProgress(progress);
+
+          const goodURL = getURL();
+
+          Router.go(`/testing?site=${goodURL}`);
         }
       } catch (err) {
         console.error('Error getting site', err.message);
@@ -283,6 +292,13 @@ export class AppHome extends LitElement {
 
       this.gettingManifest = false;
     }
+  }
+
+  updateProgress(progress: ProgressList) {
+    progress.progress[0].items[0].done = Status.DONE;
+
+    const newProgress = progress;
+    setProgress(newProgress);
   }
 
   render() {
@@ -359,19 +375,6 @@ export class AppHome extends LitElement {
           >
         </form>
       </content-header>
-
-      <app-modal
-        title="Modal Title"
-        body="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Urna, sit scelerisque vestibulum magnis. Auctor dolor, tincidunt enim."
-        ?open="${true}"
-      >
-
-        <div slot="modal-actions">
-          <app-dropdown .menuItems=${['A', 'B', 'C']}></app-dropdown>
-
-          <app-button>Test Button</app-button>
-        </div>
-      </app-modal>
 
       <resource-hub page="home" all>
         <h2 slot="title">PWABuilder Resource Hub</h2>

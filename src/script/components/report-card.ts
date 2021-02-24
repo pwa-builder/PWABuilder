@@ -6,9 +6,13 @@ import {
   property,
   internalProperty,
 } from 'lit-element';
-import { RawTestResult } from '../utils/interfaces';
+import { RawTestResult, ScoreEvent } from '../utils/interfaces';
 
-import { xxxLargeBreakPoint } from '../utils/css/breakpoints';
+import {
+  largeBreakPoint,
+  xLargeBreakPoint,
+  smallBreakPoint,
+} from '../utils/css/breakpoints';
 
 import './score-results';
 
@@ -31,6 +35,12 @@ export class ReportCard extends LitElement {
         display: block;
       }
 
+      #main-report-section {
+        padding-left: 32px;
+        padding-right: 32px;
+        padding-bottom: 32px;
+      }
+
       #report-header {
         margin-bottom: 4em;
         margin-top: 4em;
@@ -41,7 +51,7 @@ export class ReportCard extends LitElement {
       }
 
       .accordion-heading-block {
-        width: 96vw;
+        width: 76vw;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -56,7 +66,7 @@ export class ReportCard extends LitElement {
       }
 
       .accordion-score {
-        margin-right: 12px;
+        margin-right: 20px;
       }
 
       fast-accordion-item,
@@ -66,6 +76,7 @@ export class ReportCard extends LitElement {
 
       fast-accordion-item::part(button) {
         height: 6em;
+        width: 70vw;
       }
 
       .flipper-button {
@@ -74,7 +85,8 @@ export class ReportCard extends LitElement {
         border-radius: 50%;
         color: #5231a7;
 
-        width: 32px;
+        height: 32px;
+        min-width: 32px;
       }
 
       .flipper-button ion-icon {
@@ -86,7 +98,8 @@ export class ReportCard extends LitElement {
       }
 
       .flipper-button::part(control) {
-        font-size: 22px;
+        font-size: 18px;
+        padding: 0;
       }
 
       .flipper-button::part(content) {
@@ -100,6 +113,7 @@ export class ReportCard extends LitElement {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        padding-right: 1.2em;
       }
 
       .options-button {
@@ -128,6 +142,8 @@ export class ReportCard extends LitElement {
       #package-block {
         display: flex;
         justify-content: flex-end;
+        margin-right: 1.2em;
+        margin-top: 40px;
       }
 
       #package-block fast-anchor {
@@ -137,10 +153,28 @@ export class ReportCard extends LitElement {
         border-radius: var(--button-radius);
       }
 
-      ${xxxLargeBreakPoint(
+      ${xLargeBreakPoint(
+        css`
+          .accordion-heading-block,
+          #report-content {
+            width: 71vw;
+          }
+        `
+      )}
+
+      ${largeBreakPoint(
         css`
           .accordion-heading-block {
-            width: 113em;
+            width: 90vw;
+          }
+        `
+      )}
+
+      ${smallBreakPoint(
+        css`
+          #main-report-section {
+            padding-left: 12px;
+            padding-right: 12px;
           }
         `
       )}
@@ -151,7 +185,24 @@ export class ReportCard extends LitElement {
     super();
   }
 
-  opened(targetEl: EventTarget) {
+  firstUpdated() {
+    if (!this.results) {
+      // Should never really end up here
+      // But just in case this component tries to render without results
+      // lets attempt to grab the last saved results
+      this.handleNoResults();
+    }
+  }
+
+  handleNoResults() {
+    const resultsData = sessionStorage.getItem('results-string');
+
+    if (resultsData) {
+      this.results = JSON.parse(resultsData);
+    }
+  }
+
+  opened(targetEl: EventTarget | null) {
     console.log(targetEl);
 
     if (targetEl) {
@@ -201,7 +252,7 @@ export class ReportCard extends LitElement {
   handleManiScore(ev: CustomEvent) {
     this.maniScore = ev?.detail?.score || 0;
 
-    const event = new CustomEvent('mani-scored', {
+    const event = new CustomEvent<ScoreEvent>('mani-scored', {
       detail: {
         score: this.maniScore,
       },
@@ -212,7 +263,7 @@ export class ReportCard extends LitElement {
   handleSWScore(ev: CustomEvent) {
     this.swScore = ev?.detail?.score || 0;
 
-    const event = new CustomEvent('sw-scored', {
+    const event = new CustomEvent<ScoreEvent>('sw-scored', {
       detail: {
         score: this.swScore,
       },
@@ -223,7 +274,7 @@ export class ReportCard extends LitElement {
   handleSecurityScore(ev: CustomEvent) {
     this.securityScore = ev?.detail?.score || 0;
 
-    const event = new CustomEvent('security-scored', {
+    const event = new CustomEvent<ScoreEvent>('security-scored', {
       detail: {
         score: this.securityScore,
       },
@@ -251,7 +302,7 @@ export class ReportCard extends LitElement {
 
   render() {
     return html`
-      <div>
+      <div id="main-report-section">
         <div id="report-header">
           <h3>The Scoop</h3>
 
@@ -289,7 +340,7 @@ export class ReportCard extends LitElement {
               >
 
               <score-results
-                .testResults="${this.results.manifest}"
+                .testResults="${this.results?.manifest}"
                 @scored="${(ev: CustomEvent) => this.handleManiScore(ev)}"
               ></score-results>
             </fast-accordion-item>
@@ -315,7 +366,7 @@ export class ReportCard extends LitElement {
                 >Service Worker Options</app-button
               >
               <score-results
-                .testResults="${this.results.service_worker}"
+                .testResults="${this.results?.service_worker}"
                 @scored="${(ev: CustomEvent) => this.handleSWScore(ev)}"
               ></score-results>
             </fast-accordion-item>
@@ -337,7 +388,7 @@ export class ReportCard extends LitElement {
               </div>
 
               <score-results
-                .testResults="${this.results.security}"
+                .testResults="${this.results?.security}"
                 @scored="${(ev: CustomEvent) => this.handleSecurityScore(ev)}"
               ></score-results>
             </fast-accordion-item>

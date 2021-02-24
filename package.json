@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rimraf build/ && rimraf dist/",
     "build": "rollup --config rollup.config.dev.js && rimraf dist/ && rollup --config rollup.config.js",
     "start": "concurrently \"rollup --config rollup.config.dev.js --watch\" \"web-dev-server\"",
     "dev": "concurrently \"rollup --config rollup.config.dev.js --watch\" \"web-dev-server\"",

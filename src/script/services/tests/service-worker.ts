@@ -6,7 +6,7 @@ export async function testServiceWorker(url: string): Promise<Array<TestResult>>
   const isHttp = typeof url === 'string' && url.startsWith('http://');
 
   if (!url || isHttp) {
-    return;
+    return [];
   }
 
   const swData = await detectServiceWorker(url);
@@ -37,11 +37,7 @@ export async function testServiceWorker(url: string): Promise<Array<TestResult>>
       }
   ];
 
-  if (swTestResult) {
-    return swTestResult;
-  } else {
-    return null;
-  }
+  return swTestResult;
 }
 
 async function detectServiceWorker(
@@ -84,24 +80,23 @@ async function detectOfflineSupport(url: string): Promise<boolean> {
     `${env.testAPIUrl}/offline/?site=${encodeURIComponent(url)}`
   );
 
-  const fetchResultOrTimeout = await Promise.race([
+  const fetchResultOrTimeout: void | Response = await Promise.race([
     tenSecondTimeout,
     offlineFetch,
   ]);
+
   if (!fetchResultOrTimeout) {
     console.warn('Offline check timed out after 10 seconds.');
-    throw new Error('Offline check timed out after 10 seconds.');
   }
-  if (!fetchResultOrTimeout.ok) {
+  if (fetchResultOrTimeout && !fetchResultOrTimeout.ok) {
     console.warn(
       'Unable to detect offline support.',
       fetchResultOrTimeout.status,
       fetchResultOrTimeout.statusText
     );
-    throw new Error(fetchResultOrTimeout.statusText);
   }
 
-  const jsonResult: OfflineCheckResult = await fetchResultOrTimeout.json();
+  const jsonResult: OfflineCheckResult = await (fetchResultOrTimeout as Response).json();
   console.info('Offline support detection succeeded', jsonResult);
   return jsonResult.data.offline;
 }
@@ -118,10 +113,9 @@ async function detectPeriodicSyncSupport(url: string): Promise<boolean> {
       fetchResult.status,
       fetchResult.statusText
     );
-    throw new Error(fetchResult.statusText);
   }
 
   const periodicSyncResultText = await fetchResult.text();
-  console.info('Periodic sync detection succeeded', periodicSyncResultText);
+  console.info('Periodic sync detection succeeded');
   return periodicSyncResultText === 'true';
 }

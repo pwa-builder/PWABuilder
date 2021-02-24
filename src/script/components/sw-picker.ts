@@ -6,18 +6,28 @@ import {
   internalProperty,
   property,
 } from 'lit-element';
-import { chooseServiceWorker, getServiceWorkers, unsetServiceWorker } from '../services/service_worker';
+import {
+  chooseServiceWorker,
+  getServiceWorkers,
+  unsetServiceWorker,
+} from '../services/service_worker';
 
 import '../components/app-button';
 
 //@ts-ignore
 import style from '../../../styles/list-defaults.css';
 
+interface ServiceWorkerChoice {
+  id: number;
+  title: string;
+  description: string;
+}
+
 @customElement('sw-picker')
 export class SWPicker extends LitElement {
   @property({ type: Number }) score = 0;
 
-  @internalProperty() serviceWorkers: any[] | undefined;
+  @internalProperty() serviceWorkers: ServiceWorkerChoice[] | undefined;
   @internalProperty() chosenSW: number | undefined;
 
   static get styles() {
@@ -27,6 +37,8 @@ export class SWPicker extends LitElement {
         :host {
           display: block;
           width: 100%;
+
+          padding: 32px;
         }
 
         ul {
@@ -38,12 +50,13 @@ export class SWPicker extends LitElement {
           align-items: center;
           justify-content: space-between;
           padding-bottom: 35px;
-          border-bottom: 0.67681px solid #E5E5E5;
+          border-bottom: 0.67681px solid #e5e5e5;
         }
 
         h4 {
           font-size: var(--medium-font-size);
           margin-bottom: 12px;
+          margin-top: 12px;
         }
 
         h5 {
@@ -62,7 +75,7 @@ export class SWPicker extends LitElement {
         }
 
         #summary-block p {
-            margin-bottom: 0;
+          margin-bottom: 0;
         }
 
         p {
@@ -119,7 +132,7 @@ export class SWPicker extends LitElement {
     }
   }
 
-  chooseSW(sw) {
+  chooseSW(sw: ServiceWorkerChoice) {
     console.log(sw);
     this.chosenSW = sw.id;
 
@@ -136,7 +149,7 @@ export class SWPicker extends LitElement {
   done() {
     const event = new CustomEvent('back-to-overview', {
       detail: {
-        open: true
+        open: true,
       },
     });
     this.dispatchEvent(event);
@@ -164,7 +177,9 @@ export class SWPicker extends LitElement {
             </p>
 
             <div id="header-actions">
-              <app-button class="done-button" @click="${() => this.done()}">Done</app-button>
+              <app-button class="done-button" @click="${() => this.done()}"
+                >Done</app-button
+              >
             </div>
           </div>
         </div>
@@ -180,7 +195,15 @@ export class SWPicker extends LitElement {
                 </div>
 
                 <div class="actions">
-                  ${this.chosenSW === sw.id ? html`<app-button @click="${() => this.removeSW()}">Remove</app-button>` : html`<app-button id="select-button" @click="${() => this.chooseSW(sw)}">Select</app-button>`}
+                  ${this.chosenSW === sw.id
+                    ? html`<app-button @click="${() => this.removeSW()}"
+                        >Remove</app-button
+                      >`
+                    : html`<app-button
+                        id="select-button"
+                        @click="${() => this.chooseSW(sw)}"
+                        >Select</app-button
+                      >`}
                 </div>
               </li>
             `;
@@ -188,7 +211,9 @@ export class SWPicker extends LitElement {
         </ul>
 
         <div id="bottom-actions">
-          <app-button class="done-button" @click="${() => this.done()}">Done</app-button>
+          <app-button class="done-button" @click="${() => this.done()}"
+            >Done</app-button
+          >
         </div>
       </div>
     `;

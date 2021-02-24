@@ -8,6 +8,8 @@ import {
   Manifest,
   ManifestDetectionResult,
 } from '../utils/interfaces';
+import { cleanUrl } from '../utils/url';
+import { setURL } from './app-info';
 
 const apiUrl = `${env.api}/manifests`;
 
@@ -118,6 +120,7 @@ async function getManifestViaHtmlParse(
       short_name: responseData.manifestContents.short_name || '',
     },
     id: '',
+    generated: responseData.manifestContents ? false : true,
     errors: [],
     suggestions: [],
     warnings: [],
@@ -152,6 +155,10 @@ export async function fetchManifest(
   // 2. An Azure function that uses Chrome Puppeteer to fetch the manifest
   // 3. An Azure function that parses the HTML to find the manifest.
   // This fetch() function runs all 3 manifest detection schemes concurrently and returns the first one that succeeds.
+
+  const knownGoodUrl = await cleanUrl(url);
+
+  setURL(knownGoodUrl);
 
   const manifestDetectors = [
     getManifestViaApi(url),

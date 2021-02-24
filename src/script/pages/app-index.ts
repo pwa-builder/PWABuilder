@@ -4,7 +4,6 @@ import './app-home';
 import './app-report';
 
 import '../components/app-footer';
-import '../components/app-sidebar';
 import '../components/app-header';
 
 @customElement('app-index')

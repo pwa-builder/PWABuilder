@@ -1,3 +1,4 @@
+import { Router } from '@vaadin/router';
 import { LitElement, css, html, customElement, property } from 'lit-element';
 
 import {
@@ -16,6 +17,7 @@ export class AppHeader extends LitElement {
     return css`
       :host {
         --header-background: transparent;
+        --header-border: rgba(0, 0, 0, 0.25) solid 1px;
       }
 
       header {
@@ -27,6 +29,12 @@ export class AppHeader extends LitElement {
         background: var(--header-background);
         color: white;
         height: 71px;
+
+        border-bottom: var(--header-border);
+      }
+
+      header img {
+        cursor: pointer;
       }
 
       header h1 {
@@ -142,10 +150,21 @@ export class AppHeader extends LitElement {
     super();
   }
 
+  goBack() {
+    const currentPlace = location.href;
+
+    if (currentPlace.includes('reportcard')) {
+      Router.go("/");
+    }
+    else {
+      window.history.back();
+    }
+  }
+
   render() {
     return html`
-      <header>
-        <img id="header-icon" src="/assets/images/header_logo.png" alt="header logo">
+      <header part="header">
+        <img @click="${() => this.goBack()}" id="header-icon" src="/assets/images/header_logo.png" alt="header logo">
 
         <nav id="desktop-nav">
           <fast-anchor appearance="hypertext" href="./about">Resources</fast-anchor>

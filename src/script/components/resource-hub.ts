@@ -1,6 +1,6 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map';
-import { publishCards, landingCards } from './resource-hub-cards';
+import { CardData, publishCards, landingCards } from './resource-hub-cards';
 import {
   largeBreakPoint,
   mediumBreakPoint,
@@ -210,7 +210,7 @@ export class ResourceHub extends LitElement {
 
   renderCards() {
     const mode = this.determineCardMode();
-    let cardList;
+    let cardList: Array<CardData> = [];
     if (this.pageName === 'home') {
       cardList = landingCards();
     } else if (this.pageName === 'publish') {
