@@ -51,6 +51,8 @@ export class ReportCard extends LitElement {
         display: flex;
         align-items: center;
         justify-content: space-between;
+
+        color: var(--font-color);
       }
 
       h3,
