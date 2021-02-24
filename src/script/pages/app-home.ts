@@ -23,7 +23,6 @@ import '../components/loading-button';
 import '../components/dropdown-menu';
 import '../components/app-sidebar';
 
-
 //@ts-ignore
 import style from '../../../styles/error-styles.css';
 
@@ -282,7 +281,7 @@ export class AppHome extends LitElement {
           this.updateProgress(progress);
 
           const goodURL = getURL();
-          
+
           Router.go(`/testing?site=${goodURL}`);
         }
       } catch (err) {

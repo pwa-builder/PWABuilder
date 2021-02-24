@@ -137,7 +137,7 @@ export class AppModal extends LitElement {
     }
 
     this.dispatchEvent(
-      new CustomEvent<CloseEvent>('app-modal-close', {
+      new CustomEvent<ModalCloseEvent>('app-modal-close', {
         detail: {
           modalId: this.modalId,
         },

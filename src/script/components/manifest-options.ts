@@ -6,8 +6,8 @@ import {
   property,
   internalProperty,
 } from 'lit-element';
-import { classMap } from 'lit-html/directives/class-map';
-import { styleMap } from 'lit-html/directives/style-map';
+// import { classMap } from 'lit-html/directives/class-map';
+// import { styleMap } from 'lit-html/directives/style-map';
 import { getManifest } from '../services/manifest';
 import { arrayHasChanged, objectHasChanged } from '../utils/hasChanged';
 import { resolveUrl } from '../utils/url';
@@ -24,7 +24,8 @@ export class AppManifest extends LitElement {
   @property({ type: Object, hasChanged: objectHasChanged })
   manifest = getManifest();
   @property({ type: Number }) score = 0;
-  @property({ type: Array, hasChanged: arrayHasChanged }) screenshotList = [];
+  @property({ type: Array, hasChanged: arrayHasChanged })
+  screenshotList: Array<string | undefined> = [];
 
   @property({ type: Boolean }) uploadModalOpen = false;
 
@@ -32,8 +33,10 @@ export class AppManifest extends LitElement {
   protected backgroundColorRadioValue: 'none' | 'transparent' | 'custom' =
     'none';
 
-  protected searchParams: URLSearchParams;
-  protected get siteUrl(): string {
+  @internalProperty()
+  protected searchParams: URLSearchParams | undefined;
+
+  protected get siteUrl(): string | null {
     if (!this.searchParams) {
       this.searchParams = new URLSearchParams(location.search);
     }
@@ -288,7 +291,9 @@ export class AppManifest extends LitElement {
 
   renderInfoItems() {
     return infoItems.map(item => {
-      const value = this.manifest ? this.manifest[item.entry] : undefined;
+      const value = this.manifest
+        ? (this.manifest[item.entry] as string)
+        : undefined;
 
       return html`
         <div class="info-item">
@@ -311,13 +316,14 @@ export class AppManifest extends LitElement {
   renderSettingsItems() {
     return settingsItems.map(item => {
       let field;
-      const value = this.manifest ? this.manifest[item.entry] : undefined;
+      const value = this.manifest ? (this.manifest[item.entry] as string) : '';
 
-      if (item.type === 'select') {
+      if (item.type === 'select' && item.menuItems) {
+        const index = item.menuItems.indexOf(value);
         field = html`
           <app-dropdown
             .menuItems=${item.menuItems}
-            .selectedIndex=${item.menuItems.indexOf(value)}
+            selectedIndex=${index}
             @change=${this.handleInputChange}
           >
           </app-dropdown>
@@ -345,7 +351,7 @@ export class AppManifest extends LitElement {
   }
 
   renderBackgroundColorSettings() {
-    const value = this.manifest ? this.manifest.theme_color : undefined;
+    const value = this.manifest ? this.manifest?.theme_color : undefined;
 
     return html`
       <div class="setting-item inputs color">
@@ -377,13 +383,18 @@ export class AppManifest extends LitElement {
 
   renderIcons() {
     return this.manifest?.icons?.map(icon => {
-      let url = resolveUrl(this.siteUrl, this.manifest.start_url);
+      let url = resolveUrl(this.siteUrl, this.manifest?.start_url);
       url = resolveUrl(url?.href, icon.src);
 
-      return html`<div class="image-item image">
-        <img src="${url.href}" alt="image text" />
-        <p>${icon.sizes}</p>
-      </div>`;
+      if (url) {
+        return html`<div class="image-item image">
+          <img src="${url.href}" alt="image text" />
+          <p>${icon.sizes}</p>
+        </div>`;
+      } else {
+        // TODO failure state.
+        return undefined;
+      }
     });
   }
 
@@ -407,12 +418,17 @@ export class AppManifest extends LitElement {
 
   renderScreenshots() {
     return this.manifest?.screenshots?.map(screenshot => {
-      let url = resolveUrl(this.siteUrl, this.manifest.start_url);
+      let url = resolveUrl(this.siteUrl, this.manifest?.start_url);
       url = resolveUrl(url?.href, screenshot.src);
 
-      return html`<div class="image-item screenshot">
-        <img src="${url.href}" alt="image text" />
-      </div>`;
+      if (url) {
+        return html`<div class="image-item screenshot">
+          <img src="${url.href}" alt="image text" />
+        </div>`;
+      } else {
+        // TODO failure path
+        return undefined;
+      }
     });
   }
 
@@ -432,7 +448,11 @@ export class AppManifest extends LitElement {
   handleInputChange(event: InputEvent) {
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
     const fieldName = input.dataset['field'];
-    this.manifest[fieldName] = input.value;
+
+    // TODO use the update mechanism in my other branch
+    if (this.manifest && fieldName && this.manifest[fieldName]) {
+      this.manifest[fieldName] = input.value;
+    }
   }
 
   handleScreenshotUrlChange(event: Event) {
@@ -449,7 +469,9 @@ export class AppManifest extends LitElement {
   }
 
   handleBackgroundColorInputChange(event: Event) {
-    this.manifest.theme_color = (<HTMLInputElement>event.target).value;
+    if (this.manifest) {
+      this.manifest.theme_color = (<HTMLInputElement>event.target).value;
+    }
   }
 
   handleModalInputFileChange() {
@@ -457,7 +479,7 @@ export class AppManifest extends LitElement {
   }
 
   addNewScreenshot() {
-    this.screenshotList = [...this.screenshotList, undefined];
+    this.screenshotList = [...(this.screenshotList || []), undefined];
   }
 
   done() {

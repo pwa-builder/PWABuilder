@@ -1,18 +1,18 @@
 import {
   ListHeader,
   ProgressList,
+  RawTestResult,
   Status,
-  TestResult,
 } from '../utils/interfaces';
 
 let site_url: string | undefined;
-let results: Array<TestResult> | undefined;
+let results: RawTestResult | undefined;
 
 let progress: ProgressList = {
   progress: [
     {
       header: ListHeader.TEST,
-      location: "/",
+      location: '/',
       done: Status.ACTIVE,
       items: [
         {
@@ -27,7 +27,7 @@ let progress: ProgressList = {
     },
     {
       header: ListHeader.REVIEW,
-      location: "/reportcard",
+      location: '/reportcard',
       done: Status.PENDING,
       items: [
         {
@@ -46,7 +46,7 @@ let progress: ProgressList = {
     },
     {
       header: ListHeader.PUBLISH,
-      location: "/publish",
+      location: '/publish',
       done: Status.PENDING,
       items: [
         {
@@ -61,7 +61,7 @@ let progress: ProgressList = {
     },
     {
       header: ListHeader.COMPLETE,
-      location: "/complete",
+      location: '/complete',
       done: Status.PENDING,
       items: [
         {
@@ -73,20 +73,19 @@ let progress: ProgressList = {
   ],
 };
 
-export function getProgress() {
+export function getProgress(): ProgressList {
   const current_progress = sessionStorage.getItem('current_progress');
 
   if (current_progress) {
-    return JSON.parse(current_progress);
-  }
-  else {
+    return <ProgressList>JSON.parse(current_progress);
+  } else {
     return progress;
   }
 }
 
 export function setProgress(newProgress: ProgressList) {
   progress = newProgress;
-  sessionStorage.setItem('current_progress', JSON.stringify(progress))
+  sessionStorage.setItem('current_progress', JSON.stringify(progress));
 }
 
 export function setURL(url: string) {
@@ -104,19 +103,19 @@ export function getURL() {
   }
 }
 
-export function setResults(testResults) {
+export function setResults(testResults: RawTestResult) {
   results = testResults;
   sessionStorage.setItem('current_results', JSON.stringify(testResults));
 }
 
-export function getResults() {
+export function getResults(): RawTestResult | undefined {
   if (results) {
     return results;
   } else {
     const testResults = sessionStorage.getItem('current_results');
 
     if (testResults) {
-      const parsedResults = JSON.parse(testResults);
+      const parsedResults = <RawTestResult>JSON.parse(testResults);
       return parsedResults;
     } else {
       return undefined;

@@ -51,10 +51,8 @@ function downloadLinkId(config: DownloadConfig) {
 async function cleanup(mode: Modes, config: DownloadConfig) {
   try {
     // TODO
-    if (mode === Modes.link) {
-      const el = document.getElementById(downloadLinkId(config));
-      el.parentElement.removeChild(el);
-    }
+    console.log(mode, config);
+    // if (mode === Modes.link) {}
   } catch (e) {
     console.error(e);
   }

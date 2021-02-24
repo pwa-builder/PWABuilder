@@ -1,5 +1,5 @@
 import { api } from '../utils/api';
-import { download } from '../utils/download';
+// import { download } from '../utils/download';
 
 type Platform =
   | 'windows10'
@@ -47,6 +47,7 @@ export async function generateMissingImages(config: MissingImagesConfig) {
 
     // TODO handle
     const response = await request.json();
+    console.log(response);
   } catch (e) {
     console.error(e);
   }
@@ -90,6 +91,7 @@ export async function fetchIcons(id: string) {
 
     // TODO
     const response = await request.blob();
+    console.log(response);
     // download({
     //   id: `fetchIcons-${id}`
     //   // url: response

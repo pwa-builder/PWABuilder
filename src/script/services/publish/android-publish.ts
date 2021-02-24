@@ -1,4 +1,3 @@
-import { fileSave } from 'browser-fs-access';
 import {
   validateAndroidOptions,
   AndroidApkOptions,
@@ -11,7 +10,7 @@ import { getManifest, getManiURL } from '../manifest';
 
 export async function generateAndroidPackage(
   androidOptions: AndroidApkOptions
-) {
+): Promise<Blob | undefined> {
   const validationErrors = validateAndroidOptions(androidOptions);
   if (validationErrors.length > 0 || !androidOptions) {
     throw new Error(
@@ -61,14 +60,14 @@ export async function generateAndroidPackage(
       `Error generating Android platform due to HTTP error.\n\nStatus code: ${err.status}\n\nError: ${err.statusText}\n\nDetails: ${err}`
     );
   }
+
+  return undefined;
 }
 
 export function createAndroidPackageOptionsFromManifest(): AndroidApkOptions {
   const manifest = getManifest();
   if (!manifest) {
-    throw new Error(
-      'Could not find the web manifest'
-    );
+    throw new Error('Could not find the web manifest');
   }
 
   const maniURL = getManiURL();
@@ -106,6 +105,10 @@ export function createAndroidPackageOptionsFromManifest(): AndroidApkOptions {
     relativeStartUrl =
       absoluteStartUrl.pathname + (absoluteStartUrl.search || '');
   }
+
+  // TODO Justin, looks like the usage of this has been removed?
+  console.log(relativeStartUrl);
+
   const manifestIcons = manifest.icons || [];
   const icon =
     findSuitableIcon(manifestIcons, 'any', 512, 512, 'image/png') ||
@@ -115,8 +118,11 @@ export function createAndroidPackageOptionsFromManifest(): AndroidApkOptions {
     findSuitableIcon(manifestIcons, 'any', 512, 512, undefined) || // A 512x512 or larger image with unspecified type
     findSuitableIcon(manifestIcons, 'any', 192, 192, undefined) || // A 512x512 or larger image with unspecified type
     findSuitableIcon(manifestIcons, 'any', 0, 0, undefined); // Welp, we tried. Any image of any size, any type.
+
   if (!icon) {
-    throw new Error("Can't find a suitable icon to use for the Android package. Ensure your manifest has a square, large (512x512 or better) PNG icon.");
+    throw new Error(
+      "Can't find a suitable icon to use for the Android package. Ensure your manifest has a square, large (512x512 or better) PNG icon."
+    );
   }
 
   const maskableIcon =
@@ -174,7 +180,7 @@ export function createAndroidPackageOptionsFromManifest(): AndroidApkOptions {
     },
     signingMode: 'new',
     splashScreenFadeOutDuration: 300,
-    startUrl: (manifest.start_url as string),
+    startUrl: manifest.start_url as string,
     themeColor: manifest.theme_color || '#FFFFFF',
     shareTarget: manifest.share_target,
     webManifestUrl: maniURL,
@@ -187,7 +193,10 @@ export function createAndroidPackageOptionsFromManifest(): AndroidApkOptions {
  * @param relativeUrl The relative URL to make absolute.
  * @param manifestUrl The absolute URL to the web manifest.
  */
-function getAbsoluteUrl(relativeUrl: string | null, manifestUrl: string): string {
+function getAbsoluteUrl(
+  relativeUrl: string | null,
+  manifestUrl: string
+): string {
   if (!relativeUrl) {
     return '';
   }

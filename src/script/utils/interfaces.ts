@@ -29,6 +29,9 @@ export interface Manifest {
   iarcRatingId?: string;
   icons?: Icon[];
   shareTarget?: ShareTarget;
+
+  // for custom properties as well as using object notations: manifest[key]
+  [key: string]: string | boolean | undefined | null | Array<unknown> | unknown;
 }
 
 export interface ShortcutItem {
@@ -136,20 +139,29 @@ export enum Status {
   PENDING = 'pending',
 }
 
+export interface ProgressItem {
+  name: string;
+  done: Status;
+}
+
 export interface Progress {
   header: ListHeader;
   location: string;
   done: Status;
-  items: Array<{ name: string; done: Status }>;
+  items: Array<ProgressItem>;
 }
 
 export interface ProgressList {
-  progress: Array<Progress>
+  progress: Array<Progress>;
 }
 
 export enum ListHeader {
   TEST = 'Test',
   REVIEW = 'Review',
   PUBLISH = 'Package',
-  COMPLETE = 'Complete'
+  COMPLETE = 'Complete',
+}
+
+export interface ScoreEvent {
+  score: number;
 }

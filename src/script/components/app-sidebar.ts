@@ -8,21 +8,15 @@ import {
   internalProperty,
 } from 'lit-element';
 import { getProgress, getResults, getURL } from '../services/app-info';
-import { Progress, ProgressList, RawTestResult, Status } from '../utils/interfaces';
+import {
+  Progress,
+  ProgressItem,
+  ProgressList,
+  RawTestResult,
+  Status,
+} from '../utils/interfaces';
 
 import { classMap } from 'lit-html/directives/class-map';
-
-enum ItemType {
-  HEADING = 'done',
-  SUB_HEADING = 'sub-heading',
-}
-
-interface TabLayoutItem {
-  title: string;
-  status: Status;
-  type: ItemType;
-  class?: string;
-}
 
 @customElement('app-sidebar')
 export class AppSidebar extends LitElement {
@@ -250,7 +244,10 @@ export class AppSidebar extends LitElement {
         height: 0.75rem;
       }
 
-      .pending, .done, .pending::part(heading), .done::part(heading) {
+      .pending,
+      .done,
+      .pending::part(heading),
+      .done::part(heading) {
         color: rgba(255, 255, 255, 0.5);
       }
 
@@ -264,7 +261,8 @@ export class AppSidebar extends LitElement {
         padding-left: 23px;
       }
 
-      .done::part(heading), .pending::part(heading) {
+      .done::part(heading),
+      .pending::part(heading) {
         background: rgba(255, 255, 255, 0.05);
         padding-left: 23px;
       }
@@ -318,58 +316,29 @@ export class AppSidebar extends LitElement {
     const loc = new URL(location.href);
 
     // Check for all items done
-    this.menuItems?.progress.map((item) => {
+    this.menuItems?.progress.map(item => {
       if (item.items) {
-
         const remaining: Array<Progress> = [];
 
-        item.items.map((innerItem) => {
+        item.items.map(innerItem => {
           if (innerItem.done !== Status.DONE) {
             remaining.push(item);
           }
-        })
+        });
 
         if (loc.pathname === item.location) {
-          item.done = Status.ACTIVE
-        }
-        else if (remaining.length === 0) {
-          item.done = Status.DONE
-        }
-        else {
-          item.done = Status.PENDING
+          item.done = Status.ACTIVE;
+        } else if (remaining.length === 0) {
+          item.done = Status.DONE;
+        } else {
+          item.done = Status.PENDING;
         }
       }
-    })
-
-
+    });
   }
 
   @internalProperty() current_url: string | undefined;
   @internalProperty() results: RawTestResult | undefined;
-
-  @property({ type: Array }) tabletSidebarItems: TabLayoutItem[] = [
-    {
-      title: 'test',
-      status: Status.DONE,
-      type: ItemType.HEADING,
-    },
-    {
-      title: 'review',
-      status: Status.ACTIVE,
-      type: ItemType.HEADING,
-    },
-    {
-      title: 'publish',
-      status: Status.PENDING,
-      type: ItemType.HEADING,
-    },
-    {
-      title: 'complete',
-      status: Status.PENDING,
-      type: ItemType.HEADING,
-    },
-  ];
-
   @internalProperty() menuItems: ProgressList | undefined;
 
   @property({ type: Object }) mql = window.matchMedia(
@@ -378,7 +347,7 @@ export class AppSidebar extends LitElement {
 
   @property({ type: Boolean }) isDeskTopView = this.mql.matches;
 
-  renderIcon(item) {
+  renderIcon(item: Progress | ProgressItem) {
     switch (item.done) {
       case 'active':
         return html`<ion-icon class="icon active" name="ellipse"></ion-icon>`;
@@ -387,29 +356,9 @@ export class AppSidebar extends LitElement {
           <ion-icon class="icon done" name="checkmark-outline"></ion-icon>
         `;
       case 'pending':
+      default:
         return html`<ion-icon class="icon pending" name="ellipse"></ion-icon>`;
     }
-  }
-
-  renderMenuItem(items: TabLayoutItem[]) {
-    return items.map(item => {
-      if (item.type === ItemType.HEADING) {
-        return html`
-          <fast-accordion-item class="heading ${item.class}">
-            ${this.renderIcon(item)}
-            <span slot="heading">${item.title}</span></fast-accordion-item
-          >
-        `;
-      } else if (item.type === ItemType.SUB_HEADING) {
-        return html`
-          <fast-accordion-item class="${item.class || ''}">
-            ${this.renderIcon(item)}<span slot="heading"
-              >${item.title}</span
-            ></fast-accordion-item
-          >
-        `;
-      }
-    });
   }
 
   renderDesktopBar() {
@@ -431,31 +380,34 @@ export class AppSidebar extends LitElement {
         </div>
 
         <fast-accordion class="menu">
-          ${
-            this.menuItems?.progress.map((item) => {
-              return html`
-                <fast-accordion-item expanded class=${classMap({active: item.done === Status.ACTIVE, done: item.done === Status.DONE, pending: item.done === Status.PENDING})}>
-                  <div class="sidebar-item-header" slot="heading">
-                    <span class="item-name">${this.renderIcon(item)}</span>
-                    <span>${item.header}</span>
-                  </div>
-                  
-                  <ul id="sidebar-subitems-list">
-                  ${
-                    item.items.map((item) => {
-                      return html`
-                        <li>
-                          <span class="item-name">${this.renderIcon(item)}</span>
-                          <span>${item.name}</span>
-                        </li>
-                      `
-                    })
-                  }
-                  </ul>
-                </fast-accordion-item>
-              `
-            })
-          }
+          ${this.menuItems?.progress.map(item => {
+            return html`
+              <fast-accordion-item
+                expanded
+                class=${classMap({
+                  active: item.done === Status.ACTIVE,
+                  done: item.done === Status.DONE,
+                  pending: item.done === Status.PENDING,
+                })}
+              >
+                <div class="sidebar-item-header" slot="heading">
+                  <span class="item-name">${this.renderIcon(item)}</span>
+                  <span>${item.header}</span>
+                </div>
+
+                <ul id="sidebar-subitems-list">
+                  ${item.items.map(item => {
+                    return html`
+                      <li>
+                        <span class="item-name">${this.renderIcon(item)}</span>
+                        <span>${item.name}</span>
+                      </li>
+                    `;
+                  })}
+                </ul>
+              </fast-accordion-item>
+            `;
+          })}
         </fast-accordion>
       </aside>
     `;
@@ -468,7 +420,14 @@ export class AppSidebar extends LitElement {
       <div class="menu">
         ${this.menuItems?.progress.map(
           item =>
-            html`<div class=${classMap({heading: true, active: item.done === Status.ACTIVE, done: item.done === Status.DONE, pending: item.done === Status.PENDING})}>
+            html`<div
+              class=${classMap({
+                heading: true,
+                active: item.done === Status.ACTIVE,
+                done: item.done === Status.DONE,
+                pending: item.done === Status.PENDING,
+              })}
+            >
               ${this.renderIcon(item)}
               <span>${item.header}</span>
             </div>`
