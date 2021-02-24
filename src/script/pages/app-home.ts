@@ -281,6 +281,8 @@ export class AppHome extends LitElement {
           const progress = getProgress();
           this.updateProgress(progress);
 
+          console.log('in here');
+
           const goodURL = getURL();
           
           Router.go(`/testing?site=${goodURL}`);
@@ -295,10 +297,10 @@ export class AppHome extends LitElement {
     }
   }
 
-  updateProgress(progress) {
-    progress.progress[0].items[0].done = Status.DONE;
+  updateProgress(progressData) {
+    progressData.progress[0].items[0].done = Status.DONE;
 
-    const newProgress = progress;
+    const newProgress = progressData;
     setProgress(newProgress);
   }
 
@@ -357,8 +359,9 @@ export class AppHome extends LitElement {
               slot="input-container"
               type="text"
               placeholder="Enter URL"
+              name="url-input"
               class=${classMap({ error: this.errorGettingURL })}
-              @change="${(e: InputEvent) => this.handleURL(e)}"
+              @input="${(e: InputEvent) => this.handleURL(e)}"
             ></fast-text-field>
 
             ${this.errorGettingURL &&
