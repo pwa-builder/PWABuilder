@@ -157,7 +157,7 @@ export class AppPublish extends LitElement {
           width: 6em;
         }
 
-        #error-modal::part(modal-container) {
+        #error-modal::part(modal-layout) {
           max-width: 50vw;
         }
 
