@@ -1,26 +1,20 @@
-export function arrayHasChanged(value: unknown, unknownValue: unknown) {
+export function arrayHasChanged<T>(value: Array<T>, unknownValue: Array<T>) {
   if (!value || !unknownValue) {
     return false;
   }
 
-  const curr = value as Array<unknown>;
-  const next = unknownValue as Array<unknown>;
-
   return (
-    curr.length !== next.length ||
-    curr
+    value.length !== unknownValue.length ||
+    value
       .map((val, i) => val === unknownValue[i])
       .reduce((acc, cur) => acc && cur, true)
   );
 }
 
-export function objectHasChanged(value: unknown, unknownValue: unknown) {
+export function objectHasChanged<T>(value: T, unknownValue: T) {
   if (!value || !unknownValue) {
     return false;
   }
 
-  const curr = value as any;
-  const next = unknownValue as any;
-
-  return JSON.stringify(curr) === JSON.stringify(next);
+  return JSON.stringify(value) === JSON.stringify(unknownValue);
 }

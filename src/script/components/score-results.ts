@@ -86,7 +86,7 @@ export class ScoreResults extends LitElement {
     };
   }
 
-  overallScore(results) {
+  overallScore(results: Array<TestResult> | undefined) {
     let score = 0;
 
     if (results && results.length > 0) {

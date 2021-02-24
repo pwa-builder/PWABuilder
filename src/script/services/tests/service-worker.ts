@@ -6,7 +6,7 @@ export async function testServiceWorker(url: string): Promise<Array<TestResult>>
   const isHttp = typeof url === 'string' && url.startsWith('http://');
 
   if (!url || isHttp) {
-    return;
+    return [];
   }
 
   const swData = await detectServiceWorker(url);

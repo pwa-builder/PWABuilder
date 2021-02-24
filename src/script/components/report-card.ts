@@ -6,15 +6,19 @@ import {
   property,
   internalProperty,
 } from 'lit-element';
-import { RawTestResult } from '../utils/interfaces';
+import { RawTestResult, ScoreEvent } from '../utils/interfaces';
 
-import { largeBreakPoint, xLargeBreakPoint, smallBreakPoint } from '../utils/css/breakpoints';
+import {
+  largeBreakPoint,
+  xLargeBreakPoint,
+  smallBreakPoint,
+} from '../utils/css/breakpoints';
 
 import './score-results';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {
-  @property() results: RawTestResult;
+  @property() results: RawTestResult | undefined;
 
   @internalProperty() maniScore = 0;
   @internalProperty() swScore = 0;
@@ -151,32 +155,29 @@ export class ReportCard extends LitElement {
 
       ${xLargeBreakPoint(
         css`
-        .accordion-heading-block, #report-content {
-          width: 71vw;
-        }
+          .accordion-heading-block,
+          #report-content {
+            width: 71vw;
+          }
         `
       )}
 
-      ${
-        largeBreakPoint(
-          css`
-            .accordion-heading-block {
-              width: 90vw;
-            }
-          `
-        )
-      }
+      ${largeBreakPoint(
+        css`
+          .accordion-heading-block {
+            width: 90vw;
+          }
+        `
+      )}
 
-      ${
-        smallBreakPoint(
-          css`
-            #main-report-section {
-              padding-left: 12px;
-              padding-right: 12px;
-            }
-          `
-        )
-      }
+      ${smallBreakPoint(
+        css`
+          #main-report-section {
+            padding-left: 12px;
+            padding-right: 12px;
+          }
+        `
+      )}
     `;
   }
 
@@ -251,7 +252,7 @@ export class ReportCard extends LitElement {
   handleManiScore(ev: CustomEvent) {
     this.maniScore = ev?.detail?.score || 0;
 
-    const event = new CustomEvent('mani-scored', {
+    const event = new CustomEvent<ScoreEvent>('mani-scored', {
       detail: {
         score: this.maniScore,
       },
@@ -262,7 +263,7 @@ export class ReportCard extends LitElement {
   handleSWScore(ev: CustomEvent) {
     this.swScore = ev?.detail?.score || 0;
 
-    const event = new CustomEvent('sw-scored', {
+    const event = new CustomEvent<ScoreEvent>('sw-scored', {
       detail: {
         score: this.swScore,
       },
@@ -273,7 +274,7 @@ export class ReportCard extends LitElement {
   handleSecurityScore(ev: CustomEvent) {
     this.securityScore = ev?.detail?.score || 0;
 
-    const event = new CustomEvent('security-scored', {
+    const event = new CustomEvent<ScoreEvent>('security-scored', {
       detail: {
         score: this.securityScore,
       },
@@ -339,7 +340,7 @@ export class ReportCard extends LitElement {
               >
 
               <score-results
-                .testResults="${this.results.manifest}"
+                .testResults="${this.results?.manifest}"
                 @scored="${(ev: CustomEvent) => this.handleManiScore(ev)}"
               ></score-results>
             </fast-accordion-item>
@@ -365,7 +366,7 @@ export class ReportCard extends LitElement {
                 >Service Worker Options</app-button
               >
               <score-results
-                .testResults="${this.results.service_worker}"
+                .testResults="${this.results?.service_worker}"
                 @scored="${(ev: CustomEvent) => this.handleSWScore(ev)}"
               ></score-results>
             </fast-accordion-item>
@@ -387,7 +388,7 @@ export class ReportCard extends LitElement {
               </div>
 
               <score-results
-                .testResults="${this.results.security}"
+                .testResults="${this.results?.security}"
                 @scored="${(ev: CustomEvent) => this.handleSecurityScore(ev)}"
               ></score-results>
             </fast-accordion-item>
