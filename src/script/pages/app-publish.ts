@@ -157,6 +157,10 @@ export class AppPublish extends LitElement {
           width: 6em;
         }
 
+        #error-modal::part(modal-container) {
+          max-width: 50vw;
+        }
+
         ${xxxLargeBreakPoint(
           css`
             #report {
@@ -193,13 +197,11 @@ export class AppPublish extends LitElement {
   }
 
   async generatePackage(type: platform) {
-    console.log('generating package', type);
     switch (type) {
       case 'windows':
         try {
           // eslint-disable-next-line no-case-declarations
           const options = createWindowsPackageOptionsFromManifest('anaheim');
-
           this.blob = await generateWindowsPackage('anaheim', options);
         } catch (err) {
           this.showAlertModal(err);
@@ -272,6 +274,7 @@ export class AppPublish extends LitElement {
         title="Wait a minute!"
         .body="${this.errorMessage || ''}"
         ?open="${this.errored}"
+        id="error-modal"
       >
         <img class="modal-image" slot="modal-image" src="/assets/warning.svg" alt="warning icon" />
 
@@ -375,7 +378,7 @@ const platforms: ICardData[] = [
   {
     title: 'Windows',
     description:
-      'Publish your PWA to the Microsoft Store to make it available to the 1 billion Windows and XBox users worldwide.',
+      'Publish your PWA to the Microsoft Store to make it available to the 1 billion Windows users worldwide.',
     isActionCard: true,
   },
   {
