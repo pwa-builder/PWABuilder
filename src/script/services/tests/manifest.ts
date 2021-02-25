@@ -1,3 +1,4 @@
+import { default_timeout } from '../../utils/api';
 import { ManifestDetectionResult, TestResult } from '../../utils/interfaces';
 import { fetchManifest } from '../manifest';
 
@@ -84,19 +85,39 @@ const default_results = [
   },
 ];
 
-export async function testManifest(url: string): Promise<Array<TestResult>> {
-  const manifestData = await fetchManifest(url);
+export async function testManifest(
+  url: string
+): Promise<Array<TestResult> | boolean> {
+  const manifestData = fetchManifest(url);
 
-  if (manifestData) {
-    const manifest = manifestData;
+  const twentySecondTimeout = new Promise<void>(resolve =>
+    setTimeout(() => resolve(), default_timeout)
+  );
+
+  const fetchResultOrTimeout: void | ManifestDetectionResult = await Promise.race([
+    twentySecondTimeout,
+    manifestData,
+  ]);
+
+  if (!fetchResultOrTimeout) {
+    console.warn('Manifest check timed out after 20 seconds.');
+    return default_results;
+  }
+
+  console.log('testing manifest');
+
+  if (fetchResultOrTimeout) {
+    const manifest = await fetchResultOrTimeout;
 
     if (manifest) {
       return doTest(manifest);
     } else {
-      throw new Error('Could not test manifest');
+      console.error('Could not test manifest, returning default results');
+      return default_results;
     }
   } else {
-    throw new Error('Could not get manifest data');
+    console.error('Could not get manifest data');
+    return default_results;
   }
 }
 
@@ -129,18 +150,18 @@ function doTest(manifest: ManifestDetectionResult): Array<TestResult> {
       {
         infoString: 'Contains short_name property',
         result:
-          manifest.content.short_name && manifest.content.short_name.length > 1
-            ? true
-            : false,
-        category: 'required',
+          manifest.content.shortName && manifest.content.shortName.length > 1 
+          ? true 
+          : false,
+          category: "required"
       },
       {
         infoString: 'Designates a start_url',
         result:
-          manifest.content.start_url && manifest.content.start_url.length > 0
-            ? true
-            : false,
-        category: 'required',
+          manifest.content.startUrl && manifest.content.startUrl.length > 0 
+          ? true 
+          : false,
+          category: "required"
       },
       {
         infoString: 'Specifies a display mode',
@@ -155,13 +176,13 @@ function doTest(manifest: ManifestDetectionResult): Array<TestResult> {
       },
       {
         infoString: 'Has a background color',
-        result: manifest.content.background_color ? true : false,
-        category: 'recommended',
+        result: manifest.content.backgroundColor ? true : false,
+        category: "recommended"
       },
       {
         infoString: 'Has a theme color',
-        result: manifest.content.theme_color ? true : false,
-        category: 'recommended',
+        result: manifest.content.themeColor ? true : false,
+        category: "recommended"
       },
       {
         infoString: 'Specifies an orientation mode',
@@ -211,15 +232,15 @@ function doTest(manifest: ManifestDetectionResult): Array<TestResult> {
       },
       {
         infoString: 'Contains an IARC ID',
-        result: manifest.content.iarc_rating_id ? true : false,
-        category: 'optional',
+        result: manifest.content.iarcRatingId ? true : false,
+        category: "optional"
       },
       {
         infoString: 'Specifies related_application',
         result:
-          manifest.content.related_applications &&
-          manifest.content.related_applications.length > 0 &&
-          manifest.content.prefer_related_applications !== undefined
+          manifest.content.relatedApplications &&
+          manifest.content.relatedApplications.length > 0 &&
+          manifest.content.preferRelatedApplications !== undefined
             ? true
             : false,
         category: 'optional',

@@ -19,3 +19,5 @@ export const api = {
     post: generateMissingImagesBase,
   },
 };
+
+export const default_timeout = 20000;

@@ -55,7 +55,7 @@ export class AppTesting extends LitElement {
           animation: 160ms fadeIn linear;
 
           padding-top: 2em;
-          height: 91vh;
+          height: 91.7vh;
           width: 100%;
           background: linear-gradient( 
       106.57deg
@@ -87,11 +87,17 @@ export class AppTesting extends LitElement {
           left: 0;
           right: 0;
           margin-bottom: 0;
+
+          --accent-foreground-rest: var(--primary-purple);
         }
 
         #testing-container fast-progress::part(progress) {
           border-radius: 0;
         }
+
+        /*#testing-container fast-progress::part(indeterminate-indicator-1), fast-progress::part(indeterminate-indicator-2) {
+          background-color: var(--primary-purple);
+        }*/
 
         app-header::part(header) {
           background: transparent;
@@ -163,11 +169,10 @@ export class AppTesting extends LitElement {
       const siteUrl = search.get('site');
 
       if (TestResult) {
-        console.log('testResult', TestResult);
         // Completes the loading phase
         // set last phrase and give 300ms to display to user
         // before moving on
-        this.loading = false;
+        // this.loading = false;
 
         this.currentPhrase = 'Results coming to you in 3..2..1..';
         setTimeout(() => {

@@ -1,5 +1,5 @@
 export interface Manifest {
-  background_color: string | null;
+  backgroundColor: string | null;
   description: string | null;
   dir: string | null;
   display: string;
@@ -15,20 +15,20 @@ export interface Manifest {
     | 'landscape-primary'
     | 'landscape-secondary'
     | null;
-  prefer_related_applications?: boolean;
-  related_applications?: RelatedApplication[];
+  preferRelatedApplications?: boolean;
+  relatedApplications?: RelatedApplication[];
   scope: string | null;
-  short_name: string | null;
-  start_url: string | null;
-  theme_color: string | null;
+  shortName: string | null;
+  startUrl: string | null;
+  themeColor: string | null;
   generated?: boolean | null;
   url: string | null;
   shortcuts?: ShortcutItem[];
   categories?: string[];
   screenshots?: Icon[];
-  iarc_rating_id?: string;
+  iarcRatingId?: string;
   icons?: Icon[];
-  share_target?: ShareTarget;
+  shareTarget?: ShareTarget;
 
   // for custom properties as well as using object notations: manifest[key]
   [key: string]: string | boolean | undefined | null | Array<unknown> | unknown;
