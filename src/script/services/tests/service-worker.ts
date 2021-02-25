@@ -87,6 +87,7 @@ async function detectOfflineSupport(url: string): Promise<boolean> {
 
   if (!fetchResultOrTimeout) {
     console.warn('Offline check timed out after 10 seconds.');
+    return false;
   }
   if (fetchResultOrTimeout && !fetchResultOrTimeout.ok) {
     console.warn(
