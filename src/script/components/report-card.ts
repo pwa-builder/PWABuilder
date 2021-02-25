@@ -19,6 +19,7 @@ import './score-results';
 @customElement('report-card')
 export class ReportCard extends LitElement {
   @property() results: RawTestResult | undefined;
+  @property() scoreCardResults: RawTestResult | undefined;
 
   @internalProperty() maniScore = 0;
   @internalProperty() swScore = 0;
@@ -55,6 +56,8 @@ export class ReportCard extends LitElement {
         display: flex;
         align-items: center;
         justify-content: space-between;
+
+        color: var(--font-color);
       }
 
       h3,
@@ -185,21 +188,38 @@ export class ReportCard extends LitElement {
     super();
   }
 
-  firstUpdated() {
+  async firstUpdated() {
     if (!this.results) {
       // Should never really end up here
       // But just in case this component tries to render without results
       // lets attempt to grab the last saved results
-      this.handleNoResults();
+      try {
+        this.scoreCardResults = await this.handleNoResults();
+      }
+      catch(err) {
+        throw new Error(`Error handling results: ${err}`);
+      }
+    }
+    else {
+      this.scoreCardResults = this.results;
     }
   }
 
-  handleNoResults() {
-    const resultsData = sessionStorage.getItem('results-string');
+  async handleNoResults(): Promise<RawTestResult> {
+    return new Promise((resolve, reject) => {
+      const rawResultsData = sessionStorage.getItem('results-string');
 
-    if (resultsData) {
-      this.results = JSON.parse(resultsData);
-    }
+      if (rawResultsData) {
+        const resultsData = JSON.parse(rawResultsData);
+
+        if (resultsData) {
+          resolve(resultsData);
+        }
+      }
+      else {
+        reject(new Error("No results passed"));
+      }
+    })
   }
 
   opened(targetEl: EventTarget | null) {
@@ -339,10 +359,10 @@ export class ReportCard extends LitElement {
                 >Manifest Options</app-button
               >
 
-              <score-results
-                .testResults="${this.results?.manifest}"
+              ${this.scoreCardResults ? html`<score-results
+                .testResults="${this.scoreCardResults.manifest}"
                 @scored="${(ev: CustomEvent) => this.handleManiScore(ev)}"
-              ></score-results>
+              ></score-results>` : null}
             </fast-accordion-item>
             <fast-accordion-item
               @click="${(ev: Event) => this.opened(ev.target)}"
@@ -365,10 +385,10 @@ export class ReportCard extends LitElement {
                 class="options-button"
                 >Service Worker Options</app-button
               >
-              <score-results
-                .testResults="${this.results?.service_worker}"
+              ${this.scoreCardResults ? html`<score-results
+                .testResults="${this.scoreCardResults.service_worker}"
                 @scored="${(ev: CustomEvent) => this.handleSWScore(ev)}"
-              ></score-results>
+              ></score-results>` : null}
             </fast-accordion-item>
             <fast-accordion-item
               @click="${(ev: Event) => this.opened(ev.target)}"
@@ -387,10 +407,10 @@ export class ReportCard extends LitElement {
                 </div>
               </div>
 
-              <score-results
-                .testResults="${this.results?.security}"
+              ${this.scoreCardResults ? html`<score-results
+                .testResults="${this.scoreCardResults.security}"
                 @scored="${(ev: CustomEvent) => this.handleSecurityScore(ev)}"
-              ></score-results>
+              ></score-results>` : null}
             </fast-accordion-item>
           </fast-accordion>
         </div>

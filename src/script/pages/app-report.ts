@@ -4,6 +4,7 @@ import {
   html,
   customElement,
   internalProperty,
+  property
 } from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map';
 
@@ -23,11 +24,12 @@ import '../components/app-sidebar';
 
 //@ts-ignore
 import style from '../../../styles/layout-defaults.css';
-import { ScoreEvent } from '../utils/interfaces';
+import { RawTestResult, ScoreEvent } from '../utils/interfaces';
 
 @customElement('app-report')
 export class AppReport extends LitElement {
-  @internalProperty() resultOfTest = null;
+  @property() resultOfTest: RawTestResult | undefined;
+
   @internalProperty() swScore = 0;
   @internalProperty() maniScore = 0;
   @internalProperty() securityScore = 0;

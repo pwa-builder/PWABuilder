@@ -288,16 +288,22 @@ export class AppHome extends LitElement {
         console.error('Error getting site', err.message);
 
         this.errorGettingURL = true;
+
+        // couldnt get manifest, thats ok
+        // lets continue forward with the default
+        // zeroed out results. 
+        const goodURL = getURL();
+        Router.go(`/testing?site=${goodURL}`);
       }
 
       this.gettingManifest = false;
     }
   }
 
-  updateProgress(progress: ProgressList) {
-    progress.progress[0].items[0].done = Status.DONE;
+  updateProgress(progressData: ProgressList) {
+    progressData.progress[0].items[0].done = Status.DONE;
 
-    const newProgress = progress;
+    const newProgress = progressData;
     setProgress(newProgress);
   }
 
@@ -356,8 +362,10 @@ export class AppHome extends LitElement {
               slot="input-container"
               type="text"
               placeholder="Enter URL"
+              name="url-input"
               class=${classMap({ error: this.errorGettingURL })}
-              @change="${(e: InputEvent) => this.handleURL(e)}"
+              @input="${(e: InputEvent) => this.handleURL(e)}"
+              autofocus
             ></fast-text-field>
 
             ${this.errorGettingURL &&

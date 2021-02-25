@@ -64,24 +64,22 @@ async function getManifestViaFilePost(
     throw new Error(`Unable to get JSON from ${manifestTestUrl}`);
   }
 
-  const manifestFile = new File(
-    [JSON.stringify(responseData.content)],
-    'test.json'
-  );
-
-  const formData = new FormData();
-  formData.append('file', manifestFile);
-
-  const filePostTask = await fetch(apiUrl, {
-    method: 'POST',
-    body: JSON.stringify(formData),
-  });
-  const filePostResult = await filePostTask.json();
-
-  return await syncRedis(filePostResult);
+  return {
+    content: responseData.manifestContents,
+    format: 'w3c',
+    generatedUrl: responseData.manifestUrl || url,
+    default: {
+      short_name: responseData.manifestContents.short_name || '',
+    },
+    id: '',
+    generated: responseData.manifestContents ? false : true,
+    errors: [],
+    suggestions: [],
+    warnings: [],
+  };
 }
 
-// Uses Azurez HTML parsing microservice to fetch the manifest, then hands it to the API.
+// Uses Azure HTML parsing microservice to fetch the manifest, then hands it to the API.
 async function getManifestViaHtmlParse(
   url: string
 ): Promise<ManifestDetectionResult> {
@@ -112,38 +110,19 @@ async function getManifestViaHtmlParse(
     responseData
   );
 
-  return await syncRedis({
+  return {
     content: responseData.manifestContents,
     format: 'w3c',
     generatedUrl: responseData.manifestUrl || url,
     default: {
-      short_name: responseData.manifestContents.short_name || '',
+      short_name: responseData.manifestContents.shortName || '',
     },
     id: '',
     generated: responseData.manifestContents ? false : true,
     errors: [],
     suggestions: [],
     warnings: [],
-  });
-}
-
-async function syncRedis(
-  manifestData: ManifestDetectionResult
-): Promise<ManifestDetectionResult> {
-  const fetchResult = await fetch(apiUrl, {
-    method: 'POST',
-    body: JSON.stringify(manifestData),
-    headers: new Headers({ 'content-type': 'application/json' }),
-  });
-
-  if (!fetchResult.ok) {
-    throw new Error(
-      `Unable to sync redis, status code ${fetchResult.status}, status text ${fetchResult.statusText}`
-    );
-  }
-
-  const manifestResult: ManifestDetectionResult = await fetchResult.json();
-  return manifestResult;
+  };
 }
 
 export async function fetchManifest(
@@ -161,9 +140,8 @@ export async function fetchManifest(
   setURL(knownGoodUrl);
 
   const manifestDetectors = [
-    getManifestViaApi(url),
-    getManifestViaFilePost(url),
-    getManifestViaHtmlParse(url),
+    getManifestViaFilePost(knownGoodUrl),
+    getManifestViaHtmlParse(knownGoodUrl),
   ];
 
   // We want to use Promise.any(...), but browser support is too low at the time of this writing: https://caniuse.com/mdn-javascript_builtins_promise_any

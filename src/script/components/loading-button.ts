@@ -12,6 +12,8 @@ export class LoadingButton extends LitElement {
       fast-progress-ring {
         height: 1.8em;
         width: 1.8em;
+
+        --accent-foreground-rest: var(--primary-purple);
       }
 
       ${smallBreakPoint(css`
