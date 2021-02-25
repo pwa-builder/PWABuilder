@@ -11,7 +11,7 @@ import {
 import { getManifest } from '../services/manifest';
 import { arrayHasChanged, objectHasChanged } from '../utils/hasChanged';
 import { resolveUrl } from '../utils/url';
-import { FileInputDetails } from '../utils/interfaces';
+import { FileInputDetails, Lazy } from '../utils/interfaces';
 import {
   fastTextFieldCss,
   fastButtonCss,
@@ -37,22 +37,23 @@ export class AppManifest extends LitElement {
 
   @property({ type: Boolean }) uploadModalOpen = false;
   @internalProperty() uploadButtonDisabled = true;
-  @internalProperty() uploadSelectedImageFile: File | undefined;
-  @internalProperty() uploadImageObjectUrl: string;
+  @internalProperty() uploadSelectedImageFile: Lazy<File>;
+  @internalProperty() uploadImageObjectUrl: Lazy<string>;
 
   @internalProperty()
   protected backgroundColorRadioValue: 'none' | 'transparent' | 'custom' =
     'none';
 
   @internalProperty()
-  protected searchParams: URLSearchParams | undefined;
+  protected searchParams: Lazy<URLSearchParams>;
 
-  protected get siteUrl(): string | null {
+  protected get siteUrl(): string {
     if (!this.searchParams) {
       this.searchParams = new URLSearchParams(location.search);
     }
 
-    return this.searchParams.get('site');
+    const siteParam = this.searchParams.get('site');
+    return siteParam ? siteParam : '';
   }
 
   static get styles() {
