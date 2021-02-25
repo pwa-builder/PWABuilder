@@ -1,3 +1,5 @@
+export type Lazy<T> = T | undefined;
+
 export enum AppEvents {
   manifestUpdate = 'MANIFEST_UPDATE',
 }
