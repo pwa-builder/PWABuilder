@@ -5,36 +5,16 @@ import { env } from '../utils/environment';
 import {
   AppEvents,
   Icon,
+  Lazy,
   Manifest,
   ManifestDetectionResult,
 } from '../utils/interfaces';
 import { cleanUrl } from '../utils/url';
 import { setURL } from './app-info';
 
-const apiUrl = `${env.api}/manifests`;
-
 export const emitter = new EventTarget();
-let manifest: Manifest | null = null;
-let maniURL: string | null = null;
-
-// Uses PWABuilder API to fetch the manifest
-async function getManifestViaApi(
-  url: string
-): Promise<ManifestDetectionResult> {
-  const options = {
-    siteUrl: url,
-  };
-
-  // const postResult = this.axios.$post(this.apiUrl, options);
-  const post = await fetch(apiUrl, {
-    method: 'POST',
-    body: JSON.stringify(options),
-    headers: new Headers({ 'content-type': 'application/json' }),
-  });
-  const postResult = await post.json();
-
-  return postResult;
-}
+let manifest: Lazy<Manifest>;
+let maniURL: Lazy<string>;
 
 // Uses Azure manifest Puppeteer service to fetch the manifest, then POSTS it to the API.
 async function getManifestViaFilePost(
@@ -174,7 +154,7 @@ export function getManifest() {
 }
 
 export async function updateManifest(manifestUpdates: Partial<Manifest>) {
-  manifest = deepmerge(manifest, manifestUpdates, {
+  manifest = deepmerge(manifest as Manifest, manifestUpdates as Manifest, {
     customMerge: customManifestMerge,
   });
 
@@ -198,8 +178,12 @@ export function updateManifestEvent<T extends Partial<Manifest>>(detail: T) {
 
 function customManifestMerge(key: string) {
   if (key === 'icons') {
-    return uniqueElements<Icon>(icon => icon.sizes);
+    return uniqueElements<Icon>(icon => icon.sizes ?? icon.src);
   } else if (key === 'screenshots') {
-    return uniqueElements<Icon>(screenshot => screenshot.sizes);
+    return uniqueElements<Icon>(
+      screenshot => screenshot.sizes ?? screenshot.src
+    );
   }
+
+  return undefined;
 }

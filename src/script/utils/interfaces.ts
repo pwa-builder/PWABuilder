@@ -5,12 +5,12 @@ export enum AppEvents {
 }
 
 export interface Manifest {
-  backgroundColor: string | null;
-  description: string | null;
-  dir: string | null;
+  backgroundColor: string | undefined;
+  description: string | undefined;
+  dir: string | undefined;
   display: string;
-  lang: string | null;
-  name: string | null;
+  lang: string | undefined;
+  name: string | undefined;
   orientation?:
     | 'any'
     | 'natural'
@@ -23,12 +23,12 @@ export interface Manifest {
     | null;
   preferRelatedApplications?: boolean;
   relatedApplications?: RelatedApplication[];
-  scope: string | null;
-  shortName: string | null;
-  startUrl: string | null;
-  themeColor: string | null;
-  generated?: boolean | null;
-  url: string | null;
+  scope: string | undefined;
+  shortName: string | undefined;
+  startUrl: string | undefined;
+  themeColor: string | undefined;
+  generated?: boolean | undefined;
+  url: string | undefined;
   shortcuts?: ShortcutItem[];
   categories?: string[];
   screenshots?: Icon[];
@@ -37,7 +37,9 @@ export interface Manifest {
   shareTarget?: ShareTarget;
 
   // for custom properties as well as using object notations: manifest[key]
-  [key: string]: string | boolean | undefined | null | Array<unknown> | unknown;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore - accomodate custom entries... these can be a pain
+  [key: string]: string | boolean | undefined | Array<any> | any;
 }
 
 export interface ShortcutItem {

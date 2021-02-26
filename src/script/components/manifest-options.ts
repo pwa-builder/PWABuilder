@@ -413,7 +413,7 @@ export class AppManifest extends LitElement {
 
   renderIcons() {
     return this.manifest?.icons?.map(icon => {
-      let url = resolveUrl(this.siteUrl, this.manifest?.start_url);
+      let url = resolveUrl(this.siteUrl, this.manifest?.startUrl);
       url = resolveUrl(url?.href, icon.src);
 
       if (url) {
@@ -448,7 +448,7 @@ export class AppManifest extends LitElement {
 
   renderScreenshots() {
     return this.manifest?.screenshots?.map(screenshot => {
-      let url = resolveUrl(this.siteUrl, this.manifest?.start_url);
+      let url = resolveUrl(this.siteUrl, this.manifest?.startUrl);
       url = resolveUrl(url?.href, screenshot.src);
 
       if (url) {
@@ -514,12 +514,12 @@ export class AppManifest extends LitElement {
 
   async handleModalInputFileChange(evt: CustomEvent<FileInputDetails>) {
     console.log('handleModalInputFileChange', evt);
-    const files = evt.detail.input.files;
+    const files = evt.detail.input.files ?? undefined;
 
     // const file = files.item(0);
     // console.log(URL.createObjectURL(file), URL.createObjectURL(file));
 
-    this.uploadSelectedImageFile = files.item(0);
+    this.uploadSelectedImageFile = files?.item(0) ?? undefined;
     this.uploadButtonDisabled = !this.validIconInput();
 
     if (!this.uploadButtonDisabled) {
@@ -534,9 +534,11 @@ export class AppManifest extends LitElement {
   async handleIconFileUpload() {
     try {
       // TODO
-      await generateMissingImages({
-        file: this.uploadSelectedImageFile,
-      });
+      if (this.uploadSelectedImageFile) {
+        await generateMissingImages({
+          file: this.uploadSelectedImageFile,
+        });
+      }
     } catch (e) {
       console.error(e);
     }

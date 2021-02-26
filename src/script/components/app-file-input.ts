@@ -68,7 +68,7 @@ export class FileInput extends LitElement {
   }
 
   buttonText() {
-    if (this.input?.files?.length > 0) {
+    if (this.input?.files?.length) {
       return this.input?.files?.item(0)?.name;
     }
 
@@ -76,15 +76,17 @@ export class FileInput extends LitElement {
   }
 
   handleModalInputFileChosen() {
-    const changeEvent = new CustomEvent<FileInputDetails>('input-change', {
-      detail: {
-        input: this.input,
-      },
-      composed: true,
-      bubbles: true,
-    });
+    if (this.input) {
+      const changeEvent = new CustomEvent<FileInputDetails>('input-change', {
+        detail: {
+          input: this.input,
+        },
+        composed: true,
+        bubbles: true,
+      });
 
-    this.dispatchEvent(changeEvent);
-    this.requestUpdateInternal();
+      this.dispatchEvent(changeEvent);
+      this.requestUpdateInternal();
+    }
   }
 }

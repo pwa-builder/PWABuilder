@@ -85,19 +85,16 @@ const default_results = [
   },
 ];
 
-export async function testManifest(
-  url: string
-): Promise<Array<TestResult> | boolean> {
+export async function testManifest(url: string): Promise<Array<TestResult>> {
   const manifestData = fetchManifest(url);
 
   const twentySecondTimeout = new Promise<void>(resolve =>
     setTimeout(() => resolve(), default_timeout)
   );
 
-  const fetchResultOrTimeout: void | ManifestDetectionResult = await Promise.race([
-    twentySecondTimeout,
-    manifestData,
-  ]);
+  const fetchResultOrTimeout: void | ManifestDetectionResult = await Promise.race(
+    [twentySecondTimeout, manifestData]
+  );
 
   if (!fetchResultOrTimeout) {
     console.warn('Manifest check timed out after 20 seconds.');
@@ -150,18 +147,18 @@ function doTest(manifest: ManifestDetectionResult): Array<TestResult> {
       {
         infoString: 'Contains short_name property',
         result:
-          manifest.content.shortName && manifest.content.shortName.length > 1 
-          ? true 
-          : false,
-          category: "required"
+          manifest.content.shortName && manifest.content.shortName.length > 1
+            ? true
+            : false,
+        category: 'required',
       },
       {
         infoString: 'Designates a start_url',
         result:
-          manifest.content.startUrl && manifest.content.startUrl.length > 0 
-          ? true 
-          : false,
-          category: "required"
+          manifest.content.startUrl && manifest.content.startUrl.length > 0
+            ? true
+            : false,
+        category: 'required',
       },
       {
         infoString: 'Specifies a display mode',
@@ -177,12 +174,12 @@ function doTest(manifest: ManifestDetectionResult): Array<TestResult> {
       {
         infoString: 'Has a background color',
         result: manifest.content.backgroundColor ? true : false,
-        category: "recommended"
+        category: 'recommended',
       },
       {
         infoString: 'Has a theme color',
         result: manifest.content.themeColor ? true : false,
-        category: "recommended"
+        category: 'recommended',
       },
       {
         infoString: 'Specifies an orientation mode',
@@ -233,7 +230,7 @@ function doTest(manifest: ManifestDetectionResult): Array<TestResult> {
       {
         infoString: 'Contains an IARC ID',
         result: manifest.content.iarcRatingId ? true : false,
-        category: "optional"
+        category: 'optional',
       },
       {
         infoString: 'Specifies related_application',

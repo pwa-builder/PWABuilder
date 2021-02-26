@@ -90,18 +90,18 @@ export function createAndroidPackageOptionsFromManifest(): AndroidApkOptions {
   // We make sure it is below.
   let relativeStartUrl: string;
   if (
-    !manifest.start_url ||
-    manifest.start_url === '/' ||
-    manifest.start_url === '.' ||
-    manifest.start_url === './'
+    !manifest.startUrl ||
+    manifest.startUrl === '/' ||
+    manifest.startUrl === '.' ||
+    manifest.startUrl === './'
   ) {
-    // First, if we don't have a start_url in the manifest, or it's just "/",
+    // First, if we don't have a startUrl in the manifest, or it's just "/",
     // then we can just use that.
     relativeStartUrl = '/';
   } else {
-    // The start_url in the manifest is either a relative or absolute path.
+    // The startUrl in the manifest is either a relative or absolute path.
     // Ensure it's a path relative to the root.
-    const absoluteStartUrl = new URL(manifest.start_url, maniURL);
+    const absoluteStartUrl = new URL(manifest.startUrl, maniURL);
     relativeStartUrl =
       absoluteStartUrl.pathname + (absoluteStartUrl.search || '');
   }

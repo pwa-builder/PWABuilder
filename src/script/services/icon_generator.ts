@@ -51,10 +51,14 @@ export async function generateMissingImages(config: MissingImagesConfig) {
       colorOption: 'transparent',
     });
 
-    await updateManifestWithGeneratedIcons(generateIconsResult.Uri);
+    if (generateIconsResult) {
+      await updateManifestWithGeneratedIcons(generateIconsResult.Uri);
+    }
   } catch (e) {
     console.error(e);
   }
+
+  return undefined;
 }
 
 export async function generateIcons(config: IconGeneratorConfig) {
@@ -86,6 +90,8 @@ export async function generateIcons(config: IconGeneratorConfig) {
       console.error('This API requires a file', e);
     }
   }
+
+  return undefined;
 }
 
 async function fetchIcons(id: string) {
@@ -100,37 +106,54 @@ async function fetchIcons(id: string) {
   } catch (e) {
     console.error(e);
   }
+
+  return undefined;
 }
 
 export async function updateManifestWithGeneratedIcons(id: string) {
   try {
     const generatedIcons = await fetchIcons(id);
-    const blob = await generatedIcons.blob();
-    const zip = await jszip.loadAsync(blob);
-    const zipContents = JSON.parse(
-      await zip.file('icons.json').async('string')
-    ) as GeneratedImageIcons;
+    const blob = await generatedIcons?.blob();
 
-    const icons = [];
-    for (let i = 0; i < zipContents.icons.length; i++) {
-      const icon = zipContents.icons[i];
-      const zipSrc = icon.src;
-      const [platform] = zipSrc.split('/');
-      const base64Img = await zip.file(zipSrc).async('base64');
+    if (blob) {
+      const zip = await jszip.loadAsync(blob);
+      const file = zip.file('icons.json');
+      let zipContents: GeneratedImageIcons = { icons: [] };
 
-      icon.src = base64Img;
-      icon.type = 'image/png';
-      icon.generated = true;
-      icon.platform = platform;
-      icon.purpose = 'any';
-      icons.push(icon);
+      if (file) {
+        zipContents = JSON.parse(
+          await file.async('string')
+        ) as GeneratedImageIcons;
+      }
 
-      // TODO cache icon separately? or the zip?
+      const icons: Array<Icon> = [];
+      for (let i = 0; i < zipContents.icons.length; i++) {
+        const icon = zipContents.icons[i];
+        const zipSrc = icon.src;
+
+        if (zipSrc) {
+          const [platform] = zipSrc.split('/');
+          const file = zip.file(zipSrc) ?? undefined;
+          const base64Img = await file?.async('base64');
+
+          if (base64Img) {
+            icons.push({
+              src: base64Img,
+              type: 'image/png',
+              generated: true,
+              platform,
+              purpose: 'any',
+            });
+
+            // TODO cache icon separately? or the zip?
+          }
+        }
+      }
+
+      updateManifest({
+        icons,
+      });
     }
-
-    updateManifest({
-      icons,
-    });
   } catch (e) {
     console.error(e);
   }
@@ -139,6 +162,7 @@ export async function updateManifestWithGeneratedIcons(id: string) {
 export async function downloadZip(id: string) {
   try {
     const generatedIcons = await fetchIcons(id);
+    console.log(generatedIcons);
 
     //TODO convert into Object URL? will that be all?
 
