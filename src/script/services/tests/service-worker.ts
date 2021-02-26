@@ -15,11 +15,6 @@ export async function testServiceWorker(url: string): Promise<Array<TestResult>>
 
   const swTestResult = [
       {
-        result: swData.scope && swData.scope.length > 0 ? true : false,
-        infoString: "Has the correct scope",
-        category: "required"
-      },
-      {
         result: swData.hasSW,
         infoString: "Has a Service Worker",
         category: "required"
