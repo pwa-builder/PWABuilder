@@ -50,7 +50,6 @@ export async function generateWindowsPackage(
 }
 
 export function createWindowsPackageOptionsFromManifest(
-  windowsConfiguration: 'anaheim' | 'spartan'
 ): WindowsPackageOptions {
   const manifest = getManifest();
   console.log('current manifest', manifest);
@@ -86,20 +85,20 @@ export function createWindowsPackageOptionsFromManifest(
       name: name,
       packageId: packageID,
       url: pwaURL,
-      version: windowsConfiguration === 'spartan' ? '1.0.0' : '1.0.1',
+      version: '1.0.1',
       allowSigning: true,
       publisher: {
         displayName: 'Contoso, Inc.',
         commonName: 'CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca',
       },
-      generateModernPackage: windowsConfiguration === 'anaheim',
+      generateModernPackage: true,
       classicPackage: {
-        generate: windowsConfiguration === 'anaheim',
+        generate: true,
         version: '1.0.0',
         url: pwaURL,
       },
       edgeHtmlPackage: {
-        generate: windowsConfiguration === 'spartan',
+        generate: false,
       },
       manifestUrl: maniURL,
       manifest: manifest,
@@ -120,8 +119,7 @@ export function createWindowsPackageOptionsFromManifest(
 }
 
 export function createWindowsPackageOptionsFromForm(
-  form: HTMLFormElement,
-  windowsConfiguration = 'anaheim'
+  form: HTMLFormElement
 ) {
   const manifest = getManifest();
   console.log('current manifest', manifest);
@@ -155,14 +153,14 @@ export function createWindowsPackageOptionsFromForm(
         displayName: form.publisherDisplayName.value,
         commonName: form.publisherId.value,
       },
-      generateModernPackage: windowsConfiguration === 'anaheim',
+      generateModernPackage: true,
       classicPackage: {
-        generate: windowsConfiguration === 'anaheim',
+        generate: true,
         version: '1.0.0',
         url: form.url.value || getURL(),
       },
       edgeHtmlPackage: {
-        generate: windowsConfiguration === 'spartan',
+        generate: false,
       },
       manifestUrl: form.manifestUrl.value || getManiURL(),
       manifest: manifest,
