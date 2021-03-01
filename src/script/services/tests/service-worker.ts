@@ -11,7 +11,6 @@ export async function testServiceWorker(url: string): Promise<Array<TestResult>>
 
   const swData = await detectServiceWorker(url);
   const worksOffline = await detectOfflineSupport(url);
-  const periodicSync = await detectPeriodicSyncSupport(url);
 
   const swTestResult = [
       {
@@ -26,10 +25,15 @@ export async function testServiceWorker(url: string): Promise<Array<TestResult>>
         category: "recommended"
       },
       {
-        result: periodicSync,
+        result: swData.hasPeriodicBackgroundSync,
         infoString: "Uses Periodic Sync for a rich offline experience",
         category: "optional"
-      }
+      },
+      {
+        result: swData.hasBackgroundSync,
+        infoString: "Uses Background Sync for a rich offline experience",
+        category: "optional"
+      },
   ];
 
   return swTestResult;
@@ -97,21 +101,3 @@ async function detectOfflineSupport(url: string): Promise<boolean> {
   return jsonResult.data.offline;
 }
 
-async function detectPeriodicSyncSupport(url: string): Promise<boolean> {
-  const fetchResult = await fetch(
-    `${
-      env.serviceWorkerUrl
-    }/serviceWorker/getPeriodicSyncStatus/?url=${encodeURIComponent(url)}`
-  );
-  if (!fetchResult.ok) {
-    console.warn(
-      'Unable to detect periodic sync support.',
-      fetchResult.status,
-      fetchResult.statusText
-    );
-  }
-
-  const periodicSyncResultText = await fetchResult.text();
-  console.info('Periodic sync detection succeeded');
-  return periodicSyncResultText === 'true';
-}
