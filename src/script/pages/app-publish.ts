@@ -218,13 +218,13 @@ export class AppPublish extends LitElement {
             this.open_windows_options = false;
 
             if (options) {
-              this.blob = await generateWindowsPackage('anaheim', options);
+              this.blob = await generateWindowsPackage(options);
               this.generating = false;
             }
           }
           else {
-            const options = createWindowsPackageOptionsFromManifest('anaheim');
-            this.blob = await generateWindowsPackage('anaheim', options);
+            const options = createWindowsPackageOptionsFromManifest();
+            this.blob = await generateWindowsPackage(options);
 
             this.generating = false;
           }
