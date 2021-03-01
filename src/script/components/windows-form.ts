@@ -2,8 +2,6 @@ import { LitElement, css, html, customElement, property } from 'lit-element';
 
 import '../components/loading-button';
 
-import { largeBreakPoint } from '../utils/css/breakpoints';
-
 @customElement('windows-form')
 export class WindowsForm extends LitElement {
   @property({ type: Boolean }) generating: boolean;
