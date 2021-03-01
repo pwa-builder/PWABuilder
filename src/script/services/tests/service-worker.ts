@@ -11,7 +11,6 @@ export async function testServiceWorker(url: string): Promise<Array<TestResult>>
 
   const swData = await detectServiceWorker(url);
   const worksOffline = await detectOfflineSupport(url);
-  // const periodicSync = await detectPeriodicSyncSupport(url);
 
   const swTestResult = [
       {
