@@ -11,7 +11,9 @@ import '../components/app-header';
 import '../components/app-card';
 import '../components/app-modal';
 import '../components/app-button';
+import '../components/loading-button';
 import {
+  createWindowsPackageOptionsFromForm,
   createWindowsPackageOptionsFromManifest,
   generateWindowsPackage,
 } from '../services/publish/windows-publish';
@@ -45,6 +47,8 @@ export class AppPublish extends LitElement {
   @internalProperty() isDeskTopView = this.mql.matches;
 
   @internalProperty() open_windows_options = false;
+
+  @internalProperty() generating = false;
 
   constructor() {
     super();
@@ -254,24 +258,45 @@ export class AppPublish extends LitElement {
     ];
   }
 
-  async generatePackage(type: platform) {
+  async generatePackage(type: platform, form?: HTMLFormElement) {
     switch (type) {
       case 'windows':
         try {
-          // eslint-disable-next-line no-case-declarations
-          const options = createWindowsPackageOptionsFromManifest('anaheim');
-          this.blob = await generateWindowsPackage('anaheim', options);
+          this.generating = true;
+
+          if (form) {
+            const options = createWindowsPackageOptionsFromForm(form);
+
+            this.open_windows_options = false;
+
+            if (options) {
+              this.blob = await generateWindowsPackage('anaheim', options);
+              this.generating = false;
+            }
+          }
+          else {
+            const options = createWindowsPackageOptionsFromManifest('anaheim');
+            this.blob = await generateWindowsPackage('anaheim', options);
+
+            this.generating = false;
+          }
         } catch (err) {
+          this.generating = false;
           this.showAlertModal(err);
         }
         break;
       case 'android':
         try {
+          this.generating = true;
+
           // eslint-disable-next-line no-case-declarations
           const androidOptions = createAndroidPackageOptionsFromManifest();
 
           this.blob = await generateAndroidPackage(androidOptions);
+
+          this.generating = false;
         } catch (err) {
+          this.generating = false;
           this.showAlertModal(err);
         }
         break;
@@ -304,6 +329,10 @@ export class AppPublish extends LitElement {
     this.open_windows_options = true;
   }
 
+  showAndroidOptionsModal() {
+    console.log('here');
+  }
+
   renderContentCards() {
     return platforms.map(
       platform =>
@@ -313,12 +342,7 @@ export class AppPublish extends LitElement {
             <p>${platform.description}</p>
           </div>
 
-          <!--<app-button
-            @click="${() =>
-              this.generatePackage(platform.title.toLowerCase() as platform)}"
-            >Publish</app-button
-          >-->
-          <app-button @click="${() => this.showWindowsOptionsModal()}">Publish</app-button>
+          <app-button @click="${platform.title.toLowerCase() === "windows" ? () => this.showWindowsOptionsModal() : () => this.showAndroidOptionsModal()}">Publish</app-button>
         </li>`
     );
   }
@@ -363,7 +387,7 @@ export class AppPublish extends LitElement {
       </app-modal>
 
       <app-modal id="windows-options-modal" title="Microsoft Store Options" ?open="${this.open_windows_options}">
-        <form slot="modal-form" style="width: 100%">
+        <form id="windows-options-form" slot="modal-form" style="width: 100%">
           <div id="form-layout">
             <div class="">
               <div class="form-group">
@@ -383,6 +407,7 @@ export class AppPublish extends LitElement {
                   class="form-control"
                   placeholder="package ID"
                   type="text"
+                  name="packageId"
                   required
                 ></fast-text-field>
               </div>
@@ -396,6 +421,7 @@ export class AppPublish extends LitElement {
                       class="form-control"
                       id="windowsAppNameInput"
                       placeholder="My Awesome PWA"
+                      name="appName"
                       required
                     ></fast-text-field>
                   </div>
@@ -421,6 +447,7 @@ export class AppPublish extends LitElement {
                       class="form-control"
                       id="windowsAppVersionInput"
                       placeholder="1.0.1"
+                      name="appVersion"
                       required
                     ></fast-text-field>
                   </div>
@@ -428,7 +455,7 @@ export class AppPublish extends LitElement {
 
               </div>
 
-              <div v-if="windowsFormConfiguration === 'anaheim'">
+              <div>
                 <div class="">
                   <div class="form-group">
                     <label for="windowsClassicAppVersionInput">
@@ -447,6 +474,7 @@ export class AppPublish extends LitElement {
                       class="form-control"
                       id="windowsClassicAppVersionInput"
                       placeholder="1.0.0"
+                      name="classicVersion"
                       required
                     ></fast-text-field>
                   </div>
@@ -469,6 +497,7 @@ export class AppPublish extends LitElement {
                   class="form-control"
                   id="windowsUrlInput"
                   placeholder="/index.html"
+                  name="url"
                   required
                 ></fast-text-field>
               </div>
@@ -488,6 +517,7 @@ export class AppPublish extends LitElement {
                   class="form-control"
                   id="windowsManifestUrlInput"
                   placeholder="https://mysite.com/manifest.json"
+                  name="manifestUrl"
                   required
                 ></fast-text-field>
               </div>
@@ -507,6 +537,7 @@ export class AppPublish extends LitElement {
                   class="form-control"
                   id="windowsStartUrlInput"
                   placeholder="https://mysite.com/startpoint.html"
+                  name="startUrl"
                 ></fast-text-field>
               </div>
 
@@ -532,6 +563,7 @@ export class AppPublish extends LitElement {
                   class="form-control"
                   id="windowsIconUrlInput"
                   placeholder="https://myawesomepwa.com/512x512.png"
+                  name="iconUrl"
                 ></fast-text-field>
               </div>
 
@@ -553,6 +585,7 @@ export class AppPublish extends LitElement {
                     for="windowsDisplayNameInput"
                     required
                     placeholder="US"
+                    name="publisherDisplayName"
                   ></fast-text-field>
                 </div>
 
@@ -574,6 +607,7 @@ export class AppPublish extends LitElement {
                     id="windowsPublisherIdInput"
                     required
                     placeholder="CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca"
+                    name="publisherId"
                   ></fast-text-field>
                 </div>
 
@@ -592,6 +626,7 @@ export class AppPublish extends LitElement {
                   class="form-control"
                   id="windowsLanguageInput"
                   placeholder="EN-US"
+                  name="language"
                 ></fast-text-field>
               </div>
 
@@ -603,8 +638,10 @@ export class AppPublish extends LitElement {
           </div>
 
           <div slot="modal-actions" id="windows-options-actions">
-            <app-button
-              >Download</app-button
+            <loading-button @click="${() =>
+              this.generatePackage('windows', this.shadowRoot?.querySelector("#windows-options-form") || undefined)}"
+              .loading="${this.generating}"
+              >Generate</loading-button
             >
           </div>
         </form>
