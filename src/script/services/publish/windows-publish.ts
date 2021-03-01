@@ -9,7 +9,6 @@ import { getURL } from '../app-info';
 import { getManifest, getManiURL } from '../manifest';
 
 export async function generateWindowsPackage(
-  configuration: 'anaheim' | 'spartan',
   windowsOptions: WindowsPackageOptions
 ) {
   if (!windowsOptions) {
@@ -18,8 +17,7 @@ export async function generateWindowsPackage(
   }
 
   const validationErrors = validateWindowsOptions(
-    windowsOptions,
-    configuration
+    windowsOptions
   );
   if (validationErrors.length > 0 || !windowsOptions) {
     throw new Error(

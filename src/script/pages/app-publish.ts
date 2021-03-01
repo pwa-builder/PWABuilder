@@ -215,11 +215,11 @@ export class AppPublish extends LitElement {
           if (form) {
             const options = createWindowsPackageOptionsFromForm(form);
 
-            this.open_windows_options = false;
-
             if (options) {
               this.blob = await generateWindowsPackage(options);
               this.generating = false;
+
+              this.open_windows_options = false;
             }
           }
           else {
@@ -227,9 +227,12 @@ export class AppPublish extends LitElement {
             this.blob = await generateWindowsPackage(options);
 
             this.generating = false;
+
+            this.open_windows_options = false;
           }
         } catch (err) {
           this.generating = false;
+          this.open_windows_options = false;
           this.showAlertModal(err);
         }
         break;
@@ -335,7 +338,7 @@ export class AppPublish extends LitElement {
       </app-modal>
 
       <app-modal id="windows-options-modal" title="Microsoft Store Options" ?open="${this.open_windows_options}">
-        <windows-form slot="modal-form" .loading=${this.generating} @init-windows-gen="${(ev) => this.generatePackage('windows', ev.target.detail.form)}"></windows-form>
+        <windows-form slot="modal-form" .loading=${this.generating} @init-windows-gen="${(ev) => this.generatePackage('windows', ev.detail.form)}" @init-windows-test-gen="${() => this.generatePackage('windows')}"></windows-form>
       </app-modal>
 
       <div>

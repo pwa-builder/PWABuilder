@@ -60,7 +60,11 @@ export class WindowsForm extends LitElement {
         line-height: 30px;
       }
 
-      @media(min-height: 780px) and (max-height: 1000px) {
+      #test-button {
+          margin-left: 12px;
+      }
+
+      @media (min-height: 780px) and (max-height: 1000px) {
         form {
           width: 100%;
           max-height: 68vh;
@@ -81,6 +85,18 @@ export class WindowsForm extends LitElement {
       new CustomEvent('init-windows-gen', {
         detail: {
           form: form,
+        },
+        composed: true,
+        bubbles: true,
+      })
+    );
+  }
+
+  initTestGenerate() {
+    this.dispatchEvent(
+      new CustomEvent('init-windows-test-gen', {
+        detail: {
+          test: "test",
         },
         composed: true,
         bubbles: true,
@@ -362,6 +378,13 @@ export class WindowsForm extends LitElement {
             @click="${() => this.initGenerate()}"
             .loading="${this.generating}"
             >Generate</loading-button
+          >
+
+          <loading-button
+            id="test-button"
+            @click="${() => this.initTestGenerate()}"
+            .loading="${this.generating}"
+            >Generate Test Package</loading-button
           >
         </div>
       </form>
