@@ -44,6 +44,8 @@ export class AppPublish extends LitElement {
 
   @internalProperty() isDeskTopView = this.mql.matches;
 
+  @internalProperty() open_windows_options = false;
+
   constructor() {
     super();
 
@@ -242,6 +244,10 @@ export class AppPublish extends LitElement {
     this.errorMessage = errorMessage;
   }
 
+  showWindowsOptionsModal() {
+    this.open_windows_options = true;
+  }
+
   renderContentCards() {
     return platforms.map(
       platform =>
@@ -251,11 +257,12 @@ export class AppPublish extends LitElement {
             <p>${platform.description}</p>
           </div>
 
-          <app-button
+          <!--<app-button
             @click="${() =>
               this.generatePackage(platform.title.toLowerCase() as platform)}"
             >Publish</app-button
-          >
+          >-->
+          <app-button @click="${() => this.showWindowsOptionsModal()}">Publish</app-button>
         </li>`
     );
   }
@@ -297,6 +304,244 @@ export class AppPublish extends LitElement {
             >Download</app-button
           >
         </div>
+      </app-modal>
+
+      <app-modal title="Microsoft Store Options" ?open="${this.open_windows_options}">
+        <form slot="modal-form" style="width: 100%">
+          <div class="row">
+            <div class="col-lg-6 col-md-12">
+              <div class="form-group">
+                <label for="windowsPackageIdInput">
+                  <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md">
+                    Package ID
+                    <i
+                      class="fas fa-info-circle"
+                      title="The Microsoft Store's unique identifier for your app. You can find this value in Windows Partner Center. Click to learn more."
+                      aria-label="The Microsoft Store's unique identifier for your app. You can find this value in Windows Partner Center. Click to learn more."
+                      role="definition"
+                    ></i>
+                  </a>
+                </label>
+                <input
+                  id="windowsPackageIdInput"
+                  class="form-control"
+                  placeholder="package ID"
+                  type="text"
+                  required
+                />
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6 col-md-12">
+                  <div class="form-group">
+                    <label for="windowsAppNameInput">App name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="windowsAppNameInput"
+                      placeholder="My Awesome PWA"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6 col-md-12">
+                  <div class="form-group">
+                    <label for="windowsAppVersionInput">
+                      <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/classic-package.md">
+                        App version
+                        <i
+                          class="fas fa-info-circle"
+                          title="Your app version in the form of '1.0.0'. This must be greater than classic package version. Click to learn more."
+                          aria-label="Your app version in the form of '1.0.0'. This must be greater than classic package version. Click to learn more."
+                          role="definition"
+                        ></i>
+                      </a>
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="windowsAppVersionInput"
+                      placeholder="1.0.1"
+                      required
+                    />
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="row" v-if="windowsFormConfiguration === 'anaheim'">
+                <div class="col-lg-6 col-md-12">
+                  <div class="form-group">
+                    <label for="windowsClassicAppVersionInput">
+                      <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/classic-package.md">
+                        Classic package version
+                        <i
+                          class="fas fa-info-circle"
+                          title="The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0'. Must be less than app version. Click to learn more."
+                          aria-label="The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0'. Must be less than app version. Click to learn more."
+                          role="definition"
+                        ></i>
+                      </a>
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="windowsClassicAppVersionInput"
+                      placeholder="1.0.0"
+                      required
+                    />
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="form-group">
+                <label for="windowsUrlInput">
+                  URL
+                  <i
+                    class="fas fa-info-circle"
+                    title="This is the URL for your PWA."
+                    aria-label="This is the URL for your PWA."
+                    role="definition"
+                  ></i>
+                </label>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="windowsUrlInput"
+                  placeholder="/index.html"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="windowsManifestUrlInput">
+                  Manifest URL
+                  <i
+                    class="fas fa-info-circle"
+                    title="The URL to your app manifest."
+                    aria-label="The URL to your app manifest."
+                    role="definition"
+                  ></i>
+                </label>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="windowsManifestUrlInput"
+                  placeholder="https://mysite.com/manifest.json"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="windowsStartUrlInput">
+                  Start URL
+                  <i
+                    class="fas fa-info-circle"
+                    title="Optional. The preferred URL that should be loaded when the user launches the web app. Windows will use this to determine your app's identity, so this value should not change between releases of your app. This can be an absolute or relative path."
+                    aria-label="Optional. The preferred URL that should be loaded when the user launches the web app. Windows will use this to determine your app's identity, so this value should not change between releases of your app. This can be an absolute or relative path."
+                    role="definition"
+                  ></i>
+                </label>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="windowsStartUrlInput"
+                  placeholder="https://mysite.com/startpoint.html"
+                />
+              </div>
+
+            </div>
+
+            <!-- right half of the options dialog -->
+            <div class="col-lg-6 col-md-12">
+              
+              <div class="form-group">
+                <label for="windowsIconUrlInput">
+                  <a href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md" target="_blank">
+                    Icon URL
+                    <i
+                      class="fas fa-info-circle"
+                      title="A large, square, PNG image from which PWABuilder will generate all required Windows app icons. Should be 512x512 or larger. Click to learn more."
+                      aria-label="A large, square, PNG image from which PWABuilder will generate all required Windows app icons. Should be 512x512 or larger. Click to learn more."
+                      role="definition"
+                    ></i>
+                  </a>
+                </label>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="windowsIconUrlInput"
+                  placeholder="https://myawesomepwa.com/512x512.png"
+                />
+              </div>
+
+              <div class="form-group">
+                  <label for="windowsDisplayNameInput">
+                    <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md">
+                      Publisher display name
+                      <i
+                        class="fas fa-info-circle"
+                        title="The display name of your app's publisher. You can find this in Windows Partner Center. Click to learn more."
+                        aria-label="The display name of your app's publisher. You can find this in Windows Partner Center. Click to learn more."
+                        role="definition"
+                      ></i>
+                    </a>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    for="windowsDisplayNameInput"
+                    required
+                    placeholder="US"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="windowsPublisherIdInput">
+                    <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md">
+                      Publisher ID
+                      <i
+                        class="fas fa-info-circle"
+                        title="Your Windows Publisher ID. You can find this value in Windows Partner Center. Click to learn more."
+                        aria-label="Your Windows Publisher ID. You can find this value in Windows Partner Center. Click to learn more."
+                        role="definition"
+                      ></i>
+                    </a>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="windowsPublisherIdInput"
+                    required
+                    placeholder="CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca"
+                  />
+                </div>
+
+              <div class="form-group">
+                <label for="windowsLanguageInput">
+                  Language
+                  <i
+                    class="fas fa-info-circle"
+                    title="Optional. The primary language for your app package. Additional languages can be specified in Partner Center. If empty, EN-US will be used." 
+                    aria-label="Optional. The primary language for your app package. Additional languages can be specified in Partner Center. If empty, EN-US will be used."
+                    role="definition"
+                  ></i>
+                </label>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="windowsLanguageInput"
+                  placeholder="EN-US"
+                />
+              </div>
+
+            </div>
+          </div>
+        </form>
       </app-modal>
 
       <div>

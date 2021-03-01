@@ -170,6 +170,10 @@ export class AppModal extends LitElement {
               <p>${this.body}</p>
             </section>
 
+            <section id="modal-form">
+              <slot name="modal-form"></slot>
+            </section>
+
             <section id="modal-actions">
               <slot name="modal-actions"></slot>
             </section>
