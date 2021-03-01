@@ -28,6 +28,8 @@ export class AppModal extends LitElement {
         display: flex;
         align-items: center;
         justify-content: center;
+
+        z-index: 3;
       }
 
       #modal {
@@ -42,6 +44,8 @@ export class AppModal extends LitElement {
         padding-bottom: 45px;
         border-radius: 8px;
         box-shadow: 0px 16px 24px rgba(0, 0, 0, 0.12);
+
+        z-index: 4;
       }
 
       #modal-header #title {

@@ -12,6 +12,7 @@ import '../components/app-card';
 import '../components/app-modal';
 import '../components/app-button';
 import '../components/loading-button';
+import '../components/windows-form';
 import {
   createWindowsPackageOptionsFromForm,
   createWindowsPackageOptionsFromManifest,
@@ -167,62 +168,9 @@ export class AppPublish extends LitElement {
           max-width: 50vw;
         }
 
-        #form-layout {
-          display: grid;
-          grid-template-columns: auto auto;
-          gap: 30px;
-
-          padding-left: 2em;
-          padding-right: 2em;
-        }
-
-        .form-group {
-          display: flex;
-          flex-direction: column;
-        }
-
-        .form-group label {
-          font-size: var(--small-medium-font-size);
-          font-weight: bold;
-          line-height: 40px;
-        }
-
         #windows-options-modal::part(modal-layout) {
           width: 64vw;
         }
-
-        #windows-options-actions {
-          display: flex;
-          justify-content: center;
-          margin-top: 37px;
-        }
-
-        #form-layout fast-text-field::part(root) {
-          border: 1px solid rgba(194, 201, 209, 1);
-          border-radius: var(--input-radius);
-          background: rgba(229, 229, 229, 1);
-        }
-
-        #form-layout fast-text-field::part(control) {
-          color: var(--font-color);
-        }
-
-        #windows-details-block {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-top: 37px;
-        }
-
-        #windows-details-block p {
-          text-align: center;
-          font-weight: 300;
-          font-size: var(--small-medium-font-size);
-
-          color: rgba(128, 128, 128, 1);
-          line-height: 30px;
-        }
-
         ${xxxLargeBreakPoint(
           css`
             #report {
@@ -387,7 +335,7 @@ export class AppPublish extends LitElement {
       </app-modal>
 
       <app-modal id="windows-options-modal" title="Microsoft Store Options" ?open="${this.open_windows_options}">
-        <form id="windows-options-form" slot="modal-form" style="width: 100%">
+        <!--<form id="windows-options-form" slot="modal-form" style="width: 100%">
           <div id="form-layout">
             <div class="">
               <div class="form-group">
@@ -543,7 +491,7 @@ export class AppPublish extends LitElement {
 
             </div>
 
-            <!-- right half of the options dialog -->
+
             <div class="">
               
               <div class="form-group">
@@ -644,7 +592,8 @@ export class AppPublish extends LitElement {
               >Generate</loading-button
             >
           </div>
-        </form>
+        </form>-->
+        <windows-form slot="modal-form" .loading=${this.generating} @init-windows-gen="${(ev) => this.generatePackage('windows', ev.target.detail.form)}"></windows-form>
       </app-modal>
 
       <div>
