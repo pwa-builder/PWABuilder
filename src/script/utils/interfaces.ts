@@ -122,6 +122,8 @@ export interface ServiceWorkerDetectionResult {
   hasPushRegistration: boolean;
   serviceWorkerDetectionTimedOut: boolean;
   noServiceWorkerFoundDetails: string | null;
+  hasBackgroundSync: boolean;
+  hasPeriodicBackgroundSync: boolean;
 }
 
 export interface SecurityDataResults {
