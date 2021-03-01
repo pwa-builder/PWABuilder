@@ -61,6 +61,11 @@ export class AppModal extends LitElement {
         color: var(--secondary-font-color);
       }
 
+      #modal-form {
+        padding: 14px;
+        width: 100%;
+      }
+
       #back-button-block {
         width: 100%;
         display: flex;
