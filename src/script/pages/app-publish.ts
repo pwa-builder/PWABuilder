@@ -82,6 +82,8 @@ export class AppPublish extends LitElement {
         #summary-block {
           padding: 16px;
           border-bottom: var(--list-border);
+
+          margin-right: 2em;
         }
 
         h2 {
@@ -113,6 +115,8 @@ export class AppPublish extends LitElement {
           flex-direction: column;
           justify-items: center;
           align-items: center;
+
+          padding-right: 2em;
         }
 
         .container .action-buttons {
@@ -171,6 +175,22 @@ export class AppPublish extends LitElement {
         #windows-options-modal::part(modal-layout) {
           width: 64vw;
         }
+
+        #test-package-button {
+          margin-top: 15px;
+          --neutral-fill-rest: white;
+          --neutral-fill-active: white;
+          --neutral-fill-hover: white;
+        }
+
+        #test-package-button::part(underlying-button) {
+          color: var(--font-color);
+        }
+
+        #platform-actions-block app-button::part(underlying-button) {
+          width: 152px;
+        }
+
         ${xxxLargeBreakPoint(
           css`
             #report {
@@ -293,7 +313,25 @@ export class AppPublish extends LitElement {
             <p>${platform.description}</p>
           </div>
 
-          <app-button @click="${platform.title.toLowerCase() === "windows" ? () => this.showWindowsOptionsModal() : () => this.showAndroidOptionsModal()}">Publish</app-button>
+          <div id="platform-actions-block">
+            <app-button
+              @click="${platform.title.toLowerCase() === 'windows'
+                ? () => this.showWindowsOptionsModal()
+                : () => this.showAndroidOptionsModal()}"
+              >Publish</app-button
+            >
+
+            ${platform.title.toLocaleLowerCase() === 'windows'
+              ? html`<app-button id="test-package-button"
+                  @click="${() =>
+                    this.generatePackage(
+                      "windows"
+                    )}"
+                  >Test Package</app-button
+                >`
+              : null}
+          </div>
+          
         </li>`
     );
   }
