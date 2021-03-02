@@ -92,18 +92,6 @@ export class WindowsForm extends LitElement {
     );
   }
 
-  initTestGenerate() {
-    this.dispatchEvent(
-      new CustomEvent('init-windows-test-gen', {
-        detail: {
-          test: "test",
-        },
-        composed: true,
-        bubbles: true,
-      })
-    );
-  }
-
   render() {
     return html`
       <form id="windows-options-form" slot="modal-form" style="width: 100%">
@@ -378,13 +366,6 @@ export class WindowsForm extends LitElement {
             @click="${() => this.initGenerate()}"
             .loading="${this.generating}"
             >Generate</loading-button
-          >
-
-          <loading-button
-            id="test-button"
-            @click="${() => this.initTestGenerate()}"
-            .loading="${this.generating}"
-            >Generate Test Package</loading-button
           >
         </div>
       </form>
