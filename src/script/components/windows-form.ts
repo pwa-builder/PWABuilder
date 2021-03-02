@@ -8,6 +8,7 @@ import {
 } from 'lit-element';
 
 import '../components/loading-button';
+import { tooltip, styles as ToolTipStyles } from '../components/tooltip';
 
 @customElement('windows-form')
 export class WindowsForm extends LitElement {
@@ -16,7 +17,10 @@ export class WindowsForm extends LitElement {
   @internalProperty() show_adv = false;
 
   static get styles() {
-    return css`
+    return [
+      ToolTipStyles,
+      css`
+    
       #form-layout {
         display: grid;
         grid-template-columns: auto auto;
@@ -35,6 +39,17 @@ export class WindowsForm extends LitElement {
         font-size: var(--small-medium-font-size);
         font-weight: bold;
         line-height: 40px;
+        display: flex;
+        align-items: center;
+      }
+
+      .form-group label a {
+        text-decoration: none;
+        color: var(--font-color);
+      }
+
+      .tooltip {
+        margin-left: 10px;
       }
 
       #windows-options-actions {
@@ -82,7 +97,7 @@ export class WindowsForm extends LitElement {
           overflow-y: scroll;
         }
       }
-    `;
+    `];
   }
 
   constructor() {
@@ -143,6 +158,10 @@ export class WindowsForm extends LitElement {
                     role="definition"
                   ></i>
                 </a>
+
+                ${
+                  tooltip('windows-package-id', 'todo')
+                }
               </label>
               <fast-text-field
                 id="windowsPackageIdInput"
@@ -168,6 +187,10 @@ export class WindowsForm extends LitElement {
                     role="definition"
                   ></i>
                 </a>
+
+                ${
+                  tooltip('windows-display-name', 'todo')
+                }
               </label>
               <fast-text-field
                 type="text"
@@ -193,6 +216,10 @@ export class WindowsForm extends LitElement {
                     role="definition"
                   ></i>
                 </a>
+
+                ${
+                  tooltip('windows-publisher-id', 'todo')
+                }
               </label>
               <fast-text-field
                 type="text"
@@ -211,7 +238,13 @@ export class WindowsForm extends LitElement {
                 <div>
                   <div class="">
                     <div class="form-group">
-                      <label for="windowsAppNameInput">App name</label>
+                      <label for="windowsAppNameInput">
+                        App name
+
+                        ${
+                          tooltip('windows-app-name', 'todo')
+                        }
+                      </label>
                       <fast-text-field
                         type="text"
                         class="form-control"
@@ -240,6 +273,10 @@ export class WindowsForm extends LitElement {
                             role="definition"
                           ></i>
                         </a>
+                        
+                        ${
+                            tooltip('windows-app-version', 'todo')
+                          }
                       </label>
                       <fast-text-field
                         type="text"
@@ -269,6 +306,10 @@ export class WindowsForm extends LitElement {
                             role="definition"
                           ></i>
                         </a>
+
+                        ${
+                            tooltip('classic-package-version', 'todo')
+                          }
                       </label>
                       <fast-text-field
                         type="text"
@@ -291,6 +332,10 @@ export class WindowsForm extends LitElement {
                       aria-label="This is the URL for your PWA."
                       role="definition"
                     ></i>
+
+                    ${
+                      tooltip('windows-pwa-url', 'todo')
+                    }
                   </label>
                   <fast-text-field
                     type="url"
@@ -311,6 +356,10 @@ export class WindowsForm extends LitElement {
                       aria-label="The URL to your app manifest."
                       role="definition"
                     ></i>
+
+                    ${
+                        tooltip('windows-manifest-url', 'todo')
+                      }
                   </label>
                   <fast-text-field
                     type="url"
@@ -331,6 +380,10 @@ export class WindowsForm extends LitElement {
                       aria-label="Optional. The preferred URL that should be loaded when the user launches the web app. Windows will use this to determine your app's identity, so this value should not change between releases of your app. This can be an absolute or relative path."
                       role="definition"
                     ></i>
+
+                    ${
+                        tooltip('windows-start-url', 'todo')
+                      }
                   </label>
                   <fast-text-field
                     type="url"
@@ -355,6 +408,10 @@ export class WindowsForm extends LitElement {
                         role="definition"
                       ></i>
                     </a>
+
+                    ${
+                      tooltip('windows-icon-url', 'todo')
+                    }
                   </label>
                   <fast-text-field
                     type="url"
@@ -374,6 +431,10 @@ export class WindowsForm extends LitElement {
                       aria-label="Optional. The primary language for your app package. Additional languages can be specified in Partner Center. If empty, EN-US will be used."
                       role="definition"
                     ></i>
+
+                    ${
+                      tooltip('windows-language', 'todo')
+                    }
                   </label>
                   <fast-text-field
                     type="url"
