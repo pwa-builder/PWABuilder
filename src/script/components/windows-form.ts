@@ -30,6 +30,14 @@ export class WindowsForm extends LitElement {
         padding-right: 2em;
       }
 
+      .tooltip {
+        margin-left: 10px;
+      }
+
+      .form-group .tooltip a {
+        color: #fff;
+      }
+
       .form-group {
         display: flex;
         flex-direction: column;
@@ -46,10 +54,6 @@ export class WindowsForm extends LitElement {
       .form-group label a {
         text-decoration: none;
         color: var(--font-color);
-      }
-
-      .tooltip {
-        margin-left: 10px;
       }
 
       #windows-options-actions {
@@ -160,7 +164,7 @@ export class WindowsForm extends LitElement {
                 </a>
 
                 ${
-                  tooltip('windows-package-id', 'todo')
+                  tooltip("windows-package-id", "The Microsoft Store's unique identifier for your app. You can find this value in Windows Partner Center. Click to learn more.", "https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md")
                 }
               </label>
               <fast-text-field
@@ -189,7 +193,7 @@ export class WindowsForm extends LitElement {
                 </a>
 
                 ${
-                  tooltip('windows-display-name', 'todo')
+                  tooltip("windows-display-name", "The display name of your app's publisher. You can find this in Windows Partner Center. Click to learn more.", "https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md")
                 }
               </label>
               <fast-text-field
@@ -218,7 +222,7 @@ export class WindowsForm extends LitElement {
                 </a>
 
                 ${
-                  tooltip('windows-publisher-id', 'todo')
+                  tooltip("windows-publisher-id", "Your Windows Publisher ID. You can find this value in Windows Partner Center. Click to learn more.", "https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md")
                 }
               </label>
               <fast-text-field
@@ -242,7 +246,7 @@ export class WindowsForm extends LitElement {
                         App name
 
                         ${
-                          tooltip('windows-app-name', 'todo')
+                          tooltip("windows-app-name", "The name of your app")
                         }
                       </label>
                       <fast-text-field
@@ -275,7 +279,7 @@ export class WindowsForm extends LitElement {
                         </a>
                         
                         ${
-                            tooltip('windows-app-version', 'todo')
+                            tooltip("windows-app-version", "Your app version in the form of '1.0.0'. This must be greater than classic package version. Click to learn more.", "https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/classic-package.md")
                           }
                       </label>
                       <fast-text-field
@@ -308,7 +312,7 @@ export class WindowsForm extends LitElement {
                         </a>
 
                         ${
-                            tooltip('classic-package-version', 'todo')
+                            tooltip("classic-package-version", "The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0'. Must be less than app version. Click to learn more.", "https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/classic-package.md")
                           }
                       </label>
                       <fast-text-field
@@ -334,7 +338,7 @@ export class WindowsForm extends LitElement {
                     ></i>
 
                     ${
-                      tooltip('windows-pwa-url', 'todo')
+                      tooltip("windows-pwa-url", "This is the URL for your PWA")
                     }
                   </label>
                   <fast-text-field
@@ -358,7 +362,7 @@ export class WindowsForm extends LitElement {
                     ></i>
 
                     ${
-                        tooltip('windows-manifest-url', 'todo')
+                        tooltip("windows-manifest-url", "The URL to your app manifest")
                       }
                   </label>
                   <fast-text-field
@@ -382,7 +386,7 @@ export class WindowsForm extends LitElement {
                     ></i>
 
                     ${
-                        tooltip('windows-start-url', 'todo')
+                        tooltip("windows-start-url", "Optional. The preferred URL that should be loaded when the user launches the web app. Windows will use this to determine your app's identity, so this value should not change between releases of your app. This can be an absolute or relative path.")
                       }
                   </label>
                   <fast-text-field
@@ -410,7 +414,7 @@ export class WindowsForm extends LitElement {
                     </a>
 
                     ${
-                      tooltip('windows-icon-url', 'todo')
+                      tooltip("windows-icon-url", "A large, square, PNG image from which PWABuilder will generate all required Windows app icons. Should be 512x512 or larger. Click to learn more.", "https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md")
                     }
                   </label>
                   <fast-text-field
@@ -433,7 +437,7 @@ export class WindowsForm extends LitElement {
                     ></i>
 
                     ${
-                      tooltip('windows-language', 'todo')
+                      tooltip("windows-language", "Optional. The primary language for your app package. Additional languages can be specified in Partner Center. If empty, EN-US will be used.")
                     }
                   </label>
                   <fast-text-field
