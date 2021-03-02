@@ -338,7 +338,7 @@ export class AppPublish extends LitElement {
       </app-modal>
 
       <app-modal id="windows-options-modal" title="Microsoft Store Options" ?open="${this.open_windows_options}">
-        <windows-form slot="modal-form" .loading=${this.generating} @init-windows-gen="${(ev) => this.generatePackage('windows', ev.detail.form)}" @init-windows-test-gen="${() => this.generatePackage('windows')}"></windows-form>
+        <windows-form slot="modal-form" .loading=${this.generating} @init-windows-gen="${(ev) => this.generatePackage('windows', ev.detail.form)}"></windows-form>
       </app-modal>
 
       <div>
