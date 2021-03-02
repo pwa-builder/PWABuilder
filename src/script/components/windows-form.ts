@@ -1,10 +1,19 @@
-import { LitElement, css, html, customElement, property } from 'lit-element';
+import {
+  LitElement,
+  css,
+  html,
+  customElement,
+  property,
+  internalProperty,
+} from 'lit-element';
 
 import '../components/loading-button';
 
 @customElement('windows-form')
 export class WindowsForm extends LitElement {
   @property({ type: Boolean }) generating: boolean;
+
+  @internalProperty() show_adv = false;
 
   static get styles() {
     return css`
@@ -60,11 +69,13 @@ export class WindowsForm extends LitElement {
         line-height: 30px;
       }
 
-      #test-button {
-          margin-left: 12px;
+      .select-group {
+        display: flex;
+        margin-bottom: 10px;
+        padding-left: 2em;
       }
 
-      @media (min-height: 780px) and (max-height: 1000px) {
+      @media (min-height: 760px) and (max-height: 1000px) {
         form {
           width: 100%;
           max-height: 68vh;
@@ -92,11 +103,32 @@ export class WindowsForm extends LitElement {
     );
   }
 
+  toggleSettings(settingsToggleValue: 'basic' | 'advanced') {
+    console.log(settingsToggleValue);
+    if (settingsToggleValue === 'advanced') {
+      this.show_adv = true;
+    } else if (settingsToggleValue === 'basic') {
+      this.show_adv = false;
+    } else {
+      this.show_adv = false;
+    }
+  }
+
   render() {
     return html`
       <form id="windows-options-form" slot="modal-form" style="width: 100%">
+        <div class="select-group">
+          <fast-select
+            @change="${ev => this.toggleSettings(ev.target.value)}"
+            id="settings-toggle"
+          >
+            <fast-option value="basic">Basic Settings</fast-option>
+            <fast-option value="advanced">All Settings</fast-option>
+          </fast-select>
+        </div>
+
         <div id="form-layout">
-          <div class="">
+          <div class="basic-settings">
             <div class="form-group">
               <label for="windowsPackageIdInput">
                 <a
@@ -119,166 +151,6 @@ export class WindowsForm extends LitElement {
                 type="text"
                 name="packageId"
                 required
-              ></fast-text-field>
-            </div>
-
-            <div>
-              <div class="">
-                <div class="form-group">
-                  <label for="windowsAppNameInput">App name</label>
-                  <fast-text-field
-                    type="text"
-                    class="form-control"
-                    id="windowsAppNameInput"
-                    placeholder="My Awesome PWA"
-                    name="appName"
-                    required
-                  ></fast-text-field>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <div class="">
-                <div class="form-group">
-                  <label for="windowsAppVersionInput">
-                    <a
-                      target="_blank"
-                      href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/classic-package.md"
-                    >
-                      App version
-                      <i
-                        class="fas fa-info-circle"
-                        title="Your app version in the form of '1.0.0'. This must be greater than classic package version. Click to learn more."
-                        aria-label="Your app version in the form of '1.0.0'. This must be greater than classic package version. Click to learn more."
-                        role="definition"
-                      ></i>
-                    </a>
-                  </label>
-                  <fast-text-field
-                    type="text"
-                    class="form-control"
-                    id="windowsAppVersionInput"
-                    placeholder="1.0.1"
-                    name="appVersion"
-                    required
-                  ></fast-text-field>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <div class="">
-                <div class="form-group">
-                  <label for="windowsClassicAppVersionInput">
-                    <a
-                      target="_blank"
-                      href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/classic-package.md"
-                    >
-                      Classic package version
-                      <i
-                        class="fas fa-info-circle"
-                        title="The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0'. Must be less than app version. Click to learn more."
-                        aria-label="The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0'. Must be less than app version. Click to learn more."
-                        role="definition"
-                      ></i>
-                    </a>
-                  </label>
-                  <fast-text-field
-                    type="text"
-                    class="form-control"
-                    id="windowsClassicAppVersionInput"
-                    placeholder="1.0.0"
-                    name="classicVersion"
-                    required
-                  ></fast-text-field>
-                </div>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="windowsUrlInput">
-                URL
-                <i
-                  class="fas fa-info-circle"
-                  title="This is the URL for your PWA."
-                  aria-label="This is the URL for your PWA."
-                  role="definition"
-                ></i>
-              </label>
-              <fast-text-field
-                type="url"
-                class="form-control"
-                id="windowsUrlInput"
-                placeholder="/index.html"
-                name="url"
-                required
-              ></fast-text-field>
-            </div>
-
-            <div class="form-group">
-              <label for="windowsManifestUrlInput">
-                Manifest URL
-                <i
-                  class="fas fa-info-circle"
-                  title="The URL to your app manifest."
-                  aria-label="The URL to your app manifest."
-                  role="definition"
-                ></i>
-              </label>
-              <fast-text-field
-                type="url"
-                class="form-control"
-                id="windowsManifestUrlInput"
-                placeholder="https://mysite.com/manifest.json"
-                name="manifestUrl"
-                required
-              ></fast-text-field>
-            </div>
-
-            <div class="form-group">
-              <label for="windowsStartUrlInput">
-                Start URL
-                <i
-                  class="fas fa-info-circle"
-                  title="Optional. The preferred URL that should be loaded when the user launches the web app. Windows will use this to determine your app's identity, so this value should not change between releases of your app. This can be an absolute or relative path."
-                  aria-label="Optional. The preferred URL that should be loaded when the user launches the web app. Windows will use this to determine your app's identity, so this value should not change between releases of your app. This can be an absolute or relative path."
-                  role="definition"
-                ></i>
-              </label>
-              <fast-text-field
-                type="url"
-                class="form-control"
-                id="windowsStartUrlInput"
-                placeholder="https://mysite.com/startpoint.html"
-                name="startUrl"
-              ></fast-text-field>
-            </div>
-          </div>
-
-          <!-- right half of the options dialog -->
-          <div class="">
-            <div class="form-group">
-              <label for="windowsIconUrlInput">
-                <a
-                  href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md"
-                  target="_blank"
-                >
-                  Icon URL
-                  <i
-                    class="fas fa-info-circle"
-                    title="A large, square, PNG image from which PWABuilder will generate all required Windows app icons. Should be 512x512 or larger. Click to learn more."
-                    aria-label="A large, square, PNG image from which PWABuilder will generate all required Windows app icons. Should be 512x512 or larger. Click to learn more."
-                    role="definition"
-                  ></i>
-                </a>
-              </label>
-              <fast-text-field
-                type="url"
-                class="form-control"
-                id="windowsIconUrlInput"
-                placeholder="https://myawesomepwa.com/512x512.png"
-                name="iconUrl"
               ></fast-text-field>
             </div>
 
@@ -331,26 +203,188 @@ export class WindowsForm extends LitElement {
                 name="publisherId"
               ></fast-text-field>
             </div>
-
-            <div class="form-group">
-              <label for="windowsLanguageInput">
-                Language
-                <i
-                  class="fas fa-info-circle"
-                  title="Optional. The primary language for your app package. Additional languages can be specified in Partner Center. If empty, EN-US will be used."
-                  aria-label="Optional. The primary language for your app package. Additional languages can be specified in Partner Center. If empty, EN-US will be used."
-                  role="definition"
-                ></i>
-              </label>
-              <fast-text-field
-                type="url"
-                class="form-control"
-                id="windowsLanguageInput"
-                placeholder="EN-US"
-                name="language"
-              ></fast-text-field>
-            </div>
           </div>
+
+          <!-- right half of the options dialog -->
+          ${this.show_adv
+            ? html`<div class="adv-settings">
+                <div>
+                  <div class="">
+                    <div class="form-group">
+                      <label for="windowsAppNameInput">App name</label>
+                      <fast-text-field
+                        type="text"
+                        class="form-control"
+                        id="windowsAppNameInput"
+                        placeholder="My Awesome PWA"
+                        name="appName"
+                        required
+                      ></fast-text-field>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="">
+                    <div class="form-group">
+                      <label for="windowsAppVersionInput">
+                        <a
+                          target="_blank"
+                          href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/classic-package.md"
+                        >
+                          App version
+                          <i
+                            class="fas fa-info-circle"
+                            title="Your app version in the form of '1.0.0'. This must be greater than classic package version. Click to learn more."
+                            aria-label="Your app version in the form of '1.0.0'. This must be greater than classic package version. Click to learn more."
+                            role="definition"
+                          ></i>
+                        </a>
+                      </label>
+                      <fast-text-field
+                        type="text"
+                        class="form-control"
+                        id="windowsAppVersionInput"
+                        placeholder="1.0.1"
+                        name="appVersion"
+                        required
+                      ></fast-text-field>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="">
+                    <div class="form-group">
+                      <label for="windowsClassicAppVersionInput">
+                        <a
+                          target="_blank"
+                          href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/classic-package.md"
+                        >
+                          Classic package version
+                          <i
+                            class="fas fa-info-circle"
+                            title="The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0'. Must be less than app version. Click to learn more."
+                            aria-label="The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0'. Must be less than app version. Click to learn more."
+                            role="definition"
+                          ></i>
+                        </a>
+                      </label>
+                      <fast-text-field
+                        type="text"
+                        class="form-control"
+                        id="windowsClassicAppVersionInput"
+                        placeholder="1.0.0"
+                        name="classicVersion"
+                        required
+                      ></fast-text-field>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="windowsUrlInput">
+                    URL
+                    <i
+                      class="fas fa-info-circle"
+                      title="This is the URL for your PWA."
+                      aria-label="This is the URL for your PWA."
+                      role="definition"
+                    ></i>
+                  </label>
+                  <fast-text-field
+                    type="url"
+                    class="form-control"
+                    id="windowsUrlInput"
+                    placeholder="/index.html"
+                    name="url"
+                    required
+                  ></fast-text-field>
+                </div>
+
+                <div class="form-group">
+                  <label for="windowsManifestUrlInput">
+                    Manifest URL
+                    <i
+                      class="fas fa-info-circle"
+                      title="The URL to your app manifest."
+                      aria-label="The URL to your app manifest."
+                      role="definition"
+                    ></i>
+                  </label>
+                  <fast-text-field
+                    type="url"
+                    class="form-control"
+                    id="windowsManifestUrlInput"
+                    placeholder="https://mysite.com/manifest.json"
+                    name="manifestUrl"
+                    required
+                  ></fast-text-field>
+                </div>
+
+                <div class="form-group">
+                  <label for="windowsStartUrlInput">
+                    Start URL
+                    <i
+                      class="fas fa-info-circle"
+                      title="Optional. The preferred URL that should be loaded when the user launches the web app. Windows will use this to determine your app's identity, so this value should not change between releases of your app. This can be an absolute or relative path."
+                      aria-label="Optional. The preferred URL that should be loaded when the user launches the web app. Windows will use this to determine your app's identity, so this value should not change between releases of your app. This can be an absolute or relative path."
+                      role="definition"
+                    ></i>
+                  </label>
+                  <fast-text-field
+                    type="url"
+                    class="form-control"
+                    id="windowsStartUrlInput"
+                    placeholder="https://mysite.com/startpoint.html"
+                    name="startUrl"
+                  ></fast-text-field>
+                </div>
+
+                <div class="form-group">
+                  <label for="windowsIconUrlInput">
+                    <a
+                      href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md"
+                      target="_blank"
+                    >
+                      Icon URL
+                      <i
+                        class="fas fa-info-circle"
+                        title="A large, square, PNG image from which PWABuilder will generate all required Windows app icons. Should be 512x512 or larger. Click to learn more."
+                        aria-label="A large, square, PNG image from which PWABuilder will generate all required Windows app icons. Should be 512x512 or larger. Click to learn more."
+                        role="definition"
+                      ></i>
+                    </a>
+                  </label>
+                  <fast-text-field
+                    type="url"
+                    class="form-control"
+                    id="windowsIconUrlInput"
+                    placeholder="https://myawesomepwa.com/512x512.png"
+                    name="iconUrl"
+                  ></fast-text-field>
+                </div>
+
+                <div class="form-group">
+                  <label for="windowsLanguageInput">
+                    Language
+                    <i
+                      class="fas fa-info-circle"
+                      title="Optional. The primary language for your app package. Additional languages can be specified in Partner Center. If empty, EN-US will be used."
+                      aria-label="Optional. The primary language for your app package. Additional languages can be specified in Partner Center. If empty, EN-US will be used."
+                      role="definition"
+                    ></i>
+                  </label>
+                  <fast-text-field
+                    type="url"
+                    class="form-control"
+                    id="windowsLanguageInput"
+                    placeholder="EN-US"
+                    name="language"
+                  ></fast-text-field>
+                </div>
+              </div>`
+            : null}
         </div>
 
         <div id="windows-details-block">
