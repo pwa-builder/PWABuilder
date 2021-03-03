@@ -10,6 +10,8 @@ import {
 import '../components/loading-button';
 import { tooltip, styles as ToolTipStyles } from '../components/tooltip';
 
+import { xxLargeBreakPoint } from '../utils/css/breakpoints';
+
 @customElement('windows-form')
 export class WindowsForm extends LitElement {
   @property({ type: Boolean }) generating: boolean;
@@ -23,6 +25,9 @@ export class WindowsForm extends LitElement {
         #form-layout {
           padding-left: 2em;
           padding-right: 2em;
+          overflow-y: auto;
+
+          max-height: 14em;
         }
 
         .tooltip {
@@ -71,7 +76,6 @@ export class WindowsForm extends LitElement {
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-top: 37px;
         }
 
         #windows-details-block p {
@@ -92,13 +96,76 @@ export class WindowsForm extends LitElement {
           padding-left: 2em;
         }
 
+        #all-settings-header {
+          color: var(--font-color);
+          font-weight: var(--font-bold);
+          font-size: 18px;
+
+          display: flex;
+          align-items: center;
+        }
+
+        fast-accordion {
+          margin-top: 15px;
+          margin-bottom: 15px;
+        }
+
+        fast-accordion,
+        fast-accordion-item {
+          border: none;
+        }
+
+        .flipper-button {
+          background: white;
+          box-shadow: 0 1px 4px 0px rgb(0 0 0 / 25%);
+          border-radius: 50%;
+          color: #5231a7;
+
+          height: 16px;
+          min-width: 16px;
+
+          margin-left: 5px;
+        }
+
+        .flipper-button ion-icon {
+          pointer-events: none;
+
+          height: 10px;
+          width: 10px;
+        }
+
+        .flipper-button::part(control) {
+          font-size: 18px;
+          padding: 0;
+        }
+
+        .flipper-button::part(content) {
+          padding: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .adv-settings {
+          display: grid;
+          grid-template-columns: 50% 50%;
+          gap: 10px;
+        }
+
         @media (min-height: 760px) and (max-height: 1000px) {
           form {
             width: 100%;
-            max-height: 68vh;
             overflow-y: auto;
           }
         }
+
+        ${xxLargeBreakPoint(
+          css`
+            #form-layout {
+              max-height: 24em;
+            }
+          `
+        )}
       `,
     ];
   }
@@ -129,6 +196,51 @@ export class WindowsForm extends LitElement {
       this.show_adv = false;
     } else {
       this.show_adv = false;
+    }
+  }
+
+  opened(targetEl: EventTarget | null) {
+    if (targetEl) {
+      const flipperButton = (targetEl as Element).classList.contains(
+        'flipper-button'
+      )
+        ? (targetEl as Element)
+        : (targetEl as Element).querySelector('.flipper-button');
+
+      if (flipperButton) {
+        if (flipperButton.classList.contains('opened')) {
+          flipperButton.animate(
+            [
+              {
+                transform: 'rotate(0deg)',
+              },
+            ],
+            {
+              duration: 200,
+              fill: 'forwards',
+            }
+          );
+
+          flipperButton.classList.remove('opened');
+        } else {
+          flipperButton.classList.add('opened');
+
+          flipperButton.animate(
+            [
+              {
+                transform: 'rotate(0deg)',
+              },
+              {
+                transform: 'rotate(90deg)',
+              },
+            ],
+            {
+              duration: 200,
+              fill: 'forwards',
+            }
+          );
+        }
+      }
     }
   }
 
@@ -242,8 +354,19 @@ export class WindowsForm extends LitElement {
           </div>
 
           <!-- right half of the options dialog -->
-          ${this.show_adv
-            ? html`<div class="adv-settings">
+          <fast-accordion>
+            <fast-accordion-item
+              @click="${(ev: Event) => this.opened(ev.target)}"
+            >
+              <div id="all-settings-header" slot="heading">
+                <span>All Settings</span>
+
+                <fast-button class="flipper-button" mode="stealth">
+                  <ion-icon name="caret-forward-outline"></ion-icon>
+                </fast-button>
+              </div>
+
+              <div class="adv-settings">
                 <div>
                   <div class="">
                     <div class="form-group">
@@ -460,8 +583,9 @@ export class WindowsForm extends LitElement {
                     name="language"
                   ></fast-text-field>
                 </div>
-              </div>`
-            : null}
+              </div>
+            </fast-accordion-item>
+          </fast-accordion>
         </div>
 
         <div id="windows-details-block">
