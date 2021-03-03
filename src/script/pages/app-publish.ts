@@ -40,6 +40,7 @@ export class AppPublish extends LitElement {
   @internalProperty() errorMessage: string | undefined;
 
   @internalProperty() blob: Blob | File | undefined;
+  @internalProperty() testBlob: Blob | File | undefined;
 
   @internalProperty() mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`
@@ -177,14 +178,16 @@ export class AppPublish extends LitElement {
         }
 
         #test-package-button {
+          display: block;
           margin-top: 15px;
+          
           --neutral-fill-rest: white;
           --neutral-fill-active: white;
           --neutral-fill-hover: white;
         }
 
         #test-package-button::part(underlying-button) {
-          color: var(--font-color);
+          --button-font-color: var(--font-color);
         }
 
         #platform-actions-block app-button::part(underlying-button) {
@@ -244,7 +247,7 @@ export class AppPublish extends LitElement {
           }
           else {
             const options = createWindowsPackageOptionsFromManifest();
-            this.blob = await generateWindowsPackage(options);
+            this.testBlob = await generateWindowsPackage(options);
 
             this.generating = false;
 
@@ -282,8 +285,8 @@ export class AppPublish extends LitElement {
   }
 
   async download() {
-    if (this.blob) {
-      await fileSave(this.blob, {
+    if (this.blob || this.testBlob) {
+      await fileSave(this.blob as Blob || this.testBlob as Blob, {
         fileName: 'your_pwa.zip',
         extensions: ['.zip'],
       });
@@ -322,12 +325,12 @@ export class AppPublish extends LitElement {
             >
 
             ${platform.title.toLocaleLowerCase() === 'windows'
-              ? html`<app-button id="test-package-button"
+              ? html`<loading-button ?loading=${this.generating} id="test-package-button"
                   @click="${() =>
                     this.generatePackage(
                       "windows"
                     )}"
-                  >Test Package</app-button
+                  >Test Package</loading-button
                 >`
               : null}
           </div>
@@ -352,7 +355,12 @@ export class AppPublish extends LitElement {
         ?open="${this.errored}"
         id="error-modal"
       >
-        <img class="modal-image" slot="modal-image" src="/assets/warning.svg" alt="warning icon" />
+        <img
+          class="modal-image"
+          slot="modal-image"
+          src="/assets/warning.svg"
+          alt="warning icon"
+        />
 
         <div slot="modal-actions">
           <app-button @click="${() => this.returnToFix()}"
@@ -366,17 +374,47 @@ export class AppPublish extends LitElement {
         title="Download your package"
         body="Your app package is ready for download."
       >
-      <img class="modal-image" slot="modal-image" src="/assets/images/store_fpo.png" alt="publish icon" />
+        <img
+          class="modal-image"
+          slot="modal-image"
+          src="/assets/images/store_fpo.png"
+          alt="publish icon"
+        />
 
         <div slot="modal-actions">
-          <app-button @click="${() => this.download()}"
-            >Download</app-button
-          >
+          <app-button @click="${() => this.download()}">Download</app-button>
         </div>
       </app-modal>
 
-      <app-modal id="windows-options-modal" title="Microsoft Store Options" body="Customize your Windows package below!" ?open="${this.open_windows_options}">
-        <windows-form slot="modal-form" .loading=${this.generating} @init-windows-gen="${(ev) => this.generatePackage('windows', ev.detail.form)}"></windows-form>
+      <app-modal
+        ?open="${this.testBlob ? true : false}"
+        title="Test Package Download"
+        body="Want to test your files first before publishing? No problem! Description here about how this isn’t store ready and how they can come back and publish their PWA after doing whatever they need to do with their testing etc etc tc etc."
+      >
+        <img
+          class="modal-image"
+          slot="modal-image"
+          src="/assets/images/warning.svg"
+          alt="warning icon"
+        />
+
+        <div slot="modal-actions">
+          <app-button @click="${() => this.download()}">Download</app-button>
+        </div>
+      </app-modal>
+
+      <app-modal
+        id="windows-options-modal"
+        title="Microsoft Store Options"
+        body="Customize your Windows package below!"
+        ?open="${this.open_windows_options}"
+      >
+        <windows-form
+          slot="modal-form"
+          .loading=${this.generating}
+          @init-windows-gen="${ev =>
+            this.generatePackage('windows', ev.detail.form)}"
+        ></windows-form>
       </app-modal>
 
       <div>
