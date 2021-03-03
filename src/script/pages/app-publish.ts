@@ -13,12 +13,14 @@ import '../components/app-modal';
 import '../components/app-button';
 import '../components/loading-button';
 import '../components/windows-form';
+import '../components/android-form';
 import {
   createWindowsPackageOptionsFromForm,
   createWindowsPackageOptionsFromManifest,
   generateWindowsPackage,
 } from '../services/publish/windows-publish';
 import {
+  createAndroidPackageOptionsFromForm,
   createAndroidPackageOptionsFromManifest,
   generateAndroidPackage,
 } from '../services/publish/android-publish';
@@ -49,6 +51,7 @@ export class AppPublish extends LitElement {
   @internalProperty() isDeskTopView = this.mql.matches;
 
   @internalProperty() open_windows_options = false;
+  @internalProperty() open_android_options = false;
 
   @internalProperty() generating = false;
 
@@ -173,14 +176,14 @@ export class AppPublish extends LitElement {
           max-width: 50vw;
         }
 
-        #windows-options-modal::part(modal-layout) {
+        #windows-options-modal::part(modal-layout), #android-options-modal::part(modal-layout) {
           width: 64vw;
         }
 
         #test-package-button {
           display: block;
           margin-top: 15px;
-          
+
           --neutral-fill-rest: white;
           --neutral-fill-active: white;
           --neutral-fill-hover: white;
@@ -250,7 +253,6 @@ export class AppPublish extends LitElement {
             this.testBlob = await generateWindowsPackage(options);
 
             this.generating = false;
-
             this.open_windows_options = false;
           }
         } catch (err) {
@@ -263,14 +265,29 @@ export class AppPublish extends LitElement {
         try {
           this.generating = true;
 
-          // eslint-disable-next-line no-case-declarations
-          const androidOptions = createAndroidPackageOptionsFromManifest();
+          if (form) {
+            const androidOptions = createAndroidPackageOptionsFromForm(form);
 
-          this.blob = await generateAndroidPackage(androidOptions);
+            if (androidOptions) {
+              this.blob = await generateAndroidPackage(androidOptions);
+
+              this.generating = false;
+
+              this.open_android_options = false;
+            }
+          }
+          else {
+            const androidOptions = createAndroidPackageOptionsFromManifest();
+            this.blob = await generateAndroidPackage(androidOptions);
+
+            this.generating = false;
+            this.open_android_options = false;
+          }
 
           this.generating = false;
         } catch (err) {
           this.generating = false;
+          this.open_android_options = false;
           this.showAlertModal(err);
         }
         break;
@@ -304,7 +321,7 @@ export class AppPublish extends LitElement {
   }
 
   showAndroidOptionsModal() {
-    console.log('here');
+    this.open_android_options = true;
   }
 
   renderContentCards() {
@@ -415,6 +432,16 @@ export class AppPublish extends LitElement {
           @init-windows-gen="${ev =>
             this.generatePackage('windows', ev.detail.form)}"
         ></windows-form>
+      </app-modal>
+
+      <app-modal
+        id="android-options-modal"
+        title="Google Play Store Options"
+        body="Customize your Android package below!"
+        ?open="${this.open_android_options}"
+      >
+        <android-form slot="modal-form" .loading=${this.generating} @init-android-gen="${ev =>
+            this.generatePackage('android', ev.detail.form)}"></android-form>
       </app-modal>
 
       <div>
