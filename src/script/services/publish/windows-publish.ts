@@ -80,7 +80,7 @@ export function createWindowsPackageOptionsFromManifest(
       findSuitableIcon(manifestIcons, 'any', 0, 0, undefined); // Welp, we sure tried. Grab any image available.
 
     const options: WindowsPackageOptions = {
-      name: name,
+      name: name as string,
       packageId: packageID,
       url: pwaURL,
       version: '1.0.1',
