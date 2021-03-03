@@ -247,16 +247,6 @@ export class WindowsForm extends LitElement {
   render() {
     return html`
       <form id="windows-options-form" slot="modal-form" style="width: 100%">
-        <!--<div class="select-group">
-          <fast-select
-            @change="${ev => this.toggleSettings(ev.target.value)}"
-            id="settings-toggle"
-          >
-            <fast-option value="basic">Basic Settings</fast-option>
-            <fast-option value="advanced">All Settings</fast-option>
-          </fast-select>
-        </div>-->
-
         <div id="form-layout">
           <div class="basic-settings">
             <div class="form-group">
