@@ -78,6 +78,7 @@ export class AppModal extends LitElement {
 
       #back-button-block fast-button {
         margin-top: 12px;
+        background: none;
       }
 
       #back-button-block fast-button ion-icon {
