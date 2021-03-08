@@ -30,6 +30,11 @@ export class AndroidForm extends LitElement {
           max-height: 14em;
         }
 
+        fast-accordion {
+          margin-left: 3em;
+          margin-right: 3em;
+        }
+
         .tooltip {
           margin-left: 10px;
         }
@@ -62,12 +67,12 @@ export class AndroidForm extends LitElement {
           margin-top: 37px;
         }
 
-        #form-layout fast-text-field::part(root) {
+        fast-text-field::part(root), fast-number-field::part(root) {
           border: 1px solid rgba(194, 201, 209, 1);
           border-radius: var(--input-radius);
         }
 
-        #form-layout fast-text-field::part(control) {
+        fast-text-field::part(control), fast-number-field::part(control) {
           color: var(--font-color);
           border-radius: var(--input-radius);
         }
@@ -150,6 +155,20 @@ export class AndroidForm extends LitElement {
           display: grid;
           grid-template-columns: 50% 50%;
           gap: 10px;
+        }
+
+        form {
+          max-height: 24em;
+        }
+
+        .form-check {
+          display: flex;
+          align-items: center;
+        }
+
+        .form-check label {
+          font-weight: normal;
+          margin-left: 8px;
         }
 
         @media (min-height: 760px) and (max-height: 1000px) {
