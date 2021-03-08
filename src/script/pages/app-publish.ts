@@ -327,11 +327,11 @@ export class AppPublish extends LitElement {
   }
 
   showWindowsOptionsModal() {
-    this.open_windows_options = true;
+    this.open_windows_options = !this.open_windows_options;
   }
 
   showAndroidOptionsModal() {
-    this.open_android_options = true;
+    this.open_android_options = !this.open_android_options;
   }
 
   renderContentCards() {
