@@ -10,6 +10,8 @@ import {
 import '../components/loading-button';
 import { tooltip, styles as ToolTipStyles } from '../components/tooltip';
 import { getManifest } from '../services/manifest';
+import { createAndroidPackageOptionsFromManifest } from '../services/publish/android-publish';
+import { AndroidApkOptions } from '../utils/android-validation';
 
 import { xxLargeBreakPoint } from '../utils/css/breakpoints';
 import { Manifest } from '../utils/interfaces';
@@ -30,6 +32,8 @@ export class AndroidForm extends LitElement {
   @internalProperty() alias = "my-key-alias";
   @internalProperty() file = undefined;
   @internalProperty() signingMode = "mine";
+
+  @internalProperty() default_options: AndroidApkOptions | undefined;
 
   form: HTMLFormElement | undefined;
   currentManifest: Manifest | undefined;
@@ -213,6 +217,9 @@ export class AndroidForm extends LitElement {
     }
 
     this.currentManifest = getManifest();
+
+    this.default_options = createAndroidPackageOptionsFromManifest();
+    console.log('default_options', this.default_options);
   }
 
   initGenerate() {
@@ -372,8 +379,8 @@ export class AndroidForm extends LitElement {
       
             <div class="form-group">
               <label for="appNameInput">App name</label>
-              <fast-text-field type="text" class="form-control" id="appNameInput" placeholder="My Awesome PWA" required
-                name="appName" />
+              <fast-text-field type="text" class="form-control" id="appNameInput" placeholder="My Awesome PWA"
+                value="${this.default_options ? this.default_options.name : " My Awesome PWA"}" required name="appName" />
               </fast-text-field>
             </div>
       
@@ -385,7 +392,7 @@ export class AndroidForm extends LitElement {
                   aria-label="The app name used on the Android launch screen. Typically, this is the short name of the app."
                   role="definition"></i>
               </label>
-              <fast-text-field type="text" class="form-control" id="appLauncherNameInput" placeholder="Awesome PWA" required
+              <fast-text-field type="text" class="form-control" id="appLauncherNameInput" placeholder="Awesome PWA" value="${this.default_options ? this.default_options.launcherName : "Awesome PWA"}" required
                 name="launcherName" />
               </fast-text-field>
             </div>
@@ -412,7 +419,7 @@ export class AndroidForm extends LitElement {
                           title="The version of your app displayed to users. This is a string, typically in the form of '1.0.0.0'. Maps to android:versionName."
                           aria-label role="definition"></i>
                       </label>
-                      <fast-text-field type="text" class="form-control" id="appVersionInput" placeholder="1.0.0.0" required
+                      <fast-text-field type="text" class="form-control" id="appVersionInput" placeholder="1.0.0.0" value="${this.default_options ? this.default_options.appVersion : "1.0.0.0"}" required
                         name="appVersion" />
                       </fast-text-field>
                     </div>
@@ -432,7 +439,7 @@ export class AndroidForm extends LitElement {
                         role="definition" style="margin-left: 5px;"></i>
                     </label>
                     <fast-number-field type="number" min="1" max="2100000000" class="form-control" id="appVersionCodeInput"
-                      placeholder="1" required name="appVersionCode" />
+                      placeholder="1" required value="${this.default_options ? this.default_options.appVersionCode : "1"}" name="appVersionCode" />
                     </fast-number-field>
                   </div>
                 </div>
@@ -443,7 +450,7 @@ export class AndroidForm extends LitElement {
                   <div class="form-group">
                     <label for="hostInput">Host</label>
                     <fast-text-field type="url" class="form-control" id="hostInput" placeholder="https://mysite.com" required
-                      name="host" />
+                      name="host" value="${this.default_options ? this.default_options.host : "https://mysite.com"}" />
                     </fast-text-field>
                   </div>
                 </div>
@@ -457,7 +464,7 @@ export class AndroidForm extends LitElement {
                     aria-label="The start path for the TWA. Must be relative to the Host URL." role="definition"></i>
                 </label>
                 <fast-text-field type="url" class="form-control" id="startUrlInput" placeholder="/index.html" required
-                  name="startUrl" />
+                  name="startUrl" value="${this.default_options ? this.default_options.startUrl : "/"}" />
                 </fast-text-field>
               </div>
       
@@ -469,7 +476,7 @@ export class AndroidForm extends LitElement {
                     aria-label="Also known as the theme color, this is the color of the Android status bar in your app. Note: the status bar will be hidden if Display Mode is set to fullscreen."
                     role="definition"></i>
                 </label>
-                <input type="color" class="form-control" id="themeColorInput" name="themeColor" />
+                <input type="color" class="form-control" id="themeColorInput" name="themeColor" value="${this.default_options ? this.default_options.themeColor : "black"}" />
               </div>
       
               <div class="form-group">
@@ -480,7 +487,7 @@ export class AndroidForm extends LitElement {
                     aria-label="Also known as background color, this is the color of the splash screen for your app."
                     role="definition"></i>
                 </label>
-                <input type="color" class="form-control" id="bgColorInput" name="backgroundColor" />
+                <input type="color" class="form-control" id="bgColorInput" name="backgroundColor" value="${this.default_options ? this.default_options.backgroundColor : "black"}" />
               </div>
       
               <div class="form-group">
@@ -491,7 +498,7 @@ export class AndroidForm extends LitElement {
                     aria-label="The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
                     role="definition"></i>
                 </label>
-                <input type="color" class="form-control" id="navigationColorInput" name="navigationColor" />
+                <input type="color" class="form-control" id="navigationColorInput" name="navigationColor" value="${this.default_options ? this.default_options.navigationColor : "black"}" />
               </div>
       
               <div class="form-group">
@@ -502,7 +509,7 @@ export class AndroidForm extends LitElement {
                     aria-label="The color of the Android navigation bar in your app when Android is in dark mode."
                     role="definition"></i>
                 </label>
-                <input type="color" class="form-control" id="navigationColorDarkInput" name="navigationColorDark" />
+                <input type="color" class="form-control" id="navigationColorDarkInput" name="navigationColorDark" value="${this.default_options ? this.default_options.navigationColorDark : "black"}" />
               </div>
       
               <div class="form-group">
@@ -511,7 +518,7 @@ export class AndroidForm extends LitElement {
                   <i class="fas fa-info-circle" title="The color of the Android navigation bar divider in your app."
                     aria-label="The color of the Android navigation bar divider in your app." role="definition"></i>
                 </label>
-                <input type="color" class="form-control" id="navigationDividerColorInput" name="navigationDividerColor" />
+                <input type="color" class="form-control" id="navigationDividerColorInput" name="navigationDividerColor" value="${this.default_options ? this.default_options.navigationDividerColor : "black"}" />
               </div>
       
               <div class="form-group">
@@ -523,13 +530,13 @@ export class AndroidForm extends LitElement {
                     role="definition"></i>
                 </label>
                 <input type="color" class="form-control" id="navigationDividerColorDarkInput"
-                  name="navigationDividerColorDark" />
+                  name="navigationDividerColorDark" value="${this.default_options ? this.default_options.navigationDividerColorDark : "black"}" />
               </div>
       
               <div class="form-group">
                 <label for="iconUrlInput">Icon URL</label>
                 <fast-text-field type="url" class="form-control" id="iconUrlInput"
-                  placeholder="https://myawesomepwa.com/512x512.png" name="iconUrl" />
+                  placeholder="https://myawesomepwa.com/512x512.png" name="iconUrl" value="${this.default_options ? this.default_options.iconUrl : ""}" />
                 </fast-text-field>
               </div>
       
@@ -543,7 +550,7 @@ export class AndroidForm extends LitElement {
                     role="definition"></i>
                 </label>
                 <fast-text-field type="url" class="form-control" id="maskIconUrlInput"
-                  placeholder="https://myawesomepwa.com/512x512-maskable.png" name="maskableIconUrl" />
+                  placeholder="https://myawesomepwa.com/512x512-maskable.png" name="maskableIconUrl" value="${this.default_options ? this.default_options.maskableIconUrl : ""}" />
                 </fast-text-field>
               </div>
       
@@ -557,14 +564,14 @@ export class AndroidForm extends LitElement {
                     role="definition"></i>
                 </label>
                 <fast-text-field type="url" class="form-control" id="monochromeIconUrlInput"
-                  placeholder="https://myawesomepwa.com/512x512-monochrome.png" name="monochromeIconUrl" />
+                  placeholder="https://myawesomepwa.com/512x512-monochrome.png" name="monochromeIconUrl" value="${this.default_options ? this.default_options.monochromeIconUrl : ""}" />
                 </fast-text-field>
               </div>
       
               <div class="form-group">
                 <label for="splashFadeoutInput">Splash screen fade out duration (ms)</label>
                 <fast-number-field type="number" class="form-control" id="splashFadeoutInput" placeholder="300"
-                  name="splashScreenFadeOutDuration" />
+                  name="splashScreenFadeOutDuration" value="${this.default_options ? this.default_options.splashScreenFadeOutDuration : "300"}" />
                 </fast-number-field>
               </div>
       
