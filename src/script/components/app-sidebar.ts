@@ -26,6 +26,10 @@ export class AppSidebar extends LitElement {
         --neutral-foreground-rest: white;
       }
 
+      fast-accordion-item::part(icon) {
+        display: none;
+      }
+
       fast-accordion-item::part(button) {
         font-size: 16px;
         font-weight: var(--font-bold);

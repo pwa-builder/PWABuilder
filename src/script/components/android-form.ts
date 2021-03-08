@@ -136,6 +136,10 @@ export class AndroidForm extends LitElement {
           border: none;
         }
 
+        fast-accordion-item::part(icon) {
+          display: none;
+        }
+
         .flipper-button {
           background: white;
           box-shadow: 0 1px 4px 0px rgb(0 0 0 / 25%);

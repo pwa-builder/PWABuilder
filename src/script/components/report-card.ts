@@ -77,6 +77,10 @@ export class ReportCard extends LitElement {
         --neutral-divider-rest: #e5e5e5;
       }
 
+      fast-accordion-item::part(icon) {
+        display: none;
+      }
+
       fast-accordion-item::part(button) {
         height: 6em;
         width: 70vw;
