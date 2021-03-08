@@ -88,7 +88,6 @@ export class WindowsForm extends LitElement {
   }
 
   toggleSettings(settingsToggleValue: 'basic' | 'advanced') {
-    console.log(settingsToggleValue);
     if (settingsToggleValue === 'advanced') {
       this.show_adv = true;
     } else if (settingsToggleValue === 'basic') {

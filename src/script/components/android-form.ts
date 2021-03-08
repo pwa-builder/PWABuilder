@@ -89,7 +89,6 @@ export class AndroidForm extends LitElement {
     this.currentManifest = getManifest();
 
     this.default_options = createAndroidPackageOptionsFromManifest();
-    console.log('default_options', this.default_options);
   }
 
   initGenerate() {
@@ -105,7 +104,6 @@ export class AndroidForm extends LitElement {
   }
 
   toggleSettings(settingsToggleValue: 'basic' | 'advanced') {
-    console.log(settingsToggleValue);
     if (settingsToggleValue === 'advanced') {
       this.show_adv = true;
     } else if (settingsToggleValue === 'basic') {
@@ -164,8 +162,6 @@ export class AndroidForm extends LitElement {
  * Called when the user changes the signing mode.
  */
   androidSigningModeChanged(mode: "mine" | "new") {
-    console.log('changing signing mode', mode);
-
     if (!this.form) {
       return;
     }
@@ -201,7 +197,7 @@ export class AndroidForm extends LitElement {
     }
 
     const filePicker = event as HTMLInputElement;
-    console.log("filePicker", filePicker);
+
     if (filePicker && filePicker.files && filePicker.files.length > 0) {
       const keyFile = filePicker.files[0];
       // Make sure it's a reasonable size.

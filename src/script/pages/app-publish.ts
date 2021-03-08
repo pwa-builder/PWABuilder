@@ -240,7 +240,6 @@ export class AppPublish extends LitElement {
   }
 
   async generatePackage(type: platform, form?: HTMLFormElement) {
-    console.log(type, form);
     switch (type) {
       case 'windows':
         try {
@@ -294,7 +293,6 @@ export class AppPublish extends LitElement {
 
           this.generating = false;
         } catch (err) {
-          console.log(err, err.message);
           this.generating = false;
           this.open_android_options = false;
           this.showAlertModal(err);

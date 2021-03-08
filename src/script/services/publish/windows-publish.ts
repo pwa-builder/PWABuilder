@@ -50,7 +50,6 @@ export async function generateWindowsPackage(
 export function createWindowsPackageOptionsFromManifest(
 ): WindowsPackageOptions {
   const manifest = getManifest();
-  console.log('current manifest', manifest);
 
   if (manifest) {
     const maniURL = getManiURL();
@@ -120,14 +119,11 @@ export function createWindowsPackageOptionsFromForm(
   form: HTMLFormElement
 ) {
   const manifest = getManifest();
-  console.log('current manifest', manifest);
 
   if (manifest) {
     const name = form.appName.value || manifest.short_name || manifest.name;
     const packageID = form.packageId.value;
 
-    console.log('name', name);
-    console.log('packageID', packageID);
     const manifestIcons = manifest.icons || [];
 
     const icon =
