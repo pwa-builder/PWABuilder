@@ -9,14 +9,31 @@ import {
 
 import '../components/loading-button';
 import { tooltip, styles as ToolTipStyles } from '../components/tooltip';
+import { getManifest } from '../services/manifest';
 
 import { xxLargeBreakPoint } from '../utils/css/breakpoints';
+import { Manifest } from '../utils/interfaces';
 
 @customElement('android-form')
 export class AndroidForm extends LitElement {
   @property({ type: Boolean }) generating: boolean;
 
   @internalProperty() show_adv = false;
+
+  // manifest form props
+  @internalProperty() signingKeyFullName = "John Doe";
+  @internalProperty() organization = "My Company";
+  @internalProperty() organizationalUnit = "Engineering";
+  @internalProperty() countryCode = "US";
+  @internalProperty() keyPassword = "";
+  @internalProperty() storePassword = "";
+  @internalProperty() alias = "my-key-alias";
+  @internalProperty() file = undefined;
+  @internalProperty() signingMode = "mine";
+
+  form: HTMLFormElement | undefined;
+  currentManifest: Manifest | undefined;
+  maxKeyFileSizeInBytes = 2097152;
 
   static get styles() {
     return [
@@ -188,13 +205,21 @@ export class AndroidForm extends LitElement {
     super();
   }
 
-  initGenerate() {
-    const form = this.shadowRoot?.querySelector('#android-options-form');
+  firstUpdated() {
+    const form = (this.shadowRoot?.querySelector('#android-options-form') as HTMLFormElement);
 
+    if (form) {
+      this.form = form;
+    }
+
+    this.currentManifest = getManifest();
+  }
+
+  initGenerate() {
     this.dispatchEvent(
       new CustomEvent('init-android-gen', {
         detail: {
-          form: form,
+          form: this.form,
         },
         composed: true,
         bubbles: true,
@@ -255,6 +280,76 @@ export class AndroidForm extends LitElement {
           );
         }
       }
+    }
+  }
+
+  /**
+ * Called when the user changes the signing mode.
+ */
+  androidSigningModeChanged(mode: "mine" | "new") {
+    console.log('changing signing mode', mode);
+
+    if (!this.form) {
+      return;
+    }
+
+    this.signingMode = mode;
+
+    // If the user chose "mine", clear out existing values.
+    if (mode === "mine") {
+      this.alias = "";
+      this.signingKeyFullName = "";
+      this.organization = "";
+      this.organizationalUnit = "";
+      this.countryCode = "";
+      this.keyPassword = "";
+      this.storePassword = "";
+    } else if (mode === "new") {
+      this.alias = "my-key-alias";
+      this.signingKeyFullName = `${this.currentManifest.short_name || this.currentManifest.name || "App"
+        } Admin`;
+      this.organization =
+        this.currentManifest.name || "PWABuilder";
+      this.organizationalUnit = "Engineering";
+      this.countryCode = "US";
+      this.keyPassword = "";
+      this.storePassword = "";
+      this.file = null;
+    }
+  }
+
+  androidSigningKeyUploaded(event) {
+    if (!this.form) {
+      return;
+    }
+
+    const filePicker = event as HTMLInputElement;
+    console.log("filePicker", filePicker);
+    if (filePicker && filePicker.files && filePicker.files.length > 0) {
+      const keyFile = filePicker.files[0];
+      // Make sure it's a reasonable size.
+      if (keyFile.size > this.maxKeyFileSizeInBytes) {
+        console.error("Keystore file is too large.", {
+          maxSize: this.maxKeyFileSizeInBytes,
+          fileSize: keyFile.size,
+        });
+        this.signingMode = "none";
+      }
+      // Read it in as a Uint8Array and store it in our signing object.
+      const fileReader = new FileReader();
+      fileReader.onload = () => (this.file = fileReader.result as string);
+      fileReader.onerror = (progressEvent) => {
+        console.error(
+          "Unable to read keystore file",
+          fileReader.error,
+          progressEvent
+        );
+        this.file = null;
+        if (this.form) {
+          this.signingMode = "none";
+        }
+      };
+      fileReader.readAsDataURL(keyFile);
     }
   }
 
@@ -325,401 +420,399 @@ export class AndroidForm extends LitElement {
                 </div>
               </div>
       
-                <div>
-                  <div class="">
-                    <div class="form-group">
-                      <label for="appVersionCodeInput">
-                        <a href="https://developer.android.com/studio/publish/versioning#appversioning" target="_blank"
-                          rel="noopener">App version code</a>
-                        <i class="fas fa-info-circle"
-                          title="A positive integer used as an internal version number. This is not shown to users. Android uses this value to protect against downgrades. Maps to android:versionCode."
-                          aria-label="A positive integer used as an internal version number. This is not shown to users. Android uses this value to protect against downgrades. Maps to android:versionCode."
-                          role="definition" style="margin-left: 5px;"></i>
-                      </label>
-                      <fast-number-field type="number" min="1" max="2100000000" class="form-control" id="appVersionCodeInput"
-                        placeholder="1" required name="appVersionCode" />
-                      </fast-number-field>
-                    </div>
-                  </div>
-                </div>
-      
-                <div>
-                  <div class="">
-                    <div class="form-group">
-                      <label for="hostInput">Host</label>
-                      <fast-text-field type="url" class="form-control" id="hostInput" placeholder="https://mysite.com"
-                        required name="host" />
-                      </fast-text-field>
-                    </div>
-                  </div>
-                </div>
-      
-                <div class="form-group">
-                  <label for="startUrlInput">
-                    Start URL
-                    <i class="fas fa-info-circle"
-                      title="The start path for the TWA. Must be relative to the Host URL. You can specify '/' if you don't have a start URL different from Host."
-                      aria-label="The start path for the TWA. Must be relative to the Host URL." role="definition"></i>
-                  </label>
-                  <fast-text-field type="url" class="form-control" id="startUrlInput" placeholder="/index.html" required
-                    name="startUrl" />
-                  </fast-text-field>
-                </div>
-      
-                <div class="form-group">
-                  <label for="themeColorInput">
-                    Status bar color
-                    <i class="fas fa-info-circle"
-                      title="Also known as the theme color, this is the color of the Android status bar in your app. Note: the status bar will be hidden if Display Mode is set to fullscreen."
-                      aria-label="Also known as the theme color, this is the color of the Android status bar in your app. Note: the status bar will be hidden if Display Mode is set to fullscreen."
-                      role="definition"></i>
-                  </label>
-                  <input type="color" class="form-control" id="themeColorInput" name="themeColor" />
-                </div>
-      
-                <div class="form-group">
-                  <label for="bgColorInput">
-                    Splash color
-                    <i class="fas fa-info-circle"
-                      title="Also known as background color, this is the color of the splash screen for your app."
-                      aria-label="Also known as background color, this is the color of the splash screen for your app."
-                      role="definition"></i>
-                  </label>
-                  <input type="color" class="form-control" id="bgColorInput" name="backgroundColor" />
-                </div>
-      
-                <div class="form-group">
-                  <label for="navigationColorInput">
-                    Nav color
-                    <i class="fas fa-info-circle"
-                      title="The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
-                      aria-label="The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
-                      role="definition"></i>
-                  </label>
-                  <input type="color" class="form-control" id="navigationColorInput" name="navigationColor" />
-                </div>
-      
-                <div class="form-group">
-                  <label for="navigationColorDarkInput">
-                    Nav dark color
-                    <i class="fas fa-info-circle"
-                      title="The color of the Android navigation bar in your app when Android is in dark mode."
-                      aria-label="The color of the Android navigation bar in your app when Android is in dark mode."
-                      role="definition"></i>
-                  </label>
-                  <input type="color" class="form-control" id="navigationColorDarkInput" name="navigationColorDark" />
-                </div>
-      
-                <div class="form-group">
-                  <label for="navigationDividerColorInput">
-                    Nav divider color
-                    <i class="fas fa-info-circle" title="The color of the Android navigation bar divider in your app."
-                      aria-label="The color of the Android navigation bar divider in your app." role="definition"></i>
-                  </label>
-                  <input type="color" class="form-control" id="navigationDividerColorInput" name="navigationDividerColor" />
-                </div>
-      
-                <div class="form-group">
-                  <label for="navigationDividerColorDarkInput">
-                    Nav divider dark color
-                    <i class="fas fa-info-circle"
-                      title="The color of the Android navigation navigation bar divider in your app when Android is in dark mode."
-                      aria-label="The color of the Android navigation bar divider in your app when Android is in dark mode."
-                      role="definition"></i>
-                  </label>
-                  <input type="color" class="form-control" id="navigationDividerColorDarkInput"
-                    name="navigationDividerColorDark" />
-                </div>
-      
-                <div class="form-group">
-                  <label for="iconUrlInput">Icon URL</label>
-                  <fast-text-field type="url" class="form-control" id="iconUrlInput"
-                    placeholder="https://myawesomepwa.com/512x512.png" name="iconUrl" />
-                  </fast-text-field>
-                </div>
-      
-                <div class="form-group">
-                  <label for="maskIconUrlInput">
-                    <a href="https://web.dev/maskable-icon" title="Read more about maskable icons" target="_blank"
-                      rel="noopener" aria-label="Read more about maskable icons">Maskable icon</a> URL
-                    <i class="fas fa-info-circle"
-                      title="Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms."
-                      aria-label="Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms."
-                      role="definition"></i>
-                  </label>
-                  <fast-text-field type="url" class="form-control" id="maskIconUrlInput"
-                    placeholder="https://myawesomepwa.com/512x512-maskable.png" name="maskableIconUrl" />
-                  </fast-text-field>
-                </div>
-      
-                <div class="form-group">
-                  <label for="monochromeIconUrlInput">
-                    <a href="https://w3c.github.io/manifest/#monochrome-icons-and-solid-fills" target="_blank"
-                      rel="noopener">Monochrome icon</a> URL
-                    <i class="fas fa-info-circle"
-                      title="Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings."
-                      aria-label="Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings."
-                      role="definition"></i>
-                  </label>
-                  <fast-text-field type="url" class="form-control" id="monochromeIconUrlInput"
-                    placeholder="https://myawesomepwa.com/512x512-monochrome.png" name="monochromeIconUrl" />
-                  </fast-text-field>
-                </div>
-      
-                <div class="form-group">
-                  <label for="splashFadeoutInput">Splash screen fade out duration (ms)</label>
-                  <fast-number-field type="number" class="form-control" id="splashFadeoutInput" placeholder="300"
-                    name="splashScreenFadeOutDuration" />
-                  </fast-number-field>
-                </div>
-      
-                <div class="form-group">
-                  <label>Fallback behavior</label>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="fallbackType" id="fallbackCustomTabsInput"
-                      value="customtabs" name="fallbackType" />
-                    <label class="form-check-label" for="fallbackCustomTabsInput">
-                      Custom Tabs
-                      <i class="fas fa-info-circle"
-                        title="Use Chrome Custom Tabs as a fallback for your PWA when the full trusted web activity (TWA) experience is unavailable."
-                        aria-label="When trusted web activity (TWA) is unavailable, use Chrome Custom Tabs as a fallback for your PWA."
-                        role="definition"></i>
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="fallbackType" id="fallbackWebViewInput" value="webview"
-                      name="fallbackType" />
-                    <label class="form-check-label" for="fallbackWebViewInput">
-                      Web View
-                      <i class="fas fa-info-circle"
-                        title="Use a web view as the fallback for your PWA when the full trusted web activity (TWA) experience is unavailable."
-                        aria-label="When trusted web activity (TWA) is unavailable, use a web view as the fallback for your PWA."
-                        role="definition"></i>
-                    </label>
-                  </div>
-                </div>
-      
-                <div class="form-group">
-                  <label>Display mode</label>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="displayMode" id="standaloneDisplayModeInput"
-                      value="standalone" name="display" />
-                    <label class="form-check-label" for="standaloneDisplayModeInput">
-                      Standalone
-                      <i class="fas fa-info-circle"
-                        title="Your PWA will use the whole screen but keep the Android status bar and navigation bar."
-                        aria-label="Your PWA will use the whole screen but keep the Android status bar and navigation bar."
-                        role="definition"></i>
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="displayMode" id="fullscreenDisplayModeInput"
-                      value="fullscreen" name="display" />
-                    <label class="form-check-label" for="fullscreenDisplayModeInput">
-                      Fullscreen
-                      <i class="fas fa-info-circle"
-                        title="Your PWA will use the whole screen and remove the Android status bar and navigation bar. Suitable for immersive experiences such as games or media apps."
-                        aria-label="Your PWA will use the whole screen and remove the Android status bar and navigation bar. Suitable for immersive experiences such as games or media apps."
-                        role="definition"></i>
-                    </label>
-                  </div>
-                </div>
-      
-                <div class="form-group">
-                  <label>Notification delegation</label>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="enableNotificationsInput"
-                      name="enableNotifications" />
-                    <label class="form-check-label" for="enableNotificationsInput">
-                      Enable
-                      <i class="fas fa-info-circle"
-                        title="Whether to enable Push Notification Delegation. If enabled, your PWA can send push notifications without browser permission prompts."
-                        aria-label="Whether to enable Push Notification Delegation. If enabled, your PWA can send push notifications without browser permission prompts."
-                        role="definition"></i>
-                    </label>
-                  </div>
-                </div>
-      
-                <div class="form-group">
-                  <label>Location delegation</label>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="enableLocationInput" name="locationDelegation" />
-                    <label class="form-check-label" for="enableLocationInput">
-                      Enable
-                      <i class="fas fa-info-circle"
-                        title="Whether to enable Location Delegation. If enabled, your PWA can acess navigator.geolocation without browser permission prompts."
-                        aria-label="Whether to enable Location Delegation. If enabled, your PWA can acess navigator.geolocation without browser permission prompts."
-                        role="definition"></i>
-                    </label>
-                  </div>
-                </div>
-      
-                <div class="form-group">
-                  <label>Google Play billing</label>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="enablePlayBillingInput" name="playBilling" />
-                    <label class="form-check-label" for="enablePlayBillingInput">
-                      Enable
-                      <i class="fas fa-info-circle"
-                        title="Whether to enable in-app purchases through Google Play Billing and the Digital Goods API."
-                        aria-label="Whether to enable in-app purchases through Google Play Billing and the Digital Goods API."
-                        role="definition"></i>
-                    </label>
-                  </div>
-                </div>
-      
-                <div class="form-group">
-                  <label>Settings shortcut</label>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="enableSettingsShortcutInput"
-                      name="enableSiteSettingsShortcut" />
-                    <label class="form-check-label" for="enableSettingsShortcutInput">
-                      Enable
-                      <i class="fas fa-info-circle"
-                        title="If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app."
-                        aria-label="If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app."
-                        role="definition"></i>
-                    </label>
-                  </div>
-                </div>
-      
-                <div class="form-group">
-                  <label>ChromeOS only</label>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="chromeOSOnlyInput" name="isChromeOSOnly" />
-                    <label class="form-check-label" for="chromeOSOnlyInput">
-                      Enable
-                      <i class="fas fa-info-circle" title="If enabled, your Android package will only run on ChromeOS devices"
-                        aria-label="If enabled, your Android package will only run on ChromeOS devices" role="definition"></i>
-                    </label>
-                  </div>
-                </div>
-      
-                <div class="form-group">
-                  <label>Include source code</label>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="includeSourceCodeInput" name="includeSourceCode" />
-                    <label class="form-check-label" for="includeSourceCodeInput">
-                      Enable
-                      <i class="fas fa-info-circle"
-                        title="If enabled, your download will include the source code for your Android app."
-                        aria-label="If enabled, your download will include the source code for your Android app."
-                        role="definition"></i>
-                    </label>
-                  </div>
-                </div>
-      
-                <div class="form-group">
-                  <label>Signing key</label>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="signingInput" id="generateSigningKeyInput" value="new"
-                      name="signingMode" @change="${(ev) => this.androidSigningModeChanged(ev.target.value)}" />
-                    <label class="form-check-label" for="generateSigningKeyInput">
-                      Create new
-                      <i class="fas fa-info-circle"
-                        title="PWABuilder will generate a new signing key for you and sign your APK with it. Your download will contain the new signing key and passwords."
-                        aria-label="PWABuilder will generate a new signing key for you and sign your APK with it. Your download will contain the new signing key and passwords."
-                        role="definition"></i>
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="signingInput" id="unsignedInput" value="none"
-                      name="signingMode" @change="${(ev) => this.androidSigningModeChanged(ev.target.value)}" />
-                    <label class="form-check-label" for="unsignedInput">
-                      None
-                      <i class="fas fa-info-circle"
-                        title="PWABuilder will generate an unsigned APK. Google Play Store will sign your package. This is Google's recommended approach."
-                        aria-label="PWABuilder will generate an unsigned APK. Google Play Store will sign your package. This is Google's recommended approach."
-                        role="definition"></i>
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="signingInput" id="useMySigningInput" value="mine"
-                      name="signingMode" @change="${(ev) => this.androidSigningModeChanged(ev.target.value)}" />
-                    <label class="form-check-label" for="useMySigningInput">
-                      Use mine
-                      <i class="fas fa-info-circle"
-                        title="Upload your existing signing key. Use this option if you already have a signing key and you want to publish a new version of an existing app in Google Play."
-                        aria-label="Upload your existing signing key. Use this option if you already have a signing key and you want to publish a new version of an existing app in Google Play."
-                        role="definition"></i>
-                    </label>
-                  </div>
-                </div>
-      
-                <div v-if="androidForm.signingMode === 'mine' || androidForm.signingMode === 'new'"
-                  style="margin-left: 15px;">
-                  <div class="form-group" v-if="androidForm.signingMode === 'mine'">
-                    <label for="signingKeyInput">Key file</label>
-                    <input type="file" class="form-control" id="signingKeyInput"
-                      @change="${(ev) => this.androidSigningKeyUploaded(ev.target.value)}" accept=".keystore" required
-                      style="border: none;" />
-                  </div>
-      
+              <div>
+                <div class="">
                   <div class="form-group">
-                    <label for="signingKeyAliasInput">Key alias</label>
-                    <fast-text-field type="text" class="form-control" id="signingKeyAliasInput" placeholder="my-key-alias"
-                      required name="alias" />
-                    </fast-text-field>
-                  </div>
-      
-                  <div class="form-group" v-if="androidForm.signingMode === 'new'">
-                    <label for="signingKeyFullNameInput">Key full name</label>
-                    <fast-text-field type="text" class="form-control" id="signingKeyFullNameInput" required
-                      placeholder="John Doe" name="fullName" />
-                    </fast-text-field>
-                  </div>
-      
-                  <div class="form-group" v-if="androidForm.signingMode === 'new'">
-                    <label for="signingKeyOrgInput">Key organization</label>
-                    <fast-text-field type="text" class="form-control" id="signingKeyOrgInput" required
-                      placeholder="My Company" name="organization" />
-                    </fast-text-field>
-                  </div>
-      
-                  <div class="form-group" v-if="androidForm.signingMode === 'new'">
-                    <label for="signingKeyOrgUnitInput">Key organizational unit</label>
-                    <fast-text-field type="text" class="form-control" id="signingKeyOrgUnitInput" required
-                      placeholder="Engineering Department" name="organizationalUnit" />
-                    </fast-text-field>
-                  </div>
-      
-                  <div class="form-group" v-if="androidForm.signingMode === 'new'">
-                    <label for="signingKeyCountryCodeInput">
-                      Key country code
-                      <i class="fas fa-info-circle" title="The 2 letter country code to list on the signing key"
-                        aria-label="The 2 letter country code to list on the signing key" role="definition"></i>
-                    </label>
-                    <fast-text-field type="text" class="form-control" id="signingKeyCountryCodeInput" required
-                      placeholder="US" name="countryCode" />
-                    </fast-text-field>
-                  </div>
-      
-                  <div class="form-group">
-                    <label for="signingKeyPasswordInput">
-                      Key password
+                    <label for="appVersionCodeInput">
+                      <a href="https://developer.android.com/studio/publish/versioning#appversioning" target="_blank"
+                        rel="noopener">App version code</a>
                       <i class="fas fa-info-circle"
-                        title="The password for the signing key. Type a new password or leave empty to use a generated password."
-                        aria-label="The password for the signing key. Type a new password or leave empty to use a generated password."
-                        role="definition"></i>
+                        title="A positive integer used as an internal version number. This is not shown to users. Android uses this value to protect against downgrades. Maps to android:versionCode."
+                        aria-label="A positive integer used as an internal version number. This is not shown to users. Android uses this value to protect against downgrades. Maps to android:versionCode."
+                        role="definition" style="margin-left: 5px;"></i>
                     </label>
-                    <fast-text-field type="password" class="form-control" id="signingKeyPasswordInput" name="keyPassword"
-                      placeholder="Password to your signing key" />
-                    </fast-text-field>
+                    <fast-number-field type="number" min="1" max="2100000000" class="form-control" id="appVersionCodeInput"
+                      placeholder="1" required name="appVersionCode" />
+                    </fast-number-field>
                   </div>
+                </div>
+              </div>
       
+              <div>
+                <div class="">
                   <div class="form-group">
-                    <label for="signingKeyStorePasswordInput">
-                      Key store password
-                      <i class="fas fa-info-circle"
-                        title="The password for the key store. Type a new password or leave empty to use a generated password."
-                        aria-label="The password for the key store. Type a new password or leave empty to use a generated password."
-                        role="definition"></i>
-                    </label>
-                    <fast-text-field type="password" class="form-control" id="signingKeyStorePasswordInput"
-                      name="storePassword" placeholder="Password to your key store" />
+                    <label for="hostInput">Host</label>
+                    <fast-text-field type="url" class="form-control" id="hostInput" placeholder="https://mysite.com" required
+                      name="host" />
                     </fast-text-field>
                   </div>
                 </div>
+              </div>
+      
+              <div class="form-group">
+                <label for="startUrlInput">
+                  Start URL
+                  <i class="fas fa-info-circle"
+                    title="The start path for the TWA. Must be relative to the Host URL. You can specify '/' if you don't have a start URL different from Host."
+                    aria-label="The start path for the TWA. Must be relative to the Host URL." role="definition"></i>
+                </label>
+                <fast-text-field type="url" class="form-control" id="startUrlInput" placeholder="/index.html" required
+                  name="startUrl" />
+                </fast-text-field>
+              </div>
+      
+              <div class="form-group">
+                <label for="themeColorInput">
+                  Status bar color
+                  <i class="fas fa-info-circle"
+                    title="Also known as the theme color, this is the color of the Android status bar in your app. Note: the status bar will be hidden if Display Mode is set to fullscreen."
+                    aria-label="Also known as the theme color, this is the color of the Android status bar in your app. Note: the status bar will be hidden if Display Mode is set to fullscreen."
+                    role="definition"></i>
+                </label>
+                <input type="color" class="form-control" id="themeColorInput" name="themeColor" />
+              </div>
+      
+              <div class="form-group">
+                <label for="bgColorInput">
+                  Splash color
+                  <i class="fas fa-info-circle"
+                    title="Also known as background color, this is the color of the splash screen for your app."
+                    aria-label="Also known as background color, this is the color of the splash screen for your app."
+                    role="definition"></i>
+                </label>
+                <input type="color" class="form-control" id="bgColorInput" name="backgroundColor" />
+              </div>
+      
+              <div class="form-group">
+                <label for="navigationColorInput">
+                  Nav color
+                  <i class="fas fa-info-circle"
+                    title="The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
+                    aria-label="The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
+                    role="definition"></i>
+                </label>
+                <input type="color" class="form-control" id="navigationColorInput" name="navigationColor" />
+              </div>
+      
+              <div class="form-group">
+                <label for="navigationColorDarkInput">
+                  Nav dark color
+                  <i class="fas fa-info-circle"
+                    title="The color of the Android navigation bar in your app when Android is in dark mode."
+                    aria-label="The color of the Android navigation bar in your app when Android is in dark mode."
+                    role="definition"></i>
+                </label>
+                <input type="color" class="form-control" id="navigationColorDarkInput" name="navigationColorDark" />
+              </div>
+      
+              <div class="form-group">
+                <label for="navigationDividerColorInput">
+                  Nav divider color
+                  <i class="fas fa-info-circle" title="The color of the Android navigation bar divider in your app."
+                    aria-label="The color of the Android navigation bar divider in your app." role="definition"></i>
+                </label>
+                <input type="color" class="form-control" id="navigationDividerColorInput" name="navigationDividerColor" />
+              </div>
+      
+              <div class="form-group">
+                <label for="navigationDividerColorDarkInput">
+                  Nav divider dark color
+                  <i class="fas fa-info-circle"
+                    title="The color of the Android navigation navigation bar divider in your app when Android is in dark mode."
+                    aria-label="The color of the Android navigation bar divider in your app when Android is in dark mode."
+                    role="definition"></i>
+                </label>
+                <input type="color" class="form-control" id="navigationDividerColorDarkInput"
+                  name="navigationDividerColorDark" />
+              </div>
+      
+              <div class="form-group">
+                <label for="iconUrlInput">Icon URL</label>
+                <fast-text-field type="url" class="form-control" id="iconUrlInput"
+                  placeholder="https://myawesomepwa.com/512x512.png" name="iconUrl" />
+                </fast-text-field>
+              </div>
+      
+              <div class="form-group">
+                <label for="maskIconUrlInput">
+                  <a href="https://web.dev/maskable-icon" title="Read more about maskable icons" target="_blank"
+                    rel="noopener" aria-label="Read more about maskable icons">Maskable icon</a> URL
+                  <i class="fas fa-info-circle"
+                    title="Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms."
+                    aria-label="Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms."
+                    role="definition"></i>
+                </label>
+                <fast-text-field type="url" class="form-control" id="maskIconUrlInput"
+                  placeholder="https://myawesomepwa.com/512x512-maskable.png" name="maskableIconUrl" />
+                </fast-text-field>
+              </div>
+      
+              <div class="form-group">
+                <label for="monochromeIconUrlInput">
+                  <a href="https://w3c.github.io/manifest/#monochrome-icons-and-solid-fills" target="_blank"
+                    rel="noopener">Monochrome icon</a> URL
+                  <i class="fas fa-info-circle"
+                    title="Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings."
+                    aria-label="Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings."
+                    role="definition"></i>
+                </label>
+                <fast-text-field type="url" class="form-control" id="monochromeIconUrlInput"
+                  placeholder="https://myawesomepwa.com/512x512-monochrome.png" name="monochromeIconUrl" />
+                </fast-text-field>
+              </div>
+      
+              <div class="form-group">
+                <label for="splashFadeoutInput">Splash screen fade out duration (ms)</label>
+                <fast-number-field type="number" class="form-control" id="splashFadeoutInput" placeholder="300"
+                  name="splashScreenFadeOutDuration" />
+                </fast-number-field>
+              </div>
+      
+              <div class="form-group">
+                <label>Fallback behavior</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="fallbackType" id="fallbackCustomTabsInput"
+                    value="customtabs" name="fallbackType" />
+                  <label class="form-check-label" for="fallbackCustomTabsInput">
+                    Custom Tabs
+                    <i class="fas fa-info-circle"
+                      title="Use Chrome Custom Tabs as a fallback for your PWA when the full trusted web activity (TWA) experience is unavailable."
+                      aria-label="When trusted web activity (TWA) is unavailable, use Chrome Custom Tabs as a fallback for your PWA."
+                      role="definition"></i>
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="fallbackType" id="fallbackWebViewInput" value="webview"
+                    name="fallbackType" />
+                  <label class="form-check-label" for="fallbackWebViewInput">
+                    Web View
+                    <i class="fas fa-info-circle"
+                      title="Use a web view as the fallback for your PWA when the full trusted web activity (TWA) experience is unavailable."
+                      aria-label="When trusted web activity (TWA) is unavailable, use a web view as the fallback for your PWA."
+                      role="definition"></i>
+                  </label>
+                </div>
+              </div>
+      
+              <div class="form-group">
+                <label>Display mode</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="displayMode" id="standaloneDisplayModeInput"
+                    value="standalone" name="display" />
+                  <label class="form-check-label" for="standaloneDisplayModeInput">
+                    Standalone
+                    <i class="fas fa-info-circle"
+                      title="Your PWA will use the whole screen but keep the Android status bar and navigation bar."
+                      aria-label="Your PWA will use the whole screen but keep the Android status bar and navigation bar."
+                      role="definition"></i>
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="displayMode" id="fullscreenDisplayModeInput"
+                    value="fullscreen" name="display" />
+                  <label class="form-check-label" for="fullscreenDisplayModeInput">
+                    Fullscreen
+                    <i class="fas fa-info-circle"
+                      title="Your PWA will use the whole screen and remove the Android status bar and navigation bar. Suitable for immersive experiences such as games or media apps."
+                      aria-label="Your PWA will use the whole screen and remove the Android status bar and navigation bar. Suitable for immersive experiences such as games or media apps."
+                      role="definition"></i>
+                  </label>
+                </div>
+              </div>
+      
+              <div class="form-group">
+                <label>Notification delegation</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="enableNotificationsInput" name="enableNotifications" />
+                  <label class="form-check-label" for="enableNotificationsInput">
+                    Enable
+                    <i class="fas fa-info-circle"
+                      title="Whether to enable Push Notification Delegation. If enabled, your PWA can send push notifications without browser permission prompts."
+                      aria-label="Whether to enable Push Notification Delegation. If enabled, your PWA can send push notifications without browser permission prompts."
+                      role="definition"></i>
+                  </label>
+                </div>
+              </div>
+      
+              <div class="form-group">
+                <label>Location delegation</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="enableLocationInput" name="locationDelegation" />
+                  <label class="form-check-label" for="enableLocationInput">
+                    Enable
+                    <i class="fas fa-info-circle"
+                      title="Whether to enable Location Delegation. If enabled, your PWA can acess navigator.geolocation without browser permission prompts."
+                      aria-label="Whether to enable Location Delegation. If enabled, your PWA can acess navigator.geolocation without browser permission prompts."
+                      role="definition"></i>
+                  </label>
+                </div>
+              </div>
+      
+              <div class="form-group">
+                <label>Google Play billing</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="enablePlayBillingInput" name="playBilling" />
+                  <label class="form-check-label" for="enablePlayBillingInput">
+                    Enable
+                    <i class="fas fa-info-circle"
+                      title="Whether to enable in-app purchases through Google Play Billing and the Digital Goods API."
+                      aria-label="Whether to enable in-app purchases through Google Play Billing and the Digital Goods API."
+                      role="definition"></i>
+                  </label>
+                </div>
+              </div>
+      
+              <div class="form-group">
+                <label>Settings shortcut</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="enableSettingsShortcutInput"
+                    name="enableSiteSettingsShortcut" />
+                  <label class="form-check-label" for="enableSettingsShortcutInput">
+                    Enable
+                    <i class="fas fa-info-circle"
+                      title="If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app."
+                      aria-label="If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app."
+                      role="definition"></i>
+                  </label>
+                </div>
+              </div>
+      
+              <div class="form-group">
+                <label>ChromeOS only</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="chromeOSOnlyInput" name="isChromeOSOnly" />
+                  <label class="form-check-label" for="chromeOSOnlyInput">
+                    Enable
+                    <i class="fas fa-info-circle" title="If enabled, your Android package will only run on ChromeOS devices"
+                      aria-label="If enabled, your Android package will only run on ChromeOS devices" role="definition"></i>
+                  </label>
+                </div>
+              </div>
+      
+              <div class="form-group">
+                <label>Include source code</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="includeSourceCodeInput" name="includeSourceCode" />
+                  <label class="form-check-label" for="includeSourceCodeInput">
+                    Enable
+                    <i class="fas fa-info-circle"
+                      title="If enabled, your download will include the source code for your Android app."
+                      aria-label="If enabled, your download will include the source code for your Android app."
+                      role="definition"></i>
+                  </label>
+                </div>
+              </div>
+      
+              <div class="form-group">
+                <label>Signing key</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="signingInput" id="generateSigningKeyInput" value="new"
+                    name="signingMode" @change="${(ev) => this.androidSigningModeChanged(ev.target.value)}" />
+                  <label class="form-check-label" for="generateSigningKeyInput">
+                    Create new
+                    <i class="fas fa-info-circle"
+                      title="PWABuilder will generate a new signing key for you and sign your APK with it. Your download will contain the new signing key and passwords."
+                      aria-label="PWABuilder will generate a new signing key for you and sign your APK with it. Your download will contain the new signing key and passwords."
+                      role="definition"></i>
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="signingInput" id="unsignedInput" value="none"
+                    name="signingMode" @change="${(ev) => this.androidSigningModeChanged(ev.target.value)}" />
+                  <label class="form-check-label" for="unsignedInput">
+                    None
+                    <i class="fas fa-info-circle"
+                      title="PWABuilder will generate an unsigned APK. Google Play Store will sign your package. This is Google's recommended approach."
+                      aria-label="PWABuilder will generate an unsigned APK. Google Play Store will sign your package. This is Google's recommended approach."
+                      role="definition"></i>
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="signingInput" id="useMySigningInput" value="mine"
+                    name="signingMode" @change="${(ev) => this.androidSigningModeChanged(ev.target.value)}" />
+                  <label class="form-check-label" for="useMySigningInput">
+                    Use mine
+                    <i class="fas fa-info-circle"
+                      title="Upload your existing signing key. Use this option if you already have a signing key and you want to publish a new version of an existing app in Google Play."
+                      aria-label="Upload your existing signing key. Use this option if you already have a signing key and you want to publish a new version of an existing app in Google Play."
+                      role="definition"></i>
+                  </label>
+                </div>
+              </div>
+      
+              <div v-if="form.signingMode === 'mine' || form.signingMode === 'new'" style="margin-left: 15px;">
+                <div class="form-group" v-if="form.signingMode === 'mine'">
+                  <label for="signingKeyInput">Key file</label>
+                  <input type="file" class="form-control" id="signingKeyInput"
+                    @change="${(ev) => this.androidSigningKeyUploaded(ev.target)}" accept=".keystore" required
+                    style="border: none;" value="${this.file}" />
+                </div>
+      
+                <div class="form-group">
+                  <label for="signingKeyAliasInput">Key alias</label>
+                  <fast-text-field type="text" class="form-control" id="signingKeyAliasInput" placeholder="my-key-alias"
+                    required name="alias" value="${this.alias}" />
+                  </fast-text-field>
+                </div>
+      
+                <div class="form-group" v-if="form.signingMode === 'new'">
+                  <label for="signingKeyFullNameInput">Key full name</label>
+                  <fast-text-field type="text" class="form-control" id="signingKeyFullNameInput" required
+                    placeholder="John Doe" name="fullName" value="${this.signingKeyFullName}" />
+                  </fast-text-field>
+                </div>
+      
+                <div class="form-group" v-if="form.signingMode === 'new'">
+                  <label for="signingKeyOrgInput">Key organization</label>
+                  <fast-text-field type="text" class="form-control" id="signingKeyOrgInput" required placeholder="My Company"
+                    name="organization" value="${this.organization}" />
+                  </fast-text-field>
+                </div>
+      
+                <div class="form-group" v-if="form.signingMode === 'new'">
+                  <label for="signingKeyOrgUnitInput">Key organizational unit</label>
+                  <fast-text-field type="text" class="form-control" id="signingKeyOrgUnitInput" required
+                    placeholder="Engineering Department" name="organizationalUnit" value="${this.organizationalUnit}" />
+                  </fast-text-field>
+                </div>
+      
+                <div class="form-group" v-if="form.signingMode === 'new'">
+                  <label for="signingKeyCountryCodeInput">
+                    Key country code
+                    <i class="fas fa-info-circle" title="The 2 letter country code to list on the signing key"
+                      aria-label="The 2 letter country code to list on the signing key" role="definition"></i>
+                  </label>
+                  <fast-text-field type="text" class="form-control" id="signingKeyCountryCodeInput" required placeholder="US"
+                    name="countryCode" value="${this.countryCode}">
+                  </fast-text-field>
+                </div>
+      
+                <div class="form-group">
+                  <label for="signingKeyPasswordInput">
+                    Key password
+                    <i class="fas fa-info-circle"
+                      title="The password for the signing key. Type a new password or leave empty to use a generated password."
+                      aria-label="The password for the signing key. Type a new password or leave empty to use a generated password."
+                      role="definition"></i>
+                  </label>
+                  <fast-text-field type="password" class="form-control" id="signingKeyPasswordInput" name="keyPassword"
+                    placeholder="Password to your signing key" value="${this.keyPassword}" />
+                  </fast-text-field>
+                </div>
+      
+                <div class="form-group">
+                  <label for="signingKeyStorePasswordInput">
+                    Key store password
+                    <i class="fas fa-info-circle"
+                      title="The password for the key store. Type a new password or leave empty to use a generated password."
+                      aria-label="The password for the key store. Type a new password or leave empty to use a generated password."
+                      role="definition"></i>
+                  </label>
+                  <fast-text-field type="password" class="form-control" id="signingKeyStorePasswordInput" name="storePassword"
+                    placeholder="Password to your key store" value="${this.storePassword}" />
+                  </fast-text-field>
+                </div>
+              </div>
             </fast-accordion-item>
           </fast-accordion>
       
