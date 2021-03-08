@@ -9,6 +9,9 @@ import {
 
 import '../components/loading-button';
 import { tooltip, styles as ToolTipStyles } from '../components/tooltip';
+//@ts-ignore
+import style from "../../../styles/form-styles.css";
+
 import { getURL } from '../services/app-info';
 import { getManiURL } from '../services/manifest';
 import { createWindowsPackageOptionsFromManifest } from '../services/publish/windows-publish';
@@ -25,47 +28,9 @@ export class WindowsForm extends LitElement {
 
   static get styles() {
     return [
+      style,
       ToolTipStyles,
       css`
-        #form-layout {
-          padding-left: 2em;
-          padding-right: 2em;
-          overflow-y: auto;
-
-          max-height: 14em;
-        }
-
-        .tooltip {
-          margin-left: 10px;
-        }
-
-        .form-group .tooltip a {
-          color: #fff;
-        }
-
-        .form-group {
-          display: flex;
-          flex-direction: column;
-        }
-
-        .form-group label {
-          font-size: var(--small-medium-font-size);
-          font-weight: bold;
-          line-height: 40px;
-          display: flex;
-          align-items: center;
-        }
-
-        .form-group label a {
-          text-decoration: none;
-          color: var(--font-color);
-        }
-
-        #windows-options-actions {
-          display: flex;
-          justify-content: center;
-          margin-top: 37px;
-        }
 
         #form-layout fast-text-field::part(root) {
           border: 1px solid rgba(194, 201, 209, 1);
@@ -77,89 +42,7 @@ export class WindowsForm extends LitElement {
           border-radius: var(--input-radius);
         }
 
-        #windows-details-block {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        #windows-details-block p {
-          text-align: center;
-          font-weight: 300;
-          font-size: var(--small-medium-font-size);
-
-          color: rgba(128, 128, 128, 1);
-          line-height: 30px;
-
-          padding-left: 2em;
-          padding-right: 2em;
-        }
-
-        .select-group {
-          display: flex;
-          margin-bottom: 10px;
-          padding-left: 2em;
-        }
-
-        #all-settings-header {
-          color: var(--font-color);
-          font-weight: var(--font-bold);
-          font-size: 18px;
-
-          display: flex;
-          align-items: center;
-        }
-
-        fast-accordion {
-          margin-top: 15px;
-          margin-bottom: 15px;
-        }
-
-        fast-accordion,
-        fast-accordion-item {
-          border: none;
-        }
-
-        fast-accordion-item::part(icon) {
-          display: none;
-        }
-
-        .flipper-button {
-          background: white;
-          box-shadow: 0 1px 4px 0px rgb(0 0 0 / 25%);
-          border-radius: 50%;
-          color: #5231a7;
-
-          height: 16px;
-          min-width: 16px;
-
-          margin-left: 5px;
-        }
-
-        .flipper-button ion-icon {
-          pointer-events: none;
-
-          height: 10px;
-          width: 10px;
-        }
-
-        .flipper-button::part(control) {
-          font-size: 18px;
-          padding: 0;
-        }
-
-        .flipper-button::part(content) {
-          padding: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .adv-settings {
-          display: grid;
-          grid-template-columns: 50% 50%;
-          gap: 10px;
-        }
+        
 
         @media (min-height: 760px) and (max-height: 1000px) {
           form {
@@ -602,7 +485,7 @@ export class WindowsForm extends LitElement {
           </fast-accordion>
         </div>
 
-        <div id="windows-details-block">
+        <div id="form-details-block">
           <p>
             Your download will contain instructions for submitting your app to
             the Microsoft Store. Your app will be powered by Chromium-based Edge
@@ -610,7 +493,7 @@ export class WindowsForm extends LitElement {
           </p>
         </div>
 
-        <div slot="modal-actions" id="windows-options-actions">
+        <div slot="modal-actions" id="form-options-actions">
           <loading-button
             @click="${() => this.initGenerate()}"
             .loading="${this.generating}"
