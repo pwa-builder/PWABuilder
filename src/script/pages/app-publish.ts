@@ -172,7 +172,7 @@ export class AppPublish extends LitElement {
           width: 6em;
         }
 
-        #error-modal::part(modal-layout) {
+        #error-modal::part(modal-layout), #download-modal::part(modal-layout), #test-download-modal::part(modal-layout) {
           max-width: 50vw;
         }
 
@@ -233,6 +233,7 @@ export class AppPublish extends LitElement {
   }
 
   async generatePackage(type: platform, form?: HTMLFormElement) {
+    console.log(type, form);
     switch (type) {
       case 'windows':
         try {
@@ -307,6 +308,9 @@ export class AppPublish extends LitElement {
         fileName: 'your_pwa.zip',
         extensions: ['.zip'],
       });
+
+      this.blob = undefined;
+      this.testBlob = undefined;
     }
   }
 
@@ -390,6 +394,7 @@ export class AppPublish extends LitElement {
         ?open="${this.blob ? true : false}"
         title="Download your package"
         body="Your app package is ready for download."
+        id="download-modal"
       >
         <img
           class="modal-image"
@@ -407,6 +412,7 @@ export class AppPublish extends LitElement {
         ?open="${this.testBlob ? true : false}"
         title="Test Package Download"
         body="Want to test your files first before publishing? No problem! Description here about how this isn’t store ready and how they can come back and publish their PWA after doing whatever they need to do with their testing etc etc tc etc."
+        id="test-download-modal"
       >
         <img
           class="modal-image"
