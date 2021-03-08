@@ -176,6 +176,13 @@ export class AppPublish extends LitElement {
           max-width: 50vw;
         }
 
+        #error-modal::part(modal-body) {
+          max-height: 36vh;
+          overflow-y: auto;
+          max-width: inherit;
+          overflow-x: hidden;
+        }
+
         #windows-options-modal::part(modal-layout), #android-options-modal::part(modal-layout) {
           width: 64vw;
         }
@@ -287,6 +294,7 @@ export class AppPublish extends LitElement {
 
           this.generating = false;
         } catch (err) {
+          console.log(err, err.message);
           this.generating = false;
           this.open_android_options = false;
           this.showAlertModal(err);
@@ -434,7 +442,7 @@ export class AppPublish extends LitElement {
       >
         <windows-form
           slot="modal-form"
-          .loading=${this.generating}
+          .generating=${this.generating}
           @init-windows-gen="${ev =>
             this.generatePackage('windows', ev.detail.form)}"
         ></windows-form>
@@ -446,7 +454,7 @@ export class AppPublish extends LitElement {
         body="Customize your Android package below!"
         ?open="${this.open_android_options}"
       >
-        <android-form slot="modal-form" .loading=${this.generating} @init-android-gen="${ev =>
+        <android-form slot="modal-form" .generating=${this.generating} @init-android-gen="${ev =>
             this.generatePackage('android', ev.detail.form)}"></android-form>
       </app-modal>
 

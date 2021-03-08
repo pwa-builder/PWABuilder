@@ -176,7 +176,7 @@ export class AppModal extends LitElement {
               <span id="title">${this.title}</span>
             </section>
 
-            <section id="modal-body">
+            <section id="modal-body" part="modal-body">
               <p>${this.body}</p>
             </section>
 
