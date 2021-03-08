@@ -9,14 +9,19 @@ import {
 
 import '../components/loading-button';
 import { tooltip, styles as ToolTipStyles } from '../components/tooltip';
+import { getURL } from '../services/app-info';
+import { getManiURL } from '../services/manifest';
+import { createWindowsPackageOptionsFromManifest } from '../services/publish/windows-publish';
 
 import { xxLargeBreakPoint } from '../utils/css/breakpoints';
+import { WindowsPackageOptions } from '../utils/win-validation';
 
 @customElement('windows-form')
 export class WindowsForm extends LitElement {
   @property({ type: Boolean }) generating: boolean;
 
   @internalProperty() show_adv = false;
+  @internalProperty() default_options: WindowsPackageOptions | undefined;
 
   static get styles() {
     return [
@@ -172,6 +177,14 @@ export class WindowsForm extends LitElement {
 
   constructor() {
     super();
+  }
+
+  firstUpdated() {
+    const defaultOptions = createWindowsPackageOptionsFromManifest();
+
+    if(defaultOptions){ 
+      this.default_options = defaultOptions;
+    }
   }
 
   initGenerate() {
@@ -370,6 +383,7 @@ export class WindowsForm extends LitElement {
                         id="windowsAppNameInput"
                         placeholder="My Awesome PWA"
                         name="appName"
+                        value="${this.default_options ? this.default_options.name : "My Awesome PWA"}"
                         required
                       ></fast-text-field>
                     </div>
@@ -405,6 +419,7 @@ export class WindowsForm extends LitElement {
                         id="windowsAppVersionInput"
                         placeholder="1.0.1"
                         name="appVersion"
+                        value="${this.default_options ? this.default_options.version : "1.0.0"}"
                         required
                       ></fast-text-field>
                     </div>
@@ -440,6 +455,7 @@ export class WindowsForm extends LitElement {
                         id="windowsClassicAppVersionInput"
                         placeholder="1.0.0"
                         name="classicVersion"
+                        value="${this.default_options ? this.default_options.classicPackage.version : "1.0.1"}"
                         required
                       ></fast-text-field>
                     </div>
@@ -468,6 +484,7 @@ export class WindowsForm extends LitElement {
                     placeholder="/index.html"
                     name="url"
                     required
+                    value="${this.default_options ? this.default_options.url : getURL()}"
                   ></fast-text-field>
                 </div>
 
@@ -492,6 +509,7 @@ export class WindowsForm extends LitElement {
                     id="windowsManifestUrlInput"
                     placeholder="https://mysite.com/manifest.json"
                     name="manifestUrl"
+                    value="${this.default_options ? this.default_options.manifestUrl : getManiURL()}"
                     required
                   ></fast-text-field>
                 </div>
@@ -516,6 +534,7 @@ export class WindowsForm extends LitElement {
                     class="form-control"
                     id="windowsStartUrlInput"
                     placeholder="https://mysite.com/startpoint.html"
+                    value="${this.default_options ? this.default_options.manifest.startUrl : "/"}"
                     name="startUrl"
                   ></fast-text-field>
                 </div>
@@ -546,6 +565,7 @@ export class WindowsForm extends LitElement {
                     class="form-control"
                     id="windowsIconUrlInput"
                     placeholder="https://myawesomepwa.com/512x512.png"
+                    value="${this.default_options ? this.default_options.images.baseImage : ""}"
                     name="iconUrl"
                   ></fast-text-field>
                 </div>
@@ -570,6 +590,7 @@ export class WindowsForm extends LitElement {
                     class="form-control"
                     id="windowsLanguageInput"
                     placeholder="EN-US"
+                    value="${this.default_options ? this.default_options.manifest.lang : "US-EN"}"
                     name="language"
                   ></fast-text-field>
                 </div>
