@@ -53,7 +53,7 @@ export class WindowsForm extends LitElement {
         ${xxLargeBreakPoint(
           css`
             #form-layout {
-              max-height: 24em;
+              max-height: 17em;
             }
           `
         )}
