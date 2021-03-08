@@ -194,7 +194,6 @@ export class AndroidForm extends LitElement {
         @media (min-height: 760px) and (max-height: 1000px) {
           form {
             width: 100%;
-            overflow-y: auto;
           }
         }
 
