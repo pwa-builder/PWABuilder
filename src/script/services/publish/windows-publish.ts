@@ -1,5 +1,6 @@
 import { env } from '../../utils/environment';
 import { findSuitableIcon } from '../../utils/icons';
+import { Manifest } from '../../utils/interfaces';
 import {
   generateWindowsPackageId,
   validateWindowsOptions,
@@ -47,9 +48,16 @@ export async function generateWindowsPackage(
   }
 }
 
-export function createWindowsPackageOptionsFromManifest(
+export function createWindowsPackageOptionsFromManifest(localManifest?: Manifest
 ): WindowsPackageOptions {
-  const manifest = getManifest();
+  let manifest: Manifest | null = null;
+
+  if (localManifest) {
+    manifest = localManifest;
+  }
+  else {
+    manifest = getManifest();
+  }
 
   if (manifest) {
     const maniURL = getManiURL();

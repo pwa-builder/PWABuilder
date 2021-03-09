@@ -15,7 +15,6 @@ import {
 } from '../utils/css/breakpoints';
 
 import './score-results';
-import { getURL } from '../services/app-info';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {
@@ -213,16 +212,6 @@ export class ReportCard extends LitElement {
     }
     else {
       this.scoreCardResults = this.results;
-    }
-
-    this.getCurrent();
-  }
-
-  getCurrent() {
-    const current = getURL();
-
-    if (current) {
-      this.currentURL = current;
     }
   }
 
