@@ -243,7 +243,7 @@ export class AppPublish extends LitElement {
   }
 
   async grabBackupManifest() {
-    console.error("Error generating package because manifest information is missing, trying fallback", err);
+    console.error("Error generating package because manifest information is missing, trying fallback");
     const search = new URLSearchParams(location.search);
     let site: string | null = null;
     if (search) {
