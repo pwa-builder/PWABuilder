@@ -64,6 +64,129 @@ export async function generateAndroidPackage(
   return undefined;
 }
 
+export function createAndroidPackageOptionsFromForm(form: HTMLFormElement): AndroidApkOptions {
+  const manifest = getManifest();
+  if (!manifest) {
+    throw new Error('Could not find the web manifest');
+  }
+
+  const maniURL = getManiURL();
+  const pwaURL = getURL();
+
+  if (!pwaURL) {
+    throw new Error("Can't find the current URL");
+  }
+
+  if (!maniURL) {
+    throw new Error('Cant find the manifest URL');
+  }
+
+  const appName = form.appName.value || manifest.short_name || manifest.name || 'My PWA';
+  const packageName = generatePackageId(form.packageId.value || new URL(pwaURL).hostname);
+  // Use standalone display mode unless the manifest has fullscreen specified.
+  const display = 
+    manifest.display === 'fullscreen' ? 'fullscreen' : 'standalone';
+  // StartUrl must be relative to the host.
+  // We make sure it is below.
+  let relativeStartUrl: string;
+  if (
+    !manifest.start_url ||
+    manifest.start_url === '/' ||
+    manifest.start_url === '.' ||
+    manifest.start_url === './'
+  ) {
+    // First, if we don't have a start_url in the manifest, or it's just "/",
+    // then we can just use that.
+    relativeStartUrl = '/';
+  } else {
+    // The start_url in the manifest is either a relative or absolute path.
+    // Ensure it's a path relative to the root.
+    const absoluteStartUrl = new URL((manifest.start_url as string), maniURL);
+    relativeStartUrl =
+      absoluteStartUrl.pathname + (absoluteStartUrl.search || '');
+  }
+
+  // TODO Justin, looks like the usage of this has been removed?
+  console.log(relativeStartUrl);
+
+  const manifestIcons = manifest.icons || [];
+  const icon =
+    findSuitableIcon(manifestIcons, 'any', 512, 512, 'image/png') ||
+    findSuitableIcon(manifestIcons, 'any', 192, 192, 'image/png') ||
+    findSuitableIcon(manifestIcons, 'any', 512, 512, 'image/jpeg') ||
+    findSuitableIcon(manifestIcons, 'any', 192, 192, 'image/jpeg') ||
+    findSuitableIcon(manifestIcons, 'any', 512, 512, undefined) || // A 512x512 or larger image with unspecified type
+    findSuitableIcon(manifestIcons, 'any', 192, 192, undefined) || // A 512x512 or larger image with unspecified type
+    findSuitableIcon(manifestIcons, 'any', 0, 0, undefined); // Welp, we tried. Any image of any size, any type.
+
+  if (!icon) {
+    throw new Error(
+      "Can't find a suitable icon to use for the Android package. Ensure your manifest has a square, large (512x512 or better) PNG icon."
+    );
+  }
+
+  const maskableIcon =
+    findSuitableIcon(manifestIcons, 'maskable', 512, 512, 'image/png') ||
+    findSuitableIcon(manifestIcons, 'maskable', 192, 192, 'image/png') ||
+    findSuitableIcon(manifestIcons, 'maskable', 192, 192, undefined);
+  const monochromeIcon =
+    findSuitableIcon(manifestIcons, 'monochrome', 512, 512, 'image/png') ||
+    findSuitableIcon(manifestIcons, 'monochrome', 192, 192, 'image/png') ||
+    findSuitableIcon(manifestIcons, 'monochrome', 192, 192, undefined);
+  const navColorOrFallback =
+    manifest.theme_color || manifest.background_color || '#000000';
+
+  return {
+    appVersion: form.appVersion.value || '1.0.0.0',
+    appVersionCode: form.appVersionCode.value || 1,
+    backgroundColor:
+      form.backgroundColor.value || manifest.background_color || manifest.theme_color || '#FFFFFF',
+    display: form.displayMode.value || display,
+    enableNotifications: form.enableNotifications.value || true,
+    enableSiteSettingsShortcut: form.enableSiteSettingsShortcut.value || true,
+    fallbackType: form.fallbackType.value || 'customtabs',
+    features: {
+      locationDelegation: {
+        enabled: form.locationDelegation.value ||  true,
+      },
+      playBilling: {
+        enabled: form.playBilling.value || false,
+      },
+    },
+    host: form.host.value || maniURL,
+    iconUrl: getAbsoluteUrl(icon.src, maniURL),
+    includeSourceCode: form.includeSourceCode.value || false,
+    isChromeOSOnly: form.isChromeOSOnly.value || false,
+    launcherName: form.launcherName.value || manifest.short_name || appName, // launcher name should be the short name. If none is available, fallback to the full app name.
+    maskableIconUrl: getAbsoluteUrl(maskableIcon?.src, maniURL),
+    monochromeIconUrl: getAbsoluteUrl(monochromeIcon?.src, maniURL),
+    name: form.appName.value || manifest.name || "My Awesome PWA",
+    navigationColor: form.navigationColor.value || navColorOrFallback,
+    navigationColorDark: form.navigationColorDark.value || navColorOrFallback,
+    navigationDividerColor: form.navigationDividerColor.value || navColorOrFallback,
+    navigationDividerColorDark: form.navigationDividerColorDark.value || navColorOrFallback,
+    orientation: manifest.orientation || 'default',
+    packageId: form.packageId.value || packageName,
+    shortcuts: manifest.shortcuts || [],
+    signing: {
+      file: form.file ? form.file.value : null,
+      alias: form.alias.value || 'my-key-alias',
+      fullName: form.fullName.value || `${manifest.short_name || manifest.name || 'App'} Admin`,
+      organization: form.organization.value || manifest.name || 'PWABuilder',
+      organizationalUnit: form.organizationalUnit.value || 'Engineering',
+      countryCode: 'US',
+      keyPassword: '', // If empty, one will be generated by CloudAPK service
+      storePassword: '', // If empty, one will be generated by CloudAPK service
+    },
+    signingMode: form.signingMode ? form.signingMode.value : 'new',
+    splashScreenFadeOutDuration: form.splashScreenFadeOutDuration.value || 300,
+    startUrl: form.startUrl.value || manifest.start_url as string,
+    themeColor: form.themeColor.value || manifest.theme_color || '#FFFFFF',
+    shareTarget: manifest.share_target,
+    webManifestUrl: form.maniURL ? form.maniURL.value : maniURL,
+  };
+}
+
 export function createAndroidPackageOptionsFromManifest(): AndroidApkOptions {
   const manifest = getManifest();
   if (!manifest) {
@@ -101,7 +224,7 @@ export function createAndroidPackageOptionsFromManifest(): AndroidApkOptions {
   } else {
     // The start_url in the manifest is either a relative or absolute path.
     // Ensure it's a path relative to the root.
-    const absoluteStartUrl = new URL(manifest.start_url, maniURL);
+    const absoluteStartUrl = new URL((manifest.start_url as string), maniURL);
     relativeStartUrl =
       absoluteStartUrl.pathname + (absoluteStartUrl.search || '');
   }
@@ -140,7 +263,7 @@ export function createAndroidPackageOptionsFromManifest(): AndroidApkOptions {
     appVersion: '1.0.0.0',
     appVersionCode: 1,
     backgroundColor:
-      manifest.background_color || manifest.theme_color || '#FFFFFF',
+      (manifest.background_color as string) || (manifest.theme_color as string) || '#FFFFFF',
     display: display,
     enableNotifications: true,
     enableSiteSettingsShortcut: true,
@@ -157,14 +280,14 @@ export function createAndroidPackageOptionsFromManifest(): AndroidApkOptions {
     iconUrl: getAbsoluteUrl(icon.src, maniURL),
     includeSourceCode: false,
     isChromeOSOnly: false,
-    launcherName: manifest.short_name || appName, // launcher name should be the short name. If none is available, fallback to the full app name.
+    launcherName: (manifest.short_name as string) || (appName as string), // launcher name should be the short name. If none is available, fallback to the full app name.
     maskableIconUrl: getAbsoluteUrl(maskableIcon?.src, maniURL),
     monochromeIconUrl: getAbsoluteUrl(monochromeIcon?.src, maniURL),
-    name: appName,
-    navigationColor: navColorOrFallback,
-    navigationColorDark: navColorOrFallback,
-    navigationDividerColor: navColorOrFallback,
-    navigationDividerColorDark: navColorOrFallback,
+    name: (appName as string),
+    navigationColor: (navColorOrFallback as string),
+    navigationColorDark: (navColorOrFallback as string),
+    navigationDividerColor: (navColorOrFallback as string),
+    navigationDividerColorDark: (navColorOrFallback as string),
     orientation: manifest.orientation || 'default',
     packageId: packageName,
     shortcuts: manifest.shortcuts || [],
@@ -181,7 +304,7 @@ export function createAndroidPackageOptionsFromManifest(): AndroidApkOptions {
     signingMode: 'new',
     splashScreenFadeOutDuration: 300,
     startUrl: manifest.start_url as string,
-    themeColor: manifest.theme_color || '#FFFFFF',
+    themeColor: (manifest.theme_color as string) || '#FFFFFF',
     shareTarget: manifest.share_target,
     webManifestUrl: maniURL,
   };

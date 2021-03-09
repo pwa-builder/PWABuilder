@@ -79,8 +79,7 @@ export function generateWindowsPackageId(host: string): string {
 }
 
 export function validateWindowsOptions(
-  options: WindowsPackageOptions,
-  configuration: 'anaheim' | 'spartan'
+  options: WindowsPackageOptions
 ): WindowsPackageValidationError[] {
   const validationErrors: WindowsPackageValidationError[] = [];
   if (!options) {
@@ -103,39 +102,26 @@ export function validateWindowsOptions(
 
   const versionTrimmed = (options.version || '').trim();
   // For Anaheim packages, we need to validate both version and classic version.
-  if (configuration === 'anaheim') {
-    if (!options.classicPackage) {
+  if (!options.classicPackage) {
+    validationErrors.push({
+      field: 'classicPackage',
+      error: 'Must have classic package information',
+    });
+  } else {
+    const classicVersionTrimmed = (options.classicPackage.version || '').trim();
+    if (!versionTrimmed || !classicVersionTrimmed) {
       validationErrors.push({
-        field: 'classicPackage',
-        error: 'Must have classic package information',
+        field: 'version',
+        error: 'Must have an app version and a classic package version',
       });
     } else {
-      const classicVersionTrimmed = (
-        options.classicPackage.version || ''
-      ).trim();
-      if (!versionTrimmed || !classicVersionTrimmed) {
-        validationErrors.push({
-          field: 'version',
-          error: 'Must have an app version and a classic package version',
-        });
-      } else {
-        validationErrors.push(
-          ...validateWindowsAnaheimPackageVersions(
-            versionTrimmed,
-            classicVersionTrimmed
-          )
-        );
-      }
+      validationErrors.push(
+        ...validateWindowsAnaheimPackageVersions(
+          versionTrimmed,
+          classicVersionTrimmed
+        )
+      );
     }
-  } else {
-    // Spartan package: just validate the version; skip classic version.
-    validationErrors.push(
-      ...validateVersion({
-        name: 'version',
-        label: 'Version',
-        value: versionTrimmed,
-      })
-    );
   }
 
   // Validating publisher options

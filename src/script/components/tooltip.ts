@@ -8,7 +8,7 @@ function createTooltipId() {
   return 'tooltip-num-' + current;
 }
 
-export function tooltip(buttonId: string, text: string) {
+export function tooltip(buttonId: string, text: string, url?: string) {
   const tooltipId = createTooltipId();
 
   return html`
@@ -18,13 +18,18 @@ export function tooltip(buttonId: string, text: string) {
       appearance="stealth"
       aria-labelledby="${tooltipId}"
     >
+
       <img
         src="assets/images/help-outline.svg"
         alt="help outline"
         aria-hidden="true"
       />
 
-      <span id="${tooltipId}" class="tooltip-text"> ${text} </span>
+      ${url && url.length > 0
+        ? html`<a href="${url}" id="${tooltipId}" class="tooltip-text"
+            >${text}</a
+          >`
+        : html`<span id="${tooltipId}" class="tooltip-text"> ${text} </span>`}
     </fast-button>
   `;
 }
@@ -41,6 +46,7 @@ export const styles = css`
     padding: 2px;
     border-radius: var(--button-radius);
     min-width: 16px;
+    max-width: 4em;
   }
 
   .tooltip::part(control) {
@@ -52,7 +58,7 @@ export const styles = css`
   }
 
   .tooltip-text {
-    visibility: hidden;
+    display: none;
     color: #fff;
     background-color: var(--font-color);
     padding: 8px;
@@ -60,13 +66,16 @@ export const styles = css`
     position: relative;
     z-index: 1;
     text-align: center;
+
+    white-space: break-spaces;
+    width: 14em;
   }
 
   .tooltip:focus > .tooltip-text,
   .tooltip:focus-visible > .tooltip-text,
   .tooltip:focus-within > .tooltip-text,
   .tooltip:hover > .tooltip-text {
-    visibility: visible;
+    display: inline-block;
   }
 
   fast-button:hover {

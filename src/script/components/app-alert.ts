@@ -56,7 +56,6 @@ export class AppAlert extends LitElement {
     await this.updateComplete;
 
     this.dialog = this.shadowRoot?.querySelector('#alert');
-    console.log(this.dialog);
 
     if (this.dialog) {
       (this.dialog as HTMLElement).style.top = `${yValue}px`;
