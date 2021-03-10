@@ -5,6 +5,7 @@ import {
 } from '../../utils/android-validation';
 import { env } from '../../utils/environment';
 import { findSuitableIcon } from '../../utils/icons';
+import { Manifest } from '../../utils/interfaces';
 import { getURL } from '../app-info';
 import { getManifest, getManiURL } from '../manifest';
 
@@ -187,8 +188,16 @@ export function createAndroidPackageOptionsFromForm(form: HTMLFormElement): Andr
   };
 }
 
-export function createAndroidPackageOptionsFromManifest(): AndroidApkOptions {
-  const manifest = getManifest();
+export function createAndroidPackageOptionsFromManifest(localManifest?: Manifest): AndroidApkOptions {
+  let manifest: Manifest | null = null;
+
+  if (localManifest) {
+    manifest = localManifest;
+  }
+  else {
+    manifest = getManifest();
+  }
+  
   if (!manifest) {
     throw new Error('Could not find the web manifest');
   }

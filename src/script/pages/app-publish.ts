@@ -35,6 +35,9 @@ import {
 //@ts-ignore
 import style from '../../../styles/layout-defaults.css';
 import { fileSave } from 'browser-fs-access';
+import { fetchManifest, getManifest } from '../services/manifest';
+import { getURL } from '../services/app-info';
+import { Manifest } from '../utils/interfaces';
 
 @customElement('app-publish')
 export class AppPublish extends LitElement {
@@ -239,12 +242,37 @@ export class AppPublish extends LitElement {
     ];
   }
 
+  async grabBackupManifest() {
+    console.error("Error generating package because manifest information is missing, trying fallback");
+    const search = new URLSearchParams(location.search);
+    let site: string | null = null;
+    if (search) {
+      site = search.get('site');
+    }
+
+    let localManifest: Manifest | null = null;
+
+    if (site) {
+      const maniResults = await fetchManifest(site);
+
+      if (maniResults && maniResults.content) {
+        localManifest = maniResults.content;
+      }
+    }
+
+    return localManifest;
+  }
+
   async generatePackage(type: platform, form?: HTMLFormElement) {
     switch (type) {
       case 'windows':
         try {
           this.generating = true;
 
+          // First we check for a form
+          // and generate based off of that.
+          // We will have a form if the user is going to
+          // prod
           if (form) {
             const options = createWindowsPackageOptionsFromForm(form);
 
@@ -256,8 +284,22 @@ export class AppPublish extends LitElement {
             }
           }
           else {
-            const options = createWindowsPackageOptionsFromManifest();
-            this.testBlob = await generateWindowsPackage(options);
+
+            // No form, lets generate from the manifest
+            try {
+              const options = createWindowsPackageOptionsFromManifest();
+              this.testBlob = await generateWindowsPackage(options);
+            }
+            catch(err) {
+              // Oh no, looks like we dont have the manifest in memory
+              // Lets try to grab it
+              const localManifest = await this.grabBackupManifest();
+
+              if (localManifest) {
+                const options = createWindowsPackageOptionsFromManifest(localManifest);
+                this.testBlob = await generateWindowsPackage(options);
+              }
+            }
 
             this.generating = false;
             this.open_windows_options = false;
@@ -284,8 +326,20 @@ export class AppPublish extends LitElement {
             }
           }
           else {
-            const androidOptions = createAndroidPackageOptionsFromManifest();
-            this.blob = await generateAndroidPackage(androidOptions);
+
+            try {
+              const androidOptions = createAndroidPackageOptionsFromManifest();
+              this.testBlob = await generateAndroidPackage(androidOptions);
+            }
+            catch (err) {
+              // Oh no, looks like we dont have the manifest in memory
+              // Lets try to grab it
+              const localManifest = await this.grabBackupManifest();
+              if (localManifest) {
+                const androidOptions = createAndroidPackageOptionsFromManifest(localManifest);
+                this.testBlob = await generateAndroidPackage(androidOptions);
+              }
+            }
 
             this.generating = false;
             this.open_android_options = false;
