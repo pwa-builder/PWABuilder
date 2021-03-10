@@ -131,14 +131,23 @@ export default class extends Vue {
         });
       } else {
         const responseText = await response.text();
-        
+
         // Did it fail because images couldn't be fetched with ECONNREFUSED? E.g. https://github.com/pwa-builder/PWABuilder/issues/1312
         // If so, retry using our downloader proxy service.
-        const hasSafeImages = this.androidOptions.iconUrl && this.androidOptions.iconUrl.includes(process.env.safeUrlFetcher || "");
-        const isConnectionRefusedOrForbidden = (responseText || "").includes("ECONNREFUSED") || response.status === 403;
-        
+        const hasSafeImages =
+          this.androidOptions.iconUrl &&
+          this.androidOptions.iconUrl.includes(
+            process.env.safeUrlFetcher || ""
+          );
+        const isConnectionRefusedOrForbidden =
+          (responseText || "").includes("ECONNREFUSED") ||
+          response.status === 403;
+
         if (!hasSafeImages && isConnectionRefusedOrForbidden) {
-          console.warn("Android package generation failed with ECONNREFUSED. Retrying with safe images.", responseText);
+          console.warn(
+            "Android package generation failed with ECONNREFUSED. Retrying with safe images.",
+            responseText
+          );
           this.updateAndroidOptionsWithSafeUrls(this.androidOptions);
           await this.generateAndroidPackage();
         } else {
@@ -161,8 +170,11 @@ export default class extends Vue {
       this.showErrorMessage("Invalid Windows options. No options specified.");
       return;
     }
-    
-    const validationErrors = validateWindowsOptions(this.windowsOptions, configuration);
+
+    const validationErrors = validateWindowsOptions(
+      this.windowsOptions,
+      configuration
+    );
     if (validationErrors.length > 0 || !this.windowsOptions) {
       this.showErrorMessage(
         "Invalid Windows options. " +
@@ -172,7 +184,7 @@ export default class extends Vue {
       return;
     }
 
-    this.message$ = 'Generating...';
+    this.message$ = "Generating...";
     this.isReady = false;
 
     try {
@@ -206,16 +218,19 @@ export default class extends Vue {
   }
 
   public async generateMacOSPackage() {
-    this.message$ = 'Generating...';
+    this.message$ = "Generating...";
     this.isReady = false;
     try {
-      const response = await fetch(`${process.env.macosPackageGeneratorUrl}?siteUrl=${this.siteHref}`, {
-        method: "POST",
-        body: JSON.stringify(this.manifest),
-        headers: new Headers({
-          "content-type": "application/json"
-        })
-      });
+      const response = await fetch(
+        `${process.env.macosPackageGeneratorUrl}?siteUrl=${this.siteHref}`,
+        {
+          method: "POST",
+          body: JSON.stringify(this.manifest),
+          headers: new Headers({
+            "content-type": "application/json",
+          }),
+        }
+      );
       if (response.status === 200) {
         const data = await response.blob();
         const url = window.URL.createObjectURL(data);
@@ -225,7 +240,7 @@ export default class extends Vue {
         const responseText = await response.text();
         this.showErrorMessage(
           `Failed. Status code ${response.status}, Error: ${response.statusText}, Details: ${responseText}`
-        )
+        );
       }
     } catch (error) {
       this.showErrorMessage("Failed. Error: " + error);
@@ -239,13 +254,23 @@ export default class extends Vue {
     this.message$ = "Generating...";
     this.isReady = false;
     try {
-      const response = await fetch(`${process.env.webPackageGeneratorUrl}?siteUrl=${this.siteHref}&hasServiceWorker=${false}`, {
-        method: "POST",
-        body: JSON.stringify(this.manifest),
-        headers: new Headers({
-          "content-type": "application/json"
-        })
-      });
+      // The web package generator dies when screenshots is null. If detected, set screenshots to empty array.
+      const manifestWithScreenshots = { ...this.manifest };
+      if (!manifestWithScreenshots.screenshots) {
+        manifestWithScreenshots.screenshots = [];
+      }
+      const response = await fetch(
+        `${process.env.webPackageGeneratorUrl}?siteUrl=${
+          this.siteHref
+        }&hasServiceWorker=${false}`,
+        {
+          method: "POST",
+          body: JSON.stringify(manifestWithScreenshots),
+          headers: new Headers({
+            "content-type": "application/json",
+          }),
+        }
+      );
       if (response.status === 200) {
         const data = await response.blob();
         const url = window.URL.createObjectURL(data);
@@ -255,7 +280,7 @@ export default class extends Vue {
         const responseText = await response.text();
         this.showErrorMessage(
           `Failed. Status code ${response.status}, Error: ${response.statusText}, Details: ${responseText}`
-        )
+        );
       }
     } catch (error) {
       this.showErrorMessage("Failed. Error: " + error);
@@ -329,7 +354,9 @@ export default class extends Vue {
     });
   }
 
-  private updateAndroidOptionsWithSafeUrls(options: publish.AndroidApkOptions): publish.AndroidApkOptions {
+  private updateAndroidOptionsWithSafeUrls(
+    options: publish.AndroidApkOptions
+  ): publish.AndroidApkOptions {
     const absoluteUrlProps: Array<keyof publish.AndroidApkOptions> = [
       "maskableIconUrl",
       "monochromeIconUrl",
@@ -339,7 +366,9 @@ export default class extends Vue {
     for (let prop of absoluteUrlProps) {
       const url = options[prop];
       if (url && typeof url === "string") {
-        const safeUrl = `${process.env.safeUrlFetcher}?url=${encodeURIComponent(url)}`;
+        const safeUrl = `${process.env.safeUrlFetcher}?url=${encodeURIComponent(
+          url
+        )}`;
         (options as any)[prop] = safeUrl;
       }
     }

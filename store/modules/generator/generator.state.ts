@@ -102,9 +102,19 @@ export interface CodeError {
   issues: CodeIssue[];
 }
 
+/**
+ * A W3C web manifest, with an additional property containing the URL of the manifest.
+ */
+export interface ManifestContext extends Manifest {
+  /**
+   * The URL of the manifest.
+   */
+  manifestUrl: string | null;
+}
+
 export interface State {
   url: string | null;
-  manifest: Manifest | null;
+  manifest: ManifestContext | null;
   manifestUrl: string | null;
   manifestId: string | null;
   siteServiceWorkers: any;
@@ -141,7 +151,7 @@ export interface ManifestDetectionResult {
   format: "w3c" | "chromeos" | "edgeextension" | "windows10" | "firefox",
   generatedUrl: string,
   default: {
-      short_name: string
+    short_name: string
   },
   id: string,
   errors: [],
@@ -154,6 +164,8 @@ export interface ServiceWorkerDetectionResult {
   scope: string | null;
   url: string | null;
   hasPushRegistration: boolean;
+  hasBackgroundSync: boolean;
+  hasPeriodicBackgroundSync: boolean;
   serviceWorkerDetectionTimedOut: boolean;
   noServiceWorkerFoundDetails: string | null;
 }

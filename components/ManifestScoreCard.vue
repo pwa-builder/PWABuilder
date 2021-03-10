@@ -22,7 +22,7 @@ import {
 } from "~/utils/score-card-metric";
 import { getCache, setCache } from "~/utils/caching";
 import { Prop } from "vue-property-decorator";
-import { Manifest } from "~/store/modules/generator";
+import { Manifest, ManifestContext } from "~/store/modules/generator";
 import * as generator from "~/store/modules/generator";
 import { Action, namespace } from "vuex-class";
 import { findSuitableIcon } from "~/utils/icon-utils";
@@ -31,9 +31,9 @@ const GeneratorAction = namespace(generator.name, Action);
 @Component({ name: "ManifestScoreCard", components: { ScoreCard } })
 export default class extends Vue {
   @Prop({ type: String }) url: string;
-  @GeneratorAction getManifestInformation: () => Promise<Manifest>;
-  @GeneratorAction updateManifest: (manifest: Manifest) => void;
-  manifest: Manifest | null = null;
+  @GeneratorAction getManifestInformation: () => Promise<ManifestContext>;
+  @GeneratorAction updateManifest: (manifest: ManifestContext) => void;
+  manifest: ManifestContext | null = null;
   noManifest = false;
   manifestLoadFinished = false;
 
@@ -150,8 +150,14 @@ export default class extends Vue {
       "Specifies <a href='https://web.dev/get-installed-related-apps/'>related_applications</a> and <a href='https://developer.mozilla.org/en-US/docs/Web/Manifest/prefer_related_applications'>prefer_related_applications</a> for coordination with a native app",
       1,
       "optional",
-      () => this.getStatus((m) => !!m.related_applications && m.related_applications.length > 0 && m.prefer_related_applications !== undefined)
-    )
+      () =>
+        this.getStatus(
+          (m) =>
+            !!m.related_applications &&
+            m.related_applications.length > 0 &&
+            m.prefer_related_applications !== undefined
+        )
+    ),
   ];
 
   created() {
@@ -180,7 +186,7 @@ export default class extends Vue {
       return `<i class="fas fa-magic"></i> create a new one`;
     }
 
-    if (this.manifest) {      
+    if (this.manifest) {
       return `<i class='far fa-edit'></i> Edit your manifest`;
     }
 
@@ -188,7 +194,7 @@ export default class extends Vue {
   }
 
   async findManifest(): Promise<void> {
-    const cachedData: Manifest | null = getCache("manifest", this.url);
+    const cachedData: ManifestContext | null = getCache("manifest", this.url);
     if (cachedData) {
       this.manifest = cachedData;
     } else {
@@ -204,75 +210,25 @@ export default class extends Vue {
     if (this.manifest && !this.noManifest) {
       try {
         await this.updateCaches(this.manifest);
-      } catch(updateCachesError) {
-        console.warn("Manifest fetch succeeded, however, updating caches failed: " + updateCachesError);
+      } catch (updateCachesError) {
+        console.warn(
+          "Manifest fetch succeeded, however, updating caches failed: " +
+            updateCachesError
+        );
       }
     }
-    
-    this.manifestLoadFinished = true;    
+
+    this.manifestLoadFinished = true;
   }
 
-  private async updateCaches(manifest: Manifest) {
+  private async updateCaches(manifest: ManifestContext) {
     this.updateManifest(manifest);
     await setCache("manifest", this.url, manifest);
-
-    this.noManifest = false;
-    let manifestScoreData: ManifestScoreData | null = null;
-
-    // Store the manifest score data in the cache.
-    const cachedData: ManifestScoreData = getCache(
-      "manifestScoreData",
-      this.url
-    );
-    if (cachedData) {
-      manifestScoreData = cachedData;
-    } else {
-      // Why do we need to post to Reddis? Because packaging for some old platforms look for the manifest in the Redis cache.
-      manifestScoreData = await this.storeManifestInRedis();
-      setCache("manifestScoreData", this.url, manifestScoreData);
-    }
   }
 
-  private async storeManifestInRedis(): Promise<ManifestScoreData> {
-    const manifestContents = this.getManifestContentsFromSessionStorage();
-    const manifestAnalysisUrl = `${
-      process.env.testAPIUrl
-    }/WebManifest?site=${encodeURIComponent(this.url)}`;
-    const response = await fetch(manifestAnalysisUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: manifestContents
-        ? JSON.stringify({ manifest: manifestContents, maniurl: this.url })
-        : "",
-    });
-
-    if (!response.ok) {
-      console.warn(
-        "Failed to store manifest in Redis.",
-        response,
-        manifestContents
-      );
-      throw new Error(
-        "Failed to store manifest in Redis. " + response.statusText
-      );
-    }
-
-    const manifestScoreData: ManifestScoreData = await response.json();
-    return manifestScoreData;
-  }
-
-  private getManifestContentsFromSessionStorage(): string | null {
-    if (sessionStorage && this.url) {
-      const key = "manifest/" + this.url;
-      return sessionStorage.getItem(key);
-    }
-
-    return null;
-  }
-
-  private getStatus(manifestCheck: (manifest: Manifest) => boolean): ScoreCardMetricStatus {
+  private getStatus(
+    manifestCheck: (manifest: Manifest) => boolean
+  ): ScoreCardMetricStatus {
     if (this.noManifest) {
       return "missing";
     }
@@ -321,24 +277,16 @@ export default class extends Vue {
 
   private isStandardOrientation(orientation: string) {
     const standardOrientations = [
-      "any", 
-      "natural", 
-      "landscape", 
-      "landscape-primary", 
-      "landscape-secondary", 
-      "portrait", 
-      "portrait-primary", 
-      "portrait-secondary"
+      "any",
+      "natural",
+      "landscape",
+      "landscape-primary",
+      "landscape-secondary",
+      "portrait",
+      "portrait-primary",
+      "portrait-secondary",
     ];
     return standardOrientations.includes(orientation);
   }
-}
-
-interface ManifestScoreData {
-  content: {
-    json: string;
-    url: string;
-  };
-  data: unknown;
 }
 </script>

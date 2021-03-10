@@ -84,7 +84,7 @@ export default class extends Vue {
     if (!this.serviceWorkerLoadFinished) {
       return "";
     }
-    
+
     if (
       !this.serviceWorkerData ||
       this.serviceWorkerData.serviceWorkerDetectionTimedOut
@@ -110,17 +110,15 @@ export default class extends Vue {
       return;
     }
 
-    // We run 3 checks concurrently:
+    // We run 2 checks concurrently:
     // Detect the service worker
     // Detect offline support
-    // Detect periodic sync support
     //
-    // Offline and periodic sync are checked separately because they are longer-running process and
+    // Offline is checked separately because it is a longer-running process and
     // we want to give more immediate feedback to the user.
     const fetcher = new ServiceWorkerChecker(this.url);
     const detectServiceWorkerTask = fetcher.detectServiceWorker();
     const detectOfflineTask = fetcher.detectOfflineSupport();
-    const detectPeriodicSyncTask = fetcher.detectPeriodicSyncSupport();
 
     // Wait for the service worker check to come in and update the score accordingly.
     let serviceWorkerResult: ServiceWorkerDetectionResult | null = null;
@@ -129,6 +127,7 @@ export default class extends Vue {
       this.serviceWorkerData = serviceWorkerResult;
       this.noServiceWorker = serviceWorkerResult.hasSW === false;
       this.timedOutSW = serviceWorkerResult.serviceWorkerDetectionTimedOut;
+      this.hasPeriodicSync = serviceWorkerResult.hasPeriodicBackgroundSync;
     } catch (err) {
       this.noSwScore();
     } finally {
@@ -141,17 +140,6 @@ export default class extends Vue {
       this.hasPeriodicSync = false;
       this.noServiceWorker = true;
     } else {
-      // Wait for the periodic sync check to come back
-      try {
-        this.hasPeriodicSync = await detectPeriodicSyncTask;
-      } catch (periodicSyncDetectionError) {
-        console.warn(
-          "Error detecting periodic sync status",
-          periodicSyncDetectionError
-        );
-        this.hasPeriodicSync = false;
-      }
-
       // Wait for the offline check to come back
       try {
         this.worksOffline = await detectOfflineTask;
@@ -191,7 +179,7 @@ export default class extends Vue {
     if (this.noServiceWorker) {
       return "missing";
     }
-    
+
     if (this.hasPeriodicSync === null) {
       return "loading";
     }
@@ -208,7 +196,7 @@ export default class extends Vue {
     if (this.noServiceWorker) {
       return "missing";
     }
-    
+
     if (this.worksOffline === null) {
       return "loading";
     }
