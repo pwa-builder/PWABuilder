@@ -7,6 +7,7 @@ import {
 
 let site_url: string | undefined;
 let results: RawTestResult | undefined;
+let wasPWA: boolean | undefined;
 
 let progress: ProgressList = {
   progress: [
@@ -104,6 +105,7 @@ export function getURL() {
 }
 
 export function setResults(testResults: RawTestResult) {
+  console.log('testResults', testResults);
   results = testResults;
   sessionStorage.setItem('current_results', JSON.stringify(testResults));
 }
@@ -121,4 +123,12 @@ export function getResults(): RawTestResult | undefined {
       return undefined;
     }
   }
+}
+
+export function enteredAsPWA(iffy?: boolean): boolean {
+  if (iffy) {
+    wasPWA = iffy;
+  }
+
+  return wasPWA;
 }

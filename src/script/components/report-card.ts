@@ -21,6 +21,7 @@ import { getURL } from '../services/app-info';
 export class ReportCard extends LitElement {
   @property() results: RawTestResult | undefined;
   @property() scoreCardResults: RawTestResult | undefined;
+  @property() ispwa: boolean;
 
   @internalProperty() maniScore = 0;
   @internalProperty() swScore = 0;
@@ -200,6 +201,7 @@ export class ReportCard extends LitElement {
   }
 
   async firstUpdated() {
+    console.log('this.ispwa', this.ispwa);
     if (!this.results) {
       // Should never really end up here
       // But just in case this component tries to render without results
@@ -440,9 +442,10 @@ export class ReportCard extends LitElement {
           </div>
 
           <div id="package-block">
-            <fast-anchor href="${`/publish?site=${this.currentURL}`}" appearance="button"
+           ${ this.ispwa ? html`<fast-anchor href="${`/publish?site=${this.currentURL}`}" appearance="button"
               >Package</fast-anchor
-            >
+            >` : html`<fast-anchor href="/basepackage">Next</fast-anchor>`
+            }
           </div>
         </div>
       </div>

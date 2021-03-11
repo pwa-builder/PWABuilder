@@ -25,6 +25,7 @@ import '../components/app-sidebar';
 //@ts-ignore
 import style from '../../../styles/layout-defaults.css';
 import { RawTestResult, ScoreEvent } from '../utils/interfaces';
+import { enteredAsPWA } from '../services/app-info';
 
 @customElement('app-report')
 export class AppReport extends LitElement {
@@ -33,6 +34,7 @@ export class AppReport extends LitElement {
   @internalProperty() swScore = 0;
   @internalProperty() maniScore = 0;
   @internalProperty() securityScore = 0;
+  @internalProperty() isPWA = false;
 
   @internalProperty() mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`
@@ -177,6 +179,17 @@ export class AppReport extends LitElement {
     } else if (type === 'security') {
       this.securityScore = score;
     }
+
+    if (this.swScore && this.maniScore) {
+      if (this.maniScore === 0 || this.swScore === 0) {
+        this.isPWA = enteredAsPWA(false);
+        console.log('this.isPWA', this.isPWA);
+      }
+      else if (this.maniScore > 0 && this.swScore > 0) {
+        this.isPWA = enteredAsPWA(true);
+        console.log('this.isPWA', this.isPWA);
+      }
+    }
   }
 
   render() {
@@ -224,6 +237,7 @@ export class AppReport extends LitElement {
                 @open-mani-options="${() => this.openManiOptions()}"
                 @open-sw-options="${() => this.openSWOptions()}"
                 .results="${this.resultOfTest}"
+                .ispwa="${this.isPWA}"
               ></report-card>
             </fast-tab-panel>
             <fast-tab-panel id="manifestPanel">
