@@ -1,7 +1,7 @@
 import { MutationTree } from "vuex";
 import {
   types,
-  Manifest,
+  ManifestContext,
   helpers,
   Icon,
   Asset,
@@ -15,7 +15,7 @@ export const mutations: MutationTree<State> = {
     state.url = url;
   },
 
-  [types.UPDATE_MANIFEST](state, manifest: Manifest): void {
+  [types.UPDATE_MANIFEST](state, manifest: ManifestContext): void {
     if (manifest.generated) {
       delete manifest.generated;
     }
@@ -142,7 +142,7 @@ export const mutations: MutationTree<State> = {
     state.icons = icons;
   },
 
-  [types.UPDATE_SCREENSHOTS](state, screenshots: Screenshot[]): void {
+  [types.UPDATE_SCREENSHOTS](state, screenshots: Icon[]): void {
     state.screenshots = screenshots;
   },
 
@@ -154,7 +154,7 @@ export const mutations: MutationTree<State> = {
     state.icons.push(icon);
   },
 
-  [types.ADD_SCREENSHOT](state, screenshot: Screenshot): void {
+  [types.ADD_SCREENSHOT](state, screenshot: Icon): void {
     state.screenshots.push(screenshot);
   },
 

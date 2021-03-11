@@ -1,6 +1,7 @@
 import { ActionTree, ActionContext } from 'vuex';
 import {
   Manifest,
+  ManifestContext,
   Icon,
   RelatedApplication,
   CustomMember,
@@ -17,7 +18,7 @@ const screenshotsUrl = `${process.env.screenshotsUrl}`;
 
 export interface Actions<S, R> extends ActionTree<S, R> {
   update(context: ActionContext<S, R>): void;
-  updateManifest(context: ActionContext<S, R>, manifest: Manifest): void;
+  updateManifest(context: ActionContext<S, R>, manifest: ManifestContext): void;
   updateLinkFromStorage(context: ActionContext<S, R>, url: string): void;
   updateLink(context: ActionContext<S, R>, url: string): void;
   getManifestInformation(context: ActionContext<S, R>): Promise<Manifest>;
@@ -93,12 +94,20 @@ export const actions: Actions<State, RootState> = {
       delete customManifest.generated;
     }
 
-    const result = await this.$axios.$put(
-      `${apiUrl}/${state.manifestId}`,
-      customManifest
-    );
+    // const result = await this.$axios.$put(
+    //   `${apiUrl}/${state.manifestId}`,
+    //   customManifest
+    // );
 
-    commit(types.UPDATE_WITH_MANIFEST, result);
+    commit(types.UPDATE_WITH_MANIFEST, {
+      "format": "w3c",
+      "content": state.manifest,
+      "id": "not-used",
+      "generatedUrl": state.manifest ? state.manifest.manifestUrl : null,
+      "errors": [],
+      "suggestions": [],
+      "warnings": []
+    });
     commit(types.SET_DEFAULTS_MANIFEST, {
       displays: rootState.displays ? rootState.displays[0].name : '',
       orientations: rootState.orientations
@@ -131,22 +140,21 @@ export const actions: Actions<State, RootState> = {
       test.message !== undefined &&
       !url.toLowerCase().startsWith('http://')
     ) {
-      throw `${
-      test.message
+      throw `${test.message
       }: this error means that you may have a bad https cert or the url may not be correct`;
     }
 
     commit(types.UPDATE_LINK, url);
   },
 
-  async getManifestInformation({ commit, state, rootState }): Promise<Manifest> {
+  async getManifestInformation({ commit, state, rootState }): Promise<ManifestContext> {
     if (!state.url) {
       throw 'error.url_empty';
     }
     if (state.manifest && state.manifest.url === state.url) {
       return state.manifest;
     }
-    
+
     try {
       const manifest = state.manifest;
 
@@ -181,6 +189,8 @@ export const actions: Actions<State, RootState> = {
 
       result.content.url = state.url;
 
+      result.content["manifestUrl"] = result.generatedUrl;
+
       commit(types.UPDATE_WITH_MANIFEST, result);
       commit(types.SET_DEFAULTS_MANIFEST, {
         displays: rootState.displays ? rootState.displays[0].name : '',
@@ -188,8 +198,8 @@ export const actions: Actions<State, RootState> = {
           ? rootState.orientations[0].name
           : '',
       });
-      
-      return result.content;
+
+      return result.content as ManifestContext;
     } catch (e) {
       if (e.response && e.response.data) {
         let errorMessage = e.response.data
