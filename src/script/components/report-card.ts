@@ -15,7 +15,9 @@ import {
 } from '../utils/css/breakpoints';
 
 import './score-results';
-import { getURL } from '../services/app-info';
+import '../components/app-button';
+import { baseOrPublish, getURL } from '../services/app-info';
+import { Router } from '@vaadin/router';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {
@@ -202,6 +204,7 @@ export class ReportCard extends LitElement {
 
   async firstUpdated() {
     console.log('this.ispwa', this.ispwa);
+
     if (!this.results) {
       // Should never really end up here
       // But just in case this component tries to render without results
@@ -339,6 +342,20 @@ export class ReportCard extends LitElement {
     this.dispatchEvent(event);
   }
 
+  decideWhereToGo() {
+    const baseOrPublishIffy = baseOrPublish();
+
+    if (baseOrPublishIffy === 'base') {
+      Router.go('/basepackage');
+    }
+    else if (baseOrPublishIffy === 'publish') {
+      Router.go(`/publish?site=${this.currentURL}`);
+    }
+    else {
+      Router.go('/basepackage');
+    }
+  }
+
   render() {
     return html`
       <div id="main-report-section">
@@ -442,10 +459,7 @@ export class ReportCard extends LitElement {
           </div>
 
           <div id="package-block">
-           ${ this.ispwa ? html`<fast-anchor href="${`/publish?site=${this.currentURL}`}" appearance="button"
-              >Package</fast-anchor
-            >` : html`<fast-anchor href="/basepackage">Next</fast-anchor>`
-            }
+            <app-button @click="${() => this.decideWhereToGo()}">Next</app-button>
           </div>
         </div>
       </div>

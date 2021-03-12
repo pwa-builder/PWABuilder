@@ -34,7 +34,7 @@ export class AppReport extends LitElement {
   @internalProperty() swScore = 0;
   @internalProperty() maniScore = 0;
   @internalProperty() securityScore = 0;
-  @internalProperty() isPWA = false;
+  @internalProperty() isPWA:  boolean | undefined = false;
 
   @internalProperty() mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`
@@ -237,7 +237,7 @@ export class AppReport extends LitElement {
                 @open-mani-options="${() => this.openManiOptions()}"
                 @open-sw-options="${() => this.openSWOptions()}"
                 .results="${this.resultOfTest}"
-                .ispwa="${this.isPWA}"
+                .ispwa="${this.isPWA ? this.isPWA : false}"
               ></report-card>
             </fast-tab-panel>
             <fast-tab-panel id="manifestPanel">

@@ -4,6 +4,7 @@ import {
   RawTestResult,
   Status,
 } from '../utils/interfaces';
+import { getChosenServiceWorker } from './service_worker';
 
 let site_url: string | undefined;
 let results: RawTestResult | undefined;
@@ -125,10 +126,25 @@ export function getResults(): RawTestResult | undefined {
   }
 }
 
-export function enteredAsPWA(iffy?: boolean): boolean {
+export function enteredAsPWA(iffy?: boolean): boolean | undefined {
   if (iffy) {
     wasPWA = iffy;
   }
 
   return wasPWA;
+}
+
+export function baseOrPublish(): 'base' | 'publish' {
+  const choseSW = getChosenServiceWorker();
+  const enteredStatus = wasPWA;
+
+  if (choseSW !== undefined) {
+    return 'base';
+  }
+  else if (enteredStatus === true) {
+    return 'publish';
+  }
+  else {
+    return 'base';
+  }
 }
