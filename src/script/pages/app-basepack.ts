@@ -4,7 +4,11 @@ import { classMap } from 'lit-html/directives/class-map';
 import '../components/app-header';
 import '../components/app-sidebar';
 import '../components/content-header';
-import { BreakpointValues } from '../utils/css/breakpoints';
+import { BreakpointValues, largeBreakPoint,
+  xxxLargeBreakPoint, } from '../utils/css/breakpoints';
+
+// @ts-ignore
+import style from '../../../styles/layout-defaults.css';
 
 @customElement('app-basepack')
 export class AppBasePack extends LitElement {
@@ -15,7 +19,48 @@ export class AppBasePack extends LitElement {
   @internalProperty() isDeskTopView = this.mql.matches;
 
   static get styles() {
-    return css``;
+    return [style, css`
+        #tablet-sidebar {
+          display: none;
+        }
+
+        #desktop-sidebar {
+          display: block;
+        }
+
+        content-header::part(header) {
+          display: none;
+        }
+
+        ${xxxLargeBreakPoint(
+          css`
+            app-sidebar {
+              display: block;
+            }
+
+            #tablet-sidebar {
+              display: none;
+            }
+
+            #desktop-sidebar {
+              display: block;
+            }
+          `
+        )}
+
+        ${largeBreakPoint(
+          css`
+            #tablet-sidebar {
+              display: block;
+            }
+
+            #desktop-sidebar {
+              display: none;
+            }
+          `
+        )}
+
+    `];
   }
 
   constructor() {
