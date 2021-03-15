@@ -4,6 +4,7 @@ import {
   RawTestResult,
   Status,
 } from '../utils/interfaces';
+import { getManifest } from './manifest';
 import { getChosenServiceWorker } from './service_worker';
 
 let site_url: string | undefined;
@@ -126,25 +127,28 @@ export function getResults(): RawTestResult | undefined {
   }
 }
 
-export function enteredAsPWA(iffy?: boolean): boolean | undefined {
-  if (iffy) {
-    wasPWA = iffy;
-  }
-
-  return wasPWA;
-}
-
 export function baseOrPublish(): 'base' | 'publish' {
   const choseSW = getChosenServiceWorker();
-  const enteredStatus = wasPWA;
+  
+  const manifestData = getManifest();
+
+  console.log('manidata', manifestData);
 
   if (choseSW !== undefined) {
+    // User has chosen a custom service worker
+    // send to basepackage to download.
+    // to-do: Users who edit their manifest will be sent here too
     return 'base';
   }
-  else if (enteredStatus === true) {
+  else if (manifestData) {
+    // User already has a manifest
+    // send to publish page
     return 'publish';
   }
   else {
+    // user does not have a manifest and has not chosen an SW
+    // They will go to the base package page and will need to download
+    // The generated manifest and default SW
     return 'base';
   }
 }

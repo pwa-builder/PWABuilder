@@ -23,7 +23,6 @@ import { Router } from '@vaadin/router';
 export class ReportCard extends LitElement {
   @property() results: RawTestResult | undefined;
   @property() scoreCardResults: RawTestResult | undefined;
-  @property() ispwa: boolean;
 
   @internalProperty() maniScore = 0;
   @internalProperty() swScore = 0;
@@ -203,8 +202,6 @@ export class ReportCard extends LitElement {
   }
 
   async firstUpdated() {
-    console.log('this.ispwa', this.ispwa);
-
     if (!this.results) {
       // Should never really end up here
       // But just in case this component tries to render without results
