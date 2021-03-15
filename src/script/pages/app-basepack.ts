@@ -4,12 +4,14 @@ import { classMap } from 'lit-html/directives/class-map';
 import '../components/app-header';
 import '../components/app-sidebar';
 import '../components/content-header';
-import '../components/app-button';
+import '../components/loading-button';
 import { BreakpointValues, largeBreakPoint,
   xxxLargeBreakPoint, } from '../utils/css/breakpoints';
 
 // @ts-ignore
 import style from '../../../styles/layout-defaults.css';
+import { generateWebPackage } from '../services/publish/web-publish';
+import { fileSave } from 'browser-fs-access';
 
 @customElement('app-basepack')
 export class AppBasePack extends LitElement {
@@ -18,6 +20,9 @@ export class AppBasePack extends LitElement {
   );
 
   @internalProperty() isDeskTopView = this.mql.matches;
+  
+  @internalProperty() loading: boolean = false;
+  @internalProperty() blob: Blob | File | undefined;
 
   static get styles() {
     return [style, css`
@@ -139,8 +144,49 @@ export class AppBasePack extends LitElement {
  
   }
 
+  async doWebGenerate() {
+    this.loading = true;
+
+    const generatedPackage = await generateWebPackage();
+
+    if (generatedPackage) {
+      this.blob = generatedPackage;
+    }
+
+    this.loading = false;
+  }
+
+  async download() {
+    if (this.blob) {
+      await fileSave(this.blob, {
+        fileName: 'your_pwa.zip',
+        extensions: ['.zip'],
+      });
+
+      this.blob = undefined;
+    }
+  }
+
   render() {
     return html`
+      <app-modal
+        ?open="${this.blob ? true : false}"
+        title="Test Package Download"
+        body="Want to test your files first before publishing? No problem! Description here about how this isn’t store ready and how they can come back and publish their PWA after doing whatever they need to do with their testing etc etc tc etc."
+        id="test-download-modal"
+      >
+        <img
+          class="modal-image"
+          slot="modal-image"
+          src="/assets/images/warning.svg"
+          alt="warning icon"
+        />
+
+        <div slot="modal-actions">
+          <app-button @click="${() => this.download()}">Download</app-button>
+        </div>
+      </app-modal>
+      
       <div>
         <app-header></app-header>
 
@@ -188,7 +234,7 @@ export class AppBasePack extends LitElement {
                 </div>
 
                 <div id="download-actions">
-                  <app-button>Download</app-button>
+                  <loading-button ?loading="${this.loading}" @click="${() => this.doWebGenerate()}">Generate</loading-button>
                 </div>
               </div>
 
