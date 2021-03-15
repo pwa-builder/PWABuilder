@@ -5,6 +5,7 @@ import '../components/app-header';
 import '../components/app-sidebar';
 import '../components/content-header';
 import '../components/loading-button';
+import '../components/app-modal';
 import { BreakpointValues, largeBreakPoint,
   xxxLargeBreakPoint, } from '../utils/css/breakpoints';
 
@@ -23,6 +24,9 @@ export class AppBasePack extends LitElement {
   
   @internalProperty() loading: boolean = false;
   @internalProperty() blob: Blob | File | undefined;
+
+  @internalProperty() errored = false;
+  @internalProperty() errorMessage: string | undefined;
 
   static get styles() {
     return [style, css`
@@ -105,6 +109,13 @@ export class AppBasePack extends LitElement {
           max-width: 20em;
         }
 
+        #report-link {
+          color: white;
+          border-radius: var(--button-radius);
+          box-shadow: var(--button-shadow);
+          width: 10em;
+        }
+
         ${xxxLargeBreakPoint(
           css`
             app-sidebar {
@@ -147,10 +158,16 @@ export class AppBasePack extends LitElement {
   async doWebGenerate() {
     this.loading = true;
 
-    const generatedPackage = await generateWebPackage();
+    try {
+      const generatedPackage = await generateWebPackage();
 
-    if (generatedPackage) {
-      this.blob = generatedPackage;
+      if (generatedPackage) {
+        this.blob = generatedPackage;
+      }
+    }
+    catch (err) {
+      this.errorMessage = err;
+      this.errored = true;
     }
 
     this.loading = false;
@@ -165,6 +182,12 @@ export class AppBasePack extends LitElement {
 
       this.blob = undefined;
     }
+  }
+
+  showAlertModal(errorMessage: string) {
+    this.errored = true;
+
+    this.errorMessage = errorMessage;
   }
 
   render() {
@@ -184,6 +207,24 @@ export class AppBasePack extends LitElement {
 
         <div slot="modal-actions">
           <app-button @click="${() => this.download()}">Download</app-button>
+        </div>
+      </app-modal>
+
+      <app-modal
+        title="Wait a minute!"
+        .body="${this.errorMessage || ''}"
+        ?open="${this.errored}"
+        id="error-modal"
+      >
+        <img
+          class="modal-image"
+          slot="modal-image"
+          src="/assets/warning.svg"
+          alt="warning icon"
+        />
+
+        <div slot="modal-actions">
+          <fast-anchor target="_blank" rel="noopener" href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" id="report-link" appearance="button">Report an Issue</fast-anchor>
         </div>
       </app-modal>
       
