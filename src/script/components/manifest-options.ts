@@ -25,7 +25,7 @@ import { tooltip, styles as ToolTipStyles } from './tooltip';
 
 import './dropdown-menu';
 import './app-file-input';
-import { generateMissingImages } from '../services/icon_generator';
+import { generateMissingImagesBase64 } from '../services/icon_generator';
 
 @customElement('manifest-options')
 export class AppManifest extends LitElement {
@@ -535,9 +535,13 @@ export class AppManifest extends LitElement {
     try {
       // TODO
       if (this.uploadSelectedImageFile) {
-        await generateMissingImages({
+        await generateMissingImagesBase64({
           file: this.uploadSelectedImageFile,
         });
+
+        // await generateMissingImages({
+        //   file: this.uploadSelectedImageFile,
+        // });
       }
     } catch (e) {
       console.error(e);

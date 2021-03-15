@@ -73,6 +73,7 @@ export function unsetServiceWorker() {
   chosenSW = undefined;
 }
 
+// ts-ignore - handleError later gator
 function handleError(e) {
   const errorMessage = e.response.data
     ? e.response.data.error

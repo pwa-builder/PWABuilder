@@ -1,4 +1,6 @@
-import deepmerge from 'deepmerge';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare const deepmerge: any;
+
 import { promiseAnyPolyfill } from '../polyfills/promise-any';
 import { uniqueElements } from '../utils/customMerge';
 import { env } from '../utils/environment';

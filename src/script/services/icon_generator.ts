@@ -1,4 +1,3 @@
-import jszip from 'jszip';
 import { api } from '../utils/api';
 import { download } from '../utils/download';
 import { Icon } from '../utils/interfaces';
@@ -36,24 +35,96 @@ interface GeneratedImageIcons {
   icons: Array<Partial<Icon>>;
 }
 
+const base64ImageGeneratorUrl =
+  'https://appimagegenerator-prod.azurewebsites.net/api/image/base64';
+export async function generateMissingImagesBase64(config: MissingImagesConfig) {
+  try {
+    const form = new FormData();
+    form.append('baseImage', config.file);
+    form.append('padding', '0');
+    form.append('color', 'transparent');
+    form.append('colorChanged', 'false');
+    form.append('platform', `${['windows10', 'android', 'ios']}`);
+
+    const icons = ((await fetch(base64ImageGeneratorUrl, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: form,
+    })) as unknown) as Array<Icon>;
+
+    updateManifest({
+      icons,
+    });
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 export const iconGeneratorDefaults: Partial<IconGeneratorConfig> = {
   padding: 0.3,
   colorOption: 'transparent',
   platform: ['windows', 'windows10', 'android', 'chrome', 'firefox'],
 };
 
-export async function generateMissingImages(config: MissingImagesConfig) {
+export async function generateMissingImagesMock(config: MissingImagesConfig) {
   try {
-    const generateIconsResult = await generateIcons({
+    const generateMockIcons = await generateIconsMock({
       fileName: config.file,
       padding: 0,
       platform: [],
       colorOption: 'transparent',
     });
 
-    if (generateIconsResult) {
-      await updateManifestWithGeneratedIcons(generateIconsResult.Uri);
+    if (generateMockIcons) {
+      await updateManifestWithGeneratedIconsMock(generateMockIcons);
     }
+  } catch (e) {
+    console.error(e);
+  }
+
+  return undefined;
+}
+
+export async function generateMissingImages(config: MissingImagesConfig) {
+  try {
+    const generateIconsResult = await generateIcons({
+      fileName: config.file,
+      padding: 0,
+      platform: [
+        'android',
+        'chrome',
+        'firefox',
+        'msteams',
+        'windows',
+        'windows10',
+      ],
+      colorOption: 'transparent',
+    });
+
+    if (generateIconsResult) {
+      // await updateManifestWithGeneratedIcons(generateIconsResult.Uri);
+    }
+  } catch (e) {
+    console.error(e);
+  }
+
+  return undefined;
+}
+
+export async function generateIconsMock(
+  config: IconGeneratorConfig
+): Promise<GeneratedImageIcons> {
+  try {
+    const url = 'http://localhost:7071/api/ImageBase64';
+    return ((await fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      cache: 'force-cache',
+      headers: new Headers({
+        'content-type': 'application/octet-stream',
+      }),
+      body: config.fileName,
+    })) as unknown) as Promise<GeneratedImageIcons>;
   } catch (e) {
     console.error(e);
   }
@@ -78,9 +149,6 @@ export async function generateIcons(config: IconGeneratorConfig) {
       method: 'POST',
       mode: 'no-cors',
       cache: 'no-cache',
-      headers: new Headers({
-        'Content-Type': 'multipart/form-data',
-      }),
       body: createForm(config),
     });
 
@@ -110,53 +178,77 @@ async function fetchIcons(id: string) {
   return undefined;
 }
 
-export async function updateManifestWithGeneratedIcons(id: string) {
-  try {
-    const generatedIcons = await fetchIcons(id);
-    const blob = await generatedIcons?.blob();
+// export async function updateManifestWithGeneratedIcons(id: string) {
+//   try {
+//     const cache = await caches.open(cacheName);
+//     const generatedIcons = await fetchIcons(id);
+//     const blob = await generatedIcons?.blob();
 
-    if (blob) {
-      const zip = await jszip.loadAsync(blob);
-      const file = zip.file('icons.json');
-      let zipContents: GeneratedImageIcons = { icons: [] };
+//     if (blob) {
+//       const zip = await new JSZip().loadAsync(blob);
+//       const file = zip.file('icons.json');
+//       let zipContents: GeneratedImageIcons = { icons: [] };
 
-      if (file) {
-        zipContents = JSON.parse(
-          await file.async('string')
-        ) as GeneratedImageIcons;
-      }
+//       if (file) {
+//         zipContents = JSON.parse(
+//           await file.async('string')
+//         ) as GeneratedImageIcons;
+//       }
 
-      const icons: Array<Icon> = [];
-      for (let i = 0; i < zipContents.icons.length; i++) {
-        const icon = zipContents.icons[i];
-        const zipSrc = icon.src;
+//       const icons: Array<Icon> = [];
+//       for (let i = 0; i < zipContents.icons.length; i++) {
+//         const icon = zipContents.icons[i];
+//         const zipSrc = icon.src;
 
-        if (zipSrc) {
-          const [platform] = zipSrc.split('/');
-          const file = zip.file(zipSrc) ?? undefined;
-          const base64Img = await file?.async('base64');
+//         if (zipSrc) {
+//           const [platform] = zipSrc.split('/');
+//           const file = zip.file(zipSrc) ?? undefined;
+//           const base64Img = await file?.async('base64');
 
-          if (base64Img) {
-            icons.push({
-              src: base64Img,
-              type: 'image/png',
-              generated: true,
-              platform,
-              purpose: 'any',
-            });
+//           if (base64Img) {
+//             icons.push({
+//               src: base64Img,
+//               type: 'image/png',
+//               generated: true,
+//               platform,
+//               purpose: 'any',
+//             });
+//           }
+//         }
+//       }
 
-            // TODO cache icon separately? or the zip?
-          }
-        }
-      }
+//       // cache.put('cache', new Response(JSON.stringify({
+//       // })));
 
-      updateManifest({
-        icons,
-      });
-    }
-  } catch (e) {
-    console.error(e);
+//       updateManifest({
+//         icons,
+//       });
+//     }
+//   } catch (e) {
+//     console.error(e);
+//   }
+// }
+
+export async function updateManifestWithGeneratedIconsMock(
+  response: GeneratedImageIcons
+) {
+  const { icons: partialIcons } = response;
+
+  const icons: Array<Icon> = [];
+
+  for (let i = 0; i < partialIcons.length; i++) {
+    const { src, sizes, type, purpose } = partialIcons[i];
+    icons.push({
+      src,
+      sizes,
+      type,
+      purpose,
+    });
   }
+
+  updateManifest({
+    icons,
+  });
 }
 
 export async function downloadZip(id: string) {
