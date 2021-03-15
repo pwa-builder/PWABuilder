@@ -15,6 +15,7 @@ import {
 } from '../utils/css/breakpoints';
 
 import './score-results';
+import { getURL } from '../services/app-info';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {
@@ -24,6 +25,8 @@ export class ReportCard extends LitElement {
   @internalProperty() maniScore = 0;
   @internalProperty() swScore = 0;
   @internalProperty() securityScore = 0;
+
+  @internalProperty() currentURL: string | undefined;
 
   maxManiScore = 80;
   maxSWSCore = 20;
@@ -75,6 +78,10 @@ export class ReportCard extends LitElement {
       fast-accordion-item,
       fast-accordion {
         --neutral-divider-rest: #e5e5e5;
+      }
+
+      fast-accordion-item::part(icon) {
+        display: none;
       }
 
       fast-accordion-item::part(button) {
@@ -162,6 +169,10 @@ export class ReportCard extends LitElement {
           #report-content {
             width: 71vw;
           }
+
+          #total-score {
+            width: 70vw;
+          }
         `
       )}
 
@@ -202,6 +213,12 @@ export class ReportCard extends LitElement {
     }
     else {
       this.scoreCardResults = this.results;
+    }
+
+    const urlData = getURL();
+
+    if (urlData) {
+      this.currentURL = urlData;
     }
   }
 
@@ -423,7 +440,7 @@ export class ReportCard extends LitElement {
           </div>
 
           <div id="package-block">
-            <fast-anchor href="/publish" appearance="button"
+            <fast-anchor href="${`/publish?site=${this.currentURL}`}" appearance="button"
               >Package</fast-anchor
             >
           </div>

@@ -126,11 +126,12 @@ export interface OrganizedResults {
 
 export interface ServiceWorkerDetectionResult {
   hasSW: boolean;
-  scope: string | null;
   url: string | null;
   hasPushRegistration: boolean;
   serviceWorkerDetectionTimedOut: boolean;
   noServiceWorkerFoundDetails: string | null;
+  hasBackgroundSync: boolean;
+  hasPeriodicBackgroundSync: boolean;
 }
 
 export interface SecurityDataResults {

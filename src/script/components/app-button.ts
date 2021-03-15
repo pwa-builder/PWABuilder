@@ -12,10 +12,12 @@ export class AppButton extends LitElement {
       :host {
         border-radius: var(--button-radius);
         display: block;
+
+        --button-font-color: white;
       }
 
       fast-button {
-        color: white;
+        color: var(--button-font-color);
         width: 100%;
 
         border-radius: var(--button-radius);

@@ -187,6 +187,10 @@ export class AppManifest extends LitElement {
           width: 205px;
           height: 135px;
         }
+
+        fast-accordion-item::part(icon) {
+          display: none;
+        }
       `,
       // modal
       css`

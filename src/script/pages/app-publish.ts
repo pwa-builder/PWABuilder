@@ -11,11 +11,16 @@ import '../components/app-header';
 import '../components/app-card';
 import '../components/app-modal';
 import '../components/app-button';
+import '../components/loading-button';
+import '../components/windows-form';
+import '../components/android-form';
 import {
+  createWindowsPackageOptionsFromForm,
   createWindowsPackageOptionsFromManifest,
   generateWindowsPackage,
 } from '../services/publish/windows-publish';
 import {
+  createAndroidPackageOptionsFromForm,
   createAndroidPackageOptionsFromManifest,
   generateAndroidPackage,
 } from '../services/publish/android-publish';
@@ -30,6 +35,9 @@ import {
 //@ts-ignore
 import style from '../../../styles/layout-defaults.css';
 import { fileSave } from 'browser-fs-access';
+import { fetchManifest, getManifest } from '../services/manifest';
+import { getURL } from '../services/app-info';
+import { Manifest } from '../utils/interfaces';
 
 @customElement('app-publish')
 export class AppPublish extends LitElement {
@@ -37,12 +45,18 @@ export class AppPublish extends LitElement {
   @internalProperty() errorMessage: string | undefined;
 
   @internalProperty() blob: Blob | File | undefined;
+  @internalProperty() testBlob: Blob | File | undefined;
 
   @internalProperty() mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`
   );
 
   @internalProperty() isDeskTopView = this.mql.matches;
+
+  @internalProperty() open_windows_options = false;
+  @internalProperty() open_android_options = false;
+
+  @internalProperty() generating = false;
 
   constructor() {
     super();
@@ -75,6 +89,8 @@ export class AppPublish extends LitElement {
         #summary-block {
           padding: 16px;
           border-bottom: var(--list-border);
+
+          margin-right: 2em;
         }
 
         h2 {
@@ -106,6 +122,8 @@ export class AppPublish extends LitElement {
           flex-direction: column;
           justify-items: center;
           align-items: center;
+
+          padding-right: 2em;
         }
 
         .container .action-buttons {
@@ -157,8 +175,36 @@ export class AppPublish extends LitElement {
           width: 6em;
         }
 
-        #error-modal::part(modal-layout) {
+        #error-modal::part(modal-layout), #download-modal::part(modal-layout), #test-download-modal::part(modal-layout) {
           max-width: 50vw;
+        }
+
+        #error-modal::part(modal-body) {
+          max-height: 36vh;
+          overflow-y: auto;
+          max-width: inherit;
+          overflow-x: hidden;
+        }
+
+        #windows-options-modal::part(modal-layout), #android-options-modal::part(modal-layout) {
+          width: 64vw;
+        }
+
+        #test-package-button {
+          display: block;
+          margin-top: 15px;
+
+          --neutral-fill-rest: white;
+          --neutral-fill-active: white;
+          --neutral-fill-hover: white;
+        }
+
+        #test-package-button::part(underlying-button) {
+          --button-font-color: var(--font-color);
+        }
+
+        #platform-actions-block app-button::part(underlying-button) {
+          width: 152px;
         }
 
         ${xxxLargeBreakPoint(
@@ -196,24 +242,113 @@ export class AppPublish extends LitElement {
     ];
   }
 
-  async generatePackage(type: platform) {
+  async grabBackupManifest() {
+    console.error("Error generating package because manifest information is missing, trying fallback");
+    const search = new URLSearchParams(location.search);
+    let site: string | null = null;
+    if (search) {
+      site = search.get('site');
+    }
+
+    let localManifest: Manifest | null = null;
+
+    if (site) {
+      const maniResults = await fetchManifest(site);
+
+      if (maniResults && maniResults.content) {
+        localManifest = maniResults.content;
+      }
+    }
+
+    return localManifest;
+  }
+
+  async generatePackage(type: platform, form?: HTMLFormElement) {
     switch (type) {
       case 'windows':
         try {
-          // eslint-disable-next-line no-case-declarations
-          const options = createWindowsPackageOptionsFromManifest('anaheim');
-          this.blob = await generateWindowsPackage('anaheim', options);
+          this.generating = true;
+
+          // First we check for a form
+          // and generate based off of that.
+          // We will have a form if the user is going to
+          // prod
+          if (form) {
+            const options = createWindowsPackageOptionsFromForm(form);
+
+            if (options) {
+              this.blob = await generateWindowsPackage(options);
+              this.generating = false;
+
+              this.open_windows_options = false;
+            }
+          }
+          else {
+
+            // No form, lets generate from the manifest
+            try {
+              const options = createWindowsPackageOptionsFromManifest();
+              this.testBlob = await generateWindowsPackage(options);
+            }
+            catch(err) {
+              // Oh no, looks like we dont have the manifest in memory
+              // Lets try to grab it
+              const localManifest = await this.grabBackupManifest();
+
+              if (localManifest) {
+                const options = createWindowsPackageOptionsFromManifest(localManifest);
+                this.testBlob = await generateWindowsPackage(options);
+              }
+            }
+
+            this.generating = false;
+            this.open_windows_options = false;
+          }
         } catch (err) {
+          this.generating = false;
+          this.open_windows_options = false;
           this.showAlertModal(err);
         }
         break;
       case 'android':
         try {
-          // eslint-disable-next-line no-case-declarations
-          const androidOptions = createAndroidPackageOptionsFromManifest();
+          this.generating = true;
 
-          this.blob = await generateAndroidPackage(androidOptions);
+          if (form) {
+            const androidOptions = createAndroidPackageOptionsFromForm(form);
+
+            if (androidOptions) {
+              this.blob = await generateAndroidPackage(androidOptions);
+
+              this.generating = false;
+
+              this.open_android_options = false;
+            }
+          }
+          else {
+
+            try {
+              const androidOptions = createAndroidPackageOptionsFromManifest();
+              this.testBlob = await generateAndroidPackage(androidOptions);
+            }
+            catch (err) {
+              // Oh no, looks like we dont have the manifest in memory
+              // Lets try to grab it
+              const localManifest = await this.grabBackupManifest();
+              if (localManifest) {
+                const androidOptions = createAndroidPackageOptionsFromManifest(localManifest);
+                this.testBlob = await generateAndroidPackage(androidOptions);
+              }
+            }
+
+            this.generating = false;
+            this.open_android_options = false;
+          }
+
+          this.generating = false;
         } catch (err) {
+          this.generating = false;
+          this.open_android_options = false;
           this.showAlertModal(err);
         }
         break;
@@ -228,11 +363,14 @@ export class AppPublish extends LitElement {
   }
 
   async download() {
-    if (this.blob) {
-      await fileSave(this.blob, {
+    if (this.blob || this.testBlob) {
+      await fileSave(this.blob as Blob || this.testBlob as Blob, {
         fileName: 'your_pwa.zip',
         extensions: ['.zip'],
       });
+
+      this.blob = undefined;
+      this.testBlob = undefined;
     }
   }
 
@@ -240,6 +378,14 @@ export class AppPublish extends LitElement {
     this.errored = true;
 
     this.errorMessage = errorMessage;
+  }
+
+  showWindowsOptionsModal() {
+    this.open_windows_options = !this.open_windows_options;
+  }
+
+  showAndroidOptionsModal() {
+    this.open_android_options = !this.open_android_options;
   }
 
   renderContentCards() {
@@ -251,11 +397,25 @@ export class AppPublish extends LitElement {
             <p>${platform.description}</p>
           </div>
 
-          <app-button
-            @click="${() =>
-              this.generatePackage(platform.title.toLowerCase() as platform)}"
-            >Publish</app-button
-          >
+          <div id="platform-actions-block">
+            <app-button
+              @click="${platform.title.toLowerCase() === 'windows'
+                ? () => this.showWindowsOptionsModal()
+                : () => this.showAndroidOptionsModal()}"
+              >Publish</app-button
+            >
+
+            ${platform.title.toLocaleLowerCase() === 'windows'
+              ? html`<loading-button ?loading=${this.generating} id="test-package-button"
+                  @click="${() =>
+                    this.generatePackage(
+                      "windows"
+                    )}"
+                  >Test Package</loading-button
+                >`
+              : null}
+          </div>
+          
         </li>`
     );
   }
@@ -276,7 +436,12 @@ export class AppPublish extends LitElement {
         ?open="${this.errored}"
         id="error-modal"
       >
-        <img class="modal-image" slot="modal-image" src="/assets/warning.svg" alt="warning icon" />
+        <img
+          class="modal-image"
+          slot="modal-image"
+          src="/assets/warning.svg"
+          alt="warning icon"
+        />
 
         <div slot="modal-actions">
           <app-button @click="${() => this.returnToFix()}"
@@ -289,14 +454,60 @@ export class AppPublish extends LitElement {
         ?open="${this.blob ? true : false}"
         title="Download your package"
         body="Your app package is ready for download."
+        id="download-modal"
       >
-      <img class="modal-image" slot="modal-image" src="/assets/images/store_fpo.png" alt="publish icon" />
+        <img
+          class="modal-image"
+          slot="modal-image"
+          src="/assets/images/store_fpo.png"
+          alt="publish icon"
+        />
 
         <div slot="modal-actions">
-          <app-button @click="${() => this.download()}"
-            >Download</app-button
-          >
+          <app-button @click="${() => this.download()}">Download</app-button>
         </div>
+      </app-modal>
+
+      <app-modal
+        ?open="${this.testBlob ? true : false}"
+        title="Test Package Download"
+        body="Want to test your files first before publishing? No problem! Description here about how this isn’t store ready and how they can come back and publish their PWA after doing whatever they need to do with their testing etc etc tc etc."
+        id="test-download-modal"
+      >
+        <img
+          class="modal-image"
+          slot="modal-image"
+          src="/assets/images/warning.svg"
+          alt="warning icon"
+        />
+
+        <div slot="modal-actions">
+          <app-button @click="${() => this.download()}">Download</app-button>
+        </div>
+      </app-modal>
+
+      <app-modal
+        id="windows-options-modal"
+        title="Microsoft Store Options"
+        body="Customize your Windows package below!"
+        ?open="${this.open_windows_options}"
+      >
+        <windows-form
+          slot="modal-form"
+          .generating=${this.generating}
+          @init-windows-gen="${ev =>
+            this.generatePackage('windows', ev.detail.form)}"
+        ></windows-form>
+      </app-modal>
+
+      <app-modal
+        id="android-options-modal"
+        title="Google Play Store Options"
+        body="Customize your Android package below!"
+        ?open="${this.open_android_options}"
+      >
+        <android-form slot="modal-form" .generating=${this.generating} @init-android-gen="${ev =>
+            this.generatePackage('android', ev.detail.form)}"></android-form>
       </app-modal>
 
       <div>
