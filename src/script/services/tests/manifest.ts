@@ -88,40 +88,46 @@ const default_results = [
 export async function testManifest(
   url: string
 ): Promise<Array<TestResult> | boolean> {
-  const manifestData = fetchManifest(url);
+  try {
+    const manifestData = fetchManifest(url);
 
-  const twentySecondTimeout = new Promise<void>(resolve =>
-    setTimeout(() => resolve(), default_timeout)
-  );
+    const twentySecondTimeout = new Promise<Array<TestResult>>(resolve =>
+      setTimeout(() => resolve(default_results), default_timeout)
+    );
 
-  const fetchResultOrTimeout: void | ManifestDetectionResult = await Promise.race([
-    twentySecondTimeout,
-    manifestData,
-  ]);
+    const fetchResultOrTimeout: Array<TestResult> | ManifestDetectionResult = await Promise.race([
+      twentySecondTimeout,
+      manifestData,
+    ]);
 
-  if (!fetchResultOrTimeout) {
-    console.warn('Manifest check timed out after 20 seconds.');
-    return default_results;
-  }
-
-  console.log('testing manifest');
-
-  if (fetchResultOrTimeout) {
-    const manifest = await fetchResultOrTimeout;
-
-    if (manifest) {
-      return doTest(manifest);
-    } else {
-      console.error('Could not test manifest, returning default results');
+    if (!fetchResultOrTimeout) {
+      console.warn('Manifest check timed out after 20 seconds.');
       return default_results;
     }
-  } else {
-    console.error('Could not get manifest data');
+
+    console.log('testing manifest');
+
+    if (fetchResultOrTimeout) {
+      const manifest = await fetchResultOrTimeout;
+
+      if (manifest && (manifest as ManifestDetectionResult).content) {
+        return doTest((manifest as ManifestDetectionResult));
+      } else {
+        console.error('Could not test manifest, returning default results');
+        return (manifest as Array<TestResult>);
+      }
+    } else {
+      console.error('Could not get manifest data');
+      return default_results;
+    }
+  }
+  catch (err) {
+    console.error('Could not fetch a manifest to test within the specified time limit.');
     return default_results;
   }
 }
 
-function doTest(manifest: ManifestDetectionResult): Array<TestResult> {
+function doTest(manifest: ManifestDetectionResult) {
   if (manifest.generated && manifest.generated === true) {
     return default_results;
   } else {
@@ -150,26 +156,26 @@ function doTest(manifest: ManifestDetectionResult): Array<TestResult> {
       {
         infoString: 'Contains short_name property',
         result:
-          manifest.content.shortName && manifest.content.shortName.length > 1 
-          ? true 
-          : false,
-          category: "required"
+          manifest.content.shortName && manifest.content.shortName.length > 1
+            ? true
+            : false,
+        category: "required"
       },
       {
         infoString: 'Designates a start_url',
         result:
-          manifest.content.startUrl && manifest.content.startUrl.length > 0 
-          ? true 
-          : false,
-          category: "required"
+          manifest.content.startUrl && manifest.content.startUrl.length > 0
+            ? true
+            : false,
+        category: "required"
       },
       {
         infoString: 'Specifies a display mode',
         result:
           manifest.content.display &&
-          ['fullscreen', 'standalone', 'minimal-ui', 'browser'].includes(
-            manifest.content.display
-          )
+            ['fullscreen', 'standalone', 'minimal-ui', 'browser'].includes(
+              manifest.content.display
+            )
             ? true
             : false,
         category: 'recommended',
@@ -188,7 +194,7 @@ function doTest(manifest: ManifestDetectionResult): Array<TestResult> {
         infoString: 'Specifies an orientation mode',
         result:
           manifest.content.orientation &&
-          isStandardOrientation(manifest.content.orientation)
+            isStandardOrientation(manifest.content.orientation)
             ? true
             : false,
         category: 'recommended',
@@ -197,7 +203,7 @@ function doTest(manifest: ManifestDetectionResult): Array<TestResult> {
         infoString: 'Contains screenshots for app store listings',
         result:
           manifest.content.screenshots &&
-          manifest.content.screenshots.length > 0
+            manifest.content.screenshots.length > 0
             ? true
             : false,
         category: 'recommended',
@@ -224,8 +230,8 @@ function doTest(manifest: ManifestDetectionResult): Array<TestResult> {
         infoString: 'Contains categories to classify the app',
         result:
           manifest.content.categories &&
-          manifest.content.categories.length > 0 &&
-          containsStandardCategory(manifest.content.categories)
+            manifest.content.categories.length > 0 &&
+            containsStandardCategory(manifest.content.categories)
             ? true
             : false,
         category: 'recommended',
@@ -239,8 +245,8 @@ function doTest(manifest: ManifestDetectionResult): Array<TestResult> {
         infoString: 'Specifies related_application',
         result:
           manifest.content.relatedApplications &&
-          manifest.content.relatedApplications.length > 0 &&
-          manifest.content.preferRelatedApplications !== undefined
+            manifest.content.relatedApplications.length > 0 &&
+            manifest.content.preferRelatedApplications !== undefined
             ? true
             : false,
         category: 'optional',

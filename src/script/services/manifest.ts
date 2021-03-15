@@ -9,9 +9,8 @@ let maniURL: string | null = null;
 
 // Uses Azure manifest Puppeteer service to fetch the manifest, then POSTS it to the API.
 async function getManifestViaFilePost(url: string): Promise<ManifestDetectionResult> {
-  const manifestTestUrl = `${
-    env.testAPIUrl
-  }/WebManifest?site=${encodeURIComponent(url)}`;
+  const manifestTestUrl = `${env.testAPIUrl
+    }/WebManifest?site=${encodeURIComponent(url)}`;
   const response = await fetch(manifestTestUrl, {
     method: 'POST',
   });
@@ -56,9 +55,8 @@ async function getManifestViaHtmlParse(url: string): Promise<ManifestDetectionRe
     error: string | null;
   };
 
-  const manifestTestUrl = `${
-    env.manifestFinderUrl
-  }?url=${encodeURIComponent(url)}`;
+  const manifestTestUrl = `${env.manifestFinderUrl
+    }?url=${encodeURIComponent(url)}`;
   const response = await fetch(manifestTestUrl);
   if (!response.ok) {
     console.warn('Fetching manifest via HTML parsing service failed', response);
@@ -99,33 +97,35 @@ export async function fetchManifest(url: string): Promise<ManifestDetectionResul
   // 2. An Azure function that uses Chrome Puppeteer to fetch the manifest
   // 3. An Azure function that parses the HTML to find the manifest.
   // This fetch() function runs all 3 manifest detection schemes concurrently and returns the first one that succeeds.
-  
-  const knownGoodUrl = await cleanUrl(url);
 
-  setURL(knownGoodUrl);
+  return new Promise(async (resolve, reject) => {
+    const knownGoodUrl = await cleanUrl(url);
 
-  const manifestDetectors = [
+    setURL(knownGoodUrl);
+
+    const manifestDetectors = [
       getManifestViaFilePost(knownGoodUrl),
       getManifestViaHtmlParse(knownGoodUrl)
-  ];
+    ];
 
-  // We want to use Promise.any(...), but browser support is too low at the time of this writing: https://caniuse.com/mdn-javascript_builtins_promise_any
-  // Use our polyfill if needed.
-  const promiseAnyOrPolyfill: (promises: Promise<ManifestDetectionResult>[]) => Promise<ManifestDetectionResult> =
+    // We want to use Promise.any(...), but browser support is too low at the time of this writing: https://caniuse.com/mdn-javascript_builtins_promise_any
+    // Use our polyfill if needed.
+    const promiseAnyOrPolyfill: (promises: Promise<ManifestDetectionResult>[]) => Promise<ManifestDetectionResult> =
       (promises) => Promise["any"] ? Promise["any"](promises) : promiseAnyPolyfill(promises);
 
-  try {
+    try {
       const result = await promiseAnyOrPolyfill(manifestDetectors);
 
       manifest = result.content;
       maniURL = result.generatedUrl;
-      return result;
-  } catch (manifestDetectionError) {
+      resolve(result);
+    } catch (manifestDetectionError) {
       console.error("All manifest detectors failed.", manifestDetectionError);
 
       // Well, we sure tried.
-      throw manifestDetectionError;
-  }
+      reject(manifestDetectionError);
+    }
+  });
 }
 
 export function getManiURL() {
