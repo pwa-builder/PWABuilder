@@ -4,6 +4,7 @@ import { classMap } from 'lit-html/directives/class-map';
 import '../components/app-header';
 import '../components/app-sidebar';
 import '../components/content-header';
+import '../components/app-button';
 import { BreakpointValues, largeBreakPoint,
   xxxLargeBreakPoint, } from '../utils/css/breakpoints';
 
@@ -30,6 +31,73 @@ export class AppBasePack extends LitElement {
 
         content-header::part(header) {
           display: none;
+        }
+
+        .container {
+          padding: 16px;
+          display: flex;
+          flex-direction: column;
+          justify-items: center;
+
+          padding-right: 2em;
+        }
+
+        .container .action-buttons {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .container .action-buttons > app-button {
+          margin: 1rem;
+        }
+
+        #summary-block {
+          padding: 16px;
+          border-bottom: var(--list-border);
+
+          margin-right: 2em;
+        }
+
+        p {
+          font-size: var(--font-size)
+        }
+
+        h2 {
+          font-size: var(--xlarge-font-size);
+          line-height: 46px;
+          max-width: 526px;
+        }
+
+        #hero-p {
+          font-size: var(--font-size);
+          line-height: 24px;
+          max-width: 406px;
+        }
+
+        h3,
+        h5 {
+          font-size: var(--medium-font-size);
+          margin-bottom: 8px;
+        }
+
+        h4 {
+          margin-bottom: 8px;
+          margin-top: 0;
+        }
+
+        #top-container {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        #up-next {
+          border-top: var(--list-border);
+        }
+
+        #download-summary p {
+          max-width: 20em;
         }
 
         ${xxxLargeBreakPoint(
@@ -110,7 +178,35 @@ export class AppBasePack extends LitElement {
             </section>
 
             <section class="container">
-              <h3>Body</h3>
+              <div id="top-container">
+                <div id="download-summary">
+                  <h3>Download Summary</h3>
+
+                  <p>
+                    Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut.
+                  </p>
+                </div>
+
+                <div id="download-actions">
+                  <app-button>Download</app-button>
+                </div>
+              </div>
+
+              <div id="up-next">
+                <h5>Up next</h5>
+
+                <p>
+                  Ready to build your PWA? Tap "Build My PWA" to package your
+                  PWA for the app stores or tap "Feature Store" to check out the
+                  latest web components from the PWABuilder team to improve your
+                  PWA even further!
+                </p>
+              </div>
+
+              <div class="action-buttons">
+                <app-button>Back</app-button>
+                <app-button>Next</app-button>
+              </div>
             </section>
           </div>
         </div>
