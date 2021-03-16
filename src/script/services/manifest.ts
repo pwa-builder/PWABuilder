@@ -93,9 +93,8 @@ async function getManifestViaHtmlParse(url: string): Promise<ManifestDetectionRe
 export async function fetchManifest(url: string): Promise<ManifestDetectionResult> {
   // Manifest detection is surprisingly tricky due to redirects, dynamic code generation, SSL problems, and other issues.
   // We have 3 techniques to detect the manifest:
-  // 1. The legacy PWABuilder API
-  // 2. An Azure function that uses Chrome Puppeteer to fetch the manifest
-  // 3. An Azure function that parses the HTML to find the manifest.
+  // 1. An Azure function that uses Chrome Puppeteer to fetch the manifest
+  // 2. An Azure function that parses the HTML to find the manifest.
   // This fetch() function runs all 3 manifest detection schemes concurrently and returns the first one that succeeds.
 
   return new Promise(async (resolve, reject) => {
