@@ -171,7 +171,7 @@ export class AppTesting extends LitElement {
         // Completes the loading phase
         // set last phrase and give 300ms to display to user
         // before moving on
-        // this.loading = false;
+
 
         this.currentPhrase = 'Results coming to you in 3..2..1..';
         setTimeout(() => {
