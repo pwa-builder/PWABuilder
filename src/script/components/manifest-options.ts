@@ -416,9 +416,10 @@ export class AppManifest extends LitElement {
   }
 
   renderIcons() {
+    const baseUrl = this.siteUrl || this.manifest?.startUrl;
+
     return this.manifest?.icons?.map(icon => {
-      let url = resolveUrl(this.siteUrl, this.manifest?.startUrl);
-      url = resolveUrl(url?.href, icon.src);
+      const url = resolveUrl(baseUrl, icon.src);
 
       if (url) {
         return html`<div class="image-item image">
@@ -497,11 +498,11 @@ export class AppManifest extends LitElement {
     }
   }
 
-  handleScreenshotUrlChange(event: Event) {
+  handleScreenshotUrlChange(event: CustomEvent) {
     console.log(event);
   }
 
-  handleBackgroundRadioChange(event: Event) {
+  handleBackgroundRadioChange(event: CustomEvent) {
     const value = (<any>event.target).value;
     this.backgroundColorRadioValue = value;
 
@@ -510,7 +511,7 @@ export class AppManifest extends LitElement {
     }
   }
 
-  handleBackgroundColorInputChange(event: Event) {
+  handleBackgroundColorInputChange(event: CustomEvent) {
     if (this.manifest) {
       this.manifest.theme_color = (<HTMLInputElement>event.target).value;
     }
