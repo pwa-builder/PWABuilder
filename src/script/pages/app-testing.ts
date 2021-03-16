@@ -33,7 +33,7 @@ export class AppTesting extends LitElement {
           display: flex;
           flex-direction: column;
 
-          height: 100vh;
+          height: calc(100vh - 76px);
           overflow: hidden;
 
           display: block;
@@ -55,7 +55,7 @@ export class AppTesting extends LitElement {
           animation: 160ms fadeIn linear;
 
           padding-top: 2em;
-          height: 91.7vh;
+          height: 100%;
           width: 100%;
           background: linear-gradient( 
       106.57deg
@@ -71,8 +71,7 @@ export class AppTesting extends LitElement {
           --min-opacity: 10;
           --max-opacity: 50;
           background-image: paint(circles);
-
-          height: 82%;
+          height: calc(100% - 66px);
         }
 
         #testing-container img {
