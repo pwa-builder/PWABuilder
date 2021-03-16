@@ -11,7 +11,7 @@ import {
 import { getManifest } from '../services/manifest';
 import { arrayHasChanged, objectHasChanged } from '../utils/hasChanged';
 import { resolveUrl } from '../utils/url';
-import { FileInputDetails, Lazy } from '../utils/interfaces';
+import { FileInputDetails, Lazy, ModalCloseEvent } from '../utils/interfaces';
 import {
   fastTextFieldCss,
   fastButtonCss,
@@ -20,9 +20,10 @@ import {
   fastRadioCss,
 } from '../utils/css/fast-elements';
 
-import { ModalCloseEvent } from './app-modal';
 import { tooltip, styles as ToolTipStyles } from './tooltip';
 
+import './loading-button';
+import './app-modal';
 import './dropdown-menu';
 import './app-file-input';
 import { generateMissingImagesBase64 } from '../services/icon_generator';
@@ -297,11 +298,11 @@ export class AppManifest extends LitElement {
           </div>
 
           <div class="screenshots-actions">
-            <app-button
+            <loading-button
               appearance="outline"
               type="submit"
               @click=${this.generateScreenshots}
-              >Generate</app-button
+              >Generate</loading-button
             >
           </div>
         </section>
@@ -479,7 +480,6 @@ export class AppManifest extends LitElement {
         ? html`<img class="modal-img" src=${this.uploadImageObjectUrl} />`
         : undefined}
 
-      <fast-checkbox> Generate missing images from this image </fast-checkbox>
       <app-button
         @click=${this.handleIconFileUpload}
         .disabled=${this.uploadButtonDisabled}
@@ -538,15 +538,10 @@ export class AppManifest extends LitElement {
 
   async handleIconFileUpload() {
     try {
-      // TODO
       if (this.uploadSelectedImageFile) {
         await generateMissingImagesBase64({
           file: this.uploadSelectedImageFile,
         });
-
-        // await generateMissingImages({
-        //   file: this.uploadSelectedImageFile,
-        // });
       }
     } catch (e) {
       console.error(e);
