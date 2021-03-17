@@ -7,6 +7,8 @@ import { setURL } from './app-info';
 let manifest: Manifest | null = null;
 let maniURL: string | null = null;
 
+let generatedManifest: Manifest | null = null;
+
 // Uses Azure manifest Puppeteer service to fetch the manifest, then POSTS it to the API.
 async function getManifestViaFilePost(url: string): Promise<ManifestDetectionResult> {
   const manifestTestUrl = `${env.testAPIUrl
@@ -63,6 +65,7 @@ async function getManifestViaHtmlParse(url: string): Promise<ManifestDetectionRe
     throw new Error(`Error fetching from ${manifestTestUrl}`);
   }
   const responseData: ManifestFinderResult = await response.json();
+
   if (responseData.error || !responseData.manifestContents) {
     console.warn(
       'Fetching manifest via HTML parsing service failed due to no response data',
@@ -115,11 +118,14 @@ export async function fetchManifest(url: string): Promise<ManifestDetectionResul
     try {
       const result = await promiseAnyOrPolyfill(manifestDetectors);
 
+
       manifest = result.content;
       maniURL = result.generatedUrl;
       resolve(result);
     } catch (manifestDetectionError) {
       console.error("All manifest detectors failed.", manifestDetectionError);
+
+      generatedManifest = await generateManifest(url);
 
       // Well, we sure tried.
       reject(manifestDetectionError);
@@ -135,4 +141,27 @@ export function getManifest() {
   return manifest;
 }
 
+export function getGeneratedManifest() {
+  return generatedManifest;
+}
+
+async function generateManifest(url: string) {
+  try {
+    const response = await fetch(`${env.api}/manifests`, {
+      method: "POST",
+      headers: new Headers({ 'content-type': 'application/json' }),
+      body: JSON.stringify({
+        siteUrl: url
+      })
+    });
+
+    const data = await response.json();
+
+    return data?.content;
+  }
+  catch (err) {
+    console.error(`Error generating manifest: ${err}`)
+    return err;
+  }
+}
 
