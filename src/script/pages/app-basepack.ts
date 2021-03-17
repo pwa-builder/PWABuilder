@@ -7,7 +7,7 @@ import '../components/content-header';
 import '../components/loading-button';
 import '../components/app-modal';
 import { BreakpointValues, largeBreakPoint,
-  xxxLargeBreakPoint, } from '../utils/css/breakpoints';
+  xxxLargeBreakPoint, smallBreakPoint } from '../utils/css/breakpoints';
 
 // @ts-ignore
 import style from '../../../styles/layout-defaults.css';
@@ -141,6 +141,24 @@ export class AppBasePack extends LitElement {
             #desktop-sidebar {
               display: none;
             }
+          `
+        )}
+
+        ${smallBreakPoint(
+          css`
+           #top-container {
+            flex-direction: column;
+            align-items: flex-start;
+           }
+
+           #download-actions {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2em;
+            margin-top: 2em;
+           }
           `
         )}
 
