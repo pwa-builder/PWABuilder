@@ -30,27 +30,26 @@ interface IconGeneratorResponse {
   Uri: string;
 }
 
-// Only has src and sizes
-interface GeneratedImageIcons {
-  icons: Array<Partial<Icon>>;
-}
-
 const base64ImageGeneratorUrl =
   'https://appimagegenerator-prod.azurewebsites.net/api/image/base64';
+
 export async function generateMissingImagesBase64(config: MissingImagesConfig) {
   try {
     const form = new FormData();
     form.append('baseImage', config.file);
     form.append('padding', '0');
-    form.append('color', 'transparent');
+    //form.append('color', '#0000000');
     form.append('colorChanged', 'false');
-    form.append('platform', `${['windows10', 'android', 'ios']}`);
+    form.append('platform', 'windows10');
+    form.append('platform', 'android');
+    form.append('platform', 'ios');
 
-    const icons = ((await fetch(base64ImageGeneratorUrl, {
+    const response = await fetch(base64ImageGeneratorUrl, {
       method: 'POST',
-      mode: 'no-cors',
       body: form,
-    })) as unknown) as Array<Icon>;
+    });
+
+    const icons = ((await response.json()) as unknown) as Array<Icon>;
 
     updateManifest({
       icons,
@@ -65,25 +64,6 @@ export const iconGeneratorDefaults: Partial<IconGeneratorConfig> = {
   colorOption: 'transparent',
   platform: ['windows', 'windows10', 'android', 'chrome', 'firefox'],
 };
-
-export async function generateMissingImagesMock(config: MissingImagesConfig) {
-  try {
-    const generateMockIcons = await generateIconsMock({
-      fileName: config.file,
-      padding: 0,
-      platform: [],
-      colorOption: 'transparent',
-    });
-
-    if (generateMockIcons) {
-      await updateManifestWithGeneratedIconsMock(generateMockIcons);
-    }
-  } catch (e) {
-    console.error(e);
-  }
-
-  return undefined;
-}
 
 export async function generateMissingImages(config: MissingImagesConfig) {
   try {
@@ -111,27 +91,7 @@ export async function generateMissingImages(config: MissingImagesConfig) {
   return undefined;
 }
 
-export async function generateIconsMock(
-  config: IconGeneratorConfig
-): Promise<GeneratedImageIcons> {
-  try {
-    const url = 'http://localhost:7071/api/ImageBase64';
-    return ((await fetch(url, {
-      method: 'POST',
-      mode: 'no-cors',
-      cache: 'force-cache',
-      headers: new Headers({
-        'content-type': 'application/octet-stream',
-      }),
-      body: config.fileName,
-    })) as unknown) as Promise<GeneratedImageIcons>;
-  } catch (e) {
-    console.error(e);
-  }
-
-  return undefined;
-}
-
+// TODO
 export async function generateIcons(config: IconGeneratorConfig) {
   try {
     console.assert(
@@ -145,7 +105,7 @@ export async function generateIcons(config: IconGeneratorConfig) {
       throw err;
     }
 
-    const request = await fetch(api.imageGenerator.post, {
+    const request = await fetch('', {
       method: 'POST',
       mode: 'no-cors',
       cache: 'no-cache',
@@ -228,28 +188,6 @@ async function fetchIcons(id: string) {
 //     console.error(e);
 //   }
 // }
-
-export async function updateManifestWithGeneratedIconsMock(
-  response: GeneratedImageIcons
-) {
-  const { icons: partialIcons } = response;
-
-  const icons: Array<Icon> = [];
-
-  for (let i = 0; i < partialIcons.length; i++) {
-    const { src, sizes, type, purpose } = partialIcons[i];
-    icons.push({
-      src,
-      sizes,
-      type,
-      purpose,
-    });
-  }
-
-  updateManifest({
-    icons,
-  });
-}
 
 export async function downloadZip(id: string) {
   try {

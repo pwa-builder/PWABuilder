@@ -178,3 +178,7 @@ export interface ScoreEvent {
 export interface FileInputDetails {
   input: HTMLInputElement;
 }
+
+export interface ModalCloseEvent {
+  modalId: string;
+}
