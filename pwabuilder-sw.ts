@@ -3,7 +3,6 @@ import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 
 import { registerRoute } from 'workbox-routing';
 import { StaleWhileRevalidate, CacheFirst } from 'workbox-strategies';
-import { compareImg } from './src/script/utils/workbox';
 
 // Add custom service worker logic, such as a push notification serivce, or json request cache.
 self.addEventListener('message', (event: MessageEvent) => {
@@ -23,14 +22,17 @@ registerRoute(
 );
 
 registerRoute(
-  ({ url, request }) => compareImg(url, request),
+  ({ url }) =>
+    url.origin ===
+    'https://appimagegenerator-prod.azurewebsites.net/api/image/base64',
   new CacheFirst({
     plugins: [
       new CacheableResponsePlugin({
         statuses: [200],
       }),
     ],
-  })
+  }),
+  'POST'
 );
 
 try {
