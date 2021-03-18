@@ -107,7 +107,7 @@ export interface ManifestDetectionResult {
 }
 
 export interface RawTestResult {
-  manifest: Array<TestResult>;
+  manifest: Array<TestResult> | boolean;
   service_worker: Array<TestResult>;
   security: Array<TestResult>;
 }
