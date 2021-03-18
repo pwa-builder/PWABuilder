@@ -4,9 +4,12 @@ import {
   RawTestResult,
   Status,
 } from '../utils/interfaces';
+import { getManifest } from './manifest';
+import { getChosenServiceWorker } from './service_worker';
 
 let site_url: string | undefined;
 let results: RawTestResult | undefined;
+let wasPWA: boolean | undefined;
 
 let progress: ProgressList = {
   progress: [
@@ -104,6 +107,7 @@ export function getURL() {
 }
 
 export function setResults(testResults: RawTestResult) {
+  console.log('testResults', testResults);
   results = testResults;
   sessionStorage.setItem('current_results', JSON.stringify(testResults));
 }
@@ -120,5 +124,31 @@ export function getResults(): RawTestResult | undefined {
     } else {
       return undefined;
     }
+  }
+}
+
+export function baseOrPublish(): 'base' | 'publish' {
+  const choseSW = getChosenServiceWorker();
+  
+  const manifestData = getManifest();
+
+  console.log('manidata', manifestData);
+
+  if (choseSW !== undefined) {
+    // User has chosen a custom service worker
+    // send to basepackage to download.
+    // to-do: Users who edit their manifest will be sent here too
+    return 'base';
+  }
+  else if (manifestData) {
+    // User already has a manifest
+    // send to publish page
+    return 'publish';
+  }
+  else {
+    // user does not have a manifest and has not chosen an SW
+    // They will go to the base package page and will need to download
+    // The generated manifest and default SW
+    return 'base';
   }
 }

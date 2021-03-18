@@ -73,6 +73,10 @@ export function unsetServiceWorker() {
   chosenSW = undefined;
 }
 
+export function getChosenServiceWorker() {
+  return chosenSW;
+}
+
 function handleError(e) {
   const errorMessage = e.response.data
     ? e.response.data.error
