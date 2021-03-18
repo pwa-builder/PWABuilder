@@ -1,17 +1,19 @@
-import { getManifest } from "../manifest";
+import { getGeneratedManifest, getManifest } from "../manifest";
 import { env } from '../../utils/environment';
 import { getURL } from "../app-info";
 
 export async function generateWebPackage() {
   try {
     const manifest = getManifest();
+    const genManifest = getGeneratedManifest();
     const url = getURL();
 
     // The web package generator dies when screenshots is null. If detected, set screenshots to empty array.
-    const manifestWithScreenshots = { ...manifest };
+    const manifestWithScreenshots = manifest ? { ...manifest } : { ...genManifest };
     if (!manifestWithScreenshots.screenshots) {
       manifestWithScreenshots.screenshots = [];
     }
+    
     const response = await fetch(
       `${env.webPackageGeneratorUrl}?siteUrl=${url
       }&hasServiceWorker=${false}`,
