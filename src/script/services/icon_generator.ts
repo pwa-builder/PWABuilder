@@ -26,10 +26,6 @@ interface IconGeneratorConfig {
   platform: Array<Platform>;
 }
 
-interface IconGeneratorResponse {
-  Uri: string;
-}
-
 const base64ImageGeneratorUrl =
   'https://appimagegenerator-prod.azurewebsites.net/api/image/base64';
 
