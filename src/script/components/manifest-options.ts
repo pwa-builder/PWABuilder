@@ -8,10 +8,15 @@ import {
 } from 'lit-element';
 // import { classMap } from 'lit-html/directives/class-map';
 // import { styleMap } from 'lit-html/directives/style-map';
-import { getManifest } from '../services/manifest';
+import { emitter as manifestEmitter, getManifest } from '../services/manifest';
 import { arrayHasChanged, objectHasChanged } from '../utils/hasChanged';
 import { resolveUrl } from '../utils/url';
-import { FileInputDetails, Lazy, ModalCloseEvent } from '../utils/interfaces';
+import {
+  AppEvents,
+  FileInputDetails,
+  Lazy,
+  ModalCloseEvent,
+} from '../utils/interfaces';
 import {
   fastTextFieldCss,
   fastButtonCss,
@@ -213,6 +218,10 @@ export class AppManifest extends LitElement {
 
   constructor() {
     super();
+
+    manifestEmitter.addEventListener(AppEvents.manifestUpdate, () => {
+      this.manifest = getManifest();
+    });
   }
 
   render() {
@@ -518,11 +527,7 @@ export class AppManifest extends LitElement {
   }
 
   async handleModalInputFileChange(evt: CustomEvent<FileInputDetails>) {
-    console.log('handleModalInputFileChange', evt);
     const files = evt.detail.input.files ?? undefined;
-
-    // const file = files.item(0);
-    // console.log(URL.createObjectURL(file), URL.createObjectURL(file));
 
     this.uploadSelectedImageFile = files?.item(0) ?? undefined;
     this.uploadButtonDisabled = !this.validIconInput();
@@ -578,11 +583,13 @@ export class AppManifest extends LitElement {
   }
 
   downloadImages() {
-    console.log('download images', event);
+    console.log('TODO: download images');
   }
 
   generateScreenshots() {
-    console.log('generate screenshots', event);
+    console.log('generate screenshots');
+    // TODO screenshot list
+    // this.screenshotList;
   }
 
   setBackgroundColorRadio() {

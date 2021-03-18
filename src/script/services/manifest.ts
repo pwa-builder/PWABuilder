@@ -165,9 +165,6 @@ export async function updateManifest(manifestUpdates: Partial<Manifest>) {
       ...manifestUpdates,
     })
   );
-
-  // TODO determine if needed.
-  // return await syncRedis();
 }
 
 export function updateManifestEvent<T extends Partial<Manifest>>(detail: T) {
