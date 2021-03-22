@@ -35,9 +35,9 @@ import {
 //@ts-ignore
 import style from '../../../styles/layout-defaults.css';
 import { fileSave } from 'browser-fs-access';
-import { fetchManifest, getManifest } from '../services/manifest';
-import { getURL } from '../services/app-info';
+import { fetchManifest } from '../services/manifest';
 import { Manifest } from '../utils/interfaces';
+import { checkResults, finalCheckForPublish } from '../services/publish/publish-checks';
 
 @customElement('app-publish')
 export class AppPublish extends LitElement {
@@ -57,6 +57,8 @@ export class AppPublish extends LitElement {
   @internalProperty() open_android_options = false;
 
   @internalProperty() generating = false;
+
+  @internalProperty() finalChecks: checkResults | undefined;
 
   constructor() {
     super();
@@ -242,6 +244,14 @@ export class AppPublish extends LitElement {
     ];
   }
 
+  async firstUpdated() {
+    const checks = await finalCheckForPublish();
+
+    if (checks) {
+      this.finalChecks = checks;
+    }
+  }
+
   async grabBackupManifest() {
     console.error("Error generating package because manifest information is missing, trying fallback");
     const search = new URLSearchParams(location.search);
@@ -269,6 +279,38 @@ export class AppPublish extends LitElement {
         try {
           this.generating = true;
 
+          // Final checks for Windows
+          if (this.finalChecks) {
+            const maniCheck = this.finalChecks.manifest;
+            const baseIcon = this.finalChecks.baseIcon;
+            const validURL = this.finalChecks.validURL;
+
+            if (
+              maniCheck === false ||
+              baseIcon === false ||
+              validURL === false
+            ) {
+              this.generating = false;
+              this.open_windows_options = false;
+
+              let err = "";
+
+              if (maniCheck === false) {
+                err = "Your PWA does not have a valid Web Manifest";
+              }
+              else if (baseIcon === false) {
+                err = "Your PWA needs atleast a 512x512 PNG icon";
+              }
+              else if (validURL === false) {
+                err = "Your PWA does not have a valid URL";
+              };
+
+              this.showAlertModal(err);
+
+              return;
+            }
+          }
+
           // First we check for a form
           // and generate based off of that.
           // We will have a form if the user is going to
@@ -282,21 +324,20 @@ export class AppPublish extends LitElement {
 
               this.open_windows_options = false;
             }
-          }
-          else {
-
+          } else {
             // No form, lets generate from the manifest
             try {
               const options = createWindowsPackageOptionsFromManifest();
               this.testBlob = await generateWindowsPackage(options);
-            }
-            catch(err) {
+            } catch (err) {
               // Oh no, looks like we dont have the manifest in memory
               // Lets try to grab it
               const localManifest = await this.grabBackupManifest();
 
               if (localManifest) {
-                const options = createWindowsPackageOptionsFromManifest(localManifest);
+                const options = createWindowsPackageOptionsFromManifest(
+                  localManifest
+                );
                 this.testBlob = await generateWindowsPackage(options);
               }
             }
@@ -313,6 +354,43 @@ export class AppPublish extends LitElement {
       case 'android':
         try {
           this.generating = true;
+
+          // Final checks for Android
+          if (this.finalChecks) {
+            const maniCheck = this.finalChecks.manifest;
+            const baseIcon = this.finalChecks.baseIcon;
+            const validURL = this.finalChecks.validURL;
+            const offlineCheck = this.finalChecks.offline;
+
+            if (
+              maniCheck === false ||
+              baseIcon === false ||
+              validURL === false
+            ) {
+              this.generating = false;
+              this.open_android_options = false;
+
+              let err = "";
+
+              if (maniCheck === false) {
+                err = "Your PWA does not have a valid Web Manifest";
+              }
+              else if (baseIcon === false) {
+                err = "Your PWA needs atleast a 512x512 PNG icon";
+              }
+              else if (validURL === false) {
+                err = "Your PWA does not have a valid URL";
+              }
+              else if (offlineCheck === false) {
+                // Extra offline check for Android
+                err = "Your PWA does not work offline";
+              }
+
+              this.showAlertModal(err);
+
+              return;
+            }
+          }
 
           if (form) {
             const androidOptions = createAndroidPackageOptionsFromForm(form);
