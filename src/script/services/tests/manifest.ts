@@ -95,7 +95,9 @@ export async function testManifest(
       setTimeout(() => resolve(default_results), default_timeout)
     );
 
-    const fetchResultOrTimeout: Array<TestResult> | ManifestDetectionResult = await Promise.race([
+    const fetchResultOrTimeout:
+      | Array<TestResult>
+      | ManifestDetectionResult = await Promise.race([
       twentySecondTimeout,
       manifestData,
     ]);
@@ -111,18 +113,19 @@ export async function testManifest(
       const manifest = await fetchResultOrTimeout;
 
       if (manifest && (manifest as ManifestDetectionResult).content) {
-        return doTest((manifest as ManifestDetectionResult));
+        return doTest(manifest as ManifestDetectionResult);
       } else {
         console.error('Could not test manifest, returning default results');
-        return (manifest as Array<TestResult>);
+        return manifest as Array<TestResult>;
       }
     } else {
       console.error('Could not get manifest data');
       return default_results;
     }
-  }
-  catch (err) {
-    console.error('Could not fetch a manifest to test within the specified time limit.');
+  } catch (err) {
+    console.error(
+      'Could not fetch a manifest to test within the specified time limit.'
+    );
     return default_results;
   }
 }
@@ -159,7 +162,7 @@ function doTest(manifest: ManifestDetectionResult) {
           manifest.content.shortName && manifest.content.shortName.length > 1
             ? true
             : false,
-        category: "required"
+        category: 'required',
       },
       {
         infoString: 'Designates a start_url',
@@ -167,15 +170,15 @@ function doTest(manifest: ManifestDetectionResult) {
           manifest.content.startUrl && manifest.content.startUrl.length > 0
             ? true
             : false,
-        category: "required"
+        category: 'required',
       },
       {
         infoString: 'Specifies a display mode',
         result:
           manifest.content.display &&
-            ['fullscreen', 'standalone', 'minimal-ui', 'browser'].includes(
-              manifest.content.display
-            )
+          ['fullscreen', 'standalone', 'minimal-ui', 'browser'].includes(
+            manifest.content.display
+          )
             ? true
             : false,
         category: 'recommended',
@@ -183,18 +186,18 @@ function doTest(manifest: ManifestDetectionResult) {
       {
         infoString: 'Has a background color',
         result: manifest.content.backgroundColor ? true : false,
-        category: "recommended"
+        category: 'recommended',
       },
       {
         infoString: 'Has a theme color',
         result: manifest.content.themeColor ? true : false,
-        category: "recommended"
+        category: 'recommended',
       },
       {
         infoString: 'Specifies an orientation mode',
         result:
           manifest.content.orientation &&
-            isStandardOrientation(manifest.content.orientation)
+          isStandardOrientation(manifest.content.orientation)
             ? true
             : false,
         category: 'recommended',
@@ -203,7 +206,7 @@ function doTest(manifest: ManifestDetectionResult) {
         infoString: 'Contains screenshots for app store listings',
         result:
           manifest.content.screenshots &&
-            manifest.content.screenshots.length > 0
+          manifest.content.screenshots.length > 0
             ? true
             : false,
         category: 'recommended',
@@ -230,8 +233,8 @@ function doTest(manifest: ManifestDetectionResult) {
         infoString: 'Contains categories to classify the app',
         result:
           manifest.content.categories &&
-            manifest.content.categories.length > 0 &&
-            containsStandardCategory(manifest.content.categories)
+          manifest.content.categories.length > 0 &&
+          containsStandardCategory(manifest.content.categories)
             ? true
             : false,
         category: 'recommended',
@@ -239,14 +242,14 @@ function doTest(manifest: ManifestDetectionResult) {
       {
         infoString: 'Contains an IARC ID',
         result: manifest.content.iarcRatingId ? true : false,
-        category: "optional"
+        category: 'optional',
       },
       {
         infoString: 'Specifies related_application',
         result:
           manifest.content.relatedApplications &&
-            manifest.content.relatedApplications.length > 0 &&
-            manifest.content.preferRelatedApplications !== undefined
+          manifest.content.relatedApplications.length > 0 &&
+          manifest.content.preferRelatedApplications !== undefined
             ? true
             : false,
         category: 'optional',

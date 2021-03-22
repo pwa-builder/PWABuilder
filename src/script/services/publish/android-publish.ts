@@ -85,7 +85,7 @@ export function createAndroidPackageOptionsFromForm(form: HTMLFormElement): Andr
   const appName = form.appName.value || manifest.short_name || manifest.name || 'My PWA';
   const packageName = generatePackageId(form.packageId.value || new URL(pwaURL).hostname);
   // Use standalone display mode unless the manifest has fullscreen specified.
-  const display = 
+  const display =
     manifest.display === 'fullscreen' ? 'fullscreen' : 'standalone';
   // StartUrl must be relative to the host.
   // We make sure it is below.
@@ -197,7 +197,7 @@ export function createAndroidPackageOptionsFromManifest(localManifest?: Manifest
   else {
     manifest = getManifest();
   }
-  
+
   if (!manifest) {
     throw new Error('Could not find the web manifest');
   }
@@ -222,16 +222,16 @@ export function createAndroidPackageOptionsFromManifest(localManifest?: Manifest
   // We make sure it is below.
   let relativeStartUrl: string;
   if (
-    !manifest.start_url ||
-    manifest.start_url === '/' ||
-    manifest.start_url === '.' ||
-    manifest.start_url === './'
+    !manifest.startUrl ||
+    manifest.startUrl === '/' ||
+    manifest.startUrl === '.' ||
+    manifest.startUrl === './'
   ) {
-    // First, if we don't have a start_url in the manifest, or it's just "/",
+    // First, if we don't have a startUrl in the manifest, or it's just "/",
     // then we can just use that.
     relativeStartUrl = '/';
   } else {
-    // The start_url in the manifest is either a relative or absolute path.
+    // The startUrl in the manifest is either a relative or absolute path.
     // Ensure it's a path relative to the root.
     const absoluteStartUrl = new URL((manifest.start_url as string), maniURL);
     relativeStartUrl =

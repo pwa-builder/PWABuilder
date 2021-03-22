@@ -8,16 +8,30 @@ import {
 } from 'lit-element';
 // import { classMap } from 'lit-html/directives/class-map';
 // import { styleMap } from 'lit-html/directives/style-map';
-import { getManifest } from '../services/manifest';
+import { emitter as manifestEmitter, getManifest } from '../services/manifest';
 import { arrayHasChanged, objectHasChanged } from '../utils/hasChanged';
 import { resolveUrl } from '../utils/url';
-import { fastButtonCss, fastCheckboxCss } from '../utils/css/fast-elements';
+import {
+  AppEvents,
+  FileInputDetails,
+  Lazy,
+  ModalCloseEvent,
+} from '../utils/interfaces';
+import {
+  fastTextFieldCss,
+  fastButtonCss,
+  fastCheckboxCss,
+  fastMenuCss,
+  fastRadioCss,
+} from '../utils/css/fast-elements';
 
-import { ModalCloseEvent } from './app-modal';
 import { tooltip, styles as ToolTipStyles } from './tooltip';
 
+import './loading-button';
+import './app-modal';
 import './dropdown-menu';
 import './app-file-input';
+import { generateMissingImagesBase64 } from '../services/icon_generator';
 
 @customElement('manifest-options')
 export class AppManifest extends LitElement {
@@ -28,20 +42,24 @@ export class AppManifest extends LitElement {
   screenshotList: Array<string | undefined> = [];
 
   @property({ type: Boolean }) uploadModalOpen = false;
+  @internalProperty() uploadButtonDisabled = true;
+  @internalProperty() uploadSelectedImageFile: Lazy<File>;
+  @internalProperty() uploadImageObjectUrl: Lazy<string>;
 
   @internalProperty()
   protected backgroundColorRadioValue: 'none' | 'transparent' | 'custom' =
     'none';
 
   @internalProperty()
-  protected searchParams: URLSearchParams | undefined;
+  protected searchParams: Lazy<URLSearchParams>;
 
-  protected get siteUrl(): string | null {
+  protected get siteUrl(): string {
     if (!this.searchParams) {
       this.searchParams = new URLSearchParams(location.search);
     }
 
-    return this.searchParams.get('site');
+    const siteParam = this.searchParams.get('site');
+    return siteParam ? siteParam : '';
   }
 
   static get styles() {
@@ -53,6 +71,9 @@ export class AppManifest extends LitElement {
       ToolTipStyles,
       fastButtonCss,
       fastCheckboxCss,
+      fastTextFieldCss,
+      fastMenuCss,
+      fastRadioCss,
       css`
         fast-divider {
           margin: 16px 0;
@@ -177,11 +198,30 @@ export class AppManifest extends LitElement {
           display: none;
         }
       `,
+      // modal
+      css`
+        .modal-action-form {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .modal-action-form fast-checkbox {
+          margin: 16px 0;
+        }
+
+        .modal-img {
+          max-width: 400px;
+        }
+      `,
     ];
   }
 
   constructor() {
     super();
+
+    manifestEmitter.addEventListener(AppEvents.manifestUpdate, () => {
+      this.manifest = getManifest();
+    });
   }
 
   render() {
@@ -223,7 +263,7 @@ export class AppManifest extends LitElement {
               <app-modal
                 modalId="uploadModal"
                 title="Upload information"
-                body="This is or uploading screenshots"
+                body="This is or uploading icons"
                 ?open=${this.uploadModalOpen}
                 @app-modal-close=${this.uploadModalClose}
               >
@@ -267,11 +307,11 @@ export class AppManifest extends LitElement {
           </div>
 
           <div class="screenshots-actions">
-            <app-button
+            <loading-button
               appearance="outline"
               type="submit"
               @click=${this.generateScreenshots}
-              >Generate</app-button
+              >Generate</loading-button
             >
           </div>
         </section>
@@ -285,7 +325,7 @@ export class AppManifest extends LitElement {
           <fast-accordion>
             <fast-accordion-item>
               <h1 slot="heading">View Code</h1>
-              <!-- TODO -->
+              <p>${JSON.stringify(getManifest())}</p>
             </fast-accordion-item>
           </fast-accordion>
         </section>
@@ -386,9 +426,10 @@ export class AppManifest extends LitElement {
   }
 
   renderIcons() {
+    const baseUrl = this.siteUrl || this.manifest?.startUrl;
+
     return this.manifest?.icons?.map(icon => {
-      let url = resolveUrl(this.siteUrl, this.manifest?.start_url);
-      url = resolveUrl(url?.href, icon.src);
+      const url = resolveUrl(baseUrl, icon.src);
 
       if (url) {
         return html`<div class="image-item image">
@@ -422,7 +463,7 @@ export class AppManifest extends LitElement {
 
   renderScreenshots() {
     return this.manifest?.screenshots?.map(screenshot => {
-      let url = resolveUrl(this.siteUrl, this.manifest?.start_url);
+      let url = resolveUrl(this.siteUrl, this.manifest?.startUrl);
       url = resolveUrl(url?.href, screenshot.src);
 
       if (url) {
@@ -444,8 +485,15 @@ export class AppManifest extends LitElement {
         inputId="modal-file-input"
         @input-change=${this.handleModalInputFileChange}
       ></app-file-input>
-      <fast-checkbox> Generate missing images from this image </fast-checkbox>
-      <app-button>Upload</app-button>
+      ${this.uploadSelectedImageFile
+        ? html`<img class="modal-img" src=${this.uploadImageObjectUrl} />`
+        : undefined}
+
+      <app-button
+        @click=${this.handleIconFileUpload}
+        .disabled=${this.uploadButtonDisabled}
+        >Upload</app-button
+      >
     `;
   }
 
@@ -459,11 +507,11 @@ export class AppManifest extends LitElement {
     }
   }
 
-  handleScreenshotUrlChange(event: Event) {
+  handleScreenshotUrlChange(event: CustomEvent) {
     console.log(event);
   }
 
-  handleBackgroundRadioChange(event: Event) {
+  handleBackgroundRadioChange(event: CustomEvent) {
     const value = (<any>event.target).value;
     this.backgroundColorRadioValue = value;
 
@@ -472,14 +520,48 @@ export class AppManifest extends LitElement {
     }
   }
 
-  handleBackgroundColorInputChange(event: Event) {
+  handleBackgroundColorInputChange(event: CustomEvent) {
     if (this.manifest) {
       this.manifest.theme_color = (<HTMLInputElement>event.target).value;
     }
   }
 
-  handleModalInputFileChange() {
-    console.log('handleModalInputFileChange');
+  async handleModalInputFileChange(evt: CustomEvent<FileInputDetails>) {
+    const files = evt.detail.input.files ?? undefined;
+
+    this.uploadSelectedImageFile = files?.item(0) ?? undefined;
+    this.uploadButtonDisabled = !this.validIconInput();
+
+    if (!this.uploadButtonDisabled) {
+      this.uploadImageObjectUrl = URL.createObjectURL(
+        this.uploadSelectedImageFile
+      );
+    } else {
+      console.log('error state');
+    }
+  }
+
+  async handleIconFileUpload() {
+    try {
+      if (this.uploadSelectedImageFile) {
+        await generateMissingImagesBase64({
+          file: this.uploadSelectedImageFile,
+        });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  validIconInput() {
+    const supportedFileTypes = ['.png', '.jpg', '.svg'];
+
+    return supportedFileTypes.find(
+      fileType =>
+        this &&
+        this.uploadSelectedImageFile &&
+        this.uploadSelectedImageFile.name.endsWith(fileType)
+    );
   }
 
   addNewScreenshot() {
@@ -501,11 +583,13 @@ export class AppManifest extends LitElement {
   }
 
   downloadImages() {
-    console.log('download images', event);
+    console.log('TODO: download images');
   }
 
   generateScreenshots() {
-    console.log('generate screenshots', event);
+    console.log('generate screenshots');
+    // TODO screenshot list
+    // this.screenshotList;
   }
 
   setBackgroundColorRadio() {

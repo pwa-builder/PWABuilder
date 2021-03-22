@@ -2,11 +2,11 @@ import { LitElement, html, css, customElement, property } from 'lit-element';
 
 @customElement('app-alert')
 export class AppAlert extends LitElement {
-  @property({ type: Boolean }) open: boolean = false;
-  @property({ type: String }) title: string = 'Title';
+  @property({ type: Boolean }) open = false;
+  @property({ type: String }) title = 'Title';
 
-  contextAnimation: Animation | null = null;
-  dialog: Element | null | undefined = null;
+  contextAnimation: Animation | undefined = undefined;
+  dialog: Element | null | undefined = undefined;
 
   static get styles() {
     return css`

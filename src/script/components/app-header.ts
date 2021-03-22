@@ -77,43 +77,39 @@ export class AppHeader extends LitElement {
         color: black;
       }
 
-      @media(prefers-color-scheme: light) {
+      @media (prefers-color-scheme: light) {
         header {
           color: black;
         }
       }
 
-      ${
-        smallBreakPoint(css`
-          header nav {
-            display: none;
-          }
+      ${smallBreakPoint(css`
+        header nav {
+          display: none;
+        }
 
-          #desktop-nav {
-            display: none;
-          }
+        #desktop-nav {
+          display: none;
+        }
 
-          #mobile-nav {
-            display: flex;
-          }
-        `)
-      }
+        #mobile-nav {
+          display: flex;
+        }
+      `)}
 
-      ${
-        mediumBreakPoint(css`
-          header nav {
-            display: initial;
-          }
+      ${mediumBreakPoint(css`
+        header nav {
+          display: initial;
+        }
 
-          #desktop-nav {
-            display: flex;
-          }
+        #desktop-nav {
+          display: flex;
+        }
 
-          #mobile-nav {
-            display: none;
-          }
-        `)
-      }
+        #mobile-nav {
+          display: none;
+        }
+      `)}
 
       ${largeBreakPoint(css`
         #desktop-nav {
@@ -125,24 +121,19 @@ export class AppHeader extends LitElement {
         }
       `)}
 
-      ${
-        xLargeBreakPoint(css`
-          header {
-            padding-left: 1em;
-            padding-right: 1em;
-          }
-        `)
-      }
+      ${xLargeBreakPoint(css`
+        header {
+          padding-left: 1em;
+          padding-right: 1em;
+        }
+      `)}
 
-      ${
-        xxLargeBreakPoint(css`
-          header {
-            padding-left: 3em;
-            padding-right: 3em;
-          }
-        `)
-      }
-
+      ${xxLargeBreakPoint(css`
+        header {
+          padding-left: 3em;
+          padding-right: 3em;
+        }
+      `)}
     `;
   }
 
@@ -167,9 +158,14 @@ export class AppHeader extends LitElement {
         <img @click="${() => this.goBack()}" id="header-icon" src="/assets/images/header_logo.png" alt="header logo">
 
         <nav id="desktop-nav">
-          <fast-anchor appearance="hypertext" href="./about">Resources</fast-anchor>
+          <fast-anchor appearance="hypertext" href="./about"
+            >Resources</fast-anchor
+          >
 
-          <fast-anchor appearance="hypertext" href="https://github.com/pwa-builder/PWABuilder">
+          <fast-anchor
+            appearance="hypertext"
+            href="https://github.com/pwa-builder/PWABuilder"
+          >
             <ion-icon name="logo-github"></ion-icon>
           </fast-anchor>
         </nav>

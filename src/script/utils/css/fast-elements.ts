@@ -11,7 +11,7 @@ export const fastButtonCss = css`
   }
 `;
 
-export const fastTextField = css`
+export const fastTextFieldCss = css`
   fast-text-field {
     --accent-fill-rest: var(--secondary-font-color);
     --accent-fill-active: var(--font-color);
@@ -21,6 +21,16 @@ export const fastTextField = css`
 
 export const fastCheckboxCss = css`
   fast-checkbox {
+    --accent-fill-rest: var(--link-color);
+    --accent-fill-active: var(--link-color);
+    --accent-fill-hover: var(--link-color);
+  }
+`;
+
+export const fastRadioCss = css`
+  fast-radio {
+    --neutral-fill-input-rest: var(--primary-background-color);
+    --accent-foreground-cut-rest: var(--primary-backgroud-color);
     --accent-fill-rest: var(--link-color);
     --accent-fill-active: var(--link-color);
     --accent-fill-hover: var(--link-color);

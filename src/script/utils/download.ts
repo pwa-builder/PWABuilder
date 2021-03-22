@@ -51,8 +51,10 @@ function downloadLinkId(config: DownloadConfig) {
 async function cleanup(mode: Modes, config: DownloadConfig) {
   try {
     // TODO
-    console.log(mode, config);
-    // if (mode === Modes.link) {}
+    console.log(config);
+    if (mode === Modes.link) {
+      // TODO
+    }
   } catch (e) {
     console.error(e);
   }

@@ -59,7 +59,7 @@ export class AppFooter extends LitElement {
           /* 30em here to line up with rest of
           layout at this size */
           #footer-top {
-              margin-right: 30em;
+            margin-right: 30em;
           }
         `
       )}
@@ -113,21 +113,46 @@ export class AppFooter extends LitElement {
           >
 
           <div id="links">
-            <a target='_blank' rel='noopener' href="https://privacy.microsoft.com/en-us/privacystatement">Our Privacy Statement</a>
-            <a target='_blank' rel='noopener' href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md">Terms of Use</a>
+            <a
+              target="_blank"
+              rel="noopener"
+              href="https://privacy.microsoft.com/en-us/privacystatement"
+              >Our Privacy Statement</a
+            >
+            <a
+              target="_blank"
+              rel="noopener"
+              href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md"
+              >Terms of Use</a
+            >
           </div>
         </div>
 
         <div id="icons">
-          <fast-anchor target='_blank' rel='noopener' appearance="hypertext" href="https://github.com/pwa-builder/PWABuilder">
+          <fast-anchor
+            target="_blank"
+            rel="noopener"
+            appearance="hypertext"
+            href="https://github.com/pwa-builder/PWABuilder"
+          >
             <ion-icon name="logo-github"></ion-icon>
           </fast-anchor>
 
-          <fast-anchor target='_blank' rel='noopener' appearance="hypertext" href="https://twitter.com/pwabuilder">
+          <fast-anchor
+            target="_blank"
+            rel="noopener"
+            appearance="hypertext"
+            href="https://twitter.com/pwabuilder"
+          >
             <ion-icon name="logo-twitter"></ion-icon>
           </fast-anchor>
 
-          <fast-anchor target='_blank' rel='noopener' appearance="hypertext" href="https://www.youtube.com/c/PWABuilder">
+          <fast-anchor
+            target="_blank"
+            rel="noopener"
+            appearance="hypertext"
+            href="https://www.youtube.com/c/PWABuilder"
+          >
             <ion-icon name="logo-youtube"></ion-icon>
           </fast-anchor>
         </div>
