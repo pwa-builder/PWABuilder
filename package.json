@@ -4,7 +4,7 @@
   "description": "A starter kit for building PWAs!",
   "main": "index.js",
   "engines": {
-    "node": "14.16.0"
+    "node": "14.10.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
