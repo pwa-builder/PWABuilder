@@ -21,6 +21,7 @@
       // Only necessary because @types/uglify-js can't find types for source-map
       "skipLibCheck": true,
       "experimentalDecorators": true,
+      "allowSyntheticDefaultImports": true,
       "plugins": [
         {
           "name": "ts-lit-plugin",
@@ -50,6 +51,6 @@
     },
     "exclude": [
       "node_modules",
-      "**/*.spec.ts"
+      "**/*.spec.ts",
     ]
   }

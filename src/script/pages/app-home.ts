@@ -30,11 +30,11 @@ import style from '../../../styles/error-styles.css';
 import '@pwabuilder/pwainstall';
 import { Router } from '@vaadin/router';
 import { getProgress, getURL, setProgress } from '../services/app-info';
-import { ProgressList, Status } from '../utils/interfaces';
+import { Lazy, ProgressList, Status } from '../utils/interfaces';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
-  @internalProperty() siteURL: string | null = null;
+  @internalProperty() siteURL: Lazy<string>;
   @internalProperty() gettingManifest = false;
 
   @internalProperty() errorGettingURL = false;

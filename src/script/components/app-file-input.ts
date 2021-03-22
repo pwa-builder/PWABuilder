@@ -9,15 +9,12 @@ import {
 
 import { hidden } from '../utils/css/hidden';
 import { fastButtonCss } from '../utils/css/fast-elements';
-
-export interface FileInputDetails {
-  input: HTMLInputElement;
-}
+import { FileInputDetails, Lazy } from '../utils/interfaces';
 
 @customElement('app-file-input')
 export class FileInput extends LitElement {
-  @property({ type: String }) inputId: string | undefined;
-  @query('.file-input') fileInput: HTMLInputElement | undefined;
+  @property({ type: String }) inputId: Lazy<string>;
+  @query('.file-input') fileInput: Lazy<HTMLInputElement>;
 
   static get styles() {
     return [
@@ -53,7 +50,7 @@ export class FileInput extends LitElement {
           class="file-button"
           appearance="lightweight"
           @click=${this.clickModalInput}
-          >Choose File</fast-button
+          >${this.buttonText()}</fast-button
         >
         <input
           id="${this.inputId}"
@@ -89,6 +86,7 @@ export class FileInput extends LitElement {
       });
 
       this.dispatchEvent(changeEvent);
+      this.requestUpdateInternal();
     }
   }
 }

@@ -1,8 +1,5 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
-
-export interface ModalCloseEvent {
-  modalId: string;
-}
+import { ModalCloseEvent } from '../utils/interfaces';
 
 @customElement('app-modal')
 export class AppModal extends LitElement {
@@ -11,8 +8,8 @@ export class AppModal extends LitElement {
   @property({ type: String }) body = '';
   @property({ type: String }) modalId = '';
 
-  modalAni: Animation | null = null;
-  backgroundAni: Animation | null = null;
+  modalAni: Animation | undefined = undefined;
+  backgroundAni: Animation | undefined = undefined;
 
   static get styles() {
     return css`

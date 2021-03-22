@@ -30,7 +30,7 @@ export function resolveUrl(
   if (!parsedUrl) {
     try {
       if (baseUrl && url) {
-        parsedUrl = new URL(baseUrl + url);
+        parsedUrl = new URL(url, baseUrl);
       }
     } catch (e) {
       console.log('url has a problem', baseUrl, url);

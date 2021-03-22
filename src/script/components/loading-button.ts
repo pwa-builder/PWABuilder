@@ -5,6 +5,9 @@ import '../components/app-button';
 
 @customElement('loading-button')
 export class LoadingButton extends LitElement {
+  @property({ type: String }) type = 'submit';
+  @property({ type: String }) colorMode = 'primary';
+  @property({ type: String }) appearance = 'neutral';
   @property({ type: Boolean }) loading = false;
 
   static get styles() {
@@ -58,7 +61,12 @@ export class LoadingButton extends LitElement {
 
   render() {
     return html`
-      <app-button part="underlying-button" type="submit" color="primary">
+      <app-button
+        part="underlying-button"
+        .appearance=${this.appearance}
+        .type=${this.type}
+        .color=${this.colorMode}
+      >
         ${this.loading
           ? html`<fast-progress-ring></fast-progress-ring>`
           : html`<slot></slot>`}
