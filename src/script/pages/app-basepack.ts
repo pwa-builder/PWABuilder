@@ -169,10 +169,6 @@ export class AppBasePack extends LitElement {
     super();
   }
 
-  async firstUpdated() {
- 
-  }
-
   async doWebGenerate() {
     this.loading = true;
 

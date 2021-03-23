@@ -138,6 +138,19 @@ export class AppPublish extends LitElement {
           margin: 1rem;
         }
 
+        .container .action-buttons fast-anchor {
+          /** 
+             Seems like a magic value but really
+             this is just to match the back button next to it
+           */
+          width: 100px;
+
+          color: white;
+          box-shadow: var(--button-shadow);
+          border-radius: var(--button-radius);
+          font-weight: bold;
+        }
+
         #up-next {
           width: 100%;
         }
@@ -644,8 +657,8 @@ export class AppPublish extends LitElement {
               </div>
 
               <div class="action-buttons">
-                <app-button>Back</app-button>
-                <app-button>Next</app-button>
+                <app-button @click="${() => this.returnToFix()}">Back</app-button>
+                <fast-anchor href="/congrats">Next</fast-anchor>
               </div>
             </section>
           </div>
