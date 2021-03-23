@@ -9,6 +9,9 @@ import { classMap } from 'lit-html/directives/class-map';
 
 import { BreakpointValues } from '../utils/css/breakpoints';
 
+// @ts-ignore
+import style from '../../../styles/layout-defaults.css';
+
 @customElement('app-congrats')
 export class AppCongrats extends LitElement {
   @internalProperty() mql = window.matchMedia(
@@ -18,7 +21,7 @@ export class AppCongrats extends LitElement {
   @internalProperty() isDeskTopView = this.mql.matches;
 
   static get styles() {
-    return css``;
+    return [style, css``];
   }
 
   constructor() {
