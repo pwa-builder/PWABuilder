@@ -182,3 +182,4 @@ export interface FileInputDetails {
 export interface ModalCloseEvent {
   modalId: string;
 }
+

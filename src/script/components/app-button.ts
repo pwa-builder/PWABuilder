@@ -1,8 +1,9 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map';
+import { AppButtonElement } from '../utils/interface.components';
 
 @customElement('app-button')
-export class AppButton extends LitElement {
+export class AppButton extends LitElement implements AppButtonElement {
   @property({ type: String }) type = '';
   @property({ type: String }) colorMode = 'primary';
   @property({ type: String }) appearance = 'neutral';

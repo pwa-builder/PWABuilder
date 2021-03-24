@@ -1,10 +1,11 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
 import { smallBreakPoint, mediumBreakPoint } from '../utils/css/breakpoints';
+import { AppButtonElement } from '../utils/interface.components';
 
 import '../components/app-button';
 
 @customElement('loading-button')
-export class LoadingButton extends LitElement {
+export class LoadingButton extends LitElement implements AppButtonElement {
   @property({ type: String }) type = 'submit';
   @property({ type: String }) colorMode = 'primary';
   @property({ type: String }) appearance = 'neutral';
