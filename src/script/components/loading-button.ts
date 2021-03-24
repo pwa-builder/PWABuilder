@@ -68,7 +68,7 @@ export class LoadingButton extends LitElement implements AppButtonElement {
         .appearance=${this.appearance}
         .type=${this.type}
         .color=${this.colorMode}
-        ?disabled=${this.disabled}
+        ?disabled=${this.disabled || this.loading}
       >
         ${this.loading
           ? html`<fast-progress-ring></fast-progress-ring>`
