@@ -6,6 +6,7 @@ export class AppButton extends LitElement {
   @property({ type: String }) type = '';
   @property({ type: String }) colorMode = 'primary';
   @property({ type: String }) appearance = 'neutral';
+  @property({ type: Boolean }) disabled = false;
 
   static get styles() {
     return css`
@@ -22,6 +23,10 @@ export class AppButton extends LitElement {
 
         border-radius: var(--button-radius);
         box-shadow: var(--button-shadow);
+      }
+
+      fast-button:disabled::part(control) {
+        cursor: not-allowed;
       }
 
       fast-button.secondary {
@@ -65,6 +70,7 @@ export class AppButton extends LitElement {
         .appearance="${this.appearance}"
         .type="${this.type}"
         .color="${this.colorMode}"
+        ?disabled=${this.disabled}
       >
         <slot></slot>
       </fast-button>
