@@ -1222,23 +1222,6 @@
             Options
           </button>
         </div>
-
-        <div id="extraSection">
-          <p>
-            Use EdgeHTML (legacy Edge) instead:
-
-            <Download
-              id="legacyEdgeBetaDownloadButton"
-              class="webviewButton"
-              platform="windows10"
-              :windowsOptions="this.windowsSpartanForm"
-              :message="$t('publish.download')"
-              :showMessage="true"
-              v-on:downloadPackageError="showPackageDownloadError($event)" />
-
-            <button class="legacyEdgeBetaOptionsButton" @click="openWindowsOptionsModal('spartan')">Options</button>
-          </p>
-        </div>
       </section>
     </div>
 
