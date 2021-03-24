@@ -226,9 +226,11 @@ export class AppReport extends LitElement {
                 .results="${this.resultOfTest}"
               ></report-card>
             </fast-tab-panel>
+            <fast-tab-panel id="maniPanel">
               <manifest-options
                 @back-to-overview=${() => this.openOverview()}
-               .score=${this.maniScore}>
+                .score=${this.maniScore}
+              >
               </manifest-options>
             </fast-tab-panel>
             <fast-tab-panel id="swPanel">
