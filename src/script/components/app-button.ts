@@ -1,6 +1,6 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map';
-import { AppButtonElement } from '../utils/interface.components';
+import { AppButtonElement } from '../utils/interfaces.components';
 
 @customElement('app-button')
 export class AppButton extends LitElement implements AppButtonElement {

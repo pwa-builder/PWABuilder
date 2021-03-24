@@ -1,6 +1,6 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
 import { smallBreakPoint, mediumBreakPoint } from '../utils/css/breakpoints';
-import { AppButtonElement } from '../utils/interface.components';
+import { AppButtonElement } from '../utils/interfaces.components';
 
 import '../components/app-button';
 
