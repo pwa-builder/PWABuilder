@@ -33,14 +33,6 @@ export class AppBasePack extends LitElement {
 
   static get styles() {
     return [style, css`
-        #tablet-sidebar {
-          display: none;
-        }
-
-        #desktop-sidebar {
-          display: block;
-        }
-
         content-header::part(header) {
           display: none;
         }
