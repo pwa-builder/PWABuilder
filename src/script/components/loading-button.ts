@@ -67,7 +67,7 @@ export class LoadingButton extends LitElement implements AppButtonElement {
         part="underlying-button"
         .appearance=${this.appearance}
         .type=${this.type}
-        .color=${this.colorMode}
+        .colorMode=${this.colorMode}
         ?disabled=${this.disabled || this.loading}
       >
         ${this.loading
