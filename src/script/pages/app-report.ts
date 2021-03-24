@@ -4,7 +4,7 @@ import {
   html,
   customElement,
   internalProperty,
-  property
+  property,
 } from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map';
 
@@ -226,8 +226,10 @@ export class AppReport extends LitElement {
                 .results="${this.resultOfTest}"
               ></report-card>
             </fast-tab-panel>
-            <fast-tab-panel id="manifestPanel">
-              <manifest-options .score=${this.maniScore}></manifest-options>
+              <manifest-options
+                @back-to-overview=${() => this.openOverview()}
+               .score=${this.maniScore}>
+              </manifest-options>
             </fast-tab-panel>
             <fast-tab-panel id="swPanel">
               <sw-picker
