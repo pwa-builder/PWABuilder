@@ -19,7 +19,12 @@ import style from '../../../styles/layout-defaults.css';
 import '../components/app-header';
 import '../components/app-sidebar';
 import '../components/content-header';
+import '../components/app-modal';
+
 import { getPlatformsGenerated } from '../services/congrats';
+import { fileSave } from 'browser-fs-access';
+import { Router } from '@vaadin/router';
+import { generatePackage, platform } from '../services/publish';
 
 @customElement('app-congrats')
 export class AppCongrats extends LitElement {
@@ -32,6 +37,14 @@ export class AppCongrats extends LitElement {
   @internalProperty() generatedPlatforms = undefined;
 
   @internalProperty() generating = false;
+
+  @internalProperty() errored = false;
+  @internalProperty() errorMessage: string | undefined;
+
+  @internalProperty() blob: Blob | File | undefined;
+  @internalProperty() testBlob: Blob | File | undefined;
+  @internalProperty() open_windows_options = false;
+  @internalProperty() open_android_options = false;
 
   static get styles() {
     return [
@@ -130,12 +143,148 @@ export class AppCongrats extends LitElement {
     console.log(this.generatedPlatforms);
   }
 
-  showWindowsOptionsModal() {}
+  async generate(type: platform, form?: HTMLFormElement) {
+    try {
+      this.generating = true;
 
-  generatePackage(platform: string) {}
+      const packageData = await generatePackage(type, form);
+
+      if (packageData) {
+        if (packageData.type === 'test') {
+          this.testBlob = packageData.blob;
+        } else {
+          this.blob = packageData.blob;
+        }
+      }
+
+      this.generating = false;
+      this.open_android_options = false;
+      this.open_windows_options = false;
+    } catch (err) {
+      console.error(err);
+
+      this.showAlertModal(err);
+    }
+  }
+
+  async download() {
+    if (this.blob || this.testBlob) {
+      await fileSave((this.blob as Blob) || (this.testBlob as Blob), {
+        fileName: 'your_pwa.zip',
+        extensions: ['.zip'],
+      });
+
+      this.blob = undefined;
+      this.testBlob = undefined;
+    }
+  }
+
+  returnToFix() {
+    const resultsString = sessionStorage.getItem('results-string');
+
+    // navigate back to report-card page
+    // with current manifest results
+    Router.go(`/reportcard?results=${resultsString}`);
+  }
+
+  showAlertModal(errorMessage: string) {
+    this.errored = true;
+
+    this.errorMessage = errorMessage;
+  }
+
+  showWindowsOptionsModal() {
+    this.open_windows_options = !this.open_windows_options;
+  }
+
+  showAndroidOptionsModal() {
+    this.open_android_options = !this.open_android_options;
+  }
 
   render() {
     return html`
+      <app-modal
+        title="Wait a minute!"
+        .body="${this.errorMessage || ''}"
+        ?open="${this.errored}"
+        id="error-modal"
+      >
+        <img
+          class="modal-image"
+          slot="modal-image"
+          src="/assets/warning.svg"
+          alt="warning icon"
+        />
+
+        <div slot="modal-actions">
+          <app-button @click="${() => this.returnToFix()}"
+            >Return to Manifest Options</app-button
+          >
+        </div>
+      </app-modal>
+
+      <app-modal
+        ?open="${this.blob ? true : false}"
+        title="Download your package"
+        body="Your app package is ready for download."
+        id="download-modal"
+      >
+        <img
+          class="modal-image"
+          slot="modal-image"
+          src="/assets/images/store_fpo.png"
+          alt="publish icon"
+        />
+
+        <div slot="modal-actions">
+          <app-button @click="${() => this.download()}">Download</app-button>
+        </div>
+      </app-modal>
+
+      <app-modal
+        ?open="${this.testBlob ? true : false}"
+        title="Test Package Download"
+        body="Want to test your files first before publishing? No problem! Description here about how this isn’t store ready and how they can come back and publish their PWA after doing whatever they need to do with their testing etc etc tc etc."
+        id="test-download-modal"
+      >
+        <img
+          class="modal-image"
+          slot="modal-image"
+          src="/assets/images/warning.svg"
+          alt="warning icon"
+        />
+
+        <div slot="modal-actions">
+          <app-button @click="${() => this.download()}">Download</app-button>
+        </div>
+      </app-modal>
+
+      <app-modal
+        id="windows-options-modal"
+        title="Microsoft Store Options"
+        body="Customize your Windows package below!"
+        ?open="${this.open_windows_options}"
+      >
+        <windows-form
+          slot="modal-form"
+          .generating=${this.generating}
+          @init-windows-gen="${ev => this.generate('windows', ev.detail.form)}"
+        ></windows-form>
+      </app-modal>
+
+      <app-modal
+        id="android-options-modal"
+        title="Google Play Store Options"
+        body="Customize your Android package below!"
+        ?open="${this.open_android_options}"
+      >
+        <android-form
+          slot="modal-form"
+          .generating=${this.generating}
+          @init-android-gen="${ev => this.generate('android', ev.detail.form)}"
+        ></android-form>
+      </app-modal>
+
       <div>
         <app-header></app-header>
 
@@ -200,7 +349,7 @@ export class AppCongrats extends LitElement {
                           <loading-button
                             ?loading=${this.generating}
                             id="test-package-button"
-                            @click="${() => this.generatePackage('windows')}"
+                            @click="${() => this.generate('windows')}"
                             >Test Package</loading-button
                           >
                         </div>

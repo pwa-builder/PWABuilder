@@ -14,16 +14,6 @@ import '../components/app-button';
 import '../components/loading-button';
 import '../components/windows-form';
 import '../components/android-form';
-import {
-  createWindowsPackageOptionsFromForm,
-  createWindowsPackageOptionsFromManifest,
-  generateWindowsPackage,
-} from '../services/publish/windows-publish';
-import {
-  createAndroidPackageOptionsFromForm,
-  createAndroidPackageOptionsFromManifest,
-  generateAndroidPackage,
-} from '../services/publish/android-publish';
 import { Router } from '@vaadin/router';
 
 import {

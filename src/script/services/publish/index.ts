@@ -9,7 +9,7 @@ import {
   generateWindowsPackage,
 } from './windows-publish';
 
-type platform = 'windows' | 'android' | 'samsung';
+export type platform = 'windows' | 'android' | 'samsung';
 
 export async function generatePackage(type: platform, form?: HTMLFormElement) {
   switch (type) {
