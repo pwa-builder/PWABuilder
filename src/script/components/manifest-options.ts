@@ -8,7 +8,11 @@ import {
 } from 'lit-element';
 // import { classMap } from 'lit-html/directives/class-map';
 // import { styleMap } from 'lit-html/directives/style-map';
-import { emitter as manifestEmitter, getManifest } from '../services/manifest';
+import {
+  emitter as manifestEmitter,
+  getManifest,
+  updateManifest,
+} from '../services/manifest';
 import { arrayHasChanged, objectHasChanged } from '../utils/hasChanged';
 import { resolveUrl } from '../utils/url';
 import {
@@ -32,6 +36,9 @@ import './app-modal';
 import './dropdown-menu';
 import './app-file-input';
 import { generateMissingImagesBase64 } from '../services/icon_generator';
+import { generateScreenshots } from '../services/screenshots';
+
+type BackgroundColorRadioValues = 'none' | 'transparent' | 'custom';
 
 @customElement('manifest-options')
 export class AppManifest extends LitElement {
@@ -42,13 +49,19 @@ export class AppManifest extends LitElement {
   screenshotList: Array<string | undefined> = [];
 
   @property({ type: Boolean }) uploadModalOpen = false;
-  @internalProperty() uploadButtonDisabled = true;
+
+  @internalProperty() generateIconButtonDisabled = true;
+  @internalProperty()
+  protected generateScreenshotButtonDisabled = true;
+
   @internalProperty() uploadSelectedImageFile: Lazy<File>;
   @internalProperty() uploadImageObjectUrl: Lazy<string>;
 
   @internalProperty()
-  protected backgroundColorRadioValue: 'none' | 'transparent' | 'custom' =
-    'none';
+  protected backgroundColorRadioValue: BackgroundColorRadioValues = 'none';
+
+  @internalProperty()
+  protected awaitRequest = false;
 
   @internalProperty()
   protected searchParams: Lazy<URLSearchParams>;
@@ -277,8 +290,12 @@ export class AppManifest extends LitElement {
             <div class="collection image-items">${this.renderIcons()}</div>
 
             <div class="images-actions">
-              <app-button appearance="outline" @click=${this.downloadImages}
-                >Download</app-button
+              <loading-button
+                appearance="outline"
+                ?loading=${this.awaitRequest}
+                ?disabled=${this.manifest?.icons.length > 0}
+                @click=${this.downloadImages}
+                >Download</loading-button
               >
             </div>
           </div>
@@ -310,6 +327,8 @@ export class AppManifest extends LitElement {
             <loading-button
               appearance="outline"
               type="submit"
+              ?loading=${this.awaitRequest}
+              ?disabled=${this.generateScreenshotButtonDisabled}
               @click=${this.generateScreenshots}
               >Generate</loading-button
             >
@@ -437,7 +456,6 @@ export class AppManifest extends LitElement {
           <p>${icon.sizes}</p>
         </div>`;
       } else {
-        // TODO failure state.
         return undefined;
       }
     });
@@ -471,7 +489,6 @@ export class AppManifest extends LitElement {
           <img src="${url.href}" alt="image text" />
         </div>`;
       } else {
-        // TODO failure path
         return undefined;
       }
     });
@@ -489,10 +506,11 @@ export class AppManifest extends LitElement {
         ? html`<img class="modal-img" src=${this.uploadImageObjectUrl} />`
         : undefined}
 
-      <app-button
+      <loading-button
         @click=${this.handleIconFileUpload}
-        .disabled=${this.uploadButtonDisabled}
-        >Upload</app-button
+        ?disabled=${this.generateIconButtonDisabled}
+        ?loading=${this.awaitRequest}
+        >Upload</loading-button
       >
     `;
   }
@@ -501,28 +519,40 @@ export class AppManifest extends LitElement {
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
     const fieldName = input.dataset['field'];
 
-    // TODO use the update mechanism in my other branch
     if (this.manifest && fieldName && this.manifest[fieldName]) {
-      this.manifest[fieldName] = input.value;
+      updateManifest({
+        [fieldName]: input.value,
+      });
     }
   }
 
   handleScreenshotUrlChange(event: CustomEvent) {
-    console.log(event);
+    const input = <HTMLInputElement>event.target;
+    const index = Number(input.dataset['index']);
+
+    this.screenshotList[index] = input.value;
+    this.generateScreenshotButtonDisabled = this.hasScreenshotsToDownload();
   }
 
   handleBackgroundRadioChange(event: CustomEvent) {
-    const value = (<any>event.target).value;
+    const value: BackgroundColorRadioValues = (<HTMLInputElement>event.target)
+      .value as BackgroundColorRadioValues;
     this.backgroundColorRadioValue = value;
 
     if (value !== 'custom' && this.manifest) {
-      this.manifest.theme_color = value;
+      updateManifest({
+        themeColor: value,
+      });
     }
   }
 
   handleBackgroundColorInputChange(event: CustomEvent) {
     if (this.manifest) {
-      this.manifest.theme_color = (<HTMLInputElement>event.target).value;
+      const value = (<HTMLInputElement>event.target).value;
+
+      updateManifest({
+        themeColor: value,
+      });
     }
   }
 
@@ -530,9 +560,9 @@ export class AppManifest extends LitElement {
     const files = evt.detail.input.files ?? undefined;
 
     this.uploadSelectedImageFile = files?.item(0) ?? undefined;
-    this.uploadButtonDisabled = !this.validIconInput();
+    this.generateIconButtonDisabled = !this.validIconInput();
 
-    if (!this.uploadButtonDisabled) {
+    if (!this.generateIconButtonDisabled) {
       this.uploadImageObjectUrl = URL.createObjectURL(
         this.uploadSelectedImageFile
       );
@@ -542,6 +572,8 @@ export class AppManifest extends LitElement {
   }
 
   async handleIconFileUpload() {
+    this.awaitRequest = true;
+
     try {
       if (this.uploadSelectedImageFile) {
         await generateMissingImagesBase64({
@@ -551,6 +583,8 @@ export class AppManifest extends LitElement {
     } catch (e) {
       console.error(e);
     }
+
+    this.awaitRequest = false;
   }
 
   validIconInput() {
@@ -566,6 +600,7 @@ export class AppManifest extends LitElement {
 
   addNewScreenshot() {
     this.screenshotList = [...(this.screenshotList || []), undefined];
+    this.generateScreenshotButtonDisabled = this.hasScreenshotsToDownload();
   }
 
   done() {
@@ -584,12 +619,28 @@ export class AppManifest extends LitElement {
 
   downloadImages() {
     console.log('TODO: download images');
+    this.awaitRequest = true;
+    this.awaitRequest = false;
   }
 
-  generateScreenshots() {
-    console.log('generate screenshots');
-    // TODO screenshot list
-    // this.screenshotList;
+  async generateScreenshots() {
+    try {
+      this.awaitRequest = true;
+
+      if (this.screenshotList.length) {
+        await generateScreenshots(this.screenshotList);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    this.awaitRequest = false;
+  }
+
+  hasScreenshotsToDownload() {
+    return (
+      this.screenshotList.length && !this.screenshotList.includes(undefined)
+    );
   }
 
   setBackgroundColorRadio() {
