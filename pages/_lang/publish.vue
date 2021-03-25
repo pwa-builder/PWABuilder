@@ -31,7 +31,7 @@
         </button>
       </div>
       <div class="errorBody">
-        <pre>{{packageErrorMessage}}</pre>
+        <pre>{{ packageErrorMessage }}</pre>
       </div>
       <div class="errorFooter">
         <a target="_blank" rel="noopener" :href="reportPackageErrorUrl">
@@ -39,7 +39,7 @@
           Report a problem
         </a>
       </div>
-    </div>    
+    </div>
 
     <Modal
       :title="$t('publish.package_name')"
@@ -154,13 +154,14 @@
                         href="https://developer.android.com/studio/publish/versioning#appversioning"
                         target="_blank"
                         rel="noopener"
-                      >App version code</a>
+                        >App version code</a
+                      >
                       <i
                         class="fas fa-info-circle"
                         title="A positive integer used as an internal version number. This is not shown to users. Android uses this value to protect against downgrades. Maps to android:versionCode."
                         aria-label="A positive integer used as an internal version number. This is not shown to users. Android uses this value to protect against downgrades. Maps to android:versionCode."
                         role="definition"
-                        style="margin-left: 5px;"
+                        style="margin-left: 5px"
                       ></i>
                     </label>
                     <input
@@ -264,7 +265,6 @@
 
               <!-- second row of colors -->
               <div class="row">
-
                 <!-- Nav bar color -->
                 <div class="col-lg-6 col-md-12">
                   <div class="form-group">
@@ -310,7 +310,6 @@
 
               <!-- third row of colors -->
               <div class="row">
-
                 <!-- Nav bar divider color -->
                 <div class="col-lg-6 col-md-12">
                   <div class="form-group">
@@ -353,7 +352,6 @@
                   </div>
                 </div>
               </div>
-
             </div>
 
             <!-- right half of the options dialog -->
@@ -377,7 +375,9 @@
                     target="_blank"
                     rel="noopener"
                     aria-label="Read more about maskable icons"
-                  >Maskable icon</a> URL
+                    >Maskable icon</a
+                  >
+                  URL
                   <i
                     class="fas fa-info-circle"
                     title="Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms."
@@ -400,7 +400,9 @@
                     href="https://w3c.github.io/manifest/#monochrome-icons-and-solid-fills"
                     target="_blank"
                     rel="noopener"
-                  >Monochrome icon</a> URL
+                    >Monochrome icon</a
+                  >
+                  URL
                   <i
                     class="fas fa-info-circle"
                     title="Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings."
@@ -418,7 +420,9 @@
               </div>
 
               <div class="form-group">
-                <label for="splashFadeoutInput">Splash screen fade out duration (ms)</label>
+                <label for="splashFadeoutInput"
+                  >Splash screen fade out duration (ms)</label
+                >
                 <input
                   type="number"
                   class="form-control"
@@ -481,7 +485,10 @@
                     value="standalone"
                     v-model="androidForm.display"
                   />
-                  <label class="form-check-label" for="standaloneDisplayModeInput">
+                  <label
+                    class="form-check-label"
+                    for="standaloneDisplayModeInput"
+                  >
                     Standalone
                     <i
                       class="fas fa-info-circle"
@@ -500,7 +507,10 @@
                     value="fullscreen"
                     v-model="androidForm.display"
                   />
-                  <label class="form-check-label" for="fullscreenDisplayModeInput">
+                  <label
+                    class="form-check-label"
+                    for="fullscreenDisplayModeInput"
+                  >
                     Fullscreen
                     <i
                       class="fas fa-info-circle"
@@ -521,7 +531,10 @@
                     id="enableNotificationsInput"
                     v-model="androidForm.enableNotifications"
                   />
-                  <label class="form-check-label" for="enableNotificationsInput">
+                  <label
+                    class="form-check-label"
+                    for="enableNotificationsInput"
+                  >
                     Enable
                     <i
                       class="fas fa-info-circle"
@@ -584,7 +597,10 @@
                     id="enableSettingsShortcutInput"
                     v-model="androidForm.enableSiteSettingsShortcut"
                   />
-                  <label class="form-check-label" for="enableSettingsShortcutInput">
+                  <label
+                    class="form-check-label"
+                    for="enableSettingsShortcutInput"
+                  >
                     Enable
                     <i
                       class="fas fa-info-circle"
@@ -651,7 +667,7 @@
                     @change="androidSigningModeChanged"
                   />
                   <label class="form-check-label" for="generateSigningKeyInput">
-                    Create new
+                    Create new (recommended)
                     <i
                       class="fas fa-info-circle"
                       title="PWABuilder will generate a new signing key for you and sign your APK with it. Your download will contain the new signing key and passwords."
@@ -674,8 +690,8 @@
                     None
                     <i
                       class="fas fa-info-circle"
-                      title="PWABuilder will generate an unsigned APK. Google Play Store will sign your package. This is Google's recommended approach."
-                      aria-label="PWABuilder will generate an unsigned APK. Google Play Store will sign your package. This is Google's recommended approach."
+                      title="PWABuilder will generate an unsigned APK. This is not recommended. Useful when you wish to sign your own APK in a separate step."
+                      aria-label="PWABuilder will generate an unsigned APK. This is not recommended. Useful when you wish to sign your own APK in a separate step."
                       role="definition"
                     ></i>
                   </label>
@@ -694,8 +710,8 @@
                     Use mine
                     <i
                       class="fas fa-info-circle"
-                      title="Upload your existing signing key. Use this option if you already have a signing key and you want to publish a new version of an existing app in Google Play."
-                      aria-label="Upload your existing signing key. Use this option if you already have a signing key and you want to publish a new version of an existing app in Google Play."
+                      title="Upload your existing signing key. Use this option if you want to publish a new version of an existing app in Google Play."
+                      aria-label="Upload your existing signing key. Use this option if you want to publish a new version of an existing app in Google Play."
                       role="definition"
                     ></i>
                   </label>
@@ -703,10 +719,16 @@
               </div>
 
               <div
-                v-if="androidForm.signingMode === 'mine' || androidForm.signingMode === 'new'"
-                style="margin-left: 15px;"
+                v-if="
+                  androidForm.signingMode === 'mine' ||
+                  androidForm.signingMode === 'new'
+                "
+                style="margin-left: 15px"
               >
-                <div class="form-group" v-if="androidForm.signingMode === 'mine'">
+                <div
+                  class="form-group"
+                  v-if="androidForm.signingMode === 'mine'"
+                >
                   <label for="signingKeyInput">Key file</label>
                   <input
                     type="file"
@@ -715,7 +737,7 @@
                     @change="androidSigningKeyUploaded"
                     accept=".keystore"
                     required
-                    style="border: none;"
+                    style="border: none"
                   />
                 </div>
 
@@ -731,7 +753,10 @@
                   />
                 </div>
 
-                <div class="form-group" v-if="androidForm.signingMode === 'new'">
+                <div
+                  class="form-group"
+                  v-if="androidForm.signingMode === 'new'"
+                >
                   <label for="signingKeyFullNameInput">Key full name</label>
                   <input
                     type="text"
@@ -743,7 +768,10 @@
                   />
                 </div>
 
-                <div class="form-group" v-if="androidForm.signingMode === 'new'">
+                <div
+                  class="form-group"
+                  v-if="androidForm.signingMode === 'new'"
+                >
                   <label for="signingKeyOrgInput">Key organization</label>
                   <input
                     type="text"
@@ -755,8 +783,13 @@
                   />
                 </div>
 
-                <div class="form-group" v-if="androidForm.signingMode === 'new'">
-                  <label for="signingKeyOrgUnitInput">Key organizational unit</label>
+                <div
+                  class="form-group"
+                  v-if="androidForm.signingMode === 'new'"
+                >
+                  <label for="signingKeyOrgUnitInput"
+                    >Key organizational unit</label
+                  >
                   <input
                     type="text"
                     class="form-control"
@@ -767,7 +800,10 @@
                   />
                 </div>
 
-                <div class="form-group" v-if="androidForm.signingMode === 'new'">
+                <div
+                  class="form-group"
+                  v-if="androidForm.signingMode === 'new'"
+                >
                   <label for="signingKeyCountryCodeInput">
                     Key country code
                     <i
@@ -791,11 +827,11 @@
                   <label for="signingKeyPasswordInput">
                     Key password
                     <i
-                        class="fas fa-info-circle"
-                        title="The password for the signing key. Type a new password or leave empty to use a generated password."
-                        aria-label="The password for the signing key. Type a new password or leave empty to use a generated password."
-                        role="definition"
-                      ></i>
+                      class="fas fa-info-circle"
+                      title="The password for the signing key. Type a new password or leave empty to use a generated password."
+                      aria-label="The password for the signing key. Type a new password or leave empty to use a generated password."
+                      role="definition"
+                    ></i>
                   </label>
                   <input
                     type="password"
@@ -810,11 +846,11 @@
                   <label for="signingKeyStorePasswordInput">
                     Key store password
                     <i
-                        class="fas fa-info-circle"
-                        title="The password for the key store. Type a new password or leave empty to use a generated password."
-                        aria-label="The password for the key store. Type a new password or leave empty to use a generated password."
-                        role="definition"
-                      ></i>
+                      class="fas fa-info-circle"
+                      title="The password for the key store. Type a new password or leave empty to use a generated password."
+                      aria-label="The password for the key store. Type a new password or leave empty to use a generated password."
+                      role="definition"
+                    ></i>
                   </label>
                   <input
                     type="password"
@@ -861,7 +897,10 @@
             <div class="col-lg-6 col-md-12">
               <div class="form-group">
                 <label for="windowsPackageIdInput">
-                  <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md">
+                  <a
+                    target="_blank"
+                    href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md"
+                  >
                     {{ $t("publish.label_package_name") }}
                     <i
                       class="fas fa-info-circle"
@@ -901,7 +940,10 @@
                 <div class="col-lg-6 col-md-12">
                   <div class="form-group">
                     <label for="windowsAppVersionInput">
-                      <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/classic-package.md">
+                      <a
+                        target="_blank"
+                        href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/classic-package.md"
+                      >
                         App version
                         <i
                           class="fas fa-info-circle"
@@ -921,14 +963,16 @@
                     />
                   </div>
                 </div>
-
               </div>
 
               <div class="row" v-if="windowsFormConfiguration === 'anaheim'">
                 <div class="col-lg-6 col-md-12">
                   <div class="form-group">
                     <label for="windowsClassicAppVersionInput">
-                      <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/classic-package.md">
+                      <a
+                        target="_blank"
+                        href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/classic-package.md"
+                      >
                         Classic package version
                         <i
                           class="fas fa-info-circle"
@@ -948,7 +992,6 @@
                     />
                   </div>
                 </div>
-
               </div>
 
               <div class="form-group">
@@ -1009,15 +1052,16 @@
                   v-model="windowsForm.startUrl"
                 />
               </div>
-
             </div>
 
             <!-- right half of the options dialog -->
             <div class="col-lg-6 col-md-12">
-              
               <div class="form-group">
                 <label for="windowsIconUrlInput">
-                  <a href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md" target="_blank">
+                  <a
+                    href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md"
+                    target="_blank"
+                  >
                     Icon URL
                     <i
                       class="fas fa-info-circle"
@@ -1037,55 +1081,61 @@
               </div>
 
               <div class="form-group">
-                  <label for="windowsDisplayNameInput">
-                    <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md">
-                      Publisher display name
-                      <i
-                        class="fas fa-info-circle"
-                        title="The display name of your app's publisher. You can find this in Windows Partner Center. Click to learn more."
-                        aria-label="The display name of your app's publisher. You can find this in Windows Partner Center. Click to learn more."
-                        role="definition"
-                      ></i>
-                    </a>
-                  </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    for="windowsDisplayNameInput"
-                    required
-                    placeholder="US"
-                    v-model="windowsForm.publisher.displayName"
-                  />
-                </div>
+                <label for="windowsDisplayNameInput">
+                  <a
+                    target="_blank"
+                    href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md"
+                  >
+                    Publisher display name
+                    <i
+                      class="fas fa-info-circle"
+                      title="The display name of your app's publisher. You can find this in Windows Partner Center. Click to learn more."
+                      aria-label="The display name of your app's publisher. You can find this in Windows Partner Center. Click to learn more."
+                      role="definition"
+                    ></i>
+                  </a>
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  for="windowsDisplayNameInput"
+                  required
+                  placeholder="US"
+                  v-model="windowsForm.publisher.displayName"
+                />
+              </div>
 
-                <div class="form-group">
-                  <label for="windowsPublisherIdInput">
-                    <a target="_blank" href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md">
-                      Publisher ID
-                      <i
-                        class="fas fa-info-circle"
-                        title="Your Windows Publisher ID. You can find this value in Windows Partner Center. Click to learn more."
-                        aria-label="Your Windows Publisher ID. You can find this value in Windows Partner Center. Click to learn more."
-                        role="definition"
-                      ></i>
-                    </a>
-                  </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="windowsPublisherIdInput"
-                    required
-                    placeholder="CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca"
-                    v-model="windowsForm.publisher.commonName"
-                  />
-                </div>
+              <div class="form-group">
+                <label for="windowsPublisherIdInput">
+                  <a
+                    target="_blank"
+                    href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md"
+                  >
+                    Publisher ID
+                    <i
+                      class="fas fa-info-circle"
+                      title="Your Windows Publisher ID. You can find this value in Windows Partner Center. Click to learn more."
+                      aria-label="Your Windows Publisher ID. You can find this value in Windows Partner Center. Click to learn more."
+                      role="definition"
+                    ></i>
+                  </a>
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="windowsPublisherIdInput"
+                  required
+                  placeholder="CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca"
+                  v-model="windowsForm.publisher.commonName"
+                />
+              </div>
 
               <div class="form-group">
                 <label for="windowsLanguageInput">
                   Language
                   <i
                     class="fas fa-info-circle"
-                    title="Optional. The primary language for your app package. Additional languages can be specified in Partner Center. If empty, EN-US will be used." 
+                    title="Optional. The primary language for your app package. Additional languages can be specified in Partner Center. If empty, EN-US will be used."
                     aria-label="Optional. The primary language for your app package. Additional languages can be specified in Partner Center. If empty, EN-US will be used."
                     role="definition"
                   ></i>
@@ -1098,7 +1148,6 @@
                   v-model="windowsForm.resourceLanguage"
                 />
               </div>
-
             </div>
           </div>
         </form>
@@ -1116,7 +1165,8 @@
             Download your
             <a
               href="https://developers.google.com/web/updates/2019/08/twas-quickstart"
-            >PWA package</a>
+              >PWA package</a
+            >
             for Google Play
           </p>
 
@@ -1124,7 +1174,8 @@
             Your download will contain
             <a
               href="https://github.com/pwa-builder/CloudAPK/blob/master/Next-steps.md"
-            >instructions</a>
+              >instructions</a
+            >
             for submitting your app to the Google Play store.
           </p>
 
@@ -1145,7 +1196,12 @@
             v-on:apkDownloaded="showInstall($event)"
             v-on:downloadPackageError="showPackageDownloadError($event)"
           />
-          <button class="androidDownloadButton" @click="openAndroidOptionModal()">Options</button>
+          <button
+            class="androidDownloadButton"
+            @click="openAndroidOptionModal()"
+          >
+            Options
+          </button>
         </div>
 
         <!-- justin revisit -->
@@ -1177,7 +1233,13 @@
 
         <div id="extraSection">
           <p>
-            Your PWA will be a <a href="https://developers.google.com/web/updates/2019/08/twas-quickstart" target="_blank" rel="noopener">Trusted Web Activity</a>.
+            Your PWA will be a
+            <a
+              href="https://developers.google.com/web/updates/2019/08/twas-quickstart"
+              target="_blank"
+              rel="noopener"
+              >Trusted Web Activity</a
+            >.
             <Download
               :showMessage="true"
               id="legacyDownloadButton"
@@ -1202,23 +1264,36 @@
             Download your PWA package for Microsoft Store
           </p>
           <p>
-            Your download will contain <a href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps-edgehtml.md" target="_blank">instructions</a> for submitting your app to the Microsoft Store.
-            Your app will be <a href="https://link.medium.com/7lXJkhtaKab" target="_blank" rel="noopener">powered by Chromium-based Edge</a> platform (preview).
+            Your download will contain
+            <a
+              href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps-edgehtml.md"
+              target="_blank"
+              >instructions</a
+            >
+            for submitting your app to the Microsoft Store. Your app will be
+            <a
+              href="https://link.medium.com/7lXJkhtaKab"
+              target="_blank"
+              rel="noopener"
+              >powered by Chromium-based Edge</a
+            >
+            platform (preview).
           </p>
         </div>
 
         <div id="androidModalButtonSection" class="edgeBlock">
           <Download
-              class="androidDownloadButton"
-              platform="windows10new"
-              :windowsOptions="this.windowsAnaheimForm"
-              :message="'Download'"
-              :showMessage="true"
-              v-on:downloadPackageError="showPackageDownloadError($event)"
-            />
+            class="androidDownloadButton"
+            platform="windows10new"
+            :windowsOptions="this.windowsAnaheimForm"
+            :message="'Download'"
+            :showMessage="true"
+            v-on:downloadPackageError="showPackageDownloadError($event)"
+          />
           <button
             class="androidDownloadButton"
-            @click="openWindowsOptionsModal('anaheim')">
+            @click="openWindowsOptionsModal('anaheim')"
+          >
             Options
           </button>
         </div>
@@ -1312,7 +1387,9 @@
             id="uploadIconImage-color"
             name="upload-image-color"
             @click="clickUploadColorFileInput()"
-          >Choose File</button>
+          >
+            Choose File
+          </button>
           <input
             id="upload-file-input-color"
             name="upload-image-color"
@@ -1327,9 +1404,9 @@
           />
           <p class="file-description" v-show="!this.uploadColorLoaderActive">
             {{
-            this.teamsForm.colorImageFile
-            ? this.teamsForm.colorImageFile.name
-            : "No file chosen"
+              this.teamsForm.colorImageFile
+                ? this.teamsForm.colorImageFile.name
+                : "No file chosen"
             }}
           </p>
         </div>
@@ -1346,7 +1423,9 @@
             id="uploadIconImage-outline"
             name="upload-image-outline"
             @click="clickUploadOutlineFileInput()"
-          >Choose File</button>
+          >
+            Choose File
+          </button>
           <input
             id="upload-file-input-outline"
             name="upload-image-outline"
@@ -1361,9 +1440,9 @@
           />
           <p class="file-description" v-show="!this.uploadOutlineLoaderActive">
             {{
-            this.teamsForm.outlineImageFile
-            ? this.teamsForm.outlineImageFile.name
-            : "No file chosen"
+              this.teamsForm.outlineImageFile
+                ? this.teamsForm.outlineImageFile.name
+                : "No file chosen"
             }}
           </p>
         </div>
@@ -1388,7 +1467,8 @@
           <h2>Everything you need to build and publish PWA</h2>
 
           <p>
-            Publish your PWA to app stores to make your app more discoverable to users.
+            Publish your PWA to app stores to make your app more discoverable to
+            users.
           </p>
 
           <!--<div id="publishActionsContainer">-->
@@ -1411,7 +1491,11 @@
             >
               <div class="pwaCardHeaderBlock">
                 <div class="pwaCardIconBlock">
-                  <img class="pwaIcon" src="~/assets/images/pwaLogo.svg" alt="PWA Logo" />
+                  <img
+                    class="pwaIcon"
+                    src="~/assets/images/pwaLogo.svg"
+                    alt="PWA Logo"
+                  />
                   <h2>Progressive Web App</h2>
                 </div>
               </div>
@@ -1440,12 +1524,16 @@
               class="pwaCard"
             >
               <div class="pwaCardHeaderBlock">
-                <i class="fab fa-android platformIcon" aria-label="Android Icon"></i>
+                <i
+                  class="fab fa-android platformIcon"
+                  aria-label="Android Icon"
+                ></i>
                 <h2>Android</h2>
               </div>
 
               <p>
-                Publish your PWA to the Google Play Store to make your app more discoverable for Android users.
+                Publish your PWA to the Google Play Store to make your app more
+                discoverable for Android users.
               </p>
 
               <section class="platformDownloadBar">
@@ -1454,7 +1542,10 @@
                   @click="openAndroidModal()"
                   aria-label="Open Android Modal"
                 >
-                  <i class="fas fa-long-arrow-alt-down" aria-label="Open Android Icon"></i>
+                  <i
+                    class="fas fa-long-arrow-alt-down"
+                    aria-label="Open Android Icon"
+                  ></i>
                 </button>
               </section>
             </div>
@@ -1485,7 +1576,8 @@
               </div>
 
               <p>
-                Publish your PWA to the Samsung Galaxy Store to make your app more discoverable to users with Samsung Galaxy Android devices.
+                Publish your PWA to the Samsung Galaxy Store to make your app
+                more discoverable to users with Samsung Galaxy Android devices.
               </p>
 
               <section class="platformDownloadBar">
@@ -1507,13 +1599,17 @@
             >
               <div class="pwaCardHeaderBlock" id="windowsCardHeaderBlock">
                 <div id="windowsCardHeader">
-                  <i class="fab fa-windows platformIcon" aria-label="Windows Icon"></i>
+                  <i
+                    class="fab fa-windows platformIcon"
+                    aria-label="Windows Icon"
+                  ></i>
                   <h2>Windows</h2>
                 </div>
               </div>
 
               <p>
-                Publish your PWA to the Microsoft Store to make it available to the 1 billion Windows and XBox users worldwide.
+                Publish your PWA to the Microsoft Store to make it available to
+                the 1 billion Windows and XBox users worldwide.
               </p>
 
               <section class="platformDownloadBar">
@@ -1522,7 +1618,10 @@
                   @click="openWindowsModal()"
                   aria-label="Open Windows Modal"
                 >
-                  <i class="fas fa-long-arrow-alt-down" aria-label="Open Windows Icon"></i>
+                  <i
+                    class="fas fa-long-arrow-alt-down"
+                    aria-label="Open Windows Icon"
+                  ></i>
                 </button>
               </section>
             </div>
@@ -1534,12 +1633,17 @@
               class="pwaCard"
             >
               <div class="pwaCardHeaderBlock">
-                <i class="fab fa-apple platformIcon" aria-label="Apple Icon"></i>
+                <i
+                  class="fab fa-apple platformIcon"
+                  aria-label="Apple Icon"
+                ></i>
                 <h2>MacOS</h2>
               </div>
 
               <p>
-                Publish your app to the MacOS Store to make your PWA available to MacOS users. Your download will contain an Xcode project which you can build and submit to the MacOS Store.
+                Publish your app to the MacOS Store to make your PWA available
+                to MacOS users. Your download will contain an Xcode project
+                which you can build and submit to the MacOS Store.
               </p>
 
               <section class="platformDownloadBar">
@@ -1603,12 +1707,17 @@
 
     <footer>
       <p>
-        PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
-        <a
-          href="https://privacy.microsoft.com/en-us/privacystatement"
-        >Our Privacy Statement</a>
+        PWA Builder was founded by Microsoft as a community guided, open source
+        project to help move PWA adoption forward.
+        <a href="https://privacy.microsoft.com/en-us/privacystatement"
+          >Our Privacy Statement</a
+        >
 
-        <a class="termsOfUse" href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md">Terms of Use</a>
+        <a
+          class="termsOfUse"
+          href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md"
+          >Terms of Use</a
+        >
       </p>
     </footer>
   </main>
@@ -1638,7 +1747,10 @@ import {
   generatePackageId,
 } from "~/utils/android-utils";
 
-import { validateWindowsOptions, generateWindowsPackageId } from "~/utils/windows-utils";
+import {
+  validateWindowsOptions,
+  generateWindowsPackageId,
+} from "~/utils/windows-utils";
 
 const PublishState = namespace(publish.name, State);
 const PublishAction = namespace(publish.name, Action);
@@ -1730,8 +1842,12 @@ export default class extends Vue {
   public created(): void {
     this.updateStatus();
     this.androidForm = this.createAndroidPackageOptionsFromManifest();
-    this.windowsAnaheimForm = this.createWindowsPackageOptionsFromManifest("anaheim");
-    this.windowsSpartanForm = this.createWindowsPackageOptionsFromManifest("spartan");
+    this.windowsAnaheimForm = this.createWindowsPackageOptionsFromManifest(
+      "anaheim"
+    );
+    this.windowsSpartanForm = this.createWindowsPackageOptionsFromManifest(
+      "spartan"
+    );
     this.windowsForm = this.windowsSpartanForm;
   }
 
@@ -1825,7 +1941,9 @@ export default class extends Vue {
     }
   }
 
-  createWindowsPackageOptionsFromManifest(windowsConfiguration: "anaheim" | "spartan"): publish.WindowsPackageOptions {
+  createWindowsPackageOptionsFromManifest(
+    windowsConfiguration: "anaheim" | "spartan"
+  ): publish.WindowsPackageOptions {
     const pwaUrl = this.manifest.url;
     if (!pwaUrl) {
       throw new Error("Can't find the current URL");
@@ -1837,7 +1955,7 @@ export default class extends Vue {
     const icon =
       findSuitableIcon(manifestIcons, "any", 512, 512, "image/png") ||
       findSuitableIcon(manifestIcons, "any", 192, 192, "image/png") ||
-      findSuitableIcon(manifestIcons, "any", 512, 512, "image/jpeg") || 
+      findSuitableIcon(manifestIcons, "any", 512, 512, "image/jpeg") ||
       findSuitableIcon(manifestIcons, "any", 192, 192, "image/jpeg") ||
       findSuitableIcon(manifestIcons, "any", 512, 512, undefined) || // Fallback to a 512x512 with an undefined type.
       findSuitableIcon(manifestIcons, "any", 192, 192, undefined) || // Fallback to a 192x192 with an undefined type.
@@ -1853,7 +1971,7 @@ export default class extends Vue {
       allowSigning: true,
       publisher: {
         displayName: "Contoso, Inc.",
-        commonName: "CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca"
+        commonName: "CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca",
       },
       generateModernPackage: windowsConfiguration === "anaheim",
       classicPackage: {
@@ -1862,19 +1980,20 @@ export default class extends Vue {
         url: pwaUrl,
       },
       edgeHtmlPackage: {
-        generate: windowsConfiguration === "spartan"
+        generate: windowsConfiguration === "spartan",
       },
       manifestUrl: this.manifestUrl,
       manifest: this.manifest,
       images: {
         baseImage: icon && icon.src ? icon.src : "",
         backgroundColor: "transparent",
-        padding: 0.3
+        padding: 0.3,
       },
       startUrl: this.manifest.start_url,
-      resourceLanguage: this.manifest.lang === "en" ? "EN-US" : this.manifest.lang || ""
+      resourceLanguage:
+        this.manifest.lang === "en" ? "EN-US" : this.manifest.lang || "",
     };
-    
+
     return packageOptions;
   }
 
@@ -1894,7 +2013,12 @@ export default class extends Vue {
     // StartUrl must be relative to the host.
     // We make sure it is below.
     let relativeStartUrl: string;
-    if (!this.manifest.start_url || this.manifest.start_url === "/" || this.manifest.start_url === "." || this.manifest.start_url === "./") {
+    if (
+      !this.manifest.start_url ||
+      this.manifest.start_url === "/" ||
+      this.manifest.start_url === "." ||
+      this.manifest.start_url === "./"
+    ) {
       // First, if we don't have a start_url in the manifest, or it's just "/",
       // then we can just use that.
       relativeStartUrl = "/";
@@ -1921,12 +2045,10 @@ export default class extends Vue {
       findSuitableIcon(manifestIcons, "maskable", 192, 192, undefined);
     const monochromeIcon =
       findSuitableIcon(manifestIcons, "monochrome", 512, 512, "image/png") ||
-      findSuitableIcon(manifestIcons, "monochrome", 192, 192, "image/png") || 
+      findSuitableIcon(manifestIcons, "monochrome", 192, 192, "image/png") ||
       findSuitableIcon(manifestIcons, "monochrome", 192, 192, undefined);
-    const navColorOrFallback = 
-      this.manifest.theme_color ||
-        this.manifest.background_color ||
-        "#000000";
+    const navColorOrFallback =
+      this.manifest.theme_color || this.manifest.background_color || "#000000";
     return {
       appVersion: "1.0.0.0",
       appVersionCode: 1,
@@ -1940,11 +2062,11 @@ export default class extends Vue {
       fallbackType: "customtabs",
       features: {
         locationDelegation: {
-          enabled: true
+          enabled: true,
         },
         playBilling: {
-          enabled: false
-        }
+          enabled: false,
+        },
       },
       host: pwaUrl,
       iconUrl: icon ? icon.src : "",
@@ -2170,13 +2292,15 @@ export default class extends Vue {
     this.openWindows = false;
     this.windowsFormConfiguration = config;
 
-   // Create a copy of the Windows form. If the user cancels the dialog, we'll revert back to this copy.
+    // Create a copy of the Windows form. If the user cancels the dialog, we'll revert back to this copy.
     if (this.windowsForm) {
       this.windowsFormCopyForCancellation = { ...this.windowsForm };
     }
 
     (this.$refs.windowsPWAModal as Modal).show();
-    Vue.prototype.$awa({ referrerUri: 'https://www.pwabuilder.com/publish/windows10-appx' });
+    Vue.prototype.$awa({
+      referrerUri: "https://www.pwabuilder.com/publish/windows10-appx",
+    });
   }
 
   public openTeamsModal(): void {
@@ -2311,9 +2435,11 @@ export default class extends Vue {
   }
 
   public windowsOptionsModalCancelled() {
-    this.windowsForm = 
+    this.windowsForm =
       this.windowsFormCopyForCancellation ||
-      this.createWindowsPackageOptionsFromManifest(this.windowsFormConfiguration);
+      this.createWindowsPackageOptionsFromManifest(
+        this.windowsFormConfiguration
+      );
 
     this.windowsOptionsErrors = [];
 
@@ -2322,11 +2448,14 @@ export default class extends Vue {
   }
 
   public windowsOptionsModalSubmitted() {
-   if (!this.windowsForm) {
+    if (!this.windowsForm) {
       return;
     }
 
-    const validationErrors = validateWindowsOptions(this.windowsForm, this.windowsFormConfiguration);
+    const validationErrors = validateWindowsOptions(
+      this.windowsForm,
+      this.windowsFormConfiguration
+    );
     if (validationErrors.length > 0) {
       this.windowsOptionsErrors = validationErrors.map((e) => e.error);
       return;
@@ -2383,7 +2512,11 @@ export default class extends Vue {
   }
 
   get windowsFormConfiguration(): "spartan" | "anaheim" {
-    if (this.windowsForm && this.windowsForm.edgeHtmlPackage && this.windowsForm.edgeHtmlPackage.generate) {
+    if (
+      this.windowsForm &&
+      this.windowsForm.edgeHtmlPackage &&
+      this.windowsForm.edgeHtmlPackage.generate
+    ) {
       return "spartan";
     }
 
@@ -3039,9 +3172,9 @@ footer a {
   font-size: 14px;
 }
 
-.androidModalBody #extraSection #legacyDownloadButton, 
-.androidModalBody #androidModalButtonSection #legacyDownloadButton, 
-#legacyEdgeBetaDownloadButton, 
+.androidModalBody #extraSection #legacyDownloadButton,
+.androidModalBody #androidModalButtonSection #legacyDownloadButton,
+#legacyEdgeBetaDownloadButton,
 .legacyEdgeBetaOptionsButton {
   color: grey;
   font-size: 14px;
@@ -3064,7 +3197,8 @@ footer a {
   max-height: 16px;
 }
 
-#legacyEdgeBetaDownloadButton, .legacyEdgeBetaOptionsButton {
+#legacyEdgeBetaDownloadButton,
+.legacyEdgeBetaOptionsButton {
   color: #9337d8;
   border: solid 1px;
   padding: 4px;
