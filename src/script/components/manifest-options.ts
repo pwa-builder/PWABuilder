@@ -46,7 +46,7 @@ export class AppManifest extends LitElement {
   manifest = getManifest();
   @property({ type: Number }) score = 0;
   @property({ type: Array, hasChanged: arrayHasChanged })
-  screenshotList: Array<string | undefined> = [];
+  screenshotList: Array<string | undefined> = [undefined];
 
   @property({ type: Boolean }) uploadModalOpen = false;
 
@@ -483,10 +483,6 @@ export class AppManifest extends LitElement {
       ></fast-text-field>`;
     };
 
-    if (this.screenshotList.length == 0) {
-      return renderFn('', 0);
-    }
-
     return this.screenshotList.map(renderFn);
   }
 
@@ -542,7 +538,7 @@ export class AppManifest extends LitElement {
     const index = Number(input.dataset['index']);
 
     this.screenshotList[index] = input.value;
-    this.generateScreenshotButtonDisabled = this.hasScreenshotsToDownload();
+    this.generateScreenshotButtonDisabled = !this.hasScreenshotsToDownload();
   }
 
   handleBackgroundRadioChange(event: CustomEvent) {
@@ -611,7 +607,7 @@ export class AppManifest extends LitElement {
 
   addNewScreenshot() {
     this.screenshotList = [...(this.screenshotList || []), undefined];
-    this.generateScreenshotButtonDisabled = this.hasScreenshotsToDownload();
+    this.generateScreenshotButtonDisabled = !this.hasScreenshotsToDownload();
   }
 
   done() {
