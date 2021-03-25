@@ -172,11 +172,6 @@ export class AppManifest extends LitElement {
           vertical-align: middle;
         }
 
-        .modal-action-form {
-          display: flex;
-          flex-direction: column;
-        }
-
         .item-top {
           display: flex;
           flex-direction: row;
@@ -220,10 +215,15 @@ export class AppManifest extends LitElement {
         .modal-action-form {
           display: flex;
           flex-direction: column;
+          align-items: center;
         }
 
-        .modal-action-form fast-checkbox {
-          margin: 16px 0;
+        .modal-action-form app-file-input::part(control) {
+          width: 100%;
+        }
+
+        .modal-action-form loading-button {
+          margin-top: 8px;
         }
 
         .modal-img {
