@@ -96,6 +96,10 @@ export class AppManifest extends LitElement {
           max-width: 160px;
         }
 
+        loading-button::part(underlying-button) {
+          max-width: 160px;
+        }
+
         fast-text-field,
         app-dropdown::part(layout) {
           width: 300px;
@@ -226,6 +230,12 @@ export class AppManifest extends LitElement {
           max-width: 400px;
         }
       `,
+      // screenshots
+      css`
+        fast-text-field.screenshot-url {
+          margin-bottom: 8px;
+        }
+      `,
     ];
   }
 
@@ -315,6 +325,7 @@ export class AppManifest extends LitElement {
               <fast-button
                 @click=${this.addNewScreenshot}
                 appearance="lightweight"
+                ?disabled=${this.screenshotList.length >= 8}
                 >+ Add URL</fast-button
               >
             </div>
@@ -604,7 +615,12 @@ export class AppManifest extends LitElement {
   }
 
   done() {
-    console.log('done');
+    const event = new CustomEvent('back-to-overview', {
+      detail: {
+        open: true,
+      },
+    });
+    this.dispatchEvent(event);
   }
 
   openUploadModal() {
