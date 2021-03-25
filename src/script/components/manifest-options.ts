@@ -290,10 +290,16 @@ export class AppManifest extends LitElement {
                 ?open=${this.uploadModalOpen}
                 @app-modal-close=${this.uploadModalClose}
               >
+                <form class="modal-action-form" slot="modal-form">
+                  ${this.renderModalInput()}
+                </form>
                 <div slot="modal-actions">
-                  <form class="modal-action-form">
-                    ${this.renderModalInput()}
-                  </form>
+                  <loading-button
+                    @click=${this.handleIconFileUpload}
+                    ?disabled=${this.generateIconButtonDisabled}
+                    ?loading=${this.awaitRequest}
+                    >Upload</loading-button
+                  >
                 </div>
               </app-modal>
             </div>
@@ -512,13 +518,6 @@ export class AppManifest extends LitElement {
       ${this.uploadSelectedImageFile
         ? html`<img class="modal-img" src=${this.uploadImageObjectUrl} />`
         : undefined}
-
-      <loading-button
-        @click=${this.handleIconFileUpload}
-        ?disabled=${this.generateIconButtonDisabled}
-        ?loading=${this.awaitRequest}
-        >Upload</loading-button
-      >
     `;
   }
 
