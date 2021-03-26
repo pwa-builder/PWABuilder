@@ -57,9 +57,6 @@ export class AppManifest extends LitElement {
   @internalProperty()
   protected generateScreenshotButtonDisabled = true;
 
-  @internalProperty() uploadSelectedImageFile: Lazy<File>;
-  @internalProperty() uploadImageObjectUrl: Lazy<string>;
-
   @internalProperty()
   protected backgroundColorRadioValue: BackgroundColorRadioValues = 'none';
 
