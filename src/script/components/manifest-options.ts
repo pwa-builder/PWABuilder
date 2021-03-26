@@ -6,8 +6,13 @@ import {
   property,
   internalProperty,
 } from 'lit-element';
-// import { classMap } from 'lit-html/directives/class-map';
-// import { styleMap } from 'lit-html/directives/style-map';
+import { classMap } from 'lit-html/directives/class-map';
+
+import { localeStrings } from '../../locales';
+
+//@ts-ignore
+import ErrorStyles from '../../../styles/error-styles.css';
+
 import {
   emitter as manifestEmitter,
   getManifest,
@@ -37,6 +42,7 @@ import './dropdown-menu';
 import './app-file-input';
 import { generateMissingImagesBase64 } from '../services/icon_generator';
 import { generateScreenshots } from '../services/screenshots';
+import { validateScreenshotUrlsList } from '../utils/manifest-validation';
 
 type BackgroundColorRadioValues = 'none' | 'transparent' | 'custom';
 
@@ -56,6 +62,8 @@ export class AppManifest extends LitElement {
   @internalProperty() generateIconButtonDisabled = true;
   @internalProperty()
   protected generateScreenshotButtonDisabled = true;
+
+  @internalProperty() screenshotListValid: Array<boolean> = [];
 
   @internalProperty()
   protected backgroundColorRadioValue: BackgroundColorRadioValues = 'none';
@@ -81,6 +89,7 @@ export class AppManifest extends LitElement {
         :host {
         }
       `,
+      ErrorStyles,
       ToolTipStyles,
       fastButtonCss,
       fastCheckboxCss,
@@ -480,13 +489,23 @@ export class AppManifest extends LitElement {
 
   renderScreenshotInputUrlList() {
     const renderFn = (url: string | undefined, index: number) => {
-      return html` <fast-text-field
-        class="screenshot-url"
-        placeholder="www.example.com/screenshot"
-        value="${url || ''}"
-        @change=${this.handleScreenshotUrlChange}
-        data-index=${index}
-      ></fast-text-field>`;
+      const isValid = this.screenshotListValid[index];
+      const fieldClassMap = classMap({
+        error: !isValid,
+      });
+
+      return html`<fast-text-field
+          class="screenshot-url ${fieldClassMap}"
+          placeholder="www.example.com/screenshot"
+          value="${url || ''}"
+          @change=${this.handleScreenshotUrlChange}
+          data-index=${index}
+        ></fast-text-field>
+        ${isValid
+          ? html`<span class="error-message"
+              >${localeStrings.input.manifest.screenshot.error}</span
+            >`
+          : undefined} `;
     };
 
     return this.screenshotList.map(renderFn);
@@ -541,6 +560,7 @@ export class AppManifest extends LitElement {
     const index = Number(input.dataset['index']);
 
     this.screenshotList[index] = input.value;
+    this.screenshotListValid = validateScreenshotUrlsList(this.screenshotList);
     this.generateScreenshotButtonDisabled = !this.hasScreenshotsToGenerate();
   }
 
@@ -635,6 +655,13 @@ export class AppManifest extends LitElement {
   downloadIcons() {
     console.log('TODO: download images');
     this.awaitRequest = true;
+
+    try {
+      console.log('download');
+    } catch (e) {
+      console.error(e);
+    }
+
     this.awaitRequest = false;
   }
 
