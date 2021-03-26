@@ -2,7 +2,7 @@
   "input": {
     "manifest": {
       "screenshot": {
-        "error": ""
+        "error": "The url needs to be an absolute url."
       }
     }
   }
