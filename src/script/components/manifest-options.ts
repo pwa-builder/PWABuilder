@@ -519,7 +519,11 @@ export class AppManifest extends LitElement {
         @input-change=${this.handleModalInputFileChange}
       ></app-file-input>
       ${this.uploadSelectedImageFile
-        ? html`<img class="modal-img" src=${this.uploadImageObjectUrl} />`
+        ? html`<img
+            class="modal-img"
+            src=${this.uploadImageObjectUrl}
+            alt="the image to upload"
+          />`
         : undefined}
     `;
   }
