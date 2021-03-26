@@ -63,6 +63,8 @@ export class AppCongrats extends LitElement {
 
         p {
           font-size: var(--font-size);
+          color: var(--font-color);
+          max-width: 767px;
         }
 
         h2 {
@@ -101,6 +103,27 @@ export class AppCongrats extends LitElement {
 
         li h4 {
           font-size: var(--small-medium-font-size);
+          margin-bottom: 8px;
+          margin-top: 0px;
+        }
+
+        #other-stores {
+          padding: 16px;
+          border-bottom: var(--list-border);
+          margin-right: 2em;
+        }
+
+        #test-package-button {
+          display: block;
+          margin-top: 15px;
+
+          --neutral-fill-rest: white;
+          --neutral-fill-active: white;
+          --neutral-fill-hover: white;
+        }
+
+        #test-package-button::part(underlying-button) {
+          --button-font-color: var(--font-color);
         }
 
         ${xxxLargeBreakPoint(
