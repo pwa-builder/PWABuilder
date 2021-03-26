@@ -126,6 +126,11 @@ export class AppCongrats extends LitElement {
           --button-font-color: var(--font-color);
         }
 
+        #android-publish-button {
+          /* same width as buttons above it */
+          width: 152px;
+        }
+
         ${xxxLargeBreakPoint(
           css`
             app-sidebar {
@@ -383,7 +388,24 @@ export class AppCongrats extends LitElement {
 
               ${this.generatedPlatforms &&
               this.generatedPlatforms.android === false
-                ? html``
+                ? html`
+                    <li>
+                      <div id="title-block">
+                        <h4>Android</h4>
+                        <p>
+                          Some text about how awesome PWAs are on Android and
+                          how you should publish to the Google Play Store
+                        </p>
+                      </div>
+
+                      <div id="platform-actions-block">
+                        <app-button id="android-publish-button"
+                          @click="${() => this.showAndroidOptionsModal()}"
+                          >Publish</app-button
+                        >
+                      </div>
+                    </li>
+                  `
                 : null}
             </section>
           </div>
