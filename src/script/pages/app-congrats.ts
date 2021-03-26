@@ -113,6 +113,15 @@ export class AppCongrats extends LitElement {
           margin-right: 2em;
         }
 
+        #blog-section {
+          padding: 16px;
+          background: #F8F8F8;
+        }
+
+        #tools-section h3 {
+          text-align: center;
+        }
+
         #test-package-button {
           display: block;
           margin-top: 15px;
@@ -407,6 +416,14 @@ export class AppCongrats extends LitElement {
                     </li>
                   `
                 : null}
+            </section>
+
+            <section id="blog-section">
+              <h3>Blog Posts recommended for you...</h3>
+            </section>
+
+            <section id="tools-section">
+              <h3>Helpful tools for you...</h3>
             </section>
           </div>
         </div>
