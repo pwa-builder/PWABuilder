@@ -49,6 +49,9 @@ export class AppManifest extends LitElement {
   screenshotList: Array<string | undefined> = [undefined];
 
   @property({ type: Boolean }) uploadModalOpen = false;
+  @internalProperty() uploadButtonDisabled = true;
+  @internalProperty() uploadSelectedImageFile: Lazy<File>;
+  @internalProperty() uploadImageObjectUrl: Lazy<string>;
 
   @internalProperty() generateIconButtonDisabled = true;
   @internalProperty()
