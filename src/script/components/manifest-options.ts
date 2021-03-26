@@ -8,7 +8,11 @@ import {
 } from 'lit-element';
 // import { classMap } from 'lit-html/directives/class-map';
 // import { styleMap } from 'lit-html/directives/style-map';
-import { emitter as manifestEmitter, getManifest } from '../services/manifest';
+import {
+  emitter as manifestEmitter,
+  getManifest,
+  updateManifest,
+} from '../services/manifest';
 import { arrayHasChanged, objectHasChanged } from '../utils/hasChanged';
 import { resolveUrl } from '../utils/url';
 import {
@@ -32,6 +36,9 @@ import './app-modal';
 import './dropdown-menu';
 import './app-file-input';
 import { generateMissingImagesBase64 } from '../services/icon_generator';
+import { generateScreenshots } from '../services/screenshots';
+
+type BackgroundColorRadioValues = 'none' | 'transparent' | 'custom';
 
 @customElement('manifest-options')
 export class AppManifest extends LitElement {
@@ -39,16 +46,22 @@ export class AppManifest extends LitElement {
   manifest = getManifest();
   @property({ type: Number }) score = 0;
   @property({ type: Array, hasChanged: arrayHasChanged })
-  screenshotList: Array<string | undefined> = [];
+  screenshotList: Array<string | undefined> = [undefined];
 
   @property({ type: Boolean }) uploadModalOpen = false;
   @internalProperty() uploadButtonDisabled = true;
   @internalProperty() uploadSelectedImageFile: Lazy<File>;
   @internalProperty() uploadImageObjectUrl: Lazy<string>;
 
+  @internalProperty() generateIconButtonDisabled = true;
   @internalProperty()
-  protected backgroundColorRadioValue: 'none' | 'transparent' | 'custom' =
-    'none';
+  protected generateScreenshotButtonDisabled = true;
+
+  @internalProperty()
+  protected backgroundColorRadioValue: BackgroundColorRadioValues = 'none';
+
+  @internalProperty()
+  protected awaitRequest = false;
 
   @internalProperty()
   protected searchParams: Lazy<URLSearchParams>;
@@ -80,6 +93,10 @@ export class AppManifest extends LitElement {
         }
 
         app-button {
+          max-width: 160px;
+        }
+
+        loading-button::part(underlying-button) {
           max-width: 160px;
         }
 
@@ -155,11 +172,6 @@ export class AppManifest extends LitElement {
           vertical-align: middle;
         }
 
-        .modal-action-form {
-          display: flex;
-          flex-direction: column;
-        }
-
         .item-top {
           display: flex;
           flex-direction: row;
@@ -203,14 +215,25 @@ export class AppManifest extends LitElement {
         .modal-action-form {
           display: flex;
           flex-direction: column;
+          align-items: center;
         }
 
-        .modal-action-form fast-checkbox {
-          margin: 16px 0;
+        .modal-action-form app-file-input::part(control) {
+          width: 100%;
+        }
+
+        .modal-action-form loading-button {
+          margin-top: 8px;
         }
 
         .modal-img {
           max-width: 400px;
+        }
+      `,
+      // screenshots
+      css`
+        fast-text-field.screenshot-url {
+          margin-bottom: 8px;
         }
       `,
     ];
@@ -267,18 +290,28 @@ export class AppManifest extends LitElement {
                 ?open=${this.uploadModalOpen}
                 @app-modal-close=${this.uploadModalClose}
               >
+                <form class="modal-action-form" slot="modal-form">
+                  ${this.renderModalInput()}
+                </form>
                 <div slot="modal-actions">
-                  <form class="modal-action-form">
-                    ${this.renderModalInput()}
-                  </form>
+                  <loading-button
+                    @click=${this.handleIconFileUpload}
+                    ?disabled=${this.generateIconButtonDisabled}
+                    ?loading=${this.awaitRequest}
+                    >Upload</loading-button
+                  >
                 </div>
               </app-modal>
             </div>
             <div class="collection image-items">${this.renderIcons()}</div>
 
             <div class="images-actions">
-              <app-button appearance="outline" @click=${this.downloadImages}
-                >Download</app-button
+              <loading-button
+                appearance="outline"
+                ?loading=${this.awaitRequest}
+                ?disabled=${this.manifest?.icons.length > 0}
+                @click=${this.downloadIcons}
+                >Download</loading-button
               >
             </div>
           </div>
@@ -298,6 +331,7 @@ export class AppManifest extends LitElement {
               <fast-button
                 @click=${this.addNewScreenshot}
                 appearance="lightweight"
+                ?disabled=${this.screenshotList.length >= 8}
                 >+ Add URL</fast-button
               >
             </div>
@@ -310,6 +344,8 @@ export class AppManifest extends LitElement {
             <loading-button
               appearance="outline"
               type="submit"
+              ?loading=${this.awaitRequest}
+              ?disabled=${this.generateScreenshotButtonDisabled}
               @click=${this.generateScreenshots}
               >Generate</loading-button
             >
@@ -437,7 +473,6 @@ export class AppManifest extends LitElement {
           <p>${icon.sizes}</p>
         </div>`;
       } else {
-        // TODO failure state.
         return undefined;
       }
     });
@@ -454,10 +489,6 @@ export class AppManifest extends LitElement {
       ></fast-text-field>`;
     };
 
-    if (this.screenshotList.length == 0) {
-      return renderFn('', 0);
-    }
-
     return this.screenshotList.map(renderFn);
   }
 
@@ -471,7 +502,6 @@ export class AppManifest extends LitElement {
           <img src="${url.href}" alt="image text" />
         </div>`;
       } else {
-        // TODO failure path
         return undefined;
       }
     });
@@ -486,14 +516,12 @@ export class AppManifest extends LitElement {
         @input-change=${this.handleModalInputFileChange}
       ></app-file-input>
       ${this.uploadSelectedImageFile
-        ? html`<img class="modal-img" src=${this.uploadImageObjectUrl} />`
+        ? html`<img
+            class="modal-img"
+            src=${this.uploadImageObjectUrl}
+            alt="the image to upload"
+          />`
         : undefined}
-
-      <app-button
-        @click=${this.handleIconFileUpload}
-        .disabled=${this.uploadButtonDisabled}
-        >Upload</app-button
-      >
     `;
   }
 
@@ -501,28 +529,40 @@ export class AppManifest extends LitElement {
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
     const fieldName = input.dataset['field'];
 
-    // TODO use the update mechanism in my other branch
     if (this.manifest && fieldName && this.manifest[fieldName]) {
-      this.manifest[fieldName] = input.value;
+      updateManifest({
+        [fieldName]: input.value,
+      });
     }
   }
 
   handleScreenshotUrlChange(event: CustomEvent) {
-    console.log(event);
+    const input = <HTMLInputElement>event.target;
+    const index = Number(input.dataset['index']);
+
+    this.screenshotList[index] = input.value;
+    this.generateScreenshotButtonDisabled = !this.hasScreenshotsToGenerate();
   }
 
   handleBackgroundRadioChange(event: CustomEvent) {
-    const value = (<any>event.target).value;
+    const value: BackgroundColorRadioValues = (<HTMLInputElement>event.target)
+      .value as BackgroundColorRadioValues;
     this.backgroundColorRadioValue = value;
 
     if (value !== 'custom' && this.manifest) {
-      this.manifest.theme_color = value;
+      updateManifest({
+        themeColor: value,
+      });
     }
   }
 
   handleBackgroundColorInputChange(event: CustomEvent) {
     if (this.manifest) {
-      this.manifest.theme_color = (<HTMLInputElement>event.target).value;
+      const value = (<HTMLInputElement>event.target).value;
+
+      updateManifest({
+        themeColor: value,
+      });
     }
   }
 
@@ -530,9 +570,9 @@ export class AppManifest extends LitElement {
     const files = evt.detail.input.files ?? undefined;
 
     this.uploadSelectedImageFile = files?.item(0) ?? undefined;
-    this.uploadButtonDisabled = !this.validIconInput();
+    this.generateIconButtonDisabled = !this.validIconInput();
 
-    if (!this.uploadButtonDisabled) {
+    if (!this.generateIconButtonDisabled) {
       this.uploadImageObjectUrl = URL.createObjectURL(
         this.uploadSelectedImageFile
       );
@@ -542,6 +582,8 @@ export class AppManifest extends LitElement {
   }
 
   async handleIconFileUpload() {
+    this.awaitRequest = true;
+
     try {
       if (this.uploadSelectedImageFile) {
         await generateMissingImagesBase64({
@@ -551,6 +593,8 @@ export class AppManifest extends LitElement {
     } catch (e) {
       console.error(e);
     }
+
+    this.awaitRequest = false;
   }
 
   validIconInput() {
@@ -566,10 +610,16 @@ export class AppManifest extends LitElement {
 
   addNewScreenshot() {
     this.screenshotList = [...(this.screenshotList || []), undefined];
+    this.generateScreenshotButtonDisabled = !this.hasScreenshotsToGenerate();
   }
 
   done() {
-    console.log('done');
+    const event = new CustomEvent('back-to-overview', {
+      detail: {
+        open: true,
+      },
+    });
+    this.dispatchEvent(event);
   }
 
   openUploadModal() {
@@ -582,14 +632,30 @@ export class AppManifest extends LitElement {
     }
   }
 
-  downloadImages() {
+  downloadIcons() {
     console.log('TODO: download images');
+    this.awaitRequest = true;
+    this.awaitRequest = false;
   }
 
-  generateScreenshots() {
-    console.log('generate screenshots');
-    // TODO screenshot list
-    // this.screenshotList;
+  async generateScreenshots() {
+    try {
+      this.awaitRequest = true;
+
+      if (this.screenshotList.length) {
+        await generateScreenshots(this.screenshotList);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    this.awaitRequest = false;
+  }
+
+  hasScreenshotsToGenerate() {
+    return (
+      this.screenshotList.length && !this.screenshotList.includes(undefined)
+    );
   }
 
   setBackgroundColorRadio() {

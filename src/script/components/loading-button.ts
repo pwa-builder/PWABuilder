@@ -1,14 +1,16 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
 import { smallBreakPoint, mediumBreakPoint } from '../utils/css/breakpoints';
+import { AppButtonElement } from '../utils/interfaces.components';
 
 import '../components/app-button';
 
 @customElement('loading-button')
-export class LoadingButton extends LitElement {
+export class LoadingButton extends LitElement implements AppButtonElement {
   @property({ type: String }) type = 'submit';
   @property({ type: String }) colorMode = 'primary';
   @property({ type: String }) appearance = 'neutral';
   @property({ type: Boolean }) loading = false;
+  @property({ type: Boolean }) disabled = false;
 
   static get styles() {
     return css`
@@ -65,7 +67,8 @@ export class LoadingButton extends LitElement {
         part="underlying-button"
         .appearance=${this.appearance}
         .type=${this.type}
-        .color=${this.colorMode}
+        .colorMode=${this.colorMode}
+        ?disabled=${this.disabled || this.loading}
       >
         ${this.loading
           ? html`<fast-progress-ring></fast-progress-ring>`

@@ -1,4 +1,9 @@
-import { ProgressList, RawTestResult, Status } from '../../utils/interfaces';
+import {
+  ProgressList,
+  RawTestResult,
+  Status,
+  TestResult,
+} from '../../utils/interfaces';
 import { getProgress, setProgress, setResults } from '../app-info';
 import { testManifest } from './manifest';
 import { testSecurity } from './security';
@@ -37,7 +42,7 @@ function updateProgress(progress: ProgressList, results: RawTestResult) {
   progress.progress[1].items.map((item: { name: string; done: Status }) => {
     if (item.name === 'Manifest') {
       if (results && results.manifest) {
-        if (results.manifest[0].result === true) {
+        if ((results.manifest as Array<TestResult>)[0].result === true) {
           item.done = Status.DONE;
         }
       }

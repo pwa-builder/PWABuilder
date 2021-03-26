@@ -35,6 +35,17 @@ registerRoute(
   'POST'
 );
 
+registerRoute(
+  ({ url }) => url.href === 'https://pwa-screenshots.azurewebsites.net',
+  new CacheFirst({
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [200],
+      }),
+    ],
+  })
+);
+
 try {
   //@ts-ignore
   precacheAndRoute(self.__WB_MANIFEST);
