@@ -17,6 +17,12 @@ export const fastTextFieldCss = css`
     --accent-fill-active: var(--font-color);
     --accent-fill-hover: var(--font-color);
   }
+
+  fast-text-field.error {
+    --neutral-foreground-rest: var(--error-color);
+    --accent-fill-rest: var(--error-color);
+    --accent-fill-active: var(--error-color);
+  }
 `;
 
 export const fastCheckboxCss = css`
