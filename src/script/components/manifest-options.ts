@@ -310,7 +310,7 @@ export class AppManifest extends LitElement {
                 appearance="outline"
                 ?loading=${this.awaitRequest}
                 ?disabled=${this.manifest?.icons.length > 0}
-                @click=${this.downloadImages}
+                @click=${this.downloadIcons}
                 >Download</loading-button
               >
             </div>
@@ -537,7 +537,7 @@ export class AppManifest extends LitElement {
     const index = Number(input.dataset['index']);
 
     this.screenshotList[index] = input.value;
-    this.generateScreenshotButtonDisabled = !this.hasScreenshotsToDownload();
+    this.generateScreenshotButtonDisabled = !this.hasScreenshotsToGenerate();
   }
 
   handleBackgroundRadioChange(event: CustomEvent) {
@@ -606,7 +606,7 @@ export class AppManifest extends LitElement {
 
   addNewScreenshot() {
     this.screenshotList = [...(this.screenshotList || []), undefined];
-    this.generateScreenshotButtonDisabled = !this.hasScreenshotsToDownload();
+    this.generateScreenshotButtonDisabled = !this.hasScreenshotsToGenerate();
   }
 
   done() {
@@ -628,7 +628,7 @@ export class AppManifest extends LitElement {
     }
   }
 
-  downloadImages() {
+  downloadIcons() {
     console.log('TODO: download images');
     this.awaitRequest = true;
     this.awaitRequest = false;
@@ -648,7 +648,7 @@ export class AppManifest extends LitElement {
     this.awaitRequest = false;
   }
 
-  hasScreenshotsToDownload() {
+  hasScreenshotsToGenerate() {
     return (
       this.screenshotList.length && !this.screenshotList.includes(undefined)
     );
