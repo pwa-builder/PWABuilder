@@ -29,7 +29,7 @@ export const helpers = {
         if (!collection) {
             return [];
         }
-    
+
         return collection.map(x => x.name);
     }
 };
@@ -37,6 +37,10 @@ export const helpers = {
 export const getters: GetterTree<State, RootState> = {
     languagesNames(state: State): string[] {
         return helpers.getStaticContentNames(state.languages);
+    },
+
+    languages(state: State): StaticContent[] | null {
+        return state.languages;
     },
 
     displaysNames(state: State): string[] {

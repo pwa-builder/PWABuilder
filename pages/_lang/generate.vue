@@ -1,17 +1,23 @@
 <template>
   <div>
-    <HubHeader :showSubHeader="true" :disableHeader="showingIconModal"></HubHeader>
+    <HubHeader
+      :showSubHeader="true"
+      :disableHeader="showingIconModal"
+    ></HubHeader>
 
-    <div v-if="showingIconModal" class="has-acrylic-40 is-dark" id="modalBackground"></div>
     <div
-      v-if="isInvalidScreenshotUrl"
-      id="invalidUrlToast"
-    >Invalid url(s): {{ `${invalidScreenshotUrlValues}` }}. Please try again.</div>
+      v-if="showingIconModal"
+      class="has-acrylic-40 is-dark"
+      id="modalBackground"
+    ></div>
+    <div v-if="isInvalidScreenshotUrl" id="invalidUrlToast">
+      Invalid url(s): {{ `${invalidScreenshotUrlValues}` }}. Please try again.
+    </div>
     <main id="generateMain" role="presentation">
       <section id="leftSide" :aria-hidden="ariaHidden">
         <header class="mastHead">
-          <h2>{{ $t('generate.subtitle') }}</h2>
-          <p>{{ $t('generate.instructions') }}</p>
+          <h2>{{ $t("generate.subtitle") }}</h2>
+          <p>{{ $t("generate.instructions") }}</p>
         </header>
 
         <div id="dataSection">
@@ -26,7 +32,9 @@
                 aria-label="Info"
                 :aria-selected="showBasicSection ? 'true' : 'false'"
                 tabindex="0"
-              >Info</button>
+              >
+                Info
+              </button>
               <button
                 id="imagesTabButton"
                 v-bind:class="{ active: showImagesSection }"
@@ -36,7 +44,9 @@
                 aria-controls="imagesTab"
                 :aria-selected="showImagesSection ? 'true' : 'false'"
                 :tabindex="bodyTabIndex"
-              >Images</button>
+              >
+                Images
+              </button>
               <button
                 id="settingsTabButton"
                 v-bind:class="{ active: showSettingsSection }"
@@ -47,7 +57,9 @@
                 :aria-selected="showSettingsSection ? 'true' : 'false'"
                 :tabindex="bodyTabIndex"
                 :aria-hidden="ariaHidden"
-              >Settings</button>
+              >
+                Settings
+              </button>
             </div>
           </div>
 
@@ -60,9 +72,9 @@
           >
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4
-                  v-bind:class="{ fieldName: activeFormField === 'appName' }"
-                >{{ $t('generate.name') }}</h4>
+                <h4 v-bind:class="{ fieldName: activeFormField === 'appName' }">
+                  {{ $t("generate.name") }}
+                </h4>
                 <p>Used for App lists or Store listings</p>
               </label>
 
@@ -83,7 +95,9 @@
               <label class="l-generator-label">
                 <h4
                   v-bind:class="{ fieldName: activeFormField === 'shortName' }"
-                >{{ $t('generate.short_name') }}</h4>
+                >
+                  {{ $t("generate.short_name") }}
+                </h4>
                 <p>Used for tiles or home screens</p>
               </label>
 
@@ -103,9 +117,9 @@
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4
-                  v-bind:class="{ fieldName: activeFormField === 'appDesc' }"
-                >{{ $t('generate.description') }}</h4>
+                <h4 v-bind:class="{ fieldName: activeFormField === 'appDesc' }">
+                  {{ $t("generate.description") }}
+                </h4>
                 <p>Used for App listings</p>
               </label>
 
@@ -125,7 +139,9 @@
                 :tabindex="bodyTabIndex"
                 :aria-hidden="ariaHidden"
               ></textarea>
-              <span v-if="ifEntered" class="hint" id="textarea_error">Newline not allowed</span>
+              <span v-if="ifEntered" class="hint" id="textarea_error"
+                >Newline not allowed</span
+              >
               <span v-else class="hint" id="textarea_error"></span>
             </div>
 
@@ -133,7 +149,9 @@
               <label class="l-generator-label">
                 <h4
                   v-bind:class="{ fieldName: activeFormField === 'startURL' }"
-                >{{ $t('generate.start_url') }}</h4>
+                >
+                  {{ $t("generate.start_url") }}
+                </h4>
                 <p>This will be the first page that loads in your PWA.</p>
               </label>
 
@@ -161,8 +179,12 @@
             <div class="l-generator-field logo-upload">
               <div id="uploadNewSection">
                 <label class="l-generator-label">
-                  <h4 class="iconUploadHeader">Upload app icons for your PWA</h4>
-                  <p v-if="!isImageBroken">We suggest at least one image 512×512 or larger</p>
+                  <h4 class="iconUploadHeader">
+                    Upload app icons for your PWA
+                  </h4>
+                  <p v-if="!isImageBroken">
+                    We suggest at least one image 512×512 or larger
+                  </p>
                   <p class="brokenImage" v-if="isImageBroken">
                     If you want a bigger images, we suggest to you to upload at
                     least one image 512×512 or larger
@@ -179,7 +201,9 @@
                       :disabled="zipRequested"
                       :tabindex="bodyTabIndex"
                       :aria-hidden="ariaHidden"
-                    >Download All</button>
+                    >
+                      Download All
+                    </button>
                   </div>
                   <div class="l-inline">
                     <button
@@ -188,7 +212,9 @@
                       @click="onClickUploadIcon()"
                       :tabindex="bodyTabIndex"
                       :aria-hidden="ariaHidden"
-                    >Upload</button>
+                    >
+                      Upload
+                    </button>
                   </div>
                 </div>
 
@@ -210,7 +236,10 @@
                     v-for="icon in filterIcons(icons)"
                     :key="icon.src"
                   >
-                    <div id="iconDivItem" class="pure-u-10-24 l-generator-tablec">
+                    <div
+                      id="iconDivItem"
+                      class="pure-u-10-24 l-generator-tablec"
+                    >
                       <a
                         target="_blank"
                         :href="icon.src"
@@ -222,7 +251,9 @@
                           :src="icon.src"
                           :aria-label="icon.src"
                           alt="linter place holder"
-                          :alt="'icon representing an image from uri: ' + icon.src"
+                          :alt="
+                            'icon representing an image from uri: ' + icon.src
+                          "
                         />
                       </a>
 
@@ -238,7 +269,10 @@
                           :aria-label="'delete icon of size ' + icon.sizes"
                           :aria-hidden="ariaHidden"
                         >
-                          <span class="l-generator-close" :title="$t('generate.remove_icon')">
+                          <span
+                            class="l-generator-close"
+                            :title="$t('generate.remove_icon')"
+                          >
                             <i class="fas fa-trash-alt"></i>
                           </span>
                         </div>
@@ -255,7 +289,11 @@
                 </div>
               </div>
             </div>
-            <div id="screenshotsTool" :tabindex="bodyTabIndex" :aria-hidden="ariaHidden">
+            <div
+              id="screenshotsTool"
+              :tabindex="bodyTabIndex"
+              :aria-hidden="ariaHidden"
+            >
               <div class="l-generator-field">
                 <label class="l-generator-label">
                   <h4>Generate screenshots for your PWA</h4>
@@ -293,7 +331,7 @@
                       <i
                         class="fas fa-minus-circle outlineontab_content"
                         aria-hidden="true"
-                        style="cursor:pointer"
+                        style="cursor: pointer"
                         tabindex="-1"
                       ></i>
                     </span>
@@ -306,13 +344,13 @@
                       @keyup.enter="addUrlForScreenshots(k)"
                       v-show="
                         k == urlsForScreenshot.length - 1 &&
-                          screenshots.length + k <= 6
+                        screenshots.length + k <= 6
                       "
                     >
                       <i
                         class="fas fa-plus-circle outlineontab_content"
                         aria-hidden="true"
-                        style="cursor:pointer"
+                        style="cursor: pointer"
                         tabindex="-1"
                       ></i>
                     </span>
@@ -332,7 +370,8 @@
                     v-if="!screenshotLoading"
                     id="screenshotDownloadButton_content"
                     tabindex="-1"
-                  >Generate Screenshots</span>
+                    >Generate Screenshots</span
+                  >
                   <span
                     v-if="screenshotLoading"
                     tabindex="-1"
@@ -389,7 +428,13 @@
                       v-if="screenshot.src.startsWith('data:image')"
                       aria-hidden="false"
                       target="_blank"
-                      :href="'javascript:document.write(\'<img src=' + screenshot.src + ' style=' + generatedImageStyle + ' />\')'"
+                      :href="
+                        'javascript:document.write(\'<img src=' +
+                        screenshot.src +
+                        ' style=' +
+                        generatedImageStyle +
+                        ' />\')'
+                      "
                       :tabindex="bodyTabIndex"
                       class="screenshotImage"
                       ref="screenshotImage"
@@ -400,17 +445,13 @@
                       <img alt="screenshot image" :src="screenshot.src" />
                     </a>
                     <div id="screenshotsToolbar">
-                      <div style="width:27px;">
+                      <div style="width: 27px">
                         <span v-if="screenshot.sizes !== undefined">
-                          {{
-                          `${screenshot.sizes}`
-                          }}
+                          {{ `${screenshot.sizes}` }}
                         </span>
                       </div>
                       <span aria-hidden="true" id="pageNumber">
-                        {{
-                        `${k + 1} of ${screenshots.length}`
-                        }}
+                        {{ `${k + 1} of ${screenshots.length}` }}
                       </span>
                       <button
                         id="removeScreenshotsDiv"
@@ -459,8 +500,12 @@
               <label class="l-generator-label">
                 <h4
                   v-bind:class="{ fieldName: activeFormField === 'appScope' }"
-                >{{ $t('generate.scope') }}</h4>
-                <p>Scope determines what part of your website runs in the PWA</p>
+                >
+                  {{ $t("generate.scope") }}
+                </h4>
+                <p>
+                  Scope determines what part of your website runs in the PWA
+                </p>
               </label>
 
               <input
@@ -482,7 +527,9 @@
                   v-bind:class="{
                     fieldName: activeFormField === 'displayMode',
                   }"
-                >{{ $t('generate.display') }}</h4>
+                >
+                  {{ $t("generate.display") }}
+                </h4>
                 <p>
                   Display identifies the browser components that should be
                   included in your. "Standalone" appears as a traditional app.
@@ -502,7 +549,9 @@
                   v-for="display in displaysNames"
                   :value="display"
                   :key="display"
-                >{{ display }}</option>
+                >
+                  {{ display }}
+                </option>
               </select>
             </div>
 
@@ -512,8 +561,12 @@
                   v-bind:class="{
                     fieldName: activeFormField === 'appOrientation',
                   }"
-                >{{ $t('generate.orientation') }}</h4>
-                <p>Orientation determines the perfered flow of your application.</p>
+                >
+                  {{ $t("generate.orientation") }}
+                </h4>
+                <p>
+                  Orientation determines the perfered flow of your application.
+                </p>
               </label>
 
               <select
@@ -529,15 +582,17 @@
                   v-for="orientation in orientationsNames"
                   :value="orientation"
                   :key="orientation"
-                >{{ orientation }}</option>
+                >
+                  {{ orientation }}
+                </option>
               </select>
             </div>
 
             <div class="l-generator-field">
               <label class="l-generator-label">
-                <h4
-                  v-bind:class="{ fieldName: activeFormField === 'appLang' }"
-                >{{ $t('generate.language') }}</h4>
+                <h4 v-bind:class="{ fieldName: activeFormField === 'appLang' }">
+                  {{ $t("generate.language") }}
+                </h4>
                 <p>Declare the language of your PWA</p>
               </label>
 
@@ -551,10 +606,12 @@
                 :aria-hidden="ariaHidden"
               >
                 <option
-                  v-for="language in languagesNames"
-                  :value="language"
-                  :key="language"
-                >{{ language }}</option>
+                  v-for="language in languages"
+                  :key="language.name"
+                  :value="language.code"
+                >
+                  {{ language.name }}
+                </option>
               </select>
             </div>
 
@@ -573,7 +630,8 @@
             :tabindex="bodyTabIndex"
             :aria-hidden="ariaHidden"
             @click.native="saveChanges"
-          >Done</nuxt-link>
+            >Done</nuxt-link
+          >
         </div>
       </section>
 
@@ -588,9 +646,7 @@
         <section id="imageModalSection">
           <div class="l-generator-box image-upload">
             <span class="l-generator-label">
-              {{
-              $t('generate.upload_image')
-              }}
+              {{ $t("generate.upload_image") }}
             </span>
             <input
               id="modal-file"
@@ -603,29 +659,28 @@
 
           <div class="l-generator-field">
             <label id="genMissingLabel">
-              {{ $t('generate.generate_missing') }}
-              <input
-                type="checkbox"
-                v-model="iconCheckMissing"
-              />
+              {{ $t("generate.generate_missing") }}
+              <input type="checkbox" v-model="iconCheckMissing" />
             </label>
           </div>
           <div v-if="this.iconFileErrorNoneUploaded" class="l-generator-field">
-            <p
-              id="uploadImageError"
-              role="alert"
-            >{{ $t('generate.upload_image_error_none_uploaded') }}</p>
+            <p id="uploadImageError" role="alert">
+              {{ $t("generate.upload_image_error_none_uploaded") }}
+            </p>
           </div>
           <div v-if="this.iconFileErrorIncorrectType" class="l-generator-field">
-            <p
-              id="uploadImageError"
-              role="alert"
-            >{{ $t('generate.upload_image_error_incorrect_type') }}</p>
+            <p id="uploadImageError" role="alert">
+              {{ $t("generate.upload_image_error_incorrect_type") }}
+            </p>
           </div>
         </section>
       </Modal>
 
-      <section id="rightSide" :tabindex="bodyTabIndex" :aria-hidden="ariaHidden">
+      <section
+        id="rightSide"
+        :tabindex="bodyTabIndex"
+        :aria-hidden="ariaHidden"
+      >
         <!--<div id="exampleDiv">
           <h3>Add this code to your start page:</h3>
           <code>&lt;link rel="manifest" href="/manifest.json"&gt;</code>
@@ -672,14 +727,20 @@
 
     <footer>
       <p>
-        PWA Builder was founded by Microsoft as a community guided, open source project to help move PWA adoption forward.
+        PWA Builder was founded by Microsoft as a community guided, open source
+        project to help move PWA adoption forward.
         <a
           href="https://privacy.microsoft.com/en-us/privacystatement"
           :tabindex="bodyTabIndex"
           :aria-hidden="ariaHidden"
-        >Our Privacy Statement</a>
+          >Our Privacy Statement</a
+        >
 
-        <a class="termsOfUse" href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md">Terms of Use</a>
+        <a
+          class="termsOfUse"
+          href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md"
+          >Terms of Use</a
+        >
       </p>
     </footer>
   </div>
@@ -702,6 +763,7 @@ import * as generator from "~/store/modules/generator";
 import helper from "~/utils/helper";
 import axios from "axios";
 import download from "downloadjs";
+import { StaticContent } from "~/store/modules/generator";
 
 const GeneratorState = namespace(generator.name, State);
 const GeneratorActions = namespace(generator.name, Action);
@@ -769,8 +831,8 @@ export default class extends Vue {
   @GeneratorState suggestions: string[];
   @GeneratorState shortcuts: generator.ShortcutItem[];
   @GeneratorState warnings: string[];
+  @Getter languages: StaticContent[];
   @Getter orientationsNames: string[];
-  @Getter languagesNames: string[];
   @Getter displaysNames: string[];
   @GeneratorActions removeIcon;
   @GeneratorActions removeScreenshot;
@@ -838,38 +900,41 @@ export default class extends Vue {
     }
 
     try {
-      const response = await fetch("https://azure-express-zip-creator.azurewebsites.net/api", {
-        method: "POST",
-        headers: new Headers({
-          "content-type": "application/json"
-        }),
-        body: JSON.stringify({ images })
-      });
+      const response = await fetch(
+        "https://azure-express-zip-creator.azurewebsites.net/api",
+        {
+          method: "POST",
+          headers: new Headers({
+            "content-type": "application/json",
+          }),
+          body: JSON.stringify({ images }),
+        }
+      );
 
       const res = await response.blob();
 
       if (window["chooseFileSystemEntries"]) {
-          const fsOpts = {
-            type: "save-file",
-            accepts: [
-              {
-                description: "PWA Builder Image Zip",
-                extensions: ["zip"],
-                mimeTypes: ["application/zip"],
-              },
-            ],
-          };
-          const fileHandle = await window["chooseFileSystemEntries"](fsOpts);
-          // Create a FileSystemWritableFileStream to write to.
-          const writable = await fileHandle.createWritable();
-          // Write the contents of the file to the stream.
-          await writable.write(res);
-          // Close the file and write the contents to disk.
-          await writable.close();
-        } else {
-          download(res, "pwa-icons.zip", "application/zip");
-        }
-        this.zipRequested = false;
+        const fsOpts = {
+          type: "save-file",
+          accepts: [
+            {
+              description: "PWA Builder Image Zip",
+              extensions: ["zip"],
+              mimeTypes: ["application/zip"],
+            },
+          ],
+        };
+        const fileHandle = await window["chooseFileSystemEntries"](fsOpts);
+        // Create a FileSystemWritableFileStream to write to.
+        const writable = await fileHandle.createWritable();
+        // Write the contents of the file to the stream.
+        await writable.write(res);
+        // Close the file and write the contents to disk.
+        await writable.close();
+      } else {
+        download(res, "pwa-icons.zip", "application/zip");
+      }
+      this.zipRequested = false;
     } catch (error) {
       console.log(error);
       this.zipRequested = false;
@@ -1077,7 +1142,10 @@ export default class extends Vue {
     // Check if file type is an image
     if (this.iconFile && this.iconFile.name) {
       const supportedFileTypes = [".png", ".jpg", ".svg"];
-      const found = supportedFileTypes.find((fileType) => this && this.iconFile && this.iconFile.name.endsWith(fileType));
+      const found = supportedFileTypes.find(
+        (fileType) =>
+          this && this.iconFile && this.iconFile.name.endsWith(fileType)
+      );
       if (!found) {
         this.iconFileErrorIncorrectType = true;
       } else {
