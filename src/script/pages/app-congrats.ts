@@ -11,6 +11,7 @@ import {
   BreakpointValues,
   xxxLargeBreakPoint,
   largeBreakPoint,
+  mediumBreakPoint,
 } from '../utils/css/breakpoints';
 
 // @ts-ignore
@@ -125,7 +126,7 @@ export class AppCongrats extends LitElement {
 
         #tools-block {
           display: grid;
-          grid-template-columns: auto auto auto;
+          grid-template-columns: repeat(auto-fit, minmax(244px, 1fr));
           grid-gap: 23px;
         }
 
@@ -143,7 +144,7 @@ export class AppCongrats extends LitElement {
 
         #blog-block {
           display: grid;
-          grid-template-columns: auto auto;
+          grid-template-columns: repeat(auto-fit, minmax(256px, 1fr));
         }
 
         #blog-block app-card {
@@ -217,6 +218,14 @@ export class AppCongrats extends LitElement {
 
             #desktop-sidebar {
               display: none;
+            }
+          `
+        )}
+
+        ${mediumBreakPoint(
+          css`
+            #blog-block #first-card {
+              margin-right: initial;
             }
           `
         )}
@@ -478,9 +487,6 @@ export class AppCongrats extends LitElement {
               <div id="blog-block">
                 <app-card
                   id="first-card"
-                  class=${classMap({
-                    blog: true,
-                  })}
                   title="demo"
                   description="demo demo demo"
                   mode="blog"
@@ -490,9 +496,6 @@ export class AppCongrats extends LitElement {
 
                 <div>
                   <app-card
-                    class=${classMap({
-                      blog: true,
-                    })}
                     title="demo"
                     description="demo demo demo"
                     mode="blog"
@@ -501,9 +504,6 @@ export class AppCongrats extends LitElement {
                   </app-card>
 
                   <app-card
-                    class=${classMap({
-                      blog: true,
-                    })}
                     title="demo"
                     description="demo demo demo"
                     mode="blog"
@@ -525,9 +525,6 @@ export class AppCongrats extends LitElement {
 
               <div id="tools-block">
                 <app-card
-                  class=${classMap({
-                    blog: true,
-                  })}
                   title="demo"
                   description="demo demo demo"
                   mode="blog"
@@ -536,9 +533,6 @@ export class AppCongrats extends LitElement {
                 </app-card>
 
                 <app-card
-                  class=${classMap({
-                    blog: true,
-                  })}
                   title="demo"
                   description="demo demo demo"
                   mode="blog"
@@ -547,9 +541,6 @@ export class AppCongrats extends LitElement {
                 </app-card>
 
                 <app-card
-                  class=${classMap({
-                    blog: true,
-                  })}
                   title="demo"
                   description="demo demo demo"
                   mode="blog"
