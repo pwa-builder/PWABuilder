@@ -119,9 +119,14 @@ export class AppCongrats extends LitElement {
           background: #f8f8f8;
         }
 
+        #tools-section {
+          padding: 16px;
+        }
+
         #blog-section h3 {
-          margin-top: 36px;
-          margin-bottom: 32px;
+          text-align: center;
+          margin-bottom: 47px;
+          margin-top: 64px;
         }
 
         #blog-block {
@@ -497,14 +502,49 @@ export class AppCongrats extends LitElement {
               </div>
 
               <div id="anchor-block">
-                <fast-anchor href="" appearance="hypertext">View more blog posts</fast-anchor>
+                <fast-anchor href="" appearance="hypertext"
+                  >View more blog posts</fast-anchor
+                >
               </div>
             </section>
 
             <section id="tools-section">
               <h3>Helpful tools for you...</h3>
 
-              <div id="tools-block"></div>
+              <div id="tools-block">
+                <app-card
+                  class=${classMap({
+                    blog: true,
+                  })}
+                  title="demo"
+                  description="demo demo demo"
+                  mode="blog"
+                  imageUrl="/assets/icons/icon_192.png"
+                >
+                </app-card>
+
+                <app-card
+                  class=${classMap({
+                    blog: true,
+                  })}
+                  title="demo"
+                  description="demo demo demo"
+                  mode="blog"
+                  imageUrl="/assets/icons/icon_192.png"
+                >
+                </app-card>
+
+                <app-card
+                  class=${classMap({
+                    blog: true,
+                  })}
+                  title="demo"
+                  description="demo demo demo"
+                  mode="blog"
+                  imageUrl="/assets/icons/icon_192.png"
+                >
+                </app-card>
+              </div>
             </section>
           </div>
         </div>
