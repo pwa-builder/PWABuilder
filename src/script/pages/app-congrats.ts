@@ -20,6 +20,7 @@ import '../components/app-header';
 import '../components/app-sidebar';
 import '../components/content-header';
 import '../components/app-modal';
+import '../components/app-card';
 
 import { getPlatformsGenerated } from '../services/congrats';
 import { fileSave } from 'browser-fs-access';
@@ -115,7 +116,28 @@ export class AppCongrats extends LitElement {
 
         #blog-section {
           padding: 16px;
-          background: #F8F8F8;
+          background: #f8f8f8;
+        }
+
+        #blog-section h3 {
+          margin-top: 36px;
+          margin-bottom: 32px;
+        }
+
+        #blog-block {
+          display: grid;
+          grid-template-columns: auto auto;
+        }
+
+        #blog-block app-card {
+          margin-bottom: 10px;
+          box-shadow: 0px 2px 4px 0px rgb(0 0 0 / 25%);
+          border: none;
+          border-radius: 4px;
+        }
+
+        #blog-block #first-card {
+          margin-right: 18px;
         }
 
         #tools-section h3 {
@@ -138,6 +160,20 @@ export class AppCongrats extends LitElement {
         #android-publish-button {
           /* same width as buttons above it */
           width: 152px;
+        }
+
+        #anchor-block {
+          display: flex;
+          margin-top: 20px;
+          justify-content: flex-end;
+          margin-bottom: 20px;
+        }
+
+        #anchor-block fast-anchor::part(control) {
+          border-bottom: none;
+          color: inherit;
+          font-weight: var(--font-bold);
+          font-size: var(--small-medium-font-size);
         }
 
         ${xxxLargeBreakPoint(
@@ -408,7 +444,8 @@ export class AppCongrats extends LitElement {
                       </div>
 
                       <div id="platform-actions-block">
-                        <app-button id="android-publish-button"
+                        <app-button
+                          id="android-publish-button"
                           @click="${() => this.showAndroidOptionsModal()}"
                           >Publish</app-button
                         >
@@ -420,10 +457,54 @@ export class AppCongrats extends LitElement {
 
             <section id="blog-section">
               <h3>Blog Posts recommended for you...</h3>
+
+              <div id="blog-block">
+                <app-card
+                  id="first-card"
+                  class=${classMap({
+                    blog: true,
+                  })}
+                  title="demo"
+                  description="demo demo demo"
+                  mode="blog"
+                  imageUrl="/assets/icons/icon_192.png"
+                >
+                </app-card>
+
+                <div>
+                  <app-card
+                    class=${classMap({
+                      blog: true,
+                    })}
+                    title="demo"
+                    description="demo demo demo"
+                    mode="blog"
+                    imageUrl="/assets/icons/icon_192.png"
+                  >
+                  </app-card>
+
+                  <app-card
+                    class=${classMap({
+                      blog: true,
+                    })}
+                    title="demo"
+                    description="demo demo demo"
+                    mode="blog"
+                    imageUrl="/assets/icons/icon_192.png"
+                  >
+                  </app-card>
+                </div>
+              </div>
+
+              <div id="anchor-block">
+                <fast-anchor href="" appearance="hypertext">View more blog posts</fast-anchor>
+              </div>
             </section>
 
             <section id="tools-section">
               <h3>Helpful tools for you...</h3>
+
+              <div id="tools-block"></div>
             </section>
           </div>
         </div>
