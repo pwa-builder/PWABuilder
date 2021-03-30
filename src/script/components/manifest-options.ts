@@ -60,6 +60,7 @@ export class AppManifest extends LitElement {
   @internalProperty() uploadImageObjectUrl: Lazy<string>;
 
   @internalProperty() generateIconButtonDisabled = true;
+
   @internalProperty()
   protected generateScreenshotButtonDisabled = true;
 
