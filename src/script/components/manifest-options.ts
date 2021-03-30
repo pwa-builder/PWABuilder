@@ -8,7 +8,7 @@ import {
 } from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map';
 
-import { localeStrings } from '../../locales';
+import { localeStrings, languageCodes } from '../../locales';
 
 //@ts-ignore
 import ErrorStyles from '../../../styles/error-styles.css';
@@ -490,18 +490,19 @@ export class AppManifest extends LitElement {
   renderScreenshotInputUrlList() {
     const renderFn = (url: string | undefined, index: number) => {
       const isValid = this.screenshotListValid[index];
+      const showError = !isValid && url !== undefined;
       const fieldClassMap = classMap({
-        error: !isValid,
+        error: showError,
       });
 
       return html`<fast-text-field
           class="screenshot-url ${fieldClassMap}"
-          placeholder="www.example.com/screenshot"
+          placeholder="https://www.example.com/screenshot"
           value="${url || ''}"
           @change=${this.handleScreenshotUrlChange}
           data-index=${index}
         ></fast-text-field>
-        ${isValid
+        ${showError
           ? html`<span class="error-message"
               >${localeStrings.input.manifest.screenshot.error}</span
             >`
@@ -681,7 +682,9 @@ export class AppManifest extends LitElement {
 
   hasScreenshotsToGenerate() {
     return (
-      this.screenshotList.length && !this.screenshotList.includes(undefined)
+      this.screenshotList.length &&
+      !this.screenshotListValid.includes(false) &&
+      !this.screenshotList.includes(undefined)
     );
   }
 
@@ -768,5 +771,13 @@ const settingsItems: Array<InputItem> = [
       'landscape-primary',
       'landscape-secondary',
     ],
+  },
+  {
+    title: 'Language',
+    description: 'Enter the apps primary language',
+    tooltipText: 'TODO',
+    entry: 'lang',
+    type: 'select',
+    menuItems: languageCodes,
   },
 ];
