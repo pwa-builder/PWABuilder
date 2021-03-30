@@ -48,37 +48,37 @@
   "screenshots": [
     {
       "src": "/Images/assets/screenShots/s1.png",
-      "sizes": "1600x1020",
+      "sizes": "1598x1012",
       "type": "image/png",
       "description": "PWA Builder Home Screen"
     },
     {
       "src": "/Images/assets/screenShots/s2.png",
-      "sizes": "1600x1020",
+      "sizes": "1389x937",
       "type": "image/png",
       "description": "PWA Builder is also a PWA and can be used in app mode"
     },
     {
       "src": "/Images/assets/screenShots/s3.png",
-      "sizes": "1600x1020",
+      "sizes": "1389x1004",
       "type": "image/png",
       "description": "Enter your URL to get a PWA score"
     },
     {
       "src": "/Images/assets/screenShots/s4.png",
-      "sizes": "1600x1020",
+      "sizes": "1389x1004",
       "type": "image/png",
       "description": "See the manifest on the site, or a generated manifest from PWA Builder"
     },
     {
       "src": "/Images/assets/screenShots/s5.png",
-      "sizes": "1600x1020",
+      "sizes": "1389x1004",
       "type": "image/png",
       "description": "Find easy to use service workers that fit almost any site."
     },
     {
       "src": "/Images/assets/screenShots/s6.png",
-      "sizes": "1600x1020",
+      "sizes": "1389x1004",
       "type": "image/png",
       "description": "Find easy to use snippits that make your web site more app-like"
     }
