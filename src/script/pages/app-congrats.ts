@@ -123,10 +123,22 @@ export class AppCongrats extends LitElement {
           padding: 16px;
         }
 
-        #blog-section h3 {
+        #tools-block {
+          display: grid;
+          grid-template-columns: auto auto auto;
+          grid-gap: 23px;
+        }
+
+        #tools-section h3 {
+          margin-top: 36px;
+          margin-bottom: 32px;
+
           text-align: center;
-          margin-bottom: 47px;
-          margin-top: 64px;
+        }
+
+        #blog-section h3 {
+          margin-top: 36px;
+          margin-bottom: 32px;
         }
 
         #blog-block {
