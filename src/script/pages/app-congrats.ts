@@ -51,6 +51,7 @@ export class AppCongrats extends LitElement {
   @internalProperty() open_android_options = false;
 
   @internalProperty() blog_posts: Array<BlogPost> | undefined;
+  @internalProperty() featuredPost: BlogPost | undefined;
 
   static get styles() {
     return [
@@ -243,31 +244,42 @@ export class AppCongrats extends LitElement {
 
   firstUpdated() {
     this.generatedPlatforms = getPlatformsGenerated();
-    
-    const possiblePosts = allPosts;
+
+    let possiblePosts = allPosts;
 
     if (possiblePosts) {
       // first post in array will be featured
       // the below logic figures out what that should be
       // If both platforms were not generated then the featured should
       // be Windows with Android being the second post
-      this.blog_posts = [];
 
       if (this.generatedPlatforms.windows === false) {
         // Windows platform was not generated, windows blog post should be featured
-        possiblePosts.map((post) => {
+        possiblePosts.map(post => {
           if (post.relatedPlatform && post.relatedPlatform === 'windows') {
-            this.blog_posts.push(post);
+            this.featuredPost = post;
+
+            possiblePosts = possiblePosts.filter(
+              item => item.title !== post.title
+            );
           }
-        })
-      }
-      else if (this.generatedPlatforms.android === false) {
-        possiblePosts.map((post) => {
+        });
+      } else if (this.generatedPlatforms.android === false) {
+        possiblePosts.map(post => {
           if (post.relatedPlatform && post.relatedPlatform === 'android') {
-            this.blog_posts.push(post)
+            this.featuredPost = post;
+
+            possiblePosts = possiblePosts.filter(
+              item => item.title !== post.title
+            );
           }
-        })
+        });
       }
+
+      console.log('featuredPost', this.featuredPost);
+      console.log('possible', possiblePosts);
+
+      this.blog_posts = possiblePosts;
     }
   }
 
@@ -514,13 +526,13 @@ export class AppCongrats extends LitElement {
               <h3>Blog Posts recommended for you...</h3>
 
               <div id="blog-block">
-                <app-card
+                ${this.featuredPost ? html`<app-card
                   id="first-card"
-                  cardTitle="demo"
-                  description="demo demo demo"
-                  imageUrl="/assets/icons/icon_192.png"
-                  linkText="Windows"
-                  linkRoute="/something"
+                  cardTitle="${this.featuredPost.title}"
+                  description="${this.featuredPost.description}"
+                  imageUrl="${this.featuredPost.imageUrl}"
+                  linkText="Read Post"
+                  linkRoute="${this.featuredPost.clickUrl}"
                   .featured="${true}"
                   mode="blog"
                   class=${classMap({
@@ -528,24 +540,20 @@ export class AppCongrats extends LitElement {
                     featured: true,
                   })}
                 >
-                </app-card>
+                </app-card>` : null}
 
                 <div>
-                  <app-card
-                    cardTitle="demo"
-                    description="demo demo demo"
-                    mode="blog"
-                    imageUrl="/assets/icons/icon_192.png"
-                  >
-                  </app-card>
-
-                  <app-card
-                    cardTitle="demo"
-                    description="demo demo demo"
-                    mode="blog"
-                    imageUrl="/assets/icons/icon_192.png"
-                  >
-                  </app-card>
+                  ${this.blog_posts ? this.blog_posts.map(post => {
+                    return html`
+                      <app-card
+                        cardTitle="${post.title}"
+                        description="${post.description}"
+                        mode="blog"
+                        imageUrl="${post.imageUrl}"
+                      >
+                      </app-card>
+                    `;
+                  }) : null}
                 </div>
               </div>
 
