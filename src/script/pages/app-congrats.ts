@@ -27,6 +27,8 @@ import { getPlatformsGenerated } from '../services/congrats';
 import { fileSave } from 'browser-fs-access';
 import { Router } from '@vaadin/router';
 import { generatePackage, platform } from '../services/publish';
+import { BlogPost } from '../services/blog';
+import { allPosts } from '../services/blog';
 
 @customElement('app-congrats')
 export class AppCongrats extends LitElement {
@@ -47,6 +49,8 @@ export class AppCongrats extends LitElement {
   @internalProperty() testBlob: Blob | File | undefined;
   @internalProperty() open_windows_options = false;
   @internalProperty() open_android_options = false;
+
+  @internalProperty() blog_posts: Array<BlogPost> | undefined;
 
   static get styles() {
     return [
@@ -239,7 +243,32 @@ export class AppCongrats extends LitElement {
 
   firstUpdated() {
     this.generatedPlatforms = getPlatformsGenerated();
-    console.log(this.generatedPlatforms);
+    
+    const possiblePosts = allPosts;
+
+    if (possiblePosts) {
+      // first post in array will be featured
+      // the below logic figures out what that should be
+      // If both platforms were not generated then the featured should
+      // be Windows with Android being the second post
+      this.blog_posts = [];
+
+      if (this.generatedPlatforms.windows === false) {
+        // Windows platform was not generated, windows blog post should be featured
+        possiblePosts.map((post) => {
+          if (post.relatedPlatform && post.relatedPlatform === 'windows') {
+            this.blog_posts.push(post);
+          }
+        })
+      }
+      else if (this.generatedPlatforms.android === false) {
+        possiblePosts.map((post) => {
+          if (post.relatedPlatform && post.relatedPlatform === 'android') {
+            this.blog_posts.push(post)
+          }
+        })
+      }
+    }
   }
 
   async generate(type: platform, form?: HTMLFormElement) {
@@ -487,16 +516,23 @@ export class AppCongrats extends LitElement {
               <div id="blog-block">
                 <app-card
                   id="first-card"
-                  title="demo"
+                  cardTitle="demo"
                   description="demo demo demo"
-                  mode="blog"
                   imageUrl="/assets/icons/icon_192.png"
+                  linkText="Windows"
+                  linkRoute="/something"
+                  .featured="${true}"
+                  mode="blog"
+                  class=${classMap({
+                    blog: true,
+                    featured: true,
+                  })}
                 >
                 </app-card>
 
                 <div>
                   <app-card
-                    title="demo"
+                    cardTitle="demo"
                     description="demo demo demo"
                     mode="blog"
                     imageUrl="/assets/icons/icon_192.png"
@@ -504,7 +540,7 @@ export class AppCongrats extends LitElement {
                   </app-card>
 
                   <app-card
-                    title="demo"
+                    cardTitle="demo"
                     description="demo demo demo"
                     mode="blog"
                     imageUrl="/assets/icons/icon_192.png"
