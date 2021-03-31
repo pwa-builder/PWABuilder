@@ -9,6 +9,8 @@ import { Manifest } from '../../utils/interfaces';
 import { getURL } from '../app-info';
 import { getManifest, getManiURL } from '../manifest';
 
+export let android_generated = false;
+
 export async function generateAndroidPackage(
   androidOptions: AndroidApkOptions
 ): Promise<Blob | undefined> {
@@ -29,6 +31,9 @@ export async function generateAndroidPackage(
     });
 
     if (response.status === 200) {
+      //set generated flag
+      android_generated = true;
+
       return await response.blob();
     } else {
       const responseText = await response.text();

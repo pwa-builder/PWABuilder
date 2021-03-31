@@ -9,6 +9,8 @@ import {
 import { getURL } from '../app-info';
 import { getManifest, getManiURL } from '../manifest';
 
+export let windows_generated = false;
+
 export async function generateWindowsPackage(
   windowsOptions: WindowsPackageOptions
 ) {
@@ -36,6 +38,9 @@ export async function generateWindowsPackage(
     if (response.status === 200) {
       const data = await response.blob();
 
+      //set generated flag
+      windows_generated = true;
+      
       return data;
     } else {
       const responseText = await response.text();

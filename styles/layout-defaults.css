@@ -6,3 +6,12 @@
 #grid.grid-mobile {
   display: initial;
 }
+
+#tablet-sidebar {
+  display: none;
+}
+
+#desktop-sidebar {
+  display: block;
+}
+
