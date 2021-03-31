@@ -276,9 +276,6 @@ export class AppCongrats extends LitElement {
         });
       }
 
-      console.log('featuredPost', this.featuredPost);
-      console.log('possible', possiblePosts);
-
       this.blog_posts = possiblePosts;
     }
   }
