@@ -202,7 +202,6 @@ export class ResourceHub extends LitElement {
           date=${post.date}
           imageUrl=${post.imageUrl}
           linkRoute=${post.clickUrl}
-          mode="blog"
           shareLink
           .tags=${post.tags}
           .featured=${featured}

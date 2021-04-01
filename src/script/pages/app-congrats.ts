@@ -531,7 +531,6 @@ export class AppCongrats extends LitElement {
                   linkText="Read Post"
                   linkRoute="${this.featuredPost.clickUrl}"
                   .featured="${true}"
-                  mode="blog"
                   class=${classMap({
                     blog: true,
                     featured: true,
@@ -545,7 +544,7 @@ export class AppCongrats extends LitElement {
                       <app-card
                         cardTitle="${post.title}"
                         description="${post.description}"
-                        mode="blog"
+                        class="blog"
                         imageUrl="${post.imageUrl}"
                       >
                       </app-card>
@@ -566,25 +565,25 @@ export class AppCongrats extends LitElement {
 
               <div id="tools-block">
                 <app-card
+                  class="blog"
                   title="demo"
                   description="demo demo demo"
-                  mode="blog"
                   imageUrl="/assets/icons/icon_192.png"
                 >
                 </app-card>
 
                 <app-card
+                  class="blog"
                   title="demo"
                   description="demo demo demo"
-                  mode="blog"
                   imageUrl="/assets/icons/icon_192.png"
                 >
                 </app-card>
 
                 <app-card
+                  class="blog"
                   title="demo"
                   description="demo demo demo"
-                  mode="blog"
                   imageUrl="/assets/icons/icon_192.png"
                 >
                 </app-card>
