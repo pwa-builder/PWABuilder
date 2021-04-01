@@ -23,9 +23,7 @@ export class ResourceHub extends LitElement {
     return [
       css`
         :host {
-          background: var(--primary-color);
           display: flex;
-          color: white;
           justify-content: center;
         }
 
@@ -44,6 +42,16 @@ export class ResourceHub extends LitElement {
           font-weight: var(--font-bold);
           max-width: 950px;
           text-align: center;
+        }
+
+        .home {
+          background: var(--primary-color);
+          color: var(--secondary-color);
+        }
+
+        .complete {
+          background-color: var(--primary-background-color);
+          color: var(--font-color);
         }
       `,
       css`
@@ -220,10 +228,10 @@ export class ResourceHub extends LitElement {
     return cardList.map(data => {
       return html`
         <app-card
-          title=${data.title}
+          class=${mode}
+          cardTitle=${data.title}
           description=${data.description}
           imageUrl=${data.imageUrl}
-          mode=${mode}
         >
         </app-card>
       `;
@@ -264,6 +272,7 @@ export class ResourceHub extends LitElement {
   resourceHubClassMap() {
     return classMap({
       'resource-hub': true,
+      'home': this.pageName === 'home',
       'complete': this.pageName === 'complete',
     });
   }

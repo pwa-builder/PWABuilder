@@ -37,8 +37,9 @@ export class AppCard extends LitElement {
       // host
       css`
         :host {
+          background: transparent;
           display: flex;
-          color: white;
+          color: var(--primary-color);
           justify-content: center;
           border-radius: 4px;
         }
@@ -393,15 +394,8 @@ export class AppCard extends LitElement {
       `,
       // content card
       css`
-        :host {
-          background: white;
-          display: flex;
-          color: var(--primary-color);
-          justify-content: center;
-        }
-
         fast-card.content-card {
-          background-color: white;
+          background-color: var(--primary-background-color);
           padding: 1rem 0;
           width: 100%;
           max-width: 1024px;
