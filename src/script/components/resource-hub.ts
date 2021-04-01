@@ -92,103 +92,98 @@ export class ResourceHub extends LitElement {
           font-size: 16px;
           font-weight: var(--font-bold);
         }
-
-        ${smallBreakPoint(
-          css`
-            :host {
-              background-color: #ededed;
-            }
-
-            ::slotted([slot='title']),
-            ::slotted([slot='description']) {
-              color: var(--font-color);
-            }
-
-            /* TODO make this gated to only a gallery variant */
-            .cards.horizontal {
-              overflow-y: scroll;
-              overflow-x: none;
-              /* white-space: nowrap; */
-
-              flex-direction: row;
-              align-items: center;
-            }
-
-            #card.horizontal app-card {
-              display: inline-block;
-              min-width: calc(100% - 32px);
-            }
-
-            section {
-              width: 100%;
-            }
-
-            .cards.horizontal {
-              display: flex;
-              flex-direction: column;
-              overflow-x: scroll;
-              scroll-snap-type: x proximity;
-            }
-
-            .cards.horizontal app-card {
-              display: inline-block;
-              flex: 0 0 auto;
-              scroll-snap-align: center;
-            }
-
-            .cards.horizontal app-card p,
-            .cards.horizontal app-card h3 {
-              white-space: normal;
-            }
-          `
-        )}
-
-        ${mediumBreakPoint(
-          css`
-            .cards {
-              flex-direction: column;
-              align-items: center;
-            }
-
-            .cards app-card {
-              margin-bottom: 16px;
-            }
-          `,
-          'no-lower'
-        )}
-
-      ${mediumBreakPoint(
-          css`
-            .cards {
-              padding: 0 32px;
-            }
-          `
-        )}
-
-      ${largeBreakPoint(
-          css`
-            .cards app-card {
-              max-width: 350px;
-            }
-          `,
-          'no-lower'
-        )}
-
-      ${largeBreakPoint(
-          css`
-            .cards {
-              flex-direction: row;
-              flex-wrap: wrap;
-              align-items: center;
-              padding: 0;
-            }
-
-            .cards app-card {
-              margin-bottom: 16px;
-            }
-          `
-        )}
       `,
+      smallBreakPoint(
+        css`
+          :host {
+            background-color: #ededed;
+          }
+
+          ::slotted([slot='title']),
+          ::slotted([slot='description']) {
+            color: var(--font-color);
+          }
+
+          /* TODO make this gated to only a gallery variant */
+          .cards.horizontal {
+            overflow-y: scroll;
+            overflow-x: none;
+            /* white-space: nowrap; */
+
+            flex-direction: row;
+            align-items: center;
+          }
+
+          .cards.horizontal app-card {
+            display: inline-block;
+            min-width: calc(100% - 32px);
+          }
+
+          section {
+            width: 100%;
+          }
+
+          .cards.horizontal {
+            display: flex;
+            flex-direction: column;
+            overflow-x: scroll;
+            scroll-snap-type: x proximity;
+          }
+
+          .cards.horizontal app-card {
+            display: inline-block;
+            flex: 0 0 auto;
+            scroll-snap-align: center;
+          }
+
+          .cards.horizontal app-card p,
+          .cards.horizontal app-card h3 {
+            white-space: normal;
+          }
+        `
+      ),
+      mediumBreakPoint(
+        css`
+          .cards {
+            flex-direction: column;
+            align-items: center;
+          }
+
+          .cards app-card {
+            margin-bottom: 16px;
+          }
+        `,
+        'no-lower'
+      ),
+      mediumBreakPoint(
+        css`
+          .cards {
+            padding: 0 32px;
+          }
+        `
+      ),
+      largeBreakPoint(
+        css`
+          .cards app-card {
+            max-width: 350px;
+          }
+        `,
+        'no-lower'
+      ),
+      largeBreakPoint(
+        css`
+          .cards {
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: center;
+            padding: 0;
+          }
+
+          .cards app-card {
+            margin-bottom: 16px;
+          }
+        `
+      ),
     ];
   }
 
