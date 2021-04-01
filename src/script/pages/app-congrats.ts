@@ -22,13 +22,13 @@ import '../components/app-sidebar';
 import '../components/content-header';
 import '../components/app-modal';
 import '../components/app-card';
+import '../components/resource-hub';
 
 import { getPlatformsGenerated } from '../services/congrats';
 import { fileSave } from 'browser-fs-access';
 import { Router } from '@vaadin/router';
 import { generatePackage, platform } from '../services/publish';
-import { BlogPost } from '../services/blog';
-import { allPosts } from '../services/blog';
+import { BlogPost, allPosts } from '../services/blog';
 
 @customElement('app-congrats')
 export class AppCongrats extends LitElement {
@@ -561,7 +561,11 @@ export class AppCongrats extends LitElement {
             </section>
 
             <section id="tools-section">
-              <h3>Helpful tools for you...</h3>
+              <!-- TODO -->
+
+              <resource-hub page="complete">
+                <h3 slot="title">Helpful tools for you...</h3>
+              </resource-hub>
 
               <div id="tools-block">
                 <app-card
