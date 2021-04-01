@@ -469,7 +469,7 @@ export class AppCard extends LitElement {
 
   renderDefault() {
     return html`
-      <fast-card class="default" part="card">
+      <fast-card class=${this.cardClasses()} part="card">
         <div class="img-overlay ${this.imageClasses()}">
           <slot name="overlay"></slot>
         </div>
@@ -496,7 +496,7 @@ export class AppCard extends LitElement {
     // Featured Card Html
     if (this.featured && window.innerWidth > BreakpointValues.mediumUpper) {
       return html`
-        <fast-card class="blog featured" part="card">
+        <fast-card class=${this.cardClasses()} part="card">
           <div class="img-overlay">
             <div class="overlay-top">
               <span class="date">${this.date}</span>
@@ -517,7 +517,7 @@ export class AppCard extends LitElement {
     }
 
     return html`
-      <fast-card class="blog" part="card">
+      <fast-card class=${this.cardClasses()} part="card">
         <div class="img-overlay">
           <div class="overlay-top">
             <span class="date">${this.date}</span>
@@ -536,7 +536,7 @@ export class AppCard extends LitElement {
 
   renderMicroCard() {
     return html`
-      <fast-card class="micro" part="card" @click=${this.route}>
+      <fast-card class=${this.cardClasses()} part="card" @click=${this.route}>
         <img src="${this.imageUrl}" alt="${this.cardTitle} card header image" />
         <div class="content">
           <h3>${this.cardTitle}</h3>
@@ -547,11 +547,7 @@ export class AppCard extends LitElement {
 
   renderMicroDescriptionCard() {
     return html`
-      <fast-card
-        class="micro micro-description"
-        part="card"
-        @click=${this.route}
-      >
+      <fast-card class=${this.cardClasses()} part="card" @click=${this.route}>
         <img src="${this.imageUrl}" alt="${this.cardTitle} card header image" />
         <div class="content">
           <h3>${this.cardTitle}</h3>
@@ -562,7 +558,7 @@ export class AppCard extends LitElement {
   }
 
   renderContentCard() {
-    return html` <fast-card class="content-card" part="card">
+    return html` <fast-card class=${this.cardClasses()} part="card">
       <div class="header">
         <h3>${this.cardTitle}</h3>
         <p>${this.description}</p>
@@ -590,6 +586,21 @@ export class AppCard extends LitElement {
 
   share() {
     console.log('share');
+  }
+
+  cardClasses() {
+    return classMap({
+      featured: this.featured || this.className.includes('featured'),
+      [AppCardModes.default]: this.className.includes(AppCardModes.default),
+      [AppCardModes.blog]: this.className.includes(AppCardModes.blog),
+      [AppCardModes.micro]: this.className.includes(AppCardModes.micro),
+      [AppCardModes.microDescription]: this.className.includes(
+        AppCardModes.microDescription
+      ),
+      [AppCardModes.contentCard]: this.className.includes(
+        AppCardModes.contentCard
+      ),
+    });
   }
 
   imageClasses() {
