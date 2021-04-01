@@ -197,7 +197,7 @@ export class ResourceHub extends LitElement {
             blog: true,
             featured,
           })}
-          title=${post.title}
+          cardTitle=${post.title}
           description=${post.description}
           date=${post.date}
           imageUrl=${post.imageUrl}

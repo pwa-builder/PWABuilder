@@ -561,37 +561,9 @@ export class AppCongrats extends LitElement {
             </section>
 
             <section id="tools-section">
-              <!-- TODO -->
-
               <resource-hub page="complete">
                 <h3 slot="title">Helpful tools for you...</h3>
               </resource-hub>
-
-              <div id="tools-block">
-                <app-card
-                  class="blog"
-                  title="demo"
-                  description="demo demo demo"
-                  imageUrl="/assets/icons/icon_192.png"
-                >
-                </app-card>
-
-                <app-card
-                  class="blog"
-                  title="demo"
-                  description="demo demo demo"
-                  imageUrl="/assets/icons/icon_192.png"
-                >
-                </app-card>
-
-                <app-card
-                  class="blog"
-                  title="demo"
-                  description="demo demo demo"
-                  imageUrl="/assets/icons/icon_192.png"
-                >
-                </app-card>
-              </div>
             </section>
           </div>
         </div>
