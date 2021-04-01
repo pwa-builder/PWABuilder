@@ -53,6 +53,10 @@ export class ResourceHub extends LitElement {
           background-color: var(--primary-background-color);
           color: var(--font-color);
         }
+
+        .resource-hub {
+          width: 100%;
+        }
       `,
       css`
         .resource-header {
@@ -207,9 +211,7 @@ export class ResourceHub extends LitElement {
           <slot name="description"></slot>
         </div>
 
-        <div class="cards" class=${this.cardsClasses()}>
-          ${this.renderCards()}
-        </div>
+        <div class=${this.cardsClasses()}>${this.renderCards()}</div>
 
         ${this.renderViewAllButton()}
       </section>
@@ -252,6 +254,7 @@ export class ResourceHub extends LitElement {
 
   cardsClasses() {
     return classMap({
+      cards: true,
       horizontal:
         this.pageName === 'complete' &&
         window.innerWidth <= BreakpointValues.smallUpper,
