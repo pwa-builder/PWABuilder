@@ -65,6 +65,7 @@ export async function generatePackage(type: platform, form?: HTMLFormElement) {
       try {
         if (form) {
           const androidOptions = createAndroidPackageOptionsFromForm(form);
+          console.log('no form android options', androidOptions);
 
           if (androidOptions) {
             try {
@@ -82,6 +83,7 @@ export async function generatePackage(type: platform, form?: HTMLFormElement) {
         } else {
           try {
             const androidOptions = createAndroidPackageOptionsFromManifest();
+            console.log('form android options', androidOptions);
             const testBlob = await generateAndroidPackage(androidOptions);
 
             return {
