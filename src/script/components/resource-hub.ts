@@ -69,6 +69,10 @@ export class ResourceHub extends LitElement {
           padding-right: 4em;
         }
 
+        .complete .resource-header {
+          padding-top: 0;
+        }
+
         .cards {
           display: flex;
           justify-content: center;
