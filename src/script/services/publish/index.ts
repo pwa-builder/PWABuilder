@@ -67,12 +67,17 @@ export async function generatePackage(type: platform, form?: HTMLFormElement) {
           const androidOptions = createAndroidPackageOptionsFromForm(form);
 
           if (androidOptions) {
-            const blob = await generateAndroidPackage(androidOptions);
+            try {
+              const blob = await generateAndroidPackage(androidOptions);
 
-            return {
-              blob: blob || null,
-              type: 'store',
-            };
+              return {
+                blob: blob || null,
+                type: 'store',
+              };
+            }
+            catch (err) {
+              return err;
+            }
           }
         } else {
           try {
@@ -102,7 +107,7 @@ export async function generatePackage(type: platform, form?: HTMLFormElement) {
           }
         }
       } catch (err) {
-        throw new Error(`Error generating Android package ${err}`);
+        return err;
       }
       break;
     case 'samsung':

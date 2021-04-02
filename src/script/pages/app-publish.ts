@@ -362,6 +362,9 @@ export class AppPublish extends LitElement {
       this.open_windows_options = false;
     } catch (err) {
       console.error(err);
+      this.generating = false;
+      this.open_android_options = false;
+      this.open_windows_options = false;
 
       this.showAlertModal(err);
     }
