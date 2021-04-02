@@ -22,13 +22,13 @@ import '../components/app-sidebar';
 import '../components/content-header';
 import '../components/app-modal';
 import '../components/app-card';
+import '../components/resource-hub';
 
 import { getPlatformsGenerated } from '../services/congrats';
 import { fileSave } from 'browser-fs-access';
 import { Router } from '@vaadin/router';
 import { generatePackage, platform } from '../services/publish';
-import { BlogPost } from '../services/blog';
-import { allPosts } from '../services/blog';
+import { BlogPost, allPosts } from '../services/blog';
 
 @customElement('app-congrats')
 export class AppCongrats extends LitElement {
@@ -531,7 +531,6 @@ export class AppCongrats extends LitElement {
                   linkText="Read Post"
                   linkRoute="${this.featuredPost.clickUrl}"
                   .featured="${true}"
-                  mode="blog"
                   class=${classMap({
                     blog: true,
                     featured: true,
@@ -545,7 +544,7 @@ export class AppCongrats extends LitElement {
                       <app-card
                         cardTitle="${post.title}"
                         description="${post.description}"
-                        mode="blog"
+                        class="blog"
                         imageUrl="${post.imageUrl}"
                       >
                       </app-card>
@@ -562,33 +561,9 @@ export class AppCongrats extends LitElement {
             </section>
 
             <section id="tools-section">
-              <h3>Helpful tools for you...</h3>
-
-              <div id="tools-block">
-                <app-card
-                  title="demo"
-                  description="demo demo demo"
-                  mode="blog"
-                  imageUrl="/assets/icons/icon_192.png"
-                >
-                </app-card>
-
-                <app-card
-                  title="demo"
-                  description="demo demo demo"
-                  mode="blog"
-                  imageUrl="/assets/icons/icon_192.png"
-                >
-                </app-card>
-
-                <app-card
-                  title="demo"
-                  description="demo demo demo"
-                  mode="blog"
-                  imageUrl="/assets/icons/icon_192.png"
-                >
-                </app-card>
-              </div>
+              <resource-hub page="complete">
+                <h3 slot="title">Helpful tools for you...</h3>
+              </resource-hub>
             </section>
           </div>
         </div>
