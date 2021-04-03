@@ -3,16 +3,11 @@
     "target": "es2017",
     "module": "es2020",
     "moduleResolution": "node",
-    "lib": [
-      "esnext.array",
-      "esnext",
-      "es2017",
-      "dom"
-    ],
+    "lib": ["esnext.array", "esnext", "es2017", "dom"],
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noImplicitReturns": false,
+    "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": true,
@@ -50,9 +45,5 @@
     ]
   },
   "include": ["pwabuilder-sw.ts"],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts",
-    "build/pwabuilder-sw.js",
-  ]
+  "exclude": ["node_modules", "**/*.spec.ts", "build/pwabuilder-sw.js"]
 }
