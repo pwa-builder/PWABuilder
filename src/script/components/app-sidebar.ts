@@ -1,4 +1,8 @@
-import { BreakpointValues, mediumBreakPoint, smallBreakPoint } from './../utils/css/breakpoints';
+import {
+  BreakpointValues,
+  mediumBreakPoint,
+  smallBreakPoint,
+} from './../utils/css/breakpoints';
 import {
   LitElement,
   css,
@@ -17,6 +21,8 @@ import {
 } from '../utils/interfaces';
 
 import { classMap } from 'lit-html/directives/class-map';
+
+import './sidebar-card';
 
 @customElement('app-sidebar')
 export class AppSidebar extends LitElement {
@@ -294,20 +300,18 @@ export class AppSidebar extends LitElement {
         color: rgb(52 55 68);
       }
 
-      ${
-        mediumBreakPoint(css`
-          aside.tablet-sidebar, aside.desktop-sidebar {
-            display: none;
-          }
-        `),
-
-        smallBreakPoint(css`
-          aside.tablet-sidebar, aside.desktop-sidebar {
-            display: none;
-          }
-        `)
-      }
-
+      ${(mediumBreakPoint(css`
+        aside.tablet-sidebar,
+        aside.desktop-sidebar {
+          display: none;
+        }
+      `),
+      smallBreakPoint(css`
+        aside.tablet-sidebar,
+        aside.desktop-sidebar {
+          display: none;
+        }
+      `))}
     `;
   }
   constructor() {
@@ -391,43 +395,43 @@ export class AppSidebar extends LitElement {
             >${this.current_url}</a
           >
           <hr />
-          <h4 id="your-score">Your PWA Score:</h4>
-          <span id="score-number">100</span>
-          <span id="score-message">Excellent score!</span>
+          <sidebar-card title="Score">
+            <span>Some content</span>
+          </sidebar-card>
           <hr />
-          <h4 id="score-progress">PWAB Progress</h4>
-        </div>
 
-        <fast-accordion class="menu">
-          ${this.menuItems?.progress.map(item => {
-            return html`
-              <fast-accordion-item
-                expanded
-                class=${classMap({
-                  active: item.done === Status.ACTIVE,
-                  done: item.done === Status.DONE,
-                  pending: item.done === Status.PENDING,
-                })}
-              >
-                <div class="sidebar-item-header" slot="heading">
-                  <span class="item-name">${this.renderIcon(item)}</span>
-                  <span>${item.header}</span>
-                </div>
-
-                <ul id="sidebar-subitems-list">
-                  ${item.items.map(item => {
-                    return html`
-                      <li>
-                        <span class="item-name">${this.renderIcon(item)}</span>
-                        <span>${item.name}</span>
-                      </li>
-                    `;
+          <sidebar-card title="Progress">
+            ${this.menuItems?.progress.map(item => {
+              return html`
+                <div
+                  class=${classMap({
+                    active: item.done === Status.ACTIVE,
+                    done: item.done === Status.DONE,
+                    pending: item.done === Status.PENDING,
                   })}
-                </ul>
-              </fast-accordion-item>
-            `;
-          })}
-        </fast-accordion>
+                >
+                  <div class="sidebar-item-header" slot="heading">
+                    <span class="item-name">${this.renderIcon(item)}</span>
+                    <span>${item.header}</span>
+                  </div>
+
+                  <ul id="sidebar-subitems-list">
+                    ${item.items.map(item => {
+                      return html`
+                        <li>
+                          <span class="item-name"
+                            >${this.renderIcon(item)}</span
+                          >
+                          <span>${item.name}</span>
+                        </li>
+                      `;
+                    })}
+                  </ul>
+                  </div>
+              `;
+            })}
+          </sidebar-card>
+        </div>
       </aside>
     `;
   }
