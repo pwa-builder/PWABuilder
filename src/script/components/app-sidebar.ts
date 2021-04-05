@@ -60,7 +60,7 @@ export class AppSidebar extends LitElement {
       /** DESKTOP STYLES */
       aside.desktop-sidebar {
         color: var(--secondary-color);
-        background: var(--primary-color);
+        background: var(--primary-purple);
         height: 100%;
         width: 100%;
         display: flex;
@@ -83,6 +83,16 @@ export class AppSidebar extends LitElement {
         text-align: center;
         color: white;
         text-decoration: none;
+
+        margin-top: 0;
+        margin-bottom: 16px;
+        font-weight: var(--font-bold);
+        font-size: 9px;
+      }
+
+      aside.desktop-sidebar img {
+        height: 56px;
+        width: 56px;
       }
 
       aside.desktop-sidebar img,
@@ -100,6 +110,11 @@ export class AppSidebar extends LitElement {
         display: grid;
         grid-auto-flow: row;
         width: 100%;
+      }
+
+      aside.desktop-sidebar h4 {
+        font-size: var(--font-size);
+        margin-top: 16px;
       }
 
       aside.desktop-sidebar h1,
