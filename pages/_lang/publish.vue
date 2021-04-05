@@ -1576,8 +1576,8 @@
               </div>
 
               <p>
-                Publish your PWA to the Samsung Galaxy Store to make your app
-                more discoverable to users with Samsung Galaxy Android devices.
+                Provide the URL to your PWA to Samsung for inclusion in the Samsung Finder app.
+                You will need to follow up with Samsung after submission for updates on the deployment.
               </p>
 
               <section class="platformDownloadBar">
@@ -1585,7 +1585,7 @@
                   class="platformDownloadButton"
                   platform="samsung"
                   message="Download"
-                  aria-label="Download Samsung Package"
+                  aria-label="Submit app to Samsung"
                   v-on:downloadPackageError="showPackageDownloadError($event)"
                 />
               </section>

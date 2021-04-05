@@ -229,6 +229,10 @@ export const actions: Actions<State, RootState> = {
       } catch (e) {
         let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
 
+        if (params.platform === platforms.samsung) {
+          errorMessage = "Thanks for submitting! Follow up with Samsung at pwasupport@samsung.com for status updates on your submission";
+        }
+
         reject(errorMessage);
       }
     });
