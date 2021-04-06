@@ -23,6 +23,7 @@ import {
 import { classMap } from 'lit-html/directives/class-map';
 
 import './sidebar-card';
+import { getOverallScore } from '../services/tests';
 
 @customElement('app-sidebar')
 export class AppSidebar extends LitElement {
@@ -180,7 +181,7 @@ export class AppSidebar extends LitElement {
       /** TABLET STYLES */
       aside.tablet-sidebar {
         color: var(--secondary-color);
-        background: var(--primary-color);
+        background: var(--primary-purple);
         height: 50px;
         max-width: 100%;
         display: flex;
@@ -300,6 +301,49 @@ export class AppSidebar extends LitElement {
         color: rgb(52 55 68);
       }
 
+      #overall-score-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        text-align: center;
+        padding-left: 12px;
+        padding-right: 12px;
+        padding-top: 14px;
+        padding-bottom: 14px;
+      }
+
+      #score-header,
+      #score-notify {
+        font-weight: var(--font-bold);
+        font-size: var(--font-size);
+      }
+
+      .overall-score {
+        border: 2.45288px solid #ffffff;
+        width: 100%;
+        border-radius: 8px;
+        font-weight: var(--font-bold);
+        background: linear-gradient(
+          118.44deg,
+          rgba(52, 41, 102, 0.5) 12.3%,
+          rgba(93, 68, 140, 0.5) 38.83%,
+          rgba(50, 27, 62, 0.5) 96.92%
+        );
+        margin-top: 15px;
+        margin-bottom: 19px;
+        text-align: center;
+      }
+
+      #plus {
+        color: var(--success-color);
+      }
+
+      .tablet-sidebar .overall-score {
+        max-width: 64px;
+        text-align: center;
+      }
+
       ${(mediumBreakPoint(css`
         aside.tablet-sidebar,
         aside.desktop-sidebar {
@@ -314,6 +358,9 @@ export class AppSidebar extends LitElement {
       `))}
     `;
   }
+
+  @internalProperty() overallScore = 0;
+
   constructor() {
     super();
     this.mql.addEventListener('change', e => {
@@ -332,6 +379,8 @@ export class AppSidebar extends LitElement {
     if (this.results) {
       this.handleResults();
     }
+
+    this.overallScore = getOverallScore();
   }
 
   handleResults() {
@@ -396,7 +445,17 @@ export class AppSidebar extends LitElement {
           >
           <hr />
           <sidebar-card title="Score">
-            <span>Some content</span>
+            <div id="overall-score-block">
+              <span id="score-header">Your PWA Score:</span>
+
+              <div class="overall-score">${this.overallScore}</div>
+
+              <span id="score-notify">
+                ${this.overallScore > 0
+                  ? html`<span id="plus">10+</span> added to score`
+                  : html`<span id="plus">0+ added to score</span>`}
+              </span>
+            </div>
           </sidebar-card>
           <hr />
 
@@ -427,7 +486,7 @@ export class AppSidebar extends LitElement {
                       `;
                     })}
                   </ul>
-                  </div>
+                </div>
               `;
             })}
           </sidebar-card>
@@ -458,9 +517,8 @@ export class AppSidebar extends LitElement {
       </div>
 
       <div id="score-block">
-        <h4 id="your-score">Your PWA Score</h4>
-        <span id="score-number">100</span>
-        <span id="score-message">Excellent score!</span>
+        <h4 id="your-score">PWA Score</h4>
+        <span class="overall-score">${this.overallScore}</span>
       </div>
     </aside>`;
   }

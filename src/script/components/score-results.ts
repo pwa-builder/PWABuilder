@@ -48,6 +48,10 @@ export class ScoreResults extends LitElement {
         font-weight: var(--font-bold);
       }
 
+      .good-score {
+        color: var(--success-color);
+      }
+
       .bad-score {
         color: red;
       }
@@ -133,7 +137,7 @@ export class ScoreResults extends LitElement {
                             <span>${result.infoString}</span>
 
                             ${result.result === true
-                              ? html`<span class="good-score">5</span>`
+                              ? html`<span class="good-score">10</span>`
                               : html`<span class="bad-score">0</span>`}
                           </li>
                         `;
@@ -155,7 +159,7 @@ export class ScoreResults extends LitElement {
                             <span>${result.infoString}</span>
 
                             ${result.result === true
-                              ? html`<span class="good-score">5</span>`
+                              ? html`<span class="good-score">10</span>`
                               : html`<span class="bad-score">0</span>`}
                           </li>
                         `;
@@ -176,7 +180,7 @@ export class ScoreResults extends LitElement {
                             <span>${result.infoString}</span>
 
                             ${result.result === true
-                              ? html`<span class="good-score">5</span>`
+                              ? html`<span class="good-score">10</span>`
                               : html`<span class="bad-score">0</span>`}
                           </li>
                         `;
