@@ -28,17 +28,8 @@ import './sidebar-card';
 export class AppSidebar extends LitElement {
   static get styles() {
     return css`
-      fast-accordion {
-        --neutral-foreground-rest: white;
-      }
-
-      fast-accordion-item::part(icon) {
-        display: none;
-      }
-
-      fast-accordion-item::part(button) {
-        font-size: 16px;
-        font-weight: var(--font-bold);
+      sidebar-card {
+        margin-top: 20px;
       }
 
       .sidebar-item-header {
@@ -395,10 +386,10 @@ export class AppSidebar extends LitElement {
             >${this.current_url}</a
           >
           <hr />
+
           <sidebar-card title="Score">
             <span>Some content</span>
           </sidebar-card>
-          <hr />
 
           <sidebar-card title="Progress">
             ${this.menuItems?.progress.map(item => {
