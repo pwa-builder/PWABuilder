@@ -44,11 +44,26 @@ export class AppSidebar extends LitElement {
 
       .sidebar-item-header {
         display: flex;
+        font-size: var(--small-font-size);
+        font-weight: var(--font-bold);
+        padding-bottom: 11px;
+        border-left: 0.772396px solid rgba(255, 255, 255, 0.2);
+        padding-left: 5px;
+      }
+
+      .lastItem .sidebar-item-header {
+        padding-bottom: 0;
       }
 
       .item-name {
-        padding-right: 16px;
+        display: flex;
+        align-items: center;
+        font-size: 11px;
+
+        padding-left: 12px;
       }
+
+ 
 
       #sidebar-subitems-list {
         list-style: none;
@@ -262,7 +277,22 @@ export class AppSidebar extends LitElement {
 
       /** ICON STYLES */
       .desktop-sidebar .icon {
-        margin-right: 0.25rem;
+        position: relative;
+        left: -9.4px;
+        height: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 6.18px;
+
+        width: 8px;
+        height: auto;
+      }
+
+      .item-name ion-icon {
+        height: 10px;
+        color: var(--success-color);
+        padding-bottom: 3px;
       }
 
       .tablet-sidebar .icon {
@@ -275,10 +305,6 @@ export class AppSidebar extends LitElement {
       .pending::part(heading),
       .done::part(heading) {
         color: rgba(255, 255, 255, 0.5);
-      }
-
-      .done ion-icon {
-        color: var(--success-color);
       }
 
       .active::part(heading) {
@@ -297,20 +323,17 @@ export class AppSidebar extends LitElement {
         color: white;
       }
 
-      .pending .sidebar-item-header ion-icon {
-        color: rgb(52 55 68);
-      }
-
       #overall-score-block {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: space-between;
         text-align: center;
-        padding-left: 12px;
-        padding-right: 12px;
-        padding-top: 14px;
-        padding-bottom: 14px;
+        padding: 14px 12px;
+      }
+
+      #progress-block {
+        padding: 14px 12px;
       }
 
       #score-header,
@@ -420,16 +443,10 @@ export class AppSidebar extends LitElement {
   @property({ type: Boolean }) isDeskTopView = this.mql.matches;
 
   renderIcon(item: Progress | ProgressItem) {
-    switch (item.done) {
-      case 'active':
-        return html`<ion-icon class="icon active" name="ellipse"></ion-icon>`;
-      case 'done':
-        return html`
-          <ion-icon class="icon done" name="checkmark-outline"></ion-icon>
-        `;
-      case 'pending':
-      default:
-        return html`<ion-icon class="icon pending" name="ellipse"></ion-icon>`;
+    if (item.done == 'done') {
+      return html`
+        <ion-icon class="icon done" name="checkmark-outline"></ion-icon>
+      `;
     }
   }
 
@@ -460,35 +477,31 @@ export class AppSidebar extends LitElement {
           <hr />
 
           <sidebar-card title="Progress">
-            ${this.menuItems?.progress.map(item => {
-              return html`
-                <div
-                  class=${classMap({
-                    active: item.done === Status.ACTIVE,
-                    done: item.done === Status.DONE,
-                    pending: item.done === Status.PENDING,
-                  })}
-                >
-                  <div class="sidebar-item-header" slot="heading">
-                    <span class="item-name">${this.renderIcon(item)}</span>
-                    <span>${item.header}</span>
-                  </div>
-
-                  <ul id="sidebar-subitems-list">
-                    ${item.items.map(item => {
-                      return html`
-                        <li>
-                          <span class="item-name"
-                            >${this.renderIcon(item)}</span
-                          >
-                          <span>${item.name}</span>
-                        </li>
-                      `;
+            <div id="progress-block">
+              ${this.menuItems?.progress.map(item => {
+                return html`
+                  <div
+                    class=${classMap({
+                      active: item.done === Status.ACTIVE,
+                      done: item.done === Status.DONE,
+                      pending: item.done === Status.PENDING,
+                      lastItem: item.header === "Complete"
                     })}
-                  </ul>
-                </div>
-              `;
-            })}
+                  >
+                    <div class="sidebar-item-header" slot="heading">
+                      ${item.done === Status.ACTIVE
+                        ? html`<ion-icon
+                            class="icon active"
+                            name="ellipse"
+                          ></ion-icon>`
+                        : html`<img class="icon other" src="/assets/ellipse-outline.svg" aria-hidden="true">`}
+                      <span>${item.header}</span>
+                      <span class="item-name">${this.renderIcon(item)}</span>
+                    </div>
+                  </div>
+                `;
+              })}
+            </div>
           </sidebar-card>
         </div>
       </aside>
