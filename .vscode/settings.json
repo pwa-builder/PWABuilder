@@ -1,4 +1,5 @@
 {
+  "editor.tabSize": 2,
   "js/ts.implicitProjectConfig.experimentalDecorators": true,
   "typescript.tsdk": "node_modules/typescript/lib",
   "files.saveConflictResolution": "askUser",
