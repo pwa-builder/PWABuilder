@@ -29,17 +29,8 @@ import { getOverallScore } from '../services/tests';
 export class AppSidebar extends LitElement {
   static get styles() {
     return css`
-      fast-accordion {
-        --neutral-foreground-rest: white;
-      }
-
-      fast-accordion-item::part(icon) {
-        display: none;
-      }
-
-      fast-accordion-item::part(button) {
-        font-size: 16px;
-        font-weight: var(--font-bold);
+      sidebar-card {
+        margin-top: 20px;
       }
 
       .sidebar-item-header {
@@ -444,6 +435,7 @@ export class AppSidebar extends LitElement {
             >${this.current_url}</a
           >
           <hr />
+
           <sidebar-card title="Score">
             <div id="overall-score-block">
               <span id="score-header">Your PWA Score:</span>
@@ -457,7 +449,6 @@ export class AppSidebar extends LitElement {
               </span>
             </div>
           </sidebar-card>
-          <hr />
 
           <sidebar-card title="Progress">
             ${this.menuItems?.progress.map(item => {
