@@ -24,6 +24,7 @@ import { classMap } from 'lit-html/directives/class-map';
 
 import './sidebar-card';
 import { getOverallScore } from '../services/tests';
+import './rating-dial';
 
 @customElement('app-sidebar')
 export class AppSidebar extends LitElement {
@@ -292,7 +293,7 @@ export class AppSidebar extends LitElement {
         color: rgb(52 55 68);
       }
 
-      #overall-score-block {
+      #overall-score-block, #rating-block {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -307,7 +308,14 @@ export class AppSidebar extends LitElement {
       #score-header,
       #score-notify {
         font-weight: var(--font-bold);
-        font-size: var(--font-size);
+        font-size: var(--small-font-size);
+      }
+
+      .rating-header {
+        font-size: var(--small-font-size);
+        display: block;
+        text-align: center;
+        margin-bottom: 8px;
       }
 
       .overall-score {
@@ -326,13 +334,32 @@ export class AppSidebar extends LitElement {
         text-align: center;
       }
 
-      #plus {
+      #rating-block .overall-score {
+        width: 100%;
+        font-weight: var(--font-bold);
+        margin-bottom: 14px;
+        text-align: center;
+        margin-top: -4px;
+        
+        background: initial;
+        border-radius: initial;
+        border: none;
+      }
+
+      #plus, #top {
         color: var(--success-color);
       }
 
       .tablet-sidebar .overall-score {
         max-width: 64px;
         text-align: center;
+      }
+
+      #rating-comment {
+        font-weight: var(--font-bold);
+        font-size: var(--small-font-size);
+        text-align: center;
+        display: block;
       }
 
       ${(mediumBreakPoint(css`
@@ -450,36 +477,20 @@ export class AppSidebar extends LitElement {
             </div>
           </sidebar-card>
 
-          <sidebar-card title="Progress">
-            ${this.menuItems?.progress.map(item => {
-              return html`
-                <div
-                  class=${classMap({
-                    active: item.done === Status.ACTIVE,
-                    done: item.done === Status.DONE,
-                    pending: item.done === Status.PENDING,
-                  })}
-                >
-                  <div class="sidebar-item-header" slot="heading">
-                    <span class="item-name">${this.renderIcon(item)}</span>
-                    <span>${item.header}</span>
-                  </div>
+          <sidebar-card title="Rating">
+            <div id="rating-block">
+              <span class="rating-header" id="score-header"
+                >Your PWA Score compared with other developers</span
+              >
+              <rating-dial></rating-dial>
 
-                  <ul id="sidebar-subitems-list">
-                    ${item.items.map(item => {
-                      return html`
-                        <li>
-                          <span class="item-name"
-                            >${this.renderIcon(item)}</span
-                          >
-                          <span>${item.name}</span>
-                        </li>
-                      `;
-                    })}
-                  </ul>
-                </div>
-              `;
-            })}
+              <div class="overall-score">${this.overallScore}</div>
+
+              <span id="rating-comment"
+                >Your PWA ranks in the <span id="top">Top 100</span> of all developers using PWA
+                Builder</span
+              >
+            </div>
           </sidebar-card>
         </div>
       </aside>
