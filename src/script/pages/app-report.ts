@@ -85,6 +85,10 @@ export class AppReport extends LitElement {
           margin-top: 0;
         }
 
+        report-card {
+          margin-top: 20px;
+        }
+
         ${xxxLargeBreakPoint(
           css`
             #report {

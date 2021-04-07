@@ -11,6 +11,8 @@ import { RawTestResult, ScoreEvent } from '../utils/interfaces';
 import {
   largeBreakPoint,
   xLargeBreakPoint,
+  xxLargeBreakPoint,
+  mediumBreakPoint,
   smallBreakPoint,
 } from '../utils/css/breakpoints';
 
@@ -18,6 +20,7 @@ import './score-results';
 import '../components/app-button';
 import { baseOrPublish, getURL } from '../services/app-info';
 import { Router } from '@vaadin/router';
+import { getOverallScore } from '../services/tests';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {
@@ -27,6 +30,7 @@ export class ReportCard extends LitElement {
   @internalProperty() maniScore = 0;
   @internalProperty() swScore = 0;
   @internalProperty() securityScore = 0;
+  @internalProperty() overallScore = 0;
 
   @internalProperty() currentURL: string | undefined;
 
@@ -42,14 +46,9 @@ export class ReportCard extends LitElement {
       }
 
       #main-report-section {
-        padding-left: 32px;
+        padding-left: 18px;
         padding-right: 32px;
         padding-bottom: 32px;
-      }
-
-      #report-header {
-        margin-bottom: 4em;
-        margin-top: 4em;
       }
 
       #report-content {
@@ -80,6 +79,10 @@ export class ReportCard extends LitElement {
       fast-accordion-item,
       fast-accordion {
         --neutral-divider-rest: #e5e5e5;
+      }
+
+      fast-accordion {
+        border-top: none;
       }
 
       fast-accordion-item::part(icon) {
@@ -130,8 +133,9 @@ export class ReportCard extends LitElement {
 
       .options-button {
         width: 217px;
-        float: right;
-        margin-right: 4em;
+
+        margin-top: 33px;
+        margin-bottom: 33px;
       }
 
       .options-button::part(underlying-button) {
@@ -154,7 +158,6 @@ export class ReportCard extends LitElement {
       #package-block {
         display: flex;
         justify-content: flex-end;
-        margin-right: 1.2em;
         margin-top: 40px;
       }
 
@@ -165,15 +168,27 @@ export class ReportCard extends LitElement {
         border-radius: var(--button-radius);
       }
 
+      ${xxLargeBreakPoint(
+        css`
+          .accordion-heading-block {
+            width: 83vw;
+          }
+
+          #total-score {
+            margin-right: 2em;
+          }
+        `
+      )}
+
       ${xLargeBreakPoint(
         css`
           .accordion-heading-block,
           #report-content {
-            width: 71vw;
+            width: 80vw;
           }
 
           #total-score {
-            width: 70vw;
+            width: 74vw;
           }
         `
       )}
@@ -186,11 +201,23 @@ export class ReportCard extends LitElement {
         `
       )}
 
+      ${mediumBreakPoint(
+        css`
+          .accordion-heading-block {
+            width: 90vw;
+          }
+        `
+      )}
+
       ${smallBreakPoint(
         css`
           #main-report-section {
             padding-left: 12px;
             padding-right: 12px;
+          }
+
+          .accordion-heading-block {
+            width: 90vw;
           }
         `
       )}
@@ -208,12 +235,10 @@ export class ReportCard extends LitElement {
       // lets attempt to grab the last saved results
       try {
         this.scoreCardResults = await this.handleNoResults();
-      }
-      catch(err) {
+      } catch (err) {
         throw new Error(`Error handling results: ${err}`);
       }
-    }
-    else {
+    } else {
       this.scoreCardResults = this.results;
     }
 
@@ -222,6 +247,8 @@ export class ReportCard extends LitElement {
     if (urlData) {
       this.currentURL = urlData;
     }
+
+    this.overallScore = getOverallScore();
   }
 
   async handleNoResults(): Promise<RawTestResult> {
@@ -234,11 +261,10 @@ export class ReportCard extends LitElement {
         if (resultsData) {
           resolve(resultsData);
         }
+      } else {
+        reject(new Error('No results passed'));
       }
-      else {
-        reject(new Error("No results passed"));
-      }
-    })
+    });
   }
 
   opened(targetEl: EventTarget | null) {
@@ -344,11 +370,9 @@ export class ReportCard extends LitElement {
 
     if (baseOrPublishIffy === 'base') {
       Router.go('/basepackage');
-    }
-    else if (baseOrPublishIffy === 'publish') {
+    } else if (baseOrPublishIffy === 'publish') {
       Router.go(`/publish?site=${this.currentURL}`);
-    }
-    else {
+    } else {
       Router.go('/basepackage');
     }
   }
@@ -356,17 +380,6 @@ export class ReportCard extends LitElement {
   render() {
     return html`
       <div id="main-report-section">
-        <div id="report-header">
-          <h3>The Scoop</h3>
-
-          <p>
-            Ready to build your PWA? Tap "Build My PWA" to package your PWA for
-            the app stores or tap "Feature Store" to check out the latest web
-            components from the PWABuilder team to improve your PWA even
-            further!
-          </p>
-        </div>
-
         <div id="report-content">
           <fast-accordion>
             <fast-accordion-item
@@ -376,9 +389,7 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Manifest</span>
 
                 <div class="score-block">
-                  <span class="accordion-score"
-                    >${this.maniScore} / ${this.maxManiScore}</span
-                  >
+                  <span class="accordion-score">${this.maniScore}</span>
 
                   <fast-button class="flipper-button" mode="stealth">
                     <ion-icon name="caret-forward-outline"></ion-icon>
@@ -386,16 +397,19 @@ export class ReportCard extends LitElement {
                 </div>
               </div>
 
-              <app-button
-                @click="${() => this.openManiOptions()}"
-                class="options-button"
-                >Manifest Options</app-button
-              >
-
-              ${this.scoreCardResults ? html`<score-results
-                .testResults="${this.scoreCardResults.manifest}"
-                @scored="${(ev: CustomEvent) => this.handleManiScore(ev)}"
-              ></score-results>` : null}
+              ${this.scoreCardResults
+                ? html`<score-results
+                    .testResults="${this.scoreCardResults.manifest}"
+                    @scored="${(ev: CustomEvent) => this.handleManiScore(ev)}"
+                  >
+                    <app-button
+                      @click="${() => this.openManiOptions()}"
+                      class="options-button"
+                      slot="options-button"
+                      >Manifest Options</app-button
+                    >
+                  </score-results>`
+                : null}
             </fast-accordion-item>
             <fast-accordion-item
               @click="${(ev: Event) => this.opened(ev.target)}"
@@ -404,24 +418,27 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Service Worker</span>
 
                 <div class="score-block">
-                  <span class="accordion-score"
-                    >${this.swScore} / ${this.maxSWSCore}</span
-                  >
+                  <span class="accordion-score">${this.swScore}</span>
 
                   <fast-button class="flipper-button" mode="stealth">
                     <ion-icon name="caret-forward-outline"></ion-icon>
                   </fast-button>
                 </div>
               </div>
-              <app-button
-                @click="${() => this.openSWOptions()}"
-                class="options-button"
-                >Service Worker Options</app-button
-              >
-              ${this.scoreCardResults ? html`<score-results
-                .testResults="${this.scoreCardResults.service_worker}"
-                @scored="${(ev: CustomEvent) => this.handleSWScore(ev)}"
-              ></score-results>` : null}
+
+              ${this.scoreCardResults
+                ? html`<score-results
+                    .testResults="${this.scoreCardResults.service_worker}"
+                    @scored="${(ev: CustomEvent) => this.handleSWScore(ev)}"
+                  >
+                    <app-button
+                      @click="${() => this.openSWOptions()}"
+                      slot="options-button"
+                      class="options-button"
+                      >Service Worker Options</app-button
+                    >
+                  </score-results>`
+                : null}
             </fast-accordion-item>
             <fast-accordion-item
               @click="${(ev: Event) => this.opened(ev.target)}"
@@ -430,9 +447,7 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Security</span>
 
                 <div class="score-block">
-                  <span class="accordion-score"
-                    >${this.securityScore} / ${this.maxSecurityScore}</span
-                  >
+                  <span class="accordion-score">${this.securityScore}</span>
 
                   <fast-button class="flipper-button" mode="stealth">
                     <ion-icon name="caret-forward-outline"></ion-icon>
@@ -440,10 +455,13 @@ export class ReportCard extends LitElement {
                 </div>
               </div>
 
-              ${this.scoreCardResults ? html`<score-results
-                .testResults="${this.scoreCardResults.security}"
-                @scored="${(ev: CustomEvent) => this.handleSecurityScore(ev)}"
-              ></score-results>` : null}
+              ${this.scoreCardResults
+                ? html`<score-results
+                    .testResults="${this.scoreCardResults.security}"
+                    @scored="${(ev: CustomEvent) =>
+                      this.handleSecurityScore(ev)}"
+                  ></score-results>`
+                : null}
             </fast-accordion-item>
           </fast-accordion>
         </div>
@@ -452,11 +470,13 @@ export class ReportCard extends LitElement {
           <div id="total-score">
             <h4>Total Score</h4>
 
-            <span id="overall-score">00 / 100</span>
+            <span id="overall-score">${this.overallScore}</span>
           </div>
 
           <div id="package-block">
-            <app-button @click="${() => this.decideWhereToGo()}">Next</app-button>
+            <app-button @click="${() => this.decideWhereToGo()}"
+              >Next</app-button
+            >
           </div>
         </div>
       </div>
