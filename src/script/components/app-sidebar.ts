@@ -128,16 +128,17 @@ export class AppSidebar extends LitElement {
         width: 100%;
       }
 
-      aside.desktop-sidebar h4 {
-        font-size: var(--font-size);
-        margin-top: 16px;
-      }
 
       aside.desktop-sidebar h1,
       aside.desktop-sidebar h4,
       aside.desktop-sidebar h5,
       aside.desktop-sidebar p {
         margin: 0;
+      }
+
+      aside.desktop-sidebar h4 {
+        font-size: var(--font-size);
+        margin-top: 16px;
       }
 
       aside.desktop-sidebar hr {
@@ -280,7 +281,7 @@ export class AppSidebar extends LitElement {
         font-size: 6.18px;
 
         width: 8px;
-        height: auto;
+        height: 10px;
       }
 
       .item-name ion-icon {
@@ -582,22 +583,6 @@ export class AppSidebar extends LitElement {
             </div>
           </sidebar-card>
 
-          <sidebar-card title="Rating">
-            <div id="rating-block">
-              <span class="rating-header" id="score-header"
-                >Your PWA Score compared with other developers</span
-              >
-              <rating-dial></rating-dial>
-
-              <div class="overall-score">${this.overallScore}</div>
-
-              <span id="rating-comment"
-                >Your PWA ranks in the <span id="top">Top 100</span> of all developers using PWA
-                Builder</span
-              >
-             </div>
-           </sidebar-card>
-
           <sidebar-card title="Progress">
             <div id="progress-block">
               ${this.menuItems?.progress.map(item => {
@@ -625,6 +610,23 @@ export class AppSidebar extends LitElement {
               })}
             </div>
           </sidebar-card>
+
+          <sidebar-card title="Rating">
+            <div id="rating-block">
+              <span class="rating-header" id="score-header"
+                >Your PWA Score compared with other developers</span
+              >
+              <rating-dial></rating-dial>
+
+              <div class="overall-score">${this.overallScore}</div>
+
+              <span id="rating-comment"
+                >Your PWA ranks in the <span id="top">Top 100</span> of all developers using PWA
+                Builder</span
+              >
+             </div>
+           </sidebar-card>
+
         </div>
       </aside>
     `;
