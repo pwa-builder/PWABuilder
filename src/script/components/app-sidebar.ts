@@ -29,17 +29,8 @@ import { getOverallScore } from '../services/tests';
 export class AppSidebar extends LitElement {
   static get styles() {
     return css`
-      fast-accordion {
-        --neutral-foreground-rest: white;
-      }
-
-      fast-accordion-item::part(icon) {
-        display: none;
-      }
-
-      fast-accordion-item::part(button) {
-        font-size: 16px;
-        font-weight: var(--font-bold);
+      sidebar-card {
+        margin-top: 20px;
       }
 
       .sidebar-item-header {
@@ -367,6 +358,49 @@ export class AppSidebar extends LitElement {
         text-align: center;
       }
 
+      #overall-score-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        text-align: center;
+        padding-left: 12px;
+        padding-right: 12px;
+        padding-top: 14px;
+        padding-bottom: 14px;
+      }
+
+      #score-header,
+      #score-notify {
+        font-weight: var(--font-bold);
+        font-size: var(--font-size);
+      }
+
+      .overall-score {
+        border: 2.45288px solid #ffffff;
+        width: 100%;
+        border-radius: 8px;
+        font-weight: var(--font-bold);
+        background: linear-gradient(
+          118.44deg,
+          rgba(52, 41, 102, 0.5) 12.3%,
+          rgba(93, 68, 140, 0.5) 38.83%,
+          rgba(50, 27, 62, 0.5) 96.92%
+        );
+        margin-top: 15px;
+        margin-bottom: 19px;
+        text-align: center;
+      }
+
+      #plus {
+        color: var(--success-color);
+      }
+
+      .tablet-sidebar .overall-score {
+        max-width: 64px;
+        text-align: center;
+      }
+
       ${(mediumBreakPoint(css`
         aside.tablet-sidebar,
         aside.desktop-sidebar {
@@ -461,6 +495,7 @@ export class AppSidebar extends LitElement {
             >${this.current_url}</a
           >
           <hr />
+
           <sidebar-card title="Score">
             <div id="overall-score-block">
               <span id="score-header">Your PWA Score:</span>
@@ -474,7 +509,6 @@ export class AppSidebar extends LitElement {
               </span>
             </div>
           </sidebar-card>
-          <hr />
 
           <sidebar-card title="Progress">
             <div id="progress-block">
