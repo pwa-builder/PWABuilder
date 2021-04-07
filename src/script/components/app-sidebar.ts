@@ -25,6 +25,9 @@ import { classMap } from 'lit-html/directives/class-map';
 import './sidebar-card';
 import { getOverallScore } from '../services/tests';
 
+import './rating-dial';
+
+
 @customElement('app-sidebar')
 export class AppSidebar extends LitElement {
   static get styles() {
@@ -401,6 +404,75 @@ export class AppSidebar extends LitElement {
         text-align: center;
       }
 
+      #overall-score-block, #rating-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        text-align: center;
+        padding-left: 12px;
+        padding-right: 12px;
+        padding-top: 14px;
+        padding-bottom: 14px;
+      }
+
+      #score-header,
+      #score-notify {
+        font-weight: var(--font-bold);
+        font-size: var(--small-font-size);
+      }
+
+      .rating-header {
+        font-size: var(--small-font-size);
+        display: block;
+        text-align: center;
+        margin-bottom: 8px;
+      }
+
+      .overall-score {
+        border: 2.45288px solid #ffffff;
+        width: 100%;
+        border-radius: 8px;
+        font-weight: var(--font-bold);
+        background: linear-gradient(
+          118.44deg,
+          rgba(52, 41, 102, 0.5) 12.3%,
+          rgba(93, 68, 140, 0.5) 38.83%,
+          rgba(50, 27, 62, 0.5) 96.92%
+        );
+        margin-top: 15px;
+        margin-bottom: 19px;
+        text-align: center;
+      }
+
+      #rating-block .overall-score {
+        width: 100%;
+        font-weight: var(--font-bold);
+        margin-bottom: 14px;
+        text-align: center;
+        margin-top: -4px;
+        
+        background: initial;
+        border-radius: initial;
+        border: none;
+      }
+
+      #plus, #top {
+        color: var(--success-color);
+      }
+
+      .tablet-sidebar .overall-score {
+        max-width: 64px;
+        text-align: center;
+      }
+
+      #rating-comment {
+        font-weight: var(--font-bold);
+        font-size: var(--small-font-size);
+        text-align: center;
+        display: block;
+      }
+
       ${(mediumBreakPoint(css`
         aside.tablet-sidebar,
         aside.desktop-sidebar {
@@ -509,6 +581,22 @@ export class AppSidebar extends LitElement {
               </span>
             </div>
           </sidebar-card>
+
+          <sidebar-card title="Rating">
+            <div id="rating-block">
+              <span class="rating-header" id="score-header"
+                >Your PWA Score compared with other developers</span
+              >
+              <rating-dial></rating-dial>
+
+              <div class="overall-score">${this.overallScore}</div>
+
+              <span id="rating-comment"
+                >Your PWA ranks in the <span id="top">Top 100</span> of all developers using PWA
+                Builder</span
+              >
+             </div>
+           </sidebar-card>
 
           <sidebar-card title="Progress">
             <div id="progress-block">
