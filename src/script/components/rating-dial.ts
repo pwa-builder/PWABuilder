@@ -79,8 +79,8 @@ export class RatingDial extends LitElement {
 
   render() {
     return html`<div id="dial-block">
-      <img id="dial" src="/assets/dial.png" />
-      <img id="pointer" src="/assets/pointer.png" />
+      <img aria-hidden="true" id="dial" src="/assets/dial.png" />
+      <img aria-hidden="true" id="pointer" src="/assets/pointer.png" />
     </div> `;
   }
 }
