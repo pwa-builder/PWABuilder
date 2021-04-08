@@ -11,6 +11,11 @@ const possible_badges = [
 
 const current_badges: Array<{name: string, url: string}> = [];
 
+export const no_pwa_icon = {
+  name: "Not a PWA",
+  url: "/assets/badges/pwa_grey.svg"
+}
+
 export function giveOutBadges() {
   const results = getResults();
 
@@ -32,6 +37,8 @@ export function giveOutBadges() {
       const badge = possible_badges.find(badge => {
         if (badge.name === 'Manifest') return badge;
       });
+
+      console.log('maniBadge', badge);
 
       if (badge) {
         current_badges.push(badge);
@@ -77,6 +84,8 @@ export function giveOutBadges() {
         current_badges.push(badge);
       }
     }
+
+    console.log('current', current_badges);
   }
 }
 

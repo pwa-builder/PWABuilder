@@ -21,6 +21,7 @@ import '../components/app-button';
 import { baseOrPublish, getURL } from '../services/app-info';
 import { Router } from '@vaadin/router';
 import { getOverallScore } from '../services/tests';
+import { getCurrentBadges } from '../services/badges';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {
@@ -33,6 +34,8 @@ export class ReportCard extends LitElement {
   @internalProperty() overallScore = 0;
 
   @internalProperty() currentURL: string | undefined;
+
+  @internalProperty() pwa_icon: string | undefined;
 
   maxManiScore = 80;
   maxSWSCore = 20;
@@ -145,8 +148,9 @@ export class ReportCard extends LitElement {
 
       #total-score {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
+        flex-direction: column;
+        align-items: initial;
+        justify-content: initial;
 
         margin-right: 1.4em;
       }
@@ -166,6 +170,37 @@ export class ReportCard extends LitElement {
         color: white;
         box-shadow: var(--button-shadow);
         border-radius: var(--button-radius);
+      }
+
+      #total-score-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      #total-score-header h4 {
+        font-size: var(--medium-font-size);
+      }
+
+      #badge-section {
+        display: flex;
+        align-items: center;
+        margin-top: -1em;
+      }
+
+      #badge-section img {
+        margin-right: 10px;
+      }
+
+      #badge-text h4 {
+        font-size: var(--small-font-size);
+        margin-bottom: 0;
+      }
+
+      #badge-text p {
+        font-size: var(--small-font-size);
+        font-weight: normal;
+        margin-top: 0;
       }
 
       ${xxLargeBreakPoint(
@@ -249,6 +284,28 @@ export class ReportCard extends LitElement {
     }
 
     this.overallScore = getOverallScore();
+
+    await this.handlePWABadge();
+
+    console.log('pwa icon', this.pwa_icon);
+  }
+
+  async handlePWABadge() {
+    const currentBadges = getCurrentBadges();
+    console.log('currentBadges', currentBadges);
+
+    if (currentBadges) {
+      currentBadges.forEach(badge => {
+        console.log('badge', badge.name);
+        if (badge.name === 'PWA') {
+          console.log('chosen', badge);
+          this.pwa_icon = badge.url;
+          return;
+        }
+      });
+    } else {
+      return undefined;
+    }
   }
 
   async handleNoResults(): Promise<RawTestResult> {
@@ -468,9 +525,31 @@ export class ReportCard extends LitElement {
 
         <div id="overall-score">
           <div id="total-score">
-            <h4>Total Score</h4>
+            <div id="total-score-header">
+              <h4>Total Score</h4>
+              <span id="overall-score">${this.overallScore}</span>
+            </div>
 
-            <span id="overall-score">${this.overallScore}</span>
+            ${this.pwa_icon
+              ? html`<div id="badge-section">
+                  <img src="${this.pwa_icon}" />
+
+                  <div id="badge-text">
+                    <h4>Congrats!</h4>
+                    <p>You have a great PWA!</p>
+                  </div>
+                </div>`
+              : html`<div id="badge-section">
+                  <img src="/assets/badges/pwa_grey.svg" />
+
+                  <div id="badge-text">
+                    <h4>Uh oh!</h4>
+                    <p>
+                      Your app needs some work to be a PWA, check your results
+                      above for details.
+                    </p>
+                  </div>
+                </div>`}
           </div>
 
           <div id="package-block">
