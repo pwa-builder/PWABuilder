@@ -36,6 +36,9 @@ export class ReportCard extends LitElement {
   @internalProperty() currentURL: string | undefined;
 
   @internalProperty() pwa_icon: string | undefined;
+  @internalProperty() manifest_icon: string | undefined;
+  @internalProperty() sw_icon: string | undefined;
+  @internalProperty() security_icon: string | undefined;
 
   maxManiScore = 80;
   maxSWSCore = 20;
@@ -195,6 +198,7 @@ export class ReportCard extends LitElement {
       #badge-text h4 {
         font-size: var(--small-font-size);
         margin-bottom: 0;
+        margin-top: 0;
       }
 
       #badge-text p {
@@ -285,12 +289,12 @@ export class ReportCard extends LitElement {
 
     this.overallScore = getOverallScore();
 
-    await this.handlePWABadge();
+    await this.handleBadges();
 
     console.log('pwa icon', this.pwa_icon);
   }
 
-  async handlePWABadge() {
+  async handleBadges() {
     const currentBadges = getCurrentBadges();
     console.log('currentBadges', currentBadges);
 
@@ -301,6 +305,16 @@ export class ReportCard extends LitElement {
           console.log('chosen', badge);
           this.pwa_icon = badge.url;
           return;
+        }
+        else if (badge.name === 'Manifest') {
+          this.manifest_icon = badge.url;
+          return;
+        }
+        else if (badge.name === 'Service Worker') {
+          this.sw_icon = badge.url;
+        }
+        else if (badge.name === 'Security') {
+          this.security_icon = badge.url;
         }
       });
     } else {
@@ -454,6 +468,25 @@ export class ReportCard extends LitElement {
                 </div>
               </div>
 
+              ${this.manifest_icon
+              ? html`<div id="badge-section">
+                  <img src="${this.manifest_icon}"/>
+
+                  <div id="badge-text">
+                    <h4>You have unlocked the Manifest Badge!</h4>
+                  </div>
+                </div>`
+              : html`<div id="badge-section">
+                  <img src="/assets/badges/pwa_grey.svg" />
+
+                  <div id="badge-text">
+                    <h4>Uh oh!</h4>
+                    <p>
+                      Your Manifest needs some work before the Manifest Badge is unlocked.
+                    </p>
+                  </div>
+                </div>`}
+
               ${this.scoreCardResults
                 ? html`<score-results
                     .testResults="${this.scoreCardResults.manifest}"
@@ -483,6 +516,25 @@ export class ReportCard extends LitElement {
                 </div>
               </div>
 
+              ${this.sw_icon
+              ? html`<div id="badge-section">
+                  <img src="${this.sw_icon}"/>
+
+                  <div id="badge-text">
+                    <h4>You have unlocked the Service Worker Badge!</h4>
+                  </div>
+                </div>`
+              : html`<div id="badge-section">
+                  <img src="/assets/badges/pwa_grey.svg" />
+
+                  <div id="badge-text">
+                    <h4>Uh oh!</h4>
+                    <p>
+                      Your Service Worker needs some work before the Service Worker Badge is unlocked.
+                    </p>
+                  </div>
+                </div>`}
+
               ${this.scoreCardResults
                 ? html`<score-results
                     .testResults="${this.scoreCardResults.service_worker}"
@@ -511,6 +563,25 @@ export class ReportCard extends LitElement {
                   </fast-button>
                 </div>
               </div>
+
+              ${this.security_icon
+              ? html`<div id="badge-section">
+                  <img src="${this.security_icon}"/>
+
+                  <div id="badge-text">
+                    <h4>You have unlocked the Security Badge!</h4>
+                  </div>
+                </div>`
+              : html`<div id="badge-section">
+                  <img src="/assets/badges/pwa_grey.svg" />
+
+                  <div id="badge-text">
+                    <h4>Uh oh!</h4>
+                    <p>
+                      Your Security needs some work before the Security Badge is unlocked.
+                    </p>
+                  </div>
+                </div>`}
 
               ${this.scoreCardResults
                 ? html`<score-results
