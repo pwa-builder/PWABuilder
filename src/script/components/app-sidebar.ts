@@ -37,6 +37,10 @@ export class AppSidebar extends LitElement {
         margin-top: 20px;
       }
 
+      #badges-card {
+        margin-bottom: 20px;
+      }
+
       .sidebar-item-header {
         display: flex;
         font-size: var(--small-font-size);
@@ -628,7 +632,7 @@ export class AppSidebar extends LitElement {
              </div>
            </sidebar-card>
 
-           <sidebar-card title="Badges">
+           <sidebar-card id="badges-card" title="Badges">
              <app-badges></app-badges>
            </sidebar-card>
 

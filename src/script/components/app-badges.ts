@@ -9,7 +9,12 @@ export class AppBadges extends LitElement {
 
   static get styles() {
     return css`
-      
+      #badges-container {
+        padding: 14px 12px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 10px;
+      }
     `;
   }
 
@@ -26,9 +31,9 @@ export class AppBadges extends LitElement {
     return html`
       <div id="badges-container">
         ${
-          this.current_badges?.map((badge) => {
+          this.possible_badges?.map((badge) => {
             return html`
-              <img src="${badge.url}" alt="${badge.name} icon">
+              <img .src="${badge.url}" .alt="${badge.name} icon">
             `
           })
         }
