@@ -5,6 +5,7 @@ import {
   TestResult,
 } from '../../utils/interfaces';
 import { getProgress, getResults, setProgress, setResults } from '../app-info';
+import { giveOutBadges } from '../badges';
 import { testManifest } from './manifest';
 import { testSecurity } from './security';
 import { testServiceWorker } from './service-worker';
@@ -31,6 +32,8 @@ export async function runAllTests(url: string): Promise<RawTestResult> {
 
     const progress = getProgress();
     updateProgress(progress, resultsObject);
+
+    giveOutBadges();
 
     resolve(resultsObject);
   });
@@ -90,6 +93,8 @@ function updateProgress(progress: ProgressList, results: RawTestResult) {
       }
     }
   });
+
+  giveOutBadges();
 
   const newProgress = progress;
   setProgress(newProgress);
