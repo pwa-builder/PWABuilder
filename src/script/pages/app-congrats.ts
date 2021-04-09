@@ -13,6 +13,7 @@ import {
   largeBreakPoint,
   mediumBreakPoint,
 } from '../utils/css/breakpoints';
+import { hidden_all } from '../utils/css/hidden';
 
 // @ts-ignore
 import style from '../../../styles/layout-defaults.css';
@@ -198,43 +199,41 @@ export class AppCongrats extends LitElement {
           font-weight: var(--font-bold);
           font-size: var(--small-medium-font-size);
         }
-
-        ${xxxLargeBreakPoint(
-          css`
-            app-sidebar {
-              display: block;
-            }
-
-            #tablet-sidebar {
-              display: none;
-            }
-
-            #desktop-sidebar {
-              display: block;
-            }
-          `
-        )}
-
-        ${largeBreakPoint(
-          css`
-            #tablet-sidebar {
-              display: block;
-            }
-
-            #desktop-sidebar {
-              display: none;
-            }
-          `
-        )}
-
-        ${mediumBreakPoint(
-          css`
-            #blog-block #first-card {
-              margin-right: initial;
-            }
-          `
-        )}
       `,
+      hidden_all,
+      xxxLargeBreakPoint(
+        css`
+          app-sidebar {
+            display: block;
+          }
+
+          #tablet-sidebar {
+            display: none;
+          }
+
+          #desktop-sidebar {
+            display: block;
+          }
+        `
+      ),
+      largeBreakPoint(
+        css`
+          #tablet-sidebar {
+            display: block;
+          }
+
+          #desktop-sidebar {
+            display: none;
+          }
+        `
+      ),
+      mediumBreakPoint(
+        css`
+          #blog-block #first-card {
+            margin-right: initial;
+          }
+        `
+      ),
     ];
   }
 
@@ -523,33 +522,37 @@ export class AppCongrats extends LitElement {
               <h3>Blog Posts recommended for you...</h3>
 
               <div id="blog-block">
-                ${this.featuredPost ? html`<app-card
-                  id="first-card"
-                  cardTitle="${this.featuredPost.title}"
-                  description="${this.featuredPost.description}"
-                  imageUrl="${this.featuredPost.imageUrl}"
-                  linkText="Read Post"
-                  linkRoute="${this.featuredPost.clickUrl}"
-                  .featured="${true}"
-                  class=${classMap({
-                    blog: true,
-                    featured: true,
-                  })}
-                >
-                </app-card>` : null}
+                ${this.featuredPost
+                  ? html`<app-card
+                      id="first-card"
+                      cardTitle="${this.featuredPost.title}"
+                      description="${this.featuredPost.description}"
+                      imageUrl="${this.featuredPost.imageUrl}"
+                      linkText="Read Post"
+                      linkRoute="${this.featuredPost.clickUrl}"
+                      .featured="${true}"
+                      class=${classMap({
+                        blog: true,
+                        featured: true,
+                      })}
+                    >
+                    </app-card>`
+                  : null}
 
                 <div>
-                  ${this.blog_posts ? this.blog_posts.map(post => {
-                    return html`
-                      <app-card
-                        cardTitle="${post.title}"
-                        description="${post.description}"
-                        class="blog"
-                        imageUrl="${post.imageUrl}"
-                      >
-                      </app-card>
-                    `;
-                  }) : null}
+                  ${this.blog_posts
+                    ? this.blog_posts.map(post => {
+                        return html`
+                          <app-card
+                            cardTitle="${post.title}"
+                            description="${post.description}"
+                            class="blog"
+                            imageUrl="${post.imageUrl}"
+                          >
+                          </app-card>
+                        `;
+                      })
+                    : null}
                 </div>
               </div>
 
