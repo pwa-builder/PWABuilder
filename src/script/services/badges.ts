@@ -124,6 +124,7 @@ export function sortBadges(): Array<{ name: string; url: string }> {
     ) => {
       if (
         array.indexOf(currentValue) != index &&
+        // to-do: This is valid JS, but need to figure out the type
         !acc.includes((currentValue.name as any))
       )
         acc.push(currentValue);
