@@ -22,12 +22,12 @@ import { baseOrPublish, getURL } from '../services/app-info';
 import { Router } from '@vaadin/router';
 import { getOverallScore } from '../services/tests';
 import {
-  getCurrentBadges,
   getPossibleBadges,
   sortBadges,
 } from '../services/badges';
 
 import { classMap } from 'lit-html/directives/class-map';
+import { styleMap } from 'lit-html/directives/style-map';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {
@@ -490,6 +490,18 @@ export class ReportCard extends LitElement {
     }
   }
 
+  decideScoreColor(score: number, locked?: boolean) {
+    if (score === 0) {
+      return "var(--error-color)"
+    }
+    else if (locked) {
+      return "var(--warning-color)"
+    }
+    else {
+      return "var(--success-color)"
+    }
+  }
+
   render() {
     return html`
       <div id="main-report-section">
@@ -502,7 +514,13 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Manifest</span>
 
                 <div class="score-block">
-                  <span class="accordion-score">${this.maniScore}</span>
+                  <span
+                    class="accordion-score"
+                    style=${styleMap({
+                      color: this.decideScoreColor(this.maniScore, this.manifest_icon?.locked)
+                    })}
+                    >${this.maniScore}</span
+                  >
 
                   <fast-button class="flipper-button" mode="stealth">
                     <ion-icon name="caret-forward-outline"></ion-icon>
@@ -520,7 +538,12 @@ export class ReportCard extends LitElement {
                     />
 
                     <div id="badge-text">
-                      ${this.manifest_icon.locked ? html`<h4>Uh oh, your Manifest needs more work before this badge is unlocked</h4>` : html`<h4>You have unlocked the Manifest Badge!</h4>`}
+                      ${this.manifest_icon.locked
+                        ? html`<h4>
+                            Uh oh, your Manifest needs more work before this
+                            badge is unlocked
+                          </h4>`
+                        : html`<h4>You have unlocked the Manifest Badge!</h4>`}
                     </div>
                   </div>`
                 : null}
@@ -545,7 +568,9 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Service Worker</span>
 
                 <div class="score-block">
-                  <span class="accordion-score">${this.swScore}</span>
+                  <span style=${styleMap({
+                      color: this.decideScoreColor(this.swScore, this.sw_icon?.locked)
+                    })} class="accordion-score">${this.swScore}</span>
 
                   <fast-button class="flipper-button" mode="stealth">
                     <ion-icon name="caret-forward-outline"></ion-icon>
@@ -555,12 +580,22 @@ export class ReportCard extends LitElement {
 
               ${this.sw_icon
                 ? html`<div id="badge-section">
-                    <img class="${classMap({
+                    <img
+                      class="${classMap({
                         locked: this.sw_icon.locked,
-                      })}" src="${this.sw_icon.url}" />
+                      })}"
+                      src="${this.sw_icon.url}"
+                    />
 
                     <div id="badge-text">
-                      ${this.sw_icon.locked ? html`<h4>Uh oh, your Service Worker needs more work before this badge is unlocked</h4>`: html`<h4>You have unlocked the Service Worker Badge!</h4>`}
+                      ${this.sw_icon.locked
+                        ? html`<h4>
+                            Uh oh, your Service Worker needs more work before
+                            this badge is unlocked
+                          </h4>`
+                        : html`<h4>
+                            You have unlocked the Service Worker Badge!
+                          </h4>`}
                     </div>
                   </div>`
                 : null}
@@ -585,7 +620,9 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Security</span>
 
                 <div class="score-block">
-                  <span class="accordion-score">${this.securityScore}</span>
+                  <span style=${styleMap({
+                      color: this.decideScoreColor(this.securityScore, this.security_icon?.locked)
+                    })} class="accordion-score">${this.securityScore}</span>
 
                   <fast-button class="flipper-button" mode="stealth">
                     <ion-icon name="caret-forward-outline"></ion-icon>
@@ -595,16 +632,23 @@ export class ReportCard extends LitElement {
 
               ${this.security_icon
                 ? html`<div id="badge-section">
-                    <img class="${classMap({
+                    <img
+                      class="${classMap({
                         locked: this.security_icon.locked,
-                      })}" src="${this.security_icon.url}" />
+                      })}"
+                      src="${this.security_icon.url}"
+                    />
 
                     <div id="badge-text">
-                      ${this.security_icon.locked ? html`<h4>Uh oh, your Security needs more work before this badge is unlocked</h4>` : html`<h4>You have unlocked the Security Badge!</h4>`}
+                      ${this.security_icon.locked
+                        ? html`<h4>
+                            Uh oh, your Security needs more work before this
+                            badge is unlocked
+                          </h4>`
+                        : html`<h4>You have unlocked the Security Badge!</h4>`}
                     </div>
                   </div>`
                 : null}
-
               ${this.scoreCardResults
                 ? html`<score-results
                     .testResults="${this.scoreCardResults.security}"
