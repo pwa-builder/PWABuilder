@@ -7,7 +7,7 @@ import {
 } from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map';
 
-import { getCurrentBadges, getPossibleBadges } from '../services/badges';
+import { getPossibleBadges, sortBadges } from '../services/badges';
 
 @customElement('app-badges')
 export class AppBadges extends LitElement {
@@ -18,7 +18,7 @@ export class AppBadges extends LitElement {
     | Array<{ name: string; url: string }>
     | undefined;
 
-    duplicate: Array<string>;
+    duplicate: Array<{name: string, url: string}>;
 
   static get styles() {
     return css`
@@ -52,31 +52,10 @@ export class AppBadges extends LitElement {
   }
 
   firstUpdated() {
+    this.duplicate = sortBadges();
     this.possible_badges = getPossibleBadges();
-    this.current_badges = getCurrentBadges();
 
-    const combined: Array<string> = [];
-
-    this.possible_badges.forEach(badge => {
-      combined.push(badge.url);
-    });
-
-    this.current_badges.forEach(badge => {
-      combined.push(badge.url);
-    });
-
-    console.log('here in app-badges');
-
-    this.duplicate = combined.reduce(
-      (acc: Array<string>, currentValue, index, array) => {
-        if (array.indexOf(currentValue) != index && !acc.includes(currentValue))
-          acc.push(currentValue);
-        return acc;
-      },
-      []
-    );
-
-    console.log('duplicate', this.duplicate);
+    console.log('this.duplicate', this.duplicate);
   }
 
   render() {
@@ -86,7 +65,7 @@ export class AppBadges extends LitElement {
           return html`
             <div
               class="badge ${classMap({
-                'locked': this.duplicate.includes(badge.url) ? false : true,
+                'locked': this.duplicate.find((dupe) => {return badge.name === dupe.name}) ? false : true,
               })}"
             >
               <img .src="${badge.url}" .alt="${badge.name} icon" />

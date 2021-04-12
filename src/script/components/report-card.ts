@@ -21,7 +21,13 @@ import '../components/app-button';
 import { baseOrPublish, getURL } from '../services/app-info';
 import { Router } from '@vaadin/router';
 import { getOverallScore } from '../services/tests';
-import { getCurrentBadges } from '../services/badges';
+import {
+  getCurrentBadges,
+  getPossibleBadges,
+  sortBadges,
+} from '../services/badges';
+
+import { classMap } from 'lit-html/directives/class-map';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {
@@ -35,10 +41,14 @@ export class ReportCard extends LitElement {
 
   @internalProperty() currentURL: string | undefined;
 
-  @internalProperty() pwa_icon: string | undefined;
-  @internalProperty() manifest_icon: string | undefined;
-  @internalProperty() sw_icon: string | undefined;
-  @internalProperty() security_icon: string | undefined;
+  @internalProperty() pwa_icon: { url: string; locked: boolean } | undefined;
+  @internalProperty() manifest_icon:
+    | { url: string; locked: boolean }
+    | undefined;
+  @internalProperty() sw_icon: { url: string; locked: boolean } | undefined;
+  @internalProperty() security_icon:
+    | { url: string; locked: boolean }
+    | undefined;
 
   maxManiScore = 80;
   maxSWSCore = 20;
@@ -188,11 +198,12 @@ export class ReportCard extends LitElement {
       #badge-section {
         display: flex;
         align-items: center;
-        margin-top: -1em;
+        margin-top: -18px;
       }
 
       #badge-section img {
         margin-right: 10px;
+        width: 60px;
       }
 
       #badge-text h4 {
@@ -205,6 +216,11 @@ export class ReportCard extends LitElement {
         font-size: var(--small-font-size);
         font-weight: normal;
         margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      .locked {
+        opacity: 0.5;
       }
 
       ${xxLargeBreakPoint(
@@ -295,26 +311,52 @@ export class ReportCard extends LitElement {
   }
 
   async handleBadges() {
-    const currentBadges = getCurrentBadges();
-    console.log('currentBadges', currentBadges);
+    const possible_badges = getPossibleBadges();
+    const achievedBadges = sortBadges();
+    console.log('currentBadges', achievedBadges);
 
-    if (currentBadges) {
-      currentBadges.forEach(badge => {
+    if (possible_badges) {
+      possible_badges.forEach(badge => {
         console.log('badge', badge.name);
         if (badge.name === 'PWA') {
           console.log('chosen', badge);
-          this.pwa_icon = badge.url;
+          this.pwa_icon = {
+            url: badge.url,
+            locked: achievedBadges.find(dupe => {
+              return badge.name === dupe.name;
+            })
+              ? false
+              : true,
+          };
           return;
-        }
-        else if (badge.name === 'Manifest') {
-          this.manifest_icon = badge.url;
+        } else if (badge.name === 'Manifest') {
+          this.manifest_icon = {
+            url: badge.url,
+            locked: achievedBadges.find(dupe => {
+              return badge.name === dupe.name;
+            })
+              ? false
+              : true,
+          };
           return;
-        }
-        else if (badge.name === 'Service Worker') {
-          this.sw_icon = badge.url;
-        }
-        else if (badge.name === 'Security') {
-          this.security_icon = badge.url;
+        } else if (badge.name === 'Service Worker') {
+          this.sw_icon = {
+            url: badge.url,
+            locked: achievedBadges.find(dupe => {
+              return badge.name === dupe.name;
+            })
+              ? false
+              : true,
+          };
+        } else if (badge.name === 'Security') {
+          this.security_icon = {
+            url: badge.url,
+            locked: achievedBadges.find(dupe => {
+              return badge.name === dupe.name;
+            })
+              ? false
+              : true,
+          };
         }
       });
     } else {
@@ -469,24 +511,19 @@ export class ReportCard extends LitElement {
               </div>
 
               ${this.manifest_icon
-              ? html`<div id="badge-section">
-                  <img src="${this.manifest_icon}"/>
+                ? html`<div id="badge-section">
+                    <img
+                      class="${classMap({
+                        locked: this.manifest_icon.locked,
+                      })}"
+                      src="${this.manifest_icon.url}"
+                    />
 
-                  <div id="badge-text">
-                    <h4>You have unlocked the Manifest Badge!</h4>
-                  </div>
-                </div>`
-              : html`<div id="badge-section">
-                  <img src="/assets/badges/pwa_grey.svg" />
-
-                  <div id="badge-text">
-                    <h4>Uh oh!</h4>
-                    <p>
-                      Your Manifest needs some work before the Manifest Badge is unlocked.
-                    </p>
-                  </div>
-                </div>`}
-
+                    <div id="badge-text">
+                      ${this.manifest_icon.locked ? html`<h4>Uh oh, your Manifest needs more work before this badge is unlocked</h4>` : html`<h4>You have unlocked the Manifest Badge!</h4>`}
+                    </div>
+                  </div>`
+                : null}
               ${this.scoreCardResults
                 ? html`<score-results
                     .testResults="${this.scoreCardResults.manifest}"
@@ -517,24 +554,16 @@ export class ReportCard extends LitElement {
               </div>
 
               ${this.sw_icon
-              ? html`<div id="badge-section">
-                  <img src="${this.sw_icon}"/>
+                ? html`<div id="badge-section">
+                    <img class="${classMap({
+                        locked: this.sw_icon.locked,
+                      })}" src="${this.sw_icon.url}" />
 
-                  <div id="badge-text">
-                    <h4>You have unlocked the Service Worker Badge!</h4>
-                  </div>
-                </div>`
-              : html`<div id="badge-section">
-                  <img src="/assets/badges/pwa_grey.svg" />
-
-                  <div id="badge-text">
-                    <h4>Uh oh!</h4>
-                    <p>
-                      Your Service Worker needs some work before the Service Worker Badge is unlocked.
-                    </p>
-                  </div>
-                </div>`}
-
+                    <div id="badge-text">
+                      ${this.sw_icon.locked ? html`<h4>Uh oh, your Service Worker needs more work before this badge is unlocked</h4>`: html`<h4>You have unlocked the Service Worker Badge!</h4>`}
+                    </div>
+                  </div>`
+                : null}
               ${this.scoreCardResults
                 ? html`<score-results
                     .testResults="${this.scoreCardResults.service_worker}"
@@ -565,23 +594,16 @@ export class ReportCard extends LitElement {
               </div>
 
               ${this.security_icon
-              ? html`<div id="badge-section">
-                  <img src="${this.security_icon}"/>
+                ? html`<div id="badge-section">
+                    <img class="${classMap({
+                        locked: this.security_icon.locked,
+                      })}" src="${this.security_icon.url}" />
 
-                  <div id="badge-text">
-                    <h4>You have unlocked the Security Badge!</h4>
-                  </div>
-                </div>`
-              : html`<div id="badge-section">
-                  <img src="/assets/badges/pwa_grey.svg" />
-
-                  <div id="badge-text">
-                    <h4>Uh oh!</h4>
-                    <p>
-                      Your Security needs some work before the Security Badge is unlocked.
-                    </p>
-                  </div>
-                </div>`}
+                    <div id="badge-text">
+                      ${this.security_icon.locked ? html`<h4>Uh oh, your Security needs more work before this badge is unlocked</h4>` : html`<h4>You have unlocked the Security Badge!</h4>`}
+                    </div>
+                  </div>`
+                : null}
 
               ${this.scoreCardResults
                 ? html`<score-results
@@ -603,7 +625,7 @@ export class ReportCard extends LitElement {
 
             ${this.pwa_icon
               ? html`<div id="badge-section">
-                  <img src="${this.pwa_icon}" />
+                  <img src="${this.pwa_icon.url}" />
 
                   <div id="badge-text">
                     <h4>Congrats!</h4>

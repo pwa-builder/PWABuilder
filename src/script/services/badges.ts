@@ -9,19 +9,15 @@ const possible_badges = [
   { name: 'Store Ready', url: '/assets/badges/store_ready_badge.svg' },
 ];
 
-const current_badges: Array<{name: string, url: string}> = [];
+const current_badges: Array<{ name: string; url: string }> = [];
 
 export const no_pwa_icon = {
-  name: "Not a PWA",
-  url: "/assets/badges/pwa_grey.svg"
-}
+  name: 'Not a PWA',
+  url: '/assets/badges/pwa_grey.svg',
+};
 
 export function giveOutBadges() {
   const results = getResults();
-
-  console.log(possible_badges);
-
-  console.log(results);
 
   if (results) {
     const hasMani = results.manifest[0].result;
@@ -37,8 +33,6 @@ export function giveOutBadges() {
       const badge = possible_badges.find(badge => {
         if (badge.name === 'Manifest') return badge;
       });
-
-      console.log('maniBadge', badge);
 
       if (badge) {
         current_badges.push(badge);
@@ -84,15 +78,59 @@ export function giveOutBadges() {
         current_badges.push(badge);
       }
     }
+  }
 
-    console.log('current', current_badges);
+  sessionStorage.setItem('current_badges', JSON.stringify(current_badges));
+}
+
+export function getCurrentBadges(): Array<{ name: string; url: string }> | null {
+  const savedCurrentBadges = sessionStorage.getItem('current_badges');
+
+  if (current_badges && current_badges.length > 0) {
+    return current_badges;
+  }
+  else if (savedCurrentBadges) {
+    return JSON.parse(savedCurrentBadges);
+  }
+  else {
+    return null;
   }
 }
 
-export function getCurrentBadges(): Array<{name: string, url: string}> {
-  return current_badges;
+export function getPossibleBadges(): Array<{ name: string; url: string }> {
+  return possible_badges;
 }
 
-export function getPossibleBadges(): Array<{name: string, url: string}> {
-  return possible_badges;
+export function sortBadges(): Array<{ name: string; url: string }> {
+  const possible_badges = getPossibleBadges();
+  const current_badges = getCurrentBadges();
+
+  const combined: Array<{ name: string; url: string }> = [];
+
+  possible_badges.forEach(badge => {
+    combined.push(badge);
+  });
+
+  current_badges?.forEach(badge => {
+    combined.push(badge);
+  });
+
+  const duplicates = combined.reduce(
+    (
+      acc: Array<{ name: string; url: string }>,
+      currentValue,
+      index,
+      array: Array<{ name: string; url: string }>
+    ) => {
+      if (
+        array.indexOf(currentValue) != index &&
+        !acc.includes((currentValue.name as any))
+      )
+        acc.push(currentValue);
+      return acc;
+    },
+    []
+  );
+
+  return duplicates;
 }
