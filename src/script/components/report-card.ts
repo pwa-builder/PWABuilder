@@ -21,10 +21,7 @@ import '../components/app-button';
 import { baseOrPublish, getURL } from '../services/app-info';
 import { Router } from '@vaadin/router';
 import { getOverallScore } from '../services/tests';
-import {
-  getPossibleBadges,
-  sortBadges,
-} from '../services/badges';
+import { getPossibleBadges, sortBadges } from '../services/badges';
 
 import { classMap } from 'lit-html/directives/class-map';
 import { styleMap } from 'lit-html/directives/style-map';
@@ -492,13 +489,11 @@ export class ReportCard extends LitElement {
 
   decideScoreColor(score: number, locked?: boolean) {
     if (score === 0) {
-      return "var(--error-color)"
-    }
-    else if (locked) {
-      return "var(--warning-color)"
-    }
-    else {
-      return "var(--success-color)"
+      return 'var(--error-color)';
+    } else if (locked) {
+      return 'var(--warning-color)';
+    } else {
+      return 'var(--success-color)';
     }
   }
 
@@ -517,7 +512,10 @@ export class ReportCard extends LitElement {
                   <span
                     class="accordion-score"
                     style=${styleMap({
-                      color: this.decideScoreColor(this.maniScore, this.manifest_icon?.locked)
+                      color: this.decideScoreColor(
+                        this.maniScore,
+                        this.manifest_icon?.locked
+                      ),
                     })}
                     >${this.maniScore}</span
                   >
@@ -568,9 +566,16 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Service Worker</span>
 
                 <div class="score-block">
-                  <span style=${styleMap({
-                      color: this.decideScoreColor(this.swScore, this.sw_icon?.locked)
-                    })} class="accordion-score">${this.swScore}</span>
+                  <span
+                    style=${styleMap({
+                      color: this.decideScoreColor(
+                        this.swScore,
+                        this.sw_icon?.locked
+                      ),
+                    })}
+                    class="accordion-score"
+                    >${this.swScore}</span
+                  >
 
                   <fast-button class="flipper-button" mode="stealth">
                     <ion-icon name="caret-forward-outline"></ion-icon>
@@ -620,9 +625,16 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Security</span>
 
                 <div class="score-block">
-                  <span style=${styleMap({
-                      color: this.decideScoreColor(this.securityScore, this.security_icon?.locked)
-                    })} class="accordion-score">${this.securityScore}</span>
+                  <span
+                    style=${styleMap({
+                      color: this.decideScoreColor(
+                        this.securityScore,
+                        this.security_icon?.locked
+                      ),
+                    })}
+                    class="accordion-score"
+                    >${this.securityScore}</span
+                  >
 
                   <fast-button class="flipper-button" mode="stealth">
                     <ion-icon name="caret-forward-outline"></ion-icon>
@@ -669,24 +681,26 @@ export class ReportCard extends LitElement {
 
             ${this.pwa_icon
               ? html`<div id="badge-section">
-                  <img src="${this.pwa_icon.url}" />
+                  <img
+                    class="${classMap({
+                      locked: this.pwa_icon.locked,
+                    })}"
+                    src="${this.pwa_icon.url}"
+                  />
 
                   <div id="badge-text">
-                    <h4>Congrats!</h4>
-                    <p>You have a great PWA!</p>
+                    ${this.pwa_icon.locked === false
+                      ? html`<h4>Congrats!</h4>
+                          <p>You have a great PWA!</p>`
+                      : html`
+                          <h4>Uh Oh</h4>
+                          <p>
+                            Your PWA needs more work, look above for details.
+                          </p>
+                        `}
                   </div>
                 </div>`
-              : html`<div id="badge-section">
-                  <img src="/assets/badges/pwa_grey.svg" />
-
-                  <div id="badge-text">
-                    <h4>Uh oh!</h4>
-                    <p>
-                      Your app needs some work to be a PWA, check your results
-                      above for details.
-                    </p>
-                  </div>
-                </div>`}
+              : null}
           </div>
 
           <div id="package-block">
