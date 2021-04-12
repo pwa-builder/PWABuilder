@@ -43,9 +43,11 @@
   --secondary-color: #ffffff;
 
   --primary-purple: #342A6A;
-  --warning-color: gold;
-  --error-color: red;
   --error-background-color: #fff5f5;
+
+  --warning-color: rgba(235, 193, 87, 1);
+  --error-color: rgba(235, 87, 87, 1);
+  --success-color: #50BA87;
 
   --button-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
   --button-radius: 44px;
@@ -60,7 +62,6 @@
   --mobile-link-color: #0683f9;
 
   --list-border: 0.67681px solid #e5e5e5;
-  --success-color: #50BA87;
   --light-primary-color: rgba(255, 255, 255, 0.6);
 }
 

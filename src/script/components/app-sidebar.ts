@@ -26,6 +26,7 @@ import './sidebar-card';
 import { getOverallScore } from '../services/tests';
 
 import './rating-dial';
+import './app-badges';
 
 
 @customElement('app-sidebar')
@@ -34,6 +35,10 @@ export class AppSidebar extends LitElement {
     return css`
       sidebar-card {
         margin-top: 20px;
+      }
+
+      #badges-card {
+        margin-bottom: 20px;
       }
 
       .sidebar-item-header {
@@ -625,6 +630,10 @@ export class AppSidebar extends LitElement {
                 Builder</span
               >
              </div>
+           </sidebar-card>
+
+           <sidebar-card id="badges-card" title="Badges">
+             <app-badges></app-badges>
            </sidebar-card>
 
         </div>

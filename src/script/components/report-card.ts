@@ -21,6 +21,10 @@ import '../components/app-button';
 import { baseOrPublish, getURL } from '../services/app-info';
 import { Router } from '@vaadin/router';
 import { getOverallScore } from '../services/tests';
+import { getPossibleBadges, sortBadges } from '../services/badges';
+
+import { classMap } from 'lit-html/directives/class-map';
+import { styleMap } from 'lit-html/directives/style-map';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {
@@ -33,6 +37,15 @@ export class ReportCard extends LitElement {
   @internalProperty() overallScore = 0;
 
   @internalProperty() currentURL: string | undefined;
+
+  @internalProperty() pwa_icon: { url: string; locked: boolean } | undefined;
+  @internalProperty() manifest_icon:
+    | { url: string; locked: boolean }
+    | undefined;
+  @internalProperty() sw_icon: { url: string; locked: boolean } | undefined;
+  @internalProperty() security_icon:
+    | { url: string; locked: boolean }
+    | undefined;
 
   maxManiScore = 80;
   maxSWSCore = 20;
@@ -145,8 +158,9 @@ export class ReportCard extends LitElement {
 
       #total-score {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
+        flex-direction: column;
+        align-items: initial;
+        justify-content: initial;
 
         margin-right: 1.4em;
       }
@@ -166,6 +180,44 @@ export class ReportCard extends LitElement {
         color: white;
         box-shadow: var(--button-shadow);
         border-radius: var(--button-radius);
+      }
+
+      #total-score-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      #total-score-header h4 {
+        font-size: var(--medium-font-size);
+      }
+
+      #badge-section {
+        display: flex;
+        align-items: center;
+        margin-top: -18px;
+      }
+
+      #badge-section img {
+        margin-right: 10px;
+        width: 60px;
+      }
+
+      #badge-text h4 {
+        font-size: var(--small-font-size);
+        margin-bottom: 0;
+        margin-top: 0;
+      }
+
+      #badge-text p {
+        font-size: var(--small-font-size);
+        font-weight: normal;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      .locked {
+        opacity: 0.5;
       }
 
       ${xxLargeBreakPoint(
@@ -249,6 +301,64 @@ export class ReportCard extends LitElement {
     }
 
     this.overallScore = getOverallScore();
+
+    await this.handleBadges();
+
+    console.log('pwa icon', this.pwa_icon);
+  }
+
+  async handleBadges() {
+    const possible_badges = getPossibleBadges();
+    const achievedBadges = sortBadges();
+    console.log('currentBadges', achievedBadges);
+
+    if (possible_badges) {
+      possible_badges.forEach(badge => {
+        console.log('badge', badge.name);
+        if (badge.name === 'PWA') {
+          console.log('chosen', badge);
+          this.pwa_icon = {
+            url: badge.url,
+            locked: achievedBadges.find(dupe => {
+              return badge.name === dupe.name;
+            })
+              ? false
+              : true,
+          };
+          return;
+        } else if (badge.name === 'Manifest') {
+          this.manifest_icon = {
+            url: badge.url,
+            locked: achievedBadges.find(dupe => {
+              return badge.name === dupe.name;
+            })
+              ? false
+              : true,
+          };
+          return;
+        } else if (badge.name === 'Service Worker') {
+          this.sw_icon = {
+            url: badge.url,
+            locked: achievedBadges.find(dupe => {
+              return badge.name === dupe.name;
+            })
+              ? false
+              : true,
+          };
+        } else if (badge.name === 'Security') {
+          this.security_icon = {
+            url: badge.url,
+            locked: achievedBadges.find(dupe => {
+              return badge.name === dupe.name;
+            })
+              ? false
+              : true,
+          };
+        }
+      });
+    } else {
+      return undefined;
+    }
   }
 
   async handleNoResults(): Promise<RawTestResult> {
@@ -377,6 +487,16 @@ export class ReportCard extends LitElement {
     }
   }
 
+  decideScoreColor(score: number, locked?: boolean) {
+    if (score === 0) {
+      return 'var(--error-color)';
+    } else if (locked) {
+      return 'var(--warning-color)';
+    } else {
+      return 'var(--success-color)';
+    }
+  }
+
   render() {
     return html`
       <div id="main-report-section">
@@ -389,7 +509,16 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Manifest</span>
 
                 <div class="score-block">
-                  <span class="accordion-score">${this.maniScore}</span>
+                  <span
+                    class="accordion-score"
+                    style=${styleMap({
+                      color: this.decideScoreColor(
+                        this.maniScore,
+                        this.manifest_icon?.locked
+                      ),
+                    })}
+                    >${this.maniScore}</span
+                  >
 
                   <fast-button class="flipper-button" mode="stealth">
                     <ion-icon name="caret-forward-outline"></ion-icon>
@@ -397,6 +526,25 @@ export class ReportCard extends LitElement {
                 </div>
               </div>
 
+              ${this.manifest_icon
+                ? html`<div id="badge-section">
+                    <img
+                      class="${classMap({
+                        locked: this.manifest_icon.locked,
+                      })}"
+                      src="${this.manifest_icon.url}"
+                    />
+
+                    <div id="badge-text">
+                      ${this.manifest_icon.locked
+                        ? html`<h4>
+                            Uh oh, your Manifest needs more work before this
+                            badge is unlocked
+                          </h4>`
+                        : html`<h4>You have unlocked the Manifest Badge!</h4>`}
+                    </div>
+                  </div>`
+                : null}
               ${this.scoreCardResults
                 ? html`<score-results
                     .testResults="${this.scoreCardResults.manifest}"
@@ -418,7 +566,16 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Service Worker</span>
 
                 <div class="score-block">
-                  <span class="accordion-score">${this.swScore}</span>
+                  <span
+                    style=${styleMap({
+                      color: this.decideScoreColor(
+                        this.swScore,
+                        this.sw_icon?.locked
+                      ),
+                    })}
+                    class="accordion-score"
+                    >${this.swScore}</span
+                  >
 
                   <fast-button class="flipper-button" mode="stealth">
                     <ion-icon name="caret-forward-outline"></ion-icon>
@@ -426,6 +583,27 @@ export class ReportCard extends LitElement {
                 </div>
               </div>
 
+              ${this.sw_icon
+                ? html`<div id="badge-section">
+                    <img
+                      class="${classMap({
+                        locked: this.sw_icon.locked,
+                      })}"
+                      src="${this.sw_icon.url}"
+                    />
+
+                    <div id="badge-text">
+                      ${this.sw_icon.locked
+                        ? html`<h4>
+                            Uh oh, your Service Worker needs more work before
+                            this badge is unlocked
+                          </h4>`
+                        : html`<h4>
+                            You have unlocked the Service Worker Badge!
+                          </h4>`}
+                    </div>
+                  </div>`
+                : null}
               ${this.scoreCardResults
                 ? html`<score-results
                     .testResults="${this.scoreCardResults.service_worker}"
@@ -447,7 +625,16 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Security</span>
 
                 <div class="score-block">
-                  <span class="accordion-score">${this.securityScore}</span>
+                  <span
+                    style=${styleMap({
+                      color: this.decideScoreColor(
+                        this.securityScore,
+                        this.security_icon?.locked
+                      ),
+                    })}
+                    class="accordion-score"
+                    >${this.securityScore}</span
+                  >
 
                   <fast-button class="flipper-button" mode="stealth">
                     <ion-icon name="caret-forward-outline"></ion-icon>
@@ -455,6 +642,25 @@ export class ReportCard extends LitElement {
                 </div>
               </div>
 
+              ${this.security_icon
+                ? html`<div id="badge-section">
+                    <img
+                      class="${classMap({
+                        locked: this.security_icon.locked,
+                      })}"
+                      src="${this.security_icon.url}"
+                    />
+
+                    <div id="badge-text">
+                      ${this.security_icon.locked
+                        ? html`<h4>
+                            Uh oh, your Security needs more work before this
+                            badge is unlocked
+                          </h4>`
+                        : html`<h4>You have unlocked the Security Badge!</h4>`}
+                    </div>
+                  </div>`
+                : null}
               ${this.scoreCardResults
                 ? html`<score-results
                     .testResults="${this.scoreCardResults.security}"
@@ -468,9 +674,42 @@ export class ReportCard extends LitElement {
 
         <div id="overall-score">
           <div id="total-score">
-            <h4>Total Score</h4>
+            <div id="total-score-header">
+              <h4>Total Score</h4>
+              <span
+                style=${styleMap({
+                  color: this.decideScoreColor(
+                    this.overallScore,
+                    this.pwa_icon?.locked
+                  ),
+                })}
+                id="overall-score"
+                >${this.overallScore}</span
+              >
+            </div>
 
-            <span id="overall-score">${this.overallScore}</span>
+            ${this.pwa_icon
+              ? html`<div id="badge-section">
+                  <img
+                    class="${classMap({
+                      locked: this.pwa_icon.locked,
+                    })}"
+                    src="${this.pwa_icon.url}"
+                  />
+
+                  <div id="badge-text">
+                    ${this.pwa_icon.locked === false
+                      ? html`<h4>Congrats!</h4>
+                          <p>You have a great PWA!</p>`
+                      : html`
+                          <h4>Uh Oh</h4>
+                          <p>
+                            Your PWA needs more work, look above for details.
+                          </p>
+                        `}
+                  </div>
+                </div>`
+              : null}
           </div>
 
           <div id="package-block">
