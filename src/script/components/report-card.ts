@@ -676,7 +676,16 @@ export class ReportCard extends LitElement {
           <div id="total-score">
             <div id="total-score-header">
               <h4>Total Score</h4>
-              <span id="overall-score">${this.overallScore}</span>
+              <span
+                style=${styleMap({
+                  color: this.decideScoreColor(
+                    this.overallScore,
+                    this.pwa_icon?.locked
+                  ),
+                })}
+                id="overall-score"
+                >${this.overallScore}</span
+              >
             </div>
 
             ${this.pwa_icon
