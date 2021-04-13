@@ -1,5 +1,7 @@
 import { LitElement, css, html, customElement, property } from 'lit-element';
+
 import { ModalCloseEvent } from '../utils/interfaces';
+import { smallBreakPoint } from '../utils/css/breakpoints';
 
 @customElement('app-modal')
 export class AppModal extends LitElement {
@@ -82,6 +84,21 @@ export class AppModal extends LitElement {
         height: 2em;
         width: 2em;
         color: #c2c9d1;
+      }
+
+      ${
+        smallBreakPoint(css`
+          #modal {
+            margin: 0px;
+            padding: 0px;
+            width: 100vw !important;
+            height: 100vh;
+          }
+
+          #modal-form {
+            height: 100%;
+          }
+        `)
       }
     `;
   }

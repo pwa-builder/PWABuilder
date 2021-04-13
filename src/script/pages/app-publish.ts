@@ -18,6 +18,7 @@ import { Router } from '@vaadin/router';
 
 import {
   BreakpointValues,
+  smallBreakPoint,
   largeBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
@@ -173,7 +174,7 @@ export class AppPublish extends LitElement {
         p {
           font-size: var(--font-size);
           color: var(--font-color);
-          max-width: 767px;
+          max-width: 530px;
         }
 
         content-header::part(header) {
@@ -250,6 +251,18 @@ export class AppPublish extends LitElement {
             }
           `
         )}
+
+        ${smallBreakPoint(css`
+          #test-package-button app-button::part(underlying-button) {
+            width: 152px;
+            font-size: var(--font-size);
+            height: 40px;
+          }
+
+          #title-block p {
+            width: 200px;
+          }
+        `)}
       `,
     ];
   }
@@ -401,6 +414,7 @@ export class AppPublish extends LitElement {
       platform =>
         html`<li>
           <div id="title-block">
+            <img src="${platform.icon}" alt="platform icon">
             <h4>${platform.title}</h4>
             <p>${platform.description}</p>
           </div>
@@ -593,6 +607,7 @@ interface ICardData {
   title: string;
   description: string;
   isActionCard: boolean;
+  icon: string;
 }
 
 const platforms: ICardData[] = [
@@ -601,17 +616,20 @@ const platforms: ICardData[] = [
     description:
       'Publish your PWA to the Microsoft Store to make it available to the 1 billion Windows users worldwide.',
     isActionCard: true,
+    icon: '/assets/windows_icon.svg'
   },
   {
     title: 'Android',
     description:
       'Publish your PWA to the Google Play Store to make your app more discoverable for Android users.',
     isActionCard: true,
+    icon: '/assets/android_icon.svg'
   },
   {
     title: 'Samsung',
     description:
       'Publish your PWA to the Google Play Store to make your app more discoverable for Android users.',
     isActionCard: true,
+    icon: '/assets/samsung_icon.svg'
   },
 ];

@@ -16,7 +16,7 @@ import { getURL } from '../services/app-info';
 import { getManiURL } from '../services/manifest';
 import { createWindowsPackageOptionsFromManifest } from '../services/publish/windows-publish';
 
-import { xxLargeBreakPoint } from '../utils/css/breakpoints';
+import { smallBreakPoint, xxLargeBreakPoint } from '../utils/css/breakpoints';
 import { WindowsPackageOptions } from '../utils/win-validation';
 
 @customElement('windows-form')
@@ -54,6 +54,14 @@ export class WindowsForm extends LitElement {
           css`
             #form-layout {
               max-height: 17em;
+            }
+          `
+        )}
+
+        ${smallBreakPoint(
+          css`
+            #form-layout {
+              max-height: 20em;
             }
           `
         )}

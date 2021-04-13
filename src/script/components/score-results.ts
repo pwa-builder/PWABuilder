@@ -79,6 +79,12 @@ export class ScoreResults extends LitElement {
           #score-grid {
             grid-template-columns: auto;
           }
+
+          #options-block {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
         `
       )}
     `;
@@ -147,7 +153,9 @@ export class ScoreResults extends LitElement {
             voluptatem sequi nesciunt. ven further!
           </p>
 
-          <slot name="options-button"></slot>
+          <div id="options-block">
+            <slot name="options-button"></slot>
+          </div>
         </div>
 
         <div id="score-grid">

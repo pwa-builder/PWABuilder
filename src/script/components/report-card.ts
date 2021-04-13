@@ -12,6 +12,7 @@ import {
   largeBreakPoint,
   xLargeBreakPoint,
   xxLargeBreakPoint,
+  xxxLargeBreakPoint,
   mediumBreakPoint,
   smallBreakPoint,
 } from '../utils/css/breakpoints';
@@ -220,14 +221,25 @@ export class ReportCard extends LitElement {
         opacity: 0.5;
       }
 
+      ${
+        xxxLargeBreakPoint(
+          css`
+            .accordion-heading-block {
+              width: 111em;
+            }
+          `
+        )
+      }
+
       ${xxLargeBreakPoint(
         css`
           .accordion-heading-block {
-            width: 83vw;
+            max-width: 85vw;
+            width: 85vw;
           }
 
           #total-score {
-            margin-right: 2em;
+            margin-right: 1.2em;
           }
         `
       )}
@@ -240,7 +252,7 @@ export class ReportCard extends LitElement {
           }
 
           #total-score {
-            width: 74vw;
+            width: 75vw;
           }
         `
       )}

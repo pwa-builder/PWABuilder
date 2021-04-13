@@ -16,7 +16,7 @@ import { getManifest } from '../services/manifest';
 import { createAndroidPackageOptionsFromManifest } from '../services/publish/android-publish';
 import { AndroidApkOptions } from '../utils/android-validation';
 
-import { xxLargeBreakPoint } from '../utils/css/breakpoints';
+import { smallBreakPoint, xxLargeBreakPoint } from '../utils/css/breakpoints';
 import { Manifest } from '../utils/interfaces';
 
 @customElement('android-form')
@@ -71,6 +71,14 @@ export class AndroidForm extends LitElement {
             }
           `
       )}
+
+${smallBreakPoint(
+          css`
+            #form-layout {
+              max-height: 20em;
+            }
+          `
+        )}
       `,
     ];
   }

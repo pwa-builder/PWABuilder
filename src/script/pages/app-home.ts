@@ -129,10 +129,6 @@ export class AppHome extends LitElement {
           width: 100%;
         }
 
-        #input-form loading-button::part(underlying-button) {
-          width: 109px;
-        }
-
         ${smallBreakPoint(css`
           content-header::part(grid-container) {
             display: none;
@@ -169,8 +165,14 @@ export class AppHome extends LitElement {
             font-size: 22px;
           }
 
-          #input-form loading-button {
+          #input-form app-button {
             margin-top: 54px;
+            width: 180px;
+          }
+
+          #input-form app-button::part(underlying-button) {
+            height: 64px;
+            font-size: 22px;
           }
         `)}
 
@@ -242,7 +244,7 @@ export class AppHome extends LitElement {
 
       ${xxxLargeBreakPoint(css`
           content-header::part(main-container) {
-            padding-left: 18em;
+            padding-left: 16.5em;
             justify-content: flex-start;
           }
         `)}
@@ -375,11 +377,10 @@ export class AppHome extends LitElement {
               : null}
           </div>
 
-          <loading-button
-            ?loading="${this.gettingManifest}"
+          <app-button
             type="submit"
             @click="${(e: InputEvent) => this.start(e)}"
-            >Start</loading-button
+            >Start</app-button
           >
         </form>
       </content-header>
