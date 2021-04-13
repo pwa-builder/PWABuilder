@@ -254,8 +254,11 @@ export class AppCard extends LitElement {
           right: 0;
         }
 
-        .blog.featured .tag-list .tag {
-          margin: 8px 0 0 8px;
+        .tag {
+          margin: 8px 8px 0 16px;
+          padding: 2px 6px;
+          border-radius: 2px;
+          background-color: var(--primary-background-color);
         }
 
         .blog.featured .img-overlay {
