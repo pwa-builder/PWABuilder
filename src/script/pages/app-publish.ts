@@ -414,6 +414,7 @@ export class AppPublish extends LitElement {
       platform =>
         html`<li>
           <div id="title-block">
+            <img src="${platform.icon}" alt="platform icon">
             <h4>${platform.title}</h4>
             <p>${platform.description}</p>
           </div>
@@ -606,6 +607,7 @@ interface ICardData {
   title: string;
   description: string;
   isActionCard: boolean;
+  icon: string;
 }
 
 const platforms: ICardData[] = [
@@ -614,17 +616,20 @@ const platforms: ICardData[] = [
     description:
       'Publish your PWA to the Microsoft Store to make it available to the 1 billion Windows users worldwide.',
     isActionCard: true,
+    icon: '/assets/windows_icon.svg'
   },
   {
     title: 'Android',
     description:
       'Publish your PWA to the Google Play Store to make your app more discoverable for Android users.',
     isActionCard: true,
+    icon: '/assets/android_icon.svg'
   },
   {
     title: 'Samsung',
     description:
       'Publish your PWA to the Google Play Store to make your app more discoverable for Android users.',
     isActionCard: true,
+    icon: '/assets/samsung_icon.svg'
   },
 ];
