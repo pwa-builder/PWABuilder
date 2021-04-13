@@ -109,15 +109,73 @@ export class ResourceHub extends LitElement {
           font-weight: var(--font-bold);
         }
       `,
+           largeBreakPoint(
+            css`
+              .cards app-card {
+                max-width: 350px;
+              }
+            `,
+            'no-lower'
+          ),
+      mediumBreakPoint(
+        css`
+          .cards {
+            flex-direction: column;
+            align-items: center;
+          }
+
+          .resource-header {
+            padding-left: 1em;
+            padding-right: 1em;
+          }
+
+          .cards app-card, .cards app-card::part(card) {
+            width: 100%;
+            max-width: 100%;
+          }
+
+          .cards app-card {
+            margin-bottom: 16px;
+          }
+        `,
+        'no-lower'
+      ),
+      mediumBreakPoint(
+        css`
+          .cards {
+            padding: 0 32px;
+          }
+        `
+      ),
+      largeBreakPoint(
+        css`
+          .cards {
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: center;
+            padding: 0;
+          }
+
+          .cards app-card {
+            margin-bottom: 16px;
+          }
+        `
+      ),
+
       smallBreakPoint(
         css`
           :host {
             background-color: #ededed;
           }
 
-          ::slotted([slot='title']),
-          ::slotted([slot='description']) {
-            color: var(--font-color);
+          .resource-header {
+            padding-left: 1em;
+            padding-right: 1em;
+          }
+
+          .cards app-card, .cards app-card::part(card) {
+            width: 100%;
+            max-width: 100%;
           }
 
           /* TODO make this gated to only a gallery variant */
@@ -155,48 +213,6 @@ export class ResourceHub extends LitElement {
           .cards.horizontal app-card p,
           .cards.horizontal app-card h3 {
             white-space: normal;
-          }
-        `
-      ),
-      mediumBreakPoint(
-        css`
-          .cards {
-            flex-direction: column;
-            align-items: center;
-          }
-
-          .cards app-card {
-            margin-bottom: 16px;
-          }
-        `,
-        'no-lower'
-      ),
-      mediumBreakPoint(
-        css`
-          .cards {
-            padding: 0 32px;
-          }
-        `
-      ),
-      largeBreakPoint(
-        css`
-          .cards app-card {
-            max-width: 350px;
-          }
-        `,
-        'no-lower'
-      ),
-      largeBreakPoint(
-        css`
-          .cards {
-            flex-direction: row;
-            flex-wrap: wrap;
-            align-items: center;
-            padding: 0;
-          }
-
-          .cards app-card {
-            margin-bottom: 16px;
           }
         `
       ),
