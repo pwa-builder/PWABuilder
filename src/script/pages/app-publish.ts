@@ -18,6 +18,7 @@ import { Router } from '@vaadin/router';
 
 import {
   BreakpointValues,
+  smallBreakPoint,
   largeBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
@@ -173,7 +174,7 @@ export class AppPublish extends LitElement {
         p {
           font-size: var(--font-size);
           color: var(--font-color);
-          max-width: 767px;
+          max-width: 530px;
         }
 
         content-header::part(header) {
@@ -250,6 +251,18 @@ export class AppPublish extends LitElement {
             }
           `
         )}
+
+        ${smallBreakPoint(css`
+          #test-package-button app-button::part(underlying-button) {
+            width: 152px;
+            font-size: var(--font-size);
+            height: 40px;
+          }
+
+          #title-block p {
+            width: 200px;
+          }
+        `)}
       `,
     ];
   }
