@@ -100,7 +100,7 @@ async function getManifestViaHtmlParse(
     format: 'w3c',
     generatedUrl: responseData.manifestUrl || url,
     default: {
-      short_name: responseData.manifestContents.shortName || '',
+      short_name: responseData.manifestContents.short_name || '',
     },
     id: '',
     generated: responseData.manifestContents ? false : true,
