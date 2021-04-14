@@ -33,6 +33,7 @@ import {
   finalCheckForPublish,
 } from '../services/publish/publish-checks';
 import { generatePackage } from '../services/publish';
+import { getReportErrorUrl } from '../utils/error';
 
 @customElement('app-publish')
 export class AppPublish extends LitElement {
@@ -54,6 +55,8 @@ export class AppPublish extends LitElement {
   @internalProperty() generating = false;
 
   @internalProperty() finalChecks: checkResults | undefined;
+
+  @internalProperty() reportPackageErrorUrl: string;
 
   constructor() {
     super();
@@ -198,6 +201,21 @@ export class AppPublish extends LitElement {
           overflow-x: hidden;
         }
 
+        #error-link {
+          color: white;
+          font-weight: var(--font-bold);
+          border-radius: var(--button-radius);
+          background: var(--error-color);
+          margin-right: 8px;
+          padding-left: 10px;
+          padding-right: 10px;
+          box-shadow: var(--button-shadow);
+        }
+
+        #actions {
+          display: flex;
+        }
+
         #windows-options-modal::part(modal-layout),
         #android-options-modal::part(modal-layout) {
           width: 64vw;
@@ -320,7 +338,7 @@ export class AppPublish extends LitElement {
             err = 'Your PWA does not have a valid URL';
           }
 
-          this.showAlertModal(err);
+          this.showAlertModal(err, type);
 
           return;
         }
@@ -350,7 +368,7 @@ export class AppPublish extends LitElement {
             err = 'Your PWA does not work offline';
           }
 
-          this.showAlertModal(err);
+          this.showAlertModal(err, type);
 
           return;
         }
@@ -379,7 +397,7 @@ export class AppPublish extends LitElement {
       this.open_android_options = false;
       this.open_windows_options = false;
 
-      this.showAlertModal(err);
+      this.showAlertModal(err, type);
     }
   }
 
@@ -395,10 +413,12 @@ export class AppPublish extends LitElement {
     }
   }
 
-  showAlertModal(errorMessage: string) {
+  showAlertModal(error: string, platform) {
     this.errored = true;
+    this.errorMessage = error;
 
-    this.errorMessage = errorMessage;
+    this.reportAnError(error, platform);
+
   }
 
   showWindowsOptionsModal() {
@@ -414,7 +434,7 @@ export class AppPublish extends LitElement {
       platform =>
         html`<li>
           <div id="title-block">
-            <img src="${platform.icon}" alt="platform icon">
+            <img src="${platform.icon}" alt="platform icon" />
             <h4>${platform.title}</h4>
             <p>${platform.description}</p>
           </div>
@@ -448,6 +468,10 @@ export class AppPublish extends LitElement {
     Router.go(`/reportcard?results=${resultsString}`);
   }
 
+  reportAnError(errorDetail: string, platform: string) {
+    this.reportPackageErrorUrl = getReportErrorUrl(errorDetail, platform);
+  }
+
   render() {
     return html`
       <app-modal
@@ -463,7 +487,11 @@ export class AppPublish extends LitElement {
           alt="warning icon"
         />
 
-        <div slot="modal-actions">
+        <div id="actions" slot="modal-actions">
+          <fast-anchor target="__blank" id="error-link" .href="${this.reportPackageErrorUrl}"
+            >Report A Problem</fast-anchor
+          >
+
           <app-button @click="${() => this.returnToFix()}"
             >Return to Manifest Options</app-button
           >
@@ -616,20 +644,20 @@ const platforms: ICardData[] = [
     description:
       'Publish your PWA to the Microsoft Store to make it available to the 1 billion Windows users worldwide.',
     isActionCard: true,
-    icon: '/assets/windows_icon.svg'
+    icon: '/assets/windows_icon.svg',
   },
   {
     title: 'Android',
     description:
       'Publish your PWA to the Google Play Store to make your app more discoverable for Android users.',
     isActionCard: true,
-    icon: '/assets/android_icon.svg'
+    icon: '/assets/android_icon.svg',
   },
   {
     title: 'Samsung',
     description:
       'Publish your PWA to the Google Play Store to make your app more discoverable for Android users.',
     isActionCard: true,
-    icon: '/assets/samsung_icon.svg'
+    icon: '/assets/samsung_icon.svg',
   },
 ];
