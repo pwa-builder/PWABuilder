@@ -47,6 +47,7 @@ export class SidebarCard extends LitElement {
         background: transparent;
         color: white;
         border: none;
+        cursor: pointer;
       }
     `;
   }
