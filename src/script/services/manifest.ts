@@ -121,7 +121,14 @@ export async function fetchManifest(
 
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve, reject) => {
-    const knownGoodUrl = await cleanUrl(url);
+    let knownGoodUrl;
+
+    try {
+      knownGoodUrl = await cleanUrl(url);
+    }
+    catch (err) {
+      reject(err);
+    }
 
     setURL(knownGoodUrl);
 
