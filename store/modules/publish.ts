@@ -84,9 +84,9 @@ export interface WindowsPublisherOptions {
  * Images to use for a Windows PWA. Should match server implementation: https://github.com/pwa-builder/pwabuilder-windows-chromium/blob/master/Models/WindowsImages.cs
  */
 export interface WindowsImageOptions {
-    baseImage: string | null;
-    backgroundColor?: string;
-    padding?: number;
+  baseImage: string | null;
+  backgroundColor?: string;
+  padding?: number;
 }
 
 /**
@@ -106,13 +106,13 @@ export interface AndroidApkOptions {
       enabled: boolean;
       appsFlyerId: string;
     };
-    locationDelegation?: { 
-      enabled: boolean; 
+    locationDelegation?: {
+      enabled: boolean;
     };
-    playBilling?: { 
-      enabled: boolean; 
+    playBilling?: {
+      enabled: boolean;
     };
-    firstRunFlag?: { 
+    firstRunFlag?: {
       enabled: boolean;
       queryParameterName: string;
     };
@@ -228,11 +228,6 @@ export const actions: Actions<State, RootState> = {
         resolve();
       } catch (e) {
         let errorMessage = e.response.data ? e.response.data.error : e.response.data || e.response.statusText;
-
-        if (params.platform === platforms.samsung) {
-          errorMessage = "Thanks for submitting! Follow up with Samsung at pwasupport@samsung.com for status updates on your submission";
-        }
-
         reject(errorMessage);
       }
     });

@@ -3,7 +3,9 @@
     <HubHeader></HubHeader>
 
     <div
-      v-if="openAndroid || openWindows || openTeams || showBackground"
+      v-if="
+        openAndroid || openWindows || openTeams || showBackground || openSamsung
+      "
       class="has-acrylic-40 is-dark"
       id="modalBackground"
     ></div>
@@ -1277,7 +1279,7 @@
               rel="noopener"
               >powered by Chromium-based Edge</a
             >
-            platform (preview).
+            platform.
           </p>
         </div>
 
@@ -1295,6 +1297,32 @@
             @click="openWindowsOptionsModal('anaheim')"
           >
             Options
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <div v-if="openSamsung" ref="samsungModal" id="androidPlatModal">
+      <button @click="closeAndroidModal()" id="closeAndroidPlatButton">
+        <i class="fas fa-times"></i>
+      </button>
+
+      <section class="androidModalBody">
+        <div>
+          <p class="androidModalP">
+            <i class="fas fa-check-circle"></i>
+            Your PWA has been submitted to Samsung's App Finder.
+          </p>
+          <p>
+            You can follow up with Samsung at
+            <a href="mailto:pwasupport@samsung.com">pwasupport@samsung.com</a>
+            for status updates on your submission.
+          </p>
+        </div>
+
+        <div id="androidModalButtonSection">
+          <button class="androidDownloadButton" @click="closeAndroidModal()">
+            Done
           </button>
         </div>
       </section>
@@ -1576,8 +1604,9 @@
               </div>
 
               <p>
-                Provide the URL to your PWA to Samsung for inclusion in the Samsung Finder app.
-                You will need to follow up with Samsung after submission for updates on the deployment.
+                Provide the URL to your PWA to Samsung for inclusion in the
+                Samsung Finder app. You will need to follow up with Samsung
+                after submission for updates on the deployment.
               </p>
 
               <section class="platformDownloadBar">
@@ -1586,7 +1615,7 @@
                   platform="samsung"
                   message="Download"
                   aria-label="Submit app to Samsung"
-                  v-on:downloadPackageError="showPackageDownloadError($event)"
+                  v-on:downloadPackageError="showSamsungSubmittedModal($event)"
                 />
               </section>
             </div>
@@ -1807,6 +1836,7 @@ export default class extends Vue {
   public modalStatus = false;
   public openAndroid: boolean = false;
   public openWindows: boolean = false;
+  public openSamsung: boolean = false;
   public openTeams: boolean = false;
   public showBackground: boolean = false;
 
@@ -1862,6 +1892,10 @@ export default class extends Vue {
     this.packageErrorMessage = e.detail;
     this.reportPackageErrorUrl = this.getReportErrorUrl(e.detail, e.platform);
     console.error(this.packageErrorMessage, this.reportPackageErrorUrl);
+  }
+
+  showSamsungSubmittedModal() {
+    this.openSamsung = true;
   }
 
   getReportErrorUrl(errorMessage: string, platform: string): string {
@@ -2254,11 +2288,6 @@ export default class extends Vue {
     });
   }
 
-  public openAppXModal(): void {
-    this.openWindows = false;
-    (this.$refs.appxModal as Modal).show();
-  }
-
   public openAndroidOptionModal(): void {
     this.openAndroid = false;
 
@@ -2279,13 +2308,18 @@ export default class extends Vue {
     this.openAndroid = true;
   }
 
+  public openWindowsModal(): void {
+    this.openWindows = true;
+  }
+
+  public openSamsungModal(): void {
+    this.openSamsung = true;
+  }
+
   public closeAndroidModal(): void {
     this.openAndroid = false;
     this.openWindows = false;
-  }
-
-  public openWindowsModal(): void {
-    this.openWindows = true;
+    this.openSamsung = false;
   }
 
   public openWindowsOptionsModal(config: "anaheim" | "spartan"): void {

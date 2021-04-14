@@ -43,7 +43,7 @@ export const actions: Actions<State, RootState> = {
             ],
           };
           const handle = await window.showSaveFilePicker(options);
-  
+
           if (handle && blob) {
             const writable = await handle.createWritable();
             await writable.write(blob);
