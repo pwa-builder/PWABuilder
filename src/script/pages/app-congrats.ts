@@ -12,6 +12,8 @@ import {
   xxxLargeBreakPoint,
   largeBreakPoint,
   mediumBreakPoint,
+  smallBreakPoint,
+  customBreakPoint,
 } from '../utils/css/breakpoints';
 import { hidden_all } from '../utils/css/hidden';
 
@@ -161,6 +163,7 @@ export class AppCongrats extends LitElement {
         }
 
         #blog-block #first-card {
+          max-height: 552px;
           margin-right: 18px;
         }
 
@@ -233,6 +236,61 @@ export class AppCongrats extends LitElement {
             margin-right: initial;
           }
         `
+      ),
+      smallBreakPoint(
+        css`
+          #blog-block {
+            display: block;
+            overflow-y: hidden;
+            overflow-x: scroll;
+            scroll-snap-type: x proximity;
+            white-space: nowrap;
+            align-items: center;
+            padding: 0 16px;
+            margin-bottom: 16px;
+          }
+
+          .other.posts {
+            display: inline-block;
+            margin-left: 32px;
+          }
+
+          #blog-block #first-card {
+            margin-right: 0;
+          }
+
+          #blog-block .blog {
+            display: inline-block;
+            width: calc(100% - 32px);
+            margin-right: 32px;
+            margin-bottom: 16px;
+            scroll-snap-align: center;
+          }
+        `
+      ),
+      customBreakPoint(
+        css`
+          #blog-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
+          #blog-block app-card {
+            max-width: 416px;
+          }
+
+          /* due to container, might want to refactor so the container is optional. */
+          .other.posts {
+            width: 100%;
+          }
+
+          .other.posts app-card {
+            margin-left: auto;
+            margin-right: auto;
+          }
+        `,
+        480,
+        639
       ),
     ];
   }
@@ -530,16 +588,17 @@ export class AppCongrats extends LitElement {
                       imageUrl="${this.featuredPost.imageUrl}"
                       linkText="Read Post"
                       linkRoute="${this.featuredPost.clickUrl}"
-                      .featured="${true}"
+                      .tags=${this.featuredPost.tags}
+                      .featured="${this.isFeatured()}"
                       class=${classMap({
                         blog: true,
-                        featured: true,
+                        featured: this.isFeatured(),
                       })}
                     >
                     </app-card>`
                   : null}
 
-                <div>
+                <div class="other posts">
                   ${this.blog_posts
                     ? this.blog_posts.map(post => {
                         return html`
@@ -572,5 +631,9 @@ export class AppCongrats extends LitElement {
         </div>
       </div>
     `;
+  }
+
+  isFeatured() {
+    return window.innerWidth > 1023;
   }
 }

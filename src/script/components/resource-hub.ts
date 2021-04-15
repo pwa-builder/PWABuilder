@@ -6,6 +6,7 @@ import {
   mediumBreakPoint,
   smallBreakPoint,
   BreakpointValues,
+  customBreakPoint,
 } from '../utils/css/breakpoints';
 
 import { AppCardModes } from '../components/app-card';
@@ -199,6 +200,24 @@ export class ResourceHub extends LitElement {
             margin-bottom: 16px;
           }
         `
+      ),
+      customBreakPoint(
+        css`
+          .resource-hub.complete .cards {
+            flex-direction: column;
+          }
+        `,
+        undefined,
+        919
+      ),
+      customBreakPoint(
+        css`
+          .resource-hub.home .cards {
+            background-color: red;
+          }
+        `,
+        undefined,
+        1023
       ),
     ];
   }
