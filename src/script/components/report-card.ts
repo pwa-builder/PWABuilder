@@ -270,6 +270,11 @@ export class ReportCard extends LitElement {
           .accordion-heading-block {
             width: 90vw;
           }
+
+          #package-block {
+            justify-content: center;
+            margin-bottom: 40px;
+          }
         `
       )}
 
@@ -282,6 +287,11 @@ export class ReportCard extends LitElement {
 
           .accordion-heading-block {
             width: 90vw;
+          }
+
+          #package-block {
+            justify-content: center;
+            margin-bottom: 40px;
           }
         `
       )}

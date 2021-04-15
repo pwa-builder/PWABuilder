@@ -92,17 +92,22 @@ export function setProgress(newProgress: ProgressList) {
 }
 
 export function setURL(url: string) {
-  site_url = url;
-  sessionStorage.setItem('current_url', site_url);
+  if (url) {
+    site_url = url;
+    sessionStorage.setItem('current_url', site_url);
+  }
 }
 
 export function getURL() {
+  const url = sessionStorage.getItem('current_url');
+
   if (site_url) {
     return site_url;
-  } else {
-    const url = sessionStorage.getItem('current_url');
-
-    return url || undefined;
+  } else if (url) {
+    return url;
+  }
+  else {
+    throw(new Error("No Good URL found for the current site"))
   }
 }
 

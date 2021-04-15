@@ -28,7 +28,6 @@ import { getOverallScore } from '../services/tests';
 import './rating-dial';
 import './app-badges';
 
-
 @customElement('app-sidebar')
 export class AppSidebar extends LitElement {
   static get styles() {
@@ -61,8 +60,6 @@ export class AppSidebar extends LitElement {
 
         padding-left: 12px;
       }
-
- 
 
       #sidebar-subitems-list {
         list-style: none;
@@ -132,7 +129,6 @@ export class AppSidebar extends LitElement {
         grid-auto-flow: row;
         width: 100%;
       }
-
 
       aside.desktop-sidebar h1,
       aside.desktop-sidebar h4,
@@ -205,6 +201,14 @@ export class AppSidebar extends LitElement {
         padding: 0.25rem 1rem;
       }
 
+      aside.tablet-sidebar .done, .tablet-sidebar .done::part(heading) {
+        color: white !important;
+      }
+
+      aside.tablet-sidebar .done ion-icon {
+        color: var(--success-color) !important;
+      }
+
       .tablet-sidebar #score-block {
         display: flex;
         align-items: center;
@@ -265,10 +269,11 @@ export class AppSidebar extends LitElement {
 
       aside.tablet-sidebar #score-progress {
         border-right: 1px solid var(--secondary-color);
-
-        width: 44%;
         height: 100%;
         font-size: var(--small-font-size);
+
+        flex: none;
+        width: 32vw;
       }
 
       aside.tablet-sidebar #score-number {
@@ -410,7 +415,8 @@ export class AppSidebar extends LitElement {
         text-align: center;
       }
 
-      #overall-score-block, #rating-block {
+      #overall-score-block,
+      #rating-block {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -457,13 +463,14 @@ export class AppSidebar extends LitElement {
         margin-bottom: 14px;
         text-align: center;
         margin-top: -4px;
-        
+
         background: initial;
         border-radius: initial;
         border: none;
       }
 
-      #plus, #top {
+      #plus,
+      #top {
         color: var(--success-color);
       }
 
@@ -597,7 +604,7 @@ export class AppSidebar extends LitElement {
                       active: item.done === Status.ACTIVE,
                       done: item.done === Status.DONE,
                       pending: item.done === Status.PENDING,
-                      lastItem: item.header === "Complete"
+                      lastItem: item.header === 'Complete',
                     })}
                   >
                     <div class="sidebar-item-header" slot="heading">
@@ -606,7 +613,11 @@ export class AppSidebar extends LitElement {
                             class="icon active"
                             name="ellipse"
                           ></ion-icon>`
-                        : html`<img class="icon other" src="/assets/ellipse-outline.svg" aria-hidden="true">`}
+                        : html`<img
+                            class="icon other"
+                            src="/assets/ellipse-outline.svg"
+                            aria-hidden="true"
+                          />`}
                       <span>${item.header}</span>
                       <span class="item-name">${this.renderIcon(item)}</span>
                     </div>
@@ -626,16 +637,15 @@ export class AppSidebar extends LitElement {
               <div class="overall-score">${this.overallScore}</div>
 
               <span id="rating-comment"
-                >Your PWA ranks in the <span id="top">Top 100</span> of all developers using PWA
-                Builder</span
+                >Your PWA ranks in the <span id="top">Top 100</span> of all
+                developers using PWA Builder</span
               >
-             </div>
-           </sidebar-card>
+            </div>
+          </sidebar-card>
 
-           <sidebar-card id="badges-card" title="Badges">
-             <app-badges></app-badges>
-           </sidebar-card>
-
+          <sidebar-card id="badges-card" title="Badges">
+            <app-badges></app-badges>
+          </sidebar-card>
         </div>
       </aside>
     `;
@@ -643,8 +653,7 @@ export class AppSidebar extends LitElement {
 
   renderTabletBar() {
     return html`<aside class="tablet-sidebar">
-      <img src="/assets/images/sidebar-icon.svg" alt="pwd-icon" />
-      <h4 id="score-progress">PWAB Progress</h4>
+      <h4 id="score-progress">URL Tested: ${this.current_url}</h4>
       <div class="menu">
         ${this.menuItems?.progress.map(
           item =>
@@ -656,7 +665,13 @@ export class AppSidebar extends LitElement {
                 pending: item.done === Status.PENDING,
               })}
             >
-              ${this.renderIcon(item)}
+              ${item.done === Status.ACTIVE
+                ? html`<ion-icon class="icon active" name="ellipse"></ion-icon>`
+                : item.done === Status.DONE ? html`${this.renderIcon(item)}` : html`<img
+                    class="icon other"
+                    src="/assets/ellipse-outline.svg"
+                    aria-hidden="true"
+                  />`}
               <span>${item.header}</span>
             </div>`
         )}

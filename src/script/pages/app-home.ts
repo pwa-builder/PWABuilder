@@ -284,18 +284,30 @@ export class AppHome extends LitElement {
 
           const goodURL = getURL();
 
-          Router.go(`/testing?site=${goodURL}`);
+          if (goodURL !== undefined) {
+            // couldnt get manifest, thats ok
+            // lets continue forward with the default
+            // zeroed out results.
+            Router.go(`/testing?site=${goodURL}`);
+          }
         }
       } catch (err) {
         console.error('Error getting site', err.message);
 
-        this.errorGettingURL = true;
+        try {
+          const goodURL = getURL();
 
-        // couldnt get manifest, thats ok
-        // lets continue forward with the default
-        // zeroed out results. 
-        const goodURL = getURL();
-        Router.go(`/testing?site=${goodURL}`);
+          if (goodURL !== undefined) {
+            // couldnt get manifest, thats ok
+            // lets continue forward with the default
+            // zeroed out results.
+            Router.go(`/testing?site=${goodURL}`);
+          } 
+        } catch (err) {
+          this.errorGettingURL = true;
+          this.errorMessage = err;
+          throw new Error(`Error getting URL: ${err}`);
+        }
       }
 
       this.gettingManifest = false;
@@ -377,9 +389,7 @@ export class AppHome extends LitElement {
               : null}
           </div>
 
-          <app-button
-            type="submit"
-            @click="${(e: InputEvent) => this.start(e)}"
+          <app-button type="submit" @click="${(e: InputEvent) => this.start(e)}"
             >Start</app-button
           >
         </form>
