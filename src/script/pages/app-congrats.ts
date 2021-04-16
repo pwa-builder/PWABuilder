@@ -156,6 +156,7 @@ export class AppCongrats extends LitElement {
         }
 
         #blog-block app-card {
+          max-width: 612px;
           margin-bottom: 10px;
           box-shadow: 0px 2px 4px 0px rgb(0 0 0 / 25%);
           border: none;
