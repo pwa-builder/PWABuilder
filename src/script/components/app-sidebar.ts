@@ -1,4 +1,8 @@
-import { BreakpointValues, mediumBreakPoint, smallBreakPoint } from './../utils/css/breakpoints';
+import {
+  BreakpointValues,
+  mediumBreakPoint,
+  smallBreakPoint,
+} from './../utils/css/breakpoints';
 import {
   LitElement,
   css,
@@ -18,29 +22,43 @@ import {
 
 import { classMap } from 'lit-html/directives/class-map';
 
+import './sidebar-card';
+import { getOverallScore } from '../services/tests';
+
+import './rating-dial';
+import './app-badges';
+
 @customElement('app-sidebar')
 export class AppSidebar extends LitElement {
   static get styles() {
     return css`
-      fast-accordion {
-        --neutral-foreground-rest: white;
+      sidebar-card {
+        margin-top: 20px;
       }
 
-      fast-accordion-item::part(icon) {
-        display: none;
-      }
-
-      fast-accordion-item::part(button) {
-        font-size: 16px;
-        font-weight: var(--font-bold);
+      #badges-card {
+        margin-bottom: 20px;
       }
 
       .sidebar-item-header {
         display: flex;
+        font-size: var(--small-font-size);
+        font-weight: var(--font-bold);
+        padding-bottom: 11px;
+        border-left: 0.772396px solid rgba(255, 255, 255, 0.2);
+        padding-left: 5px;
+      }
+
+      .lastItem .sidebar-item-header {
+        padding-bottom: 0;
       }
 
       .item-name {
-        padding-right: 16px;
+        display: flex;
+        align-items: center;
+        font-size: 11px;
+
+        padding-left: 12px;
       }
 
       #sidebar-subitems-list {
@@ -60,7 +78,7 @@ export class AppSidebar extends LitElement {
       /** DESKTOP STYLES */
       aside.desktop-sidebar {
         color: var(--secondary-color);
-        background: var(--primary-color);
+        background: var(--primary-purple);
         height: 100%;
         width: 100%;
         display: flex;
@@ -83,6 +101,16 @@ export class AppSidebar extends LitElement {
         text-align: center;
         color: white;
         text-decoration: none;
+
+        margin-top: 0;
+        margin-bottom: 16px;
+        font-weight: var(--font-bold);
+        font-size: 9px;
+      }
+
+      aside.desktop-sidebar img {
+        height: 56px;
+        width: 56px;
       }
 
       aside.desktop-sidebar img,
@@ -107,6 +135,11 @@ export class AppSidebar extends LitElement {
       aside.desktop-sidebar h5,
       aside.desktop-sidebar p {
         margin: 0;
+      }
+
+      aside.desktop-sidebar h4 {
+        font-size: var(--font-size);
+        margin-top: 16px;
       }
 
       aside.desktop-sidebar hr {
@@ -159,13 +192,21 @@ export class AppSidebar extends LitElement {
       /** TABLET STYLES */
       aside.tablet-sidebar {
         color: var(--secondary-color);
-        background: var(--primary-color);
+        background: var(--primary-purple);
         height: 50px;
         max-width: 100%;
         display: flex;
         justify-content: space-evenly;
         align-items: center;
         padding: 0.25rem 1rem;
+      }
+
+      aside.tablet-sidebar .done, .tablet-sidebar .done::part(heading) {
+        color: white !important;
+      }
+
+      aside.tablet-sidebar .done ion-icon {
+        color: var(--success-color) !important;
       }
 
       .tablet-sidebar #score-block {
@@ -228,10 +269,11 @@ export class AppSidebar extends LitElement {
 
       aside.tablet-sidebar #score-progress {
         border-right: 1px solid var(--secondary-color);
-
-        width: 44%;
         height: 100%;
         font-size: var(--small-font-size);
+
+        flex: none;
+        width: 32vw;
       }
 
       aside.tablet-sidebar #score-number {
@@ -240,7 +282,22 @@ export class AppSidebar extends LitElement {
 
       /** ICON STYLES */
       .desktop-sidebar .icon {
-        margin-right: 0.25rem;
+        position: relative;
+        left: -9.4px;
+        height: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 6.18px;
+
+        width: 8px;
+        height: 10px;
+      }
+
+      .item-name ion-icon {
+        height: 10px;
+        color: var(--success-color);
+        padding-bottom: 3px;
       }
 
       .tablet-sidebar .icon {
@@ -253,10 +310,6 @@ export class AppSidebar extends LitElement {
       .pending::part(heading),
       .done::part(heading) {
         color: rgba(255, 255, 255, 0.5);
-      }
-
-      .done ion-icon {
-        color: var(--success-color);
       }
 
       .active::part(heading) {
@@ -275,26 +328,181 @@ export class AppSidebar extends LitElement {
         color: white;
       }
 
-      .pending .sidebar-item-header ion-icon {
-        color: rgb(52 55 68);
+      #overall-score-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        text-align: center;
+        padding: 14px 12px;
       }
 
-      ${
-        mediumBreakPoint(css`
-          aside.tablet-sidebar, aside.desktop-sidebar {
-            display: none;
-          }
-        `),
-
-        smallBreakPoint(css`
-          aside.tablet-sidebar, aside.desktop-sidebar {
-            display: none;
-          }
-        `)
+      #progress-block {
+        padding: 14px 12px;
       }
 
+      #score-header,
+      #score-notify {
+        font-weight: var(--font-bold);
+        font-size: var(--font-size);
+      }
+
+      .overall-score {
+        border: 2.45288px solid #ffffff;
+        width: 100%;
+        border-radius: 8px;
+        font-weight: var(--font-bold);
+        background: linear-gradient(
+          118.44deg,
+          rgba(52, 41, 102, 0.5) 12.3%,
+          rgba(93, 68, 140, 0.5) 38.83%,
+          rgba(50, 27, 62, 0.5) 96.92%
+        );
+        margin-top: 15px;
+        margin-bottom: 19px;
+        text-align: center;
+      }
+
+      #plus {
+        color: var(--success-color);
+      }
+
+      .tablet-sidebar .overall-score {
+        max-width: 64px;
+        text-align: center;
+      }
+
+      #overall-score-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        text-align: center;
+        padding-left: 12px;
+        padding-right: 12px;
+        padding-top: 14px;
+        padding-bottom: 14px;
+      }
+
+      #score-header,
+      #score-notify {
+        font-weight: var(--font-bold);
+        font-size: var(--font-size);
+      }
+
+      .overall-score {
+        border: 2.45288px solid #ffffff;
+        width: 100%;
+        border-radius: 8px;
+        font-weight: var(--font-bold);
+        background: linear-gradient(
+          118.44deg,
+          rgba(52, 41, 102, 0.5) 12.3%,
+          rgba(93, 68, 140, 0.5) 38.83%,
+          rgba(50, 27, 62, 0.5) 96.92%
+        );
+        margin-top: 15px;
+        margin-bottom: 19px;
+        text-align: center;
+      }
+
+      #plus {
+        color: var(--success-color);
+      }
+
+      .tablet-sidebar .overall-score {
+        max-width: 64px;
+        text-align: center;
+      }
+
+      #overall-score-block,
+      #rating-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        text-align: center;
+        padding-left: 12px;
+        padding-right: 12px;
+        padding-top: 14px;
+        padding-bottom: 14px;
+      }
+
+      #score-header,
+      #score-notify {
+        font-weight: var(--font-bold);
+        font-size: var(--small-font-size);
+      }
+
+      .rating-header {
+        font-size: var(--small-font-size);
+        display: block;
+        text-align: center;
+        margin-bottom: 8px;
+      }
+
+      .overall-score {
+        border: 2.45288px solid #ffffff;
+        width: 100%;
+        border-radius: 8px;
+        font-weight: var(--font-bold);
+        background: linear-gradient(
+          118.44deg,
+          rgba(52, 41, 102, 0.5) 12.3%,
+          rgba(93, 68, 140, 0.5) 38.83%,
+          rgba(50, 27, 62, 0.5) 96.92%
+        );
+        margin-top: 15px;
+        margin-bottom: 19px;
+        text-align: center;
+      }
+
+      #rating-block .overall-score {
+        width: 100%;
+        font-weight: var(--font-bold);
+        margin-bottom: 14px;
+        text-align: center;
+        margin-top: -4px;
+
+        background: initial;
+        border-radius: initial;
+        border: none;
+      }
+
+      #plus,
+      #top {
+        color: var(--success-color);
+      }
+
+      .tablet-sidebar .overall-score {
+        max-width: 64px;
+        text-align: center;
+      }
+
+      #rating-comment {
+        font-weight: var(--font-bold);
+        font-size: var(--small-font-size);
+        text-align: center;
+        display: block;
+      }
+
+      ${(mediumBreakPoint(css`
+        aside.tablet-sidebar,
+        aside.desktop-sidebar {
+          display: none;
+        }
+      `),
+      smallBreakPoint(css`
+        aside.tablet-sidebar,
+        aside.desktop-sidebar {
+          display: none;
+        }
+      `))}
     `;
   }
+
+  @internalProperty() overallScore = 0;
+
   constructor() {
     super();
     this.mql.addEventListener('change', e => {
@@ -313,6 +521,8 @@ export class AppSidebar extends LitElement {
     if (this.results) {
       this.handleResults();
     }
+
+    this.overallScore = getOverallScore();
   }
 
   handleResults() {
@@ -352,16 +562,10 @@ export class AppSidebar extends LitElement {
   @property({ type: Boolean }) isDeskTopView = this.mql.matches;
 
   renderIcon(item: Progress | ProgressItem) {
-    switch (item.done) {
-      case 'active':
-        return html`<ion-icon class="icon active" name="ellipse"></ion-icon>`;
-      case 'done':
-        return html`
-          <ion-icon class="icon done" name="checkmark-outline"></ion-icon>
-        `;
-      case 'pending':
-      default:
-        return html`<ion-icon class="icon pending" name="ellipse"></ion-icon>`;
+    if (item.done == 'done') {
+      return html`
+        <ion-icon class="icon done" name="checkmark-outline"></ion-icon>
+      `;
     }
   }
 
@@ -376,51 +580,80 @@ export class AppSidebar extends LitElement {
             >${this.current_url}</a
           >
           <hr />
-          <h4 id="your-score">Your PWA Score:</h4>
-          <span id="score-number">100</span>
-          <span id="score-message">Excellent score!</span>
-          <hr />
-          <h4 id="score-progress">PWAB Progress</h4>
-        </div>
 
-        <fast-accordion class="menu">
-          ${this.menuItems?.progress.map(item => {
-            return html`
-              <fast-accordion-item
-                expanded
-                class=${classMap({
-                  active: item.done === Status.ACTIVE,
-                  done: item.done === Status.DONE,
-                  pending: item.done === Status.PENDING,
-                })}
+          <sidebar-card title="Score">
+            <div id="overall-score-block">
+              <span id="score-header">Your PWA Score:</span>
+
+              <div class="overall-score">${this.overallScore}</div>
+
+              <span id="score-notify">
+                ${this.overallScore > 0
+                  ? html`<span id="plus">10+</span> added to score`
+                  : html`<span id="plus">0+ added to score</span>`}
+              </span>
+            </div>
+          </sidebar-card>
+
+          <sidebar-card title="Progress">
+            <div id="progress-block">
+              ${this.menuItems?.progress.map(item => {
+                return html`
+                  <div
+                    class=${classMap({
+                      active: item.done === Status.ACTIVE,
+                      done: item.done === Status.DONE,
+                      pending: item.done === Status.PENDING,
+                      lastItem: item.header === 'Complete',
+                    })}
+                  >
+                    <div class="sidebar-item-header" slot="heading">
+                      ${item.done === Status.ACTIVE
+                        ? html`<ion-icon
+                            class="icon active"
+                            name="ellipse"
+                          ></ion-icon>`
+                        : html`<img
+                            class="icon other"
+                            src="/assets/ellipse-outline.svg"
+                            aria-hidden="true"
+                          />`}
+                      <span>${item.header}</span>
+                      <span class="item-name">${this.renderIcon(item)}</span>
+                    </div>
+                  </div>
+                `;
+              })}
+            </div>
+          </sidebar-card>
+
+          <sidebar-card title="Rating">
+            <div id="rating-block">
+              <span class="rating-header" id="score-header"
+                >Your PWA Score compared with other developers</span
               >
-                <div class="sidebar-item-header" slot="heading">
-                  <span class="item-name">${this.renderIcon(item)}</span>
-                  <span>${item.header}</span>
-                </div>
+              <rating-dial></rating-dial>
 
-                <ul id="sidebar-subitems-list">
-                  ${item.items.map(item => {
-                    return html`
-                      <li>
-                        <span class="item-name">${this.renderIcon(item)}</span>
-                        <span>${item.name}</span>
-                      </li>
-                    `;
-                  })}
-                </ul>
-              </fast-accordion-item>
-            `;
-          })}
-        </fast-accordion>
+              <div class="overall-score">${this.overallScore}</div>
+
+              <span id="rating-comment"
+                >Your PWA ranks in the <span id="top">Top 100</span> of all
+                developers using PWA Builder</span
+              >
+            </div>
+          </sidebar-card>
+
+          <sidebar-card id="badges-card" title="Badges">
+            <app-badges></app-badges>
+          </sidebar-card>
+        </div>
       </aside>
     `;
   }
 
   renderTabletBar() {
     return html`<aside class="tablet-sidebar">
-      <img src="/assets/images/sidebar-icon.svg" alt="pwd-icon" />
-      <h4 id="score-progress">PWAB Progress</h4>
+      <h4 id="score-progress">URL Tested: ${this.current_url}</h4>
       <div class="menu">
         ${this.menuItems?.progress.map(
           item =>
@@ -432,16 +665,21 @@ export class AppSidebar extends LitElement {
                 pending: item.done === Status.PENDING,
               })}
             >
-              ${this.renderIcon(item)}
+              ${item.done === Status.ACTIVE
+                ? html`<ion-icon class="icon active" name="ellipse"></ion-icon>`
+                : item.done === Status.DONE ? html`${this.renderIcon(item)}` : html`<img
+                    class="icon other"
+                    src="/assets/ellipse-outline.svg"
+                    aria-hidden="true"
+                  />`}
               <span>${item.header}</span>
             </div>`
         )}
       </div>
 
       <div id="score-block">
-        <h4 id="your-score">Your PWA Score</h4>
-        <span id="score-number">100</span>
-        <span id="score-message">Excellent score!</span>
+        <h4 id="your-score">PWA Score</h4>
+        <span class="overall-score">${this.overallScore}</span>
       </div>
     </aside>`;
   }

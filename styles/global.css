@@ -31,6 +31,7 @@
   --font-medium: 400;
 
   --font-size: 14px;
+  --smallish-font-size: 16px;
   --small-font-size: 12px;
   --small-medium-font-size: 22px;
   --medium-font-size: 28px;
@@ -41,10 +42,12 @@
   --primary-color: #292c3a;
   --secondary-color: #ffffff;
 
-  --primary-purple: #5D5DB9;
-  --warning-color: gold;
-  --error-color: red;
+  --primary-purple: #342A6A;
   --error-background-color: #fff5f5;
+
+  --warning-color: rgba(235, 193, 87, 1);
+  --error-color: rgba(235, 87, 87, 1);
+  --success-color: #50BA87;
 
   --button-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
   --button-radius: 44px;
@@ -59,7 +62,6 @@
   --mobile-link-color: #0683f9;
 
   --list-border: 0.67681px solid #e5e5e5;
-  --success-color: #a2f4cc;
   --light-primary-color: rgba(255, 255, 255, 0.6);
 }
 

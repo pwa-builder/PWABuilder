@@ -14,20 +14,11 @@ import '../components/app-button';
 import '../components/loading-button';
 import '../components/windows-form';
 import '../components/android-form';
-import {
-  createWindowsPackageOptionsFromForm,
-  createWindowsPackageOptionsFromManifest,
-  generateWindowsPackage,
-} from '../services/publish/windows-publish';
-import {
-  createAndroidPackageOptionsFromForm,
-  createAndroidPackageOptionsFromManifest,
-  generateAndroidPackage,
-} from '../services/publish/android-publish';
 import { Router } from '@vaadin/router';
 
 import {
   BreakpointValues,
+  smallBreakPoint,
   largeBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
@@ -37,7 +28,12 @@ import style from '../../../styles/layout-defaults.css';
 import { fileSave } from 'browser-fs-access';
 import { fetchManifest } from '../services/manifest';
 import { Manifest } from '../utils/interfaces';
-import { checkResults, finalCheckForPublish } from '../services/publish/publish-checks';
+import {
+  checkResults,
+  finalCheckForPublish,
+} from '../services/publish/publish-checks';
+import { generatePackage } from '../services/publish';
+import { getReportErrorUrl } from '../utils/error';
 
 @customElement('app-publish')
 export class AppPublish extends LitElement {
@@ -59,6 +55,8 @@ export class AppPublish extends LitElement {
   @internalProperty() generating = false;
 
   @internalProperty() finalChecks: checkResults | undefined;
+
+  @internalProperty() reportPackageErrorUrl: string;
 
   constructor() {
     super();
@@ -138,6 +136,19 @@ export class AppPublish extends LitElement {
           margin: 1rem;
         }
 
+        .container .action-buttons fast-anchor {
+          /** 
+             Seems like a magic value but really
+             this is just to match the back button next to it
+           */
+          width: 100px;
+
+          color: white;
+          box-shadow: var(--button-shadow);
+          border-radius: var(--button-radius);
+          font-weight: bold;
+        }
+
         #up-next {
           width: 100%;
         }
@@ -166,7 +177,7 @@ export class AppPublish extends LitElement {
         p {
           font-size: var(--font-size);
           color: var(--font-color);
-          max-width: 767px;
+          max-width: 530px;
         }
 
         content-header::part(header) {
@@ -177,7 +188,9 @@ export class AppPublish extends LitElement {
           width: 6em;
         }
 
-        #error-modal::part(modal-layout), #download-modal::part(modal-layout), #test-download-modal::part(modal-layout) {
+        #error-modal::part(modal-layout),
+        #download-modal::part(modal-layout),
+        #test-download-modal::part(modal-layout) {
           max-width: 50vw;
         }
 
@@ -188,7 +201,23 @@ export class AppPublish extends LitElement {
           overflow-x: hidden;
         }
 
-        #windows-options-modal::part(modal-layout), #android-options-modal::part(modal-layout) {
+        #error-link {
+          color: white;
+          font-weight: var(--font-bold);
+          border-radius: var(--button-radius);
+          background: var(--error-color);
+          margin-right: 8px;
+          padding-left: 10px;
+          padding-right: 10px;
+          box-shadow: var(--button-shadow);
+        }
+
+        #actions {
+          display: flex;
+        }
+
+        #windows-options-modal::part(modal-layout),
+        #android-options-modal::part(modal-layout) {
           width: 64vw;
         }
 
@@ -240,6 +269,18 @@ export class AppPublish extends LitElement {
             }
           `
         )}
+
+        ${smallBreakPoint(css`
+          #test-package-button app-button::part(underlying-button) {
+            width: 152px;
+            font-size: var(--font-size);
+            height: 40px;
+          }
+
+          #title-block p {
+            width: 200px;
+          }
+        `)}
       `,
     ];
   }
@@ -253,7 +294,9 @@ export class AppPublish extends LitElement {
   }
 
   async grabBackupManifest() {
-    console.error("Error generating package because manifest information is missing, trying fallback");
+    console.error(
+      'Error generating package because manifest information is missing, trying fallback'
+    );
     const search = new URLSearchParams(location.search);
     let site: string | null = null;
     if (search) {
@@ -273,176 +316,94 @@ export class AppPublish extends LitElement {
     return localManifest;
   }
 
-  async generatePackage(type: platform, form?: HTMLFormElement) {
-    switch (type) {
-      case 'windows':
-        try {
-          this.generating = true;
+  async generate(type: platform, form?: HTMLFormElement) {
+    if (type === 'windows') {
+      // Final checks for Windows
+      if (this.finalChecks) {
+        const maniCheck = this.finalChecks.manifest;
+        const baseIcon = this.finalChecks.baseIcon;
+        const validURL = this.finalChecks.validURL;
 
-          // Final checks for Windows
-          if (this.finalChecks) {
-            const maniCheck = this.finalChecks.manifest;
-            const baseIcon = this.finalChecks.baseIcon;
-            const validURL = this.finalChecks.validURL;
-
-            if (
-              maniCheck === false ||
-              baseIcon === false ||
-              validURL === false
-            ) {
-              this.generating = false;
-              this.open_windows_options = false;
-
-              let err = "";
-
-              if (maniCheck === false) {
-                err = "Your PWA does not have a valid Web Manifest";
-              }
-              else if (baseIcon === false) {
-                err = "Your PWA needs atleast a 512x512 PNG icon";
-              }
-              else if (validURL === false) {
-                err = "Your PWA does not have a valid URL";
-              };
-
-              this.showAlertModal(err);
-
-              return;
-            }
-          }
-
-          // First we check for a form
-          // and generate based off of that.
-          // We will have a form if the user is going to
-          // prod
-          if (form) {
-            const options = createWindowsPackageOptionsFromForm(form);
-
-            if (options) {
-              this.blob = await generateWindowsPackage(options);
-              this.generating = false;
-
-              this.open_windows_options = false;
-            }
-          } else {
-            // No form, lets generate from the manifest
-            try {
-              const options = createWindowsPackageOptionsFromManifest();
-              this.testBlob = await generateWindowsPackage(options);
-            } catch (err) {
-              // Oh no, looks like we dont have the manifest in memory
-              // Lets try to grab it
-              const localManifest = await this.grabBackupManifest();
-
-              if (localManifest) {
-                const options = createWindowsPackageOptionsFromManifest(
-                  localManifest
-                );
-                this.testBlob = await generateWindowsPackage(options);
-              }
-            }
-
-            this.generating = false;
-            this.open_windows_options = false;
-          }
-        } catch (err) {
+        if (maniCheck === false || baseIcon === false || validURL === false) {
           this.generating = false;
           this.open_windows_options = false;
-          this.showAlertModal(err);
+
+          let err = '';
+
+          if (maniCheck === false) {
+            err = 'Your PWA does not have a valid Web Manifest';
+          } else if (baseIcon === false) {
+            err = 'Your PWA needs atleast a 512x512 PNG icon';
+          } else if (validURL === false) {
+            err = 'Your PWA does not have a valid URL';
+          }
+
+          this.showAlertModal(err, type);
+
+          return;
         }
-        break;
-      case 'android':
-        try {
-          this.generating = true;
+      }
+    } else if (type === 'android') {
+      // Final checks for Android
+      if (this.finalChecks) {
+        const maniCheck = this.finalChecks.manifest;
+        const baseIcon = this.finalChecks.baseIcon;
+        const validURL = this.finalChecks.validURL;
+        const offlineCheck = this.finalChecks.offline;
 
-          // Final checks for Android
-          if (this.finalChecks) {
-            const maniCheck = this.finalChecks.manifest;
-            const baseIcon = this.finalChecks.baseIcon;
-            const validURL = this.finalChecks.validURL;
-            const offlineCheck = this.finalChecks.offline;
-
-            if (
-              maniCheck === false ||
-              baseIcon === false ||
-              validURL === false
-            ) {
-              this.generating = false;
-              this.open_android_options = false;
-
-              let err = "";
-
-              if (maniCheck === false) {
-                err = "Your PWA does not have a valid Web Manifest";
-              }
-              else if (baseIcon === false) {
-                err = "Your PWA needs atleast a 512x512 PNG icon";
-              }
-              else if (validURL === false) {
-                err = "Your PWA does not have a valid URL";
-              }
-              else if (offlineCheck === false) {
-                // Extra offline check for Android
-                err = "Your PWA does not work offline";
-              }
-
-              this.showAlertModal(err);
-
-              return;
-            }
-          }
-
-          if (form) {
-            const androidOptions = createAndroidPackageOptionsFromForm(form);
-
-            if (androidOptions) {
-              this.blob = await generateAndroidPackage(androidOptions);
-
-              this.generating = false;
-
-              this.open_android_options = false;
-            }
-          }
-          else {
-
-            try {
-              const androidOptions = createAndroidPackageOptionsFromManifest();
-              this.testBlob = await generateAndroidPackage(androidOptions);
-            }
-            catch (err) {
-              // Oh no, looks like we dont have the manifest in memory
-              // Lets try to grab it
-              const localManifest = await this.grabBackupManifest();
-              if (localManifest) {
-                const androidOptions = createAndroidPackageOptionsFromManifest(localManifest);
-                this.testBlob = await generateAndroidPackage(androidOptions);
-              }
-            }
-
-            this.generating = false;
-            this.open_android_options = false;
-          }
-
-          this.generating = false;
-        } catch (err) {
+        if (maniCheck === false || baseIcon === false || validURL === false) {
           this.generating = false;
           this.open_android_options = false;
-          this.showAlertModal(err);
+
+          let err = '';
+
+          if (maniCheck === false) {
+            err = 'Your PWA does not have a valid Web Manifest';
+          } else if (baseIcon === false) {
+            err = 'Your PWA needs atleast a 512x512 PNG icon';
+          } else if (validURL === false) {
+            err = 'Your PWA does not have a valid URL';
+          } else if (offlineCheck === false) {
+            // Extra offline check for Android
+            err = 'Your PWA does not work offline';
+          }
+
+          this.showAlertModal(err, type);
+
+          return;
         }
-        break;
-      case 'samsung':
-        console.log('samsung');
-        break;
-      default:
-        console.error(
-          `A platform type must be passed, ${type} is not a valid platform.`
-        );
+      }
+    }
+
+    try {
+      this.generating = true;
+
+      const packageData = await generatePackage(type, form);
+
+      if (packageData) {
+        if (packageData.type === 'test') {
+          this.testBlob = packageData.blob;
+        } else {
+          this.blob = packageData.blob;
+        }
+      }
+
+      this.generating = false;
+      this.open_android_options = false;
+      this.open_windows_options = false;
+    } catch (err) {
+      console.error(err);
+      this.generating = false;
+      this.open_android_options = false;
+      this.open_windows_options = false;
+
+      this.showAlertModal(err, type);
     }
   }
 
   async download() {
     if (this.blob || this.testBlob) {
-      await fileSave(this.blob as Blob || this.testBlob as Blob, {
+      await fileSave((this.blob as Blob) || (this.testBlob as Blob), {
         fileName: 'your_pwa.zip',
         extensions: ['.zip'],
       });
@@ -452,10 +413,12 @@ export class AppPublish extends LitElement {
     }
   }
 
-  showAlertModal(errorMessage: string) {
+  showAlertModal(error: string, platform) {
     this.errored = true;
+    this.errorMessage = error;
 
-    this.errorMessage = errorMessage;
+    this.reportAnError(error, platform);
+
   }
 
   showWindowsOptionsModal() {
@@ -471,6 +434,7 @@ export class AppPublish extends LitElement {
       platform =>
         html`<li>
           <div id="title-block">
+            <img src="${platform.icon}" alt="platform icon" />
             <h4>${platform.title}</h4>
             <p>${platform.description}</p>
           </div>
@@ -484,16 +448,14 @@ export class AppPublish extends LitElement {
             >
 
             ${platform.title.toLocaleLowerCase() === 'windows'
-              ? html`<loading-button ?loading=${this.generating} id="test-package-button"
-                  @click="${() =>
-                    this.generatePackage(
-                      "windows"
-                    )}"
+              ? html`<loading-button
+                  ?loading=${this.generating}
+                  id="test-package-button"
+                  @click="${() => this.generate('windows')}"
                   >Test Package</loading-button
                 >`
               : null}
           </div>
-          
         </li>`
     );
   }
@@ -504,6 +466,10 @@ export class AppPublish extends LitElement {
     // navigate back to report-card page
     // with current manifest results
     Router.go(`/reportcard?results=${resultsString}`);
+  }
+
+  reportAnError(errorDetail: string, platform: string) {
+    this.reportPackageErrorUrl = getReportErrorUrl(errorDetail, platform);
   }
 
   render() {
@@ -521,7 +487,11 @@ export class AppPublish extends LitElement {
           alt="warning icon"
         />
 
-        <div slot="modal-actions">
+        <div id="actions" slot="modal-actions">
+          <fast-anchor target="__blank" id="error-link" .href="${this.reportPackageErrorUrl}"
+            >Report A Problem</fast-anchor
+          >
+
           <app-button @click="${() => this.returnToFix()}"
             >Return to Manifest Options</app-button
           >
@@ -573,8 +543,7 @@ export class AppPublish extends LitElement {
         <windows-form
           slot="modal-form"
           .generating=${this.generating}
-          @init-windows-gen="${ev =>
-            this.generatePackage('windows', ev.detail.form)}"
+          @init-windows-gen="${ev => this.generate('windows', ev.detail.form)}"
         ></windows-form>
       </app-modal>
 
@@ -584,8 +553,11 @@ export class AppPublish extends LitElement {
         body="Customize your Android package below!"
         ?open="${this.open_android_options}"
       >
-        <android-form slot="modal-form" .generating=${this.generating} @init-android-gen="${ev =>
-            this.generatePackage('android', ev.detail.form)}"></android-form>
+        <android-form
+          slot="modal-form"
+          .generating=${this.generating}
+          @init-android-gen="${ev => this.generate('android', ev.detail.form)}"
+        ></android-form>
       </app-modal>
 
       <div>
@@ -644,8 +616,10 @@ export class AppPublish extends LitElement {
               </div>
 
               <div class="action-buttons">
-                <app-button>Back</app-button>
-                <app-button>Next</app-button>
+                <app-button @click="${() => this.returnToFix()}"
+                  >Back</app-button
+                >
+                <fast-anchor href="/congrats">Next</fast-anchor>
               </div>
             </section>
           </div>
@@ -661,6 +635,7 @@ interface ICardData {
   title: string;
   description: string;
   isActionCard: boolean;
+  icon: string;
 }
 
 const platforms: ICardData[] = [
@@ -669,17 +644,20 @@ const platforms: ICardData[] = [
     description:
       'Publish your PWA to the Microsoft Store to make it available to the 1 billion Windows users worldwide.',
     isActionCard: true,
+    icon: '/assets/windows_icon.svg',
   },
   {
     title: 'Android',
     description:
       'Publish your PWA to the Google Play Store to make your app more discoverable for Android users.',
     isActionCard: true,
+    icon: '/assets/android_icon.svg',
   },
   {
     title: 'Samsung',
     description:
       'Publish your PWA to the Google Play Store to make your app more discoverable for Android users.',
     isActionCard: true,
+    icon: '/assets/samsung_icon.svg',
   },
 ];

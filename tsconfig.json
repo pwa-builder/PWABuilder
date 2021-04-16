@@ -3,20 +3,21 @@
     "target": "es2017",
     "module": "es2020",
     "moduleResolution": "node",
-    "lib": [
-      "esnext.array",
-      "esnext",
-      "es2017",
-      "dom"
-    ],
-    "strict": true,
+    "lib": ["esnext.array", "esnext", "es2017", "dom"],
+    "forceConsistentCasingInFileNames": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noImplicitReturns": false,
     "noFallthroughCasesInSwitch": true,
-    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
+    "noUncheckedIndexedAccess": true,
+    "strict": true,
+    "strictPropertyInitialization": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "allowUnusedLabels": false,
+    "preserveWatchOutput": true,
     "outDir": "./dist/",
     // Only necessary because @types/uglify-js can't find types for source-map
     "skipLibCheck": true,
@@ -50,9 +51,5 @@
     ]
   },
   "include": ["pwabuilder-sw.ts"],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts",
-    "build/pwabuilder-sw.js",
-  ]
+  "exclude": ["node_modules", "**/*.spec.ts", "build/pwabuilder-sw.js"]
 }

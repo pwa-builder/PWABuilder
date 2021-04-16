@@ -9,6 +9,8 @@ import { Manifest } from '../../utils/interfaces';
 import { getURL } from '../app-info';
 import { getManifest, getManiURL } from '../manifest';
 
+export let android_generated = false;
+
 export async function generateAndroidPackage(
   androidOptions: AndroidApkOptions
 ): Promise<Blob | undefined> {
@@ -19,16 +21,19 @@ export async function generateAndroidPackage(
     );
   }
 
-  const generateAppUrl = `${env.androidPackageGeneratorUrl}/generateAppPackage`;
+  const generateAppUrl = `${env.androidPackageGeneratorUrl}/generateApkZip`;
 
   try {
     const response = await fetch(generateAppUrl, {
       method: 'POST',
-      headers: new Headers({ 'content-type': 'application/json' }),
       body: JSON.stringify(androidOptions),
+      headers: new Headers({ 'content-type': 'application/json' }),
     });
 
     if (response.status === 200) {
+      //set generated flag
+      android_generated = true;
+
       return await response.blob();
     } else {
       const responseText = await response.text();
@@ -143,21 +148,21 @@ export function createAndroidPackageOptionsFromForm(form: HTMLFormElement): Andr
     backgroundColor:
       form.backgroundColor.value || manifest.background_color || manifest.theme_color || '#FFFFFF',
     display: form.displayMode.value || display,
-    enableNotifications: form.enableNotifications.value || true,
-    enableSiteSettingsShortcut: form.enableSiteSettingsShortcut.value || true,
+    enableNotifications: form.enableNotifications.value === "on" ? true : false,
+    enableSiteSettingsShortcut: form.enableSiteSettingsShortcut.value === "on" ? true : false,
     fallbackType: form.fallbackType.value || 'customtabs',
     features: {
       locationDelegation: {
-        enabled: form.locationDelegation.value ||  true,
+        enabled: form.locationDelegation.value === "on" ? true : false,
       },
       playBilling: {
-        enabled: form.playBilling.value || false,
+        enabled: form.playBilling.value === "on" ? true : false,
       },
     },
     host: form.host.value || maniURL,
     iconUrl: getAbsoluteUrl(icon.src, maniURL),
-    includeSourceCode: form.includeSourceCode.value || false,
-    isChromeOSOnly: form.isChromeOSOnly.value || false,
+    includeSourceCode: form.includeSourceCode.value === "on" ? true : false,
+    isChromeOSOnly: form.isChromeOSOnly.value === "on" ? true : false,
     launcherName: form.launcherName.value || manifest.short_name || appName, // launcher name should be the short name. If none is available, fallback to the full app name.
     maskableIconUrl: getAbsoluteUrl(maskableIcon?.src, maniURL),
     monochromeIconUrl: getAbsoluteUrl(monochromeIcon?.src, maniURL),

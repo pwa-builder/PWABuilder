@@ -4,7 +4,8 @@ import {
   Status,
   TestResult,
 } from '../../utils/interfaces';
-import { getProgress, setProgress, setResults } from '../app-info';
+import { getProgress, getResults, setProgress, setResults } from '../app-info';
+import { giveOutBadges } from '../badges';
 import { testManifest } from './manifest';
 import { testSecurity } from './security';
 import { testServiceWorker } from './service-worker';
@@ -32,8 +33,40 @@ export async function runAllTests(url: string): Promise<RawTestResult> {
     const progress = getProgress();
     updateProgress(progress, resultsObject);
 
+    giveOutBadges();
+
     resolve(resultsObject);
   });
+}
+
+export function getOverallScore() {
+  const results = getResults();
+
+  let manifestScore = 0;
+  let swScore = 0;
+  let securityScore = 0;
+
+  // gather manifest scores
+  // each result is worth 10
+  (results?.manifest as TestResult[]).map((result) => {
+    if (result.result === true) {
+      manifestScore = manifestScore + 10;
+    }
+  });
+
+  (results?.service_worker as TestResult[]).map((result) => {
+    if (result.result === true) {
+      swScore = swScore + 10;
+    }
+  });
+
+  (results?.security as TestResult[]).map((result) => {
+    if (result.result === true) {
+      securityScore = securityScore + 10;
+    }
+  });
+
+  return manifestScore + swScore + securityScore;
 }
 
 function updateProgress(progress: ProgressList, results: RawTestResult) {
@@ -60,6 +93,8 @@ function updateProgress(progress: ProgressList, results: RawTestResult) {
       }
     }
   });
+
+  giveOutBadges();
 
   const newProgress = progress;
   setProgress(newProgress);

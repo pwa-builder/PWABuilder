@@ -2,6 +2,8 @@ import { getGeneratedManifest, getManifest } from "../manifest";
 import { env } from '../../utils/environment';
 import { getURL } from "../app-info";
 
+export let web_generated = false;
+
 export async function generateWebPackage() {
   try {
     const manifest = getManifest();
@@ -27,6 +29,9 @@ export async function generateWebPackage() {
     );
     if (response.status === 200) {
       const data = await response.blob();
+
+      // set generated flag
+      web_generated = true;
 
       return data;
     } else {

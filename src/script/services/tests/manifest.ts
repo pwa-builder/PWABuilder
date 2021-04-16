@@ -1,4 +1,5 @@
 import { default_timeout } from '../../utils/api';
+import { findSuitableIcon } from '../../utils/icons';
 import { ManifestDetectionResult, TestResult } from '../../utils/interfaces';
 import { fetchManifest } from '../manifest';
 
@@ -159,7 +160,7 @@ function doTest(manifest: ManifestDetectionResult) {
       {
         infoString: 'Contains short_name property',
         result:
-          manifest.content.shortName && manifest.content.shortName.length > 1
+          manifest.content.short_name && manifest.content.short_name.length > 1
             ? true
             : false,
         category: 'required',
@@ -167,7 +168,7 @@ function doTest(manifest: ManifestDetectionResult) {
       {
         infoString: 'Designates a start_url',
         result:
-          manifest.content.startUrl && manifest.content.startUrl.length > 0
+          manifest.content.start_url && manifest.content.start_url.length > 0
             ? true
             : false,
         category: 'required',
@@ -185,12 +186,12 @@ function doTest(manifest: ManifestDetectionResult) {
       },
       {
         infoString: 'Has a background color',
-        result: manifest.content.backgroundColor ? true : false,
+        result: manifest.content.background_color ? true : false,
         category: 'recommended',
       },
       {
         infoString: 'Has a theme color',
-        result: manifest.content.themeColor ? true : false,
+        result: manifest.content.theme_color ? true : false,
         category: 'recommended',
       },
       {
@@ -213,12 +214,12 @@ function doTest(manifest: ManifestDetectionResult) {
       },
       {
         infoString: 'Has a square PNG icon 512x512 or larger',
-        result: true,
+        result: findSuitableIcon(manifest.content.icons, null, 512, 512, 'image/png') ? true : false,
         category: 'required',
       },
       {
         infoString: 'Has a maskable PNG icon',
-        result: true,
+        result: findSuitableIcon(manifest.content.icons, 'maskable', 512, 512, 'image/png') ? true : false,
         category: 'recommended',
       },
       {
@@ -241,15 +242,15 @@ function doTest(manifest: ManifestDetectionResult) {
       },
       {
         infoString: 'Contains an IARC ID',
-        result: manifest.content.iarcRatingId ? true : false,
+        result: manifest.content.iarc_rating_id ? true : false,
         category: 'optional',
       },
       {
         infoString: 'Specifies related_application',
         result:
-          manifest.content.relatedApplications &&
-          manifest.content.relatedApplications.length > 0 &&
-          manifest.content.preferRelatedApplications !== undefined
+          manifest.content.related_applications &&
+          manifest.content.related_applications.length > 0 &&
+          manifest.content.prefer_related_applications !== undefined
             ? true
             : false,
         category: 'optional',
