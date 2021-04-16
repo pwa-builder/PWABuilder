@@ -1,6 +1,10 @@
 {
+  "editor.tabSize": 2,
   "js/ts.implicitProjectConfig.experimentalDecorators": true,
   "typescript.tsdk": "node_modules/typescript/lib",
+  "files.saveConflictResolution": "askUser",
+  "typescript.tsc.autoDetect": "on",
+  "typescript.reportStyleChecksAsWarnings": true,
   "typescript.validate.enable": true,
   "javascript.validate.enable": true
 }

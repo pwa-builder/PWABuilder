@@ -11,6 +11,9 @@ import { RawTestResult, ScoreEvent } from '../utils/interfaces';
 import {
   largeBreakPoint,
   xLargeBreakPoint,
+  xxLargeBreakPoint,
+  xxxLargeBreakPoint,
+  mediumBreakPoint,
   smallBreakPoint,
 } from '../utils/css/breakpoints';
 
@@ -18,6 +21,11 @@ import './score-results';
 import '../components/app-button';
 import { baseOrPublish, getURL } from '../services/app-info';
 import { Router } from '@vaadin/router';
+import { getOverallScore } from '../services/tests';
+import { getPossibleBadges, sortBadges } from '../services/badges';
+
+import { classMap } from 'lit-html/directives/class-map';
+import { styleMap } from 'lit-html/directives/style-map';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {
@@ -27,8 +35,18 @@ export class ReportCard extends LitElement {
   @internalProperty() maniScore = 0;
   @internalProperty() swScore = 0;
   @internalProperty() securityScore = 0;
+  @internalProperty() overallScore = 0;
 
   @internalProperty() currentURL: string | undefined;
+
+  @internalProperty() pwa_icon: { url: string; locked: boolean } | undefined;
+  @internalProperty() manifest_icon:
+    | { url: string; locked: boolean }
+    | undefined;
+  @internalProperty() sw_icon: { url: string; locked: boolean } | undefined;
+  @internalProperty() security_icon:
+    | { url: string; locked: boolean }
+    | undefined;
 
   maxManiScore = 80;
   maxSWSCore = 20;
@@ -42,14 +60,9 @@ export class ReportCard extends LitElement {
       }
 
       #main-report-section {
-        padding-left: 32px;
+        padding-left: 18px;
         padding-right: 32px;
         padding-bottom: 32px;
-      }
-
-      #report-header {
-        margin-bottom: 4em;
-        margin-top: 4em;
       }
 
       #report-content {
@@ -80,6 +93,10 @@ export class ReportCard extends LitElement {
       fast-accordion-item,
       fast-accordion {
         --neutral-divider-rest: #e5e5e5;
+      }
+
+      fast-accordion {
+        border-top: none;
       }
 
       fast-accordion-item::part(icon) {
@@ -130,8 +147,9 @@ export class ReportCard extends LitElement {
 
       .options-button {
         width: 217px;
-        float: right;
-        margin-right: 4em;
+
+        margin-top: 33px;
+        margin-bottom: 33px;
       }
 
       .options-button::part(underlying-button) {
@@ -141,8 +159,9 @@ export class ReportCard extends LitElement {
 
       #total-score {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
+        flex-direction: column;
+        align-items: initial;
+        justify-content: initial;
 
         margin-right: 1.4em;
       }
@@ -154,7 +173,6 @@ export class ReportCard extends LitElement {
       #package-block {
         display: flex;
         justify-content: flex-end;
-        margin-right: 1.2em;
         margin-top: 40px;
       }
 
@@ -165,15 +183,76 @@ export class ReportCard extends LitElement {
         border-radius: var(--button-radius);
       }
 
+      #total-score-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      #total-score-header h4 {
+        font-size: var(--medium-font-size);
+      }
+
+      #badge-section {
+        display: flex;
+        align-items: center;
+        margin-top: -18px;
+      }
+
+      #badge-section img {
+        margin-right: 10px;
+        width: 60px;
+      }
+
+      #badge-text h4 {
+        font-size: var(--small-font-size);
+        margin-bottom: 0;
+        margin-top: 0;
+      }
+
+      #badge-text p {
+        font-size: var(--small-font-size);
+        font-weight: normal;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      .locked {
+        opacity: 0.5;
+      }
+
+      ${
+        xxxLargeBreakPoint(
+          css`
+            .accordion-heading-block {
+              width: 111em;
+            }
+          `
+        )
+      }
+
+      ${xxLargeBreakPoint(
+        css`
+          .accordion-heading-block {
+            max-width: 85vw;
+            width: 85vw;
+          }
+
+          #total-score {
+            margin-right: 1.2em;
+          }
+        `
+      )}
+
       ${xLargeBreakPoint(
         css`
           .accordion-heading-block,
           #report-content {
-            width: 71vw;
+            width: 80vw;
           }
 
           #total-score {
-            width: 70vw;
+            width: 75vw;
           }
         `
       )}
@@ -186,11 +265,33 @@ export class ReportCard extends LitElement {
         `
       )}
 
+      ${mediumBreakPoint(
+        css`
+          .accordion-heading-block {
+            width: 90vw;
+          }
+
+          #package-block {
+            justify-content: center;
+            margin-bottom: 40px;
+          }
+        `
+      )}
+
       ${smallBreakPoint(
         css`
           #main-report-section {
             padding-left: 12px;
             padding-right: 12px;
+          }
+
+          .accordion-heading-block {
+            width: 90vw;
+          }
+
+          #package-block {
+            justify-content: center;
+            margin-bottom: 40px;
           }
         `
       )}
@@ -208,12 +309,10 @@ export class ReportCard extends LitElement {
       // lets attempt to grab the last saved results
       try {
         this.scoreCardResults = await this.handleNoResults();
-      }
-      catch(err) {
+      } catch (err) {
         throw new Error(`Error handling results: ${err}`);
       }
-    }
-    else {
+    } else {
       this.scoreCardResults = this.results;
     }
 
@@ -221,6 +320,66 @@ export class ReportCard extends LitElement {
 
     if (urlData) {
       this.currentURL = urlData;
+    }
+
+    this.overallScore = getOverallScore();
+
+    await this.handleBadges();
+
+    console.log('pwa icon', this.pwa_icon);
+  }
+
+  async handleBadges() {
+    const possible_badges = getPossibleBadges();
+    const achievedBadges = sortBadges();
+    console.log('currentBadges', achievedBadges);
+
+    if (possible_badges) {
+      possible_badges.forEach(badge => {
+        console.log('badge', badge.name);
+        if (badge.name === 'PWA') {
+          console.log('chosen', badge);
+          this.pwa_icon = {
+            url: badge.url,
+            locked: achievedBadges.find(dupe => {
+              return badge.name === dupe.name;
+            })
+              ? false
+              : true,
+          };
+          return;
+        } else if (badge.name === 'Manifest') {
+          this.manifest_icon = {
+            url: badge.url,
+            locked: achievedBadges.find(dupe => {
+              return badge.name === dupe.name;
+            })
+              ? false
+              : true,
+          };
+          return;
+        } else if (badge.name === 'Service Worker') {
+          this.sw_icon = {
+            url: badge.url,
+            locked: achievedBadges.find(dupe => {
+              return badge.name === dupe.name;
+            })
+              ? false
+              : true,
+          };
+        } else if (badge.name === 'Security') {
+          this.security_icon = {
+            url: badge.url,
+            locked: achievedBadges.find(dupe => {
+              return badge.name === dupe.name;
+            })
+              ? false
+              : true,
+          };
+        }
+      });
+    } else {
+      return undefined;
     }
   }
 
@@ -234,11 +393,10 @@ export class ReportCard extends LitElement {
         if (resultsData) {
           resolve(resultsData);
         }
+      } else {
+        reject(new Error('No results passed'));
       }
-      else {
-        reject(new Error("No results passed"));
-      }
-    })
+    });
   }
 
   opened(targetEl: EventTarget | null) {
@@ -344,29 +502,26 @@ export class ReportCard extends LitElement {
 
     if (baseOrPublishIffy === 'base') {
       Router.go('/basepackage');
-    }
-    else if (baseOrPublishIffy === 'publish') {
+    } else if (baseOrPublishIffy === 'publish') {
       Router.go(`/publish?site=${this.currentURL}`);
-    }
-    else {
+    } else {
       Router.go('/basepackage');
+    }
+  }
+
+  decideScoreColor(score: number, locked?: boolean) {
+    if (score === 0) {
+      return 'var(--error-color)';
+    } else if (locked) {
+      return 'var(--warning-color)';
+    } else {
+      return 'var(--success-color)';
     }
   }
 
   render() {
     return html`
       <div id="main-report-section">
-        <div id="report-header">
-          <h3>The Scoop</h3>
-
-          <p>
-            Ready to build your PWA? Tap "Build My PWA" to package your PWA for
-            the app stores or tap "Feature Store" to check out the latest web
-            components from the PWABuilder team to improve your PWA even
-            further!
-          </p>
-        </div>
-
         <div id="report-content">
           <fast-accordion>
             <fast-accordion-item
@@ -376,8 +531,15 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Manifest</span>
 
                 <div class="score-block">
-                  <span class="accordion-score"
-                    >${this.maniScore} / ${this.maxManiScore}</span
+                  <span
+                    class="accordion-score"
+                    style=${styleMap({
+                      color: this.decideScoreColor(
+                        this.maniScore,
+                        this.manifest_icon?.locked
+                      ),
+                    })}
+                    >${this.maniScore}</span
                   >
 
                   <fast-button class="flipper-button" mode="stealth">
@@ -386,16 +548,38 @@ export class ReportCard extends LitElement {
                 </div>
               </div>
 
-              <app-button
-                @click="${() => this.openManiOptions()}"
-                class="options-button"
-                >Manifest Options</app-button
-              >
+              ${this.manifest_icon
+                ? html`<div id="badge-section">
+                    <img
+                      class="${classMap({
+                        locked: this.manifest_icon.locked,
+                      })}"
+                      src="${this.manifest_icon.url}"
+                    />
 
-              ${this.scoreCardResults ? html`<score-results
-                .testResults="${this.scoreCardResults.manifest}"
-                @scored="${(ev: CustomEvent) => this.handleManiScore(ev)}"
-              ></score-results>` : null}
+                    <div id="badge-text">
+                      ${this.manifest_icon.locked
+                        ? html`<h4>
+                            Uh oh, your Manifest needs more work before this
+                            badge is unlocked
+                          </h4>`
+                        : html`<h4>You have unlocked the Manifest Badge!</h4>`}
+                    </div>
+                  </div>`
+                : null}
+              ${this.scoreCardResults
+                ? html`<score-results
+                    .testResults="${this.scoreCardResults.manifest}"
+                    @scored="${(ev: CustomEvent) => this.handleManiScore(ev)}"
+                  >
+                    <app-button
+                      @click="${() => this.openManiOptions()}"
+                      class="options-button"
+                      slot="options-button"
+                      >Manifest Options</app-button
+                    >
+                  </score-results>`
+                : null}
             </fast-accordion-item>
             <fast-accordion-item
               @click="${(ev: Event) => this.opened(ev.target)}"
@@ -404,8 +588,15 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Service Worker</span>
 
                 <div class="score-block">
-                  <span class="accordion-score"
-                    >${this.swScore} / ${this.maxSWSCore}</span
+                  <span
+                    style=${styleMap({
+                      color: this.decideScoreColor(
+                        this.swScore,
+                        this.sw_icon?.locked
+                      ),
+                    })}
+                    class="accordion-score"
+                    >${this.swScore}</span
                   >
 
                   <fast-button class="flipper-button" mode="stealth">
@@ -413,15 +604,41 @@ export class ReportCard extends LitElement {
                   </fast-button>
                 </div>
               </div>
-              <app-button
-                @click="${() => this.openSWOptions()}"
-                class="options-button"
-                >Service Worker Options</app-button
-              >
-              ${this.scoreCardResults ? html`<score-results
-                .testResults="${this.scoreCardResults.service_worker}"
-                @scored="${(ev: CustomEvent) => this.handleSWScore(ev)}"
-              ></score-results>` : null}
+
+              ${this.sw_icon
+                ? html`<div id="badge-section">
+                    <img
+                      class="${classMap({
+                        locked: this.sw_icon.locked,
+                      })}"
+                      src="${this.sw_icon.url}"
+                    />
+
+                    <div id="badge-text">
+                      ${this.sw_icon.locked
+                        ? html`<h4>
+                            Uh oh, your Service Worker needs more work before
+                            this badge is unlocked
+                          </h4>`
+                        : html`<h4>
+                            You have unlocked the Service Worker Badge!
+                          </h4>`}
+                    </div>
+                  </div>`
+                : null}
+              ${this.scoreCardResults
+                ? html`<score-results
+                    .testResults="${this.scoreCardResults.service_worker}"
+                    @scored="${(ev: CustomEvent) => this.handleSWScore(ev)}"
+                  >
+                    <app-button
+                      @click="${() => this.openSWOptions()}"
+                      slot="options-button"
+                      class="options-button"
+                      >Service Worker Options</app-button
+                    >
+                  </score-results>`
+                : null}
             </fast-accordion-item>
             <fast-accordion-item
               @click="${(ev: Event) => this.opened(ev.target)}"
@@ -430,8 +647,15 @@ export class ReportCard extends LitElement {
                 <span class="accordion-heading">Security</span>
 
                 <div class="score-block">
-                  <span class="accordion-score"
-                    >${this.securityScore} / ${this.maxSecurityScore}</span
+                  <span
+                    style=${styleMap({
+                      color: this.decideScoreColor(
+                        this.securityScore,
+                        this.security_icon?.locked
+                      ),
+                    })}
+                    class="accordion-score"
+                    >${this.securityScore}</span
                   >
 
                   <fast-button class="flipper-button" mode="stealth">
@@ -440,23 +664,80 @@ export class ReportCard extends LitElement {
                 </div>
               </div>
 
-              ${this.scoreCardResults ? html`<score-results
-                .testResults="${this.scoreCardResults.security}"
-                @scored="${(ev: CustomEvent) => this.handleSecurityScore(ev)}"
-              ></score-results>` : null}
+              ${this.security_icon
+                ? html`<div id="badge-section">
+                    <img
+                      class="${classMap({
+                        locked: this.security_icon.locked,
+                      })}"
+                      src="${this.security_icon.url}"
+                    />
+
+                    <div id="badge-text">
+                      ${this.security_icon.locked
+                        ? html`<h4>
+                            Uh oh, your Security needs more work before this
+                            badge is unlocked
+                          </h4>`
+                        : html`<h4>You have unlocked the Security Badge!</h4>`}
+                    </div>
+                  </div>`
+                : null}
+              ${this.scoreCardResults
+                ? html`<score-results
+                    .testResults="${this.scoreCardResults.security}"
+                    @scored="${(ev: CustomEvent) =>
+                      this.handleSecurityScore(ev)}"
+                  ></score-results>`
+                : null}
             </fast-accordion-item>
           </fast-accordion>
         </div>
 
         <div id="overall-score">
           <div id="total-score">
-            <h4>Total Score</h4>
+            <div id="total-score-header">
+              <h4>Total Score</h4>
+              <span
+                style=${styleMap({
+                  color: this.decideScoreColor(
+                    this.overallScore,
+                    this.pwa_icon?.locked
+                  ),
+                })}
+                id="overall-score"
+                >${this.overallScore}</span
+              >
+            </div>
 
-            <span id="overall-score">00 / 100</span>
+            ${this.pwa_icon
+              ? html`<div id="badge-section">
+                  <img
+                    class="${classMap({
+                      locked: this.pwa_icon.locked,
+                    })}"
+                    src="${this.pwa_icon.url}"
+                  />
+
+                  <div id="badge-text">
+                    ${this.pwa_icon.locked === false
+                      ? html`<h4>Congrats!</h4>
+                          <p>You have a great PWA!</p>`
+                      : html`
+                          <h4>Uh Oh</h4>
+                          <p>
+                            Your PWA needs more work, look above for details.
+                          </p>
+                        `}
+                  </div>
+                </div>`
+              : null}
           </div>
 
           <div id="package-block">
-            <app-button @click="${() => this.decideWhereToGo()}">Next</app-button>
+            <app-button @click="${() => this.decideWhereToGo()}"
+              >Next</app-button
+            >
           </div>
         </div>
       </div>

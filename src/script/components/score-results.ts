@@ -8,6 +8,11 @@ import {
 } from 'lit-element';
 import { OrganizedResults, TestResult } from '../utils/interfaces';
 
+import {
+  mediumBreakPoint,
+  smallBreakPoint,
+} from '../utils/css/breakpoints';
+
 @customElement('score-results')
 export class ScoreResults extends LitElement {
   @property() testResults: Array<TestResult> | undefined;
@@ -30,6 +35,11 @@ export class ScoreResults extends LitElement {
         grid-gap: 0 3em;
       }
 
+      #mani-scorecard-header p {
+        font-size: var(--smallish-font-size);
+        line-height: 24px;
+      }
+
       ul {
         list-style: none;
         padding: 0;
@@ -48,9 +58,35 @@ export class ScoreResults extends LitElement {
         font-weight: var(--font-bold);
       }
 
+      .good-score {
+        color: var(--success-color);
+      }
+
       .bad-score {
         color: red;
       }
+
+      ${mediumBreakPoint(
+        css`
+          #score-grid {
+            grid-template-columns: auto;
+          }
+        `
+      )}
+
+      ${smallBreakPoint(
+        css`
+          #score-grid {
+            grid-template-columns: auto;
+          }
+
+          #options-block {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+        `
+      )}
     `;
   }
 
@@ -94,7 +130,7 @@ export class ScoreResults extends LitElement {
     if (results && results.length > 0) {
       results.map((result: TestResult) => {
         if (result.result === true) {
-          score = score + 5;
+          score = score + 10;
         }
       });
 
@@ -111,13 +147,15 @@ export class ScoreResults extends LitElement {
     return html`
       <div>
         <div id="mani-scorecard-header">
-          <h4>Summary</h4>
-
           <p>
             Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut
             fugit, sed quia consequuntur magni dolores eos qui ratione
             voluptatem sequi nesciunt. ven further!
           </p>
+
+          <div id="options-block">
+            <slot name="options-button"></slot>
+          </div>
         </div>
 
         <div id="score-grid">
@@ -133,7 +171,7 @@ export class ScoreResults extends LitElement {
                             <span>${result.infoString}</span>
 
                             ${result.result === true
-                              ? html`<span class="good-score">5</span>`
+                              ? html`<span class="good-score">10</span>`
                               : html`<span class="bad-score">0</span>`}
                           </li>
                         `;
@@ -155,7 +193,7 @@ export class ScoreResults extends LitElement {
                             <span>${result.infoString}</span>
 
                             ${result.result === true
-                              ? html`<span class="good-score">5</span>`
+                              ? html`<span class="good-score">10</span>`
                               : html`<span class="bad-score">0</span>`}
                           </li>
                         `;
@@ -176,7 +214,7 @@ export class ScoreResults extends LitElement {
                             <span>${result.infoString}</span>
 
                             ${result.result === true
-                              ? html`<span class="good-score">5</span>`
+                              ? html`<span class="good-score">10</span>`
                               : html`<span class="bad-score">0</span>`}
                           </li>
                         `;

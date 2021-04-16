@@ -100,7 +100,7 @@ async function getManifestViaHtmlParse(
     format: 'w3c',
     generatedUrl: responseData.manifestUrl || url,
     default: {
-      short_name: responseData.manifestContents.shortName || '',
+      short_name: responseData.manifestContents.short_name || '',
     },
     id: '',
     generated: responseData.manifestContents ? false : true,
@@ -121,7 +121,14 @@ export async function fetchManifest(
 
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve, reject) => {
-    const knownGoodUrl = await cleanUrl(url);
+    let knownGoodUrl;
+
+    try {
+      knownGoodUrl = await cleanUrl(url);
+    }
+    catch (err) {
+      reject(err);
+    }
 
     setURL(knownGoodUrl);
 
