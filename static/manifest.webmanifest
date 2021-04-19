@@ -47,40 +47,95 @@
   ],
   "screenshots": [
     {
-      "src": "/Images/assets/screenShots/s1.png",
-      "sizes": "1598x1012",
+      "src": "/Images/assets/screenShots/01-home-desktop.png",
+      "sizes": "1920x1200",
       "type": "image/png",
-      "description": "PWA Builder Home Screen"
+      "label": "PWABuilder gives you an easy way to analyze your web app",
+      "platform": "wide"
     },
     {
-      "src": "/Images/assets/screenShots/s2.png",
-      "sizes": "1389x937",
+      "src": "/Images/assets/screenShots/02-analysis-desktop.png",
+      "sizes": "1920x1200",
       "type": "image/png",
-      "description": "PWA Builder is also a PWA and can be used in app mode"
+      "label": "PWABuilder analyzes and scores your web app, helping you build a great PWA",
+      "platform": "wide"
     },
     {
-      "src": "/Images/assets/screenShots/s3.png",
-      "sizes": "1389x1004",
+      "src": "/Images/assets/screenShots/03-packaging-desktop.png",
+      "sizes": "1920x1200",
       "type": "image/png",
-      "description": "Enter your URL to get a PWA score"
+      "label": "PWABuilder lets you create apps for different app stores",
+      "platform": "wide"
     },
     {
-      "src": "/Images/assets/screenShots/s4.png",
-      "sizes": "1389x1004",
+      "src": "/Images/assets/screenShots/04-manifest-desktop.png",
+      "sizes": "1920x1200",
       "type": "image/png",
-      "description": "See the manifest on the site, or a generated manifest from PWA Builder"
+      "label": "PWABuilder gives you tools to create a great web app manifest",
+      "platform": "wide"
     },
     {
-      "src": "/Images/assets/screenShots/s5.png",
-      "sizes": "1389x1004",
+      "src": "/Images/assets/screenShots/05-demos-desktop.png",
+      "sizes": "1920x1200",
       "type": "image/png",
-      "description": "Find easy to use service workers that fit almost any site."
+      "label": "PWABuilder has articles and demos on the latest web platform features to help you build a great PWA",
+      "platform": "wide"
     },
     {
-      "src": "/Images/assets/screenShots/s6.png",
-      "sizes": "1389x1004",
+      "src": "/Images/assets/screenShots/06-demo-desktop.png",
+      "sizes": "1920x1200",
       "type": "image/png",
-      "description": "Find easy to use snippits that make your web site more app-like"
+      "label": "Each web platform article comes with code samples, live demo, browser support matrix, and more",
+      "platform": "wide"
+    },
+    {
+      "src": "/Images/assets/screenShots/06-demo-desktop.png",
+      "sizes": "1920x1200",
+      "type": "image/png",
+      "label": "Each web platform article comes with code samples, live demo, browser support matrix, and more",
+      "platform": "wide"
+    },
+    {
+      "src": "/Images/assets/screenShots/07-home-mobile.png",
+      "sizes": "1079x1919",
+      "type": "image/png",
+      "label": "PWABuilder gives you an easy way to analyze your web app",
+      "platform": "narrow"
+    },
+    {
+      "src": "/Images/assets/screenShots/08-analysis-mobile.png",
+      "sizes": "1079x1919",
+      "type": "image/png",
+      "label": "PWABuilder analyzes and scores your web app, helping you build a great PWA",
+      "platform": "narrow"
+    },
+    {
+      "src": "/Images/assets/screenShots/09-packaging-mobile.png",
+      "sizes": "1079x1919",
+      "type": "image/png",
+      "label": "PWABuilder lets you create apps for different app stores",
+      "platform": "narrow"
+    },
+    {
+      "src": "/Images/assets/screenShots/10-manifest-mobile.png",
+      "sizes": "1079x1919",
+      "type": "image/png",
+      "label": "PWABuilder gives you tools to create a great web app manifest",
+      "platform": "narrow"
+    },
+    {
+      "src": "/Images/assets/screenShots/11-demos-mobile.png",
+      "sizes": "1079x1919",
+      "type": "image/png",
+      "label": "PWABuilder has articles and demos on the latest web platform features to help you build a great PWA",
+      "platform": "narrow"
+    },
+    {
+      "src": "/Images/assets/screenShots/12-demo-mobile.png",
+      "sizes": "1079x1919",
+      "type": "image/png",
+      "label": "Each web platform article comes with code samples, live demo, browser support matrix, and more",
+      "platform": "narrow"
     }
   ]
 }
