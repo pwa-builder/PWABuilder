@@ -478,13 +478,7 @@ export class AppSidebar extends LitElement {
         max-width: 64px;
         text-align: center;
       }
-
-      #rating-comment {
-        font-weight: var(--font-bold);
-        font-size: var(--small-font-size);
-        text-align: center;
-        display: block;
-      }
+      
 
       ${(mediumBreakPoint(css`
         aside.tablet-sidebar,
@@ -633,13 +627,6 @@ export class AppSidebar extends LitElement {
                 >Your PWA Score compared with other developers</span
               >
               <rating-dial></rating-dial>
-
-              <div class="overall-score">${this.overallScore}</div>
-
-              <span id="rating-comment"
-                >Your PWA ranks in the <span id="top">Top 100</span> of all
-                developers using PWA Builder</span
-              >
             </div>
           </sidebar-card>
 
