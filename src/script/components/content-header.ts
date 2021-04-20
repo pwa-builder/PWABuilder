@@ -39,6 +39,10 @@ export class ContentHeader extends LitElement {
         background: url(/assets/images/publish.jpg) top right / cover no-repeat;
       }
 
+      :host(.congrats) {
+        background: url(/assets/images/congrats.jpg) top right / cover no-repeat;
+      }
+
       :host(.home) {
         height: initial;
       }
@@ -156,6 +160,10 @@ export class ContentHeader extends LitElement {
         :host(.publish) {
           background-position: 0em;
         }
+
+        :host(.congrats) {
+          background-position: 0em;
+        }
       `)}
 
       ${xxLargeBreakPoint(css`
@@ -180,6 +188,10 @@ export class ContentHeader extends LitElement {
 
         :host(.publish) {
           background-position: 2em;
+        }
+
+        :host(.congrats) {
+          background-position: 0em;
         }
       `)}
     `;
