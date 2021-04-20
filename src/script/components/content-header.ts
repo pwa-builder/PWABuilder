@@ -40,7 +40,8 @@ export class ContentHeader extends LitElement {
       }
 
       :host(.congrats) {
-        background: url(/assets/images/congrats.webp) top right / cover no-repeat;
+        background: url(/assets/images/congrats.webp) top right / cover
+          no-repeat;
       }
 
       :host(.home) {
@@ -63,6 +64,15 @@ export class ContentHeader extends LitElement {
       }
 
       ${smallBreakPoint(css`
+        :host(.home) {
+          background-position: top center;
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/home_mobile.webp);
+          background-size: cover;
+
+          height: 46em;
+        }
+
         #main-container {
           flex-direction: column-reverse;
         }
@@ -80,8 +90,12 @@ export class ContentHeader extends LitElement {
 
         #main-container {
           padding-top: initial;
+          margin-top: 15em;
           padding-bottom: 51px;
-          padding-left: 0;
+        }
+
+        #circles-box {
+          height: 46em;
         }
 
         #hero-container {
@@ -96,6 +110,15 @@ export class ContentHeader extends LitElement {
       ${mediumBreakPoint(css`
         #main-container {
           flex-direction: column-reverse;
+        }
+
+        :host(.home) {
+          background-position: top center;
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/home_mobile.webp);
+          background-size: cover;
+
+          height: 30em;
         }
 
         img {
@@ -115,6 +138,11 @@ export class ContentHeader extends LitElement {
 
         #main-container {
           padding-top: initial;
+          margin-top: 12em;
+        }
+
+        #circles-box {
+          height: 30em;
         }
       `)}
 
