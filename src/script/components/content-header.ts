@@ -15,7 +15,7 @@ export class ContentHeader extends LitElement {
   static get styles() {
     return css`
       :host {
-        background: url(/assets/images/home_1920.jpg);
+        background: url(/assets/images/home_1920.webp);
         background-position: top right;
         background-size: cover;
         background-repeat: no-repeat;
@@ -26,21 +26,21 @@ export class ContentHeader extends LitElement {
       }
 
       :host(.reportCard) {
-        background: url(/assets/images/report_card.jpg) top right / cover
+        background: url(/assets/images/report_card.webp) top right / cover
           no-repeat;
       }
 
       :host(.basePackage) {
-        background: url(/assets/images/base_package.jpg) top right / cover
+        background: url(/assets/images/base_package.webp) top right / cover
           no-repeat;
       }
 
       :host(.publish) {
-        background: url(/assets/images/publish.jpg) top right / cover no-repeat;
+        background: url(/assets/images/publish.webp) top right / cover no-repeat;
       }
 
       :host(.congrats) {
-        background: url(/assets/images/congrats.jpg) top right / cover no-repeat;
+        background: url(/assets/images/congrats.webp) top right / cover no-repeat;
       }
 
       :host(.home) {
@@ -147,7 +147,7 @@ export class ContentHeader extends LitElement {
         }
 
         :host(.reportCard) {
-          background: url(/assets/images/report_card.jpg) top right / cover
+          background: url(/assets/images/report_card.webp) top right / cover
             no-repeat;
 
           background-position: -1em;
@@ -178,7 +178,7 @@ export class ContentHeader extends LitElement {
         }
 
         :host(.reportCard) {
-          background: url(/assets/images/report_card.jpg) top right / cover
+          background: url(/assets/images/report_card.webp) top right / cover
             no-repeat;
         }
 
