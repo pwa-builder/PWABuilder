@@ -30,6 +30,11 @@ export class ContentHeader extends LitElement {
           no-repeat;
       }
 
+      :host(.basePackage) {
+        background: url(/assets/images/base_package.jpg) top right / cover
+          no-repeat;
+      }
+
       #content-side {
         max-width: 18em;
       }
@@ -127,6 +132,10 @@ export class ContentHeader extends LitElement {
 
           background-position: -1em;
         }
+
+        :host(.basePackage) {
+          background-position: -1em;
+        }
       `)}
 
       ${xxLargeBreakPoint(css`
@@ -137,13 +146,16 @@ export class ContentHeader extends LitElement {
         :host {
           background-position: -8em center;
           background-repeat: no-repeat;
-          background-image: url(/assets/images/home_1920.jpg);
           background-size: cover;
         }
 
         :host(.reportCard) {
           background: url(/assets/images/report_card.jpg) top right / cover
             no-repeat;
+        }
+
+        :host(.basePackage) {
+          background-position: -1em;
         }
       `)}
     `;
