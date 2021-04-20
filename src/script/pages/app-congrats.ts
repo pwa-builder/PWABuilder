@@ -12,7 +12,10 @@ import {
   xxxLargeBreakPoint,
   largeBreakPoint,
   mediumBreakPoint,
+  smallBreakPoint,
+  customBreakPoint,
 } from '../utils/css/breakpoints';
+import { hidden_all } from '../utils/css/hidden';
 
 // @ts-ignore
 import style from '../../../styles/layout-defaults.css';
@@ -153,6 +156,7 @@ export class AppCongrats extends LitElement {
         }
 
         #blog-block app-card {
+          max-width: 612px;
           margin-bottom: 10px;
           box-shadow: 0px 2px 4px 0px rgb(0 0 0 / 25%);
           border: none;
@@ -160,6 +164,7 @@ export class AppCongrats extends LitElement {
         }
 
         #blog-block #first-card {
+          max-height: 552px;
           margin-right: 18px;
         }
 
@@ -198,43 +203,96 @@ export class AppCongrats extends LitElement {
           font-weight: var(--font-bold);
           font-size: var(--small-medium-font-size);
         }
-
-        ${xxxLargeBreakPoint(
-          css`
-            app-sidebar {
-              display: block;
-            }
-
-            #tablet-sidebar {
-              display: none;
-            }
-
-            #desktop-sidebar {
-              display: block;
-            }
-          `
-        )}
-
-        ${largeBreakPoint(
-          css`
-            #tablet-sidebar {
-              display: block;
-            }
-
-            #desktop-sidebar {
-              display: none;
-            }
-          `
-        )}
-
-        ${mediumBreakPoint(
-          css`
-            #blog-block #first-card {
-              margin-right: initial;
-            }
-          `
-        )}
       `,
+      hidden_all,
+      xxxLargeBreakPoint(
+        css`
+          app-sidebar {
+            display: block;
+          }
+
+          #tablet-sidebar {
+            display: none;
+          }
+
+          #desktop-sidebar {
+            display: block;
+          }
+        `
+      ),
+      largeBreakPoint(
+        css`
+          #tablet-sidebar {
+            display: block;
+          }
+
+          #desktop-sidebar {
+            display: none;
+          }
+        `
+      ),
+      mediumBreakPoint(
+        css`
+          #blog-block #first-card {
+            margin-right: initial;
+          }
+        `
+      ),
+      smallBreakPoint(
+        css`
+          #blog-block {
+            display: block;
+            overflow-y: hidden;
+            overflow-x: scroll;
+            scroll-snap-type: x proximity;
+            white-space: nowrap;
+            align-items: center;
+            padding: 0 16px;
+            margin-bottom: 16px;
+          }
+
+          .other.posts {
+            display: inline-block;
+            margin-left: 32px;
+          }
+
+          #blog-block #first-card {
+            margin-right: 0;
+          }
+
+          #blog-block .blog {
+            display: inline-block;
+            width: calc(100% - 32px);
+            margin-right: 32px;
+            margin-bottom: 16px;
+            scroll-snap-align: center;
+          }
+        `
+      ),
+      customBreakPoint(
+        css`
+          #blog-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
+          #blog-block app-card {
+            max-width: 416px;
+          }
+
+          /* due to container, might want to refactor so the container is optional. */
+          .other.posts {
+            width: 100%;
+          }
+
+          .other.posts app-card {
+            margin-left: auto;
+            margin-right: auto;
+          }
+        `,
+        480,
+        639
+      ),
     ];
   }
 
@@ -518,33 +576,38 @@ export class AppCongrats extends LitElement {
               <h3>Blog Posts recommended for you...</h3>
 
               <div id="blog-block">
-                ${this.featuredPost ? html`<app-card
-                  id="first-card"
-                  cardTitle="${this.featuredPost.title}"
-                  description="${this.featuredPost.description}"
-                  imageUrl="${this.featuredPost.imageUrl}"
-                  linkText="Read Post"
-                  linkRoute="${this.featuredPost.clickUrl}"
-                  .featured="${true}"
-                  class=${classMap({
-                    blog: true,
-                    featured: true,
-                  })}
-                >
-                </app-card>` : null}
+                ${this.featuredPost
+                  ? html`<app-card
+                      id="first-card"
+                      cardTitle="${this.featuredPost.title}"
+                      description="${this.featuredPost.description}"
+                      imageUrl="${this.featuredPost.imageUrl}"
+                      linkText="Read Post"
+                      linkRoute="${this.featuredPost.clickUrl}"
+                      .tags=${this.featuredPost.tags}
+                      .featured="${this.isFeatured()}"
+                      class=${classMap({
+                        blog: true,
+                        featured: this.isFeatured(),
+                      })}
+                    >
+                    </app-card>`
+                  : null}
 
-                <div>
-                  ${this.blog_posts ? this.blog_posts.map(post => {
-                    return html`
-                      <app-card
-                        cardTitle="${post.title}"
-                        description="${post.description}"
-                        class="blog"
-                        imageUrl="${post.imageUrl}"
-                      >
-                      </app-card>
-                    `;
-                  }) : null}
+                <div class="other posts">
+                  ${this.blog_posts
+                    ? this.blog_posts.map(post => {
+                        return html`
+                          <app-card
+                            cardTitle="${post.title}"
+                            description="${post.description}"
+                            class="blog"
+                            imageUrl="${post.imageUrl}"
+                          >
+                          </app-card>
+                        `;
+                      })
+                    : null}
                 </div>
               </div>
 
@@ -564,5 +627,9 @@ export class AppCongrats extends LitElement {
         </div>
       </div>
     `;
+  }
+
+  isFeatured() {
+    return window.innerWidth > 1023;
   }
 }

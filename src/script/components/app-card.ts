@@ -53,6 +53,11 @@ export class AppCard extends LitElement {
           border-radius: 4px;
         }
 
+        fast-card h3,
+        fast-card p {
+          white-space: initial;
+        }
+
         fast-card.default {
           min-width: 200px;
           max-width: 280px;
@@ -254,8 +259,11 @@ export class AppCard extends LitElement {
           right: 0;
         }
 
-        .blog.featured .tag-list .tag {
-          margin: 8px 0 0 8px;
+        .tag {
+          margin: 8px 8px 0 16px;
+          padding: 2px 6px;
+          border-radius: 2px;
+          background-color: var(--primary-background-color);
         }
 
         .blog.featured .img-overlay {
@@ -325,14 +333,6 @@ export class AppCard extends LitElement {
           color: var(--font-color);
         }
 
-        ${mediumBreakPoint(
-          css`
-            .blog {
-              margin-bottom: 32px;
-            }
-          `
-        )}
-
         ${largeBreakPoint(
           css`
             .blog .img-overlay {
@@ -353,7 +353,8 @@ export class AppCard extends LitElement {
       css`
         .micro {
           display: grid;
-          width: 280px;
+          width: 100%;
+          max-width: 416px;
           margin: 16px;
 
           grid-template-columns: 72px auto;
