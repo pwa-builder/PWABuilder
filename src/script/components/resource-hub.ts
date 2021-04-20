@@ -45,7 +45,9 @@ export class ResourceHub extends LitElement {
         }
 
         .home {
-          background: var(--primary-color);
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/blog_fold.jpg);
+          background-size: cover;
           color: var(--secondary-color);
         }
 
