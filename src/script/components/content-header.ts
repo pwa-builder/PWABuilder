@@ -1,5 +1,5 @@
 import { css, customElement, html, LitElement } from 'lit-element';
-import { loadPaintPolyfillIfNeeded } from '../polyfills/css-paint';
+// import { loadPaintPolyfillIfNeeded } from '../polyfills/css-paint';
 import {
   BreakpointValues,
   largeBreakPoint,
@@ -15,11 +15,44 @@ export class ContentHeader extends LitElement {
   static get styles() {
     return css`
       :host {
-        display: block;
-        background: url(/assets/images/glass.jpg);
+        background: url(/assets/images/home_1920.webp);
+        background-position: top right;
         background-size: cover;
         background-repeat: no-repeat;
-        background-position: right;
+
+        height: 16em;
+        display: flex;
+        align-items: center;
+      }
+
+      :host(.reportCard) {
+        background: url(/assets/images/report_card.webp) top right / cover
+          no-repeat;
+      }
+
+      :host(.basePackage) {
+        background: url(/assets/images/base_package.webp) top right / cover
+          no-repeat;
+      }
+
+      :host(.publish) {
+        background: url(/assets/images/publish.webp) top right / cover no-repeat;
+      }
+
+      :host(.congrats) {
+        background: url(/assets/images/congrats.webp) top right / cover no-repeat;
+      }
+
+      :host(.home) {
+        height: initial;
+      }
+
+      :host(.home) #circles-box {
+        width: 100%;
+      }
+
+      #content-side {
+        max-width: 18em;
       }
 
       #main-container {
@@ -27,51 +60,6 @@ export class ContentHeader extends LitElement {
         align-items: center;
         padding-bottom: 91px;
         padding-left: 2em;
-      }
-
-      #circles-box {
-        --colors: #888094, #5a5ab7, #d9a0f7, #5d2863, #5b5bb9;
-        --min-radius: 30;
-        --max-radius: 100;
-        --num-circles: 15;
-        --min-opacity: 10;
-        --max-opacity: 50;
-        background-image: paint(circles);
-      }
-
-      #background-filter-box {
-        background: linear-gradient(
-          106.57deg,
-          rgba(255, 255, 255, 0.616) 0%,
-          rgba(255, 255, 255, 0.098) 100%
-        );
-        backdrop-filter: blur(40px);
-      }
-
-      img {
-        margin-left: 30px;
-        height: 389px;
-        width: 369px;
-
-        animation: float 3s ease-in-out infinite;
-      }
-
-      /*
-        keeping this here as its only used in this component
-      */
-      @keyframes float {
-        0% {
-          transform: translateY(0px);
-        }
-        25% {
-          transform: translateY(-10px);
-        }
-        75% {
-          transform: translateY(10px);
-        }
-        100% {
-          transform: translateY(0px);
-        }
       }
 
       ${smallBreakPoint(css`
@@ -108,8 +96,6 @@ export class ContentHeader extends LitElement {
       ${mediumBreakPoint(css`
         #main-container {
           flex-direction: column-reverse;
-
-          
         }
 
         img {
@@ -148,11 +134,64 @@ export class ContentHeader extends LitElement {
           height: 100%;
           width: initial;
         }
+
+        :host(.home) {
+          background-position: -21em center;
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/home_1920.jpg);
+          background-size: cover;
+        }
+
+        :host(.home) #content-side {
+          max-width: 21em;
+        }
+
+        :host(.reportCard) {
+          background: url(/assets/images/report_card.webp) top right / cover
+            no-repeat;
+
+          background-position: -1em;
+        }
+
+        :host(.basePackage) {
+          background-position: -1em;
+        }
+
+        :host(.publish) {
+          background-position: 0em;
+        }
+
+        :host(.congrats) {
+          background-position: 0em;
+        }
       `)}
 
       ${xxLargeBreakPoint(css`
         #content-side {
-          width: 28em;
+          max-width: 23em;
+        }
+
+        :host {
+          background-position: -8em center;
+          background-repeat: no-repeat;
+          background-size: cover;
+        }
+
+        :host(.reportCard) {
+          background: url(/assets/images/report_card.webp) top right / cover
+            no-repeat;
+        }
+
+        :host(.basePackage) {
+          background-position: 0em;
+        }
+
+        :host(.publish) {
+          background-position: 2em;
+        }
+
+        :host(.congrats) {
+          background-position: 0em;
         }
       `)}
     `;
@@ -163,8 +202,8 @@ export class ContentHeader extends LitElement {
   }
 
   async firstUpdated() {
-    await loadPaintPolyfillIfNeeded();
-    (CSS as any).paintWorklet.addModule('/workers/header-paint.js');
+    // await loadPaintPolyfillIfNeeded();
+    // (CSS as any).paintWorklet.addModule('/workers/header-paint.js');
   }
 
   render() {
@@ -185,7 +224,7 @@ export class ContentHeader extends LitElement {
             </section>
 
             <section>
-              <slot name="picture-container">
+              <!--<slot name="picture-container">
                 <picture>
                   <source
                     srcset="/assets/images/pwab3d.png"
@@ -200,7 +239,7 @@ export class ContentHeader extends LitElement {
                     alt="3d version of the PWABuilder logo"
                   />
                 </picture>
-              </slot>
+              </slot>-->
             </section>
           </div>
         </div>

@@ -46,7 +46,7 @@ export class AppHome extends LitElement {
       css`
         content-header::part(main-container) {
           display: flex;
-          justify-content: space-around;
+
           padding-top: 0;
         }
 
@@ -244,7 +244,7 @@ export class AppHome extends LitElement {
 
       ${xxxLargeBreakPoint(css`
           content-header::part(main-container) {
-            padding-left: 16.5em;
+            padding-left: 13em;
             justify-content: flex-start;
           }
         `)}
@@ -323,7 +323,7 @@ export class AppHome extends LitElement {
 
   render() {
     return html`
-      <content-header>
+      <content-header class="home">
         <h2 slot="hero-container">
           Transform your website to an app at lightning speed.
         </h2>

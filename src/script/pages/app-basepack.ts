@@ -270,18 +270,12 @@ export class AppBasePack extends LitElement {
           <app-sidebar id="desktop-sidebar"></app-sidebar>
 
           <div>
-            <content-header>
+            <content-header class="basePackage">
               <h2 slot="hero-container">Getting down to business.</h2>
               <p id="hero-p" slot="hero-container">
                 Description about what is going to take place below and how they
                 are on their way to build their PWA. Mention nav bar for help.
               </p>
-
-              <img
-                slot="picture-container"
-                src="/assets/images/reportcard-header.svg"
-                alt="report card header image"
-              />
             </content-header>
 
             <app-sidebar id="tablet-sidebar"></app-sidebar>

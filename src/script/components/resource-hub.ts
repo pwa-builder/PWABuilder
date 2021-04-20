@@ -45,7 +45,10 @@ export class ResourceHub extends LitElement {
         }
 
         .home {
-          background: var(--primary-color);
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/blog_fold.jpg);
+          background-size: cover;
+          background-position: left bottom;
           color: var(--secondary-color);
         }
 
@@ -109,14 +112,14 @@ export class ResourceHub extends LitElement {
           font-weight: var(--font-bold);
         }
       `,
-           largeBreakPoint(
-            css`
-              .cards app-card {
-                max-width: 350px;
-              }
-            `,
-            'no-lower'
-          ),
+      largeBreakPoint(
+        css`
+          .cards app-card {
+            max-width: 350px;
+          }
+        `,
+        'no-lower'
+      ),
       mediumBreakPoint(
         css`
           .cards {
@@ -129,7 +132,8 @@ export class ResourceHub extends LitElement {
             padding-right: 1em;
           }
 
-          .cards app-card, .cards app-card::part(card) {
+          .cards app-card,
+          .cards app-card::part(card) {
             width: 100%;
             max-width: 100%;
           }
@@ -173,7 +177,8 @@ export class ResourceHub extends LitElement {
             padding-right: 1em;
           }
 
-          .cards app-card, .cards app-card::part(card) {
+          .cards app-card,
+          .cards app-card::part(card) {
             width: 100%;
             max-width: 100%;
           }
