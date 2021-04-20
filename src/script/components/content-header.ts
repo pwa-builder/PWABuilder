@@ -1,5 +1,5 @@
 import { css, customElement, html, LitElement } from 'lit-element';
-import { loadPaintPolyfillIfNeeded } from '../polyfills/css-paint';
+// import { loadPaintPolyfillIfNeeded } from '../polyfills/css-paint';
 import {
   BreakpointValues,
   largeBreakPoint,
@@ -15,11 +15,23 @@ export class ContentHeader extends LitElement {
   static get styles() {
     return css`
       :host {
-        display: block;
-        background: url(/assets/images/home_1920.jpg) right / cover no-repeat;
+        background: url(/assets/images/home_1920.jpg);
         background-position: top right;
         background-size: cover;
         background-repeat: no-repeat;
+
+        height: 16em;
+        display: flex;
+        align-items: center;
+      }
+
+      :host(.reportCard) {
+        background: url(/assets/images/report_card.jpg) top right / cover
+          no-repeat;
+      }
+
+      #content-side {
+        max-width: 18em;
       }
 
       #main-container {
@@ -86,7 +98,6 @@ export class ContentHeader extends LitElement {
       `)}
 
       ${largeBreakPoint(css`
-
         ::slotted(ul) {
           grid-gap: 10px;
         }
@@ -109,6 +120,13 @@ export class ContentHeader extends LitElement {
           background-image: url(/assets/images/home_1920.jpg);
           background-size: cover;
         }
+
+        :host(.reportCard) {
+          background: url(/assets/images/report_card.jpg) top right / cover
+            no-repeat;
+
+          background-position: -1em;
+        }
       `)}
 
       ${xxLargeBreakPoint(css`
@@ -121,6 +139,11 @@ export class ContentHeader extends LitElement {
           background-repeat: no-repeat;
           background-image: url(/assets/images/home_1920.jpg);
           background-size: cover;
+        }
+
+        :host(.reportCard) {
+          background: url(/assets/images/report_card.jpg) top right / cover
+            no-repeat;
         }
       `)}
     `;
