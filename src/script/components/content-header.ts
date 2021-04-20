@@ -35,6 +35,18 @@ export class ContentHeader extends LitElement {
           no-repeat;
       }
 
+      :host(.publish) {
+        background: url(/assets/images/publish.jpg) top right / cover no-repeat;
+      }
+
+      :host(.home) {
+        height: initial;
+      }
+
+      :host(.home) #circles-box {
+        width: 100%;
+      }
+
       #content-side {
         max-width: 18em;
       }
@@ -119,11 +131,15 @@ export class ContentHeader extends LitElement {
           width: initial;
         }
 
-        :host {
-          background-position: -16em center;
+        :host(.home) {
+          background-position: -21em center;
           background-repeat: no-repeat;
           background-image: url(/assets/images/home_1920.jpg);
           background-size: cover;
+        }
+
+        :host(.home) #content-side {
+          max-width: 21em;
         }
 
         :host(.reportCard) {
@@ -136,11 +152,15 @@ export class ContentHeader extends LitElement {
         :host(.basePackage) {
           background-position: -1em;
         }
+
+        :host(.publish) {
+          background-position: 0em;
+        }
       `)}
 
       ${xxLargeBreakPoint(css`
         #content-side {
-          width: 28em;
+          max-width: 23em;
         }
 
         :host {
@@ -155,7 +175,11 @@ export class ContentHeader extends LitElement {
         }
 
         :host(.basePackage) {
-          background-position: -1em;
+          background-position: 0em;
+        }
+
+        :host(.publish) {
+          background-position: 2em;
         }
       `)}
     `;

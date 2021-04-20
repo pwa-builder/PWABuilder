@@ -323,7 +323,7 @@ export class AppHome extends LitElement {
 
   render() {
     return html`
-      <content-header>
+      <content-header class="home">
         <h2 slot="hero-container">
           Transform your website to an app at lightning speed.
         </h2>
