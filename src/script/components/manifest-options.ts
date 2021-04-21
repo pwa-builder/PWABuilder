@@ -41,7 +41,6 @@ import './app-modal';
 import './dropdown-menu';
 import './app-file-input';
 import {
-  downloadZip,
   generateMissingImagesBase64,
 } from '../services/icon_generator';
 import { generateScreenshots } from '../services/screenshots';
