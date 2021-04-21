@@ -22,6 +22,7 @@
     "browser-fs-access": "^0.16.2",
     "cors": "^2.8.5",
     "deepmerge": "^4.2.2",
+    "downloadjs": "^1.4.7",
     "express": "^4.17.1",
     "lit-element": "^2.4.0",
     "workbox-core": "^6.1.2",
