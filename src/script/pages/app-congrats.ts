@@ -256,15 +256,15 @@ export class AppCongrats extends LitElement {
             }
 
             .congrats h2 {
-             font-size: 33px;
+              font-size: 33px;
             }
 
             .congrats p {
               display: none;
             }
           `
-        )}
-      
+        )},
+      `,
       hidden_all,
       xxxLargeBreakPoint(
         css`
@@ -559,7 +559,6 @@ export class AppCongrats extends LitElement {
                 Description about what is going to take place below and how they
                 are on their way to build their PWA. Mention nav bar for help.
               </p>
-
             </content-header>
 
             <app-sidebar id="tablet-sidebar"></app-sidebar>
