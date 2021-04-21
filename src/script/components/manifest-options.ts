@@ -40,9 +40,15 @@ import './loading-button';
 import './app-modal';
 import './dropdown-menu';
 import './app-file-input';
-import { generateMissingImagesBase64 } from '../services/icon_generator';
+import {
+  downloadZip,
+  generateMissingImagesBase64,
+} from '../services/icon_generator';
 import { generateScreenshots } from '../services/screenshots';
 import { validateScreenshotUrlsList } from '../utils/manifest-validation';
+import { mediumBreakPoint, smallBreakPoint } from '../utils/css/breakpoints';
+import { hidden_sm } from '../utils/css/hidden';
+import { generateAndDownloadIconZip } from '../services/download_icons';
 
 type BackgroundColorRadioValues = 'none' | 'transparent' | 'custom';
 
@@ -246,6 +252,53 @@ export class AppManifest extends LitElement {
           margin-bottom: 8px;
         }
       `,
+      // breakpoints
+      mediumBreakPoint(
+        css`
+          .head .top-section,
+          .head .summary-body,
+          .images-header,
+          .info-items,
+          .setting-items {
+            flex-flow: column;
+            justify-content: center;
+            align-items: baseline;
+          }
+
+          .info-item,
+          .setting-item {
+            width: 100%;
+          }
+
+          fast-text-field,
+          app-dropdown::part(layout) {
+            width: 100%;
+          }
+        `,
+        'no-lower'
+      ),
+      smallBreakPoint(css`
+        #bg-custom-color {
+          width: calc(100% - 32px);
+        }
+
+        .collection.image-items {
+          height: 170px;
+          display: block;
+          overflow-x: scroll;
+          scroll-snap-type: x proximity;
+          white-space: nowrap;
+          align-items: center;
+        }
+
+        .image-item {
+          display: inline-block;
+          width: 100px;
+          white-space: initial;
+          scroll-snap-align: start;
+        }
+      `),
+      hidden_sm,
     ];
   }
 
@@ -263,7 +316,7 @@ export class AppManifest extends LitElement {
         <div class="head">
           <div class="top-section">
             <h1>Manifest</h1>
-            <h1>Score ${this.score} / 40</h1>
+            <h1>Score ${this.score}</h1>
           </div>
 
           <h2>Summary</h2>
@@ -315,7 +368,7 @@ export class AppManifest extends LitElement {
             </div>
             <div class="collection image-items">${this.renderIcons()}</div>
 
-            <div class="images-actions">
+            <div class="images-actions hidden-sm">
               <loading-button
                 appearance="outline"
                 ?loading=${this.awaitRequest}
@@ -374,6 +427,9 @@ export class AppManifest extends LitElement {
               <p>${JSON.stringify(getManifest())}</p>
             </fast-accordion-item>
           </fast-accordion>
+        </section>
+        <section class="bottom-section">
+          <app-button @click=${this.done}>Done</app-button>
         </section>
       </div>
     `;
@@ -654,12 +710,11 @@ export class AppManifest extends LitElement {
     }
   }
 
-  downloadIcons() {
-    console.log('TODO: download images');
+  async downloadIcons() {
     this.awaitRequest = true;
 
     try {
-      console.log('download');
+      await generateAndDownloadIconZip(this.manifest.icons);
     } catch (e) {
       console.error(e);
     }
