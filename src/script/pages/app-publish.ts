@@ -20,6 +20,7 @@ import {
   BreakpointValues,
   smallBreakPoint,
   largeBreakPoint,
+  mediumBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
 
@@ -270,6 +271,19 @@ export class AppPublish extends LitElement {
           `
         )}
 
+        ${mediumBreakPoint(
+          css`
+            .publish h2 {
+              font-size: 33px;
+              max-width: 10em;
+            }
+
+            .publish p {
+              display: none;
+            }
+          `
+        )}
+
         ${smallBreakPoint(css`
           #test-package-button app-button::part(underlying-button) {
             width: 152px;
@@ -280,6 +294,14 @@ export class AppPublish extends LitElement {
           #title-block p {
             width: 200px;
           }
+
+          .publish h2 {
+             font-size: 33px;
+            }
+
+            .publish p {
+              display: none;
+            }
         `)}
       `,
     ];
@@ -418,7 +440,6 @@ export class AppPublish extends LitElement {
     this.errorMessage = error;
 
     this.reportAnError(error, platform);
-
   }
 
   showWindowsOptionsModal() {
@@ -488,7 +509,10 @@ export class AppPublish extends LitElement {
         />
 
         <div id="actions" slot="modal-actions">
-          <fast-anchor target="__blank" id="error-link" .href="${this.reportPackageErrorUrl}"
+          <fast-anchor
+            target="__blank"
+            id="error-link"
+            .href="${this.reportPackageErrorUrl}"
             >Report A Problem</fast-anchor
           >
 

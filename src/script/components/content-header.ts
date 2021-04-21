@@ -70,11 +70,63 @@ export class ContentHeader extends LitElement {
           background-image: url(/assets/images/home_mobile.webp);
           background-size: cover;
 
-          height: 46em;
+          height: 43em;
         }
 
-        #main-container {
-          flex-direction: column-reverse;
+        :host(.home) #circles-box {
+          height: 44em;
+        }
+
+        :host(.home) #main-container {
+          height: 51em;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          max-width: initial;
+        }
+
+        :host(.reportCard) {
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/report_card_mobile.webp);
+          background-size: cover;
+
+          background-position: 0em -2.5em;
+          height: 10em;
+        }
+
+        :host(.congrats) {
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/congrats_mobile.webp);
+          background-size: cover;
+
+          background-position: 0em -2.5em;
+          height: 10em;
+        }
+
+        :host(.basePackage) {
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/base_package_mobile.webp);
+          background-size: cover;
+
+          background-position: 0em -2.5em;
+          height: 10em;
+        }
+
+        :host(.publish) {
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/publish_mobile.webp);
+          background-size: cover;
+
+          background-position: 0em -2.5em;
+          height: 10em;
+        }
+
+        :host(.reportCard) #circles-box, :host(.publish) #circles-box, :host(.congrats) #circles-box, :host(.basePackage) #circles-box{
+          height: 34em;
+        }
+
+        :host(.reportCard) #hero-container, :host(.publish) #hero-container, :host(.congrats) #hero-container, :host(.basePackage) #hero-container{
+          text-align: initial;
         }
 
         img {
@@ -89,9 +141,11 @@ export class ContentHeader extends LitElement {
         }
 
         #main-container {
-          padding-top: initial;
-          margin-top: 15em;
-          padding-bottom: 51px;
+          flex-direction: column-reverse;
+          padding-left: 0;
+
+          height: 23em;
+          max-width: 16em;
         }
 
         #circles-box {
@@ -110,6 +164,7 @@ export class ContentHeader extends LitElement {
       ${mediumBreakPoint(css`
         #main-container {
           flex-direction: column-reverse;
+          padding-left: 0;
         }
 
         :host(.home) {
@@ -121,6 +176,46 @@ export class ContentHeader extends LitElement {
           height: 30em;
         }
 
+        :host(.reportCard) {
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/report_card_mobile.webp);
+          background-size: cover;
+
+          background-position: 0em -2.5em;
+          height: 10em;
+        }
+
+        :host(.reportCard) #circles-box, :host(.publish) #circles-box, :host(.congrats) #circles-box, :host(.basePackage) #circles-box{
+          height: 34em;
+        }
+
+        :host(.publish) {
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/publish_mobile.webp);
+          background-size: cover;
+
+          background-position: 0em -2.5em;
+          height: 10em;
+        }
+
+        :host(.congrats) {
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/congrats_mobile.webp);
+          background-size: cover;
+
+          background-position: 0em -2.5em;
+          height: 10em;
+        }
+
+        :host(.basePackage) {
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/base_package_mobile.webp);
+          background-size: cover;
+
+          background-position: 0em -2.5em;
+          height: 10em;
+        }
+
         img {
           margin-left: 0;
           width: 100%;
@@ -130,6 +225,10 @@ export class ContentHeader extends LitElement {
 
         #content-side {
           padding: 1em;
+        }
+
+        :host(.reportCard) #hero-container, :host(.publish) #hero-container, :host(.congrats) #hero-container, :host(.basePackage) #hero-container{
+          text-align: initial;
         }
 
         #hero-container {

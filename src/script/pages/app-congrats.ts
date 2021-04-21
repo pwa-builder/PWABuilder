@@ -12,6 +12,7 @@ import {
   xxxLargeBreakPoint,
   largeBreakPoint,
   mediumBreakPoint,
+  smallBreakPoint
 } from '../utils/css/breakpoints';
 
 // @ts-ignore
@@ -231,6 +232,31 @@ export class AppCongrats extends LitElement {
           css`
             #blog-block #first-card {
               margin-right: initial;
+            }
+
+            .congrats h2 {
+              font-size: 33px;
+              max-width: 10em;
+            }
+
+            .congrats p {
+              display: none;
+            }
+          `
+        )}
+
+        ${smallBreakPoint(
+          css`
+            fast-tabs::part(tablist) {
+              display: none;
+            }
+
+            .congrats h2 {
+             font-size: 33px;
+            }
+
+            .congrats p {
+              display: none;
             }
           `
         )}
