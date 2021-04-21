@@ -155,6 +155,32 @@ export class ContentHeader extends LitElement {
           height: 282px;
           width: 268px;
         }
+
+        :host(.home) {
+          background-position: 8em -2em;
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/home_mobile.webp);
+          background-size: cover;
+        }
+
+        :host(.reportCard) {
+          background: url(/assets/images/report_card.webp) top right / cover
+            no-repeat;
+
+          background-position: -1em;
+        }
+
+        :host(.basePackage) {
+          background-position: -1em;
+        }
+
+        :host(.publish) {
+          background-position: 0em;
+        }
+
+        :host(.congrats) {
+          background-position: 0em;
+        }
       `)}
 
       ${xLargeBreakPoint(css`
