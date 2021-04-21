@@ -1,12 +1,3 @@
-// export interface ManifestValidation {
-
-// }
-
-// export function validateManifest(): ManifestValidation {
-
-//   return undefined;
-// }
-
 export function validateScreenshotUrlsList(urls: Array<string | undefined>) {
   const results: Array<boolean> = [];
 

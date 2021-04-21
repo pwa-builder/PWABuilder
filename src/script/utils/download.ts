@@ -24,8 +24,7 @@ export async function download(config: DownloadConfig) {
         fileApi(config);
         break;
       default:
-        throw Error('');
-        break;
+        throw Error('mode not specified');
     }
   } catch (e) {
     console.error(e);
