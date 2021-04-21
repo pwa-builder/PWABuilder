@@ -40,7 +40,8 @@ export class ContentHeader extends LitElement {
       }
 
       :host(.congrats) {
-        background: url(/assets/images/congrats.webp) top right / cover no-repeat;
+        background: url(/assets/images/congrats.webp) top right / cover
+          no-repeat;
       }
 
       :host(.home) {
@@ -63,8 +64,69 @@ export class ContentHeader extends LitElement {
       }
 
       ${smallBreakPoint(css`
-        #main-container {
-          flex-direction: column-reverse;
+        :host(.home) {
+          background-position: top center;
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/home_mobile.webp);
+          background-size: cover;
+
+          height: 43em;
+        }
+
+        :host(.home) #circles-box {
+          height: 44em;
+        }
+
+        :host(.home) #main-container {
+          height: 51em;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          max-width: initial;
+        }
+
+        :host(.reportCard) {
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/report_card_mobile.webp);
+          background-size: cover;
+
+          background-position: 0em -2.5em;
+          height: 10em;
+        }
+
+        :host(.congrats) {
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/congrats_mobile.webp);
+          background-size: cover;
+
+          background-position: 0em -2.5em;
+          height: 10em;
+        }
+
+        :host(.basePackage) {
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/base_package_mobile.webp);
+          background-size: cover;
+
+          background-position: 0em -2.5em;
+          height: 10em;
+        }
+
+        :host(.publish) {
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/publish_mobile.webp);
+          background-size: cover;
+
+          background-position: 0em -2.5em;
+          height: 10em;
+        }
+
+        :host(.reportCard) #circles-box, :host(.publish) #circles-box, :host(.congrats) #circles-box, :host(.basePackage) #circles-box{
+          height: 34em;
+        }
+
+        :host(.reportCard) #hero-container, :host(.publish) #hero-container, :host(.congrats) #hero-container, :host(.basePackage) #hero-container{
+          text-align: initial;
         }
 
         img {
@@ -79,9 +141,15 @@ export class ContentHeader extends LitElement {
         }
 
         #main-container {
-          padding-top: initial;
-          padding-bottom: 51px;
+          flex-direction: column-reverse;
           padding-left: 0;
+
+          height: 23em;
+          max-width: 16em;
+        }
+
+        #circles-box {
+          height: 46em;
         }
 
         #hero-container {
@@ -96,6 +164,56 @@ export class ContentHeader extends LitElement {
       ${mediumBreakPoint(css`
         #main-container {
           flex-direction: column-reverse;
+          padding-left: 0;
+        }
+
+        :host(.home) {
+          background-position: top center;
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/home_mobile.webp);
+          background-size: cover;
+
+          height: 30em;
+        }
+
+        :host(.reportCard) {
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/report_card_mobile.webp);
+          background-size: cover;
+
+          background-position: 0em -2.5em;
+          height: 10em;
+        }
+
+        :host(.reportCard) #circles-box, :host(.publish) #circles-box, :host(.congrats) #circles-box, :host(.basePackage) #circles-box{
+          height: 34em;
+        }
+
+        :host(.publish) {
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/publish_mobile.webp);
+          background-size: cover;
+
+          background-position: 0em -2.5em;
+          height: 10em;
+        }
+
+        :host(.congrats) {
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/congrats_mobile.webp);
+          background-size: cover;
+
+          background-position: 0em -2.5em;
+          height: 10em;
+        }
+
+        :host(.basePackage) {
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/base_package_mobile.webp);
+          background-size: cover;
+
+          background-position: 0em -2.5em;
+          height: 10em;
         }
 
         img {
@@ -109,12 +227,21 @@ export class ContentHeader extends LitElement {
           padding: 1em;
         }
 
+        :host(.reportCard) #hero-container, :host(.publish) #hero-container, :host(.congrats) #hero-container, :host(.basePackage) #hero-container{
+          text-align: initial;
+        }
+
         #hero-container {
           text-align: center;
         }
 
         #main-container {
           padding-top: initial;
+          margin-top: 12em;
+        }
+
+        #circles-box {
+          height: 30em;
         }
       `)}
 
@@ -126,6 +253,32 @@ export class ContentHeader extends LitElement {
         img {
           height: 282px;
           width: 268px;
+        }
+
+        :host(.home) {
+          background-position: 8em -2em;
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/home_mobile.webp);
+          background-size: cover;
+        }
+
+        :host(.reportCard) {
+          background: url(/assets/images/report_card.webp) top right / cover
+            no-repeat;
+
+          background-position: -1em;
+        }
+
+        :host(.basePackage) {
+          background-position: -1em;
+        }
+
+        :host(.publish) {
+          background-position: 0em;
+        }
+
+        :host(.congrats) {
+          background-position: 0em;
         }
       `)}
 

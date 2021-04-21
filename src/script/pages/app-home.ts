@@ -140,6 +140,7 @@ export class AppHome extends LitElement {
 
           h2 {
             margin-top: 0;
+            font-size: var(--large-font-size);
           }
 
           #hero-p {
@@ -218,6 +219,19 @@ export class AppHome extends LitElement {
           #input-form loading-button::part(underlying-button) {
             margin-top: 44px;
             width: 176px;
+          }
+
+          #input-block {
+            margin-bottom: 30px;
+          }
+
+          #input-form app-button {
+            width: 180px;
+          }
+
+          #input-form app-button::part(underlying-button) {
+            height: 64px;
+            font-size: 22px;
           }
         `)}
 

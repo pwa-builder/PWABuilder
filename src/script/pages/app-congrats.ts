@@ -203,6 +203,67 @@ export class AppCongrats extends LitElement {
           font-weight: var(--font-bold);
           font-size: var(--small-medium-font-size);
         }
+
+        ${xxxLargeBreakPoint(
+          css`
+            app-sidebar {
+              display: block;
+            }
+
+            #tablet-sidebar {
+              display: none;
+            }
+
+            #desktop-sidebar {
+              display: block;
+            }
+          `
+        )}
+
+        ${largeBreakPoint(
+          css`
+            #tablet-sidebar {
+              display: block;
+            }
+
+            #desktop-sidebar {
+              display: none;
+            }
+          `
+        )}
+
+        ${mediumBreakPoint(
+          css`
+            #blog-block #first-card {
+              margin-right: initial;
+            }
+
+            .congrats h2 {
+              font-size: 33px;
+              max-width: 10em;
+            }
+
+            .congrats p {
+              display: none;
+            }
+          `
+        )}
+
+        ${smallBreakPoint(
+          css`
+            fast-tabs::part(tablist) {
+              display: none;
+            }
+
+            .congrats h2 {
+              font-size: 33px;
+            }
+
+            .congrats p {
+              display: none;
+            }
+          `
+        )},
       `,
       hidden_all,
       xxxLargeBreakPoint(
@@ -498,7 +559,6 @@ export class AppCongrats extends LitElement {
                 Description about what is going to take place below and how they
                 are on their way to build their PWA. Mention nav bar for help.
               </p>
-
             </content-header>
 
             <app-sidebar id="tablet-sidebar"></app-sidebar>

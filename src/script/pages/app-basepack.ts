@@ -1,4 +1,10 @@
-import { LitElement, css, html, customElement, internalProperty } from 'lit-element';
+import {
+  LitElement,
+  css,
+  html,
+  customElement,
+  internalProperty,
+} from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map';
 
 import '../components/app-header';
@@ -6,8 +12,13 @@ import '../components/app-sidebar';
 import '../components/content-header';
 import '../components/loading-button';
 import '../components/app-modal';
-import { BreakpointValues, largeBreakPoint,
-  xxxLargeBreakPoint, smallBreakPoint } from '../utils/css/breakpoints';
+import {
+  BreakpointValues,
+  largeBreakPoint,
+  xxxLargeBreakPoint,
+  smallBreakPoint,
+  mediumBreakPoint,
+} from '../utils/css/breakpoints';
 
 // @ts-ignore
 import style from '../../../styles/layout-defaults.css';
@@ -24,7 +35,7 @@ export class AppBasePack extends LitElement {
   );
 
   @internalProperty() isDeskTopView = this.mql.matches;
-  
+
   @internalProperty() loading: boolean = false;
   @internalProperty() blob: Blob | File | undefined;
 
@@ -32,7 +43,9 @@ export class AppBasePack extends LitElement {
   @internalProperty() errorMessage: string | undefined;
 
   static get styles() {
-    return [style, css`
+    return [
+      style,
+      css`
         content-header::part(header) {
           display: none;
         }
@@ -77,7 +90,7 @@ export class AppBasePack extends LitElement {
         }
 
         p {
-          font-size: var(--font-size)
+          font-size: var(--font-size);
         }
 
         h2 {
@@ -152,25 +165,46 @@ export class AppBasePack extends LitElement {
           `
         )}
 
-        ${smallBreakPoint(
+        ${mediumBreakPoint(
           css`
-           #top-container {
-            flex-direction: column;
-            align-items: flex-start;
-           }
+            .basePackage h2 {
+              font-size: 33px;
+              max-width: 10em;
+            }
 
-           #download-actions {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 2em;
-            margin-top: 2em;
-           }
+            .basePackage p {
+              display: none;
+            }
           `
         )}
 
-    `];
+        ${smallBreakPoint(
+          css`
+            #top-container {
+              flex-direction: column;
+              align-items: flex-start;
+            }
+
+            #download-actions {
+              width: 100%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin-bottom: 2em;
+              margin-top: 2em;
+            }
+
+            .basePackage h2 {
+             font-size: 33px;
+            }
+
+            .basePackage p {
+              display: none;
+            }
+          `
+        )}
+      `,
+    ];
   }
 
   constructor() {
@@ -186,8 +220,7 @@ export class AppBasePack extends LitElement {
       if (generatedPackage) {
         this.blob = generatedPackage;
       }
-    }
-    catch (err) {
+    } catch (err) {
       this.errorMessage = err;
       this.errored = true;
     }
@@ -214,7 +247,7 @@ export class AppBasePack extends LitElement {
 
   reTest() {
     const site = getURL();
-    
+
     if (site) {
       Router.go(`/testing?site=${site}`);
     }
@@ -254,10 +287,17 @@ export class AppBasePack extends LitElement {
         />
 
         <div slot="modal-actions">
-          <fast-anchor target="_blank" rel="noopener" href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" id="report-link" appearance="button">Report an Issue</fast-anchor>
+          <fast-anchor
+            target="_blank"
+            rel="noopener"
+            href="https://github.com/pwa-builder/PWABuilder/issues/new/choose"
+            id="report-link"
+            appearance="button"
+            >Report an Issue</fast-anchor
+          >
         </div>
       </app-modal>
-      
+
       <div>
         <app-header></app-header>
 
@@ -284,7 +324,8 @@ export class AppBasePack extends LitElement {
               <h3>Download your PWA base files</h3>
 
               <p>
-                Grab everything you need to make your app a PWA and get ready for publishing to the app stores! 
+                Grab everything you need to make your app a PWA and get ready
+                for publishing to the app stores!
               </p>
             </section>
 
@@ -294,12 +335,17 @@ export class AppBasePack extends LitElement {
                   <h3>Download Summary</h3>
 
                   <p>
-                    Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut.
+                    Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut
+                    odit aut.
                   </p>
                 </div>
 
                 <div id="download-actions">
-                  <loading-button ?loading="${this.loading}" @click="${() => this.doWebGenerate()}">Generate</loading-button>
+                  <loading-button
+                    ?loading="${this.loading}"
+                    @click="${() => this.doWebGenerate()}"
+                    >Generate</loading-button
+                  >
                 </div>
               </div>
 
@@ -315,7 +361,9 @@ export class AppBasePack extends LitElement {
               </div>
 
               <div class="action-buttons">
-                <app-button @click="${() => this.reTest()}">Run New Test</app-button>
+                <app-button @click="${() => this.reTest()}"
+                  >Run New Test</app-button
+                >
                 <fast-anchor href="/congrats">Next</fast-anchor>
               </div>
             </section>

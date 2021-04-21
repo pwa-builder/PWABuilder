@@ -10,6 +10,7 @@ import { classMap } from 'lit-html/directives/class-map';
 
 import {
   BreakpointValues,
+  mediumBreakPoint,
   largeBreakPoint,
   xxxLargeBreakPoint,
   smallBreakPoint,
@@ -121,9 +122,29 @@ export class AppReport extends LitElement {
           `
         )}
 
+        ${mediumBreakPoint(
+          css`
+            .reportCard h2 {
+             font-size: 33px;
+            }
+
+            .reportCard p {
+              display: none;
+            }
+          `
+        )}
+
         ${smallBreakPoint(
           css`
             fast-tabs::part(tablist) {
+              display: none;
+            }
+
+            .reportCard h2 {
+             font-size: 33px;
+            }
+
+            .reportCard p {
               display: none;
             }
           `
