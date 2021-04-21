@@ -21,7 +21,7 @@ export async function download(config: DownloadConfig) {
         linkDownload(config);
         break;
       case Modes.fileApi:
-        fileApi(config);
+        await fileApi(config);
         break;
       default:
         throw Error('mode not specified');
