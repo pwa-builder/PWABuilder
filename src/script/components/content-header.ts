@@ -30,6 +30,16 @@ export class ContentHeader extends LitElement {
           no-repeat;
       }
 
+      :host(.reportCard.mani) {
+        background: url(/assets/images/report_card_manifest.webp) top right / cover
+          no-repeat;
+      }
+
+      :host(.reportCard.sw) {
+        background: url(/assets/images/report_card_sw.webp) top right / cover
+          no-repeat;
+      }
+
       :host(.basePackage) {
         background: url(/assets/images/base_package.webp) top right / cover
           no-repeat;
@@ -269,6 +279,14 @@ export class ContentHeader extends LitElement {
           background-position: -1em;
         }
 
+        :host(.reportCard.mani) {
+          background-position: -1em;
+        }
+
+        :host(.reportCard.sw) {
+          background-position: -1em;
+        }
+
         :host(.basePackage) {
           background-position: -1em;
         }
@@ -303,6 +321,14 @@ export class ContentHeader extends LitElement {
           background: url(/assets/images/report_card.webp) top right / cover
             no-repeat;
 
+          background-position: -1em;
+        }
+
+        :host(.reportCard.mani) {
+          background-position: -1em;
+        }
+
+        :host(.reportCard.sw) {
           background-position: -1em;
         }
 
@@ -352,11 +378,6 @@ export class ContentHeader extends LitElement {
 
   constructor() {
     super();
-  }
-
-  async firstUpdated() {
-    // await loadPaintPolyfillIfNeeded();
-    // (CSS as any).paintWorklet.addModule('/workers/header-paint.js');
   }
 
   render() {

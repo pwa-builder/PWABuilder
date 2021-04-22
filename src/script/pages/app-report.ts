@@ -27,6 +27,24 @@ import '../components/app-sidebar';
 import style from '../../../styles/layout-defaults.css';
 import { RawTestResult, ScoreEvent } from '../utils/interfaces';
 
+const possible_messages = {
+  overview: {
+    heading: 'Getting down to business.',
+    supporting:
+      'Description about what is going to take place below and how they are on their way to build their PWA. Mention nav bar for help.',
+  },
+  mani: {
+    heading: 'Manifest great PWAs.',
+    supporting:
+      'Description about what is going to take place below and how they are on their way to build their PWA. Mention nav bar for help.',
+  },
+  sw: {
+    heading: 'Secret Ingredient: A Service Worker',
+    supporting:
+      'Description about what is going to take place below and how they are on their way to build their PWA. Mention nav bar for help.',
+  }
+};
+
 @customElement('app-report')
 export class AppReport extends LitElement {
   @property() resultOfTest: RawTestResult | undefined;
@@ -34,6 +52,10 @@ export class AppReport extends LitElement {
   @internalProperty() swScore = 0;
   @internalProperty() maniScore = 0;
   @internalProperty() securityScore = 0;
+
+  @internalProperty() selectedTab: string = 'overview';
+  @internalProperty() currentHeader: string = possible_messages.overview.heading;
+  @internalProperty() currentSupporting: string = possible_messages.overview.supporting;
 
   @internalProperty() mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`
@@ -125,7 +147,7 @@ export class AppReport extends LitElement {
         ${mediumBreakPoint(
           css`
             .reportCard h2 {
-             font-size: 33px;
+              font-size: 33px;
             }
 
             .reportCard p {
@@ -141,7 +163,7 @@ export class AppReport extends LitElement {
             }
 
             .reportCard h2 {
-             font-size: 33px;
+              font-size: 33px;
             }
 
             .reportCard p {
@@ -204,6 +226,23 @@ export class AppReport extends LitElement {
     }
   }
 
+  handleTabsEvent(type: 'mani' | 'sw' | 'overview') {
+    this.selectedTab = type;
+
+    if (type === "mani") {
+      this.currentHeader = possible_messages.mani.heading;
+      this.currentSupporting = possible_messages.mani.supporting;
+    }
+    else if (type === "sw") {
+      this.currentHeader = possible_messages.sw.heading;
+      this.currentSupporting = possible_messages.sw.supporting;
+    }
+    else {
+      this.currentHeader = possible_messages.overview.heading;
+      this.currentSupporting = possible_messages.overview.supporting;
+    }
+  }
+
   render() {
     return html` <div>
       <app-header></app-header>
@@ -217,20 +256,34 @@ export class AppReport extends LitElement {
         <app-sidebar id="desktop-sidebar"></app-sidebar>
 
         <section id="report">
-          <content-header class="reportCard">
-            <h2 slot="hero-container">Getting down to business.</h2>
+          <content-header class="reportCard ${this.selectedTab}">
+            <h2 slot="hero-container">${this.currentHeader}</h2>
             <p id="hero-p" slot="hero-container">
-              Description about what is going to take place below and how they
-              are on their way to build their PWA. Mention nav bar for help.
+              ${this.currentSupporting}
             </p>
           </content-header>
 
           <app-sidebar id="tablet-sidebar"></app-sidebar>
 
           <fast-tabs activeId="sections">
-            <fast-tab class="tab" id="overview">Overview</fast-tab>
-            <fast-tab class="tab" id="mani">Manifest Options</fast-tab>
-            <fast-tab class="tab" id="sw">Service Worker Options</fast-tab>
+            <fast-tab
+              class="tab"
+              id="overview"
+              @click="${() => this.handleTabsEvent('overview')}"
+              >Overview</fast-tab
+            >
+            <fast-tab
+              class="tab"
+              id="mani"
+              @click="${() => this.handleTabsEvent('mani')}"
+              >Manifest Options</fast-tab
+            >
+            <fast-tab
+              class="tab"
+              id="sw"
+              @click="${() => this.handleTabsEvent('sw')}"
+              >Service Worker Options</fast-tab
+            >
 
             <fast-tab-panel id="overviewPanel">
               <report-card
