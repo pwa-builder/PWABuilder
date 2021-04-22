@@ -273,15 +273,6 @@ export class ResourceHub extends LitElement {
         undefined,
         919
       ),
-      customBreakPoint(
-        css`
-          .resource-hub.home .cards {
-            background-color: red;
-          }
-        `,
-        undefined,
-        1023
-      ),
     ];
   }
 
