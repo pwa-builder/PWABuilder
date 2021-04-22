@@ -5,13 +5,13 @@ on:
         branches: [ master, dev ]
 
     pull_request:
-        branches: [ master ]
+        branches: [ master, dev ]
 
 jobs:
 
     build:
         runs-on: ubuntu-latest
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/master' && github.event.name == 'push'
     
         steps:
         - uses: actions/checkout@v2
@@ -23,10 +23,19 @@ jobs:
           
         - name: Push
           run: docker push pwabuilder.azurecr.io/pwabuilder-site-container:latest
+          
+    build-prod-pr:
+        runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/master' && github.event.name == 'pull_request'
+        
+        steps:
+        - uses: actions/checkout@v2
+        - name: Test build docker image for PR
+          run: docker build . --file dockerfile --target build-prod
       
     build-preview: 
         runs-on: ubuntu-latest
-        if: github.ref == 'refs/heads/dev'
+        if: github.ref == 'refs/heads/dev' && github.event.name == 'push'
         
         steps:
         - uses: actions/checkout@v2
@@ -38,4 +47,13 @@ jobs:
           
         - name: Push
           run: docker push pwabuilder.azurecr.io/pwabuilder-site-preview-container:latest
+          
+    build-dev-pr:
+        runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/dev' && github.event.name == 'pull_request'
+        
+        steps:
+        - uses: actions/checkout@v2
+        - name: Test build docker image for PR
+          run: docker build . --file dockerfile --target build-preview
         
