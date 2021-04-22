@@ -6,7 +6,12 @@ import { AppButtonElement } from '../utils/interfaces.components';
 export class AppButton extends LitElement implements AppButtonElement {
   @property({ type: String }) type = '';
   @property({ type: String }) colorMode = 'primary';
-  @property({ type: String }) appearance = 'neutral';
+  @property({ type: String }) appearance:
+    | 'accent'
+    | 'lightweight'
+    | 'neutral'
+    | 'outline'
+    | 'stealth' = 'neutral';
   @property({ type: Boolean }) disabled = false;
 
   static get styles() {
@@ -56,6 +61,18 @@ export class AppButton extends LitElement implements AppButtonElement {
         width: auto;
         padding: 0;
       }
+
+      fast-button.round {
+        height: 44px;
+        width: 44px;
+      }
+
+      fast-button.round::part(control) {
+        /* assumption is that the button is 14x21 */
+        padding: 0 15px;
+        align-items: center;
+        line-height: 0;
+      }
     `;
   }
 
@@ -79,7 +96,10 @@ export class AppButton extends LitElement implements AppButtonElement {
   }
 
   classMap() {
+    const className = this.className || '';
+
     return classMap({
+      [className]: className,
       link: this.appearance === 'lightweight',
       secondary: this.appearance === 'outline',
     });
