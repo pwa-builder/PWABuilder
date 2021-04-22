@@ -61,7 +61,7 @@ export class AppGallery extends LitElement {
         >
           <ion-icon name="chevron-back-outline"></ion-icon>
         </app-button>
-        <span class="image-container" @click=${this.openModal}>
+        <div class="image-container" @click=${this.openModal}>
           <!-- <img
             class="current-image"
             decoding="async"
@@ -71,7 +71,7 @@ export class AppGallery extends LitElement {
           <div style="background-color: red; width: 100px; height: 100px">
             ${this.index}
           </div>
-        </span>
+        </div>
         <app-button
           class="round"
           @click=${this.navigateForward}
