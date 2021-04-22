@@ -22,12 +22,14 @@
     "browser-fs-access": "^0.16.2",
     "cors": "^2.8.5",
     "deepmerge": "^4.2.2",
+    "downloadjs": "^1.4.7",
     "express": "^4.17.1",
     "lit-element": "^2.4.0",
     "workbox-core": "^6.1.2",
     "workbox-precaching": "^6.1.2"
   },
   "devDependencies": {
+    "@rollup/plugin-json": "^4.1.0",
     "@open-wc/rollup-plugin-html": "^1.2.5",
     "@rollup/plugin-node-resolve": "^11.2.1",
     "@rollup/plugin-replace": "^2.4.2",

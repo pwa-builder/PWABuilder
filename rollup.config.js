@@ -6,6 +6,7 @@ import strip from "@rollup/plugin-strip";
 import copy from "rollup-plugin-copy";
 import typescript from "@rollup/plugin-typescript";
 import litcss from "rollup-plugin-lit-css";
+import json from '@rollup/plugin-json';
 
 const workbox = require('rollup-plugin-workbox-inject');
 
@@ -23,6 +24,7 @@ export default {
       ),
     }),
     html(),
+    json(),
     typescript({
       tsconfig: "tsconfig.json"
     }),

@@ -80,14 +80,11 @@ async function fetchIcons(id: string) {
 export async function downloadZip(id: string) {
   try {
     const generatedIcons = await fetchIcons(id);
-    console.log(generatedIcons);
-
-    //TODO convert into Object URL? will that be all?
 
     download({
-      id: '',
+      id: 'generated icons zip',
       fileName: 'icons.zip',
-      url: '',
+      blob: await generatedIcons.blob(),
     });
   } catch (e) {
     console.error(e);

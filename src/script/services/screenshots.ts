@@ -11,21 +11,19 @@ enum EndPoints {
 
 export async function generateScreenshots(screenshotsList: Array<string>) {
   try {
-    let screenshots: Array<Icon> = getManifest().screenshots ?? [];
-
-    console.log('generateScreenshots', screenshots);
-
     const res = await fetch(`${screenshotServiceBaseUrl}/${EndPoints.base64}`, {
       headers: {
         'content-type': 'application/json',
       },
       method: 'POST',
+      mode: 'no-cors',
       body: JSON.stringify({
         url: screenshotsList,
       }),
     });
 
     if (res.ok) {
+      let screenshots: Array<Icon> = getManifest().screenshots ?? [];
       screenshots = screenshots.concat(await res.json());
 
       updateManifest({

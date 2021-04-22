@@ -4,6 +4,7 @@ import copy from "rollup-plugin-copy";
 import replace from "@rollup/plugin-replace";
 import typescript from "@rollup/plugin-typescript";
 import litcss from "rollup-plugin-lit-css";
+import json from '@rollup/plugin-json';
 
 export default {
   input: "index.html",
@@ -15,6 +16,7 @@ export default {
   plugins: [
     resolve(),
     html(),
+    json(),
     typescript({
       tsconfig: "tsconfig.dev.json",
     }),
