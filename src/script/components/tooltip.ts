@@ -1,4 +1,4 @@
-import { css, html } from 'lit-element';
+import { css, html } from 'lit';
 
 let tooltipCounter = 0;
 

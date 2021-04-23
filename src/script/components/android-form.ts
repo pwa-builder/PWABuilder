@@ -1,11 +1,11 @@
 import {
   LitElement,
   css,
-  html,
-  customElement,
-  property,
-  internalProperty,
-} from 'lit-element';
+  html
+} from 'lit';
+
+import { customElement, property,
+  state, } from "lit/decorators.js"
 
 import '../components/loading-button';
 import { tooltip, styles as ToolTipStyles } from '../components/tooltip';
@@ -23,20 +23,20 @@ import { Manifest } from '../utils/interfaces';
 export class AndroidForm extends LitElement {
   @property({ type: Boolean }) generating: boolean;
 
-  @internalProperty() show_adv = false;
+  @state() show_adv = false;
 
   // manifest form props
-  @internalProperty() signingKeyFullName = "John Doe";
-  @internalProperty() organization = "My Company";
-  @internalProperty() organizationalUnit = "Engineering";
-  @internalProperty() countryCode = "US";
-  @internalProperty() keyPassword = "";
-  @internalProperty() storePassword = "";
-  @internalProperty() alias = "my-key-alias";
-  @internalProperty() file = undefined;
-  @internalProperty() signingMode = "mine";
+  @state() signingKeyFullName = "John Doe";
+  @state() organization = "My Company";
+  @state() organizationalUnit = "Engineering";
+  @state() countryCode = "US";
+  @state() keyPassword = "";
+  @state() storePassword = "";
+  @state() alias = "my-key-alias";
+  @state() file = undefined;
+  @state() signingMode = "mine";
 
-  @internalProperty() default_options: AndroidApkOptions | undefined;
+  @state() default_options: AndroidApkOptions | undefined;
 
   form: HTMLFormElement | undefined;
   currentManifest: Manifest | undefined;

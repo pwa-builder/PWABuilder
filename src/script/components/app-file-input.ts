@@ -1,11 +1,10 @@
 import {
   LitElement,
-  customElement,
   css,
-  html,
-  property,
-  query,
-} from 'lit-element';
+  html
+} from 'lit';
+
+import { customElement, property, query } from "lit/decorators.js"
 
 import { hidden } from '../utils/css/hidden';
 import { fastButtonCss } from '../utils/css/fast-elements';
@@ -86,7 +85,7 @@ export class FileInput extends LitElement {
       });
 
       this.dispatchEvent(changeEvent);
-      this.requestUpdateInternal();
+      this.requestUpdate();
     }
   }
 }

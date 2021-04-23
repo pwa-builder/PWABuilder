@@ -1,11 +1,10 @@
 import {
   LitElement,
   css,
-  html,
-  customElement,
-  property,
-  internalProperty,
-} from 'lit-element';
+  html
+} from 'lit';
+import { customElement, property,
+  state, } from "lit/decorators.js"
 import { RawTestResult, ScoreEvent } from '../utils/interfaces';
 
 import {
@@ -24,27 +23,27 @@ import { Router } from '@vaadin/router';
 import { getOverallScore } from '../services/tests';
 import { getPossibleBadges, sortBadges } from '../services/badges';
 
-import { classMap } from 'lit-html/directives/class-map';
-import { styleMap } from 'lit-html/directives/style-map';
+import { classMap } from 'lit/directives/class-map';
+import { styleMap } from 'lit/directives/style-map';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {
   @property() results: RawTestResult | undefined;
   @property() scoreCardResults: RawTestResult | undefined;
 
-  @internalProperty() maniScore = 0;
-  @internalProperty() swScore = 0;
-  @internalProperty() securityScore = 0;
-  @internalProperty() overallScore = 0;
+  @state() maniScore = 0;
+  @state() swScore = 0;
+  @state() securityScore = 0;
+  @state() overallScore = 0;
 
-  @internalProperty() currentURL: string | undefined;
+  @state() currentURL: string | undefined;
 
-  @internalProperty() pwa_icon: { url: string; locked: boolean } | undefined;
-  @internalProperty() manifest_icon:
+  @state() pwa_icon: { url: string; locked: boolean } | undefined;
+  @state() manifest_icon:
     | { url: string; locked: boolean }
     | undefined;
-  @internalProperty() sw_icon: { url: string; locked: boolean } | undefined;
-  @internalProperty() security_icon:
+  @state() sw_icon: { url: string; locked: boolean } | undefined;
+  @state() security_icon:
     | { url: string; locked: boolean }
     | undefined;
 

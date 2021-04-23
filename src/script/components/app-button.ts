@@ -1,5 +1,7 @@
-import { LitElement, css, html, customElement, property } from 'lit-element';
-import { classMap } from 'lit-html/directives/class-map';
+import { LitElement, css, html } from 'lit';
+import { customElement, property,
+ } from "lit/decorators.js"
+import { classMap } from 'lit/directives/class-map';
 import { AppButtonElement } from '../utils/interfaces.components';
 
 @customElement('app-button')

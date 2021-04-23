@@ -2,11 +2,10 @@ import {
   LitElement,
   css,
   html,
-  customElement,
-  internalProperty,
-  property,
-} from 'lit-element';
-import { classMap } from 'lit-html/directives/class-map';
+} from 'lit';
+import { customElement, property,
+  state, } from "lit/decorators.js"
+import { classMap } from 'lit/directives/class-map';
 
 import {
   BreakpointValues,
@@ -31,15 +30,15 @@ import { RawTestResult, ScoreEvent } from '../utils/interfaces';
 export class AppReport extends LitElement {
   @property() resultOfTest: RawTestResult | undefined;
 
-  @internalProperty() swScore = 0;
-  @internalProperty() maniScore = 0;
-  @internalProperty() securityScore = 0;
+  @state() swScore = 0;
+  @state() maniScore = 0;
+  @state() securityScore = 0;
 
-  @internalProperty() mql = window.matchMedia(
+  @state() mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`
   );
 
-  @internalProperty() isDeskTopView = this.mql.matches;
+  @state() isDeskTopView = this.mql.matches;
 
   static get styles() {
     return [

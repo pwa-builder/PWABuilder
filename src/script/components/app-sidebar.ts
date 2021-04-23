@@ -7,10 +7,11 @@ import {
   LitElement,
   css,
   html,
-  customElement,
-  property,
-  internalProperty,
-} from 'lit-element';
+} from 'lit';
+
+import { customElement, property,
+  state, } from "lit/decorators.js"
+
 import { getProgress, getResults, getURL } from '../services/app-info';
 import {
   Progress,
@@ -20,7 +21,7 @@ import {
   Status,
 } from '../utils/interfaces';
 
-import { classMap } from 'lit-html/directives/class-map';
+import { classMap } from 'lit/directives/class-map';
 
 import './sidebar-card';
 import { getOverallScore } from '../services/tests';
@@ -495,7 +496,7 @@ export class AppSidebar extends LitElement {
     `;
   }
 
-  @internalProperty() overallScore = 0;
+  @state() overallScore = 0;
 
   constructor() {
     super();
@@ -545,9 +546,9 @@ export class AppSidebar extends LitElement {
     });
   }
 
-  @internalProperty() current_url: string | undefined;
-  @internalProperty() results: RawTestResult | undefined;
-  @internalProperty() menuItems: ProgressList | undefined;
+  @state() current_url: string | undefined;
+  @state() results: RawTestResult | undefined;
+  @state() menuItems: ProgressList | undefined;
 
   @property({ type: Object }) mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`

@@ -1,11 +1,11 @@
 import {
   LitElement,
   css,
-  html,
-  customElement,
-  property,
-  internalProperty,
-} from 'lit-element';
+  html
+} from 'lit';
+
+import { customElement, property,
+  state, } from "lit/decorators.js"
 import { OrganizedResults, TestResult } from '../utils/interfaces';
 
 import {
@@ -16,7 +16,7 @@ import {
 @customElement('score-results')
 export class ScoreResults extends LitElement {
   @property() testResults: Array<TestResult> | undefined;
-  @internalProperty() organizedResults: OrganizedResults | undefined;
+  @state() organizedResults: OrganizedResults | undefined;
 
   static get styles() {
     return css`

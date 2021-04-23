@@ -2,9 +2,9 @@ import {
   LitElement,
   css,
   html,
-  customElement,
-  internalProperty,
-} from 'lit-element';
+} from 'lit';
+import { customElement,
+  state, } from "lit/decorators.js"
 import { Router } from '@vaadin/router';
 
 import { smallBreakPoint } from '../utils/css/breakpoints';
@@ -21,8 +21,8 @@ import { loadPaintPolyfillIfNeeded } from '../polyfills/css-paint';
 
 @customElement('app-testing')
 export class AppTesting extends LitElement {
-  @internalProperty() loading = false;
-  @internalProperty() currentPhrase =
+  @state() loading = false;
+  @state() currentPhrase =
     'PWABuilder is loading your PWA in the background';
 
   static get styles() {

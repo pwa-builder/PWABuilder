@@ -1,9 +1,9 @@
 /* eslint-disable no-fallthrough */
-import { LitElement, css, html, customElement, property } from 'lit-element';
-import { classMap } from 'lit-html/directives/class-map';
+import { LitElement, css, html } from 'lit';
+import { customElement, property } from "lit/decorators.js"
+import { classMap } from 'lit/directives/class-map';
 import { Router } from '@vaadin/router';
 import {
-  mediumBreakPoint,
   largeBreakPoint,
   BreakpointValues,
 } from '../utils/css/breakpoints';
@@ -29,7 +29,7 @@ export class AppCard extends LitElement {
 
   @property({ type: Boolean }) featured = false;
   @property({ type: Boolean }) shareLink = false;
-  @property({ type: Array }) tags = [];
+  @property({ type: Array }) tags: Array<string> = [];
   @property({ type: Boolean }) isActionCard = false;
 
   static get styles() {

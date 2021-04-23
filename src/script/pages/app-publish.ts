@@ -1,11 +1,11 @@
 import {
   css,
-  customElement,
   html,
-  internalProperty,
   LitElement,
-} from 'lit-element';
-import { classMap } from 'lit-html/directives/class-map';
+} from 'lit';
+import { customElement,
+  state, } from "lit/decorators.js"
+import { classMap } from 'lit/directives/class-map';
 
 import '../components/app-header';
 import '../components/app-card';
@@ -38,26 +38,26 @@ import { getReportErrorUrl } from '../utils/error';
 
 @customElement('app-publish')
 export class AppPublish extends LitElement {
-  @internalProperty() errored = false;
-  @internalProperty() errorMessage: string | undefined;
+  @state() errored = false;
+  @state() errorMessage: string | undefined;
 
-  @internalProperty() blob: Blob | File | undefined;
-  @internalProperty() testBlob: Blob | File | undefined;
+  @state() blob: Blob | File | undefined;
+  @state() testBlob: Blob | File | undefined;
 
-  @internalProperty() mql = window.matchMedia(
+  @state() mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`
   );
 
-  @internalProperty() isDeskTopView = this.mql.matches;
+  @state() isDeskTopView = this.mql.matches;
 
-  @internalProperty() open_windows_options = false;
-  @internalProperty() open_android_options = false;
+  @state() open_windows_options = false;
+  @state() open_android_options = false;
 
-  @internalProperty() generating = false;
+  @state() generating = false;
 
-  @internalProperty() finalChecks: checkResults | undefined;
+  @state() finalChecks: checkResults | undefined;
 
-  @internalProperty() reportPackageErrorUrl: string;
+  @state() reportPackageErrorUrl: string;
 
   constructor() {
     super();

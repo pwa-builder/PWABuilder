@@ -2,10 +2,10 @@ import {
   LitElement,
   css,
   html,
-  customElement,
-  property,
-  internalProperty,
-} from 'lit-element';
+} from 'lit';
+
+import { customElement, property,
+  state, } from "lit/decorators.js"
 
 import '../components/loading-button';
 import { tooltip, styles as ToolTipStyles } from '../components/tooltip';
@@ -23,8 +23,8 @@ import { WindowsPackageOptions } from '../utils/win-validation';
 export class WindowsForm extends LitElement {
   @property({ type: Boolean }) generating: boolean;
 
-  @internalProperty() show_adv = false;
-  @internalProperty() default_options: WindowsPackageOptions | undefined;
+  @state() show_adv = false;
+  @state() default_options: WindowsPackageOptions | undefined;
 
   static get styles() {
     return [

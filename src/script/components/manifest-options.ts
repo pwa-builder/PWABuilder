@@ -1,12 +1,11 @@
 import {
   LitElement,
-  customElement,
   css,
-  html,
-  property,
-  internalProperty,
-} from 'lit-element';
-import { classMap } from 'lit-html/directives/class-map';
+  html
+} from 'lit';
+import { customElement, property,
+  state } from "lit/decorators.js"
+import { classMap } from 'lit/directives/class-map';
 
 import { localeStrings, languageCodes } from '../../locales';
 
@@ -60,24 +59,24 @@ export class AppManifest extends LitElement {
   screenshotList: Array<string | undefined> = [undefined];
 
   @property({ type: Boolean }) uploadModalOpen = false;
-  @internalProperty() uploadButtonDisabled = true;
-  @internalProperty() uploadSelectedImageFile: Lazy<File>;
-  @internalProperty() uploadImageObjectUrl: Lazy<string>;
+  @state() uploadButtonDisabled = true;
+  @state() uploadSelectedImageFile: Lazy<File>;
+  @state() uploadImageObjectUrl: Lazy<string>;
 
-  @internalProperty() generateIconButtonDisabled = true;
+  @state() generateIconButtonDisabled = true;
 
-  @internalProperty()
+  @state()
   protected generateScreenshotButtonDisabled = true;
 
-  @internalProperty() screenshotListValid: Array<boolean> = [];
+  @state() screenshotListValid: Array<boolean> = [];
 
-  @internalProperty()
+  @state()
   protected backgroundColorRadioValue: BackgroundColorRadioValues = 'none';
 
-  @internalProperty()
+  @state()
   protected awaitRequest = false;
 
-  @internalProperty()
+  @state()
   protected searchParams: Lazy<URLSearchParams>;
 
   protected get siteUrl(): string {
