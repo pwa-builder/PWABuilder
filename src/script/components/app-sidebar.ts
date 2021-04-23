@@ -595,12 +595,12 @@ export class AppSidebar extends LitElement {
               ${this.menuItems?.progress.map(item => {
                 return html`
                   <div
-                    class=${classMap({
+                    class="${classMap({
                       active: item.done === Status.ACTIVE,
                       done: item.done === Status.DONE,
                       pending: item.done === Status.PENDING,
                       lastItem: item.header === 'Complete',
-                    })}
+                    })}"
                   >
                     <div class="sidebar-item-header" slot="heading">
                       ${item.done === Status.ACTIVE
@@ -646,12 +646,12 @@ export class AppSidebar extends LitElement {
         ${this.menuItems?.progress.map(
           item =>
             html`<div
-              class=${classMap({
+              class="${classMap({
                 heading: true,
                 active: item.done === Status.ACTIVE,
                 done: item.done === Status.DONE,
                 pending: item.done === Status.PENDING,
-              })}
+              })}"
             >
               ${item.done === Status.ACTIVE
                 ? html`<ion-icon class="icon active" name="ellipse"></ion-icon>`

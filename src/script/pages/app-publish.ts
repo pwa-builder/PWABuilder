@@ -589,9 +589,9 @@ export class AppPublish extends LitElement {
 
         <div
           id="grid"
-          class=${classMap({
+          class="${classMap({
             'grid-mobile': this.isDeskTopView == false,
-          })}
+          })}"
         >
           <app-sidebar id="desktop-sidebar"></app-sidebar>
 

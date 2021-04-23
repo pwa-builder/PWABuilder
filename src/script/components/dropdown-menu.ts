@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, property } from "lit/decorators.js"
+import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { fastMenuCss } from '../utils/css/fast-elements';
 import { KeyboardKeys } from '../utils/keyboard';
@@ -9,7 +9,7 @@ const dropdownComponentClass = 'dropdown-component';
 @customElement('app-dropdown')
 export class DropdownMenu extends LitElement {
   @property({ type: Boolean }) openMenu = false;
-  @property({ type: Array }) menuItems = [];
+  @property({ type: Array }) menuItems: Array<string> = [];
   @property({ type: Number }) selectedIndex = 0;
 
   @property({ attribute: 'static-text', type: String })
@@ -115,15 +115,21 @@ export class DropdownMenu extends LitElement {
               : html`<ion-icon name="chevron-up-outline"></ion-icon>`}
           </span>
         </fast-button>
-        <fast-menu class=${this.menuClassMap()}>
+        <fast-menu
+          class="${classMap({
+            'menu': true,
+            'dropdown-component': true,
+            'closed': !this.openMenu,
+          })}"
+        >
           ${this.menuItems.map((item, i) => {
             const isSelectedItem = i === this.selectedIndex;
             return html` <fast-menu-item
               part="menu-item"
-              class=${classMap({
+              class="${classMap({
                 'dropdown-component': true,
                 'selected': isSelectedItem,
-              })}
+              })}"
               @click=${() => this.clickMenuItem(i)}
               data-index=${i}
               tabindex="0"
@@ -177,13 +183,5 @@ export class DropdownMenu extends LitElement {
   clickMenuItem(index: number) {
     this.selectedIndex = index;
     this.openMenu = false;
-  }
-
-  menuClassMap() {
-    return classMap({
-      'menu': true,
-      'dropdown-component': true,
-      'closed': !this.openMenu,
-    });
   }
 }

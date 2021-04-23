@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, property } from "lit/decorators.js"
+import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { CardData, publishCards, landingCards } from './resource-hub-cards';
 import {
@@ -283,13 +283,28 @@ export class ResourceHub extends LitElement {
 
   render() {
     return html`
-      <section class=${this.resourceHubClassMap()}>
+      <section
+        class="${classMap({
+          'resource-hub': true,
+          'home': this.pageName === 'home',
+          'complete': this.pageName === 'complete',
+        })}"
+      >
         <div class="resource-header">
           <slot name="title"></slot>
           <slot name="description"></slot>
         </div>
 
-        <div class=${this.cardsClasses()}>${this.renderCards()}</div>
+        <div
+          class="${classMap({
+            cards: true,
+            horizontal:
+              this.pageName === 'complete' &&
+              window.innerWidth <= BreakpointValues.smallUpper,
+          })}"
+        >
+          ${this.renderCards()}
+        </div>
 
         ${this.renderViewAllButton()}
       </section>
@@ -330,15 +345,6 @@ export class ResourceHub extends LitElement {
     return undefined;
   }
 
-  cardsClasses() {
-    return classMap({
-      cards: true,
-      horizontal:
-        this.pageName === 'complete' &&
-        window.innerWidth <= BreakpointValues.smallUpper,
-    });
-  }
-
   determineCardMode(): AppCardModes {
     if (
       this.pageName === 'complete' &&
@@ -348,13 +354,5 @@ export class ResourceHub extends LitElement {
     }
 
     return AppCardModes.default;
-  }
-
-  resourceHubClassMap() {
-    return classMap({
-      'resource-hub': true,
-      'home': this.pageName === 'home',
-      'complete': this.pageName === 'complete',
-    });
   }
 }

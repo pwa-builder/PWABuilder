@@ -392,7 +392,7 @@ export class AppHome extends LitElement {
               type="text"
               placeholder="Enter URL"
               name="url-input"
-              class=${classMap({ error: this.errorGettingURL })}
+              class="${classMap({ error: this.errorGettingURL })}"
               @input="${(e: InputEvent) => this.handleURL(e)}"
               autofocus
             ></fast-text-field>

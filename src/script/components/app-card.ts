@@ -1,12 +1,10 @@
 /* eslint-disable no-fallthrough */
 import { LitElement, css, html } from 'lit';
-import { customElement, property } from "lit/decorators.js"
+import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { Router } from '@vaadin/router';
-import {
-  largeBreakPoint,
-  BreakpointValues,
-} from '../utils/css/breakpoints';
+import { largeBreakPoint, BreakpointValues } from '../utils/css/breakpoints';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 export enum AppCardModes {
   default = 'default',
@@ -464,13 +462,29 @@ export class AppCard extends LitElement {
 
   renderDefault() {
     return html`
-      <fast-card class=${this.cardClasses()} part="card">
-        <div class="img-overlay ${this.imageClasses()}">
+      <fast-card class="${classMap({
+        featured: this.featured || this.className.includes('featured'),
+        [AppCardModes.default]: this.className.includes(AppCardModes.default),
+        [AppCardModes.blog]: this.className.includes(AppCardModes.blog),
+        [AppCardModes.micro]: this.className.includes(AppCardModes.micro),
+        [AppCardModes.microDescription]: this.className.includes(
+          AppCardModes.microDescription
+        ),
+        [AppCardModes.contentCard]: this.className.includes(
+          AppCardModes.contentCard
+        ),
+      })}" part="card">
+        <div class="${classMap({
+          'bordered': this.imageBordered,
+          'img-overlay': true,
+        })}">
           <slot name="overlay"></slot>
         </div>
         <img
-          class=${this.imageClasses()}
-          src="${this.imageUrl}"
+          class="${classMap({
+            bordered: this.imageBordered,
+          })}"
+          src="${ifDefined(this.imageUrl)}"
           alt="${this.cardTitle} card header image"
         />
         <h3>${this.cardTitle}</h3>
@@ -491,7 +505,23 @@ export class AppCard extends LitElement {
     // Featured Card Html
     if (this.featured && window.innerWidth > BreakpointValues.mediumUpper) {
       return html`
-        <fast-card class=${this.cardClasses()} part="card">
+        <fast-card
+          class="${classMap({
+            featured: this.featured || this.className.includes('featured'),
+            [AppCardModes.default]: this.className.includes(
+              AppCardModes.default
+            ),
+            [AppCardModes.blog]: this.className.includes(AppCardModes.blog),
+            [AppCardModes.micro]: this.className.includes(AppCardModes.micro),
+            [AppCardModes.microDescription]: this.className.includes(
+              AppCardModes.microDescription
+            ),
+            [AppCardModes.contentCard]: this.className.includes(
+              AppCardModes.contentCard
+            ),
+          })}"
+          part="card"
+        >
           <div class="img-overlay">
             <div class="overlay-top">
               <span class="date">${this.date}</span>
@@ -504,7 +534,7 @@ export class AppCard extends LitElement {
             <div class="tag-list">${this.renderTagList()}</div>
           </div>
           <img
-            src="${this.imageUrl}"
+            src="${ifDefined(this.imageUrl)}"
             alt="${this.cardTitle} card header image"
           />
         </fast-card>
@@ -512,7 +542,21 @@ export class AppCard extends LitElement {
     }
 
     return html`
-      <fast-card class=${this.cardClasses()} part="card">
+      <fast-card
+        class="${classMap({
+          featured: this.featured || this.className.includes('featured'),
+          [AppCardModes.default]: this.className.includes(AppCardModes.default),
+          [AppCardModes.blog]: this.className.includes(AppCardModes.blog),
+          [AppCardModes.micro]: this.className.includes(AppCardModes.micro),
+          [AppCardModes.microDescription]: this.className.includes(
+            AppCardModes.microDescription
+          ),
+          [AppCardModes.contentCard]: this.className.includes(
+            AppCardModes.contentCard
+          ),
+        })}"
+        part="card"
+      >
         <div class="img-overlay">
           <div class="overlay-top">
             <span class="date">${this.date}</span>
@@ -520,7 +564,10 @@ export class AppCard extends LitElement {
           </div>
           <slot name="overlay"></slot>
         </div>
-        <img src="${this.imageUrl}" alt="${this.cardTitle} card header image" />
+        <img
+          src="${ifDefined(this.imageUrl)}"
+          alt="${this.cardTitle} card header image"
+        />
         <div class="content">
           <h3>${this.cardTitle}</h3>
           ${this.renderShareButton()}
@@ -531,8 +578,26 @@ export class AppCard extends LitElement {
 
   renderMicroCard() {
     return html`
-      <fast-card class=${this.cardClasses()} part="card" @click=${this.route}>
-        <img src="${this.imageUrl}" alt="${this.cardTitle} card header image" />
+      <fast-card
+        class="${classMap({
+          featured: this.featured || this.className.includes('featured'),
+          [AppCardModes.default]: this.className.includes(AppCardModes.default),
+          [AppCardModes.blog]: this.className.includes(AppCardModes.blog),
+          [AppCardModes.micro]: this.className.includes(AppCardModes.micro),
+          [AppCardModes.microDescription]: this.className.includes(
+            AppCardModes.microDescription
+          ),
+          [AppCardModes.contentCard]: this.className.includes(
+            AppCardModes.contentCard
+          ),
+        })}"
+        part="card"
+        @click=${this.route}
+      >
+        <img
+          src="${ifDefined(this.imageUrl)}"
+          alt="${this.cardTitle} card header image"
+        />
         <div class="content">
           <h3>${this.cardTitle}</h3>
         </div>
@@ -542,8 +607,26 @@ export class AppCard extends LitElement {
 
   renderMicroDescriptionCard() {
     return html`
-      <fast-card class=${this.cardClasses()} part="card" @click=${this.route}>
-        <img src="${this.imageUrl}" alt="${this.cardTitle} card header image" />
+      <fast-card
+        class="${classMap({
+          featured: this.featured || this.className.includes('featured'),
+          [AppCardModes.default]: this.className.includes(AppCardModes.default),
+          [AppCardModes.blog]: this.className.includes(AppCardModes.blog),
+          [AppCardModes.micro]: this.className.includes(AppCardModes.micro),
+          [AppCardModes.microDescription]: this.className.includes(
+            AppCardModes.microDescription
+          ),
+          [AppCardModes.contentCard]: this.className.includes(
+            AppCardModes.contentCard
+          ),
+        })}"
+        part="card"
+        @click=${this.route}
+      >
+        <img
+          src="${ifDefined(this.imageUrl)}"
+          alt="${this.cardTitle} card header image"
+        />
         <div class="content">
           <h3>${this.cardTitle}</h3>
           <p>${this.description}</p>
@@ -553,7 +636,21 @@ export class AppCard extends LitElement {
   }
 
   renderContentCard() {
-    return html` <fast-card class=${this.cardClasses()} part="card">
+    return html` <fast-card
+      class="${classMap({
+        featured: this.featured || this.className.includes('featured'),
+        [AppCardModes.default]: this.className.includes(AppCardModes.default),
+        [AppCardModes.blog]: this.className.includes(AppCardModes.blog),
+        [AppCardModes.micro]: this.className.includes(AppCardModes.micro),
+        [AppCardModes.microDescription]: this.className.includes(
+          AppCardModes.microDescription
+        ),
+        [AppCardModes.contentCard]: this.className.includes(
+          AppCardModes.contentCard
+        ),
+      })}"
+      part="card"
+    >
       <div class="header">
         <h3>${this.cardTitle}</h3>
         <p>${this.description}</p>
@@ -581,27 +678,6 @@ export class AppCard extends LitElement {
 
   share() {
     console.log('share');
-  }
-
-  cardClasses() {
-    return classMap({
-      featured: this.featured || this.className.includes('featured'),
-      [AppCardModes.default]: this.className.includes(AppCardModes.default),
-      [AppCardModes.blog]: this.className.includes(AppCardModes.blog),
-      [AppCardModes.micro]: this.className.includes(AppCardModes.micro),
-      [AppCardModes.microDescription]: this.className.includes(
-        AppCardModes.microDescription
-      ),
-      [AppCardModes.contentCard]: this.className.includes(
-        AppCardModes.contentCard
-      ),
-    });
-  }
-
-  imageClasses() {
-    return classMap({
-      bordered: this.imageBordered,
-    });
   }
 
   route() {

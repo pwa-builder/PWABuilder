@@ -547,9 +547,9 @@ export class AppCongrats extends LitElement {
 
         <div
           id="grid"
-          class=${classMap({
+          class="${classMap({
             'grid-mobile': this.isDeskTopView == false,
-          })}
+          })}"
         >
           <app-sidebar id="desktop-sidebar"></app-sidebar>
 
@@ -647,10 +647,10 @@ export class AppCongrats extends LitElement {
                       linkRoute="${this.featuredPost.clickUrl}"
                       .tags=${this.featuredPost.tags}
                       .featured="${this.isFeatured()}"
-                      class=${classMap({
+                      class="${classMap({
                         blog: true,
                         featured: this.isFeatured(),
-                      })}
+                      })}"
                     >
                     </app-card>`
                   : null}

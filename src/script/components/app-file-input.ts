@@ -9,17 +9,17 @@ import { customElement, property, query } from "lit/decorators.js"
 import { hidden } from '../utils/css/hidden';
 import { fastButtonCss } from '../utils/css/fast-elements';
 import { FileInputDetails, Lazy } from '../utils/interfaces';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 @customElement('app-file-input')
 export class FileInput extends LitElement {
-  @property({ type: String }) inputId: Lazy<string>;
+  @property({ type: String }) inputId: string;
   @query('.file-input') fileInput: Lazy<HTMLInputElement>;
 
   static get styles() {
     return [
       css`
-        :host {
-        }
+
       `,
       hidden,
       fastButtonCss,
@@ -52,7 +52,7 @@ export class FileInput extends LitElement {
           >${this.buttonText()}</fast-button
         >
         <input
-          id="${this.inputId}"
+          id="${ifDefined(this.inputId)}"
           class="file-input hidden"
           type="file"
           aria-hidden="true"

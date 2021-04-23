@@ -28,8 +28,8 @@ import { styleMap } from 'lit/directives/style-map.js';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {
-  @property() results: RawTestResult | undefined;
-  @property() scoreCardResults: RawTestResult | undefined;
+  @property({ type: Object }) results: RawTestResult | undefined;
+  @property({ type: Object }) scoreCardResults: RawTestResult | undefined;
 
   @state() maniScore = 0;
   @state() swScore = 0;

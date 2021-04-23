@@ -55,7 +55,8 @@ export class AppBadges extends LitElement {
         ${this.possible_badges?.map(badge => {
           return html`
             <div
-              class="badge ${classMap({
+              class="${classMap({
+                badge: true,
                 locked: this.duplicate.find(dupe => {
                   return badge.name === dupe.name;
                 })
