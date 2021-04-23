@@ -28,7 +28,7 @@ import { RawTestResult, ScoreEvent } from '../utils/interfaces';
 
 @customElement('app-report')
 export class AppReport extends LitElement {
-  @property() resultOfTest: RawTestResult | undefined;
+  @property({ type: Object }) resultOfTest: RawTestResult | undefined;
 
   @state() swScore = 0;
   @state() maniScore = 0;

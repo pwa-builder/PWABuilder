@@ -12,14 +12,12 @@ export class DropdownMenu extends LitElement {
   @property({ type: Array }) menuItems: Array<string> = [];
   @property({ type: Number }) selectedIndex = 0;
 
-  @property({ attribute: 'static-text', type: String })
-  staticButtonText = undefined;
+  @property({ attribute: 'static-text', type: String})
+  staticButtonText = 'static-text';
 
   static get styles() {
     return [
       css`
-        :host {
-        }
         ion-icon {
           vertical-align: middle;
         }

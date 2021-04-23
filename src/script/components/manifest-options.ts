@@ -85,8 +85,6 @@ export class AppManifest extends LitElement {
   static get styles() {
     return [
       css`
-        :host {
-        }
       `,
       ErrorStyles,
       ToolTipStyles,
