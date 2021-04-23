@@ -7,6 +7,7 @@ import {
   largeBreakPoint,
   BreakpointValues,
 } from '../utils/css/breakpoints';
+import { fastButtonCss } from '../utils/css/fast-elements';
 
 export enum AppCardModes {
   default = 'default',
@@ -228,7 +229,7 @@ export class AppCard extends LitElement {
         }
 
         .blog .content h3 {
-          font-size: 18px;
+          font-size: 24px;
           margin: 0;
         }
 
@@ -238,13 +239,15 @@ export class AppCard extends LitElement {
 
         .blog.featured h3 {
           line-height: 34px;
-          font-size: 30px;
+          font-size: 28px;
           margin: 16px 0 8px 0;
         }
 
         .blog.featured p {
           font-size: 18px;
-          line-height: 34px;
+          line-height: 24px;
+          font-weight: 500px;
+          color: var(--font-color);
         }
 
         .blog.featured img {
@@ -290,7 +293,11 @@ export class AppCard extends LitElement {
 
         .share-button-text {
           color: var(--font-color);
-          font-weight: 400;
+          font-weight: 700;
+        }
+
+        fast-button.share.link {
+          --desktop-button-font-size: 16px;
         }
 
         fast-button.share::part(control) {
@@ -320,6 +327,13 @@ export class AppCard extends LitElement {
         .blog .content .share::part(control) {
           display: inline-block;
           font-size: var(--desktop-button-font-size);
+        }
+
+        .blog .date {
+          --desktop-button-font-size: 16px;
+          font-weight: 700;
+          line-height: 21px;
+          color: var(--font-color);
         }
 
         .blog.featured fast-badge::part(control) {
@@ -379,8 +393,8 @@ export class AppCard extends LitElement {
 
         .micro h3 {
           margin: 0;
-          line-height: 20px;
-          font-size: 14px;
+          line-height: 24px;
+          font-size: 24px;
         }
 
         .micro p {
@@ -439,6 +453,7 @@ export class AppCard extends LitElement {
           'no-upper'
         )}
       `,
+      fastButtonCss,
     ];
   }
 
@@ -567,8 +582,12 @@ export class AppCard extends LitElement {
   }
   renderShareButton() {
     return html`
-      <fast-button class="share" appearance="lightweight" @click=${this.share}>
-        <span class="share-button-text">Share</span>
+      <fast-button
+        class="share link"
+        appearance="lightweight"
+        @click=${this.share}
+      >
+        <span class="share-button-text">SHARE</span>
       </fast-button>
     `;
   }
