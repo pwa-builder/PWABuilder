@@ -3,12 +3,13 @@ import { smallBreakPoint, mediumBreakPoint } from '../utils/css/breakpoints';
 import { AppButtonElement } from '../utils/interfaces.components';
 
 import '../components/app-button';
+import { FastButtonAppearance } from '../utils/fast-element';
 
 @customElement('loading-button')
 export class LoadingButton extends LitElement implements AppButtonElement {
   @property({ type: String }) type = 'submit';
   @property({ type: String }) colorMode = 'primary';
-  @property({ type: String }) appearance = 'neutral';
+  @property({ type: String }) appearance: FastButtonAppearance = 'neutral';
   @property({ type: Boolean }) loading = false;
   @property({ type: Boolean }) disabled = false;
 
@@ -30,7 +31,6 @@ export class LoadingButton extends LitElement implements AppButtonElement {
         fast-button::part(control) {
           font-size: var(--mobile-button-fontsize);
         }
-
       `)}
 
       ${mediumBreakPoint(css`
