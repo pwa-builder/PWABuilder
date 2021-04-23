@@ -427,7 +427,7 @@ export class WindowsForm extends LitElement {
                     class="form-control"
                     id="windowsStartUrlInput"
                     placeholder="https://mysite.com/startpoint.html"
-                    value="${this.default_options ? this.default_options.manifest.startUrl : "/"}"
+                    .value="${this.default_options ? this.default_options.manifest?.start_url : "/"}"
                     name="startUrl"
                   ></fast-text-field>
                 </div>
