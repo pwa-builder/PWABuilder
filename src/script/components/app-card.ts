@@ -1,7 +1,7 @@
 /* eslint-disable no-fallthrough */
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from "lit/decorators.js"
-import { classMap } from 'lit/directives/class-map';
+import { classMap } from 'lit/directives/class-map.js';
 import { Router } from '@vaadin/router';
 import {
   largeBreakPoint,

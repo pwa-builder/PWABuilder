@@ -5,7 +5,7 @@ import {
 } from 'lit';
 import { customElement, property,
   state } from "lit/decorators.js"
-import { classMap } from 'lit/directives/class-map';
+import { classMap } from 'lit/directives/class-map.js';
 
 import { localeStrings, languageCodes } from '../../locales';
 

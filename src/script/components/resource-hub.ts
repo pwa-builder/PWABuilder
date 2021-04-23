@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from "lit/decorators.js"
-import { classMap } from 'lit/directives/class-map';
+import { classMap } from 'lit/directives/class-map.js';
 import { CardData, publishCards, landingCards } from './resource-hub-cards';
 import {
   largeBreakPoint,

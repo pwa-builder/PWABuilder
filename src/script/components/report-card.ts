@@ -23,8 +23,8 @@ import { Router } from '@vaadin/router';
 import { getOverallScore } from '../services/tests';
 import { getPossibleBadges, sortBadges } from '../services/badges';
 
-import { classMap } from 'lit/directives/class-map';
-import { styleMap } from 'lit/directives/style-map';
+import { classMap } from 'lit/directives/class-map.js';
+import { styleMap } from 'lit/directives/style-map.js';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {

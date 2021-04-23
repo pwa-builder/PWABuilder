@@ -6,7 +6,7 @@ import {
 
 import { customElement,
   state, } from "lit/decorators.js"
-import { classMap } from 'lit/directives/class-map';
+import { classMap } from 'lit/directives/class-map.js';
 
 import {
   BreakpointValues,

@@ -21,7 +21,7 @@ import {
   Status,
 } from '../utils/interfaces';
 
-import { classMap } from 'lit/directives/class-map';
+import { classMap } from 'lit/directives/class-map.js';
 
 import './sidebar-card';
 import { getOverallScore } from '../services/tests';
