@@ -532,13 +532,13 @@ export class AppCard extends LitElement {
           <div class="overlay-top">
             <span class="date">${this.date}</span>
             <div class="tag-list">${this.renderTagList()}</div>
+            ${this.renderShareButton()}
           </div>
           <slot name="overlay"></slot>
         </div>
         <img src="${this.imageUrl}" alt="${this.cardTitle} card header image" />
         <div class="content">
           <h3>${this.cardTitle}</h3>
-          ${this.renderShareButton()}
         </div>
       </fast-card>
     `;
