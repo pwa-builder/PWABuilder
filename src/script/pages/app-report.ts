@@ -129,6 +129,15 @@ export class AppReport extends LitElement {
             #desktop-sidebar {
               display: block;
             }
+
+            #report-wrapper {
+              max-width: 69em;
+              background: white;
+            }
+
+            #grid {
+              background: white;
+            }
           `
         )}
 
@@ -244,7 +253,7 @@ export class AppReport extends LitElement {
   }
 
   render() {
-    return html` <div>
+    return html` <div id="report-wrapper">
       <app-header></app-header>
 
       <div

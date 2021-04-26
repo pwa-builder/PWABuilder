@@ -41,6 +41,7 @@ export class AppTesting extends LitElement {
           background-size: cover;
           background-repeat: no-repeat;
           background-position: right;
+          background-color: white;
         }
 
         #testing-container {

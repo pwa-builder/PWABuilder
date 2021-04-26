@@ -10,6 +10,10 @@ import '../components/app-header';
 export class AppIndex extends LitElement {
   static get styles() {
     return css`
+      #router-outlet {
+        background: var(--primary-purple);
+      }
+      
       #router-outlet > * {
         width: 100% !important;
       }

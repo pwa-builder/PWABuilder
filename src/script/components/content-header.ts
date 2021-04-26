@@ -56,6 +56,7 @@ export class ContentHeader extends LitElement {
 
       :host(.home) {
         height: initial;
+        background-color: white;
       }
 
       :host(.home) #circles-box {

@@ -150,6 +150,11 @@ export class AppBasePack extends LitElement {
             #desktop-sidebar {
               display: block;
             }
+
+            #basepack-wrapper {
+              max-width: 69em;
+              background: white;
+            }
           `
         )}
 
@@ -298,7 +303,7 @@ export class AppBasePack extends LitElement {
         </div>
       </app-modal>
 
-      <div>
+      <div id="basepack-wrapper">
         <app-header></app-header>
 
         <div

@@ -258,7 +258,7 @@ export class AppHome extends LitElement {
 
       ${xxxLargeBreakPoint(css`
           content-header::part(main-container) {
-            padding-left: 13em;
+            padding-left: 10em;
             justify-content: flex-start;
           }
         `)}
