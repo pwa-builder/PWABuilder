@@ -2,11 +2,12 @@ import {
   LitElement,
   css,
   html,
-  customElement,
-  internalProperty,
-} from 'lit-element';
+} from 'lit';
 
-import { classMap } from 'lit-html/directives/class-map';
+import { customElement,
+  state, } from "lit/decorators.js"
+
+import { classMap } from 'lit/directives/class-map.js';
 
 import {
   smallBreakPoint,
@@ -34,11 +35,11 @@ import { Lazy, ProgressList, Status } from '../utils/interfaces';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
-  @internalProperty() siteURL: Lazy<string>;
-  @internalProperty() gettingManifest = false;
+  @state() siteURL: Lazy<string>;
+  @state() gettingManifest = false;
 
-  @internalProperty() errorGettingURL = false;
-  @internalProperty() errorMessage: string | undefined;
+  @state() errorGettingURL = false;
+  @state() errorMessage: string | undefined;
 
   static get styles() {
     return [
@@ -391,7 +392,7 @@ export class AppHome extends LitElement {
               type="text"
               placeholder="Enter URL"
               name="url-input"
-              class=${classMap({ error: this.errorGettingURL })}
+              class="${classMap({ error: this.errorGettingURL })}"
               @input="${(e: InputEvent) => this.handleURL(e)}"
               autofocus
             ></fast-text-field>

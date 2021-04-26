@@ -2,10 +2,10 @@ import {
   LitElement,
   css,
   html,
-  customElement,
-  internalProperty,
-  property,
-} from 'lit-element';
+} from 'lit';
+
+import { customElement, property,
+  state, } from "lit/decorators.js"
 import {
   chooseServiceWorker,
   getServiceWorkers,
@@ -27,8 +27,8 @@ interface ServiceWorkerChoice {
 export class SWPicker extends LitElement {
   @property({ type: Number }) score = 0;
 
-  @internalProperty() serviceWorkers: ServiceWorkerChoice[] | undefined;
-  @internalProperty() chosenSW: number | undefined;
+  @state() serviceWorkers: ServiceWorkerChoice[] | undefined;
+  @state() chosenSW: number | undefined;
 
   static get styles() {
     return [

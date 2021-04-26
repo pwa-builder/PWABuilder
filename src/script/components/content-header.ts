@@ -1,4 +1,5 @@
-import { css, customElement, html, LitElement } from 'lit-element';
+import { html, css, LitElement } from 'lit';
+import { customElement } from "lit/decorators.js"
 // import { loadPaintPolyfillIfNeeded } from '../polyfills/css-paint';
 import {
   BreakpointValues,
@@ -27,6 +28,16 @@ export class ContentHeader extends LitElement {
 
       :host(.reportCard) {
         background: url(/assets/images/report_card.webp) top right / cover
+          no-repeat;
+      }
+
+      :host(.reportCard.mani) {
+        background: url(/assets/images/report_card_manifest.webp) top right / cover
+          no-repeat;
+      }
+
+      :host(.reportCard.sw) {
+        background: url(/assets/images/report_card_sw.webp) top right / cover
           no-repeat;
       }
 
@@ -162,10 +173,6 @@ export class ContentHeader extends LitElement {
       `)}
 
       ${mediumBreakPoint(css`
-        #main-container {
-          flex-direction: column-reverse;
-          padding-left: 0;
-        }
 
         :host(.home) {
           background-position: top center;
@@ -173,7 +180,11 @@ export class ContentHeader extends LitElement {
           background-image: url(/assets/images/home_mobile.webp);
           background-size: cover;
 
-          height: 30em;
+          height: 40em;
+        }
+
+        :host(.home) #circles-box {
+          height: 40em;
         }
 
         :host(.reportCard) {
@@ -237,7 +248,10 @@ export class ContentHeader extends LitElement {
 
         #main-container {
           padding-top: initial;
-          margin-top: 12em;
+          margin-top: 14em;
+
+          flex-direction: column-reverse;
+          padding-left: 0;
         }
 
         #circles-box {
@@ -266,6 +280,14 @@ export class ContentHeader extends LitElement {
           background: url(/assets/images/report_card.webp) top right / cover
             no-repeat;
 
+          background-position: -1em;
+        }
+
+        :host(.reportCard.mani) {
+          background-position: -1em;
+        }
+
+        :host(.reportCard.sw) {
           background-position: -1em;
         }
 
@@ -303,6 +325,14 @@ export class ContentHeader extends LitElement {
           background: url(/assets/images/report_card.webp) top right / cover
             no-repeat;
 
+          background-position: -1em;
+        }
+
+        :host(.reportCard.mani) {
+          background-position: -1em;
+        }
+
+        :host(.reportCard.sw) {
           background-position: -1em;
         }
 
@@ -352,11 +382,6 @@ export class ContentHeader extends LitElement {
 
   constructor() {
     super();
-  }
-
-  async firstUpdated() {
-    // await loadPaintPolyfillIfNeeded();
-    // (CSS as any).paintWorklet.addModule('/workers/header-paint.js');
   }
 
   render() {

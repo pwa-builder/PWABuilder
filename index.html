@@ -11,7 +11,10 @@
       name="viewport"
       content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0"
     />
-    <meta name="description" content="All the tools you need to build and deploy your Progressive Web Apps." />
+    <meta
+      name="description"
+      content="All the tools you need to build and deploy your Progressive Web Apps."
+    />
     <meta name="theme-color" content="#E1477E" />
 
     <!-- These meta tags are Apple-specific, and set the web application to run in full-screen mode with a black status bar. Learn more at https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html-->
@@ -30,8 +33,6 @@
       type="module"
       src="https://unpkg.com/@microsoft/fast-components"
     ></script>
-    <script
-      src="https://unpkg.com/deepmerge@4.2.2/dist/umd.js"></script>
 
     <!-- A stylesheet to design the pages. -->
     <link href="styles/global.css" rel="stylesheet" />
@@ -40,8 +41,8 @@
     <script type="module" src="src/script/pages/app-index.ts"></script>
 
     <!-- preload font -->
-    <link rel="preload" as="font" href="assets/fonts/Hind-Bold.ttf">
-    <link rel="preload" as="font" href="assets/fonts/Hind-Regular.ttf">
+    <link rel="preload" as="font" href="assets/fonts/Hind-Bold.ttf" />
+    <link rel="preload" as="font" href="assets/fonts/Hind-Regular.ttf" />
   </head>
 
   <body>
@@ -53,10 +54,20 @@
     <script type="module" src="/pwabuilder-sw.ts"></script>
 
     <script>
-      navigator.serviceWorker.register("/pwabuilder-sw.js");
+      navigator.serviceWorker.register('/pwabuilder-sw.js');
     </script>
 
-    <script async="true" defer="true" type="module" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.esm.js"></script>
-    <script async="true" defer="true" nomodule="" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.js"></script>
+    <script
+      async="true"
+      defer="true"
+      type="module"
+      src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      async="true"
+      defer="true"
+      nomodule=""
+      src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.js"
+    ></script>
   </body>
 </html>

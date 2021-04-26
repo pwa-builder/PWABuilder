@@ -1,12 +1,6 @@
-import {
-  LitElement,
-  customElement,
-  css,
-  html,
-  property,
-  internalProperty,
-} from 'lit-element';
-import { classMap } from 'lit-html/directives/class-map';
+import { LitElement, css, html } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 
 import { localeStrings, languageCodes } from '../../locales';
 
@@ -40,14 +34,13 @@ import './loading-button';
 import './app-modal';
 import './dropdown-menu';
 import './app-file-input';
-import {
-  generateMissingImagesBase64,
-} from '../services/icon_generator';
+import { generateMissingImagesBase64 } from '../services/icon_generator';
 import { generateScreenshots } from '../services/screenshots';
 import { validateScreenshotUrlsList } from '../utils/manifest-validation';
 import { mediumBreakPoint, smallBreakPoint } from '../utils/css/breakpoints';
 import { hidden_sm } from '../utils/css/hidden';
 import { generateAndDownloadIconZip } from '../services/download_icons';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 type BackgroundColorRadioValues = 'none' | 'transparent' | 'custom';
 
@@ -60,24 +53,24 @@ export class AppManifest extends LitElement {
   screenshotList: Array<string | undefined> = [undefined];
 
   @property({ type: Boolean }) uploadModalOpen = false;
-  @internalProperty() uploadButtonDisabled = true;
-  @internalProperty() uploadSelectedImageFile: Lazy<File>;
-  @internalProperty() uploadImageObjectUrl: Lazy<string>;
+  @state() uploadButtonDisabled = true;
+  @state() uploadSelectedImageFile: Lazy<File>;
+  @state() uploadImageObjectUrl: string;
 
-  @internalProperty() generateIconButtonDisabled = true;
+  @state() generateIconButtonDisabled = true;
 
-  @internalProperty()
+  @state()
   protected generateScreenshotButtonDisabled = true;
 
-  @internalProperty() screenshotListValid: Array<boolean> = [];
+  @state() screenshotListValid: Array<boolean> = [];
 
-  @internalProperty()
+  @state()
   protected backgroundColorRadioValue: BackgroundColorRadioValues = 'none';
 
-  @internalProperty()
+  @state()
   protected awaitRequest = false;
 
-  @internalProperty()
+  @state()
   protected searchParams: Lazy<URLSearchParams>;
 
   protected get siteUrl(): string {
@@ -92,8 +85,6 @@ export class AppManifest extends LitElement {
   static get styles() {
     return [
       css`
-        :host {
-        }
       `,
       ErrorStyles,
       ToolTipStyles,
@@ -371,7 +362,9 @@ export class AppManifest extends LitElement {
               <loading-button
                 appearance="outline"
                 ?loading=${this.awaitRequest}
-                ?disabled=${this.manifest?.icons.length > 0}
+                ?disabled=${this.manifest && this.manifest.icons
+                  ? this.manifest.icons.length > 0
+                  : false}
                 @click=${this.downloadIcons}
                 >Download</loading-button
               >
@@ -547,12 +540,12 @@ export class AppManifest extends LitElement {
     const renderFn = (url: string | undefined, index: number) => {
       const isValid = this.screenshotListValid[index];
       const showError = !isValid && url !== undefined;
-      const fieldClassMap = classMap({
-        error: showError,
-      });
 
       return html`<fast-text-field
-          class="screenshot-url ${fieldClassMap}"
+          class="${classMap({
+            'error': showError,
+            'screenshot-url': true,
+          })}"
           placeholder="https://www.example.com/screenshot"
           value="${url || ''}"
           @change=${this.handleScreenshotUrlChange}
@@ -594,7 +587,7 @@ export class AppManifest extends LitElement {
       ${this.uploadSelectedImageFile
         ? html`<img
             class="modal-img"
-            src=${this.uploadImageObjectUrl}
+            src=${ifDefined(this.uploadImageObjectUrl)}
             alt="the image to upload"
           />`
         : undefined}
@@ -713,7 +706,9 @@ export class AppManifest extends LitElement {
     this.awaitRequest = true;
 
     try {
-      await generateAndDownloadIconZip(this.manifest.icons);
+      if (this.manifest && this.manifest.icons) {
+        await generateAndDownloadIconZip(this.manifest.icons);
+      }
     } catch (e) {
       console.error(e);
     }
@@ -725,7 +720,9 @@ export class AppManifest extends LitElement {
     try {
       this.awaitRequest = true;
 
-      if (this.screenshotList.length) {
+      if (this.screenshotList && this.screenshotList.length) {
+        // to-do: take another type look at this
+        // @ts-ignore
         await generateScreenshots(this.screenshotList);
       }
     } catch (e) {

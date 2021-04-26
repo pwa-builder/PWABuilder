@@ -2,10 +2,10 @@ import {
   LitElement,
   css,
   html,
-  customElement,
-  internalProperty,
-} from 'lit-element';
-import { classMap } from 'lit-html/directives/class-map';
+} from 'lit';
+import { customElement,
+  state, } from "lit/decorators.js"
+import { classMap } from 'lit/directives/class-map.js';
 
 import '../components/app-header';
 import '../components/app-sidebar';
@@ -30,17 +30,17 @@ import { getURL } from '../services/app-info';
 
 @customElement('app-basepack')
 export class AppBasePack extends LitElement {
-  @internalProperty() mql = window.matchMedia(
+  @state() mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`
   );
 
-  @internalProperty() isDeskTopView = this.mql.matches;
+  @state() isDeskTopView = this.mql.matches;
 
-  @internalProperty() loading: boolean = false;
-  @internalProperty() blob: Blob | File | undefined;
+  @state() loading: boolean = false;
+  @state() blob: Blob | File | undefined;
 
-  @internalProperty() errored = false;
-  @internalProperty() errorMessage: string | undefined;
+  @state() errored = false;
+  @state() errorMessage: string | undefined;
 
   static get styles() {
     return [
@@ -303,9 +303,9 @@ export class AppBasePack extends LitElement {
 
         <div
           id="grid"
-          class=${classMap({
+          class="${classMap({
             'grid-mobile': this.isDeskTopView == false,
-          })}
+          })}"
         >
           <app-sidebar id="desktop-sidebar"></app-sidebar>
 

@@ -1,12 +1,17 @@
 /* eslint-disable no-fallthrough */
-import { LitElement, css, html, customElement, property } from 'lit-element';
-import { classMap } from 'lit-html/directives/class-map';
+import { LitElement, css, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 import { Router } from '@vaadin/router';
+
+import { ifDefined } from 'lit/directives/if-defined.js';
+
 import {
   mediumBreakPoint,
   largeBreakPoint,
   BreakpointValues,
 } from '../utils/css/breakpoints';
+import { fastButtonCss } from '../utils/css/fast-elements';
 
 export enum AppCardModes {
   default = 'default',
@@ -29,7 +34,7 @@ export class AppCard extends LitElement {
 
   @property({ type: Boolean }) featured = false;
   @property({ type: Boolean }) shareLink = false;
-  @property({ type: Array }) tags = [];
+  @property({ type: Array }) tags: Array<string> = [];
   @property({ type: Boolean }) isActionCard = false;
 
   static get styles() {
@@ -228,7 +233,7 @@ export class AppCard extends LitElement {
         }
 
         .blog .content h3 {
-          font-size: 18px;
+          font-size: 24px;
           margin: 0;
         }
 
@@ -238,13 +243,15 @@ export class AppCard extends LitElement {
 
         .blog.featured h3 {
           line-height: 34px;
-          font-size: 30px;
+          font-size: 28px;
           margin: 16px 0 8px 0;
         }
 
         .blog.featured p {
           font-size: 18px;
-          line-height: 34px;
+          line-height: 24px;
+          font-weight: 500px;
+          color: var(--font-color);
         }
 
         .blog.featured img {
@@ -290,7 +297,11 @@ export class AppCard extends LitElement {
 
         .share-button-text {
           color: var(--font-color);
-          font-weight: 400;
+          font-weight: 700;
+        }
+
+        fast-button.share.link {
+          --desktop-button-font-size: 16px;
         }
 
         fast-button.share::part(control) {
@@ -320,6 +331,13 @@ export class AppCard extends LitElement {
         .blog .content .share::part(control) {
           display: inline-block;
           font-size: var(--desktop-button-font-size);
+        }
+
+        .blog .date {
+          --desktop-button-font-size: 16px;
+          font-weight: 700;
+          line-height: 21px;
+          color: var(--font-color);
         }
 
         .blog.featured fast-badge::part(control) {
@@ -379,8 +397,8 @@ export class AppCard extends LitElement {
 
         .micro h3 {
           margin: 0;
-          line-height: 20px;
-          font-size: 14px;
+          line-height: 24px;
+          font-size: 24px;
         }
 
         .micro p {
@@ -439,6 +457,7 @@ export class AppCard extends LitElement {
           'no-upper'
         )}
       `,
+      fastButtonCss,
     ];
   }
 
@@ -464,13 +483,29 @@ export class AppCard extends LitElement {
 
   renderDefault() {
     return html`
-      <fast-card class=${this.cardClasses()} part="card">
-        <div class="img-overlay ${this.imageClasses()}">
+      <fast-card class="${classMap({
+        featured: this.featured || this.className.includes('featured'),
+        [AppCardModes.default]: this.className.includes(AppCardModes.default),
+        [AppCardModes.blog]: this.className.includes(AppCardModes.blog),
+        [AppCardModes.micro]: this.className.includes(AppCardModes.micro),
+        [AppCardModes.microDescription]: this.className.includes(
+          AppCardModes.microDescription
+        ),
+        [AppCardModes.contentCard]: this.className.includes(
+          AppCardModes.contentCard
+        ),
+      })}" part="card">
+        <div class="${classMap({
+          'bordered': this.imageBordered,
+          'img-overlay': true,
+        })}">
           <slot name="overlay"></slot>
         </div>
         <img
-          class=${this.imageClasses()}
-          src="${this.imageUrl}"
+          class="${classMap({
+            bordered: this.imageBordered,
+          })}"
+          src="${ifDefined(this.imageUrl)}"
           alt="${this.cardTitle} card header image"
         />
         <h3>${this.cardTitle}</h3>
@@ -491,7 +526,23 @@ export class AppCard extends LitElement {
     // Featured Card Html
     if (this.featured && window.innerWidth > BreakpointValues.mediumUpper) {
       return html`
-        <fast-card class=${this.cardClasses()} part="card">
+        <fast-card
+          class="${classMap({
+            featured: this.featured || this.className.includes('featured'),
+            [AppCardModes.default]: this.className.includes(
+              AppCardModes.default
+            ),
+            [AppCardModes.blog]: this.className.includes(AppCardModes.blog),
+            [AppCardModes.micro]: this.className.includes(AppCardModes.micro),
+            [AppCardModes.microDescription]: this.className.includes(
+              AppCardModes.microDescription
+            ),
+            [AppCardModes.contentCard]: this.className.includes(
+              AppCardModes.contentCard
+            ),
+          })}"
+          part="card"
+        >
           <div class="img-overlay">
             <div class="overlay-top">
               <span class="date">${this.date}</span>
@@ -504,7 +555,7 @@ export class AppCard extends LitElement {
             <div class="tag-list">${this.renderTagList()}</div>
           </div>
           <img
-            src="${this.imageUrl}"
+            src="${ifDefined(this.imageUrl)}"
             alt="${this.cardTitle} card header image"
           />
         </fast-card>
@@ -512,18 +563,35 @@ export class AppCard extends LitElement {
     }
 
     return html`
-      <fast-card class=${this.cardClasses()} part="card">
+      <fast-card
+        class="${classMap({
+          featured: this.featured || this.className.includes('featured'),
+          [AppCardModes.default]: this.className.includes(AppCardModes.default),
+          [AppCardModes.blog]: this.className.includes(AppCardModes.blog),
+          [AppCardModes.micro]: this.className.includes(AppCardModes.micro),
+          [AppCardModes.microDescription]: this.className.includes(
+            AppCardModes.microDescription
+          ),
+          [AppCardModes.contentCard]: this.className.includes(
+            AppCardModes.contentCard
+          ),
+        })}"
+        part="card"
+      >
         <div class="img-overlay">
           <div class="overlay-top">
             <span class="date">${this.date}</span>
             <div class="tag-list">${this.renderTagList()}</div>
+            ${this.renderShareButton()}
           </div>
           <slot name="overlay"></slot>
         </div>
-        <img src="${this.imageUrl}" alt="${this.cardTitle} card header image" />
+        <img
+          src="${ifDefined(this.imageUrl)}"
+          alt="${this.cardTitle} card header image"
+        />
         <div class="content">
           <h3>${this.cardTitle}</h3>
-          ${this.renderShareButton()}
         </div>
       </fast-card>
     `;
@@ -531,8 +599,26 @@ export class AppCard extends LitElement {
 
   renderMicroCard() {
     return html`
-      <fast-card class=${this.cardClasses()} part="card" @click=${this.route}>
-        <img src="${this.imageUrl}" alt="${this.cardTitle} card header image" />
+      <fast-card
+        class="${classMap({
+          featured: this.featured || this.className.includes('featured'),
+          [AppCardModes.default]: this.className.includes(AppCardModes.default),
+          [AppCardModes.blog]: this.className.includes(AppCardModes.blog),
+          [AppCardModes.micro]: this.className.includes(AppCardModes.micro),
+          [AppCardModes.microDescription]: this.className.includes(
+            AppCardModes.microDescription
+          ),
+          [AppCardModes.contentCard]: this.className.includes(
+            AppCardModes.contentCard
+          ),
+        })}"
+        part="card"
+        @click=${this.route}
+      >
+        <img
+          src="${ifDefined(this.imageUrl)}"
+          alt="${this.cardTitle} card header image"
+        />
         <div class="content">
           <h3>${this.cardTitle}</h3>
         </div>
@@ -542,8 +628,26 @@ export class AppCard extends LitElement {
 
   renderMicroDescriptionCard() {
     return html`
-      <fast-card class=${this.cardClasses()} part="card" @click=${this.route}>
-        <img src="${this.imageUrl}" alt="${this.cardTitle} card header image" />
+      <fast-card
+        class="${classMap({
+          featured: this.featured || this.className.includes('featured'),
+          [AppCardModes.default]: this.className.includes(AppCardModes.default),
+          [AppCardModes.blog]: this.className.includes(AppCardModes.blog),
+          [AppCardModes.micro]: this.className.includes(AppCardModes.micro),
+          [AppCardModes.microDescription]: this.className.includes(
+            AppCardModes.microDescription
+          ),
+          [AppCardModes.contentCard]: this.className.includes(
+            AppCardModes.contentCard
+          ),
+        })}"
+        part="card"
+        @click=${this.route}
+      >
+        <img
+          src="${ifDefined(this.imageUrl)}"
+          alt="${this.cardTitle} card header image"
+        />
         <div class="content">
           <h3>${this.cardTitle}</h3>
           <p>${this.description}</p>
@@ -553,7 +657,21 @@ export class AppCard extends LitElement {
   }
 
   renderContentCard() {
-    return html` <fast-card class=${this.cardClasses()} part="card">
+    return html` <fast-card
+      class="${classMap({
+        featured: this.featured || this.className.includes('featured'),
+        [AppCardModes.default]: this.className.includes(AppCardModes.default),
+        [AppCardModes.blog]: this.className.includes(AppCardModes.blog),
+        [AppCardModes.micro]: this.className.includes(AppCardModes.micro),
+        [AppCardModes.microDescription]: this.className.includes(
+          AppCardModes.microDescription
+        ),
+        [AppCardModes.contentCard]: this.className.includes(
+          AppCardModes.contentCard
+        ),
+      })}"
+      part="card"
+    >
       <div class="header">
         <h3>${this.cardTitle}</h3>
         <p>${this.description}</p>
@@ -567,8 +685,12 @@ export class AppCard extends LitElement {
   }
   renderShareButton() {
     return html`
-      <fast-button class="share" appearance="lightweight" @click=${this.share}>
-        <span class="share-button-text">Share</span>
+      <fast-button
+        class="share link"
+        appearance="lightweight"
+        @click=${this.share}
+      >
+        <span class="share-button-text">SHARE</span>
       </fast-button>
     `;
   }
@@ -581,27 +703,6 @@ export class AppCard extends LitElement {
 
   share() {
     console.log('share');
-  }
-
-  cardClasses() {
-    return classMap({
-      featured: this.featured || this.className.includes('featured'),
-      [AppCardModes.default]: this.className.includes(AppCardModes.default),
-      [AppCardModes.blog]: this.className.includes(AppCardModes.blog),
-      [AppCardModes.micro]: this.className.includes(AppCardModes.micro),
-      [AppCardModes.microDescription]: this.className.includes(
-        AppCardModes.microDescription
-      ),
-      [AppCardModes.contentCard]: this.className.includes(
-        AppCardModes.contentCard
-      ),
-    });
-  }
-
-  imageClasses() {
-    return classMap({
-      bordered: this.imageBordered,
-    });
   }
 
   route() {

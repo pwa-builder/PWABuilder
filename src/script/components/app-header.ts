@@ -1,5 +1,6 @@
 import { Router } from '@vaadin/router';
-import { LitElement, css, html, customElement, property } from 'lit-element';
+import { LitElement, css, html } from 'lit';
+import { customElement, property } from "lit/decorators.js"
 
 import {
   xxLargeBreakPoint,
