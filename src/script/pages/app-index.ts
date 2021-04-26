@@ -10,10 +10,6 @@ import '../components/app-header';
 export class AppIndex extends LitElement {
   static get styles() {
     return css`
-      #router-outlet {
-        background: var(--primary-purple);
-      }
-      
       #router-outlet > * {
         width: 100% !important;
       }
@@ -24,6 +20,12 @@ export class AppIndex extends LitElement {
 
       #router-otlet > .entering {
         animation: 160ms fadeIn linear;
+      }
+
+      @media(min-width: 1920px) {
+        #router-outlet {
+          background: var(--primary-purple);
+        }
       }
 
       @keyframes fadeOut {
