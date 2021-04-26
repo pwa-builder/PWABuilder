@@ -184,7 +184,7 @@ export class AppSidebar extends LitElement {
 
       .desktop-sidebar #score-message,
       .tablet-sidebar #score-message {
-        color: var(--success-color);
+        color: var(--sidebar-accent);
 
         font-weight: var(--font-bold);
         margin-top: -1em;
@@ -208,7 +208,7 @@ export class AppSidebar extends LitElement {
       }
 
       aside.tablet-sidebar .done ion-icon {
-        color: var(--success-color) !important;
+        color: var(--sidebar-accent) !important;
       }
 
       .tablet-sidebar #score-block {
@@ -298,7 +298,7 @@ export class AppSidebar extends LitElement {
 
       .item-name ion-icon {
         height: 10px;
-        color: var(--success-color);
+        color: var(--sidebar-color);
         padding-bottom: 3px;
       }
 
@@ -370,7 +370,7 @@ export class AppSidebar extends LitElement {
       }
 
       #plus {
-        color: var(--success-color);
+        color: var(--sidebar-accent);
       }
 
       .tablet-sidebar .overall-score {
@@ -413,7 +413,7 @@ export class AppSidebar extends LitElement {
       }
 
       #plus {
-        color: var(--success-color);
+        color: var(--sidebar-accent);
       }
 
       .tablet-sidebar .overall-score {
@@ -477,7 +477,7 @@ export class AppSidebar extends LitElement {
 
       #plus,
       #top {
-        color: var(--success-color);
+        color: var(--sidebar-accent);
       }
 
       .tablet-sidebar .overall-score {

@@ -39,15 +39,14 @@
   --xlarge-font-size: 44px;
 
   --primary-background-color: white;
-  --primary-color: #292c3a;
+  --primary-color: #292C3A;
   --secondary-color: #ffffff;
-
   --primary-purple: #342A6A;
   --error-background-color: #fff5f5;
-
-  --warning-color: rgba(235, 193, 87, 1);
-  --error-color: rgba(235, 87, 87, 1);
-  --success-color: #50BA87;
+  --warning-color:#EBC157;
+  --error-color: #EB5757;
+  --success-color: #63C093;
+  --sidebar-accent: #A2F4CC;
 
   --button-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
   --button-radius: 44px;

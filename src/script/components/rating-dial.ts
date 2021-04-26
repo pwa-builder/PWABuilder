@@ -50,7 +50,7 @@ export class RatingDial extends LitElement {
       }
 
       #top {
-        color: var(--success-color);
+        color: var(--sidebar-accent);
       }
 
       #middle {
