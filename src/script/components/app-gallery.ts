@@ -62,15 +62,12 @@ export class AppGallery extends LitElement {
           <ion-icon name="chevron-back-outline"></ion-icon>
         </app-button>
         <div class="image-container" @click=${this.openModal}>
-          <!-- <img
+          <img
             class="current-image"
             decoding="async"
             loading="lazy"
             .src=${this.currentImage}
-          /> -->
-          <div style="background-color: red; width: 100px; height: 100px">
-            ${this.index}
-          </div>
+          />
         </div>
         <app-button
           class="round"
@@ -79,17 +76,17 @@ export class AppGallery extends LitElement {
         >
           <ion-icon name="chevron-forward-outline"></ion-icon>
         </app-button>
-        <app-modal ?open=${this.modalOpened}>
-          <!-- <img
+        <app-modal
+          ?open=${this.modalOpened}
+          @app-modal-close=${this.closeModal}
+        >
+          <img
             slot="modal-image"
             class="modal-image"
             decoding="async"
             loading="lazy"
             .src=${this.currentImage}
-          /> -->
-          <div style="background-color: red; width: 100px; height: 100px">
-            ${this.index}
-          </div>
+          />
           <div slot="modal-actions">
             <app-button @click=${this.closeModal}> Close </app-button>
           </div>
@@ -99,19 +96,23 @@ export class AppGallery extends LitElement {
   }
 
   navigateBack() {
-    this.index -= 1;
+    if (!this.backDisabled()) {
+      this.index -= 1;
+    }
   }
 
   navigateForward() {
-    this.index += 1;
+    if (!this.forwardDisabled()) {
+      this.index += 1;
+    }
   }
 
   backDisabled() {
-    return this.index === 0;
+    return this.index <= 0;
   }
 
   forwardDisabled() {
-    return this.index == this.images?.length - 1;
+    return this.index >= this.images?.length - 1;
   }
 
   openModal() {
