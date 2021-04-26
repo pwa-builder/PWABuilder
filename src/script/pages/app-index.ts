@@ -23,6 +23,12 @@ export class AppIndex extends LitElement {
         animation: 160ms fadeIn linear;
       }
 
+      @media(min-width: 1920px) {
+        #router-outlet {
+          background: var(--primary-purple);
+        }
+      }
+
       @keyframes fadeOut {
         from {
           opacity: 1;

@@ -218,6 +218,11 @@ export class AppCongrats extends LitElement {
             #desktop-sidebar {
               display: block;
             }
+
+            #congrats-wrapper {
+              max-width: 69em;
+              background: white;
+            }
           `
         )}
 
@@ -542,7 +547,7 @@ export class AppCongrats extends LitElement {
         ></android-form>
       </app-modal>
 
-      <div>
+      <div id="congrats-wrapper">
         <app-header></app-header>
 
         <div

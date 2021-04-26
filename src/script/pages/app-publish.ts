@@ -256,6 +256,11 @@ export class AppPublish extends LitElement {
             #desktop-sidebar {
               display: block;
             }
+
+            #publish-wrapper {
+              max-width: 69em;
+              background: white;
+            }
           `
         )}
 
@@ -584,7 +589,7 @@ export class AppPublish extends LitElement {
         ></android-form>
       </app-modal>
 
-      <div>
+      <div id="publish-wrapper">
         <app-header></app-header>
 
         <div

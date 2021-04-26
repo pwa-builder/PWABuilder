@@ -35,7 +35,6 @@ export class SidebarCard extends LitElement {
         padding-top: 6px;
         padding-bottom: 6px;
         background: #c4c4c45e;
-        border-bottom: solid 1px white;
       }
 
       #sidecard-header span {
