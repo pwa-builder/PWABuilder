@@ -1,17 +1,17 @@
 import {
   LitElement,
   css,
-  html,
-  customElement,
-  property,
-  internalProperty,
-} from 'lit-element';
+  html
+} from 'lit';
+
+import { customElement, property,
+  state, } from "lit/decorators.js"
 
 @customElement('sidebar-card')
 export class SidebarCard extends LitElement {
   @property() title: string;
 
-  @internalProperty() open = true;
+  @state() open = true;
 
   static get styles() {
     return css`

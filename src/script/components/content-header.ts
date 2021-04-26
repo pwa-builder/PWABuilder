@@ -1,4 +1,5 @@
-import { css, customElement, html, LitElement } from 'lit-element';
+import { html, css, LitElement } from 'lit';
+import { customElement } from "lit/decorators.js"
 // import { loadPaintPolyfillIfNeeded } from '../polyfills/css-paint';
 import {
   BreakpointValues,

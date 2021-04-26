@@ -1,4 +1,5 @@
-import { LitElement, css, html, customElement, property } from 'lit-element';
+import { LitElement, css, html } from 'lit';
+import { customElement, property } from "lit/decorators.js"
 
 import { ModalCloseEvent } from '../utils/interfaces';
 import { smallBreakPoint } from '../utils/css/breakpoints';

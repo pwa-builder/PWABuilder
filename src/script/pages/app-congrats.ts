@@ -1,11 +1,12 @@
 import {
   LitElement,
   css,
-  html,
-  customElement,
-  internalProperty,
-} from 'lit-element';
-import { classMap } from 'lit-html/directives/class-map';
+  html
+} from 'lit';
+
+import { customElement,
+  state, } from "lit/decorators.js"
+import { classMap } from 'lit/directives/class-map.js';
 
 import {
   BreakpointValues,
@@ -35,26 +36,26 @@ import { BlogPost, allPosts } from '../services/blog';
 
 @customElement('app-congrats')
 export class AppCongrats extends LitElement {
-  @internalProperty() mql = window.matchMedia(
+  @state() mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`
   );
 
-  @internalProperty() isDeskTopView = this.mql.matches;
+  @state() isDeskTopView = this.mql.matches;
 
-  @internalProperty() generatedPlatforms = undefined;
+  @state() generatedPlatforms;
 
-  @internalProperty() generating = false;
+  @state() generating = false;
 
-  @internalProperty() errored = false;
-  @internalProperty() errorMessage: string | undefined;
+  @state() errored = false;
+  @state() errorMessage: string | undefined;
 
-  @internalProperty() blob: Blob | File | undefined;
-  @internalProperty() testBlob: Blob | File | undefined;
-  @internalProperty() open_windows_options = false;
-  @internalProperty() open_android_options = false;
+  @state() blob: Blob | File | undefined;
+  @state() testBlob: Blob | File | undefined;
+  @state() open_windows_options = false;
+  @state() open_android_options = false;
 
-  @internalProperty() blog_posts: Array<BlogPost> | undefined;
-  @internalProperty() featuredPost: BlogPost | undefined;
+  @state() blog_posts: Array<BlogPost> | undefined;
+  @state() featuredPost: BlogPost | undefined;
 
   static get styles() {
     return [
@@ -546,9 +547,9 @@ export class AppCongrats extends LitElement {
 
         <div
           id="grid"
-          class=${classMap({
+          class="${classMap({
             'grid-mobile': this.isDeskTopView == false,
-          })}
+          })}"
         >
           <app-sidebar id="desktop-sidebar"></app-sidebar>
 
@@ -646,10 +647,10 @@ export class AppCongrats extends LitElement {
                       linkRoute="${this.featuredPost.clickUrl}"
                       .tags=${this.featuredPost.tags}
                       .featured="${this.isFeatured()}"
-                      class=${classMap({
+                      class="${classMap({
                         blog: true,
                         featured: this.isFeatured(),
-                      })}
+                      })}"
                     >
                     </app-card>`
                   : null}

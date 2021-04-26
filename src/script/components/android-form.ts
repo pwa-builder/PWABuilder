@@ -1,11 +1,12 @@
 import {
   LitElement,
   css,
-  html,
-  customElement,
-  property,
-  internalProperty,
-} from 'lit-element';
+  html
+} from 'lit';
+
+import { customElement, property,
+  state, } from "lit/decorators.js"
+import {ifDefined} from 'lit/directives/if-defined.js';
 
 import '../components/loading-button';
 import { tooltip, styles as ToolTipStyles } from '../components/tooltip';
@@ -23,20 +24,20 @@ import { Manifest } from '../utils/interfaces';
 export class AndroidForm extends LitElement {
   @property({ type: Boolean }) generating: boolean;
 
-  @internalProperty() show_adv = false;
+  @state() show_adv = false;
 
   // manifest form props
-  @internalProperty() signingKeyFullName = "John Doe";
-  @internalProperty() organization = "My Company";
-  @internalProperty() organizationalUnit = "Engineering";
-  @internalProperty() countryCode = "US";
-  @internalProperty() keyPassword = "";
-  @internalProperty() storePassword = "";
-  @internalProperty() alias = "my-key-alias";
-  @internalProperty() file = undefined;
-  @internalProperty() signingMode = "mine";
+  @state() signingKeyFullName = "John Doe";
+  @state() organization = "My Company";
+  @state() organizationalUnit = "Engineering";
+  @state() countryCode = "US";
+  @state() keyPassword = "";
+  @state() storePassword = "";
+  @state() alias = "my-key-alias";
+  @state() file: string | undefined = undefined;
+  @state() signingMode = "mine";
 
-  @internalProperty() default_options: AndroidApkOptions | undefined;
+  @state() default_options: AndroidApkOptions | undefined;
 
   form: HTMLFormElement | undefined;
   currentManifest: Manifest | undefined;
@@ -187,15 +188,15 @@ ${smallBreakPoint(
       this.storePassword = "";
     } else if (mode === "new") {
       this.alias = "my-key-alias";
-      this.signingKeyFullName = `${this.currentManifest.short_name || this.currentManifest.name || "App"
+      this.signingKeyFullName = `${this.currentManifest?.short_name || this.currentManifest?.name || "App"
         } Admin`;
       this.organization =
-        this.currentManifest.name || "PWABuilder";
+        this.currentManifest?.name || "PWABuilder";
       this.organizationalUnit = "Engineering";
       this.countryCode = "US";
       this.keyPassword = "";
       this.storePassword = "";
-      this.file = null;
+      this.file = undefined;
     }
   }
 
@@ -225,7 +226,7 @@ ${smallBreakPoint(
           fileReader.error,
           progressEvent
         );
-        this.file = null;
+        this.file = undefined;
         if (this.form) {
           this.signingMode = "none";
         }
@@ -485,7 +486,7 @@ ${smallBreakPoint(
                     )}
                 </label>
                 <fast-text-field type="url" class="form-control" id="maskIconUrlInput"
-                  placeholder="https://myawesomepwa.com/512x512-maskable.png" name="maskableIconUrl" value="${this.default_options ? this.default_options.maskableIconUrl : ""}" />
+                  placeholder="https://myawesomepwa.com/512x512-maskable.png" name="maskableIconUrl" .value="${this.default_options ? this.default_options.maskableIconUrl : ""}" />
                 </fast-text-field>
               </div>
       
@@ -504,7 +505,7 @@ ${smallBreakPoint(
                     )}
                 </label>
                 <fast-text-field type="url" class="form-control" id="monochromeIconUrlInput"
-                  placeholder="https://myawesomepwa.com/512x512-monochrome.png" name="monochromeIconUrl" value="${this.default_options ? this.default_options.monochromeIconUrl : ""}" />
+                  placeholder="https://myawesomepwa.com/512x512-monochrome.png" name="monochromeIconUrl" .value="${this.default_options ? this.default_options.monochromeIconUrl : ""}" />
                 </fast-text-field>
               </div>
       
@@ -757,7 +758,7 @@ ${smallBreakPoint(
                   <label for="signingKeyInput">Key file</label>
                   <input type="file" class="form-control" id="signingKeyInput"
                     @change="${(ev) => this.androidSigningKeyUploaded(ev.target)}" accept=".keystore" required
-                    style="border: none;" value="${this.file}" />
+                    style="border: none;" value="${ifDefined(this.file)}" />
                 </div>
       
                 <div class="form-group">

@@ -2,11 +2,10 @@ import {
   LitElement,
   css,
   html,
-  customElement,
-  internalProperty,
-  property,
-} from 'lit-element';
-import { classMap } from 'lit-html/directives/class-map';
+} from 'lit';
+import { customElement, property,
+  state, } from "lit/decorators.js"
+import { classMap } from 'lit/directives/class-map.js';
 
 import {
   BreakpointValues,
@@ -47,21 +46,21 @@ const possible_messages = {
 
 @customElement('app-report')
 export class AppReport extends LitElement {
-  @property() resultOfTest: RawTestResult | undefined;
+  @property({ type: Object }) resultOfTest: RawTestResult | undefined;
 
-  @internalProperty() swScore = 0;
-  @internalProperty() maniScore = 0;
-  @internalProperty() securityScore = 0;
+  @state() swScore = 0;
+  @state() maniScore = 0;
+  @state() securityScore = 0;
 
-  @internalProperty() selectedTab: string = 'overview';
-  @internalProperty() currentHeader: string = possible_messages.overview.heading;
-  @internalProperty() currentSupporting: string = possible_messages.overview.supporting;
+  @state() selectedTab: string = 'overview';
+  @state() currentHeader: string = possible_messages.overview.heading;
+  @state() currentSupporting: string = possible_messages.overview.supporting;
 
-  @internalProperty() mql = window.matchMedia(
+  @state() mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`
   );
 
-  @internalProperty() isDeskTopView = this.mql.matches;
+  @state() isDeskTopView = this.mql.matches;
 
   static get styles() {
     return [
@@ -249,9 +248,9 @@ export class AppReport extends LitElement {
 
       <div
         id="grid"
-        class=${classMap({
+        class="${classMap({
           'grid-mobile': this.isDeskTopView == false,
-        })}
+        })}"
       >
         <app-sidebar id="desktop-sidebar"></app-sidebar>
 

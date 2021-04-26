@@ -1,22 +1,14 @@
-import {
-  LitElement,
-  css,
-  html,
-  customElement,
-  property,
-  internalProperty,
-} from 'lit-element';
+import { LitElement, css, html } from 'lit';
+
+import { customElement, property, state } from 'lit/decorators.js';
 import { OrganizedResults, TestResult } from '../utils/interfaces';
 
-import {
-  mediumBreakPoint,
-  smallBreakPoint,
-} from '../utils/css/breakpoints';
+import { mediumBreakPoint, smallBreakPoint } from '../utils/css/breakpoints';
 
 @customElement('score-results')
 export class ScoreResults extends LitElement {
-  @property() testResults: Array<TestResult> | undefined;
-  @internalProperty() organizedResults: OrganizedResults | undefined;
+  @property({ attribute: false }) testResults: Array<TestResult> | boolean | undefined;
+  @state() organizedResults: OrganizedResults | undefined;
 
   static get styles() {
     return css`
@@ -103,17 +95,19 @@ export class ScoreResults extends LitElement {
     const recResults: Array<TestResult> = [];
     const optionalResults: Array<TestResult> = [];
 
-    this.overallScore(this.testResults);
+    if (typeof this.testResults !== 'boolean') {
+      this.overallScore(this.testResults);
 
-    this.testResults?.map((result: TestResult) => {
-      if (result.category === 'required') {
-        reqResults.push(result);
-      } else if (result.category === 'recommended') {
-        recResults.push(result);
-      } else {
-        optionalResults.push(result);
-      }
-    });
+      this.testResults?.map((result: TestResult) => {
+        if (result.category === 'required') {
+          reqResults.push(result);
+        } else if (result.category === 'recommended') {
+          recResults.push(result);
+        } else {
+          optionalResults.push(result);
+        }
+      });
+    }
 
     return {
       required: reqResults,
