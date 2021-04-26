@@ -125,7 +125,7 @@ export class AppCongrats extends LitElement {
         }
 
         #blog-section {
-          padding: 16px;
+          padding: 16px 32px;
           background: #f8f8f8;
         }
 
@@ -166,7 +166,7 @@ export class AppCongrats extends LitElement {
 
         #blog-block #first-card {
           max-height: 552px;
-          margin-right: 18px;
+          margin-right: 24px;
         }
 
         #tools-section h3 {

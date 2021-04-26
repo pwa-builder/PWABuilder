@@ -202,7 +202,8 @@ export class AppSidebar extends LitElement {
         padding: 0.25rem 1rem;
       }
 
-      aside.tablet-sidebar .done, .tablet-sidebar .done::part(heading) {
+      aside.tablet-sidebar .done,
+      .tablet-sidebar .done::part(heading) {
         color: white !important;
       }
 
@@ -364,6 +365,10 @@ export class AppSidebar extends LitElement {
         text-align: center;
       }
 
+      .overall-score span {
+        vertical-align: sub;
+      }
+
       #plus {
         color: var(--success-color);
       }
@@ -479,7 +484,6 @@ export class AppSidebar extends LitElement {
         max-width: 64px;
         text-align: center;
       }
-      
 
       ${(mediumBreakPoint(css`
         aside.tablet-sidebar,
@@ -580,7 +584,7 @@ export class AppSidebar extends LitElement {
             <div id="overall-score-block">
               <span id="score-header">Your PWA Score:</span>
 
-              <div class="overall-score">${this.overallScore}</div>
+              <div class="overall-score"><span>${this.overallScore}</span></div>
 
               <span id="score-notify">
                 ${this.overallScore > 0
@@ -655,7 +659,9 @@ export class AppSidebar extends LitElement {
             >
               ${item.done === Status.ACTIVE
                 ? html`<ion-icon class="icon active" name="ellipse"></ion-icon>`
-                : item.done === Status.DONE ? html`${this.renderIcon(item)}` : html`<img
+                : item.done === Status.DONE
+                ? html`${this.renderIcon(item)}`
+                : html`<img
                     class="icon other"
                     src="/assets/ellipse-outline.svg"
                     aria-hidden="true"
