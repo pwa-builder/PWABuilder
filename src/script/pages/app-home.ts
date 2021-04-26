@@ -60,6 +60,7 @@ export class AppHome extends LitElement {
           line-height: 48px;
           letter-spacing: -0.015em;
           max-width: 526px;
+          margin-bottom: 0;
         }
 
         h3 {

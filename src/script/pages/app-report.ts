@@ -111,6 +111,10 @@ export class AppReport extends LitElement {
           margin-top: 20px;
         }
 
+        #overview-panel {
+          padding-left: 14px;
+        }
+
         ${xxxLargeBreakPoint(
           css`
             #report {
@@ -293,7 +297,7 @@ export class AppReport extends LitElement {
               >Service Worker Options</fast-tab
             >
 
-            <fast-tab-panel id="overviewPanel">
+            <fast-tab-panel id="overview-panel">
               <report-card
                 @sw-scored="${(ev: CustomEvent<ScoreEvent>) =>
                   this.handleScoreForDisplay('sw', ev.detail.score)}"

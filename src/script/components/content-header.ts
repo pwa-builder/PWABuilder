@@ -75,6 +75,11 @@ export class ContentHeader extends LitElement {
         padding-left: 2em;
       }
 
+      :host ::slotted(h2) {
+        margin-bottom: 0;
+        line-height: 40px;
+      }
+
       ${smallBreakPoint(css`
         :host(.home) {
           background-position: top center;

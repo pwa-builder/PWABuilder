@@ -199,21 +199,24 @@ export class ReportCard extends LitElement {
       }
 
       #badge-section img {
-        margin-right: 10px;
         width: 60px;
       }
 
       #badge-text h4 {
-        font-size: var(--small-font-size);
+        font-size: var(--smallish-font-size);
         margin-bottom: 0;
         margin-top: 0;
       }
 
       #badge-text p {
-        font-size: var(--small-font-size);
+        font-size: var(--smallish-font-size);
         font-weight: normal;
         margin-top: 0;
         margin-bottom: 0;
+      }
+
+      #overall-score #badge-section img {
+        margin-right: 10px;
       }
 
       .locked {
