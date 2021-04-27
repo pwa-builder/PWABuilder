@@ -23,6 +23,7 @@ import { resolveUrl } from '../utils/url';
 import {
   AppEvents,
   FileInputDetails,
+  Icon,
   Lazy,
   ModalCloseEvent,
 } from '../utils/interfaces';
@@ -40,14 +41,17 @@ import './loading-button';
 import './app-modal';
 import './dropdown-menu';
 import './app-file-input';
+import './app-gallery';
 import {
   generateMissingImagesBase64,
+  iconGeneratorDefaults,
 } from '../services/icon_generator';
 import { generateScreenshots } from '../services/screenshots';
 import { validateScreenshotUrlsList } from '../utils/manifest-validation';
 import { mediumBreakPoint, smallBreakPoint } from '../utils/css/breakpoints';
 import { hidden_sm } from '../utils/css/hidden';
 import { generateAndDownloadIconZip } from '../services/download_icons';
+import { getWrap } from '../utils/class-utils';
 
 type BackgroundColorRadioValues = 'none' | 'transparent' | 'custom';
 
@@ -57,7 +61,8 @@ export class AppManifest extends LitElement {
   manifest = getManifest();
   @property({ type: Number }) score = 0;
   @property({ type: Array, hasChanged: arrayHasChanged })
-  screenshotList: Array<string | undefined> = [undefined];
+  screenshotList: Array<string | undefined> =
+    [undefined] || this.manifest.screenshots?.map(img => img.src);
 
   @property({ type: Boolean }) uploadModalOpen = false;
   @internalProperty() uploadButtonDisabled = true;
@@ -387,6 +392,10 @@ export class AppManifest extends LitElement {
                 Specify the URLs to generate desktop and mobile screenshots
                 from. You may add up to 8 screenshots or Store Listings.
               </p>
+
+              <app-gallery .images=${this.screenshotSrcListParse()}>
+              </app-gallery>
+
               <!-- url text field -->
               ${this.renderScreenshotInputUrlList()}
               <!-- Add url button -->
@@ -527,14 +536,12 @@ export class AppManifest extends LitElement {
   }
 
   renderIcons() {
-    const baseUrl = this.siteUrl || this.manifest?.startUrl;
-
     return this.manifest?.icons?.map(icon => {
-      const url = resolveUrl(baseUrl, icon.src);
+      const url = this.handleImageUrl(icon);
 
       if (url) {
         return html`<div class="image-item image">
-          <img src="${url.href}" alt="image text" />
+          <img src="${url}" alt="image text" decoding="async" loading="lazy" />
           <p>${icon.sizes}</p>
         </div>`;
       } else {
@@ -570,17 +577,22 @@ export class AppManifest extends LitElement {
 
   renderScreenshots() {
     return this.manifest?.screenshots?.map(screenshot => {
-      let url = resolveUrl(this.siteUrl, this.manifest?.startUrl);
-      url = resolveUrl(url?.href, screenshot.src);
+      const url = this.handleImageUrl(screenshot);
 
       if (url) {
         return html`<div class="image-item screenshot">
-          <img src="${url.href}" alt="image text" />
+          <img src="${url}" alt="image text" />
         </div>`;
       } else {
         return undefined;
       }
     });
+  }
+
+  screenshotSrcListParse() {
+    return this.manifest?.screenshots
+      ?.map(this.handleImageUrl)
+      .filter(str => str);
   }
 
   renderToolTip = tooltip;
@@ -751,6 +763,21 @@ export class AppManifest extends LitElement {
     }
 
     return 'custom';
+  }
+
+  handleImageUrl(icon: Icon) {
+    if (icon.src.indexOf('data:') === 0 && icon.src.indexOf('base64') !== -1) {
+      return icon.src;
+    }
+
+    let url = resolveUrl(this.siteUrl, this.manifest?.startUrl);
+    url = resolveUrl(url?.href, icon.src);
+
+    if (url) {
+      return url.href;
+    }
+
+    return undefined;
   }
 }
 
