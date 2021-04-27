@@ -125,8 +125,7 @@ export async function fetchManifest(
 
     try {
       knownGoodUrl = await cleanUrl(url);
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
 
@@ -165,8 +164,19 @@ export function getManiURL() {
   return maniURL;
 }
 
-export function getManifest() {
-  return manifest;
+export function getManifest(): Manifest {
+  if (manifest) {
+    return manifest;
+  }
+  const search = new URLSearchParams(location.search);
+
+  try {
+    return JSON.parse(search.get('results'));
+  } catch (e) {
+    console.log(e);
+  }
+
+  return undefined;
 }
 
 export function getGeneratedManifest() {
