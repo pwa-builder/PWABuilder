@@ -19,7 +19,7 @@ export class LoadingButton extends LitElement implements AppButtonElement {
         height: 1.8em;
         width: 1.8em;
 
-        --accent-foreground-rest: var(--primary-purple);
+        --accent-foreground-rest: white;
       }
 
       ${smallBreakPoint(css`
