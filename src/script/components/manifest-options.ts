@@ -402,7 +402,7 @@ export class AppManifest extends LitElement {
               <fast-button
                 @click=${this.addNewScreenshot}
                 appearance="lightweight"
-                ?disabled=${this.screenshotList.length >= 8}
+                ?disabled=${this.screenshotList?.length >= 8}
                 >+ Add URL</fast-button
               >
             </div>
@@ -432,7 +432,7 @@ export class AppManifest extends LitElement {
           <fast-accordion>
             <fast-accordion-item>
               <h1 slot="heading">View Code</h1>
-              <p>${JSON.stringify(getManifest())}</p>
+              <p>${this.manifest}</p>
             </fast-accordion-item>
           </fast-accordion>
         </section>
@@ -470,10 +470,18 @@ export class AppManifest extends LitElement {
   renderSettingsItems() {
     return settingsItems.map(item => {
       let field;
-      const value = this.manifest ? (this.manifest[item.entry] as string) : '';
+      const value = this.manifest
+        ? (this.manifest[item.entry] as string).toLocaleLowerCase()
+        : '';
 
       if (item.type === 'select' && item.menuItems) {
-        const index = item.menuItems.indexOf(value);
+        let index = item.menuItems.indexOf(value);
+
+        if (index === -1) {
+          const find = item.menuItems.filter(i => i.startsWith(value))[0];
+          index = item.menuItems.indexOf(find);
+        }
+
         field = html`
           <app-dropdown
             .menuItems=${item.menuItems}
