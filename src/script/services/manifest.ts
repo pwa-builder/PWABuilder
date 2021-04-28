@@ -171,7 +171,21 @@ export function getManifest(): Manifest {
   const search = new URLSearchParams(location.search);
 
   try {
-    return JSON.parse(search.get('results'));
+    const url = maniURL || search.get('site');
+
+    fetchManifest(url)
+      .then(response => {
+        updateManifest(response.content);
+      })
+      .catch(reason => {
+        console.error(reason);
+
+        generateManifest(url)
+          .then(response => {
+            updateManifest(response.content);
+          })
+          .catch(console.error);
+      });
   } catch (e) {
     console.log(e);
   }
