@@ -38,7 +38,8 @@ export default {
         { src: "assets/**/*", dest: "dist/assets/" },
         { src: "styles/global.css", dest: "dist/styles/" },
         { src: "manifest.json", dest: "dist/" },
-        { src: "workers/**/*", dest: "dist/workers/" }
+        { src: "workers/**/*", dest: "dist/workers/" },
+        { src: 'routes.json', dest: 'dist/' },
       ],
     }),
     workbox({
