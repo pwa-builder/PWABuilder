@@ -271,6 +271,16 @@ export class AppHome extends LitElement {
     super();
   }
 
+  async firstUpdated() {
+    const search = new URLSearchParams(location.search);
+    const site = search.get('site');
+
+    if (site) {
+      this.siteURL = site;
+      await this.doTest();
+    }
+  }
+
   handleURL(inputEvent: InputEvent) {
     if (inputEvent) {
       this.siteURL = (inputEvent.target as HTMLInputElement).value;
@@ -280,12 +290,16 @@ export class AppHome extends LitElement {
   async start(inputEvent: InputEvent) {
     inputEvent.preventDefault();
 
+    await this.doTest();
+  }
+
+  async doTest() {
     if (this.siteURL) {
       this.gettingManifest = true;
 
       try {
         const data = await fetchManifest(this.siteURL);
-
+  
         if (data.error) {
           this.errorGettingURL = true;
           this.errorMessage = data.error;
@@ -293,12 +307,12 @@ export class AppHome extends LitElement {
         } else {
           this.errorGettingURL = false;
           this.errorMessage = undefined;
-
+  
           const progress = getProgress();
           this.updateProgress(progress);
-
+  
           const goodURL = getURL();
-
+  
           if (goodURL !== undefined) {
             // couldnt get manifest, thats ok
             // lets continue forward with the default
@@ -308,10 +322,10 @@ export class AppHome extends LitElement {
         }
       } catch (err) {
         console.error('Error getting site', err.message);
-
+  
         try {
           const goodURL = getURL();
-
+  
           if (goodURL !== undefined) {
             // couldnt get manifest, thats ok
             // lets continue forward with the default
@@ -324,7 +338,7 @@ export class AppHome extends LitElement {
           throw new Error(`Error getting URL: ${err}`);
         }
       }
-
+  
       this.gettingManifest = false;
     }
   }
