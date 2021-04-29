@@ -85,6 +85,7 @@ export class AppGallery extends LitElement {
           <img
             slot="modal-image"
             class="modal-image"
+            alt="current image selected in a modal"
             decoding="async"
             loading="lazy"
             .src=${this.currentImage}
