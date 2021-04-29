@@ -42,16 +42,12 @@ import './app-modal';
 import './dropdown-menu';
 import './app-file-input';
 import './app-gallery';
-import {
-  generateMissingImagesBase64,
-  iconGeneratorDefaults,
-} from '../services/icon_generator';
+import { generateMissingImagesBase64 } from '../services/icon_generator';
 import { generateScreenshots } from '../services/screenshots';
 import { validateScreenshotUrlsList } from '../utils/manifest-validation';
 import { mediumBreakPoint, smallBreakPoint } from '../utils/css/breakpoints';
 import { hidden_sm } from '../utils/css/hidden';
 import { generateAndDownloadIconZip } from '../services/download_icons';
-import { getWrap } from '../utils/class-utils';
 
 type BackgroundColorRadioValues = 'none' | 'transparent' | 'custom';
 
@@ -61,8 +57,7 @@ export class AppManifest extends LitElement {
   manifest = getManifest();
   @property({ type: Number }) score = 0;
   @property({ type: Array, hasChanged: arrayHasChanged })
-  screenshotList: Array<string | undefined> =
-    [undefined] || this.manifest.screenshots?.map(img => img.src);
+  screenshotList: Array<string | undefined> = [undefined];
 
   @property({ type: Boolean }) uploadModalOpen = false;
   @internalProperty() uploadButtonDisabled = true;
@@ -229,6 +224,11 @@ export class AppManifest extends LitElement {
         fast-accordion-item::part(icon) {
           display: none;
         }
+
+        .show-sm {
+          display: none;
+          visibility: hidden;
+        }
       `,
       // modal
       css`
@@ -300,6 +300,11 @@ export class AppManifest extends LitElement {
           width: 100px;
           white-space: initial;
           scroll-snap-align: start;
+        }
+
+        .show-sm {
+          display: block;
+          visibility: visible;
         }
       `),
       hidden_sm,
@@ -376,7 +381,8 @@ export class AppManifest extends LitElement {
               <loading-button
                 appearance="outline"
                 ?loading=${this.awaitRequest}
-                ?disabled=${this.manifest?.icons.length > 0}
+                ?disabled=${this.manifest?.icons &&
+                this.manifest?.icons.length > 0}
                 @click=${this.downloadIcons}
                 >Download</loading-button
               >
@@ -393,23 +399,22 @@ export class AppManifest extends LitElement {
                 from. You may add up to 8 screenshots or Store Listings.
               </p>
 
-              <app-gallery .images=${this.screenshotSrcListParse()}>
-              </app-gallery>
-
               <!-- url text field -->
               ${this.renderScreenshotInputUrlList()}
               <!-- Add url button -->
               <fast-button
                 @click=${this.addNewScreenshot}
                 appearance="lightweight"
-                ?disabled=${this.screenshotList?.length >= 8}
+                ?disabled=${this.screenshotList?.length >= 8 || true}
                 >+ Add URL</fast-button
               >
             </div>
           </div>
-          <div class="collection screenshot-items">
+          <div class="collection screenshot-items hidde-sm">
             ${this.renderScreenshots()}
           </div>
+          <app-gallery class="show-sm" .images=${this.screenshotSrcListParse()}>
+          </app-gallery>
 
           <div class="screenshots-actions">
             <loading-button
@@ -552,9 +557,9 @@ export class AppManifest extends LitElement {
           <img src="${url}" alt="image text" decoding="async" loading="lazy" />
           <p>${icon.sizes}</p>
         </div>`;
-      } else {
-        return undefined;
       }
+
+      return undefined;
     });
   }
 
@@ -598,9 +603,17 @@ export class AppManifest extends LitElement {
   }
 
   screenshotSrcListParse() {
-    return this.manifest?.screenshots
-      ?.map(this.handleImageUrl)
-      .filter(str => str);
+    if (!this.manifest && !this.siteUrl) {
+      return [];
+    }
+
+    return (
+      this.manifest?.screenshots
+        ?.map(screenshot => {
+          return this.handleImageUrl(screenshot);
+        })
+        .filter(str => str) || []
+    );
   }
 
   renderToolTip = tooltip;
