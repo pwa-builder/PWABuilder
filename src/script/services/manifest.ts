@@ -217,6 +217,11 @@ async function generateManifest(url: string): Promise<ManifestDetectionResult> {
 }
 
 export async function updateManifest(manifestUpdates: Partial<Manifest>) {
+  // @ts-ignore
+  // using a dynamic import here as this is a large library
+  // so we should only load it once its actually needed
+  await import("https://unpkg.com/deepmerge@4.2.2/dist/umd.js");
+
   manifest = deepmerge(manifest as Manifest, manifestUpdates as Manifest, {
     customMerge: customManifestMerge,
   });

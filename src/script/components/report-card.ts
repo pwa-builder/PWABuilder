@@ -1,11 +1,10 @@
 import {
   LitElement,
   css,
-  html,
-  customElement,
-  property,
-  internalProperty,
-} from 'lit-element';
+  html
+} from 'lit';
+import { customElement, property,
+  state, } from "lit/decorators.js"
 import { RawTestResult, ScoreEvent } from '../utils/interfaces';
 
 import {
@@ -24,27 +23,27 @@ import { Router } from '@vaadin/router';
 import { getOverallScore } from '../services/tests';
 import { getPossibleBadges, sortBadges } from '../services/badges';
 
-import { classMap } from 'lit-html/directives/class-map';
-import { styleMap } from 'lit-html/directives/style-map';
+import { classMap } from 'lit/directives/class-map.js';
+import { styleMap } from 'lit/directives/style-map.js';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {
-  @property() results: RawTestResult | undefined;
-  @property() scoreCardResults: RawTestResult | undefined;
+  @property({ type: Object }) results: RawTestResult | undefined;
+  @property({ type: Object }) scoreCardResults: RawTestResult | undefined;
 
-  @internalProperty() maniScore = 0;
-  @internalProperty() swScore = 0;
-  @internalProperty() securityScore = 0;
-  @internalProperty() overallScore = 0;
+  @state() maniScore = 0;
+  @state() swScore = 0;
+  @state() securityScore = 0;
+  @state() overallScore = 0;
 
-  @internalProperty() currentURL: string | undefined;
+  @state() currentURL: string | undefined;
 
-  @internalProperty() pwa_icon: { url: string; locked: boolean } | undefined;
-  @internalProperty() manifest_icon:
+  @state() pwa_icon: { url: string; locked: boolean } | undefined;
+  @state() manifest_icon:
     | { url: string; locked: boolean }
     | undefined;
-  @internalProperty() sw_icon: { url: string; locked: boolean } | undefined;
-  @internalProperty() security_icon:
+  @state() sw_icon: { url: string; locked: boolean } | undefined;
+  @state() security_icon:
     | { url: string; locked: boolean }
     | undefined;
 
@@ -200,21 +199,24 @@ export class ReportCard extends LitElement {
       }
 
       #badge-section img {
-        margin-right: 10px;
         width: 60px;
       }
 
       #badge-text h4 {
-        font-size: var(--small-font-size);
+        font-size: var(--smallish-font-size);
         margin-bottom: 0;
         margin-top: 0;
       }
 
       #badge-text p {
-        font-size: var(--small-font-size);
+        font-size: var(--smallish-font-size);
         font-weight: normal;
         margin-top: 0;
         margin-bottom: 0;
+      }
+
+      #overall-score #badge-section img {
+        margin-right: 10px;
       }
 
       .locked {
@@ -225,7 +227,7 @@ export class ReportCard extends LitElement {
         xxxLargeBreakPoint(
           css`
             .accordion-heading-block {
-              width: 111em;
+              width: 99em;
             }
           `
         )

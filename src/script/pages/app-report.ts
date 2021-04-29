@@ -2,14 +2,14 @@ import {
   LitElement,
   css,
   html,
-  customElement,
-  internalProperty,
-  property,
-} from 'lit-element';
-import { classMap } from 'lit-html/directives/class-map';
+} from 'lit';
+import { customElement, property,
+  state, } from "lit/decorators.js"
+import { classMap } from 'lit/directives/class-map.js';
 
 import {
   BreakpointValues,
+  mediumBreakPoint,
   largeBreakPoint,
   xxxLargeBreakPoint,
   smallBreakPoint,
@@ -26,19 +26,41 @@ import '../components/app-sidebar';
 import style from '../../../styles/layout-defaults.css';
 import { RawTestResult, ScoreEvent } from '../utils/interfaces';
 
+const possible_messages = {
+  overview: {
+    heading: 'Getting down to business.',
+    supporting:
+      'Description about what is going to take place below and how they are on their way to build their PWA. Mention nav bar for help.',
+  },
+  mani: {
+    heading: 'Manifest great PWAs.',
+    supporting:
+      'Description about what is going to take place below and how they are on their way to build their PWA. Mention nav bar for help.',
+  },
+  sw: {
+    heading: 'Secret Ingredient: A Service Worker',
+    supporting:
+      'Description about what is going to take place below and how they are on their way to build their PWA. Mention nav bar for help.',
+  }
+};
+
 @customElement('app-report')
 export class AppReport extends LitElement {
-  @property() resultOfTest: RawTestResult | undefined;
+  @property({ type: Object }) resultOfTest: RawTestResult | undefined;
 
-  @internalProperty() swScore = 0;
-  @internalProperty() maniScore = 0;
-  @internalProperty() securityScore = 0;
+  @state() swScore = 0;
+  @state() maniScore = 0;
+  @state() securityScore = 0;
 
-  @internalProperty() mql = window.matchMedia(
+  @state() selectedTab: string = 'overview';
+  @state() currentHeader: string = possible_messages.overview.heading;
+  @state() currentSupporting: string = possible_messages.overview.supporting;
+
+  @state() mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`
   );
 
-  @internalProperty() isDeskTopView = this.mql.matches;
+  @state() isDeskTopView = this.mql.matches;
 
   static get styles() {
     return [
@@ -89,6 +111,10 @@ export class AppReport extends LitElement {
           margin-top: 20px;
         }
 
+        #overview-panel {
+          padding-left: 14px;
+        }
+
         ${xxxLargeBreakPoint(
           css`
             #report {
@@ -106,6 +132,15 @@ export class AppReport extends LitElement {
             #desktop-sidebar {
               display: block;
             }
+
+            #report-wrapper {
+              max-width: 69em;
+              background: white;
+            }
+
+            #grid {
+              background: white;
+            }
           `
         )}
 
@@ -121,9 +156,29 @@ export class AppReport extends LitElement {
           `
         )}
 
+        ${mediumBreakPoint(
+          css`
+            .reportCard h2 {
+              font-size: 33px;
+            }
+
+            .reportCard p {
+              display: none;
+            }
+          `
+        )}
+
         ${smallBreakPoint(
           css`
             fast-tabs::part(tablist) {
+              display: none;
+            }
+
+            .reportCard h2 {
+              font-size: 33px;
+            }
+
+            .reportCard p {
               display: none;
             }
           `
@@ -183,41 +238,66 @@ export class AppReport extends LitElement {
     }
   }
 
+  handleTabsEvent(type: 'mani' | 'sw' | 'overview') {
+    this.selectedTab = type;
+
+    if (type === "mani") {
+      this.currentHeader = possible_messages.mani.heading;
+      this.currentSupporting = possible_messages.mani.supporting;
+    }
+    else if (type === "sw") {
+      this.currentHeader = possible_messages.sw.heading;
+      this.currentSupporting = possible_messages.sw.supporting;
+    }
+    else {
+      this.currentHeader = possible_messages.overview.heading;
+      this.currentSupporting = possible_messages.overview.supporting;
+    }
+  }
+
   render() {
-    return html` <div>
+    return html` <div id="report-wrapper">
       <app-header></app-header>
 
       <div
         id="grid"
-        class=${classMap({
+        class="${classMap({
           'grid-mobile': this.isDeskTopView == false,
-        })}
+        })}"
       >
         <app-sidebar id="desktop-sidebar"></app-sidebar>
 
         <section id="report">
-          <content-header>
-            <h2 slot="hero-container">Getting down to business.</h2>
+          <content-header class="reportCard ${this.selectedTab}">
+            <h2 slot="hero-container">${this.currentHeader}</h2>
             <p id="hero-p" slot="hero-container">
-              Description about what is going to take place below and how they
-              are on their way to build their PWA. Mention nav bar for help.
+              ${this.currentSupporting}
             </p>
-
-            <img
-              slot="picture-container"
-              src="/assets/images/reportcard-header.svg"
-              alt="report card header image"
-            />
           </content-header>
 
           <app-sidebar id="tablet-sidebar"></app-sidebar>
 
           <fast-tabs activeId="sections">
-            <fast-tab class="tab" id="overview">Overview</fast-tab>
-            <fast-tab class="tab" id="mani">Manifest Options</fast-tab>
-            <fast-tab class="tab" id="sw">Service Worker Options</fast-tab>
+            <fast-tab
+              class="tab"
+              id="overview"
+              @click="${() => this.handleTabsEvent('overview')}"
+              >Overview</fast-tab
+            >
+            <fast-tab
+              class="tab"
+              id="mani"
+              @click="${() => this.handleTabsEvent('mani')}"
+              >Manifest Options</fast-tab
+            >
+            <fast-tab
+              class="tab"
+              id="sw"
+              @click="${() => this.handleTabsEvent('sw')}"
+              >Service Worker Options</fast-tab
+            >
 
-            <fast-tab-panel id="overviewPanel">
+            <fast-tab-panel id="overview-panel">
               <report-card
                 @sw-scored="${(ev: CustomEvent<ScoreEvent>) =>
                   this.handleScoreForDisplay('sw', ev.detail.score)}"

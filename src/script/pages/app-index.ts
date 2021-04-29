@@ -1,4 +1,5 @@
-import { LitElement, css, html, customElement } from 'lit-element';
+import { LitElement, css, html } from 'lit';
+import { customElement } from "lit/decorators.js"
 import { Router } from '@vaadin/router';
 import './app-home';
 import './app-report';
@@ -20,6 +21,12 @@ export class AppIndex extends LitElement {
 
       #router-otlet > .entering {
         animation: 160ms fadeIn linear;
+      }
+
+      @media(min-width: 1920px) {
+        #router-outlet {
+          background: var(--primary-purple);
+        }
       }
 
       @keyframes fadeOut {

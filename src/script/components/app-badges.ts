@@ -1,24 +1,15 @@
-import {
-  LitElement,
-  css,
-  html,
-  customElement,
-  internalProperty,
-} from 'lit-element';
-import { classMap } from 'lit-html/directives/class-map';
+import { LitElement, css, html } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 
 import { getPossibleBadges, sortBadges } from '../services/badges';
 
 @customElement('app-badges')
 export class AppBadges extends LitElement {
-  @internalProperty() current_badges:
-    | Array<{ name: string; url: string }>
-    | undefined;
-  @internalProperty() possible_badges:
-    | Array<{ name: string; url: string }>
-    | undefined;
+  @state() current_badges: Array<{ name: string; url: string }> | undefined;
+  @state() possible_badges: Array<{ name: string; url: string }> | undefined;
 
-    duplicate: Array<{name: string, url: string}>;
+  duplicate: Array<{ name: string; url: string }>;
 
   static get styles() {
     return css`
@@ -64,8 +55,13 @@ export class AppBadges extends LitElement {
         ${this.possible_badges?.map(badge => {
           return html`
             <div
-              class="badge ${classMap({
-                'locked': this.duplicate.find((dupe) => {return badge.name === dupe.name}) ? false : true,
+              class="${classMap({
+                badge: true,
+                locked: this.duplicate.find(dupe => {
+                  return badge.name === dupe.name;
+                })
+                  ? false
+                  : true,
               })}"
             >
               <img .src="${badge.url}" .alt="${badge.name} icon" />

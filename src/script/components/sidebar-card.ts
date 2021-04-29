@@ -1,17 +1,17 @@
 import {
   LitElement,
   css,
-  html,
-  customElement,
-  property,
-  internalProperty,
-} from 'lit-element';
+  html
+} from 'lit';
+
+import { customElement, property,
+  state, } from "lit/decorators.js"
 
 @customElement('sidebar-card')
 export class SidebarCard extends LitElement {
   @property() title: string;
 
-  @internalProperty() open = true;
+  @state() open = true;
 
   static get styles() {
     return css`
@@ -35,7 +35,6 @@ export class SidebarCard extends LitElement {
         padding-top: 6px;
         padding-bottom: 6px;
         background: #c4c4c45e;
-        border-bottom: solid 1px white;
       }
 
       #sidecard-header span {

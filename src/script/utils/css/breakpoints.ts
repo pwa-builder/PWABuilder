@@ -1,4 +1,4 @@
-import { css, unsafeCSS, CSSResult } from 'lit-element';
+import { css, unsafeCSS, CSSResult, CSSResultGroup } from 'lit';
 
 export enum BreakpointValues {
   smallUpper = 479,
@@ -16,7 +16,7 @@ export enum BreakpointValues {
 type BoundModification = 'both' | 'no-lower' | 'no-upper';
 
 export function customBreakPoint(
-  styles: CSSResult,
+  styles: CSSResultGroup,
   lower: number | undefined = undefined,
   upper: number | undefined = undefined
 ) {
@@ -35,7 +35,7 @@ export function customBreakPoint(
   `);
 }
 
-export function smallBreakPoint(styles: CSSResult) {
+export function smallBreakPoint(styles: CSSResultGroup) {
   const upper = BreakpointValues.smallUpper;
   return unsafeCSS(`
     @media screen ${breakPoints({ upper })} {
@@ -45,7 +45,7 @@ export function smallBreakPoint(styles: CSSResult) {
 }
 
 export function mediumBreakPoint(
-  styles: CSSResult,
+  styles: CSSResultGroup,
   editBound: BoundModification = 'both'
 ) {
   const lower =
@@ -60,7 +60,7 @@ export function mediumBreakPoint(
 }
 
 export function largeBreakPoint(
-  styles: CSSResult,
+  styles: CSSResultGroup,
   editBound: BoundModification = 'both'
 ) {
   const lower =
@@ -75,7 +75,7 @@ export function largeBreakPoint(
 }
 
 export function xLargeBreakPoint(
-  styles: CSSResult,
+  styles: CSSResultGroup,
   editBound: BoundModification = 'both'
 ) {
   const lower =
@@ -90,7 +90,7 @@ export function xLargeBreakPoint(
 }
 
 export function xxLargeBreakPoint(
-  styles: CSSResult,
+  styles: CSSResultGroup,
   editBound: BoundModification = 'both'
 ) {
   const lower =
@@ -104,7 +104,7 @@ export function xxLargeBreakPoint(
   `);
 }
 
-export function xxxLargeBreakPoint(styles: CSSResult) {
+export function xxxLargeBreakPoint(styles: CSSResultGroup) {
   const lower = BreakpointValues.xxxLargeLower;
   return unsafeCSS(`
     @media screen ${breakPoints({ lower })} {
@@ -119,7 +119,7 @@ interface Bound {
 }
 
 function breakPoints({ lower, upper }: Bound) {
-  const output = [];
+  const output: Array<string> = [];
 
   if (lower) {
     output.push(`(min-width: ${lower}px)`);

@@ -2,10 +2,10 @@ import {
   LitElement,
   css,
   html,
-  customElement,
-  property,
-  internalProperty,
-} from 'lit-element';
+} from 'lit';
+
+import { customElement, property,
+  state, } from "lit/decorators.js"
 
 import '../components/loading-button';
 import { tooltip, styles as ToolTipStyles } from '../components/tooltip';
@@ -23,8 +23,8 @@ import { WindowsPackageOptions } from '../utils/win-validation';
 export class WindowsForm extends LitElement {
   @property({ type: Boolean }) generating: boolean;
 
-  @internalProperty() show_adv = false;
-  @internalProperty() default_options: WindowsPackageOptions | undefined;
+  @state() show_adv = false;
+  @state() default_options: WindowsPackageOptions | undefined;
 
   static get styles() {
     return [
@@ -348,7 +348,7 @@ export class WindowsForm extends LitElement {
                         id="windowsClassicAppVersionInput"
                         placeholder="1.0.0"
                         name="classicVersion"
-                        value="${this.default_options ? this.default_options.classicPackage.version : "1.0.1"}"
+                        .value="${this.default_options ? this.default_options.classicPackage?.version : "1.0.1"}"
                         required
                       ></fast-text-field>
                     </div>
@@ -402,7 +402,7 @@ export class WindowsForm extends LitElement {
                     id="windowsManifestUrlInput"
                     placeholder="https://mysite.com/manifest.json"
                     name="manifestUrl"
-                    value="${this.default_options ? this.default_options.manifestUrl : getManiURL()}"
+                    .value="${this.default_options ? this.default_options.manifestUrl : getManiURL()}"
                     required
                   ></fast-text-field>
                 </div>
@@ -427,7 +427,7 @@ export class WindowsForm extends LitElement {
                     class="form-control"
                     id="windowsStartUrlInput"
                     placeholder="https://mysite.com/startpoint.html"
-                    value="${this.default_options ? this.default_options.manifest.startUrl : "/"}"
+                    .value="${this.default_options ? this.default_options.manifest?.start_url : "/"}"
                     name="startUrl"
                   ></fast-text-field>
                 </div>
@@ -458,7 +458,7 @@ export class WindowsForm extends LitElement {
                     class="form-control"
                     id="windowsIconUrlInput"
                     placeholder="https://myawesomepwa.com/512x512.png"
-                    value="${this.default_options ? this.default_options.images.baseImage : ""}"
+                    .value="${this.default_options ? this.default_options.images?.baseImage : ""}"
                     name="iconUrl"
                   ></fast-text-field>
                 </div>
@@ -483,7 +483,7 @@ export class WindowsForm extends LitElement {
                     class="form-control"
                     id="windowsLanguageInput"
                     placeholder="EN-US"
-                    value="${this.default_options ? this.default_options.manifest.lang : "US-EN"}"
+                    .value="${this.default_options ? this.default_options.manifest?.lang : "US-EN"}"
                     name="language"
                   ></fast-text-field>
                 </div>

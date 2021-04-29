@@ -1,4 +1,6 @@
-import { LitElement, css, html, customElement } from 'lit-element';
+import { LitElement, css, html } from 'lit';
+
+import { customElement } from "lit/decorators.js"
 
 import { smallBreakPoint, mediumBreakPoint, xxxLargeBreakPoint } from '../utils/css/breakpoints';
 

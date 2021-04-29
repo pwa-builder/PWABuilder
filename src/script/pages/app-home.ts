@@ -2,11 +2,12 @@ import {
   LitElement,
   css,
   html,
-  customElement,
-  internalProperty,
-} from 'lit-element';
+} from 'lit';
 
-import { classMap } from 'lit-html/directives/class-map';
+import { customElement,
+  state, } from "lit/decorators.js"
+
+import { classMap } from 'lit/directives/class-map.js';
 
 import {
   smallBreakPoint,
@@ -34,11 +35,11 @@ import { Lazy, ProgressList, Status } from '../utils/interfaces';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
-  @internalProperty() siteURL: Lazy<string>;
-  @internalProperty() gettingManifest = false;
+  @state() siteURL: Lazy<string>;
+  @state() gettingManifest = false;
 
-  @internalProperty() errorGettingURL = false;
-  @internalProperty() errorMessage: string | undefined;
+  @state() errorGettingURL = false;
+  @state() errorMessage: string | undefined;
 
   static get styles() {
     return [
@@ -46,7 +47,7 @@ export class AppHome extends LitElement {
       css`
         content-header::part(main-container) {
           display: flex;
-          justify-content: space-around;
+
           padding-top: 0;
         }
 
@@ -59,6 +60,7 @@ export class AppHome extends LitElement {
           line-height: 48px;
           letter-spacing: -0.015em;
           max-width: 526px;
+          margin-bottom: 0;
         }
 
         h3 {
@@ -140,6 +142,7 @@ export class AppHome extends LitElement {
 
           h2 {
             margin-top: 0;
+            font-size: var(--large-font-size);
           }
 
           #hero-p {
@@ -165,12 +168,14 @@ export class AppHome extends LitElement {
             font-size: 22px;
           }
 
-          #input-form app-button {
-            margin-top: 54px;
-            width: 180px;
+          #input-form loading-button {
+            margin-top: 34px;
+            width: 176px;
           }
 
-          #input-form app-button::part(underlying-button) {
+          #input-form loading-button::part(underlying-button) {
+            margin-top: 44px;
+            width: 176px;
             height: 64px;
             font-size: 22px;
           }
@@ -218,6 +223,16 @@ export class AppHome extends LitElement {
           #input-form loading-button::part(underlying-button) {
             margin-top: 44px;
             width: 176px;
+            height: 64px;
+            font-size: 22px;
+          }
+
+          #input-block {
+            margin-bottom: 30px;
+          }
+
+          #input-form loading-button {
+            width: 180px;
           }
         `)}
 
@@ -244,7 +259,7 @@ export class AppHome extends LitElement {
 
       ${xxxLargeBreakPoint(css`
           content-header::part(main-container) {
-            padding-left: 16.5em;
+            padding-left: 10em;
             justify-content: flex-start;
           }
         `)}
@@ -256,6 +271,16 @@ export class AppHome extends LitElement {
     super();
   }
 
+  async firstUpdated() {
+    const search = new URLSearchParams(location.search);
+    const site = search.get('site');
+
+    if (site) {
+      this.siteURL = site;
+      await this.doTest();
+    }
+  }
+
   handleURL(inputEvent: InputEvent) {
     if (inputEvent) {
       this.siteURL = (inputEvent.target as HTMLInputElement).value;
@@ -265,12 +290,16 @@ export class AppHome extends LitElement {
   async start(inputEvent: InputEvent) {
     inputEvent.preventDefault();
 
+    await this.doTest();
+  }
+
+  async doTest() {
     if (this.siteURL) {
       this.gettingManifest = true;
 
       try {
         const data = await fetchManifest(this.siteURL);
-
+  
         if (data.error) {
           this.errorGettingURL = true;
           this.errorMessage = data.error;
@@ -278,12 +307,12 @@ export class AppHome extends LitElement {
         } else {
           this.errorGettingURL = false;
           this.errorMessage = undefined;
-
+  
           const progress = getProgress();
           this.updateProgress(progress);
-
+  
           const goodURL = getURL();
-
+  
           if (goodURL !== undefined) {
             // couldnt get manifest, thats ok
             // lets continue forward with the default
@@ -293,10 +322,10 @@ export class AppHome extends LitElement {
         }
       } catch (err) {
         console.error('Error getting site', err.message);
-
+  
         try {
           const goodURL = getURL();
-
+  
           if (goodURL !== undefined) {
             // couldnt get manifest, thats ok
             // lets continue forward with the default
@@ -309,7 +338,7 @@ export class AppHome extends LitElement {
           throw new Error(`Error getting URL: ${err}`);
         }
       }
-
+  
       this.gettingManifest = false;
     }
   }
@@ -323,7 +352,7 @@ export class AppHome extends LitElement {
 
   render() {
     return html`
-      <content-header>
+      <content-header class="home">
         <h2 slot="hero-container">
           Transform your website to an app at lightning speed.
         </h2>
@@ -377,7 +406,7 @@ export class AppHome extends LitElement {
               type="text"
               placeholder="Enter URL"
               name="url-input"
-              class=${classMap({ error: this.errorGettingURL })}
+              class="${classMap({ error: this.errorGettingURL })}"
               @input="${(e: InputEvent) => this.handleURL(e)}"
               autofocus
             ></fast-text-field>
@@ -389,8 +418,8 @@ export class AppHome extends LitElement {
               : null}
           </div>
 
-          <app-button type="submit" @click="${(e: InputEvent) => this.start(e)}"
-            >Start</app-button
+          <loading-button type="submit" ?loading="${this.gettingManifest}" @click="${(e: InputEvent) => this.start(e)}"
+            >Start</loading-button
           >
         </form>
       </content-header>

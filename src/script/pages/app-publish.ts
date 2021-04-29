@@ -1,11 +1,11 @@
 import {
   css,
-  customElement,
   html,
-  internalProperty,
   LitElement,
-} from 'lit-element';
-import { classMap } from 'lit-html/directives/class-map';
+} from 'lit';
+import { customElement,
+  state, } from "lit/decorators.js"
+import { classMap } from 'lit/directives/class-map.js';
 
 import '../components/app-header';
 import '../components/app-card';
@@ -20,6 +20,7 @@ import {
   BreakpointValues,
   smallBreakPoint,
   largeBreakPoint,
+  mediumBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
 
@@ -37,26 +38,26 @@ import { getReportErrorUrl } from '../utils/error';
 
 @customElement('app-publish')
 export class AppPublish extends LitElement {
-  @internalProperty() errored = false;
-  @internalProperty() errorMessage: string | undefined;
+  @state() errored = false;
+  @state() errorMessage: string | undefined;
 
-  @internalProperty() blob: Blob | File | undefined;
-  @internalProperty() testBlob: Blob | File | undefined;
+  @state() blob: Blob | File | undefined;
+  @state() testBlob: Blob | File | undefined;
 
-  @internalProperty() mql = window.matchMedia(
+  @state() mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`
   );
 
-  @internalProperty() isDeskTopView = this.mql.matches;
+  @state() isDeskTopView = this.mql.matches;
 
-  @internalProperty() open_windows_options = false;
-  @internalProperty() open_android_options = false;
+  @state() open_windows_options = false;
+  @state() open_android_options = false;
 
-  @internalProperty() generating = false;
+  @state() generating = false;
 
-  @internalProperty() finalChecks: checkResults | undefined;
+  @state() finalChecks: checkResults | undefined;
 
-  @internalProperty() reportPackageErrorUrl: string;
+  @state() reportPackageErrorUrl: string;
 
   constructor() {
     super();
@@ -255,6 +256,11 @@ export class AppPublish extends LitElement {
             #desktop-sidebar {
               display: block;
             }
+
+            #publish-wrapper {
+              max-width: 69em;
+              background: white;
+            }
           `
         )}
 
@@ -270,6 +276,19 @@ export class AppPublish extends LitElement {
           `
         )}
 
+        ${mediumBreakPoint(
+          css`
+            .publish h2 {
+              font-size: 33px;
+              max-width: 10em;
+            }
+
+            .publish p {
+              display: none;
+            }
+          `
+        )}
+
         ${smallBreakPoint(css`
           #test-package-button app-button::part(underlying-button) {
             width: 152px;
@@ -280,6 +299,14 @@ export class AppPublish extends LitElement {
           #title-block p {
             width: 200px;
           }
+
+          .publish h2 {
+             font-size: 33px;
+            }
+
+            .publish p {
+              display: none;
+            }
         `)}
       `,
     ];
@@ -418,7 +445,6 @@ export class AppPublish extends LitElement {
     this.errorMessage = error;
 
     this.reportAnError(error, platform);
-
   }
 
   showWindowsOptionsModal() {
@@ -488,7 +514,10 @@ export class AppPublish extends LitElement {
         />
 
         <div id="actions" slot="modal-actions">
-          <fast-anchor target="__blank" id="error-link" .href="${this.reportPackageErrorUrl}"
+          <fast-anchor
+            target="__blank"
+            id="error-link"
+            .href="${this.reportPackageErrorUrl}"
             >Report A Problem</fast-anchor
           >
 
@@ -560,30 +589,24 @@ export class AppPublish extends LitElement {
         ></android-form>
       </app-modal>
 
-      <div>
+      <div id="publish-wrapper">
         <app-header></app-header>
 
         <div
           id="grid"
-          class=${classMap({
+          class="${classMap({
             'grid-mobile': this.isDeskTopView == false,
-          })}
+          })}"
         >
           <app-sidebar id="desktop-sidebar"></app-sidebar>
 
           <div>
-            <content-header>
+            <content-header class="publish">
               <h2 slot="hero-container">Small details go a long way.</h2>
               <p id="hero-p" slot="hero-container">
                 Description about what is going to take place below and how they
                 are on their way to build their PWA. Mention nav bar for help.
               </p>
-
-              <img
-                slot="picture-container"
-                src="/assets/images/reportcard-header.svg"
-                alt="report card header image"
-              />
             </content-header>
 
             <app-sidebar id="tablet-sidebar"></app-sidebar>

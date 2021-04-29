@@ -1,18 +1,22 @@
 import {
   LitElement,
   css,
-  html,
-  customElement,
-  internalProperty,
-} from 'lit-element';
-import { classMap } from 'lit-html/directives/class-map';
+  html
+} from 'lit';
+
+import { customElement,
+  state, } from "lit/decorators.js"
+import { classMap } from 'lit/directives/class-map.js';
 
 import {
   BreakpointValues,
   xxxLargeBreakPoint,
   largeBreakPoint,
   mediumBreakPoint,
+  smallBreakPoint,
+  customBreakPoint,
 } from '../utils/css/breakpoints';
+import { hidden_all } from '../utils/css/hidden';
 
 // @ts-ignore
 import style from '../../../styles/layout-defaults.css';
@@ -32,26 +36,26 @@ import { BlogPost, allPosts } from '../services/blog';
 
 @customElement('app-congrats')
 export class AppCongrats extends LitElement {
-  @internalProperty() mql = window.matchMedia(
+  @state() mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`
   );
 
-  @internalProperty() isDeskTopView = this.mql.matches;
+  @state() isDeskTopView = this.mql.matches;
 
-  @internalProperty() generatedPlatforms = undefined;
+  @state() generatedPlatforms;
 
-  @internalProperty() generating = false;
+  @state() generating = false;
 
-  @internalProperty() errored = false;
-  @internalProperty() errorMessage: string | undefined;
+  @state() errored = false;
+  @state() errorMessage: string | undefined;
 
-  @internalProperty() blob: Blob | File | undefined;
-  @internalProperty() testBlob: Blob | File | undefined;
-  @internalProperty() open_windows_options = false;
-  @internalProperty() open_android_options = false;
+  @state() blob: Blob | File | undefined;
+  @state() testBlob: Blob | File | undefined;
+  @state() open_windows_options = false;
+  @state() open_android_options = false;
 
-  @internalProperty() blog_posts: Array<BlogPost> | undefined;
-  @internalProperty() featuredPost: BlogPost | undefined;
+  @state() blog_posts: Array<BlogPost> | undefined;
+  @state() featuredPost: BlogPost | undefined;
 
   static get styles() {
     return [
@@ -121,7 +125,7 @@ export class AppCongrats extends LitElement {
         }
 
         #blog-section {
-          padding: 16px;
+          padding: 16px 32px;
           background: #f8f8f8;
         }
 
@@ -153,6 +157,7 @@ export class AppCongrats extends LitElement {
         }
 
         #blog-block app-card {
+          max-width: 612px;
           margin-bottom: 10px;
           box-shadow: 0px 2px 4px 0px rgb(0 0 0 / 25%);
           border: none;
@@ -160,7 +165,8 @@ export class AppCongrats extends LitElement {
         }
 
         #blog-block #first-card {
-          margin-right: 18px;
+          max-height: 552px;
+          margin-right: 24px;
         }
 
         #tools-section h3 {
@@ -212,6 +218,11 @@ export class AppCongrats extends LitElement {
             #desktop-sidebar {
               display: block;
             }
+
+            #congrats-wrapper {
+              max-width: 69em;
+              background: white;
+            }
           `
         )}
 
@@ -232,9 +243,123 @@ export class AppCongrats extends LitElement {
             #blog-block #first-card {
               margin-right: initial;
             }
+
+            .congrats h2 {
+              font-size: 33px;
+              max-width: 10em;
+            }
+
+            .congrats p {
+              display: none;
+            }
           `
         )}
+
+        ${smallBreakPoint(
+          css`
+            fast-tabs::part(tablist) {
+              display: none;
+            }
+
+            .congrats h2 {
+              font-size: 33px;
+            }
+
+            .congrats p {
+              display: none;
+            }
+          `
+        )},
       `,
+      hidden_all,
+      xxxLargeBreakPoint(
+        css`
+          app-sidebar {
+            display: block;
+          }
+
+          #tablet-sidebar {
+            display: none;
+          }
+
+          #desktop-sidebar {
+            display: block;
+          }
+        `
+      ),
+      largeBreakPoint(
+        css`
+          #tablet-sidebar {
+            display: block;
+          }
+
+          #desktop-sidebar {
+            display: none;
+          }
+        `
+      ),
+      mediumBreakPoint(
+        css`
+          #blog-block #first-card {
+            margin-right: initial;
+          }
+        `
+      ),
+      smallBreakPoint(
+        css`
+          #blog-block {
+            display: block;
+            overflow-y: hidden;
+            overflow-x: scroll;
+            scroll-snap-type: x proximity;
+            white-space: nowrap;
+            align-items: center;
+            padding: 0 16px;
+            margin-bottom: 16px;
+          }
+
+          .other.posts {
+            display: inline-block;
+            margin-left: 32px;
+          }
+
+          #blog-block #first-card {
+            margin-right: 0;
+          }
+
+          #blog-block .blog {
+            display: inline-block;
+            width: calc(100% - 32px);
+            margin-right: 32px;
+            margin-bottom: 16px;
+            scroll-snap-align: center;
+          }
+        `
+      ),
+      customBreakPoint(
+        css`
+          #blog-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
+          #blog-block app-card {
+            max-width: 416px;
+          }
+
+          /* due to container, might want to refactor so the container is optional. */
+          .other.posts {
+            width: 100%;
+          }
+
+          .other.posts app-card {
+            margin-left: auto;
+            margin-right: auto;
+          }
+        `,
+        480,
+        639
+      ),
     ];
   }
 
@@ -422,30 +547,24 @@ export class AppCongrats extends LitElement {
         ></android-form>
       </app-modal>
 
-      <div>
+      <div id="congrats-wrapper">
         <app-header></app-header>
 
         <div
           id="grid"
-          class=${classMap({
+          class="${classMap({
             'grid-mobile': this.isDeskTopView == false,
-          })}
+          })}"
         >
           <app-sidebar id="desktop-sidebar"></app-sidebar>
 
           <div>
-            <content-header>
+            <content-header class="congrats">
               <h2 slot="hero-container">Congrats! Your PWA has...</h2>
               <p id="hero-p" slot="hero-container">
                 Description about what is going to take place below and how they
                 are on their way to build their PWA. Mention nav bar for help.
               </p>
-
-              <img
-                slot="picture-container"
-                src="/assets/images/reportcard-header.svg"
-                alt="congrats header image"
-              />
             </content-header>
 
             <app-sidebar id="tablet-sidebar"></app-sidebar>
@@ -523,33 +642,38 @@ export class AppCongrats extends LitElement {
               <h3>Blog Posts recommended for you...</h3>
 
               <div id="blog-block">
-                ${this.featuredPost ? html`<app-card
-                  id="first-card"
-                  cardTitle="${this.featuredPost.title}"
-                  description="${this.featuredPost.description}"
-                  imageUrl="${this.featuredPost.imageUrl}"
-                  linkText="Read Post"
-                  linkRoute="${this.featuredPost.clickUrl}"
-                  .featured="${true}"
-                  class=${classMap({
-                    blog: true,
-                    featured: true,
-                  })}
-                >
-                </app-card>` : null}
+                ${this.featuredPost
+                  ? html`<app-card
+                      id="first-card"
+                      cardTitle="${this.featuredPost.title}"
+                      description="${this.featuredPost.description}"
+                      imageUrl="${this.featuredPost.imageUrl}"
+                      linkText="Read Post"
+                      linkRoute="${this.featuredPost.clickUrl}"
+                      .tags=${this.featuredPost.tags}
+                      .featured="${this.isFeatured()}"
+                      class="${classMap({
+                        blog: true,
+                        featured: this.isFeatured(),
+                      })}"
+                    >
+                    </app-card>`
+                  : null}
 
-                <div>
-                  ${this.blog_posts ? this.blog_posts.map(post => {
-                    return html`
-                      <app-card
-                        cardTitle="${post.title}"
-                        description="${post.description}"
-                        class="blog"
-                        imageUrl="${post.imageUrl}"
-                      >
-                      </app-card>
-                    `;
-                  }) : null}
+                <div class="other posts">
+                  ${this.blog_posts
+                    ? this.blog_posts.map(post => {
+                        return html`
+                          <app-card
+                            cardTitle="${post.title}"
+                            description="${post.description}"
+                            class="blog"
+                            imageUrl="${post.imageUrl}"
+                          >
+                          </app-card>
+                        `;
+                      })
+                    : null}
                 </div>
               </div>
 
@@ -569,5 +693,9 @@ export class AppCongrats extends LitElement {
         </div>
       </div>
     `;
+  }
+
+  isFeatured() {
+    return window.innerWidth > 1023;
   }
 }

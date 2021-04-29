@@ -1,11 +1,13 @@
-import { LitElement, css, html, customElement, property } from 'lit-element';
-import { classMap } from 'lit-html/directives/class-map';
+import { LitElement, css, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 import { CardData, publishCards, landingCards } from './resource-hub-cards';
 import {
   largeBreakPoint,
   mediumBreakPoint,
   smallBreakPoint,
   BreakpointValues,
+  customBreakPoint,
 } from '../utils/css/breakpoints';
 
 import { AppCardModes } from '../components/app-card';
@@ -45,7 +47,10 @@ export class ResourceHub extends LitElement {
         }
 
         .home {
-          background: var(--primary-color);
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/blog_fold.jpg);
+          background-size: cover;
+          background-position: left bottom;
           color: var(--secondary-color);
         }
 
@@ -109,14 +114,14 @@ export class ResourceHub extends LitElement {
           font-weight: var(--font-bold);
         }
       `,
-           largeBreakPoint(
-            css`
-              .cards app-card {
-                max-width: 350px;
-              }
-            `,
-            'no-lower'
-          ),
+      largeBreakPoint(
+        css`
+          .cards app-card {
+            max-width: 350px;
+          }
+        `,
+        'no-lower'
+      ),
       mediumBreakPoint(
         css`
           .cards {
@@ -129,7 +134,8 @@ export class ResourceHub extends LitElement {
             padding-right: 1em;
           }
 
-          .cards app-card, .cards app-card::part(card) {
+          .cards app-card,
+          .cards app-card::part(card) {
             width: 100%;
             max-width: 100%;
           }
@@ -173,7 +179,8 @@ export class ResourceHub extends LitElement {
             padding-right: 1em;
           }
 
-          .cards app-card, .cards app-card::part(card) {
+          .cards app-card,
+          .cards app-card::part(card) {
             width: 100%;
             max-width: 100%;
           }
@@ -216,6 +223,57 @@ export class ResourceHub extends LitElement {
           }
         `
       ),
+      mediumBreakPoint(
+        css`
+          .cards {
+            flex-direction: column;
+            align-items: center;
+          }
+
+          .cards app-card {
+            margin-bottom: 16px;
+          }
+        `,
+        'no-lower'
+      ),
+      mediumBreakPoint(
+        css`
+          .cards {
+            padding: 0 32px;
+          }
+        `
+      ),
+      largeBreakPoint(
+        css`
+          .cards app-card {
+            max-width: 350px;
+          }
+        `,
+        'no-lower'
+      ),
+      largeBreakPoint(
+        css`
+          .cards {
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: center;
+            padding: 0;
+          }
+
+          .cards app-card {
+            margin-bottom: 16px;
+          }
+        `
+      ),
+      customBreakPoint(
+        css`
+          .resource-hub.complete .cards {
+            flex-direction: column;
+          }
+        `,
+        undefined,
+        919
+      ),
     ];
   }
 
@@ -225,13 +283,28 @@ export class ResourceHub extends LitElement {
 
   render() {
     return html`
-      <section class=${this.resourceHubClassMap()}>
+      <section
+        class="${classMap({
+          'resource-hub': true,
+          'home': this.pageName === 'home',
+          'complete': this.pageName === 'complete',
+        })}"
+      >
         <div class="resource-header">
           <slot name="title"></slot>
           <slot name="description"></slot>
         </div>
 
-        <div class=${this.cardsClasses()}>${this.renderCards()}</div>
+        <div
+          class="${classMap({
+            cards: true,
+            horizontal:
+              this.pageName === 'complete' &&
+              window.innerWidth <= BreakpointValues.smallUpper,
+          })}"
+        >
+          ${this.renderCards()}
+        </div>
 
         ${this.renderViewAllButton()}
       </section>
@@ -272,15 +345,6 @@ export class ResourceHub extends LitElement {
     return undefined;
   }
 
-  cardsClasses() {
-    return classMap({
-      cards: true,
-      horizontal:
-        this.pageName === 'complete' &&
-        window.innerWidth <= BreakpointValues.smallUpper,
-    });
-  }
-
   determineCardMode(): AppCardModes {
     if (
       this.pageName === 'complete' &&
@@ -290,13 +354,5 @@ export class ResourceHub extends LitElement {
     }
 
     return AppCardModes.default;
-  }
-
-  resourceHubClassMap() {
-    return classMap({
-      'resource-hub': true,
-      'home': this.pageName === 'home',
-      'complete': this.pageName === 'complete',
-    });
   }
 }

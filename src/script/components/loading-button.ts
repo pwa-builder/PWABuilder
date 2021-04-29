@@ -1,4 +1,5 @@
-import { LitElement, css, html, customElement, property } from 'lit-element';
+import { LitElement, css, html } from 'lit';
+import { customElement, property } from "lit/decorators.js"
 import { smallBreakPoint, mediumBreakPoint } from '../utils/css/breakpoints';
 import { AppButtonElement } from '../utils/interfaces.components';
 
@@ -19,7 +20,7 @@ export class LoadingButton extends LitElement implements AppButtonElement {
         height: 1.8em;
         width: 1.8em;
 
-        --accent-foreground-rest: var(--primary-purple);
+        --accent-foreground-rest: white;
       }
 
       ${smallBreakPoint(css`

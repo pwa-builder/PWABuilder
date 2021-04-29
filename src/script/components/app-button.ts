@@ -80,7 +80,10 @@ export class AppButton extends LitElement implements AppButtonElement {
     return html`
       <fast-button
         part="underlying-button"
-        class="${this.classMap()}"
+        class="${classMap({
+          link: this.appearance === 'lightweight',
+          secondary: this.appearance === 'outline',
+        })}"
         .appearance="${this.appearance}"
         .type="${this.type}"
         .color="${this.colorMode}"
