@@ -375,7 +375,13 @@ export class AppManifest extends LitElement {
                 </div>
               </app-modal>
             </div>
-            <div class="collection image-items">${this.renderIcons()}</div>
+            <div class="collection image-items hidden-sm">
+              ${this.renderIcons()}
+            </div>
+            <app-gallery
+              class="hidden-sm"
+              .images=${this.iconSrcListParse()}
+            ></app-gallery>
 
             <div class="images-actions hidden-sm">
               <loading-button
@@ -600,6 +606,20 @@ export class AppManifest extends LitElement {
         return undefined;
       }
     });
+  }
+
+  iconSrcListParse() {
+    if (!this.manifest && !this.siteUrl) {
+      return [];
+    }
+
+    return (
+      this.manifest?.icons
+        ?.map(icon => {
+          return this.handleImageUrl(icon);
+        })
+        .filter(str => str) || []
+    );
   }
 
   screenshotSrcListParse() {
