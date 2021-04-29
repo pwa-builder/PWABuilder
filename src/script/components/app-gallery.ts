@@ -65,6 +65,7 @@ export class AppGallery extends LitElement {
         <div class="image-container" @click=${this.openModal}>
           <img
             class="current-image"
+            alt="current image selected"
             decoding="async"
             loading="lazy"
             .src=${this.currentImage}
