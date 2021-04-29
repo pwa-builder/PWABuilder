@@ -32,7 +32,8 @@ export class AppGallery extends LitElement {
         align-items: center;
       }
 
-      .image-container {
+      .image-container,
+      .image-container img {
         max-height: 216px;
         max-width: 344px;
       }
