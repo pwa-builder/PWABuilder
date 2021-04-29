@@ -187,7 +187,7 @@ export function getManifest(): Manifest {
           .catch(console.error);
       });
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 
   return undefined;
@@ -197,7 +197,7 @@ export function getGeneratedManifest() {
   return generatedManifest;
 }
 
-async function generateManifest(url: string) {
+async function generateManifest(url: string): Promise<ManifestDetectionResult> {
   try {
     const response = await fetch(`${env.api}/manifests`, {
       method: 'POST',
