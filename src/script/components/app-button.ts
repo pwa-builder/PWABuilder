@@ -1,5 +1,6 @@
-import { LitElement, css, html, customElement, property } from 'lit-element';
-import { classMap } from 'lit-html/directives/class-map';
+import { LitElement, css, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 import { FastButtonAppearance } from '../utils/fast-element';
 import { AppButtonElement } from '../utils/interfaces.components';
 
