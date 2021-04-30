@@ -36,6 +36,7 @@ import './app-modal';
 import './dropdown-menu';
 import './app-file-input';
 import './app-gallery';
+import './code-editor';
 import { generateMissingImagesBase64 } from '../services/icon_generator';
 import { generateScreenshots } from '../services/screenshots';
 import { validateScreenshotUrlsList } from '../utils/manifest-validation';
@@ -436,7 +437,10 @@ export class AppManifest extends LitElement {
           <fast-accordion>
             <fast-accordion-item>
               <h1 slot="heading">View Code</h1>
-              <p>${this.manifest}</p>
+              <code-editor
+                .startManifest=${JSON.stringify(this.manifest)}
+              ></code-editor
+              >>
             </fast-accordion-item>
           </fast-accordion>
         </section>
