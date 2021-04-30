@@ -1,9 +1,11 @@
+import { once } from 'lodash-es';
 import { EditorState } from '@codemirror/state';
 import {
   keymap,
   drawSelection,
   highlightSpecialChars,
   highlightActiveLine,
+  EditorView,
 } from '@codemirror/view';
 import { defaultKeymap } from '@codemirror/commands';
 import { history, historyKeymap } from '@codemirror/history';
@@ -18,12 +20,13 @@ import { commentKeymap } from '@codemirror/comment';
 import { rectangularSelection } from '@codemirror/rectangular-selection';
 import { defaultHighlightStyle } from '@codemirror/highlight';
 import { lintKeymap } from '@codemirror/lint';
-
 import { json } from '@codemirror/lang-json';
 
 type EditorStateType = 'json';
 
 export function createState(text: string, editorType: EditorStateType) {
+  setupEditor();
+
   return EditorState.create({
     doc: text,
     extensions: [
@@ -63,3 +66,8 @@ function fromEditorType(editorType: EditorStateType) {
 
   return json();
 }
+
+const setupEditor = once(() => {
+  // TODO: consult our designer for styles.
+  EditorView.baseTheme({});
+});
