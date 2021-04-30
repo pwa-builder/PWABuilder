@@ -182,3 +182,7 @@ export interface FileInputDetails {
 export interface ModalCloseEvent {
   modalId: string;
 }
+
+export interface UpdateEditorPayload {
+  manifest: Manifest;
+}
