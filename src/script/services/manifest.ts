@@ -125,8 +125,7 @@ export async function fetchManifest(
 
     try {
       knownGoodUrl = await cleanUrl(url);
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
 
@@ -165,15 +164,40 @@ export function getManiURL() {
   return maniURL;
 }
 
-export function getManifest() {
-  return manifest;
+export function getManifest(): Manifest {
+  if (manifest) {
+    return manifest;
+  }
+  const search = new URLSearchParams(location.search);
+
+  try {
+    const url = maniURL || search.get('site');
+
+    fetchManifest(url)
+      .then(response => {
+        updateManifest(response.content);
+      })
+      .catch(reason => {
+        console.error(reason);
+
+        generateManifest(url)
+          .then(response => {
+            updateManifest(response.content);
+          })
+          .catch(console.error);
+      });
+  } catch (e) {
+    console.error(e);
+  }
+
+  return undefined;
 }
 
 export function getGeneratedManifest() {
   return generatedManifest;
 }
 
-async function generateManifest(url: string) {
+async function generateManifest(url: string): Promise<ManifestDetectionResult> {
   try {
     const response = await fetch(`${env.api}/manifests`, {
       method: 'POST',

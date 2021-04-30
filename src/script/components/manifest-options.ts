@@ -17,6 +17,7 @@ import { resolveUrl } from '../utils/url';
 import {
   AppEvents,
   FileInputDetails,
+  Icon,
   Lazy,
   ModalCloseEvent,
 } from '../utils/interfaces';
@@ -34,6 +35,8 @@ import './loading-button';
 import './app-modal';
 import './dropdown-menu';
 import './app-file-input';
+import './app-gallery';
+import './code-editor';
 import { generateMissingImagesBase64 } from '../services/icon_generator';
 import { generateScreenshots } from '../services/screenshots';
 import { validateScreenshotUrlsList } from '../utils/manifest-validation';
@@ -84,8 +87,7 @@ export class AppManifest extends LitElement {
 
   static get styles() {
     return [
-      css`
-      `,
+      css``,
       ErrorStyles,
       ToolTipStyles,
       fastButtonCss,
@@ -215,6 +217,11 @@ export class AppManifest extends LitElement {
         fast-accordion-item::part(icon) {
           display: none;
         }
+
+        .show-sm {
+          display: none;
+          visibility: hidden;
+        }
       `,
       // modal
       css`
@@ -287,6 +294,11 @@ export class AppManifest extends LitElement {
           white-space: initial;
           scroll-snap-align: start;
         }
+
+        .show-sm {
+          display: block;
+          visibility: visible;
+        }
       `),
       hidden_sm,
     ];
@@ -356,7 +368,13 @@ export class AppManifest extends LitElement {
                 </div>
               </app-modal>
             </div>
-            <div class="collection image-items">${this.renderIcons()}</div>
+            <div class="collection image-items hidden-sm">
+              ${this.renderIcons()}
+            </div>
+            <app-gallery
+              class="hidden-sm"
+              .images=${this.iconSrcListParse()}
+            ></app-gallery>
 
             <div class="images-actions hidden-sm">
               <loading-button
@@ -380,20 +398,23 @@ export class AppManifest extends LitElement {
                 Specify the URLs to generate desktop and mobile screenshots
                 from. You may add up to 8 screenshots or Store Listings.
               </p>
+
               <!-- url text field -->
               ${this.renderScreenshotInputUrlList()}
               <!-- Add url button -->
               <fast-button
                 @click=${this.addNewScreenshot}
                 appearance="lightweight"
-                ?disabled=${this.screenshotList.length >= 8}
+                ?disabled=${this.screenshotList?.length >= 8 || true}
                 >+ Add URL</fast-button
               >
             </div>
           </div>
-          <div class="collection screenshot-items">
+          <div class="collection screenshot-items hidde-sm">
             ${this.renderScreenshots()}
           </div>
+          <app-gallery class="show-sm" .images=${this.screenshotSrcListParse()}>
+          </app-gallery>
 
           <div class="screenshots-actions">
             <loading-button
@@ -416,7 +437,10 @@ export class AppManifest extends LitElement {
           <fast-accordion>
             <fast-accordion-item>
               <h1 slot="heading">View Code</h1>
-              <p>${JSON.stringify(getManifest())}</p>
+              <code-editor
+                .startManifest=${JSON.stringify(this.manifest)}
+              ></code-editor
+              >>
             </fast-accordion-item>
           </fast-accordion>
         </section>
@@ -454,10 +478,18 @@ export class AppManifest extends LitElement {
   renderSettingsItems() {
     return settingsItems.map(item => {
       let field;
-      const value = this.manifest ? (this.manifest[item.entry] as string) : '';
+      const value = this.manifest
+        ? (this.manifest[item.entry] as string).toLocaleLowerCase()
+        : '';
 
       if (item.type === 'select' && item.menuItems) {
-        const index = item.menuItems.indexOf(value);
+        let index = item.menuItems.indexOf(value);
+
+        if (index === -1) {
+          const find = item.menuItems.filter(i => i.startsWith(value))[0];
+          index = item.menuItems.indexOf(find);
+        }
+
         field = html`
           <app-dropdown
             .menuItems=${item.menuItems}
@@ -520,19 +552,17 @@ export class AppManifest extends LitElement {
   }
 
   renderIcons() {
-    const baseUrl = this.siteUrl || this.manifest?.startUrl;
-
     return this.manifest?.icons?.map(icon => {
-      const url = resolveUrl(baseUrl, icon.src);
+      const url = this.handleImageUrl(icon);
 
       if (url) {
         return html`<div class="image-item image">
-          <img src="${url.href}" alt="image text" />
+          <img src="${url}" alt="image text" decoding="async" loading="lazy" />
           <p>${icon.sizes}</p>
         </div>`;
-      } else {
-        return undefined;
       }
+
+      return undefined;
     });
   }
 
@@ -563,17 +593,44 @@ export class AppManifest extends LitElement {
 
   renderScreenshots() {
     return this.manifest?.screenshots?.map(screenshot => {
-      let url = resolveUrl(this.siteUrl, this.manifest?.startUrl);
-      url = resolveUrl(url?.href, screenshot.src);
+      const url = this.handleImageUrl(screenshot);
 
       if (url) {
         return html`<div class="image-item screenshot">
-          <img src="${url.href}" alt="image text" />
+          <img src="${url}" alt="image text" />
         </div>`;
       } else {
         return undefined;
       }
     });
+  }
+
+  iconSrcListParse() {
+    if (!this.manifest && !this.siteUrl) {
+      return [];
+    }
+
+    return (
+      this.manifest?.icons
+        ?.map(icon => {
+          return this.handleImageUrl(icon);
+        })
+        .filter(str => str) || []
+    );
+  }
+
+  screenshotSrcListParse() {
+    if (!this.manifest && !this.siteUrl) {
+      return [];
+    }
+
+    return (
+      this.manifest?.screenshots
+        ?.map(screenshot => {
+          return this.handleImageUrl(screenshot);
+        })
+        .filter(str => str) || []
+    );
   }
 
   renderToolTip = tooltip;
@@ -748,6 +805,21 @@ export class AppManifest extends LitElement {
     }
 
     return 'custom';
+  }
+
+  handleImageUrl(icon: Icon) {
+    if (icon.src.indexOf('data:') === 0 && icon.src.indexOf('base64') !== -1) {
+      return icon.src;
+    }
+
+    let url = resolveUrl(this.siteUrl, this.manifest?.startUrl);
+    url = resolveUrl(url?.href, icon.src);
+
+    if (url) {
+      return url.href;
+    }
+
+    return undefined;
   }
 }
 

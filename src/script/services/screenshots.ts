@@ -12,9 +12,9 @@ enum EndPoints {
 export async function generateScreenshots(screenshotsList: Array<string>) {
   try {
     const res = await fetch(`${screenshotServiceBaseUrl}/${EndPoints.base64}`, {
-      headers: {
-        'content-type': 'application/json',
-      },
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
       method: 'POST',
       mode: 'no-cors',
       body: JSON.stringify({

@@ -38,6 +38,10 @@ export function resolveUrl(
     }
   }
 
+  if (!parsedUrl) {
+    return new URL(baseUrl);
+  }
+
   return parsedUrl;
 }
 
