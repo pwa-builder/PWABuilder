@@ -438,9 +438,8 @@ export class AppManifest extends LitElement {
             <fast-accordion-item>
               <h1 slot="heading">View Code</h1>
               <code-editor
-                .startManifest=${JSON.stringify(this.manifest)}
-              ></code-editor
-              >>
+                .startManifest=${JSON.stringify(this.manifest, null, 2)}
+              ></code-editor>
             </fast-accordion-item>
           </fast-accordion>
         </section>
