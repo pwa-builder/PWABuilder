@@ -1,7 +1,7 @@
 import { api } from '../utils/api';
 import { download } from '../utils/download';
 import { Icon } from '../utils/interfaces';
-import { updateManifest } from './manifest';
+import { getManifest, updateManifest } from './manifest';
 
 type Platform =
   | 'windows10'
