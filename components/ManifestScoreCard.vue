@@ -141,7 +141,7 @@ export default class extends Vue {
       () => this.getStatus((m) => !!m.shortcuts && m.shortcuts.length > 0)
     ),
     new ScoreCardMetric(
-      "Contains an <a href='https://www.w3.org/TR/appmanifest/#iarc_rating_id-member'>IARC rating ID</a> to determine the appropriate ages for the app",
+      "Contains an <a href='https://www.w3.org/TR/manifest-app-info/#iarc_rating_id-member'>IARC rating ID</a> to determine the appropriate ages for the app",
       1,
       "optional",
       () => this.getStatus((m) => !!m.iarc_rating_id)
