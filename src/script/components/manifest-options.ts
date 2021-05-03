@@ -113,6 +113,10 @@ export class AppManifest extends LitElement {
           width: 300px;
         }
 
+        fast-accordion-item {
+          --base-height-multiplier: 20;
+        }
+
         #bg-custom-color {
           margin-left: 32px;
         }
@@ -130,6 +134,10 @@ export class AppManifest extends LitElement {
         .icons,
         .screenshots {
           margin-top: 16px;
+        }
+
+        .view-code {
+          margin-bottom: 8px;
         }
 
         .images-header {
@@ -372,7 +380,7 @@ export class AppManifest extends LitElement {
               ${this.renderIcons()}
             </div>
             <app-gallery
-              class="hidden-sm"
+              class="show-sm"
               .images=${this.iconSrcListParse()}
             ></app-gallery>
 
