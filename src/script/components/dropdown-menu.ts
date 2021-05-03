@@ -2,6 +2,7 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { fastMenuCss } from '../utils/css/fast-elements';
+import { Lazy } from '../utils/interfaces';
 import { KeyboardKeys } from '../utils/keyboard';
 
 const dropdownComponentClass = 'dropdown-component';
@@ -12,8 +13,8 @@ export class DropdownMenu extends LitElement {
   @property({ type: Array }) menuItems: Array<string> = [];
   @property({ type: Number }) selectedIndex = 0;
 
-  @property({ attribute: 'static-text', type: String})
-  staticButtonText = 'static-text';
+  @property({ attribute: 'static-text', type: String })
+  staticButtonText: Lazy<string>;
 
   static get styles() {
     return [
