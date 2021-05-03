@@ -10,7 +10,7 @@ import { Lazy, UpdateEditorPayload } from '../utils/interfaces';
 import { increment } from '../utils/id';
 
 @customElement('code-editor')
-export class AppManifest extends LitElement {
+export class CodeEditor extends LitElement {
   @property({ type: String }) startManifest: Lazy<string>;
 
   @state()
