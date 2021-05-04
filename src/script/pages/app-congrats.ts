@@ -560,10 +560,9 @@ export class AppCongrats extends LitElement {
 
           <div>
             <content-header class="congrats">
-              <h2 slot="hero-container">Congrats! Your PWA has...</h2>
+              <h2 slot="hero-container">Awesome!</h2>
               <p id="hero-p" slot="hero-container">
-                Description about what is going to take place below and how they
-                are on their way to build their PWA. Mention nav bar for help.
+                You have taken your PWA to the app stores!
               </p>
             </content-header>
 
@@ -573,10 +572,7 @@ export class AppCongrats extends LitElement {
               <h3>Nice</h3>
 
               <p>
-                REcap and intoduction to the other assets we have that can
-                further their PWAs. Nemo enim ipsam voluptatem quia voluptas sit
-                aspernatur aut odit aut fugit, sed quia consequuntur magni
-                dolores eos qui ratione voluptatem sequi nesciunt. ven further!
+                Check below to package your PWA for another store and visit our Blog for demos, components and to learn more about PWAs!
               </p>
             </section>
 
@@ -591,8 +587,7 @@ export class AppCongrats extends LitElement {
                         <div id="title-block">
                           <h4>Windows</h4>
                           <p>
-                            Some text about how awesome PWAs are on Windows and
-                            how you should publish to the Microsoft Store
+                            <a href="https://medium.com/pwabuilder/bringing-chromium-edge-pwas-progressive-web-apps-to-the-microsoft-store-c0bd07914ed9?source=friends_link&sk=04ca8b2ae2bd094b04ef6b53780b5698">PWAs work great on Windows!</a> Tap Test Package to test your PWA on a Windows device, or if you're ready, tap Publish to generate a Microsoft Store-ready package for your PWA!
                           </p>
                         </div>
 
@@ -621,8 +616,7 @@ export class AppCongrats extends LitElement {
                       <div id="title-block">
                         <h4>Android</h4>
                         <p>
-                          Some text about how awesome PWAs are on Android and
-                          how you should publish to the Google Play Store
+                          Want to ship your PWA to Android? PWAs also work great on Android and are accepted in the Google Play Store. Tap publish to generate a package you can both test with and submit to the Google Play Store!
                         </p>
                       </div>
 
@@ -639,7 +633,7 @@ export class AppCongrats extends LitElement {
             </section>
 
             <section id="blog-section">
-              <h3>Blog Posts recommended for you...</h3>
+              <h3>Learn more on our Blog…</h3>
 
               <div id="blog-block">
                 ${this.featuredPost
