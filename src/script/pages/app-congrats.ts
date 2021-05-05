@@ -247,6 +247,9 @@ export class AppCongrats extends LitElement {
             .congrats h2 {
               font-size: 33px;
               max-width: 10em;
+
+              margin-top: 0;
+              margin-bottom: 2em;
             }
 
             .congrats p {
@@ -263,6 +266,9 @@ export class AppCongrats extends LitElement {
 
             .congrats h2 {
               font-size: 33px;
+
+              margin-top: 0;
+              margin-bottom: 2em;
             }
 
             .congrats p {
