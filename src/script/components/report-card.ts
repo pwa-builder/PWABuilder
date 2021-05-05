@@ -236,8 +236,8 @@ export class ReportCard extends LitElement {
       ${xxLargeBreakPoint(
         css`
           .accordion-heading-block {
-            max-width: 85vw;
-            width: 85vw;
+            max-width: 83vw;
+            width: 83vw;
           }
 
           #total-score {
@@ -250,11 +250,12 @@ export class ReportCard extends LitElement {
         css`
           .accordion-heading-block,
           #report-content {
-            width: 80vw;
+            width: 78vw;
+
           }
 
           #total-score {
-            width: 75vw;
+            width: 72vw;
           }
         `
       )}

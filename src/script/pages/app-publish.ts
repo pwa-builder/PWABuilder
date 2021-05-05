@@ -88,7 +88,7 @@ export class AppPublish extends LitElement {
         }
 
         #summary-block {
-          padding: 16px;
+          padding: 16px 16px 16px 36px;
           border-bottom: var(--list-border);
 
           margin-right: 2em;
@@ -118,13 +118,11 @@ export class AppPublish extends LitElement {
         }
 
         .container {
-          padding: 16px;
+          padding: 16px 16px 16px 36px;
           display: flex;
           flex-direction: column;
           justify-items: center;
           align-items: center;
-
-          padding-right: 2em;
         }
 
         .container .action-buttons {

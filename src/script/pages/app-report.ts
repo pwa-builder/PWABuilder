@@ -107,6 +107,10 @@ export class AppReport extends LitElement {
           margin-top: 0;
         }
 
+        fast-tabs::part(tablist) {
+          margin-left: 26px;
+        }
+
         report-card {
           margin-top: 20px;
         }
