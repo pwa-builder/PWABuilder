@@ -572,6 +572,7 @@ export class ReportCard extends LitElement {
               ${this.scoreCardResults
                 ? html`<score-results
                     .testResults="${this.scoreCardResults.manifest}"
+                    scoreMessage="PWABuilder has analyzed your Web Manifest, check out the results below. If you are missing something, tap Manifest Options to update your Manifest."
                     @scored="${(ev: CustomEvent) => this.handleManiScore(ev)}"
                   >
                     <app-button
@@ -631,6 +632,7 @@ export class ReportCard extends LitElement {
               ${this.scoreCardResults
                 ? html`<score-results
                     .testResults="${this.scoreCardResults.service_worker}"
+                    scoreMessage="PWABuilder has analyzed your Service Worker, check out the results below. Want to add a Service Worker or check out our pre-built Service Workers? Tap Service Worker Options."
                     @scored="${(ev: CustomEvent) => this.handleSWScore(ev)}"
                   >
                     <app-button
@@ -688,6 +690,7 @@ export class ReportCard extends LitElement {
               ${this.scoreCardResults
                 ? html`<score-results
                     .testResults="${this.scoreCardResults.security}"
+                    scoreMessage="PWABuilder has done a basic analysis of your HTTPS setup. You can use LetsEncrypt to get a free HTTPS certificate, or publish to Azure to get built-in HTTPS support."
                     @scored="${(ev: CustomEvent) =>
                       this.handleSecurityScore(ev)}"
                   ></score-results>`

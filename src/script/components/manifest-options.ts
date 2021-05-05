@@ -324,9 +324,7 @@ export class AppManifest extends LitElement {
           <h2>Summary</h2>
           <div class="summary-body">
             <p>
-              Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
-              aut fugit, sed quia consequuntur magni dolores eos qui ratione
-              voluptatem sequi nesciunt. ven further!
+              Easily update and upgrade your Web Manifest with our built-in Web Manifest editor
             </p>
             <app-button @click=${this.done}>Done</app-button>
           </div>

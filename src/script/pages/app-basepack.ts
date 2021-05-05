@@ -316,10 +316,9 @@ export class AppBasePack extends LitElement {
 
           <div>
             <content-header class="basePackage">
-              <h2 slot="hero-container">Getting down to business.</h2>
+              <h2 slot="hero-container">Lets make your app a PWA!</h2>
               <p id="hero-p" slot="hero-container">
-                Description about what is going to take place below and how they
-                are on their way to build their PWA. Mention nav bar for help.
+                Looks like your web app is not a PWA yet, but that’s OK! Download your base files below and publish them to your app to become a PWA! Then tap Run New Test at the bottom to test again, or next to go straight to packaging!
               </p>
             </content-header>
 
@@ -329,8 +328,7 @@ export class AppBasePack extends LitElement {
               <h3>Download your PWA base files</h3>
 
               <p>
-                Grab everything you need to make your app a PWA and get ready
-                for publishing to the app stores!
+                Check out the next-steps doc in your download to succesfully upload these files to your web app.
               </p>
             </section>
 
@@ -340,8 +338,7 @@ export class AppBasePack extends LitElement {
                   <h3>Download Summary</h3>
 
                   <p>
-                    Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut
-                    odit aut.
+                    Your Download will include everything needed to make your Web App a PWA.
                   </p>
                 </div>
 
@@ -358,10 +355,7 @@ export class AppBasePack extends LitElement {
                 <h5>Up next</h5>
 
                 <p>
-                  Ready to build your PWA? Tap "Build My PWA" to package your
-                  PWA for the app stores or tap "Feature Store" to check out the
-                  latest web components from the PWABuilder team to improve your
-                  PWA even further!
+                  After uploading the above files to your Web App tap Run New Test to test your PWA again, or tap Next to go straight to packaging! 
                 </p>
               </div>
 

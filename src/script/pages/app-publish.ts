@@ -602,10 +602,9 @@ export class AppPublish extends LitElement {
 
           <div>
             <content-header class="publish">
-              <h2 slot="hero-container">Small details go a long way.</h2>
+              <h2 slot="hero-container">Your PWA is Store Ready!</h2>
               <p id="hero-p" slot="hero-container">
-                Description about what is going to take place below and how they
-                are on their way to build their PWA. Mention nav bar for help.
+                You are now ready to ship your PWA to the app stores!
               </p>
             </content-header>
 
@@ -615,10 +614,7 @@ export class AppPublish extends LitElement {
               <h3>Publish your PWA to stores</h3>
 
               <p>
-                Ready to build your PWA? Tap "Build My PWA" to package your PWA
-                for the app stores or tap "Feature Store" to check out the
-                latest web components from the PWABuilder team to improve your
-                PWA even further!
+                Generate store-ready packages for the Microsoft Store, Google Play and more! 
               </p>
             </section>
 
@@ -628,13 +624,10 @@ export class AppPublish extends LitElement {
               </ul>
 
               <div id="up-next">
-                <h5>Up next</h5>
+                <h5>Congrats!</h5>
 
                 <p>
-                  Ready to build your PWA? Tap "Build My PWA" to package your
-                  PWA for the app stores or tap "Feature Store" to check out the
-                  latest web components from the PWABuilder team to improve your
-                  PWA even further!
+                  Make sure you check our documentation for help submitting your generated packages! Click next to see what else you can do with your PWA!
                 </p>
               </div>
 

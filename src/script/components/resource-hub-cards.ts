@@ -10,28 +10,28 @@ export const resourceCards: Array<CardData> = [
     imageUrl: '/assets/icons/icon_120.png',
     title: 'Blog',
     description:
-      'Card description. Lorem ipsum dolor sit amet, consectetur elit adipiscing',
+      'Check out the PWABuilder blog for all the latest on PWABuilder and PWAs',
     linkUrl: '',
   },
   {
     imageUrl: '/assets/icons/icon_120.png',
     title: 'Demo',
     description:
-      'Card description. Lorem ipsum dolor sit amet, consectetur elit adipiscing',
+      'Check out our demos to see what PWAs are capable of!',
     linkUrl: '',
   },
   {
     imageUrl: '/assets/icons/icon_120.png',
     title: 'Components',
     description:
-      'Card description. Lorem ipsum dolor sit amet, consectetur elit adipiscing',
+      'Looking to upgrade your PWA? Check out some of our components we offer!',
     linkUrl: '',
   },
   {
     imageUrl: '/assets/icons/icon_120.png',
     title: 'Documentation',
     description:
-      'Card description. Lorem ipsum dolor sit amet, consectetur elit adipiscing',
+      'Looking for our documentation? Tap View Documentation to get started!',
     linkUrl: '',
   },
 ];

@@ -28,19 +28,19 @@ import { RawTestResult, ScoreEvent } from '../utils/interfaces';
 
 const possible_messages = {
   overview: {
-    heading: 'Getting down to business.',
+    heading: "Your PWA's report card.",
     supporting:
-      'Description about what is going to take place below and how they are on their way to build their PWA. Mention nav bar for help.',
+      'Check out the the Overview below to see if your PWA is store-ready! If not, tap the section that needs work to begin upgrading your PWA.',
   },
   mani: {
     heading: 'Manifest great PWAs.',
     supporting:
-      'Description about what is going to take place below and how they are on their way to build their PWA. Mention nav bar for help.',
+      'PWABuilder has analyzed your Web Manifest, check out the results below. If you are missing something, tap Manifest Options to update your Manifest.',
   },
   sw: {
     heading: 'Secret Ingredient: A Service Worker',
     supporting:
-      'Description about what is going to take place below and how they are on their way to build their PWA. Mention nav bar for help.',
+      'PWABuilder has analyzed your Service Worker, check out the results below. Want to add a Service Worker or check out our pre-built Service Workers? Tap Service Worker Options.',
   }
 };
 
