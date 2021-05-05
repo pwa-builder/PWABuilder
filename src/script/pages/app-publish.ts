@@ -1,10 +1,5 @@
-import {
-  css,
-  html,
-  LitElement,
-} from 'lit';
-import { customElement,
-  state, } from "lit/decorators.js"
+import { css, html, LitElement } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 
 import '../components/app-header';
@@ -231,6 +226,7 @@ export class AppPublish extends LitElement {
 
         #test-package-button::part(underlying-button) {
           --button-font-color: var(--font-color);
+          height: 40px;
         }
 
         #platform-actions-block app-button::part(underlying-button) {
@@ -279,10 +275,34 @@ export class AppPublish extends LitElement {
             .publish h2 {
               font-size: 33px;
               max-width: 10em;
+
+              margin-top: 0;
+              margin-bottom: 1em;
             }
 
             .publish p {
               display: none;
+            }
+
+            li {
+              flex-direction: column;
+              align-items: flex-start;
+            }
+
+            #title-block {
+              width: 100%;
+            }
+
+            #title-block p {
+              width: unset;
+            }
+
+            #platform-actions-block {
+              width: 100%;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              margin-top: 2em;
             }
           `
         )}
@@ -294,17 +314,37 @@ export class AppPublish extends LitElement {
             height: 40px;
           }
 
+          li {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+
+          #title-block {
+            width: 100%;
+          }
+
           #title-block p {
-            width: 200px;
+            width: unset;
+          }
+
+          #platform-actions-block {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 2em;
           }
 
           .publish h2 {
-             font-size: 33px;
-            }
+            font-size: 33px;
 
-            .publish p {
-              display: none;
-            }
+            margin-top: 0;
+            margin-bottom: 1em;
+          }
+
+          .publish p {
+            display: none;
+          }
         `)}
       `,
     ];
@@ -612,7 +652,8 @@ export class AppPublish extends LitElement {
               <h3>Publish your PWA to stores</h3>
 
               <p>
-                Generate store-ready packages for the Microsoft Store, Google Play and more! 
+                Generate store-ready packages for the Microsoft Store, Google
+                Play and more!
               </p>
             </section>
 
@@ -625,7 +666,9 @@ export class AppPublish extends LitElement {
                 <h5>Congrats!</h5>
 
                 <p>
-                  Make sure you check our documentation for help submitting your generated packages! Click next to see what else you can do with your PWA!
+                  Make sure you check our documentation for help submitting your
+                  generated packages! Click next to see what else you can do
+                  with your PWA!
                 </p>
               </div>
 
