@@ -1,5 +1,5 @@
 import { once } from 'lodash-es';
-import { EditorState } from '@codemirror/state';
+import { EditorState, Extension, Facet, StateField } from '@codemirror/state';
 import {
   keymap,
   drawSelection,
@@ -24,7 +24,13 @@ import { json } from '@codemirror/lang-json';
 
 type EditorStateType = 'json';
 
-export function createState(text: string, editorType: EditorStateType) {
+export const emitter = new EventTarget();
+
+export function getEditorState(
+  text: string,
+  editorType: EditorStateType,
+  extensions: Array<Extension> = []
+) {
   setupEditor();
 
   return EditorState.create({
@@ -55,6 +61,8 @@ export function createState(text: string, editorType: EditorStateType) {
         ...closeBracketsKeymap,
         ...completionKeymap,
       ]),
+      ...extensions,
+      stateField,
     ],
   });
 }
@@ -70,4 +78,31 @@ function fromEditorType(editorType: EditorStateType) {
 const setupEditor = once(() => {
   // TODO: consult our designer for styles.
   EditorView.baseTheme({});
+});
+
+const stat = Facet.define({
+  combine: (value: readonly unknown[]) => {
+    console.log(value);
+    return value;
+  },
+  compare: (a, b) => {
+    console.log(a, b);
+    return false;
+  },
+  static: false,
+  enables: [],
+});
+
+function genFacet(config = {}): Extension {
+  return [stat.of(config)];
+}
+
+// TODO start building out the event
+const stateField = StateField.define<number>({
+  create() {
+    return 0;
+  },
+  update(val: number, tr) {
+    return tr.docChanged ? val + 1 : val;
+  },
 });

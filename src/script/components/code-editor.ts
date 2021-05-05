@@ -57,6 +57,10 @@ export class CodeEditor extends LitElement {
   }
 
   updateEditor() {
+    // TODO [] of extensions
+    // this.editorState.facet();
+    // this.editorView.plugin
+
     this.editorState = getEditorState(this.startManifest, 'json');
 
     if (this.editorView) {
