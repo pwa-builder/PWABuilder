@@ -199,7 +199,7 @@ export class AppSidebar extends LitElement {
         display: flex;
         justify-content: space-evenly;
         align-items: center;
-        padding: 0.25rem 1rem;
+        padding: 0.25rem 0rem;
       }
 
       aside.tablet-sidebar .done,
@@ -214,8 +214,11 @@ export class AppSidebar extends LitElement {
       .tablet-sidebar #score-block {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: space-around;
         width: 100%;
+
+        border-right: 1px solid var(--secondary-color);
+        padding-right: 20px;
       }
 
       .tablet-sidebar #score-message {
@@ -226,6 +229,8 @@ export class AppSidebar extends LitElement {
       .tablet-sidebar #your-score {
         margin-bottom: 0px;
         margin-top: 0px;
+
+        font-size: var(--smallish-font-size);
       }
 
       aside.tablet-sidebar > * {
@@ -248,7 +253,6 @@ export class AppSidebar extends LitElement {
       aside.tablet-sidebar .menu {
         display: flex;
         align-items: center;
-        border-right: 1px solid var(--secondary-color);
         height: 50px;
 
         font-size: var(--small-font-size);
@@ -272,10 +276,13 @@ export class AppSidebar extends LitElement {
       aside.tablet-sidebar #score-progress {
         border-right: 1px solid var(--secondary-color);
         height: 100%;
-        font-size: var(--small-font-size);
+        font-size: var(--smallish-font-size);
 
         flex: none;
         width: 32vw;
+
+        display: flex;
+        justify-content: center;
       }
 
       aside.tablet-sidebar #score-number {
@@ -645,7 +652,13 @@ export class AppSidebar extends LitElement {
 
   renderTabletBar() {
     return html`<aside class="tablet-sidebar">
-      <h4 id="score-progress">URL Tested: ${this.current_url}</h4>
+      <h4 id="score-progress">${this.current_url}</h4>
+
+      <div id="score-block">
+        <h4 id="your-score">PWA Score</h4>
+        <span class="overall-score">${this.overallScore}</span>
+      </div>
+
       <div class="menu">
         ${this.menuItems?.progress.map(
           item =>
@@ -669,11 +682,6 @@ export class AppSidebar extends LitElement {
               <span>${item.header}</span>
             </div>`
         )}
-      </div>
-
-      <div id="score-block">
-        <h4 id="your-score">PWA Score</h4>
-        <span class="overall-score">${this.overallScore}</span>
       </div>
     </aside>`;
   }
