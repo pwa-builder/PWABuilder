@@ -1,4 +1,5 @@
 import { once } from 'lodash-es';
+import debounce from 'lodash-es/debounce';
 import {
   EditorState,
   Extension,
@@ -34,6 +35,10 @@ import {
 type EditorStateType = 'json';
 
 export const emitter = new EventTarget();
+
+export const dispatchEvent = debounce((event: Event) => {
+  emitter.dispatchEvent(event);
+}, 1500);
 
 export function getEditorState(
   text: string,
@@ -106,7 +111,7 @@ const stateField = StateField.define<number>({
           composed: true,
         }
       );
-      emitter.dispatchEvent(event);
+      dispatchEvent(event);
     }
 
     return tr.docChanged ? val + 1 : val;
