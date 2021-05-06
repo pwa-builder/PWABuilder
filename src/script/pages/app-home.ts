@@ -322,23 +322,14 @@ export class AppHome extends LitElement {
         }
       } catch (err) {
         console.error('Error getting site', err.message);
-  
-        try {
-          const goodURL = getURL();
-  
-          if (goodURL !== undefined) {
-            // couldnt get manifest, thats ok
-            // lets continue forward with the default
-            // zeroed out results.
-            Router.go(`/testing?site=${goodURL}`);
-          } 
-        } catch (err) {
-          this.errorGettingURL = true;
-          this.errorMessage = err;
-          throw new Error(`Error getting URL: ${err}`);
-        }
+
+        this.gettingManifest = false;
+
+        this.errorGettingURL = true;
+        this.errorMessage = err;
+
       }
-  
+
       this.gettingManifest = false;
     }
   }
@@ -407,7 +398,7 @@ export class AppHome extends LitElement {
               autofocus
             ></fast-text-field>
 
-            ${this.errorGettingURL &&
+            ${
             this.errorMessage &&
             this.errorMessage.length > 0
               ? html`<span class="error-message">${this.errorMessage}</span>`
