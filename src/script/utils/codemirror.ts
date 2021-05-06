@@ -1,5 +1,10 @@
 import { once } from 'lodash-es';
-import { EditorState, Extension, Facet, StateField } from '@codemirror/state';
+import {
+  EditorState,
+  Extension,
+  StateField,
+  Transaction,
+} from '@codemirror/state';
 import {
   keymap,
   drawSelection,
@@ -21,6 +26,10 @@ import { rectangularSelection } from '@codemirror/rectangular-selection';
 import { defaultHighlightStyle } from '@codemirror/highlight';
 import { lintKeymap } from '@codemirror/lint';
 import { json } from '@codemirror/lang-json';
+import {
+  CodeEditorEvents,
+  CodeEditorUpdateEvent,
+} from './interfaces.codemirror';
 
 type EditorStateType = 'json';
 
@@ -80,29 +89,26 @@ const setupEditor = once(() => {
   EditorView.baseTheme({});
 });
 
-const stat = Facet.define({
-  combine: (value: readonly unknown[]) => {
-    console.log(value);
-    return value;
-  },
-  compare: (a, b) => {
-    console.log(a, b);
-    return false;
-  },
-  static: false,
-  enables: [],
-});
-
-function genFacet(config = {}): Extension {
-  return [stat.of(config)];
-}
-
-// TODO start building out the event
+// just treat like redux for the time being
 const stateField = StateField.define<number>({
   create() {
     return 0;
   },
-  update(val: number, tr) {
+  update(val: number, tr: Transaction) {
+    if (tr.docChanged) {
+      const event = new CustomEvent<CodeEditorUpdateEvent>(
+        CodeEditorEvents.update,
+        {
+          detail: {
+            transaction: tr,
+          },
+          bubbles: true,
+          composed: true,
+        }
+      );
+      emitter.dispatchEvent(event);
+    }
+
     return tr.docChanged ? val + 1 : val;
   },
 });
