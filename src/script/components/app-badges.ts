@@ -65,8 +65,6 @@ export class AppBadges extends LitElement {
               })}"
             >
               <img .src="${badge.url}" .alt="${badge.name} icon" />
-
-              <span>${badge.name}</span>
             </div>
           `;
         })}

@@ -107,6 +107,10 @@ export class AppReport extends LitElement {
           margin-top: 0;
         }
 
+        fast-tabs::part(tablist) {
+          margin-left: 26px;
+        }
+
         report-card {
           margin-top: 20px;
         }
@@ -160,6 +164,8 @@ export class AppReport extends LitElement {
           css`
             .reportCard h2 {
               font-size: 33px;
+              margin-top: 0;
+              margin-bottom: 1em;
             }
 
             .reportCard p {
@@ -176,6 +182,8 @@ export class AppReport extends LitElement {
 
             .reportCard h2 {
               font-size: 33px;
+              margin-top: 0;
+              margin-bottom: 1em;
             }
 
             .reportCard p {

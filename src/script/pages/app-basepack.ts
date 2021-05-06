@@ -83,7 +83,7 @@ export class AppBasePack extends LitElement {
         }
 
         #summary-block {
-          padding: 16px;
+          padding: 16px 16px 16px 36px;
           border-bottom: var(--list-border);
 
           margin-right: 2em;
@@ -175,6 +175,9 @@ export class AppBasePack extends LitElement {
             .basePackage h2 {
               font-size: 33px;
               max-width: 10em;
+
+              margin-top: 0;
+              margin-bottom: 1em;
             }
 
             .basePackage p {
@@ -201,6 +204,9 @@ export class AppBasePack extends LitElement {
 
             .basePackage h2 {
              font-size: 33px;
+
+             margin-top: 0;
+             margin-bottom: 1em;
             }
 
             .basePackage p {

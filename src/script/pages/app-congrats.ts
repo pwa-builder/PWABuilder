@@ -66,7 +66,7 @@ export class AppCongrats extends LitElement {
         }
 
         #summary-block {
-          padding: 16px;
+          padding: 16px 16px 16px 36px;
           border-bottom: var(--list-border);
 
           margin-right: 2em;
@@ -247,11 +247,48 @@ export class AppCongrats extends LitElement {
             .congrats h2 {
               font-size: 33px;
               max-width: 10em;
+
+              margin-top: 0;
+              margin-bottom: 2em;
             }
 
             .congrats p {
               display: none;
             }
+
+            #other-stores li {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+
+          #other-stores #title-block {
+            width: 100%;
+          }
+
+          #other-stores #title-block p {
+            width: unset;
+          }
+
+          #other-stores #platform-actions-block {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 2em;
+          }
+
+          #other-stores li h2 {
+            font-size: 33px;
+
+            margin-top: 0;
+            margin-bottom: 1em;
+          }
+
+          #test-package-button app-button::part(underlying-button) {
+            width: 152px;
+            font-size: var(--font-size);
+            height: 40px;
+          }
           `
         )}
 
@@ -263,11 +300,48 @@ export class AppCongrats extends LitElement {
 
             .congrats h2 {
               font-size: 33px;
+
+              margin-top: 0;
+              margin-bottom: 2em;
             }
 
             .congrats p {
               display: none;
             }
+
+          #other-stores li {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+
+          #other-stores #title-block {
+            width: 100%;
+          }
+
+          #other-stores #title-block p {
+            width: unset;
+          }
+
+          #other-stores #platform-actions-block {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 2em;
+          }
+
+          #other-stores li h2 {
+            font-size: 33px;
+
+            margin-top: 0;
+            margin-bottom: 1em;
+          }
+
+          #test-package-button app-button::part(underlying-button) {
+            width: 152px;
+            font-size: var(--font-size);
+            height: 40px;
+          }
           `
         )},
       `,
