@@ -3,11 +3,21 @@ import { customElement, property, state, query } from 'lit/decorators.js';
 import { EditorState } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import debounce from 'lodash-es/debounce';
-import { createState } from '../utils/codemirror';
-import { debounceEvent } from '../utils/wc-events';
+import { getEditorState, emitter } from '../utils/codemirror';
 
 import { Lazy, UpdateEditorPayload } from '../utils/interfaces';
+import {
+  CodeEditorEvents,
+  CodeEditorSyncEvent,
+} from '../utils/interfaces.codemirror';
 import { increment } from '../utils/id';
+
+@customElement('code-editor')
+export class CodeEditor extends LitElement {
+  @property({ type: String }) startText: Lazy<string>;
+
+import { createState } from '../utils/codemirror';
+import { debounceEvent } from '../utils/wc-events';
 
 @customElement('code-editor')
 export class AppManifest extends LitElement {
@@ -19,6 +29,8 @@ export class AppManifest extends LitElement {
   @state() editorView: Lazy<EditorView>;
 
   @state() editorId: Lazy<string>;
+
+  @state() editorEmitter = emitter;
 
   protected static editorIdGenerator = increment();
 
@@ -34,14 +46,24 @@ export class AppManifest extends LitElement {
   constructor() {
     super();
 
-    this.editorId = `editor-${AppManifest.editorIdGenerator.next().value}`;
+    this.editorId = `editor-${CodeEditor.editorIdGenerator.next().value}`;
 
-    this.addEventListener(debounceEvent, function (evt: Event) {
-      const event = evt as CustomEvent<UpdateEditorPayload>;
-      debounce(() => {
+    this.editorEmitter.addEventListener(
+      CodeEditorEvents.sync,
+      (event: Event) => {
+        const e = event as CustomEvent<CodeEditorSyncEvent>;
+
+        this.startText = e.detail.text;
         this.updateEditor();
-      }, 3000);
-    });
+      }
+    );
+
+    this.editorEmitter.addEventListener(
+      CodeEditorEvents.update,
+      (event: Event) => {
+        this.dispatchEvent(event);
+      }
+    );
   }
 
   firstUpdated() {
@@ -54,12 +76,17 @@ export class AppManifest extends LitElement {
     `;
   }
 
-  updateEditor() {
-    this.editorState = createState(this.startManifest, 'json');
-    this.editorView = new EditorView({
-      state: this.editorState,
-      root: this.shadowRoot,
-      parent: this.shadowRoot.getElementById(this.editorId),
-    });
-  }
+  updateEditor = debounce(() => {
+    this.editorState = getEditorState(this.startText, 'json');
+
+    if (this.editorView) {
+      this.editorView.setState(this.editorState);
+    } else {
+      this.editorView = new EditorView({
+        state: this.editorState,
+        root: this.shadowRoot,
+        parent: this.shadowRoot.getElementById(this.editorId),
+      });
+    }
+  }, 2000);
 }

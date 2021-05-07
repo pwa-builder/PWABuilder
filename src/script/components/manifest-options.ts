@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 
 import { localeStrings, languageCodes } from '../../locales';
@@ -19,8 +19,14 @@ import {
   FileInputDetails,
   Icon,
   Lazy,
+  Manifest,
   ModalCloseEvent,
 } from '../utils/interfaces';
+import {
+  CodeEditorEvents,
+  CodeEditorSyncEvent,
+  CodeEditorUpdateEvent,
+} from '../utils/interfaces.codemirror';
 import {
   fastTextFieldCss,
   fastButtonCss,
@@ -44,6 +50,7 @@ import { mediumBreakPoint, smallBreakPoint } from '../utils/css/breakpoints';
 import { hidden_sm } from '../utils/css/hidden';
 import { generateAndDownloadIconZip } from '../services/download_icons';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { emitter } from '../utils/codemirror';
 
 type BackgroundColorRadioValues = 'none' | 'transparent' | 'custom';
 
@@ -113,6 +120,10 @@ export class AppManifest extends LitElement {
           width: 300px;
         }
 
+        fast-accordion-item {
+          --base-height-multiplier: 20;
+        }
+
         #bg-custom-color {
           margin-left: 32px;
         }
@@ -130,6 +141,10 @@ export class AppManifest extends LitElement {
         .icons,
         .screenshots {
           margin-top: 16px;
+        }
+
+        .view-code {
+          margin-bottom: 8px;
         }
 
         .images-header {
@@ -370,7 +385,7 @@ export class AppManifest extends LitElement {
               ${this.renderIcons()}
             </div>
             <app-gallery
-              class="hidden-sm"
+              class="show-sm"
               .images=${this.iconSrcListParse()}
             ></app-gallery>
 
@@ -436,9 +451,9 @@ export class AppManifest extends LitElement {
             <fast-accordion-item>
               <h1 slot="heading">View Code</h1>
               <code-editor
-                .startManifest=${JSON.stringify(this.manifest)}
-              ></code-editor
-              >>
+                .startText=${JSON.stringify(this.manifest, null, 2)}
+                @code-editor-update=${this.handleEditorUpdate}
+              ></code-editor>
             </fast-accordion-item>
           </fast-accordion>
         </section>
@@ -645,8 +660,22 @@ export class AppManifest extends LitElement {
             src=${ifDefined(this.uploadImageObjectUrl)}
             alt="the image to upload"
           />`
-        : undefined}
+        : undefined}  
     `;
+  }
+
+  updateManifest(changes: Partial<Manifest>) {
+    updateManifest(changes).then(() => {
+      console.log('update manifest, dispatch', this.manifest);
+
+      emitter.dispatchEvent(
+        new CustomEvent<CodeEditorSyncEvent>(CodeEditorEvents.sync, {
+          detail: {
+            text: JSON.stringify(this.manifest, undefined, 2),
+          },
+        })
+      );
+    });
   }
 
   handleInputChange(event: InputEvent) {
@@ -654,9 +683,7 @@ export class AppManifest extends LitElement {
     const fieldName = input.dataset['field'];
 
     if (this.manifest && fieldName && this.manifest[fieldName]) {
-      updateManifest({
-        [fieldName]: input.value,
-      });
+      this.updateManifest({ [fieldName]: input.value });
     }
   }
 
@@ -675,7 +702,7 @@ export class AppManifest extends LitElement {
     this.backgroundColorRadioValue = value;
 
     if (value !== 'custom' && this.manifest) {
-      updateManifest({
+      this.updateManifest({
         themeColor: value,
       });
     }
@@ -685,7 +712,7 @@ export class AppManifest extends LitElement {
     if (this.manifest) {
       const value = (<HTMLInputElement>event.target).value;
 
-      updateManifest({
+      this.updateManifest({
         themeColor: value,
       });
     }
@@ -720,6 +747,11 @@ export class AppManifest extends LitElement {
     }
 
     this.awaitRequest = false;
+  }
+
+  handleEditorUpdate(event: Event) {
+    const e = event as CustomEvent<CodeEditorUpdateEvent>;
+    updateManifest(e); // explicitly not using the updateManifest method here to prevent a infinite loop.
   }
 
   validIconInput() {

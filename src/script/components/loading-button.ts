@@ -34,6 +34,9 @@ export class LoadingButton extends LitElement implements AppButtonElement {
           height: var(--mobile-button-height);
         }
 
+        fast-button::part(control) {
+          font-size: var(--mobile-button-fontsize);
+        }
       `)}
 
       ${mediumBreakPoint(css`

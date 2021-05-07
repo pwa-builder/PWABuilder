@@ -1,10 +1,5 @@
-import {
-  LitElement,
-  css,
-  html,
-} from 'lit';
-import { customElement, property,
-  state, } from "lit/decorators.js"
+import { LitElement, css, html } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 
 import {
@@ -113,6 +108,10 @@ export class AppReport extends LitElement {
 
         report-card {
           margin-top: 20px;
+        }
+
+        manifest-options {
+          width: 100%;
         }
 
         #overview-panel {
@@ -249,15 +248,13 @@ export class AppReport extends LitElement {
   handleTabsEvent(type: 'mani' | 'sw' | 'overview') {
     this.selectedTab = type;
 
-    if (type === "mani") {
+    if (type === 'mani') {
       this.currentHeader = possible_messages.mani.heading;
       this.currentSupporting = possible_messages.mani.supporting;
-    }
-    else if (type === "sw") {
+    } else if (type === 'sw') {
       this.currentHeader = possible_messages.sw.heading;
       this.currentSupporting = possible_messages.sw.supporting;
-    }
-    else {
+    } else {
       this.currentHeader = possible_messages.overview.heading;
       this.currentSupporting = possible_messages.overview.supporting;
     }
@@ -278,9 +275,7 @@ export class AppReport extends LitElement {
         <section id="report">
           <content-header class="reportCard ${this.selectedTab}">
             <h2 slot="hero-container">${this.currentHeader}</h2>
-            <p id="hero-p" slot="hero-container">
-              ${this.currentSupporting}
-            </p>
+            <p id="hero-p" slot="hero-container">${this.currentSupporting}</p>
           </content-header>
 
           <app-sidebar id="tablet-sidebar"></app-sidebar>
