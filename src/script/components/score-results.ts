@@ -8,6 +8,7 @@ import { mediumBreakPoint, smallBreakPoint } from '../utils/css/breakpoints';
 @customElement('score-results')
 export class ScoreResults extends LitElement {
   @property({ attribute: false }) testResults: Array<TestResult> | boolean | undefined;
+  @property() scoreMessage: string;
   @state() organizedResults: OrganizedResults | undefined;
 
   static get styles() {
@@ -142,9 +143,7 @@ export class ScoreResults extends LitElement {
       <div>
         <div id="mani-scorecard-header">
           <p>
-            Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut
-            fugit, sed quia consequuntur magni dolores eos qui ratione
-            voluptatem sequi nesciunt. ven further!
+            ${this.scoreMessage}
           </p>
 
           <div id="options-block">

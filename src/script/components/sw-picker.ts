@@ -171,9 +171,7 @@ export class SWPicker extends LitElement {
             <h5 id="summary">Summary</h5>
 
             <p>
-              Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
-              aut fugit, sed quia consequuntur magni dolores eos qui ratione
-              voluptatem sequi nesciunt. ven further!
+              Choose one of our pre-built Service Workers that utilize <a href="https://developers.google.com/web/tools/workbox/">Workbox</a> to make building your offline experience easy!
             </p>
 
             <div id="header-actions">

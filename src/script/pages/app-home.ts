@@ -322,23 +322,14 @@ export class AppHome extends LitElement {
         }
       } catch (err) {
         console.error('Error getting site', err.message);
-  
-        try {
-          const goodURL = getURL();
-  
-          if (goodURL !== undefined) {
-            // couldnt get manifest, thats ok
-            // lets continue forward with the default
-            // zeroed out results.
-            Router.go(`/testing?site=${goodURL}`);
-          } 
-        } catch (err) {
-          this.errorGettingURL = true;
-          this.errorMessage = err;
-          throw new Error(`Error getting URL: ${err}`);
-        }
+
+        this.gettingManifest = false;
+
+        this.errorGettingURL = true;
+        this.errorMessage = err;
+
       }
-  
+
       this.gettingManifest = false;
     }
   }
@@ -354,7 +345,7 @@ export class AppHome extends LitElement {
     return html`
       <content-header class="home">
         <h2 slot="hero-container">
-          Transform your website to an app at lightning speed.
+        Ship your PWA to the app stores at lightning speed.
         </h2>
 
         <ul slot="grid-container">
@@ -362,8 +353,7 @@ export class AppHome extends LitElement {
             <h3>Test</h3>
 
             <p>
-              Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
-              aut.
+              PWABuilder will make sure your web app is a PWA and ready for the stores!
             </p>
           </div>
 
@@ -371,8 +361,7 @@ export class AppHome extends LitElement {
             <h3>Manage</h3>
 
             <p>
-              Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
-              aut.
+              Our Report Card will let you know if your PWA is store-ready. If not, PWABuilder will help you get there!
             </p>
           </div>
 
@@ -380,8 +369,7 @@ export class AppHome extends LitElement {
             <h3>Package</h3>
 
             <p>
-              Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
-              aut.
+              Once you are ready, PWABuilder can package your PWA for the app stores in minutes!
             </p>
           </div>
 
@@ -389,8 +377,7 @@ export class AppHome extends LitElement {
             <h3>Explore</h3>
 
             <p>
-              Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit
-              aut.
+              PWAs are moving forward fast, learn about new web APIs, store readiness, and more!
             </p>
           </div>
         </ul>
@@ -411,7 +398,7 @@ export class AppHome extends LitElement {
               autofocus
             ></fast-text-field>
 
-            ${this.errorGettingURL &&
+            ${
             this.errorMessage &&
             this.errorMessage.length > 0
               ? html`<span class="error-message">${this.errorMessage}</span>`
@@ -427,9 +414,7 @@ export class AppHome extends LitElement {
       <resource-hub page="home" all>
         <h2 slot="title">PWABuilder Resource Hub</h2>
         <p slot="description">
-          Ready to build your PWA? Tap "Build My PWA" to package your PWA for
-          the app stores or tap "Feature Store" to check out the latest web
-          components from the PWABuilder team to improve your PWA even further!
+          Jump to our blog, find our documentation and check out demos and components from the PWABuilder team!
         </p>
       </resource-hub>
     `;

@@ -65,7 +65,7 @@ export class ContentHeader extends LitElement {
       }
 
       #content-side {
-        max-width: 18em;
+        max-width: 22em;
       }
 
       #main-container {
@@ -319,7 +319,7 @@ export class ContentHeader extends LitElement {
         :host(.home) {
           background-position: -21em center;
           background-repeat: no-repeat;
-          background-image: url(/assets/images/home_1920.jpg);
+          background-image: url(/assets/images/home_1920.webp);
           background-size: cover;
         }
 

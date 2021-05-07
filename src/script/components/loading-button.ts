@@ -23,8 +23,13 @@ export class LoadingButton extends LitElement implements AppButtonElement {
         --accent-foreground-rest: white;
       }
 
+      app-button::part(underlying-button) {
+        height: 100%;
+        font-size: inherit;
+      }
+
       ${smallBreakPoint(css`
-        fast-button {
+        app-button {
           width: 176px;
           height: var(--mobile-button-height);
         }
@@ -35,19 +40,9 @@ export class LoadingButton extends LitElement implements AppButtonElement {
       `)}
 
       ${mediumBreakPoint(css`
-        fast-button {
+        app-button {
           width: 176px;
           height: var(--mobile-button-height);
-        }
-
-        fast-button::part(control) {
-          font-size: var(--mobile-button-fontsize);
-        }
-
-        app-button::part(underlying-button) {
-          width: 176px;
-          font-size: 22px;
-          height: 64px;
         }
       `)}
     `;

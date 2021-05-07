@@ -38,7 +38,7 @@ export function resolveUrl(
     }
   }
 
-  if (!parsedUrl) {
+  if (!parsedUrl && baseUrl) {
     return new URL(baseUrl);
   }
 
@@ -57,7 +57,7 @@ export function validateUrl(url: string, base?: string): string | null {
 export async function cleanUrl(url: string) {
   let cleanedUrl: string | undefined;
 
-  if (url && !url.startsWith('http')) {
+  if (url && !url.startsWith('http') && !url.startsWith('https')) {
     cleanedUrl = 'https://' + url;
   }
 
