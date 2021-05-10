@@ -2,6 +2,7 @@ import { LitElement, css, html } from 'lit';
 import { customElement } from "lit/decorators.js"
 import { Router } from '@vaadin/router';
 import './app-home';
+import './app-report';
 
 import '../components/app-footer';
 import '../components/app-header';
@@ -92,10 +93,7 @@ export class AppIndex extends LitElement {
           },
           {
             path: '/reportcard',
-            component: 'app-report',
-            action: async () => {
-              await import('./app-report.js');
-            },
+            component: 'app-report'
           },
           {
             path: '/publish',
