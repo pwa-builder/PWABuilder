@@ -9,7 +9,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rimraf build/ && rimraf dist/",
-    "build": "rollup --config rollup.config.dev.js && rimraf dist/ && rollup --config rollup.config.js",
+    "build": "rollup --config rollup.config.dev.js && rimraf dist/ && rollup --config rollup.config.js && node workbox.mjs",
     "start": "npm run build && npx nodemon server.js",
     "dev": "concurrently \"rollup --config rollup.config.dev.js --watch\" \"web-dev-server\"",
     "debug": "concurrently \"rollup --config rollup.config.dev.js --watch\" \"web-dev-server --config web-dev-server.debugging.config.mjs\""
@@ -43,8 +43,8 @@
     "workbox-precaching": "^6.1.2"
   },
   "devDependencies": {
-    "@rollup/plugin-json": "^4.1.0",
     "@open-wc/rollup-plugin-html": "^1.2.5",
+    "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^11.2.1",
     "@rollup/plugin-replace": "^2.4.2",
     "@rollup/plugin-strip": "^2.0.0",

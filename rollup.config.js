@@ -8,8 +8,6 @@ import typescript from "@rollup/plugin-typescript";
 import litcss from "rollup-plugin-lit-css";
 import json from '@rollup/plugin-json';
 
-const workbox = require('rollup-plugin-workbox-inject');
-
 export default {
   input: "build/index.html",
   output: {
@@ -41,17 +39,6 @@ export default {
         { src: "workers/**/*", dest: "dist/workers/" },
         { src: "routes.json", dest: "dist/" },
       ],
-    }),
-    workbox({
-      globDirectory: "dist/",
-      globPatterns: [
-        "styles/*.css",
-        "**/*/*.svg",
-        "*.js",
-        "*.html",
-        "assets/**",
-        "*.json",
-      ],
-    }),
+    })
   ],
 };
