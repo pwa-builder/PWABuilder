@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, property } from "lit/decorators.js"
+import { customElement, property } from 'lit/decorators.js';
 import { smallBreakPoint, mediumBreakPoint } from '../utils/css/breakpoints';
 import { AppButtonElement } from '../utils/interfaces.components';
 
@@ -15,41 +15,45 @@ export class LoadingButton extends LitElement implements AppButtonElement {
   @property({ type: Boolean }) disabled = false;
 
   static get styles() {
-    return css`
-      fast-progress-ring {
-        height: 1.8em;
-        width: 1.8em;
-
-        --accent-foreground-rest: white;
-      }
-
-      app-button {
-        height: var(--button-height);
-      }
-
-      app-button::part(underlying-button) {
-        height: 100%;
-        font-size: inherit;
-      }
-
-      ${smallBreakPoint(css`
-        app-button {
-          width: 176px;
-          height: var(--mobile-button-height);
+    return [
+      css`
+        :host {
+          --loading-button-height: var(--button-height);
+          --loading-button-width: 176px;
+          --loader-size: 1.8em;
         }
 
+        fast-progress-ring {
+          height: var(--loader-size);
+          width: var(--loader-size);
+
+          --accent-foreground-rest: white;
+        }
+
+        app-button {
+          height: var(--loading-button-height);
+        }
+
+        app-button::part(underlying-button) {
+          height: 100%;
+          font-size: inherit;
+        }
+      `,
+      smallBreakPoint(css`
         fast-button::part(control) {
           font-size: var(--mobile-button-fontsize);
         }
-      `)}
-
-      ${mediumBreakPoint(css`
-        app-button {
-          width: 176px;
-          height: var(--mobile-button-height);
-        }
-      `)}
-    `;
+      `),
+      mediumBreakPoint(
+        css`
+          app-button {
+            width: var(--loading-button-width);
+            height: var(--mobile-button-height);
+          }
+        `,
+        'no-lower'
+      ),
+    ];
   }
 
   constructor() {
