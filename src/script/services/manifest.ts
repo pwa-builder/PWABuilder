@@ -152,7 +152,7 @@ export async function fetchManifest(
     } catch (manifestDetectionError) {
       console.error('All manifest detectors failed.', manifestDetectionError);
 
-      generatedManifest = await generateManifest(url);
+      generatedManifest = await (await generateManifest(url)).content;
 
       // Well, we sure tried.
       reject(manifestDetectionError);

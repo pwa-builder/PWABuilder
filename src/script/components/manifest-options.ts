@@ -668,13 +668,11 @@ export class AppManifest extends LitElement {
     updateManifest(changes).then(() => {
       console.log('update manifest, dispatch', this.manifest);
 
-      emitter.dispatchEvent(
-        new CustomEvent<CodeEditorSyncEvent>(CodeEditorEvents.sync, {
-          detail: {
-            text: JSON.stringify(this.manifest, undefined, 2),
-          },
-        })
-      );
+      dispatchEvent(new CustomEvent<CodeEditorSyncEvent>(CodeEditorEvents.sync, {
+        detail: {
+          text: JSON.stringify(this.manifest, undefined, 2),
+        },
+      }));
     });
   }
 
