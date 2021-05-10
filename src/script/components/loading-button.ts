@@ -23,6 +23,10 @@ export class LoadingButton extends LitElement implements AppButtonElement {
         --accent-foreground-rest: white;
       }
 
+      app-button {
+        height: var(--button-height);
+      }
+
       app-button::part(underlying-button) {
         height: 100%;
         font-size: inherit;
