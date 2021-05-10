@@ -5,7 +5,7 @@ import { EditorView } from '@codemirror/view';
 import debounce from 'lodash-es/debounce';
 import { getEditorState, emitter } from '../utils/codemirror';
 
-import { Lazy, UpdateEditorPayload } from '../utils/interfaces';
+import { Lazy } from '../utils/interfaces';
 import {
   CodeEditorEvents,
   CodeEditorSyncEvent,
@@ -15,13 +15,6 @@ import { increment } from '../utils/id';
 @customElement('code-editor')
 export class CodeEditor extends LitElement {
   @property({ type: String }) startText: Lazy<string>;
-
-import { createState } from '../utils/codemirror';
-import { debounceEvent } from '../utils/wc-events';
-
-@customElement('code-editor')
-export class AppManifest extends LitElement {
-  @property({ type: String }) startManifest: Lazy<string>;
 
   @state()
   editorState: Lazy<EditorState>;
