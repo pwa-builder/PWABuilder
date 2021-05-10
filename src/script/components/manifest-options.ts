@@ -164,6 +164,7 @@ export class AppManifest extends LitElement {
           display: flex;
           flex-direction: row;
           align-items: flex-end;
+          justify-content: space-between;
         }
 
         .screenshots-header {
