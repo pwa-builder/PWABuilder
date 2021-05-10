@@ -1,4 +1,5 @@
-import { injectManifest } from 'workbox-build';
+import pkg from 'workbox-build';
+const { injectManifest } = pkg;
 
 injectManifest({
     globDirectory: 'dist',
