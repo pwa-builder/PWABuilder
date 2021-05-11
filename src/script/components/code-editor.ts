@@ -53,9 +53,9 @@ export class CodeEditor extends LitElement {
 
     this.editorEmitter.addEventListener(
       CodeEditorEvents.update,
-      (event: Event) => {
+      debounce((event: Event) => {
         this.dispatchEvent(event);
-      }
+      })
     );
   }
 
