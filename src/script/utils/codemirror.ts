@@ -76,7 +76,7 @@ export function getEditorState(
         ...completionKeymap,
       ]),
       ...extensions,
-      stateField,
+      updateStateField,
     ],
   });
 }
@@ -95,7 +95,7 @@ const setupEditor = once(() => {
 });
 
 // just treat like redux for the time being
-const stateField = StateField.define<number>({
+export const updateStateField = StateField.define<number>({
   create() {
     return 0;
   },
