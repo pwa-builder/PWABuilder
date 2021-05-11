@@ -39,11 +39,6 @@ export class LoadingButton extends LitElement implements AppButtonElement {
           font-size: inherit;
         }
       `,
-      smallBreakPoint(css`
-        fast-button::part(control) {
-          font-size: var(--mobile-button-fontsize);
-        }
-      `),
       mediumBreakPoint(
         css`
           app-button {

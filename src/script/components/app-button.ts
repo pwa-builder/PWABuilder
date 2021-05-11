@@ -1,6 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { smallBreakPoint } from '../utils/css/breakpoints';
 import { fastButtonCss } from '../utils/css/fast-elements';
 import { FastButtonAppearance } from '../utils/fast-element';
 import { AppButtonElement } from '../utils/interfaces.components';
@@ -19,7 +20,12 @@ export class AppButton extends LitElement implements AppButtonElement {
           border-radius: var(--button-radius);
           display: block;
 
+          --font-size: var(--desktop-button-font-size);
+          --button-square: var(--button-height);
+          --button-width: 100%;
           --button-font-color: var(--secondary-color);
+          --pading-vertical: 0;
+          --padding-horizontal: 34px;
         }
       `,
       // fast css
@@ -27,7 +33,7 @@ export class AppButton extends LitElement implements AppButtonElement {
       css`
         fast-button {
           color: var(--button-font-color);
-          width: 100%;
+          width: var(--button-width);
 
           border-radius: var(--button-radius);
           box-shadow: var(--button-shadow);
@@ -38,10 +44,9 @@ export class AppButton extends LitElement implements AppButtonElement {
         }
 
         fast-button::part(control) {
-          font-size: var(--desktop-button-font-size);
+          font-size: var(--font-size);
           font-weight: var(--font-bold);
-          padding-left: 34px;
-          padding-right: 34px;
+          padding: var(--padding-vertical) var(--padding-horizontal);
         }
 
         fast-button.secondary {
@@ -60,22 +65,31 @@ export class AppButton extends LitElement implements AppButtonElement {
         }
 
         fast-button.link::part(control) {
+          --padding-horizontal: 0;
+
           width: auto;
-          padding: 0;
         }
 
-        fast-button.round {
-          height: 44px;
-          width: 44px;
+        fast-button.round,
+        fast-button.square {
+          height: var(--button-square);
+          width: var(--button-square);
         }
 
-        fast-button.round::part(control) {
+        fast-button.round::part(control),
+        fast-button.square::part(control) {
           /* assumption is that the button is 14x21 */
-          padding: 0 15px;
+          --padding-horizontal: 15px;
+
           align-items: center;
           line-height: 0;
         }
       `,
+      smallBreakPoint(css`
+        fast-button {
+          --font-size: var(--mobile-button-fontsize);
+        }
+      `),
     ];
   }
 
