@@ -50,7 +50,7 @@ import { mediumBreakPoint, smallBreakPoint } from '../utils/css/breakpoints';
 import { hidden_sm } from '../utils/css/hidden';
 import { generateAndDownloadIconZip } from '../services/download_icons';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { emitter } from '../utils/codemirror';
+import { emitter as editorEmitter } from '../utils/codemirror';
 
 type BackgroundColorRadioValues = 'none' | 'transparent' | 'custom';
 
@@ -340,7 +340,8 @@ export class AppManifest extends LitElement {
           <h2>Summary</h2>
           <div class="summary-body">
             <p>
-              Easily update and upgrade your Web Manifest with our built-in Web Manifest editor
+              Easily update and upgrade your Web Manifest with our built-in Web
+              Manifest editor
             </p>
             <app-button @click=${this.done}>Done</app-button>
           </div>
@@ -661,7 +662,7 @@ export class AppManifest extends LitElement {
             src=${ifDefined(this.uploadImageObjectUrl)}
             alt="the image to upload"
           />`
-        : undefined}  
+        : undefined}
     `;
   }
 
@@ -669,11 +670,13 @@ export class AppManifest extends LitElement {
     updateManifest(changes).then(() => {
       console.log('update manifest, dispatch', this.manifest);
 
-      dispatchEvent(new CustomEvent<CodeEditorSyncEvent>(CodeEditorEvents.sync, {
-        detail: {
-          text: JSON.stringify(this.manifest, undefined, 2),
-        },
-      }));
+      editorEmitter.dispatchEvent(
+        new CustomEvent<CodeEditorSyncEvent>(CodeEditorEvents.sync, {
+          detail: {
+            text: JSON.stringify(this.manifest, undefined, 2),
+          },
+        })
+      );
     });
   }
 
