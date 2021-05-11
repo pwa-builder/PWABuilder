@@ -50,7 +50,7 @@ import { mediumBreakPoint, smallBreakPoint } from '../utils/css/breakpoints';
 import { hidden_sm } from '../utils/css/hidden';
 import { generateAndDownloadIconZip } from '../services/download_icons';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { emitter as editorEmitter } from '../utils/codemirror';
+import { dispatchEvent as editorDispatchEvent } from '../utils/codemirror';
 
 type BackgroundColorRadioValues = 'none' | 'transparent' | 'custom';
 
@@ -670,7 +670,7 @@ export class AppManifest extends LitElement {
     updateManifest(changes).then(() => {
       console.log('update manifest, dispatch', this.manifest);
 
-      editorEmitter.dispatchEvent(
+      editorDispatchEvent(
         new CustomEvent<CodeEditorSyncEvent>(CodeEditorEvents.sync, {
           detail: {
             text: JSON.stringify(this.manifest, undefined, 2),
