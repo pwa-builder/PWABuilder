@@ -50,7 +50,10 @@ import { mediumBreakPoint, smallBreakPoint } from '../utils/css/breakpoints';
 import { hidden_sm } from '../utils/css/hidden';
 import { generateAndDownloadIconZip } from '../services/download_icons';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { dispatchEvent as editorDispatchEvent } from '../utils/codemirror';
+import {
+  dispatchEvent as editorDispatchEvent,
+  updateStateField,
+} from '../utils/codemirror';
 
 type BackgroundColorRadioValues = 'none' | 'transparent' | 'custom';
 
@@ -94,7 +97,6 @@ export class AppManifest extends LitElement {
 
   static get styles() {
     return [
-      css``,
       ErrorStyles,
       ToolTipStyles,
       fastButtonCss,
@@ -753,7 +755,19 @@ export class AppManifest extends LitElement {
 
   handleEditorUpdate(event: Event) {
     const e = event as CustomEvent<CodeEditorUpdateEvent>;
-    updateManifest(e); // explicitly not using the updateManifest method here to prevent a infinite loop.
+
+    try {
+      console.log(
+        'handle editor update',
+        e.detail.transaction.state.field(updateStateField)
+      );
+
+      const newManifest = JSON.parse(e.detail.transaction.state.doc.toString());
+
+      updateManifest(newManifest); // explicitly not using the this.updateManifest method to prevent a infinite loop.
+    } catch (ex) {
+      console.error('failed to parse the manifest successfully', e, ex);
+    }
   }
 
   validIconInput() {
