@@ -493,15 +493,57 @@ export class AppSidebar extends LitElement {
       }
 
       ${(mediumBreakPoint(css`
-        aside.tablet-sidebar,
         aside.desktop-sidebar {
           display: none;
         }
+
+        aside.tablet-sidebar {
+          flex-direction: row-reverse;
+          overflow-x: scroll;
+        }
+
+        aside.tablet-sidebar .menu {
+          display: none;
+        }
+
+        aside.tablet-sidebar #score-progress {
+          width: 46%;
+          border-right: none;
+          overflow-x: scroll;
+          white-space: nowrap;
+          justify-content: unset;
+          align-items: center;
+        }
+
+        aside.tablet-sidebar #score-block {
+          width: 50%;
+        }
       `),
       smallBreakPoint(css`
-        aside.tablet-sidebar,
         aside.desktop-sidebar {
           display: none;
+        }
+
+        aside.tablet-sidebar {
+          flex-direction: row-reverse;
+          overflow-x: scroll;
+        }
+
+        aside.tablet-sidebar .menu {
+          display: none;
+        }
+
+        aside.tablet-sidebar #score-progress {
+          width: 46%;
+          border-right: none;
+          overflow-x: scroll;
+          white-space: nowrap;
+          justify-content: unset;
+          align-items: center;
+        }
+
+        aside.tablet-sidebar #score-block {
+          width: 50%;
         }
       `))}
     `;
