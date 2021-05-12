@@ -22,7 +22,7 @@ export class AppButton extends LitElement implements AppButtonElement {
 
           --font-size: var(--desktop-button-font-size);
           --button-square: var(--button-height);
-          --button-width: 120px;
+          --button-width: 127px;
           --button-font-color: var(--secondary-color);
           --pading-vertical: 0;
           --padding-horizontal: 34px;
