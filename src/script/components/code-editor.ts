@@ -4,6 +4,7 @@ import { EditorState } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import debounce from 'lodash-es/debounce';
 import { getEditorState, emitter } from '../utils/codemirror';
+import { domEventEmitter } from '../utils/events';
 
 import { Lazy } from '../utils/interfaces';
 import {
@@ -57,6 +58,10 @@ export class CodeEditor extends LitElement {
         this.dispatchEvent(event);
       })
     );
+
+    domEventEmitter.addEventListener('resize', () => {
+      this.requestUpdate();
+    });
   }
 
   firstUpdated() {
