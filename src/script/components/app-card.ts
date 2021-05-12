@@ -6,12 +6,9 @@ import { Router } from '@vaadin/router';
 
 import { ifDefined } from 'lit/directives/if-defined.js';
 
-import {
-  mediumBreakPoint,
-  largeBreakPoint,
-  BreakpointValues,
-} from '../utils/css/breakpoints';
+import { largeBreakPoint, BreakpointValues } from '../utils/css/breakpoints';
 import { fastButtonCss } from '../utils/css/fast-elements';
+import { Lazy } from '../utils/interfaces';
 
 export enum AppCardModes {
   default = 'default',
@@ -25,12 +22,12 @@ export enum AppCardModes {
 export class AppCard extends LitElement {
   @property({ attribute: 'bordered', type: Boolean })
   imageBordered = false;
-  @property({ type: String }) imageUrl: string | undefined;
-  @property({ type: String }) cardTitle: string | undefined;
-  @property({ type: String }) description: string | undefined;
-  @property({ type: String }) date: string | undefined;
-  @property({ type: String }) linkText: string | undefined;
-  @property({ type: String }) linkRoute: string | undefined;
+  @property({ type: String }) imageUrl: Lazy<string>;
+  @property({ type: String }) cardTitle: Lazy<string>;
+  @property({ type: String }) description: Lazy<string>;
+  @property({ type: String }) date: Lazy<string>;
+  @property({ type: String }) linkText: Lazy<string>;
+  @property({ type: String }) linkRoute: Lazy<string>;
 
   @property({ type: Boolean }) featured = false;
   @property({ type: Boolean }) shareLink = false;
@@ -168,10 +165,9 @@ export class AppCard extends LitElement {
         }
 
         .blog img {
-          height: 142px;
+          height: 200px;
           width: 100%;
           object-fit: none;
-          height: 200px;
         }
 
         .blog h3 {
@@ -350,23 +346,22 @@ export class AppCard extends LitElement {
           --badge-fill-primary: var(--primary-background-color);
           color: var(--font-color);
         }
-
-        ${largeBreakPoint(
-          css`
-            .blog .img-overlay {
-              height: 142px;
-            }
-
-            .blog.featured {
-              min-width: 220px;
-            }
-
-            .blog {
-              min-width: 200px;
-            }
-          `
-        )}
       `,
+      largeBreakPoint(
+        css`
+          .blog .img-overlay {
+            height: 142px;
+          }
+
+          .blog.featured {
+            min-width: 220px;
+          }
+
+          .blog {
+            min-width: 200px;
+          }
+        `
+      ),
       // micro card
       css`
         .micro {
@@ -438,25 +433,24 @@ export class AppCard extends LitElement {
         .content-card app-button {
           margin-top: 1rem;
         }
-
-        ${largeBreakPoint(
-          css`
-            fast-card.content-card {
-              width: calc(100vw - 30vw);
-              flex-direction: row;
-            }
-
-            .content-card .header {
-              margin-right: 1rem;
-            }
-
-            .content-card app-button {
-              margin-top: 0;
-            }
-          `,
-          'no-upper'
-        )}
       `,
+      largeBreakPoint(
+        css`
+          fast-card.content-card {
+            width: calc(100vw - 30vw);
+            flex-direction: row;
+          }
+
+          .content-card .header {
+            margin-right: 1rem;
+          }
+
+          .content-card app-button {
+            margin-top: 0;
+          }
+        `,
+        'no-upper'
+      ),
       fastButtonCss,
     ];
   }

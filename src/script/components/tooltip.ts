@@ -18,7 +18,6 @@ export function tooltip(buttonId: string, text: string, url?: string) {
       appearance="stealth"
       aria-labelledby="${tooltipId}"
     >
-
       <img
         src="assets/images/help-outline.svg"
         alt="help outline"
@@ -36,6 +35,12 @@ export function tooltip(buttonId: string, text: string, url?: string) {
 
 export const styles = css`
   fast-button.tooltip {
+    --tooltip-square: 16px;
+    --tooltip-image-square: 12px;
+
+    --tooltip-text-color: #fff;
+    --tooltip-background-color: var(--font-color);
+
     --base-height-multiplier: 4;
   }
 
@@ -59,8 +64,8 @@ export const styles = css`
 
   .tooltip-text {
     display: none;
-    color: #fff;
-    background-color: var(--font-color);
+    color: var(--tooltip-text-color);
+    background-color: var(--tooltip-background-color);
     padding: 8px;
     border-radius: 6px;
     position: relative;
@@ -84,12 +89,12 @@ export const styles = css`
 
   .tooltip img {
     vertical-align: middle;
-    height: 12px;
-    width: 12px;
+    height: var(--tooltip-image-square);
+    width: var(--tooltip-image-square);
   }
 
   .tooltip-badge {
-    height: 16px;
-    width: 16px;
+    height: var(--tooltip-square);
+    width: var(--tooltip-square);
   }
 `;

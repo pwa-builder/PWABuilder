@@ -39,14 +39,14 @@
   --xlarge-font-size: 44px;
 
   --primary-background-color: white;
-  --primary-color: #292C3A;
+  --primary-color: #292c3a;
   --secondary-color: #ffffff;
-  --primary-purple: #342A6A;
+  --primary-purple: #342a6a;
   --error-background-color: #fff5f5;
-  --warning-color:#EBC157;
-  --error-color: #EB5757;
-  --success-color: #63C093;
-  --sidebar-accent: #A2F4CC;
+  --warning-color: #ebc157;
+  --error-color: #eb5757;
+  --success-color: #63c093;
+  --sidebar-accent: #a2f4cc;
 
   --button-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
   --button-height: 40px;

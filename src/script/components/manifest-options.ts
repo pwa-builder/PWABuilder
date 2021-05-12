@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, property, query, state } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 
 import { localeStrings, languageCodes } from '../../locales';
@@ -50,7 +50,10 @@ import { mediumBreakPoint, smallBreakPoint } from '../utils/css/breakpoints';
 import { hidden_sm } from '../utils/css/hidden';
 import { generateAndDownloadIconZip } from '../services/download_icons';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { emitter } from '../utils/codemirror';
+import {
+  dispatchEvent as editorDispatchEvent,
+  updateStateField,
+} from '../utils/codemirror';
 
 type BackgroundColorRadioValues = 'none' | 'transparent' | 'custom';
 
@@ -94,7 +97,6 @@ export class AppManifest extends LitElement {
 
   static get styles() {
     return [
-      css``,
       ErrorStyles,
       ToolTipStyles,
       fastButtonCss,
@@ -108,6 +110,8 @@ export class AppManifest extends LitElement {
         }
 
         app-button {
+          --button-width: 140px;
+
           max-width: 160px;
         }
 
@@ -162,8 +166,7 @@ export class AppManifest extends LitElement {
 
         .head .summary-body {
           display: flex;
-          flex-direction: row;
-          align-items: flex-end;
+          flex-direction: column;
         }
 
         .screenshots-header {
@@ -339,7 +342,8 @@ export class AppManifest extends LitElement {
           <h2>Summary</h2>
           <div class="summary-body">
             <p>
-              Easily update and upgrade your Web Manifest with our built-in Web Manifest editor
+              Easily update and upgrade your Web Manifest with our built-in Web
+              Manifest editor
             </p>
             <app-button @click=${this.done}>Done</app-button>
           </div>
@@ -660,7 +664,7 @@ export class AppManifest extends LitElement {
             src=${ifDefined(this.uploadImageObjectUrl)}
             alt="the image to upload"
           />`
-        : undefined}  
+        : undefined}
     `;
   }
 
@@ -668,11 +672,13 @@ export class AppManifest extends LitElement {
     updateManifest(changes).then(() => {
       console.log('update manifest, dispatch', this.manifest);
 
-      dispatchEvent(new CustomEvent<CodeEditorSyncEvent>(CodeEditorEvents.sync, {
-        detail: {
-          text: JSON.stringify(this.manifest, undefined, 2),
-        },
-      }));
+      editorDispatchEvent(
+        new CustomEvent<CodeEditorSyncEvent>(CodeEditorEvents.sync, {
+          detail: {
+            text: JSON.stringify(this.manifest, undefined, 2),
+          },
+        })
+      );
     });
   }
 
@@ -749,7 +755,19 @@ export class AppManifest extends LitElement {
 
   handleEditorUpdate(event: Event) {
     const e = event as CustomEvent<CodeEditorUpdateEvent>;
-    updateManifest(e); // explicitly not using the updateManifest method here to prevent a infinite loop.
+
+    try {
+      console.log(
+        'handle editor update',
+        e.detail.transaction.state.field(updateStateField)
+      );
+
+      const newManifest = JSON.parse(e.detail.transaction.state.doc.toString());
+
+      updateManifest(newManifest); // explicitly not using the this.updateManifest method to prevent a infinite loop.
+    } catch (ex) {
+      console.error('failed to parse the manifest successfully', e, ex);
+    }
   }
 
   validIconInput() {
