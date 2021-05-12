@@ -47,6 +47,7 @@ export class AppPublish extends LitElement {
 
   @state() open_windows_options = false;
   @state() open_android_options = false;
+  @state() open_samsung_modal = false;
 
   @state() generating = false;
 
@@ -493,6 +494,10 @@ export class AppPublish extends LitElement {
     this.open_android_options = !this.open_android_options;
   }
 
+  showSamsungModal() {
+    this.open_samsung_modal = !this.open_samsung_modal;
+  }
+
   renderContentCards() {
     return platforms.map(
       platform =>
@@ -504,21 +509,29 @@ export class AppPublish extends LitElement {
           </div>
 
           <div id="platform-actions-block">
-            <app-button
-              @click="${platform.title.toLowerCase() === 'windows'
-                ? () => this.showWindowsOptionsModal()
-                : () => this.showAndroidOptionsModal()}"
-              >Publish</app-button
-            >
-
-            ${platform.title.toLocaleLowerCase() === 'windows'
-              ? html`<loading-button
+            ${
+              platform.title.toLowerCase() === 'windows' ? html`
+                <app-button @click="${() => this.showWindowsOptionsModal()}">Generate</app-button>
+                <loading-button
                   ?loading=${this.generating}
                   id="test-package-button"
                   @click="${() => this.generate('windows')}"
                   >Test Package</loading-button
-                >`
-              : null}
+                >
+              ` : null
+            }
+
+            ${
+              platform.title.toLowerCase() === 'android' ? html`
+                <app-button @click="${() => this.showAndroidOptionsModal()}">Generate</app-button>
+              ` : null
+            }
+
+            ${
+              platform.title.toLowerCase() === 'samsung' ? html`
+                <app-button @click="${() => this.showSamsungModal()}">Submit</app-button>
+              ` : null
+            }
           </div>
         </li>`
     );
@@ -538,6 +551,8 @@ export class AppPublish extends LitElement {
 
   render() {
     return html`
+
+      <!-- error modal -->
       <app-modal
         title="Wait a minute!"
         .body="${this.errorMessage || ''}"
@@ -565,6 +580,7 @@ export class AppPublish extends LitElement {
         </div>
       </app-modal>
 
+      <!-- download modal -->
       <app-modal
         ?open="${this.blob ? true : false}"
         title="Download your package"
@@ -583,6 +599,7 @@ export class AppPublish extends LitElement {
         </div>
       </app-modal>
 
+      <!-- test package download modal -->
       <app-modal
         ?open="${this.testBlob ? true : false}"
         title="Test Package Download"
@@ -601,6 +618,7 @@ export class AppPublish extends LitElement {
         </div>
       </app-modal>
 
+      <!-- windows store options modal -->
       <app-modal
         id="windows-options-modal"
         title="Microsoft Store Options"
@@ -614,6 +632,7 @@ export class AppPublish extends LitElement {
         ></windows-form>
       </app-modal>
 
+      <!-- android options modal -->
       <app-modal
         id="android-options-modal"
         title="Google Play Store Options"
@@ -625,6 +644,15 @@ export class AppPublish extends LitElement {
           .generating=${this.generating}
           @init-android-gen="${ev => this.generate('android', ev.detail.form)}"
         ></android-form>
+      </app-modal>
+
+      <!-- samsung modal -->
+      <app-modal
+        id="samsung-options-modal"
+        title="Your PWA has been submitted to Samsung's App Finder"
+        body="You can follow up with Samsung at pwasupport@samsung.com for status updates on your submission."
+        ?open="${this.open_samsung_modal}"
+        >
       </app-modal>
 
       <div id="publish-wrapper">
@@ -713,7 +741,7 @@ const platforms: ICardData[] = [
   {
     title: 'Samsung',
     description:
-      'Publish your PWA to the Google Play Store to make your app more discoverable for Android users.',
+      'Provide the URL to your PWA to Samsung for inclusion in the Samsung Finder app. You will need to follow up with Samsung after submission for updates on the deployment.',
     isActionCard: true,
     icon: '/assets/samsung_icon.svg',
   },
