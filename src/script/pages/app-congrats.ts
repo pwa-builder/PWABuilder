@@ -17,6 +17,7 @@ import {
   customBreakPoint,
 } from '../utils/css/breakpoints';
 import { hidden_all } from '../utils/css/hidden';
+import { domEventEmitter } from '../utils/events';
 
 // @ts-ignore
 import style from '../../../styles/layout-defaults.css';
@@ -439,6 +440,10 @@ export class AppCongrats extends LitElement {
 
   constructor() {
     super();
+
+    domEventEmitter.addEventListener('resize', () => {
+      this.requestUpdate();
+    })
   }
 
   firstUpdated() {
