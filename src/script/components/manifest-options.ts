@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, property, query, state } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 
 import { localeStrings, languageCodes } from '../../locales';
@@ -164,9 +164,7 @@ export class AppManifest extends LitElement {
 
         .head .summary-body {
           display: flex;
-          flex-direction: row;
-          align-items: flex-end;
-          justify-content: space-between;
+          flex-direction: column;
         }
 
         .screenshots-header {
