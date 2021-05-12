@@ -170,6 +170,14 @@ export class AppReport extends LitElement {
             .reportCard p {
               display: none;
             }
+
+            #desktop-sidebar {
+              display: none;
+            }
+
+            #tablet-sidebar {
+              display: block;
+            }
           `
         )}
 
@@ -187,6 +195,14 @@ export class AppReport extends LitElement {
 
             .reportCard p {
               display: none;
+            }
+
+            #desktop-sidebar {
+              display: none;
+            }
+
+            #tablet-sidebar {
+              display: block;
             }
           `
         )}
