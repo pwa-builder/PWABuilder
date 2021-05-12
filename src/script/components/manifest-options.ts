@@ -110,6 +110,8 @@ export class AppManifest extends LitElement {
         }
 
         app-button {
+          --button-width: 140px;
+
           max-width: 160px;
         }
 
