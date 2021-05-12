@@ -169,7 +169,7 @@ export class AppHeader extends LitElement {
   render() {
     return html`
       <header part="header">
-        <img @click="${() => this.goBack()}" id="header-icon" src="/assets/images/header_logo.png" alt="header logo">
+        <img @click="${() => this.goBack()}" id="header-icon" src="/assets/images/header_logo.webp" alt="header logo">
 
         <nav id="desktop-nav">
           <fast-anchor appearance="hypertext" href="./about"
