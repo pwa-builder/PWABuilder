@@ -104,6 +104,10 @@ export class ResourceHub extends LitElement {
           margin-bottom: 74px;
         }
 
+        .resource-hub-actions app-button {
+          --button-width: 205px;
+        }
+
         .resource-hub-actions app-button::part(underlying-button) {
           background-color: white;
           color: var(--font-color);
@@ -257,7 +261,6 @@ export class ResourceHub extends LitElement {
             flex-direction: row;
             flex-wrap: wrap;
             align-items: center;
-            padding: 0;
           }
 
           .cards app-card {
@@ -267,12 +270,13 @@ export class ResourceHub extends LitElement {
       ),
       customBreakPoint(
         css`
-          .resource-hub.complete .cards {
-            flex-direction: column;
+          .cards {
+            display: grid;
+            grid-template-columns: auto auto;
           }
         `,
-        undefined,
-        919
+        888,
+        1023
       ),
     ];
   }
