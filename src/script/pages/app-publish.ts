@@ -237,6 +237,7 @@ export class AppPublish extends LitElement {
         #platform-actions-block app-button,
         #platform-actions-block loading-button {
           --button-width: 152px;
+          --loading-button-width: 152px;
         }
 
         ${xxxLargeBreakPoint(
