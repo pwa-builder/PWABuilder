@@ -22,7 +22,7 @@ import { Manifest } from '../utils/interfaces';
 
 @customElement('android-form')
 export class AndroidForm extends LitElement {
-  @property({ type: Boolean }) generating: boolean;
+  @property({ type: Boolean }) generating: boolean = false;
 
   @state() show_adv = false;
 
