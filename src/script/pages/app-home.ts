@@ -1,11 +1,6 @@
-import {
-  LitElement,
-  css,
-  html,
-} from 'lit';
+import { LitElement, css, html } from 'lit';
 
-import { customElement,
-  state, } from "lit/decorators.js"
+import { customElement, state } from 'lit/decorators.js';
 
 import { classMap } from 'lit/directives/class-map.js';
 
@@ -299,7 +294,7 @@ export class AppHome extends LitElement {
 
       try {
         const data = await fetchManifest(this.siteURL);
-  
+
         if (data.error) {
           this.errorGettingURL = true;
           this.errorMessage = data.error;
@@ -307,12 +302,12 @@ export class AppHome extends LitElement {
         } else {
           this.errorGettingURL = false;
           this.errorMessage = undefined;
-  
+
           const progress = getProgress();
           this.updateProgress(progress);
-  
+
           const goodURL = getURL();
-  
+
           if (goodURL !== undefined) {
             // couldnt get manifest, thats ok
             // lets continue forward with the default
@@ -327,7 +322,6 @@ export class AppHome extends LitElement {
 
         this.errorGettingURL = true;
         this.errorMessage = err;
-
       }
 
       this.gettingManifest = false;
@@ -335,17 +329,19 @@ export class AppHome extends LitElement {
   }
 
   updateProgress(progressData: ProgressList) {
-    progressData.progress[0].items[0].done = Status.DONE;
+    if (progressData) {
+      progressData.progress[0].items[0].done = Status.DONE;
 
-    const newProgress = progressData;
-    setProgress(newProgress);
+      const newProgress = progressData;
+      setProgress(newProgress);
+    }
   }
 
   render() {
     return html`
       <content-header class="home">
         <h2 slot="hero-container">
-        Ship your PWA to the app stores at lightning speed.
+          Ship your PWA to the app stores at lightning speed.
         </h2>
 
         <ul slot="grid-container">
@@ -353,7 +349,8 @@ export class AppHome extends LitElement {
             <h3>Test</h3>
 
             <p>
-              PWABuilder will make sure your web app is a PWA and ready for the stores!
+              PWABuilder will make sure your web app is a PWA and ready for the
+              stores!
             </p>
           </div>
 
@@ -361,7 +358,8 @@ export class AppHome extends LitElement {
             <h3>Manage</h3>
 
             <p>
-              Our Report Card will let you know if your PWA is store-ready. If not, PWABuilder will help you get there!
+              Our Report Card will let you know if your PWA is store-ready. If
+              not, PWABuilder will help you get there!
             </p>
           </div>
 
@@ -369,7 +367,8 @@ export class AppHome extends LitElement {
             <h3>Package</h3>
 
             <p>
-              Once you are ready, PWABuilder can package your PWA for the app stores in minutes!
+              Once you are ready, PWABuilder can package your PWA for the app
+              stores in minutes!
             </p>
           </div>
 
@@ -377,7 +376,8 @@ export class AppHome extends LitElement {
             <h3>Explore</h3>
 
             <p>
-              PWAs are moving forward fast, learn about new web APIs, store readiness, and more!
+              PWAs are moving forward fast, learn about new web APIs, store
+              readiness, and more!
             </p>
           </div>
         </ul>
@@ -398,14 +398,15 @@ export class AppHome extends LitElement {
               autofocus
             ></fast-text-field>
 
-            ${
-            this.errorMessage &&
-            this.errorMessage.length > 0
+            ${this.errorMessage && this.errorMessage.length > 0
               ? html`<span class="error-message">${this.errorMessage}</span>`
               : null}
           </div>
 
-          <loading-button type="submit" ?loading="${this.gettingManifest}" @click="${(e: InputEvent) => this.start(e)}"
+          <loading-button
+            type="submit"
+            ?loading="${this.gettingManifest}"
+            @click="${(e: InputEvent) => this.start(e)}"
             >Start</loading-button
           >
         </form>
@@ -414,7 +415,8 @@ export class AppHome extends LitElement {
       <resource-hub page="home" all>
         <h2 slot="title">PWABuilder Resource Hub</h2>
         <p slot="description">
-          Jump to our blog, find our documentation and check out demos and components from the PWABuilder team!
+          Jump to our blog, find our documentation and check out demos and
+          components from the PWABuilder team!
         </p>
       </resource-hub>
     `;

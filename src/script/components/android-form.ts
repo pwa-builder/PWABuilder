@@ -200,7 +200,7 @@ ${smallBreakPoint(
     }
   }
 
-  androidSigningKeyUploaded(event) {
+  androidSigningKeyUploaded(event: any) {
     if (!this.form) {
       return;
     }
@@ -210,7 +210,7 @@ ${smallBreakPoint(
     if (filePicker && filePicker.files && filePicker.files.length > 0) {
       const keyFile = filePicker.files[0];
       // Make sure it's a reasonable size.
-      if (keyFile.size > this.maxKeyFileSizeInBytes) {
+      if (keyFile && keyFile.size > this.maxKeyFileSizeInBytes) {
         console.error("Keystore file is too large.", {
           maxSize: this.maxKeyFileSizeInBytes,
           fileSize: keyFile.size,
