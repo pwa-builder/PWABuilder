@@ -270,7 +270,16 @@ export class ResourceHub extends LitElement {
       ),
       customBreakPoint(
         css`
-          .cards {
+          .resource-hub.complete .cards {
+            flex-direction: column;
+          }
+        `,
+        undefined,
+        919
+      ),
+      customBreakPoint(
+        css`
+          .resource-hub.home .cards {
             display: grid;
             grid-template-columns: auto auto;
           }
