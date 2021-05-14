@@ -1,3 +1,5 @@
+import { fileSave } from "browser-fs-access";
+
 enum Modes {
   fileApi,
   link,
@@ -48,7 +50,11 @@ function chooseMode(config: DownloadConfig) {
 function linkDownload(config: DownloadConfig) {
   const link = document.createElement('a');
   link.id = downloadLinkId(config);
-  link.href = config.url;
+
+  if (config.url) {
+    link.href = config.url;
+  }
+  
   link.setAttribute('download', config.fileName);
   link.click();
 }
@@ -56,19 +62,14 @@ function linkDownload(config: DownloadConfig) {
 async function fileApi(config: DownloadConfig) {
   try {
     const fsOpts = {
-      type: 'save-file',
-      accepts: [
-        {
-          description: 'PWA Builder Image Zip',
-          extensions: ['zip'],
-          mimeTypes: ['application/zip'],
-        },
-      ],
+      fileName: "PWABuilder Images",
+      extensions: ['zip'],
+      mimeTypes: ['application/zip'],
     };
 
-    const fileHandle = await window['chooseFileSystemEntries'](fsOpts);
-    const writable = await fileHandle.createWritable();
-    await writable.write(config.blob);
+    if (config.blob) {
+      await fileSave(config.blob, fsOpts)
+    }
   } catch (e) {
     console.error(e);
   }
