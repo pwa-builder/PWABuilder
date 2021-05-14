@@ -77,7 +77,7 @@ export function getChosenServiceWorker() {
   return chosenSW;
 }
 
-function handleError(e) {
+function handleError(e: any) {
   const errorMessage = e.response.data
     ? e.response.data.error
     : e.response.data || e.response.statusText;

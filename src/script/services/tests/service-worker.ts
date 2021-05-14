@@ -75,34 +75,6 @@ async function detectServiceWorker(
  * Checks the URL for offline support.
  */
 async function detectOfflineSupport(url: string): Promise<boolean> {
-  // We've witnessed this call take a very long time. We're going to time-box it to 10s.
-  /*const tenSecondTimeout = new Promise<void>(resolve =>
-    setTimeout(() => resolve(), 10000)
-  );
-  const offlineFetch = fetch(
-    `${env.testAPIUrl}/offline/?site=${encodeURIComponent(url)}`
-  );
-
-  const fetchResultOrTimeout: void | Response = await Promise.race([
-    tenSecondTimeout,
-    offlineFetch,
-  ]);
-
-  if (!fetchResultOrTimeout) {
-    console.warn('Offline check timed out after 10 seconds.');
-    return false;
-  }
-  if (fetchResultOrTimeout && !fetchResultOrTimeout.ok) {
-    console.warn(
-      'Unable to detect offline support.',
-      fetchResultOrTimeout.status,
-      fetchResultOrTimeout.statusText
-    );
-  }
-
-  const jsonResult: OfflineCheckResult = await (fetchResultOrTimeout as Response).json();
-  console.info('Offline support detection succeeded', jsonResult);
-  return jsonResult.data.offline;*/
 
   // We have 2 offline checks:
   // - A Google Lighthouse-based check, run via APIv2
@@ -133,7 +105,7 @@ async function detectOfflineSupport(url: string): Promise<boolean> {
   });
 }
 
-async function detectOfflineSupportPuppeteer(url) {
+async function detectOfflineSupportPuppeteer(url: string) {
   const fetchResult = await fetch(
     `${
       env.serviceWorkerUrl
@@ -156,7 +128,7 @@ async function detectOfflineSupportPuppeteer(url) {
   return jsonResult;
 }
 
-async function detectOfflineSupportLighthouse(url) {
+async function detectOfflineSupportLighthouse(url: string) {
   const fetchResult = await fetch(
     `${env.testAPIUrl}/offline/?site=${encodeURIComponent(url)}`
   );

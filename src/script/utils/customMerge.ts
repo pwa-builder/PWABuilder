@@ -10,8 +10,10 @@ export function uniqueElements<T>(
     for (let i = 0; i < totalArr.length; i++) {
       const curr = totalArr[i];
 
-      if (!map.has(key(curr))) {
-        map.set(key(curr), curr);
+      if (curr) {
+        if (!map.has(key(curr))) {
+          map.set(key(curr), curr);
+        }
       }
     }
 

@@ -21,7 +21,7 @@ import { WindowsPackageOptions } from '../utils/win-validation';
 
 @customElement('windows-form')
 export class WindowsForm extends LitElement {
-  @property({ type: Boolean }) generating: boolean;
+  @property({ type: Boolean }) generating: boolean = false;
 
   @state() show_adv = false;
   @state() default_options: WindowsPackageOptions | undefined;

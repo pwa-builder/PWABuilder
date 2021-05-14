@@ -194,7 +194,7 @@ export function createAndroidPackageOptionsFromForm(form: HTMLFormElement): Andr
 }
 
 export function createAndroidPackageOptionsFromManifest(localManifest?: Manifest): AndroidApkOptions {
-  let manifest: Manifest | null = null;
+  let manifest: Manifest | undefined;
 
   if (localManifest) {
     manifest = localManifest;

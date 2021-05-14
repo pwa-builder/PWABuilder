@@ -2,11 +2,9 @@
 declare const deepmerge: any;
 
 import { promiseAnyPolyfill } from '../polyfills/promise-any';
-import { uniqueElements } from '../utils/customMerge';
 import { env } from '../utils/environment';
 import {
   AppEvents,
-  Icon,
   Lazy,
   Manifest,
   ManifestDetectionResult,
@@ -164,16 +162,17 @@ export function getManiURL() {
   return maniURL;
 }
 
-export function getManifest(): Manifest {
+export function getManifest(): Manifest | undefined {
   if (manifest) {
     return manifest;
   }
   const search = new URLSearchParams(location.search);
 
   try {
-    const url = maniURL || search.get('site');
+    const url: string | null = maniURL || search.get('site');
 
-    fetchManifest(url)
+    if (url) {
+      fetchManifest(url)
       .then(response => {
         updateManifest(response.content);
       })
@@ -186,6 +185,8 @@ export function getManifest(): Manifest {
           })
           .catch(console.error);
       });
+    }
+   
   } catch (e) {
     console.error(e);
   }
@@ -239,16 +240,4 @@ export function updateManifestEvent<T extends Partial<Manifest>>(detail: T) {
     bubbles: true,
     composed: true,
   });
-}
-
-function customManifestMerge(key: string) {
-  if (key === 'icons') {
-    return uniqueElements<Icon>(icon => icon.sizes ?? icon.src);
-  } else if (key === 'screenshots') {
-    return uniqueElements<Icon>(
-      screenshot => screenshot.sizes ?? screenshot.src
-    );
-  }
-
-  return undefined;
 }

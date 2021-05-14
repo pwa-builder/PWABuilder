@@ -1,3 +1,5 @@
+import { Manifest } from '../../utils/interfaces';
+import { fetchManifest } from '../manifest';
 import {
   createAndroidPackageOptionsFromForm,
   createAndroidPackageOptionsFromManifest,
@@ -42,7 +44,7 @@ export async function generatePackage(type: platform, form?: HTMLFormElement) {
           } catch (err) {
             // Oh no, looks like we dont have the manifest in memory
             // Lets try to grab it
-            const localManifest = await this.grabBackupManifest();
+            const localManifest = await grabBackupManifest();
 
             if (localManifest) {
               const options = createWindowsPackageOptionsFromManifest(
@@ -93,7 +95,7 @@ export async function generatePackage(type: platform, form?: HTMLFormElement) {
           } catch (err) {
             // Oh no, looks like we dont have the manifest in memory
             // Lets try to grab it
-            const localManifest = await this.grabBackupManifest();
+            const localManifest = await grabBackupManifest();
             if (localManifest) {
               const androidOptions = createAndroidPackageOptionsFromManifest(
                 localManifest
@@ -120,4 +122,27 @@ export async function generatePackage(type: platform, form?: HTMLFormElement) {
         `A platform type must be passed, ${type} is not a valid platform.`
       );
   }
+}
+
+async function grabBackupManifest() {
+  console.error(
+    'Error generating package because manifest information is missing, trying fallback'
+  );
+  const search = new URLSearchParams(location.search);
+  let site: string | null = null;
+  if (search) {
+    site = search.get('site');
+  }
+
+  let localManifest: Manifest | null = null;
+
+  if (site) {
+    const maniResults = await fetchManifest(site);
+
+    if (maniResults && maniResults.content) {
+      localManifest = maniResults.content;
+    }
+  }
+
+  return localManifest;
 }

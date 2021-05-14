@@ -1,4 +1,4 @@
-import { css, unsafeCSS, CSSResult, CSSResultGroup } from 'lit';
+import { css, unsafeCSS, CSSResultGroup } from 'lit';
 
 export enum BreakpointValues {
   smallUpper = 479,
