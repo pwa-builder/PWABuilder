@@ -45,7 +45,7 @@ export async function generateMissingImagesBase64(config: MissingImagesConfig) {
       body: form,
     });
 
-    const icons = getManifest().icons.concat(
+    const icons = getManifest().icons?.concat(
       ((await response.json()) as unknown) as Array<Icon>
     );
 
@@ -83,11 +83,13 @@ export async function downloadZip(id: string) {
   try {
     const generatedIcons = await fetchIcons(id);
 
-    download({
-      id: 'generated icons zip',
-      fileName: 'icons.zip',
-      blob: await generatedIcons.blob(),
-    });
+    if (generatedIcons) {
+      download({
+        id: 'generated icons zip',
+        fileName: 'icons.zip',
+        blob: await generatedIcons.blob(),
+      });
+    }
   } catch (e) {
     console.error(e);
   }
