@@ -9,7 +9,6 @@ import { getChosenServiceWorker } from './service_worker';
 
 let site_url: string | undefined;
 let results: RawTestResult | undefined;
-let wasPWA: boolean | undefined;
 
 let progress: ProgressList = {
   progress: [

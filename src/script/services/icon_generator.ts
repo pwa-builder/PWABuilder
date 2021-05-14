@@ -45,7 +45,7 @@ export async function generateMissingImagesBase64(config: MissingImagesConfig) {
       body: form,
     });
 
-    const icons = getManifest().icons?.concat(
+    const icons = getManifest()?.icons?.concat(
       ((await response.json()) as unknown) as Array<Icon>
     );
 

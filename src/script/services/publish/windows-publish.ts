@@ -55,7 +55,7 @@ export async function generateWindowsPackage(
 
 export function createWindowsPackageOptionsFromManifest(localManifest?: Manifest
 ): WindowsPackageOptions {
-  let manifest: Manifest | null = null;
+  let manifest: Manifest | undefined;
 
   if (localManifest) {
     manifest = localManifest;
