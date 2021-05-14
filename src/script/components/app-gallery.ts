@@ -115,7 +115,9 @@ export class AppGallery extends LitElement {
   }
 
   forwardDisabled() {
-    return this.index >= this.images?.length - 1;
+    if (this.images) {
+      return this.index >= this.images.length - 1;
+    }
   }
 
   openModal() {

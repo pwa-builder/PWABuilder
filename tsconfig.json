@@ -23,6 +23,7 @@
     "skipLibCheck": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
     "plugins": [
       {
         "name": "ts-lit-plugin",

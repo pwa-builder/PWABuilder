@@ -367,7 +367,7 @@ export function validateUrl(url: string, base?: string): string | null {
 function withoutLeadingDigits(input: string): string {
   // Check if it starts with a digit.
   // If so, prepend "app" to it.
-  if (input.length && input[0].match(/^\d/)) {
+  if (input && input.length && input[0].match(/^\d/)) {
     return `app_${input}`;
   }
 

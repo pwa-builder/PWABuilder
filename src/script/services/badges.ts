@@ -21,8 +21,8 @@ export function giveOutBadges() {
 
   if (results) {
     const hasMani = results.manifest[0].result;
-    const hasSW = results.service_worker[0].result;
-    const security = results.security[0].result;
+    const hasSW = results.service_worker[0]?.result;
+    const security = results.security[0]?.result;
 
     //has 512 icon
     const has_good_icon = (results.manifest as TestResult[]).map(result =>
