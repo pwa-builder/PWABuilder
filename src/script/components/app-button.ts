@@ -22,7 +22,7 @@ export class AppButton extends LitElement implements AppButtonElement {
 
           --font-size: var(--desktop-button-font-size);
           --button-square: var(--button-height);
-          --button-width: 100%;
+          --button-width: 127px;
           --button-font-color: var(--secondary-color);
           --pading-vertical: 0;
           --padding-horizontal: 34px;
@@ -46,7 +46,10 @@ export class AppButton extends LitElement implements AppButtonElement {
         fast-button::part(control) {
           font-size: var(--font-size);
           font-weight: var(--font-bold);
-          padding: var(--padding-vertical) var(--padding-horizontal);
+          padding-top: var(--padding-vertical);
+          padding-bottom: var(--padding-vertical);
+          padding-left: var(--padding-horizontal);
+          padding-right: var(--padding-horizontal);
         }
 
         fast-button.secondary {

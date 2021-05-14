@@ -170,6 +170,8 @@ export class ReportCard extends LitElement {
       }
 
       #package-block {
+        --button-width: 127px;
+
         display: flex;
         justify-content: flex-end;
         margin-top: 40px;

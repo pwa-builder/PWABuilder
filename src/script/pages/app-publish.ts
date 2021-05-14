@@ -131,13 +131,17 @@ export class AppPublish extends LitElement {
           margin: 1rem;
         }
 
+        .container .action-buttons fast-anchor,
+        .container .action-buttons app-button {
+          --button-width: 127px;
+          width: var(--button-width);
+        }
+
         .container .action-buttons fast-anchor {
           /** 
              Seems like a magic value but really
              this is just to match the back button next to it
            */
-          width: 100px;
-
           color: white;
           box-shadow: var(--button-shadow);
           border-radius: var(--button-radius);
@@ -230,8 +234,10 @@ export class AppPublish extends LitElement {
           height: 40px;
         }
 
-        #platform-actions-block app-button::part(underlying-button) {
-          width: 152px;
+        #platform-actions-block app-button,
+        #platform-actions-block loading-button {
+          --button-width: 152px;
+          --loading-button-width: 152px;
         }
 
         ${xxxLargeBreakPoint(
