@@ -134,6 +134,7 @@ export class AppPublish extends LitElement {
         .container .action-buttons fast-anchor,
         .container .action-buttons app-button {
           --button-width: 127px;
+          height: 44px;
           width: var(--button-width);
         }
 
