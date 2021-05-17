@@ -164,14 +164,13 @@ export class AppHome extends LitElement {
           }
 
           #input-form loading-button {
+            --loading-button-width: 176px;
+            --loading-button-height: 64px;
             margin-top: 34px;
-            width: 176px;
           }
 
           #input-form loading-button::part(underlying-button) {
             margin-top: 44px;
-            width: 176px;
-            height: 64px;
             font-size: 22px;
           }
         `)}
@@ -215,19 +214,18 @@ export class AppHome extends LitElement {
             font-size: 22px;
           }
 
+          #input-form loading-button {
+            --loading-button-height: 64px;
+            --loading-button-width: 180px;
+            --font-size: 22px;
+          }
+
           #input-form loading-button::part(underlying-button) {
             margin-top: 44px;
-            width: 176px;
-            height: 64px;
-            font-size: 22px;
           }
 
           #input-block {
             margin-bottom: 30px;
-          }
-
-          #input-form loading-button {
-            width: 180px;
           }
         `)}
 

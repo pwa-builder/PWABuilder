@@ -42,8 +42,8 @@ export class LoadingButton extends LitElement implements AppButtonElement {
       mediumBreakPoint(
         css`
           app-button {
-            width: var(--loading-button-width);
-            height: var(--mobile-button-height);
+            --button-width: var(--loading-button-width);
+            --button-height: var(--loading-button-height);
           }
         `,
         'no-lower'
