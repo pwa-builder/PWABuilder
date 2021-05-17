@@ -515,29 +515,38 @@ export class AppPublish extends LitElement {
           </div>
 
           <div id="platform-actions-block">
-            ${
-              platform.title.toLowerCase() === 'windows' ? html`
-                <app-button @click="${() => this.showWindowsOptionsModal()}">Generate</app-button>
-                <loading-button
-                  ?loading=${this.generating}
-                  id="test-package-button"
-                  @click="${() => this.generate('windows')}"
-                  >Test Package</loading-button
-                >
-              ` : null
-            }
-
-            ${
-              platform.title.toLowerCase() === 'android' ? html`
-                <app-button @click="${() => this.showAndroidOptionsModal()}">Generate</app-button>
-              ` : null
-            }
-
-            ${
-              platform.title.toLowerCase() === 'samsung' ? html`
-                <app-button @click="${() => this.showSamsungModal()}">Submit</app-button>
-              ` : null
-            }
+            ${platform.title.toLowerCase() === 'windows'
+              ? html`
+                  <app-button @click="${() => this.showWindowsOptionsModal()}"
+                    >Generate</app-button
+                  >
+                  <loading-button
+                    class="continue"
+                    ?loading=${this.generating}
+                    id="test-package-button"
+                    @click="${() => this.generate('windows')}"
+                    >Test Package</loading-button
+                  >
+                `
+              : null}
+            ${platform.title.toLowerCase() === 'android'
+              ? html`
+                  <app-button
+                    class="continue"
+                    @click="${() => this.showAndroidOptionsModal()}"
+                    >Generate</app-button
+                  >
+                `
+              : null}
+            ${platform.title.toLowerCase() === 'samsung'
+              ? html`
+                  <app-button
+                    class="continue"
+                    @click="${() => this.showSamsungModal()}"
+                    >Submit</app-button
+                  >
+                `
+              : null}
           </div>
         </li>`
     );
@@ -557,7 +566,6 @@ export class AppPublish extends LitElement {
 
   render() {
     return html`
-
       <!-- error modal -->
       <app-modal
         title="Wait a minute!"
@@ -658,7 +666,7 @@ export class AppPublish extends LitElement {
         title="Your PWA has been submitted to Samsung's App Finder"
         body="You can follow up with Samsung at pwasupport@samsung.com for status updates on your submission."
         ?open="${this.open_samsung_modal}"
-        >
+      >
       </app-modal>
 
       <div id="publish-wrapper">

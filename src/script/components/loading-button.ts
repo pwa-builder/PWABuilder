@@ -58,6 +58,7 @@ export class LoadingButton extends LitElement implements AppButtonElement {
   render() {
     return html`
       <app-button
+        class=${this.className}
         part="underlying-button"
         .appearance=${this.appearance}
         .type=${this.type}

@@ -116,6 +116,7 @@ export class AppButton extends LitElement implements AppButtonElement {
       <fast-button
         part="underlying-button"
         class="${classMap({
+          [this.className]: this.className || '',
           link: this.appearance === 'lightweight',
           secondary: this.appearance === 'outline',
         })}"
@@ -127,15 +128,5 @@ export class AppButton extends LitElement implements AppButtonElement {
         <slot></slot>
       </fast-button>
     `;
-  }
-
-  classMap() {
-    const className = this.className || '';
-
-    return classMap({
-      [className]: className,
-      link: this.appearance === 'lightweight',
-      secondary: this.appearance === 'outline',
-    });
   }
 }
