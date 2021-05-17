@@ -229,7 +229,7 @@ export class ReportCard extends LitElement {
         xxxLargeBreakPoint(
           css`
             .accordion-heading-block {
-              width: 99em;
+              width: 97em;
             }
           `
         )
