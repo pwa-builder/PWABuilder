@@ -134,6 +134,7 @@ export class AppPublish extends LitElement {
         .container .action-buttons fast-anchor,
         .container .action-buttons app-button {
           --button-width: 127px;
+          height: 44px;
           width: var(--button-width);
         }
 
@@ -318,9 +319,16 @@ export class AppPublish extends LitElement {
             loading-button {
               --loading-button-height: 64px;
             }
-            
+
             loading-button::part(underlying-button) {
               --font-size: 22px;
+            }
+
+            .container .action-buttons fast-anchor,
+            .container .action-buttons app-button {
+              --button-width: 127px;
+              font-size: var(--mobile-button-fontsize);
+              width: var(--button-width);
             }
           `,
           'no-lower'

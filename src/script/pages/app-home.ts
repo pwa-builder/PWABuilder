@@ -207,20 +207,25 @@ export class AppHome extends LitElement {
             font-size: 22px;
           }
 
-          #input-form loading-button {
-            --loading-button-height: 64px;
-            --loading-button-width: 180px;
-          }
-
-          #input-form loading-button::part(underlying-button) {
-            --font-size: 22px;
-            margin-top: 44px;
-          }
-
           #input-block {
             margin-bottom: 30px;
           }
         `)}
+
+        ${mediumBreakPoint(
+          css`
+            #input-form loading-button {
+              --loading-button-height: 64px;
+              --loading-button-width: 180px;
+            }
+
+            #input-form loading-button::part(underlying-button) {
+              --font-size: 22px;
+              margin-top: 44px;
+            }
+          `,
+          'no-lower'
+        )}
 
       ${largeBreakPoint(css`
           content-header::part(main-container) {
