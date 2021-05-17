@@ -231,7 +231,6 @@ export class AppPublish extends LitElement {
 
         #test-package-button::part(underlying-button) {
           --button-font-color: var(--font-color);
-          height: 40px;
         }
 
         #platform-actions-block app-button,
@@ -314,11 +313,22 @@ export class AppPublish extends LitElement {
           `
         )}
 
+        ${mediumBreakPoint(
+          css`
+            loading-button {
+              --loading-button-height: 64px;
+            }
+            
+            loading-button::part(underlying-button) {
+              --font-size: 22px;
+            }
+          `,
+          'no-lower'
+        )}
+
         ${smallBreakPoint(css`
           #test-package-button app-button::part(underlying-button) {
-            width: 152px;
             font-size: var(--font-size);
-            height: 40px;
           }
 
           li {
@@ -517,11 +527,13 @@ export class AppPublish extends LitElement {
           <div id="platform-actions-block">
             ${platform.title.toLowerCase() === 'windows'
               ? html`
-                  <app-button @click="${() => this.showWindowsOptionsModal()}"
+                  <app-button
+                    class="navigation"
+                    @click="${() => this.showWindowsOptionsModal()}"
                     >Generate</app-button
                   >
                   <loading-button
-                    class="continue"
+                    class="navigation"
                     ?loading=${this.generating}
                     id="test-package-button"
                     @click="${() => this.generate('windows')}"
@@ -532,7 +544,7 @@ export class AppPublish extends LitElement {
             ${platform.title.toLowerCase() === 'android'
               ? html`
                   <app-button
-                    class="continue"
+                    class="navigation"
                     @click="${() => this.showAndroidOptionsModal()}"
                     >Generate</app-button
                   >
@@ -541,7 +553,7 @@ export class AppPublish extends LitElement {
             ${platform.title.toLowerCase() === 'samsung'
               ? html`
                   <app-button
-                    class="continue"
+                    class="navigation"
                     @click="${() => this.showSamsungModal()}"
                     >Submit</app-button
                   >

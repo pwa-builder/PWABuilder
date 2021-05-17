@@ -48,6 +48,7 @@ export class AppButton extends LitElement implements AppButtonElement {
         fast-button::part(control) {
           font-size: var(--font-size);
           font-weight: var(--font-bold);
+          width: 100%;
           padding-top: var(--padding-vertical);
           padding-bottom: var(--padding-vertical);
           padding-left: var(--padding-horizontal);

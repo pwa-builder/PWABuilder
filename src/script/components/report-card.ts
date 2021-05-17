@@ -271,6 +271,20 @@ export class ReportCard extends LitElement {
         `
       )}
 
+
+      ${mediumBreakPoint(
+        css`
+          loading-button {
+            --loading-button-height: 64px;
+          }
+
+          loading-button::part(underlying-button) {
+            --font-size: 22px;
+          }
+        `,
+        'no-lower'
+      )}
+
       ${smallBreakPoint(
         css`
           #main-report-section {
@@ -732,7 +746,7 @@ export class ReportCard extends LitElement {
 
           <div id="package-block">
             <app-button
-              class="continue"
+              class="navigation"
               @click="${() => this.decideWhereToGo()}"
               >Next</app-button
             >
