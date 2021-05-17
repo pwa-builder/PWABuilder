@@ -107,6 +107,7 @@ export class AppManifest extends LitElement {
       css`
         fast-divider {
           margin: 16px 0;
+          border-color: rgb(229, 229, 229);
         }
 
         app-button {
@@ -134,7 +135,6 @@ export class AppManifest extends LitElement {
 
         .panel {
           padding: 32px;
-          max-width: 1009px;
         }
 
         .tooltip {
@@ -149,6 +149,14 @@ export class AppManifest extends LitElement {
 
         .view-code {
           margin-bottom: 8px;
+        }
+
+        .view-code fast-accordion {
+          border-color: rgb(229, 229, 229);
+        }
+
+        .view-code fast-accordion-item {
+          border-bottom: none;
         }
 
         .images-header {
@@ -168,6 +176,11 @@ export class AppManifest extends LitElement {
           display: flex;
           flex-direction: column;
         }
+
+        #manifest-done-button {
+          margin-top: 23px;
+          margin-bottom: 23px;
+        } 
 
         .screenshots-header {
           display: flex;
@@ -239,6 +252,20 @@ export class AppManifest extends LitElement {
         .show-sm {
           display: none;
           visibility: hidden;
+        }
+
+        .head h2 {
+          margin-bottom: 0px;
+          margin-top: 28px;
+        }
+
+        .bottom-section {
+          display: flex;
+          justify-content: flex-end;
+        }
+
+        fast-accordion-item::part(button) {
+          color: var(--font-color);
         }
       `,
       // modal
@@ -336,7 +363,6 @@ export class AppManifest extends LitElement {
         <div class="head">
           <div class="top-section">
             <h1>Manifest</h1>
-            <h1>Score ${this.score}</h1>
           </div>
 
           <h2>Summary</h2>
@@ -345,7 +371,7 @@ export class AppManifest extends LitElement {
               Easily update and upgrade your Web Manifest with our built-in Web
               Manifest editor
             </p>
-            <app-button @click=${this.done}>Done</app-button>
+            <app-button id="manifest-done-button" @click=${this.done}>Done</app-button>
           </div>
         </div>
         <fast-divider></fast-divider>
