@@ -89,6 +89,8 @@ export class AppHome extends LitElement {
           margin-top: 0;
           color: var(--secondary-font-color);
           font-size: var(--font-size);
+
+          width: 194px;
         }
 
         #input-form {
