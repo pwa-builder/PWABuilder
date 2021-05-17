@@ -1,10 +1,5 @@
-import {
-  LitElement,
-  css,
-  html
-} from 'lit';
-import { customElement, property,
-  state, } from "lit/decorators.js"
+import { LitElement, css, html } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
 import { RawTestResult, ScoreEvent } from '../utils/interfaces';
 
 import {
@@ -39,13 +34,9 @@ export class ReportCard extends LitElement {
   @state() currentURL: string | undefined;
 
   @state() pwa_icon: { url: string; locked: boolean } | undefined;
-  @state() manifest_icon:
-    | { url: string; locked: boolean }
-    | undefined;
+  @state() manifest_icon: { url: string; locked: boolean } | undefined;
   @state() sw_icon: { url: string; locked: boolean } | undefined;
-  @state() security_icon:
-    | { url: string; locked: boolean }
-    | undefined;
+  @state() security_icon: { url: string; locked: boolean } | undefined;
 
   maxManiScore = 80;
   maxSWSCore = 20;
@@ -225,15 +216,13 @@ export class ReportCard extends LitElement {
         opacity: 0.5;
       }
 
-      ${
-        xxxLargeBreakPoint(
-          css`
-            .accordion-heading-block {
-              width: 99em;
-            }
-          `
-        )
-      }
+      ${xxxLargeBreakPoint(
+        css`
+          .accordion-heading-block {
+            width: 99em;
+          }
+        `
+      )}
 
       ${xxLargeBreakPoint(
         css`
@@ -253,7 +242,6 @@ export class ReportCard extends LitElement {
           .accordion-heading-block,
           #report-content {
             width: 78vw;
-
           }
 
           #total-score {
@@ -743,7 +731,9 @@ export class ReportCard extends LitElement {
           </div>
 
           <div id="package-block">
-            <app-button @click="${() => this.decideWhereToGo()}"
+            <app-button
+              class="continue"
+              @click="${() => this.decideWhereToGo()}"
               >Next</app-button
             >
           </div>

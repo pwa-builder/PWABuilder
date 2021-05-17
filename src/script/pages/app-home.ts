@@ -163,15 +163,8 @@ export class AppHome extends LitElement {
             font-size: 22px;
           }
 
-          #input-form loading-button {
-            --loading-button-width: 176px;
-            --loading-button-height: 64px;
-            margin-top: 34px;
-          }
-
           #input-form loading-button::part(underlying-button) {
             margin-top: 44px;
-            font-size: 22px;
           }
         `)}
 
@@ -403,6 +396,7 @@ export class AppHome extends LitElement {
 
           <loading-button
             type="submit"
+            class="continue"
             ?loading="${this.gettingManifest}"
             @click="${(e: InputEvent) => this.start(e)}"
             >Start</loading-button
