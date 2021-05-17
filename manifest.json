@@ -40,40 +40,40 @@
   ],
   "screenshots": [
     {
-      "src": "/assets/screenshots/s1.png",
-      "sizes": "1598x1012",
+      "src": "/assets/screenshots/screen1.png",
+      "sizes": "2880x1800",
       "type": "image/png",
-      "description": "PWA Builder Home Screen"
+      "description": "PWABuilder Home Screen"
     },
     {
-      "src": "/assets/screenshots/s2.png",
-      "sizes": "1389x937",
+      "src": "/assets/screenshots/screen2.png",
+      "sizes": "2880/1800",
       "type": "image/png",
-      "description": "PWA Builder is also a PWA and can be used in app mode"
+      "description": "PWABuilder Report Card"
     },
     {
-      "src": "/assets/screenshots/s3.png",
-      "sizes": "1389x1004",
+      "src": "/assets/screenshots/screen3.png",
+      "sizes": "2880x1800",
       "type": "image/png",
-      "description": "Enter your URL to get a PWA score"
+      "description": "Manifest information on the Report Card"
     },
     {
-      "src": "/assets/screenshots/s4.png",
-      "sizes": "1389x1004",
+      "src": "/assets/screenshots/screen4.png",
+      "sizes": "2880x1800",
       "type": "image/png",
-      "description": "See the manifest on the site, or a generated manifest from PWA Builder"
+      "description": "Pick a pre-built Service Worker"
     },
     {
-      "src": "/assets/screenshots/s5.png",
-      "sizes": "1389x1004",
+      "src": "/assets/screenshots/screen5.png",
+      "sizes": "2880x1800",
       "type": "image/png",
-      "description": "Find easy to use service workers that fit almost any site."
+      "description": "Publish your PWA to the App Stores!"
     },
     {
-      "src": "/assets/screenshots/s6.png",
-      "sizes": "1389x1004",
+      "src": "/assets/screenshots/mobile.png",
+      "sizes": "1439x2881",
       "type": "image/png",
-      "description": "Find easy to use snippits that make your web site more app-like"
+      "description": "PWABuilder also works on your phone!"
     }
   ],
   "features": [
