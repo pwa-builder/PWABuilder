@@ -110,15 +110,15 @@ export class AppManifest extends LitElement {
           border-color: rgb(229, 229, 229);
         }
 
-        app-button {
+        /* app-button {
           --button-width: 140px;
 
           max-width: 160px;
-        }
+        } */
 
-        loading-button::part(underlying-button) {
+        /* loading-button::part(underlying-button) {
           max-width: 160px;
-        }
+        } */
 
         fast-text-field,
         app-dropdown::part(layout) {
@@ -180,7 +180,7 @@ export class AppManifest extends LitElement {
         #manifest-done-button {
           margin-top: 23px;
           margin-bottom: 23px;
-        } 
+        }
 
         .screenshots-header {
           display: flex;
@@ -371,7 +371,9 @@ export class AppManifest extends LitElement {
               Easily update and upgrade your Web Manifest with our built-in Web
               Manifest editor
             </p>
-            <app-button id="manifest-done-button" @click=${this.done}>Done</app-button>
+            <app-button id="manifest-done-button" @click=${this.done}
+              >Done</app-button
+            >
           </div>
         </div>
         <fast-divider></fast-divider>
@@ -777,6 +779,21 @@ export class AppManifest extends LitElement {
     }
 
     this.awaitRequest = false;
+  }
+
+  async handleDeleteImage(event: Event) {
+    try {
+      const input = <HTMLInputElement>event.target;
+      const list = Number(input.dataset['list']);
+      const index = Number(input.dataset['index']);
+      const imageList: Array<Icon> = this.manifest[list];
+
+      this.updateManifest({
+        [list]: imageList.slice(0, index).concat(imageList.slice(index + 1)),
+      });
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   handleEditorUpdate(event: Event) {
