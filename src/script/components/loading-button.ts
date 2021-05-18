@@ -18,8 +18,6 @@ export class LoadingButton extends LitElement implements AppButtonElement {
     return [
       css`
         :host {
-          --loading-button-height: var(--button-height);
-          --loading-button-width: 176px;
           --loader-size: 1.8em;
         }
 
@@ -29,25 +27,7 @@ export class LoadingButton extends LitElement implements AppButtonElement {
 
           --accent-foreground-rest: white;
         }
-
-        app-button {
-          height: var(--loading-button-height);
-        }
-
-        app-button::part(underlying-button) {
-          height: 100%;
-          font-size: inherit;
-        }
       `,
-      mediumBreakPoint(
-        css`
-          app-button {
-            --button-width: var(--loading-button-width);
-            --button-height: var(--loading-button-height);
-          }
-        `,
-        'no-lower'
-      ),
     ];
   }
 
