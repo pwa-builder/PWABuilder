@@ -134,6 +134,7 @@ export class AppPublish extends LitElement {
         .container .action-buttons fast-anchor,
         .container .action-buttons app-button {
           --button-width: 127px;
+          height: 44px;
           width: var(--button-width);
         }
 
@@ -231,7 +232,6 @@ export class AppPublish extends LitElement {
 
         #test-package-button::part(underlying-button) {
           --button-font-color: var(--font-color);
-          height: 40px;
         }
 
         #platform-actions-block app-button,
@@ -314,11 +314,29 @@ export class AppPublish extends LitElement {
           `
         )}
 
+        ${mediumBreakPoint(
+          css`
+            loading-button {
+              --loading-button-height: 64px;
+            }
+
+            loading-button::part(underlying-button) {
+              --font-size: 22px;
+            }
+
+            .container .action-buttons fast-anchor,
+            .container .action-buttons app-button {
+              --button-width: 127px;
+              font-size: var(--mobile-button-fontsize);
+              width: var(--button-width);
+            }
+          `,
+          'no-lower'
+        )}
+
         ${smallBreakPoint(css`
           #test-package-button app-button::part(underlying-button) {
-            width: 152px;
             font-size: var(--font-size);
-            height: 40px;
           }
 
           li {
@@ -515,29 +533,40 @@ export class AppPublish extends LitElement {
           </div>
 
           <div id="platform-actions-block">
-            ${
-              platform.title.toLowerCase() === 'windows' ? html`
-                <app-button @click="${() => this.showWindowsOptionsModal()}">Generate</app-button>
-                <loading-button
-                  ?loading=${this.generating}
-                  id="test-package-button"
-                  @click="${() => this.generate('windows')}"
-                  >Test Package</loading-button
-                >
-              ` : null
-            }
-
-            ${
-              platform.title.toLowerCase() === 'android' ? html`
-                <app-button @click="${() => this.showAndroidOptionsModal()}">Generate</app-button>
-              ` : null
-            }
-
-            ${
-              platform.title.toLowerCase() === 'samsung' ? html`
-                <app-button @click="${() => this.showSamsungModal()}">Submit</app-button>
-              ` : null
-            }
+            ${platform.title.toLowerCase() === 'windows'
+              ? html`
+                  <app-button
+                    class="navigation"
+                    @click="${() => this.showWindowsOptionsModal()}"
+                    >Generate</app-button
+                  >
+                  <loading-button
+                    class="navigation"
+                    ?loading=${this.generating}
+                    id="test-package-button"
+                    @click="${() => this.generate('windows')}"
+                    >Test Package</loading-button
+                  >
+                `
+              : null}
+            ${platform.title.toLowerCase() === 'android'
+              ? html`
+                  <app-button
+                    class="navigation"
+                    @click="${() => this.showAndroidOptionsModal()}"
+                    >Generate</app-button
+                  >
+                `
+              : null}
+            ${platform.title.toLowerCase() === 'samsung'
+              ? html`
+                  <app-button
+                    class="navigation"
+                    @click="${() => this.showSamsungModal()}"
+                    >Submit</app-button
+                  >
+                `
+              : null}
           </div>
         </li>`
     );
@@ -557,7 +586,6 @@ export class AppPublish extends LitElement {
 
   render() {
     return html`
-
       <!-- error modal -->
       <app-modal
         title="Wait a minute!"
@@ -658,7 +686,7 @@ export class AppPublish extends LitElement {
         title="Your PWA has been submitted to Samsung's App Finder"
         body="You can follow up with Samsung at pwasupport@samsung.com for status updates on your submission."
         ?open="${this.open_samsung_modal}"
-        >
+      >
       </app-modal>
 
       <div id="publish-wrapper">

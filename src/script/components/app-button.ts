@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { smallBreakPoint } from '../utils/css/breakpoints';
+import { mediumBreakPoint } from '../utils/css/breakpoints';
 import { fastButtonCss } from '../utils/css/fast-elements';
 import { FastButtonAppearance } from '../utils/fast-element';
 import { AppButtonElement } from '../utils/interfaces.components';
@@ -22,6 +22,7 @@ export class AppButton extends LitElement implements AppButtonElement {
 
           --font-size: var(--desktop-button-font-size);
           --button-square: var(--button-height);
+          --button-height: 44px;
           --button-width: 127px;
           --button-font-color: var(--secondary-color);
           --pading-vertical: 0;
@@ -33,6 +34,7 @@ export class AppButton extends LitElement implements AppButtonElement {
       css`
         fast-button {
           color: var(--button-font-color);
+          height: var(--button-height);
           width: var(--button-width);
 
           border-radius: var(--button-radius);
@@ -46,6 +48,7 @@ export class AppButton extends LitElement implements AppButtonElement {
         fast-button::part(control) {
           font-size: var(--font-size);
           font-weight: var(--font-bold);
+          width: 100%;
           padding-top: var(--padding-vertical);
           padding-bottom: var(--padding-vertical);
           padding-left: var(--padding-horizontal);
@@ -88,11 +91,20 @@ export class AppButton extends LitElement implements AppButtonElement {
           line-height: 0;
         }
       `,
-      smallBreakPoint(css`
-        fast-button {
-          --font-size: var(--mobile-button-fontsize);
-        }
-      `),
+      mediumBreakPoint(
+        css`
+          fast-button {
+            --font-size: var(--mobile-button-fontsize);
+          }
+
+          fast-button.navigation {
+            --button-height: 64px;
+            --button-width: 180px;
+            line-height: 28px;
+          }
+        `,
+        'no-lower'
+      ),
     ];
   }
 
@@ -105,6 +117,7 @@ export class AppButton extends LitElement implements AppButtonElement {
       <fast-button
         part="underlying-button"
         class="${classMap({
+          [this.className]: this.className || '',
           link: this.appearance === 'lightweight',
           secondary: this.appearance === 'outline',
         })}"
@@ -116,15 +129,5 @@ export class AppButton extends LitElement implements AppButtonElement {
         <slot></slot>
       </fast-button>
     `;
-  }
-
-  classMap() {
-    const className = this.className || '';
-
-    return classMap({
-      [className]: className,
-      link: this.appearance === 'lightweight',
-      secondary: this.appearance === 'outline',
-    });
   }
 }

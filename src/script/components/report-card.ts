@@ -1,10 +1,5 @@
-import {
-  LitElement,
-  css,
-  html
-} from 'lit';
-import { customElement, property,
-  state, } from "lit/decorators.js"
+import { LitElement, css, html } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
 import { RawTestResult, ScoreEvent } from '../utils/interfaces';
 
 import {
@@ -39,13 +34,9 @@ export class ReportCard extends LitElement {
   @state() currentURL: string | undefined;
 
   @state() pwa_icon: { url: string; locked: boolean } | undefined;
-  @state() manifest_icon:
-    | { url: string; locked: boolean }
-    | undefined;
+  @state() manifest_icon: { url: string; locked: boolean } | undefined;
   @state() sw_icon: { url: string; locked: boolean } | undefined;
-  @state() security_icon:
-    | { url: string; locked: boolean }
-    | undefined;
+  @state() security_icon: { url: string; locked: boolean } | undefined;
 
   maxManiScore = 80;
   maxSWSCore = 20;
@@ -225,15 +216,13 @@ export class ReportCard extends LitElement {
         opacity: 0.5;
       }
 
-      ${
-        xxxLargeBreakPoint(
-          css`
-            .accordion-heading-block {
-              width: 97em;
-            }
-          `
-        )
-      }
+      ${xxxLargeBreakPoint(
+        css`
+          .accordion-heading-block {
+            width: 97em;
+          }
+        `
+      )}
 
       ${xxLargeBreakPoint(
         css`
@@ -253,7 +242,6 @@ export class ReportCard extends LitElement {
           .accordion-heading-block,
           #report-content {
             width: 78vw;
-
           }
 
           #total-score {
@@ -281,6 +269,20 @@ export class ReportCard extends LitElement {
             margin-bottom: 40px;
           }
         `
+      )}
+
+
+      ${mediumBreakPoint(
+        css`
+          loading-button {
+            --loading-button-height: 64px;
+          }
+
+          loading-button::part(underlying-button) {
+            --font-size: 22px;
+          }
+        `,
+        'no-lower'
       )}
 
       ${smallBreakPoint(
@@ -743,7 +745,9 @@ export class ReportCard extends LitElement {
           </div>
 
           <div id="package-block">
-            <app-button @click="${() => this.decideWhereToGo()}"
+            <app-button
+              class="navigation"
+              @click="${() => this.decideWhereToGo()}"
               >Next</app-button
             >
           </div>

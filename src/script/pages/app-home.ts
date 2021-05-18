@@ -165,16 +165,8 @@ export class AppHome extends LitElement {
             font-size: 22px;
           }
 
-          #input-form loading-button {
-            margin-top: 34px;
-            width: 176px;
-          }
-
           #input-form loading-button::part(underlying-button) {
             margin-top: 44px;
-            width: 176px;
-            height: 64px;
-            font-size: 22px;
           }
         `)}
 
@@ -217,21 +209,25 @@ export class AppHome extends LitElement {
             font-size: 22px;
           }
 
-          #input-form loading-button::part(underlying-button) {
-            margin-top: 44px;
-            width: 176px;
-            height: 64px;
-            font-size: 22px;
-          }
-
           #input-block {
             margin-bottom: 30px;
           }
-
-          #input-form loading-button {
-            width: 180px;
-          }
         `)}
+
+        ${mediumBreakPoint(
+          css`
+            #input-form loading-button {
+              --loading-button-height: 64px;
+              --loading-button-width: 180px;
+            }
+
+            #input-form loading-button::part(underlying-button) {
+              --font-size: 22px;
+              margin-top: 44px;
+            }
+          `,
+          'no-lower'
+        )}
 
       ${largeBreakPoint(css`
           content-header::part(main-container) {
@@ -407,6 +403,7 @@ export class AppHome extends LitElement {
 
           <loading-button
             type="submit"
+            class="navigation"
             ?loading="${this.gettingManifest}"
             @click="${(e: InputEvent) => this.start(e)}"
             >Start</loading-button
