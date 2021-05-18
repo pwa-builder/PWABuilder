@@ -24,6 +24,11 @@ export const fastButtonCss = css`
     padding-right: var(--padding-horizontal);
   }
 
+  fast-button.secondary {
+    background: var(--secondary-color);
+    color: var(--font-color);
+  }
+
   fast-button[appearance='lightweight'] {
     --accent-foreground-rest: var(--secondary-font-color);
     --accent-foreground-active: var(--font-color);
