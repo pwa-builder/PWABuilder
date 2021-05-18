@@ -521,8 +521,8 @@ export class AppManifest extends LitElement {
   renderSettingsItems() {
     return settingsItems.map(item => {
       let field;
-      const value = this.manifest
-        ? (this.manifest[item.entry] as string).toLocaleLowerCase()
+      const value = this.manifest && this.manifest[item.entry]
+        ? this.manifest[item.entry].toLocaleLowerCase()
         : '';
 
       if (item.type === 'select' && item.menuItems) {
