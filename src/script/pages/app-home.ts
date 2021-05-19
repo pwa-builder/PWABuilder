@@ -134,6 +134,10 @@ export class AppHome extends LitElement {
             font-size: var(--large-font-size);
           }
 
+          #start-button {
+            margin-top: 16px;
+          }
+
           #hero-p {
             line-height: 22px;
           }
@@ -199,6 +203,10 @@ export class AppHome extends LitElement {
 
           #input-block {
             margin-bottom: 30px;
+          }
+
+          #start-button {
+            margin-top: 45px;
           }
         `)}
 
@@ -376,6 +384,7 @@ export class AppHome extends LitElement {
           </div>
 
           <loading-button
+            id="start-button"
             type="submit"
             class="navigation"
             ?loading="${this.gettingManifest}"

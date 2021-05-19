@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, property } from "lit/decorators.js"
+import { customElement, property } from 'lit/decorators.js';
 
 import { ModalCloseEvent } from '../utils/interfaces';
 import { smallBreakPoint } from '../utils/css/breakpoints';
@@ -87,25 +87,27 @@ export class AppModal extends LitElement {
         color: #c2c9d1;
       }
 
-      ${
-        smallBreakPoint(css`
-          #modal {
-            margin: 0px;
-            padding: 0px;
-            width: 100vw !important;
-            height: 100vh;
-          }
+      ${smallBreakPoint(css`
+        #modal {
+          margin: 0px;
+          padding: 0px;
+          width: 100vw !important;
+          height: 100vh;
+        }
 
-          #modal-form {
-            height: 100%;
-          }
-        `)
-      }
+        #modal-form {
+          height: 100%;
+        }
+      `)}
     `;
   }
 
   constructor() {
     super();
+
+    this.addEventListener('scroll', (e: Event) => {
+      console.log('scroll', e);
+    });
   }
 
   firstUpdated() {
