@@ -159,7 +159,7 @@ export class AppTesting extends LitElement {
     try {
       const TestResult = await runAllTests(site);
       const search = new URLSearchParams(location.search);
-      // const siteUrl = search.get('site');
+      const siteUrl = search.get('site');
 
       if (TestResult) {
         // Completes the loading ase
@@ -169,9 +169,9 @@ export class AppTesting extends LitElement {
 
         this.currentPhrase = 'Results coming to you in 3..2..1..';
         setTimeout(() => {
-          /*Router.go(
+          Router.go(
             `/reportcard?site=${siteUrl}&results=${JSON.stringify(TestResult)}`
-          );*/
+          );
         }, 300);
       } else {
         this.loading = false;
