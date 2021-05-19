@@ -309,6 +309,24 @@ export class AppPublish extends LitElement {
           `
         )}
 
+        ${mediumBreakPoint(
+          css`
+            loading-button {
+              --loading-button-height: 64px;
+            }
+            loading-button::part(underlying-button) {
+              --font-size: 22px;
+            }
+            .container .action-buttons fast-anchor,
+            .container .action-buttons app-button {
+              --button-width: 127px;
+              font-size: var(--mobile-button-fontsize);
+              width: var(--button-width);
+            }
+          `,
+          'no-lower'
+        )}
+
         ${smallBreakPoint(css`
           #test-package-button app-button::part(underlying-button) {
             font-size: var(--font-size);
