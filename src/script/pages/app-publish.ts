@@ -233,7 +233,6 @@ export class AppPublish extends LitElement {
         #platform-actions-block app-button,
         #platform-actions-block loading-button::part(underlying-button) {
           --button-width: 152px;
-          --loading-button-width: 152px;
         }
 
         ${xxxLargeBreakPoint(
@@ -308,26 +307,6 @@ export class AppPublish extends LitElement {
               margin-top: 2em;
             }
           `
-        )}
-
-        ${mediumBreakPoint(
-          css`
-            loading-button {
-              --loading-button-height: 64px;
-            }
-
-            loading-button::part(underlying-button) {
-              --font-size: 22px;
-            }
-
-            .container .action-buttons fast-anchor,
-            .container .action-buttons app-button {
-              --button-width: 127px;
-              font-size: var(--mobile-button-fontsize);
-              width: var(--button-width);
-            }
-          `,
-          'no-lower'
         )}
 
         ${smallBreakPoint(css`
