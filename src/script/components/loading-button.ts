@@ -25,7 +25,14 @@ export class LoadingButton extends LitElement implements AppButtonElement {
           height: var(--loader-size);
           width: var(--loader-size);
 
-          --accent-foreground-rest: white;
+          --accent-foreground-rest: var(--secondary-color);
+        }
+
+        app-button.secondary fast-progress-ring {
+          --accent-foreground-rest: var(--primary-color);
+          --neutral-fill-rest: white;
+          --neutral-fill-active: white;
+          --neutral-fill-hover: white;
         }
       `,
     ];
