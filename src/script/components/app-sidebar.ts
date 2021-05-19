@@ -3,14 +3,9 @@ import {
   mediumBreakPoint,
   smallBreakPoint,
 } from './../utils/css/breakpoints';
-import {
-  LitElement,
-  css,
-  html,
-} from 'lit';
+import { LitElement, css, html } from 'lit';
 
-import { customElement, property,
-  state, } from "lit/decorators.js"
+import { customElement, property, state } from 'lit/decorators.js';
 
 import { getProgress, getResults, getURL } from '../services/app-info';
 import {
@@ -71,10 +66,6 @@ export class AppSidebar extends LitElement {
         font-weight: var(--font-bold);
         padding-left: 23px;
       }
-
-      /*.done::part(button) {
-        --neutral-foreground-rest: green
-      }*/
 
       /** DESKTOP STYLES */
       aside.desktop-sidebar {

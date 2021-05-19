@@ -2,6 +2,32 @@ import { css } from 'lit';
 
 export const fastButtonCss = css`
   fast-button {
+    color: var(--button-font-color);
+    height: var(--button-height);
+    width: var(--button-width);
+
+    border-radius: var(--button-radius);
+    box-shadow: var(--button-shadow);
+  }
+
+  fast-button:disabled::part(control) {
+    cursor: not-allowed;
+  }
+
+  fast-button::part(control) {
+    font-size: var(--font-size);
+    font-weight: var(--font-bold);
+    width: 100%;
+    padding-top: var(--padding-vertical);
+    padding-bottom: var(--padding-vertical);
+    padding-left: var(--padding-horizontal);
+    padding-right: var(--padding-horizontal);
+  }
+
+  fast-button.secondary {
+    background: var(--secondary-color);
+    color: var(--font-color);
+    border-color: transparent;
   }
 
   fast-button[appearance='lightweight'] {

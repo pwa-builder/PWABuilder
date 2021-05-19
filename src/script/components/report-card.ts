@@ -136,15 +136,10 @@ export class ReportCard extends LitElement {
       }
 
       .options-button {
-        width: 217px;
+        --button-width: 217px;
 
         margin-top: 33px;
         margin-bottom: 33px;
-      }
-
-      .options-button::part(underlying-button) {
-        background: white;
-        color: var(--font-color);
       }
 
       #total-score {
@@ -582,7 +577,7 @@ export class ReportCard extends LitElement {
                   >
                     <app-button
                       @click="${() => this.openManiOptions()}"
-                      class="options-button"
+                      class="options-button secondary"
                       slot="options-button"
                       >Manifest Options</app-button
                     >
@@ -643,7 +638,7 @@ export class ReportCard extends LitElement {
                     <app-button
                       @click="${() => this.openSWOptions()}"
                       slot="options-button"
-                      class="options-button"
+                      class="options-button secondary"
                       >Service Worker Options</app-button
                     >
                   </score-results>`

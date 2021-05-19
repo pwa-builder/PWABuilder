@@ -224,10 +224,6 @@ export class AppPublish extends LitElement {
         #test-package-button {
           display: block;
           margin-top: 15px;
-
-          --neutral-fill-rest: white;
-          --neutral-fill-active: white;
-          --neutral-fill-hover: white;
         }
 
         #test-package-button::part(underlying-button) {
@@ -235,9 +231,8 @@ export class AppPublish extends LitElement {
         }
 
         #platform-actions-block app-button,
-        #platform-actions-block loading-button {
+        #platform-actions-block loading-button::part(underlying-button) {
           --button-width: 152px;
-          --loading-button-width: 152px;
         }
 
         ${xxxLargeBreakPoint(
@@ -541,7 +536,7 @@ export class AppPublish extends LitElement {
                     >Generate</app-button
                   >
                   <loading-button
-                    class="navigation"
+                    class="navigation secondary"
                     ?loading=${this.generating}
                     id="test-package-button"
                     @click="${() => this.generate('windows')}"

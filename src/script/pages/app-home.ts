@@ -103,14 +103,6 @@ export class AppHome extends LitElement {
           margin-right: 10px;
         }
 
-        #input-form loading-button {
-          flex: 0.21;
-        }
-
-        #input-form loading-button::part(underlying-button) {
-          display: flex;
-        }
-
         #input-form fast-text-field::part(root) {
           border: 1px solid #e5e5e5;
           border-radius: var(--input-radius);
@@ -164,10 +156,6 @@ export class AppHome extends LitElement {
           #input-form fast-text-field::part(control) {
             font-size: 22px;
           }
-
-          #input-form loading-button::part(underlying-button) {
-            margin-top: 44px;
-          }
         `)}
 
         ${mediumBreakPoint(css`
@@ -214,20 +202,6 @@ export class AppHome extends LitElement {
           }
         `)}
 
-        ${mediumBreakPoint(
-          css`
-            #input-form loading-button {
-              --loading-button-height: 64px;
-              --loading-button-width: 180px;
-            }
-
-            #input-form loading-button::part(underlying-button) {
-              --font-size: 22px;
-              margin-top: 44px;
-            }
-          `,
-          'no-lower'
-        )}
 
       ${largeBreakPoint(css`
           content-header::part(main-container) {

@@ -1,11 +1,6 @@
-import {
-  LitElement,
-  css,
-  html
-} from 'lit';
+import { LitElement, css, html } from 'lit';
 
-import { customElement,
-  state, } from "lit/decorators.js"
+import { customElement, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 
 import {
@@ -177,14 +172,6 @@ export class AppCongrats extends LitElement {
         #test-package-button {
           display: block;
           margin-top: 15px;
-
-          --neutral-fill-rest: white;
-          --neutral-fill-active: white;
-          --neutral-fill-hover: white;
-        }
-
-        #test-package-button::part(underlying-button) {
-          --button-font-color: var(--font-color);
         }
 
         #android-publish-button {
@@ -258,38 +245,38 @@ export class AppCongrats extends LitElement {
             }
 
             #other-stores li {
-            flex-direction: column;
-            align-items: flex-start;
-          }
+              flex-direction: column;
+              align-items: flex-start;
+            }
 
-          #other-stores #title-block {
-            width: 100%;
-          }
+            #other-stores #title-block {
+              width: 100%;
+            }
 
-          #other-stores #title-block p {
-            width: unset;
-          }
+            #other-stores #title-block p {
+              width: unset;
+            }
 
-          #other-stores #platform-actions-block {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 2em;
-          }
+            #other-stores #platform-actions-block {
+              width: 100%;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              margin-top: 2em;
+            }
 
-          #other-stores li h2 {
-            font-size: 33px;
+            #other-stores li h2 {
+              font-size: 33px;
 
-            margin-top: 0;
-            margin-bottom: 1em;
-          }
+              margin-top: 0;
+              margin-bottom: 1em;
+            }
 
-          #test-package-button app-button::part(underlying-button) {
-            width: 152px;
-            font-size: var(--font-size);
-            height: 40px;
-          }
+            #test-package-button app-button::part(underlying-button) {
+              width: 152px;
+              font-size: var(--font-size);
+              height: 40px;
+            }
           `
         )}
 
@@ -310,39 +297,39 @@ export class AppCongrats extends LitElement {
               display: none;
             }
 
-          #other-stores li {
-            flex-direction: column;
-            align-items: flex-start;
-          }
+            #other-stores li {
+              flex-direction: column;
+              align-items: flex-start;
+            }
 
-          #other-stores #title-block {
-            width: 100%;
-          }
+            #other-stores #title-block {
+              width: 100%;
+            }
 
-          #other-stores #title-block p {
-            width: unset;
-          }
+            #other-stores #title-block p {
+              width: unset;
+            }
 
-          #other-stores #platform-actions-block {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 2em;
-          }
+            #other-stores #platform-actions-block {
+              width: 100%;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              margin-top: 2em;
+            }
 
-          #other-stores li h2 {
-            font-size: 33px;
+            #other-stores li h2 {
+              font-size: 33px;
 
-            margin-top: 0;
-            margin-bottom: 1em;
-          }
+              margin-top: 0;
+              margin-bottom: 1em;
+            }
 
-          #test-package-button app-button::part(underlying-button) {
-            width: 152px;
-            font-size: var(--font-size);
-            height: 40px;
-          }
+            #test-package-button app-button::part(underlying-button) {
+              width: 152px;
+              font-size: var(--font-size);
+              height: 40px;
+            }
           `
         )},
       `,
@@ -443,7 +430,7 @@ export class AppCongrats extends LitElement {
 
     domEventEmitter.addEventListener('resize', () => {
       this.requestUpdate();
-    })
+    });
   }
 
   firstUpdated() {
@@ -651,7 +638,8 @@ export class AppCongrats extends LitElement {
               <h3>Nice</h3>
 
               <p>
-                Check below to package your PWA for another store and visit our Blog for demos, components and to learn more about PWAs!
+                Check below to package your PWA for another store and visit our
+                Blog for demos, components and to learn more about PWAs!
               </p>
             </section>
 
@@ -666,7 +654,13 @@ export class AppCongrats extends LitElement {
                         <div id="title-block">
                           <h4>Windows</h4>
                           <p>
-                            <a href="https://medium.com/pwabuilder/bringing-chromium-edge-pwas-progressive-web-apps-to-the-microsoft-store-c0bd07914ed9?source=friends_link&sk=04ca8b2ae2bd094b04ef6b53780b5698">PWAs work great on Windows!</a> Tap Test Package to test your PWA on a Windows device, or if you're ready, tap Publish to generate a Microsoft Store-ready package for your PWA!
+                            <a
+                              href="https://medium.com/pwabuilder/bringing-chromium-edge-pwas-progressive-web-apps-to-the-microsoft-store-c0bd07914ed9?source=friends_link&sk=04ca8b2ae2bd094b04ef6b53780b5698"
+                              >PWAs work great on Windows!</a
+                            >
+                            Tap Test Package to test your PWA on a Windows
+                            device, or if you're ready, tap Publish to generate
+                            a Microsoft Store-ready package for your PWA!
                           </p>
                         </div>
 
@@ -679,6 +673,7 @@ export class AppCongrats extends LitElement {
                           <loading-button
                             ?loading=${this.generating}
                             id="test-package-button"
+                            class="navigation secondary"
                             @click="${() => this.generate('windows')}"
                             >Test Package</loading-button
                           >
@@ -695,7 +690,10 @@ export class AppCongrats extends LitElement {
                       <div id="title-block">
                         <h4>Android</h4>
                         <p>
-                          Want to ship your PWA to Android? PWAs also work great on Android and are accepted in the Google Play Store. Tap publish to generate a package you can both test with and submit to the Google Play Store!
+                          Want to ship your PWA to Android? PWAs also work great
+                          on Android and are accepted in the Google Play Store.
+                          Tap publish to generate a package you can both test
+                          with and submit to the Google Play Store!
                         </p>
                       </div>
 
