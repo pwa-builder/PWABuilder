@@ -27,6 +27,7 @@ export const fastButtonCss = css`
   fast-button.secondary {
     background: var(--secondary-color);
     color: var(--font-color);
+    border-color: transparent;
   }
 
   fast-button[appearance='lightweight'] {
