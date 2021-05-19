@@ -17,7 +17,6 @@ import '../components/app-header';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import style from '../../../styles/animations.css';
-import { loadPaintPolyfillIfNeeded } from '../polyfills/css-paint';
 
 @customElement('app-testing')
 export class AppTesting extends LitElement {
@@ -45,7 +44,6 @@ export class AppTesting extends LitElement {
         }
 
         #testing-container {
-          flex: 0.7;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -56,22 +54,16 @@ export class AppTesting extends LitElement {
           animation: 160ms fadeIn linear;
 
           padding-top: 2em;
-          height: 100%;
           width: 100%;
-          background: linear-gradient( 
-      106.57deg
-      , rgba(255, 255, 255, 0.616) 0%, rgba(255, 255, 255, 0.098) 100% );
-          backdrop-filter: blur(40px);
+          background-image: url(/assets/images/loading_page.webp);
+          height: 100%;
+          background-repeat: no-repeat;
+          background-position: center;
+          justify-content: center;
+          background-size: cover;
         }
 
         #glass {
-          --colors: #888094, #5a5ab7, #d9a0f7, #5d2863, #5b5bb9;
-          --min-radius: 30;
-          --max-radius: 100;
-          --num-circles: 15;
-          --min-opacity: 10;
-          --max-opacity: 50;
-          background-image: paint(circles);
           height: calc(100% - 66px);
         }
 
@@ -112,7 +104,7 @@ export class AppTesting extends LitElement {
         #testing-container span {
           font-weight: var(--font-bold);
           font-size: var(--large-font-size);
-          margin-top: 12px;
+          margin-top: 4em;
         }
 
         app-header::part(header) {
@@ -138,6 +130,10 @@ export class AppTesting extends LitElement {
           #testing-container img {
             width: 100%;
           }
+
+          #testing-container span {
+            margin-top: 7em;
+          }
         `)}
       `,
     ];
@@ -157,9 +153,6 @@ export class AppTesting extends LitElement {
 
       await this.runTests(site);
     }
-
-    await loadPaintPolyfillIfNeeded();
-    (CSS as any).paintWorklet.addModule('/workers/header-paint.js');
   }
 
   async runTests(site: string) {
@@ -169,7 +162,7 @@ export class AppTesting extends LitElement {
       const siteUrl = search.get('site');
 
       if (TestResult) {
-        // Completes the loading phase
+        // Completes the loading ase
         // set last phrase and give 300ms to display to user
         // before moving on
 
@@ -217,10 +210,6 @@ export class AppTesting extends LitElement {
     return html` <app-header></app-header>
       <div id="glass">
         <div id="testing-container">
-          <img
-            alt="PWABUilder Logo"
-            src="/assets/images/full_header_logo.png"
-          />
 
           <span>${this.currentPhrase}</span>
 
