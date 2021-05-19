@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { mediumBreakPoint, smallBreakPoint } from '../utils/css/breakpoints';
+import { mediumBreakPoint } from '../utils/css/breakpoints';
 import { fastButtonCss } from '../utils/css/fast-elements';
 import { FastButtonAppearance } from '../utils/fast-element';
 import { AppButtonElement } from '../utils/interfaces.components';
@@ -24,6 +24,7 @@ export class AppButton extends LitElement implements AppButtonElement {
           --button-height: 44px;
           --button-height: var(--desktop-button-height);
           --button-square: var(--button-height);
+          --button-height: 44px;
           --button-width: 127px;
           --button-width: var(--button-width);
           --button-font-color: var(--secondary-color);
