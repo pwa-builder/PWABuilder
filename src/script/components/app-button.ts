@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { mediumBreakPoint } from '../utils/css/breakpoints';
+import { mediumBreakPoint, smallBreakPoint } from '../utils/css/breakpoints';
 import { fastButtonCss } from '../utils/css/fast-elements';
 import { FastButtonAppearance } from '../utils/fast-element';
 import { AppButtonElement } from '../utils/interfaces.components';
