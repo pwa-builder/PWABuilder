@@ -298,6 +298,7 @@ export class AppCard extends LitElement {
 
         fast-button.share.link {
           --desktop-button-font-size: 16px;
+          box-shadow: none;
         }
 
         fast-button.share::part(control) {
