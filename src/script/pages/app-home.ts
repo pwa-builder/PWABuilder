@@ -309,7 +309,7 @@ export class AppHome extends LitElement {
         this.errorGettingURL = true;
 
         if (err.message === 'All promises were rejected') {
-          this.errorMessage = localeStrings.home.error.promises;
+          this.errorMessage = localeStrings.input.home.error.promises;
         } else {
           this.errorMessage = err;
         }
