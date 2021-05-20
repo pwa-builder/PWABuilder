@@ -3,6 +3,7 @@ import { LitElement, css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
 import { classMap } from 'lit/directives/class-map.js';
+import { localeStrings } from '../../locales';
 
 import {
   smallBreakPoint,
@@ -276,10 +277,14 @@ export class AppHome extends LitElement {
         const data = await fetchManifest(this.siteURL);
 
         if (data.error) {
+          console.log('data.error', data);
+
           this.errorGettingURL = true;
           this.errorMessage = data.error;
           throw new Error(`Error getting URL: ${data.error}`);
         } else {
+          console.log('not data.error', data);
+
           this.errorGettingURL = false;
           this.errorMessage = undefined;
 
@@ -296,12 +301,18 @@ export class AppHome extends LitElement {
           }
         }
       } catch (err) {
+        console.log(err, typeof err, err.message);
         console.error('Error getting site', err.message);
 
         this.gettingManifest = false;
 
         this.errorGettingURL = true;
-        this.errorMessage = err;
+
+        if (err.message === 'All promises were rejected') {
+          this.errorMessage = localeStrings.home.error.promises;
+        } else {
+          this.errorMessage = err;
+        }
       }
 
       this.gettingManifest = false;
