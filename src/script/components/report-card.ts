@@ -266,13 +266,11 @@ export class ReportCard extends LitElement {
         `
       )}
 
-
       ${mediumBreakPoint(
         css`
           loading-button {
             --loading-button-height: 64px;
           }
-
           loading-button::part(underlying-button) {
             --font-size: 22px;
           }

@@ -1,6 +1,5 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { smallBreakPoint, mediumBreakPoint } from '../utils/css/breakpoints';
 import { AppButtonElement } from '../utils/interfaces.components';
 
 import '../components/app-button';

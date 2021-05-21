@@ -314,11 +314,9 @@ export class AppPublish extends LitElement {
             loading-button {
               --loading-button-height: 64px;
             }
-
             loading-button::part(underlying-button) {
               --font-size: 22px;
             }
-
             .container .action-buttons fast-anchor,
             .container .action-buttons app-button {
               --button-width: 127px;

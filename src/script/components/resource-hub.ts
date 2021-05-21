@@ -287,6 +287,16 @@ export class ResourceHub extends LitElement {
         888,
         1023
       ),
+      customBreakPoint(
+        css`
+          .resource-hub.home .cards {
+            display: grid;
+            grid-template-columns: auto auto;
+          }
+        `,
+        888,
+        1023
+      ),
     ];
   }
 

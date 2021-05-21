@@ -1,5 +1,10 @@
 {
   "input": {
+    "home": {
+      "error": {
+        "promises": "There was a problem retrieving the manifest from your site."
+      }
+    },
     "manifest": {
       "screenshot": {
         "error": "The url needs to be an absolute url."

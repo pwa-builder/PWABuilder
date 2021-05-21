@@ -3,6 +3,7 @@ import { LitElement, css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
 import { classMap } from 'lit/directives/class-map.js';
+import { localeStrings } from '../../locales';
 
 import {
   smallBreakPoint,
@@ -134,6 +135,10 @@ export class AppHome extends LitElement {
             font-size: var(--large-font-size);
           }
 
+          #start-button {
+            margin-top: 16px;
+          }
+
           #hero-p {
             line-height: 22px;
           }
@@ -199,6 +204,10 @@ export class AppHome extends LitElement {
 
           #input-block {
             margin-bottom: 30px;
+          }
+
+          #start-button {
+            margin-top: 45px;
           }
         `)}
 
@@ -268,10 +277,14 @@ export class AppHome extends LitElement {
         const data = await fetchManifest(this.siteURL);
 
         if (data.error) {
+          console.log('data.error', data);
+
           this.errorGettingURL = true;
           this.errorMessage = data.error;
           throw new Error(`Error getting URL: ${data.error}`);
         } else {
+          console.log('not data.error', data);
+
           this.errorGettingURL = false;
           this.errorMessage = undefined;
 
@@ -288,12 +301,18 @@ export class AppHome extends LitElement {
           }
         }
       } catch (err) {
+        console.log(err, typeof err, err.message);
         console.error('Error getting site', err.message);
 
         this.gettingManifest = false;
 
         this.errorGettingURL = true;
-        this.errorMessage = err;
+
+        if (err.message === 'All promises were rejected') {
+          this.errorMessage = localeStrings.input.home.error.promises;
+        } else {
+          this.errorMessage = err;
+        }
       }
 
       this.gettingManifest = false;
@@ -376,6 +395,7 @@ export class AppHome extends LitElement {
           </div>
 
           <loading-button
+            id="start-button"
             type="submit"
             class="navigation"
             ?loading="${this.gettingManifest}"
