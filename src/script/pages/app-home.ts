@@ -12,7 +12,7 @@ import {
   xxLargeBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
-import { fetchManifest } from '../services/manifest';
+import { isValidURL } from '../utils/url';
 
 import '../components/content-header';
 import '../components/resource-hub';
@@ -28,6 +28,7 @@ import '@pwabuilder/pwainstall';
 import { Router } from '@vaadin/router';
 import { getProgress, getURL, setProgress } from '../services/app-info';
 import { Lazy, ProgressList, Status } from '../utils/interfaces';
+import { fetchManifest } from '../services/manifest';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -274,19 +275,21 @@ export class AppHome extends LitElement {
       this.gettingManifest = true;
 
       try {
-        const data = await fetchManifest(this.siteURL);
+        const validation_test = await isValidURL(this.siteURL);
+        
+        if (validation_test === true) {
+          const data = await fetchManifest(this.siteURL);
 
-        if (data.error) {
-          console.log('data.error', data);
+          if (data.error) {
+  
+            this.errorGettingURL = true;
+            this.errorMessage = data.error;
+            console.warn(`Error getting URL: ${data.error}`);
 
-          this.errorGettingURL = true;
-          this.errorMessage = data.error;
-          throw new Error(`Error getting URL: ${data.error}`);
-        } else {
-          console.log('not data.error', data);
+            return;
+          }
 
           this.errorGettingURL = false;
-          this.errorMessage = undefined;
 
           const progress = getProgress();
           this.updateProgress(progress);
@@ -300,19 +303,16 @@ export class AppHome extends LitElement {
             Router.go(`/testing?site=${goodURL}`);
           }
         }
-      } catch (err) {
-        console.log(err, typeof err, err.message);
-        console.error('Error getting site', err.message);
-
-        this.gettingManifest = false;
-
-        this.errorGettingURL = true;
-
-        if (err.message === 'All promises were rejected') {
-          this.errorMessage = localeStrings.input.home.error.promises;
-        } else {
-          this.errorMessage = err;
+        else {
+          this.errorMessage = localeStrings.input.home.error.invalidURL;
+          this.errorGettingURL = true;
         }
+      }
+      catch (err) {
+        console.error('err', err);
+
+        this.errorMessage = err;
+        this.errorGettingURL = true;
       }
 
       this.gettingManifest = false;
