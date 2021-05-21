@@ -274,14 +274,13 @@ export class AppHome extends LitElement {
     if (this.siteURL) {
       this.gettingManifest = true;
 
-      try {
-        const validation_test = await isValidURL(this.siteURL);
-        
-        if (validation_test === true) {
+      const validation_test = await isValidURL(this.siteURL);
+
+      if (validation_test === true) {
+        try {
           const data = await fetchManifest(this.siteURL);
 
           if (data.error) {
-  
             this.errorGettingURL = true;
             this.errorMessage = data.error;
             console.warn(`Error getting URL: ${data.error}`);
@@ -297,21 +296,25 @@ export class AppHome extends LitElement {
           const goodURL = getURL();
 
           if (goodURL !== undefined) {
-            // couldnt get manifest, thats ok
-            // lets continue forward with the default
-            // zeroed out results.
+            Router.go(`/testing?site=${goodURL}`);
+          }
+        } catch (err) {
+          // couldnt get manifest
+          // continue forward with zeroed out results
+          // and use generated manifest
+          this.errorGettingURL = false;
+
+          const progress = getProgress();
+          this.updateProgress(progress);
+
+          const goodURL = getURL();
+
+          if (goodURL !== undefined) {
             Router.go(`/testing?site=${goodURL}`);
           }
         }
-        else {
-          this.errorMessage = localeStrings.input.home.error.invalidURL;
-          this.errorGettingURL = true;
-        }
-      }
-      catch (err) {
-        console.error('err', err);
-
-        this.errorMessage = err;
+      } else {
+        this.errorMessage = localeStrings.input.home.error.invalidURL;
         this.errorGettingURL = true;
       }
 
