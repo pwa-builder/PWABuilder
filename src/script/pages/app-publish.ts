@@ -188,12 +188,6 @@ export class AppPublish extends LitElement {
           width: 6em;
         }
 
-        #error-modal::part(modal-layout),
-        #download-modal::part(modal-layout),
-        #test-download-modal::part(modal-layout) {
-          max-width: 50vw;
-        }
-
         #error-modal::part(modal-body) {
           max-height: 36vh;
           overflow-y: auto;
@@ -328,6 +322,10 @@ export class AppPublish extends LitElement {
         )}
 
         ${smallBreakPoint(css`
+          #error-modal::part(modal-layout) {
+            width: 100vw;
+          }
+
           #test-package-button app-button::part(underlying-button) {
             font-size: var(--font-size);
           }
@@ -365,6 +363,16 @@ export class AppPublish extends LitElement {
           }
         `)}
       `,
+      mediumBreakPoint(
+        css`
+          #error-modal::part(modal-layout),
+          #download-modal::part(modal-layout),
+          #test-download-modal::part(modal-layout) {
+            max-width: 50vw;
+          }
+        `,
+        'no-upper'
+      ),
     ];
   }
 
