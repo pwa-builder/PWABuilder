@@ -104,6 +104,10 @@ export class AppModal extends LitElement {
 
   constructor() {
     super();
+
+    this.addEventListener('scroll', (e: Event) => {
+      console.log('scroll', e);
+    });
   }
 
   firstUpdated() {
