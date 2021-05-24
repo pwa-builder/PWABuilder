@@ -9,6 +9,11 @@
       "screenshot": {
         "error": "The url needs to be an absolute url."
       }
+    },
+    "publish": {
+      "windows": {
+        "test_package": "Want to test your app first before going to the Microsoft Store? Tap Download to get a package you can install and test."
+      }
     }
   }
 }
