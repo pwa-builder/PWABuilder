@@ -118,6 +118,10 @@ export class AppGallery extends LitElement {
     if (this.images) {
       return this.index >= this.images.length - 1;
     }
+    else {
+      // no images so we are going to disable going forward
+      return false;
+    }
   }
 
   openModal() {

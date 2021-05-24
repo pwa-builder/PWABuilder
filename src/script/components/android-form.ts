@@ -19,6 +19,7 @@ import { AndroidApkOptions } from '../utils/android-validation';
 
 import { smallBreakPoint, xxLargeBreakPoint } from '../utils/css/breakpoints';
 import { Manifest } from '../utils/interfaces';
+import { ChangeEvent } from 'rollup';
 
 @customElement('android-form')
 export class AndroidForm extends LitElement {
@@ -231,7 +232,7 @@ ${smallBreakPoint(
           this.signingMode = "none";
         }
       };
-      fileReader.readAsDataURL(keyFile);
+      fileReader.readAsDataURL((keyFile as Blob));
     }
   }
 
@@ -705,7 +706,7 @@ ${smallBreakPoint(
                 <label>Signing key</label>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="signingInput" id="generateSigningKeyInput" value="new"
-                    name="signingMode" @change="${(ev) => this.androidSigningModeChanged(ev.target.value)}" />
+                    name="signingMode" @change="${(ev) => this.androidSigningModeChanged(((ev.target.value)}" />
                   <label class="form-check-label" for="generateSigningKeyInput">
                     Create new
                     <i class="fas fa-info-circle"
