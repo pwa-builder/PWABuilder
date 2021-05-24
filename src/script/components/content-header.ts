@@ -62,6 +62,7 @@ export class ContentHeader extends LitElement {
 
       :host(.home) #circles-box {
         width: 100%;
+        pointer-events: none;
       }
 
       #content-side {
