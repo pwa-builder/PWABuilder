@@ -97,6 +97,16 @@ export function setURL(url: string) {
   }
 }
 
+export function setCanonicalURL(initialURL) {
+  const parts = new URL(initialURL);
+
+  const needed_part = parts.origin;
+
+  if (needed_part) {
+    setURL(needed_part);
+  }
+}
+
 export function getURL() {
   const url = sessionStorage.getItem('current_url');
 
