@@ -46,8 +46,6 @@ async function getManifestViaFilePost(
     throw new Error(`Unable to get JSON from ${manifestTestUrl}`);
   }
 
-  console.log('responseData', responseData);
-
   setCanonicalURL(responseData.content.url);
 
   return {
