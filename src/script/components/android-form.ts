@@ -1,18 +1,15 @@
-import {
-  LitElement,
-  css,
-  html
-} from 'lit';
+import { LitElement, css, html } from 'lit';
 
-import { customElement, property,
-  state, } from "lit/decorators.js"
-import {ifDefined} from 'lit/directives/if-defined.js';
+import { customElement, property, state } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 import '../components/loading-button';
 import { tooltip, styles as ToolTipStyles } from '../components/tooltip';
 
 //@ts-ignore
-import style from "../../../styles/form-styles.css";
+import style from '../../../styles/form-styles.css';
+//@ts-ignore
+import ModalStyles from '../../../styles/modal-styles.css';
 import { getManifest } from '../services/manifest';
 import { createAndroidPackageOptionsFromManifest } from '../services/publish/android-publish';
 import { AndroidApkOptions } from '../utils/android-validation';
@@ -27,15 +24,15 @@ export class AndroidForm extends LitElement {
   @state() show_adv = false;
 
   // manifest form props
-  @state() signingKeyFullName = "John Doe";
-  @state() organization = "My Company";
-  @state() organizationalUnit = "Engineering";
-  @state() countryCode = "US";
-  @state() keyPassword = "";
-  @state() storePassword = "";
-  @state() alias = "my-key-alias";
+  @state() signingKeyFullName = 'John Doe';
+  @state() organization = 'My Company';
+  @state() organizationalUnit = 'Engineering';
+  @state() countryCode = 'US';
+  @state() keyPassword = '';
+  @state() storePassword = '';
+  @state() alias = 'my-key-alias';
   @state() file: string | undefined = undefined;
-  @state() signingMode = "mine";
+  @state() signingMode = 'mine';
 
   @state() default_options: AndroidApkOptions | undefined;
 
@@ -46,15 +43,17 @@ export class AndroidForm extends LitElement {
   static get styles() {
     return [
       style,
+      ModalStyles,
       ToolTipStyles,
       css`
-
-        fast-text-field::part(root), fast-number-field::part(root) {
+        fast-text-field::part(root),
+        fast-number-field::part(root) {
           border: 1px solid rgba(194, 201, 209, 1);
           border-radius: var(--input-radius);
         }
 
-        fast-text-field::part(control), fast-number-field::part(control) {
+        fast-text-field::part(control),
+        fast-number-field::part(control) {
           color: var(--font-color);
           border-radius: var(--input-radius);
         }
@@ -66,14 +65,14 @@ export class AndroidForm extends LitElement {
         }
 
         ${xxLargeBreakPoint(
-        css`
+          css`
             #form-layout {
               max-height: 17em;
             }
           `
-      )}
+        )}
 
-${smallBreakPoint(
+        ${smallBreakPoint(
           css`
             #form-layout {
               max-height: 20em;
@@ -89,7 +88,9 @@ ${smallBreakPoint(
   }
 
   firstUpdated() {
-    const form = (this.shadowRoot?.querySelector('#android-options-form') as HTMLFormElement);
+    const form = this.shadowRoot?.querySelector(
+      '#android-options-form'
+    ) as HTMLFormElement;
 
     if (form) {
       this.form = form;
@@ -168,9 +169,9 @@ ${smallBreakPoint(
   }
 
   /**
- * Called when the user changes the signing mode.
- */
-  androidSigningModeChanged(mode: "mine" | "new") {
+   * Called when the user changes the signing mode.
+   */
+  androidSigningModeChanged(mode: 'mine' | 'new') {
     if (!this.form) {
       return;
     }
@@ -178,24 +179,24 @@ ${smallBreakPoint(
     this.signingMode = mode;
 
     // If the user chose "mine", clear out existing values.
-    if (mode === "mine") {
-      this.alias = "";
-      this.signingKeyFullName = "";
-      this.organization = "";
-      this.organizationalUnit = "";
-      this.countryCode = "";
-      this.keyPassword = "";
-      this.storePassword = "";
-    } else if (mode === "new") {
-      this.alias = "my-key-alias";
-      this.signingKeyFullName = `${this.currentManifest?.short_name || this.currentManifest?.name || "App"
-        } Admin`;
-      this.organization =
-        this.currentManifest?.name || "PWABuilder";
-      this.organizationalUnit = "Engineering";
-      this.countryCode = "US";
-      this.keyPassword = "";
-      this.storePassword = "";
+    if (mode === 'mine') {
+      this.alias = '';
+      this.signingKeyFullName = '';
+      this.organization = '';
+      this.organizationalUnit = '';
+      this.countryCode = '';
+      this.keyPassword = '';
+      this.storePassword = '';
+    } else if (mode === 'new') {
+      this.alias = 'my-key-alias';
+      this.signingKeyFullName = `${
+        this.currentManifest?.short_name || this.currentManifest?.name || 'App'
+      } Admin`;
+      this.organization = this.currentManifest?.name || 'PWABuilder';
+      this.organizationalUnit = 'Engineering';
+      this.countryCode = 'US';
+      this.keyPassword = '';
+      this.storePassword = '';
       this.file = undefined;
     }
   }
@@ -211,24 +212,24 @@ ${smallBreakPoint(
       const keyFile = filePicker.files[0];
       // Make sure it's a reasonable size.
       if (keyFile && keyFile.size > this.maxKeyFileSizeInBytes) {
-        console.error("Keystore file is too large.", {
+        console.error('Keystore file is too large.', {
           maxSize: this.maxKeyFileSizeInBytes,
           fileSize: keyFile.size,
         });
-        this.signingMode = "none";
+        this.signingMode = 'none';
       }
       // Read it in as a Uint8Array and store it in our signing object.
       const fileReader = new FileReader();
       fileReader.onload = () => (this.file = fileReader.result as string);
-      fileReader.onerror = (progressEvent) => {
+      fileReader.onerror = progressEvent => {
         console.error(
-          "Unable to read keystore file",
+          'Unable to read keystore file',
           fileReader.error,
           progressEvent
         );
         this.file = undefined;
         if (this.form) {
-          this.signingMode = "none";
+          this.signingMode = 'none';
         }
       };
       fileReader.readAsDataURL(keyFile);
@@ -249,8 +250,8 @@ ${smallBreakPoint(
                   role="definition"></i>
 
                   ${tooltip(
-                    "android-package-name",
-                    "The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname",
+                    'android-package-name',
+                    'The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname'
                   )}
               </label>
               <fast-text-field id="packageIdInput" class="form-control" placeholder="Package Name" type="text" required
@@ -260,7 +261,11 @@ ${smallBreakPoint(
             <div class="form-group">
               <label for="appNameInput">App name</label>
               <fast-text-field type="text" class="form-control" id="appNameInput" placeholder="My Awesome PWA"
-                value="${this.default_options ? this.default_options.name : " My Awesome PWA"}" required name="appName" />
+                value="${
+                  this.default_options
+                    ? this.default_options.name
+                    : ' My Awesome PWA'
+                }" required name="appName" />
               </fast-text-field>
             </div>
       
@@ -274,10 +279,14 @@ ${smallBreakPoint(
 
                   ${tooltip(
                     'android-launcher-name',
-                    "The app name used on the Android launch screen. Typically, this is the short name of the app."
+                    'The app name used on the Android launch screen. Typically, this is the short name of the app.'
                   )}
               </label>
-              <fast-text-field type="text" class="form-control" id="appLauncherNameInput" placeholder="Awesome PWA" value="${this.default_options ? this.default_options.launcherName : "Awesome PWA"}" required
+              <fast-text-field type="text" class="form-control" id="appLauncherNameInput" placeholder="Awesome PWA" value="${
+                this.default_options
+                  ? this.default_options.launcherName
+                  : 'Awesome PWA'
+              }" required
                 name="launcherName" />
               </fast-text-field>
             </div>
@@ -285,7 +294,8 @@ ${smallBreakPoint(
       
           <!-- right half of the options dialog -->
           <fast-accordion>
-            <fast-accordion-item @click="${(ev: Event) => this.opened(ev.target)}">
+            <fast-accordion-item @click="${(ev: Event) =>
+              this.opened(ev.target)}">
               <div id="all-settings-header" slot="heading">
                 <span>All Settings</span>
       
@@ -309,7 +319,11 @@ ${smallBreakPoint(
                             "The version of your app displayed to users. This is a string, typically in the form of '1.0.0.0'. Maps to android:versionName."
                           )}
                       </label>
-                      <fast-text-field type="text" class="form-control" id="appVersionInput" placeholder="1.0.0.0" value="${this.default_options ? this.default_options.appVersion : "1.0.0.0"}" required
+                      <fast-text-field type="text" class="form-control" id="appVersionInput" placeholder="1.0.0.0" value="${
+                        this.default_options
+                          ? this.default_options.appVersion
+                          : '1.0.0.0'
+                      }" required
                         name="appVersion" />
                       </fast-text-field>
                     </div>
@@ -329,12 +343,16 @@ ${smallBreakPoint(
                         role="definition" style="margin-left: 5px;"></i>
 
                         ${tooltip(
-                            'android-version-code',
-                            "A positive integer used as an internal version number. This is not shown to users. Android uses this value to protect against downgrades. Maps to android:versionCode."
-                          )}
+                          'android-version-code',
+                          'A positive integer used as an internal version number. This is not shown to users. Android uses this value to protect against downgrades. Maps to android:versionCode.'
+                        )}
                     </label>
                     <fast-number-field type="number" min="1" max="2100000000" class="form-control" id="appVersionCodeInput"
-                      placeholder="1" required value="${this.default_options ? this.default_options.appVersionCode : "1"}" name="appVersionCode" />
+                      placeholder="1" required value="${
+                        this.default_options
+                          ? this.default_options.appVersionCode
+                          : '1'
+                      }" name="appVersionCode" />
                     </fast-number-field>
                   </div>
                 </div>
@@ -345,7 +363,11 @@ ${smallBreakPoint(
                   <div class="form-group">
                     <label for="hostInput">Host</label>
                     <fast-text-field type="url" class="form-control" id="hostInput" placeholder="https://mysite.com" required
-                      name="host" value="${this.default_options ? this.default_options.host : "https://mysite.com"}" />
+                      name="host" value="${
+                        this.default_options
+                          ? this.default_options.host
+                          : 'https://mysite.com'
+                      }" />
                     </fast-text-field>
                   </div>
                 </div>
@@ -364,7 +386,9 @@ ${smallBreakPoint(
                     )}
                 </label>
                 <fast-text-field type="url" class="form-control" id="startUrlInput" placeholder="/index.html" required
-                  name="startUrl" value="${this.default_options ? this.default_options.startUrl : "/"}" />
+                  name="startUrl" value="${
+                    this.default_options ? this.default_options.startUrl : '/'
+                  }" />
                 </fast-text-field>
               </div>
       
@@ -378,11 +402,15 @@ ${smallBreakPoint(
 
                     ${tooltip(
                       'android-status-bar-color',
-                      "Also known as the theme color, this is the color of the Android status bar in your app. Note: the status bar will be hidden if Display Mode is set to fullscreen."
+                      'Also known as the theme color, this is the color of the Android status bar in your app. Note: the status bar will be hidden if Display Mode is set to fullscreen.'
                     )}
                     
                 </label>
-                <input type="color" class="form-control" id="themeColorInput" name="themeColor" value="${this.default_options ? this.default_options.themeColor : "black"}" />
+                <input type="color" class="form-control" id="themeColorInput" name="themeColor" value="${
+                  this.default_options
+                    ? this.default_options.themeColor
+                    : 'black'
+                }" />
               </div>
       
               <div class="form-group">
@@ -395,10 +423,14 @@ ${smallBreakPoint(
 
                     ${tooltip(
                       'android-splash-color',
-                      "Also known as background color, this is the color of the splash screen for your app."
+                      'Also known as background color, this is the color of the splash screen for your app.'
                     )}
                 </label>
-                <input type="color" class="form-control" id="bgColorInput" name="backgroundColor" value="${this.default_options ? this.default_options.backgroundColor : "black"}" />
+                <input type="color" class="form-control" id="bgColorInput" name="backgroundColor" value="${
+                  this.default_options
+                    ? this.default_options.backgroundColor
+                    : 'black'
+                }" />
               </div>
       
               <div class="form-group">
@@ -411,10 +443,14 @@ ${smallBreakPoint(
                 </label>
 
                 ${tooltip(
-                      'android-nav-color',
-                      "The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
-                    )}
-                <input type="color" class="form-control" id="navigationColorInput" name="navigationColor" value="${this.default_options ? this.default_options.navigationColor : "black"}" />
+                  'android-nav-color',
+                  'The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen.'
+                )}
+                <input type="color" class="form-control" id="navigationColorInput" name="navigationColor" value="${
+                  this.default_options
+                    ? this.default_options.navigationColor
+                    : 'black'
+                }" />
               </div>
       
               <div class="form-group">
@@ -427,10 +463,14 @@ ${smallBreakPoint(
 
                     ${tooltip(
                       'android-nav-color-dark',
-                      "The color of the Android navigation bar in your app when Android is in dark mode."
+                      'The color of the Android navigation bar in your app when Android is in dark mode.'
                     )}
                 </label>
-                <input type="color" class="form-control" id="navigationColorDarkInput" name="navigationColorDark" value="${this.default_options ? this.default_options.navigationColorDark : "black"}" />
+                <input type="color" class="form-control" id="navigationColorDarkInput" name="navigationColorDark" value="${
+                  this.default_options
+                    ? this.default_options.navigationColorDark
+                    : 'black'
+                }" />
               </div>
       
               <div class="form-group">
@@ -441,10 +481,14 @@ ${smallBreakPoint(
 
                     ${tooltip(
                       'android-divider-color',
-                      "The color of the Android navigation bar divider in your app."
+                      'The color of the Android navigation bar divider in your app.'
                     )}
                 </label>
-                <input type="color" class="form-control" id="navigationDividerColorInput" name="navigationDividerColor" value="${this.default_options ? this.default_options.navigationDividerColor : "black"}" />
+                <input type="color" class="form-control" id="navigationDividerColorInput" name="navigationDividerColor" value="${
+                  this.default_options
+                    ? this.default_options.navigationDividerColor
+                    : 'black'
+                }" />
               </div>
       
               <div class="form-group">
@@ -457,17 +501,23 @@ ${smallBreakPoint(
 
                     ${tooltip(
                       'android-divider-color-dark',
-                      "The color of the Android navigation navigation bar divider in your app when Android is in dark mode."
+                      'The color of the Android navigation navigation bar divider in your app when Android is in dark mode.'
                     )}
                 </label>
                 <input type="color" class="form-control" id="navigationDividerColorDarkInput"
-                  name="navigationDividerColorDark" value="${this.default_options ? this.default_options.navigationDividerColorDark : "black"}" />
+                  name="navigationDividerColorDark" value="${
+                    this.default_options
+                      ? this.default_options.navigationDividerColorDark
+                      : 'black'
+                  }" />
               </div>
       
               <div class="form-group">
                 <label for="iconUrlInput">Icon URL</label>
                 <fast-text-field type="url" class="form-control" id="iconUrlInput"
-                  placeholder="https://myawesomepwa.com/512x512.png" name="iconUrl" value="${this.default_options ? this.default_options.iconUrl : ""}" />
+                  placeholder="https://myawesomepwa.com/512x512.png" name="iconUrl" value="${
+                    this.default_options ? this.default_options.iconUrl : ''
+                  }" />
                 </fast-text-field>
               </div>
       
@@ -482,11 +532,15 @@ ${smallBreakPoint(
 
                     ${tooltip(
                       'maskable-icon-url',
-                      "Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms."
+                      'Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms.'
                     )}
                 </label>
                 <fast-text-field type="url" class="form-control" id="maskIconUrlInput"
-                  placeholder="https://myawesomepwa.com/512x512-maskable.png" name="maskableIconUrl" .value="${this.default_options ? this.default_options.maskableIconUrl : ""}" />
+                  placeholder="https://myawesomepwa.com/512x512-maskable.png" name="maskableIconUrl" .value="${
+                    this.default_options
+                      ? this.default_options.maskableIconUrl
+                      : ''
+                  }" />
                 </fast-text-field>
               </div>
       
@@ -501,18 +555,26 @@ ${smallBreakPoint(
 
                     ${tooltip(
                       'mono-icon-url',
-                      "Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings."
+                      'Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings.'
                     )}
                 </label>
                 <fast-text-field type="url" class="form-control" id="monochromeIconUrlInput"
-                  placeholder="https://myawesomepwa.com/512x512-monochrome.png" name="monochromeIconUrl" .value="${this.default_options ? this.default_options.monochromeIconUrl : ""}" />
+                  placeholder="https://myawesomepwa.com/512x512-monochrome.png" name="monochromeIconUrl" .value="${
+                    this.default_options
+                      ? this.default_options.monochromeIconUrl
+                      : ''
+                  }" />
                 </fast-text-field>
               </div>
       
               <div class="form-group">
                 <label for="splashFadeoutInput">Splash screen fade out duration (ms)</label>
                 <fast-number-field type="number" class="form-control" id="splashFadeoutInput" placeholder="300"
-                  name="splashScreenFadeOutDuration" value="${this.default_options ? this.default_options.splashScreenFadeOutDuration : "300"}" />
+                  name="splashScreenFadeOutDuration" value="${
+                    this.default_options
+                      ? this.default_options.splashScreenFadeOutDuration
+                      : '300'
+                  }" />
                 </fast-number-field>
               </div>
       
@@ -529,9 +591,9 @@ ${smallBreakPoint(
                       role="definition"></i>
 
                       ${tooltip(
-                      'fallback-behavior',
-                      "Use Chrome Custom Tabs as a fallback for your PWA when the full trusted web activity (TWA) experience is unavailable."
-                    )}
+                        'fallback-behavior',
+                        'Use Chrome Custom Tabs as a fallback for your PWA when the full trusted web activity (TWA) experience is unavailable.'
+                      )}
                   </label>
                 </div>
                 <div class="form-check">
@@ -545,9 +607,9 @@ ${smallBreakPoint(
                       role="definition"></i>
 
                       ${tooltip(
-                      'fallback-behavior',
-                      "Use a web view as the fallback for your PWA when the full trusted web activity (TWA) experience is unavailable."
-                    )}
+                        'fallback-behavior',
+                        'Use a web view as the fallback for your PWA when the full trusted web activity (TWA) experience is unavailable.'
+                      )}
                   </label>
                 </div>
               </div>
@@ -565,9 +627,9 @@ ${smallBreakPoint(
                       role="definition"></i>
 
                       ${tooltip(
-                      'display-mode-standalone',
-                      "Your PWA will use the whole screen but keep the Android status bar and navigation bar."
-                    )}
+                        'display-mode-standalone',
+                        'Your PWA will use the whole screen but keep the Android status bar and navigation bar.'
+                      )}
                   </label>
                 </div>
                 <div class="form-check">
@@ -581,9 +643,9 @@ ${smallBreakPoint(
                       role="definition"></i>
 
                       ${tooltip(
-                      'display-mode-fullscreen',
-                      "Your PWA will use the whole screen and remove the Android status bar and navigation bar. Suitable for immersive experiences such as games or media apps."
-                    )}
+                        'display-mode-fullscreen',
+                        'Your PWA will use the whole screen and remove the Android status bar and navigation bar. Suitable for immersive experiences such as games or media apps.'
+                      )}
                   </label>
                 </div>
               </div>
@@ -600,9 +662,9 @@ ${smallBreakPoint(
                       role="definition"></i>
 
                       ${tooltip(
-                      'push-delegation',
-                      "Whether to enable Push Notification Delegation. If enabled, your PWA can send push notifications without browser permission prompts."
-                    )}
+                        'push-delegation',
+                        'Whether to enable Push Notification Delegation. If enabled, your PWA can send push notifications without browser permission prompts.'
+                      )}
                   </label>
                 </div>
               </div>
@@ -619,9 +681,9 @@ ${smallBreakPoint(
                       role="definition"></i>
 
                       ${tooltip(
-                      'location-delegation',
-                      "Whether to enable Location Delegation. If enabled, your PWA can acess navigator.geolocation without browser permission prompts."
-                    )}
+                        'location-delegation',
+                        'Whether to enable Location Delegation. If enabled, your PWA can acess navigator.geolocation without browser permission prompts.'
+                      )}
                   </label>
                 </div>
               </div>
@@ -638,9 +700,9 @@ ${smallBreakPoint(
                       role="definition"></i>
 
                       ${tooltip(
-                      'play-billing',
-                      "Whether to enable in-app purchases through Google Play Billing and the Digital Goods API."
-                    )}
+                        'play-billing',
+                        'Whether to enable in-app purchases through Google Play Billing and the Digital Goods API.'
+                      )}
                   </label>
                 </div>
               </div>
@@ -658,9 +720,9 @@ ${smallBreakPoint(
                       role="definition"></i>
 
                       ${tooltip(
-                      'settings-shortcut',
-                      "If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app."
-                    )}
+                        'settings-shortcut',
+                        'If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app.'
+                      )}
                   </label>
                 </div>
               </div>
@@ -675,9 +737,9 @@ ${smallBreakPoint(
                       aria-label="If enabled, your Android package will only run on ChromeOS devices" role="definition"></i>
 
                       ${tooltip(
-                      'chromeos-only',
-                      "If enabled, your Android package will only run on ChromeOS devices"
-                    )}
+                        'chromeos-only',
+                        'If enabled, your Android package will only run on ChromeOS devices'
+                      )}
                   </label>
                 </div>
               </div>
@@ -694,9 +756,9 @@ ${smallBreakPoint(
                       role="definition"></i>
 
                       ${tooltip(
-                      'include-source',
-                      "If enabled, your download will include the source code for your Android app."
-                    )}
+                        'include-source',
+                        'If enabled, your download will include the source code for your Android app.'
+                      )}
                   </label>
                 </div>
               </div>
@@ -705,7 +767,8 @@ ${smallBreakPoint(
                 <label>Signing key</label>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="signingInput" id="generateSigningKeyInput" value="new"
-                    name="signingMode" @change="${(ev) => this.androidSigningModeChanged(ev.target.value)}" />
+                    name="signingMode" @change="${ev =>
+                      this.androidSigningModeChanged(ev.target.value)}" />
                   <label class="form-check-label" for="generateSigningKeyInput">
                     Create new
                     <i class="fas fa-info-circle"
@@ -714,14 +777,15 @@ ${smallBreakPoint(
                       role="definition"></i>
 
                       ${tooltip(
-                      'signing-key-new',
-                      "PWABuilder will generate a new signing key for you and sign your APK with it. Your download will contain the new signing key and passwords."
-                    )}
+                        'signing-key-new',
+                        'PWABuilder will generate a new signing key for you and sign your APK with it. Your download will contain the new signing key and passwords.'
+                      )}
                   </label>
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="signingInput" id="unsignedInput" value="none"
-                    name="signingMode" @change="${(ev) => this.androidSigningModeChanged(ev.target.value)}" />
+                    name="signingMode" @change="${ev =>
+                      this.androidSigningModeChanged(ev.target.value)}" />
                   <label class="form-check-label" for="unsignedInput">
                     None
                     <i class="fas fa-info-circle"
@@ -730,14 +794,15 @@ ${smallBreakPoint(
                       role="definition"></i>
 
                       ${tooltip(
-                      'signing-key-none',
-                      "PWABuilder will generate an unsigned APK. Google Play Store will sign your package. This is Google's recommended approach."
-                    )}
+                        'signing-key-none',
+                        "PWABuilder will generate an unsigned APK. Google Play Store will sign your package. This is Google's recommended approach."
+                      )}
                   </label>
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="signingInput" id="useMySigningInput" value="mine"
-                    name="signingMode" @change="${(ev) => this.androidSigningModeChanged(ev.target.value)}" />
+                    name="signingMode" @change="${ev =>
+                      this.androidSigningModeChanged(ev.target.value)}" />
                   <label class="form-check-label" for="useMySigningInput">
                     Use mine
                     <i class="fas fa-info-circle"
@@ -746,9 +811,9 @@ ${smallBreakPoint(
                       role="definition"></i>
 
                       ${tooltip(
-                      'signing-key-mine',
-                      "Upload your existing signing key. Use this option if you already have a signing key and you want to publish a new version of an existing app in Google Play."
-                    )}
+                        'signing-key-mine',
+                        'Upload your existing signing key. Use this option if you already have a signing key and you want to publish a new version of an existing app in Google Play.'
+                      )}
                   </label>
                 </div>
               </div>
@@ -757,7 +822,10 @@ ${smallBreakPoint(
                 <div class="form-group" v-if="form.signingMode === 'mine'">
                   <label for="signingKeyInput">Key file</label>
                   <input type="file" class="form-control" id="signingKeyInput"
-                    @change="${(ev) => this.androidSigningKeyUploaded(ev.target)}" accept=".keystore" required
+                    @change="${ev =>
+                      this.androidSigningKeyUploaded(
+                        ev.target
+                      )}" accept=".keystore" required
                     style="border: none;" value="${ifDefined(this.file)}" />
                 </div>
       
@@ -771,7 +839,9 @@ ${smallBreakPoint(
                 <div class="form-group" v-if="form.signingMode === 'new'">
                   <label for="signingKeyFullNameInput">Key full name</label>
                   <fast-text-field type="text" class="form-control" id="signingKeyFullNameInput" required
-                    placeholder="John Doe" name="fullName" value="${this.signingKeyFullName}" />
+                    placeholder="John Doe" name="fullName" value="${
+                      this.signingKeyFullName
+                    }" />
                   </fast-text-field>
                 </div>
       
@@ -785,7 +855,9 @@ ${smallBreakPoint(
                 <div class="form-group" v-if="form.signingMode === 'new'">
                   <label for="signingKeyOrgUnitInput">Key organizational unit</label>
                   <fast-text-field type="text" class="form-control" id="signingKeyOrgUnitInput" required
-                    placeholder="Engineering Department" name="organizationalUnit" value="${this.organizationalUnit}" />
+                    placeholder="Engineering Department" name="organizationalUnit" value="${
+                      this.organizationalUnit
+                    }" />
                   </fast-text-field>
                 </div>
       
@@ -796,9 +868,9 @@ ${smallBreakPoint(
                       aria-label="The 2 letter country code to list on the signing key" role="definition"></i>
 
                       ${tooltip(
-                      'key-country-code',
-                      "The 2 letter country code to list on the signing key"
-                    )}
+                        'key-country-code',
+                        'The 2 letter country code to list on the signing key'
+                      )}
                   </label>
                   <fast-text-field type="text" class="form-control" id="signingKeyCountryCodeInput" required placeholder="US"
                     name="countryCode" value="${this.countryCode}">
@@ -814,12 +886,14 @@ ${smallBreakPoint(
                       role="definition"></i>
 
                       ${tooltip(
-                      'key-password',
-                      "The password for the signing key. Type a new password or leave empty to use a generated password."
-                    )}
+                        'key-password',
+                        'The password for the signing key. Type a new password or leave empty to use a generated password.'
+                      )}
                   </label>
                   <fast-text-field type="password" class="form-control" id="signingKeyPasswordInput" name="keyPassword"
-                    placeholder="Password to your signing key" value="${this.keyPassword}" />
+                    placeholder="Password to your signing key" value="${
+                      this.keyPassword
+                    }" />
                   </fast-text-field>
                 </div>
       
@@ -833,11 +907,13 @@ ${smallBreakPoint(
 
                     ${tooltip(
                       'keystore-password',
-                      "The password for the key store. Type a new password or leave empty to use a generated password."
+                      'The password for the key store. Type a new password or leave empty to use a generated password.'
                     )}
                   </label>
                   <fast-text-field type="password" class="form-control" id="signingKeyStorePasswordInput" name="storePassword"
-                    placeholder="Password to your key store" value="${this.storePassword}" />
+                    placeholder="Password to your key store" value="${
+                      this.storePassword
+                    }" />
                   </fast-text-field>
                 </div>
               </div>
@@ -854,7 +930,9 @@ ${smallBreakPoint(
         </div>
       
         <div slot="modal-actions" id="form-options-actions">
-          <loading-button @click="${() => this.initGenerate()}" .loading="${this.generating}">Generate</loading-button>
+          <loading-button @click="${() => this.initGenerate()}" .loading="${
+      this.generating
+    }">Generate</loading-button>
         </div>
       </form>
     `;
