@@ -1,0 +1,7 @@
+.modal-actions {
+  display: block;
+  position: fixed;
+  bottom: 0;
+
+  margin-bottom: 16px;
+}
