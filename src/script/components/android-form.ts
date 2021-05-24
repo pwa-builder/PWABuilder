@@ -929,7 +929,7 @@ export class AndroidForm extends LitElement {
           </p>
         </div>
       
-        <div slot="modal-actions" id="form-options-actions">
+        <div id="form-options-actions" class="modal-actions" >
           <loading-button @click="${() => this.initGenerate()}" .loading="${
       this.generating
     }">Generate</loading-button>
