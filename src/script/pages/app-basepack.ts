@@ -354,7 +354,7 @@ export class AppBasePack extends LitElement {
                   <loading-button
                     ?loading="${this.loading}"
                     @click="${() => this.doWebGenerate()}"
-                    >Generate</loading-button
+                    >Download</loading-button
                   >
                 </div>
               </div>
