@@ -188,6 +188,7 @@ export class ReportCard extends LitElement {
 
       #badge-section img {
         width: 60px;
+        margin-left: -10px;
       }
 
       #badge-text h4 {
