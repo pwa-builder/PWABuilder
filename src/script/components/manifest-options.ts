@@ -105,6 +105,11 @@ export class AppManifest extends LitElement {
       fastMenuCss,
       fastRadioCss,
       css`
+        app-button,
+        loading-button::part(underlying-button) {
+          margin-top: 8px;
+        }
+
         fast-divider {
           margin: 16px 0;
           border-color: rgb(229, 229, 229);
@@ -117,6 +122,10 @@ export class AppManifest extends LitElement {
 
         fast-accordion-item {
           --base-height-multiplier: 20;
+        }
+
+        fast-button.link {
+          box-shadow: none;
         }
 
         #bg-custom-color {
@@ -151,6 +160,7 @@ export class AppManifest extends LitElement {
 
         .images-header {
           display: flex;
+          flex-direction: column;
           justify-content: space-between;
           vertical-align: middle;
         }
@@ -409,18 +419,16 @@ export class AppManifest extends LitElement {
               class="show-sm"
               .images=${this.iconSrcListParse()}
             ></app-gallery>
-
-            <div class="images-actions hidden-sm">
-              <loading-button
-                appearance="outline"
-                ?loading=${this.awaitRequest}
-                ?disabled=${this.manifest && this.manifest.icons
-                  ? this.manifest.icons.length > 0
-                  : false}
-                @click=${this.downloadIcons}
-                >Download</loading-button
-              >
-            </div>
+            <loading-button
+              class="hidden-sm"
+              appearance="outline"
+              ?loading=${this.awaitRequest}
+              ?disabled=${this.manifest && this.manifest.icons
+                ? this.manifest.icons.length > 0
+                : false}
+              @click=${this.downloadIcons}
+              >Download</loading-button
+            >
           </div>
           <div class="screenshots">
             <div class="screenshots-header">
@@ -437,8 +445,9 @@ export class AppManifest extends LitElement {
               ${this.renderScreenshotInputUrlList()}
               <!-- Add url button -->
               <fast-button
-                @click=${this.addNewScreenshot}
+                class="link"
                 appearance="lightweight"
+                @click=${this.addNewScreenshot}
                 ?disabled=${this.screenshotList?.length >= 8 || true}
                 >+ Add URL</fast-button
               >
