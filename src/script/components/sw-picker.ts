@@ -50,7 +50,7 @@ export class SWPicker extends LitElement {
           align-items: center;
           justify-content: space-between;
           padding-bottom: 35px;
-          border-bottom: 0.67681px solid #e5e5e5;
+          border-bottom: solid 1px rgb(229, 229, 229);
         }
 
         h4 {
