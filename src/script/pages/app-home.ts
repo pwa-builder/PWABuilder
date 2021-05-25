@@ -56,7 +56,6 @@ export class AppHome extends LitElement {
           font-size: var(--xlarge-font-size);
           line-height: 48px;
           letter-spacing: -0.015em;
-          max-width: 526px;
           margin-bottom: 0;
         }
 

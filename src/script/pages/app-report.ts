@@ -64,7 +64,6 @@ export class AppReport extends LitElement {
         h2 {
           font-size: 44px;
           line-height: 46px;
-          max-width: 526px;
         }
 
         #hero-p {
