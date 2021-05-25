@@ -96,11 +96,6 @@ export class SWPicker extends LitElement {
           justify-content: flex-end;
         }
 
-        #score-block {
-          font-size: var(--medium-font-size);
-          font-weight: var(--font-bold);
-        }
-
         .actions #select-button::part(underlying-button) {
           background: white;
           color: var(--font-color);
@@ -163,8 +158,6 @@ export class SWPicker extends LitElement {
           <div id="header-info">
             <div id="header-block">
               <h4>Service Worker</h4>
-
-              <span id="score-block">${this.score} / 20</span>
             </div>
           </div>
 
