@@ -19,6 +19,7 @@ export default {
     json(),
     typescript({
       tsconfig: "tsconfig.dev.json",
+      resolveJsonModule: true
     }),
     litcss(),
     replace({

@@ -378,9 +378,9 @@ export class ReportCard extends LitElement {
           };
         }
       });
-    } else {
-      return undefined;
     }
+
+    return undefined;
   }
 
   async handleNoResults(): Promise<RawTestResult> {

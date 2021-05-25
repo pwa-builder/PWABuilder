@@ -9,7 +9,7 @@ export class AppBadges extends LitElement {
   @state() current_badges: Array<{ name: string; url: string }> | undefined;
   @state() possible_badges: Array<{ name: string; url: string }> | undefined;
 
-  duplicate: Array<{ name: string; url: string }>;
+  duplicate: Array<{ name: string; url: string }> | undefined;
 
   static get styles() {
     return css`
@@ -57,6 +57,10 @@ export class AppBadges extends LitElement {
             <div
               class="${classMap({
                 badge: true,
+                // @ts-ignore
+                // I am ignoring here as this is valid JS, but when I fix the TS error
+                // the functionality of this code breaks
+                // Justin: Revisit
                 locked: this.duplicate.find(dupe => {
                   return badge.name === dupe.name;
                 })
