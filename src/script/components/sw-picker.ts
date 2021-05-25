@@ -81,7 +81,8 @@ export class SWPicker extends LitElement {
         p {
           font-size: var(--font-size);
           color: var(--font-color);
-          max-width: 767px;
+
+          max-width: 38em;
         }
 
         #header-block {
