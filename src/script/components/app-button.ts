@@ -34,6 +34,10 @@ export class AppButton extends LitElement implements AppButtonElement {
       // fast css
       fastButtonCss,
       css`
+        [appearance='lightweight'] {
+          box-shadow: none;
+        }
+
         fast-button.link {
           --accent-foreground-active: var(--font-color);
           --accent-foreground-hover: var(--font-color);

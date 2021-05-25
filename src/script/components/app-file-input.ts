@@ -1,10 +1,6 @@
-import {
-  LitElement,
-  css,
-  html
-} from 'lit';
+import { LitElement, css, html } from 'lit';
 
-import { customElement, property, query } from "lit/decorators.js"
+import { customElement, property, query } from 'lit/decorators.js';
 
 import { hidden } from '../utils/css/hidden';
 import { fastButtonCss } from '../utils/css/fast-elements';
@@ -19,7 +15,9 @@ export class FileInput extends LitElement {
   static get styles() {
     return [
       css`
-
+        [appearance='lightweight'] {
+          box-shadow: none;
+        }
       `,
       hidden,
       fastButtonCss,
