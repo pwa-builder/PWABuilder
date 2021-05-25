@@ -206,10 +206,6 @@ export class AppPublish extends LitElement {
           box-shadow: var(--button-shadow);
         }
 
-        #actions {
-          display: flex;
-        }
-
         #windows-options-modal::part(modal-layout),
         #android-options-modal::part(modal-layout) {
           width: 64vw;
