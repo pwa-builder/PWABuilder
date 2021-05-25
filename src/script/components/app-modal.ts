@@ -4,6 +4,9 @@ import { customElement, property } from 'lit/decorators.js';
 import { ModalCloseEvent } from '../utils/interfaces';
 import { smallBreakPoint } from '../utils/css/breakpoints';
 
+//@ts-ignore
+import ModalStyles from '../../../styles/modal-styles.css';
+
 @customElement('app-modal')
 export class AppModal extends LitElement {
   @property({ type: Boolean }) open = false;
@@ -15,79 +18,84 @@ export class AppModal extends LitElement {
   backgroundAni: Animation | undefined = undefined;
 
   static get styles() {
-    return css`
-      #background {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: transparent;
-        backdrop-filter: blur(10px);
-        z-index: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    return [
+      ModalStyles,
+      css`
+        #background {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: transparent;
+          backdrop-filter: blur(10px);
+          z-index: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
 
-        z-index: 3;
-      }
+          z-index: 3;
+        }
 
-      #modal {
-        background: white;
-        margin: 51px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        padding-left: 16px;
-        padding-right: 16px;
-        padding-bottom: 45px;
-        border-radius: 8px;
-        box-shadow: 0px 16px 24px rgba(0, 0, 0, 0.12);
+        #modal {
+          background: white;
+          margin: 51px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+          padding-left: 16px;
+          padding-right: 16px;
+          padding-bottom: 45px;
+          border-radius: 8px;
+          box-shadow: 0px 16px 24px rgba(0, 0, 0, 0.12);
 
-        z-index: 4;
-      }
+          z-index: 4;
+        }
 
-      #modal-header #title {
-        font-weight: bold;
-        font-size: var(--medium-font-size);
-        line-height: 28px;
-      }
+        #modal-header #title {
+          display: block;
+          width: 100%;
+          text-align: center;
+          font-weight: bold;
+          font-size: var(--medium-font-size);
+          line-height: 28px;
+        }
 
-      #modal-body {
-        text-align: center;
-      }
+        #modal-body {
+          text-align: center;
+        }
 
-      #modal-body p {
-        font-weight: 300;
-        font-size: 14px;
-        line-height: 20px;
-        color: var(--secondary-font-color);
-      }
+        #modal-body p {
+          font-weight: 300;
+          font-size: 14px;
+          line-height: 20px;
+          color: var(--secondary-font-color);
+        }
 
-      #modal-form {
-        padding: 14px;
-        width: 100%;
-      }
+        #modal-form {
+          padding: 14px;
+          width: 100%;
+        }
 
-      #back-button-block {
-        width: 100%;
-        display: flex;
-        justify-content: flex-end;
-      }
+        #back-button-block {
+          width: 100%;
+          display: flex;
+          justify-content: flex-end;
+        }
 
-      #back-button-block fast-button {
-        margin-top: 12px;
-        background: none;
-      }
+        #back-button-block fast-button {
+          margin-top: 12px;
+          background: none;
+        }
 
-      #back-button-block fast-button ion-icon {
-        height: 2em;
-        width: 2em;
-        color: #c2c9d1;
-      }
-
-      ${smallBreakPoint(css`
+        #back-button-block fast-button ion-icon {
+          height: 2em;
+          width: 2em;
+          color: #c2c9d1;
+        }
+      `,
+      smallBreakPoint(css`
         #modal {
           margin: 0px;
           padding: 0px;
@@ -98,8 +106,13 @@ export class AppModal extends LitElement {
         #modal-form {
           height: 100%;
         }
-      `)}
-    `;
+
+        #back-button-block {
+          position: fixed;
+          top: 0;
+        }
+      `),
+    ];
   }
 
   constructor() {
@@ -185,9 +198,7 @@ export class AppModal extends LitElement {
               </fast-button>
             </div>
 
-            <div id="modal-image">
-              <slot name="modal-image"></slot>
-            </div>
+            <slot id="modal-image" name="modal-image"></slot>
 
             <section id="modal-header">
               <span id="title">${this.title}</span>
@@ -197,13 +208,9 @@ export class AppModal extends LitElement {
               <p>${this.body}</p>
             </section>
 
-            <section id="modal-form">
-              <slot name="modal-form"></slot>
-            </section>
+            <slot id="modal-form" name="modal-form"></slot>
 
-            <section id="modal-actions">
-              <slot name="modal-actions"></slot>
-            </section>
+            <slot class="modal-actions" name="modal-actions"></slot>
           </div>
         </div>
       `;

@@ -1,16 +1,13 @@
-import {
-  LitElement,
-  css,
-  html,
-} from 'lit';
+import { LitElement, css, html } from 'lit';
 
-import { customElement, property,
-  state, } from "lit/decorators.js"
+import { customElement, property, state } from 'lit/decorators.js';
 
 import '../components/loading-button';
 import { tooltip, styles as ToolTipStyles } from '../components/tooltip';
 //@ts-ignore
-import style from "../../../styles/form-styles.css";
+import style from '../../../styles/form-styles.css';
+//@ts-ignore
+import ModalStyles from '../../../styles/modal-styles.css';
 
 import { getURL } from '../services/app-info';
 import { getManiURL } from '../services/manifest';
@@ -29,9 +26,9 @@ export class WindowsForm extends LitElement {
   static get styles() {
     return [
       style,
+      ModalStyles,
       ToolTipStyles,
       css`
-
         #form-layout fast-text-field::part(root) {
           border: 1px solid rgba(194, 201, 209, 1);
           border-radius: var(--input-radius);
@@ -41,8 +38,6 @@ export class WindowsForm extends LitElement {
           color: var(--font-color);
           border-radius: var(--input-radius);
         }
-
-        
 
         @media (min-height: 760px) and (max-height: 1000px) {
           form {
@@ -76,7 +71,7 @@ export class WindowsForm extends LitElement {
   firstUpdated() {
     const defaultOptions = createWindowsPackageOptionsFromManifest();
 
-    if(defaultOptions){ 
+    if (defaultOptions) {
       this.default_options = defaultOptions;
     }
   }
@@ -276,7 +271,9 @@ export class WindowsForm extends LitElement {
                         id="windowsAppNameInput"
                         placeholder="My Awesome PWA"
                         name="appName"
-                        value="${this.default_options ? this.default_options.name : "My Awesome PWA"}"
+                        value="${this.default_options
+                          ? this.default_options.name
+                          : 'My Awesome PWA'}"
                         required
                       ></fast-text-field>
                     </div>
@@ -312,7 +309,9 @@ export class WindowsForm extends LitElement {
                         id="windowsAppVersionInput"
                         placeholder="1.0.1"
                         name="appVersion"
-                        value="${this.default_options ? this.default_options.version : "1.0.0"}"
+                        value="${this.default_options
+                          ? this.default_options.version
+                          : '1.0.0'}"
                         required
                       ></fast-text-field>
                     </div>
@@ -348,7 +347,9 @@ export class WindowsForm extends LitElement {
                         id="windowsClassicAppVersionInput"
                         placeholder="1.0.0"
                         name="classicVersion"
-                        .value="${this.default_options ? this.default_options.classicPackage?.version : "1.0.1"}"
+                        .value="${this.default_options
+                          ? this.default_options.classicPackage?.version
+                          : '1.0.1'}"
                         required
                       ></fast-text-field>
                     </div>
@@ -377,7 +378,9 @@ export class WindowsForm extends LitElement {
                     placeholder="/index.html"
                     name="url"
                     required
-                    value="${this.default_options ? this.default_options.url : getURL()}"
+                    value="${this.default_options
+                      ? this.default_options.url
+                      : getURL()}"
                   ></fast-text-field>
                 </div>
 
@@ -402,7 +405,9 @@ export class WindowsForm extends LitElement {
                     id="windowsManifestUrlInput"
                     placeholder="https://mysite.com/manifest.json"
                     name="manifestUrl"
-                    .value="${this.default_options ? this.default_options.manifestUrl : getManiURL()}"
+                    .value="${this.default_options
+                      ? this.default_options.manifestUrl
+                      : getManiURL()}"
                     required
                   ></fast-text-field>
                 </div>
@@ -427,7 +432,9 @@ export class WindowsForm extends LitElement {
                     class="form-control"
                     id="windowsStartUrlInput"
                     placeholder="https://mysite.com/startpoint.html"
-                    .value="${this.default_options ? this.default_options.manifest?.start_url : "/"}"
+                    .value="${this.default_options
+                      ? this.default_options.manifest?.start_url
+                      : '/'}"
                     name="startUrl"
                   ></fast-text-field>
                 </div>
@@ -458,7 +465,9 @@ export class WindowsForm extends LitElement {
                     class="form-control"
                     id="windowsIconUrlInput"
                     placeholder="https://myawesomepwa.com/512x512.png"
-                    .value="${this.default_options ? this.default_options.images?.baseImage : ""}"
+                    .value="${this.default_options
+                      ? this.default_options.images?.baseImage
+                      : ''}"
                     name="iconUrl"
                   ></fast-text-field>
                 </div>
@@ -483,7 +492,9 @@ export class WindowsForm extends LitElement {
                     class="form-control"
                     id="windowsLanguageInput"
                     placeholder="EN-US"
-                    .value="${this.default_options ? this.default_options.manifest?.lang : "US-EN"}"
+                    .value="${this.default_options
+                      ? this.default_options.manifest?.lang
+                      : 'US-EN'}"
                     name="language"
                   ></fast-text-field>
                 </div>
@@ -500,7 +511,7 @@ export class WindowsForm extends LitElement {
           </p>
         </div>
 
-        <div slot="modal-actions" id="form-options-actions">
+        <div id="form-options-actions" class="modal-actions">
           <loading-button
             @click="${() => this.initGenerate()}"
             .loading="${this.generating}"
