@@ -62,13 +62,13 @@ export async function cleanUrl(url: string) {
   }
 
   if (cleanedUrl) {
-    const test = await isValidUrl(cleanedUrl);
+    const test = await isValidURL(cleanedUrl);
 
     if (
-      test.message !== undefined &&
+      test === false &&
       !url.toLowerCase().startsWith('http://')
     ) {
-      throw `${test.message}: this error means that you may have a bad https cert or the url may not be correct`;
+      throw "This error means that you may have a bad https cert or the url may not be correct";
     } else {
       return cleanedUrl;
     }
@@ -78,13 +78,13 @@ export async function cleanUrl(url: string) {
   }
 }
 
-async function isValidUrl(url: string) {
-  try {
-    return await fetch(url, {
-      mode: 'no-cors',
-      credentials: 'include',
-    });
-  } catch (err) {
-    return err;
-  }
+export function isValidURL(str) {
+  // from https://stackoverflow.com/a/5717133
+  var pattern = new RegExp('^(https?:\\/\\/)?'+
+    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ 
+    '((\\d{1,3}\\.){3}\\d{1,3}))'+
+    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+
+    '(\\?[;&a-z\\d%_.~+=-]*)?'+
+    '(\\#[-a-z\\d_]*)?$','i');
+  return !!pattern.test(str);
 }

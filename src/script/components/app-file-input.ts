@@ -9,7 +9,7 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 
 @customElement('app-file-input')
 export class FileInput extends LitElement {
-  @property({ type: String }) inputId: string;
+  @property({ type: String, attribute: true }) inputId: string;
   @query('.file-input') fileInput: Lazy<HTMLInputElement>;
 
   static get styles() {

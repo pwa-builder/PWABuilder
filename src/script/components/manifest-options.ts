@@ -785,7 +785,7 @@ export class AppManifest extends LitElement {
       const input = <HTMLInputElement>event.target;
       const list = Number(input.dataset['list']);
       const index = Number(input.dataset['index']);
-      const imageList: Array<Icon> = this.manifest[list];
+      const imageList: Array<Icon> = this.manifest ? this.manifest[list] : null;
 
       this.updateManifest({
         [list]: imageList.slice(0, index).concat(imageList.slice(index + 1)),

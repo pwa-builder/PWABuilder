@@ -24,7 +24,8 @@ export default {
     html(),
     json(),
     typescript({
-      tsconfig: "tsconfig.json"
+      tsconfig: "tsconfig.json",
+      resolveJsonModule: true
     }),
     litcss(),
     terser(),
