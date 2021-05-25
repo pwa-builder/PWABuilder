@@ -316,7 +316,6 @@ export class AppManifest extends LitElement {
 
         .collection.image-items {
           height: 170px;
-          display: block;
           overflow-x: scroll;
           scroll-snap-type: x proximity;
           white-space: nowrap;
