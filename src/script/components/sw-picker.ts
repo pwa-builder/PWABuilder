@@ -42,7 +42,7 @@ export class SWPicker extends LitElement {
         }
 
         ul {
-          margin-top: 4em;
+          margin-top: 23px;
         }
 
         li {
@@ -93,7 +93,8 @@ export class SWPicker extends LitElement {
 
         #header-actions {
           display: flex;
-          justify-content: flex-end;
+          justify-content: flex-start;
+          margin-top: 23px;
         }
 
         .actions #select-button::part(underlying-button) {
