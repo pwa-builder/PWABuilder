@@ -47,7 +47,7 @@
 #form-details-block p {
   text-align: center;
   font-weight: 300;
-  font-size: var(--small-medium-font-size);
+  font-size: var(--small-font-size);
 
   color: rgba(128, 128, 128, 1);
   line-height: 30px;

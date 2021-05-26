@@ -329,6 +329,10 @@ export class AppCongrats extends LitElement {
               font-size: var(--font-size);
               height: 40px;
             }
+
+            #anchor-block {
+              justify-content: space-around;
+            }
           `
         )},
       `,
