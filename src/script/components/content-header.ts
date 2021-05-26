@@ -78,6 +78,8 @@ export class ContentHeader extends LitElement {
       :host ::slotted(h2) {
         margin-bottom: 0;
         line-height: 40px;
+
+        max-width: 474px;
       }
 
       ${smallBreakPoint(css`

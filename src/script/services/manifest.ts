@@ -10,7 +10,7 @@ import {
   ManifestDetectionResult,
 } from '../utils/interfaces';
 import { cleanUrl } from '../utils/url';
-import { setURL } from './app-info';
+import { setCanonicalURL, setURL } from './app-info';
 
 export const emitter = new EventTarget();
 let manifest: Lazy<Manifest>;
@@ -46,6 +46,8 @@ async function getManifestViaFilePost(
     throw new Error(`Unable to get JSON from ${manifestTestUrl}`);
   }
 
+  setCanonicalURL(responseData.content.url);
+
   return {
     content: responseData.manifestContents,
     format: 'w3c',
@@ -80,6 +82,8 @@ async function getManifestViaHtmlParse(
     throw new Error(`Error fetching from ${manifestTestUrl}`);
   }
   const responseData: ManifestFinderResult = await response.json();
+
+  setCanonicalURL(responseData.manifestUrl);
 
   if (responseData.error || !responseData.manifestContents) {
     console.warn(

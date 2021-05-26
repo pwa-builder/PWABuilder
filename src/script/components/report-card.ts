@@ -188,6 +188,7 @@ export class ReportCard extends LitElement {
 
       #badge-section img {
         width: 60px;
+        margin-left: -10px;
       }
 
       #badge-text h4 {
@@ -378,9 +379,9 @@ export class ReportCard extends LitElement {
           };
         }
       });
-    } else {
-      return undefined;
     }
+
+    return undefined;
   }
 
   async handleNoResults(): Promise<RawTestResult> {

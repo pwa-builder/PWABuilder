@@ -28,6 +28,8 @@ import { fileSave } from 'browser-fs-access';
 import { Router } from '@vaadin/router';
 import { getURL } from '../services/app-info';
 
+import { localeStrings } from '../../locales';
+
 @customElement('app-basepack')
 export class AppBasePack extends LitElement {
   @state() mql = window.matchMedia(
@@ -96,7 +98,6 @@ export class AppBasePack extends LitElement {
         h2 {
           font-size: var(--xlarge-font-size);
           line-height: 46px;
-          max-width: 526px;
         }
 
         #hero-p {
@@ -269,7 +270,7 @@ export class AppBasePack extends LitElement {
       <app-modal
         ?open="${this.blob ? true : false}"
         title="Test Package Download"
-        body="Want to test your files first before publishing? No problem! Description here about how this isn’t store ready and how they can come back and publish their PWA after doing whatever they need to do with their testing etc etc tc etc."
+        .body="${localeStrings.input.publish.windows.test_package}"
         id="test-download-modal"
       >
         <img
@@ -352,7 +353,7 @@ export class AppBasePack extends LitElement {
                   <loading-button
                     ?loading="${this.loading}"
                     @click="${() => this.doWebGenerate()}"
-                    >Generate</loading-button
+                    >Download</loading-button
                   >
                 </div>
               </div>

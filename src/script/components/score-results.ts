@@ -26,6 +26,8 @@ export class ScoreResults extends LitElement {
         display: grid;
         grid-template-columns: auto auto;
         grid-gap: 0 3em;
+        
+        margin-bottom: 16px;
       }
 
       #mani-scorecard-header p {

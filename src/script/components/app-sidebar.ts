@@ -3,7 +3,7 @@ import {
   mediumBreakPoint,
   smallBreakPoint,
 } from './../utils/css/breakpoints';
-import { LitElement, css, html } from 'lit';
+import { LitElement, css, html, TemplateResult } from 'lit';
 
 import { customElement, property, state } from 'lit/decorators.js';
 
@@ -600,7 +600,7 @@ export class AppSidebar extends LitElement {
 
   @property({ type: Boolean }) isDeskTopView = this.mql.matches;
 
-  renderIcon(item: Progress | ProgressItem) {
+  renderIcon(item: Progress | ProgressItem): TemplateResult | void {
     if (item.done == 'done') {
       return html`
         <ion-icon class="icon done" name="checkmark-outline"></ion-icon>
@@ -658,7 +658,6 @@ export class AppSidebar extends LitElement {
                             aria-hidden="true"
                           />`}
                       <span>${item.header}</span>
-                      <span class="item-name">${this.renderIcon(item)}</span>
                     </div>
                   </div>
                 `;

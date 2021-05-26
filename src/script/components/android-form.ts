@@ -16,6 +16,7 @@ import { AndroidApkOptions } from '../utils/android-validation';
 
 import { smallBreakPoint, xxLargeBreakPoint } from '../utils/css/breakpoints';
 import { Manifest } from '../utils/interfaces';
+import { ChangeEvent } from 'rollup';
 
 @customElement('android-form')
 export class AndroidForm extends LitElement {
@@ -232,7 +233,7 @@ export class AndroidForm extends LitElement {
           this.signingMode = 'none';
         }
       };
-      fileReader.readAsDataURL(keyFile);
+      fileReader.readAsDataURL((keyFile as Blob));
     }
   }
 

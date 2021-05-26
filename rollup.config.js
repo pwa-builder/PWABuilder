@@ -24,7 +24,8 @@ export default {
     html(),
     json(),
     typescript({
-      tsconfig: "tsconfig.json"
+      tsconfig: "tsconfig.json",
+      resolveJsonModule: true
     }),
     litcss(),
     terser(),
@@ -38,6 +39,7 @@ export default {
         { src: "manifest.json", dest: "dist/" },
         { src: "workers/**/*", dest: "dist/workers/" },
         { src: "routes.json", dest: "dist/" },
+        { src: "fast-components.min.js", dest: "build/" }
       ],
     })
   ],
