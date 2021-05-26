@@ -93,7 +93,6 @@ export class AppPublish extends LitElement {
         h2 {
           font-size: var(--xlarge-font-size);
           line-height: 46px;
-          max-width: 526px;
         }
 
         #hero-p {

@@ -32,7 +32,8 @@ export default {
         { src: "assets/**/*", dest: "build/assets/" },
         { src: "styles/global.css", dest: "build/styles/" },
         { src: "manifest.json", dest: "build/" },
-        { src: "workers/**/*", dest: "build/workers/" }
+        { src: "workers/**/*", dest: "build/workers/" },
+        { src: "fast-components.min.js", dest: "build/" }
       ],
     }),
   ],

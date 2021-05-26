@@ -39,6 +39,7 @@ export default {
         { src: "manifest.json", dest: "dist/" },
         { src: "workers/**/*", dest: "dist/workers/" },
         { src: "routes.json", dest: "dist/" },
+        { src: "fast-components.min.js", dest: "build/" }
       ],
     })
   ],

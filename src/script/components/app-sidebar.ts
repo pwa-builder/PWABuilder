@@ -658,7 +658,6 @@ export class AppSidebar extends LitElement {
                             aria-hidden="true"
                           />`}
                       <span>${item.header}</span>
-                      <span class="item-name">${this.renderIcon(item)}</span>
                     </div>
                   </div>
                 `;

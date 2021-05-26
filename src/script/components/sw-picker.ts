@@ -42,7 +42,7 @@ export class SWPicker extends LitElement {
         }
 
         ul {
-          margin-top: 4em;
+          margin-top: 23px;
         }
 
         li {
@@ -50,7 +50,7 @@ export class SWPicker extends LitElement {
           align-items: center;
           justify-content: space-between;
           padding-bottom: 35px;
-          border-bottom: 0.67681px solid #e5e5e5;
+          border-bottom: solid 1px rgb(229, 229, 229);
         }
 
         h4 {
@@ -81,7 +81,8 @@ export class SWPicker extends LitElement {
         p {
           font-size: var(--font-size);
           color: var(--font-color);
-          max-width: 767px;
+
+          max-width: 38em;
         }
 
         #header-block {
@@ -92,12 +93,8 @@ export class SWPicker extends LitElement {
 
         #header-actions {
           display: flex;
-          justify-content: flex-end;
-        }
-
-        #score-block {
-          font-size: var(--medium-font-size);
-          font-weight: var(--font-bold);
+          justify-content: flex-start;
+          margin-top: 23px;
         }
 
         .actions #select-button::part(underlying-button) {
@@ -162,8 +159,6 @@ export class SWPicker extends LitElement {
           <div id="header-info">
             <div id="header-block">
               <h4>Service Worker</h4>
-
-              <span id="score-block">${this.score} / 20</span>
             </div>
           </div>
 

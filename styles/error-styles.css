@@ -8,6 +8,7 @@
 .error-message {
   color: var(--error-color);
   font-size: var(--small-font-size);
+  margin-top: 6px;
 }
 
 .error::part(control) {
