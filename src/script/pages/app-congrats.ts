@@ -335,6 +335,10 @@ export class AppCongrats extends LitElement {
           #anchor-block {
             justify-content: space-around;
           }
+
+          #blog-block app-card {
+            height: 300px;
+          }
         `
       ),
       hidden_all,
