@@ -223,106 +223,54 @@ export class AppPublish extends LitElement {
         #platform-actions-block loading-button::part(underlying-button) {
           --button-width: 152px;
         }
-
-        ${xxxLargeBreakPoint(
-          css`
-            #report {
-              max-width: 69em;
-            }
-
-            app-sidebar {
-              display: block;
-            }
-
-            #tablet-sidebar {
-              display: none;
-            }
-
-            #desktop-sidebar {
-              display: block;
-            }
-
-            #publish-wrapper {
-              max-width: 69em;
-              background: white;
-            }
-          `
-        )}
-
-        ${largeBreakPoint(
-          css`
-            #tablet-sidebar {
-              display: block;
-            }
-
-            #desktop-sidebar {
-              display: none;
-            }
-          `
-        )}
-
-        ${mediumBreakPoint(
-          css`
-            .publish h2 {
-              font-size: 33px;
-              max-width: 10em;
-
-              margin-top: 0;
-              margin-bottom: 1em;
-            }
-
-            .publish p {
-              display: none;
-            }
-
-            li {
-              flex-direction: column;
-              align-items: flex-start;
-            }
-
-            #title-block {
-              width: 100%;
-            }
-
-            #title-block p {
-              width: unset;
-            }
-
-            #platform-actions-block {
-              width: 100%;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              margin-top: 2em;
-            }
-          `
-        )}
-
-        ${mediumBreakPoint(
-          css`
-            loading-button {
-              --loading-button-height: 64px;
-            }
-            loading-button::part(underlying-button) {
-              --font-size: 22px;
-            }
-            .container .action-buttons fast-anchor,
-            .container .action-buttons app-button {
-              --button-width: 127px;
-              font-size: var(--mobile-button-fontsize);
-              width: var(--button-width);
-            }
-          `,
-          'no-lower'
-        )}
-
-        ${smallBreakPoint(css`
-          #error-modal::part(modal-layout) {
-            width: 100vw;
+      `,
+      xxxLargeBreakPoint(
+        css`
+          #report {
+            max-width: 69em;
           }
 
-          #test-package-button app-button::part(underlying-button) {
-            font-size: var(--font-size);
+          app-sidebar {
+            display: block;
+          }
+
+          #tablet-sidebar {
+            display: none;
+          }
+
+          #desktop-sidebar {
+            display: block;
+          }
+
+          #publish-wrapper {
+            max-width: 69em;
+            background: white;
+          }
+        `
+      ),
+      largeBreakPoint(
+        css`
+          #tablet-sidebar {
+            display: block;
+          }
+
+          #desktop-sidebar {
+            display: none;
+          }
+        `
+      ),
+      mediumBreakPoint(
+        css`
+          .publish h2 {
+            font-size: 33px;
+            max-width: 10em;
+
+            margin-top: 0;
+            margin-bottom: 1em;
+          }
+
+          .publish p {
+            display: none;
           }
 
           li {
@@ -345,19 +293,25 @@ export class AppPublish extends LitElement {
             align-items: center;
             margin-top: 2em;
           }
-
-          .publish h2 {
-            font-size: 33px;
-
-            margin-top: 0;
-            margin-bottom: 1em;
+        `
+      ),
+      mediumBreakPoint(
+        css`
+          loading-button {
+            --loading-button-height: 64px;
           }
-
-          .publish p {
-            display: none;
+          loading-button::part(underlying-button) {
+            --font-size: 22px;
           }
-        `)}
-      `,
+          .container .action-buttons fast-anchor,
+          .container .action-buttons app-button {
+            --button-width: 127px;
+            font-size: var(--mobile-button-fontsize);
+            width: var(--button-width);
+          }
+        `,
+        'no-lower'
+      ),
       mediumBreakPoint(
         css`
           #error-modal::part(modal-layout),
@@ -368,6 +322,47 @@ export class AppPublish extends LitElement {
         `,
         'no-upper'
       ),
+      smallBreakPoint(css`
+        #error-modal::part(modal-layout) {
+          width: 100vw;
+        }
+
+        #test-package-button app-button::part(underlying-button) {
+          font-size: var(--font-size);
+        }
+
+        li {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        #title-block {
+          width: 100%;
+        }
+
+        #title-block p {
+          width: unset;
+        }
+
+        #platform-actions-block {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          margin-top: 2em;
+        }
+
+        .publish h2 {
+          font-size: 33px;
+
+          margin-top: 0;
+          margin-bottom: 1em;
+        }
+
+        .publish p {
+          display: none;
+        }
+      `),
     ];
   }
 
@@ -528,6 +523,7 @@ export class AppPublish extends LitElement {
             <p>${platform.description}</p>
           </div>
 
+          <!-- TODO need to fix the platform action blocks text spacing for the left. -->
           <div id="platform-actions-block">
             ${platform.title.toLowerCase() === 'windows'
               ? html`
