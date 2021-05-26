@@ -42,6 +42,8 @@ export const styles = css`
     --tooltip-background-color: var(--font-color);
 
     --base-height-multiplier: 4;
+
+    box-shadow: none;
   }
 
   .tooltip {
