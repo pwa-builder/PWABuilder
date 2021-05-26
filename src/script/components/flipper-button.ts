@@ -17,7 +17,7 @@ export class FlipperButton extends LitElement implements AppButtonElement {
       css`
         .flipper-button {
           animation-name: close;
-          animation-duration: 0.1s;
+          animation-duration: 0.3s;
           animation-iteration-count: 1;
 
           background: white;
@@ -33,6 +33,7 @@ export class FlipperButton extends LitElement implements AppButtonElement {
 
         .flipper-button.opened {
           animation-name: open;
+          transform: rotate(90deg);
         }
 
         .flipper-button ion-icon {
