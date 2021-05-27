@@ -61,6 +61,10 @@ export class AppCongrats extends LitElement {
           display: none;
         }
 
+        app-button {
+          --button-width: 152px;
+        }
+
         #summary-block {
           padding: 16px 16px 16px 36px;
           border-bottom: var(--list-border);
