@@ -43,10 +43,18 @@ import './dropdown-menu';
 import './app-file-input';
 import './app-gallery';
 import './code-editor';
+import './flipper-button';
 import { generateMissingImagesBase64 } from '../services/icon_generator';
 import { generateScreenshots } from '../services/screenshots';
 import { validateScreenshotUrlsList } from '../utils/manifest-validation';
-import { mediumBreakPoint, smallBreakPoint } from '../utils/css/breakpoints';
+import {
+  largeBreakPoint,
+  mediumBreakPoint,
+  smallBreakPoint,
+  xLargeBreakPoint,
+  xxLargeBreakPoint,
+  xxxLargeBreakPoint,
+} from '../utils/css/breakpoints';
 import { hidden_sm } from '../utils/css/hidden';
 import { generateAndDownloadIconZip } from '../services/download_icons';
 import { ifDefined } from 'lit/directives/if-defined.js';
@@ -85,6 +93,9 @@ export class AppManifest extends LitElement {
 
   @state()
   protected searchParams: Lazy<URLSearchParams>;
+
+  @state()
+  protected editorOpened = false;
 
   protected get siteUrl(): string {
     if (!this.searchParams) {
@@ -267,6 +278,15 @@ export class AppManifest extends LitElement {
         fast-accordion-item::part(button) {
           color: var(--font-color);
         }
+
+        .accordion-heading-block {
+          width: 79vw;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+
+          color: var(--font-color);
+        }
       `,
       // modal
       css`
@@ -295,6 +315,41 @@ export class AppManifest extends LitElement {
         }
       `,
       // breakpoints
+      xxxLargeBreakPoint(css`
+        .accordion-heading-block {
+          width: 94em;
+        }
+      `),
+      xxLargeBreakPoint(
+        css`
+          .accordion-heading-block {
+            max-width: 83vw;
+            width: 83vw;
+          }
+        `
+      ),
+      xLargeBreakPoint(
+        css`
+          .accordion-heading-block,
+          #report-content {
+            width: 79vw;
+          }
+        `
+      ),
+      largeBreakPoint(
+        css`
+          .accordion-heading-block {
+            width: 86vw;
+          }
+        `
+      ),
+      mediumBreakPoint(
+        css`
+          .accordion-heading-block {
+            width: 86vw;
+          }
+        `
+      ),
       mediumBreakPoint(
         css`
           .head .top-section,
@@ -342,6 +397,10 @@ export class AppManifest extends LitElement {
         .show-sm {
           display: block;
           visibility: visible;
+        }
+
+        .accordion-heading-block {
+          width: 90vw;
         }
       `),
       hidden_sm,
@@ -478,8 +537,14 @@ export class AppManifest extends LitElement {
         </section>
         <section class="view-code">
           <fast-accordion>
-            <fast-accordion-item>
-              <h1 slot="heading">View Code</h1>
+            <fast-accordion-item @click=${this.handleEditorOpened}>
+              <div class="accordion-heading-block" slot="heading">
+                <h1>View Code</h1>
+                <flipper-button
+                  class="large end"
+                  .opened=${this.editorOpened}
+                ></flipper-button>
+              </div>
               <code-editor
                 .startText=${JSON.stringify(this.manifest, null, 2)}
                 @code-editor-update=${this.handleEditorUpdate}
@@ -810,6 +875,10 @@ export class AppManifest extends LitElement {
     } catch (ex) {
       console.error('failed to parse the manifest successfully', e, ex);
     }
+  }
+
+  handleEditorOpened() {
+    this.editorOpened = !this.editorOpened;
   }
 
   validIconInput() {
