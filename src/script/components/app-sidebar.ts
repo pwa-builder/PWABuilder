@@ -41,8 +41,11 @@ export class AppSidebar extends LitElement {
         font-size: var(--small-font-size);
         font-weight: var(--font-bold);
         padding-bottom: 11px;
-        border-left: 0.772396px solid rgba(255, 255, 255, 0.2);
         padding-left: 5px;
+      }
+
+      .progress-index {
+        margin-right: 4px;
       }
 
       .lastItem .sidebar-item-header {
@@ -306,10 +309,14 @@ export class AppSidebar extends LitElement {
       }
 
       .pending,
-      .done,
-      .pending::part(heading),
-      .done::part(heading) {
+      .pending::part(heading)
+      {
         color: rgba(255, 255, 255, 0.5);
+      }
+
+      .done, .done::part(heading) {
+        color: var(--success-color);
+        opacity: 0.5;
       }
 
       .active::part(heading) {
@@ -636,7 +643,7 @@ export class AppSidebar extends LitElement {
 
           <sidebar-card title="Progress">
             <div id="progress-block">
-              ${this.menuItems?.progress.map(item => {
+              ${this.menuItems?.progress.map((item, index) => {
                 return html`
                   <div
                     class="${classMap({
@@ -647,16 +654,7 @@ export class AppSidebar extends LitElement {
                     })}"
                   >
                     <div class="sidebar-item-header" slot="heading">
-                      ${item.done === Status.ACTIVE
-                        ? html`<ion-icon
-                            class="icon active"
-                            name="ellipse"
-                          ></ion-icon>`
-                        : html`<img
-                            class="icon other"
-                            src="/assets/ellipse-outline.svg"
-                            aria-hidden="true"
-                          />`}
+                      <span class="progress-index">${++index}.</span>
                       <span>${item.header}</span>
                     </div>
                   </div>
