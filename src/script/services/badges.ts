@@ -9,7 +9,7 @@ const possible_badges = [
   { name: 'Store Ready', url: '/assets/badges/store_ready_badge.svg' },
 ];
 
-const current_badges: Array<{ name: string; url: string }> = [];
+let current_badges: Array<{ name: string; url: string }> = [];
 
 export const no_pwa_icon = {
   name: 'Not a PWA',
@@ -18,6 +18,9 @@ export const no_pwa_icon = {
 
 export function giveOutBadges() {
   const results = getResults();
+
+  current_badges = [];
+  sessionStorage.removeItem("current_badges");
 
   if (results) {
     const hasMani = results.manifest[0].result;
@@ -114,9 +117,6 @@ export function sortBadges(): Array<{ name: string; url: string }> {
   const possible_badges = getPossibleBadges();
   const current_badges = getCurrentBadges();
 
-  console.log('current_badges', current_badges);
-  console.log('possible_badges', possible_badges);
-
   const combined: Array<{ name: string; url: string }> = [];
 
   possible_badges.forEach(badge => {
@@ -149,6 +149,7 @@ export function sortBadges(): Array<{ name: string; url: string }> {
 
   console.log('duplicate', duplicates);
 
+  sessionStorage.removeItem("current_badges");
   sessionStorage.setItem('current_badges', JSON.stringify(duplicates));
 
   return duplicates;
