@@ -15,6 +15,11 @@ export class FlipperButton extends LitElement implements AppButtonElement {
   static get styles() {
     return [
       css`
+        :host {
+          --height: 16px;
+          --min-width: 16px;
+        }
+
         .flipper-button {
           animation-name: close;
           animation-duration: 0.3s;
@@ -25,8 +30,8 @@ export class FlipperButton extends LitElement implements AppButtonElement {
           border-radius: 50%;
           color: #5231a7;
 
-          height: 16px;
-          min-width: 16px;
+          height: var(--height);
+          min-width: var(--min-width);
 
           margin-left: 5px;
         }
@@ -34,6 +39,17 @@ export class FlipperButton extends LitElement implements AppButtonElement {
         .flipper-button.opened {
           animation-name: open;
           transform: rotate(90deg);
+        }
+
+        .flipper-button.large {
+          --height: 32px;
+          --min-width: 32px;
+        }
+
+        .flipper-button.large ion-icon {
+          height: 18px;
+          min-width: 18px;
+          font-size: 18px;
         }
 
         .flipper-button ion-icon {

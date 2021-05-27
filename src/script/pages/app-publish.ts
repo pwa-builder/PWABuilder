@@ -21,6 +21,7 @@ import {
 
 //@ts-ignore
 import style from '../../../styles/layout-defaults.css';
+import { fastAnchorCss } from '../utils/css/fast-elements';
 import { fileSave } from 'browser-fs-access';
 import { fetchManifest } from '../services/manifest';
 import { Manifest } from '../utils/interfaces';
@@ -66,6 +67,7 @@ export class AppPublish extends LitElement {
   static get styles() {
     return [
       style,
+      fastAnchorCss,
       css`
         .header {
           padding: 1rem 3rem;
@@ -184,7 +186,7 @@ export class AppPublish extends LitElement {
         }
 
         .modal-image {
-          width: 6em;
+          width: 50px;
         }
 
         #error-modal::part(modal-body) {
@@ -205,11 +207,6 @@ export class AppPublish extends LitElement {
           box-shadow: var(--button-shadow);
         }
 
-        #windows-options-modal::part(modal-layout),
-        #android-options-modal::part(modal-layout) {
-          width: 64vw;
-        }
-
         #test-package-button {
           display: block;
           margin-top: 15px;
@@ -224,105 +221,64 @@ export class AppPublish extends LitElement {
           --button-width: 152px;
         }
 
-        ${xxxLargeBreakPoint(
-          css`
-            #report {
-              max-width: 69em;
-            }
+        #actions {
+          display: flex;
+          flex-direction: column;
+        }
 
-            app-sidebar {
-              display: block;
-            }
-
-            #tablet-sidebar {
-              display: none;
-            }
-
-            #desktop-sidebar {
-              display: block;
-            }
-
-            #publish-wrapper {
-              max-width: 69em;
-              background: white;
-            }
-          `
-        )}
-
-        ${largeBreakPoint(
-          css`
-            #tablet-sidebar {
-              display: block;
-            }
-
-            #desktop-sidebar {
-              display: none;
-            }
-          `
-        )}
-
-        ${mediumBreakPoint(
-          css`
-            .publish h2 {
-              font-size: 33px;
-              max-width: 10em;
-
-              margin-top: 0;
-              margin-bottom: 1em;
-            }
-
-            .publish p {
-              display: none;
-            }
-
-            li {
-              flex-direction: column;
-              align-items: flex-start;
-            }
-
-            #title-block {
-              width: 100%;
-            }
-
-            #title-block p {
-              width: unset;
-            }
-
-            #platform-actions-block {
-              width: 100%;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              margin-top: 2em;
-            }
-          `
-        )}
-
-        ${mediumBreakPoint(
-          css`
-            loading-button {
-              --loading-button-height: 64px;
-            }
-            loading-button::part(underlying-button) {
-              --font-size: 22px;
-            }
-            .container .action-buttons fast-anchor,
-            .container .action-buttons app-button {
-              --button-width: 127px;
-              font-size: var(--mobile-button-fontsize);
-              width: var(--button-width);
-            }
-          `,
-          'no-lower'
-        )}
-
-        ${smallBreakPoint(css`
-          #error-modal::part(modal-layout) {
-            width: 100vw;
+        #actions fast-anchor.button,
+        #actions app-button {
+          margin-right: 0;
+          margin-top: 8px;
+        }
+      `,
+      xxxLargeBreakPoint(
+        css`
+          #report {
+            max-width: 69em;
           }
 
-          #test-package-button app-button::part(underlying-button) {
-            font-size: var(--font-size);
+          app-sidebar {
+            display: block;
+          }
+
+          #tablet-sidebar {
+            display: none;
+          }
+
+          #desktop-sidebar {
+            display: block;
+          }
+
+          #publish-wrapper {
+            max-width: 69em;
+            background: white;
+          }
+        `
+      ),
+      largeBreakPoint(
+        css`
+          #tablet-sidebar {
+            display: block;
+          }
+
+          #desktop-sidebar {
+            display: none;
+          }
+        `
+      ),
+      mediumBreakPoint(
+        css`
+          .publish h2 {
+            font-size: 33px;
+            max-width: 10em;
+
+            margin-top: 0;
+            margin-bottom: 1em;
+          }
+
+          .publish p {
+            display: none;
           }
 
           li {
@@ -345,29 +301,68 @@ export class AppPublish extends LitElement {
             align-items: center;
             margin-top: 2em;
           }
-
-          .publish h2 {
-            font-size: 33px;
-
-            margin-top: 0;
-            margin-bottom: 1em;
-          }
-
-          .publish p {
-            display: none;
-          }
-        `)}
-      `,
+        `
+      ),
       mediumBreakPoint(
         css`
-          #error-modal::part(modal-layout),
-          #download-modal::part(modal-layout),
-          #test-download-modal::part(modal-layout) {
-            max-width: 50vw;
+          loading-button {
+            --loading-button-height: 64px;
+          }
+          loading-button::part(underlying-button) {
+            --font-size: 22px;
+          }
+          .container .action-buttons fast-anchor,
+          .container .action-buttons app-button {
+            --button-width: 127px;
+            font-size: var(--mobile-button-fontsize);
+            height: var(--mobile-button-height);
+            width: var(--button-width);
+            margin: 22px;
           }
         `,
-        'no-upper'
+        'no-lower'
       ),
+      smallBreakPoint(css`
+        #error-modal::part(modal-layout) {
+          width: 100vw;
+        }
+
+        #test-package-button app-button::part(underlying-button) {
+          font-size: var(--font-size);
+        }
+
+        li {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        #title-block {
+          width: 100%;
+        }
+
+        #title-block p {
+          width: unset;
+        }
+
+        #platform-actions-block {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          margin-top: 2em;
+        }
+
+        .publish h2 {
+          font-size: 33px;
+
+          margin-top: 0;
+          margin-bottom: 1em;
+        }
+
+        .publish p {
+          display: none;
+        }
+      `),
     ];
   }
 
@@ -528,6 +523,7 @@ export class AppPublish extends LitElement {
             <p>${platform.description}</p>
           </div>
 
+          <!-- TODO need to fix the platform action blocks text spacing for the left. -->
           <div id="platform-actions-block">
             ${platform.title.toLowerCase() === 'windows'
               ? html`
@@ -600,6 +596,7 @@ export class AppPublish extends LitElement {
           <fast-anchor
             target="__blank"
             id="error-link"
+            class="button"
             .href="${this.reportPackageErrorUrl}"
             >Report A Problem</fast-anchor
           >
@@ -734,7 +731,7 @@ export class AppPublish extends LitElement {
                 <app-button @click="${() => this.returnToFix()}"
                   >Back</app-button
                 >
-                <fast-anchor href="/congrats">Next</fast-anchor>
+                <fast-anchor class="button" href="/congrats">Next</fast-anchor>
               </div>
             </section>
           </div>

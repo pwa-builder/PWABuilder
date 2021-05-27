@@ -61,6 +61,10 @@ export class AppCongrats extends LitElement {
           display: none;
         }
 
+        app-button {
+          --button-width: 152px;
+        }
+
         #summary-block {
           padding: 16px 16px 16px 36px;
           border-bottom: var(--list-border);
@@ -192,150 +196,155 @@ export class AppCongrats extends LitElement {
           font-size: var(--small-medium-font-size);
         }
 
-        ${xxxLargeBreakPoint(
-          css`
-            app-sidebar {
-              display: block;
-            }
-
-            #tablet-sidebar {
-              display: none;
-            }
-
-            #desktop-sidebar {
-              display: block;
-            }
-
-            #congrats-wrapper {
-              max-width: 69em;
-              background: white;
-            }
-          `
-        )}
-
-        ${largeBreakPoint(
-          css`
-            #tablet-sidebar {
-              display: block;
-            }
-
-            #desktop-sidebar {
-              display: none;
-            }
-          `
-        )}
-
-        ${mediumBreakPoint(
-          css`
-            #blog-block #first-card {
-              margin-right: initial;
-            }
-
-            .congrats h2 {
-              font-size: 33px;
-              max-width: 10em;
-
-              margin-top: 0;
-              margin-bottom: 2em;
-            }
-
-            .congrats p {
-              display: none;
-            }
-
-            #other-stores li {
-              flex-direction: column;
-              align-items: flex-start;
-            }
-
-            #other-stores #title-block {
-              width: 100%;
-            }
-
-            #other-stores #title-block p {
-              width: unset;
-            }
-
-            #other-stores #platform-actions-block {
-              width: 100%;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              margin-top: 2em;
-            }
-
-            #other-stores li h2 {
-              font-size: 33px;
-
-              margin-top: 0;
-              margin-bottom: 1em;
-            }
-
-            #test-package-button app-button::part(underlying-button) {
-              width: 152px;
-              font-size: var(--font-size);
-              height: 40px;
-            }
-          `
-        )}
-
-        ${smallBreakPoint(
-          css`
-            fast-tabs::part(tablist) {
-              display: none;
-            }
-
-            .congrats h2 {
-              font-size: 33px;
-
-              margin-top: 0;
-              margin-bottom: 2em;
-            }
-
-            .congrats p {
-              display: none;
-            }
-
-            #other-stores li {
-              flex-direction: column;
-              align-items: flex-start;
-            }
-
-            #other-stores #title-block {
-              width: 100%;
-            }
-
-            #other-stores #title-block p {
-              width: unset;
-            }
-
-            #other-stores #platform-actions-block {
-              width: 100%;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              margin-top: 2em;
-            }
-
-            #other-stores li h2 {
-              font-size: 33px;
-
-              margin-top: 0;
-              margin-bottom: 1em;
-            }
-
-            #test-package-button app-button::part(underlying-button) {
-              width: 152px;
-              font-size: var(--font-size);
-              height: 40px;
-            }
-
-            #anchor-block {
-              justify-content: space-around;
-            }
-          `
-        )},
+        #platform-actions-block {
+          margin-left: 16px;
+        }
       `,
+      xxxLargeBreakPoint(
+        css`
+          app-sidebar {
+            display: block;
+          }
+
+          #tablet-sidebar {
+            display: none;
+          }
+
+          #desktop-sidebar {
+            display: block;
+          }
+
+          #congrats-wrapper {
+            max-width: 69em;
+            background: white;
+          }
+        `
+      ),
+      largeBreakPoint(
+        css`
+          #tablet-sidebar {
+            display: block;
+          }
+
+          #desktop-sidebar {
+            display: none;
+          }
+        `
+      ),
+      mediumBreakPoint(
+        css`
+          #blog-block #first-card {
+            margin-right: initial;
+          }
+
+          .congrats h2 {
+            font-size: 33px;
+            max-width: 10em;
+
+            margin-top: 0;
+            margin-bottom: 2em;
+          }
+
+          .congrats p {
+            display: none;
+          }
+
+          #other-stores li {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+
+          #other-stores #title-block {
+            width: 100%;
+          }
+
+          #other-stores #title-block p {
+            width: unset;
+          }
+
+          #other-stores #platform-actions-block {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 2em;
+          }
+
+          #other-stores li h2 {
+            font-size: 33px;
+
+            margin-top: 0;
+            margin-bottom: 1em;
+          }
+
+          #test-package-button app-button::part(underlying-button) {
+            width: 152px;
+            font-size: var(--font-size);
+            height: 40px;
+          }
+        `
+      ),
+      smallBreakPoint(
+        css`
+          fast-tabs::part(tablist) {
+            display: none;
+          }
+
+          .congrats h2 {
+            font-size: 33px;
+
+            margin-top: 0;
+            margin-bottom: 2em;
+          }
+
+          .congrats p {
+            display: none;
+          }
+
+          #other-stores li {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+
+          #other-stores #title-block {
+            width: 100%;
+          }
+
+          #other-stores #title-block p {
+            width: unset;
+          }
+
+          #other-stores #platform-actions-block {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 2em;
+            margin-left: 0;
+          }
+
+          #other-stores li h2 {
+            font-size: 33px;
+
+            margin-top: 0;
+            margin-bottom: 1em;
+          }
+
+          #test-package-button app-button::part(underlying-button) {
+            width: 152px;
+            font-size: var(--font-size);
+            height: 40px;
+          }
+
+          #anchor-block {
+            justify-content: space-around;
+          }
+
+          #blog-block app-card {
+            height: 300px;
+          }
+        `
+      ),
       hidden_all,
       xxxLargeBreakPoint(
         css`
