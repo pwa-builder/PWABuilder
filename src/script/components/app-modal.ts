@@ -39,6 +39,7 @@ export class AppModal extends LitElement {
 
         #modal {
           background: white;
+          width: 500px;
           margin: 51px;
           display: flex;
           justify-content: center;
@@ -51,6 +52,11 @@ export class AppModal extends LitElement {
           box-shadow: 0px 16px 24px rgba(0, 0, 0, 0.12);
 
           z-index: 4;
+        }
+
+        #modal-image {
+          height: 50px;
+          width: 50px;
         }
 
         #modal-header #title {
