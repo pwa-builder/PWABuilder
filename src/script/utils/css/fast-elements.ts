@@ -37,6 +37,15 @@ export const fastButtonCss = css`
   }
 `;
 
+export const fastAnchorCss = css`
+  @media screen and (min-width: 480px) and (max-width: 639px) {
+    fast-anchor.button {
+      font-size: 22px;
+      height: 64px;
+    }
+  }
+`;
+
 export const fastTextFieldCss = css`
   fast-text-field {
     --accent-fill-rest: var(--secondary-font-color);
