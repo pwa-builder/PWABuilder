@@ -166,35 +166,40 @@ export function getManiURL() {
   return maniURL;
 }
 
-export function getManifest(): Manifest | undefined {
+export async function getManifest(): Promise<Manifest | undefined> {
+
   if (manifest) {
     return manifest;
   }
+
+  // no manifest object yet, so lets try to grab one
   const search = new URLSearchParams(location.search);
+  const url: string | null = maniURL || search.get('site');
 
   try {
-    const url: string | null = maniURL || search.get('site');
-
     if (url) {
-      fetchManifest(url)
-      .then(response => {
-        updateManifest(response.content);
-      })
-      .catch(reason => {
-        console.error(reason);
+      const response = await fetchManifest(url);
 
-        generateManifest(url)
-          .then(response => {
-            updateManifest(response.content);
-          })
-          .catch(console.error);
-      });
+      if (response) {
+        updateManifest(response.content);
+        return;
+      }
     }
-   
-  } catch (e) {
-    console.error(e);
+  }
+  catch(err) {
+    // the above will error if the site has no manifest of its own, 
+    // we will then return our generated manifest
+    if (url) {
+      const response = await generateManifest(url);
+
+      if (response) {
+        generatedManifest = response.content;
+        return generatedManifest;
+      }
+    }
   }
 
+  // if all else fails, lets just return undefined
   return undefined;
 }
 
