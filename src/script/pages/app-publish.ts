@@ -21,6 +21,7 @@ import {
 
 //@ts-ignore
 import style from '../../../styles/layout-defaults.css';
+import { fastAnchorCss } from '../utils/css/fast-elements';
 import { fileSave } from 'browser-fs-access';
 import { fetchManifest } from '../services/manifest';
 import { Manifest } from '../utils/interfaces';
@@ -66,6 +67,7 @@ export class AppPublish extends LitElement {
   static get styles() {
     return [
       style,
+      fastAnchorCss,
       css`
         .header {
           padding: 1rem 3rem;
@@ -184,7 +186,7 @@ export class AppPublish extends LitElement {
         }
 
         .modal-image {
-          width: 6em;
+          width: 50px;
         }
 
         #error-modal::part(modal-body) {
@@ -205,11 +207,6 @@ export class AppPublish extends LitElement {
           box-shadow: var(--button-shadow);
         }
 
-        #windows-options-modal::part(modal-layout),
-        #android-options-modal::part(modal-layout) {
-          width: 64vw;
-        }
-
         #test-package-button {
           display: block;
           margin-top: 15px;
@@ -222,6 +219,17 @@ export class AppPublish extends LitElement {
         #platform-actions-block app-button,
         #platform-actions-block loading-button::part(underlying-button) {
           --button-width: 152px;
+        }
+
+        #actions {
+          display: flex;
+          flex-direction: column;
+        }
+
+        #actions fast-anchor.button,
+        #actions app-button {
+          margin-right: 0;
+          margin-top: 8px;
         }
       `,
       xxxLargeBreakPoint(
@@ -307,20 +315,12 @@ export class AppPublish extends LitElement {
           .container .action-buttons app-button {
             --button-width: 127px;
             font-size: var(--mobile-button-fontsize);
+            height: var(--mobile-button-height);
             width: var(--button-width);
+            margin: 22px;
           }
         `,
         'no-lower'
-      ),
-      mediumBreakPoint(
-        css`
-          #error-modal::part(modal-layout),
-          #download-modal::part(modal-layout),
-          #test-download-modal::part(modal-layout) {
-            max-width: 50vw;
-          }
-        `,
-        'no-upper'
       ),
       smallBreakPoint(css`
         #error-modal::part(modal-layout) {
@@ -596,6 +596,7 @@ export class AppPublish extends LitElement {
           <fast-anchor
             target="__blank"
             id="error-link"
+            class="button"
             .href="${this.reportPackageErrorUrl}"
             >Report A Problem</fast-anchor
           >
@@ -730,7 +731,7 @@ export class AppPublish extends LitElement {
                 <app-button @click="${() => this.returnToFix()}"
                   >Back</app-button
                 >
-                <fast-anchor href="/congrats">Next</fast-anchor>
+                <fast-anchor class="button" href="/congrats">Next</fast-anchor>
               </div>
             </section>
           </div>
