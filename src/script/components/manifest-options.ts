@@ -68,7 +68,6 @@ type BackgroundColorRadioValues = 'none' | 'transparent' | 'custom';
 @customElement('manifest-options')
 export class AppManifest extends LitElement {
   @property({ type: Object, hasChanged: objectHasChanged })
-  manifest = getManifest();
   @property({ type: Number }) score = 0;
   @property({ type: Array, hasChanged: arrayHasChanged })
   screenshotList: Array<string | undefined> = [undefined];
@@ -96,6 +95,9 @@ export class AppManifest extends LitElement {
 
   @state()
   protected editorOpened = false;
+
+  @state() 
+  protected manifest: Lazy<Manifest | undefined>;
 
   protected get siteUrl(): string {
     if (!this.searchParams) {
@@ -410,9 +412,14 @@ export class AppManifest extends LitElement {
   constructor() {
     super();
 
-    manifestEmitter.addEventListener(AppEvents.manifestUpdate, () => {
-      this.manifest = getManifest();
+    manifestEmitter.addEventListener(AppEvents.manifestUpdate, async () => {
+
+      this.manifest = await getManifest();
     });
+  }
+
+  async firstUpdated() {
+    this.manifest = await getManifest();
   }
 
   render() {
