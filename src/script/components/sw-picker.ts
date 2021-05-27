@@ -1,11 +1,6 @@
-import {
-  LitElement,
-  css,
-  html,
-} from 'lit';
+import { LitElement, css, html } from 'lit';
 
-import { customElement, property,
-  state, } from "lit/decorators.js"
+import { customElement, property, state } from 'lit/decorators.js';
 import {
   chooseServiceWorker,
   getServiceWorkers,
@@ -97,6 +92,10 @@ export class SWPicker extends LitElement {
           margin-top: 23px;
         }
 
+        .actions {
+          margin-left: 16px;
+        }
+
         .actions #select-button::part(underlying-button) {
           background: white;
           color: var(--font-color);
@@ -166,7 +165,11 @@ export class SWPicker extends LitElement {
             <h5 id="summary">Summary</h5>
 
             <p>
-              Choose one of our pre-built Service Workers that utilize <a href="https://developers.google.com/web/tools/workbox/">Workbox</a> to make building your offline experience easy!
+              Choose one of our pre-built Service Workers that utilize
+              <a href="https://developers.google.com/web/tools/workbox/"
+                >Workbox</a
+              >
+              to make building your offline experience easy!
             </p>
 
             <div id="header-actions">
