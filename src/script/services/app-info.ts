@@ -127,6 +127,8 @@ export function getURL() {
 export function setResults(testResults: RawTestResult) {
   console.log('testResults', testResults);
   results = testResults;
+
+  sessionStorage.removeItem('current_results');
   sessionStorage.setItem('current_results', JSON.stringify(testResults));
 }
 
