@@ -498,8 +498,8 @@ export class ReportCard extends LitElement {
     this.dispatchEvent(event);
   }
 
-  decideWhereToGo() {
-    const baseOrPublishIffy = baseOrPublish();
+  async decideWhereToGo() {
+    const baseOrPublishIffy = await baseOrPublish();
 
     if (baseOrPublishIffy === 'base') {
       Router.go('/basepackage');
