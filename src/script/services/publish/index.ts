@@ -22,7 +22,7 @@ export async function generatePackage(type: platform, form?: HTMLFormElement) {
         // We will have a form if the user is going to
         // prod
         if (form) {
-          const options = createWindowsPackageOptionsFromForm(form);
+          const options = await createWindowsPackageOptionsFromForm(form);
 
           if (options) {
             const blob = await generateWindowsPackage(options);

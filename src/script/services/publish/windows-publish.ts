@@ -53,15 +53,15 @@ export async function generateWindowsPackage(
   }
 }
 
-export function createWindowsPackageOptionsFromManifest(localManifest?: Manifest
-): WindowsPackageOptions {
+export async function createWindowsPackageOptionsFromManifest(localManifest?: Manifest
+): Promise<WindowsPackageOptions> {
   let manifest: Manifest | undefined;
 
   if (localManifest) {
     manifest = localManifest;
   }
   else {
-    manifest = getManifest();
+    manifest = await getManifest();
   }
 
   if (manifest) {
@@ -128,10 +128,10 @@ export function createWindowsPackageOptionsFromManifest(localManifest?: Manifest
   }
 }
 
-export function createWindowsPackageOptionsFromForm(
+export async function createWindowsPackageOptionsFromForm(
   form: HTMLFormElement
 ) {
-  const manifest = getManifest();
+  const manifest = await getManifest();
 
   if (manifest) {
     const name = form.appName.value || manifest.short_name || manifest.name;

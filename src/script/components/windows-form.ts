@@ -68,8 +68,8 @@ export class WindowsForm extends LitElement {
     super();
   }
 
-  firstUpdated() {
-    const defaultOptions = createWindowsPackageOptionsFromManifest();
+  async firstUpdated() {
+    const defaultOptions = await createWindowsPackageOptionsFromManifest();
 
     if (defaultOptions) {
       this.default_options = defaultOptions;

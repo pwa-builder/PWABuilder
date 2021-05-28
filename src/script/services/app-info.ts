@@ -147,10 +147,10 @@ export function getResults(): RawTestResult | undefined {
   }
 }
 
-export function baseOrPublish(): 'base' | 'publish' {
+export async function baseOrPublish(): Promise<'base' | 'publish'> {
   const choseSW = getChosenServiceWorker();
   
-  const manifestData = getManifest();
+  const manifestData = await getManifest();
 
   console.log('manidata', manifestData);
 
