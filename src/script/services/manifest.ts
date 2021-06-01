@@ -237,17 +237,34 @@ export async function updateManifest(manifestUpdates: Partial<Manifest>) {
   // so we should only load it once its actually needed
   await import('https://unpkg.com/deepmerge@4.2.2/dist/umd.js');
 
-  manifest = deepmerge(manifest ? manifest as Manifest : generatedManifest as Manifest, manifestUpdates as Partial<Manifest>, {
-    // customMerge: customManifestMerge, // NOTE: need to manually concat with editor changes.
-  });
+  const manifest_check = manifest ? true : false;
 
-  console.log('deepmerge mani', manifest);
-
-  emitter.dispatchEvent(
-    updateManifestEvent({
-      ...manifest,
-    })
-  );
+  if (manifest_check === true) {
+    manifest = deepmerge(manifest ? manifest as Manifest : generatedManifest as Manifest, manifestUpdates as Partial<Manifest>, {
+      // customMerge: customManifestMerge, // NOTE: need to manually concat with editor changes.
+    });
+  
+    console.log('deepmerge mani', manifest);
+  
+    emitter.dispatchEvent(
+      updateManifestEvent({
+        ...manifest,
+      })
+    );
+  }
+  else {
+    generatedManifest = deepmerge(manifest ? manifest as Manifest : generatedManifest as Manifest, manifestUpdates as Partial<Manifest>, {
+      // customMerge: customManifestMerge, // NOTE: need to manually concat with editor changes.
+    });
+  
+    console.log('deepmerge mani', manifest);
+  
+    emitter.dispatchEvent(
+      updateManifestEvent({
+        ...generatedManifest,
+      })
+    );
+  }
 }
 
 export function updateManifestEvent<T extends Partial<Manifest>>(detail: T) {

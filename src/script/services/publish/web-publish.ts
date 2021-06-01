@@ -6,12 +6,13 @@ export let web_generated = false;
 
 export async function generateWebPackage() {
   try {
-    const manifest = getManifest();
+    const manifest = await getManifest();
     const genManifest = getGeneratedManifest();
     const url = getURL();
 
     // The web package generator dies when screenshots is null. If detected, set screenshots to empty array.
     const manifestWithScreenshots = manifest ? { ...manifest } : { ...genManifest };
+
     if (!manifestWithScreenshots.screenshots) {
       manifestWithScreenshots.screenshots = [];
     }
