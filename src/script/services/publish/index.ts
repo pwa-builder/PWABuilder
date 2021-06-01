@@ -34,7 +34,7 @@ export async function generatePackage(type: platform, form?: HTMLFormElement) {
         } else {
           // No form, lets generate from the manifest
           try {
-            const options = createWindowsPackageOptionsFromManifest();
+            const options = await createWindowsPackageOptionsFromManifest();
 
             const testBlob = await generateWindowsPackage(options);
             return {
@@ -47,7 +47,7 @@ export async function generatePackage(type: platform, form?: HTMLFormElement) {
             const localManifest = await grabBackupManifest();
 
             if (localManifest) {
-              const options = createWindowsPackageOptionsFromManifest(
+              const options = await createWindowsPackageOptionsFromManifest(
                 localManifest
               );
               const testBlob = await generateWindowsPackage(options);
