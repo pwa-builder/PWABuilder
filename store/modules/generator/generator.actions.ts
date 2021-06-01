@@ -65,40 +65,6 @@ export const actions: Actions<State, RootState> = {
       await new ManifestFetcher(state.url!, this.$axios).fetch();
     }
 
-    // Update
-    const customManifest: any = Object.assign({}, state.manifest);
-    state.members.forEach((member) => {
-      customManifest[member.name] = member.value;
-    });
-
-    customManifest['icons'] = [];
-
-    state.icons.forEach((icon) => {
-      customManifest['icons'].push(Object.assign({}, icon));
-    });
-
-    customManifest['screenshots'] = [];
-
-    if (state.screenshots !== undefined) {
-      state.screenshots.forEach((screenshot) => {
-        customManifest['screenshots'].push(Object.assign({}, screenshot));
-      });
-    } else {
-      state.screenshots = [];
-    }
-    if (typeof customManifest.related_applications === 'string') {
-      customManifest.related_applications = [];
-    }
-
-    if (customManifest.generated) {
-      delete customManifest.generated;
-    }
-
-    // const result = await this.$axios.$put(
-    //   `${apiUrl}/${state.manifestId}`,
-    //   customManifest
-    // );
-
     commit(types.UPDATE_WITH_MANIFEST, {
       "format": "w3c",
       "content": state.manifest,
