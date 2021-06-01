@@ -222,8 +222,11 @@ export const actions: Actions<State, RootState> = {
 
       try {
         const options = { platforms: platformsList, dirSuffix: params.platform, parameters: params.options };
-        const result = await this.$axios.$post(`${apiUrl}/${manifestId}/build?ids=${serviceworker}&href=${params.href}
-                `, options);
+        // TODO
+        const result = { archive: undefined};
+        // const result = await this.$axios.$post(`${apiUrl}/${manifestId}/build?ids=${serviceworker}&href=${params.href}
+        //         `, options);
+        throw Error('broken path');
         commit(types.UPDATE_ARCHIVELINK, result.archive);
         resolve();
       } catch (e) {
