@@ -154,7 +154,12 @@ export async function fetchManifest(
     } catch (manifestDetectionError) {
       console.error('All manifest detectors failed.', manifestDetectionError);
 
-      generatedManifest = await (await generateManifest(url)).content;
+      const genContent = await generateManifest(url);
+      console.log('genContent', genContent);
+
+      if (genContent) {
+        generatedManifest = genContent.content;
+      }
 
       // Well, we sure tried.
       reject(manifestDetectionError);
@@ -167,7 +172,6 @@ export function getManiURL() {
 }
 
 export async function getManifest(): Promise<Manifest | undefined> {
-
   if (manifest) {
     return manifest;
   }
@@ -189,14 +193,7 @@ export async function getManifest(): Promise<Manifest | undefined> {
   catch(err) {
     // the above will error if the site has no manifest of its own, 
     // we will then return our generated manifest
-    if (url) {
-      const response = await generateManifest(url);
-
-      if (response) {
-        generatedManifest = response.content;
-        return generatedManifest;
-      }
-    }
+    console.warn(err);
   }
 
   // if all else fails, lets just return undefined
@@ -219,7 +216,7 @@ async function generateManifest(url: string): Promise<ManifestDetectionResult> {
 
     const data = await response.json();
 
-    return data?.content;
+    return data;
   } catch (err) {
     console.error(`Error generating manifest: ${err}`);
     return err;
@@ -232,13 +229,15 @@ export async function updateManifest(manifestUpdates: Partial<Manifest>) {
   // so we should only load it once its actually needed
   await import('https://unpkg.com/deepmerge@4.2.2/dist/umd.js');
 
-  manifest = deepmerge(manifest as Manifest, manifestUpdates as Manifest, {
+  manifest = deepmerge(manifest ? manifest as Manifest : generatedManifest as Manifest, manifestUpdates as Partial<Manifest>, {
     // customMerge: customManifestMerge, // NOTE: need to manually concat with editor changes.
   });
 
+  console.log('deepmerge mani', manifest);
+
   emitter.dispatchEvent(
     updateManifestEvent({
-      ...manifestUpdates,
+      ...manifest,
     })
   );
 }

@@ -9,6 +9,7 @@ import ErrorStyles from '../../../styles/error-styles.css';
 
 import {
   emitter as manifestEmitter,
+  getGeneratedManifest,
   getManifest,
   updateManifest,
 } from '../services/manifest';
@@ -412,14 +413,50 @@ export class AppManifest extends LitElement {
   constructor() {
     super();
 
-    manifestEmitter.addEventListener(AppEvents.manifestUpdate, async () => {
+    manifestEmitter.addEventListener(AppEvents.manifestUpdate, async (maniUpdates: any) => {
+      /*const potential_mani = await getManifest();
 
-      this.manifest = await getManifest();
+      if (potential_mani) {
+        this.manifest = await potential_mani;
+        console.log("this.manifest", this.manifest);
+      }
+      else if (potential_mani === undefined) {
+        const gen = await getGeneratedManifest();
+        console.info('Gen manifest', gen);
+
+        this.manifest = gen;
+
+      }*/
+      console.log('maniUpdates', maniUpdates);
+      if (maniUpdates) {
+        this.manifest = maniUpdates.detail;
+      }
     });
   }
 
   async firstUpdated() {
-    this.manifest = await getManifest();
+    try {
+      const potential_mani = await getManifest();
+
+      if (potential_mani) {
+        this.manifest = potential_mani;
+        console.log("this.manifest", this.manifest);
+      }
+      else if (potential_mani === undefined) {
+        const gen = await getGeneratedManifest();
+        console.info('Gen manifest', gen);
+
+        this.manifest = gen;
+
+      }
+    }
+    catch (err) {
+      console.info("in here");
+      const gen = await getGeneratedManifest();
+
+      this.manifest = gen;
+      console.warn(err, gen);
+    }
   }
 
   render() {
@@ -567,6 +604,7 @@ export class AppManifest extends LitElement {
   }
 
   renderInfoItems() {
+    console.log('infoItems', infoItems);
     return infoItems.map(item => {
       const value = this.manifest
         ? (this.manifest[item.entry] as string)
@@ -784,6 +822,8 @@ export class AppManifest extends LitElement {
   handleInputChange(event: InputEvent) {
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
     const fieldName = input.dataset['field'];
+
+    console.log('input.value', input.value, 'fieldName', fieldName);
 
     if (this.manifest && fieldName && this.manifest[fieldName]) {
       this.updateManifest({ [fieldName]: input.value });
