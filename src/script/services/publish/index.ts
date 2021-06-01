@@ -66,7 +66,7 @@ export async function generatePackage(type: platform, form?: HTMLFormElement) {
     case 'android':
       try {
         if (form) {
-          const androidOptions = createAndroidPackageOptionsFromForm(form);
+          const androidOptions = await createAndroidPackageOptionsFromForm(form);
           console.log('no form android options', androidOptions);
 
           if (androidOptions) {
@@ -84,7 +84,7 @@ export async function generatePackage(type: platform, form?: HTMLFormElement) {
           }
         } else {
           try {
-            const androidOptions = createAndroidPackageOptionsFromManifest();
+            const androidOptions = await createAndroidPackageOptionsFromManifest();
             console.log('form android options', androidOptions);
             const testBlob = await generateAndroidPackage(androidOptions);
 
@@ -97,7 +97,7 @@ export async function generatePackage(type: platform, form?: HTMLFormElement) {
             // Lets try to grab it
             const localManifest = await grabBackupManifest();
             if (localManifest) {
-              const androidOptions = createAndroidPackageOptionsFromManifest(
+              const androidOptions = await createAndroidPackageOptionsFromManifest(
                 localManifest
               );
 

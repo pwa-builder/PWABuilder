@@ -70,8 +70,8 @@ export async function generateAndroidPackage(
   return undefined;
 }
 
-export function createAndroidPackageOptionsFromForm(form: HTMLFormElement): AndroidApkOptions {
-  const manifest = getManifest();
+export async function createAndroidPackageOptionsFromForm(form: HTMLFormElement): Promise<AndroidApkOptions> {
+  const manifest = await getManifest();
   if (!manifest) {
     throw new Error('Could not find the web manifest');
   }
@@ -193,14 +193,14 @@ export function createAndroidPackageOptionsFromForm(form: HTMLFormElement): Andr
   };
 }
 
-export function createAndroidPackageOptionsFromManifest(localManifest?: Manifest): AndroidApkOptions {
+export async function createAndroidPackageOptionsFromManifest(localManifest?: Manifest): Promise<AndroidApkOptions> {
   let manifest: Manifest | undefined;
 
   if (localManifest) {
     manifest = localManifest;
   }
   else {
-    manifest = getManifest();
+    manifest = await getManifest();
   }
 
   if (!manifest) {
