@@ -18,6 +18,8 @@ let maniURL: Lazy<string>;
 
 let generatedManifest: Lazy<Manifest>;
 
+let testResult: ManifestDetectionResult | undefined;
+
 // Uses Azure manifest Puppeteer service to fetch the manifest, then POSTS it to the API.
 async function getManifestViaFilePost(
   url: string
@@ -125,6 +127,10 @@ export async function fetchManifest(
   return new Promise(async (resolve, reject) => {
     let knownGoodUrl;
 
+    if (testResult) {
+      resolve(testResult);
+    }
+
     try {
       knownGoodUrl = await cleanUrl(url);
     } catch (err) {
@@ -146,19 +152,21 @@ export async function fetchManifest(
       Promise['any'] ? Promise['any'](promises) : promiseAnyPolyfill(promises);
 
     try {
-      const result = await promiseAnyOrPolyfill(manifestDetectors);
+      testResult = await promiseAnyOrPolyfill(manifestDetectors);
 
-      manifest = result.content;
-      maniURL = result.generatedUrl;
-      resolve(result);
+      manifest = testResult.content;
+      maniURL = testResult.generatedUrl;
+      resolve(testResult);
     } catch (manifestDetectionError) {
       console.error('All manifest detectors failed.', manifestDetectionError);
 
-      const genContent = await generateManifest(url);
-      console.log('genContent', genContent);
-
-      if (genContent) {
-        generatedManifest = genContent.content;
+      if (!generatedManifest) {
+        const genContent = await generateManifest(url);
+        console.log('genContent', genContent);
+  
+        if (genContent) {
+          generatedManifest = genContent.content;
+        }
       }
 
       // Well, we sure tried.

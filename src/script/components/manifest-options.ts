@@ -414,19 +414,6 @@ export class AppManifest extends LitElement {
     super();
 
     manifestEmitter.addEventListener(AppEvents.manifestUpdate, async (maniUpdates: any) => {
-      /*const potential_mani = await getManifest();
-
-      if (potential_mani) {
-        this.manifest = await potential_mani;
-        console.log("this.manifest", this.manifest);
-      }
-      else if (potential_mani === undefined) {
-        const gen = await getGeneratedManifest();
-        console.info('Gen manifest', gen);
-
-        this.manifest = gen;
-
-      }*/
       console.log('maniUpdates', maniUpdates);
       if (maniUpdates) {
         this.manifest = maniUpdates.detail;
