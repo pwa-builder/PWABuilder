@@ -88,7 +88,7 @@ export class AndroidForm extends LitElement {
     super();
   }
 
-  firstUpdated() {
+  async firstUpdated() {
     const form = this.shadowRoot?.querySelector(
       '#android-options-form'
     ) as HTMLFormElement;
@@ -97,9 +97,9 @@ export class AndroidForm extends LitElement {
       this.form = form;
     }
 
-    this.currentManifest = getManifest();
+    this.currentManifest = await getManifest();
 
-    this.default_options = createAndroidPackageOptionsFromManifest();
+    this.default_options = await createAndroidPackageOptionsFromManifest();
   }
 
   initGenerate() {
