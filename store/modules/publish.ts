@@ -200,6 +200,7 @@ export const actions: Actions<State, RootState> = {
     commit(types.UPDATE_STATUS, status);
   },
 
+  // TODO seems to be not in used
   async build({ commit, rootState }, params: { platform: string, href: string, options?: string[] }): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       const manifestId = rootState.generator.manifestId;
