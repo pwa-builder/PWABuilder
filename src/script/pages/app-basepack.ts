@@ -226,8 +226,14 @@ export class AppBasePack extends LitElement {
   async doWebGenerate() {
     this.loading = true;
 
+    this.blob = undefined;
+    this.errorMessage = undefined;
+    this.errored = false;
+
     try {
       const generatedPackage = await generateWebPackage();
+
+      console.log('blob', generatedPackage);
 
       if (generatedPackage) {
         this.blob = generatedPackage;
@@ -265,9 +271,16 @@ export class AppBasePack extends LitElement {
     }
   }
 
+  cancel() {
+    this.blob = undefined;
+    this.errored = false;
+    this.errorMessage = undefined;
+  }
+
   render() {
     return html`
       <app-modal
+        @app-modal-close="${() => this.cancel()}"
         ?open="${this.blob ? true : false}"
         title="Base Package Download"
         .body="${localeStrings.input.publish.base_package.download}"
@@ -353,7 +366,7 @@ export class AppBasePack extends LitElement {
                   <loading-button
                     ?loading="${this.loading}"
                     @click="${() => this.doWebGenerate()}"
-                    >Download</loading-button
+                    >Generate</loading-button
                   >
                 </div>
               </div>
