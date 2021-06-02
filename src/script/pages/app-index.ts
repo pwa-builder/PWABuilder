@@ -69,6 +69,10 @@ export class AppIndex extends LitElement {
 
   constructor() {
     super();
+
+    window.addEventListener('vaadin-router-location-changed', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   }
 
   firstUpdated() {
