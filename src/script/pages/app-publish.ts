@@ -502,15 +502,15 @@ export class AppPublish extends LitElement {
   }
 
   showWindowsOptionsModal() {
-    this.open_windows_options = !this.open_windows_options;
+    this.open_windows_options = true;
   }
 
   showAndroidOptionsModal() {
-    this.open_android_options = !this.open_android_options;
+    this.open_android_options = true;
   }
 
   showSamsungModal() {
-    this.open_samsung_modal = !this.open_samsung_modal;
+    this.open_samsung_modal = true;
   }
 
   renderContentCards() {
@@ -576,6 +576,24 @@ export class AppPublish extends LitElement {
     this.reportPackageErrorUrl = getReportErrorUrl(errorDetail, platform);
   }
 
+  downloadCancel() {
+    this.blob = undefined;
+    this.errorMessage = undefined;
+    this.errored = false;
+  }
+
+  downloadTestCancel() {
+    this.testBlob = undefined;
+    this.errorMessage = undefined;
+    this.errored = false;
+  }
+
+  storeOptionsCancel() {
+    this.open_windows_options = false;
+    this.open_android_options = false;
+    this.open_samsung_modal = false;
+  }
+
   render() {
     return html`
       <!-- error modal -->
@@ -613,6 +631,7 @@ export class AppPublish extends LitElement {
         title="Download your package"
         body="Your app package is ready for download."
         id="download-modal"
+        @app-modal-close="${() => this.downloadCancel()}"
       >
         <img
           class="modal-image"
@@ -632,6 +651,7 @@ export class AppPublish extends LitElement {
         title="Test Package Download"
         body="Want to test your files first before publishing? No problem! Description here about how this isn’t store ready and how they can come back and publish their PWA after doing whatever they need to do with their testing etc etc tc etc."
         id="test-download-modal"
+        @app-modal-close="${() => this.downloadTestCancel()}"
       >
         <img
           class="modal-image"
@@ -651,6 +671,8 @@ export class AppPublish extends LitElement {
         title="Microsoft Store Options"
         body="Customize your Windows package below!"
         ?open="${this.open_windows_options}"
+        @app-modal-close="${() => this.storeOptionsCancel()}"
+
       >
         <windows-form
           slot="modal-form"
@@ -664,7 +686,8 @@ export class AppPublish extends LitElement {
         id="android-options-modal"
         title="Google Play Store Options"
         body="Customize your Android package below!"
-        ?open="${this.open_android_options}"
+        ?open="${this.open_android_options === true}"
+        @app-modal-close="${() => this.storeOptionsCancel()}"
       >
         <android-form
           slot="modal-form"
@@ -678,7 +701,8 @@ export class AppPublish extends LitElement {
         id="samsung-options-modal"
         title="Your PWA has been submitted to Samsung's App Finder"
         body="You can follow up with Samsung at pwasupport@samsung.com for status updates on your submission."
-        ?open="${this.open_samsung_modal}"
+        ?open="${this.open_samsung_modal === true}"
+        @app-modal-close="${() => this.storeOptionsCancel()}"
       >
       </app-modal>
 
