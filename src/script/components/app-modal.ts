@@ -100,6 +100,17 @@ export class AppModal extends LitElement {
           width: 2em;
           color: #c2c9d1;
         }
+
+        #modal-tou {
+          margin-top: 4px;
+        }
+
+        #tou-link {
+          text-align: center;
+          font-weight: 300;
+          font-size: var(--small-font-size);
+          color: var(--secondary-font-color);
+        }
       `,
       smallBreakPoint(css`
         #modal {
@@ -217,6 +228,16 @@ export class AppModal extends LitElement {
             <slot id="modal-form" name="modal-form"></slot>
 
             <slot class="modal-actions" name="modal-actions"></slot>
+
+            <section id="modal-tou">
+              <a
+                target="_blank"
+                rel="noopener"
+                href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md"
+                id="tou-link"
+                >Terms of Use</a
+              >
+            </section>
           </div>
         </div>
       `;
