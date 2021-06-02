@@ -72,8 +72,8 @@ export const mutations: MutationTree<State> = {
       if (result.content.screenshots) {
         var generatedScreenshots =
           result.generated &&
-          result.content.icons &&
-          result.content.icons.length > 0;
+          result.content.screenshots &&
+          result.content.screenshots.length > 0;
         if (result.generatedUrl || generatedScreenshots) {
           state.screenshots =
             helpers.prepareIconsUrls(
