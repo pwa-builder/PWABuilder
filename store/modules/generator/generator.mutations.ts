@@ -154,7 +154,7 @@ export const mutations: MutationTree<State> = {
 
   [types.ADD_SCREENSHOT](state, screenshot: Icon | Array<Icon>): void {
     if (Array.isArray(screenshot)) {
-      state.screenshots.concat(screenshot);
+      state.screenshots = state.screenshots.concat(screenshot);
     } else {
       state.screenshots.push(screenshot);
     }
