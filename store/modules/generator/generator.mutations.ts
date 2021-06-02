@@ -102,6 +102,8 @@ export const mutations: MutationTree<State> = {
   },
 
   [types.OVERWRITE_MANIFEST](state, result): void {
+    console.log(types.OVERWRITE_MANIFEST, state, result);
+
     if (result.content.generated) {
       delete result.content.generated;
     }
@@ -146,16 +148,16 @@ export const mutations: MutationTree<State> = {
     state.screenshots = screenshots;
   },
 
-  [types.ADD_ASSETS](state, assets: Asset[]): void {
-    state.assets = assets;
-  },
-
   [types.ADD_ICON](state, icon: Icon): void {
     state.icons.push(icon);
   },
 
-  [types.ADD_SCREENSHOT](state, screenshot: Icon): void {
-    state.screenshots.push(screenshot);
+  [types.ADD_SCREENSHOT](state, screenshot: Icon | Array<Icon>): void {
+    if (Array.isArray(screenshot)) {
+      state.screenshots.concat(screenshot);
+    } else {
+      state.screenshots.push(screenshot);
+    }
   },
 
   [types.RESET_STATES](state): void {
