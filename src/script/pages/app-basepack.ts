@@ -269,8 +269,8 @@ export class AppBasePack extends LitElement {
     return html`
       <app-modal
         ?open="${this.blob ? true : false}"
-        title="Test Package Download"
-        .body="${localeStrings.input.publish.windows.test_package}"
+        title="Base Package Download"
+        .body="${localeStrings.input.publish.base_package.download}"
         id="test-download-modal"
       >
         <img

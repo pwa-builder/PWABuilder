@@ -14,6 +14,9 @@
     "publish": {
       "windows": {
         "test_package": "Want to test your app first before going to the Microsoft Store? Tap Download to get a package you can install and test."
+      },
+      "base_package": {
+        "download": "Download your generated Web Manifest and chosen Service Worker to make your app a PWA!"
       }
     }
   }
