@@ -4,11 +4,11 @@ import {
   ManifestContext,
   helpers,
   Icon,
-  Asset,
   RelatedApplication,
   CustomMember,
   State,
 } from "~/store/modules/generator";
+var merge = require("lodash.merge");
 
 export const mutations: MutationTree<State> = {
   [types.UPDATE_LINK](state, url: string): void {
@@ -38,7 +38,7 @@ export const mutations: MutationTree<State> = {
 
     state.manifest = result.content;
     state.manifestUrl = result.generatedUrl;
-    state.manifestId = result.id;
+    state.manifestId = result.id || "not-used";
     state.siteServiceWorkers = result.siteServiceWorkers;
     if (result && result.content) {
       // Set icons
@@ -47,6 +47,7 @@ export const mutations: MutationTree<State> = {
           result.generated &&
           result.content.icons &&
           result.content.icons.length > 0;
+
         if (result.generatedUrl || generatedIcons) {
           state.icons =
             <Icon[]>(
@@ -74,6 +75,7 @@ export const mutations: MutationTree<State> = {
           result.generated &&
           result.content.screenshots &&
           result.content.screenshots.length > 0;
+
         if (result.generatedUrl || generatedScreenshots) {
           state.screenshots =
             helpers.prepareIconsUrls(
@@ -99,6 +101,10 @@ export const mutations: MutationTree<State> = {
     state.warnings = result.warnings;
     state.errors = result.errors;
     state.generated = result.generated ? result.generated : false;
+  },
+
+  [types.UPDATE_MANIFEST_PARTIAL](state, partialUpdate): void {
+    state.manifest = merge(state.manifest, partialUpdate);
   },
 
   [types.OVERWRITE_MANIFEST](state, result): void {
@@ -148,8 +154,12 @@ export const mutations: MutationTree<State> = {
     state.screenshots = screenshots;
   },
 
-  [types.ADD_ICON](state, icon: Icon): void {
-    state.icons.push(icon);
+  [types.ADD_ICON](state, icon: Icon | Array<Icon>): void {
+    if (Array.isArray(icon)) {
+      state.icons = state.icons.concat(icon);
+    } else {
+      state.icons.push(icon);
+    }
   },
 
   [types.ADD_SCREENSHOT](state, screenshot: Icon | Array<Icon>): void {
