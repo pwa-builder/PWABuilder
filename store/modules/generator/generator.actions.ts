@@ -1,4 +1,4 @@
-import { ActionTree, ActionContext } from 'vuex';
+import { ActionTree, ActionContext } from "vuex";
 import {
   Manifest,
   ManifestContext,
@@ -9,12 +9,12 @@ import {
   types,
   helpers,
   State,
-} from '~/store/modules/generator';
-import { RootState } from 'store';
-import { ManifestFetcher } from '~/utils/manifest-fetcher';
+} from "~/store/modules/generator";
+import { RootState } from "store";
+import { ManifestFetcher } from "~/utils/manifest-fetcher";
 
-const apiUrl = `${process.env.apiUrl}/manifests`;
 const screenshotsUrl = `${process.env.screenshotsUrl}`;
+const imageGeneratorUrl = process.env.imageGeneratorUrl + "/api/image/base64";
 
 export interface Actions<S, R> extends ActionTree<S, R> {
   update(context: ActionContext<S, R>): void;
@@ -47,10 +47,12 @@ export interface Actions<S, R> extends ActionTree<S, R> {
 
 export const actions: Actions<State, RootState> = {
   async update({ commit, state, rootState }): Promise<void> {
+    console.log("update", state);
+
     if (!state.manifestId) {
       if (state.manifest && rootState.generator.manifest) {
         // Fix common issues with the manifest
-        if (typeof state.manifest.related_applications === 'string') {
+        if (typeof state.manifest.related_applications === "string") {
           state.manifest.related_applications = [];
           rootState.generator.manifest.related_applications = [];
         }
@@ -65,60 +67,26 @@ export const actions: Actions<State, RootState> = {
       await new ManifestFetcher(state.url!, this.$axios).fetch();
     }
 
-    // Update
-    const customManifest: any = Object.assign({}, state.manifest);
-    state.members.forEach((member) => {
-      customManifest[member.name] = member.value;
-    });
-
-    customManifest['icons'] = [];
-
-    state.icons.forEach((icon) => {
-      customManifest['icons'].push(Object.assign({}, icon));
-    });
-
-    customManifest['screenshots'] = [];
-
-    if (state.screenshots !== undefined) {
-      state.screenshots.forEach((screenshot) => {
-        customManifest['screenshots'].push(Object.assign({}, screenshot));
-      });
-    } else {
-      state.screenshots = [];
-    }
-    if (typeof customManifest.related_applications === 'string') {
-      customManifest.related_applications = [];
-    }
-
-    if (customManifest.generated) {
-      delete customManifest.generated;
-    }
-
-    // const result = await this.$axios.$put(
-    //   `${apiUrl}/${state.manifestId}`,
-    //   customManifest
-    // );
-
     commit(types.UPDATE_WITH_MANIFEST, {
-      "format": "w3c",
-      "content": state.manifest,
-      "id": "not-used",
-      "generatedUrl": state.manifest ? state.manifest.manifestUrl : null,
-      "errors": [],
-      "suggestions": [],
-      "warnings": []
+      format: "w3c",
+      content: state.manifest,
+      id: "not-used",
+      generatedUrl: state.manifest ? state.manifest.manifestUrl : null,
+      errors: [],
+      suggestions: [],
+      warnings: [],
     });
     commit(types.SET_DEFAULTS_MANIFEST, {
-      displays: rootState.displays ? rootState.displays[0].name : '',
+      displays: rootState.displays ? rootState.displays[0].name : "",
       orientations: rootState.orientations
         ? rootState.orientations[0].name
-        : '',
+        : "",
     });
   },
 
   updateManifest({ commit, dispatch }, manifest): void {
     commit(types.UPDATE_MANIFEST, manifest);
-    dispatch('update');
+    dispatch("update");
   },
 
   commitManifest({ commit }, manifest): void {
@@ -130,26 +98,31 @@ export const actions: Actions<State, RootState> = {
   },
 
   async updateLink({ commit }, url: string): Promise<any> {
-    if (url && !url.startsWith('http')) {
-      url = 'https://' + url;
+    if (url && !url.startsWith("http")) {
+      url = "https://" + url;
     }
 
     const test = await helpers.isValidUrl(url);
 
     if (
       test.message !== undefined &&
-      !url.toLowerCase().startsWith('http://')
+      !url.toLowerCase().startsWith("http://")
     ) {
-      throw `${test.message
+      throw `${
+        test.message
       }: this error means that you may have a bad https cert or the url may not be correct`;
     }
 
     commit(types.UPDATE_LINK, url);
   },
 
-  async getManifestInformation({ commit, state, rootState }): Promise<ManifestContext> {
+  async getManifestInformation({
+    commit,
+    state,
+    rootState,
+  }): Promise<ManifestContext> {
     if (!state.url) {
-      throw 'error.url_empty';
+      throw "error.url_empty";
     }
     if (state.manifest && state.manifest.url === state.url) {
       return state.manifest;
@@ -160,7 +133,7 @@ export const actions: Actions<State, RootState> = {
 
       if (manifest && rootState.generator.manifest) {
         // Fix common issues with the manifest
-        if (typeof manifest.related_applications === 'string') {
+        if (typeof manifest.related_applications === "string") {
           manifest.related_applications = [];
           rootState.generator.manifest.related_applications = [];
         }
@@ -176,10 +149,12 @@ export const actions: Actions<State, RootState> = {
       const result = await manifestFetcher.fetch();
 
       // Convert color if necessary
-      result.content.background_color = helpers.fixColorFromServer(result.content.background_color);
+      result.content.background_color = helpers.fixColorFromServer(
+        result.content.background_color
+      );
 
       // Fix common issues with the manifest
-      if (typeof result.content.related_applications === 'string') {
+      if (typeof result.content.related_applications === "string") {
         result.content.related_applications = [];
       }
 
@@ -193,10 +168,10 @@ export const actions: Actions<State, RootState> = {
 
       commit(types.UPDATE_WITH_MANIFEST, result);
       commit(types.SET_DEFAULTS_MANIFEST, {
-        displays: rootState.displays ? rootState.displays[0].name : '',
+        displays: rootState.displays ? rootState.displays[0].name : "",
         orientations: rootState.orientations
           ? rootState.orientations[0].name
-          : '',
+          : "",
       });
 
       return result.content as ManifestContext;
@@ -222,7 +197,7 @@ export const actions: Actions<State, RootState> = {
       icons.splice(index, 1);
       commit(types.UPDATE_ICONS, icons);
     }
-    dispatch('update', { root: true });
+    dispatch("update", { root: true });
   },
 
   removeScreenshot({ commit, state, dispatch }, screenshot: Icon): void {
@@ -235,7 +210,7 @@ export const actions: Actions<State, RootState> = {
       screenshots.splice(index, 1);
       commit(types.UPDATE_SCREENSHOTS, screenshots);
     }
-    dispatch('update', { root: true });
+    dispatch("update", { root: true });
   },
 
   resetStates({ commit }): void {
@@ -252,25 +227,27 @@ export const actions: Actions<State, RootState> = {
       return;
     }
 
-    if (src.charAt(0) === '/') {
+    if (src.charAt(0) === "/") {
       src = src.slice(1);
     }
 
-    if (!src.includes('http')) {
+    if (!src.includes("http")) {
       let prefix = state.manifest ? state.manifest.start_url : state.url;
-      src = (prefix || '') + src;
+      src = (prefix || "") + src;
     }
 
     try {
       const sizes = await helpers.getImageIconSize(src);
       commit(types.ADD_ICON, { src, sizes: `${sizes.width}x${sizes.height}` });
-      dispatch('update');
+      dispatch("update");
     } catch (e) {
       throw e;
     }
   },
 
-  async uploadIcon({ commit, dispatch }, iconFile: File): Promise<void> {
+  async uploadIcon({ commit, dispatch, state }, iconFile: File): Promise<void> {
+    console.log("uploadIcon", iconFile, state);
+
     const dataUri: string = await helpers.getImageDataURI(iconFile);
     const sizes = await helpers.getImageIconSize(dataUri);
     commit(types.ADD_ICON, {
@@ -278,11 +255,14 @@ export const actions: Actions<State, RootState> = {
       sizes: `${sizes.width}x${sizes.height}`,
       fileName: iconFile.name,
     });
+    commit(types.UPDATE_MANIFEST_PARTIAL, {
+      icons: state.icons,
+    });
 
-    dispatch('update');
+    dispatch("update");
   },
 
-  async isValidUrls({ }, urls: string[]) {
+  async isValidUrls({}, urls: string[]) {
     var invalidUrls: string[] = [];
     for (var i = 0; i < urls.length; i++) {
       const test = await helpers.isValidScreenshotUrl(urls[i]);
@@ -298,49 +278,77 @@ export const actions: Actions<State, RootState> = {
   ): Promise<void> {
     //fetch screenshots from each URL
     // receive screenshots and add src to manifest
-    console.log(urls);
-    console.log();
-    await fetch(screenshotsUrl + '/screenshotsAsBase64Strings', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        url: urls,
-      }),
-    }).then((res) => {
-      res.json().then((jsonData) => {
-        console.log(jsonData.images);
-        this.$axios
-          .$post(
-            `${apiUrl}/${state.manifestId}/generateMissingScreenshots`,
-            jsonData.images
-          )
-          .then((result) => {
-            console.log('Result');
-            console.log(result);
-            commit(types.OVERWRITE_MANIFEST, result);
-            commit(types.ADD_ASSETS, result.assets);
-            dispatch('update');
-          });
+
+    try {
+      const res = await fetch(screenshotsUrl + "/screenshotsAsBase64Strings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          url: urls,
+        }),
       });
-    });
+
+      if (res.ok) {
+        interface ScreenshotsAsBase64StringsInterface {
+          images: Array<Icon>;
+        }
+
+        const response: ScreenshotsAsBase64StringsInterface = await res.json();
+        console.log(response);
+
+        console.log("Result", res, response, state);
+        response.images.forEach((img) => {
+          img.src = "data:" + (img.type || "image/png") + ";base64," + img.src;
+        });
+
+        commit(types.ADD_SCREENSHOT, response.images);
+        commit(types.UPDATE_MANIFEST_PARTIAL, {
+          screenshots: state.screenshots,
+        });
+        dispatch("update");
+      } else {
+        throw "screenshot service error";
+      }
+    } catch (e) {
+      console.error(e);
+    }
   },
   async generateMissingImages(
     { commit, state, dispatch },
     iconFile: File
   ): Promise<void> {
-    let formData = new FormData();
-    formData.append('file', iconFile);
+    let result: Array<Icon> = [];
 
-    const result = await this.$axios.$post(
-      `${apiUrl}/${state.manifestId}/generatemissingimages`,
-      formData
-    );
+    try {
+      const form = new FormData();
+      form.append("baseImage", iconFile);
+      form.append("padding", "0");
+      //form.append('color', '#0000000');
+      form.append("colorChanged", "false");
+      form.append("platform", "windows10");
+      form.append("platform", "android");
+      form.append("platform", "ios");
 
-    commit(types.OVERWRITE_MANIFEST, result);
-    commit(types.ADD_ASSETS, result.assets);
-    dispatch('update');
+      const res = await fetch(imageGeneratorUrl, {
+        method: "POST",
+        body: form,
+      });
+      if (!res.ok) {
+        throw "failed to fetch from image generator service.";
+      }
+
+      result = await res.json();
+    } catch (e) {
+      console.error(e);
+    }
+
+    commit(types.ADD_ICON, result);
+    commit(types.UPDATE_MANIFEST_PARTIAL, {
+      icons: state.icons,
+    });
+    dispatch("update");
   },
 
   addRelatedApplication(
@@ -354,41 +362,41 @@ export const actions: Actions<State, RootState> = {
     }
 
     commit(types.ADD_RELATED_APPLICATION, payload);
-    dispatch('update');
+    dispatch("update");
   },
 
   removeRelatedApplication({ commit, dispatch }, id: string): void {
     commit(types.REMOVE_RELATED_APPLICATION, id);
-    dispatch('update');
+    dispatch("update");
   },
 
   // @ts-ignore TS6133
   changePreferRelatedApplication({ commit, dispatch }, status: boolean): void {
     commit(types.UPDATE_PREFER_RELATED_APPLICATION, status);
-    dispatch('update');
+    dispatch("update");
   },
 
   addCustomMember({ commit, state, dispatch }, payload: CustomMember): void {
     if (state.members.find((member) => member.name === payload.name)) {
-      throw 'error.custom_value';
+      throw "error.custom_value";
     }
 
-    if (!payload.name.includes('_')) {
+    if (!payload.name.includes("_")) {
       payload.name = helpers.MEMBER_PREFIX + payload.name;
     }
 
     try {
       payload.value = JSON.parse(payload.value);
       commit(types.ADD_CUSTOM_MEMBER, payload);
-      dispatch('update');
+      dispatch("update");
     } catch (e) {
-      throw 'error.parsing_value';
+      throw "error.parsing_value";
     }
   },
 
   removeCustomMember({ commit, dispatch }, name: string): void {
     commit(types.REMOVE_CUSTOM_MEMBER, name);
-    dispatch('update');
+    dispatch("update");
   },
 
   updateColor({ commit, dispatch }, payload: ColorOptions): void {
@@ -399,6 +407,6 @@ export const actions: Actions<State, RootState> = {
     }
 
     commit(types.UPDATE_COLOR, color);
-    dispatch('update');
+    dispatch("update");
   },
 };

@@ -5,7 +5,16 @@ export interface Manifest {
   display: string;
   lang: string | null;
   name: string | null;
-  orientation?: "any" | "natural" | "landscape" | "portrait" | "portrait-primary" | "portrait-secondary" | "landscape-primary" | "landscape-secondary" | null;
+  orientation?:
+    | "any"
+    | "natural"
+    | "landscape"
+    | "portrait"
+    | "portrait-primary"
+    | "portrait-secondary"
+    | "landscape-primary"
+    | "landscape-secondary"
+    | null;
   prefer_related_applications?: boolean;
   related_applications?: RelatedApplication[];
   scope: string | null;
@@ -147,16 +156,16 @@ export const state = (): State => ({
 });
 
 export interface ManifestDetectionResult {
-  content: Manifest,
-  format: "w3c" | "chromeos" | "edgeextension" | "windows10" | "firefox",
-  generatedUrl: string,
+  content: Manifest;
+  format: "w3c" | "chromeos" | "edgeextension" | "windows10" | "firefox";
+  generatedUrl: string;
   default: {
-    short_name: string
-  },
-  id: string,
-  errors: [],
-  suggestions: [],
-  warnings: []
+    short_name: string;
+  };
+  id: string;
+  errors: [];
+  suggestions: [];
+  warnings: [];
 }
 
 export interface ServiceWorkerDetectionResult {

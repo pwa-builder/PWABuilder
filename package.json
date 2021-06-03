@@ -23,6 +23,7 @@
     "dont-sniff-mimetype": "^1.1.0",
     "downloadjs": "^1.4.7",
     "highlight.js": "^9.15.6",
+    "lodash.merge": "^4.6.2",
     "manup": "^1.0.1",
     "marked": "0.7.0",
     "monaco-editor": "^0.17.0",
