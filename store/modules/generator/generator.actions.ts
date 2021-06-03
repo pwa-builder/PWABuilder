@@ -14,6 +14,7 @@ import { RootState } from "store";
 import { ManifestFetcher } from "~/utils/manifest-fetcher";
 
 const screenshotsUrl = `${process.env.screenshotsUrl}`;
+const imageGeneratorUrl = process.env.imageGeneratorUrl + "/api/image/base64";
 
 export interface Actions<S, R> extends ActionTree<S, R> {
   update(context: ActionContext<S, R>): void;
@@ -318,22 +319,36 @@ export const actions: Actions<State, RootState> = {
     { commit, state, dispatch },
     iconFile: File
   ): Promise<void> {
-    console.log("generateMissingImages", state, iconFile);
+    let result: Array<Icon> = [];
 
-    let result = {
-      assets: undefined,
-    };
-
-    console.log(iconFile, commit, dispatch, result);
     try {
-      // result = await fetch("", {});
+      const form = new FormData();
+      form.append("baseImage", iconFile);
+      form.append("padding", "0");
+      //form.append('color', '#0000000');
+      form.append("colorChanged", "false");
+      form.append("platform", "windows10");
+      form.append("platform", "android");
+      form.append("platform", "ios");
+
+      const res = await fetch(imageGeneratorUrl, {
+        method: "POST",
+        body: form,
+      });
+      if (!res.ok) {
+        throw "failed to fetch from image generator service.";
+      }
+
+      result = await res.json();
     } catch (e) {
       console.error(e);
     }
 
-    // commit(types.OVERWRITE_MANIFEST, result);
-    // commit(types.ADD_ASSETS, result.assets);
-    // dispatch("update");
+    commit(types.ADD_ICON, result);
+    commit(types.UPDATE_MANIFEST_PARTIAL, {
+      icons: state.icons,
+    });
+    dispatch("update");
   },
 
   addRelatedApplication(
