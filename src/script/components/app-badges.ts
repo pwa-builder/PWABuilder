@@ -45,8 +45,6 @@ export class AppBadges extends LitElement {
   firstUpdated() {
     this.duplicate = sortBadges();
     this.possible_badges = getPossibleBadges();
-
-    console.log('this.duplicate', this.duplicate);
   }
 
   render() {
@@ -68,7 +66,7 @@ export class AppBadges extends LitElement {
                   : true,
               })}"
             >
-              <img .src="${badge.url}" .alt="${badge.name} icon" />
+              <img .title="${badge.name}" .src="${badge.url}" .alt="${badge.name} icon" />
             </div>
           `;
         })}
