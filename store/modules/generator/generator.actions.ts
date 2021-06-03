@@ -254,6 +254,9 @@ export const actions: Actions<State, RootState> = {
       sizes: `${sizes.width}x${sizes.height}`,
       fileName: iconFile.name,
     });
+    commit(types.UPDATE_MANIFEST_PARTIAL, {
+      icons: state.icons,
+    });
 
     dispatch("update");
   },
