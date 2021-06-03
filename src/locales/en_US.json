@@ -18,6 +18,9 @@
       "base_package": {
         "download": "Download your generated Web Manifest and chosen Service Worker to make your app a PWA!"
       }
+    },
+    "basepack": {
+      "run_new": "After uploading the above files to your Web App tap Run New Test to test your PWA again!"
     }
   }
 }

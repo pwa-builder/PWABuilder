@@ -375,7 +375,7 @@ export class AppBasePack extends LitElement {
                 <h5>Up next</h5>
 
                 <p>
-                  After uploading the above files to your Web App tap Run New Test to test your PWA again, or tap Next to go straight to packaging! 
+                  ${localeStrings.input.basepack.run_new}
                 </p>
               </div>
 
@@ -383,7 +383,6 @@ export class AppBasePack extends LitElement {
                 <app-button @click="${() => this.reTest()}"
                   >Run New Test</app-button
                 >
-                <fast-anchor href="/congrats">Next</fast-anchor>
               </div>
             </section>
           </div>
