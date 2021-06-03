@@ -15,6 +15,9 @@
       "windows": {
         "test_package": "Want to test your app first before going to the Microsoft Store? Tap Download to get a package you can install and test."
       }
+    },
+    "basepack": {
+      "run_new": "After uploading the above files to your Web App tap Run New Test to test your PWA again!"
     }
   }
 }

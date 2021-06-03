@@ -362,7 +362,7 @@ export class AppBasePack extends LitElement {
                 <h5>Up next</h5>
 
                 <p>
-                  After uploading the above files to your Web App tap Run New Test to test your PWA again!
+                  ${localeStrings.input.basepack.run_new}
                 </p>
               </div>
 
