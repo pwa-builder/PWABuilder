@@ -300,6 +300,9 @@ export const actions: Actions<State, RootState> = {
         });
 
         commit(types.ADD_SCREENSHOT, response.images);
+        commit(types.UPDATE_MANIFEST_PARTIAL, {
+          screenshots: state.screenshots,
+        });
         dispatch("update");
       } else {
         throw "screenshot service error";
