@@ -89,13 +89,6 @@
       "platform": "wide"
     },
     {
-      "src": "/Images/assets/screenShots/06-demo-desktop.png",
-      "sizes": "1920x1200",
-      "type": "image/png",
-      "label": "Each web platform article comes with code samples, live demo, browser support matrix, and more",
-      "platform": "wide"
-    },
-    {
       "src": "/Images/assets/screenShots/07-home-mobile.png",
       "sizes": "1079x1919",
       "type": "image/png",
