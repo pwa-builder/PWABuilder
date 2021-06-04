@@ -53,7 +53,7 @@ export class AppBasePack extends LitElement {
         }
 
         .container {
-          padding: 16px;
+          padding: 16px 16px 16px 36px;
           display: flex;
           flex-direction: column;
           justify-items: center;
