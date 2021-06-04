@@ -413,33 +413,6 @@ export class WindowsForm extends LitElement {
                 </div>
 
                 <div class="form-group">
-                  <label for="windowsStartUrlInput">
-                    Start URL
-                    <i
-                      class="fas fa-info-circle"
-                      title="Optional. The preferred URL that should be loaded when the user launches the web app. Windows will use this to determine your app's identity, so this value should not change between releases of your app. This can be an absolute or relative path."
-                      aria-label="Optional. The preferred URL that should be loaded when the user launches the web app. Windows will use this to determine your app's identity, so this value should not change between releases of your app. This can be an absolute or relative path."
-                      role="definition"
-                    ></i>
-
-                    ${tooltip(
-                      'windows-start-url',
-                      "Optional. The preferred URL that should be loaded when the user launches the web app. Windows will use this to determine your app's identity, so this value should not change between releases of your app. This can be an absolute or relative path."
-                    )}
-                  </label>
-                  <fast-text-field
-                    type="url"
-                    class="form-control"
-                    id="windowsStartUrlInput"
-                    placeholder="https://mysite.com/startpoint.html"
-                    .value="${this.default_options
-                      ? this.default_options.manifest?.start_url
-                      : '/'}"
-                    name="startUrl"
-                  ></fast-text-field>
-                </div>
-
-                <div class="form-group">
                   <label for="windowsIconUrlInput">
                     <a
                       href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md"
