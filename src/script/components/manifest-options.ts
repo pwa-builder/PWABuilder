@@ -509,16 +509,18 @@ export class AppManifest extends LitElement {
               class="show-sm"
               .images=${this.iconSrcListParse()}
             ></app-gallery>
-            <loading-button
-              class="hidden-sm"
-              appearance="outline"
-              ?loading=${this.awaitRequest}
-              ?disabled=${this.manifest && this.manifest.icons
-                ? this.manifest.icons.length > 0
-                : false}
-              @click=${this.downloadIcons}
-              >Download</loading-button
-            >
+
+            ${this.manifest &&
+            this.manifest.icons &&
+            this.manifest.icons.length > 0
+              ? html`<loading-button
+                  class="hidden-sm"
+                  appearance="outline"
+                  ?loading=${this.awaitRequest}
+                  @click=${this.downloadIcons}
+                  >Download</loading-button
+                >`
+              : null}
           </div>
           <div class="screenshots">
             <div class="screenshots-header">
