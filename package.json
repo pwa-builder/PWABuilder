@@ -22,7 +22,7 @@
     "clipboard": "^2.0.1",
     "dont-sniff-mimetype": "^1.1.0",
     "downloadjs": "^1.4.7",
-    "highlight.js": "^9.15.6",
+    "highlight.js": "^10.4.1",
     "lodash.merge": "^4.6.2",
     "manup": "^1.0.1",
     "marked": "0.7.0",
