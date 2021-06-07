@@ -118,7 +118,7 @@ export class AppCongrats extends LitElement {
         }
 
         #other-stores {
-          padding: 16px;
+          padding: 16px 16px 16px 36px;
           border-bottom: var(--list-border);
           margin-right: 2em;
         }
