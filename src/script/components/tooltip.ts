@@ -8,6 +8,18 @@ function createTooltipId() {
   return 'tooltip-num-' + current;
 }
 
+function openTooltip(ev: MouseEvent, tooltipEl: HTMLElement) {
+  // the style length check looks non-ideal at first
+  // but the DOM api is just not great here in the fact that
+  // if an elemenet does not have the style.top property
+  // initialized yet, its an empty string instead of undefined.
+  // This code is here to throttle style application as multiple hover events
+  // can fire within seconds of each other causing "jumping" in the UI.
+  if (tooltipEl && ev && tooltipEl.style.top.length === 0) {
+    tooltipEl.style.top = `${ev.clientY.toString()}px`;
+  }
+}
+
 export function tooltip(buttonId: string, text: string, url?: string) {
   const tooltipId = createTooltipId();
 
@@ -17,6 +29,7 @@ export function tooltip(buttonId: string, text: string, url?: string) {
       class="tooltip"
       appearance="stealth"
       aria-labelledby="${tooltipId}"
+      @mouseover="${($event) => openTooltip($event, $event.currentTarget.querySelector('.tooltip-text'))}"
     >
       <img
         src="assets/images/help-outline.svg"
@@ -70,7 +83,7 @@ export const styles = css`
     background-color: var(--tooltip-background-color);
     padding: 8px;
     border-radius: 6px;
-    position: relative;
+    position: absolute;
     z-index: 1;
     text-align: center;
 
