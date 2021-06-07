@@ -98,6 +98,17 @@ export class AppCard extends LitElement {
           height: 188px;
         }
 
+        .image-block {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .image-block img {
+          width: 60%;
+          object-fit: contain;
+        }
+
         h3 {
           font-size: 24px;
           line-height: 24px;
@@ -496,13 +507,17 @@ export class AppCard extends LitElement {
         })}">
           <slot name="overlay"></slot>
         </div>
-        <img
-          class="${classMap({
-            bordered: this.imageBordered,
-          })}"
-          src="${ifDefined(this.imageUrl)}"
-          alt="${this.cardTitle} card header image"
-        />
+
+        <div class="image-block">
+          <img
+            class="${classMap({
+              bordered: this.imageBordered,
+            })}"
+            src="${ifDefined(this.imageUrl)}"
+            alt="${this.cardTitle} card header image"
+          />
+        </div>
+      
         <h3>${this.cardTitle}</h3>
         <p>${this.description}</p>
 
