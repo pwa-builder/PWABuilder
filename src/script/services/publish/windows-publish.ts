@@ -163,7 +163,7 @@ export async function createWindowsPackageOptionsFromForm(
       generateModernPackage: true,
       classicPackage: {
         generate: true,
-        version: '1.0.0',
+        version: form.classicVersion.value || '1.0.0',
         url: form.url.value || getURL(),
       },
       edgeHtmlPackage: {
