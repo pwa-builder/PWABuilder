@@ -1,14 +1,14 @@
 {
   "dir": "ltr",
   "lang": "EN",
-  "name": "Progressive Web Apps Builder",
+  "name": "PWABuilder",
   "display": "standalone",
   "start_url": "/",
   "short_name": "PWABuilder",
-  "theme_color": "#E1477E",
+  "theme_color": "#FFFFFF",
   "description": "All the tools you need to build and deploy your Progressive Web Apps.",
   "orientation": "any",
-  "background_color": "#E1477E",
+  "background_color": "#FFFFFF",
   "related_applications": [],
   "prefer_related_applications": false,
   "icons": [
