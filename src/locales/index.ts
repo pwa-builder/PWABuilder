@@ -13,4 +13,6 @@ function localization() {
 
 export const localeStrings = localization();
 
-export const languageCodes = lang.map((it: langType) => it.code);
+export const languageCodes = lang.map((it: langType) => {
+  return { formatted: it.name, code: it.code };
+});

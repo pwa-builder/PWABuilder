@@ -608,7 +608,6 @@ export class AppManifest extends LitElement {
   }
 
   renderInfoItems() {
-    console.log('infoItems', infoItems);
     return infoItems.map(item => {
       const value = this.manifest
         ? (this.manifest[item.entry] as string)
@@ -644,7 +643,7 @@ export class AppManifest extends LitElement {
         let index = item.menuItems.indexOf(value);
 
         if (index === -1) {
-          const find = item.menuItems.filter(i => i.startsWith(value))[0];
+          const find = item.menuItems.filter(i => i.code?.startsWith(value))[0];
           index = item.menuItems.indexOf(find);
         }
 
@@ -652,6 +651,7 @@ export class AppManifest extends LitElement {
           <app-dropdown
             .menuItems=${item.menuItems}
             selectedIndex=${index}
+            data-field="lang"
             @change=${this.handleInputChange}
           >
           </app-dropdown>
@@ -857,10 +857,10 @@ export class AppManifest extends LitElement {
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
     const fieldName = input.dataset['field'];
 
-    console.log('input.value', input.value, 'fieldName', fieldName);
-
     if (this.manifest && fieldName && this.manifest[fieldName]) {
-      this.updateManifest({ [fieldName]: input.value });
+      // to-do Justin: Figure out why typescript is casting input.value to a string
+      // automatically and how to cast to a better type that will actually compile
+      this.updateManifest({ [fieldName]: (input.value as any).code ? (input.value as any).code : input.value });
     }
   }
 
@@ -1099,7 +1099,7 @@ interface InputItem {
   tooltipText: string;
   entry: string;
   type: 'input' | 'select' | 'radios';
-  menuItems?: Array<string>;
+  menuItems?: Array<string> | Array<any>;
 }
 
 const infoItems: Array<InputItem> = [
