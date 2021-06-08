@@ -64,7 +64,7 @@ import {
   updateStateField,
 } from '../utils/codemirror';
 
-type BackgroundColorRadioValues = 'none' | 'transparent' | 'custom';
+type ColorRadioValues = 'none' | 'transparent' | 'custom';
 
 @customElement('manifest-options')
 export class AppManifest extends LitElement {
@@ -86,7 +86,10 @@ export class AppManifest extends LitElement {
   @state() screenshotListValid: Array<boolean> = [];
 
   @state()
-  protected backgroundColorRadioValue: BackgroundColorRadioValues = 'none';
+  protected backgroundColorRadioValue: ColorRadioValues = 'none';
+
+  @state()
+  protected themeColorRadioValue: ColorRadioValues = 'none';
 
   @state()
   protected awaitRequest = false;
@@ -119,6 +122,12 @@ export class AppManifest extends LitElement {
       fastMenuCss,
       fastRadioCss,
       css`
+        .custom-color-block {
+          display: flex;
+          flex-direction: column;
+          font-weight: bold;
+        }
+
         app-button,
         loading-button::part(underlying-button) {
           margin-top: 8px;
@@ -142,8 +151,8 @@ export class AppManifest extends LitElement {
           box-shadow: none;
         }
 
-        #bg-custom-color {
-          margin-left: 32px;
+        #bg-custom-color, #theme-custom-color {
+          width: 8em;
         }
 
         .panel {
@@ -237,6 +246,12 @@ export class AppManifest extends LitElement {
 
         .item-top .tooltip {
           margin-left: 4px;
+        }
+
+        .color {
+          max-width: 618px;
+          margin-bottom: 1em;
+          margin-top: 1.5em;
         }
 
         .image-item {
@@ -664,32 +679,62 @@ export class AppManifest extends LitElement {
   }
 
   renderBackgroundColorSettings() {
-    const value = this.manifest ? this.manifest?.theme_color : undefined;
+    const value = this.manifest ? this.manifest?.background_color : undefined;
 
     return html`
-      <div class="setting-item inputs color">
-        <div class="item-top">
-          <h3>Background Color</h3>
-          ${this.renderToolTip('bg-color-tooltip', 'TODO')}
-        </div>
-        <fast-radio-group
-          value=${this.setBackgroundColorRadio()}
-          orientation="vertical"
-          @change=${this.handleBackgroundRadioChange}
-        >
-          <fast-radio value="none">None</fast-radio>
-          <fast-radio value="transparent">Transparent</fast-radio>
-          <fast-radio value="custom">Custom Color</fast-radio>
-        </fast-radio-group>
+      <div class="setting-items inputs color">
+        <div id="background-color-block">
+          <div class="item-top">
+            <h3>Background Color</h3>
+            ${this.renderToolTip('bg-color-tooltip', 'TODO')}
+          </div>
+          <fast-radio-group
+            value=${this.setBackgroundColorRadio()}
+            orientation="vertical"
+            @change=${this.handleBackgroundRadioChange}
+          >
+            <fast-radio value="none">None</fast-radio>
+            <fast-radio value="transparent">Transparent</fast-radio>
+            <fast-radio value="custom">Custom Color</fast-radio>
+          </fast-radio-group>
 
-        ${this.backgroundColorRadioValue === 'custom'
-          ? html`<fast-text-field
-              id="bg-custom-color"
-              placeholder="#XXXXXX"
-              .value=${value}
-              @change=${this.handleBackgroundColorInputChange}
-            ></fast-text-field>`
-          : undefined}
+          ${this.backgroundColorRadioValue === 'custom'
+            ? html`
+              <div class="custom-color-block">
+                <label for="bg-custom-color">Custom Color</label>
+                <input type="color" id="bg-custom-color" .value=${value}
+                  @change=${this.handleBackgroundColorInputChange} />
+              </div>
+              `
+            : undefined}
+        </div>
+
+        <div id="theme-color-block">
+          <div class="item-top">
+            <h3>Theme Color</h3>
+            ${this.renderToolTip('bg-color-tooltip', 'TODO')}
+          </div>
+          <fast-radio-group
+            value=${this.setThemeColorRadio()}
+            orientation="vertical"
+            @change=${this.handleThemeRadioChange}
+          >
+            <fast-radio value="none">None</fast-radio>
+            <fast-radio value="transparent">Transparent</fast-radio>
+            <fast-radio value="custom">Custom Color</fast-radio>
+          </fast-radio-group>
+
+          ${this.themeColorRadioValue === 'custom'
+            ? html`
+              <div class="custom-color-block">
+                <label for="theme-custom-color">Custom Color</label>
+                <input type="color" id="theme-custom-color" .value=${value}
+                  @change=${this.handleThemeColorInputChange} />
+              </div>
+              `
+            : undefined}
+        </div>
+        
       </div>
     `;
   }
@@ -829,13 +874,25 @@ export class AppManifest extends LitElement {
   }
 
   handleBackgroundRadioChange(event: CustomEvent) {
-    const value: BackgroundColorRadioValues = (<HTMLInputElement>event.target)
-      .value as BackgroundColorRadioValues;
+    const value: ColorRadioValues = (<HTMLInputElement>event.target)
+      .value as ColorRadioValues;
     this.backgroundColorRadioValue = value;
 
     if (value !== 'custom' && this.manifest) {
       this.updateManifest({
-        themeColor: value,
+        background_color: value,
+      });
+    }
+  }
+
+  handleThemeRadioChange(event: CustomEvent) {
+    const value: ColorRadioValues = (<HTMLInputElement>event.target)
+      .value as ColorRadioValues;
+    this.themeColorRadioValue = value;
+
+    if (value !== 'custom' && this.manifest) {
+      this.updateManifest({
+        theme_color: value,
       });
     }
   }
@@ -845,9 +902,39 @@ export class AppManifest extends LitElement {
       const value = (<HTMLInputElement>event.target).value;
 
       this.updateManifest({
-        themeColor: value,
+        background_color: value,
       });
     }
+  }
+
+  handleThemeColorInputChange(event: CustomEvent) {
+    if (this.manifest) {
+      const value = (<HTMLInputElement>event.target).value;
+
+      this.updateManifest({
+        theme_color: value,
+      });
+    }
+  }
+
+  setBackgroundColorRadio() {
+    if (!this.manifest?.background_color || this.manifest?.background_color === 'none') {
+      return 'none';
+    } else if (this.manifest?.background_color === 'transparent') {
+      return 'transparent';
+    }
+
+    return 'custom';
+  }
+
+  setThemeColorRadio() {
+    if (!this.manifest?.theme_color || this.manifest?.theme_color === 'none') {
+      return 'none';
+    } else if (this.manifest?.theme_color === 'transparent') {
+      return 'transparent';
+    }
+
+    return 'custom';
   }
 
   async handleModalInputFileChange(evt: CustomEvent<FileInputDetails>) {
@@ -988,16 +1075,6 @@ export class AppManifest extends LitElement {
       !this.screenshotListValid.includes(false) &&
       !this.screenshotList.includes(undefined)
     );
-  }
-
-  setBackgroundColorRadio() {
-    if (!this.manifest?.theme_color || this.manifest?.theme_color === 'none') {
-      return 'none';
-    } else if (this.manifest?.theme_color === 'transparent') {
-      return 'transparent';
-    }
-
-    return 'custom';
   }
 
   handleImageUrl(icon: Icon) {
