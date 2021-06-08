@@ -122,6 +122,12 @@ export class AppManifest extends LitElement {
       fastMenuCss,
       fastRadioCss,
       css`
+        .custom-color-block {
+          display: flex;
+          flex-direction: column;
+          font-weight: bold;
+        }
+
         app-button,
         loading-button::part(underlying-button) {
           margin-top: 8px;
@@ -145,8 +151,7 @@ export class AppManifest extends LitElement {
           box-shadow: none;
         }
 
-        #bg-custom-color {
-          margin-left: 32px;
+        #bg-custom-color, #theme-custom-color {
           width: 8em;
         }
 
@@ -693,8 +698,11 @@ export class AppManifest extends LitElement {
 
           ${this.backgroundColorRadioValue === 'custom'
             ? html`
-              <input type="color" id="bg-custom-color" .value=${value}
-                @change=${this.handleBackgroundColorInputChange} />
+              <div class="custom-color-block">
+                <label for="bg-custom-color">Custom Color</label>
+                <input type="color" id="bg-custom-color" .value=${value}
+                  @change=${this.handleBackgroundColorInputChange} />
+              </div>
               `
             : undefined}
         </div>
@@ -716,8 +724,11 @@ export class AppManifest extends LitElement {
 
           ${this.themeColorRadioValue === 'custom'
             ? html`
-              <input type="color" id="bg-custom-color" .value=${value}
-                @change=${this.handleThemeColorInputChange} />
+              <div class="custom-color-block">
+                <label for="theme-custom-color">Custom Color</label>
+                <input type="color" id="theme-custom-color" .value=${value}
+                  @change=${this.handleThemeColorInputChange} />
+              </div>
               `
             : undefined}
         </div>
