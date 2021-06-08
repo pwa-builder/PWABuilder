@@ -169,7 +169,9 @@ export class SWPicker extends LitElement {
               <a href="https://developers.google.com/web/tools/workbox/"
                 >Workbox</a
               >
-              to make building your offline experience easy!
+              to make building your offline experience easy! Tap "Add to Base Package" on the Service Worker of your choice and then tap "Done".
+              The next page will let you download your Base Package, which will include this Service Worker and a Web Manifest, along with instructions on how to 
+              inlude the files in your app.
             </p>
 
             <div id="header-actions">
@@ -198,7 +200,7 @@ export class SWPicker extends LitElement {
                     : html`<app-button
                         id="select-button"
                         @click="${() => this.chooseSW(sw)}"
-                        >Select</app-button
+                        >Add to Base Package</app-button
                       >`}
                 </div>
               </li>
