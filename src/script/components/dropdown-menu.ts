@@ -1,6 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { langCodes } from '../../locales';
 import { fastMenuCss } from '../utils/css/fast-elements';
 import { Lazy } from '../utils/interfaces';
 import { KeyboardKeys } from '../utils/keyboard';
@@ -10,7 +11,7 @@ const dropdownComponentClass = 'dropdown-component';
 @customElement('app-dropdown')
 export class DropdownMenu extends LitElement {
   @property({ type: Boolean }) openMenu = false;
-  @property({ type: Array }) menuItems: Array<string> | Array<{}> = [];
+  @property({ type: Array }) menuItems: Array<string> | Array<langCodes> = [];
   @property({ type: Number }) selectedIndex = 0;
 
   @property({ attribute: 'static-text', type: String })

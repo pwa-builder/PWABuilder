@@ -6,6 +6,11 @@ export type langType = {
   name: string
 }
 
+export type langCodes = {
+  formatted: string,
+  code: string
+}
+
 function localization() {
   // TODO flesh out if we localize
   return english;
@@ -13,6 +18,6 @@ function localization() {
 
 export const localeStrings = localization();
 
-export const languageCodes = lang.map((it: langType) => {
+export const languageCodes: Array<langCodes> = lang.map((it: langType) => {
   return { formatted: it.name, code: it.code };
 });
