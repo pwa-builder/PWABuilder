@@ -13,6 +13,8 @@ import {
 } from '../utils/interfaces.codemirror';
 import { increment } from '../utils/id';
 
+import "./app-button";
+
 @customElement('code-editor')
 export class CodeEditor extends LitElement {
   @property({ type: String }) startText: Lazy<string>;
@@ -22,16 +24,22 @@ export class CodeEditor extends LitElement {
 
   @state() editorView: Lazy<EditorView>;
 
-  @state() editorId: Lazy<string>;
+  @state() editorId: string;
 
   @state() editorEmitter = emitter;
+
+  @state() copied = false;
+  @state() copyText = "Copy Manifest";
 
   protected static editorIdGenerator = increment();
 
   static get styles() {
     return [
       css`
-        .editor-container {
+        #copy-block {
+          display: flex;
+          justify-content: flex-end;
+          margin-bottom: 10px;
         }
       `,
     ];
@@ -68,22 +76,43 @@ export class CodeEditor extends LitElement {
     this.updateEditor();
   }
 
+  async copyManifest() {
+    const doc = this.editorState?.doc;
+
+    if (doc) {
+      try {
+        await navigator.clipboard.writeText(doc.toString());
+        this.copyText = "Copied";
+        this.copied = true;
+      }
+      catch(err) {
+        // We should never really end up here but just in case
+        // lets put the error in the console
+        console.warn("Copying failed with the following err", err);
+      }
+    }
+  }
+
   render() {
     return html`
+      <div id="copy-block">
+        <app-button ?disabled="${this.copied}" @click="${() => this.copyManifest()}" appearance="outline" class="secondary">${this.copyText}</app-button>
+      </div>
+
       <div id=${this.editorId} class="editor-container ${this.className}"></div>
     `;
   }
 
   updateEditor = debounce(() => {
-    this.editorState = getEditorState(this.startText, 'json');
+    this.editorState = getEditorState(this.startText || "", 'json');
 
     if (this.editorView) {
       this.editorView.setState(this.editorState);
     } else {
       this.editorView = new EditorView({
         state: this.editorState,
-        root: this.shadowRoot,
-        parent: this.shadowRoot.getElementById(this.editorId),
+        root: this.shadowRoot || undefined,
+        parent: this.shadowRoot?.getElementById(this.editorId) || undefined,
       });
     }
   }, 2000);
