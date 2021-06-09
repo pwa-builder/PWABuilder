@@ -188,6 +188,9 @@ export class AppTesting extends LitElement {
       'PWABuilder is loading your PWA in the background...',
       'This may take a minute...',
       'We are analyzing your Service Worker and Web Manifest...',
+      'Checking your icons...',
+      'We are analyzing if your app works offline...',
+      'If your app does not have a Web Manifest, we are generating one for you...'
     ];
 
     for (let i = 0; i < phrases.length; i++) {
