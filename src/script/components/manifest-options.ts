@@ -500,7 +500,7 @@ export class AppManifest extends LitElement {
               <app-modal
                 modalId="uploadModal"
                 title="Upload information"
-                body="This is or uploading icons"
+                body="Choose an Icon to upload. For the best results, we recommend choosing a 512x512 size icon."
                 ?open=${this.uploadModalOpen}
                 @app-modal-close=${this.uploadModalClose}
               >
@@ -508,12 +508,12 @@ export class AppManifest extends LitElement {
                   ${this.renderModalInput()}
                 </form>
                 <div slot="modal-actions">
-                  <loading-button
+                  ${this.uploadImageObjectUrl ? html`<loading-button
                     @click=${this.handleIconFileUpload}
                     ?disabled=${this.generateIconButtonDisabled}
                     ?loading=${this.awaitRequest}
                     >Upload</loading-button
-                  >
+                  >` : null}
                 </div>
               </app-modal>
             </div>
