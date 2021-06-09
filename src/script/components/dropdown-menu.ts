@@ -1,6 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { langCodes } from '../../locales';
 import { fastMenuCss } from '../utils/css/fast-elements';
 import { Lazy } from '../utils/interfaces';
 import { KeyboardKeys } from '../utils/keyboard';
@@ -10,7 +11,7 @@ const dropdownComponentClass = 'dropdown-component';
 @customElement('app-dropdown')
 export class DropdownMenu extends LitElement {
   @property({ type: Boolean }) openMenu = false;
-  @property({ type: Array }) menuItems: Array<string> = [];
+  @property({ type: Array }) menuItems: Array<string> | Array<langCodes> = [];
   @property({ type: Number }) selectedIndex = 0;
 
   @property({ attribute: 'static-text', type: String })
@@ -40,6 +41,10 @@ export class DropdownMenu extends LitElement {
 
         .dropdown-component {
           z-index: 20;
+
+          max-height: 15em;
+          overflow-y: scroll;
+          overflow-x: hidden;
         }
 
         fast-button::part(control) {
@@ -114,6 +119,7 @@ export class DropdownMenu extends LitElement {
               : html`<ion-icon name="chevron-up-outline"></ion-icon>`}
           </span>
         </fast-button>
+
         <fast-menu
           class="${classMap({
             'menu': true,
@@ -138,7 +144,7 @@ export class DropdownMenu extends LitElement {
                     <ion-icon name="checkmark-outline"></ion-icon>
                   </span> `
                 : undefined}
-              <span>${item}</span>
+              <span>${item.formatted || item}</span>
             </fast-menu-item>`;
           })}
         </fast-menu>
@@ -151,7 +157,7 @@ export class DropdownMenu extends LitElement {
       return this.staticButtonText;
     }
 
-    return this.menuItems[this.selectedIndex];
+    return (this.menuItems[this.selectedIndex] as any)?.formatted ? (this.menuItems[this.selectedIndex] as any).formatted : this.menuItems[this.selectedIndex];
   }
 
   clickMenuButton() {
