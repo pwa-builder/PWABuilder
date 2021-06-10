@@ -149,6 +149,9 @@ export class AppManifest extends LitElement {
 
         fast-button.link {
           box-shadow: none;
+          padding-top: 4px;
+          padding-right: 6px;
+          padding-left: 6px;
         }
 
         #bg-custom-color, #theme-custom-color {
