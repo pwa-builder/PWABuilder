@@ -36,7 +36,7 @@ const possible_messages = {
     heading: 'Secret Ingredient: A Service Worker',
     supporting:
       'PWABuilder has analyzed your Service Worker, check out the results below. Want to add a Service Worker or check out our pre-built Service Workers? Tap Service Worker Options.',
-  }
+  },
 };
 
 @customElement('app-report')
@@ -329,10 +329,7 @@ export class AppReport extends LitElement {
               ></report-card>
             </fast-tab-panel>
             <fast-tab-panel id="maniPanel">
-              <manifest-options
-                @back-to-overview=${() => this.openOverview()}
-                .score=${this.maniScore}
-              >
+              <manifest-options @back-to-overview=${() => this.openOverview()}>
               </manifest-options>
             </fast-tab-panel>
             <fast-tab-panel id="swPanel">

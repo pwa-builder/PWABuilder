@@ -68,8 +68,6 @@ type ColorRadioValues = 'none' | 'transparent' | 'custom';
 
 @customElement('manifest-options')
 export class AppManifest extends LitElement {
-  @property({ type: Object, hasChanged: objectHasChanged })
-  @property({ type: Number }) score = 0;
   @property({ type: Array, hasChanged: arrayHasChanged })
   screenshotList: Array<string | undefined> = [undefined];
 
