@@ -21,30 +21,59 @@ export async function testServiceWorker(
   }
 
   const swData = await detectServiceWorker(url);
-  const worksOffline = await detectOfflineSupport(url);
 
-  const swTestResult = [
-    {
-      result: swData.hasSW,
-      infoString: 'Has a Service Worker',
-      category: 'required',
-    },
-    {
-      result: worksOffline,
-      infoString: 'Works Offline',
-      category: 'recommended',
-    },
-    {
-      result: swData.hasPeriodicBackgroundSync,
-      infoString: 'Uses Periodic Sync for a rich offline experience',
-      category: 'optional',
-    },
-    {
-      result: swData.hasBackgroundSync,
-      infoString: 'Uses Background Sync for a rich offline experience',
-      category: 'optional',
-    },
-  ];
+  let swTestResult;
+
+  if (swData.hasSW === true) {
+    const worksOffline = await detectOfflineSupport(url);
+
+    swTestResult = [
+      {
+        result: swData.hasSW,
+        infoString: 'Has a Service Worker',
+        category: 'required',
+      },
+      {
+        result: worksOffline,
+        infoString: 'Works Offline',
+        category: 'recommended',
+      },
+      {
+        result: swData.hasPeriodicBackgroundSync,
+        infoString: 'Uses Periodic Sync for a rich offline experience',
+        category: 'optional',
+      },
+      {
+        result: swData.hasBackgroundSync,
+        infoString: 'Uses Background Sync for a rich offline experience',
+        category: 'optional',
+      },
+    ];
+  }
+  else {
+    swTestResult = [
+      {
+        result: swData.hasSW,
+        infoString: 'Has a Service Worker',
+        category: 'required',
+      },
+      {
+        result: false,
+        infoString: 'Works Offline',
+        category: 'recommended',
+      },
+      {
+        result: swData.hasPeriodicBackgroundSync,
+        infoString: 'Uses Periodic Sync for a rich offline experience',
+        category: 'optional',
+      },
+      {
+        result: swData.hasBackgroundSync,
+        infoString: 'Uses Background Sync for a rich offline experience',
+        category: 'optional',
+      },
+    ];
+  }
 
   return swTestResult;
 }
