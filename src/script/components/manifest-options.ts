@@ -79,6 +79,9 @@ export class AppManifest extends LitElement {
   @state() generateIconButtonDisabled = true;
 
   @state()
+  protected addScreenshotUrlDisabled = true;
+
+  @state()
   protected generateScreenshotButtonDisabled = true;
 
   @state() screenshotListValid: Array<boolean> = [];
@@ -98,7 +101,7 @@ export class AppManifest extends LitElement {
   @state()
   protected editorOpened = false;
 
-  @state() 
+  @state()
   protected manifest: Lazy<Manifest | undefined>;
 
   protected get siteUrl(): string {
@@ -152,7 +155,8 @@ export class AppManifest extends LitElement {
           padding-left: 6px;
         }
 
-        #bg-custom-color, #theme-custom-color {
+        #bg-custom-color,
+        #theme-custom-color {
           width: 8em;
         }
 
@@ -429,12 +433,15 @@ export class AppManifest extends LitElement {
   constructor() {
     super();
 
-    manifestEmitter.addEventListener(AppEvents.manifestUpdate, async (maniUpdates: any) => {
-      console.log('maniUpdates', maniUpdates);
-      if (maniUpdates) {
-        this.manifest = maniUpdates.detail;
+    manifestEmitter.addEventListener(
+      AppEvents.manifestUpdate,
+      async (maniUpdates: any) => {
+        console.log('maniUpdates', maniUpdates);
+        if (maniUpdates) {
+          this.manifest = maniUpdates.detail;
+        }
       }
-    });
+    );
   }
 
   async firstUpdated() {
@@ -443,18 +450,15 @@ export class AppManifest extends LitElement {
 
       if (potential_mani) {
         this.manifest = potential_mani;
-        console.log("this.manifest", this.manifest);
-      }
-      else if (potential_mani === undefined) {
+        console.log('this.manifest', this.manifest);
+      } else if (potential_mani === undefined) {
         const gen = await getGeneratedManifest();
         console.info('Gen manifest', gen);
 
         this.manifest = gen;
-
       }
-    }
-    catch (err) {
-      console.info("in here");
+    } catch (err) {
+      console.info('in here');
       const gen = await getGeneratedManifest();
 
       this.manifest = gen;
@@ -509,12 +513,14 @@ export class AppManifest extends LitElement {
                   ${this.renderModalInput()}
                 </form>
                 <div slot="modal-actions">
-                  ${this.uploadImageObjectUrl ? html`<loading-button
-                    @click=${this.handleIconFileUpload}
-                    ?disabled=${this.generateIconButtonDisabled}
-                    ?loading=${this.awaitRequest}
-                    >Upload</loading-button
-                  >` : null}
+                  ${this.uploadImageObjectUrl
+                    ? html`<loading-button
+                        @click=${this.handleIconFileUpload}
+                        ?disabled=${this.generateIconButtonDisabled}
+                        ?loading=${this.awaitRequest}
+                        >Upload</loading-button
+                      >`
+                    : null}
                 </div>
               </app-modal>
             </div>
@@ -704,11 +710,15 @@ export class AppManifest extends LitElement {
 
           ${this.backgroundColorRadioValue === 'custom'
             ? html`
-              <div class="custom-color-block">
-                <label for="bg-custom-color">Custom Color</label>
-                <input type="color" id="bg-custom-color" .value=${value}
-                  @change=${this.handleBackgroundColorInputChange} />
-              </div>
+                <div class="custom-color-block">
+                  <label for="bg-custom-color">Custom Color</label>
+                  <input
+                    type="color"
+                    id="bg-custom-color"
+                    .value=${value}
+                    @change=${this.handleBackgroundColorInputChange}
+                  />
+                </div>
               `
             : undefined}
         </div>
@@ -730,15 +740,18 @@ export class AppManifest extends LitElement {
 
           ${this.themeColorRadioValue === 'custom'
             ? html`
-              <div class="custom-color-block">
-                <label for="theme-custom-color">Custom Color</label>
-                <input type="color" id="theme-custom-color" .value=${value}
-                  @change=${this.handleThemeColorInputChange} />
-              </div>
+                <div class="custom-color-block">
+                  <label for="theme-custom-color">Custom Color</label>
+                  <input
+                    type="color"
+                    id="theme-custom-color"
+                    .value=${value}
+                    @change=${this.handleThemeColorInputChange}
+                  />
+                </div>
               `
             : undefined}
         </div>
-        
       </div>
     `;
   }
@@ -864,7 +877,9 @@ export class AppManifest extends LitElement {
     if (this.manifest && fieldName && this.manifest[fieldName]) {
       // to-do Justin: Figure out why typescript is casting input.value to a string
       // automatically and how to cast to a better type that will actually compile
-      this.updateManifest({ [fieldName]: (input.value as any).code || input.value });
+      this.updateManifest({
+        [fieldName]: (input.value as any).code || input.value,
+      });
     }
   }
 
@@ -922,7 +937,10 @@ export class AppManifest extends LitElement {
   }
 
   setBackgroundColorRadio() {
-    if (!this.manifest?.background_color || this.manifest?.background_color === 'none') {
+    if (
+      !this.manifest?.background_color ||
+      this.manifest?.background_color === 'none'
+    ) {
       return 'none';
     } else if (this.manifest?.background_color === 'transparent') {
       return 'transparent';
