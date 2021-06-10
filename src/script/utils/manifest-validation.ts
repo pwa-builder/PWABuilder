@@ -4,9 +4,11 @@ export function validateScreenshotUrlsList(urls: Array<string | undefined>) {
   const length = urls.length;
   for (let i = 0; i < length; i++) {
     try {
-      const urlToHandle = urls[i];
+      let urlToHandle = urls[i];
 
-      if (urlToHandle) {
+      if (!urlToHandle.startsWith('http')) {
+        new URL('http://' + urlToHandle);
+      } else if (urlToHandle) {
         new URL(urlToHandle);
       }
       results[i] = true;
