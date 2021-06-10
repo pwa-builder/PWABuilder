@@ -562,7 +562,7 @@ export class AppManifest extends LitElement {
                 class="link"
                 appearance="lightweight"
                 @click=${this.addNewScreenshot}
-                ?disabled=${this.screenshotList?.length >= 8 || true}
+                ?disabled=${this.addScreenshotUrlDisabled}
                 >+ Add URL</fast-button
               >
             </div>
@@ -889,6 +889,7 @@ export class AppManifest extends LitElement {
 
     this.screenshotList[index] = input.value;
     this.screenshotListValid = validateScreenshotUrlsList(this.screenshotList);
+    this.addScreenshotUrlDisabled = !this.disableAddUrlButton();
     this.generateScreenshotButtonDisabled = !this.hasScreenshotsToGenerate();
   }
 
@@ -1039,6 +1040,7 @@ export class AppManifest extends LitElement {
 
   addNewScreenshot() {
     this.screenshotList = [...(this.screenshotList || []), undefined];
+    this.addScreenshotUrlDisabled = !this.disableAddUrlButton();
     this.generateScreenshotButtonDisabled = !this.hasScreenshotsToGenerate();
   }
 
@@ -1089,6 +1091,10 @@ export class AppManifest extends LitElement {
     }
 
     this.awaitRequest = false;
+  }
+
+  disableAddUrlButton() {
+    return this.screenshotList?.length < 8 && this.hasScreenshotsToGenerate();
   }
 
   hasScreenshotsToGenerate() {
