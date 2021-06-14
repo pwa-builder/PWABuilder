@@ -13,7 +13,7 @@ import {
   getManifest,
   updateManifest,
 } from '../services/manifest';
-import { arrayHasChanged, objectHasChanged } from '../utils/hasChanged';
+import { arrayHasChanged } from '../utils/hasChanged';
 import { resolveUrl } from '../utils/url';
 import {
   AppEvents,
@@ -68,8 +68,6 @@ type ColorRadioValues = 'none' | 'transparent' | 'custom';
 
 @customElement('manifest-options')
 export class AppManifest extends LitElement {
-  @property({ type: Object, hasChanged: objectHasChanged })
-  @property({ type: Number }) score = 0;
   @property({ type: Array, hasChanged: arrayHasChanged })
   screenshotList: Array<string | undefined> = [undefined];
 
@@ -79,6 +77,9 @@ export class AppManifest extends LitElement {
   @state() uploadImageObjectUrl: string;
 
   @state() generateIconButtonDisabled = true;
+
+  @state()
+  protected addScreenshotUrlDisabled = true;
 
   @state()
   protected generateScreenshotButtonDisabled = true;
@@ -106,7 +107,7 @@ export class AppManifest extends LitElement {
   @state()
   protected editorOpened = false;
 
-  @state() 
+  @state()
   protected manifest: Lazy<Manifest | undefined>;
 
   protected get siteUrl(): string {
@@ -155,9 +156,13 @@ export class AppManifest extends LitElement {
 
         fast-button.link {
           box-shadow: none;
+          padding-top: 4px;
+          padding-right: 6px;
+          padding-left: 6px;
         }
 
-        #bg-custom-color, #theme-custom-color {
+        #bg-custom-color,
+        #theme-custom-color {
           width: 8em;
         }
 
@@ -434,12 +439,15 @@ export class AppManifest extends LitElement {
   constructor() {
     super();
 
-    manifestEmitter.addEventListener(AppEvents.manifestUpdate, async (maniUpdates: any) => {
-      console.log('maniUpdates', maniUpdates);
-      if (maniUpdates) {
-        this.manifest = maniUpdates.detail;
+    manifestEmitter.addEventListener(
+      AppEvents.manifestUpdate,
+      async (maniUpdates: any) => {
+        console.log('maniUpdates', maniUpdates);
+        if (maniUpdates) {
+          this.manifest = maniUpdates.detail;
+        }
       }
-    });
+    );
   }
 
   async firstUpdated() {
@@ -448,18 +456,15 @@ export class AppManifest extends LitElement {
 
       if (potential_mani) {
         this.manifest = potential_mani;
-        console.log("this.manifest", this.manifest);
-      }
-      else if (potential_mani === undefined) {
+        console.log('this.manifest', this.manifest);
+      } else if (potential_mani === undefined) {
         const gen = await getGeneratedManifest();
         console.info('Gen manifest', gen);
 
         this.manifest = gen;
-
       }
-    }
-    catch (err) {
-      console.info("in here");
+    } catch (err) {
+      console.info('in here');
       const gen = await getGeneratedManifest();
 
       this.manifest = gen;
@@ -514,12 +519,14 @@ export class AppManifest extends LitElement {
                   ${this.renderModalInput()}
                 </form>
                 <div slot="modal-actions">
-                  ${this.uploadImageObjectUrl ? html`<loading-button
-                    @click=${this.handleIconFileUpload}
-                    ?disabled=${this.generateIconButtonDisabled}
-                    ?loading=${this.awaitRequest}
-                    >Upload</loading-button
-                  >` : null}
+                  ${this.uploadImageObjectUrl
+                    ? html`<loading-button
+                        @click=${this.handleIconFileUpload}
+                        ?disabled=${this.generateIconButtonDisabled}
+                        ?loading=${this.awaitRequest}
+                        >Upload</loading-button
+                      >`
+                    : null}
                 </div>
               </app-modal>
             </div>
@@ -561,7 +568,7 @@ export class AppManifest extends LitElement {
                 class="link"
                 appearance="lightweight"
                 @click=${this.addNewScreenshot}
-                ?disabled=${this.screenshotList?.length >= 8 || true}
+                ?disabled=${this.addScreenshotUrlDisabled}
                 >+ Add URL</fast-button
               >
             </div>
@@ -710,11 +717,15 @@ export class AppManifest extends LitElement {
 
           ${this.backgroundColorRadioValue === 'custom'
             ? html`
-              <div class="custom-color-block">
-                <label for="bg-custom-color">Custom Color</label>
-                <input type="color" id="bg-custom-color" .value=${this.backgroundColor}
-                  @change=${this.handleBackgroundColorInputChange} />
-              </div>
+                <div class="custom-color-block">
+                  <label for="bg-custom-color">Custom Color</label>
+                  <input
+                    type="color"
+                    id="bg-custom-color"
+                    .value=${this.backgroundColor}
+                    @change=${this.handleBackgroundColorInputChange}
+                  />
+                </div>
               `
             : undefined}
         </div>
@@ -736,15 +747,18 @@ export class AppManifest extends LitElement {
 
           ${this.themeColorRadioValue === 'custom'
             ? html`
-              <div class="custom-color-block">
-                <label for="theme-custom-color">Custom Color</label>
-                <input type="color" id="theme-custom-color" .value=${this.themeColor}
-                  @change=${this.handleThemeColorInputChange} />
-              </div>
+                <div class="custom-color-block">
+                  <label for="theme-custom-color">Custom Color</label>
+                  <input
+                    type="color"
+                    id="theme-custom-color"
+                    .value=${this.themeColor}
+                    @change=${this.handleThemeColorInputChange}
+                  />
+                </div>
               `
             : undefined}
         </div>
-        
       </div>
     `;
   }
@@ -870,7 +884,9 @@ export class AppManifest extends LitElement {
     if (this.manifest && fieldName && this.manifest[fieldName]) {
       // to-do Justin: Figure out why typescript is casting input.value to a string
       // automatically and how to cast to a better type that will actually compile
-      this.updateManifest({ [fieldName]: (input.value as any).code || input.value });
+      this.updateManifest({
+        [fieldName]: (input.value as any).code || input.value,
+      });
     }
   }
 
@@ -880,6 +896,7 @@ export class AppManifest extends LitElement {
 
     this.screenshotList[index] = input.value;
     this.screenshotListValid = validateScreenshotUrlsList(this.screenshotList);
+    this.addScreenshotUrlDisabled = !this.disableAddUrlButton();
     this.generateScreenshotButtonDisabled = !this.hasScreenshotsToGenerate();
   }
 
@@ -930,7 +947,10 @@ export class AppManifest extends LitElement {
   }
 
   setBackgroundColorRadio() {
-    if (!this.manifest?.background_color || this.manifest?.background_color === 'none') {
+    if (
+      !this.manifest?.background_color ||
+      this.manifest?.background_color === 'none'
+    ) {
       return 'none';
     } else if (this.manifest?.background_color === 'transparent') {
       return 'transparent';
@@ -1029,6 +1049,7 @@ export class AppManifest extends LitElement {
 
   addNewScreenshot() {
     this.screenshotList = [...(this.screenshotList || []), undefined];
+    this.addScreenshotUrlDisabled = !this.disableAddUrlButton();
     this.generateScreenshotButtonDisabled = !this.hasScreenshotsToGenerate();
   }
 
@@ -1079,6 +1100,10 @@ export class AppManifest extends LitElement {
     }
 
     this.awaitRequest = false;
+  }
+
+  disableAddUrlButton() {
+    return this.screenshotList?.length < 8 && this.hasScreenshotsToGenerate();
   }
 
   hasScreenshotsToGenerate() {
