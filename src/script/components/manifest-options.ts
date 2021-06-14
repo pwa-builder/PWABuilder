@@ -63,6 +63,7 @@ import {
   dispatchEvent as editorDispatchEvent,
   updateStateField,
 } from '../utils/codemirror';
+import { AppModalCloseEvent } from '../utils/events/modal';
 
 type ColorRadioValues = 'none' | 'transparent' | 'custom';
 
@@ -989,6 +990,7 @@ export class AppManifest extends LitElement {
     }
 
     this.awaitRequest = false;
+    this.uploadModalClose(AppModalCloseEvent());
   }
 
   async handleDeleteImage(event: Event) {

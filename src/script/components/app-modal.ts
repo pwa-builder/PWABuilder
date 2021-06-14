@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-import { ModalCloseEvent } from '../utils/interfaces';
+import { AppModalCloseEvent } from '../utils/events/modal';
 import { smallBreakPoint } from '../utils/css/breakpoints';
 
 import { turnOffScroll, turnOnScroll } from '../utils/dom-utils';
@@ -205,15 +205,7 @@ export class AppModal extends LitElement {
       this.open = false;
     }
 
-    this.dispatchEvent(
-      new CustomEvent<ModalCloseEvent>('app-modal-close', {
-        detail: {
-          modalId: this.modalId,
-        },
-        composed: true,
-        bubbles: true,
-      })
-    );
+    this.dispatchEvent(AppModalCloseEvent());
 
     // just to ensure scrolling gets turned back on
     // when the modal is closed
