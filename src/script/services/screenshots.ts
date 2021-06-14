@@ -23,7 +23,7 @@ export async function generateScreenshots(screenshotsList: Array<string>) {
     });
 
     if (res.ok) {
-      let screenshots: Array<Icon> = (await getManifest())?.screenshots ?? [];
+      let screenshots: Array<Icon> = (await getManifestGuarded())?.screenshots;
       screenshots = screenshots.concat(await res.json());
 
       updateManifest({
