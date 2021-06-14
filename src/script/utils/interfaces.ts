@@ -1,4 +1,8 @@
+import { LitElement } from "lit";
+
 export type Lazy<T> = T | undefined;
+
+export type ShadowRootQuery<T> = HTMLElement & LitElement & T;
 
 export enum AppEvents {
   manifestUpdate = 'MANIFEST_UPDATE',

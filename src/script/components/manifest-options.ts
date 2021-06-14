@@ -22,6 +22,7 @@ import {
   Lazy,
   Manifest,
   ModalCloseEvent,
+  ShadowRootQuery,
 } from '../utils/interfaces';
 import {
   CodeEditorEvents,
@@ -63,7 +64,7 @@ import {
   dispatchEvent as editorDispatchEvent,
   updateStateField,
 } from '../utils/codemirror';
-import { AppModalCloseEvent } from '../utils/events/modal';
+import { AppModalElement } from '../utils/interfaces.components';
 
 type ColorRadioValues = 'none' | 'transparent' | 'custom';
 
@@ -990,7 +991,12 @@ export class AppManifest extends LitElement {
     }
 
     this.awaitRequest = false;
-    this.uploadModalClose(AppModalCloseEvent());
+
+    const uploadModal = (await this.shadowRoot.getElementById(
+      'uploadModal'
+    )) as ShadowRootQuery<AppModalElement>;
+
+    uploadModal.close();
   }
 
   async handleDeleteImage(event: Event) {
