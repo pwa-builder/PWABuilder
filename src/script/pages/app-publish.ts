@@ -31,6 +31,7 @@ import {
 } from '../services/publish/publish-checks';
 import { generatePackage } from '../services/publish';
 import { getReportErrorUrl } from '../utils/error';
+import { capturePageAction } from '../utils/analytics';
 
 @customElement('app-publish')
 export class AppPublish extends LitElement {
@@ -480,6 +481,12 @@ export class AppPublish extends LitElement {
 
       this.showAlertModal(err, type);
     }
+
+    capturePageAction({
+      pageName: `${type}-package-generated`,
+      uri: `${location.pathname}`,
+      pageHeight: window.innerHeight
+    });
   }
 
   async download() {
@@ -491,6 +498,12 @@ export class AppPublish extends LitElement {
 
       this.blob = undefined;
       this.testBlob = undefined;
+
+      capturePageAction({
+        pageName: `${this.blob ? 'store' : 'test'}-package-downloaded`,
+        uri: `${location.pathname}`,
+        pageHeight: window.innerHeight
+      });
     }
   }
 
@@ -503,14 +516,32 @@ export class AppPublish extends LitElement {
 
   showWindowsOptionsModal() {
     this.open_windows_options = true;
+
+    capturePageAction({
+      pageName: 'windows-settings-opened',
+      uri: `${location.pathname}`,
+      pageHeight: window.innerHeight
+    });
   }
 
   showAndroidOptionsModal() {
     this.open_android_options = true;
+
+    capturePageAction({
+      pageName: 'android-settings-opened',
+      uri: `${location.pathname}`,
+      pageHeight: window.innerHeight
+    });
   }
 
   showSamsungModal() {
     this.open_samsung_modal = true;
+
+    capturePageAction({
+      pageName: 'samsung',
+      uri: `${location.pathname}`,
+      pageHeight: window.innerHeight
+    });
   }
 
   renderContentCards() {
