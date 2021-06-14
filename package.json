@@ -39,6 +39,7 @@
     "express": "^4.17.1",
     "lit": "^2.0.0-rc.1",
     "lodash-es": "^4.17.21",
+    "workbox-build": "^6.1.5",
     "workbox-core": "^6.1.2",
     "workbox-precaching": "^6.1.2"
   },
@@ -68,8 +69,6 @@
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-lit-css": "^2.1.0",
     "rollup-plugin-terser": "^7.0.2",
-    "rollup-plugin-workbox": "^6.1.1",
-    "rollup-plugin-workbox-inject": "^2.0.0",
     "tslib": "^2.1.0",
     "typescript": "^4.2.3"
   }
