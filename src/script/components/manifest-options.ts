@@ -90,7 +90,13 @@ export class AppManifest extends LitElement {
   protected backgroundColorRadioValue: ColorRadioValues = 'none';
 
   @state()
+  protected backgroundColor: string;
+
+  @state()
   protected themeColorRadioValue: ColorRadioValues = 'none';
+  
+  @state()
+  protected themeColor: string;
 
   @state()
   protected awaitRequest = false;
@@ -689,7 +695,8 @@ export class AppManifest extends LitElement {
   }
 
   renderBackgroundColorSettings() {
-    const value = this.manifest ? this.manifest?.background_color : undefined;
+    this.backgroundColor = this.manifest ? this.manifest?.background_color : undefined;
+    this.themeColor = this.manifest ? this.manifest?.theme_color : undefined;
 
     return html`
       <div class="setting-items inputs color">
@@ -715,7 +722,7 @@ export class AppManifest extends LitElement {
                   <input
                     type="color"
                     id="bg-custom-color"
-                    .value=${value}
+                    .value=${this.backgroundColor}
                     @change=${this.handleBackgroundColorInputChange}
                   />
                 </div>
@@ -726,7 +733,7 @@ export class AppManifest extends LitElement {
         <div id="theme-color-block">
           <div class="item-top">
             <h3>Theme Color</h3>
-            ${this.renderToolTip('bg-color-tooltip', 'TODO')}
+            ${this.renderToolTip('theme-color-tooltip', 'TODO')}
           </div>
           <fast-radio-group
             value=${this.setThemeColorRadio()}
@@ -745,7 +752,7 @@ export class AppManifest extends LitElement {
                   <input
                     type="color"
                     id="theme-custom-color"
-                    .value=${value}
+                    .value=${this.themeColor}
                     @change=${this.handleThemeColorInputChange}
                   />
                 </div>
@@ -921,6 +928,7 @@ export class AppManifest extends LitElement {
     if (this.manifest) {
       const value = (<HTMLInputElement>event.target).value;
 
+      this.backgroundColor = value;
       this.updateManifest({
         background_color: value,
       });
@@ -931,6 +939,7 @@ export class AppManifest extends LitElement {
     if (this.manifest) {
       const value = (<HTMLInputElement>event.target).value;
 
+      this.themeColor = value;
       this.updateManifest({
         theme_color: value,
       });
