@@ -84,7 +84,9 @@
         }
       };
 
-      awa.init(config);
+      if (window.awa) {
+        window.awa.init(config);
+      }
     </script>
   </body>
 </html>

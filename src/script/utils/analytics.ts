@@ -17,9 +17,13 @@ export interface AnalyticsOptions {
 }
 
 export function capturePageView(options: AnalyticsOptions) {
-  (window as any).awa.ct.capturePageView(options);
+  if ((window as any).awa) {
+    (window as any).awa.ct.capturePageView(options);
+  }
 }
 
 export function capturePageAction(options: AnalyticsOptions) {
-  (window as any).awa.ct.capturePageAction(options);
+  if ((window as any).awa) {
+    (window as any).awa.ct.capturePageAction(options);
+  }
 }
