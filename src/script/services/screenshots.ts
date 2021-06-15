@@ -1,5 +1,5 @@
 import { Icon } from '../utils/interfaces';
-import { getManifest, updateManifest } from './manifest';
+import { getManifestGuarded, updateManifest } from './manifest';
 
 const screenshotServiceBaseUrl = 'https://pwa-screenshots.azurewebsites.net';
 
@@ -12,11 +12,13 @@ enum EndPoints {
 export async function generateScreenshots(screenshotsList: Array<string>) {
   try {
     const res = await fetch(`${screenshotServiceBaseUrl}/${EndPoints.base64}`, {
-      headers: new Headers({
-        'Content-Type': 'application/json',
-      }),
       method: 'POST',
-      mode: 'no-cors',
+      headers: {
+        'content-type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+      referrerPolicy: 'origin',
+      credentials: 'omit',
       body: JSON.stringify({
         url: screenshotsList,
       }),
