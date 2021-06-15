@@ -4,3 +4,7 @@ export interface AppButtonElement {
   appearance: string;
   disabled: boolean;
 }
+
+export interface AppModalElement {
+  close(): Promise<void>
+}

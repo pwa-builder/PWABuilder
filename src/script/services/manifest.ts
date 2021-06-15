@@ -179,6 +179,19 @@ export function getManiURL() {
   return maniURL;
 }
 
+export async function getManifestGuarded(): Promise<Manifest> {
+  try {
+    const manifest = await getManifest();
+    if (manifest) {
+      return manifest
+    }
+  } catch (e) {
+    console.warn(e);
+  }
+
+  return getGeneratedManifest();
+}
+
 export async function getManifest(): Promise<Manifest | undefined> {
   if (manifest) {
     return manifest;

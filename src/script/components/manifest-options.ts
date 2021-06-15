@@ -22,6 +22,7 @@ import {
   Lazy,
   Manifest,
   ModalCloseEvent,
+  ShadowRootQuery,
 } from '../utils/interfaces';
 import {
   CodeEditorEvents,
@@ -63,6 +64,9 @@ import {
   dispatchEvent as editorDispatchEvent,
   updateStateField,
 } from '../utils/codemirror';
+
+import { AppModalElement } from '../utils/interfaces.components';
+
 import { capturePageAction } from '../utils/analytics';
 
 type ColorRadioValues = 'none' | 'transparent' | 'custom';
@@ -95,7 +99,7 @@ export class AppManifest extends LitElement {
 
   @state()
   protected themeColorRadioValue: ColorRadioValues = 'none';
-  
+
   @state()
   protected themeColor: string;
 
@@ -696,7 +700,9 @@ export class AppManifest extends LitElement {
   }
 
   renderBackgroundColorSettings() {
-    this.backgroundColor = this.manifest ? this.manifest?.background_color : undefined;
+    this.backgroundColor = this.manifest
+      ? this.manifest?.background_color
+      : undefined;
     this.themeColor = this.manifest ? this.manifest?.theme_color : undefined;
 
     return html`
@@ -999,6 +1005,12 @@ export class AppManifest extends LitElement {
     }
 
     this.awaitRequest = false;
+
+    const uploadModal = (await this.shadowRoot.getElementById(
+      'uploadModal'
+    )) as ShadowRootQuery<AppModalElement>;
+
+    uploadModal.close();
   }
 
   async handleDeleteImage(event: Event) {

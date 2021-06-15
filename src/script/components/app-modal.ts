@@ -1,16 +1,17 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-import { ModalCloseEvent } from '../utils/interfaces';
+import { AppModalCloseEvent } from '../utils/events/modal';
 import { smallBreakPoint } from '../utils/css/breakpoints';
 
 import { turnOffScroll, turnOnScroll } from '../utils/dom-utils';
 
 //@ts-ignore
 import ModalStyles from '../../../styles/modal-styles.css';
+import { AppModalElement } from '../utils/interfaces.components';
 
 @customElement('app-modal')
-export class AppModal extends LitElement {
+export class AppModal extends LitElement implements AppModalElement {
   @property({ type: Boolean }) open = false;
   @property({ type: String }) title = '';
   @property({ type: String }) body = '';
@@ -179,11 +180,10 @@ export class AppModal extends LitElement {
   updated(changedProperties: Map<string, any>) {
     if (changedProperties.has('open')) {
       if (changedProperties.get('open') === false) {
-        // modal is open 
+        // modal is open
         // (check above can be confusing at first glance so explaning here)
         turnOffScroll();
-      }
-      else {
+      } else {
         // modal has been closed
         turnOnScroll();
       }
@@ -197,23 +197,10 @@ export class AppModal extends LitElement {
 
       await this.modalAni.finished;
       await this.backgroundAni.finished;
-
-      this.open = false;
-    } else {
-      // Should never really end up here
-      // but just in case close modal without animation
-      this.open = false;
     }
 
-    this.dispatchEvent(
-      new CustomEvent<ModalCloseEvent>('app-modal-close', {
-        detail: {
-          modalId: this.modalId,
-        },
-        composed: true,
-        bubbles: true,
-      })
-    );
+    this.open = false;
+    this.dispatchEvent(AppModalCloseEvent());
 
     // just to ensure scrolling gets turned back on
     // when the modal is closed

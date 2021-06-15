@@ -1,7 +1,7 @@
 import { api } from '../utils/api';
 import { download } from '../utils/download';
 import { Icon } from '../utils/interfaces';
-import { getManifest, updateManifest } from './manifest';
+import { getManifestGuarded, updateManifest } from './manifest';
 
 type Platform =
   | 'windows10'
@@ -46,7 +46,7 @@ export async function generateMissingImagesBase64(config: MissingImagesConfig) {
     });
 
     if (response.ok) {
-      let icons = (await getManifest()).icons ?? [];
+      let icons = (await getManifestGuarded()).icons;
       icons = icons.concat(((await response.json()) as unknown) as Array<Icon>);
 
       updateManifest({
