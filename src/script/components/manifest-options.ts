@@ -503,7 +503,7 @@ export class AppManifest extends LitElement {
             <div class="images-header">
               <div class="item-top">
                 <h3>Upload App Icons</h3>
-                ${this.renderToolTip('upload-icons-tooltip', 'TODO')}
+                ${this.renderToolTip('upload-icons-tooltip', 'Your apps icon, this is the Icon operating systems will use to represent your app. In Windows this is used in the taskbar, start menu etc.', 'https://developer.mozilla.org/en-US/docs/Web/Manifest/icons')}
               </div>
               <app-button appearance="outline" @click=${this.openUploadModal}
                 >Upload</app-button
@@ -554,7 +554,7 @@ export class AppManifest extends LitElement {
             <div class="screenshots-header">
               <div class="item-top">
                 <h3>Generate Screenshots</h3>
-                ${this.renderToolTip('generate-screenshot-tooltip', 'TODO')}
+                ${this.renderToolTip('generate-screenshot-tooltip', 'Screenshots of your PWA can be used in stores and the in-browser install prompt to help promote your PWA.', 'https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots')}
               </div>
               <p>
                 Specify the URLs to generate desktop and mobile screenshots
@@ -703,7 +703,7 @@ export class AppManifest extends LitElement {
         <div id="background-color-block">
           <div class="item-top">
             <h3>Background Color</h3>
-            ${this.renderToolTip('bg-color-tooltip', 'TODO')}
+            ${this.renderToolTip('bg-color-tooltip', 'The background_color member controls the splashscreen color of your app.', 'https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color')}
           </div>
           <fast-radio-group
             value=${this.setBackgroundColorRadio()}
@@ -733,7 +733,7 @@ export class AppManifest extends LitElement {
         <div id="theme-color-block">
           <div class="item-top">
             <h3>Theme Color</h3>
-            ${this.renderToolTip('theme-color-tooltip', 'TODO')}
+            ${this.renderToolTip('theme-color-tooltip', 'The theme_color member is a string that defines the default theme color for the application. On Windows this will be the title-bar color.', 'https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color')}
           </div>
           <fast-radio-group
             value=${this.setThemeColorRadio()}
@@ -1142,29 +1142,29 @@ interface InputItem {
 const infoItems: Array<InputItem> = [
   {
     title: 'Name',
-    description: 'Used for App Lists or Store Listings',
-    tooltipText: 'TODO',
+    description: 'The name of your App',
+    tooltipText: 'The name of your App',
     entry: 'name',
     type: 'input',
   },
   {
     title: 'Short Name',
-    description: 'Use for title or home screens',
-    tooltipText: 'TODO',
+    description: 'Uses for title or home screens',
+    tooltipText: 'The short name for your app, used where the full name cannot be displayed without wrapping.',
     entry: 'short_name',
     type: 'input',
   },
   {
     title: 'Description',
     description: 'Used for app listings',
-    tooltipText: 'TODO',
+    tooltipText: 'A description that describes your app.',
     entry: 'description',
     type: 'input',
   },
   {
     title: 'Start URL',
     description: 'Used for app listings',
-    tooltipText: 'TODO',
+    tooltipText: 'This is the initial URL that is opened when the PWA is launched. Normally this should be the root url of your app.',
     entry: 'start_url',
     type: 'input',
   },
@@ -1173,23 +1173,23 @@ const infoItems: Array<InputItem> = [
 const settingsItems: Array<InputItem> = [
   {
     title: 'Scope',
-    description: 'Enter app scope',
-    tooltipText: 'TODO',
+    description: 'App Scope',
+    tooltipText: "The scope member is a string that defines the navigation scope of this web application's application context.",
     entry: 'scope',
     type: 'input',
   },
   {
     title: 'Display',
-    description: 'Enter app display',
-    tooltipText: 'TODO',
+    description: 'App Display',
+    tooltipText: 'The display member is a string that determines the developers’ preferred display mode for the website.',
     entry: 'display',
     type: 'select',
     menuItems: ['fullscreen', 'standalone', 'minimal-ui', 'browser'],
   },
   {
     title: 'Orientation',
-    description: 'Enter app orientation',
-    tooltipText: 'TODO',
+    description: 'App Orientation',
+    tooltipText: 'The default orientation your app should be used in, such as portrait or landscape.',
     entry: 'orientation',
     type: 'select',
     menuItems: [
@@ -1206,7 +1206,7 @@ const settingsItems: Array<InputItem> = [
   {
     title: 'Language',
     description: 'Enter the apps primary language',
-    tooltipText: 'TODO',
+    tooltipText: 'Specifies the primary language of the app.',
     entry: 'lang',
     type: 'select',
     menuItems: languageCodes,
