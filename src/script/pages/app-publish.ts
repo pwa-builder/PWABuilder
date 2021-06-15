@@ -31,7 +31,7 @@ import {
 } from '../services/publish/publish-checks';
 import { generatePackage } from '../services/publish';
 import { getReportErrorUrl } from '../utils/error';
-
+import { tooltip, styles as ToolTipStyles } from '../components/tooltip';
 @customElement('app-publish')
 export class AppPublish extends LitElement {
   @state() errored = false;
@@ -68,6 +68,7 @@ export class AppPublish extends LitElement {
     return [
       style,
       fastAnchorCss,
+      ToolTipStyles,
       css`
         .header {
           padding: 1rem 3rem;
@@ -230,6 +231,39 @@ export class AppPublish extends LitElement {
         #actions app-button {
           margin-right: 0;
           margin-top: 8px;
+        }
+
+        .tooltip {
+          height: 16px;
+          width: 16px;
+        }
+
+        #hover-tooltip {
+          display: none;
+
+          position: relative;
+
+          flex-direction: column;
+          justify-content: space-around;
+
+          padding: 8px;
+          border-radius: 6px;
+          position: absolute;
+          z-index: 1;
+
+          white-space: break-spaces;
+          width: 14em;
+
+          background: var(--font-color);
+          right: 6em;
+
+          color: #fff;
+          text-decoration: none;
+          font-weight: initial;
+        }
+
+        #test-package-button:hover #hover-tooltip {
+          display: flex;
         }
       `,
       xxxLargeBreakPoint(
@@ -530,15 +564,25 @@ export class AppPublish extends LitElement {
                   <app-button
                     class="navigation"
                     @click="${() => this.showWindowsOptionsModal()}"
-                    >Generate</app-button
+                    >Store Package</app-button
                   >
-                  <loading-button
-                    class="navigation secondary"
-                    ?loading=${this.generating}
-                    id="test-package-button"
-                    @click="${() => this.generate('windows')}"
-                    >Test Package</loading-button
-                  >
+
+                  <div>
+                    <loading-button
+                      class="navigation secondary"
+                      ?loading=${this.generating}
+                      id="test-package-button"
+                      @click="${() => this.generate('windows')}"
+                      >Test Package
+
+                      <!-- todo after release: refactor this into a <hover-tooltip /> component -->
+                      <a
+                        id="hover-tooltip"
+                        target="_blank"
+                        href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps.md#1-test-your-app-on-your-windows-machine"
+                      >Generate a package you can use to test your app on your Windows Device before going to the Microsoft Store.</a>
+                    </loading-button>
+                  </div>
                 `
               : null}
             ${platform.title.toLowerCase() === 'android'
@@ -546,7 +590,7 @@ export class AppPublish extends LitElement {
                   <app-button
                     class="navigation"
                     @click="${() => this.showAndroidOptionsModal()}"
-                    >Generate</app-button
+                    >Store Package</app-button
                   >
                 `
               : null}
