@@ -29,7 +29,10 @@ import { fileSave } from 'browser-fs-access';
 import { Router } from '@vaadin/router';
 import { generatePackage, platform } from '../services/publish';
 import { BlogPost, allPosts } from '../services/blog';
+
 import { localeStrings } from '../../locales';
+
+import { capturePageAction } from '../utils/analytics';
 
 @customElement('app-congrats')
 export class AppCongrats extends LitElement {
@@ -501,6 +504,12 @@ export class AppCongrats extends LitElement {
       this.generating = false;
       this.open_android_options = false;
       this.open_windows_options = false;
+
+      capturePageAction({
+        pageName: `${type}-generated-from-congrats`,
+        uri: location.pathname,
+        pageHeight: window.innerHeight
+      });
     } catch (err) {
       console.error(err);
 
@@ -517,6 +526,12 @@ export class AppCongrats extends LitElement {
 
       this.blob = undefined;
       this.testBlob = undefined;
+
+      capturePageAction({
+        pageName: `${this.blob ? 'store' : 'test'}-package-downloaded-congrats`,
+        uri: `${location.pathname}`,
+        pageHeight: window.innerHeight
+      });
     }
   }
 
