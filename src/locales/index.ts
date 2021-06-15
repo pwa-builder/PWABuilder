@@ -18,8 +18,14 @@ function localization() {
 
 export const localeStrings = localization();
 
+const localeCache = {};
+
 // use dot notation
 export function locale(key: string): string {
+  if (localeCache[key]) {
+    return localeCache[key];
+  }
+
   const steps = key.split('.');
   const length = steps.length;
 
@@ -32,6 +38,7 @@ export function locale(key: string): string {
     return 'NO LOCALIZATION FOUND';
   }
 
+  localeCache[key] = value;
   return value;
 }
 
