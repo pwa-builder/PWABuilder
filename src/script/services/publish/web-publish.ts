@@ -1,6 +1,7 @@
 import { getGeneratedManifest, getManifest } from "../manifest";
 import { env } from '../../utils/environment';
 import { getURL } from "../app-info";
+import { getChosenServiceWorker } from "../service_worker";
 
 export let web_generated = false;
 
@@ -9,6 +10,7 @@ export async function generateWebPackage() {
     const manifest = await getManifest();
     const genManifest = getGeneratedManifest();
     const url = getURL();
+    const chosenSW = getChosenServiceWorker();
 
     // The web package generator dies when screenshots is null. If detected, set screenshots to empty array.
     const manifestWithScreenshots = manifest ? { ...manifest } : { ...genManifest };
@@ -16,10 +18,20 @@ export async function generateWebPackage() {
     if (!manifestWithScreenshots.screenshots) {
       manifestWithScreenshots.screenshots = [];
     }
-    
+
+    let urlToUse;
+
+    if (chosenSW) {
+      urlToUse = `${env.webPackageGeneratorUrl}?siteUrl=${url
+      }&swId=${chosenSW}&hasServiceWorker=${false}`
+    }
+    else {
+      urlToUse = `${env.webPackageGeneratorUrl}?siteUrl=${url
+      }&hasServiceWorker=${true}`
+    }
+
     const response = await fetch(
-      `${env.webPackageGeneratorUrl}?siteUrl=${url
-      }&hasServiceWorker=${false}`,
+      urlToUse,
       {
         method: "POST",
         body: JSON.stringify(manifestWithScreenshots),

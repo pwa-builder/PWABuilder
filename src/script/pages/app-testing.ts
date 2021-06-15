@@ -17,6 +17,7 @@ import '../components/app-header';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import style from '../../../styles/animations.css';
+import { capturePageAction } from '../utils/analytics';
 
 @customElement('app-testing')
 export class AppTesting extends LitElement {
@@ -152,6 +153,12 @@ export class AppTesting extends LitElement {
       this.phrasePager();
 
       await this.runTests(site);
+
+      capturePageAction({
+        pageName: `running-tests-${site}`,
+        uri: `${location.pathname}`,
+        pageHeight: window.innerHeight
+      });
     }
   }
 

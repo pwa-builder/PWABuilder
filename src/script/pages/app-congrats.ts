@@ -30,6 +30,10 @@ import { Router } from '@vaadin/router';
 import { generatePackage, platform } from '../services/publish';
 import { BlogPost, allPosts } from '../services/blog';
 
+import { localeStrings } from '../../locales';
+
+import { capturePageAction } from '../utils/analytics';
+
 @customElement('app-congrats')
 export class AppCongrats extends LitElement {
   @state() mql = window.matchMedia(
@@ -500,6 +504,12 @@ export class AppCongrats extends LitElement {
       this.generating = false;
       this.open_android_options = false;
       this.open_windows_options = false;
+
+      capturePageAction({
+        pageName: `${type}-generated-from-congrats`,
+        uri: location.pathname,
+        pageHeight: window.innerHeight
+      });
     } catch (err) {
       console.error(err);
 
@@ -516,6 +526,12 @@ export class AppCongrats extends LitElement {
 
       this.blob = undefined;
       this.testBlob = undefined;
+
+      capturePageAction({
+        pageName: `${this.blob ? 'store' : 'test'}-package-downloaded-congrats`,
+        uri: `${location.pathname}`,
+        pageHeight: window.innerHeight
+      });
     }
   }
 
@@ -584,7 +600,7 @@ export class AppCongrats extends LitElement {
       <app-modal
         ?open="${this.testBlob ? true : false}"
         title="Test Package Download"
-        body="Want to test your files first before publishing? No problem! Description here about how this isn’t store ready and how they can come back and publish their PWA after doing whatever they need to do with their testing etc etc tc etc."
+        body="${localeStrings.input.publish.windows.test_package}"
         id="test-download-modal"
       >
         <img

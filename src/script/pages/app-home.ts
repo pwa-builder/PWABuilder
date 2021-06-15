@@ -29,6 +29,7 @@ import { Router } from '@vaadin/router';
 import { getProgress, getURL, setProgress } from '../services/app-info';
 import { Lazy, ProgressList, Status } from '../utils/interfaces';
 import { fetchManifest } from '../services/manifest';
+import { capturePageAction } from '../utils/analytics';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -267,6 +268,12 @@ export class AppHome extends LitElement {
     inputEvent.preventDefault();
 
     await this.doTest();
+
+    capturePageAction({
+      pageName: `test-started-${this.siteURL}`,
+      uri: `${location.pathname}`,
+      pageHeight: window.innerHeight
+    });
   }
 
   async doTest() {
@@ -297,6 +304,12 @@ export class AppHome extends LitElement {
           if (goodURL !== undefined) {
             Router.go(`/testing?site=${goodURL}`);
           }
+
+          capturePageAction({
+            pageName: `is-pwa-${goodURL}`,
+            uri: `${location.pathname}`,
+            pageHeight: window.innerHeight
+          });
         } catch (err) {
           // couldnt get manifest
           // continue forward with zeroed out results
@@ -311,6 +324,12 @@ export class AppHome extends LitElement {
           if (goodURL !== undefined) {
             Router.go(`/testing?site=${goodURL}`);
           }
+
+          capturePageAction({
+            pageName: `not-pwa-${goodURL}`,
+            uri: `${location.pathname}`,
+            pageHeight: window.innerHeight
+          });
         }
       } else {
         this.errorMessage = localeStrings.input.home.error.invalidURL;

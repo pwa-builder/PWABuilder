@@ -6,6 +6,7 @@ import './app-report';
 
 import '../components/app-footer';
 import '../components/app-header';
+import { capturePageView } from '../utils/analytics';
 
 @customElement('app-index')
 export class AppIndex extends LitElement {
@@ -70,8 +71,14 @@ export class AppIndex extends LitElement {
   constructor() {
     super();
 
-    window.addEventListener('vaadin-router-location-changed', () => {
+    window.addEventListener('vaadin-router-location-changed', (ev) => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      capturePageView({
+        pageName: ev.detail.location.route?.component,
+        uri: ev.detail.location.pathname,
+        pageHeight: window.innerHeight
+      });
     });
   }
 
