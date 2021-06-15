@@ -172,13 +172,14 @@ export class AppHeader extends LitElement {
         <img @click="${() => this.goBack()}" id="header-icon" src="/assets/images/header_logo.webp" alt="header logo">
 
         <nav id="desktop-nav">
-          <fast-anchor appearance="hypertext" href="./about"
+          <fast-anchor appearance="hypertext" href="https://aka.ms/pwabuilderv3" target="__blank"
             >Resources</fast-anchor
           >
 
           <fast-anchor
             appearance="hypertext"
             href="https://github.com/pwa-builder/PWABuilder"
+            target="__blank"
           >
             <ion-icon name="logo-github"></ion-icon>
           </fast-anchor>
