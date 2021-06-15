@@ -11,28 +11,21 @@ export const resourceCards: Array<CardData> = [
     title: 'Blog',
     description:
       'Check out the PWABuilder blog for all the latest on PWABuilder and PWAs',
-    linkUrl: '',
+    linkUrl: 'https://aka.ms/pwabuilderv3',
   },
   {
     imageUrl: '/assets/images/demo-card.webp',
     title: 'Demo',
     description:
       'Check out our demos to see what PWAs are capable of!',
-    linkUrl: '',
-  },
-  {
-    imageUrl: '/assets/images/comp-card.webp',
-    title: 'Components',
-    description:
-      'Looking to upgrade your PWA? Check out some of our components we offer!',
-    linkUrl: '',
+    linkUrl: 'https://components.pwabuilder.com/',
   },
   {
     imageUrl: '/assets/images/docs-card.webp',
     title: 'Documentation',
     description:
       'Looking for our documentation? Tap View Documentation to get started!',
-    linkUrl: '',
+    linkUrl: 'https://aka.ms/pwabuilderv3',
   },
 ];
 

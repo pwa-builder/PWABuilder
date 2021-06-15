@@ -220,7 +220,7 @@ export class WindowsForm extends LitElement {
                 class="form-control"
                 for="windowsDisplayNameInput"
                 required
-                placeholder="US"
+                placeholder="Contoso Inc"
                 name="publisherDisplayName"
               ></fast-text-field>
             </div>
