@@ -29,6 +29,7 @@ import { fileSave } from 'browser-fs-access';
 import { Router } from '@vaadin/router';
 import { generatePackage, platform } from '../services/publish';
 import { BlogPost, allPosts } from '../services/blog';
+import { localeStrings } from '../../locales';
 
 @customElement('app-congrats')
 export class AppCongrats extends LitElement {
@@ -584,7 +585,7 @@ export class AppCongrats extends LitElement {
       <app-modal
         ?open="${this.testBlob ? true : false}"
         title="Test Package Download"
-        body="Want to test your files first before publishing? No problem! Description here about how this isn’t store ready and how they can come back and publish their PWA after doing whatever they need to do with their testing etc etc tc etc."
+        body="${localeStrings.input.publish.windows.test_package}"
         id="test-download-modal"
       >
         <img
