@@ -1,6 +1,6 @@
 import { Router } from '@vaadin/router';
 import { LitElement, css, html } from 'lit';
-import { customElement, property } from "lit/decorators.js"
+import { customElement, property } from 'lit/decorators.js';
 
 import {
   xxLargeBreakPoint,
@@ -159,9 +159,8 @@ export class AppHeader extends LitElement {
     const currentPlace = location.href;
 
     if (currentPlace.includes('reportcard')) {
-      Router.go("/");
-    }
-    else {
+      Router.go('/');
+    } else {
       window.history.back();
     }
   }
@@ -169,10 +168,19 @@ export class AppHeader extends LitElement {
   render() {
     return html`
       <header part="header">
-        <img @click="${() => this.goBack()}" id="header-icon" src="/assets/images/header_logo.webp" alt="header logo">
+        <img
+          @click="${() => this.goBack()}"
+          id="header-icon"
+          src="/assets/images/header_logo.webp"
+          alt="header logo"
+        />
 
         <nav id="desktop-nav">
-          <fast-anchor appearance="hypertext" href="https://aka.ms/pwabuilderv3" target="__blank"
+          <fast-anchor
+            appearance="hypertext"
+            href="https://aka.ms/pwabuilderv3"
+            target="__blank"
+            rel="noopener"
             >Resources</fast-anchor
           >
 
@@ -180,6 +188,7 @@ export class AppHeader extends LitElement {
             appearance="hypertext"
             href="https://github.com/pwa-builder/PWABuilder"
             target="__blank"
+            rel="noopener"
           >
             <ion-icon name="logo-github"></ion-icon>
           </fast-anchor>
