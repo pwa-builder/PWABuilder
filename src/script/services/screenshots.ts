@@ -9,6 +9,10 @@ enum EndPoints {
   zip = 'downloadScreenshotsZipFile',
 }
 
+interface ScreenshotServiceResponse {
+  images: Array<Icon>;
+}
+
 export async function generateScreenshots(screenshotsList: Array<string>) {
   try {
     const res = await fetch(`${screenshotServiceBaseUrl}/${EndPoints.base64}`, {
@@ -25,12 +29,21 @@ export async function generateScreenshots(screenshotsList: Array<string>) {
     });
 
     if (res.ok) {
+      const response = (await res.json()) as ScreenshotServiceResponse;
+
       let screenshots: Array<Icon> = (await getManifestGuarded())?.screenshots;
-      screenshots = screenshots.concat(await res.json());
+      screenshots = screenshots.concat(
+        response.images.map(image => {
+          image.src = 'data:image/png;base64,' + image.src;
+          return image;
+        })
+      );
 
       updateManifest({
         screenshots,
       });
+    } else {
+      throw new Error(await res.text());
     }
   } catch (e) {
     console.error(e);
