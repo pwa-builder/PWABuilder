@@ -1,4 +1,11 @@
 {
+  "button": {
+    "done": "Done",
+    "upload": "Upload",
+    "download": "Download",
+    "generate": "Generate",
+    "add_url": "+ Add URL"
+  },
   "input": {
     "home": {
       "error": {
@@ -22,5 +29,54 @@
     "basepack": {
       "run_new": "After uploading the above files to your Web App tap Run New Test to test your PWA again!"
     }
+  },
+  "text": {
+    "manifest_options": {
+      "top_section": {
+        "h1": "Manifest"
+      },
+      "summary_body": {
+        "h1": "Summary",
+        "p": "Easily update and upgrade your Web Manifest with our built-in Web Manifest editor"
+      },
+      "info": {
+        "h1": "Info"
+      },
+      "images": {
+        "h1": "Images",
+        "icons": {
+          "h3": "Upload App Icons"
+        },
+        "screenshots": {
+          "h3": "Generate Screenshots",
+          "p": "Specify the URLs to generate desktop and mobile screenshots from. You may add up to 8 screenshots or Store Listings."
+        }
+      },
+      "settings": {
+        "h1": "Settings",
+        "background_color": {
+          "h3": "Background Color"
+        },
+        "theme_color": {
+          "h3": "Theme Color"
+        }
+      },
+      "view_code": {
+        "h1": "View Code"
+      }
+    }
+  },
+  "tooltip": {
+    "manifest_options": {
+      "upload": "Your apps icon, this is the Icon operating systems will use to represent your app. In Windows this is used in the taskbar, start menu etc.",
+      "generate": "Screenshots of your PWA can be used in stores and the in-browser install prompt to help promote your PWA.",
+      "background_color": "The background_color member controls the splashscreen color of your app.",
+      "theme_color": "The theme_color member is a string that defines the default theme color for the application. On Windows this will be the title-bar color."
+    }
+  },
+  "values": {
+    "none": "None",
+    "transparent": "Transparent",
+    "custom": "Custom Color"
   }
 }

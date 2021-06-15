@@ -482,36 +482,37 @@ export class AppManifest extends LitElement {
       <div class="panel">
         <div class="head">
           <div class="top-section">
-            <h1>Manifest</h1>
+            <h1>${localeStrings.text.manifest_options.top_section.h1}</h1>
           </div>
 
-          <h2>Summary</h2>
+          <h2>${localeStrings.text.manifest_options.summary_body.h1}</h2>
           <div class="summary-body">
-            <p>
-              Easily update and upgrade your Web Manifest with our built-in Web
-              Manifest editor
-            </p>
+            <p>${localeStrings.text.manifest_options.summary_body.p}</p>
             <app-button id="manifest-done-button" @click=${this.done}
-              >Done</app-button
+              >${localeStrings.button.done}</app-button
             >
           </div>
         </div>
         <fast-divider></fast-divider>
         <section class="info">
-          <h1>Info</h1>
+          <h1>${localeStrings.text.manifest_options.info.h1}</h1>
           <div class="info-items inputs">${this.renderInfoItems()}</div>
         </section>
         <fast-divider></fast-divider>
         <section class="images">
-          <h1>Images</h1>
+          <h1>${localeStrings.text.manifest_options.images.h1}</h1>
           <div class="icons">
             <div class="images-header">
               <div class="item-top">
-                <h3>Upload App Icons</h3>
-                ${this.renderToolTip('upload-icons-tooltip', 'Your apps icon, this is the Icon operating systems will use to represent your app. In Windows this is used in the taskbar, start menu etc.', 'https://developer.mozilla.org/en-US/docs/Web/Manifest/icons')}
+                <h3>${localeStrings.text.manifest_options.images.icons.h3}</h3>
+                ${this.renderToolTip(
+                  'upload-icons-tooltip',
+                  localeStrings.tooltip.manifest_options.upload,
+                  'https://developer.mozilla.org/en-US/docs/Web/Manifest/icons'
+                )}
               </div>
               <app-button appearance="outline" @click=${this.openUploadModal}
-                >Upload</app-button
+                >${localeStrings.button.upload}</app-button
               >
               <app-modal
                 modalId="uploadModal"
@@ -529,7 +530,7 @@ export class AppManifest extends LitElement {
                         @click=${this.handleIconFileUpload}
                         ?disabled=${this.generateIconButtonDisabled}
                         ?loading=${this.awaitRequest}
-                        >Upload</loading-button
+                        >${localeStrings.button.upload}</loading-button
                       >`
                     : null}
                 </div>
@@ -551,20 +552,23 @@ export class AppManifest extends LitElement {
                   appearance="outline"
                   ?loading=${this.awaitRequest}
                   @click=${this.downloadIcons}
-                  >Download</loading-button
+                  >${localeStrings.button.download}</loading-button
                 >`
               : null}
           </div>
           <div class="screenshots">
             <div class="screenshots-header">
               <div class="item-top">
-                <h3>Generate Screenshots</h3>
-                ${this.renderToolTip('generate-screenshot-tooltip', 'Screenshots of your PWA can be used in stores and the in-browser install prompt to help promote your PWA.', 'https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots')}
+                <h3>
+                  ${localeStrings.text.manifest_options.images.screenshots.h3}
+                </h3>
+                ${this.renderToolTip(
+                  'generate-screenshot-tooltip',
+                  localeStrings.tooltip.manifest_options.generate,
+                  'https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots'
+                )}
               </div>
-              <p>
-                Specify the URLs to generate desktop and mobile screenshots
-                from. You may add up to 8 screenshots or Store Listings.
-              </p>
+              <p>${localeStrings.text.manifest_options.images.screenshots.p}</p>
 
               <!-- url text field -->
               ${this.renderScreenshotInputUrlList()}
@@ -574,7 +578,7 @@ export class AppManifest extends LitElement {
                 appearance="lightweight"
                 @click=${this.addNewScreenshot}
                 ?disabled=${this.addScreenshotUrlDisabled}
-                >+ Add URL</fast-button
+                >${localeStrings.button.add_url}</fast-button
               >
             </div>
           </div>
@@ -591,13 +595,13 @@ export class AppManifest extends LitElement {
               ?loading=${this.awaitRequest}
               ?disabled=${this.generateScreenshotButtonDisabled}
               @click=${this.generateScreenshots}
-              >Generate</loading-button
+              >${localeStrings.button.generate}</loading-button
             >
           </div>
         </section>
         <fast-divider></fast-divider>
         <section class="settings">
-          <h1>Settings</h1>
+          <h1>${localeStrings.text.manifest_options.settings.h1}</h1>
           <div class="setting-items inputs">${this.renderSettingsItems()}</div>
           ${this.renderBackgroundColorSettings()}
         </section>
@@ -605,7 +609,7 @@ export class AppManifest extends LitElement {
           <fast-accordion>
             <fast-accordion-item @click=${this.handleEditorOpened}>
               <div class="accordion-heading-block" slot="heading">
-                <h1>View Code</h1>
+                <h1>${localeStrings.text.manifest_options.view_code.h1}</h1>
                 <flipper-button
                   class="large end"
                   .opened=${this.editorOpened}
@@ -619,7 +623,9 @@ export class AppManifest extends LitElement {
           </fast-accordion>
         </section>
         <section class="bottom-section">
-          <app-button @click=${this.done}>Done</app-button>
+          <app-button @click=${this.done}
+            >${localeStrings.button.done}</app-button
+          >
         </section>
       </div>
     `;
@@ -709,23 +715,36 @@ export class AppManifest extends LitElement {
       <div class="setting-items inputs color">
         <div id="background-color-block">
           <div class="item-top">
-            <h3>Background Color</h3>
-            ${this.renderToolTip('bg-color-tooltip', 'The background_color member controls the splashscreen color of your app.', 'https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color')}
+            <h3>
+              ${localeStrings.text.manifest_options.settings.background_color
+                .h3}
+            </h3>
+            ${this.renderToolTip(
+              'bg-color-tooltip',
+              localeStrings.tooltip.background_color,
+              'https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color'
+            )}
           </div>
           <fast-radio-group
             value=${this.setBackgroundColorRadio()}
             orientation="vertical"
             @change=${this.handleBackgroundRadioChange}
           >
-            <fast-radio value="none">None</fast-radio>
-            <fast-radio value="transparent">Transparent</fast-radio>
-            <fast-radio value="custom">Custom Color</fast-radio>
+            <fast-radio value="none">${localeStrings.values.none}</fast-radio>
+            <fast-radio value="transparent"
+              >${localeStrings.values.transparent}</fast-radio
+            >
+            <fast-radio value="custom"
+              >${localeStrings.values.custom}</fast-radio
+            >
           </fast-radio-group>
 
           ${this.backgroundColorRadioValue === 'custom'
             ? html`
                 <div class="custom-color-block">
-                  <label for="bg-custom-color">Custom Color</label>
+                  <label for="bg-custom-color"
+                    >${localeStrings.values.custom}</label
+                  >
                   <input
                     type="color"
                     id="bg-custom-color"
@@ -739,23 +758,35 @@ export class AppManifest extends LitElement {
 
         <div id="theme-color-block">
           <div class="item-top">
-            <h3>Theme Color</h3>
-            ${this.renderToolTip('theme-color-tooltip', 'The theme_color member is a string that defines the default theme color for the application. On Windows this will be the title-bar color.', 'https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color')}
+            <h3>
+              ${localeStrings.text.manifest_options.settings.theme_color.h3}
+            </h3>
+            ${this.renderToolTip(
+              'theme-color-tooltip',
+              localeStrings.tooltip.theme_color,
+              'https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color'
+            )}
           </div>
           <fast-radio-group
             value=${this.setThemeColorRadio()}
             orientation="vertical"
             @change=${this.handleThemeRadioChange}
           >
-            <fast-radio value="none">None</fast-radio>
-            <fast-radio value="transparent">Transparent</fast-radio>
-            <fast-radio value="custom">Custom Color</fast-radio>
+            <fast-radio value="none">${localeStrings.values.none}</fast-radio>
+            <fast-radio value="transparent"
+              >${localeStrings.values.transparent}</fast-radio
+            >
+            <fast-radio value="custom"
+              >${localeStrings.values.custom}</fast-radio
+            >
           </fast-radio-group>
 
           ${this.themeColorRadioValue === 'custom'
             ? html`
                 <div class="custom-color-block">
-                  <label for="theme-custom-color">Custom Color</label>
+                  <label for="theme-custom-color"
+                    >${localeStrings.values.custom}</label
+                  >
                   <input
                     type="color"
                     id="theme-custom-color"
@@ -1093,9 +1124,9 @@ export class AppManifest extends LitElement {
         await generateAndDownloadIconZip(this.manifest.icons);
 
         capturePageAction({
-          pageName: "generate-icons",
+          pageName: 'generate-icons',
           uri: location.pathname,
-          pageHeight: window.innerHeight
+          pageHeight: window.innerHeight,
         });
       }
     } catch (e) {
@@ -1115,9 +1146,9 @@ export class AppManifest extends LitElement {
         await generateScreenshots(this.screenshotList);
 
         capturePageAction({
-          pageName: "generate-screenshots",
+          pageName: 'generate-screenshots',
           uri: location.pathname,
-          pageHeight: window.innerHeight
+          pageHeight: window.innerHeight,
         });
       }
     } catch (e) {
@@ -1175,7 +1206,8 @@ const infoItems: Array<InputItem> = [
   {
     title: 'Short Name',
     description: 'Uses for title or home screens',
-    tooltipText: 'The short name for your app, used where the full name cannot be displayed without wrapping.',
+    tooltipText:
+      'The short name for your app, used where the full name cannot be displayed without wrapping.',
     entry: 'short_name',
     type: 'input',
   },
@@ -1189,7 +1221,8 @@ const infoItems: Array<InputItem> = [
   {
     title: 'Start URL',
     description: 'Used for app listings',
-    tooltipText: 'This is the initial URL that is opened when the PWA is launched. Normally this should be the root url of your app.',
+    tooltipText:
+      'This is the initial URL that is opened when the PWA is launched. Normally this should be the root url of your app.',
     entry: 'start_url',
     type: 'input',
   },
@@ -1199,14 +1232,16 @@ const settingsItems: Array<InputItem> = [
   {
     title: 'Scope',
     description: 'App Scope',
-    tooltipText: "The scope member is a string that defines the navigation scope of this web application's application context.",
+    tooltipText:
+      "The scope member is a string that defines the navigation scope of this web application's application context.",
     entry: 'scope',
     type: 'input',
   },
   {
     title: 'Display',
     description: 'App Display',
-    tooltipText: 'The display member is a string that determines the developers’ preferred display mode for the website.',
+    tooltipText:
+      'The display member is a string that determines the developers’ preferred display mode for the website.',
     entry: 'display',
     type: 'select',
     menuItems: ['fullscreen', 'standalone', 'minimal-ui', 'browser'],
@@ -1214,7 +1249,8 @@ const settingsItems: Array<InputItem> = [
   {
     title: 'Orientation',
     description: 'App Orientation',
-    tooltipText: 'The default orientation your app should be used in, such as portrait or landscape.',
+    tooltipText:
+      'The default orientation your app should be used in, such as portrait or landscape.',
     entry: 'orientation',
     type: 'select',
     menuItems: [
