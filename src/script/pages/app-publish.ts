@@ -32,9 +32,8 @@ import {
 import { generatePackage } from '../services/publish';
 import { getReportErrorUrl } from '../utils/error';
 import { capturePageAction } from '../utils/analytics';
-
 import { tooltip, styles as ToolTipStyles } from '../components/tooltip';
-
+import { localeStrings } from '../../locales';
 @customElement('app-publish')
 export class AppPublish extends LitElement {
   @state() errored = false;
@@ -496,7 +495,9 @@ export class AppPublish extends LitElement {
     try {
       this.generating = true;
 
+      
       const packageData = await generatePackage(type, form);
+
 
       if (packageData) {
         if (packageData.type === 'test') {
@@ -572,7 +573,7 @@ export class AppPublish extends LitElement {
 
   showSamsungModal() {
     this.open_samsung_modal = true;
-
+    
     capturePageAction({
       pageName: 'samsung',
       uri: `${location.pathname}`,
@@ -726,7 +727,7 @@ export class AppPublish extends LitElement {
       <app-modal
         ?open="${this.testBlob ? true : false}"
         title="Test Package Download"
-        body="Want to test your files first before publishing? No problem! Description here about how this isn’t store ready and how they can come back and publish their PWA after doing whatever they need to do with their testing etc etc tc etc."
+        body="${localeStrings.input.publish.windows.test_package}"
         id="test-download-modal"
         @app-modal-close="${() => this.downloadTestCancel()}"
       >

@@ -67,11 +67,10 @@ export async function generatePackage(type: platform, form?: HTMLFormElement) {
       try {
         if (form) {
           const androidOptions = await createAndroidPackageOptionsFromForm(form);
-          console.log('no form android options', androidOptions);
 
           if (androidOptions) {
             try {
-              const blob = await generateAndroidPackage(androidOptions);
+              const blob = await generateAndroidPackage(androidOptions, form);
 
               return {
                 blob: blob || null,
@@ -79,13 +78,13 @@ export async function generatePackage(type: platform, form?: HTMLFormElement) {
               };
             }
             catch (err) {
+              console.error('err generating android from form', err);
               return err;
             }
           }
         } else {
           try {
             const androidOptions = await createAndroidPackageOptionsFromManifest();
-            console.log('form android options', androidOptions);
             const testBlob = await generateAndroidPackage(androidOptions);
 
             return {

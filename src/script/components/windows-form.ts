@@ -187,7 +187,7 @@ export class WindowsForm extends LitElement {
               <fast-text-field
                 id="windowsPackageIdInput"
                 class="form-control"
-                placeholder="package ID"
+                placeholder="app.contoso.edge"
                 type="text"
                 name="packageId"
                 required

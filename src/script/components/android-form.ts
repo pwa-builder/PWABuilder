@@ -33,7 +33,7 @@ export class AndroidForm extends LitElement {
   @state() storePassword = '';
   @state() alias = 'my-key-alias';
   @state() file: string | undefined = undefined;
-  @state() signingMode = 'mine';
+  @state() signingMode = 'new';
 
   @state() default_options: AndroidApkOptions | undefined;
 
@@ -112,7 +112,6 @@ export class AndroidForm extends LitElement {
         bubbles: true,
       })
     );
-
     capturePageAction({
       pageName: 'android-form-used',
       uri: `${location.pathname}`,
@@ -128,7 +127,6 @@ export class AndroidForm extends LitElement {
     } else {
       this.show_adv = false;
     }
-
     capturePageAction({
       pageName: 'android-settings-toggled',
       uri: `${location.pathname}`,
@@ -781,7 +779,7 @@ export class AndroidForm extends LitElement {
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="signingInput" id="generateSigningKeyInput" value="new"
                     name="signingMode" @change="${ev =>
-                      this.androidSigningModeChanged(ev.target.value)}" />
+                      this.androidSigningModeChanged(ev.target.value)}" .defaultChecked="${true}" />
                   <label class="form-check-label" for="generateSigningKeyInput">
                     Create new
                     <i class="fas fa-info-circle"
@@ -830,17 +828,33 @@ export class AndroidForm extends LitElement {
                   </label>
                 </div>
               </div>
-      
-              <div v-if="form.signingMode === 'mine' || form.signingMode === 'new'" style="margin-left: 15px;">
-                <div class="form-group" v-if="form.signingMode === 'mine'">
-                  <label for="signingKeyInput">Key file</label>
-                  <input type="file" class="form-control" id="signingKeyInput"
-                    @change="${ev =>
-                      this.androidSigningKeyUploaded(
-                        ev.target
-                      )}" accept=".keystore" required
-                    style="border: none;" value="${ifDefined(this.file)}" />
-                </div>
+
+              ${
+                this.signingMode === 'mine' ||
+                this.signingMode === 'new'
+                  ? html`
+                  <div style="margin-left: 15px;">
+
+                  ${
+                    this.signingMode === 'mine'
+                      ? html`
+                          <div class="form-group">
+                            <label for="signingKeyInput">Key file</label>
+                            <input
+                              type="file"
+                              class="form-control"
+                              id="signingKeyInput"
+                              @change="${ev =>
+                                this.androidSigningKeyUploaded(ev.target)}"
+                              accept=".keystore"
+                              required
+                              style="border: none;"
+                              value="${ifDefined(this.file)}"
+                            />
+                          </div>
+                        `
+                      : null
+                  }
       
                 <div class="form-group">
                   <label for="signingKeyAliasInput">Key alias</label>
@@ -848,8 +862,9 @@ export class AndroidForm extends LitElement {
                     required name="alias" value="${this.alias}" />
                   </fast-text-field>
                 </div>
-      
-                <div class="form-group" v-if="form.signingMode === 'new'">
+
+                ${this.signingMode === 'new' ? html`
+                <div class="form-group">
                   <label for="signingKeyFullNameInput">Key full name</label>
                   <fast-text-field type="text" class="form-control" id="signingKeyFullNameInput" required
                     placeholder="John Doe" name="fullName" value="${
@@ -858,14 +873,14 @@ export class AndroidForm extends LitElement {
                   </fast-text-field>
                 </div>
       
-                <div class="form-group" v-if="form.signingMode === 'new'">
+                <div class="form-group">
                   <label for="signingKeyOrgInput">Key organization</label>
                   <fast-text-field type="text" class="form-control" id="signingKeyOrgInput" required placeholder="My Company"
                     name="organization" value="${this.organization}" />
                   </fast-text-field>
                 </div>
       
-                <div class="form-group" v-if="form.signingMode === 'new'">
+                <div class="form-group">
                   <label for="signingKeyOrgUnitInput">Key organizational unit</label>
                   <fast-text-field type="text" class="form-control" id="signingKeyOrgUnitInput" required
                     placeholder="Engineering Department" name="organizationalUnit" value="${
@@ -874,7 +889,7 @@ export class AndroidForm extends LitElement {
                   </fast-text-field>
                 </div>
       
-                <div class="form-group" v-if="form.signingMode === 'new'">
+                <div class="form-group">
                   <label for="signingKeyCountryCodeInput">
                     Key country code
                     <i class="fas fa-info-circle" title="The 2 letter country code to list on the signing key"
@@ -889,6 +904,7 @@ export class AndroidForm extends LitElement {
                     name="countryCode" value="${this.countryCode}">
                   </fast-text-field>
                 </div>
+                ` : null}
       
                 <div class="form-group">
                   <label for="signingKeyPasswordInput">
@@ -930,6 +946,9 @@ export class AndroidForm extends LitElement {
                   </fast-text-field>
                 </div>
               </div>
+                `
+                  : null
+              }
             </fast-accordion-item>
           </fast-accordion>
       
