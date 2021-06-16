@@ -721,7 +721,7 @@ export class AppManifest extends LitElement {
             </h3>
             ${this.renderToolTip(
               'bg-color-tooltip',
-              localeStrings.tooltip.background_color,
+              localeStrings.tooltip.manifest_options.background_color,
               'https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color'
             )}
           </div>
@@ -763,7 +763,7 @@ export class AppManifest extends LitElement {
             </h3>
             ${this.renderToolTip(
               'theme-color-tooltip',
-              localeStrings.tooltip.theme_color,
+              localeStrings.tooltip.manifest_options.theme_color,
               'https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color'
             )}
           </div>
@@ -1197,32 +1197,30 @@ interface InputItem {
 
 const infoItems: Array<InputItem> = [
   {
-    title: 'Name',
-    description: 'The name of your App',
-    tooltipText: 'The name of your App',
+    title: localeStrings.text.manifest_options.titles.name,
+    description: localeStrings.tooltip.manifest_options.name,
+    tooltipText: localeStrings.tooltip.manifest_options.name,
     entry: 'name',
     type: 'input',
   },
   {
-    title: 'Short Name',
-    description: 'Uses for title or home screens',
-    tooltipText:
-      'The short name for your app, used where the full name cannot be displayed without wrapping.',
+    title: localeStrings.text.manifest_options.titles.short_name,
+    description: localeStrings.text.manifest_options.descriptions.short_name,
+    tooltipText: localeStrings.tooltip.manifest_options.short_name,
     entry: 'short_name',
     type: 'input',
   },
   {
-    title: 'Description',
-    description: 'Used for app listings',
-    tooltipText: 'A description that describes your app.',
+    title: localeStrings.text.manifest_options.titles.description,
+    description: localeStrings.text.manifest_options.descriptions.description,
+    tooltipText: localeStrings.tooltip.manifest_options.description,
     entry: 'description',
     type: 'input',
   },
   {
-    title: 'Start URL',
-    description: 'Used for app listings',
-    tooltipText:
-      'This is the initial URL that is opened when the PWA is launched. Normally this should be the root url of your app.',
+    title: localeStrings.text.manifest_options.titles.start_url,
+    description: localeStrings.text.manifest_options.descriptions.start_url,
+    tooltipText: localeStrings.tooltip.manifest_options.start_url,
     entry: 'start_url',
     type: 'input',
   },
@@ -1230,27 +1228,24 @@ const infoItems: Array<InputItem> = [
 
 const settingsItems: Array<InputItem> = [
   {
-    title: 'Scope',
-    description: 'App Scope',
-    tooltipText:
-      "The scope member is a string that defines the navigation scope of this web application's application context.",
+    title: localeStrings.text.manifest_options.titles.scope,
+    description: localeStrings.text.manifest_options.descriptions.scope,
+    tooltipText: localeStrings.tooltip.manifest_options.scope,
     entry: 'scope',
     type: 'input',
   },
   {
-    title: 'Display',
-    description: 'App Display',
-    tooltipText:
-      'The display member is a string that determines the developers’ preferred display mode for the website.',
+    title: localeStrings.text.manifest_options.titles.display,
+    description: localeStrings.text.manifest_options.descriptions.display,
+    tooltipText: localeStrings.tooltip.manifest_options.display,
     entry: 'display',
     type: 'select',
     menuItems: ['fullscreen', 'standalone', 'minimal-ui', 'browser'],
   },
   {
-    title: 'Orientation',
-    description: 'App Orientation',
-    tooltipText:
-      'The default orientation your app should be used in, such as portrait or landscape.',
+    title: localeStrings.text.manifest_options.titles.orientation,
+    description: localeStrings.text.manifest_options.descriptions.orientation,
+    tooltipText: localeStrings.tooltip.manifest_options.orientation,
     entry: 'orientation',
     type: 'select',
     menuItems: [
@@ -1265,9 +1260,9 @@ const settingsItems: Array<InputItem> = [
     ],
   },
   {
-    title: 'Language',
-    description: 'Enter the apps primary language',
-    tooltipText: 'Specifies the primary language of the app.',
+    title: localeStrings.text.manifest_options.titles.language,
+    description: localeStrings.text.manifest_options.descriptions.language,
+    tooltipText: localeStrings.tooltip.manifest_options.language,
     entry: 'lang',
     type: 'select',
     menuItems: languageCodes,
