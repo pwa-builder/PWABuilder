@@ -104,16 +104,14 @@ export class ResourceHub extends LitElement {
           margin-bottom: 74px;
         }
 
-        .resource-hub-actions app-button {
-          --button-width: 205px;
-        }
-
-        .resource-hub-actions app-button::part(underlying-button) {
+        .resource-hub-actions fast-anchor {
+          width: 205px;
           background-color: white;
           color: var(--font-color);
+          border-radius: var(--button-radius);
         }
 
-        .resource-hub-actions app-button::part(control) {
+        .resource-hub-actions fast-anchor::part(control) {
           font-size: 16px;
           font-weight: var(--font-bold);
         }
@@ -360,7 +358,7 @@ export class ResourceHub extends LitElement {
     if (this.showViewAllButton) {
       return html`
         <div class="resource-hub-actions">
-          <app-button>View all resources</app-button>
+          <fast-anchor appearance="button" href="https://aka.ms/pwabuilderv3" target="_blank" rel="noopener">View all resources</fast-anchor>
         </div>
       `;
     }
