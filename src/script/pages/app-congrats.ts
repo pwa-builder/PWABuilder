@@ -751,6 +751,7 @@ export class AppCongrats extends LitElement {
                       linkRoute="${this.featuredPost.clickUrl}"
                       .tags=${this.featuredPost.tags}
                       .featured="${this.isFeatured()}"
+                      ?isActionCard="${true}"
                       class="${classMap({
                         blog: true,
                         featured: this.isFeatured(),
@@ -768,6 +769,9 @@ export class AppCongrats extends LitElement {
                             description="${post.description}"
                             class="blog"
                             imageUrl="${post.imageUrl}"
+                            linkText="Read Post"
+                            .linkRoute="${post.clickUrl}"
+                            ?isActionCard="${true}"
                           >
                           </app-card>
                         `;
@@ -777,7 +781,7 @@ export class AppCongrats extends LitElement {
               </div>
 
               <div id="anchor-block">
-                <fast-anchor href="" appearance="hypertext"
+                <fast-anchor href="https://aka.ms/pwabuilderv3" appearance="hypertext"
                   >View more blog posts</fast-anchor
                 >
               </div>
