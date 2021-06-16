@@ -1,4 +1,11 @@
 {
+  "button": {
+    "done": "Done",
+    "upload": "Upload",
+    "download": "Download",
+    "generate": "Generate",
+    "add_url": "+ Add URL"
+  },
   "input": {
     "home": {
       "error": {
@@ -22,5 +29,81 @@
     "basepack": {
       "run_new": "After uploading the above files to your Web App tap Run New Test to test your PWA again!"
     }
+  },
+  "text": {
+    "manifest_options": {
+      "top_section": {
+        "h1": "Manifest"
+      },
+      "summary_body": {
+        "h1": "Summary",
+        "p": "Easily update and upgrade your Web Manifest with our built-in Web Manifest editor"
+      },
+      "info": {
+        "h1": "Info"
+      },
+      "images": {
+        "h1": "Images",
+        "icons": {
+          "h3": "Upload App Icons"
+        },
+        "screenshots": {
+          "h3": "Generate Screenshots",
+          "p": "Specify the URLs to generate desktop and mobile screenshots from. You may add up to 8 screenshots or Store Listings."
+        }
+      },
+      "settings": {
+        "h1": "Settings",
+        "background_color": {
+          "h3": "Background Color"
+        },
+        "theme_color": {
+          "h3": "Theme Color"
+        }
+      },
+      "view_code": {
+        "h1": "View Code"
+      },
+      "titles": {
+        "name": "Name",
+        "short_name": "Short Name",
+        "description": "Description",
+        "start_url": "Start URL",
+        "scope": "Scope",
+        "display": "Display",
+        "orientation": "Orientation",
+        "language": "Language"
+      },
+      "descriptions": {
+        "short_name": "Uses for title or home screens",
+        "description": "Used for app listings",
+        "start_url": "Used for app listings",
+        "scope": "App Scope",
+        "display": "App Display",
+        "orientation": "App Orientation",
+        "language": "Enter the apps primary language"
+      }
+    }
+  },
+  "tooltip": {
+    "manifest_options": {
+      "upload": "Your apps icon, this is the Icon operating systems will use to represent your app. In Windows this is used in the taskbar, start menu etc.",
+      "generate": "Screenshots of your PWA can be used in stores and the in-browser install prompt to help promote your PWA.",
+      "background_color": "The background_color member controls the splashscreen color of your app.",
+      "theme_color": "The theme_color member is a string that defines the default theme color for the application. On Windows this will be the title-bar color.",
+      "name": "The name of your App",
+      "short_name": "The short name for your app, used where the full name cannot be displayed without wrapping.",
+      "start_url": "This is the initial URL that is opened when the PWA is launched. Normally this should be the root url of your app.",
+      "scope": "The scope member is a string that defines the navigation scope of this web application's application context.",
+      "display": "The display member is a string that determines the developers’ preferred display mode for the website.",
+      "orientation": "The default orientation your app should be used in, such as portrait or landscape.",
+      "language": "Specifies the primary language of the app.",
+      "description": "A description that describes your app."
+    }
+  },
+  "values": {
+    "none": "None",
+    "transparent": "Transparent",
+    "custom": "Custom Color"
   }
 }
