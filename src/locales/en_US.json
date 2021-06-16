@@ -31,6 +31,11 @@
     }
   },
   "text": {
+    "publish": {
+      "windows_platform": {
+        "p": "Your download will contain instructions for submitting your app to the Microsoft Store. Your app will be powered by the Chromium-based Edge platform."
+      }
+    },
     "manifest_options": {
       "top_section": {
         "h1": "Manifest"

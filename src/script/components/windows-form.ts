@@ -17,6 +17,8 @@ import { smallBreakPoint, xxLargeBreakPoint } from '../utils/css/breakpoints';
 import { WindowsPackageOptions } from '../utils/win-validation';
 import { capturePageAction } from '../utils/analytics';
 
+import { localeStrings } from '../../locales';
+
 @customElement('windows-form')
 export class WindowsForm extends LitElement {
   @property({ type: Boolean }) generating: boolean = false;
@@ -491,9 +493,7 @@ export class WindowsForm extends LitElement {
 
         <div id="form-details-block">
           <p>
-            Your download will contain instructions for submitting your app to
-            the Microsoft Store. Your app will be powered by Chromium-based Edge
-            platform (preview).
+            ${localeStrings.text.publish.windows_platform.p}
           </p>
         </div>
 
