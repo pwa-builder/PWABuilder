@@ -27,7 +27,7 @@ export class AppCard extends LitElement {
   @property({ type: String }) description: Lazy<string>;
   @property({ type: String }) date: Lazy<string>;
   @property({ type: String }) linkText: Lazy<string>;
-  @property({ type: String }) linkRoute: Lazy<string>;
+  @property({ type: String }) linkRoute: string;
 
   @property({ type: Boolean }) featured = false;
   @property({ type: Boolean }) shareLink = false;
@@ -353,6 +353,11 @@ export class AppCard extends LitElement {
           color: var(--font-color);
         }
 
+        .blog .card-anchor {
+          text-decoration: none;
+          color: initial;
+        }
+
         fast-badge::part(control) {
           --badge-color-dark: var(--font-color);
           --badge-fill-primary: var(--primary-background-color);
@@ -553,21 +558,23 @@ export class AppCard extends LitElement {
           })}"
           part="card"
         >
-          <div class="img-overlay">
-            <div class="overlay-top">
-              <span class="date">${this.date}</span>
-              ${this.renderShareButton()}
-            </div>
-            <h3>${this.cardTitle}</h3>
-            <p>${this.description}</p>
-            <slot name="overlay"></slot>
+          <a class="card-anchor" .href="${this.linkRoute}" target="_blank" rel="noopener">
+            <div class="img-overlay">
+              <div class="overlay-top">
+                <span class="date">${this.date}</span>
+                ${this.renderShareButton()}
+              </div>
+              <h3>${this.cardTitle}</h3>
+              <p>${this.description}</p>
+              <slot name="overlay"></slot>
 
-            <div class="tag-list">${this.renderTagList()}</div>
-          </div>
-          <img
-            src="${ifDefined(this.imageUrl)}"
-            alt="${this.cardTitle} card header image"
-          />
+              <div class="tag-list">${this.renderTagList()}</div>
+            </div>
+            <img
+              src="${ifDefined(this.imageUrl)}"
+              alt="${this.cardTitle} card header image"
+            />
+          </a>
         </fast-card>
       `;
     }
@@ -588,21 +595,23 @@ export class AppCard extends LitElement {
         })}"
         part="card"
       >
-        <div class="img-overlay">
-          <div class="overlay-top">
-            <span class="date">${this.date}</span>
-            <div class="tag-list">${this.renderTagList()}</div>
-            ${this.renderShareButton()}
+        <a class="card-anchor" .href="${this.linkRoute}" target="_blank" rel="noopener">
+          <div class="img-overlay">
+            <div class="overlay-top">
+              <span class="date">${this.date}</span>
+              <div class="tag-list">${this.renderTagList()}</div>
+              ${this.renderShareButton()}
+            </div>
+            <slot name="overlay"></slot>
           </div>
-          <slot name="overlay"></slot>
-        </div>
-        <img
-          src="${ifDefined(this.imageUrl)}"
-          alt="${this.cardTitle} card header image"
-        />
-        <div class="content">
-          <h3>${this.cardTitle}</h3>
-        </div>
+          <img
+            src="${ifDefined(this.imageUrl)}"
+            alt="${this.cardTitle} card header image"
+          />
+          <div class="content">
+            <h3>${this.cardTitle}</h3>
+          </div>
+        </a>
       </fast-card>
     `;
   }
