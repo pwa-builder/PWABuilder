@@ -253,14 +253,14 @@ export class AppHome extends LitElement {
     const site = search.get('site');
 
     if (site) {
-      this.siteURL = site;
+      this.siteURL = site.trim();
       await this.doTest();
     }
   }
 
   handleURL(inputEvent: InputEvent) {
     if (inputEvent) {
-      this.siteURL = (inputEvent.target as HTMLInputElement).value;
+      this.siteURL = (inputEvent.target as HTMLInputElement).value.trim();
     }
   }
 
