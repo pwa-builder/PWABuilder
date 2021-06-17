@@ -18,12 +18,12 @@ function localization() {
 
 export const localeStrings = localization();
 
-const localeCache = {};
+const localeCache: { [name: string]: string | undefined } = {};
 
 // use dot notation
 export function locale(key: string): string {
   if (localeCache[key]) {
-    return localeCache[key];
+    return localeCache[key] as string;
   }
 
   const steps = key.split('.');
