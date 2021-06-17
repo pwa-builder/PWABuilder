@@ -6,5 +6,11 @@ export interface AppButtonElement {
 }
 
 export interface AppModalElement {
-  close(): Promise<void>
+  close(): Promise<void>;
+}
+
+export interface FileInputElement {
+  input: HTMLInputElement;
+  value: string;
+  files: FileList;
 }
