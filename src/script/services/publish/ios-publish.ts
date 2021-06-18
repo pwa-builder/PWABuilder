@@ -26,7 +26,54 @@ export async function generateIOSPackage(iosOptions: any) {
   } catch (err) {}
 }
 
-export async function createIOSPackageOptionsFromForm(form: HTMLFormElement) {}
+export async function createIOSPackageOptionsFromForm(form: HTMLFormElement) {
+  let manifest: Manifest | undefined;
+  manifest = await getManifest();
+
+  if (manifest) {
+    const maniURL = getManiURL();
+    const pwaURL = getURL();
+
+    if (!pwaURL) {
+      throw new Error("Can't find the current URL");
+    }
+
+    if (!maniURL) {
+      throw new Error('Cant find the manifest URL');
+    }
+
+    const name = form.appName.value || manifest.short_name || manifest.name;
+
+    const manifestIcons = manifest.icons || [];
+    const icon =
+      findSuitableIcon(manifestIcons, 'any', 512, 512, 'image/png') ||
+      findSuitableIcon(manifestIcons, 'any', 512, 512, 'image/jpeg') ||
+      findSuitableIcon(manifestIcons, 'any', 512, 512, undefined) || // Fallback to a 512x512 with an undefined type.
+      findSuitableIcon(manifestIcons, 'any', 0, 0, undefined); // Welp, we sure tried. Grab any image available.
+
+    const options: any = {
+      name: name as string,
+      url: pwaURL,
+      imageUrl: icon,
+      splashScreenColor:
+        form.splashScreenColor?.value || manifest.background_color || '#FFFFFF',
+      progressBarColor:
+        form.progressBarColor?.value || manifest.theme_color || '#FFFFFF',
+      statusBarColor:
+        form.statusBarColor?.value || manifest.background_color || '#FFFFFF',
+      permittedUrls: [
+        'login.microsoftonline.com',
+        'google.com',
+        'facebook.com',
+        'apple.com',
+      ],
+      manifest: manifest,
+      manifestUrl: maniURL,
+    };
+
+    return options;
+  }
+}
 
 export async function createIOSPackageOptionsFromManifest(
   localManifest?: Manifest
@@ -76,17 +123,17 @@ export async function createIOSPackageOptionsFromManifest(
       name: name as string,
       url: pwaURL,
       imageUrl: icon,
-      splashColor: manifest.background_color || "#FFFFFF",
-      progressBarColor: manifest.theme_color || "#FFFFFF",
-      statusBarColor: manifest.background_color || "#FFFFFF",
+      splashColor: manifest.background_color || '#FFFFFF',
+      progressBarColor: manifest.theme_color || '#FFFFFF',
+      statusBarColor: manifest.background_color || '#FFFFFF',
       permittedUrls: [
-         "login.microsoftonline.com",
-         "google.com",
-         "facebook.com",
-         "apple.com"
+        'login.microsoftonline.com',
+        'google.com',
+        'facebook.com',
+        'apple.com',
       ],
       manifest: manifest,
-      manifestUrl: maniURL
+      manifestUrl: maniURL,
     };
 
     return options;

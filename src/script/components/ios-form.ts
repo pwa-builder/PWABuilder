@@ -100,6 +100,9 @@ export class iosForm extends LitElement {
               <fast-text-field
                 id="iosAppNameInput"
                 class="form-control"
+                value="${this.default_options
+                  ? this.default_options.name
+                  : 'My Awesome PWA'}"
                 placeholder="Contoso App"
                 type="text"
                 name="appName"
@@ -129,6 +132,9 @@ export class iosForm extends LitElement {
                 class="form-control"
                 for="iosAppURLInput"
                 required
+                value="${this.default_options
+                  ? this.default_options.url
+                  : '/'}"
                 placeholder="/"
                 name="appURL"
               ></fast-text-field>
@@ -159,6 +165,9 @@ export class iosForm extends LitElement {
                 class="form-control"
                 id="iosPublisherIdInput"
                 required
+                value="${this.default_options
+                  ? this.default_options.imageUrl.src
+                  : '/'}"
                 placeholder="/"
                 name="publisherId"
               ></fast-text-field>
@@ -189,7 +198,10 @@ export class iosForm extends LitElement {
                 class="form-control"
                 id="iosSplashScreenInput"
                 required
-                placeholder="/"
+                value="${this.default_options
+                  ? this.default_options.splashScreenColor
+                  : '#FFFFFF'}"
+                placeholder="#FFFFFF"
                 name="splashScreenColor"
               ></fast-text-field>
             </div>
@@ -219,7 +231,10 @@ export class iosForm extends LitElement {
                 class="form-control"
                 id="iosStatusBarColorInput"
                 required
-                placeholder="/"
+                value="${this.default_options
+                  ? this.default_options.statusBarColor
+                  : '#FFFFFF'}"
+                placeholder="#FFFFFF"
                 name="statusBarColor"
               ></fast-text-field>
             </div>
@@ -228,8 +243,9 @@ export class iosForm extends LitElement {
 
         <div id="form-details-block">
           <p>
-            Your download will contain an xCode ready package of your PWA. You will need to build this package
-            with xCode and then you will be ready to submit to the App Store!
+            Your download will contain an xCode ready package of your PWA. You
+            will need to build this package with xCode and then you will be
+            ready to submit to the App Store!
           </p>
         </div>
 
