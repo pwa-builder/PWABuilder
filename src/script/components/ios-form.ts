@@ -28,7 +28,6 @@ Permitted URLs - optional. Allow user to specify one or more URLs (e.g. for 3rd 
 
 @customElement('ios-form')
 export class iosForm extends LitElement {
-
   @property({ type: Boolean }) generating: boolean = false;
 
   @state() default_options: any | undefined;
@@ -72,7 +71,7 @@ export class iosForm extends LitElement {
     capturePageAction({
       pageName: 'ios-form-used',
       uri: `${location.pathname}`,
-      pageHeight: window.innerHeight
+      pageHeight: window.innerHeight,
     });
   }
 
@@ -96,10 +95,7 @@ export class iosForm extends LitElement {
                   ></i>
                 </a>
 
-                ${tooltip(
-                  'ios-package-id',
-                  'The name of your App',
-                )}
+                ${tooltip('ios-package-id', 'The name of your App')}
               </label>
               <fast-text-field
                 id="iosAppNameInput"
@@ -126,10 +122,7 @@ export class iosForm extends LitElement {
                   ></i>
                 </a>
 
-                ${tooltip(
-                  'ios-app-url',
-                  'The URL to your App'
-                )}
+                ${tooltip('ios-app-url', 'The URL to your App')}
               </label>
               <fast-text-field
                 type="text"
@@ -230,8 +223,22 @@ export class iosForm extends LitElement {
                 name="statusBarColor"
               ></fast-text-field>
             </div>
-
           </div>
+        </div>
+
+        <div id="form-details-block">
+          <p>
+            Your download will contain an xCode ready package of your PWA. You will need to build this package
+            with xCode and then you will be ready to submit to the App Store!
+          </p>
+        </div>
+
+        <div id="form-options-actions" class="modal-actions">
+          <loading-button
+            @click="${() => this.initGenerate()}"
+            .loading="${this.generating}"
+            >Generate</loading-button
+          >
         </div>
       </form>
     `;
