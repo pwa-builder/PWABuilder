@@ -5,13 +5,14 @@ import {
   createAndroidPackageOptionsFromManifest,
   generateAndroidPackage,
 } from './android-publish';
+import { createIOSPackageOptionsFromManifest, generateIOSPackage } from './ios-publish';
 import {
   createWindowsPackageOptionsFromForm,
   createWindowsPackageOptionsFromManifest,
   generateWindowsPackage,
 } from './windows-publish';
 
-export type platform = 'windows' | 'android' | 'samsung';
+export type platform = 'windows' | 'android' | 'samsung' | 'ios';
 
 export async function generatePackage(type: platform, form?: HTMLFormElement) {
   switch (type) {
@@ -66,7 +67,9 @@ export async function generatePackage(type: platform, form?: HTMLFormElement) {
     case 'android':
       try {
         if (form) {
-          const androidOptions = await createAndroidPackageOptionsFromForm(form);
+          const androidOptions = await createAndroidPackageOptionsFromForm(
+            form
+          );
 
           if (androidOptions) {
             try {
@@ -76,8 +79,7 @@ export async function generatePackage(type: platform, form?: HTMLFormElement) {
                 blob: blob || null,
                 type: 'store',
               };
-            }
-            catch (err) {
+            } catch (err) {
               console.error('err generating android from form', err);
               return err;
             }
@@ -115,6 +117,16 @@ export async function generatePackage(type: platform, form?: HTMLFormElement) {
       break;
     case 'samsung':
       console.log('samsung');
+      break;
+    case 'ios':
+      console.log('ios');
+      const options = await createIOSPackageOptionsFromManifest();
+
+      const testBlob = await generateIOSPackage(options);
+      return {
+        blob: testBlob || null,
+        type: 'test',
+      };
       break;
     default:
       console.error(

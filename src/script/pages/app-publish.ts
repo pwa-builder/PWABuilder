@@ -9,6 +9,7 @@ import '../components/app-button';
 import '../components/loading-button';
 import '../components/windows-form';
 import '../components/android-form';
+import '../components/ios-form';
 import { Router } from '@vaadin/router';
 
 import {
@@ -50,6 +51,7 @@ export class AppPublish extends LitElement {
 
   @state() open_windows_options = false;
   @state() open_android_options = false;
+  @state() open_ios_options = false;
   @state() open_samsung_modal = false;
 
   @state() generating = false;
@@ -571,6 +573,16 @@ export class AppPublish extends LitElement {
     });
   }
 
+  showIOSModal() {
+    this.open_ios_options = true;
+
+    capturePageAction({
+      pageName: 'ios-settings-opened',
+      uri: `${location.pathname}`,
+      pageHeight: window.innerHeight
+    });
+  }
+
   showSamsungModal() {
     this.open_samsung_modal = true;
     
@@ -619,6 +631,7 @@ export class AppPublish extends LitElement {
                   </div>
                 `
               : null}
+
             ${platform.title.toLowerCase() === 'android'
               ? html`
                   <app-button
@@ -628,6 +641,17 @@ export class AppPublish extends LitElement {
                   >
                 `
               : null}
+
+            ${platform.title.toLowerCase() === 'ios'
+              ? html`
+                  <app-button
+                    class="navigation"
+                    @click="${() => this.showIOSModal()}"
+                    >Generate</app-button
+                  >
+                `
+              : null}
+
             ${platform.title.toLowerCase() === 'samsung'
               ? html`
                   <app-button
@@ -743,7 +767,7 @@ export class AppPublish extends LitElement {
         </div>
       </app-modal>
 
-      <!-- windows store options modal -->
+      <!-- Microsoft Store options modal -->
       <app-modal
         id="windows-options-modal"
         title="Microsoft Store Options"
@@ -759,7 +783,7 @@ export class AppPublish extends LitElement {
         ></windows-form>
       </app-modal>
 
-      <!-- android options modal -->
+      <!-- Android options modal -->
       <app-modal
         id="android-options-modal"
         title="Google Play Store Options"
@@ -774,7 +798,7 @@ export class AppPublish extends LitElement {
         ></android-form>
       </app-modal>
 
-      <!-- samsung modal -->
+      <!-- Samsung modal -->
       <app-modal
         id="samsung-options-modal"
         title="Your PWA has been submitted to Samsung's App Finder"
@@ -782,6 +806,23 @@ export class AppPublish extends LitElement {
         ?open="${this.open_samsung_modal === true}"
         @app-modal-close="${() => this.storeOptionsCancel()}"
       >
+      </app-modal>
+
+      <!-- iOS modal -->
+      <app-modal
+        id="ios-options-modal"
+        title="Apple App Store Options"
+        body="Customize your iOS package below!"
+        ?open="${this.open_ios_options === true}"
+        @app-modal-close="${() => this.storeOptionsCancel()}"
+      >
+
+        <ios-form 
+          slot="modal-form"
+          .generating=${this.generating}
+          @init-ios-gen="${ev => this.generate('ios', ev.detail.form)}"
+          >
+        </ios-form>
       </app-modal>
 
       <div id="publish-wrapper">
@@ -843,7 +884,7 @@ export class AppPublish extends LitElement {
   }
 }
 
-type platform = 'windows' | 'android' | 'samsung';
+type platform = 'windows' | 'android' | 'samsung' | 'ios';
 
 interface ICardData {
   title: string;
@@ -874,4 +915,11 @@ const platforms: ICardData[] = [
     isActionCard: true,
     icon: '/assets/samsung_icon.svg',
   },
+  {
+    title: 'iOS',
+    description:
+      'Generate a package you can build with xCode to publish your PWA in a wrapper for the Apple App Store. (Preview)',
+    isActionCard: true,
+    icon: '/assets/windows_icon.svg'
+  }
 ];
