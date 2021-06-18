@@ -193,17 +193,17 @@ export class iosForm extends LitElement {
                   'The color of the splash screen for your app (defaults to the background_color from the manifest)'
                 )}
               </label>
-              <fast-text-field
-                type="text"
+              <input
+                type="color"
                 class="form-control"
                 id="iosSplashScreenInput"
                 required
                 value="${this.default_options
-                  ? this.default_options.splashScreenColor
+                  ? this.default_options.splashScreen
                   : '#FFFFFF'}"
                 placeholder="#FFFFFF"
-                name="splashScreenColor"
-              ></fast-text-field>
+                name="splashScreen"
+              />
             </div>
 
             <div class="form-group">
@@ -226,8 +226,8 @@ export class iosForm extends LitElement {
                   'The color of the status bar for your app (defaults to the background_color from the manifest)'
                 )}
               </label>
-              <fast-text-field
-                type="text"
+              <input
+                type="color"
                 class="form-control"
                 id="iosStatusBarColorInput"
                 required
@@ -236,7 +236,7 @@ export class iosForm extends LitElement {
                   : '#FFFFFF'}"
                 placeholder="#FFFFFF"
                 name="statusBarColor"
-              ></fast-text-field>
+              />
             </div>
           </div>
         </div>

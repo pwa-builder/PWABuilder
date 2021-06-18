@@ -512,11 +512,13 @@ export class AppPublish extends LitElement {
       this.generating = false;
       this.open_android_options = false;
       this.open_windows_options = false;
+      this.open_ios_options = false;
     } catch (err) {
       console.error(err);
       this.generating = false;
       this.open_android_options = false;
       this.open_windows_options = false;
+      this.open_ios_options = false;
 
       this.showAlertModal(err, type);
     }
@@ -598,7 +600,7 @@ export class AppPublish extends LitElement {
       platform =>
         html`<li>
           <div id="title-block">
-            <img src="${platform.icon}" alt="platform icon" />
+            ${platform.icon ? html`<img src="${platform.icon}" alt="platform icon" />` : null}
             <h4>${platform.title}</h4>
             <p>${platform.description}</p>
           </div>
@@ -890,7 +892,7 @@ interface ICardData {
   title: string;
   description: string;
   isActionCard: boolean;
-  icon: string;
+  icon?: string;
 }
 
 const platforms: ICardData[] = [
@@ -908,18 +910,17 @@ const platforms: ICardData[] = [
     isActionCard: true,
     icon: '/assets/android_icon.svg',
   },
-  {
+  /*{
     title: 'Samsung',
     description:
       'Provide the URL to your PWA to Samsung for inclusion in the Samsung Finder app. You will need to follow up with Samsung after submission for updates on the deployment.',
     isActionCard: true,
     icon: '/assets/samsung_icon.svg',
-  },
+  },*/
   {
     title: 'iOS',
     description:
       'Generate a package you can build with xCode to publish your PWA in a wrapper for the Apple App Store. (Preview)',
-    isActionCard: true,
-    icon: '/assets/windows_icon.svg'
+    isActionCard: true
   }
 ];

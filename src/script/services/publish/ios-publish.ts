@@ -1,6 +1,7 @@
 import { env } from '../../utils/environment';
 import { findSuitableIcon } from '../../utils/icons';
 import { Manifest } from '../../utils/interfaces';
+import { iosOptions } from '../../utils/ios-validation';
 import { getURL } from '../app-info';
 import { getManifest, getManiURL } from '../manifest';
 
@@ -51,12 +52,12 @@ export async function createIOSPackageOptionsFromForm(form: HTMLFormElement) {
       findSuitableIcon(manifestIcons, 'any', 512, 512, undefined) || // Fallback to a 512x512 with an undefined type.
       findSuitableIcon(manifestIcons, 'any', 0, 0, undefined); // Welp, we sure tried. Grab any image available.
 
-    const options: any = {
+    const options: iosOptions = {
       name: name as string,
       url: pwaURL,
-      imageUrl: icon,
-      splashScreenColor:
-        form.splashScreenColor?.value || manifest.background_color || '#FFFFFF',
+      imageUrl: icon ? icon.src : "",
+      splashColor:
+        form.splashScreen?.value || manifest.background_color || '#FFFFFF',
       progressBarColor:
         form.progressBarColor?.value || manifest.theme_color || '#FFFFFF',
       statusBarColor:
@@ -78,17 +79,6 @@ export async function createIOSPackageOptionsFromForm(form: HTMLFormElement) {
 export async function createIOSPackageOptionsFromManifest(
   localManifest?: Manifest
 ) {
-  /**
- * 
-  App name - required (defaults to manifest name)
-  App URL - required (defaults to absolute URL of manifest's URL being base URL part and start_url being the relative URL part)
-  App image URL - required (defaults to 512x512 or larger PNG image from manifest)
-  Splash color - optional (defaults to manifest background_color)
-  Progress bar color - optional (defaults to manifest theme_color)
-  Status bar color - optional (defaults to manifest background_color)
-  Permitted URLs - optional. Allow user to specify one or more URLs (e.g. for 3rd party authentication, etc.) which the app can navigate to outside of the PWA scope. This is needed for things like "Sign in with Google". Defaults to empty string.
-
- */
 
   let manifest: Manifest | undefined;
 
@@ -119,10 +109,10 @@ export async function createIOSPackageOptionsFromManifest(
       findSuitableIcon(manifestIcons, 'any', 512, 512, undefined) || // Fallback to a 512x512 with an undefined type.
       findSuitableIcon(manifestIcons, 'any', 0, 0, undefined); // Welp, we sure tried. Grab any image available.
 
-    const options: any = {
+    const options: iosOptions = {
       name: name as string,
       url: pwaURL,
-      imageUrl: icon,
+      imageUrl: icon ? icon.src : "",
       splashColor: manifest.background_color || '#FFFFFF',
       progressBarColor: manifest.theme_color || '#FFFFFF',
       statusBarColor: manifest.background_color || '#FFFFFF',

@@ -5,7 +5,7 @@ import {
   createAndroidPackageOptionsFromManifest,
   generateAndroidPackage,
 } from './android-publish';
-import { createIOSPackageOptionsFromManifest, generateIOSPackage } from './ios-publish';
+import { createIOSPackageOptionsFromForm, createIOSPackageOptionsFromManifest, generateIOSPackage } from './ios-publish';
 import {
   createWindowsPackageOptionsFromForm,
   createWindowsPackageOptionsFromManifest,
@@ -119,14 +119,28 @@ export async function generatePackage(type: platform, form?: HTMLFormElement) {
       console.log('samsung');
       break;
     case 'ios':
-      console.log('ios');
-      const options = await createIOSPackageOptionsFromManifest();
+      if (form) {
+        const options = await createIOSPackageOptionsFromForm(form);
 
-      const testBlob = await generateIOSPackage(options);
-      return {
-        blob: testBlob || null,
-        type: 'test',
-      };
+        if (options) {
+          const blob = await generateIOSPackage(options);
+          return {
+            blob: blob || null,
+            type: 'store',
+          };
+        }
+      }
+      else {
+        const options = await createIOSPackageOptionsFromManifest();
+
+        if (options) {
+          const blob = await generateIOSPackage(options);
+          return {
+            blob: blob || null,
+            type: 'store',
+          };
+        }
+      }
       break;
     default:
       console.error(
