@@ -22,13 +22,20 @@ const platformsData: Array<PlatformInformation> = [
   { label: loc.firefox, value: 'firefox' },
 ];
 
+function boolListHasChanged<T>(value: T, unknownValue: T): boolean {
+  if (!value || !unknownValue) {
+    return false;
+  }
+
+  return value.toString() === unknownValue.toString();
+}
+
 @customElement('image-generator')
 export class ImageGenerator extends LitElement {
-  @state() platformSelected: Array<boolean> = platformsData.map(
-    platform => true
-  );
+  @state({ hasChanged: boolListHasChanged })
+  platformSelected: Array<boolean> = platformsData.map(() => true);
 
-  @state() files: Lazy<FileList> = undefined;
+  @state() files: Lazy<FileList>;
 
   @state() padding = 0.3;
 
@@ -45,6 +52,10 @@ export class ImageGenerator extends LitElement {
     return [
       css`
         :host {
+        }
+
+        fast-button#downloadButton {
+          --neutral-foreground-rest: #ffffff;
         }
       `,
       smallBreakPoint(css``),
@@ -86,6 +97,7 @@ export class ImageGenerator extends LitElement {
                     min="0"
                     step="0.1"
                     .value=${this.padding}
+                    @change=${this.handlePaddingChange}
                     required
                   ></fast-number-field>
                   <small>${loc.padding_text}</small>
@@ -144,17 +156,16 @@ export class ImageGenerator extends LitElement {
   renderPlatformList() {
     return platformsData.map(
       (platform, i) => html`
-        <label
-          ><input
-            type="checkbox"
-            name="platform"
-            value="${platform.value}"
-            .checked=${this.platformSelected[i]}
-            @click=${this.handleCheckbox}
-            data-index=${i}
-          />
+        <fast-checkbox
+          type="checkbox"
+          name="platform"
+          value="${platform.value}"
+          ?checked=${this.platformSelected[i]}
+          @change=${this.handleCheckbox}
+          data-index=${i}
+        >
           ${platform.label}
-        </label>
+        </fast-checkbox>
       `
     );
   }
@@ -184,6 +195,11 @@ export class ImageGenerator extends LitElement {
     this.checkDownloadEnabled();
   }
 
+  handlePaddingChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.padding = Number(input.value);
+  }
+
   handleCheckbox(event: Event) {
     const input = event.target as HTMLInputElement;
     const index = input.dataset['index'];
@@ -197,7 +213,6 @@ export class ImageGenerator extends LitElement {
       .value as ColorRadioValues;
     this.colorOption = value;
     this.checkDownloadEnabled();
-    // this.requestUpdate(); // TODO make sure not needed?
   }
 
   handleThemeColorInputChange(event: Event) {
@@ -207,10 +222,11 @@ export class ImageGenerator extends LitElement {
   }
 
   handleSelectAndClearAll() {
-    this.platformSelected.map(platform => this.selectAllState);
+    this.platformSelected = this.platformSelected.map(
+      () => this.selectAllState
+    );
     this.selectAllState = !this.selectAllState;
     this.checkDownloadEnabled();
-    this.requestUpdate();
   }
 
   downloadZip() {
@@ -223,8 +239,9 @@ export class ImageGenerator extends LitElement {
   }
 
   checkDownloadEnabled() {
-    return (
-      this.files !== undefined && this.platformSelected.reduce((a, b) => a && b)
-    );
+    this.downloadEnabled =
+      this.files !== undefined &&
+      this.platformSelected.reduce((a, b) => a || b);
+    return this.downloadEnabled;
   }
 }
