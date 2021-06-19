@@ -10,7 +10,7 @@ export async function download(config: DownloadConfig) {
   try {
     const fsOpts = {
       fileName: config.fileName || 'PWABuilder Images',
-      extensions: ['zip'],
+      extensions: ['.zip'],
       mimeTypes: ['application/zip'],
     };
 
