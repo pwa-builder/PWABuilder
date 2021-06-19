@@ -6,10 +6,20 @@ import { localeStrings } from '../../locales';
 import '../components/app-header';
 import '../components/app-file-input';
 import { FileInputDetails, Lazy } from '../utils/interfaces';
+import { download } from '../utils/download';
 
 interface PlatformInformation {
   label: string;
   value: string;
+}
+
+interface ImageGeneratorServicePostResponse {
+  Message: string;
+  Uri: string;
+}
+
+interface ImageGenerateServiceGetResponse {
+  Message: string;
 }
 
 type ColorRadioValues = 'transparent' | 'choose';
@@ -21,6 +31,7 @@ const platformsData: Array<PlatformInformation> = [
   { label: loc.chrome, value: 'chrome' },
   { label: loc.firefox, value: 'firefox' },
 ];
+const baseUrl = 'https://appimagegenerator-prod.azurewebsites.net';
 
 function boolListHasChanged<T>(value: T, unknownValue: T): boolean {
   if (!value || !unknownValue) {
@@ -47,6 +58,8 @@ export class ImageGenerator extends LitElement {
   @state() selectAllState = false;
 
   @state() downloadEnabled = false;
+
+  @state() error: Lazy<string>;
 
   static get styles() {
     return [
@@ -145,6 +158,8 @@ export class ImageGenerator extends LitElement {
                 >
                   ${localeStrings.button.download}
                 </fast-button>
+
+                ${this.renderError()}
               </section>
             </form>
           </div>
@@ -185,6 +200,14 @@ export class ImageGenerator extends LitElement {
     }
 
     return undefined;
+  }
+
+  renderError() {
+    if (this.error) {
+      return html`
+        <p style="font-size: 16px; font-color: red;">${this.error}</p>
+      `;
+    }
   }
 
   handleInputChange(event: CustomEvent<FileInputDetails>) {
@@ -229,13 +252,59 @@ export class ImageGenerator extends LitElement {
     this.checkDownloadEnabled();
   }
 
-  downloadZip() {
-    // TODO
-    // new FormData();
-    // fetch('https://appimagegenerator-prod.azurewebsites.net/api/image', {
-    //   method: 'POST',
-    //   body: form,
-    // });
+  async downloadZip() {
+    try {
+      this.downloadEnabled = false;
+
+      const form = new FormData();
+      form.append('fileName', this.files[0]);
+      form.append('padding', String(this.padding));
+      form.append('colorOption', String(this.colorOption));
+      form.append('colorOption', String(this.colorOption));
+
+      for (let i = 0; i < platformsData.length; i++) {
+        if (this.platformSelected[i]) {
+          form.append('platform', platformsData[i].value);
+        }
+      }
+
+      const res = fetch(`${baseUrl}/api/image`, {
+        method: 'POST',
+        body: form,
+      });
+
+      const postRes = (
+        await res
+      ).json() as unknown as ImageGeneratorServicePostResponse;
+
+      if (postRes.Message) {
+        throw new Error('Error from service: ' + postRes.Message);
+      }
+
+      const getRes = await fetch(
+        'https://appimagegenerator-prod.azurewebsites.net/api/image',
+        {
+          method: 'GET',
+          body: form,
+        }
+      );
+
+      if (!getRes.ok) {
+        const getJson =
+          (await getRes.json()) as ImageGenerateServiceGetResponse;
+        throw new Error('Error from service: ' + getJson.Message);
+      }
+
+      download({
+        fileName: 'PWABuilder Icons',
+        blob: await getRes.blob(),
+      });
+
+      this.downloadEnabled = true;
+    } catch (e) {
+      console.error(e);
+      this.error = (e as Error).message;
+    }
   }
 
   checkDownloadEnabled() {
