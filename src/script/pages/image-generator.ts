@@ -268,14 +268,13 @@ export class ImageGenerator extends LitElement {
         }
       }
 
-      const res = fetch(`${baseUrl}/api/image`, {
+      const res = await fetch(`${baseUrl}/api/image`, {
         method: 'POST',
         body: form,
       });
 
-      const postRes = (
-        await res
-      ).json() as unknown as ImageGeneratorServicePostResponse;
+      const postRes =
+        (await res.json()) as unknown as ImageGeneratorServicePostResponse;
 
       if (postRes.Message) {
         throw new Error('Error from service: ' + postRes.Message);
