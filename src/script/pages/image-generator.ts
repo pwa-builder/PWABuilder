@@ -291,7 +291,7 @@ export class ImageGenerator extends LitElement {
         throw new Error('Error from service: ' + getJson.Message);
       }
 
-      download({
+      await download({
         fileName: 'PWABuilder Icons',
         blob: await getRes.blob(),
       });
