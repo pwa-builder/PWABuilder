@@ -281,13 +281,9 @@ export class ImageGenerator extends LitElement {
         throw new Error('Error from service: ' + postRes.Message);
       }
 
-      const getRes = await fetch(
-        'https://appimagegenerator-prod.azurewebsites.net/api/image',
-        {
-          method: 'GET',
-          body: form,
-        }
-      );
+      const getRes = await fetch(`${baseUrl}${postRes.Uri}`, {
+        method: 'GET',
+      });
 
       if (!getRes.ok) {
         const getJson =
