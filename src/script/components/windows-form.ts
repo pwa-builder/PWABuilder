@@ -169,7 +169,7 @@ export class WindowsForm extends LitElement {
               <label for="windowsPackageIdInput">
                 <a
                   target="_blank"
-                  href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md"
+                  href="https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/"
                 >
                   Package ID
                   <i
@@ -183,7 +183,7 @@ export class WindowsForm extends LitElement {
                 ${tooltip(
                   'windows-package-id',
                   "The Microsoft Store's unique identifier for your app. You can find this value in Windows Partner Center. Click to learn more.",
-                  'https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md'
+                  'https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/'
                 )}
               </label>
               <fast-text-field
@@ -200,7 +200,7 @@ export class WindowsForm extends LitElement {
               <label for="windowsDisplayNameInput">
                 <a
                   target="_blank"
-                  href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md"
+                  href="https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/"
                 >
                   Publisher display name
                   <i
@@ -214,7 +214,7 @@ export class WindowsForm extends LitElement {
                 ${tooltip(
                   'windows-display-name',
                   "The display name of your app's publisher. You can find this in Windows Partner Center. Click to learn more.",
-                  'https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md'
+                  'https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/'
                 )}
               </label>
               <fast-text-field
@@ -231,7 +231,7 @@ export class WindowsForm extends LitElement {
               <label for="windowsPublisherIdInput">
                 <a
                   target="_blank"
-                  href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md"
+                  href="https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/"
                 >
                   Publisher ID
                   <i
@@ -245,7 +245,7 @@ export class WindowsForm extends LitElement {
                 ${tooltip(
                   'windows-publisher-id',
                   'Your Windows Publisher ID. You can find this value in Windows Partner Center. Click to learn more.',
-                  'https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/find-publisher.md'
+                  'https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/'
                 )}
               </label>
               <fast-text-field
@@ -301,7 +301,7 @@ export class WindowsForm extends LitElement {
                       <label for="windowsAppVersionInput">
                         <a
                           target="_blank"
-                          href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/classic-package.md"
+                          href="https://blog.pwabuilder.com/docs/what-is-a-classic-package/"
                         >
                           App version
                           <i
@@ -315,7 +315,7 @@ export class WindowsForm extends LitElement {
                         ${tooltip(
                           'windows-app-version',
                           "Your app version in the form of '1.0.0'. This must be greater than classic package version. Click to learn more.",
-                          'https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/classic-package.md'
+                          'https://blog.pwabuilder.com/docs/what-is-a-classic-package/'
                         )}
                       </label>
                       <fast-text-field
@@ -339,7 +339,7 @@ export class WindowsForm extends LitElement {
                       <label for="windowsClassicAppVersionInput">
                         <a
                           target="_blank"
-                          href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/classic-package.md"
+                          href="https://blog.pwabuilder.com/docs/what-is-a-classic-package/"
                         >
                           Classic package version
                           <i
@@ -353,7 +353,7 @@ export class WindowsForm extends LitElement {
                         ${tooltip(
                           'classic-package-version',
                           "The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0'. Must be less than app version. Click to learn more.",
-                          'https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/classic-package.md'
+                          'https://blog.pwabuilder.com/docs/what-is-a-classic-package/'
                         )}
                       </label>
                       <fast-text-field
@@ -430,7 +430,7 @@ export class WindowsForm extends LitElement {
                 <div class="form-group">
                   <label for="windowsIconUrlInput">
                     <a
-                      href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md"
+                      href="https://blog.pwabuilder.com/docs/image-recommendations-for-windows-pwa-packages/"
                       target="_blank"
                     >
                       Icon URL
@@ -445,7 +445,7 @@ export class WindowsForm extends LitElement {
                     ${tooltip(
                       'windows-icon-url',
                       'A large, square, PNG image from which PWABuilder will generate all required Windows app icons. Should be 512x512 or larger. Click to learn more.',
-                      'https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md'
+                      'https://blog.pwabuilder.com/docs/image-recommendations-for-windows-pwa-packages/'
                     )}
                   </label>
                   <fast-text-field

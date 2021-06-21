@@ -33,7 +33,7 @@ export class AppBadges extends LitElement {
       }
 
       .locked {
-        opacity: 0.5;
+        opacity: 0.3;
       }
     `;
   }
