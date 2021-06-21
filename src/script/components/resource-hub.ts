@@ -348,6 +348,7 @@ export class ResourceHub extends LitElement {
           cardTitle=${data.title}
           description=${data.description}
           imageUrl=${data.imageUrl}
+          linkRoute=${data.linkUrl}
         >
         </app-card>
       `;
