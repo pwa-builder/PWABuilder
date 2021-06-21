@@ -178,7 +178,7 @@ export class AppHeader extends LitElement {
         <nav id="desktop-nav">
           <fast-anchor
             appearance="hypertext"
-            href="https://aka.ms/pwabuilderv3"
+            href="https://blog.pwabuilder.com"
             target="__blank"
             rel="noopener"
             >Resources</fast-anchor
