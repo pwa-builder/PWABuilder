@@ -359,7 +359,7 @@ export class ResourceHub extends LitElement {
     if (this.showViewAllButton) {
       return html`
         <div class="resource-hub-actions">
-          <fast-anchor appearance="button" href="https://aka.ms/pwabuilderv3" target="_blank" rel="noopener">View all resources</fast-anchor>
+          <fast-anchor appearance="button" href="https://blog.pwabuilder.com" target="_blank" rel="noopener">View all resources</fast-anchor>
         </div>
       `;
     }
