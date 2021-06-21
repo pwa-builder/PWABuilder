@@ -1,3 +1,4 @@
+import { localeStrings } from '../../locales';
 export interface CardData {
   imageUrl: string;
   title: string;
@@ -8,24 +9,21 @@ export interface CardData {
 export const resourceCards: Array<CardData> = [
   {
     imageUrl: '/assets/images/blog-card.webp',
-    title: 'Blog',
-    description:
-      'Check out the PWABuilder blog for all the latest on PWABuilder and PWAs',
+    title: localeStrings.text.resource_hub.titles.blog,
+    description: localeStrings.text.resource_hub.description.blog,
     linkUrl: 'https://blog.pwabuilder.com',
   },
   {
-    imageUrl: '/assets/images/docs-card.webp',
-    title: 'Documentation',
-    description:
-      'Looking for our documentation? Tap View Documentation to get started!',
-    linkUrl: 'https://blog.pwabuilder.com/docs',
+    imageUrl: '/assets/images/demo-card.webp',
+    title: localeStrings.text.resource_hub.titles.demo,
+    description: localeStrings.text.resource_hub.description.demo,
+    linkUrl: 'https://blog.pwabuilder.com/demos',
   },
   {
-    imageUrl: '/assets/images/demo-card.webp',
-    title: 'Demos',
-    description:
-      'Check out our demos to see what PWAs are capable of!',
-    linkUrl: 'https://blog.pwabuilder.com/demos',
+    imageUrl: '/assets/images/docs-card.webp',
+    title: localeStrings.text.resource_hub.titles.documentation,
+    description: localeStrings.text.resource_hub.description.documentation,
+    linkUrl: 'https://blog.pwabuilder.com/docs',
   },
 ];
 
