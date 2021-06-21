@@ -22,6 +22,8 @@ import {
 
 // @ts-ignore
 import style from '../../../styles/layout-defaults.css';
+// @ts-ignore
+import listStyle from '../../../styles/list-defaults.css';
 
 import { generateWebPackage } from '../services/publish/web-publish';
 import { fileSave } from 'browser-fs-access';
@@ -48,6 +50,7 @@ export class AppBasePack extends LitElement {
   static get styles() {
     return [
       style,
+      listStyle,
       css`
         content-header::part(header) {
           display: none;
@@ -77,7 +80,7 @@ export class AppBasePack extends LitElement {
              Seems like a magic value but really
              this is just to match the back button next to it
            */
-          width: 100px;
+          width: 11em;
 
           color: white;
           box-shadow: var(--button-shadow);
@@ -128,8 +131,14 @@ export class AppBasePack extends LitElement {
           border-top: var(--list-border);
         }
 
+        #up-next ol {
+          margin: 0;
+          padding-left: 1em;
+          font-size: var(--font-size);
+        }
+
         #download-summary p {
-          max-width: 20em;
+          max-width: 28em;
         }
 
         #report-link {
@@ -355,29 +364,21 @@ export class AppBasePack extends LitElement {
 
           <div>
             <content-header class="basePackage">
-              <h2 slot="hero-container">Lets make your app a PWA!</h2>
+              <h2 slot="hero-container">${localeStrings.text.base_package.top_section.h1}</h2>
               <p id="hero-p" slot="hero-container">
-                Looks like your web app is not a PWA yet, but that’s OK! Download your base files below and publish them to your app to become a PWA! Then tap Run New Test at the bottom to test again, or next to go straight to packaging!
+                ${localeStrings.text.base_package.top_section.p}
               </p>
             </content-header>
 
             <app-sidebar id="tablet-sidebar"></app-sidebar>
 
-            <section id="summary-block">
-              <h3>Download your PWA base files</h3>
-
-              <p>
-                Check out the next-steps doc in your download to succesfully upload these files to your web app.
-              </p>
-            </section>
-
             <section class="container">
               <div id="top-container">
                 <div id="download-summary">
-                  <h3>Download Summary</h3>
+                  <h3>${localeStrings.text.base_package.summary_body.h1}</h3>
 
                   <p>
-                    Your Download will include everything needed to make your Web App a PWA.
+                    ${localeStrings.text.base_package.summary_body.p}
                   </p>
                 </div>
 
@@ -391,16 +392,35 @@ export class AppBasePack extends LitElement {
               </div>
 
               <div id="up-next">
-                <h5>Up next</h5>
+                <h5>Next Steps</h5>
 
                 <p>
-                  ${localeStrings.input.basepack.run_new}
+                  Your steps away from being able to package your PWA for the store. 
+                  After you download your base files be sure to
                 </p>
+                 
+                 <ol>
+                   <li>
+                     <a href="https://github.com/pwa-builder/pwabuilder-web/blob/V2/src/assets/web/next-steps.md" rel="noopener" target="_blank">Open documentation</a> in order to accurately add files or links to your server.
+                   </li>
+
+                   <li>
+                     After you have updated your files, submit your PWA through our testing hub again to be sure that all is accurate with your updates.
+                   </li>
+
+                   <li>
+                     After acing your PWA test and review, go ahead and package for the app stores!
+                   </li>
+                 </ol>
               </div>
 
               <div class="action-buttons">
+                <fast-anchor href="https://github.com/pwa-builder/pwabuilder-web/blob/V2/src/assets/web/next-steps.md" rel="noopener" target="_blank" appearance="button">
+                  Documentation
+                </fast-anchor>
+
                 <app-button @click="${() => this.reTest()}"
-                  >Run New Test</app-button
+                  >Test Updated App</app-button
                 >
               </div>
             </section>
