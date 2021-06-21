@@ -11,7 +11,6 @@ import '../components/app-button';
 
 //@ts-ignore
 import style from '../../../styles/list-defaults.css';
-import { capturePageAction } from '../utils/analytics';
 
 interface ServiceWorkerChoice {
   id: number;
@@ -135,12 +134,6 @@ export class SWPicker extends LitElement {
 
     if (this.chosenSW) {
       chooseServiceWorker(this.chosenSW);
-
-      capturePageAction({
-        pageName: "chosen-service-worker",
-        uri: `${location.pathname}/?serviceWorker=${this.chosenSW}`,
-        pageHeight: window.innerHeight
-      });
     }
   }
 

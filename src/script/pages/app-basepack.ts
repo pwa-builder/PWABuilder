@@ -31,7 +31,6 @@ import { Router } from '@vaadin/router';
 import { getURL } from '../services/app-info';
 
 import { localeStrings } from '../../locales';
-import { capturePageAction } from '../utils/analytics';
 
 @customElement('app-basepack')
 export class AppBasePack extends LitElement {
@@ -254,12 +253,6 @@ export class AppBasePack extends LitElement {
     }
 
     this.loading = false;
-
-    capturePageAction({
-      pageName: "base-package-generated",
-      uri: `${location.pathname}`,
-      pageHeight: window.innerHeight
-    });
   }
 
   async download() {
@@ -270,12 +263,6 @@ export class AppBasePack extends LitElement {
       });
 
       this.blob = undefined;
-
-      capturePageAction({
-        pageName: "base-package-downloaded",
-        uri: `${location.pathname}`,
-        pageHeight: window.innerHeight
-      });
     }
   }
 
@@ -290,12 +277,6 @@ export class AppBasePack extends LitElement {
 
     if (site) {
       Router.go(`/testing?site=${site}`);
-
-      capturePageAction({
-        pageName: "base-package-retest",
-        uri: `/testing?site=${site}`,
-        pageHeight: window.innerHeight
-      });
     }
   }
 

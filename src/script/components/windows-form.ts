@@ -15,7 +15,6 @@ import { createWindowsPackageOptionsFromManifest } from '../services/publish/win
 
 import { smallBreakPoint, xxLargeBreakPoint } from '../utils/css/breakpoints';
 import { WindowsPackageOptions } from '../utils/win-validation';
-import { capturePageAction } from '../utils/analytics';
 
 import { localeStrings } from '../../locales';
 
@@ -91,12 +90,6 @@ export class WindowsForm extends LitElement {
         bubbles: true,
       })
     );
-
-    capturePageAction({
-      pageName: 'windows-form-used',
-      uri: `${location.pathname}`,
-      pageHeight: window.innerHeight
-    });
   }
 
   toggleSettings(settingsToggleValue: 'basic' | 'advanced') {
@@ -107,12 +100,6 @@ export class WindowsForm extends LitElement {
     } else {
       this.show_adv = false;
     }
-
-    capturePageAction({
-      pageName: 'windows-settings-toggled',
-      uri: `${location.pathname}`,
-      pageHeight: window.innerHeight
-    });
   }
 
   opened(targetEl: EventTarget | null) {

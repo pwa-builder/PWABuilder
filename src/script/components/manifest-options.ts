@@ -67,8 +67,6 @@ import {
 
 import { AppModalElement } from '../utils/interfaces.components';
 
-import { capturePageAction } from '../utils/analytics';
-
 type ColorRadioValues = 'none' | 'transparent' | 'custom';
 
 @customElement('manifest-options')
@@ -1122,12 +1120,6 @@ export class AppManifest extends LitElement {
     try {
       if (this.manifest && this.manifest.icons) {
         await generateAndDownloadIconZip(this.manifest.icons);
-
-        capturePageAction({
-          pageName: 'generate-icons',
-          uri: location.pathname,
-          pageHeight: window.innerHeight,
-        });
       }
     } catch (e) {
       console.error(e);
@@ -1144,12 +1136,6 @@ export class AppManifest extends LitElement {
         // to-do: take another type look at this
         // @ts-ignore
         await generateScreenshots(this.screenshotList);
-
-        capturePageAction({
-          pageName: 'generate-screenshots',
-          uri: location.pathname,
-          pageHeight: window.innerHeight,
-        });
       }
     } catch (e) {
       console.error(e);

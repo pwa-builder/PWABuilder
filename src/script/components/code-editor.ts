@@ -14,7 +14,6 @@ import {
 import { increment } from '../utils/id';
 
 import "./app-button";
-import { capturePageAction } from '../utils/analytics';
 
 @customElement('code-editor')
 export class CodeEditor extends LitElement {
@@ -85,12 +84,6 @@ export class CodeEditor extends LitElement {
         await navigator.clipboard.writeText(doc.toString());
         this.copyText = "Copied";
         this.copied = true;
-
-        capturePageAction({
-          pageName: "manifest-copied",
-          uri: location.pathname,
-          pageHeight: window.innerHeight
-        });
       }
       catch(err) {
         // We should never really end up here but just in case

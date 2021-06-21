@@ -20,7 +20,6 @@ import '../components/app-sidebar';
 //@ts-ignore
 import style from '../../../styles/layout-defaults.css';
 import { RawTestResult, ScoreEvent } from '../utils/interfaces';
-import { capturePageAction } from '../utils/analytics';
 
 const possible_messages = {
   overview: {
@@ -239,23 +238,11 @@ export class AppReport extends LitElement {
   openManiOptions() {
     const maniTab = this.shadowRoot?.querySelector('#mani');
     (maniTab as HTMLButtonElement).click();
-
-    capturePageAction({
-      pageName: "manifest-options",
-      uri: location.pathname,
-      pageHeight: window.innerHeight
-    });
   }
 
   openSWOptions() {
     const maniTab = this.shadowRoot?.querySelector('#sw');
     (maniTab as HTMLButtonElement).click();
-
-    capturePageAction({
-      pageName: "service-worker-picker",
-      uri: location.pathname,
-      pageHeight: window.innerHeight
-    });
   }
 
   openOverview() {
