@@ -31,6 +31,24 @@
     }
   },
   "text": {
+    "publish": {
+      "windows_platform": {
+        "p": "Your download will contain instructions for submitting your app to the Microsoft Store. Your app will be powered by the Chromium-based Edge platform."
+      }
+    },
+    "base_package": {
+      "top_section": {
+        "h1": "Make your app a PWA",
+        "p": "Looks like your web app is not a PWA yet, but you're on your way! Head below to download your base file package and get one step closer to packaging your app for the app stores."
+      },
+      "summary_body": {
+        "h1": "Download PWA Base Files",
+        "p": "Whether you edited your manifest or added a service worker, in your downloaded base package files you will receive a manifest and service worker files ready to be added to your server, along with some helpful documentation."
+      },
+      "next_steps": {
+        "h1": "Next Steps"
+      }
+    },
     "manifest_options": {
       "top_section": {
         "h1": "Manifest"

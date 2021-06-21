@@ -725,6 +725,8 @@ export class AppCard extends LitElement {
   }
 
   route() {
-    this.linkRoute && Router.go(this.linkRoute);
+    if (this.linkRoute) {
+      window.open(this.linkRoute, "_blank")
+    }
   }
 }

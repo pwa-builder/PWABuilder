@@ -781,7 +781,7 @@ export class AppCongrats extends LitElement {
               </div>
 
               <div id="anchor-block">
-                <fast-anchor href="https://aka.ms/pwabuilderv3" appearance="hypertext"
+                <fast-anchor href="https://blog.pwabuilder.com" target="_blank" appearance="hypertext"
                   >View more blog posts</fast-anchor
                 >
               </div>
