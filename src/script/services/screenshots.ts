@@ -31,7 +31,8 @@ export async function generateScreenshots(screenshotsList: Array<string>) {
     if (res.ok) {
       const response = (await res.json()) as ScreenshotServiceResponse;
 
-      let screenshots: Array<Icon> = (await getManifestGuarded())?.screenshots;
+      let screenshots: Array<Icon> =
+        (await getManifestGuarded())?.screenshots ?? [];
       screenshots = screenshots.concat(
         response.images.map(image => {
           image.src = 'data:image/png;base64,' + image.src;
