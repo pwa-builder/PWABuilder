@@ -13,6 +13,7 @@ import ModalStyles from '../../../styles/modal-styles.css';
 import { tooltip, styles as ToolTipStyles } from '../components/tooltip';
 import { createIOSPackageOptionsFromManifest } from '../services/publish/ios-publish';
 import { capturePageAction } from '../utils/analytics';
+import { iosOptions } from '../utils/ios-validation';
 
 /**
  * 
@@ -30,7 +31,7 @@ Permitted URLs - optional. Allow user to specify one or more URLs (e.g. for 3rd 
 export class iosForm extends LitElement {
   @property({ type: Boolean }) generating: boolean = false;
 
-  @state() default_options: any | undefined;
+  @state() default_options: iosOptions | undefined;
 
   form: HTMLFormElement | undefined;
   currentManifest: Manifest | undefined;
@@ -82,10 +83,7 @@ export class iosForm extends LitElement {
           <div class="basic-settings">
             <div class="form-group">
               <label for="iosPackageIdInput">
-                <a
-                  target="_blank"
-                  href="https://github.com/pwa-builder/pwabuilder-ios-chromium-docs/blob/master/find-publisher.md"
-                >
+                <a target="_blank">
                   App Name
                   <i
                     class="fas fa-info-circle"
@@ -112,10 +110,7 @@ export class iosForm extends LitElement {
 
             <div class="form-group">
               <label for="iosDisplayNameInput">
-                <a
-                  target="_blank"
-                  href="https://github.com/pwa-builder/pwabuilder-ios-chromium-docs/blob/master/find-publisher.md"
-                >
+                <a target="_blank">
                   App URL
                   <i
                     class="fas fa-info-circle"
@@ -132,9 +127,7 @@ export class iosForm extends LitElement {
                 class="form-control"
                 for="iosAppURLInput"
                 required
-                value="${this.default_options
-                  ? this.default_options.url
-                  : '/'}"
+                value="${this.default_options ? this.default_options.url : '/'}"
                 placeholder="/"
                 name="appURL"
               ></fast-text-field>
@@ -142,10 +135,7 @@ export class iosForm extends LitElement {
 
             <div class="form-group">
               <label for="iosPublisherIdInput">
-                <a
-                  target="_blank"
-                  href="https://github.com/pwa-builder/pwabuilder-ios-chromium-docs/blob/master/find-publisher.md"
-                >
+                <a target="_blank">
                   App Icon URL
                   <i
                     class="fas fa-info-circle"
@@ -166,7 +156,7 @@ export class iosForm extends LitElement {
                 id="iosPublisherIdInput"
                 required
                 value="${this.default_options
-                  ? this.default_options.imageUrl.src
+                  ? this.default_options.imageUrl
                   : '/'}"
                 placeholder="/"
                 name="publisherId"
@@ -175,10 +165,7 @@ export class iosForm extends LitElement {
 
             <div class="form-group">
               <label for="iosPublisherIdInput">
-                <a
-                  target="_blank"
-                  href="https://github.com/pwa-builder/pwabuilder-ios-chromium-docs/blob/master/find-publisher.md"
-                >
+                <a target="_blank">
                   Splash Screen Color
                   <i
                     class="fas fa-info-circle"
@@ -199,7 +186,7 @@ export class iosForm extends LitElement {
                 id="iosSplashScreenInput"
                 required
                 value="${this.default_options
-                  ? this.default_options.splashScreen
+                  ? this.default_options.splashColor
                   : '#FFFFFF'}"
                 placeholder="#FFFFFF"
                 name="splashScreen"
@@ -208,10 +195,37 @@ export class iosForm extends LitElement {
 
             <div class="form-group">
               <label for="iosPublisherIdInput">
-                <a
-                  target="_blank"
-                  href="https://github.com/pwa-builder/pwabuilder-ios-chromium-docs/blob/master/find-publisher.md"
-                >
+                <a target="_blank">
+                  Progress Bar Color
+                  <i
+                    class="fas fa-info-circle"
+                    title="The color of the progress bar for your app (defaults to the theme_color from the manifest)"
+                    aria-label="The color of the progress bar for your app (defaults to the theme_color from the manifest)"
+                    role="definition"
+                  ></i>
+                </a>
+
+                ${tooltip(
+                  'ios-progressbar-id',
+                  'The color of the progress bar for your app (defaults to the theme_color from the manifest)'
+                )}
+              </label>
+              <input
+                type="color"
+                class="form-control"
+                id="iosProgressBarInput"
+                required
+                value="${this.default_options
+                  ? this.default_options.progressBarColor
+                  : '#FFFFFF'}"
+                placeholder="#FFFFFF"
+                name="splashScreen"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="iosPublisherIdInput">
+                <a target="_blank">
                   Status Bar Color
                   <i
                     class="fas fa-info-circle"
@@ -237,6 +251,37 @@ export class iosForm extends LitElement {
                 placeholder="#FFFFFF"
                 name="statusBarColor"
               />
+            </div>
+
+            <div class="form-group">
+              <label for="iosPermittedURLSInput">
+                <a target="_blank">
+                  Permitted URLs
+                  <i
+                    class="fas fa-info-circle"
+                    title="Specify one or more URLs (e.g. for 3rd party authentication, etc.) which the app can navigate to outside of the PWA scope. This is needed for things like 'Sign in with Google'. (Defaults to empty string)"
+                    aria-label="Specify one or more URLs (e.g. for 3rd party authentication, etc.) which the app can navigate to outside of the PWA scope. This is needed for things like 'Sign in with Google'. (Defaults to empty string)"
+                    role="definition"
+                  ></i>
+                </a>
+
+                ${tooltip(
+                  'ios-permitted-urls',
+                  "Specify one or more URLs (e.g. for 3rd party authentication, etc.) which the app can navigate to outside of the PWA scope. This is needed for things like 'Sign in with Google'. (Defaults to empty string)"
+                )}
+              </label>
+
+              <fast-text-area
+                class="form-control"
+                id="iosStatusBarColorInput"
+                required
+                value="${this.default_options
+                  ? this.default_options.permittedUrls
+                  : '#FFFFFF'}"
+                placeholder="Enter a comma seperated list of URLS"
+                name="permittedURLs"
+              >
+              </fast-text-area>
             </div>
           </div>
         </div>

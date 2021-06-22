@@ -62,12 +62,7 @@ export async function createIOSPackageOptionsFromForm(form: HTMLFormElement) {
         form.progressBarColor?.value || manifest.theme_color || '#FFFFFF',
       statusBarColor:
         form.statusBarColor?.value || manifest.background_color || '#FFFFFF',
-      permittedUrls: [
-        'login.microsoftonline.com',
-        'google.com',
-        'facebook.com',
-        'apple.com',
-      ],
+      permittedUrls: form.permittedURLs?.value.split(",") || [],
       manifest: manifest,
       manifestUrl: maniURL,
     };
@@ -116,12 +111,7 @@ export async function createIOSPackageOptionsFromManifest(
       splashColor: manifest.background_color || '#FFFFFF',
       progressBarColor: manifest.theme_color || '#FFFFFF',
       statusBarColor: manifest.background_color || '#FFFFFF',
-      permittedUrls: [
-        'login.microsoftonline.com',
-        'google.com',
-        'facebook.com',
-        'apple.com',
-      ],
+      permittedUrls: [],
       manifest: manifest,
       manifestUrl: maniURL,
     };

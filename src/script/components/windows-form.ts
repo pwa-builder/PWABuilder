@@ -493,7 +493,7 @@ export class WindowsForm extends LitElement {
           <p>
             Your download will contain instructions for submitting your app to
             the Microsoft Store. Your app will be powered by Chromium-based Edge
-            platform (preview).
+            platform.
           </p>
         </div>
 

@@ -920,7 +920,7 @@ const platforms: ICardData[] = [
   {
     title: 'iOS',
     description:
-      'Generate a package you can build with xCode to publish your PWA in a wrapper for the Apple App Store. (Preview)',
+      'Generate a package you can build with xCode to publish your PWA in a wrapper for the Apple App Store. (alpha)',
     isActionCard: true
   }
 ];
