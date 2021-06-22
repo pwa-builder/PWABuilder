@@ -16,7 +16,7 @@ export const allPosts: Array<BlogPost> = [
     title: 'Bringing Chromium Edge PWAs to the Microsoft Store',
     description: 'Learn more details on what Chromium Edge PWAs mean for you and your app!',
     date: 'Oct 20, 2020 ',
-    imageUrl: '/assets/images/windows_blog.png',
+    imageUrl: '/assets/images/edge-chromium.webp',
     shareUrl: 'https://blog.pwabuilder.com/posts/bringing-chromium-edge-pwas-to-the-microsoft-store/',
     clickUrl: 'https://blog.pwabuilder.com/posts/bringing-chromium-edge-pwas-to-the-microsoft-store/',
     tags: ['Windows', 'Store'],
