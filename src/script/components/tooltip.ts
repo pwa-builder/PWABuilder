@@ -22,6 +22,7 @@ function openTooltip(ev: MouseEvent, tooltipEl: HTMLElement) {
 
 export function tooltip(buttonId: string, text: string, url?: string) {
   const tooltipId = createTooltipId();
+  const boundOpenToolTip = openTooltip.bind(this);
 
   return html`
     <fast-button
@@ -29,7 +30,11 @@ export function tooltip(buttonId: string, text: string, url?: string) {
       class="tooltip"
       appearance="stealth"
       aria-labelledby="${tooltipId}"
-      @mouseover="${($event) => openTooltip($event, $event.currentTarget.querySelector('.tooltip-text'))}"
+      @mouseover="${$event =>
+        boundOpenToolTip(
+          $event,
+          $event.currentTarget.querySelector('.tooltip-text')
+        )}"
     >
       <img
         src="assets/images/help-outline.svg"
@@ -38,7 +43,11 @@ export function tooltip(buttonId: string, text: string, url?: string) {
       />
 
       ${url && url.length > 0
-        ? html`<a href="${url}" id="${tooltipId}" target="_blank" class="tooltip-text"
+        ? html`<a
+            href="${url}"
+            id="${tooltipId}"
+            target="_blank"
+            class="tooltip-text"
             >${text}</a
           >`
         : html`<span id="${tooltipId}" class="tooltip-text"> ${text} </span>`}
