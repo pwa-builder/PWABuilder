@@ -669,7 +669,7 @@ export class AppCongrats extends LitElement {
                           <h4>Windows</h4>
                           <p>
                             <a
-                              href="https://medium.com/pwabuilder/bringing-chromium-edge-pwas-progressive-web-apps-to-the-microsoft-store-c0bd07914ed9?source=friends_link&sk=04ca8b2ae2bd094b04ef6b53780b5698"
+                              href="https://blog.pwabuilder.com/posts/bringing-chromium-edge-pwas-to-the-microsoft-store/"
                               >PWAs work great on Windows!</a
                             >
                             Tap Test Package to test your PWA on a Windows
