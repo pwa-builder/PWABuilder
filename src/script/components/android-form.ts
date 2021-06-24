@@ -173,7 +173,7 @@ export class AndroidForm extends LitElement {
   /**
    * Called when the user changes the signing mode.
    */
-  androidSigningModeChanged(mode: 'mine' | 'new') {
+  androidSigningModeChanged(mode: 'mine' | 'new' | 'none') {
     if (!this.form) {
       return;
     }
@@ -181,7 +181,7 @@ export class AndroidForm extends LitElement {
     this.signingMode = mode;
 
     // If the user chose "mine", clear out existing values.
-    if (mode === 'mine') {
+    if (mode === 'mine' || mode === "none") {
       this.alias = '';
       this.signingKeyFullName = '';
       this.organization = '';
@@ -780,7 +780,7 @@ export class AndroidForm extends LitElement {
               <div class="form-group">
                 <label>Signing key</label>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="signingInput" id="generateSigningKeyInput" value="new"
+                  <input class="form-check-input" type="radio" id="generateSigningKeyInput" value="new"
                     name="signingMode" @change="${ev =>
                       this.androidSigningModeChanged(ev.target.value)}" .defaultChecked="${true}" />
                   <label class="form-check-label" for="generateSigningKeyInput">
@@ -797,7 +797,7 @@ export class AndroidForm extends LitElement {
                   </label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="signingInput" id="unsignedInput" value="none"
+                  <input class="form-check-input" type="radio" id="unsignedInput" value="none"
                     name="signingMode" @change="${ev =>
                       this.androidSigningModeChanged(ev.target.value)}" />
                   <label class="form-check-label" for="unsignedInput">
@@ -814,7 +814,7 @@ export class AndroidForm extends LitElement {
                   </label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="signingInput" id="useMySigningInput" value="mine"
+                  <input class="form-check-input" type="radio" id="useMySigningInput" value="mine"
                     name="signingMode" @change="${ev =>
                       this.androidSigningModeChanged(ev.target.value)}" />
                   <label class="form-check-label" for="useMySigningInput">
