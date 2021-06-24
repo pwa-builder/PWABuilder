@@ -251,7 +251,7 @@ export class AndroidForm extends LitElement {
                   aria-label="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
                   role="definition"></i>
 
-                  ${tooltip(
+                  ${this.tooltip(
                     'android-package-name',
                     'The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname'
                   )}
@@ -263,7 +263,7 @@ export class AndroidForm extends LitElement {
                 }" type="text" required
                 name="packageId"></fast-text-field>
             </div>
-      
+
             <div class="form-group">
               <label for="appNameInput">App name</label>
               <fast-text-field type="text" class="form-control" id="appNameInput" placeholder="My Awesome PWA"
@@ -274,7 +274,7 @@ export class AndroidForm extends LitElement {
                 }" required name="appName" />
               </fast-text-field>
             </div>
-      
+
             <div class="form-group">
               <label for="appLauncherNameInput">
                 Launcher name
@@ -283,7 +283,7 @@ export class AndroidForm extends LitElement {
                   aria-label="The app name used on the Android launch screen. Typically, this is the short name of the app."
                   role="definition"></i>
 
-                  ${tooltip(
+                  ${this.tooltip(
                     'android-launcher-name',
                     'The app name used on the Android launch screen. Typically, this is the short name of the app.'
                   )}
@@ -297,19 +297,19 @@ export class AndroidForm extends LitElement {
               </fast-text-field>
             </div>
           </div>
-      
+
           <!-- right half of the options dialog -->
           <fast-accordion>
             <fast-accordion-item @click="${(ev: Event) =>
               this.opened(ev.target)}">
               <div id="all-settings-header" slot="heading">
                 <span>All Settings</span>
-      
+
                 <fast-button class="flipper-button" mode="stealth">
                   <ion-icon name="caret-forward-outline"></ion-icon>
                 </fast-button>
               </div>
-      
+
               <div class="adv-settings">
                 <div>
                   <div class="">
@@ -320,7 +320,7 @@ export class AndroidForm extends LitElement {
                           title="The version of your app displayed to users. This is a string, typically in the form of '1.0.0.0'. Maps to android:versionName."
                           aria-label role="definition"></i>
 
-                          ${tooltip(
+                          ${this.tooltip(
                             'android-version',
                             "The version of your app displayed to users. This is a string, typically in the form of '1.0.0.0'. Maps to android:versionName."
                           )}
@@ -336,7 +336,7 @@ export class AndroidForm extends LitElement {
                   </div>
                 </div>
               </div>
-      
+
               <div>
                 <div class="">
                   <div class="form-group">
@@ -348,7 +348,7 @@ export class AndroidForm extends LitElement {
                         aria-label="A positive integer used as an internal version number. This is not shown to users. Android uses this value to protect against downgrades. Maps to android:versionCode."
                         role="definition" style="margin-left: 5px;"></i>
 
-                        ${tooltip(
+                        ${this.tooltip(
                           'android-version-code',
                           'A positive integer used as an internal version number. This is not shown to users. Android uses this value to protect against downgrades. Maps to android:versionCode.'
                         )}
@@ -363,7 +363,7 @@ export class AndroidForm extends LitElement {
                   </div>
                 </div>
               </div>
-      
+
               <div>
                 <div class="">
                   <div class="form-group">
@@ -378,7 +378,7 @@ export class AndroidForm extends LitElement {
                   </div>
                 </div>
               </div>
-      
+
               <div class="form-group">
                 <label for="startUrlInput">
                   Start URL
@@ -386,7 +386,7 @@ export class AndroidForm extends LitElement {
                     title="The start path for the TWA. Must be relative to the Host URL. You can specify '/' if you don't have a start URL different from Host."
                     aria-label="The start path for the TWA. Must be relative to the Host URL." role="definition"></i>
 
-                    ${tooltip(
+                    ${this.tooltip(
                       'android-start-url',
                       "The start path for the TWA. Must be relative to the Host URL. You can specify '/' if you don't have a start URL different from Host."
                     )}
@@ -397,7 +397,7 @@ export class AndroidForm extends LitElement {
                   }" />
                 </fast-text-field>
               </div>
-      
+
               <div class="form-group">
                 <label for="themeColorInput">
                   Status bar color
@@ -406,11 +406,11 @@ export class AndroidForm extends LitElement {
                     aria-label="Also known as the theme color, this is the color of the Android status bar in your app. Note: the status bar will be hidden if Display Mode is set to fullscreen."
                     role="definition"></i>
 
-                    ${tooltip(
+                    ${this.tooltip(
                       'android-status-bar-color',
                       'Also known as the theme color, this is the color of the Android status bar in your app. Note: the status bar will be hidden if Display Mode is set to fullscreen.'
                     )}
-                    
+
                 </label>
                 <input type="color" class="form-control" id="themeColorInput" name="themeColor" value="${
                   this.default_options
@@ -418,7 +418,7 @@ export class AndroidForm extends LitElement {
                     : 'black'
                 }" />
               </div>
-      
+
               <div class="form-group">
                 <label for="bgColorInput">
                   Splash color
@@ -427,7 +427,7 @@ export class AndroidForm extends LitElement {
                     aria-label="Also known as background color, this is the color of the splash screen for your app."
                     role="definition"></i>
 
-                    ${tooltip(
+                    ${this.tooltip(
                       'android-splash-color',
                       'Also known as background color, this is the color of the splash screen for your app.'
                     )}
@@ -438,7 +438,7 @@ export class AndroidForm extends LitElement {
                     : 'black'
                 }" />
               </div>
-      
+
               <div class="form-group">
                 <label for="navigationColorInput">
                   Nav color
@@ -448,7 +448,7 @@ export class AndroidForm extends LitElement {
                     role="definition"></i>
                 </label>
 
-                ${tooltip(
+                ${this.tooltip(
                   'android-nav-color',
                   'The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen.'
                 )}
@@ -458,7 +458,7 @@ export class AndroidForm extends LitElement {
                     : 'black'
                 }" />
               </div>
-      
+
               <div class="form-group">
                 <label for="navigationColorDarkInput">
                   Nav dark color
@@ -467,7 +467,7 @@ export class AndroidForm extends LitElement {
                     aria-label="The color of the Android navigation bar in your app when Android is in dark mode."
                     role="definition"></i>
 
-                    ${tooltip(
+                    ${this.tooltip(
                       'android-nav-color-dark',
                       'The color of the Android navigation bar in your app when Android is in dark mode.'
                     )}
@@ -478,14 +478,14 @@ export class AndroidForm extends LitElement {
                     : 'black'
                 }" />
               </div>
-      
+
               <div class="form-group">
                 <label for="navigationDividerColorInput">
                   Nav divider color
                   <i class="fas fa-info-circle" title="The color of the Android navigation bar divider in your app."
                     aria-label="The color of the Android navigation bar divider in your app." role="definition"></i>
 
-                    ${tooltip(
+                    ${this.tooltip(
                       'android-divider-color',
                       'The color of the Android navigation bar divider in your app.'
                     )}
@@ -496,7 +496,7 @@ export class AndroidForm extends LitElement {
                     : 'black'
                 }" />
               </div>
-      
+
               <div class="form-group">
                 <label for="navigationDividerColorDarkInput">
                   Nav divider dark color
@@ -505,7 +505,7 @@ export class AndroidForm extends LitElement {
                     aria-label="The color of the Android navigation bar divider in your app when Android is in dark mode."
                     role="definition"></i>
 
-                    ${tooltip(
+                    ${this.tooltip(
                       'android-divider-color-dark',
                       'The color of the Android navigation navigation bar divider in your app when Android is in dark mode.'
                     )}
@@ -517,7 +517,7 @@ export class AndroidForm extends LitElement {
                       : 'black'
                   }" />
               </div>
-      
+
               <div class="form-group">
                 <label for="iconUrlInput">Icon URL</label>
                 <fast-text-field type="url" class="form-control" id="iconUrlInput"
@@ -526,7 +526,7 @@ export class AndroidForm extends LitElement {
                   }" />
                 </fast-text-field>
               </div>
-      
+
               <div class="form-group">
                 <label for="maskIconUrlInput">
                   <a href="https://web.dev/maskable-icon" title="Read more about maskable icons" target="_blank"
@@ -536,7 +536,7 @@ export class AndroidForm extends LitElement {
                     aria-label="Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms."
                     role="definition"></i>
 
-                    ${tooltip(
+                    ${this.tooltip(
                       'maskable-icon-url',
                       'Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms.'
                     )}
@@ -549,7 +549,7 @@ export class AndroidForm extends LitElement {
                   }" />
                 </fast-text-field>
               </div>
-      
+
               <div class="form-group">
                 <label for="monochromeIconUrlInput">
                   <a href="https://w3c.github.io/manifest/#monochrome-icons-and-solid-fills" target="_blank"
@@ -559,7 +559,7 @@ export class AndroidForm extends LitElement {
                     aria-label="Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings."
                     role="definition"></i>
 
-                    ${tooltip(
+                    ${this.tooltip(
                       'mono-icon-url',
                       'Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings.'
                     )}
@@ -572,7 +572,7 @@ export class AndroidForm extends LitElement {
                   }" />
                 </fast-text-field>
               </div>
-      
+
               <div class="form-group">
                 <label for="splashFadeoutInput">Splash screen fade out duration (ms)</label>
                 <fast-number-field type="number" class="form-control" id="splashFadeoutInput" placeholder="300"
@@ -583,7 +583,7 @@ export class AndroidForm extends LitElement {
                   }" />
                 </fast-number-field>
               </div>
-      
+
               <div class="form-group">
                 <label>Fallback behavior</label>
                 <div class="form-check">
@@ -596,7 +596,7 @@ export class AndroidForm extends LitElement {
                       aria-label="When trusted web activity (TWA) is unavailable, use Chrome Custom Tabs as a fallback for your PWA."
                       role="definition"></i>
 
-                      ${tooltip(
+                      ${this.tooltip(
                         'fallback-behavior',
                         'Use Chrome Custom Tabs as a fallback for your PWA when the full trusted web activity (TWA) experience is unavailable.'
                       )}
@@ -612,14 +612,14 @@ export class AndroidForm extends LitElement {
                       aria-label="When trusted web activity (TWA) is unavailable, use a web view as the fallback for your PWA."
                       role="definition"></i>
 
-                      ${tooltip(
+                      ${this.tooltip(
                         'fallback-behavior',
                         'Use a web view as the fallback for your PWA when the full trusted web activity (TWA) experience is unavailable.'
                       )}
                   </label>
                 </div>
               </div>
-      
+
               <div class="form-group">
                 <label>Display mode</label>
                 <div class="form-check">
@@ -636,7 +636,7 @@ export class AndroidForm extends LitElement {
                       aria-label="Your PWA will use the whole screen but keep the Android status bar and navigation bar."
                       role="definition"></i>
 
-                      ${tooltip(
+                      ${this.tooltip(
                         'display-mode-standalone',
                         'Your PWA will use the whole screen but keep the Android status bar and navigation bar.'
                       )}
@@ -656,14 +656,14 @@ export class AndroidForm extends LitElement {
                       aria-label="Your PWA will use the whole screen and remove the Android status bar and navigation bar. Suitable for immersive experiences such as games or media apps."
                       role="definition"></i>
 
-                      ${tooltip(
+                      ${this.tooltip(
                         'display-mode-fullscreen',
                         'Your PWA will use the whole screen and remove the Android status bar and navigation bar. Suitable for immersive experiences such as games or media apps.'
                       )}
                   </label>
                 </div>
               </div>
-      
+
               <div class="form-group">
                 <label>Notification delegation</label>
                 <div class="form-check">
@@ -675,14 +675,14 @@ export class AndroidForm extends LitElement {
                       aria-label="Whether to enable Push Notification Delegation. If enabled, your PWA can send push notifications without browser permission prompts."
                       role="definition"></i>
 
-                      ${tooltip(
+                      ${this.tooltip(
                         'push-delegation',
                         'Whether to enable Push Notification Delegation. If enabled, your PWA can send push notifications without browser permission prompts.'
                       )}
                   </label>
                 </div>
               </div>
-      
+
               <div class="form-group">
                 <label>Location delegation</label>
                 <div class="form-check">
@@ -694,14 +694,14 @@ export class AndroidForm extends LitElement {
                       aria-label="Whether to enable Location Delegation. If enabled, your PWA can acess navigator.geolocation without browser permission prompts."
                       role="definition"></i>
 
-                      ${tooltip(
+                      ${this.tooltip(
                         'location-delegation',
                         'Whether to enable Location Delegation. If enabled, your PWA can acess navigator.geolocation without browser permission prompts.'
                       )}
                   </label>
                 </div>
               </div>
-      
+
               <div class="form-group">
                 <label>Google Play billing</label>
                 <div class="form-check">
@@ -713,14 +713,14 @@ export class AndroidForm extends LitElement {
                       aria-label="Whether to enable in-app purchases through Google Play Billing and the Digital Goods API."
                       role="definition"></i>
 
-                      ${tooltip(
+                      ${this.tooltip(
                         'play-billing',
                         'Whether to enable in-app purchases through Google Play Billing and the Digital Goods API.'
                       )}
                   </label>
                 </div>
               </div>
-      
+
               <div class="form-group">
                 <label>Settings shortcut</label>
                 <div class="form-check">
@@ -733,14 +733,14 @@ export class AndroidForm extends LitElement {
                       aria-label="If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app."
                       role="definition"></i>
 
-                      ${tooltip(
+                      ${this.tooltip(
                         'settings-shortcut',
                         'If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app.'
                       )}
                   </label>
                 </div>
               </div>
-      
+
               <div class="form-group">
                 <label>ChromeOS only</label>
                 <div class="form-check">
@@ -750,14 +750,14 @@ export class AndroidForm extends LitElement {
                     <i class="fas fa-info-circle" title="If enabled, your Android package will only run on ChromeOS devices"
                       aria-label="If enabled, your Android package will only run on ChromeOS devices" role="definition"></i>
 
-                      ${tooltip(
+                      ${this.tooltip(
                         'chromeos-only',
                         'If enabled, your Android package will only run on ChromeOS devices'
                       )}
                   </label>
                 </div>
               </div>
-      
+
               <div class="form-group">
                 <label>Include source code</label>
                 <div class="form-check">
@@ -769,14 +769,14 @@ export class AndroidForm extends LitElement {
                       aria-label="If enabled, your download will include the source code for your Android app."
                       role="definition"></i>
 
-                      ${tooltip(
+                      ${this.tooltip(
                         'include-source',
                         'If enabled, your download will include the source code for your Android app.'
                       )}
                   </label>
                 </div>
               </div>
-      
+
               <div class="form-group">
                 <label>Signing key</label>
                 <div class="form-check">
@@ -790,7 +790,7 @@ export class AndroidForm extends LitElement {
                       aria-label="PWABuilder will generate a new signing key for you and sign your APK with it. Your download will contain the new signing key and passwords."
                       role="definition"></i>
 
-                      ${tooltip(
+                      ${this.tooltip(
                         'signing-key-new',
                         'PWABuilder will generate a new signing key for you and sign your APK with it. Your download will contain the new signing key and passwords.'
                       )}
@@ -807,7 +807,7 @@ export class AndroidForm extends LitElement {
                       aria-label="PWABuilder will generate an unsigned APK. Google Play Store will sign your package. This is Google's recommended approach."
                       role="definition"></i>
 
-                      ${tooltip(
+                      ${this.tooltip(
                         'signing-key-none',
                         "PWABuilder will generate an unsigned APK. Google Play Store will sign your package. This is Google's recommended approach."
                       )}
@@ -824,7 +824,7 @@ export class AndroidForm extends LitElement {
                       aria-label="Upload your existing signing key. Use this option if you already have a signing key and you want to publish a new version of an existing app in Google Play."
                       role="definition"></i>
 
-                      ${tooltip(
+                      ${this.tooltip(
                         'signing-key-mine',
                         'Upload your existing signing key. Use this option if you already have a signing key and you want to publish a new version of an existing app in Google Play.'
                       )}
@@ -858,7 +858,7 @@ export class AndroidForm extends LitElement {
                         `
                       : null
                   }
-      
+
                 <div class="form-group">
                   <label for="signingKeyAliasInput">Key alias</label>
                   <fast-text-field type="text" class="form-control" id="signingKeyAliasInput" placeholder="my-key-alias"
@@ -875,14 +875,14 @@ export class AndroidForm extends LitElement {
                     }" />
                   </fast-text-field>
                 </div>
-      
+
                 <div class="form-group">
                   <label for="signingKeyOrgInput">Key organization</label>
                   <fast-text-field type="text" class="form-control" id="signingKeyOrgInput" required placeholder="My Company"
                     name="organization" value="${this.organization}" />
                   </fast-text-field>
                 </div>
-      
+
                 <div class="form-group">
                   <label for="signingKeyOrgUnitInput">Key organizational unit</label>
                   <fast-text-field type="text" class="form-control" id="signingKeyOrgUnitInput" required
@@ -891,14 +891,14 @@ export class AndroidForm extends LitElement {
                     }" />
                   </fast-text-field>
                 </div>
-      
+
                 <div class="form-group">
                   <label for="signingKeyCountryCodeInput">
                     Key country code
                     <i class="fas fa-info-circle" title="The 2 letter country code to list on the signing key"
                       aria-label="The 2 letter country code to list on the signing key" role="definition"></i>
 
-                      ${tooltip(
+                      ${this.tooltip(
                         'key-country-code',
                         'The 2 letter country code to list on the signing key'
                       )}
@@ -908,7 +908,7 @@ export class AndroidForm extends LitElement {
                   </fast-text-field>
                 </div>
                 ` : null}
-      
+
                 <div class="form-group">
                   <label for="signingKeyPasswordInput">
                     Key password
@@ -917,7 +917,7 @@ export class AndroidForm extends LitElement {
                       aria-label="The password for the signing key. Type a new password or leave empty to use a generated password."
                       role="definition"></i>
 
-                      ${tooltip(
+                      ${this.tooltip(
                         'key-password',
                         'The password for the signing key. Type a new password or leave empty to use a generated password.'
                       )}
@@ -928,7 +928,7 @@ export class AndroidForm extends LitElement {
                     }" />
                   </fast-text-field>
                 </div>
-      
+
                 <div class="form-group">
                   <label for="signingKeyStorePasswordInput">
                     Key store password
@@ -937,7 +937,7 @@ export class AndroidForm extends LitElement {
                       aria-label="The password for the key store. Type a new password or leave empty to use a generated password."
                       role="definition"></i>
 
-                    ${tooltip(
+                    ${this.tooltip(
                       'keystore-password',
                       'The password for the key store. Type a new password or leave empty to use a generated password.'
                     )}
@@ -954,16 +954,16 @@ export class AndroidForm extends LitElement {
               }
             </fast-accordion-item>
           </fast-accordion>
-      
+
         </div>
-      
+
         <div id="form-details-block">
           <p>
             Your download will contain instructions for submitting your app to
             the Google Play Store.
           </p>
         </div>
-      
+
         <div id="form-options-actions" class="modal-actions" >
           <loading-button @click="${() => this.initGenerate()}" .loading="${
       this.generating
@@ -972,4 +972,6 @@ export class AndroidForm extends LitElement {
       </form>
     `;
   }
+
+  tooltip = tooltip
 }
