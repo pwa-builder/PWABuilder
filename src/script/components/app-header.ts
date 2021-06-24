@@ -171,7 +171,7 @@ export class AppHeader extends LitElement {
         <img
           @click="${() => this.goBack()}"
           id="header-icon"
-          src="/assets/images/header_logo.webp"
+          src="/assets/images/header_logo.svg"
           alt="header logo"
         />
 
