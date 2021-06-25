@@ -17,7 +17,8 @@ export interface AnalyticsOptions {
 }
 
 export function capturePageView(options: AnalyticsOptions) {
-  if ((window as any).awa) {
+  console.log('just consoling the analytics options so typescript does not complain, not actually making a analytics call', options);
+  /*if ((window as any).awa) {
     (window as any).awa.ct.capturePageView(options);
-  }
+  }*/
 }
