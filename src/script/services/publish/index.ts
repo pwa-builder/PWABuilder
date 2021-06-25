@@ -13,7 +13,7 @@ import {
 
 export type platform = 'windows' | 'android' | 'samsung';
 
-export async function generatePackage(type: platform, form?: HTMLFormElement) {
+export async function generatePackage(type: platform, form?: HTMLFormElement, signingFile?: string) {
   switch (type) {
     case 'windows':
       try {
@@ -66,7 +66,7 @@ export async function generatePackage(type: platform, form?: HTMLFormElement) {
     case 'android':
       try {
         if (form) {
-          const androidOptions = await createAndroidPackageOptionsFromForm(form);
+          const androidOptions = await createAndroidPackageOptionsFromForm(form, signingFile);
 
           if (androidOptions) {
             try {

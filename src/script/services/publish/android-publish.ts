@@ -71,7 +71,7 @@ export async function generateAndroidPackage(
   return undefined;
 }
 
-export async function createAndroidPackageOptionsFromForm(form: HTMLFormElement): Promise<AndroidApkOptions> {
+export async function createAndroidPackageOptionsFromForm(form: HTMLFormElement, signingFile?: string): Promise<AndroidApkOptions> {
   const manifest = await getManifest();
   if (!manifest) {
     throw new Error('Could not find the web manifest');
@@ -176,7 +176,7 @@ export async function createAndroidPackageOptionsFromForm(form: HTMLFormElement)
     packageId: form.packageId.value || packageName,
     shortcuts: manifest.shortcuts || [],
     signing: {
-      file: form.file ? form.file.value : null,
+      file: signingFile ? signingFile : null,
       alias: form.alias ? form.alias.value : 'my-key-alias',
       fullName: form.fullName ? form.fullName.value : `${manifest.short_name || manifest.name || 'App'} Admin`,
       organization: form.organization ? form.organization.value : manifest.name || 'PWABuilder',

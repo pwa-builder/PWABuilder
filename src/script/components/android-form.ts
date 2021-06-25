@@ -104,10 +104,12 @@ export class AndroidForm extends LitElement {
   }
 
   initGenerate() {
+    console.log('this.file', this.file);
     this.dispatchEvent(
       new CustomEvent('init-android-gen', {
         detail: {
           form: this.form,
+          signingFile: this.file
         },
         composed: true,
         bubbles: true,
@@ -222,7 +224,10 @@ export class AndroidForm extends LitElement {
       }
       // Read it in as a Uint8Array and store it in our signing object.
       const fileReader = new FileReader();
-      fileReader.onload = () => (this.file = fileReader.result as string);
+      fileReader.onload = () => {
+        this.file = fileReader.result as string;
+        return;
+      };
       fileReader.onerror = progressEvent => {
         console.error(
           'Unable to read keystore file',
