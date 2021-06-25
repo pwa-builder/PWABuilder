@@ -432,7 +432,7 @@ export class AppPublish extends LitElement {
     return localManifest;
   }
 
-  async generate(type: platform, form?: HTMLFormElement) {
+  async generate(type: platform, form?: HTMLFormElement, signingFile?: string) {
     if (type === 'windows') {
       // Final checks for Windows
       if (this.finalChecks) {
@@ -460,6 +460,7 @@ export class AppPublish extends LitElement {
         }
       }
     } else if (type === 'android') {
+      console.log('signingFile', signingFile);
       // Final checks for Android
       if (this.finalChecks) {
         const maniCheck = this.finalChecks.manifest;
@@ -494,8 +495,10 @@ export class AppPublish extends LitElement {
     try {
       this.generating = true;
 
+      console.log('signingFile', signingFile);
+
       
-      const packageData = await generatePackage(type, form);
+      const packageData = await generatePackage(type, form, signingFile);
 
 
       if (packageData) {
@@ -739,7 +742,7 @@ export class AppPublish extends LitElement {
         <android-form
           slot="modal-form"
           .generating=${this.generating}
-          @init-android-gen="${ev => this.generate('android', ev.detail.form)}"
+          @init-android-gen="${ev => this.generate('android', ev.detail.form, ev.detail.signingFile)}"
         ></android-form>
       </app-modal>
 
