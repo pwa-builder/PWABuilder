@@ -15,9 +15,24 @@ function openTooltip(ev: MouseEvent, tooltipEl: HTMLElement) {
   // initialized yet, its an empty string instead of undefined.
   // This code is here to throttle style application as multiple hover events
   // can fire within seconds of each other causing "jumping" in the UI.
-  if (tooltipEl && ev && tooltipEl.style.top.length === 0) {
-    tooltipEl.style.top = `${ev.clientY.toString()}px`;
-  }
+
+  const target = ev.target as HTMLElement;
+  const rect = target.getBoundingClientRect();
+  const tooltipRect = tooltipEl.getBoundingClientRect();
+  let top = rect.top + rect.height || (ev as unknown)['layerY'];
+
+  // if (!top) {
+  //   const parent = this as HTMLElement;
+  // }
+  console.log(
+    // document.scrollingElement,
+    // tooltipEl,
+    tooltipRect,
+    target,
+    target.getBoundingClientRect(),
+    top
+  );
+  tooltipEl.style.top = `${top}px`;
 }
 
 export function tooltip(buttonId: string, text: string, url?: string) {
