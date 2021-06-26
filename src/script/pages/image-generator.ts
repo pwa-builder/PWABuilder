@@ -1,6 +1,5 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { smallBreakPoint } from '../utils/css/breakpoints';
 import { localeStrings } from '../../locales';
 
 import '../components/app-header';
@@ -349,7 +348,7 @@ export class ImageGenerator extends LitElement {
       }
 
       await download({
-        fileName: 'PWABuilder Icons',
+        fileName: 'PWABuilderIcons.zip',
         blob: await getRes.blob(),
       });
 

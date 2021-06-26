@@ -9,7 +9,7 @@ interface DownloadConfig {
 export async function download(config: DownloadConfig) {
   try {
     const fsOpts = {
-      fileName: config.fileName || 'PWABuilder Images',
+      fileName: config.fileName || 'PWABuilderImages.zip',
       extensions: ['.zip'],
       mimeTypes: ['application/zip'],
     };
