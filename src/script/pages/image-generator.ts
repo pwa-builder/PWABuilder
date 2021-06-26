@@ -8,6 +8,13 @@ import '../components/app-file-input';
 import { FileInputDetails, Lazy } from '../utils/interfaces';
 import { download } from '../utils/download';
 
+import {
+  fastButtonCss,
+  fastCheckboxCss,
+  fastNumberFieldCss,
+  fastRadioCss,
+} from '../utils/css/fast-elements';
+
 interface PlatformInformation {
   label: string;
   value: string;
@@ -63,15 +70,66 @@ export class ImageGenerator extends LitElement {
 
   static get styles() {
     return [
+      fastButtonCss,
+      fastCheckboxCss,
+      fastRadioCss,
+      fastNumberFieldCss,
       css`
         :host {
         }
 
+        h1 {
+          font-size: var(--xlarge-font-size);
+          line-height: 48px;
+          letter-spacing: -0.015em;
+          margin: 0;
+        }
+
+        h2 {
+          font-size: var(--large-font-size);
+        }
+
+        h3 {
+          font-size: var(--medium-font-size);
+        }
+
+        p {
+          font-size: var(--font-size);
+        }
+
+        small {
+          display: block;
+          font-size: 10px;
+        }
+
+        fast-card {
+          --background-color: var(--secondary-color);
+          padding: 16px;
+        }
+
+        fast-button {
+          height: 24px;
+          padding: 8px;
+        }
+
+        #submit {
+          margin-top: 8px;
+        }
+
         fast-button#downloadButton {
-          --neutral-foreground-rest: #ffffff;
+          --neutral-foreground-rest: var(--secondary-color);
+          --button-font-color: var(--secondary-color);
+        }
+
+        .background {
+          background-color: var(--primary-color);
+          color: var(--primary-color);
+        }
+
+        .main {
+          padding: 32px;
         }
       `,
-      smallBreakPoint(css``),
     ];
   }
 
@@ -83,8 +141,8 @@ export class ImageGenerator extends LitElement {
     return html`
       <div>
         <app-header></app-header>
-        <main id="main" role="presentation" class="main">
-          <div>
+        <main id="main" role="presentation" class="main background">
+          <fast-card>
             <h1>${loc.image_generator}</h1>
             <p>${loc.image_generator_text}</p>
             <form
@@ -162,7 +220,7 @@ export class ImageGenerator extends LitElement {
                 ${this.renderError()}
               </section>
             </form>
-          </div>
+          </fast-card>
         </main>
       </div>
     `;
