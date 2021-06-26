@@ -3,7 +3,7 @@ interface DownloadConfig {
   id?: string;
   fileName: string;
   url?: string;
-  blob?: Blob | FileWithHandle;
+  blob?: Blob;
 }
 
 export async function download(config: DownloadConfig) {

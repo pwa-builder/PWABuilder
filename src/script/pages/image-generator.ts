@@ -5,7 +5,6 @@ import { localeStrings } from '../../locales';
 import '../components/app-header';
 import '../components/app-file-input';
 import { FileInputDetails, Lazy } from '../utils/interfaces';
-import { download } from '../utils/download';
 
 import {
   fastButtonCss,
@@ -13,6 +12,7 @@ import {
   fastNumberFieldCss,
   fastRadioCss,
 } from '../utils/css/fast-elements';
+import { fileSave } from 'browser-fs-access';
 
 interface PlatformInformation {
   label: string;
@@ -368,9 +368,9 @@ export class ImageGenerator extends LitElement {
         throw new Error('Error from service: ' + getJson.Message);
       }
 
-      await download({
+      await fileSave(await getRes.blob(), {
         fileName: 'PWABuilderIcons.zip',
-        blob: await getRes.blob(),
+        extensions: ['.zip'],
       });
 
       this.downloadEnabled = true;
