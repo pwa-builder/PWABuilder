@@ -31,7 +31,6 @@ import {
 } from '../services/publish/publish-checks';
 import { generatePackage } from '../services/publish';
 import { getReportErrorUrl } from '../utils/error';
-import { capturePageAction } from '../utils/analytics';
 import { tooltip, styles as ToolTipStyles } from '../components/tooltip';
 import { localeStrings } from '../../locales';
 @customElement('app-publish')
@@ -433,7 +432,7 @@ export class AppPublish extends LitElement {
     return localManifest;
   }
 
-  async generate(type: platform, form?: HTMLFormElement) {
+  async generate(type: platform, form?: HTMLFormElement, signingFile?: string) {
     if (type === 'windows') {
       // Final checks for Windows
       if (this.finalChecks) {
@@ -461,6 +460,7 @@ export class AppPublish extends LitElement {
         }
       }
     } else if (type === 'android') {
+      console.log('signingFile', signingFile);
       // Final checks for Android
       if (this.finalChecks) {
         const maniCheck = this.finalChecks.manifest;
@@ -495,8 +495,10 @@ export class AppPublish extends LitElement {
     try {
       this.generating = true;
 
+      console.log('signingFile', signingFile);
+
       
-      const packageData = await generatePackage(type, form);
+      const packageData = await generatePackage(type, form, signingFile);
 
 
       if (packageData) {
@@ -518,12 +520,6 @@ export class AppPublish extends LitElement {
 
       this.showAlertModal(err, type);
     }
-
-    capturePageAction({
-      pageName: `${type}-package-generated`,
-      uri: `${location.pathname}`,
-      pageHeight: window.innerHeight
-    });
   }
 
   async download() {
@@ -535,12 +531,6 @@ export class AppPublish extends LitElement {
 
       this.blob = undefined;
       this.testBlob = undefined;
-
-      capturePageAction({
-        pageName: `${this.blob ? 'store' : 'test'}-package-downloaded`,
-        uri: `${location.pathname}`,
-        pageHeight: window.innerHeight
-      });
     }
   }
 
@@ -553,32 +543,14 @@ export class AppPublish extends LitElement {
 
   showWindowsOptionsModal() {
     this.open_windows_options = true;
-
-    capturePageAction({
-      pageName: 'windows-settings-opened',
-      uri: `${location.pathname}`,
-      pageHeight: window.innerHeight
-    });
   }
 
   showAndroidOptionsModal() {
     this.open_android_options = true;
-
-    capturePageAction({
-      pageName: 'android-settings-opened',
-      uri: `${location.pathname}`,
-      pageHeight: window.innerHeight
-    });
   }
 
   showSamsungModal() {
     this.open_samsung_modal = true;
-    
-    capturePageAction({
-      pageName: 'samsung',
-      uri: `${location.pathname}`,
-      pageHeight: window.innerHeight
-    });
   }
 
   renderContentCards() {
@@ -770,7 +742,7 @@ export class AppPublish extends LitElement {
         <android-form
           slot="modal-form"
           .generating=${this.generating}
-          @init-android-gen="${ev => this.generate('android', ev.detail.form)}"
+          @init-android-gen="${ev => this.generate('android', ev.detail.form, ev.detail.signingFile)}"
         ></android-form>
       </app-modal>
 

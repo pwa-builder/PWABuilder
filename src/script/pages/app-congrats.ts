@@ -32,8 +32,6 @@ import { BlogPost, allPosts } from '../services/blog';
 
 import { localeStrings } from '../../locales';
 
-import { capturePageAction } from '../utils/analytics';
-
 @customElement('app-congrats')
 export class AppCongrats extends LitElement {
   @state() mql = window.matchMedia(
@@ -504,12 +502,6 @@ export class AppCongrats extends LitElement {
       this.generating = false;
       this.open_android_options = false;
       this.open_windows_options = false;
-
-      capturePageAction({
-        pageName: `${type}-generated-from-congrats`,
-        uri: location.pathname,
-        pageHeight: window.innerHeight
-      });
     } catch (err) {
       console.error(err);
 
@@ -526,12 +518,6 @@ export class AppCongrats extends LitElement {
 
       this.blob = undefined;
       this.testBlob = undefined;
-
-      capturePageAction({
-        pageName: `${this.blob ? 'store' : 'test'}-package-downloaded-congrats`,
-        uri: `${location.pathname}`,
-        pageHeight: window.innerHeight
-      });
     }
   }
 
@@ -683,7 +669,7 @@ export class AppCongrats extends LitElement {
                           <h4>Windows</h4>
                           <p>
                             <a
-                              href="https://medium.com/pwabuilder/bringing-chromium-edge-pwas-progressive-web-apps-to-the-microsoft-store-c0bd07914ed9?source=friends_link&sk=04ca8b2ae2bd094b04ef6b53780b5698"
+                              href="https://blog.pwabuilder.com/posts/bringing-chromium-edge-pwas-to-the-microsoft-store/"
                               >PWAs work great on Windows!</a
                             >
                             Tap Test Package to test your PWA on a Windows
@@ -781,7 +767,7 @@ export class AppCongrats extends LitElement {
               </div>
 
               <div id="anchor-block">
-                <fast-anchor href="https://aka.ms/pwabuilderv3" appearance="hypertext"
+                <fast-anchor href="https://blog.pwabuilder.com" target="_blank" appearance="hypertext"
                   >View more blog posts</fast-anchor
                 >
               </div>

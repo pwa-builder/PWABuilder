@@ -21,9 +21,3 @@ export function capturePageView(options: AnalyticsOptions) {
     (window as any).awa.ct.capturePageView(options);
   }
 }
-
-export function capturePageAction(options: AnalyticsOptions) {
-  if ((window as any).awa) {
-    (window as any).awa.ct.capturePageAction(options);
-  }
-}

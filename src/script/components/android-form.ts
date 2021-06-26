@@ -104,10 +104,12 @@ export class AndroidForm extends LitElement {
   }
 
   initGenerate() {
+    console.log('this.file', this.file);
     this.dispatchEvent(
       new CustomEvent('init-android-gen', {
         detail: {
           form: this.form,
+          signingFile: this.file
         },
         composed: true,
         bubbles: true,
@@ -183,7 +185,7 @@ export class AndroidForm extends LitElement {
   /**
    * Called when the user changes the signing mode.
    */
-  androidSigningModeChanged(mode: 'mine' | 'new') {
+  androidSigningModeChanged(mode: 'mine' | 'new' | 'none') {
     if (!this.form) {
       return;
     }
@@ -191,7 +193,7 @@ export class AndroidForm extends LitElement {
     this.signingMode = mode;
 
     // If the user chose "mine", clear out existing values.
-    if (mode === 'mine') {
+    if (mode === 'mine' || mode === "none") {
       this.alias = '';
       this.signingKeyFullName = '';
       this.organization = '';
@@ -232,7 +234,10 @@ export class AndroidForm extends LitElement {
       }
       // Read it in as a Uint8Array and store it in our signing object.
       const fileReader = new FileReader();
-      fileReader.onload = () => (this.file = fileReader.result as string);
+      fileReader.onload = () => {
+        this.file = fileReader.result as string;
+        return;
+      };
       fileReader.onerror = progressEvent => {
         console.error(
           'Unable to read keystore file',
@@ -268,9 +273,11 @@ export class AndroidForm extends LitElement {
                     localeStrings.text.android.description.package_name
                   )}
               </label>
-              <fast-text-field id="packageIdInput" class="form-control" placeholder="${
-                localeStrings.text.android.titles.package_name
-              }" type="text" required
+              <fast-text-field id="packageIdInput" class="form-control" placeholder="com.contoso.app" value="${
+                  this.default_options
+                    ? this.default_options.packageId
+                    : 'com.contoso.app'
+                }" type="text" required
                 name="packageId"></fast-text-field>
             </div>
 
@@ -652,8 +659,8 @@ export class AndroidForm extends LitElement {
               <div class="form-group">
                 <label>${localeStrings.text.android.titles.fallback}</label>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="fallbackType" id="fallbackCustomTabsInput"
-                    value="customtabs" name="fallbackType" />
+                  <input .defaultChecked="${true}" value="customtabs" class="form-check-input" type="radio" name="fallbackType" id="fallbackCustomTabsInput"
+                  name="fallbackType" />
                   <label class="form-check-label" for="fallbackCustomTabsInput">
                     ${localeStrings.text.android.titles.custom}
                     <i class="fas fa-info-circle"
@@ -670,7 +677,7 @@ export class AndroidForm extends LitElement {
                   </label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="fallbackType" id="fallbackWebViewInput" value="webview"
+                  <input .defaultChecked="${false}" value="webview" class="form-check-input" type="radio" name="fallbackType" id="fallbackWebViewInput" value="webview"
                     name="fallbackType" />
                   <label class="form-check-label" for="fallbackWebViewInput">
                     ${localeStrings.text.android.titles.web_view}
@@ -693,7 +700,11 @@ export class AndroidForm extends LitElement {
                 <label>${localeStrings.text.android.titles.display_mode}</label>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="displayMode" id="standaloneDisplayModeInput"
-                    value="standalone" name="display" />
+                  .defaultChecked="${
+                      this.default_options
+                        ? this.default_options.display === "standalone" ? true : false
+                        : false
+                    }" value="standalone" name="display" />
                   <label class="form-check-label" for="standaloneDisplayModeInput">
                     ${localeStrings.text.android.titles.standalone}
                     <i class="fas fa-info-circle"
@@ -713,7 +724,11 @@ export class AndroidForm extends LitElement {
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="displayMode" id="fullscreenDisplayModeInput"
-                    value="fullscreen" name="display" />
+                  .defaultChecked="${
+                      this.default_options
+                        ? this.default_options.display === "fullscreen" ? true : false
+                        : false
+                    }" value="fullscreen" name="display" />
                   <label class="form-check-label" for="fullscreenDisplayModeInput">
                     ${localeStrings.text.android.titles.fullscreen}
                     <i class="fas fa-info-circle"
@@ -736,7 +751,7 @@ export class AndroidForm extends LitElement {
               <div class="form-group">
                 <label>${localeStrings.text.android.titles.fullscreen}</label>
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="enableNotificationsInput" name="enableNotifications" />
+                  <input .defaultChecked="${true}" class="form-check-input" type="checkbox" id="enableNotificationsInput" name="enableNotifications" />
                   <label class="form-check-label" for="enableNotificationsInput">
                     ${localeStrings.text.android.titles.enable}
                     <i class="fas fa-info-circle"
@@ -761,7 +776,7 @@ export class AndroidForm extends LitElement {
                   localeStrings.text.android.titles.location_delegation
                 }</label>
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="enableLocationInput" name="locationDelegation" />
+                  <input .defaultChecked="${true}" class="form-check-input" type="checkbox" id="enableLocationInput" name="locationDelegation" />
                   <label class="form-check-label" for="enableLocationInput">
                     ${localeStrings.text.android.titles.enable}
                     <i class="fas fa-info-circle"
@@ -789,7 +804,7 @@ export class AndroidForm extends LitElement {
                   localeStrings.text.android.titles.google_play_billing
                 }</label>
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="enablePlayBillingInput" name="playBilling" />
+                  <input .defaultChecked="${false}" class="form-check-input" type="checkbox" id="enablePlayBillingInput" name="playBilling" />
                   <label class="form-check-label" for="enablePlayBillingInput">
                     ${localeStrings.text.android.titles.enable}
                     <i class="fas fa-info-circle"
@@ -817,7 +832,7 @@ export class AndroidForm extends LitElement {
                   localeStrings.text.android.titles.settings_shortcut
                 }</label>
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="enableSettingsShortcutInput"
+                  <input .defaultChecked="${true}" class="form-check-input" type="checkbox" id="enableSettingsShortcutInput"
                     name="enableSiteSettingsShortcut" />
                   <label class="form-check-label" for="enableSettingsShortcutInput">
                     ${localeStrings.text.android.titles.enable}
@@ -843,7 +858,7 @@ export class AndroidForm extends LitElement {
                   localeStrings.text.android.titles.chromeos_only
                 }</label>
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="chromeOSOnlyInput" name="isChromeOSOnly" />
+                  <input .defaultChecked="${false}" class="form-check-input" type="checkbox" id="chromeOSOnlyInput" name="isChromeOSOnly" />
                   <label class="form-check-label" for="chromeOSOnlyInput">
                     ${localeStrings.text.android.titles.enable}
                     <i class="fas fa-info-circle" title="${
@@ -864,7 +879,7 @@ export class AndroidForm extends LitElement {
               <div class="form-group">
                 <label>${localeStrings.text.android.titles.source_code}</label>
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="includeSourceCodeInput" name="includeSourceCode" />
+                  <input .defaultChecked="${false}" class="form-check-input" type="checkbox" id="includeSourceCodeInput" name="includeSourceCode" />
                   <label class="form-check-label" for="includeSourceCodeInput">
                     ${localeStrings.text.android.titles.enable}
                     <i class="fas fa-info-circle"
@@ -887,7 +902,7 @@ export class AndroidForm extends LitElement {
               <div class="form-group">
                 <label>${localeStrings.text.android.titles.signing_key}</label>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="signingInput" id="generateSigningKeyInput" value="new"
+                  <input class="form-check-input" type="radio" id="generateSigningKeyInput" value="new"
                     name="signingMode" @change="${ev =>
                       this.androidSigningModeChanged(
                         ev.target.value
@@ -910,7 +925,7 @@ export class AndroidForm extends LitElement {
                   </label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="signingInput" id="unsignedInput" value="none"
+                  <input class="form-check-input" type="radio" id="unsignedInput" value="none"
                     name="signingMode" @change="${ev =>
                       this.androidSigningModeChanged(ev.target.value)}" />
                   <label class="form-check-label" for="unsignedInput">
@@ -931,7 +946,7 @@ export class AndroidForm extends LitElement {
                   </label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="signingInput" id="useMySigningInput" value="mine"
+                  <input class="form-check-input" type="radio" id="useMySigningInput" value="mine"
                     name="signingMode" @change="${ev =>
                       this.androidSigningModeChanged(ev.target.value)}" />
                   <label class="form-check-label" for="useMySigningInput">

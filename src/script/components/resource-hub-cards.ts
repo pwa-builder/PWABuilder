@@ -11,19 +11,19 @@ export const resourceCards: Array<CardData> = [
     imageUrl: '/assets/images/blog-card.webp',
     title: localeStrings.text.resource_hub.titles.blog,
     description: localeStrings.text.resource_hub.description.blog,
-    linkUrl: 'https://aka.ms/pwabuilderv3',
+    linkUrl: 'https://blog.pwabuilder.com',
   },
   {
     imageUrl: '/assets/images/demo-card.webp',
     title: localeStrings.text.resource_hub.titles.demo,
     description: localeStrings.text.resource_hub.description.demo,
-    linkUrl: 'https://components.pwabuilder.com/',
+    linkUrl: 'https://blog.pwabuilder.com/demos',
   },
   {
     imageUrl: '/assets/images/docs-card.webp',
     title: localeStrings.text.resource_hub.titles.documentation,
     description: localeStrings.text.resource_hub.description.documentation,
-    linkUrl: 'https://aka.ms/pwabuilderv3',
+    linkUrl: 'https://blog.pwabuilder.com/docs',
   },
 ];
 
