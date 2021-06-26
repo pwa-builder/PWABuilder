@@ -63,6 +63,8 @@ export class ImageGenerator extends LitElement {
 
   @state() selectAllState = false;
 
+  @state() downloading = false;
+
   @state() downloadEnabled = false;
 
   @state() error: Lazy<string>;
@@ -75,6 +77,7 @@ export class ImageGenerator extends LitElement {
       fastNumberFieldCss,
       css`
         :host {
+          --loader-size: 1.8em;
         }
 
         h1 {
@@ -108,7 +111,22 @@ export class ImageGenerator extends LitElement {
 
         fast-button {
           height: 24px;
-          padding: 8px;
+          padding: 8px 0;
+        }
+
+        fast-progress-ring {
+          height: var(--loader-size);
+          width: var(--loader-size);
+
+          --accent-foreground-rest: var(--secondary-color);
+          --accent-foreground-rest: var(--primary-color);
+          --neutral-fill-rest: white;
+          --neutral-fill-active: white;
+          --neutral-fill-hover: white;
+        }
+
+        fast-button::part(content) {
+          margin: 0 16px;
         }
 
         #submit {
@@ -210,10 +228,12 @@ export class ImageGenerator extends LitElement {
                 <fast-button
                   id="downloadButton"
                   class="primary"
-                  ?disabled=${!this.downloadEnabled}
+                  ?disabled=${!this.downloadEnabled || this.downloading}
                   @click=${this.downloadZip}
                 >
-                  ${localeStrings.button.download}
+                  ${this.downloading
+                    ? html`<fast-progress-ring></fast-progress-ring>`
+                    : localeStrings.button.download}
                 </fast-button>
 
                 ${this.renderError()}
@@ -312,6 +332,7 @@ export class ImageGenerator extends LitElement {
   async downloadZip() {
     try {
       this.downloadEnabled = false;
+      this.downloading = true;
 
       const form = new FormData();
       form.append('fileName', this.files[0]);
@@ -353,6 +374,7 @@ export class ImageGenerator extends LitElement {
       });
 
       this.downloadEnabled = true;
+      this.downloading = false;
     } catch (e) {
       console.error(e);
       this.error = (e as Error).message;
