@@ -281,9 +281,7 @@ export class ImageGenerator extends LitElement {
 
   renderError() {
     if (this.error) {
-      return html`
-        <p style="font-size: 16px; font-color: red;">${this.error}</p>
-      `;
+      return html` <p style="font-size: 16px; color: red;">${this.error}</p> `;
     }
   }
 
