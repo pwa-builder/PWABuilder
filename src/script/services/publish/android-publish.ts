@@ -130,8 +130,8 @@ export async function createAndroidPackageOptionsFromForm(form: HTMLFormElement,
     findSuitableIcon(manifestIcons, 'maskable', 512, 512, undefined) || // A 512x512 or larger maskable image with unspecified type
     findSuitableIcon(manifestIcons, 'any', 192, 192, undefined) || // A 512x512 or larger maskableimage with unspecified type
     findSuitableIcon(manifestIcons, 'maskable', 192, 192, undefined) || // A 512x512 or larger maskable image with unspecified type
-    findSuitableIcon(manifestIcons, 'any', 0, 0, undefined); // Welp, we tried. Any image of any size, any type.
-  findSuitableIcon(manifestIcons, 'maskable', 0, 0, undefined); // Welp, we really tried. Any maskable image of any size, any type.
+    findSuitableIcon(manifestIcons, 'any', 0, 0, undefined) || // Welp, we tried. Any image of any size, any type.
+    findSuitableIcon(manifestIcons, 'maskable', 0, 0, undefined); // Welp, we really tried. Any maskable image of any size, any type.
 
   if (!icon) {
     throw new Error(
