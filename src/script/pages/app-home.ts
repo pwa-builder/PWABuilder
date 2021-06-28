@@ -317,7 +317,10 @@ export class AppHome extends LitElement {
         this.errorGettingURL = true;
       }
 
-      this.gettingManifest = false;
+      // HACK: Lit 2.0rc1 crashes on Safari 14 (Mac and iOS) on the following line:
+      // this.gettingManifest = false;
+      // To fix this, we've found that putting that call in a 1ms timeout fixes the issue.
+      setTimeout(() => this.gettingManifest = false, 1);
     }
   }
 
