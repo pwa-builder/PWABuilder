@@ -16,7 +16,6 @@ import { AndroidApkOptions } from '../utils/android-validation';
 
 import { smallBreakPoint, xxLargeBreakPoint } from '../utils/css/breakpoints';
 import { Manifest } from '../utils/interfaces';
-import { capturePageAction } from '../utils/analytics';
 import { localeStrings } from '../../locales';
 
 @customElement('android-form')
@@ -115,11 +114,6 @@ export class AndroidForm extends LitElement {
         bubbles: true,
       })
     );
-    capturePageAction({
-      pageName: 'android-form-used',
-      uri: `${location.pathname}`,
-      pageHeight: window.innerHeight,
-    });
   }
 
   toggleSettings(settingsToggleValue: 'basic' | 'advanced') {
@@ -130,11 +124,6 @@ export class AndroidForm extends LitElement {
     } else {
       this.show_adv = false;
     }
-    capturePageAction({
-      pageName: 'android-settings-toggled',
-      uri: `${location.pathname}`,
-      pageHeight: window.innerHeight,
-    });
   }
 
   opened(targetEl: EventTarget | null) {

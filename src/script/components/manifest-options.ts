@@ -1125,12 +1125,6 @@ export class AppManifest extends LitElement {
             return icon;
           })
         );
-
-        capturePageAction({
-          pageName: 'generate-icons',
-          uri: location.pathname,
-          pageHeight: window.innerHeight,
-        });
       }
     } catch (e) {
       console.error(e);
