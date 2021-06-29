@@ -13,7 +13,11 @@ import {
 
 export type platform = 'windows' | 'android' | 'samsung';
 
-export async function generatePackage(type: platform, form?: HTMLFormElement, signingFile?: string) {
+export async function generatePackage(
+  type: platform,
+  form?: HTMLFormElement,
+  signingFile?: string
+) {
   switch (type) {
     case 'windows':
       try {
@@ -47,15 +51,21 @@ export async function generatePackage(type: platform, form?: HTMLFormElement, si
             const localManifest = await grabBackupManifest();
 
             if (localManifest) {
-              const options = await createWindowsPackageOptionsFromManifest(
-                localManifest
-              );
-              const testBlob = await generateWindowsPackage(options);
+              try {
+                const options = await createWindowsPackageOptionsFromManifest(
+                  localManifest
+                );
+                const testBlob = await generateWindowsPackage(options);
 
-              return {
-                blob: testBlob || null,
-                type: 'test',
-              };
+                return {
+                  blob: testBlob || null,
+                  type: 'test',
+                };
+              } catch (err) {
+                throw new Error(
+                  `Error generating Windows Package from form: ${err}`
+                );
+              }
             }
           }
         }
@@ -66,21 +76,18 @@ export async function generatePackage(type: platform, form?: HTMLFormElement, si
     case 'android':
       try {
         if (form) {
-          const androidOptions = await createAndroidPackageOptionsFromForm(form, signingFile);
+          const androidOptions = await createAndroidPackageOptionsFromForm(
+            form,
+            signingFile
+          );
 
           if (androidOptions) {
-            try {
-              const blob = await generateAndroidPackage(androidOptions, form);
+            const blob = await generateAndroidPackage(androidOptions, form);
 
-              return {
-                blob: blob || null,
-                type: 'store',
-              };
-            }
-            catch (err) {
-              console.error('err generating android from form', err);
-              return err;
-            }
+            return {
+              blob: blob || null,
+              type: 'store',
+            };
           }
         } else {
           try {
@@ -100,24 +107,28 @@ export async function generatePackage(type: platform, form?: HTMLFormElement, si
                 localManifest
               );
 
-              const testBlob = await generateAndroidPackage(androidOptions);
+              try {
+                const testBlob = await generateAndroidPackage(androidOptions);
 
-              return {
-                blob: testBlob || null,
-                type: 'test',
-              };
+                return {
+                  blob: testBlob || null,
+                  type: 'test',
+                };
+              } catch (err) {
+                throw new Error(`Error generating android from form: ${err}`);
+              }
             }
           }
         }
       } catch (err) {
-        return err;
+        throw new Error(`Error generating android from form: ${err}`);
       }
       break;
     case 'samsung':
       console.log('samsung');
       break;
     default:
-      console.error(
+      throw new Error(
         `A platform type must be passed, ${type} is not a valid platform.`
       );
   }
