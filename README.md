@@ -1,10 +1,10 @@
 # PWABuilder
 
-Welcome to [PWABuilder](https://www.pwabuilder.com/) v3.0 preview! This branch is a work in progress and may not be fully featured yet. 
+### Built with the [PWABuilder PWA Starter](https://github.com/pwa-builder/pwa-starter)
 
-Live URL: https://nice-field-047c1420f.azurestaticapps.net/
+Welcome to [PWABuilder](https://www.pwabuilder.com/) v3.0! Read our launch blog [here](https://blog.pwabuilder.com/posts/introducing-the-brand-new-pwa-builder/) for all the details! 
 
-## Contributing
+[Try It](https://www.pwabuilder.com)
 
 ### Prequisites
 
@@ -42,7 +42,7 @@ Run `npm run build`, the `dist/` folder will contain your built PWA. The product
 ## Folder Structure
 
 ```
-pwa-starter
+PWABuilder
 │   README.md (docs)
 │   rollup.config.js (bundler config https://rollupjs.org/)
 |   tsconfig.json (TypeScript config https://www.typescriptlang.org/)
@@ -63,11 +63,12 @@ pwa-starter
 │       |
 |       └───components
 |           |   header.ts (header component)
+|           |   more components
 |       |
 |       |
 |       └───pages
 |           |   app-index.ts (app-index component)
 |           |   app-home.ts (app-home component)
 |           |   app-about.ts (app-about component)
-
+|           |   more pages
 ```
