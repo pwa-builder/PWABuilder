@@ -104,7 +104,7 @@ export class AndroidForm extends LitElement {
   }
 
   initGenerate() {
-    console.log('this.file', this.file, this.form);
+    console.log('this.file', this.file);
     this.dispatchEvent(
       new CustomEvent('init-android-gen', {
         detail: {
@@ -353,7 +353,7 @@ export class AndroidForm extends LitElement {
                           'A positive integer used as an internal version number. This is not shown to users. Android uses this value to protect against downgrades. Maps to android:versionCode.'
                         )}
                     </label>
-                    <fast-number-field type="number"     min="1" max="2100000000" class="form-control" id="appVersionCodeInput" name="appVersionCode" placeholder="1" required value="${this.default_options?.appVersionCode || 1}"/>
+                    <fast-number-field type="number" min="1" max="2100000000" class="form-control" id="appVersionCodeInput" name="appVersionCode" placeholder="1" required value="${this.default_options?.appVersionCode || 1}"/>
                     </fast-number-field>
                   </div>
                 </div>
