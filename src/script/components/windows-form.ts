@@ -88,8 +88,8 @@ export class WindowsForm extends LitElement {
 
   initGenerate(ev: InputEvent) {
     ev.preventDefault();
+
     const form = this.shadowRoot?.querySelector('#windows-options-form');
-    console.log('here', form);
 
     this.dispatchEvent(
       new CustomEvent('init-windows-gen', {
@@ -194,6 +194,7 @@ export class WindowsForm extends LitElement {
                 placeholder="app.contoso.edge"
                 type="text"
                 name="packageId"
+                pattern="[a-zA-Z0-9.]*$"
                 maxlength="49"
                 required
               />
