@@ -12,7 +12,6 @@ import { capturePageView } from '../utils/analytics';
 
 @customElement('app-index')
 export class AppIndex extends LitElement {
-
   static get styles() {
     return css`
       #router-outlet > * {
@@ -128,6 +127,13 @@ export class AppIndex extends LitElement {
             component: 'app-congrats',
             action: async () => {
               await import('./app-congrats.js');
+            },
+          },
+          {
+            path: 'imageGenerator',
+            component: 'image-generator',
+            action: async () => {
+              await import('./image-generator.js');
             },
           },
         ],

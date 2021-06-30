@@ -7,8 +7,10 @@ import { fastButtonCss } from '../utils/css/fast-elements';
 import { FileInputDetails, Lazy } from '../utils/interfaces';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
+import { FileInputElement } from '../utils/interfaces.components';
+
 @customElement('app-file-input')
-export class FileInput extends LitElement {
+export class FileInput extends LitElement implements FileInputElement {
   @property({ type: String, attribute: true }) inputId: string;
   @query('.file-input') fileInput: Lazy<HTMLInputElement>;
 

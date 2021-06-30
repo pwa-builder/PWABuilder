@@ -16,7 +16,6 @@ import { AndroidApkOptions } from '../utils/android-validation';
 
 import { smallBreakPoint, xxLargeBreakPoint } from '../utils/css/breakpoints';
 import { Manifest } from '../utils/interfaces';
-
 import { localeStrings } from '../../locales';
 
 @customElement('android-form')
@@ -722,7 +721,7 @@ export class AndroidForm extends LitElement {
               </div>
 
               <div class="form-group">
-                <label>Fallback behavior</label>
+                <label>${localeStrings.text.android.titles.fallback}</label>
                 <div class="form-check">
                   <input
                     .defaultChecked="${true}"
@@ -777,7 +776,7 @@ export class AndroidForm extends LitElement {
               </div>
 
               <div class="form-group">
-                <label>Display mode</label>
+                <label>${localeStrings.text.android.titles.display_mode}</label>
                 <div class="form-check">
                   <input
                     class="form-check-input"
@@ -845,7 +844,7 @@ export class AndroidForm extends LitElement {
               </div>
 
               <div class="form-group">
-                <label>Notification delegation</label>
+                <label>${localeStrings.text.android.titles.fullscreen}</label>
                 <div class="form-check">
                   <input
                     .defaultChecked="${true}"
@@ -875,7 +874,9 @@ export class AndroidForm extends LitElement {
               </div>
 
               <div class="form-group">
-                <label>Location delegation</label>
+                <label>${
+                  localeStrings.text.android.titles.location_delegation
+                }</label>
                 <div class="form-check">
                   <input
                     .defaultChecked="${true}"
@@ -902,7 +903,9 @@ export class AndroidForm extends LitElement {
               </div>
 
               <div class="form-group">
-                <label>Google Play billing</label>
+                <label>${
+                  localeStrings.text.android.titles.google_play_billing
+                }</label>
                 <div class="form-check">
                   <input
                     .defaultChecked="${false}"
@@ -929,7 +932,9 @@ export class AndroidForm extends LitElement {
               </div>
 
               <div class="form-group">
-                <label>Settings shortcut</label>
+                <label>${
+                  localeStrings.text.android.titles.settings_shortcut
+                }</label>
                 <div class="form-check">
                   <input
                     .defaultChecked="${true}"
@@ -959,7 +964,9 @@ export class AndroidForm extends LitElement {
               </div>
 
               <div class="form-group">
-                <label>ChromeOS only</label>
+                <label>${
+                  localeStrings.text.android.titles.chromeos_only
+                }</label>
                 <div class="form-check">
                   <input
                     .defaultChecked="${false}"
@@ -986,7 +993,7 @@ export class AndroidForm extends LitElement {
               </div>
 
               <div class="form-group">
-                <label>Include source code</label>
+                <label>${localeStrings.text.android.titles.source_code}</label>
                 <div class="form-check">
                   <input
                     .defaultChecked="${false}"
@@ -1013,7 +1020,7 @@ export class AndroidForm extends LitElement {
               </div>
 
               <div class="form-group">
-                <label>Signing key</label>
+                <label>${localeStrings.text.android.titles.signing_key}</label>
                 <div class="form-check">
                   <input
                     class="form-check-input"
@@ -1260,8 +1267,7 @@ export class AndroidForm extends LitElement {
 
         <div id="form-details-block">
           <p>
-            Your download will contain instructions for submitting your app to
-            the Google Play Store.
+            ${localeStrings.text.android.description.form_details}
           </p>
         </div>
 

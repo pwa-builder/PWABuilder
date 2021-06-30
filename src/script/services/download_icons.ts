@@ -15,10 +15,14 @@ export async function generateAndDownloadIconZip(images: Array<Icon>) {
       }),
     });
 
+    if (!response.ok) {
+      throw new Error(JSON.stringify(await response.json()));
+    }
+
     const blob = await response.blob();
     await download({
       id: 'icon',
-      fileName: 'pwabuilder-icons',
+      fileName: 'pwabuilder-icons.zip',
       blob,
     });
   } catch (e) {

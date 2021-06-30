@@ -1119,7 +1119,12 @@ export class AppManifest extends LitElement {
 
     try {
       if (this.manifest && this.manifest.icons) {
-        await generateAndDownloadIconZip(this.manifest.icons);
+        await generateAndDownloadIconZip(
+          this.manifest.icons.map(icon => {
+            icon.src = this.handleImageUrl(icon);
+            return icon;
+          })
+        );
       }
     } catch (e) {
       console.error(e);
