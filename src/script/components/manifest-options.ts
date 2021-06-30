@@ -311,8 +311,7 @@ export class AppManifest extends LitElement {
           color: var(--font-color);
         }
 
-        .accordion-heading-block {
-          width: 79vw;
+        .code-editor-collapse-header {
           display: flex;
           align-items: center;
           justify-content: space-between;
@@ -347,38 +346,10 @@ export class AppManifest extends LitElement {
         }
       `,
       // breakpoints
-      xxxLargeBreakPoint(css`
-        .accordion-heading-block {
-          width: 94em;
-        }
-      `),
-      xxLargeBreakPoint(
-        css`
-          .accordion-heading-block {
-            max-width: 83vw;
-            width: 83vw;
-          }
-        `
-      ),
       xLargeBreakPoint(
         css`
-          .accordion-heading-block,
           #report-content {
             width: 79vw;
-          }
-        `
-      ),
-      largeBreakPoint(
-        css`
-          .accordion-heading-block {
-            width: 86vw;
-          }
-        `
-      ),
-      mediumBreakPoint(
-        css`
-          .accordion-heading-block {
-            width: 86vw;
           }
         `
       ),
@@ -429,10 +400,6 @@ export class AppManifest extends LitElement {
         .show-sm {
           display: block;
           visibility: visible;
-        }
-
-        .accordion-heading-block {
-          width: 90vw;
         }
       `),
       hidden_sm,
@@ -606,7 +573,7 @@ export class AppManifest extends LitElement {
         <section class="view-code">
           <fast-accordion>
             <fast-accordion-item @click=${this.handleEditorOpened}>
-              <div class="accordion-heading-block" slot="heading">
+              <div class="code-editor-collapse-header" slot="heading">
                 <h1>${localeStrings.text.manifest_options.view_code.h1}</h1>
                 <flipper-button
                   class="large end"
