@@ -433,6 +433,7 @@ export class AppPublish extends LitElement {
   }
 
   async generate(type: platform, form?: HTMLFormElement, signingFile?: string) {
+    console.log('generating');
     if (type === 'windows') {
       // Final checks for Windows
       if (this.finalChecks) {
