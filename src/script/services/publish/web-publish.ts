@@ -24,19 +24,7 @@ export async function generateWebPackage() {
 
     let baseUrl: string;
     let urlToUse: string;
-    let headers: Headers | undefined;
-    let body: FormData | string;
-
-    if (manifest.icons.length > 10) {
-      baseUrl = env.webPackageGeneratorUrlForm;
-      body = createNewFormDataWithManifest(manifest);
-    } else {
-      baseUrl = env.webPackageGeneratorUrl;
-      headers = new Headers({
-        'content-type': 'application/json',
-      });
-      body = JSON.stringify(manifestWithScreenshots);
-    }
+    const body = createNewFormDataWithManifest(manifest);
 
     if (chosenSW) {
       urlToUse = `${baseUrl}?siteUrl=${url}&swId=${chosenSW}&hasServiceWorker=${false}`;
@@ -47,7 +35,6 @@ export async function generateWebPackage() {
     const response = await fetch(urlToUse, {
       method: 'POST',
       body,
-      headers,
     });
     if (response.status === 200) {
       const data = await response.blob();
