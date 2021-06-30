@@ -376,7 +376,7 @@ export class AppBasePack extends LitElement {
                 <h5>Next Steps</h5>
 
                 <p>
-                  Your steps away from being able to package your PWA for the store. 
+                  You're steps away from being able to package your PWA for the store. 
                   After you download your base files be sure to
                 </p>
                  
