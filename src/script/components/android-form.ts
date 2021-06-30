@@ -47,16 +47,22 @@ export class AndroidForm extends LitElement {
       ModalStyles,
       ToolTipStyles,
       css`
-        fast-text-field::part(root),
-        fast-number-field::part(root) {
+        #form-layout input {
           border: 1px solid rgba(194, 201, 209, 1);
           border-radius: var(--input-radius);
+          padding: 10px;
+          color: var(--font-color);
         }
 
-        fast-text-field::part(control),
-        fast-number-field::part(control) {
-          color: var(--font-color);
-          border-radius: var(--input-radius);
+        #generate-submit {
+          background: transparent;
+          color: var(--button-font-color);
+          font-weight: bold;
+          border: none;
+          cursor: pointer;
+
+          height: var(--desktop-button-height);
+          width: var(--button-width);
         }
 
         @media (min-height: 760px) and (max-height: 1000px) {
@@ -102,13 +108,14 @@ export class AndroidForm extends LitElement {
     this.default_options = await createAndroidPackageOptionsFromManifest();
   }
 
-  initGenerate() {
-    console.log('this.file', this.file);
+  initGenerate(ev: InputEvent) {
+    ev.preventDefault();
+
     this.dispatchEvent(
       new CustomEvent('init-android-gen', {
         detail: {
           form: this.form,
-          signingFile: this.file
+          signingFile: this.file,
         },
         composed: true,
         bubbles: true,
@@ -182,7 +189,7 @@ export class AndroidForm extends LitElement {
     this.signingMode = mode;
 
     // If the user chose "mine", clear out existing values.
-    if (mode === 'mine' || mode === "none") {
+    if (mode === 'mine' || mode === 'none') {
       this.alias = '';
       this.signingKeyFullName = '';
       this.organization = '';
@@ -244,78 +251,95 @@ export class AndroidForm extends LitElement {
 
   render() {
     return html`
-      <form id="android-options-form" slot="modal-form" style="width: 100%">
+      <form
+        id="android-options-form"
+        slot="modal-form"
+        style="width: 100%"
+        @submit="${ev => this.initGenerate(ev)}"
+        title=""
+      >
         <div id="form-layout">
           <div class="basic-settings">
             <div class="form-group">
               <label for="packageIdInput">
-                ${localeStrings.text.android.titles.package_name}
-                <i class="fas fa-info-circle"
-                  title="${localeStrings.text.android.description.package_name}"
-                  aria-label="${
-                    localeStrings.text.android.description.package_name
-                  }"
-                  role="definition"></i>
+                Package Name
+                <i
+                  class="fas fa-info-circle"
+                  title="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
+                  aria-label="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
+                  role="definition"
+                ></i>
 
-                  ${tooltip(
-                    'android-package-name',
-                    localeStrings.text.android.description.package_name
-                  )}
+                ${tooltip(
+                  'android-package-name',
+                  'The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname'
+                )}
               </label>
-              <fast-text-field id="packageIdInput" class="form-control" placeholder="com.contoso.app" value="${
-                  this.default_options
-                    ? this.default_options.packageId
-                    : 'com.contoso.app'
-                }" type="text" required
-                name="packageId"></fast-text-field>
+              <input
+                id="packageIdInput"
+                class="form-control"
+                placeholder="com.contoso.app"
+                value="${this.default_options
+                  ? this.default_options.packageId
+                  : 'com.contoso.app'}"
+                type="text"
+                required
+                pattern="[a-zA-Z0-9.]*$"
+                name="packageId"
+              />
             </div>
 
             <div class="form-group">
-              <label for="appNameInput">${
-                localeStrings.text.android.titles.app_name
-              }</label>
-              <fast-text-field type="text" class="form-control" id="appNameInput" placeholder="My Awesome PWA"
-                value="${
-                  this.default_options
-                    ? this.default_options.name
-                    : ' My Awesome PWA'
-                }" required name="appName" />
-              </fast-text-field>
+              <label for="appNameInput">App name</label>
+              <input
+                type="text"
+                class="form-control"
+                id="appNameInput"
+                placeholder="My Awesome PWA"
+                value="${this.default_options
+                  ? this.default_options.name
+                  : ' My Awesome PWA'}"
+                required
+                name="appName"
+              />
             </div>
 
             <div class="form-group">
               <label for="appLauncherNameInput">
-                ${localeStrings.text.android.titles.launcher_name}
-                <i class="fas fa-info-circle"
-                  title="${
-                    localeStrings.text.android.description.launcher_name
-                  }"
-                  aria-label="${
-                    localeStrings.text.android.description.launcher_name
-                  }"
-                  role="definition"></i>
+                Launcher name
+                <i
+                  class="fas fa-info-circle"
+                  title="The app name used on the Android launch screen. Typically, this is the short name of the app."
+                  aria-label="The app name used on the Android launch screen. Typically, this is the short name of the app."
+                  role="definition"
+                ></i>
 
-                  ${tooltip(
-                    'android-launcher-name',
-                    localeStrings.text.android.description.launcher_name
-                  )}
+                ${tooltip(
+                  'android-launcher-name',
+                  'The app name used on the Android launch screen. Typically, this is the short name of the app.'
+                )}
               </label>
-              <fast-text-field type="text" class="form-control" id="appLauncherNameInput" placeholder="Awesome PWA" value="${
-                this.default_options
+              <input
+                type="text"
+                class="form-control"
+                id="appLauncherNameInput"
+                placeholder="Awesome PWA"
+                value="${this.default_options
                   ? this.default_options.launcherName
-                  : 'Awesome PWA'
-              }" required
-                name="launcherName" />
-              </fast-text-field>
+                  : 'Awesome PWA'}"
+                required
+                name="launcherName"
+              />
             </div>
           </div>
 
           <!-- right half of the options dialog -->
           <fast-accordion>
-            <fast-accordion-item @click="${(ev: Event) =>
-              this.opened(ev.target)}">
+            <fast-accordion-item
+              @click="${(ev: Event) => this.opened(ev.target)}"
+            >
               <div id="all-settings-header" slot="heading">
-                <span>${localeStrings.text.android.titles.all_settings}</span>
+                <span>All Settings</span>
 
                 <fast-button class="flipper-button" mode="stealth">
                   <ion-icon name="caret-forward-outline"></ion-icon>
@@ -327,25 +351,28 @@ export class AndroidForm extends LitElement {
                   <div class="">
                     <div class="form-group">
                       <label for="appVersionInput">
-                        ${localeStrings.text.android.titles.app_version}
-                        <i class="fas fa-info-circle"
-                          title="${
-                            localeStrings.text.android.description.app_version
-                          }"
-                          aria-label role="definition"></i>
+                        App version
+                        <i
+                          class="fas fa-info-circle"
+                          title="The version of your app displayed to users. This is a string, typically in the form of '1.0.0.0'. Maps to android:versionName."
+                          aria-label
+                          role="definition"
+                        ></i>
 
-                          ${tooltip(
-                            'android-version',
-                            localeStrings.text.android.description.app_version
-                          )}
+                        ${tooltip(
+                          'android-version',
+                          "The version of your app displayed to users. This is a string, typically in the form of '1.0.0.0'. Maps to android:versionName."
+                        )}
                       </label>
-                      <fast-text-field type="text" class="form-control" id="appVersionInput" placeholder="1.0.0.0" value="${
-                        this.default_options
-                          ? this.default_options.appVersion
-                          : '1.0.0.0'
-                      }" required
-                        name="appVersion" />
-                      </fast-text-field>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="appVersionInput"
+                        placeholder="1.0.0.0"
+                        value="${this.default_options?.appVersion || '1.0.0.0'}"
+                        required
+                        name="appVersion"
+                      />
                     </div>
                   </div>
                 </div>
@@ -355,34 +382,37 @@ export class AndroidForm extends LitElement {
                 <div class="">
                   <div class="form-group">
                     <label for="appVersionCodeInput">
-                      <a href="https://developer.android.com/studio/publish/versioning#appversioning" target="_blank"
-                        rel="noopener">${
-                          localeStrings.text.android.titles.app_version_code
-                        }</a>
-                      <i class="fas fa-info-circle"
-                        title="${
-                          localeStrings.text.android.description
-                            .app_version_code
-                        }"
-                        aria-label="${
-                          localeStrings.text.android.description
-                            .app_version_code
-                        }"
-                        role="definition" style="margin-left: 5px;"></i>
+                      <a
+                        href="https://developer.android.com/studio/publish/versioning#appversioning"
+                        target="_blank"
+                        rel="noopener"
+                        tabindex="-1"
+                        >App version code</a
+                      >
+                      <i
+                        class="fas fa-info-circle"
+                        title="A positive integer used as an internal version number. This is not shown to users. Android uses this value to protect against downgrades. Maps to android:versionCode."
+                        aria-label="A positive integer used as an internal version number. This is not shown to users. Android uses this value to protect against downgrades. Maps to android:versionCode."
+                        role="definition"
+                        style="margin-left: 5px;"
+                      ></i>
 
-                        ${tooltip(
-                          'android-version-code',
-                          localeStrings.text.android.description
-                            .app_version_code
-                        )}
+                      ${tooltip(
+                        'android-version-code',
+                        'A positive integer used as an internal version number. This is not shown to users. Android uses this value to protect against downgrades. Maps to android:versionCode.'
+                      )}
                     </label>
-                    <fast-number-field type="number" min="1" max="2100000000" class="form-control" id="appVersionCodeInput"
-                      placeholder="1" required value="${
-                        this.default_options
-                          ? this.default_options.appVersionCode
-                          : '1'
-                      }" name="appVersionCode" />
-                    </fast-number-field>
+                    <input
+                      type="number"
+                      min="1"
+                      max="2100000000"
+                      class="form-control"
+                      id="appVersionCodeInput"
+                      name="appVersionCode"
+                      placeholder="1"
+                      required
+                      value="${this.default_options?.appVersionCode || 1}"
+                    />
                   </div>
                 </div>
               </div>
@@ -390,297 +420,357 @@ export class AndroidForm extends LitElement {
               <div>
                 <div class="">
                   <div class="form-group">
-                    <label for="hostInput">${
-                      localeStrings.text.android.titles.host
-                    }</label>
-                    <fast-text-field type="url" class="form-control" id="hostInput" placeholder="https://mysite.com" required
-                      name="host" value="${
-                        this.default_options
-                          ? this.default_options.host
-                          : 'https://mysite.com'
-                      }" />
-                    </fast-text-field>
+                    <label for="hostInput">Host</label>
+                    <input
+                      type="url"
+                      class="form-control"
+                      id="hostInput"
+                      placeholder="https://mysite.com"
+                      required
+                      name="host"
+                      value="${this.default_options
+                        ? this.default_options.host
+                        : 'https://mysite.com'}"
+                    />
                   </div>
                 </div>
               </div>
 
               <div class="form-group">
                 <label for="startUrlInput">
-                  ${localeStrings.text.android.titles.start_url}
-                  <i class="fas fa-info-circle"
-                    title="${localeStrings.text.android.description.start_url}"
-                    aria-label="${
-                      localeStrings.text.android.description.start_url_short
-                    }" role="definition"></i>
+                  Start URL
+                  <i
+                    class="fas fa-info-circle"
+                    title="The start path for the TWA. Must be relative to the Host URL. You can specify '/' if you don't have a start URL different from Host."
+                    aria-label="The start path for the TWA. Must be relative to the Host URL."
+                    role="definition"
+                  ></i>
 
-                    ${tooltip(
-                      'android-start-url',
-                      localeStrings.text.android.description.start_url
-                    )}
+                  ${tooltip(
+                    'android-start-url',
+                    "The start path for the TWA. Must be relative to the Host URL. You can specify '/' if you don't have a start URL different from Host."
+                  )}
                 </label>
-                <fast-text-field type="url" class="form-control" id="startUrlInput" placeholder="/index.html" required
-                  name="startUrl" value="${
-                    this.default_options ? this.default_options.startUrl : '/'
-                  }" />
-                </fast-text-field>
+                <!-- has to be a text type as / is not a valid URL in the input in the spec -->
+                <input
+                  type="text"
+                  class="form-control"
+                  id="startUrlInput"
+                  placeholder="/index.html"
+                  required
+                  name="startUrl"
+                  value="${this.default_options
+                    ? this.default_options.startUrl
+                    : '/'}"
+                />
               </div>
 
               <div class="form-group">
                 <label for="themeColorInput">
-                  ${localeStrings.text.android.titles.theme_color}
-                  <i class="fas fa-info-circle"
-                    title="${
-                      localeStrings.text.android.description.theme_color
-                    }"
-                    aria-label="${
-                      localeStrings.text.android.description.theme_color
-                    }"
-                    role="definition"></i>
+                  Status bar color
+                  <i
+                    class="fas fa-info-circle"
+                    title="Also known as the theme color, this is the color of the Android status bar in your app. Note: the status bar will be hidden if Display Mode is set to fullscreen."
+                    aria-label="Also known as the theme color, this is the color of the Android status bar in your app. Note: the status bar will be hidden if Display Mode is set to fullscreen."
+                    role="definition"
+                  ></i>
 
-                    ${tooltip(
-                      'android-status-bar-color',
-                      localeStrings.text.android.description.theme_color
-                    )}
-
+                  ${tooltip(
+                    'android-status-bar-color',
+                    'Also known as the theme color, this is the color of the Android status bar in your app. Note: the status bar will be hidden if Display Mode is set to fullscreen.'
+                  )}
                 </label>
-                <input type="color" class="form-control" id="themeColorInput" name="themeColor" value="${
-                  this.default_options
+                <input
+                  type="color"
+                  class="form-control"
+                  id="themeColorInput"
+                  name="themeColor"
+                  value="${this.default_options
                     ? this.default_options.themeColor
-                    : 'black'
-                }" />
+                    : 'black'}"
+                />
               </div>
 
               <div class="form-group">
                 <label for="bgColorInput">
-                  ${localeStrings.text.android.titles.splash_color}
-                  <i class="fas fa-info-circle"
-                    title="${
-                      localeStrings.text.android.description.splash_color
-                    }"
-                    aria-label="${
-                      localeStrings.text.android.description.splash_color
-                    }"
-                    role="definition"></i>
+                  Splash color
+                  <i
+                    class="fas fa-info-circle"
+                    title="Also known as background color, this is the color of the splash screen for your app."
+                    aria-label="Also known as background color, this is the color of the splash screen for your app."
+                    role="definition"
+                  ></i>
 
-                    ${tooltip(
-                      'android-splash-color',
-                      localeStrings.text.android.description.splash_color
-                    )}
+                  ${tooltip(
+                    'android-splash-color',
+                    'Also known as background color, this is the color of the splash screen for your app.'
+                  )}
                 </label>
-                <input type="color" class="form-control" id="bgColorInput" name="backgroundColor" value="${
-                  this.default_options
+                <input
+                  type="color"
+                  class="form-control"
+                  id="bgColorInput"
+                  name="backgroundColor"
+                  value="${this.default_options
                     ? this.default_options.backgroundColor
-                    : 'black'
-                }" />
+                    : 'black'}"
+                />
               </div>
 
               <div class="form-group">
                 <label for="navigationColorInput">
-                  ${localeStrings.text.android.titles.nav_color}
-                  <i class="fas fa-info-circle"
-                    title="${localeStrings.text.android.description.nav_color}"
-                    aria-label="${
-                      localeStrings.text.android.description.nav_color
-                    }"
-                    role="definition"></i>
-                </label>
+                  Nav color
+                  <i
+                    class="fas fa-info-circle"
+                    title="The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
+                    aria-label="The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
+                    role="definition"
+                  ></i>
 
-                ${tooltip(
-                  'android-nav-color',
-                  localeStrings.text.android.description.nav_color
-                )}
-                <input type="color" class="form-control" id="navigationColorInput" name="navigationColor" value="${
-                  this.default_options
+                  ${tooltip(
+                    'android-nav-color',
+                    'The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen.'
+                  )}
+                </label>
+                <input
+                  type="color"
+                  class="form-control"
+                  id="navigationColorInput"
+                  name="navigationColor"
+                  value="${this.default_options
                     ? this.default_options.navigationColor
-                    : 'black'
-                }" />
+                    : 'black'}"
+                />
               </div>
 
               <div class="form-group">
                 <label for="navigationColorDarkInput">
-                  ${localeStrings.text.android.titles.dark_color}
-                  <i class="fas fa-info-circle"
-                    title="${localeStrings.text.android.description.dark_color}"
-                    aria-label="${
-                      localeStrings.text.android.description.dark_color
-                    }"
-                    role="definition"></i>
+                  Nav dark color
+                  <i
+                    class="fas fa-info-circle"
+                    title="The color of the Android navigation bar in your app when Android is in dark mode."
+                    aria-label="The color of the Android navigation bar in your app when Android is in dark mode."
+                    role="definition"
+                  ></i>
 
-                    ${tooltip(
-                      'android-nav-color-dark',
-                      localeStrings.text.android.description.dark_color
-                    )}
+                  ${tooltip(
+                    'android-nav-color-dark',
+                    'The color of the Android navigation bar in your app when Android is in dark mode.'
+                  )}
                 </label>
-                <input type="color" class="form-control" id="navigationColorDarkInput" name="navigationColorDark" value="${
-                  this.default_options
+                <input
+                  type="color"
+                  class="form-control"
+                  id="navigationColorDarkInput"
+                  name="navigationColorDark"
+                  value="${this.default_options
                     ? this.default_options.navigationColorDark
-                    : 'black'
-                }" />
+                    : 'black'}"
+                />
               </div>
 
               <div class="form-group">
                 <label for="navigationDividerColorInput">
-                  ${localeStrings.text.android.titles.div_color}
-                  <i class="fas fa-info-circle" title="${
-                    localeStrings.text.android.description.div_color
-                  }"
-                    aria-label="${
-                      localeStrings.text.android.description.div_color
-                    }" role="definition"></i>
+                  Nav divider color
+                  <i
+                    class="fas fa-info-circle"
+                    title="The color of the Android navigation bar divider in your app."
+                    aria-label="The color of the Android navigation bar divider in your app."
+                    role="definition"
+                  ></i>
 
-                    ${tooltip(
-                      'android-divider-color',
-                      localeStrings.text.android.description.div_color
-                    )}
+                  ${tooltip(
+                    'android-divider-color',
+                    'The color of the Android navigation bar divider in your app.'
+                  )}
                 </label>
-                <input type="color" class="form-control" id="navigationDividerColorInput" name="navigationDividerColor" value="${
-                  this.default_options
+                <input
+                  type="color"
+                  class="form-control"
+                  id="navigationDividerColorInput"
+                  name="navigationDividerColor"
+                  value="${this.default_options
                     ? this.default_options.navigationDividerColor
-                    : 'black'
-                }" />
+                    : 'black'}"
+                />
               </div>
 
               <div class="form-group">
                 <label for="navigationDividerColorDarkInput">
-                  ${localeStrings.text.android.titles.div_dark_color}
-                  <i class="fas fa-info-circle"
-                    title="${
-                      localeStrings.text.android.description.div_dark_color
-                    }"
-                    aria-label="${
-                      localeStrings.text.android.description.div_dark_color
-                    }"
-                    role="definition"></i>
+                  Nav divider dark color
+                  <i
+                    class="fas fa-info-circle"
+                    title="The color of the Android navigation navigation bar divider in your app when Android is in dark mode."
+                    aria-label="The color of the Android navigation bar divider in your app when Android is in dark mode."
+                    role="definition"
+                  ></i>
 
-                    ${tooltip(
-                      'android-divider-color-dark',
-                      localeStrings.text.android.description.div_dark_color
-                    )}
+                  ${tooltip(
+                    'android-divider-color-dark',
+                    'The color of the Android navigation navigation bar divider in your app when Android is in dark mode.'
+                  )}
                 </label>
-                <input type="color" class="form-control" id="navigationDividerColorDarkInput"
-                  name="navigationDividerColorDark" value="${
-                    this.default_options
-                      ? this.default_options.navigationDividerColorDark
-                      : 'black'
-                  }" />
+                <input
+                  type="color"
+                  class="form-control"
+                  id="navigationDividerColorDarkInput"
+                  name="navigationDividerColorDark"
+                  value="${this.default_options
+                    ? this.default_options.navigationDividerColorDark
+                    : 'black'}"
+                />
               </div>
 
               <div class="form-group">
-                <label for="iconUrlInput">${
-                  localeStrings.text.android.titles.icon_url
-                }</label>
-                <fast-text-field type="url" class="form-control" id="iconUrlInput"
-                  placeholder="https://myawesomepwa.com/512x512.png" name="iconUrl" value="${
-                    this.default_options ? this.default_options.iconUrl : ''
-                  }" />
-                </fast-text-field>
+                <label for="iconUrlInput">Icon URL</label>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="iconUrlInput"
+                  placeholder="https://myawesomepwa.com/512x512.png"
+                  name="iconUrl"
+                  value="${this.default_options
+                    ? this.default_options.iconUrl
+                    : ''}"
+                />
               </div>
 
               <div class="form-group">
                 <label for="maskIconUrlInput">
-                  <a href="https://web.dev/maskable-icon" title="Read more about maskable icons" target="_blank"
-                    rel="noopener" aria-label="Read more about maskable icons">${
-                      localeStrings.text.android.titles.mask_icon_url
-                    }</a>
-                  <i class="fas fa-info-circle"
-                    title="${
-                      localeStrings.text.android.description.mask_icon_url
-                    }"
-                    aria-label="${
-                      localeStrings.text.android.description.mask_icon_url
-                    }"
-                    role="definition"></i>
+                  <a
+                    href="https://web.dev/maskable-icon"
+                    title="Read more about maskable icons"
+                    target="_blank"
+                    rel="noopener"
+                    aria-label="Read more about maskable icons"
+                    tabindex="-1"
+                  >
+                    Maskable icon URL
+                  </a>
+                  <i
+                    class="fas fa-info-circle"
+                    title="Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms."
+                    aria-label="Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms."
+                    role="definition"
+                  ></i>
 
-                    ${tooltip(
-                      'maskable-icon-url',
-                      localeStrings.text.android.description.mask_icon_url
-                    )}
+                  ${tooltip(
+                    'maskable-icon-url',
+                    'Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms.'
+                  )}
                 </label>
-                <fast-text-field type="url" class="form-control" id="maskIconUrlInput"
-                  placeholder="https://myawesomepwa.com/512x512-maskable.png" name="maskableIconUrl" .value="${
-                    this.default_options
-                      ? this.default_options.maskableIconUrl
-                      : ''
-                  }" />
-                </fast-text-field>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="maskIconUrlInput"
+                  placeholder="https://myawesomepwa.com/512x512-maskable.png"
+                  name="maskableIconUrl"
+                  .value="${this.default_options
+                    ? this.default_options.maskableIconUrl
+                    : ''}"
+                />
               </div>
 
               <div class="form-group">
                 <label for="monochromeIconUrlInput">
-                  <a href="https://w3c.github.io/manifest/#monochrome-icons-and-solid-fills" target="_blank"
-                    rel="noopener">${
-                      localeStrings.text.android.titles.mono_icon_url
-                    }</a>
-                  <i class="fas fa-info-circle"
-                    title="${
-                      localeStrings.text.android.description.mono_icon_url
-                    }"
-                    aria-label="${
-                      localeStrings.text.android.description.mono_icon_url
-                    }"
-                    role="definition"></i>
+                  <a
+                    href="https://w3c.github.io/manifest/#monochrome-icons-and-solid-fills"
+                    target="_blank"
+                    rel="noopener"
+                    tabindex="-1"
+                    >Monochrome icon URL</a
+                  >
+                  <i
+                    class="fas fa-info-circle"
+                    title="Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings."
+                    aria-label="Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings."
+                    role="definition"
+                  ></i>
 
-                    ${tooltip(
-                      'mono-icon-url',
-                      localeStrings.text.android.description.mono_icon_url
-                    )}
+                  ${tooltip(
+                    'mono-icon-url',
+                    'Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings.'
+                  )}
                 </label>
-                <fast-text-field type="url" class="form-control" id="monochromeIconUrlInput"
-                  placeholder="https://myawesomepwa.com/512x512-monochrome.png" name="monochromeIconUrl" .value="${
-                    this.default_options
-                      ? this.default_options.monochromeIconUrl
-                      : ''
-                  }" />
-                </fast-text-field>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="monochromeIconUrlInput"
+                  placeholder="https://myawesomepwa.com/512x512-monochrome.png"
+                  name="monochromeIconUrl"
+                  .value="${this.default_options
+                    ? this.default_options.monochromeIconUrl
+                    : ''}"
+                />
               </div>
 
               <div class="form-group">
-                <label for="splashFadeoutInput">Splash screen fade out duration (ms)</label>
-                <fast-number-field type="number" class="form-control" id="splashFadeoutInput" placeholder="300"
-                  name="splashScreenFadeOutDuration" value="${
-                    this.default_options
-                      ? this.default_options.splashScreenFadeOutDuration
-                      : '300'
-                  }" />
-                </fast-number-field>
+                <label for="splashFadeoutInput"
+                  >Splash screen fade out duration (ms)</label
+                >
+                <input
+                  type="number"
+                  class="form-control"
+                  id="splashFadeoutInput"
+                  placeholder="300"
+                  name="splashScreenFadeOutDuration"
+                  value="${this.default_options
+                    ? this.default_options.splashScreenFadeOutDuration
+                    : '300'}"
+                />
               </div>
 
               <div class="form-group">
                 <label>${localeStrings.text.android.titles.fallback}</label>
                 <div class="form-check">
-                  <input .defaultChecked="${true}" value="customtabs" class="form-check-input" type="radio" name="fallbackType" id="fallbackCustomTabsInput"
-                  name="fallbackType" />
+                  <input
+                    .defaultChecked="${true}"
+                    value="customtabs"
+                    class="form-check-input"
+                    type="radio"
+                    name="fallbackType"
+                    id="fallbackCustomTabsInput"
+                    name="fallbackType"
+                  />
                   <label class="form-check-label" for="fallbackCustomTabsInput">
-                    ${localeStrings.text.android.titles.custom}
-                    <i class="fas fa-info-circle"
-                      title="${localeStrings.text.android.description.custom}"
-                      aria-label="${
-                        localeStrings.text.android.description.custom
-                      }"
-                      role="definition"></i>
+                    Custom Tabs
+                    <i
+                      class="fas fa-info-circle"
+                      title="Use Chrome Custom Tabs as a fallback for your PWA when the full trusted web activity (TWA) experience is unavailable."
+                      aria-label="When trusted web activity (TWA) is unavailable, use Chrome Custom Tabs as a fallback for your PWA."
+                      role="definition"
+                    ></i>
 
-                      ${tooltip(
-                        'fallback-behavior',
-                        localeStrings.text.android.description.custom
-                      )}
+                    ${tooltip(
+                      'fallback-behavior',
+                      'Use Chrome Custom Tabs as a fallback for your PWA when the full trusted web activity (TWA) experience is unavailable.'
+                    )}
                   </label>
                 </div>
                 <div class="form-check">
-                  <input .defaultChecked="${false}" value="webview" class="form-check-input" type="radio" name="fallbackType" id="fallbackWebViewInput" value="webview"
-                    name="fallbackType" />
+                  <input
+                    .defaultChecked="${false}"
+                    value="webview"
+                    class="form-check-input"
+                    type="radio"
+                    name="fallbackType"
+                    id="fallbackWebViewInput"
+                    value="webview"
+                    name="fallbackType"
+                  />
                   <label class="form-check-label" for="fallbackWebViewInput">
-                    ${localeStrings.text.android.titles.web_view}
-                    <i class="fas fa-info-circle"
-                      title="${localeStrings.text.android.description.web_view}"
-                      aria-label="${
-                        localeStrings.text.android.description.web_view
-                      }"
-                      role="definition"></i>
+                    Web View
+                    <i
+                      class="fas fa-info-circle"
+                      title="Use a web view as the fallback for your PWA when the full trusted web activity (TWA) experience is unavailable."
+                      aria-label="When trusted web activity (TWA) is unavailable, use a web view as the fallback for your PWA."
+                      role="definition"
+                    ></i>
 
-                      ${tooltip(
-                        'fallback-behavior',
-                        localeStrings.text.android.titles.web_view
-                      )}
+                    ${tooltip(
+                      'fallback-behavior',
+                      'Use a web view as the fallback for your PWA when the full trusted web activity (TWA) experience is unavailable.'
+                    )}
                   </label>
                 </div>
               </div>
@@ -688,51 +778,67 @@ export class AndroidForm extends LitElement {
               <div class="form-group">
                 <label>${localeStrings.text.android.titles.display_mode}</label>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="displayMode" id="standaloneDisplayModeInput"
-                  .defaultChecked="${
-                      this.default_options
-                        ? this.default_options.display === "standalone" ? true : false
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="displayMode"
+                    id="standaloneDisplayModeInput"
+                    .defaultChecked="${this.default_options
+                      ? this.default_options.display === 'standalone'
+                        ? true
                         : false
-                    }" value="standalone" name="display" />
-                  <label class="form-check-label" for="standaloneDisplayModeInput">
-                    ${localeStrings.text.android.titles.standalone}
-                    <i class="fas fa-info-circle"
-                      title="${
-                        localeStrings.text.android.description.standalone
-                      }"
-                      aria-label="${
-                        localeStrings.text.android.description.standalone
-                      }"
-                      role="definition"></i>
+                      : false}"
+                    value="standalone"
+                    name="display"
+                  />
+                  <label
+                    class="form-check-label"
+                    for="standaloneDisplayModeInput"
+                  >
+                    Standalone
+                    <i
+                      class="fas fa-info-circle"
+                      title="Your PWA will use the whole screen but keep the Android status bar and navigation bar."
+                      aria-label="Your PWA will use the whole screen but keep the Android status bar and navigation bar."
+                      role="definition"
+                    ></i>
 
-                      ${tooltip(
-                        'display-mode-standalone',
-                        localeStrings.text.android.description.standalone
-                      )}
+                    ${tooltip(
+                      'display-mode-standalone',
+                      'Your PWA will use the whole screen but keep the Android status bar and navigation bar.'
+                    )}
                   </label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="displayMode" id="fullscreenDisplayModeInput"
-                  .defaultChecked="${
-                      this.default_options
-                        ? this.default_options.display === "fullscreen" ? true : false
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="displayMode"
+                    id="fullscreenDisplayModeInput"
+                    .defaultChecked="${this.default_options
+                      ? this.default_options.display === 'fullscreen'
+                        ? true
                         : false
-                    }" value="fullscreen" name="display" />
-                  <label class="form-check-label" for="fullscreenDisplayModeInput">
-                    ${localeStrings.text.android.titles.fullscreen}
-                    <i class="fas fa-info-circle"
-                      title="${
-                        localeStrings.text.android.description.fullscreen
-                      }"
-                      aria-label="${
-                        localeStrings.text.android.description.fullscreen
-                      }"
-                      role="definition"></i>
+                      : false}"
+                    value="fullscreen"
+                    name="display"
+                  />
+                  <label
+                    class="form-check-label"
+                    for="fullscreenDisplayModeInput"
+                  >
+                    Fullscreen
+                    <i
+                      class="fas fa-info-circle"
+                      title="Your PWA will use the whole screen and remove the Android status bar and navigation bar. Suitable for immersive experiences such as games or media apps."
+                      aria-label="Your PWA will use the whole screen and remove the Android status bar and navigation bar. Suitable for immersive experiences such as games or media apps."
+                      role="definition"
+                    ></i>
 
-                      ${tooltip(
-                        'display-mode-fullscreen',
-                        localeStrings.text.android.description.fullscreen
-                      )}
+                    ${tooltip(
+                      'display-mode-fullscreen',
+                      'Your PWA will use the whole screen and remove the Android status bar and navigation bar. Suitable for immersive experiences such as games or media apps.'
+                    )}
                   </label>
                 </div>
               </div>
@@ -740,22 +846,29 @@ export class AndroidForm extends LitElement {
               <div class="form-group">
                 <label>${localeStrings.text.android.titles.fullscreen}</label>
                 <div class="form-check">
-                  <input .defaultChecked="${true}" class="form-check-input" type="checkbox" id="enableNotificationsInput" name="enableNotifications" />
-                  <label class="form-check-label" for="enableNotificationsInput">
-                    ${localeStrings.text.android.titles.enable}
-                    <i class="fas fa-info-circle"
-                      title="${
-                        localeStrings.text.android.description.fullscreen
-                      }"
-                      aria-label="${
-                        localeStrings.text.android.description.fullscreen
-                      }"
-                      role="definition"></i>
+                  <input
+                    .defaultChecked="${true}"
+                    class="form-check-input"
+                    type="checkbox"
+                    id="enableNotificationsInput"
+                    name="enableNotifications"
+                  />
+                  <label
+                    class="form-check-label"
+                    for="enableNotificationsInput"
+                  >
+                    Enable
+                    <i
+                      class="fas fa-info-circle"
+                      title="Whether to enable Push Notification Delegation. If enabled, your PWA can send push notifications without browser permission prompts."
+                      aria-label="Whether to enable Push Notification Delegation. If enabled, your PWA can send push notifications without browser permission prompts."
+                      role="definition"
+                    ></i>
 
-                      ${tooltip(
-                        'push-delegation',
-                        localeStrings.text.android.description.fullscreen
-                      )}
+                    ${tooltip(
+                      'push-delegation',
+                      'Whether to enable Push Notification Delegation. If enabled, your PWA can send push notifications without browser permission prompts.'
+                    )}
                   </label>
                 </div>
               </div>
@@ -765,25 +878,26 @@ export class AndroidForm extends LitElement {
                   localeStrings.text.android.titles.location_delegation
                 }</label>
                 <div class="form-check">
-                  <input .defaultChecked="${true}" class="form-check-input" type="checkbox" id="enableLocationInput" name="locationDelegation" />
+                  <input
+                    .defaultChecked="${true}"
+                    class="form-check-input"
+                    type="checkbox"
+                    id="enableLocationInput"
+                    name="locationDelegation"
+                  />
                   <label class="form-check-label" for="enableLocationInput">
-                    ${localeStrings.text.android.titles.enable}
-                    <i class="fas fa-info-circle"
-                      title="${
-                        localeStrings.text.android.description
-                          .location_delegation
-                      }"
-                      aria-label="${
-                        localeStrings.text.android.description
-                          .location_delegation
-                      }"
-                      role="definition"></i>
+                    Enable
+                    <i
+                      class="fas fa-info-circle"
+                      title="Whether to enable Location Delegation. If enabled, your PWA can acess navigator.geolocation without browser permission prompts."
+                      aria-label="Whether to enable Location Delegation. If enabled, your PWA can acess navigator.geolocation without browser permission prompts."
+                      role="definition"
+                    ></i>
 
-                      ${tooltip(
-                        'location-delegation',
-                        localeStrings.text.android.description
-                          .location_delegation
-                      )}
+                    ${tooltip(
+                      'location-delegation',
+                      'Whether to enable Location Delegation. If enabled, your PWA can acess navigator.geolocation without browser permission prompts.'
+                    )}
                   </label>
                 </div>
               </div>
@@ -793,25 +907,26 @@ export class AndroidForm extends LitElement {
                   localeStrings.text.android.titles.google_play_billing
                 }</label>
                 <div class="form-check">
-                  <input .defaultChecked="${false}" class="form-check-input" type="checkbox" id="enablePlayBillingInput" name="playBilling" />
+                  <input
+                    .defaultChecked="${false}"
+                    class="form-check-input"
+                    type="checkbox"
+                    id="enablePlayBillingInput"
+                    name="playBilling"
+                  />
                   <label class="form-check-label" for="enablePlayBillingInput">
-                    ${localeStrings.text.android.titles.enable}
-                    <i class="fas fa-info-circle"
-                      title="${
-                        localeStrings.text.android.description
-                          .google_play_billing
-                      }"
-                      aria-label="${
-                        localeStrings.text.android.description
-                          .google_play_billing
-                      }"
-                      role="definition"></i>
+                    Enable
+                    <i
+                      class="fas fa-info-circle"
+                      title="Whether to enable in-app purchases through Google Play Billing and the Digital Goods API."
+                      aria-label="Whether to enable in-app purchases through Google Play Billing and the Digital Goods API."
+                      role="definition"
+                    ></i>
 
-                      ${tooltip(
-                        'play-billing',
-                        localeStrings.text.android.description
-                          .google_play_billing
-                      )}
+                    ${tooltip(
+                      'play-billing',
+                      'Whether to enable in-app purchases through Google Play Billing and the Digital Goods API.'
+                    )}
                   </label>
                 </div>
               </div>
@@ -821,23 +936,29 @@ export class AndroidForm extends LitElement {
                   localeStrings.text.android.titles.settings_shortcut
                 }</label>
                 <div class="form-check">
-                  <input .defaultChecked="${true}" class="form-check-input" type="checkbox" id="enableSettingsShortcutInput"
-                    name="enableSiteSettingsShortcut" />
-                  <label class="form-check-label" for="enableSettingsShortcutInput">
-                    ${localeStrings.text.android.titles.enable}
-                    <i class="fas fa-info-circle"
-                      title="${
-                        localeStrings.text.android.description.settings_shortcut
-                      }"
-                      aria-label="${
-                        localeStrings.text.android.description.settings_shortcut
-                      }"
-                      role="definition"></i>
+                  <input
+                    .defaultChecked="${true}"
+                    class="form-check-input"
+                    type="checkbox"
+                    id="enableSettingsShortcutInput"
+                    name="enableSiteSettingsShortcut"
+                  />
+                  <label
+                    class="form-check-label"
+                    for="enableSettingsShortcutInput"
+                  >
+                    Enable
+                    <i
+                      class="fas fa-info-circle"
+                      title="If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app."
+                      aria-label="If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app."
+                      role="definition"
+                    ></i>
 
-                      ${tooltip(
-                        'settings-shortcut',
-                        localeStrings.text.android.description.settings_shortcut
-                      )}
+                    ${tooltip(
+                      'settings-shortcut',
+                      'If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app.'
+                    )}
                   </label>
                 </div>
               </div>
@@ -847,20 +968,26 @@ export class AndroidForm extends LitElement {
                   localeStrings.text.android.titles.chromeos_only
                 }</label>
                 <div class="form-check">
-                  <input .defaultChecked="${false}" class="form-check-input" type="checkbox" id="chromeOSOnlyInput" name="isChromeOSOnly" />
+                  <input
+                    .defaultChecked="${false}"
+                    class="form-check-input"
+                    type="checkbox"
+                    id="chromeOSOnlyInput"
+                    name="isChromeOSOnly"
+                  />
                   <label class="form-check-label" for="chromeOSOnlyInput">
-                    ${localeStrings.text.android.titles.enable}
-                    <i class="fas fa-info-circle" title="${
-                      localeStrings.text.android.description.chromeos_only
-                    }"
-                      aria-label="${
-                        localeStrings.text.android.description.chromeos_only
-                      }" role="definition"></i>
+                    Enable
+                    <i
+                      class="fas fa-info-circle"
+                      title="If enabled, your Android package will only run on ChromeOS devices"
+                      aria-label="If enabled, your Android package will only run on ChromeOS devices"
+                      role="definition"
+                    ></i>
 
-                      ${tooltip(
-                        'chromeos-only',
-                        localeStrings.text.android.description.chromeos_only
-                      )}
+                    ${tooltip(
+                      'chromeos-only',
+                      'If enabled, your Android package will only run on ChromeOS devices'
+                    )}
                   </label>
                 </div>
               </div>
@@ -868,22 +995,26 @@ export class AndroidForm extends LitElement {
               <div class="form-group">
                 <label>${localeStrings.text.android.titles.source_code}</label>
                 <div class="form-check">
-                  <input .defaultChecked="${false}" class="form-check-input" type="checkbox" id="includeSourceCodeInput" name="includeSourceCode" />
+                  <input
+                    .defaultChecked="${false}"
+                    class="form-check-input"
+                    type="checkbox"
+                    id="includeSourceCodeInput"
+                    name="includeSourceCode"
+                  />
                   <label class="form-check-label" for="includeSourceCodeInput">
-                    ${localeStrings.text.android.titles.enable}
-                    <i class="fas fa-info-circle"
-                      title="${
-                        localeStrings.text.android.description.source_code
-                      }"
-                      aria-label="${
-                        localeStrings.text.android.description.source_code
-                      }"
-                      role="definition"></i>
+                    Enable
+                    <i
+                      class="fas fa-info-circle"
+                      title="If enabled, your download will include the source code for your Android app."
+                      aria-label="If enabled, your download will include the source code for your Android app."
+                      role="definition"
+                    ></i>
 
-                      ${tooltip(
-                        'include-source',
-                        localeStrings.text.android.description.source_code
-                      )}
+                    ${tooltip(
+                      'include-source',
+                      'If enabled, your download will include the source code for your Android app.'
+                    )}
                   </label>
                 </div>
               </div>
@@ -891,218 +1022,247 @@ export class AndroidForm extends LitElement {
               <div class="form-group">
                 <label>${localeStrings.text.android.titles.signing_key}</label>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" id="generateSigningKeyInput" value="new"
-                    name="signingMode" @change="${ev =>
-                      this.androidSigningModeChanged(
-                        ev.target.value
-                      )}" .defaultChecked="${true}" />
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    id="generateSigningKeyInput"
+                    value="new"
+                    name="signingMode"
+                    @change="${ev =>
+                      this.androidSigningModeChanged(ev.target.value)}"
+                    .defaultChecked="${true}"
+                  />
                   <label class="form-check-label" for="generateSigningKeyInput">
                     Create new
-                    <i class="fas fa-info-circle"
-                      title="${
-                        localeStrings.text.android.description.signing_key
-                      }"
-                      aria-label="${
-                        localeStrings.text.android.description.signing_key
-                      }"
-                      role="definition"></i>
-
-                      ${tooltip(
-                        'signing-key-new',
-                        localeStrings.text.android.description.signing_key
-                      )}
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" id="unsignedInput" value="none"
-                    name="signingMode" @change="${ev =>
-                      this.androidSigningModeChanged(ev.target.value)}" />
-                  <label class="form-check-label" for="unsignedInput">
-                    ${localeStrings.text.android.titles.none}
-                    <i class="fas fa-info-circle"
-                      title="${
-                        localeStrings.text.android.description.unsigned_key
-                      }"
-                      aria-label="${
-                        localeStrings.text.android.description.unsigned_key
-                      }"
-                      role="definition"></i>
-
-                      ${tooltip(
-                        'signing-key-none',
-                        localeStrings.text.android.description.unsigned_key
-                      )}
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" id="useMySigningInput" value="mine"
-                    name="signingMode" @change="${ev =>
-                      this.androidSigningModeChanged(ev.target.value)}" />
-                  <label class="form-check-label" for="useMySigningInput">
-                    Use mine
-                    <i class="fas fa-info-circle"
-                      title="${
-                        localeStrings.text.android.description
-                          .upload_signing_key
-                      }"
-                      aria-label="${
-                        localeStrings.text.android.description
-                          .upload_signing_key
-                      }"
-                      role="definition"></i>
-
-                      ${tooltip(
-                        'signing-key-mine',
-                        localeStrings.text.android.description
-                          .upload_signing_key
-                      )}
-                  </label>
-                </div>
-              </div>
-
-              ${
-                this.signingMode === 'mine' || this.signingMode === 'new'
-                  ? html`
-                  <div style="margin-left: 15px;">
-
-                  ${
-                    this.signingMode === 'mine'
-                      ? html`
-                          <div class="form-group">
-                            <label for="signingKeyInput"
-                              >${localeStrings.text.android.titles
-                                .key_file}</label
-                            >
-                            <input
-                              type="file"
-                              class="form-control"
-                              id="signingKeyInput"
-                              @change="${ev =>
-                                this.androidSigningKeyUploaded(ev.target)}"
-                              accept=".keystore"
-                              required
-                              style="border: none;"
-                              value="${ifDefined(this.file)}"
-                            />
-                          </div>
-                        `
-                      : null
-                  }
-
-                <div class="form-group">
-                  <label for="signingKeyAliasInput">${
-                    localeStrings.text.android.titles.key_alias
-                  }</label>
-                  <fast-text-field type="text" class="form-control" id="signingKeyAliasInput" placeholder="my-key-alias"
-                    required name="alias" value="${this.alias}" />
-                  </fast-text-field>
-                </div>
-
-                ${
-                  this.signingMode === 'new'
-                    ? html`
-                <div class="form-group">
-                  <label for="signingKeyFullNameInput">${
-                    localeStrings.text.android.titles.key_fullname
-                  }</label>
-                  <fast-text-field type="text" class="form-control" id="signingKeyFullNameInput" required
-                    placeholder="John Doe" name="fullName" value="${
-                      this.signingKeyFullName
-                    }" />
-                  </fast-text-field>
-                </div>
-
-                <div class="form-group">
-                  <label for="signingKeyOrgInput">${
-                    localeStrings.text.android.titles.key_org
-                  }</label>
-                  <fast-text-field type="text" class="form-control" id="signingKeyOrgInput" required placeholder="My Company"
-                    name="organization" value="${this.organization}" />
-                  </fast-text-field>
-                </div>
-
-                <div class="form-group">
-                  <label for="signingKeyOrgUnitInput">${
-                    localeStrings.text.android.titles.key_org_unit
-                  }</label>
-                  <fast-text-field type="text" class="form-control" id="signingKeyOrgUnitInput" required
-                    placeholder="Engineering Department" name="organizationalUnit" value="${
-                      this.organizationalUnit
-                    }" />
-                  </fast-text-field>
-                </div>
-
-                <div class="form-group">
-                  <label for="signingKeyCountryCodeInput">
-                    ${localeStrings.text.android.titles.key_country_code}
-                    <i class="fas fa-info-circle" title="The 2 letter country code to list on the signing key"
-                      aria-label="The 2 letter country code to list on the signing key" role="definition"></i>
-
-                      ${tooltip(
-                        'key-country-code',
-                        localeStrings.text.android.description.key_country_code
-                      )}
-                  </label>
-                  <fast-text-field type="text" class="form-control" id="signingKeyCountryCodeInput" required placeholder="US"
-                    name="countryCode" value="${this.countryCode}">
-                  </fast-text-field>
-                </div>
-                `
-                    : null
-                }
-
-                <div class="form-group">
-                  <label for="signingKeyPasswordInput">
-                    ${localeStrings.text.android.titles.key_pw}
-                    <i class="fas fa-info-circle"
-                      aria-label="${
-                        localeStrings.text.android.description.key_pw
-                      }"
-                      title="${localeStrings.text.android.description.key_pw}"
-                      role="definition"></i>
-
-                      ${tooltip(
-                        'key-password',
-                        localeStrings.text.android.description.key_pw
-                      )}
-                  </label>
-                  <fast-text-field type="password" class="form-control" id="signingKeyPasswordInput" name="keyPassword"
-                    placeholder="Password to your signing key" value="${
-                      this.keyPassword
-                    }" />
-                  </fast-text-field>
-                </div>
-
-                <div class="form-group">
-                  <label for="signingKeyStorePasswordInput">
-                    ${localeStrings.text.android.titles.key_store_pw}
-                    <i class="fas fa-info-circle"
-                      title="${
-                        localeStrings.text.android.description.key_store_pw
-                      }"
-                      aria-label="${
-                        localeStrings.text.android.description.key_store_pw
-                      }"
-                      role="definition"></i>
+                    <i
+                      class="fas fa-info-circle"
+                      title="PWABuilder will generate a new signing key for you and sign your APK with it. Your download will contain the new signing key and passwords."
+                      aria-label="PWABuilder will generate a new signing key for you and sign your APK with it. Your download will contain the new signing key and passwords."
+                      role="definition"
+                    ></i>
 
                     ${tooltip(
-                      'keystore-password',
-                      localeStrings.text.android.description.key_store_pw
+                      'signing-key-new',
+                      'PWABuilder will generate a new signing key for you and sign your APK with it. Your download will contain the new signing key and passwords.'
                     )}
                   </label>
-                  <fast-text-field type="password" class="form-control" id="signingKeyStorePasswordInput" name="storePassword"
-                    placeholder="Password to your key store" value="${
-                      this.storePassword
-                    }" />
-                  </fast-text-field>
+                </div>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    id="unsignedInput"
+                    value="none"
+                    name="signingMode"
+                    @change="${ev =>
+                      this.androidSigningModeChanged(ev.target.value)}"
+                  />
+                  <label class="form-check-label" for="unsignedInput">
+                    None
+                    <i
+                      class="fas fa-info-circle"
+                      title="PWABuilder will generate an unsigned APK. Google Play Store will sign your package. This is Google's recommended approach."
+                      aria-label="PWABuilder will generate an unsigned APK. Google Play Store will sign your package. This is Google's recommended approach."
+                      role="definition"
+                    ></i>
+
+                    ${tooltip(
+                      'signing-key-none',
+                      "PWABuilder will generate an unsigned APK. Google Play Store will sign your package. This is Google's recommended approach."
+                    )}
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    id="useMySigningInput"
+                    value="mine"
+                    name="signingMode"
+                    @change="${ev =>
+                      this.androidSigningModeChanged(ev.target.value)}"
+                  />
+                  <label class="form-check-label" for="useMySigningInput">
+                    Use mine
+                    <i
+                      class="fas fa-info-circle"
+                      title="Upload your existing signing key. Use this option if you already have a signing key and you want to publish a new version of an existing app in Google Play."
+                      aria-label="Upload your existing signing key. Use this option if you already have a signing key and you want to publish a new version of an existing app in Google Play."
+                      role="definition"
+                    ></i>
+
+                    ${tooltip(
+                      'signing-key-mine',
+                      'Upload your existing signing key. Use this option if you already have a signing key and you want to publish a new version of an existing app in Google Play.'
+                    )}
+                  </label>
                 </div>
               </div>
-                `
-                  : null
-              }
+
+              ${this.signingMode === 'mine' || this.signingMode === 'new'
+                ? html`
+                    <div style="margin-left: 15px;">
+                      ${this.signingMode === 'mine'
+                        ? html`
+                            <div class="form-group">
+                              <label for="signingKeyInput">Key file</label>
+                              <input
+                                type="file"
+                                class="form-control"
+                                id="signingKeyInput"
+                                @change="${ev =>
+                                  this.androidSigningKeyUploaded(ev.target)}"
+                                accept=".keystore"
+                                required
+                                style="border: none;"
+                                value="${ifDefined(this.file)}"
+                              />
+                            </div>
+                          `
+                        : null}
+
+                      <div class="form-group">
+                        <label for="signingKeyAliasInput">Key alias</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="signingKeyAliasInput"
+                          placeholder="my-key-alias"
+                          required
+                          name="alias"
+                          value="${this.alias}"
+                        />
+                      </div>
+
+                      ${this.signingMode === 'new'
+                        ? html`
+                            <div class="form-group">
+                              <label for="signingKeyFullNameInput"
+                                >Key full name</label
+                              >
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="signingKeyFullNameInput"
+                                required
+                                placeholder="John Doe"
+                                name="fullName"
+                                value="${this.signingKeyFullName}"
+                              />
+                            </div>
+
+                            <div class="form-group">
+                              <label for="signingKeyOrgInput"
+                                >Key organization</label
+                              >
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="signingKeyOrgInput"
+                                required
+                                placeholder="My Company"
+                                name="organization"
+                                value="${this.organization}"
+                              />
+                            </div>
+
+                            <div class="form-group">
+                              <label for="signingKeyOrgUnitInput"
+                                >Key organizational unit</label
+                              >
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="signingKeyOrgUnitInput"
+                                required
+                                placeholder="Engineering Department"
+                                name="organizationalUnit"
+                                value="${this.organizationalUnit}"
+                              />
+                            </div>
+
+                            <div class="form-group">
+                              <label for="signingKeyCountryCodeInput">
+                                Key country code
+                                <i
+                                  class="fas fa-info-circle"
+                                  title="The 2 letter country code to list on the signing key"
+                                  aria-label="The 2 letter country code to list on the signing key"
+                                  role="definition"
+                                ></i>
+
+                                ${tooltip(
+                                  'key-country-code',
+                                  'The 2 letter country code to list on the signing key'
+                                )}
+                              </label>
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="signingKeyCountryCodeInput"
+                                required
+                                placeholder="US"
+                                name="countryCode"
+                                value="${this.countryCode}"
+                              />
+                            </div>
+                          `
+                        : null}
+
+                      <div class="form-group">
+                        <label for="signingKeyPasswordInput">
+                          Key password
+                          <i
+                            class="fas fa-info-circle"
+                            title="The password for the signing key. Type a new password or leave empty to use a generated password."
+                            aria-label="The password for the signing key. Type a new password or leave empty to use a generated password."
+                            role="definition"
+                          ></i>
+
+                          ${tooltip(
+                            'key-password',
+                            'The password for the signing key. Type a new password or leave empty to use a generated password.'
+                          )}
+                        </label>
+                        <input
+                          type="password"
+                          class="form-control"
+                          id="signingKeyPasswordInput"
+                          name="keyPassword"
+                          placeholder="Password to your signing key"
+                          value="${this.keyPassword}"
+                        />
+                      </div>
+
+                      <div class="form-group">
+                        <label for="signingKeyStorePasswordInput">
+                          Key store password
+                          <i
+                            class="fas fa-info-circle"
+                            title="The password for the key store. Type a new password or leave empty to use a generated password."
+                            aria-label="The password for the key store. Type a new password or leave empty to use a generated password."
+                            role="definition"
+                          ></i>
+
+                          ${tooltip(
+                            'keystore-password',
+                            'The password for the key store. Type a new password or leave empty to use a generated password.'
+                          )}
+                        </label>
+                        <input
+                          type="password"
+                          class="form-control"
+                          id="signingKeyStorePasswordInput"
+                          name="storePassword"
+                          placeholder="Password to your key store"
+                          value="${this.storePassword}"
+                        />
+                      </div>
+                    </div>
+                  `
+                : null}
             </fast-accordion-item>
           </fast-accordion>
-
         </div>
 
         <div id="form-details-block">
@@ -1111,10 +1271,10 @@ export class AndroidForm extends LitElement {
           </p>
         </div>
 
-        <div id="form-options-actions" class="modal-actions" >
-          <loading-button @click="${() => this.initGenerate()}" .loading="${
-      this.generating
-    }">${localeStrings.text.android.titles.generate}</loading-button>
+        <div id="form-options-actions" class="modal-actions">
+          <loading-button .loading="${this.generating}">
+            <input id="generate-submit" type="submit" value="Generate" />
+          </loading-button>
         </div>
       </form>
     `;

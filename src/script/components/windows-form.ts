@@ -31,14 +31,22 @@ export class WindowsForm extends LitElement {
       ModalStyles,
       ToolTipStyles,
       css`
-        #form-layout fast-text-field::part(root) {
+        #form-layout input {
           border: 1px solid rgba(194, 201, 209, 1);
           border-radius: var(--input-radius);
+          padding: 10px;
+          color: var(--font-color);
         }
 
-        #form-layout fast-text-field::part(control) {
-          color: var(--font-color);
-          border-radius: var(--input-radius);
+        #generate-submit {
+          background: transparent;
+          color: var(--button-font-color);
+          font-weight: bold;
+          border: none;
+          cursor: pointer;
+
+          height: var(--desktop-button-height);
+          width: var(--button-width);
         }
 
         @media (min-height: 760px) and (max-height: 1000px) {
@@ -78,7 +86,9 @@ export class WindowsForm extends LitElement {
     }
   }
 
-  initGenerate() {
+  initGenerate(ev: InputEvent) {
+    ev.preventDefault();
+
     const form = this.shadowRoot?.querySelector('#windows-options-form');
 
     this.dispatchEvent(
@@ -149,7 +159,12 @@ export class WindowsForm extends LitElement {
 
   render() {
     return html`
-      <form id="windows-options-form" slot="modal-form" style="width: 100%">
+      <form
+        id="windows-options-form"
+        @submit="${ev => this.initGenerate(ev)}"
+        slot="modal-form"
+        style="width: 100%"
+      >
         <div id="form-layout">
           <div class="basic-settings">
             <div class="form-group">
@@ -173,14 +188,16 @@ export class WindowsForm extends LitElement {
                   'https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/'
                 )}
               </label>
-              <fast-text-field
+              <input
                 id="windowsPackageIdInput"
                 class="form-control"
                 placeholder="app.contoso.edge"
                 type="text"
                 name="packageId"
+                pattern="[a-zA-Z0-9.]*$"
+                maxlength="49"
                 required
-              ></fast-text-field>
+              />
             </div>
 
             <div class="form-group">
@@ -204,14 +221,14 @@ export class WindowsForm extends LitElement {
                   'https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/'
                 )}
               </label>
-              <fast-text-field
+              <input
                 type="text"
                 class="form-control"
                 for="windowsDisplayNameInput"
                 required
                 placeholder="Contoso Inc"
                 name="publisherDisplayName"
-              ></fast-text-field>
+              />
             </div>
 
             <div class="form-group">
@@ -235,14 +252,14 @@ export class WindowsForm extends LitElement {
                   'https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/'
                 )}
               </label>
-              <fast-text-field
+              <input
                 type="text"
                 class="form-control"
                 id="windowsPublisherIdInput"
                 required
                 placeholder="CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca"
                 name="publisherId"
-              ></fast-text-field>
+              />
             </div>
           </div>
 
@@ -267,7 +284,7 @@ export class WindowsForm extends LitElement {
                         App name
                         ${tooltip('windows-app-name', 'The name of your app')}
                       </label>
-                      <fast-text-field
+                      <input
                         type="text"
                         class="form-control"
                         id="windowsAppNameInput"
@@ -277,7 +294,7 @@ export class WindowsForm extends LitElement {
                           ? this.default_options.name
                           : 'My Awesome PWA'}"
                         required
-                      ></fast-text-field>
+                      />
                     </div>
                   </div>
                 </div>
@@ -305,7 +322,7 @@ export class WindowsForm extends LitElement {
                           'https://blog.pwabuilder.com/docs/what-is-a-classic-package/'
                         )}
                       </label>
-                      <fast-text-field
+                      <input
                         type="text"
                         class="form-control"
                         id="windowsAppVersionInput"
@@ -315,7 +332,7 @@ export class WindowsForm extends LitElement {
                           ? this.default_options.version
                           : '1.0.0'}"
                         required
-                      ></fast-text-field>
+                      />
                     </div>
                   </div>
                 </div>
@@ -343,7 +360,7 @@ export class WindowsForm extends LitElement {
                           'https://blog.pwabuilder.com/docs/what-is-a-classic-package/'
                         )}
                       </label>
-                      <fast-text-field
+                      <input
                         type="text"
                         class="form-control"
                         id="windowsClassicAppVersionInput"
@@ -353,7 +370,7 @@ export class WindowsForm extends LitElement {
                           ? this.default_options.classicPackage?.version
                           : '1.0.1'}"
                         required
-                      ></fast-text-field>
+                      />
                     </div>
                   </div>
                 </div>
@@ -373,7 +390,7 @@ export class WindowsForm extends LitElement {
                       'This is the URL for your PWA'
                     )}
                   </label>
-                  <fast-text-field
+                  <input
                     type="url"
                     class="form-control"
                     id="windowsUrlInput"
@@ -383,7 +400,7 @@ export class WindowsForm extends LitElement {
                     value="${this.default_options
                       ? this.default_options.url
                       : getURL()}"
-                  ></fast-text-field>
+                  />
                 </div>
 
                 <div class="form-group">
@@ -401,7 +418,7 @@ export class WindowsForm extends LitElement {
                       'The URL to your app manifest'
                     )}
                   </label>
-                  <fast-text-field
+                  <input
                     type="url"
                     class="form-control"
                     id="windowsManifestUrlInput"
@@ -411,11 +428,11 @@ export class WindowsForm extends LitElement {
                       ? this.default_options.manifestUrl
                       : getManiURL()}"
                     required
-                  ></fast-text-field>
+                  />
                 </div>
 
                 <div class="form-group">
-                  <label for="windowsIconUrlInput">
+                  <label for="iconUrl">
                     <a
                       href="https://blog.pwabuilder.com/docs/image-recommendations-for-windows-pwa-packages/"
                       target="_blank"
@@ -435,20 +452,20 @@ export class WindowsForm extends LitElement {
                       'https://blog.pwabuilder.com/docs/image-recommendations-for-windows-pwa-packages/'
                     )}
                   </label>
-                  <fast-text-field
-                    type="url"
+                  <input
+                    type="text"
                     class="form-control"
-                    id="windowsIconUrlInput"
+                    id="iconUrl"
                     placeholder="https://myawesomepwa.com/512x512.png"
                     .value="${this.default_options
                       ? this.default_options.images?.baseImage
                       : ''}"
                     name="iconUrl"
-                  ></fast-text-field>
+                  />
                 </div>
 
                 <div class="form-group">
-                  <label for="windowsLanguageInput">
+                  <label for="language">
                     Language
                     <i
                       class="fas fa-info-circle"
@@ -462,8 +479,8 @@ export class WindowsForm extends LitElement {
                       'Optional. The primary language for your app package. Additional languages can be specified in Partner Center. If empty, EN-US will be used.'
                     )}
                   </label>
-                  <fast-text-field
-                    type="url"
+                  <input
+                    type="text"
                     class="form-control"
                     id="windowsLanguageInput"
                     placeholder="EN-US"
@@ -471,7 +488,7 @@ export class WindowsForm extends LitElement {
                       ? this.default_options.manifest?.lang
                       : 'US-EN'}"
                     name="language"
-                  ></fast-text-field>
+                  />
                 </div>
               </div>
             </fast-accordion-item>
@@ -479,17 +496,13 @@ export class WindowsForm extends LitElement {
         </div>
 
         <div id="form-details-block">
-          <p>
-            ${localeStrings.text.publish.windows_platform.p}
-          </p>
+          <p>${localeStrings.text.publish.windows_platform.p}</p>
         </div>
 
         <div id="form-options-actions" class="modal-actions">
-          <loading-button
-            @click="${() => this.initGenerate()}"
-            .loading="${this.generating}"
-            >Generate</loading-button
-          >
+          <loading-button .loading="${this.generating}">
+            <input id="generate-submit" type="submit" value="Generate"/>
+          </loading-button>
         </div>
       </form>
     `;
