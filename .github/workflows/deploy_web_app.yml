@@ -18,11 +18,11 @@
 on:
   push:
     branches:
-      - v3.0
+      - main
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
-      - v3.0
+      - main
 
 env:
   NODE_VERSION: '14.x' # set this to the node version to use
