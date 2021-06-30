@@ -78,7 +78,7 @@ export async function cleanUrl(url: string) {
   }
 }
 
-export function isValidURL(str) {
+export function isValidURL(str: string) {
   // from https://stackoverflow.com/a/5717133
   var pattern = new RegExp('^(https?:\\/\\/)?'+
     '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ 

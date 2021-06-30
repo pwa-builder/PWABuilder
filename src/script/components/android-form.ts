@@ -245,7 +245,7 @@ export class AndroidForm extends LitElement {
 
   render() {
     return html`
-      <form id="android-options-form" slot="modal-form" style="width: 100%">
+      <form id="android-options-form" slot="modal-form" style="width: 100%" title="">
         <div id="form-layout">
           <div class="basic-settings">
             <div class="form-group">
@@ -330,12 +330,7 @@ export class AndroidForm extends LitElement {
                             "The version of your app displayed to users. This is a string, typically in the form of '1.0.0.0'. Maps to android:versionName."
                           )}
                       </label>
-                      <fast-text-field type="text" class="form-control" id="appVersionInput" placeholder="1.0.0.0" value="${
-                        this.default_options
-                          ? this.default_options.appVersion
-                          : '1.0.0.0'
-                      }" required
-                        name="appVersion" />
+                      <fast-text-field type="text" class="form-control" id="appVersionInput" placeholder="1.0.0.0" value="${this.default_options?.appVersion || '1.0.0.0'}" required name="appVersion">
                       </fast-text-field>
                     </div>
                   </div>
@@ -347,7 +342,7 @@ export class AndroidForm extends LitElement {
                   <div class="form-group">
                     <label for="appVersionCodeInput">
                       <a href="https://developer.android.com/studio/publish/versioning#appversioning" target="_blank"
-                        rel="noopener">App version code</a>
+                        rel="noopener" tabindex="-1">App version code</a>
                       <i class="fas fa-info-circle"
                         title="A positive integer used as an internal version number. This is not shown to users. Android uses this value to protect against downgrades. Maps to android:versionCode."
                         aria-label="A positive integer used as an internal version number. This is not shown to users. Android uses this value to protect against downgrades. Maps to android:versionCode."
@@ -358,12 +353,7 @@ export class AndroidForm extends LitElement {
                           'A positive integer used as an internal version number. This is not shown to users. Android uses this value to protect against downgrades. Maps to android:versionCode.'
                         )}
                     </label>
-                    <fast-number-field type="number" min="1" max="2100000000" class="form-control" id="appVersionCodeInput"
-                      placeholder="1" required value="${
-                        this.default_options
-                          ? this.default_options.appVersionCode
-                          : '1'
-                      }" name="appVersionCode" />
+                    <fast-number-field type="number" min="1" max="2100000000" class="form-control" id="appVersionCodeInput" name="appVersionCode" placeholder="1" required value="${this.default_options?.appVersionCode || 1}"/>
                     </fast-number-field>
                   </div>
                 </div>
@@ -451,12 +441,12 @@ export class AndroidForm extends LitElement {
                     title="The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
                     aria-label="The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
                     role="definition"></i>
-                </label>
 
-                ${tooltip(
-                  'android-nav-color',
-                  'The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen.'
-                )}
+                  ${tooltip(
+                    'android-nav-color',
+                    'The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen.'
+                  )}
+                </label>
                 <input type="color" class="form-control" id="navigationColorInput" name="navigationColor" value="${
                   this.default_options
                     ? this.default_options.navigationColor
@@ -535,7 +525,9 @@ export class AndroidForm extends LitElement {
               <div class="form-group">
                 <label for="maskIconUrlInput">
                   <a href="https://web.dev/maskable-icon" title="Read more about maskable icons" target="_blank"
-                    rel="noopener" aria-label="Read more about maskable icons">Maskable icon</a> URL
+                    rel="noopener" aria-label="Read more about maskable icons" tabindex="-1">
+                    Maskable icon URL
+                  </a>
                   <i class="fas fa-info-circle"
                     title="Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms."
                     aria-label="Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms."
@@ -558,7 +550,7 @@ export class AndroidForm extends LitElement {
               <div class="form-group">
                 <label for="monochromeIconUrlInput">
                   <a href="https://w3c.github.io/manifest/#monochrome-icons-and-solid-fills" target="_blank"
-                    rel="noopener">Monochrome icon</a> URL
+                    rel="noopener" tabindex="-1">Monochrome icon URL</a>
                   <i class="fas fa-info-circle"
                     title="Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings."
                     aria-label="Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings."
@@ -970,9 +962,9 @@ export class AndroidForm extends LitElement {
         </div>
       
         <div id="form-options-actions" class="modal-actions" >
-          <loading-button @click="${() => this.initGenerate()}" .loading="${
-      this.generating
-    }">Generate</loading-button>
+          <loading-button @click="${() => this.initGenerate()}" .loading="${this.generating}">
+            Generate
+          </loading-button>
         </div>
       </form>
     `;
