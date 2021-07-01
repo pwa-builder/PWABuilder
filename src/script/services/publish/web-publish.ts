@@ -22,7 +22,7 @@ export async function generateWebPackage() {
       manifestWithScreenshots.screenshots = [];
     }
 
-    let baseUrl: string;
+    const baseUrl = env.webPackageGeneratorFormUrl;
     let urlToUse: string;
     const body = createNewFormDataWithManifest(manifest);
 
