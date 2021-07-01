@@ -1,11 +1,13 @@
 import { LitElement, css, html } from 'lit';
-import { customElement } from "lit/decorators.js"
+import { customElement } from 'lit/decorators.js';
 import { Router } from '@vaadin/router';
 import './app-home';
 import './app-report';
 
 import '../components/app-footer';
 import '../components/app-header';
+import '../components/app-button';
+import '../components/cookie-banner';
 import { capturePageView } from '../utils/analytics';
 
 @customElement('app-index')
@@ -24,7 +26,7 @@ export class AppIndex extends LitElement {
         animation: 160ms fadeIn linear;
       }
 
-      @media(min-width: 1920px) {
+      @media (min-width: 1920px) {
         #router-outlet {
           background: var(--primary-purple);
         }
@@ -71,13 +73,13 @@ export class AppIndex extends LitElement {
   constructor() {
     super();
 
-    window.addEventListener('vaadin-router-location-changed', (ev) => {
+    window.addEventListener('vaadin-router-location-changed', ev => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
       capturePageView({
         pageName: ev.detail.location.route?.component,
         uri: ev.detail.location.pathname,
-        pageHeight: window.innerHeight
+        pageHeight: window.innerHeight,
       });
     });
   }
@@ -104,7 +106,7 @@ export class AppIndex extends LitElement {
           },
           {
             path: '/reportcard',
-            component: 'app-report'
+            component: 'app-report',
           },
           {
             path: '/publish',
@@ -118,15 +120,22 @@ export class AppIndex extends LitElement {
             component: 'app-basepack',
             action: async () => {
               await import('./app-basepack.js');
-            }
+            },
           },
           {
             path: '/congrats',
             component: 'app-congrats',
             action: async () => {
               await import('./app-congrats.js');
-            }
-          }
+            },
+          },
+          {
+            path: 'imageGenerator',
+            component: 'image-generator',
+            action: async () => {
+              await import('./image-generator.js');
+            },
+          },
         ],
       } as any,
     ]);
@@ -135,6 +144,9 @@ export class AppIndex extends LitElement {
   render() {
     return html`
       <div>
+        <!--required cookie banner-->
+        <cookie-banner></cookie-banner>
+
         <main>
           <div id="router-outlet"></div>
         </main>

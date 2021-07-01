@@ -13,6 +13,8 @@ export const env = {
   safeUrlFetcher:
     'https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl',
   webPackageGeneratorUrl: 'https://pwabuilder-web-platform.azurewebsites.net/',
+  webPackageGeneratorFormUrl:
+    'https://pwabuilder-web-platform.azurewebsites.net/form',
   ratingUrl:
     'https://pwabuilder-url-logger-api.azurewebsites.net/api/analyses/getaveragescores',
 };

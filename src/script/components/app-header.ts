@@ -194,11 +194,12 @@ export class AppHeader extends LitElement {
           </fast-anchor>
         </nav>
 
-        <nav id="mobile-nav">
+        <!-- temporarily removing this based on design feedback -->
+        <!--<nav id="mobile-nav">
           <fast-button appearance="lightweight">
             <ion-icon name="menu-outline"></ion-icon>
           </fast-button>
-        </nav>
+        </nav>-->
       </header>
     `;
   }

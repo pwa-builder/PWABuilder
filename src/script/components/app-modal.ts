@@ -73,6 +73,7 @@ export class AppModal extends LitElement implements AppModalElement {
 
         #modal-body {
           text-align: center;
+          width: inherit;
         }
 
         #modal-body p {
@@ -200,7 +201,7 @@ export class AppModal extends LitElement implements AppModalElement {
     }
 
     this.open = false;
-    this.dispatchEvent(AppModalCloseEvent());
+    this.dispatchEvent(AppModalCloseEvent(this.modalId));
 
     // just to ensure scrolling gets turned back on
     // when the modal is closed
