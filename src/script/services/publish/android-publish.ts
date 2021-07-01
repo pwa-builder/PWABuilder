@@ -221,7 +221,7 @@ export async function createAndroidPackageOptionsFromManifest(localManifest?: Ma
         enabled: false,
       },
     },
-    host: pwaURL,
+    host: 'https://' + new URL(manifest.start_url || '/', maniURL).host,
     iconUrl: getAbsoluteUrl(icon.src, maniURL),
     includeSourceCode: false,
     isChromeOSOnly: false,

@@ -430,7 +430,7 @@ export class AndroidForm extends LitElement {
                       name="host"
                       value="${this.default_options
                         ? this.default_options.host
-                        : 'https://mysite.com'}"
+                        : 'mysite.com'}"
                     />
                   </div>
                 </div>
