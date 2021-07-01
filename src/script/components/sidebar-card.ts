@@ -9,7 +9,7 @@ import { customElement, property,
 
 @customElement('sidebar-card')
 export class SidebarCard extends LitElement {
-  @property() title: string;
+  @property() title: string = '';
 
   @state() open = true;
 

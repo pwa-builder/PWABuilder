@@ -89,33 +89,10 @@ export async function createAndroidPackageOptionsFromForm(form: HTMLFormElement,
   }
 
   const appName = form.appName.value || manifest.short_name || manifest.name || 'My PWA';
-  const packageName = generatePackageId(form.packageId.value || new URL(pwaURL).hostname);
+  const packageName = generatePackageId(form.packageId.value || new URL(pwaURL).host);
   // Use standalone display mode unless the manifest has fullscreen specified.
   const display =
     manifest.display === 'fullscreen' ? 'fullscreen' : 'standalone';
-  // StartUrl must be relative to the host.
-  // We make sure it is below.
-  let relativeStartUrl: string;
-  if (
-    !manifest.start_url ||
-    manifest.start_url === '/' ||
-    manifest.start_url === '.' ||
-    manifest.start_url === './'
-  ) {
-    // First, if we don't have a start_url in the manifest, or it's just "/",
-    // then we can just use that.
-    relativeStartUrl = '/';
-  } else {
-    // The start_url in the manifest is either a relative or absolute path.
-    // Ensure it's a path relative to the root.
-    const absoluteStartUrl = new URL((manifest.start_url as string), maniURL);
-    relativeStartUrl =
-      absoluteStartUrl.pathname + (absoluteStartUrl.search || '');
-  }
-
-  // TODO Justin, looks like the usage of this has been removed?
-  console.log(relativeStartUrl);
-
   const navColorOrFallback =
     manifest.theme_color || manifest.background_color || '#000000';
   return {
@@ -162,7 +139,7 @@ export async function createAndroidPackageOptionsFromForm(form: HTMLFormElement,
     },
     signingMode: form.signingMode ? form.signingMode.value : 'new',
     splashScreenFadeOutDuration: form.splashScreenFadeOutDuration.value || 300,
-    startUrl: form.startUrl.value || manifest.start_url as string,
+    startUrl: getStartUrlRelativeToHost(form.startUrl.value || manifest.start_url, new URL(maniURL)),
     themeColor: form.themeColor.value || manifest.theme_color || '#FFFFFF',
     shareTarget: manifest.share_target,
     webManifestUrl: form.maniURL ? form.maniURL.value : maniURL,
@@ -199,28 +176,6 @@ export async function createAndroidPackageOptionsFromManifest(localManifest?: Ma
   // Use standalone display mode unless the manifest has fullscreen specified.
   const display =
     manifest.display === 'fullscreen' ? 'fullscreen' : 'standalone';
-  // StartUrl must be relative to the host.
-  // We make sure it is below.
-  let relativeStartUrl: string;
-  if (
-    !manifest.startUrl ||
-    manifest.startUrl === '/' ||
-    manifest.startUrl === '.' ||
-    manifest.startUrl === './'
-  ) {
-    // First, if we don't have a startUrl in the manifest, or it's just "/",
-    // then we can just use that.
-    relativeStartUrl = '/';
-  } else {
-    // The startUrl in the manifest is either a relative or absolute path.
-    // Ensure it's a path relative to the root.
-    const absoluteStartUrl = new URL((manifest.start_url as string), maniURL);
-    relativeStartUrl =
-      absoluteStartUrl.pathname + (absoluteStartUrl.search || '');
-  }
-
-  // TODO Justin, looks like the usage of this has been removed?
-  console.log(relativeStartUrl);
 
   const manifestIcons = manifest.icons || [];
   const icon =
@@ -266,7 +221,7 @@ export async function createAndroidPackageOptionsFromManifest(localManifest?: Ma
         enabled: false,
       },
     },
-    host: pwaURL,
+    host: 'https://' + new URL(manifest.start_url || '/', maniURL).host,
     iconUrl: getAbsoluteUrl(icon.src, maniURL),
     includeSourceCode: false,
     isChromeOSOnly: false,
@@ -293,7 +248,7 @@ export async function createAndroidPackageOptionsFromManifest(localManifest?: Ma
     },
     signingMode: 'new',
     splashScreenFadeOutDuration: 300,
-    startUrl: manifest.start_url as string,
+    startUrl: getStartUrlRelativeToHost(manifest.start_url, new URL(maniURL)),
     themeColor: (manifest.theme_color as string) || '#FFFFFF',
     shareTarget: manifest.share_target,
     webManifestUrl: maniURL,
@@ -315,6 +270,30 @@ function getAbsoluteUrl(
   }
 
   return new URL(relativeUrl, manifestUrl).toString();
+}
+
+function getStartUrlRelativeToHost(startUrl: string | null | undefined, manifestUrl: URL) {
+  // The start URL we send to the CloudAPK service should be a URL relative to the host.
+  const absoluteStartUrl = new URL(startUrl || '/', manifestUrl);
+  return absoluteStartUrl.pathname + (absoluteStartUrl.search || '');
+
+  // COMMENTED OUT: Old PWABuilder v2 URL creation. Commented out because we can do the same thing in less code above.
+  // if (
+  //   !manifest.start_url ||
+  //   manifest.start_url === '/' ||
+  //   manifest.start_url === '.' ||
+  //   manifest.start_url === './'
+  // ) {
+  //   // First, if we don't have a start_url in the manifest, or it's just "/",
+  //   // then we can just use that.
+  //   relativeStartUrl = '/';
+  // } else {
+  //   // The start_url in the manifest is either a relative or absolute path.
+  //   // Ensure it's a path relative to the root.
+  //   const absoluteStartUrl = new URL((manifest.start_url as string), maniURL);
+  //   relativeStartUrl =
+  //     absoluteStartUrl.pathname + (absoluteStartUrl.search || '');
+  // }
 }
 
 function updateAndroidOptionsWithSafeUrls(
