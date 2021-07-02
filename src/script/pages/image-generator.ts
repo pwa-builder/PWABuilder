@@ -63,9 +63,15 @@ export class ImageGenerator extends LitElement {
 
   @state() selectAllState = false;
 
+  @state() generating = false;
+
+  @state() generateEnabled = false;
+
   @state() downloading = false;
 
   @state() downloadEnabled = false;
+
+  @state() blob: Blob | undefined;
 
   @state() error: Lazy<string>;
 
@@ -133,6 +139,7 @@ export class ImageGenerator extends LitElement {
           margin-top: 8px;
         }
 
+        fast-button#generateButton,
         fast-button#downloadButton {
           --neutral-foreground-rest: var(--secondary-color);
           --button-font-color: var(--secondary-color);
@@ -226,6 +233,16 @@ export class ImageGenerator extends LitElement {
               </section>
               <section id="submit" class="form-bottom">
                 <fast-button
+                  id="generateButton"
+                  class="primary"
+                  ?disabled=${!this.generateEnabled || this.generating}
+                  @click=${this.generateZip}
+                >
+                  ${this.generating
+                    ? html`<fast-progress-ring></fast-progress-ring>`
+                    : localeStrings.button.generate}
+                </fast-button>
+                <fast-button
                   id="downloadButton"
                   class="primary"
                   ?disabled=${!this.downloadEnabled || this.downloading}
@@ -290,7 +307,7 @@ export class ImageGenerator extends LitElement {
     if (input.files) {
       this.files = input.files;
     }
-    this.checkDownloadEnabled();
+    this.checkGenerateEnabled();
   }
 
   handlePaddingChange(event: Event) {
@@ -303,20 +320,20 @@ export class ImageGenerator extends LitElement {
     const index = input.dataset['index'];
     this.platformSelected[index] = input.checked;
 
-    this.checkDownloadEnabled();
+    this.checkGenerateEnabled();
   }
 
   handleBackgroundRadioChange(event: CustomEvent) {
     const value: ColorRadioValues = (<HTMLInputElement>event.target)
       .value as ColorRadioValues;
     this.colorOption = value;
-    this.checkDownloadEnabled();
+    this.checkGenerateEnabled();
   }
 
   handleThemeColorInputChange(event: Event) {
     const input = event.target as HTMLInputElement;
     this.color = input.value;
-    this.checkDownloadEnabled();
+    this.checkGenerateEnabled();
   }
 
   handleSelectAndClearAll() {
@@ -324,13 +341,13 @@ export class ImageGenerator extends LitElement {
       () => this.selectAllState
     );
     this.selectAllState = !this.selectAllState;
-    this.checkDownloadEnabled();
+    this.checkGenerateEnabled();
   }
 
-  async downloadZip() {
+  async generateZip() {
     try {
-      this.downloadEnabled = false;
-      this.downloading = true;
+      this.generateEnabled = false;
+      this.generating = true;
 
       const form = new FormData();
       form.append('fileName', this.files[0]);
@@ -366,7 +383,23 @@ export class ImageGenerator extends LitElement {
         throw new Error('Error from service: ' + getJson.Message);
       }
 
-      await fileSave(await getRes.blob(), {
+      this.blob = await getRes.blob();
+
+      this.generating = false;
+    } catch (e) {
+      console.error(e);
+      this.error = (e as Error).message;
+    }
+
+    this.checkDownloadEnabled();
+  }
+
+  async downloadZip() {
+    try {
+      this.downloadEnabled = false;
+      this.downloading = true;
+
+      await fileSave(this.blob, {
         fileName: 'PWABuilderIcons.zip',
         extensions: ['.zip'],
       });
@@ -379,10 +412,15 @@ export class ImageGenerator extends LitElement {
     }
   }
 
-  checkDownloadEnabled() {
-    this.downloadEnabled =
+  checkGenerateEnabled() {
+    this.generateEnabled =
       this.files !== undefined &&
       this.platformSelected.reduce((a, b) => a || b);
+    return this.generateEnabled;
+  }
+
+  checkDownloadEnabled() {
+    this.downloadEnabled = this.blob !== undefined;
     return this.downloadEnabled;
   }
 }
