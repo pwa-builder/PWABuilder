@@ -46,7 +46,13 @@ export async function generateMissingImagesBase64(config: MissingImagesConfig) {
     });
 
     if (response.ok) {
-      let icons = (await getManifestGuarded()).icons ?? [];
+      const manifest = await getManifestGuarded();
+      if (!manifest) {
+        console.error("Manifest was unexpectedly null or undefined");
+        return;
+      }
+
+      let icons = manifest.icons ?? [];
       icons = icons.concat((await response.json()) as unknown as Array<Icon>);
 
       updateManifest({

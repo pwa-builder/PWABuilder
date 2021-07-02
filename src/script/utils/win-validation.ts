@@ -212,7 +212,7 @@ function validateVersion(
 
   // Version must be 1.0.0 or greater; Store doesn't support versions starting with zero.
   const segmentValues = segments.map(s => parseInt(s));
-  if (segmentValues && segmentValues.length > 0 && segmentValues[0] <= 0) {
+  if (segmentValues && segmentValues.length > 0 && segmentValues[0]! <= 0) {
     versionErrors.push({
       field: versionInfo.name,
       error: `${versionInfo.label} must start with an integer >= 1.`,

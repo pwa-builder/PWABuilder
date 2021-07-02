@@ -1,4 +1,4 @@
-import { fileSave, FileWithHandle } from 'browser-fs-access';
+import { fileSave } from 'browser-fs-access';
 interface DownloadConfig {
   id?: string;
   fileName: string;

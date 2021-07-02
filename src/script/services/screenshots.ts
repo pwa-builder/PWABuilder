@@ -1,4 +1,4 @@
-import { Icon } from '../utils/interfaces';
+import { Screenshot } from '../utils/interfaces';
 import { getManifestGuarded, updateManifest } from './manifest';
 
 const screenshotServiceBaseUrl = 'https://pwa-screenshots.azurewebsites.net';
@@ -10,7 +10,7 @@ enum EndPoints {
 }
 
 interface ScreenshotServiceResponse {
-  images: Array<Icon>;
+  images: Array<Screenshot>;
 }
 
 export async function generateScreenshots(screenshotsList: Array<string>) {
@@ -31,7 +31,7 @@ export async function generateScreenshots(screenshotsList: Array<string>) {
     if (res.ok) {
       const response = (await res.json()) as ScreenshotServiceResponse;
 
-      let screenshots: Array<Icon> =
+      let screenshots: Array<Screenshot> =
         (await getManifestGuarded())?.screenshots ?? [];
       screenshots = screenshots.concat(
         response.images.map(image => {

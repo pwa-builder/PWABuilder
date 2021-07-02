@@ -70,24 +70,24 @@ export function getOverallScore() {
 }
 
 function updateProgress(progress: ProgressList, results: RawTestResult) {
-  progress.progress[0].items[1].done = Status.DONE;
+  progress.progress[0]!.items[1]!.done = Status.DONE;
 
-  progress.progress[1].items.map((item: { name: string; done: Status }) => {
+  progress.progress[1]!.items.map((item: { name: string; done: Status }) => {
     if (item.name === 'Manifest') {
       if (results && results.manifest) {
-        if ((results.manifest as Array<TestResult>)[0].result === true) {
+        if ((results.manifest as Array<TestResult>)[0]!.result === true) {
           item.done = Status.DONE;
         }
       }
     } else if (item.name === 'Service Worker') {
       if (results && results.service_worker) {
-        if (results.service_worker[0].result === true) {
+        if (results.service_worker[0]!.result === true) {
           item.done = Status.DONE;
         }
       }
     } else if (item.name === 'Security') {
       if (results && results.security) {
-        if (results.security[0].result === true) {
+        if (results.security[0]!.result === true) {
           item.done = Status.DONE;
         }
       }

@@ -29,17 +29,17 @@ import {
   checkResults,
   finalCheckForPublish,
 } from '../services/publish/publish-checks';
-import { generatePackage } from '../services/publish';
+import { generatePackage, Platform } from '../services/publish';
 import { getReportErrorUrl } from '../utils/error';
-import { tooltip, styles as ToolTipStyles } from '../components/tooltip';
+import { styles as ToolTipStyles } from '../components/tooltip';
 import { localeStrings } from '../../locales';
 @customElement('app-publish')
 export class AppPublish extends LitElement {
   @state() errored = false;
   @state() errorMessage: string | undefined;
 
-  @state() blob: Blob | File | undefined;
-  @state() testBlob: Blob | File | undefined;
+  @state() blob: Blob | File | null | undefined;
+  @state() testBlob: Blob | File | null | undefined;
 
   @state() mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`
@@ -55,7 +55,7 @@ export class AppPublish extends LitElement {
 
   @state() finalChecks: checkResults | undefined;
 
-  @state() reportPackageErrorUrl: string;
+  @state() reportPackageErrorUrl = '';
 
   constructor() {
     super();
@@ -535,7 +535,7 @@ export class AppPublish extends LitElement {
     }
   }
 
-  showAlertModal(error: string, platform) {
+  showAlertModal(error: string, platform: Platform) {
     this.errored = true;
     this.errorMessage = error;
 
@@ -728,7 +728,7 @@ export class AppPublish extends LitElement {
         <windows-form
           slot="modal-form"
           .generating=${this.generating}
-          @init-windows-gen="${ev => this.generate('windows', ev.detail.form)}"
+          @init-windows-gen="${(ev: CustomEvent) => this.generate('windows', ev.detail.form)}"
         ></windows-form>
       </app-modal>
 
@@ -743,7 +743,7 @@ export class AppPublish extends LitElement {
         <android-form
           slot="modal-form"
           .generating=${this.generating}
-          @init-android-gen="${ev => this.generate('android', ev.detail.form, ev.detail.signingFile)}"
+          @init-android-gen="${(ev: CustomEvent) => this.generate('android', ev.detail.form, ev.detail.signingFile)}"
         ></android-form>
       </app-modal>
 

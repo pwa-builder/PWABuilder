@@ -41,15 +41,15 @@ export interface AndroidApkOptions {
   navigationDividerColor: string;
   navigationDividerColorDark: string;
   orientation:
-    | 'default'
-    | 'any'
-    | 'natural'
-    | 'landscape'
-    | 'portrait'
-    | 'portrait-primary'
-    | 'portrait-secondary'
-    | 'landscape-primary'
-    | 'landscape-secondary';
+  | 'default'
+  | 'any'
+  | 'natural'
+  | 'landscape'
+  | 'portrait'
+  | 'portrait-primary'
+  | 'portrait-secondary'
+  | 'landscape-primary'
+  | 'landscape-secondary';
   packageId: string;
   shareTarget?: ShareTarget;
   shortcuts: ShortcutItem[];
@@ -160,8 +160,8 @@ export function validateAndroidOptions(
   }
 
   if (
-    (options.fallbackType as string) !== 'customtabs' &&
-    (options.fallbackType as string) !== 'webview'
+    options.fallbackType !== 'customtabs' &&
+    options.fallbackType !== 'webview'
   ) {
     validationErrors.push({
       field: 'fallbackType',
@@ -360,14 +360,18 @@ export function validateUrl(url: string, base?: string): string | null {
     new URL(url, base);
     return null;
   } catch (urlError) {
-    return urlError;
+    return `${urlError}`;
   }
 }
 
 function withoutLeadingDigits(input: string): string {
+  if (input.length === 0) {
+    return "app";
+  }
+
   // Check if it starts with a digit.
   // If so, prepend "app" to it.
-  if (input && input.length && input[0].match(/^\d/)) {
+  if (input && input.length && input[0]!.match(/^\d/)) {
     return `app_${input}`;
   }
 

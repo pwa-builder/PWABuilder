@@ -325,9 +325,8 @@ export class AppHome extends LitElement {
   }
 
   updateProgress(progressData: ProgressList) {
-    if (progressData) {
+    if (progressData && progressData.progress[0] && progressData.progress[0].items[0]) {
       progressData.progress[0].items[0].done = Status.DONE;
-
       const newProgress = progressData;
       setProgress(newProgress);
     }

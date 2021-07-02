@@ -1,5 +1,4 @@
 import { LitElement, css, html } from 'lit';
-
 import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
@@ -255,7 +254,7 @@ export class AndroidForm extends LitElement {
         id="android-options-form"
         slot="modal-form"
         style="width: 100%"
-        @submit="${ev => this.initGenerate(ev)}"
+        @submit="${(ev: InputEvent) => this.initGenerate(ev)}"
         title=""
       >
         <div id="form-layout">
@@ -430,7 +429,7 @@ export class AndroidForm extends LitElement {
                       name="host"
                       value="${this.default_options
                         ? this.default_options.host
-                        : 'mysite.com'}"
+                        : 'https://mysite.com'}"
                     />
                   </div>
                 </div>
@@ -665,9 +664,7 @@ export class AndroidForm extends LitElement {
                   id="maskIconUrlInput"
                   placeholder="https://myawesomepwa.com/512x512-maskable.png"
                   name="maskableIconUrl"
-                  .value="${this.default_options
-                    ? this.default_options.maskableIconUrl
-                    : ''}"
+                  .value="${this.default_options?.maskableIconUrl || ''}"
                 />
               </div>
 
@@ -698,9 +695,7 @@ export class AndroidForm extends LitElement {
                   id="monochromeIconUrlInput"
                   placeholder="https://myawesomepwa.com/512x512-monochrome.png"
                   name="monochromeIconUrl"
-                  .value="${this.default_options
-                    ? this.default_options.monochromeIconUrl
-                    : ''}"
+                  .value="${this.default_options?.monochromeIconUrl || ''}"
                 />
               </div>
 
@@ -1028,8 +1023,8 @@ export class AndroidForm extends LitElement {
                     id="generateSigningKeyInput"
                     value="new"
                     name="signingMode"
-                    @change="${ev =>
-                      this.androidSigningModeChanged(ev.target.value)}"
+                    @change="${(ev: Event) =>
+                      this.androidSigningModeChanged((ev.target as any).value)}"
                     .defaultChecked="${true}"
                   />
                   <label class="form-check-label" for="generateSigningKeyInput">
@@ -1054,8 +1049,8 @@ export class AndroidForm extends LitElement {
                     id="unsignedInput"
                     value="none"
                     name="signingMode"
-                    @change="${ev =>
-                      this.androidSigningModeChanged(ev.target.value)}"
+                    @change="${(ev: Event) =>
+                      this.androidSigningModeChanged((ev.target as any).value)}"
                   />
                   <label class="form-check-label" for="unsignedInput">
                     None
@@ -1079,8 +1074,8 @@ export class AndroidForm extends LitElement {
                     id="useMySigningInput"
                     value="mine"
                     name="signingMode"
-                    @change="${ev =>
-                      this.androidSigningModeChanged(ev.target.value)}"
+                    @change="${(ev: Event) =>
+                      this.androidSigningModeChanged((ev.target as any).value)}"
                   />
                   <label class="form-check-label" for="useMySigningInput">
                     Use mine
@@ -1110,7 +1105,7 @@ export class AndroidForm extends LitElement {
                                 type="file"
                                 class="form-control"
                                 id="signingKeyInput"
-                                @change="${ev =>
+                                @change="${(ev: Event) =>
                                   this.androidSigningKeyUploaded(ev.target)}"
                                 accept=".keystore"
                                 required

@@ -1,4 +1,4 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, css, html, TemplateResult } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { localeStrings } from '../../locales';
 
@@ -44,7 +44,7 @@ function boolListHasChanged<T>(value: T, unknownValue: T): boolean {
     return false;
   }
 
-  return value.toString() === unknownValue.toString();
+  return (value as Object).toString() === (unknownValue as Object).toString();
 }
 
 @customElement('image-generator')
@@ -169,48 +169,29 @@ export class ImageGenerator extends LitElement {
           <fast-card>
             <h1>${loc.image_generator}</h1>
             <p>${loc.image_generator_text}</p>
-            <form
-              id="imageFileInputForm"
-              enctype="multipart/form-data"
-              role="form"
-              class="form"
-            >
+            <form id="imageFileInputForm" enctype="multipart/form-data" role="form" class="form">
               <section class="form-left">
                 <h2>${loc.image_details}</h2>
                 <p>${loc.image_generator_text}</p>
                 <div class="image-section">
                   <h3>${loc.input_image}</h3>
-                  <app-file-input
-                    @input-change=${this.handleInputChange}
-                  ></app-file-input>
+                  <app-file-input @input-change=${this.handleInputChange}></app-file-input>
                 </div>
                 <div class="padding-section">
                   <h3>${loc.padding}</h3>
-                  <fast-number-field
-                    name="padding"
-                    max="1"
-                    min="0"
-                    step="0.1"
-                    .value=${this.padding}
-                    @change=${this.handlePaddingChange}
-                    required
-                  ></fast-number-field>
+                  <fast-number-field name="padding" max="1" min="0" step="0.1" .value=${this.padding}
+                    @change=${this.handlePaddingChange} required></fast-number-field>
                   <small>${loc.padding_text}</small>
                 </div>
                 <div class="color-section">
                   <h3>${loc.background_color}</h3>
                   <div class="color-radio">
-                    <fast-radio-group
-                      orientation="vertical"
-                      .value=${this.colorOption}
-                      @change=${this.handleBackgroundRadioChange}
-                    >
+                    <fast-radio-group orientation="vertical" .value=${this.colorOption}
+                      @change=${this.handleBackgroundRadioChange}>
                       <fast-radio name="colorOption" value="transparent">
                         ${loc.transparent}
                       </fast-radio>
-                      <fast-radio name="colorOption" value="choose"
-                        >${loc.custom_color}</fast-radio
-                      >
+                      <fast-radio name="colorOption" value="choose">${loc.custom_color}</fast-radio>
                     </fast-radio-group>
                   </div>
                   ${this.renderColorPicker()}
@@ -222,12 +203,8 @@ export class ImageGenerator extends LitElement {
                 <div role="group" class="platform-list">
                   ${this.renderPlatformList()}
                 </div>
-                <fast-button
-                  id="selectPlatforms"
-                  class="secondary"
-                  appearance="accent"
-                  @click=${this.handleSelectAndClearAll}
-                >
+                <fast-button id="selectPlatforms" class="secondary" appearance="accent"
+                  @click=${this.handleSelectAndClearAll}>
                   ${loc.select_button}
                 </fast-button>
               </section>
@@ -252,7 +229,7 @@ export class ImageGenerator extends LitElement {
                     ? html`<fast-progress-ring></fast-progress-ring>`
                     : localeStrings.button.download}
                 </fast-button>
-
+      
                 ${this.renderError()}
               </section>
             </form>
@@ -265,14 +242,8 @@ export class ImageGenerator extends LitElement {
   renderPlatformList() {
     return platformsData.map(
       (platform, i) => html`
-        <fast-checkbox
-          type="checkbox"
-          name="platform"
-          value="${platform.value}"
-          ?checked=${this.platformSelected[i]}
-          @change=${this.handleCheckbox}
-          data-index=${i}
-        >
+        <fast-checkbox type="checkbox" name="platform" value="${platform.value}" ?checked=${this.platformSelected[i]}
+          @change=${this.handleCheckbox} data-index=${i}>
           ${platform.label}
         </fast-checkbox>
       `
@@ -282,24 +253,21 @@ export class ImageGenerator extends LitElement {
   renderColorPicker() {
     if (this.colorOption === 'choose') {
       return html`<div class="custom-color-block">
-        <label for="theme-custom-color">${localeStrings.values.custom}</label>
-        <input
-          type="color"
-          id="theme-custom-color"
-          name="color"
-          .value=${this.color}
-          @change=${this.handleThemeColorInputChange}
-        />
-      </div>`;
+  <label for="theme-custom-color">${localeStrings.values.custom}</label>
+  <input type="color" id="theme-custom-color" name="color" .value=${this.color}
+    @change=${this.handleThemeColorInputChange} />
+</div>`;
     }
 
     return undefined;
   }
 
-  renderError() {
+  renderError(): TemplateResult {
     if (this.error) {
-      return html` <p style="font-size: 16px; color: red;">${this.error}</p> `;
-    }
+      return html`<p style="font-size: 16px; color: red;">${this.error}</p>`;
+    };
+    
+    return html``;
   }
 
   handleInputChange(event: CustomEvent<FileInputDetails>) {
@@ -318,7 +286,7 @@ export class ImageGenerator extends LitElement {
   handleCheckbox(event: Event) {
     const input = event.target as HTMLInputElement;
     const index = input.dataset['index'];
-    this.platformSelected[index] = input.checked;
+    this.platformSelected[index as any] = input.checked;
 
     this.checkGenerateEnabled();
   }
@@ -345,21 +313,27 @@ export class ImageGenerator extends LitElement {
   }
 
   async generateZip() {
+    const file = this.files ? this.files[0] : null;
+    if (!file) {
+      const errorMessage = 'No file available to generate zip';
+      console.error(errorMessage);
+      this.error = errorMessage;
+      return;
+    }
+
     try {
       this.generateEnabled = false;
       this.generating = true;
 
       const form = new FormData();
-      form.append('fileName', this.files[0]);
+      form.append('fileName', file as Blob);
       form.append('padding', String(this.padding));
       form.append('colorOption', String(this.colorOption));
       form.append('colorOption', String(this.colorOption));
 
-      for (let i = 0; i < platformsData.length; i++) {
-        if (this.platformSelected[i]) {
-          form.append('platform', platformsData[i].value);
-        }
-      }
+      platformsData
+        .filter((_, index) => this.platformSelected[index])
+        .forEach(data => form.append('platform', data.value));
 
       const res = await fetch(`${baseUrl}/api/image`, {
         method: 'POST',
@@ -399,7 +373,12 @@ export class ImageGenerator extends LitElement {
       this.downloadEnabled = false;
       this.downloading = true;
 
-      await fileSave(this.blob, {
+      const blob = this.blob;
+      if (!blob) {
+        throw new Error("No zip file available");
+      }
+
+      await fileSave(blob, {
         fileName: 'PWABuilderIcons.zip',
         extensions: ['.zip'],
       });

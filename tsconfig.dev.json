@@ -43,13 +43,54 @@
           "no-unclosed-tag": "error",
           "no-unknown-attribute": "off",
           "no-unknown-event": "off",
-          "no-unknown-property": "error",
+          "no-unknown-property": "off",
           "no-unknown-property-converter": "error",
           "no-unknown-slot": "off",
           "no-unknown-tag-name": "error"
-        }
+        },
+        "globalTags": [
+          "ion-icon",
+          "fast-accordion",
+          "fast-accordion-item",
+          "fast-anchor",
+          "fast-badge",
+          "fast-breadcrumb",
+          "fast-breadcrumb-item",
+          "fast-button",
+          "fast-card",
+          "fast-checkbox",
+          "fast-data-grid",
+          "fast-dialog",
+          "fast-divider",
+          "fast-flipper",
+          "fast-listbox",
+          "fast-option",
+          "fast-menu",
+          "fast-menu-item",
+          "fast-number-field",
+          "fast-progress",
+          "fast-progress-ring",
+          "fast-radio",
+          "fast-radio-group",
+          "fast-select",
+          "fast-skeleton",
+          "fast-slider",
+          "fast-slider-label",
+          "fast-switch",
+          "fast-tabs",
+          "fast-tab",
+          "fast-text-area",
+          "fast-text-field",
+          "fast-tooltip",
+          "fast-tree-view",
+          "fast-tree-item"
+        ]
       }
     ]
   },
+  "include": [
+    "pwabuilder-sw.ts", 
+    "src/**/*"
+  ],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

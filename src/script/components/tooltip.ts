@@ -8,6 +8,16 @@ function createTooltipId() {
   return 'tooltip-num-' + current;
 }
 
+function onMouseOverTooltip(ev: MouseEvent) {
+  if (ev.currentTarget) {
+    const target = ev.currentTarget as HTMLElement;
+    const toolTipTextEl = target.querySelector('.tooltip-text') as HTMLElement;
+    if (toolTipTextEl) {
+      openTooltip(ev, toolTipTextEl);
+    }
+  }
+}
+
 function openTooltip(ev: MouseEvent, tooltipEl: HTMLElement) {
   // the style length check looks non-ideal at first
   // but the DOM api is just not great here in the fact that
@@ -29,7 +39,7 @@ export function tooltip(buttonId: string, text: string, url?: string) {
       class="tooltip"
       appearance="stealth"
       aria-labelledby="${tooltipId}"
-      @mouseover="${($event) => openTooltip($event, $event.currentTarget.querySelector('.tooltip-text'))}"
+      @mouseover="${($event: MouseEvent) => onMouseOverTooltip($event)}"
     >
       <img
         src="assets/images/help-outline.svg"

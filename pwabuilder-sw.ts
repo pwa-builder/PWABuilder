@@ -15,10 +15,10 @@ self.addEventListener('message', (event: MessageEvent) => {
 // https://developers.google.com/web/tools/workbox/modules/workbox-strategies#stale-while-revalidate
 registerRoute(
   ({ url }) =>
-    url.origin === 'https://pwabuilder-tests-dev.azurewebsites.net' ||
+    url.origin === 'https://pwabuilder-tests.azurewebsites.net' ||
     url.origin ===
-      'https://pwabuilder-serviceworker-finder.centralus.cloudapp.azure.com',
-  new StaleWhileRevalidate()
+    'https://pwabuilder-serviceworker-finder.centralus.cloudapp.azure.com',
+  new StaleWhileRevalidate({})
 );
 
 registerRoute(

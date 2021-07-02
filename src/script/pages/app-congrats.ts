@@ -24,10 +24,10 @@ import '../components/app-modal';
 import '../components/app-card';
 import '../components/resource-hub';
 
-import { getPlatformsGenerated } from '../services/congrats';
+import { getPlatformsGenerated, GeneratedPlatforms } from '../services/congrats';
 import { fileSave } from 'browser-fs-access';
 import { Router } from '@vaadin/router';
-import { generatePackage, platform } from '../services/publish';
+import { generatePackage, Platform } from '../services/publish';
 import { BlogPost, allPosts } from '../services/blog';
 
 import { localeStrings } from '../../locales';
@@ -40,7 +40,7 @@ export class AppCongrats extends LitElement {
 
   @state() isDeskTopView = this.mql.matches;
 
-  @state() generatedPlatforms;
+  @state() generatedPlatforms: GeneratedPlatforms | null = null;
 
   @state() generating = false;
 
@@ -485,7 +485,7 @@ export class AppCongrats extends LitElement {
     }
   }
 
-  async generate(type: platform, form?: HTMLFormElement) {
+  async generate(type: Platform, form?: HTMLFormElement) {
     try {
       this.generating = true;
 
@@ -493,9 +493,9 @@ export class AppCongrats extends LitElement {
 
       if (packageData) {
         if (packageData.type === 'test') {
-          this.testBlob = packageData.blob;
+          this.testBlob = packageData.blob || undefined;
         } else {
-          this.blob = packageData.blob;
+          this.blob = packageData.blob || undefined;
         }
       }
 
@@ -504,8 +504,7 @@ export class AppCongrats extends LitElement {
       this.open_windows_options = false;
     } catch (err) {
       console.error(err);
-
-      this.showAlertModal(err);
+      this.showAlertModal(err as string);
     }
   }
 
@@ -610,7 +609,7 @@ export class AppCongrats extends LitElement {
         <windows-form
           slot="modal-form"
           .generating=${this.generating}
-          @init-windows-gen="${ev => this.generate('windows', ev.detail.form)}"
+          @init-windows-gen="${(ev: CustomEvent) => this.generate('windows', ev.detail.form)}"
         ></windows-form>
       </app-modal>
 
@@ -623,7 +622,7 @@ export class AppCongrats extends LitElement {
         <android-form
           slot="modal-form"
           .generating=${this.generating}
-          @init-android-gen="${ev => this.generate('android', ev.detail.form)}"
+          @init-android-gen="${(ev: CustomEvent) => this.generate('android', ev.detail.form)}"
         ></android-form>
       </app-modal>
 

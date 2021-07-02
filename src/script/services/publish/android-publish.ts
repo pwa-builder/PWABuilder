@@ -4,7 +4,7 @@ import {
   generatePackageId,
 } from '../../utils/android-validation';
 import { env } from '../../utils/environment';
-import { findSuitableIcon } from '../../utils/icons';
+import { findSuitableIcon, findBestAppIcon } from '../../utils/icons';
 import { Manifest } from '../../utils/interfaces';
 import { getURL } from '../app-info';
 import { getManifest, getManiURL } from '../manifest';
@@ -89,7 +89,7 @@ export async function createAndroidPackageOptionsFromForm(form: HTMLFormElement,
   }
 
   const appName = form.appName.value || manifest.short_name || manifest.name || 'My PWA';
-  const packageName = generatePackageId(form.packageId.value || new URL(pwaURL).host);
+  const packageName = generatePackageId(form.packageId.value || new URL(pwaURL).hostname);
   // Use standalone display mode unless the manifest has fullscreen specified.
   const display =
     manifest.display === 'fullscreen' ? 'fullscreen' : 'standalone';
@@ -178,15 +178,7 @@ export async function createAndroidPackageOptionsFromManifest(localManifest?: Ma
     manifest.display === 'fullscreen' ? 'fullscreen' : 'standalone';
 
   const manifestIcons = manifest.icons || [];
-  const icon =
-    findSuitableIcon(manifestIcons, 'any', 512, 512, 'image/png') ||
-    findSuitableIcon(manifestIcons, 'any', 192, 192, 'image/png') ||
-    findSuitableIcon(manifestIcons, 'any', 512, 512, 'image/jpeg') ||
-    findSuitableIcon(manifestIcons, 'any', 192, 192, 'image/jpeg') ||
-    findSuitableIcon(manifestIcons, 'any', 512, 512, undefined) || // A 512x512 or larger image with unspecified type
-    findSuitableIcon(manifestIcons, 'any', 192, 192, undefined) || // A 512x512 or larger image with unspecified type
-    findSuitableIcon(manifestIcons, 'any', 0, 0, undefined); // Welp, we tried. Any image of any size, any type.
-
+  const icon = findBestAppIcon(manifestIcons);
   if (!icon) {
     throw new Error(
       "Can't find a suitable icon to use for the Android package. Ensure your manifest has a square, large (512x512 or better) PNG icon."
@@ -221,7 +213,7 @@ export async function createAndroidPackageOptionsFromManifest(localManifest?: Ma
         enabled: false,
       },
     },
-    host: 'https://' + new URL(manifest.start_url || '/', maniURL).host,
+    host: pwaURL,
     iconUrl: getAbsoluteUrl(icon.src, maniURL),
     includeSourceCode: false,
     isChromeOSOnly: false,
@@ -273,6 +265,12 @@ function getAbsoluteUrl(
 }
 
 function getStartUrlRelativeToHost(startUrl: string | null | undefined, manifestUrl: URL) {
+
+  // Example with expected output:
+  // - IN: manifestUrl = "https://www.foo.com/subpath/manifest.json"
+  // - IN: startUrl = "./index.html?foo=1"
+  // - OUT: "/subpath/index.html?foo=1"
+
   // The start URL we send to the CloudAPK service should be a URL relative to the host.
   const absoluteStartUrl = new URL(startUrl || '/', manifestUrl);
   return absoluteStartUrl.pathname + (absoluteStartUrl.search || '');

@@ -144,7 +144,7 @@ export class DropdownMenu extends LitElement {
                     <ion-icon name="checkmark-outline"></ion-icon>
                   </span> `
                 : undefined}
-              <span>${item.formatted || item}</span>
+              <span>${(item as langCodes).formatted || item}</span>
             </fast-menu-item>`;
           })}
         </fast-menu>

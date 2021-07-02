@@ -1,5 +1,5 @@
 import { env } from '../../utils/environment';
-import { findSuitableIcon } from '../../utils/icons';
+import { findBestAppIcon } from '../../utils/icons';
 import { Manifest } from '../../utils/interfaces';
 import {
   generateWindowsPackageId,
@@ -25,7 +25,7 @@ export async function generateWindowsPackage(
   if (validationErrors.length > 0 || !windowsOptions) {
     throw new Error(
       'Invalid Windows options. ' +
-        validationErrors.map(a => a.error).join('\n')
+      validationErrors.map(a => a.error).join('\n')
     );
   }
 
@@ -40,7 +40,7 @@ export async function generateWindowsPackage(
 
       //set generated flag
       windows_generated = true;
-      
+
       return data;
     } else {
       const responseText = await response.text();
@@ -80,17 +80,7 @@ export async function createWindowsPackageOptionsFromManifest(localManifest?: Ma
     const packageID = generateWindowsPackageId(new URL(pwaURL).hostname);
     const manifestIcons = manifest.icons || [];
 
-    const icon =
-      findSuitableIcon(manifestIcons, 'any', 512, 512, 'image/png') ||
-      findSuitableIcon(manifestIcons, 'any', 192, 192, 'image/png') ||
-      findSuitableIcon(manifestIcons, 'any', 512, 512, 'image/jpeg') ||
-      findSuitableIcon(manifestIcons, 'any', 192, 192, 'image/jpeg') ||
-      findSuitableIcon(manifestIcons, 'any', 512, 512, undefined) || // Fallback to a 512x512 with an undefined type.
-      findSuitableIcon(manifestIcons, 'any', 192, 192, undefined) || // Fallback to a 192x192 with an undefined type.
-      findSuitableIcon(manifestIcons, 'any', 0, 0, 'image/png') || // No large PNG and no large JPG? See if we have *any* PNG
-      findSuitableIcon(manifestIcons, 'any', 0, 0, 'image/jpeg') || // No large PNG and no large JPG? See if we have *any* JPG
-      findSuitableIcon(manifestIcons, 'any', 0, 0, undefined); // Welp, we sure tried. Grab any image available.
-
+    const icon = findBestAppIcon(manifestIcons);
     const options: WindowsPackageOptions = {
       name: name as string,
       packageId: packageID,
@@ -113,7 +103,7 @@ export async function createWindowsPackageOptionsFromManifest(localManifest?: Ma
       manifestUrl: maniURL,
       manifest: manifest,
       images: {
-        baseImage: icon && icon.src ? icon.src : '',
+        baseImage: icon?.src || '',
         backgroundColor: 'transparent',
         padding: 0.3,
       },
@@ -130,54 +120,54 @@ export async function createWindowsPackageOptionsFromManifest(localManifest?: Ma
 
 export async function createWindowsPackageOptionsFromForm(
   form: HTMLFormElement
-) {
+): Promise<WindowsPackageOptions> {
   const manifest = await getManifest();
-
-  if (manifest) {
-    const name = form.appName.value || manifest.short_name || manifest.name;
-    const packageID = form.packageId.value;
-
-    const manifestIcons = manifest.icons || [];
-
-    const icon =
-      findSuitableIcon(manifestIcons, 'any', 512, 512, 'image/png') ||
-      findSuitableIcon(manifestIcons, 'any', 192, 192, 'image/png') ||
-      findSuitableIcon(manifestIcons, 'any', 512, 512, 'image/jpeg') ||
-      findSuitableIcon(manifestIcons, 'any', 192, 192, 'image/jpeg') ||
-      findSuitableIcon(manifestIcons, 'any', 512, 512, undefined) || // Fallback to a 512x512 with an undefined type.
-      findSuitableIcon(manifestIcons, 'any', 192, 192, undefined) || // Fallback to a 192x192 with an undefined type.
-      findSuitableIcon(manifestIcons, 'any', 0, 0, 'image/png') || // No large PNG and no large JPG? See if we have *any* PNG
-      findSuitableIcon(manifestIcons, 'any', 0, 0, 'image/jpeg') || // No large PNG and no large JPG? See if we have *any* JPG
-      findSuitableIcon(manifestIcons, 'any', 0, 0, undefined); // Welp, we sure tried. Grab any image available.*/
-
-    const options: WindowsPackageOptions = {
-      name: name,
-      packageId: packageID,
-      url: form.url.value || getURL(),
-      version: form.appVersion.value || "1.0.1",
-      allowSigning: true,
-      publisher: {
-        displayName: form.publisherDisplayName.value,
-        commonName: form.publisherId.value,
-      },
-      generateModernPackage: true,
-      classicPackage: {
-        generate: true,
-        version: form.classicVersion.value || '1.0.0',
-        url: form.url.value || getURL(),
-      },
-      edgeHtmlPackage: {
-        generate: false,
-      },
-      manifestUrl: form.manifestUrl.value || getManiURL(),
-      manifest: manifest,
-      images: {
-        baseImage: form.iconUrl.value || icon,
-        backgroundColor: 'transparent',
-        padding: 0.3,
-      },
-    };
-
-    return options;
+  if (!manifest) {
+    return createEmptyPackageOptions();
   }
+
+  const name = form.appName.value || manifest.short_name || manifest.name;
+  const packageID = form.packageId.value;
+  const manifestIcons = manifest.icons || [];
+  const icon = findBestAppIcon(manifestIcons);
+  return {
+    name: name,
+    packageId: packageID,
+    url: form.url.value || getURL(),
+    version: form.appVersion.value || "1.0.1",
+    allowSigning: true,
+    publisher: {
+      displayName: form.publisherDisplayName.value,
+      commonName: form.publisherId.value,
+    },
+    generateModernPackage: true,
+    classicPackage: {
+      generate: true,
+      version: form.classicVersion.value || '1.0.0',
+      url: form.url.value || getURL(),
+    },
+    edgeHtmlPackage: {
+      generate: false,
+    },
+    manifestUrl: form.manifestUrl.value || getManiURL(),
+    manifest: manifest,
+    images: {
+      baseImage: form.iconUrl.value || icon,
+      backgroundColor: 'transparent',
+      padding: 0.3,
+    }
+  };
+}
+
+function createEmptyPackageOptions(): WindowsPackageOptions {
+  return {
+    name: '',
+    packageId: '',
+    url: '',
+    version: '',
+    publisher: {
+      displayName: '',
+      commonName: ''
+    }
+  };
 }
