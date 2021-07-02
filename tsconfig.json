@@ -43,7 +43,7 @@
           "no-unclosed-tag": "error",
           "no-unknown-attribute": "off",
           "no-unknown-event": "off",
-          "no-unknown-property": "error",
+          "no-unknown-property": "off",
           "no-unknown-property-converter": "error",
           "no-unknown-slot": "off",
           "no-unknown-tag-name": "error"
