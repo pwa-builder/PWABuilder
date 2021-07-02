@@ -360,7 +360,7 @@ export function validateUrl(url: string, base?: string): string | null {
     new URL(url, base);
     return null;
   } catch (urlError) {
-    return urlError;
+    return `${urlError}`;
   }
 }
 

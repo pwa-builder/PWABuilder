@@ -9,6 +9,10 @@ export let web_generated = false;
 export async function generateWebPackage() {
   try {
     const manifest = await getManifest();
+    if (!manifest) {
+      throw new Error('No manifest available, unable to generate web package');
+    }
+
     const genManifest = getGeneratedManifest();
     const url = getURL();
     const chosenSW = getChosenServiceWorker();
@@ -61,8 +65,8 @@ function createNewFormDataWithManifest(manifest: Manifest): FormData {
   const length = keys.length;
 
   for (let i = 0; i < length; i++) {
-    const key = keys[i];
-    let val = manifest[key as keyof Manifest];
+    const key = keys[i] as keyof Manifest;
+    let val = manifest[key];
 
     if (Array.isArray(val)) {
       const arrLength = val.length;
@@ -74,13 +78,13 @@ function createNewFormDataWithManifest(manifest: Manifest): FormData {
           arrVal = JSON.stringify(arrVal);
         }
 
-        form.append(key, arrVal);
+        form.append(key as string, arrVal);
       }
     } else if (typeof val === 'object') {
       val = JSON.stringify(val);
     }
 
-    form.append(key, val);
+    form.append(key as string, val);
   }
 
   return form;
