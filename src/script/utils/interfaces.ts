@@ -9,36 +9,36 @@ export enum AppEvents {
 }
 
 export interface Manifest {
-  backgroundColor: string | undefined;
+  background_color: string | undefined;
   description: string | undefined;
   dir: string | undefined;
   display: string;
   lang: string | undefined;
   name: string | undefined;
   orientation?:
-    | 'any'
-    | 'natural'
-    | 'landscape'
-    | 'portrait'
-    | 'portrait-primary'
-    | 'portrait-secondary'
-    | 'landscape-primary'
-    | 'landscape-secondary'
-    | null;
-  preferRelatedApplications?: boolean;
-  relatedApplications?: RelatedApplication[];
+  | 'any'
+  | 'natural'
+  | 'landscape'
+  | 'portrait'
+  | 'portrait-primary'
+  | 'portrait-secondary'
+  | 'landscape-primary'
+  | 'landscape-secondary'
+  | null;
+  prefer_related_applications?: boolean;
+  related_applications?: RelatedApplication[];
   scope: string | undefined;
-  shortName: string | undefined;
-  startUrl: string | undefined;
-  themeColor: string | undefined;
+  short_name: string | undefined;
+  start_url: string | undefined;
+  theme_color: string | undefined;
   generated?: boolean | undefined;
   url: string | undefined;
   shortcuts?: ShortcutItem[];
   categories?: string[];
-  screenshots?: Icon[];
-  iarcRatingId?: string;
+  screenshots?: Screenshot[];
+  iarc_rating_id?: string;
   icons?: Icon[];
-  shareTarget?: ShareTarget;
+  share_target?: ShareTarget;
 
   // for custom properties as well as using object notations: manifest[key]
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -60,7 +60,11 @@ export interface Icon {
   type?: string;
   sizes?: string;
   purpose?: 'any' | 'maskable' | 'monochrome';
-  platform?: string;
+  label?: string;
+}
+
+export interface Screenshot extends Icon {
+  platform?: 'narrow' | 'wide' | 'android' | 'chromeos' | 'ios' | 'kaios' | 'macos' | 'windows' | 'xbox' | 'chrome_web_store' | 'play' | 'itunes' | 'microsoft-inbox' | 'microsoft-store';
 }
 
 export interface RelatedApplication {

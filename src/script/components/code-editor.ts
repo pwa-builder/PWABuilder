@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, property, state, query } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { EditorState } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import debounce from 'lodash-es/debounce';
@@ -85,7 +85,7 @@ export class CodeEditor extends LitElement {
         this.copyText = "Copied";
         this.copied = true;
       }
-      catch(err) {
+      catch (err) {
         // We should never really end up here but just in case
         // lets put the error in the console
         console.warn("Copying failed with the following err", err);
@@ -96,9 +96,10 @@ export class CodeEditor extends LitElement {
   render() {
     return html`
       <div id="copy-block">
-        <app-button ?disabled="${this.copied}" @click="${() => this.copyManifest()}" appearance="outline" class="secondary">${this.copyText}</app-button>
+        <app-button ?disabled="${this.copied}" @click="${() => this.copyManifest()}" appearance="outline" class="secondary">
+          ${this.copyText}</app-button>
       </div>
-
+      
       <div id=${this.editorId} class="editor-container ${this.className}"></div>
     `;
   }

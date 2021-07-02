@@ -31,7 +31,7 @@ export function locale(key: string): string {
 
   let value: any | string = localeStrings;
   for (let i = 0; i < length; i++) {
-    value = value[steps[i]];
+    value = value[steps[i] as any];
   }
 
   if (typeof value !== 'string') {

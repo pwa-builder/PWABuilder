@@ -3,8 +3,10 @@ import {
   css,
   html,
 } from 'lit';
-import { customElement,
-  state, } from "lit/decorators.js"
+import {
+  customElement,
+  state,
+} from "lit/decorators.js"
 import { Router } from '@vaadin/router';
 
 import { smallBreakPoint } from '../utils/css/breakpoints';
@@ -195,7 +197,8 @@ export class AppTesting extends LitElement {
 
     for (let i = 0; i < phrases.length; i++) {
       if (this.loading === true) {
-        await this.setPhrase(phrases[i], i);
+        const phrase = phrases[i];
+        await this.setPhrase(phrase!, i);
       }
     }
   }
@@ -210,14 +213,14 @@ export class AppTesting extends LitElement {
   };
 
   render() {
-    return html` <app-header></app-header>
-      <div id="glass">
-        <div id="testing-container">
+    return html`<app-header></app-header>
+<div id="glass">
+  <div id="testing-container">
 
-          <span>${this.currentPhrase}</span>
+    <span>${this.currentPhrase}</span>
 
-          ${this.loading ? html`<fast-progress></fast-progress>` : null}
-        </div>
-      </div>`;
+    ${this.loading ? html`<fast-progress></fast-progress>` : null}
+  </div>
+</div>`;
   }
 }

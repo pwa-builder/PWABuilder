@@ -54,7 +54,7 @@ export function validateUrl(url: string, base?: string): string | null {
   }
 }
 
-export async function cleanUrl(url: string) {
+export async function cleanUrl(url: string): Promise<string> {
   let cleanedUrl: string | undefined;
 
   if (url && !url.startsWith('http') && !url.startsWith('https')) {
@@ -80,11 +80,11 @@ export async function cleanUrl(url: string) {
 
 export function isValidURL(str: string) {
   // from https://stackoverflow.com/a/5717133
-  var pattern = new RegExp('^(https?:\\/\\/)?'+
-    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ 
-    '((\\d{1,3}\\.){3}\\d{1,3}))'+
-    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+
-    '(\\?[;&a-z\\d%_.~+=-]*)?'+
-    '(\\#[-a-z\\d_]*)?$','i');
+  var pattern = new RegExp('^(https?:\\/\\/)?' +
+    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
+    '((\\d{1,3}\\.){3}\\d{1,3}))' +
+    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
+    '(\\?[;&a-z\\d%_.~+=-]*)?' +
+    '(\\#[-a-z\\d_]*)?$', 'i');
   return !!pattern.test(str);
 }

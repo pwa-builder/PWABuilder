@@ -161,7 +161,7 @@ export class WindowsForm extends LitElement {
     return html`
       <form
         id="windows-options-form"
-        @submit="${ev => this.initGenerate(ev)}"
+        @submit="${(ev: InputEvent) => this.initGenerate(ev)}"
         slot="modal-form"
         style="width: 100%"
       >

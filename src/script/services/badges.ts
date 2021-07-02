@@ -23,7 +23,8 @@ export function giveOutBadges() {
   sessionStorage.removeItem("current_badges");
 
   if (results) {
-    const hasMani = results.manifest[0].result;
+    const firstManifest = typeof results.manifest === "boolean" ? null : results.manifest[0];
+    const hasMani = firstManifest?.result;
     const hasSW = results.service_worker[0]?.result;
     const security = results.security[0]?.result;
 
@@ -33,50 +34,35 @@ export function giveOutBadges() {
     );
 
     if (hasMani) {
-      const badge = possible_badges.find(badge => {
-        if (badge.name === 'Manifest') return badge;
-      });
-
+      const badge = possible_badges.find(b => b.name === 'Manifest');
       if (badge) {
         current_badges.push(badge);
       }
     }
 
     if (hasSW) {
-      const badge = possible_badges.find(badge => {
-        if (badge.name === 'Service Worker') return badge;
-      });
-
+      const badge = possible_badges.find(b => b.name === 'Service Worker');
       if (badge) {
         current_badges.push(badge);
       }
     }
 
     if (security) {
-      const badge = possible_badges.find(badge => {
-        if (badge.name === 'Security') return badge;
-      });
-
+      const badge = possible_badges.find(b => b.name === 'Security');
       if (badge) {
         current_badges.push(badge);
       }
     }
 
     if (hasMani && hasSW && security) {
-      const badge = possible_badges.find(badge => {
-        if (badge.name === 'PWA') return badge;
-      });
-
+      const badge = possible_badges.find(b => b.name === 'PWA');
       if (badge) {
         current_badges.push(badge);
       }
     }
 
     if (hasMani && hasSW && security && has_good_icon) {
-      const badge = possible_badges.find(badge => {
-        if (badge.name === 'Store Ready') return badge;
-      });
-
+      const badge = possible_badges.find(b => b.name === 'Store Ready');
       if (badge) {
         current_badges.push(badge);
       }

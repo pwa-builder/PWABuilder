@@ -8,7 +8,7 @@ import { mediumBreakPoint, smallBreakPoint } from '../utils/css/breakpoints';
 @customElement('score-results')
 export class ScoreResults extends LitElement {
   @property({ attribute: false }) testResults: Array<TestResult> | boolean | undefined;
-  @property() scoreMessage: string;
+  @property() scoreMessage: string = '';
   @state() organizedResults: OrganizedResults | undefined;
 
   static get styles() {

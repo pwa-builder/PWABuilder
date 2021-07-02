@@ -50,12 +50,9 @@ import { generateMissingImagesBase64 } from '../services/icon_generator';
 import { generateScreenshots } from '../services/screenshots';
 import { validateScreenshotUrlsList } from '../utils/manifest-validation';
 import {
-  largeBreakPoint,
   mediumBreakPoint,
   smallBreakPoint,
-  xLargeBreakPoint,
-  xxLargeBreakPoint,
-  xxxLargeBreakPoint,
+  xLargeBreakPoint
 } from '../utils/css/breakpoints';
 import { hidden_sm } from '../utils/css/hidden';
 import { generateAndDownloadIconZip } from '../services/download_icons';
@@ -77,7 +74,7 @@ export class AppManifest extends LitElement {
   @property({ type: Boolean }) uploadModalOpen = false;
   @state() uploadButtonDisabled = true;
   @state() uploadSelectedImageFile: Lazy<File>;
-  @state() uploadImageObjectUrl: string;
+  @state() uploadImageObjectUrl: string = '';
 
   @state() generateIconButtonDisabled = true;
 
@@ -93,13 +90,13 @@ export class AppManifest extends LitElement {
   protected backgroundColorRadioValue: ColorRadioValues = 'none';
 
   @state()
-  protected backgroundColor: string;
+  protected backgroundColor: string | undefined;
 
   @state()
   protected themeColorRadioValue: ColorRadioValues = 'none';
 
   @state()
-  protected themeColor: string;
+  protected themeColor: string | undefined;
 
   @state()
   protected awaitRequest = false;
@@ -284,8 +281,8 @@ export class AppManifest extends LitElement {
 
         .screenshot,
         .screenshot img {
-          width: 205px;
-          height: 135px;
+          max-width: 205px;
+          max-height: 135px;
         }
 
         fast-accordion-item::part(icon) {
@@ -671,10 +668,8 @@ export class AppManifest extends LitElement {
   }
 
   renderBackgroundColorSettings() {
-    this.backgroundColor = this.manifest
-      ? this.manifest?.background_color
-      : undefined;
-    this.themeColor = this.manifest ? this.manifest?.theme_color : undefined;
+    this.backgroundColor = this.manifest?.background_color || undefined;
+    this.themeColor = this.manifest?.theme_color || undefined;
 
     return html`
       <div class="setting-items inputs color">
@@ -1002,11 +997,10 @@ export class AppManifest extends LitElement {
 
     this.awaitRequest = false;
 
-    const uploadModal = (await this.shadowRoot.getElementById(
-      'uploadModal'
-    )) as ShadowRootQuery<AppModalElement>;
-
-    uploadModal.close();
+    const uploadModal = this.shadowRoot?.getElementById('uploadModal') as ShadowRootQuery<AppModalElement>;
+    if (uploadModal) {
+      uploadModal.close();
+    }
   }
 
   async handleDeleteImage(event: Event) {
@@ -1088,7 +1082,7 @@ export class AppManifest extends LitElement {
       if (this.manifest && this.manifest.icons) {
         await generateAndDownloadIconZip(
           this.manifest.icons.map(icon => {
-            icon.src = this.handleImageUrl(icon);
+            icon.src = this.handleImageUrl(icon) || '';
             return icon;
           })
         );

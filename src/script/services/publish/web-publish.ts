@@ -62,7 +62,7 @@ function createNewFormDataWithManifest(manifest: Manifest): FormData {
 
   for (let i = 0; i < length; i++) {
     const key = keys[i];
-    let val = manifest[key];
+    let val = manifest[key as keyof Manifest];
 
     if (Array.isArray(val)) {
       const arrLength = val.length;

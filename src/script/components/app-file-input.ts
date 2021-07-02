@@ -11,7 +11,7 @@ import { FileInputElement } from '../utils/interfaces.components';
 
 @customElement('app-file-input')
 export class FileInput extends LitElement implements FileInputElement {
-  @property({ type: String, attribute: true }) inputId: string;
+  @property({ type: String, attribute: true }) inputId = '';
   @query('.file-input') fileInput: Lazy<HTMLInputElement>;
 
   static get styles() {
@@ -26,16 +26,16 @@ export class FileInput extends LitElement implements FileInputElement {
     ];
   }
 
-  get input() {
+  get input(): any {
     return this.fileInput;
   }
 
-  get value() {
+  get value(): any {
     return this.fileInput?.value;
   }
 
-  get files() {
-    return this.fileInput?.files;
+  get files(): any {
+    return this.fileInput?.files || undefined;
   }
 
   constructor() {
@@ -45,19 +45,11 @@ export class FileInput extends LitElement implements FileInputElement {
   render() {
     return html`
       <div>
-        <fast-button
-          class="file-button"
-          appearance="lightweight"
-          @click=${this.clickModalInput}
-          >${this.buttonText()}</fast-button
-        >
-        <input
-          id="${ifDefined(this.inputId)}"
-          class="file-input hidden"
-          type="file"
-          aria-hidden="true"
-          @change=${this.handleModalInputFileChosen}
-        />
+        <fast-button class="file-button" appearance="lightweight" @click=${this.clickModalInput}>
+          ${this.buttonText()}
+        </fast-button>
+        <input id="${ifDefined(this.inputId)}" class="file-input hidden" type="file" aria-hidden="true"
+          @change=${this.handleModalInputFileChosen} />
       </div>
     `;
   }

@@ -24,9 +24,8 @@ let testResult: ManifestDetectionResult | undefined;
 async function getManifestViaFilePost(
   url: string
 ): Promise<ManifestDetectionResult> {
-  const manifestTestUrl = `${
-    env.testAPIUrl
-  }/WebManifest?site=${encodeURIComponent(url)}`;
+  const manifestTestUrl = `${env.testAPIUrl
+    }/WebManifest?site=${encodeURIComponent(url)}`;
   const response = await fetch(manifestTestUrl, {
     method: 'POST',
   });
@@ -130,6 +129,7 @@ export async function fetchManifest(
       knownGoodUrl = await cleanUrl(url);
     } catch (err) {
       reject(err);
+      return;
     }
 
     setURL(knownGoodUrl);
@@ -144,7 +144,7 @@ export async function fetchManifest(
     const promiseAnyOrPolyfill: (
       promises: Promise<ManifestDetectionResult>[]
     ) => Promise<ManifestDetectionResult> = promises =>
-      Promise['any'] ? Promise['any'](promises) : promiseAnyPolyfill(promises);
+        Promise['any'] ? Promise['any'](promises) : promiseAnyPolyfill(promises);
 
     try {
       testResult = await promiseAnyOrPolyfill(manifestDetectors);
@@ -157,8 +157,6 @@ export async function fetchManifest(
 
       if (!generatedManifest) {
         const genContent = await generateManifest(url);
-        console.log('genContent', genContent);
-  
         if (genContent) {
           generatedManifest = genContent.content;
         }
@@ -178,7 +176,7 @@ export async function getManifestGuarded(): Promise<Manifest> {
   try {
     const manifest = await getManifest();
     if (manifest) {
-      return manifest
+      return manifest;
     }
   } catch (e) {
     console.warn(e);
@@ -206,7 +204,7 @@ export async function getManifest(): Promise<Manifest | undefined> {
       }
     }
   }
-  catch(err) {
+  catch (err) {
     // the above will error if the site has no manifest of its own, 
     // we will then return our generated manifest
     console.warn(err);
@@ -216,7 +214,7 @@ export async function getManifest(): Promise<Manifest | undefined> {
   return undefined;
 }
 
-export function getGeneratedManifest() {
+export function getGeneratedManifest(): Lazy<Manifest> {
   return generatedManifest;
 }
 
@@ -251,9 +249,9 @@ export async function updateManifest(manifestUpdates: Partial<Manifest>) {
     manifest = deepmerge(manifest ? manifest as Manifest : generatedManifest as Manifest, manifestUpdates as Partial<Manifest>, {
       // customMerge: customManifestMerge, // NOTE: need to manually concat with editor changes.
     });
-  
+
     console.log('deepmerge mani', manifest);
-  
+
     emitter.dispatchEvent(
       updateManifestEvent({
         ...manifest,
@@ -264,9 +262,9 @@ export async function updateManifest(manifestUpdates: Partial<Manifest>) {
     generatedManifest = deepmerge(manifest ? manifest as Manifest : generatedManifest as Manifest, manifestUpdates as Partial<Manifest>, {
       // customMerge: customManifestMerge, // NOTE: need to manually concat with editor changes.
     });
-  
+
     console.log('deepmerge mani', manifest);
-  
+
     emitter.dispatchEvent(
       updateManifestEvent({
         ...generatedManifest,
