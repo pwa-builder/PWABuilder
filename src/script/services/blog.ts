@@ -1,4 +1,4 @@
-import { platform } from "./publish";
+import { Platform } from "./publish";
 
 export interface BlogPost {
   title: string;
@@ -8,7 +8,7 @@ export interface BlogPost {
   shareUrl: string;
   clickUrl: string;
   tags: Array<string>;
-  relatedPlatform?: platform
+  relatedPlatform?: Platform
 }
 
 export const allPosts: Array<BlogPost> = [

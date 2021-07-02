@@ -172,7 +172,7 @@ export function getManiURL() {
   return maniURL;
 }
 
-export async function getManifestGuarded(): Promise<Manifest> {
+export async function getManifestGuarded(): Promise<Manifest | undefined> {
   try {
     const manifest = await getManifest();
     if (manifest) {
@@ -233,7 +233,7 @@ async function generateManifest(url: string): Promise<ManifestDetectionResult> {
     return data;
   } catch (err) {
     console.error(`Error generating manifest: ${err}`);
-    return err;
+    throw err;
   }
 }
 
