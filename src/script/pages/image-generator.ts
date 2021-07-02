@@ -318,6 +318,7 @@ export class ImageGenerator extends LitElement {
       const errorMessage = 'No file available to generate zip';
       console.error(errorMessage);
       this.error = errorMessage;
+      return;
     }
 
     try {
