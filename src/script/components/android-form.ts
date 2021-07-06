@@ -700,6 +700,20 @@ export class AndroidForm extends LitElement {
               </div>
 
               <div class="form-group">
+                <label for="webManifestUrlInput">
+                  Manifest URL
+                </label>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="webManifestUrlInput"
+                  placeholder="https://myawesomepwa.com/manifest.json"
+                  name="webManifestUrl"
+                  .value="${this.default_options?.webManifestUrl || ''}"
+                />
+              </div>
+
+              <div class="form-group">
                 <label for="splashFadeoutInput"
                   >Splash screen fade out duration (ms)</label
                 >
