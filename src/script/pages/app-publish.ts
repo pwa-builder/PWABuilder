@@ -409,29 +409,6 @@ export class AppPublish extends LitElement {
     }
   }
 
-  async grabBackupManifest() {
-    console.error(
-      'Error generating package because manifest information is missing, trying fallback'
-    );
-    const search = new URLSearchParams(location.search);
-    let site: string | null = null;
-    if (search) {
-      site = search.get('site');
-    }
-
-    let localManifest: Manifest | null = null;
-
-    if (site) {
-      const maniResults = await fetchManifest(site);
-
-      if (maniResults && maniResults.content) {
-        localManifest = maniResults.content;
-      }
-    }
-
-    return localManifest;
-  }
-
   async generate(type: platform, form?: HTMLFormElement, signingFile?: string) {
     console.log('generating');
     if (type === 'windows') {
