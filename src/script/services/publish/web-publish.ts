@@ -80,11 +80,13 @@ function createNewFormDataWithManifest(manifest: Manifest): FormData {
 
         form.append(key as string, arrVal);
       }
-    } else if (typeof val === 'object') {
-      val = JSON.stringify(val);
-    }
+    } else {
+      if (typeof val === 'object') {
+        val = JSON.stringify(val);
+      }
 
-    form.append(key as string, val);
+      form.append(key as string, val);
+    }
   }
 
   return form;
