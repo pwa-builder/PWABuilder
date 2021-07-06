@@ -142,7 +142,7 @@ export async function createAndroidPackageOptionsFromForm(form: HTMLFormElement,
     startUrl: getStartUrlRelativeToHost(form.startUrl.value || manifest.start_url, new URL(maniURL)),
     themeColor: form.themeColor.value || manifest.theme_color || '#FFFFFF',
     shareTarget: manifest.share_target,
-    webManifestUrl: form.maniURL ? form.maniURL.value : maniURL,
+    webManifestUrl: form.webManifestUrl.value || maniURL,
   };
 }
 

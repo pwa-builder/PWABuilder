@@ -450,7 +450,7 @@ export class AppPublish extends LitElement {
           if (maniCheck === false) {
             err = 'Your PWA does not have a valid Web Manifest';
           } else if (baseIcon === false) {
-            err = 'Your PWA needs atleast a 512x512 PNG icon';
+            err = 'Your PWA needs at least a 512x512 PNG icon';
           } else if (validURL === false) {
             err = 'Your PWA does not have a valid URL';
           }
@@ -478,7 +478,8 @@ export class AppPublish extends LitElement {
           if (maniCheck === false) {
             err = 'Your PWA does not have a valid Web Manifest';
           } else if (baseIcon === false) {
-            err = 'Your PWA needs atleast a 512x512 PNG icon';
+            console.log("zanz ", baseIcon, this.finalChecks);
+            err = 'Your PWA needs at least a 512x512 PNG icon';
           } else if (validURL === false) {
             err = 'Your PWA does not have a valid URL';
           } else if (offlineCheck === false) {
