@@ -853,7 +853,7 @@ export class AndroidForm extends LitElement {
               </div>
 
               <div class="form-group">
-                <label>${localeStrings.text.android.titles.fullscreen}</label>
+                <label>${localeStrings.text.android.titles.notification}</label>
                 <div class="form-check">
                   <input
                     .defaultChecked="${true}"
