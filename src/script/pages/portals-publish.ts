@@ -1,6 +1,5 @@
 import { css, html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 
 import '../components/app-header';
 import '../components/app-card';
@@ -9,10 +8,8 @@ import '../components/app-button';
 import '../components/loading-button';
 import '../components/windows-form';
 import '../components/android-form';
-import { Router } from '@vaadin/router';
 
 import {
-  BreakpointValues,
   smallBreakPoint,
   largeBreakPoint,
   mediumBreakPoint,
@@ -23,29 +20,22 @@ import {
 import style from '../../../styles/layout-defaults.css';
 import { fastAnchorCss } from '../utils/css/fast-elements';
 import { fileSave } from 'browser-fs-access';
-import { fetchManifest } from '../services/manifest';
-import { Manifest } from '../utils/interfaces';
+
 import {
   checkResults,
-  finalCheckForPublish,
 } from '../services/publish/publish-checks';
 import { generatePackage, Platform } from '../services/publish';
 import { getReportErrorUrl } from '../utils/error';
 import { styles as ToolTipStyles } from '../components/tooltip';
 import { localeStrings } from '../../locales';
-@customElement('app-publish')
-export class AppPublish extends LitElement {
+
+@customElement('portals-publish')
+export class PortalsPublish extends LitElement {
   @state() errored = false;
   @state() errorMessage: string | undefined;
 
   @state() blob: Blob | File | null | undefined;
   @state() testBlob: Blob | File | null | undefined;
-
-  @state() mql = window.matchMedia(
-    `(min-width: ${BreakpointValues.largeUpper}px)`
-  );
-
-  @state() isDeskTopView = this.mql.matches;
 
   @state() open_windows_options = false;
   @state() open_android_options = false;
@@ -59,10 +49,6 @@ export class AppPublish extends LitElement {
 
   constructor() {
     super();
-
-    this.mql.addEventListener('change', e => {
-      this.isDeskTopView = e.matches;
-    });
   }
 
   static get styles() {
@@ -77,14 +63,6 @@ export class AppPublish extends LitElement {
 
         .header p {
           width: min(100%, 600px);
-        }
-
-        #tablet-sidebar {
-          display: none;
-        }
-
-        #desktop-sidebar {
-          display: block;
         }
 
         #summary-block {
@@ -128,24 +106,17 @@ export class AppPublish extends LitElement {
           display: flex;
           justify-content: center;
           align-items: center;
-        }
-
-        .container .action-buttons > app-button {
-          margin: 1rem;
-        }
-
-        .container .action-buttons fast-anchor,
-        .container .action-buttons app-button {
-          --button-width: 127px;
-          height: 44px;
-          width: var(--button-width);
+          margin-bottom: 10px;
         }
 
         .container .action-buttons fast-anchor {
-          /** 
-             Seems like a magic value but really
-             this is just to match the back button next to it
-           */
+          --button-width: 127px;
+          height: 44px;
+          width: var(--button-width);
+
+          padding-left: 10px;
+          padding-right: 10px;
+
           color: white;
           box-shadow: var(--button-shadow);
           border-radius: var(--button-radius);
@@ -181,10 +152,6 @@ export class AppPublish extends LitElement {
           font-size: var(--font-size);
           color: var(--font-color);
           max-width: 530px;
-        }
-
-        content-header::part(header) {
-          display: none;
         }
 
         .modal-image {
@@ -271,18 +238,6 @@ export class AppPublish extends LitElement {
         css`
           #report {
             max-width: 69em;
-          }
-
-          app-sidebar {
-            display: block;
-          }
-
-          #tablet-sidebar {
-            display: none;
-          }
-
-          #desktop-sidebar {
-            display: block;
           }
 
           #publish-wrapper {
@@ -401,81 +356,9 @@ export class AppPublish extends LitElement {
     ];
   }
 
-  async firstUpdated() {
-    const checks = await finalCheckForPublish();
-
-    if (checks) {
-      this.finalChecks = checks;
-    }
-  }
-
   async generate(type: platform, form?: HTMLFormElement, signingFile?: string) {
-    console.log('generating');
-    if (type === 'windows') {
-      // Final checks for Windows
-      if (this.finalChecks) {
-        const maniCheck = this.finalChecks.manifest;
-        const baseIcon = this.finalChecks.baseIcon;
-        const validURL = this.finalChecks.validURL;
-
-        if (maniCheck === false || baseIcon === false || validURL === false) {
-          this.generating = false;
-          this.open_windows_options = false;
-
-          let err = '';
-
-          if (maniCheck === false) {
-            err = 'Your PWA does not have a valid Web Manifest';
-          } else if (baseIcon === false) {
-            err = 'Your PWA needs at least a 512x512 PNG icon';
-          } else if (validURL === false) {
-            err = 'Your PWA does not have a valid URL';
-          }
-
-          this.showAlertModal(err, type);
-
-          return;
-        }
-      }
-    } else if (type === 'android') {
-      console.log('signingFile', signingFile);
-      // Final checks for Android
-      if (this.finalChecks) {
-        const maniCheck = this.finalChecks.manifest;
-        const baseIcon = this.finalChecks.baseIcon;
-        const validURL = this.finalChecks.validURL;
-        const offlineCheck = this.finalChecks.offline;
-
-        if (maniCheck === false || baseIcon === false || validURL === false) {
-          this.generating = false;
-          this.open_android_options = false;
-
-          let err = '';
-
-          if (maniCheck === false) {
-            err = 'Your PWA does not have a valid Web Manifest';
-          } else if (baseIcon === false) {
-            console.log("zanz ", baseIcon, this.finalChecks);
-            err = 'Your PWA needs at least a 512x512 PNG icon';
-          } else if (validURL === false) {
-            err = 'Your PWA does not have a valid URL';
-          } else if (offlineCheck === false) {
-            // Extra offline check for Android
-            err = 'Your PWA does not work offline';
-          }
-
-          this.showAlertModal(err, type);
-
-          return;
-        }
-      }
-    }
-
     try {
       this.generating = true;
-
-      console.log('signingFile', signingFile);
-
       
       const packageData = await generatePackage(type, form, signingFile);
 
@@ -504,7 +387,7 @@ export class AppPublish extends LitElement {
   async download() {
     if (this.blob || this.testBlob) {
       await fileSave((this.blob as Blob) || (this.testBlob as Blob), {
-        fileName: 'your_pwa.zip',
+        fileName: 'your_portals_pwa.zip',
         extensions: ['.zip'],
       });
 
@@ -542,7 +425,6 @@ export class AppPublish extends LitElement {
             <p>${platform.description}</p>
           </div>
 
-          <!-- TODO need to fix the platform action blocks text spacing for the left. -->
           <div id="platform-actions-block">
             ${platform.title.toLowerCase() === 'windows'
               ? html`
@@ -579,26 +461,9 @@ export class AppPublish extends LitElement {
                   >
                 `
               : null}
-            ${platform.title.toLowerCase() === 'samsung'
-              ? html`
-                  <app-button
-                    class="navigation"
-                    @click="${() => this.showSamsungModal()}"
-                    >Submit</app-button
-                  >
-                `
-              : null}
           </div>
         </li>`
     );
-  }
-
-  returnToFix() {
-    const resultsString = sessionStorage.getItem('results-string');
-
-    // navigate back to report-card page
-    // with current manifest results
-    Router.go(`/reportcard?results=${resultsString}`);
   }
 
   reportAnError(errorDetail: string, platform: string) {
@@ -646,10 +511,6 @@ export class AppPublish extends LitElement {
             class="button"
             .href="${this.reportPackageErrorUrl}"
             >Report A Problem</fast-anchor
-          >
-
-          <app-button @click="${() => this.returnToFix()}"
-            >Return to Manifest Options</app-button
           >
         </div>
       </app-modal>
@@ -725,36 +586,8 @@ export class AppPublish extends LitElement {
         ></android-form>
       </app-modal>
 
-      <!-- samsung modal -->
-      <app-modal
-        id="samsung-options-modal"
-        title="Your PWA has been submitted to Samsung's App Finder"
-        body="You can follow up with Samsung at pwasupport@samsung.com for status updates on your submission."
-        ?open="${this.open_samsung_modal === true}"
-        @app-modal-close="${() => this.storeOptionsCancel()}"
-      >
-      </app-modal>
-
       <div id="publish-wrapper">
         <app-header></app-header>
-
-        <div
-          id="grid"
-          class="${classMap({
-            'grid-mobile': this.isDeskTopView == false,
-          })}"
-        >
-          <app-sidebar id="desktop-sidebar"></app-sidebar>
-
-          <div>
-            <content-header class="publish">
-              <h2 slot="hero-container">Your PWA is Store Ready!</h2>
-              <p id="hero-p" slot="hero-container">
-                You are now ready to ship your PWA to the app stores!
-              </p>
-            </content-header>
-
-            <app-sidebar id="tablet-sidebar"></app-sidebar>
 
             <section id="summary-block">
               <h3>Publish your PWA to stores</h3>
@@ -781,10 +614,7 @@ export class AppPublish extends LitElement {
               </div>
 
               <div class="action-buttons">
-                <app-button @click="${() => this.returnToFix()}"
-                  >Back</app-button
-                >
-                <fast-anchor class="button" href="/congrats">Next</fast-anchor>
+                <fast-anchor class="button" href="https://blog.pwabuilder.com/docs/">Documentation</fast-anchor>
               </div>
             </section>
           </div>
@@ -794,7 +624,7 @@ export class AppPublish extends LitElement {
   }
 }
 
-type platform = 'windows' | 'android' | 'samsung';
+type platform = 'windows' | 'android';
 
 interface ICardData {
   title: string;
@@ -817,12 +647,5 @@ const platforms: ICardData[] = [
       'Publish your PWA to the Google Play Store to make your app more discoverable for Android users.',
     isActionCard: true,
     icon: '/assets/android_icon.svg',
-  },
-  {
-    title: 'Samsung',
-    description:
-      'Provide the URL to your PWA to Samsung for inclusion in the Samsung Finder app. You will need to follow up with Samsung after submission for updates on the deployment.',
-    isActionCard: true,
-    icon: '/assets/samsung_icon.svg',
-  },
+  }
 ];
