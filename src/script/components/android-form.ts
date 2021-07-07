@@ -261,7 +261,7 @@ export class AndroidForm extends LitElement {
           <div class="basic-settings">
             <div class="form-group">
               <label for="packageIdInput">
-                Package Name
+                Package ID
                 <i
                   class="fas fa-info-circle"
                   title="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
@@ -283,7 +283,7 @@ export class AndroidForm extends LitElement {
                   : 'com.contoso.app'}"
                 type="text"
                 required
-                pattern="[a-zA-Z0-9.]*$"
+                pattern="[a-zA-Z0-9._]*$"
                 name="packageId"
               />
             </div>
@@ -1239,6 +1239,7 @@ export class AndroidForm extends LitElement {
                           id="signingKeyPasswordInput"
                           name="keyPassword"
                           placeholder="Password to your signing key"
+                          minlength="6"
                           value="${this.keyPassword}"
                         />
                       </div>
@@ -1264,6 +1265,7 @@ export class AndroidForm extends LitElement {
                           id="signingKeyStorePasswordInput"
                           name="storePassword"
                           placeholder="Password to your key store"
+                          minlength="6"
                           value="${this.storePassword}"
                         />
                       </div>
