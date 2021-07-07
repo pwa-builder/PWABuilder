@@ -283,7 +283,7 @@ export class AndroidForm extends LitElement {
                   : 'com.contoso.app'}"
                 type="text"
                 required
-                pattern="[a-zA-Z0-9.]*$"
+                pattern="[a-zA-Z0-9._]*$"
                 name="packageId"
               />
             </div>
