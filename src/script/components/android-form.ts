@@ -261,7 +261,7 @@ export class AndroidForm extends LitElement {
           <div class="basic-settings">
             <div class="form-group">
               <label for="packageIdInput">
-                Package Name
+                Package ID
                 <i
                   class="fas fa-info-circle"
                   title="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
