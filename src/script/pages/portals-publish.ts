@@ -8,10 +8,8 @@ import '../components/app-button';
 import '../components/loading-button';
 import '../components/windows-form';
 import '../components/android-form';
-import { Router } from '@vaadin/router';
 
 import {
-  BreakpointValues,
   smallBreakPoint,
   largeBreakPoint,
   mediumBreakPoint,
@@ -22,11 +20,9 @@ import {
 import style from '../../../styles/layout-defaults.css';
 import { fastAnchorCss } from '../utils/css/fast-elements';
 import { fileSave } from 'browser-fs-access';
-import { fetchManifest } from '../services/manifest';
-import { Manifest } from '../utils/interfaces';
+
 import {
   checkResults,
-  finalCheckForPublish,
 } from '../services/publish/publish-checks';
 import { generatePackage, Platform } from '../services/publish';
 import { getReportErrorUrl } from '../utils/error';
@@ -41,12 +37,6 @@ export class PortalsPublish extends LitElement {
   @state() blob: Blob | File | null | undefined;
   @state() testBlob: Blob | File | null | undefined;
 
-  @state() mql = window.matchMedia(
-    `(min-width: ${BreakpointValues.largeUpper}px)`
-  );
-
-  @state() isDeskTopView = this.mql.matches;
-
   @state() open_windows_options = false;
   @state() open_android_options = false;
   @state() open_samsung_modal = false;
@@ -59,10 +49,6 @@ export class PortalsPublish extends LitElement {
 
   constructor() {
     super();
-
-    this.mql.addEventListener('change', e => {
-      this.isDeskTopView = e.matches;
-    });
   }
 
   static get styles() {
@@ -371,13 +357,8 @@ export class PortalsPublish extends LitElement {
   }
 
   async generate(type: platform, form?: HTMLFormElement, signingFile?: string) {
-    console.log('generating');
-
     try {
       this.generating = true;
-
-      console.log('signingFile', signingFile);
-
       
       const packageData = await generatePackage(type, form, signingFile);
 
@@ -406,7 +387,7 @@ export class PortalsPublish extends LitElement {
   async download() {
     if (this.blob || this.testBlob) {
       await fileSave((this.blob as Blob) || (this.testBlob as Blob), {
-        fileName: 'your_pwa.zip',
+        fileName: 'your_portals_pwa.zip',
         extensions: ['.zip'],
       });
 
@@ -444,7 +425,6 @@ export class PortalsPublish extends LitElement {
             <p>${platform.description}</p>
           </div>
 
-          <!-- TODO need to fix the platform action blocks text spacing for the left. -->
           <div id="platform-actions-block">
             ${platform.title.toLowerCase() === 'windows'
               ? html`
@@ -481,26 +461,9 @@ export class PortalsPublish extends LitElement {
                   >
                 `
               : null}
-            ${platform.title.toLowerCase() === 'samsung'
-              ? html`
-                  <app-button
-                    class="navigation"
-                    @click="${() => this.showSamsungModal()}"
-                    >Submit</app-button
-                  >
-                `
-              : null}
           </div>
         </li>`
     );
-  }
-
-  returnToFix() {
-    const resultsString = sessionStorage.getItem('results-string');
-
-    // navigate back to report-card page
-    // with current manifest results
-    Router.go(`/reportcard?results=${resultsString}`);
   }
 
   reportAnError(errorDetail: string, platform: string) {
@@ -548,10 +511,6 @@ export class PortalsPublish extends LitElement {
             class="button"
             .href="${this.reportPackageErrorUrl}"
             >Report A Problem</fast-anchor
-          >
-
-          <app-button @click="${() => this.returnToFix()}"
-            >Return to Manifest Options</app-button
           >
         </div>
       </app-modal>
