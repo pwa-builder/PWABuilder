@@ -16,6 +16,22 @@ export const emitter = new EventTarget();
 let manifest: Lazy<Manifest>;
 let maniURL: Lazy<string>;
 
+export let generated = true;
+export let boilerPlateManifest: Manifest = {
+  dir: 'auto',
+  display: 'fullscreen',
+  name: 'placeholder',
+  short_name: 'placeholder',
+  start_url: undefined,
+  scope: '/',
+  lang: 'en',
+  description: 'placeholder description',
+  theme_color: 'none',
+  background_color: 'none',
+  icons: [],
+  screenshots: [],
+};
+
 let generatedManifest: Lazy<Manifest>;
 
 let testResult: ManifestDetectionResult | undefined;
@@ -24,8 +40,9 @@ let testResult: ManifestDetectionResult | undefined;
 async function getManifestViaFilePost(
   url: string
 ): Promise<ManifestDetectionResult> {
-  const manifestTestUrl = `${env.testAPIUrl
-    }/WebManifest?site=${encodeURIComponent(url)}`;
+  const manifestTestUrl = `${
+    env.testAPIUrl
+  }/WebManifest?site=${encodeURIComponent(url)}`;
   const response = await fetch(manifestTestUrl, {
     method: 'POST',
   });
@@ -144,12 +161,21 @@ export async function fetchManifest(
     const promiseAnyOrPolyfill: (
       promises: Promise<ManifestDetectionResult>[]
     ) => Promise<ManifestDetectionResult> = promises =>
-        Promise['any'] ? Promise['any'](promises) : promiseAnyPolyfill(promises);
+      Promise['any'] ? Promise['any'](promises) : promiseAnyPolyfill(promises);
 
     try {
       testResult = await promiseAnyOrPolyfill(manifestDetectors);
 
       manifest = testResult.content;
+
+      if (!manifest.icons) {
+        manifest.icons = [];
+      }
+
+      if (!manifest.screenshots) {
+        manifest.screenshots = [];
+      }
+
       maniURL = testResult.generatedUrl;
       resolve(testResult);
     } catch (manifestDetectionError) {
@@ -157,8 +183,20 @@ export async function fetchManifest(
 
       if (!generatedManifest) {
         const genContent = await generateManifest(url);
-        if (genContent) {
+
+        if (genContent && !genContent.error) {
           generatedManifest = genContent.content;
+
+          if (!generatedManifest.icons) {
+            generatedManifest.icons = [];
+          }
+
+          if (!generatedManifest.screenshots) {
+            generatedManifest.screenshots = [];
+          }
+        } else {
+          generatedManifest = boilerPlateManifest;
+          generatedManifest.start_url = knownGoodUrl;
         }
       }
 
@@ -172,7 +210,7 @@ export function getManiURL() {
   return maniURL;
 }
 
-export async function getManifestGuarded(): Promise<Manifest | undefined> {
+export async function getManifestGuarded(): Promise<Manifest> {
   try {
     const manifest = await getManifest();
     if (manifest) {
@@ -199,13 +237,14 @@ export async function getManifest(): Promise<Manifest | undefined> {
       const response = await fetchManifest(url);
 
       if (response) {
-        updateManifest(response.content);
+        updateManifest({
+          ...response.content,
+        });
         return;
       }
     }
-  }
-  catch (err) {
-    // the above will error if the site has no manifest of its own, 
+  } catch (err) {
+    // the above will error if the site has no manifest of its own,
     // we will then return our generated manifest
     console.warn(err);
   }
@@ -214,8 +253,8 @@ export async function getManifest(): Promise<Manifest | undefined> {
   return undefined;
 }
 
-export function getGeneratedManifest(): Lazy<Manifest> {
-  return generatedManifest;
+export function getGeneratedManifest(): Manifest {
+  return generatedManifest as Manifest;
 }
 
 async function generateManifest(url: string): Promise<ManifestDetectionResult> {
@@ -246,9 +285,13 @@ export async function updateManifest(manifestUpdates: Partial<Manifest>) {
   const manifest_check = manifest ? true : false;
 
   if (manifest_check === true) {
-    manifest = deepmerge(manifest ? manifest as Manifest : generatedManifest as Manifest, manifestUpdates as Partial<Manifest>, {
-      // customMerge: customManifestMerge, // NOTE: need to manually concat with editor changes.
-    });
+    manifest = deepmerge(
+      manifest ? (manifest as Manifest) : (generatedManifest as Manifest),
+      manifestUpdates as Partial<Manifest>,
+      {
+        // customMerge: customManifestMerge, // NOTE: need to manually concat with editor changes.
+      }
+    );
 
     console.log('deepmerge mani', manifest);
 
@@ -257,11 +300,14 @@ export async function updateManifest(manifestUpdates: Partial<Manifest>) {
         ...manifest,
       })
     );
-  }
-  else {
-    generatedManifest = deepmerge(manifest ? manifest as Manifest : generatedManifest as Manifest, manifestUpdates as Partial<Manifest>, {
-      // customMerge: customManifestMerge, // NOTE: need to manually concat with editor changes.
-    });
+  } else {
+    generatedManifest = deepmerge(
+      manifest ? (manifest as Manifest) : (generatedManifest as Manifest),
+      manifestUpdates as Partial<Manifest>,
+      {
+        // customMerge: customManifestMerge, // NOTE: need to manually concat with editor changes.
+      }
+    );
 
     console.log('deepmerge mani', manifest);
 
