@@ -1,4 +1,4 @@
-import { getGeneratedManifest, getManifest } from '../manifest';
+import { getManifestGuarded } from '../manifest';
 import { env } from '../../utils/environment';
 import { getURL } from '../app-info';
 import { getChosenServiceWorker } from '../service_worker';
@@ -8,24 +8,17 @@ export let web_generated = false;
 
 export async function generateWebPackage() {
   try {
-    const manifest = await getManifest();
+    const manifest = await getManifestGuarded();
+
     if (!manifest) {
+      // this should never throw in a normal circumstance, this fails the placeholder fallback.
       throw new Error('No manifest available, unable to generate web package');
     }
 
-    const genManifest = getGeneratedManifest();
     const url = getURL();
     const chosenSW = getChosenServiceWorker();
 
     // The web package generator dies when screenshots is null. If detected, set screenshots to empty array.
-    const manifestWithScreenshots = manifest
-      ? { ...manifest }
-      : { ...genManifest };
-
-    if (!manifestWithScreenshots.screenshots) {
-      manifestWithScreenshots.screenshots = [];
-    }
-
     const baseUrl = env.webPackageGeneratorFormUrl;
     let urlToUse: string;
     const body = createNewFormDataWithManifest(manifest);
