@@ -8,12 +8,11 @@ import { localeStrings, languageCodes, langCodes } from '../../locales';
 import ErrorStyles from '../../../styles/error-styles.css';
 
 import {
-  boilerPlateManifest,
   emitter as manifestEmitter,
   getManifestGuarded,
   updateManifest,
 } from '../services/manifest';
-import { arrayHasChanged } from '../utils/hasChanged';
+import { arrayHasChanged, objectHasChanged } from '../utils/hasChanged';
 import { resolveUrl } from '../utils/url';
 import {
   AppEvents,
@@ -107,7 +106,7 @@ export class AppManifest extends LitElement {
   @state()
   protected editorOpened = false;
 
-  @state()
+  @state({ hasChanged: objectHasChanged })
   protected manifest: Lazy<Manifest>;
 
   protected get siteUrl(): string {
@@ -413,8 +412,6 @@ export class AppManifest extends LitElement {
     } catch (err) {
       // should not fall here, but if it does...
       console.warn(err);
-      boilerPlateManifest.start_url = this.siteUrl;
-      this.manifest = boilerPlateManifest;
     }
 
     this.requestUpdate();
@@ -859,13 +856,13 @@ export class AppManifest extends LitElement {
   }
 
   updateManifest(changes: Partial<Manifest>) {
-    updateManifest(changes).then(() => {
-      console.log('update manifest, dispatch', this.manifest);
+    updateManifest(changes).then(manifest => {
+      console.log('manifest updated return', this.manifest, manifest);
 
       editorDispatchEvent(
         new CustomEvent<CodeEditorSyncEvent>(CodeEditorEvents.sync, {
           detail: {
-            text: JSON.stringify(this.manifest, undefined, 2),
+            text: JSON.stringify(manifest, undefined, 2),
           },
         })
       );
@@ -1024,7 +1021,7 @@ export class AppManifest extends LitElement {
     }
   }
 
-  handleEditorUpdate(event: Event) {
+  async handleEditorUpdate(event: Event) {
     const e = event as CustomEvent<CodeEditorUpdateEvent>;
 
     try {
@@ -1035,7 +1032,9 @@ export class AppManifest extends LitElement {
 
       const newManifest = JSON.parse(e.detail.transaction.state.doc.toString());
 
-      updateManifest(newManifest); // explicitly not using the this.updateManifest method to prevent a infinite loop.
+      await updateManifest(newManifest); // explicitly not using the this.updateManifest method to prevent a infinite loop.
+
+      console.log('handleInputChange', this.manifest);
     } catch (ex) {
       console.error('failed to parse the manifest successfully', e, ex);
     }
