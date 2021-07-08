@@ -240,32 +240,8 @@ export class AppPublish extends LitElement {
           width: 16px;
         }
 
-        #hover-tooltip {
+        hover-tooltip::part(tooltip-image) {
           display: none;
-
-          position: relative;
-
-          flex-direction: column;
-          justify-content: space-around;
-
-          padding: 8px;
-          border-radius: 6px;
-          position: absolute;
-          z-index: 1;
-
-          white-space: break-spaces;
-          width: 14em;
-
-          background: var(--font-color);
-          right: 6em;
-
-          color: #fff;
-          text-decoration: none;
-          font-weight: initial;
-        }
-
-        #test-package-button:hover #hover-tooltip {
-          display: flex;
         }
       `,
       xxxLargeBreakPoint(

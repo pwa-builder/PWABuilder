@@ -60,6 +60,7 @@ export class HoverTooltip extends LitElement {
     return html`
       <div id="tooltip-block">
         <img
+          part="tooltip-image"
           src="assets/images/help-outline.svg"
           alt="help outline"
           aria-hidden="true"
