@@ -13,10 +13,7 @@ import { cleanUrl } from '../utils/url';
 import { setURL } from './app-info';
 
 export const emitter = new EventTarget();
-let manifest: Lazy<Manifest>;
-let maniURL: Lazy<string>;
 
-export let generated = true;
 export let boilerPlateManifest: Manifest = {
   dir: 'auto',
   display: 'fullscreen',
@@ -32,9 +29,16 @@ export let boilerPlateManifest: Manifest = {
   screenshots: [],
 };
 
-let generatedManifest: Lazy<Manifest>;
+let manifest: Manifest = boilerPlateManifest;
+let maniURL: Lazy<string>;
+let fetchAttempted = false;
+let generated = false;
 
 let testResult: ManifestDetectionResult | undefined;
+
+export function manifestGenerated() {
+  return generated;
+}
 
 // Uses Azure manifest Puppeteer service to fetch the manifest, then POSTS it to the API.
 async function getManifestViaFilePost(
@@ -181,22 +185,26 @@ export async function fetchManifest(
     } catch (manifestDetectionError) {
       console.error('All manifest detectors failed.', manifestDetectionError);
 
-      if (!generatedManifest) {
-        const genContent = await generateManifest(url);
+      if (!generated) {
+        try {
+          const genContent = await generateManifest(url);
 
-        if (genContent && !genContent.error) {
-          generatedManifest = genContent.content;
+          if (genContent && !genContent.error) {
+            manifest = genContent.content;
 
-          if (!generatedManifest.icons) {
-            generatedManifest.icons = [];
+            if (!manifest.icons) {
+              manifest.icons = [];
+            }
+
+            if (!manifest.screenshots) {
+              manifest.screenshots = [];
+            }
+          } else {
+            manifest = boilerPlateManifest;
+            manifest.start_url = knownGoodUrl;
           }
-
-          if (!generatedManifest.screenshots) {
-            generatedManifest.screenshots = [];
-          }
-        } else {
-          generatedManifest = boilerPlateManifest;
-          generatedManifest.start_url = knownGoodUrl;
+        } catch (generatedError) {
+          reject(generatedError);
         }
       }
 
@@ -210,26 +218,29 @@ export function getManiURL() {
   return maniURL;
 }
 
+/*
+  1. Attempts to fetch manifest
+  2. If that fails, generates the manifest, warns console.
+  3. If the generation fails, still returns the boiler plate.
+*/
 export async function getManifestGuarded(): Promise<Manifest> {
   try {
-    if (!manifest && !generatedManifest) {
-      manifest = await getManifest();
-    } else if (generatedManifest) {
-      return getGeneratedManifest();
-    }
+    if (!fetchAttempted) {
+      const newManifest = await getManifest();
 
-    return manifest as Manifest;
+      if (newManifest) {
+        manifest = newManifest;
+      }
+    }
   } catch (e) {
     console.warn(e);
   }
 
-  return getGeneratedManifest();
+  return manifest;
 }
 
-export async function getManifest(): Promise<Manifest | undefined> {
-  if (manifest) {
-    return manifest;
-  }
+async function getManifest(): Promise<Manifest | undefined> {
+  fetchAttempted = true;
 
   // no manifest object yet, so lets try to grab one
   const search = new URLSearchParams(location.search);
@@ -256,11 +267,9 @@ export async function getManifest(): Promise<Manifest | undefined> {
   return undefined;
 }
 
-export function getGeneratedManifest(): Manifest {
-  return generatedManifest as Manifest;
-}
-
 async function generateManifest(url: string): Promise<ManifestDetectionResult> {
+  generated = true;
+
   try {
     const response = await fetch(`${env.api}/manifests`, {
       method: 'POST',
@@ -285,41 +294,15 @@ export async function updateManifest(manifestUpdates: Partial<Manifest>) {
   // so we should only load it once its actually needed
   await import('https://unpkg.com/deepmerge@4.2.2/dist/umd.js');
 
-  const manifest_check = manifest ? true : false;
+  manifest = deepmerge(manifest, manifestUpdates as Partial<Manifest>, {
+    // customMerge: customManifestMerge, // NOTE: need to manually concat with editor changes.
+  });
 
-  if (manifest_check === true) {
-    manifest = deepmerge(
-      manifest ? (manifest as Manifest) : (generatedManifest as Manifest),
-      manifestUpdates as Partial<Manifest>,
-      {
-        // customMerge: customManifestMerge, // NOTE: need to manually concat with editor changes.
-      }
-    );
-
-    console.log('deepmerge mani', manifest);
-
-    emitter.dispatchEvent(
-      updateManifestEvent({
-        ...manifest,
-      })
-    );
-  } else {
-    generatedManifest = deepmerge(
-      manifest ? (manifest as Manifest) : (generatedManifest as Manifest),
-      manifestUpdates as Partial<Manifest>,
-      {
-        // customMerge: customManifestMerge, // NOTE: need to manually concat with editor changes.
-      }
-    );
-
-    console.log('deepmerge mani', manifest);
-
-    emitter.dispatchEvent(
-      updateManifestEvent({
-        ...generatedManifest,
-      })
-    );
-  }
+  emitter.dispatchEvent(
+    updateManifestEvent({
+      ...manifest,
+    })
+  );
 }
 
 export function updateManifestEvent<T extends Partial<Manifest>>(detail: T) {
