@@ -46,13 +46,14 @@ import './app-file-input';
 import './app-gallery';
 import './code-editor';
 import './flipper-button';
+import './hover-tooltip';
 import { generateMissingImagesBase64 } from '../services/icon_generator';
 import { generateScreenshots } from '../services/screenshots';
 import { validateScreenshotUrlsList } from '../utils/manifest-validation';
 import {
   mediumBreakPoint,
   smallBreakPoint,
-  xLargeBreakPoint
+  xLargeBreakPoint,
 } from '../utils/css/breakpoints';
 import { hidden_sm } from '../utils/css/hidden';
 import { generateAndDownloadIconZip } from '../services/download_icons';
@@ -249,6 +250,8 @@ export class AppManifest extends LitElement {
           display: flex;
           flex-direction: row;
           align-items: top;
+
+          position: relative;
         }
 
         .item-top h3 {
@@ -467,11 +470,9 @@ export class AppManifest extends LitElement {
             <div class="images-header">
               <div class="item-top">
                 <h3>${localeStrings.text.manifest_options.images.icons.h3}</h3>
-                ${this.renderToolTip(
-                  'upload-icons-tooltip',
-                  localeStrings.tooltip.manifest_options.upload,
-                  'https://developer.mozilla.org/en-US/docs/Web/Manifest/icons'
-                )}
+
+                <hover-tooltip .text="${localeStrings.tooltip.manifest_options.upload}" link="https://developer.mozilla.org/en-US/docs/Web/Manifest/icons"></hover-tooltip>
+
               </div>
               <app-button appearance="outline" @click=${this.openUploadModal}
                 >${localeStrings.button.upload}</app-button
@@ -524,11 +525,9 @@ export class AppManifest extends LitElement {
                 <h3>
                   ${localeStrings.text.manifest_options.images.screenshots.h3}
                 </h3>
-                ${this.renderToolTip(
-                  'generate-screenshot-tooltip',
-                  localeStrings.tooltip.manifest_options.generate,
-                  'https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots'
-                )}
+
+                <hover-tooltip .text="${localeStrings.tooltip.manifest_options.generate}" link="https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots"></hover-tooltip>
+
               </div>
               <p>${localeStrings.text.manifest_options.images.screenshots.p}</p>
 
@@ -603,7 +602,9 @@ export class AppManifest extends LitElement {
         <div class="info-item">
           <div class="item-top">
             <h3>${item.title}</h3>
-            ${this.renderToolTip(item.entry + '-tooltip', item.tooltipText)}
+
+            <hover-tooltip .text="${item.tooltipText}" link="https://developer.mozilla.org/en-US/docs/Web/Manifest"></hover-tooltip>
+
           </div>
           <p>${item.description}</p>
           <fast-text-field
@@ -658,7 +659,8 @@ export class AppManifest extends LitElement {
         <div class="setting-item">
           <div class="item-top">
             <h3>${item.title}</h3>
-            ${this.renderToolTip(item.entry + '-tooltip', item.tooltipText)}
+
+            <hover-tooltip .text="${item.tooltipText}" link="https://developer.mozilla.org/en-US/docs/Web/Manifest"></hover-tooltip>
           </div>
           <p>${item.description}</p>
           ${field}
@@ -679,11 +681,9 @@ export class AppManifest extends LitElement {
               ${localeStrings.text.manifest_options.settings.background_color
                 .h3}
             </h3>
-            ${this.renderToolTip(
-              'bg-color-tooltip',
-              localeStrings.tooltip.manifest_options.background_color,
-              'https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color'
-            )}
+
+            <hover-tooltip .text="${localeStrings.tooltip.manifest_options.background_color}" link="https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color"></hover-tooltip>
+
           </div>
           <fast-radio-group
             value=${this.setBackgroundColorRadio()}
@@ -721,11 +721,9 @@ export class AppManifest extends LitElement {
             <h3>
               ${localeStrings.text.manifest_options.settings.theme_color.h3}
             </h3>
-            ${this.renderToolTip(
-              'theme-color-tooltip',
-              localeStrings.tooltip.manifest_options.theme_color,
-              'https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color'
-            )}
+
+            <hover-tooltip .text="${localeStrings.tooltip.manifest_options.theme_color}" link="https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color"></hover-tooltip>
+
           </div>
           <fast-radio-group
             value=${this.setThemeColorRadio()}
@@ -997,7 +995,9 @@ export class AppManifest extends LitElement {
 
     this.awaitRequest = false;
 
-    const uploadModal = this.shadowRoot?.getElementById('uploadModal') as ShadowRootQuery<AppModalElement>;
+    const uploadModal = this.shadowRoot?.getElementById(
+      'uploadModal'
+    ) as ShadowRootQuery<AppModalElement>;
     if (uploadModal) {
       uploadModal.close();
     }
