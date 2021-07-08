@@ -416,6 +416,8 @@ export class AppManifest extends LitElement {
       boilerPlateManifest.start_url = this.siteUrl;
       this.manifest = boilerPlateManifest;
     }
+
+    this.requestUpdate();
   }
 
   connectedCallback() {
