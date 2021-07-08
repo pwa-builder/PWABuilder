@@ -251,7 +251,7 @@ async function getManifest(): Promise<Manifest | undefined> {
       const response = await fetchManifest(url);
 
       if (response) {
-        updateManifest({
+        await updateManifest({
           ...response.content,
         });
         return manifest;
