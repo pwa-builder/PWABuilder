@@ -212,8 +212,10 @@ export function getManiURL() {
 
 export async function getManifestGuarded(): Promise<Manifest> {
   try {
-    if (!manifest) {
+    if (!manifest && !generatedManifest) {
       manifest = await getManifest();
+    } else if (generatedManifest) {
+      return getGeneratedManifest();
     }
 
     return manifest as Manifest;
