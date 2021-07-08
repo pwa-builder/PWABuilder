@@ -7,7 +7,7 @@ import {
   WindowsPackageOptions,
 } from '../../utils/win-validation';
 import { getURL } from '../app-info';
-import { getManifest, getManiURL } from '../manifest';
+import { getManifestGuarded, getManiURL } from '../manifest';
 
 export let windows_generated = false;
 
@@ -19,13 +19,11 @@ export async function generateWindowsPackage(
     throw new Error('Invalid Windows options. No options specified.');
   }
 
-  const validationErrors = validateWindowsOptions(
-    windowsOptions
-  );
+  const validationErrors = validateWindowsOptions(windowsOptions);
   if (validationErrors.length > 0 || !windowsOptions) {
     throw new Error(
       'Invalid Windows options. ' +
-      validationErrors.map(a => a.error).join('\n')
+        validationErrors.map(a => a.error).join('\n')
     );
   }
 
@@ -53,15 +51,15 @@ export async function generateWindowsPackage(
   }
 }
 
-export async function createWindowsPackageOptionsFromManifest(localManifest?: Manifest
+export async function createWindowsPackageOptionsFromManifest(
+  localManifest?: Manifest
 ): Promise<WindowsPackageOptions> {
   let manifest: Manifest | undefined;
 
   if (localManifest) {
     manifest = localManifest;
-  }
-  else {
-    manifest = await getManifest();
+  } else {
+    manifest = await getManifestGuarded();
   }
 
   if (manifest) {
@@ -121,7 +119,7 @@ export async function createWindowsPackageOptionsFromManifest(localManifest?: Ma
 export async function createWindowsPackageOptionsFromForm(
   form: HTMLFormElement
 ): Promise<WindowsPackageOptions> {
-  const manifest = await getManifest();
+  const manifest = await getManifestGuarded();
   if (!manifest) {
     return createEmptyPackageOptions();
   }
@@ -134,7 +132,7 @@ export async function createWindowsPackageOptionsFromForm(
     name: name,
     packageId: packageID,
     url: form.url.value || getURL(),
-    version: form.appVersion.value || "1.0.1",
+    version: form.appVersion.value || '1.0.1',
     allowSigning: true,
     publisher: {
       displayName: form.publisherDisplayName.value,
@@ -155,7 +153,7 @@ export async function createWindowsPackageOptionsFromForm(
       baseImage: form.iconUrl.value || icon,
       backgroundColor: 'transparent',
       padding: 0.3,
-    }
+    },
   };
 }
 
@@ -167,7 +165,7 @@ function createEmptyPackageOptions(): WindowsPackageOptions {
     version: '',
     publisher: {
       displayName: '',
-      commonName: ''
-    }
+      commonName: '',
+    },
   };
 }
