@@ -9,6 +9,7 @@ import '../components/app-button';
 import '../components/loading-button';
 import '../components/windows-form';
 import '../components/android-form';
+import '../components/hover-tooltip';
 import { Router } from '@vaadin/router';
 
 import {
@@ -560,12 +561,8 @@ export class AppPublish extends LitElement {
                       @click="${() => this.generate('windows')}"
                       >Test Package
 
-                      <!-- todo after release: refactor this into a <hover-tooltip /> component -->
-                      <a
-                        id="hover-tooltip"
-                        target="_blank"
-                        href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps.md#1-test-your-app-on-your-windows-machine"
-                      >Generate a package you can use to test your app on your Windows Device before going to the Microsoft Store.</a>
+                      <hover-tooltip text="Generate a package you can use to test your app on your Windows Device before going to the Microsoft Store." link="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps.md#1-test-your-app-on-your-windows-machine"></hover-tooltip>
+
                     </loading-button>
                   </div>
                 `
