@@ -47,8 +47,9 @@ export async function generateMissingImagesBase64(config: MissingImagesConfig) {
 
     if (response.ok) {
       const manifest = await getManifestGuarded();
+
       if (!manifest) {
-        console.error("Manifest was unexpectedly null or undefined");
+        console.error('Manifest was unexpectedly null or undefined');
         return;
       }
 

@@ -8,9 +8,9 @@ import { localeStrings, languageCodes, langCodes } from '../../locales';
 import ErrorStyles from '../../../styles/error-styles.css';
 
 import {
+  boilerPlateManifest,
   emitter as manifestEmitter,
-  getGeneratedManifest,
-  getManifest,
+  getManifestGuarded,
   updateManifest,
 } from '../services/manifest';
 import { arrayHasChanged } from '../utils/hasChanged';
@@ -409,23 +409,12 @@ export class AppManifest extends LitElement {
 
   async firstUpdated() {
     try {
-      const potential_mani = await getManifest();
-
-      if (potential_mani) {
-        this.manifest = potential_mani;
-        console.log('this.manifest', this.manifest);
-      } else if (potential_mani === undefined) {
-        const gen = await getGeneratedManifest();
-        console.info('Gen manifest', gen);
-
-        this.manifest = gen;
-      }
+      this.manifest = await getManifestGuarded();
     } catch (err) {
-      console.info('in here');
-      const gen = await getGeneratedManifest();
-
-      this.manifest = gen;
-      console.warn(err, gen);
+      // should not fall here, but if it does...
+      console.warn(err);
+      boilerPlateManifest.start_url = this.siteUrl;
+      this.manifest = boilerPlateManifest;
     }
   }
 
