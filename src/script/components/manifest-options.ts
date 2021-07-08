@@ -52,7 +52,7 @@ import { validateScreenshotUrlsList } from '../utils/manifest-validation';
 import {
   mediumBreakPoint,
   smallBreakPoint,
-  xLargeBreakPoint
+  xLargeBreakPoint,
 } from '../utils/css/breakpoints';
 import { hidden_sm } from '../utils/css/hidden';
 import { generateAndDownloadIconZip } from '../services/download_icons';
@@ -405,16 +405,6 @@ export class AppManifest extends LitElement {
 
   constructor() {
     super();
-
-    manifestEmitter.addEventListener(
-      AppEvents.manifestUpdate,
-      async (maniUpdates: any) => {
-        console.log('maniUpdates', maniUpdates);
-        if (maniUpdates) {
-          this.manifest = maniUpdates.detail;
-        }
-      }
-    );
   }
 
   async firstUpdated() {
@@ -437,6 +427,22 @@ export class AppManifest extends LitElement {
       this.manifest = gen;
       console.warn(err, gen);
     }
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    manifestEmitter.addEventListener(
+      AppEvents.manifestUpdate,
+      this.handleManifestUpdate
+    );
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    manifestEmitter.removeEventListener(
+      AppEvents.manifestUpdate,
+      this.handleManifestUpdate
+    );
   }
 
   render() {
@@ -875,6 +881,13 @@ export class AppManifest extends LitElement {
     });
   }
 
+  handleManifestUpdate(maniUpdates: any) {
+    console.log('maniUpdates', this, maniUpdates);
+    if (maniUpdates) {
+      this.manifest = maniUpdates.detail;
+    }
+  }
+
   handleInputChange(event: InputEvent) {
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
     const fieldName = input.dataset['field'];
@@ -997,7 +1010,9 @@ export class AppManifest extends LitElement {
 
     this.awaitRequest = false;
 
-    const uploadModal = this.shadowRoot?.getElementById('uploadModal') as ShadowRootQuery<AppModalElement>;
+    const uploadModal = this.shadowRoot?.getElementById(
+      'uploadModal'
+    ) as ShadowRootQuery<AppModalElement>;
     if (uploadModal) {
       uploadModal.close();
     }
