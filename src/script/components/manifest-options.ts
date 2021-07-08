@@ -37,8 +37,6 @@ import {
   fastRadioCss,
 } from '../utils/css/fast-elements';
 
-import { tooltip, styles as ToolTipStyles } from './tooltip';
-
 import './loading-button';
 import './app-modal';
 import './dropdown-menu';
@@ -123,7 +121,6 @@ export class AppManifest extends LitElement {
   static get styles() {
     return [
       ErrorStyles,
-      ToolTipStyles,
       fastButtonCss,
       fastCheckboxCss,
       fastTextFieldCss,
@@ -853,8 +850,6 @@ export class AppManifest extends LitElement {
         .filter(str => str) || []
     );
   }
-
-  renderToolTip = tooltip;
 
   renderModalInput() {
     return html`
