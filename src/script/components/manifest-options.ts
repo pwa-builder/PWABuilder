@@ -108,7 +108,7 @@ export class AppManifest extends LitElement {
   protected editorOpened = false;
 
   @state()
-  protected manifest: Lazy<Manifest | undefined>;
+  protected manifest: Lazy<Manifest>;
 
   protected get siteUrl(): string {
     if (!this.searchParams) {
