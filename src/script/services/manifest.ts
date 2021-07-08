@@ -254,7 +254,7 @@ async function getManifest(): Promise<Manifest | undefined> {
         updateManifest({
           ...response.content,
         });
-        return;
+        return manifest;
       }
     }
   } catch (err) {
