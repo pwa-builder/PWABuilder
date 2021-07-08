@@ -9,6 +9,7 @@ import '../components/app-button';
 import '../components/loading-button';
 import '../components/windows-form';
 import '../components/android-form';
+import '../components/hover-tooltip';
 import { Router } from '@vaadin/router';
 
 import {
@@ -239,32 +240,8 @@ export class AppPublish extends LitElement {
           width: 16px;
         }
 
-        #hover-tooltip {
+        hover-tooltip::part(tooltip-image) {
           display: none;
-
-          position: relative;
-
-          flex-direction: column;
-          justify-content: space-around;
-
-          padding: 8px;
-          border-radius: 6px;
-          position: absolute;
-          z-index: 1;
-
-          white-space: break-spaces;
-          width: 14em;
-
-          background: var(--font-color);
-          right: 6em;
-
-          color: #fff;
-          text-decoration: none;
-          font-weight: initial;
-        }
-
-        #test-package-button:hover #hover-tooltip {
-          display: flex;
         }
       `,
       xxxLargeBreakPoint(
@@ -560,12 +537,8 @@ export class AppPublish extends LitElement {
                       @click="${() => this.generate('windows')}"
                       >Test Package
 
-                      <!-- todo after release: refactor this into a <hover-tooltip /> component -->
-                      <a
-                        id="hover-tooltip"
-                        target="_blank"
-                        href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps.md#1-test-your-app-on-your-windows-machine"
-                      >Generate a package you can use to test your app on your Windows Device before going to the Microsoft Store.</a>
+                      <hover-tooltip text="Generate a package you can use to test your app on your Windows Device before going to the Microsoft Store." link="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps.md#1-test-your-app-on-your-windows-machine"></hover-tooltip>
+
                     </loading-button>
                   </div>
                 `
