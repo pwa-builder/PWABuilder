@@ -251,10 +251,9 @@ async function getManifest(): Promise<Manifest | undefined> {
       const response = await fetchManifest(url);
 
       if (response) {
-        await updateManifest({
+        return await updateManifest({
           ...response.content,
         });
-        return manifest;
       }
     }
   } catch (err) {
@@ -288,7 +287,9 @@ async function generateManifest(url: string): Promise<ManifestDetectionResult> {
   }
 }
 
-export async function updateManifest(manifestUpdates: Partial<Manifest>) {
+export async function updateManifest(
+  manifestUpdates: Partial<Manifest>
+): Promise<Manifest> {
   // @ts-ignore
   // using a dynamic import here as this is a large library
   // so we should only load it once its actually needed
@@ -303,6 +304,8 @@ export async function updateManifest(manifestUpdates: Partial<Manifest>) {
       ...manifest,
     })
   );
+
+  return manifest;
 }
 
 export function updateManifestEvent<T extends Partial<Manifest>>(detail: T) {
