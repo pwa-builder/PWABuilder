@@ -4,6 +4,11 @@ export type Lazy<T> = T | undefined;
 
 export type ShadowRootQuery<T> = HTMLElement & LitElement & T;
 
+export enum PWABuilderSession {
+  manifest = 'PWABuilderManifest',
+  manifestGenerated = 'ManifestGenerated',
+}
+
 export enum AppEvents {
   manifestUpdate = 'MANIFEST_UPDATE',
 }

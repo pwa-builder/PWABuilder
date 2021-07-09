@@ -8,6 +8,7 @@ import {
   Lazy,
   Manifest,
   ManifestDetectionResult,
+  PWABuilderSession,
 } from '../utils/interfaces';
 import { cleanUrl } from '../utils/url';
 import { setURL } from './app-info';
@@ -29,12 +30,30 @@ export let boilerPlateManifest: Manifest = {
   screenshots: [],
 };
 
-let manifest: Manifest = boilerPlateManifest;
+let manifest: Manifest = manifestFromSession();
 let maniURL: Lazy<string>;
 let fetchAttempted = false;
 let generated = false;
 
 let testResult: ManifestDetectionResult | undefined;
+
+function manifestFromSession(): Manifest {
+  try {
+    const sessionManifest = sessionStorage.getItem(PWABuilderSession.manifest);
+
+    if (sessionManifest) {
+      return JSON.parse(sessionManifest) as Manifest;
+    }
+
+    fetchAttempted = true;
+    generated =
+      sessionStorage.getItem(PWABuilderSession.manifestGenerated) === 'true';
+  } catch (err) {
+    console.error(err as Error);
+  }
+
+  return boilerPlateManifest;
+}
 
 export function manifestGenerated() {
   return generated;
@@ -269,6 +288,7 @@ async function getManifest(): Promise<Manifest | undefined> {
 
 async function generateManifest(url: string): Promise<ManifestDetectionResult> {
   generated = true;
+  sessionStorage.setItem(PWABuilderSession.manifestGenerated, 'true');
 
   try {
     const response = await fetch(`${env.api}/manifests`, {
@@ -301,6 +321,8 @@ export async function updateManifest(
   manifest = deepmerge(manifest, manifestUpdates as Partial<Manifest>, {
     // customMerge: customManifestMerge, // NOTE: need to manually concat with editor changes.
   });
+
+  sessionStorage.setItem(PWABuilderSession.manifest, JSON.stringify(manifest)); // would it make sense to make this async?
 
   emitter.dispatchEvent(
     updateManifestEvent({
