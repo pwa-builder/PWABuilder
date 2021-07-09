@@ -4,7 +4,7 @@ import {
   RawTestResult,
   Status,
 } from '../utils/interfaces';
-import { getManifestGuarded } from './manifest';
+import { generated } from './manifest';
 import { getChosenServiceWorker } from './service_worker';
 
 let site_url: string | undefined;
@@ -135,16 +135,17 @@ export function getResults(): RawTestResult | undefined {
 export async function baseOrPublish(): Promise<'base' | 'publish'> {
   const choseSW = getChosenServiceWorker();
 
-  const manifestData = await getManifestGuarded();
+  // is the manifest one we generated
+  // or the users
+  const generatedFlag = generated;
 
-  console.log('manidata', manifestData);
-
-  if (choseSW !== undefined) {
+  if (generatedFlag === true || choseSW !== undefined) {
     // User has chosen a custom service worker
+    // or we have generated a manifest for them
     // send to basepackage to download.
     // to-do: Users who edit their manifest will be sent here too
     return 'base';
-  } else if (manifestData) {
+  } else if (generatedFlag === false) {
     // User already has a manifest
     // send to publish page
     return 'publish';

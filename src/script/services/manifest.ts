@@ -33,7 +33,11 @@ export let boilerPlateManifest: Manifest = {
 let manifest: Manifest = manifestFromSession();
 let maniURL: Lazy<string>;
 let fetchAttempted = false;
-let generated = false;
+
+// export to use as a flag for generation
+// this is needed to decide to go to the 
+// publish page or base_package
+export let generated = false;
 
 let testResult: ManifestDetectionResult | undefined;
 
