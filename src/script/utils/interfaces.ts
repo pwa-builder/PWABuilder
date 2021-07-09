@@ -1,8 +1,13 @@
-import { LitElement } from "lit";
+import { LitElement } from 'lit';
 
 export type Lazy<T> = T | undefined;
 
 export type ShadowRootQuery<T> = HTMLElement & LitElement & T;
+
+export enum PWABuilderSession {
+  manifest = 'PWABuilderManifest',
+  manifestGenerated = 'ManifestGenerated',
+}
 
 export enum AppEvents {
   manifestUpdate = 'MANIFEST_UPDATE',
@@ -11,20 +16,20 @@ export enum AppEvents {
 export interface Manifest {
   background_color: string | undefined;
   description: string | undefined;
-  dir: string | undefined;
+  dir: 'auto' | 'ltr' | 'rtl' | string;
   display: string;
   lang: string | undefined;
   name: string | undefined;
   orientation?:
-  | 'any'
-  | 'natural'
-  | 'landscape'
-  | 'portrait'
-  | 'portrait-primary'
-  | 'portrait-secondary'
-  | 'landscape-primary'
-  | 'landscape-secondary'
-  | null;
+    | 'any'
+    | 'natural'
+    | 'landscape'
+    | 'portrait'
+    | 'portrait-primary'
+    | 'portrait-secondary'
+    | 'landscape-primary'
+    | 'landscape-secondary'
+    | null;
   prefer_related_applications?: boolean;
   related_applications?: RelatedApplication[];
   scope: string | undefined;
@@ -32,7 +37,6 @@ export interface Manifest {
   start_url: string | undefined;
   theme_color: string | undefined;
   generated?: boolean | undefined;
-  url: string | undefined;
   shortcuts?: ShortcutItem[];
   categories?: string[];
   screenshots?: Screenshot[];
@@ -64,7 +68,21 @@ export interface Icon {
 }
 
 export interface Screenshot extends Icon {
-  platform?: 'narrow' | 'wide' | 'android' | 'chromeos' | 'ios' | 'kaios' | 'macos' | 'windows' | 'xbox' | 'chrome_web_store' | 'play' | 'itunes' | 'microsoft-inbox' | 'microsoft-store';
+  platform?:
+    | 'narrow'
+    | 'wide'
+    | 'android'
+    | 'chromeos'
+    | 'ios'
+    | 'kaios'
+    | 'macos'
+    | 'windows'
+    | 'xbox'
+    | 'chrome_web_store'
+    | 'play'
+    | 'itunes'
+    | 'microsoft-inbox'
+    | 'microsoft-store';
 }
 
 export interface RelatedApplication {

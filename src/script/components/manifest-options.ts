@@ -9,11 +9,10 @@ import ErrorStyles from '../../../styles/error-styles.css';
 
 import {
   emitter as manifestEmitter,
-  getGeneratedManifest,
-  getManifest,
+  getManifestGuarded,
   updateManifest,
 } from '../services/manifest';
-import { arrayHasChanged } from '../utils/hasChanged';
+import { arrayHasChanged, objectHasChanged } from '../utils/hasChanged';
 import { resolveUrl } from '../utils/url';
 import {
   AppEvents,
@@ -106,8 +105,8 @@ export class AppManifest extends LitElement {
   @state()
   protected editorOpened = false;
 
-  @state()
-  protected manifest: Lazy<Manifest | undefined>;
+  @state({ hasChanged: objectHasChanged })
+  protected manifest: Lazy<Manifest>;
 
   protected get siteUrl(): string {
     if (!this.searchParams) {
@@ -405,38 +404,33 @@ export class AppManifest extends LitElement {
 
   constructor() {
     super();
-
-    manifestEmitter.addEventListener(
-      AppEvents.manifestUpdate,
-      async (maniUpdates: any) => {
-        console.log('maniUpdates', maniUpdates);
-        if (maniUpdates) {
-          this.manifest = maniUpdates.detail;
-        }
-      }
-    );
   }
 
   async firstUpdated() {
     try {
-      const potential_mani = await getManifest();
-
-      if (potential_mani) {
-        this.manifest = potential_mani;
-        console.log('this.manifest', this.manifest);
-      } else if (potential_mani === undefined) {
-        const gen = await getGeneratedManifest();
-        console.info('Gen manifest', gen);
-
-        this.manifest = gen;
-      }
+      this.manifest = await getManifestGuarded();
     } catch (err) {
-      console.info('in here');
-      const gen = await getGeneratedManifest();
-
-      this.manifest = gen;
-      console.warn(err, gen);
+      // should not fall here, but if it does...
+      console.warn(err);
     }
+
+    this.requestUpdate();
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    manifestEmitter.addEventListener(
+      AppEvents.manifestUpdate,
+      this.handleManifestUpdate
+    );
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    manifestEmitter.removeEventListener(
+      AppEvents.manifestUpdate,
+      this.handleManifestUpdate
+    );
   }
 
   render() {
@@ -868,17 +862,24 @@ export class AppManifest extends LitElement {
   }
 
   updateManifest(changes: Partial<Manifest>) {
-    updateManifest(changes).then(() => {
-      console.log('update manifest, dispatch', this.manifest);
+    updateManifest(changes).then(manifest => {
+      console.log('manifest updated return', this.manifest, manifest);
 
       editorDispatchEvent(
         new CustomEvent<CodeEditorSyncEvent>(CodeEditorEvents.sync, {
           detail: {
-            text: JSON.stringify(this.manifest, undefined, 2),
+            text: JSON.stringify(manifest, undefined, 2),
           },
         })
       );
     });
+  }
+
+  handleManifestUpdate(maniUpdates: any) {
+    console.log('maniUpdates', this, maniUpdates);
+    if (maniUpdates) {
+      this.manifest = maniUpdates.detail;
+    }
   }
 
   handleInputChange(event: InputEvent) {
@@ -1026,7 +1027,7 @@ export class AppManifest extends LitElement {
     }
   }
 
-  handleEditorUpdate(event: Event) {
+  async handleEditorUpdate(event: Event) {
     const e = event as CustomEvent<CodeEditorUpdateEvent>;
 
     try {
@@ -1037,7 +1038,9 @@ export class AppManifest extends LitElement {
 
       const newManifest = JSON.parse(e.detail.transaction.state.doc.toString());
 
-      updateManifest(newManifest); // explicitly not using the this.updateManifest method to prevent a infinite loop.
+      await updateManifest(newManifest); // explicitly not using the this.updateManifest method to prevent a infinite loop.
+
+      console.log('handleInputChange', this.manifest);
     } catch (ex) {
       console.error('failed to parse the manifest successfully', e, ex);
     }

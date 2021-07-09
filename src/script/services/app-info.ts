@@ -4,7 +4,7 @@ import {
   RawTestResult,
   Status,
 } from '../utils/interfaces';
-import { getManifest } from './manifest';
+import { generated } from './manifest';
 import { getChosenServiceWorker } from './service_worker';
 
 let site_url: string | undefined;
@@ -104,9 +104,8 @@ export function getURL() {
     return site_url;
   } else if (url) {
     return url;
-  }
-  else {
-    throw(new Error("No Good URL found for the current site"))
+  } else {
+    throw new Error('No Good URL found for the current site');
   }
 }
 
@@ -135,23 +134,22 @@ export function getResults(): RawTestResult | undefined {
 
 export async function baseOrPublish(): Promise<'base' | 'publish'> {
   const choseSW = getChosenServiceWorker();
-  
-  const manifestData = await getManifest();
 
-  console.log('manidata', manifestData);
+  // is the manifest one we generated
+  // or the users
+  const generatedFlag = generated;
 
-  if (choseSW !== undefined) {
+  if (generatedFlag === true || choseSW !== undefined) {
     // User has chosen a custom service worker
+    // or we have generated a manifest for them
     // send to basepackage to download.
     // to-do: Users who edit their manifest will be sent here too
     return 'base';
-  }
-  else if (manifestData) {
+  } else if (generatedFlag === false) {
     // User already has a manifest
     // send to publish page
     return 'publish';
-  }
-  else {
+  } else {
     // user does not have a manifest and has not chosen an SW
     // They will go to the base package page and will need to download
     // The generated manifest and default SW

@@ -8,24 +8,68 @@ import {
   Lazy,
   Manifest,
   ManifestDetectionResult,
+  PWABuilderSession,
 } from '../utils/interfaces';
 import { cleanUrl } from '../utils/url';
 import { setURL } from './app-info';
 
 export const emitter = new EventTarget();
-let manifest: Lazy<Manifest>;
-let maniURL: Lazy<string>;
 
-let generatedManifest: Lazy<Manifest>;
+export let boilerPlateManifest: Manifest = {
+  dir: 'auto',
+  display: 'fullscreen',
+  name: 'placeholder',
+  short_name: 'placeholder',
+  start_url: undefined,
+  scope: '/',
+  lang: 'en',
+  description: 'placeholder description',
+  theme_color: 'none',
+  background_color: 'none',
+  icons: [],
+  screenshots: [],
+};
+
+let manifest: Manifest = manifestFromSession();
+let maniURL: Lazy<string>;
+let fetchAttempted = false;
+
+// export to use as a flag for generation
+// this is needed to decide to go to the 
+// publish page or base_package
+export let generated = false;
 
 let testResult: ManifestDetectionResult | undefined;
+
+function manifestFromSession(): Manifest {
+  try {
+    const sessionManifest = sessionStorage.getItem(PWABuilderSession.manifest);
+
+    if (sessionManifest) {
+      return JSON.parse(sessionManifest) as Manifest;
+    }
+
+    fetchAttempted = true;
+    generated =
+      sessionStorage.getItem(PWABuilderSession.manifestGenerated) === 'true';
+  } catch (err) {
+    console.error(err as Error);
+  }
+
+  return boilerPlateManifest;
+}
+
+export function manifestGenerated() {
+  return generated;
+}
 
 // Uses Azure manifest Puppeteer service to fetch the manifest, then POSTS it to the API.
 async function getManifestViaFilePost(
   url: string
 ): Promise<ManifestDetectionResult> {
-  const manifestTestUrl = `${env.testAPIUrl
-    }/WebManifest?site=${encodeURIComponent(url)}`;
+  const manifestTestUrl = `${
+    env.testAPIUrl
+  }/WebManifest?site=${encodeURIComponent(url)}`;
   const response = await fetch(manifestTestUrl, {
     method: 'POST',
   });
@@ -144,21 +188,49 @@ export async function fetchManifest(
     const promiseAnyOrPolyfill: (
       promises: Promise<ManifestDetectionResult>[]
     ) => Promise<ManifestDetectionResult> = promises =>
-        Promise['any'] ? Promise['any'](promises) : promiseAnyPolyfill(promises);
+      Promise['any'] ? Promise['any'](promises) : promiseAnyPolyfill(promises);
 
     try {
       testResult = await promiseAnyOrPolyfill(manifestDetectors);
 
-      manifest = testResult.content;
+      if (!fetchAttempted) {
+        manifest = testResult.content;
+
+        if (!manifest.icons) {
+          manifest.icons = [];
+        }
+
+        if (!manifest.screenshots) {
+          manifest.screenshots = [];
+        }
+
+        fetchAttempted = true;
+      }
+
       maniURL = testResult.generatedUrl;
       resolve(testResult);
     } catch (manifestDetectionError) {
       console.error('All manifest detectors failed.', manifestDetectionError);
 
-      if (!generatedManifest) {
-        const genContent = await generateManifest(url);
-        if (genContent) {
-          generatedManifest = genContent.content;
+      if (!fetchAttempted && !generated) {
+        try {
+          const genContent = await generateManifest(url);
+
+          if (genContent && !genContent.error) {
+            manifest = genContent.content;
+
+            if (!manifest.icons) {
+              manifest.icons = [];
+            }
+
+            if (!manifest.screenshots) {
+              manifest.screenshots = [];
+            }
+
+            fetchAttempted = true;
+          }
+        } catch (generatedError) {
+          reject(generatedError);
         }
       }
 
@@ -172,24 +244,28 @@ export function getManiURL() {
   return maniURL;
 }
 
-export async function getManifestGuarded(): Promise<Manifest | undefined> {
+/*
+  1. Attempts to fetch manifest
+  2. If that fails, generates the manifest, warns console.
+  3. If the generation fails, still returns the boiler plate.
+*/
+export async function getManifestGuarded(): Promise<Manifest> {
   try {
-    const manifest = await getManifest();
-    if (manifest) {
-      return manifest;
+    if (!fetchAttempted) {
+      const newManifest = await getManifest();
+
+      if (newManifest) {
+        manifest = newManifest;
+      }
     }
   } catch (e) {
     console.warn(e);
   }
 
-  return getGeneratedManifest();
+  return manifest;
 }
 
-export async function getManifest(): Promise<Manifest | undefined> {
-  if (manifest) {
-    return manifest;
-  }
-
+async function getManifest(): Promise<Manifest | undefined> {
   // no manifest object yet, so lets try to grab one
   const search = new URLSearchParams(location.search);
   const url: string | null = maniURL || search.get('site');
@@ -199,13 +275,13 @@ export async function getManifest(): Promise<Manifest | undefined> {
       const response = await fetchManifest(url);
 
       if (response) {
-        updateManifest(response.content);
-        return;
+        return await updateManifest({
+          ...response.content,
+        });
       }
     }
-  }
-  catch (err) {
-    // the above will error if the site has no manifest of its own, 
+  } catch (err) {
+    // the above will error if the site has no manifest of its own,
     // we will then return our generated manifest
     console.warn(err);
   }
@@ -214,11 +290,10 @@ export async function getManifest(): Promise<Manifest | undefined> {
   return undefined;
 }
 
-export function getGeneratedManifest(): Lazy<Manifest> {
-  return generatedManifest;
-}
-
 async function generateManifest(url: string): Promise<ManifestDetectionResult> {
+  generated = true;
+  sessionStorage.setItem(PWABuilderSession.manifestGenerated, 'true');
+
   try {
     const response = await fetch(`${env.api}/manifests`, {
       method: 'POST',
@@ -230,6 +305,8 @@ async function generateManifest(url: string): Promise<ManifestDetectionResult> {
 
     const data = await response.json();
 
+    console.log('generateManifest', data);
+
     return data;
   } catch (err) {
     console.error(`Error generating manifest: ${err}`);
@@ -237,40 +314,27 @@ async function generateManifest(url: string): Promise<ManifestDetectionResult> {
   }
 }
 
-export async function updateManifest(manifestUpdates: Partial<Manifest>) {
+export async function updateManifest(
+  manifestUpdates: Partial<Manifest>
+): Promise<Manifest> {
   // @ts-ignore
   // using a dynamic import here as this is a large library
   // so we should only load it once its actually needed
   await import('https://unpkg.com/deepmerge@4.2.2/dist/umd.js');
 
-  const manifest_check = manifest ? true : false;
+  manifest = deepmerge(manifest, manifestUpdates as Partial<Manifest>, {
+    // customMerge: customManifestMerge, // NOTE: need to manually concat with editor changes.
+  });
 
-  if (manifest_check === true) {
-    manifest = deepmerge(manifest ? manifest as Manifest : generatedManifest as Manifest, manifestUpdates as Partial<Manifest>, {
-      // customMerge: customManifestMerge, // NOTE: need to manually concat with editor changes.
-    });
+  sessionStorage.setItem(PWABuilderSession.manifest, JSON.stringify(manifest)); // would it make sense to make this async?
 
-    console.log('deepmerge mani', manifest);
+  emitter.dispatchEvent(
+    updateManifestEvent({
+      ...manifest,
+    })
+  );
 
-    emitter.dispatchEvent(
-      updateManifestEvent({
-        ...manifest,
-      })
-    );
-  }
-  else {
-    generatedManifest = deepmerge(manifest ? manifest as Manifest : generatedManifest as Manifest, manifestUpdates as Partial<Manifest>, {
-      // customMerge: customManifestMerge, // NOTE: need to manually concat with editor changes.
-    });
-
-    console.log('deepmerge mani', manifest);
-
-    emitter.dispatchEvent(
-      updateManifestEvent({
-        ...generatedManifest,
-      })
-    );
-  }
+  return manifest;
 }
 
 export function updateManifestEvent<T extends Partial<Manifest>>(detail: T) {

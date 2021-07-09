@@ -1,12 +1,12 @@
 import { findBestAppIcon } from '../../utils/icons';
 import { getResults, getURL } from '../app-info';
-import { getGeneratedManifest, getManifest } from '../manifest';
+import { getManifestGuarded } from '../manifest';
 
 export interface checkResults {
-  validURL: boolean,
-  manifest: boolean,
-  baseIcon: boolean,
-  offline: boolean
+  validURL: boolean;
+  manifest: boolean;
+  baseIcon: boolean;
+  offline: boolean;
 }
 
 export async function finalCheckForPublish(): Promise<checkResults> {
@@ -23,13 +23,14 @@ export async function finalCheckForPublish(): Promise<checkResults> {
     const results = getResults();
     const testURL = getURL();
 
-    const possible_mani = await getManifest();
-    const possible_gen_mani = await getGeneratedManifest();
-    const possible_icons = possible_mani ? possible_mani.icons : possible_gen_mani?.icons;
+    const manifest = await getManifestGuarded();
+    const possible_icons = manifest ? manifest.icons : [];
     const icon = findBestAppIcon(possible_icons);
     if (results && testURL) {
-      const firstManifestResult = typeof results.manifest === "boolean" ?
-        false : results.manifest[0]!.result;
+      const firstManifestResult =
+        typeof results.manifest === 'boolean'
+          ? false
+          : results.manifest[0]!.result;
       const checkResults = {
         validURL: testURL ? true : false,
         manifest: firstManifestResult,
@@ -38,7 +39,7 @@ export async function finalCheckForPublish(): Promise<checkResults> {
       };
       resolve(checkResults);
     } else {
-      reject("Could not grab test results or url to validate");
+      reject('Could not grab test results or url to validate');
     }
   });
 }

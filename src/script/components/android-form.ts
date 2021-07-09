@@ -9,7 +9,7 @@ import { tooltip, styles as ToolTipStyles } from '../components/tooltip';
 import style from '../../../styles/form-styles.css';
 //@ts-ignore
 import ModalStyles from '../../../styles/modal-styles.css';
-import { getManifest } from '../services/manifest';
+import { getManifestGuarded } from '../services/manifest';
 import { createAndroidPackageOptionsFromManifest } from '../services/publish/android-publish';
 import { AndroidApkOptions } from '../utils/android-validation';
 
@@ -102,7 +102,7 @@ export class AndroidForm extends LitElement {
       this.form = form;
     }
 
-    this.currentManifest = await getManifest();
+    this.currentManifest = await getManifestGuarded();
 
     this.default_options = await createAndroidPackageOptionsFromManifest();
   }
@@ -700,9 +700,7 @@ export class AndroidForm extends LitElement {
               </div>
 
               <div class="form-group">
-                <label for="webManifestUrlInput">
-                  Manifest URL
-                </label>
+                <label for="webManifestUrlInput"> Manifest URL </label>
                 <input
                   type="url"
                   class="form-control"
@@ -883,9 +881,10 @@ export class AndroidForm extends LitElement {
               </div>
 
               <div class="form-group">
-                <label>${
-                  localeStrings.text.android.titles.location_delegation
-                }</label>
+                <label
+                  >${localeStrings.text.android.titles
+                    .location_delegation}</label
+                >
                 <div class="form-check">
                   <input
                     .defaultChecked="${true}"
@@ -912,9 +911,10 @@ export class AndroidForm extends LitElement {
               </div>
 
               <div class="form-group">
-                <label>${
-                  localeStrings.text.android.titles.google_play_billing
-                }</label>
+                <label
+                  >${localeStrings.text.android.titles
+                    .google_play_billing}</label
+                >
                 <div class="form-check">
                   <input
                     .defaultChecked="${false}"
@@ -941,9 +941,9 @@ export class AndroidForm extends LitElement {
               </div>
 
               <div class="form-group">
-                <label>${
-                  localeStrings.text.android.titles.settings_shortcut
-                }</label>
+                <label
+                  >${localeStrings.text.android.titles.settings_shortcut}</label
+                >
                 <div class="form-check">
                   <input
                     .defaultChecked="${true}"
@@ -973,9 +973,9 @@ export class AndroidForm extends LitElement {
               </div>
 
               <div class="form-group">
-                <label>${
-                  localeStrings.text.android.titles.chromeos_only
-                }</label>
+                <label
+                  >${localeStrings.text.android.titles.chromeos_only}</label
+                >
                 <div class="form-check">
                   <input
                     .defaultChecked="${false}"
@@ -1277,9 +1277,7 @@ export class AndroidForm extends LitElement {
         </div>
 
         <div id="form-details-block">
-          <p>
-            ${localeStrings.text.android.description.form_details}
-          </p>
+          <p>${localeStrings.text.android.description.form_details}</p>
         </div>
 
         <div id="form-options-actions" class="modal-actions">
