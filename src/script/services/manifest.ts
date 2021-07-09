@@ -13,6 +13,9 @@ import {
 import { cleanUrl } from '../utils/url';
 import { setURL } from './app-info';
 
+/*
+  Attributes
+*/
 export const emitter = new EventTarget();
 
 export let boilerPlateManifest: Manifest = {
@@ -33,14 +36,164 @@ export let boilerPlateManifest: Manifest = {
 let manifest: Manifest = manifestFromSession();
 let maniURL: Lazy<string>;
 let fetchAttempted = false;
-
-// export to use as a flag for generation
-// this is needed to decide to go to the 
-// publish page or base_package
-export let generated = false;
+let generated = false;
 
 let testResult: ManifestDetectionResult | undefined;
 
+/*
+  External API section
+*/
+/*
+  1. Attempts to fetch manifest
+  2. If that fails, generates the manifest, warns console.
+  3. If the generation fails, still returns the boiler plate.
+*/
+export async function getManifestGuarded(): Promise<Manifest> {
+  try {
+    if (!fetchAttempted) {
+      const newManifest = await getManifest();
+
+      if (newManifest) {
+        manifest = newManifest;
+      }
+    }
+  } catch (e) {
+    console.warn(e);
+  }
+
+  return manifest;
+}
+
+export function manifestGenerated() {
+  return generated === true;
+}
+
+export function getManiURL() {
+  return maniURL;
+}
+
+export async function fetchManifest(
+  url: string
+): Promise<ManifestDetectionResult> {
+  // Manifest detection is surprisingly tricky due to redirects, dynamic code generation, SSL problems, and other issues.
+  // We have 3 techniques to detect the manifest:
+  // 1. An Azure function that uses Chrome Puppeteer to fetch the manifest
+  // 2. An Azure function that parses the HTML to find the manifest.
+  // This fetch() function runs all 3 manifest detection schemes concurrently and returns the first one that succeeds.
+
+  // eslint-disable-next-line no-async-promise-executor
+  return new Promise(async (resolve, reject) => {
+    let knownGoodUrl;
+
+    if (testResult) {
+      resolve(testResult);
+    }
+
+    try {
+      knownGoodUrl = await cleanUrl(url);
+    } catch (err) {
+      reject(err);
+      return;
+    }
+
+    setURL(knownGoodUrl);
+
+    const manifestDetectors = [
+      getManifestViaFilePost(knownGoodUrl),
+      getManifestViaHtmlParse(knownGoodUrl),
+    ];
+
+    // We want to use Promise.any(...), but browser support is too low at the time of this writing: https://caniuse.com/mdn-javascript_builtins_promise_any
+    // Use our polyfill if needed.
+    const promiseAnyOrPolyfill: (
+      promises: Promise<ManifestDetectionResult>[]
+    ) => Promise<ManifestDetectionResult> = promises =>
+      Promise['any'] ? Promise['any'](promises) : promiseAnyPolyfill(promises);
+
+    try {
+      testResult = await promiseAnyOrPolyfill(manifestDetectors);
+
+      if (!fetchAttempted) {
+        manifest = testResult.content;
+
+        if (!manifest.icons) {
+          manifest.icons = [];
+        }
+
+        if (!manifest.screenshots) {
+          manifest.screenshots = [];
+        }
+
+        fetchAttempted = true;
+      }
+
+      maniURL = testResult.generatedUrl;
+      resolve(testResult);
+    } catch (manifestDetectionError) {
+      console.error('All manifest detectors failed.', manifestDetectionError);
+
+      if (!fetchAttempted && !generated) {
+        try {
+          const genContent = await generateManifest(url);
+
+          if (genContent && !genContent.error) {
+            manifest = genContent.content;
+
+            if (!manifest.icons) {
+              manifest.icons = [];
+            }
+
+            if (!manifest.screenshots) {
+              manifest.screenshots = [];
+            }
+
+            fetchAttempted = true;
+          }
+        } catch (generatedError) {
+          reject(generatedError);
+        }
+      }
+
+      // Well, we sure tried.
+      reject(manifestDetectionError);
+    }
+  });
+}
+
+export async function updateManifest(
+  manifestUpdates: Partial<Manifest>
+): Promise<Manifest> {
+  // @ts-ignore
+  // using a dynamic import here as this is a large library
+  // so we should only load it once its actually needed
+  await import('https://unpkg.com/deepmerge@4.2.2/dist/umd.js');
+
+  manifest = deepmerge(manifest, manifestUpdates as Partial<Manifest>, {
+    // customMerge: customManifestMerge, // NOTE: need to manually concat with editor changes.
+  });
+
+  sessionStorage.setItem(PWABuilderSession.manifest, JSON.stringify(manifest)); // would it make sense to make this async?
+
+  emitter.dispatchEvent(
+    updateManifestEvent({
+      ...manifest,
+    })
+  );
+
+  return manifest;
+}
+
+export function updateManifestEvent<T extends Partial<Manifest>>(detail: T) {
+  return new CustomEvent<T>(AppEvents.manifestUpdate, {
+    detail,
+    bubbles: true,
+    composed: true,
+  });
+}
+
+/*
+  Internal API section
+*/
 function manifestFromSession(): Manifest {
   try {
     const sessionManifest = sessionStorage.getItem(PWABuilderSession.manifest);
@@ -57,10 +210,6 @@ function manifestFromSession(): Manifest {
   }
 
   return boilerPlateManifest;
-}
-
-export function manifestGenerated() {
-  return generated;
 }
 
 // Uses Azure manifest Puppeteer service to fetch the manifest, then POSTS it to the API.
@@ -152,119 +301,6 @@ async function getManifestViaHtmlParse(
   };
 }
 
-export async function fetchManifest(
-  url: string
-): Promise<ManifestDetectionResult> {
-  // Manifest detection is surprisingly tricky due to redirects, dynamic code generation, SSL problems, and other issues.
-  // We have 3 techniques to detect the manifest:
-  // 1. An Azure function that uses Chrome Puppeteer to fetch the manifest
-  // 2. An Azure function that parses the HTML to find the manifest.
-  // This fetch() function runs all 3 manifest detection schemes concurrently and returns the first one that succeeds.
-
-  // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async (resolve, reject) => {
-    let knownGoodUrl;
-
-    if (testResult) {
-      resolve(testResult);
-    }
-
-    try {
-      knownGoodUrl = await cleanUrl(url);
-    } catch (err) {
-      reject(err);
-      return;
-    }
-
-    setURL(knownGoodUrl);
-
-    const manifestDetectors = [
-      getManifestViaFilePost(knownGoodUrl),
-      getManifestViaHtmlParse(knownGoodUrl),
-    ];
-
-    // We want to use Promise.any(...), but browser support is too low at the time of this writing: https://caniuse.com/mdn-javascript_builtins_promise_any
-    // Use our polyfill if needed.
-    const promiseAnyOrPolyfill: (
-      promises: Promise<ManifestDetectionResult>[]
-    ) => Promise<ManifestDetectionResult> = promises =>
-      Promise['any'] ? Promise['any'](promises) : promiseAnyPolyfill(promises);
-
-    try {
-      testResult = await promiseAnyOrPolyfill(manifestDetectors);
-
-      if (!fetchAttempted) {
-        manifest = testResult.content;
-
-        if (!manifest.icons) {
-          manifest.icons = [];
-        }
-
-        if (!manifest.screenshots) {
-          manifest.screenshots = [];
-        }
-
-        fetchAttempted = true;
-      }
-
-      maniURL = testResult.generatedUrl;
-      resolve(testResult);
-    } catch (manifestDetectionError) {
-      console.error('All manifest detectors failed.', manifestDetectionError);
-
-      if (!fetchAttempted && !generated) {
-        try {
-          const genContent = await generateManifest(url);
-
-          if (genContent && !genContent.error) {
-            manifest = genContent.content;
-
-            if (!manifest.icons) {
-              manifest.icons = [];
-            }
-
-            if (!manifest.screenshots) {
-              manifest.screenshots = [];
-            }
-
-            fetchAttempted = true;
-          }
-        } catch (generatedError) {
-          reject(generatedError);
-        }
-      }
-
-      // Well, we sure tried.
-      reject(manifestDetectionError);
-    }
-  });
-}
-
-export function getManiURL() {
-  return maniURL;
-}
-
-/*
-  1. Attempts to fetch manifest
-  2. If that fails, generates the manifest, warns console.
-  3. If the generation fails, still returns the boiler plate.
-*/
-export async function getManifestGuarded(): Promise<Manifest> {
-  try {
-    if (!fetchAttempted) {
-      const newManifest = await getManifest();
-
-      if (newManifest) {
-        manifest = newManifest;
-      }
-    }
-  } catch (e) {
-    console.warn(e);
-  }
-
-  return manifest;
-}
-
 async function getManifest(): Promise<Manifest | undefined> {
   // no manifest object yet, so lets try to grab one
   const search = new URLSearchParams(location.search);
@@ -312,35 +348,4 @@ async function generateManifest(url: string): Promise<ManifestDetectionResult> {
     console.error(`Error generating manifest: ${err}`);
     throw err;
   }
-}
-
-export async function updateManifest(
-  manifestUpdates: Partial<Manifest>
-): Promise<Manifest> {
-  // @ts-ignore
-  // using a dynamic import here as this is a large library
-  // so we should only load it once its actually needed
-  await import('https://unpkg.com/deepmerge@4.2.2/dist/umd.js');
-
-  manifest = deepmerge(manifest, manifestUpdates as Partial<Manifest>, {
-    // customMerge: customManifestMerge, // NOTE: need to manually concat with editor changes.
-  });
-
-  sessionStorage.setItem(PWABuilderSession.manifest, JSON.stringify(manifest)); // would it make sense to make this async?
-
-  emitter.dispatchEvent(
-    updateManifestEvent({
-      ...manifest,
-    })
-  );
-
-  return manifest;
-}
-
-export function updateManifestEvent<T extends Partial<Manifest>>(detail: T) {
-  return new CustomEvent<T>(AppEvents.manifestUpdate, {
-    detail,
-    bubbles: true,
-    composed: true,
-  });
 }
