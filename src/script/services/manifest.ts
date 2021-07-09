@@ -170,14 +170,18 @@ export async function fetchManifest(
     try {
       testResult = await promiseAnyOrPolyfill(manifestDetectors);
 
-      manifest = testResult.content;
+      if (!fetchAttempted) {
+        manifest = testResult.content;
 
-      if (!manifest.icons) {
-        manifest.icons = [];
-      }
+        if (!manifest.icons) {
+          manifest.icons = [];
+        }
 
-      if (!manifest.screenshots) {
-        manifest.screenshots = [];
+        if (!manifest.screenshots) {
+          manifest.screenshots = [];
+        }
+
+        fetchAttempted = true;
       }
 
       maniURL = testResult.generatedUrl;
@@ -185,7 +189,7 @@ export async function fetchManifest(
     } catch (manifestDetectionError) {
       console.error('All manifest detectors failed.', manifestDetectionError);
 
-      if (!generated) {
+      if (!fetchAttempted && !generated) {
         try {
           const genContent = await generateManifest(url);
 
@@ -199,9 +203,8 @@ export async function fetchManifest(
             if (!manifest.screenshots) {
               manifest.screenshots = [];
             }
-          } else {
-            manifest = boilerPlateManifest;
-            manifest.start_url = knownGoodUrl;
+
+            fetchAttempted = true;
           }
         } catch (generatedError) {
           reject(generatedError);
@@ -240,8 +243,6 @@ export async function getManifestGuarded(): Promise<Manifest> {
 }
 
 async function getManifest(): Promise<Manifest | undefined> {
-  fetchAttempted = true;
-
   // no manifest object yet, so lets try to grab one
   const search = new URLSearchParams(location.search);
   const url: string | null = maniURL || search.get('site');
@@ -279,6 +280,8 @@ async function generateManifest(url: string): Promise<ManifestDetectionResult> {
     });
 
     const data = await response.json();
+
+    console.log('generateManifest', data);
 
     return data;
   } catch (err) {
