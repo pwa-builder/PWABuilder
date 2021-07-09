@@ -4,7 +4,7 @@ import {
   RawTestResult,
   Status,
 } from '../utils/interfaces';
-import { generated } from './manifest';
+import { manifestGenerated } from './manifest';
 import { getChosenServiceWorker } from './service_worker';
 
 let site_url: string | undefined;
@@ -137,7 +137,7 @@ export async function baseOrPublish(): Promise<'base' | 'publish'> {
 
   // is the manifest one we generated
   // or the users
-  const generatedFlag = generated;
+  const generatedFlag = manifestGenerated();
 
   if (generatedFlag === true || choseSW !== undefined) {
     // User has chosen a custom service worker
