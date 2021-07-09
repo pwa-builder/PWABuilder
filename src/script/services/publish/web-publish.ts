@@ -78,6 +78,10 @@ function createNewFormDataWithManifest(manifest: Manifest): FormData {
         val = JSON.stringify(val);
       }
 
+      if (val === null || val === undefined || val === '') {
+        continue;
+      }
+
       form.append(key as string, val);
     }
   }
