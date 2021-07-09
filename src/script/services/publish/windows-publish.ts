@@ -29,27 +29,23 @@ export async function generateWindowsPackage(
     );
   }
 
-  try {
-    const response = await fetch(`${env.windowsPackageGeneratorUrl}`, {
-      method: 'POST',
-      body: JSON.stringify(windowsOptions),
-      headers: new Headers({ 'content-type': 'application/json' }),
-    });
-    if (response.status === 200) {
-      const data = await response.blob();
+  const response = await fetch(`${env.windowsPackageGeneratorUrl}`, {
+    method: 'POST',
+    body: JSON.stringify(windowsOptions),
+    headers: new Headers({ 'content-type': 'application/json' }),
+  });
+  if (response.status === 200) {
+    const data = await response.blob();
 
-      //set generated flag
-      windows_generated = true;
+    //set generated flag
+    windows_generated = true;
 
-      return data;
-    } else {
-      const responseText = await response.text();
-      throw new Error(
-        `Failed. Status code ${response.status}, Error: ${response.statusText}, Details: ${responseText}`
-      );
-    }
-  } catch (err) {
-    throw new Error('Failed. Error: ' + err);
+    return data;
+  } else {
+    const responseText = await response.text();
+    throw new Error(
+      `Failed. Status code ${response.status}, Error: ${response.statusText}, Details: ${responseText}`
+    );
   }
 }
 

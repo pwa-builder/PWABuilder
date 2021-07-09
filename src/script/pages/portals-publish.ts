@@ -380,7 +380,7 @@ export class PortalsPublish extends LitElement {
       this.open_android_options = false;
       this.open_windows_options = false;
 
-      this.showAlertModal(err, type);
+      this.showAlertModal(err as Error, type);
     }
   }
 
@@ -396,9 +396,9 @@ export class PortalsPublish extends LitElement {
     }
   }
 
-  showAlertModal(error: string, platform: Platform) {
+  showAlertModal(error: string | Error, platform: Platform) {
     this.errored = true;
-    this.errorMessage = error;
+    this.errorMessage = (error || '').toString();
 
     this.reportAnError(error, platform);
   }
@@ -466,7 +466,7 @@ export class PortalsPublish extends LitElement {
     );
   }
 
-  reportAnError(errorDetail: string, platform: string) {
+  reportAnError(errorDetail: string | Object, platform: string) {
     this.reportPackageErrorUrl = getReportErrorUrl(errorDetail, platform);
   }
 
