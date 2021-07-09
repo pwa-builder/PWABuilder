@@ -84,6 +84,7 @@ export async function fetchManifest(
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve, reject) => {
     let knownGoodUrl;
+    const testErrors: Array<Error> = [];
 
     if (testResult) {
       resolve(testResult);
@@ -110,53 +111,56 @@ export async function fetchManifest(
     ) => Promise<ManifestDetectionResult> = promises =>
       Promise['any'] ? Promise['any'](promises) : promiseAnyPolyfill(promises);
 
+    // Test results
     try {
       testResult = await promiseAnyOrPolyfill(manifestDetectors);
-
-      if (!fetchAttempted) {
-        manifest = testResult.content;
-
-        if (!manifest.icons) {
-          manifest.icons = [];
-        }
-
-        if (!manifest.screenshots) {
-          manifest.screenshots = [];
-        }
-
-        fetchAttempted = true;
-      }
-
       maniURL = testResult.generatedUrl;
-      resolve(testResult);
     } catch (manifestDetectionError) {
       console.error('All manifest detectors failed.', manifestDetectionError);
+      testErrors.push(manifestDetectionError as Error);
+    }
 
-      if (!fetchAttempted && !generated) {
-        try {
-          const genContent = await generateManifest(url);
+    // Use test results to attempt to get a manifest, or generate one from the url
+    if (!fetchAttempted && testResult) {
+      manifest = testResult.content;
 
-          if (genContent && !genContent.error) {
-            manifest = genContent.content;
-
-            if (!manifest.icons) {
-              manifest.icons = [];
-            }
-
-            if (!manifest.screenshots) {
-              manifest.screenshots = [];
-            }
-
-            fetchAttempted = true;
-          }
-        } catch (generatedError) {
-          reject(generatedError);
-        }
+      if (!manifest.icons) {
+        manifest.icons = [];
       }
 
-      // Well, we sure tried.
-      reject(manifestDetectionError);
+      if (!manifest.screenshots) {
+        manifest.screenshots = [];
+      }
+
+      fetchAttempted = true;
+    } else if (!fetchAttempted && !generated) {
+      try {
+        const genContent = await generateManifest(url);
+
+        if (genContent && !genContent.error) {
+          manifest = genContent.content;
+
+          if (!manifest.icons) {
+            manifest.icons = [];
+          }
+
+          if (!manifest.screenshots) {
+            manifest.screenshots = [];
+          }
+
+          fetchAttempted = true;
+        }
+      } catch (generatedError) {
+        testErrors.push(generatedError as Error);
+      }
     }
+
+    // resolve the flow.
+    if (testResult) {
+      resolve(testResult);
+    }
+
+    reject(testErrors);
   });
 }
 
