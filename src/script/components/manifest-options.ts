@@ -875,8 +875,8 @@ export class AppManifest extends LitElement {
     });
   }
 
-  handleManifestUpdate(maniUpdates: any) {
-    console.log('maniUpdates', this, maniUpdates);
+  async handleManifestUpdate(maniUpdates: any) {
+    console.log('maniUpdates', maniUpdates);
     if (maniUpdates) {
       this.manifest = maniUpdates.detail;
     }
