@@ -63,8 +63,11 @@ export async function generateAndroidPackage(
       }
     }
   } catch (err) {
+    const responseError = err as Response; // is this the right type? Is there a ResponseError type? 
+    const statusCode = responseError.status || 'unknown';
+    const statusText = responseError.statusText || 'unknown';
     throw new Error(
-      `Error generating Android platform due to HTTP error.\n\nStatus code: ${err.status}\n\nError: ${err.statusText}\n\nDetails: ${err}`
+      `Error generating Android platform due to HTTP error.\n\nStatus code: ${statusCode}\n\nError: ${statusText}\n\nDetails: ${err}`
     );
   }
 
@@ -80,27 +83,28 @@ export async function createAndroidPackageOptionsFromForm(
     throw new Error('Could not find the web manifest');
   }
 
-  const maniURL = getManiURL();
-  const pwaURL = getURL();
+  const maniUrl = getManiURL();
+  const pwaUrl = getURL();
 
-  if (!pwaURL) {
+  if (!pwaUrl) {
     throw new Error("Can't find the current URL");
   }
 
-  if (!maniURL) {
+  if (!maniUrl) {
     throw new Error('Cant find the manifest URL');
   }
 
   const appName =
     form.appName.value || manifest.short_name || manifest.name || 'My PWA';
   const packageName = generatePackageId(
-    form.packageId.value || new URL(pwaURL).hostname
+    form.packageId.value || new URL(pwaUrl).hostname
   );
   // Use standalone display mode unless the manifest has fullscreen specified.
   const display =
     manifest.display === 'fullscreen' ? 'fullscreen' : 'standalone';
   const navColorOrFallback =
     manifest.theme_color || manifest.background_color || '#000000';
+  const manifestUrlOrRoot = maniUrl.startsWith("data:application/manifest+json,") ? pwaUrl : maniUrl;
   return {
     appVersion: form.appVersion.value || '1.0.0.0',
     appVersionCode: form.appVersionCode.value || 1,
@@ -121,13 +125,13 @@ export async function createAndroidPackageOptionsFromForm(
         enabled: form.playBilling.checked,
       },
     },
-    host: form.host.value || pwaURL,
-    iconUrl: getAbsoluteUrl(form.iconUrl.value, maniURL),
+    host: form.host.value || pwaUrl,
+    iconUrl: getAbsoluteUrl(form.iconUrl.value, manifestUrlOrRoot),
     includeSourceCode: form.includeSourceCode.checked,
     isChromeOSOnly: form.isChromeOSOnly.checked,
     launcherName: form.launcherName.value || manifest.short_name || appName, // launcher name should be the short name. If none is available, fallback to the full app name.
-    maskableIconUrl: getAbsoluteUrl(form.maskableIconUrl.value, maniURL),
-    monochromeIconUrl: getAbsoluteUrl(form.monochromeIconUrl.value, maniURL),
+    maskableIconUrl: getAbsoluteUrl(form.maskableIconUrl.value, manifestUrlOrRoot),
+    monochromeIconUrl: getAbsoluteUrl(form.monochromeIconUrl.value, manifestUrlOrRoot),
     name: form.appName.value || manifest.name || 'My Awesome PWA',
     navigationColor: form.navigationColor.value || navColorOrFallback,
     navigationColorDark: form.navigationColorDark.value || navColorOrFallback,
@@ -157,12 +161,12 @@ export async function createAndroidPackageOptionsFromForm(
     signingMode: form.signingMode ? form.signingMode.value : 'new',
     splashScreenFadeOutDuration: form.splashScreenFadeOutDuration.value || 300,
     startUrl: getStartUrlRelativeToHost(
-      form.startUrl.value || manifest.start_url,
-      new URL(maniURL)
+      form.startUrl.value || manifest.start_url || "/",
+      manifestUrlOrRoot
     ),
     themeColor: form.themeColor.value || manifest.theme_color || '#FFFFFF',
     shareTarget: manifest.share_target,
-    webManifestUrl: form.webManifestUrl.value || maniURL,
+    webManifestUrl: form.webManifestUrl.value || maniUrl,
   };
 }
 
@@ -181,19 +185,19 @@ export async function createAndroidPackageOptionsFromManifest(
     throw new Error('Could not find the web manifest');
   }
 
-  const maniURL = getManiURL();
-  const pwaURL = getURL();
+  const maniUrl = getManiURL();
+  const pwaUrl = getURL();
 
-  if (!pwaURL) {
+  if (!pwaUrl) {
     throw new Error("Can't find the current URL");
   }
 
-  if (!maniURL) {
+  if (!maniUrl) {
     throw new Error('Cant find the manifest URL');
   }
 
   const appName = manifest.short_name || manifest.name || 'My PWA';
-  const packageName = generatePackageId(new URL(pwaURL).hostname);
+  const packageName = generatePackageId(new URL(pwaUrl).hostname);
   // Use standalone display mode unless the manifest has fullscreen specified.
   const display =
     manifest.display === 'fullscreen' ? 'fullscreen' : 'standalone';
@@ -217,6 +221,15 @@ export async function createAndroidPackageOptionsFromManifest(
   const navColorOrFallback =
     manifest.theme_color || manifest.background_color || '#000000';
 
+  // Support URL-encoded manifests. See https://github.com/pwa-builder/PWABuilder/issues/1926
+  // When URL-encoded manifest is the manifest URL, we can resolve relative paths using the PWA URL itself.
+  // For example, consider this manifest declaration:
+  //    <link rel="manifest" href="data:application/manifest+json,..." />
+  // The manifestUrl will be "data:application/manifest+json,..."
+  // In this case, we can't do new URL("/foo.png", "data:application/manifest+json") - it will throw an error.
+  // Instead, we can resolve the absolute URL using the PWA URL itself.
+  const manifestUrlOrRoot = maniUrl.startsWith("data:application/manifest+json,") ? pwaUrl : maniUrl;
+
   return {
     appVersion: '1.0.0.0',
     appVersionCode: 1,
@@ -236,13 +249,13 @@ export async function createAndroidPackageOptionsFromManifest(
         enabled: false,
       },
     },
-    host: pwaURL,
-    iconUrl: getAbsoluteUrl(icon.src, maniURL),
+    host: pwaUrl,
+    iconUrl: getAbsoluteUrl(icon.src, manifestUrlOrRoot),
     includeSourceCode: false,
     isChromeOSOnly: false,
     launcherName: (manifest.short_name as string) || (appName as string), // launcher name should be the short name. If none is available, fallback to the full app name.
-    maskableIconUrl: getAbsoluteUrl(maskableIcon?.src, maniURL),
-    monochromeIconUrl: getAbsoluteUrl(monochromeIcon?.src, maniURL),
+    maskableIconUrl: getAbsoluteUrl(maskableIcon?.src, manifestUrlOrRoot),
+    monochromeIconUrl: getAbsoluteUrl(monochromeIcon?.src, manifestUrlOrRoot),
     name: appName as string,
     navigationColor: navColorOrFallback as string,
     navigationColorDark: navColorOrFallback as string,
@@ -263,10 +276,10 @@ export async function createAndroidPackageOptionsFromManifest(
     },
     signingMode: 'new',
     splashScreenFadeOutDuration: 300,
-    startUrl: getStartUrlRelativeToHost(manifest.start_url, new URL(maniURL)),
+    startUrl: getStartUrlRelativeToHost(manifest.start_url, new URL(manifestUrlOrRoot)),
     themeColor: (manifest.theme_color as string) || '#FFFFFF',
     shareTarget: manifest.share_target,
-    webManifestUrl: maniURL,
+    webManifestUrl: maniUrl,
   };
 }
 
@@ -289,11 +302,11 @@ function getAbsoluteUrl(
 
 function getStartUrlRelativeToHost(
   startUrl: string | null | undefined,
-  manifestUrl: URL
+  manifestUrl: URL | string
 ) {
   // Example with expected output:
-  // - IN: manifestUrl = "https://www.foo.com/subpath/manifest.json"
   // - IN: startUrl = "./index.html?foo=1"
+  // - IN: manifestUrl = "https://www.foo.com/subpath/manifest.json"
   // - OUT: "/subpath/index.html?foo=1"
 
   // The start URL we send to the CloudAPK service should be a URL relative to the host.
