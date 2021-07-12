@@ -246,11 +246,10 @@ function doTest(manifest: ManifestDetectionResult) {
         category: 'optional',
       },
       {
-        infoString: 'Specifies related_application',
+        infoString: 'Specifies related_applications',
         result:
           manifest.content.related_applications &&
-          manifest.content.related_applications.length > 0 &&
-          manifest.content.prefer_related_applications !== undefined
+          manifest.content.related_applications.length > 0
             ? true
             : false,
         category: 'optional',
