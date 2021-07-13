@@ -24,8 +24,6 @@ import {
 import style from '../../../styles/layout-defaults.css';
 import { fastAnchorCss } from '../utils/css/fast-elements';
 import { fileSave } from 'browser-fs-access';
-import { fetchManifest } from '../services/manifest';
-import { Manifest } from '../utils/interfaces';
 import {
   checkResults,
   finalCheckForPublish,
@@ -143,7 +141,7 @@ export class AppPublish extends LitElement {
         }
 
         .container .action-buttons fast-anchor {
-          /** 
+          /**
              Seems like a magic value but really
              this is just to match the back button next to it
            */
@@ -432,7 +430,7 @@ export class AppPublish extends LitElement {
           if (maniCheck === false) {
             err = 'Your PWA does not have a valid Web Manifest';
           } else if (baseIcon === false) {
-            console.log("zanz ", baseIcon, this.finalChecks);
+            console.log('zanz ', baseIcon, this.finalChecks);
             err = 'Your PWA needs at least a 512x512 PNG icon';
           } else if (validURL === false) {
             err = 'Your PWA does not have a valid URL';
@@ -453,9 +451,7 @@ export class AppPublish extends LitElement {
 
       console.log('signingFile', signingFile);
 
-      
       const packageData = await generatePackage(type, form, signingFile);
-
 
       if (packageData) {
         if (packageData.type === 'test') {
@@ -537,8 +533,10 @@ export class AppPublish extends LitElement {
                       @click="${() => this.generate('windows')}"
                       >Test Package
 
-                      <hover-tooltip text="Generate a package you can use to test your app on your Windows Device before going to the Microsoft Store." link="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps.md#1-test-your-app-on-your-windows-machine"></hover-tooltip>
-
+                      <hover-tooltip
+                        text="Generate a package you can use to test your app on your Windows Device before going to the Microsoft Store."
+                        link="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps.md#1-test-your-app-on-your-windows-machine"
+                      ></hover-tooltip>
                     </loading-button>
                   </div>
                 `
@@ -674,12 +672,12 @@ export class AppPublish extends LitElement {
         body="Customize your Windows package below!"
         ?open="${this.open_windows_options}"
         @app-modal-close="${() => this.storeOptionsCancel()}"
-
       >
         <windows-form
           slot="modal-form"
           .generating=${this.generating}
-          @init-windows-gen="${(ev: CustomEvent) => this.generate('windows', ev.detail.form)}"
+          @init-windows-gen="${(ev: CustomEvent) =>
+            this.generate('windows', ev.detail.form)}"
         ></windows-form>
       </app-modal>
 
@@ -694,7 +692,8 @@ export class AppPublish extends LitElement {
         <android-form
           slot="modal-form"
           .generating=${this.generating}
-          @init-android-gen="${(ev: CustomEvent) => this.generate('android', ev.detail.form, ev.detail.signingFile)}"
+          @init-android-gen="${(ev: CustomEvent) =>
+            this.generate('android', ev.detail.form, ev.detail.signingFile)}"
         ></android-form>
       </app-modal>
 

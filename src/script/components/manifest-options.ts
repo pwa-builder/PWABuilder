@@ -9,10 +9,11 @@ import ErrorStyles from '../../../styles/error-styles.css';
 
 import {
   emitter as manifestEmitter,
+  manifestProxy,
   getManifestGuarded,
   updateManifest,
 } from '../services/manifest';
-import { arrayHasChanged, objectHasChanged } from '../utils/hasChanged';
+import { arrayHasChanged } from '../utils/hasChanged';
 import { resolveUrl } from '../utils/url';
 import {
   AppEvents,
@@ -105,8 +106,7 @@ export class AppManifest extends LitElement {
   @state()
   protected editorOpened = false;
 
-  @state({ hasChanged: objectHasChanged })
-  protected manifest: Lazy<Manifest>;
+  protected manifest: Lazy<Manifest> = manifestProxy;
 
   protected get siteUrl(): string {
     if (!this.searchParams) {
@@ -408,7 +408,7 @@ export class AppManifest extends LitElement {
 
   async firstUpdated() {
     try {
-      this.manifest = await getManifestGuarded();
+      (await this.manifest)?.name;
     } catch (err) {
       // should not fall here, but if it does...
       console.warn(err);

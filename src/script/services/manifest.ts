@@ -40,6 +40,21 @@ let generated = false;
 
 let testResult: ManifestDetectionResult | undefined;
 
+export const manifestProxy = new Proxy<Manifest>(manifest, {
+  get: async function (target: Manifest, prop: string) {
+    if (!fetchAttempted) {
+      const manifest = await getManifestGuarded();
+      target = manifest;
+    }
+
+    return target[prop];
+  },
+  set: function () {
+    // read only
+    return false;
+  },
+});
+
 /*
   External API section
 */
