@@ -69,6 +69,9 @@ export class AppManifest extends LitElement {
   @property({ type: Array, hasChanged: arrayHasChanged })
   screenshotList: Array<string | undefined> = [undefined];
 
+  @property({ type: Array })
+  iconsList: Array<Icon> | undefined = [];
+
   @property({ type: Boolean }) uploadModalOpen = false;
   @state() uploadButtonDisabled = true;
   @state() uploadSelectedImageFile: Lazy<File>;
@@ -409,6 +412,11 @@ export class AppManifest extends LitElement {
   async firstUpdated() {
     try {
       this.manifest = await getManifestGuarded();
+      console.log('this.manifest in guarded', this.manifest);
+
+      if (this.manifest.icons) {
+        this.iconsList = this.manifest.icons;
+      }
     } catch (err) {
       // should not fall here, but if it does...
       console.warn(err);
@@ -493,7 +501,22 @@ export class AppManifest extends LitElement {
               </app-modal>
             </div>
             <div class="collection image-items hidden-sm">
-              ${this.renderIcons()}
+              <!--${this.renderIcons()}-->
+
+              ${
+                this.iconsList?.map(icon => {
+                  const url = this.handleImageUrl(icon);
+            
+                  if (url) {
+                    return html`<div class="image-item image">
+                      <img src="${url}" alt="image text" decoding="async" loading="lazy" />
+                      <p>${icon.sizes}</p>
+                    </div>`;
+                  }
+            
+                  return undefined;
+                })
+              }
             </div>
             <app-gallery
               class="show-sm"
@@ -764,18 +787,36 @@ export class AppManifest extends LitElement {
   }
 
   renderIcons() {
-    return this.manifest?.icons?.map(icon => {
-      const url = this.handleImageUrl(icon);
-
-      if (url) {
-        return html`<div class="image-item image">
-          <img src="${url}" alt="image text" decoding="async" loading="lazy" />
-          <p>${icon.sizes}</p>
-        </div>`;
-      }
-
-      return undefined;
-    });
+    console.log("this.manifest", this.manifest);
+    if (this.manifest) {
+      return this.manifest?.icons?.map(icon => {
+        const url = this.handleImageUrl(icon);
+  
+        if (url) {
+          return html`<div class="image-item image">
+            <img src="${url}" alt="image text" decoding="async" loading="lazy" />
+            <p>${icon.sizes}</p>
+          </div>`;
+        }
+  
+        return undefined;
+      });
+    }
+    else {
+      this.iconsList?.map(icon => {
+        const url = this.handleImageUrl(icon);
+  
+        if (url) {
+          return html`<div class="image-item image">
+            <img src="${url}" alt="image text" decoding="async" loading="lazy" />
+            <p>${icon.sizes}</p>
+          </div>`;
+        }
+  
+        return undefined;
+      });
+    }
+    return undefined;
   }
 
   renderScreenshotInputUrlList() {
@@ -994,9 +1035,11 @@ export class AppManifest extends LitElement {
 
     try {
       if (this.uploadSelectedImageFile) {
-        await generateMissingImagesBase64({
+        this.iconsList = await generateMissingImagesBase64({
           file: this.uploadSelectedImageFile,
         });
+
+        // this.renderIcons();
       }
     } catch (e) {
       console.error(e);
