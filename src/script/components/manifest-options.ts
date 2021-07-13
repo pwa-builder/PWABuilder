@@ -69,8 +69,6 @@ export class AppManifest extends LitElement {
   @property({ type: Array, hasChanged: arrayHasChanged })
   screenshotList: Array<string | undefined> = [undefined];
 
-  @property({ type: Array })
-  iconsList: Array<Icon> | undefined = [];
 
   @property({ type: Boolean }) uploadModalOpen = false;
   @state() uploadButtonDisabled = true;
@@ -110,6 +108,9 @@ export class AppManifest extends LitElement {
 
   @state({ hasChanged: objectHasChanged })
   protected manifest: Lazy<Manifest>;
+
+  @state()
+  protected iconsList: Array<Icon> | undefined = [];
 
   protected get siteUrl(): string {
     if (!this.searchParams) {
@@ -1030,16 +1031,24 @@ export class AppManifest extends LitElement {
     }
   }
 
-  async handleIconFileUpload() {
+  async handleIconFileUpload(): Promise<void> {
     this.awaitRequest = true;
 
     try {
       if (this.uploadSelectedImageFile) {
+
+        // remove existing icons so we can replace them
+        this.updateManifest({
+          icons: undefined,
+        });
+
+        // clear our local state variable too
+        this.iconsList = undefined;
+
+        // new icons (triggers a render)
         this.iconsList = await generateMissingImagesBase64({
           file: this.uploadSelectedImageFile,
         });
-
-        // this.renderIcons();
       }
     } catch (e) {
       console.error(e);
