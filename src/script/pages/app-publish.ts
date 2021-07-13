@@ -24,8 +24,6 @@ import {
 import style from '../../../styles/layout-defaults.css';
 import { fastAnchorCss } from '../utils/css/fast-elements';
 import { fileSave } from 'browser-fs-access';
-import { fetchManifest } from '../services/manifest';
-import { Manifest } from '../utils/interfaces';
 import {
   checkResults,
   finalCheckForPublish,
@@ -432,7 +430,6 @@ export class AppPublish extends LitElement {
           if (maniCheck === false) {
             err = 'Your PWA does not have a valid Web Manifest';
           } else if (baseIcon === false) {
-            console.log("zanz ", baseIcon, this.finalChecks);
             err = 'Your PWA needs at least a 512x512 PNG icon';
           } else if (validURL === false) {
             err = 'Your PWA does not have a valid URL';
@@ -474,7 +471,7 @@ export class AppPublish extends LitElement {
       this.open_android_options = false;
       this.open_windows_options = false;
 
-      this.showAlertModal(err, type);
+      this.showAlertModal(err as Error, type);
     }
   }
 
@@ -490,9 +487,9 @@ export class AppPublish extends LitElement {
     }
   }
 
-  showAlertModal(error: string, platform: Platform) {
+  showAlertModal(error: string | Object, platform: Platform) {
     this.errored = true;
-    this.errorMessage = error;
+    this.errorMessage = (error || '').toString();
 
     this.reportAnError(error, platform);
   }
@@ -574,7 +571,7 @@ export class AppPublish extends LitElement {
     Router.go(`/reportcard?results=${resultsString}`);
   }
 
-  reportAnError(errorDetail: string, platform: string) {
+  reportAnError(errorDetail: string | Object, platform: string) {
     this.reportPackageErrorUrl = getReportErrorUrl(errorDetail, platform);
   }
 
