@@ -503,8 +503,6 @@ export class AppManifest extends LitElement {
               </app-modal>
             </div>
             <div class="collection image-items hidden-sm">
-              <!--${this.renderIcons()}-->
-
               ${
                 this.iconsList?.map(icon => {
                   const url = this.handleImageUrl(icon);
@@ -786,39 +784,6 @@ export class AppManifest extends LitElement {
         </div>
       </div>
     `;
-  }
-
-  renderIcons() {
-    console.log("this.manifest", this.manifest);
-    if (this.manifest) {
-      return this.manifest?.icons?.map(icon => {
-        const url = this.handleImageUrl(icon);
-  
-        if (url) {
-          return html`<div class="image-item image">
-            <img src="${url}" alt="image text" decoding="async" loading="lazy" />
-            <p>${icon.sizes}</p>
-          </div>`;
-        }
-  
-        return undefined;
-      });
-    }
-    else {
-      this.iconsList?.map(icon => {
-        const url = this.handleImageUrl(icon);
-  
-        if (url) {
-          return html`<div class="image-item image">
-            <img src="${url}" alt="image text" decoding="async" loading="lazy" />
-            <p>${icon.sizes}</p>
-          </div>`;
-        }
-  
-        return undefined;
-      });
-    }
-    return undefined;
   }
 
   renderScreenshotInputUrlList() {
