@@ -69,6 +69,7 @@ export class AppManifest extends LitElement {
   @property({ type: Array, hasChanged: arrayHasChanged })
   screenshotList: Array<string | undefined> = [undefined];
 
+
   @property({ type: Boolean }) uploadModalOpen = false;
   @state() uploadButtonDisabled = true;
   @state() uploadSelectedImageFile: Lazy<File>;
@@ -107,6 +108,9 @@ export class AppManifest extends LitElement {
 
   @state({ hasChanged: objectHasChanged })
   protected manifest: Lazy<Manifest>;
+
+  @state()
+  protected iconsList: Array<Icon> | undefined = [];
 
   protected get siteUrl(): string {
     if (!this.searchParams) {
@@ -409,6 +413,11 @@ export class AppManifest extends LitElement {
   async firstUpdated() {
     try {
       this.manifest = await getManifestGuarded();
+      console.log('this.manifest in guarded', this.manifest);
+
+      if (this.manifest.icons) {
+        this.iconsList = this.manifest.icons;
+      }
     } catch (err) {
       // should not fall here, but if it does...
       console.warn(err);
@@ -471,6 +480,7 @@ export class AppManifest extends LitElement {
                 >${localeStrings.button.upload}</app-button
               >
               <app-modal
+                id="uploadModal"
                 modalId="uploadModal"
                 title="Upload information"
                 body="Choose an Icon to upload. For the best results, we recommend choosing a 512x512 size icon."
@@ -493,7 +503,20 @@ export class AppManifest extends LitElement {
               </app-modal>
             </div>
             <div class="collection image-items hidden-sm">
-              ${this.renderIcons()}
+              ${
+                this.iconsList?.map(icon => {
+                  const url = this.handleImageUrl(icon);
+            
+                  if (url) {
+                    return html`<div class="image-item image">
+                      <img src="${url}" alt="image text" decoding="async" loading="lazy" />
+                      <p>${icon.sizes}</p>
+                    </div>`;
+                  }
+            
+                  return undefined;
+                })
+              }
             </div>
             <app-gallery
               class="show-sm"
@@ -763,21 +786,6 @@ export class AppManifest extends LitElement {
     `;
   }
 
-  renderIcons() {
-    return this.manifest?.icons?.map(icon => {
-      const url = this.handleImageUrl(icon);
-
-      if (url) {
-        return html`<div class="image-item image">
-          <img src="${url}" alt="image text" decoding="async" loading="lazy" />
-          <p>${icon.sizes}</p>
-        </div>`;
-      }
-
-      return undefined;
-    });
-  }
-
   renderScreenshotInputUrlList() {
     const renderFn = (url: string | undefined, index: number) => {
       const isValid = this.screenshotListValid[index];
@@ -989,12 +997,22 @@ export class AppManifest extends LitElement {
     }
   }
 
-  async handleIconFileUpload() {
+  async handleIconFileUpload(): Promise<void> {
     this.awaitRequest = true;
 
     try {
       if (this.uploadSelectedImageFile) {
-        await generateMissingImagesBase64({
+
+        // remove existing icons so we can replace them
+        this.updateManifest({
+          icons: undefined,
+        });
+
+        // clear our local state variable too
+        this.iconsList = undefined;
+
+        // new icons (triggers a render)
+        this.iconsList = await generateMissingImagesBase64({
           file: this.uploadSelectedImageFile,
         });
       }

@@ -29,7 +29,7 @@ interface IconGeneratorConfig {
 const base64ImageGeneratorUrl =
   'https://appimagegenerator-prod.azurewebsites.net/api/image/base64';
 
-export async function generateMissingImagesBase64(config: MissingImagesConfig) {
+export async function generateMissingImagesBase64(config: MissingImagesConfig): Promise<Array<Icon> | undefined> {
   try {
     const form = new FormData();
     form.append('baseImage', config.file);
@@ -59,9 +59,15 @@ export async function generateMissingImagesBase64(config: MissingImagesConfig) {
       updateManifest({
         icons,
       });
+
+      return icons;
+    }
+    else {
+      return;
     }
   } catch (e) {
     console.error(e);
+    return;
   }
 }
 
