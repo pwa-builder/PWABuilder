@@ -480,6 +480,7 @@ export class AppManifest extends LitElement {
                 >${localeStrings.button.upload}</app-button
               >
               <app-modal
+                id="uploadModal"
                 modalId="uploadModal"
                 title="Upload information"
                 body="Choose an Icon to upload. For the best results, we recommend choosing a 512x512 size icon."
