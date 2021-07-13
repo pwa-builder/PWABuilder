@@ -106,7 +106,7 @@ export class AppManifest extends LitElement {
   @state()
   protected editorOpened = false;
 
-  @state({ hasChanged: objectHasChanged })
+  @state()
   protected manifest: Lazy<Manifest>;
 
   @state()
@@ -1049,16 +1049,13 @@ export class AppManifest extends LitElement {
     const e = event as CustomEvent<CodeEditorUpdateEvent>;
 
     try {
-      console.log(
-        'handle editor update',
-        e.detail.transaction.state.field(updateStateField)
-      );
-
       const newManifest = JSON.parse(e.detail.transaction.state.doc.toString());
 
-      await updateManifest(newManifest); // explicitly not using the this.updateManifest method to prevent a infinite loop.
+      const updatedManifest = await updateManifest(newManifest); // explicitly not using the this.updateManifest method to prevent a infinite loop.
 
-      console.log('handleInputChange', this.manifest);
+      if (updatedManifest) {
+        this.manifest = updatedManifest;
+      }
     } catch (ex) {
       console.error('failed to parse the manifest successfully', e, ex);
     }
