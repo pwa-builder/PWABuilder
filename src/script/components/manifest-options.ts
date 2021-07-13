@@ -12,7 +12,7 @@ import {
   getManifestGuarded,
   updateManifest,
 } from '../services/manifest';
-import { arrayHasChanged, objectHasChanged } from '../utils/hasChanged';
+import { arrayHasChanged } from '../utils/hasChanged';
 import { resolveUrl } from '../utils/url';
 import {
   AppEvents,
