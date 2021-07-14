@@ -19,6 +19,7 @@ export class AppButton extends LitElement implements AppButtonElement {
         :host {
           border-radius: var(--button-radius);
           display: block;
+          outline: none;
 
           --font-size: var(--desktop-button-font-size);
           --button-height: 44px;
@@ -46,6 +47,7 @@ export class AppButton extends LitElement implements AppButtonElement {
 
           border-radius: unset;
           box-shadow: none;
+          background-color: transparent;
         }
 
         fast-button.link::part(control) {
