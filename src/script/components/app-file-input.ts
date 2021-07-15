@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit';
 
-import { customElement, property, query } from 'lit/decorators.js';
+import { customElement, property, state, query } from 'lit/decorators.js';
 
 import { hidden } from '../utils/css/hidden';
 import { fastButtonCss } from '../utils/css/fast-elements';
@@ -13,6 +13,8 @@ import { FileInputElement } from '../utils/interfaces.components';
 export class FileInput extends LitElement implements FileInputElement {
   @property({ type: String, attribute: true }) inputId = '';
   @query('.file-input') fileInput: Lazy<HTMLInputElement>;
+
+  @state() buttonText = 'Choose File';
 
   static get styles() {
     return [
@@ -50,7 +52,7 @@ export class FileInput extends LitElement implements FileInputElement {
           appearance="lightweight"
           @click=${this.clickModalInput}
         >
-          ${this.buttonText()}
+          ${this.buttonText}
         </fast-button>
         <input
           id="${ifDefined(this.inputId)}"
@@ -67,14 +69,6 @@ export class FileInput extends LitElement implements FileInputElement {
     this.fileInput?.click();
   }
 
-  buttonText() {
-    if (this.input?.files?.length) {
-      return this.input?.files?.item(0)?.name;
-    }
-
-    return 'Choose File';
-  }
-
   handleModalInputFileChosen() {
     if (this.input) {
       const changeEvent = new CustomEvent<FileInputDetails>('input-change', {
@@ -85,8 +79,17 @@ export class FileInput extends LitElement implements FileInputElement {
         bubbles: true,
       });
 
+      this.buttonText = this.input?.files?.item(0)?.name;
       this.dispatchEvent(changeEvent);
       this.requestUpdate();
+    }
+  }
+
+  clearInput() {
+    this.buttonText = 'Choose File';
+
+    if (this.fileInput) {
+      this.fileInput.files = null;
     }
   }
 }

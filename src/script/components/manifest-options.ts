@@ -55,12 +55,12 @@ import {
 import { hidden_sm } from '../utils/css/hidden';
 import { generateAndDownloadIconZip } from '../services/download_icons';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import {
-  dispatchEvent as editorDispatchEvent,
-  updateStateField,
-} from '../utils/codemirror';
+import { dispatchEvent as editorDispatchEvent } from '../utils/codemirror';
 
-import { AppModalElement } from '../utils/interfaces.components';
+import {
+  AppModalElement,
+  FileInputElement,
+} from '../utils/interfaces.components';
 
 type ColorRadioValues = 'none' | 'transparent' | 'custom';
 
@@ -68,7 +68,6 @@ type ColorRadioValues = 'none' | 'transparent' | 'custom';
 export class AppManifest extends LitElement {
   @property({ type: Array, hasChanged: arrayHasChanged })
   screenshotList: Array<string | undefined> = [undefined];
-
 
   @property({ type: Boolean }) uploadModalOpen = false;
   @state() uploadButtonDisabled = true;
@@ -138,7 +137,8 @@ export class AppManifest extends LitElement {
 
         app-button,
         loading-button::part(underlying-button) {
-          margin-top: 8px;
+          margin-top: 16px;
+          margin-bottom: 8px;
         }
 
         fast-divider {
@@ -493,6 +493,7 @@ export class AppManifest extends LitElement {
                 <div slot="modal-actions">
                   ${this.uploadImageObjectUrl
                     ? html`<loading-button
+                        class="loading-button-upload"
                         @click=${this.handleIconFileUpload}
                         ?disabled=${this.generateIconButtonDisabled}
                         ?loading=${this.awaitRequest}
@@ -503,20 +504,23 @@ export class AppManifest extends LitElement {
               </app-modal>
             </div>
             <div class="collection image-items hidden-sm">
-              ${
-                this.iconsList?.map(icon => {
-                  const url = this.handleImageUrl(icon);
-            
-                  if (url) {
-                    return html`<div class="image-item image">
-                      <img src="${url}" alt="image text" decoding="async" loading="lazy" />
-                      <p>${icon.sizes}</p>
-                    </div>`;
-                  }
-            
-                  return undefined;
-                })
-              }
+              ${this.iconsList?.map(icon => {
+                const url = this.handleImageUrl(icon);
+
+                if (url) {
+                  return html`<div class="image-item image">
+                    <img
+                      src="${url}"
+                      alt="image text"
+                      decoding="async"
+                      loading="lazy"
+                    />
+                    <p>${icon.sizes}</p>
+                  </div>`;
+                }
+
+                return undefined;
+              })}
             </div>
             <app-gallery
               class="show-sm"
@@ -856,6 +860,7 @@ export class AppManifest extends LitElement {
   renderModalInput() {
     return html`
       <app-file-input
+        id="modal-file-input"
         inputId="modal-file-input"
         @input-change=${this.handleModalInputFileChange}
       ></app-file-input>
@@ -1002,7 +1007,6 @@ export class AppManifest extends LitElement {
 
     try {
       if (this.uploadSelectedImageFile) {
-
         // remove existing icons so we can replace them
         this.updateManifest({
           icons: undefined,
@@ -1028,6 +1032,18 @@ export class AppManifest extends LitElement {
     if (uploadModal) {
       uploadModal.close();
     }
+
+    this.clearUploadModal();
+  }
+
+  clearUploadModal() {
+    const appFileInput = this.shadowRoot?.getElementById(
+      'modal-file-input'
+    ) as ShadowRootQuery<FileInputElement>;
+    appFileInput.clearInput();
+
+    this.uploadSelectedImageFile = undefined;
+    this.uploadImageObjectUrl = '';
   }
 
   async handleDeleteImage(event: Event) {
@@ -1098,6 +1114,11 @@ export class AppManifest extends LitElement {
   uploadModalClose(event: CustomEvent<ModalCloseEvent>) {
     if (event.detail.modalId === 'uploadModal') {
       this.uploadModalOpen = false;
+      (
+        this.shadowRoot?.getElementById(
+          'modal-file-input'
+        ) as ShadowRootQuery<FileInputElement>
+      ).clearInput();
     }
   }
 
