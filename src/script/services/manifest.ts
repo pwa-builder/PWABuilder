@@ -1,7 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const deepmerge: any;
 
-import { promiseAnyPolyfill } from '../polyfills/promise-any';
 import { env } from '../utils/environment';
 import {
   AppEvents,
@@ -67,9 +66,8 @@ export function manifestGenerated() {
 async function getManifestViaFilePost(
   url: string
 ): Promise<ManifestDetectionResult> {
-  const manifestTestUrl = `${
-    env.testAPIUrl
-  }/WebManifest?site=${encodeURIComponent(url)}`;
+  const manifestTestUrl = `${env.testAPIUrl
+    }/WebManifest?site=${encodeURIComponent(url)}`;
   const response = await fetch(manifestTestUrl, {
     method: 'POST',
   });
@@ -113,6 +111,7 @@ async function getManifestViaHtmlParse(
     manifestUrl: string | null;
     manifestContents: Manifest | null;
     error: string | null;
+    manifestContainsInvalidJson: boolean;
   };
 
   const manifestTestUrl = `${env.manifestFinderUrl}?url=${encodeURIComponent(
@@ -149,6 +148,7 @@ async function getManifestViaHtmlParse(
     errors: [],
     suggestions: [],
     warnings: [],
+    manifestContainsInvalidJson: responseData.manifestContainsInvalidJson
   };
 }
 
@@ -182,16 +182,8 @@ export async function fetchManifest(
       getManifestViaFilePost(knownGoodUrl),
       getManifestViaHtmlParse(knownGoodUrl),
     ];
-
-    // We want to use Promise.any(...), but browser support is too low at the time of this writing: https://caniuse.com/mdn-javascript_builtins_promise_any
-    // Use our polyfill if needed.
-    const promiseAnyOrPolyfill: (
-      promises: Promise<ManifestDetectionResult>[]
-    ) => Promise<ManifestDetectionResult> = promises =>
-      Promise['any'] ? Promise['any'](promises) : promiseAnyPolyfill(promises);
-
     try {
-      testResult = await promiseAnyOrPolyfill(manifestDetectors);
+      testResult = await Promise.any(manifestDetectors);
 
       if (!fetchAttempted) {
         manifest = testResult.content;

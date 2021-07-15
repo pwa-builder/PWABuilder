@@ -20,16 +20,7 @@ export interface Manifest {
   display: string;
   lang: string | undefined;
   name: string | undefined;
-  orientation?:
-    | 'any'
-    | 'natural'
-    | 'landscape'
-    | 'portrait'
-    | 'portrait-primary'
-    | 'portrait-secondary'
-    | 'landscape-primary'
-    | 'landscape-secondary'
-    | null;
+  orientation?: 'any' | 'natural' | 'landscape' | 'portrait' | 'portrait-primary' | 'portrait-secondary' | 'landscape-primary' | 'landscape-secondary' | null;
   prefer_related_applications?: boolean;
   related_applications?: RelatedApplication[];
   scope: string | undefined;
@@ -68,21 +59,7 @@ export interface Icon {
 }
 
 export interface Screenshot extends Icon {
-  platform?:
-    | 'narrow'
-    | 'wide'
-    | 'android'
-    | 'chromeos'
-    | 'ios'
-    | 'kaios'
-    | 'macos'
-    | 'windows'
-    | 'xbox'
-    | 'chrome_web_store'
-    | 'play'
-    | 'itunes'
-    | 'microsoft-inbox'
-    | 'microsoft-store';
+  platform?: 'narrow' | 'wide' | 'android' | 'chromeos' | 'ios' | 'kaios' | 'macos' | 'windows' | 'xbox' | 'chrome_web_store' | 'play' | 'itunes' | 'microsoft-inbox' | 'microsoft-store';
 }
 
 export interface RelatedApplication {
@@ -130,6 +107,7 @@ export interface ManifestDetectionResult {
   suggestions: [];
   warnings: [];
   error?: string;
+  manifestContainsInvalidJson?: boolean;
 }
 
 export interface RawTestResult {
