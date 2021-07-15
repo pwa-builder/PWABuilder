@@ -156,9 +156,9 @@ export class AppHeader extends LitElement {
   }
 
   goBack() {
-    const currentPlace = location.href;
+    const pathName = location.pathname;
 
-    if (currentPlace.includes('reportcard')) {
+    if (pathName === '/' || pathName === '/reportcard') {
       Router.go('/');
     } else {
       window.history.back();
@@ -169,7 +169,7 @@ export class AppHeader extends LitElement {
     return html`
       <header part="header">
         <img
-          @click="${() => this.goBack()}"
+          @click="${this.goBack}"
           id="header-icon"
           src="/assets/images/header_logo.svg"
           alt="header logo"
