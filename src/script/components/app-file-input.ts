@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit';
 
-import { customElement, property, query } from 'lit/decorators.js';
+import { customElement, property, state, query } from 'lit/decorators.js';
 
 import { hidden } from '../utils/css/hidden';
 import { fastButtonCss } from '../utils/css/fast-elements';
@@ -13,6 +13,8 @@ import { FileInputElement } from '../utils/interfaces.components';
 export class FileInput extends LitElement implements FileInputElement {
   @property({ type: String, attribute: true }) inputId = '';
   @query('.file-input') fileInput: Lazy<HTMLInputElement>;
+
+  @state() buttonText = 'Choose File';
 
   static get styles() {
     return [
@@ -45,25 +47,26 @@ export class FileInput extends LitElement implements FileInputElement {
   render() {
     return html`
       <div>
-        <fast-button class="file-button" appearance="lightweight" @click=${this.clickModalInput}>
-          ${this.buttonText()}
+        <fast-button
+          class="file-button"
+          appearance="lightweight"
+          @click=${this.clickModalInput}
+        >
+          ${this.buttonText}
         </fast-button>
-        <input id="${ifDefined(this.inputId)}" class="file-input hidden" type="file" aria-hidden="true"
-          @change=${this.handleModalInputFileChosen} />
+        <input
+          id="${ifDefined(this.inputId)}"
+          class="file-input hidden"
+          type="file"
+          aria-hidden="true"
+          @change=${this.handleModalInputFileChosen}
+        />
       </div>
     `;
   }
 
   clickModalInput() {
     this.fileInput?.click();
-  }
-
-  buttonText() {
-    if (this.input?.files?.length) {
-      return this.input?.files?.item(0)?.name;
-    }
-
-    return 'Choose File';
   }
 
   handleModalInputFileChosen() {
@@ -76,8 +79,17 @@ export class FileInput extends LitElement implements FileInputElement {
         bubbles: true,
       });
 
+      this.buttonText = this.input?.files?.item(0)?.name;
       this.dispatchEvent(changeEvent);
       this.requestUpdate();
+    }
+  }
+
+  clearInput() {
+    this.buttonText = 'Choose File';
+
+    if (this.fileInput) {
+      this.fileInput.files = null;
     }
   }
 }

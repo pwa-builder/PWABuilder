@@ -13,4 +13,6 @@ export interface FileInputElement {
   input: HTMLInputElement;
   value: string;
   files: FileList;
+
+  clearInput(): void;
 }
