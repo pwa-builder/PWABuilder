@@ -194,7 +194,7 @@ export class WindowsForm extends LitElement {
                 placeholder="app.contoso.edge"
                 type="text"
                 name="packageId"
-                pattern="[a-zA-Z0-9.]*$"
+                pattern="[a-zA-Z0-9.-]*$"
                 maxlength="50"
                 required
               />
