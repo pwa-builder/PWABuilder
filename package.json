@@ -7,7 +7,7 @@
     "node": "14.10.0"
   },
   "scripts": {
-    "test": "npx playwright install && npx playwright test",
+    "test": "npx playwright test",
     "clean": "rimraf build/ && rimraf dist/",
     "build": "rollup --config rollup.config.dev.js && rimraf dist/ && rollup --config rollup.config.js && node workbox.mjs",
     "start": "npm run build && npx nodemon server.js",
