@@ -17,14 +17,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-            submodules: true
-      - uses: actions/setup-node@v1
-
-      - name: Install dependencies and run tests
-        run: npx playwright install-deps chromium && npm install && npm test
-
-      - uses: actions/checkout@v2
-        with:
           submodules: true
       - name: Build And Deploy
         id: builddeploy
