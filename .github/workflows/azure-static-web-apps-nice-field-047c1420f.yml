@@ -10,6 +10,19 @@ on:
       - main
 
 jobs:
+  e2e-tests:
+    runs-on: windows-latest # or macos-latest, windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v1
+
+      - uses: microsoft/playwright-github-action@v1
+
+      - name: Install dependencies and run tests
+        run: npm install && npm test
+
   build_and_deploy_job:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest

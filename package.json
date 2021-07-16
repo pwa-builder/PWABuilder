@@ -7,7 +7,7 @@
     "node": "14.10.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npx playwright install && npx playwright test",
     "clean": "rimraf build/ && rimraf dist/",
     "build": "rollup --config rollup.config.dev.js && rimraf dist/ && rollup --config rollup.config.js && node workbox.mjs",
     "start": "npm run build && npx nodemon server.js",
@@ -45,6 +45,7 @@
   },
   "devDependencies": {
     "@open-wc/rollup-plugin-html": "^1.2.5",
+    "@playwright/test": "^1.12.3",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^11.2.1",
     "@rollup/plugin-replace": "^2.4.2",
