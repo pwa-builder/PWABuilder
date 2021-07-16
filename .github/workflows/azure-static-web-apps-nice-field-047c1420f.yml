@@ -16,11 +16,12 @@ jobs:
     name: Build and Deploy Job
     steps:
       - uses: actions/checkout@v2
+        with:
+            submodules: true
       - uses: actions/setup-node@v1
-      - uses: microsoft/playwright-github-action@v1
 
       - name: Install dependencies and run tests
-        run: npm install && npm test
+        run: npx playwright install-deps chromium && npm test
 
       - uses: actions/checkout@v2
         with:
