@@ -7,7 +7,7 @@
     "node": "14.10.0"
   },
   "scripts": {
-    "test": "npx playwright test",
+    "test": "npm install -D playwright && npx playwright install-deps chromium && npx playwright test",
     "clean": "rimraf build/ && rimraf dist/",
     "build": "rollup --config rollup.config.dev.js && rimraf dist/ && rollup --config rollup.config.js && node workbox.mjs",
     "start": "npm run build && npx nodemon server.js",
@@ -64,6 +64,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.3.1",
     "lit-analyzer": "^1.2.1",
+    "playwright": "^1.12.3",
     "prettier": "^2.2.1",
     "rimraf": "^3.0.2",
     "rollup": "^2.44.0",

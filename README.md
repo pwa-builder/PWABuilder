@@ -6,7 +6,7 @@ Welcome to [PWABuilder](https://www.pwabuilder.com/) v3.0! Read our launch blog 
 
 [Try It](https://www.pwabuilder.com)
 
-### Prequisites
+### Prerequisites
 
 You will need the following things properly installed on your computer.
 
@@ -27,6 +27,14 @@ Additionally, when you open the project in VS Code, you'll be prompted to instal
 ### Development
 
 Run `npm install` and then run `npm run dev`, the project should open in your default browser. From here you can start developing, your changes will be rebuilt and reloaded in the browser as you develop.
+
+### Running Tests
+We currently have E2E tests that are run using the Playwright test-runner.
+Currently they can be run by running the following commands:
+- npm run dev (We are going to run the E2E tests on your latest local changes)
+- npm run test (This will make sure the needed dependences are installed and will start running the tests)
+
+The output of the tests can be found in the console.
 
 ### Debugging in VS Code
 
