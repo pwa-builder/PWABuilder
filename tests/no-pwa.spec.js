@@ -5,7 +5,7 @@ test('known not-a-pwa base_package generation test', async ({ page }) => {
   test.slow();
 
   // open PWABuilder and enter MSN (not a PWA) into the start input
-  await page.goto('https://www.pwabuilder.com', {waitUntil: 'networkidle'});
+  await page.goto('http://localhost:8000/', {waitUntil: 'networkidle'});
   const input = await page.evaluateHandle(`document.querySelector("body > fast-design-system-provider > app-index").shadowRoot.querySelector("#router-outlet > app-home").shadowRoot.querySelector("#input-block > fast-text-field").shadowRoot.querySelector("#control")`);
   await input.focus();
   await input.type("https://www.example.com");
@@ -15,7 +15,7 @@ test('known not-a-pwa base_package generation test', async ({ page }) => {
   await start_button.click();
 
   // waiting for the report-card page which is where 
-  // we should end up with a PWA
+  // we should end up with not a PWA
   await page.waitForNavigation({
     url: (url) => url.href.includes("reportcard")
   });

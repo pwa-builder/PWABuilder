@@ -5,7 +5,7 @@ test('known good pwa Windows package generation test', async ({ page }) => {
   test.slow();
 
   // open PWABuilder and enter a PWA into the start input
-  await page.goto('https://www.pwabuilder.com/', {waitUntil: 'networkidle'});
+  await page.goto('http://localhost:8000/', {waitUntil: 'networkidle'});
   const input = await page.evaluateHandle(`document.querySelector("body > fast-design-system-provider > app-index").shadowRoot.querySelector("#router-outlet > app-home").shadowRoot.querySelector("#input-block > fast-text-field").shadowRoot.querySelector("#control")`);
   await input.focus();
   await input.type("https://webboard.app");
@@ -56,7 +56,7 @@ test('public pwa Windows package generation test', async ({ page }) => {
   test.slow();
 
   // open PWABuilder and enter a PWA into the start input
-  await page.goto('https://www.pwabuilder.com/', {waitUntil: 'networkidle'});
+  await page.goto('http://localhost:8000/', {waitUntil: 'networkidle'});
   const input = await page.evaluateHandle(`document.querySelector("body > fast-design-system-provider > app-index").shadowRoot.querySelector("#router-outlet > app-home").shadowRoot.querySelector("#input-block > fast-text-field").shadowRoot.querySelector("#control")`);
   await input.focus();
   await input.type("https://twitter.com");
