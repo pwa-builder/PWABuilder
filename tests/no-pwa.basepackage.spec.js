@@ -34,7 +34,7 @@ test('known not-a-pwa base_package generation test', async ({ page }) => {
     url: (url) => url.href.includes("basepackage")
   });
 
-  // checking were on the publish page
+  // checking were on the base_package page
   expect(await page.isVisible('text=Make your app a PWA')).toBeTruthy();
 
   // click generate button for the base_package platform
