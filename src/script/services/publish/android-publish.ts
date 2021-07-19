@@ -24,51 +24,45 @@ export async function generateAndroidPackage(
 
   const generateAppUrl = `${env.androidPackageGeneratorUrl}/generateApkZip`;
 
-  try {
-    const response = await fetch(generateAppUrl, {
-      method: 'POST',
-      body: JSON.stringify(androidOptions),
-      headers: new Headers({ 'content-type': 'application/json' }),
-    });
+  const response = await fetch(generateAppUrl, {
+    method: 'POST',
+    body: JSON.stringify(androidOptions),
+    headers: new Headers({ 'content-type': 'application/json' }),
+  });
 
-    if (response.status === 200) {
-      //set generated flag
-      android_generated = true;
+  if (response.status === 200) {
+    //set generated flag
+    android_generated = true;
 
-      return await response.blob();
+    return await response.blob();
+  } else {
+    const responseText = await response.text();
+
+    // Did it fail because images couldn't be fetched with ECONNREFUSED? E.g. https://github.com/pwa-builder/PWABuilder/issues/1312
+    // This may indicate either the service is using HTTP/2 or HTTP/3, which Bubblewrap doesn't currently support.
+    // Or, it may indicate the site is using anti-bot tech, such as Cloudflare.
+    // 
+    // If it's the former (HTTP/2 or HTTP/3), see if we can fetch using our safe URL proxy, which properly handles HTTP/2 and /3.
+    const hasSafeImages =
+      androidOptions.iconUrl &&
+      androidOptions.iconUrl.includes(env.safeUrlFetcher || '');
+    const isConnectionRefusedOrForbidden =
+      (responseText || '').includes('ECONNREFUSED') ||
+      response.status === 403;
+
+    if (!hasSafeImages && isConnectionRefusedOrForbidden) {
+      console.warn(
+        'Android package generation failed with ECONNREFUSED. Retrying with safe images.',
+        responseText
+      );
+      const updatedOptions = updateAndroidOptionsWithSafeUrls(androidOptions);
+
+      await generateAndroidPackage(updatedOptions, form);
     } else {
-      const responseText = await response.text();
-
-      // Did it fail because images couldn't be fetched with ECONNREFUSED? E.g. https://github.com/pwa-builder/PWABuilder/issues/1312
-      // If so, retry using our downloader proxy service.
-      const hasSafeImages =
-        androidOptions.iconUrl &&
-        androidOptions.iconUrl.includes(env.safeUrlFetcher || '');
-      const isConnectionRefusedOrForbidden =
-        (responseText || '').includes('ECONNREFUSED') ||
-        response.status === 403;
-
-      if (!hasSafeImages && isConnectionRefusedOrForbidden) {
-        console.warn(
-          'Android package generation failed with ECONNREFUSED. Retrying with safe images.',
-          responseText
-        );
-        const updatedOptions = updateAndroidOptionsWithSafeUrls(androidOptions);
-
-        await generateAndroidPackage(updatedOptions, form);
-      } else {
-        throw new Error(
-          `Error generating Android package.\n\nStatus code: ${response.status}\n\nError: ${response.statusText}\n\nDetails: ${responseText}`
-        );
-      }
+      throw new Error(
+        `Error generating Android package.\nStatus code: ${response.status}\nError: ${response.statusText}\nDetails: ${responseText}`
+      );
     }
-  } catch (err) {
-    const responseError = err as Response; // is this the right type? Is there a ResponseError type? 
-    const statusCode = responseError.status || 'unknown';
-    const statusText = responseError.statusText || 'unknown';
-    throw new Error(
-      `Error generating Android platform due to HTTP error.\n\nStatus code: ${statusCode}\n\nError: ${statusText}\n\nDetails: ${err}`
-    );
   }
 
   return undefined;

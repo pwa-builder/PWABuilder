@@ -197,6 +197,14 @@ export class AppPublish extends LitElement {
           overflow-x: hidden;
         }
 
+        #error-modal::part(modal-body-contents) {
+          white-space: pre;
+          text-align: left;
+          overflow: auto;
+          max-height: 300px;
+          padding: 20px;
+        }
+
         #error-link {
           color: white;
           font-weight: var(--font-bold);
@@ -489,7 +497,25 @@ export class AppPublish extends LitElement {
 
   showAlertModal(error: string | Object, platform: Platform) {
     this.errored = true;
-    this.errorMessage = (error || '').toString();
+
+    const errorObj = error as Error;
+    if (errorObj.message && errorObj.stack) {
+      const is403 = typeof errorObj.message === 'string' && errorObj.message.includes('Responded with status 403');
+      const isFailedToFetchManifest = typeof errorObj.message === 'string' && errorObj.message.includes('Failed to retreive PWA manifest for');
+      if (is403) {
+        // Is it a 403? Then most likely it's anti-bot tech, e.g. Cloudflare, blocking us.
+        this.errorMessage = `PWABuilder got a 403 Forbidden error when fetching your site.\nThis can happen when your site is using Cloudflare or other anti-bot technologies.\nTry temporarily pausing Cloudflare or your anti-bot technology while running PWABuilder on your web app.\n\n${errorObj.message}\n\nStack trace: \n${errorObj.stack}`;
+      } else if (isFailedToFetchManifest) {
+        // Failed to fetch manifest? This is thrown by the Windows platform when we have anti-bot tech blocking us from downloading the manifest.
+        this.errorMessage = `PWABuilder was unable to download your manifest.\nThis can happen when your site is using Cloudflare or other anti-bot technology.\nTry temporarily pausing Cloudflare or your anti-bot technology while running PWABuilder on your web app.\n\n${errorObj.message}\n\nStack trace: \n${errorObj.stack}`;
+      } else {
+        this.errorMessage = `${errorObj.message}\n\nStack trace:\n${errorObj.stack}`;
+      }
+    } else if (errorObj.message) {
+      this.errorMessage = errorObj.message;
+    } else {
+      this.errorMessage = (error || '').toString();
+    }
 
     this.reportAnError(error, platform);
   }
