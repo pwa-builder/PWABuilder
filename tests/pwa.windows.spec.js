@@ -5,7 +5,7 @@ test('known good pwa Windows package generation test', async ({ page }) => {
   test.slow();
 
   // open PWABuilder and enter a PWA into the start input
-  await page.goto('http://localhost:8000/', {waitUntil: 'networkidle'});
+  await page.goto('http://localhost:8000/', { waitUntil: 'networkidle' });
   const input = await page.evaluateHandle(`document.querySelector("body > fast-design-system-provider > app-index").shadowRoot.querySelector("#router-outlet > app-home").shadowRoot.querySelector("#input-block > fast-text-field").shadowRoot.querySelector("#control")`);
   await input.focus();
   await input.type("https://webboard.app");
@@ -19,7 +19,7 @@ test('known good pwa Windows package generation test', async ({ page }) => {
   await page.waitForNavigation({
     url: (url) => url.href.includes("reportcard")
   });
- 
+
   // checking that we ended up on the reportcard page
   // with the PWA badge
   expect(await page.isVisible('text=You have a great PWA!')).toBeTruthy();
@@ -56,7 +56,7 @@ test('public pwa Windows package generation test', async ({ page }) => {
   test.slow();
 
   // open PWABuilder and enter a PWA into the start input
-  await page.goto('http://localhost:8000/', {waitUntil: 'networkidle'});
+  await page.goto('http://localhost:8000/', { waitUntil: 'networkidle' });
   const input = await page.evaluateHandle(`document.querySelector("body > fast-design-system-provider > app-index").shadowRoot.querySelector("#router-outlet > app-home").shadowRoot.querySelector("#input-block > fast-text-field").shadowRoot.querySelector("#control")`);
   await input.focus();
   await input.type("https://twitter.com");
@@ -70,7 +70,7 @@ test('public pwa Windows package generation test', async ({ page }) => {
   await page.waitForNavigation({
     url: (url) => url.href.includes("reportcard")
   });
- 
+
   // checking that we ended up on the reportcard page
   // with the PWA badge
   expect(await page.isVisible('text=You have a great PWA!')).toBeTruthy();

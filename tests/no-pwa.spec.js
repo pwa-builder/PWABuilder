@@ -5,7 +5,7 @@ test('known not-a-pwa base_package generation test', async ({ page }) => {
   test.slow();
 
   // open PWABuilder and enter MSN (not a PWA) into the start input
-  await page.goto('http://localhost:8000/', {waitUntil: 'networkidle'});
+  await page.goto('http://localhost:8000/', { waitUntil: 'networkidle' });
   const input = await page.evaluateHandle(`document.querySelector("body > fast-design-system-provider > app-index").shadowRoot.querySelector("#router-outlet > app-home").shadowRoot.querySelector("#input-block > fast-text-field").shadowRoot.querySelector("#control")`);
   await input.focus();
   await input.type("https://www.example.com");
@@ -19,7 +19,7 @@ test('known not-a-pwa base_package generation test', async ({ page }) => {
   await page.waitForNavigation({
     url: (url) => url.href.includes("reportcard")
   });
- 
+
   // checking that we ended up on the reportcard page
   // with the needs work badge / prompt
   expect(await page.isVisible('text=Your PWA needs more work, look above for details.')).toBeTruthy();
