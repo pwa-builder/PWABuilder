@@ -111,52 +111,48 @@ async function tryGenerateWindowsPackage(form?: HTMLFormElement): Promise<Packag
 }
 
 async function tryGenerateAndroidPackage(form?: HTMLFormElement, signingFile?: string): Promise<PackageInfo | null> {
-  try {
-    if (form) {
-      const androidOptions = await createAndroidPackageOptionsFromForm(
-        form,
-        signingFile
-      );
+  if (form) {
+    const androidOptions = await createAndroidPackageOptionsFromForm(
+      form,
+      signingFile
+    );
 
-      if (!androidOptions) {
+    if (!androidOptions) {
+      return null;
+    }
+
+    const blob = await generateAndroidPackage(androidOptions, form);
+    return {
+      blob: blob || null,
+      type: 'store',
+    };
+  } else {
+    // No form. Try creating from manifest.
+    try {
+      const androidOptions = await createAndroidPackageOptionsFromManifest();
+      const testBlob = await generateAndroidPackage(androidOptions);
+
+      return {
+        blob: testBlob || null,
+        type: 'test',
+      };
+    } catch (err) {
+      // Oh no, looks like we dont have the manifest in memory
+      // Lets try to grab it
+      const localManifest = await grabBackupManifest();
+      if (!localManifest) {
         return null;
       }
 
-      const blob = await generateAndroidPackage(androidOptions, form);
+      const androidOptions = await createAndroidPackageOptionsFromManifest(
+        localManifest
+      );
+
+      const testBlob = await generateAndroidPackage(androidOptions);
       return {
-        blob: blob || null,
-        type: 'store',
+        blob: testBlob || null,
+        type: 'test',
       };
-    } else {
-      // No form. Try creating from manifest.
-      try {
-        const androidOptions = await createAndroidPackageOptionsFromManifest();
-        const testBlob = await generateAndroidPackage(androidOptions);
-
-        return {
-          blob: testBlob || null,
-          type: 'test',
-        };
-      } catch (err) {
-        // Oh no, looks like we dont have the manifest in memory
-        // Lets try to grab it
-        const localManifest = await grabBackupManifest();
-        if (!localManifest) {
-          return null;
-        }
-
-        const androidOptions = await createAndroidPackageOptionsFromManifest(
-          localManifest
-        );
-
-        const testBlob = await generateAndroidPackage(androidOptions);
-        return {
-          blob: testBlob || null,
-          type: 'test',
-        };
-      }
     }
-  } catch (err) {
-    throw new Error(`Error generating android package: ${err}`);
   }
 }
