@@ -23,7 +23,35 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Segoe';
+  src: url('/assets/fonts/SegoeUI.ttf');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SF-Pro';
+  src: url('/assets/fonts/SFProDisplay-Light.ttf');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('/assets/fonts/Roboto-Regular.ttf');
+  font-weight: 400;
+  font-style: normal;
+}
+
 :root {
+  --previewer-windows-font-family: Segoe;
+  --previewer-ios-font-family: SF-pro;
+  --previewer-background-color: #FFF;
+  --previewer-theme-color: #EBD0FE;
+  --previewer-card-box-shadow: 0px 3px 5.41317px rgba(0, 0, 0, 0.25);
+
   --font-family: Hind;
   --font-color: #292c3a;
   --secondary-font-color: #808080;

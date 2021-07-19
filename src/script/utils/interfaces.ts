@@ -17,7 +17,7 @@ export interface Manifest {
   background_color: string | undefined;
   description: string | undefined;
   dir: 'auto' | 'ltr' | 'rtl' | string;
-  display: string;
+  display: Display;
   lang: string | undefined;
   name: string | undefined;
   orientation?: 'any' | 'natural' | 'landscape' | 'portrait' | 'portrait-primary' | 'portrait-secondary' | 'landscape-primary' | 'landscape-secondary' | null;
@@ -40,6 +40,8 @@ export interface Manifest {
   // @ts-ignore - accomodate custom entries... these can be a pain
   [key: string]: string | boolean | undefined | Array<any> | any;
 }
+
+export type Display = 'fullscreen' | 'standalone' | 'minimal-ui' | 'browser';
 
 export interface ShortcutItem {
   name: string;
