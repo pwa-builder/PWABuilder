@@ -29,12 +29,17 @@ Additionally, when you open the project in VS Code, you'll be prompted to instal
 Run `npm install` and then run `npm run dev`, the project should open in your default browser. From here you can start developing, your changes will be rebuilt and reloaded in the browser as you develop.
 
 ### Running Tests
-We currently have E2E tests that are run using the Playwright test-runner.
+We currently have E2E tests that are run using the [Playwright test-runner](https://playwright.dev/docs/test-intro).
 Currently they can be run by running the following commands:
 - npm run dev (We are going to run the E2E tests on your latest local changes)
 - npm run test (This will make sure the needed dependences are installed and will start running the tests)
 
 The output of the tests can be found in the console.
+
+*Notes*
+- If a test fails it will retry twice. The reason this is needed is our tests are relying on network requests, of which many are happening at once as tests run which can cause false positives.
+- Playwright spins up workers for tests to try to spread the load on your CPU and avoid false positives. I have set this to 2 when running in a CI (recommended), when running locally it will use your number of CPU cores - 1. So on a Surface Pro X with 8 cores it will attempt to spin up 7 workers.
+- I have also set a timeout of a minute for each test.
 
 ### Debugging in VS Code
 
