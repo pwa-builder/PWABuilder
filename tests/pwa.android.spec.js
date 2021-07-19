@@ -66,7 +66,7 @@ test('public pwa Android package generation test', async ({ page }) => {
   await page.goto('http://localhost:8000/', { waitUntil: 'networkidle' });
   const input = await page.evaluateHandle(`document.querySelector("body > fast-design-system-provider > app-index").shadowRoot.querySelector("#router-outlet > app-home").shadowRoot.querySelector("#input-block > fast-text-field").shadowRoot.querySelector("#control")`);
   await input.focus();
-  await input.type("https://twitter.com");
+  await input.type("https://pinterest.com");
 
   // click the start button
   const start_button = await page.evaluateHandle(`document.querySelector("body > fast-design-system-provider > app-index").shadowRoot.querySelector("#router-outlet > app-home").shadowRoot.querySelector("#start-button")`);
