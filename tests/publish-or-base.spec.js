@@ -8,7 +8,7 @@ const known_pwas = [
 const not_pwas = [
   'https://example.com',
   'https://cnn.com'
-]
+];
 
 test('Should end up on publish page', async ({ browser }) => {
   // this test can run long
