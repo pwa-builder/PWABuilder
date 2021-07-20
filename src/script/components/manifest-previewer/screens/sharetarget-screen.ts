@@ -25,7 +25,7 @@ export class ShareTarget extends ScreenTemplate {
         .windows .contacts {
           background-color: #F3F3F3;
           position: absolute;
-          top: 197px;
+          top: 190px;
           width: 100%;
           left: 0;
           height: 70px;
@@ -52,12 +52,11 @@ export class ShareTarget extends ScreenTemplate {
           width: 30px;
           height: 30px;
           font-size: 15px;
-          margin-bottom: 7px;
         }
 
         .windows .app {
           position: absolute;
-          bottom: 57px;
+          bottom: 52px;
           background-color: #F3F3F3;
           font-weight: 400;
           font-size: 9px;
@@ -72,7 +71,6 @@ export class ShareTarget extends ScreenTemplate {
         .windows .app img {
           width: 30px;
           height: 30px;
-          margin-bottom: 4px;
         }
 
         .android .contacts {
@@ -91,15 +89,14 @@ export class ShareTarget extends ScreenTemplate {
 
         .android .app {
           position: absolute;
-          bottom: 20px;
+          bottom: 17px;
           padding-bottom: 10px;
           left: 36px;
           height: 64px;
-          font-weight: 600;
           width: 65px;
           overflow: hidden;
           background-color: #FFF;
-          color: rgba(0, 0, 0, 0.6);
+          color: rgba(0, 0, 0, 0.5);
         }
 
         .android .app img {
@@ -134,8 +131,8 @@ export class ShareTarget extends ScreenTemplate {
         }
 
         .ios .app img {
-          width: 48px;
-          height: 48px;
+          width: 45px;
+          height: 45px;
           margin-bottom: 3px;
         }
       `

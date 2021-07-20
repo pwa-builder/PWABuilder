@@ -32,8 +32,8 @@ export class NameScreen extends ScreenTemplate {
           display: flex;
           flex-direction: column;
           align-items: center;
-          top: 33px;
-          right: 95px;
+          top: 34px;
+          right: 94px;
           min-width: 30px;
           height: 23.5px;
           justify-content: flex-end;
@@ -41,14 +41,18 @@ export class NameScreen extends ScreenTemplate {
     
         .windows .app-name {
           color: rgba(0, 0, 0, 0.8);
-          font-size: 4.5px;
+          font-size: 5px;
           font-weight: 600;
           letter-spacing: -0.07px;
-          margin-top: 2.5px;
           font-family: var(--previewer-windows-font-family); 
           max-width: 40px;
           white-space: nowrap;
           overflow-x: hidden;
+          line-height: 1;
+          margin-top: 3px;
+          /* display: flex; */
+          /* justify-content: center; */
+          height: 8px;
         }
     
         .windows .app-icon {
@@ -96,7 +100,7 @@ export class NameScreen extends ScreenTemplate {
           font-family: var(--previewer-ios-font-family);
           background-color: #F4F4F4;
           position: absolute;
-          top: 146px;
+          top: 144px;
           left: 41px;
           font-size: 13px;
           font-weight: 600;

@@ -139,6 +139,7 @@ export class ThemecolorScreen extends ScreenTemplate {
         .windows .title-bar .app-name {
           margin: 4px;
           font-size: 6px;
+          line-height: 1.8;
         }
     
         @media(max-width: 1366px) {

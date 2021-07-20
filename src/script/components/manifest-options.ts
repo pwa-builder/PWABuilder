@@ -28,6 +28,7 @@ import {
   CodeEditorSyncEvent,
   CodeEditorUpdateEvent,
 } from '../utils/interfaces.codemirror';
+import { PreviewStage } from '../utils/interfaces.previewer';
 import {
   fastTextFieldCss,
   fastButtonCss,
@@ -111,6 +112,11 @@ export class AppManifest extends LitElement {
 
   @state()
   protected iconsList: Array<Icon> | undefined = [];
+
+  /**
+   * The current screen in the preview component.
+   */
+  @state() previewStage = PreviewStage.Name;
 
   protected get siteUrl(): string {
     if (!this.searchParams) {
@@ -471,7 +477,9 @@ export class AppManifest extends LitElement {
             html`
             <manifest-previewer 
             .manifest=${this.manifest}
-            .manifestUrl=${this.siteUrl}>
+            .manifestUrl=${this.siteUrl}
+            .siteUrl=${this.siteUrl}
+            .stage=${this.previewStage}>
             </manifest-previewer>` : null}
         </section>
         <fast-divider></fast-divider>
@@ -905,11 +913,35 @@ export class AppManifest extends LitElement {
     }
   }
 
+  /**
+   * Syncs the form state with the preview component.
+   * 
+   * @param fieldName - The input name that's currently being modified
+   */
+  handlePreviewerSync(fieldName: string) {
+    switch (fieldName) {
+      case 'name': 
+        this.previewStage = PreviewStage.Name;
+        break;
+      case 'short_name':
+        this.previewStage = PreviewStage.ShortName;
+        break;
+      case 'display':
+        this.previewStage = PreviewStage.Display;
+        break;
+      case 'theme_color':
+        this.previewStage = PreviewStage.ThemeColor;
+        break;
+    }
+  }
+
   handleInputChange(event: InputEvent) {
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
     const fieldName = input.dataset['field'];
-
+    
     if (this.manifest && fieldName && this.manifest[fieldName]) {
+      this.handlePreviewerSync(fieldName);
+
       // to-do Justin: Figure out why typescript is casting input.value to a string
       // automatically and how to cast to a better type that will actually compile
       this.updateManifest({
@@ -968,6 +1000,7 @@ export class AppManifest extends LitElement {
       const value = (<HTMLInputElement>event.target).value;
 
       this.themeColor = value;
+      this.handlePreviewerSync('theme_color');
       this.updateManifest({
         theme_color: value,
       });

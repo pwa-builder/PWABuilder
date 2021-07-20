@@ -40,14 +40,15 @@ export class ShortnameScreen extends ScreenTemplate {
           align-items: center;
           position: absolute;
           flex-direction: column;
-          top: 50px;
-          left: 10px;
+          top: 45px;
+          left: 12px;
         }
 
         .android .app-icon {
           border-radius: 50%;
           width: 50px;
           height: 50px;
+          margin-bottom: 5px;
         }
 
         .android .app-name {
@@ -74,6 +75,7 @@ export class ShortnameScreen extends ScreenTemplate {
           color: rgb(255, 255, 255);
           font-family: var(--previewer-ios-font-family);
           font-size: 9px;
+          line-height: 1.2;
         }
 
         .ios .app-icon {

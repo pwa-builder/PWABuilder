@@ -4,6 +4,7 @@ import { styleMap } from 'lit/directives/style-map.js';
 
 import { ScreenTemplate } from './screen-template';
 import { getContrastingColor } from '../../../utils/previewer-utils';
+import '../disclaimer-message.js';
 
 @customElement('splash-screen')
 export class SplashScreen extends ScreenTemplate {
@@ -105,60 +106,7 @@ export class SplashScreen extends ScreenTemplate {
 
         .container.windows {
           width: 250px;
-          margin-top: 30px;
-        }
-
-        .windows img.desktop {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          box-shadow: var(--previewer-card-box-shadow);
-        }
-
-        .windows .screen {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          position: absolute;
-          width: 100px;
-          height: 55px;
-          top: 45px;
-          left: calc(50% - 50px);
-          background-color: var(--previewer-background-color);
-        }
-
-        .windows .app-info {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          width: fit-content
-        }
-
-        .windows .app-info img {
-          width: 30px;
-          height: 30px;
-          margin-right: 5px;
-        }
-
-        .windows .app-info p {
-          margin: 0;
-          font-size: 10px;
-          font-weight: 600;
-          font-family: var(--previewer-windows-font-family);
-        }
-
-        .windows .window-actions {
-          position: absolute;
-          top: 2px;
-          right: 2px;
-          display: flex;
-          align-items: center;
-        }
-
-        .windows .window-actions .collapse {
-          width: 4px;
-          height: 0.1px;
-          margin-right: 3px;
+          margin-top: 120px;
         }
       `
     ];
@@ -195,24 +143,10 @@ export class SplashScreen extends ScreenTemplate {
 
   renderWindows() {
     return html`
-      <div 
-      class="container windows">
-        <img class="desktop" alt="Window's desktop" src="../../../../../assets/previewer-images/windows/desktop.png" />
-        <div class="screen" style=${styleMap({ '--previewer-background-color': this.backgroundColor })}>
-          <div class="window-actions">
-            <div class="collapse" style=${styleMap({ backgroundColor: this.contrastingBackgroundColor })}></div>
-            <svg class="close" width="4px" height="4px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1000 1000" enable-background="new 0 0 1000 1000" xml:space="preserve">
-              <g><path style="fill:${this.contrastingBackgroundColor}" d="M990,61.2L933.3,5.1L500,443.3L66.7,5.1L10,61.2L443.9,500L10,938.8l56.7,56.1L500,556.7l433.3,438.2l56.7-56.1L556.1,500L990,61.2z"/></g>
-            </svg>
-          </div>
-          <div class="app-info">
-            ${this.iconUrl ? 
-              html`<img src=${this.iconUrl} alt="App's splash screen" />` : null}
-            <p style=${styleMap({ color: this.contrastingBackgroundColor })}>
-              ${this.appName || 'PWA App'}
-            </p>
-          </div>
-        </div>
+      <div class="container windows">
+        <disclaimer-message>
+          Windows does not currently use splash screens.
+        </disclaimer-message>
       </div>
     `;
   }

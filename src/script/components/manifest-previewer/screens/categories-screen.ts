@@ -70,6 +70,7 @@ export class CategoriesScreen extends ScreenTemplate {
           height: 35px;
           width: 100%;
           overflow: hidden;
+          line-height: 1.5;
         }
 
         .categories {
@@ -87,7 +88,7 @@ export class CategoriesScreen extends ScreenTemplate {
         }
 
         .android .categories {
-          top: 337px;
+          top: 340px;
           height: 37px;
         }
 
@@ -144,9 +145,10 @@ export class CategoriesScreen extends ScreenTemplate {
           font-size: 9px;
           top: 300px;
           padding-left: 10px;
-          height: 27px;
+          height: 30px;
           width: 80%;
           overflow: hidden;
+          line-height: 1.5;
         }
 
         .ios-message {

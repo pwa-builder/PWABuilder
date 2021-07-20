@@ -155,7 +155,7 @@ export class ManifestPreviewer extends LitElement {
   /**
    * The website's URL.
    */
-  @state() private siteUrl = '';
+  @property() siteUrl = '';
 
   /**
    * The URL used for icon previews.
@@ -170,7 +170,7 @@ export class ManifestPreviewer extends LitElement {
   /**
    * The kind of preview currently shown.
    */
-  @property({ type: Number }) stage: PreviewStage = PreviewStage.ThemeColor;
+  @property({ type: Number }) stage: PreviewStage = PreviewStage.Name;
 
   /**
    * The input web manifest.
@@ -217,8 +217,10 @@ export class ManifestPreviewer extends LitElement {
       this.iconUrl = `https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl?url=${absoluteUrl}`;
     }
 
-    // Set the site URL (assuming it can be derived from the manifest's URL)
-    this.siteUrl = this.manifestUrl.substring(0, this.manifestUrl.lastIndexOf('manifest.json'));
+    // Set the site URL if needed (assuming it can be derived from the manifest's URL)
+    if (!this.siteUrl) {
+      this.siteUrl = this.manifestUrl.substring(0, this.manifestUrl.lastIndexOf('manifest.json'));
+    }
   }
 
   /**
@@ -314,8 +316,8 @@ export class ManifestPreviewer extends LitElement {
           .appName=${this.manifest.name}>
             <p slot="title">Splash screen</p>
             <p slot="info-windows">
-              While the PWA is loading, Windows uses the background color, name and 
-              icon for displaying the splash screen.
+              Splash screens are used to provide a smooth transition between the loading state
+              and the initial launch of the application.
             </p>
             <p slot="info-android">
               When launching the PWA, Android uses the background color, theme color, name and 

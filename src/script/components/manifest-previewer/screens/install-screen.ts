@@ -51,6 +51,7 @@ export class InstallScreen extends ScreenTemplate {
           width: 90px;
           overflow-x: hidden;
           white-space: nowrap;
+          line-height: 1.5;
         }
 
         .android .dialog {
@@ -88,6 +89,7 @@ export class InstallScreen extends ScreenTemplate {
         .android .app-name {
           font-size: 8px;
           margin: 0;
+          line-height: 1.8;
         }
 
         .android .app-url {
@@ -97,6 +99,8 @@ export class InstallScreen extends ScreenTemplate {
           margin: 0;
           width: 90px;
           overflow-x: hidden;
+          height: 10px;
+          line-height: 1;
         }
 
         .android .install-btn {
@@ -123,6 +127,7 @@ export class InstallScreen extends ScreenTemplate {
           width: 100%;
           margin: 0;
           font-size: 8px;
+          line-height: 1.4;
         }
 
         .android .screenshots {
@@ -181,6 +186,7 @@ export class InstallScreen extends ScreenTemplate {
         .windows .add-dialog .dialog-text {
           margin: 0 0 7px 25px;
           font-size: 7px;
+          line-height: 1.3;
         } 
 
         .windows .dialog-text {
@@ -265,7 +271,7 @@ export class InstallScreen extends ScreenTemplate {
         .ios .app-name {
           background-color: #FFF;
           position: absolute;
-          top: 58px;
+          top: 57px;
           left: 52px;
           font-size: 11px;
           font-family: var(--previewer-ios-font-family);
@@ -277,12 +283,13 @@ export class InstallScreen extends ScreenTemplate {
           color: rgb(186, 191, 200);
           background-color: #FFF;
           position: absolute;
-          top: 86px;
+          top: 84px;
           left: 52px;
           font-size: 9px;
           width: 159px;
           font-family: var(--previewer-ios-font-family);
           white-space: nowrap;
+          line-height: 1.3;
         }
       `
     ];
