@@ -548,6 +548,7 @@ export class AppPublish extends LitElement {
               ? html`
                   <app-button
                     class="navigation"
+                    id="windows-package-button"
                     @click="${() => this.showWindowsOptionsModal()}"
                     >Store Package</app-button
                   >
@@ -570,6 +571,7 @@ export class AppPublish extends LitElement {
               ? html`
                   <app-button
                     class="navigation"
+                    id="android-package-button"
                     @click="${() => this.showAndroidOptionsModal()}"
                     >Store Package</app-button
                   >
