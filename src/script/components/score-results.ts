@@ -122,8 +122,6 @@ export class ScoreResults extends LitElement {
   overallScore(results: Array<TestResult> | undefined) {
     let score = 0;
 
-    console.log(results);
-
     if (results && results.length > 0) {
       results.map((result: TestResult) => {
         if (result.result === true) {

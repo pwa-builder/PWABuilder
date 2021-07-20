@@ -124,12 +124,10 @@ export class SWPicker extends LitElement {
 
     if (swData) {
       this.serviceWorkers = swData.serviceworkers;
-      console.log(this.serviceWorkers);
     }
   }
 
   chooseSW(sw: ServiceWorkerChoice) {
-    console.log(sw);
     this.chosenSW = sw.id;
 
     if (this.chosenSW) {

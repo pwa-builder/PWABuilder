@@ -413,7 +413,6 @@ export class AppManifest extends LitElement {
   async firstUpdated() {
     try {
       this.manifest = await getManifestGuarded();
-      console.log('this.manifest in guarded', this.manifest);
 
       if (this.manifest.icons) {
         this.iconsList = this.manifest.icons;
@@ -876,7 +875,6 @@ export class AppManifest extends LitElement {
 
   updateManifest(changes: Partial<Manifest>) {
     updateManifest(changes).then(manifest => {
-      console.log('manifest updated return', this.manifest, manifest);
 
       editorDispatchEvent(
         new CustomEvent<CodeEditorSyncEvent>(CodeEditorEvents.sync, {
@@ -889,7 +887,6 @@ export class AppManifest extends LitElement {
   }
 
   handleManifestUpdate(maniUpdates: any) {
-    console.log('maniUpdates', this, maniUpdates);
     if (maniUpdates) {
       this.manifest = maniUpdates.detail;
     }
@@ -998,7 +995,7 @@ export class AppManifest extends LitElement {
         this.uploadSelectedImageFile
       );
     } else {
-      console.log('error state');
+      console.log('error state in modal input file change code');
     }
   }
 

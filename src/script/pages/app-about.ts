@@ -23,7 +23,6 @@ export class AppAbout extends LitElement {
 
     if (site) {
       const TestResult = await runAllTests(site);
-      console.log(TestResult);
     }
   }
 

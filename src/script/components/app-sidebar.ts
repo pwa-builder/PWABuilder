@@ -562,7 +562,6 @@ export class AppSidebar extends LitElement {
     this.current_url = getURL();
 
     this.results = getResults();
-    console.log('results', this.results);
 
     if (this.results) {
       this.handleResults();

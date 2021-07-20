@@ -74,14 +74,11 @@ export function giveOutBadges() {
 
 export function getCurrentBadges(): Array<{ name: string; url: string }> | null {
   const savedCurrentBadges = sessionStorage.getItem('current_badges');
-  console.log('getting current badges');
 
   if (current_badges && current_badges.length > 0) {
-    console.log("returning current badges", current_badges);
     return current_badges;
   }
   else if (savedCurrentBadges) {
-    console.log("returning saved current badges", savedCurrentBadges);
     return JSON.parse(savedCurrentBadges);
   }
   else {
@@ -113,8 +110,6 @@ export function sortBadges(): Array<{ name: string; url: string }> {
     combined.push(badge);
   });
 
-  console.log('combined', combined);
-
   const duplicates = combined.reduce(
     (
       acc: Array<{ name: string; url: string }>,
@@ -132,8 +127,6 @@ export function sortBadges(): Array<{ name: string; url: string }> {
     },
     []
   );
-
-  console.log('duplicate', duplicates);
 
   sessionStorage.removeItem("current_badges");
   sessionStorage.setItem('current_badges', JSON.stringify(duplicates));

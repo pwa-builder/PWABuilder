@@ -3,7 +3,7 @@ export function isUrl(url: string): boolean {
     return typeof new URL(url) === 'string';
   } catch (e) {
     if (!(e instanceof TypeError)) {
-      console.log(e);
+      console.log(`URL is not valid: ${e}`);
     }
   }
 
@@ -22,7 +22,6 @@ export function resolveUrl(
     }
   } catch (e) {
     if (!(e instanceof TypeError)) {
-      console.log('url has a problem', url);
       console.error(e);
     }
   }
@@ -33,7 +32,6 @@ export function resolveUrl(
         parsedUrl = new URL(url, baseUrl);
       }
     } catch (e) {
-      console.log('url has a problem', baseUrl, url);
       console.error(e);
     }
   }

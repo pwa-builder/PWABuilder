@@ -5,7 +5,5 @@ export function memoizedReference<T>(getter: () => T) {
     descriptor: PropertyDescriptorMap
   ) {
     descriptor.value = getter();
-
-    console.log(target, propertyKey);
   };
 }

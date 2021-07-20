@@ -13,8 +13,6 @@ export function getPlatformsGenerated(): GeneratedPlatforms {
   const windows = windows_generated;
   const web = web_generated;
 
-  console.log('android', android);
-
   return {
     android,
     windows,
