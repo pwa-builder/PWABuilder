@@ -219,7 +219,11 @@ export class ThemecolorScreen extends ScreenTemplate {
     return html`
       <div class="container android">
         <img alt="Android's app switcher" src="../../../../../assets/previewer-images/android/appswitcher.jpg" class="switcher-img" />
-        <div class="app-box" style=${styleMap({ '--previewer-theme-color': this.themeColor })}>
+        <div 
+        class="app-box" 
+        style=${styleMap({ 
+          '--previewer-theme-color': (this.themeColor === 'none' || this.themeColor === 'transparent') ? 'darkgray' : this.themeColor
+        })}>
           ${this.iconUrl ? 
           html`<img class="app-icon" alt="Application's icon" src=${this.iconUrl} />` :
           html`<div class="app-icon"></div>`}

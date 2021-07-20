@@ -155,10 +155,16 @@ export class SplashScreen extends ScreenTemplate {
     return html`
     <div class="container android">
       <img class="phone" alt="Application mobile preview" src="../../../../../assets/previewer-images/android/background.svg" />
-      <div class="screen" style=${styleMap({ '--previewer-background-color': this.backgroundColor })}>
+      <div 
+      class="screen" 
+      style=${styleMap({ 
+        '--previewer-background-color': (this.backgroundColor === 'none' || this.backgroundColor === 'trasparent') ? '#FFF' : this.backgroundColor
+      })}>
         <div 
         class="phone-bar"
-        style=${styleMap({ '--previewer-background-color': this.themeColor })}></div>
+        style=${styleMap({ 
+          '--previewer-theme-color': (this.themeColor === 'none' || this.themeColor === 'trasparent') ? '#FFF' : this.themeColor
+        })}></div>
         ${this.iconUrl ?
           html`
           <img 
@@ -169,7 +175,11 @@ export class SplashScreen extends ScreenTemplate {
         <h5 class="app-name" style=${styleMap({ color: this.contrastingBackgroundColor })}>
           ${this.appName || 'PWA App'}
         </h5>
-        <div class="phone-bar" style=${styleMap({ '--previewer-background-color': this.themeColor })}></div>
+        <div 
+        class="phone-bar" 
+        style=${styleMap({ 
+          '--previewer-theme-color': (this.themeColor === 'none' || this.themeColor === 'trasparent') ? '#FFF' : this.themeColor
+        })}></div>
       </div>
     </div>
     `;

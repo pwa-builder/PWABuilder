@@ -473,7 +473,7 @@ export class AppManifest extends LitElement {
             <h1>${localeStrings.text.manifest_options.info.h1}</h1>
             <div class="info-items inputs">${this.renderInfoItems()}</div>
           </div>
-          ${this.manifest ? 
+          ${(this.manifest && this.siteUrl) ? 
             html`
             <manifest-previewer 
             .manifest=${this.manifest}

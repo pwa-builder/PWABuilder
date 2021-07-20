@@ -204,17 +204,16 @@ export class ManifestPreviewer extends LitElement {
 
   firstUpdated() {
     // Set the icon URL.
-    if (this.manifest.icons) {
+    if (this.manifest.icons && this.manifest.icons.length > 0) {
       // Try to get the largest icon so that it looks good everywhere, or the first one by default
-      let iconUrl = this.manifest.icons[0]?.src || '';
-      for (const icon of this.manifest.icons) {
-        if (icon.sizes?.includes('512x512')) {
-          iconUrl = icon.src;
-          break;
-        }
+      let iconUrl = this.manifest.icons.find(icon => icon.sizes?.includes('512x512'))?.src;
+      if (!iconUrl) {
+        iconUrl = this.manifest.icons[0]?.src;
       }
-      const absoluteUrl = new URL(iconUrl, this.manifestUrl).href;
-      this.iconUrl = `https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl?url=${absoluteUrl}`;
+      if (iconUrl) {
+        const absoluteUrl = new URL(iconUrl, this.manifestUrl).href;
+        this.iconUrl = `https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl?url=${absoluteUrl}`;
+      }
     }
 
     // Set the site URL if needed (assuming it can be derived from the manifest's URL)

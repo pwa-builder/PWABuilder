@@ -2,13 +2,13 @@
  * Possible stages of the preview component.
  */
  export enum PreviewStage {
-  Install,
-  SplashScreen,
   Name,
   ShortName,
-  ThemeColor,
-  Shortcuts,
   Display,
+  ThemeColor,
+  Install,
+  SplashScreen,
+  Shortcuts,
   Categories,
   ShareTarget
 }

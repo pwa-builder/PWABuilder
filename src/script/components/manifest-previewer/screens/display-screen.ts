@@ -91,6 +91,7 @@ export class DisplayScreen extends ScreenTemplate {
           width: fit-content;
           margin: 15px auto 0px;
           font-size: 16px;
+          line-height: 1.7;
         }
 
         .android .app-url {
@@ -103,6 +104,7 @@ export class DisplayScreen extends ScreenTemplate {
           width: 93px;
           overflow-x: hidden;
           white-space: nowrap;
+          line-height: 1.5;
         }
 
         .windows .browser-img {
@@ -254,7 +256,9 @@ export class DisplayScreen extends ScreenTemplate {
     const appSplash = html`
       <div
       class="app-background ${this.display}"
-      style=${styleMap({ '--previewer-background-color': this.backgroundColor })}>
+      style=${styleMap({ 
+        '--previewer-background-color': (this.backgroundColor === 'transparent' || this.backgroundColor === 'none') ? '#FFF' : this.backgroundColor 
+      })}>
         ${this.iconUrl ?
           html`<img class="app-icon" alt="App icon" src=${this.iconUrl} />` : null}
         <h4 
@@ -330,7 +334,11 @@ export class DisplayScreen extends ScreenTemplate {
       <div class="container android">
         ${this.display !== 'fullscreen' ? 
         html`
-          <div class="status-bar" style=${styleMap({ '--previewer-background-color': this.themeColor })}>
+          <div 
+          class="status-bar" 
+          style=${styleMap({ 
+            '--previewer-theme-color': (this.themeColor === 'transparent' || this.themeColor === 'none') ? '#FFF' : this.themeColor
+          })}>
             <img alt="Status bar" src="../../../../../assets/previewer-images/android/statusbar-icons.png" />
           </div>
         ` : null}
@@ -341,7 +349,9 @@ export class DisplayScreen extends ScreenTemplate {
           'app-background-full': this.display === 'fullscreen' || this.display === 'standalone',
           'app-background-partial': this.display === 'minimal-ui' || this.display === 'browser'
         })} 
-        style=${styleMap({ '--previewer-background-color': this.backgroundColor })}>
+        style=${styleMap({ 
+          '--previewer-background-color': (this.backgroundColor === 'transparent' || this.backgroundColor === 'none') ? '#FFF' : this.backgroundColor
+        })}>
           ${this.iconUrl ?
             html`<img class="app-icon" alt="App icon" src=${this.iconUrl} />` : null}
           <h4 

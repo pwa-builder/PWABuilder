@@ -276,6 +276,7 @@ export class InstallScreen extends ScreenTemplate {
           font-size: 11px;
           font-family: var(--previewer-ios-font-family);
           font-weight: 600;
+          min-width: 32px;
         }
 
         .ios .app-link {
