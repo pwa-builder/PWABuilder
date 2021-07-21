@@ -170,8 +170,18 @@ export class ThemecolorScreen extends ScreenTemplate {
 
   /**
    * Theme color attribute on the manifest.
+   * To avoid showing the placeholder images, avoid 'transparent' color
    */
-  @property() themeColor?: string;
+  private _themeColor = '';
+
+  set themeColor(val: string) {
+    const oldVal = this._themeColor;
+    this._themeColor = val === 'none' || val === 'transparent' ? 'darkGray' : val;
+    this.requestUpdate('themeColor', oldVal);
+  } 
+
+  @property()
+  get themeColor() { return this._themeColor; }
 
   /**
    * Name attribute on the manifest.
@@ -197,7 +207,7 @@ export class ThemecolorScreen extends ScreenTemplate {
       <div class="windows container">
         <div 
         class="title-bar"
-        style=${styleMap({ '--previewer-background-color': this.themeColor })}>
+        style=${styleMap({ '--previewer-theme-color': this.themeColor })}>
           <div class="nav-actions">
             <img alt="Go back" src="../../../../../assets/previewer-images/windows/backarrow.svg" />
             <img alt="Refresh page" src="../../../../../assets/previewer-images/windows/refresharrow.svg" />
@@ -221,9 +231,7 @@ export class ThemecolorScreen extends ScreenTemplate {
         <img alt="Android's app switcher" src="../../../../../assets/previewer-images/android/appswitcher.jpg" class="switcher-img" />
         <div 
         class="app-box" 
-        style=${styleMap({ 
-          '--previewer-theme-color': (this.themeColor === 'none' || this.themeColor === 'transparent') ? 'darkgray' : this.themeColor
-        })}>
+        style=${styleMap({ '--previewer-theme-color': this.themeColor })}>
           ${this.iconUrl ? 
           html`<img class="app-icon" alt="Application's icon" src=${this.iconUrl} />` :
           html`<div class="app-icon"></div>`}
