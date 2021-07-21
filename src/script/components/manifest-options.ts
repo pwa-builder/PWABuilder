@@ -63,7 +63,7 @@ import {
   FileInputElement,
 } from '../utils/interfaces.components';
 
-type ColorRadioValues = 'none' | 'transparent' | 'custom';
+type ColorRadioValues = 'none' | 'custom';
 
 @customElement('manifest-options')
 export class AppManifest extends LitElement {
@@ -724,9 +724,6 @@ export class AppManifest extends LitElement {
             @change=${this.handleBackgroundRadioChange}
           >
             <fast-radio value="none">${localeStrings.values.none}</fast-radio>
-            <fast-radio value="transparent"
-              >${localeStrings.values.transparent}</fast-radio
-            >
             <fast-radio value="custom"
               >${localeStrings.values.custom}</fast-radio
             >
@@ -766,9 +763,6 @@ export class AppManifest extends LitElement {
             @change=${this.handleThemeRadioChange}
           >
             <fast-radio value="none">${localeStrings.values.none}</fast-radio>
-            <fast-radio value="transparent"
-              >${localeStrings.values.transparent}</fast-radio
-            >
             <fast-radio value="custom"
               >${localeStrings.values.custom}</fast-radio
             >
@@ -976,8 +970,6 @@ export class AppManifest extends LitElement {
       this.manifest?.background_color === 'none'
     ) {
       return 'none';
-    } else if (this.manifest?.background_color === 'transparent') {
-      return 'transparent';
     }
 
     return 'custom';
@@ -986,8 +978,6 @@ export class AppManifest extends LitElement {
   setThemeColorRadio() {
     if (!this.manifest?.theme_color || this.manifest?.theme_color === 'none') {
       return 'none';
-    } else if (this.manifest?.theme_color === 'transparent') {
-      return 'transparent';
     }
 
     return 'custom';
