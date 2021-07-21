@@ -13,7 +13,9 @@ interface ScreenshotServiceResponse {
   images: Array<Screenshot>;
 }
 
-export async function generateScreenshots(screenshotsList: Array<string>) {
+export async function generateScreenshots(
+  screenshotsList: Array<string>
+): Promise<Array<Screenshot> | undefined> {
   try {
     const res = await fetch(`${screenshotServiceBaseUrl}/${EndPoints.base64}`, {
       method: 'POST',
@@ -40,15 +42,19 @@ export async function generateScreenshots(screenshotsList: Array<string>) {
         })
       );
 
-      updateManifest({
+      await updateManifest({
         screenshots,
       });
+
+      return screenshots;
     } else {
       throw new Error(await res.text());
     }
   } catch (e) {
     console.error(e);
   }
+
+  return undefined;
 }
 
 export async function downloadScreenshotZip() {

@@ -18,6 +18,7 @@ import {
   AppEvents,
   FileInputDetails,
   Icon,
+  Screenshot,
   Lazy,
   Manifest,
   ModalCloseEvent,
@@ -67,7 +68,7 @@ type ColorRadioValues = 'none' | 'transparent' | 'custom';
 @customElement('manifest-options')
 export class AppManifest extends LitElement {
   @property({ type: Array, hasChanged: arrayHasChanged })
-  screenshotList: Array<string | undefined> = [undefined];
+  screenshotUrlList: Array<string | undefined> = [undefined];
 
   @property({ type: Boolean }) uploadModalOpen = false;
   @state() uploadButtonDisabled = true;
@@ -110,6 +111,9 @@ export class AppManifest extends LitElement {
 
   @state()
   protected iconsList: Array<Icon> | undefined = [];
+
+  @state()
+  protected screenshotsList: Array<Screenshot> = [];
 
   protected get siteUrl(): string {
     if (!this.searchParams) {
@@ -812,11 +816,11 @@ export class AppManifest extends LitElement {
           : undefined} `;
     };
 
-    return this.screenshotList.map(renderFn);
+    return this.screenshotUrlList.map(renderFn);
   }
 
   renderScreenshots() {
-    return this.manifest?.screenshots?.map(screenshot => {
+    return this.screenshotsList.map(screenshot => {
       const url = this.handleImageUrl(screenshot);
 
       if (url) {
@@ -912,8 +916,10 @@ export class AppManifest extends LitElement {
     const input = <HTMLInputElement>event.target;
     const index = Number(input.dataset['index']);
 
-    this.screenshotList[index] = input.value;
-    this.screenshotListValid = validateScreenshotUrlsList(this.screenshotList);
+    this.screenshotUrlList[index] = input.value;
+    this.screenshotListValid = validateScreenshotUrlsList(
+      this.screenshotUrlList
+    );
     this.addScreenshotUrlDisabled = !this.disableAddUrlButton();
     this.generateScreenshotButtonDisabled = !this.hasScreenshotsToGenerate();
   }
@@ -1093,7 +1099,7 @@ export class AppManifest extends LitElement {
   }
 
   addNewScreenshot() {
-    this.screenshotList = [...(this.screenshotList || []), undefined];
+    this.screenshotUrlList = [...(this.screenshotUrlList || []), undefined];
     this.addScreenshotUrlDisabled = !this.disableAddUrlButton();
     this.generateScreenshotButtonDisabled = !this.hasScreenshotsToGenerate();
   }
@@ -1145,10 +1151,14 @@ export class AppManifest extends LitElement {
     try {
       this.awaitRequest = true;
 
-      if (this.screenshotList && this.screenshotList.length) {
+      if (this.screenshotUrlList && this.screenshotUrlList.length) {
         // to-do: take another type look at this
         // @ts-ignore
-        await generateScreenshots(this.screenshotList);
+        const screenshots = await generateScreenshots(this.screenshotUrlList);
+
+        if (screenshots) {
+          this.screenshotsList = screenshots;
+        }
       }
     } catch (e) {
       console.error(e);
@@ -1158,14 +1168,16 @@ export class AppManifest extends LitElement {
   }
 
   disableAddUrlButton() {
-    return this.screenshotList?.length < 8 && this.hasScreenshotsToGenerate();
+    return (
+      this.screenshotUrlList?.length < 8 && this.hasScreenshotsToGenerate()
+    );
   }
 
   hasScreenshotsToGenerate() {
     return (
-      this.screenshotList.length &&
+      this.screenshotUrlList.length &&
       !this.screenshotListValid.includes(false) &&
-      !this.screenshotList.includes(undefined)
+      !this.screenshotUrlList.includes(undefined)
     );
   }
 
