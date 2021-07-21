@@ -430,7 +430,7 @@ export class ManifestPreviewer extends LitElement {
           <themecolor-screen
           .isInFullScreen=${this.isInFullScreen}
           .platform=${this.platform}
-          .themeColor=${this.manifest.theme_color}
+          .themeColor=${this.manifest.theme_color || ''}
           .appName=${this.manifest.name}
           .iconUrl=${this.iconUrl}>
           </themecolor-screen>
@@ -451,8 +451,8 @@ export class ManifestPreviewer extends LitElement {
           .isInFullScreen=${this.isInFullScreen}
           .platform=${this.platform}
           .display=${this.manifest.display || 'standalone'} 
-          .themeColor=${this.manifest.theme_color}
-          .backgroundColor=${this.manifest.background_color}
+          .themeColor=${this.manifest.theme_color || ''}
+          .backgroundColor=${this.manifest.background_color || ''}
           .iconUrl=${this.iconUrl}
           .appName=${this.manifest.name}
           .siteUrl=${this.siteUrl}>
