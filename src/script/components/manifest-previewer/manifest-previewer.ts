@@ -13,7 +13,13 @@ import './screens/display-screen.js';
 import './screens/categories-screen.js';
 import './screens/sharetarget-screen.js';
 import { Manifest } from '../../utils/interfaces';
-import { PreviewStage, Platform } from '../../utils/interfaces.previewer';
+import { 
+  PREVIEW_STAGES,
+  PreviewStage, 
+  Platform, 
+  ScreenDescriptions, 
+  ScreenTitles 
+} from '../../utils/interfaces.previewer';
 
 @customElement('manifest-previewer')
 export class ManifestPreviewer extends LitElement {
@@ -115,6 +121,25 @@ export class ManifestPreviewer extends LitElement {
       cursor: pointer;
     }
 
+    .screen-title {
+      margin: 10px auto;
+      width: fit-content;
+      font-weight: 600;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .screen-info {
+      margin: 0 auto;
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 16px;
+      text-align: center;
+      color: var(--secondary-font-color);
+      width: 230px;
+      display: block;
+    }
+
     /* The card is hidden for smaller screens */
     @media(min-width: 800px) {
       .card {
@@ -155,23 +180,13 @@ export class ManifestPreviewer extends LitElement {
   /**
    * The website's URL.
    */
-  @property() siteUrl = '';
-
+  @property() private siteUrl = '';
+  
   /**
-   * The URL used for icon previews.
+   * The current preview screen.
    */
-  @state() private iconUrl = '';
-
-  /**
-   * If true, the preview content is displayed in full screen.
-   */
-  @state() isInFullScreen = false;
-
-  /**
-   * The kind of preview currently shown.
-   */
-  @property({ type: Number }) stage: PreviewStage = PreviewStage.Name;
-
+  @property() stage: PreviewStage = 'name';
+  
   /**
    * The input web manifest.
    */
@@ -186,17 +201,37 @@ export class ManifestPreviewer extends LitElement {
     }
   })
   manifest = {} as Manifest;
-
+  
   /**
    * The url where the manifest resides.
    */
   @property() manifestUrl = '';
-
+  
   /**
    * The currently selected platform.
    */
   @property() platform: Platform = 'windows';
-
+  
+  /**
+   * The screen description texts.
+   */
+  @property({ type: Object }) descriptions = {} as ScreenDescriptions;
+  
+  /**
+   * The titles of each preview screen.
+   */
+  @property({ type: Object }) titles = {} as ScreenTitles;
+  
+  /**
+   * The URL used for icon previews.
+   */
+  @state() private iconUrl = '';
+  
+  /**
+   * If true, the preview content is displayed in full screen.
+   */
+  @state() isInFullScreen = false;
+  
   /**
    * The content to display when in full screen.
    */
@@ -220,6 +255,74 @@ export class ManifestPreviewer extends LitElement {
     if (!this.siteUrl) {
       this.siteUrl = this.manifestUrl.substring(0, this.manifestUrl.lastIndexOf('manifest.json'));
     }
+
+    // Set default texts
+    this.setDefaultDescriptions();
+    this.setDefaultTitles();
+  }
+
+  private setDefaultDescriptions() {
+    this.descriptions = {
+      install: {
+        windows: this.descriptions.install?.windows || "Windows includes the application's icon, name, and website URL in its installation dialog.",
+        android: this.descriptions.install?.android || 'When installing a PWA on Android, the description, name, icon and screenshots are used for giving a preview of the application.',
+        iOS: this.descriptions.install?.iOS || "iOS uses the application's icon, name, and website URL in its installation screen."
+      },
+      splashScreen: {
+        windows: this.descriptions.splashScreen?.windows || 'Splash screens are used to provide a smooth transition between the loading state and the initial launch of the application.',
+        android: this.descriptions.splashScreen?.android || 'When launching the PWA, Android uses the background color, theme color, name and icon for displaying the splash screen.',
+        iOS: this.descriptions.splashScreen?.iOS || 'When launching the PWA, iOS uses the background color, name and icon for displaying the splash screen while the content loads.'
+      },
+      name: {
+        windows: this.descriptions.name?.windows || "The name of the web application is displayed on Window's start menu, application preferences, title bar, etc.",
+        android: this.descriptions.name?.android || 'The name of the web application will be included in the app info screen on Android.',
+        iOS: this.descriptions.name?.iOS || 'On iOS, the name of the web application will be used on settings.'
+      },
+      shortName: {
+        windows: this.descriptions.shortName?.windows || 'Windows uses the short name as a fallback when the manifest does not specify a value for the name attribute.',
+        android: this.descriptions.shortName?.android || "On Android, the application's short name is used in the home screen as a label for the icon.",
+        iOS: this.descriptions.shortName?.iOS || "On iOS, the application's short name is used in the home screen as a label for the icon."
+      },
+      themeColor: {
+        windows: this.descriptions.themeColor?.windows || "The theme color defines the default color theme for the application, and is used for the PWA's title bar.",
+        android: this.descriptions.themeColor?.android || 'The theme color defines the default color theme for the application, and affects how the site is displayed.',
+        iOS: this.descriptions.themeColor?.iOS || 'The theme color defines the default color theme for the PWA, and defines the background color of the status bar when using the application.'
+      },
+      shortcuts: {
+        windows: this.descriptions.shortcuts?.windows || "This attribute (A.K.A. jump list) assembles a context menu that is shows when a user right-clicks on the app's icon on the taskbar.",
+        android: this.descriptions.shortcuts?.android || "This attribute (A.K.A. jump list) assembles a context menu that is shows when a user long-presses the app's icon on the home screen.",
+        iOS: this.descriptions.shortcuts?.iOS || "This attribute (A.K.A. jump list) defines a list of shortcuts/links to key tasks or pages within a web app, assembling a context menu when a user interacts with the app's icon."
+      },
+      display: {
+        windows: this.descriptions.display?.windows || "The display mode changes how much of the browser's UI is shown to the user. It can range from browser (the full browser window is shown) to fullscreen (the app is full-screened).",
+        android: this.descriptions.display?.android || "The display mode changes how much of the browser's UI (like the status bar and navigation buttons) is shown to the user.",
+        iOS: this.descriptions.display?.iOS || "The display mode changes how much of the browser's UI is shown to the user. It can range from browser (the full browser window is shown) to fullscreen (the app is full-screened)."
+      },
+      categories: {
+        windows: this.descriptions.categories?.windows || "The Microsoft store uses the indicated categories as tags in the app's listing.",
+        android: this.descriptions.categories?.android || "Google Play includes the categories specified in the manifest in the application's listing page.",
+        iOS: this.descriptions.categories?.iOS || "On iOS, your application's categories are set from a predetermined set of options and enhance the discoverability of your app."
+      },
+      shareTarget: {
+        windows: this.descriptions.shareTarget?.windows || 'This attribute allows your application to easily share and receive media content on Windows.',
+        android: this.descriptions.shareTarget?.android || 'By using the share target attribute, you can quickly share and receive links and files like a native Android application.',
+        iOS: this.descriptions.shareTarget?.iOS || 'By using the share target attribute, you can quickly share and receive links and files like a native iOS application. '
+      }
+    }
+  }
+
+  private setDefaultTitles() {
+    this.titles = {
+      install: this.titles.install || 'Installation dialog',
+      splashScreen: this.titles.splashScreen || 'Splash screen',
+      name: this.titles.name || 'The name attribute',
+      shortName: this.titles.shortName || 'The short name attribute',
+      themeColor: this.titles.themeColor || 'The theme color attribute',
+      shortcuts: this.titles.shortcuts || 'The shortcuts attribute',
+      display:  this.titles.display || 'The display attribute',
+      categories: this.titles.categories || 'The categories attribute',
+      shareTarget: this.titles.shareTarget || 'The share target attribute'
+    }
   }
 
   /**
@@ -234,16 +337,18 @@ export class ManifestPreviewer extends LitElement {
    * Navigates to the next preview screen.
    */
   private handleNavigateRight() {
-    const numStages = Object.keys(PreviewStage).length / 2;
-    this.stage = (this.stage + 1) % numStages;
+    const currentIdx = PREVIEW_STAGES.indexOf(this.stage);
+    const nextIdx = (currentIdx + 1) % PREVIEW_STAGES.length;
+    this.stage = PREVIEW_STAGES[nextIdx]!;
   }
 
   /**
    * Navigates to the previous preview screen.
    */
   private handleNavigateLeft() {
-    const numStages = Object.keys(PreviewStage).length / 2;
-    this.stage = (this.stage + numStages - 1) % numStages;
+    const currentIdx = PREVIEW_STAGES.indexOf(this.stage);
+    const nextIdx = (currentIdx + PREVIEW_STAGES.length - 1) % PREVIEW_STAGES.length;
+    this.stage = PREVIEW_STAGES[nextIdx]!;
   }
 
   // Let the rest of the application know when the screen changes.
@@ -277,7 +382,7 @@ export class ManifestPreviewer extends LitElement {
 
   private screenContent() {
     switch (this.stage) {
-      case PreviewStage.Install:
+      case 'install':
         return html`
           <install-screen
           .isInFullScreen=${this.isInFullScreen}
@@ -289,22 +394,9 @@ export class ManifestPreviewer extends LitElement {
           .description=${this.manifest.description}
           .screenshots=${this.manifest.screenshots}
           .manifestUrl=${this.manifestUrl}>
-            <p slot="title">Installation dialog</p>
-            <p slot="info-windows">
-              Windows includes the application's icon, name, and website URL in its
-              installation dialog.
-            </p>
-            <p slot="info-android">
-              When installing a PWA on Android, the description, name, icon and screenshots are used for
-              giving a preview of the application.
-            </p>
-            <p slot="info-iOS">
-              iOS uses the application's icon, name, and website URL in its
-              installation screen.
-            </p>
           </install-screen>
         `;
-      case PreviewStage.SplashScreen:
+      case 'splashScreen':
         return html`
           <splash-screen
           .isInFullScreen=${this.isInFullScreen}
@@ -313,64 +405,27 @@ export class ManifestPreviewer extends LitElement {
           .backgroundColor=${this.manifest.background_color}
           .themeColor=${this.manifest.theme_color}
           .appName=${this.manifest.name}>
-            <p slot="title">Splash screen</p>
-            <p slot="info-windows">
-              Splash screens are used to provide a smooth transition between the loading state
-              and the initial launch of the application.
-            </p>
-            <p slot="info-android">
-              When launching the PWA, Android uses the background color, theme color, name and 
-              icon for displaying the splash screen.
-            </p>
-            <p slot="info-iOS">
-              When launching the PWA, iOS uses the background color, name and icon for displaying
-              the splash screen while the content loads.
-            </p>
           </splash-screen>
         `;
-      case PreviewStage.Name:
+      case 'name':
         return html`
           <name-screen
           .isInFullScreen=${this.isInFullScreen}
           .platform=${this.platform}
           .appName=${this.manifest.name}
           .iconUrl=${this.iconUrl}>
-            <p slot="title">The name attribute</p>
-            <p slot="info-windows">
-              The name of the web application is displayed on Window's start menu, application 
-              preferences, title bar, etc.
-            </p>
-            <p slot="info-android">
-              The name of the web application will be included in the app info screen on Android.
-            </p>
-            <p slot="info-iOS">
-              On iOS, the name of the web application will be used on settings.
-            </p>
           </name-screen>
         `;
-      case PreviewStage.ShortName:
+      case 'shortName':
         return html`
           <shortname-screen
           .isInFullScreen=${this.isInFullScreen}
           .platform=${this.platform}
           .shortName=${this.manifest.short_name}
           .iconUrl=${this.iconUrl}>
-            <p slot="title">The short name attribute</p>
-            <p slot="info-windows">
-              Windows uses the short name as a fallback when the manifest does not specify a 
-              value for the name attribute.
-            </p>
-            <p slot="info-android">
-              On Android, the application's short name is used in the home screen as a label for 
-              the icon.
-            </p>
-            <p slot="info-iOS">
-              On iOS, the application's short name is used in the home screen as a label for 
-              the icon.
-            </p>
           </shortname-screen>
         `;
-      case PreviewStage.ThemeColor:
+      case 'themeColor':
         return html`
           <themecolor-screen
           .isInFullScreen=${this.isInFullScreen}
@@ -378,22 +433,9 @@ export class ManifestPreviewer extends LitElement {
           .themeColor=${this.manifest.theme_color}
           .appName=${this.manifest.name}
           .iconUrl=${this.iconUrl}>
-            <p slot="title">The theme color attribute</p>
-            <p slot="info-windows">
-              The theme color defines the default color theme for the application, and is used 
-              for the PWA's title bar.
-            </p>
-            <p slot="info-android">
-              The theme color defines the default color theme for the application, and affects
-              how the site is displayed.
-            </p>
-            <p slot="info-iOS">
-              The theme color defines the default color theme for the PWA, and defines the 
-              background color of the status bar when using the application.
-            </p>
           </themecolor-screen>
         `;
-      case PreviewStage.Shortcuts:
+      case 'shortcuts':
         return html`
           <shortcuts-screen
           .isInFullScreen=${this.isInFullScreen}
@@ -401,50 +443,22 @@ export class ManifestPreviewer extends LitElement {
           .shortcuts=${this.manifest.shortcuts}
           .iconUrl=${this.iconUrl}
           .manifestUrl=${this.manifestUrl}>
-            <p slot="title">The shortcuts attribute</p>
-            <p slot="info-windows">
-              This attribute (A.K.A. jump list) assembles a context menu that is shows when a user 
-              right-clicks on the app's icon on the taskbar.
-            </p>
-            <p slot="info-android">
-              This attribute (A.K.A. jump list) assembles a context menu that is shows when a user 
-              long-presses the app's icon on the home screen.
-            </p>
-            <p slot="info-iOS">
-              This attribute (A.K.A. jump list) defines a list of shortcuts/links to key tasks or pages 
-              within a web app, assembling a context menu when a user interacts with the app's icon.
-            </p>
           </shortcuts-screen>
         `;
-      case PreviewStage.Display:
+      case 'display':
         return html`
           <display-screen
           .isInFullScreen=${this.isInFullScreen}
           .platform=${this.platform}
-          .display=${this.manifest.display || 'browser'} 
+          .display=${this.manifest.display || 'standalone'} 
           .themeColor=${this.manifest.theme_color}
           .backgroundColor=${this.manifest.background_color}
           .iconUrl=${this.iconUrl}
           .appName=${this.manifest.name}
           .siteUrl=${this.siteUrl}>
-            <p slot="title">The display attribute</p>
-            <p slot="info-windows">
-              The display mode changes how much of the browser's UI is shown to the user. It can 
-              range from browser (the full browser window is shown) to fullscreen (the app is 
-              full-screened).
-            </p>
-            <p slot="info-android">
-              The display mode changes how much of the browser's UI (like the status bar and
-              navigation buttons) is shown to the user. 
-            </p>
-            <p slot="info-iOS">
-              The display mode changes how much of the browser's UI is shown to the user. It can 
-              range from browser (the full browser window is shown) to fullscreen (the app is 
-              full-screened).
-            </p>
           </display-screen>
         `;
-      case PreviewStage.Categories:
+      case 'categories':
         return html`
           <categories-screen
           .isInFullScreen=${this.isInFullScreen}
@@ -455,21 +469,9 @@ export class ManifestPreviewer extends LitElement {
           .description=${this.manifest.description}
           .screenshots=${this.manifest.screenshots}
           .manifestUrl=${this.manifestUrl}>
-            <p slot="title">The categories attribute</p>
-            <p slot="info-windows">
-              The Microsoft store uses the indicated categories as tags in the app's listing.
-            </p>
-            <p slot="info-android">
-              Google Play includes the categories specified in the manifest in the 
-              application's listing page.
-            </p>
-            <p slot="info-iOS">
-              On iOS, your application's categories are set from a predetermined set of options
-              and enhance the discoverability of your app. 
-            </p>
           </categories-screen>
         `;
-      case PreviewStage.ShareTarget:
+      case 'shareTarget':
         return html`
           <share-target
           .isInFullScreen=${this.isInFullScreen}
@@ -478,19 +480,6 @@ export class ManifestPreviewer extends LitElement {
           .appName=${this.manifest.name}
           .shortName=${this.manifest.short_name}
           .siteUrl=${this.siteUrl}>
-            <p slot="title">The share target attribute</p>
-            <p slot="info-windows">
-              This attribute allows your application to easily share and receive
-              media content on Windows.
-            </p>
-            <p slot="info-android">
-              By using the share target attribute, you can quickly share and receive 
-              links and files like a native Android application. 
-            </p>
-            <p slot="info-iOS">
-              By using the share target attribute, you can quickly share and receive 
-              links and files like a native iOS application. 
-            </p>
           </share-target>
         `;
       default: return null;
@@ -534,6 +523,10 @@ export class ManifestPreviewer extends LitElement {
           </fast-button>
         </div>
         <div part="app-name" class="name">${this.manifest.name}</div>
+        <p part="screen-title" class="screen-title">${this.titles[this.stage]}</p>
+        <p part="screen-description" class="screen-info">
+          ${this.descriptions[this.stage] ? this.descriptions[this.stage]![this.platform] : ''}
+        </p>
         <div id="content">${this.screenContent()}</div>
         <img 
         part="nav-arrow"

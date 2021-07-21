@@ -116,7 +116,7 @@ export class AppManifest extends LitElement {
   /**
    * The current screen in the preview component.
    */
-  @state() previewStage = PreviewStage.Name;
+  @state() previewStage: PreviewStage = 'name';
 
   protected get siteUrl(): string {
     if (!this.searchParams) {
@@ -921,16 +921,16 @@ export class AppManifest extends LitElement {
   handlePreviewerSync(fieldName: string) {
     switch (fieldName) {
       case 'name': 
-        this.previewStage = PreviewStage.Name;
+        this.previewStage = 'name';
         break;
       case 'short_name':
-        this.previewStage = PreviewStage.ShortName;
+        this.previewStage = 'shortName';
         break;
       case 'display':
-        this.previewStage = PreviewStage.Display;
+        this.previewStage = 'display';
         break;
       case 'theme_color':
-        this.previewStage = PreviewStage.ThemeColor;
+        this.previewStage = 'themeColor';
         break;
     }
   }
