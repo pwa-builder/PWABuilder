@@ -787,6 +787,12 @@ export class AppManifest extends LitElement {
     `;
   }
 
+  handleScreenshotButtonEnabled() {
+    if (this.generateScreenshotButtonDisabled === true) {
+      this.generateScreenshotButtonDisabled = false;
+    }
+  }
+
   renderScreenshotInputUrlList() {
     const renderFn = (url: string | undefined, index: number) => {
       const isValid = this.screenshotListValid[index];
@@ -799,6 +805,7 @@ export class AppManifest extends LitElement {
           })}"
           placeholder="https://www.example.com/screenshot"
           value="${url || ''}"
+          @input=${this.handleScreenshotButtonEnabled}
           @change=${this.handleScreenshotUrlChange}
           data-index=${index}
         ></fast-text-field>
