@@ -231,7 +231,6 @@ export class AppReport extends LitElement {
       sessionStorage.setItem('results-string', results);
 
       this.resultOfTest = JSON.parse(results);
-      console.log('resultOfTest', this.resultOfTest);
     }
   }
 

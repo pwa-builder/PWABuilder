@@ -326,20 +326,15 @@ export class ReportCard extends LitElement {
     this.overallScore = getOverallScore();
 
     await this.handleBadges();
-
-    console.log('pwa icon', this.pwa_icon);
   }
 
   async handleBadges() {
     const possible_badges = getPossibleBadges();
     const achievedBadges = sortBadges();
-    console.log('currentBadges', achievedBadges);
 
     if (possible_badges) {
       possible_badges.forEach(badge => {
-        console.log('badge', badge.name);
         if (badge.name === 'PWA') {
-          console.log('chosen', badge);
           this.pwa_icon = {
             url: badge.url,
             locked: achievedBadges.find(dupe => {
@@ -401,8 +396,6 @@ export class ReportCard extends LitElement {
   }
 
   opened(targetEl: EventTarget | null) {
-    console.log(targetEl);
-
     if (targetEl) {
       const flipperButton = (targetEl as Element).classList.contains(
         'flipper-button'

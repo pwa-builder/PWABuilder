@@ -55,7 +55,7 @@ export class CookieBanner extends LitElement {
 
   firstUpdated() {
     const savedValue = localStorage.getItem('PWABuilderGDPR');
-    console.log('savedValue', savedValue);
+
     if (JSON.parse(savedValue as string) !== true) {
       this.show = true;
       localStorage.setItem('PWABuilderGDPR', JSON.stringify(true));

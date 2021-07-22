@@ -29,7 +29,6 @@ export async function generatePackage(
     case 'android':
       return await tryGenerateAndroidPackage(form, signingFile);
     case 'samsung':
-      console.log('samsung');
       return null;
     default:
       throw new Error(

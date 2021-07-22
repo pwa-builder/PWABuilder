@@ -56,7 +56,6 @@ export class SidebarCard extends LitElement {
   }
 
   collapse() {
-    console.log('trying');
     this.open = !this.open;
   }
 

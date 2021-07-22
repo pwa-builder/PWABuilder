@@ -19,7 +19,6 @@ export async function getServiceWorkers() {
       return data;
     }
   } catch (e) {
-    console.log(e);
     handleError(e);
   }
 }
@@ -35,11 +34,9 @@ export async function getServiceWorkerCode(serviceworker: number) {
     const result = await response.json();
 
     if (result && result.serviceWorker) {
-      console.log(result);
       return result.serviceWorker;
     }
   } catch (e) {
-    console.log(e);
     handleError(e);
   }
 }
@@ -59,7 +56,6 @@ export async function downloadServiceWorker(serviceworker: number) {
       extensions: ['.zip'],
     });
   } catch (e) {
-    console.log(e);
     handleError(e);
   }
 }

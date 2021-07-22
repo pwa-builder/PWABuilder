@@ -242,8 +242,6 @@ export class AppBasePack extends LitElement {
     try {
       const generatedPackage = await generateWebPackage();
 
-      console.log('blob', generatedPackage);
-
       if (generatedPackage) {
         this.blob = generatedPackage;
       }

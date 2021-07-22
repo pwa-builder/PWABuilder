@@ -393,7 +393,6 @@ export class AppPublish extends LitElement {
   }
 
   async generate(type: platform, form?: HTMLFormElement, signingFile?: string) {
-    console.log('generating');
     if (type === 'windows') {
       // Final checks for Windows
       if (this.finalChecks) {
@@ -421,7 +420,6 @@ export class AppPublish extends LitElement {
         }
       }
     } else if (type === 'android') {
-      console.log('signingFile', signingFile);
       // Final checks for Android
       if (this.finalChecks) {
         const maniCheck = this.finalChecks.manifest;
@@ -455,8 +453,6 @@ export class AppPublish extends LitElement {
 
     try {
       this.generating = true;
-
-      console.log('signingFile', signingFile);
 
       
       const packageData = await generatePackage(type, form, signingFile);
