@@ -1,6 +1,6 @@
 export function isUrl(url: string): boolean {
   try {
-    return typeof new URL(url) === 'string';
+    return typeof new URL(url).hostname === 'string';
   } catch (e) {
     if (!(e instanceof TypeError)) {
       console.log(`URL is not valid: ${e}`);
