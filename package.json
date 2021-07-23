@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "npm install -D playwright && npx playwright install-deps chromium && npx playwright test",
-    "mocha": "mocha",
+    "mocha": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha",
     "clean": "rimraf build/ && rimraf dist/",
     "build": "rollup --config rollup.config.dev.js && rimraf dist/ && rollup --config rollup.config.js && node workbox.mjs",
     "start": "npm run build && npx nodemon server.js",
