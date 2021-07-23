@@ -1,5 +1,5 @@
-import { validateScreenshotUrlsList } from '../../src/script/utils/manifest-validation';
 import { expect } from 'chai';
+import { validateScreenshotUrlsList } from '../../src/script/utils/manifest-validation';
 
 describe('utils/manifest-validation', () => {
   it('validateScreenshotUrlsList() - happy', () => {
