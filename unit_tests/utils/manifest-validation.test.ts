@@ -1,3 +1,4 @@
+import { } from '../../src/script/services/'
 import { expect } from 'chai';
 
 describe('Typescript usage suite', () => {
