@@ -38,6 +38,7 @@ import {
 } from '../utils/css/fast-elements';
 
 import '@pwabuilder/manifest-previewer';
+import { PreviewStage } from '@pwabuilder/manifest-previewer/dist/models';
 import './loading-button';
 import './app-modal';
 import './dropdown-menu';
@@ -115,6 +116,11 @@ export class AppManifest extends LitElement {
 
   @state()
   protected screenshotsList: Array<Screenshot> = [];
+
+  /**
+   * The current preview screen.
+   */
+  @state() previewStage: PreviewStage = 'name';
 
   protected get siteUrl(): string {
     if (!this.searchParams) {
@@ -467,6 +473,7 @@ export class AppManifest extends LitElement {
   }
 
   render() {
+    console.log(this.manifest)
     return html`
       <div class="panel">
         <div class="head">
@@ -492,7 +499,8 @@ export class AppManifest extends LitElement {
           <manifest-previewer
           .manifest=${this.manifest}
           .manifestUrl=${this.siteUrl}
-          .siteUrl=${this.siteUrl}>
+          .siteUrl=${this.siteUrl}
+          .stage=${this.previewStage}>
           </manifest-previewer>
           ` : null}
         </section>
@@ -909,7 +917,6 @@ export class AppManifest extends LitElement {
 
   updateManifest(changes: Partial<Manifest>) {
     updateManifest(changes).then(manifest => {
-
       editorDispatchEvent(
         new CustomEvent<CodeEditorSyncEvent>(CodeEditorEvents.sync, {
           detail: {
@@ -931,11 +938,32 @@ export class AppManifest extends LitElement {
     const fieldName = input.dataset['field'];
 
     if (this.manifest && fieldName && this.manifest[fieldName]) {
+      this.handlePreviewStageUpdate(fieldName);
       // to-do Justin: Figure out why typescript is casting input.value to a string
       // automatically and how to cast to a better type that will actually compile
       this.updateManifest({
         [fieldName]: (input.value as any).code || input.value,
       });
+    }
+  }
+
+  private handlePreviewStageUpdate(fieldName: string) {
+    switch (fieldName) {
+      case 'name':
+        this.previewStage = 'name';
+        break;
+      case 'short_name':
+        this.previewStage = 'shortName';
+        break;
+      case 'display':
+        this.previewStage = 'display';
+        break;
+      case 'theme_color':
+        this.previewStage = 'themeColor';
+        break;
+      case 'background_color':
+        this.previewStage = 'splashScreen';
+        break;
     }
   }
 
@@ -980,6 +1008,7 @@ export class AppManifest extends LitElement {
       const value = (<HTMLInputElement>event.target).value;
 
       this.backgroundColor = value;
+      this.handlePreviewStageUpdate('background_color');
       this.updateManifest({
         background_color: value,
       });
@@ -991,6 +1020,7 @@ export class AppManifest extends LitElement {
       const value = (<HTMLInputElement>event.target).value;
 
       this.themeColor = value;
+      this.handlePreviewStageUpdate('theme_color');
       this.updateManifest({
         theme_color: value,
       });
