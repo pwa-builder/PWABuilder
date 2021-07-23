@@ -37,6 +37,7 @@ import {
   fastRadioCss,
 } from '../utils/css/fast-elements';
 
+import '@pwabuilder/manifest-previewer';
 import './loading-button';
 import './app-modal';
 import './dropdown-menu';
@@ -236,7 +237,7 @@ export class AppManifest extends LitElement {
           justify-content: space-between;
           align-items: flex-start;
 
-          max-width: 800px;
+          max-width: 650px;
         }
 
         .info-item,
@@ -407,6 +408,26 @@ export class AppManifest extends LitElement {
         }
       `),
       hidden_sm,
+
+      // Manifest previewer
+      css`
+        .info {
+          display: flex;
+        }
+
+        manifest-previewer {
+          margin-left: 100px;
+          line-height: normal;
+          --windows-font-family: 'Segoe';
+          --ios-font-family: 'SF-Pro';
+        }
+
+        @media(max-width: 800px) {
+          manifest-previewer {
+            display: none;
+          }
+        }
+      `
     ];
   }
 
@@ -452,7 +473,6 @@ export class AppManifest extends LitElement {
           <div class="top-section">
             <h1>${localeStrings.text.manifest_options.top_section.h1}</h1>
           </div>
-
           <h2>${localeStrings.text.manifest_options.summary_body.h1}</h2>
           <div class="summary-body">
             <p>${localeStrings.text.manifest_options.summary_body.p}</p>
@@ -463,8 +483,18 @@ export class AppManifest extends LitElement {
         </div>
         <fast-divider></fast-divider>
         <section class="info">
-          <h1>${localeStrings.text.manifest_options.info.h1}</h1>
-          <div class="info-items inputs">${this.renderInfoItems()}</div>
+          <div>
+            <h1>${localeStrings.text.manifest_options.info.h1}</h1>
+            <div class="info-items inputs">${this.renderInfoItems()}</div>
+          </div>
+          ${this.manifest ? 
+          html`
+          <manifest-previewer
+          .manifest=${this.manifest}
+          .manifestUrl=${this.siteUrl}
+          .siteUrl=${this.siteUrl}>
+          </manifest-previewer>
+          ` : null}
         </section>
         <fast-divider></fast-divider>
         <section class="images">
@@ -473,7 +503,6 @@ export class AppManifest extends LitElement {
             <div class="images-header">
               <div class="item-top">
                 <h3>${localeStrings.text.manifest_options.images.icons.h3}</h3>
-
                 <hover-tooltip
                   .text="${localeStrings.tooltip.manifest_options.upload}"
                   link="https://developer.mozilla.org/en-US/docs/Web/Manifest/icons"
