@@ -1,11 +1,35 @@
-import { } from '../../src/script/services/'
+import { validateScreenshotUrlsList } from '../../src/script/utils/manifest-validation';
 import { expect } from 'chai';
 
-describe('Typescript usage suite', () => {
-  it('should be able to execute a test', () => {
-    expect(true);
+describe('utils/manifest-validation', () => {
+  it('validateScreenshotUrlsList() - happy', () => {
+    const output = validateScreenshotUrlsList([
+      'www.pwabuilder.com',
+      'www.msn.com',
+    ]);
+    expect(output).to.deep.equal([true, true]);
   });
-  it('should return expected string', () => {
-    expect(true);
+
+  it('validateScreenshotUrlsList() - single valid', () => {
+    const output = validateScreenshotUrlsList(['www.pwabuilder.com']);
+    expect(output).to.deep.equal([true]);
+  });
+
+  it('validateScreenshotUrlsList() - empty list', () => {
+    const output = validateScreenshotUrlsList([]);
+    expect(output).to.deep.equal([]);
+  });
+
+  it('validateScreenshotUrlsList() - undefined in list', () => {
+    const output = validateScreenshotUrlsList([undefined]);
+    expect(output).to.deep.equal([false]);
+  });
+
+  it('validateScreenshotUrlsList() - mixed', () => {
+    const output = validateScreenshotUrlsList([
+      'www.pwabuilder.com',
+      undefined,
+    ]);
+    expect(output).to.deep.equal([true, false]);
   });
 });
