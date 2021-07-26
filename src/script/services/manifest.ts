@@ -297,8 +297,6 @@ async function generateManifest(url: string): Promise<ManifestDetectionResult> {
 
     const data = await response.json();
 
-    console.log('generateManifest', data);
-
     return data;
   } catch (err) {
     console.error(`Error generating manifest: ${err}`);

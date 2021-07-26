@@ -63,7 +63,7 @@ import {
   FileInputElement,
 } from '../utils/interfaces.components';
 
-type ColorRadioValues = 'none' | 'transparent' | 'custom';
+type ColorRadioValues = 'none' | 'custom';
 
 @customElement('manifest-options')
 export class AppManifest extends LitElement {
@@ -417,7 +417,6 @@ export class AppManifest extends LitElement {
   async firstUpdated() {
     try {
       this.manifest = await getManifestGuarded();
-      console.log('this.manifest in guarded', this.manifest);
 
       if (this.manifest.icons) {
         this.iconsList = this.manifest.icons;
@@ -526,11 +525,16 @@ export class AppManifest extends LitElement {
                 return undefined;
               })}
             </div>
-            <app-gallery
-              class="show-sm"
-              .images=${this.iconSrcListParse()}
-            ></app-gallery>
 
+            ${this.manifest &&
+            this.manifest.icons &&
+            this.manifest.icons.length > 0
+              ? html`<app-gallery
+                  class="show-sm"
+                  .images=${this.iconSrcListParse()}
+                ></app-gallery>`
+              : null}
+              
             ${this.manifest &&
             this.manifest.icons &&
             this.manifest.icons.length > 0
@@ -569,11 +573,18 @@ export class AppManifest extends LitElement {
               >
             </div>
           </div>
-          <div class="collection screenshot-items hidde-sm">
+          <div class="collection screenshot-items hidden-sm">
             ${this.renderScreenshots()}
           </div>
-          <app-gallery class="show-sm" .images=${this.screenshotSrcListParse()}>
-          </app-gallery>
+
+          ${(this.screenshotsList && this.screenshotsList.length > 0) ||
+          (this.manifest?.screenshots && this.manifest.screenshots.length > 0)
+            ? html`<app-gallery
+                class="show-sm"
+                .images=${this.screenshotSrcListParse()}
+              >
+              </app-gallery>`
+            : null}
 
           <div class="screenshots-actions">
             <loading-button
@@ -724,9 +735,6 @@ export class AppManifest extends LitElement {
             @change=${this.handleBackgroundRadioChange}
           >
             <fast-radio value="none">${localeStrings.values.none}</fast-radio>
-            <fast-radio value="transparent"
-              >${localeStrings.values.transparent}</fast-radio
-            >
             <fast-radio value="custom"
               >${localeStrings.values.custom}</fast-radio
             >
@@ -766,9 +774,6 @@ export class AppManifest extends LitElement {
             @change=${this.handleThemeRadioChange}
           >
             <fast-radio value="none">${localeStrings.values.none}</fast-radio>
-            <fast-radio value="transparent"
-              >${localeStrings.values.transparent}</fast-radio
-            >
             <fast-radio value="custom"
               >${localeStrings.values.custom}</fast-radio
             >
@@ -794,6 +799,12 @@ export class AppManifest extends LitElement {
     `;
   }
 
+  handleScreenshotButtonEnabled() {
+    if (this.generateScreenshotButtonDisabled === true) {
+      this.generateScreenshotButtonDisabled = false;
+    }
+  }
+
   renderScreenshotInputUrlList() {
     const renderFn = (url: string | undefined, index: number) => {
       const isValid = this.screenshotListValid[index];
@@ -806,6 +817,7 @@ export class AppManifest extends LitElement {
           })}"
           placeholder="https://www.example.com/screenshot"
           value="${url || ''}"
+          @input=${this.handleScreenshotButtonEnabled}
           @change=${this.handleScreenshotUrlChange}
           data-index=${index}
         ></fast-text-field>
@@ -880,7 +892,6 @@ export class AppManifest extends LitElement {
 
   updateManifest(changes: Partial<Manifest>) {
     updateManifest(changes).then(manifest => {
-      console.log('manifest updated return', this.manifest, manifest);
 
       editorDispatchEvent(
         new CustomEvent<CodeEditorSyncEvent>(CodeEditorEvents.sync, {
@@ -893,7 +904,6 @@ export class AppManifest extends LitElement {
   }
 
   handleManifestUpdate(maniUpdates: any) {
-    console.log('maniUpdates', this, maniUpdates);
     if (maniUpdates) {
       this.manifest = maniUpdates.detail;
     }
@@ -976,8 +986,6 @@ export class AppManifest extends LitElement {
       this.manifest?.background_color === 'none'
     ) {
       return 'none';
-    } else if (this.manifest?.background_color === 'transparent') {
-      return 'transparent';
     }
 
     return 'custom';
@@ -986,8 +994,6 @@ export class AppManifest extends LitElement {
   setThemeColorRadio() {
     if (!this.manifest?.theme_color || this.manifest?.theme_color === 'none') {
       return 'none';
-    } else if (this.manifest?.theme_color === 'transparent') {
-      return 'transparent';
     }
 
     return 'custom';
@@ -1004,7 +1010,7 @@ export class AppManifest extends LitElement {
         this.uploadSelectedImageFile
       );
     } else {
-      console.log('error state');
+      console.log('error state in modal input file change code');
     }
   }
 

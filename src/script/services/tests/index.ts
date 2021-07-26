@@ -26,8 +26,6 @@ export async function runAllTests(url: string): Promise<RawTestResult> {
       security: await securityTestResult,
     };
 
-    console.log('resultsObject', resultsObject);
-
     setResults(resultsObject);
 
     const progress = getProgress();

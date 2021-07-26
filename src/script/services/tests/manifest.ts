@@ -108,8 +108,6 @@ export async function testManifest(
       return default_results;
     }
 
-    console.log('testing manifest');
-
     if (fetchResultOrTimeout) {
       const manifest = await fetchResultOrTimeout;
 
