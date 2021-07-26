@@ -130,7 +130,7 @@ async function detectOfflineSupportPuppeteer(url: string) {
 
 async function detectOfflineSupportLighthouse(url: string) {
   const fetchResult = await fetch(
-    `${env.testAPIUrl}/offline/?site=${encodeURIComponent(url)}`
+    `${env.api}/offline/?site=${encodeURIComponent(url)}`
   );
   if (!fetchResult.ok) {
     console.warn(
