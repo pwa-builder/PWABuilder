@@ -63,7 +63,9 @@ export async function cleanUrl(url: string): Promise<string> {
     const test = await isValidURL(cleanedUrl);
 
     if (test === false && !url.toLowerCase().startsWith('http://')) {
-      throw 'This error means that you may have a bad https cert or the url may not be correct';
+      throw new Error(
+        'This error means that you may have a bad https cert or the url may not be correct'
+      );
     } else {
       return cleanedUrl;
     }

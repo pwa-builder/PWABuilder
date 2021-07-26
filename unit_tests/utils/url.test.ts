@@ -49,15 +49,15 @@ describe('utils/url', () => {
     expect(validateUrl('asdf', undefined)).to.be.not.null;
   });
 
-  it('cleanurl() with https succeeds', async () => {
+  it('cleanUrl() with https succeeds', async () => {
     expect(await cleanUrl('https://www.pwabuilder.com')).to.equal(
       'https://www.pwabuilder.com'
     );
   });
 
-  it('cleanurl() throws error on http', async () => {
-    expect(await cleanUrl('http://www.pwabuilder.com')).to.throw(
-      'This error means that you may have a bad https cert or the url may not be correct'
+  it('cleanUrl() returns http on http', async () => {
+    expect(await cleanUrl('http://www.pwabuilder.com')).to.equal(
+      'http://www.pwabuilder.com'
     );
   });
 
@@ -74,9 +74,13 @@ describe('utils/url', () => {
   });
 
   it('cleanUrl() throws on bad protocol', async () => {
-    expect(await cleanUrl('file://www.pwabuilder.com')).to.throw(
-      'This error means that you may have a bad https cert or the url may not be correct'
-    );
+    try {
+      await cleanUrl('file://www.pwabuilder.com');
+    } catch (e) {
+      expect(e.message).to.equal(
+        'This error means that you may have a bad https cert or the url may not be correct'
+      );
+    }
   });
 
   it('isValidURL() happy path', () => {
