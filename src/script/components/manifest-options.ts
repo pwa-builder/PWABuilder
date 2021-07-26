@@ -148,8 +148,7 @@ export class AppManifest extends LitElement {
 
         app-button,
         loading-button::part(underlying-button) {
-          margin-top: 16px;
-          margin-bottom: 8px;
+          margin: 16px 0;
         }
 
         fast-divider {
@@ -274,7 +273,8 @@ export class AppManifest extends LitElement {
         }
 
         .color {
-          max-width: 618px;
+          max-width: 480px;
+          width: 100%;
           margin-bottom: 1em;
           margin-top: 1.5em;
         }
@@ -473,7 +473,6 @@ export class AppManifest extends LitElement {
   }
 
   render() {
-    console.log(this.manifest)
     return html`
       <div class="panel">
         <div class="head">
@@ -492,7 +491,10 @@ export class AppManifest extends LitElement {
         <section class="info">
           <div>
             <h1>${localeStrings.text.manifest_options.info.h1}</h1>
-            <div class="info-items inputs">${this.renderInfoItems()}</div>
+            <div class="info-items inputs">
+              ${this.renderSectionItems(infoItems)}
+              ${this.renderBackgroundColorSettings()}
+            </div>
           </div>
           ${this.manifest ? 
           html`
@@ -503,6 +505,11 @@ export class AppManifest extends LitElement {
           .stage=${this.previewStage}>
           </manifest-previewer>
           ` : null}
+        </section>
+        <fast-divider></fast-divider>
+        <section class="settings">
+          <h1>${localeStrings.text.manifest_options.settings.h1}</h1>
+          <div class="setting-items inputs">${this.renderSectionItems(settingsItems)}</div>
         </section>
         <fast-divider></fast-divider>
         <section class="images">
@@ -622,12 +629,6 @@ export class AppManifest extends LitElement {
             >
           </div>
         </section>
-        <fast-divider></fast-divider>
-        <section class="settings">
-          <h1>${localeStrings.text.manifest_options.settings.h1}</h1>
-          <div class="setting-items inputs">${this.renderSettingsItems()}</div>
-          ${this.renderBackgroundColorSettings()}
-        </section>
         <section class="view-code">
           <fast-accordion>
             <fast-accordion-item @click=${this.handleEditorOpened}>
@@ -654,36 +655,8 @@ export class AppManifest extends LitElement {
     `;
   }
 
-  renderInfoItems() {
-    return infoItems.map(item => {
-      const value = this.manifest
-        ? (this.manifest[item.entry] as string)
-        : undefined;
-
-      return html`
-        <div class="info-item">
-          <div class="item-top">
-            <h3>${item.title}</h3>
-
-            <hover-tooltip
-              .text="${item.tooltipText}"
-              link="https://developer.mozilla.org/en-US/docs/Web/Manifest"
-            ></hover-tooltip>
-          </div>
-          <p>${item.description}</p>
-          <fast-text-field
-            data-field="${item.entry}"
-            placeholder="${item.title}"
-            .value=${value}
-            @change=${this.handleInputChange}
-          ></fast-text-field>
-        </div>
-      `;
-    });
-  }
-
-  renderSettingsItems() {
-    return settingsItems.map(item => {
+  renderSectionItems(items: InputItem[]) {
+    return items.map(item => {
       let field;
       const value =
         this.manifest && this.manifest[item.entry]
@@ -723,7 +696,6 @@ export class AppManifest extends LitElement {
         <div class="setting-item">
           <div class="item-top">
             <h3>${item.title}</h3>
-
             <hover-tooltip
               .text="${item.tooltipText}"
               link="https://developer.mozilla.org/en-US/docs/Web/Manifest"
@@ -1282,29 +1254,29 @@ const infoItems: Array<InputItem> = [
     type: 'input',
   },
   {
-    title: localeStrings.text.manifest_options.titles.start_url,
-    description: localeStrings.text.manifest_options.descriptions.start_url,
-    tooltipText: localeStrings.tooltip.manifest_options.start_url,
-    entry: 'start_url',
-    type: 'input',
-  },
-];
-
-const settingsItems: Array<InputItem> = [
-  {
-    title: localeStrings.text.manifest_options.titles.scope,
-    description: localeStrings.text.manifest_options.descriptions.scope,
-    tooltipText: localeStrings.tooltip.manifest_options.scope,
-    entry: 'scope',
-    type: 'input',
-  },
-  {
     title: localeStrings.text.manifest_options.titles.display,
     description: localeStrings.text.manifest_options.descriptions.display,
     tooltipText: localeStrings.tooltip.manifest_options.display,
     entry: 'display',
     type: 'select',
     menuItems: ['fullscreen', 'standalone', 'minimal-ui', 'browser'],
+  }
+];
+
+const settingsItems: Array<InputItem> = [
+  {
+    title: localeStrings.text.manifest_options.titles.start_url,
+    description: localeStrings.text.manifest_options.descriptions.start_url,
+    tooltipText: localeStrings.tooltip.manifest_options.start_url,
+    entry: 'start_url',
+    type: 'input',
+  },
+  {
+    title: localeStrings.text.manifest_options.titles.scope,
+    description: localeStrings.text.manifest_options.descriptions.scope,
+    tooltipText: localeStrings.tooltip.manifest_options.scope,
+    entry: 'scope',
+    type: 'input',
   },
   {
     title: localeStrings.text.manifest_options.titles.orientation,
