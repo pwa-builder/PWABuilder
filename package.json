@@ -9,6 +9,7 @@
   "scripts": {
     "test": "npm install -D playwright && npx playwright install-deps chromium && npx playwright test",
     "mocha": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha",
+    "coverage": "nyc npm run mocha",
     "clean": "rimraf build/ && rimraf dist/",
     "build": "rollup --config rollup.config.dev.js && rimraf dist/ && rollup --config rollup.config.js && node workbox.mjs",
     "start": "npm run build && npx nodemon server.js",
@@ -46,6 +47,7 @@
     "workbox-precaching": "^6.1.2"
   },
   "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@open-wc/rollup-plugin-html": "^1.2.5",
     "@playwright/test": "^1.12.3",
     "@rollup/plugin-json": "^4.1.0",
@@ -70,6 +72,7 @@
     "eslint-plugin-prettier": "^3.3.1",
     "lit-analyzer": "^1.2.1",
     "mocha": "^9.0.2",
+    "nyc": "^15.1.0",
     "playwright": "^1.12.3",
     "prettier": "^2.2.1",
     "rimraf": "^3.0.2",
