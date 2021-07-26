@@ -525,11 +525,16 @@ export class AppManifest extends LitElement {
                 return undefined;
               })}
             </div>
-            <app-gallery
-              class="show-sm"
-              .images=${this.iconSrcListParse()}
-            ></app-gallery>
 
+            ${this.manifest &&
+            this.manifest.icons &&
+            this.manifest.icons.length > 0
+              ? html`<app-gallery
+                  class="show-sm"
+                  .images=${this.iconSrcListParse()}
+                ></app-gallery>`
+              : null}
+              
             ${this.manifest &&
             this.manifest.icons &&
             this.manifest.icons.length > 0
@@ -568,11 +573,18 @@ export class AppManifest extends LitElement {
               >
             </div>
           </div>
-          <div class="collection screenshot-items hidde-sm">
+          <div class="collection screenshot-items hidden-sm">
             ${this.renderScreenshots()}
           </div>
-          <app-gallery class="show-sm" .images=${this.screenshotSrcListParse()}>
-          </app-gallery>
+
+          ${(this.screenshotsList && this.screenshotsList.length > 0) ||
+          (this.manifest?.screenshots && this.manifest.screenshots.length > 0)
+            ? html`<app-gallery
+                class="show-sm"
+                .images=${this.screenshotSrcListParse()}
+              >
+              </app-gallery>`
+            : null}
 
           <div class="screenshots-actions">
             <loading-button
