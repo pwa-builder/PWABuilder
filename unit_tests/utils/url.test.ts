@@ -1,5 +1,11 @@
 import { expect } from 'chai';
-import { isUrl, resolveUrl, cleanUrl } from '../../src/script/utils/url';
+import {
+  isUrl,
+  resolveUrl,
+  cleanUrl,
+  validateUrl,
+  isValidURL,
+} from '../../src/script/utils/url';
 
 describe('utils/url', () => {
   it('isUrl() receives an absolute url', () => {
@@ -35,7 +41,13 @@ describe('utils/url', () => {
     );
   });
 
-  it('todo - validateUrl()', () => {});
+  it('validateUrl() returns null on success', () => {
+    expect(validateUrl('https://www.pwabuilder.com')).to.be.null;
+  });
+
+  it('validateUrl() returns a string on failure', () => {
+    expect(validateUrl('asdf', undefined)).to.be.not.null;
+  });
 
   it('cleanurl() with https succeeds', async () => {
     expect(await cleanUrl('https://www.pwabuilder.com')).to.equal(
@@ -49,11 +61,29 @@ describe('utils/url', () => {
     );
   });
 
-  // it('cleanurl() tries if protocol is omitted', async () => {
-  //   expect(await cleanUrl('www.pwabuilder.com')).to.equal(
-  //     'https://www.pwabuilder.com'
-  //   );
-  // });
+  it('cleanUrl() tries https if protocol is omitted', async () => {
+    expect(await cleanUrl('www.pwabuilder.com')).to.equal(
+      'https://www.pwabuilder.com'
+    );
+  });
 
-  // it('isValidURL()', () => {});
+  it('cleanUrl() ignores http', async () => {
+    expect(await cleanUrl('http://www.pwabuilder.com')).to.equal(
+      'http://www.pwabuilder.com'
+    );
+  });
+
+  it('cleanUrl() throws on bad protocol', async () => {
+    expect(await cleanUrl('file://www.pwabuilder.com')).to.throw(
+      'This error means that you may have a bad https cert or the url may not be correct'
+    );
+  });
+
+  it('isValidURL() happy path', () => {
+    expect(isValidURL('https://www.pwabuilder.com')).to.be.true;
+  });
+
+  it('isValidURL() happy path', () => {
+    expect(isValidURL('1')).to.be.false;
+  });
 });
