@@ -1,6 +1,6 @@
-import { expect } from 'chai';
+// import { expect } from 'chai';
 
-import { AppModalCloseEvent } from '../../../src/script/utils/events/modal';
+// import { AppModalCloseEvent } from '../../../src/script/utils/events/modal';
 
 describe('todo (ui) - utils/events/modal', () => {
   // it('construct AppModalCloseEvent()', () => {
