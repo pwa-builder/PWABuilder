@@ -279,7 +279,7 @@ export class AppManifest extends LitElement {
 
         .image,
         .image img {
-          width: 100px;
+          max-width: 200px;
         }
 
         .image p {
