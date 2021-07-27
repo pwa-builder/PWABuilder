@@ -12,7 +12,7 @@ import {
   customBreakPoint,
 } from '../utils/css/breakpoints';
 import { hidden_all } from '../utils/css/hidden';
-import { domEventEmitter } from '../utils/events';
+import { resizeObserver } from '../utils/events';
 
 // @ts-ignore
 import style from '../../../styles/layout-defaults.css';
@@ -24,7 +24,10 @@ import '../components/app-modal';
 import '../components/app-card';
 import '../components/resource-hub';
 
-import { getPlatformsGenerated, GeneratedPlatforms } from '../services/congrats';
+import {
+  getPlatformsGenerated,
+  GeneratedPlatforms,
+} from '../services/congrats';
 import { fileSave } from 'browser-fs-access';
 import { Router } from '@vaadin/router';
 import { generatePackage, Platform } from '../services/publish';
@@ -442,9 +445,7 @@ export class AppCongrats extends LitElement {
   constructor() {
     super();
 
-    domEventEmitter.addEventListener('resize', () => {
-      this.requestUpdate();
-    });
+    resizeObserver.observe(this);
   }
 
   firstUpdated() {
@@ -609,7 +610,8 @@ export class AppCongrats extends LitElement {
         <windows-form
           slot="modal-form"
           .generating=${this.generating}
-          @init-windows-gen="${(ev: CustomEvent) => this.generate('windows', ev.detail.form)}"
+          @init-windows-gen="${(ev: CustomEvent) =>
+            this.generate('windows', ev.detail.form)}"
         ></windows-form>
       </app-modal>
 
@@ -622,7 +624,8 @@ export class AppCongrats extends LitElement {
         <android-form
           slot="modal-form"
           .generating=${this.generating}
-          @init-android-gen="${(ev: CustomEvent) => this.generate('android', ev.detail.form)}"
+          @init-android-gen="${(ev: CustomEvent) =>
+            this.generate('android', ev.detail.form)}"
         ></android-form>
       </app-modal>
 
@@ -766,7 +769,10 @@ export class AppCongrats extends LitElement {
               </div>
 
               <div id="anchor-block">
-                <fast-anchor href="https://blog.pwabuilder.com" target="_blank" appearance="hypertext"
+                <fast-anchor
+                  href="https://blog.pwabuilder.com"
+                  target="_blank"
+                  appearance="hypertext"
                   >View more blog posts</fast-anchor
                 >
               </div>

@@ -4,7 +4,7 @@ import { EditorState } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import debounce from 'lodash-es/debounce';
 import { getEditorState, emitter } from '../utils/codemirror';
-import { domEventEmitter } from '../utils/events';
+import { resizeObserver } from '../utils/events';
 
 import { Lazy } from '../utils/interfaces';
 import {
@@ -13,7 +13,7 @@ import {
 } from '../utils/interfaces.codemirror';
 import { increment } from '../utils/id';
 
-import "./app-button";
+import './app-button';
 
 @customElement('code-editor')
 export class CodeEditor extends LitElement {
@@ -29,7 +29,7 @@ export class CodeEditor extends LitElement {
   @state() editorEmitter = emitter;
 
   @state() copied = false;
-  @state() copyText = "Copy Manifest";
+  @state() copyText = 'Copy Manifest';
 
   protected static editorIdGenerator = increment();
 
@@ -67,9 +67,7 @@ export class CodeEditor extends LitElement {
       })
     );
 
-    domEventEmitter.addEventListener('resize', () => {
-      this.requestUpdate();
-    });
+    resizeObserver.observe(this);
   }
 
   firstUpdated() {
@@ -82,13 +80,12 @@ export class CodeEditor extends LitElement {
     if (doc) {
       try {
         await navigator.clipboard.writeText(doc.toString());
-        this.copyText = "Copied";
+        this.copyText = 'Copied';
         this.copied = true;
-      }
-      catch (err) {
+      } catch (err) {
         // We should never really end up here but just in case
         // lets put the error in the console
-        console.warn("Copying failed with the following err", err);
+        console.warn('Copying failed with the following err', err);
       }
     }
   }
@@ -96,16 +93,22 @@ export class CodeEditor extends LitElement {
   render() {
     return html`
       <div id="copy-block">
-        <app-button ?disabled="${this.copied}" @click="${() => this.copyManifest()}" appearance="outline" class="secondary">
-          ${this.copyText}</app-button>
+        <app-button
+          ?disabled="${this.copied}"
+          @click="${() => this.copyManifest()}"
+          appearance="outline"
+          class="secondary"
+        >
+          ${this.copyText}</app-button
+        >
       </div>
-      
+
       <div id=${this.editorId} class="editor-container ${this.className}"></div>
     `;
   }
 
   updateEditor = debounce(() => {
-    this.editorState = getEditorState(this.startText || "", 'json');
+    this.editorState = getEditorState(this.startText || '', 'json');
 
     if (this.editorView) {
       this.editorView.setState(this.editorState);
