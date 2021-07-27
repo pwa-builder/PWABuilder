@@ -18,6 +18,7 @@ import "./app-button";
 @customElement('code-editor')
 export class CodeEditor extends LitElement {
   @property({ type: String }) startText: Lazy<string>;
+  @property({ type: String }) copyText = "Copy Manifest";
 
   @state()
   editorState: Lazy<EditorState>;
@@ -29,7 +30,6 @@ export class CodeEditor extends LitElement {
   @state() editorEmitter = emitter;
 
   @state() copied = false;
-  @state() copyText = "Copy Manifest";
 
   protected static editorIdGenerator = increment();
 
@@ -76,7 +76,7 @@ export class CodeEditor extends LitElement {
     this.updateEditor();
   }
 
-  async copyManifest() {
+  async copyCode() {
     const doc = this.editorState?.doc;
 
     if (doc) {
@@ -96,7 +96,7 @@ export class CodeEditor extends LitElement {
   render() {
     return html`
       <div id="copy-block">
-        <app-button ?disabled="${this.copied}" @click="${() => this.copyManifest()}" appearance="outline" class="secondary">
+        <app-button ?disabled="${this.copied}" @click="${() => this.copyCode()}" appearance="outline" class="secondary">
           ${this.copyText}</app-button>
       </div>
       

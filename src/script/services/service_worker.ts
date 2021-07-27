@@ -23,7 +23,9 @@ export async function getServiceWorkers() {
   }
 }
 
-export async function getServiceWorkerCode(serviceworker: number) {
+export async function getServiceWorkerCode(
+  serviceworker: number
+): Promise<{ website: string; serviceWorker: string } | undefined> {
   try {
     const response = await fetch(`${apiUrl}/codePreview?id=${serviceworker}`, {
       headers: {
@@ -35,9 +37,12 @@ export async function getServiceWorkerCode(serviceworker: number) {
 
     if (result && result.serviceWorker) {
       return result.serviceWorker;
+    } else {
+      return undefined;
     }
   } catch (e) {
     handleError(e);
+    return undefined;
   }
 }
 

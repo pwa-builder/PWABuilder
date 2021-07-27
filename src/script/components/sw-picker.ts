@@ -3,11 +3,13 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import {
   chooseServiceWorker,
+  getServiceWorkerCode,
   getServiceWorkers,
   unsetServiceWorker,
 } from '../services/service_worker';
 
 import '../components/app-button';
+import '../components/code-editor';
 
 //@ts-ignore
 import style from '../../../styles/list-defaults.css';
@@ -22,8 +24,10 @@ interface ServiceWorkerChoice {
 export class SWPicker extends LitElement {
   @property({ type: Number }) score = 0;
 
-  @state() serviceWorkers: ServiceWorkerChoice[] | undefined;
-  @state() chosenSW: number | undefined;
+  @state() protected serviceWorkers: ServiceWorkerChoice[] | undefined;
+  @state() protected chosenSW: number | undefined;
+  @state() protected serviceWorkerCode: string | undefined;
+  @state() protected editorOpened = false;
 
   static get styles() {
     return [
@@ -44,7 +48,6 @@ export class SWPicker extends LitElement {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding-bottom: 35px;
           border-bottom: solid 1px rgb(229, 229, 229);
         }
 
@@ -96,9 +99,19 @@ export class SWPicker extends LitElement {
           margin-left: 16px;
         }
 
+        .actions #select-button {
+          /* matches margin on the test-package button 
+            on the publish page for consistency */
+          margin-bottom: 15px;
+        }
+
         .actions #select-button::part(underlying-button) {
           background: white;
           color: var(--font-color);
+        }
+
+        .actions #download-button::part(underlying-button) {
+          width: 100%;
         }
 
         #bottom-actions {
@@ -110,6 +123,37 @@ export class SWPicker extends LitElement {
 
         .done-button {
           width: 108px;
+        }
+
+        .view-code {
+          margin-bottom: 8px;
+        }
+
+        .view-code fast-accordion {
+          border-color: rgb(229, 229, 229);
+          border: none;
+        }
+
+        .view-code fast-accordion-item {
+          border: none;
+
+          --base-height-multiplier: 20;
+        }
+
+        .view-code fast-accordion-item::part(icon) {
+          display: none;
+        }
+
+        .view-code fast-accordion-item::part(button) {
+          color: var(--font-color);
+        }
+
+        .view-code .code-editor-collapse-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+
+          color: var(--font-color);
         }
       `,
     ];
@@ -149,6 +193,15 @@ export class SWPicker extends LitElement {
     this.dispatchEvent(event);
   }
 
+  async handleEditorOpened(swID: number) {
+    const sw_code = await getServiceWorkerCode(swID);
+    
+    if (sw_code) {
+      this.serviceWorkerCode = sw_code.serviceWorker;
+    }
+    this.editorOpened = !this.editorOpened;
+  }
+
   render() {
     return html`
       <div>
@@ -167,9 +220,11 @@ export class SWPicker extends LitElement {
               <a href="https://developers.google.com/web/tools/workbox/"
                 >Workbox</a
               >
-              to make building your offline experience easy! Tap "Add to Base Package" on the Service Worker of your choice and then tap "Done".
-              The next page will let you download your Base Package, which will include this Service Worker and a Web Manifest, along with instructions on how to 
-              inlude the files in your app.
+              to make building your offline experience easy! Tap "Add to Base
+              Package" on the Service Worker of your choice and then tap "Done".
+              The next page will let you download your Base Package, which will
+              include this Service Worker and a Web Manifest, along with
+              instructions on how to inlude the files in your app.
             </p>
 
             <div id="header-actions">
@@ -184,10 +239,34 @@ export class SWPicker extends LitElement {
           ${this.serviceWorkers?.map(sw => {
             return html`
               <li>
-                <div class="info">
-                  <h5>${sw.title}</h5>
+                <div>
+                  <div class="info">
+                    <h5>${sw.title}</h5>
 
-                  <p>${sw.description}</p>
+                    <p>${sw.description}</p>
+                  </div>
+
+                  <section class="view-code">
+                    <fast-accordion>
+                      <fast-accordion-item @click=${() => this.handleEditorOpened(sw.id)}>
+                        <div class="code-editor-collapse-header" slot="heading">
+                          <h1>View Code</h1>
+                          <flipper-button
+                            class="large end"
+                            .opened=${this.editorOpened}
+                          ></flipper-button>
+                        </div>
+                        <code-editor
+                          copyText="Copy Service Worker"
+                          .startText=${JSON.stringify(
+                            this.serviceWorkerCode,
+                            null,
+                            2
+                          )}
+                        ></code-editor>
+                      </fast-accordion-item>
+                    </fast-accordion>
+                  </section>
                 </div>
 
                 <div class="actions">
