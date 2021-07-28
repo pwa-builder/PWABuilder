@@ -26,7 +26,7 @@ export class SWPicker extends LitElement {
 
   @state() protected serviceWorkers: ServiceWorkerChoice[] | undefined;
   @state() protected chosenSW: number | undefined;
-  @state() protected serviceWorkerCode: string | undefined;
+  @state() protected serviceWorkerCode: any | undefined;
   @state() protected editorOpened = false;
 
   static get styles() {
@@ -45,9 +45,6 @@ export class SWPicker extends LitElement {
         }
 
         li {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
           border-bottom: solid 1px rgb(229, 229, 229);
         }
 
@@ -155,6 +152,12 @@ export class SWPicker extends LitElement {
 
           color: var(--font-color);
         }
+
+        .sw-block .info {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
       `,
     ];
   }
@@ -195,11 +198,22 @@ export class SWPicker extends LitElement {
 
   async handleEditorOpened(swID: number) {
     const sw_code = await getServiceWorkerCode(swID);
-    
+
     if (sw_code) {
-      this.serviceWorkerCode = sw_code.serviceWorker;
+      console.log('sw_code in editor opened', sw_code);
+      this.serviceWorkerCode = sw_code;
+      console.log(this.serviceWorkerCode);
     }
+
     this.editorOpened = !this.editorOpened;
+  }
+
+  async handleEditorUpdate(swID: number) {
+    const sw_code = await getServiceWorkerCode(swID);
+
+    if (sw_code) {
+      this.serviceWorkerCode = sw_code;
+    }
   }
 
   render() {
@@ -239,46 +253,49 @@ export class SWPicker extends LitElement {
           ${this.serviceWorkers?.map(sw => {
             return html`
               <li>
-                <div>
+                <div class="sw-block">
                   <div class="info">
-                    <h5>${sw.title}</h5>
+                    <div>
+                      <h5>${sw.title}</h5>
 
-                    <p>${sw.description}</p>
+                      <p>${sw.description}</p>
+                    </div>
+
+                    <div class="actions">
+                      ${this.chosenSW === sw.id
+                        ? html`<app-button @click="${() => this.removeSW()}"
+                            >Remove</app-button
+                          >`
+                        : html`<app-button
+                            id="select-button"
+                            @click="${() => this.chooseSW(sw)}"
+                            >Add to Base Package</app-button
+                          >`}
+                    </div>
                   </div>
 
                   <section class="view-code">
                     <fast-accordion>
-                      <fast-accordion-item @click=${() => this.handleEditorOpened(sw.id)}>
+                      <fast-accordion-item
+                        @click=${() => this.handleEditorOpened(sw.id)}
+                      >
                         <div class="code-editor-collapse-header" slot="heading">
                           <h1>View Code</h1>
                           <flipper-button
-                            class="large end"
+                            .class=${`large end ${sw.id}`}
                             .opened=${this.editorOpened}
                           ></flipper-button>
                         </div>
+
                         <code-editor
-                          copyText="Copy Service Worker"
-                          .startText=${JSON.stringify(
-                            this.serviceWorkerCode,
-                            null,
-                            2
-                          )}
+                          copyText="Copy Service Worker test"
+                          .startText=${this.serviceWorkerCode}
+                          @code-editor-update=${() =>
+                            this.handleEditorUpdate(sw.id)}
                         ></code-editor>
                       </fast-accordion-item>
                     </fast-accordion>
                   </section>
-                </div>
-
-                <div class="actions">
-                  ${this.chosenSW === sw.id
-                    ? html`<app-button @click="${() => this.removeSW()}"
-                        >Remove</app-button
-                      >`
-                    : html`<app-button
-                        id="select-button"
-                        @click="${() => this.chooseSW(sw)}"
-                        >Add to Base Package</app-button
-                      >`}
                 </div>
               </li>
             `;

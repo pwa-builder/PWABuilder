@@ -13,12 +13,19 @@ import {
 } from '../utils/interfaces.codemirror';
 import { increment } from '../utils/id';
 
-import "./app-button";
+import './app-button';
 
 @customElement('code-editor')
 export class CodeEditor extends LitElement {
-  @property({ type: String }) startText: Lazy<string>;
-  @property({ type: String }) copyText = "Copy Manifest";
+  @property({
+    type: String,
+    /*hasChanged(newVal: string, oldVal: string) {
+      console.log('newVal / oldVal', newVal, oldVal);
+      return true;
+    },*/
+  })
+  startText: Lazy<string>;
+  @property({ type: String }) copyText = 'Copy Manifest';
 
   @state()
   editorState: Lazy<EditorState>;
@@ -30,6 +37,8 @@ export class CodeEditor extends LitElement {
   @state() editorEmitter = emitter;
 
   @state() copied = false;
+
+  @state() newText: string | undefined;
 
   protected static editorIdGenerator = increment();
 
@@ -76,19 +85,38 @@ export class CodeEditor extends LitElement {
     this.updateEditor();
   }
 
+  updated(changedProperties: Map<string, any>) {
+    if (changedProperties.has('startText')) {
+      console.log('in updated', changedProperties);
+
+      this.editorState = getEditorState(this.startText || '', 'json');
+
+      console.log('this.startText in update', this.startText);
+
+      if (this.editorView) {
+        this.editorView.setState(this.editorState);
+      } else {
+        this.editorView = new EditorView({
+          state: this.editorState,
+          root: this.shadowRoot || undefined,
+          parent: this.shadowRoot?.getElementById(this.editorId) || undefined,
+        });
+      }
+    }
+  }
+
   async copyCode() {
     const doc = this.editorState?.doc;
 
     if (doc) {
       try {
         await navigator.clipboard.writeText(doc.toString());
-        this.copyText = "Copied";
+        this.copyText = 'Copied';
         this.copied = true;
-      }
-      catch (err) {
+      } catch (err) {
         // We should never really end up here but just in case
         // lets put the error in the console
-        console.warn("Copying failed with the following err", err);
+        console.warn('Copying failed with the following err', err);
       }
     }
   }
@@ -96,16 +124,24 @@ export class CodeEditor extends LitElement {
   render() {
     return html`
       <div id="copy-block">
-        <app-button ?disabled="${this.copied}" @click="${() => this.copyCode()}" appearance="outline" class="secondary">
-          ${this.copyText}</app-button>
+        <app-button
+          ?disabled="${this.copied}"
+          @click="${() => this.copyCode()}"
+          appearance="outline"
+          class="secondary"
+        >
+          ${this.copyText}</app-button
+        >
       </div>
-      
+
       <div id=${this.editorId} class="editor-container ${this.className}"></div>
     `;
   }
 
   updateEditor = debounce(() => {
-    this.editorState = getEditorState(this.startText || "", 'json');
+    this.editorState = getEditorState(this.startText || '', 'json');
+
+    console.log('this.startText in update', this.startText);
 
     if (this.editorView) {
       this.editorView.setState(this.editorState);
