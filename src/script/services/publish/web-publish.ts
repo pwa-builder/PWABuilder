@@ -7,48 +7,45 @@ import { Manifest } from '../../utils/interfaces';
 export let web_generated = false;
 
 export async function generateWebPackage() {
-  try {
-    const manifest = await getManifestGuarded();
+  const manifest = await getManifestGuarded();
 
-    if (!manifest) {
-      // this should never throw in a normal circumstance, this fails the placeholder fallback.
-      throw new Error('No manifest available, unable to generate web package');
-    }
-
-    const url = getURL();
-    const chosenSW = getChosenServiceWorker();
-
-    // The web package generator dies when screenshots is null. If detected, set screenshots to empty array.
-    const baseUrl = env.webPackageGeneratorFormUrl;
-    let urlToUse: string;
-    const body = createNewFormDataWithManifest(manifest);
-
-    if (chosenSW) {
-      urlToUse = `${baseUrl}?siteUrl=${url}&swId=${chosenSW}&hasServiceWorker=${false}`;
-    } else {
-      urlToUse = `${baseUrl}?siteUrl=${url}&hasServiceWorker=${true}`;
-    }
-
-    const response = await fetch(urlToUse, {
-      method: 'POST',
-      body,
-    });
-    if (response.status === 200) {
-      const data = await response.blob();
-
-      // set generated flag
-      web_generated = true;
-
-      return data;
-    } else {
-      const responseText = await response.text();
-      throw new Error(
-        `Failed. Status code ${response.status}, Error: ${response.statusText}, Details: ${responseText}`
-      );
-    }
-  } catch (error) {
-    throw new Error('Failed. Error: ' + error);
+  if (!manifest) {
+    // this should never throw in a normal circumstance, this fails the placeholder fallback.
+    throw new Error('No manifest available, unable to generate web package');
   }
+
+  const url = getURL();
+  const chosenSW = getChosenServiceWorker();
+
+  // The web package generator dies when screenshots is null. If detected, set screenshots to empty array.
+  const baseUrl = env.webPackageGeneratorFormUrl;
+  let urlToUse: string;
+  const body = createNewFormDataWithManifest(manifest);
+
+  if (chosenSW) {
+    urlToUse = `${baseUrl}?siteUrl=${url}&swId=${chosenSW}&hasServiceWorker=${false}`;
+  } else {
+    urlToUse = `${baseUrl}?siteUrl=${url}&hasServiceWorker=${true}`;
+  }
+
+  const response = await fetch(urlToUse, {
+    method: 'POST',
+    body,
+  });
+  if (response.status === 200) {
+    const data = await response.blob();
+
+    // set generated flag
+    web_generated = true;
+
+    return data;
+  } else {
+    const responseText = await response.text();
+    throw new Error(
+      `Unable to generate base package. Status code ${response.status}, Error: ${response.statusText}, Details: ${responseText}`
+    );
+  }
+}
 }
 
 function createNewFormDataWithManifest(manifest: Manifest): FormData {

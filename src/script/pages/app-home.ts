@@ -71,7 +71,7 @@ export class AppHome extends LitElement {
           max-width: 406px;
         }
 
-        ul {
+        #content-grid {
           padding: 0;
           margin: 0;
           display: grid;
@@ -339,7 +339,7 @@ export class AppHome extends LitElement {
           Ship your PWA to the app stores at lightning speed.
         </h2>
 
-        <ul slot="grid-container">
+        <section id="content-grid" slot="grid-container">
           <div class="intro-grid-item">
             <h3>Test</h3>
 
@@ -375,7 +375,7 @@ export class AppHome extends LitElement {
               readiness, and more!
             </p>
           </div>
-        </ul>
+        </section>
 
         <form
           id="input-form"
