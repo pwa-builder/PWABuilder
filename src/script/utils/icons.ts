@@ -30,12 +30,9 @@ export function findSuitableIcon(
     return exactMatch;
   }
 
-  if (purpose === null) {
+  if (!purpose) {
     const withoutPurpose = icons.find(
-      i =>
-        hasSize(i, desiredSize) &&
-        !isEmbedded(i) &&
-        hasMimeType(i, mimeType)
+      i => hasSize(i, desiredSize) && !isEmbedded(i) && hasMimeType(i, mimeType)
     );
 
     if (withoutPurpose) {
@@ -64,7 +61,8 @@ export function findSuitableIcon(
  * @returns An icon suitable to use as a general purpose app icon.
  */
 export function findBestAppIcon(icons: Icon[] | null | undefined): Icon | null {
-  return findSuitableIcon(icons, 'any', 512, 512, 'image/png') ||
+  return (
+    findSuitableIcon(icons, 'any', 512, 512, 'image/png') ||
     findSuitableIcon(icons, 'maskable', 512, 512, 'image/png') ||
     findSuitableIcon(icons, 'any', 192, 192, 'image/png') ||
     findSuitableIcon(icons, 'maskable', 192, 192, 'image/png') ||
@@ -81,7 +79,8 @@ export function findBestAppIcon(icons: Icon[] | null | undefined): Icon | null {
     findSuitableIcon(icons, 'any', 0, 0, 'image/jpeg') ||
     findSuitableIcon(icons, 'maskable', 0, 0, 'image/jpeg') ||
     findSuitableIcon(icons, 'any', 0, 0, undefined) ||
-    findSuitableIcon(icons, 'maskable', 0, 0, undefined);
+    findSuitableIcon(icons, 'maskable', 0, 0, undefined)
+  );
 }
 
 function hasPurpose(icon: Icon, purpose: string | null | undefined): boolean {
@@ -89,15 +88,11 @@ function hasPurpose(icon: Icon, purpose: string | null | undefined): boolean {
     return true;
   }
 
-  return (icon.purpose || 'any')
-    .split(' ')
-    .some(p => p === purpose);
+  return (icon.purpose || 'any').split(' ').some(p => p === purpose);
 }
 
 function hasSize(icon: Icon, size: string): boolean {
-  return (icon.sizes || '0x0')
-    .split(' ')
-    .some(s => s === size);
+  return (icon.sizes || '0x0').split(' ').some(s => s === size);
 }
 
 function isEmbedded(icon: Icon): boolean {
@@ -109,21 +104,21 @@ function hasMimeType(icon: Icon, mimeType: string | null | undefined): boolean {
     return true;
   }
 
-  return icon.type === mimeType ||
+  return (
+    icon.type === mimeType ||
     (!icon.type && mimeType === 'image/png' && icon.src?.endsWith('.png')) || // best guess when the manifest doesn't specify the type of image
-    (!icon.type && mimeType === 'image/jpeg' && icon.src?.endsWith('.jpg')); // best guess when the manifest doesn't specify the type of image
+    (!icon.type && mimeType === 'image/jpeg' && icon.src?.endsWith('.jpg'))
+  ); // best guess when the manifest doesn't specify the type of image
 }
 
 function getDimensions(icon: Icon): IconDimension[] {
-  return (icon.sizes || '0x0')
-    .split(' ')
-    .map(size => {
-      const dimensions = size.split('x');
-      return {
-        width: Number.parseInt(dimensions[0] || '0'),
-        height: Number.parseInt(dimensions[1] || '0'),
-      };
-    });
+  return (icon.sizes || '0x0').split(' ').map(size => {
+    const dimensions = size.split('x');
+    return {
+      width: Number.parseInt(dimensions[0] || '0'),
+      height: Number.parseInt(dimensions[1] || '0'),
+    };
+  });
 }
 
 function isLarger(icon: Icon, width: number, height: number): boolean {
