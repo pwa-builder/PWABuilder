@@ -66,7 +66,7 @@ export function manifestGenerated() {
 async function getManifestViaFilePost(
   url: string
 ): Promise<ManifestDetectionResult> {
-  const manifestTestUrl = `${env.testAPIUrl
+  const manifestTestUrl = `${env.api
     }/WebManifest?site=${encodeURIComponent(url)}`;
   const response = await fetch(manifestTestUrl, {
     method: 'POST',
@@ -287,12 +287,9 @@ async function generateManifest(url: string): Promise<ManifestDetectionResult> {
   sessionStorage.setItem(PWABuilderSession.manifestGenerated, 'true');
 
   try {
-    const response = await fetch(`${env.api}/manifests`, {
+    const response = await fetch(`${env.api}/GenerateManifest?site=${url}`, {
       method: 'POST',
       headers: new Headers({ 'content-type': 'application/json' }),
-      body: JSON.stringify({
-        siteUrl: url,
-      }),
     });
 
     const data = await response.json();

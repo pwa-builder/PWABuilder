@@ -27,7 +27,7 @@ export async function testSecurity(url: string): Promise<Array<TestResult>> {
   );
 
   const encodedUrl = encodeURIComponent(url);
-  const securityUrl = `${env.testAPIUrl}/Security?site=${encodedUrl}`;
+  const securityUrl = `${env.api}/Security?site=${encodedUrl}`;
   const fetchResult = fetch(securityUrl);
 
   const fetchResultOrTimeout: void | Response = await Promise.race([

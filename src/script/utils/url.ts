@@ -1,6 +1,6 @@
 export function isUrl(url: string): boolean {
   try {
-    return typeof new URL(url) === 'string';
+    return typeof new URL(url).hostname === 'string';
   } catch (e) {
     if (!(e instanceof TypeError)) {
       console.log(`URL is not valid: ${e}`);
@@ -62,27 +62,29 @@ export async function cleanUrl(url: string): Promise<string> {
   if (cleanedUrl) {
     const test = await isValidURL(cleanedUrl);
 
-    if (
-      test === false &&
-      !url.toLowerCase().startsWith('http://')
-    ) {
-      throw "This error means that you may have a bad https cert or the url may not be correct";
+    if (test === false && !url.toLowerCase().startsWith('http://')) {
+      throw new Error(
+        'This error means that you may have a bad https cert or the url may not be correct'
+      );
     } else {
       return cleanedUrl;
     }
-  } else {
-    // original URL is ok
-    return url;
   }
+
+  // original URL is ok
+  return url;
 }
 
 export function isValidURL(str: string) {
   // from https://stackoverflow.com/a/5717133
-  var pattern = new RegExp('^(https?:\\/\\/)?' +
-    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
-    '((\\d{1,3}\\.){3}\\d{1,3}))' +
-    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
-    '(\\?[;&a-z\\d%_.~+=-]*)?' +
-    '(\\#[-a-z\\d_]*)?$', 'i');
+  var pattern = new RegExp(
+    '^(https?:\\/\\/)?' +
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
+      '((\\d{1,3}\\.){3}\\d{1,3}))' +
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
+      '(\\?[;&a-z\\d%_.~+=-]*)?' +
+      '(\\#[-a-z\\d_]*)?$',
+    'i'
+  );
   return !!pattern.test(str);
 }

@@ -8,14 +8,12 @@ import { localeStrings, languageCodes, langCodes } from '../../locales';
 import ErrorStyles from '../../../styles/error-styles.css';
 
 import {
-  emitter as manifestEmitter,
   getManifestGuarded,
   updateManifest,
 } from '../services/manifest';
 import { arrayHasChanged } from '../utils/hasChanged';
 import { resolveUrl } from '../utils/url';
 import {
-  AppEvents,
   FileInputDetails,
   Icon,
   Screenshot,
@@ -36,6 +34,7 @@ import {
   fastMenuCss,
   fastRadioCss,
 } from '../utils/css/fast-elements';
+import { resizeObserver } from '../utils/events';
 
 import '@pwabuilder/manifest-previewer';
 import { PreviewStage } from '@pwabuilder/manifest-previewer/dist/models';
@@ -286,7 +285,7 @@ export class AppManifest extends LitElement {
 
         .image,
         .image img {
-          width: 100px;
+          max-width: 200px;
         }
 
         .image p {
@@ -458,18 +457,11 @@ export class AppManifest extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    manifestEmitter.addEventListener(
-      AppEvents.manifestUpdate,
-      this.handleManifestUpdate
-    );
+    resizeObserver.observe(this);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    manifestEmitter.removeEventListener(
-      AppEvents.manifestUpdate,
-      this.handleManifestUpdate
-    );
   }
 
   render() {
@@ -569,11 +561,16 @@ export class AppManifest extends LitElement {
                 return undefined;
               })}
             </div>
-            <app-gallery
-              class="show-sm"
-              .images=${this.iconSrcListParse()}
-            ></app-gallery>
 
+            ${this.manifest &&
+            this.manifest.icons &&
+            this.manifest.icons.length > 0
+              ? html`<app-gallery
+                  class="show-sm"
+                  .images=${this.iconSrcListParse()}
+                ></app-gallery>`
+              : null}
+              
             ${this.manifest &&
             this.manifest.icons &&
             this.manifest.icons.length > 0
@@ -612,11 +609,18 @@ export class AppManifest extends LitElement {
               >
             </div>
           </div>
-          <div class="collection screenshot-items hidde-sm">
+          <div class="collection screenshot-items hidden-sm">
             ${this.renderScreenshots()}
           </div>
-          <app-gallery class="show-sm" .images=${this.screenshotSrcListParse()}>
-          </app-gallery>
+
+          ${(this.screenshotsList && this.screenshotsList.length > 0) ||
+          (this.manifest?.screenshots && this.manifest.screenshots.length > 0)
+            ? html`<app-gallery
+                class="show-sm"
+                .images=${this.screenshotSrcListParse()}
+              >
+              </app-gallery>`
+            : null}
 
           <div class="screenshots-actions">
             <loading-button
