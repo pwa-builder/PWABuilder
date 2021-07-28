@@ -1,6 +1,7 @@
 import { LitElement, css, html } from 'lit';
 
 import { customElement, property, state } from 'lit/decorators.js';
+
 import {
   chooseServiceWorker,
   getServiceWorkerCode,
@@ -196,16 +197,40 @@ export class SWPicker extends LitElement {
     this.dispatchEvent(event);
   }
 
-  async handleEditorOpened(swID: number) {
+  resetSWCodeEditor() {
+    this.shadowRoot?.querySelectorAll('fast-accordion-item').forEach((item) => {
+      item.removeAttribute('expanded');
+      item.classList.remove('expanded');
+    });
+
+    this.shadowRoot?.querySelectorAll('flipper-button').forEach((item) => {
+      if (item.hasAttribute('opened')) {
+        item.removeAttribute('opened');
+      }
+    });
+  }
+
+  manuallyHandleFlipperButton(event: Event) {
+    const button = (event.target as HTMLElement)
+    .querySelector('flipper-button') || (event.target as HTMLElement);
+
+    button.toggleAttribute('opened');
+  }
+
+  async handleEditorOpened(swID: number, event: Event) {
+    // close all the accordions and flipper buttons
+    this.resetSWCodeEditor();
+
+    // open the one that was clicked on
+    this.manuallyHandleFlipperButton(event);
+
+    // update the service worker code
     const sw_code = await getServiceWorkerCode(swID);
 
     if (sw_code) {
-      console.log('sw_code in editor opened', sw_code);
       this.serviceWorkerCode = sw_code;
       console.log(this.serviceWorkerCode);
     }
-
-    this.editorOpened = !this.editorOpened;
   }
 
   async handleEditorUpdate(swID: number) {
@@ -277,18 +302,16 @@ export class SWPicker extends LitElement {
                   <section class="view-code">
                     <fast-accordion>
                       <fast-accordion-item
-                        @click=${() => this.handleEditorOpened(sw.id)}
+                        @click=${($event: Event) =>
+                          this.handleEditorOpened(sw.id, $event)}
                       >
                         <div class="code-editor-collapse-header" slot="heading">
                           <h1>View Code</h1>
-                          <flipper-button
-                            .class=${`large end ${sw.id}`}
-                            .opened=${this.editorOpened}
-                          ></flipper-button>
+                          <flipper-button class="large end"></flipper-button>
                         </div>
 
                         <code-editor
-                          copyText="Copy Service Worker test"
+                          copyText="Copy Service Worker"
                           .startText=${this.serviceWorkerCode}
                           @code-editor-update=${() =>
                             this.handleEditorUpdate(sw.id)}
