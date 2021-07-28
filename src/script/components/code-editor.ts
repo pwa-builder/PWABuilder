@@ -87,11 +87,7 @@ export class CodeEditor extends LitElement {
 
   updated(changedProperties: Map<string, any>) {
     if (changedProperties.has('startText')) {
-      console.log('in updated', changedProperties);
-
       this.editorState = getEditorState(this.startText || '', 'json');
-
-      console.log('this.startText in update', this.startText);
 
       if (this.editorView) {
         this.editorView.setState(this.editorState);
@@ -124,14 +120,16 @@ export class CodeEditor extends LitElement {
   render() {
     return html`
       <div id="copy-block">
-        <app-button
-          ?disabled="${this.copied}"
-          @click="${() => this.copyCode()}"
-          appearance="outline"
-          class="secondary"
-        >
-          ${this.copyText}</app-button
-        >
+        <slot>
+          <app-button
+            ?disabled="${this.copied}"
+            @click="${() => this.copyCode()}"
+            appearance="outline"
+            class="secondary"
+          >
+            ${this.copyText}</app-button
+          >
+        </slot>
       </div>
 
       <div id=${this.editorId} class="editor-container ${this.className}"></div>

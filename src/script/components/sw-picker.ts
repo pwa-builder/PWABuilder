@@ -4,12 +4,14 @@ import { customElement, property, state } from 'lit/decorators.js';
 
 import {
   chooseServiceWorker,
+  downloadServiceWorker,
   getServiceWorkerCode,
   getServiceWorkers,
   unsetServiceWorker,
 } from '../services/service_worker';
 
 import '../components/app-button';
+import '../components/loading-button';
 import '../components/code-editor';
 
 //@ts-ignore
@@ -29,6 +31,7 @@ export class SWPicker extends LitElement {
   @state() protected chosenSW: number | undefined;
   @state() protected serviceWorkerCode: any | undefined;
   @state() protected editorOpened = false;
+  @state() protected downloading = false;
 
   static get styles() {
     return [
@@ -198,12 +201,12 @@ export class SWPicker extends LitElement {
   }
 
   resetSWCodeEditor() {
-    this.shadowRoot?.querySelectorAll('fast-accordion-item').forEach((item) => {
+    this.shadowRoot?.querySelectorAll('fast-accordion-item').forEach(item => {
       item.removeAttribute('expanded');
       item.classList.remove('expanded');
     });
 
-    this.shadowRoot?.querySelectorAll('flipper-button').forEach((item) => {
+    this.shadowRoot?.querySelectorAll('flipper-button').forEach(item => {
       if (item.hasAttribute('opened')) {
         item.removeAttribute('opened');
       }
@@ -211,8 +214,9 @@ export class SWPicker extends LitElement {
   }
 
   manuallyHandleFlipperButton(event: Event) {
-    const button = (event.target as HTMLElement)
-    .querySelector('flipper-button') || (event.target as HTMLElement);
+    const button =
+      (event.target as HTMLElement).querySelector('flipper-button') ||
+      (event.target as HTMLElement);
 
     button.toggleAttribute('opened');
   }
@@ -239,6 +243,12 @@ export class SWPicker extends LitElement {
     if (sw_code) {
       this.serviceWorkerCode = sw_code;
     }
+  }
+
+  async downloadSW(id: number) {
+    this.downloading = true;
+    await downloadServiceWorker(id);
+    this.downloading = false;
   }
 
   render() {
@@ -315,7 +325,11 @@ export class SWPicker extends LitElement {
                           .startText=${this.serviceWorkerCode}
                           @code-editor-update=${() =>
                             this.handleEditorUpdate(sw.id)}
-                        ></code-editor>
+                        >
+                          <loading-button .loading=${this.downloading} @click="${() => this.downloadSW(sw.id)}" appearance="outline" class="secondary"
+                            >Download Service Worker</loading-button
+                          >
+                        </code-editor>
                       </fast-accordion-item>
                     </fast-accordion>
                   </section>
