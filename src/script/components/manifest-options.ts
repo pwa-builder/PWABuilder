@@ -7,10 +7,7 @@ import { localeStrings, languageCodes, langCodes } from '../../locales';
 //@ts-ignore
 import ErrorStyles from '../../../styles/error-styles.css';
 
-import {
-  getManifestGuarded,
-  updateManifest,
-} from '../services/manifest';
+import { getManifestGuarded, updateManifest } from '../services/manifest';
 import { arrayHasChanged } from '../utils/hasChanged';
 import { resolveUrl } from '../utils/url';
 import {
@@ -427,12 +424,12 @@ export class AppManifest extends LitElement {
           --ios-font-family: 'SF-Pro';
         }
 
-        @media(max-width: 800px) {
+        @media (max-width: 800px) {
           manifest-previewer {
             display: none;
           }
         }
-      `
+      `,
     ];
   }
 
@@ -488,20 +485,29 @@ export class AppManifest extends LitElement {
               ${this.renderBackgroundColorSettings()}
             </div>
           </div>
-          ${this.manifest ? 
-          html`
-          <manifest-previewer
-          .manifest=${this.manifest}
-          .manifestUrl=${this.siteUrl}
-          .siteUrl=${this.siteUrl}
-          .stage=${this.previewStage}>
-          </manifest-previewer>
-          ` : null}
+          ${this.manifest
+            ? html`
+                <manifest-previewer
+                  .manifest=${new Proxy(this.manifest, {
+                    get: (target, prop: string) => {
+                      return target[prop];
+                    },
+                    set: () => false,
+                  })}
+                  .manifestUrl=${this.siteUrl}
+                  .siteUrl=${this.siteUrl}
+                  .stage=${this.previewStage}
+                >
+                </manifest-previewer>
+              `
+            : null}
         </section>
         <fast-divider></fast-divider>
         <section class="settings">
           <h1>${localeStrings.text.manifest_options.settings.h1}</h1>
-          <div class="setting-items inputs">${this.renderSectionItems(settingsItems)}</div>
+          <div class="setting-items inputs">
+            ${this.renderSectionItems(settingsItems)}
+          </div>
         </section>
         <fast-divider></fast-divider>
         <section class="images">
@@ -570,7 +576,6 @@ export class AppManifest extends LitElement {
                   .images=${this.iconSrcListParse()}
                 ></app-gallery>`
               : null}
-              
             ${this.manifest &&
             this.manifest.icons &&
             this.manifest.icons.length > 0
@@ -893,6 +898,8 @@ export class AppManifest extends LitElement {
 
   updateManifest(changes: Partial<Manifest>) {
     updateManifest(changes).then(manifest => {
+      this.manifest = manifest;
+
       editorDispatchEvent(
         new CustomEvent<CodeEditorSyncEvent>(CodeEditorEvents.sync, {
           detail: {
@@ -901,12 +908,6 @@ export class AppManifest extends LitElement {
         })
       );
     });
-  }
-
-  handleManifestUpdate(maniUpdates: any) {
-    if (maniUpdates) {
-      this.manifest = maniUpdates.detail;
-    }
   }
 
   handleInputChange(event: InputEvent) {
@@ -1264,7 +1265,7 @@ const infoItems: Array<InputItem> = [
     entry: 'display',
     type: 'select',
     menuItems: ['fullscreen', 'standalone', 'minimal-ui', 'browser'],
-  }
+  },
 ];
 
 const settingsItems: Array<InputItem> = [
