@@ -4,7 +4,7 @@ import { EditorState } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import debounce from 'lodash-es/debounce';
 import { getEditorState, emitter } from '../utils/codemirror';
-import { domEventEmitter } from '../utils/events';
+import { resizeObserver } from '../utils/events';
 
 import { Lazy } from '../utils/interfaces';
 import {
@@ -39,6 +39,9 @@ export class CodeEditor extends LitElement {
   @state() copied = false;
 
   @state() newText: string | undefined;
+
+  @state() copyText = 'Copy Manifest';
+
 
   protected static editorIdGenerator = increment();
 
@@ -76,9 +79,7 @@ export class CodeEditor extends LitElement {
       })
     );
 
-    domEventEmitter.addEventListener('resize', () => {
-      this.requestUpdate();
-    });
+    resizeObserver.observe(this);
   }
 
   firstUpdated() {
@@ -138,8 +139,6 @@ export class CodeEditor extends LitElement {
 
   updateEditor = debounce(() => {
     this.editorState = getEditorState(this.startText || '', 'json');
-
-    console.log('this.startText in update', this.startText);
 
     if (this.editorView) {
       this.editorView.setState(this.editorState);

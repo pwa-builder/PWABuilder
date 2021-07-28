@@ -8,14 +8,12 @@ import { localeStrings, languageCodes, langCodes } from '../../locales';
 import ErrorStyles from '../../../styles/error-styles.css';
 
 import {
-  emitter as manifestEmitter,
   getManifestGuarded,
   updateManifest,
 } from '../services/manifest';
 import { arrayHasChanged } from '../utils/hasChanged';
 import { resolveUrl } from '../utils/url';
 import {
-  AppEvents,
   FileInputDetails,
   Icon,
   Screenshot,
@@ -36,6 +34,7 @@ import {
   fastMenuCss,
   fastRadioCss,
 } from '../utils/css/fast-elements';
+import { resizeObserver } from '../utils/events';
 
 import './loading-button';
 import './app-modal';
@@ -431,18 +430,11 @@ export class AppManifest extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    manifestEmitter.addEventListener(
-      AppEvents.manifestUpdate,
-      this.handleManifestUpdate
-    );
+    resizeObserver.observe(this);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    manifestEmitter.removeEventListener(
-      AppEvents.manifestUpdate,
-      this.handleManifestUpdate
-    );
   }
 
   render() {
@@ -892,7 +884,6 @@ export class AppManifest extends LitElement {
 
   updateManifest(changes: Partial<Manifest>) {
     updateManifest(changes).then(manifest => {
-
       editorDispatchEvent(
         new CustomEvent<CodeEditorSyncEvent>(CodeEditorEvents.sync, {
           detail: {
