@@ -46,7 +46,6 @@ export async function generateWebPackage() {
     );
   }
 }
-}
 
 function createNewFormDataWithManifest(manifest: Manifest): FormData {
   const form = new FormData();
