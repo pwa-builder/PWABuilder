@@ -38,6 +38,11 @@ export class WindowsForm extends LitElement {
           color: var(--font-color);
         }
 
+        input::placeholder {
+          color: var(--placeholder-color);
+          font-style: italic;
+        }
+
         #generate-submit {
           background: transparent;
           color: var(--button-font-color);

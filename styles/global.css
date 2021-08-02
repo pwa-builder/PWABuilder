@@ -23,6 +23,7 @@
   font-display: swap;
 }
 
+/* Platform fonts used for the manifest previewer */
 @font-face {
   font-family: 'Segoe';
   src: url('/assets/fonts/SegoeUI.ttf');
@@ -86,6 +87,8 @@
 
   --list-border: 0.67681px solid #e5e5e5;
   --light-primary-color: rgba(255, 255, 255, 0.6);
+
+  --placeholder-color: #A9A9A9;
 }
 
 * {

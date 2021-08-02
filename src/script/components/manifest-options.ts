@@ -152,6 +152,11 @@ export class AppManifest extends LitElement {
           border-color: rgb(229, 229, 229);
         }
 
+        fast-text-field::part(control)::placeholder {
+          color: var(--placeholder-color);
+          font-style: italic;
+        }
+
         fast-text-field,
         app-dropdown::part(layout) {
           width: 300px;
