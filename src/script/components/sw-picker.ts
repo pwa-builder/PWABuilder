@@ -1,13 +1,18 @@
 import { LitElement, css, html } from 'lit';
 
 import { customElement, property, state } from 'lit/decorators.js';
+
 import {
   chooseServiceWorker,
+  downloadServiceWorker,
+  getServiceWorkerCode,
   getServiceWorkers,
   unsetServiceWorker,
 } from '../services/service_worker';
 
 import '../components/app-button';
+import '../components/loading-button';
+import '../components/code-editor';
 
 //@ts-ignore
 import style from '../../../styles/list-defaults.css';
@@ -22,8 +27,11 @@ interface ServiceWorkerChoice {
 export class SWPicker extends LitElement {
   @property({ type: Number }) score = 0;
 
-  @state() serviceWorkers: ServiceWorkerChoice[] | undefined;
-  @state() chosenSW: number | undefined;
+  @state() protected serviceWorkers: ServiceWorkerChoice[] | undefined;
+  @state() protected chosenSW: number | undefined;
+  @state() protected serviceWorkerCode: any | undefined;
+  @state() protected editorOpened = false;
+  @state() protected downloading = false;
 
   static get styles() {
     return [
@@ -41,10 +49,6 @@ export class SWPicker extends LitElement {
         }
 
         li {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding-bottom: 35px;
           border-bottom: solid 1px rgb(229, 229, 229);
         }
 
@@ -96,9 +100,19 @@ export class SWPicker extends LitElement {
           margin-left: 16px;
         }
 
+        .actions #select-button {
+          /* matches margin on the test-package button 
+            on the publish page for consistency */
+          margin-bottom: 15px;
+        }
+
         .actions #select-button::part(underlying-button) {
           background: white;
           color: var(--font-color);
+        }
+
+        .actions #download-button::part(underlying-button) {
+          width: 100%;
         }
 
         #bottom-actions {
@@ -110,6 +124,43 @@ export class SWPicker extends LitElement {
 
         .done-button {
           width: 108px;
+        }
+
+        .view-code {
+          margin-bottom: 8px;
+        }
+
+        .view-code fast-accordion {
+          border-color: rgb(229, 229, 229);
+          border: none;
+        }
+
+        .view-code fast-accordion-item {
+          border: none;
+
+          --base-height-multiplier: 20;
+        }
+
+        .view-code fast-accordion-item::part(icon) {
+          display: none;
+        }
+
+        .view-code fast-accordion-item::part(button) {
+          color: var(--font-color);
+        }
+
+        .view-code .code-editor-collapse-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+
+          color: var(--font-color);
+        }
+
+        .sw-block .info {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
         }
       `,
     ];
@@ -149,6 +200,57 @@ export class SWPicker extends LitElement {
     this.dispatchEvent(event);
   }
 
+  resetSWCodeEditor() {
+    this.shadowRoot?.querySelectorAll('fast-accordion-item').forEach(item => {
+      item.removeAttribute('expanded');
+      item.classList.remove('expanded');
+    });
+
+    this.shadowRoot?.querySelectorAll('flipper-button').forEach(item => {
+      if (item.hasAttribute('opened')) {
+        item.removeAttribute('opened');
+      }
+    });
+  }
+
+  manuallyHandleFlipperButton(event: Event) {
+    const button =
+      (event.target as HTMLElement).querySelector('flipper-button') ||
+      (event.target as HTMLElement);
+
+    button.toggleAttribute('opened');
+  }
+
+  async handleEditorOpened(swID: number, event: Event) {
+    // close all the accordions and flipper buttons
+    this.resetSWCodeEditor();
+
+    // open the one that was clicked on
+    this.manuallyHandleFlipperButton(event);
+
+    // update the service worker code
+    const sw_code = await getServiceWorkerCode(swID);
+
+    if (sw_code) {
+      this.serviceWorkerCode = sw_code;
+      console.log(this.serviceWorkerCode);
+    }
+  }
+
+  async handleEditorUpdate(swID: number) {
+    const sw_code = await getServiceWorkerCode(swID);
+
+    if (sw_code) {
+      this.serviceWorkerCode = sw_code;
+    }
+  }
+
+  async downloadSW(id: number) {
+    this.downloading = true;
+    await downloadServiceWorker(id);
+    this.downloading = false;
+  }
+
   render() {
     return html`
       <div>
@@ -167,9 +269,11 @@ export class SWPicker extends LitElement {
               <a href="https://developers.google.com/web/tools/workbox/"
                 >Workbox</a
               >
-              to make building your offline experience easy! Tap "Add to Base Package" on the Service Worker of your choice and then tap "Done".
-              The next page will let you download your Base Package, which will include this Service Worker and a Web Manifest, along with instructions on how to 
-              inlude the files in your app.
+              to make building your offline experience easy! Tap "Add to Base
+              Package" on the Service Worker of your choice and then tap "Done".
+              The next page will let you download your Base Package, which will
+              include this Service Worker and a Web Manifest, along with
+              instructions on how to inlude the files in your app.
             </p>
 
             <div id="header-actions">
@@ -184,22 +288,51 @@ export class SWPicker extends LitElement {
           ${this.serviceWorkers?.map(sw => {
             return html`
               <li>
-                <div class="info">
-                  <h5>${sw.title}</h5>
+                <div class="sw-block">
+                  <div class="info">
+                    <div>
+                      <h5>${sw.title}</h5>
 
-                  <p>${sw.description}</p>
-                </div>
+                      <p>${sw.description}</p>
+                    </div>
 
-                <div class="actions">
-                  ${this.chosenSW === sw.id
-                    ? html`<app-button @click="${() => this.removeSW()}"
-                        >Remove</app-button
-                      >`
-                    : html`<app-button
-                        id="select-button"
-                        @click="${() => this.chooseSW(sw)}"
-                        >Add to Base Package</app-button
-                      >`}
+                    <div class="actions">
+                      ${this.chosenSW === sw.id
+                        ? html`<app-button @click="${() => this.removeSW()}"
+                            >Remove</app-button
+                          >`
+                        : html`<app-button
+                            id="select-button"
+                            @click="${() => this.chooseSW(sw)}"
+                            >Add to Base Package</app-button
+                          >`}
+                    </div>
+                  </div>
+
+                  <section class="view-code">
+                    <fast-accordion>
+                      <fast-accordion-item
+                        @click=${($event: Event) =>
+                          this.handleEditorOpened(sw.id, $event)}
+                      >
+                        <div class="code-editor-collapse-header" slot="heading">
+                          <h1>View Code</h1>
+                          <flipper-button class="large end"></flipper-button>
+                        </div>
+
+                        <code-editor
+                          copyText="Copy Service Worker"
+                          .startText=${this.serviceWorkerCode}
+                          @code-editor-update=${() =>
+                            this.handleEditorUpdate(sw.id)}
+                        >
+                          <loading-button .loading=${this.downloading} @click="${() => this.downloadSW(sw.id)}" appearance="outline" class="secondary"
+                            >Download Service Worker</loading-button
+                          >
+                        </code-editor>
+                      </fast-accordion-item>
+                    </fast-accordion>
+                  </section>
                 </div>
               </li>
             `;
