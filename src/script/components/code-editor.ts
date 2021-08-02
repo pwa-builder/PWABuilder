@@ -18,11 +18,7 @@ import './app-button';
 @customElement('code-editor')
 export class CodeEditor extends LitElement {
   @property({
-    type: String,
-    /*hasChanged(newVal: string, oldVal: string) {
-      console.log('newVal / oldVal', newVal, oldVal);
-      return true;
-    },*/
+    type: String
   })
   startText: Lazy<string>;
   @property({ type: String }) copyText = 'Copy Manifest';
@@ -37,10 +33,6 @@ export class CodeEditor extends LitElement {
   @state() editorEmitter = emitter;
 
   @state() copied = false;
-
-  @state() newText: string | undefined;
-
-  @state() copyText = 'Copy Manifest';
 
 
   protected static editorIdGenerator = increment();
