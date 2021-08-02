@@ -6,6 +6,8 @@ Welcome to [PWABuilder](https://www.pwabuilder.com/) v3.0! Read our launch blog 
 
 [Try It](https://www.pwabuilder.com)
 
+Want to help us build PWABuilder? Check out the info below and our [developer's wiki](https://github.com/pwa-builder/PWABuilder/wiki) to get started!
+
 ### Prerequisites
 
 You will need the following things properly installed on your computer.
