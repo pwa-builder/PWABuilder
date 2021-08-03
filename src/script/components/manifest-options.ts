@@ -60,6 +60,7 @@ import {
   AppModalElement,
   FileInputElement,
 } from '../utils/interfaces.components';
+import { checkImageUrl } from '../utils/icons';
 
 type ColorRadioValues = 'none' | 'custom';
 
@@ -1225,7 +1226,11 @@ export class AppManifest extends LitElement {
     url = resolveUrl(url?.href, icon.src);
 
     if (url) {
-      return url.href;
+      const iconCheck = checkImageUrl(url.href);
+
+      if (iconCheck === true) {
+        return url.href;
+      }
     }
 
     return undefined;
