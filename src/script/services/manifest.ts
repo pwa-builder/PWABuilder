@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-declare const deepmerge: any;
-
 import { env } from '../utils/environment';
 import {
   AppEvents,
@@ -34,7 +31,7 @@ let maniURL: Lazy<string>;
 let fetchAttempted = false;
 
 // export to use as a flag for generation
-// this is needed to decide to go to the 
+// this is needed to decide to go to the
 // publish page or base_package
 export let generated = false;
 
@@ -66,8 +63,9 @@ export function manifestGenerated() {
 async function getManifestViaFilePost(
   url: string
 ): Promise<ManifestDetectionResult> {
-  const manifestTestUrl = `${env.api
-    }/WebManifest?site=${encodeURIComponent(url)}`;
+  const manifestTestUrl = `${env.api}/WebManifest?site=${encodeURIComponent(
+    url
+  )}`;
   const response = await fetch(manifestTestUrl, {
     method: 'POST',
   });
@@ -148,7 +146,7 @@ async function getManifestViaHtmlParse(
     errors: [],
     suggestions: [],
     warnings: [],
-    manifestContainsInvalidJson: responseData.manifestContainsInvalidJson
+    manifestContainsInvalidJson: responseData.manifestContainsInvalidJson,
   };
 }
 
@@ -304,14 +302,7 @@ async function generateManifest(url: string): Promise<ManifestDetectionResult> {
 export async function updateManifest(
   manifestUpdates: Partial<Manifest>
 ): Promise<Manifest> {
-  // @ts-ignore
-  // using a dynamic import here as this is a large library
-  // so we should only load it once its actually needed
-  await import('https://unpkg.com/deepmerge@4.2.2/dist/umd.js');
-
-  manifest = deepmerge(manifest, manifestUpdates as Partial<Manifest>, {
-    // customMerge: customManifestMerge, // NOTE: need to manually concat with editor changes.
-  });
+  manifest = Object.assign(manifest, manifestUpdates as Partial<Manifest>);
 
   sessionStorage.setItem(PWABuilderSession.manifest, JSON.stringify(manifest)); // would it make sense to make this async?
 
