@@ -15,8 +15,8 @@
     "start": "npm run build && npx nodemon server.js",
     "dev": "concurrently \"rollup --config rollup.config.dev.js --watch\" \"web-dev-server\"",
     "debug": "concurrently \"rollup --config rollup.config.dev.js --watch\" \"web-dev-server --config web-dev-server.debugging.config.mjs\"",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "storybook": "start-storybook -p 6006 -s assets,styles,sb-assets",
+    "build-storybook": "build-storybook -s assets,styles,sb-assets"
   },
   "author": "",
   "license": "ISC",
