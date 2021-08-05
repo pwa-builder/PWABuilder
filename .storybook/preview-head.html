@@ -1,0 +1,20 @@
+<link rel="preconnect" href="https://web.vortex.data.microsoft.com">
+
+<!-- Imports the manifest to represent the web application. A web app must have a manifest to be a PWA. -->
+<link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+<!-- Microsoft Fast Components https://www.fast.design/docs/components/getting-started-->
+<script
+  type="module"
+  src="https://unpkg.com/@microsoft/fast-element@latest/dist/fast-element.min.js"
+></script>
+
+<!-- A stylesheet to design the pages. -->
+<link href="%PUBLIC_URL%/global.css" rel="stylesheet" />
+
+<!--<script type="module" src="/build/src/script/pages/app-index.js"></script>-->
+<!-- <script type="module" src="%PUBLIC_URL%/src/script/pages/app-index.ts"></script> -->
+
+<!-- preload font -->
+<link rel="preload" as="font" href="%PUBLIC_URL%/fonts/Hind-Bold.ttf" />
+<link rel="preload" as="font" href="%PUBLIC_URL%/fonts/Hind-Regular.ttf" />
