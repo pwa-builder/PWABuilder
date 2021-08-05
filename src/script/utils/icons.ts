@@ -89,17 +89,20 @@ export function findBestAppIcon(icons: Icon[] | null | undefined): Icon | null {
  * @returns An boolean value based on whether the image loads or nothing if the image never
  * fires the load or error event.
  */
-export function checkImageUrl(icon_url: string): boolean | void {
-  const image = new Image();
+export function checkImageUrl(icon_url: string): Promise<boolean>{
+  return new Promise((resolve, reject) => {
+    const image = new Image();
 
-  image.onload = () => {
-    return true;
-  };
-  image.onerror = () => {
-    return false;
-  };
-
-  image.src = icon_url;
+    image.onload = () => {
+      resolve(true);
+    };
+    
+    image.onerror = () => {
+      reject(false);
+    };
+  
+    image.src = icon_url;
+  })
 }
 
 

@@ -1217,7 +1217,7 @@ export class AppManifest extends LitElement {
     );
   }
 
-  handleImageUrl(icon: Icon) {
+  async handleImageUrl(icon: Icon) {
     if (icon.src.indexOf('data:') === 0 && icon.src.indexOf('base64') !== -1) {
       return icon.src;
     }
@@ -1226,7 +1226,9 @@ export class AppManifest extends LitElement {
     url = resolveUrl(url?.href, icon.src);
 
     if (url) {
-      const iconCheck = checkImageUrl(url.href);
+      const iconCheck = await checkImageUrl(url.href);
+
+      console.log('iconCheck', iconCheck);
 
       if (iconCheck === true) {
         return url.href;
