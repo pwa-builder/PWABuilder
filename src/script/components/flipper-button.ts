@@ -7,7 +7,6 @@ import { AppButtonElement } from '../utils/interfaces.components';
 @customElement('flipper-button')
 export class FlipperButton extends LitElement implements AppButtonElement {
   @property({ type: String }) type = '';
-  @property({ type: String }) colorMode = 'primary';
   @property({ type: String }) appearance: FastButtonAppearance = 'neutral';
   @property({ type: Boolean }) disabled = false;
   @property({ type: Boolean }) opened = false;
@@ -28,7 +27,7 @@ export class FlipperButton extends LitElement implements AppButtonElement {
           background: white;
           box-shadow: 0 1px 4px 0px rgb(0 0 0 / 25%);
           border-radius: 50%;
-          color: #5231a7;
+          color: var(--flipper-color);
 
           height: var(--height);
           min-width: var(--min-width);

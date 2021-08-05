@@ -2,7 +2,6 @@ import { FastButtonAppearance } from './fast-element';
 
 export interface AppButtonElement {
   type: string;
-  colorMode: string;
   appearance: FastButtonAppearance;
   disabled: boolean;
 }

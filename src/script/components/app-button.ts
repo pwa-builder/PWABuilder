@@ -9,7 +9,6 @@ import { AppButtonElement } from '../utils/interfaces.components';
 @customElement('app-button')
 export class AppButton extends LitElement implements AppButtonElement {
   @property({ type: String }) type = '';
-  @property({ type: String }) colorMode = 'primary';
   @property({ type: String }) appearance: FastButtonAppearance = 'neutral';
   @property({ type: Boolean }) disabled = false;
 
@@ -102,7 +101,6 @@ export class AppButton extends LitElement implements AppButtonElement {
         })}"
         .appearance="${this.appearance}"
         .type="${this.type}"
-        .color="${this.colorMode}"
         ?disabled=${this.disabled}
       >
         <slot></slot>
