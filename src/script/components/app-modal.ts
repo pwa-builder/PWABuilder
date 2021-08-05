@@ -214,7 +214,7 @@ export class AppModal extends LitElement implements AppModalElement {
         <div id="background">
           <div part="modal-layout" id="modal">
             <div id="back-button-block">
-              <fast-button @click="${() => this.close()}" appearance="stealth">
+              <fast-button @click="${this.close}" appearance="stealth">
                 <ion-icon name="close"></ion-icon>
               </fast-button>
             </div>
