@@ -23,7 +23,7 @@ const Template: Story<TemplateArgs> = (args: TemplateArgs) =>
     >
       ${args.label}
     </app-button>
-`;
+  `);
 
 export const Primary = Template.bind({});
 Primary.args = {
