@@ -89,8 +89,9 @@
     ]
   },
   "include": [
-    "pwabuilder-sw.ts", 
-    "src/**/*"
+    "pwabuilder-sw.ts",
+    "src/**/*",
+    "unit_tests/**/*"
   ],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }
