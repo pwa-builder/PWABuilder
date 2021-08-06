@@ -291,14 +291,24 @@ export class AppManifest extends LitElement {
           max-width: 200px;
         }
 
-        .image p {
-          text-align: center;
+        .image .info {
+          display: flex;
+          flex-flow: row;
+          justify-content: center;
+          align-items: center;
         }
 
-        .screenshot,
+        .screenshot {
+          max-width: 230px;
+        }
         .screenshot img {
           max-width: 205px;
           max-height: 135px;
+        }
+
+        .delete-button {
+          --button-font-color: var(--font-color);
+          margin: 0;
         }
 
         fast-accordion-item::part(icon) {
@@ -555,7 +565,7 @@ export class AppManifest extends LitElement {
               </app-modal>
             </div>
             <div class="collection image-items hidden-sm">
-              ${this.iconsList?.map(icon => {
+              ${this.iconsList?.map((icon, i) => {
                 const url = this.handleImageUrl(icon);
 
                 if (url) {
@@ -566,7 +576,10 @@ export class AppManifest extends LitElement {
                       decoding="async"
                       loading="lazy"
                     />
-                    <p>${icon.sizes}</p>
+                    <div class="info">
+                      <p>${icon.sizes}</p>
+                      ${this.renderDeleteImageButton('icons', i)}
+                    </div>
                   </div>`;
                 }
 
@@ -844,12 +857,13 @@ export class AppManifest extends LitElement {
   }
 
   renderScreenshots() {
-    return this.screenshotsList.map(screenshot => {
+    return this.screenshotsList.map((screenshot, i) => {
       const url = this.handleImageUrl(screenshot);
 
       if (url) {
         return html`<div class="image-item screenshot">
           <img src="${url}" alt="image text" />
+          ${this.renderDeleteImageButton('screenshots', i)}
         </div>`;
       } else {
         return undefined;
@@ -1088,16 +1102,46 @@ export class AppManifest extends LitElement {
     this.uploadImageObjectUrl = '';
   }
 
-  async handleDeleteImage(event: Event) {
+  renderDeleteImageButton(list: 'icons' | 'screenshots', index: number) {
+    return html`
+      <app-button
+        class="delete-button"
+        appearance="lightweight"
+        data-list=${list}
+        data-index=${index}
+        @click=${this.handleDeleteImage}
+      >
+        <ion-icon
+          name="trash-outline"
+          data-list=${list}
+          data-index=${index}
+        ></ion-icon>
+      </app-button>
+    `;
+  }
+
+  handleDeleteImage(event: Event) {
     try {
-      const input = <HTMLInputElement>event.target;
-      const list = Number(input.dataset['list']);
+      const input = <HTMLButtonElement>event.target;
+      const list = input.dataset['list'] as 'icons' | 'screenshots';
       const index = Number(input.dataset['index']);
-      const imageList: Array<Icon> = this.manifest ? this.manifest[list] : null;
+      const imageList: Array<Icon> =
+        (this.manifest && this.manifest[list]) ?? [];
+      const updatedList = imageList
+        .slice(0, index)
+        .concat(imageList.slice(index + 1));
 
       this.updateManifest({
-        [list]: imageList.slice(0, index).concat(imageList.slice(index + 1)),
+        [list]: updatedList,
       });
+
+      if (list === 'icons') {
+        this.iconsList = updatedList;
+      }
+
+      if (list === 'screenshots') {
+        this.screenshotsList = updatedList;
+      }
     } catch (e) {
       console.error(e);
     }
