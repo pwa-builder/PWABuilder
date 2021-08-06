@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "npm install -D playwright && npx playwright install-deps chromium && npx playwright test",
-    "mocha": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha",
+    "mocha": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha --require global-jsdom/register",
     "coverage": "nyc npm run mocha",
     "clean": "rimraf build/ && rimraf dist/",
     "build": "rollup --config rollup.config.dev.js && rimraf dist/ && rollup --config rollup.config.js && node workbox.mjs",
@@ -80,6 +80,8 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.3.1",
+    "global-jsdom": "^8.1.0",
+    "jsdom": "^16.7.0",
     "lit-analyzer": "^1.2.1",
     "mocha": "^9.0.2",
     "msw": "^0.33.0",
