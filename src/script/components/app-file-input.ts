@@ -22,6 +22,9 @@ export class FileInput extends LitElement implements FileInputElement {
         [appearance='lightweight'] {
           box-shadow: none;
         }
+        :hover {
+          background-color: transparent;
+        }
       `,
       hidden,
       fastButtonCss,

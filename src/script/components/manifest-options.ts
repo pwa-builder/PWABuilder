@@ -7,10 +7,7 @@ import { localeStrings, languageCodes, langCodes } from '../../locales';
 //@ts-ignore
 import ErrorStyles from '../../../styles/error-styles.css';
 
-import {
-  getManifestGuarded,
-  updateManifest,
-} from '../services/manifest';
+import { getManifestGuarded, updateManifest } from '../services/manifest';
 import { arrayHasChanged } from '../utils/hasChanged';
 import { resolveUrl } from '../utils/url';
 import {
@@ -36,6 +33,8 @@ import {
 } from '../utils/css/fast-elements';
 import { resizeObserver } from '../utils/events';
 
+import '@pwabuilder/manifest-previewer';
+import { PreviewStage } from '@pwabuilder/manifest-previewer/dist/models';
 import './loading-button';
 import './app-modal';
 import './dropdown-menu';
@@ -61,6 +60,7 @@ import {
   AppModalElement,
   FileInputElement,
 } from '../utils/interfaces.components';
+import { checkImageUrl } from '../utils/icons';
 
 type ColorRadioValues = 'none' | 'custom';
 
@@ -114,6 +114,11 @@ export class AppManifest extends LitElement {
   @state()
   protected screenshotsList: Array<Screenshot> = [];
 
+  /**
+   * The current preview screen.
+   */
+  @state() previewStage: PreviewStage = 'name';
+
   protected get siteUrl(): string {
     if (!this.searchParams) {
       this.searchParams = new URLSearchParams(location.search);
@@ -140,13 +145,17 @@ export class AppManifest extends LitElement {
 
         app-button,
         loading-button::part(underlying-button) {
-          margin-top: 16px;
-          margin-bottom: 8px;
+          margin: 16px 0;
         }
 
         fast-divider {
           margin: 16px 0;
           border-color: rgb(229, 229, 229);
+        }
+
+        fast-text-field::part(control)::placeholder {
+          color: var(--placeholder-color);
+          font-style: italic;
         }
 
         fast-text-field,
@@ -235,7 +244,7 @@ export class AppManifest extends LitElement {
           justify-content: space-between;
           align-items: flex-start;
 
-          max-width: 800px;
+          max-width: 650px;
         }
 
         .info-item,
@@ -266,7 +275,8 @@ export class AppManifest extends LitElement {
         }
 
         .color {
-          max-width: 618px;
+          max-width: 480px;
+          width: 100%;
           margin-bottom: 1em;
           margin-top: 1.5em;
         }
@@ -406,6 +416,26 @@ export class AppManifest extends LitElement {
         }
       `),
       hidden_sm,
+
+      // Manifest previewer
+      css`
+        .info {
+          display: flex;
+        }
+
+        manifest-previewer {
+          margin-left: 100px;
+          line-height: normal;
+          --windows-font-family: 'Segoe';
+          --ios-font-family: 'SF-Pro';
+        }
+
+        @media (max-width: 800px) {
+          manifest-previewer {
+            display: none;
+          }
+        }
+      `,
     ];
   }
 
@@ -444,7 +474,6 @@ export class AppManifest extends LitElement {
           <div class="top-section">
             <h1>${localeStrings.text.manifest_options.top_section.h1}</h1>
           </div>
-
           <h2>${localeStrings.text.manifest_options.summary_body.h1}</h2>
           <div class="summary-body">
             <p>${localeStrings.text.manifest_options.summary_body.p}</p>
@@ -455,8 +484,36 @@ export class AppManifest extends LitElement {
         </div>
         <fast-divider></fast-divider>
         <section class="info">
-          <h1>${localeStrings.text.manifest_options.info.h1}</h1>
-          <div class="info-items inputs">${this.renderInfoItems()}</div>
+          <div>
+            <h1>${localeStrings.text.manifest_options.info.h1}</h1>
+            <div class="info-items inputs">
+              ${this.renderSectionItems(infoItems)}
+              ${this.renderBackgroundColorSettings()}
+            </div>
+          </div>
+          <!-- ${this.manifest
+            ? html`
+                <manifest-previewer
+                  .manifest=${new Proxy(this.manifest, {
+                    get: (target, prop: string) => {
+                      return target[prop];
+                    },
+                    set: () => false,
+                  })}
+                  .manifestUrl=${this.siteUrl}
+                  .siteUrl=${this.siteUrl}
+                  .stage=${this.previewStage}
+                >
+                </manifest-previewer>
+              `
+            : null} -->
+        </section>
+        <fast-divider></fast-divider>
+        <section class="settings">
+          <h1>${localeStrings.text.manifest_options.settings.h1}</h1>
+          <div class="setting-items inputs">
+            ${this.renderSectionItems(settingsItems)}
+          </div>
         </section>
         <fast-divider></fast-divider>
         <section class="images">
@@ -465,7 +522,6 @@ export class AppManifest extends LitElement {
             <div class="images-header">
               <div class="item-top">
                 <h3>${localeStrings.text.manifest_options.images.icons.h3}</h3>
-
                 <hover-tooltip
                   .text="${localeStrings.tooltip.manifest_options.upload}"
                   link="https://developer.mozilla.org/en-US/docs/Web/Manifest/icons"
@@ -526,7 +582,6 @@ export class AppManifest extends LitElement {
                   .images=${this.iconSrcListParse()}
                 ></app-gallery>`
               : null}
-              
             ${this.manifest &&
             this.manifest.icons &&
             this.manifest.icons.length > 0
@@ -589,12 +644,6 @@ export class AppManifest extends LitElement {
             >
           </div>
         </section>
-        <fast-divider></fast-divider>
-        <section class="settings">
-          <h1>${localeStrings.text.manifest_options.settings.h1}</h1>
-          <div class="setting-items inputs">${this.renderSettingsItems()}</div>
-          ${this.renderBackgroundColorSettings()}
-        </section>
         <section class="view-code">
           <fast-accordion>
             <fast-accordion-item @click=${this.handleEditorOpened}>
@@ -621,36 +670,8 @@ export class AppManifest extends LitElement {
     `;
   }
 
-  renderInfoItems() {
-    return infoItems.map(item => {
-      const value = this.manifest
-        ? (this.manifest[item.entry] as string)
-        : undefined;
-
-      return html`
-        <div class="info-item">
-          <div class="item-top">
-            <h3>${item.title}</h3>
-
-            <hover-tooltip
-              .text="${item.tooltipText}"
-              link="https://developer.mozilla.org/en-US/docs/Web/Manifest"
-            ></hover-tooltip>
-          </div>
-          <p>${item.description}</p>
-          <fast-text-field
-            data-field="${item.entry}"
-            placeholder="${item.title}"
-            .value=${value}
-            @change=${this.handleInputChange}
-          ></fast-text-field>
-        </div>
-      `;
-    });
-  }
-
-  renderSettingsItems() {
-    return settingsItems.map(item => {
+  renderSectionItems(items: InputItem[]) {
+    return items.map(item => {
       let field;
       const value =
         this.manifest && this.manifest[item.entry]
@@ -690,7 +711,6 @@ export class AppManifest extends LitElement {
         <div class="setting-item">
           <div class="item-top">
             <h3>${item.title}</h3>
-
             <hover-tooltip
               .text="${item.tooltipText}"
               link="https://developer.mozilla.org/en-US/docs/Web/Manifest"
@@ -884,6 +904,8 @@ export class AppManifest extends LitElement {
 
   updateManifest(changes: Partial<Manifest>) {
     updateManifest(changes).then(manifest => {
+      this.manifest = manifest;
+
       editorDispatchEvent(
         new CustomEvent<CodeEditorSyncEvent>(CodeEditorEvents.sync, {
           detail: {
@@ -894,22 +916,37 @@ export class AppManifest extends LitElement {
     });
   }
 
-  handleManifestUpdate(maniUpdates: any) {
-    if (maniUpdates) {
-      this.manifest = maniUpdates.detail;
-    }
-  }
-
   handleInputChange(event: InputEvent) {
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
     const fieldName = input.dataset['field'];
 
     if (this.manifest && fieldName && this.manifest[fieldName]) {
+      this.handlePreviewStageUpdate(fieldName);
       // to-do Justin: Figure out why typescript is casting input.value to a string
       // automatically and how to cast to a better type that will actually compile
       this.updateManifest({
         [fieldName]: (input.value as any).code || input.value,
       });
+    }
+  }
+
+  private handlePreviewStageUpdate(fieldName: string) {
+    switch (fieldName) {
+      case 'name':
+        this.previewStage = 'name';
+        break;
+      case 'short_name':
+        this.previewStage = 'shortName';
+        break;
+      case 'display':
+        this.previewStage = 'display';
+        break;
+      case 'theme_color':
+        this.previewStage = 'themeColor';
+        break;
+      case 'background_color':
+        this.previewStage = 'splashScreen';
+        break;
     }
   }
 
@@ -954,6 +991,7 @@ export class AppManifest extends LitElement {
       const value = (<HTMLInputElement>event.target).value;
 
       this.backgroundColor = value;
+      this.handlePreviewStageUpdate('background_color');
       this.updateManifest({
         background_color: value,
       });
@@ -965,6 +1003,7 @@ export class AppManifest extends LitElement {
       const value = (<HTMLInputElement>event.target).value;
 
       this.themeColor = value;
+      this.handlePreviewStageUpdate('theme_color');
       this.updateManifest({
         theme_color: value,
       });
@@ -1187,7 +1226,11 @@ export class AppManifest extends LitElement {
     url = resolveUrl(url?.href, icon.src);
 
     if (url) {
-      return url.href;
+      const iconCheck = checkImageUrl(url.href);
+
+      if (iconCheck === true) {
+        return url.href;
+      }
     }
 
     return undefined;
@@ -1226,29 +1269,29 @@ const infoItems: Array<InputItem> = [
     type: 'input',
   },
   {
-    title: localeStrings.text.manifest_options.titles.start_url,
-    description: localeStrings.text.manifest_options.descriptions.start_url,
-    tooltipText: localeStrings.tooltip.manifest_options.start_url,
-    entry: 'start_url',
-    type: 'input',
-  },
-];
-
-const settingsItems: Array<InputItem> = [
-  {
-    title: localeStrings.text.manifest_options.titles.scope,
-    description: localeStrings.text.manifest_options.descriptions.scope,
-    tooltipText: localeStrings.tooltip.manifest_options.scope,
-    entry: 'scope',
-    type: 'input',
-  },
-  {
     title: localeStrings.text.manifest_options.titles.display,
     description: localeStrings.text.manifest_options.descriptions.display,
     tooltipText: localeStrings.tooltip.manifest_options.display,
     entry: 'display',
     type: 'select',
     menuItems: ['fullscreen', 'standalone', 'minimal-ui', 'browser'],
+  },
+];
+
+const settingsItems: Array<InputItem> = [
+  {
+    title: localeStrings.text.manifest_options.titles.start_url,
+    description: localeStrings.text.manifest_options.descriptions.start_url,
+    tooltipText: localeStrings.tooltip.manifest_options.start_url,
+    entry: 'start_url',
+    type: 'input',
+  },
+  {
+    title: localeStrings.text.manifest_options.titles.scope,
+    description: localeStrings.text.manifest_options.descriptions.scope,
+    tooltipText: localeStrings.tooltip.manifest_options.scope,
+    entry: 'scope',
+    type: 'input',
   },
   {
     title: localeStrings.text.manifest_options.titles.orientation,

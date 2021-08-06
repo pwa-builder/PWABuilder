@@ -17,3 +17,28 @@
   font-style: bold;
   font-display: swap;
 }
+
+/* Platform fonts used for the manifest previewer */
+@font-face {
+  font-family: 'Segoe';
+  src: url('/assets/fonts/SegoeUI.ttf');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('/assets/fonts/Roboto-Regular.ttf');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SF-Pro';
+  src: url('/assets/fonts/SFProDisplay-Light.ttf');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
