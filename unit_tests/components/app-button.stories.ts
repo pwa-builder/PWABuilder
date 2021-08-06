@@ -9,6 +9,17 @@ import { BaseTemplate } from '../base';
 
 export default {
   title: 'Components/app-button',
+  argTypes: {
+    appearance: {
+      options: ['accent', 'lightweight', 'neutral', 'outline', 'stealth'],
+      control: 'select',
+    },
+  },
+  parameters: {
+    actions: {
+      handles: ['click'],
+    },
+  },
 };
 
 type TemplateArgs = AppButtonElement & Args;
@@ -18,7 +29,7 @@ const Template: Story<TemplateArgs> = (args: TemplateArgs) =>
     <app-button
       .appearance=${args.appearance}
       .type=${args.type}
-      .disabled=${args.disabled}
+      ?disabled=${args.disabled}
       @click=${onclick}
     >
       ${args.label}
@@ -43,7 +54,7 @@ Secondary.args = {
 
 export const Link = Template.bind({});
 Link.args = {
-  appearance: 'Lightweight',
+  appearance: 'lightweight',
   type: '',
   disabled: false,
   label: 'Click me',
