@@ -50,6 +50,7 @@
         },
         "globalTags": [
           "ion-icon",
+          "fast-design-system-provider",
           "fast-accordion",
           "fast-accordion-item",
           "fast-anchor",
