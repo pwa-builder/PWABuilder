@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import expect from 'expect';
 
 import {
   arrayHasChanged,
@@ -7,15 +7,19 @@ import {
 
 describe('utils/hasChanged', () => {
   it('arrayHasChanged() happy', () => {
-    expect(arrayHasChanged<string>(['a'], ['b'])).to.be.true;
+    expect(arrayHasChanged<string>(['a'], ['b'])).toBeFalsy();
   });
 
   it('arrayHasChanged() both same', () => {
-    expect(arrayHasChanged(['a'], ['a'])).to.be.false;
+    expect(arrayHasChanged(['a'], ['a'])).toBeFalsy();
   });
 
   it('arrayHasChanged() both undefined', () => {
-    expect(arrayHasChanged(undefined, undefined)).to.be.false;
+    expect(arrayHasChanged(undefined, undefined)).toBeFalsy();
+  });
+
+  it('arrayHasChanged() both undefined', () => {
+    expect(arrayHasChanged(undefined, undefined)).toBeFalsy();
   });
 
   it('objectHasChanged() happy', () => {
@@ -28,7 +32,7 @@ describe('utils/hasChanged', () => {
           b: true,
         }
       )
-    ).to.be.true;
+    ).toBeTruthy();
   });
 
   it('objectHasChanged() same', () => {
@@ -41,10 +45,10 @@ describe('utils/hasChanged', () => {
           a: true,
         }
       )
-    ).to.be.false;
+    ).toBeFalsy();
   });
 
   it('objectHasChanged() both undefined', () => {
-    expect(objectHasChanged(undefined, undefined)).to.be.false;
+    expect(objectHasChanged(undefined, undefined)).toBeFalsy();
   });
 });

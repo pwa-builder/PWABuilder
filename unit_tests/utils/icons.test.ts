@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import expect from 'expect';
 
 import { Icon } from '../../src/script/utils/interfaces';
 import { findSuitableIcon } from '../../src/script/utils/icons';
@@ -40,7 +40,7 @@ describe('utils/icons', () => {
   it('findSuitableIcon() happy path', () => {
     const icon = findSuitableIcon(mockList, 'any', 512, 512, 'image/png');
 
-    expect(icon!.sizes).to.equal('512x512');
+    expect(icon!.sizes).toEqual('512x512');
   });
 
   it('findSuitableIcon() without purpose', () => {
@@ -51,30 +51,28 @@ describe('utils/icons', () => {
 
     const icon = findSuitableIcon(list, 'any', 512, 512, 'image/png');
 
-    expect(icon!.sizes).to.equal('512x512');
+    expect(icon!.sizes).toEqual('512x512');
   });
 
   it('findSuitableIcon() will find the largest if size not found', () => {
     const icon = findSuitableIcon(mockList, 'any', 16, 16, 'image/png');
 
-    expect(icon!.sizes).to.equal('512x512');
+    expect(icon!.sizes).toEqual('512x512');
   });
 
   it('findSuitableIcon() no suitable', () => {
-    expect(findSuitableIcon(mockList, 'any', 1920, 1600, 'image/jpeg')).to.be
-      .null;
+    expect(findSuitableIcon(mockList, 'any', 1920, 1600, 'image/jpeg')).toBeNull();
   });
 
   it('findSuitableIcon() given empty list returns null', () => {
-    expect(findSuitableIcon([], 'any', 1920, 1600, 'image/jpeg')).to.be.null;
+    expect(findSuitableIcon([], 'any', 1920, 1600, 'image/jpeg')).toBeNull();
   });
 
   it('findSuitableIcon() given null returns null', () => {
-    expect(findSuitableIcon(null, 'any', 1920, 1600, 'image/jpeg')).to.be.null;
+    expect(findSuitableIcon(null, 'any', 1920, 1600, 'image/jpeg')).toBeNull();
   });
 
   it('findSuitableIcon() given undefined returns null', () => {
-    expect(findSuitableIcon(undefined, 'any', 1920, 1600, 'image/jpeg')).to.be
-      .null;
+    expect(findSuitableIcon(undefined, 'any', 1920, 1600, 'image/jpeg')).toBeNull();
   });
 });

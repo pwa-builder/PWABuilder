@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import expect from 'expect';
 import { validateScreenshotUrlsList } from '../../src/script/utils/manifest-validation';
 
 describe('utils/manifest-validation', () => {
@@ -7,22 +7,22 @@ describe('utils/manifest-validation', () => {
       'www.pwabuilder.com',
       'www.msn.com',
     ]);
-    expect(output).to.deep.equal([true, true]);
+    expect(output).toStrictEqual([true, true]);
   });
 
   it('validateScreenshotUrlsList() - single valid', () => {
     const output = validateScreenshotUrlsList(['www.pwabuilder.com']);
-    expect(output).to.deep.equal([true]);
+    expect(output).toStrictEqual([true]);
   });
 
   it('validateScreenshotUrlsList() - empty list', () => {
     const output = validateScreenshotUrlsList([]);
-    expect(output).to.deep.equal([]);
+    expect(output).toStrictEqual([]);
   });
 
   it('validateScreenshotUrlsList() - undefined in list', () => {
     const output = validateScreenshotUrlsList([undefined]);
-    expect(output).to.deep.equal([false]);
+    expect(output).toStrictEqual([false]);
   });
 
   it('validateScreenshotUrlsList() - mixed', () => {
@@ -30,6 +30,6 @@ describe('utils/manifest-validation', () => {
       'www.pwabuilder.com',
       undefined,
     ]);
-    expect(output).to.deep.equal([true, false]);
+    expect(output).toStrictEqual([true, false]);
   });
 });
