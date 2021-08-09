@@ -83,26 +83,6 @@ export function findBestAppIcon(icons: Icon[] | null | undefined): Icon | null {
   );
 }
 
-/**
- * Check if an image succesfully loads.
- * @param icon_url The url to the icon to test.
- * @returns An boolean value based on whether the image loads or nothing if the image never
- * fires the load or error event.
- */
-export function checkImageUrl(icon_url: string): boolean | void {
-  const image = new Image();
-
-  image.onload = () => {
-    return true;
-  };
-  image.onerror = () => {
-    return false;
-  };
-
-  image.src = icon_url;
-}
-
-
 function hasPurpose(icon: Icon, purpose: string | null | undefined): boolean {
   if (!purpose) {
     return true;
