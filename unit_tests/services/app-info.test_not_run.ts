@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import expect from 'expect';
 
 import { ListHeader, Status } from '../../src/script/utils/interfaces';
 import {
@@ -10,7 +10,7 @@ import {
   setResults,
 } from '../../src/script/services/app-info';
 
-describe('services/app-info', () => {
+describe('services/app-info', function () {
   const mockProgress = {
     progress: [
       {
@@ -90,12 +90,12 @@ describe('services/app-info', () => {
     const progList = getProgress();
 
     const first = progList.progress[0];
-    expect(first?.done).to.equal(Status.ACTIVE);
+    expect(first?.done).toEqual(Status.ACTIVE);
 
     for (let i = 1; i < progList.progress.length; i++) {
       const current = progList.progress[i];
 
-      expect(current?.done).to.equal(Status.PENDING);
+      expect(current?.done).toEqual(Status.PENDING);
     }
   });
 
@@ -103,29 +103,29 @@ describe('services/app-info', () => {
     sessionStorage.setItem('current_progress', JSON.stringify(mockProgress));
 
     const progList = getProgress();
-    expect(progList.progress[1]?.done).to.equal(Status.ACTIVE);
+    expect(progList.progress[1]?.done).toEqual(Status.ACTIVE);
   });
 
   it('setProgress stores progress, by json stringify', () => {
     setProgress(mockProgress);
 
-    expect(getProgress()).to.deep.equal(mockProgress);
+    expect(getProgress()).toStrictEqual(mockProgress);
   });
 
   it('getURL() throws an error if url is not stored', () => {
-    expect(getURL()).to.throw();
+    expect(getURL()).toThrow();
   });
 
   it('getURL() retrieves url if stored', () => {
     const exampleUrl = 'https://www.pwabuilder.com';
     sessionStorage.setItem('current_url', exampleUrl);
 
-    expect(getURL()).to.equal(exampleUrl);
+    expect(getURL()).toEqual(exampleUrl);
   });
 
   it('getURL() retrieves url if set', () => {
     setURL('https://www.pwabuilder.com');
-    expect(getURL()).to.equal('https://www.pwabuilder.com');
+    expect(getURL()).toEqual('https://www.pwabuilder.com');
   });
 
   it('setUrl() for coverage sake', () => {
@@ -134,11 +134,11 @@ describe('services/app-info', () => {
 
   it('getResults() returns the raw test results', () => {
     setResults(mockResults);
-    expect(getResults()).to.deep.equal(mockResults);
+    expect(getResults()).toStrictEqual(mockResults);
   });
 
   it('getResults() returns undefined if not stored', () => {
-    expect(getResults()).to.be.undefined;
+    expect(getResults()).toBeUndefined();
   });
 
   it('setResults() sanity', () => {
