@@ -17,6 +17,6 @@ module.exports = {
   workers: process.env.CI ? 2 : os.cpus().length - 1,
 
   // Set the directory for the integration tests
-  testDir: "/tests"
+  testDir: "tests/"
 
 };
