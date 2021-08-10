@@ -43,8 +43,11 @@ export class DropdownMenu extends LitElement {
           z-index: 20;
 
           max-height: 15em;
-          overflow-y: scroll;
           overflow-x: hidden;
+        }
+
+        fast-button:hover {
+          background: none;
         }
 
         fast-button::part(control) {
@@ -66,6 +69,7 @@ export class DropdownMenu extends LitElement {
           background-color: var(--primary-background-color);
           color: var(--font-color);
           width: 100%;
+          overflow-y: scroll;
         }
 
         fast-menu-item {
