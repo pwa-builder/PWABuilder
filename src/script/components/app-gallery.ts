@@ -1,12 +1,5 @@
-import {
-  LitElement,
-  css,
-  html,
-  customElement,
-  property,
-  internalProperty,
-  query,
-} from 'lit-element';
+import { LitElement, css, html } from 'lit';
+import { customElement, property, state, query } from 'lit/decorators.js';
 import { Lazy } from '../utils/interfaces';
 
 import './app-modal';
@@ -16,7 +9,7 @@ import './app-button';
 export class AppGallery extends LitElement {
   @property({ attribute: 'images', type: Array }) images: Lazy<Array<string>>;
   @property({ type: Number }) index = 0;
-  @internalProperty() modalOpened = false;
+  @state() modalOpened = false;
 
   @query('.gallery') gallery: Lazy<HTMLElement>;
 
@@ -68,7 +61,7 @@ export class AppGallery extends LitElement {
             alt="current image selected"
             decoding="async"
             loading="lazy"
-            .src=${this.currentImage}
+            src=${this.currentImage}
           />
         </div>
         <app-button
@@ -88,7 +81,7 @@ export class AppGallery extends LitElement {
             alt="current image selected in a modal"
             decoding="async"
             loading="lazy"
-            .src=${this.currentImage}
+            src=${this.currentImage}
           />
           <div slot="modal-actions">
             <app-button @click=${this.closeModal}> Close </app-button>
