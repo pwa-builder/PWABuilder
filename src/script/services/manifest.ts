@@ -90,6 +90,7 @@ async function getManifestViaFilePost(
     content: responseData.manifestContents,
     format: 'w3c',
     generatedUrl: responseData.manifestUrl || url,
+    siteUrl: url,
     default: {
       short_name: responseData.manifestContents.short_name || '',
     },
@@ -138,6 +139,7 @@ async function getManifestViaHtmlParse(
     content: responseData.manifestContents,
     format: 'w3c',
     generatedUrl: responseData.manifestUrl || url,
+    siteUrl: url,
     default: {
       short_name: responseData.manifestContents.short_name || '',
     },
@@ -163,15 +165,27 @@ export async function fetchManifest(
   return new Promise(async (resolve, reject) => {
     let knownGoodUrl;
 
-    if (testResult) {
-      resolve(testResult);
-    }
-
     try {
       knownGoodUrl = await cleanUrl(url);
     } catch (err) {
       reject(err);
       return;
+    }
+
+    // At this point testResult could be from a previous url, so compare the URLs
+    if (testResult) {
+      const prevManifestUrl = testResult.siteUrl;
+      if (prevManifestUrl === knownGoodUrl) {
+        // We're still analyzing the same site, so use previous result
+        resolve(testResult);
+      } else {
+        // We're looking at a different site, so reset the state
+        generated = false;
+        fetchAttempted = false;
+      }
+    } else {
+      generated = false;
+      fetchAttempted = false;
     }
 
     setURL(knownGoodUrl);
@@ -219,12 +233,15 @@ export async function fetchManifest(
 
             fetchAttempted = true;
           }
+
+          resolve(genContent);
         } catch (generatedError) {
           reject(generatedError);
         }
       }
 
-      // Well, we sure tried.
+      // Well, we sure tried. Use the boilerplate because we couldn't fetch that guy.
+      manifest = boilerPlateManifest;
       reject(manifestDetectionError);
     }
   });
