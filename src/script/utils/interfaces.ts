@@ -98,6 +98,7 @@ export interface ManifestDetectionResult {
   content: Manifest;
   format: 'w3c' | 'chromeos' | 'edgeextension' | 'windows10' | 'firefox';
   generatedUrl: string;
+  siteUrl: string;
   default: {
     short_name: string;
   };
