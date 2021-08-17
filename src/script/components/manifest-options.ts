@@ -477,7 +477,6 @@ export class AppManifest extends LitElement {
   }
 
   render() {
-    console.log(this.manifest)
     return html`
       <div class="panel">
         <div class="head">
