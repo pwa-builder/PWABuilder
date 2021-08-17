@@ -477,6 +477,7 @@ export class AppManifest extends LitElement {
   }
 
   render() {
+    console.log(this.manifest)
     return html`
       <div class="panel">
         <div class="head">
@@ -687,7 +688,7 @@ export class AppManifest extends LitElement {
       let field;
       const value =
         this.manifest && this.manifest[item.entry]
-          ? this.manifest[item.entry].toLocaleLowerCase()
+          ? this.manifest[item.entry]
           : '';
 
       if (item.type === 'select' && item.menuItems) {
