@@ -439,6 +439,11 @@ export class AppManifest extends LitElement {
           --ios-font-family: 'SF-Pro';
         }
 
+        /* Hide the platform buttons until trademark approval */
+        manifest-previewer::part(platform-buttons) {
+          display: none;
+        }
+
         @media (max-width: 800px) {
           manifest-previewer {
             display: none;
@@ -500,7 +505,7 @@ export class AppManifest extends LitElement {
               ${this.renderBackgroundColorSettings()}
             </div>
           </div>
-          <!-- ${this.manifest
+          ${this.manifest
             ? html`
                 <manifest-previewer
                   .manifest=${new Proxy(this.manifest, {
@@ -515,7 +520,7 @@ export class AppManifest extends LitElement {
                 >
                 </manifest-previewer>
               `
-            : null} -->
+            : null}
         </section>
         <fast-divider></fast-divider>
         <section class="settings">
