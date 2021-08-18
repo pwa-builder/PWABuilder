@@ -1,8 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { Router } from '@vaadin/router';
+import { Router, Route } from '@vaadin/router';
 import './app-home';
-import './app-report';
 
 import '../components/app-footer';
 import '../components/app-header';
@@ -102,11 +101,14 @@ export class AppIndex extends LitElement {
             component: 'app-testing',
             action: async () => {
               await import('./app-testing.js');
-            },
+            }
           },
           {
             path: '/reportcard',
             component: 'app-report',
+            action: async () => {
+              await import('./app-report.js');
+            }
           },
           {
             path: '/publish',
@@ -143,8 +145,8 @@ export class AppIndex extends LitElement {
               await import('./portals-publish.js');
             }
           }
-        ],
-      } as any,
+        ] as Route[]
+      }
     ]);
   }
 
