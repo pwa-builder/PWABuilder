@@ -90,7 +90,6 @@ export class AppIndex extends LitElement {
     // For more info on using the @vaadin/router check here https://vaadin.com/router
     const router = new Router(this.shadowRoot?.querySelector('#router-outlet'));
     router.setRoutes([
-      // temporarily cast to any because of a Type bug with the router
       {
         path: '',
         animate: true,
