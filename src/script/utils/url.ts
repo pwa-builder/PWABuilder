@@ -1,4 +1,4 @@
-export function isUrl(url: string) {
+export function isUrl(url: string): boolean {
   try {
     return typeof new URL(url).hostname === 'string';
   } catch (e) {
