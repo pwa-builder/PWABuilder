@@ -42,7 +42,7 @@ export async function generateWebPackage() {
   } else {
     const responseText = await response.text();
     throw new Error(
-      `Unable to generate base package. Status code ${response.status}, Error: ${response.statusText}, Details: ${responseText}`
+      `Unable to generate base package. Status code ${response.status}, Error: ${response.statusText}, Details: ${responseText}, Form Data: ${body}`
     );
   }
 }

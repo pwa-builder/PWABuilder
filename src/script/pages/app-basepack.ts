@@ -139,7 +139,7 @@ export class AppBasePack extends LitElement {
         }
 
         #download-summary p {
-          max-width: 28em;
+          max-width: 58em;
         }
 
         #report-link {
