@@ -1,8 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { Router } from '@vaadin/router';
+import { Router, Route } from '@vaadin/router';
 import './app-home';
-import './app-report';
 
 import '../components/app-footer';
 import '../components/app-header';
@@ -91,7 +90,6 @@ export class AppIndex extends LitElement {
     // For more info on using the @vaadin/router check here https://vaadin.com/router
     const router = new Router(this.shadowRoot?.querySelector('#router-outlet'));
     router.setRoutes([
-      // temporarily cast to any because of a Type bug with the router
       {
         path: '',
         animate: true,
@@ -102,11 +100,14 @@ export class AppIndex extends LitElement {
             component: 'app-testing',
             action: async () => {
               await import('./app-testing.js');
-            },
+            }
           },
           {
             path: '/reportcard',
             component: 'app-report',
+            action: async () => {
+              await import('./app-report.js');
+            }
           },
           {
             path: '/publish',
@@ -143,8 +144,8 @@ export class AppIndex extends LitElement {
               await import('./portals-publish.js');
             }
           }
-        ],
-      } as any,
+        ] as Route[]
+      }
     ]);
   }
 
