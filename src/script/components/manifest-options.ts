@@ -439,7 +439,7 @@ export class AppManifest extends LitElement {
           --ios-font-family: 'SF-Pro';
         }
 
-        /* Hide the platform buttons until trademark approval */
+        /* Hiding the platform buttons until trademark approval. */
         manifest-previewer::part(platform-buttons) {
           display: none;
         }
