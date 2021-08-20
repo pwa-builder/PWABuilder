@@ -436,12 +436,11 @@ export class AppManifest extends LitElement {
           margin-left: 100px;
           line-height: normal;
           --windows-font-family: 'Segoe';
-          --ios-font-family: 'SF-Pro';
+          --android-font-family: 'Roboto';
         }
 
-        /* Hiding the platform buttons until trademark approval. */
         manifest-previewer::part(platform-buttons) {
-          display: none;
+          width: 185px;
         }
 
         @media (max-width: 800px) {
@@ -514,9 +513,11 @@ export class AppManifest extends LitElement {
                     },
                     set: () => false,
                   })}
+                  .platform=${'windows'}
                   .manifestUrl=${this.siteUrl}
                   .siteUrl=${this.siteUrl}
                   .stage=${this.previewStage}
+                  .disabledPlatforms=${'iOS'}
                 >
                 </manifest-previewer>
               `
