@@ -32,11 +32,7 @@ export let boilerPlateManifest: Manifest = {
 let manifest: Manifest = manifestFromSession();
 let maniURL: Lazy<string>;
 let fetchAttempted = false;
-
-// export to use as a flag for generation
-// this is needed to decide to go to the 
-// publish page or base_package
-export let generated = false;
+let generated = false;
 
 let testResult: ManifestDetectionResult | undefined;
 
@@ -66,8 +62,9 @@ export function manifestGenerated() {
 async function getManifestViaFilePost(
   url: string
 ): Promise<ManifestDetectionResult> {
-  const manifestTestUrl = `${env.api
-    }/WebManifest?site=${encodeURIComponent(url)}`;
+  const manifestTestUrl = `${env.api}/WebManifest?site=${encodeURIComponent(
+    url
+  )}`;
   const response = await fetch(manifestTestUrl, {
     method: 'POST',
   });
@@ -148,7 +145,7 @@ async function getManifestViaHtmlParse(
     errors: [],
     suggestions: [],
     warnings: [],
-    manifestContainsInvalidJson: responseData.manifestContainsInvalidJson
+    manifestContainsInvalidJson: responseData.manifestContainsInvalidJson,
   };
 }
 

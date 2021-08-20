@@ -1,5 +1,5 @@
 {
   "extension": ["ts"],
   "spec": "unit_tests/**/*.test.ts",
-  "require": "ts-node/register"
+  "require": ["ts-node/register", "global-jsdom/register"]
 }

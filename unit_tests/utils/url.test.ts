@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import expect from 'expect';
 import {
   isUrl,
   resolveUrl,
@@ -9,15 +9,15 @@ import {
 
 describe('utils/url', () => {
   it('isUrl() receives an absolute url', () => {
-    expect(isUrl('https://www.pwabuilder.com')).to.equal(true);
+    expect(isUrl('https://www.pwabuilder.com')).toEqual(true);
   });
 
   it('isUrl() receive not a url', () => {
-    expect(isUrl('a')).to.equal(false);
+    expect(isUrl('a')).toEqual(false);
   });
 
   it('isUrl() receives a relative url', () => {
-    expect(isUrl('www.example.com')).to.equal(false);
+    expect(isUrl('www.example.com')).toEqual(false);
   });
 
   it('resolveUrl() happy path', () => {
@@ -42,7 +42,7 @@ describe('utils/url', () => {
   });
 
   it('validateUrl() returns null on success', () => {
-    expect(validateUrl('https://www.pwabuilder.com')).to.be.null;
+    expect(validateUrl('https://www.pwabuilder.com')).toBeNull();
   });
 
   it('validateUrl() returns a string on failure', () => {
@@ -50,25 +50,25 @@ describe('utils/url', () => {
   });
 
   it('cleanUrl() with https succeeds', async () => {
-    expect(await cleanUrl('https://www.pwabuilder.com')).to.equal(
+    expect(await cleanUrl('https://www.pwabuilder.com')).toEqual(
       'https://www.pwabuilder.com'
     );
   });
 
   it('cleanUrl() returns http on http', async () => {
-    expect(await cleanUrl('http://www.pwabuilder.com')).to.equal(
+    expect(await cleanUrl('http://www.pwabuilder.com')).toEqual(
       'http://www.pwabuilder.com'
     );
   });
 
   it('cleanUrl() tries https if protocol is omitted', async () => {
-    expect(await cleanUrl('www.pwabuilder.com')).to.equal(
+    expect(await cleanUrl('www.pwabuilder.com')).toEqual(
       'https://www.pwabuilder.com'
     );
   });
 
   it('cleanUrl() ignores http', async () => {
-    expect(await cleanUrl('http://www.pwabuilder.com')).to.equal(
+    expect(await cleanUrl('http://www.pwabuilder.com')).toEqual(
       'http://www.pwabuilder.com'
     );
   });
@@ -77,7 +77,7 @@ describe('utils/url', () => {
     try {
       await cleanUrl('file://www.pwabuilder.com');
     } catch (e) {
-      expect(e.message).to.equal(
+      expect(e.message).toEqual(
         'This error means that you may have a bad https cert or the url may not be correct'
       );
     }
