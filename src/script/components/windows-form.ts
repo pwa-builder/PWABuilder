@@ -371,9 +371,7 @@ export class WindowsForm extends LitElement {
                         id="windowsClassicAppVersionInput"
                         placeholder="1.0.0"
                         name="classicVersion"
-                        .value="${this.default_options
-                          ? this.default_options.classicPackage?.version
-                          : '1.0.1'}"
+                        .value="${this.default_options?.classicPackage?.version || '1.0.1'}"
                         required
                       />
                     </div>
@@ -429,9 +427,9 @@ export class WindowsForm extends LitElement {
                     id="windowsManifestUrlInput"
                     placeholder="https://mysite.com/manifest.json"
                     name="manifestUrl"
-                    .value="${this.default_options
-                      ? this.default_options.manifestUrl
-                      : getManiURL()}"
+                    .value="${this.default_options?.manifestUrl || 
+                      getManiURL() ||
+                      ''}"
                     required
                   />
                 </div>
@@ -462,9 +460,7 @@ export class WindowsForm extends LitElement {
                     class="form-control"
                     id="iconUrl"
                     placeholder="https://myawesomepwa.com/512x512.png"
-                    .value="${this.default_options
-                      ? this.default_options.images?.baseImage
-                      : ''}"
+                    .value="${this.default_options?.images?.baseImage || ''}"
                     name="iconUrl"
                   />
                 </div>
@@ -489,9 +485,10 @@ export class WindowsForm extends LitElement {
                     class="form-control"
                     id="windowsLanguageInput"
                     placeholder="EN-US"
-                    .value="${this.default_options
-                      ? this.default_options.manifest?.lang
-                      : 'US-EN'}"
+                    .value="${
+                      this.default_options?.resourceLanguage ||
+                      this.default_options?.manifest?.lang ||
+                      ''}"
                     name="language"
                   />
                 </div>

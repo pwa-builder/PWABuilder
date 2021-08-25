@@ -453,10 +453,7 @@ export class AppPublish extends LitElement {
 
     try {
       this.generating = true;
-
-      
       const packageData = await generatePackage(type, form, signingFile);
-
 
       if (packageData) {
         if (packageData.type === 'test') {

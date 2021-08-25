@@ -43,6 +43,7 @@ export interface WindowsPackageOptions {
   };
   images?: WindowsImageOptions;
   publisher: WindowsPublisherOptions;
+  resourceLanguage?: string;
 }
 
 type WindowsPackageValidationError = {
