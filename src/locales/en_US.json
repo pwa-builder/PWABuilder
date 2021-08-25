@@ -93,13 +93,13 @@
         "language": "Language"
       },
       "descriptions": {
-        "short_name": "Uses for title or home screens",
-        "description": "Used for app listings",
-        "start_url": "Used for app listings",
-        "scope": "App Scope",
-        "display": "App Display",
-        "orientation": "App Orientation",
-        "language": "Enter the apps primary language"
+        "short_name": "Used in app launchers",
+        "description": "Used in app storefronts and install dialogs",
+        "start_url": "The relative URL that loads when your app starts",
+        "scope": "Which URLs can load within your app",
+        "display": "The appearance of your app window",
+        "orientation": "The default screen orientation of your app",
+        "language": "The primary language of your app"
       }
     },
     "android": {
@@ -195,18 +195,18 @@
   },
   "tooltip": {
     "manifest_options": {
-      "upload": "Your apps icon, this is the Icon operating systems will use to represent your app. In Windows this is used in the taskbar, start menu etc.",
+      "upload": "Your app's icon, this is the icon operating systems will use to represent your app. In Windows this is used in the taskbar, start menu etc, launch screen.",
       "generate": "Screenshots of your PWA can be used in stores and the in-browser install prompt to help promote your PWA.",
-      "background_color": "The background_color member controls the splashscreen color of your app.",
-      "theme_color": "The theme_color member is a string that defines the default theme color for the application. On Windows this will be the title-bar color.",
-      "name": "The name of your App",
-      "short_name": "The short name for your app, used where the full name cannot be displayed without wrapping.",
-      "start_url": "This is the initial URL that is opened when the PWA is launched. Normally this should be the root url of your app.",
+      "background_color": "The background_color member controls the splash screen color of your app.",
+      "theme_color": "The theme_color member defines the default theme color for your app. On Windows, this will be the color of your app's title bar.",
+      "name": "The name of your app as displayed to the user.",
+      "short_name": "The short name for your app. It's used where there is insufficent space to display the full name.",
+      "start_url": "A URL relative to the root of your domain that is opened when your app is launched, e.g. /index.html. Typically this is set to '/', indicating the root of the domain.",
       "scope": "The scope member is a string that defines the navigation scope of this web application's application context.",
-      "display": "The display member is a string that determines the developers’ preferred display mode for the website.",
+      "display": "How your app is displayed. Standalone: Recommended. Your PWA appears like a native app, no browser UI is shown. Minimal-ui: similar to standalone but includes a refresh button and back button in your app's title bar. Fullscreen: Typically used in immersive games, your PWA takes up all the available display area without any browser UI or app title bar. Browser: full browser UI is shown.",
       "orientation": "The default orientation your app should be used in, such as portrait or landscape.",
       "language": "Specifies the primary language of the app.",
-      "description": "A description that describes your app."
+      "description": "A description of your app. Appears in app listings, app storefronts, and app install UI."
     }
   },
   "values": {

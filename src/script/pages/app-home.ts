@@ -253,7 +253,7 @@ export class AppHome extends LitElement {
 
     if (site) {
       this.siteURL = site.trim();
-      await this.doTest();
+      await this.analyzeSite();
     }
   }
 
@@ -266,10 +266,10 @@ export class AppHome extends LitElement {
   async start(inputEvent: InputEvent) {
     inputEvent.preventDefault();
 
-    await this.doTest();
+    await this.analyzeSite();
   }
 
-  async doTest() {
+  async analyzeSite() {
     if (this.siteURL) {
       this.gettingManifest = true;
 
