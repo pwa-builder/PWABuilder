@@ -23,7 +23,7 @@ export async function generateWindowsPackage(
   if (validationErrors.length > 0 || !windowsOptions) {
     throw new Error(
       'Invalid Windows options. ' +
-        validationErrors.map(a => a.error).join('\n')
+      validationErrors.map(a => a.error).join('\n')
     );
   }
 
@@ -101,6 +101,7 @@ export async function createWindowsPackageOptionsFromManifest(
         backgroundColor: 'transparent',
         padding: 0.3,
       },
+      resourceLanguage: manifest?.lang
     };
 
     return options;
@@ -150,6 +151,7 @@ export async function createWindowsPackageOptionsFromForm(
       backgroundColor: 'transparent',
       padding: 0.3,
     },
+    resourceLanguage: form.windowsLanguageInput.value || "EN-US"
   };
 }
 
