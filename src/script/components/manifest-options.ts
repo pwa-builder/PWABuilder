@@ -444,11 +444,15 @@ export class AppManifest extends LitElement {
           margin-left: 100px;
           line-height: normal;
           --windows-font-family: 'Segoe';
-          --ios-font-family: 'SF-Pro';
+          --android-font-family: 'Roboto';
         }
 
         manifest-previewer::part(platform-buttons) {
+<<<<<<< HEAD
           justify-content: space-around;
+=======
+          width: 185px;
+>>>>>>> main
         }
 
         @media (max-width: 800px) {
@@ -523,9 +527,15 @@ export class AppManifest extends LitElement {
                     },
                     set: () => false,
                   })}
+<<<<<<< HEAD
+=======
+                  .platform=${'windows'}
+                  .manifestUrl=${this.siteUrl}
+>>>>>>> main
                   .siteUrl=${this.siteUrl}
                   .manifestUrl=${this.siteUrl}
                   .stage=${this.previewStage}
+                  .disabledPlatforms=${'iOS'}
                 >
                 </manifest-previewer>
               `
