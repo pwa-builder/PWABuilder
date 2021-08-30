@@ -130,3 +130,47 @@ function isSquare(icon: Icon): boolean {
   const dimensions = getDimensions(icon);
   return dimensions.some(d => d.width === d.height);
 }
+
+/**
+ * Clones the icon and if the src is a URL-encoded image, swaps out the src with a replacement.
+ * @param icon The icon to clone.
+ * @param newSrc The new desired src of the resulting clone.
+ * @returns A clone of the icon with its src changed.
+ */
+export function cloneIconWithoutUrlEncodedSrc(icon: Icon, newSrc: string): Icon {
+  const clone = { ...icon };
+  if (clone.src?.startsWith('data:image')) {
+    clone.src = newSrc;
+  }
+  return clone;
+}
+
+/**
+ * Guesses the file extension from the icon's mime type.
+ * @param icon The icon from whose mime type the file extension will be guessed.
+ * @returns A best guess of the file extesion, or empty if no extension could be guessed.
+ */
+export function getProbableFileExtension(icon: Icon): string {
+  if (!icon.type) {
+    return '';
+  }
+
+  switch (icon.type) {
+    case "image/png": return "png";
+    case "image/jpeg": return "jpg";
+    case "image/jpg": return "jpg";
+    case "image/webp": return "webp";
+    case "image/gif": return "gif";
+    case "image/x-icon": return "ico";
+    case "image/tiff": return "tiff";
+    case "image/bmp": return "bmp";
+    case "image/svg+xml": return "svg";
+    default:
+      const lastSlashIndex = icon.type.lastIndexOf('/');
+      if (lastSlashIndex != -1) {
+        return icon.type.substr(lastSlashIndex + 1);
+      }
+
+      return '';
+  }
+}

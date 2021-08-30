@@ -69,7 +69,7 @@ export class DropdownMenu extends LitElement {
           background-color: var(--primary-background-color);
           color: var(--font-color);
           width: 100%;
-          overflow-y: scroll;
+          overflow-y: auto;
         }
 
         fast-menu-item {

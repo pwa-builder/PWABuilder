@@ -26,33 +26,25 @@ export let boilerPlateManifest: Manifest = {
   screenshots: [],
 };
 
-let manifest: Manifest = manifestFromSession();
-let maniURL: Lazy<string>;
-let fetchAttempted = false;
-
 // export to use as a flag for generation
 // this is needed to decide to go to the
 // publish page or base_package
 export let generated = false;
-
+let manifest: Manifest = manifestFromSession();
+let maniURL: Lazy<string>;
 let testResult: ManifestDetectionResult | undefined;
 
 function manifestFromSession(): Manifest {
   try {
     const sessionManifest = sessionStorage.getItem(PWABuilderSession.manifest);
-
+    generated = sessionStorage.getItem(PWABuilderSession.manifestGenerated) === 'true';
     if (sessionManifest) {
       return JSON.parse(sessionManifest) as Manifest;
     }
-
-    fetchAttempted = true;
-    generated =
-      sessionStorage.getItem(PWABuilderSession.manifestGenerated) === 'true';
   } catch (err) {
-    console.error(err as Error);
+    console.error('Unable to load manifest from session', err);
   }
 
-  console.log("zanz using boilerplate from session");
   return boilerPlateManifest;
 }
 
@@ -187,11 +179,9 @@ export async function fetchManifest(
       } else {
         // We're looking at a different site, so reset the state
         generated = false;
-        fetchAttempted = false;
       }
     } else {
       generated = false;
-      fetchAttempted = false;
     }
 
     setURL(knownGoodUrl);
@@ -206,28 +196,19 @@ export async function fetchManifest(
       timeoutAfter(10000).then(() => reject("Timeout expired"));
       const manifestDetectionResult = await Promise.any(manifestDetectors);
 
-      if (!fetchAttempted) {
-        manifest = manifestDetectionResult.content;
-        fetchAttempted = true;
-      }
-
+      manifest = manifestDetectionResult.content;
       maniURL = manifestDetectionResult.generatedUrl;
       resolve(manifestDetectionResult);
     } catch (manifestDetectionError) {
       console.error('All manifest detectors failed.', manifestDetectionError);
 
-      if (!fetchAttempted && !generated) {
-        fetchAttempted = true;
+      if (!generated) {
         const createdManifestTask = createManifest(knownGoodUrl)
-          .then(m => {
-            console.log("zanz success, using created manifest");
-            return wrapManifestInDetectionResult(m, knownGoodUrl, true);
-          });
+          .then(m => wrapManifestInDetectionResult(m, knownGoodUrl, true));
         resolve(createdManifestTask);
       } else {
         // Well, we sure tried. Use the boilerplate because we couldn't fetch that guy.
         manifest = boilerPlateManifest;
-        console.log("zanz using boilerplate manifest");
         reject(manifestDetectionError);
       }
     }
@@ -245,12 +226,10 @@ export function getManiURL() {
 */
 export async function getManifestGuarded(): Promise<Manifest> {
   try {
-    if (!fetchAttempted) {
-      const newManifest = await getManifest();
+    const newManifest = await getManifest();
 
-      if (newManifest) {
-        manifest = newManifest;
-      }
+    if (newManifest) {
+      manifest = newManifest;
     }
   } catch (e) {
     console.warn(e);
