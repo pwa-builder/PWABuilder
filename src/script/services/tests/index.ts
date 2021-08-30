@@ -46,19 +46,19 @@ export function getOverallScore() {
 
   // gather manifest scores
   // each result is worth 10
-  (results?.manifest as TestResult[]).map((result) => {
+  (results?.manifest as TestResult[]).map(result => {
     if (result.result === true) {
       manifestScore = manifestScore + 10;
     }
   });
 
-  (results?.service_worker as TestResult[]).map((result) => {
+  (results?.service_worker as TestResult[]).map(result => {
     if (result.result === true) {
       swScore = swScore + 10;
     }
   });
 
-  (results?.security as TestResult[]).map((result) => {
+  (results?.security as TestResult[]).map(result => {
     if (result.result === true) {
       securityScore = securityScore + 10;
     }

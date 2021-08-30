@@ -21,9 +21,7 @@ import style from '../../../styles/layout-defaults.css';
 import { fastAnchorCss } from '../utils/css/fast-elements';
 import { fileSave } from 'browser-fs-access';
 
-import {
-  checkResults,
-} from '../services/publish/publish-checks';
+import { checkResults } from '../services/publish/publish-checks';
 import { generatePackage, Platform } from '../services/publish';
 import { getReportErrorUrl } from '../utils/error';
 import { styles as ToolTipStyles } from '../components/tooltip';
@@ -359,9 +357,8 @@ export class PortalsPublish extends LitElement {
   async generate(type: platform, form?: HTMLFormElement, signingFile?: string) {
     try {
       this.generating = true;
-      
-      const packageData = await generatePackage(type, form, signingFile);
 
+      const packageData = await generatePackage(type, form, signingFile);
 
       if (packageData) {
         if (packageData.type === 'test') {
@@ -447,7 +444,9 @@ export class PortalsPublish extends LitElement {
                         id="hover-tooltip"
                         target="_blank"
                         href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps.md#1-test-your-app-on-your-windows-machine"
-                      >Generate a package you can use to test your app on your Windows Device before going to the Microsoft Store.</a>
+                        >Generate a package you can use to test your app on your
+                        Windows Device before going to the Microsoft Store.</a
+                      >
                     </loading-button>
                   </div>
                 `
@@ -567,7 +566,8 @@ export class PortalsPublish extends LitElement {
         <windows-form
           slot="modal-form"
           .generating=${this.generating}
-          @init-windows-gen="${(ev: CustomEvent) => this.generate('windows', ev.detail.form)}"
+          @init-windows-gen="${(ev: CustomEvent) =>
+            this.generate('windows', ev.detail.form)}"
         ></windows-form>
       </app-modal>
 
@@ -582,7 +582,8 @@ export class PortalsPublish extends LitElement {
         <android-form
           slot="modal-form"
           .generating=${this.generating}
-          @init-android-gen="${(ev: CustomEvent) => this.generate('android', ev.detail.form, ev.detail.signingFile)}"
+          @init-android-gen="${(ev: CustomEvent) =>
+            this.generate('android', ev.detail.form, ev.detail.signingFile)}"
         ></android-form>
       </app-modal>
 
@@ -647,5 +648,5 @@ const platforms: ICardData[] = [
       'Publish your PWA to the Google Play Store to make your app more discoverable for Android users.',
     isActionCard: true,
     icon: '/assets/android_icon.svg',
-  }
+  },
 ];

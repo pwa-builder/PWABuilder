@@ -17,7 +17,7 @@ registerRoute(
   ({ url }) =>
     url.origin === 'https://pwabuilder-tests.azurewebsites.net' ||
     url.origin ===
-    'https://pwabuilder-serviceworker-finder.centralus.cloudapp.azure.com',
+      'https://pwabuilder-serviceworker-finder.centralus.cloudapp.azure.com',
   new StaleWhileRevalidate({})
 );
 

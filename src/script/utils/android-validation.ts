@@ -41,15 +41,15 @@ export interface AndroidApkOptions {
   navigationDividerColor: string;
   navigationDividerColorDark: string;
   orientation:
-  | 'default'
-  | 'any'
-  | 'natural'
-  | 'landscape'
-  | 'portrait'
-  | 'portrait-primary'
-  | 'portrait-secondary'
-  | 'landscape-primary'
-  | 'landscape-secondary';
+    | 'default'
+    | 'any'
+    | 'natural'
+    | 'landscape'
+    | 'portrait'
+    | 'portrait-primary'
+    | 'portrait-secondary'
+    | 'landscape-primary'
+    | 'landscape-secondary';
   packageId: string;
   shareTarget?: ShareTarget;
   shortcuts: ShortcutItem[];
@@ -59,7 +59,7 @@ export interface AndroidApkOptions {
   startUrl: string;
   themeColor: string;
   webManifestUrl: string;
-};
+}
 
 /**
  * Signing options for Android APK generation. This is sent to the Cloud APK service as part of AndroidApkOptions.
@@ -78,7 +78,7 @@ export interface AndroidSigningOptions {
   countryCode: string;
   keyPassword: string;
   storePassword: string;
-};
+}
 
 type AndroidPackageValidationError = {
   field: keyof AndroidApkOptions | keyof AndroidSigningOptions | null;
@@ -366,7 +366,7 @@ export function validateUrl(url: string, base?: string): string | null {
 
 function withoutLeadingDigits(input: string): string {
   if (input.length === 0) {
-    return "app";
+    return 'app';
   }
 
   // Check if it starts with a digit.

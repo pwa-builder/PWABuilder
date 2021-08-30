@@ -9,11 +9,11 @@
  */
 
 export interface AnalyticsOptions {
-  isAuto?: boolean,
-  behavior?: number,
-  uri?: string,
-  pageName?: string,
-  pageHeight?: number
+  isAuto?: boolean;
+  behavior?: number;
+  uri?: string;
+  pageName?: string;
+  pageHeight?: number;
 }
 
 export function capturePageView(options: AnalyticsOptions) {

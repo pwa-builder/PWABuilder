@@ -326,7 +326,11 @@ export class SWPicker extends LitElement {
                           @code-editor-update=${() =>
                             this.handleEditorUpdate(sw.id)}
                         >
-                          <loading-button .loading=${this.downloading} @click="${() => this.downloadSW(sw.id)}" appearance="outline" class="secondary"
+                          <loading-button
+                            .loading=${this.downloading}
+                            @click="${() => this.downloadSW(sw.id)}"
+                            appearance="outline"
+                            class="secondary"
                             >Download Service Worker</loading-button
                           >
                         </code-editor>

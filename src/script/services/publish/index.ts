@@ -16,7 +16,7 @@ export type Platform = 'windows' | 'android' | 'samsung';
 export type PackageInfo = {
   blob: Blob | null;
   type: string;
-}
+};
 
 export async function generatePackage(
   type: Platform,
@@ -60,7 +60,9 @@ async function grabBackupManifest() {
   return localManifest;
 }
 
-async function tryGenerateWindowsPackage(form?: HTMLFormElement): Promise<PackageInfo | null> {
+async function tryGenerateWindowsPackage(
+  form?: HTMLFormElement
+): Promise<PackageInfo | null> {
   try {
     // First we check for a form
     // and generate based off of that.
@@ -84,7 +86,7 @@ async function tryGenerateWindowsPackage(form?: HTMLFormElement): Promise<Packag
         const testBlob = await generateWindowsPackage(options);
         return {
           blob: testBlob || null,
-          type: 'test'
+          type: 'test',
         };
       } catch (err) {
         // Oh no, looks like we dont have the manifest in memory
@@ -109,7 +111,10 @@ async function tryGenerateWindowsPackage(form?: HTMLFormElement): Promise<Packag
   }
 }
 
-async function tryGenerateAndroidPackage(form?: HTMLFormElement, signingFile?: string): Promise<PackageInfo | null> {
+async function tryGenerateAndroidPackage(
+  form?: HTMLFormElement,
+  signingFile?: string
+): Promise<PackageInfo | null> {
   if (form) {
     const androidOptions = await createAndroidPackageOptionsFromForm(
       form,

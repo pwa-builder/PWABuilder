@@ -75,7 +75,6 @@ async function detectServiceWorker(
  * Checks the URL for offline support.
  */
 async function detectOfflineSupport(url: string): Promise<boolean> {
-
   // We have 2 offline checks:
   // - A Google Lighthouse-based check, run via APIv2
   // - A Puppeteer check check, run via our service worker API.

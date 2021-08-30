@@ -96,12 +96,8 @@ export async function testManifest(
       setTimeout(() => resolve(default_results), default_timeout)
     );
 
-    const fetchResultOrTimeout:
-      | Array<TestResult>
-      | ManifestDetectionResult = await Promise.race([
-      twentySecondTimeout,
-      manifestData,
-    ]);
+    const fetchResultOrTimeout: Array<TestResult> | ManifestDetectionResult =
+      await Promise.race([twentySecondTimeout, manifestData]);
 
     if (!fetchResultOrTimeout) {
       console.warn('Manifest check timed out after 20 seconds.');
@@ -212,12 +208,28 @@ function doTest(manifest: ManifestDetectionResult) {
       },
       {
         infoString: 'Has a square PNG icon 512x512 or larger',
-        result: findSuitableIcon(manifest.content.icons, null, 512, 512, 'image/png') ? true : false,
+        result: findSuitableIcon(
+          manifest.content.icons,
+          null,
+          512,
+          512,
+          'image/png'
+        )
+          ? true
+          : false,
         category: 'required',
       },
       {
         infoString: 'Has a maskable PNG icon',
-        result: findSuitableIcon(manifest.content.icons, 'maskable', 512, 512, 'image/png') ? true : false,
+        result: findSuitableIcon(
+          manifest.content.icons,
+          'maskable',
+          512,
+          512,
+          'image/png'
+        )
+          ? true
+          : false,
         category: 'recommended',
       },
       {

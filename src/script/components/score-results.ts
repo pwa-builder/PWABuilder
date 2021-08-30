@@ -7,7 +7,10 @@ import { mediumBreakPoint, smallBreakPoint } from '../utils/css/breakpoints';
 
 @customElement('score-results')
 export class ScoreResults extends LitElement {
-  @property({ attribute: false }) testResults: Array<TestResult> | boolean | undefined;
+  @property({ attribute: false }) testResults:
+    | Array<TestResult>
+    | boolean
+    | undefined;
   @property() scoreMessage: string = '';
   @state() organizedResults: OrganizedResults | undefined;
 
@@ -26,7 +29,7 @@ export class ScoreResults extends LitElement {
         display: grid;
         grid-template-columns: auto auto;
         grid-gap: 0 3em;
-        
+
         margin-bottom: 16px;
       }
 
@@ -142,9 +145,7 @@ export class ScoreResults extends LitElement {
     return html`
       <div>
         <div id="mani-scorecard-header">
-          <p>
-            ${this.scoreMessage}
-          </p>
+          <p>${this.scoreMessage}</p>
 
           <div id="options-block">
             <slot name="options-button"></slot>

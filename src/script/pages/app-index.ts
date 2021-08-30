@@ -100,14 +100,14 @@ export class AppIndex extends LitElement {
             component: 'app-testing',
             action: async () => {
               await import('./app-testing.js');
-            }
+            },
           },
           {
             path: '/reportcard',
             component: 'app-report',
             action: async () => {
               await import('./app-report.js');
-            }
+            },
           },
           {
             path: '/publish',
@@ -142,10 +142,10 @@ export class AppIndex extends LitElement {
             component: 'portals-publish',
             action: async () => {
               await import('./portals-publish.js');
-            }
-          }
-        ] as Route[]
-      }
+            },
+          },
+        ] as Route[],
+      },
     ]);
   }
 

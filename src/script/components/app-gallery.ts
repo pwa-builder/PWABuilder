@@ -110,8 +110,7 @@ export class AppGallery extends LitElement {
   forwardDisabled() {
     if (this.images) {
       return this.index >= this.images.length - 1;
-    }
-    else {
+    } else {
       // no images so we are going to disable going forward
       return false;
     }

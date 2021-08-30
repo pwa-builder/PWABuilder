@@ -48,7 +48,11 @@ export function tooltip(buttonId: string, text: string, url?: string) {
       />
 
       ${url && url.length > 0
-        ? html`<a href="${url}" id="${tooltipId}" target="_blank" class="tooltip-text"
+        ? html`<a
+            href="${url}"
+            id="${tooltipId}"
+            target="_blank"
+            class="tooltip-text"
             >${text}</a
           >`
         : html`<span id="${tooltipId}" class="tooltip-text"> ${text} </span>`}
