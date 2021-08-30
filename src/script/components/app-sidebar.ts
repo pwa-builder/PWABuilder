@@ -309,12 +309,12 @@ export class AppSidebar extends LitElement {
       }
 
       .pending,
-      .pending::part(heading)
-      {
+      .pending::part(heading) {
         color: rgba(255, 255, 255, 0.5);
       }
 
-      .done, .done::part(heading) {
+      .done,
+      .done::part(heading) {
         color: var(--success-color);
         opacity: 0.5;
       }

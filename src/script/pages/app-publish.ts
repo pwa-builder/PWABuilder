@@ -493,8 +493,12 @@ export class AppPublish extends LitElement {
 
     const errorObj = error as Error;
     if (errorObj.message && errorObj.stack) {
-      const is403 = typeof errorObj.message === 'string' && errorObj.message.includes('Responded with status 403');
-      const isFailedToFetchManifest = typeof errorObj.message === 'string' && errorObj.message.includes('Failed to retreive PWA manifest for');
+      const is403 =
+        typeof errorObj.message === 'string' &&
+        errorObj.message.includes('Responded with status 403');
+      const isFailedToFetchManifest =
+        typeof errorObj.message === 'string' &&
+        errorObj.message.includes('Failed to retreive PWA manifest for');
       if (is403) {
         // Is it a 403? Then most likely it's anti-bot tech, e.g. Cloudflare, blocking us.
         this.errorMessage = `PWABuilder got a 403 Forbidden error when fetching your site.\nThis can happen when your site is using Cloudflare or other anti-bot technologies.\nTry temporarily pausing Cloudflare or your anti-bot technology while running PWABuilder on your web app.\n\n${errorObj.message}\n\nStack trace: \n${errorObj.stack}`;
@@ -554,8 +558,10 @@ export class AppPublish extends LitElement {
                       @click="${() => this.generate('windows')}"
                       >Test Package
 
-                      <hover-tooltip text="Generate a package you can use to test your app on your Windows Device before going to the Microsoft Store." link="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps.md#1-test-your-app-on-your-windows-machine"></hover-tooltip>
-
+                      <hover-tooltip
+                        text="Generate a package you can use to test your app on your Windows Device before going to the Microsoft Store."
+                        link="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps.md#1-test-your-app-on-your-windows-machine"
+                      ></hover-tooltip>
                     </loading-button>
                   </div>
                 `
@@ -692,12 +698,12 @@ export class AppPublish extends LitElement {
         body="Customize your Windows package below!"
         ?open="${this.open_windows_options}"
         @app-modal-close="${() => this.storeOptionsCancel()}"
-
       >
         <windows-form
           slot="modal-form"
           .generating=${this.generating}
-          @init-windows-gen="${(ev: CustomEvent) => this.generate('windows', ev.detail.form)}"
+          @init-windows-gen="${(ev: CustomEvent) =>
+            this.generate('windows', ev.detail.form)}"
         ></windows-form>
       </app-modal>
 
@@ -712,7 +718,8 @@ export class AppPublish extends LitElement {
         <android-form
           slot="modal-form"
           .generating=${this.generating}
-          @init-android-gen="${(ev: CustomEvent) => this.generate('android', ev.detail.form, ev.detail.signingFile)}"
+          @init-android-gen="${(ev: CustomEvent) =>
+            this.generate('android', ev.detail.form, ev.detail.signingFile)}"
         ></android-form>
       </app-modal>
 

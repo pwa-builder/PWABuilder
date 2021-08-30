@@ -1,12 +1,5 @@
-import {
-  LitElement,
-  css,
-  html,
-} from 'lit';
-import {
-  customElement,
-  state,
-} from "lit/decorators.js"
+import { LitElement, css, html } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
 import { Router } from '@vaadin/router';
 
 import { smallBreakPoint } from '../utils/css/breakpoints';
@@ -23,8 +16,7 @@ import style from '../../../styles/animations.css';
 @customElement('app-testing')
 export class AppTesting extends LitElement {
   @state() loading = false;
-  @state() currentPhrase =
-    'PWABuilder is loading your PWA in the background';
+  @state() currentPhrase = 'PWABuilder is loading your PWA in the background';
 
   static get styles() {
     return [
@@ -168,7 +160,6 @@ export class AppTesting extends LitElement {
         // set last phrase and give 300ms to display to user
         // before moving on
 
-
         this.currentPhrase = 'Results coming to you in 3..2..1..';
         setTimeout(() => {
           Router.go(
@@ -192,7 +183,7 @@ export class AppTesting extends LitElement {
       'We are analyzing your Service Worker and Web Manifest...',
       'Checking your icons...',
       'We are analyzing if your app works offline...',
-      'If your app does not have a Web Manifest, we are generating one for you...'
+      'If your app does not have a Web Manifest, we are generating one for you...',
     ];
 
     for (let i = 0; i < phrases.length; i++) {
@@ -214,13 +205,12 @@ export class AppTesting extends LitElement {
 
   render() {
     return html`<app-header></app-header>
-<div id="glass">
-  <div id="testing-container">
+      <div id="glass">
+        <div id="testing-container">
+          <span>${this.currentPhrase}</span>
 
-    <span>${this.currentPhrase}</span>
-
-    ${this.loading ? html`<fast-progress></fast-progress>` : null}
-  </div>
-</div>`;
+          ${this.loading ? html`<fast-progress></fast-progress>` : null}
+        </div>
+      </div>`;
   }
 }

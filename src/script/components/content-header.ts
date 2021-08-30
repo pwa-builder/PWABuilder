@@ -1,5 +1,5 @@
 import { html, css, LitElement } from 'lit';
-import { customElement } from "lit/decorators.js"
+import { customElement } from 'lit/decorators.js';
 // import { loadPaintPolyfillIfNeeded } from '../polyfills/css-paint';
 import {
   BreakpointValues,
@@ -32,8 +32,8 @@ export class ContentHeader extends LitElement {
       }
 
       :host(.reportCard.mani) {
-        background: url(/assets/images/report_card_manifest.webp) top right / cover
-          no-repeat;
+        background: url(/assets/images/report_card_manifest.webp) top right /
+          cover no-repeat;
       }
 
       :host(.reportCard.sw) {
@@ -140,11 +140,17 @@ export class ContentHeader extends LitElement {
           height: 10em;
         }
 
-        :host(.reportCard) #circles-box, :host(.publish) #circles-box, :host(.congrats) #circles-box, :host(.basePackage) #circles-box{
+        :host(.reportCard) #circles-box,
+        :host(.publish) #circles-box,
+        :host(.congrats) #circles-box,
+        :host(.basePackage) #circles-box {
           height: 34em;
         }
 
-        :host(.reportCard) #hero-container, :host(.publish) #hero-container, :host(.congrats) #hero-container, :host(.basePackage) #hero-container{
+        :host(.reportCard) #hero-container,
+        :host(.publish) #hero-container,
+        :host(.congrats) #hero-container,
+        :host(.basePackage) #hero-container {
           text-align: initial;
         }
 
@@ -181,7 +187,6 @@ export class ContentHeader extends LitElement {
       `)}
 
       ${mediumBreakPoint(css`
-
         :host(.home) {
           background-position: top center;
           background-repeat: no-repeat;
@@ -204,7 +209,10 @@ export class ContentHeader extends LitElement {
           height: 10em;
         }
 
-        :host(.reportCard) #circles-box, :host(.publish) #circles-box, :host(.congrats) #circles-box, :host(.basePackage) #circles-box{
+        :host(.reportCard) #circles-box,
+        :host(.publish) #circles-box,
+        :host(.congrats) #circles-box,
+        :host(.basePackage) #circles-box {
           height: 34em;
         }
 
@@ -246,7 +254,10 @@ export class ContentHeader extends LitElement {
           padding: 1em;
         }
 
-        :host(.reportCard) #hero-container, :host(.publish) #hero-container, :host(.congrats) #hero-container, :host(.basePackage) #hero-container{
+        :host(.reportCard) #hero-container,
+        :host(.publish) #hero-container,
+        :host(.congrats) #hero-container,
+        :host(.basePackage) #hero-container {
           text-align: initial;
         }
 

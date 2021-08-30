@@ -20,10 +20,11 @@ export function giveOutBadges() {
   const results = getResults();
 
   current_badges = [];
-  sessionStorage.removeItem("current_badges");
+  sessionStorage.removeItem('current_badges');
 
   if (results) {
-    const firstManifest = typeof results.manifest === "boolean" ? null : results.manifest[0];
+    const firstManifest =
+      typeof results.manifest === 'boolean' ? null : results.manifest[0];
     const hasMani = firstManifest?.result;
     const hasSW = results.service_worker[0]?.result;
     const security = results.security[0]?.result;
@@ -72,16 +73,17 @@ export function giveOutBadges() {
   sessionStorage.setItem('current_badges', JSON.stringify(current_badges));
 }
 
-export function getCurrentBadges(): Array<{ name: string; url: string }> | null {
+export function getCurrentBadges(): Array<{
+  name: string;
+  url: string;
+}> | null {
   const savedCurrentBadges = sessionStorage.getItem('current_badges');
 
   if (current_badges && current_badges.length > 0) {
     return current_badges;
-  }
-  else if (savedCurrentBadges) {
+  } else if (savedCurrentBadges) {
     return JSON.parse(savedCurrentBadges);
-  }
-  else {
+  } else {
     return null;
   }
 }
@@ -91,7 +93,7 @@ export function getPossibleBadges(): Array<{ name: string; url: string }> {
 }
 
 export function sortBadges(): Array<{ name: string; url: string }> {
-  const saved_badges = sessionStorage.getItem("current_badges");
+  const saved_badges = sessionStorage.getItem('current_badges');
 
   if (saved_badges) {
     return JSON.parse(saved_badges);
@@ -120,7 +122,7 @@ export function sortBadges(): Array<{ name: string; url: string }> {
       if (
         array.indexOf(currentValue) != index &&
         // to-do: This is valid JS, but need to figure out the type
-        !acc.includes((currentValue.name as any))
+        !acc.includes(currentValue.name as any)
       )
         acc.push(currentValue);
       return acc;
@@ -128,7 +130,7 @@ export function sortBadges(): Array<{ name: string; url: string }> {
     []
   );
 
-  sessionStorage.removeItem("current_badges");
+  sessionStorage.removeItem('current_badges');
   sessionStorage.setItem('current_badges', JSON.stringify(duplicates));
 
   return duplicates;

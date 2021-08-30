@@ -371,7 +371,8 @@ export class WindowsForm extends LitElement {
                         id="windowsClassicAppVersionInput"
                         placeholder="1.0.0"
                         name="classicVersion"
-                        .value="${this.default_options?.classicPackage?.version || '1.0.1'}"
+                        .value="${this.default_options?.classicPackage
+                          ?.version || '1.0.1'}"
                         required
                       />
                     </div>
@@ -427,9 +428,9 @@ export class WindowsForm extends LitElement {
                     id="windowsManifestUrlInput"
                     placeholder="https://mysite.com/manifest.json"
                     name="manifestUrl"
-                    .value="${this.default_options?.manifestUrl || 
-                      getManiURL() ||
-                      ''}"
+                    .value="${this.default_options?.manifestUrl ||
+                    getManiURL() ||
+                    ''}"
                     required
                   />
                 </div>
@@ -485,10 +486,9 @@ export class WindowsForm extends LitElement {
                     class="form-control"
                     id="windowsLanguageInput"
                     placeholder="EN-US"
-                    .value="${
-                      this.default_options?.resourceLanguage ||
-                      this.default_options?.manifest?.lang ||
-                      ''}"
+                    .value="${this.default_options?.resourceLanguage ||
+                    this.default_options?.manifest?.lang ||
+                    ''}"
                     name="language"
                   />
                 </div>
@@ -503,7 +503,7 @@ export class WindowsForm extends LitElement {
 
         <div id="form-options-actions" class="modal-actions">
           <loading-button .loading="${this.generating}">
-            <input id="generate-submit" type="submit" value="Generate"/>
+            <input id="generate-submit" type="submit" value="Generate" />
           </loading-button>
         </div>
       </form>

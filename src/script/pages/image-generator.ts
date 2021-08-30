@@ -169,29 +169,48 @@ export class ImageGenerator extends LitElement {
           <fast-card>
             <h1>${loc.image_generator}</h1>
             <p>${loc.image_generator_text}</p>
-            <form id="imageFileInputForm" enctype="multipart/form-data" role="form" class="form">
+            <form
+              id="imageFileInputForm"
+              enctype="multipart/form-data"
+              role="form"
+              class="form"
+            >
               <section class="form-left">
                 <h2>${loc.image_details}</h2>
                 <p>${loc.image_generator_text}</p>
                 <div class="image-section">
                   <h3>${loc.input_image}</h3>
-                  <app-file-input @input-change=${this.handleInputChange}></app-file-input>
+                  <app-file-input
+                    @input-change=${this.handleInputChange}
+                  ></app-file-input>
                 </div>
                 <div class="padding-section">
                   <h3>${loc.padding}</h3>
-                  <fast-number-field name="padding" max="1" min="0" step="0.1" .value=${this.padding}
-                    @change=${this.handlePaddingChange} required></fast-number-field>
+                  <fast-number-field
+                    name="padding"
+                    max="1"
+                    min="0"
+                    step="0.1"
+                    .value=${this.padding}
+                    @change=${this.handlePaddingChange}
+                    required
+                  ></fast-number-field>
                   <small>${loc.padding_text}</small>
                 </div>
                 <div class="color-section">
                   <h3>${loc.background_color}</h3>
                   <div class="color-radio">
-                    <fast-radio-group orientation="vertical" .value=${this.colorOption}
-                      @change=${this.handleBackgroundRadioChange}>
+                    <fast-radio-group
+                      orientation="vertical"
+                      .value=${this.colorOption}
+                      @change=${this.handleBackgroundRadioChange}
+                    >
                       <fast-radio name="colorOption" value="transparent">
                         ${loc.transparent}
                       </fast-radio>
-                      <fast-radio name="colorOption" value="choose">${loc.custom_color}</fast-radio>
+                      <fast-radio name="colorOption" value="choose"
+                        >${loc.custom_color}</fast-radio
+                      >
                     </fast-radio-group>
                   </div>
                   ${this.renderColorPicker()}
@@ -203,8 +222,12 @@ export class ImageGenerator extends LitElement {
                 <div role="group" class="platform-list">
                   ${this.renderPlatformList()}
                 </div>
-                <fast-button id="selectPlatforms" class="secondary" appearance="accent"
-                  @click=${this.handleSelectAndClearAll}>
+                <fast-button
+                  id="selectPlatforms"
+                  class="secondary"
+                  appearance="accent"
+                  @click=${this.handleSelectAndClearAll}
+                >
                   ${loc.select_button}
                 </fast-button>
               </section>
@@ -229,7 +252,7 @@ export class ImageGenerator extends LitElement {
                     ? html`<fast-progress-ring></fast-progress-ring>`
                     : localeStrings.button.download}
                 </fast-button>
-      
+
                 ${this.renderError()}
               </section>
             </form>
@@ -242,8 +265,14 @@ export class ImageGenerator extends LitElement {
   renderPlatformList() {
     return platformsData.map(
       (platform, i) => html`
-        <fast-checkbox type="checkbox" name="platform" value="${platform.value}" ?checked=${this.platformSelected[i]}
-          @change=${this.handleCheckbox} data-index=${i}>
+        <fast-checkbox
+          type="checkbox"
+          name="platform"
+          value="${platform.value}"
+          ?checked=${this.platformSelected[i]}
+          @change=${this.handleCheckbox}
+          data-index=${i}
+        >
           ${platform.label}
         </fast-checkbox>
       `
@@ -253,10 +282,15 @@ export class ImageGenerator extends LitElement {
   renderColorPicker() {
     if (this.colorOption === 'choose') {
       return html`<div class="custom-color-block">
-  <label for="theme-custom-color">${localeStrings.values.custom}</label>
-  <input type="color" id="theme-custom-color" name="color" .value=${this.color}
-    @change=${this.handleThemeColorInputChange} />
-</div>`;
+        <label for="theme-custom-color">${localeStrings.values.custom}</label>
+        <input
+          type="color"
+          id="theme-custom-color"
+          name="color"
+          .value=${this.color}
+          @change=${this.handleThemeColorInputChange}
+        />
+      </div>`;
     }
 
     return undefined;
@@ -265,8 +299,8 @@ export class ImageGenerator extends LitElement {
   renderError(): TemplateResult {
     if (this.error) {
       return html`<p style="font-size: 16px; color: red;">${this.error}</p>`;
-    };
-    
+    }
+
     return html``;
   }
 
@@ -375,7 +409,7 @@ export class ImageGenerator extends LitElement {
 
       const blob = this.blob;
       if (!blob) {
-        throw new Error("No zip file available");
+        throw new Error('No zip file available');
       }
 
       await fileSave(blob, {

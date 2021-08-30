@@ -41,14 +41,13 @@ export async function generateAndroidPackage(
     // Did it fail because images couldn't be fetched with ECONNREFUSED? E.g. https://github.com/pwa-builder/PWABuilder/issues/1312
     // This may indicate either the service is using HTTP/2 or HTTP/3, which Bubblewrap doesn't currently support.
     // Or, it may indicate the site is using anti-bot tech, such as Cloudflare.
-    // 
+    //
     // If it's the former (HTTP/2 or HTTP/3), see if we can fetch using our safe URL proxy, which properly handles HTTP/2 and /3.
     const hasSafeImages =
       androidOptions.iconUrl &&
       androidOptions.iconUrl.includes(env.safeUrlFetcher || '');
     const isConnectionRefusedOrForbidden =
-      (responseText || '').includes('ECONNREFUSED') ||
-      response.status === 403;
+      (responseText || '').includes('ECONNREFUSED') || response.status === 403;
 
     if (!hasSafeImages && isConnectionRefusedOrForbidden) {
       console.warn(
@@ -98,7 +97,11 @@ export async function createAndroidPackageOptionsFromForm(
     manifest.display === 'fullscreen' ? 'fullscreen' : 'standalone';
   const navColorOrFallback =
     manifest.theme_color || manifest.background_color || '#000000';
-  const manifestUrlOrRoot = maniUrl.startsWith("data:application/manifest+json,") ? pwaUrl : maniUrl;
+  const manifestUrlOrRoot = maniUrl.startsWith(
+    'data:application/manifest+json,'
+  )
+    ? pwaUrl
+    : maniUrl;
   return {
     appVersion: form.appVersion.value || '1.0.0.0',
     appVersionCode: form.appVersionCode.value || 1,
@@ -124,8 +127,14 @@ export async function createAndroidPackageOptionsFromForm(
     includeSourceCode: form.includeSourceCode.checked,
     isChromeOSOnly: form.isChromeOSOnly.checked,
     launcherName: form.launcherName.value || manifest.short_name || appName, // launcher name should be the short name. If none is available, fallback to the full app name.
-    maskableIconUrl: getAbsoluteUrl(form.maskableIconUrl.value, manifestUrlOrRoot),
-    monochromeIconUrl: getAbsoluteUrl(form.monochromeIconUrl.value, manifestUrlOrRoot),
+    maskableIconUrl: getAbsoluteUrl(
+      form.maskableIconUrl.value,
+      manifestUrlOrRoot
+    ),
+    monochromeIconUrl: getAbsoluteUrl(
+      form.monochromeIconUrl.value,
+      manifestUrlOrRoot
+    ),
     name: form.appName.value || manifest.name || 'My Awesome PWA',
     navigationColor: form.navigationColor.value || navColorOrFallback,
     navigationColorDark: form.navigationColorDark.value || navColorOrFallback,
@@ -155,7 +164,7 @@ export async function createAndroidPackageOptionsFromForm(
     signingMode: form.signingMode.value ? form.signingMode.value : 'new',
     splashScreenFadeOutDuration: form.splashScreenFadeOutDuration.value || 300,
     startUrl: getStartUrlRelativeToHost(
-      form.startUrl.value || manifest.start_url || "/",
+      form.startUrl.value || manifest.start_url || '/',
       manifestUrlOrRoot
     ),
     themeColor: form.themeColor.value || manifest.theme_color || '#FFFFFF',
@@ -222,7 +231,11 @@ export async function createAndroidPackageOptionsFromManifest(
   // The manifestUrl will be "data:application/manifest+json,..."
   // In this case, we can't do new URL("/foo.png", "data:application/manifest+json") - it will throw an error.
   // Instead, we can resolve the absolute URL using the PWA URL itself.
-  const manifestUrlOrRoot = maniUrl.startsWith("data:application/manifest+json,") ? pwaUrl : maniUrl;
+  const manifestUrlOrRoot = maniUrl.startsWith(
+    'data:application/manifest+json,'
+  )
+    ? pwaUrl
+    : maniUrl;
 
   return {
     appVersion: '1.0.0.0',
@@ -270,7 +283,10 @@ export async function createAndroidPackageOptionsFromManifest(
     },
     signingMode: 'new',
     splashScreenFadeOutDuration: 300,
-    startUrl: getStartUrlRelativeToHost(manifest.start_url, new URL(manifestUrlOrRoot)),
+    startUrl: getStartUrlRelativeToHost(
+      manifest.start_url,
+      new URL(manifestUrlOrRoot)
+    ),
     themeColor: (manifest.theme_color as string) || '#FFFFFF',
     shareTarget: manifest.share_target,
     webManifestUrl: maniUrl,

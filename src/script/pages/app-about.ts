@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement } from "lit/decorators.js"
+import { customElement } from 'lit/decorators.js';
 import { runAllTests } from '../services/tests';
 
 // double import needed to get full impl
@@ -27,7 +27,8 @@ export class AppAbout extends LitElement {
   }
 
   testAlert(ev: PointerEvent) {
-    const alert: AppAlert | null | undefined = this.shadowRoot?.querySelector("app-alert");
+    const alert: AppAlert | null | undefined =
+      this.shadowRoot?.querySelector('app-alert');
 
     if (alert) {
       alert.openAlert(ev.clientX, ev.clientY);
@@ -39,10 +40,15 @@ export class AppAbout extends LitElement {
       <div>
         <h2>About Page</h2>
 
-        <fast-button @click="${(ev: PointerEvent) => this.testAlert(ev)}">test alert</fast-button>
+        <fast-button @click="${(ev: PointerEvent) => this.testAlert(ev)}"
+          >test alert</fast-button
+        >
 
         <app-alert title="Test Alert">
-          <p>Info description. Lorem ipsum dolor sit amet, consectetur elit adipiscing, sed do eiusm tem. Ipsum dolor sit.</p>
+          <p>
+            Info description. Lorem ipsum dolor sit amet, consectetur elit
+            adipiscing, sed do eiusm tem. Ipsum dolor sit.
+          </p>
 
           <fast-anchor slot="actions">Test</fast-anchor>
         </app-alert>

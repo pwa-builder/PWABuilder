@@ -1,8 +1,12 @@
 import { LitElement, css, html } from 'lit';
 
-import { customElement } from "lit/decorators.js"
+import { customElement } from 'lit/decorators.js';
 
-import { smallBreakPoint, mediumBreakPoint, xxxLargeBreakPoint } from '../utils/css/breakpoints';
+import {
+  smallBreakPoint,
+  mediumBreakPoint,
+  xxxLargeBreakPoint,
+} from '../utils/css/breakpoints';
 
 @customElement('app-footer')
 export class AppFooter extends LitElement {
