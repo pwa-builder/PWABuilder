@@ -60,6 +60,8 @@ import {
   AppModalElement,
   FileInputElement,
 } from '../utils/interfaces.components';
+import { cloneIconWithoutUrlEncodedSrc, getProbableFileExtension } from '../utils/icons';
+import { debounce } from '../utils/debounce';
 
 type ColorRadioValues = 'none' | 'custom';
 
@@ -117,6 +119,12 @@ export class AppManifest extends LitElement {
    * The current preview screen.
    */
   @state() previewStage: PreviewStage = 'name';
+
+  // Debounced because color pickers UI can rapidly change the value.
+  // We do taxing work when updating the manifest: stringify the manifest JSON and update the code editor, update the manifest previewer, etc.
+  // Without debouncing, these rapid UI updates would result in a sluggish UI
+  private debouncedUpdateThemeColor = debounce((newThemeColor: string) => this.updateThemeColor(newThemeColor), 200);
+  private debouncedUpdateBackgroundColor = debounce((newBgColor: string) => this.updateBackgroundColor(newBgColor), 200);
 
   protected get siteUrl(): string {
     if (!this.searchParams) {
@@ -440,7 +448,7 @@ export class AppManifest extends LitElement {
         }
 
         manifest-previewer::part(platform-buttons) {
-          width: 185px;
+          justify-content: space-around;
         }
 
         @media (max-width: 800px) {
@@ -456,7 +464,7 @@ export class AppManifest extends LitElement {
     super();
   }
 
-  async firstUpdated() {
+  async firstUpdated() {    
     try {
       this.manifest = await getManifestGuarded();
 
@@ -507,15 +515,16 @@ export class AppManifest extends LitElement {
           ${this.manifest
             ? html`
                 <manifest-previewer
+                  disabled-platforms="iOS"
+                  platform="windows"
                   .manifest=${new Proxy(this.manifest, {
                     get: (target, prop: string) => {
                       return target[prop];
                     },
                     set: () => false,
                   })}
-                  .platform=${'windows'}
-                  .manifestUrl=${this.siteUrl}
                   .siteUrl=${this.siteUrl}
+                  .manifestUrl=${this.siteUrl}
                   .stage=${this.previewStage}
                   .disabledPlatforms=${'iOS'}
                 >
@@ -673,7 +682,7 @@ export class AppManifest extends LitElement {
                 ></flipper-button>
               </div>
               <code-editor
-                .startText=${JSON.stringify(this.manifest, null, 2)}
+                .startText=${this.getManifestCodeForEditor()}
                 @code-editor-update=${this.handleEditorUpdate}
               ></code-editor>
             </fast-accordion-item>
@@ -713,6 +722,7 @@ export class AppManifest extends LitElement {
             selectedIndex=${index}
             data-field=${item.entry}
             @change=${this.handleInputChange}
+            @focus=${() => this.switchManifestPreviewerPage(item.entry)}
           >
           </app-dropdown>
         `;
@@ -721,7 +731,8 @@ export class AppManifest extends LitElement {
           data-field="${item.entry}"
           placeholder="${item.title}"
           .value=${value}
-          @change=${this.handleInputChange}
+          @input=${this.handleInputChange}
+          @focus=${() => this.switchManifestPreviewerPage(item.entry)}
         ></fast-text-field>`;
       }
 
@@ -779,8 +790,9 @@ export class AppManifest extends LitElement {
                   <input
                     type="color"
                     id="bg-custom-color"
-                    .value=${this.backgroundColor}
-                    @change=${this.handleBackgroundColorInputChange}
+                    .value=${this.backgroundColor || ''}
+                    @input=${this.backgroundColorInputChanged}
+                    @focus=${() => this.switchManifestPreviewerPage('background_color')}
                   />
                 </div>
               `
@@ -818,8 +830,9 @@ export class AppManifest extends LitElement {
                   <input
                     type="color"
                     id="theme-custom-color"
-                    .value=${this.themeColor}
-                    @change=${this.handleThemeColorInputChange}
+                    .value=${this.themeColor || ''}
+                    @input=${this.themeColorInputChanged}
+                    @focus=${() => this.switchManifestPreviewerPage('theme_color')}
                   />
                 </div>
               `
@@ -883,23 +896,19 @@ export class AppManifest extends LitElement {
 
     return (
       this.manifest?.icons
-        ?.map(icon => {
-          return this.handleImageUrl(icon);
-        })
+        ?.map(icon => this.handleImageUrl(icon) || '')
         .filter(str => str) || []
     );
   }
 
-  screenshotSrcListParse() {
+  screenshotSrcListParse(): string[] {
     if (!this.manifest && !this.siteUrl) {
       return [];
     }
 
     return (
       this.manifest?.screenshots
-        ?.map(screenshot => {
-          return this.handleImageUrl(screenshot);
-        })
+        ?.map(screenshot => this.handleImageUrl(screenshot) || '')
         .filter(str => str) || []
     );
   }
@@ -921,35 +930,38 @@ export class AppManifest extends LitElement {
     `;
   }
 
-  updateManifest(changes: Partial<Manifest>) {
-    updateManifest(changes).then(manifest => {
+  updateManifest(changes: Partial<Manifest>): Promise<any> {
+    return updateManifest(changes).then(manifest => {
       this.manifest = manifest;
 
       editorDispatchEvent(
         new CustomEvent<CodeEditorSyncEvent>(CodeEditorEvents.sync, {
           detail: {
-            text: JSON.stringify(manifest, undefined, 2),
+            text: this.getManifestCodeForEditor(),
           },
         })
       );
     });
   }
 
-  handleInputChange(event: InputEvent) {
+  async handleInputChange(event: InputEvent) {
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
     const fieldName = input.dataset['field'];
+    if (this.manifest && fieldName && this.manifest[fieldName] !== undefined) {
+      this.switchManifestPreviewerPage(fieldName);
 
-    if (this.manifest && fieldName && this.manifest[fieldName]) {
-      this.handlePreviewStageUpdate(fieldName);
-      // to-do Justin: Figure out why typescript is casting input.value to a string
-      // automatically and how to cast to a better type that will actually compile
-      this.updateManifest({
+      await this.updateManifest({
         [fieldName]: (input.value as any).code || input.value,
-      });
+      }); 
+
+      // While manifest is a reactive property, the manifest's fields aren't.
+      // Thus, we have to tell Lit that the manifest has been updated.
+      // Without this, the Manifest Previewer won't show the new value until the input loses focus.
+      super.requestUpdate();
     }
   }
 
-  private handlePreviewStageUpdate(fieldName: string) {
+  private switchManifestPreviewerPage(fieldName: keyof Manifest) {
     switch (fieldName) {
       case 'name':
         this.previewStage = 'name';
@@ -966,6 +978,8 @@ export class AppManifest extends LitElement {
       case 'background_color':
         this.previewStage = 'splashScreen';
         break;
+      case 'description':
+        this.previewStage = 'description';
     }
   }
 
@@ -1005,28 +1019,30 @@ export class AppManifest extends LitElement {
     }
   }
 
-  handleBackgroundColorInputChange(event: CustomEvent) {
-    if (this.manifest) {
-      const value = (<HTMLInputElement>event.target).value;
-
-      this.backgroundColor = value;
-      this.handlePreviewStageUpdate('background_color');
-      this.updateManifest({
-        background_color: value,
-      });
-    }
+  backgroundColorInputChanged(e: Event) {
+    const value = (e.target as HTMLInputElement).value;
+    this.backgroundColor = value;
+    this.debouncedUpdateBackgroundColor(value);
   }
 
-  handleThemeColorInputChange(event: CustomEvent) {
-    if (this.manifest) {
-      const value = (<HTMLInputElement>event.target).value;
+  themeColorInputChanged(e: Event) {
+    const value = (e.target as HTMLInputElement).value;
+    
+    this.debouncedUpdateThemeColor(value);
+  }
 
-      this.themeColor = value;
-      this.handlePreviewStageUpdate('theme_color');
-      this.updateManifest({
-        theme_color: value,
-      });
-    }
+  updateThemeColor(color: string) {
+    this.themeColor = color;
+    this.updateManifest({
+      theme_color: color
+    });
+  }
+
+  updateBackgroundColor(color: string) {
+    this.backgroundColor = color;
+    this.updateManifest({
+      background_color: color
+    });
   }
 
   setBackgroundColorRadio() {
@@ -1166,6 +1182,26 @@ export class AppManifest extends LitElement {
     } catch (ex) {
       console.error('failed to parse the manifest successfully', e, ex);
     }
+  }
+
+  getManifestCodeForEditor(): string {
+    // Return the JSON of the manifest. 
+    // Except, swap out the manifest URL-encoded images with image links. 
+    // Otherwise, users open issues asking why they can't create package with manifest we gave them.
+    // See https://github.com/pwa-builder/PWABuilder/issues/2038
+    const clone = { ...this.manifest };
+    if (clone.icons) {
+      clone.icons = clone.icons.map((icon, index) =>
+        cloneIconWithoutUrlEncodedSrc(icon, `/images/icon-${index + 1}.${getProbableFileExtension(icon)}`)
+      );
+    }
+    if (clone.screenshots) {
+      clone.screenshots = clone.screenshots.map((icon, index) =>
+        cloneIconWithoutUrlEncodedSrc(icon, `/images/screenshot-${index + 1}.${getProbableFileExtension(icon)}`)
+      );
+    }
+       
+    return JSON.stringify(clone, null, 2);
   }
 
   handleEditorOpened() {

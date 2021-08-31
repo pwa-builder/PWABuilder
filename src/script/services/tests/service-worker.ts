@@ -53,8 +53,7 @@ async function detectServiceWorker(
   url: string
 ): Promise<ServiceWorkerDetectionResult> {
   const fetchResult = await fetch(
-    `${
-      env.serviceWorkerUrl
+    `${env.serviceWorkerUrl
     }/serviceWorker/runAllChecks?url=${encodeURIComponent(url)}`
   );
   if (!fetchResult.ok) {
@@ -75,6 +74,7 @@ async function detectServiceWorker(
  * Checks the URL for offline support.
  */
 async function detectOfflineSupport(url: string): Promise<boolean> {
+
   // We have 2 offline checks:
   // - A Google Lighthouse-based check, run via APIv2
   // - A Puppeteer check check, run via our service worker API.
@@ -98,7 +98,7 @@ async function detectOfflineSupport(url: string): Promise<boolean> {
     lighthouseCheck.then(result => resolveIfOfflineDetected(result));
 
     // If both checks finished, resolve as no offline detected.
-    Promise['allSettled']([puppeteerCheck, lighthouseCheck]).then(() =>
+    Promise.allSettled([puppeteerCheck, lighthouseCheck]).then(() =>
       resolve(false)
     );
   });
@@ -106,8 +106,7 @@ async function detectOfflineSupport(url: string): Promise<boolean> {
 
 async function detectOfflineSupportPuppeteer(url: string) {
   const fetchResult = await fetch(
-    `${
-      env.serviceWorkerUrl
+    `${env.serviceWorkerUrl
     }/serviceworker/GetOfflineSupport?url=${encodeURIComponent(url)}`
   );
   if (!fetchResult.ok) {

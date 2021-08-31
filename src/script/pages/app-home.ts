@@ -253,7 +253,7 @@ export class AppHome extends LitElement {
 
     if (site) {
       this.siteURL = site.trim();
-      await this.doTest();
+      await this.analyzeSite();
     }
   }
 
@@ -266,10 +266,10 @@ export class AppHome extends LitElement {
   async start(inputEvent: InputEvent) {
     inputEvent.preventDefault();
 
-    await this.doTest();
+    await this.analyzeSite();
   }
 
-  async doTest() {
+  async analyzeSite() {
     if (this.siteURL) {
       this.gettingManifest = true;
 
@@ -320,16 +320,12 @@ export class AppHome extends LitElement {
       // HACK: Lit 2.0rc1 crashes on Safari 14 (Mac and iOS) on the following line:
       // this.gettingManifest = false;
       // To fix this, we've found that putting that call in a 1ms timeout fixes the issue.
-      setTimeout(() => (this.gettingManifest = false), 1);
+      setTimeout(() => this.gettingManifest = false, 1);
     }
   }
 
   updateProgress(progressData: ProgressList) {
-    if (
-      progressData &&
-      progressData.progress[0] &&
-      progressData.progress[0].items[0]
-    ) {
+    if (progressData && progressData.progress[0] && progressData.progress[0].items[0]) {
       progressData.progress[0].items[0].done = Status.DONE;
       const newProgress = progressData;
       setProgress(newProgress);

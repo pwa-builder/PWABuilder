@@ -132,7 +132,7 @@ export class AppBasePack extends LitElement {
         }
 
         #download-summary p {
-          max-width: 28em;
+          max-width: 58em;
         }
 
         #report-link {
@@ -143,7 +143,7 @@ export class AppBasePack extends LitElement {
         }
 
         ${xxxLargeBreakPoint(
-          css`
+        css`
             app-sidebar {
               display: block;
             }
@@ -161,10 +161,10 @@ export class AppBasePack extends LitElement {
               background: white;
             }
           `
-        )}
+      )}
 
         ${largeBreakPoint(
-          css`
+        css`
             #tablet-sidebar {
               display: block;
             }
@@ -173,10 +173,10 @@ export class AppBasePack extends LitElement {
               display: none;
             }
           `
-        )}
+      )}
 
         ${mediumBreakPoint(
-          css`
+        css`
             .basePackage h2 {
               font-size: 33px;
               max-width: 10em;
@@ -189,10 +189,10 @@ export class AppBasePack extends LitElement {
               display: none;
             }
           `
-        )}
+      )}
 
         ${smallBreakPoint(
-          css`
+        css`
             #top-container {
               flex-direction: column;
               align-items: flex-start;
@@ -218,7 +218,7 @@ export class AppBasePack extends LitElement {
               display: none;
             }
           `
-        )}
+      )}
       `,
     ];
   }
@@ -281,61 +281,32 @@ export class AppBasePack extends LitElement {
 
   render() {
     return html`
-      <app-modal
-        @app-modal-close="${() => this.cancel()}"
-        ?open="${this.blob ? true : false}"
-        title="Base Package Download"
-        .body="${localeStrings.input.publish.base_package.download}"
-        id="test-download-modal"
-      >
-        <img
-          class="modal-image"
-          slot="modal-image"
-          src="/assets/images/warning.svg"
-          alt="warning icon"
-        />
-
+      <app-modal @app-modal-close="${() => this.cancel()}" ?open="${this.blob ? true : false}" title="Base Package Download"
+        .body="${localeStrings.input.publish.base_package.download}" id="test-download-modal">
+        <img class="modal-image" slot="modal-image" src="/assets/images/warning.svg" alt="warning icon" />
+      
         <div slot="modal-actions">
           <app-button @click="${() => this.download()}">Download</app-button>
         </div>
       </app-modal>
-
-      <app-modal
-        title="Wait a minute!"
-        .body="${this.errorMessage || ''}"
-        ?open="${this.errored}"
-        id="error-modal"
-      >
-        <img
-          class="modal-image"
-          slot="modal-image"
-          src="/assets/warning.svg"
-          alt="warning icon"
-        />
-
+      
+      <app-modal title="Wait a minute!" .body="${this.errorMessage || ''}" ?open="${this.errored}" id="error-modal">
+        <img class="modal-image" slot="modal-image" src="/assets/warning.svg" alt="warning icon" />
+      
         <div slot="modal-actions">
-          <fast-anchor
-            target="_blank"
-            rel="noopener"
-            href="https://github.com/pwa-builder/PWABuilder/issues/new/choose"
-            id="report-link"
-            appearance="button"
-            >Report an Issue</fast-anchor
-          >
+          <fast-anchor target="_blank" rel="noopener" href="https://github.com/pwa-builder/PWABuilder/issues/new/choose"
+            id="report-link" appearance="button">Report an Issue</fast-anchor>
         </div>
       </app-modal>
-
+      
       <div id="basepack-wrapper">
         <app-header></app-header>
-
-        <div
-          id="grid"
-          class="${classMap({
+      
+        <div id="grid" class="${classMap({
             'grid-mobile': this.isDeskTopView == false,
-          })}"
-        >
+          })}">
           <app-sidebar id="desktop-sidebar"></app-sidebar>
-
+      
           <div>
             <content-header class="basePackage">
               <h2 slot="hero-container">
@@ -345,71 +316,57 @@ export class AppBasePack extends LitElement {
                 ${localeStrings.text.base_package.top_section.p}
               </p>
             </content-header>
-
+      
             <app-sidebar id="tablet-sidebar"></app-sidebar>
-
+      
             <section class="container">
               <div id="top-container">
                 <div id="download-summary">
                   <h3>${localeStrings.text.base_package.summary_body.h1}</h3>
-
+      
                   <p>${localeStrings.text.base_package.summary_body.p}</p>
                 </div>
-
+      
                 <div id="download-actions">
-                  <loading-button
-                    ?loading="${this.loading}"
-                    @click="${() => this.doWebGenerate()}"
-                    >Generate</loading-button
-                  >
+                  <loading-button ?loading="${this.loading}" @click="${() => this.doWebGenerate()}">Generate</loading-button>
                 </div>
               </div>
-
+      
               <div id="up-next">
                 <h5>Next Steps</h5>
-
+      
                 <p>
                   You're steps away from being able to package your PWA for the
                   store. After you download your base files be sure to
                 </p>
-
+      
                 <ol>
                   <li>
-                    <a
-                      href="https://github.com/pwa-builder/pwabuilder-web/blob/V2/src/assets/web/next-steps.md"
-                      rel="noopener"
-                      target="_blank"
-                      >Open documentation</a
-                    >
+                    <a href="https://github.com/pwa-builder/pwabuilder-web/blob/V2/src/assets/web/next-steps.md"
+                      rel="noopener" target="_blank">Open documentation</a>
                     in order to accurately add files or links to your server.
                   </li>
-
+      
                   <li>
                     After you have updated your files, submit your PWA through
                     our testing hub again to be sure that all is accurate with
                     your updates.
                   </li>
-
+      
                   <li>
                     After acing your PWA test and review, go ahead and package
                     for the app stores!
                   </li>
                 </ol>
               </div>
-
+      
               <div class="action-buttons">
-                <fast-anchor
-                  href="https://github.com/pwa-builder/pwabuilder-web/blob/V2/src/assets/web/next-steps.md"
-                  rel="noopener"
-                  target="_blank"
-                  appearance="button"
-                >
+                <fast-anchor href="https://github.com/pwa-builder/pwabuilder-web/blob/V2/src/assets/web/next-steps.md"
+                  rel="noopener" target="_blank" appearance="button">
                   Documentation
                 </fast-anchor>
-
-                <app-button @click="${() => this.reTest()}"
-                  >Test Updated App</app-button
-                >
+      
+                <app-button @click="${() => this.reTest()}">Test Updated App</app-button>
               </div>
             </section>
           </div>

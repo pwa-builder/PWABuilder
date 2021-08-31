@@ -26,30 +26,23 @@ export let boilerPlateManifest: Manifest = {
   screenshots: [],
 };
 
-let manifest: Manifest = manifestFromSession();
-let maniURL: Lazy<string>;
-let fetchAttempted = false;
-
 // export to use as a flag for generation
 // this is needed to decide to go to the
 // publish page or base_package
 export let generated = false;
-
+let manifest: Manifest = manifestFromSession();
+let maniURL: Lazy<string>;
 let testResult: ManifestDetectionResult | undefined;
 
 function manifestFromSession(): Manifest {
   try {
     const sessionManifest = sessionStorage.getItem(PWABuilderSession.manifest);
-
+    generated = sessionStorage.getItem(PWABuilderSession.manifestGenerated) === 'true';
     if (sessionManifest) {
       return JSON.parse(sessionManifest) as Manifest;
     }
-
-    fetchAttempted = true;
-    generated =
-      sessionStorage.getItem(PWABuilderSession.manifestGenerated) === 'true';
   } catch (err) {
-    console.error(err as Error);
+    console.error('Unable to load manifest from session', err);
   }
 
   return boilerPlateManifest;
@@ -63,9 +56,8 @@ export function manifestGenerated() {
 async function getManifestViaFilePost(
   url: string
 ): Promise<ManifestDetectionResult> {
-  const manifestTestUrl = `${env.api}/WebManifest?site=${encodeURIComponent(
-    url
-  )}`;
+  const encodedUrl = encodeURIComponent(url);
+  const manifestTestUrl = `${env.api}/WebManifest?site=${encodedUrl}`;
   const response = await fetch(manifestTestUrl, {
     method: 'POST',
   });
@@ -152,19 +144,25 @@ async function getManifestViaHtmlParse(
   };
 }
 
+function timeoutAfter(milliseconds: number): Promise<void> {
+  return new Promise<void>(resolve => {
+    setTimeout(() => resolve(), milliseconds);
+  });
+}
+
 export async function fetchManifest(
   url: string
 ): Promise<ManifestDetectionResult> {
   // Manifest detection is surprisingly tricky due to redirects, dynamic code generation, SSL problems, and other issues.
-  // We have 3 techniques to detect the manifest:
+  // We have 2 techniques to detect the manifest:
   // 1. An Azure function that uses Chrome Puppeteer to fetch the manifest
   // 2. An Azure function that parses the HTML to find the manifest.
-  // This fetch() function runs all 3 manifest detection schemes concurrently and returns the first one that succeeds.
+  // This fetch() function runs all manifest detection schemes concurrently and returns the first one that succeeds.
+  // We also timebox manifest detection to 10 seconds, as the Puppeteer fetch can take a very long time.
 
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve, reject) => {
-    let knownGoodUrl;
-
+    let knownGoodUrl: string;
     try {
       knownGoodUrl = await cleanUrl(url);
     } catch (err) {
@@ -181,68 +179,38 @@ export async function fetchManifest(
       } else {
         // We're looking at a different site, so reset the state
         generated = false;
-        fetchAttempted = false;
       }
     } else {
       generated = false;
-      fetchAttempted = false;
     }
 
     setURL(knownGoodUrl);
 
     const manifestDetectors = [
       getManifestViaFilePost(knownGoodUrl),
-      getManifestViaHtmlParse(knownGoodUrl),
+      getManifestViaHtmlParse(knownGoodUrl)
     ];
     try {
-      testResult = await Promise.any(manifestDetectors);
+      // Timeout after 10 seconds.
+      // Some sites that don't have a manifest take a long time for our Puppeteer-based test to complete.
+      timeoutAfter(10000).then(() => reject("Timeout expired"));
+      const manifestDetectionResult = await Promise.any(manifestDetectors);
 
-      if (!fetchAttempted) {
-        manifest = testResult.content;
-
-        if (!manifest.icons) {
-          manifest.icons = [];
-        }
-
-        if (!manifest.screenshots) {
-          manifest.screenshots = [];
-        }
-
-        fetchAttempted = true;
-      }
-
-      maniURL = testResult.generatedUrl;
-      resolve(testResult);
+      manifest = manifestDetectionResult.content;
+      maniURL = manifestDetectionResult.generatedUrl;
+      resolve(manifestDetectionResult);
     } catch (manifestDetectionError) {
       console.error('All manifest detectors failed.', manifestDetectionError);
 
-      if (!fetchAttempted && !generated) {
-        try {
-          const genContent = await generateManifest(url);
-
-          if (genContent && !genContent.error) {
-            manifest = genContent.content;
-
-            if (!manifest.icons) {
-              manifest.icons = [];
-            }
-
-            if (!manifest.screenshots) {
-              manifest.screenshots = [];
-            }
-
-            fetchAttempted = true;
-          }
-
-          resolve(genContent);
-        } catch (generatedError) {
-          reject(generatedError);
-        }
+      if (!generated) {
+        const createdManifestTask = createManifest(knownGoodUrl)
+          .then(m => wrapManifestInDetectionResult(m, knownGoodUrl, true));
+        resolve(createdManifestTask);
+      } else {
+        // Well, we sure tried. Use the boilerplate because we couldn't fetch that guy.
+        manifest = boilerPlateManifest;
+        reject(manifestDetectionError);
       }
-
-      // Well, we sure tried. Use the boilerplate because we couldn't fetch that guy.
-      manifest = boilerPlateManifest;
-      reject(manifestDetectionError);
     }
   });
 }
@@ -258,12 +226,10 @@ export function getManiURL() {
 */
 export async function getManifestGuarded(): Promise<Manifest> {
   try {
-    if (!fetchAttempted) {
-      const newManifest = await getManifest();
+    const newManifest = await getManifest();
 
-      if (newManifest) {
-        manifest = newManifest;
-      }
+    if (newManifest) {
+      manifest = newManifest;
     }
   } catch (e) {
     console.warn(e);
@@ -297,19 +263,18 @@ async function getManifest(): Promise<Manifest | undefined> {
   return undefined;
 }
 
-async function generateManifest(url: string): Promise<ManifestDetectionResult> {
+async function createManifest(url: string): Promise<Manifest> {
   generated = true;
   sessionStorage.setItem(PWABuilderSession.manifestGenerated, 'true');
 
   try {
-    const response = await fetch(`${env.api}/GenerateManifest?site=${url}`, {
+    const response = await fetch(`${env.manifestCreatorUrl}?url=${url}`, {
       method: 'POST',
       headers: new Headers({ 'content-type': 'application/json' }),
     });
 
-    const data = await response.json();
-
-    return data;
+    const createdManifest = await response.json<Manifest>();
+    return createdManifest;
   } catch (err) {
     console.error(`Error generating manifest: ${err}`);
     throw err;
@@ -338,4 +303,21 @@ export function updateManifestEvent<T extends Partial<Manifest>>(detail: T) {
     bubbles: true,
     composed: true,
   });
+}
+
+function wrapManifestInDetectionResult(manifest: Manifest, url: string, generated: boolean): ManifestDetectionResult {
+  return {
+    content: manifest,
+    format: "w3c",
+    siteUrl: url,
+    generated: generated,
+    id: "",
+    generatedUrl: "",
+    default: {
+      short_name: manifest.short_name || "My PWA"
+    },
+    errors: [],
+    suggestions: [],
+    warnings: []
+  };
 }

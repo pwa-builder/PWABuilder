@@ -1,6 +1,8 @@
 export const env = {
   manifestFinderUrl:
     'https://pwabuilder-manifest-finder.azurewebsites.net/api/findmanifest',
+  manifestCreatorUrl:
+    'https://pwabuilder-manifest-creator.azurewebsites.net/api/create',
   serviceWorkerUrl:
     'https://pwabuilder-serviceworker-finder.centralus.cloudapp.azure.com',
   api: 'https://pwabuilder-tests.azurewebsites.net/api',
