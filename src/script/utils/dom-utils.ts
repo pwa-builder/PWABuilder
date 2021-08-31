@@ -1,7 +1,7 @@
 export function turnOffScroll() {
-  document.documentElement.style.overflowY = "hidden";
+  document.documentElement.style.overflowY = 'hidden';
 }
 
 export function turnOnScroll() {
-  document.documentElement.style.overflowY = "initial";
+  document.documentElement.style.overflowY = 'initial';
 }

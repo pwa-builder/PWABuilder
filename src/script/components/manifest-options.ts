@@ -448,11 +448,7 @@ export class AppManifest extends LitElement {
         }
 
         manifest-previewer::part(platform-buttons) {
-<<<<<<< HEAD
           justify-content: space-around;
-=======
-          width: 185px;
->>>>>>> main
         }
 
         @media (max-width: 800px) {
@@ -527,11 +523,6 @@ export class AppManifest extends LitElement {
                     },
                     set: () => false,
                   })}
-<<<<<<< HEAD
-=======
-                  .platform=${'windows'}
-                  .manifestUrl=${this.siteUrl}
->>>>>>> main
                   .siteUrl=${this.siteUrl}
                   .manifestUrl=${this.siteUrl}
                   .stage=${this.previewStage}

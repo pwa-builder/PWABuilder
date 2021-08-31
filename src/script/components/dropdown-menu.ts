@@ -161,7 +161,9 @@ export class DropdownMenu extends LitElement {
       return this.staticButtonText;
     }
 
-    return (this.menuItems[this.selectedIndex] as any)?.formatted ? (this.menuItems[this.selectedIndex] as any).formatted : this.menuItems[this.selectedIndex];
+    return (this.menuItems[this.selectedIndex] as any)?.formatted
+      ? (this.menuItems[this.selectedIndex] as any).formatted
+      : this.menuItems[this.selectedIndex];
   }
 
   clickMenuButton() {

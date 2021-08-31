@@ -195,7 +195,7 @@
   },
   "tooltip": {
     "manifest_options": {
-      "upload": "Your app's icon, this is the icon operating systems will use to represent your app. In Windows this is used in the taskbar, start menu etc, launch screen.",
+      "upload": "Your app's icon. This is the icon operating systems will use to represent your app. In Windows this is used in the taskbar, start menu etc, launch screen.",
       "generate": "Screenshots of your PWA can be used in stores and the in-browser install prompt to help promote your PWA.",
       "background_color": "The background_color member controls the splash screen color of your app.",
       "theme_color": "The theme_color member defines the default theme color for your app. On Windows, this will be the color of your app's title bar.",

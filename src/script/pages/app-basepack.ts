@@ -1,12 +1,5 @@
-import {
-  LitElement,
-  css,
-  html,
-} from 'lit';
-import {
-  customElement,
-  state,
-} from "lit/decorators.js"
+import { LitElement, css, html } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 
 import '../components/app-header';
@@ -215,10 +208,10 @@ export class AppBasePack extends LitElement {
             }
 
             .basePackage h2 {
-             font-size: 33px;
+              font-size: 33px;
 
-             margin-top: 0;
-             margin-bottom: 1em;
+              margin-top: 0;
+              margin-bottom: 1em;
             }
 
             .basePackage p {
@@ -248,7 +241,7 @@ export class AppBasePack extends LitElement {
         this.blob = generatedPackage;
       }
     } catch (err) {
-      this.errorMessage = (err as Error || '').toString();
+      this.errorMessage = ((err as Error) || '').toString();
       this.errored = true;
     }
 
@@ -316,7 +309,9 @@ export class AppBasePack extends LitElement {
       
           <div>
             <content-header class="basePackage">
-              <h2 slot="hero-container">${localeStrings.text.base_package.top_section.h1}</h2>
+              <h2 slot="hero-container">
+                ${localeStrings.text.base_package.top_section.h1}
+              </h2>
               <p id="hero-p" slot="hero-container">
                 ${localeStrings.text.base_package.top_section.p}
               </p>
@@ -329,9 +324,7 @@ export class AppBasePack extends LitElement {
                 <div id="download-summary">
                   <h3>${localeStrings.text.base_package.summary_body.h1}</h3>
       
-                  <p>
-                    ${localeStrings.text.base_package.summary_body.p}
-                  </p>
+                  <p>${localeStrings.text.base_package.summary_body.p}</p>
                 </div>
       
                 <div id="download-actions">
@@ -343,24 +336,26 @@ export class AppBasePack extends LitElement {
                 <h5>Next Steps</h5>
       
                 <p>
-                  You're steps away from being able to package your PWA for the store.
-                  After you download your base files be sure to
+                  You're steps away from being able to package your PWA for the
+                  store. After you download your base files be sure to
                 </p>
       
                 <ol>
                   <li>
                     <a href="https://github.com/pwa-builder/pwabuilder-web/blob/V2/src/assets/web/next-steps.md"
-                      rel="noopener" target="_blank">Open documentation</a> in order to accurately add files or links to your
-                    server.
+                      rel="noopener" target="_blank">Open documentation</a>
+                    in order to accurately add files or links to your server.
                   </li>
       
                   <li>
-                    After you have updated your files, submit your PWA through our testing hub again to be sure that all is
-                    accurate with your updates.
+                    After you have updated your files, submit your PWA through
+                    our testing hub again to be sure that all is accurate with
+                    your updates.
                   </li>
       
                   <li>
-                    After acing your PWA test and review, go ahead and package for the app stores!
+                    After acing your PWA test and review, go ahead and package
+                    for the app stores!
                   </li>
                 </ol>
               </div>

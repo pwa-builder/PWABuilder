@@ -5,19 +5,19 @@ import { default_timeout } from '../../utils/api';
 export const default_results = [
   {
     result: false,
-    infoString: "Uses HTTPS",
-    category: "required"
+    infoString: 'Uses HTTPS',
+    category: 'required',
   },
   {
     result: false,
-    infoString: "Has a valid SSL certificate",
-    category: "required"
+    infoString: 'Has a valid SSL certificate',
+    category: 'required',
   },
   {
     result: false,
-    infoString: "No mixed content on page",
-    category: "required"
-  }
+    infoString: 'No mixed content on page',
+    category: 'required',
+  },
 ];
 
 export async function testSecurity(url: string): Promise<Array<TestResult>> {
@@ -42,7 +42,8 @@ export async function testSecurity(url: string): Promise<Array<TestResult>> {
 
   if (fetchResultOrTimeout && !fetchResultOrTimeout.ok) {
     throw new Error(
-      'Error fetching security report: ' + await fetchResultOrTimeout.statusText
+      'Error fetching security report: ' +
+        (await fetchResultOrTimeout.statusText)
     );
   }
 
@@ -53,19 +54,19 @@ export async function testSecurity(url: string): Promise<Array<TestResult>> {
   const organizedResults = [
     {
       result: results.data.isHTTPS,
-      infoString: "Uses HTTPS",
-      category: "required"
+      infoString: 'Uses HTTPS',
+      category: 'required',
     },
     {
       result: results.data.valid,
-      infoString: "Has a valid SSL certificate",
-      category: "required"
+      infoString: 'Has a valid SSL certificate',
+      category: 'required',
     },
     {
       result: results.data.validProtocol,
-      infoString: "No mixed content on page",
-      category: "required"
-    }
+      infoString: 'No mixed content on page',
+      category: 'required',
+    },
   ];
 
   return organizedResults;

@@ -1,11 +1,5 @@
-import {
-  LitElement,
-  html,
-  css,
-  TemplateResult,
-} from 'lit';
-import { customElement,
-  state, } from "lit/decorators.js"
+import { LitElement, html, css, TemplateResult } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
 import { getOverallScore } from '../services/tests';
 import { env } from '../utils/environment';
 
@@ -171,8 +165,8 @@ export class RatingDial extends LitElement {
     > `;
 
     const lowerHTML = html`<span id="rating-comment"
-      >Your PWA ranks <span id="lower">below the average</span> of all developers
-      using PWA Builder</span
+      >Your PWA ranks <span id="lower">below the average</span> of all
+      developers using PWA Builder</span
     > `;
 
     if (this.rating === 'middle') {
