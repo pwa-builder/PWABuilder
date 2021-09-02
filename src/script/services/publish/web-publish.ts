@@ -1,4 +1,4 @@
-import { getManifestGuarded } from '../manifest';
+import { fetchOrCreateManifest } from '../manifest';
 import { env } from '../../utils/environment';
 import { getURL } from '../app-info';
 import { getChosenServiceWorker } from '../service_worker';
@@ -7,13 +7,8 @@ import { Manifest } from '../../utils/interfaces';
 export let web_generated = false;
 
 export async function generateWebPackage() {
-  const manifest = await getManifestGuarded();
-
-  if (!manifest) {
-    // this should never throw in a normal circumstance, this fails the placeholder fallback.
-    throw new Error('No manifest available, unable to generate web package');
-  }
-
+  const manifestContext = await fetchOrCreateManifest();
+  const manifest = manifestContext.manifest;
   const url = getURL();
   const chosenSW = getChosenServiceWorker();
 

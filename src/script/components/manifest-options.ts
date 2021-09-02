@@ -7,7 +7,7 @@ import { localeStrings, languageCodes, langCodes } from '../../locales';
 //@ts-ignore
 import ErrorStyles from '../../../styles/error-styles.css';
 
-import { getManifestGuarded, updateManifest } from '../services/manifest';
+import { fetchOrCreateManifest, updateManifest } from '../services/manifest';
 import { arrayHasChanged } from '../utils/hasChanged';
 import { resolveUrl } from '../utils/url';
 import {
@@ -17,7 +17,7 @@ import {
   Lazy,
   Manifest,
   ModalCloseEvent,
-  ShadowRootQuery,
+  ShadowRootQuery
 } from '../utils/interfaces';
 import {
   CodeEditorEvents,
@@ -466,17 +466,18 @@ export class AppManifest extends LitElement {
 
   async firstUpdated() {    
     try {
-      this.manifest = await getManifestGuarded();
+      const manifestContext = await fetchOrCreateManifest();
+      this.manifest = manifestContext.manifest;
 
       if (this.manifest.icons) {
         this.iconsList = this.manifest.icons;
       }
+
+      this.requestUpdate();
     } catch (err) {
       // should not fall here, but if it does...
       console.warn(err);
     }
-
-    this.requestUpdate();
   }
 
   connectedCallback() {
@@ -930,18 +931,15 @@ export class AppManifest extends LitElement {
     `;
   }
 
-  updateManifest(changes: Partial<Manifest>): Promise<any> {
-    return updateManifest(changes).then(manifest => {
-      this.manifest = manifest;
-
-      editorDispatchEvent(
-        new CustomEvent<CodeEditorSyncEvent>(CodeEditorEvents.sync, {
-          detail: {
-            text: this.getManifestCodeForEditor(),
-          },
-        })
-      );
-    });
+  updatePageManifest(changes: Partial<Manifest>) {
+    this.manifest = updateManifest(changes);
+    editorDispatchEvent(
+      new CustomEvent<CodeEditorSyncEvent>(CodeEditorEvents.sync, {
+        detail: {
+          text: this.getManifestCodeForEditor(),
+        },
+      })
+    );
   }
 
   async handleInputChange(event: InputEvent) {
@@ -950,7 +948,7 @@ export class AppManifest extends LitElement {
     if (this.manifest && fieldName && this.manifest[fieldName] !== undefined) {
       this.switchManifestPreviewerPage(fieldName);
 
-      await this.updateManifest({
+      await this.updatePageManifest({
         [fieldName]: (input.value as any).code || input.value,
       }); 
 
@@ -1001,7 +999,7 @@ export class AppManifest extends LitElement {
     this.backgroundColorRadioValue = value;
 
     if (value !== 'custom' && this.manifest) {
-      this.updateManifest({
+      this.updatePageManifest({
         background_color: value,
       });
     }
@@ -1013,7 +1011,7 @@ export class AppManifest extends LitElement {
     this.themeColorRadioValue = value;
 
     if (value !== 'custom' && this.manifest) {
-      this.updateManifest({
+      this.updatePageManifest({
         theme_color: value,
       });
     }
@@ -1033,14 +1031,14 @@ export class AppManifest extends LitElement {
 
   updateThemeColor(color: string) {
     this.themeColor = color;
-    this.updateManifest({
+    this.updatePageManifest({
       theme_color: color
     });
   }
 
   updateBackgroundColor(color: string) {
     this.backgroundColor = color;
-    this.updateManifest({
+    this.updatePageManifest({
       background_color: color
     });
   }
@@ -1085,7 +1083,7 @@ export class AppManifest extends LitElement {
     try {
       if (this.uploadSelectedImageFile) {
         // remove existing icons so we can replace them
-        this.updateManifest({
+        this.updatePageManifest({
           icons: undefined,
         });
 
@@ -1152,7 +1150,7 @@ export class AppManifest extends LitElement {
         .slice(0, index)
         .concat(imageList.slice(index + 1));
 
-      this.updateManifest({
+      this.updatePageManifest({
         [list]: updatedList,
       });
 

@@ -28,7 +28,7 @@ import '@pwabuilder/pwainstall';
 import { Router } from '@vaadin/router';
 import { getProgress, getURL, setProgress } from '../services/app-info';
 import { Lazy, ProgressList, Status } from '../utils/interfaces';
-import { fetchManifest } from '../services/manifest';
+import { fetchOrCreateManifest } from '../services/manifest';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -272,27 +272,16 @@ export class AppHome extends LitElement {
   async analyzeSite() {
     if (this.siteURL) {
       this.gettingManifest = true;
-
-      const validation_test = await isValidURL(this.siteURL);
-
-      if (validation_test === true) {
+      const isValidUrl = isValidURL(this.siteURL);
+      if (isValidUrl) {
         try {
-          const data = await fetchManifest(this.siteURL);
-
-          if (data.error) {
-            this.errorGettingURL = true;
-            this.errorMessage = data.error;
-            console.warn(`Error getting URL: ${data.error}`);
-
-            return;
-          }
-
+          const manifestContext = await fetchOrCreateManifest(this.siteURL);
           this.errorGettingURL = false;
 
           const progress = getProgress();
           this.updateProgress(progress);
 
-          const goodURL = getURL();
+          const goodURL = manifestContext.siteUrl;
 
           if (goodURL !== undefined) {
             Router.go(`/testing?site=${goodURL}`);

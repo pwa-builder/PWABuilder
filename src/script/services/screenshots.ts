@@ -1,5 +1,5 @@
 import { Screenshot } from '../utils/interfaces';
-import { getManifestGuarded, updateManifest } from './manifest';
+import { fetchOrCreateManifest, updateManifest } from './manifest';
 
 const screenshotServiceBaseUrl = 'https://pwa-screenshots.azurewebsites.net';
 
@@ -33,8 +33,13 @@ export async function generateScreenshots(
     if (res.ok) {
       const response = (await res.json()) as ScreenshotServiceResponse;
 
-      let screenshots: Array<Screenshot> =
-        (await getManifestGuarded())?.screenshots ?? [];
+      let screenshots: Array<Screenshot>;
+      try {
+        const manifestContext = await fetchOrCreateManifest();
+        screenshots = manifestContext.manifest.screenshots || [];
+      } catch (error) {
+        screenshots = [];
+      }
       screenshots = screenshots.concat(
         response.images.map(image => {
           image.src = 'data:image/png;base64,' + image.src;

@@ -6,8 +6,8 @@ import {
   validateWindowsOptions,
   WindowsPackageOptions,
 } from '../../utils/win-validation';
-import { getURL } from '../app-info';
-import { getManifestGuarded, getManiURL } from '../manifest';
+import { getURL, getManifestUrl } from '../app-info';
+import { fetchOrCreateManifest } from '../manifest';
 
 export let windows_generated = false;
 
@@ -23,7 +23,7 @@ export async function generateWindowsPackage(
   if (validationErrors.length > 0 || !windowsOptions) {
     throw new Error(
       'Invalid Windows options. ' +
-        validationErrors.map(a => a.error).join('\n')
+      validationErrors.map(a => a.error).join('\n')
     );
   }
 
@@ -55,11 +55,12 @@ export async function createWindowsPackageOptionsFromManifest(
   if (localManifest) {
     manifest = localManifest;
   } else {
-    manifest = await getManifestGuarded();
+    const manifestContext = await fetchOrCreateManifest();
+    manifest = manifestContext.manifest;
   }
 
   if (manifest) {
-    const maniURL = getManiURL();
+    const maniURL = getManifestUrl();
     const pwaURL = getURL();
 
     if (!pwaURL) {
@@ -116,8 +117,11 @@ export async function createWindowsPackageOptionsFromManifest(
 export async function createWindowsPackageOptionsFromForm(
   form: HTMLFormElement
 ): Promise<WindowsPackageOptions> {
-  const manifest = await getManifestGuarded();
-  if (!manifest) {
+  let manifest: Manifest;
+  try {
+    const manifestContext = await fetchOrCreateManifest();
+    manifest = manifestContext.manifest;
+  } catch {
     return createEmptyPackageOptions();
   }
 
@@ -144,7 +148,7 @@ export async function createWindowsPackageOptionsFromForm(
     edgeHtmlPackage: {
       generate: false,
     },
-    manifestUrl: form.manifestUrl.value || getManiURL(),
+    manifestUrl: form.manifestUrl.value || getManifestUrl(),
     manifest: manifest,
     images: {
       baseImage: form.iconUrl.value || icon,

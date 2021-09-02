@@ -12,8 +12,11 @@ export async function getServiceWorkers() {
       },
       method: 'GET',
     });
-    const swData = await response.json();
+    if (!response.ok) {
+      throw new Error(`Unable to fetch service workers due to error: ${response}`);
+    }
 
+    const swData = await response.json();
     if (swData) {
       const data = JSON.parse(swData);
       return data;
