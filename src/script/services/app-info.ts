@@ -1,14 +1,17 @@
 import {
   ListHeader,
+  Manifest,
+  ManifestContext,
   ProgressList,
+  PWABuilderSession,
   RawTestResult,
   Status,
 } from '../utils/interfaces';
-import { generated } from './manifest';
 import { getChosenServiceWorker } from './service_worker';
 
 let site_url: string | undefined;
 let results: RawTestResult | undefined;
+let manifestContext: ManifestContext | undefined;
 
 let progress: ProgressList = {
   progress: [
@@ -93,20 +96,22 @@ export function setProgress(newProgress: ProgressList) {
 export function setURL(url: string) {
   if (url) {
     site_url = url;
-    sessionStorage.setItem('current_url', site_url);
+    sessionStorage.setItem(PWABuilderSession.currentUrl, site_url);
   }
 }
 
-export function getURL() {
-  const url = sessionStorage.getItem('current_url');
+export function getURL(): string {
+  const url = sessionStorage.getItem(PWABuilderSession.currentUrl);
 
   if (site_url) {
     return site_url;
-  } else if (url) {
-    return url;
-  } else {
-    throw new Error('No Good URL found for the current site');
   }
+
+  if (url) {
+    return url;
+  }
+
+  throw new Error('No Good URL found for the current site');
 }
 
 export function setResults(testResults: RawTestResult) {
@@ -135,8 +140,8 @@ export async function baseOrPublish(): Promise<'base' | 'publish'> {
   const choseSW = getChosenServiceWorker();
 
   // is the manifest one we generated
-  // or the users
-  const generatedFlag = generated;
+  // or is it from the developer?
+  const generatedFlag = getManifestContext().isGenerated;
 
   if (generatedFlag === true || choseSW !== undefined) {
     // User has chosen a custom service worker
@@ -144,14 +149,75 @@ export async function baseOrPublish(): Promise<'base' | 'publish'> {
     // send to basepackage to download.
     // to-do: Users who edit their manifest will be sent here too
     return 'base';
-  } else if (generatedFlag === false) {
+  }
+
+  if (generatedFlag === false) {
     // User already has a manifest
     // send to publish page
     return 'publish';
-  } else {
-    // user does not have a manifest and has not chosen an SW
-    // They will go to the base package page and will need to download
-    // The generated manifest and default SW
-    return 'base';
+  }
+
+  // user does not have a manifest and has not chosen an SW
+  // They will go to the base package page and will need to download
+  // The generated manifest and default SW
+  return 'base';
+}
+
+/**
+ * Gets contextual information about the current manifest.
+ * If no manifest has been detected, an empty manifest will be returned.
+ * @returns 
+ */
+export function getManifestContext(): ManifestContext {
+  if (!manifestContext) {
+    manifestContext = getManifestFromSessionOrEmpty();
+  }
+
+  return manifestContext;
+}
+
+/**
+ * Sets the current manifest context.
+ * @param val The manifest.
+ */
+export function setManifestContext(val: ManifestContext) {
+  manifestContext = val;
+  sessionStorage.setItem(PWABuilderSession.manifest, JSON.stringify(val));
+  setURL(val.siteUrl);
+}
+
+export function getManifestUrl(): string {
+  return getManifestContext().manifestUrl;
+}
+
+function getManifestFromSessionOrEmpty(): ManifestContext {
+  try {
+    const sessionManifest = sessionStorage.getItem(PWABuilderSession.manifest);
+    if (sessionManifest) {
+      return JSON.parse(sessionManifest) as ManifestContext;
+    }
+  } catch (err) {
+    console.error('Unable to load manifest from session', err);
+  }
+
+  const emptyManifest: Manifest = {
+    dir: 'auto',
+    display: 'fullscreen',
+    name: 'placeholder',
+    short_name: 'placeholder',
+    start_url: undefined,
+    scope: '/',
+    lang: 'en',
+    description: 'placeholder description',
+    theme_color: 'none',
+    background_color: 'none',
+    icons: [],
+    screenshots: [],
+  };
+  return {
+    manifest: emptyManifest,
+    siteUrl: sessionStorage.getItem(PWABuilderSession.currentUrl) || '',
+    manifestUrl: '',
+    isGenerated: true
   }
 }

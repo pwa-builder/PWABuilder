@@ -9,7 +9,7 @@ import { tooltip, styles as ToolTipStyles } from '../components/tooltip';
 import style from '../../../styles/form-styles.css';
 //@ts-ignore
 import ModalStyles from '../../../styles/modal-styles.css';
-import { getManifestGuarded } from '../services/manifest';
+import { fetchOrCreateManifest } from '../services/manifest';
 import { createAndroidPackageOptionsFromManifest } from '../services/publish/android-publish';
 import { AndroidApkOptions } from '../utils/android-validation';
 
@@ -107,7 +107,8 @@ export class AndroidForm extends LitElement {
       this.form = form;
     }
 
-    this.currentManifest = await getManifestGuarded();
+    const manifestContext = await fetchOrCreateManifest();
+    this.currentManifest = manifestContext.manifest;
 
     this.default_options = await createAndroidPackageOptionsFromManifest();
   }

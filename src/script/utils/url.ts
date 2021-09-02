@@ -52,7 +52,7 @@ export function validateUrl(url: string, base?: string): string | null {
   }
 }
 
-export async function cleanUrl(url: string): Promise<string> {
+export function cleanUrl(url: string): string {
   let cleanedUrl: string | undefined;
 
   if (url && !url.startsWith('http') && !url.startsWith('https')) {
@@ -60,15 +60,15 @@ export async function cleanUrl(url: string): Promise<string> {
   }
 
   if (cleanedUrl) {
-    const test = await isValidURL(cleanedUrl);
+    const test = isValidURL(cleanedUrl);
 
     if (test === false && !url.toLowerCase().startsWith('http://')) {
       throw new Error(
         'This error means that you may have a bad https cert or the url may not be correct'
       );
-    } else {
-      return cleanedUrl;
     }
+
+    return cleanedUrl;
   }
 
   // original URL is ok
@@ -79,11 +79,11 @@ export function isValidURL(str: string) {
   // from https://stackoverflow.com/a/5717133
   var pattern = new RegExp(
     '^(https?:\\/\\/)?' +
-      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
-      '((\\d{1,3}\\.){3}\\d{1,3}))' +
-      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
-      '(\\?[;&a-z\\d%_.~+=-]*)?' +
-      '(\\#[-a-z\\d_]*)?$',
+    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
+    '((\\d{1,3}\\.){3}\\d{1,3}))' +
+    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
+    '(\\?[;&a-z\\d%_.~+=-]*)?' +
+    '(\\#[-a-z\\d_]*)?$',
     'i'
   );
   return !!pattern.test(str);

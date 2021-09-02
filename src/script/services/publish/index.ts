@@ -1,5 +1,5 @@
 import { Manifest } from '../../utils/interfaces';
-import { fetchManifest } from '../manifest';
+import { fetchOrCreateManifest } from '../manifest';
 import {
   createAndroidPackageOptionsFromForm,
   createAndroidPackageOptionsFromManifest,
@@ -50,10 +50,11 @@ async function grabBackupManifest() {
   let localManifest: Manifest | null = null;
 
   if (site) {
-    const maniResults = await fetchManifest(site);
+    try {
+      const context = await fetchOrCreateManifest(site);
+      localManifest = context.manifest;
+    } catch (error) {
 
-    if (maniResults && maniResults.content) {
-      localManifest = maniResults.content;
     }
   }
 

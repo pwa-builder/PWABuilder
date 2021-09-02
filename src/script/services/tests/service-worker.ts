@@ -20,9 +20,21 @@ export async function testServiceWorker(
     return [];
   }
 
-  const swData = await detectServiceWorker(url);
+  let swData: ServiceWorkerDetectionResult;
+  try {
+    swData = await detectServiceWorker(url);
+  } catch (swDetectionError) {
+    swData = {
+      hasSW: false,
+      url: url,
+      hasPushRegistration: false,
+      serviceWorkerDetectionTimedOut: false,
+      noServiceWorkerFoundDetails: `${swDetectionError}`,
+      hasBackgroundSync: false,
+      hasPeriodicBackgroundSync: false,
+    };
+  }
   const worksOffline = await detectOfflineSupport(url);
-
   const swTestResult = [
     {
       result: swData.hasSW,
@@ -58,11 +70,11 @@ async function detectServiceWorker(
   );
   if (!fetchResult.ok) {
     console.warn(
-      'Unable to detect service worker',
+      'Unable to detect service worker due to HTTP error',
       fetchResult.status,
       fetchResult.statusText
     );
-    throw new Error(fetchResult.statusText);
+    throw new Error(`Service worker detection failed due to HTTP error ${fetchresult.status} ${fetchResult.statusText}`);
   }
 
   const jsonResult: ServiceWorkerDetectionResult = await fetchResult.json();
@@ -94,8 +106,8 @@ async function detectOfflineSupport(url: string): Promise<boolean> {
     const lighthouseCheck = detectOfflineSupportLighthouse(url);
     new Promise<void>(() => setTimeout(() => resolve(false), 10000));
 
-    puppeteerCheck.then(result => resolveIfOfflineDetected(result));
-    lighthouseCheck.then(result => resolveIfOfflineDetected(result));
+    puppeteerCheck.then(result => resolveIfOfflineDetected(result), puppeteerError => console.warn('Service worker offline check via Puppeteer failed', puppeteerError));
+    lighthouseCheck.then(result => resolveIfOfflineDetected(result), lighthouseError => console.warn('Service worker offline check via Lighthouse failed', lighthouseError));
 
     // If both checks finished, resolve as no offline detected.
     Promise.allSettled([puppeteerCheck, lighthouseCheck]).then(() =>

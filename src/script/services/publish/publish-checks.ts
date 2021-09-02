@@ -1,6 +1,6 @@
 import { findBestAppIcon } from '../../utils/icons';
 import { getResults, getURL } from '../app-info';
-import { getManifestGuarded } from '../manifest';
+import { fetchOrCreateManifest } from '../manifest';
 
 export interface checkResults {
   validURL: boolean;
@@ -23,7 +23,8 @@ export async function finalCheckForPublish(): Promise<checkResults> {
     const results = getResults();
     const testURL = getURL();
 
-    const manifest = await getManifestGuarded();
+    const manifestContext = await fetchOrCreateManifest();
+    const manifest = manifestContext.manifest;
     const possible_icons = manifest ? manifest.icons : [];
     const icon = findBestAppIcon(possible_icons);
     if (results && testURL) {

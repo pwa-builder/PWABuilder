@@ -6,8 +6,8 @@ import {
 import { env } from '../../utils/environment';
 import { findSuitableIcon, findBestAppIcon } from '../../utils/icons';
 import { Manifest } from '../../utils/interfaces';
-import { getURL } from '../app-info';
-import { getManifestGuarded, getManiURL } from '../manifest';
+import { getURL, getManifestUrl } from '../app-info';
+import { fetchOrCreateManifest } from '../manifest';
 
 export let android_generated = false;
 
@@ -71,13 +71,14 @@ export async function createAndroidPackageOptionsFromForm(
   form: HTMLFormElement,
   signingFile?: string
 ): Promise<AndroidApkOptions> {
-  const manifest = await getManifestGuarded();
+  const manifestContext = await fetchOrCreateManifest();
+  const manifest = manifestContext.manifest;
   if (!manifest) {
     throw new Error('Could not find the web manifest');
   }
 
-  const maniUrl = getManiURL();
-  const pwaUrl = getURL();
+  const maniUrl = manifestContext.manifestUrl;
+  const pwaUrl = manifestContext.siteUrl;
 
   if (!pwaUrl) {
     throw new Error("Can't find the current URL");
@@ -181,14 +182,15 @@ export async function createAndroidPackageOptionsFromManifest(
   if (localManifest) {
     manifest = localManifest;
   } else {
-    manifest = await getManifestGuarded();
+    const manifestContext = await fetchOrCreateManifest();
+    manifest = manifestContext.manifest;
   }
 
   if (!manifest) {
     throw new Error('Could not find the web manifest');
   }
 
-  const maniUrl = getManiURL();
+  const maniUrl = getManifestUrl();
   const pwaUrl = getURL();
 
   if (!pwaUrl) {

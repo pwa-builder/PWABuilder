@@ -1,7 +1,7 @@
 import { api } from '../utils/api';
 import { download } from '../utils/download';
 import { Icon } from '../utils/interfaces';
-import { getManifestGuarded, updateManifest } from './manifest';
+import { fetchOrCreateManifest, updateManifest } from './manifest';
 
 type Platform =
   | 'windows10'
@@ -48,7 +48,8 @@ export async function generateMissingImagesBase64(
     });
 
     if (response.ok) {
-      const manifest = await getManifestGuarded();
+      const manifestContext = await fetchOrCreateManifest();
+      const manifest = manifestContext.manifest;
 
       if (!manifest) {
         console.error('Manifest was unexpectedly null or undefined');
