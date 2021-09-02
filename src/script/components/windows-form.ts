@@ -9,8 +9,7 @@ import style from '../../../styles/form-styles.css';
 //@ts-ignore
 import ModalStyles from '../../../styles/modal-styles.css';
 
-import { getURL } from '../services/app-info';
-import { getManiURL } from '../services/manifest';
+import { getURL, getManifestUrl } from '../services/app-info';
 import { createWindowsPackageOptionsFromManifest } from '../services/publish/windows-publish';
 
 import { smallBreakPoint, xxLargeBreakPoint } from '../utils/css/breakpoints';
@@ -160,6 +159,10 @@ export class WindowsForm extends LitElement {
         }
       }
     }
+  }
+
+  get manifestUrl(): string | null | undefined {
+    return getManifestUrl();
   }
 
   render() {
@@ -429,7 +432,7 @@ export class WindowsForm extends LitElement {
                     placeholder="https://mysite.com/manifest.json"
                     name="manifestUrl"
                     .value="${this.default_options?.manifestUrl ||
-                    getManiURL() ||
+                    this.manifestUrl ||
                     ''}"
                     required
                   />
