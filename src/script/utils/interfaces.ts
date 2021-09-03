@@ -142,7 +142,9 @@ export interface ManifestContext {
   siteUrl: string;
   manifestUrl: string;
   manifest: Manifest;
+  initialManifest: Manifest;
   isGenerated: boolean;
+  isEdited: boolean;
 }
 
 export interface RawTestResult {
