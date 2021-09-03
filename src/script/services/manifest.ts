@@ -6,9 +6,10 @@ import {
   ManifestDetectionResult
 } from '../utils/interfaces';
 import { cleanUrl } from '../utils/url';
-import { getManifestContext, getURL, setManifestContext, setURL } from './app-info';
+import { getManifestContext, getURL, setManifestContext, setURL, isManifestEdited } from './app-info';
 
 export const emitter = new EventTarget();
+export let initialManifest: Manifest;
 
 export let emptyManifest: Manifest = {
   dir: 'auto',
@@ -158,6 +159,14 @@ async function fetchManifest(
       timeoutAfter(10000).then(() => reject("Timeout expired"));
 
       const manifestDetectionResult = await Promise.any(manifestDetectors);
+
+      const context = getManifestContext();
+      if (!context.initialManifest) {
+        initialManifest = manifestDetectionResult.content;
+        context.initialManifest = initialManifest;
+        setManifestContext(context);
+      }
+
       resolve(manifestDetectionResult);
     } catch (manifestDetectionError) {
       console.error('All manifest detectors failed.', manifestDetectionError);
@@ -187,9 +196,11 @@ export async function fetchOrCreateManifest(url?: string | null | undefined): Pr
   // Update our global manifest state.
   const context = {
     manifest: detectionResult.content,
+    initialManifest: initialManifest,
     manifestUrl: detectionResult.generatedUrl,
     isGenerated: detectionResult.generated,
-    siteUrl: detectionResult.siteUrl
+    siteUrl: detectionResult.siteUrl,
+    isEdited: false
   };
   setManifestContext(context);
 
@@ -245,7 +256,13 @@ export function updateManifest(
   manifestUpdates: Partial<Manifest>
 ): Manifest {
   const context = getManifestContext();
+
   context.manifest = Object.assign(context.manifest, manifestUpdates as Partial<Manifest>);
+
+  if (context.initialManifest) {
+    isManifestEdited(context.initialManifest, context.manifest);
+  }
+
   setManifestContext(context);
 
   emitter.dispatchEvent(

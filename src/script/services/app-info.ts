@@ -143,7 +143,11 @@ export async function baseOrPublish(): Promise<'base' | 'publish'> {
   // or is it from the developer?
   const generatedFlag = getManifestContext().isGenerated;
 
-  if (generatedFlag === true || choseSW !== undefined) {
+  // has the manifest been edited by
+  // the user?
+  const editedFlag = getManifestContext().isEdited;
+
+  if (generatedFlag === true || choseSW !== undefined || editedFlag === true) {
     // User has chosen a custom service worker
     // or we have generated a manifest for them
     // send to basepackage to download.
@@ -151,8 +155,9 @@ export async function baseOrPublish(): Promise<'base' | 'publish'> {
     return 'base';
   }
 
-  if (generatedFlag === false) {
+  if (generatedFlag === false && editedFlag === false) {
     // User already has a manifest
+    // and as not edited it
     // send to publish page
     return 'publish';
   }
@@ -166,7 +171,7 @@ export async function baseOrPublish(): Promise<'base' | 'publish'> {
 /**
  * Gets contextual information about the current manifest.
  * If no manifest has been detected, an empty manifest will be returned.
- * @returns 
+ * @returns
  */
 export function getManifestContext(): ManifestContext {
   if (!manifestContext) {
@@ -216,8 +221,39 @@ function getManifestFromSessionOrEmpty(): ManifestContext {
   };
   return {
     manifest: emptyManifest,
+    initialManifest: emptyManifest,
     siteUrl: sessionStorage.getItem(PWABuilderSession.currentUrl) || '',
     manifestUrl: '',
-    isGenerated: true
+    isGenerated: true,
+    isEdited: false,
+  };
+}
+
+// a function that compares two objects and returns true if the same, false if different
+export function isManifestEdited(
+  originalMani: Manifest,
+  newMani: Manifest
+): void {
+  if (originalMani === newMani) {
+    getManifestContext().isEdited = false;
   }
+
+  // loop through all the values in the original manifest
+  // and see if they are diffrent in the newMani
+  Object.keys(originalMani).forEach((key) => {
+
+    if (Array.isArray(originalMani[key]) && Array.isArray(newMani[key])) {
+      let flattened_original: Array<any> = originalMani[key].flat(2);
+      let flattened_new: Array<any> = newMani[key].flat(2);
+
+      flattened_original.forEach((item: any, index) => {
+        if (flattened_new.includes(item) === true && flattened_new[index] !== item) {
+          getManifestContext().isEdited = true;
+        }
+      })
+    }
+    else if (JSON.stringify(originalMani[key]) !== JSON.stringify(newMani[key])) {
+      getManifestContext().isEdited = true;
+    }
+  });
 }
