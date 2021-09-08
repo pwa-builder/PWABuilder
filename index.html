@@ -1,92 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>PWABuilder</title>
 
-    <base href="/" />
+<head>
+  <meta charset="utf-8" />
+  <title>PWABuilder</title>
 
-    <!-- This meta viewport ensures the webpage's dimensions change according to the device it's on. This is called Responsive Web Design.-->
-    <meta
-      name="viewport"
-      content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0"
-    />
-    <meta
-      name="description"
-      content="All the tools you need to build and deploy your Progressive Web Apps."
-    />
-    <meta name="theme-color" content="#FFFFFF" />
+  <base href="/" />
 
-    <!-- These meta tags are Apple-specific, and set the web application to run in full-screen mode with a black status bar. Learn more at https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html-->
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-title" content="PWABuilder" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <!-- This meta viewport ensures the webpage's dimensions change according to the device it's on. This is called Responsive Web Design.-->
+  <meta name="viewport"
+    content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
+  <meta name="description" content="All the tools you need to build and deploy your Progressive Web Apps." />
+  <meta name="theme-color" content="#FFFFFF" />
 
-    <!-- for analytics -->
-    <meta name="ms.appid" content="PWABuilder">
+  <!-- These meta tags are Apple-specific, and set the web application to run in full-screen mode with a black status bar. Learn more at https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html-->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="PWABuilder" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 
-    <link rel="preconnect" href="https://web.vortex.data.microsoft.com">
+  <!-- for analytics -->
+  <meta name="ms.appid" content="PWABuilder">
 
-    <!-- Imports an icon to represent the document. -->
-    <link rel="icon" href="assets/icons/icon_24.png" type="image/x-icon" />
+  <link rel="preconnect" href="https://web.vortex.data.microsoft.com">
 
-    <!-- Imports the manifest to represent the web application. A web app must have a manifest to be a PWA. -->
-    <link rel="manifest" href="manifest.json" />
+  <!-- Imports an icon to represent the document. -->
+  <link rel="icon" href="assets/icons/icon_24.png" type="image/x-icon" />
 
-    <!-- Microsoft Fast Components https://www.fast.design/docs/components/getting-started-->
-    <script
-      type="module"
-      src="/fast-components.min.js"
-    ></script>
+  <!-- Imports the manifest to represent the web application. A web app must have a manifest to be a PWA. -->
+  <link rel="manifest" href="manifest.json" />
 
-    <!-- A stylesheet to design the pages. -->
-    <link href="styles/global.css" rel="stylesheet" />
+  <!-- Microsoft Fast Components https://www.fast.design/docs/components/getting-started-->
+  <script type="module" src="/fast-components.min.js"></script>
 
-    <!--<script type="module" src="/build/src/script/pages/app-index.js"></script>-->
-    <script type="module" src="src/script/pages/app-index.ts"></script>
+  <!-- A stylesheet to design the pages. -->
+  <link href="styles/global.css" rel="stylesheet" />
 
-    <!-- preload font -->
-    <link rel="preload" as="font" href="assets/fonts/Hind-Bold.ttf" />
-    <link rel="preload" as="font" href="assets/fonts/Hind-Regular.ttf" />
-  </head>
+  <!--<script type="module" src="/build/src/script/pages/app-index.js"></script>-->
+  <script type="module" src="src/script/pages/app-index.ts"></script>
 
-  <body>
-    <!-- Our app-index web component. This component is defined in src/pages/app-index.ts-->
-    <fast-design-system-provider use-defaults>
-      <app-index></app-index>
-    </fast-design-system-provider>
+  <!-- preload font -->
+  <link rel="preload" as="font" href="assets/fonts/Hind-Bold.ttf" />
+  <link rel="preload" as="font" href="assets/fonts/Hind-Regular.ttf" />
+</head>
 
-    <script type="module" src="/pwabuilder-sw.ts"></script>
+<body>
+  <!-- Our app-index web component. This component is defined in src/pages/app-index.ts-->
+  <fast-design-system-provider use-defaults>
+    <app-index></app-index>
+  </fast-design-system-provider>
 
-    <script>
-      navigator.serviceWorker.register('/pwabuilder-sw.js');
-    </script>
+  <script type="module" src="/pwabuilder-sw.ts"></script>
 
-    <script
-      async="true"
-      defer="true"
-      type="module"
-      src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.esm.js"
-    ></script>
-    <script
-      async="true"
-      defer="true"
-      nomodule=""
-      src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.js"
-    ></script>
+  <script>
+    navigator.serviceWorker.register('/pwabuilder-sw.js');
+  </script>
 
-    <!-- for analytics -->
-    <script src="https://az725175.vo.msecnd.net/scripts/jsll-4.js"></script>
-    <script>
-      const config = {
-        coreData: {
-          appId: "PWABuilder"
-        }
-      };
+  <script async="true" defer="true" type="module"
+    src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.esm.js"></script>
+  <script async="true" defer="true" nomodule=""
+    src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.js"></script>
 
-      if (window.awa) {
-        window.awa.init(config);
-      }
-    </script>
-  </body>
+  <!-- for analytics -->
+  <script type="text/javascript" src="https://az416426.vo.msecnd.net/scripts/c/ms.analytics-web-2.min.js"></script>
+  <script>
+
+  </script>
+</body>
+
 </html>

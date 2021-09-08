@@ -29,6 +29,7 @@ import { Router } from '@vaadin/router';
 import { getProgress, getURL, setProgress } from '../services/app-info';
 import { Lazy, ProgressList, Status } from '../utils/interfaces';
 import { fetchOrCreateManifest } from '../services/manifest';
+import { recordPageAction } from '../utils/analytics';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -273,6 +274,7 @@ export class AppHome extends LitElement {
     if (this.siteURL) {
       this.gettingManifest = true;
       const isValidUrl = isValidURL(this.siteURL);
+      recordPageAction('analysis-started', { url: this.siteURL, valid: isValidUrl });
       if (isValidUrl) {
         try {
           const manifestContext = await fetchOrCreateManifest(this.siteURL);

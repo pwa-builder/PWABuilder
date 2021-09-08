@@ -32,6 +32,7 @@
     "@codemirror/text": "^0.18.0",
     "@codemirror/tooltip": "^0.18.4",
     "@codemirror/view": "^0.18.10",
+    "@microsoft/1ds-wa-js": "^3.1.5",
     "@pwabuilder/manifest-previewer": "^1.0.21",
     "@pwabuilder/pwainstall": "^1.6.6",
     "@vaadin/router": "^1.7.4",

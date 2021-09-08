@@ -13,7 +13,8 @@ import {
 
 export type Platform = 'windows' | 'android' | 'samsung';
 
-export type PackageInfo = {
+type PackageInfo = {
+  appName: string;
   blob: Blob | null;
   type: string;
 };
@@ -77,6 +78,7 @@ async function tryGenerateWindowsPackage(
 
       const blob = await generateWindowsPackage(options);
       return {
+        appName: options.name,
         blob: blob || null,
         type: 'store',
       };
@@ -86,6 +88,7 @@ async function tryGenerateWindowsPackage(
         const options = await createWindowsPackageOptionsFromManifest();
         const testBlob = await generateWindowsPackage(options);
         return {
+          appName: options.name,
           blob: testBlob || null,
           type: 'test',
         };
@@ -102,6 +105,7 @@ async function tryGenerateWindowsPackage(
         );
         const testBlob = await generateWindowsPackage(options);
         return {
+          appName: options.name,
           blob: testBlob || null,
           type: 'test',
         };
@@ -128,6 +132,7 @@ async function tryGenerateAndroidPackage(
 
     const blob = await generateAndroidPackage(androidOptions, form);
     return {
+      appName: androidOptions.name,
       blob: blob || null,
       type: 'store',
     };
@@ -138,6 +143,7 @@ async function tryGenerateAndroidPackage(
       const testBlob = await generateAndroidPackage(androidOptions);
 
       return {
+        appName: androidOptions.name,
         blob: testBlob || null,
         type: 'test',
       };
@@ -155,6 +161,7 @@ async function tryGenerateAndroidPackage(
 
       const testBlob = await generateAndroidPackage(androidOptions);
       return {
+        appName: androidOptions.name,
         blob: testBlob || null,
         type: 'test',
       };
