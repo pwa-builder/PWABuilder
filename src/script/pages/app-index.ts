@@ -7,7 +7,7 @@ import '../components/app-footer';
 import '../components/app-header';
 import '../components/app-button';
 import '../components/cookie-banner';
-import { recordPageView, initAnalytics } from '../utils/analytics';
+import { recordPageView } from '../utils/analytics';
 
 @customElement('app-index')
 export class AppIndex extends LitElement {
@@ -71,8 +71,6 @@ export class AppIndex extends LitElement {
 
   constructor() {
     super();
-
-    initAnalytics();
 
     window.addEventListener('vaadin-router-location-changed', ev => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
