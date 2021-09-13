@@ -155,6 +155,18 @@ export class AppHeader extends LitElement {
     super();
   }
 
+  firstUpdated() {
+    // Cant seem to type `event` as a KeyboardEvent without TypeScript complaining
+    // with an error I dont fully understand.
+    // revisit: Justin
+    this.shadowRoot?.querySelector('#header-icon')?.addEventListener("keydown" , (event) => {
+      // casting here because of type problem described above
+      if ((event as KeyboardEvent).key === "Enter") {
+        this.goBack();
+      }
+    })
+  }
+
   goBack() {
     const pathName = location.pathname;
 
@@ -170,6 +182,7 @@ export class AppHeader extends LitElement {
       <header part="header">
         <img
           @click="${this.goBack}"
+          tabindex="0"
           id="header-icon"
           src="/assets/images/header_logo.svg"
           alt="header logo"
@@ -193,13 +206,6 @@ export class AppHeader extends LitElement {
             <ion-icon name="logo-github"></ion-icon>
           </fast-anchor>
         </nav>
-
-        <!-- temporarily removing this based on design feedback -->
-        <!--<nav id="mobile-nav">
-          <fast-button appearance="lightweight">
-            <ion-icon name="menu-outline"></ion-icon>
-          </fast-button>
-        </nav>-->
       </header>
     `;
   }
