@@ -7,6 +7,7 @@ import copy from "rollup-plugin-copy";
 import typescript from "@rollup/plugin-typescript";
 import litcss from "rollup-plugin-lit-css";
 import json from '@rollup/plugin-json';
+import versionInjector from 'rollup-plugin-version-injector';
 
 export default {
   input: "build/index.html",
@@ -16,6 +17,13 @@ export default {
   },
   plugins: [
     resolve(),
+    versionInjector(
+      {
+        injectInTags: {
+          dateFormat: 'mmmm d, yyyy HH:MM:ss'
+        }
+      }
+    ),
     replace({
       "process.env.NODE_ENV": JSON.stringify(
         process.env.NODE_ENV || "production"
