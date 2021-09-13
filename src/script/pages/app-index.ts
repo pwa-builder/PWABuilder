@@ -81,6 +81,8 @@ export class AppIndex extends LitElement {
         pageHeight: window.innerHeight,
       });
     });
+
+    console.info('[VI]{version} - {date}[/VI]');
   }
 
   firstUpdated() {
