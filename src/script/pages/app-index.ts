@@ -7,7 +7,7 @@ import '../components/app-footer';
 import '../components/app-header';
 import '../components/app-button';
 import '../components/cookie-banner';
-import { capturePageView } from '../utils/analytics';
+import { recordPageView } from '../utils/analytics';
 
 @customElement('app-index')
 export class AppIndex extends LitElement {
@@ -75,11 +75,10 @@ export class AppIndex extends LitElement {
     window.addEventListener('vaadin-router-location-changed', ev => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
-      capturePageView({
-        pageName: ev.detail.location.route?.component,
-        uri: ev.detail.location.pathname,
-        pageHeight: window.innerHeight,
-      });
+      recordPageView(
+        ev.detail.location.pathname, // path
+        ev.detail.location.route?.component // page name
+      );
     });
 
     console.info('[VI]{version} - {date}[/VI]');
@@ -156,11 +155,11 @@ export class AppIndex extends LitElement {
       <div>
         <!--required cookie banner-->
         <cookie-banner></cookie-banner>
-
+      
         <main>
           <div id="router-outlet"></div>
         </main>
-
+      
         <app-footer></app-footer>
       </div>
     `;

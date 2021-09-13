@@ -74,7 +74,7 @@ async function detectServiceWorker(
       fetchResult.status,
       fetchResult.statusText
     );
-    throw new Error(`Service worker detection failed due to HTTP error ${fetchresult.status} ${fetchResult.statusText}`);
+    throw new Error(`Service worker detection failed due to HTTP error ${fetchResult.status} ${fetchResult.statusText}`);
   }
 
   const jsonResult: ServiceWorkerDetectionResult = await fetchResult.json();

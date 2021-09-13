@@ -32,6 +32,8 @@ import { generatePackage, Platform } from '../services/publish';
 import { getReportErrorUrl } from '../utils/error';
 import { styles as ToolTipStyles } from '../components/tooltip';
 import { localeStrings } from '../../locales';
+import { recordPageAction } from '../utils/analytics';
+import { getURL } from '../services/app-info';
 @customElement('app-publish')
 export class AppPublish extends LitElement {
   @state() errored = false;
@@ -39,6 +41,7 @@ export class AppPublish extends LitElement {
 
   @state() blob: Blob | File | null | undefined;
   @state() testBlob: Blob | File | null | undefined;
+  @state() downloadFileName: string | null = null;
 
   @state() mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`
@@ -392,94 +395,97 @@ export class AppPublish extends LitElement {
     }
   }
 
-  async generate(type: platform, form?: HTMLFormElement, signingFile?: string) {
-    if (type === 'windows') {
-      // Final checks for Windows
-      if (this.finalChecks) {
-        const maniCheck = this.finalChecks.manifest;
-        const baseIcon = this.finalChecks.baseIcon;
-        const validURL = this.finalChecks.validURL;
+  getWindowsFinalChecksErrorMessage(): string | null {
+    if (this.finalChecks) {
+      const maniCheck = this.finalChecks.manifest;
+      const baseIcon = this.finalChecks.baseIcon;
+      const validURL = this.finalChecks.validURL;
 
-        if (maniCheck === false || baseIcon === false || validURL === false) {
-          this.generating = false;
-          this.open_windows_options = false;
-
-          let err = '';
-
-          if (maniCheck === false) {
-            err = 'Your PWA does not have a valid Web Manifest';
-          } else if (baseIcon === false) {
-            err = 'Your PWA needs at least a 512x512 PNG icon';
-          } else if (validURL === false) {
-            err = 'Your PWA does not have a valid URL';
-          }
-
-          this.showAlertModal(err, type);
-
-          return;
-        }
+      if (maniCheck === false) {
+        return 'Your PWA does not have a valid Web Manifest';
       }
-    } else if (type === 'android') {
-      // Final checks for Android
-      if (this.finalChecks) {
-        const maniCheck = this.finalChecks.manifest;
-        const baseIcon = this.finalChecks.baseIcon;
-        const validURL = this.finalChecks.validURL;
-        const offlineCheck = this.finalChecks.offline;
-
-        if (maniCheck === false || baseIcon === false || validURL === false) {
-          this.generating = false;
-          this.open_android_options = false;
-
-          let err = '';
-
-          if (maniCheck === false) {
-            err = 'Your PWA does not have a valid Web Manifest';
-          } else if (baseIcon === false) {
-            err = 'Your PWA needs at least a 512x512 PNG icon';
-          } else if (validURL === false) {
-            err = 'Your PWA does not have a valid URL';
-          } else if (offlineCheck === false) {
-            // Extra offline check for Android
-            err = 'Your PWA does not work offline';
-          }
-
-          this.showAlertModal(err, type);
-
-          return;
-        }
+      
+      if (baseIcon === false) {
+        return 'Your PWA needs at least a 512x512 PNG icon';
+      }
+      
+      if (validURL === false) {
+        return 'Your PWA does not have a valid URL';
       }
     }
+
+    return null;
+  }
+
+  getAndroidFinalChecksErrorMessage(): string | null {
+    if (this.finalChecks) {
+      const maniCheck = this.finalChecks.manifest;
+      const baseIcon = this.finalChecks.baseIcon;
+      const validURL = this.finalChecks.validURL;
+
+      if (maniCheck === false) {
+        return 'Your PWA does not have a valid Web Manifest';
+      }
+      
+      if (baseIcon === false) {
+        return 'Your PWA needs at least a 512x512 PNG icon';
+      }
+      
+      if (validURL === false) {
+        return 'Your PWA does not have a valid URL';
+      }
+    }
+
+    return null;
+  }
+
+  async generate(type: Platform, form?: HTMLFormElement, signingFile?: string) {
+    if (type === 'windows') {
+      const windowsErrorMessage = this.getWindowsFinalChecksErrorMessage();
+      if (windowsErrorMessage) {
+        this.open_windows_options = false;
+        this.showAlertModal(windowsErrorMessage, type);
+        return;
+      }
+    } else if (type === 'android') {
+      const androidErrorMessage = this.getAndroidFinalChecksErrorMessage();
+      if (androidErrorMessage) {
+        this.open_android_options = false;
+        this.showAlertModal(androidErrorMessage, type);
+        return;
+      }
+    }
+
+    // Record analysis results to our analytics portal.
+    recordPageAction(`create-${type}-package`, { url: getURL() });
 
     try {
       this.generating = true;
       const packageData = await generatePackage(type, form, signingFile);
 
       if (packageData) {
+        this.downloadFileName = `${packageData.appName}.zip`;
         if (packageData.type === 'test') {
           this.testBlob = packageData.blob;
         } else {
           this.blob = packageData.blob;
         }
       }
-
-      this.generating = false;
-      this.open_android_options = false;
-      this.open_windows_options = false;
     } catch (err) {
       console.error(err);
+      this.showAlertModal(err as Error, type);
+      recordPageAction(`create-${type}-package-failed`, { url: getURL() });
+    } finally {
       this.generating = false;
       this.open_android_options = false;
       this.open_windows_options = false;
-
-      this.showAlertModal(err as Error, type);
     }
   }
 
   async download() {
     if (this.blob || this.testBlob) {
       await fileSave((this.blob as Blob) || (this.testBlob as Blob), {
-        fileName: 'your_pwa.zip',
+        fileName: this.downloadFileName || 'your_pwa.zip',
         extensions: ['.zip'],
       });
 
@@ -791,8 +797,6 @@ export class AppPublish extends LitElement {
     `;
   }
 }
-
-type platform = 'windows' | 'android' | 'samsung';
 
 interface ICardData {
   title: string;
