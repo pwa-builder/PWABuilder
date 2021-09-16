@@ -26,6 +26,7 @@ export class HoverTooltip extends LitElement {
 
         background: var(--font-color);
         left: 0em;
+        top: 0em;
 
         color: #fff;
         text-decoration: none;
