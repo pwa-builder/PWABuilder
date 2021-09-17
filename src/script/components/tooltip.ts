@@ -26,7 +26,8 @@ function openTooltip(ev: MouseEvent, tooltipEl: HTMLElement) {
   // This code is here to throttle style application as multiple hover events
   // can fire within seconds of each other causing "jumping" in the UI.
   if (tooltipEl && ev && tooltipEl.style.top.length === 0) {
-    tooltipEl.style.top = `${ev.clientY.toString()}px`;
+    // re-visit this tooltip logic entirely - Justin Willis
+    tooltipEl.style.top = `${(ev.clientY - 300).toString()}px`;
   }
 }
 
