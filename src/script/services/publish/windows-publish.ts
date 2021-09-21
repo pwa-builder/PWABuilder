@@ -100,7 +100,7 @@ export async function createWindowsPackageOptionsFromManifest(
       images: {
         baseImage: icon?.src || '',
         backgroundColor: 'transparent',
-        padding: 0.3,
+        padding: 0.0,
       },
       resourceLanguage: manifest?.lang,
     };
@@ -153,7 +153,7 @@ export async function createWindowsPackageOptionsFromForm(
     images: {
       baseImage: form.iconUrl.value || icon,
       backgroundColor: 'transparent',
-      padding: 0.3,
+      padding: 0.0,
     },
     resourceLanguage: form.windowsLanguageInput.value || 'EN-US',
   };
