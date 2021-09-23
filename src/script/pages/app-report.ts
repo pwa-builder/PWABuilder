@@ -61,7 +61,7 @@ export class AppReport extends LitElement {
     return [
       style,
       css`
-        h2 {
+        h1 {
           font-size: 44px;
           line-height: 46px;
         }
@@ -160,7 +160,7 @@ export class AppReport extends LitElement {
 
         ${mediumBreakPoint(
           css`
-            .reportCard h2 {
+            .reportCard h1 {
               font-size: 33px;
               margin-top: 0;
               margin-bottom: 1em;
@@ -186,7 +186,7 @@ export class AppReport extends LitElement {
               display: none;
             }
 
-            .reportCard h2 {
+            .reportCard h1 {
               font-size: 33px;
               margin-top: 0;
               margin-bottom: 1em;
@@ -288,7 +288,7 @@ export class AppReport extends LitElement {
 
         <section id="report">
           <content-header class="reportCard ${this.selectedTab}">
-            <h2 slot="hero-container">${this.currentHeader}</h2>
+            <h1 slot="hero-container">${this.currentHeader}</h1>
             <p id="hero-p" slot="hero-container">${this.currentSupporting}</p>
           </content-header>
 
