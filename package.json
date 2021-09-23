@@ -38,7 +38,7 @@
     "browser-fs-access": "^0.16.2",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "lit": "^2.0.0-rc.3",
+    "lit": "^2.0.0",
     "lodash-es": "^4.17.21",
     "workbox-build": "^6.1.5",
     "workbox-core": "^6.1.2",
