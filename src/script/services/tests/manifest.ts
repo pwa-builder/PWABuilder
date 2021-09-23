@@ -1,7 +1,8 @@
 import { default_timeout } from '../../utils/api';
-import { findSuitableIcon } from '../../utils/icons';
-import { ManifestContext, TestResult } from '../../utils/interfaces';
+import { canLoadIcon, findSuitableIcon } from '../../utils/icons';
+import { ManifestContext, TestResult, Icon } from '../../utils/interfaces';
 import { fetchOrCreateManifest } from '../manifest';
+import { getManifestContext } from '../app-info';
 
 const default_results = [
   {
@@ -110,7 +111,7 @@ export async function testManifest(
         console.error('Could not test manifest, returning default results');
         return manifest as Array<TestResult>;
       } else {
-        return doTest(manifest);
+        return await doTest(manifest);
       }
     } else {
       console.error('Could not get manifest data');
@@ -122,7 +123,7 @@ export async function testManifest(
   }
 }
 
-function doTest(context: ManifestContext) {
+async function doTest(context: ManifestContext) {
   if (context.isGenerated === true) {
     return default_results;
   } else {
@@ -217,6 +218,11 @@ function doTest(context: ManifestContext) {
         category: 'required',
       },
       {
+        infoString: 'Main icon can be succesfully loaded from the network',
+        result: await iconCanBeLoaded(context),
+        category: 'required',
+      },
+      {
         infoString: 'Has a maskable PNG icon',
         result: findSuitableIcon(
           context.manifest.icons,
@@ -228,6 +234,11 @@ function doTest(context: ManifestContext) {
           ? true
           : false,
         category: 'recommended',
+      },
+      {
+        infoString: 'Main icon can be succesfully loaded from the network',
+        result: true,
+        category: 'required'
       },
       {
         infoString: 'Lists shortcuts for quick access',
@@ -312,4 +323,34 @@ function isStandardOrientation(orientation: string) {
     'portrait-secondary',
   ];
   return standardOrientations.includes(orientation);
+}
+
+// check to see if icon is valid
+function iconCanBeLoaded(context: ManifestContext): Promise<boolean> {
+  return new Promise(async (resolve, reject) => {
+    const icon = findSuitableIcon(
+      context.manifest.icons,
+      'maskable',
+      512,
+      512,
+      'image/png'
+    )
+    const maniURL = getManifestContext().manifestUrl;
+
+    if (icon) {
+      try {
+        const absolute = new URL(icon.src, maniURL).toString()
+        const check = await canLoadIcon(absolute);
+        if (check) {
+          resolve(true);
+        }
+      }
+      catch (err) {
+        reject(false);
+      }
+    }
+    else {
+      reject(false);
+    }
+  })
 }

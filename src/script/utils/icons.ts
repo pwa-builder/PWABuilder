@@ -174,3 +174,32 @@ export function getProbableFileExtension(icon: Icon): string {
       return '';
   }
 }
+
+
+/**
+ * Checks if the icon succesfully loads
+ * @param icon The icon to check
+ * @returns True if the icon is valid, rejects otherwise
+ */
+export function canLoadIcon(iconURL: string): Promise<boolean> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.src = iconURL;
+
+    img.onload = () => {
+      // there are cases where the image element could get into the onload event
+      // but not be actually loaded.
+      // As a double check, we check the naturalWidth is greater than 0
+      // and if the image.complete property is true.
+      if (img.naturalWidth > 0 && img.complete) {
+        resolve(true);
+      }
+      else {
+        // invalid icon
+        reject(false);
+      }
+    }
+
+    img.onerror = () => reject(false);
+  })
+}
