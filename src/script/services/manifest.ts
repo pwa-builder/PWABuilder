@@ -77,6 +77,8 @@ async function getManifestViaHtmlParse(
     manifestContents: Manifest | null;
     error: string | null;
     manifestContainsInvalidJson: boolean;
+    manifestScore: { [key: keyof Manifest | "manifest"]: number }; // e.g. { "categories": 2, ... }
+    warnings: { [key: keyof Manifest | string]: string }; // e.g. { "categories": "Must be an array" }
   };
 
   const manifestTestUrl = `${env.manifestFinderUrl}?url=${encodeURIComponent(
@@ -111,9 +113,10 @@ async function getManifestViaHtmlParse(
     },
     id: '',
     generated: responseData.manifestContents ? false : true,
-    errors: [],
+    errors: responseData.error ? [responseData.error] : [],
     suggestions: [],
-    warnings: [],
+    warnings: Object.entries(responseData.warnings)
+      .map(keyVal => `${keyVal[0]}: ${keyVal[1]}`), // e.g. "categories: Must be an array"
     manifestContainsInvalidJson: responseData.manifestContainsInvalidJson,
   };
 }
