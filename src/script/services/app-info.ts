@@ -8,6 +8,7 @@ import {
   Status,
 } from '../utils/interfaces';
 import { getChosenServiceWorker } from './service_worker';
+import { doTest } from './tests/manifest';
 
 let site_url: string | undefined;
 let results: RawTestResult | undefined;
@@ -139,13 +140,15 @@ export function getResults(): RawTestResult | undefined {
 export async function baseOrPublish(): Promise<'base' | 'publish'> {
   const choseSW = getChosenServiceWorker();
 
+  const maniContext = getManifestContext();
+
   // is the manifest one we generated
   // or is it from the developer?
-  const generatedFlag = getManifestContext().isGenerated;
+  const generatedFlag = maniContext.isGenerated;
 
   // has the manifest been edited by
   // the user?
-  const editedFlag = getManifestContext().isEdited;
+  const editedFlag = maniContext.isEdited;
 
   if (generatedFlag === true || choseSW !== undefined || editedFlag === true) {
     // User has chosen a custom service worker
@@ -155,7 +158,16 @@ export async function baseOrPublish(): Promise<'base' | 'publish'> {
     return 'base';
   }
 
-  if (generatedFlag === false && editedFlag === false) {
+  // double check manifest
+  const doubleCheckResults = doubleCheckManifest(maniContext);
+  if (
+    generatedFlag === false &&
+    editedFlag === false    &&
+    doubleCheckResults.icon &&
+    doubleCheckResults.name &&
+    doubleCheckResults.shortName &&
+    doubleCheckResults.startURL
+  ) {
     // User already has a manifest
     // and as not edited it
     // send to publish page
@@ -256,4 +268,41 @@ export function isManifestEdited(
       getManifestContext().isEdited = true;
     }
   });
+}
+
+function doubleCheckManifest(maniContext: ManifestContext): {
+  startURL: boolean;
+  name: boolean;
+  shortName: boolean;
+  icon: boolean;
+} {
+  // manifest double checks
+  const test_results = doTest(maniContext);
+
+  let startURL = false;
+  let name = false;
+  let shortName = false;
+  let icon = false;
+
+  test_results.forEach(test => {
+    if (test.infoString.includes('start_url')) {
+      startURL = test.result;
+    }
+    if (test.infoString.includes('short_name')) {
+      shortName = test.result;
+    }
+    if (test.infoString.includes('name')) {
+      name = test.result;
+    }
+    if (test.infoString.includes('512')) {
+      icon = test.result;
+    }
+  });
+
+  return {
+    startURL,
+    name,
+    shortName,
+    icon,
+  };
 }

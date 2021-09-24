@@ -122,7 +122,7 @@ export async function testManifest(
   }
 }
 
-function doTest(context: ManifestContext) {
+export function doTest(context: ManifestContext) {
   if (context.isGenerated === true) {
     return default_results;
   } else {
