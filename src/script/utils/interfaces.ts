@@ -127,10 +127,9 @@ export interface ManifestDetectionResult {
   };
   id: string;
   generated: boolean;
-  errors: [];
-  suggestions: [];
-  warnings: [];
-  error?: string;
+  errors: string[];
+  suggestions: string[];
+  warnings: string[];
   manifestContainsInvalidJson?: boolean;
 }
 
