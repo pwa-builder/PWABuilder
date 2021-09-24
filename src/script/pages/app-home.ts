@@ -310,10 +310,10 @@ export class AppHome extends LitElement {
         this.errorGettingURL = true;
       }
 
-      // HACK: Lit 2.0rc1 crashes on Safari 14 (Mac and iOS) on the following line:
+      // HACK: Lit 2.0 crashes on Safari 14 desktop on the following line:
       // this.gettingManifest = false;
-      // To fix this, we've found that putting that call in a 1ms timeout fixes the issue.
-      setTimeout(() => this.gettingManifest = false, 1);
+      // To fix this, we've found that putting that call in a 100ms timeout fixes the issue.
+      setTimeout(() => this.gettingManifest = false, 100);
     }
   }
 
@@ -335,72 +335,53 @@ export class AppHome extends LitElement {
         <section id="content-grid" slot="grid-container">
           <div class="intro-grid-item">
             <h2>Test</h2>
-
             <p>
               PWABuilder will make sure your web app is a PWA and ready for the
               stores!
             </p>
           </div>
-
+      
           <div class="intro-grid-item">
             <h2>Manage</h2>
-
             <p>
               Our Report Card will let you know if your PWA is store-ready. If
               not, PWABuilder will help you get there!
             </p>
           </div>
-
+      
           <div class="intro-grid-item">
             <h2>Package</h2>
-
             <p>
               Once you are ready, PWABuilder can package your PWA for the app
               stores in minutes!
             </p>
           </div>
-
+      
           <div class="intro-grid-item">
             <h2>Explore</h2>
-
             <p>
               PWAs are moving forward fast, learn about new web APIs, store
               readiness, and more!
             </p>
           </div>
         </section>
-
-        <form
-          id="input-form"
-          slot="input-container"
-          @submit="${(e: InputEvent) => this.start(e)}"
-        >
+      
+        <form id="input-form" slot="input-container" @submit="${(e: InputEvent) => this.start(e)}">
           <div id="input-block">
-            <fast-text-field
-              slot="input-container"
-              type="text"
-              placeholder="Enter the URL to your PWA"
-              name="url-input"
-              class="${classMap({ error: this.errorGettingURL })}"
-              @input="${(e: InputEvent) => this.handleURL(e)}"
-            ></fast-text-field>
-
+            <fast-text-field slot="input-container" type="text" placeholder="Enter the URL to your PWA" name="url-input"
+              class="${classMap({ error: this.errorGettingURL })}" @input="${(e: InputEvent) => this.handleURL(e)}">
+            </fast-text-field>
+      
             ${this.errorMessage && this.errorMessage.length > 0
-              ? html`<span class="error-message">${this.errorMessage}</span>`
-              : null}
+      ? html`<span class="error-message">${this.errorMessage}</span>`
+      : null}
           </div>
-
-          <loading-button
-            id="start-button"
-            type="submit"
-            class="navigation"
-            ?loading="${this.gettingManifest}"
-            @click="${(e: InputEvent) => this.start(e)}"
-            >Start</loading-button
-          >
+      
+          <loading-button id="start-button" type="submit" class="navigation" ?loading="${this.gettingManifest}"
+            @click="${(e: InputEvent) => this.start(e)}">Start</loading-button>
         </form>
       </content-header>
-
+      
       <resource-hub page="home" all>
         <h1 slot="title">PWABuilder Resource Hub</h1>
         <p slot="description">
