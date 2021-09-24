@@ -185,7 +185,7 @@ export class AppHeader extends LitElement {
           tabindex="0"
           id="header-icon"
           src="/assets/images/header_logo.svg"
-          alt="header logo"
+          alt="PWA Builder logo"
         />
 
         <nav id="desktop-nav">
@@ -193,6 +193,7 @@ export class AppHeader extends LitElement {
             appearance="hypertext"
             href="https://blog.pwabuilder.com"
             target="__blank"
+            aria-label="Link will open in separate tab"
             rel="noopener"
             >Resources</fast-anchor
           >
@@ -201,6 +202,7 @@ export class AppHeader extends LitElement {
             appearance="hypertext"
             href="https://github.com/pwa-builder/PWABuilder"
             target="__blank"
+            aria-label="Link will open in separate tab"
             rel="noopener"
           >
             <ion-icon name="logo-github"></ion-icon>

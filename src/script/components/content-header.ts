@@ -75,7 +75,7 @@ export class ContentHeader extends LitElement {
         padding-left: 2em;
       }
 
-      :host ::slotted(h2) {
+      :host ::slotted(h1) {
         margin-bottom: 0;
         line-height: 40px;
 

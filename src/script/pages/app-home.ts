@@ -53,15 +53,17 @@ export class AppHome extends LitElement {
           --header-border: none;
         }
 
-        h2 {
+        h1 {
           font-size: var(--xlarge-font-size);
           line-height: 48px;
           letter-spacing: -0.015em;
           margin-bottom: 0;
         }
 
-        h3 {
+        h2 {
           font-size: var(--medium-font-size);
+          margin-block: 1em;
+          margin-bottom: 5px;
         }
 
         #hero-p {
@@ -131,7 +133,7 @@ export class AppHome extends LitElement {
             padding-left: 0;
           }
 
-          h2 {
+          h1 {
             margin-top: 0;
             font-size: var(--large-font-size);
           }
@@ -173,7 +175,7 @@ export class AppHome extends LitElement {
             padding-left: 0;
           }
 
-          h2 {
+          h1 {
             font-size: var(--large-font-size);
             margin-top: 0;
           }
@@ -224,7 +226,7 @@ export class AppHome extends LitElement {
             max-width: 280px;
           }
 
-          h2 {
+          h1 {
             max-width: 600px;
           }
 
@@ -326,14 +328,13 @@ export class AppHome extends LitElement {
   render() {
     return html`
       <content-header class="home">
-        <h2 slot="hero-container">
+        <h1 slot="hero-container">
           Ship your PWA to the app stores at lightning speed.
-        </h2>
-      
+        </h1>
+
         <section id="content-grid" slot="grid-container">
           <div class="intro-grid-item">
-            <h3>Test</h3>
-      
+            <h2>Test</h2>
             <p>
               PWABuilder will make sure your web app is a PWA and ready for the
               stores!
@@ -341,8 +342,7 @@ export class AppHome extends LitElement {
           </div>
       
           <div class="intro-grid-item">
-            <h3>Manage</h3>
-      
+            <h2>Manage</h2>
             <p>
               Our Report Card will let you know if your PWA is store-ready. If
               not, PWABuilder will help you get there!
@@ -350,8 +350,7 @@ export class AppHome extends LitElement {
           </div>
       
           <div class="intro-grid-item">
-            <h3>Package</h3>
-      
+            <h2>Package</h2>
             <p>
               Once you are ready, PWABuilder can package your PWA for the app
               stores in minutes!
@@ -359,8 +358,7 @@ export class AppHome extends LitElement {
           </div>
       
           <div class="intro-grid-item">
-            <h3>Explore</h3>
-      
+            <h2>Explore</h2>
             <p>
               PWAs are moving forward fast, learn about new web APIs, store
               readiness, and more!
@@ -385,7 +383,7 @@ export class AppHome extends LitElement {
       </content-header>
       
       <resource-hub page="home" all>
-        <h2 slot="title">PWABuilder Resource Hub</h2>
+        <h1 slot="title">PWABuilder Resource Hub</h1>
         <p slot="description">
           Jump to our blog, find our documentation and check out demos and
           components from the PWABuilder team!

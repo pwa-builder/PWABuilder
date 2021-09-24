@@ -83,12 +83,12 @@ export class AppCongrats extends LitElement {
           max-width: 767px;
         }
 
-        h2 {
+        h1 {
           font-size: var(--xlarge-font-size);
           line-height: 46px;
         }
 
-        h3 {
+        h2 {
           font-size: var(--medium-font-size);
           margin-bottom: 8px;
         }
@@ -116,7 +116,7 @@ export class AppCongrats extends LitElement {
           border-bottom: var(--list-border);
         }
 
-        li h4 {
+        li h3 {
           font-size: var(--small-medium-font-size);
           margin-bottom: 8px;
           margin-top: 0px;
@@ -143,14 +143,14 @@ export class AppCongrats extends LitElement {
           grid-gap: 23px;
         }
 
-        #tools-section h3 {
+        #tools-section h2 {
           margin-top: 36px;
           margin-bottom: 32px;
 
           text-align: center;
         }
 
-        #blog-section h3 {
+        #blog-section h2 {
           margin-top: 36px;
           margin-bottom: 32px;
         }
@@ -173,7 +173,7 @@ export class AppCongrats extends LitElement {
           margin-right: 24px;
         }
 
-        #tools-section h3 {
+        #tools-section h2 {
           text-align: center;
         }
 
@@ -242,7 +242,7 @@ export class AppCongrats extends LitElement {
             margin-right: initial;
           }
 
-          .congrats h2 {
+          .congrats h1 {
             font-size: 33px;
             max-width: 10em;
 
@@ -275,7 +275,7 @@ export class AppCongrats extends LitElement {
             margin-top: 2em;
           }
 
-          #other-stores li h2 {
+          #other-stores li h1 {
             font-size: 33px;
 
             margin-top: 0;
@@ -295,7 +295,7 @@ export class AppCongrats extends LitElement {
             display: none;
           }
 
-          .congrats h2 {
+          .congrats h1 {
             font-size: 33px;
 
             margin-top: 0;
@@ -328,7 +328,7 @@ export class AppCongrats extends LitElement {
             margin-left: 0;
           }
 
-          #other-stores li h2 {
+          #other-stores li h1 {
             font-size: 33px;
 
             margin-top: 0;
@@ -642,7 +642,7 @@ export class AppCongrats extends LitElement {
 
           <div>
             <content-header class="congrats">
-              <h2 slot="hero-container">Awesome!</h2>
+              <h1 slot="hero-container">Awesome!</h1>
               <p id="hero-p" slot="hero-container">
                 You have taken your PWA to the app stores!
               </p>
@@ -651,7 +651,7 @@ export class AppCongrats extends LitElement {
             <app-sidebar id="tablet-sidebar"></app-sidebar>
 
             <section id="summary-block">
-              <h3>Nice</h3>
+              <h2>Nice</h2>
 
               <p>
                 Check below to package your PWA for another store and visit our
@@ -660,7 +660,7 @@ export class AppCongrats extends LitElement {
             </section>
 
             <section id="other-stores">
-              <h3>Publish your PWA to other stores?</h3>
+              <h2>Publish your PWA to other stores?</h2>
 
               <ul>
                 ${this.generatedPlatforms &&
@@ -668,7 +668,7 @@ export class AppCongrats extends LitElement {
                   ? html`
                       <li>
                         <div id="title-block">
-                          <h4>Windows</h4>
+                          <h3>Windows</h3>
                           <p>
                             <a
                               href="https://blog.pwabuilder.com/posts/bringing-chromium-edge-pwas-to-the-microsoft-store/"
@@ -704,7 +704,7 @@ export class AppCongrats extends LitElement {
                 ? html`
                     <li>
                       <div id="title-block">
-                        <h4>Android</h4>
+                        <h3>Android</h3>
                         <p>
                           Want to ship your PWA to Android? PWAs also work great
                           on Android and are accepted in the Google Play Store.
@@ -726,7 +726,7 @@ export class AppCongrats extends LitElement {
             </section>
 
             <section id="blog-section">
-              <h3>Learn more on our Blog…</h3>
+              <h2>Learn more on our Blog…</h2>
 
               <div id="blog-block">
                 ${this.featuredPost
@@ -780,7 +780,7 @@ export class AppCongrats extends LitElement {
 
             <section id="tools-section">
               <resource-hub page="complete">
-                <h3 slot="title">Helpful tools for you...</h3>
+                <h2 slot="title">Helpful tools for you...</h2>
               </resource-hub>
             </section>
           </div>
