@@ -96,7 +96,7 @@ export class AppPublish extends LitElement {
           margin-right: 2em;
         }
 
-        h2 {
+        h1 {
           font-size: var(--xlarge-font-size);
           line-height: 46px;
         }
@@ -107,13 +107,13 @@ export class AppPublish extends LitElement {
           max-width: 406px;
         }
 
-        h3,
-        h5 {
+        h2,
+        h4 {
           font-size: var(--medium-font-size);
           margin-bottom: 8px;
         }
 
-        h4 {
+        h3 {
           margin-bottom: 8px;
           margin-top: 0;
         }
@@ -175,7 +175,7 @@ export class AppPublish extends LitElement {
           border-bottom: var(--list-border);
         }
 
-        li h4 {
+        li h3 {
           font-size: var(--small-medium-font-size);
         }
 
@@ -290,7 +290,7 @@ export class AppPublish extends LitElement {
       ),
       mediumBreakPoint(
         css`
-          .publish h2 {
+          .publish h1 {
             font-size: 33px;
             max-width: 10em;
 
@@ -373,7 +373,7 @@ export class AppPublish extends LitElement {
           margin-top: 2em;
         }
 
-        .publish h2 {
+        .publish h1 {
           font-size: 33px;
 
           margin-top: 0;
@@ -541,7 +541,7 @@ export class AppPublish extends LitElement {
         html`<li>
           <div id="title-block">
             <img src="${platform.icon}" alt="platform icon" />
-            <h4>${platform.title}</h4>
+            <h3>${platform.title}</h3>
             <p>${platform.description}</p>
           </div>
 
@@ -752,7 +752,7 @@ export class AppPublish extends LitElement {
 
           <div>
             <content-header class="publish">
-              <h2 slot="hero-container">Your PWA is Store Ready!</h2>
+              <h1 slot="hero-container">Your PWA is Store Ready!</h1>
               <p id="hero-p" slot="hero-container">
                 You are now ready to ship your PWA to the app stores!
               </p>
@@ -761,7 +761,7 @@ export class AppPublish extends LitElement {
             <app-sidebar id="tablet-sidebar"></app-sidebar>
 
             <section id="summary-block">
-              <h3>Publish your PWA to stores</h3>
+              <h2>Publish your PWA to stores</h2>
 
               <p>
                 Generate store-ready packages for the Microsoft Store, Google
@@ -775,7 +775,7 @@ export class AppPublish extends LitElement {
               </ul>
 
               <div id="up-next">
-                <h5>Congrats!</h5>
+                <h4>Congrats!</h4>
 
                 <p>
                   Make sure you check our documentation for help submitting your
