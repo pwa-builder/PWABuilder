@@ -336,10 +336,13 @@ function isStandardOrientation(orientation: string) {
 }
 
 function iconCanLoadSuccesfully(): Promise<boolean> {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     if (mainIcon) {
       const imageEl = new Image();
-      imageEl.src = new URL(mainIcon.src, getManifestContext().manifestUrl).toString();
+      imageEl.src = `https://pwabuilder-safe-url.azurewebsites.net/api/getSafeUrl?checkExistsOnly=true&url=${new URL(
+        mainIcon.src,
+        getManifestContext().manifestUrl
+      ).toString()}`;
 
       imageEl.onload = () => {
         if (imageEl.complete && imageEl.naturalHeight > 0) {
