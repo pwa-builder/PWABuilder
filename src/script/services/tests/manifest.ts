@@ -339,7 +339,7 @@ function iconCanLoadSuccesfully(): Promise<boolean> {
   return new Promise(resolve => {
     if (mainIcon) {
       const imageEl = new Image();
-      imageEl.src = `https://pwabuilder-safe-url.azurewebsites.net/api/getSafeUrl?checkExistsOnly=true&url=${new URL(
+      imageEl.src = `https://pwabuilder-safe-url.azurewebsites.net/api/getSafeUrl?checkExistsOnly=false&url=${new URL(
         mainIcon.src,
         getManifestContext().manifestUrl
       ).toString()}`;
