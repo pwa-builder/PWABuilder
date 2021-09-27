@@ -124,6 +124,10 @@ export class AppHome extends LitElement {
           width: 100%;
         }
 
+        #home-header {
+          max-width: 498px;
+        }
+
         ${smallBreakPoint(css`
           content-header::part(grid-container) {
             display: none;
@@ -328,7 +332,7 @@ export class AppHome extends LitElement {
   render() {
     return html`
       <content-header class="home">
-        <h1 slot="hero-container">
+        <h1 id="home-header" slot="hero-container">
           Ship your PWA to the app stores at lightning speed.
         </h1>
 
