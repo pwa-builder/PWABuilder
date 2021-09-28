@@ -281,6 +281,7 @@ export class AppHome extends LitElement {
       this.gettingManifest = true;
       const isValidUrl = isValidURL(this.siteURL);
       recordPageAction('analysis-started', { url: this.siteURL, valid: isValidUrl });
+
       if (isValidUrl) {
         try {
           const manifestContext = await fetchOrCreateManifest(this.siteURL);
@@ -312,6 +313,10 @@ export class AppHome extends LitElement {
       } else {
         this.errorMessage = localeStrings.input.home.error.invalidURL;
         this.errorGettingURL = true;
+
+        await this.updateComplete;
+
+        (this.shadowRoot?.querySelector('.error-message')as HTMLSpanElement)?.focus();
       }
 
       // HACK: Lit 2.0 crashes on Safari 14 desktop on the following line:
@@ -371,13 +376,13 @@ export class AppHome extends LitElement {
         </section>
       
         <form id="input-form" slot="input-container" @submit="${(e: InputEvent) => this.start(e)}">
-          <div id="input-block">
+          <div id="input-block" role="region">
             <fast-text-field slot="input-container" type="text" placeholder="Enter the URL to your PWA" name="url-input"
               class="${classMap({ error: this.errorGettingURL })}" @input="${(e: InputEvent) => this.handleURL(e)}">
             </fast-text-field>
       
             ${this.errorMessage && this.errorMessage.length > 0
-      ? html`<span class="error-message">${this.errorMessage}</span>`
+      ? html`<span role="alert" aria-live="polite" class="error-message">${this.errorMessage}</span>`
       : null}
           </div>
       
