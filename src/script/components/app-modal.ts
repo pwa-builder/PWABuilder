@@ -211,7 +211,7 @@ export class AppModal extends LitElement implements AppModalElement {
   render() {
     if (this.open) {
       return html`
-        <div id="background">
+        <div id="background" role="alert" aria-live="polite">
           <div part="modal-layout" id="modal">
             <div id="back-button-block">
               <fast-button @click="${this.close}" appearance="stealth">
