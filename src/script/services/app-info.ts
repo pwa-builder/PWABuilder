@@ -159,7 +159,7 @@ export async function baseOrPublish(): Promise<'base' | 'publish'> {
   }
 
   // double check manifest
-  const doubleCheckResults = doubleCheckManifest(maniContext);
+  const doubleCheckResults = await doubleCheckManifest(maniContext);
   if (
     generatedFlag === false &&
     editedFlag === false    &&
@@ -270,14 +270,14 @@ export function isManifestEdited(
   });
 }
 
-function doubleCheckManifest(maniContext: ManifestContext): {
+async function doubleCheckManifest(maniContext: ManifestContext): Promise<{
   startURL: boolean;
   name: boolean;
   shortName: boolean;
   icon: boolean;
-} {
+}> {
   // manifest double checks
-  const test_results = doTest(maniContext);
+  const test_results = await doTest(maniContext);
 
   let startURL = false;
   let name = false;
