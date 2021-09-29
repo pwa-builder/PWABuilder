@@ -203,7 +203,7 @@ export class WindowsForm extends LitElement {
                 type="text"
                 name="packageId"
                 pattern="[a-zA-Z0-9.-]*$"
-                maxlength="50"
+                maxlength="39"
                 required
               />
             </div>
