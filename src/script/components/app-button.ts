@@ -70,6 +70,11 @@ export class AppButton extends LitElement implements AppButtonElement {
           align-items: center;
           line-height: 0;
         }
+
+        fast-button:focus {
+          outline: solid;
+          outline-width: 2px;
+        }
       `,
       mediumBreakPoint(
         css`

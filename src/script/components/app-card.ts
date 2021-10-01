@@ -81,6 +81,11 @@ export class AppCard extends LitElement {
           color: var(--link-color);
         }
 
+        fast-card.default app-button:focus {
+          outline: solid;
+          outline-width: 2px;
+        }
+
         fast-card .card-actions {
           margin: 0 16px;
         }

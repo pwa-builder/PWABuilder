@@ -31,6 +31,11 @@ export class AppFooter extends LitElement {
         border-bottom: none;
       }
 
+      fast-anchor:focus {
+        outline: solid;
+        outline-width: 2px;
+      }
+
       ion-icon {
         font-size: var(--font-size);
         color: var(--font-color);
