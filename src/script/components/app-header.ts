@@ -54,6 +54,11 @@ export class AppHeader extends LitElement {
         font-size: 18px;
       }
 
+      fast-anchor:focus {
+        outline: solid;
+        outline-width: 2px;
+      }
+
       nav fast-anchor::part(control) {
         color: var(--font-color);
         text-decoration: none;
@@ -193,7 +198,7 @@ export class AppHeader extends LitElement {
             appearance="hypertext"
             href="https://blog.pwabuilder.com"
             target="__blank"
-            aria-label="Link will open in separate tab"
+            aria-label="Resources, will open in separate tab"
             rel="noopener"
             >Resources</fast-anchor
           >
@@ -202,7 +207,7 @@ export class AppHeader extends LitElement {
             appearance="hypertext"
             href="https://github.com/pwa-builder/PWABuilder"
             target="__blank"
-            aria-label="Link will open in separate tab"
+            aria-label="Github repo, will open in separate tab"
             rel="noopener"
           >
             <ion-icon name="logo-github"></ion-icon>
