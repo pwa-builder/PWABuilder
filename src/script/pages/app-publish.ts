@@ -204,7 +204,7 @@ export class AppPublish extends LitElement {
           white-space: pre;
           text-align: left;
           overflow: auto;
-          max-height: 300px;
+          max-height: 200px;
           padding: 20px;
         }
 
