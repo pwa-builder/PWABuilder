@@ -14,8 +14,8 @@ export interface WindowsPublisherOptions {
  */
 export interface WindowsImageOptions {
   baseImage: string | null;
-  backgroundColor?: string;
-  padding?: number;
+  backgroundColor?: string | null; // null or undefined = best guess the background using the base image pixel (0,0)
+  padding?: number; // should be between 0 (no padding) and 1 (max padding)
 }
 
 export interface WindowsPackageOptions {
