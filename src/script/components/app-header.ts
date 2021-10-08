@@ -66,6 +66,16 @@ export class AppHeader extends LitElement {
         font-weight: var(--font-bold);
       }
 
+      #resources span {
+        display: inline-block;
+        height: 18px;
+        border-bottom: 1px solid transparent;
+      }
+    
+      #resources:hover span{
+        border-color: var(--font-color);
+      }
+
       nav ion-icon {
         font-size: 2em;
       }
@@ -195,12 +205,13 @@ export class AppHeader extends LitElement {
 
         <nav id="desktop-nav">
           <fast-anchor
+            id="resources"
             appearance="hypertext"
             href="https://blog.pwabuilder.com"
             target="__blank"
             aria-label="Resources, will open in separate tab"
             rel="noopener"
-            >Resources</fast-anchor
+            ><span>Resources</span></fast-anchor
           >
 
           <fast-anchor
