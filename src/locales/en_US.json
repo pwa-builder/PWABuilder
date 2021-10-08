@@ -215,23 +215,23 @@
     "custom": "Custom Color"
   },
   "imageGenerator": {
-    "windows10": "windows10",
-    "msteams": "msteams",
-    "android": "android",
-    "chrome": "chrome",
-    "firefox": "firefox",
+    "windows11": "Windows 11",
+    "windows10": "Windows 10",
+    "android": "Android",
+    "ios": "iOS",
     "image_generator": "Image Generator",
     "image_generator_text": "Quickly and easily create app icons for various platforms in the right size and format",
     "image_details": "Image Details",
     "image_details_text": "Specify the image details below.",
-    "input_image": "Input Image",
+    "input_image": "Choose your base image",
+    "input_image_help": "You should choose a 512x512 or larger square PNG image. This image will be used to generate all the images for your chosen platforms.",
     "padding": "Padding",
-    "padding_text": "0 is no padding, 1 is 100% of the source image. 0.3 is a typical value for most icons",
+    "padding_text": "0 is no padding, 1 is 100% of the source image. 0.3 is a typical value for most icons. For Windows 11 platform, this value is overriden on individual images based on UX guidelines.",
     "background_color": "Background Color",
+    "best_guess": "Best guess",
     "transparent": "Transparent",
     "custom_color": "Custom color",
     "platforms": "Platforms",
-    "platforms_text": "Select the platforms to generate images for.",
-    "select_button": "Select/Clear All"
+    "platforms_text": "Select the platforms to generate images for."
   }
 }
