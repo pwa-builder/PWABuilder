@@ -53,7 +53,7 @@ export class ImageGenerator extends LitElement {
 
   @state() padding = 0.3;
 
-  @state() colorOption: ColorRadioValues = 'best guess';
+  @state() colorOption: ColorRadioValues = 'transparent';
 
   // hex color
   @state() color: string = '#ffffff';
