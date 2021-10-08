@@ -99,7 +99,7 @@ export async function createWindowsPackageOptionsFromManifest(
       manifest: manifest,
       images: {
         baseImage: icon?.src || '',
-        backgroundColor: manifest.background_color || null,
+        backgroundColor: manifest.background_color || "transparent",
         padding: 0.0,
       },
       resourceLanguage: manifest?.lang,
@@ -152,7 +152,7 @@ export async function createWindowsPackageOptionsFromForm(
     manifest: manifest,
     images: {
       baseImage: form.iconUrl.value || icon,
-      backgroundColor: null, // TODO: should we let the user specify image background color in the form?
+      backgroundColor: "transparent", // TODO: should we let the user specify image background color in the form?
       padding: 0.0,
     },
     resourceLanguage: form.windowsLanguageInput.value || 'EN-US',
