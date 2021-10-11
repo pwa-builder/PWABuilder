@@ -130,12 +130,26 @@ export class AppCard extends LitElement {
           margin-top: 8px;
         }
 
-        .card-actions app-button::part(underlying-button) {
+        .card-actions a {
           font-weight: bold;
           font-size: 14px;
-          line-height: 20px;
+          line-height: 40px;
           color: var(--link-color);
           padding: 0;
+        }
+
+        .card-actions a:hover {
+          cursor: pointer;
+        }
+
+        .card-actions a span {
+          display: inline-block;
+          height: 28px;
+          border-bottom: 1px solid transparent
+        }
+
+        .card-actions a:hover span {
+          border-color: var(--link-color);
         }
       `,
       // overlay
@@ -527,10 +541,7 @@ export class AppCard extends LitElement {
         <p>${this.description}</p>
       
         <div class="card-actions">
-          <app-button appearance="lightweight" @click=${this.route}>View ${
-      this.cardTitle
-    }</fast-button>
-          </app-button>
+          <a @click=${this.route}><span>View ${this.cardTitle}</span></a>
         </div>
       </fast-card>
     `;
