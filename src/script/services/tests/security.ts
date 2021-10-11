@@ -36,15 +36,13 @@ export async function testSecurity(url: string): Promise<Array<TestResult>> {
   ]);
 
   if (!fetchResultOrTimeout) {
-    console.warn('Offline check timed out after 20 seconds.');
+    console.warn('Security check timed out after 20 seconds.');
     return default_results;
   }
 
-  if (fetchResultOrTimeout && !fetchResultOrTimeout.ok) {
-    throw new Error(
-      'Error fetching security report: ' +
-        (await fetchResultOrTimeout.statusText)
-    );
+  if (!fetchResultOrTimeout.ok) {
+    console.warn('Security check failed with non-successful status code', fetchResultOrTimeout.status, fetchResultOrTimeout.statusText);
+    return default_results;
   }
 
   // we have made it through, yay!
