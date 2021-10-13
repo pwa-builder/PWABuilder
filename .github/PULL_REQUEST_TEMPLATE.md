@@ -24,7 +24,7 @@
 ## PR Checklist
 
 - [ ] Test: run `npm run test` and ensure that all tests pass
-- [ ] Target master branch (or an appropriate release branch if appropriate for a bug fix)
+- [ ] Target main branch (or an appropriate release branch if appropriate for a bug fix)
 - [ ] Ensure that your contribution follows [standard accessibility guidelines](https://docs.microsoft.com/en-us/microsoft-edge/accessibility/design). Use tools like https://webhint.io/ to validate your changes.
 
 
