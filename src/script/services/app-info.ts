@@ -164,8 +164,7 @@ export async function baseOrPublish(): Promise<'base' | 'publish'> {
     generatedFlag === false &&
     editedFlag === false    &&
     doubleCheckResults.icon &&
-    doubleCheckResults.name &&
-    doubleCheckResults.shortName &&
+    (doubleCheckResults.name || doubleCheckResults.shortName) &&
     doubleCheckResults.startURL
   ) {
     // User already has a manifest
@@ -288,10 +287,10 @@ async function doubleCheckManifest(maniContext: ManifestContext): Promise<{
     if (test.infoString.includes('start_url')) {
       startURL = test.result;
     }
-    if (test.infoString.includes('short_name')) {
+    if (test.infoString.includes('short_name') && test.infoString.toLowerCase().includes('name') === false) {
       shortName = test.result;
     }
-    if (test.infoString.includes('name')) {
+    if (test.infoString.includes('name') && test.infoString.toLowerCase().includes('short_name') === false) {
       name = test.result;
     }
     if (test.infoString.includes('512')) {
