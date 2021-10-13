@@ -342,7 +342,7 @@ export class AppBasePack extends LitElement {
       
                 <ol>
                   <li>
-                    <a href="https://github.com/pwa-builder/pwabuilder-web/blob/V2/src/assets/web/next-steps.md"
+                    <a href="https://github.com/pwa-builder/pwabuilder-web/blob/V2/src/assets/next-steps.md"
                       rel="noopener" target="_blank">Open documentation</a>
                     in order to accurately add files or links to your server.
                   </li>
@@ -361,7 +361,7 @@ export class AppBasePack extends LitElement {
               </div>
       
               <div class="action-buttons">
-                <fast-anchor href="https://github.com/pwa-builder/pwabuilder-web/blob/V2/src/assets/web/next-steps.md"
+                <fast-anchor href="https://github.com/pwa-builder/pwabuilder-web/blob/V2/src/assets/next-steps.md"
                   rel="noopener" target="_blank" appearance="button">
                   Documentation
                 </fast-anchor>
