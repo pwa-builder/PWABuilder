@@ -53,6 +53,10 @@ export class AndroidForm extends LitElement {
           color: var(--font-color);
         }
 
+        input[type="color"] {
+          padding: 0px;
+        }
+
         input::placeholder {
           color: var(--placeholder-color);
           font-style: italic;
