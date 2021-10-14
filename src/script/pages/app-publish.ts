@@ -32,7 +32,7 @@ import { generatePackage, Platform } from '../services/publish';
 import { getReportErrorUrl } from '../utils/error';
 import { styles as ToolTipStyles } from '../components/tooltip';
 import { localeStrings } from '../../locales';
-import { recordPageAction } from '../utils/analytics';
+import { AnalyticsBehavior, recordProcessStep } from '../utils/analytics';
 import { getURL } from '../services/app-info';
 @customElement('app-publish')
 export class AppPublish extends LitElement {
@@ -457,7 +457,11 @@ export class AppPublish extends LitElement {
     }
 
     // Record analysis results to our analytics portal.
-    recordPageAction(`create-${type}-package`, { url: getURL() });
+    recordProcessStep(
+      'analyze-and-package-pwa',
+      `create-${type}-package`,
+      AnalyticsBehavior.CompleteProcess,
+      { url: getURL() });
 
     try {
       this.generating = true;
@@ -474,7 +478,11 @@ export class AppPublish extends LitElement {
     } catch (err) {
       console.error(err);
       this.showAlertModal(err as Error, type);
-      recordPageAction(`create-${type}-package-failed`, { url: getURL() });
+      recordProcessStep(
+        'analyze-and-package-pwa',
+        `create-${type}-package-failed`,
+        AnalyticsBehavior.CancelProcess,
+        { url: getURL() });
     } finally {
       this.generating = false;
       this.open_android_options = false;
@@ -819,12 +827,12 @@ const platforms: ICardData[] = [
       'Publish your PWA to the Google Play Store to make your app more discoverable for Android users.',
     isActionCard: true,
     icon: '/assets/android_icon.svg',
-  },
-  {
-    title: 'Samsung',
-    description:
-      'Provide the URL to your PWA to Samsung for inclusion in the Samsung Finder app. You will need to follow up with Samsung after submission for updates on the deployment.',
-    isActionCard: true,
-    icon: '/assets/samsung_icon.svg',
-  },
+  }
+  // {
+  //   title: 'Samsung',
+  //   description:
+  //     'Provide the URL to your PWA to Samsung for inclusion in the Samsung Finder app. You will need to follow up with Samsung after submission for updates on the deployment.',
+  //   isActionCard: true,
+  //   icon: '/assets/samsung_icon.svg',
+  // },
 ];
