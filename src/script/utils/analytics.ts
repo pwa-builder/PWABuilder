@@ -27,9 +27,29 @@ export function recordPageView(uri: string, name?: string, properties?: any) {
     .catch(err => console.warn('OneDS record page view error', err));
 }
 
-export function recordPageAction(actionName: string, properties?: { [key: string]: string | number | boolean | string[] | number[] | boolean[] | object }) {
+// See https://martech.azurewebsites.net/website-tools/oneds/guided-learning/scenario-process
+export function recordProcessStep(
+  processName: string,
+  processStep: string,
+  stepType: AnalyticsBehavior.ProcessCheckpoint | AnalyticsBehavior.StartProcess | AnalyticsBehavior.ProcessCheckpoint | AnalyticsBehavior.CancelProcess | AnalyticsBehavior.CompleteProcess,
+  additionalInfo?: {}) {
+  lazyLoadAnalytics()
+    .then(oneDS => oneDS.capturePageAction(null, {
+      actionType: AnalyticsActionType.Other,
+      behavior: stepType,
+      contentTags: {
+        scn: processName,
+        scnstp: processStep
+      },
+      content: additionalInfo
+    }));
+}
+
+export function recordPageAction(actionName: string, type: AnalyticsActionType, behavior: AnalyticsBehavior, properties?: { [key: string]: string | number | boolean | string[] | number[] | boolean[] | object }) {
   const action: PageActionTelemetry = {
     name: actionName,
+    actionType: type,
+    behavior: behavior,
     properties: properties
   };
   lazyLoadAnalytics()
@@ -68,12 +88,12 @@ function tryInitAnalytics(): Error | AppInsights {
         urlCollectHash: false,
         syncPageActionNavClick: false,
         autoCapture: {
-          click: false,
+          click: true,
           scroll: false,
           pageView: false, // We'll do this manually via our SPA router
           jsError: false,
           msTags: false,
-          onUnload: false
+          onUnload: true
         }
       }
     };
@@ -93,6 +113,7 @@ interface AppInsights {
   initialize(config: unknown, plugins: unknown[]): void;
   trackPageView(pageView: PageViewTelemetry): void;
   trackPageAction(action: PageActionTelemetry): void;
+  capturePageAction(element: Element | null, overrideValues: IPageActionOverrideValues, customProperties?: {}, isRightClick?: boolean): void;
 }
 
 interface PageViewTelemetry {
@@ -195,4 +216,146 @@ declare const enum EventSendType {
    * Note: Not all browsers support the keepalive flag so for those environments the events may still fail
    */
   SyncFetch = 3
+}
+
+// See https://1dsdocs.azurewebsites.net/api/webSDK/ext/webanalytics/3.0/f/interfaces/ipageactionoverridevalues.html
+interface IPageActionOverrideValues {
+  actionType?: AnalyticsActionType,
+  behavior?: AnalyticsBehavior,
+  clickCoordinateX?: number;
+  clickCoordinateY?: number;
+  content?: any;
+  contentTags?: any;
+  isAuto?: boolean;
+  pageName?: string;
+  pageType?: string;
+  refUri?: string;
+  targetUri?: string;
+}
+
+// See https://martech.azurewebsites.net/website-tools/oneds/references/action-type-dictionary/
+export const enum AnalyticsActionType {
+  LeftClick = "CL",
+  MiddleClick = "CM",
+  RightClick = "CR",
+  Scroll = "S",
+  Zoom = "Z",
+  Resize = "R",
+  PointerMovementEnter = "PE",
+  PointerMovementHover = "PH",
+  PointerMovementLeave = "PL",
+  Automatic = "A",
+  AutomaticTimer = "AT",
+  Other = "O"
+}
+
+// See https://martech.azurewebsites.net/website-tools/oneds/references/behavior-dictionary
+export const enum AnalyticsBehavior {
+  ContentUpdate = 0,
+  NavigationBack = 1,
+  NavigationSelectionJump = 2,
+  NavigationForward = 3,
+  Apply = 4,
+  Remove = 5,
+  Sort = 6,
+  Expand = 7,
+  Reduce = 8,
+  OpenContextMenu = 9,
+  Tab = 10,
+  Copy = 11,
+  Experimentation = 12,
+  Print = 13,
+  Show = 14,
+  Hide = 15,
+  Maximize = 16,
+  Minimize = 17,
+  Backbutton = 18,
+  StartProcess = 20,
+  ProcessCheckpoint = 21,
+  CompleteProcess = 22,
+  CancelProcess = 23,
+  DownloadCommit = 40,
+  Download = 41,
+  SearchAutoComplete = 60,
+  Search = 61,
+  SearchInitiate = 62,
+  TextBoxInput = 63,
+  Purchase = 80,
+  AddToCart = 81,
+  ViewCart = 82,
+  AddToWishlist = 83,
+  FindStore = 84,
+  Checkout = 85,
+  RemoveFromCart = 86,
+  PurchaseComplete = 87,
+  ViewCheckoutPage = 88,
+  ViewCartPage = 89,
+  ViewPDP = 90,
+  UpdateItemQuantity = 91,
+  IntentToBuy = 92,
+  PushToInstall = 93,
+  SignIn = 100,
+  SignOut = 101,
+  SocialShare = 120,
+  SocialLike = 121,
+  SocialReply = 122,
+  Call = 123,
+  Email = 124,
+  Community = 125,
+  SocialFollow = 126,
+  Vote = 140,
+  SurveyInitiate = 141,
+  SurveyComplete = 142,
+  ReportApplication = 143,
+  ReportReview = 144,
+  SurveyCheckpoint = 145,
+  Contact = 145,
+  InitiateRegistration = 161,
+  RegistrationComplete = 162,
+  CancelSubscription = 163,
+  RenewSubscription = 164,
+  ChangeSubscription = 165,
+  RegistrationCheckpoint = 166,
+  ChatInitiate = 180,
+  ChatEnd = 181,
+  TrialSignup = 200,
+  TrialInitiate = 201,
+  SignUp = 210,
+  FreeSignUp = 211,
+  PartnerReferral = 220,
+  LearnLowerFunnel = 230,
+  LearnHigherFunnel = 231,
+  ShoppingIntent = 232,
+  VideoStart = 240,
+  VideoPause = 241,
+  VideoContinue = 242,
+  VideoCheckpoint = 243,
+  VideoJump = 244,
+  VideoComplete = 245,
+  VideoBuffering = 246,
+  VideoError = 247,
+  VideoMute = 248,
+  VideoUnmute = 249,
+  VideoFullScreen = 250,
+  VideoUnfullscreen = 251,
+  VideoReplay = 252,
+  VideoPlayerLoad = 253,
+  VideoPlayerClick = 254,
+  VideoVolumeControl = 255,
+  VideoAudioTrackControl = 256,
+  VideoClosedCaptionControl = 257,
+  VideoClosedCaptionStyle = 258,
+  VideoResolutionControl = 259,
+  VirtualEventJoin = 260,
+  VirtualEventEnd = 261,
+  Impression = 280,
+  Click = 281,
+  RichMediaComplete = 282,
+  AdBuffering = 283,
+  AdError = 284,
+  AdStart = 285,
+  AdComplete = 286,
+  AdSkip = 287,
+  AdTimeout = 288,
+  Other = 300
 }

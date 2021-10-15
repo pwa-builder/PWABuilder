@@ -20,7 +20,7 @@ import { getPossibleBadges, sortBadges } from '../services/badges';
 
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
-import { recordPageAction } from '../utils/analytics';
+import { AnalyticsBehavior, recordProcessStep } from '../utils/analytics';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {
@@ -327,7 +327,7 @@ export class ReportCard extends LitElement {
     this.overallScore = getOverallScore();
 
     // Record analysis results to our analytics portal.
-    recordPageAction('analysis-completed', {
+    recordProcessStep('analyze-and-package-pwa', 'url-analyzed', AnalyticsBehavior.ProcessCheckpoint, {
       url: this.currentURL || '',
       score: this.overallScore,
       hasManifest: Array.isArray(this.scoreCardResults.manifest) && this.scoreCardResults.manifest.some(t => t.result === true),
