@@ -269,7 +269,7 @@ export function isManifestEdited(
   });
 }
 
-async function doubleCheckManifest(maniContext: ManifestContext): Promise<{
+export async function doubleCheckManifest(maniContext: ManifestContext): Promise<{
   startURL: boolean;
   name: boolean;
   shortName: boolean;
@@ -287,7 +287,7 @@ async function doubleCheckManifest(maniContext: ManifestContext): Promise<{
     if (test.infoString.includes('start_url')) {
       startURL = test.result;
     }
-    if (test.infoString.includes('short_name') && test.infoString.toLowerCase().includes('name') === false) {
+    if (test.infoString.includes('short_name')) {
       shortName = test.result;
     }
     if (test.infoString.includes('name') && test.infoString.toLowerCase().includes('short_name') === false) {
