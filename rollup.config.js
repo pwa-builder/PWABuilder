@@ -25,9 +25,7 @@ export default {
       }
     ),
     replace({
-      "process.env.NODE_ENV": JSON.stringify(
-        process.env.NODE_ENV || "production"
-      ),
+        "ENV": JSON.stringify(process.env.NODE_ENV || "production"),
     }),
     html(),
     json(),
