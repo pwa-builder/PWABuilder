@@ -1,6 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { doubleCheckManifest, getManifestContext } from '../services/app-info';
 
 import {
   BreakpointValues,
@@ -16,6 +17,7 @@ import '../components/manifest-options';
 import '../components/sw-picker';
 import '../components/app-header';
 import '../components/app-sidebar';
+import '../components/app-modal';
 
 //@ts-ignore
 import style from '../../../styles/layout-defaults.css';
@@ -39,6 +41,24 @@ const possible_messages = {
   },
 };
 
+const error_messages = {
+  icon: {
+    message:
+      'Your app is missing an icon that is atleast 512x512, because of this your PWA cannot currently be packaged. Please visit the documentation below for how to fix this.',
+    link: 'https://docs.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/icon-theme-color#define-icons',
+  },
+  start_url: {
+    message:
+      'Your app is missing a start_url, because of this your PWA cannot currently be packaged. Please visit the documentation below for how to fix this.',
+    link: 'https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url',
+  },
+  name: {
+    message:
+      'Your app is missing a name, because of this your PWA cannot currently be packaged. Please visit the documentation below for how to fix this.',
+    link: 'https://developer.mozilla.org/en-US/docs/Web/Manifest/name',
+  },
+};
+
 @customElement('app-report')
 export class AppReport extends LitElement {
   @property({ type: Object }) resultOfTest: RawTestResult | undefined;
@@ -50,6 +70,10 @@ export class AppReport extends LitElement {
   @state() selectedTab: string = 'overview';
   @state() currentHeader: string = possible_messages.overview.heading;
   @state() currentSupporting: string = possible_messages.overview.supporting;
+
+  @state() errored: boolean = false;
+  @state() errorMessage: string | undefined = undefined;
+  @state() errorLink: string | undefined = undefined;
 
   @state() mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`
@@ -115,6 +139,17 @@ export class AppReport extends LitElement {
 
         #overview-panel {
           padding-left: 14px;
+        }
+
+        #error-link {
+          color: white;
+          font-weight: var(--font-bold);
+          border-radius: var(--button-radius);
+          background: var(--error-color);
+          margin-right: 8px;
+          padding-left: 10px;
+          padding-right: 10px;
+          box-shadow: var(--button-shadow);
         }
 
         ${xxxLargeBreakPoint(
@@ -217,7 +252,7 @@ export class AppReport extends LitElement {
     });
   }
 
-  firstUpdated() {
+  async firstUpdated() {
     const search = new URLSearchParams(location.search);
     const results = search.get('results');
 
@@ -231,6 +266,36 @@ export class AppReport extends LitElement {
       sessionStorage.setItem('results-string', results);
 
       this.resultOfTest = JSON.parse(results);
+    }
+
+    await this.handleDoubleChecks();
+  }
+
+  async handleDoubleChecks() {
+    const maniContext = getManifestContext();
+    const doubleCheckResults = await doubleCheckManifest(maniContext);
+    console.log('latest double results', doubleCheckResults);
+
+    if (doubleCheckResults) {
+      if (!doubleCheckResults.icon) {
+        this.errorMessage = error_messages.icon.message;
+        this.errorLink = error_messages.icon.link;
+
+        this.errored = true;
+        return;
+      } else if (!doubleCheckResults.name || !doubleCheckResults.shortName) {
+        this.errorMessage = error_messages.name.message;
+        this.errorLink = error_messages.name.link;
+
+        this.errored = true;
+        return;
+      } else if (!doubleCheckResults.startURL) {
+        this.errorMessage = error_messages.start_url.message;
+        this.errorLink = error_messages.start_url.link;
+
+        this.errored = true;
+        return;
+      }
     }
   }
 
@@ -275,71 +340,98 @@ export class AppReport extends LitElement {
   }
 
   render() {
-    return html` <div id="report-wrapper">
-      <app-header></app-header>
-
-      <div
-        id="grid"
-        class="${classMap({
-          'grid-mobile': this.isDeskTopView == false,
-        })}"
+    return html` <!-- error modal -->
+      <app-modal
+        title="Wait a minute!"
+        .body="${this.errorMessage || ''}"
+        ?open="${this.errored}"
+        id="error-modal"
       >
-        <app-sidebar id="desktop-sidebar"></app-sidebar>
+        <img
+          class="modal-image"
+          slot="modal-image"
+          src="/assets/warning.svg"
+          alt="warning icon"
+        />
 
-        <section id="report">
-          <content-header class="reportCard ${this.selectedTab}">
-            <h1 slot="hero-container">${this.currentHeader}</h1>
-            <p id="hero-p" slot="hero-container">${this.currentSupporting}</p>
-          </content-header>
+        <div id="actions" slot="modal-actions">
+          <fast-anchor
+            target="__blank"
+            id="error-link"
+            class="button"
+            .href="${this.errorLink}"
+            >Documentation <ion-icon name="link"></ion-icon
+          ></fast-anchor>
+        </div>
+      </app-modal>
 
-          <app-sidebar id="tablet-sidebar"></app-sidebar>
+      <div id="report-wrapper">
+        <app-header></app-header>
 
-          <fast-tabs activeId="sections">
-            <fast-tab
-              class="tab"
-              id="overview"
-              @click="${() => this.handleTabsEvent('overview')}"
-              >Overview</fast-tab
-            >
-            <fast-tab
-              class="tab"
-              id="mani"
-              @click="${() => this.handleTabsEvent('mani')}"
-              >Manifest Options</fast-tab
-            >
-            <fast-tab
-              class="tab"
-              id="sw"
-              @click="${() => this.handleTabsEvent('sw')}"
-              >Service Worker Options</fast-tab
-            >
+        <div
+          id="grid"
+          class="${classMap({
+            'grid-mobile': this.isDeskTopView == false,
+          })}"
+        >
+          <app-sidebar id="desktop-sidebar"></app-sidebar>
 
-            <fast-tab-panel id="overview-panel">
-              <report-card
-                @sw-scored="${(ev: CustomEvent<ScoreEvent>) =>
-                  this.handleScoreForDisplay('sw', ev.detail.score)}"
-                @mani-scored="${(ev: CustomEvent<ScoreEvent>) =>
-                  this.handleScoreForDisplay('manifest', ev.detail.score)}"
-                @security-scored="${(ev: CustomEvent<ScoreEvent>) =>
-                  this.handleScoreForDisplay('manifest', ev.detail.score)}"
-                @open-mani-options="${() => this.openManiOptions()}"
-                @open-sw-options="${() => this.openSWOptions()}"
-                .results="${this.resultOfTest}"
-              ></report-card>
-            </fast-tab-panel>
-            <fast-tab-panel id="maniPanel">
-              <manifest-options @back-to-overview=${() => this.openOverview()}>
-              </manifest-options>
-            </fast-tab-panel>
-            <fast-tab-panel id="swPanel">
-              <sw-picker
-                @back-to-overview="${() => this.openOverview()}"
-                score="${this.swScore}"
-              ></sw-picker>
-            </fast-tab-panel>
-          </fast-tabs>
-        </section>
-      </div>
-    </div>`;
+          <section id="report">
+            <content-header class="reportCard ${this.selectedTab}">
+              <h1 slot="hero-container">${this.currentHeader}</h1>
+              <p id="hero-p" slot="hero-container">${this.currentSupporting}</p>
+            </content-header>
+
+            <app-sidebar id="tablet-sidebar"></app-sidebar>
+
+            <fast-tabs activeId="sections">
+              <fast-tab
+                class="tab"
+                id="overview"
+                @click="${() => this.handleTabsEvent('overview')}"
+                >Overview</fast-tab
+              >
+              <fast-tab
+                class="tab"
+                id="mani"
+                @click="${() => this.handleTabsEvent('mani')}"
+                >Manifest Options</fast-tab
+              >
+              <fast-tab
+                class="tab"
+                id="sw"
+                @click="${() => this.handleTabsEvent('sw')}"
+                >Service Worker Options</fast-tab
+              >
+
+              <fast-tab-panel id="overview-panel">
+                <report-card
+                  @sw-scored="${(ev: CustomEvent<ScoreEvent>) =>
+                    this.handleScoreForDisplay('sw', ev.detail.score)}"
+                  @mani-scored="${(ev: CustomEvent<ScoreEvent>) =>
+                    this.handleScoreForDisplay('manifest', ev.detail.score)}"
+                  @security-scored="${(ev: CustomEvent<ScoreEvent>) =>
+                    this.handleScoreForDisplay('manifest', ev.detail.score)}"
+                  @open-mani-options="${() => this.openManiOptions()}"
+                  @open-sw-options="${() => this.openSWOptions()}"
+                  .results="${this.resultOfTest}"
+                ></report-card>
+              </fast-tab-panel>
+              <fast-tab-panel id="maniPanel">
+                <manifest-options
+                  @back-to-overview=${() => this.openOverview()}
+                >
+                </manifest-options>
+              </fast-tab-panel>
+              <fast-tab-panel id="swPanel">
+                <sw-picker
+                  @back-to-overview="${() => this.openOverview()}"
+                  score="${this.swScore}"
+                ></sw-picker>
+              </fast-tab-panel>
+            </fast-tabs>
+          </section>
+        </div>
+      </div>`;
   }
 }
