@@ -1,11 +1,5 @@
 {
   "root": true,
-  "env": {
-    "browser": true
-  },
-  "globals": {
-    "ENV": true
-  },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 2020,

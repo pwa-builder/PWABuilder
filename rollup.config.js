@@ -10,7 +10,7 @@ import json from '@rollup/plugin-json';
 import versionInjector from 'rollup-plugin-version-injector';
 
 export default {
-  input: "build/index.html",
+  input: "index.html",
   output: {
     dir: "dist",
     format: "es"
@@ -25,7 +25,7 @@ export default {
       }
     ),
     replace({
-        "ENV": JSON.stringify(process.env.NODE_ENV || "production"),
+        "window.ENV": JSON.stringify(process.env.NODE_ENV || "production"),
     }),
     html(),
     json(),
