@@ -145,11 +145,7 @@ export class AppCard extends LitElement {
         .card-actions a span {
           display: inline-block;
           height: 28px;
-          border-bottom: 1px solid transparent
-        }
-
-        .card-actions a:hover span {
-          border-color: var(--link-color);
+          border-bottom: 1px solid var(--link-color);
         }
       `,
       // overlay
