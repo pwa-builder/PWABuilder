@@ -1,9 +1,18 @@
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<rect x="0.487427" y="0.844727" width="22.8442" height="22.4434" fill="url(#pattern0)"/>
-<defs>
-<pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
-<use xlink:href="#image0" transform="scale(0.0175439 0.0178571)"/>
-</pattern>
-<image id="image0" width="57" height="56" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADkAAAA4CAYAAABHRFAgAAACSklEQVRoBe1bv2vCQBR+UDuVSikUig4ZHIpDqRRKJXSPQ3EKFEU3ly4dJIKFUpwEQTp2KYbilEmyFIfSKZuI4iD436ScTSCekNxpzh/pE4678x5397373ru75AUgIr/hcHjY7/cv2u22UqlUHrPZbCsejxvj8fhkryBOJpMj0zQvm83mfbFYfMpkMm+xWMwEAMtJNgAspOl0erpzIInmDcO4bjQaqqqqWjqdfgeALz8gNDBvfWsgB4PBebfbva3X64V8Pv8sSdIHAHyvCsQLii4LA0k6NgzjxqUJsZdEIvEJAD8igNDAvPW1QI5GozNnNR7IaqRSKXo1LHcAJ1+wFe9ERJbdObgKX8oJrXRdl2u1WiGXy71IkqTz0ModYOsgZ7PZcafTuatWqyVFUV6TyWRotNoZkLIst0TRxd2jnHwrdJ2PjSCpjZV3xXEl11Qgq8KRrqya8pNDuiJdF28SfmwJakObDNIQSzvaJNok2iTXGRgdD4tjCZJBx4OOBx0Pv+PRNK1ELs4ikm3bB+TBEclF9M/SpzuHpQdY+Mc+aqDX612RdwsiklcfIvpn6XM+B8LroP1uxXaL2ifJSxkupxGC/N8cBIK0KZCbBjgfD491IVAFVzIMJbL0gXRl0VKQDDqeDW0nSNcgKrK0I12RruEd/9AmWWwuSAZtEm0SbZLryvZ/HI/IYKWdcTze5zB0OTJhZzQw1npkAghZAdNyJKYuEqGgNDCeeiSCenkA07LEWUUiPJsGxlr3BtqXy+X9DbRnBUzL+X0y8Qv/JIG8SZRPwQAAAABJRU5ErkJggg=="/>
-</defs>
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+ "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+ width="852.000000pt" height="849.000000pt" viewBox="0 0 852.000000 849.000000"
+ preserveAspectRatio="xMidYMid meet">
+<g transform="translate(0.000000,849.000000) scale(0.100000,-0.100000)"
+fill="#000000" stroke="none">
+<path d="M2 6443 l3 -2048 2053 -3 2052 -2 0 2050 0 2050 -2055 0 -2055 0 2
+-2047z"/>
+<path d="M4410 6440 l0 -2050 2053 2 2052 3 3 2048 2 2047 -2055 0 -2055 0 0
+-2050z"/>
+<path d="M7 4093 c-4 -3 -7 -926 -7 -2050 l0 -2043 2055 0 2055 0 0 2050 0
+2050 -2048 0 c-1127 0 -2052 -3 -2055 -7z"/>
+<path d="M4410 2050 l0 -2050 2055 0 2055 0 -2 2048 -3 2047 -2052 3 -2053 2
+0 -2050z"/>
+</g>
 </svg>

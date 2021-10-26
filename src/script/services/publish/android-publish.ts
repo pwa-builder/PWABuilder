@@ -18,7 +18,7 @@ export async function generateAndroidPackage(
   const validationErrors = validateAndroidOptions(androidOptions);
   if (validationErrors.length > 0 || !androidOptions) {
     throw new Error(
-      'Invalid Adroid options. ' + validationErrors.map(a => a.error).join('\n')
+      'Invalid Android options. ' + validationErrors.map(a => a.error).join('\n')
     );
   }
 
@@ -174,6 +174,47 @@ export async function createAndroidPackageOptionsFromForm(
   };
 }
 
+export function emptyAndroidPackageOptions(): AndroidApkOptions {
+  return {
+    appVersion: '1.0.0.0',
+    appVersionCode: 1,
+    backgroundColor: '#ffffff',
+    display: 'standalone',
+    enableNotifications: false,
+    enableSiteSettingsShortcut: true,
+    fallbackType: 'customtabs',
+    features: {
+      locationDelegation: {
+        enabled: true
+      },
+      playBilling: {
+        enabled: false
+      }
+    },
+    host: '',
+    iconUrl: '',
+    includeSourceCode: false,
+    isChromeOSOnly: false,
+    launcherName: '',
+    maskableIconUrl: '',
+    monochromeIconUrl: '',
+    name: '',
+    navigationColor: '#ffffff',
+    navigationColorDark: '#000000',
+    navigationDividerColor: '#ffffff',
+    navigationDividerColorDark: '#000000',
+    orientation: 'default',
+    packageId: '',
+    shortcuts: [],
+    signing: null,
+    signingMode: 'none',
+    splashScreenFadeOutDuration: 300,
+    startUrl: '',
+    themeColor: '#ffffff',
+    webManifestUrl: ''
+  };
+}
+
 export async function createAndroidPackageOptionsFromManifest(
   localManifest?: Manifest
 ): Promise<AndroidApkOptions> {
@@ -265,7 +306,7 @@ export async function createAndroidPackageOptionsFromManifest(
     launcherName: (manifest.short_name as string) || (appName as string), // launcher name should be the short name. If none is available, fallback to the full app name.
     maskableIconUrl: getAbsoluteUrl(maskableIcon?.src, manifestUrlOrRoot),
     monochromeIconUrl: getAbsoluteUrl(monochromeIcon?.src, manifestUrlOrRoot),
-    name: appName as string,
+    name: appName,
     navigationColor: navColorOrFallback as string,
     navigationColorDark: navColorOrFallback as string,
     navigationDividerColor: navColorOrFallback as string,

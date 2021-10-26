@@ -1,80 +1,26 @@
-import { LitElement, css, html } from 'lit';
-
+import { css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-
 import '../components/loading-button';
-import { tooltip, styles as ToolTipStyles } from '../components/tooltip';
-//@ts-ignore
-import style from '../../../styles/form-styles.css';
-//@ts-ignore
-import ModalStyles from '../../../styles/modal-styles.css';
-
-import { getURL, getManifestUrl } from '../services/app-info';
-import { createWindowsPackageOptionsFromManifest } from '../services/publish/windows-publish';
-
-import { smallBreakPoint, xxLargeBreakPoint } from '../utils/css/breakpoints';
+import { tooltip } from '../components/tooltip';
+import { getManifestUrl } from '../services/app-info';
+import { createWindowsPackageOptionsFromManifest, emptyWindowsPackageOptions } from '../services/publish/windows-publish';
 import { WindowsPackageOptions } from '../utils/win-validation';
-
 import { localeStrings } from '../../locales';
+import { AppPackageFormBase } from './app-package-form-base';
 
 @customElement('windows-form')
-export class WindowsForm extends LitElement {
+export class WindowsForm extends AppPackageFormBase {
   @property({ type: Boolean }) generating: boolean = false;
 
-  @state() show_adv = false;
-  @state() default_options: WindowsPackageOptions | undefined;
+  @state() showAdvanced = false;
+  @state() defaultOptions: WindowsPackageOptions = emptyWindowsPackageOptions();
 
   static get styles() {
+    const localStyles = css`
+    `;
     return [
-      style,
-      ModalStyles,
-      ToolTipStyles,
-      css`
-        #form-layout input {
-          border: 1px solid rgba(194, 201, 209, 1);
-          border-radius: var(--input-radius);
-          padding: 10px;
-          color: var(--font-color);
-        }
-
-        input::placeholder {
-          color: var(--placeholder-color);
-          font-style: italic;
-        }
-
-        #generate-submit {
-          background: transparent;
-          color: var(--button-font-color);
-          font-weight: bold;
-          border: none;
-          cursor: pointer;
-
-          height: var(--desktop-button-height);
-          width: var(--button-width);
-        }
-
-        @media (min-height: 760px) and (max-height: 1000px) {
-          form {
-            width: 100%;
-          }
-        }
-
-        ${xxLargeBreakPoint(
-          css`
-            #form-layout {
-              max-height: 17em;
-            }
-          `
-        )}
-
-        ${smallBreakPoint(
-          css`
-            #form-layout {
-              max-height: 20em;
-            }
-          `
-        )}
-      `,
+      super.styles,
+      localStyles
     ];
   }
 
@@ -84,9 +30,8 @@ export class WindowsForm extends LitElement {
 
   async firstUpdated() {
     const defaultOptions = await createWindowsPackageOptionsFromManifest();
-
     if (defaultOptions) {
-      this.default_options = defaultOptions;
+      this.defaultOptions = defaultOptions;
     }
   }
 
@@ -108,11 +53,11 @@ export class WindowsForm extends LitElement {
 
   toggleSettings(settingsToggleValue: 'basic' | 'advanced') {
     if (settingsToggleValue === 'advanced') {
-      this.show_adv = true;
+      this.showAdvanced = true;
     } else if (settingsToggleValue === 'basic') {
-      this.show_adv = false;
+      this.showAdvanced = false;
     } else {
-      this.show_adv = false;
+      this.showAdvanced = false;
     }
   }
 
@@ -298,9 +243,7 @@ export class WindowsForm extends LitElement {
                         id="windowsAppNameInput"
                         placeholder="My Awesome PWA"
                         name="appName"
-                        value="${this.default_options
-                          ? this.default_options.name
-                          : 'My Awesome PWA'}"
+                        value="${this.defaultOptions.name || 'My Awesome PWA'}"
                         required
                       />
                     </div>
@@ -336,9 +279,7 @@ export class WindowsForm extends LitElement {
                         id="windowsAppVersionInput"
                         placeholder="1.0.1"
                         name="appVersion"
-                        value="${this.default_options
-                          ? this.default_options.version
-                          : '1.0.0'}"
+                        value="${this.defaultOptions.version || '1.0.0'}"
                         required
                       />
                     </div>
@@ -374,8 +315,7 @@ export class WindowsForm extends LitElement {
                         id="windowsClassicAppVersionInput"
                         placeholder="1.0.0"
                         name="classicVersion"
-                        .value="${this.default_options?.classicPackage
-                          ?.version || '1.0.1'}"
+                        .value="${this.defaultOptions.classicPackage?.version || '1.0.1'}"
                         required
                       />
                     </div>
@@ -404,9 +344,7 @@ export class WindowsForm extends LitElement {
                     placeholder="/index.html"
                     name="url"
                     required
-                    value="${this.default_options
-                      ? this.default_options.url
-                      : getURL()}"
+                    value="${this.defaultOptions.url || ''}"
                   />
                 </div>
 
@@ -431,9 +369,7 @@ export class WindowsForm extends LitElement {
                     id="windowsManifestUrlInput"
                     placeholder="https://mysite.com/manifest.json"
                     name="manifestUrl"
-                    .value="${this.default_options?.manifestUrl ||
-                    this.manifestUrl ||
-                    ''}"
+                    .value="${this.defaultOptions.manifestUrl || ''}"
                     required
                   />
                 </div>
@@ -464,7 +400,7 @@ export class WindowsForm extends LitElement {
                     class="form-control"
                     id="iconUrl"
                     placeholder="https://myawesomepwa.com/512x512.png"
-                    .value="${this.default_options?.images?.baseImage || ''}"
+                    .value="${this.defaultOptions.images?.baseImage || ''}"
                     name="iconUrl"
                   />
                 </div>
@@ -489,9 +425,7 @@ export class WindowsForm extends LitElement {
                     class="form-control"
                     id="windowsLanguageInput"
                     placeholder="EN-US"
-                    .value="${this.default_options?.resourceLanguage ||
-                    this.default_options?.manifest?.lang ||
-                    ''}"
+                    .value="${this.defaultOptions.resourceLanguage || this.defaultOptions?.manifest?.lang || ''}"
                     name="language"
                   />
                 </div>

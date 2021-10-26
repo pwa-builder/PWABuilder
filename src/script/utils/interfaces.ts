@@ -14,12 +14,12 @@ export enum AppEvents {
 }
 
 export interface Manifest {
-  background_color: string | undefined;
-  description: string | undefined;
-  dir: 'auto' | 'ltr' | 'rtl' | string;
-  display: string;
-  lang: string | undefined;
-  name: string | undefined;
+  background_color?: string;
+  description?: string;
+  dir?: 'auto' | 'ltr' | 'rtl' | string;
+  display?: string;
+  lang?: string | undefined;
+  name?: string | undefined;
   orientation?:
   | 'any'
   | 'natural'
@@ -28,15 +28,14 @@ export interface Manifest {
   | 'portrait-primary'
   | 'portrait-secondary'
   | 'landscape-primary'
-  | 'landscape-secondary'
-  | null;
+  | 'landscape-secondary';
   prefer_related_applications?: boolean;
   related_applications?: RelatedApplication[];
-  scope: string | undefined;
-  short_name: string | undefined;
-  start_url: string | undefined;
-  theme_color: string | undefined;
-  generated?: boolean | undefined;
+  scope?: string;
+  short_name?: string;
+  start_url?: string;
+  theme_color?: string;
+  generated?: boolean;
   shortcuts?: ShortcutItem[];
   categories?: string[];
   screenshots?: Screenshot[];

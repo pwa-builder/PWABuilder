@@ -1,4 +1,4 @@
-import { css, html, LitElement } from 'lit';
+import { css, html, LitElement, TemplateResult } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 
@@ -9,6 +9,7 @@ import '../components/app-button';
 import '../components/loading-button';
 import '../components/windows-form';
 import '../components/android-form';
+import '../components/ios-form';
 import '../components/hover-tooltip';
 import { Router } from '@vaadin/router';
 
@@ -34,6 +35,7 @@ import { styles as ToolTipStyles } from '../components/tooltip';
 import { localeStrings } from '../../locales';
 import { AnalyticsBehavior, recordProcessStep } from '../utils/analytics';
 import { getURL } from '../services/app-info';
+import { IOSAppPackageOptions } from '../utils/ios-validation';
 @customElement('app-publish')
 export class AppPublish extends LitElement {
   @state() errored = false;
@@ -51,13 +53,40 @@ export class AppPublish extends LitElement {
 
   @state() open_windows_options = false;
   @state() open_android_options = false;
-  @state() open_samsung_modal = false;
+  @state() open_ios_options = false;
 
   @state() generating = false;
 
   @state() finalChecks: checkResults | undefined;
 
   @state() reportPackageErrorUrl = '';
+
+  readonly platforms: ICardData[] = [
+    {
+      title: 'Windows',
+      description:
+        'Publish your PWA to the Microsoft Store to make it available to the 1 billion Windows users worldwide.',
+      isActionCard: true,
+      icon: '/assets/windows_icon.svg',
+      renderDownloadButton: () => this.renderWindowsDownloadButton()
+    },
+    {
+      title: 'Android',
+      description:
+        'Publish your PWA to the Google Play Store to make your app more discoverable for Android users.',
+      isActionCard: true,
+      icon: '/assets/android_icon.svg',
+      renderDownloadButton: () => this.renderAndroidDownloadButton()
+    },
+    {
+      title: 'iOS',
+      description:
+        'Publish your PWA to the iOS App Store to make it available to iPhone and iPad users. Requires a Mac to build the package.',
+      isActionCard: true,
+      icon: '/assets/apple_icon.svg',
+      renderDownloadButton: () => this.renderiOSDownloadButton()
+    }
+  ];
 
   constructor() {
     super();
@@ -252,6 +281,11 @@ export class AppPublish extends LitElement {
         hover-tooltip::part(tooltip-image) {
           display: none;
         }
+
+        .platform-icon {
+          max-width: 37px;
+          image-rendering: smooth;
+        }
       `,
       xxxLargeBreakPoint(
         css`
@@ -404,11 +438,11 @@ export class AppPublish extends LitElement {
       if (maniCheck === false) {
         return 'Your PWA does not have a valid Web Manifest';
       }
-      
+
       if (baseIcon === false) {
         return 'Your PWA needs at least a 512x512 PNG icon';
       }
-      
+
       if (validURL === false) {
         return 'Your PWA does not have a valid URL';
       }
@@ -426,11 +460,11 @@ export class AppPublish extends LitElement {
       if (maniCheck === false) {
         return 'Your PWA does not have a valid Web Manifest';
       }
-      
+
       if (baseIcon === false) {
         return 'Your PWA needs at least a 512x512 PNG icon';
       }
-      
+
       if (validURL === false) {
         return 'Your PWA does not have a valid URL';
       }
@@ -439,7 +473,7 @@ export class AppPublish extends LitElement {
     return null;
   }
 
-  async generate(type: Platform, form?: HTMLFormElement, signingFile?: string) {
+  async generate(type: Platform, form?: HTMLFormElement | IOSAppPackageOptions, signingFile?: string) {
     if (type === 'windows') {
       const windowsErrorMessage = this.getWindowsFinalChecksErrorMessage();
       if (windowsErrorMessage) {
@@ -465,7 +499,7 @@ export class AppPublish extends LitElement {
 
     try {
       this.generating = true;
-      const packageData = await generatePackage(type, form, signingFile);
+      const packageData = await generatePackage(type, form as HTMLFormElement, signingFile);
 
       if (packageData) {
         this.downloadFileName = `${packageData.appName}.zip`;
@@ -539,69 +573,60 @@ export class AppPublish extends LitElement {
     this.open_android_options = true;
   }
 
-  showSamsungModal() {
-    this.open_samsung_modal = true;
+  showiOSOptionsModal() {
+    this.open_ios_options = true;
   }
 
-  renderContentCards() {
-    return platforms.map(
-      platform =>
-        html`<li>
+  renderContentCards(): TemplateResult[] {
+    return this.platforms.map(
+      platform => html`
+        <li>
           <div id="title-block">
-            <img src="${platform.icon}" alt="platform icon" />
+            <img class="platform-icon" src="${platform.icon}" alt="platform icon" />
             <h3>${platform.title}</h3>
             <p>${platform.description}</p>
           </div>
-
+        
           <!-- TODO need to fix the platform action blocks text spacing for the left. -->
           <div id="platform-actions-block">
-            ${platform.title.toLowerCase() === 'windows'
-              ? html`
-                  <app-button
-                    class="navigation"
-                    id="windows-package-button"
-                    @click="${() => this.showWindowsOptionsModal()}"
-                    >Store Package</app-button
-                  >
-
-                  <div>
-                    <loading-button
-                      class="navigation secondary"
-                      ?loading=${this.generating}
-                      id="test-package-button"
-                      @click="${() => this.generate('windows')}"
-                      >Test Package
-
-                      <hover-tooltip
-                        text="Generate a package you can use to test your app on your Windows Device before going to the Microsoft Store."
-                        link="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps.md#1-test-your-app-on-your-windows-machine"
-                      ></hover-tooltip>
-                    </loading-button>
-                  </div>
-                `
-              : null}
-            ${platform.title.toLowerCase() === 'android'
-              ? html`
-                  <app-button
-                    class="navigation"
-                    id="android-package-button"
-                    @click="${() => this.showAndroidOptionsModal()}"
-                    >Store Package</app-button
-                  >
-                `
-              : null}
-            ${platform.title.toLowerCase() === 'samsung'
-              ? html`
-                  <app-button
-                    class="navigation"
-                    @click="${() => this.showSamsungModal()}"
-                    >Submit</app-button
-                  >
-                `
-              : null}
+            ${platform.renderDownloadButton()}
           </div>
         </li>`
     );
+  }
+
+  renderWindowsDownloadButton(): TemplateResult {
+    return html`
+      <app-button class="navigation" id="windows-package-button" @click="${() => this.showWindowsOptionsModal()}">
+        Store Package
+      </app-button>
+      <div>
+        <loading-button class="navigation secondary" ?loading=${this.generating} id="test-package-button"
+          @click="${() => this.generate('windows')}">
+          Test Package
+          <hover-tooltip
+            text="Generate a package you can use to test your app on your Windows Device before going to the Microsoft Store."
+            link="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps.md#1-test-your-app-on-your-windows-machine">
+          </hover-tooltip>
+        </loading-button>
+      </div>
+    `;
+  }
+
+  renderAndroidDownloadButton(): TemplateResult {
+    return html`
+      <app-button class="navigation" id="android-package-button" @click="${() => this.showAndroidOptionsModal()}">
+        Store Package
+      </app-button>
+    `;
+  }
+
+  renderiOSDownloadButton(): TemplateResult {
+    return html`
+      <app-button class="navigation" id="ios-package-button" @click="${() => this.showiOSOptionsModal()}">
+        Store Package
+      </app-button>
+    `;
   }
 
   returnToFix() {
@@ -631,133 +656,74 @@ export class AppPublish extends LitElement {
   storeOptionsCancel() {
     this.open_windows_options = false;
     this.open_android_options = false;
-    this.open_samsung_modal = false;
+    this.open_ios_options = false;
   }
 
   render() {
     return html`
       <!-- error modal -->
-      <app-modal
-        title="Wait a minute!"
-        .body="${this.errorMessage || ''}"
-        ?open="${this.errored}"
-        id="error-modal"
-      >
-        <img
-          class="modal-image"
-          slot="modal-image"
-          src="/assets/warning.svg"
-          alt="warning icon"
-        />
-
+      <app-modal title="Wait a minute!" .body="${this.errorMessage || ''}" ?open="${this.errored}" id="error-modal">
+        <img class="modal-image" slot="modal-image" src="/assets/warning.svg" alt="warning icon" />
+      
         <div id="actions" slot="modal-actions">
-          <fast-anchor
-            target="__blank"
-            id="error-link"
-            class="button"
-            .href="${this.reportPackageErrorUrl}"
-            >Report A Problem</fast-anchor
-          >
-
-          <app-button @click="${() => this.returnToFix()}"
-            >Return to Manifest Options</app-button
-          >
+          <fast-anchor target="__blank" id="error-link" class="button" .href="${this.reportPackageErrorUrl}">Report A Problem
+          </fast-anchor>
+      
+          <app-button @click="${() => this.returnToFix()}">Return to Manifest Options</app-button>
         </div>
       </app-modal>
-
+      
       <!-- download modal -->
-      <app-modal
-        ?open="${this.blob ? true : false}"
-        title="Download your package"
-        body="Your app package is ready for download."
-        id="download-modal"
-        @app-modal-close="${() => this.downloadCancel()}"
-      >
-        <img
-          class="modal-image"
-          slot="modal-image"
-          src="/assets/images/store_fpo.png"
-          alt="publish icon"
-        />
-
+      <app-modal ?open="${this.blob ? true : false}" title="Download your package"
+        body="Your app package is ready for download." id="download-modal" @app-modal-close="${() => this.downloadCancel()}">
+        <img class="modal-image" slot="modal-image" src="/assets/images/store_fpo.png" alt="publish icon" />
+      
         <div slot="modal-actions">
           <app-button @click="${() => this.download()}">Download</app-button>
         </div>
       </app-modal>
-
+      
       <!-- test package download modal -->
-      <app-modal
-        ?open="${this.testBlob ? true : false}"
-        title="Test Package Download"
-        body="${localeStrings.input.publish.windows.test_package}"
-        id="test-download-modal"
-        @app-modal-close="${() => this.downloadTestCancel()}"
-      >
-        <img
-          class="modal-image"
-          slot="modal-image"
-          src="/assets/images/warning.svg"
-          alt="warning icon"
-        />
-
+      <app-modal ?open="${this.testBlob ? true : false}" title="Test Package Download"
+        body="${localeStrings.input.publish.windows.test_package}" id="test-download-modal"
+        @app-modal-close="${() => this.downloadTestCancel()}">
+        <img class="modal-image" slot="modal-image" src="/assets/images/warning.svg" alt="warning icon" />
+      
         <div slot="modal-actions">
           <app-button @click="${() => this.download()}">Download</app-button>
         </div>
       </app-modal>
-
+      
       <!-- windows store options modal -->
-      <app-modal
-        id="windows-options-modal"
-        title="Microsoft Store Options"
-        body="Customize your Windows package below!"
-        ?open="${this.open_windows_options}"
-        @app-modal-close="${() => this.storeOptionsCancel()}"
-      >
-        <windows-form
-          slot="modal-form"
-          .generating=${this.generating}
-          @init-windows-gen="${(ev: CustomEvent) =>
-            this.generate('windows', ev.detail.form)}"
-        ></windows-form>
+      <app-modal id="windows-options-modal" title="Microsoft Store Options" body="Customize your Windows package below"
+        ?open="${this.open_windows_options}" @app-modal-close="${() => this.storeOptionsCancel()}">
+        <windows-form slot="modal-form" .generating=${this.generating} @init-windows-gen="${(ev: CustomEvent) =>
+              this.generate('windows', ev.detail.form)}"></windows-form>
       </app-modal>
-
+      
       <!-- android options modal -->
-      <app-modal
-        id="android-options-modal"
-        title="Google Play Store Options"
-        body="Customize your Android package below!"
-        ?open="${this.open_android_options === true}"
-        @app-modal-close="${() => this.storeOptionsCancel()}"
-      >
-        <android-form
-          slot="modal-form"
-          .generating=${this.generating}
-          @init-android-gen="${(ev: CustomEvent) =>
-            this.generate('android', ev.detail.form, ev.detail.signingFile)}"
-        ></android-form>
+      <app-modal id="android-options-modal" title="Google Play Store Options" body="Customize your Android package below"
+        ?open="${this.open_android_options === true}" @app-modal-close="${() => this.storeOptionsCancel()}">
+        <android-form slot="modal-form" .generating=${this.generating} @init-android-gen="${(ev: CustomEvent) =>
+              this.generate('android', ev.detail.form, ev.detail.signingFile)}"></android-form>
       </app-modal>
-
-      <!-- samsung modal -->
-      <app-modal
-        id="samsung-options-modal"
-        title="Your PWA has been submitted to Samsung's App Finder"
-        body="You can follow up with Samsung at pwasupport@samsung.com for status updates on your submission."
-        ?open="${this.open_samsung_modal === true}"
-        @app-modal-close="${() => this.storeOptionsCancel()}"
-      >
+      
+      <!-- ios options modal -->
+      <app-modal id="ios-options-modal" title="iOS App Store Options" body="Customize your iOS package below"
+        ?open="${this.open_ios_options === true}" @app-modal-close="${() => this.storeOptionsCancel()}">
+        <ios-form slot="modal-form" .generating=${this.generating}
+          @init-ios-gen="${(ev: CustomEvent) => this.generate('ios', ev.detail)}">
+        </ios-form>
       </app-modal>
-
+      
       <div id="publish-wrapper">
         <app-header></app-header>
-
-        <div
-          id="grid"
-          class="${classMap({
-            'grid-mobile': this.isDeskTopView == false,
-          })}"
-        >
+      
+        <div id="grid" class="${classMap({
+                'grid-mobile': this.isDeskTopView == false,
+              })}">
           <app-sidebar id="desktop-sidebar"></app-sidebar>
-
+      
           <div>
             <content-header class="publish">
               <h1 slot="hero-container">Your PWA is Store Ready!</h1>
@@ -765,37 +731,35 @@ export class AppPublish extends LitElement {
                 You are now ready to ship your PWA to the app stores!
               </p>
             </content-header>
-
+      
             <app-sidebar id="tablet-sidebar"></app-sidebar>
-
+      
             <section id="summary-block">
               <h2>Publish your PWA to stores</h2>
-
+      
               <p>
                 Generate store-ready packages for the Microsoft Store, Google
                 Play and more!
               </p>
             </section>
-
+      
             <section class="container">
               <ul>
                 ${this.renderContentCards()}
               </ul>
-
+      
               <div id="up-next">
                 <h4>Congrats!</h4>
-
+      
                 <p>
                   Make sure you check our documentation for help submitting your
                   generated packages! Click next to see what else you can do
                   with your PWA!
                 </p>
               </div>
-
+      
               <div class="action-buttons">
-                <app-button @click="${() => this.returnToFix()}"
-                  >Back</app-button
-                >
+                <app-button @click="${() => this.returnToFix()}">Back</app-button>
                 <fast-anchor class="button" href="/congrats">Next</fast-anchor>
               </div>
             </section>
@@ -807,32 +771,9 @@ export class AppPublish extends LitElement {
 }
 
 interface ICardData {
-  title: string;
+  title: 'Windows' | 'Android' | 'iOS';
   description: string;
   isActionCard: boolean;
   icon: string;
+  renderDownloadButton: () => TemplateResult;
 }
-
-const platforms: ICardData[] = [
-  {
-    title: 'Windows',
-    description:
-      'Publish your PWA to the Microsoft Store to make it available to the 1 billion Windows users worldwide.',
-    isActionCard: true,
-    icon: '/assets/windows_icon.svg',
-  },
-  {
-    title: 'Android',
-    description:
-      'Publish your PWA to the Google Play Store to make your app more discoverable for Android users.',
-    isActionCard: true,
-    icon: '/assets/android_icon.svg',
-  }
-  // {
-  //   title: 'Samsung',
-  //   description:
-  //     'Provide the URL to your PWA to Samsung for inclusion in the Samsung Finder app. You will need to follow up with Samsung after submission for updates on the deployment.',
-  //   isActionCard: true,
-  //   icon: '/assets/samsung_icon.svg',
-  // },
-];
