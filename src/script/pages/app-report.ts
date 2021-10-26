@@ -44,7 +44,7 @@ const possible_messages = {
 const error_messages = {
   icon: {
     message:
-      'Your app is missing an icon that is atleast 512x512, because of this your PWA cannot currently be packaged. Please visit the documentation below for how to fix this.',
+      'Your app is missing a 512x512 or larger PNG icon. Because of this your PWA cannot currently be packaged. Please visit the documentation below for how to fix this.',
     link: 'https://docs.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/icon-theme-color#define-icons',
   },
   start_url: {
@@ -153,7 +153,7 @@ export class AppReport extends LitElement {
         }
 
         ${xxxLargeBreakPoint(
-          css`
+        css`
             #report {
               max-width: 69em;
             }
@@ -179,10 +179,10 @@ export class AppReport extends LitElement {
               background: white;
             }
           `
-        )}
+      )}
 
         ${largeBreakPoint(
-          css`
+        css`
             #tablet-sidebar {
               display: block;
             }
@@ -191,10 +191,10 @@ export class AppReport extends LitElement {
               display: none;
             }
           `
-        )}
+      )}
 
         ${mediumBreakPoint(
-          css`
+        css`
             .reportCard h1 {
               font-size: 33px;
               margin-top: 0;
@@ -213,10 +213,10 @@ export class AppReport extends LitElement {
               display: block;
             }
           `
-        )}
+      )}
 
         ${smallBreakPoint(
-          css`
+        css`
             fast-tabs::part(tablist) {
               display: none;
             }
@@ -239,7 +239,7 @@ export class AppReport extends LitElement {
               display: block;
             }
           `
-        )}
+      )}
       `,
     ];
   }
@@ -273,9 +273,14 @@ export class AppReport extends LitElement {
 
   async handleDoubleChecks() {
     const maniContext = getManifestContext();
-    const doubleCheckResults = await doubleCheckManifest(maniContext);
-    console.log('latest double results', doubleCheckResults);
 
+    // If we couldn't find the manifest and we instead generated one,
+    // punt back; no need to do additional manifest checks.
+    if (maniContext.isGenerated) {
+      return;
+    }
+
+    const doubleCheckResults = await doubleCheckManifest(maniContext);
     if (doubleCheckResults) {
       if (!doubleCheckResults.icon) {
         this.errorMessage = error_messages.icon.message;
@@ -340,98 +345,56 @@ export class AppReport extends LitElement {
   }
 
   render() {
-    return html` <!-- error modal -->
-      <app-modal
-        title="Wait a minute!"
-        .body="${this.errorMessage || ''}"
-        ?open="${this.errored}"
-        id="error-modal"
-      >
-        <img
-          class="modal-image"
-          slot="modal-image"
-          src="/assets/warning.svg"
-          alt="warning icon"
-        />
+    return html`<!-- error modal -->
+<app-modal title="Wait a minute!" .body="${this.errorMessage || ''}" ?open="${this.errored}" id="error-modal">
+  <img class="modal-image" slot="modal-image" src="/assets/warning.svg" alt="warning icon" />
 
-        <div id="actions" slot="modal-actions">
-          <fast-anchor
-            target="__blank"
-            id="error-link"
-            class="button"
-            .href="${this.errorLink}"
-            >Documentation <ion-icon name="link"></ion-icon
-          ></fast-anchor>
-        </div>
-      </app-modal>
+  <div id="actions" slot="modal-actions">
+    <fast-anchor target="__blank" id="error-link" class="button" .href="${this.errorLink}">Documentation <ion-icon
+        name="link"></ion-icon>
+    </fast-anchor>
+  </div>
+</app-modal>
 
-      <div id="report-wrapper">
-        <app-header></app-header>
+<div id="report-wrapper">
+  <app-header></app-header>
 
-        <div
-          id="grid"
-          class="${classMap({
-            'grid-mobile': this.isDeskTopView == false,
-          })}"
-        >
-          <app-sidebar id="desktop-sidebar"></app-sidebar>
+  <div id="grid" class="${classMap({
+      'grid-mobile': this.isDeskTopView == false,
+    })}">
+    <app-sidebar id="desktop-sidebar"></app-sidebar>
 
-          <section id="report">
-            <content-header class="reportCard ${this.selectedTab}">
-              <h1 slot="hero-container">${this.currentHeader}</h1>
-              <p id="hero-p" slot="hero-container">${this.currentSupporting}</p>
-            </content-header>
+    <section id="report">
+      <content-header class="reportCard ${this.selectedTab}">
+        <h1 slot="hero-container">${this.currentHeader}</h1>
+        <p id="hero-p" slot="hero-container">${this.currentSupporting}</p>
+      </content-header>
 
-            <app-sidebar id="tablet-sidebar"></app-sidebar>
+      <app-sidebar id="tablet-sidebar"></app-sidebar>
 
-            <fast-tabs activeId="sections">
-              <fast-tab
-                class="tab"
-                id="overview"
-                @click="${() => this.handleTabsEvent('overview')}"
-                >Overview</fast-tab
-              >
-              <fast-tab
-                class="tab"
-                id="mani"
-                @click="${() => this.handleTabsEvent('mani')}"
-                >Manifest Options</fast-tab
-              >
-              <fast-tab
-                class="tab"
-                id="sw"
-                @click="${() => this.handleTabsEvent('sw')}"
-                >Service Worker Options</fast-tab
-              >
+      <fast-tabs activeId="sections">
+        <fast-tab class="tab" id="overview" @click="${() => this.handleTabsEvent('overview')}">Overview</fast-tab>
+        <fast-tab class="tab" id="mani" @click="${() => this.handleTabsEvent('mani')}">Manifest Options</fast-tab>
+        <fast-tab class="tab" id="sw" @click="${() => this.handleTabsEvent('sw')}">Service Worker Options</fast-tab>
 
-              <fast-tab-panel id="overview-panel">
-                <report-card
-                  @sw-scored="${(ev: CustomEvent<ScoreEvent>) =>
-                    this.handleScoreForDisplay('sw', ev.detail.score)}"
-                  @mani-scored="${(ev: CustomEvent<ScoreEvent>) =>
-                    this.handleScoreForDisplay('manifest', ev.detail.score)}"
-                  @security-scored="${(ev: CustomEvent<ScoreEvent>) =>
-                    this.handleScoreForDisplay('manifest', ev.detail.score)}"
-                  @open-mani-options="${() => this.openManiOptions()}"
-                  @open-sw-options="${() => this.openSWOptions()}"
-                  .results="${this.resultOfTest}"
-                ></report-card>
-              </fast-tab-panel>
-              <fast-tab-panel id="maniPanel">
-                <manifest-options
-                  @back-to-overview=${() => this.openOverview()}
-                >
-                </manifest-options>
-              </fast-tab-panel>
-              <fast-tab-panel id="swPanel">
-                <sw-picker
-                  @back-to-overview="${() => this.openOverview()}"
-                  score="${this.swScore}"
-                ></sw-picker>
-              </fast-tab-panel>
-            </fast-tabs>
-          </section>
-        </div>
-      </div>`;
+        <fast-tab-panel id="overview-panel">
+          <report-card @sw-scored="${(ev: CustomEvent<ScoreEvent>) =>
+        this.handleScoreForDisplay('sw', ev.detail.score)}" @mani-scored="${(ev: CustomEvent<ScoreEvent>) =>
+          this.handleScoreForDisplay('manifest', ev.detail.score)}" @security-scored="${(ev: CustomEvent<ScoreEvent>) =>
+            this.handleScoreForDisplay('manifest', ev.detail.score)}" @open-mani-options="${() => this.openManiOptions()}"
+            @open-sw-options="${() => this.openSWOptions()}" .results="${this.resultOfTest}"></report-card>
+        </fast-tab-panel>
+        <fast-tab-panel id="maniPanel">
+          <manifest-options @back-to-overview=${() => this.openOverview()}
+            >
+          </manifest-options>
+        </fast-tab-panel>
+        <fast-tab-panel id="swPanel">
+          <sw-picker @back-to-overview="${() => this.openOverview()}" score="${this.swScore}"></sw-picker>
+        </fast-tab-panel>
+      </fast-tabs>
+    </section>
+  </div>
+</div>`;
   }
 }
