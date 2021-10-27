@@ -31,6 +31,10 @@ export class HoverTooltip extends LitElement {
         color: #fff;
         text-decoration: none;
         font-weight: initial;
+
+        line-height: initial;
+        font-size: 14px;
+        text-decoration: underline;
       }
 
       #tooltip-block {
