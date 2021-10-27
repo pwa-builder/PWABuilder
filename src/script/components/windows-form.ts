@@ -4,7 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 
 import '../components/loading-button';
 import '../components/hover-tooltip';
-import { tooltip, styles as ToolTipStyles } from '../components/tooltip';
+
 //@ts-ignore
 import style from '../../../styles/form-styles.css';
 //@ts-ignore
@@ -29,7 +29,6 @@ export class WindowsForm extends LitElement {
     return [
       style,
       ModalStyles,
-      ToolTipStyles,
       css`
         #form-layout input {
           border: 1px solid rgba(194, 201, 209, 1);
