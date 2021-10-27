@@ -39,6 +39,7 @@ export class AndroidForm extends LitElement {
   form: HTMLFormElement | undefined;
   currentManifest: Manifest | undefined;
   maxKeyFileSizeInBytes = 2097152;
+  
 
   static get styles() {
     return [
@@ -130,6 +131,17 @@ export class AndroidForm extends LitElement {
         bubbles: true,
       })
     );
+  }
+
+  validatePackageId(e: InputEvent) {
+    const packageIdInput = this.form?.packageId;
+
+    if(packageIdInput?.value?.indexOf('if') !== -1) {
+      packageIdInput?.setCustomValidity("Package ID cannot include 'if'");
+    } else {
+      packageIdInput?.setCustomValidity('');
+    }
+    packageIdInput?.reportValidity();
   }
 
   toggleSettings(settingsToggleValue: 'basic' | 'advanced') {
@@ -295,6 +307,7 @@ export class AndroidForm extends LitElement {
                 required
                 pattern="[a-zA-Z0-9._]*$"
                 name="packageId"
+                @change="${(e: InputEvent) => this.validatePackageId(e)}"
               />
             </div>
 
