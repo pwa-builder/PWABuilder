@@ -3,7 +3,6 @@ import { customElement, property, state } from 'lit/decorators.js';
 import '../components/loading-button';
 import { fetchOrCreateManifest } from '../services/manifest';
 import { ManifestContext } from '../utils/interfaces';
-import { localeStrings } from '../../locales';
 import { AppPackageFormBase } from './app-package-form-base';
 import { createIOSPackageOptionsFromManifest, emptyIOSPackageOptions } from '../services/publish/ios-publish';
 import { IOSAppPackageOptions } from '../utils/ios-validation';

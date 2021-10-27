@@ -1,4 +1,4 @@
-import { Manifest, ManifestContext } from "./interfaces";
+import { Manifest } from "./interfaces";
 
 /**
  * Package options for PWABuilder's iOS platform. Should match https://github.com/pwa-builder/pwabuilder-ios/blob/main/Microsoft.PWABuilder.IOS.Web/Models/IOSAppPackageOptions.cs

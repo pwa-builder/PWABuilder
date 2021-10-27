@@ -23,10 +23,6 @@ interface ImageGeneratorServicePostResponse {
   Uri: string;
 }
 
-interface ImageGenerateServiceGetResponse {
-  Message: string;
-}
-
 type ColorRadioValues = 'best guess' | 'transparent' | 'custom';
 const loc = localeStrings.imageGenerator;
 const platformsData: Array<PlatformInformation> = [
