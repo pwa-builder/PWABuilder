@@ -40,6 +40,8 @@ export class HoverTooltip extends LitElement {
       #tooltip-block {
         position: relative;
         cursor: pointer;
+
+        display: flex;
       }
 
       #tooltip-block img {
