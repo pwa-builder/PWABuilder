@@ -191,12 +191,6 @@ export class WindowsForm extends LitElement {
                   ></i>
                 </a>
 
-                <!--${tooltip(
-                  'windows-package-id',
-                  "The Microsoft Store's unique identifier for your app. You can find this value in Windows Partner Center. Click to learn more.",
-                  'https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/'
-                )}-->
-
                 <hover-tooltip
                   text="The Microsoft Store's unique identifier for your app. You can find this value in Windows Partner Center. Click to learn more."
                   link="https://developer.mozilla.org/en-US/docs/Web/Manifest/icons"
@@ -230,12 +224,6 @@ export class WindowsForm extends LitElement {
                     role="definition"
                   ></i>
                 </a>
-
-                <!--${tooltip(
-                  'windows-display-name',
-                  "The display name of your app's publisher. You can find this in Windows Partner Center. Click to learn more.",
-                  'https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/'
-                )}-->
 
                 <hover-tooltip
                   text="The display name of your app's publisher. You can find this in Windows Partner Center. Click to learn more."
