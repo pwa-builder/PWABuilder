@@ -275,6 +275,10 @@ export class AppPublish extends LitElement {
             max-width: 69em;
             background: white;
           }
+
+          #windows-options-modal::part(modal-layout) {
+            width: 800px;
+          }
         `
       ),
       largeBreakPoint(
