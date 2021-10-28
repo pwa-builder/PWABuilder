@@ -235,7 +235,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                 <hover-tooltip
                   text="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
-                  link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                  link="https://blog.pwabuilder.com/docs/android-platform"
                 >
                 </hover-tooltip>
               </label>
@@ -277,7 +277,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                 <hover-tooltip
                   text="The app name used on the Android launch screen. Typically, this is the short name of the app."
-                  link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                  link="https://blog.pwabuilder.com/docs/android-platform"
                 >
                 </hover-tooltip>
               </label>
@@ -321,7 +321,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                         <hover-tooltip
                           text="The version of your app displayed to users. This is a string, typically in the form of '1.0.0.0'. Maps to android:versionName."
-                          link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                          link="https://blog.pwabuilder.com/docs/android-platform"
                         >
                         </hover-tooltip>
                       </label>
@@ -360,7 +360,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                       <hover-tooltip
                         text="A positive integer used as an internal version number. This is not shown to users. Android uses this value to protect against downgrades. Maps to android:versionCode."
-                        link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                        link="https://blog.pwabuilder.com/docs/android-platform"
                       >
                       </hover-tooltip>
                     </label>
@@ -408,7 +408,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                   <hover-tooltip
                     text="The start path for the TWA. Must be relative to the Host URL. You can specify '/' if you don't have a start URL different from Host."
-                    link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                    link="https://blog.pwabuilder.com/docs/android-platform"
                   >
                   </hover-tooltip>
                 </label>
@@ -436,7 +436,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                   <hover-tooltip
                     text="Also known as the theme color, this is the color of the Android status bar in your app. Note: the status bar will be hidden if Display Mode is set to fullscreen."
-                    link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                    link="https://blog.pwabuilder.com/docs/android-platform"
                   >
                   </hover-tooltip>
                 </label>
@@ -461,7 +461,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                   <hover-tooltip
                     text="Also known as background color, this is the color of the splash screen for your app."
-                    link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                    link="https://blog.pwabuilder.com/docs/android-platform"
                   >
                   </hover-tooltip>
                 </label>
@@ -486,7 +486,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                   <hover-tooltip
                     text="The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
-                    link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                    link="https://blog.pwabuilder.com/docs/android-platform"
                   >
                   </hover-tooltip>
                 </label>
@@ -511,7 +511,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                   <hover-tooltip
                     text="The color of the Android navigation bar in your app when Android is in dark mode."
-                    link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                    link="https://blog.pwabuilder.com/docs/android-platform"
                   >
                   </hover-tooltip>
                 </label>
@@ -536,7 +536,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                   <hover-tooltip
                     text="The color of the Android navigation bar divider in your app."
-                    link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                    link="https://blog.pwabuilder.com/docs/android-platform"
                   >
                   </hover-tooltip>
                 </label>
@@ -561,7 +561,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                   <hover-tooltip
                     text="The color of the Android navigation navigation bar divider in your app when Android is in dark mode."
-                    link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                    link="https://blog.pwabuilder.com/docs/android-platform"
                   >
                   </hover-tooltip>
                 </label>
@@ -607,7 +607,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                   <hover-tooltip
                     text="Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms."
-                    link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                    link="https://blog.pwabuilder.com/docs/android-platform"
                   >
                   </hover-tooltip>
                 </label>
@@ -639,7 +639,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                   <hover-tooltip
                     text="Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings."
-                    link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                    link="https://blog.pwabuilder.com/docs/android-platform"
                   >
                   </hover-tooltip>
                 </label>
@@ -702,7 +702,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                     <hover-tooltip
                       text="Use Chrome Custom Tabs as a fallback for your PWA when the full trusted web activity (TWA) experience is unavailable."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -729,7 +729,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                     <hover-tooltip
                       text="Use a web view as the fallback for your PWA when the full trusted web activity (TWA) experience is unavailable."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -762,7 +762,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                     <hover-tooltip
                       text="Your PWA will use the whole screen but keep the Android status bar and navigation bar."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -791,7 +791,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                     <hover-tooltip
                       text="Your PWA will use the whole screen and remove the Android status bar and navigation bar. Suitable for immersive experiences such as games or media apps."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -822,7 +822,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                     <hover-tooltip
                       text="Whether to enable Push Notification Delegation. If enabled, your PWA can send push notifications without browser permission prompts."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -853,7 +853,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                     <hover-tooltip
                       text="Whether to enable Location Delegation. If enabled, your PWA can acess navigator.geolocation without browser permission prompts."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -884,7 +884,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                     <hover-tooltip
                       text="Whether to enable in-app purchases through Google Play Billing and the Digital Goods API."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -917,7 +917,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                     <hover-tooltip
                       text="If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -947,7 +947,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                     <hover-tooltip
                       text="If enabled, your Android package will only run on ChromeOS devices"
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -975,7 +975,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                     <hover-tooltip
                       text="If enabled, your download will include the source code for your Android app."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -1005,7 +1005,7 @@ export class AndroidForm extends AppPackageFormBase {
                     ></i>
                     <hover-tooltip
                       text="PWABuilder will generate a new signing key for you and sign your APK with it. Your download will contain the new signing key and passwords."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -1031,7 +1031,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                     <hover-tooltip
                       text="PWABuilder will generate an unsigned APK. Google Play Store will sign your package. This is Google's recommended approach."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -1057,7 +1057,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                     <hover-tooltip
                       text="Upload your existing signing key. Use this option if you already have a signing key and you want to publish a new version of an existing app in Google Play."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -1158,7 +1158,7 @@ export class AndroidForm extends AppPackageFormBase {
 
                                 <hover-tooltip
                                   text="The 2 letter country code to list on the signing key"
-                                  link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                                  link="https://blog.pwabuilder.com/docs/android-platform"
                                 >
                                 </hover-tooltip>
                               </label>

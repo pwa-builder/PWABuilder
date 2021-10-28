@@ -252,7 +252,7 @@ export class WindowsForm extends AppPackageFormBase {
                       aria-label="This is the URL for your PWA." role="definition"></i>
       
                     <hover-tooltip text="This is the URL to your PWA"
-                      link="https://blog.pwabuilder.com/docs/windows-store-documentation/">
+                      link="https://blog.pwabuilder.com/docs/windows-platform/">
                     </hover-tooltip>
                   </label>
                   <input type="url" class="form-control" id="windowsUrlInput" placeholder="/index.html" name="url" required
@@ -266,7 +266,7 @@ export class WindowsForm extends AppPackageFormBase {
                       aria-label="The URL to your app manifest." role="definition"></i>
       
                     <hover-tooltip text="The URL to your app manifest"
-                      link="https://blog.pwabuilder.com/docs/windows-store-documentation/">
+                      link="https://blog.pwabuilder.com/docs/windows-platform/">
                     </hover-tooltip>
                   </label>
                   <input type="url" class="form-control" id="windowsManifestUrlInput"
@@ -304,7 +304,7 @@ export class WindowsForm extends AppPackageFormBase {
       
                     <hover-tooltip
                       text="Optional. The primary language for your app package. Additional languages can be specified in Partner Center. If empty, EN-US will be used."
-                      link="https://blog.pwabuilder.com/docs/windows-store-documentation/">
+                      link="https://blog.pwabuilder.com/docs/windows-platform/">
                     </hover-tooltip>
                   </label>
                   <input type="text" class="form-control" id="windowsLanguageInput" placeholder="EN-US"
