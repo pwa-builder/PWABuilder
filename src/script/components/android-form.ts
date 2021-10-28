@@ -1,27 +1,20 @@
-import { LitElement, css, html } from 'lit';
+import { css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-
 import '../components/loading-button';
 import '../components/hover-tooltip';
-
-//@ts-ignore
-import style from '../../../styles/form-styles.css';
-//@ts-ignore
-import ModalStyles from '../../../styles/modal-styles.css';
 import { fetchOrCreateManifest } from '../services/manifest';
-import { createAndroidPackageOptionsFromManifest } from '../services/publish/android-publish';
+import { createAndroidPackageOptionsFromManifest, emptyAndroidPackageOptions } from '../services/publish/android-publish';
 import { AndroidApkOptions } from '../utils/android-validation';
-
-import { smallBreakPoint, xxLargeBreakPoint } from '../utils/css/breakpoints';
 import { Manifest } from '../utils/interfaces';
 import { localeStrings } from '../../locales';
+import { AppPackageFormBase } from './app-package-form-base';
 
 @customElement('android-form')
-export class AndroidForm extends LitElement {
-  @property({ type: Boolean }) generating: boolean = false;
+export class AndroidForm extends AppPackageFormBase {
+  @property({ type: Boolean }) generating = false;
 
-  @state() show_adv = false;
+  @state() showAdvanced = false;
 
   // manifest form props
   @state() signingKeyFullName = 'John Doe';
@@ -33,67 +26,18 @@ export class AndroidForm extends LitElement {
   @state() alias = 'my-key-alias';
   @state() file: string | undefined = undefined;
   @state() signingMode = 'new';
-
-  @state() default_options: AndroidApkOptions | undefined;
+  @state() defaultOptions: AndroidApkOptions = emptyAndroidPackageOptions();
 
   form: HTMLFormElement | undefined;
   currentManifest: Manifest | undefined;
   maxKeyFileSizeInBytes = 2097152;
 
   static get styles() {
+    const localStyles = css`
+    `;
     return [
-      style,
-      ModalStyles,
-      css`
-        #form-layout input {
-          border: 1px solid rgba(194, 201, 209, 1);
-          border-radius: var(--input-radius);
-          padding: 10px;
-          color: var(--font-color);
-        }
-
-        input[type='color'] {
-          padding: 0px;
-        }
-
-        input::placeholder {
-          color: var(--placeholder-color);
-          font-style: italic;
-        }
-
-        #generate-submit {
-          background: transparent;
-          color: var(--button-font-color);
-          font-weight: bold;
-          border: none;
-          cursor: pointer;
-
-          height: var(--desktop-button-height);
-          width: var(--button-width);
-        }
-
-        @media (min-height: 760px) and (max-height: 1000px) {
-          form {
-            width: 100%;
-          }
-        }
-
-        ${xxLargeBreakPoint(
-          css`
-            #form-layout {
-              max-height: 17em;
-            }
-          `
-        )}
-
-        ${smallBreakPoint(
-          css`
-            #form-layout {
-              max-height: 20em;
-            }
-          `
-        )}
-      `,
+      super.styles,
+      localStyles
     ];
   }
 
@@ -113,7 +57,7 @@ export class AndroidForm extends LitElement {
     const manifestContext = await fetchOrCreateManifest();
     this.currentManifest = manifestContext.manifest;
 
-    this.default_options = await createAndroidPackageOptionsFromManifest();
+    this.defaultOptions = await createAndroidPackageOptionsFromManifest(manifestContext.manifest);
   }
 
   initGenerate(ev: InputEvent) {
@@ -131,7 +75,7 @@ export class AndroidForm extends LitElement {
     );
   }
 
-  validatePackageId(e: InputEvent) {
+  validatePackageId() {
     const packageIdInput = this.form?.packageId;
 
     if (packageIdInput?.value?.indexOf('if') !== -1) {
@@ -144,11 +88,11 @@ export class AndroidForm extends LitElement {
 
   toggleSettings(settingsToggleValue: 'basic' | 'advanced') {
     if (settingsToggleValue === 'advanced') {
-      this.show_adv = true;
+      this.showAdvanced = true;
     } else if (settingsToggleValue === 'basic') {
-      this.show_adv = false;
+      this.showAdvanced = false;
     } else {
-      this.show_adv = false;
+      this.showAdvanced = false;
     }
   }
 
@@ -291,7 +235,7 @@ export class AndroidForm extends LitElement {
 
                 <hover-tooltip
                   text="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
-                  link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                  link="https://blog.pwabuilder.com/docs/android-platform"
                 >
                 </hover-tooltip>
               </label>
@@ -299,14 +243,12 @@ export class AndroidForm extends LitElement {
                 id="packageIdInput"
                 class="form-control"
                 placeholder="com.contoso.app"
-                value="${this.default_options
-                  ? this.default_options.packageId
-                  : 'com.contoso.app'}"
+                value="${this.defaultOptions.packageId || 'com.contoso.app'}"
                 type="text"
                 required
                 pattern="[a-zA-Z0-9._]*$"
                 name="packageId"
-                @change="${(e: InputEvent) => this.validatePackageId(e)}"
+                @change="${this.validatePackageId}"
               />
             </div>
 
@@ -317,9 +259,7 @@ export class AndroidForm extends LitElement {
                 class="form-control"
                 id="appNameInput"
                 placeholder="My Awesome PWA"
-                value="${this.default_options
-                  ? this.default_options.name
-                  : ' My Awesome PWA'}"
+                value="${this.defaultOptions.name || 'My Awesome PWA'}"
                 required
                 name="appName"
               />
@@ -337,7 +277,7 @@ export class AndroidForm extends LitElement {
 
                 <hover-tooltip
                   text="The app name used on the Android launch screen. Typically, this is the short name of the app."
-                  link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                  link="https://blog.pwabuilder.com/docs/android-platform"
                 >
                 </hover-tooltip>
               </label>
@@ -346,9 +286,7 @@ export class AndroidForm extends LitElement {
                 class="form-control"
                 id="appLauncherNameInput"
                 placeholder="Awesome PWA"
-                value="${this.default_options
-                  ? this.default_options.launcherName
-                  : 'Awesome PWA'}"
+                value="${this.defaultOptions.launcherName || 'Awesome PWA'}"
                 required
                 name="launcherName"
               />
@@ -383,7 +321,7 @@ export class AndroidForm extends LitElement {
 
                         <hover-tooltip
                           text="The version of your app displayed to users. This is a string, typically in the form of '1.0.0.0'. Maps to android:versionName."
-                          link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                          link="https://blog.pwabuilder.com/docs/android-platform"
                         >
                         </hover-tooltip>
                       </label>
@@ -392,7 +330,7 @@ export class AndroidForm extends LitElement {
                         class="form-control"
                         id="appVersionInput"
                         placeholder="1.0.0.0"
-                        value="${this.default_options?.appVersion || '1.0.0.0'}"
+                        value="${this.defaultOptions.appVersion || '1.0.0.0'}"
                         required
                         name="appVersion"
                       />
@@ -422,7 +360,7 @@ export class AndroidForm extends LitElement {
 
                       <hover-tooltip
                         text="A positive integer used as an internal version number. This is not shown to users. Android uses this value to protect against downgrades. Maps to android:versionCode."
-                        link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                        link="https://blog.pwabuilder.com/docs/android-platform"
                       >
                       </hover-tooltip>
                     </label>
@@ -435,7 +373,7 @@ export class AndroidForm extends LitElement {
                       name="appVersionCode"
                       placeholder="1"
                       required
-                      value="${this.default_options?.appVersionCode || 1}"
+                      value="${this.defaultOptions.appVersionCode || 1}"
                     />
                   </div>
                 </div>
@@ -452,9 +390,7 @@ export class AndroidForm extends LitElement {
                       placeholder="https://mysite.com"
                       required
                       name="host"
-                      value="${this.default_options
-                        ? this.default_options.host
-                        : 'https://mysite.com'}"
+                      value="${this.defaultOptions.host || 'https://mysite.com'}"
                     />
                   </div>
                 </div>
@@ -472,7 +408,7 @@ export class AndroidForm extends LitElement {
 
                   <hover-tooltip
                     text="The start path for the TWA. Must be relative to the Host URL. You can specify '/' if you don't have a start URL different from Host."
-                    link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                    link="https://blog.pwabuilder.com/docs/android-platform"
                   >
                   </hover-tooltip>
                 </label>
@@ -484,9 +420,7 @@ export class AndroidForm extends LitElement {
                   placeholder="/index.html"
                   required
                   name="startUrl"
-                  value="${this.default_options
-                    ? this.default_options.startUrl
-                    : '/'}"
+                  value="${this.defaultOptions.startUrl || '/'}"
                 />
               </div>
 
@@ -502,7 +436,7 @@ export class AndroidForm extends LitElement {
 
                   <hover-tooltip
                     text="Also known as the theme color, this is the color of the Android status bar in your app. Note: the status bar will be hidden if Display Mode is set to fullscreen."
-                    link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                    link="https://blog.pwabuilder.com/docs/android-platform"
                   >
                   </hover-tooltip>
                 </label>
@@ -511,9 +445,7 @@ export class AndroidForm extends LitElement {
                   class="form-control"
                   id="themeColorInput"
                   name="themeColor"
-                  value="${this.default_options
-                    ? this.default_options.themeColor
-                    : 'black'}"
+                  value="${this.defaultOptions.themeColor || 'black'}"
                 />
               </div>
 
@@ -529,7 +461,7 @@ export class AndroidForm extends LitElement {
 
                   <hover-tooltip
                     text="Also known as background color, this is the color of the splash screen for your app."
-                    link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                    link="https://blog.pwabuilder.com/docs/android-platform"
                   >
                   </hover-tooltip>
                 </label>
@@ -538,9 +470,7 @@ export class AndroidForm extends LitElement {
                   class="form-control"
                   id="bgColorInput"
                   name="backgroundColor"
-                  value="${this.default_options
-                    ? this.default_options.backgroundColor
-                    : 'black'}"
+                  value="${this.defaultOptions.backgroundColor || 'black'}"
                 />
               </div>
 
@@ -556,7 +486,7 @@ export class AndroidForm extends LitElement {
 
                   <hover-tooltip
                     text="The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
-                    link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                    link="https://blog.pwabuilder.com/docs/android-platform"
                   >
                   </hover-tooltip>
                 </label>
@@ -565,9 +495,7 @@ export class AndroidForm extends LitElement {
                   class="form-control"
                   id="navigationColorInput"
                   name="navigationColor"
-                  value="${this.default_options
-                    ? this.default_options.navigationColor
-                    : 'black'}"
+                  value="${this.defaultOptions.navigationColor || 'black'}"
                 />
               </div>
 
@@ -583,7 +511,7 @@ export class AndroidForm extends LitElement {
 
                   <hover-tooltip
                     text="The color of the Android navigation bar in your app when Android is in dark mode."
-                    link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                    link="https://blog.pwabuilder.com/docs/android-platform"
                   >
                   </hover-tooltip>
                 </label>
@@ -592,9 +520,7 @@ export class AndroidForm extends LitElement {
                   class="form-control"
                   id="navigationColorDarkInput"
                   name="navigationColorDark"
-                  value="${this.default_options
-                    ? this.default_options.navigationColorDark
-                    : 'black'}"
+                  value="${this.defaultOptions.navigationColorDark || 'black'}"
                 />
               </div>
 
@@ -610,7 +536,7 @@ export class AndroidForm extends LitElement {
 
                   <hover-tooltip
                     text="The color of the Android navigation bar divider in your app."
-                    link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                    link="https://blog.pwabuilder.com/docs/android-platform"
                   >
                   </hover-tooltip>
                 </label>
@@ -619,9 +545,7 @@ export class AndroidForm extends LitElement {
                   class="form-control"
                   id="navigationDividerColorInput"
                   name="navigationDividerColor"
-                  value="${this.default_options
-                    ? this.default_options.navigationDividerColor
-                    : 'black'}"
+                  value="${this.defaultOptions.navigationDividerColor || 'black'}"
                 />
               </div>
 
@@ -637,7 +561,7 @@ export class AndroidForm extends LitElement {
 
                   <hover-tooltip
                     text="The color of the Android navigation navigation bar divider in your app when Android is in dark mode."
-                    link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                    link="https://blog.pwabuilder.com/docs/android-platform"
                   >
                   </hover-tooltip>
                 </label>
@@ -646,9 +570,7 @@ export class AndroidForm extends LitElement {
                   class="form-control"
                   id="navigationDividerColorDarkInput"
                   name="navigationDividerColorDark"
-                  value="${this.default_options
-                    ? this.default_options.navigationDividerColorDark
-                    : 'black'}"
+                  value="${this.defaultOptions.navigationDividerColorDark || 'black'}"
                 />
               </div>
 
@@ -660,9 +582,7 @@ export class AndroidForm extends LitElement {
                   id="iconUrlInput"
                   placeholder="https://myawesomepwa.com/512x512.png"
                   name="iconUrl"
-                  value="${this.default_options
-                    ? this.default_options.iconUrl
-                    : ''}"
+                  value="${this.defaultOptions.iconUrl || ''}"
                 />
               </div>
 
@@ -687,7 +607,7 @@ export class AndroidForm extends LitElement {
 
                   <hover-tooltip
                     text="Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms."
-                    link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                    link="https://blog.pwabuilder.com/docs/android-platform"
                   >
                   </hover-tooltip>
                 </label>
@@ -697,7 +617,7 @@ export class AndroidForm extends LitElement {
                   id="maskIconUrlInput"
                   placeholder="https://myawesomepwa.com/512x512-maskable.png"
                   name="maskableIconUrl"
-                  .value="${this.default_options?.maskableIconUrl || ''}"
+                  .value="${this.defaultOptions.maskableIconUrl || ''}"
                 />
               </div>
 
@@ -719,7 +639,7 @@ export class AndroidForm extends LitElement {
 
                   <hover-tooltip
                     text="Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings."
-                    link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                    link="https://blog.pwabuilder.com/docs/android-platform"
                   >
                   </hover-tooltip>
                 </label>
@@ -729,7 +649,7 @@ export class AndroidForm extends LitElement {
                   id="monochromeIconUrlInput"
                   placeholder="https://myawesomepwa.com/512x512-monochrome.png"
                   name="monochromeIconUrl"
-                  .value="${this.default_options?.monochromeIconUrl || ''}"
+                  .value="${this.defaultOptions.monochromeIconUrl || ''}"
                 />
               </div>
 
@@ -741,7 +661,7 @@ export class AndroidForm extends LitElement {
                   id="webManifestUrlInput"
                   placeholder="https://myawesomepwa.com/manifest.json"
                   name="webManifestUrl"
-                  .value="${this.default_options?.webManifestUrl || ''}"
+                  .value="${this.defaultOptions.webManifestUrl || ''}"
                 />
               </div>
 
@@ -755,9 +675,7 @@ export class AndroidForm extends LitElement {
                   id="splashFadeoutInput"
                   placeholder="300"
                   name="splashScreenFadeOutDuration"
-                  value="${this.default_options
-                    ? this.default_options.splashScreenFadeOutDuration
-                    : '300'}"
+                  value="${this.defaultOptions.splashScreenFadeOutDuration || '300'}"
                 />
               </div>
 
@@ -784,7 +702,7 @@ export class AndroidForm extends LitElement {
 
                     <hover-tooltip
                       text="Use Chrome Custom Tabs as a fallback for your PWA when the full trusted web activity (TWA) experience is unavailable."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -811,7 +729,7 @@ export class AndroidForm extends LitElement {
 
                     <hover-tooltip
                       text="Use a web view as the fallback for your PWA when the full trusted web activity (TWA) experience is unavailable."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -826,11 +744,7 @@ export class AndroidForm extends LitElement {
                     type="radio"
                     name="displayMode"
                     id="standaloneDisplayModeInput"
-                    .defaultChecked="${this.default_options
-                      ? this.default_options.display === 'standalone'
-                        ? true
-                        : false
-                      : false}"
+                    .defaultChecked="${this.defaultOptions.display === 'standalone'}"
                     value="standalone"
                     name="display"
                   />
@@ -848,7 +762,7 @@ export class AndroidForm extends LitElement {
 
                     <hover-tooltip
                       text="Your PWA will use the whole screen but keep the Android status bar and navigation bar."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -859,11 +773,7 @@ export class AndroidForm extends LitElement {
                     type="radio"
                     name="displayMode"
                     id="fullscreenDisplayModeInput"
-                    .defaultChecked="${this.default_options
-                      ? this.default_options.display === 'fullscreen'
-                        ? true
-                        : false
-                      : false}"
+                    .defaultChecked="${this.defaultOptions.display === 'fullscreen'}"
                     value="fullscreen"
                     name="display"
                   />
@@ -881,7 +791,7 @@ export class AndroidForm extends LitElement {
 
                     <hover-tooltip
                       text="Your PWA will use the whole screen and remove the Android status bar and navigation bar. Suitable for immersive experiences such as games or media apps."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -912,7 +822,7 @@ export class AndroidForm extends LitElement {
 
                     <hover-tooltip
                       text="Whether to enable Push Notification Delegation. If enabled, your PWA can send push notifications without browser permission prompts."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -943,7 +853,7 @@ export class AndroidForm extends LitElement {
 
                     <hover-tooltip
                       text="Whether to enable Location Delegation. If enabled, your PWA can acess navigator.geolocation without browser permission prompts."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -974,7 +884,7 @@ export class AndroidForm extends LitElement {
 
                     <hover-tooltip
                       text="Whether to enable in-app purchases through Google Play Billing and the Digital Goods API."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -1007,7 +917,7 @@ export class AndroidForm extends LitElement {
 
                     <hover-tooltip
                       text="If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -1037,7 +947,7 @@ export class AndroidForm extends LitElement {
 
                     <hover-tooltip
                       text="If enabled, your Android package will only run on ChromeOS devices"
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -1065,7 +975,7 @@ export class AndroidForm extends LitElement {
 
                     <hover-tooltip
                       text="If enabled, your download will include the source code for your Android app."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -1095,7 +1005,7 @@ export class AndroidForm extends LitElement {
                     ></i>
                     <hover-tooltip
                       text="PWABuilder will generate a new signing key for you and sign your APK with it. Your download will contain the new signing key and passwords."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -1121,7 +1031,7 @@ export class AndroidForm extends LitElement {
 
                     <hover-tooltip
                       text="PWABuilder will generate an unsigned APK. Google Play Store will sign your package. This is Google's recommended approach."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -1147,7 +1057,7 @@ export class AndroidForm extends LitElement {
 
                     <hover-tooltip
                       text="Upload your existing signing key. Use this option if you already have a signing key and you want to publish a new version of an existing app in Google Play."
-                      link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                      link="https://blog.pwabuilder.com/docs/android-platform"
                     >
                     </hover-tooltip>
                   </label>
@@ -1248,7 +1158,7 @@ export class AndroidForm extends LitElement {
 
                                 <hover-tooltip
                                   text="The 2 letter country code to list on the signing key"
-                                  link="https://blog.pwabuilder.com/docs/pwabuilder-android-platform-documentation/"
+                                  link="https://blog.pwabuilder.com/docs/android-platform"
                                 >
                                 </hover-tooltip>
                               </label>

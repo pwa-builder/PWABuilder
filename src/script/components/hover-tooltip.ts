@@ -19,7 +19,7 @@ export class HoverTooltip extends LitElement {
         padding: 8px;
         border-radius: 6px;
         position: absolute;
-        z-index: 1;
+        z-index: 1000;
 
         white-space: break-spaces;
         width: 14em;
@@ -29,11 +29,14 @@ export class HoverTooltip extends LitElement {
         top: 0em;
 
         color: #fff;
-        text-decoration: none;
         font-weight: initial;
 
         line-height: initial;
         font-size: 14px;
+      }
+
+      #hover-tooltip a {
+        color: #fff;
         text-decoration: underline;
       }
 
@@ -66,18 +69,24 @@ export class HoverTooltip extends LitElement {
   render() {
     return html`
       <div id="tooltip-block">
-        <img
-          part="tooltip-image"
-          src="assets/images/help-outline.svg"
-          alt="help outline"
-          aria-hidden="true"
-          id="tooltip-image"
-        />
-
-        <a id="hover-tooltip" target="_blank" href="${this.link}"
-          >${this.text}</a
-        >
+        <img part="tooltip-image" src="assets/images/help-outline.svg" alt="help outline" aria-hidden="true"
+          id="tooltip-image" />
+      
+        ${this.renderLinkOrSpan()}
       </div>
     `;
+  }
+
+  renderLinkOrSpan() {
+    if (this.link) {
+      return html`
+        <p id="hover-tooltip">
+          ${this.text}
+          <a target="_blank" href="${this.link}"><i class="fas fa-external-link-square-alt"></i>Read more...</a>
+        </p>
+      `;
+    }
+
+    return html`<span id="hover-tooltip">${this.text}</span>`;
   }
 }

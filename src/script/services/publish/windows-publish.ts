@@ -47,6 +47,25 @@ export async function generateWindowsPackage(
   }
 }
 
+export function emptyWindowsPackageOptions(): WindowsPackageOptions {
+  return {
+    name: '',
+    packageId: '',
+    url: '',
+    version: '1.0.0.1',
+    manifestUrl: '',
+    classicPackage: {
+      generate: true,
+      version: '1.0.0.0',
+      url: ''
+    },
+    publisher: {
+      displayName: '',
+      commonName: ''
+    }
+  };
+}
+
 export async function createWindowsPackageOptionsFromManifest(
   localManifest?: Manifest
 ): Promise<WindowsPackageOptions> {

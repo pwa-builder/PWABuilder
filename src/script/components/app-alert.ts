@@ -5,7 +5,7 @@ import { customElement, property } from 'lit/decorators.js';
 @customElement('app-alert')
 export class AppAlert extends LitElement {
   @property({ type: Boolean }) open = false;
-  @property({ type: String }) title = 'Title';
+  @property({ type: String }) heading = 'Title';
 
   contextAnimation: Animation | undefined = undefined;
   dialog: Element | null | undefined = undefined;
@@ -90,20 +90,17 @@ export class AppAlert extends LitElement {
       return html`
         <div id="alert">
           <div id="alert-header">
-            <h5>${this.title}</h5>
-
-            <fast-button
-              @click="${() => this.close()}"
-              appearance="lightweight"
-            >
+            <h5>${this.heading}</h5>
+        
+            <fast-button @click="${() => this.close()}" appearance="lightweight">
               <ion-icon name="close"></ion-icon>
             </fast-button>
           </div>
-
+        
           <div id="alert-content">
             <slot></slot>
           </div>
-
+        
           <div id="alert-actions">
             <slot name="actions"></slot>
           </div>
