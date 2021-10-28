@@ -5,7 +5,6 @@ import { fetchOrCreateManifest } from '../services/manifest';
 import { ManifestContext } from '../utils/interfaces';
 import { AppPackageFormBase } from './app-package-form-base';
 import { createIOSPackageOptionsFromManifest, emptyIOSPackageOptions } from '../services/publish/ios-publish';
-import { IOSAppPackageOptions } from '../utils/ios-validation';
 
 @customElement('ios-form')
 export class IOSForm extends AppPackageFormBase {
@@ -113,7 +112,7 @@ export class IOSForm extends AppPackageFormBase {
               ${super.renderFormInput({
                 label: 'Bundle ID',
                 tooltip: `The unique identifier of your app. Apple recommends a reverse-domain style string: com.domainname.appname. You'll need this value when uploading your app to the App Store.`,
-                tooltipLink: "https://blog.pwabuilder.com/docs/ios-app-submission#create-your-bundle-id",
+                tooltipLink: "https://blog.pwabuilder.com/docs/publish-your-pwa-to-the-ios-app-store/#create-your-bundle-id",
                 inputId: 'bundleIdInput',
                 value: this.packageOptions.bundleId || 'com.domainname.appname',
                 required: true,
@@ -235,7 +234,7 @@ export class IOSForm extends AppPackageFormBase {
         <div id="form-details-block">
           <p>
             Your download will contain
-            <a href="https://blog.pwabuilder.com/docs/ios-next-steps" target="_blank">instructions</a>
+            <a href="https://blog.pwabuilder.com/docs/build-your-ios-app" target="_blank">instructions</a>
             for submitting to the App Store.</p>
         </div>
 
