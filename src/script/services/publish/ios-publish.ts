@@ -41,11 +41,11 @@ export function createIOSPackageOptionsFromManifest(manifestContext: ManifestCon
   return {
     name: manifestContext.manifest.short_name || manifestContext.manifest.name || "My PWA",
     bundleId: generateBundleId(host),
-    url: manifestContext.siteUrl,
+    url: new URL(manifestContext.manifest.start_url || "/", manifestContext.manifestUrl).toString(),
     imageUrl: findBestAppIcon(manifestContext.manifest.icons)?.src || '',
     splashColor: manifestContext.manifest.background_color || '#ffffff',
     progressBarColor: manifestContext.manifest.theme_color || '#000000',
-    statusBarColor: manifestContext.manifest.background_color || '#ffffff',
+    statusBarColor: manifestContext.manifest.theme_color || manifestContext.manifest.background_color || '#ffffff',
     permittedUrls: [],
     manifestUrl: manifestContext.manifestUrl,
     manifest: manifestContext.manifest

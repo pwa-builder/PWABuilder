@@ -13,7 +13,7 @@ import { AppModalElement } from '../utils/interfaces.components';
 @customElement('app-modal')
 export class AppModal extends LitElement implements AppModalElement {
   @property({ type: Boolean }) open = false;
-  @property({ type: String }) title = '';
+  @property({ type: String }) heading = '';
   @property({ type: String }) body = '';
   @property({ type: String }) modalId = '';
 
@@ -218,29 +218,24 @@ export class AppModal extends LitElement implements AppModalElement {
                 <ion-icon name="close"></ion-icon>
               </fast-button>
             </div>
-
+        
             <slot id="modal-image" name="modal-image"></slot>
-
+        
             <section id="modal-header">
-              <span id="title">${this.title}</span>
+              <span id="title">${this.heading}</span>
             </section>
-
+        
             <section id="modal-body" part="modal-body">
               <p part="modal-body-contents">${this.body}</p>
             </section>
-
+        
             <slot id="modal-form" name="modal-form"></slot>
-
+        
             <slot class="modal-actions" name="modal-actions"></slot>
-
+        
             <section id="modal-tou">
-              <a
-                target="_blank"
-                rel="noopener"
-                href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md"
-                id="tou-link"
-                >Terms of Use</a
-              >
+              <a target="_blank" rel="noopener" href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md"
+                id="tou-link">Terms of Use</a>
             </section>
           </div>
         </div>

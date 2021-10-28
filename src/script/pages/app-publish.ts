@@ -51,9 +51,9 @@ export class AppPublish extends LitElement {
 
   @state() isDeskTopView = this.mql.matches;
 
-  @state() open_windows_options = false;
-  @state() open_android_options = false;
-  @state() open_ios_options = false;
+  @state() openWindowsOptions = false;
+  @state() openAndroidOptions = false;
+  @state() openiOSOptions = false;
 
   @state() generating = false;
 
@@ -286,6 +286,10 @@ export class AppPublish extends LitElement {
           max-width: 37px;
           image-rendering: smooth;
         }
+
+                  ios-form {
+            width: 100%;
+          }
       `,
       xxxLargeBreakPoint(
         css`
@@ -311,7 +315,11 @@ export class AppPublish extends LitElement {
           }
 
           #windows-options-modal::part(modal-layout) {
-            width: 800px;
+            width: 700px;
+          }
+
+          #ios-options-modal::part(modal-layout) {
+            width: 600px;
           }
         `
       ),
@@ -477,33 +485,61 @@ export class AppPublish extends LitElement {
     return null;
   }
 
-  async generate(type: Platform, form?: HTMLFormElement | IOSAppPackageOptions, signingFile?: string) {
-    if (type === 'windows') {
+  getiOSFinalChecksErrorMessage(): string | null {
+    if (this.finalChecks) {
+      const maniCheck = this.finalChecks.manifest;
+      const baseIcon = this.finalChecks.baseIcon;
+      const validURL = this.finalChecks.validURL;
+
+      if (maniCheck === false) {
+        return 'Your PWA does not have a valid Web Manifest';
+      }
+
+      if (baseIcon === false) {
+        return 'Your PWA needs at least a 512x512 PNG icon';
+      }
+
+      if (validURL === false) {
+        return 'Your PWA does not have a valid URL';
+      }
+    }
+
+    return null;
+  }
+
+  async generate(platform: Platform, form?: HTMLFormElement | IOSAppPackageOptions, signingFile?: string) {
+    if (platform === 'windows') {
       const windowsErrorMessage = this.getWindowsFinalChecksErrorMessage();
       if (windowsErrorMessage) {
-        this.open_windows_options = false;
-        this.showAlertModal(windowsErrorMessage, type);
+        this.openWindowsOptions = false;
+        this.showAlertModal(windowsErrorMessage, platform);
         return;
       }
-    } else if (type === 'android') {
+    } else if (platform === 'android') {
       const androidErrorMessage = this.getAndroidFinalChecksErrorMessage();
       if (androidErrorMessage) {
-        this.open_android_options = false;
-        this.showAlertModal(androidErrorMessage, type);
+        this.openAndroidOptions = false;
+        this.showAlertModal(androidErrorMessage, platform);
         return;
+      }
+    } else if (platform === 'ios') {
+      const iosErrorMessage = this.getWindowsFinalChecksErrorMessage();
+      if (iosErrorMessage) {
+        this.openiOSOptions = false;
+        this.showAlertModal(iosErrorMessage, platform);
       }
     }
 
     // Record analysis results to our analytics portal.
     recordProcessStep(
       'analyze-and-package-pwa',
-      `create-${type}-package`,
+      `create-${platform}-package`,
       AnalyticsBehavior.CompleteProcess,
       { url: getURL() });
 
     try {
       this.generating = true;
-      const packageData = await generatePackage(type, form as HTMLFormElement, signingFile);
+      const packageData = await generatePackage(platform, form as HTMLFormElement, signingFile);
 
       if (packageData) {
         this.downloadFileName = `${packageData.appName}.zip`;
@@ -515,16 +551,17 @@ export class AppPublish extends LitElement {
       }
     } catch (err) {
       console.error(err);
-      this.showAlertModal(err as Error, type);
+      this.showAlertModal(err as Error, platform);
       recordProcessStep(
         'analyze-and-package-pwa',
-        `create-${type}-package-failed`,
+        `create-${platform}-package-failed`,
         AnalyticsBehavior.CancelProcess,
         { url: getURL() });
     } finally {
       this.generating = false;
-      this.open_android_options = false;
-      this.open_windows_options = false;
+      this.openAndroidOptions = false;
+      this.openWindowsOptions = false;
+      this.openiOSOptions = false;
     }
   }
 
@@ -570,15 +607,15 @@ export class AppPublish extends LitElement {
   }
 
   showWindowsOptionsModal() {
-    this.open_windows_options = true;
+    this.openWindowsOptions = true;
   }
 
   showAndroidOptionsModal() {
-    this.open_android_options = true;
+    this.openAndroidOptions = true;
   }
 
   showiOSOptionsModal() {
-    this.open_ios_options = true;
+    this.openiOSOptions = true;
   }
 
   renderContentCards(): TemplateResult[] {
@@ -658,15 +695,15 @@ export class AppPublish extends LitElement {
   }
 
   storeOptionsCancel() {
-    this.open_windows_options = false;
-    this.open_android_options = false;
-    this.open_ios_options = false;
+    this.openWindowsOptions = false;
+    this.openAndroidOptions = false;
+    this.openiOSOptions = false;
   }
 
   render() {
     return html`
       <!-- error modal -->
-      <app-modal title="Wait a minute!" .body="${this.errorMessage || ''}" ?open="${this.errored}" id="error-modal">
+      <app-modal heading="Wait a minute!" .body="${this.errorMessage || ''}" ?open="${this.errored}" id="error-modal">
         <img class="modal-image" slot="modal-image" src="/assets/warning.svg" alt="warning icon" />
       
         <div id="actions" slot="modal-actions">
@@ -678,7 +715,7 @@ export class AppPublish extends LitElement {
       </app-modal>
       
       <!-- download modal -->
-      <app-modal ?open="${this.blob ? true : false}" title="Download your package"
+      <app-modal ?open="${this.blob ? true : false}" heading="Download your package"
         body="Your app package is ready for download." id="download-modal" @app-modal-close="${() => this.downloadCancel()}">
         <img class="modal-image" slot="modal-image" src="/assets/images/store_fpo.png" alt="publish icon" />
       
@@ -688,7 +725,7 @@ export class AppPublish extends LitElement {
       </app-modal>
       
       <!-- test package download modal -->
-      <app-modal ?open="${this.testBlob ? true : false}" title="Test Package Download"
+      <app-modal ?open="${this.testBlob ? true : false}" heading="Test Package Download"
         body="${localeStrings.input.publish.windows.test_package}" id="test-download-modal"
         @app-modal-close="${() => this.downloadTestCancel()}">
         <img class="modal-image" slot="modal-image" src="/assets/images/warning.svg" alt="warning icon" />
@@ -699,22 +736,22 @@ export class AppPublish extends LitElement {
       </app-modal>
       
       <!-- windows store options modal -->
-      <app-modal id="windows-options-modal" title="Microsoft Store Options" body="Customize your Windows package below"
-        ?open="${this.open_windows_options}" @app-modal-close="${() => this.storeOptionsCancel()}">
+      <app-modal id="windows-options-modal" heading="Windows App Options" body="Customize your Windows package below"
+        ?open="${this.openWindowsOptions}" @app-modal-close="${() => this.storeOptionsCancel()}">
         <windows-form slot="modal-form" .generating=${this.generating} @init-windows-gen="${(ev: CustomEvent) =>
               this.generate('windows', ev.detail.form)}"></windows-form>
       </app-modal>
       
       <!-- android options modal -->
-      <app-modal id="android-options-modal" title="Google Play Store Options" body="Customize your Android package below"
-        ?open="${this.open_android_options === true}" @app-modal-close="${() => this.storeOptionsCancel()}">
+      <app-modal id="android-options-modal" heading="Anroid App Options" body="Customize your Android package below"
+        ?open="${this.openAndroidOptions === true}" @app-modal-close="${() => this.storeOptionsCancel()}">
         <android-form slot="modal-form" .generating=${this.generating} @init-android-gen="${(ev: CustomEvent) =>
               this.generate('android', ev.detail.form, ev.detail.signingFile)}"></android-form>
       </app-modal>
       
       <!-- ios options modal -->
-      <app-modal id="ios-options-modal" title="iOS App Store Options" body="Customize your iOS package below"
-        ?open="${this.open_ios_options === true}" @app-modal-close="${() => this.storeOptionsCancel()}">
+      <app-modal id="ios-options-modal" heading="iOS App Options" body="Customize your iOS app package below"
+        ?open="${this.openiOSOptions === true}" @app-modal-close="${() => this.storeOptionsCancel()}">
         <ios-form slot="modal-form" .generating=${this.generating}
           @init-ios-gen="${(ev: CustomEvent) => this.generate('ios', ev.detail)}">
         </ios-form>

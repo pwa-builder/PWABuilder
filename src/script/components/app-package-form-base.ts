@@ -5,7 +5,8 @@ import { smallBreakPoint, xxLargeBreakPoint } from '../utils/css/breakpoints';
 import style from '../../../styles/form-styles.css';
 //@ts-ignore
 import ModalStyles from '../../../styles/modal-styles.css';
-import { styles as ToolTipStyles, tooltip } from '../components/tooltip';
+import { styles as ToolTipStyles } from '../components/tooltip';
+import '../components/hover-tooltip';
 import { customElement } from 'lit/decorators.js';
 
 @customElement('app-package-form-base')
@@ -93,7 +94,8 @@ export class AppPackageFormBase extends LitElement {
     return html`
       <i class='fas fa-info-circle' title='${formInput.tooltip}' aria-label='${formInput.tooltip}' role='definition'></i>
       
-      ${tooltip(formInput.inputId + '-tooltip', formInput.tooltip)}
+      <hover-tooltip text="${formInput.tooltip}" link="${ifDefined(formInput.tooltipLink)}">
+      </hover-tooltip>
     `;
   }
 
@@ -108,6 +110,7 @@ export class AppPackageFormBase extends LitElement {
 export interface FormInput {
   label: string;
   tooltip?: string;
+  tooltipLink?: string;
   inputId: string;
   type?: 'hidden' | 'text' | 'search' | 'tel' | 'url' | 'email' | 'password' | 'datetime' | 'date' | 'month' | 'week' | 'time' | 'datetime-local' | 'number' | 'range' | 'color' | 'checkbox' | 'radio' | 'file' | 'submit' | 'image' | 'reset' | 'button'
   placeholder?: string;

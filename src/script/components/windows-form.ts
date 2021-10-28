@@ -121,13 +121,13 @@ export class WindowsForm extends AppPackageFormBase {
                 <a target="_blank" href="https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/">
                   Package ID
                   <i class="fas fa-info-circle"
-                    title="The Microsoft Store's unique identifier for your app. You can find this value in Windows Partner Center. Click to learn more."
-                    aria-label="The Microsoft Store's unique identifier for your app. You can find this value in Windows Partner Center. Click to learn more."
+                    title="The Microsoft Store's unique identifier for your app. You can find this value in Windows Partner Center."
+                    aria-label="The Microsoft Store's unique identifier for your app. You can find this value in Windows Partner Center."
                     role="definition"></i>
                 </a>
       
                 <hover-tooltip
-                  text="The Microsoft Store's unique identifier for your app. You can find this value in Windows Partner Center. Click to learn more."
+                  text="The Microsoft Store's unique identifier for your app. You can find this value in Windows Partner Center."
                   link="https://developer.mozilla.org/en-US/docs/Web/Manifest/icons">
                 </hover-tooltip>
       
@@ -141,13 +141,12 @@ export class WindowsForm extends AppPackageFormBase {
                 <a target="_blank" href="https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/">
                   Publisher display name
                   <i class="fas fa-info-circle"
-                    title="The display name of your app's publisher. You can find this in Windows Partner Center. Click to learn more."
-                    aria-label="The display name of your app's publisher. You can find this in Windows Partner Center. Click to learn more."
+                    title="The display name of your app's publisher. You can find this in Windows Partner Center."
+                    aria-label="The display name of your app's publisher. You can find this in Windows Partner Center."
                     role="definition"></i>
                 </a>
       
-                <hover-tooltip
-                  text="The display name of your app's publisher. You can find this in Windows Partner Center. Click to learn more."
+                <hover-tooltip text="The display name of your app's publisher. You can find this in Windows Partner Center."
                   link="https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/">
                 </hover-tooltip>
               </label>
@@ -160,13 +159,12 @@ export class WindowsForm extends AppPackageFormBase {
                 <a target="_blank" href="https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/">
                   Publisher ID
                   <i class="fas fa-info-circle"
-                    title="Your Windows Publisher ID. You can find this value in Windows Partner Center. Click to learn more."
-                    aria-label="Your Windows Publisher ID. You can find this value in Windows Partner Center. Click to learn more."
+                    title="Your Windows Publisher ID. You can find this value in Windows Partner Center."
+                    aria-label="Your Windows Publisher ID. You can find this value in Windows Partner Center."
                     role="definition"></i>
                 </a>
       
-                <hover-tooltip
-                  text="Your Windows Publisher ID. You can find this value in Windows Partner Center. Click to learn more."
+                <hover-tooltip text="Your Windows Publisher ID. You can find this value in Windows Partner Center."
                   link="https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/">
                 </hover-tooltip>
               </label>
@@ -209,13 +207,13 @@ export class WindowsForm extends AppPackageFormBase {
                         <a target="_blank" href="https://blog.pwabuilder.com/docs/what-is-a-classic-package/">
                           App version
                           <i class="fas fa-info-circle"
-                            title="Your app version in the form of '1.0.0'. This must be greater than classic package version. Click to learn more."
-                            aria-label="Your app version in the form of '1.0.0'. This must be greater than classic package version. Click to learn more."
+                            title="Your app version in the form of '1.0.0'. This must be greater than classic package version."
+                            aria-label="Your app version in the form of '1.0.0'. This must be greater than classic package version."
                             role="definition"></i>
                         </a>
       
                         <hover-tooltip
-                          text="Your app version in the form of '1.0.0'. This must be greater than classic package version. Click to learn more."
+                          text="Your app version in the form of '1.0.0'. This must be greater than classic package version."
                           link="https://blog.pwabuilder.com/docs/what-is-a-classic-package/">
                         </hover-tooltip>
                       </label>
@@ -232,12 +230,12 @@ export class WindowsForm extends AppPackageFormBase {
                         <a target="_blank" href="https://blog.pwabuilder.com/docs/what-is-a-classic-package/">
                           Classic package version
                           <i class="fas fa-info-circle"
-                            title="The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0'. Must be less than app version. Click to learn more."
-                            aria-label="The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0'. Must be less than app version. Click to learn more."
+                            title="The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0'. Must be less than app version."
+                            aria-label="The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0'. Must be less than app version."
                             role="definition"></i>
                         </a>
                         <hover-tooltip
-                          text="The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0'. Must be less than app version. Click to learn more."
+                          text="The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0'. Must be less than app version."
                           link="https://blog.pwabuilder.com/docs/what-is-a-classic-package/">
                         </hover-tooltip>
                       </label>
@@ -282,13 +280,13 @@ export class WindowsForm extends AppPackageFormBase {
                       target="_blank">
                       Icon URL
                       <i class="fas fa-info-circle"
-                        title="A large, square, PNG image from which PWABuilder will generate all required Windows app icons. Should be 512x512 or larger. Click to learn more."
-                        aria-label="A large, square, PNG image from which PWABuilder will generate all required Windows app icons. Should be 512x512 or larger. Click to learn more."
+                        title="A large, square, PNG image from which PWABuilder will generate all required Windows app icons. Should be 512x512 or larger."
+                        aria-label="A large, square, PNG image from which PWABuilder will generate all required Windows app icons. Should be 512x512 or larger."
                         role="definition"></i>
                     </a>
       
                     <hover-tooltip
-                      text="A large, square, PNG image from which PWABuilder will generate all required Windows app icons. Should be 512x512 or larger. Click to learn more."
+                      text="A large, square, PNG image from which PWABuilder will generate all required Windows app icons. Should be 512x512 or larger."
                       link="https://blog.pwabuilder.com/docs/image-recommendations-for-windows-pwa-packages/">
                     </hover-tooltip>
                   </label>

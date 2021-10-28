@@ -11,15 +11,7 @@ import { IOSAppPackageOptions } from '../utils/ios-validation';
 export class IOSForm extends AppPackageFormBase {
   @property({ type: Boolean }) generating: boolean = false;
   @state() showAllSettings = false;
-  @state() name = '';
-  @state() bundleId = '';
-  @state() url = 'Engineering';
-  @state() imageUrl = 'US';
-  @state() splashColor = '#ffffff';
-  @state() progressBarColor = '#000000';
-  @state() statusBarColor = '#ffffff';
-  @state() permittedUrls: string[] = [];
-  @state() defaultOptions = emptyIOSPackageOptions();
+  @state() packageOptions = emptyIOSPackageOptions();
   private manifestContext: ManifestContext | null = null;
 
   static get styles() {
@@ -37,7 +29,7 @@ export class IOSForm extends AppPackageFormBase {
 
   async firstUpdated() {
     this.manifestContext = await fetchOrCreateManifest();
-    this.defaultOptions = createIOSPackageOptionsFromManifest(this.manifestContext);
+    this.packageOptions = createIOSPackageOptionsFromManifest(this.manifestContext);
   }
 
   initGenerate(ev: InputEvent) {
@@ -45,26 +37,11 @@ export class IOSForm extends AppPackageFormBase {
 
     this.dispatchEvent(
       new CustomEvent('init-ios-gen', {
-        detail: this.getPackageOptions(),
+        detail: this.packageOptions,
         composed: true,
         bubbles: true,
       })
     );
-  }
-
-  getPackageOptions(): IOSAppPackageOptions {
-    return {
-      name: this.name,
-      bundleId: this.bundleId,
-      url: this.url,
-      imageUrl: this.imageUrl,
-      splashColor: this.splashColor,
-      progressBarColor: this.progressBarColor,
-      statusBarColor: this.statusBarColor,
-      permittedUrls: this.permittedUrls,
-      manifestUrl: this.manifestContext?.manifestUrl || '',
-      manifest: this.manifestContext?.manifest || {}
-    };
   }
 
   toggleSettings(settingsToggleValue: 'basic' | 'advanced') {
@@ -135,13 +112,14 @@ export class IOSForm extends AppPackageFormBase {
             <div class="form-group">
               ${super.renderFormInput({
                 label: 'Bundle ID',
-                tooltip: `The unique identifier of your app. It should contain only letters, numbers, and periods. Apple recommends a reverse-domain style string: com.domainname.appname. You'll need this value when uploading your app to the iOS App Store.`,
+                tooltip: `The unique identifier of your app. Apple recommends a reverse-domain style string: com.domainname.appname. You'll need this value when uploading your app to the App Store.`,
+                tooltipLink: "https://blog.pwabuilder.com/docs/ios-app-submission#create-your-bundle-id",
                 inputId: 'bundleIdInput',
-                value: this.defaultOptions.bundleId || 'com.domainname.appname',
+                value: this.packageOptions.bundleId || 'com.domainname.appname',
                 required: true,
                 placeholder: "com.domainname.appname",
                 minLength: 3,
-                inputHandler: (val: string) => this.bundleId = val
+                inputHandler: (val: string) => this.packageOptions.bundleId = val
               })}
             </div>
 
@@ -150,10 +128,11 @@ export class IOSForm extends AppPackageFormBase {
                 label: 'App name',
                 inputId: 'appNameInput',
                 placeholder: 'My PWA',
-                value: this.defaultOptions.name || 'My PWA',
+                value: this.packageOptions.name || 'My PWA',
                 required: true,
                 spellcheck: false,
-                inputHandler: (val: string) => this.name = val
+                minLength: 3,
+                inputHandler: (val: string) => this.packageOptions.name = val
               })}
             </div>
 
@@ -162,15 +141,14 @@ export class IOSForm extends AppPackageFormBase {
                 label: 'URL',
                 inputId: 'urlInput',
                 placeholder: 'https://domainname.com/app',
-                value: this.defaultOptions.url,
+                value: this.packageOptions.url,
                 required: true,
                 type: 'url',
-                inputHandler: (val: string) => this.url = val
+                inputHandler: (val: string) => this.packageOptions.url = val
               })}
             </div>
           </div>
 
-          <!-- right half of the options dialog -->
           <fast-accordion>
             <fast-accordion-item
               @click="${(ev: Event) => this.opened(ev.target)}"
@@ -190,11 +168,11 @@ export class IOSForm extends AppPackageFormBase {
                       ${this.renderFormInput({
                         label: 'Image URL',
                         inputId: 'imageUrlInput',
-                        tooltip: `The URL of a aquare 512x512 or larger PNG image from which to generate your app icons. This can be an absolute URL or a URL relative to your web manifest.`,
+                        tooltip: `The URL of a square 512x512 or larger PNG image from which to generate your iOS app icons. This can be an absolute URL or a URL relative to your web manifest.`,
                         placeholder: '/images/512x512.png',
-                        value: this.defaultOptions.imageUrl,
+                        value: this.packageOptions.imageUrl,
                         required: true,
-                        inputHandler: (val: string) => this.imageUrl = val
+                        inputHandler: (val: string) => this.packageOptions.imageUrl = val
                       })}
                     </div>
                   </div>
@@ -205,12 +183,12 @@ export class IOSForm extends AppPackageFormBase {
                 ${this.renderFormInput({
                     label: 'Status bar color',
                     inputId: 'statusBarColorInput',
-                    tooltip: `The background color of the iOS status bar while your app is running. We recommend using your manifest's background_color. The status bar shows at the top of the iPhone's screen, containing system information like reception bars, battery life indicator, time, etc. This should typically be the prominent background color of your app.`,
+                    tooltip: `The background color of the iOS status bar while your app is running. We recommend using your manifest's theme_color or background_color.`,
                     type: 'color',
                     placeholder: '#ffffff',
-                    value: this.defaultOptions.statusBarColor,
+                    value: this.packageOptions.statusBarColor,
                     required: true,
-                    inputHandler: (val: string) => this.statusBarColor = val
+                    inputHandler: (val: string) => this.packageOptions.statusBarColor = val
                   })}
               </div>
 
@@ -221,9 +199,9 @@ export class IOSForm extends AppPackageFormBase {
                     tooltip: `The background color of the splash screen shown while your PWA is launching. We recommend using your manifest's background_color.`,
                     type: 'color',
                     placeholder: '#ffffff',
-                    value: this.defaultOptions.splashColor,
+                    value: this.packageOptions.splashColor,
                     required: true,
-                    inputHandler: (val: string) => this.splashColor = val
+                    inputHandler: (val: string) => this.packageOptions.splashColor = val
                   })}
               </div>
 
@@ -234,9 +212,9 @@ export class IOSForm extends AppPackageFormBase {
                     tooltip: `The color of the progress bar shown on your app's splash screen while your PWA is loaded. We recommend using your manifest's theme_color.`,
                     type: 'color',
                     placeholder: '#000000',
-                    value: this.defaultOptions.progressBarColor,
+                    value: this.packageOptions.progressBarColor,
                     required: true,
-                    inputHandler: (val: string) => this.progressBarColor = val
+                    inputHandler: (val: string) => this.packageOptions.progressBarColor = val
                   })}
               </div>
 
@@ -244,10 +222,10 @@ export class IOSForm extends AppPackageFormBase {
                 ${this.renderFormInput({
                     label: 'Permitted URLs',
                     inputId: 'permittedUrlsInput',
-                    tooltip: `Optional. A comma-separated list of URLs or hosts that your PWA should be allowed to navigate to. For example, account.google.com will allow permit all navigations that include account.google.com in the URL.`,
+                    tooltip: `Optional. A comma-separated list of URLs or hosts that your PWA should be allowed to navigate to. You don't need to add your PWA's domain, as it's automatically included.`,
                     placeholder: 'account.google.com, login.microsoft.com',
-                    value: this.defaultOptions.permittedUrls.join(', '),
-                    inputHandler: (val: string) => this.permittedUrls = val.split(',').map(i => i.trim()).filter(i => !!i)
+                    value: this.packageOptions.permittedUrls.join(', '),
+                    inputHandler: (val: string) => this.packageOptions.permittedUrls = val.split(',').map(i => i.trim()).filter(i => !!i)
                   })}
               </div>
             </fast-accordion-item>
@@ -257,9 +235,7 @@ export class IOSForm extends AppPackageFormBase {
         <div id="form-details-block">
           <p>
             Your download will contain
-            <a href="https://github.com/pwa-builder/pwabuilder-ios/blob/main/next-steps.md" target="_blank">
-              instructions
-            </a> 
+            <a href="https://blog.pwabuilder.com/docs/ios-next-steps" target="_blank">instructions</a>
             for submitting to the App Store.</p>
         </div>
 

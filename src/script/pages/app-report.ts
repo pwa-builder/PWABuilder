@@ -346,7 +346,7 @@ export class AppReport extends LitElement {
 
   render() {
     return html`<!-- error modal -->
-<app-modal title="Wait a minute!" .body="${this.errorMessage || ''}" ?open="${this.errored}" id="error-modal">
+<app-modal heading="Wait a minute!" .body="${this.errorMessage || ''}" ?open="${this.errored}" id="error-modal">
   <img class="modal-image" slot="modal-image" src="/assets/warning.svg" alt="warning icon" />
 
   <div id="actions" slot="modal-actions">
@@ -381,11 +381,12 @@ export class AppReport extends LitElement {
           <report-card @sw-scored="${(ev: CustomEvent<ScoreEvent>) =>
         this.handleScoreForDisplay('sw', ev.detail.score)}" @mani-scored="${(ev: CustomEvent<ScoreEvent>) =>
           this.handleScoreForDisplay('manifest', ev.detail.score)}" @security-scored="${(ev: CustomEvent<ScoreEvent>) =>
-            this.handleScoreForDisplay('manifest', ev.detail.score)}" @open-mani-options="${() => this.openManiOptions()}"
-            @open-sw-options="${() => this.openSWOptions()}" .results="${this.resultOfTest}"></report-card>
+            this.handleScoreForDisplay('manifest', ev.detail.score)}"
+            @open-mani-options="${() => this.openManiOptions()}" @open-sw-options="${() => this.openSWOptions()}"
+            .results="${this.resultOfTest}"></report-card>
         </fast-tab-panel>
         <fast-tab-panel id="maniPanel">
-          <manifest-options @back-to-overview=${() => this.openOverview()}
+          <manifest-options @back-to-overview=${()=> this.openOverview()}
             >
           </manifest-options>
         </fast-tab-panel>
