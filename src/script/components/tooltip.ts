@@ -21,13 +21,16 @@ function onMouseOverTooltip(ev: MouseEvent) {
 function openTooltip(ev: MouseEvent, tooltipEl: HTMLElement) {
   // the style length check looks non-ideal at first
   // but the DOM api is just not great here in the fact that
-  // if an elemenet does not have the style.top property
+  // if an element does not have the style.top property
   // initialized yet, its an empty string instead of undefined.
   // This code is here to throttle style application as multiple hover events
   // can fire within seconds of each other causing "jumping" in the UI.
+
+  console.log('openTooltip', tooltipEl);
+  console.log('openTooltipEvent', ev);
   if (tooltipEl && ev && tooltipEl.style.top.length === 0) {
     // re-visit this tooltip logic entirely - Justin Willis
-    tooltipEl.style.top = `${(ev.clientY - 300).toString()}px`;
+    // tooltipEl.style.top = `${(ev.clientY - 300).toString()}px`;
   }
 }
 
