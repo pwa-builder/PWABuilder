@@ -94,11 +94,6 @@ export async function createAndroidPackageOptionsFromForm(
     ? pwaUrl
     : maniUrl;
 
-  console.log("test", getStartUrlRelativeToHost(
-    form.startUrl.value || manifest.start_url || '/',
-    manifestUrlOrRoot
-  ),)
-
   const appName =
     form.appName.value || manifest.short_name || manifest.name || 'My PWA';
   const packageName = generatePackageId(
@@ -251,12 +246,6 @@ export async function createAndroidPackageOptionsFromManifest(
   )
     ? pwaUrl
     : maniUrl;
-        
-    console.log("manifest.start_url", manifest.start_url);
-    console.log("new URL(manifestUrlOrRoot)", new URL(manifestUrlOrRoot));
-
-    console.log("IS THIS THE ISSUE", pwaUrl);
-    console.log("is this the fix?", new URL(pwaUrl).origin);
 
   return {
     appVersion: '1.0.0.0',
@@ -340,14 +329,8 @@ function getStartUrlRelativeToHost(
   // - IN: manifestUrl = "https://www.foo.com/subpath/manifest.json"
   // - OUT: "/subpath/index.html?foo=1"
 
-  console.log("startURL", startUrl);
-  console.log("manifestURL", manifestUrl);
   // The start URL we send to the CloudAPK service should be a URL relative to the host.
   const absoluteStartUrl = new URL(startUrl || '/', manifestUrl);
-
-  console.log("absoluteStartUrl", absoluteStartUrl);
-
-  console.log("returning", absoluteStartUrl.pathname + (absoluteStartUrl.search || ''));
 
   return absoluteStartUrl.pathname + (absoluteStartUrl.search || '');
 
