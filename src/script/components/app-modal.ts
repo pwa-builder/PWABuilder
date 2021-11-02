@@ -2,7 +2,7 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 import { AppModalCloseEvent } from '../utils/events/modal';
-import { smallBreakPoint } from '../utils/css/breakpoints';
+import { smallBreakPoint, xLargeBreakPoint } from '../utils/css/breakpoints';
 
 import { turnOffScroll, turnOnScroll } from '../utils/dom-utils';
 
@@ -55,6 +55,9 @@ export class AppModal extends LitElement implements AppModalElement {
           box-shadow: 0px 16px 24px rgba(0, 0, 0, 0.12);
 
           z-index: 4;
+          @media screen (min-width: 1024px) {
+            width: 800px;
+          };
         }
 
         #modal-image {
@@ -133,6 +136,11 @@ export class AppModal extends LitElement implements AppModalElement {
           top: 0;
         }
       `),
+      xLargeBreakPoint(css`
+        #modal {
+          width: 800px !important;
+        }
+      `)
     ];
   }
 
