@@ -55,9 +55,6 @@ export class AppModal extends LitElement implements AppModalElement {
           box-shadow: 0px 16px 24px rgba(0, 0, 0, 0.12);
 
           z-index: 4;
-          @media screen (min-width: 1024px) {
-            width: 800px;
-          };
         }
 
         #modal-image {
