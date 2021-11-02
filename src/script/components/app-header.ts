@@ -221,7 +221,7 @@ export class AppHeader extends LitElement {
             aria-label="Github repo, will open in separate tab"
             rel="noopener"
           >
-            <ion-icon name="logo-github"></ion-icon>
+            <ion-icon role="presentation" aria-hidden="true" tab-index="-1" name="logo-github"></ion-icon>
           </fast-anchor>
         </nav>
       </header>
