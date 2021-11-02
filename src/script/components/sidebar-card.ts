@@ -4,7 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 
 @customElement('sidebar-card')
 export class SidebarCard extends LitElement {
-  @property() title: string = '';
+  @property() heading: string = '';
 
   @state() open = true;
 
@@ -58,7 +58,7 @@ export class SidebarCard extends LitElement {
     return html`
       <div id="sidecard-container">
         <div id="sidecard-header">
-          <span>${this.title || ''}</span>
+          <span>${this.heading || ''}</span>
 
           <button @click="${() => this.collapse()}">
             <ion-icon name="chevron-down-outline"></ion-icon>

@@ -298,7 +298,7 @@ export class AppHome extends LitElement {
           this.updateProgress(progress);
 
           const goodURL = manifestContext.siteUrl;
-
+          
           if (goodURL !== undefined) {
             Router.go(`/testing?site=${goodURL}`);
           }

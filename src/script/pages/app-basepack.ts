@@ -281,7 +281,7 @@ export class AppBasePack extends LitElement {
 
   render() {
     return html`
-      <app-modal @app-modal-close="${() => this.cancel()}" ?open="${this.blob ? true : false}" title="Base Package Download"
+      <app-modal @app-modal-close="${() => this.cancel()}" ?open="${this.blob ? true : false}" heading="Base Package Download"
         .body="${localeStrings.input.publish.base_package.download}" id="test-download-modal">
         <img class="modal-image" slot="modal-image" src="/assets/images/warning.svg" alt="warning icon" />
       
@@ -290,7 +290,7 @@ export class AppBasePack extends LitElement {
         </div>
       </app-modal>
       
-      <app-modal title="Wait a minute!" .body="${this.errorMessage || ''}" ?open="${this.errored}" id="error-modal">
+      <app-modal heading="Wait a minute!" .body="${this.errorMessage || ''}" ?open="${this.errored}" id="error-modal">
         <img class="modal-image" slot="modal-image" src="/assets/warning.svg" alt="warning icon" />
       
         <div slot="modal-actions">
@@ -342,8 +342,8 @@ export class AppBasePack extends LitElement {
       
                 <ol>
                   <li>
-                    <a href="https://github.com/pwa-builder/pwabuilder-web/blob/V2/src/assets/next-steps.md"
-                      rel="noopener" target="_blank">Open documentation</a>
+                    <a href="https://github.com/pwa-builder/pwabuilder-web/blob/V2/src/assets/next-steps.md" rel="noopener"
+                      target="_blank">Open documentation</a>
                     in order to accurately add files or links to your server.
                   </li>
       

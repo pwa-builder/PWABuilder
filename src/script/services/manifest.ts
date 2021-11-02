@@ -26,8 +26,8 @@ export let emptyManifest: Manifest = {
   screenshots: [],
 };
 
-// Uses Azure manifest Puppeteer service to fetch the manifest, then POSTS it to the API.
-async function getManifestViaFilePost(
+// Uses Azure manifest Puppeteer service to fetch the manifest
+async function getManifestViaPuppeteer(
   url: string
 ): Promise<ManifestDetectionResult> {
   const encodedUrl = encodeURIComponent(url);
@@ -37,31 +37,40 @@ async function getManifestViaFilePost(
   });
   if (!response.ok) {
     console.warn(
-      'Fetching manifest via API v2 file POST failed',
+      'Fetching manifest via Puppeteer service failed',
       response.statusText
     );
     throw new Error(
       `Unable to fetch response using ${manifestTestUrl}. Response status  ${response}`
     );
   }
-  const responseData = await response.json();
+  const responseData = await response.json<PuppeteerManifestFinderResult>();
   if (!responseData) {
     console.warn(
-      'Fetching manifest via API v2 file POST failed due to no response data',
+      'Fetching manifest via Puppeteer failed due to no response data',
       response
     );
     throw new Error(`Unable to get JSON from ${manifestTestUrl}`);
   }
+
+  // OK, the call succeeded.
+  // But if we didn't detect the manifest, we want to fail the result here
+  // to give the other manifest detector a chance to succeed.
+  if (!responseData.content || !responseData.content.json) {
+    console.info("Manifest detection via Puppeteer completed, but couldn't detect the manifest.", responseData);
+    throw new Error("HTML parse manifest detector couldn't find the manifest. " + responseData.error);
+  }
+
   return {
-    content: responseData.manifestContents,
+    content: responseData.content.json,
     format: 'w3c',
-    generatedUrl: responseData.manifestUrl || url,
+    generatedUrl: responseData.url || url,
     siteUrl: url,
     default: {
-      short_name: responseData.manifestContents.short_name || '',
+      short_name: responseData.content.json.short_name || '',
     },
     id: '',
-    generated: responseData.manifestContents ? false : true,
+    generated: responseData.content ? false : true,
     errors: [],
     suggestions: [],
     warnings: [],
@@ -72,15 +81,6 @@ async function getManifestViaFilePost(
 async function getManifestViaHtmlParse(
   url: string
 ): Promise<ManifestDetectionResult> {
-  type ManifestFinderResult = {
-    manifestUrl: string | null;
-    manifestContents: Manifest | null;
-    error: string | null;
-    manifestContainsInvalidJson: boolean;
-    manifestScore: { [key: keyof Manifest | "manifest"]: number }; // e.g. { "categories": 2, ... }
-    warnings: { [key: keyof Manifest | string]: string }; // e.g. { "categories": "Must be an array" }
-  };
-
   const manifestTestUrl = `${env.manifestFinderUrl}?url=${encodeURIComponent(
     url
   )}`;
@@ -89,7 +89,7 @@ async function getManifestViaHtmlParse(
     console.warn('Fetching manifest via HTML parsing service failed', response);
     throw new Error(`Error fetching from ${manifestTestUrl}`);
   }
-  const responseData: ManifestFinderResult = await response.json();
+  const responseData = await response.json<HtmlParseManifestFinderResult>();
 
   if (responseData.error || !responseData.manifestContents) {
     console.warn(
@@ -98,10 +98,16 @@ async function getManifestViaHtmlParse(
     );
     throw new Error(responseData.error || "Manifest couldn't be fetched");
   }
-  console.info(
-    'Manifest detection succeeded via HTML parse service',
-    responseData
-  );
+
+  // OK, the call succeeded.
+  // But if we didn't detect the manifest, we want to fail the result here.
+  // This is needed so that sites with JS-injected manifests (e.g. vscode.dev) can 
+  // still be detected by our Puppeteer-based manifest detector.
+  // See https://github.com/pwa-builder/PWABuilder/issues/2157
+  if (!responseData.manifestContents) {
+    console.info("Manifest detection via HTML parse completed, but couldn't detect the manifest.", responseData);
+    throw new Error("Manifest detection via HTML parsing completed but couldn't find the manifest. " + responseData.error);
+  }
 
   return {
     content: responseData.manifestContents,
@@ -153,7 +159,7 @@ async function fetchManifest(
     }
 
     const manifestDetectors = [
-      getManifestViaFilePost(knownGoodUrl),
+      getManifestViaPuppeteer(knownGoodUrl),
       getManifestViaHtmlParse(knownGoodUrl)
     ];
     try {
@@ -300,4 +306,21 @@ function wrapManifestInDetectionResult(manifest: Manifest, url: string, generate
     suggestions: [],
     warnings: []
   };
+}
+
+type HtmlParseManifestFinderResult = {
+  manifestUrl: string | null;
+  manifestContents: Manifest | null;
+  error: string | null;
+  manifestContainsInvalidJson: boolean;
+  manifestScore: { [key: keyof Manifest | "manifest"]: number }; // e.g. { "categories": 2, ... }
+  warnings: { [key: keyof Manifest | string]: string }; // e.g. { "categories": "Must be an array" }
+};
+
+type PuppeteerManifestFinderResult = {
+  content: {
+    json: Manifest
+  } | null;
+  url: string | null;
+  error?: any;
 }

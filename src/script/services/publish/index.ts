@@ -1,17 +1,19 @@
 import { Manifest } from '../../utils/interfaces';
+import { IOSAppPackageOptions } from '../../utils/ios-validation';
 import { fetchOrCreateManifest } from '../manifest';
 import {
   createAndroidPackageOptionsFromForm,
   createAndroidPackageOptionsFromManifest,
   generateAndroidPackage,
 } from './android-publish';
+import { generateIOSPackage } from './ios-publish';
 import {
   createWindowsPackageOptionsFromForm,
   createWindowsPackageOptionsFromManifest,
   generateWindowsPackage,
 } from './windows-publish';
 
-export type Platform = 'windows' | 'android' | 'samsung';
+export type Platform = 'windows' | 'android' | 'ios';
 
 type PackageInfo = {
   appName: string;
@@ -21,16 +23,16 @@ type PackageInfo = {
 
 export async function generatePackage(
   type: Platform,
-  form?: HTMLFormElement,
+  form?: HTMLFormElement | IOSAppPackageOptions,
   signingFile?: string
 ): Promise<PackageInfo | null> {
   switch (type) {
     case 'windows':
-      return await tryGenerateWindowsPackage(form);
+      return await tryGenerateWindowsPackage(form as HTMLFormElement);
     case 'android':
-      return await tryGenerateAndroidPackage(form, signingFile);
-    case 'samsung':
-      return null;
+      return await tryGenerateAndroidPackage(form as HTMLFormElement, signingFile);
+    case 'ios':
+      return await tryGenerateIOSPackage(form as IOSAppPackageOptions);
     default:
       throw new Error(
         `A platform type must be passed, ${type} is not a valid platform.`
@@ -60,6 +62,15 @@ async function grabBackupManifest() {
   }
 
   return localManifest;
+}
+
+async function tryGenerateIOSPackage(options: IOSAppPackageOptions): Promise<PackageInfo | null> {
+  const result = await generateIOSPackage(options);
+  return {
+    appName: options.name,
+    blob: result,
+    type: "store"
+  };
 }
 
 async function tryGenerateWindowsPackage(
