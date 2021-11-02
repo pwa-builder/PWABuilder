@@ -88,6 +88,12 @@ export async function createAndroidPackageOptionsFromForm(
     throw new Error('Cant find the manifest URL');
   }
 
+  const manifestUrlOrRoot = maniUrl.startsWith(
+    'data:application/manifest+json,'
+  )
+    ? pwaUrl
+    : maniUrl;
+
   const appName =
     form.appName.value || manifest.short_name || manifest.name || 'My PWA';
   const packageName = generatePackageId(
@@ -98,11 +104,13 @@ export async function createAndroidPackageOptionsFromForm(
     manifest.display === 'fullscreen' ? 'fullscreen' : 'standalone';
   const navColorOrFallback =
     manifest.theme_color || manifest.background_color || '#000000';
+    /*
   const manifestUrlOrRoot = maniUrl.startsWith(
     'data:application/manifest+json,'
   )
     ? pwaUrl
     : maniUrl;
+    */
   return {
     appVersion: form.appVersion.value || '1.0.0.0',
     appVersionCode: form.appVersionCode.value || 1,
@@ -299,7 +307,7 @@ export async function createAndroidPackageOptionsFromManifest(
         enabled: false,
       },
     },
-    host: pwaUrl,
+    host: new URL(pwaUrl).origin,
     iconUrl: getAbsoluteUrl(icon.src, manifestUrlOrRoot),
     includeSourceCode: false,
     isChromeOSOnly: false,
@@ -364,6 +372,7 @@ function getStartUrlRelativeToHost(
 
   // The start URL we send to the CloudAPK service should be a URL relative to the host.
   const absoluteStartUrl = new URL(startUrl || '/', manifestUrl);
+
   return absoluteStartUrl.pathname + (absoluteStartUrl.search || '');
 
   // COMMENTED OUT: Old PWABuilder v2 URL creation. Commented out because we can do the same thing in less code above.
