@@ -724,6 +724,7 @@ export class ReportCard extends LitElement {
                       locked: this.pwa_icon.locked,
                     })}"
                     src="${this.pwa_icon.url}"
+                    role="presentation"
                   />
 
                   <div id="badge-text">

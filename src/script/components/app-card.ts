@@ -534,7 +534,7 @@ export class AppCard extends LitElement {
             bordered: this.imageBordered,
           })}" src="${ifDefined(this.imageUrl)}" alt="${
       this.cardTitle
-    } card header image" />
+    } card header image" role="presentation"/>
         </div>
       
         <h3>${this.cardTitle}</h3>
