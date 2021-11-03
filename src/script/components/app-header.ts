@@ -199,12 +199,24 @@ export class AppHeader extends LitElement {
           alt="PWA Builder logo" />
       
         <nav id="desktop-nav">
-          <fast-anchor id="resources" appearance="hypertext" href="https://blog.pwabuilder.com" target="__blank"
-            aria-label="Resources, will open in separate tab" rel="noopener"><span>Resources</span></fast-anchor>
-      
-          <fast-anchor appearance="hypertext" href="https://github.com/pwa-builder/PWABuilder" target="__blank"
-            aria-label="Github repo, will open in separate tab" rel="noopener">
-            <ion-icon name="logo-github"></ion-icon>
+          <fast-anchor
+            id="resources"
+            appearance="hypertext"
+            href="https://blog.pwabuilder.com"
+            target="__blank"
+            aria-label="Resources, will open in separate tab"
+            rel="noopener"
+            ><span>Resources</span></fast-anchor
+          >
+
+          <fast-anchor
+            appearance="hypertext"
+            href="https://github.com/pwa-builder/PWABuilder"
+            target="__blank"
+            aria-label="Github repo, will open in separate tab"
+            rel="noopener"
+          >
+            <ion-icon role="presentation" aria-hidden="true" tab-index="-1" name="logo-github"></ion-icon>
           </fast-anchor>
         </nav>
       </header>

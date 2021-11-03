@@ -31,6 +31,7 @@ export class AndroidForm extends AppPackageFormBase {
   form: HTMLFormElement | undefined;
   currentManifest: Manifest | undefined;
   maxKeyFileSizeInBytes = 2097152;
+  
 
   static get styles() {
     const localStyles = css`
@@ -75,10 +76,11 @@ export class AndroidForm extends AppPackageFormBase {
     );
   }
 
-  validatePackageId() {
+  validatePackageId(e: InputEvent) {
     const packageIdInput = this.form?.packageId;
 
-    if (packageIdInput?.value?.indexOf('if') !== -1) {
+    if(packageIdInput?.value?.indexOf('if') !== -1) {
+
       packageIdInput?.setCustomValidity("Package ID cannot include 'if'");
     } else {
       packageIdInput?.setCustomValidity('');
@@ -248,7 +250,7 @@ export class AndroidForm extends AppPackageFormBase {
                 required
                 pattern="[a-zA-Z0-9._]*$"
                 name="packageId"
-                @change="${this.validatePackageId}"
+                @change="${(e: InputEvent) => this.validatePackageId(e)}"
               />
             </div>
 
