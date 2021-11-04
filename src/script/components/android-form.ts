@@ -76,7 +76,7 @@ export class AndroidForm extends AppPackageFormBase {
     );
   }
 
-  validatePackageId(e: InputEvent) {
+  validatePackageId() {
     const packageIdInput = this.form?.packageId;
 
     if(packageIdInput?.value?.indexOf('if') !== -1) {
@@ -250,7 +250,7 @@ export class AndroidForm extends AppPackageFormBase {
                 required
                 pattern="[a-zA-Z0-9._]*$"
                 name="packageId"
-                @change="${(e: InputEvent) => this.validatePackageId(e)}"
+                @change="${() => this.validatePackageId()}"
               />
             </div>
 
