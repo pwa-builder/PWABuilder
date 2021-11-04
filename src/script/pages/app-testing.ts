@@ -93,7 +93,6 @@ export class AppTesting extends LitElement {
         app-header::part(header) {
           background: transparent;
           position: absolute;
-          top: 0;
           left: 0;
           right: 0;
           z-index: 2;
@@ -109,7 +108,6 @@ export class AppTesting extends LitElement {
         app-header::part(header) {
           background: transparent;
           position: absolute;
-          top: 0;
           left: 0;
           right: 0;
           z-index: 2;
