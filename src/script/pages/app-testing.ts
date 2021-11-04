@@ -5,7 +5,9 @@ import { Router } from '@vaadin/router';
 import { smallBreakPoint } from '../utils/css/breakpoints';
 
 import { runAllTests } from '../services/tests';
+
 import '../components/app-header';
+import '../components/app-modal';
 
 // have to use ts-ignore here as typescript does not understand
 // this import yet
@@ -17,6 +19,9 @@ import style from '../../../styles/animations.css';
 export class AppTesting extends LitElement {
   @state() loading = false;
   @state() currentPhrase = 'PWABuilder is loading your PWA in the background';
+
+  @state() errored: boolean = false;
+  @state() errorMessage: string | undefined;
 
   static get styles() {
     return [
@@ -110,6 +115,17 @@ export class AppTesting extends LitElement {
           z-index: 2;
         }
 
+        .modal-image {
+          width: 50px;
+        }
+
+        #report-link {
+          color: white;
+          border-radius: var(--button-radius);
+          box-shadow: var(--button-shadow);
+          width: 10em;
+        }
+
         @keyframes fadeIn {
           from {
             opacity: 0;
@@ -145,7 +161,12 @@ export class AppTesting extends LitElement {
       this.loading = true;
       this.phrasePager();
 
-      await this.runTests(site);
+      try {
+        await this.runTests(site);
+      } catch (err: unknown) {
+        this.errored = true;
+        this.errorMessage = (err as Error).message || (err as Error).toString();
+      }
     }
   }
 
@@ -168,11 +189,13 @@ export class AppTesting extends LitElement {
         }, 300);
       } else {
         this.loading = false;
-        throw new Error(`Test results could not be gathered for: ${site}`);
+        throw new Error(`Test results could not be gathered for ${site}`);
       }
     } catch (err) {
-      console.error('Tests errored out', err);
       this.loading = false;
+      throw new Error(
+        `Test results could not be gathered for ${site} because ${err}`
+      );
     }
   }
 
@@ -204,7 +227,34 @@ export class AppTesting extends LitElement {
   };
 
   render() {
-    return html`<app-header></app-header>
+    return html` <app-header></app-header>
+
+      <app-modal
+        heading="Uh Oh!"
+        .body="${this.errorMessage ||
+        'There was an error running the tests. Please open an issue using the below link.'}"
+        ?open="${this.errored}"
+        id="error-modal"
+      >
+        <img
+          class="modal-image"
+          slot="modal-image"
+          src="/assets/warning.svg"
+          alt="warning icon"
+        />
+
+        <div slot="modal-actions">
+          <fast-anchor
+            target="_blank"
+            rel="noopener"
+            href="https://github.com/pwa-builder/PWABuilder/issues/new/choose"
+            id="report-link"
+            appearance="button"
+            >Report an Issue</fast-anchor
+          >
+        </div>
+      </app-modal>
+
       <div id="glass">
         <div id="testing-container">
           <span>${this.currentPhrase}</span>
