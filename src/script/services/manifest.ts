@@ -313,8 +313,8 @@ type HtmlParseManifestFinderResult = {
   manifestContents: Manifest | null;
   error: string | null;
   manifestContainsInvalidJson: boolean;
-  manifestScore: { [key: keyof Manifest | "manifest"]: number }; // e.g. { "categories": 2, ... }
-  warnings: { [key: keyof Manifest | string]: string }; // e.g. { "categories": "Must be an array" }
+  manifestScore: { [key in keyof Manifest | "manifest"]: number }; // e.g. { "categories": 2, ... }
+  warnings: { [key in keyof Manifest | string]: string }; // e.g. { "categories": "Must be an array" }
 };
 
 type PuppeteerManifestFinderResult = {

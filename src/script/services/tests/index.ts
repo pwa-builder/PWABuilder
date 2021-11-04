@@ -15,25 +15,29 @@ export async function runAllTests(url: string): Promise<RawTestResult> {
   // here for this function to work properly
   // this is also valid JavaScript
   // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async resolve => {
-    const maniTestResult = testManifest(url);
-    const serviceWorkerTestResult = testServiceWorker(url);
-    const securityTestResult = testSecurity(url);
+  return new Promise(async (resolve, reject) => {
+    try {
+      const maniTestResult = testManifest(url);
+      const serviceWorkerTestResult = testServiceWorker(url);
+      const securityTestResult = testSecurity(url);
 
-    const resultsObject: RawTestResult = {
-      manifest: await maniTestResult,
-      service_worker: await serviceWorkerTestResult,
-      security: await securityTestResult,
-    };
+      const resultsObject: RawTestResult = {
+        manifest: await maniTestResult,
+        service_worker: await serviceWorkerTestResult,
+        security: await securityTestResult,
+      };
 
-    setResults(resultsObject);
+      setResults(resultsObject);
 
-    const progress = getProgress();
-    updateProgress(progress, resultsObject);
+      const progress = getProgress();
+      updateProgress(progress, resultsObject);
 
-    giveOutBadges();
+      giveOutBadges();
 
-    resolve(resultsObject);
+      resolve(resultsObject);
+    } catch (err) {
+      reject(err);
+    }
   });
 }
 
