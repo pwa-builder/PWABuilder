@@ -190,12 +190,12 @@ export class WindowsForm extends AppPackageFormBase {
                     <div class="form-group">
                       <label for="windowsAppNameInput">
                         App name
-                        <hover-tooltip text="The name of your app"
+                        <hover-tooltip text="Please do not include special characters in your app name"
                           link="https://developer.mozilla.org/en-US/docs/Web/Manifest/name">
                         </hover-tooltip>
                       </label>
                       <input type="text" class="form-control" id="windowsAppNameInput" placeholder="My Awesome PWA"
-                        name="appName" value="${this.defaultOptions.name || 'My Awesome PWA'}" required />
+                        name="appName" value="${this.defaultOptions.name || 'My Awesome PWA'}" required pattern="[a-zA-Z0-9._]*$" />
                     </div>
                   </div>
                 </div>

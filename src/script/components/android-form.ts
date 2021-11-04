@@ -31,7 +31,6 @@ export class AndroidForm extends AppPackageFormBase {
   form: HTMLFormElement | undefined;
   currentManifest: Manifest | undefined;
   maxKeyFileSizeInBytes = 2097152;
-  
 
   static get styles() {
     const localStyles = css`
@@ -79,8 +78,7 @@ export class AndroidForm extends AppPackageFormBase {
   validatePackageId() {
     const packageIdInput = this.form?.packageId;
 
-    if(packageIdInput?.value?.indexOf('if') !== -1) {
-
+    if (packageIdInput?.value?.indexOf('if') !== -1) {
       packageIdInput?.setCustomValidity("Package ID cannot include 'if'");
     } else {
       packageIdInput?.setCustomValidity('');
@@ -255,7 +253,21 @@ export class AndroidForm extends AppPackageFormBase {
             </div>
 
             <div class="form-group">
-              <label for="appNameInput">App name</label>
+              <label for="appNameInput">
+                App name
+                <i
+                  class="fas fa-info-circle"
+                  title="Please do not include special characters in your app name."
+                  aria-label="Please do not include special characters in your app name."
+                  role="definition"
+                ></i>
+
+                <hover-tooltip
+                  text="Please do not include special characters in your app name."
+                  link="https://blog.pwabuilder.com/docs/android-platform"
+                >
+                </hover-tooltip>
+              </label>
               <input
                 type="text"
                 class="form-control"
@@ -263,6 +275,7 @@ export class AndroidForm extends AppPackageFormBase {
                 placeholder="My Awesome PWA"
                 value="${this.defaultOptions.name || 'My Awesome PWA'}"
                 required
+                pattern="[a-zA-Z0-9._]*$"
                 name="appName"
               />
             </div>

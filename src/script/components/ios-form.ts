@@ -125,13 +125,16 @@ export class IOSForm extends AppPackageFormBase {
             <div class="form-group">
               ${this.renderFormInput({
                 label: 'App name',
+                tooltip: `Please do not include special characters in your app name`,
+                tooltipLink: "https://blog.pwabuilder.com/docs/publish-your-pwa-to-the-ios-app-store",
                 inputId: 'appNameInput',
                 placeholder: 'My PWA',
                 value: this.packageOptions.name || 'My PWA',
                 required: true,
                 spellcheck: false,
                 minLength: 3,
-                inputHandler: (val: string) => this.packageOptions.name = val
+                inputHandler: (val: string) => this.packageOptions.name = val,
+                pattern:"[a-zA-Z0-9._]*$"
               })}
             </div>
 
