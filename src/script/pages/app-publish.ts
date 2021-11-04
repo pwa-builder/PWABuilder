@@ -743,7 +743,7 @@ export class AppPublish extends LitElement {
       </app-modal>
       
       <!-- android options modal -->
-      <app-modal id="android-options-modal" heading="Anroid App Options" body="Customize your Android package below"
+      <app-modal id="android-options-modal" heading="Android App Options" body="Customize your Android package below"
         ?open="${this.openAndroidOptions === true}" @app-modal-close="${() => this.storeOptionsCancel()}">
         <android-form slot="modal-form" .generating=${this.generating} @init-android-gen="${(ev: CustomEvent) =>
               this.generate('android', ev.detail.form, ev.detail.signingFile)}"></android-form>
