@@ -248,7 +248,7 @@ export class AndroidForm extends AppPackageFormBase {
                 required
                 pattern="[a-zA-Z0-9._]*$"
                 name="packageId"
-                @change="${this.validatePackageId}"
+                @change="${() => this.validatePackageId()}"
               />
             </div>
 
