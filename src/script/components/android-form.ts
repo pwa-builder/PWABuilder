@@ -275,7 +275,7 @@ export class AndroidForm extends AppPackageFormBase {
                 placeholder="My Awesome PWA"
                 value="${this.defaultOptions.name || 'My Awesome PWA'}"
                 required
-                pattern="[a-zA-Z0-9._]*$"
+                pattern="[a-zA-Z0-9._ ]*$"
                 name="appName"
               />
             </div>
