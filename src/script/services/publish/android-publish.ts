@@ -18,7 +18,7 @@ export async function generateAndroidPackage(
   const validationErrors = validateAndroidOptions(androidOptions);
   if (validationErrors.length > 0 || !androidOptions) {
     throw new Error(
-      'Invalid Adroid options. ' + validationErrors.map(a => a.error).join('\n')
+      'Invalid Android options. ' + validationErrors.map(a => a.error).join('\n')
     );
   }
 
@@ -88,6 +88,12 @@ export async function createAndroidPackageOptionsFromForm(
     throw new Error('Cant find the manifest URL');
   }
 
+  const manifestUrlOrRoot = maniUrl.startsWith(
+    'data:application/manifest+json,'
+  )
+    ? pwaUrl
+    : maniUrl;
+
   const appName =
     form.appName.value || manifest.short_name || manifest.name || 'My PWA';
   const packageName = generatePackageId(
@@ -98,11 +104,13 @@ export async function createAndroidPackageOptionsFromForm(
     manifest.display === 'fullscreen' ? 'fullscreen' : 'standalone';
   const navColorOrFallback =
     manifest.theme_color || manifest.background_color || '#000000';
+    /*
   const manifestUrlOrRoot = maniUrl.startsWith(
     'data:application/manifest+json,'
   )
     ? pwaUrl
     : maniUrl;
+    */
   return {
     appVersion: form.appVersion.value || '1.0.0.0',
     appVersionCode: form.appVersionCode.value || 1,
@@ -171,6 +179,47 @@ export async function createAndroidPackageOptionsFromForm(
     themeColor: form.themeColor.value || manifest.theme_color || '#FFFFFF',
     shareTarget: manifest.share_target,
     webManifestUrl: form.webManifestUrl.value || maniUrl,
+  };
+}
+
+export function emptyAndroidPackageOptions(): AndroidApkOptions {
+  return {
+    appVersion: '1.0.0.0',
+    appVersionCode: 1,
+    backgroundColor: '#ffffff',
+    display: 'standalone',
+    enableNotifications: false,
+    enableSiteSettingsShortcut: true,
+    fallbackType: 'customtabs',
+    features: {
+      locationDelegation: {
+        enabled: true
+      },
+      playBilling: {
+        enabled: false
+      }
+    },
+    host: '',
+    iconUrl: '',
+    includeSourceCode: false,
+    isChromeOSOnly: false,
+    launcherName: '',
+    maskableIconUrl: '',
+    monochromeIconUrl: '',
+    name: '',
+    navigationColor: '#ffffff',
+    navigationColorDark: '#000000',
+    navigationDividerColor: '#ffffff',
+    navigationDividerColorDark: '#000000',
+    orientation: 'default',
+    packageId: '',
+    shortcuts: [],
+    signing: null,
+    signingMode: 'none',
+    splashScreenFadeOutDuration: 300,
+    startUrl: '',
+    themeColor: '#ffffff',
+    webManifestUrl: ''
   };
 }
 
@@ -258,14 +307,14 @@ export async function createAndroidPackageOptionsFromManifest(
         enabled: false,
       },
     },
-    host: pwaUrl,
+    host: new URL(pwaUrl).origin,
     iconUrl: getAbsoluteUrl(icon.src, manifestUrlOrRoot),
     includeSourceCode: false,
     isChromeOSOnly: false,
     launcherName: (manifest.short_name as string) || (appName as string), // launcher name should be the short name. If none is available, fallback to the full app name.
     maskableIconUrl: getAbsoluteUrl(maskableIcon?.src, manifestUrlOrRoot),
     monochromeIconUrl: getAbsoluteUrl(monochromeIcon?.src, manifestUrlOrRoot),
-    name: appName as string,
+    name: appName,
     navigationColor: navColorOrFallback as string,
     navigationColorDark: navColorOrFallback as string,
     navigationDividerColor: navColorOrFallback as string,
@@ -323,6 +372,7 @@ function getStartUrlRelativeToHost(
 
   // The start URL we send to the CloudAPK service should be a URL relative to the host.
   const absoluteStartUrl = new URL(startUrl || '/', manifestUrl);
+
   return absoluteStartUrl.pathname + (absoluteStartUrl.search || '');
 
   // COMMENTED OUT: Old PWABuilder v2 URL creation. Commented out because we can do the same thing in less code above.

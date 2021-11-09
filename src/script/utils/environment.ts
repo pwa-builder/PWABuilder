@@ -39,4 +39,3 @@ if((window as any).ENV == "production"){
   env.webPackageGeneratorFormUrl = 'https://pwabuilder-web-platform.azurewebsites.net/form';
   env.ratingUrl = 'https://pwabuilder-url-logger-api.azurewebsites.net/api/analyses/getaveragescores';
 }
-

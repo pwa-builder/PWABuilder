@@ -29,7 +29,7 @@ import { Router } from '@vaadin/router';
 import { getProgress, getURL, setProgress } from '../services/app-info';
 import { Lazy, ProgressList, Status } from '../utils/interfaces';
 import { fetchOrCreateManifest } from '../services/manifest';
-import { recordPageAction } from '../utils/analytics';
+import { AnalyticsBehavior, recordProcessStep } from '../utils/analytics';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -280,7 +280,14 @@ export class AppHome extends LitElement {
     if (this.siteURL) {
       this.gettingManifest = true;
       const isValidUrl = isValidURL(this.siteURL);
-      recordPageAction('analysis-started', { url: this.siteURL, valid: isValidUrl });
+      recordProcessStep(
+        'analyze-and-package-pwa',
+        'url-analysis-started',
+        AnalyticsBehavior.StartProcess,
+        {
+          url: this.siteURL,
+          valid: isValidUrl
+        });
 
       if (isValidUrl) {
         try {
@@ -291,7 +298,7 @@ export class AppHome extends LitElement {
           this.updateProgress(progress);
 
           const goodURL = manifestContext.siteUrl;
-
+          
           if (goodURL !== undefined) {
             Router.go(`/testing?site=${goodURL}`);
           }
@@ -316,7 +323,7 @@ export class AppHome extends LitElement {
 
         await this.updateComplete;
 
-        (this.shadowRoot?.querySelector('.error-message')as HTMLSpanElement)?.focus();
+        (this.shadowRoot?.querySelector('.error-message') as HTMLSpanElement)?.focus();
       }
 
       // HACK: Lit 2.0 crashes on Safari 14 desktop on the following line:
@@ -381,8 +388,8 @@ export class AppHome extends LitElement {
             </fast-text-field>
       
             ${this.errorMessage && this.errorMessage.length > 0
-      ? html`<span role="alert" aria-live="polite" class="error-message">${this.errorMessage}</span>`
-      : null}
+              ? html`<span role="alert" aria-live="polite" class="error-message">${this.errorMessage}</span>`
+              : null}
           </div>
       
           <loading-button id="start-button" type="submit" class="navigation" ?loading="${this.gettingManifest}"

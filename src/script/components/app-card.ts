@@ -142,14 +142,14 @@ export class AppCard extends LitElement {
           cursor: pointer;
         }
 
+        card-actions a:focus {
+          outline: 1px solid black;
+        }
+
         .card-actions a span {
           display: inline-block;
           height: 28px;
-          border-bottom: 1px solid transparent
-        }
-
-        .card-actions a:hover span {
-          border-color: var(--link-color);
+          border-bottom: 1px solid var(--link-color);
         }
       `,
       // overlay
@@ -534,14 +534,14 @@ export class AppCard extends LitElement {
             bordered: this.imageBordered,
           })}" src="${ifDefined(this.imageUrl)}" alt="${
       this.cardTitle
-    } card header image" />
+    } card header image" role="presentation"/>
         </div>
       
         <h3>${this.cardTitle}</h3>
         <p>${this.description}</p>
       
         <div class="card-actions">
-          <a @click=${this.route}><span>View ${this.cardTitle}</span></a>
+          <a @click=${this.route} tabindex="0"><span>View ${this.cardTitle}</span></a>
         </div>
       </fast-card>
     `;

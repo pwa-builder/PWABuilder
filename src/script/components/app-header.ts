@@ -12,7 +12,7 @@ import {
 
 @customElement('app-header')
 export class AppHeader extends LitElement {
-  @property({ type: String }) title = 'PWABuilder';
+  @property({ type: String }) heading = 'PWABuilder';
 
   static get styles() {
     return css`
@@ -174,7 +174,7 @@ export class AppHeader extends LitElement {
     // Cant seem to type `event` as a KeyboardEvent without TypeScript complaining
     // with an error I dont fully understand.
     // revisit: Justin
-    this.shadowRoot?.querySelector('#header-icon')?.addEventListener("keydown" , (event) => {
+    this.shadowRoot?.querySelector('#header-icon')?.addEventListener("keydown", (event) => {
       // casting here because of type problem described above
       if ((event as KeyboardEvent).key === "Enter") {
         this.goBack();
@@ -195,14 +195,9 @@ export class AppHeader extends LitElement {
   render() {
     return html`
       <header part="header">
-        <img
-          @click="${this.goBack}"
-          tabindex="0"
-          id="header-icon"
-          src="/assets/images/header_logo.svg"
-          alt="PWA Builder logo"
-        />
-
+        <img @click="${this.goBack}" tabindex="0" id="header-icon" src="/assets/images/header_logo.svg"
+          alt="PWA Builder logo" />
+      
         <nav id="desktop-nav">
           <fast-anchor
             id="resources"
@@ -221,7 +216,7 @@ export class AppHeader extends LitElement {
             aria-label="Github repo, will open in separate tab"
             rel="noopener"
           >
-            <ion-icon name="logo-github"></ion-icon>
+            <ion-icon role="presentation" aria-hidden="true" tab-index="-1" name="logo-github"></ion-icon>
           </fast-anchor>
         </nav>
       </header>

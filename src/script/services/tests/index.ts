@@ -15,25 +15,29 @@ export async function runAllTests(url: string): Promise<RawTestResult> {
   // here for this function to work properly
   // this is also valid JavaScript
   // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async resolve => {
-    const maniTestResult = testManifest(url);
-    const serviceWorkerTestResult = testServiceWorker(url);
-    const securityTestResult = testSecurity(url);
+  return new Promise(async (resolve, reject) => {
+    try {
+      const maniTestResult = testManifest(url);
+      const serviceWorkerTestResult = testServiceWorker(url);
+      const securityTestResult = testSecurity(url);
 
-    const resultsObject: RawTestResult = {
-      manifest: await maniTestResult,
-      service_worker: await serviceWorkerTestResult,
-      security: await securityTestResult,
-    };
+      const resultsObject: RawTestResult = {
+        manifest: await maniTestResult,
+        service_worker: await serviceWorkerTestResult,
+        security: await securityTestResult,
+      };
 
-    setResults(resultsObject);
+      setResults(resultsObject);
 
-    const progress = getProgress();
-    updateProgress(progress, resultsObject);
+      const progress = getProgress();
+      updateProgress(progress, resultsObject);
 
-    giveOutBadges();
+      giveOutBadges();
 
-    resolve(resultsObject);
+      resolve(resultsObject);
+    } catch (err) {
+      reject(err);
+    }
   });
 }
 
@@ -70,22 +74,22 @@ export function getOverallScore() {
 function updateProgress(progress: ProgressList, results: RawTestResult) {
   progress.progress[0]!.items[1]!.done = Status.DONE;
 
-  progress.progress[1]!.items.map((item: { name: string; done: Status }) => {
+  progress.progress[1]!.items.map(item => {
     if (item.name === 'Manifest') {
-      if (results && results.manifest) {
-        if ((results.manifest as Array<TestResult>)[0]!.result === true) {
+      if (results && Array.isArray(results.manifest)) {
+        if (results.manifest[0]?.result === true) {
           item.done = Status.DONE;
         }
       }
     } else if (item.name === 'Service Worker') {
       if (results && results.service_worker) {
-        if (results.service_worker[0]!.result === true) {
+        if (results.service_worker[0]?.result === true) {
           item.done = Status.DONE;
         }
       }
     } else if (item.name === 'Security') {
       if (results && results.security) {
-        if (results.security[0]!.result === true) {
+        if (results.security[0]?.result === true) {
           item.done = Status.DONE;
         }
       }
