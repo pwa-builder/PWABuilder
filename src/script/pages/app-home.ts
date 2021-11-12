@@ -347,7 +347,6 @@ export class AppHome extends LitElement {
         <h1 id="home-header" slot="hero-container">
           Ship your PWA to the app stores at lightning speed.
         </h1>
-      
         <section id="content-grid" slot="grid-container">
           <div class="intro-grid-item">
             <h2>Test</h2>
