@@ -12,11 +12,7 @@ import { customElement } from 'lit/decorators.js';
 @customElement('app-package-form-base')
 export class AppPackageFormBase extends LitElement {
   static get styles() {
-    return [
-      style,
-      ModalStyles,
-      ToolTipStyles,
-      css`
+    const localStyles = css`
         #form-layout input {
           border: 1px solid rgba(194, 201, 209, 1);
           border-radius: var(--input-radius);
@@ -50,21 +46,27 @@ export class AppPackageFormBase extends LitElement {
         }
 
         ${xxLargeBreakPoint(
-        css`
+      css`
             #form-layout {
               max-height: 17em;
             }
           `
-      )}
+    )}
 
-        ${smallBreakPoint(
-        css`
-            #form-layout {
-              max-height: 20em;
-            }
-          `
-      )}
-      `
+      ${smallBreakPoint(
+      css`
+          #form-layout {
+            max-height: 20em;
+          }
+        `
+    )}
+    `;
+
+    return [
+      style,
+      ModalStyles,
+      ToolTipStyles,
+      localStyles
     ];
   }
 
@@ -81,8 +83,10 @@ export class AppPackageFormBase extends LitElement {
       </label>
       <input id="${formInput.inputId}" class="form-control" placeholder="${formInput.placeholder || ''}"
         value="${formInput.value || ''}" type="${inputType}" ?required="${formInput.required}"
-        minlength="${ifDefined(formInput.minLength)}" pattern="${ifDefined(formInput.pattern)}"
-        spellcheck="${ifDefined(formInput.spellcheck)}" @input="${(e: UIEvent) => this.inputChanged(e, formInput)}" />
+        minlength="${ifDefined(formInput.minLength)}" maxlength="${ifDefined(formInput.maxLength)}"
+        pattern="${ifDefined(formInput.pattern)}" spellcheck="${ifDefined(formInput.spellcheck)}"
+        custom-validation-error-message="${ifDefined(formInput.validationErrorMessage)}"
+        @input="${(e: UIEvent) => this.inputChanged(e, formInput)}" @invalid=${this.inputInvalid} />
     `;
   }
 
@@ -99,10 +103,102 @@ export class AppPackageFormBase extends LitElement {
     `;
   }
 
+  protected toggleAccordion(targetEl: EventTarget | null) {
+    if (targetEl) {
+      const flipperButton = (targetEl as Element).classList.contains(
+        'flipper-button'
+      )
+        ? (targetEl as Element)
+        : (targetEl as Element).querySelector('.flipper-button');
+
+      if (flipperButton) {
+        if (flipperButton.classList.contains('opened')) {
+          flipperButton.animate(
+            [
+              {
+                transform: 'rotate(0deg)',
+              },
+            ],
+            {
+              duration: 200,
+              fill: 'forwards',
+            }
+          );
+
+          flipperButton.classList.remove('opened');
+        } else {
+          flipperButton.classList.add('opened');
+
+          flipperButton.animate(
+            [
+              {
+                transform: 'rotate(0deg)',
+              },
+              {
+                transform: 'rotate(90deg)',
+              },
+            ],
+            {
+              duration: 200,
+              fill: 'forwards',
+            }
+          );
+        }
+      }
+    }
+  }
+
   private inputChanged(e: UIEvent, formInput: FormInput) {
     const inputElement = e.target as HTMLInputElement | null;
-    if (formInput.inputHandler) {
-      formInput.inputHandler(inputElement?.value || '');
+    if (inputElement) {
+      // Fire the input handler
+      if (formInput.inputHandler) {
+        formInput.inputHandler(inputElement?.value || '');
+      }
+
+      // Run validation if necessary.
+      if (formInput.validationErrorMessage) {
+        const errorMessage = this.inputHasValidationErrors(inputElement) ? formInput.validationErrorMessage : '';
+        inputElement.setCustomValidity(errorMessage);
+        inputElement.title = errorMessage;
+      }
+    }
+  }
+
+  private inputInvalid(e: UIEvent) {
+    const element = e.target as HTMLInputElement;
+    if (element) {
+      this.expandParentAccordionIfNeeded(element);
+    }
+  }
+
+  private inputHasValidationErrors(input: HTMLInputElement): boolean {
+    const statesChecked = [
+      input.validity.badInput,
+      input.validity.patternMismatch,
+      input.validity.rangeOverflow,
+      input.validity.rangeUnderflow,
+      input.validity.stepMismatch,
+      input.validity.tooLong,
+      input.validity.tooShort,
+      input.validity.typeMismatch,
+      input.validity.valueMissing
+    ];
+
+    return statesChecked.some(s => s === true);
+  }
+
+  private expandParentAccordionIfNeeded(element: HTMLInputElement) {
+    // If the accordion is hiding any invalid inputs, open it.
+    const isInvalid = !element.validity.valid;
+    const parentAccordion = element.closest('fast-accordion-item');
+    if (parentAccordion && (parentAccordion as any).expanded === false && isInvalid) {
+      const accordionFlipper = parentAccordion.querySelector<HTMLElement>(".flipper-button");
+      accordionFlipper?.click();
+      setTimeout(() => {
+        element.scrollIntoView();
+        element.reportValidity();
+      }, 0);
     }
   }
 }
@@ -117,37 +213,9 @@ export interface FormInput {
   value?: string;
   required?: boolean;
   minLength?: number;
+  maxLength?: number;
   pattern?: string;
   spellcheck?: boolean;
+  validationErrorMessage?: string;
   inputHandler?: (val: string) => void;
 }
-
-/**
- * <label for='bundleIdInput'>
-                Bundle ID
-                <i
-                  class='fas fa-info-circle'
-                  title='The unique identifier of your app. It should contain only letters, numbers, and periods. Apple recommends a reverse-domain style string: com.domainname.appname. You'll need this value when uploading your app to the iOS App Store.'
-                  aria-label='The unique identifier of your app. It should contain only letters, numbers, and periods. Apple recommends a reverse-domain style string: com.domainname.appname. You'll need this value when uploading your app to the iOS App Store.'
-                  role='definition'
-                ></i>
-
-                ${tooltip(
-                  'ios-bundleId-name',
-                  `The unique identifier of your app. It should be at least 3 characters in length, and cannot contain asterisks. Apple recommends a reverse-domain style string: com.domainname.appname. You'll need this value when uploading your app to the iOS App Store.`
-                )}
-              </label>
-              <input
-                id='bundleIdInput'
-                class='form-control'
-                placeholder='com.domainname.app'
-                value='${this.defaultOptions.bundleId || 'com.domainname.appname'}'
-                type='text'
-                required
-                minlength='3'
-                pattern='^[\*]*$'
-                name='bundleId'
-                @input='${(e: UIEvent) => this.bundleId = this.getInputValue(e.target)}'
-              />
- * 
- */

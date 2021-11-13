@@ -26,6 +26,8 @@ import { generatePackage, Platform } from '../services/publish';
 import { getReportErrorUrl } from '../utils/error';
 import { styles as ToolTipStyles } from '../components/tooltip';
 import { localeStrings } from '../../locales';
+import { WindowsPackageOptions } from '../utils/win-validation';
+import { IOSAppPackageOptions } from '../utils/ios-validation';
 
 @customElement('portals-publish')
 export class PortalsPublish extends LitElement {
@@ -35,9 +37,9 @@ export class PortalsPublish extends LitElement {
   @state() blob: Blob | File | null | undefined;
   @state() testBlob: Blob | File | null | undefined;
 
-  @state() open_windows_options = false;
-  @state() open_android_options = false;
-  @state() open_samsung_modal = false;
+  @state() openWindowsOptions = false;
+  @state() openAndroidOptions = false;
+  @state() openiOSOptions = false;
 
   @state() generating = false;
 
@@ -354,7 +356,7 @@ export class PortalsPublish extends LitElement {
     ];
   }
 
-  async generate(type: platform, form?: HTMLFormElement, signingFile?: string) {
+  async generate(type: Platform, form?: HTMLFormElement | WindowsPackageOptions | IOSAppPackageOptions, signingFile?: string) {
     try {
       this.generating = true;
 
@@ -369,13 +371,13 @@ export class PortalsPublish extends LitElement {
       }
 
       this.generating = false;
-      this.open_android_options = false;
-      this.open_windows_options = false;
+      this.openAndroidOptions = false;
+      this.openWindowsOptions = false;
     } catch (err) {
       console.error(err);
       this.generating = false;
-      this.open_android_options = false;
-      this.open_windows_options = false;
+      this.openAndroidOptions = false;
+      this.openWindowsOptions = false;
 
       this.showAlertModal(err as Error, type);
     }
@@ -401,15 +403,15 @@ export class PortalsPublish extends LitElement {
   }
 
   showWindowsOptionsModal() {
-    this.open_windows_options = true;
+    this.openWindowsOptions = true;
   }
 
   showAndroidOptionsModal() {
-    this.open_android_options = true;
+    this.openAndroidOptions = true;
   }
 
-  showSamsungModal() {
-    this.open_samsung_modal = true;
+  showiOSModal() {
+    this.openiOSOptions = true;
   }
 
   renderContentCards() {
@@ -482,9 +484,9 @@ export class PortalsPublish extends LitElement {
   }
 
   storeOptionsCancel() {
-    this.open_windows_options = false;
-    this.open_android_options = false;
-    this.open_samsung_modal = false;
+    this.openWindowsOptions = false;
+    this.openAndroidOptions = false;
+    this.openiOSOptions = false;
   }
 
   render() {
@@ -508,8 +510,9 @@ export class PortalsPublish extends LitElement {
             target="__blank"
             id="error-link"
             class="button"
-            .href="${this.reportPackageErrorUrl}"
-            >Report A Problem</fast-anchor
+            .href="${this.reportPackageErrorUrl}">
+            Report A Problem
+            </fast-anchor
           >
         </div>
       </app-modal>
@@ -557,9 +560,9 @@ export class PortalsPublish extends LitElement {
       <!-- windows store options modal -->
       <app-modal
         id="windows-options-modal"
-        title="Microsoft Store Options"
-        body="Customize your Windows package below!"
-        ?open="${this.open_windows_options}"
+        heading="Windows App Options"
+        body="Customize your Windows app below"
+        ?open="${this.openWindowsOptions}"
         @app-modal-close="${() => this.storeOptionsCancel()}"
 
       >
@@ -567,16 +570,16 @@ export class PortalsPublish extends LitElement {
           slot="modal-form"
           .generating=${this.generating}
           @init-windows-gen="${(ev: CustomEvent) =>
-            this.generate('windows', ev.detail.form)}"
+            this.generate('windows', ev.detail as WindowsPackageOptions)}"
         ></windows-form>
       </app-modal>
 
       <!-- android options modal -->
       <app-modal
         id="android-options-modal"
-        title="Google Play Store Options"
-        body="Customize your Android package below!"
-        ?open="${this.open_android_options === true}"
+        heading="Android App Options"
+        body="Customize your Android app below"
+        ?open="${this.openAndroidOptions === true}"
         @app-modal-close="${() => this.storeOptionsCancel()}"
       >
         <android-form
@@ -587,45 +590,56 @@ export class PortalsPublish extends LitElement {
         ></android-form>
       </app-modal>
 
+      <!-- ios options modal -->
+      <app-modal
+        id="ios-options-modal"
+        heading="iOS App Options"
+        body="Customize your iOS app below"
+        ?open="${this.openiOSOptions === true}"
+        @app-modal-close="${() => this.storeOptionsCancel()}">
+        <android-form
+          slot="modal-form"
+          .generating=${this.generating}
+          @init-ios-gen="${(ev: CustomEvent) => this.generate('ios', ev.detail)}">
+        </android-form>
+      </app-modal>
+
       <div id="publish-wrapper">
         <app-header></app-header>
+        <section id="summary-block">
+          <h3>Publish your PWA to stores</h3>
 
-            <section id="summary-block">
-              <h3>Publish your PWA to stores</h3>
+          <p>
+            Generate store-ready packages for the Microsoft Store, Google
+            Play, iOS and more
+          </p>
+        </section>
 
-              <p>
-                Generate store-ready packages for the Microsoft Store, Google
-                Play and more!
-              </p>
-            </section>
+        <section class="container">
+          <ul>
+            ${this.renderContentCards()}
+          </ul>
 
-            <section class="container">
-              <ul>
-                ${this.renderContentCards()}
-              </ul>
+          <div id="up-next">
+            <h5>Congrats!</h5>
 
-              <div id="up-next">
-                <h5>Congrats!</h5>
-
-                <p>
-                  Make sure you check our documentation for help submitting your
-                  generated packages! Click next to see what else you can do
-                  with your PWA!
-                </p>
-              </div>
-
-              <div class="action-buttons">
-                <fast-anchor class="button" href="https://blog.pwabuilder.com/docs/">Documentation</fast-anchor>
-              </div>
-            </section>
+            <p>
+              Make sure you check our documentation for help submitting your
+              generated packages. Click next to see what else you can do
+              with your PWA.
+            </p>
           </div>
-        </div>
+
+          <div class="action-buttons">
+            <fast-anchor class="button" href="https://blog.pwabuilder.com/docs/">Documentation</fast-anchor>
+          </div>
+        </section>
       </div>
-    `;
+    </div>
+  </div>
+`;
   }
 }
-
-type platform = 'windows' | 'android';
 
 interface ICardData {
   title: string;
@@ -649,4 +663,11 @@ const platforms: ICardData[] = [
     isActionCard: true,
     icon: '/assets/android_icon.svg',
   },
+  {
+    title: 'iOS',
+    description:
+      'Publish your PWA to the iOS App Store to make it available to iPhone and iPad users. Requires a Mac to build the package.',
+    isActionCard: true,
+    icon: '/assets/apple_icon.svg'
+  }
 ];

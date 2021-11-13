@@ -26,8 +26,6 @@ function openTooltip(ev: MouseEvent, tooltipEl: HTMLElement) {
   // This code is here to throttle style application as multiple hover events
   // can fire within seconds of each other causing "jumping" in the UI.
 
-  console.log('openTooltip', tooltipEl);
-  console.log('openTooltipEvent', ev);
   if (tooltipEl && ev && tooltipEl.style.top.length === 0) {
     // re-visit this tooltip logic entirely - Justin Willis
     // tooltipEl.style.top = `${(ev.clientY - 300).toString()}px`;
@@ -38,28 +36,13 @@ export function tooltip(buttonId: string, text: string, url?: string) {
   const tooltipId = createTooltipId();
 
   return html`
-    <fast-button
-      id="${buttonId}"
-      class="tooltip"
-      appearance="stealth"
-      aria-labelledby="${tooltipId}"
-      @mouseover="${($event: MouseEvent) => onMouseOverTooltip($event)}"
-    >
-      <img
-        src="assets/images/help-outline.svg"
-        alt="help outline"
-        aria-hidden="true"
-      />
-
+    <fast-button id="${buttonId}" class="tooltip" appearance="stealth" aria-labelledby="${tooltipId}"
+      @mouseover="${($event: MouseEvent) => onMouseOverTooltip($event)}">
+      <img src="assets/images/help-outline.svg" alt="help outline" aria-hidden="true" />
+    
       ${url && url.length > 0
-        ? html`<a
-            href="${url}"
-            id="${tooltipId}"
-            target="_blank"
-            class="tooltip-text"
-            >${text}</a
-          >`
-        : html`<span id="${tooltipId}" class="tooltip-text"> ${text} </span>`}
+    ? html`<a href="${url}" id="${tooltipId}" target="_blank" class="tooltip-text">${text}</a>`
+    : html`<span id="${tooltipId}" class="tooltip-text"> ${text} </span>`}
     </fast-button>
   `;
 }

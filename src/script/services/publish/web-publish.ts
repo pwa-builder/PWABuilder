@@ -4,7 +4,7 @@ import { getURL } from '../app-info';
 import { getChosenServiceWorker } from '../service_worker';
 import { Manifest } from '../../utils/interfaces';
 
-export let web_generated = false;
+export let hasGeneratedWebPackage = false;
 
 export async function generateWebPackage() {
   const manifestContext = await fetchOrCreateManifest();
@@ -31,7 +31,7 @@ export async function generateWebPackage() {
     const data = await response.blob();
 
     // set generated flag
-    web_generated = true;
+    hasGeneratedWebPackage = true;
 
     return data;
   } else {

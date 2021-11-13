@@ -34,8 +34,11 @@ import { getReportErrorUrl } from '../utils/error';
 import { styles as ToolTipStyles } from '../components/tooltip';
 import { localeStrings } from '../../locales';
 import { AnalyticsBehavior, recordProcessStep } from '../utils/analytics';
-import { getURL } from '../services/app-info';
+import { getManifestContext, getURL } from '../services/app-info';
 import { IOSAppPackageOptions } from '../utils/ios-validation';
+import { WindowsPackageOptions } from '../utils/win-validation';
+import { fetchOrCreateManifest } from '../services/manifest';
+import { createWindowsPackageOptionsFromManifest } from '../services/publish/windows-publish';
 @customElement('app-publish')
 export class AppPublish extends LitElement {
   @state() errored = false;
@@ -485,51 +488,17 @@ export class AppPublish extends LitElement {
     return null;
   }
 
-  getiOSFinalChecksErrorMessage(): string | null {
-    if (this.finalChecks) {
-      const maniCheck = this.finalChecks.manifest;
-      const baseIcon = this.finalChecks.baseIcon;
-      const validURL = this.finalChecks.validURL;
-
-      if (maniCheck === false) {
-        return 'Your PWA does not have a valid Web Manifest';
-      }
-
-      if (baseIcon === false) {
-        return 'Your PWA needs at least a 512x512 PNG icon';
-      }
-
-      if (validURL === false) {
-        return 'Your PWA does not have a valid URL';
-      }
+  async generateWindowsTestPackage() {
+    let manifestContext = getManifestContext();
+    if (manifestContext.isGenerated) {
+      manifestContext = await fetchOrCreateManifest();
     }
 
-    return null;
+    const options = createWindowsPackageOptionsFromManifest(manifestContext.manifest);
+    await this.generate("windows", options);
   }
 
-  async generate(platform: Platform, form?: HTMLFormElement | IOSAppPackageOptions, signingFile?: string) {
-    if (platform === 'windows') {
-      const windowsErrorMessage = this.getWindowsFinalChecksErrorMessage();
-      if (windowsErrorMessage) {
-        this.openWindowsOptions = false;
-        this.showAlertModal(windowsErrorMessage, platform);
-        return;
-      }
-    } else if (platform === 'android') {
-      const androidErrorMessage = this.getAndroidFinalChecksErrorMessage();
-      if (androidErrorMessage) {
-        this.openAndroidOptions = false;
-        this.showAlertModal(androidErrorMessage, platform);
-        return;
-      }
-    } else if (platform === 'ios') {
-      const iosErrorMessage = this.getWindowsFinalChecksErrorMessage();
-      if (iosErrorMessage) {
-        this.openiOSOptions = false;
-        this.showAlertModal(iosErrorMessage, platform);
-      }
-    }
-
+  async generate(platform: Platform, form?: HTMLFormElement | IOSAppPackageOptions | WindowsPackageOptions, signingFile?: string) {
     // Record analysis results to our analytics portal.
     recordProcessStep(
       'analyze-and-package-pwa',
@@ -556,7 +525,10 @@ export class AppPublish extends LitElement {
         'analyze-and-package-pwa',
         `create-${platform}-package-failed`,
         AnalyticsBehavior.CancelProcess,
-        { url: getURL() });
+        {
+          url: getURL(),
+          error: err
+        });
     } finally {
       this.generating = false;
       this.openAndroidOptions = false;
@@ -643,7 +615,7 @@ export class AppPublish extends LitElement {
       </app-button>
       <div>
         <loading-button class="navigation secondary" ?loading=${this.generating} id="test-package-button"
-          @click="${() => this.generate('windows')}">
+          @click="${this.generateWindowsTestPackage}">
           Test Package
           <hover-tooltip
             text="Generate a package you can use to test your app on your Windows Device before going to the Microsoft Store."
@@ -736,21 +708,21 @@ export class AppPublish extends LitElement {
       </app-modal>
       
       <!-- windows store options modal -->
-      <app-modal id="windows-options-modal" heading="Windows App Options" body="Customize your Windows package below"
+      <app-modal id="windows-options-modal" heading="Windows App Options" body="Customize your Windows app below"
         ?open="${this.openWindowsOptions}" @app-modal-close="${() => this.storeOptionsCancel()}">
         <windows-form slot="modal-form" .generating=${this.generating} @init-windows-gen="${(ev: CustomEvent) =>
-              this.generate('windows', ev.detail.form)}"></windows-form>
+              this.generate('windows', ev.detail as WindowsPackageOptions)}"></windows-form>
       </app-modal>
       
       <!-- android options modal -->
-      <app-modal id="android-options-modal" heading="Android App Options" body="Customize your Android package below"
+      <app-modal id="android-options-modal" heading="Android App Options" body="Customize your Android app below"
         ?open="${this.openAndroidOptions === true}" @app-modal-close="${() => this.storeOptionsCancel()}">
         <android-form slot="modal-form" .generating=${this.generating} @init-android-gen="${(ev: CustomEvent) =>
               this.generate('android', ev.detail.form, ev.detail.signingFile)}"></android-form>
       </app-modal>
       
       <!-- ios options modal -->
-      <app-modal id="ios-options-modal" heading="iOS App Options" body="Customize your iOS app package below"
+      <app-modal id="ios-options-modal" heading="iOS App Options" body="Customize your iOS app below"
         ?open="${this.openiOSOptions === true}" @app-modal-close="${() => this.storeOptionsCancel()}">
         <ios-form slot="modal-form" .generating=${this.generating}
           @init-ios-gen="${(ev: CustomEvent) => this.generate('ios', ev.detail)}">

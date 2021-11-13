@@ -9,7 +9,7 @@ import { Manifest } from '../../utils/interfaces';
 import { getURL, getManifestUrl } from '../app-info';
 import { fetchOrCreateManifest } from '../manifest';
 
-export let android_generated = false;
+export let hasGeneratedAndroidPackage = false;
 
 export async function generateAndroidPackage(
   androidOptions: AndroidApkOptions,
@@ -32,7 +32,7 @@ export async function generateAndroidPackage(
 
   if (response.status === 200) {
     //set generated flag
-    android_generated = true;
+    hasGeneratedAndroidPackage = true;
 
     return await response.blob();
   } else {
@@ -104,13 +104,13 @@ export async function createAndroidPackageOptionsFromForm(
     manifest.display === 'fullscreen' ? 'fullscreen' : 'standalone';
   const navColorOrFallback =
     manifest.theme_color || manifest.background_color || '#000000';
-    /*
-  const manifestUrlOrRoot = maniUrl.startsWith(
-    'data:application/manifest+json,'
-  )
-    ? pwaUrl
-    : maniUrl;
-    */
+  /*
+const manifestUrlOrRoot = maniUrl.startsWith(
+  'data:application/manifest+json,'
+)
+  ? pwaUrl
+  : maniUrl;
+  */
   return {
     appVersion: form.appVersion.value || '1.0.0.0',
     appVersionCode: form.appVersionCode.value || 1,
