@@ -77,13 +77,14 @@ export class WindowsForm extends AppPackageFormBase {
                 label: 'Package ID',
                 tooltip: `The Package ID uniquely identifying your app in the Microsoft Store. Get this value from Windows Partner Center.`,
                 tooltipLink: 'https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/',
-                inputId: 'packageId',
+                inputId: 'packageIdInput',
                 required: true,
                 placeholder: 'MyCompany.MyApp',
                 minLength: 3,
                 maxLength: 50,
                 spellcheck: false,
                 pattern: "[a-zA-Z0-9.-]*$",
+                validationErrorMessage: "Package ID must contain only letters, numbers, period, or hyphen.",
                 inputHandler: (val: string) => this.packageOptions.packageId = val
               })}
             </div>
@@ -189,8 +190,7 @@ export class WindowsForm extends AppPackageFormBase {
                     tooltipLink: 'https://blog.pwabuilder.com/docs/image-recommendations-for-windows-pwa-packages/',
                     inputId: 'iconUrlInput',
                     required: true,
-                    type: 'text', // NOTE: can't use ulr here, because we allow relative paths.
-                    pattern: '(https?|/).*?',
+                    type: 'text', // NOTE: can't use URL here, because we allow relative paths.
                     minLength: 2,
                     validationErrorMessage: 'Must be an absolute URL or a URL relative to your manifest',
                     value: this.packageOptions.images?.baseImage || '',
