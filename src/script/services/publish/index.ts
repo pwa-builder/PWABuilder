@@ -1,5 +1,6 @@
 import { Manifest } from '../../utils/interfaces';
 import { IOSAppPackageOptions } from '../../utils/ios-validation';
+import { WindowsPackageOptions } from '../../utils/win-validation';
 import { fetchOrCreateManifest } from '../manifest';
 import {
   createAndroidPackageOptionsFromForm,
@@ -8,8 +9,6 @@ import {
 } from './android-publish';
 import { generateIOSPackage } from './ios-publish';
 import {
-  createWindowsPackageOptionsFromForm,
-  createWindowsPackageOptionsFromManifest,
   generateWindowsPackage,
 } from './windows-publish';
 
@@ -23,12 +22,12 @@ type PackageInfo = {
 
 export async function generatePackage(
   type: Platform,
-  form?: HTMLFormElement | IOSAppPackageOptions,
+  form?: HTMLFormElement | IOSAppPackageOptions | WindowsPackageOptions,
   signingFile?: string
 ): Promise<PackageInfo | null> {
   switch (type) {
     case 'windows':
-      return await tryGenerateWindowsPackage(form as HTMLFormElement);
+      return await tryGenerateWindowsPackage(form as WindowsPackageOptions);
     case 'android':
       return await tryGenerateAndroidPackage(form as HTMLFormElement, signingFile);
     case 'ios':
@@ -73,58 +72,13 @@ async function tryGenerateIOSPackage(options: IOSAppPackageOptions): Promise<Pac
   };
 }
 
-async function tryGenerateWindowsPackage(
-  form?: HTMLFormElement
-): Promise<PackageInfo | null> {
-  try {
-    // First we check for a form
-    // and generate based off of that.
-    // We will have a form if the user is going to
-    // prod
-    if (form) {
-      const options = await createWindowsPackageOptionsFromForm(form);
-      if (!options) {
-        return null;
-      }
-
-      const blob = await generateWindowsPackage(options);
-      return {
-        appName: options.name,
-        blob: blob || null,
-        type: 'store',
-      };
-    } else {
-      // No form, lets generate from the manifest
-      try {
-        const options = await createWindowsPackageOptionsFromManifest();
-        const testBlob = await generateWindowsPackage(options);
-        return {
-          appName: options.name,
-          blob: testBlob || null,
-          type: 'test',
-        };
-      } catch (err) {
-        // Oh no, looks like we dont have the manifest in memory
-        // Lets try to grab it
-        const localManifest = await grabBackupManifest();
-        if (!localManifest) {
-          return null;
-        }
-
-        const options = await createWindowsPackageOptionsFromManifest(
-          localManifest
-        );
-        const testBlob = await generateWindowsPackage(options);
-        return {
-          appName: options.name,
-          blob: testBlob || null,
-          type: 'test',
-        };
-      }
-    }
-  } catch (err) {
-    throw new Error(`Error generating Windows package ${err}`);
-  }
+async function tryGenerateWindowsPackage(packageOptions: WindowsPackageOptions): Promise<PackageInfo | null> {
+  const blob = await generateWindowsPackage(packageOptions);
+  return {
+    appName: packageOptions.name,
+    blob: blob || null,
+    type: 'store',
+  };
 }
 
 async function tryGenerateAndroidPackage(

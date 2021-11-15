@@ -1,4 +1,4 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, css, html, TemplateResult } from 'lit';
 
 import { customElement, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
@@ -23,6 +23,9 @@ import '../components/content-header';
 import '../components/app-modal';
 import '../components/app-card';
 import '../components/resource-hub';
+import '../components/windows-form';
+import '../components/android-form';
+import '../components/ios-form';
 
 import {
   getPlatformsGenerated,
@@ -34,27 +37,24 @@ import { generatePackage, Platform } from '../services/publish';
 import { BlogPost, allPosts } from '../services/blog';
 
 import { localeStrings } from '../../locales';
+import { WindowsPackageOptions } from '../utils/win-validation';
+import { IOSAppPackageOptions } from '../utils/ios-validation';
 
 @customElement('app-congrats')
 export class AppCongrats extends LitElement {
   @state() mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`
   );
-
   @state() isDeskTopView = this.mql.matches;
-
-  @state() generatedPlatforms: GeneratedPlatforms | null = null;
-
+  @state() generatedPlatforms: GeneratedPlatforms = getPlatformsGenerated();
   @state() generating = false;
-
   @state() errored = false;
   @state() errorMessage: string | undefined;
-
   @state() blob: Blob | File | undefined;
   @state() testBlob: Blob | File | undefined;
-  @state() open_windows_options = false;
-  @state() open_android_options = false;
-
+  @state() openWindowsOptions = false;
+  @state() openAndroidOptions = false;
+  @state() openIOSOptions = false;
   @state() blog_posts: Array<BlogPost> | undefined;
   @state() featuredPost: BlogPost | undefined;
 
@@ -449,8 +449,6 @@ export class AppCongrats extends LitElement {
   }
 
   firstUpdated() {
-    this.generatedPlatforms = getPlatformsGenerated();
-
     let possiblePosts = allPosts;
 
     if (possiblePosts) {
@@ -480,18 +478,26 @@ export class AppCongrats extends LitElement {
             );
           }
         });
+      } else if (this.generatedPlatforms.ios === false) {
+        possiblePosts.map(post => {
+          if (post.relatedPlatform && post.relatedPlatform === 'ios') {
+            this.featuredPost = post;
+
+            possiblePosts = possiblePosts.filter(
+              item => item.title !== post.title
+            );
+          }
+        });
       }
 
       this.blog_posts = possiblePosts;
     }
   }
 
-  async generate(type: Platform, form?: HTMLFormElement) {
+  async generateApp(type: Platform, form?: HTMLFormElement | WindowsPackageOptions | IOSAppPackageOptions) {
     try {
       this.generating = true;
-
       const packageData = await generatePackage(type, form);
-
       if (packageData) {
         if (packageData.type === 'test') {
           this.testBlob = packageData.blob || undefined;
@@ -499,13 +505,14 @@ export class AppCongrats extends LitElement {
           this.blob = packageData.blob || undefined;
         }
       }
-
-      this.generating = false;
-      this.open_android_options = false;
-      this.open_windows_options = false;
     } catch (err) {
       console.error(err);
       this.showAlertModal(err as string);
+    } finally {
+      this.generating = false;
+      this.openAndroidOptions = false;
+      this.openWindowsOptions = false;
+      this.openIOSOptions = false;
     }
   }
 
@@ -535,18 +542,10 @@ export class AppCongrats extends LitElement {
     this.errorMessage = errorMessage;
   }
 
-  showWindowsOptionsModal() {
-    this.open_windows_options = !this.open_windows_options;
-  }
-
-  showAndroidOptionsModal() {
-    this.open_android_options = !this.open_android_options;
-  }
-
   render() {
     return html`
       <app-modal
-        title="Wait a minute!"
+        heading="Wait a minute!"
         .body="${this.errorMessage || ''}"
         ?open="${this.errored}"
         id="error-modal"
@@ -567,7 +566,7 @@ export class AppCongrats extends LitElement {
 
       <app-modal
         ?open="${this.blob ? true : false}"
-        title="Download your package"
+        heading="Download your package"
         body="Your app package is ready for download."
         id="download-modal"
       >
@@ -585,7 +584,7 @@ export class AppCongrats extends LitElement {
 
       <app-modal
         ?open="${this.testBlob ? true : false}"
-        title="Test Package Download"
+        heading="Windows Test Package Download"
         body="${localeStrings.input.publish.windows.test_package}"
         id="test-download-modal"
       >
@@ -603,30 +602,44 @@ export class AppCongrats extends LitElement {
 
       <app-modal
         id="windows-options-modal"
-        title="Microsoft Store Options"
-        body="Customize your Windows package below!"
-        ?open="${this.open_windows_options}"
+        heading="Microsoft Store Options"
+        body="Customize your Windows app below"
+        ?open="${this.openWindowsOptions}"
       >
         <windows-form
           slot="modal-form"
           .generating=${this.generating}
           @init-windows-gen="${(ev: CustomEvent) =>
-            this.generate('windows', ev.detail.form)}"
+            this.generateApp('windows', ev.detail as WindowsPackageOptions)}"
         ></windows-form>
       </app-modal>
 
       <app-modal
         id="android-options-modal"
-        title="Google Play Store Options"
-        body="Customize your Android package below!"
-        ?open="${this.open_android_options}"
+        heading="Google Play Store Options"
+        body="Customize your Android app below"
+        ?open="${this.openAndroidOptions}"
       >
         <android-form
           slot="modal-form"
           .generating=${this.generating}
           @init-android-gen="${(ev: CustomEvent) =>
-            this.generate('android', ev.detail.form)}"
+            this.generateApp('android', ev.detail.form)}"
         ></android-form>
+      </app-modal>
+
+      <app-modal
+        id="ios-options-modal"
+        heading="iOS App Store Options"
+        body="Customize your iOS app below"
+        ?open="${this.openIOSOptions}"
+      >
+        <ios-form
+          slot="modal-form"
+          .generating=${this.generating}
+          @init-ios-gen="${(ev: CustomEvent) =>
+        this.generateApp('ios', ev.detail)}"
+        ></ios-form>
       </app-modal>
 
       <div id="congrats-wrapper">
@@ -650,79 +663,15 @@ export class AppCongrats extends LitElement {
 
             <app-sidebar id="tablet-sidebar"></app-sidebar>
 
-            <section id="summary-block">
-              <h2>Nice</h2>
-
-              <p>
-                Check below to package your PWA for another store and visit our
-                Blog for demos, components and to learn more about PWAs!
-              </p>
-            </section>
-
             <section id="other-stores">
               <h2>Publish your PWA to other stores?</h2>
 
               <ul>
-                ${this.generatedPlatforms &&
-                this.generatedPlatforms.windows === false
-                  ? html`
-                      <li>
-                        <div id="title-block">
-                          <h3>Windows</h3>
-                          <p>
-                            <a
-                              href="https://blog.pwabuilder.com/posts/bringing-chromium-edge-pwas-to-the-microsoft-store/"
-                              >PWAs work great on Windows!</a
-                            >
-                            Tap Test Package to test your PWA on a Windows
-                            device, or if you're ready, tap Publish to generate
-                            a Microsoft Store-ready package for your PWA!
-                          </p>
-                        </div>
-
-                        <div id="platform-actions-block">
-                          <app-button
-                            @click="${() => this.showWindowsOptionsModal()}"
-                            >Publish</app-button
-                          >
-
-                          <loading-button
-                            ?loading=${this.generating}
-                            id="test-package-button"
-                            class="navigation secondary"
-                            @click="${() => this.generate('windows')}"
-                            >Test Package</loading-button
-                          >
-                        </div>
-                      </li>
-                    `
-                  : null}
+                ${this.renderWindowsPlatform()}
+                ${this.renderAndroidPlatform()}
+                ${this.renderiOSPlatform()}
               </ul>
 
-              ${this.generatedPlatforms &&
-              this.generatedPlatforms.android === false
-                ? html`
-                    <li>
-                      <div id="title-block">
-                        <h3>Android</h3>
-                        <p>
-                          Want to ship your PWA to Android? PWAs also work great
-                          on Android and are accepted in the Google Play Store.
-                          Tap publish to generate a package you can both test
-                          with and submit to the Google Play Store!
-                        </p>
-                      </div>
-
-                      <div id="platform-actions-block">
-                        <app-button
-                          id="android-publish-button"
-                          @click="${() => this.showAndroidOptionsModal()}"
-                          >Publish</app-button
-                        >
-                      </div>
-                    </li>
-                  `
-                : null}
             </section>
 
             <section id="blog-section">
@@ -792,4 +741,98 @@ export class AppCongrats extends LitElement {
   isFeatured() {
     return window.innerWidth > 1023;
   }
+
+  renderWindowsPlatform(): TemplateResult {
+    // If we already generated windows package, skip this.
+    if (this.generatedPlatforms.windows) {
+      return html``;
+    }      
+      
+    return html`
+      <li>
+        <div id="title-block">
+          <h3>Windows</h3>
+          <p>
+            <a href="https://blog.pwabuilder.com/posts/bringing-chromium-edge-pwas-to-the-microsoft-store/">
+              PWAs work great on Windows!
+            </a>
+            Tap Test Package to test your PWA on a Windows
+            device, or if you're ready, tap Publish to generate
+            a Microsoft Store-ready package for your PWA.
+          </p>
+        </div>
+
+        <div id="platform-actions-block">
+          <app-button
+            @click="${() => this.openWindowsOptions = true}">
+            Publish
+          </app-button>
+
+          <loading-button
+            ?loading=${this.generating}
+            id="test-package-button"
+            class="navigation secondary"
+            @click="${() => this.generateApp('windows')}">
+            Test Package
+            </loading-button>
+        </div>
+      </li>
+    `;
+  }
+
+  renderAndroidPlatform(): TemplateResult {
+    // If we already generated Android, skip this.
+    if (this.generatedPlatforms.android) {
+      return html``;
+    }
+
+    return html`
+      <li>
+        <div id="title-block">
+          <h3>Android</h3>
+          <p>
+            Want to ship your PWA to Android? PWAs also work great
+            on Android and are accepted in the Google Play Store.
+            Tap publish to generate a package you can both test
+            on a Android device and submit to the Google Play Store.
+          </p>
+        </div>
+
+        <div id="platform-actions-block">
+          <app-button
+            id="android-publish-button"
+            @click="${() => this.openAndroidOptions = true}">
+            Publish
+          </app-button>
+        </div>
+      </li>
+    `;
+  }
+
+  renderiOSPlatform(): TemplateResult {
+    // If we already generated iOS, skip this.
+    if (this.generatedPlatforms.ios) {
+      return html``;
+    }
+
+    return html`
+      <li>
+        <div id="title-block">
+          <h3>iOS</h3>
+          <p>
+            Your PWA can run on iOS and be published to the iOS App Store. 
+            Tab publish to generate your iOS app package.
+          </p>
+        </div>
+      
+        <div id="platform-actions-block">
+          <app-button @click="${() => this.openIOSOptions = true}">
+            Publish
+          </app-button>
+        </div>
+      </li>
+    `;
+  }
 }
+
+

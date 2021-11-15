@@ -5,6 +5,7 @@ import { fetchOrCreateManifest } from '../services/manifest';
 import { ManifestContext } from '../utils/interfaces';
 import { AppPackageFormBase } from './app-package-form-base';
 import { createIOSPackageOptionsFromManifest, emptyIOSPackageOptions } from '../services/publish/ios-publish';
+import { getManifestContext } from '../services/app-info';
 
 @customElement('ios-form')
 export class IOSForm extends AppPackageFormBase {
@@ -27,7 +28,11 @@ export class IOSForm extends AppPackageFormBase {
   }
 
   async firstUpdated() {
-    this.manifestContext = await fetchOrCreateManifest();
+    this.manifestContext = getManifestContext();
+    if (this.manifestContext.isGenerated) {
+      this.manifestContext = await fetchOrCreateManifest();
+    }
+    
     this.packageOptions = createIOSPackageOptionsFromManifest(this.manifestContext);
   }
 
@@ -38,7 +43,7 @@ export class IOSForm extends AppPackageFormBase {
       new CustomEvent('init-ios-gen', {
         detail: this.packageOptions,
         composed: true,
-        bubbles: true,
+        bubbles: true
       })
     );
   }
@@ -50,50 +55,6 @@ export class IOSForm extends AppPackageFormBase {
       this.showAllSettings = false;
     } else {
       this.showAllSettings = false;
-    }
-  }
-
-  opened(targetEl: EventTarget | null) {
-    if (targetEl) {
-      const flipperButton = (targetEl as Element).classList.contains(
-        'flipper-button'
-      )
-        ? (targetEl as Element)
-        : (targetEl as Element).querySelector('.flipper-button');
-
-      if (flipperButton) {
-        if (flipperButton.classList.contains('opened')) {
-          flipperButton.animate(
-            [
-              {
-                transform: 'rotate(0deg)',
-              },
-            ],
-            {
-              duration: 200,
-              fill: 'forwards',
-            }
-          );
-
-          flipperButton.classList.remove('opened');
-        } else {
-          flipperButton.classList.add('opened');
-          flipperButton.animate(
-            [
-              {
-                transform: 'rotate(0deg)',
-              },
-              {
-                transform: 'rotate(90deg)',
-              },
-            ],
-            {
-              duration: 200,
-              fill: 'forwards',
-            }
-          );
-        }
-      }
     }
   }
 
@@ -118,6 +79,7 @@ export class IOSForm extends AppPackageFormBase {
                 required: true,
                 placeholder: "com.domainname.appname",
                 minLength: 3,
+                spellcheck: false,
                 inputHandler: (val: string) => this.packageOptions.bundleId = val
               })}
             </div>
@@ -125,7 +87,7 @@ export class IOSForm extends AppPackageFormBase {
             <div class="form-group">
               ${this.renderFormInput({
                 label: 'App name',
-                tooltip: `Please do not include special characters in your app name`,
+                tooltip: `The name of your app as displayed to users`,
                 tooltipLink: "https://blog.pwabuilder.com/docs/publish-your-pwa-to-the-ios-app-store",
                 inputId: 'appNameInput',
                 placeholder: 'My PWA',
@@ -133,8 +95,8 @@ export class IOSForm extends AppPackageFormBase {
                 required: true,
                 spellcheck: false,
                 minLength: 3,
-                inputHandler: (val: string) => this.packageOptions.name = val,
-                pattern:"[a-zA-Z0-9._]*$"
+                // pattern: // NOTE: avoid using a regex pattern here, as it often has unintended consequences, such as blocking non-English names
+                inputHandler: (val: string) => this.packageOptions.name = val
               })}
             </div>
 
@@ -153,7 +115,7 @@ export class IOSForm extends AppPackageFormBase {
 
           <fast-accordion>
             <fast-accordion-item
-              @click="${(ev: Event) => this.opened(ev.target)}"
+              @click="${(ev: Event) => this.toggleAccordion(ev.target)}"
             >
               <div id="all-settings-header" slot="heading">
                 <span>All Settings</span>

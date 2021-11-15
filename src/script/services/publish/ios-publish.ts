@@ -3,6 +3,8 @@ import { findBestAppIcon } from "../../utils/icons";
 import { ManifestContext } from "../../utils/interfaces";
 import { generateBundleId, IOSAppPackageOptions, validateIOSOptions } from "../../utils/ios-validation";
 
+export let hasGeneratedIOSPackage = false;
+
 export async function generateIOSPackage(
   options: IOSAppPackageOptions,
 ): Promise<Blob> {
@@ -27,6 +29,7 @@ export async function generateIOSPackage(
     );
   }
 
+  hasGeneratedIOSPackage = true;
   return await createPackageResponse.blob();
 }
 

@@ -1,21 +1,20 @@
-import { android_generated } from './publish/android-publish';
-import { web_generated } from './publish/web-publish';
-import { windows_generated } from './publish/windows-publish';
+import { hasGeneratedAndroidPackage } from './publish/android-publish';
+import { hasGeneratedWebPackage } from './publish/web-publish';
+import { hasGeneratedWindowsPackage } from './publish/windows-publish';
+import { hasGeneratedIOSPackage } from './publish/ios-publish';
 
 export interface GeneratedPlatforms {
   windows: boolean;
   android: boolean;
   web: boolean;
+  ios: boolean;
 }
 
 export function getPlatformsGenerated(): GeneratedPlatforms {
-  const android = android_generated;
-  const windows = windows_generated;
-  const web = web_generated;
-
   return {
-    android,
-    windows,
-    web,
+    android: hasGeneratedAndroidPackage,
+    windows: hasGeneratedWindowsPackage,
+    web: hasGeneratedWebPackage,
+    ios: hasGeneratedIOSPackage
   };
 }

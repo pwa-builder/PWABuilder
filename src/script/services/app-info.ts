@@ -8,7 +8,7 @@ import {
   Status,
 } from '../utils/interfaces';
 import { getChosenServiceWorker } from './service_worker';
-import { doTest } from './tests/manifest';
+import { doTest } from './tests/manifest'; // TODO: this creates a cyclical reference between app-info and manifest.ts. We should remove this.
 
 let site_url: string | undefined;
 let results: RawTestResult | undefined;
@@ -162,7 +162,7 @@ export async function baseOrPublish(): Promise<'base' | 'publish'> {
   const doubleCheckResults = await doubleCheckManifest(maniContext);
   if (
     generatedFlag === false &&
-    editedFlag === false    &&
+    editedFlag === false &&
     doubleCheckResults.icon &&
     (doubleCheckResults.name || doubleCheckResults.shortName) &&
     doubleCheckResults.startURL

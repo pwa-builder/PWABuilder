@@ -96,50 +96,6 @@ export class AndroidForm extends AppPackageFormBase {
     }
   }
 
-  opened(targetEl: EventTarget | null) {
-    if (targetEl) {
-      const flipperButton = (targetEl as Element).classList.contains(
-        'flipper-button'
-      )
-        ? (targetEl as Element)
-        : (targetEl as Element).querySelector('.flipper-button');
-
-      if (flipperButton) {
-        if (flipperButton.classList.contains('opened')) {
-          flipperButton.animate(
-            [
-              {
-                transform: 'rotate(0deg)',
-              },
-            ],
-            {
-              duration: 200,
-              fill: 'forwards',
-            }
-          );
-
-          flipperButton.classList.remove('opened');
-        } else {
-          flipperButton.classList.add('opened');
-
-          flipperButton.animate(
-            [
-              {
-                transform: 'rotate(0deg)',
-              },
-              {
-                transform: 'rotate(90deg)',
-              },
-            ],
-            {
-              duration: 200,
-              fill: 'forwards',
-            }
-          );
-        }
-      }
-    }
-  }
 
   /**
    * Called when the user changes the signing mode.
@@ -275,8 +231,7 @@ export class AndroidForm extends AppPackageFormBase {
                 placeholder="My Awesome PWA"
                 value="${this.defaultOptions.name || 'My Awesome PWA'}"
                 required
-                pattern="[a-zA-Z0-9._ ]*$"
-                name="appName"
+                name="appName" 
               />
             </div>
 
@@ -311,7 +266,7 @@ export class AndroidForm extends AppPackageFormBase {
           <!-- right half of the options dialog -->
           <fast-accordion>
             <fast-accordion-item
-              @click="${(ev: Event) => this.opened(ev.target)}"
+              @click="${(ev: Event) => this.toggleAccordion(ev.target)}"
             >
               <div id="all-settings-header" slot="heading">
                 <span>All Settings</span>
