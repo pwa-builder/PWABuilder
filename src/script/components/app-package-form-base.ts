@@ -6,60 +6,68 @@ import style from '../../../styles/form-styles.css';
 //@ts-ignore
 import ModalStyles from '../../../styles/modal-styles.css';
 import { styles as ToolTipStyles } from '../components/tooltip';
-import '../components/hover-tooltip';
+import '../components/info-circle-tooltip';
 import { customElement } from 'lit/decorators.js';
 
+/**
+ * Base class for app package forms, e.g. the Windows package form, the Android package form, the iOS package form, etc.
+ * Shares styles across forms and shares common code, such as form label + input rendering, accordion toggling, etc.
+ */
 @customElement('app-package-form-base')
 export class AppPackageFormBase extends LitElement {
   static get styles() {
     const localStyles = css`
-        #form-layout input {
-          border: 1px solid rgba(194, 201, 209, 1);
-          border-radius: var(--input-radius);
-          color: var(--font-color);
+      #form-layout input {
+        border: 1px solid rgba(194, 201, 209, 1);
+        border-radius: var(--input-radius);
+        color: var(--font-color);
+      }
+
+      #form-layout input:not([type='color']) {
+        padding: 10px;
+      }
+
+      input::placeholder {
+        color: var(--placeholder-color);
+        font-style: italic;
+      }
+
+      #generate-submit {
+        background: transparent;
+        color: var(--button-font-color);
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+
+        height: var(--desktop-button-height);
+        width: var(--button-width);
+      }
+
+      info-circle-tooltip {
+        margin-top: 4px;
+      }
+
+      @media (min-height: 760px) and (max-height: 1000px) {
+        form {
+          width: 100%;
         }
+      }
 
-        #form-layout input:not([type='color']) {
-          padding: 10px;
-        }
-
-        input::placeholder {
-          color: var(--placeholder-color);
-          font-style: italic;
-        }
-
-        #generate-submit {
-          background: transparent;
-          color: var(--button-font-color);
-          font-weight: bold;
-          border: none;
-          cursor: pointer;
-
-          height: var(--desktop-button-height);
-          width: var(--button-width);
-        }
-
-        @media (min-height: 760px) and (max-height: 1000px) {
-          form {
-            width: 100%;
-          }
-        }
-
-        ${xxLargeBreakPoint(
+      ${xxLargeBreakPoint(
       css`
-            #form-layout {
-              max-height: 17em;
-            }
-          `
+          #form-layout {
+            max-height: 17em;
+          }
+        `
     )}
 
       ${smallBreakPoint(
-      css`
+        css`
           #form-layout {
             max-height: 20em;
           }
         `
-    )}
+      )}
     `;
 
     return [
@@ -75,18 +83,42 @@ export class AppPackageFormBase extends LitElement {
   }
 
   protected renderFormInput(formInput: FormInput): TemplateResult {
+    // If it's a checkbox or radio, the label comes after the check
+    if (formInput.type === 'checkbox' || formInput.type === 'radio') {
+      return html`
+        ${this.renderFormInputTextbox(formInput)}
+        ${this.renderFormInputLabel(formInput)}
+      `;
+    }
+
+    // For all others, the label comes first.
+    return html`
+      ${this.renderFormInputLabel(formInput)}
+      ${this.renderFormInputTextbox(formInput)}
+    `;
+  }
+
+  private renderFormInputTextbox(formInput: FormInput): TemplateResult {
     const inputType = formInput.type || 'text';
+    const inputClass = formInput.type === 'radio' ? 'form-check-input' : 'form-control';
+    return html`
+      <input id="${formInput.inputId}" class="${inputClass}" placeholder="${formInput.placeholder || ''}"
+        value="${ifDefined(formInput.value)}" type="${inputType}" ?required="${formInput.required}"
+        name="${ifDefined(formInput.name)}" minlength="${ifDefined(formInput.minLength)}"
+        maxlength="${ifDefined(formInput.maxLength)}" min=${ifDefined(formInput.minValue)}
+        max="${ifDefined(formInput.maxValue)}" pattern="${ifDefined(formInput.pattern)}"
+        spellcheck="${ifDefined(formInput.spellcheck)}" ?checked="${formInput.checked}"
+        custom-validation-error-message="${ifDefined(formInput.validationErrorMessage)}"
+        @input="${(e: UIEvent) => this.inputChanged(e, formInput)}" @invalid=${this.inputInvalid} />
+    `;
+  }
+
+  private renderFormInputLabel(formInput: FormInput): TemplateResult {
     return html`
       <label for="${formInput.inputId}">
         ${formInput.label}
         ${this.renderTooltip(formInput)}
       </label>
-      <input id="${formInput.inputId}" class="form-control" placeholder="${formInput.placeholder || ''}"
-        value="${formInput.value || ''}" type="${inputType}" ?required="${formInput.required}"
-        minlength="${ifDefined(formInput.minLength)}" maxlength="${ifDefined(formInput.maxLength)}"
-        pattern="${ifDefined(formInput.pattern)}" spellcheck="${ifDefined(formInput.spellcheck)}"
-        custom-validation-error-message="${ifDefined(formInput.validationErrorMessage)}"
-        @input="${(e: UIEvent) => this.inputChanged(e, formInput)}" @invalid=${this.inputInvalid} />
     `;
   }
 
@@ -95,11 +127,15 @@ export class AppPackageFormBase extends LitElement {
       return html``;
     }
 
+    // Ensure we have an ID for this element. If not, add one.
+    // We need it for the tooltip.
+    if (!formInput.inputId) {
+      formInput.inputId = Math.random().toString(36).replace('0.', 'form-input-');
+    }
+
     return html`
-      <i class='fas fa-info-circle' title='${formInput.tooltip}' aria-label='${formInput.tooltip}' role='definition'></i>
-      
-      <hover-tooltip text="${formInput.tooltip}" link="${ifDefined(formInput.tooltipLink)}">
-      </hover-tooltip>
+      <info-circle-tooltip text="${formInput.tooltip}" link="${ifDefined(formInput.tooltipLink)}">
+      </info-circle-tooltip>
     `;
   }
 
@@ -153,7 +189,7 @@ export class AppPackageFormBase extends LitElement {
     if (inputElement) {
       // Fire the input handler
       if (formInput.inputHandler) {
-        formInput.inputHandler(inputElement?.value || '');
+        formInput.inputHandler(inputElement.value || '', inputElement.checked, inputElement);
       }
 
       // Run validation if necessary.
@@ -208,14 +244,18 @@ export interface FormInput {
   tooltip?: string;
   tooltipLink?: string;
   inputId: string;
+  name?: string;
   type?: 'hidden' | 'text' | 'search' | 'tel' | 'url' | 'email' | 'password' | 'datetime' | 'date' | 'month' | 'week' | 'time' | 'datetime-local' | 'number' | 'range' | 'color' | 'checkbox' | 'radio' | 'file' | 'submit' | 'image' | 'reset' | 'button'
   placeholder?: string;
   value?: string;
   required?: boolean;
   minLength?: number;
   maxLength?: number;
+  minValue?: number;
+  maxValue?: number;
   pattern?: string;
   spellcheck?: boolean;
   validationErrorMessage?: string;
-  inputHandler?: (val: string) => void;
+  checked?: boolean;
+  inputHandler?: (val: string, checked: boolean, input: HTMLInputElement) => void;
 }

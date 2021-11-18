@@ -116,12 +116,6 @@ fast-accordion-item::part(icon) {
   justify-content: center;
 }
 
-.adv-settings {
-  display: grid;
-  grid-template-columns: 50% 50%;
-  gap: 10px;
-}
-
 form {
   max-height: 24em;
 }

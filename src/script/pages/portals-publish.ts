@@ -8,6 +8,7 @@ import '../components/app-button';
 import '../components/loading-button';
 import '../components/windows-form';
 import '../components/android-form';
+import '../components/info-circle-tooltip';
 
 import {
   smallBreakPoint,
@@ -28,6 +29,7 @@ import { styles as ToolTipStyles } from '../components/tooltip';
 import { localeStrings } from '../../locales';
 import { WindowsPackageOptions } from '../utils/win-validation';
 import { IOSAppPackageOptions } from '../utils/ios-validation';
+import { AndroidPackageOptions } from '../utils/android-validation';
 
 @customElement('portals-publish')
 export class PortalsPublish extends LitElement {
@@ -356,12 +358,11 @@ export class PortalsPublish extends LitElement {
     ];
   }
 
-  async generate(type: Platform, form?: HTMLFormElement | WindowsPackageOptions | IOSAppPackageOptions, signingFile?: string) {
+  async generate(type: Platform, options?: AndroidPackageOptions | WindowsPackageOptions | IOSAppPackageOptions) {
     try {
       this.generating = true;
 
-      const packageData = await generatePackage(type, form, signingFile);
-
+      const packageData = await generatePackage(type, options);
       if (packageData) {
         if (packageData.type === 'test') {
           this.testBlob = packageData.blob;
@@ -438,17 +439,12 @@ export class PortalsPublish extends LitElement {
                       class="navigation secondary"
                       ?loading=${this.generating}
                       id="test-package-button"
-                      @click="${() => this.generate('windows')}"
-                      >Test Package
-
-                      <!-- todo after release: refactor this into a <hover-tooltip /> component -->
-                      <a
-                        id="hover-tooltip"
-                        target="_blank"
-                        href="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps.md#1-test-your-app-on-your-windows-machine"
-                        >Generate a package you can use to test your app on your
-                        Windows Device before going to the Microsoft Store.</a
-                      >
+                      @click="${() => this.generate('windows')}">
+                      Test Package
+                      <info-circle-tooltip 
+                        text="Generate a package you can use to test your app on your Windows Device before going to the Microsoft Store."
+                        link="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps.md#1-test-your-app-on-your-windows-machine">
+                      </info-circle-tooltip>
                     </loading-button>
                   </div>
                 `
@@ -493,7 +489,7 @@ export class PortalsPublish extends LitElement {
     return html`
       <!-- error modal -->
       <app-modal
-        title="Wait a minute!"
+        heading="Wait a minute!"
         .body="${this.errorMessage || ''}"
         ?open="${this.errored}"
         id="error-modal"
@@ -520,7 +516,7 @@ export class PortalsPublish extends LitElement {
       <!-- download modal -->
       <app-modal
         ?open="${this.blob ? true : false}"
-        title="Download your package"
+        heading="Download your package"
         body="Your app package is ready for download."
         id="download-modal"
         @app-modal-close="${() => this.downloadCancel()}"
@@ -540,7 +536,7 @@ export class PortalsPublish extends LitElement {
       <!-- test package download modal -->
       <app-modal
         ?open="${this.testBlob ? true : false}"
-        title="Test Package Download"
+        heading="Test Package Download"
         body="${localeStrings.input.publish.windows.test_package}"
         id="test-download-modal"
         @app-modal-close="${() => this.downloadTestCancel()}"
@@ -585,8 +581,8 @@ export class PortalsPublish extends LitElement {
         <android-form
           slot="modal-form"
           .generating=${this.generating}
-          @init-android-gen="${(ev: CustomEvent) =>
-            this.generate('android', ev.detail.form, ev.detail.signingFile)}"
+          @init-android-gen="${(e: CustomEvent) =>
+            this.generate('android', e.detail as AndroidPackageOptions)}"
         ></android-form>
       </app-modal>
 

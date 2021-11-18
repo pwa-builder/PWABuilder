@@ -2,7 +2,6 @@ import { css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import '../components/loading-button';
 import { fetchOrCreateManifest } from '../services/manifest';
-import { ManifestContext } from '../utils/interfaces';
 import { AppPackageFormBase } from './app-package-form-base';
 import { createIOSPackageOptionsFromManifest, emptyIOSPackageOptions } from '../services/publish/ios-publish';
 import { getManifestContext } from '../services/app-info';
@@ -12,7 +11,6 @@ export class IOSForm extends AppPackageFormBase {
   @property({ type: Boolean }) generating: boolean = false;
   @state() showAllSettings = false;
   @state() packageOptions = emptyIOSPackageOptions();
-  private manifestContext: ManifestContext | null = null;
 
   static get styles() {
     const localStyles = css`
@@ -28,12 +26,12 @@ export class IOSForm extends AppPackageFormBase {
   }
 
   async firstUpdated() {
-    this.manifestContext = getManifestContext();
-    if (this.manifestContext.isGenerated) {
-      this.manifestContext = await fetchOrCreateManifest();
+    let manifestContext = getManifestContext();
+    if (manifestContext.isGenerated) {
+      manifestContext = await fetchOrCreateManifest();
     }
     
-    this.packageOptions = createIOSPackageOptionsFromManifest(this.manifestContext);
+    this.packageOptions = createIOSPackageOptionsFromManifest(manifestContext);
   }
 
   initGenerate(ev: InputEvent) {
