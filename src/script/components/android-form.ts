@@ -711,7 +711,7 @@ export class AndroidForm extends AppPackageFormBase {
     return html`
       <div class="signing-key-fields">
         <div class="form-group">
-          <label for="signingKeyInput">Key file</label>
+          <label for="signing-key-file-input">Key file</label>
           <input
             type="file"
             class="form-control"
