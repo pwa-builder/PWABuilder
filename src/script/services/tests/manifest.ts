@@ -1,10 +1,9 @@
 import { default_timeout } from '../../utils/api';
-import { findSuitableIcon } from '../../utils/icons';
-import { ManifestContext, TestResult, Icon } from '../../utils/interfaces';
+import { findBestAppIcon, findSuitableIcon, IconInfo } from '../../utils/icons';
+import { ManifestContext, TestResult } from '../../utils/interfaces';
 import { fetchOrCreateManifest } from '../manifest';
-import { getManifestContext } from '../app-info';
 
-const default_results = [
+const default_results: TestResult[] = [
   {
     infoString: 'Web Manifest Properly Attached',
     result: false,
@@ -76,6 +75,16 @@ const default_results = [
     category: 'recommended',
   },
   {
+    infoString: 'Icons specify their type',
+    result: false,
+    category: 'recommended',
+  },
+  {
+    infoString: 'Icons specify their size',
+    result: false,
+    category: 'recommended',
+  },
+  {
     infoString: 'Contains an IARC ID',
     result: false,
     category: 'optional',
@@ -111,7 +120,7 @@ export async function testManifest(
         console.error('Could not test manifest, returning default results');
         return manifest as Array<TestResult>;
       } else {
-        return await doTest(manifest);
+        return await runManifestChecks(manifest);
       }
     } else {
       console.error('Could not get manifest data');
@@ -123,31 +132,18 @@ export async function testManifest(
   }
 }
 
-let mainIcon: Icon | null;
-export async function doTest(context: ManifestContext) {
+export async function runManifestChecks(context: ManifestContext): Promise<Array<TestResult>> {
   if (context.isGenerated === true) {
     return default_results;
   } else {
 
     // go ahead and try to find mainIcon
     // so we can use it for the below check
-    mainIcon = findSuitableIcon(
-      context.manifest.icons,
-      null,
-      512,
-      512,
-      'image/png'
-    );
+    const mainIcon = findBestAppIcon(context.manifest.icons);
+    const mainIconInfo = mainIcon ? new IconInfo(mainIcon) : null;
 
     // checking if the icon can be succesfully loaded
-    let iconCanBeLoadedFlag;
-    try {
-      iconCanBeLoadedFlag = await iconCanLoadSuccesfully();
-    }
-    catch (err) {
-      iconCanBeLoadedFlag = false;
-    }
-
+    const iconCanBeLoaded = mainIconInfo ? await mainIconInfo.resolvesSuccessfully(context.manifestUrl) : false;
     return [
       {
         infoString: 'Web Manifest Properly Attached',
@@ -190,9 +186,9 @@ export async function doTest(context: ManifestContext) {
         infoString: 'Specifies a display mode',
         result:
           context.manifest.display &&
-          ['fullscreen', 'standalone', 'minimal-ui', 'browser'].includes(
-            context.manifest.display
-          )
+            ['fullscreen', 'standalone', 'minimal-ui', 'browser'].includes(
+              context.manifest.display
+            )
             ? true
             : false,
         category: 'recommended',
@@ -211,7 +207,7 @@ export async function doTest(context: ManifestContext) {
         infoString: 'Specifies an orientation mode',
         result:
           context.manifest.orientation &&
-          isStandardOrientation(context.manifest.orientation)
+            isStandardOrientation(context.manifest.orientation)
             ? true
             : false,
         category: 'recommended',
@@ -220,25 +216,23 @@ export async function doTest(context: ManifestContext) {
         infoString: 'Contains screenshots for app store listings',
         result:
           context.manifest.screenshots &&
-          context.manifest.screenshots.length > 0
+            context.manifest.screenshots.length > 0
             ? true
             : false,
         category: 'recommended',
       },
       {
         infoString: 'Has a square PNG icon 512x512 or larger',
-        result: mainIcon
-          ? true
-          : false,
+        result: !!mainIconInfo && mainIconInfo.isPng && mainIconInfo.isAtLeast(512, 512),
         category: 'required',
       },
       {
         infoString: '512x512 or larger icon can be loaded succesfully from the network',
-        result: iconCanBeLoadedFlag,
+        result: iconCanBeLoaded,
         category: 'required'
       },
       {
-        infoString: 'Has a maskable PNG icon',
+        infoString: 'Has a maskable PNG icon 512x512 or larger',
         result: findSuitableIcon(
           context.manifest.icons,
           'maskable',
@@ -262,10 +256,20 @@ export async function doTest(context: ManifestContext) {
         infoString: 'Contains categories to classify the app',
         result:
           context.manifest.categories &&
-          context.manifest.categories.length > 0 &&
-          containsStandardCategory(context.manifest.categories)
+            context.manifest.categories.length > 0 &&
+            containsStandardCategory(context.manifest.categories)
             ? true
             : false,
+        category: 'recommended',
+      },
+      {
+        infoString: 'Icons specify their type',
+        result: !!context.manifest.icons && context.manifest.icons.every(i => !!i.type),
+        category: 'recommended',
+      },
+      {
+        infoString: 'Icons specify their size',
+        result: !!context.manifest.icons && context.manifest.icons.every(i => !!i.sizes),
         category: 'recommended',
       },
       {
@@ -277,7 +281,7 @@ export async function doTest(context: ManifestContext) {
         infoString: 'Specifies related_applications',
         result:
           context.manifest.related_applications &&
-          context.manifest.related_applications.length > 0
+            context.manifest.related_applications.length > 0
             ? true
             : false,
         category: 'optional',
@@ -333,29 +337,4 @@ function isStandardOrientation(orientation: string) {
     'portrait-secondary',
   ];
   return standardOrientations.includes(orientation);
-}
-
-function iconCanLoadSuccesfully(): Promise<boolean> {
-  return new Promise(resolve => {
-    if (mainIcon) {
-      const imageEl = new Image();
-      imageEl.src = `https://pwabuilder-safe-url.azurewebsites.net/api/getSafeUrl?checkExistsOnly=false&url=${new URL(
-        mainIcon.src,
-        getManifestContext().manifestUrl
-      ).toString()}`;
-
-      imageEl.onload = () => {
-        if (imageEl.complete && imageEl.naturalHeight > 0) {
-          resolve(true);
-        } else {
-          resolve(false);
-        }
-      };
-      imageEl.onerror = () => {
-        resolve(false);
-      };
-    } else {
-      resolve(false);
-    }
-  });
 }
