@@ -1,9 +1,9 @@
 import { env } from './environment';
 import { Icon } from './interfaces';
 
-type IconDimension = { 
-  width: number; 
-  height: number 
+type IconDimension = {
+  width: number;
+  height: number
 }
 
 type ImageFormat = {
@@ -130,7 +130,7 @@ export class IconInfo {
   get isJpg(): boolean {
     return this.getMimeTypeOrGuessFromSrc() === IconInfo.jpgFormat.mime;
   }
-  
+
   get isSquare(): boolean {
     const dimensions = this.getDimensions();
     return dimensions.some(d => d.width === d.height);
@@ -144,12 +144,12 @@ export class IconInfo {
     if (!purpose) {
       return true;
     }
-  
+
     return (this.icon.purpose || 'any')
       .split(' ')
       .some(p => p.toLowerCase() === purpose.toLowerCase());
   }
-  
+
   hasSize(size: `${number}x${number}`): boolean {
     return (this.icon.sizes || '0x0')
       .split(' ')
@@ -190,7 +190,7 @@ export class IconInfo {
     if (!mimeType) {
       return true;
     }
-  
+
     return this.getMimeTypeOrGuessFromSrc() === mimeType.toLowerCase();
   }
 
@@ -202,9 +202,9 @@ export class IconInfo {
 
     // See if we're an exact match.
     const desiredSize: `${number}x${number}` = `${desiredWidth}x${desiredHeight}`;
-    return this.hasPurpose(purpose) && 
-      this.hasSize(desiredSize) && 
-      !this.isEmbedded && 
+    return this.hasPurpose(purpose) &&
+      this.hasSize(desiredSize) &&
+      !this.isEmbedded &&
       this.hasMimeType(mimeType);
   }
 
@@ -223,29 +223,29 @@ export class IconInfo {
     desiredHeight: number,
     mimeType: string | undefined) {
 
-      const exactMatch = this.isExactMatch(purpose, desiredWidth, desiredHeight, mimeType);
-      if (exactMatch) {
+    const exactMatch = this.isExactMatch(purpose, desiredWidth, desiredHeight, mimeType);
+    if (exactMatch) {
+      return true;
+    }
+
+    // See if everything matches but purpose is left empty.
+    if (!purpose) {
+      const withoutPurpose = this.isExactMatch(null, desiredWidth, desiredHeight, mimeType);
+      if (withoutPurpose) {
         return true;
       }
-      
-      // See if everything matches but purpose is left empty.
-      if (!purpose) {
-        const withoutPurpose = this.isExactMatch(this.icon.purpose || null, desiredWidth, desiredHeight, mimeType);
-        if (withoutPurpose) {
-          return true;
-        }
-      }
+    }
 
-      // Find a larger one if we're able.
-      const isExpectingSquare = desiredWidth === desiredHeight;
-      const matchesSquareRequirement = !isExpectingSquare || this.isSquare;
-      const largerIcon = 
-          this.hasPurpose(purpose) &&
-          this.isAtLeast(desiredWidth, desiredHeight) &&
-          !this.isEmbedded &&
-          this.hasMimeType(mimeType) &&
-          matchesSquareRequirement;
-      return !!largerIcon;
+    // Find a larger one if we're able.
+    const isExpectingSquare = desiredWidth === desiredHeight;
+    const matchesSquareRequirement = !isExpectingSquare || this.isSquare;
+    const largerIcon =
+      this.hasPurpose(purpose) &&
+      this.isAtLeast(desiredWidth, desiredHeight) &&
+      !this.isEmbedded &&
+      this.hasMimeType(mimeType) &&
+      matchesSquareRequirement;
+    return !!largerIcon;
   }
 
   /**
@@ -257,7 +257,7 @@ export class IconInfo {
     if (!this.icon.src) {
       return Promise.resolve(false);
     }
-    
+
     return new Promise(resolve => {
       const imageEl = new Image();
       const imgUrl = new URL(
