@@ -4,6 +4,7 @@
     "module": "es2020",
     "moduleResolution": "node",
     "lib": ["esnext.array", "esnext", "es2017", "dom"],
+    "incremental": true,
     "forceConsistentCasingInFileNames": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
