@@ -161,7 +161,7 @@ export class SurveyBanner extends LitElement {
               Complete the survey for a chance to win a $25 Amazon gift card. 
             </p>
 
-            <a href="https://forms.office.com/r/LHq6gqJ9Lf" target="_blank"><button
+            <a href="https://forms.office.com/r/LHq6gqJ9Lf" target="_blank" rel="noopener"><button
               id="take-survey-button"
               aria-label="Take Survey Button"
               @click="${() => console.log("open suvery")}"
