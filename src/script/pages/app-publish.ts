@@ -290,9 +290,9 @@ export class AppPublish extends LitElement {
           image-rendering: smooth;
         }
 
-                  ios-form {
-            width: 100%;
-          }
+        ios-form {
+          width: 100%;
+        }
       `,
       xxxLargeBreakPoint(
         css`
