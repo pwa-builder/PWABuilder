@@ -60,7 +60,7 @@ import {
   AppModalElement,
   FileInputElement,
 } from '../utils/interfaces.components';
-import { cloneIconWithoutUrlEncodedSrc, getProbableFileExtension } from '../utils/icons';
+import { IconInfo } from '../utils/icons';
 import { debounce } from '../utils/debounce';
 
 type ColorRadioValues = 'none' | 'custom';
@@ -1066,7 +1066,7 @@ export class AppManifest extends LitElement {
     this.uploadSelectedImageFile = files?.item(0) ?? undefined;
     this.generateIconButtonDisabled = !this.validIconInput();
 
-    if (!this.generateIconButtonDisabled) {
+    if (!this.generateIconButtonDisabled && this.uploadSelectedImageFile) {
       this.uploadImageObjectUrl = URL.createObjectURL(
         this.uploadSelectedImageFile
       );
@@ -1187,13 +1187,15 @@ export class AppManifest extends LitElement {
     // See https://github.com/pwa-builder/PWABuilder/issues/2038
     const clone = { ...this.manifest };
     if (clone.icons) {
-      clone.icons = clone.icons.map((icon, index) =>
-        cloneIconWithoutUrlEncodedSrc(icon, `/images/icon-${index + 1}.${getProbableFileExtension(icon)}`)
+      clone.icons = clone.icons
+        .map(i => new IconInfo(i))
+        .map((i, index) => i.createIconWithoutUrlEncodedSrc(`/images/icon-${index + 1}.${i.getProbableFileExtension()}`)
       );
     }
     if (clone.screenshots) {
-      clone.screenshots = clone.screenshots.map((icon, index) =>
-        cloneIconWithoutUrlEncodedSrc(icon, `/images/screenshot-${index + 1}.${getProbableFileExtension(icon)}`)
+      clone.screenshots = clone.screenshots
+        .map(i => new IconInfo(i))
+        .map((i, index) => i.createIconWithoutUrlEncodedSrc(`/images/screenshot-${index + 1}.${i.getProbableFileExtension()}`)
       );
     }
        
