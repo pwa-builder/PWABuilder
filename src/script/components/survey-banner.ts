@@ -15,7 +15,6 @@ export class SurveyBanner extends LitElement {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 16px;
         height: 50px;
         background-color: #342A6A;
         color: white;
@@ -66,6 +65,8 @@ export class SurveyBanner extends LitElement {
       #desk_close {
         height: 12px;
         width: 12px;
+        margin-top: 5px;
+        margin-right: 5px;
       }
 
       #desk_close:hover {
@@ -98,7 +99,6 @@ export class SurveyBanner extends LitElement {
 
         #banner-content {
           width: 100%;
-          justify-content: space-between;
         }
 
         #survey-banner p{
@@ -120,6 +120,8 @@ export class SurveyBanner extends LitElement {
 
         #mobile_close {
           display: block;
+          margin-top: 5px;
+          margin-right: 5px;
         }
 
         #desk_box {
