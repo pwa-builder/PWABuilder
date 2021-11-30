@@ -233,6 +233,11 @@ export class PortalsPublish extends LitElement {
         #test-package-button:hover #hover-tooltip {
           display: flex;
         }
+
+        .platform-icon {
+          max-width: 37px;
+          image-rendering: smooth;
+        }
       `,
       xxxLargeBreakPoint(
         css`
@@ -419,7 +424,7 @@ export class PortalsPublish extends LitElement {
       platform =>
         html`<li>
           <div id="title-block">
-            <img src="${platform.icon}" alt="platform icon" />
+            <img class="platform-icon" src="${platform.icon}" alt="platform icon" />
             <h4>${platform.title}</h4>
             <p>${platform.description}</p>
           </div>
