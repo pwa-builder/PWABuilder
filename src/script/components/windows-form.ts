@@ -1,22 +1,18 @@
 import { css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import '../components/loading-button';
-import '../components/hover-tooltip';
 import { getManifestContext, getManifestUrl } from '../services/app-info';
 import { createWindowsPackageOptionsFromManifest, emptyWindowsPackageOptions } from '../services/publish/windows-publish';
 import { WindowsPackageOptions } from '../utils/win-validation';
 import { localeStrings } from '../../locales';
 import { AppPackageFormBase } from './app-package-form-base';
 import { fetchOrCreateManifest } from '../services/manifest';
-import { ManifestContext } from '../utils/interfaces';
 
 @customElement('windows-form')
 export class WindowsForm extends AppPackageFormBase {
   @property({ type: Boolean }) generating: boolean = false;
-
   @state() showAdvanced = false;
   @state() packageOptions: WindowsPackageOptions = emptyWindowsPackageOptions();
-  private manifestContext: ManifestContext | null = null;
 
   static get styles() {
     const localStyles = css`
@@ -32,12 +28,12 @@ export class WindowsForm extends AppPackageFormBase {
   }
 
   async firstUpdated() {
-    this.manifestContext = getManifestContext();
-    if (this.manifestContext.isGenerated) {
-      this.manifestContext = await fetchOrCreateManifest();
+    let manifestContext = getManifestContext();
+    if (manifestContext.isGenerated) {
+      manifestContext = await fetchOrCreateManifest();
     }
 
-    this.packageOptions = createWindowsPackageOptionsFromManifest(this.manifestContext.manifest);
+    this.packageOptions = createWindowsPackageOptionsFromManifest(manifestContext.manifest);
   }
 
   initGenerate(ev: InputEvent) {
@@ -77,7 +73,7 @@ export class WindowsForm extends AppPackageFormBase {
                 label: 'Package ID',
                 tooltip: `The Package ID uniquely identifying your app in the Microsoft Store. Get this value from Windows Partner Center.`,
                 tooltipLink: 'https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/',
-                inputId: 'packageIdInput',
+                inputId: 'package-id-input',
                 required: true,
                 placeholder: 'MyCompany.MyApp',
                 minLength: 3,
@@ -94,7 +90,7 @@ export class WindowsForm extends AppPackageFormBase {
                 label: 'Publisher display name',
                 tooltip: `The display name of your app's publisher. Gets this value from Windows Partner Center.`,
                 tooltipLink: 'https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/',
-                inputId: 'publisherDisplayNameInput',
+                inputId: 'publisher-display-name-input',
                 required: true,
                 minLength: 3,
                 spellcheck: false,
@@ -109,7 +105,7 @@ export class WindowsForm extends AppPackageFormBase {
                 label: 'Publisher ID',
                 tooltip: `The ID of your app's publisher. Get this value from Windows Partner Center.`,
                 tooltipLink: 'https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/',
-                inputId: 'publisherIdInput',
+                inputId: 'publisher-id-input',
                 placeholder: 'CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca',
                 validationErrorMessage: 'Publisher ID must be in the format CN=XXXX. Get your publisher ID from Partner Center.',
                 pattern: 'CN=.+',
@@ -139,7 +135,7 @@ export class WindowsForm extends AppPackageFormBase {
                     label: 'App name',
                     tooltip: `The name of your app. This is displayed to users in the Store.`,
                     tooltipLink: 'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-displayname',
-                    inputId: 'appNameInput',
+                    inputId: 'app-name-input',
                     required: true,
                     minLength: 1,
                     maxLength: 256,
@@ -155,7 +151,7 @@ export class WindowsForm extends AppPackageFormBase {
                     label: 'App version',
                     tooltip: `Your app version in the form of '1.0.0'. It must not start with zero and must be greater than classic package version. For new apps, this should be set to 1.0.1`,
                     tooltipLink: 'https://blog.pwabuilder.com/docs/what-is-a-classic-package/',
-                    inputId: 'versionInput',
+                    inputId: 'version-input',
                     required: true,
                     minLength: 5,
                     value: this.packageOptions.version,
@@ -172,7 +168,7 @@ export class WindowsForm extends AppPackageFormBase {
                     label: 'Classic app version',
                     tooltip: `The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0', it cannot start with zero, and must be less than app version. For new apps, this should be set to 1.0.0`,
                     tooltipLink: 'https://blog.pwabuilder.com/docs/what-is-a-classic-package/',
-                    inputId: 'classicVersionInput',
+                    inputId: 'classic-version-input',
                     required: true,
                     minLength: 5,
                     value: this.packageOptions.classicPackage?.version,
@@ -188,7 +184,7 @@ export class WindowsForm extends AppPackageFormBase {
                     label: 'Icon URL',
                     tooltip: `The URL of an icon to use for your app. This should be a 512x512 or larger, square PNG image. Additional Windows image sizes will be fetched from your manifest, and any missing Windows image sizes will be generated by PWABuilder. The URL can be an absolute path or relative to your manifest.`,
                     tooltipLink: 'https://blog.pwabuilder.com/docs/image-recommendations-for-windows-pwa-packages/',
-                    inputId: 'iconUrlInput',
+                    inputId: 'icon-url-input',
                     required: true,
                     type: 'text', // NOTE: can't use URL here, because we allow relative paths.
                     minLength: 2,
@@ -204,7 +200,7 @@ export class WindowsForm extends AppPackageFormBase {
                     label: 'Language',
                     tooltip: `Optional. The primary language for your app package. Additional languages can be specified in Windows Partner Center. If empty, EN-US will beused.`,
                     tooltipLink: 'https://docs.microsoft.com/en-us/windows/uwp/publish/supported-languages',
-                    inputId: 'languageInput',
+                    inputId: 'language-input',
                     value: this.packageOptions.resourceLanguage,
                     placeholder: 'EN-US',
                     inputHandler: (val: string) => this.packageOptions.resourceLanguage = val

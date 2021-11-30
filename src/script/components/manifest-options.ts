@@ -42,7 +42,7 @@ import './app-file-input';
 import './app-gallery';
 import './code-editor';
 import './flipper-button';
-import './hover-tooltip';
+import './info-circle-tooltip';
 import { generateMissingImagesBase64 } from '../services/icon_generator';
 import { generateScreenshots } from '../services/screenshots';
 import { validateScreenshotUrlsList } from '../utils/manifest-validation';
@@ -547,10 +547,10 @@ export class AppManifest extends LitElement {
             <div class="images-header">
               <div class="item-top">
                 <h3>${localeStrings.text.manifest_options.images.icons.h3}</h3>
-                <hover-tooltip
+                <info-circle-tooltip 
                   .text="${localeStrings.tooltip.manifest_options.upload}"
-                  link="https://developer.mozilla.org/en-US/docs/Web/Manifest/icons"
-                ></hover-tooltip>
+                  link="https://developer.mozilla.org/en-US/docs/Web/Manifest/icons">
+                </info-circle-tooltip>
               </div>
               <app-button appearance="outline" @click=${this.openUploadModal}
                 >${localeStrings.button.upload}</app-button
@@ -558,7 +558,7 @@ export class AppManifest extends LitElement {
               <app-modal
                 id="uploadModal"
                 modalId="uploadModal"
-                title="Upload information"
+                heading="Upload information"
                 body="Choose an Icon to upload. For the best results, we recommend choosing a 512x512 size icon."
                 ?open=${this.uploadModalOpen}
                 @app-modal-close=${this.uploadModalClose}
@@ -628,11 +628,10 @@ export class AppManifest extends LitElement {
                 <h3>
                   ${localeStrings.text.manifest_options.images.screenshots.h3}
                 </h3>
-
-                <hover-tooltip
+                <info-circle-tooltip 
                   .text="${localeStrings.tooltip.manifest_options.generate}"
-                  link="https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots"
-                ></hover-tooltip>
+                  link="https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots">
+                </info-circle-tooltip>
               </div>
               <p>${localeStrings.text.manifest_options.images.screenshots.p}</p>
 
@@ -741,10 +740,10 @@ export class AppManifest extends LitElement {
         <div class="setting-item">
           <div class="item-top">
             <h3>${item.title}</h3>
-            <hover-tooltip
+            <info-circle-tooltip 
               .text="${item.tooltipText}"
-              link="https://developer.mozilla.org/en-US/docs/Web/Manifest"
-            ></hover-tooltip>
+              link="https://developer.mozilla.org/en-US/docs/Web/Manifest">
+            </info-circle-tooltip>
           </div>
           <p>${item.description}</p>
           ${field}
@@ -766,10 +765,10 @@ export class AppManifest extends LitElement {
                 .h3}
             </h3>
 
-            <hover-tooltip
+            <info-circle-tooltip 
               .text="${localeStrings.tooltip.manifest_options.background_color}"
-              link="https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color"
-            ></hover-tooltip>
+              link="https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color">
+            </info-circle-tooltip>
           </div>
           <fast-radio-group
             value=${this.setBackgroundColorRadio()}
@@ -805,11 +804,10 @@ export class AppManifest extends LitElement {
             <h3>
               ${localeStrings.text.manifest_options.settings.theme_color.h3}
             </h3>
-
-            <hover-tooltip
+            <info-circle-tooltip 
               .text="${localeStrings.tooltip.manifest_options.theme_color}"
-              link="https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color"
-            ></hover-tooltip>
+              link="https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color">
+            </info-circle-tooltip>
           </div>
           <fast-radio-group
             value=${this.setThemeColorRadio()}

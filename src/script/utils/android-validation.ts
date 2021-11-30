@@ -4,11 +4,11 @@ import { ShareTarget, ShortcutItem } from './interfaces';
  * Settings for the Android APK generation. This is the raw data passed to the CloudApk service.
  * It should match the CloudApk service's AndroidPackageOptions interface: https://github.com/pwa-builder/CloudAPK/blob/master/build/androidPackageOptions.ts
  */
-export interface AndroidApkOptions {
+export interface AndroidPackageOptions {
   appVersion: string;
   appVersionCode: number;
   backgroundColor: string;
-  display: 'standalone' | 'fullscreen';
+  display: 'standalone' | 'fullscreen' | 'fullscreen-sticky';
   enableNotifications: boolean;
   enableSiteSettingsShortcut: boolean;
   fallbackType: 'customtabs' | 'webview';
@@ -41,19 +41,19 @@ export interface AndroidApkOptions {
   navigationDividerColor: string;
   navigationDividerColorDark: string;
   orientation:
-    | 'default'
-    | 'any'
-    | 'natural'
-    | 'landscape'
-    | 'portrait'
-    | 'portrait-primary'
-    | 'portrait-secondary'
-    | 'landscape-primary'
-    | 'landscape-secondary';
+  | 'default'
+  | 'any'
+  | 'natural'
+  | 'landscape'
+  | 'portrait'
+  | 'portrait-primary'
+  | 'portrait-secondary'
+  | 'landscape-primary'
+  | 'landscape-secondary';
   packageId: string;
   shareTarget?: ShareTarget;
   shortcuts: ShortcutItem[];
-  signing: AndroidSigningOptions | null;
+  signing: AndroidSigningOptions;
   signingMode: 'new' | 'none' | 'mine';
   splashScreenFadeOutDuration: number;
   startUrl: string;
@@ -81,11 +81,13 @@ export interface AndroidSigningOptions {
 }
 
 type AndroidPackageValidationError = {
-  field: keyof AndroidApkOptions | keyof AndroidSigningOptions | null;
+  field: keyof AndroidPackageOptions | keyof AndroidSigningOptions | null;
   error: string;
 };
 
 const DISALLOWED_ANDROID_PACKAGE_CHARS_REGEX = /[^a-zA-Z0-9_]/g;
+
+export const maxSigningKeySizeInBytes = 2097152;
 
 export function generatePackageId(host: string): string {
   const parts = host
@@ -101,7 +103,7 @@ export function generatePackageId(host: string): string {
 }
 
 export function validateAndroidOptions(
-  options: Partial<AndroidApkOptions | null>
+  options: Partial<AndroidPackageOptions | null>
 ): AndroidPackageValidationError[] {
   const validationErrors: AndroidPackageValidationError[] = [];
   if (!options) {
@@ -113,11 +115,20 @@ export function validateAndroidOptions(
     validationErrors.push({ field: 'packageId', error: 'No package ID' });
   }
 
-  if (options.packageId && options.packageId.search(/[^a-zA-Z0-9_.]/) !== -1) {
+  if (options.packageId && options.packageId.search(/[^a-zA-Z0-9-_.]/) !== -1) {
     validationErrors.push({
       field: 'packageId',
       error:
-        'Package ID must not contain any character other than alphanumeric and period.',
+        'Package ID must not contain any character other than alphanumeric, period, hyphen, and underscore.',
+    });
+  }
+
+  // Package ID can't contain ".if.", can't start with "if.", and can't end with ".if"
+  // See https://github.com/pwa-builder/PWABuilder/issues/2146
+  if (options.packageId && (options.packageId.includes('.if.') || options.packageId.startsWith('if.') || options.packageId?.endsWith('.if'))) {
+    validationErrors.push({
+      field: 'packageId',
+      error: 'Package ID must not contain ".if.", must not start with "if.", and must not end with ".if"'
     });
   }
 
@@ -125,6 +136,20 @@ export function validateAndroidOptions(
     validationErrors.push({
       field: 'name',
       error: 'Must have a valid app name',
+    });
+  }
+
+  if (options.name && (options.name.length < 3 || options.name.length > 50)) {
+    validationErrors.push({
+      field: 'name',
+      error: 'Name must not be between 3 and 50 characters in length'
+    });
+  }
+
+  if (options.launcherName && (options.launcherName.length < 3 || options.launcherName.length > 30)) {
+    validationErrors.push({
+      field: 'launcherName',
+      error: 'Launcher name must be between 3 and 30 characters in length'
     });
   }
 
@@ -138,7 +163,7 @@ export function validateAndroidOptions(
   if (!options.appVersionCode || options.appVersionCode > 2100000000) {
     validationErrors.push({
       field: 'appVersionCode',
-      error: 'App version code must be between 1 and 2100000000',
+      error: 'App version code must be between 1 and 2,100,000,000',
     });
   }
 
@@ -150,8 +175,9 @@ export function validateAndroidOptions(
   }
 
   if (
-    (options.display as string) !== 'standalone' &&
-    (options.display as string) !== 'fullscreen'
+    options.display !== 'standalone' &&
+    options.display !== 'fullscreen' &&
+    options.display !== 'fullscreen-sticky'
   ) {
     validationErrors.push({
       field: 'display',
@@ -172,11 +198,12 @@ export function validateAndroidOptions(
   if (!options.host) {
     validationErrors.push({ field: 'host', error: 'Host must be specified' });
   } else {
-    const hostUrlError = validateUrl(options.host);
+    const hostWithProtocol = options.host.startsWith("https") ? options.host : `https://${options.host}`;
+    const hostUrlError = validateUrl(hostWithProtocol);
     if (hostUrlError) {
       validationErrors.push({
         field: 'host',
-        error: 'Host URL must be a valid absolute URL',
+        error: 'Host URL must be a valid URL',
       });
     }
   }
@@ -184,7 +211,7 @@ export function validateAndroidOptions(
   if (!options.iconUrl) {
     validationErrors.push({ field: 'iconUrl', error: 'Must have a icon URL' });
   } else {
-    const iconUrlError = validateUrl(options.iconUrl, options.host);
+    const iconUrlError = validateUrl(options.iconUrl, options.webManifestUrl);
     if (iconUrlError) {
       validationErrors.push({ field: 'iconUrl', error: 'Icon URL is invalid' });
     }
@@ -216,7 +243,7 @@ export function validateAndroidOptions(
   if (options.maskableIconUrl) {
     const maskableIconError = validateUrl(
       options.maskableIconUrl,
-      options.host
+      options.webManifestUrl
     );
     if (maskableIconError) {
       validationErrors.push({
@@ -231,7 +258,7 @@ export function validateAndroidOptions(
   if (options.monochromeIconUrl) {
     const monochromeIconError = validateUrl(
       options.monochromeIconUrl,
-      options.host
+      options.webManifestUrl
     );
     if (monochromeIconError) {
       validationErrors.push({
@@ -336,7 +363,7 @@ export function validateAndroidOptions(
         "Start URL must be specified. If your start URL is the same as Host, you can use '/' as the start URL.",
     });
   } else {
-    const startUrlError = validateUrl(options.startUrl, options.host);
+    const startUrlError = validateUrl(options.startUrl, options.webManifestUrl);
     if (startUrlError) {
       validationErrors.push({
         field: 'startUrl',

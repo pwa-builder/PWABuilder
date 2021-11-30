@@ -11,6 +11,8 @@
  *    -   Instead, we append a global script and use the global 
  */
 
+import { env } from "./environment";
+
 // import { AppInsightsCore, IExtendedConfiguration } from '@microsoft/1ds-core-js';
 // import { ApplicationInsights, IPageViewTelemetry, IWebAnalyticsConfiguration } from '@microsoft/1ds-wa-js';
 
@@ -22,9 +24,11 @@ export function recordPageView(uri: string, name?: string, properties?: any) {
     uri: uri,
     properties: properties
   };
-  lazyLoadAnalytics()
-    .then(oneDS => oneDS.trackPageView(pageViewOptions))
-    .catch(err => console.warn('OneDS record page view error', err));
+  if (env.isProduction) {
+    lazyLoadAnalytics()
+      .then(oneDS => oneDS.trackPageView(pageViewOptions))
+      .catch(err => console.warn('OneDS record page view error', err));
+  }
 }
 
 // See https://martech.azurewebsites.net/website-tools/oneds/guided-learning/scenario-process
@@ -33,16 +37,19 @@ export function recordProcessStep(
   processStep: string,
   stepType: AnalyticsBehavior.ProcessCheckpoint | AnalyticsBehavior.StartProcess | AnalyticsBehavior.ProcessCheckpoint | AnalyticsBehavior.CancelProcess | AnalyticsBehavior.CompleteProcess,
   additionalInfo?: {}) {
-  lazyLoadAnalytics()
-    .then(oneDS => oneDS.capturePageAction(null, {
-      actionType: AnalyticsActionType.Other,
-      behavior: stepType,
-      contentTags: {
-        scn: processName,
-        scnstp: processStep
-      },
-      content: additionalInfo
-    }));
+
+  if (env.isProduction) {
+    lazyLoadAnalytics()
+      .then(oneDS => oneDS.capturePageAction(null, {
+        actionType: AnalyticsActionType.Other,
+        behavior: stepType,
+        contentTags: {
+          scn: processName,
+          scnstp: processStep
+        },
+        content: additionalInfo
+      }));
+  }
 }
 
 export function recordPageAction(actionName: string, type: AnalyticsActionType, behavior: AnalyticsBehavior, properties?: { [key: string]: string | number | boolean | string[] | number[] | boolean[] | object }) {

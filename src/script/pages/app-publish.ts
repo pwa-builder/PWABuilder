@@ -10,7 +10,7 @@ import '../components/loading-button';
 import '../components/windows-form';
 import '../components/android-form';
 import '../components/ios-form';
-import '../components/hover-tooltip';
+import '../components/info-circle-tooltip';
 import { Router } from '@vaadin/router';
 
 import {
@@ -39,6 +39,7 @@ import { IOSAppPackageOptions } from '../utils/ios-validation';
 import { WindowsPackageOptions } from '../utils/win-validation';
 import { fetchOrCreateManifest } from '../services/manifest';
 import { createWindowsPackageOptionsFromManifest } from '../services/publish/windows-publish';
+import { AndroidPackageOptions } from '../utils/android-validation';
 @customElement('app-publish')
 export class AppPublish extends LitElement {
   @state() errored = false;
@@ -498,7 +499,7 @@ export class AppPublish extends LitElement {
     await this.generate("windows", options);
   }
 
-  async generate(platform: Platform, form?: HTMLFormElement | IOSAppPackageOptions | WindowsPackageOptions, signingFile?: string) {
+  async generate(platform: Platform, options?: AndroidPackageOptions | IOSAppPackageOptions | WindowsPackageOptions) {
     // Record analysis results to our analytics portal.
     recordProcessStep(
       'analyze-and-package-pwa',
@@ -508,7 +509,7 @@ export class AppPublish extends LitElement {
 
     try {
       this.generating = true;
-      const packageData = await generatePackage(platform, form as HTMLFormElement, signingFile);
+      const packageData = await generatePackage(platform, options);
 
       if (packageData) {
         this.downloadFileName = `${packageData.appName}.zip`;
@@ -614,14 +615,15 @@ export class AppPublish extends LitElement {
         Store Package
       </app-button>
       <div>
-        <loading-button class="navigation secondary" ?loading=${this.generating} id="test-package-button"
+        <loading-button id="windows-test-pkg-btn" class="navigation secondary" ?loading=${this.generating} id="test-package-button"
           @click="${this.generateWindowsTestPackage}">
           Test Package
-          <hover-tooltip
-            text="Generate a package you can use to test your app on your Windows Device before going to the Microsoft Store."
-            link="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps.md#1-test-your-app-on-your-windows-machine">
-          </hover-tooltip>
         </loading-button>
+        <hover-tooltip
+          anchor="windows-test-pkg-btn" 
+          text="Generate a package you can use to test your app on your Windows Device before going to the Microsoft Store."
+          link="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps.md#1-test-your-app-on-your-windows-machine">
+        </hover-tooltip>
       </div>
     `;
   }
@@ -717,8 +719,8 @@ export class AppPublish extends LitElement {
       <!-- android options modal -->
       <app-modal id="android-options-modal" heading="Android App Options" body="Customize your Android app below"
         ?open="${this.openAndroidOptions === true}" @app-modal-close="${() => this.storeOptionsCancel()}">
-        <android-form slot="modal-form" .generating=${this.generating} @init-android-gen="${(ev: CustomEvent) =>
-              this.generate('android', ev.detail.form, ev.detail.signingFile)}"></android-form>
+        <android-form slot="modal-form" .generating=${this.generating} @init-android-gen="${(e: CustomEvent) =>
+              this.generate('android', e.detail as AndroidPackageOptions)}"></android-form>
       </app-modal>
       
       <!-- ios options modal -->

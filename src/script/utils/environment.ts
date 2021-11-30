@@ -1,4 +1,5 @@
 export const env = {
+  isProduction: false,
   manifestFinderUrl: '',
   manifestCreatorUrl: '',
   serviceWorkerUrl: '',
@@ -14,6 +15,7 @@ export const env = {
 }
 
 if ((window as any).ENV == "production") {
+  env.isProduction = true;
   env.manifestFinderUrl = 'https://pwabuilder-manifest-finder.azurewebsites.net/api/findmanifest';
   env.manifestCreatorUrl = 'https://pwabuilder-manifest-creator.azurewebsites.net/api/create'
   env.serviceWorkerUrl = 'https://pwabuilder-serviceworker-finder.centralus.cloudapp.azure.com';

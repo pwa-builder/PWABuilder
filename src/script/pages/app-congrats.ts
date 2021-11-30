@@ -39,6 +39,7 @@ import { BlogPost, allPosts } from '../services/blog';
 import { localeStrings } from '../../locales';
 import { WindowsPackageOptions } from '../utils/win-validation';
 import { IOSAppPackageOptions } from '../utils/ios-validation';
+import { AndroidPackageOptions } from '../utils/android-validation';
 
 @customElement('app-congrats')
 export class AppCongrats extends LitElement {
@@ -494,10 +495,10 @@ export class AppCongrats extends LitElement {
     }
   }
 
-  async generateApp(type: Platform, form?: HTMLFormElement | WindowsPackageOptions | IOSAppPackageOptions) {
+  async generateApp(type: Platform, packageOptions?: AndroidPackageOptions | WindowsPackageOptions | IOSAppPackageOptions) {
     try {
       this.generating = true;
-      const packageData = await generatePackage(type, form);
+      const packageData = await generatePackage(type, packageOptions);
       if (packageData) {
         if (packageData.type === 'test') {
           this.testBlob = packageData.blob || undefined;
@@ -624,7 +625,7 @@ export class AppCongrats extends LitElement {
           slot="modal-form"
           .generating=${this.generating}
           @init-android-gen="${(ev: CustomEvent) =>
-            this.generateApp('android', ev.detail.form)}"
+            this.generateApp('android', ev.detail as AndroidPackageOptions)}"
         ></android-form>
       </app-modal>
 

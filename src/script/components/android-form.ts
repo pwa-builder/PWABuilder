@@ -1,39 +1,30 @@
-import { css, html } from 'lit';
+import { css, html, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { ifDefined } from 'lit/directives/if-defined.js';
 import '../components/loading-button';
-import '../components/hover-tooltip';
 import { fetchOrCreateManifest } from '../services/manifest';
 import { createAndroidPackageOptionsFromManifest, emptyAndroidPackageOptions } from '../services/publish/android-publish';
-import { AndroidApkOptions } from '../utils/android-validation';
-import { Manifest } from '../utils/interfaces';
+import { ManifestContext } from '../utils/interfaces';
 import { localeStrings } from '../../locales';
 import { AppPackageFormBase } from './app-package-form-base';
+import { getManifestContext } from '../services/app-info';
+import { maxSigningKeySizeInBytes } from '../utils/android-validation';
 
 @customElement('android-form')
 export class AndroidForm extends AppPackageFormBase {
   @property({ type: Boolean }) generating = false;
-
   @state() showAdvanced = false;
-
-  // manifest form props
-  @state() signingKeyFullName = 'John Doe';
-  @state() organization = 'My Company';
-  @state() organizationalUnit = 'Engineering';
-  @state() countryCode = 'US';
-  @state() keyPassword = '';
-  @state() storePassword = '';
-  @state() alias = 'my-key-alias';
-  @state() file: string | undefined = undefined;
-  @state() signingMode = 'new';
-  @state() defaultOptions: AndroidApkOptions = emptyAndroidPackageOptions();
-
-  form: HTMLFormElement | undefined;
-  currentManifest: Manifest | undefined;
-  maxKeyFileSizeInBytes = 2097152;
+  @state() packageOptions = emptyAndroidPackageOptions();
+  @state() manifestContext: ManifestContext = getManifestContext();
 
   static get styles() {
     const localStyles = css`
+      .signing-key-fields {
+        margin-left: 30px;
+      }
+
+      #signing-key-file-input {
+        border: none;
+      }
     `;
     return [
       super.styles,
@@ -46,44 +37,22 @@ export class AndroidForm extends AppPackageFormBase {
   }
 
   async firstUpdated() {
-    const form = this.shadowRoot?.querySelector(
-      '#android-options-form'
-    ) as HTMLFormElement;
-
-    if (form) {
-      this.form = form;
+    if (this.manifestContext.isGenerated) {
+      this.manifestContext = await fetchOrCreateManifest();
     }
 
-    const manifestContext = await fetchOrCreateManifest();
-    this.currentManifest = manifestContext.manifest;
-
-    this.defaultOptions = await createAndroidPackageOptionsFromManifest(manifestContext.manifest);
+    this.packageOptions = createAndroidPackageOptionsFromManifest(this.manifestContext);
   }
 
   initGenerate(ev: InputEvent) {
     ev.preventDefault();
 
-    this.dispatchEvent(
-      new CustomEvent('init-android-gen', {
-        detail: {
-          form: this.form,
-          signingFile: this.file,
-        },
-        composed: true,
-        bubbles: true,
-      })
-    );
-  }
-
-  validatePackageId() {
-    const packageIdInput = this.form?.packageId;
-
-    if (packageIdInput?.value?.indexOf('if') !== -1) {
-      packageIdInput?.setCustomValidity("Package ID cannot include 'if'");
-    } else {
-      packageIdInput?.setCustomValidity('');
-    }
-    packageIdInput?.reportValidity();
+    const eventArgs = new CustomEvent('init-android-gen', {
+      detail: this.packageOptions,
+      composed: true,
+      bubbles: true,
+    });
+    this.dispatchEvent(eventArgs);      
   }
 
   toggleSettings(settingsToggleValue: 'basic' | 'advanced') {
@@ -96,73 +65,62 @@ export class AndroidForm extends AppPackageFormBase {
     }
   }
 
-
   /**
    * Called when the user changes the signing mode.
    */
   androidSigningModeChanged(mode: 'mine' | 'new' | 'none') {
-    if (!this.form) {
-      return;
-    }
+    this.packageOptions.signingMode = mode;
 
-    this.signingMode = mode;
-
-    // If the user chose "mine", clear out existing values.
+    // Reset the values as needed.
     if (mode === 'mine' || mode === 'none') {
-      this.alias = '';
-      this.signingKeyFullName = '';
-      this.organization = '';
-      this.organizationalUnit = '';
-      this.countryCode = '';
-      this.keyPassword = '';
-      this.storePassword = '';
+      this.packageOptions.signing.alias = '';
+      this.packageOptions.signing.fullName = '';
+      this.packageOptions.signing.organization = '';
+      this.packageOptions.signing.organizationalUnit = '';
+      this.packageOptions.signing.countryCode = '';
+      this.packageOptions.signing.keyPassword = '';
+      this.packageOptions.signing.storePassword = '';
     } else if (mode === 'new') {
-      this.alias = 'my-key-alias';
-      this.signingKeyFullName = `${
-        this.currentManifest?.short_name || this.currentManifest?.name || 'App'
-      } Admin`;
-      this.organization = this.currentManifest?.name || 'PWABuilder';
-      this.organizationalUnit = 'Engineering';
-      this.countryCode = 'US';
-      this.keyPassword = '';
-      this.storePassword = '';
-      this.file = undefined;
+      this.packageOptions.signing.alias = 'my-key-alias';
+      this.packageOptions.signing.fullName = (this.manifestContext.manifest.short_name || this.manifestContext.manifest.name || 'My PWA') + ' Admin';
+      this.packageOptions.signing.organization = this.manifestContext.manifest.name || 'PWABuilder';
+      this.packageOptions.signing.organizationalUnit = 'Engineering';
+      this.packageOptions.signing.countryCode = 'US';
+      this.packageOptions.signing.keyPassword = '';
+      this.packageOptions.signing.storePassword = '';
+      this.packageOptions.signing.file = null;
     }
+
+    // We need to re-render because Lit isn't watching packageOptions.signing, as it's a nested object.
+    this.requestUpdate();
   }
 
   androidSigningKeyUploaded(event: any) {
-    if (!this.form) {
-      return;
-    }
-
     const filePicker = event as HTMLInputElement;
-
     if (filePicker && filePicker.files && filePicker.files.length > 0) {
       const keyFile = filePicker.files[0];
       // Make sure it's a reasonable size.
-      if (keyFile && keyFile.size > this.maxKeyFileSizeInBytes) {
-        console.error('Keystore file is too large.', {
-          maxSize: this.maxKeyFileSizeInBytes,
+      if (keyFile && keyFile.size > maxSigningKeySizeInBytes) {
+        console.error('Android signing key file is too large. Max size:', {
+          maxSize: maxSigningKeySizeInBytes,
           fileSize: keyFile.size,
         });
-        this.signingMode = 'none';
+        this.packageOptions.signingMode = 'none';
       }
       // Read it in as a Uint8Array and store it in our signing object.
       const fileReader = new FileReader();
       fileReader.onload = () => {
-        this.file = fileReader.result as string;
-        return;
+        this.packageOptions.signing.file = fileReader.result as string;
       };
+
       fileReader.onerror = progressEvent => {
         console.error(
-          'Unable to read keystore file',
+          'Unable to read Android signing key file',
           fileReader.error,
           progressEvent
         );
-        this.file = undefined;
-        if (this.form) {
-          this.signingMode = 'none';
-        }
+        this.packageOptions.signing.file = null;
+        this.packageOptions.signingMode = 'none';
       };
       fileReader.readAsDataURL(keyFile as Blob);
     }
@@ -175,95 +133,64 @@ export class AndroidForm extends AppPackageFormBase {
         slot="modal-form"
         style="width: 100%"
         @submit="${(ev: InputEvent) => this.initGenerate(ev)}"
-        title=""
       >
         <div id="form-layout">
           <div class="basic-settings">
+            
             <div class="form-group">
-              <label for="packageIdInput">
-                Package ID
-                <i
-                  class="fas fa-info-circle"
-                  title="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
-                  aria-label="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
-                  role="definition"
-                ></i>
-
-                <hover-tooltip
-                  text="The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname"
-                  link="https://blog.pwabuilder.com/docs/android-platform"
-                >
-                </hover-tooltip>
-              </label>
-              <input
-                id="packageIdInput"
-                class="form-control"
-                placeholder="com.contoso.app"
-                value="${this.defaultOptions.packageId || 'com.contoso.app'}"
-                type="text"
-                required
-                pattern="[a-zA-Z0-9._]*$"
-                name="packageId"
-                @change="${() => this.validatePackageId()}"
-              />
+              ${this.renderFormInput({
+                label: 'Package ID',
+                tooltip: `The ID of your app on Google Play. Google recommends a reverse-domain style string: com.domainname.appname. Letters, numbers, periods, hyphens, and underscores are allowed.`,
+                tooltipLink: 'https://developer.android.com/guide/topics/manifest/manifest-element.html#package',
+                inputId: 'package-id-input',
+                required: true,
+                placeholder: 'MyCompany.MyApp',
+                value: this.packageOptions.packageId,
+                minLength: 3,
+                maxLength: 50,
+                spellcheck: false,
+                pattern: "[a-zA-Z0-9.-_]*$",
+                validationErrorMessage: "Package ID must contain only letters, numbers, periods, hyphens, and underscores.",
+                inputHandler: (val: string) => this.packageOptions.packageId = val
+              })}
             </div>
 
             <div class="form-group">
-              <label for="appNameInput">
-                App name
-                <i
-                  class="fas fa-info-circle"
-                  title="Please do not include special characters in your app name."
-                  aria-label="Please do not include special characters in your app name."
-                  role="definition"
-                ></i>
-
-                <hover-tooltip
-                  text="Please do not include special characters in your app name."
-                  link="https://blog.pwabuilder.com/docs/android-platform"
-                >
-                </hover-tooltip>
-              </label>
-              <input
-                type="text"
-                class="form-control"
-                id="appNameInput"
-                placeholder="My Awesome PWA"
-                value="${this.defaultOptions.name || 'My Awesome PWA'}"
-                required
-                name="appName" 
-              />
+              ${this.renderFormInput({
+                label: 'App name',
+                tooltip: `The full name of your app as displayed to end users`,
+                tooltipLink: 'https://support.google.com/googleplay/android-developer/answer/9859152?hl=en&visit_id=637726158830539690-3630173317&rd=1#details&zippy=%2Cproduct-details',
+                inputId: 'app-name-input',
+                required: true,
+                placeholder: 'My Awesome PWA',
+                value: this.packageOptions.name,
+                minLength: 3,
+                maxLength: 50,
+                spellcheck: false,
+                validationErrorMessage: "App name must be between 3 and 50 characters in length",
+                inputHandler: (val: string) => this.packageOptions.name = val
+              })}
             </div>
 
             <div class="form-group">
-              <label for="appLauncherNameInput">
-                Launcher name
-                <i
-                  class="fas fa-info-circle"
-                  title="The app name used on the Android launch screen. Typically, this is the short name of the app."
-                  aria-label="The app name used on the Android launch screen. Typically, this is the short name of the app."
-                  role="definition"
-                ></i>
-
-                <hover-tooltip
-                  text="The app name used on the Android launch screen. Typically, this is the short name of the app."
-                  link="https://blog.pwabuilder.com/docs/android-platform"
-                >
-                </hover-tooltip>
-              </label>
-              <input
-                type="text"
-                class="form-control"
-                id="appLauncherNameInput"
-                placeholder="Awesome PWA"
-                value="${this.defaultOptions.launcherName || 'Awesome PWA'}"
-                required
-                name="launcherName"
-              />
+              ${this.renderFormInput({
+                label: 'Short name',
+                tooltip: `The shorter version of your app name displayed on the Android home screen. Google recommends no more than 12 characters.`,
+                tooltipLink: 'https://developer.chrome.com/apps/manifest/name#short_name',
+                inputId: 'short-name-input',
+                required: true,
+                placeholder: 'My PWA',
+                value: this.packageOptions.launcherName,
+                minLength: 3,
+                maxLength: 30,
+                spellcheck: false,
+                validationErrorMessage: "Short name must be between 3 and 30 characters in length. Google recommends 12 characters or fewer.",
+                inputHandler: (val: string) => this.packageOptions.launcherName = val
+              })}
             </div>
           </div>
 
-          <!-- right half of the options dialog -->
+          <!-- The "all settings" section of the options dialog -->
           <fast-accordion>
             <fast-accordion-item
               @click="${(ev: Event) => this.toggleAccordion(ev.target)}"
@@ -277,930 +204,410 @@ export class AndroidForm extends AppPackageFormBase {
               </div>
 
               <div class="adv-settings">
-                <div>
-                  <div class="">
-                    <div class="form-group">
-                      <label for="appVersionInput">
-                        App version
-                        <i
-                          class="fas fa-info-circle"
-                          title="The version of your app displayed to users. This is a string, typically in the form of '1.0.0.0'. Maps to android:versionName."
-                          aria-label
-                          role="definition"
-                        ></i>
+                <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'Version',
+                    tooltip: `The version of your app displayed to users. This is a string, typically in the form of '1.0.0.0'. Maps to android:versionName.`,
+                    tooltipLink: 'https://developer.android.com/guide/topics/manifest/manifest-element.html#vname',
+                    inputId: 'version-input',
+                    required: true,
+                    placeholder: '1.0.0.0',
+                    value: this.packageOptions.appVersion,
+                    spellcheck: false,
+                    inputHandler: (val: string) => this.packageOptions.appVersion = val
+                  })}
+                </div>
+                
+                <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'Version code',
+                    tooltip: `A positive integer used as an internal version number. This is not shown to users. This number is used by Google Play to determine whether one version is more recent than another, with higher numbers indicating more recent versions. Maps to android:versionCode.`,
+                    tooltipLink: 'https://developer.android.com/guide/topics/manifest/manifest-element.html#vcode',
+                    inputId: 'version-code-input',
+                    type: 'number',
+                    minValue: 1,
+                    maxValue: 2100000000,
+                    required: true,
+                    placeholder: '1',
+                    value: this.packageOptions.appVersionCode.toString(),
+                    inputHandler: (val: string) => this.packageOptions.appVersionCode = parseInt(val, 10)
+                  })}
+                </div>
 
-                        <hover-tooltip
-                          text="The version of your app displayed to users. This is a string, typically in the form of '1.0.0.0'. Maps to android:versionName."
-                          link="https://blog.pwabuilder.com/docs/android-platform"
-                        >
-                        </hover-tooltip>
-                      </label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="appVersionInput"
-                        placeholder="1.0.0.0"
-                        value="${this.defaultOptions.appVersion || '1.0.0.0'}"
-                        required
-                        name="appVersion"
-                      />
-                    </div>
+                <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'Host',
+                    tooltip: `The host portion of your PWA's URL. For example, mypwa.com`,
+                    inputId: 'host-input',
+                    required: true,
+                    placeholder: 'mypwa.com',
+                    value: this.packageOptions.host,
+                    minLength: 3,
+                    spellcheck: false,
+                    inputHandler: (val: string) => this.packageOptions.host = val
+                  })}
+                </div>
+
+                <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'Start URL',
+                    tooltip: `The start path for your PWA. Must be relative to the Host URL. If Host URL contains your PWA, you can use '/' to specify a default`,
+                    tooltipLink: 'https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url',
+                    inputId: 'start-url-input',
+                    required: true,
+                    placeholder: '/index.html',
+                    value: this.packageOptions.startUrl,
+                    spellcheck: false,
+                    validationErrorMessage: "You must specify a relative start URL. If you don't have a start URL, use '/'",
+                    inputHandler: (val: string) => this.packageOptions.startUrl = val
+                  })}
+                </div>
+
+                <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'Theme color',
+                    tooltip: `The theme color used for the Android status bar in your app. Typically, this should be set to your manifest's theme_color.`,
+                    inputId: 'theme-color-input',
+                    type: 'color',
+                    value: this.packageOptions.themeColor,
+                    inputHandler: (val: string) => this.packageOptions.themeColor = val
+                  })}
+                </div>
+
+                <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'Background color',
+                    tooltip: `The background color to use for your app's splash screen. Typically this is set to your manifest's background_color.`,
+                    inputId: 'background-color-input',
+                    type: 'color',
+                    value: this.packageOptions.backgroundColor,
+                    inputHandler: (val: string) => this.packageOptions.backgroundColor = val
+                  })}
+                </div>
+
+                <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'Nav color',
+                    tooltip: `The color of the Android navigation bar in your app. Typically this is set to your manifest's theme_color`,
+                    inputId: 'nav-color-input',
+                    type: 'color',
+                    value: this.packageOptions.navigationColor,
+                    inputHandler: (val: string) => this.packageOptions.navigationColor = val
+                  })}
+                </div>
+
+                <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'Nav dark color',
+                    tooltip: `The color of the Android navigation bar in your app when the Android device is in dark mode.`,
+                    inputId: 'nav-dark-color-input',
+                    type: 'color',
+                    value: this.packageOptions.navigationColorDark,
+                    inputHandler: (val: string) => this.packageOptions.navigationColorDark = val
+                  })}
+                </div>
+
+                <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'Nav divider color',
+                    tooltip: `The color of the Android navigation bar divider in your app.`,
+                    inputId: 'nav-divider-color-input',
+                    type: 'color',
+                    value: this.packageOptions.navigationDividerColor,
+                    inputHandler: (val: string) => this.packageOptions.navigationDividerColor = val
+                  })}
+                </div>
+
+                <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'Nav divider dark color',
+                    tooltip: `The color of the Android navigation bar divider in your app when the Android device is in dark mode.`,
+                    inputId: 'nav-divider-dark-color-input',
+                    type: 'color',
+                    value: this.packageOptions.navigationDividerColorDark,
+                    inputHandler: (val: string) => this.packageOptions.navigationDividerColorDark = val
+                  })}
+                </div>
+
+                <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'Icon URL',
+                    tooltip: `The URL to a square PNG image to use for your app's icon. Can be absolute or relative to your manifest. Google recommends a 512x512 PNG without shadows.`,
+                    tooltipLink: 'https://developer.android.com/distribute/google-play/resources/icon-design-specifications',
+                    inputId: 'icon-url-input',
+                    required: true,
+                    spellcheck: false,
+                    value: this.packageOptions.iconUrl,
+                    placeholder: '/icons/512x512.png',
+                    inputHandler: (val: string) => this.packageOptions.iconUrl = val
+                  })}
+                </div>
+
+                <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'Maskable icon URL',
+                    tooltip: `Optional. The URL to a PNG image with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android versions. Google recommends a 512x512 PNG without shadows.`,
+                    tooltipLink: 'https://web.dev/maskable-icon',
+                    inputId: 'maskable-icon-url-input',
+                    spellcheck: false,
+                    value: this.packageOptions.maskableIconUrl || '',
+                    placeholder: '/icons/512x512-maskable.png',
+                    inputHandler: (val: string) => this.packageOptions.maskableIconUrl = val
+                  })}
+                </div>
+
+                <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'Monochrome icon URL',
+                    tooltip: `Optional. The URL to a PNG image containing only white and black colors, enabling Android to fill the icon with user-specified color or
+                    gradient depending on theme, color mode, or Android ontrast settings.`,
+                    tooltipLink: 'https://w3c.github.io/manifest/#monochrome-icons-and-solid-fills',
+                    inputId: 'monochrome-icon-url-input',
+                    spellcheck: false,
+                    value: this.packageOptions.monochromeIconUrl || '',
+                    placeholder: '/icons/512x512-monochrome.png',
+                    inputHandler: (val: string) => this.packageOptions.monochromeIconUrl = val
+                  })}
+                </div>
+
+                <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'Manifest URL',
+                    tooltip: `The absolute URL of your web manifest.`,
+                    inputId: 'manifest-url-input',
+                    type: 'url',
+                    value: this.packageOptions.webManifestUrl,
+                    placeholder: 'https://myawesomepwa.com/manifest.json',
+                    inputHandler: (val: string) => this.packageOptions.webManifestUrl = val
+                  })}
+                </div>
+
+                <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'Splash fade out duration (ms)',
+                    tooltip: `How long the splash screen fade out animation should last in milliseconds.`,
+                    inputId: 'splash-fade-out-input',
+                    type: 'number',
+                    value: (this.packageOptions.splashScreenFadeOutDuration || 0).toString(),
+                    placeholder: '300',
+                    inputHandler: (val: string) => this.packageOptions.splashScreenFadeOutDuration = parseInt(val, 10)
+                  })}
+                </div>
+
+                <div class="form-group">
+                  <label>${localeStrings.text.android.titles.fallback}</label>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Custom Tabs',
+                      tooltip: `When Trusted Web Activity (TWA) is unavailable, use Chrome Custom Tabs as a fallback to run your app.`,
+                      tooltipLink: 'https://developer.chrome.com/docs/android/custom-tabs/',
+                      inputId: 'chrome-custom-tab-fallback-input',
+                      type: 'radio',
+                      name: 'fallbackType',
+                      value: 'customtabs',
+                      checked: this.packageOptions.fallbackType === 'customtabs',
+                      inputHandler: () => this.packageOptions.fallbackType = 'customtabs'
+                    })}
+                  </div>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Web View',
+                      tooltip: `When Trusted Web Activity (TWA) is unavailable, use a web view as a fallback to run your app.`,
+                      tooltipLink: 'https://developer.chrome.com/docs/android/custom-tabs/',
+                      inputId: 'web-view-fallback-input',
+                      type: 'radio',
+                      name: 'fallbackType',
+                      value: 'webview',
+                      checked: this.packageOptions.fallbackType === 'webview',
+                      inputHandler: () => this.packageOptions.fallbackType = 'webview'
+                    })}
                   </div>
                 </div>
-              </div>
 
-              <div>
-                <div class="">
-                  <div class="form-group">
-                    <label for="appVersionCodeInput">
-                      <a
-                        href="https://developer.android.com/studio/publish/versioning#appversioning"
-                        target="_blank"
-                        rel="noopener"
-                        tabindex="-1"
-                        >App version code</a
-                      >
-                      <i
-                        class="fas fa-info-circle"
-                        title="A positive integer used as an internal version number. This is not shown to users. Android uses this value to protect against downgrades. Maps to android:versionCode."
-                        aria-label="A positive integer used as an internal version number. This is not shown to users. Android uses this value to protect against downgrades. Maps to android:versionCode."
-                        role="definition"
-                        style="margin-left: 5px;"
-                      ></i>
-
-                      <hover-tooltip
-                        text="A positive integer used as an internal version number. This is not shown to users. Android uses this value to protect against downgrades. Maps to android:versionCode."
-                        link="https://blog.pwabuilder.com/docs/android-platform"
-                      >
-                      </hover-tooltip>
-                    </label>
-                    <input
-                      type="number"
-                      min="1"
-                      max="2100000000"
-                      class="form-control"
-                      id="appVersionCodeInput"
-                      name="appVersionCode"
-                      placeholder="1"
-                      required
-                      value="${this.defaultOptions.appVersionCode || 1}"
-                    />
+                <div class="form-group">
+                  <label>${localeStrings.text.android.titles.display_mode}</label>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Standalone',
+                      tooltip: 'Recommended for most apps. The Android status bar and navigation bar will be shown while your app is running.',
+                      tooltipLink: 'https://developer.android.com/training/system-ui/immersive',
+                      inputId: 'display-standalone-input',
+                      type: 'radio',
+                      name: 'displayMode',
+                      value: 'standalone',
+                      checked: this.packageOptions.display === 'standalone',
+                      inputHandler: () => this.packageOptions.display = 'standalone'
+                    })}
+                  </div>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Fullscreen',
+                      tooltip: `The Android status bar and navigation bar will be hidden while your app is running. Suitable for immersive experiences such as games or media apps.`,
+                      tooltipLink: 'https://developer.android.com/training/system-ui/immersive#immersive',
+                      inputId: 'display-fullscreen-input',
+                      type: 'radio',
+                      name: 'displayMode',
+                      value: 'fullscreen',
+                      checked: this.packageOptions.display === 'fullscreen',
+                      inputHandler: () => this.packageOptions.display = 'fullscreen'
+                    })}
+                  </div>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Fullscreen sticky',
+                      tooltip: `The Android status bar and navigation bar will be hidden while your app is running, and if the user swipes from the edge of the Android device, the system bars will be semi-transparent, and the touch gesture will be passed to your app. Recommended for drawing apps, and games that require lots of swiping.`,
+                      tooltipLink: 'https://developer.android.com/training/system-ui/immersive#sticky-immersive',
+                      inputId: 'display-fullscreen-sticky-input',
+                      type: 'radio',
+                      name: 'displayMode',
+                      value: 'fullscreen-sticky',
+                      checked: this.packageOptions.display === 'fullscreen-sticky',
+                      inputHandler: () => this.packageOptions.display = 'fullscreen-sticky'
+                    })}
                   </div>
                 </div>
-              </div>
 
-              <div>
-                <div class="">
-                  <div class="form-group">
-                    <label for="hostInput">Host</label>
-                    <input
-                      type="url"
-                      class="form-control"
-                      id="hostInput"
-                      placeholder="https://mysite.com"
-                      required
-                      name="host"
-                      value="${this.defaultOptions.host || 'https://mysite.com'}"
-                    />
+                <div class="form-group">
+                  <label>${localeStrings.text.android.titles.notification}</label>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Enable',
+                      tooltip: `If enabled, your PWA can send push notifications without browser permission prompts.`,
+                      tooltipLink: 'https://github.com/GoogleChromeLabs/svgomg-twa/issues/60',
+                      inputId: 'notification-delegation-input',
+                      type: 'checkbox',
+                      checked: this.packageOptions.enableNotifications === true,
+                      inputHandler: (_, checked) => this.packageOptions.enableNotifications = checked
+                    })}
                   </div>
                 </div>
-              </div>
 
-              <div class="form-group">
-                <label for="startUrlInput">
-                  Start URL
-                  <i
-                    class="fas fa-info-circle"
-                    title="The start path for the TWA. Must be relative to the Host URL. You can specify '/' if you don't have a start URL different from Host."
-                    aria-label="The start path for the TWA. Must be relative to the Host URL."
-                    role="definition"
-                  ></i>
-
-                  <hover-tooltip
-                    text="The start path for the TWA. Must be relative to the Host URL. You can specify '/' if you don't have a start URL different from Host."
-                    link="https://blog.pwabuilder.com/docs/android-platform"
-                  >
-                  </hover-tooltip>
-                </label>
-                <!-- has to be a text type as / is not a valid URL in the input in the spec -->
-                <input
-                  type="text"
-                  class="form-control"
-                  id="startUrlInput"
-                  placeholder="/index.html"
-                  required
-                  name="startUrl"
-                  value="${this.defaultOptions.startUrl || '/'}"
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="themeColorInput">
-                  Status bar color
-                  <i
-                    class="fas fa-info-circle"
-                    title="Also known as the theme color, this is the color of the Android status bar in your app. Note: the status bar will be hidden if Display Mode is set to fullscreen."
-                    aria-label="Also known as the theme color, this is the color of the Android status bar in your app. Note: the status bar will be hidden if Display Mode is set to fullscreen."
-                    role="definition"
-                  ></i>
-
-                  <hover-tooltip
-                    text="Also known as the theme color, this is the color of the Android status bar in your app. Note: the status bar will be hidden if Display Mode is set to fullscreen."
-                    link="https://blog.pwabuilder.com/docs/android-platform"
-                  >
-                  </hover-tooltip>
-                </label>
-                <input
-                  type="color"
-                  class="form-control"
-                  id="themeColorInput"
-                  name="themeColor"
-                  value="${this.defaultOptions.themeColor || 'black'}"
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="bgColorInput">
-                  Splash color
-                  <i
-                    class="fas fa-info-circle"
-                    title="Also known as background color, this is the color of the splash screen for your app."
-                    aria-label="Also known as background color, this is the color of the splash screen for your app."
-                    role="definition"
-                  ></i>
-
-                  <hover-tooltip
-                    text="Also known as background color, this is the color of the splash screen for your app."
-                    link="https://blog.pwabuilder.com/docs/android-platform"
-                  >
-                  </hover-tooltip>
-                </label>
-                <input
-                  type="color"
-                  class="form-control"
-                  id="bgColorInput"
-                  name="backgroundColor"
-                  value="${this.defaultOptions.backgroundColor || 'black'}"
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="navigationColorInput">
-                  Nav color
-                  <i
-                    class="fas fa-info-circle"
-                    title="The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
-                    aria-label="The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
-                    role="definition"
-                  ></i>
-
-                  <hover-tooltip
-                    text="The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen."
-                    link="https://blog.pwabuilder.com/docs/android-platform"
-                  >
-                  </hover-tooltip>
-                </label>
-                <input
-                  type="color"
-                  class="form-control"
-                  id="navigationColorInput"
-                  name="navigationColor"
-                  value="${this.defaultOptions.navigationColor || 'black'}"
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="navigationColorDarkInput">
-                  Nav dark color
-                  <i
-                    class="fas fa-info-circle"
-                    title="The color of the Android navigation bar in your app when Android is in dark mode."
-                    aria-label="The color of the Android navigation bar in your app when Android is in dark mode."
-                    role="definition"
-                  ></i>
-
-                  <hover-tooltip
-                    text="The color of the Android navigation bar in your app when Android is in dark mode."
-                    link="https://blog.pwabuilder.com/docs/android-platform"
-                  >
-                  </hover-tooltip>
-                </label>
-                <input
-                  type="color"
-                  class="form-control"
-                  id="navigationColorDarkInput"
-                  name="navigationColorDark"
-                  value="${this.defaultOptions.navigationColorDark || 'black'}"
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="navigationDividerColorInput">
-                  Nav divider color
-                  <i
-                    class="fas fa-info-circle"
-                    title="The color of the Android navigation bar divider in your app."
-                    aria-label="The color of the Android navigation bar divider in your app."
-                    role="definition"
-                  ></i>
-
-                  <hover-tooltip
-                    text="The color of the Android navigation bar divider in your app."
-                    link="https://blog.pwabuilder.com/docs/android-platform"
-                  >
-                  </hover-tooltip>
-                </label>
-                <input
-                  type="color"
-                  class="form-control"
-                  id="navigationDividerColorInput"
-                  name="navigationDividerColor"
-                  value="${this.defaultOptions.navigationDividerColor || 'black'}"
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="navigationDividerColorDarkInput">
-                  Nav divider dark color
-                  <i
-                    class="fas fa-info-circle"
-                    title="The color of the Android navigation navigation bar divider in your app when Android is in dark mode."
-                    aria-label="The color of the Android navigation bar divider in your app when Android is in dark mode."
-                    role="definition"
-                  ></i>
-
-                  <hover-tooltip
-                    text="The color of the Android navigation navigation bar divider in your app when Android is in dark mode."
-                    link="https://blog.pwabuilder.com/docs/android-platform"
-                  >
-                  </hover-tooltip>
-                </label>
-                <input
-                  type="color"
-                  class="form-control"
-                  id="navigationDividerColorDarkInput"
-                  name="navigationDividerColorDark"
-                  value="${this.defaultOptions.navigationDividerColorDark || 'black'}"
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="iconUrlInput">Icon URL</label>
-                <input
-                  type="url"
-                  class="form-control"
-                  id="iconUrlInput"
-                  placeholder="https://myawesomepwa.com/512x512.png"
-                  name="iconUrl"
-                  value="${this.defaultOptions.iconUrl || ''}"
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="maskIconUrlInput">
-                  <a
-                    href="https://web.dev/maskable-icon"
-                    title="Read more about maskable icons"
-                    target="_blank"
-                    rel="noopener"
-                    aria-label="Read more about maskable icons"
-                    tabindex="-1"
-                  >
-                    Maskable icon URL
-                  </a>
-                  <i
-                    class="fas fa-info-circle"
-                    title="Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms."
-                    aria-label="Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms."
-                    role="definition"
-                  ></i>
-
-                  <hover-tooltip
-                    text="Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms."
-                    link="https://blog.pwabuilder.com/docs/android-platform"
-                  >
-                  </hover-tooltip>
-                </label>
-                <input
-                  type="url"
-                  class="form-control"
-                  id="maskIconUrlInput"
-                  placeholder="https://myawesomepwa.com/512x512-maskable.png"
-                  name="maskableIconUrl"
-                  .value="${this.defaultOptions.maskableIconUrl || ''}"
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="monochromeIconUrlInput">
-                  <a
-                    href="https://w3c.github.io/manifest/#monochrome-icons-and-solid-fills"
-                    target="_blank"
-                    rel="noopener"
-                    tabindex="-1"
-                    >Monochrome icon URL</a
-                  >
-                  <i
-                    class="fas fa-info-circle"
-                    title="Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings."
-                    aria-label="Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings."
-                    role="definition"
-                  ></i>
-
-                  <hover-tooltip
-                    text="Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings."
-                    link="https://blog.pwabuilder.com/docs/android-platform"
-                  >
-                  </hover-tooltip>
-                </label>
-                <input
-                  type="url"
-                  class="form-control"
-                  id="monochromeIconUrlInput"
-                  placeholder="https://myawesomepwa.com/512x512-monochrome.png"
-                  name="monochromeIconUrl"
-                  .value="${this.defaultOptions.monochromeIconUrl || ''}"
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="webManifestUrlInput"> Manifest URL </label>
-                <input
-                  type="url"
-                  class="form-control"
-                  id="webManifestUrlInput"
-                  placeholder="https://myawesomepwa.com/manifest.json"
-                  name="webManifestUrl"
-                  .value="${this.defaultOptions.webManifestUrl || ''}"
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="splashFadeoutInput"
-                  >Splash screen fade out duration (ms)</label
-                >
-                <input
-                  type="number"
-                  class="form-control"
-                  id="splashFadeoutInput"
-                  placeholder="300"
-                  name="splashScreenFadeOutDuration"
-                  value="${this.defaultOptions.splashScreenFadeOutDuration || '300'}"
-                />
-              </div>
-
-              <div class="form-group">
-                <label>${localeStrings.text.android.titles.fallback}</label>
-                <div class="form-check">
-                  <input
-                    .defaultChecked="${true}"
-                    value="customtabs"
-                    class="form-check-input"
-                    type="radio"
-                    name="fallbackType"
-                    id="fallbackCustomTabsInput"
-                    name="fallbackType"
-                  />
-                  <label class="form-check-label" for="fallbackCustomTabsInput">
-                    Custom Tabs
-                    <i
-                      class="fas fa-info-circle"
-                      title="Use Chrome Custom Tabs as a fallback for your PWA when the full trusted web activity (TWA) experience is unavailable."
-                      aria-label="When trusted web activity (TWA) is unavailable, use Chrome Custom Tabs as a fallback for your PWA."
-                      role="definition"
-                    ></i>
-
-                    <hover-tooltip
-                      text="Use Chrome Custom Tabs as a fallback for your PWA when the full trusted web activity (TWA) experience is unavailable."
-                      link="https://blog.pwabuilder.com/docs/android-platform"
-                    >
-                    </hover-tooltip>
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input
-                    .defaultChecked="${false}"
-                    value="webview"
-                    class="form-check-input"
-                    type="radio"
-                    name="fallbackType"
-                    id="fallbackWebViewInput"
-                    value="webview"
-                    name="fallbackType"
-                  />
-                  <label class="form-check-label" for="fallbackWebViewInput">
-                    Web View
-                    <i
-                      class="fas fa-info-circle"
-                      title="Use a web view as the fallback for your PWA when the full trusted web activity (TWA) experience is unavailable."
-                      aria-label="When trusted web activity (TWA) is unavailable, use a web view as the fallback for your PWA."
-                      role="definition"
-                    ></i>
-
-                    <hover-tooltip
-                      text="Use a web view as the fallback for your PWA when the full trusted web activity (TWA) experience is unavailable."
-                      link="https://blog.pwabuilder.com/docs/android-platform"
-                    >
-                    </hover-tooltip>
-                  </label>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label>${localeStrings.text.android.titles.display_mode}</label>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="displayMode"
-                    id="standaloneDisplayModeInput"
-                    .defaultChecked="${this.defaultOptions.display === 'standalone'}"
-                    value="standalone"
-                    name="display"
-                  />
+                <div class="form-group">
                   <label
-                    class="form-check-label"
-                    for="standaloneDisplayModeInput"
+                    >${localeStrings.text.android.titles
+                      .location_delegation}</label
                   >
-                    Standalone
-                    <i
-                      class="fas fa-info-circle"
-                      title="Your PWA will use the whole screen but keep the Android status bar and navigation bar."
-                      aria-label="Your PWA will use the whole screen but keep the Android status bar and navigation bar."
-                      role="definition"
-                    ></i>
-
-                    <hover-tooltip
-                      text="Your PWA will use the whole screen but keep the Android status bar and navigation bar."
-                      link="https://blog.pwabuilder.com/docs/android-platform"
-                    >
-                    </hover-tooltip>
-                  </label>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Enable',
+                      tooltip: 'If enabled, your PWA can access navigator.geolocation without browser permission prompts.',
+                      inputId: 'location-delegation-input',
+                      type: 'checkbox',
+                      checked: this.packageOptions.features.locationDelegation?.enabled === true,
+                      inputHandler: (_, checked) => this.packageOptions.features.locationDelegation!.enabled = checked
+                    })}
+                  </div>
                 </div>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="displayMode"
-                    id="fullscreenDisplayModeInput"
-                    .defaultChecked="${this.defaultOptions.display === 'fullscreen'}"
-                    value="fullscreen"
-                    name="display"
-                  />
+
+                <div class="form-group">
                   <label
-                    class="form-check-label"
-                    for="fullscreenDisplayModeInput"
+                    >${localeStrings.text.android.titles
+                      .google_play_billing}</label
                   >
-                    Fullscreen
-                    <i
-                      class="fas fa-info-circle"
-                      title="Your PWA will use the whole screen and remove the Android status bar and navigation bar. Suitable for immersive experiences such as games or media apps."
-                      aria-label="Your PWA will use the whole screen and remove the Android status bar and navigation bar. Suitable for immersive experiences such as games or media apps."
-                      role="definition"
-                    ></i>
-
-                    <hover-tooltip
-                      text="Your PWA will use the whole screen and remove the Android status bar and navigation bar. Suitable for immersive experiences such as games or media apps."
-                      link="https://blog.pwabuilder.com/docs/android-platform"
-                    >
-                    </hover-tooltip>
-                  </label>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Enable',
+                      tooltip: 'If enabled, your PWA can sell in-app purchases and subscriptions via the Digital Goods API.',
+                      tooltipLink: 'https://developer.chrome.com/docs/android/trusted-web-activity/receive-payments-play-billing/',
+                      inputId: 'google-play-billing-input',
+                      type: 'checkbox',
+                      checked: this.packageOptions.features.playBilling?.enabled === true,
+                      inputHandler: (_, checked) => this.packageOptions.features.playBilling!.enabled = checked
+                    })}
+                  </div>
                 </div>
+
+                <div class="form-group">
+                  <label>
+                    ${localeStrings.text.android.titles.settings_shortcut}
+                  </label>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Enable',
+                      tooltip: 'If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app.',
+                      tooltipLink: 'https://github.com/pwa-builder/PWABuilder/issues/1113',
+                      inputId: 'site-settings-shortcut-input',
+                      type: 'checkbox',
+                      checked: this.packageOptions.enableSiteSettingsShortcut === true,
+                      inputHandler: (_, checked) => this.packageOptions.enableSiteSettingsShortcut = checked
+                    })}
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label>
+                    ${localeStrings.text.android.titles.chromeos_only}
+                  </label>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Enable',
+                      tooltip: 'If enabled, your Android package will only run on ChromeOS devices.',
+                      inputId: 'chromeos-only-input',
+                      type: 'checkbox',
+                      checked: this.packageOptions.isChromeOSOnly === true,
+                      inputHandler: (_, checked) => this.packageOptions.isChromeOSOnly = checked
+                    })}
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label>${localeStrings.text.android.titles.source_code}</label>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Enable',
+                      tooltip: 'If enabled, your download will include the source code for your Android app.',
+                      inputId: 'include-src-input',
+                      type: 'checkbox',
+                      checked: this.packageOptions.includeSourceCode === true,
+                      inputHandler: (_, checked) => this.packageOptions.includeSourceCode = checked
+                    })}
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label>${localeStrings.text.android.titles.signing_key}</label>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'New',
+                      tooltip: `Recommended for new apps in Google Play. PWABuilder will generate a new signing key for you and sign your package with it. Your download will contain the new signing details.`,
+                      inputId: 'signing-new-input',
+                      name: 'signingMode',
+                      value: 'new',
+                      type: 'radio',
+                      checked: this.packageOptions.signingMode === 'new',
+                      inputHandler: () => this.androidSigningModeChanged('new')
+                    })}
+                  </div>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Use mine',
+                      tooltip: 'Recommended for existing apps in Google Play. Use this option if you already have a signing key and you want to publish a new version of an existing app in Google Play.',
+                      inputId: 'signing-mine-input',
+                      name: 'signingMode',
+                      value: 'mine',
+                      type: 'radio',
+                      checked: this.packageOptions.signingMode === 'mine',
+                      inputHandler: () => this.androidSigningModeChanged('mine')
+                    })}
+                  </div>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'None',
+                      tooltip: 'PWABuilder will generate a raw, unsigned APK. Raw, unsigned APKs cannot be uploaded to the Google Play Store.',
+                      inputId: 'signing-none-input',
+                      name: 'signingMode',
+                      value: 'none',
+                      type: 'radio',
+                      checked: this.packageOptions.signingMode === 'none',
+                      inputHandler: () => this.androidSigningModeChanged('none')
+                    })}
+                  </div>
+                </div>
+
+                ${this.renderSigningKeyFields()}
+                
               </div>
 
-              <div class="form-group">
-                <label>${localeStrings.text.android.titles.notification}</label>
-                <div class="form-check">
-                  <input
-                    .defaultChecked="${true}"
-                    class="form-check-input"
-                    type="checkbox"
-                    id="enableNotificationsInput"
-                    name="enableNotifications"
-                  />
-                  <label
-                    class="form-check-label"
-                    for="enableNotificationsInput"
-                  >
-                    Enable
-                    <i
-                      class="fas fa-info-circle"
-                      title="Whether to enable Push Notification Delegation. If enabled, your PWA can send push notifications without browser permission prompts."
-                      aria-label="Whether to enable Push Notification Delegation. If enabled, your PWA can send push notifications without browser permission prompts."
-                      role="definition"
-                    ></i>
-
-                    <hover-tooltip
-                      text="Whether to enable Push Notification Delegation. If enabled, your PWA can send push notifications without browser permission prompts."
-                      link="https://blog.pwabuilder.com/docs/android-platform"
-                    >
-                    </hover-tooltip>
-                  </label>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label
-                  >${localeStrings.text.android.titles
-                    .location_delegation}</label
-                >
-                <div class="form-check">
-                  <input
-                    .defaultChecked="${true}"
-                    class="form-check-input"
-                    type="checkbox"
-                    id="enableLocationInput"
-                    name="locationDelegation"
-                  />
-                  <label class="form-check-label" for="enableLocationInput">
-                    Enable
-                    <i
-                      class="fas fa-info-circle"
-                      title="Whether to enable Location Delegation. If enabled, your PWA can acess navigator.geolocation without browser permission prompts."
-                      aria-label="Whether to enable Location Delegation. If enabled, your PWA can acess navigator.geolocation without browser permission prompts."
-                      role="definition"
-                    ></i>
-
-                    <hover-tooltip
-                      text="Whether to enable Location Delegation. If enabled, your PWA can acess navigator.geolocation without browser permission prompts."
-                      link="https://blog.pwabuilder.com/docs/android-platform"
-                    >
-                    </hover-tooltip>
-                  </label>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label
-                  >${localeStrings.text.android.titles
-                    .google_play_billing}</label
-                >
-                <div class="form-check">
-                  <input
-                    .defaultChecked="${false}"
-                    class="form-check-input"
-                    type="checkbox"
-                    id="enablePlayBillingInput"
-                    name="playBilling"
-                  />
-                  <label class="form-check-label" for="enablePlayBillingInput">
-                    Enable
-                    <i
-                      class="fas fa-info-circle"
-                      title="Whether to enable in-app purchases through Google Play Billing and the Digital Goods API."
-                      aria-label="Whether to enable in-app purchases through Google Play Billing and the Digital Goods API."
-                      role="definition"
-                    ></i>
-
-                    <hover-tooltip
-                      text="Whether to enable in-app purchases through Google Play Billing and the Digital Goods API."
-                      link="https://blog.pwabuilder.com/docs/android-platform"
-                    >
-                    </hover-tooltip>
-                  </label>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label
-                  >${localeStrings.text.android.titles.settings_shortcut}</label
-                >
-                <div class="form-check">
-                  <input
-                    .defaultChecked="${true}"
-                    class="form-check-input"
-                    type="checkbox"
-                    id="enableSettingsShortcutInput"
-                    name="enableSiteSettingsShortcut"
-                  />
-                  <label
-                    class="form-check-label"
-                    for="enableSettingsShortcutInput"
-                  >
-                    Enable
-                    <i
-                      class="fas fa-info-circle"
-                      title="If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app."
-                      aria-label="If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app."
-                      role="definition"
-                    ></i>
-
-                    <hover-tooltip
-                      text="If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app."
-                      link="https://blog.pwabuilder.com/docs/android-platform"
-                    >
-                    </hover-tooltip>
-                  </label>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label
-                  >${localeStrings.text.android.titles.chromeos_only}</label
-                >
-                <div class="form-check">
-                  <input
-                    .defaultChecked="${false}"
-                    class="form-check-input"
-                    type="checkbox"
-                    id="chromeOSOnlyInput"
-                    name="isChromeOSOnly"
-                  />
-                  <label class="form-check-label" for="chromeOSOnlyInput">
-                    Enable
-                    <i
-                      class="fas fa-info-circle"
-                      title="If enabled, your Android package will only run on ChromeOS devices"
-                      aria-label="If enabled, your Android package will only run on ChromeOS devices"
-                      role="definition"
-                    ></i>
-
-                    <hover-tooltip
-                      text="If enabled, your Android package will only run on ChromeOS devices"
-                      link="https://blog.pwabuilder.com/docs/android-platform"
-                    >
-                    </hover-tooltip>
-                  </label>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label>${localeStrings.text.android.titles.source_code}</label>
-                <div class="form-check">
-                  <input
-                    .defaultChecked="${false}"
-                    class="form-check-input"
-                    type="checkbox"
-                    id="includeSourceCodeInput"
-                    name="includeSourceCode"
-                  />
-                  <label class="form-check-label" for="includeSourceCodeInput">
-                    Enable
-                    <i
-                      class="fas fa-info-circle"
-                      title="If enabled, your download will include the source code for your Android app."
-                      aria-label="If enabled, your download will include the source code for your Android app."
-                      role="definition"
-                    ></i>
-
-                    <hover-tooltip
-                      text="If enabled, your download will include the source code for your Android app."
-                      link="https://blog.pwabuilder.com/docs/android-platform"
-                    >
-                    </hover-tooltip>
-                  </label>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label>${localeStrings.text.android.titles.signing_key}</label>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    id="generateSigningKeyInput"
-                    value="new"
-                    name="signingMode"
-                    @change="${(ev: Event) =>
-                      this.androidSigningModeChanged((ev.target as any).value)}"
-                    .defaultChecked="${true}"
-                  />
-                  <label class="form-check-label" for="generateSigningKeyInput">
-                    Create new
-                    <i
-                      class="fas fa-info-circle"
-                      title="PWABuilder will generate a new signing key for you and sign your APK with it. Your download will contain the new signing key and passwords."
-                      aria-label="PWABuilder will generate a new signing key for you and sign your APK with it. Your download will contain the new signing key and passwords."
-                      role="definition"
-                    ></i>
-                    <hover-tooltip
-                      text="PWABuilder will generate a new signing key for you and sign your APK with it. Your download will contain the new signing key and passwords."
-                      link="https://blog.pwabuilder.com/docs/android-platform"
-                    >
-                    </hover-tooltip>
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    id="unsignedInput"
-                    value="none"
-                    name="signingMode"
-                    @change="${(ev: Event) =>
-                      this.androidSigningModeChanged((ev.target as any).value)}"
-                  />
-                  <label class="form-check-label" for="unsignedInput">
-                    None
-                    <i
-                      class="fas fa-info-circle"
-                      title="PWABuilder will generate an unsigned APK. Google Play Store will sign your package. This is Google's recommended approach."
-                      aria-label="PWABuilder will generate an unsigned APK. Google Play Store will sign your package. This is Google's recommended approach."
-                      role="definition"
-                    ></i>
-
-                    <hover-tooltip
-                      text="PWABuilder will generate an unsigned APK. Google Play Store will sign your package. This is Google's recommended approach."
-                      link="https://blog.pwabuilder.com/docs/android-platform"
-                    >
-                    </hover-tooltip>
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    id="useMySigningInput"
-                    value="mine"
-                    name="signingMode"
-                    @change="${(ev: Event) =>
-                      this.androidSigningModeChanged((ev.target as any).value)}"
-                  />
-                  <label class="form-check-label" for="useMySigningInput">
-                    Use mine
-                    <i
-                      class="fas fa-info-circle"
-                      title="Upload your existing signing key. Use this option if you already have a signing key and you want to publish a new version of an existing app in Google Play."
-                      aria-label="Upload your existing signing key. Use this option if you already have a signing key and you want to publish a new version of an existing app in Google Play."
-                      role="definition"
-                    ></i>
-
-                    <hover-tooltip
-                      text="Upload your existing signing key. Use this option if you already have a signing key and you want to publish a new version of an existing app in Google Play."
-                      link="https://blog.pwabuilder.com/docs/android-platform"
-                    >
-                    </hover-tooltip>
-                  </label>
-                </div>
-              </div>
-
-              ${this.signingMode === 'mine' || this.signingMode === 'new'
-                ? html`
-                    <div style="margin-left: 15px;">
-                      ${this.signingMode === 'mine'
-                        ? html`
-                            <div class="form-group">
-                              <label for="signingKeyInput">Key file</label>
-                              <input
-                                type="file"
-                                class="form-control"
-                                id="signingKeyInput"
-                                @change="${(ev: Event) =>
-                                  this.androidSigningKeyUploaded(ev.target)}"
-                                accept=".keystore"
-                                required
-                                style="border: none;"
-                                value="${ifDefined(this.file)}"
-                              />
-                            </div>
-                          `
-                        : null}
-
-                      <div class="form-group">
-                        <label for="signingKeyAliasInput">Key alias</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="signingKeyAliasInput"
-                          placeholder="my-key-alias"
-                          required
-                          name="alias"
-                          value="${this.alias}"
-                        />
-                      </div>
-
-                      ${this.signingMode === 'new'
-                        ? html`
-                            <div class="form-group">
-                              <label for="signingKeyFullNameInput"
-                                >Key full name</label
-                              >
-                              <input
-                                type="text"
-                                class="form-control"
-                                id="signingKeyFullNameInput"
-                                required
-                                placeholder="John Doe"
-                                name="fullName"
-                                value="${this.signingKeyFullName}"
-                              />
-                            </div>
-
-                            <div class="form-group">
-                              <label for="signingKeyOrgInput"
-                                >Key organization</label
-                              >
-                              <input
-                                type="text"
-                                class="form-control"
-                                id="signingKeyOrgInput"
-                                required
-                                placeholder="My Company"
-                                name="organization"
-                                value="${this.organization}"
-                              />
-                            </div>
-
-                            <div class="form-group">
-                              <label for="signingKeyOrgUnitInput"
-                                >Key organizational unit</label
-                              >
-                              <input
-                                type="text"
-                                class="form-control"
-                                id="signingKeyOrgUnitInput"
-                                required
-                                placeholder="Engineering Department"
-                                name="organizationalUnit"
-                                value="${this.organizationalUnit}"
-                              />
-                            </div>
-
-                            <div class="form-group">
-                              <label for="signingKeyCountryCodeInput">
-                                Key country code
-                                <i
-                                  class="fas fa-info-circle"
-                                  title="The 2 letter country code to list on the signing key"
-                                  aria-label="The 2 letter country code to list on the signing key"
-                                  role="definition"
-                                ></i>
-
-                                <hover-tooltip
-                                  text="The 2 letter country code to list on the signing key"
-                                  link="https://blog.pwabuilder.com/docs/android-platform"
-                                >
-                                </hover-tooltip>
-                              </label>
-                              <input
-                                type="text"
-                                class="form-control"
-                                id="signingKeyCountryCodeInput"
-                                required
-                                placeholder="US"
-                                name="countryCode"
-                                value="${this.countryCode}"
-                              />
-                            </div>
-                          `
-                        : null}
-
-                      <div class="form-group">
-                        <label for="signingKeyPasswordInput">
-                          Key password
-                          <i
-                            class="fas fa-info-circle"
-                            title="The password for the signing key. Type a new password or leave empty to use a generated password."
-                            aria-label="The password for the signing key. Type a new password or leave empty to use a generated password."
-                            role="definition"
-                          ></i>
-
-                          <hover-tooltip
-                            text="The 2 letter country code to list on the signing key"
-                            link="The password for the signing key. Type a new password or leave empty to use a generated password."
-                          >
-                          </hover-tooltip>
-                        </label>
-                        <input
-                          type="password"
-                          class="form-control"
-                          id="signingKeyPasswordInput"
-                          name="keyPassword"
-                          placeholder="Password to your signing key"
-                          minlength="6"
-                          value="${this.keyPassword}"
-                        />
-                      </div>
-
-                      <div class="form-group">
-                        <label for="signingKeyStorePasswordInput">
-                          Key store password
-                          <i
-                            class="fas fa-info-circle"
-                            title="The password for the key store. Type a new password or leave empty to use a generated password."
-                            aria-label="The password for the key store. Type a new password or leave empty to use a generated password."
-                            role="definition"
-                          ></i>
-
-                          <hover-tooltip
-                            text="The 2 letter country code to list on the signing key"
-                            link="The password for the key store. Type a new password or leave empty to use a generated password."
-                          >
-                          </hover-tooltip>
-                        </label>
-                        <input
-                          type="password"
-                          class="form-control"
-                          id="signingKeyStorePasswordInput"
-                          name="storePassword"
-                          placeholder="Password to your key store"
-                          minlength="6"
-                          value="${this.storePassword}"
-                        />
-                      </div>
-                    </div>
-                  `
-                : null}
             </fast-accordion-item>
           </fast-accordion>
         </div>
@@ -1215,6 +622,173 @@ export class AndroidForm extends AppPackageFormBase {
           </loading-button>
         </div>
       </form>
+    `;
+  }
+
+  renderSigningKeyFields(): TemplateResult {
+    if (this.packageOptions.signingMode === 'new') {
+      return this.renderNewSigningKeyFields();
+    }
+
+    if (this.packageOptions.signingMode === 'mine') {
+      return this.renderExistingSigningKeyFields();
+    }
+
+    // Otherwise, nothing to render.
+    return html``;
+  }
+
+  renderNewSigningKeyFields(): TemplateResult {
+    return html`
+      <div class="signing-key-fields">
+        <div class="form-group">
+          ${this.renderKeyAlias()}
+        </div>
+
+        <div class="form-group">
+          ${this.renderFormInput({
+            label: 'Key full name',
+            tooltip: `Your full name. Used when create the new signing key.`,
+            tooltipLink: 'https://developer.android.com/studio/publish/app-signing',
+            inputId: 'key-full-name-input',
+            required: true,
+            placeholder: 'John Doe',
+            value: this.packageOptions.signing.fullName || '',
+            spellcheck: false,
+            inputHandler: (val: string) => this.packageOptions.signing.fullName = val
+          })}
+        </div>
+
+        <div class="form-group">
+          ${this.renderFormInput({
+            label: 'Key organization',
+            tooltip: `The name of your company or organization. Used as the organization of the new signing key.`,
+            tooltipLink: 'https://developer.android.com/studio/publish/app-signing',
+            inputId: 'key-org-input',
+            required: true,
+            placeholder: 'My Company',
+            value: this.packageOptions.signing.organization || '',
+            spellcheck: false,
+            inputHandler: (val: string) => this.packageOptions.signing.organization = val
+          })}
+        </div>
+
+        <div class="form-group">
+          ${this.renderFormInput({
+            label: 'Key organizational unit',
+            tooltip: `The department you work in, e.g. "Engineering". Used as the organizational unit of the new signing key.`,
+            tooltipLink: 'https://developer.android.com/studio/publish/app-signing',
+            inputId: 'key-org-unit-input',
+            required: true,
+            placeholder: 'Engineering Department',
+            value: this.packageOptions.signing.organizationalUnit,
+            spellcheck: false,
+            inputHandler: (val: string) => this.packageOptions.signing.organizationalUnit = val
+          })}
+        </div>
+
+        <div class="form-group">
+          ${this.renderFormInput({
+            label: 'Key country code',
+            tooltip: `Your country's 2 letter code (e.g. "US"). Used as the country of the new signing key.`,
+            tooltipLink: 'https://developer.android.com/studio/publish/app-signing',
+            inputId: 'key-org-unit-input',
+            required: true,
+            placeholder: 'US',
+            value: this.packageOptions.signing.countryCode,
+            spellcheck: false,
+            minLength: 2,
+            maxLength: 2,
+            validationErrorMessage: 'Country code must be 2 characters in length',
+            inputHandler: (val: string) => this.packageOptions.signing.countryCode = val
+          })}
+        </div>
+      </div>
+    `;
+  }
+
+  renderExistingSigningKeyFields(): TemplateResult {
+    return html`
+      <div class="signing-key-fields">
+        <div class="form-group">
+          <label for="signing-key-file-input">Key file</label>
+          <input
+            type="file"
+            class="form-control"
+            id="signing-key-file-input"
+            @change="${(e: Event) =>
+              this.androidSigningKeyUploaded(e.target)}"
+            accept=".keystore"
+            required
+          />
+        </div>
+        ${this.renderKeyAlias()}
+        ${this.renderKeyPassword()}
+        ${this.renderKeyStorePassword()}
+      </div>
+    `;
+  }
+
+  renderKeyAlias(): TemplateResult {
+    const tooltip = this.packageOptions.signingMode === 'new' ?
+      'The alias to use in the new signing key.' :
+      'The alias of your existing signing key.'
+    return html`
+      <div class="form-group">
+        ${this.renderFormInput({
+          label: 'Key alias',
+          tooltip: tooltip,
+          tooltipLink: 'https://developer.android.com/studio/publish/app-signing',
+          inputId: 'key-alias-input',
+          required: true,
+          placeholder: 'my-key-alias',
+          value: this.packageOptions.signing.alias || '',
+          spellcheck: false,
+          inputHandler: (val: string) => this.packageOptions.signing.alias = val
+        })}
+      </div>
+    `;
+  }
+
+  renderKeyPassword(): TemplateResult {
+    const tooltip = this.packageOptions.signingMode === 'new' ?
+      'The password to use for the new signing key. Leave blank to let PWABuilder generate a strong password for you.' :
+      'Your existing key password'
+    return html`
+      <div class="form-group">
+        ${this.renderFormInput({
+          label: 'Key password',
+          tooltip: tooltip,
+          tooltipLink: 'https://developer.android.com/studio/publish/app-signing',
+          inputId: 'key-password-input',
+          type: 'password',
+          minLength: 6,
+          required: this.packageOptions.signingMode === 'mine',
+          value: this.packageOptions.signing.keyPassword,
+          inputHandler: (val: string) => this.packageOptions.signing.keyPassword = val
+        })}
+      </div>
+    `;
+  }
+
+  renderKeyStorePassword(): TemplateResult {
+    const tooltip = this.packageOptions.signingMode === 'new' ?
+      'The key store password to use in the new signing key. Leave blank to let PWABuilder generate a strong key store password for you.' :
+      'Your existing key store password'
+    return html`
+      <div class="form-group">
+        ${this.renderFormInput({
+          label: 'Key store password',
+          tooltip: tooltip,
+          tooltipLink: 'https://developer.android.com/studio/publish/app-signing',
+          inputId: 'key-store-password-input',
+          type: 'password',
+          minLength: 6,
+          required: this.packageOptions.signingMode === 'mine',
+          value: this.packageOptions.signing.storePassword,
+          inputHandler: (val: string) => this.packageOptions.signing.storePassword = val
+        })}
+      </div>
     `;
   }
 }
