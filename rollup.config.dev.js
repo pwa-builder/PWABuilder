@@ -23,7 +23,7 @@ export default {
     }),
     litcss(),
     replace({
-        "window.ENV": JSON.stringify(process.env.NODE_ENV || "development")
+      "window.ENV": JSON.stringify(process.env.NODE_ENV || "development")
     }),
     copy({
       targets: [
@@ -33,6 +33,7 @@ export default {
         { src: "workers/**/*", dest: "build/workers/" },
         { src: "fast-components.min.js", dest: "build/" }
       ],
+      copyOnce: true
     }),
   ],
 };
