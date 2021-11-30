@@ -610,8 +610,8 @@ export class PortalsPublish extends LitElement {
           <h3>Publish your PWA to stores</h3>
 
           <p>
-            Generate store-ready packages for the Microsoft Store, Google
-            Play, iOS and more
+            Generate store-ready packages for the Microsoft Store and Google
+            Play.
           </p>
         </section>
 
@@ -662,12 +662,5 @@ const platforms: ICardData[] = [
       'Publish your PWA to the Google Play Store to make your app more discoverable for Android users.',
     isActionCard: true,
     icon: '/assets/android_icon.svg',
-  },
-  {
-    title: 'iOS',
-    description:
-      'Publish your PWA to the iOS App Store to make it available to iPhone and iPad users. Requires a Mac to build the package.',
-    isActionCard: true,
-    icon: '/assets/apple_icon.svg'
   }
 ];
