@@ -11,7 +11,8 @@ export const env = {
   safeUrlFetcher: '',
   webPackageGeneratorUrl: '',
   webPackageGeneratorFormUrl: '',
-  ratingUrl: ''
+  ratingUrl: '',
+  zipCreatorUrl: ''
 }
 
 if ((window as any).ENV == "production") {
@@ -28,6 +29,7 @@ if ((window as any).ENV == "production") {
   env.webPackageGeneratorUrl = 'https://pwabuilder-web-platform.azurewebsites.net/';
   env.webPackageGeneratorFormUrl = 'https://pwabuilder-web-platform.azurewebsites.net/form';
   env.ratingUrl = 'https://pwabuilder-url-logger-api.azurewebsites.net/api/analyses/getaveragescores';
+  env.zipCreatorUrl = 'https://azure-express-zip-creator.azurewebsites.net/api';
 } else {
   env.manifestFinderUrl = 'https://pwabuilder-manifest-finder.azurewebsites.net/api/findmanifest';
   env.manifestCreatorUrl = 'https://pwabuilder-manifest-creator.azurewebsites.net/api/create'
@@ -41,4 +43,6 @@ if ((window as any).ENV == "production") {
   env.webPackageGeneratorUrl = 'https://pwabuilder-web-platform.azurewebsites.net/';
   env.webPackageGeneratorFormUrl = 'https://pwabuilder-web-platform.azurewebsites.net/form';
   env.ratingUrl = 'https://pwabuilder-url-logger-api.azurewebsites.net/api/analyses/getaveragescores';
+  env.zipCreatorUrl = 'https://azure-express-zip-creator.azurewebsites.net/api';
 }
+
