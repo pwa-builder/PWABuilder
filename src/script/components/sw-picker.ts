@@ -39,7 +39,7 @@ export class SWPicker extends LitElement {
       css`
         :host {
           display: block;
-          width: 100%;
+          width: 95%;
 
           padding: 32px;
         }
