@@ -284,17 +284,19 @@ export async function doubleCheckManifest(maniContext: ManifestContext): Promise
   let icon = false;
 
   test_results.forEach(test => {
-    if (test.infoString.includes('start_url')) {
-      startURL = test.result;
-    }
-    if (test.infoString.includes('short_name')) {
-      shortName = test.result;
-    }
-    if (test.infoString.includes('name') && test.infoString.toLowerCase().includes('short_name') === false) {
-      name = test.result;
-    }
-    if (test.infoString.includes('512')) {
-      icon = test.result;
+    if (test.category === 'required') {
+      if (test.infoString.includes('start_url')) {
+        startURL = test.result;
+      }
+      if (test.infoString.includes('short_name')) {
+        shortName = test.result;
+      }
+      if (test.infoString.includes('name') && test.infoString.toLowerCase().includes('short_name') === false) {
+        name = test.result;
+      }
+      if (test.infoString.includes('512')) {
+        icon = test.result;
+      }
     }
   });
 
