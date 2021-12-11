@@ -1,4 +1,4 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, css, html, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 
@@ -489,6 +489,21 @@ export class AppManifest extends LitElement {
     super.disconnectedCallback();
   }
 
+  renderDownloadButton(): TemplateResult {
+    if(this.iconsList) {
+     return html`<loading-button
+            class="hidden-sm"
+            appearance="outline"
+            ?loading=${this.awaitRequest}
+            @click=${this.downloadIcons}
+            >${localeStrings.button.download}</loading-button
+          >`
+    } else {
+      console.log("MANIFEST.ICONS.LENGTH:", this.iconsList);
+      return html``;
+    }
+  }
+
   render() {
     return html`
       <div class="panel">
@@ -610,17 +625,9 @@ export class AppManifest extends LitElement {
                   .images=${this.iconSrcListParse()}
                 ></app-gallery>`
               : null}
-            ${this.manifest &&
-            this.manifest.icons &&
-            this.manifest.icons.length > 0
-              ? html`<loading-button
-                  class="hidden-sm"
-                  appearance="outline"
-                  ?loading=${this.awaitRequest}
-                  @click=${this.downloadIcons}
-                  >${localeStrings.button.download}</loading-button
-                >`
-              : null}
+        ${
+          this.renderDownloadButton()
+        }        
           </div>
           <div class="screenshots">
             <div class="screenshots-header">
@@ -1092,6 +1099,7 @@ export class AppManifest extends LitElement {
         this.iconsList = await generateMissingImagesBase64({
           file: this.uploadSelectedImageFile,
         });
+
       }
     } catch (e) {
       console.error(e);
@@ -1233,6 +1241,7 @@ export class AppManifest extends LitElement {
   }
 
   openUploadModal() {
+
     this.uploadModalOpen = true;
   }
 
@@ -1251,9 +1260,9 @@ export class AppManifest extends LitElement {
     this.awaitRequest = true;
 
     try {
-      if (this.manifest && this.manifest.icons) {
+      if (this.manifest && this.iconsList) {
         await generateAndDownloadIconZip(
-          this.manifest.icons.map(icon => {
+          this.iconsList.map(icon => {
             icon.src = this.handleImageUrl(icon) || '';
             return icon;
           })

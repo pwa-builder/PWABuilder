@@ -5,7 +5,6 @@ import { env } from '../utils/environment';
 const url = env.zipCreatorUrl;
 
 function convertBase64ToBlob(base64Image: string) {
-  console.log('base 64:', base64Image);
   // Split into two parts
   const parts = base64Image.split(';base64,');
 
@@ -28,16 +27,22 @@ function convertBase64ToBlob(base64Image: string) {
 }
 
 export async function generateAndDownloadIconZip(images: Array<Icon>) {
-
   let formData = new FormData();
-  images.forEach((image, index) => {
+  let formArray = images.map(image => {
+    let imageClone = Object.assign({}, image);
+    if(imageClone.src.includes('data:image')) {
+      imageClone.src = "data:image";
+    }
+    return imageClone;
+  });
+  formData.append("icons", JSON.stringify(formArray));
+  
+  images.forEach(image => {
     if(image.src.includes('data:image')) {
       let newImageBlob = convertBase64ToBlob(image.src);
-      formData.append(`image-${index}`, newImageBlob);
-    } else {
-      formData.append(`image-url-${index}`, image.src);
-    }
-  })
+      formData.append("images", newImageBlob);
+    }; 
+  });
 
   try {
     const response = await fetch(url, { 

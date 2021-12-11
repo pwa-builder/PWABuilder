@@ -15,7 +15,13 @@ export async function download(config: DownloadConfig) {
     };
 
     if (config.blob) {
-      await fileSave(config.blob, fsOpts);
+      let link = document.createElement("a");
+
+      link.href = URL.createObjectURL(config.blob);
+
+      link.setAttribute("download", fsOpts.fileName);
+
+      link.click();
     }
   } catch (e) {
     console.error(e);
