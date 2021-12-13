@@ -7,8 +7,8 @@ import {
   RawTestResult,
   Status,
 } from '../utils/interfaces';
+import { runManifestChecks } from '../utils/manifest-validation';
 import { getChosenServiceWorker } from './service_worker';
-import { runManifestChecks } from './tests/manifest'; // TODO: this creates a cyclical reference between app-info and manifest.ts. We should remove this.
 
 let site_url: string | undefined;
 let results: RawTestResult | undefined;
