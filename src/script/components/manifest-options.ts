@@ -498,10 +498,8 @@ export class AppManifest extends LitElement {
             @click=${this.downloadIcons}
             >${localeStrings.button.download}</loading-button
           >`
-    } else {
-      console.log("MANIFEST.ICONS.LENGTH:", this.iconsList);
-      return html``;
-    }
+    } 
+    return html``;
   }
 
   render() {
@@ -625,9 +623,7 @@ export class AppManifest extends LitElement {
                   .images=${this.iconSrcListParse()}
                 ></app-gallery>`
               : null}
-        ${
-          this.renderDownloadButton()
-        }        
+        ${this.renderDownloadButton()}
           </div>
           <div class="screenshots">
             <div class="screenshots-header">
