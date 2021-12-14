@@ -102,6 +102,32 @@ export function generatePackageId(host: string): string {
   return parts.join('.');
 }
 
+export function validateAndroidPackageId(packageId?: string | null): AndroidPackageValidationError[] {
+  const packageErrors: AndroidPackageValidationError[] = [];
+  if (!packageId) {
+    packageErrors.push({ field: 'packageId', error: 'No package ID' });
+  }
+
+  if (packageId && packageId.search(/[^a-zA-Z0-9-_.]/) !== -1) {
+    packageErrors.push({
+      field: 'packageId',
+      error:
+        'Package ID must not contain any character other than alphanumeric, period, hyphen, and underscore.',
+    });
+  }
+
+  // Package ID can't contain ".if.", can't start with "if.", and can't end with ".if"
+  // See https://github.com/pwa-builder/PWABuilder/issues/2146
+  if (packageId && (packageId.includes('.if.') || packageId.startsWith('if.') || packageId?.endsWith('.if'))) {
+    packageErrors.push({
+      field: 'packageId',
+      error: 'Package ID must not contain ".if.", must not start with "if.", and must not end with ".if"'
+    });
+  }
+
+  return packageErrors;
+}
+
 export function validateAndroidOptions(
   options: Partial<AndroidPackageOptions | null>
 ): AndroidPackageValidationError[] {
@@ -111,26 +137,7 @@ export function validateAndroidOptions(
     return validationErrors;
   }
 
-  if (!options.packageId) {
-    validationErrors.push({ field: 'packageId', error: 'No package ID' });
-  }
-
-  if (options.packageId && options.packageId.search(/[^a-zA-Z0-9-_.]/) !== -1) {
-    validationErrors.push({
-      field: 'packageId',
-      error:
-        'Package ID must not contain any character other than alphanumeric, period, hyphen, and underscore.',
-    });
-  }
-
-  // Package ID can't contain ".if.", can't start with "if.", and can't end with ".if"
-  // See https://github.com/pwa-builder/PWABuilder/issues/2146
-  if (options.packageId && (options.packageId.includes('.if.') || options.packageId.startsWith('if.') || options.packageId?.endsWith('.if'))) {
-    validationErrors.push({
-      field: 'packageId',
-      error: 'Package ID must not contain ".if.", must not start with "if.", and must not end with ".if"'
-    });
-  }
+  validationErrors.push(...validateAndroidPackageId(options?.packageId));
 
   if (!options.name || options.name.trim().length === 0) {
     validationErrors.push({
@@ -142,7 +149,7 @@ export function validateAndroidOptions(
   if (options.name && (options.name.length < 3 || options.name.length > 50)) {
     validationErrors.push({
       field: 'name',
-      error: 'Name must not be between 3 and 50 characters in length'
+      error: 'Name must be between 3 and 50 characters in length'
     });
   }
 

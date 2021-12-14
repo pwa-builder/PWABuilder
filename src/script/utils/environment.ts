@@ -7,6 +7,7 @@ export const env = {
   windowsPackageGeneratorUrl: '',
   androidPackageGeneratorUrl: '',
   iosPackageGeneratorUrl: '',
+  oculusPackageGeneratorUrl: '',
   imageGeneratorUrl: '',
   safeUrlFetcher: '',
   webPackageGeneratorUrl: '',
@@ -24,6 +25,7 @@ if ((window as any).ENV == "production") {
   env.windowsPackageGeneratorUrl = 'https://pwabuilder-win-chromium-platform.centralus.cloudapp.azure.com/msix/generatezip';
   env.androidPackageGeneratorUrl = 'https://pwabuilder-cloudapk.azurewebsites.net';
   env.iosPackageGeneratorUrl = 'https://pwabuilder-ios.azurewebsites.net/packages/create';
+  env.oculusPackageGeneratorUrl = 'https://pwabuilder-oculus.centralus.cloudapp.azure.com/packages/create';
   env.imageGeneratorUrl = 'https://appimagegenerator-prod.azurewebsites.net/api/image';
   env.safeUrlFetcher = 'https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl';
   env.webPackageGeneratorUrl = 'https://pwabuilder-web-platform.azurewebsites.net/';
@@ -38,6 +40,7 @@ if ((window as any).ENV == "production") {
   env.windowsPackageGeneratorUrl = 'https://pwabuilder-win-chromium-platform.centralus.cloudapp.azure.com/msix/generatezip';
   env.androidPackageGeneratorUrl = 'https://pwabuilder-cloudapk-pre.azurewebsites.net'; // changed 
   env.iosPackageGeneratorUrl = 'https://pwabuilder-ios.azurewebsites.net/packages/create';
+  env.oculusPackageGeneratorUrl = 'https://pwabuilder-oculus.centralus.cloudapp.azure.com/packages/create';
   env.imageGeneratorUrl = 'https://appimagegenerator-pre.azurewebsites.net'; // changed
   env.safeUrlFetcher = 'https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl';
   env.webPackageGeneratorUrl = 'https://pwabuilder-web-platform.azurewebsites.net/';
