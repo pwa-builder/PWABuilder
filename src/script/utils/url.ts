@@ -78,12 +78,7 @@ export function cleanUrl(url: string): string {
 export function isValidURL(str: string) {
   // from https://stackoverflow.com/a/5717133
   var pattern = new RegExp(
-    '^(https?:\\/\\/)?' +
-    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
-    '((\\d{1,3}\\.){3}\\d{1,3}))' +
-    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
-    '(\\?[;&a-z\\d%_.~+=-]*)?' +
-    '(\\#[-a-z\\d_]*)?$',
+    '^((https?:)?\\/\\/)?(?:\\S+(?::\\S*)?@)?(([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*(\\?[;&a-z\\d%_.~+=-]*)?(\\\\#[-a-z\\\\d_]*)?',
     'i'
   );
   return !!pattern.test(str);
