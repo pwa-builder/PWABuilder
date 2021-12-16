@@ -83,7 +83,7 @@ export function isValidURL(str: string) {
     '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
     '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
     '(\\\\#[-a-z\\\\d_]*)?', // fragment locator
-    'i'
+    'i' // case insensitive
   );
   return !!pattern.test(str);
 }
