@@ -407,7 +407,6 @@ export class ContentHeader extends LitElement {
     return html`
       <div id="circles-box">
         <div id="background-filter-box">
-          <app-header part="header"></app-header>
 
           <div part="main-container" id="main-container">
             <section id="content-side">

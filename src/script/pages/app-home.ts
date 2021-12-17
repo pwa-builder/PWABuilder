@@ -345,6 +345,8 @@ export class AppHome extends LitElement {
   render() {
     return html`
       <survey-banner></survey-banner>
+      <app-header part="header"></app-header>
+      <main>
       <content-header class="home">
         <h1 id="home-header" slot="hero-container">
           Ship your PWA to the app stores at lightning speed.
@@ -406,6 +408,7 @@ export class AppHome extends LitElement {
           components from the PWABuilder team!
         </p>
       </resource-hub>
+      </main>
     `;
   }
 }
