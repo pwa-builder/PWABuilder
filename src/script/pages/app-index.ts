@@ -156,9 +156,9 @@ export class AppIndex extends LitElement {
         <!--required cookie banner-->
         <cookie-banner></cookie-banner>
       
-        <main>
+        <div>
           <div id="router-outlet"></div>
-        </main>
+        </div>
       
         <app-footer></app-footer>
       </div>
