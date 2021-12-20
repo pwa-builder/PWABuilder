@@ -19,7 +19,6 @@ import '../components/resource-hub';
 import '../components/loading-button';
 import '../components/dropdown-menu';
 import '../components/app-sidebar';
-import '../components/survey-banner';
 
 //@ts-ignore
 import style from '../../../styles/error-styles.css';
@@ -344,7 +343,6 @@ export class AppHome extends LitElement {
 
   render() {
     return html`
-      <survey-banner></survey-banner>
       <app-header part="header"></app-header>
       <main>
       <content-header class="home">
