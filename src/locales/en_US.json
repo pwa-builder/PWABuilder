@@ -10,7 +10,7 @@
     "home": {
       "error": {
         "promises": "There was a problem retrieving the manifest from your site.",
-        "invalidURL": "The URL you entered is not a properly formatted URL"
+        "invalidURL": "Invalid URL, please try again."
       }
     },
     "manifest": {
