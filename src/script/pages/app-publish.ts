@@ -674,6 +674,15 @@ export class AppPublish extends LitElement {
     this.openiOSOptions = false;
   }
 
+  fetchAndroidNav() {
+    return html`
+      <div id="apk-type">
+        <p>Google Play</p>
+        <p>Other Android</p>
+      </div>
+    `
+  }
+
   render() {
     return html`
       <!-- error modal -->
@@ -717,7 +726,7 @@ export class AppPublish extends LitElement {
       </app-modal>
       
       <!-- android options modal -->
-      <app-modal id="android-options-modal" heading="Android App Options" body="Customize your Android app below"
+      <app-modal id="android-options-modal" heading="Android App Options" body="Customize your Android app below" nav=${true}
         ?open="${this.openAndroidOptions === true}" @app-modal-close="${() => this.storeOptionsCancel()}">
         <android-form slot="modal-form" .generating=${this.generating} @init-android-gen="${(e: CustomEvent) =>
               this.generate('android', e.detail as AndroidPackageOptions)}"></android-form>
