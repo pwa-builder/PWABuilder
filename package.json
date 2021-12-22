@@ -41,7 +41,7 @@
     "lit": "^2.0.0",
     "lodash-es": "^4.17.21",
     "workbox-build": "^6.1.5",
-    "workbox-core": "^6.1.2",
+    "workbox-core": "^6.4.2",
     "workbox-precaching": "^6.1.2"
   },
   "devDependencies": {
