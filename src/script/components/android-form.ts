@@ -43,6 +43,23 @@ export class AndroidForm extends AppPackageFormBase {
     }
 
     this.packageOptions = createAndroidPackageOptionsFromManifest(this.manifestContext);
+    if(!this.isGooglePlayApk){
+      this.packageOptions.features.locationDelegation!.enabled = false;
+      this.packageOptions.features.playBilling!.enabled = false;
+      this.packageOptions.isChromeOSOnly = false;
+      this.packageOptions.enableNotifications = false;
+      this.packageOptions.signingMode = "none";
+      this.packageOptions.signing = {
+                                      file: null,
+                                      alias: '',
+                                      fullName: '',
+                                      organization: '',
+                                      organizationalUnit: '',
+                                      countryCode: '',
+                                      keyPassword: '',
+                                      storePassword: ''
+                                    };
+    }
   }
 
   initGenerate(ev: InputEvent) {

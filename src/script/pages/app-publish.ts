@@ -728,8 +728,6 @@ export class AppPublish extends LitElement {
     } else {
       this.isGooglePlay = false;
     }
-
-    console.log(this.isGooglePlay);
   }
 
   render() {
