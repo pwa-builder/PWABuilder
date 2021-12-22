@@ -300,6 +300,8 @@ export class AppPublish extends LitElement {
           display: flex;
           width: 100%;
           border-bottom: 2px solid #5D5DB9;
+          margin-top: 20px;
+          margin-bottom: 40px;
         }
 
         #apk-type p {
@@ -311,12 +313,11 @@ export class AppPublish extends LitElement {
           width: 100%;
           height: 100%;
           margin: 0;
-          padding: 3px 0;
+          padding: 10px 0;
         }
 
         #apk-type p:hover {
           cursor: pointer;
-          color: #5D5DB9;
         }
 
         .selected-apk {
