@@ -12,6 +12,7 @@ import { maxSigningKeySizeInBytes } from '../utils/android-validation';
 @customElement('android-form')
 export class AndroidForm extends AppPackageFormBase {
   @property({ type: Boolean }) generating = false;
+  @property({ type: Boolean }) isGooglePlayApk = false;
   @state() showAdvanced = false;
   @state() packageOptions = emptyAndroidPackageOptions();
   @state() manifestContext: ManifestContext = getManifestContext();
@@ -467,6 +468,8 @@ export class AndroidForm extends AppPackageFormBase {
                   </div>
                 </div>
 
+                ${this.isGooglePlayApk ? 
+                html`
                 <div class="form-group">
                   <label>${localeStrings.text.android.titles.notification}</label>
                   <div class="form-check">
@@ -480,8 +483,10 @@ export class AndroidForm extends AppPackageFormBase {
                       inputHandler: (_, checked) => this.packageOptions.enableNotifications = checked
                     })}
                   </div>
-                </div>
+                </div>` : html``}
 
+                ${this.isGooglePlayApk ? 
+                html`
                 <div class="form-group">
                   <label
                     >${localeStrings.text.android.titles
@@ -497,8 +502,10 @@ export class AndroidForm extends AppPackageFormBase {
                       inputHandler: (_, checked) => this.packageOptions.features.locationDelegation!.enabled = checked
                     })}
                   </div>
-                </div>
+                </div>` : html``}
 
+                ${this.isGooglePlayApk ? 
+                html`
                 <div class="form-group">
                   <label
                     >${localeStrings.text.android.titles
@@ -515,7 +522,7 @@ export class AndroidForm extends AppPackageFormBase {
                       inputHandler: (_, checked) => this.packageOptions.features.playBilling!.enabled = checked
                     })}
                   </div>
-                </div>
+                </div>` : html``}
 
                 <div class="form-group">
                   <label>
@@ -533,7 +540,9 @@ export class AndroidForm extends AppPackageFormBase {
                     })}
                   </div>
                 </div>
-
+                  
+                ${this.isGooglePlayApk ? 
+                html`
                 <div class="form-group">
                   <label>
                     ${localeStrings.text.android.titles.chromeos_only}
@@ -548,7 +557,7 @@ export class AndroidForm extends AppPackageFormBase {
                       inputHandler: (_, checked) => this.packageOptions.isChromeOSOnly = checked
                     })}
                   </div>
-                </div>
+                </div>` : html``}
 
                 <div class="form-group">
                   <label>${localeStrings.text.android.titles.source_code}</label>
@@ -564,6 +573,8 @@ export class AndroidForm extends AppPackageFormBase {
                   </div>
                 </div>
 
+                ${this.isGooglePlayApk ? 
+                html`
                 <div class="form-group">
                   <label>${localeStrings.text.android.titles.signing_key}</label>
                   <div class="form-check">
@@ -604,7 +615,8 @@ export class AndroidForm extends AppPackageFormBase {
                   </div>
                 </div>
 
-                ${this.renderSigningKeyFields()}
+                ${this.renderSigningKeyFields()}` :
+                html``}
                 
               </div>
 

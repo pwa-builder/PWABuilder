@@ -60,6 +60,7 @@ export class AppPublish extends LitElement {
   @state() openiOSOptions = false;
 
   @state() generating = false;
+  @state() isGooglePlay = true;
 
   @state() finalChecks: checkResults | undefined;
 
@@ -722,7 +723,13 @@ export class AppPublish extends LitElement {
     let next = event.target;
     next.classList.replace("unselected-apk", "selected-apk");
 
-    // change android form.
+    if(event.target.innerHTML === "Google Play"){
+      this.isGooglePlay = true;
+    } else {
+      this.isGooglePlay = false;
+    }
+
+    console.log(this.isGooglePlay);
   }
 
   render() {
@@ -774,9 +781,13 @@ export class AppPublish extends LitElement {
             <p class="selected-apk apk-type" @click=${(e: any) => this.toggleApkType(e)}>Google Play</p>
             <p class="unselected-apk apk-type" @click=${(e: any) => this.toggleApkType(e)}>Other Android</p>
           </div>
-        <android-form slot="modal-form" .generating=${this.generating} @init-android-gen="${(e: CustomEvent) =>
-              this.generate('android', e.detail as AndroidPackageOptions)}"></android-form>
-      </app-modal>
+          ${this.isGooglePlay ?
+            html`<android-form slot="modal-form" .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay} @init-android-gen="${(e: CustomEvent) =>
+              this.generate('android', e.detail as AndroidPackageOptions)}"></android-form>` :
+            html`<android-form slot="modal-form" .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay} @init-android-gen="${(e: CustomEvent) =>
+              this.generate('android', e.detail as AndroidPackageOptions)}"></android-form>`
+          }
+    </app-modal>
       
       <!-- ios options modal -->
       <app-modal id="ios-options-modal" heading="iOS App Options" body="Customize your iOS app below"
