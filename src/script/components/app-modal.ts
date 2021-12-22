@@ -116,34 +116,9 @@ export class AppModal extends LitElement implements AppModalElement {
           font-size: var(--small-font-size);
           color: var(--secondary-font-color);
         }
-
+        
         #modal-nav {
           width: 100%;
-        }
-
-        #apk-type {
-          display: flex;
-          width: 100%;
-          border-bottom: 2px solid #5D5DB9;
-        }
-
-        #apk-type p {
-          font-size: 20px;
-          font-weight: 700;
-          line-height: 20px;
-          letter-spacing: 0px;
-          text-align: center;
-          width: 100%;
-          height: 100%;
-          margin: 0;
-          padding: 3px 0;
-          border-bottom: 5px solid transparent;
-        }
-
-        #apk-type p:hover {
-          cursor: pointer;
-          border-bottom: 5px solid #5D5DB9;
-          color: #5D5DB9;
         }
       `,
       smallBreakPoint(css`
@@ -264,16 +239,7 @@ export class AppModal extends LitElement implements AppModalElement {
               <p part="modal-body-contents">${this.body}</p>
             </section>
 
-            ${this.nav ? html`
-            <section id="modal-nav" part="modal-nav">
-              <div part="modal-nav-contents">
-                <div id="apk-type">
-                  <p>Google Play</p>
-                  <p>Other Android</p>
-                </div>
-              </div>
-            </section>` : 
-            html``}
+            <slot id="modal-nav" name="modal-nav"></slot>
         
             <slot id="modal-form" name="modal-form"></slot>
         
