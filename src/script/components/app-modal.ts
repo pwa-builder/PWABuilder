@@ -16,6 +16,7 @@ export class AppModal extends LitElement implements AppModalElement {
   @property({ type: String }) heading = '';
   @property({ type: String }) body = '';
   @property({ type: String }) modalId = '';
+  @property() nav: any;
 
   modalAni: Animation | undefined = undefined;
   backgroundAni: Animation | undefined = undefined;
@@ -114,6 +115,10 @@ export class AppModal extends LitElement implements AppModalElement {
           font-weight: 300;
           font-size: var(--small-font-size);
           color: var(--secondary-font-color);
+        }
+        
+        #modal-nav {
+          width: 100%;
         }
       `,
       smallBreakPoint(css`
@@ -233,6 +238,8 @@ export class AppModal extends LitElement implements AppModalElement {
             <section id="modal-body" part="modal-body">
               <p part="modal-body-contents">${this.body}</p>
             </section>
+
+            <slot id="modal-nav" name="modal-nav"></slot>
         
             <slot id="modal-form" name="modal-form"></slot>
         
