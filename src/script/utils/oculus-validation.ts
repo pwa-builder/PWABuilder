@@ -14,9 +14,17 @@ export interface OculusAppPackageOptions {
    */
   name: string;
   /**
+   * The URL analyzed in PWABuilder.
+   */
+  url: string;
+  /**
    * The Android version code of the Oculus app. Should be 1 or greater.
    */
   versionCode: number;
+  /**
+   * The version name displayed to end-users, e.g. "1.0.0.0beta2".
+   */
+  versionName: string;
   /**
    * The URL of the PWA's manifest.
    */
@@ -95,6 +103,10 @@ export function validateOculusOptions(options?: OculusAppPackageOptions | null):
     errors.push('Version code must be greater than zero');
   }
 
+  if (!options.versionName) {
+    errors.push('Version name required');
+  }
+
   if (!options.manifest) {
     errors.push("Manifest required");
   }
@@ -105,8 +117,14 @@ export function validateOculusOptions(options?: OculusAppPackageOptions | null):
 
   try {
     new URL(options.manifestUrl);
+  } catch (manifestUrlError) {
+    errors.push('Manifest URL must be a valid, absolute URL');
+  }
+
+  try {
+    new URL(options.url);
   } catch (urlError) {
-    errors.push('URL must be a valid, absolute URL');
+    errors.push('Url must be a valid, absolute URL');
   }
 
   // It's OK for signing key to be null. But if we've specified an existing signing key, then
