@@ -18,7 +18,12 @@ export class AndroidForm extends AppPackageFormBase {
   @state() manifestContext: ManifestContext = getManifestContext();
 
   static get styles() {
+    
     const localStyles = css`
+
+      :host {
+        width: 100%;
+      }
       .signing-key-fields {
         margin-left: 30px;
       }
@@ -26,6 +31,8 @@ export class AndroidForm extends AppPackageFormBase {
       #signing-key-file-input {
         border: none;
       }
+      
+      
     `;
     return [
       super.styles,
@@ -641,9 +648,12 @@ export class AndroidForm extends AppPackageFormBase {
           </fast-accordion>
         </div>
 
-        <div id="form-details-block">
-          <p>${localeStrings.text.android.description.form_details}</p>
-        </div>
+        ${this.isGooglePlayApk ?
+          html`
+          <div id="form-details-block">
+            <p>${localeStrings.text.android.description.form_details}</p>
+          </div>` : html`<p style="height: 84px; margin: 0;"></p>`
+        }
 
         <div id="form-options-actions" class="modal-actions">
           <loading-button .loading="${this.generating}">

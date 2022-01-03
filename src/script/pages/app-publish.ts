@@ -298,6 +298,7 @@ export class AppPublish extends LitElement {
 
         #apk-type {
           display: flex;
+          align-items: baseline;
           width: 100%;
           border-bottom: 2px solid #5D5DB9;
           margin-top: 20px;
@@ -318,6 +319,16 @@ export class AppPublish extends LitElement {
 
         #apk-type p:hover {
           cursor: pointer;
+        }
+
+        #other-android{
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        #info-tooltip {
+          height: 20px
         }
 
         .selected-apk {
@@ -776,9 +787,13 @@ export class AppPublish extends LitElement {
       <!-- android options modal -->
       <app-modal id="android-options-modal" heading="Android App Options" body="Customize your Android app below" nav=${true}
         ?open="${this.openAndroidOptions === true}" @app-modal-close="${() => this.storeOptionsCancel()}">
-          <div id="apk-type" slot="modal-nav">
+          
+        <div id="apk-type" slot="modal-nav">
             <p class="selected-apk apk-type" @click=${(e: any) => this.toggleApkType(e)}>Google Play</p>
-            <p class="unselected-apk apk-type" @click=${(e: any) => this.toggleApkType(e)}>Other Android</p>
+              <p class="unselected-apk apk-type" id="other-android" @click=${(e: any) => this.toggleApkType(e)}>
+                Other Android
+                <info-circle-tooltip  id="info-tooltip" text='Generates an unsigned APK.'></info-circle-tooltip>
+              </p> 
           </div>
           ${this.isGooglePlay ?
             html`<android-form slot="modal-form" .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay} @init-android-gen="${(e: CustomEvent) =>
