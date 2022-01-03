@@ -40,8 +40,10 @@ export function createOculusPackageOptionsFromManifest(manifestContext: Manifest
     manifestUrl: manifestContext.manifestUrl,
     manifest: manifestContext.manifest,
     versionCode: 1,
+    versionName: '1.0.0.0',
     existingSigningKey: null,
-    signingMode: SigningMode.New
+    signingMode: SigningMode.New,
+    url: manifestContext.siteUrl
   };
 }
 
@@ -52,8 +54,10 @@ export function emptyOculusPackageOptions(): OculusAppPackageOptions {
     manifestUrl: '',
     manifest: {},
     versionCode: 1,
+    versionName: '1.0.0.0',
     existingSigningKey: null,
-    signingMode: SigningMode.New
+    signingMode: SigningMode.New,
+    url: '',
   };
 }
 

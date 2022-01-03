@@ -104,6 +104,20 @@ export class OculusForm extends AppPackageFormBase {
             </div>
 
             <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'Version name',
+                    tooltip: `The version of your app displayed to users. This is a string, typically in the form of '1.0.0.0'. This is purely for display purposes to users, Oculus Store uses Version Code to determine the latest version of your app.`,
+                    tooltipLink: 'https://developer.android.com/guide/topics/manifest/manifest-element.html#vname',
+                    inputId: 'version-input',
+                    required: true,
+                    placeholder: '1.0.0.0',
+                    value: this.packageOptions.versionName,
+                    spellcheck: false,
+                    inputHandler: (val: string) => this.packageOptions.versionName = val
+                  })}
+                </div>
+
+            <div class="form-group">
               ${this.renderFormInput({
                 label: 'Version code',
                 tooltip: `A positive integer used as your app's version number. This number is used by the Oculus Store to determine whether one version is more recent than another, with higher numbers indicating more recent versions.`,
@@ -151,13 +165,26 @@ export class OculusForm extends AppPackageFormBase {
                   <div class="form-check">
                     ${this.renderFormInput({
                       label: 'New',
-                      tooltip: `Recommended for new Oculus apps. PWABuilder will generate a new signing key for you and sign your app package with it. Your download will contain the new signing details.`,
+                      tooltip: `Recommended for new Oculus apps. PWABuilder will generate a new signing key for you and sign your app package with it. Your download will contain the new signing key details.`,
                       inputId: 'signing-new-input',
                       name: 'signingMode',
                       value: 'new',
                       type: 'radio',
                       checked: this.packageOptions.signingMode === SigningMode.New,
                       inputHandler: () => this.signingModeChanged(SigningMode.New)
+                    })}
+                  </div>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'None',
+                      tooltip: 'PWABuilder will generate an unsigned APK. Unsigned APKs cannot be uploaded to the Oculus Store; you will need to sign the APK manually via Java keytool before submitting to the Store.',
+                      tooltipLink: 'https://docs.oracle.com/en/java/javase/12/tools/keytool.html',
+                      inputId: 'signing-none-input',
+                      name: 'signingMode',
+                      value: 'none',
+                      type: 'radio',
+                      checked: this.packageOptions.signingMode === SigningMode.None,
+                      inputHandler: () => this.signingModeChanged(SigningMode.None)
                     })}
                   </div>
                   <div class="form-check">
@@ -170,18 +197,6 @@ export class OculusForm extends AppPackageFormBase {
                       type: 'radio',
                       checked: this.packageOptions.signingMode === SigningMode.Existing,
                       inputHandler: () => this.signingModeChanged(SigningMode.Existing)
-                    })}
-                  </div>
-                  <div class="form-check">
-                    ${this.renderFormInput({
-                      label: 'None',
-                      tooltip: 'PWABuilder will generate a raw, unsigned APK. Raw, unsigned APKs cannot be uploaded to the Oculus Store; you will need to sign the APK manually before submitting to the Store.',
-                      inputId: 'signing-none-input',
-                      name: 'signingMode',
-                      value: 'none',
-                      type: 'radio',
-                      checked: this.packageOptions.signingMode === SigningMode.None,
-                      inputHandler: () => this.signingModeChanged(SigningMode.None)
                     })}
                   </div>
 
