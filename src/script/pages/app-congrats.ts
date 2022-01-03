@@ -26,6 +26,7 @@ import '../components/resource-hub';
 import '../components/windows-form';
 import '../components/android-form';
 import '../components/ios-form';
+import '../components/oculus-form';
 
 import {
   getPlatformsGenerated,
@@ -56,6 +57,7 @@ export class AppCongrats extends LitElement {
   @state() openWindowsOptions = false;
   @state() openAndroidOptions = false;
   @state() openIOSOptions = false;
+  @state() openOculusOptions = false;
   @state() blog_posts: Array<BlogPost> | undefined;
   @state() featuredPost: BlogPost | undefined;
 
@@ -639,8 +641,22 @@ export class AppCongrats extends LitElement {
           slot="modal-form"
           .generating=${this.generating}
           @init-ios-gen="${(ev: CustomEvent) =>
-        this.generateApp('ios', ev.detail)}"
+          this.generateApp('ios', ev.detail)}"
         ></ios-form>
+      </app-modal>
+
+      <app-modal
+        id="oculus-options-modal"
+        heading="Oculus App Options"
+        body="Customize your Oculus app below"
+        ?open="${this.openOculusOptions}"
+      >
+        <oculus-form
+          slot="modal-form"
+          .generating=${this.generating}
+          @init-oculus-gen="${(ev: CustomEvent) =>
+          this.generateApp('oculus', ev.detail)}"
+        ></oculus-form>
       </app-modal>
 
       <div id="congrats-wrapper">
