@@ -75,6 +75,9 @@ export class AppModal extends LitElement implements AppModalElement {
         #modal-body {
           text-align: center;
           width: inherit;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
         #modal-body p {
