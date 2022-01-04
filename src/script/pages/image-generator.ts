@@ -122,6 +122,10 @@ export class ImageGenerator extends LitElement {
           margin: 0 16px;
         }
 
+        #image-generator-card {
+          background: #ffffff;
+        }
+
         #submit {
           margin-top: 8px;
         }
@@ -153,7 +157,7 @@ export class ImageGenerator extends LitElement {
       <div>
         <app-header></app-header>
         <main id="main" role="presentation" class="main background">
-          <fast-card>
+          <fast-card id="image-generator-card">
             <h1>${loc.image_generator}</h1>
             <p>${loc.image_generator_text}</p>
             <form id="imageFileInputForm" enctype="multipart/form-data" role="form" class="form">
