@@ -1160,7 +1160,7 @@ export class AppManifest extends LitElement {
       }
 
       if (list === 'screenshots') {
-        let filteredScreenshotList = this.screenshotsList?.filter((icon, i) => index !== i);
+        let filteredScreenshotList = this.screenshotsList?.filter((image, i) => index !== i);
 
         this.updatePageManifest({
           [list]: filteredScreenshotList,
