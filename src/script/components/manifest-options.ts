@@ -471,6 +471,7 @@ export class AppManifest extends LitElement {
 
       if (this.manifest.icons) {
         this.iconsList = this.manifest.icons;
+        //console.log("ICONS LIST", this.iconsList);
       }
 
       this.requestUpdate();
@@ -595,6 +596,7 @@ export class AppManifest extends LitElement {
             <div class="collection image-items hidden-sm">
               ${this.iconsList?.map((icon, i) => {
                 const url = this.handleImageUrl(icon);
+                //console.log("EACH ICON:", icon, i);
 
                 if (url) {
                   return html`<div class="image-item image">
@@ -1146,23 +1148,26 @@ export class AppManifest extends LitElement {
       const input = <HTMLButtonElement>event.target;
       const list = input.dataset['list'] as 'icons' | 'screenshots';
       const index = Number(input.dataset['index']);
-      const imageList: Array<Icon> =
-        (this.manifest && this.manifest[list]) ?? [];
-      const updatedList = imageList
-        .slice(0, index)
-        .concat(imageList.slice(index + 1));
-
-      this.updatePageManifest({
-        [list]: updatedList,
-      });
-
+    
       if (list === 'icons') {
-        this.iconsList = updatedList;
+        let filteredIconList = this.iconsList?.filter((icon, i) => index !== i);
+        
+        this.updatePageManifest({
+          [list]: filteredIconList,
+        });
+
+        this.iconsList = filteredIconList;
       }
 
       if (list === 'screenshots') {
-        this.screenshotsList = updatedList;
-      }
+        let filteredScreenshotList = this.screenshotsList?.filter((image, i) => index !== i);
+
+        this.updatePageManifest({
+          [list]: filteredScreenshotList,
+        });
+
+        this.screenshotsList = filteredScreenshotList;
+      }  
     } catch (e) {
       console.error(e);
     }
