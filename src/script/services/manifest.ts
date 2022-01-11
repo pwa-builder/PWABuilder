@@ -30,8 +30,7 @@ export let emptyManifest: Manifest = {
 async function getManifestViaPuppeteer(
   url: string
 ): Promise<ManifestDetectionResult> {
-  console.log("starting pup");
-  console.time("Pup");
+
   const encodedUrl = encodeURIComponent(url);
   const manifestTestUrl = `${env.api}/WebManifest?site=${encodedUrl}`;
   const response = await fetch(manifestTestUrl, {
@@ -43,7 +42,6 @@ async function getManifestViaPuppeteer(
       response.statusText
     );
     
-    console.timeEnd("Pup");
     throw new Error(
       `Unable to fetch response using ${manifestTestUrl}. Response status  ${response}`
     );
@@ -64,7 +62,7 @@ async function getManifestViaPuppeteer(
     console.info("Manifest detection via Puppeteer completed, but couldn't detect the manifest.", responseData);
     throw new Error("HTML parse manifest detector couldn't find the manifest. " + responseData.error);
   }
-  console.log("returning from pup");
+  
   return {
     content: responseData.content.json,
     format: 'w3c',
@@ -85,8 +83,6 @@ async function getManifestViaPuppeteer(
 async function getManifestViaHtmlParse(
   url: string
 ): Promise<ManifestDetectionResult> {
-  console.log("starting html parse");
-  console.time("HTMLParse");
   const manifestTestUrl = `${env.manifestFinderUrl}?url=${encodeURIComponent(
     url
   )}`;
@@ -102,7 +98,6 @@ async function getManifestViaHtmlParse(
       'Fetching manifest via HTML parsing service failed due to no response data',
       response
     );
-    console.timeEnd("HTMLParse");
     throw new Error(responseData.error || "Manifest couldn't be fetched");
   }
 
@@ -115,7 +110,6 @@ async function getManifestViaHtmlParse(
     console.info("Manifest detection via HTML parse completed, but couldn't detect the manifest.", responseData);
     throw new Error("Manifest detection via HTML parsing completed but couldn't find the manifest. " + responseData.error);
   }
-  console.log("returning from html parse");
   
   return {
     content: responseData.manifestContents,
@@ -185,18 +179,13 @@ async function fetchManifest(
       }
 
       resolve(manifestDetectionResult);
-
     } else {
-      console.log("in the else");
-      //clearTimeout(detectorTimeout);
-      //console.error('All manifest detectors failed.', manifestDetectionError);
-      console.time("else");
+      console.error('All manifest detectors failed: Timeout expired.');
       const createdManifest = await createManifestFromPageOrEmpty(knownGoodUrl);
       const createdManifestResult = wrapManifestInDetectionResult(createdManifest, knownGoodUrl, true);
-      console.timeEnd("else");
       resolve(createdManifestResult);
     }
-});
+  });
 }
 
 /**
@@ -304,7 +293,7 @@ export function updateManifestEvent<T extends Partial<Manifest>>(detail: T) {
   });
 }
 
-async function wrapManifestInDetectionResult(manifest: Manifest, url: string, generated: boolean): ManifestDetectionResult {
+async function wrapManifestInDetectionResult(manifest: Manifest, url: string, generated: boolean): Promise<ManifestDetectionResult> {
   return {
       content: manifest,
       format: "w3c",
