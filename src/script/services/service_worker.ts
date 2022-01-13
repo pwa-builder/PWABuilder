@@ -2,7 +2,8 @@ import { fileSave } from 'browser-fs-access';
 
 const apiUrl = 'https://pwabuilder-sw-server.azurewebsites.net';
 
-let chosenSW: number | undefined;
+// By default we are going to use the Advanced Caching SW.
+let chosenSW: number | undefined = 5; 
 
 export async function getServiceWorkers() {
   try {
