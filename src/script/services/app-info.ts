@@ -138,9 +138,8 @@ export function getResults(): RawTestResult | undefined {
 }
 
 export async function baseOrPublish(): Promise<'base' | 'publish'> {
-  const choseSW = getChosenServiceWorker();
-
-  // quick fix
+  
+  // This counter != 0 if the user has selected a custom SW.
   const setSWCounter = getSetSWCounter();
 
   const maniContext = getManifestContext();
@@ -148,11 +147,11 @@ export async function baseOrPublish(): Promise<'base' | 'publish'> {
   // is the manifest one we generated
   // or is it from the developer?
   const generatedFlag = maniContext.isGenerated;
+  
   // has the manifest been edited by
   // the user?
   const editedFlag = maniContext.isEdited;
-
-  // choseSW is never undefined now bc we set a default
+  
   if (generatedFlag === true || setSWCounter !== 0 || editedFlag === true) {
     // User has chosen a custom service worker
     // or we have generated a manifest for them
@@ -163,7 +162,7 @@ export async function baseOrPublish(): Promise<'base' | 'publish'> {
 
   // double check manifest
   const doubleCheckResults = await doubleCheckManifest(maniContext);
-  console.log("doubleCheckResults", doubleCheckResults);
+  
   if (
     generatedFlag === false &&
     editedFlag === false &&
