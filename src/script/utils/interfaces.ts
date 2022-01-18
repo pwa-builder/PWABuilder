@@ -40,6 +40,7 @@ export interface Manifest {
   categories?: string[];
   screenshots?: Screenshot[];
   iarc_rating_id?: string;
+  iconBlobUrls?: string[];
   icons?: Icon[];
   share_target?: ShareTarget;
 

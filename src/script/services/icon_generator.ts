@@ -29,7 +29,7 @@ interface IconGeneratorConfig {
 const base64ImageGeneratorUrl =
   'https://appimagegenerator-prod.azurewebsites.net/api/image/base64';
 
-export async function generateMissingImagesBase64(
+export async function  generateMissingImagesBase64(
   config: MissingImagesConfig
 ): Promise<Array<Icon> | undefined> {
   try {
@@ -58,6 +58,15 @@ export async function generateMissingImagesBase64(
 
       let icons = manifest.icons ?? [];
       icons = icons.concat((await response.json()) as unknown as Array<Icon>);
+
+      const resolvedIcons = await Promise.all(icons.map(icon => fetch(icon.src)));
+      const iconBlobs = await Promise.all(resolvedIcons.map(resolvedIcon => resolvedIcon.blob()));
+      const iconBlobUrls = iconBlobs.map(blob => URL.createObjectURL(blob));
+      icons.forEach((icon, index) => {
+        icon.src = icon.src.includes('data:image') && iconBlobUrls[index] || icon.src;
+      });
+
+
 
       updateManifest({
         icons,
