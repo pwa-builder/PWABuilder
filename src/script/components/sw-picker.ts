@@ -219,6 +219,7 @@ export class SWPicker extends LitElement {
       (event.target as HTMLElement);
 
     button.toggleAttribute('opened');
+    this.requestUpdate();
   }
 
   async handleEditorOpened(swID: number, event: Event) {
@@ -233,7 +234,6 @@ export class SWPicker extends LitElement {
 
     if (sw_code) {
       this.serviceWorkerCode = sw_code;
-      console.log(this.serviceWorkerCode);
     }
   }
 
