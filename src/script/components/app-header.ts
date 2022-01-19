@@ -3,6 +3,7 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 import {
+  xxxLargeBreakPoint,
   xxLargeBreakPoint,
   xLargeBreakPoint,
   largeBreakPoint,
@@ -161,6 +162,12 @@ export class AppHeader extends LitElement {
         header {
           padding-left: 3em;
           padding-right: 3em;
+        }
+      `)}
+
+      ${xxxLargeBreakPoint(css`
+        header {
+          background-color: white;
         }
       `)}
     `;
