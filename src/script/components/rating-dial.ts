@@ -1,5 +1,5 @@
 import { LitElement, html, css, TemplateResult } from 'lit';
-import { customElement, state, property } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
 import { getOverallScore } from '../services/tests';
 import { env } from '../utils/environment';
 
@@ -8,7 +8,7 @@ type Rating = 'top' | 'middle' | 'bottom';
 @customElement('rating-dial')
 export class RatingDial extends LitElement {
   @state() rating: Rating = 'bottom';
-  @property({type: Number}) overallScore = 0;
+  @state() overallScore = 0;
   @state() ratingComment = '';
 
   static get styles() {
@@ -125,14 +125,10 @@ export class RatingDial extends LitElement {
   }
 
   async calcRating(): Promise<void> {
-    const response = await fetch(env.ratingUrl);
-    const scoreData = await response.json();
-
-    // Adding 94 here to "shim" the data so that we can
-    // fairly average it with our new scoring system
-    // which ends up with much higher scores overall.
-    // We wont need this once we start getting alot of data from v3 in prod
-    const averageScore = scoreData.overallAverageScore + 94;
+  
+    // Instead of doing a network request just going to set average at 150.
+    // Network call was hand wavy anyway, so 150 will do for now.
+    const averageScore = 150;
     this.overallScore = getOverallScore();
 
     if (
