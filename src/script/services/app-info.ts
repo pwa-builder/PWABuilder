@@ -138,7 +138,9 @@ export function getResults(): RawTestResult | undefined {
 }
 
 export async function baseOrPublish(): Promise<'base' | 'publish'> {
-  const choseSW = getChosenServiceWorker();
+  
+  // This counter != 0 if the user has selected a custom SW.
+  const setSWCounter = getSetSWCounter();
 
   // quick fix
   const setSWCounter = getSetSWCounter();
@@ -163,7 +165,6 @@ export async function baseOrPublish(): Promise<'base' | 'publish'> {
 
   // double check manifest
   const doubleCheckResults = await doubleCheckManifest(maniContext);
-  console.log("doubleCheckResults", doubleCheckResults);
   if (
     generatedFlag === false &&
     editedFlag === false &&

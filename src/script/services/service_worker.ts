@@ -81,7 +81,8 @@ export function getSetSWCounter() {
 }
 
 export function unsetServiceWorker() {
-  chosenSW = undefined;
+  chosenSW = 5;
+  setCounter = 0;
 }
 
 export function getChosenServiceWorker() {
