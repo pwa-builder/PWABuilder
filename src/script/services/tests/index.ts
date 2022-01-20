@@ -67,7 +67,7 @@ export function getOverallScore() {
       securityScore = securityScore + 10;
     }
   });
-
+  
   return manifestScore + swScore + securityScore;
 }
 

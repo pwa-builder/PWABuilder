@@ -1,5 +1,5 @@
 import { LitElement, html, css, TemplateResult } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, state, property } from 'lit/decorators.js';
 import { getOverallScore } from '../services/tests';
 import { env } from '../utils/environment';
 
@@ -8,7 +8,7 @@ type Rating = 'top' | 'middle' | 'bottom';
 @customElement('rating-dial')
 export class RatingDial extends LitElement {
   @state() rating: Rating = 'bottom';
-  @state() overallScore = 0;
+  @property({type: Number}) overallScore = 0;
   @state() ratingComment = '';
 
   static get styles() {

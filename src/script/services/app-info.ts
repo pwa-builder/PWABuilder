@@ -142,9 +142,6 @@ export async function baseOrPublish(): Promise<'base' | 'publish'> {
   // This counter != 0 if the user has selected a custom SW.
   const setSWCounter = getSetSWCounter();
 
-  // quick fix
-  const setSWCounter = getSetSWCounter();
-
   const maniContext = getManifestContext();
 
   // is the manifest one we generated
