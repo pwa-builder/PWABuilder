@@ -8,7 +8,7 @@ import {
   Status,
 } from '../utils/interfaces';
 import { runManifestChecks } from '../utils/manifest-validation';
-import { getChosenServiceWorker, getSetSWCounter } from './service_worker';
+import { getSetSWCounter } from './service_worker';
 
 let site_url: string | undefined;
 let results: RawTestResult | undefined;

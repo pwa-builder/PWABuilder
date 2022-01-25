@@ -20,22 +20,40 @@ export class CookieBanner extends LitElement {
         font-size: var(--small-font-size);
       }
 
-      #cookie-info {
+      #cookie-text {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
+        flex-direction: column;
+        align-items: flex-start
+        justify-content: center;
       }
 
-      #cookie-banner #close-button {
+      #cookie-text p {
+        margin-bottom: 0;
+      }
+
+      .action-button {
         border-radius: var(--button-radius);
         border: none;
-        background: white;
         padding: 8px;
         font-weight: bold;
         padding-left: 10px;
         padding-right: 10px;
         margin-left: 10px;
         width: 6em;
+      }
+
+      .action-button:hover {
+        cursor: pointer;
+      }
+
+      #accept-button {
+        background-color: black;
+        color: white;
+      }
+
+      #reject-button {
+        background-color: white;
+        color: black;
       }
 
       ${smallBreakPoint(css`
@@ -58,39 +76,51 @@ export class CookieBanner extends LitElement {
 
     if (JSON.parse(savedValue as string) !== true) {
       this.show = true;
-      localStorage.setItem('PWABuilderGDPR', JSON.stringify(true));
+      //localStorage.setItem('PWABuilderGDPR', JSON.stringify(true));
     }
   }
 
-  close() {
+  close(response: boolean) {
     this.show = false;
-    localStorage.setItem('PWABuilderGDPR', JSON.stringify(true));
+    localStorage.setItem('PWABuilderGDPR', JSON.stringify(response));
   }
 
   render() {
     return html`
       ${this.show
-        ? html`<div id="cookie-banner">
+        ? html`
+        <div id="cookie-banner">
+          <div id="cookie-text">
             <p>
               This site uses cookies for analytics and personalized content. By
               continuing to browse this site, you agree to this use.
             </p>
+            <a
+              href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
+              >Learn More</a
+            >
+          </div>
 
-            <div id="cookie-info">
-              <a
-                href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
-                >Learn More</a
-              >
+          <div id="cookie-buttons">
+            <button
+              id="reject-button"
+              class="action-button"
+              aria-label="Reject Button"
+              @click="${() => this.close(false)}"
+            >
+              Reject
+            </button>
 
-              <button
-                id="close-button"
-                aria-label="Close Button"
-                @click="${() => this.close()}"
-              >
-                Close
-              </button>
-            </div>
-          </div>`
+            <button
+              id="accept-button"
+              class="action-button"
+              aria-label="Accept Button"
+              @click="${() => this.close(true)}"
+            >
+              Accept
+            </button>
+          </div>
+        </div>`
         : null}
     `;
   }
