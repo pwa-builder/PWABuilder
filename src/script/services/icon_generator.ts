@@ -59,14 +59,17 @@ export async function  generateMissingImagesBase64(
       let icons = manifest.icons ?? [];
       icons = icons.concat((await response.json()) as unknown as Array<Icon>);
 
-      const resolvedIcons = await Promise.all(icons.map(icon => fetch(icon.src)));
-      const iconBlobs = await Promise.all(resolvedIcons.map(resolvedIcon => resolvedIcon.blob()));
-      const iconBlobUrls = iconBlobs.map(blob => URL.createObjectURL(blob));
-      icons.forEach((icon, index) => {
-        icon.src = icon.src.includes('data:image') && iconBlobUrls[index] || icon.src;
-      });
+      try {
+        const resolvedIcons = await Promise.all(icons.map(icon => fetch(icon.src)));
+        const iconBlobs = await Promise.all(resolvedIcons.map(resolvedIcon => resolvedIcon.blob()));
+        const iconBlobUrls = iconBlobs.map(blob => URL.createObjectURL(blob));
 
-
+        icons.forEach((icon, index) => {
+          icon.src = icon.src.includes('data:image') && iconBlobUrls[index] || icon.src;
+        });
+      } catch(e) {
+        console.log(e)
+      }
 
       updateManifest({
         icons,
