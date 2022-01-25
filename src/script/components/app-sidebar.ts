@@ -667,7 +667,7 @@ export class AppSidebar extends LitElement {
               <span class="rating-header" id="score-header"
                 >Your PWA Score compared with other developers</span
               >
-              <rating-dial .overallScore=${this.overallScore}></rating-dial>
+              <rating-dial></rating-dial>
             </div>
           </sidebar-card>
 
