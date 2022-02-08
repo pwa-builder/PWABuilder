@@ -1,0 +1,2163 @@
+[
+  {
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "IssuesOnlyResponder",
+    "version": "1.0",
+    "config": {
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isAction",
+            "parameters": {
+              "action": "opened"
+            }
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isPartOfProject",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isAssignedToSomeone",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "hasLabel",
+            "parameters": {
+              "label": "bug :bug:"
+            }
+          }
+        ]
+      },
+      "eventType": "issue",
+      "eventNames": [
+        "issues",
+        "project_card"
+      ],
+      "taskName": "Add \"needs triage\" label to new Issues",
+      "actions": [
+        {
+          "name": "addLabel",
+          "parameters": {
+            "label": "needs triage :mag:"
+          }
+        },
+        {
+          "name": "addReply",
+          "parameters": {
+            "comment": "Hello ${issueAuthor}, thank you for opening an issue with us! \n\nI have automatically added a \"needs triage\" label to help get things started. Our team will investigate the issue and help solve it ASAP. Other community members may also look into the issue and provide feedback 🙌"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "taskType": "scheduled",
+    "capabilityId": "ScheduledSearch",
+    "subCapability": "ScheduledSearch",
+    "version": "1.1",
+    "config": {
+      "frequency": [
+        {
+          "weekDay": 0,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 1,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 2,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 3,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 4,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 5,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 6,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        }
+      ],
+      "searchTerms": [
+        {
+          "name": "isIssue",
+          "parameters": {}
+        },
+        {
+          "name": "isOpen",
+          "parameters": {}
+        },
+        {
+          "name": "hasLabel",
+          "parameters": {
+            "label": "duplicate :busts_in_silhouette:"
+          }
+        },
+        {
+          "name": "noActivitySince",
+          "parameters": {
+            "days": 1
+          }
+        }
+      ],
+      "taskName": "Close duplicate Issues",
+      "actions": [
+        {
+          "name": "addReply",
+          "parameters": {
+            "comment": "This issue has been marked as \"duplicate\" and has not had any activity for **1 day**. If no further action is performed then the issue will automatically be closed."
+          }
+        },
+        {
+          "name": "closeIssue",
+          "parameters": {}
+        }
+      ]
+    }
+  },
+  {
+    "taskType": "scheduled",
+    "capabilityId": "ScheduledSearch",
+    "subCapability": "ScheduledSearch",
+    "version": "1.1",
+    "config": {
+      "frequency": [
+        {
+          "weekDay": 0,
+          "hours": [
+            0,
+            3,
+            6,
+            9,
+            12,
+            15,
+            18,
+            21
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 1,
+          "hours": [
+            0,
+            3,
+            6,
+            9,
+            12,
+            15,
+            18,
+            21
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 2,
+          "hours": [
+            0,
+            3,
+            6,
+            9,
+            12,
+            15,
+            18,
+            21
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 3,
+          "hours": [
+            0,
+            3,
+            6,
+            9,
+            12,
+            15,
+            18,
+            21
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 4,
+          "hours": [
+            0,
+            3,
+            6,
+            9,
+            12,
+            15,
+            18,
+            21
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 5,
+          "hours": [
+            0,
+            3,
+            6,
+            9,
+            12,
+            15,
+            18,
+            21
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 6,
+          "hours": [
+            0,
+            3,
+            6,
+            9,
+            12,
+            15,
+            18,
+            21
+          ],
+          "timezoneOffset": -8
+        }
+      ],
+      "searchTerms": [
+        {
+          "name": "isIssue",
+          "parameters": {}
+        },
+        {
+          "name": "isOpen",
+          "parameters": {}
+        },
+        {
+          "name": "hasLabel",
+          "parameters": {
+            "label": "needs author feedback :memo:"
+          }
+        },
+        {
+          "name": "noActivitySince",
+          "parameters": {
+            "days": 7
+          }
+        },
+        {
+          "name": "noLabel",
+          "parameters": {
+            "label": "no-recent-activity :chart_with_downwards_trend:"
+          }
+        }
+      ],
+      "taskName": "Add \"no-recent-activity\" label to Stale Issues",
+      "actions": [
+        {
+          "name": "addLabel",
+          "parameters": {
+            "label": "no-recent-activity :chart_with_downwards_trend:"
+          }
+        },
+        {
+          "name": "addReply",
+          "parameters": {
+            "comment": "This issue has been automatically marked as \"no-recent-activity\" because it requires author feedback but has not had any activity for **7 days**. It will be closed if no further activity occurs within **7 days** of this comment."
+          }
+        }
+      ]
+    }
+  },
+  {
+    "taskType": "scheduled",
+    "capabilityId": "ScheduledSearch",
+    "subCapability": "ScheduledSearch",
+    "version": "1.1",
+    "config": {
+      "frequency": [
+        {
+          "weekDay": 0,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 1,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 2,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 3,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 4,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 5,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 6,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        }
+      ],
+      "searchTerms": [
+        {
+          "name": "isOpen",
+          "parameters": {}
+        },
+        {
+          "name": "hasLabel",
+          "parameters": {
+            "label": "needs author feedback :memo:"
+          }
+        },
+        {
+          "name": "hasLabel",
+          "parameters": {
+            "label": "no-recent-activity :chart_with_downwards_trend:"
+          }
+        },
+        {
+          "name": "noActivitySince",
+          "parameters": {
+            "days": 30
+          }
+        }
+      ],
+      "taskName": "Close issues that are labeled as \"no-recent-activity\"",
+      "actions": [
+        {
+          "name": "addReply",
+          "parameters": {
+            "comment": "This issue has been automatically closed because it was marked as requiring author feedback but has not had any activity for **7 days**."
+          }
+        },
+        {
+          "name": "closeIssue",
+          "parameters": {}
+        }
+      ]
+    }
+  },
+  {
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "IssuesOnlyResponder",
+    "version": "1.0",
+    "config": {
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "hasLabel",
+            "parameters": {
+              "label": "no-recent-activity :chart_with_downwards_trend:"
+            }
+          },
+          {
+            "name": "isAction",
+            "parameters": {
+              "action": "edited"
+            }
+          }
+        ]
+      },
+      "eventType": "issue",
+      "eventNames": [
+        "issues",
+        "project_card"
+      ],
+      "taskName": "Remove \"no-recent-activity\" label from Issues when an activity is occurred ",
+      "actions": [
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "no-recent-activity :chart_with_downwards_trend:"
+          }
+        },
+        {
+          "name": "addReply",
+          "parameters": {
+            "comment": "Glad to have you back! I have removed the \"no-recent-activity\" label due to the occurrence of an activity. "
+          }
+        }
+      ]
+    }
+  },
+  {
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "IssueCommentResponder",
+    "version": "1.0",
+    "config": {
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isOpen",
+            "parameters": {}
+          },
+          {
+            "name": "hasLabel",
+            "parameters": {
+              "label": "no-recent-activity :chart_with_downwards_trend:"
+            }
+          }
+        ]
+      },
+      "eventType": "issue",
+      "eventNames": [
+        "issue_comment"
+      ],
+      "taskName": "Remove \"no-recent-activity\" label when an issue is commented on",
+      "actions": [
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "no-recent-activity :chart_with_downwards_trend:"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "IssuesOnlyResponder",
+    "version": "1.0",
+    "config": {
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isAction",
+            "parameters": {
+              "action": "opened"
+            }
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isPartOfProject",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isAssignedToSomeone",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "hasLabel",
+            "parameters": {
+              "label": "feature request :mailbox_with_mail:"
+            }
+          }
+        ]
+      },
+      "eventType": "issue",
+      "eventNames": [
+        "issues",
+        "project_card"
+      ],
+      "taskName": "Add Voting to new feature request ",
+      "actions": [
+        {
+          "name": "addReactionToIssue",
+          "parameters": {
+            "reaction": "+1"
+          }
+        },
+        {
+          "name": "addReply",
+          "parameters": {
+            "comment": "Thanks for submitting a new feature request! I've automatically added a vote 👍 reaction to help get things started. Other community members can vote to help us prioritize this feature in the future. "
+          }
+        }
+      ]
+    }
+  },
+  {
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "IssueCommentResponder",
+    "version": "1.0",
+    "config": {
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isAction",
+            "parameters": {
+              "action": "created"
+            }
+          },
+          {
+            "name": "isActivitySender",
+            "parameters": {
+              "user": {
+                "type": "author"
+              }
+            }
+          },
+          {
+            "name": "hasLabel",
+            "parameters": {
+              "label": "needs author feedback :memo:"
+            }
+          },
+          {
+            "name": "isOpen",
+            "parameters": {}
+          }
+        ]
+      },
+      "eventType": "issue",
+      "eventNames": [
+        "issue_comment"
+      ],
+      "taskName": "Replace \"needs author feedback\" label when the Author comments on the Issue",
+      "actions": [
+        {
+          "name": "addLabel",
+          "parameters": {
+            "label": "needs attention :wave:"
+          }
+        },
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "needs author feedback :memo:"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "taskType": "scheduled",
+    "capabilityId": "ScheduledSearch",
+    "subCapability": "ScheduledSearch",
+    "version": "1.1",
+    "config": {
+      "frequency": [
+        {
+          "weekDay": 0,
+          "hours": [
+            0,
+            3,
+            6,
+            9,
+            12,
+            15,
+            18,
+            21
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 1,
+          "hours": [
+            0,
+            3,
+            6,
+            9,
+            12,
+            15,
+            18,
+            21
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 2,
+          "hours": [
+            0,
+            3,
+            6,
+            9,
+            12,
+            15,
+            18,
+            21
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 3,
+          "hours": [
+            0,
+            3,
+            6,
+            9,
+            12,
+            15,
+            18,
+            21
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 4,
+          "hours": [
+            0,
+            3,
+            6,
+            9,
+            12,
+            15,
+            18,
+            21
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 5,
+          "hours": [
+            0,
+            3,
+            6,
+            9,
+            12,
+            15,
+            18,
+            21
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 6,
+          "hours": [
+            0,
+            3,
+            6,
+            9,
+            12,
+            15,
+            18,
+            21
+          ],
+          "timezoneOffset": -8
+        }
+      ],
+      "searchTerms": [
+        {
+          "name": "isOpen",
+          "parameters": {}
+        },
+        {
+          "name": "isIssue",
+          "parameters": {}
+        },
+        {
+          "name": "hasLabel",
+          "parameters": {
+            "label": "needs triage :mag:"
+          }
+        },
+        {
+          "name": "noActivitySince",
+          "parameters": {
+            "days": 15
+          }
+        }
+      ],
+      "taskName": "Issue needs attention ",
+      "actions": [
+        {
+          "name": "addLabel",
+          "parameters": {
+            "label": "needs attention :wave:"
+          }
+        },
+        {
+          "name": "addReply",
+          "parameters": {
+            "comment": "This issue has been marked as \"needs attention 👋\" due to no activity for **15 days**.  Please triage the issue so the fix can be established. "
+          }
+        }
+      ]
+    }
+  },
+  {
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "PullRequestResponder",
+    "version": "1.0",
+    "config": {
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isAction",
+            "parameters": {
+              "action": "opened"
+            }
+          }
+        ]
+      },
+      "eventType": "pull_request",
+      "eventNames": [
+        "pull_request",
+        "issues",
+        "project_card"
+      ],
+      "taskName": "Opened Pull Requests",
+      "actions": [
+        {
+          "name": "addReply",
+          "parameters": {
+            "comment": "Thanks ${issueAuthor} for opening a Pull Request! The reviewers will test the PR and highlight if there is any conflict or changes required. If the PR is approved we will proceed to merge the pull request 🙌"
+          }
+        },
+        {
+          "name": "assignToGitHubUserGroup",
+          "parameters": {
+            "groupId": "5e30958bcaaa10165018e690",
+            "skipOpener": true
+          }
+        }
+      ]
+    }
+  },
+  {
+    "taskType": "trigger",
+    "capabilityId": "InPrLabel",
+    "subCapability": "InPrLabel",
+    "version": "1.0",
+    "config": {
+      "taskName": "Issues labeled as \"In-PR\" and Fixed when referenced in open PR",
+      "label_inPr": "In-PR :rocket:",
+      "fixedLabelEnabled": true,
+      "label_fixed": "Completed :fire:"
+    }
+  },
+  {
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "PullRequestReviewResponder",
+    "version": "1.0",
+    "config": {
+      "taskName": "Add \"needs author feedback label\" to pull requests when changes are requested",
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isAction",
+            "parameters": {
+              "action": "submitted"
+            }
+          },
+          {
+            "name": "isReviewState",
+            "parameters": {
+              "state": "changes_requested"
+            }
+          }
+        ]
+      },
+      "actions": [
+        {
+          "name": "addLabel",
+          "parameters": {
+            "label": "needs author feedback :memo:"
+          }
+        }
+      ],
+      "eventType": "pull_request",
+      "eventNames": [
+        "pull_request_review"
+      ]
+    }
+  },
+  {
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "PullRequestResponder",
+    "version": "1.0",
+    "config": {
+      "taskName": "Remove \"needs author feedback\" label when the author responds to a pull request",
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isActivitySender",
+            "parameters": {
+              "user": {
+                "type": "author"
+              }
+            }
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isAction",
+                "parameters": {
+                  "action": "closed"
+                }
+              }
+            ]
+          },
+          {
+            "name": "hasLabel",
+            "parameters": {
+              "label": "needs author feedback :memo:"
+            }
+          }
+        ]
+      },
+      "actions": [
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "needs author feedback :memo:"
+          }
+        }
+      ],
+      "eventType": "pull_request",
+      "eventNames": [
+        "pull_request",
+        "issues",
+        "project_card"
+      ]
+    }
+  },
+  {
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "PullRequestCommentResponder",
+    "version": "1.0",
+    "config": {
+      "taskName": "Remove needs author feedback label when the author comments on a pull request",
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isActivitySender",
+            "parameters": {
+              "user": {
+                "type": "author"
+              }
+            }
+          },
+          {
+            "name": "hasLabel",
+            "parameters": {
+              "label": "needs author feedback :memo:"
+            }
+          }
+        ]
+      },
+      "actions": [
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "needs author feedback :memo:"
+          }
+        }
+      ],
+      "eventType": "pull_request",
+      "eventNames": [
+        "issue_comment"
+      ]
+    }
+  },
+  {
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "PullRequestReviewResponder",
+    "version": "1.0",
+    "config": {
+      "taskName": "Remove needs author feedback label when the author responds to a pull request review comment",
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isActivitySender",
+            "parameters": {
+              "user": {
+                "type": "author"
+              }
+            }
+          },
+          {
+            "name": "hasLabel",
+            "parameters": {
+              "label": "needs author feedback :memo:"
+            }
+          }
+        ]
+      },
+      "actions": [
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "needs author feedback :memo:"
+          }
+        }
+      ],
+      "eventType": "pull_request",
+      "eventNames": [
+        "pull_request_review"
+      ]
+    }
+  },
+  {
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "PullRequestResponder",
+    "version": "1.0",
+    "config": {
+      "taskName": "Remove no recent activity label from pull requests",
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isAction",
+                "parameters": {
+                  "action": "closed"
+                }
+              }
+            ]
+          },
+          {
+            "name": "hasLabel",
+            "parameters": {
+              "label": "no-recent-activity :chart_with_downwards_trend:"
+            }
+          }
+        ]
+      },
+      "actions": [
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "no-recent-activity :chart_with_downwards_trend:"
+          }
+        }
+      ],
+      "eventType": "pull_request",
+      "eventNames": [
+        "pull_request",
+        "issues",
+        "project_card"
+      ]
+    }
+  },
+  {
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "PullRequestCommentResponder",
+    "version": "1.0",
+    "config": {
+      "taskName": "Remove no recent activity label when a pull request is commented on",
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "hasLabel",
+            "parameters": {
+              "label": "no-recent-activity :chart_with_downwards_trend:"
+            }
+          }
+        ]
+      },
+      "actions": [
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "no-recent-activity :chart_with_downwards_trend:"
+          }
+        }
+      ],
+      "eventType": "pull_request",
+      "eventNames": [
+        "issue_comment"
+      ]
+    }
+  },
+  {
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "PullRequestReviewResponder",
+    "version": "1.0",
+    "config": {
+      "taskName": "Remove no recent activity label when a pull request is reviewed",
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "hasLabel",
+            "parameters": {
+              "label": "no-recent-activity :chart_with_downwards_trend:"
+            }
+          }
+        ]
+      },
+      "actions": [
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "no-recent-activity :chart_with_downwards_trend:"
+          }
+        }
+      ],
+      "eventType": "pull_request",
+      "eventNames": [
+        "pull_request_review"
+      ]
+    }
+  },
+  {
+    "taskType": "scheduled",
+    "capabilityId": "ScheduledSearch",
+    "subCapability": "ScheduledSearch",
+    "version": "1.1",
+    "config": {
+      "taskName": "Close Stale pull requests",
+      "frequency": [
+        {
+          "weekDay": 0,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 1,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 2,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 3,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 4,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 5,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 6,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        }
+      ],
+      "searchTerms": [
+        {
+          "name": "isPr",
+          "parameters": {}
+        },
+        {
+          "name": "isOpen",
+          "parameters": {}
+        },
+        {
+          "name": "hasLabel",
+          "parameters": {
+            "label": "needs author feedback :memo:"
+          }
+        },
+        {
+          "name": "hasLabel",
+          "parameters": {
+            "label": "no-recent-activity :chart_with_downwards_trend:"
+          }
+        },
+        {
+          "name": "noActivitySince",
+          "parameters": {
+            "days": 45
+          }
+        }
+      ],
+      "actions": [
+        {
+          "name": "closeIssue",
+          "parameters": {}
+        }
+      ]
+    }
+  },
+  {
+    "taskType": "scheduled",
+    "capabilityId": "ScheduledSearch",
+    "subCapability": "ScheduledSearch",
+    "version": "1.1",
+    "config": {
+      "taskName": "Add no recent activity label to pull requests",
+      "frequency": [
+        {
+          "weekDay": 0,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 1,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 2,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 3,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 4,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 5,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 6,
+          "hours": [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ],
+          "timezoneOffset": -8
+        }
+      ],
+      "searchTerms": [
+        {
+          "name": "isPr",
+          "parameters": {}
+        },
+        {
+          "name": "isOpen",
+          "parameters": {}
+        },
+        {
+          "name": "hasLabel",
+          "parameters": {
+            "label": "needs author feedback :memo:"
+          }
+        },
+        {
+          "name": "noActivitySince",
+          "parameters": {
+            "days": 15
+          }
+        },
+        {
+          "name": "noLabel",
+          "parameters": {
+            "label": "no-recent-activity :chart_with_downwards_trend:"
+          }
+        }
+      ],
+      "actions": [
+        {
+          "name": "addLabel",
+          "parameters": {
+            "label": "no-recent-activity :chart_with_downwards_trend:"
+          }
+        },
+        {
+          "name": "addReply",
+          "parameters": {
+            "comment": "This pull request has been automatically marked as stale because it has been marked as requiring author feedback but has not had any activity for **15 days**. It will be closed if no further activity occurs **within 30 days of this comment**."
+          }
+        }
+      ]
+    }
+  },
+  {
+    "taskType": "trigger",
+    "capabilityId": "AutoMerge",
+    "subCapability": "AutoMerge",
+    "version": "1.0",
+    "config": {
+      "taskName": "Automatically merge pull requests",
+      "label": "auto merge",
+      "silentMode": false,
+      "minMinutesOpen": 480,
+      "mergeType": "squash",
+      "allowAutoMergeInstructionsWithoutLabel": true,
+      "requireAllStatuses": false,
+      "minimumNumberOfStatuses": 3,
+      "minimumNumberOfCheckRuns": 3,
+      "conditionalMergeTypes": []
+    },
+    "disabled": true
+  },
+  {
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "IssueCommentResponder",
+    "version": "1.0",
+    "config": {
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isOpen",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "isAction",
+            "parameters": {
+              "action": "created"
+            }
+          },
+          {
+            "name": "hasLabel",
+            "parameters": {
+              "label": "no-recent-activity :chart_with_downwards_trend:"
+            }
+          },
+          {
+            "name": "hasLabel",
+            "parameters": {
+              "label": "needs author feedback :memo:"
+            }
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "noActivitySince",
+                "parameters": {
+                  "days": 7
+                }
+              }
+            ]
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isCloseAndComment",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "isActivitySender",
+            "parameters": {
+              "user": {
+                "type": "author"
+              }
+            }
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "activitySenderHasPermissions",
+                "parameters": {
+                  "permissions": "none"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "eventType": "issue",
+      "eventNames": [
+        "issue_comment"
+      ],
+      "taskName": "For issues closed due to inactivity, re-open an issue if issue author posts a reply within 7 days.",
+      "actions": [
+        {
+          "name": "reopenIssue",
+          "parameters": {}
+        },
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "no-recent-activity :chart_with_downwards_trend:"
+          }
+        },
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "needs author feedback :memo:"
+          }
+        },
+        {
+          "name": "addLabel",
+          "parameters": {
+            "label": "needs attention :wave:"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "IssueCommentResponder",
+    "version": "1.0",
+    "config": {
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isAction",
+            "parameters": {
+              "action": "created"
+            }
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isOpen",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "activitySenderHasPermissions",
+                "parameters": {
+                  "permissions": "none"
+                }
+              }
+            ]
+          },
+          {
+            "name": "noActivitySince",
+            "parameters": {
+              "days": 7
+            }
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isCloseAndComment",
+                "parameters": {}
+              }
+            ]
+          }
+        ]
+      },
+      "eventType": "issue",
+      "eventNames": [
+        "issue_comment"
+      ],
+      "taskName": "For issues closed with no activity over 7 days, ask non-contributor to consider opening a new issue instead.",
+      "actions": [
+        {
+          "name": "addReply",
+          "parameters": {
+            "comment": "Hello lovely human, thank you for your comment on this issue. Because this issue has been closed for a period of time, please strongly consider opening a new issue linking to this issue instead to ensure better visibility of your comment. Thank you!"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "taskType": "scheduled",
+    "capabilityId": "ScheduledSearch",
+    "subCapability": "ScheduledSearch",
+    "version": "1.1",
+    "config": {
+      "frequency": [
+        {
+          "weekDay": 0,
+          "hours": [
+            1,
+            4,
+            7,
+            10,
+            13,
+            16,
+            19,
+            22
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 1,
+          "hours": [
+            1,
+            4,
+            7,
+            10,
+            13,
+            16,
+            19,
+            22
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 2,
+          "hours": [
+            1,
+            4,
+            7,
+            10,
+            13,
+            16,
+            19,
+            22
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 3,
+          "hours": [
+            1,
+            4,
+            7,
+            10,
+            13,
+            16,
+            19,
+            22
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 4,
+          "hours": [
+            1,
+            4,
+            7,
+            10,
+            13,
+            16,
+            19,
+            22
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 5,
+          "hours": [
+            1,
+            4,
+            7,
+            10,
+            13,
+            16,
+            19,
+            22
+          ],
+          "timezoneOffset": -8
+        },
+        {
+          "weekDay": 6,
+          "hours": [
+            1,
+            4,
+            7,
+            10,
+            13,
+            16,
+            19,
+            22
+          ],
+          "timezoneOffset": -8
+        }
+      ],
+      "searchTerms": [
+        {
+          "name": "isClosed",
+          "parameters": {}
+        },
+        {
+          "name": "noActivitySince",
+          "parameters": {
+            "days": 60
+          }
+        },
+        {
+          "name": "isUnlocked",
+          "parameters": {}
+        },
+        {
+          "name": "isIssue",
+          "parameters": {}
+        }
+      ],
+      "taskName": "Lock issues closed without activity for over 30 days",
+      "actions": [
+        {
+          "name": "lockIssue",
+          "parameters": {
+            "reason": "resolved"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "IssuesOnlyResponder",
+    "version": "1.0",
+    "config": {
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isOpen",
+            "parameters": {}
+          },
+          {
+            "name": "addedToProjectColumn",
+            "parameters": {
+              "projectName": "September sprint",
+              "columnName": "In progress"
+            }
+          }
+        ]
+      },
+      "eventType": "issue",
+      "eventNames": [
+        "issues",
+        "project_card"
+      ],
+      "taskName": "Mark as \"in-progress\" label when moved to In Progress column in the project",
+      "actions": [
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "Completed :fire:"
+          }
+        },
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "to review :book:"
+          }
+        },
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "needs triage :mag:"
+          }
+        },
+        {
+          "name": "addLabel",
+          "parameters": {
+            "label": "In progress :construction:"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "IssuesOnlyResponder",
+    "version": "1.0",
+    "config": {
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isOpen",
+            "parameters": {}
+          },
+          {
+            "name": "addedToProjectColumn",
+            "parameters": {
+              "projectName": "September sprint",
+              "columnName": "Done"
+            }
+          }
+        ]
+      },
+      "eventType": "issue",
+      "eventNames": [
+        "issues",
+        "project_card"
+      ],
+      "taskName": "Mark as \"Fixed\" label when moved to Done column in the project",
+      "actions": [
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "In progress :construction:"
+          }
+        },
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "to review :book:"
+          }
+        },
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "needs triage :mag:"
+          }
+        },
+        {
+          "name": "addLabel",
+          "parameters": {
+            "label": "Completed :fire:"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "IssuesOnlyResponder",
+    "version": "1.0",
+    "config": {
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isOpen",
+            "parameters": {}
+          },
+          {
+            "name": "addedToProjectColumn",
+            "parameters": {
+              "projectName": "September sprint",
+              "columnName": "Ready for testing"
+            }
+          }
+        ]
+      },
+      "eventType": "issue",
+      "eventNames": [
+        "issues",
+        "project_card"
+      ],
+      "taskName": "Mark as \"to-review\" label when moved to Ready for testing column in the project",
+      "actions": [
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "In progress :construction:"
+          }
+        },
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "Completed :fire:"
+          }
+        },
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "needs triage :mag:"
+          }
+        },
+        {
+          "name": "addLabel",
+          "parameters": {
+            "label": "to review :book:"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "IssuesOnlyResponder",
+    "version": "1.0",
+    "config": {
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isOpen",
+            "parameters": {}
+          },
+          {
+            "name": "addedToProjectColumn",
+            "parameters": {
+              "projectName": "September sprint",
+              "columnName": "To do"
+            }
+          }
+        ]
+      },
+      "eventType": "issue",
+      "eventNames": [
+        "issues",
+        "project_card"
+      ],
+      "taskName": "Remove all labels when moved to To do column in the project",
+      "actions": [
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "In progress :construction:"
+          }
+        },
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "Completed :fire:"
+          }
+        },
+        {
+          "name": "removeLabel",
+          "parameters": {
+            "label": "to review :book:"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "taskType": "trigger",
+    "capabilityId": "EmailCleanser",
+    "subCapability": "EmailCleanser",
+    "version": "1.0",
+    "config": {
+      "taskName": "Remove Quoted Email Content "
+    }
+  },
+  {
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "IssuesOnlyResponder",
+    "version": "1.0",
+    "config": {
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isAction",
+            "parameters": {
+              "action": "opened"
+            }
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isPartOfProject",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isAssignedToSomeone",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "hasLabel",
+            "parameters": {
+              "label": "question :grey_question:"
+            }
+          }
+        ]
+      },
+      "eventType": "issue",
+      "eventNames": [
+        "issues",
+        "project_card"
+      ],
+      "actions": [
+        {
+          "name": "addLabel",
+          "parameters": {
+            "label": "needs triage :mag:"
+          }
+        },
+        {
+          "name": "addReply",
+          "parameters": {
+            "comment": "Hello ${issueAuthor}, thank you for your interest in PWABuilder!\n\nI have automatically added a \"needs triage\" label to help get things started. Our team will look into the question and answer ASAP. Other community members may also answer the question and provide feedback 🙌"
+          }
+        }
+      ],
+      "taskName": "Add Question Label"
+    }
+  },
+  {
+    "taskType": "trigger",
+    "capabilityId": "IssueResponder",
+    "subCapability": "IssuesOnlyResponder",
+    "version": "1.0",
+    "config": {
+      "conditions": {
+        "operator": "and",
+        "operands": [
+          {
+            "name": "isAction",
+            "parameters": {
+              "action": "opened"
+            }
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isPartOfProject",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isAssignedToSomeone",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "operator": "not",
+            "operands": [
+              {
+                "name": "isLabeled",
+                "parameters": {}
+              }
+            ]
+          }
+        ]
+      },
+      "eventType": "issue",
+      "eventNames": [
+        "issues",
+        "project_card"
+      ],
+      "taskName": "Add \"needs triage\" label to an empty template",
+      "actions": [
+        {
+          "name": "addLabel",
+          "parameters": {
+            "label": "needs triage :mag:"
+          }
+        },
+        {
+          "name": "addReply",
+          "parameters": {
+            "comment": "Hello ${issueAuthor}, thank you for opening an issue with us! \n\nI have automatically added a \"needs triage\" label to help get things started. Our team will investigate the issue and help solve it ASAP. Other community members may also look into the issue and provide feedback 🙌"
+          }
+        }
+      ]
+    }
+  }
+]
