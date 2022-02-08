@@ -15,10 +15,11 @@ import {
 import { isValidURL } from '../utils/url';
 
 import '../components/content-header';
-import '../components/resource-hub';
 import '../components/loading-button';
 import '../components/dropdown-menu';
 import '../components/app-sidebar';
+import '../components/success-stories';
+import '../components/resource-hub-new';
 
 //@ts-ignore
 import style from '../../../styles/error-styles.css';
@@ -69,7 +70,7 @@ export class AppNewHome extends LitElement {
           margin-bottom: 20px;
         }
 
-        h2 {
+        content-header h2 {
           font-size: 1em;
           font-weight: bold;
           margin: 0;
@@ -94,6 +95,7 @@ export class AppNewHome extends LitElement {
 
         .intro-grid-item {
           max-width: 200px;
+          margin-right: 1em;
         }
 
         .grid-item-header {
@@ -114,16 +116,17 @@ export class AppNewHome extends LitElement {
         }
 
         .intro-grid-item p {
-          margin-top: 0;
+          margin: 0;
           color: #292C3A;
           font-size: .75em;
 
-          width: 194px;
+          width: 15em;
         }
 
         #input-form {
           display: flex;
           margin-top: 1em;
+          width: max-content;
         }
 
         #input-header-holder {
@@ -134,8 +137,9 @@ export class AppNewHome extends LitElement {
         }
 
         #input-header-holder img {
-          width: 140px;
-          height: 20px;
+          width: fit-content;
+          height: 1.5em;
+          margin-left: 10px;
         }
 
         #input-area {
@@ -146,7 +150,6 @@ export class AppNewHome extends LitElement {
         }
 
         #input-form fast-text-field {
-          width: 94%;
           margin-right: 10px;
         }
 
@@ -157,6 +160,7 @@ export class AppNewHome extends LitElement {
 
         #input-form fast-text-field::part(control) {
           color: var(--font-color);
+          width: 26em;
         }
 
         #input-block {
@@ -185,6 +189,9 @@ export class AppNewHome extends LitElement {
 
         #home-header {
           max-width: 498px;
+        }
+        #test {
+          background-image: url('/assets/new/BackgroundPWA1366.png');
         }
 
         ${smallBreakPoint(css`
@@ -458,6 +465,10 @@ export class AppNewHome extends LitElement {
           </div>
         </form>
       </content-header>
+      <success-stories></success-stories>
+      <resource-hub-new>
+        <h2 slot="title">What Makes a PWA?</h2>
+      </resource-hub-new>
       </main>
     `;
   }

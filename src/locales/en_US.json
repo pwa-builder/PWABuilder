@@ -191,6 +191,18 @@
         "demo": "Check out our demos to see what PWAs are capable of!",
         "documentation": "Looking for our documentation? Tap View Documentation to get started!"
       }
+    },
+    "resource_hub_new": {
+      "titles": {
+        "manifest": "Web Manifest",
+        "sw": "Service Worker",
+        "https": "Secure HTTPS"
+      },
+      "description": {
+        "manifest": "A Web App Manifest of a website governs how your Progressive Web App (PWA) looks and behaves when installed on a device.",
+        "sw": "Service Workers are a special type of Web Worker with the ability to intercept, modify, and respond to all offline and online network requests using the Fetch API.",
+        "https": "Having a secure HTTPS endpoint and other user safeguards making the user experience secure from end to end."
+      }
     }
   },
   "tooltip": {
