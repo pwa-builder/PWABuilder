@@ -1,386 +1,67 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
-import { CardData, publishCards, landingCards } from './resource-hub-cards-new';
-import {
-  largeBreakPoint,
-  mediumBreakPoint,
-  smallBreakPoint,
-  BreakpointValues,
-  customBreakPoint,
-} from '../utils/css/breakpoints';
-
-import { AppCardModes } from '../components/app-card-new';
-import '../components/app-button';
-
-type ResourceHubPages = 'home' | 'complete';
+import { customElement, state } from 'lit/decorators.js';
+import { landingCards } from './resource-hub-cards-new';
+import '../components/info-card'
 
 @customElement('resource-hub-new')
 export class ResourceHubNew extends LitElement {
-  @property({ attribute: 'all', type: Boolean }) showViewAllButton = false;
-  @property({ attribute: 'page', type: String }) pageName: ResourceHubPages =
-    'home';
+  @state() cards: any = [];
 
   static get styles() {
     return [
-      css`
-        :host {
-          display: flex;
-          justify-content: center;
-        }
+    css`
+      #hub-panel {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-image: url(/assets/new/BackgroundPWA1366.png);
+        background-repeat: no-repeat;
+        padding: 2em;
+      }
 
-        ::slotted([slot='title']) {
-          margin: 0;
-          font-weight: var(--font-bold);
-          text-align: center;
+      #hub-panel h2 {
+        color: white;
+        margin: 0;
+        margin-bottom: 1em;
+        font-weight: bold;
+        font-size: 1.55em;
+      }
 
-          font-size: 36px;
-          line-height: 39px;
-          letter-spacing: -0.015em;
-          margin-top: 0;
-        }
-
-        ::slotted([slot='description']) {
-          font-weight: var(--font-bold);
-          max-width: 950px;
-          text-align: center;
-        }
-
-        .home {
-          background-repeat: no-repeat;
-          background-image: url(/assets/new/BackgroundPWA1366.png);
-          background-size: cover;
-          background-position: center;
-          color: var(--secondary-color);
-        }
-
-        .complete {
-          background-color: var(--primary-background-color);
-          color: var(--font-color);
-        }
-
-        .resource-hub {
-          width: 100%;
-        }
-      `,
-      css`
-        .resource-header {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          padding-top: 80px;
-          padding-left: 4em;
-          padding-right: 4em;
-        }
-
-        .complete .resource-header {
-          padding-top: 0;
-        }
-
-        .cards {
-          display: flex;
-          justify-content: center;
-          padding-left: 4em;
-          padding-right: 4em;
-          margin-top: 1em;
-          padding: 0 16px;
-        }
-
-        .cards app-card-new {
-          margin: 8px;
-        }
-
-        .cards app-card-new::part(card) {
-          margin: 0;
-        }
-
-        .resource-hub-actions {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-
-          margin-top: 32px;
-          margin-bottom: 74px;
-        }
-
-        .resource-hub-actions fast-anchor {
-          width: 205px;
-          background-color: white;
-          color: var(--font-color);
-          border-radius: var(--button-radius);
-        }
-
-        .resource-hub-actions fast-anchor::part(control) {
-          font-size: 16px;
-          font-weight: var(--font-bold);
-        }
-      `,
-      largeBreakPoint(
-        css`
-          .cards app-card-new {
-            max-width: 350px;
-          }
-        `,
-        'no-lower'
-      ),
-      mediumBreakPoint(
-        css`
-          .cards {
-            flex-direction: column;
-            align-items: center;
-          }
-
-          .resource-header {
-            padding-left: 1em;
-            padding-right: 1em;
-          }
-
-          .cards app-card-new,
-          .cards app-card-new::part(card) {
-            width: 100%;
-            max-width: 100%;
-          }
-
-          .cards app-card-new {
-            margin-bottom: 16px;
-          }
-        `,
-        'no-lower'
-      ),
-      mediumBreakPoint(
-        css`
-          .cards {
-            padding: 0 32px;
-          }
-        `
-      ),
-      largeBreakPoint(
-        css`
-          .cards {
-            flex-direction: row;
-            flex-wrap: wrap;
-            align-items: center;
-            padding: 0;
-          }
-
-          .cards app-card-new {
-            margin-bottom: 16px;
-          }
-        `
-      ),
-
-      smallBreakPoint(
-        css`
-          :host {
-            background-color: #ededed;
-          }
-
-          .resource-header {
-            padding-left: 1em;
-            padding-right: 1em;
-          }
-
-          .cards app-card-new,
-          .cards app-card-new::part(card) {
-            width: 100%;
-            max-width: 100%;
-          }
-
-          /* TODO make this gated to only a gallery variant */
-          .cards.horizontal {
-            overflow-y: scroll;
-            overflow-x: none;
-            /* white-space: nowrap; */
-
-            flex-direction: row;
-            align-items: center;
-          }
-
-          .cards.horizontal app-card-new {
-            display: inline-block;
-            min-width: calc(100% - 32px);
-          }
-
-          section {
-            width: 100%;
-          }
-
-          .cards.horizontal {
-            display: flex;
-            flex-direction: column;
-            overflow-x: scroll;
-            scroll-snap-type: x proximity;
-          }
-
-          .cards.horizontal app-card-new {
-            display: inline-block;
-            flex: 0 0 auto;
-            scroll-snap-align: center;
-          }
-
-          .cards.horizontal app-card-new p,
-          .cards.horizontal app-card-new h3 {
-            white-space: normal;
-          }
-        `
-      ),
-      mediumBreakPoint(
-        css`
-          .cards {
-            flex-direction: column;
-            align-items: center;
-          }
-
-          .cards app-card-new {
-            margin-bottom: 16px;
-          }
-        `,
-        'no-lower'
-      ),
-      mediumBreakPoint(
-        css`
-          .cards {
-            padding: 0 32px;
-          }
-        `
-      ),
-      largeBreakPoint(
-        css`
-          .cards app-card-new {
-            max-width: 350px;
-          }
-        `,
-        'no-lower'
-      ),
-      largeBreakPoint(
-        css`
-          .cards {
-            flex-direction: row;
-            flex-wrap: wrap;
-            align-items: center;
-          }
-
-          .cards app-card-new {
-            margin-bottom: 16px;
-          }
-        `
-      ),
-      customBreakPoint(
-        css`
-          .resource-hub.complete .cards {
-            flex-direction: column;
-          }
-        `,
-        undefined,
-        919
-      ),
-      customBreakPoint(
-        css`
-          .resource-hub.home .cards {
-            display: grid;
-            grid-template-columns: auto auto;
-          }
-        `,
-        888,
-        1023
-      ),
-      customBreakPoint(
-        css`
-          .resource-hub.home .cards {
-            display: grid;
-            grid-template-columns: auto auto;
-          }
-        `,
-        888,
-        1023
-      ),
-    ];
+      #cards {
+        width: 100%;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        column-gap: 1em;
+      }
+    `,];
   }
 
   constructor() {
     super();
   }
 
+  firstUpdated(){
+    this.cards = landingCards();
+  }
+
   render() {
     return html`
-      <section
-        class="${classMap({
-          'resource-hub': true,
-          'home': this.pageName === 'home',
-          'complete': this.pageName === 'complete',
-        })}"
-      >
-        <div class="resource-header">
-          <slot name="title"></slot>
-          <slot name="description"></slot>
-        </div>
-
-        <div
-          class="${classMap({
-            cards: true,
-            horizontal:
-              this.pageName === 'complete' &&
-              window.innerWidth <= BreakpointValues.smallUpper,
-          })}"
-        >
-          ${this.renderCards()}
-        </div>
-
-        ${this.renderViewAllButton()}
-      </section>
-    `;
-  }
-
-  renderCards() {
-    const mode = this.determineCardMode();
-    let cardList: Array<CardData> = [];
-    if (this.pageName === 'home') {
-      cardList = landingCards();
-    } else if (this.pageName === 'complete') {
-      cardList = publishCards();
-    }
-
-    return cardList.map(data => {
-      return html`
-        <app-card-new
-          class=${mode}
-          cardTitle=${data.title}
-          description=${data.description}
-          imageUrl=${data.imageUrl}
-          linkRoute=${data.linkUrl}
-        >
-        </app-card-new>
-      `;
-    });
-  }
-
-  renderViewAllButton() {
-    if (this.showViewAllButton) {
-      return html`
-        <div class="resource-hub-actions">
-          <fast-anchor
-            appearance="button"
-            href="https://blog.pwabuilder.com"
-            target="_blank"
-            rel="noopener"
-            >View all resources</fast-anchor
+      <div id="hub-panel">
+        <h2>What Makes a PWA?</h2>
+        <div id="cards">
+          ${this.cards.map((card: any) => html`
+            <info-card
+            cardTitle=${card.title}
+            description=${card.description}
+            imageUrl=${card.imageUrl}
+            linkRoute=${card.linkUrl}
           >
+          </info-card>
+          `)}
         </div>
-      `;
-    }
-
-    return undefined;
-  }
-
-  determineCardMode(): AppCardModes {
-    if (
-      this.pageName === 'complete' &&
-      window.innerWidth <= BreakpointValues.smallUpper
-    ) {
-      return AppCardModes.micro;
-    }
-
-    return AppCardModes.default;
+      </div>
+    `;
   }
 }

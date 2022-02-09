@@ -14,8 +14,9 @@ export class AppFooter extends LitElement {
     return css`
       footer {
         /*temp color*/
-        background: #f3f3f3;
-
+        background: #292C3A;
+        color: white;
+        fill: white;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -38,7 +39,7 @@ export class AppFooter extends LitElement {
 
       ion-icon {
         font-size: var(--font-size);
-        color: var(--font-color);
+        color: white;
       }
 
       span {
@@ -59,6 +60,11 @@ export class AppFooter extends LitElement {
 
       #links a {
         margin-right: 12px;
+        color: white;
+      }
+
+      #links a:visited {
+        color: white;
       }
 
       ${xxxLargeBreakPoint(

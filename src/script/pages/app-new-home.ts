@@ -20,6 +20,7 @@ import '../components/dropdown-menu';
 import '../components/app-sidebar';
 import '../components/success-stories';
 import '../components/resource-hub-new';
+import '../components/community-hub';
 
 //@ts-ignore
 import style from '../../../styles/error-styles.css';
@@ -466,9 +467,8 @@ export class AppNewHome extends LitElement {
         </form>
       </content-header>
       <success-stories></success-stories>
-      <resource-hub-new>
-        <h2 slot="title">What Makes a PWA?</h2>
-      </resource-hub-new>
+      <resource-hub-new></resource-hub-new>
+      <community-hub></community-hub>
       </main>
     `;
   }
