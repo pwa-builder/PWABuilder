@@ -64,7 +64,7 @@ export class WindowsForm extends AppPackageFormBase {
 
   addOrRemoveDeviceFamily(val: string, checked: boolean) {
     if (this.packageOptions.targetDeviceFamilies === undefined) {
-      this.packageOptions.targetDeviceFamilies = ['Desktop', 'Holographic'];
+      this.packageOptions.targetDeviceFamilies = ['Desktop'];
     }
     if (checked) {
       if (!this.packageOptions.targetDeviceFamilies?.includes(val)) {
@@ -256,22 +256,6 @@ export class WindowsForm extends AppPackageFormBase {
 
                 <div class="form-group">
                   <label>Target device families</label>
-                  <div class="form-check">
-                    ${this.renderFormInput({
-                      label: 'Desktop',
-                      value: 'Desktop',
-                      tooltip:
-                        'Identifies the device family that your package targets. Both Desktop and Holographic are enabled by default',
-                      tooltipLink:
-                        'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-targetdevicefamily',
-                      inputId: 'device-family-input-desktop',
-                      type: 'checkbox',
-                      checked: true,
-                      inputHandler: (val: string, checked: boolean) => {
-                        this.addOrRemoveDeviceFamily(val, checked);
-                      },
-                    })}
-                  </div>
                   <div class="form-check">
                     ${this.renderFormInput({
                       label: 'Holographic (HoloLens)',
