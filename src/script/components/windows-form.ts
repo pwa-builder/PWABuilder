@@ -201,7 +201,6 @@ export class WindowsForm extends AppPackageFormBase {
                       (this.packageOptions.version = val),
                   })}
                 </div>
-                <span></span>
                 <div class="form-group">
                   ${this.renderFormInput({
                     label: 'Classic app version',
