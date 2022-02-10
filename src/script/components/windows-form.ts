@@ -79,6 +79,26 @@ export class WindowsForm extends AppPackageFormBase {
         this.packageOptions.targetDeviceFamilies?.splice(index, 1);
       }
     }
+    this.checkValidityForDeviceFamily();
+  }
+
+  checkValidityForDeviceFamily() {
+    const checkboxes = this.shadowRoot?.querySelector(
+      '#target-device-families'
+    );
+    const checkedCheckboxes = checkboxes?.querySelectorAll(
+      'input[type="checkbox"]:checked'
+    );
+    const desktopCheckbox = this.shadowRoot?.querySelector(
+      '#device-family-input-desktop'
+    ) as HTMLInputElement;
+    if (checkedCheckboxes !== undefined && checkedCheckboxes?.length === 0) {
+      desktopCheckbox.setCustomValidity(
+        'Please select at least one device family'
+      );
+    } else {
+      desktopCheckbox.setCustomValidity('');
+    }
   }
 
   render() {
@@ -254,8 +274,24 @@ export class WindowsForm extends AppPackageFormBase {
                   })}
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" id="target-device-families">
                   <label>Target device families</label>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Desktop',
+                      value: 'Desktop',
+                      tooltip:
+                        'Identifies the device family that your package targets. Both Desktop and Holographic are enabled by default',
+                      tooltipLink:
+                        'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-targetdevicefamily',
+                      inputId: 'device-family-input-desktop',
+                      type: 'checkbox',
+                      checked: true,
+                      inputHandler: (val: string, checked: boolean) => {
+                        this.addOrRemoveDeviceFamily(val, checked);
+                      },
+                    })}
+                  </div>
                   <div class="form-check">
                     ${this.renderFormInput({
                       label: 'Holographic (HoloLens)',
