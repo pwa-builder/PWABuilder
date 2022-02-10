@@ -109,7 +109,8 @@ export class AppNewHome extends LitElement {
 
         .grid-item-header h2 {
           margin-right: .25em;
-          text-decoration: underline;
+          border-bottom: 1px solid rgb(79, 63, 182);
+          line-height: 20px;
         }
 
         .grid-item-header:hover {
@@ -135,12 +136,13 @@ export class AppNewHome extends LitElement {
           align-items: center;
           justify-content: center;
           width: max-content;
+          margin-bottom: 10px;
         }
 
         #input-header-holder img {
           width: fit-content;
-          height: 1.5em;
-          margin-left: 10px;
+          height: 1em;
+          margin-left: 20px;
         }
 
         #input-area {
@@ -190,9 +192,6 @@ export class AppNewHome extends LitElement {
 
         #home-header {
           max-width: 498px;
-        }
-        #test {
-          background-image: url('/assets/new/BackgroundPWA1366.png');
         }
 
         ${smallBreakPoint(css`
@@ -425,7 +424,7 @@ export class AppNewHome extends LitElement {
           <div class="intro-grid-item">
             <div class="grid-item-header">  
               <h2>Start a new PWA</h2>
-              <img src="/assets/arrow.svg" alt="arrow" />
+              <img src="/assets/new/arrow.svg" alt="arrow" />
               
             </div>
             <p>
@@ -436,7 +435,7 @@ export class AppNewHome extends LitElement {
           <div class="intro-grid-item">
             <div class="grid-item-header">  
               <h2>Use dev tools</h2>
-              <img src="/assets/arrow.svg" alt="arrow" />
+              <img src="/assets/new/arrow.svg" alt="arrow" />
             </div>
             <p>
               Use our VS Code extension to create, improve, and package your PWA directly in yoru code editor.
@@ -448,7 +447,7 @@ export class AppNewHome extends LitElement {
           <div id="input-block" role="region">
             <div id="input-header-holder">
               <h2 id="input-header">Ship your PWA to app stores</h2>
-              <img src="/assets/images/store-logos.svg" alt="store logos"/>
+              <img src="/assets/new/store-logos.png" alt="store logos"/>
             </div>
             <div id="input-area">
               <fast-text-field slot="input-container" type="text" id="input-box" placeholder="Enter the URL to your PWA" name="url-input"

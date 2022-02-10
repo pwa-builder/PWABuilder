@@ -15,6 +15,7 @@ export class Infocard extends LitElement {
         max-width: 220px;
         height: 12em;
         padding: .5em 1.25em;
+        padding-bottom: 35px;
         display: flex;
         flex-direction: column;
         align-items: flex-start;
@@ -62,7 +63,9 @@ export class Infocard extends LitElement {
       .card-actions a {
         color: #4F3FB6;
         font-weight: bold;
-        text-decoration: underline;
+        border-bottom: 1px solid rgb(79, 63, 182);
+        text-decoration: none;
+        line-height: 14px;
         font-size: 14px;
         margin: 0;
       }

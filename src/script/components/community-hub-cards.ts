@@ -13,7 +13,7 @@ export interface link {
 
 export const communityCards: Array<CardData> = [
   {
-    imageUrl: '/assets/new/github.svg',
+    imageUrl: '/assets/new/github.png',
     title: localeStrings.text.community_hub.titles.github,
     description: localeStrings.text.community_hub.description.github,
     links: [
@@ -28,7 +28,7 @@ export const communityCards: Array<CardData> = [
     ]
   },
   {
-    imageUrl: '/assets/new/twitter.svg',
+    imageUrl: '/assets/new/twitter.png',
     title: localeStrings.text.community_hub.titles.twitter,
     description: localeStrings.text.community_hub.description.twitter,
     links: [
@@ -39,7 +39,7 @@ export const communityCards: Array<CardData> = [
     ]
   },
   {
-    imageUrl: '/assets/new/discord.svg',
+    imageUrl: '/assets/new/discord.png',
     title: localeStrings.text.community_hub.titles.discord,
     description: localeStrings.text.community_hub.description.discord,
     links: [

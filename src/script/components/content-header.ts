@@ -16,7 +16,7 @@ export class ContentHeader extends LitElement {
   static get styles() {
     return css`
       :host {
-        background: url(/assets/new/HeroBackground1920.png);
+        background: url(/assets/new/HeroBackground1920.jpg);
         background-position: top right;
         background-size: cover;
         background-repeat: no-repeat;
@@ -332,7 +332,7 @@ export class ContentHeader extends LitElement {
         :host(.home) {
           background-position: -21em center;
           background-repeat: no-repeat;
-          background-image: url(/assets/new/HeroBackground1920.png);
+          background-image: url(/assets/new/HeroBackground1920.jpg);
           background-size: cover;
         }
 

@@ -26,6 +26,11 @@ export class CommunityHub extends LitElement {
         justify-content: center;
       }
 
+      #community-photo img { 
+        width: 500px;
+        height: auto;
+      }
+
       #community-content {
         display: flex;
         flex-direction: column;
@@ -47,6 +52,7 @@ export class CommunityHub extends LitElement {
         flex-direction: column;
         align-items: flex-start;
         justify-content: center;
+        row-gap: 30px;
       }
     `,
     ];

@@ -20,6 +20,7 @@ export class CommunityCard extends LitElement {
         align-items: flex-start;
         column-gap: 1.5em;
         padding: .5em;
+        padding-left: 0;
       }
 
       .community-card-content {
@@ -51,14 +52,17 @@ export class CommunityCard extends LitElement {
         display: flex;
         align-items: center;
         justify-content: flex-start;
-        column-gap: .5em;
+        column-gap: 1.5em;
       }
 
       .community-card-actions a {
-        font-size: .5em;
+        font-size: 14px;
         font-weight: bold;
-        margin-right: .75em;
+        margin-right: .5em;
         width: 100%;
+        border-bottom: 1px solid rgb(79, 63, 182);
+        text-decoration: none;
+        line-height: 14px;
       }
 
       .card-link-box {
@@ -68,17 +72,9 @@ export class CommunityCard extends LitElement {
         width: max-content;
       }
 
-      .community-card-image {
-        width: 3em:
+      .community-card-image img {
+        width: 50px;
         height: auto;
-      }
-
-      .community-card-image img {
-        object-fit: contain;
-      }
-
-      .community-card-image img {
-        object-fit: contain;
       }
 
       .community-card-actions a:hover {
@@ -116,8 +112,8 @@ export class CommunityCard extends LitElement {
             ${this.links && this.links.map((link: any) =>
               html`
               <div class="card-link-box">
-                <a href=${link.route} target="_blank" rel="noopener">${link.text}</a>
-                <img src="/assets/arrow.svg" alt="arrow" />
+                <a href=${link.route} target="_blank">${link.text}</a>
+                <img src="/assets/new/arrow.svg" alt="arrow" />
               </div>
               `
             )}

@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { doubleCheckManifest, getManifestContext } from '../services/app-info';
+import { doubleCheckManifest, getManifestContext, setResults, setURL } from '../services/app-info';
 
 import {
   BreakpointValues,
@@ -256,6 +256,9 @@ export class AppReport extends LitElement {
     const search = new URLSearchParams(location.search);
     const results = search.get('results');
 
+    const url = search.get('site');
+    setURL(url!);
+
     if (results) {
       /*
         cache results string as we may need this farther in the flow
@@ -266,6 +269,7 @@ export class AppReport extends LitElement {
       sessionStorage.setItem('results-string', results);
 
       this.resultOfTest = JSON.parse(results);
+      setResults((this.resultOfTest as RawTestResult));
     }
 
     await this.handleDoubleChecks();
