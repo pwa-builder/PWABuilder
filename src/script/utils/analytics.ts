@@ -18,6 +18,15 @@ import { env } from "./environment";
 
 let analyticsLoadTask: Promise<AppInsights> | null;
 
+/*
+Per CELA all cookies related to Analytics are considered non-essential
+unless the data is aggregated. So if the user decides to accept cookies,
+the below three functions will all being firing. However, if the user
+chooses to deny or ignore the cookies banner, only recordPageView will
+record data as it is the only aggregated analytics tracker (The other two 
+track individual user pathing).
+*/
+
 export function recordPageView(uri: string, name?: string, properties?: any) {
   const pageViewOptions: PageViewTelemetry = {
     name: name,
@@ -38,7 +47,9 @@ export function recordProcessStep(
   stepType: AnalyticsBehavior.ProcessCheckpoint | AnalyticsBehavior.StartProcess | AnalyticsBehavior.ProcessCheckpoint | AnalyticsBehavior.CancelProcess | AnalyticsBehavior.CompleteProcess,
   additionalInfo?: {}) {
 
-  if (env.isProduction) {
+  const acceptedCookies = localStorage.getItem('PWABuilderGDPR');
+
+  if (env.isProduction && acceptedCookies) {
     lazyLoadAnalytics()
       .then(oneDS => oneDS.capturePageAction(null, {
         actionType: AnalyticsActionType.Other,
@@ -59,9 +70,14 @@ export function recordPageAction(actionName: string, type: AnalyticsActionType, 
     behavior: behavior,
     properties: properties
   };
-  lazyLoadAnalytics()
-    .then(oneDS => oneDS.trackPageAction(action))
-    .catch(err => console.warn('OneDS record page action error', err));
+  
+  const acceptedCookies = localStorage.getItem('PWABuilderGDPR');
+  
+  if (env.isProduction && acceptedCookies) {
+    lazyLoadAnalytics()
+      .then(oneDS => oneDS.trackPageAction(action))
+      .catch(err => console.warn('OneDS record page action error', err));
+  }
 }
 
 function lazyLoadAnalytics(): Promise<AppInsights> {
