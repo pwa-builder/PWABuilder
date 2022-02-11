@@ -14,6 +14,7 @@ import {
 } from '../utils/css/breakpoints';
 import { isValidURL } from '../utils/url';
 
+import '../components/discord-banner';
 import '../components/content-header';
 import '../components/resource-hub';
 import '../components/loading-button';
@@ -343,6 +344,7 @@ export class AppHome extends LitElement {
 
   render() {
     return html`
+      <discord-banner></discord-banner>
       <app-header part="header"></app-header>
       <main>
       <content-header class="home">
