@@ -18,11 +18,11 @@ export const communityCards: Array<CardData> = [
     description: localeStrings.text.community_hub.description.github,
     links: [
       {
-        link: 'https://github.com/pwa-builder/PWABuilder',
+        link: 'https://github.com/pwa-builder/PWABuilder#pwabuilder',
         text: 'Visit us on GitHub'
       },
       {
-        link: 'https://github.com/pwa-builder/PWABuilder',
+        link: 'https://github.com/pwa-builder/PWABuilder/projects/4?fullscreen=true&card_filter_query=label%3A%22help+wanted+%3Araising_hand%3A%22',
         text: 'Contribute to project'
       }
     ]
