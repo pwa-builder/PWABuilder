@@ -96,7 +96,8 @@ export class CommunityCard extends LitElement {
   }
 
   firstUpdated(){
-    
+    this.links.forEach((link) =>
+      console.log(link))
   }
 
   render() {
@@ -112,7 +113,7 @@ export class CommunityCard extends LitElement {
             ${this.links && this.links.map((link: any) =>
               html`
               <div class="card-link-box">
-                <a href=${link.route} target="_blank">${link.text}</a>
+                <a href=${link.link} target="_blank" rel="noopener">${link.text}</a>
                 <img src="/assets/new/arrow.svg" alt="arrow" />
               </div>
               `

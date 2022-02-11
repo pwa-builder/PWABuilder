@@ -18,8 +18,9 @@ import '../components/content-header';
 import '../components/loading-button';
 import '../components/dropdown-menu';
 import '../components/app-sidebar';
-import '../components/success-stories';
+import '../components/companies-packaged';
 import '../components/resource-hub-new';
+import '../components/success-stories';
 import '../components/community-hub';
 
 //@ts-ignore
@@ -465,8 +466,9 @@ export class AppNewHome extends LitElement {
           </div>
         </form>
       </content-header>
-      <success-stories></success-stories>
+      <companies-packaged></companies-packaged>
       <resource-hub-new></resource-hub-new>
+      <success-stories></success-stories>
       <community-hub></community-hub>
       </main>
     `;

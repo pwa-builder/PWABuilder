@@ -215,6 +215,26 @@
         "twitter": "Meet our fellow PWA enthusiast and follow our latest releases and updates on Twitter.",
         "discord": "Join our PWA community to connect with the  people and resources you need."
       }
+    },
+    "success_stories": {
+      "stat": {
+        "trivago": "User traffic",
+        "alibaba": "Total conversions",
+        "pintrest": "Ad revenue",
+        "tinder": "Storage efficient"
+      },
+      "value": {
+        "trivago": "+150%",
+        "alibaba": "+76%",
+        "pintrest": "+44%",
+        "tinder": "+90%"
+      },
+      "description": {
+        "trivago": "Engagement for users who add to homescreen has increased by 150%. This increased engagement led to a 97% increase in click outs to hotel offers.",
+        "alibaba": "After upgrading to a PWA, Alibaba saw a 76% increase in total conversions across browsers. And 30% more monthly active users on Android.",
+        "pintrest": "With the new Pinterest PWA they were able to increase user-generated ad revenue by 44% and core engagement by 60%.",
+        "tinder": "The native Tinder application was a whopping 30MB, when Tinder transitioned to PWA they were able to reduce their file size down to 2.8MB. "
+      }
     }
   },
   "tooltip": {

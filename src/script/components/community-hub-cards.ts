@@ -44,7 +44,7 @@ export const communityCards: Array<CardData> = [
     description: localeStrings.text.community_hub.description.discord,
     links: [
       {
-        link: 'https://discord.gg/JMvx4gmeqf',
+        link: 'https://aka.ms/pwabuilderdiscord',
         text: 'Join now'
       }
     ]
