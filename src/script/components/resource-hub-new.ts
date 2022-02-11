@@ -3,6 +3,14 @@ import { customElement, state } from 'lit/decorators.js';
 import { landingCards } from './resource-hub-cards-new';
 import '../components/info-card'
 
+import {
+  smallBreakPoint,
+  mediumBreakPoint,
+  largeBreakPoint,
+  xxLargeBreakPoint,
+  xxxLargeBreakPoint,
+} from '../utils/css/breakpoints';
+
 @customElement('resource-hub-new')
 export class ResourceHubNew extends LitElement {
   @state() cards: any = [];
@@ -34,8 +42,23 @@ export class ResourceHubNew extends LitElement {
         align-items: flex-start;
         justify-content: center;
         column-gap: 1em;
-      }
-    `,];
+      },
+      /* 640px - 1023px */
+      ${largeBreakPoint(css`
+          
+      `)}
+
+      /*1024px - 1365px*/
+      ${xxLargeBreakPoint(css`
+          
+      `)}
+
+      /* > 1920px */
+      ${xxxLargeBreakPoint(css`
+          
+      `)}
+    `,
+  ];
   }
 
   constructor() {

@@ -113,9 +113,6 @@ export class AppHeader extends LitElement {
           display: flex;
         }
 
-        nav fast-anchor::part(control) {
-          color: white;
-        }
       `)}
 
       ${mediumBreakPoint(css`
@@ -131,9 +128,6 @@ export class AppHeader extends LitElement {
           display: none;
         }
 
-        nav fast-anchor::part(control) {
-          color: white;
-        }
       `)}
       
 
@@ -146,9 +140,6 @@ export class AppHeader extends LitElement {
           display: none;
         }
 
-        nav fast-anchor::part(control) {
-          color: white;
-        }
       `)}
 
       ${xLargeBreakPoint(css`

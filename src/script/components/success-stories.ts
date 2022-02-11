@@ -4,6 +4,14 @@ import { customElement, state } from 'lit/decorators.js';
 import { getCards } from './success-stories-cards';
 import '../components/success-card'
 
+import {
+  smallBreakPoint,
+  mediumBreakPoint,
+  largeBreakPoint,
+  xxLargeBreakPoint,
+  xxxLargeBreakPoint,
+} from '../utils/css/breakpoints';
+
 @customElement('success-stories')
 export class SuccessStories extends LitElement {
   @state() cards: any = [];
@@ -38,8 +46,25 @@ export class SuccessStories extends LitElement {
         justify-content: flex-start;
         column-gap: 1em;
         row-gap: .8em;
-      }
-    `,];
+      },
+      /* 640px - 1023px */
+      ${largeBreakPoint(css`
+        #success-panel {
+          background-image: url(/assets/new/Success_1024.png);
+        }
+      `)}
+
+      /*1024px - 1365px*/
+      ${xxLargeBreakPoint(css`
+          
+      `)}
+
+      /* > 1920px */
+      ${xxxLargeBreakPoint(css`
+          
+      `)}
+    `,
+    ];
   }
 
   constructor() {
@@ -53,7 +78,7 @@ export class SuccessStories extends LitElement {
   render() {
     return html`
       <div id="success-panel">
-        <h2>PWA success stories</h2>
+        <h2>PWA success stories!</h2>
         <div id="success-cards">
           ${this.cards.map((card: any) => html`
             <success-card

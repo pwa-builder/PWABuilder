@@ -3,6 +3,14 @@ import { customElement, state } from 'lit/decorators.js';
 import { getCards } from './community-hub-cards';
 import '../components/community-card';
 
+import {
+  smallBreakPoint,
+  mediumBreakPoint,
+  largeBreakPoint,
+  xxLargeBreakPoint,
+  xxxLargeBreakPoint,
+} from '../utils/css/breakpoints';
+
 @customElement('community-hub')
 export class CommunityHub extends LitElement {
   @state() cards: any = [];
@@ -53,7 +61,27 @@ export class CommunityHub extends LitElement {
         align-items: flex-start;
         justify-content: center;
         row-gap: 30px;
-      }
+      },
+      /* 640px - 1023px */
+      ${largeBreakPoint(css`
+        #community-photo img { 
+          width: 450px;
+          height: auto;
+        }
+        #community-cards {
+          row-gap: 10px;
+        }
+      `)}
+
+      /*1024px - 1365px*/
+      ${xxLargeBreakPoint(css`
+          
+      `)}
+
+      /* > 1920px */
+      ${xxxLargeBreakPoint(css`
+          
+      `)}
     `,
     ];
   }

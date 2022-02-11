@@ -289,9 +289,8 @@ export class ContentHeader extends LitElement {
         }
 
         :host(.home) {
-          background-position: 8em -2em;
           background-repeat: no-repeat;
-          background-image: url(/assets/images/home_mobile.webp);
+          background-image: url(/assets/new/HeroBackground1024.jpg);
           background-size: cover;
         }
 

@@ -195,6 +195,7 @@ export class AppNewHome extends LitElement {
           max-width: 498px;
         }
 
+        /* < 480px */
         ${smallBreakPoint(css`
           content-header::part(grid-container) {
             display: none;
@@ -237,6 +238,7 @@ export class AppNewHome extends LitElement {
           }
         `)}
 
+        /* 480px - 639px */
         ${mediumBreakPoint(css`
           content-header::part(grid-container) {
             display: none;
@@ -286,12 +288,18 @@ export class AppNewHome extends LitElement {
         `)}
 
 
+      /* 640px - 1023px */
       ${largeBreakPoint(css`
           content-header::part(main-container) {
-            padding-left: 16px;
+            padding-left: 4.5em;
+          }
+
+          #content-grid {
+            column-gap: 2em;
           }
         `)}
 
+      /*1024px - 1365px*/
       ${xxLargeBreakPoint(css`
           .intro-grid-item {
             max-width: 280px;
@@ -307,6 +315,7 @@ export class AppNewHome extends LitElement {
           }
         `)}
 
+        /* > 1920px */
       ${xxxLargeBreakPoint(css`
           content-header::part(main-container) {
             padding-left: 10em;

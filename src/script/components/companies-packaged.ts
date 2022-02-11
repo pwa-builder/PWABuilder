@@ -2,11 +2,20 @@ import { LitElement, css, html } from 'lit';
 
 import { customElement } from 'lit/decorators.js';
 
+import {
+  smallBreakPoint,
+  mediumBreakPoint,
+  largeBreakPoint,
+  xxLargeBreakPoint,
+  xxxLargeBreakPoint,
+} from '../utils/css/breakpoints';
+
 @customElement('companies-packaged')
 export class ComapniesPackaged extends LitElement {
 
   static get styles() {
-    return css`
+    return [
+    css`
       #success-wrapper {
         display: flex;
         flex-direction: column;
@@ -38,7 +47,25 @@ export class ComapniesPackaged extends LitElement {
         font-size: .75em;
       }
 
-    `;
+      /* 640px - 1023px */
+      ${largeBreakPoint(css`
+          #success-wrapper img {
+            max-width: 39em;
+            height: auto;
+          }
+      `)}
+
+      /*1024px - 1365px*/
+      ${xxLargeBreakPoint(css`
+          
+      `)}
+
+      /* > 1920px */
+      ${xxxLargeBreakPoint(css`
+          
+      `)}
+    `
+    ];
   }
 
   constructor() {
