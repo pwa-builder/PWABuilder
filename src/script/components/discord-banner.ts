@@ -134,7 +134,7 @@ export class DiscordBanner extends LitElement {
           <div id="banner-content">
             <img id="logo" src="/assets/images/discord_logo.svg" alt="discord logo"/>
             <p>
-              Join our PWA community Discord to connect with the people and resources you need.
+              Join the PWABuilder Discord community to connect with the people and resources you need.
             </p>
 
             <a href="https://aka.ms/pwabuilderdiscord" target="_blank" rel="noopener"><button
