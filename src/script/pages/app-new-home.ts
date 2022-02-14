@@ -9,7 +9,7 @@ import {
   smallBreakPoint,
   mediumBreakPoint,
   largeBreakPoint,
-  xxLargeBreakPoint,
+  xLargeBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
 import { isValidURL } from '../utils/url';
@@ -47,7 +47,7 @@ export class AppNewHome extends LitElement {
       style,
       css`
         #wrapper {
-          background: url(/assets/new/HeroBackground1366.jpg);
+          background: url(/assets/new/HeroBackground1920.jpg);
           background-position: center center;
           background-size: cover;
           background-repeat: no-repeat;
@@ -119,6 +119,7 @@ export class AppNewHome extends LitElement {
           font-size: 1em;
           font-weight: bold;
           margin: 0;
+          margin-right: .5em;
           line-height: 1em;
           color: #4F3FB6;
         }
@@ -249,84 +250,51 @@ export class AppNewHome extends LitElement {
 
         /* 480px - 639px */
         ${mediumBreakPoint(css`
-          content-header::part(grid-container) {
-            display: none;
-          }
-
-          content-header::part(main-container) {
-            padding-left: 0;
-          }
-
-          h1 {
-            font-size: var(--large-font-size);
-            margin-top: 0;
-          }
-
-          #hero-p {
-            line-height: 22px;
-            text-align: center;
-            max-width: initial;
-          }
-
-          #input-form {
-            flex-direction: column;
-            width: 100%;
-            align-items: center;
-          }
-
-          #input-form fast-text-field {
-            width: 100%;
-            margin-right: 0;
-          }
-
-          #input-form fast-text-field::part(root) {
-            height: 64px;
-          }
-
-          #input-form fast-text-field::part(control) {
-            font-size: 22px;
-          }
-
-          #input-block {
-            margin-bottom: 30px;
-          }
-
-          #start-button {
-            margin-top: 45px;
+          #wrapper {
+            padding: 1.5em;
+            padding-top: 4em;
+            background: url(/assets/new/HeroBackground480.jpg);
+            background-position: center center;
+            background-size: cover;
+            background-repeat: no-repeat;
           }
         `)}
-
 
       /* 640px - 1023px */
       ${largeBreakPoint(css`
-          content-header::part(main-container) {
+          #wrapper {
             padding-left: 4.5em;
+            background: url(/assets/new/HeroBackground1024.jpg);
+            background-position: center center;
+            background-size: cover;
+            background-repeat: no-repeat;
           }
 
           #content-grid {
-            column-gap: 2em;
+            column-gap: 1em;
           }
-        `)}
+          
+      `)}
+
+      @media (min-width: 640px) and (max-width: 955px) {
+        #wrapper {
+          background-position: left;
+        }
+      }
 
       /*1024px - 1365px*/
-      ${xxLargeBreakPoint(css`
-          .intro-grid-item {
-            max-width: 280px;
+      ${xLargeBreakPoint(css`
+          #wrapper {
+            background: url(/assets/new/HeroBackground1366.jpg);
+            background-position: center center;
+            background-size: cover;
+            background-repeat: no-repeat;
           }
+      `)}
 
-          h1 {
-            max-width: 600px;
-          }
-
-          content-header::part(main-container) {
-            padding-left: 9em;
-            justify-content: flex-start;
-          }
-        `)}
-
-        /* > 1920px */
+        /* > 1366 */
       ${xxxLargeBreakPoint(css`
-          content-header::part(main-container) {
+          #wrapper {
             padding-left: 10em;
             justify-content: flex-start;
           }
