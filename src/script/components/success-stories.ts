@@ -47,6 +47,7 @@ export class SuccessStories extends LitElement {
         column-gap: 1em;
         row-gap: .8em;
       },
+      /* 850px, hide background */
       /* 640px - 1023px */
       ${largeBreakPoint(css`
         #success-panel {
@@ -78,7 +79,7 @@ export class SuccessStories extends LitElement {
   render() {
     return html`
       <div id="success-panel">
-        <h2>PWA success stories!</h2>
+        <h2>PWA success stories</h2>
         <div id="success-cards">
           ${this.cards.map((card: any) => html`
             <success-card

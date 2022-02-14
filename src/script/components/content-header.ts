@@ -65,7 +65,7 @@ export class ContentHeader extends LitElement {
       }
 
       #content-side {
-        max-width: 22em;
+        max-width: 30em;
       }
 
       #main-container {

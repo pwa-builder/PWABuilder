@@ -46,14 +46,16 @@ export class AppNewHome extends LitElement {
     return [
       style,
       css`
-        content-header::part(main-container) {
-          display: flex;
-          margin-top: 4em;
-          padding-top: 0;
-        }
+        #wrapper {
+          background: url(/assets/new/HeroBackground1366.jpg);
+          background-position: center center;
+          background-size: cover;
+          background-repeat: no-repeat;
 
-        content-header::part(header) {
-          --header-border: none;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          padding: 4em;
         }
 
         app-header::part(header) {
@@ -61,6 +63,7 @@ export class AppNewHome extends LitElement {
           position: absolute;
           left: 0;
           right: 0;
+          top: 0;
           z-index: 2;
           border: none;
         }
@@ -72,7 +75,7 @@ export class AppNewHome extends LitElement {
           margin-bottom: 20px;
         }
 
-        content-header h2 {
+        #input-header {
           font-size: 1em;
           font-weight: bold;
           margin: 0;
@@ -93,10 +96,11 @@ export class AppNewHome extends LitElement {
           margin: 0;
           display: grid;
           grid-template-columns: auto auto;
+          width: fit-content;
         }
 
         .intro-grid-item {
-          max-width: 200px;
+          width: max-content;
           margin-right: 1em;
         }
 
@@ -112,6 +116,11 @@ export class AppNewHome extends LitElement {
           margin-right: .25em;
           border-bottom: 1px solid rgb(79, 63, 182);
           line-height: 20px;
+          font-size: 1em;
+          font-weight: bold;
+          margin: 0;
+          line-height: 1em;
+          color: #4F3FB6;
         }
 
         .grid-item-header:hover {
@@ -426,7 +435,7 @@ export class AppNewHome extends LitElement {
     return html`
       <app-header part="header"></app-header>
       <main>
-      <content-header class="home">
+      <div id="wrapper">
         <h1 id="home-header" slot="hero-container">
           Helping developers build and publish PWAs
         </h1>
@@ -474,7 +483,7 @@ export class AppNewHome extends LitElement {
             <p id="demo">To try a demo url <a id="demo-action" @click=${() => this.placeDemoURL()}>click here.</a></p>
           </div>
         </form>
-      </content-header>
+      </div>
       <companies-packaged></companies-packaged>
       <resource-hub-new></resource-hub-new>
       <success-stories></success-stories>
