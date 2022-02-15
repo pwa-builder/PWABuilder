@@ -129,7 +129,6 @@ export class AppNewHome extends LitElement {
         }
 
         #input-form {
-          display: flex;
           margin-top: 1em;
           width: max-content;
         }
@@ -149,10 +148,24 @@ export class AppNewHome extends LitElement {
         }
 
         #input-area {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 100%;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          grid-template-rows: 1fr 1fr;
+        }
+
+        #input-box {
+          grid-column: 1;
+          grid-row: 1;
+        }
+
+        #start-button {
+          grid-column: 2;
+          grid-row: 1;
+        }
+
+        #demo {
+          grid-column: 1 / 2;
+          grid-row: 2;
         }
 
         #input-form fast-text-field {
@@ -227,25 +240,43 @@ export class AppNewHome extends LitElement {
             width: 13em;
           }
           #input-area {
-            flex-direction: column;
-            align-items: flex-start;
-            justify-content: flex-start;
             width: 100%;
             row-gap: 10px;
           }
-          fast-button::part(underlying-button) {
-            font-size: 16px!important;
+
+          #input-box {
+            grid-column: 1 / span 2;
+            grid-row: 1;
           }
-          #input-form fast-text-field::part(control) {
-            width: 28em;
+
+          #start-button {
+            grid-column: 1;
+            grid-row: 2;
+          }
+
+          #demo {
+            grid-column: 2;
+            grid-row: 2;
+            align-self: flex-start;
+            justify-self: flex-end;
+          }
+          #input-form {
+            width: 100%;
+          }
+          #input-form fast-text-field {
+            margin-right: 0;
+          }
+          #home-header{
+            font-size: 40px;
           }
         `)}
 
         /* < 480px */
         ${smallBreakPoint(css`
           #wrapper {
-            padding: 1.5em;
+            padding: 1em;
             padding-top: 4em;
+            padding-bottom: 2em;
             background: url(/assets/new/HeroBackground320.jpg);
             background-position: center center;
             background-size: cover;
@@ -253,6 +284,43 @@ export class AppNewHome extends LitElement {
           }
           #home-header {
             font-size: 1.9em;
+          }
+          #content-grid {
+            display: flex;
+            flex-direction: column;
+            row-gap: 1em;
+          }
+          #input-area {
+            width: 100%;
+            row-gap: 10px;
+          }
+
+          #input-box {
+            grid-column: 1 / span 2;
+            grid-row: 1;
+          }
+
+          #start-button {
+            grid-column: 1;
+            grid-row: 2;
+          }
+          #input-header-holder img {
+            display: none;
+          }
+          #demo {
+            display: none;
+          }
+          #home-header {
+            line-height: 36px;
+          }
+          #input-form {
+            width: 100%;
+          }
+          #input-form fast-text-field {
+            margin-right: 0;
+          }
+          #input-form fast-text-field::part(control) {
+            width: 100%;
           }
         `)}
 
@@ -427,8 +495,9 @@ export class AppNewHome extends LitElement {
         
               <loading-button id="start-button" type="submit" class="navigation" ?loading="${this.gettingManifest}"
               @click="${(e: InputEvent) => this.start(e)}">Start</loading-button>
+              <p id="demo">To try a demo url <a id="demo-action" @click=${() => this.placeDemoURL()}>click here.</a></p>
             </div>
-            <p id="demo">To try a demo url <a id="demo-action" @click=${() => this.placeDemoURL()}>click here.</a></p>
+            
           </div>
         </form>
       </div>
