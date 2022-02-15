@@ -130,8 +130,9 @@ export class AppHome extends LitElement {
           max-width: 498px;
         }
 
+
         #discord-link {
-          position: absolute;
+          position: relative;
           bottom: 10px;
           right: 10px;
           z-index: 2;
@@ -139,6 +140,17 @@ export class AppHome extends LitElement {
 
         #discord-link:hover {
           cursor: pointer;
+        }
+
+        #discord-tooltip {
+          display: none;
+        }
+
+        #discord-link:hover #discord-tooltip {
+          display: block;
+          position: absolute;
+          top: 0;
+          left: 0;
         }
 
         ${smallBreakPoint(css`
@@ -419,12 +431,21 @@ export class AppHome extends LitElement {
           components from the PWABuilder team!
         </p>
       </resource-hub>
-      <img id="discord-link" src="/assets/images/discord_logo.svg" alt="discord logo"/>
-      <hover-tooltip
-          anchor="discord-link" 
-          text="Join the PWABuilder Discord community to connect with the people and resources you need."
-          link="https://aka.ms/pwabuilderdiscord">
-      </hover-tooltip>
+      <div id="discord-link">
+        <img src="/assets/images/discord_logo.svg" alt="discord logo"/>
+        <div id="discord-tooltip">
+          <p>
+            Join the PWABuilder Discord community to connect with the people and resources you need.
+          </p>
+
+          <a href="https://aka.ms/pwabuilderdiscord" target="_blank" rel="noopener"><button
+            id="discord-button"
+            aria-label="Discord Button"
+          >
+          Join
+          </button></a>
+        </div>
+      </div>
       </main>
     `;
   }
