@@ -7,7 +7,7 @@ import {
   smallBreakPoint,
   mediumBreakPoint,
   largeBreakPoint,
-  xxLargeBreakPoint,
+  xLargeBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
 
@@ -23,8 +23,9 @@ export class ResourceHubNew extends LitElement {
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background-image: url(/assets/new/BackgroundPWA1920.png);
+        background-image: url(/assets/new/BackgroundPWA1366.png);
         background-repeat: no-repeat;
+        background-size: cover;
         padding: 2em;
       }
 
@@ -42,21 +43,41 @@ export class ResourceHubNew extends LitElement {
         align-items: flex-start;
         justify-content: center;
         column-gap: 1em;
-      },
+      }
 
-      /* > 1920px */
-      ${xxxLargeBreakPoint(css`
+      /* 480px - 639px */
+      ${mediumBreakPoint(css`
           
       `)}
 
-      /*1024px - 1365px*/
-      ${xxLargeBreakPoint(css`
-          
-      `)}
+      /* 640px - 1023px */
+      ${largeBreakPoint(css`
+        #wrapper{
+          background-image: url(/assets/new/BackgroundPWA1024.png);
+          background-position: center center;
+          background-repeat: no-repeat;
+          background-size: cover;
+        }
+    `)}
 
-       /* 640px - 1023px */
-       ${largeBreakPoint(css`
-          
+    /*1024px - 1365px*/
+    ${xLargeBreakPoint(css`
+        #wrapper {
+          background: url(/assets/new/BackgroundPWA1366.png);
+          background-position: center center;
+          background-size: cover;
+          background-repeat: no-repeat;
+        }
+    `)}
+
+    /* > 1920 */
+    ${xxxLargeBreakPoint(css`
+          #wrapper{
+          background-image: url(/assets/new/BackgroundPWA1920.png);
+          background-repeat: no-repeat;
+          background-size: cover;
+          padding: 3em;
+        }
       `)}
 
       

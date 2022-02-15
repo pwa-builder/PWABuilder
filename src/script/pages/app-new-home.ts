@@ -324,29 +324,29 @@ export class AppNewHome extends LitElement {
           }
         `)}
 
-      @media (min-width: 640px) and (max-width: 955px) {
-        #wrapper {
-          background-position: left;
+        @media (min-width: 640px) and (max-width: 955px) {
+          #wrapper {
+            background-position: left;
+          }
         }
-      }
 
-      /*1024px - 1365px*/
-      ${xLargeBreakPoint(css`
-          #wrapper {
-            background: url(/assets/new/HeroBackground1366.jpg);
-            background-position: center center;
-            background-size: cover;
-            background-repeat: no-repeat;
-          }
-      `)}
-
-        /* > 1366 */
-      ${xxxLargeBreakPoint(css`
-          #wrapper {
-            padding-left: 10em;
-            justify-content: flex-start;
-          }
+        /*1024px - 1365px*/
+        ${xLargeBreakPoint(css`
+            #wrapper {
+              background: url(/assets/new/HeroBackground1366.jpg);
+              background-position: center center;
+              background-size: cover;
+              background-repeat: no-repeat;
+            }
         `)}
+
+          /* > 1920 */
+        ${xxxLargeBreakPoint(css`
+            #wrapper {
+              padding-left: 10em;
+              justify-content: flex-start;
+            }
+          `)}
       `,
     ];
   }
