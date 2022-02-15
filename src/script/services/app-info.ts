@@ -9,7 +9,7 @@ import {
 } from '../utils/interfaces';
 import { runManifestChecks } from '../utils/manifest-validation';
 import { getChosenServiceWorker, getSetSWCounter } from './service_worker';
-import { Router } from '@vaadin/router';
+
 
 let site_url: string | undefined;
 let results: RawTestResult | undefined;
@@ -107,13 +107,6 @@ export function getURL(): string {
 
   if (site_url) {
     return site_url;
-  }
-
-  //if report card link is opened in a new tab
-  if(!site_url && window.location.href.includes('site=')) {
-    let windowUrl = window.location.href;
-    let currentUrl = windowUrl.substring(windowUrl.indexOf('=') + 1, windowUrl.indexOf('&'));
-    Router.go(`/testing?site=${currentUrl}`);
   }
 
   if (url) {
