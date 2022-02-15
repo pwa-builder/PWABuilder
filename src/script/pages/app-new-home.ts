@@ -83,14 +83,6 @@ export class AppNewHome extends LitElement {
           color: #4F3FB6;
         }
 
-        #hero-p {
-          font-size: 16px;
-          line-height: 24px;
-          letter-spacing: -0.015em;
-          color: var(--secondary-font-color);
-          max-width: 406px;
-        }
-
         #content-grid {
           padding: 0;
           margin: 0;
@@ -205,63 +197,8 @@ export class AppNewHome extends LitElement {
           max-width: 498px;
         }
 
-        /* < 480px */
-        ${smallBreakPoint(css`
-          content-header::part(grid-container) {
-            display: none;
-          }
-
-          content-header::part(main-container) {
-            padding-left: 0;
-          }
-
-          h1 {
-            margin-top: 0;
-            font-size: var(--large-font-size);
-          }
-
-          #start-button {
-            margin-top: 16px;
-          }
-
-          #hero-p {
-            line-height: 22px;
-          }
-
-          #input-form {
-            flex-direction: column;
-            width: 100%;
-            align-items: center;
-          }
-
-          #input-form fast-text-field {
-            width: 100%;
-            margin-right: 0;
-          }
-
-          #input-form fast-text-field::part(root) {
-            height: 64px;
-          }
-
-          #input-form fast-text-field::part(control) {
-            font-size: 22px;
-          }
-        `)}
-
-        /* 480px - 639px */
-        ${mediumBreakPoint(css`
-          #wrapper {
-            padding: 1.5em;
-            padding-top: 4em;
-            background: url(/assets/new/HeroBackground480.jpg);
-            background-position: center center;
-            background-size: cover;
-            background-repeat: no-repeat;
-          }
-        `)}
-
-      /* 640px - 1023px */
-      ${largeBreakPoint(css`
+        /* 640px - 1023px */
+        ${largeBreakPoint(css`
           #wrapper {
             padding-left: 4.5em;
             background: url(/assets/new/HeroBackground1024.jpg);
@@ -273,8 +210,51 @@ export class AppNewHome extends LitElement {
           #content-grid {
             column-gap: 1em;
           }
-          
-      `)}
+        `)}
+
+        /* 480px - 639px */
+        ${mediumBreakPoint(css`
+          #wrapper {
+            padding: 1.5em;
+            padding-top: 4em;
+            padding-bottom: 6em;
+            background: url(/assets/new/HeroBackground480.jpg);
+            background-position: center center;
+            background-size: cover;
+            background-repeat: no-repeat;
+          }
+          .intro-grid-item p {
+            width: 13em;
+          }
+          #input-area {
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+            width: 100%;
+            row-gap: 10px;
+          }
+          fast-button::part(underlying-button) {
+            font-size: 16px!important;
+          }
+          #input-form fast-text-field::part(control) {
+            width: 28em;
+          }
+        `)}
+
+        /* < 480px */
+        ${smallBreakPoint(css`
+          #wrapper {
+            padding: 1.5em;
+            padding-top: 4em;
+            background: url(/assets/new/HeroBackground320.jpg);
+            background-position: center center;
+            background-size: cover;
+            background-repeat: no-repeat;
+          }
+          #home-header {
+            font-size: 1.9em;
+          }
+        `)}
 
       @media (min-width: 640px) and (max-width: 955px) {
         #wrapper {

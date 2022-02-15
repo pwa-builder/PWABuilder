@@ -23,7 +23,7 @@ export class ResourceHubNew extends LitElement {
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background-image: url(/assets/new/BackgroundPWA1366.png);
+        background-image: url(/assets/new/BackgroundPWA1920.png);
         background-repeat: no-repeat;
         padding: 2em;
       }
@@ -43,8 +43,9 @@ export class ResourceHubNew extends LitElement {
         justify-content: center;
         column-gap: 1em;
       },
-      /* 640px - 1023px */
-      ${largeBreakPoint(css`
+
+      /* > 1920px */
+      ${xxxLargeBreakPoint(css`
           
       `)}
 
@@ -53,10 +54,12 @@ export class ResourceHubNew extends LitElement {
           
       `)}
 
-      /* > 1920px */
-      ${xxxLargeBreakPoint(css`
+       /* 640px - 1023px */
+       ${largeBreakPoint(css`
           
       `)}
+
+      
     `,
   ];
   }

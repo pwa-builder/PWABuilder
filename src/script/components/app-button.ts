@@ -84,8 +84,10 @@ export class AppButton extends LitElement implements AppButtonElement {
           }
 
           fast-button.navigation {
-            --button-width: 180px;
+            --button-width: 100px;
+            --button-height: 40px;
             line-height: 28px;
+            font-size: 16px;
           }
         `
       ),
