@@ -45,7 +45,7 @@ export class CookieBanner extends LitElement {
         padding-left: 10px;
         padding-right: 10px;
         margin-left: 10px;
-        width: 6em;
+        width: fit-content;
       }
 
       #cookie-actions button:hover {
@@ -87,7 +87,7 @@ export class CookieBanner extends LitElement {
     // by default, non essential cookies are denied.
     const savedValue = localStorage.getItem('PWABuilderGDPR');
 
-    if (JSON.parse(savedValue as string) !== true) {
+    if (!savedValue) {
       this.show = true;
       localStorage.setItem('PWABuilderGDPR', JSON.stringify(false));
     }
@@ -108,8 +108,7 @@ export class CookieBanner extends LitElement {
 
             <div id="cookie-info">
               <p>
-              This site uses cookies for analytics and personalized content. By
-              continuing to browse this site, you agree to this use.
+              This site uses cookies to offer you a better browsing experience. Click below to learn more.
               </p>
               <a
                 href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
