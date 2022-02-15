@@ -257,6 +257,7 @@ export class AppReport extends LitElement {
     const search = new URLSearchParams(location.search);
     const results = search.get('results');
     const url = search.get('site');
+    const hasBadges = sessionStorage.getItem('current_badges');
     setURL(url!);
     
     if (results) {
@@ -274,8 +275,9 @@ export class AppReport extends LitElement {
 
       this.resultOfTest = JSON.parse(results);
 
-      giveOutBadges();
-
+      if(!hasBadges) {
+        giveOutBadges();
+      }
     }
 
     await this.handleDoubleChecks();
