@@ -25,6 +25,10 @@ the below three functions will all being firing. However, if the user
 chooses to deny or ignore the cookies banner, only recordPageView will
 record data as it is the only aggregated analytics tracker (The other two 
 track individual user pathing).
+
+In order to check if the cookies have been accepted check: 
+const acceptedCookies = localStorage.getItem('PWABuilderGDPR'); 
+and add acceptedCookies to the if(env.isProduction && acceptedCookies) 
 */
 
 export function recordPageView(uri: string, name?: string, properties?: any) {
@@ -47,9 +51,7 @@ export function recordProcessStep(
   stepType: AnalyticsBehavior.ProcessCheckpoint | AnalyticsBehavior.StartProcess | AnalyticsBehavior.ProcessCheckpoint | AnalyticsBehavior.CancelProcess | AnalyticsBehavior.CompleteProcess,
   additionalInfo?: {}) {
 
-  const acceptedCookies = localStorage.getItem('PWABuilderGDPR');
-
-  if (env.isProduction && acceptedCookies) {
+  if (env.isProduction) {
     lazyLoadAnalytics()
       .then(oneDS => oneDS.capturePageAction(null, {
         actionType: AnalyticsActionType.Other,
@@ -71,9 +73,7 @@ export function recordPageAction(actionName: string, type: AnalyticsActionType, 
     properties: properties
   };
   
-  const acceptedCookies = localStorage.getItem('PWABuilderGDPR');
-  
-  if (env.isProduction && acceptedCookies) {
+  if (env.isProduction) {
     lazyLoadAnalytics()
       .then(oneDS => oneDS.trackPageAction(action))
       .catch(err => console.warn('OneDS record page action error', err));

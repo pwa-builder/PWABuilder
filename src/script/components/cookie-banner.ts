@@ -75,6 +75,13 @@ export class CookieBanner extends LitElement {
           text-align: center;
           margin-bottom: 10px;
         }
+
+        #cookie-actions {
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          row-gap: 5px;
+        }
       `)}
     `;
   }
@@ -122,7 +129,7 @@ export class CookieBanner extends LitElement {
                 aria-label="Reject Button"
                 @click="${() => this.close(false)}"
               > 
-                Reject
+                Reject all non-essential cookies
               </button>
 
               <button
@@ -130,7 +137,7 @@ export class CookieBanner extends LitElement {
                 aria-label="Accept Button"
                 @click="${() => this.close(true)}"
               >
-                Accept
+                Accept all cookies
               </button>
             </div>
           </div>`
