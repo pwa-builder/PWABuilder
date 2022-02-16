@@ -1,6 +1,14 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
+import {
+  smallBreakPoint,
+  mediumBreakPoint,
+  largeBreakPoint,
+  xLargeBreakPoint,
+  xxxLargeBreakPoint,
+} from '../utils/css/breakpoints';
+
 @customElement('info-card')
 export class Infocard extends LitElement {
   @property({ type: String }) imageUrl: string = "";
@@ -9,7 +17,8 @@ export class Infocard extends LitElement {
   @property({ type: String }) linkRoute: string = "";
 
   static get styles() {
-    return css`
+    return [
+    css`
       .card {
         min-width: 140px;
         max-width: 220px;
@@ -43,6 +52,7 @@ export class Infocard extends LitElement {
         font-weight: var(--font-bold);
         margin: 0;
         margin-bottom: .5em;
+        text-align: center;
       }
 
       .card-content p {
@@ -73,7 +83,53 @@ export class Infocard extends LitElement {
       .card-actions a:hover {
         cursor: pointer;
       }
-    `;
+
+      /* < 480px */
+      ${smallBreakPoint(css`
+          .card {
+            min-width: 140px;
+            max-width: 300px;
+            height: 15em;
+          }
+          .card-content p {
+            font-size: .825em;
+          }
+      `)}
+
+      /* 480px - 639px */
+      ${mediumBreakPoint(css`
+        .card {
+            min-width: 140px;
+            max-width: 300px;
+            height: 15em;
+          }
+          .card-content p {
+            font-size: .825em;
+          }
+      `)}
+
+      /* 640px - 1023px */
+      ${largeBreakPoint(css`
+        .card {
+          min-width: 140px;
+          max-width: 200px;
+          height: 15em;
+          padding: .75em;
+          padding-bottom: 1.25em;
+        }
+      `)}
+
+      /*1024px - 1365px*/
+      ${xLargeBreakPoint(css`
+      `)}
+
+      /* > 1920 */
+      ${xxxLargeBreakPoint(css`
+          
+      `)}
+
+    `
+    ];
   }
 
   constructor() {

@@ -26,6 +26,7 @@ export class ResourceHubNew extends LitElement {
         background-image: url(/assets/new/BackgroundPWA1366.png);
         background-repeat: no-repeat;
         background-size: cover;
+        background-position: center;
         padding: 2em;
       }
 
@@ -35,6 +36,7 @@ export class ResourceHubNew extends LitElement {
         margin-bottom: 1em;
         font-weight: bold;
         font-size: 1.55em;
+        text-align: center;
       }
 
       #cards {
@@ -45,39 +47,60 @@ export class ResourceHubNew extends LitElement {
         column-gap: 1em;
       }
 
+      /* < 480px */
+      ${smallBreakPoint(css`
+          #hub-panel{
+            background-image: url(/assets/new/BackgroundPWA320.png);
+            padding: 2em 1em;
+          }
+          #cards {
+            flex-direction: column;
+            row-gap: 1em;
+            align-items: center;
+            justify-content: center;
+          }
+      `)}
+
       /* 480px - 639px */
       ${mediumBreakPoint(css`
-          
+          #hub-panel{
+            background-image: url(/assets/new/BackgroundPWA480.png);
+            padding: 2em 4em;
+          }
+          #cards {
+            flex-direction: column;
+            row-gap: 1em;
+            align-items: center;
+            justify-content: center;
+          }
       `)}
 
       /* 640px - 1023px */
       ${largeBreakPoint(css`
-        #wrapper{
-          background-image: url(/assets/new/BackgroundPWA1024.png);
-          background-position: center center;
-          background-repeat: no-repeat;
-          background-size: cover;
-        }
-    `)}
+          #hub-panel{
+            background-image: url(/assets/new/BackgroundPWA1024.png);
+            padding: 3.25em;
+          }
+      `)}
 
-    /*1024px - 1365px*/
-    ${xLargeBreakPoint(css`
-        #wrapper {
-          background: url(/assets/new/BackgroundPWA1366.png);
-          background-position: center center;
-          background-size: cover;
-          background-repeat: no-repeat;
-        }
-    `)}
+      /*1024px - 1365px*/
+      ${xLargeBreakPoint(css`
+          #hub-panel {
+            background: url(/assets/new/BackgroundPWA1366.png);
+            background-position: center center;
+            background-size: cover;
+            background-repeat: no-repeat;
+          }
+      `)}
 
-    /* > 1920 */
-    ${xxxLargeBreakPoint(css`
-          #wrapper{
-          background-image: url(/assets/new/BackgroundPWA1920.png);
-          background-repeat: no-repeat;
-          background-size: cover;
-          padding: 3em;
-        }
+      /* > 1920 */
+      ${xxxLargeBreakPoint(css`
+            #hub-panel{
+            background-image: url(/assets/new/BackgroundPWA1920.png);
+            background-repeat: no-repeat;
+            background-size: cover;
+            padding: 3em;
+          }
       `)}
 
       

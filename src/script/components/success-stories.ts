@@ -24,7 +24,7 @@ export class SuccessStories extends LitElement {
         flex-direction: column;
         align-items: flex-start;
         justify-content: flex-start;
-        background-image: url(/assets/new/Success_1366.png);
+        background-image: url(/assets/new/successBG_1366.png);
         background-repeat: no-repeat;
         padding: 2em;
         padding-left: 7em;
@@ -40,18 +40,18 @@ export class SuccessStories extends LitElement {
 
       #success-cards {
         width: 100%;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: flex-start;
-        justify-content: flex-start;
-        column-gap: 1em;
+        display: grid;
+        grid-template-columns: min-content min-content;
+        grid-template-rows: auto auto;
         row-gap: .8em;
+        column-gap: 1em;
       },
       /* 850px, hide background */
+
       /* 640px - 1023px */
       ${largeBreakPoint(css`
         #success-panel {
-          background-image: url(/assets/new/Success_1024.png);
+          background-image: url(/assets/new/successBG_1024.png);
         }
       `)}
 

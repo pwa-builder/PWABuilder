@@ -1,6 +1,14 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
+import {
+  smallBreakPoint,
+  mediumBreakPoint,
+  largeBreakPoint,
+  xxLargeBreakPoint,
+  xxxLargeBreakPoint,
+} from '../utils/css/breakpoints';
+
 @customElement('success-card')
 export class SuccessCard extends LitElement {
   @property({ type: String }) imageUrl: string = "";
@@ -9,12 +17,13 @@ export class SuccessCard extends LitElement {
   @property({ type: String }) cardValue: string = "";
 
   static get styles() {
-    return css`
+    return [
+      css`
       .success-card {
         width: 350px;
         height: max-content;
         padding: 1em;
-        display: flex;
+        display: inline-flex;
         flex-direction: column;
         align-items: flex-start;
         justify-content: flex-start;
@@ -51,7 +60,22 @@ export class SuccessCard extends LitElement {
         line-height: 18px;
         color: #808080
       }
-    `;
+
+      /* 640px - 1023px */
+      ${largeBreakPoint(css`
+      `)}
+
+      /*1024px - 1365px*/
+      ${xxLargeBreakPoint(css`
+          
+      `)}
+
+      /* > 1920px */
+      ${xxxLargeBreakPoint(css`
+          
+      `)}
+    `
+    ];
   }
 
   constructor() {
