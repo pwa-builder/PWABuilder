@@ -73,9 +73,9 @@ export class DiscordBox extends LitElement {
       ${this.show
         ? html`
         <div id="discord-box">
-          <img id="logo" src="/assets/images/discord_logo.svg" />
+          <img id="logo" src="/assets/images/discord_logo.svg" alt="discord logo"/>
           <p>Want to chat? Join us on <a href="https://aka.ms/pwabuilderdiscord" target="_blank" rel="noopener">Discord</a></p>
-          <img id="close" src="/assets/images/Close_desk.png" @click=${() => this.close()}/>
+          <img id="close" src="/assets/images/Close_desk.png" @click=${() => this.close()} alt="close button"/>
         </div>`
         : null}
     `;
