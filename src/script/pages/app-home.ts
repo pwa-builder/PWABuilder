@@ -14,7 +14,7 @@ import {
 } from '../utils/css/breakpoints';
 import { isValidURL } from '../utils/url';
 
-import '../components/discord-banner';
+import '../components/discord-box';
 import '../components/content-header';
 import '../components/resource-hub';
 import '../components/loading-button';
@@ -431,20 +431,7 @@ export class AppHome extends LitElement {
           components from the PWABuilder team!
         </p>
       </resource-hub>
-      <div id="discord-link">
-        <img src="/assets/images/discord_logo.svg" alt="discord logo"/>
-        <div id="discord-tooltip">
-          <p>
-            Join the PWABuilder Discord community to connect with the people and resources you need.
-          </p>
-
-          <a href="https://aka.ms/pwabuilderdiscord" target="_blank" rel="noopener"><button
-            id="discord-button"
-            aria-label="Discord Button"
-          >
-          Join
-          </button></a>
-        </div>
+      <discord-box></discord-box>
       </div>
       </main>
     `;
