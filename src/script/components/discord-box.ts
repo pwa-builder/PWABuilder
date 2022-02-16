@@ -18,7 +18,7 @@ export class DiscordBox extends LitElement {
         bottom: 0;
         right: 0;
         width: 200px;
-        height: 40px;
+        height: 30px;
         background-color: #F5F7FA;
         padding: 10px;
         border-top-left-radius: 10px;
@@ -39,6 +39,7 @@ export class DiscordBox extends LitElement {
 
       #discord-box p {
         font-size: 14px;
+        line-height: 14px;
         color: black;
         font-weight: bold;
       }
@@ -46,7 +47,7 @@ export class DiscordBox extends LitElement {
         text-decoration: none;
         border-bottom: 1px solid black;
         display: inline-block;
-        height: 16px;
+        height: 12px;
       }
       #discord-box a:visited{
         color: black;
