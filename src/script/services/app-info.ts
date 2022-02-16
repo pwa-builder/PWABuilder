@@ -10,6 +10,7 @@ import {
 import { runManifestChecks } from '../utils/manifest-validation';
 import { getChosenServiceWorker, getSetSWCounter } from './service_worker';
 
+
 let site_url: string | undefined;
 let results: RawTestResult | undefined;
 let manifestContext: ManifestContext | undefined;
