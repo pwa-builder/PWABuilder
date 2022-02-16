@@ -25,4 +25,4 @@ body:
       label: Have you considered any alternatives?
       description: Is this something that can be solved differently
     validations:
-      required: true
+      required: false
