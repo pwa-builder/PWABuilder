@@ -1,6 +1,6 @@
-name: VS Code Extension Bug Report
+name: Bug Report (VS Code Extension)
 description: File a bug report for the VS Code Extension
-title: "[VSCODE]: "
+title: "[VSCODE] "
 labels: ["bug :bug:", "needs triage :mag:", "vscode"]
 assignees:
   - jgw96
@@ -8,38 +8,19 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out this bug report!
-  - type: input
-    id: contact
-    attributes:
-      label: Contact Details
-      description: How can we get in touch with you if we need more info?
-      placeholder: ex. email@example.com
-    validations:
-      required: false
+        Thanks for taking the time to fill out this bug report! 
   - type: textarea
     id: what-happened
     attributes:
       label: What happened?
       description: Also tell us, what did you expect to happen?
       placeholder: Tell us what you see!
-      value: "A bug happened!"
-    validations:
-      required: true
-  - type: dropdown
-    id: version
-    attributes:
-      label: Version
-      description: What version of our software are you running?
-      options:
-        - 1.0.2 (Default)
-        - 1.0.3 (Edge)
     validations:
       required: true
   - type: dropdown
     id: vscode-version
     attributes:
-      label: What version of vscode are you using?
+      label: What version of VS Code are you using?
       multiple: true
       options:
         - VS Code Stable
