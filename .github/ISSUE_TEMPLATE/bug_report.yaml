@@ -1,8 +1,7 @@
 name: Bug report
-about: Create a bug report to help us improve PWABuilder!
-title: ''
+description: Create a bug report to help us improve PWABuilder!
+title: "[BUG] "
 labels: ["bug :bug:", "needs triage :mag:"]
-assignees: ''
 body:
   - type: markdown
     attributes:
@@ -42,8 +41,8 @@ body:
         OS: Windows 10
         Browser: [e.g. edge, chrome, safari]
         Browser Version: [e.g. 22]
-    validation:
-      required: true
+      validation:
+        required: true
   - type: textarea
     id: context
     attributes:
