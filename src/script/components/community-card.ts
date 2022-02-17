@@ -2,6 +2,11 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { link } from './community-hub-cards';
 
+import {
+  smallBreakPoint,
+  mediumBreakPoint
+} from '../utils/css/breakpoints';
+
 @customElement('community-card')
 export class CommunityCard extends LitElement {
   @property({ type: String }) imageUrl: string = "";
@@ -10,7 +15,8 @@ export class CommunityCard extends LitElement {
   @property({type: Array}) links: link[] = [];
 
   static get styles() {
-    return css`
+    return [
+    css`
       .community-card {
         width: max-content;
         max-width: 480px;
@@ -88,7 +94,34 @@ export class CommunityCard extends LitElement {
         width: .5em;
         height: auto;
       }
-    `;
+
+      /* < 480px */
+      ${smallBreakPoint(css`
+          .community-card {
+            width: 100%;
+          }
+          .community-card-actions {
+            flex-direction: column;
+            align-items: flex-start;
+            row-gap: .5em;
+          }
+          .community-card-image img {
+            width: 35px;
+            height: auto;
+          }
+          .community-card-content p {
+            font-size: .825em;
+          }
+      `)}
+
+      /* 480px - 639px */
+      ${mediumBreakPoint(css`
+          .community-card {
+            width: 100%;
+          }
+      `)}
+    `
+    ];
   }
 
   constructor() {

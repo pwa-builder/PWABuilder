@@ -5,7 +5,7 @@ import {
   smallBreakPoint,
   mediumBreakPoint,
   largeBreakPoint,
-  xxLargeBreakPoint,
+  xLargeBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
 
@@ -61,13 +61,30 @@ export class SuccessCard extends LitElement {
         color: #808080
       }
 
+      /* < 480px */
+      ${smallBreakPoint(css`
+        .success-card {
+          width: 240px;
+        }
+      `)}
+
+      /* 480px - 639px */
+      ${mediumBreakPoint(css`
+        .success-card {
+          width: 400px;
+        }
+      `)}
+
       /* 640px - 1023px */
       ${largeBreakPoint(css`
+          .success-card {
+            width: 305px;
+          }
       `)}
 
       /*1024px - 1365px*/
-      ${xxLargeBreakPoint(css`
-          
+      ${xLargeBreakPoint(css`
+
       `)}
 
       /* > 1920px */

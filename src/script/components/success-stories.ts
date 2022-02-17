@@ -8,7 +8,7 @@ import {
   smallBreakPoint,
   mediumBreakPoint,
   largeBreakPoint,
-  xxLargeBreakPoint,
+  xLargeBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
 
@@ -24,8 +24,10 @@ export class SuccessStories extends LitElement {
         flex-direction: column;
         align-items: flex-start;
         justify-content: flex-start;
-        background-image: url(/assets/new/successBG_1366.png);
+        background-image: url(/assets/new/successBG_1920.png);
         background-repeat: no-repeat;
+        background-size: cover;
+        background-position: right;
         padding: 2em;
         padding-left: 7em;
       }
@@ -45,24 +47,94 @@ export class SuccessStories extends LitElement {
         grid-template-rows: auto auto;
         row-gap: .8em;
         column-gap: 1em;
-      },
-      /* 850px, hide background */
+      }
+      
+      
+      /* < 480px */
+      ${smallBreakPoint(css`
+          #success-panel {
+            background-image: url(/assets/new/successBG_320.png);
+            padding: 2em 1em;
+          }
+          #success-panel h2 {
+            text-align: left;
+            width: 100%;
+          }
+          
+          #success-cards {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: fit-content;
+            align-self: center;
+          }
+      `)}
 
-      /* 640px - 1023px */
-      ${largeBreakPoint(css`
+      /* 480px - 639px */
+      ${mediumBreakPoint(css`
         #success-panel {
-          background-image: url(/assets/new/successBG_1024.png);
+          background-image: url(/assets/new/successBG_480.png);
+          padding: 4em;
+        }
+
+        #success-panel h2 {
+          text-align: left;
+          width: 100%;
+        }
+        
+        #success-cards {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          width: fit-content;
+          align-self: center;
         }
       `)}
 
+      /* 640px - 1023px */
+      ${largeBreakPoint(css`
+          #success-panel {
+            background-image: url(/assets/new/successBG_1024.png);
+            padding-left: 2em;
+          }
+      `)}
+
+      @media (min-width: 640px) and (max-width: 850px) {
+        #success-panel {
+          background-image: url(/assets/new/successBG_480.png);
+          padding: 1em;
+          padding-bottom: 2em;
+        }
+
+        #success-panel h2 {
+          text-align: center;
+          width: 100%;
+        }
+        
+        #success-cards {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          width: fit-content;
+          align-self: center;
+        }
+      }
+      
+
       /*1024px - 1365px*/
-      ${xxLargeBreakPoint(css`
-          
+      ${xLargeBreakPoint(css`
+
       `)}
 
       /* > 1920px */
       ${xxxLargeBreakPoint(css`
-          
+          #success-panel {
+            padding-left: 17em;
+            padding-bottom: 1em;
+          }
       `)}
     `,
     ];

@@ -23,7 +23,7 @@ export class ResourceHubNew extends LitElement {
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background-image: url(/assets/new/BackgroundPWA1366.png);
+        background-image: url(/assets/new/BackgroundPWA1920.png);
         background-repeat: no-repeat;
         background-size: cover;
         background-position: center;

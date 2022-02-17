@@ -7,7 +7,7 @@ import {
   smallBreakPoint,
   mediumBreakPoint,
   largeBreakPoint,
-  xxLargeBreakPoint,
+  xLargeBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
 
@@ -61,26 +61,77 @@ export class CommunityHub extends LitElement {
         align-items: flex-start;
         justify-content: center;
         row-gap: 30px;
-      },
-      /* 640px - 1023px */
-      ${largeBreakPoint(css`
-        #community-photo img { 
-          width: 450px;
-          height: auto;
-        }
-        #community-cards {
-          row-gap: 10px;
-        }
+      }
+
+       /* < 480px */
+       ${smallBreakPoint(css`
+          #community-photo img { 
+            display: none;
+          }
+          #community-panel {
+            column-gap: 0;
+          }
+          #community-content h2 {
+            width: 100%;
+          }
+          #community-content{
+            width: 280px;
+          }
       `)}
 
+      /* 480px - 639px */
+      ${mediumBreakPoint(css`
+          #community-photo img { 
+            display: none;
+          }
+          #success-panel {
+            align-items: center;
+            justify-content: center;
+          }
+          #community-panel {
+            align-items: center;
+            column-gap: 0;
+          }
+          #community-content {
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+          }
+          #community-content h2 {
+            width: 100%;
+          }
+      `)}
+
+      /* 640px - 1023px */
+      ${largeBreakPoint(css`
+          #community-photo img { 
+            max-width: 19em;
+            height: auto;
+          }
+      `)}
+
+      @media (min-width: 640px) and (max-width: 850px) {
+        #community-photo img { 
+          display: none;
+        }
+        #success-panel {
+          align-items: center;
+          justify-content: center;
+        }
+      }
+      
+
       /*1024px - 1365px*/
-      ${xxLargeBreakPoint(css`
-          
+      ${xLargeBreakPoint(css`
+
       `)}
 
       /* > 1920px */
       ${xxxLargeBreakPoint(css`
-          
+          #community-panel {
+            justify-content: unset;
+            padding-left: 17em;
+          }
       `)}
     `,
     ];
