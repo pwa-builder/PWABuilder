@@ -129,8 +129,6 @@ export class CommunityCard extends LitElement {
   }
 
   firstUpdated(){
-    this.links.forEach((link) =>
-      console.log(link))
   }
 
   render() {

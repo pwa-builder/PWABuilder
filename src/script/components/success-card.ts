@@ -64,7 +64,8 @@ export class SuccessCard extends LitElement {
       /* < 480px */
       ${smallBreakPoint(css`
         .success-card {
-          width: 240px;
+          width: 280px;
+          box-sizing: border-box;
         }
       `)}
 
