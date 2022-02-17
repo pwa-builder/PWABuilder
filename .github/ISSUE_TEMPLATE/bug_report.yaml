@@ -41,8 +41,8 @@ body:
         OS: Windows 10
         Browser: [e.g. edge, chrome, safari]
         Browser Version: [e.g. 22]
-      validation:
-        required: true
+    validations:
+      required: true
   - type: textarea
     id: context
     attributes:
