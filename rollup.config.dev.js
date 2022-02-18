@@ -5,6 +5,7 @@ import replace from "@rollup/plugin-replace";
 import typescript from "@rollup/plugin-typescript";
 import litcss from "rollup-plugin-lit-css";
 import json from '@rollup/plugin-json';
+import commonjs from '@rollup/plugin-commonjs';
 
 export default {
   input: "index.html",
@@ -15,6 +16,7 @@ export default {
   },
   plugins: [
     resolve(),
+    commonjs(),
     html(),
     json(),
     typescript({

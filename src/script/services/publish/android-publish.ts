@@ -6,8 +6,21 @@ import {
 import { env } from '../../utils/environment';
 import { findSuitableIcon, findBestAppIcon } from '../../utils/icons';
 import { ManifestContext } from '../../utils/interfaces';
+import {PackageSigner} from '@chromeos/android-package-signer';
 
 export let hasGeneratedAndroidPackage = false;
+
+async function createNewKey(): Promise<string> {
+  const packageSigner = new PackageSigner("TODOtest");
+  const base64Der = await packageSigner.generateKey({
+      commonName: 'Alexander Nohe',
+      organizationName: 'Google, Inc',
+      organizationUnit: 'DevRel',
+      countryCode: 'US',
+    });
+
+  return base64Der;
+}
 
 export async function generateAndroidPackage(androidOptions: AndroidPackageOptions): Promise<Blob | undefined> {
   const validationErrors = validateAndroidOptions(androidOptions);
@@ -17,43 +30,47 @@ export async function generateAndroidPackage(androidOptions: AndroidPackageOptio
     );
   }
 
-  const generateAppUrl = `${env.androidPackageGeneratorUrl}/generateAppPackage`;
-  const response = await fetch(generateAppUrl, {
-    method: 'POST',
-    body: JSON.stringify(androidOptions),
-    headers: new Headers({ 'content-type': 'application/json' }),
-  });
+  const key = await createNewKey()
 
-  if (response.status === 200) {
-    hasGeneratedAndroidPackage = true;
-    return await response.blob();
-  } else {
-    const responseText = await response.text();
+  debugger;
 
-    // Did it fail because images couldn't be fetched with ECONNREFUSED? E.g. https://github.com/pwa-builder/PWABuilder/issues/1312
-    // This may indicate either the service is using HTTP/2 or HTTP/3, which Bubblewrap doesn't currently support.
-    // Or, it may indicate the site is using anti-bot tech, such as Cloudflare.
-    //
-    // If it's the former (HTTP/2 or HTTP/3), see if we can fetch using our safe URL proxy, which properly handles HTTP/2 and /3.
-    const hasSafeImages =
-      androidOptions.iconUrl &&
-      androidOptions.iconUrl.includes(env.safeUrlFetcher || '');
-    const isConnectionRefusedOrForbidden =
-      (responseText || '').includes('ECONNREFUSED') || response.status === 403;
+  // const generateAppUrl = `${env.androidPackageGeneratorUrl}/generateAppPackage`;
+  // const response = await fetch(generateAppUrl, {
+  //   method: 'POST',
+  //   body: JSON.stringify(androidOptions),
+  //   headers: new Headers({ 'content-type': 'application/json' }),
+  // });
 
-    if (!hasSafeImages && isConnectionRefusedOrForbidden) {
-      console.warn(
-        'Android package generation failed with ECONNREFUSED. Retrying with safe images.',
-        responseText
-      );
-      const updatedOptions = updateAndroidOptionsWithSafeUrls(androidOptions);
-      await generateAndroidPackage(updatedOptions);
-    } else {
-      throw new Error(
-        `Error generating Android package.\nStatus code: ${response.status}\nError: ${response.statusText}\nDetails: ${responseText}`
-      );
-    }
-  }
+  // if (response.status === 200) {
+  //   hasGeneratedAndroidPackage = true;
+  //   return await response.blob();
+  // } else {
+  //   const responseText = await response.text();
+
+  //   // Did it fail because images couldn't be fetched with ECONNREFUSED? E.g. https://github.com/pwa-builder/PWABuilder/issues/1312
+  //   // This may indicate either the service is using HTTP/2 or HTTP/3, which Bubblewrap doesn't currently support.
+  //   // Or, it may indicate the site is using anti-bot tech, such as Cloudflare.
+  //   //
+  //   // If it's the former (HTTP/2 or HTTP/3), see if we can fetch using our safe URL proxy, which properly handles HTTP/2 and /3.
+  //   const hasSafeImages =
+  //     androidOptions.iconUrl &&
+  //     androidOptions.iconUrl.includes(env.safeUrlFetcher || '');
+  //   const isConnectionRefusedOrForbidden =
+  //     (responseText || '').includes('ECONNREFUSED') || response.status === 403;
+
+  //   if (!hasSafeImages && isConnectionRefusedOrForbidden) {
+  //     console.warn(
+  //       'Android package generation failed with ECONNREFUSED. Retrying with safe images.',
+  //       responseText
+  //     );
+  //     const updatedOptions = updateAndroidOptionsWithSafeUrls(androidOptions);
+  //     await generateAndroidPackage(updatedOptions);
+  //   } else {
+  //     throw new Error(
+  //       `Error generating Android package.\nStatus code: ${response.status}\nError: ${response.statusText}\nDetails: ${responseText}`
+  //     );
+  //   }
+  // }
 
   return undefined;
 }
