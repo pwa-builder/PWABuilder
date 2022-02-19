@@ -9,7 +9,6 @@ import litcss from "rollup-plugin-lit-css";
 import json from '@rollup/plugin-json';
 import versionInjector from 'rollup-plugin-version-injector';
 import commonjs from '@rollup/plugin-commonjs';
-import nodePolyfills from 'rollup-plugin-node-polyfills';
 
 export default {
   input: "index.html",
@@ -18,7 +17,6 @@ export default {
     format: "es"
   },
   plugins: [
-    nodePolyfills({crypto: true}),
     resolve({browser: true}),
     commonjs(),
     versionInjector(
