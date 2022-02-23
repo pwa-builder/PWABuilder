@@ -61,6 +61,7 @@ export class SuccessStories extends LitElement {
             width: 100%;
             padding-left: 5px;
             font-size: 1.75em;
+            margin-bottom: .5em;
           }
           
           #success-cards {
@@ -78,12 +79,14 @@ export class SuccessStories extends LitElement {
         #success-panel {
           background-image: url(/assets/new/successBG_480.png);
           padding: 1em;
+          padding-bottom: 2em;
         }
 
         #success-panel h2 {
           text-align: left;
           width: 100%;
           padding-left: 5px;
+          margin-bottom: .5em;
         }
         
         #success-cards {
@@ -101,6 +104,9 @@ export class SuccessStories extends LitElement {
           #success-panel {
             background-image: url(/assets/new/successBG_1024.png);
             padding-left: 2em;
+          }
+          #success-panel h2 {
+            margin-bottom: .5em;
           }
       `)}
 
@@ -136,7 +142,10 @@ export class SuccessStories extends LitElement {
       ${xxxLargeBreakPoint(css`
           #success-panel {
             padding-left: 17em;
-            padding-bottom: 1em;
+            padding-bottom: 2.5em;
+          }
+          #success-panel h2 {
+            margin-bottom: .5em;
           }
       `)}
     `,

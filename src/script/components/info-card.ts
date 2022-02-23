@@ -56,7 +56,7 @@ export class Infocard extends LitElement {
       }
 
       .card-content p {
-        color: #808080;
+        color: var(--secondary-font-color);
         font-size: .65em;
         line-height: 18px;
         text-align: center;
@@ -94,6 +94,9 @@ export class Infocard extends LitElement {
           .card-content p {
             font-size: .825em;
           }
+          .card-content h3 {
+            font-size: 20px;
+          }
       `)}
 
       /* 480px - 639px */
@@ -101,10 +104,13 @@ export class Infocard extends LitElement {
         .card {
             min-width: 140px;
             max-width: 300px;
-            height: 15em;
+            height: 12em;
           }
           .card-content p {
             font-size: .825em;
+          }
+          .card-content h3 {
+            font-size: 20px;
           }
       `)}
 
@@ -113,7 +119,7 @@ export class Infocard extends LitElement {
         .card {
           min-width: 140px;
           max-width: 200px;
-          height: 15em;
+          height: 12em;
           padding: .75em;
           padding-bottom: 1.25em;
         }

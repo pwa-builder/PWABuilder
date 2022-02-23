@@ -257,6 +257,10 @@ export class AppNewHome extends LitElement {
             grid-row: 1;
           }
 
+          #input-block {
+            margin-bottom: -30px;
+          }
+
           #start-button {
             grid-column: 1;
             grid-row: 2;
@@ -329,6 +333,12 @@ export class AppNewHome extends LitElement {
           }
           #input-form fast-text-field::part(control) {
             width: 100%;
+          }
+          .grid-item-header {
+            font-size: 20px;
+          }
+          #input-header {
+            font-size: 20px;
           }
         `)}
 
@@ -429,7 +439,7 @@ export class AppNewHome extends LitElement {
       } else {
         this.errorMessage = localeStrings.input.home.error.invalidURL;
         this.errorGettingURL = true;
-
+        
         await this.updateComplete;
 
         (this.shadowRoot?.querySelector('.error-message') as HTMLSpanElement)?.focus();
@@ -481,7 +491,7 @@ export class AppNewHome extends LitElement {
               <img src="/assets/new/arrow.svg" alt="arrow" />
             </div>
             <p>
-              Use our VS Code extension to create, improve, and package your PWA directly in yoru code editor.
+              Use our VS Code extension to create, improve, and package your PWA directly in your code editor.
             </p>
           </div>
         </section>

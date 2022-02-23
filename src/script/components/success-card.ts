@@ -58,7 +58,7 @@ export class SuccessCard extends LitElement {
         margin: 0;
         font-size: 14px;
         line-height: 18px;
-        color: #808080
+        color: var(--secondary-font-color);
       }
 
       /* < 480px */
@@ -67,12 +67,18 @@ export class SuccessCard extends LitElement {
           width: 280px;
           box-sizing: border-box;
         }
+        .success-line-one h3 {
+          font-size: 28px;
+        }
       `)}
 
       /* 480px - 639px */
       ${mediumBreakPoint(css`
         .success-card {
           width: 400px;
+        }
+        .success-line-one h3 {
+          font-size: 28px;
         }
       `)}
 
@@ -98,10 +104,6 @@ export class SuccessCard extends LitElement {
 
   constructor() {
     super();
-  }
-
-  firstUpdated(){
-   
   }
 
   render() {

@@ -73,6 +73,7 @@ export class CommunityHub extends LitElement {
           }
           #community-content h2 {
             width: 100%;
+            margin-bottom: .5em;
           }
           #community-content{
             width: 280px;
@@ -99,14 +100,25 @@ export class CommunityHub extends LitElement {
           }
           #community-content h2 {
             width: 100%;
+            margin-bottom: .5em;
           }
       `)}
 
       /* 640px - 1023px */
       ${largeBreakPoint(css`
+          #community-panel {
+            padding-left: 35px;
+            justify-content: space-between;
+          }
           #community-photo img { 
             max-width: 19em;
             height: auto;
+          }
+          #community-panel h2 {
+            margin-bottom: .5em;
+          }
+          #community-cards {
+            row-gap: 15px;
           }
       `)}
 
@@ -132,6 +144,7 @@ export class CommunityHub extends LitElement {
             justify-content: unset;
             padding-left: 17em;
           }
+          
       `)}
     `,
     ];

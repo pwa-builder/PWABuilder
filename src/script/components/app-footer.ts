@@ -100,6 +100,7 @@ export class AppFooter extends LitElement {
           }
 
           #icons {
+            color: white;
             width: 10em;
           }
 
@@ -109,7 +110,7 @@ export class AppFooter extends LitElement {
 
           #icons ion-icon {
             font-size: 27px;
-            color: black;
+            color: white;
           }
         `
       )}
