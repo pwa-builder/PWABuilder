@@ -130,7 +130,6 @@ export class WindowsForm extends AppPackageFormBase {
                   (this.packageOptions.packageId = val),
               })}
             </div>
-
             <div class="form-group">
               ${this.renderFormInput({
                 label: 'Publisher display name',
@@ -168,7 +167,6 @@ export class WindowsForm extends AppPackageFormBase {
               })}
             </div>
           </div>
-
           <!-- "all settings" section of the modal -->
           <fast-accordion>
             <fast-accordion-item
@@ -221,7 +219,6 @@ export class WindowsForm extends AppPackageFormBase {
                       (this.packageOptions.version = val),
                   })}
                 </div>
-                <span></span>
                 <div class="form-group">
                   ${this.renderFormInput({
                     label: 'Classic app version',
@@ -240,7 +237,6 @@ export class WindowsForm extends AppPackageFormBase {
                       (this.packageOptions.classicPackage!.version = val),
                   })}
                 </div>
-
                 <div class="form-group">
                   ${this.renderFormInput({
                     label: 'Icon URL',
@@ -313,11 +309,9 @@ export class WindowsForm extends AppPackageFormBase {
             </fast-accordion-item>
           </fast-accordion>
         </div>
-
         <div id="form-details-block">
           <p>${localeStrings.text.publish.windows_platform.p}</p>
         </div>
-
         <div id="form-options-actions" class="modal-actions">
           <loading-button .loading="${this.generating}">
             <input id="generate-submit" type="submit" value="Generate" />
