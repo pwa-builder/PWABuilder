@@ -14,11 +14,13 @@ import {
 } from '../utils/css/breakpoints';
 import { isValidURL } from '../utils/url';
 
+
 import '../components/content-header';
 import '../components/resource-hub';
 import '../components/loading-button';
 import '../components/dropdown-menu';
 import '../components/app-sidebar';
+import '../components/hover-tooltip';
 
 //@ts-ignore
 import style from '../../../styles/error-styles.css';
@@ -126,6 +128,29 @@ export class AppHome extends LitElement {
 
         #home-header {
           max-width: 498px;
+        }
+
+
+        #discord-link {
+          position: relative;
+          bottom: 10px;
+          right: 10px;
+          z-index: 2;
+        }
+
+        #discord-link:hover {
+          cursor: pointer;
+        }
+
+        #discord-tooltip {
+          display: none;
+        }
+
+        #discord-link:hover #discord-tooltip {
+          display: block;
+          position: absolute;
+          top: 0;
+          left: 0;
         }
 
         ${smallBreakPoint(css`
@@ -406,6 +431,7 @@ export class AppHome extends LitElement {
           components from the PWABuilder team!
         </p>
       </resource-hub>
+      </div>
       </main>
     `;
   }
