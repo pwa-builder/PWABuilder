@@ -1,0 +1,25 @@
+name: Feature Request
+description: Suggest an idea for PWA Builder
+labels: ["feature request :mailbox_with_mail:", "needs triage :mag:"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: Tell us about your feature idea
+      description: Is this related to a problem? Please describe
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Do you have an implementation or a solution in mind?
+      description: Tell us what you want to happen
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Have you considered any alternatives?
+      description: Is this something that can be solved differently
+    validations:
+      required: false

@@ -125,14 +125,10 @@ export class RatingDial extends LitElement {
   }
 
   async calcRating(): Promise<void> {
-    const response = await fetch(env.ratingUrl);
-    const scoreData = await response.json();
-
-    // Adding 94 here to "shim" the data so that we can
-    // fairly average it with our new scoring system
-    // which ends up with much higher scores overall.
-    // We wont need this once we start getting alot of data from v3 in prod
-    const averageScore = scoreData.overallAverageScore + 94;
+  
+    // Instead of doing a network request just going to set average at 150.
+    // Network call was hand wavy anyway, so 150 will do for now.
+    const averageScore = 150;
     this.overallScore = getOverallScore();
 
     if (

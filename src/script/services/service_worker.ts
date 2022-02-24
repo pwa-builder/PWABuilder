@@ -3,7 +3,8 @@ import { fileSave } from 'browser-fs-access';
 const apiUrl = 'https://pwabuilder-sw-server.azurewebsites.net';
 
 // By default we are going to use the Advanced Caching SW.
-let chosenSW: number | undefined = 5; 
+let chosenSW: number | undefined = 5;
+let setCounter: number = 0;
 
 export async function getServiceWorkers() {
   try {
@@ -71,11 +72,17 @@ export async function downloadServiceWorker(serviceworker: number) {
 
 export async function chooseServiceWorker(serviceworker: number) {
   chosenSW = serviceworker;
+  setCounter += 1;
   return chosenSW;
 }
 
+export function getSetSWCounter() {
+  return setCounter;
+}
+
 export function unsetServiceWorker() {
-  chosenSW = undefined;
+  chosenSW = 5;
+  setCounter = 0;
 }
 
 export function getChosenServiceWorker() {

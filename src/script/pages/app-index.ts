@@ -7,6 +7,7 @@ import '../components/app-footer';
 import '../components/app-header';
 import '../components/app-button';
 import '../components/cookie-banner';
+import '../components/discord-box';
 import { recordPageView } from '../utils/analytics';
 
 @customElement('app-index')
@@ -159,7 +160,7 @@ export class AppIndex extends LitElement {
         <div>
           <div id="router-outlet"></div>
         </div>
-      
+        <discord-box></discord-box>
         <app-footer></app-footer>
       </div>
     `;

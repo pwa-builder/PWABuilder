@@ -168,18 +168,30 @@ function validateWindowsAnaheimPackageVersions(
   classicVersion: string
 ): WindowsPackageValidationError[] {
   const versionErrors: WindowsPackageValidationError[] = [];
+  const versionArray = version.split(".").map(Number);
+  const classicVersionArray = classicVersion.split(".").map(Number);
+  let isValidVersion = null;
 
   // Common validation run on both version and classic version.
   const versionInfos: WindowsVersionInfo[] = [
     { name: 'version', label: 'Version', value: version },
     { name: 'classicPackage', label: 'Classic version', value: classicVersion },
   ];
+  
   for (const versionInfo of versionInfos) {
     versionErrors.push(...validateVersion(versionInfo));
   }
 
   // Make sure the version is > classic version
-  if (version <= classicVersion) {
+  versionArray.forEach((versionNum, i) => {
+    if(classicVersionArray[i]! > versionNum && classicVersionArray[0]! >= versionArray[0]!) {
+      isValidVersion = false;
+    } else {
+      isValidVersion = true
+    }
+  });
+
+  if (!isValidVersion) {
     versionErrors.push({
       field: 'version',
       error: 'App version must be greater than classic package version',

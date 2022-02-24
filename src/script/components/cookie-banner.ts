@@ -22,28 +22,65 @@ export class CookieBanner extends LitElement {
 
       #cookie-info {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
       }
 
-      #cookie-banner #close-button {
+      #cookie-info p {
+        margin: 0;
+      }
+
+      #cookie-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+      }
+
+      #cookie-actions button {
         border-radius: var(--button-radius);
         border: none;
-        background: white;
         padding: 8px;
         font-weight: bold;
         padding-left: 10px;
         padding-right: 10px;
         margin-left: 10px;
-        width: 6em;
+        width: fit-content;
       }
+
+      #cookie-actions button:hover {
+        cursor: pointer;
+      }
+
+      #cookie-actions #reject-button {
+        background: white;
+      }
+
+      #cookie-actions #accept-button {
+        background: black;
+        color: white;
+      }
+
+
 
       ${smallBreakPoint(css`
         #cookie-banner {
-          align-items: center;
-          display: flex;
           flex-direction: column;
           text-align: center;
+        }
+
+        #cookie-info{
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          margin-bottom: 10px;
+        }
+
+        #cookie-actions {
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          row-gap: 5px;
         }
       `)}
     `;
@@ -54,40 +91,53 @@ export class CookieBanner extends LitElement {
   }
 
   firstUpdated() {
+    // by default, non essential cookies are denied.
     const savedValue = localStorage.getItem('PWABuilderGDPR');
 
-    if (JSON.parse(savedValue as string) !== true) {
+    if (!savedValue) {
       this.show = true;
-      localStorage.setItem('PWABuilderGDPR', JSON.stringify(true));
+      localStorage.setItem('PWABuilderGDPR', JSON.stringify(false));
     }
   }
 
-  close() {
+  close(accepted: boolean) {
     this.show = false;
-    localStorage.setItem('PWABuilderGDPR', JSON.stringify(true));
+
+    // setting the PWABuilderGDPR var to what the user chose.
+    localStorage.setItem('PWABuilderGDPR', JSON.stringify(accepted));
   }
 
   render() {
     return html`
       ${this.show
         ? html`<div id="cookie-banner">
-            <p>
-              This site uses cookies for analytics and personalized content. By
-              continuing to browse this site, you agree to this use.
-            </p>
+            
 
             <div id="cookie-info">
+              <p>
+              This site uses cookies to offer you a better browsing experience. Click below to learn more.
+              </p>
               <a
                 href="https://privacy.microsoft.com/en-us/privacystatement#maincookiessimilartechnologiesmodule"
-                >Learn More</a
-              >
+                >Learn More
+              </a>
+            </div>
+
+            <div id="cookie-actions">
+              <button
+                id="reject-button"
+                aria-label="Reject Button"
+                @click="${() => this.close(false)}"
+              > 
+                Reject all non-essential cookies
+              </button>
 
               <button
-                id="close-button"
-                aria-label="Close Button"
-                @click="${() => this.close()}"
+                id="accept-button"
+                aria-label="Accept Button"
+                @click="${() => this.close(true)}"
               >
-                Close
+                Accept all cookies
               </button>
             </div>
           </div>`
