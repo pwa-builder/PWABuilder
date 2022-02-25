@@ -1155,7 +1155,7 @@ export class AppManifest extends LitElement {
       const index = Number(input.dataset['index']);
     
       if (list === 'icons') {
-        let filteredIconList = this.iconsList?.filter((icon, i) => index !== i);
+        let filteredIconList = this.iconsList?.filter((_icon, i) => index !== i);
         
         this.updatePageManifest({
           [list]: filteredIconList,
@@ -1165,7 +1165,7 @@ export class AppManifest extends LitElement {
       }
 
       if (list === 'screenshots') {
-        let filteredScreenshotList = this.screenshotsList?.filter((image, i) => index !== i);
+        let filteredScreenshotList = this.screenshotsList?.filter((_image, i) => index !== i);
 
         this.updatePageManifest({
           [list]: filteredScreenshotList,

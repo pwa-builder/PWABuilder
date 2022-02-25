@@ -1,7 +1,6 @@
 import { LitElement, html, css, TemplateResult } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { getOverallScore } from '../services/tests';
-import { env } from '../utils/environment';
 
 type Rating = 'top' | 'middle' | 'bottom';
 
