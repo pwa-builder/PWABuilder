@@ -162,7 +162,7 @@ export class CommunityHub extends LitElement {
     return html`
       <div id="community-panel">
         <div id="community-photo">
-          <img src="/assets/new/community-image.png" />
+          <img src="/assets/new/community-image.png" alt="social hub image" />
         </div>
         <div id="community-content">
           <h2>Join our Community</h2>
@@ -172,6 +172,7 @@ export class CommunityHub extends LitElement {
               cardTitle=${card.title}
               description=${card.description}
               imageUrl=${card.imageUrl}
+              company=${card.company}
               .links=${card.links}
             >
             </community-card>

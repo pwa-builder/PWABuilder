@@ -3,7 +3,8 @@ export interface CardData {
   imageUrl: string;
   title: string;
   description: string;
-  links: link[]
+  links: link[];
+  company: string;
 }
 
 export interface link {
@@ -25,7 +26,8 @@ export const communityCards: Array<CardData> = [
         link: 'https://github.com/pwa-builder/PWABuilder/projects/4?fullscreen=true&card_filter_query=label%3A%22help+wanted+%3Araising_hand%3A%22',
         text: 'Contribute to project'
       }
-    ]
+    ],
+    company: "github"
   },
   {
     imageUrl: '/assets/new/twitter.png',
@@ -36,7 +38,8 @@ export const communityCards: Array<CardData> = [
         link: 'https://twitter.com/pwabuilder',
         text: 'Follow now'
       }
-    ]
+    ],
+    company: "twitter"
   },
   {
     imageUrl: '/assets/new/discord.png',
@@ -47,7 +50,8 @@ export const communityCards: Array<CardData> = [
         link: 'https://aka.ms/pwabuilderdiscord',
         text: 'Join now'
       }
-    ]
+    ],
+    company: "discord"
   },
 ];
 

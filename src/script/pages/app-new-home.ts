@@ -347,7 +347,6 @@ export class AppNewHome extends LitElement {
             background-position: left;
           }
         }
-
         /*1024px - 1365px*/
         ${xLargeBreakPoint(css`
             #wrapper {
@@ -500,7 +499,7 @@ export class AppNewHome extends LitElement {
           <div id="input-block" role="region">
             <div id="input-header-holder">
               <h2 id="input-header">Ship your PWA to app stores</h2>
-              <img src="/assets/new/store-logos.png" alt="store logos"/>
+              <img src="/assets/new/store-logos.png" alt="store logos" style="visibility: hidden" />
             </div>
             <div id="input-area">
               <fast-text-field slot="input-container" type="text" id="input-box" placeholder="Enter the URL to your PWA" name="url-input"

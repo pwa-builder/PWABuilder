@@ -15,6 +15,7 @@ export class SuccessCard extends LitElement {
   @property({ type: String }) cardStat: string = "";
   @property({ type: String }) description: string = "";
   @property({ type: String }) cardValue: string = "";
+  @property({ type: String }) company: string = "";
 
   static get styles() {
     return [
@@ -111,7 +112,7 @@ export class SuccessCard extends LitElement {
       <div class="success-card">
         <div class="success-line-one">
           <h3>${this.cardValue}</h3>
-          <img src=${this.imageUrl} />
+          <img src=${this.imageUrl} alt="${this.company} logo" style="visibility: hidden" />
         </div>
         <p class="success-stat">${this.cardStat}</p>
         <p class="success-desc">${this.description}</p>

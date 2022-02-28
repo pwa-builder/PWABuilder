@@ -12,6 +12,7 @@ export class CommunityCard extends LitElement {
   @property({ type: String }) imageUrl: string = "";
   @property({ type: String }) cardTitle: string = "";
   @property({ type: String }) description: string = "";
+  @property({ type: String }) company: string = "";
   @property({type: Array}) links: link[] = [];
 
   static get styles() {
@@ -135,7 +136,7 @@ export class CommunityCard extends LitElement {
     return html`
       <div class="community-card">
         <div class="community-card-image">
-          <img src=${this.imageUrl} />
+          <img src=${this.imageUrl} alt ="${this.company} logo" style="visibility: hidden" />
         </div>
         <div class="community-card-content">
           <h3>${this.cardTitle}</h3>

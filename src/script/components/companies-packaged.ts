@@ -108,7 +108,7 @@ export class ComapniesPackaged extends LitElement {
           <h2>Apps Packaged</h2>
           <p>Companies of all sizes—from startups to Fortune 500s—have used PWABuilder to package their PWAs.</p>
       </div>
-      <div id="img-box"></div>
+      <div id="img-box" alt="logos of companies that use PWA" style="visibility: hidden" ></div>
     </div>
     `;
   }

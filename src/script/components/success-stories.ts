@@ -171,6 +171,7 @@ export class SuccessStories extends LitElement {
             description=${card.description}
             imageUrl=${card.imageUrl}
             cardValue=${card.value}
+            company=${card.company}
           >
           </success-card>
           `)}
