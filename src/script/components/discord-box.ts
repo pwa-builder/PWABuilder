@@ -2,8 +2,6 @@ import { LitElement, css, html } from 'lit';
 
 import { customElement, state } from 'lit/decorators.js';
 
-import { smallBreakPoint } from '../utils/css/breakpoints';
-
 @customElement('discord-box')
 export class DiscordBox extends LitElement {
   @state() show = true;

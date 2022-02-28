@@ -162,22 +162,30 @@ async function fetchManifest(
 
     // Some sites that don't have a manifest take a long time for our Puppeteer-based test to complete.
     // If 10 seconds passes, we ignore the detectors and move to creating a manifest in the interest of time. 
+    // rollup is giving warnings about the void type being returned from Promise.any(manifestDetectors),
+    // void is returned when the detectors timeout so none of the relevant code gets run with type void.
+    // so we can ignore this warning.
+    //@ts-ignore:next-line
     const manifestDetectors = [
       getManifestViaPuppeteer(knownGoodUrl),
       getManifestViaHtmlParse(knownGoodUrl),
       timeoutAfter(10000)
     ];
 
+    //@ts-ignore:next-line
     const manifestDetectionResult = await Promise.any(manifestDetectors);
 
+    //@ts-ignore:next-line
     if(manifestDetectionResult){
       const context = getManifestContext();
       if (!context.initialManifest) {
+        //@ts-ignore:next-line
         initialManifest = manifestDetectionResult.content;
         context.initialManifest = initialManifest;
         setManifestContext(context);
       }
 
+      //@ts-ignore:next-line
       resolve(manifestDetectionResult);
     } else {
       console.error('All manifest detectors failed: Timeout expired.');
