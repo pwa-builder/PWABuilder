@@ -1,0 +1,50 @@
+name: Bug report
+description: Create a bug report to help us improve PWABuilder!
+title: "[BUG] "
+labels: ["bug :bug:", "needs triage :mag:"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! 
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Tell us about the issue. Attach any screenshots or files that might help
+      placeholder: Tell us what you see!
+    validations:
+      required: true
+  - type: textarea
+    id: repro-steps
+    attributes:
+      label: How do we reproduce the behavior?
+      description: Give us detailed steps to help us reproduce the issue
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    id: what-should-happen
+    attributes:
+      label: What do you expect to happen?
+      description: Any suggestions on how to fix the issue?
+  - type: textarea
+    id: environment-version
+    attributes:
+      label: What environment were you using?
+      description: What OS, Browser, Device, and versions of each were you using when the issue happened?
+      placeholder: |
+        OS: Windows 10
+        Browser: [e.g. edge, chrome, safari]
+        Browser Version: [e.g. 22]
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here
