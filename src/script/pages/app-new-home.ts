@@ -117,6 +117,7 @@ export class AppNewHome extends LitElement {
         }
 
         .grid-item-header a {
+          color: #4F3FB6;
           text-decoration: none;
         }
 

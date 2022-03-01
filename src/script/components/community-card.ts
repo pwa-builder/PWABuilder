@@ -63,6 +63,7 @@ export class CommunityCard extends LitElement {
       }
 
       .community-card-actions a {
+        color: #4F3FB6;
         font-size: 14px;
         font-weight: bold;
         margin-right: .5em;
