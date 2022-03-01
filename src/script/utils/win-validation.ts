@@ -44,6 +44,7 @@ export interface WindowsPackageOptions {
   images?: WindowsImageOptions;
   publisher: WindowsPublisherOptions;
   resourceLanguage?: string;
+  targetDeviceFamilies?: string[];
 }
 
 type WindowsPackageValidationError = {

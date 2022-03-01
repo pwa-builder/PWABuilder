@@ -22,6 +22,7 @@ import '../components/app-modal';
 //@ts-ignore
 import style from '../../../styles/layout-defaults.css';
 import { RawTestResult, ScoreEvent } from '../utils/interfaces';
+import { giveOutBadges } from '../services/badges';
 
 const possible_messages = {
   overview: {
@@ -257,8 +258,9 @@ export class AppReport extends LitElement {
     const results = search.get('results');
 
     const url = search.get('site');
+    const hasBadges = sessionStorage.getItem('current_badges');
     setURL(url!);
-
+    
     if (results) {
       /*
         cache results string as we may need this farther in the flow
@@ -270,6 +272,12 @@ export class AppReport extends LitElement {
 
       this.resultOfTest = JSON.parse(results);
       setResults((this.resultOfTest as RawTestResult));
+
+      this.resultOfTest = JSON.parse(results);
+
+      if(!hasBadges) {
+        giveOutBadges();
+      }
     }
 
     await this.handleDoubleChecks();

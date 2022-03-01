@@ -1,0 +1,48 @@
+name: Bug Report (VS Code Extension)
+description: File a bug report for the VS Code Extension
+title: "[VSCODE] "
+labels: ["bug :bug:", "needs triage :mag:", "vscode"]
+assignees:
+  - jgw96
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! 
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Tell us about the issue. Attach any screenshots or files that might help
+      placeholder: Tell us what you see!
+    validations:
+      required: true
+  - type: textarea
+    id: what-should-happen
+    attributes:
+      label: What do you expect to happen?
+      description: Any suggestions on how to fix the issue?
+    validations:
+      required: true
+  - type: dropdown
+    id: vscode-version
+    attributes:
+      label: What version of VS Code are you using?
+      multiple: true
+      options:
+        - VS Code Stable
+        - VS Code Insiders
+        - vscode.dev
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: shell
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Are you using the latest version of the VS Code extension?
+      options:
+        - label: I am using the latest version of the VS Code extension
+          required: true
