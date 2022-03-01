@@ -462,6 +462,8 @@ export class AppNewHome extends LitElement {
 
   placeDemoURL(){
     this.siteURL = "https://webboard.app";
+    let box = this.shadowRoot!.getElementById("input-box");
+    (box as HTMLInputElement)!.value = this.siteURL;
     this.analyzeSite();
   }
 
