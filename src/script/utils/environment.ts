@@ -26,7 +26,7 @@ if ((window as any).ENV == 'production') {
     'https://pwabuilder-serviceworker-finder.centralus.cloudapp.azure.com';
   env.api = 'https://pwabuilder-tests.azurewebsites.net/api';
   env.windowsPackageGeneratorUrl =
-    'https://pwabuilder-winserver-chromium-platform.centralus.cloudapp.azure.com/msix/generatezip';
+    'https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip';
   env.androidPackageGeneratorUrl =
     'https://pwabuilder-cloudapk.azurewebsites.net';
   env.iosPackageGeneratorUrl =
@@ -53,7 +53,7 @@ if ((window as any).ENV == 'production') {
     'https://pwabuilder-serviceworker-finder.centralus.cloudapp.azure.com';
   env.api = 'https://pwabuilder-tests-dev.azurewebsites.net/api'; // changed
   env.windowsPackageGeneratorUrl =
-    'https://pwabuilder-winserver-chromium-platform.centralus.cloudapp.azure.com/msix/generatezip';
+    'https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip';
   env.androidPackageGeneratorUrl =
     'https://pwabuilder-cloudapk-pre.azurewebsites.net'; // changed
   env.iosPackageGeneratorUrl =

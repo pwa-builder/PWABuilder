@@ -35,7 +35,6 @@ import { AnalyticsBehavior, recordProcessStep } from '../utils/analytics';
 export class AppHome extends LitElement {
   @state() siteURL: Lazy<string>;
   @state() gettingManifest = false;
-
   @state() errorGettingURL = false;
   @state() errorMessage: string | undefined;
 
@@ -286,8 +285,9 @@ export class AppHome extends LitElement {
         AnalyticsBehavior.StartProcess,
         {
           url: this.siteURL,
-          valid: isValidUrl
-        });
+          valid: isValidUrl,
+        }
+      );
 
       if (isValidUrl) {
         try {
@@ -298,7 +298,7 @@ export class AppHome extends LitElement {
           this.updateProgress(progress);
 
           const goodURL = manifestContext.siteUrl;
-          
+
           if (goodURL !== undefined) {
             Router.go(`/testing?site=${goodURL}`);
           }
@@ -323,18 +323,24 @@ export class AppHome extends LitElement {
 
         await this.updateComplete;
 
-        (this.shadowRoot?.querySelector('.error-message') as HTMLSpanElement)?.focus();
+        (
+          this.shadowRoot?.querySelector('.error-message') as HTMLSpanElement
+        )?.focus();
       }
 
       // HACK: Lit 2.0 crashes on Safari 14 desktop on the following line:
       // this.gettingManifest = false;
       // To fix this, we've found that putting that call in a 100ms timeout fixes the issue.
-      setTimeout(() => this.gettingManifest = false, 100);
+      setTimeout(() => (this.gettingManifest = false), 100);
     }
   }
 
   updateProgress(progressData: ProgressList) {
-    if (progressData && progressData.progress[0] && progressData.progress[0].items[0]) {
+    if (
+      progressData &&
+      progressData.progress[0] &&
+      progressData.progress[0].items[0]
+    ) {
       progressData.progress[0].items[0].done = Status.DONE;
       const newProgress = progressData;
       setProgress(newProgress);
@@ -343,8 +349,6 @@ export class AppHome extends LitElement {
 
   render() {
     return html`
-      <app-header part="header"></app-header>
-      <main>
       <content-header class="home">
         <h1 id="home-header" slot="hero-container">
           Ship your PWA to the app stores at lightning speed.
@@ -383,18 +387,31 @@ export class AppHome extends LitElement {
           </div>
         </section>
       
-        <form id="input-form" slot="input-container" @submit="${(e: InputEvent) => this.start(e)}">
+        <form id="input-form" slot="input-container" @submit="${(
+          e: InputEvent
+        ) => this.start(e)}">
           <div id="input-block" role="region">
             <fast-text-field slot="input-container" type="text" placeholder="Enter the URL to your PWA" name="url-input"
-              class="${classMap({ error: this.errorGettingURL })}" @input="${(e: InputEvent) => this.handleURL(e)}">
+              class="${classMap({ error: this.errorGettingURL })}" @input="${(
+      e: InputEvent
+    ) => this.handleURL(e)}">
             </fast-text-field>
       
-            ${this.errorMessage && this.errorMessage.length > 0
-              ? html`<span role="alert" aria-live="polite" class="error-message">${this.errorMessage}</span>`
-              : null}
+            ${
+              this.errorMessage && this.errorMessage.length > 0
+                ? html`<span
+                    role="alert"
+                    aria-live="polite"
+                    class="error-message"
+                    >${this.errorMessage}</span
+                  >`
+                : null
+            }
           </div>
       
-          <loading-button id="start-button" type="submit" class="navigation" ?loading="${this.gettingManifest}"
+          <loading-button id="start-button" type="submit" class="navigation" ?loading="${
+            this.gettingManifest
+          }"
             @click="${(e: InputEvent) => this.start(e)}">Start</loading-button>
         </form>
       </content-header>
