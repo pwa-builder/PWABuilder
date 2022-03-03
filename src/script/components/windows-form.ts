@@ -17,9 +17,20 @@ export class WindowsForm extends AppPackageFormBase {
   @state() showAdvanced = false;
   @state() packageOptions: WindowsPackageOptions = emptyWindowsPackageOptions();
 
+
+
   static get styles() {
     const localStyles = css``;
-    return [super.styles, localStyles];
+    return [
+      super.styles, 
+      localStyles,
+      css `
+      .flipper-button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    `];
   }
 
   constructor() {
@@ -175,9 +186,9 @@ export class WindowsForm extends AppPackageFormBase {
               <div id="all-settings-header" slot="heading">
                 <span>All Settings</span>
 
-                <fast-button class="flipper-button" mode="stealth">
+                <div class="flipper-button" mode="stealth">
                   <ion-icon name="caret-forward-outline"></ion-icon>
-                </fast-button>
+                </div>
               </div>
 
               <div class="adv-settings">
