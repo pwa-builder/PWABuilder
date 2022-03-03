@@ -1,12 +1,19 @@
+// @ts-nocheck
 import { env } from '../utils/environment';
 import {
   AppEvents,
   Manifest,
   ManifestContext,
-  ManifestDetectionResult
+  ManifestDetectionResult,
 } from '../utils/interfaces';
 import { cleanUrl } from '../utils/url';
-import { getManifestContext, getURL, setManifestContext, setURL, isManifestEdited } from './app-info';
+import {
+  getManifestContext,
+  getURL,
+  setManifestContext,
+  setURL,
+  isManifestEdited,
+} from './app-info';
 
 export const emitter = new EventTarget();
 export let initialManifest: Manifest;
@@ -57,8 +64,14 @@ async function getManifestViaPuppeteer(
   // But if we didn't detect the manifest, we want to fail the result here
   // to give the other manifest detector a chance to succeed.
   if (!responseData.content || !responseData.content.json) {
-    console.info("Manifest detection via Puppeteer completed, but couldn't detect the manifest.", responseData);
-    throw new Error("HTML parse manifest detector couldn't find the manifest. " + responseData.error);
+    console.info(
+      "Manifest detection via Puppeteer completed, but couldn't detect the manifest.",
+      responseData
+    );
+    throw new Error(
+      "HTML parse manifest detector couldn't find the manifest. " +
+        responseData.error
+    );
   }
 
   return {
@@ -101,12 +114,18 @@ async function getManifestViaHtmlParse(
 
   // OK, the call succeeded.
   // But if we didn't detect the manifest, we want to fail the result here.
-  // This is needed so that sites with JS-injected manifests (e.g. vscode.dev) can 
+  // This is needed so that sites with JS-injected manifests (e.g. vscode.dev) can
   // still be detected by our Puppeteer-based manifest detector.
   // See https://github.com/pwa-builder/PWABuilder/issues/2157
   if (!responseData.manifestContents) {
-    console.info("Manifest detection via HTML parse completed, but couldn't detect the manifest.", responseData);
-    throw new Error("Manifest detection via HTML parsing completed but couldn't find the manifest. " + responseData.error);
+    console.info(
+      "Manifest detection via HTML parse completed, but couldn't detect the manifest.",
+      responseData
+    );
+    throw new Error(
+      "Manifest detection via HTML parsing completed but couldn't find the manifest. " +
+        responseData.error
+    );
   }
 
   return {
@@ -121,8 +140,9 @@ async function getManifestViaHtmlParse(
     generated: responseData.manifestContents ? false : true,
     errors: responseData.error ? [responseData.error] : [],
     suggestions: [],
-    warnings: Object.entries(responseData.warnings)
-      .map(keyVal => `${keyVal[0]}: ${keyVal[1]}`), // e.g. "categories: Must be an array"
+    warnings: Object.entries(responseData.warnings).map(
+      keyVal => `${keyVal[0]}: ${keyVal[1]}`
+    ), // e.g. "categories: Must be an array"
     manifestContainsInvalidJson: responseData.manifestContainsInvalidJson,
   };
 }
@@ -138,9 +158,7 @@ function timeoutAfter(milliseconds: number): Promise<void> {
  * @param url The URL from which to detect the manifest.
  * @returns A manifest detection result.
  */
-async function fetchManifest(
-  url: string
-): Promise<ManifestDetectionResult> {
+async function fetchManifest(url: string): Promise<ManifestDetectionResult> {
   // Manifest detection is surprisingly tricky due to redirects, dynamic code generation, SSL problems, and other issues.
   // We have 2 techniques to detect the manifest:
   // 1. An Azure function that uses Chrome Puppeteer to fetch the manifest
@@ -158,29 +176,38 @@ async function fetchManifest(
       return;
     }
 
+    // Some sites that don't have a manifest take a long time for our Puppeteer-based test to complete.
+    // If 10 seconds passes, we ignore the detectors and move to creating a manifest in the interest of time.
     const manifestDetectors = [
       getManifestViaPuppeteer(knownGoodUrl),
-      getManifestViaHtmlParse(knownGoodUrl)
+      getManifestViaHtmlParse(knownGoodUrl),
+      timeoutAfter(10000),
     ];
     try {
       // Timeout after 10 seconds.
       // Some sites that don't have a manifest take a long time for our Puppeteer-based test to complete.
-      timeoutAfter(10000).then(() => reject("Timeout expired"));
+      timeoutAfter(10000).then(() => reject('Timeout expired'));
 
       const manifestDetectionResult = await Promise.any(manifestDetectors);
 
-      const context = getManifestContext();
-      if (!context.initialManifest) {
-        initialManifest = manifestDetectionResult.content;
-        context.initialManifest = initialManifest;
-        setManifestContext(context);
-      }
+      if (manifestDetectionResult) {
+        const context = getManifestContext();
+        if (!context.initialManifest) {
+          initialManifest = manifestDetectionResult.content;
+          context.initialManifest = initialManifest;
+          setManifestContext(context);
+        }
 
-      resolve(manifestDetectionResult);
+        resolve(manifestDetectionResult);
+      }
     } catch (manifestDetectionError) {
       console.error('All manifest detectors failed.', manifestDetectionError);
       const createdManifest = await createManifestFromPageOrEmpty(knownGoodUrl);
-      const createdManifestResult = wrapManifestInDetectionResult(createdManifest, knownGoodUrl, true);
+      const createdManifestResult = wrapManifestInDetectionResult(
+        createdManifest,
+        knownGoodUrl,
+        true
+      );
       resolve(createdManifestResult);
     }
   });
@@ -193,10 +220,12 @@ async function fetchManifest(
  * @param url The URL to fetch the manifest for. If null or omitted, the current site URL will be used.
  * @returns The manifest context.
  */
-export async function fetchOrCreateManifest(url?: string | null | undefined): Promise<ManifestContext> {
+export async function fetchOrCreateManifest(
+  url?: string | null | undefined
+): Promise<ManifestContext> {
   const siteUrl = url || getSiteUrlFromManifestOrQueryString();
   if (!siteUrl) {
-    throw new Error("No available site URL");
+    throw new Error('No available site URL');
   }
 
   setURL(siteUrl);
@@ -209,7 +238,7 @@ export async function fetchOrCreateManifest(url?: string | null | undefined): Pr
     manifestUrl: detectionResult.generatedUrl,
     isGenerated: detectionResult.generated,
     siteUrl: detectionResult.siteUrl,
-    isEdited: false
+    isEdited: false,
   };
   setManifestContext(context);
 
@@ -221,10 +250,10 @@ export async function fetchOrCreateManifest(url?: string | null | undefined): Pr
 }
 
 /**
- * Gets the site URL from the current manifest context. 
+ * Gets the site URL from the current manifest context.
  * If no site URL exists, it will get the site URL from the query string.
  * If no query string exists, it will return null.
- * @returns 
+ * @returns
  */
 function getSiteUrlFromManifestOrQueryString(): string | null {
   const context = getManifestContext();
@@ -256,17 +285,21 @@ async function createManifestFromPageOrEmpty(url: string): Promise<Manifest> {
     const createdManifest = await response.json<Manifest>();
     return createdManifest;
   } catch (err) {
-    console.error(`Manifest creation service failed to create the manifest. Falling back to empty manifest.`, err);
+    console.error(
+      `Manifest creation service failed to create the manifest. Falling back to empty manifest.`,
+      err
+    );
     return emptyManifest;
   }
 }
 
-export function updateManifest(
-  manifestUpdates: Partial<Manifest>
-): Manifest {
+export function updateManifest(manifestUpdates: Partial<Manifest>): Manifest {
   const context = getManifestContext();
 
-  context.manifest = Object.assign(context.manifest, manifestUpdates as Partial<Manifest>);
+  context.manifest = Object.assign(
+    context.manifest,
+    manifestUpdates as Partial<Manifest>
+  );
 
   if (context.initialManifest) {
     isManifestEdited(context.initialManifest, context.manifest);
@@ -291,20 +324,24 @@ export function updateManifestEvent<T extends Partial<Manifest>>(detail: T) {
   });
 }
 
-function wrapManifestInDetectionResult(manifest: Manifest, url: string, generated: boolean): ManifestDetectionResult {
+async function wrapManifestInDetectionResult(
+  manifest: Manifest,
+  url: string,
+  generated: boolean
+): Promise<ManifestDetectionResult> {
   return {
     content: manifest,
-    format: "w3c",
+    format: 'w3c',
     siteUrl: url,
     generated: generated,
-    id: "",
-    generatedUrl: "",
+    id: '',
+    generatedUrl: '',
     default: {
-      short_name: manifest.short_name || "My PWA"
+      short_name: manifest.short_name || 'My PWA',
     },
     errors: [],
     suggestions: [],
-    warnings: []
+    warnings: [],
   };
 }
 
@@ -313,14 +350,14 @@ type HtmlParseManifestFinderResult = {
   manifestContents: Manifest | null;
   error: string | null;
   manifestContainsInvalidJson: boolean;
-  manifestScore: { [key in keyof Manifest | "manifest"]: number }; // e.g. { "categories": 2, ... }
+  manifestScore: { [key in keyof Manifest | 'manifest']: number }; // e.g. { "categories": 2, ... }
   warnings: { [key in keyof Manifest | string]: string }; // e.g. { "categories": "Must be an array" }
 };
 
 type PuppeteerManifestFinderResult = {
   content: {
-    json: Manifest
+    json: Manifest;
   } | null;
   url: string | null;
   error?: any;
-}
+};

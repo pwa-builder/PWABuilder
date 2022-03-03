@@ -62,6 +62,7 @@ export class AppPublish extends LitElement {
   @state() openiOSOptions = false;
   @state() openOculusOptions = false;
   @state() generating = false;
+  @state() isGooglePlay = false;
   @state() finalChecks: checkResults | undefined;
   @state() reportPackageErrorUrl = '';
 
