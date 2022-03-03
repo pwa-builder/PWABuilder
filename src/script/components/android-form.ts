@@ -31,8 +31,13 @@ export class AndroidForm extends AppPackageFormBase {
       #signing-key-file-input {
         border: none;
       }
-      
-      
+    
+      .flipper-button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+ 
     `;
     return [
       super.styles,
@@ -223,9 +228,9 @@ export class AndroidForm extends AppPackageFormBase {
               <div id="all-settings-header" slot="heading">
                 <span>All Settings</span>
 
-                <fast-button class="flipper-button" mode="stealth">
+                <div class="flipper-button" mode="stealth">
                   <ion-icon name="caret-forward-outline"></ion-icon>
-                </fast-button>
+                </div>
               </div>
 
               <div class="adv-settings">
