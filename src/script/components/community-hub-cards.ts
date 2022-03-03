@@ -19,7 +19,7 @@ export const communityCards: Array<CardData> = [
     description: localeStrings.text.community_hub.description.github,
     links: [
       {
-        link: 'https://github.com/pwa-builder/PWABuilder#pwabuilder',
+        link: 'https://github.com/pwa-builder/PWABuilder',
         text: 'Visit us on GitHub'
       },
       {

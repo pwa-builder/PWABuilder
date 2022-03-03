@@ -11,19 +11,19 @@ export const resourceCards: Array<CardData> = [
     imageUrl: '/assets/new/manifest.svg',
     title: localeStrings.text.resource_hub_new.titles.manifest,
     description: localeStrings.text.resource_hub_new.description.manifest,
-    linkUrl: 'https://blog.pwabuilder.com',
+    linkUrl: 'https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/03',
   },
   {
     imageUrl: '/assets/new/sw.svg',
     title: localeStrings.text.resource_hub_new.titles.sw,
     description: localeStrings.text.resource_hub_new.description.sw,
-    linkUrl: 'https://blog.pwabuilder.com/demos',
+    linkUrl: 'https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/05',
   },
   {
     imageUrl: '/assets/new/https.svg',
     title: localeStrings.text.resource_hub_new.titles.https,
     description: localeStrings.text.resource_hub_new.description.https,
-    linkUrl: 'https://blog.pwabuilder.com/docs',
+    linkUrl: 'https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/04',
   },
 ];
 

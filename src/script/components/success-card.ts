@@ -16,6 +16,7 @@ export class SuccessCard extends LitElement {
   @property({ type: String }) description: string = "";
   @property({ type: String }) cardValue: string = "";
   @property({ type: String }) company: string = "";
+  @property({ type: String }) source: string = "";
 
   static get styles() {
     return [
@@ -31,6 +32,8 @@ export class SuccessCard extends LitElement {
         background: white;
         border-radius: 4px;
         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        text-decoration: none;
+        color: black;
       }
 
       .success-line-one {
@@ -109,14 +112,14 @@ export class SuccessCard extends LitElement {
 
   render() {
     return html`
-      <div class="success-card">
+      <a class="success-card" href="${this.source}" rel="noopener" target="_blank">
         <div class="success-line-one">
           <h3>${this.cardValue}</h3>
-          <img src=${this.imageUrl} alt="${this.company} logo" style="visibility: hidden" />
+          <img src=${this.imageUrl} alt="${this.company} logo"/>
         </div>
         <p class="success-stat">${this.cardStat}</p>
         <p class="success-desc">${this.description}</p>
-      </div>
+  </a>
     `;
   }
 }

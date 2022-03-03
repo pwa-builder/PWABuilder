@@ -478,7 +478,7 @@ export class AppNewHome extends LitElement {
         <section id="content-grid" slot="grid-container">
           <div class="intro-grid-item">
             <div class="grid-item-header">  
-              <h2><a href="https://github.com/pwa-builder/pwa-starter" target="_blank" rel="noopener">Start a new PWA</a></h2>
+              <h2><a href="https://github.com/pwa-builder/pwa-starter/wiki/Getting-Started/" target="_blank" rel="noopener">Start a new PWA</a></h2>
               <img src="/assets/new/arrow.svg" alt="arrow" />
               
             </div>
