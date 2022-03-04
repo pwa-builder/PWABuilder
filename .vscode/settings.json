@@ -6,5 +6,6 @@
   "typescript.tsc.autoDetect": "on",
   "typescript.reportStyleChecksAsWarnings": true,
   "typescript.validate.enable": true,
-  "javascript.validate.enable": true
+  "javascript.validate.enable": true,
+  "appService.showBuildDuringDeployPrompt": false
 }
