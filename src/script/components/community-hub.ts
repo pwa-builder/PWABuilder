@@ -135,16 +135,22 @@ export class CommunityHub extends LitElement {
 
       /*1024px - 1365px*/
       ${xLargeBreakPoint(css`
-
+          #community-panel {
+            justify-content: unset;
+            padding-left: 15%;
+          }
       `)}
 
       /* > 1920px */
       ${xxxLargeBreakPoint(css`
           #community-panel {
             justify-content: unset;
-            padding-left: 17em;
+            padding-left: 20%;
           }
-          
+          #community-photo img { 
+            width: 569px;
+            height: auto;
+          }
       `)}
     `,
     ];

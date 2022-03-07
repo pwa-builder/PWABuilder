@@ -100,7 +100,9 @@ export class SuccessCard extends LitElement {
 
       /* > 1920px */
       ${xxxLargeBreakPoint(css`
-          
+        .success-card {
+          width: 525px;
+        }
       `)}
     `
     ];

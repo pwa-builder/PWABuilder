@@ -29,7 +29,7 @@ export class SuccessStories extends LitElement {
         background-size: cover;
         background-position: right;
         padding: 2em;
-        padding-left: 7em;
+        padding-left: 20%;
       }
 
       #success-panel h2 {
@@ -135,13 +135,16 @@ export class SuccessStories extends LitElement {
 
       /*1024px - 1365px*/
       ${xLargeBreakPoint(css`
-
+          #success-panel {
+            padding-left: 15%;
+            padding-bottom: 2.5em;
+          }
       `)}
 
       /* > 1920px */
       ${xxxLargeBreakPoint(css`
           #success-panel {
-            padding-left: 17em;
+            padding-left: 20%;
             padding-bottom: 2.5em;
           }
           #success-panel h2 {

@@ -56,6 +56,7 @@ export class AppNewHome extends LitElement {
           display: flex;
           flex-direction: column;
           padding: 4em;
+          padding-left: 20%;
         }
 
         app-header::part(header) {
@@ -355,13 +356,14 @@ export class AppNewHome extends LitElement {
               background-position: center center;
               background-size: cover;
               background-repeat: no-repeat;
+              padding-left: 15%;
             }
         `)}
 
           /* > 1920 */
         ${xxxLargeBreakPoint(css`
             #wrapper {
-              padding-left: 10em;
+              padding-left: 20%;
               justify-content: flex-start;
             }
           `)}
@@ -471,60 +473,60 @@ export class AppNewHome extends LitElement {
     return html`
       <app-header part="header"></app-header>
       <main>
-      <div id="wrapper">
-        <h1 id="home-header" slot="hero-container">
-          Helping developers build and publish PWAs
-        </h1>
-        <section id="content-grid" slot="grid-container">
-          <div class="intro-grid-item">
-            <div class="grid-item-header">  
-              <h2><a href="https://github.com/pwa-builder/pwa-starter/wiki/Getting-Started/" target="_blank" rel="noopener">Start a new PWA</a></h2>
-              <img src="/assets/new/arrow.svg" alt="arrow" />
+        <div id="wrapper">
+          <h1 id="home-header" slot="hero-container">
+            Helping developers build and publish PWAs
+          </h1>
+          <section id="content-grid" slot="grid-container">
+            <div class="intro-grid-item">
+              <div class="grid-item-header">  
+                <h2><a href="https://github.com/pwa-builder/pwa-starter/wiki/Getting-Started/" target="_blank" rel="noopener">Start a new PWA</a></h2>
+                <img src="/assets/new/arrow.svg" alt="arrow" />
+                
+              </div>
+              <p>
+                Looking to build a new Progressive Web App? Checkout all the documentation here.
+              </p>
+            </div>
+        
+            <div class="intro-grid-item">
+              <div class="grid-item-header">  
+                <h2><a href="https://marketplace.visualstudio.com/items?itemName=PWABuilder.pwa-studio" target="_blank" rel="noopener">Use dev tools</a></h2>
+                <img src="/assets/new/arrow.svg" alt="arrow" />
+              </div>
+              <p>
+                Use our VS Code extension to create, improve, and package your PWA directly in your code editor.
+              </p>
+            </div>
+          </section>
+        
+          <form id="input-form" slot="input-container" @submit="${(e: InputEvent) => this.start(e)}">
+            <div id="input-block" role="region">
+              <div id="input-header-holder">
+                <h2 id="input-header">Ship your PWA to app stores</h2>
+                <img src="/assets/new/store-logos.png" alt="store logos" style="visibility: hidden" />
+              </div>
+              <div id="input-area">
+                <fast-text-field slot="input-container" type="text" id="input-box" placeholder="Enter the URL to your PWA" name="url-input"
+                  class="${classMap({ error: this.errorGettingURL })}" @input="${(e: InputEvent) => this.handleURL(e)}">
+                </fast-text-field>
+          
+                ${this.errorMessage && this.errorMessage.length > 0
+                  ? html`<span role="alert" aria-live="polite" class="error-message">${this.errorMessage}</span>`
+                  : null}
+          
+                <loading-button id="start-button" type="submit" class="navigation" ?loading="${this.gettingManifest}"
+                @click="${(e: InputEvent) => this.start(e)}">Start</loading-button>
+                <p id="demo">To try a demo url <a id="demo-action" @click=${() => this.placeDemoURL()}>click here.</a></p>
+              </div>
               
             </div>
-            <p>
-              Looking to build a new Progressive Web App? Checkout all the documentation here.
-            </p>
-          </div>
-      
-          <div class="intro-grid-item">
-            <div class="grid-item-header">  
-              <h2><a href="https://marketplace.visualstudio.com/items?itemName=PWABuilder.pwa-studio" target="_blank" rel="noopener">Use dev tools</a></h2>
-              <img src="/assets/new/arrow.svg" alt="arrow" />
-            </div>
-            <p>
-              Use our VS Code extension to create, improve, and package your PWA directly in your code editor.
-            </p>
-          </div>
-        </section>
-      
-        <form id="input-form" slot="input-container" @submit="${(e: InputEvent) => this.start(e)}">
-          <div id="input-block" role="region">
-            <div id="input-header-holder">
-              <h2 id="input-header">Ship your PWA to app stores</h2>
-              <img src="/assets/new/store-logos.png" alt="store logos" style="visibility: hidden" />
-            </div>
-            <div id="input-area">
-              <fast-text-field slot="input-container" type="text" id="input-box" placeholder="Enter the URL to your PWA" name="url-input"
-                class="${classMap({ error: this.errorGettingURL })}" @input="${(e: InputEvent) => this.handleURL(e)}">
-              </fast-text-field>
-        
-              ${this.errorMessage && this.errorMessage.length > 0
-                ? html`<span role="alert" aria-live="polite" class="error-message">${this.errorMessage}</span>`
-                : null}
-        
-              <loading-button id="start-button" type="submit" class="navigation" ?loading="${this.gettingManifest}"
-              @click="${(e: InputEvent) => this.start(e)}">Start</loading-button>
-              <p id="demo">To try a demo url <a id="demo-action" @click=${() => this.placeDemoURL()}>click here.</a></p>
-            </div>
-            
-          </div>
-        </form>
-      </div>
-      <companies-packaged></companies-packaged>
-      <resource-hub-new></resource-hub-new>
-      <success-stories></success-stories>
-      <community-hub></community-hub>
+          </form>
+        </div>
+        <companies-packaged></companies-packaged>
+        <resource-hub-new></resource-hub-new>
+        <success-stories></success-stories>
+        <community-hub></community-hub>
       </main>
     `;
   }

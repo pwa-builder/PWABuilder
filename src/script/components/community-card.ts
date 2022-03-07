@@ -137,7 +137,7 @@ export class CommunityCard extends LitElement {
     return html`
       <div class="community-card">
         <div class="community-card-image">
-          <img src=${this.imageUrl} alt ="${this.company} logo" style="visibility: hidden" />
+          <img src=${this.imageUrl} alt ="${this.company} logo" />
         </div>
         <div class="community-card-content">
           <h3>${this.cardTitle}</h3>
