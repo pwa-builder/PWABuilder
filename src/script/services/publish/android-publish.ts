@@ -3,10 +3,9 @@ import {
   AndroidPackageOptions,
   generatePackageId
 } from '../../utils/android-validation';
-import { env } from '../../utils/environment';
 import { findSuitableIcon, findBestAppIcon } from '../../utils/icons';
 import { ManifestContext } from '../../utils/interfaces';
-import {PackageSigner} from '@chromeos/android-package-signer';
+import { PackageSigner } from '@chromeos/android-package-signer';
 
 export let hasGeneratedAndroidPackage = false;
 
