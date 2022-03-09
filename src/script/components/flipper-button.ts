@@ -25,6 +25,10 @@ export class FlipperButton extends LitElement implements AppButtonElement {
           animation-duration: 0.3s;
           animation-iteration-count: 1;
 
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 18px;
           background: white;
           box-shadow: 0 1px 4px 0px rgb(0 0 0 / 25%);
           border-radius: 50%;
@@ -100,7 +104,7 @@ export class FlipperButton extends LitElement implements AppButtonElement {
 
   render() {
     return html`
-      <fast-button
+      <div
         class="${classMap({
           [this.className]: this.className,
           'flipper-button': true,
@@ -109,7 +113,7 @@ export class FlipperButton extends LitElement implements AppButtonElement {
         mode="stealth"
       >
         <ion-icon name="caret-forward-outline"></ion-icon>
-      </fast-button>
+      </div>
     `;
   }
 }
