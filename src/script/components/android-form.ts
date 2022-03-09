@@ -736,7 +736,7 @@ export class AndroidForm extends AppPackageFormBase {
             label: 'Key country code',
             tooltip: `Your country's 2 letter code (e.g. "US"). Used as the country of the new signing key.`,
             tooltipLink: 'https://developer.android.com/studio/publish/app-signing',
-            inputId: 'key-org-unit-input',
+            inputId: 'key-country-code-input',
             required: true,
             placeholder: 'US',
             value: this.packageOptions.signing.countryCode,
