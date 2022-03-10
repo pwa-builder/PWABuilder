@@ -30,6 +30,12 @@ export class WindowsForm extends AppPackageFormBase {
         justify-content: center;
         align-items: center;
       }
+
+      .form-generate-button {
+        width: 135px;
+        height: 40px;
+        display: inherit;
+      }
     `];
   }
 
@@ -324,7 +330,7 @@ export class WindowsForm extends AppPackageFormBase {
           <p>${localeStrings.text.publish.windows_platform.p}</p>
         </div>
         <div id="form-options-actions" class="modal-actions">
-          <loading-button .loading="${this.generating}">
+          <loading-button class="form-generate-button" .loading="${this.generating}" .primary=${true}>
             <input id="generate-submit" type="submit" value="Generate" />
           </loading-button>
         </div>

@@ -153,6 +153,12 @@ export class AppHome extends LitElement {
           left: 0;
         }
 
+        #start-button {
+          height: 40px;
+          width: 100px;
+          display: inherit;
+        }
+
         ${smallBreakPoint(css`
           content-header::part(grid-container) {
             display: none;
@@ -420,7 +426,7 @@ export class AppHome extends LitElement {
           </div>
       
           <loading-button id="start-button" type="submit" class="navigation" ?loading="${this.gettingManifest}"
-            @click="${(e: InputEvent) => this.start(e)}">Start</loading-button>
+            @click="${(e: InputEvent) => this.start(e)}" .primary=${true}>Start</loading-button>
         </form>
       </content-header>
       
