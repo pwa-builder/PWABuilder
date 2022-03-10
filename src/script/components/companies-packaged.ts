@@ -142,7 +142,7 @@ export class ComapniesPackaged extends LitElement {
           
       `)}
 
-      /* > 1920px */
+      /* > 1920px */ 
       ${xxxLargeBreakPoint(css`
       `)}
     `
