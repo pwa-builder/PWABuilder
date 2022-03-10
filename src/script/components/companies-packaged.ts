@@ -14,7 +14,7 @@ import {
 export class ComapniesPackaged extends LitElement {
 
   @state() companies: string[] = ["facebook", "instagram", "mailchimp", "plutotv", "sketchapp", "tiktok", "twitter"] ;
-
+  
   static get styles() {
     return [
     css`
