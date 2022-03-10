@@ -129,7 +129,7 @@ export class ComapniesPackaged extends LitElement {
         /* 4 icons in the carousel */
       `)}
 
-      /* 640px - 1023px */
+      /* 640px - 1023px */ 
       ${largeBreakPoint(css`
           /* 5 icons in the carousel */
       `)}
