@@ -65,10 +65,13 @@ export class ComapniesPackaged extends LitElement {
 
       @keyframes scroll {
         0% { transform: translateX(0); }
-        25% { transform: translateX(calc(var(--slide-width) * -1)) }
-        50% { transform: translateX(calc(var(--slide-width) * -2)) }
-        75% { transform: translateX(calc(-var(--slide-width) * 1)) }
-        100% { transform: translateX(0); }
+        14% { transform: translateX(calc(var(--slide-width) * -1)); }
+        28% { transform: translateX(calc(var(--slide-width) * -2)); }
+        42% { transform: translateX(calc(var(--slide-width) * -3)); }
+        56% { transform: translateX(calc(var(--slide-width) * -4)); }
+        70% { transform: translateX(calc(var(--slide-width) * -5)); }
+        84% { transform: translateX(calc(var(--slide-width) * -6)); }
+        100% { transform: translateX(calc(var(--slide-width) * -7)); }
       }
 
       .slider {
@@ -100,7 +103,7 @@ export class ComapniesPackaged extends LitElement {
       }
 
       .slide-track {
-        animation: scroll 15s infinite;
+        animation: scroll 15s infinite ease;
         animation-delay: 3s;
         display: flex;
         width: calc(var(--slide-width) * 14);
@@ -186,6 +189,12 @@ export class ComapniesPackaged extends LitElement {
       <div class="slider">
         <div class="slide-track">
           ${this.companies.map((comp: string) => 
+              html`
+              <div class="slide">
+                <img src="/assets/new/${comp}_carousel.png" alt="${comp} logo" />
+              </div>`
+            )}
+            ${this.companies.map((comp: string) => 
               html`
               <div class="slide">
                 <img src="/assets/new/${comp}_carousel.png" alt="${comp} logo" />
