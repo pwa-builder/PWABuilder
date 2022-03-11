@@ -124,17 +124,40 @@ export class ComapniesPackaged extends LitElement {
 
       /* < 480px */
       ${smallBreakPoint(css`
-          /* 3 icons in the carousel */
+          :host {
+            --carousel-width: 250px;
+            --slide-width: 250px;
+            --slide-height: 100px;
+            --carousel-image-width: 150px;
+          }
+          .slide-track {
+            animation: scroll 12s infinite ease;
+            animation-delay: 2s;
+          }
       `)}
 
       /* 480px - 639px */
       ${mediumBreakPoint(css`
-        /* 4 icons in the carousel */
+          :host {
+            --carousel-width: 440px;
+            --slide-width: 110px;
+            --slide-height: 44px;
+            --carousel-image-width: 66px;
+          }
+          .slide-track {
+            animation: scroll 12s infinite ease;
+            animation-delay: 2s;
+          }
       `)}
 
       /* 640px - 1023px */ 
       ${largeBreakPoint(css`
-          /* 5 icons in the carousel */
+          :host {
+            --carousel-width: 600px;
+            --slide-width: 120px;
+            --slide-height: 48px;
+            --carousel-image-width: 72px;
+          }
       `)}
 
       /*1024px - 1365px*/
