@@ -32,7 +32,7 @@ if ((window as any).ENV == 'production') {
   env.iosPackageGeneratorUrl =
     'https://pwabuilder-ios.azurewebsites.net/packages/create';
   env.oculusPackageGeneratorUrl =
-    'https://pwabuilder-oculus.centralus.cloudapp.azure.com/packages/create';
+    'https://pwabuilder-oculus-linux-docker-app.azurewebsites.net/packages/create';
   env.imageGeneratorUrl =
     'https://appimagegenerator-prod.azurewebsites.net/api/image';
   env.safeUrlFetcher =
@@ -59,7 +59,7 @@ if ((window as any).ENV == 'production') {
   env.iosPackageGeneratorUrl =
     'https://pwabuilder-ios.azurewebsites.net/packages/create';
   env.oculusPackageGeneratorUrl =
-    'https://pwabuilder-oculus.centralus.cloudapp.azure.com/packages/create';
+    'https://pwabuilder-oculus-linux-docker-app.azurewebsites.net/packages/create';
   env.imageGeneratorUrl = 'https://appimagegenerator-pre.azurewebsites.net'; // changed
   env.safeUrlFetcher =
     'https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl';
