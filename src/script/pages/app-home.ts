@@ -9,18 +9,19 @@ import {
   smallBreakPoint,
   mediumBreakPoint,
   largeBreakPoint,
-  xxLargeBreakPoint,
+  xLargeBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
 import { isValidURL } from '../utils/url';
 
-
 import '../components/content-header';
-import '../components/resource-hub';
 import '../components/loading-button';
 import '../components/dropdown-menu';
 import '../components/app-sidebar';
-import '../components/hover-tooltip';
+import '../components/companies-packaged';
+import '../components/resource-hub-new';
+import '../components/success-stories';
+import '../components/community-hub';
 
 //@ts-ignore
 import style from '../../../styles/error-styles.css';
@@ -45,35 +46,42 @@ export class AppHome extends LitElement {
     return [
       style,
       css`
-        content-header::part(main-container) {
-          display: flex;
+        #wrapper {
+          background: url(/assets/new/HeroBackground1920.jpg);
+          background-position: center center;
+          background-size: cover;
+          background-repeat: no-repeat;
 
-          padding-top: 0;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          padding: 4em;
+          padding-left: 20%;
         }
 
-        content-header::part(header) {
-          --header-border: none;
+        app-header::part(header) {
+          background: transparent;
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 0;
+          z-index: 2;
+          border: none;
         }
 
         h1 {
           font-size: var(--xlarge-font-size);
           line-height: 48px;
           letter-spacing: -0.015em;
-          margin-bottom: 0;
+          margin-bottom: 20px;
         }
 
-        h2 {
-          font-size: var(--medium-font-size);
-          margin-block: 1em;
-          margin-bottom: 5px;
-        }
-
-        #hero-p {
-          font-size: 16px;
-          line-height: 24px;
-          letter-spacing: -0.015em;
-          color: var(--secondary-font-color);
-          max-width: 406px;
+        #input-header {
+          font-size: 1em;
+          font-weight: bold;
+          margin: 0;
+          line-height: 1.75em;
+          color: #4F3FB6;
         }
 
         #content-grid {
@@ -81,31 +89,96 @@ export class AppHome extends LitElement {
           margin: 0;
           display: grid;
           grid-template-columns: auto auto;
+          width: fit-content;
         }
 
         .intro-grid-item {
-          max-width: 200px;
+          width: max-content;
+          margin-right: 1em;
         }
 
-        .intro-grid-item h3 {
-          margin-bottom: 5px;
+        .grid-item-header {
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          font-weight: bold;
+          margin-bottom: .25em;
+        }
+
+        .grid-item-header h2 {
+          margin-right: .25em;
+          border-bottom: 1px solid rgb(79, 63, 182);
+          line-height: 20px;
+          font-size: 1em;
+          font-weight: bold;
+          margin: 0;
+          margin-right: .5em;
+          line-height: 1em;
+          color: #4F3FB6;
+        }
+
+        .grid-item-header a {
+          color: #4F3FB6;
+          text-decoration: none;
+        }
+
+        .grid-item-header a:visited {
+          color: #4F3FB6;
+        }
+
+        .grid-item-header:hover {
+          cursor: pointer;
         }
 
         .intro-grid-item p {
-          margin-top: 0;
-          color: var(--secondary-font-color);
-          font-size: var(--font-size);
+          margin: 0;
+          color: #292C3A;
+          font-size: .75em;
 
-          width: 194px;
+          width: 15em;
         }
 
         #input-form {
-          display: flex;
           margin-top: 1em;
+          width: max-content;
+        }
+
+        #input-header-holder {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: max-content;
+          margin-bottom: 10px;
+        }
+
+        #input-header-holder img {
+          width: fit-content;
+          height: 1em;
+          margin-left: 20px;
+        }
+
+        #input-area {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          grid-template-rows: 1fr 1fr;
+        }
+
+        #input-box {
+          grid-column: 1;
+          grid-row: 1;
+        }
+
+        #start-button {
+          grid-column: 2;
+          grid-row: 1;
+        }
+
+        #demo {
+          grid-column: 1 / 2;
+          grid-row: 2;
         }
 
         #input-form fast-text-field {
-          width: 94%;
           margin-right: 10px;
         }
 
@@ -116,161 +189,184 @@ export class AppHome extends LitElement {
 
         #input-form fast-text-field::part(control) {
           color: var(--font-color);
+          width: 26em;
         }
 
         #input-block {
           display: flex;
           flex-direction: column;
-
           flex: 0.8 1 0%;
           width: 100%;
+        }
+
+        #demo {
+          font-size: .55em;
+          margin: 0;
+          margin-top: 5px;
+          color: #292C3A;
+        }
+
+        #demo-action {
+          margin: 0;
+          text-decoration: underline;
+          font-weight: bold;
+        }
+
+        #demo-action:hover{
+          cursor: pointer;
         }
 
         #home-header {
           max-width: 498px;
         }
 
-
-        #discord-link {
-          position: relative;
-          bottom: 10px;
-          right: 10px;
-          z-index: 2;
-        }
-
-        #discord-link:hover {
-          cursor: pointer;
-        }
-
-        #discord-tooltip {
-          display: none;
-        }
-
-        #discord-link:hover #discord-tooltip {
-          display: block;
-          position: absolute;
-          top: 0;
-          left: 0;
-        }
-
-        ${smallBreakPoint(css`
-          content-header::part(grid-container) {
-            display: none;
+        /* 640px - 1023px */
+        ${largeBreakPoint(css`
+          #wrapper {
+            padding-left: 4.5em;
+            background: url(/assets/new/HeroBackground1024.jpg);
+            background-position: center center;
+            background-size: cover;
+            background-repeat: no-repeat;
           }
 
-          content-header::part(main-container) {
-            padding-left: 0;
-          }
-
-          h1 {
-            margin-top: 0;
-            font-size: var(--large-font-size);
-          }
-
-          #start-button {
-            margin-top: 16px;
-          }
-
-          #hero-p {
-            line-height: 22px;
-          }
-
-          #input-form {
-            flex-direction: column;
-            width: 100%;
-            align-items: center;
-          }
-
-          #input-form fast-text-field {
-            width: 100%;
-            margin-right: 0;
-          }
-
-          #input-form fast-text-field::part(root) {
-            height: 64px;
-          }
-
-          #input-form fast-text-field::part(control) {
-            font-size: 22px;
+          #content-grid {
+            column-gap: 1em;
           }
         `)}
 
+        /* 480px - 639px */
         ${mediumBreakPoint(css`
-          content-header::part(grid-container) {
-            display: none;
+          #wrapper {
+            padding: 1.5em;
+            padding-top: 4em;
+            padding-bottom: 6em;
+            background: url(/assets/new/HeroBackground480.jpg);
+            background-position: center center;
+            background-size: cover;
+            background-repeat: no-repeat;
           }
-
-          content-header::part(main-container) {
-            padding-left: 0;
+          .intro-grid-item p {
+            width: 13em;
           }
-
-          h1 {
-            font-size: var(--large-font-size);
-            margin-top: 0;
-          }
-
-          #hero-p {
-            line-height: 22px;
-            text-align: center;
-            max-width: initial;
-          }
-
-          #input-form {
-            flex-direction: column;
+          #input-area {
             width: 100%;
-            align-items: center;
+            row-gap: 10px;
           }
 
-          #input-form fast-text-field {
-            width: 100%;
-            margin-right: 0;
-          }
-
-          #input-form fast-text-field::part(root) {
-            height: 64px;
-          }
-
-          #input-form fast-text-field::part(control) {
-            font-size: 22px;
+          #input-box {
+            grid-column: 1 / span 2;
+            grid-row: 1;
           }
 
           #input-block {
-            margin-bottom: 30px;
+            margin-bottom: -30px;
           }
 
           #start-button {
-            margin-top: 45px;
+            grid-column: 1;
+            grid-row: 2;
+          }
+
+          #demo {
+            grid-column: 2;
+            grid-row: 2;
+            align-self: flex-start;
+            justify-self: flex-end;
+          }
+          #input-form {
+            width: 100%;
+          }
+          #input-form fast-text-field {
+            margin-right: 0;
+          }
+          #home-header{
+            font-size: 40px;
           }
         `)}
 
+        /* < 480px */
+        ${smallBreakPoint(css`
+          #wrapper {
+            padding: 1em;
+            padding-top: 4em;
+            padding-bottom: 2em;
+            background: url(/assets/new/HeroBackground320.jpg);
+            background-position: center center;
+            background-size: cover;
+            background-repeat: no-repeat;
+          }
+          #home-header {
+            font-size: 1.9em;
+          }
+          #content-grid {
+            display: flex;
+            flex-direction: column;
+            row-gap: 1em;
+          }
+          #input-area {
+            width: 100%;
+            row-gap: 10px;
+          }
 
-      ${largeBreakPoint(css`
-          content-header::part(main-container) {
-            padding-left: 16px;
+          #input-box {
+            grid-column: 1 / span 2;
+            grid-row: 1;
+          }
+
+          #start-button {
+            grid-column: 1;
+            grid-row: 2;
+          }
+          #input-header-holder img {
+            display: none;
+          }
+          #demo {
+            display: none;
+          }
+          #home-header {
+            line-height: 36px;
+          }
+          #input-form {
+            width: 100%;
+          }
+          #input-form fast-text-field {
+            margin-right: 0;
+          }
+          #input-form fast-text-field::part(control) {
+            width: 100%;
+          }
+          .grid-item-header {
+            font-size: 20px;
+          }
+          #input-header {
+            font-size: 20px;
           }
         `)}
 
-      ${xxLargeBreakPoint(css`
-          .intro-grid-item {
-            max-width: 280px;
+        @media (min-width: 640px) and (max-width: 955px) {
+          #wrapper {
+            background-position: left;
           }
-
-          h1 {
-            max-width: 600px;
-          }
-
-          content-header::part(main-container) {
-            padding-left: 5em;
-            justify-content: flex-start;
-          }
+        }
+        /*1024px - 1365px*/
+        ${xLargeBreakPoint(css`
+            #wrapper {
+              background: url(/assets/new/HeroBackground1366.jpg);
+              background-position: center center;
+              background-size: cover;
+              background-repeat: no-repeat;
+              padding-left: 15%;
+            }
         `)}
 
-      ${xxxLargeBreakPoint(css`
-          content-header::part(main-container) {
-            padding-left: 10em;
-            justify-content: flex-start;
-          }
-        `)}
+          /* > 1920 */
+        ${xxxLargeBreakPoint(css`
+            #wrapper {
+              padding-left: 20%;
+              justify-content: flex-start;
+            }
+          `)}
       `,
     ];
   }
@@ -345,7 +441,7 @@ export class AppHome extends LitElement {
       } else {
         this.errorMessage = localeStrings.input.home.error.invalidURL;
         this.errorGettingURL = true;
-
+        
         await this.updateComplete;
 
         (this.shadowRoot?.querySelector('.error-message') as HTMLSpanElement)?.focus();
@@ -366,72 +462,71 @@ export class AppHome extends LitElement {
     }
   }
 
+  placeDemoURL(){
+    this.siteURL = "https://webboard.app";
+    let box = this.shadowRoot!.getElementById("input-box");
+    (box as HTMLInputElement)!.value = this.siteURL;
+    this.analyzeSite();
+  }
+
   render() {
     return html`
       <app-header part="header"></app-header>
       <main>
-      <content-header class="home">
-        <h1 id="home-header" slot="hero-container">
-          Ship your PWA to the app stores at lightning speed.
-        </h1>
-        <section id="content-grid" slot="grid-container">
-          <div class="intro-grid-item">
-            <h2>Test</h2>
-            <p>
-              PWABuilder will make sure your web app is a PWA and ready for the
-              stores!
-            </p>
-          </div>
-      
-          <div class="intro-grid-item">
-            <h2>Manage</h2>
-            <p>
-              Our Report Card will let you know if your PWA is store-ready. If
-              not, PWABuilder will help you get there!
-            </p>
-          </div>
-      
-          <div class="intro-grid-item">
-            <h2>Package</h2>
-            <p>
-              Once you are ready, PWABuilder can package your PWA for the app
-              stores in minutes!
-            </p>
-          </div>
-      
-          <div class="intro-grid-item">
-            <h2>Explore</h2>
-            <p>
-              PWAs are moving forward fast, learn about new web APIs, store
-              readiness, and more!
-            </p>
-          </div>
-        </section>
-      
-        <form id="input-form" slot="input-container" @submit="${(e: InputEvent) => this.start(e)}">
-          <div id="input-block" role="region">
-            <fast-text-field slot="input-container" type="text" placeholder="Enter the URL to your PWA" name="url-input"
-              class="${classMap({ error: this.errorGettingURL })}" @input="${(e: InputEvent) => this.handleURL(e)}">
-            </fast-text-field>
-      
-            ${this.errorMessage && this.errorMessage.length > 0
-              ? html`<span role="alert" aria-live="polite" class="error-message">${this.errorMessage}</span>`
-              : null}
-          </div>
-      
-          <loading-button id="start-button" type="submit" class="navigation" ?loading="${this.gettingManifest}"
-            @click="${(e: InputEvent) => this.start(e)}">Start</loading-button>
-        </form>
-      </content-header>
-      
-      <resource-hub page="home" all>
-        <h1 slot="title">PWABuilder Resource Hub</h1>
-        <p slot="description">
-          Jump to our blog, find our documentation and check out demos and
-          components from the PWABuilder team!
-        </p>
-      </resource-hub>
-      </div>
+        <div id="wrapper">
+          <h1 id="home-header" slot="hero-container">
+            Helping developers build and publish PWAs
+          </h1>
+          <section id="content-grid" slot="grid-container">
+            <div class="intro-grid-item">
+              <div class="grid-item-header">  
+                <h2><a href="https://github.com/pwa-builder/pwa-starter/wiki/Getting-Started/" target="_blank" rel="noopener">Start a new PWA</a></h2>
+                <img src="/assets/new/arrow.svg" alt="arrow" />
+                
+              </div>
+              <p>
+                Looking to build a new Progressive Web App? Checkout all the documentation here.
+              </p>
+            </div>
+        
+            <div class="intro-grid-item">
+              <div class="grid-item-header">  
+                <h2><a href="https://marketplace.visualstudio.com/items?itemName=PWABuilder.pwa-studio" target="_blank" rel="noopener">Use dev tools</a></h2>
+                <img src="/assets/new/arrow.svg" alt="arrow" />
+              </div>
+              <p>
+                Use our VS Code extension to create, improve, and package your PWA directly in your code editor.
+              </p>
+            </div>
+          </section>
+        
+          <form id="input-form" slot="input-container" @submit="${(e: InputEvent) => this.start(e)}">
+            <div id="input-block" role="region">
+              <div id="input-header-holder">
+                <h2 id="input-header">Ship your PWA to app stores</h2>
+                <img src="/assets/new/store-logos.png" alt="store logos" style="visibility: hidden" />
+              </div>
+              <div id="input-area">
+                <fast-text-field slot="input-container" type="text" id="input-box" placeholder="Enter the URL to your PWA" name="url-input"
+                  class="${classMap({ error: this.errorGettingURL })}" @input="${(e: InputEvent) => this.handleURL(e)}">
+                </fast-text-field>
+          
+                ${this.errorMessage && this.errorMessage.length > 0
+                  ? html`<span role="alert" aria-live="polite" class="error-message">${this.errorMessage}</span>`
+                  : null}
+          
+                <loading-button id="start-button" type="submit" class="navigation" ?loading="${this.gettingManifest}"
+                @click="${(e: InputEvent) => this.start(e)}">Start</loading-button>
+                <p id="demo">To try a demo url <a id="demo-action" @click=${() => this.placeDemoURL()}>click here.</a></p>
+              </div>
+              
+            </div>
+          </form>
+        </div>
+        <companies-packaged></companies-packaged>
+        <resource-hub-new></resource-hub-new>
+        <success-stories></success-stories>
+        <community-hub></community-hub>
       </main>
     `;
   }
