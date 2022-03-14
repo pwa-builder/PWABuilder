@@ -97,6 +97,18 @@ export class AppHome extends LitElement {
           margin-right: 1em;
         }
 
+        @keyframes bounce {
+          0%, 20%, 50%, 80%, 100% {
+              transform: translateY(0);
+          }
+          40% {
+            transform: translateX(-5px);
+          }
+          60% {
+              transform: translateX(5px);
+          }
+        }
+
         .grid-item-header {
           display: flex;
           align-items: center;
@@ -128,6 +140,10 @@ export class AppHome extends LitElement {
 
         .grid-item-header:hover {
           cursor: pointer;
+        }
+
+        .grid-item-header:hover img {
+          animation: bounce 1s;
         }
 
         .intro-grid-item p {
@@ -171,6 +187,12 @@ export class AppHome extends LitElement {
         #start-button {
           grid-column: 2;
           grid-row: 1;
+        }
+
+        .raise:hover,
+        .raise:focus {
+          box-shadow: 0 0.5em 0.5em -0.4em var(--hover);
+          transform: translateY(-0.2em);
         }
 
         #demo {
@@ -515,7 +537,7 @@ export class AppHome extends LitElement {
                   ? html`<span role="alert" aria-live="polite" class="error-message">${this.errorMessage}</span>`
                   : null}
           
-                <loading-button id="start-button" type="submit" class="navigation" ?loading="${this.gettingManifest}"
+                <loading-button id="start-button" type="submit" class="navigation raise" ?loading="${this.gettingManifest}"
                 @click="${(e: InputEvent) => this.start(e)}">Start</loading-button>
                 <p id="demo">To try a demo url <a id="demo-action" @click=${() => this.placeDemoURL()}>click here.</a></p>
               </div>

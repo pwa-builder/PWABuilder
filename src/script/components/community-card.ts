@@ -97,6 +97,22 @@ export class CommunityCard extends LitElement {
         height: auto;
       }
 
+      @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+        }
+        40% {
+            transform: translateX(-5px);
+        }
+        60% {
+            transform: translateX(5px);
+        }
+      }
+
+      .card-link-box:hover img {
+        animation: bounce 1s;
+      }
+
       /* < 480px */
       ${smallBreakPoint(css`
           .community-card {

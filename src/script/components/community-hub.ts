@@ -104,6 +104,8 @@ export class CommunityHub extends LitElement {
           }
       `)}
 
+      
+
       /* 640px - 1023px */
       ${largeBreakPoint(css`
           #community-panel {
@@ -111,7 +113,7 @@ export class CommunityHub extends LitElement {
             justify-content: space-between;
           }
           #community-photo img { 
-            max-width: 19em;
+            max-width: 18em;
             height: auto;
           }
           #community-panel h2 {
@@ -131,6 +133,8 @@ export class CommunityHub extends LitElement {
           justify-content: center;
         }
       }
+
+      
       
 
       /*1024px - 1365px*/
@@ -140,6 +144,12 @@ export class CommunityHub extends LitElement {
             padding-left: 15%;
           }
       `)}
+
+      @media (min-width: 1024px) and (max-width: 1160px) {
+        #community-photo img { 
+          width: 380px;
+        }
+      }
 
       /* > 1920px */
       ${xxxLargeBreakPoint(css`

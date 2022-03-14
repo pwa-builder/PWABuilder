@@ -103,7 +103,7 @@ export class ComapniesPackaged extends LitElement {
       }
 
       .slide-track {
-        animation: scroll 15s infinite ease;
+        animation: scroll 18s infinite ease;
         animation-delay: 3s;
         display: flex;
         width: calc(var(--slide-width) * 14);
@@ -122,52 +122,50 @@ export class ComapniesPackaged extends LitElement {
         width: var(--carousel-image-width);
       }
 
-      /* < 480px */
-      ${smallBreakPoint(css`
-          :host {
-            --carousel-width: 250px;
-            --slide-width: 250px;
-            --slide-height: 100px;
-            --carousel-image-width: 150px;
-          }
-          .slide-track {
-            animation: scroll 12s infinite ease;
-            animation-delay: 2s;
-          }
-      `)}
+      @media (min-width: 200px) and (max-width: 400px) {
+        :host {
+        --carousel-width: 200px;
+        --slide-width: 200px;
+        --slide-height: 80px;
+        --carousel-image-width: 120px;
+        }
+      }
 
-      /* 480px - 639px */
-      ${mediumBreakPoint(css`
-          :host {
-            --carousel-width: 440px;
-            --slide-width: 110px;
-            --slide-height: 44px;
-            --carousel-image-width: 66px;
-          }
-          .slide-track {
-            animation: scroll 12s infinite ease;
-            animation-delay: 2s;
-          }
-      `)}
+      @media (min-width: 400px) and (max-width: 600px) {
+        :host {
+        --carousel-width: 400px;
+        --slide-width: 200px;
+        --slide-height: 80px;
+        --carousel-image-width: 120px;
+        }
+      }
 
-      /* 640px - 1023px */ 
-      ${largeBreakPoint(css`
-          :host {
-            --carousel-width: 600px;
-            --slide-width: 120px;
-            --slide-height: 48px;
-            --carousel-image-width: 72px;
-          }
-      `)}
+      @media (min-width: 600px) and (max-width: 800px) {
+        :host {
+        --carousel-width: 600px;
+        --slide-width: 200px;
+        --slide-height: 80px;
+        --carousel-image-width: 120px;
+        }
+      }
 
-      /*1024px - 1365px*/
-      ${xxLargeBreakPoint(css`
-          
-      `)}
+      @media (min-width: 800px) and (max-width: 1000px) {
+        :host {
+        --carousel-width: 800px;
+        --slide-width: 200px;
+        --slide-height: 80px;
+        --carousel-image-width: 120px;
+        }
+      }
 
-      /* > 1920px */ 
-      ${xxxLargeBreakPoint(css`
-      `)}
+      @media (min-width: 1000px) {
+        :host {
+        --carousel-width: 1000px;
+        --slide-width: 200px;
+        --slide-height: 80px;
+        --carousel-image-width: 120px;
+        }
+      }
     `
     ];
   }
@@ -179,28 +177,26 @@ export class ComapniesPackaged extends LitElement {
   firstUpdated() {
     const shuffled = this.shuffle(this.companies);
     this.companies = [...shuffled];
-    console.log("companies", this.companies);
   }
 
   shuffle(array: any) {
     let currentIndex = array.length
     let randomIndex;
-  
+
     // While there remain elements to shuffle...
     while (currentIndex != 0) {
-  
+
       // Pick a remaining element...
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex--;
-  
+
       // And swap it with the current element.
       [array[currentIndex], array[randomIndex]] = [
         array[randomIndex], array[currentIndex]];
     }
-  
+
     return array;
   }
-
 
   render() {
     return html`
