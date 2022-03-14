@@ -23,7 +23,7 @@ export const communityCards: Array<CardData> = [
         text: 'Visit us on GitHub'
       },
       {
-        link: 'https://github.com/pwa-builder/PWABuilder/projects/4?fullscreen=true&card_filter_query=label%3A%22help+wanted+%3Araising_hand%3A%22',
+        link: 'https://github.com/pwa-builder/PWABuilder/wiki/How-to-contribute-to-PWABuilder',
         text: 'Contribute to project'
       }
     ],
