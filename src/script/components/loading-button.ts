@@ -84,6 +84,7 @@ export class LoadingButton extends LitElement {
     return html`
       <div 
         role="button"
+        aria-label="loading button"
         id="loading-options"
         class=${classMap({
           secondary: this.secondary,

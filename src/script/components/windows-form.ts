@@ -192,7 +192,7 @@ export class WindowsForm extends AppPackageFormBase {
               <div id="all-settings-header" slot="heading">
                 <span>All Settings</span>
 
-                <div class="flipper-button" role="button">
+                <div class="flipper-button" aria-label="caret dropdown" role="button">
                   <ion-icon name="caret-forward-outline"></ion-icon>
                 </div>
               </div>
