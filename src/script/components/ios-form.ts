@@ -129,7 +129,7 @@ export class IOSForm extends AppPackageFormBase {
               <div id="all-settings-header" slot="heading">
                 <span>All Settings</span>
 
-                <div class="flipper-button" mode="stealth">
+                <div class="flipper-button" role="button">
                   <ion-icon name="caret-forward-outline"></ion-icon>
                 </div>
               </div>

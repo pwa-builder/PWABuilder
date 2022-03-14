@@ -69,7 +69,8 @@ export class LoadingButton extends LitElement {
         }
 
         #loading-options.secondary.disabled {
-          opacity: 0.3;
+          opacity: 0.8;
+          color: #747578;
         }
       `,
     ];
@@ -82,6 +83,7 @@ export class LoadingButton extends LitElement {
   render() {
     return html`
       <div 
+        role="button"
         id="loading-options"
         class=${classMap({
           secondary: this.secondary,
