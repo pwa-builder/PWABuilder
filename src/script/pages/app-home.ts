@@ -38,7 +38,6 @@ import { AnalyticsBehavior, recordProcessStep } from '../utils/analytics';
 export class AppHome extends LitElement {
   @state() siteURL: Lazy<string>;
   @state() gettingManifest = false;
-
   @state() errorGettingURL = false;
   @state() errorMessage: string | undefined;
 

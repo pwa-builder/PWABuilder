@@ -1,15 +1,17 @@
 import { AndroidPackageOptions } from '../../utils/android-validation';
 import { IOSAppPackageOptions } from '../../utils/ios-validation';
+import { OculusAppPackageOptions } from '../../utils/oculus-validation';
 import { WindowsPackageOptions } from '../../utils/win-validation';
 import {
   generateAndroidPackage,
 } from './android-publish';
 import { generateIOSPackage } from './ios-publish';
+import { generateOculusPackage } from './oculus-publish';
 import {
   generateWindowsPackage,
 } from './windows-publish';
 
-export type Platform = 'windows' | 'android' | 'ios';
+export type Platform = 'windows' | 'android' | 'ios' | 'oculus';
 
 type PackageInfo = {
   appName: string;
@@ -19,7 +21,7 @@ type PackageInfo = {
 
 export async function generatePackage(
   type: Platform,
-  packageOptions?: AndroidPackageOptions | IOSAppPackageOptions | WindowsPackageOptions
+  packageOptions?: AndroidPackageOptions | IOSAppPackageOptions | WindowsPackageOptions | OculusAppPackageOptions
 ): Promise<PackageInfo | null> {
   switch (type) {
     case 'windows':
@@ -28,6 +30,8 @@ export async function generatePackage(
       return await tryGenerateAndroidPackage(packageOptions as AndroidPackageOptions);
     case 'ios':
       return await tryGenerateIOSPackage(packageOptions as IOSAppPackageOptions);
+    case 'oculus':
+      return await tryGenerateOculusPackage(packageOptions as OculusAppPackageOptions);
     default:
       throw new Error(
         `A platform type must be passed, ${type} is not a valid platform.`
@@ -35,32 +39,17 @@ export async function generatePackage(
   }
 }
 
-// async function grabBackupManifest() {
-//   console.error(
-//     'Error generating package because manifest information is missing, trying fallback'
-//   );
-//   const search = new URLSearchParams(location.search);
-//   let site: string | null = null;
-//   if (search) {
-//     site = search.get('site');
-//   }
-
-//   let localManifest: Manifest | null = null;
-
-//   if (site) {
-//     try {
-//       const context = await fetchOrCreateManifest(site);
-//       localManifest = context.manifest;
-//     } catch (error) {
-
-//     }
-//   }
-
-//   return localManifest;
-// }
-
 async function tryGenerateIOSPackage(options: IOSAppPackageOptions): Promise<PackageInfo | null> {
   const result = await generateIOSPackage(options);
+  return {
+    appName: options.name,
+    blob: result,
+    type: "store"
+  };
+}
+
+async function tryGenerateOculusPackage(options: OculusAppPackageOptions): Promise<PackageInfo | null> {
+  const result = await generateOculusPackage(options);
   return {
     appName: options.name,
     blob: result,
