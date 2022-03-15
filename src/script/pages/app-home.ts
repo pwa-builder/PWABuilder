@@ -179,9 +179,11 @@ export class AppHome extends LitElement {
           grid-template-rows: 1fr 1fr;
         }
 
-        #input-box {
+        #input-and-error {
           grid-column: 1;
           grid-row: 1;
+          display: flex;
+          flex-direction: column;
         }
 
         #start-button {
@@ -232,6 +234,11 @@ export class AppHome extends LitElement {
           margin: 0;
           text-decoration: underline;
           font-weight: bold;
+          background: none;
+          border: none;
+          padding: 0;
+          font-size: 1em;
+          margin-left: 1px;
         }
 
         #demo-action:hover{
@@ -529,17 +536,19 @@ export class AppHome extends LitElement {
                 <img src="/assets/new/store-logos.png" alt="store logos" style="visibility: hidden" />
               </div>
               <div id="input-area">
-                <fast-text-field slot="input-container" type="text" id="input-box" placeholder="Enter the URL to your PWA" name="url-input"
-                  class="${classMap({ error: this.errorGettingURL })}" @input="${(e: InputEvent) => this.handleURL(e)}">
-                </fast-text-field>
-          
-                ${this.errorMessage && this.errorMessage.length > 0
-                  ? html`<span role="alert" aria-live="polite" class="error-message">${this.errorMessage}</span>`
-                  : null}
+                <div id="input-and-error">
+                  <fast-text-field slot="input-container" type="text" id="input-box" placeholder="Enter the URL to your PWA" name="url-input"
+                    class="${classMap({ error: this.errorGettingURL })}" @input="${(e: InputEvent) => this.handleURL(e)}">
+                  </fast-text-field>
+            
+                  ${this.errorMessage && this.errorMessage.length > 0
+                    ? html`<span role="alert" aria-live="polite" class="error-message">${this.errorMessage}</span>`
+                    : null}
+                </div>
           
                 <loading-button id="start-button" type="submit" class="navigation raise" ?loading="${this.gettingManifest}"
                 @click="${(e: InputEvent) => this.start(e)}">Start</loading-button>
-                <p id="demo">To try a demo url <a id="demo-action" @click=${() => this.placeDemoURL()}>click here.</a></p>
+                <p id="demo">To try a demo url <button id="demo-action" aria-label="click here for demo url" @click=${() => this.placeDemoURL()}>click here.</button></p>
               </div>
               
             </div>

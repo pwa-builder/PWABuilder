@@ -67,6 +67,12 @@ export class AppFooter extends LitElement {
         color: white;
       }
 
+      fast-anchor:focus {
+        border: 1px solid white;
+        border-radius: 5px;
+        padding: 3px;
+      }
+
       ${xxxLargeBreakPoint(
         css`
           footer {
