@@ -8,7 +8,8 @@ import {
   Status,
 } from '../utils/interfaces';
 import { runManifestChecks } from '../utils/manifest-validation';
-import { getChosenServiceWorker } from './service_worker';
+import { getSetSWCounter } from './service_worker';
+
 
 let site_url: string | undefined;
 let results: RawTestResult | undefined;
@@ -138,19 +139,21 @@ export function getResults(): RawTestResult | undefined {
 }
 
 export async function baseOrPublish(): Promise<'base' | 'publish'> {
-  const choseSW = getChosenServiceWorker();
+  
+  // This counter != 0 if the user has selected a custom SW.
+  const setSWCounter = getSetSWCounter();
 
   const maniContext = getManifestContext();
 
   // is the manifest one we generated
   // or is it from the developer?
   const generatedFlag = maniContext.isGenerated;
-
   // has the manifest been edited by
   // the user?
   const editedFlag = maniContext.isEdited;
 
-  if (generatedFlag === true || choseSW !== undefined || editedFlag === true) {
+  // choseSW is never undefined now bc we set a default
+  if (generatedFlag === true || setSWCounter !== 0 || editedFlag === true) {
     // User has chosen a custom service worker
     // or we have generated a manifest for them
     // send to basepackage to download.

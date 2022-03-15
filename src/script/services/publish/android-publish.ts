@@ -89,6 +89,7 @@ export function emptyAndroidPackageOptions(): AndroidPackageOptions {
     navigationDividerColorDark: '#000000',
     orientation: 'default',
     packageId: '',
+    pwaUrl: '',
     shortcuts: [],
     signing: {
       file: null,
@@ -212,6 +213,7 @@ export function createAndroidPackageOptionsFromManifest(manifestContext: Manifes
     themeColor: manifest.theme_color || '#FFFFFF',
     shareTarget: manifest.share_target,
     webManifestUrl: maniUrl,
+    pwaUrl: manifestContext.siteUrl
   };
 }
 

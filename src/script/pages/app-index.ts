@@ -7,6 +7,7 @@ import '../components/app-footer';
 import '../components/app-header';
 import '../components/app-button';
 import '../components/cookie-banner';
+import '../components/discord-box';
 import { recordPageView } from '../utils/analytics';
 
 @customElement('app-index')
@@ -20,9 +21,13 @@ export class AppIndex extends LitElement {
       #router-outlet > .leaving {
         animation: 160ms fadeOut ease-in-out;
       }
-
-      #router-otlet > .entering {
+      
+      #router-outlet > .entering {
         animation: 160ms fadeIn linear;
+      }
+ 
+      #router-outlet {
+        position: relative;
       }
 
       @media (min-width: 1920px) {
@@ -156,10 +161,10 @@ export class AppIndex extends LitElement {
         <!--required cookie banner-->
         <cookie-banner></cookie-banner>
       
-        <main>
+        <div>
           <div id="router-outlet"></div>
-        </main>
-      
+        </div>
+        <discord-box></discord-box>
         <app-footer></app-footer>
       </div>
     `;

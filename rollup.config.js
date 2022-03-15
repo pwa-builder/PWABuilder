@@ -26,6 +26,8 @@ export default {
     ),
     replace({
         "window.ENV": JSON.stringify(process.env.NODE_ENV || "production"),
+        "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV || "production"),
+        preventAssignment: true,
     }),
     html(),
     json(),

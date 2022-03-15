@@ -51,6 +51,7 @@ export interface AndroidPackageOptions {
   | 'landscape-primary'
   | 'landscape-secondary';
   packageId: string;
+  pwaUrl: string;
   shareTarget?: ShareTarget;
   shortcuts: ShortcutItem[];
   signing: AndroidSigningOptions;

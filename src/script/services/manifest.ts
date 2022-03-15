@@ -30,6 +30,7 @@ export let emptyManifest: Manifest = {
 async function getManifestViaPuppeteer(
   url: string
 ): Promise<ManifestDetectionResult> {
+
   const encodedUrl = encodeURIComponent(url);
   const manifestTestUrl = `${env.api}/WebManifest?site=${encodedUrl}`;
   const response = await fetch(manifestTestUrl, {
@@ -40,6 +41,7 @@ async function getManifestViaPuppeteer(
       'Fetching manifest via Puppeteer service failed',
       response.statusText
     );
+    
     throw new Error(
       `Unable to fetch response using ${manifestTestUrl}. Response status  ${response}`
     );
@@ -60,7 +62,7 @@ async function getManifestViaPuppeteer(
     console.info("Manifest detection via Puppeteer completed, but couldn't detect the manifest.", responseData);
     throw new Error("HTML parse manifest detector couldn't find the manifest. " + responseData.error);
   }
-
+  
   return {
     content: responseData.content.json,
     format: 'w3c',
@@ -108,7 +110,7 @@ async function getManifestViaHtmlParse(
     console.info("Manifest detection via HTML parse completed, but couldn't detect the manifest.", responseData);
     throw new Error("Manifest detection via HTML parsing completed but couldn't find the manifest. " + responseData.error);
   }
-
+  
   return {
     content: responseData.manifestContents,
     format: 'w3c',
@@ -158,27 +160,35 @@ async function fetchManifest(
       return;
     }
 
+    // Some sites that don't have a manifest take a long time for our Puppeteer-based test to complete.
+    // If 10 seconds passes, we ignore the detectors and move to creating a manifest in the interest of time. 
+    // rollup is giving warnings about the void type being returned from Promise.any(manifestDetectors),
+    // void is returned when the detectors timeout so none of the relevant code gets run with type void.
+    // so we can ignore this warning.
+    //@ts-ignore:next-line
     const manifestDetectors = [
       getManifestViaPuppeteer(knownGoodUrl),
-      getManifestViaHtmlParse(knownGoodUrl)
+      getManifestViaHtmlParse(knownGoodUrl),
+      timeoutAfter(10000)
     ];
-    try {
-      // Timeout after 10 seconds.
-      // Some sites that don't have a manifest take a long time for our Puppeteer-based test to complete.
-      timeoutAfter(10000).then(() => reject("Timeout expired"));
 
-      const manifestDetectionResult = await Promise.any(manifestDetectors);
+    //@ts-ignore:next-line
+    const manifestDetectionResult = await Promise.any(manifestDetectors);
 
+    //@ts-ignore:next-line
+    if(manifestDetectionResult){
       const context = getManifestContext();
       if (!context.initialManifest) {
+        //@ts-ignore:next-line
         initialManifest = manifestDetectionResult.content;
         context.initialManifest = initialManifest;
         setManifestContext(context);
       }
 
+      //@ts-ignore:next-line
       resolve(manifestDetectionResult);
-    } catch (manifestDetectionError) {
-      console.error('All manifest detectors failed.', manifestDetectionError);
+    } else {
+      console.error('All manifest detectors failed: Timeout expired.');
       const createdManifest = await createManifestFromPageOrEmpty(knownGoodUrl);
       const createdManifestResult = wrapManifestInDetectionResult(createdManifest, knownGoodUrl, true);
       resolve(createdManifestResult);
@@ -291,22 +301,23 @@ export function updateManifestEvent<T extends Partial<Manifest>>(detail: T) {
   });
 }
 
-function wrapManifestInDetectionResult(manifest: Manifest, url: string, generated: boolean): ManifestDetectionResult {
+async function wrapManifestInDetectionResult(manifest: Manifest, url: string, generated: boolean): Promise<ManifestDetectionResult> {
   return {
-    content: manifest,
-    format: "w3c",
-    siteUrl: url,
-    generated: generated,
-    id: "",
-    generatedUrl: "",
-    default: {
-      short_name: manifest.short_name || "My PWA"
-    },
-    errors: [],
-    suggestions: [],
-    warnings: []
-  };
+      content: manifest,
+      format: "w3c",
+      siteUrl: url,
+      generated: generated,
+      id: "",
+      generatedUrl: "",
+      default: {
+        short_name: manifest.short_name || "My PWA"
+      },
+      errors: [],
+      suggestions: [],
+      warnings: []
+    }
 }
+
 
 type HtmlParseManifestFinderResult = {
   manifestUrl: string | null;

@@ -115,6 +115,9 @@ export class AppManifest extends LitElement {
   @state()
   protected screenshotsList: Array<Screenshot> = [];
 
+  @state() errored: boolean = false;
+  @state() errorMessage: string | undefined = undefined;
+
   /**
    * The current preview screen.
    */
@@ -471,6 +474,7 @@ export class AppManifest extends LitElement {
 
       if (this.manifest.icons) {
         this.iconsList = this.manifest.icons;
+        //console.log("ICONS LIST", this.iconsList);
       }
 
       this.requestUpdate();
@@ -571,8 +575,8 @@ export class AppManifest extends LitElement {
               <app-modal
                 id="uploadModal"
                 modalId="uploadModal"
-                heading="Upload information"
-                body="Choose an Icon to upload. For the best results, we recommend choosing a 512x512 size icon."
+                heading="${!this.errored ? 'Upload Information' : 'Wait A Minute!'}"
+                body="${!this.errored ? 'Choose an Icon to upload. For the best results, we recommend choosing a 512x512 size icon.': this.errorMessage || ''}"
                 ?open=${this.uploadModalOpen}
                 @app-modal-close=${this.uploadModalClose}
               >
@@ -595,6 +599,7 @@ export class AppManifest extends LitElement {
             <div class="collection image-items hidden-sm">
               ${this.iconsList?.map((icon, i) => {
                 const url = this.handleImageUrl(icon);
+                //console.log("EACH ICON:", icon, i);
 
                 if (url) {
                   return html`<div class="image-item image">
@@ -1064,6 +1069,7 @@ export class AppManifest extends LitElement {
   }
 
   async handleModalInputFileChange(evt: CustomEvent<FileInputDetails>) {
+    this.errored = false;
     const files = evt.detail.input.files ?? undefined;
 
     this.uploadSelectedImageFile = files?.item(0) ?? undefined;
@@ -1074,7 +1080,8 @@ export class AppManifest extends LitElement {
         this.uploadSelectedImageFile
       );
     } else {
-      console.log('error state in modal input file change code');
+      this.errored = true;
+      this.errorMessage = "File type is not supported. Please use .PNG, .JPG, .SVG";
     }
   }
 
@@ -1146,23 +1153,26 @@ export class AppManifest extends LitElement {
       const input = <HTMLButtonElement>event.target;
       const list = input.dataset['list'] as 'icons' | 'screenshots';
       const index = Number(input.dataset['index']);
-      const imageList: Array<Icon> =
-        (this.manifest && this.manifest[list]) ?? [];
-      const updatedList = imageList
-        .slice(0, index)
-        .concat(imageList.slice(index + 1));
-
-      this.updatePageManifest({
-        [list]: updatedList,
-      });
-
+    
       if (list === 'icons') {
-        this.iconsList = updatedList;
+        let filteredIconList = this.iconsList?.filter((_icon, i) => index !== i);
+        
+        this.updatePageManifest({
+          [list]: filteredIconList,
+        });
+
+        this.iconsList = filteredIconList;
       }
 
       if (list === 'screenshots') {
-        this.screenshotsList = updatedList;
-      }
+        let filteredScreenshotList = this.screenshotsList?.filter((_image, i) => index !== i);
+
+        this.updatePageManifest({
+          [list]: filteredScreenshotList,
+        });
+
+        this.screenshotsList = filteredScreenshotList;
+      }  
     } catch (e) {
       console.error(e);
     }
