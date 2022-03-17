@@ -548,7 +548,7 @@ export class AppHome extends LitElement {
           
                 <loading-button id="start-button" type="submit" class="navigation raise" ?loading="${this.gettingManifest}"
                 @click="${(e: InputEvent) => this.start(e)}">Start</loading-button>
-                <p id="demo">To try a demo url <button id="demo-action" aria-label="click here for demo url" @click=${() => this.placeDemoURL()}>click here.</button></p>
+                <p id="demo">To try a demo url <button id="demo-action" aria-label="click here for demo url" @click=${() => this.placeDemoURL()}>click here</button>.</p>
               </div>
               
             </div>

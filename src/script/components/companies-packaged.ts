@@ -103,7 +103,7 @@ export class ComapniesPackaged extends LitElement {
       }
 
       .slide-track {
-        animation: scroll 18s infinite ease;
+        animation: scroll 21s infinite ease;
         animation-delay: 3s;
         display: flex;
         width: calc(var(--slide-width) * 14);
@@ -124,46 +124,31 @@ export class ComapniesPackaged extends LitElement {
 
       @media (min-width: 200px) and (max-width: 400px) {
         :host {
-        --carousel-width: 200px;
-        --slide-width: 200px;
-        --slide-height: 80px;
-        --carousel-image-width: 120px;
+          --carousel-width: 200px;
         }
       }
 
       @media (min-width: 400px) and (max-width: 600px) {
         :host {
-        --carousel-width: 400px;
-        --slide-width: 200px;
-        --slide-height: 80px;
-        --carousel-image-width: 120px;
+          --carousel-width: 400px;
         }
       }
 
       @media (min-width: 600px) and (max-width: 800px) {
         :host {
-        --carousel-width: 600px;
-        --slide-width: 200px;
-        --slide-height: 80px;
-        --carousel-image-width: 120px;
+          --carousel-width: 600px;
         }
       }
 
       @media (min-width: 800px) and (max-width: 1000px) {
         :host {
-        --carousel-width: 800px;
-        --slide-width: 200px;
-        --slide-height: 80px;
-        --carousel-image-width: 120px;
+          --carousel-width: 800px;
         }
       }
 
       @media (min-width: 1000px) {
         :host {
-        --carousel-width: 1000px;
-        --slide-width: 200px;
-        --slide-height: 80px;
-        --carousel-image-width: 120px;
+          --carousel-width: 1000px;
         }
       }
     `
