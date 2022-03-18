@@ -22,14 +22,14 @@ export class SuccessStories extends LitElement {
       #success-panel {
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
-        justify-content: flex-start;
+        align-items: center;
+        justify-content: center;
         background-image: url(/assets/new/successBG_1920.png);
         background-repeat: no-repeat;
         background-size: cover;
         background-position: right;
         padding: 2em;
-        padding-left: 20%;
+        /* padding-left: 20%; */
       }
 
       #success-panel h2 {
@@ -136,7 +136,7 @@ export class SuccessStories extends LitElement {
       /*1024px - 1365px*/
       ${xLargeBreakPoint(css`
           #success-panel {
-            padding-left: 15%;
+            /* padding-left: 15%; */
             padding-bottom: 2.5em;
           }
       `)}
@@ -144,7 +144,7 @@ export class SuccessStories extends LitElement {
       /* > 1920px */
       ${xxxLargeBreakPoint(css`
           #success-panel {
-            padding-left: 30%;
+            /* padding-left: 30%; */
             padding-bottom: 2.5em;
           }
           #success-panel h2 {
@@ -166,9 +166,10 @@ export class SuccessStories extends LitElement {
   render() {
     return html`
       <div id="success-panel">
-        <h2>PWA success stories</h2>
-        <div id="success-cards">
-          ${this.cards.map((card: any) => html`
+        <div id="success-panel-wrapper">
+          <h2>PWA success stories</h2>
+          <div id="success-cards">
+            ${this.cards.map((card: any) => html`
             <success-card
             cardStat=${card.stat}
             description=${card.description}
@@ -176,9 +177,10 @@ export class SuccessStories extends LitElement {
             cardValue=${card.value}
             company=${card.company}
             source=${card.source}
-          >
-          </success-card>
-          `)}
+            >
+            </success-card>
+            `)}
+          </div>
         </div>
       </div>
     `;
