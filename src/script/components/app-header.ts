@@ -85,15 +85,6 @@ export class AppHeader extends LitElement {
         display: flex;
       }
 
-      #mobile-nav {
-        display: none;
-        width: initial;
-      }
-
-      #mobile-nav fast-button::part(control) {
-        color: black;
-      }
-
       @media (prefers-color-scheme: light) {
         header {
           color: black;
@@ -101,17 +92,6 @@ export class AppHeader extends LitElement {
       }
 
       ${smallBreakPoint(css`
-        header nav {
-          display: none;
-        }
-
-        #desktop-nav {
-          display: none;
-        }
-
-        #mobile-nav {
-          display: flex;
-        }
 
       `)}
 
@@ -124,20 +104,12 @@ export class AppHeader extends LitElement {
           display: flex;
         }
 
-        #mobile-nav {
-          display: none;
-        }
-
       `)}
       
 
       ${largeBreakPoint(css`
         #desktop-nav {
           display: flex;
-        }
-
-        #mobile-nav {
-          display: none;
         }
 
       `)}
