@@ -90,7 +90,6 @@ export class CommunityHub extends LitElement {
             justify-content: center;
           }
           #community-panel {
-            align-items: center;
             column-gap: 0;
           }
           #community-content {
@@ -108,10 +107,6 @@ export class CommunityHub extends LitElement {
 
       /* 640px - 1023px */
       ${largeBreakPoint(css`
-          #community-panel {
-            padding-left: 35px;
-            justify-content: space-between;
-          }
           #community-photo img { 
             max-width: 18em;
             height: auto;
@@ -139,10 +134,7 @@ export class CommunityHub extends LitElement {
 
       /*1024px - 1365px*/
       ${xLargeBreakPoint(css`
-          #community-panel {
-            justify-content: unset;
-            padding-left: 15%;
-          }
+          
       `)}
 
       @media (min-width: 1024px) and (max-width: 1160px) {
@@ -153,10 +145,6 @@ export class CommunityHub extends LitElement {
 
       /* > 1920px */
       ${xxxLargeBreakPoint(css`
-          #community-panel {
-            justify-content: unset;
-            padding-left: 30%;
-          }
           #community-photo img { 
             width: 569px;
             height: auto;
