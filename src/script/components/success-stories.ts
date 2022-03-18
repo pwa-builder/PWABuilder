@@ -144,7 +144,7 @@ export class SuccessStories extends LitElement {
       /* > 1920px */
       ${xxxLargeBreakPoint(css`
           #success-panel {
-            padding-left: 20%;
+            padding-left: 30%;
             padding-bottom: 2.5em;
           }
           #success-panel h2 {

@@ -2,14 +2,6 @@ import { LitElement, css, html } from 'lit';
 
 import { customElement, state } from 'lit/decorators.js';
 
-import {
-  smallBreakPoint,
-  mediumBreakPoint,
-  largeBreakPoint,
-  xxLargeBreakPoint,
-  xxxLargeBreakPoint,
-} from '../utils/css/breakpoints';
-
 @customElement('companies-packaged')
 export class ComapniesPackaged extends LitElement {
 
