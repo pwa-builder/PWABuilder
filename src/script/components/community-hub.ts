@@ -155,7 +155,7 @@ export class CommunityHub extends LitElement {
       ${xxxLargeBreakPoint(css`
           #community-panel {
             justify-content: unset;
-            padding-left: 20%;
+            padding-left: 30%;
           }
           #community-photo img { 
             width: 569px;

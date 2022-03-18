@@ -43,6 +43,7 @@ export class DiscordBox extends LitElement {
       }
       #discord-box a {
         text-decoration: none;
+        color: black;
         border-bottom: 1px solid black;
         display: inline-block;
         height: 12px;

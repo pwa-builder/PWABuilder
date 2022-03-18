@@ -192,8 +192,7 @@ export class AppHome extends LitElement {
 
         .raise:hover,
         .raise:focus {
-          box-shadow: 0 0.5em 0.5em -0.4em var(--hover);
-          transform: translateY(-0.2em);
+          transform: scale(1.01);
         }
 
         #demo {
@@ -279,28 +278,7 @@ export class AppHome extends LitElement {
           }
           #input-area {
             width: 100%;
-            row-gap: 10px;
-          }
-
-          #input-box {
-            grid-column: 1 / span 2;
-            grid-row: 1;
-          }
-
-          #input-block {
-            margin-bottom: -30px;
-          }
-
-          #start-button {
-            grid-column: 1;
-            grid-row: 2;
-          }
-
-          #demo {
-            grid-column: 2;
-            grid-row: 2;
-            align-self: flex-start;
-            justify-self: flex-end;
+            
           }
           #input-form {
             width: 100%;
@@ -332,24 +310,20 @@ export class AppHome extends LitElement {
             flex-direction: column;
             row-gap: 1em;
           }
+
+          #input-and-error{
+            width: 85%;
+          }
+
           #input-area {
             width: 100%;
-            row-gap: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            row-gap: 5px;
           }
 
-          #input-box {
-            grid-column: 1 / span 2;
-            grid-row: 1;
-          }
-
-          #start-button {
-            grid-column: 1;
-            grid-row: 2;
-          }
           #input-header-holder img {
-            display: none;
-          }
-          #demo {
             display: none;
           }
           #home-header {
@@ -377,7 +351,8 @@ export class AppHome extends LitElement {
             background-position: left;
           }
         }
-        /*1024px - 1365px*/
+
+        /*1024px - 1365px*/ 
         ${xLargeBreakPoint(css`
             #wrapper {
               background: url(/assets/new/HeroBackground1366.jpg);
@@ -391,10 +366,10 @@ export class AppHome extends LitElement {
           /* > 1920 */
         ${xxxLargeBreakPoint(css`
             #wrapper {
-              padding-left: 20%;
+              padding-left: 30%;
               justify-content: flex-start;
             }
-          `)}
+        `)}
       `,
     ];
   }
@@ -545,9 +520,11 @@ export class AppHome extends LitElement {
                     : null}
                 </div>
           
+                <p id="demo">To try a demo url <button id="demo-action" aria-label="click here for demo url" @click=${() => this.placeDemoURL()}>click here</button>.</p>
+
                 <loading-button id="start-button" type="submit" class="navigation raise" ?loading="${this.gettingManifest}"
                 @click="${(e: InputEvent) => this.start(e)}">Start</loading-button>
-                <p id="demo">To try a demo url <button id="demo-action" aria-label="click here for demo url" @click=${() => this.placeDemoURL()}>click here.</button></p>
+                
               </div>
               
             </div>
