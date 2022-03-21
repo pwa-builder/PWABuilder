@@ -46,7 +46,7 @@ export class AppHome extends LitElement {
     return [
       style,
       css`
-        #wrapper {
+        #home-block {
           background: url(/assets/new/HeroBackground1920.jpg);
           background-position: center center;
           background-size: cover;
@@ -55,8 +55,12 @@ export class AppHome extends LitElement {
           height: 100%;
           display: flex;
           flex-direction: column;
+          align-items: center;
           padding: 4em;
-          padding-left: 20%;
+        }
+
+        #wrapper {
+          width: 1000px;
         }
 
         app-header::part(header) {
@@ -250,12 +254,16 @@ export class AppHome extends LitElement {
 
         /* 640px - 1023px */
         ${largeBreakPoint(css`
-          #wrapper {
+          #home-block {
             padding-left: 4.5em;
             background: url(/assets/new/HeroBackground1024.jpg);
             background-position: center center;
             background-size: cover;
             background-repeat: no-repeat;
+          }
+
+          #wrapper {
+            width: 825px;
           }
 
           #content-grid {
@@ -265,7 +273,7 @@ export class AppHome extends LitElement {
 
         /* 480px - 639px */
         ${mediumBreakPoint(css`
-          #wrapper {
+          #home-block {
             padding: 1.5em;
             padding-top: 4em;
             padding-bottom: 6em;
@@ -274,6 +282,11 @@ export class AppHome extends LitElement {
             background-size: cover;
             background-repeat: no-repeat;
           }
+
+          #wrapper {
+            width: 530px;
+          }
+
           .intro-grid-item p {
             width: 13em;
           }
@@ -292,9 +305,23 @@ export class AppHome extends LitElement {
           }
         `)}
 
-        /* < 480px */
-        ${smallBreakPoint(css`
+        @media (min-width: 480px) and (max-width: 580px) {
           #wrapper {
+            width: 400px;
+          }
+          #input-area {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            row-gap: 5px;
+          }
+        }
+        
+
+        /* < 480px */
+        @media (max-width: 480px) {
+          #home-block {
             padding: 1em;
             padding-top: 4em;
             padding-bottom: 2em;
@@ -303,6 +330,11 @@ export class AppHome extends LitElement {
             background-size: cover;
             background-repeat: no-repeat;
           }
+
+          #wrapper {
+            width: 400px;
+          }
+
           #home-header {
             font-size: 1.9em;
           }
@@ -345,30 +377,40 @@ export class AppHome extends LitElement {
           #input-header {
             font-size: 20px;
           }
-        `)}
+        }
+
+        @media (max-width: 415px) {
+          #wrapper {
+            width: 300px;
+          }
+        }
 
         @media (min-width: 640px) and (max-width: 955px) {
-          #wrapper {
+          #home-block {
             background-position: left;
+          }
+          #wrapper {
+            width: 600px;
           }
         }
 
         /*1024px - 1365px*/ 
         ${xLargeBreakPoint(css`
-            #wrapper {
+            #home-block {
               background: url(/assets/new/HeroBackground1366.jpg);
               background-position: center center;
               background-size: cover;
               background-repeat: no-repeat;
-              padding-left: 15%;
             }
         `)}
 
           /* > 1920 */
         ${xxxLargeBreakPoint(css`
+            #home-block {
+              align-items: center;
+            }
             #wrapper {
-              padding-left: 30%;
-              justify-content: flex-start;
+              width: 1160px;
             }
         `)}
       `,
@@ -477,59 +519,61 @@ export class AppHome extends LitElement {
     return html`
       <app-header part="header"></app-header>
       <main>
-        <div id="wrapper">
-          <h1 id="home-header" slot="hero-container">
-            Helping developers build and publish PWAs
-          </h1>
-          <section id="content-grid" slot="grid-container">
-            <div class="intro-grid-item">
-              <div class="grid-item-header">  
-                <h2><a href="https://github.com/pwa-builder/pwa-starter/wiki/Getting-Started/" target="_blank" rel="noopener">Start a new PWA</a></h2>
-                <img src="/assets/new/arrow.svg" alt="arrow" />
-                
-              </div>
-              <p>
-                Looking to build a new Progressive Web App? Checkout all the documentation here.
-              </p>
-            </div>
-        
-            <div class="intro-grid-item">
-              <div class="grid-item-header">  
-                <h2><a href="https://marketplace.visualstudio.com/items?itemName=PWABuilder.pwa-studio" target="_blank" rel="noopener">Use dev tools</a></h2>
-                <img src="/assets/new/arrow.svg" alt="arrow" />
-              </div>
-              <p>
-                Use our VS Code extension to create, improve, and package your PWA directly in your code editor.
-              </p>
-            </div>
-          </section>
-        
-          <form id="input-form" slot="input-container" @submit="${(e: InputEvent) => this.start(e)}">
-            <div id="input-block" role="region">
-              <div id="input-header-holder">
-                <h2 id="input-header">Ship your PWA to app stores</h2>
-                <img src="/assets/new/store-logos.png" alt="store logos" style="visibility: hidden" />
-              </div>
-              <div id="input-area">
-                <div id="input-and-error">
-                  <fast-text-field slot="input-container" type="text" id="input-box" placeholder="Enter the URL to your PWA" name="url-input"
-                    class="${classMap({ error: this.errorGettingURL })}" @input="${(e: InputEvent) => this.handleURL(e)}">
-                  </fast-text-field>
-            
-                  ${this.errorMessage && this.errorMessage.length > 0
-                    ? html`<span role="alert" aria-live="polite" class="error-message">${this.errorMessage}</span>`
-                    : null}
+        <div id="home-block">
+          <div id="wrapper">
+            <h1 id="home-header" slot="hero-container">
+              Helping developers build and publish PWAs
+            </h1>
+            <section id="content-grid" slot="grid-container">
+              <div class="intro-grid-item">
+                <div class="grid-item-header">  
+                  <h2><a href="https://github.com/pwa-builder/pwa-starter/wiki/Getting-Started/" target="_blank" rel="noopener">Start a new PWA</a></h2>
+                  <img src="/assets/new/arrow.svg" alt="arrow" />
+                  
                 </div>
+                <p>
+                  Looking to build a new Progressive Web App? Checkout all the documentation here.
+                </p>
+              </div>
           
-                <p id="demo">Try a <button id="demo-action" aria-label="click here for demo url" @click=${() => this.placeDemoURL()}>demo url</button></p>
+              <div class="intro-grid-item">
+                <div class="grid-item-header">  
+                  <h2><a href="https://marketplace.visualstudio.com/items?itemName=PWABuilder.pwa-studio" target="_blank" rel="noopener">Use dev tools</a></h2>
+                  <img src="/assets/new/arrow.svg" alt="arrow" />
+                </div>
+                <p>
+                  Use our VS Code extension to create, improve, and package your PWA directly in your code editor.
+                </p>
+              </div>
+            </section>
+          
+            <form id="input-form" slot="input-container" @submit="${(e: InputEvent) => this.start(e)}">
+              <div id="input-block" role="region">
+                <div id="input-header-holder">
+                  <h2 id="input-header">Ship your PWA to app stores</h2>
+                  <img src="/assets/new/store-logos.png" alt="store logos" style="visibility: hidden" />
+                </div>
+                <div id="input-area">
+                  <div id="input-and-error">
+                    <fast-text-field slot="input-container" type="text" id="input-box" placeholder="Enter the URL to your PWA" name="url-input"
+                      class="${classMap({ error: this.errorGettingURL })}" @input="${(e: InputEvent) => this.handleURL(e)}">
+                    </fast-text-field>
+              
+                    ${this.errorMessage && this.errorMessage.length > 0
+                      ? html`<span role="alert" aria-live="polite" class="error-message">${this.errorMessage}</span>`
+                      : null}
+                  </div>
+            
 
-                <loading-button id="start-button" type="submit" class="navigation raise" ?loading="${this.gettingManifest}"
-                @click="${(e: InputEvent) => this.start(e)}">Start</loading-button>
+                  <loading-button id="start-button" type="submit" class="navigation raise" ?loading="${this.gettingManifest}"
+                  @click="${(e: InputEvent) => this.start(e)}">Start</loading-button>
+                  <p id="demo">Try a <button id="demo-action" aria-label="click here for demo url" @click=${() => this.placeDemoURL()}>demo url</button></p>
+
+                </div>
                 
               </div>
-              
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
         <companies-packaged></companies-packaged>
         <resource-hub-new></resource-hub-new>
