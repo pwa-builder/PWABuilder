@@ -194,7 +194,7 @@ function validateWindowsAnaheimPackageVersions(
       break;
     }
   }
-  //Check if versions are equal
+  // Check if versions are equal
   if (i == versionArray.length) {
     isValidVersion = false;
   }
