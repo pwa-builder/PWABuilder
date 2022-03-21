@@ -194,7 +194,6 @@ function validateWindowsAnaheimPackageVersions(
       break;
     }
   }
-  console.log(i, versionArray.length);
   if (i == versionArray.length) {
     isValidVersion = false;
   }
