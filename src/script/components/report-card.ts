@@ -549,7 +549,7 @@ export class ReportCard extends LitElement {
                     >${this.maniScore}</span
                   >
 
-                  <div class="flipper-button">
+                  <div class="flipper-button" aria-label="caret dropdown" role="button">
                     <ion-icon name="caret-forward-outline"></ion-icon> 
                   </div>                
                   
@@ -608,7 +608,7 @@ export class ReportCard extends LitElement {
                     >${this.swScore}</span
                   >
 
-                  <div class="flipper-button">
+                  <div class="flipper-button" aria-label="caret dropdown" role="button">
                     <ion-icon name="caret-forward-outline"></ion-icon> 
                   </div> 
                 </div>
@@ -668,7 +668,7 @@ export class ReportCard extends LitElement {
                     >${this.securityScore}</span
                   >
 
-                  <div class="flipper-button">
+                  <div class="flipper-button" aria-label="caret dropdown" role="button">
                     <ion-icon name="caret-forward-outline"></ion-icon> 
                   </div> 
                 </div>

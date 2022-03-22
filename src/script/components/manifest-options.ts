@@ -351,6 +351,20 @@ export class AppManifest extends LitElement {
 
           color: var(--font-color);
         }
+
+        .download-icon-button {
+          width: 150px;
+          height: 40px;
+          display: inherit;
+        }
+
+        .generate-button {
+          width: 150px;
+          height: 40px;
+          display: inherit;
+          margin-bottom: 15px;
+          margin-top: 15px;
+        }
       `,
       // modal
       css`
@@ -496,9 +510,10 @@ export class AppManifest extends LitElement {
   renderDownloadButton(): TemplateResult {
     if(this.iconsList) {
      return html`<loading-button
-            class="hidden-sm"
+            class="hidden-sm download-icon-button"
             appearance="outline"
             ?loading=${this.awaitRequest}
+            ?secondary=${true}
             @click=${this.downloadIcons}
             >${localeStrings.button.download}</loading-button
           >`
@@ -670,10 +685,12 @@ export class AppManifest extends LitElement {
 
           <div class="screenshots-actions">
             <loading-button
+              class="generate-button"
               appearance="outline"
               type="submit"
               ?loading=${this.awaitRequest}
               ?disabled=${this.generateScreenshotButtonDisabled}
+              ?secondary=${true}
               @click=${this.generateScreenshots}
               >${localeStrings.button.generate}</loading-button
             >

@@ -662,7 +662,7 @@ export class AppPublish extends LitElement {
       </app-button>
       <div>
         <loading-button id="windows-test-pkg-btn" class="navigation secondary" ?loading=${this.generating} id="test-package-button"
-          @click="${this.generateWindowsTestPackage}">
+          @click="${this.generateWindowsTestPackage}" .secondary="${true}">
           Test Package
         </loading-button>
         <hover-tooltip
