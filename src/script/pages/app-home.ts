@@ -6,7 +6,6 @@ import { classMap } from 'lit/directives/class-map.js';
 import { localeStrings } from '../../locales';
 
 import {
-  smallBreakPoint,
   mediumBreakPoint,
   largeBreakPoint,
   xLargeBreakPoint,
@@ -292,7 +291,9 @@ export class AppHome extends LitElement {
           }
           #input-area {
             width: 100%;
-            
+          }
+          #input-and-error {
+            margin-right: 10px;
           }
           #input-form {
             width: 100%;
