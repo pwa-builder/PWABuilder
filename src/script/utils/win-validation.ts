@@ -169,8 +169,8 @@ function validateWindowsAnaheimPackageVersions(
   classicVersion: string
 ): WindowsPackageValidationError[] {
   const versionErrors: WindowsPackageValidationError[] = [];
-  const versionArray = version.split(".").map(Number);
-  const classicVersionArray = classicVersion.split(".").map(Number);
+  const versionArray = version.split('.').map(Number);
+  const classicVersionArray = classicVersion.split('.').map(Number);
   let isValidVersion = null;
 
   // Common validation run on both version and classic version.
@@ -178,19 +178,26 @@ function validateWindowsAnaheimPackageVersions(
     { name: 'version', label: 'Version', value: version },
     { name: 'classicPackage', label: 'Classic version', value: classicVersion },
   ];
-  
+
   for (const versionInfo of versionInfos) {
     versionErrors.push(...validateVersion(versionInfo));
   }
 
   // Make sure the version is > classic version
-  versionArray.forEach((versionNum, i) => {
-    if(classicVersionArray[i]! > versionNum && classicVersionArray[0]! >= versionArray[0]!) {
+  for (var i = 0; i < versionArray.length; i++) {
+    if (versionArray[i]! < classicVersionArray[i]!) {
       isValidVersion = false;
-    } else {
-      isValidVersion = true
+      break;
     }
-  });
+    if (versionArray[i]! > classicVersionArray[i]!) {
+      isValidVersion = true;
+      break;
+    }
+  }
+  // Check if versions are equal
+  if (i == versionArray.length) {
+    isValidVersion = false;
+  }
 
   if (!isValidVersion) {
     versionErrors.push({
