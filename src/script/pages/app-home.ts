@@ -552,7 +552,7 @@ export class AppHome extends LitElement {
               <div id="input-block" role="region">
                 <div id="input-header-holder">
                   <h2 id="input-header">Ship your PWA to app stores</h2>
-                  <img src="/assets/new/store-logos.png" alt="store logos" style="visibility: hidden" />
+                  <img src="/assets/new/store-logos.png" alt="store logos" />
                 </div>
                 <div id="input-area">
                   <div id="input-and-error">
