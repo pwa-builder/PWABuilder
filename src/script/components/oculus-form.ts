@@ -3,7 +3,11 @@ import { customElement, property, state } from 'lit/decorators.js';
 import '../components/loading-button';
 import { fetchOrCreateManifest } from '../services/manifest';
 import { AppPackageFormBase } from './app-package-form-base';
-import { createOculusPackageOptionsFromManifest, emptyOculusPackageOptions, emptyOculusSigningKey } from '../services/publish/oculus-publish';
+import {
+  createOculusPackageOptionsFromManifest,
+  emptyOculusPackageOptions,
+  emptyOculusSigningKey,
+} from '../services/publish/oculus-publish';
 import { getManifestContext } from '../services/app-info';
 import { SigningMode } from '../utils/oculus-validation';
 import { maxSigningKeySizeInBytes } from '../utils/android-validation';
@@ -16,12 +20,8 @@ export class OculusForm extends AppPackageFormBase {
   @state() existingSigningKey = emptyOculusSigningKey();
 
   static get styles() {
-    const localStyles = css`
-    `;
-    return [
-      super.styles,
-      localStyles
-    ];
+    const localStyles = css``;
+    return [super.styles, localStyles];
   }
 
   constructor() {
@@ -33,8 +33,9 @@ export class OculusForm extends AppPackageFormBase {
     if (manifestContext.isGenerated) {
       manifestContext = await fetchOrCreateManifest();
     }
-    
-    this.packageOptions = createOculusPackageOptionsFromManifest(manifestContext);
+
+    this.packageOptions =
+      createOculusPackageOptionsFromManifest(manifestContext);
   }
 
   initGenerate(ev: InputEvent) {
@@ -44,7 +45,7 @@ export class OculusForm extends AppPackageFormBase {
       new CustomEvent('init-oculus-gen', {
         detail: this.packageOptions,
         composed: true,
-        bubbles: true
+        bubbles: true,
       })
     );
   }
@@ -74,7 +75,8 @@ export class OculusForm extends AppPackageFormBase {
               ${this.renderFormInput({
                 label: 'Package ID',
                 tooltip: `The ID of your Oculus app. We recommend a reverse-domain style string: com.domainname.appname. Letters, numbers, periods, hyphens, and underscores are allowed.`,
-                tooltipLink: 'https://developer.android.com/guide/topics/manifest/manifest-element.html#package',
+                tooltipLink:
+                  'https://developer.android.com/guide/topics/manifest/manifest-element.html#package',
                 inputId: 'package-id-input',
                 required: true,
                 placeholder: 'MyCompany.MyApp',
@@ -82,9 +84,11 @@ export class OculusForm extends AppPackageFormBase {
                 minLength: 3,
                 maxLength: 50,
                 spellcheck: false,
-                pattern: "[a-zA-Z0-9.-_]*$",
-                validationErrorMessage: "Package ID must contain only letters, numbers, periods, hyphens, and underscores.",
-                inputHandler: (val: string) => this.packageOptions.packageId = val
+                pattern: '[a-zA-Z0-9.-_]*$',
+                validationErrorMessage:
+                  'Package ID must contain only letters, numbers, periods, hyphens, and underscores.',
+                inputHandler: (val: string) =>
+                  (this.packageOptions.packageId = val),
               })}
             </div>
 
@@ -99,29 +103,32 @@ export class OculusForm extends AppPackageFormBase {
                 spellcheck: false,
                 minLength: 3,
                 // pattern: // NOTE: avoid using a regex pattern here, as it often has unintended consequences, such as blocking non-English names
-                inputHandler: (val: string) => this.packageOptions.name = val
+                inputHandler: (val: string) => (this.packageOptions.name = val),
               })}
             </div>
 
             <div class="form-group">
-                  ${this.renderFormInput({
-                    label: 'Version name',
-                    tooltip: `The version of your app displayed to users. This is a string, typically in the form of '1.0.0.0'. This is purely for display purposes to users, Oculus Store uses Version Code to determine the latest version of your app.`,
-                    tooltipLink: 'https://developer.android.com/guide/topics/manifest/manifest-element.html#vname',
-                    inputId: 'version-input',
-                    required: true,
-                    placeholder: '1.0.0.0',
-                    value: this.packageOptions.versionName,
-                    spellcheck: false,
-                    inputHandler: (val: string) => this.packageOptions.versionName = val
-                  })}
-                </div>
+              ${this.renderFormInput({
+                label: 'Version name',
+                tooltip: `The version of your app displayed to users. This is a string, typically in the form of '1.0.0.0'. This is purely for display purposes to users, Oculus Store uses Version Code to determine the latest version of your app.`,
+                tooltipLink:
+                  'https://developer.android.com/guide/topics/manifest/manifest-element.html#vname',
+                inputId: 'version-input',
+                required: true,
+                placeholder: '1.0.0.0',
+                value: this.packageOptions.versionName,
+                spellcheck: false,
+                inputHandler: (val: string) =>
+                  (this.packageOptions.versionName = val),
+              })}
+            </div>
 
             <div class="form-group">
               ${this.renderFormInput({
                 label: 'Version code',
                 tooltip: `A positive integer used as your app's version number. This number is used by the Oculus Store to determine whether one version is more recent than another, with higher numbers indicating more recent versions.`,
-                tooltipLink: 'https://developer.android.com/guide/topics/manifest/manifest-element.html#vcode',
+                tooltipLink:
+                  'https://developer.android.com/guide/topics/manifest/manifest-element.html#vcode',
                 inputId: 'version-code-input',
                 type: 'number',
                 minValue: 1,
@@ -129,7 +136,8 @@ export class OculusForm extends AppPackageFormBase {
                 required: true,
                 placeholder: '1',
                 value: this.packageOptions.versionCode.toString(),
-                inputHandler: (val: string) => this.packageOptions.versionCode = parseInt(val, 10)
+                inputHandler: (val: string) =>
+                  (this.packageOptions.versionCode = parseInt(val, 10)),
               })}
             </div>
           </div>
@@ -156,9 +164,10 @@ export class OculusForm extends AppPackageFormBase {
                     value: this.packageOptions.manifestUrl,
                     readonly: true,
                     placeholder: 'https://myawesomepwa.com/manifest.json',
-                    inputHandler: (val: string) => this.packageOptions.manifestUrl = val
+                    inputHandler: (val: string) =>
+                      (this.packageOptions.manifestUrl = val),
                   })}
-                </div>          
+                </div>
 
                 <div class="form-group">
                   <label>Signing key</label>
@@ -170,33 +179,43 @@ export class OculusForm extends AppPackageFormBase {
                       name: 'signingMode',
                       value: 'new',
                       type: 'radio',
-                      checked: this.packageOptions.signingMode === SigningMode.New,
-                      inputHandler: () => this.signingModeChanged(SigningMode.New)
+                      checked:
+                        this.packageOptions.signingMode === SigningMode.New,
+                      inputHandler: () =>
+                        this.signingModeChanged(SigningMode.New),
                     })}
                   </div>
                   <div class="form-check">
                     ${this.renderFormInput({
                       label: 'None',
-                      tooltip: 'PWABuilder will generate an unsigned APK. Unsigned APKs cannot be uploaded to the Oculus Store; you will need to sign the APK manually via Java keytool before submitting to the Store.',
-                      tooltipLink: 'https://docs.oracle.com/en/java/javase/12/tools/keytool.html',
+                      tooltip:
+                        'PWABuilder will generate an unsigned APK. Unsigned APKs cannot be uploaded to the Oculus Store; you will need to sign the APK manually via Java keytool before submitting to the Store.',
+                      tooltipLink:
+                        'https://docs.oracle.com/en/java/javase/12/tools/keytool.html',
                       inputId: 'signing-none-input',
                       name: 'signingMode',
                       value: 'none',
                       type: 'radio',
-                      checked: this.packageOptions.signingMode === SigningMode.None,
-                      inputHandler: () => this.signingModeChanged(SigningMode.None)
+                      checked:
+                        this.packageOptions.signingMode === SigningMode.None,
+                      inputHandler: () =>
+                        this.signingModeChanged(SigningMode.None),
                     })}
                   </div>
                   <div class="form-check">
                     ${this.renderFormInput({
                       label: 'Existing',
-                      tooltip: 'Recommended for existing apps in the Oculus Store. Use this option if you already have a signing key and you want to publish a new version of an existing app in the Oculus Store.',
+                      tooltip:
+                        'Recommended for existing apps in the Oculus Store. Use this option if you already have a signing key and you want to publish a new version of an existing app in the Oculus Store.',
                       inputId: 'signing-mine-input',
                       name: 'signingMode',
                       value: 'mine',
                       type: 'radio',
-                      checked: this.packageOptions.signingMode === SigningMode.Existing,
-                      inputHandler: () => this.signingModeChanged(SigningMode.Existing)
+                      checked:
+                        this.packageOptions.signingMode ===
+                        SigningMode.Existing,
+                      inputHandler: () =>
+                        this.signingModeChanged(SigningMode.Existing),
                     })}
                   </div>
 
@@ -209,7 +228,9 @@ export class OculusForm extends AppPackageFormBase {
 
         <div id="form-details-block">
           <p>
-            Your download will contain instructions for submitting to Oculus Store.</p>
+            Your download will contain instructions for submitting to Oculus
+            Store.
+          </p>
         </div>
 
         <div id="form-options-actions" class="modal-actions">
@@ -233,60 +254,59 @@ export class OculusForm extends AppPackageFormBase {
   renderExistingSigningKeyFields(): TemplateResult {
     return html`
       <div class="signing-key-fields">
-
         <div class="form-group">
           <label for="signing-key-file-input">
             Keystore file
             ${this.renderTooltip({
               label: 'Keystore file',
               inputId: 'signing-key-file-input',
-              tooltipLink: 'https://developer.android.com/studio/publish/app-signing',
-              tooltip: 'Your existing .keystore file used to sign the previous version of your app. If you don\'t have an existing .keystore file, you should choose \'New\' above.'
+              tooltipLink:
+                'https://developer.android.com/studio/publish/app-signing',
+              tooltip:
+                "Your existing .keystore file used to sign the previous version of your app. If you don't have an existing .keystore file, you should choose 'New' above.",
             })}
           </label>
-          <input type="file" class="form-control" id="signing-key-file-input" @change="${(e: Event) =>
-              this.signingKeyUploaded(e.target)}" accept=".keystore" required />
+          <input
+            type="file"
+            class="form-control"
+            id="signing-key-file-input"
+            @change="${(e: Event) => this.signingKeyUploaded(e.target)}"
+            accept=".keystore"
+            required
+          />
         </div>
 
         <div class="form-group">
           ${this.renderFormInput({
             label: 'Keystore password',
             tooltip: 'The password to access the .keystore file',
-            tooltipLink: 'https://developer.android.com/studio/publish/app-signing',
+            tooltipLink:
+              'https://developer.android.com/studio/publish/app-signing',
             inputId: 'key-store-password-input',
             type: 'password',
             minLength: 6,
             required: true,
             value: this.existingSigningKey.storePassword,
-            inputHandler: (val: string) => this.existingSigningKey.storePassword = val
+            inputHandler: (val: string) => {
+              this.existingSigningKey.storePassword =
+                this.existingSigningKey.password = val;
+            },
           })}
         </div>
 
         <div class="form-group">
           ${this.renderFormInput({
             label: 'Key alias',
-            tooltip: "The alias of the key to sign the app package with.",
-            tooltipLink: 'https://developer.android.com/studio/publish/app-signing',
+            tooltip: 'The alias of the key to sign the app package with.',
+            tooltipLink:
+              'https://developer.android.com/studio/publish/app-signing',
             inputId: 'key-alias-input',
             required: true,
             placeholder: 'my-key-alias',
             value: this.existingSigningKey.alias,
             spellcheck: false,
-            inputHandler: (val: string) => this.existingSigningKey.alias = val
-          })}
-        </div>
-
-        <div class="form-group">
-          ${this.renderFormInput({
-            label: 'Key password',
-            tooltip: 'The password for the key with which to sign the app package',
-            tooltipLink: 'https://developer.android.com/studio/publish/app-signing',
-            inputId: 'key-password-input',
-            type: 'password',
-            minLength: 6,
-            required: true,
-            value: this.existingSigningKey.password,
-            inputHandler: (val: string) => this.existingSigningKey.password = val
+            inputHandler: (val: string) =>
+              (this.existingSigningKey.alias = val),
           })}
         </div>
       </div>
@@ -307,7 +327,8 @@ export class OculusForm extends AppPackageFormBase {
 
       // Read it in as a Uint8Array and store it in our signing object.
       const fileReader = new FileReader();
-      fileReader.onload = () => this.existingSigningKey.keyStoreFile = fileReader.result as string;
+      fileReader.onload = () =>
+        (this.existingSigningKey.keyStoreFile = fileReader.result as string);
 
       // Log any errors.
       fileReader.onerror = progressEvent => {
