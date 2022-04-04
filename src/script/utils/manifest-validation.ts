@@ -228,7 +228,7 @@ export async function runManifestChecks(context: ManifestContext): Promise<Array
         category: 'recommended',
       },
       {
-        infoString: 'Contains categories to classify the app',
+        infoString: categoryReport(context.manifest.categories) as any,
         result:
           context.manifest.categories &&
             context.manifest.categories.length > 0 &&
@@ -313,3 +313,16 @@ function containsStandardCategory(categories: string[]): boolean {
   ];
   return categories.some(c => standardCategories.includes(c));
 }
+
+function categoryReport(categories: string[] | undefined) {
+  if(categories &&
+    categories.length > 0 &&
+      containsStandardCategory(categories)) {
+      return 'Contains categories to classify the app'
+  } else if ((categories &&
+          categories.length > 0 &&
+          !containsStandardCategory(categories))){
+      return 'You have non-standard categories'
+  }
+  return;
+} 
