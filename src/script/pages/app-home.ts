@@ -171,7 +171,7 @@ export class AppHome extends LitElement {
         }
 
         #input-header-holder img {
-          width: fit-content;
+          width: auto;
           height: 1em;
           margin-left: 20px;
         }
