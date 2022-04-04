@@ -317,12 +317,11 @@ function containsStandardCategory(categories: string[]): boolean {
 function categoryReport(categories: string[] | undefined) {
   if(categories &&
     categories.length > 0 &&
-      containsStandardCategory(categories)) {
-      return 'Contains categories to classify the app'
-  } else if ((categories &&
-          categories.length > 0 &&
-          !containsStandardCategory(categories))){
-      return 'You have non-standard categories'
+      !containsStandardCategory(categories)) {
+      return 'You have non-standard categories';
+      
+  } else {
+        return 'Contains categories to classify the app';
   }
-  return;
+
 } 
