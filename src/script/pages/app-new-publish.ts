@@ -145,10 +145,19 @@ export class AppNewPublish extends LitElement {
         }
 
         #summary-block {
-          padding: 16px 16px 16px 36px;
-          border-bottom: var(--list-border);
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          row-gap: .5em;
+        }
 
-          margin-right: 2em;
+        #summary-block h2 {
+          margin: 0;
+        }
+
+        #summary-block p {
+          margin: 0;
         }
 
         h1 {
@@ -165,15 +174,15 @@ export class AppNewPublish extends LitElement {
         h2,
         h4 {
           font-size: var(--medium-font-size);
-          margin-bottom: 8px;
         }
 
         .container {
-          padding: 16px 16px 16px 36px;
+          padding: 2em 5em;
           display: flex;
           flex-direction: column;
           justify-items: center;
           align-items: center;
+          row-gap: 1em;
         }
 
         .container .action-buttons {
@@ -205,15 +214,15 @@ export class AppNewPublish extends LitElement {
         }
 
         #store-cards {
+          width: 100%;
           display: grid;
-          grid-template-columns: auto auto;
-          grid-template-rows: auto auto;
+          grid-template-columns: repeat(auto-fill, 300px);
           grid-gap: 1em;
         }
 
         .card-wrapper {
           width: 300px;
-          height: 340px;
+          height: 400px;
           display: flex;
           flex-direction: column;
           box-shadow: 0px 4px 10px 4px rgba(0, 0, 0, 0.05);
@@ -251,6 +260,8 @@ export class AppNewPublish extends LitElement {
         .platform-actions-block {
           align-self: center;
           display: flex;
+          flex-direction: column;
+          row-gap: 10px;
         }
 
         .packaged-tracker {
@@ -274,10 +285,6 @@ export class AppNewPublish extends LitElement {
           font-size: 10px;
           line-height: 12px;
           font-weight: bold;
-        }
-
-        #up-next {
-          width: 100%;
         }
 
         p {
@@ -325,13 +332,9 @@ export class AppNewPublish extends LitElement {
           margin-top: 15px;
         }
 
-        #test-package-button::part(underlying-button) {
-          --button-font-color: var(--font-color);
-        }
-
         .platform-actions-block app-button,
         .platform-actions-block loading-button::part(underlying-button) {
-          --button-width: 152px;
+          --button-width: 223px;
         }
 
         #actions {
@@ -716,8 +719,8 @@ export class AppNewPublish extends LitElement {
       <app-button class="navigation" id="windows-package-button" @click="${() => this.showWindowsOptionsModal()}">
         Store Package
       </app-button>
-      <div style="margin-left: 5px;">
-        <loading-button id="windows-test-pkg-btn" class="navigation secondary" ?loading=${this.generating} id="test-package-button"
+      <div>
+        <loading-button id="windows-test-pkg-btn" class="navigation alternate" ?loading=${this.generating} id="test-package-button"
           @click="${this.generateWindowsTestPackage}">
           Test Package
         </loading-button>
@@ -885,32 +888,19 @@ export class AppNewPublish extends LitElement {
       
             <app-sidebar id="tablet-sidebar"></app-sidebar>
       
-            <section id="summary-block">
-              <h2>Publish your PWA to stores</h2>
-      
-              <p>
-                Generate store-ready packages for the Microsoft Store, Google
-                Play and more!
-              </p>
-            </section>
+            
       
             <section class="container">
-              <div id="store-cards">
-                ${this.renderContentCards()}
-              </div>
-              <div id="up-next">
-                <h4>Congrats!</h4>
-      
+              <div id="summary-block">
+                <h2>Publish your PWA to stores</h2>
+        
                 <p>
-                  Make sure you check our documentation for help submitting your
-                  generated packages! Click next to see what else you can do
-                  with your PWA!
+                  Generate store-ready packages for the Microsoft Store, Google
+                  Play and more!
                 </p>
               </div>
-      
-              <div class="action-buttons">
-                <app-button @click="${() => this.returnToFix()}">Back</app-button>
-                <fast-anchor class="button" href="/congrats">Next</fast-anchor>
+              <div id="store-cards">
+                ${this.renderContentCards()}
               </div>
             </section>
           </div>
