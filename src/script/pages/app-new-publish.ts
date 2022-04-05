@@ -216,7 +216,8 @@ export class AppNewPublish extends LitElement {
         #store-cards {
           width: 100%;
           display: grid;
-          grid-template-columns: repeat(auto-fill, 300px);
+          /* grid-template-columns: repeat(auto-fill, 300px); */
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* causes funky grid spacing */
           grid-gap: 1em;
         }
 
@@ -440,6 +441,9 @@ export class AppNewPublish extends LitElement {
           #ios-options-modal::part(modal-layout) {
             width: 600px;
           }
+          .container {
+            padding: 2em 10em;
+          }
         `
       ),
       largeBreakPoint(
@@ -477,15 +481,9 @@ export class AppNewPublish extends LitElement {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 2em;
           }
           
         `
-      ),
-      mediumBreakPoint(
-        css`
-        `,
-        'no-lower'
       ),
       smallBreakPoint(css`
         #error-modal::part(modal-layout) {
@@ -502,7 +500,6 @@ export class AppNewPublish extends LitElement {
           display: flex;
           flex-direction: column;
           align-items: center;
-          margin-top: 2em;
         }
 
         .publish h1 {
@@ -677,9 +674,12 @@ export class AppNewPublish extends LitElement {
     return this.platforms.map(
       platform => html`
         <div class="card-wrapper">
-          <div class="packaged-tracker"> <!-- This will eventually be in an "if packaged previously" -->
-           <p>Packaged Previously</p>
-          </div> 
+          ${true ? html`` :
+            html`
+            <div class="packaged-tracker"> <!-- This will eventually be in an "if packaged previously" -->
+            <p>Packaged Previously</p>
+            </div>` 
+          }
           <div class="title-block">
             <img class="platform-icon" src="${platform.icon}" alt="platform icon" />
             <h3>${platform.title}</h3>
@@ -868,8 +868,6 @@ export class AppNewPublish extends LitElement {
             </content-header>
       
             <app-sidebar id="tablet-sidebar"></app-sidebar>
-      
-            
       
             <section class="container">
               <div id="summary-block">
