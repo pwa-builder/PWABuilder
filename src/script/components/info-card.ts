@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { AnalyticsBehavior, recordProcessStep } from '../utils/analytics';
+import { AnalyticsActionType, AnalyticsBehavior, recordPageAction, recordProcessStep } from '../utils/analytics';
 
 import {
   smallBreakPoint,
@@ -149,6 +149,8 @@ export class Infocard extends LitElement {
 
   recordStep(){
     recordProcessStep('test-process', `${this.cardTitle}-learn-more-clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    recordPageAction(`${this.cardTitle}-learn-more-clicked`, AnalyticsActionType.LeftClick, AnalyticsBehavior.Click)
+
   }
 
   render() {

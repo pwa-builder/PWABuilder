@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { recordProcessStep, AnalyticsBehavior } from '../utils/analytics';
+import { recordProcessStep, AnalyticsBehavior, AnalyticsActionType, recordPageAction } from '../utils/analytics';
 
 import {
   smallBreakPoint,
@@ -115,6 +115,7 @@ export class SuccessCard extends LitElement {
 
   recordStep(){
     recordProcessStep('test-process', `${this.company}-card-clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    recordPageAction(`${this.company}-card-clicked`, AnalyticsActionType.LeftClick, AnalyticsBehavior.Click)
   }
 
   render() {
