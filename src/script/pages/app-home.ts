@@ -170,7 +170,7 @@ export class AppHome extends LitElement {
         }
 
         #input-header-holder img {
-          width: fit-content;
+          width: auto;
           height: 1em;
           margin-left: 20px;
         }
@@ -429,6 +429,16 @@ export class AppHome extends LitElement {
       this.siteURL = site.trim();
       await this.analyzeSite();
     }
+
+    recordProcessStep('test-process', 'landing-page-loaded', AnalyticsBehavior.StartProcess);
+
+    /*
+    Step 1: Start the process on home page load
+    Step 2: Track any button presses a checkpoint
+    Step 3: end the process when the user packages
+
+    timer for first action
+    */
   }
 
   handleURL(inputEvent: InputEvent) {
@@ -455,6 +465,12 @@ export class AppHome extends LitElement {
           url: this.siteURL,
           valid: isValidUrl
         });
+
+      recordProcessStep('test-process', 'url-analysis-started', AnalyticsBehavior.ProcessCheckpoint, 
+      {
+        url: this.siteURL,
+        valid: isValidUrl
+      });
 
       if (isValidUrl) {
         try {
@@ -509,6 +525,7 @@ export class AppHome extends LitElement {
   }
 
   placeDemoURL(){
+    recordProcessStep('test-process', 'demo-url-used', AnalyticsBehavior.ProcessCheckpoint);
     this.siteURL = "https://webboard.app";
     let box = this.shadowRoot!.getElementById("input-box");
     (box as HTMLInputElement)!.value = this.siteURL;
@@ -532,7 +549,7 @@ export class AppHome extends LitElement {
                   
                 </div>
                 <p>
-                  Looking to build a new Progressive Web App? Checkout all the documentation here.
+                  Looking to build a  new Progressive Web App? Checkout all the documentation here.
                 </p>
               </div>
           

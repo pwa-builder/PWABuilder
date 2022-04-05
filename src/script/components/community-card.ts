@@ -6,6 +6,7 @@ import {
   smallBreakPoint,
   mediumBreakPoint
 } from '../utils/css/breakpoints';
+import { recordProcessStep, AnalyticsBehavior } from '../utils/analytics';
 
 @customElement('community-card')
 export class CommunityCard extends LitElement {
@@ -149,6 +150,10 @@ export class CommunityCard extends LitElement {
   firstUpdated(){
   }
 
+  recordStep(text: string){
+    recordProcessStep('test-process', `${text}-link-clicked`, AnalyticsBehavior.ProcessCheckpoint);
+  }
+
   render() {
     return html`
       <div class="community-card">
@@ -162,7 +167,7 @@ export class CommunityCard extends LitElement {
             ${this.links && this.links.map((link: any) =>
               html`
               <div class="card-link-box">
-                <a href=${link.link} target="_blank" rel="noopener">${link.text}</a>
+                <a @click=${() => this.recordStep(link.text)} href=${link.link} target="_blank" rel="noopener">${link.text}</a>
                 <img src="/assets/new/arrow.svg" alt="arrow" />
               </div>
               `
