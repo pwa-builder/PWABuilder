@@ -517,6 +517,12 @@ export class AppPublish extends LitElement {
       AnalyticsBehavior.CompleteProcess,
       { url: getURL() });
 
+      recordProcessStep(
+        'test-process',
+        `create-${platform}-package`,
+        AnalyticsBehavior.CompleteProcess,
+        { url: getURL() });
+
     try {
       this.generating = true;
       const packageData = await generatePackage(platform, options);
@@ -540,6 +546,14 @@ export class AppPublish extends LitElement {
           url: getURL(),
           error: err
         });
+        recordProcessStep(
+          'test-process',
+          `create-${platform}-package-failed`,
+          AnalyticsBehavior.CancelProcess,
+          {
+            url: getURL(),
+            error: err
+          });
     } finally {
       this.generating = false;
       this.openAndroidOptions = false;

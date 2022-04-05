@@ -159,8 +159,8 @@ export class Infocard extends LitElement {
           <h3>${this.cardTitle}</h3>
           <p>${this.description}</p>
         </div>
-        <div class="card-actions">
-          <a @click=${() => this.recordStep()} href=${this.linkRoute} target="_blank" rel="noopener">Learn More</a>
+        <div class="card-actions" @click=${() => this.recordStep()}>
+          <a href=${this.linkRoute} target="_blank" rel="noopener">Learn More</a>
         </div>
       </div>
     `;
