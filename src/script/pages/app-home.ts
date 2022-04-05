@@ -31,7 +31,7 @@ import { Router } from '@vaadin/router';
 import { getProgress, getURL, setProgress } from '../services/app-info';
 import { Lazy, ProgressList, Status } from '../utils/interfaces';
 import { fetchOrCreateManifest } from '../services/manifest';
-import { AnalyticsBehavior, recordProcessStep } from '../utils/analytics';
+import { AnalyticsActionType, AnalyticsBehavior, recordPageAction, recordProcessStep } from '../utils/analytics';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -534,6 +534,7 @@ export class AppHome extends LitElement {
 
   recordStep(text: string){
     recordProcessStep('test-process', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    recordPageAction(`${text}-clicked`, AnalyticsActionType.LeftClick, AnalyticsBehavior.Click)
   }
 
   render() {

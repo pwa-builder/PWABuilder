@@ -6,7 +6,7 @@ import {
   smallBreakPoint,
   mediumBreakPoint
 } from '../utils/css/breakpoints';
-import { recordProcessStep, AnalyticsBehavior } from '../utils/analytics';
+import { recordProcessStep, AnalyticsBehavior, AnalyticsActionType, recordPageAction } from '../utils/analytics';
 
 @customElement('community-card')
 export class CommunityCard extends LitElement {
@@ -152,6 +152,7 @@ export class CommunityCard extends LitElement {
 
   recordStep(text: string){
     recordProcessStep('test-process', `${text}-link-clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    recordPageAction(`${text}-link-clicked`, AnalyticsActionType.LeftClick, AnalyticsBehavior.Click)
   }
 
   render() {
