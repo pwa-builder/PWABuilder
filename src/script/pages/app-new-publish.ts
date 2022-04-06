@@ -222,7 +222,7 @@ export class AppNewPublish extends LitElement {
         }
 
         .card-wrapper {
-          width: 300px;
+          width: 100%;
           height: 400px;
           display: flex;
           flex-direction: column;
@@ -296,6 +296,23 @@ export class AppNewPublish extends LitElement {
 
         content-header::part(header) {
           display: none;
+        }
+
+        #banner-header h1 {
+          display: flex;
+          flex-direction: column;
+          width: max-content;
+          margin-bottom: 0;
+          font-size: 36px;
+        }
+        #banner-header h1 span {
+          color: #4F3FB6;
+        }
+
+        #hero-p {
+          margin: 0;
+          margin-top: .5em;
+          font-size: 17px;
         }
 
         .modal-image {
@@ -861,7 +878,10 @@ export class AppNewPublish extends LitElement {
       
           <div>
             <content-header class="publish">
-              <h1 slot="hero-container">Your PWA is Store Ready!</h1>
+              <div id="banner-header" slot="hero-container">
+                <h1> <span>Awesome!</span> Your PWA is Store Ready.</h1>
+              </div>
+              
               <p id="hero-p" slot="hero-container">
                 You are now ready to ship your PWA to the app stores!
               </p>
