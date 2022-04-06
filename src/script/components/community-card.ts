@@ -151,7 +151,7 @@ export class CommunityCard extends LitElement {
   }
 
   recordStep(text: string){
-    recordProcessStep('test-process', `${text}-link-clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    recordProcessStep('pwa-builder', `${text}-link-clicked`, AnalyticsBehavior.ProcessCheckpoint);
     recordPageAction(`${text}-link-clicked`, AnalyticsActionType.LeftClick, AnalyticsBehavior.Click)
   }
 

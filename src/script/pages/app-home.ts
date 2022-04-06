@@ -430,7 +430,7 @@ export class AppHome extends LitElement {
       await this.analyzeSite();
     }
 
-    recordProcessStep('test-process', 'landing-page-loaded', AnalyticsBehavior.StartProcess);
+    recordProcessStep('pwa-builder', 'landing-page-loaded', AnalyticsBehavior.StartProcess);
 
     /*
     Step 1: Start the process on home page load
@@ -466,7 +466,7 @@ export class AppHome extends LitElement {
           valid: isValidUrl
         });
 
-      recordProcessStep('test-process', 'url-analysis-started', AnalyticsBehavior.ProcessCheckpoint, 
+      recordProcessStep('pwa-builder', 'url-analysis-started', AnalyticsBehavior.ProcessCheckpoint, 
       {
         url: this.siteURL,
         valid: isValidUrl
@@ -525,7 +525,7 @@ export class AppHome extends LitElement {
   }
 
   placeDemoURL(){
-    recordProcessStep('test-process', 'demo-url-used', AnalyticsBehavior.ProcessCheckpoint);
+    recordProcessStep('pwa-builder', 'demo-url-used', AnalyticsBehavior.ProcessCheckpoint);
     this.siteURL = "https://webboard.app";
     let box = this.shadowRoot!.getElementById("input-box");
     (box as HTMLInputElement)!.value = this.siteURL;
@@ -533,8 +533,7 @@ export class AppHome extends LitElement {
   }
 
   recordStep(text: string){
-    recordProcessStep('test-process', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
-    recordPageAction(`${text}-clicked`, AnalyticsActionType.LeftClick, AnalyticsBehavior.Click)
+    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   render() {
