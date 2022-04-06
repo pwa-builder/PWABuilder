@@ -148,7 +148,7 @@ export class Infocard extends LitElement {
   }
 
   recordStep(){
-    recordProcessStep('test-process', `${this.cardTitle}-learn-more-clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    recordProcessStep('pwa-builder', `${this.cardTitle}-learn-more-clicked`, AnalyticsBehavior.ProcessCheckpoint);
     recordPageAction(`${this.cardTitle}-learn-more-clicked`, AnalyticsActionType.LeftClick, AnalyticsBehavior.Click)
 
   }

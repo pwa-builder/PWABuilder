@@ -114,7 +114,7 @@ export class SuccessCard extends LitElement {
   }
 
   recordStep(){
-    recordProcessStep('test-process', `${this.company}-card-clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    recordProcessStep('pwa-builder', `${this.company}-card-clicked`, AnalyticsBehavior.ProcessCheckpoint);
     recordPageAction(`${this.company}-card-clicked`, AnalyticsActionType.LeftClick, AnalyticsBehavior.Click)
   }
 
