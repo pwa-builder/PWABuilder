@@ -318,7 +318,7 @@ function categoryReport(categories: string[] | undefined) {
   if(categories &&
     categories.length > 0 &&
       !containsStandardCategory(categories)) {
-      return 'You have non-standard categories';
+      return 'Contains non-standard categories';
       
   } else {
         return 'Contains categories to classify the app';
