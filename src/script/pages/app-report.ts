@@ -343,7 +343,7 @@ export class AppReport extends LitElement {
   }
 
   handleTabsEvent(type: 'mani' | 'sw' | 'overview') {
-    this.recordStep(type + "tab")
+    this.recordStep(type + "-tab")
     this.selectedTab = type;
 
     if (type === 'mani') {
