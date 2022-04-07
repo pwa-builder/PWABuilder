@@ -553,6 +553,12 @@ export class AppPublish extends LitElement {
       AnalyticsBehavior.CompleteProcess,
       { url: getURL() });
 
+      recordProcessStep(
+        'pwa-builder',
+        `create-${platform}-package`,
+        AnalyticsBehavior.CompleteProcess,
+        { url: getURL() });
+
     try {
       this.generating = true;
       const packageData = await generatePackage(platform, options);
@@ -576,6 +582,14 @@ export class AppPublish extends LitElement {
           url: getURL(),
           error: err
         });
+        recordProcessStep(
+          'pwa-builder',
+          `create-${platform}-package-failed`,
+          AnalyticsBehavior.CancelProcess,
+          {
+            url: getURL(),
+            error: err
+          });
     } finally {
       this.generating = false;
       this.openAndroidOptions = false;
@@ -626,14 +640,17 @@ export class AppPublish extends LitElement {
   }
 
   showWindowsOptionsModal() {
+    this.recordStep("windows-store-package");
     this.openWindowsOptions = true;
   }
 
   showAndroidOptionsModal() {
+    this.recordStep("android-store-package");
     this.openAndroidOptions = true;
   }
 
   showiOSOptionsModal() {
+    this.recordStep("ios-store-package");
     this.openiOSOptions = true;
   }
 
@@ -691,6 +708,7 @@ export class AppPublish extends LitElement {
   }
 
   returnToFix() {
+    this.recordStep("return-to-fix")
     const resultsString = sessionStorage.getItem('results-string');
 
     // navigate back to report-card page
@@ -741,6 +759,11 @@ export class AppPublish extends LitElement {
       this.isGooglePlay = false;
     }
   }
+
+  recordStep(text: string){
+    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
+  }
+
 
   render() {
     return html`

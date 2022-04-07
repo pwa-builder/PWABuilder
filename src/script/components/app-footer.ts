@@ -1,6 +1,7 @@
 import { LitElement, css, html } from 'lit';
 
 import { customElement } from 'lit/decorators.js';
+import { recordProcessStep, AnalyticsBehavior } from '../utils/analytics';
 
 import {
   smallBreakPoint,
@@ -14,8 +15,9 @@ export class AppFooter extends LitElement {
     return css`
       footer {
         /*temp color*/
-        background: #f3f3f3;
-
+        background: #292C3A;
+        color: white;
+        fill: white;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -38,7 +40,7 @@ export class AppFooter extends LitElement {
 
       ion-icon {
         font-size: var(--font-size);
-        color: var(--font-color);
+        color: white;
       }
 
       span {
@@ -59,6 +61,17 @@ export class AppFooter extends LitElement {
 
       #links a {
         margin-right: 12px;
+        color: white;
+      }
+
+      #links a:visited {
+        color: white;
+      }
+
+      fast-anchor:focus {
+        border: 1px solid white;
+        border-radius: 5px;
+        padding: 3px;
       }
 
       ${xxxLargeBreakPoint(
@@ -94,6 +107,7 @@ export class AppFooter extends LitElement {
           }
 
           #icons {
+            color: white;
             width: 10em;
           }
 
@@ -103,7 +117,7 @@ export class AppFooter extends LitElement {
 
           #icons ion-icon {
             font-size: 27px;
-            color: black;
+            color: white;
           }
         `
       )}
@@ -127,6 +141,10 @@ export class AppFooter extends LitElement {
     super();
   }
 
+  recordStep(text: string){
+    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
+  }
+
   render() {
     return html`
       <footer>
@@ -141,12 +159,14 @@ export class AppFooter extends LitElement {
               target="_blank"
               rel="noopener"
               href="https://privacy.microsoft.com/en-us/privacystatement"
+              @click=${() => this.recordStep("privacy-policy")}
               >Our Privacy Statement</a
             >
             <a
               target="_blank"
               rel="noopener"
               href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md"
+              @click=${() => this.recordStep("terms-of-use")}
               >Terms of Use</a
             >
           </div>
@@ -158,6 +178,7 @@ export class AppFooter extends LitElement {
             rel="noopener"
             appearance="hypertext"
             href="https://github.com/pwa-builder/PWABuilder"
+            @click=${() => this.recordStep("footer-github")}
           >
             <ion-icon name="logo-github"></ion-icon>
           </fast-anchor>
@@ -167,6 +188,7 @@ export class AppFooter extends LitElement {
             rel="noopener"
             appearance="hypertext"
             href="https://twitter.com/pwabuilder"
+            @click=${() => this.recordStep("footer-twitter")}
           >
             <ion-icon name="logo-twitter"></ion-icon>
           </fast-anchor>
@@ -176,6 +198,7 @@ export class AppFooter extends LitElement {
             rel="noopener"
             appearance="hypertext"
             href="https://www.youtube.com/c/PWABuilder"
+            @click=${() => this.recordStep("footer-youtube")}
           >
             <ion-icon name="logo-youtube"></ion-icon>
           </fast-anchor>

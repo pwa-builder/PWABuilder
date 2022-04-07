@@ -78,14 +78,12 @@ export class AppButton extends LitElement implements AppButtonElement {
       `,
       mediumBreakPoint(
         css`
-          :host {
-            --font-size: var(--mobile-button-fontsize);
-            --button-height: var(--mobile-button-height);
-          }
 
           fast-button.navigation {
-            --button-width: 180px;
+            --button-width: 100px;
+            --button-height: 40px;
             line-height: 28px;
+            font-size: 16px;
           }
         `
       ),

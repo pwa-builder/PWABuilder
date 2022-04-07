@@ -408,7 +408,8 @@ export class ReportCard extends LitElement {
     });
   }
 
-  opened(targetEl: EventTarget | null) {
+  opened(targetEl: EventTarget | null, analyticText: string) {
+    this.recordStep(analyticText);
     if (targetEl) {
       const flipperButton = (targetEl as Element).classList.contains(
         'flipper-button'
@@ -487,6 +488,7 @@ export class ReportCard extends LitElement {
   }
 
   openManiOptions() {
+    this.recordStep("manifest-options")
     const event = new CustomEvent('open-mani-options', {
       detail: {
         open: true,
@@ -496,6 +498,7 @@ export class ReportCard extends LitElement {
   }
 
   openSWOptions() {
+    this.recordStep("sw-options")
     const event = new CustomEvent('open-sw-options', {
       detail: {
         open: true,
@@ -505,6 +508,7 @@ export class ReportCard extends LitElement {
   }
 
   async decideWhereToGo() {
+    this.recordStep("report-card-next-button")
     const baseOrPublishIffy = await baseOrPublish();
 
     if (baseOrPublishIffy === 'base') {
@@ -526,13 +530,17 @@ export class ReportCard extends LitElement {
     }
   }
 
+  recordStep(text: string){
+    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
+  }
+
   render() {
     return html`
       <div id="main-report-section">
         <div id="report-content">
           <fast-accordion>
             <fast-accordion-item
-              @click="${(ev: Event) => this.opened(ev.target)}"
+              @click="${(ev: Event) => this.opened(ev.target, "manifest-accordian")}"
             >
               <div class="accordion-heading-block" slot="heading">
                 <span class="accordion-heading">Manifest</span>
@@ -591,7 +599,7 @@ export class ReportCard extends LitElement {
                 : null}
             </fast-accordion-item>
             <fast-accordion-item
-              @click="${(ev: Event) => this.opened(ev.target)}"
+              @click="${(ev: Event) => this.opened(ev.target, "sw-accordian")}"
             >
               <div class="accordion-heading-block" slot="heading">
                 <span class="accordion-heading">Service Worker</span>
@@ -651,7 +659,7 @@ export class ReportCard extends LitElement {
                 : null}
             </fast-accordion-item>
             <fast-accordion-item
-              @click="${(ev: Event) => this.opened(ev.target)}"
+              @click="${(ev: Event) => this.opened(ev.target, "security-accordian")}"
             >
               <div class="accordion-heading-block" slot="heading">
                 <span class="accordion-heading">Security</span>

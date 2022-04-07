@@ -105,14 +105,6 @@ export class AppTesting extends LitElement {
           margin-top: 4em;
         }
 
-        app-header::part(header) {
-          background: transparent;
-          position: absolute;
-          left: 0;
-          right: 0;
-          z-index: 2;
-        }
-
         .modal-image {
           width: 50px;
         }

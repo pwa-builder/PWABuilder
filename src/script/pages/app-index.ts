@@ -21,9 +21,13 @@ export class AppIndex extends LitElement {
       #router-outlet > .leaving {
         animation: 160ms fadeOut ease-in-out;
       }
-
-      #router-otlet > .entering {
+      
+      #router-outlet > .entering {
         animation: 160ms fadeIn linear;
+      }
+ 
+      #router-outlet {
+        position: relative;
       }
 
       @media (min-width: 1920px) {

@@ -62,6 +62,7 @@ import {
 } from '../utils/interfaces.components';
 import { IconInfo } from '../utils/icons';
 import { debounce } from '../utils/debounce';
+import { recordProcessStep, AnalyticsBehavior } from '../utils/analytics';
 
 type ColorRadioValues = 'none' | 'custom';
 
@@ -519,6 +520,10 @@ export class AppManifest extends LitElement {
           >`
     } 
     return html``;
+  }
+
+  recordStep(text: string){
+    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   render() {
@@ -1234,6 +1239,7 @@ export class AppManifest extends LitElement {
   }
 
   handleEditorOpened() {
+    this.recordStep("view-code");
     this.editorOpened = !this.editorOpened;
   }
 
@@ -1255,6 +1261,7 @@ export class AppManifest extends LitElement {
   }
 
   done() {
+    this.recordStep("done-manifest-options")
     const event = new CustomEvent('back-to-overview', {
       detail: {
         open: true,
@@ -1264,7 +1271,7 @@ export class AppManifest extends LitElement {
   }
 
   openUploadModal() {
-
+    this.recordStep("upload-icons-button");
     this.uploadModalOpen = true;
   }
 
@@ -1280,6 +1287,7 @@ export class AppManifest extends LitElement {
   }
 
   async downloadIcons() {
+    this.recordStep("download-icons");
     this.awaitRequest = true;
 
     try {
@@ -1299,6 +1307,7 @@ export class AppManifest extends LitElement {
   }
 
   async generateScreenshots() {
+    this.recordStep("generate-screenshots");
     try {
       this.awaitRequest = true;
 

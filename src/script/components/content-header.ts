@@ -16,7 +16,7 @@ export class ContentHeader extends LitElement {
   static get styles() {
     return css`
       :host {
-        background: url(/assets/images/home_1920.webp);
+        background: url(/assets/new/HeroBackground1920.jpg);
         background-position: top right;
         background-size: cover;
         background-repeat: no-repeat;
@@ -65,7 +65,7 @@ export class ContentHeader extends LitElement {
       }
 
       #content-side {
-        max-width: 22em;
+        max-width: 30em;
       }
 
       #main-container {
@@ -289,9 +289,8 @@ export class ContentHeader extends LitElement {
         }
 
         :host(.home) {
-          background-position: 8em -2em;
           background-repeat: no-repeat;
-          background-image: url(/assets/images/home_mobile.webp);
+          background-image: url(/assets/new/HeroBackground1024.jpg);
           background-size: cover;
         }
 
@@ -332,7 +331,7 @@ export class ContentHeader extends LitElement {
         :host(.home) {
           background-position: -21em center;
           background-repeat: no-repeat;
-          background-image: url(/assets/images/home_1920.webp);
+          background-image: url(/assets/new/HeroBackground1920.jpg);
           background-size: cover;
         }
 
