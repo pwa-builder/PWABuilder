@@ -250,7 +250,7 @@ export class AppHome extends LitElement {
         #home-header {
           max-width: 498px;
         }
-
+        
         /* 640px - 1023px */
         ${largeBreakPoint(css`
           #home-block {

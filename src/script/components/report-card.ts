@@ -100,11 +100,14 @@ export class ReportCard extends LitElement {
       }
 
       .flipper-button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 18px;
         background: white;
         box-shadow: 0 1px 4px 0px rgb(0 0 0 / 25%);
         border-radius: 50%;
         color: #5231a7;
-
         height: 32px;
         min-width: 32px;
       }
@@ -554,9 +557,10 @@ export class ReportCard extends LitElement {
                     >${this.maniScore}</span
                   >
 
-                  <fast-button class="flipper-button" mode="stealth">
-                    <ion-icon name="caret-forward-outline"></ion-icon>
-                  </fast-button>
+                  <div class="flipper-button" aria-label="caret dropdown" role="button">
+                    <ion-icon name="caret-forward-outline"></ion-icon> 
+                  </div>                
+                  
                 </div>
               </div>
 
@@ -612,9 +616,9 @@ export class ReportCard extends LitElement {
                     >${this.swScore}</span
                   >
 
-                  <fast-button class="flipper-button" mode="stealth">
-                    <ion-icon name="caret-forward-outline"></ion-icon>
-                  </fast-button>
+                  <div class="flipper-button" aria-label="caret dropdown" role="button">
+                    <ion-icon name="caret-forward-outline"></ion-icon> 
+                  </div> 
                 </div>
               </div>
 
@@ -672,9 +676,9 @@ export class ReportCard extends LitElement {
                     >${this.securityScore}</span
                   >
 
-                  <fast-button class="flipper-button" mode="stealth">
-                    <ion-icon name="caret-forward-outline"></ion-icon>
-                  </fast-button>
+                  <div class="flipper-button" aria-label="caret dropdown" role="button">
+                    <ion-icon name="caret-forward-outline"></ion-icon> 
+                  </div> 
                 </div>
               </div>
 

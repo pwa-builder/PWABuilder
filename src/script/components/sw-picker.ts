@@ -163,6 +163,12 @@ export class SWPicker extends LitElement {
           align-items: center;
           justify-content: space-between;
         }
+
+        .sw-download-button {
+          width: 150px;
+          height: 40px;
+          display: inherit;
+        }
       `,
     ];
   }
@@ -340,7 +346,8 @@ export class SWPicker extends LitElement {
                             .loading=${this.downloading}
                             @click="${() => this.downloadSW(sw.id)}"
                             appearance="outline"
-                            class="secondary"
+                            class="sw-download-button secondary"
+                            .secondary=${true}
                             >Download Service Worker</loading-button
                           >
                         </code-editor>
