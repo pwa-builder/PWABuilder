@@ -133,7 +133,7 @@ export class ContentHeader extends LitElement {
 
         :host(.publish) {
           background-repeat: no-repeat;
-          background-image: url(/assets/images/Publish_back1366.jpg);
+          background-image: url(/assets/images/publish_mobile.webp);
           background-size: cover;
 
           background-position: 0em -2.5em;
@@ -184,6 +184,28 @@ export class ContentHeader extends LitElement {
         ::slotted(ul) {
           grid-gap: 10px;
         }
+
+        :host(.publish) {
+          background-repeat: no-repeat;
+          background-image: url(/assets/images/publish_mobile.webp);
+          background-size: cover;
+
+          background-position: 0em -2.5em;
+          height: 10em;
+        }
+
+        :host(.publish) #circles-box {
+          height: fit-content;
+        }
+
+        :host(.publish) #main-container {
+          margin: 0;
+          padding: 0;
+          height: fit-content;
+        }
+        #content-side {
+          width: 10em;
+        }
       `)}
 
       ${mediumBreakPoint(css`
@@ -210,7 +232,6 @@ export class ContentHeader extends LitElement {
         }
 
         :host(.reportCard) #circles-box,
-        :host(.publish) #circles-box,
         :host(.congrats) #circles-box,
         :host(.basePackage) #circles-box {
           height: 34em;
@@ -218,12 +239,22 @@ export class ContentHeader extends LitElement {
 
         :host(.publish) {
           background-repeat: no-repeat;
-          background-image: url(/assets/images/Publish_back1366.jpg);
+          background-image: url(/assets/images/publish_mobile.webp);
           background-size: cover;
 
           background-position: 0em -2.5em;
           height: 10em;
         }
+
+        :host(.publish) #circles-box {
+          height: fit-content;
+        }
+
+        :host(.publish) #main-container {
+          margin: 0;
+          padding: 0;
+        }
+
 
         :host(.congrats) {
           background-repeat: no-repeat;
@@ -315,6 +346,7 @@ export class ContentHeader extends LitElement {
         }
 
         :host(.publish) {
+          background-image: url(/assets/images/Publish_back1024.jpg);
           background-position: 0em;
         }
 
@@ -360,6 +392,7 @@ export class ContentHeader extends LitElement {
         }
 
         :host(.publish) {
+          background-image: url(/assets/images/Publish_back1366.jpg);
           background-position: 0em;
         }
 

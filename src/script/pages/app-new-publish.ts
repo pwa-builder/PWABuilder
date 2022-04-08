@@ -529,6 +529,16 @@ export class AppNewPublish extends LitElement {
         .publish p {
           display: none;
         }
+        #banner-header h1 {
+          font-size: 18px;
+          line-height: 24px;
+        }
+        .container {
+          padding: 2em 2em;
+        }
+        #summary-block {
+          text-align: center;
+        }
       `),
     ];
   }
