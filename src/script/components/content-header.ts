@@ -47,7 +47,7 @@ export class ContentHeader extends LitElement {
       }
 
       :host(.publish) {
-        background: url(/assets/images/publish.webp) top right / cover no-repeat;
+        background: url(/assets/images/Publish_back1920.jpg) top right / cover no-repeat;
       }
 
       :host(.congrats) {
@@ -133,7 +133,7 @@ export class ContentHeader extends LitElement {
 
         :host(.publish) {
           background-repeat: no-repeat;
-          background-image: url(/assets/images/publish_mobile.webp);
+          background-image: url(/assets/images/Publish_back1366.jpg);
           background-size: cover;
 
           background-position: 0em -2.5em;
@@ -218,7 +218,7 @@ export class ContentHeader extends LitElement {
 
         :host(.publish) {
           background-repeat: no-repeat;
-          background-image: url(/assets/images/publish_mobile.webp);
+          background-image: url(/assets/images/Publish_back1366.jpg);
           background-size: cover;
 
           background-position: 0em -2.5em;
