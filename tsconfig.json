@@ -24,6 +24,9 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
+    "types": [
+      "vite-plugin-pwa/client"
+    ],
     "plugins": [
       {
         "name": "ts-lit-plugin",
@@ -89,8 +92,8 @@
     ]
   },
   "include": [
-    "pwabuilder-sw.ts", 
-    "src/**/*"
+    "public/pwabuilder-sw.ts", 
+    "src/**/*.ts"
   ],
   "exclude": ["node_modules", "**/*.spec.ts", "build/pwabuilder-sw.js"]
 }
