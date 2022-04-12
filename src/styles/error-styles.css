@@ -1,0 +1,16 @@
+.error {
+  color: var(--error-color);
+  border: 1px solid var(--error-color);
+  border-radius: var(--input-radius);
+  background: var(--error-background-color);
+}
+
+.error-message {
+  color: var(--error-color);
+  font-size: var(--small-font-size);
+  margin-top: 6px;
+}
+
+.error::part(control) {
+  background: var(--error-background-color);
+}

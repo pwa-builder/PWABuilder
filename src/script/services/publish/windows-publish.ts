@@ -82,6 +82,7 @@ export function createWindowsPackageOptionsFromManifest(
 
   const name = manifest.short_name || manifest.name || 'My PWA';
   const packageID = generateWindowsPackageId(new URL(pwaURL).hostname);
+  
   const manifestIcons = manifest.icons || [];
 
   const icon = findBestAppIcon(manifestIcons);

@@ -1,0 +1,19 @@
+.modal-actions {
+  display: flex;
+  flex-flow: row;
+  justify-content: space-evenly;
+}
+
+@media screen and (max-width: 479px) {
+  .modal-actions {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+
+    margin-bottom: 16px;
+  }
+
+  .modal-actions > * {
+    margin-top: 8px;
+  }
+}
