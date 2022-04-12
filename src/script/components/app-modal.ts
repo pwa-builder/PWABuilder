@@ -7,7 +7,7 @@ import { smallBreakPoint, xLargeBreakPoint } from '../utils/css/breakpoints';
 import { turnOffScroll, turnOnScroll } from '../utils/dom-utils';
 
 //@ts-ignore
-import ModalStyles from '../../../styles/modal-styles.css';
+import ModalStyles from '../../styles/modal-styles.css';
 import { AppModalElement } from '../utils/interfaces.components';
 import { recordProcessStep, AnalyticsBehavior } from '../utils/analytics';
 
