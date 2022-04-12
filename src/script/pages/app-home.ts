@@ -22,8 +22,7 @@ import '../components/resource-hub-new';
 import '../components/success-stories';
 import '../components/community-hub';
 
-//@ts-ignore
-// import style from '../../../styles/error-styles.css';
+import '../styles/error-styles.module.css';
 
 // For more info on the @pwabuilder/pwainstall component click here https://github.com/pwa-builder/pwa-install
 import '@pwabuilder/pwainstall';
@@ -43,7 +42,6 @@ export class AppHome extends LitElement {
 
   static get styles() {
     return [
-      // style,
       css`
         #home-block {
           background: url(/assets/new/HeroBackground1920.jpg);
