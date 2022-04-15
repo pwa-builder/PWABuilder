@@ -12,6 +12,7 @@ import {
   fastNumberFieldCss,
   fastRadioCss,
 } from '../utils/css/fast-elements';
+import { recordProcessStep, AnalyticsBehavior } from '../utils/analytics';
 
 interface PlatformInformation {
   label: string;
@@ -152,6 +153,11 @@ export class ImageGenerator extends LitElement {
     super();
   }
 
+  firstUpdated() {
+    recordProcessStep('image-generation', `page-loaded`, AnalyticsBehavior.StartProcess);
+
+  }
+
   render() {
     return html`
       <div>
@@ -248,6 +254,8 @@ export class ImageGenerator extends LitElement {
   }
 
   handleInputChange(event: CustomEvent<FileInputDetails>) {
+    recordProcessStep('image-generation', 'choose-file-clicked', AnalyticsBehavior.ProcessCheckpoint);
+
     const input = event.detail.input;
     if (input.files) {
       this.files = input.files;
@@ -282,6 +290,7 @@ export class ImageGenerator extends LitElement {
   }
 
   async generateZip() {
+    recordProcessStep('image-generation', 'generate-zip-clicked', AnalyticsBehavior.CompleteProcess);
     const file = this.files ? this.files[0] : null;
     if (!file) {
       const errorMessage = 'No file available to generate zip';
