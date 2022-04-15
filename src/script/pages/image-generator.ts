@@ -155,7 +155,6 @@ export class ImageGenerator extends LitElement {
 
   firstUpdated() {
     recordProcessStep('image-generation', `page-loaded`, AnalyticsBehavior.StartProcess);
-
   }
 
   render() {
