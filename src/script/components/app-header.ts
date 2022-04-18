@@ -172,7 +172,7 @@ export class AppHeader extends LitElement {
     return html`
       <header part="header">
         <img @click="${this.goBack}" tabindex="0" id="header-icon" src="/assets/images/header_logo.svg"
-          alt="PWA Builder logo" />
+          alt="PWABuilder logo" />
       
         <nav id="desktop-nav">
           <fast-anchor
