@@ -206,7 +206,7 @@ export class AppModal extends LitElement implements AppModalElement {
   }
 
   async close() {
-    this.recordStep(this.heading.split(" ").join("-") + "-modal");
+    this.recordStep(this.heading.split(" ").join("_") + "_modal_closed");
     if (this.modalAni && this.backgroundAni) {
       this.modalAni.reverse();
       this.backgroundAni.reverse();
@@ -224,7 +224,9 @@ export class AppModal extends LitElement implements AppModalElement {
   }
 
   recordStep(text: string){
-    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    let pageName = window.location.pathname.slice(1);
+    console.log(pageName + "." + text);
+    recordProcessStep('pwa-builder', `${pageName}.${text}`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   render() {

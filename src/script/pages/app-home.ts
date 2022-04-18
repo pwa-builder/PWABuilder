@@ -417,7 +417,7 @@ export class AppHome extends LitElement {
           valid: isValidUrl
         });
 
-      recordProcessStep('pwa-builder', 'url-analysis-started', AnalyticsBehavior.ProcessCheckpoint, 
+      recordProcessStep('pwa-builder', '.top.entered_link_testing_started', AnalyticsBehavior.ProcessCheckpoint, 
       {
         url: this.siteURL,
         valid: isValidUrl
@@ -476,7 +476,7 @@ export class AppHome extends LitElement {
   }
 
   placeDemoURL(){
-    recordProcessStep('pwa-builder', 'demo-url-used', AnalyticsBehavior.ProcessCheckpoint);
+    recordProcessStep('pwa-builder', '.top.DemoURL', AnalyticsBehavior.ProcessCheckpoint);
     this.siteURL = "https://webboard.app";
     let box = this.shadowRoot!.getElementById("input-box");
     (box as HTMLInputElement)!.value = this.siteURL;
@@ -484,7 +484,7 @@ export class AppHome extends LitElement {
   }
 
   recordStep(text: string){
-    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    recordProcessStep('pwa-builder', `home.${text}_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   render() {
@@ -499,7 +499,7 @@ export class AppHome extends LitElement {
             <section id="content-grid" slot="grid-container">
               <div class="intro-grid-item">
                 <div class="grid-item-header">  
-                  <h2><a @click=${() => this.recordStep("Start-a-new-pwa")} href="https://github.com/pwa-builder/pwa-starter/wiki/Getting-Started" target="_blank" rel="noopener">Start a new PWA</a></h2>
+                  <h2><a @click=${() => this.recordStep(".top.PWAStarter")} href="https://github.com/pwa-builder/pwa-starter/wiki/Getting-Started" target="_blank" rel="noopener">Start a new PWA</a></h2>
                   <img src="/assets/new/arrow.svg" alt="arrow" />
                   
                 </div>
@@ -510,7 +510,7 @@ export class AppHome extends LitElement {
           
               <div class="intro-grid-item">
                 <div class="grid-item-header">  
-                  <h2><a @click=${() => this.recordStep("Use-dev-tools")} href="https://marketplace.visualstudio.com/items?itemName=PWABuilder.pwa-studio" target="_blank" rel="noopener">Use dev tools</a></h2>
+                  <h2><a @click=${() => this.recordStep(".top.PWAStudio")} href="https://marketplace.visualstudio.com/items?itemName=PWABuilder.pwa-studio" target="_blank" rel="noopener">Use dev tools</a></h2>
                   <img src="/assets/new/arrow.svg" alt="arrow" />
                 </div>
                 <p>

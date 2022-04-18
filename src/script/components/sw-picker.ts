@@ -186,7 +186,7 @@ export class SWPicker extends LitElement {
   }
 
   chooseSW(sw: ServiceWorkerChoice) {
-    this.recordStep("sw #" + sw.id)
+    this.recordStep("sw" + sw.id + "_selected")
     this.chosenSW = sw.id;
 
     if (this.chosenSW) {
@@ -200,7 +200,7 @@ export class SWPicker extends LitElement {
   }
 
   done() {
-    this.recordStep("done-sw-options")
+    this.recordStep("done_sw_options_clicked")
     const event = new CustomEvent('back-to-overview', {
       detail: {
         open: true,
@@ -232,7 +232,7 @@ export class SWPicker extends LitElement {
   }
 
   async handleEditorOpened(swID: number, event: Event) {
-    this.recordStep("sw #" + swID + "-view-code")
+    this.recordStep("sw" + swID + "_view_code_clicked")
 
     // close all the accordions and flipper buttons
     this.resetSWCodeEditor();
@@ -263,7 +263,8 @@ export class SWPicker extends LitElement {
   }
 
   recordStep(text: string){
-    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    let pageName = window.location.pathname.slice(1);
+    recordProcessStep('pwa-builder', `${pageName}.sw_options.${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
 

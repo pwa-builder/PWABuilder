@@ -640,17 +640,18 @@ export class AppPublish extends LitElement {
   }
 
   showWindowsOptionsModal() {
-    this.recordStep("windows-store-package");
+    
+    this.recordStep("windows_store_modal_opened");
     this.openWindowsOptions = true;
   }
 
   showAndroidOptionsModal() {
-    this.recordStep("android-store-package");
+    this.recordStep("android_store_modal_opened");
     this.openAndroidOptions = true;
   }
 
   showiOSOptionsModal() {
-    this.recordStep("ios-store-package");
+    this.recordStep("ios_store_modal_opened");
     this.openiOSOptions = true;
   }
 
@@ -708,7 +709,7 @@ export class AppPublish extends LitElement {
   }
 
   returnToFix() {
-    this.recordStep("return-to-fix")
+    this.recordStep("back_button_clicked")
     const resultsString = sessionStorage.getItem('results-string');
 
     // navigate back to report-card page
@@ -761,7 +762,8 @@ export class AppPublish extends LitElement {
   }
 
   recordStep(text: string){
-    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    let pageName = window.location.pathname.slice(1);
+    recordProcessStep('pwa-builder', `${pageName}.${text}`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
 

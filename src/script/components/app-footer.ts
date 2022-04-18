@@ -142,7 +142,8 @@ export class AppFooter extends LitElement {
   }
 
   recordStep(text: string){
-    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    let pageName = window.location.pathname.slice(1);
+    recordProcessStep('pwa-builder', `${pageName}.footer.${text}_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   render() {
@@ -159,14 +160,14 @@ export class AppFooter extends LitElement {
               target="_blank"
               rel="noopener"
               href="https://privacy.microsoft.com/en-us/privacystatement"
-              @click=${() => this.recordStep("privacy-policy")}
+              @click=${() => this.recordStep("privacy_policy")}
               >Our Privacy Statement</a
             >
             <a
               target="_blank"
               rel="noopener"
               href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md"
-              @click=${() => this.recordStep("terms-of-use")}
+              @click=${() => this.recordStep("terms_of_use")}
               >Terms of Use</a
             >
           </div>
@@ -178,7 +179,7 @@ export class AppFooter extends LitElement {
             rel="noopener"
             appearance="hypertext"
             href="https://github.com/pwa-builder/PWABuilder"
-            @click=${() => this.recordStep("footer-github")}
+            @click=${() => this.recordStep("github")}
           >
             <ion-icon name="logo-github"></ion-icon>
           </fast-anchor>
@@ -188,7 +189,7 @@ export class AppFooter extends LitElement {
             rel="noopener"
             appearance="hypertext"
             href="https://twitter.com/pwabuilder"
-            @click=${() => this.recordStep("footer-twitter")}
+            @click=${() => this.recordStep("twitter")}
           >
             <ion-icon name="logo-twitter"></ion-icon>
           </fast-anchor>
@@ -198,7 +199,7 @@ export class AppFooter extends LitElement {
             rel="noopener"
             appearance="hypertext"
             href="https://www.youtube.com/c/PWABuilder"
-            @click=${() => this.recordStep("footer-youtube")}
+            @click=${() => this.recordStep("youtube")}
           >
             <ion-icon name="logo-youtube"></ion-icon>
           </fast-anchor>

@@ -95,7 +95,7 @@ export class CodeEditor extends LitElement {
   }
 
   async copyCode() {
-    this.recordStep("copy-code")
+    this.recordStep("copy_code")
     const doc = this.editorState?.doc;
 
     if (doc) {
@@ -112,7 +112,8 @@ export class CodeEditor extends LitElement {
   }
 
   recordStep(text: string){
-    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    let pageName = window.location.pathname.slice(1);
+    recordProcessStep('pwa-builder', `${pageName}.code_editor.${text}_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
 

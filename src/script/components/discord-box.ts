@@ -70,7 +70,8 @@ export class DiscordBox extends LitElement {
   }
 
   recordStep(text: string){
-    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    let pageName = window.location.pathname.slice(1);
+    recordProcessStep('pwa-builder', `${pageName}.${text}_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   render() {
@@ -79,7 +80,7 @@ export class DiscordBox extends LitElement {
         ? html`
         <div id="discord-box">
           <img id="logo" src="/assets/images/discord_logo.svg" alt="discord logo"/>
-          <p>Want to chat? Join us on <a @click=${() => this.recordStep("discord-link")} href="https://aka.ms/pwabuilderdiscord" target="_blank" rel="noopener">Discord</a></p>
+          <p>Want to chat? Join us on <a @click=${() => this.recordStep("discord_box_link")} href="https://aka.ms/pwabuilderdiscord" target="_blank" rel="noopener">Discord</a></p>
           <img id="close" src="/assets/images/Close_desk.png" @click=${() => this.close()} alt="close button"/>
         </div>`
         : null}

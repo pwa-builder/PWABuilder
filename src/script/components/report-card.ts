@@ -409,7 +409,7 @@ export class ReportCard extends LitElement {
   }
 
   opened(targetEl: EventTarget | null, analyticText: string) {
-    this.recordStep(analyticText);
+    this.recordStep(analyticText + "_clicked");
     if (targetEl) {
       const flipperButton = (targetEl as Element).classList.contains(
         'flipper-button'
@@ -488,7 +488,7 @@ export class ReportCard extends LitElement {
   }
 
   openManiOptions() {
-    this.recordStep("manifest-options")
+    this.recordStep("manifest_accordion.manifest_options_button_clicked")
     const event = new CustomEvent('open-mani-options', {
       detail: {
         open: true,
@@ -498,7 +498,7 @@ export class ReportCard extends LitElement {
   }
 
   openSWOptions() {
-    this.recordStep("sw-options")
+    this.recordStep("sw_accordion.sw_options_button_clicked")
     const event = new CustomEvent('open-sw-options', {
       detail: {
         open: true,
@@ -508,7 +508,7 @@ export class ReportCard extends LitElement {
   }
 
   async decideWhereToGo() {
-    this.recordStep("report-card-next-button")
+    this.recordStep("next_button_clicked")
     const baseOrPublishIffy = await baseOrPublish();
 
     if (baseOrPublishIffy === 'base') {
@@ -531,7 +531,8 @@ export class ReportCard extends LitElement {
   }
 
   recordStep(text: string){
-    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    let pageName = window.location.pathname.slice(1);
+    recordProcessStep('pwa-builder', `${pageName}.${text}`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   render() {

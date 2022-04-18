@@ -148,9 +148,7 @@ export class Infocard extends LitElement {
   }
 
   recordStep(){
-    recordProcessStep('pwa-builder', `${this.cardTitle}-learn-more-clicked`, AnalyticsBehavior.ProcessCheckpoint);
-    recordPageAction(`${this.cardTitle}-learn-more-clicked`, AnalyticsActionType.LeftClick, AnalyticsBehavior.Click)
-
+    recordProcessStep('pwa-builder', `home.middle.${this.cardTitle}_learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   render() {

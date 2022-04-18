@@ -154,7 +154,7 @@ export class AppHeader extends LitElement {
   }
 
   goBack() {
-    this.recordStep("header-logo");
+    this.recordStep("logo");
     const pathName = location.pathname;
 
     if (pathName === '/' || pathName === '/reportcard') {
@@ -165,7 +165,8 @@ export class AppHeader extends LitElement {
   }
   
   recordStep(text: string){
-    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    let pageName = window.location.pathname.slice(1);
+    recordProcessStep('pwa-builder', `${pageName}.header.${text}_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   render() {
@@ -182,7 +183,7 @@ export class AppHeader extends LitElement {
             target="__blank"
             aria-label="Resources, will open in separate tab"
             rel="noopener"
-            @click=${() => this.recordStep("header-resources")}
+            @click=${() => this.recordStep("resources")}
             ><span>Resources</span></fast-anchor
           >
 
@@ -192,7 +193,7 @@ export class AppHeader extends LitElement {
             target="__blank"
             aria-label="Github repo, will open in separate tab"
             rel="noopener"
-            @click=${() => this.recordStep("header-github")}
+            @click=${() => this.recordStep("github")}
           >
             <ion-icon role="presentation" aria-hidden="true" tab-index="-1" name="logo-github"></ion-icon>
           </fast-anchor>

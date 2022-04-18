@@ -343,7 +343,7 @@ export class AppReport extends LitElement {
   }
 
   handleTabsEvent(type: 'mani' | 'sw' | 'overview') {
-    this.recordStep(type + "-tab")
+    this.recordStep(type + "_tab")
     this.selectedTab = type;
 
     if (type === 'mani') {
@@ -359,7 +359,8 @@ export class AppReport extends LitElement {
   }
 
   recordStep(text: string){
-    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    let pageName = window.location.pathname.slice(1);
+    recordProcessStep('pwa-builder', `${pageName}.${text}_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   render() {

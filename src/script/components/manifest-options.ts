@@ -523,7 +523,8 @@ export class AppManifest extends LitElement {
   }
 
   recordStep(text: string){
-    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    let pageName = window.location.pathname.slice(1);
+    recordProcessStep('pwa-builder', `${pageName}.manifest_options.${text}_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   render() {
@@ -1239,7 +1240,7 @@ export class AppManifest extends LitElement {
   }
 
   handleEditorOpened() {
-    this.recordStep("view-code");
+    this.recordStep("view_code");
     this.editorOpened = !this.editorOpened;
   }
 
@@ -1261,7 +1262,7 @@ export class AppManifest extends LitElement {
   }
 
   done() {
-    this.recordStep("done-manifest-options")
+    this.recordStep("done_manifest_options")
     const event = new CustomEvent('back-to-overview', {
       detail: {
         open: true,
@@ -1271,7 +1272,7 @@ export class AppManifest extends LitElement {
   }
 
   openUploadModal() {
-    this.recordStep("upload-icons-button");
+    this.recordStep("upload_icons_button");
     this.uploadModalOpen = true;
   }
 
@@ -1287,7 +1288,7 @@ export class AppManifest extends LitElement {
   }
 
   async downloadIcons() {
-    this.recordStep("download-icons");
+    this.recordStep("download_icons");
     this.awaitRequest = true;
 
     try {
@@ -1307,7 +1308,7 @@ export class AppManifest extends LitElement {
   }
 
   async generateScreenshots() {
-    this.recordStep("generate-screenshots");
+    this.recordStep("generate_screenshots");
     try {
       this.awaitRequest = true;
 
