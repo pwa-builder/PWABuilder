@@ -9,7 +9,7 @@ import { turnOffScroll, turnOnScroll } from '../utils/dom-utils';
 //@ts-ignore
 import ModalStyles from '../../../styles/modal-styles.css';
 import { AppModalElement } from '../utils/interfaces.components';
-import { recordProcessStep, AnalyticsBehavior } from '../utils/analytics';
+import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
 @customElement('app-modal')
 export class AppModal extends LitElement implements AppModalElement {
@@ -206,7 +206,7 @@ export class AppModal extends LitElement implements AppModalElement {
   }
 
   async close() {
-    this.recordStep(this.heading.split(" ").join("_") + "_modal_closed");
+    recordPWABuilderProcessStep(this.heading.split(" ").join("_") + "_modal_closed", AnalyticsBehavior.ProcessCheckpoint);
     if (this.modalAni && this.backgroundAni) {
       this.modalAni.reverse();
       this.backgroundAni.reverse();
@@ -221,12 +221,6 @@ export class AppModal extends LitElement implements AppModalElement {
     // just to ensure scrolling gets turned back on
     // when the modal is closed
     turnOnScroll();
-  }
-
-  recordStep(text: string){
-    let pageName = window.location.pathname.slice(1);
-    console.log(pageName + "." + text);
-    recordProcessStep('pwa-builder', `${pageName}.${text}`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   render() {
@@ -268,3 +262,4 @@ export class AppModal extends LitElement implements AppModalElement {
     }
   }
 }
+

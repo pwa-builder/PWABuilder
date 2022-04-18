@@ -6,7 +6,7 @@ import {
   smallBreakPoint,
   mediumBreakPoint
 } from '../utils/css/breakpoints';
-import { recordProcessStep, AnalyticsBehavior, AnalyticsActionType, recordPageAction } from '../utils/analytics';
+import {AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
 @customElement('community-card')
 export class CommunityCard extends LitElement {
@@ -150,10 +150,6 @@ export class CommunityCard extends LitElement {
   firstUpdated(){
   }
 
-  recordStep(text: string){
-    recordProcessStep('pwa-builder', `home.bottom.${text}_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-  }
-
   render() {
     return html`
       <div class="community-card">
@@ -167,7 +163,7 @@ export class CommunityCard extends LitElement {
             ${this.links && this.links.map((link: any) =>
               html`
               <div class="card-link-box">
-                <a @click=${() => this.recordStep(link.text)} href=${link.link} target="_blank" rel="noopener">${link.text}</a>
+                <a @click=${() => recordPWABuilderProcessStep("home.bottom." + link.text + "_clicked", AnalyticsBehavior.ProcessCheckpoint)} href=${link.link} target="_blank" rel="noopener">${link.text}</a>
                 <img src="/assets/new/arrow.svg" alt="arrow" />
               </div>
               `

@@ -23,7 +23,7 @@ import '../components/app-modal';
 import style from '../../../styles/layout-defaults.css';
 import { RawTestResult, ScoreEvent } from '../utils/interfaces';
 import { giveOutBadges } from '../services/badges';
-import { recordProcessStep, AnalyticsBehavior } from '../utils/analytics';
+import { recordProcessStep, AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
 const possible_messages = {
   overview: {
@@ -343,7 +343,7 @@ export class AppReport extends LitElement {
   }
 
   handleTabsEvent(type: 'mani' | 'sw' | 'overview') {
-    this.recordStep(type + "_tab")
+    recordPWABuilderProcessStep(type + "_tab_clicked", AnalyticsBehavior.ProcessCheckpoint);
     this.selectedTab = type;
 
     if (type === 'mani') {
@@ -356,11 +356,6 @@ export class AppReport extends LitElement {
       this.currentHeader = possible_messages.overview.heading;
       this.currentSupporting = possible_messages.overview.supporting;
     }
-  }
-
-  recordStep(text: string){
-    let pageName = window.location.pathname.slice(1);
-    recordProcessStep('pwa-builder', `${pageName}.${text}_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   render() {

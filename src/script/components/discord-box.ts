@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit';
 
 import { customElement, state } from 'lit/decorators.js';
-import { recordProcessStep, AnalyticsBehavior } from '../utils/analytics';
+import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
 @customElement('discord-box')
 export class DiscordBox extends LitElement {
@@ -69,18 +69,13 @@ export class DiscordBox extends LitElement {
     this.show = false;
   }
 
-  recordStep(text: string){
-    let pageName = window.location.pathname.slice(1);
-    recordProcessStep('pwa-builder', `${pageName}.${text}_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-  }
-
   render() {
     return html`
       ${this.show
         ? html`
         <div id="discord-box">
           <img id="logo" src="/assets/images/discord_logo.svg" alt="discord logo"/>
-          <p>Want to chat? Join us on <a @click=${() => this.recordStep("discord_box_link")} href="https://aka.ms/pwabuilderdiscord" target="_blank" rel="noopener">Discord</a></p>
+          <p>Want to chat? Join us on <a @click=${() => recordPWABuilderProcessStep("discord_box_link_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://aka.ms/pwabuilderdiscord" target="_blank" rel="noopener">Discord</a></p>
           <img id="close" src="/assets/images/Close_desk.png" @click=${() => this.close()} alt="close button"/>
         </div>`
         : null}
