@@ -150,7 +150,7 @@ export class AppFooter extends LitElement {
       <footer>
         <div id="footer-top">
           <span
-            >PWA Builder was founded by Microsoft as a community guided, open
+            >PWABuilder was founded by Microsoft as a community guided, open
             source project to help move PWA adoption forward.</span
           >
 

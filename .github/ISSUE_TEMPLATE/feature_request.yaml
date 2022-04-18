@@ -1,5 +1,5 @@
 name: Feature Request
-description: Suggest an idea for PWA Builder
+description: Suggest an idea for PWABuilder
 labels: ["feature request :mailbox_with_mail:", "needs triage :mag:"]
 body:
   - type: textarea
