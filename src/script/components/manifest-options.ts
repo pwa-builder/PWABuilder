@@ -62,7 +62,7 @@ import {
 } from '../utils/interfaces.components';
 import { IconInfo } from '../utils/icons';
 import { debounce } from '../utils/debounce';
-import { recordProcessStep, AnalyticsBehavior } from '../utils/analytics';
+import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
 type ColorRadioValues = 'none' | 'custom';
 
@@ -520,10 +520,6 @@ export class AppManifest extends LitElement {
           >`
     } 
     return html``;
-  }
-
-  recordStep(text: string){
-    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   render() {
@@ -1239,7 +1235,7 @@ export class AppManifest extends LitElement {
   }
 
   handleEditorOpened() {
-    this.recordStep("view-code");
+    recordPWABuilderProcessStep("manifest_options.view_code_clicked", AnalyticsBehavior.ProcessCheckpoint);
     this.editorOpened = !this.editorOpened;
   }
 
@@ -1261,7 +1257,7 @@ export class AppManifest extends LitElement {
   }
 
   done() {
-    this.recordStep("done-manifest-options")
+    recordPWABuilderProcessStep("manifest_options.done_manifest_options_clicked", AnalyticsBehavior.ProcessCheckpoint);
     const event = new CustomEvent('back-to-overview', {
       detail: {
         open: true,
@@ -1271,7 +1267,7 @@ export class AppManifest extends LitElement {
   }
 
   openUploadModal() {
-    this.recordStep("upload-icons-button");
+    recordPWABuilderProcessStep("manifest_options.upload_icons_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
     this.uploadModalOpen = true;
   }
 
@@ -1287,7 +1283,7 @@ export class AppManifest extends LitElement {
   }
 
   async downloadIcons() {
-    this.recordStep("download-icons");
+    recordPWABuilderProcessStep("manifest_options.download_icons_clicked", AnalyticsBehavior.ProcessCheckpoint);
     this.awaitRequest = true;
 
     try {
@@ -1307,7 +1303,7 @@ export class AppManifest extends LitElement {
   }
 
   async generateScreenshots() {
-    this.recordStep("generate-screenshots");
+    recordPWABuilderProcessStep("manifest_options.generate_screenshots_clicked", AnalyticsBehavior.ProcessCheckpoint);
     try {
       this.awaitRequest = true;
 

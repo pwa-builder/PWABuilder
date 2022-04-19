@@ -16,7 +16,7 @@ import '../components/code-editor';
 
 //@ts-ignore
 import style from '../../../styles/list-defaults.css';
-import { recordProcessStep, AnalyticsBehavior } from '../utils/analytics';
+import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
 interface ServiceWorkerChoice {
   id: number;
@@ -186,7 +186,8 @@ export class SWPicker extends LitElement {
   }
 
   chooseSW(sw: ServiceWorkerChoice) {
-    this.recordStep("sw #" + sw.id)
+    recordPWABuilderProcessStep("sw_options.sw" + sw.id + "_selected", AnalyticsBehavior.ProcessCheckpoint);
+    
     this.chosenSW = sw.id;
 
     if (this.chosenSW) {
@@ -200,7 +201,7 @@ export class SWPicker extends LitElement {
   }
 
   done() {
-    this.recordStep("done-sw-options")
+    recordPWABuilderProcessStep("sw_options.done_sw_options_clicked", AnalyticsBehavior.ProcessCheckpoint);
     const event = new CustomEvent('back-to-overview', {
       detail: {
         open: true,
@@ -232,7 +233,7 @@ export class SWPicker extends LitElement {
   }
 
   async handleEditorOpened(swID: number, event: Event) {
-    this.recordStep("sw #" + swID + "-view-code")
+    recordPWABuilderProcessStep("sw_options.sw" + swID + "_view_code_clicked", AnalyticsBehavior.ProcessCheckpoint);
 
     // close all the accordions and flipper buttons
     this.resetSWCodeEditor();
@@ -261,11 +262,6 @@ export class SWPicker extends LitElement {
     await downloadServiceWorker(id);
     this.downloading = false;
   }
-
-  recordStep(text: string){
-    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
-  }
-
 
   render() {
     return html`
