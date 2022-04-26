@@ -1,4 +1,18 @@
 # PWABuilder
+TODO - update this README 
+
+## Working with this monorepo
+
+### Pre-reqs
+
+* node v14 or greater
+* npm v7 or greater (update npm if using an older version)
+
+### Adding a new project
+
+1. Create a new project in packages
+1. Add package to root `package.json` under `workspaces`. Order is important - make sure the package is after any dependencies or before any packages that might depend on this packages
+
 
 ### Built with the [PWABuilder PWA Starter](https://github.com/pwa-builder/pwa-starter)
 
@@ -55,11 +69,5 @@ Run `npm run build`, the `dist/` folder will contain your built PWA. The product
 
 
 
-## Working with this monorepo
-
-### Adding a new project
-
-1. Create a new project in packages
-1. Add package to root `package.json` under `workspaces`. Order is important - make sure the package is after any dependencies or before any packages that might depend on this packages
 
 
