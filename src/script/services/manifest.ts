@@ -20,8 +20,8 @@ export let emptyManifest: Manifest = {
   scope: '/',
   lang: 'en',
   description: 'placeholder description',
-  theme_color: '#000000',
-  background_color: '#000000',
+  theme_color: 'none',
+  background_color: 'none',
   icons: [],
   screenshots: [],
 };

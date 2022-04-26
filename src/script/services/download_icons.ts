@@ -50,9 +50,6 @@ export async function generateAndDownloadIconZip(images: Array<Icon>) {
       body: formData
     });
 
-    // delete line below
-    console.log(url);
-    formData.forEach((item: any) => console.log(item));
     if (!response.ok) {
       throw new Error(JSON.stringify(await response.json()));
     }
