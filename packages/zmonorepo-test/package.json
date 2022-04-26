@@ -8,12 +8,12 @@
   },
   "scripts": {
     "clean": "rimraf build/ && rimraf dist/",
-    "build": "rimraf dist/ && tsc"
+    "build": "npm run clean && tsc",
+    "test2": "echo should run first"
   },
   "dependencies": {
     "browser-fs-access": "^0.23.0"
   },
   "devDependencies": {
-    "typescript": "^4.3.2"
   }
 }

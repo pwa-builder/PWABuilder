@@ -2,7 +2,7 @@
 
 ### Built with the [PWABuilder PWA Starter](https://github.com/pwa-builder/pwa-starter)
 
-Welcome to [PWABuilder](https://www.pwabuilder.com/) v3.0! Read our launch blog [here](https://blog.pwabuilder.com/posts/introducing-the-brand-new-pwa-builder/) for all the details! 
+Welcome to [PWABuilder](https://www.pwabuilder.com/) Read our launch blog [here](https://blog.pwabuilder.com/posts/introducing-the-brand-new-pwa-builder/) for all the details! 
 
 [Try It](https://www.pwabuilder.com)
 
