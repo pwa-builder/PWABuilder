@@ -54,36 +54,12 @@ In VSCode, set a breakpoint in a TypeScript file. Then press F5 to launch debugg
 Run `npm run build`, the `dist/` folder will contain your built PWA. The production build will also generate a pre-caching service worker using [Workbox](https://developers.google.com/web/tools/workbox/modules/workbox-precaching).
 
 
-## Folder Structure
 
-```
-PWABuilder
-│   README.md (docs)
-│   rollup.config.js (bundler config https://rollupjs.org/)
-|   tsconfig.json (TypeScript config https://www.typescriptlang.org/)
-|   pwabuilder-sw.js (Service Worker https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API)
-|   package.json (https://docs.npmjs.com/creating-a-package-json-file)
-|   package-lock.json (https://docs.npmjs.com/files/package-lock.json)
-|   manifest.json (web manifest https://developer.mozilla.org/en-US/docs/Web/Manifest)
-|   index.prod.html (index.html file used for production builds)
-|   index.html (index.html for dev builds)
-|   *note*: The index.prod.html registers a service worker which caches assets, so index.html is used for dev builds
-|   .gitignore (git config file https://git-scm.com/docs/gitignore)
-│
-└───src (most of your development will happen here)
-│   │   global.css (used for global CSS styles and CSS variables)
-│   │
-│   └───script
-│       │
-│       |
-|       └───components
-|           |   header.ts (header component)
-|           |   more components
-|       |
-|       |
-|       └───pages
-|           |   app-index.ts (app-index component)
-|           |   app-home.ts (app-home component)
-|           |   app-about.ts (app-about component)
-|           |   more pages
-```
+## Working with this monorepo
+
+### Adding a new project
+
+1. Create a new project in packages
+1. Add package to root `package.json` under `workspaces`. Order is important - make sure the package is after any dependencies or before any packages that might depend on this packages
+
+

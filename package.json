@@ -2,14 +2,16 @@
   "name": "project",
   "version": "0.0.1",
   "workspaces": [
-    "./packages/*"
+    "./packages/zmonorepo-test",
+    "./packages/pwabuilder"
   ],
   "description": "Helping developers build better PWAs ",
   "main": "index.js",
   "private": true,
   "scripts": {
     "build": "npm run build -ws",
-    "dev": "npm run build && npm run dev -w pwabuilder"
+    "dev": "npm run build && npm run dev -w pwabuilder",
+    "test2": "npm run test2 -ws"
   },
   "author": "",
   "license": "ISC",
