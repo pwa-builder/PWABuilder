@@ -2,8 +2,9 @@
   "name": "project",
   "version": "0.0.1",
   "workspaces": [
-    "./packages/zmonorepo-test",
-    "./packages/pwabuilder"
+    "./libraries/monorepo-test",
+    "./components/pwa-update",
+    "./apps/pwabuilder"
   ],
   "description": "Helping developers build better PWAs ",
   "main": "index.js",
