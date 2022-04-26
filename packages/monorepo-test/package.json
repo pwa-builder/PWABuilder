@@ -1,0 +1,19 @@
+{
+  "name": "@pwabuilder/monorepo-test",
+  "version": "0.0.1",
+  "module": "./dist/index.js",
+  "main": "./dist/index.js",
+  "engines": {
+    "node": "14.10.0"
+  },
+  "scripts": {
+    "clean": "rimraf build/ && rimraf dist/",
+    "build": "rimraf dist/ && tsc"
+  },
+  "dependencies": {
+    "browser-fs-access": "^0.23.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.3.2"
+  }
+}
