@@ -50,6 +50,13 @@ export function recordPWABuilderProcessStep(
   stepType: AnalyticsBehavior.ProcessCheckpoint | AnalyticsBehavior.StartProcess | AnalyticsBehavior.ProcessCheckpoint | AnalyticsBehavior.CancelProcess | AnalyticsBehavior.CompleteProcess,
   additionalInfo?: {}) {
 
+    const demo_used = localStorage.getItem('demoURL')
+    let scn = 'pwa-builder';
+
+    if(demo_used){
+      scn = 'demo-process';
+    }
+
     let pageName = window.location.pathname.slice(1);
     if(pageName.length == 0) {
       pageName = "home";
@@ -63,7 +70,7 @@ export function recordPWABuilderProcessStep(
         actionType: AnalyticsActionType.Other,
         behavior: stepType,
         contentTags: {
-          scn: "pwa-builder",
+          scn: scn,
           scnstp: processLabel
         },
         content: additionalInfo

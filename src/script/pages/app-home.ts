@@ -405,6 +405,10 @@ export class AppHome extends LitElement {
   }
 
   async analyzeSite() {
+    if(this.siteURL === demoURL){
+      localStorage.setItem('demoURL', JSON.stringify(false));
+    }
+
     if (this.siteURL) {
       this.gettingManifest = true;
       const isValidUrl = isValidURL(this.siteURL);
@@ -475,8 +479,9 @@ export class AppHome extends LitElement {
   }
 
   placeDemoURL(){
+    localStorage.setItem('demoURL', JSON.stringify(true));
     recordPWABuilderProcessStep("home.top.DemoURL_clicked", AnalyticsBehavior.ProcessCheckpoint);
-    this.siteURL = "https://webboard.app";
+    this.siteURL = demoURL;
     let box = this.shadowRoot!.getElementById("input-box");
     (box as HTMLInputElement)!.value = this.siteURL;
     this.analyzeSite();
@@ -549,3 +554,5 @@ export class AppHome extends LitElement {
     `;
   }
 }
+
+const demoURL: string = "https://webboard.app";
