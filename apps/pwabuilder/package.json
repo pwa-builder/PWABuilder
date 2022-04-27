@@ -3,9 +3,6 @@
   "version": "0.0.1",
   "description": "A starter kit for building PWAs!",
   "main": "index.js",
-  "engines": {
-    "node": "14.10.0"
-  },
   "scripts": {
     "test": "npm install -D playwright && npx playwright install-deps chromium && npx playwright test",
     "mocha": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha",
@@ -20,7 +17,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@pwabuilder/monorepo-test": "*",
+    "@pwabuilder/monorepo-test": "file:../../libraries/monorepo-test",
     "@codemirror/autocomplete": "^0.18.5",
     "@codemirror/basic-setup": "^0.18.0",
     "@codemirror/commands": "^0.18.1",
