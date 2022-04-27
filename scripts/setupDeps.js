@@ -2,10 +2,7 @@ var path = require('path');
 var fs = require('fs');
 var execSync = require('child_process').execSync;
 
-// get package.json from current directory
-// const pkg = getPkg();
-// console.log(pkg);
-
+const ignoreDirs = ['node_modules'];
 
 // function to get package.json from current directory
 function getPkgFromCurrentDir() {
@@ -18,8 +15,7 @@ function getPkgFromCurrentDir() {
   }
 }
 
-const ignoreDirs = ['node_modules'];
-
+// function to get all packages in repo
 const getAllPkgs = (startPath = path.join(__dirname, '..')) => {
   let results = {};
 
@@ -45,15 +41,12 @@ const getAllPkgs = (startPath = path.join(__dirname, '..')) => {
       }
 
     } 
-    
-    // else if (filename.indexOf('package.json') >= 0) {
-    //   results.push(filename);
-    // }
   }
 
   return results;
 }
 
+// returns an array of all local dependencies for a package
 function getAllLocalDeps(pkgJson) {
   let deps = [];
   const allDeps = {...(pkgJson.dependencies || {}), ...(pkgJson.devDependencies || {})};
@@ -65,6 +58,7 @@ function getAllLocalDeps(pkgJson) {
   return deps;
 }
 
+// run npm i and npm run build for a specific package
 function setupPackage(packageName, packageLocation) {
   console.info('\x1b[33m%s\x1b[0m', `${packageName}: npm i && npm run build`)
   execSync('npm i && npm run build', {cwd: packageLocation, stdio: 'inherit'});
@@ -72,6 +66,8 @@ function setupPackage(packageName, packageLocation) {
 
 }
 
+// function to recursively run npm i and npm run build on all dependencies 
+// this will not work if there are circular dependencies
 function setupAllDeps(packageName, allPackages, mainPackage = packageName) {
   const package = allPackages[packageName];
   if (package) {
@@ -95,9 +91,3 @@ if (currentPackage) {
 } else {
   console.log('no package.json found in current directory');
 }
-
-// console.log(pkgs);
-
-// for (const pkgName in pkgs) {
-//   execSync('npm i', {cwd: pkgs[pkgName], stdio: 'inherit'});
-// }
