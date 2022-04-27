@@ -4,6 +4,7 @@
   "description": "A starter kit for building PWAs!",
   "main": "index.js",
   "scripts": {
+    "preinstall": "node ../../scripts/setupDeps.js",
     "test": "npm install -D playwright && npx playwright install-deps chromium && npx playwright test",
     "mocha": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha",
     "coverage": "nyc npm run mocha",
