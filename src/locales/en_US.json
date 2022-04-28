@@ -191,6 +191,50 @@
         "demo": "Check out our demos to see what PWAs are capable of!",
         "documentation": "Looking for our documentation? Tap View Documentation to get started!"
       }
+    },
+    "resource_hub_new": {
+      "titles": {
+        "manifest": "Web Manifest",
+        "sw": "Service Worker",
+        "https": "Secure HTTPS"
+      },
+      "description": {
+        "manifest": "A Web App Manifest of a website governs how your Progressive Web App (PWA) looks and behaves when installed on a device.",
+        "sw": "Service Workers are a special type of Web Worker with the ability to intercept, modify, and respond to all offline and online network requests using the Fetch API.",
+        "https": "Having a secure HTTPS endpoint and other user safeguards making the user experience secure from end to end."
+      }
+    },
+    "community_hub": {
+      "titles": {
+        "github": "Contribute on GitHub",
+        "twitter": "Follow us on Twitter!",
+        "discord": "Join us on our Discord Server"
+      },
+      "description": {
+        "github": "Contribute to this Open Source project by joining our PWA community on GitHub.",
+        "twitter": "Meet our fellow PWA enthusiast and follow our latest releases and updates on Twitter.",
+        "discord": "Join the PWABuilder Discord community to connect with the people and resources you need."
+      }
+    },
+    "success_stories": {
+      "stat": {
+        "trivago": "User traffic",
+        "alibaba": "Total conversions",
+        "pintrest": "Ad revenue",
+        "tinder": "Storage efficient"
+      },
+      "value": {
+        "trivago": "+150%",
+        "alibaba": "+76%",
+        "pintrest": "+44%",
+        "tinder": "+90%"
+      },
+      "description": {
+        "trivago": "Engagement for users who add to homescreen has increased by 150%. This increased engagement led to a 97% increase in click outs to hotel offers.",
+        "alibaba": "After upgrading to a PWA, Alibaba saw a 76% increase in total conversions across browsers. And 30% more monthly active users on Android.",
+        "pintrest": "With the new Pinterest PWA they were able to increase user-generated ad revenue by 44% and core engagement by 60%.",
+        "tinder": "The native Tinder application was a whopping 30MB, when Tinder transitioned to PWA they were able to reduce their file size down to 2.8MB. "
+      }
     }
   },
   "tooltip": {

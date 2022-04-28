@@ -1,6 +1,7 @@
 import { Router } from '@vaadin/router';
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { AnalyticsBehavior, recordProcessStep } from '../utils/analytics';
 
 import {
   xxxLargeBreakPoint,
@@ -85,15 +86,6 @@ export class AppHeader extends LitElement {
         display: flex;
       }
 
-      #mobile-nav {
-        display: none;
-        width: initial;
-      }
-
-      #mobile-nav fast-button::part(control) {
-        color: black;
-      }
-
       @media (prefers-color-scheme: light) {
         header {
           color: black;
@@ -101,21 +93,7 @@ export class AppHeader extends LitElement {
       }
 
       ${smallBreakPoint(css`
-        header nav {
-          display: none;
-        }
 
-        #desktop-nav {
-          display: none;
-        }
-
-        #mobile-nav {
-          display: flex;
-        }
-
-        nav fast-anchor::part(control) {
-          color: white;
-        }
       `)}
 
       ${mediumBreakPoint(css`
@@ -127,13 +105,6 @@ export class AppHeader extends LitElement {
           display: flex;
         }
 
-        #mobile-nav {
-          display: none;
-        }
-
-        nav fast-anchor::part(control) {
-          color: white;
-        }
       `)}
       
 
@@ -142,13 +113,6 @@ export class AppHeader extends LitElement {
           display: flex;
         }
 
-        #mobile-nav {
-          display: none;
-        }
-
-        nav fast-anchor::part(control) {
-          color: white;
-        }
       `)}
 
       ${xLargeBreakPoint(css`
@@ -190,6 +154,7 @@ export class AppHeader extends LitElement {
   }
 
   goBack() {
+    this.recordStep("header-logo");
     const pathName = location.pathname;
 
     if (pathName === '/' || pathName === '/reportcard') {
@@ -197,6 +162,10 @@ export class AppHeader extends LitElement {
     } else {
       window.history.back();
     }
+  }
+  
+  recordStep(text: string){
+    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   render() {
@@ -213,6 +182,7 @@ export class AppHeader extends LitElement {
             target="__blank"
             aria-label="Resources, will open in separate tab"
             rel="noopener"
+            @click=${() => this.recordStep("header-resources")}
             ><span>Resources</span></fast-anchor
           >
 
@@ -222,6 +192,7 @@ export class AppHeader extends LitElement {
             target="__blank"
             aria-label="Github repo, will open in separate tab"
             rel="noopener"
+            @click=${() => this.recordStep("header-github")}
           >
             <ion-icon role="presentation" aria-hidden="true" tab-index="-1" name="logo-github"></ion-icon>
           </fast-anchor>
