@@ -10,6 +10,7 @@ import '../components/loading-button';
 import '../components/windows-form';
 import '../components/android-form';
 import '../components/ios-form';
+import '../components/oculus-form';
 import '../components/info-circle-tooltip';
 import { Router } from '@vaadin/router';
 
@@ -40,6 +41,7 @@ import { WindowsPackageOptions } from '../utils/win-validation';
 import { fetchOrCreateManifest } from '../services/manifest';
 import { createWindowsPackageOptionsFromManifest } from '../services/publish/windows-publish';
 import { AndroidPackageOptions } from '../utils/android-validation';
+import { OculusAppPackageOptions } from '../utils/oculus-validation';
 
 @customElement('app-publish')
 export class AppPublish extends LitElement {
@@ -59,12 +61,10 @@ export class AppPublish extends LitElement {
   @state() openWindowsOptions = false;
   @state() openAndroidOptions = false;
   @state() openiOSOptions = false;
-
+  @state() openOculusOptions = false;
   @state() generating = false;
   @state() isGooglePlay = true;
-
   @state() finalChecks: checkResults | undefined;
-
   @state() reportPackageErrorUrl = '';
 
   readonly platforms: ICardData[] = [
@@ -111,7 +111,7 @@ export class AppPublish extends LitElement {
       ],
       isActionCard: true,
       icon: '/assets/oculus_icon.svg',
-      renderDownloadButton: () => this.renderiOSDownloadButton() // change to oculus eventually
+      renderDownloadButton: () => this.renderOculusDownloadButton()
     }
   ];
 
@@ -552,50 +552,6 @@ export class AppPublish extends LitElement {
     }
   }
 
-  getWindowsFinalChecksErrorMessage(): string | null {
-    if (this.finalChecks) {
-      const maniCheck = this.finalChecks.manifest;
-      const baseIcon = this.finalChecks.baseIcon;
-      const validURL = this.finalChecks.validURL;
-
-      if (maniCheck === false) {
-        return 'Your PWA does not have a valid Web Manifest';
-      }
-
-      if (baseIcon === false) {
-        return 'Your PWA needs at least a 512x512 PNG icon';
-      }
-
-      if (validURL === false) {
-        return 'Your PWA does not have a valid URL';
-      }
-    }
-
-    return null;
-  }
-
-  getAndroidFinalChecksErrorMessage(): string | null {
-    if (this.finalChecks) {
-      const maniCheck = this.finalChecks.manifest;
-      const baseIcon = this.finalChecks.baseIcon;
-      const validURL = this.finalChecks.validURL;
-
-      if (maniCheck === false) {
-        return 'Your PWA does not have a valid Web Manifest';
-      }
-
-      if (baseIcon === false) {
-        return 'Your PWA needs at least a 512x512 PNG icon';
-      }
-
-      if (validURL === false) {
-        return 'Your PWA does not have a valid URL';
-      }
-    }
-
-    return null;
-  }
-
   async generateWindowsTestPackage() {
     let manifestContext = getManifestContext();
     if (manifestContext.isGenerated) {
@@ -606,13 +562,19 @@ export class AppPublish extends LitElement {
     await this.generate("windows", options);
   }
 
-  async generate(platform: Platform, options?: AndroidPackageOptions | IOSAppPackageOptions | WindowsPackageOptions) {
+  async generate(platform: Platform, options?: AndroidPackageOptions | IOSAppPackageOptions | WindowsPackageOptions | OculusAppPackageOptions) {
     // Record analysis results to our analytics portal.
     recordProcessStep(
       'analyze-and-package-pwa',
       `create-${platform}-package`,
       AnalyticsBehavior.CompleteProcess,
       { url: getURL() });
+
+      recordProcessStep(
+        'pwa-builder',
+        `create-${platform}-package`,
+        AnalyticsBehavior.CompleteProcess,
+        { url: getURL() });
 
     try {
       this.generating = true;
@@ -637,11 +599,20 @@ export class AppPublish extends LitElement {
           url: getURL(),
           error: err
         });
+        recordProcessStep(
+          'pwa-builder',
+          `create-${platform}-package-failed`,
+          AnalyticsBehavior.CancelProcess,
+          {
+            url: getURL(),
+            error: err
+          });
     } finally {
       this.generating = false;
       this.openAndroidOptions = false;
       this.openWindowsOptions = false;
       this.openiOSOptions = false;
+      this.openOculusOptions = false;
     }
   }
 
@@ -687,15 +658,22 @@ export class AppPublish extends LitElement {
   }
 
   showWindowsOptionsModal() {
+    this.recordStep("windows-store-package");
     this.openWindowsOptions = true;
   }
 
   showAndroidOptionsModal() {
+    this.recordStep("android-store-package");
     this.openAndroidOptions = true;
   }
 
   showiOSOptionsModal() {
+    this.recordStep("ios-store-package");
     this.openiOSOptions = true;
+  }
+
+  showOculusOptionsModal() {
+    this.openOculusOptions = true;
   }
 
   renderContentCards(): TemplateResult[] {
@@ -733,8 +711,7 @@ export class AppPublish extends LitElement {
           @click="${this.generateWindowsTestPackage}">
           Test Package
         </loading-button>
-        <hover-tooltip
-          anchor="windows-test-pkg-btn" 
+        <hover-tooltip anchor="windows-test-pkg-btn"
           text="Generate a package you can use to test your app on your Windows Device before going to the Microsoft Store."
           link="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps.md#1-test-your-app-on-your-windows-machine">
         </hover-tooltip>
@@ -758,7 +735,16 @@ export class AppPublish extends LitElement {
     `;
   }
 
+  renderOculusDownloadButton(): TemplateResult {
+    return html`
+      <app-button class="navigation" id="oculus-package-button" @click="${() => this.showOculusOptionsModal()}">
+        Store Package
+      </app-button>
+    `;
+  }
+
   returnToFix() {
+    this.recordStep("return-to-fix")
     const resultsString = sessionStorage.getItem('results-string');
 
     // navigate back to report-card page
@@ -786,6 +772,7 @@ export class AppPublish extends LitElement {
     this.openWindowsOptions = false;
     this.openAndroidOptions = false;
     this.openiOSOptions = false;
+    this.openOculusOptions = false;
   }
 
   fetchAndroidNav() {
@@ -809,6 +796,11 @@ export class AppPublish extends LitElement {
       this.isGooglePlay = false;
     }
   }
+
+  recordStep(text: string){
+    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
+  }
+
 
   render() {
     return html`
@@ -877,6 +869,14 @@ export class AppPublish extends LitElement {
         <ios-form slot="modal-form" .generating=${this.generating}
           @init-ios-gen="${(ev: CustomEvent) => this.generate('ios', ev.detail)}">
         </ios-form>
+      </app-modal>
+      
+      <!-- oculus options modal -->
+      <app-modal id="oculus-options-modal" heading="Oculus App Options" body="Customize your Oculus app below"
+        ?open="${this.openOculusOptions}" @app-modal-close="${() => this.storeOptionsCancel()}">
+        <oculus-form slot="modal-form" .generating=${this.generating}
+          @init-oculus-gen="${(ev: CustomEvent) => this.generate('oculus', ev.detail)}">
+        </oculus-form>
       </app-modal>
       
       <div id="publish-wrapper">

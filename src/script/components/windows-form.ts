@@ -130,6 +130,7 @@ export class WindowsForm extends AppPackageFormBase {
                   (this.packageOptions.packageId = val),
               })}
             </div>
+            
             <div class="form-group">
               ${this.renderFormInput({
                 label: 'Publisher display name',
@@ -167,6 +168,7 @@ export class WindowsForm extends AppPackageFormBase {
               })}
             </div>
           </div>
+          
           <!-- "all settings" section of the modal -->
           <fast-accordion>
             <fast-accordion-item
@@ -219,6 +221,7 @@ export class WindowsForm extends AppPackageFormBase {
                       (this.packageOptions.version = val),
                   })}
                 </div>
+                
                 <div class="form-group">
                   ${this.renderFormInput({
                     label: 'Classic app version',
@@ -237,6 +240,7 @@ export class WindowsForm extends AppPackageFormBase {
                       (this.packageOptions.classicPackage!.version = val),
                   })}
                 </div>
+                
                 <div class="form-group">
                   ${this.renderFormInput({
                     label: 'Icon URL',
@@ -269,6 +273,7 @@ export class WindowsForm extends AppPackageFormBase {
                       (this.packageOptions.resourceLanguage = val),
                   })}
                 </div>
+
 
                 <div class="form-group" id="target-device-families">
                   <label>Target device families</label>

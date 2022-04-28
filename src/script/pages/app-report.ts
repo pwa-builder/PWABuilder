@@ -23,6 +23,7 @@ import '../components/app-modal';
 import style from '../../../styles/layout-defaults.css';
 import { RawTestResult, ScoreEvent } from '../utils/interfaces';
 import { giveOutBadges } from '../services/badges';
+import { recordProcessStep, AnalyticsBehavior } from '../utils/analytics';
 
 const possible_messages = {
   overview: {
@@ -256,6 +257,7 @@ export class AppReport extends LitElement {
   async firstUpdated() {
     const search = new URLSearchParams(location.search);
     const results = search.get('results');
+
     const url = search.get('site');
     const hasBadges = sessionStorage.getItem('current_badges');
     setURL(url!);
@@ -270,7 +272,6 @@ export class AppReport extends LitElement {
       sessionStorage.setItem('results-string', results);
 
       this.resultOfTest = JSON.parse(results);
-
       setResults((this.resultOfTest as RawTestResult));
 
       this.resultOfTest = JSON.parse(results);
@@ -342,6 +343,7 @@ export class AppReport extends LitElement {
   }
 
   handleTabsEvent(type: 'mani' | 'sw' | 'overview') {
+    this.recordStep(type + "-tab")
     this.selectedTab = type;
 
     if (type === 'mani') {
@@ -354,6 +356,10 @@ export class AppReport extends LitElement {
       this.currentHeader = possible_messages.overview.heading;
       this.currentSupporting = possible_messages.overview.supporting;
     }
+  }
+
+  recordStep(text: string){
+    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   render() {
