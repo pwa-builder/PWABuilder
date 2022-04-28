@@ -405,8 +405,8 @@ export class AppHome extends LitElement {
   }
 
   async analyzeSite() {
-    if(this.siteURL === demoURL){
-      localStorage.setItem('demoURL', JSON.stringify(false));
+    if(this.siteURL !== demoURL){
+      sessionStorage.setItem('demoURL', JSON.stringify(false));
     }
 
     if (this.siteURL) {
@@ -479,7 +479,7 @@ export class AppHome extends LitElement {
   }
 
   placeDemoURL(){
-    localStorage.setItem('demoURL', JSON.stringify(true));
+    sessionStorage.setItem('demoURL', JSON.stringify(true));
     recordPWABuilderProcessStep("home.top.DemoURL_clicked", AnalyticsBehavior.ProcessCheckpoint);
     this.siteURL = demoURL;
     let box = this.shadowRoot!.getElementById("input-box");

@@ -50,7 +50,7 @@ export function recordPWABuilderProcessStep(
   stepType: AnalyticsBehavior.ProcessCheckpoint | AnalyticsBehavior.StartProcess | AnalyticsBehavior.ProcessCheckpoint | AnalyticsBehavior.CancelProcess | AnalyticsBehavior.CompleteProcess,
   additionalInfo?: {}) {
 
-    const demo_used = localStorage.getItem('demoURL')
+    const demo_used = JSON.parse(sessionStorage.getItem('demoURL')!);
     let scn = 'pwa-builder';
 
     if(demo_used){
