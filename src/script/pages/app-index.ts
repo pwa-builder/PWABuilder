@@ -1,6 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { Router, Route } from '@vaadin/router';
+import { isUserLoggedIn, signInUser, signOutUser } from '../services/sign-in';
 import './app-home';
 
 import '../components/app-footer';
@@ -21,13 +22,17 @@ export class AppIndex extends LitElement {
       #router-outlet > .leaving {
         animation: 160ms fadeOut ease-in-out;
       }
-      
+
       #router-outlet > .entering {
         animation: 160ms fadeIn linear;
       }
- 
+
       #router-outlet {
         position: relative;
+      }
+
+      #user-dashboard {
+        visibility: false;
       }
 
       @media (min-width: 1920px) {
@@ -89,12 +94,39 @@ export class AppIndex extends LitElement {
     console.info('[VI]{version} - {date}[/VI]');
   }
 
+  private dashboardClick() {
+    Router.go('/userDashboard');
+  }
+
   firstUpdated() {
     // this method is a lifecycle even in lit-element
     // for more info check out the lit-element docs https://lit-element.polymer-project.org/guide/lifecycle
 
     // For more info on using the @vaadin/router check here https://vaadin.com/router
     const router = new Router(this.shadowRoot?.querySelector('#router-outlet'));
+    const pwaAuth = this.shadowRoot?.querySelector('#signin');
+    console.log('Inside first updated');
+    pwaAuth?.addEventListener('signin-completed', async ev => {
+      const signIn = ev;
+      console.log('ev', ev);
+      const token = (signIn as any).detail.providerData.accessToken;
+      if (!isUserLoggedIn()) {
+        signInUser(token, true);
+      } else {
+        signInUser(token, false);
+      }
+      (
+        this.shadowRoot?.querySelector('#user-dashboard') as HTMLButtonElement
+      ).style.visibility = 'true';
+      this.setNameAfterLogin(pwaAuth, signIn);
+    });
+
+    pwaAuth?.addEventListener('signout-completed', async ev => {
+      this.requestUpdate();
+      signOutUser();
+      this.resetSignInAfterLogout(pwaAuth);
+    });
+
     router.setRoutes([
       {
         path: '',
@@ -150,9 +182,28 @@ export class AppIndex extends LitElement {
               await import('./portals-publish.js');
             },
           },
+          {
+            path: '/userDashboard',
+            component: 'user-dashboard',
+            action: async () => {
+              await import('./user-dashboard.js');
+            },
+          },
         ] as Route[],
       },
     ]);
+  }
+
+  private setNameAfterLogin(pwaAuth: Element, signIn: Event) {
+    const signInButton = pwaAuth?.shadowRoot?.querySelector('div > button');
+    signInButton
+      ? (signInButton.innerHTML = (signIn as any).detail.name)
+      : null;
+  }
+
+  private resetSignInAfterLogout(pwaAuth: Element) {
+    const signInButton = pwaAuth?.shadowRoot?.querySelector('div > button');
+    signInButton ? (signInButton.innerHTML = 'Sign In') : null;
   }
 
   render() {
@@ -160,7 +211,15 @@ export class AppIndex extends LitElement {
       <div>
         <!--required cookie banner-->
         <cookie-banner></cookie-banner>
-      
+        <pwa-auth
+          id="signin"
+          microsoftkey="ce35509c-2864-42e6-90d2-ce25c3c536e9"
+          credentialmode="silent"
+        >
+        </pwa-auth>
+        <button id="user-dashboard" @click=${() => this.dashboardClick()}>
+          User dashboard
+        </button>
         <div>
           <div id="router-outlet"></div>
         </div>

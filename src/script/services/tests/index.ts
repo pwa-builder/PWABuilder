@@ -1,3 +1,4 @@
+import { result } from 'lodash-es';
 import {
   ProgressList,
   RawTestResult,
@@ -6,6 +7,7 @@ import {
 } from '../../utils/interfaces';
 import { getProgress, getResults, setProgress, setResults } from '../app-info';
 import { giveOutBadges } from '../badges';
+import { storeOrUpdateUrlManifestScores } from '../sign-in';
 import { testManifest } from './manifest';
 import { testSecurity } from './security';
 import { testServiceWorker } from './service-worker';
@@ -31,7 +33,7 @@ export async function runAllTests(url: string): Promise<RawTestResult> {
 
       const progress = getProgress();
       updateProgress(progress, resultsObject);
-
+      storeOrUpdateUrlManifestScores(resultsObject);
       giveOutBadges();
 
       resolve(resultsObject);
@@ -67,7 +69,7 @@ export function getOverallScore() {
       securityScore = securityScore + 10;
     }
   });
-  
+
   return manifestScore + swScore + securityScore;
 }
 

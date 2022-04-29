@@ -1,6 +1,7 @@
 import { Router } from '@vaadin/router';
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import '@pwabuilder/pwaauth';
 
 import {
   xxxLargeBreakPoint,
@@ -72,8 +73,8 @@ export class AppHeader extends LitElement {
         height: 18px;
         border-bottom: 1px solid transparent;
       }
-    
-      #resources:hover span{
+
+      #resources:hover span {
         border-color: var(--font-color);
       }
 
@@ -91,9 +92,7 @@ export class AppHeader extends LitElement {
         }
       }
 
-      ${smallBreakPoint(css`
-
-      `)}
+      ${smallBreakPoint(css``)}
 
       ${mediumBreakPoint(css`
         header nav {
@@ -103,7 +102,6 @@ export class AppHeader extends LitElement {
         #desktop-nav {
           display: flex;
         }
-
       `)}
       
 
@@ -111,7 +109,6 @@ export class AppHeader extends LitElement {
         #desktop-nav {
           display: flex;
         }
-
       `)}
 
       ${xLargeBreakPoint(css`
@@ -144,12 +141,14 @@ export class AppHeader extends LitElement {
     // Cant seem to type `event` as a KeyboardEvent without TypeScript complaining
     // with an error I dont fully understand.
     // revisit: Justin
-    this.shadowRoot?.querySelector('#header-icon')?.addEventListener("keydown", (event) => {
-      // casting here because of type problem described above
-      if ((event as KeyboardEvent).key === "Enter") {
-        this.goBack();
-      }
-    })
+    this.shadowRoot
+      ?.querySelector('#header-icon')
+      ?.addEventListener('keydown', event => {
+        // casting here because of type problem described above
+        if ((event as KeyboardEvent).key === 'Enter') {
+          this.goBack();
+        }
+      });
   }
 
   goBack() {
@@ -165,9 +164,14 @@ export class AppHeader extends LitElement {
   render() {
     return html`
       <header part="header">
-        <img @click="${this.goBack}" tabindex="0" id="header-icon" src="/assets/images/header_logo.svg"
-          alt="PWA Builder logo" />
-      
+        <img
+          @click="${this.goBack}"
+          tabindex="0"
+          id="header-icon"
+          src="/assets/images/header_logo.svg"
+          alt="PWA Builder logo"
+        />
+
         <nav id="desktop-nav">
           <fast-anchor
             id="resources"
@@ -186,7 +190,12 @@ export class AppHeader extends LitElement {
             aria-label="Github repo, will open in separate tab"
             rel="noopener"
           >
-            <ion-icon role="presentation" aria-hidden="true" tab-index="-1" name="logo-github"></ion-icon>
+            <ion-icon
+              role="presentation"
+              aria-hidden="true"
+              tab-index="-1"
+              name="logo-github"
+            ></ion-icon>
           </fast-anchor>
         </nav>
       </header>

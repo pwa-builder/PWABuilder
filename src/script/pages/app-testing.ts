@@ -14,6 +14,9 @@ import '../components/app-modal';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import style from '../../../styles/animations.css';
+import { getManifestContext } from '../services/app-info';
+import { storeOrUpdateUrlManifestScores } from '../services/sign-in';
+import { TestResult } from '../utils/interfaces';
 
 @customElement('app-testing')
 export class AppTesting extends LitElement {
@@ -158,6 +161,11 @@ export class AppTesting extends LitElement {
         this.errorMessage = (err as Error).message || (err as Error).toString();
       }
     }
+  }
+
+  async storeManifestUrlScores(testResult: any) {
+    console.log('Manifest context', getManifestContext());
+    await storeOrUpdateUrlManifestScores(testResult);
   }
 
   async runTests(site: string) {
