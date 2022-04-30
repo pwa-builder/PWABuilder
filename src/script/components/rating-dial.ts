@@ -152,16 +152,16 @@ export class RatingDial extends LitElement {
   decideComment(): TemplateResult {
     const topHTML = html`<span id="rating-comment"
       >Your PWA ranks in the <span id="top">Top 100</span> of all developers
-      using PWA Builder</span
+      using PWABuilder</span
     > `;
     const middleHTML = html`<span id="rating-comment"
       >Your PWA ranks in the <span id="middle">middle</span> of all developers
-      using PWA Builder</span
+      using PWABuilder</span
     > `;
 
     const lowerHTML = html`<span id="rating-comment"
       >Your PWA ranks <span id="lower">below the average</span> of all
-      developers using PWA Builder</span
+      developers using PWABuilder</span
     > `;
 
     if (this.rating === 'middle') {

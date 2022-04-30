@@ -19,7 +19,23 @@ export class WindowsForm extends AppPackageFormBase {
 
   static get styles() {
     const localStyles = css``;
-    return [super.styles, localStyles];
+    return [
+      super.styles,
+      localStyles,
+      css`
+        .flipper-button {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .form-generate-button {
+          width: 135px;
+          height: 40px;
+          display: inherit;
+        }
+      `,
+    ];
   }
 
   constructor() {
@@ -35,6 +51,8 @@ export class WindowsForm extends AppPackageFormBase {
     this.packageOptions = createWindowsPackageOptionsFromManifest(
       manifestContext.manifest
     );
+
+    this.packageOptions.targetDeviceFamilies = ['Desktop', 'Holographic'];
   }
 
   initGenerate(ev: InputEvent) {
@@ -63,9 +81,6 @@ export class WindowsForm extends AppPackageFormBase {
   }
 
   addOrRemoveDeviceFamily(val: string, checked: boolean) {
-    if (this.packageOptions.targetDeviceFamilies === undefined) {
-      this.packageOptions.targetDeviceFamilies = ['Desktop'];
-    }
     if (checked) {
       if (!this.packageOptions.targetDeviceFamilies?.includes(val)) {
         this.packageOptions.targetDeviceFamilies?.push(val);
@@ -175,9 +190,13 @@ export class WindowsForm extends AppPackageFormBase {
               <div id="all-settings-header" slot="heading">
                 <span>All Settings</span>
 
-                <fast-button class="flipper-button" mode="stealth">
+                <div
+                  class="flipper-button"
+                  aria-label="caret dropdown"
+                  role="button"
+                >
                   <ion-icon name="caret-forward-outline"></ion-icon>
-                </fast-button>
+                </div>
               </div>
 
               <div class="adv-settings">
@@ -277,7 +296,7 @@ export class WindowsForm extends AppPackageFormBase {
                       label: 'Desktop',
                       value: 'Desktop',
                       tooltip:
-                        'Identifies the device family that your package targets. Both Desktop and Holographic are enabled by default',
+                        'Identifies the device family that your package targets. Desktop and Holographic are enabled by default',
                       tooltipLink:
                         'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-targetdevicefamily',
                       inputId: 'device-family-input-desktop',
@@ -293,12 +312,28 @@ export class WindowsForm extends AppPackageFormBase {
                       label: 'Holographic (HoloLens)',
                       value: 'Holographic',
                       tooltip:
-                        'Identifies the device family that your package targets. Both Desktop and Holographic are enabled by default',
+                        'Identifies the device family that your package targets. Desktop and Holographic are enabled by default',
                       tooltipLink:
                         'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-targetdevicefamily',
                       inputId: 'device-family-input-holographic',
                       type: 'checkbox',
                       checked: true,
+                      inputHandler: (val: string, checked: boolean) => {
+                        this.addOrRemoveDeviceFamily(val, checked);
+                      },
+                    })}
+                  </div>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Surface Hub (Team)',
+                      value: 'Team',
+                      tooltip:
+                        'Identifies the device family that your package targets. Both Desktop and Holographic are enabled by default',
+                      tooltipLink:
+                        'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-targetdevicefamily',
+                      inputId: 'device-family-input-team',
+                      type: 'checkbox',
+                      checked: false,
                       inputHandler: (val: string, checked: boolean) => {
                         this.addOrRemoveDeviceFamily(val, checked);
                       },
@@ -313,7 +348,11 @@ export class WindowsForm extends AppPackageFormBase {
           <p>${localeStrings.text.publish.windows_platform.p}</p>
         </div>
         <div id="form-options-actions" class="modal-actions">
-          <loading-button .loading="${this.generating}">
+          <loading-button
+            class="form-generate-button"
+            .loading="${this.generating}"
+            .primary=${true}
+          >
             <input id="generate-submit" type="submit" value="Generate" />
           </loading-button>
         </div>

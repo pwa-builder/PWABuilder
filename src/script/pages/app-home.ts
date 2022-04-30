@@ -6,21 +6,21 @@ import { classMap } from 'lit/directives/class-map.js';
 import { localeStrings } from '../../locales';
 
 import {
-  smallBreakPoint,
   mediumBreakPoint,
   largeBreakPoint,
-  xxLargeBreakPoint,
+  xLargeBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
 import { isValidURL } from '../utils/url';
 
-
 import '../components/content-header';
-import '../components/resource-hub';
 import '../components/loading-button';
 import '../components/dropdown-menu';
 import '../components/app-sidebar';
-import '../components/hover-tooltip';
+import '../components/companies-packaged';
+import '../components/resource-hub-new';
+import '../components/success-stories';
+import '../components/community-hub';
 
 //@ts-ignore
 import style from '../../../styles/error-styles.css';
@@ -31,7 +31,7 @@ import { Router } from '@vaadin/router';
 import { getProgress, getURL, setProgress } from '../services/app-info';
 import { Lazy, ProgressList, Status } from '../utils/interfaces';
 import { fetchOrCreateManifest } from '../services/manifest';
-import { AnalyticsBehavior, recordProcessStep } from '../utils/analytics';
+import { AnalyticsBehavior, recordProcessStep, recordPWABuilderProcessStep } from '../utils/analytics';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -45,231 +45,325 @@ export class AppHome extends LitElement {
     return [
       style,
       css`
-        content-header::part(main-container) {
+        #home-block {
+          background: url(/assets/new/HeroBackground1920.jpg);
+          background-position: center center;
+          background-size: cover;
+          background-repeat: no-repeat;
+          height: 100%;
           display: flex;
-
-          padding-top: 0;
+          flex-direction: column;
+          align-items: center;
+          padding: 4em;
         }
-
-        content-header::part(header) {
-          --header-border: none;
+        #wrapper {
+          width: 1000px;
         }
-
+        app-header::part(header) {
+          background: transparent;
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 0;
+          z-index: 2;
+          border: none;
+        }
         h1 {
           font-size: var(--xlarge-font-size);
           line-height: 48px;
           letter-spacing: -0.015em;
-          margin-bottom: 0;
+          margin-bottom: 20px;
         }
-
-        h2 {
-          font-size: var(--medium-font-size);
-          margin-block: 1em;
-          margin-bottom: 5px;
+        #input-header {
+          font-size: 1em;
+          font-weight: bold;
+          margin: 0;
+          line-height: 1.75em;
+          color: #4F3FB6;
         }
-
-        #hero-p {
-          font-size: 16px;
-          line-height: 24px;
-          letter-spacing: -0.015em;
-          color: var(--secondary-font-color);
-          max-width: 406px;
-        }
-
         #content-grid {
           padding: 0;
           margin: 0;
           display: grid;
           grid-template-columns: auto auto;
+          width: fit-content;
         }
-
         .intro-grid-item {
-          max-width: 200px;
+          width: max-content;
+          margin-right: 1em;
         }
-
-        .intro-grid-item h3 {
-          margin-bottom: 5px;
+        @keyframes bounce {
+          0%, 20%, 50%, 80%, 100% {
+              transform: translateY(0);
+          }
+          40% {
+            transform: translateX(-5px);
+          }
+          60% {
+              transform: translateX(5px);
+          }
         }
-
-        .intro-grid-item p {
-          margin-top: 0;
-          color: var(--secondary-font-color);
-          font-size: var(--font-size);
-
-          width: 194px;
-        }
-
-        #input-form {
+        .grid-item-header {
           display: flex;
-          margin-top: 1em;
+          align-items: center;
+          justify-content: flex-start;
+          font-weight: bold;
+          margin-bottom: .25em;
         }
-
+        .grid-item-header h2 {
+          margin-right: .25em;
+          border-bottom: 1px solid rgb(79, 63, 182);
+          line-height: 20px;
+          font-size: 1em;
+          font-weight: bold;
+          margin: 0;
+          margin-right: .5em;
+          line-height: 1em;
+          color: #4F3FB6;
+        }
+        .grid-item-header a {
+          color: #4F3FB6;
+          text-decoration: none;
+        }
+        .grid-item-header a:visited {
+          color: #4F3FB6;
+        }
+        .grid-item-header:hover {
+          cursor: pointer;
+        }
+        .grid-item-header:hover img {
+          animation: bounce 1s;
+        }
+        .intro-grid-item p {
+          margin: 0;
+          color: #292C3A;
+          font-size: .75em;
+          width: 15em;
+        }
+        #input-form {
+          margin-top: 1em;
+          width: max-content;
+        }
+        #input-header-holder {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: max-content;
+          margin-bottom: 10px;
+        }
+        #input-header-holder img {
+          width: auto;
+          height: 1em;
+          margin-left: 20px;
+        }
+        #input-area {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          grid-template-rows: 1fr 1fr;
+        }
+        #input-and-error {
+          grid-column: 1;
+          grid-row: 1;
+          display: flex;
+          flex-direction: column;
+        }
+        #start-button {
+          grid-column: 2;
+          grid-row: 1;
+        }
+        .raise:hover,
+        .raise:focus {
+          transform: scale(1.01);
+        }
+        #demo {
+          grid-column: 1 / 2;
+          grid-row: 2;
+        }
         #input-form fast-text-field {
-          width: 94%;
           margin-right: 10px;
         }
-
         #input-form fast-text-field::part(root) {
           border: 1px solid #e5e5e5;
           border-radius: var(--input-radius);
         }
-
         #input-form fast-text-field::part(control) {
           color: var(--font-color);
+          width: 26em;
         }
-
         #input-block {
           display: flex;
           flex-direction: column;
-
           flex: 0.8 1 0%;
           width: 100%;
         }
-
+        #demo {
+          font-size: .55em;
+          margin: 0;
+          margin-top: 5px;
+          color: #292C3A;
+        }
+        #demo-action {
+          margin: 0;
+          text-decoration: underline;
+          font-weight: bold;
+          background: none;
+          border: none;
+          padding: 0;
+          font-size: 1em;
+          margin-left: 1px;
+        }
+        #demo-action:hover{
+          cursor: pointer;
+        }
         #home-header {
           max-width: 498px;
         }
-
-
-        #discord-link {
-          position: relative;
-          bottom: 10px;
-          right: 10px;
-          z-index: 2;
-        }
-
-        #discord-link:hover {
-          cursor: pointer;
-        }
-
-        #discord-tooltip {
-          display: none;
-        }
-
-        #discord-link:hover #discord-tooltip {
-          display: block;
-          position: absolute;
-          top: 0;
-          left: 0;
-        }
-
-        ${smallBreakPoint(css`
-          content-header::part(grid-container) {
-            display: none;
+        /* 640px - 1023px */
+        ${largeBreakPoint(css`
+          #home-block {
+            padding-left: 4.5em;
+            background: url(/assets/new/HeroBackground1024.jpg);
+            background-position: center center;
+            background-size: cover;
+            background-repeat: no-repeat;
           }
-
-          content-header::part(main-container) {
-            padding-left: 0;
+          #wrapper {
+            width: 825px;
           }
-
-          h1 {
-            margin-top: 0;
-            font-size: var(--large-font-size);
-          }
-
-          #start-button {
-            margin-top: 16px;
-          }
-
-          #hero-p {
-            line-height: 22px;
-          }
-
-          #input-form {
-            flex-direction: column;
-            width: 100%;
-            align-items: center;
-          }
-
-          #input-form fast-text-field {
-            width: 100%;
-            margin-right: 0;
-          }
-
-          #input-form fast-text-field::part(root) {
-            height: 64px;
-          }
-
-          #input-form fast-text-field::part(control) {
-            font-size: 22px;
+          #content-grid {
+            column-gap: 1em;
           }
         `)}
-
+        /* 480px - 639px */
         ${mediumBreakPoint(css`
-          content-header::part(grid-container) {
-            display: none;
+          #home-block {
+            padding: 1.5em;
+            padding-top: 4em;
+            padding-bottom: 6em;
+            background: url(/assets/new/HeroBackground480.jpg);
+            background-position: center center;
+            background-size: cover;
+            background-repeat: no-repeat;
           }
-
-          content-header::part(main-container) {
-            padding-left: 0;
+          #wrapper {
+            width: 530px;
           }
-
-          h1 {
-            font-size: var(--large-font-size);
-            margin-top: 0;
+          .intro-grid-item p {
+            width: 13em;
           }
-
-          #hero-p {
-            line-height: 22px;
-            text-align: center;
-            max-width: initial;
+          #input-area {
+            width: 100%;
           }
-
+          #input-and-error {
+            margin-right: 10px;
+          }
           #input-form {
-            flex-direction: column;
             width: 100%;
-            align-items: center;
           }
-
           #input-form fast-text-field {
-            width: 100%;
             margin-right: 0;
           }
-
-          #input-form fast-text-field::part(root) {
-            height: 64px;
+          #home-header{
+            font-size: 40px;
           }
-
+        `)}
+        @media (min-width: 480px) and (max-width: 580px) {
+          #wrapper {
+            width: 400px;
+          }
+          #input-area {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            row-gap: 5px;
+          }
+        }
+        
+        /* < 480px */
+        @media (max-width: 480px) {
+          #home-block {
+            padding: 1em;
+            padding-top: 4em;
+            padding-bottom: 2em;
+            background: url(/assets/new/HeroBackground320.jpg);
+            background-position: center center;
+            background-size: cover;
+            background-repeat: no-repeat;
+          }
+          #wrapper {
+            width: 400px;
+          }
+          #home-header {
+            font-size: 1.9em;
+          }
+          #content-grid {
+            display: flex;
+            flex-direction: column;
+            row-gap: 1em;
+          }
+          #input-and-error{
+            width: 85%;
+          }
+          #input-area {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            row-gap: 5px;
+          }
+          #input-header-holder img {
+            display: none;
+          }
+          #home-header {
+            line-height: 36px;
+          }
+          #input-form {
+            width: 100%;
+          }
+          #input-form fast-text-field {
+            margin-right: 0;
+          }
           #input-form fast-text-field::part(control) {
-            font-size: 22px;
+            width: 100%;
           }
-
-          #input-block {
-            margin-bottom: 30px;
+          .grid-item-header {
+            font-size: 20px;
           }
-
-          #start-button {
-            margin-top: 45px;
+          #input-header {
+            font-size: 20px;
           }
+        }
+        @media (max-width: 415px) {
+          #wrapper {
+            width: 300px;
+          }
+        }
+        @media (min-width: 640px) and (max-width: 955px) {
+          #home-block {
+            background-position: left;
+          }
+          #wrapper {
+            width: 600px;
+          }
+        }
+        /*1024px - 1365px*/ 
+        ${xLargeBreakPoint(css`
+            #home-block {
+              background: url(/assets/new/HeroBackground1366.jpg);
+              background-position: center center;
+              background-size: cover;
+              background-repeat: no-repeat;
+            }
         `)}
-
-
-      ${largeBreakPoint(css`
-          content-header::part(main-container) {
-            padding-left: 16px;
-          }
-        `)}
-
-      ${xxLargeBreakPoint(css`
-          .intro-grid-item {
-            max-width: 280px;
-          }
-
-          h1 {
-            max-width: 600px;
-          }
-
-          content-header::part(main-container) {
-            padding-left: 5em;
-            justify-content: flex-start;
-          }
-        `)}
-
-      ${xxxLargeBreakPoint(css`
-          content-header::part(main-container) {
-            padding-left: 10em;
-            justify-content: flex-start;
-          }
+          /* > 1920 */
+        ${xxxLargeBreakPoint(css`
+            #home-block {
+              align-items: center;
+            }
+            #wrapper {
+              width: 1160px;
+            }
         `)}
       `,
     ];
@@ -287,6 +381,15 @@ export class AppHome extends LitElement {
       this.siteURL = site.trim();
       await this.analyzeSite();
     }
+
+    recordPWABuilderProcessStep('landing-page-loaded', AnalyticsBehavior.StartProcess);
+
+    /*
+    Step 1: Start the process on home page load
+    Step 2: Track any button presses a checkpoint
+    Step 3: end the process when the user packages
+    timer for first action
+    */
   }
 
   handleURL(inputEvent: InputEvent) {
@@ -302,6 +405,10 @@ export class AppHome extends LitElement {
   }
 
   async analyzeSite() {
+    if(this.siteURL !== demoURL){
+      sessionStorage.setItem('demoURL', JSON.stringify(false));
+    }
+
     if (this.siteURL) {
       this.gettingManifest = true;
       const isValidUrl = isValidURL(this.siteURL);
@@ -313,7 +420,12 @@ export class AppHome extends LitElement {
           url: this.siteURL,
           valid: isValidUrl
         });
-
+      recordPWABuilderProcessStep('.top.entered_link_testing_started', AnalyticsBehavior.ProcessCheckpoint, 
+      {
+        url: this.siteURL,
+        valid: isValidUrl
+      });
+      
       if (isValidUrl) {
         try {
           const manifestContext = await fetchOrCreateManifest(this.siteURL);
@@ -345,7 +457,7 @@ export class AppHome extends LitElement {
       } else {
         this.errorMessage = localeStrings.input.home.error.invalidURL;
         this.errorGettingURL = true;
-
+        
         await this.updateComplete;
 
         (this.shadowRoot?.querySelector('.error-message') as HTMLSpanElement)?.focus();
@@ -366,73 +478,81 @@ export class AppHome extends LitElement {
     }
   }
 
+  placeDemoURL(){
+    sessionStorage.setItem('demoURL', JSON.stringify(true));
+    recordPWABuilderProcessStep("home.top.DemoURL_clicked", AnalyticsBehavior.ProcessCheckpoint);
+    this.siteURL = demoURL;
+    let box = this.shadowRoot!.getElementById("input-box");
+    (box as HTMLInputElement)!.value = this.siteURL;
+    this.analyzeSite();
+  }
+
+
   render() {
     return html`
       <app-header part="header"></app-header>
       <main>
-      <content-header class="home">
-        <h1 id="home-header" slot="hero-container">
-          Ship your PWA to the app stores at lightning speed.
-        </h1>
-        <section id="content-grid" slot="grid-container">
-          <div class="intro-grid-item">
-            <h2>Test</h2>
-            <p>
-              PWABuilder will make sure your web app is a PWA and ready for the
-              stores!
-            </p>
+        <div id="home-block">
+          <div id="wrapper">
+            <h1 id="home-header" slot="hero-container">
+              Helping developers build and publish PWAs
+            </h1>
+            <section id="content-grid" slot="grid-container">
+              <div class="intro-grid-item">
+                <div class="grid-item-header">  
+                  <h2><a @click=${() => recordPWABuilderProcessStep("home.top.PWAStarter_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://github.com/pwa-builder/pwa-starter/wiki/Getting-Started" target="_blank" rel="noopener">Start a new PWA</a></h2>
+                  <img src="/assets/new/arrow.svg" alt="arrow" />
+                  
+                </div>
+                <p>
+                  Looking to build a new Progressive Web App? Checkout all the documentation here.
+                </p>
+              </div>
+          
+              <div class="intro-grid-item">
+                <div class="grid-item-header">  
+                  <h2><a @click=${() => recordPWABuilderProcessStep("home.top.PWAStudio_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://marketplace.visualstudio.com/items?itemName=PWABuilder.pwa-studio" target="_blank" rel="noopener">Use dev tools</a></h2>
+                  <img src="/assets/new/arrow.svg" alt="arrow" />
+                </div>
+                <p>
+                  Use our VS Code extension to create, improve, and package your PWA directly in your code editor.
+                </p>
+              </div>
+            </section>
+          
+            <form id="input-form" slot="input-container" @submit="${(e: InputEvent) => this.start(e)}">
+              <div id="input-block" role="region">
+                <div id="input-header-holder">
+                  <h2 id="input-header">Ship your PWA to app stores</h2>
+                  <img src="/assets/new/store-logos.png" alt="store logos" />
+                </div>
+                <div id="input-area">
+                  <div id="input-and-error">
+                    <fast-text-field slot="input-container" type="text" id="input-box" placeholder="Enter the URL to your PWA" name="url-input"
+                      class="${classMap({ error: this.errorGettingURL })}" @input="${(e: InputEvent) => this.handleURL(e)}">
+                    </fast-text-field>
+              
+                    ${this.errorMessage && this.errorMessage.length > 0
+                      ? html`<span role="alert" aria-live="polite" class="error-message">${this.errorMessage}</span>`
+                      : null}
+                  </div>
+            
+                  <loading-button id="start-button" type="submit" class="navigation raise" ?loading="${this.gettingManifest}"
+                  @click="${(e: InputEvent) => this.start(e)}">Start</loading-button>
+                  <p id="demo">Try a <button id="demo-action" aria-label="click here for demo url" @click=${() => this.placeDemoURL()}>demo url</button></p>
+                </div>
+                
+              </div>
+            </form>
           </div>
-      
-          <div class="intro-grid-item">
-            <h2>Manage</h2>
-            <p>
-              Our Report Card will let you know if your PWA is store-ready. If
-              not, PWABuilder will help you get there!
-            </p>
-          </div>
-      
-          <div class="intro-grid-item">
-            <h2>Package</h2>
-            <p>
-              Once you are ready, PWABuilder can package your PWA for the app
-              stores in minutes!
-            </p>
-          </div>
-      
-          <div class="intro-grid-item">
-            <h2>Explore</h2>
-            <p>
-              PWAs are moving forward fast, learn about new web APIs, store
-              readiness, and more!
-            </p>
-          </div>
-        </section>
-      
-        <form id="input-form" slot="input-container" @submit="${(e: InputEvent) => this.start(e)}">
-          <div id="input-block" role="region">
-            <fast-text-field slot="input-container" type="text" placeholder="Enter the URL to your PWA" name="url-input"
-              class="${classMap({ error: this.errorGettingURL })}" @input="${(e: InputEvent) => this.handleURL(e)}">
-            </fast-text-field>
-      
-            ${this.errorMessage && this.errorMessage.length > 0
-              ? html`<span role="alert" aria-live="polite" class="error-message">${this.errorMessage}</span>`
-              : null}
-          </div>
-      
-          <loading-button id="start-button" type="submit" class="navigation" ?loading="${this.gettingManifest}"
-            @click="${(e: InputEvent) => this.start(e)}">Start</loading-button>
-        </form>
-      </content-header>
-      
-      <resource-hub page="home" all>
-        <h1 slot="title">PWABuilder Resource Hub</h1>
-        <p slot="description">
-          Jump to our blog, find our documentation and check out demos and
-          components from the PWABuilder team!
-        </p>
-      </resource-hub>
-      </div>
+        </div>
+        <companies-packaged></companies-packaged>
+        <resource-hub-new></resource-hub-new>
+        <success-stories></success-stories>
+        <community-hub></community-hub>
       </main>
     `;
   }
 }
+
+const demoURL: string = "https://webboard.app";

@@ -31,8 +31,18 @@ export class AndroidForm extends AppPackageFormBase {
       #signing-key-file-input {
         border: none;
       }
-      
-      
+    
+      .flipper-button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .form-generate-button {
+        width: 135px;
+        height: 40px;
+        display: inherit;
+      }
     `;
     return [
       super.styles,
@@ -223,9 +233,9 @@ export class AndroidForm extends AppPackageFormBase {
               <div id="all-settings-header" slot="heading">
                 <span>All Settings</span>
 
-                <fast-button class="flipper-button" mode="stealth">
+                <div class="flipper-button" aria-label="caret dropdown" role="button">
                   <ion-icon name="caret-forward-outline"></ion-icon>
-                </fast-button>
+                </div>
               </div>
 
               <div class="adv-settings">
@@ -656,7 +666,7 @@ export class AndroidForm extends AppPackageFormBase {
         }
 
         <div id="form-options-actions" class="modal-actions">
-          <loading-button .loading="${this.generating}">
+          <loading-button class="form-generate-button" .loading="${this.generating}" .primary=${true}>
             <input id="generate-submit" type="submit" value="Generate" />
           </loading-button>
         </div>

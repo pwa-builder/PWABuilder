@@ -71,6 +71,10 @@ export class AppCongrats extends LitElement {
           --button-width: 152px;
         }
 
+        app-button#return-to-manifest-button {
+          --button-width: 200px;
+        }
+
         #summary-block {
           padding: 16px 16px 16px 36px;
           border-bottom: var(--list-border);
@@ -204,6 +208,12 @@ export class AppCongrats extends LitElement {
 
         #platform-actions-block {
           margin-left: 16px;
+        }
+
+        .test-package-button {
+          width: 150px;
+          height: 40px;
+          display: inherit;
         }
       `,
       xxxLargeBreakPoint(
@@ -559,7 +569,7 @@ export class AppCongrats extends LitElement {
         />
 
         <div slot="modal-actions">
-          <app-button @click="${() => this.returnToFix()}"
+          <app-button id="return-to-manifest-button" @click="${() => this.returnToFix()}"
             >Return to Manifest Options</app-button
           >
         </div>
@@ -772,7 +782,8 @@ export class AppCongrats extends LitElement {
           <loading-button
             ?loading=${this.generating}
             id="test-package-button"
-            class="navigation secondary"
+            class="navigation test-package-button secondary"
+            .secondary=${true}
             @click="${() => this.generateApp('windows')}">
             Test Package
             </loading-button>

@@ -62,6 +62,7 @@ import {
 } from '../utils/interfaces.components';
 import { IconInfo } from '../utils/icons';
 import { debounce } from '../utils/debounce';
+import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
 type ColorRadioValues = 'none' | 'custom';
 
@@ -351,6 +352,20 @@ export class AppManifest extends LitElement {
 
           color: var(--font-color);
         }
+
+        .download-icon-button {
+          width: 150px;
+          height: 40px;
+          display: inherit;
+        }
+
+        .generate-button {
+          width: 150px;
+          height: 40px;
+          display: inherit;
+          margin-bottom: 15px;
+          margin-top: 15px;
+        }
       `,
       // modal
       css`
@@ -496,9 +511,10 @@ export class AppManifest extends LitElement {
   renderDownloadButton(): TemplateResult {
     if(this.iconsList) {
      return html`<loading-button
-            class="hidden-sm"
+            class="hidden-sm download-icon-button"
             appearance="outline"
             ?loading=${this.awaitRequest}
+            ?secondary=${true}
             @click=${this.downloadIcons}
             >${localeStrings.button.download}</loading-button
           >`
@@ -670,10 +686,12 @@ export class AppManifest extends LitElement {
 
           <div class="screenshots-actions">
             <loading-button
+              class="generate-button"
               appearance="outline"
               type="submit"
               ?loading=${this.awaitRequest}
               ?disabled=${this.generateScreenshotButtonDisabled}
+              ?secondary=${true}
               @click=${this.generateScreenshots}
               >${localeStrings.button.generate}</loading-button
             >
@@ -1217,6 +1235,7 @@ export class AppManifest extends LitElement {
   }
 
   handleEditorOpened() {
+    recordPWABuilderProcessStep("manifest_options.view_code_clicked", AnalyticsBehavior.ProcessCheckpoint);
     this.editorOpened = !this.editorOpened;
   }
 
@@ -1238,6 +1257,7 @@ export class AppManifest extends LitElement {
   }
 
   done() {
+    recordPWABuilderProcessStep("manifest_options.done_manifest_options_clicked", AnalyticsBehavior.ProcessCheckpoint);
     const event = new CustomEvent('back-to-overview', {
       detail: {
         open: true,
@@ -1247,7 +1267,7 @@ export class AppManifest extends LitElement {
   }
 
   openUploadModal() {
-
+    recordPWABuilderProcessStep("manifest_options.upload_icons_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
     this.uploadModalOpen = true;
   }
 
@@ -1263,6 +1283,7 @@ export class AppManifest extends LitElement {
   }
 
   async downloadIcons() {
+    recordPWABuilderProcessStep("manifest_options.download_icons_clicked", AnalyticsBehavior.ProcessCheckpoint);
     this.awaitRequest = true;
 
     try {
@@ -1282,6 +1303,7 @@ export class AppManifest extends LitElement {
   }
 
   async generateScreenshots() {
+    recordPWABuilderProcessStep("manifest_options.generate_screenshots_clicked", AnalyticsBehavior.ProcessCheckpoint);
     try {
       this.awaitRequest = true;
 

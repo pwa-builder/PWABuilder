@@ -77,7 +77,7 @@ export function generateWindowsPackageId(host: string): string {
     .filter(p => p.length > 0)
     .map(p => p.replace(DISALLOWED_WINDOWS_PACKAGE_CHARS_REGEX, '-'));
   parts.push('edge');
-  return parts.join('.');
+  return parts.join('.').slice(0, 50);
 }
 
 export function validateWindowsOptions(
@@ -194,7 +194,7 @@ function validateWindowsAnaheimPackageVersions(
       break;
     }
   }
-  console.log(i, versionArray.length);
+  // Check if versions are equal
   if (i == versionArray.length) {
     isValidVersion = false;
   }
