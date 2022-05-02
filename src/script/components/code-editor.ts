@@ -14,6 +14,7 @@ import {
 import { increment } from '../utils/id';
 
 import './app-button';
+import { recordProcessStep, AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
 @customElement('code-editor')
 export class CodeEditor extends LitElement {
@@ -94,6 +95,7 @@ export class CodeEditor extends LitElement {
   }
 
   async copyCode() {
+    recordPWABuilderProcessStep("code_editor.copy_code_clicked", AnalyticsBehavior.ProcessCheckpoint);
     const doc = this.editorState?.doc;
 
     if (doc) {

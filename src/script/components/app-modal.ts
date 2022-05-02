@@ -9,6 +9,7 @@ import { turnOffScroll, turnOnScroll } from '../utils/dom-utils';
 //@ts-ignore
 import ModalStyles from '../../../styles/modal-styles.css';
 import { AppModalElement } from '../utils/interfaces.components';
+import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
 @customElement('app-modal')
 export class AppModal extends LitElement implements AppModalElement {
@@ -205,6 +206,7 @@ export class AppModal extends LitElement implements AppModalElement {
   }
 
   async close() {
+    recordPWABuilderProcessStep(this.heading.split(" ").join("_") + "_modal_closed", AnalyticsBehavior.ProcessCheckpoint);
     if (this.modalAni && this.backgroundAni) {
       this.modalAni.reverse();
       this.backgroundAni.reverse();
@@ -260,3 +262,4 @@ export class AppModal extends LitElement implements AppModalElement {
     }
   }
 }
+

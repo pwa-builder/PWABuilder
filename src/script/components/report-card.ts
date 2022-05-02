@@ -20,7 +20,7 @@ import { getPossibleBadges, sortBadges } from '../services/badges';
 
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
-import { AnalyticsBehavior, recordProcessStep } from '../utils/analytics';
+import { AnalyticsBehavior, recordProcessStep, recordPWABuilderProcessStep } from '../utils/analytics';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {
@@ -338,6 +338,14 @@ export class ReportCard extends LitElement {
       hasHttps: this.scoreCardResults.security.some(t => t.result === true)
     });
 
+    recordPWABuilderProcessStep('url-analyzed', AnalyticsBehavior.ProcessCheckpoint, {
+      url: this.currentURL || '',
+      score: this.overallScore,
+      hasManifest: Array.isArray(this.scoreCardResults.manifest) && this.scoreCardResults.manifest.some(t => t.result === true),
+      hasServiceWorker: this.scoreCardResults.service_worker.some(t => t.result === true),
+      hasHttps: this.scoreCardResults.security.some(t => t.result === true)
+    });
+
     await this.handleBadges();
   }
 
@@ -408,7 +416,8 @@ export class ReportCard extends LitElement {
     });
   }
 
-  opened(targetEl: EventTarget | null) {
+  opened(targetEl: EventTarget | null, analyticText: string) {
+    recordPWABuilderProcessStep(analyticText + "_clicked", AnalyticsBehavior.ProcessCheckpoint);
     if (targetEl) {
       const flipperButton = (targetEl as Element).classList.contains(
         'flipper-button'
@@ -487,6 +496,7 @@ export class ReportCard extends LitElement {
   }
 
   openManiOptions() {
+    recordPWABuilderProcessStep("manifest_accordion.manifest_options_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
     const event = new CustomEvent('open-mani-options', {
       detail: {
         open: true,
@@ -496,6 +506,7 @@ export class ReportCard extends LitElement {
   }
 
   openSWOptions() {
+    recordPWABuilderProcessStep("sw_accordion.sw_options_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
     const event = new CustomEvent('open-sw-options', {
       detail: {
         open: true,
@@ -505,6 +516,7 @@ export class ReportCard extends LitElement {
   }
 
   async decideWhereToGo() {
+    recordPWABuilderProcessStep("next_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
     const baseOrPublishIffy = await baseOrPublish();
 
     if (baseOrPublishIffy === 'base') {
@@ -532,7 +544,7 @@ export class ReportCard extends LitElement {
         <div id="report-content">
           <fast-accordion>
             <fast-accordion-item
-              @click="${(ev: Event) => this.opened(ev.target)}"
+              @click="${(ev: Event) => this.opened(ev.target, "manifest-accordian")}"
             >
               <div class="accordion-heading-block" slot="heading">
                 <span class="accordion-heading">Manifest</span>
@@ -549,7 +561,7 @@ export class ReportCard extends LitElement {
                     >${this.maniScore}</span
                   >
 
-                  <div class="flipper-button">
+                  <div class="flipper-button" aria-label="caret dropdown" role="button">
                     <ion-icon name="caret-forward-outline"></ion-icon> 
                   </div>                
                   
@@ -591,7 +603,7 @@ export class ReportCard extends LitElement {
                 : null}
             </fast-accordion-item>
             <fast-accordion-item
-              @click="${(ev: Event) => this.opened(ev.target)}"
+              @click="${(ev: Event) => this.opened(ev.target, "sw-accordian")}"
             >
               <div class="accordion-heading-block" slot="heading">
                 <span class="accordion-heading">Service Worker</span>
@@ -608,7 +620,7 @@ export class ReportCard extends LitElement {
                     >${this.swScore}</span
                   >
 
-                  <div class="flipper-button">
+                  <div class="flipper-button" aria-label="caret dropdown" role="button">
                     <ion-icon name="caret-forward-outline"></ion-icon> 
                   </div> 
                 </div>
@@ -651,7 +663,7 @@ export class ReportCard extends LitElement {
                 : null}
             </fast-accordion-item>
             <fast-accordion-item
-              @click="${(ev: Event) => this.opened(ev.target)}"
+              @click="${(ev: Event) => this.opened(ev.target, "security-accordian")}"
             >
               <div class="accordion-heading-block" slot="heading">
                 <span class="accordion-heading">Security</span>
@@ -668,7 +680,7 @@ export class ReportCard extends LitElement {
                     >${this.securityScore}</span
                   >
 
-                  <div class="flipper-button">
+                  <div class="flipper-button" aria-label="caret dropdown" role="button">
                     <ion-icon name="caret-forward-outline"></ion-icon> 
                   </div> 
                 </div>

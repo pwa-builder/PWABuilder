@@ -33,7 +33,7 @@ import { generatePackage, Platform } from '../services/publish';
 import { getReportErrorUrl } from '../utils/error';
 import { styles as ToolTipStyles } from '../components/tooltip';
 import { localeStrings } from '../../locales';
-import { AnalyticsBehavior, recordProcessStep } from '../utils/analytics';
+import { AnalyticsBehavior, recordProcessStep, recordPWABuilderProcessStep } from '../utils/analytics';
 import { getManifestContext, getURL } from '../services/app-info';
 import { IOSAppPackageOptions } from '../utils/ios-validation';
 import { WindowsPackageOptions } from '../utils/win-validation';
@@ -553,6 +553,12 @@ export class AppPublish extends LitElement {
       AnalyticsBehavior.CompleteProcess,
       { url: getURL() });
 
+      recordProcessStep(
+        'pwa-builder',
+        `create-${platform}-package`,
+        AnalyticsBehavior.CompleteProcess,
+        { url: getURL() });
+
     try {
       this.generating = true;
       const packageData = await generatePackage(platform, options);
@@ -576,6 +582,14 @@ export class AppPublish extends LitElement {
           url: getURL(),
           error: err
         });
+        recordProcessStep(
+          'pwa-builder',
+          `create-${platform}-package-failed`,
+          AnalyticsBehavior.CancelProcess,
+          {
+            url: getURL(),
+            error: err
+          });
     } finally {
       this.generating = false;
       this.openAndroidOptions = false;
@@ -626,14 +640,17 @@ export class AppPublish extends LitElement {
   }
 
   showWindowsOptionsModal() {
+    recordPWABuilderProcessStep("windows_store_modal_opened", AnalyticsBehavior.ProcessCheckpoint)
     this.openWindowsOptions = true;
   }
 
   showAndroidOptionsModal() {
+    recordPWABuilderProcessStep("android_store_modal_opened", AnalyticsBehavior.ProcessCheckpoint);
     this.openAndroidOptions = true;
   }
 
   showiOSOptionsModal() {
+    recordPWABuilderProcessStep("ios_store_modal_opened", AnalyticsBehavior.ProcessCheckpoint);
     this.openiOSOptions = true;
   }
 
@@ -662,7 +679,7 @@ export class AppPublish extends LitElement {
       </app-button>
       <div>
         <loading-button id="windows-test-pkg-btn" class="navigation secondary" ?loading=${this.generating} id="test-package-button"
-          @click="${this.generateWindowsTestPackage}">
+          @click="${this.generateWindowsTestPackage}" .secondary="${true}">
           Test Package
         </loading-button>
         <hover-tooltip
@@ -691,6 +708,7 @@ export class AppPublish extends LitElement {
   }
 
   returnToFix() {
+    recordPWABuilderProcessStep("back_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
     const resultsString = sessionStorage.getItem('results-string');
 
     // navigate back to report-card page

@@ -16,6 +16,7 @@ import '../components/code-editor';
 
 //@ts-ignore
 import style from '../../../styles/list-defaults.css';
+import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
 interface ServiceWorkerChoice {
   id: number;
@@ -162,6 +163,12 @@ export class SWPicker extends LitElement {
           align-items: center;
           justify-content: space-between;
         }
+
+        .sw-download-button {
+          width: 150px;
+          height: 40px;
+          display: inherit;
+        }
       `,
     ];
   }
@@ -179,6 +186,8 @@ export class SWPicker extends LitElement {
   }
 
   chooseSW(sw: ServiceWorkerChoice) {
+    recordPWABuilderProcessStep("sw_options.sw" + sw.id + "_selected", AnalyticsBehavior.ProcessCheckpoint);
+    
     this.chosenSW = sw.id;
 
     if (this.chosenSW) {
@@ -192,6 +201,7 @@ export class SWPicker extends LitElement {
   }
 
   done() {
+    recordPWABuilderProcessStep("sw_options.done_sw_options_clicked", AnalyticsBehavior.ProcessCheckpoint);
     const event = new CustomEvent('back-to-overview', {
       detail: {
         open: true,
@@ -223,6 +233,8 @@ export class SWPicker extends LitElement {
   }
 
   async handleEditorOpened(swID: number, event: Event) {
+    recordPWABuilderProcessStep("sw_options.sw" + swID + "_view_code_clicked", AnalyticsBehavior.ProcessCheckpoint);
+
     // close all the accordions and flipper buttons
     this.resetSWCodeEditor();
 
@@ -330,7 +342,8 @@ export class SWPicker extends LitElement {
                             .loading=${this.downloading}
                             @click="${() => this.downloadSW(sw.id)}"
                             appearance="outline"
-                            class="secondary"
+                            class="sw-download-button secondary"
+                            .secondary=${true}
                             >Download Service Worker</loading-button
                           >
                         </code-editor>

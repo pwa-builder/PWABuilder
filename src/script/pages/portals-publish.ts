@@ -444,6 +444,7 @@ export class PortalsPublish extends LitElement {
                       class="navigation secondary"
                       ?loading=${this.generating}
                       id="test-package-button"
+                      .secondary=${true}
                       @click="${() => this.generate('windows')}">
                       Test Package
                       <info-circle-tooltip 
