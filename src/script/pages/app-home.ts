@@ -511,7 +511,7 @@ export class AppHome extends LitElement {
           
               <div class="intro-grid-item">
                 <div class="grid-item-header">  
-                  <h2><a @click=${() => recordPWABuilderProcessStep("home.top.PWAStudio_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://marketplace.visualstudio.com/items?itemName=PWABuilder.pwa-studio" target="_blank" rel="noopener">Use dev tools</a></h2>
+                  <h2><a @click=${() => recordPWABuilderProcessStep("home.top.PWAStudio_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://aka.ms/install-pwa-studio" target="_blank" rel="noopener">Use dev tools</a></h2>
                   <img src="/assets/new/arrow.svg" alt="arrow" />
                 </div>
                 <p>
