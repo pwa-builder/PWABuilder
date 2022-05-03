@@ -30,5 +30,11 @@
   <script src="//cdn.jsdelivr.net/npm/docsify-prism@latest/dist/docsify-prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/docsify-tabs@1"></script>
+
+  <script type="module">
+    import {recordPageView} from './public/analytics/index.js';
+
+    console.log(recordPageView);
+  </script>
 </body>
 </html>
