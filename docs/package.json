@@ -1,0 +1,14 @@
+{
+  "name": "docs",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "start": "docsify serve",
+    "preinstall": "node ../scripts/setupDeps.js"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "docsify-cli": "^4.4.4"
+  }
+}
