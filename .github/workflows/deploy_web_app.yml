@@ -19,10 +19,14 @@ on:
   push:
     branches:
       - dev
+    paths:
+      - "apps/pwabuilder/*"
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
       - dev
+    paths:
+      - "apps/pwabuilder/*"
 
 env:
   NODE_VERSION: '14.x' # set this to the node version to use
@@ -30,6 +34,9 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/pwabuilder
 
     steps:
       - uses: actions/checkout@v2
