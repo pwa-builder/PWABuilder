@@ -76,7 +76,7 @@ export class AppPublish extends LitElement {
         "2.5 billion store enabled devices"
       ],
       isActionCard: true,
-      icon: '/assets/android_icon.svg',
+      icon: '/assets/Publish_Android.svg',
       renderDownloadButton: () => this.renderAndroidDownloadButton()
     },
     {
@@ -88,7 +88,7 @@ export class AppPublish extends LitElement {
         "1B+ store enabled devices."
       ],
       isActionCard: true,
-      icon: '/assets/windows_icon.svg',
+      icon: '/assets/Publish_Windows.svg',
       renderDownloadButton: () => this.renderWindowsDownloadButton()
     },
     {
@@ -99,7 +99,7 @@ export class AppPublish extends LitElement {
         "Premium devices."
       ],
       isActionCard: true,
-      icon: '/assets/apple_icon.svg',
+      icon: '/assets/Publish_Apple.svg',
       renderDownloadButton: () => this.renderiOSDownloadButton()
     },
     {
@@ -110,7 +110,7 @@ export class AppPublish extends LitElement {
         "[Insert Oculus bullet points here]"
       ],
       isActionCard: true,
-      icon: '/assets/oculus_icon.svg',
+      icon: '/assets/Publish_Oculus.svg',
       renderDownloadButton: () => this.renderOculusDownloadButton()
     }
   ];

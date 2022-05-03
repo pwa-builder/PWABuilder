@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { recordProcessStep, AnalyticsBehavior, AnalyticsActionType, recordPageAction } from '../utils/analytics';
+import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
 import {
   smallBreakPoint,
@@ -113,14 +113,9 @@ export class SuccessCard extends LitElement {
     super();
   }
 
-  recordStep(){
-    recordProcessStep('pwa-builder', `${this.company}-card-clicked`, AnalyticsBehavior.ProcessCheckpoint);
-    recordPageAction(`${this.company}-card-clicked`, AnalyticsActionType.LeftClick, AnalyticsBehavior.Click)
-  }
-
   render() {
     return html`
-      <a @click=${() => this.recordStep()} class="success-card" href="${this.source}" rel="noopener" target="_blank">
+      <a @click=${() => recordPWABuilderProcessStep("home.middle." + this.company + "_clicked", AnalyticsBehavior.ProcessCheckpoint)} class="success-card" href="${this.source}" rel="noopener" target="_blank">
         <div class="success-line-one">
           <h3>${this.cardValue}</h3>
           <img src=${this.imageUrl} alt="${this.company} logo"/>
