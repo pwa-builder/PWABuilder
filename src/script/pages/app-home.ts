@@ -31,7 +31,7 @@ import { Router } from '@vaadin/router';
 import { getProgress, getURL, setProgress } from '../services/app-info';
 import { Lazy, ProgressList, Status } from '../utils/interfaces';
 import { fetchOrCreateManifest } from '../services/manifest';
-import { AnalyticsActionType, AnalyticsBehavior, recordPageAction, recordProcessStep } from '../utils/analytics';
+import { AnalyticsBehavior, recordProcessStep } from '../utils/analytics';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
