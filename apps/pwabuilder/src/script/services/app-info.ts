@@ -228,8 +228,8 @@ function getManifestFromSessionOrEmpty(): ManifestContext {
     scope: '/',
     lang: 'en',
     description: 'placeholder description',
-    theme_color: 'none',
-    background_color: 'none',
+    theme_color: '#000000',
+    background_color: '#000000',
     icons: [],
     screenshots: [],
   };
