@@ -1,7 +1,7 @@
 import { Router } from '@vaadin/router';
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { AnalyticsBehavior, recordProcessStep } from '../utils/analytics';
+import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
 import {
   xxxLargeBreakPoint,
@@ -154,7 +154,7 @@ export class AppHeader extends LitElement {
   }
 
   goBack() {
-    this.recordStep("header-logo");
+    recordPWABuilderProcessStep(`.header.logo_clicked`, AnalyticsBehavior.ProcessCheckpoint);
     const pathName = location.pathname;
 
     if (pathName === '/' || pathName === '/reportcard') {
@@ -163,16 +163,12 @@ export class AppHeader extends LitElement {
       window.history.back();
     }
   }
-  
-  recordStep(text: string){
-    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
-  }
 
   render() {
     return html`
       <header part="header">
         <img @click="${this.goBack}" tabindex="0" id="header-icon" src="/assets/images/header_logo.svg"
-          alt="PWA Builder logo" />
+          alt="PWABuilder logo" />
       
         <nav id="desktop-nav">
           <fast-anchor
@@ -182,7 +178,7 @@ export class AppHeader extends LitElement {
             target="__blank"
             aria-label="Resources, will open in separate tab"
             rel="noopener"
-            @click=${() => this.recordStep("header-resources")}
+            @click=${() => recordPWABuilderProcessStep(`.header.resources_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
             ><span>Resources</span></fast-anchor
           >
 
@@ -192,7 +188,7 @@ export class AppHeader extends LitElement {
             target="__blank"
             aria-label="Github repo, will open in separate tab"
             rel="noopener"
-            @click=${() => this.recordStep("header-github")}
+            @click=${() => recordPWABuilderProcessStep(`.header.github_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
             <ion-icon role="presentation" aria-hidden="true" tab-index="-1" name="logo-github"></ion-icon>
           </fast-anchor>

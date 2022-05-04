@@ -17,9 +17,26 @@ export class WindowsForm extends AppPackageFormBase {
   @state() showAdvanced = false;
   @state() packageOptions: WindowsPackageOptions = emptyWindowsPackageOptions();
 
+
+
   static get styles() {
     const localStyles = css``;
-    return [super.styles, localStyles];
+    return [
+      super.styles, 
+      localStyles,
+      css `
+      .flipper-button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .form-generate-button {
+        width: 135px;
+        height: 40px;
+        display: inherit;
+      }
+    `];
   }
 
   constructor() {
@@ -177,9 +194,9 @@ export class WindowsForm extends AppPackageFormBase {
               <div id="all-settings-header" slot="heading">
                 <span>All Settings</span>
 
-                <fast-button class="flipper-button" mode="stealth">
+                <div class="flipper-button" aria-label="caret dropdown" role="button">
                   <ion-icon name="caret-forward-outline"></ion-icon>
-                </fast-button>
+                </div>
               </div>
 
               <div class="adv-settings">
@@ -318,7 +335,7 @@ export class WindowsForm extends AppPackageFormBase {
           <p>${localeStrings.text.publish.windows_platform.p}</p>
         </div>
         <div id="form-options-actions" class="modal-actions">
-          <loading-button .loading="${this.generating}">
+          <loading-button class="form-generate-button" .loading="${this.generating}" .primary=${true}>
             <input id="generate-submit" type="submit" value="Generate" />
           </loading-button>
         </div>

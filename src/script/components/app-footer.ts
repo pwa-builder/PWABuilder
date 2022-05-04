@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit';
 
 import { customElement } from 'lit/decorators.js';
-import { recordProcessStep, AnalyticsBehavior } from '../utils/analytics';
+import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
 import {
   smallBreakPoint,
@@ -141,16 +141,12 @@ export class AppFooter extends LitElement {
     super();
   }
 
-  recordStep(text: string){
-    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
-  }
-
   render() {
     return html`
       <footer>
         <div id="footer-top">
           <span
-            >PWA Builder was founded by Microsoft as a community guided, open
+            >PWABuilder was founded by Microsoft as a community guided, open
             source project to help move PWA adoption forward.</span
           >
 
@@ -159,14 +155,14 @@ export class AppFooter extends LitElement {
               target="_blank"
               rel="noopener"
               href="https://privacy.microsoft.com/en-us/privacystatement"
-              @click=${() => this.recordStep("privacy-policy")}
+              @click=${() => recordPWABuilderProcessStep(`.footer.privacy_policy_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
               >Our Privacy Statement</a
             >
             <a
               target="_blank"
               rel="noopener"
               href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md"
-              @click=${() => this.recordStep("terms-of-use")}
+              @click=${() => recordPWABuilderProcessStep(`.footer.terms_of_use_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
               >Terms of Use</a
             >
           </div>
@@ -178,7 +174,7 @@ export class AppFooter extends LitElement {
             rel="noopener"
             appearance="hypertext"
             href="https://github.com/pwa-builder/PWABuilder"
-            @click=${() => this.recordStep("footer-github")}
+            @click=${() => recordPWABuilderProcessStep(`.footer.github_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
             <ion-icon name="logo-github"></ion-icon>
           </fast-anchor>
@@ -188,7 +184,7 @@ export class AppFooter extends LitElement {
             rel="noopener"
             appearance="hypertext"
             href="https://twitter.com/pwabuilder"
-            @click=${() => this.recordStep("footer-twitter")}
+            @click=${() => recordPWABuilderProcessStep(`.footer.twitter_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
             <ion-icon name="logo-twitter"></ion-icon>
           </fast-anchor>
@@ -198,7 +194,7 @@ export class AppFooter extends LitElement {
             rel="noopener"
             appearance="hypertext"
             href="https://www.youtube.com/c/PWABuilder"
-            @click=${() => this.recordStep("footer-youtube")}
+            @click=${() => recordPWABuilderProcessStep(`.footer.youtube_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
             <ion-icon name="logo-youtube"></ion-icon>
           </fast-anchor>

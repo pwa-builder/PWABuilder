@@ -20,7 +20,7 @@ import { getPossibleBadges, sortBadges } from '../services/badges';
 
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
-import { AnalyticsBehavior, recordProcessStep } from '../utils/analytics';
+import { AnalyticsBehavior, recordProcessStep, recordPWABuilderProcessStep } from '../utils/analytics';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {
@@ -100,11 +100,14 @@ export class ReportCard extends LitElement {
       }
 
       .flipper-button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 18px;
         background: white;
         box-shadow: 0 1px 4px 0px rgb(0 0 0 / 25%);
         border-radius: 50%;
         color: #5231a7;
-
         height: 32px;
         min-width: 32px;
       }
@@ -335,6 +338,14 @@ export class ReportCard extends LitElement {
       hasHttps: this.scoreCardResults.security.some(t => t.result === true)
     });
 
+    recordPWABuilderProcessStep('url-analyzed', AnalyticsBehavior.ProcessCheckpoint, {
+      url: this.currentURL || '',
+      score: this.overallScore,
+      hasManifest: Array.isArray(this.scoreCardResults.manifest) && this.scoreCardResults.manifest.some(t => t.result === true),
+      hasServiceWorker: this.scoreCardResults.service_worker.some(t => t.result === true),
+      hasHttps: this.scoreCardResults.security.some(t => t.result === true)
+    });
+
     await this.handleBadges();
   }
 
@@ -406,7 +417,7 @@ export class ReportCard extends LitElement {
   }
 
   opened(targetEl: EventTarget | null, analyticText: string) {
-    this.recordStep(analyticText);
+    recordPWABuilderProcessStep(analyticText + "_clicked", AnalyticsBehavior.ProcessCheckpoint);
     if (targetEl) {
       const flipperButton = (targetEl as Element).classList.contains(
         'flipper-button'
@@ -485,7 +496,7 @@ export class ReportCard extends LitElement {
   }
 
   openManiOptions() {
-    this.recordStep("manifest-options")
+    recordPWABuilderProcessStep("manifest_accordion.manifest_options_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
     const event = new CustomEvent('open-mani-options', {
       detail: {
         open: true,
@@ -495,7 +506,7 @@ export class ReportCard extends LitElement {
   }
 
   openSWOptions() {
-    this.recordStep("sw-options")
+    recordPWABuilderProcessStep("sw_accordion.sw_options_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
     const event = new CustomEvent('open-sw-options', {
       detail: {
         open: true,
@@ -505,7 +516,7 @@ export class ReportCard extends LitElement {
   }
 
   async decideWhereToGo() {
-    this.recordStep("report-card-next-button")
+    recordPWABuilderProcessStep("next_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
     const baseOrPublishIffy = await baseOrPublish();
 
     if (baseOrPublishIffy === 'base') {
@@ -525,10 +536,6 @@ export class ReportCard extends LitElement {
     } else {
       return 'var(--success-color)';
     }
-  }
-
-  recordStep(text: string){
-    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   render() {
@@ -554,9 +561,10 @@ export class ReportCard extends LitElement {
                     >${this.maniScore}</span
                   >
 
-                  <fast-button class="flipper-button" mode="stealth">
-                    <ion-icon name="caret-forward-outline"></ion-icon>
-                  </fast-button>
+                  <div class="flipper-button" aria-label="caret dropdown" role="button">
+                    <ion-icon name="caret-forward-outline"></ion-icon> 
+                  </div>                
+                  
                 </div>
               </div>
 
@@ -612,9 +620,9 @@ export class ReportCard extends LitElement {
                     >${this.swScore}</span
                   >
 
-                  <fast-button class="flipper-button" mode="stealth">
-                    <ion-icon name="caret-forward-outline"></ion-icon>
-                  </fast-button>
+                  <div class="flipper-button" aria-label="caret dropdown" role="button">
+                    <ion-icon name="caret-forward-outline"></ion-icon> 
+                  </div> 
                 </div>
               </div>
 
@@ -672,9 +680,9 @@ export class ReportCard extends LitElement {
                     >${this.securityScore}</span
                   >
 
-                  <fast-button class="flipper-button" mode="stealth">
-                    <ion-icon name="caret-forward-outline"></ion-icon>
-                  </fast-button>
+                  <div class="flipper-button" aria-label="caret dropdown" role="button">
+                    <ion-icon name="caret-forward-outline"></ion-icon> 
+                  </div> 
                 </div>
               </div>
 

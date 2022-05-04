@@ -34,7 +34,7 @@ import { generatePackage, Platform } from '../services/publish';
 import { getReportErrorUrl } from '../utils/error';
 import { styles as ToolTipStyles } from '../components/tooltip';
 import { localeStrings } from '../../locales';
-import { AnalyticsBehavior, recordProcessStep } from '../utils/analytics';
+import { AnalyticsBehavior, recordProcessStep, recordPWABuilderProcessStep } from '../utils/analytics';
 import { getManifestContext, getURL } from '../services/app-info';
 import { IOSAppPackageOptions } from '../utils/ios-validation';
 import { WindowsPackageOptions } from '../utils/win-validation';
@@ -658,17 +658,17 @@ export class AppPublish extends LitElement {
   }
 
   showWindowsOptionsModal() {
-    this.recordStep("windows-store-package");
+    recordPWABuilderProcessStep("windows_store_modal_opened", AnalyticsBehavior.ProcessCheckpoint)
     this.openWindowsOptions = true;
   }
 
   showAndroidOptionsModal() {
-    this.recordStep("android-store-package");
+    recordPWABuilderProcessStep("android_store_modal_opened", AnalyticsBehavior.ProcessCheckpoint);
     this.openAndroidOptions = true;
   }
 
   showiOSOptionsModal() {
-    this.recordStep("ios-store-package");
+    recordPWABuilderProcessStep("ios_store_modal_opened", AnalyticsBehavior.ProcessCheckpoint);
     this.openiOSOptions = true;
   }
 
@@ -707,8 +707,8 @@ export class AppPublish extends LitElement {
         Store Package
       </app-button>
       <div>
-        <loading-button id="windows-test-pkg-btn" class="navigation alternate" ?loading=${this.generating} id="test-package-button"
-          @click="${this.generateWindowsTestPackage}">
+        <loading-button id="windows-test-pkg-btn" class="navigation secondary" ?loading=${this.generating} id="test-package-button"
+          @click="${this.generateWindowsTestPackage}" .secondary="${true}">
           Test Package
         </loading-button>
         <hover-tooltip anchor="windows-test-pkg-btn"
@@ -744,7 +744,7 @@ export class AppPublish extends LitElement {
   }
 
   returnToFix() {
-    this.recordStep("return-to-fix")
+    recordPWABuilderProcessStep("back_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
     const resultsString = sessionStorage.getItem('results-string');
 
     // navigate back to report-card page
@@ -796,11 +796,6 @@ export class AppPublish extends LitElement {
       this.isGooglePlay = false;
     }
   }
-
-  recordStep(text: string){
-    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
-  }
-
 
   render() {
     return html`

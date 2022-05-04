@@ -31,7 +31,7 @@ import { Router } from '@vaadin/router';
 import { getProgress, getURL, setProgress } from '../services/app-info';
 import { Lazy, ProgressList, Status } from '../utils/interfaces';
 import { fetchOrCreateManifest } from '../services/manifest';
-import { AnalyticsBehavior, recordProcessStep } from '../utils/analytics';
+import { AnalyticsBehavior, recordProcessStep, recordPWABuilderProcessStep } from '../utils/analytics';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -49,18 +49,15 @@ export class AppHome extends LitElement {
           background-position: center center;
           background-size: cover;
           background-repeat: no-repeat;
-
           height: 100%;
           display: flex;
           flex-direction: column;
           align-items: center;
           padding: 4em;
         }
-
         #wrapper {
           width: 1000px;
         }
-
         app-header::part(header) {
           background: transparent;
           position: absolute;
@@ -70,14 +67,12 @@ export class AppHome extends LitElement {
           z-index: 2;
           border: none;
         }
-
         h1 {
           font-size: var(--xlarge-font-size);
           line-height: 48px;
           letter-spacing: -0.015em;
           margin-bottom: 20px;
         }
-
         #input-header {
           font-size: 1em;
           font-weight: bold;
@@ -85,7 +80,6 @@ export class AppHome extends LitElement {
           line-height: 1.75em;
           color: #4F3FB6;
         }
-
         #content-grid {
           padding: 0;
           margin: 0;
@@ -93,12 +87,10 @@ export class AppHome extends LitElement {
           grid-template-columns: auto auto;
           width: fit-content;
         }
-
         .intro-grid-item {
           width: max-content;
           margin-right: 1em;
         }
-
         @keyframes bounce {
           0%, 20%, 50%, 80%, 100% {
               transform: translateY(0);
@@ -110,7 +102,6 @@ export class AppHome extends LitElement {
               transform: translateX(5px);
           }
         }
-
         .grid-item-header {
           display: flex;
           align-items: center;
@@ -118,7 +109,6 @@ export class AppHome extends LitElement {
           font-weight: bold;
           margin-bottom: .25em;
         }
-
         .grid-item-header h2 {
           margin-right: .25em;
           border-bottom: 1px solid rgb(79, 63, 182);
@@ -130,37 +120,29 @@ export class AppHome extends LitElement {
           line-height: 1em;
           color: #4F3FB6;
         }
-
         .grid-item-header a {
           color: #4F3FB6;
           text-decoration: none;
         }
-
         .grid-item-header a:visited {
           color: #4F3FB6;
         }
-
         .grid-item-header:hover {
           cursor: pointer;
         }
-
         .grid-item-header:hover img {
           animation: bounce 1s;
         }
-
         .intro-grid-item p {
           margin: 0;
           color: #292C3A;
           font-size: .75em;
-
           width: 15em;
         }
-
         #input-form {
           margin-top: 1em;
           width: max-content;
         }
-
         #input-header-holder {
           display: flex;
           align-items: center;
@@ -168,69 +150,57 @@ export class AppHome extends LitElement {
           width: max-content;
           margin-bottom: 10px;
         }
-
         #input-header-holder img {
           width: auto;
           height: 1em;
           margin-left: 20px;
         }
-
         #input-area {
           display: grid;
           grid-template-columns: 1fr 1fr;
           grid-template-rows: 1fr 1fr;
         }
-
         #input-and-error {
           grid-column: 1;
           grid-row: 1;
           display: flex;
           flex-direction: column;
         }
-
         #start-button {
           grid-column: 2;
           grid-row: 1;
         }
-
         .raise:hover,
         .raise:focus {
           transform: scale(1.01);
         }
-
         #demo {
           grid-column: 1 / 2;
           grid-row: 2;
         }
-
         #input-form fast-text-field {
           margin-right: 10px;
         }
-
         #input-form fast-text-field::part(root) {
           border: 1px solid #e5e5e5;
           border-radius: var(--input-radius);
         }
-
         #input-form fast-text-field::part(control) {
           color: var(--font-color);
           width: 26em;
         }
-
         #input-block {
           display: flex;
           flex-direction: column;
           flex: 0.8 1 0%;
           width: 100%;
         }
-
         #demo {
           font-size: .55em;
           margin: 0;
           margin-top: 5px;
           color: #292C3A;
         }
-
         #demo-action {
           margin: 0;
           text-decoration: underline;
@@ -241,15 +211,12 @@ export class AppHome extends LitElement {
           font-size: 1em;
           margin-left: 1px;
         }
-
         #demo-action:hover{
           cursor: pointer;
         }
-
         #home-header {
           max-width: 498px;
         }
-
         /* 640px - 1023px */
         ${largeBreakPoint(css`
           #home-block {
@@ -259,16 +226,13 @@ export class AppHome extends LitElement {
             background-size: cover;
             background-repeat: no-repeat;
           }
-
           #wrapper {
             width: 825px;
           }
-
           #content-grid {
             column-gap: 1em;
           }
         `)}
-
         /* 480px - 639px */
         ${mediumBreakPoint(css`
           #home-block {
@@ -280,11 +244,9 @@ export class AppHome extends LitElement {
             background-size: cover;
             background-repeat: no-repeat;
           }
-
           #wrapper {
             width: 530px;
           }
-
           .intro-grid-item p {
             width: 13em;
           }
@@ -304,7 +266,6 @@ export class AppHome extends LitElement {
             font-size: 40px;
           }
         `)}
-
         @media (min-width: 480px) and (max-width: 580px) {
           #wrapper {
             width: 400px;
@@ -318,7 +279,6 @@ export class AppHome extends LitElement {
           }
         }
         
-
         /* < 480px */
         @media (max-width: 480px) {
           #home-block {
@@ -330,11 +290,9 @@ export class AppHome extends LitElement {
             background-size: cover;
             background-repeat: no-repeat;
           }
-
           #wrapper {
             width: 400px;
           }
-
           #home-header {
             font-size: 1.9em;
           }
@@ -343,11 +301,9 @@ export class AppHome extends LitElement {
             flex-direction: column;
             row-gap: 1em;
           }
-
           #input-and-error{
             width: 85%;
           }
-
           #input-area {
             width: 100%;
             display: flex;
@@ -355,7 +311,6 @@ export class AppHome extends LitElement {
             align-items: flex-start;
             row-gap: 5px;
           }
-
           #input-header-holder img {
             display: none;
           }
@@ -378,13 +333,11 @@ export class AppHome extends LitElement {
             font-size: 20px;
           }
         }
-
         @media (max-width: 415px) {
           #wrapper {
             width: 300px;
           }
         }
-
         @media (min-width: 640px) and (max-width: 955px) {
           #home-block {
             background-position: left;
@@ -393,7 +346,6 @@ export class AppHome extends LitElement {
             width: 600px;
           }
         }
-
         /*1024px - 1365px*/ 
         ${xLargeBreakPoint(css`
             #home-block {
@@ -403,7 +355,6 @@ export class AppHome extends LitElement {
               background-repeat: no-repeat;
             }
         `)}
-
           /* > 1920 */
         ${xxxLargeBreakPoint(css`
             #home-block {
@@ -430,13 +381,12 @@ export class AppHome extends LitElement {
       await this.analyzeSite();
     }
 
-    recordProcessStep('pwa-builder', 'landing-page-loaded', AnalyticsBehavior.StartProcess);
+    recordPWABuilderProcessStep('landing-page-loaded', AnalyticsBehavior.StartProcess);
 
     /*
     Step 1: Start the process on home page load
     Step 2: Track any button presses a checkpoint
     Step 3: end the process when the user packages
-
     timer for first action
     */
   }
@@ -454,6 +404,10 @@ export class AppHome extends LitElement {
   }
 
   async analyzeSite() {
+    if(this.siteURL !== demoURL){
+      sessionStorage.setItem('demoURL', JSON.stringify(false));
+    }
+
     if (this.siteURL) {
       this.gettingManifest = true;
       const isValidUrl = isValidURL(this.siteURL);
@@ -465,13 +419,12 @@ export class AppHome extends LitElement {
           url: this.siteURL,
           valid: isValidUrl
         });
-
-      recordProcessStep('pwa-builder', 'url-analysis-started', AnalyticsBehavior.ProcessCheckpoint, 
+      recordPWABuilderProcessStep('.top.entered_link_testing_started', AnalyticsBehavior.ProcessCheckpoint, 
       {
         url: this.siteURL,
         valid: isValidUrl
       });
-
+      
       if (isValidUrl) {
         try {
           const manifestContext = await fetchOrCreateManifest(this.siteURL);
@@ -525,16 +478,14 @@ export class AppHome extends LitElement {
   }
 
   placeDemoURL(){
-    recordProcessStep('pwa-builder', 'demo-url-used', AnalyticsBehavior.ProcessCheckpoint);
-    this.siteURL = "https://webboard.app";
+    sessionStorage.setItem('demoURL', JSON.stringify(true));
+    recordPWABuilderProcessStep("home.top.DemoURL_clicked", AnalyticsBehavior.ProcessCheckpoint);
+    this.siteURL = demoURL;
     let box = this.shadowRoot!.getElementById("input-box");
     (box as HTMLInputElement)!.value = this.siteURL;
     this.analyzeSite();
   }
 
-  recordStep(text: string){
-    recordProcessStep('pwa-builder', `${text}-clicked`, AnalyticsBehavior.ProcessCheckpoint);
-  }
 
   render() {
     return html`
@@ -548,18 +499,18 @@ export class AppHome extends LitElement {
             <section id="content-grid" slot="grid-container">
               <div class="intro-grid-item">
                 <div class="grid-item-header">  
-                  <h2><a @click=${() => this.recordStep("Start-a-new-pwa")} href="https://github.com/pwa-builder/pwa-starter/wiki/Getting-Started/" target="_blank" rel="noopener">Start a new PWA</a></h2>
+                  <h2><a @click=${() => recordPWABuilderProcessStep("home.top.PWAStarter_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://github.com/pwa-builder/pwa-starter/wiki/Getting-Started" target="_blank" rel="noopener">Start a new PWA</a></h2>
                   <img src="/assets/new/arrow.svg" alt="arrow" />
                   
                 </div>
                 <p>
-                  Looking to build a  new Progressive Web App? Checkout all the documentation here.
+                  Looking to build a new Progressive Web App? Checkout all the documentation here.
                 </p>
               </div>
           
               <div class="intro-grid-item">
                 <div class="grid-item-header">  
-                  <h2><a @click=${() => this.recordStep("Use-dev-tools")} href="https://marketplace.visualstudio.com/items?itemName=PWABuilder.pwa-studio" target="_blank" rel="noopener">Use dev tools</a></h2>
+                  <h2><a @click=${() => recordPWABuilderProcessStep("home.top.PWAStudio_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://aka.ms/install-pwa-studio" target="_blank" rel="noopener">Use dev tools</a></h2>
                   <img src="/assets/new/arrow.svg" alt="arrow" />
                 </div>
                 <p>
@@ -585,11 +536,9 @@ export class AppHome extends LitElement {
                       : null}
                   </div>
             
-
                   <loading-button id="start-button" type="submit" class="navigation raise" ?loading="${this.gettingManifest}"
                   @click="${(e: InputEvent) => this.start(e)}">Start</loading-button>
                   <p id="demo">Try a <button id="demo-action" aria-label="click here for demo url" @click=${() => this.placeDemoURL()}>demo url</button></p>
-
                 </div>
                 
               </div>
@@ -604,3 +553,5 @@ export class AppHome extends LitElement {
     `;
   }
 }
+
+const demoURL: string = "https://webboard.app";
