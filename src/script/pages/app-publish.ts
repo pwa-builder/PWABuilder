@@ -92,11 +92,11 @@ export class AppPublish extends LitElement {
       renderDownloadButton: () => this.renderiOSDownloadButton()
     },
     {
-      title: 'Oculus',
+      title: 'Meta Quest',
       description:
-        'Publish your PWA to the Oculus Store, making it available to users of Oculus Quest devices.',
+        'Publish your PWA to the Meta Quest Store, making it available to users of Meta Quest devices.',
       isActionCard: true,
-      icon: '/assets/oculus_icon.svg',
+      icon: '/assets/meta_icon.svg',
       renderDownloadButton: () => this.renderOculusDownloadButton()
     }
   ];
@@ -812,7 +812,7 @@ export class AppPublish extends LitElement {
       </app-modal>
       
       <!-- oculus options modal -->
-      <app-modal id="oculus-options-modal" heading="Oculus App Options" body="Customize your Oculus app below"
+      <app-modal id="oculus-options-modal" heading="Meta Quest App Options" body="Customize your Meta Quest app below"
         ?open="${this.openOculusOptions}" @app-modal-close="${() => this.storeOptionsCancel()}">
         <oculus-form slot="modal-form" .generating=${this.generating}
           @init-oculus-gen="${(ev: CustomEvent) => this.generate('oculus', ev.detail)}">
@@ -874,7 +874,7 @@ export class AppPublish extends LitElement {
 }
 
 interface ICardData {
-  title: 'Windows' | 'Android' | 'iOS' | 'Oculus';
+  title: 'Windows' | 'Android' | 'iOS' | 'Meta Quest';
   description: string;
   isActionCard: boolean;
   icon: string;

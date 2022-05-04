@@ -647,8 +647,8 @@ export class AppCongrats extends LitElement {
 
       <app-modal
         id="oculus-options-modal"
-        heading="Oculus App Options"
-        body="Customize your Oculus app below"
+        heading="Meta Quest App Options"
+        body="Customize your Meta Quest app below"
         ?open="${this.openOculusOptions}"
       >
         <oculus-form
