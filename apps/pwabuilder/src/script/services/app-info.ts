@@ -8,7 +8,7 @@ import {
   Status,
 } from '../utils/interfaces';
 import { runManifestChecks } from '../utils/manifest-validation';
-import { getSetSWCounter } from '@pwabuilder/monorepo-test';
+import { getSetSWCounter } from './service_worker';
 
 
 let site_url: string | undefined;

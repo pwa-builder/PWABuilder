@@ -1,7 +1,7 @@
 import { fetchOrCreateManifest } from '../manifest';
 import { env } from '../../utils/environment';
 import { getURL } from '../app-info';
-import { getChosenServiceWorker } from '@pwabuilder/monorepo-test';
+import { getChosenServiceWorker } from '../../services/service_worker';
 import { Manifest } from '../../utils/interfaces';
 
 export let hasGeneratedWebPackage = false;

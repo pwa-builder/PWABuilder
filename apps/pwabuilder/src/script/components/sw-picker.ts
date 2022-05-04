@@ -8,7 +8,7 @@ import {
   getServiceWorkerCode,
   getServiceWorkers,
   unsetServiceWorker,
-} from '@pwabuilder/monorepo-test';
+} from '../services/service_worker';
 
 import '../components/app-button';
 import '../components/loading-button';

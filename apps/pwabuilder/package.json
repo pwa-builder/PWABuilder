@@ -18,7 +18,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@pwabuilder/monorepo-test": "file:../../libraries/monorepo-test",
     "@pwabuilder/site-analytics": "file:../../libraries/site-analytics",
     "@codemirror/autocomplete": "^0.18.5",
     "@codemirror/basic-setup": "^0.18.0",
