@@ -24,5 +24,6 @@
 
 - **PWABuilder**
   - <a href="#/builder/quick-start"> Quick Start </a>
+  - <a href="#/builder/windows">  Microsoft Store </a>
   - <a href="#/builder/iOS"> iOS App Store </a>
   - <a href="#/builder/FAQ"> FAQ </a>

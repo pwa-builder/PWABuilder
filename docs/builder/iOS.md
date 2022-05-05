@@ -25,10 +25,10 @@ The whole process can be done in just a few steps:
 
 1. Navigate to [PWABuilder.com](https://www.pwabuilder.com/).
    
-2. Enter the URL of your PWA on the homepage
+2. Enter the URL of your PWA on the homepage.
    
 <div class="docs-image">
-    <img src="/assets/builder/ios/enter-url.png" width=450>
+    <img src="/assets/builder/enter-url.png" width=450>
 </div>
 
 3. Click `Next` to navigate to the package selection page.
