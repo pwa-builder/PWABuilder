@@ -23,7 +23,7 @@ import '../components/app-modal';
 import style from '../../../styles/layout-defaults.css';
 import { RawTestResult, ScoreEvent } from '../utils/interfaces';
 import { giveOutBadges } from '../services/badges';
-import { recordProcessStep, AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
+import {  AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
 const possible_messages = {
   overview: {

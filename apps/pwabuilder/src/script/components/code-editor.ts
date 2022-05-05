@@ -14,7 +14,7 @@ import {
 import { increment } from '../utils/id';
 
 import './app-button';
-import { recordProcessStep, AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
+import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
 @customElement('code-editor')
 export class CodeEditor extends LitElement {

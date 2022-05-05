@@ -12,7 +12,21 @@ export function recordPWABuilderProcessStep(
   stepType: analytics.AnalyticsBehavior.ProcessCheckpoint | analytics.AnalyticsBehavior.StartProcess | analytics.AnalyticsBehavior.ProcessCheckpoint | analytics.AnalyticsBehavior.CancelProcess | analytics.AnalyticsBehavior.CompleteProcess,
   additionalInfo?: {}) {
     if (env.isProduction) {
-      analytics.recordPWABuilderProcessStep(processStep, stepType, additionalInfo);
+      const demo_used = JSON.parse(sessionStorage.getItem('demoURL')!);
+      let scn = 'pwa-builder';
+
+      if(demo_used){
+        scn = 'demo-process';
+      }
+
+      let pageName = window.location.pathname.slice(1);
+      if(pageName.length == 0) {
+        pageName = "home";
+      }
+
+      let processLabel = pageName + "." + processStep
+
+      recordProcessStep(scn, processLabel, stepType, additionalInfo);
     }
 }
 

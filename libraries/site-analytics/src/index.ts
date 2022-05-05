@@ -42,32 +42,6 @@ export function recordPageView(uri: string, name?: string, properties?: any) {
 }
 
 // See https://martech.azurewebsites.net/website-tools/oneds/guided-learning/scenario-process
-export function recordPWABuilderProcessStep(
-  processStep: string,
-  stepType: AnalyticsBehavior.ProcessCheckpoint | AnalyticsBehavior.StartProcess | AnalyticsBehavior.ProcessCheckpoint | AnalyticsBehavior.CancelProcess | AnalyticsBehavior.CompleteProcess,
-  additionalInfo?: {}) {
-
-    let pageName = window.location.pathname.slice(1);
-    if(pageName.length == 0) {
-      pageName = "home";
-    }
-
-    let processLabel = pageName + "." + processStep
-
-    lazyLoadAnalytics()
-      .then(oneDS => oneDS.capturePageAction(null, {
-        actionType: AnalyticsActionType.Other,
-        behavior: stepType,
-        contentTags: {
-          scn: "pwa-builder",
-          scnstp: processLabel
-        },
-        content: additionalInfo
-      }));
-}
-
-
-// See https://martech.azurewebsites.net/website-tools/oneds/guided-learning/scenario-process
 export function recordProcessStep(
   processName: string,
   processStep: string,
