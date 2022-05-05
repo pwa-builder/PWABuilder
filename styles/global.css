@@ -81,6 +81,7 @@
   --light-primary-color: rgba(255, 255, 255, 0.6);
 
   --placeholder-color: #a9a9a9;
+  font-variant-ligatures: no-common-ligatures;
 }
 
 * {
