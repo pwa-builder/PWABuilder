@@ -17,26 +17,9 @@ export class WindowsForm extends AppPackageFormBase {
   @state() showAdvanced = false;
   @state() packageOptions: WindowsPackageOptions = emptyWindowsPackageOptions();
 
-
-
   static get styles() {
     const localStyles = css``;
-    return [
-      super.styles, 
-      localStyles,
-      css `
-      .flipper-button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      .form-generate-button {
-        width: 135px;
-        height: 40px;
-        display: inherit;
-      }
-    `];
+    return [super.styles, localStyles];
   }
 
   constructor() {
@@ -96,26 +79,6 @@ export class WindowsForm extends AppPackageFormBase {
         this.packageOptions.targetDeviceFamilies?.splice(index, 1);
       }
     }
-    this.checkValidityForDeviceFamily();
-  }
-
-  checkValidityForDeviceFamily() {
-    const checkboxes = this.shadowRoot?.querySelector(
-      '#target-device-families'
-    );
-    const checkedCheckboxes = checkboxes?.querySelectorAll(
-      'input[type="checkbox"]:checked'
-    );
-    const desktopCheckbox = this.shadowRoot?.querySelector(
-      '#device-family-input-desktop'
-    ) as HTMLInputElement;
-    if (checkedCheckboxes !== undefined && checkedCheckboxes?.length === 0) {
-      desktopCheckbox.setCustomValidity(
-        'Please select at least one device family'
-      );
-    } else {
-      desktopCheckbox.setCustomValidity('');
-    }
   }
 
   render() {
@@ -147,6 +110,10 @@ export class WindowsForm extends AppPackageFormBase {
                   (this.packageOptions.packageId = val),
               })}
             </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> f9df2ab3 (Added ability to opt out of targeting hololens while packaging for windows (#2598))
             <div class="form-group">
               ${this.renderFormInput({
                 label: 'Publisher display name',
@@ -192,7 +159,7 @@ export class WindowsForm extends AppPackageFormBase {
               <div id="all-settings-header" slot="heading">
                 <span>All Settings</span>
 
-                <div class="flipper-button" aria-label="caret dropdown" role="button">
+                <fast-button class="flipper-button" mode="stealth">
                   <ion-icon name="caret-forward-outline"></ion-icon>
                 </div>
               </div>
@@ -236,6 +203,7 @@ export class WindowsForm extends AppPackageFormBase {
                       (this.packageOptions.version = val),
                   })}
                 </div>
+                <span></span>
                 <div class="form-group">
                   ${this.renderFormInput({
                     label: 'Classic app version',
@@ -254,6 +222,10 @@ export class WindowsForm extends AppPackageFormBase {
                       (this.packageOptions.classicPackage!.version = val),
                   })}
                 </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> f9df2ab3 (Added ability to opt out of targeting hololens while packaging for windows (#2598))
                 <div class="form-group">
                   ${this.renderFormInput({
                     label: 'Icon URL',
@@ -287,24 +259,8 @@ export class WindowsForm extends AppPackageFormBase {
                   })}
                 </div>
 
-                <div class="form-group" id="target-device-families">
+                <div class="form-group">
                   <label>Target device families</label>
-                  <div class="form-check">
-                    ${this.renderFormInput({
-                      label: 'Desktop',
-                      value: 'Desktop',
-                      tooltip:
-                        'Identifies the device family that your package targets. Both Desktop and Holographic are enabled by default',
-                      tooltipLink:
-                        'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-targetdevicefamily',
-                      inputId: 'device-family-input-desktop',
-                      type: 'checkbox',
-                      checked: true,
-                      inputHandler: (val: string, checked: boolean) => {
-                        this.addOrRemoveDeviceFamily(val, checked);
-                      },
-                    })}
-                  </div>
                   <div class="form-check">
                     ${this.renderFormInput({
                       label: 'Holographic (HoloLens)',
@@ -326,11 +282,15 @@ export class WindowsForm extends AppPackageFormBase {
             </fast-accordion-item>
           </fast-accordion>
         </div>
+
         <div id="form-details-block">
           <p>${localeStrings.text.publish.windows_platform.p}</p>
         </div>
+
         <div id="form-options-actions" class="modal-actions">
-          <loading-button class="form-generate-button" .loading="${this.generating}" .primary=${true}>
+          <loading-button class="form-generate-button" .loading="${
+            this.generating
+          }" .primary=${true}>
             <input id="generate-submit" type="submit" value="Generate" />
           </loading-button>
         </div>
