@@ -148,26 +148,20 @@ export class AppHeader extends LitElement {
     this.shadowRoot?.querySelector('#header-icon')?.addEventListener("keydown", (event) => {
       // casting here because of type problem described above
       if ((event as KeyboardEvent).key === "Enter") {
-        this.goBack();
+        this.goHome();
       }
     })
   }
 
-  goBack() {
+  goHome() {
     recordPWABuilderProcessStep(`.header.logo_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-    const pathName = location.pathname;
-
-    if (pathName === '/' || pathName === '/reportcard') {
-      Router.go('/');
-    } else {
-      window.history.back();
-    }
+    Router.go('/');
   }
 
   render() {
     return html`
       <header part="header">
-        <img @click="${this.goBack}" tabindex="0" id="header-icon" src="/assets/images/header_logo.svg"
+        <img @click="${this.goHome}" tabindex="0" id="header-icon" src="/assets/images/header_logo.svg"
           alt="PWABuilder logo" />
       
         <nav id="desktop-nav">

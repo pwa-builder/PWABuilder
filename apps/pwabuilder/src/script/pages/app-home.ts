@@ -30,7 +30,7 @@ import '@pwabuilder/pwainstall';
 import { Router } from '@vaadin/router';
 import { getProgress, getURL, setProgress } from '../services/app-info';
 import { Lazy, ProgressList, Status } from '../utils/interfaces';
-import { fetchOrCreateManifest } from '../services/manifest';
+import { fetchOrCreateManifest, resetInitialManifest } from '../services/manifest';
 import { AnalyticsBehavior, recordProcessStep, recordPWABuilderProcessStep } from '../utils/analytics';
 
 @customElement('app-home')
@@ -374,6 +374,10 @@ export class AppHome extends LitElement {
   }
 
   async firstUpdated() {
+    // Resetting for a new url
+    sessionStorage.clear();
+    resetInitialManifest();
+    
     const search = new URLSearchParams(location.search);
     const site = search.get('site');
 

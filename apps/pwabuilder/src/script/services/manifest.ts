@@ -15,7 +15,7 @@ import {
 } from './app-info';
 
 export const emitter = new EventTarget();
-export let initialManifest: Manifest;
+export let initialManifest: Manifest | undefined;
 
 export let emptyManifest: Manifest = {
   dir: 'auto',
@@ -31,6 +31,10 @@ export let emptyManifest: Manifest = {
   icons: [],
   screenshots: [],
 };
+
+export function resetInitialManifest(){
+  initialManifest = undefined;
+}
 
 // Uses Azure manifest Puppeteer service to fetch the manifest
 async function getManifestViaPuppeteer(
@@ -194,6 +198,7 @@ async function fetchManifest(url: string): Promise<ManifestDetectionResult> {
     //@ts-ignore:next-line
     if (manifestDetectionResult) {
       const context = getManifestContext();
+      
       if (!context.initialManifest) {
         //@ts-ignore:next-line
         initialManifest = manifestDetectionResult.content;
@@ -243,6 +248,7 @@ export async function fetchOrCreateManifest(
     siteUrl: detectionResult.siteUrl,
     isEdited: false,
   };
+
   setManifestContext(context);
 
   await updateManifest({

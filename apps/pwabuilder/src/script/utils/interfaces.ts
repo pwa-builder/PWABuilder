@@ -141,7 +141,7 @@ export interface ManifestContext {
   siteUrl: string;
   manifestUrl: string;
   manifest: Manifest;
-  initialManifest: Manifest;
+  initialManifest: Manifest | undefined;
   isGenerated: boolean;
   isEdited: boolean;
 }
