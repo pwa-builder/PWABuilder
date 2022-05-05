@@ -50,6 +50,8 @@ export class WindowsForm extends AppPackageFormBase {
     this.packageOptions = createWindowsPackageOptionsFromManifest(
       manifestContext.manifest
     );
+
+    this.packageOptions.targetDeviceFamilies = ['Desktop', 'Holographic'];
   }
 
   initGenerate(ev: InputEvent) {
@@ -78,9 +80,6 @@ export class WindowsForm extends AppPackageFormBase {
   }
 
   addOrRemoveDeviceFamily(val: string, checked: boolean) {
-    if (this.packageOptions.targetDeviceFamilies === undefined) {
-      this.packageOptions.targetDeviceFamilies = ['Desktop'];
-    }
     if (checked) {
       if (!this.packageOptions.targetDeviceFamilies?.includes(val)) {
         this.packageOptions.targetDeviceFamilies?.push(val);
@@ -312,6 +311,22 @@ export class WindowsForm extends AppPackageFormBase {
                       inputId: 'device-family-input-holographic',
                       type: 'checkbox',
                       checked: true,
+                      inputHandler: (val: string, checked: boolean) => {
+                        this.addOrRemoveDeviceFamily(val, checked);
+                      },
+                    })}
+                  </div>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Surface Hub (Team)',
+                      value: 'Team',
+                      tooltip:
+                        'Identifies the device family that your package targets.',
+                      tooltipLink:
+                        'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-targetdevicefamily',
+                      inputId: 'device-family-input-team',
+                      type: 'checkbox',
+                      checked: false,
                       inputHandler: (val: string, checked: boolean) => {
                         this.addOrRemoveDeviceFamily(val, checked);
                       },
