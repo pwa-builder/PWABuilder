@@ -17,26 +17,24 @@ export class WindowsForm extends AppPackageFormBase {
   @state() showAdvanced = false;
   @state() packageOptions: WindowsPackageOptions = emptyWindowsPackageOptions();
 
-
-
   static get styles() {
     const localStyles = css``;
     return [
-      super.styles, 
+      super.styles,
       localStyles,
-      css `
-      .flipper-button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      .form-generate-button {
-        width: 135px;
-        height: 40px;
-        display: inherit;
-      }
-    `];
+      css`
+        .flipper-button {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        .form-generate-button {
+          width: 135px;
+          height: 40px;
+          display: inherit;
+        }
+      `,
+    ];
   }
 
   constructor() {
@@ -52,6 +50,8 @@ export class WindowsForm extends AppPackageFormBase {
     this.packageOptions = createWindowsPackageOptionsFromManifest(
       manifestContext.manifest
     );
+
+    this.packageOptions.targetDeviceFamilies = ['Desktop', 'Holographic'];
   }
 
   initGenerate(ev: InputEvent) {
@@ -80,9 +80,6 @@ export class WindowsForm extends AppPackageFormBase {
   }
 
   addOrRemoveDeviceFamily(val: string, checked: boolean) {
-    if (this.packageOptions.targetDeviceFamilies === undefined) {
-      this.packageOptions.targetDeviceFamilies = ['Desktop'];
-    }
     if (checked) {
       if (!this.packageOptions.targetDeviceFamilies?.includes(val)) {
         this.packageOptions.targetDeviceFamilies?.push(val);
@@ -164,7 +161,6 @@ export class WindowsForm extends AppPackageFormBase {
                   (this.packageOptions.publisher.displayName = val),
               })}
             </div>
-
             <div class="form-group">
               ${this.renderFormInput({
                 label: 'Publisher ID',
@@ -191,12 +187,14 @@ export class WindowsForm extends AppPackageFormBase {
             >
               <div id="all-settings-header" slot="heading">
                 <span>All Settings</span>
-
-                <div class="flipper-button" aria-label="caret dropdown" role="button">
+                <div
+                  class="flipper-button"
+                  aria-label="caret dropdown"
+                  role="button"
+                >
                   <ion-icon name="caret-forward-outline"></ion-icon>
                 </div>
               </div>
-
               <div class="adv-settings">
                 <div class="form-group">
                   ${this.renderFormInput({
@@ -216,7 +214,6 @@ export class WindowsForm extends AppPackageFormBase {
                       (this.packageOptions.name = val),
                   })}
                 </div>
-
                 <div class="form-group">
                   ${this.renderFormInput({
                     label: 'App version',
@@ -272,7 +269,6 @@ export class WindowsForm extends AppPackageFormBase {
                       (this.packageOptions.images!.baseImage = val),
                   })}
                 </div>
-
                 <div class="form-group">
                   ${this.renderFormInput({
                     label: 'Language',
@@ -286,7 +282,6 @@ export class WindowsForm extends AppPackageFormBase {
                       (this.packageOptions.resourceLanguage = val),
                   })}
                 </div>
-
                 <div class="form-group" id="target-device-families">
                   <label>Target device families</label>
                   <div class="form-check">
@@ -321,6 +316,22 @@ export class WindowsForm extends AppPackageFormBase {
                       },
                     })}
                   </div>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Surface Hub (Team)',
+                      value: 'Team',
+                      tooltip:
+                        'Identifies the device family that your package targets.',
+                      tooltipLink:
+                        'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-targetdevicefamily',
+                      inputId: 'device-family-input-team',
+                      type: 'checkbox',
+                      checked: false,
+                      inputHandler: (val: string, checked: boolean) => {
+                        this.addOrRemoveDeviceFamily(val, checked);
+                      },
+                    })}
+                  </div>
                 </div>
               </div>
             </fast-accordion-item>
@@ -330,7 +341,11 @@ export class WindowsForm extends AppPackageFormBase {
           <p>${localeStrings.text.publish.windows_platform.p}</p>
         </div>
         <div id="form-options-actions" class="modal-actions">
-          <loading-button class="form-generate-button" .loading="${this.generating}" .primary=${true}>
+          <loading-button
+            class="form-generate-button"
+            .loading="${this.generating}"
+            .primary=${true}
+          >
             <input id="generate-submit" type="submit" value="Generate" />
           </loading-button>
         </div>
