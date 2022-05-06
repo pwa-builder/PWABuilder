@@ -16,6 +16,7 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
+    cd apps/pwabuilder
     npm install
     npm run build
   displayName: 'npm install and build'

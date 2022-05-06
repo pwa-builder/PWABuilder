@@ -1,0 +1,17 @@
+{
+  "name": "docs",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "start": "docsify serve",
+    "preinstall": "node ../scripts/setupDeps.js && npm run copy-analytics",
+    "copy-analytics": "cpx \"..\\libraries\\site-analytics\\dist\\index.js\" \"public\\analytics\""
+  },
+  "dependencies": {
+    "@pwabuilder/site-analytics": "file:../../libraries/site-analytics"
+  },
+  "devDependencies": {
+    "docsify-cli": "^4.4.4",
+    "cpx": "^1.5.0"
+  }
+}
