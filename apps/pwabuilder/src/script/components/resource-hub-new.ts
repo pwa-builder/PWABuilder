@@ -119,7 +119,7 @@ export class ResourceHubNew extends LitElement {
   render() {
     return html`
       <div id="hub-panel">
-        <h2>What Makes a PWA?</h2>
+        <h2>What makes a PWA?</h2>
         <div id="cards">
           ${this.cards.map((card: any) => html`
             <info-card
