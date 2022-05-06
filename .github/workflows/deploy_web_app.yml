@@ -34,9 +34,16 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/pwabuilder
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Install Dependencies and Build
+        run: npm install && npm run build
+
       - name: Build the Docker image
         run: docker build . --file Dockerfile --tag pwabuilder.azurecr.io/pwa-site-dev:latest
 
