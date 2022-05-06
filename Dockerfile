@@ -6,6 +6,8 @@ WORKDIR /app
 COPY . . 
 
 ENV PORT 80
-RUN npm install
+
+WORKDIR /app/apps/pwabuilder
+RUN npm install --unsafe-perm
 
 CMD npm start

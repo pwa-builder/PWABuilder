@@ -15,13 +15,8 @@
             }
           },
           {
-            "operator": "not",
-            "operands": [
-              {
-                "name": "isPartOfProject",
-                "parameters": {}
-              }
-            ]
+            "name": "isPartOfProject",
+            "parameters": {}
           },
           {
             "operator": "not",
@@ -72,243 +67,51 @@
         {
           "weekDay": 0,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 1,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 2,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 3,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 4,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 5,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 6,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
-        }
-      ],
-      "searchTerms": [
-        {
-          "name": "isIssue",
-          "parameters": {}
-        },
-        {
-          "name": "isOpen",
-          "parameters": {}
-        },
-        {
-          "name": "hasLabel",
-          "parameters": {
-            "label": "duplicate :busts_in_silhouette:"
-          }
-        },
-        {
-          "name": "noActivitySince",
-          "parameters": {
-            "days": 1
-          }
-        }
-      ],
-      "taskName": "Close duplicate Issues",
-      "actions": [
-        {
-          "name": "addReply",
-          "parameters": {
-            "comment": "This issue has been marked as \"duplicate\" and has not had any activity for **1 day**. If no further action is performed then the issue will automatically be closed."
-          }
-        },
-        {
-          "name": "closeIssue",
-          "parameters": {}
-        }
-      ]
-    }
-  },
-  {
-    "taskType": "scheduled",
-    "capabilityId": "ScheduledSearch",
-    "subCapability": "ScheduledSearch",
-    "version": "1.1",
-    "config": {
-      "frequency": [
-        {
-          "weekDay": 0,
-          "hours": [
-            0,
-            3,
-            6,
-            9,
-            12,
-            15,
-            18,
-            21
-          ],
-          "timezoneOffset": -8
-        },
-        {
-          "weekDay": 1,
-          "hours": [
-            0,
-            3,
-            6,
-            9,
-            12,
-            15,
-            18,
-            21
-          ],
-          "timezoneOffset": -8
-        },
-        {
-          "weekDay": 2,
-          "hours": [
-            0,
-            3,
-            6,
-            9,
-            12,
-            15,
-            18,
-            21
-          ],
-          "timezoneOffset": -8
-        },
-        {
-          "weekDay": 3,
-          "hours": [
-            0,
-            3,
-            6,
-            9,
-            12,
-            15,
-            18,
-            21
-          ],
-          "timezoneOffset": -8
-        },
-        {
-          "weekDay": 4,
-          "hours": [
-            0,
-            3,
-            6,
-            9,
-            12,
-            15,
-            18,
-            21
-          ],
-          "timezoneOffset": -8
-        },
-        {
-          "weekDay": 5,
-          "hours": [
-            0,
-            3,
-            6,
-            9,
-            12,
-            15,
-            18,
-            21
-          ],
-          "timezoneOffset": -8
-        },
-        {
-          "weekDay": 6,
-          "hours": [
-            0,
-            3,
-            6,
-            9,
-            12,
-            15,
-            18,
-            21
-          ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         }
       ],
       "searchTerms": [
@@ -366,100 +169,51 @@
         {
           "weekDay": 0,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 1,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 2,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 3,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 4,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 5,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 6,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         }
       ],
       "searchTerms": [
@@ -482,8 +236,12 @@
         {
           "name": "noActivitySince",
           "parameters": {
-            "days": 30
+            "days": 7
           }
+        },
+        {
+          "name": "isIssue",
+          "parameters": {}
         }
       ],
       "taskName": "Close issues that are labeled as \"no-recent-activity\"",
@@ -711,100 +469,51 @@
         {
           "weekDay": 0,
           "hours": [
-            0,
-            3,
-            6,
-            9,
-            12,
-            15,
-            18,
-            21
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 1,
           "hours": [
-            0,
-            3,
-            6,
-            9,
-            12,
-            15,
-            18,
-            21
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 2,
           "hours": [
-            0,
-            3,
-            6,
-            9,
-            12,
-            15,
-            18,
-            21
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 3,
           "hours": [
-            0,
-            3,
-            6,
-            9,
-            12,
-            15,
-            18,
-            21
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 4,
           "hours": [
-            0,
-            3,
-            6,
-            9,
-            12,
-            15,
-            18,
-            21
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 5,
           "hours": [
-            0,
-            3,
-            6,
-            9,
-            12,
-            15,
-            18,
-            21
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 6,
           "hours": [
-            0,
-            3,
-            6,
-            9,
-            12,
-            15,
-            18,
-            21
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         }
       ],
       "searchTerms": [
@@ -825,7 +534,7 @@
         {
           "name": "noActivitySince",
           "parameters": {
-            "days": 15
+            "days": 7
           }
         }
       ],
@@ -840,7 +549,7 @@
         {
           "name": "addReply",
           "parameters": {
-            "comment": "This issue has been marked as \"needs attention 👋\" due to no activity for **15 days**.  Please triage the issue so the fix can be established. "
+            "comment": "This issue has been marked as \"needs attention 👋\" since it has not been triaged for **7 days**.  Please triage the issue ."
           }
         }
       ]
@@ -876,27 +585,8 @@
           "parameters": {
             "comment": "Thanks ${issueAuthor} for opening a Pull Request! The reviewers will test the PR and highlight if there is any conflict or changes required. If the PR is approved we will proceed to merge the pull request 🙌"
           }
-        },
-        {
-          "name": "assignToGitHubUserGroup",
-          "parameters": {
-            "groupId": "5e30958bcaaa10165018e690",
-            "skipOpener": true
-          }
         }
       ]
-    }
-  },
-  {
-    "taskType": "trigger",
-    "capabilityId": "InPrLabel",
-    "subCapability": "InPrLabel",
-    "version": "1.0",
-    "config": {
-      "taskName": "Issues labeled as \"In-PR\" and Fixed when referenced in open PR",
-      "label_inPr": "In-PR :rocket:",
-      "fixedLabelEnabled": true,
-      "label_fixed": "Completed :fire:"
     }
   },
   {
@@ -1190,100 +880,51 @@
         {
           "weekDay": 0,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 1,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 2,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 3,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 4,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 5,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 6,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         }
       ],
       "searchTerms": [
@@ -1310,7 +951,7 @@
         {
           "name": "noActivitySince",
           "parameters": {
-            "days": 45
+            "days": 30
           }
         }
       ],
@@ -1333,100 +974,51 @@
         {
           "weekDay": 0,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 1,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 2,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 3,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 4,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 5,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 6,
           "hours": [
-            2,
-            5,
-            8,
-            11,
-            14,
-            17,
-            20,
-            23
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         }
       ],
       "searchTerms": [
@@ -1598,7 +1190,8 @@
           }
         }
       ]
-    }
+    },
+    "disabled": false
   },
   {
     "taskType": "trigger",
@@ -1661,11 +1254,12 @@
         {
           "name": "addReply",
           "parameters": {
-            "comment": "Hello lovely human, thank you for your comment on this issue. Because this issue has been closed for a period of time, please strongly consider opening a new issue linking to this issue instead to ensure better visibility of your comment. Thank you!"
+            "comment": "Thank you for your comment on this issue. Because this issue has been closed for a period of time, please strongly consider opening a new issue linking to this issue instead to ensure better visibility of your comment. Thank you!"
           }
         }
       ]
-    }
+    },
+    "disabled": false
   },
   {
     "taskType": "scheduled",
@@ -1677,100 +1271,51 @@
         {
           "weekDay": 0,
           "hours": [
-            1,
-            4,
-            7,
-            10,
-            13,
-            16,
-            19,
-            22
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 1,
           "hours": [
-            1,
-            4,
-            7,
-            10,
-            13,
-            16,
-            19,
-            22
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 2,
           "hours": [
-            1,
-            4,
-            7,
-            10,
-            13,
-            16,
-            19,
-            22
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 3,
           "hours": [
-            1,
-            4,
-            7,
-            10,
-            13,
-            16,
-            19,
-            22
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 4,
           "hours": [
-            1,
-            4,
-            7,
-            10,
-            13,
-            16,
-            19,
-            22
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 5,
           "hours": [
-            1,
-            4,
-            7,
-            10,
-            13,
-            16,
-            19,
-            22
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         },
         {
           "weekDay": 6,
           "hours": [
-            1,
-            4,
-            7,
-            10,
-            13,
-            16,
-            19,
-            22
+            7
           ],
-          "timezoneOffset": -8
+          "timezoneOffset": -7
         }
       ],
       "searchTerms": [
@@ -1781,7 +1326,7 @@
         {
           "name": "noActivitySince",
           "parameters": {
-            "days": 60
+            "days": 30
           }
         },
         {
@@ -1806,224 +1351,6 @@
   },
   {
     "taskType": "trigger",
-    "capabilityId": "IssueResponder",
-    "subCapability": "IssuesOnlyResponder",
-    "version": "1.0",
-    "config": {
-      "conditions": {
-        "operator": "and",
-        "operands": [
-          {
-            "name": "isOpen",
-            "parameters": {}
-          },
-          {
-            "name": "addedToProjectColumn",
-            "parameters": {
-              "projectName": "September sprint",
-              "columnName": "In progress"
-            }
-          }
-        ]
-      },
-      "eventType": "issue",
-      "eventNames": [
-        "issues",
-        "project_card"
-      ],
-      "taskName": "Mark as \"in-progress\" label when moved to In Progress column in the project",
-      "actions": [
-        {
-          "name": "removeLabel",
-          "parameters": {
-            "label": "Completed :fire:"
-          }
-        },
-        {
-          "name": "removeLabel",
-          "parameters": {
-            "label": "to review :book:"
-          }
-        },
-        {
-          "name": "removeLabel",
-          "parameters": {
-            "label": "needs triage :mag:"
-          }
-        },
-        {
-          "name": "addLabel",
-          "parameters": {
-            "label": "In progress :construction:"
-          }
-        }
-      ]
-    }
-  },
-  {
-    "taskType": "trigger",
-    "capabilityId": "IssueResponder",
-    "subCapability": "IssuesOnlyResponder",
-    "version": "1.0",
-    "config": {
-      "conditions": {
-        "operator": "and",
-        "operands": [
-          {
-            "name": "isOpen",
-            "parameters": {}
-          },
-          {
-            "name": "addedToProjectColumn",
-            "parameters": {
-              "projectName": "September sprint",
-              "columnName": "Done"
-            }
-          }
-        ]
-      },
-      "eventType": "issue",
-      "eventNames": [
-        "issues",
-        "project_card"
-      ],
-      "taskName": "Mark as \"Fixed\" label when moved to Done column in the project",
-      "actions": [
-        {
-          "name": "removeLabel",
-          "parameters": {
-            "label": "In progress :construction:"
-          }
-        },
-        {
-          "name": "removeLabel",
-          "parameters": {
-            "label": "to review :book:"
-          }
-        },
-        {
-          "name": "removeLabel",
-          "parameters": {
-            "label": "needs triage :mag:"
-          }
-        },
-        {
-          "name": "addLabel",
-          "parameters": {
-            "label": "Completed :fire:"
-          }
-        }
-      ]
-    }
-  },
-  {
-    "taskType": "trigger",
-    "capabilityId": "IssueResponder",
-    "subCapability": "IssuesOnlyResponder",
-    "version": "1.0",
-    "config": {
-      "conditions": {
-        "operator": "and",
-        "operands": [
-          {
-            "name": "isOpen",
-            "parameters": {}
-          },
-          {
-            "name": "addedToProjectColumn",
-            "parameters": {
-              "projectName": "September sprint",
-              "columnName": "Ready for testing"
-            }
-          }
-        ]
-      },
-      "eventType": "issue",
-      "eventNames": [
-        "issues",
-        "project_card"
-      ],
-      "taskName": "Mark as \"to-review\" label when moved to Ready for testing column in the project",
-      "actions": [
-        {
-          "name": "removeLabel",
-          "parameters": {
-            "label": "In progress :construction:"
-          }
-        },
-        {
-          "name": "removeLabel",
-          "parameters": {
-            "label": "Completed :fire:"
-          }
-        },
-        {
-          "name": "removeLabel",
-          "parameters": {
-            "label": "needs triage :mag:"
-          }
-        },
-        {
-          "name": "addLabel",
-          "parameters": {
-            "label": "to review :book:"
-          }
-        }
-      ]
-    }
-  },
-  {
-    "taskType": "trigger",
-    "capabilityId": "IssueResponder",
-    "subCapability": "IssuesOnlyResponder",
-    "version": "1.0",
-    "config": {
-      "conditions": {
-        "operator": "and",
-        "operands": [
-          {
-            "name": "isOpen",
-            "parameters": {}
-          },
-          {
-            "name": "addedToProjectColumn",
-            "parameters": {
-              "projectName": "September sprint",
-              "columnName": "To do"
-            }
-          }
-        ]
-      },
-      "eventType": "issue",
-      "eventNames": [
-        "issues",
-        "project_card"
-      ],
-      "taskName": "Remove all labels when moved to To do column in the project",
-      "actions": [
-        {
-          "name": "removeLabel",
-          "parameters": {
-            "label": "In progress :construction:"
-          }
-        },
-        {
-          "name": "removeLabel",
-          "parameters": {
-            "label": "Completed :fire:"
-          }
-        },
-        {
-          "name": "removeLabel",
-          "parameters": {
-            "label": "to review :book:"
-          }
-        }
-      ]
-    }
-  },
-  {
-    "taskType": "trigger",
     "capabilityId": "EmailCleanser",
     "subCapability": "EmailCleanser",
     "version": "1.0",
@@ -2041,97 +1368,14 @@
         "operator": "and",
         "operands": [
           {
-            "name": "isAction",
-            "parameters": {
-              "action": "opened"
-            }
+            "name": "isOpen",
+            "parameters": {}
           },
           {
             "operator": "not",
             "operands": [
               {
                 "name": "isPartOfProject",
-                "parameters": {}
-              }
-            ]
-          },
-          {
-            "operator": "not",
-            "operands": [
-              {
-                "name": "isAssignedToSomeone",
-                "parameters": {}
-              }
-            ]
-          },
-          {
-            "name": "hasLabel",
-            "parameters": {
-              "label": "question :grey_question:"
-            }
-          }
-        ]
-      },
-      "eventType": "issue",
-      "eventNames": [
-        "issues",
-        "project_card"
-      ],
-      "actions": [
-        {
-          "name": "addLabel",
-          "parameters": {
-            "label": "needs triage :mag:"
-          }
-        },
-        {
-          "name": "addReply",
-          "parameters": {
-            "comment": "Hello ${issueAuthor}, thank you for your interest in PWABuilder!\n\nI have automatically added a \"needs triage\" label to help get things started. Our team will look into the question and answer ASAP. Other community members may also answer the question and provide feedback 🙌"
-          }
-        }
-      ],
-      "taskName": "Add Question Label"
-    }
-  },
-  {
-    "taskType": "trigger",
-    "capabilityId": "IssueResponder",
-    "subCapability": "IssuesOnlyResponder",
-    "version": "1.0",
-    "config": {
-      "conditions": {
-        "operator": "and",
-        "operands": [
-          {
-            "name": "isAction",
-            "parameters": {
-              "action": "opened"
-            }
-          },
-          {
-            "operator": "not",
-            "operands": [
-              {
-                "name": "isPartOfProject",
-                "parameters": {}
-              }
-            ]
-          },
-          {
-            "operator": "not",
-            "operands": [
-              {
-                "name": "isAssignedToSomeone",
-                "parameters": {}
-              }
-            ]
-          },
-          {
-            "operator": "not",
-            "operands": [
-              {
-                "name": "isLabeled",
                 "parameters": {}
               }
             ]
@@ -2143,18 +1387,13 @@
         "issues",
         "project_card"
       ],
-      "taskName": "Add \"needs triage\" label to an empty template",
+      "taskName": "Add issue to project when created",
       "actions": [
         {
-          "name": "addLabel",
+          "name": "addToProject",
           "parameters": {
-            "label": "needs triage :mag:"
-          }
-        },
-        {
-          "name": "addReply",
-          "parameters": {
-            "comment": "Hello ${issueAuthor}, thank you for opening an issue with us! \n\nI have automatically added a \"needs triage\" label to help get things started. Our team will investigate the issue and help solve it ASAP. Other community members may also look into the issue and provide feedback 🙌"
+            "isOrgProject": true,
+            "projectName": "PWABuilder"
           }
         }
       ]

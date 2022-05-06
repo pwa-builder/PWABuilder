@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./build/",
+    "esModuleInterop": true,
+    "rootDir": "src"
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "src", "index.d.ts"
+  ]
+}

@@ -1,5 +1,5 @@
-# Fixes 
-<!-- Link to relevant issue (for ex: #1234) which will automatically close the issue once the PR is merged -->
+fixes #[issue number] 
+<!-- Link to relevant issue (for ex: "fixes #1234") which will automatically close the issue once the PR is merged -->
 
 ## PR Type
 <!-- Please uncomment one ore more that apply to this PR -->
