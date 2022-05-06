@@ -1,10 +1,47 @@
-FROM node:14
+# This workflow will build and push a node.js application to an Azure Web App when a release is created.
+#
+# This workflow assumes you have already created the target Azure App Service web app.
+# For instructions see https://docs.microsoft.com/azure/app-service/app-service-plan-manage#create-an-app-service-plan
+#
+# To configure this workflow:
+#
+# 1. For Linux apps, add an app setting called WEBSITE_WEBDEPLOY_USE_SCM and set it to true in your app **before downloading the file**.
+#      For more instructions see: https://docs.microsoft.com/azure/app-service/configure-common#configure-app-settings
+#
+# 2. Set up a secret in your repository named AZURE_WEBAPP_PUBLISH_PROFILE with the value of your Azure publish profile.
+#    For instructions on obtaining the publish profile see: https://docs.microsoft.com/azure/app-service/deploy-github-actions#configure-the-github-secret
+#
+# 3. Change the values for the AZURE_WEBAPP_NAME, AZURE_WEBAPP_PACKAGE_PATH and NODE_VERSION environment variables  (below).
+#
+# For more information on GitHub Actions for Azure, refer to https://github.com/Azure/Actions
+# For more samples to get started with GitHub Action workflows to deploy to Azure, refer to https://github.com/Azure/actions-workflow-samples
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - "apps/pwabuilder/**"
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - dev
+    paths:
+      - "apps/pwabuilder/**"
 
-EXPOSE 3000
+env:
+  NODE_VERSION: '14.x' # set this to the node version to use
 
-WORKDIR /app
-COPY . . 
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-ENV PORT 80
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag pwabuilder.azurecr.io/pwa-site-dev:latest
 
-CMD npm start serve
+      - name: Login
+        run: docker login pwabuilder.azurecr.io -u pwabuilder --password ${{secrets.azure}}
+
+      - name: Push
+        run: docker push pwabuilder.azurecr.io/pwa-site-dev:latest
