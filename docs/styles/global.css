@@ -1,0 +1,52 @@
+:root {
+    /* General Theme */
+    --theme-color: #491576;
+    --heading-color: #491576;
+
+    --heading-h2-border-style: none;
+    --heading-h2-font-size: 30px;
+    --heading-h2-margin: .75em 0 -.75em 0;
+
+    /* Sidebar */
+    --sidebar-name-color: #491576;
+    --sidebar-background: linear-gradient(to right, #F2F0F4, #F2FBFD);
+    --sidebar-name-font-weight: 400;
+    --sidebar-nav-pagelink-background-image          : url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='11.2' viewBox='0 0 7 11.2'%3E%3Cpath d='M1.5 1.5l4 4.1 -4 4.1' stroke-width='1.5' stroke='rgb%28179, 179, 179%29' fill='none' stroke-linecap='square' stroke-linejoin='miter' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+    --sidebar-nav-pagelink-background-image--active  : url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11.2' height='7' viewBox='0 0 11.2 7'%3E%3Cpath d='M1.5 1.5l4.1 4 4.1-4' stroke-width='1.5' stroke='rgb%2873, 21, 118%29' fill='none' stroke-linecap='square' stroke-linejoin='miter' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+    --sidebar-nav-pagelink-background-image--collapse: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='11.2' viewBox='0 0 7 11.2'%3E%3Cpath d='M1.5 1.5l4 4.1 -4 4.1' stroke-width='1.5' stroke='rgb%2873, 21, 118%29' fill='none' stroke-linecap='square' stroke-linejoin='miter' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+    --sidebar-nav-pagelink-background-image--loaded  : url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11.2' height='7' viewBox='0 0 11.2 7'%3E%3Cpath d='M1.5 1.5l4.1 4 4.1-4' stroke-width='1.5' stroke='rgb%2873, 21, 118%29' fill='none' stroke-linecap='square' stroke-linejoin='miter' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+
+    /* Search */
+    --search-flex-order: 1;
+    --search-input-border-radius: 15px;
+    --search-input-border-radius--focus: 15px;
+    --search-margin: 1.5rem .75rem 0 .75rem;
+
+    /* Notices */
+    --notice-tip-background: #F2F0F4;
+    --notice-tip-border-color: #491576;
+
+    /* Warnings */
+    
+
+    /* Cover Page */
+    --cover-background-color: #9C8DAB;
+    --cover-button-border-radius: 20px;
+    --cover-button-background: #7A688D;
+    --cover-button-color: #fff;
+    --cover-button-border: 1px solid #fff;
+
+    --cover-button-primary-background: #7A688D;
+    --cover-button-primary-color: #fff;
+    --cover-button-primary-border: 1px solid #fff;
+
+}
+
+.docs-image {
+    border-color:#7A688D;
+    border-width: 2px;
+    border-style: solid;
+    padding: 5px;
+    display: inline-block;
+    border-radius: 3px;
+}
