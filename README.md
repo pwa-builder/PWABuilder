@@ -1,32 +1,18 @@
 # PWABuilder
-TODO - update this README 
+The simplest way to create progressive web apps across platforms and devices.
 
-## Working with this monorepo
+This repo is home to several projects in the PWABuilder family of tools. The main projects are
 
-### Pre-reqs
-
-* node v14 or greater
-* npm v7 or greater (update npm if using an older version)
-
-### Adding a new project
-
-1. Create a new project in packages
-1. Add package to root `package.json` under `workspaces`. Order is important - make sure the package is after any dependencies or before any packages that might depend on this packages
-
-
-### Built with the [PWABuilder PWA Starter](https://github.com/pwa-builder/pwa-starter)
-
-Welcome to [PWABuilder](https://www.pwabuilder.com/) Read our launch blog [here](https://blog.pwabuilder.com/posts/introducing-the-brand-new-pwa-builder/) for all the details! 
-
-[Try It](https://www.pwabuilder.com)
-
-Want to help us build PWABuilder? Check out the info below and our [developer's wiki](https://github.com/pwa-builder/PWABuilder/wiki) to get started!
+| Name  | Overview | Project Root | Docs | Contribute |
+|-------| ----- | --------------- | -------------- | --------|
+| PWABuilder.com | Source code for [pwabuilder.com](https://pwabuilder.com) - the best way to package PWAs for various stores. | [/apps/pwabuilder](/apps/pwabuilder) | [PWABuilder docs](https://docs.pwabuilder.com) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
+| PWABuilder docs | Source code for [docs.pwabuilder.com](https://docs.pwabuilder.com) | [/docs](/docs) | [TODO: add wiki link] | [TODO: add wiki link]
 
 ### Prerequisites
 
 You will need the following things properly installed on your computer.
 
-* [Node.js](http://nodejs.org/) (with NPM)
+* [Node.js](http://nodejs.org/)
 * [NPM](https://www.npmjs.com/get-npm)
 
 You should also be familiar with [TypeScript](https://www.typescriptlang.org/) which we use for this project. This helps give you more guidance as you code from [intellisense](https://code.visualstudio.com/docs/editor/intellisense) when using [VSCode](https://code.visualstudio.com/).
@@ -42,32 +28,43 @@ Additionally, when you open the project in VS Code, you'll be prompted to instal
 
 ### Development
 
-Run `npm install` and then run `npm run dev`, the project should open in your default browser. From here you can start developing, your changes will be rebuilt and reloaded in the browser as you develop.
+Navigate to the folder of the project you plan to work on (example [/apps/pwabuilder](/apps/pwabuilder)), and follow the README for how to get started. 
 
-### Running Tests
-We currently have E2E tests that are run using the [Playwright test-runner](https://playwright.dev/docs/test-intro).
-Currently they can be run by running the following commands:
-- npm run dev (We are going to run the E2E tests on your latest local changes)
-- npm run test (This will make sure the needed dependences are installed and will start running the tests)
-
-The output of the tests can be found in the console.
-
-*Notes*
-- If a test fails it will retry twice. The reason this is needed is our tests are relying on network requests, of which many are happening at once as tests run which can cause false positives.
-- Playwright spins up workers for tests to try to spread the load on your CPU and avoid false positives. I have set this to 2 when running in a CI (recommended), when running locally it will use your number of CPU cores - 1. So on a Surface Pro X with 8 cores it will attempt to spin up 7 workers.
-- I have also set a timeout of a minute for each test.
-
-### Debugging in VS Code
-
-In VS Code, install [Debugger for Microsoft Edge extension](https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-edge).
-
-In VSCode, set a breakpoint in a TypeScript file. Then press F5 to launch debugging.
-
-### Building for Production
-
-Run `npm run build`, the `dist/` folder will contain your built PWA. The production build will also generate a pre-caching service worker using [Workbox](https://developers.google.com/web/tools/workbox/modules/workbox-precaching).
+Running `npm install` in the project folder will automatically install and build all dependencies.
 
 
+### About this monorepo
+
+This monorepo does not use a root package.json like other monorepos you might be used to. Instead, projects live in their separate folders and are mostly independent of each other. 
+
+However, when there are dependencies between projects, our tooling should automatically handle linking and dependency building when you run `npm install` in the project root. 
+
+For example `/apps/pwabuilder` has a dependency on `library/site-analytics`. This dependency is defined in the pwabuilder package.json like so: 
+
+```json
+  //package.json
+  "dependencies": {
+    "@pwabuilder/site-analytics": "file:../../libraries/site-analytics",
+    ...
+```
+
+Running `npm install` in the pwabuilder folder will also run `npm install` and `npm run build` for the `site-analytics` project. In most cases, and unless working on a dependency, a developer will not have to worry about how these projects are linked.
+
+For automatic linking of projects to work, ensure each project has a `preinstall` script like so:
+
+```json
+  // package.json
+  "scripts": {
+    "preinstall": "node ../../scripts/setupDeps.js",
+    ...
+```
 
 
+## License
 
+All files on the PWABuilder repository are subject to the MIT license. Please read the License file at the root of the project.
+
+
+---
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
