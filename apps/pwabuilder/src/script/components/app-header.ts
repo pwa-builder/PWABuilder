@@ -184,7 +184,7 @@ export class AppHeader extends LitElement {
             rel="noopener"
             @click=${() => recordPWABuilderProcessStep(`.header.github_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
-            <ion-icon role="presentation" aria-hidden="true" tab-index="-1" name="logo-github"></ion-icon>
+            <ion-icon role="presentation" aria-hidden="true" tab-index="-1" name="logo-github" title="View source on GitHub"></ion-icon>
           </fast-anchor>
         </nav>
       </header>
