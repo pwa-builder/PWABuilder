@@ -20,13 +20,13 @@ on:
     branches:
       - dev
     paths:
-      - "apps/pwabuilder/*"
+      - "apps/pwabuilder/**"
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
       - dev
     paths:
-      - "apps/pwabuilder/*"
+      - "apps/pwabuilder/**"
 
 env:
   NODE_VERSION: '14.x' # set this to the node version to use
