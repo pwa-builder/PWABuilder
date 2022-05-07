@@ -110,7 +110,7 @@ export class AppPublish extends LitElement {
         "[Insert Meta Quest bullet points here]"
       ],
       isActionCard: true,
-      icon: '/assets/Publish_Oculus.svg',
+      icon: '/assets/Publish_Meta.svg',
       renderDownloadButton: () => this.renderOculusDownloadButton()
     }
   ];
@@ -204,7 +204,7 @@ export class AppPublish extends LitElement {
         }
 
         .container .action-buttons fast-anchor {
-          /**
+          /** 
              Seems like a magic value but really
              this is just to match the back button next to it
            */
@@ -425,7 +425,7 @@ export class AppPublish extends LitElement {
           border-bottom: 5px solid #5D5DB9;
           color: #5D5DB9;
         }
-
+        
         .unselected-apk {
           border-bottom: 5px solid transparent;
         }
@@ -500,7 +500,7 @@ export class AppPublish extends LitElement {
             flex-direction: column;
             align-items: center;
           }
-
+          
         `
       ),
       smallBreakPoint(css`
@@ -684,7 +684,7 @@ export class AppPublish extends LitElement {
             html`
             <div class="packaged-tracker"> <!-- This will eventually be in an "if packaged previously" -->
             <p>Packaged Previously</p>
-            </div>`
+            </div>` 
           }
           <div class="title-block">
             <img class="platform-icon" src="${platform.icon}" alt="platform icon" />
@@ -802,53 +802,53 @@ export class AppPublish extends LitElement {
       <!-- error modal -->
       <app-modal heading="Wait a minute!" .body="${this.errorMessage || ''}" ?open="${this.errored}" id="error-modal">
         <img class="modal-image" slot="modal-image" src="/assets/warning.svg" alt="warning icon" />
-
+      
         <div id="actions" slot="modal-actions">
           <fast-anchor target="__blank" id="error-link" class="button" .href="${this.reportPackageErrorUrl}">Report A Problem
           </fast-anchor>
-
+      
           <app-button @click="${() => this.returnToFix()}">Return to Manifest Options</app-button>
         </div>
       </app-modal>
-
+      
       <!-- download modal -->
       <app-modal ?open="${this.blob ? true : false}" heading="Download your package"
         body="Your app package is ready for download." id="download-modal" @app-modal-close="${() => this.downloadCancel()}">
         <img class="modal-image" slot="modal-image" src="/assets/images/store_fpo.png" alt="publish icon" />
-
+      
         <div slot="modal-actions">
           <app-button @click="${() => this.download()}">Download</app-button>
         </div>
       </app-modal>
-
+      
       <!-- test package download modal -->
       <app-modal ?open="${this.testBlob ? true : false}" heading="Test Package Download"
         body="${localeStrings.input.publish.windows.test_package}" id="test-download-modal"
         @app-modal-close="${() => this.downloadTestCancel()}">
         <img class="modal-image" slot="modal-image" src="/assets/images/warning.svg" alt="warning icon" />
-
+      
         <div slot="modal-actions">
           <app-button @click="${() => this.download()}">Download</app-button>
         </div>
       </app-modal>
-
+      
       <!-- windows store options modal -->
       <app-modal id="windows-options-modal" heading="Windows App Options" body="Customize your Windows app below"
         ?open="${this.openWindowsOptions}" @app-modal-close="${() => this.storeOptionsCancel()}">
         <windows-form slot="modal-form" .generating=${this.generating} @init-windows-gen="${(ev: CustomEvent) =>
               this.generate('windows', ev.detail as WindowsPackageOptions)}"></windows-form>
       </app-modal>
-
+      
       <!-- android options modal -->
       <app-modal id="android-options-modal" heading="Android App Options" body="Customize your Android app below" nav=${true}
         ?open="${this.openAndroidOptions === true}" @app-modal-close="${() => this.storeOptionsCancel()}">
-
+          
         <div id="apk-type" slot="modal-nav">
             <p class="selected-apk apk-type" @click=${(e: any) => this.toggleApkType(e)}>Google Play</p>
               <p class="unselected-apk apk-type" id="other-android" @click=${(e: any) => this.toggleApkType(e)}>
                 Other Android
                 <info-circle-tooltip  id="info-tooltip" text='Generates an unsigned APK.'></info-circle-tooltip>
-              </p>
+              </p> 
           </div>
           ${this.isGooglePlay ?
             html`<android-form slot="modal-form" .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay} @init-android-gen="${(e: CustomEvent) =>
@@ -857,7 +857,7 @@ export class AppPublish extends LitElement {
               this.generate('android', e.detail as AndroidPackageOptions)}"></android-form>`
           }
     </app-modal>
-
+      
       <!-- ios options modal -->
       <app-modal id="ios-options-modal" heading="iOS App Options" body="Customize your iOS app below"
         ?open="${this.openiOSOptions === true}" @app-modal-close="${() => this.storeOptionsCancel()}">
@@ -865,7 +865,7 @@ export class AppPublish extends LitElement {
           @init-ios-gen="${(ev: CustomEvent) => this.generate('ios', ev.detail)}">
         </ios-form>
       </app-modal>
-
+      
       <!-- oculus options modal -->
       <app-modal id="oculus-options-modal" heading="Meta Quest App Options" body="Customize your Meta Quest app below"
         ?open="${this.openOculusOptions}" @app-modal-close="${() => this.storeOptionsCancel()}">
@@ -873,32 +873,32 @@ export class AppPublish extends LitElement {
           @init-oculus-gen="${(ev: CustomEvent) => this.generate('oculus', ev.detail)}">
         </oculus-form>
       </app-modal>
-
+      
       <div id="publish-wrapper">
         <app-header></app-header>
-
+      
         <div id="grid" class="${classMap({
                 'grid-mobile': this.isDeskTopView == false,
               })}">
           <app-sidebar id="desktop-sidebar"></app-sidebar>
-
+      
           <div>
             <content-header class="publish">
               <div id="banner-header" slot="hero-container">
                 <h1> <span>Awesome!</span> Your PWA is Store Ready.</h1>
               </div>
-
+              
               <p id="hero-p" slot="hero-container">
                 You are now ready to ship your PWA to the app stores!
               </p>
             </content-header>
-
+      
             <app-sidebar id="tablet-sidebar"></app-sidebar>
-
+      
             <section class="container">
               <div id="summary-block">
                 <h2>Publish your PWA to stores</h2>
-
+        
                 <p>
                   Generate store-ready packages for the Microsoft Store, Google
                   Play and more!
