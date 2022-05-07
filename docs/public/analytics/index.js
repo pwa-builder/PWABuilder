@@ -36,24 +36,6 @@ export function recordPageView(uri, name, properties) {
         .catch(err => console.warn('OneDS record page view error', err));
 }
 // See https://martech.azurewebsites.net/website-tools/oneds/guided-learning/scenario-process
-export function recordPWABuilderProcessStep(processStep, stepType, additionalInfo) {
-    let pageName = window.location.pathname.slice(1);
-    if (pageName.length == 0) {
-        pageName = "home";
-    }
-    let processLabel = pageName + "." + processStep;
-    lazyLoadAnalytics()
-        .then(oneDS => oneDS.capturePageAction(null, {
-        actionType: "O" /* Other */,
-        behavior: stepType,
-        contentTags: {
-            scn: "pwa-builder",
-            scnstp: processLabel
-        },
-        content: additionalInfo
-    }));
-}
-// See https://martech.azurewebsites.net/website-tools/oneds/guided-learning/scenario-process
 export function recordProcessStep(processName, processStep, stepType, additionalInfo) {
     lazyLoadAnalytics()
         .then(oneDS => oneDS.capturePageAction(null, {

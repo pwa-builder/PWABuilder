@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirecting</title>
+</head>
+<body>
+  <script>
+    
+    // redirect if url is pattern docs.pwabuilder.com/docs
+    if (window.location.hostname === 'docs.pwabuilder.com') { //  && window.location.pathname.startsWith('/docs/')
+      window.location.href = 'https://blob.pwabuilder.com' + window.location.pathname;
+    }
+
+  </script>
+</body>
+</html>
