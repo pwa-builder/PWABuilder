@@ -22,10 +22,19 @@ There are just a few things you will need before getting started:
 
 ?> **Note** You can also use our VSCode Extension, PWA Studio, to generate a starter project. Go [here](#/studio/quick-start) for more info.
 
-First, visit [the PWA Starter on Github](https://aka.ms/pwa-starter). Now, click the `Use this template` button.
-Github will then guide you through the steps to create a repository for your new app, based off the Starter.
+To use the starter:
 
-When this is finished, you will have your codebase for your new app on your Github account!
+1. Visit the [PWA Starter repository.](https://github.com/pwa-builder/pwa-starter)
+
+2. Click the green `Use this template` button.
+
+3.  Provide a repository name and other options you wish to include.
+
+4. Click `Create repository from template`.
+
+5. You will be redirected to your new repository!
+
+Next, you just need to clone the repository to start developing. If you need help, check out these [docs.]()
 
 ## Starting Development
 
