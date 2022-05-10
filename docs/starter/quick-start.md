@@ -1,9 +1,10 @@
 # PWA Starter
 
-The pwa-starter is a starter codebase, just like create-react-app or the Angular CLI can generate, that 
-- Uses the PWABuilder team's preferred front-end tech stack
-- Is specifically for building cross-platform Progressive youb Apps (PWAs)
-- And enforces best practices from the start
+The PWA Starter is our opinionated and production tested starter that the PWABuilder team uses to build all of our PWAs, including PWABuilder itself. 
+
+The PWA Starter uses a lightweight, fast, and extensible stack that allows you to quickly get started with developing a new PWA.
+
+The starter is specifically focused on cross-platform PWA development and comes with a basic manifest and service worker functionality through [Workbox.](https://developers.google.com/web/tools/workbox/)
 
 If you're new to developing PWAs and aren't sure where to start, check out this [blog series.]()
 
