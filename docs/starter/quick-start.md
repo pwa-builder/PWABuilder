@@ -6,7 +6,7 @@ The PWA Starter uses a lightweight, fast, and extensible stack that allows you t
 
 The starter is specifically focused on cross-platform PWA development and comes with a basic manifest and service worker functionality through [Workbox.](https://developers.google.com/web/tools/workbox/)
 
-If you're new to developing PWAs and aren't sure where to start, check out this [blog series.]()
+If you're new to developing PWAs and aren't sure where to start, check out this [blog series.](https://microsoft.github.io/win-student-devs/#/)
 
 ## Prerequisites
 
