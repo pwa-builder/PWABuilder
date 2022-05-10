@@ -36,29 +36,6 @@ To use the starter:
 
 Next, you just need to clone the repository to start developing. If you need help, check out these [docs.]()
 
-## Starting Development
-
-Now, using the code repository we created above, you can start developing your app.
-
-First, choose the local option:
-
-<div class="docs-image">
-  <img src="/assets/starter/quick-start/local-button.png" alt="Image of PWA Studio commands being filtered in VS Code" width=600/>
-</div>
-
-Next, click the copy button:
-
-<div class="docs-image">
-  <img src="assets/starter/quick-start/copy-button.png" alt="A screenshot that shows the copy button on the pwa-starter Github repo" width=600 />
-</div>
-
-After you have our URL copied, open a terminal (Windows Terminal comes by default in Windows 11, but Powershell or any other terminal on your operating system of choice will work) and type `git clone` followed by the URL you just copied. ``
-
-This will clone a copy of the pwa-starter to our device!
-
-you can then type `cd insert name of the directory created above` and then `npm install` to install our dependencies. you are now ready to start building!
-
-For more information on how to build your app, what capabilities PWAs have access too, and more, [Check our course on building PWAs](https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/)
 
 ## Tech Stack
 
