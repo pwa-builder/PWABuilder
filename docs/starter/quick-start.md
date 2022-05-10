@@ -18,7 +18,7 @@ There are just a few things you will need before getting started:
 - [Node.js](https://docs.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-windows)
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
-## Getting the Starter
+## Cloning the Starter
 
 **Note**: You can also use our VSCode Extension, PWA Studio, to generate a starter project. Go [here]() for more info.
 
