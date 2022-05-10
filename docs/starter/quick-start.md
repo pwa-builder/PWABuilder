@@ -15,7 +15,8 @@ There are just a few things you will need before getting started:
 - A Github Account, which you can create at [GitHub](https://github.com/).
 - A code editor, such as [Visual Studio Code](https://code.visualstudio.com/).
 - A web browser, such as [Microsoft Edge](https://www.microsoft.com/en-us/edge).
-- [Install Node.js and Git](https://docs.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-windows)
+- [Node.js](https://docs.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-windows)
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
 ## Getting the Starter
 
