@@ -34,8 +34,29 @@ To use the starter:
 
 5. You will be redirected to your new repository!
 
-Next, you just need to clone the repository to start developing. If you need help, check out these [docs.]()
+Next, you just need to clone the repository to start developing. If you need help, check out these [docs.](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
 
+## Deploying Locally
+
+To run your progressive web app locally:
+
+1. Open a terminal of your choice at the root of your PWA Starter repo.
+
+2. Install dependencies with `npm`:
+
+```
+npm install
+```
+
+3. After your packages are installed, deploy your PWA locally with this command:
+
+```
+npm start
+```
+
+4. Check the terminal for the proper URL to find your PWA, it should take the form of `localhost:<PORT NUMBER>`.
+
+Now you can view and test your PWA locally.
 
 ## Tech Stack
 
