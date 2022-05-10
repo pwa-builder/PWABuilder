@@ -47,11 +47,11 @@ Check out [this tutorial](https://lit.dev/tutorials/intro-to-lit/) in the Lit do
 
 3. Finally, add `<fluent-anchor href="/settings">Settings</fluent-anchor>` to your `/src/script/pages/app-home.ts` in the [`render` function](https://github.com/pwa-builder/pwa-starter/blob/main/src/script/pages/app-home.ts#L104).
 
+4. Lets now run your app and check our work. Open your [terminal](https://www.hanselman.com/blog/whats-the-difference-between-a-console-a-terminal-and-a-shell) and run `npm run dev`. Your app will now open in the browser, at which point you should see your new link you can click. This will then navigate you to your new page!
+
 <div class="docs-image">
   <img src="/assets/starter/routing/settings-button.png" alt="" width=600>
 </div>
-
-4. Lets now run your app and check our work. Open your [terminal](https://www.hanselman.com/blog/whats-the-difference-between-a-console-a-terminal-and-a-shell) and run `npm run dev`. Your app will now open in the browser, at which point you should see your new link you can click. This will then navigate you to your new page!
 
 
 
