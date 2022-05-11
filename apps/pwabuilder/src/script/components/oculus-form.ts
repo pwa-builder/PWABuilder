@@ -74,7 +74,7 @@ export class OculusForm extends AppPackageFormBase {
             <div class="form-group">
               ${this.renderFormInput({
                 label: 'Package ID',
-                tooltip: `The ID of your Oculus app. We recommend a reverse-domain style string: com.domainname.appname. Letters, numbers, periods, hyphens, and underscores are allowed.`,
+                tooltip: `The ID of your Meta Quest app. We recommend a reverse-domain style string: com.domainname.appname. Letters, numbers, periods, hyphens, and underscores are allowed.`,
                 tooltipLink:
                   'https://developer.android.com/guide/topics/manifest/manifest-element.html#package',
                 inputId: 'package-id-input',
@@ -110,7 +110,7 @@ export class OculusForm extends AppPackageFormBase {
             <div class="form-group">
               ${this.renderFormInput({
                 label: 'Version name',
-                tooltip: `The version of your app displayed to users. This is a string, typically in the form of '1.0.0.0'. This is purely for display purposes to users, Oculus Store uses Version Code to determine the latest version of your app.`,
+                tooltip: `The version of your app displayed to users. This is a string, typically in the form of '1.0.0.0'. This is purely for display purposes to users, Meta Quest Store uses Version Code to determine the latest version of your app.`,
                 tooltipLink:
                   'https://developer.android.com/guide/topics/manifest/manifest-element.html#vname',
                 inputId: 'version-input',
@@ -126,7 +126,7 @@ export class OculusForm extends AppPackageFormBase {
             <div class="form-group">
               ${this.renderFormInput({
                 label: 'Version code',
-                tooltip: `A positive integer used as your app's version number. This number is used by the Oculus Store to determine whether one version is more recent than another, with higher numbers indicating more recent versions.`,
+                tooltip: `A positive integer used as your app's version number. This number is used by the Meta Quest Store to determine whether one version is more recent than another, with higher numbers indicating more recent versions.`,
                 tooltipLink:
                   'https://developer.android.com/guide/topics/manifest/manifest-element.html#vcode',
                 inputId: 'version-code-input',
@@ -174,7 +174,7 @@ export class OculusForm extends AppPackageFormBase {
                   <div class="form-check">
                     ${this.renderFormInput({
                       label: 'New',
-                      tooltip: `Recommended for new Oculus apps. PWABuilder will generate a new signing key for you and sign your app package with it. Your download will contain the new signing key details.`,
+                      tooltip: `Recommended for new Meta Quest apps. PWABuilder will generate a new signing key for you and sign your app package with it. Your download will contain the new signing key details.`,
                       inputId: 'signing-new-input',
                       name: 'signingMode',
                       value: 'new',
@@ -189,7 +189,7 @@ export class OculusForm extends AppPackageFormBase {
                     ${this.renderFormInput({
                       label: 'None',
                       tooltip:
-                        'PWABuilder will generate an unsigned APK. Unsigned APKs cannot be uploaded to the Oculus Store; you will need to sign the APK manually via Java keytool before submitting to the Store.',
+                        'PWABuilder will generate an unsigned APK. Unsigned APKs cannot be uploaded to the Meta Quest Store; you will need to sign the APK manually via Java keytool before submitting to the Store.',
                       tooltipLink:
                         'https://docs.oracle.com/en/java/javase/12/tools/keytool.html',
                       inputId: 'signing-none-input',
@@ -206,7 +206,7 @@ export class OculusForm extends AppPackageFormBase {
                     ${this.renderFormInput({
                       label: 'Existing',
                       tooltip:
-                        'Recommended for existing apps in the Oculus Store. Use this option if you already have a signing key and you want to publish a new version of an existing app in the Oculus Store.',
+                        'Recommended for existing apps in the Meta Quest Store. Use this option if you already have a signing key and you want to publish a new version of an existing app in the Meta Quest Store.',
                       inputId: 'signing-mine-input',
                       name: 'signingMode',
                       value: 'mine',
@@ -228,7 +228,7 @@ export class OculusForm extends AppPackageFormBase {
 
         <div id="form-details-block">
           <p>
-            Your download will contain instructions for submitting to Oculus
+            Your download will contain instructions for submitting to Meta Quest
             Store.
           </p>
         </div>

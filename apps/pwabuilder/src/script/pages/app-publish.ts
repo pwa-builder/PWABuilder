@@ -103,14 +103,15 @@ export class AppPublish extends LitElement {
       renderDownloadButton: () => this.renderiOSDownloadButton()
     },
     {
-      title: 'Oculus',
+      title: 'Meta Quest',
       factoids: [
-        "[Insert Oculus bullet points here]",
-        "[Insert Oculus bullet points here]",
-        "[Insert Oculus bullet points here]"
+        "PWAs are first class applications",
+        "Bring your 2D apps to VR's immersive screen",
+        "Build immersive 3D experiences for VR using WebXR",
+        "Currently in developer preview via sideloading"
       ],
       isActionCard: true,
-      icon: '/assets/Publish_Oculus.svg',
+      icon: '/assets/Publish_Meta.svg',
       renderDownloadButton: () => this.renderOculusDownloadButton()
     }
   ];
@@ -867,7 +868,7 @@ export class AppPublish extends LitElement {
       </app-modal>
       
       <!-- oculus options modal -->
-      <app-modal id="oculus-options-modal" heading="Oculus App Options" body="Customize your Oculus app below"
+      <app-modal id="oculus-options-modal" heading="Meta Quest App Options" body="Customize your Meta Quest app below"
         ?open="${this.openOculusOptions}" @app-modal-close="${() => this.storeOptionsCancel()}">
         <oculus-form slot="modal-form" .generating=${this.generating}
           @init-oculus-gen="${(ev: CustomEvent) => this.generate('oculus', ev.detail)}">
@@ -916,7 +917,7 @@ export class AppPublish extends LitElement {
 }
 
 interface ICardData {
-  title: 'Windows' | 'Android' | 'iOS' | "Oculus";
+  title: 'Windows' | 'Android' | 'iOS' | "Meta Quest";
   factoids: string[];
   isActionCard: boolean;
   icon: string;
