@@ -1,5 +1,5 @@
 <div align=center>
-  <a href="#/">
+  <a href="/">
   <img width="45" src="assets/icons/pwa-builder.png">
   </a>
 </div>
