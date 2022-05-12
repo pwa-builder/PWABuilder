@@ -219,7 +219,7 @@ export class ComapniesPackaged extends LitElement {
             )}
         </div>
       </div>
-      ${this.paused ? html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}><img src="/assets/Play.svg" /></button>` : html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}><img src="/assets/Pause.svg" /></button>`}
+      ${this.paused ? html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}><img src="/assets/Play.svg" alt="play button" /></button>` : html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}><img src="/assets/Pause.svg" alt="pause button" /></button>`}
     </div>
     `;
   }
