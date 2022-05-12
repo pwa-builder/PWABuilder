@@ -41,6 +41,8 @@ export class AppHome extends LitElement {
   @state() errorGettingURL = false;
   @state() errorMessage: string | undefined;
 
+  @state() disableStart = true;
+
   static get styles() {
     return [
       style,
@@ -400,6 +402,10 @@ export class AppHome extends LitElement {
     if (inputEvent) {
       this.siteURL = (inputEvent.target as HTMLInputElement).value.trim();
     }
+
+    if (isValidURL(this.siteURL as string)) {
+      this.disableStart = false;
+    };
   }
 
   async start(inputEvent: InputEvent) {
@@ -541,7 +547,7 @@ export class AppHome extends LitElement {
                       : null}
                   </div>
             
-                  <loading-button id="start-button" type="submit" class="navigation raise" ?loading="${this.gettingManifest}"
+                  <loading-button id="start-button" type="submit" class="navigation raise" ?loading="${this.gettingManifest}" ?disabled="${this.disableStart}"
                   @click="${(e: InputEvent) => this.start(e)}">Start</loading-button>
                   <p id="demo">Try a <button id="demo-action" aria-label="click here for demo url" @click=${() => this.placeDemoURL()}>demo url</button></p>
                 </div>
