@@ -5,7 +5,8 @@ import { customElement, state } from 'lit/decorators.js';
 @customElement('companies-packaged')
 export class ComapniesPackaged extends LitElement {
 
-  @state() companies: string[] = ["facebook", "instagram", "mailchimp", "plutotv", "sketchapp", "tiktok", "twitter"] ;
+  @state() companies: string[] = ["facebook", "instagram", "mailchimp", "plutotv", "sketchapp", "tiktok", "twitter"];
+  @state() paused: boolean = false;
   
   static get styles() {
     return [
@@ -53,6 +54,16 @@ export class ComapniesPackaged extends LitElement {
         width: 100%;
         background-repeat: no-repeat;
         background-position: center;
+      }
+      .controls {
+        border: none;
+        background: none;
+        height: 20px;
+        width: auto;
+      }
+
+      .controls:hover {
+        cursor: pointer;
       }
 
       @keyframes scroll {
@@ -175,6 +186,16 @@ export class ComapniesPackaged extends LitElement {
     return array;
   }
 
+  toggleAnimation(){
+    this.paused = !this.paused;
+    let animatedElement = (this.shadowRoot!.querySelector(".slide-track") as HTMLElement);
+    if(this.paused){
+      animatedElement!.style.animationPlayState = 'paused';
+    } else {
+      animatedElement!.style.animationPlayState = 'running';
+    }
+  }
+
   render() {
     return html`
     <div id="success-wrapper">
@@ -198,6 +219,7 @@ export class ComapniesPackaged extends LitElement {
             )}
         </div>
       </div>
+      ${this.paused ? html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}><img src="/assets/Play.svg" alt="play button" /></button>` : html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}><img src="/assets/Pause.svg" alt="pause button" /></button>`}
     </div>
     `;
   }
