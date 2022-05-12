@@ -45,6 +45,9 @@ export class AppHome extends LitElement {
     return [
       style,
       css`
+        #home-block::before {
+          content: "";
+        }
         #home-block {
           background: url(/assets/new/HeroBackground1920.jpg);
           background-position: center center;
