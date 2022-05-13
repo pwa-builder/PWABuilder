@@ -405,7 +405,9 @@ export class AppHome extends LitElement {
 
     if (isValidURL(this.siteURL as string)) {
       this.disableStart = false;
-    };
+    } else {
+      this.disableStart = true;
+    }
   }
 
   async start(inputEvent: InputEvent) {
