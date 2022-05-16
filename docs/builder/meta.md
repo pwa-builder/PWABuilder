@@ -1,4 +1,4 @@
-# Creating Packages for 
+# Packaging PWAs for Meta Quest
 
 PWABuilder’s Meta Quest platform utilizes the [CLI tool published by Meta](https://developer.oculus.com/documentation/web/pwa-packaging/) to generate an apk package that can be installed on a Meta Quest.
 
