@@ -33,7 +33,10 @@ The first step is to generate your .apk package with PWABuilder.
 5. Next you will see a list of the different options for the Meta Quest platform that are covered in more detail below.
 6. When you are ready, tap the Generate button to generate your app package, and then the Download button when it pops up to download the generated App and associated files.
 
-## Customize your .apk package
+## Customize Your Package
+
+Here's a breakdown of the properties associated with your package:
+
 * Package ID: The ID of your Meta Quest app. We recommend a reverse-domain style string: com.domainname.appname. Letters, numbers, periods, hyphens, and underscores are allowed.
 * App name: The name of your app as displayed to users.
 * Launcher name: The name of your app in the Android launcher. This is typically the same as app name, or a shortened version of it. We prepopulate this with 
