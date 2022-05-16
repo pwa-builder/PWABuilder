@@ -16,7 +16,7 @@ You will need:
 
 The first step is to generate your .apk package with PWABuilder.
 
-1. Navigate to preview.pwabuilder.com.
+1. Navigate to [pwabuilder.com](https://pwabuilder.com).
 2. Enter the URL of your PWA on the homepage.
 
 <div class="docs-image">
