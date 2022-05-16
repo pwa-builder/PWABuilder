@@ -54,7 +54,7 @@ Your zip file contains ```signing.keystore``` and ```signing-key-info.txt```. ``
 ```signing-key-info.txt``` is a text file containing your signing key information, such as the key password, store password, and key alias.
 Keep both of these files in a safe place. You’ll need them to deploy future versions of your app. 
 
-## Sideloading and Testing your app on your Meta Quest device
+## Sideloading and Testing
 
 For this step, you'll need:
 
