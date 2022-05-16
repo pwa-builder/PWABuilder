@@ -1,5 +1,7 @@
 <div align=center>
+  <a href="/">
   <img width="45" src="assets/icons/pwa-builder.png">
+  </a>
 </div>
 <br>
 
@@ -25,5 +27,6 @@
 - **PWABuilder**
   - <a href="#/builder/quick-start"> Quick Start </a>
   - <a href="#/builder/windows">  Microsoft Store </a>
+  - <a href="#/builder/android"> Google Play Store </a>
   - <a href="#/builder/iOS"> iOS App Store </a>
   - <a href="#/builder/FAQ"> FAQ </a>

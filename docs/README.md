@@ -1,25 +1,57 @@
-:construction: **This repo is a work in progress. Come back for updates soon.** :construction:
+?> **Note** This documentation is a work in progress, keep checking back for new articles and content!
 
-## Welcome to the PWABuilder Docs Repo! <!-- {docsify-ignore} -->
+# PWABuilder Suite Documentation
 
+Welcome to the new documentation for the PWABuilder tooling suite! 
 
-This repository is where all the documentation for the main PWABuilder tool chain will live. This includes:
+In these docs, you can find guides, tips, and info for three separate but related PWABuilder tools:
 
- [PWABuilder](https://github.com/pwa-builder/PWABuilder)
+* ***PWA Starter:*** A starter template for building a brand new PWA
+* ***PWA Studio:*** A Visual Studio Code Extension for developing PWAs
+* ***PWABuilder:*** A packaging tool for preparing PWAs for applications stores
 
- [PWA Starter](https://github.com/pwa-builder/pwa-starter)
+If you're new to the PWABuilder suite, keep reading for a quick overview for each of our tools.
 
- [PWA Studio](https://github.com/pwa-builder/pwa-studio)
+## PWA Starter <!-- {docsify-ignore} -->
 
-Documentation for these tools, and for building PWAs in general, will eventually be hosted with Docsify as part of the existing PWABuilder website.
+The PWA Starter is our opinionated and production tested starter that the PWABuilder team uses to build all of our PWAs, including PWABuilder itself. 
 
-## Want To Contribute To These Docs? <!-- {docsify-ignore} -->
-Just like the rest of PWABuilder, the documentation will also be open-source and open to contribution! We would love contributions to the documentation in parallel with contributions to the code bases.
+The PWA Starter uses a lightweight, fast, and extensible stack that allows you to quickly get started with developing a new PWA. 
 
-### Notice Something Wrong?
-Open an issue [here.](https://github.com/pwa-builder/PWABuilder/issues) You can find more info about working with Docsify in their [documentation.](https://docsify.js.org/#/?id=docsify)
+It comes with the key pieces of any PWA, including a manifest and service worker functionality through [Workbox.](https://developers.google.com/web/tools/workbox/)
 
-### Want to Fix Something Yourself?
-Fork the repository and open a pull request [here.](https://github.com/pwa-builder/pwa-docs/pulls)
+To learn more about the starter's tech stack and how to develop on it, take a look at the [quick start.](#/starter/quick-start)
 
-More info on how to contribute to the PWABuilder documentation will be added to the wiki soon.
+## PWA Studio <!-- {docsify-ignore} -->
+
+PWA Studio is an extension for Visual Studio Code that provides tooling for working with and creating progressive web apps.
+
+You can use PWA Studio to:
+
+* Create a new PWA using the starter template
+  
+* Convert an existing web app into a PWA
+  
+* Manage your app’s manifest, service workers, and icons
+  
+* Package your app’s for the Microsoft, Google, and Apple Stores
+  
+* Validate your PWA across several metrics
+  
+* Add web capabilities with code snippets
+
+To learn more about PWA Studio, take a look at the [quick start.](#/studio/quick-start)
+
+## PWABuilder <!-- {docsify-ignore} -->
+
+[PWABuilder.com](https://www.pwabuilder.com/) is the hallmark tool within the PWABuilder suite. 
+
+PWABuilder enables developers to quickly and easily to generate store uploadable packages for the Microsoft, Google Play, and iOS App stores. 
+
+In addition to store-ready packages, you can also generate side-loadable packages for testing and validation.
+
+To learn more about packaging with PWABuilder, take a look at the [quick start.](#/builder/quick-start)
+
+<div class="docs-image">
+   <img src="assets/PWABuilder.png" alt="PWABuilder.com landing page" >
+</div>

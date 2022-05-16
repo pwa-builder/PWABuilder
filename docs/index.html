@@ -2,16 +2,49 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Document</title>
+  <title> Welcome </title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <meta name="description" content="Description">
+  <meta name="description" content="Documentation for building great progressive web apps with the PWABuilder tooling suite.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+
+  <link rel="icon" href="/assets/icons/icon_24.png" type="image/x-icon" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css">
   
   <link rel="stylesheet" href="styles/global.css">
 </head>
 <body>
   <div id="app"></div>
+
+  <script type="text/javascript" src="https://js.monitor.azure.com/scripts/c/ms.analytics-web-3.min.js"></script>
+  <script>
+    const analytics = new oneDS.ApplicationInsights();
+    var config = {
+      instrumentationKey: "f72753e593724c6183de8c8a3a5f419d-5e71f893-09c1-41d8-abf0-667e691c28a9-6593",
+      channelConfiguration:{ // Post channel configuration
+        eventsLimitInMem: 50
+      },
+      propertyConfiguration: { // Properties Plugin configuration 
+        env:"PROD" // Environment can be set to PPE or PROD as needed. 
+      },
+      webAnalyticsConfiguration:{ // Web Analytics Plugin configuration
+        urlCollectQuery: true,
+        urlCollectHash: true,
+        autoCapture: {
+          scroll: false,
+          pageView: true,
+          onLoad: true,
+          onUnload: true,
+          click: true,
+          resize: true,
+          lineage: true,
+          jsError: true
+        }
+      }
+    }; 
+    //Initialize SDK
+    analytics.initialize(config, []);
+  </script>
+
   <script>
     window.$docsify = {
       repo: 'https://github.com/pwa-builder/pwa-docs',

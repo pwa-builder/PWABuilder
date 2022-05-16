@@ -9,7 +9,7 @@
     "mocha": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha",
     "coverage": "nyc npm run mocha",
     "clean": "rimraf build/ && rimraf dist/",
-    "build": "rimraf dist/ && cross-env NODE_ENV=production && rollup --config rollup.config.js && node workbox.mjs",
+    "build": "rimraf dist/ && cross-env NODE_ENV=production && rollup --config rollup.config.js",
     "start": "npm run build && npx nodemon server.js",
     "serve": "npx nodemon server.js",
     "dev": "cross-env NODE_ENV=development && concurrently \"rollup --config rollup.config.dev.js --watch\" \"web-dev-server\"",
@@ -19,7 +19,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@pwabuilder/site-analytics": "file:../../libraries/site-analytics",
     "@codemirror/autocomplete": "^0.18.5",
     "@codemirror/basic-setup": "^0.18.0",
     "@codemirror/commands": "^0.18.1",
@@ -35,15 +34,13 @@
     "@codemirror/view": "^0.18.10",
     "@pwabuilder/manifest-previewer": "^1.0.21",
     "@pwabuilder/pwainstall": "^1.6.6",
+    "@pwabuilder/site-analytics": "file:../../libraries/site-analytics",
     "@vaadin/router": "^1.7.4",
     "browser-fs-access": "^0.23.0",
     "cors": "^2.8.5",
     "express": "^4.17.3",
     "lit": "^2.0.0",
-    "lodash-es": "^4.17.21",
-    "workbox-build": "^6.5.2",
-    "workbox-core": "^6.4.2",
-    "workbox-precaching": "^6.1.2"
+    "lodash-es": "^4.17.21"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
