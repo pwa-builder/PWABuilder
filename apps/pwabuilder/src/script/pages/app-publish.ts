@@ -69,17 +69,6 @@ export class AppPublish extends LitElement {
 
   readonly platforms: ICardData[] = [
     {
-      title: 'Android',
-      factoids: [
-        "PWAs are first class applications",
-        "One app store listing for all devices (mobile, tablet, desktop)",
-        "2.5 billion store enabled devices"
-      ],
-      isActionCard: true,
-      icon: '/assets/Publish_Android.svg',
-      renderDownloadButton: () => this.renderAndroidDownloadButton()
-    },
-    {
       title: 'Windows',
       factoids: [
         "PWAs can be indistinguishable from native apps on Windows",
@@ -91,6 +80,18 @@ export class AppPublish extends LitElement {
       icon: '/assets/Publish_Windows.svg',
       renderDownloadButton: () => this.renderWindowsDownloadButton()
     },
+    {
+      title: 'Android',
+      factoids: [
+        "PWAs are first class applications",
+        "One app store listing for all devices (mobile, tablet, desktop)",
+        "2.5 billion store enabled devices"
+      ],
+      isActionCard: true,
+      icon: '/assets/Publish_Android.svg',
+      renderDownloadButton: () => this.renderAndroidDownloadButton()
+    },
+    
     {
       title: 'iOS',
       factoids: [
