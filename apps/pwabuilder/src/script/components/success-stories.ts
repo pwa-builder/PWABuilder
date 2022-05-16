@@ -19,6 +19,9 @@ export class SuccessStories extends LitElement {
   static get styles() {
     return [
     css`
+      #success-panel::before {
+        content: "";
+      }
       #success-panel {
         display: flex;
         flex-direction: column;
