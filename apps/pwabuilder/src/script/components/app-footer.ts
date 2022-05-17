@@ -174,9 +174,10 @@ export class AppFooter extends LitElement {
             rel="noopener"
             appearance="hypertext"
             href="https://github.com/pwa-builder/PWABuilder"
+            aria-label="Contribute to our Github"
             @click=${() => recordPWABuilderProcessStep(`.footer.github_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
-            <ion-icon name="logo-github"></ion-icon>
+            <ion-icon name="logo-github" role="presentation"></ion-icon>
           </fast-anchor>
 
           <fast-anchor
@@ -184,9 +185,10 @@ export class AppFooter extends LitElement {
             rel="noopener"
             appearance="hypertext"
             href="https://twitter.com/pwabuilder"
+            aria-label="Follow us on Twitter"
             @click=${() => recordPWABuilderProcessStep(`.footer.twitter_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
-            <ion-icon name="logo-twitter"></ion-icon>
+            <ion-icon name="logo-twitter" role="presentation"></ion-icon>
           </fast-anchor>
 
           <fast-anchor
@@ -194,9 +196,10 @@ export class AppFooter extends LitElement {
             rel="noopener"
             appearance="hypertext"
             href="https://www.youtube.com/c/PWABuilder"
+            aria-label="Subscribe to our Youtube"
             @click=${() => recordPWABuilderProcessStep(`.footer.youtube_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
-            <ion-icon name="logo-youtube"></ion-icon>
+            <ion-icon name="logo-youtube" role="presentation"></ion-icon>
           </fast-anchor>
         </div>
       </footer>

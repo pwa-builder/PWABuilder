@@ -151,12 +151,12 @@ export class Infocard extends LitElement {
     return html`
       <div class="card">
         <div class="card-content">
-          <img src=${this.imageUrl} alt="${this.cardTitle} icon" />
+          <img src=${this.imageUrl} alt="${this.cardTitle} icon" role="presentation"/>
           <h3>${this.cardTitle}</h3>
           <p>${this.description}</p>
         </div>
         <div class="card-actions" @click=${() => recordPWABuilderProcessStep("home.middle." + this.cardTitle + "_learn_more_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
-          <a href=${this.linkRoute} target="_blank" rel="noopener">Learn More</a>
+          <a href=${this.linkRoute} target="_blank" rel="noopener" aria-label="Learn more about ${this.cardTitle}">Learn More</a>
         </div>
       </div>
     `;
