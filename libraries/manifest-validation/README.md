@@ -6,15 +6,6 @@ This package runs our validation tests against a Web Manifest. It can be used in
 - [Methods](#methods)
 - [Types](#types)
 
-## Getting Started during preview
-
-- git clone this repository
-- `cd` into this repo (or open in VSCode)
-- Run `npm link` in this new directory
-- Open the project you would like to use this library in (either with `cd` or VSCode)
-- Run `npm link manifest-validation` in the open project
-- You can now start importing and using the library as if you had installed it from npm.
-
 ## Getting Started
 - Get a standard web manifest object as JSON. This can be done in any way you need and is a seperate concern from this package.
 - Start by calling one of the methods below and passing in the manifest JSON from step two. Note that you will first need to import that method first
