@@ -1,8 +1,8 @@
 {
-  "name": "manifest-editor",
+  "name": "@pwabuilder/manifest-editor",
   "version": "0.0.1",
   "description": "A starter kit for building PWAs!",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "start": "run-p build:watch serve",

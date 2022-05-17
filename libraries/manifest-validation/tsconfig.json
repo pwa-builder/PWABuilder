@@ -2,8 +2,6 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
-    /* Modules */
-    "module": "CommonJS",                                /* Specify what module code is generated. */
     "rootDir": "./src",
     "outDir": "./dist",                                   /* Specify an output folder for all emitted files. */
     "removeComments": true,                           /* Disable emitting comments. */

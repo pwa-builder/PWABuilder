@@ -1,4 +1,4 @@
-import { LitElement, css, html, PropertyValueMap } from 'lit';
+import { LitElement, css, html } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
 import { Manifest } from '../utils/interfaces';
 

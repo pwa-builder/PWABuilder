@@ -36,6 +36,7 @@ export async function generateScreenshots(
       try {
         //const manifestContext = await fetchOrCreateManifest(); // How to create a constant manifest state across files like this?
         //screenshots = manifestContext.manifest.screenshots || [];
+        screenshots = [];
       } catch (error) {
         screenshots = [];
       }
