@@ -151,7 +151,7 @@ export class Infocard extends LitElement {
     return html`
       <div class="card">
         <div class="card-content">
-          <img src=${this.imageUrl} alt="${this.cardTitle} icon" />
+          <img src=${this.imageUrl} alt="${this.cardTitle} icon" role="presentation"/>
           <h3>${this.cardTitle}</h3>
           <p>${this.description}</p>
         </div>
