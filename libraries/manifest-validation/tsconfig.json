@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    /* Visit https://aka.ms/tsconfig.json to read more about this file */
+    "target": "es2021",
+
+    /* Modules */
+    "module": "CommonJS",                                /* Specify what module code is generated. */
+    "rootDir": "./src",
+
+    /* Emit */
+    "declaration": true,                              /* Generate .d.ts files from TypeScript and JavaScript files in your project. */
+    "declarationMap": true,                           /* Create sourcemaps for d.ts files. */                   /* Only output d.ts files and not JavaScript files. */
+    "sourceMap": true,                                /* Create source map files for emitted JavaScript files. */
+    "outDir": "./dist",                                   /* Specify an output folder for all emitted files. */
+    "removeComments": true,                           /* Disable emitting comments. */
+    
+    "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
+  }
+}
