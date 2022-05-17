@@ -1,9 +1,56 @@
-# Routing
+# Adding Content
 
-The PWA Starter is a [Single-Page Application](https://developer.mozilla.org/en-US/docs/Glossary/SPA) and therefore uses a client-side router to navigate between pages. For this purpose, we use the [Vaadin Router](https://vaadin.github.io/router/vaadin-router/demo/#vaadin-router-getting-started-demos). The router is a simple, declarative router that allows you to define a route, such as `/about`, and it's corresponding web-component. 
+The PWA Starter is a [Single-Page Application](https://developer.mozilla.org/en-US/docs/Glossary/SPA) and uses a client-side router to navigate between pages. The starter uses [Vaadin Router](https://vaadin.github.io/router/vaadin-router/demo/#vaadin-router-getting-started-demos), which is a simple, declarative router that allows you to define a route, such as `/about`, and it's corresponding web-component. 
 
-## What is Client-Side Routing?
-Client-Side Routing is a way to navigate between pages without reloading the page, emulating a platform-specific (native) application.
+The starter makes use of both pre-built ([Fluent Components]()) and custom web components ([Lit]()) to define both entire pages, and the smaller, functional components that make up those pages.
+
+If you've never used web components before and want to learn more, check out this [primer](https://www.fast.design/docs/resources/why-web-components) on what they can bring to your web project.
+
+## Routing
+The PWA Starter uses *client-side routing* to navigate between pages, which allows for navigating without reloading our refreshing the view.
+
+As far as progressive web apps are concerned, this allows for an unbroken user experienced that is more consistent with expectations for native applications.
+
+In the case of the PWA Starter, each page is it's own custom web component, and they are mapped to URLs using [Vaadin Router](https://vaadin.github.io/router/vaadin-router/demo/#vaadin-router-getting-started-demos).
+
+#### Setting Routes
+
+All of the routing logic for the PWA Starter can be found in `src/app-index.ts`, which is our root index component that we include in our normal `index.html` file.
+
+Let's take a look at this block of code within `firstUpdated()` function contained in `app-index.ts`, where we use the `setRoutes()` function to define our PWA's navigation:
+
+```typescript
+const router = new Router(this.shadowRoot?.querySelector('#routerOutlet')); 
+router.setRoutes([
+  {
+    path: '', // our root path
+    animate: true,
+    children: [ // the children of this path
+      { path: '/', component: 'app-home' }, // our default URL
+      {
+        path: '/about', // while this route will take us to the app-about component
+        component: 'app-about',
+        action: async () => {
+          await import('./script/pages/app-about.js');
+        },
+      },
+    ],
+  } as any, // temporarily cast to any because of a Type bug with the router
+]);
+```
+
+In this snippet, we have a `app-home` component that lives at `/`, and a `app-about` component that lives at `/about`. 
+
+We also use of the `children` property to add structure as routing grows more complicated, but for simple scenarios, all you need to declare a route is a `path` and `component` property.
+
+For example, a similar but simpler set up could look like:
+
+```typescript
+const router = new Router(this.shadowRoot?.querySelector('#routerOutlet'));
+router.setRoutes([
+      { path: '/', component: 'app-home' },
+      { path: '/about', component: 'app-about'}])
+```
 
 ## Adding a new Page
 
