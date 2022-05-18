@@ -1,5 +1,7 @@
 # Frequently Asked Questions
 
+Welcome to the PWA Studio FAQ!
+
 If you have a question that isn't addressed here or elsewhere in the documentation, feel free to open an [issue.](https://github.com/pwa-builder/PWABuilder/issues/new/choose)
 
 #### I have a web manifest, but the extension says it can't be found?
