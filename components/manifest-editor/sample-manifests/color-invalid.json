@@ -1,0 +1,17 @@
+{
+    "background_color": "#",
+    "description": "Marketplace de serviços",
+    "display": "fullscreen",
+    "icons": [
+        {
+            "src": "https://s3.amazonaws.com/appforest_uf/f1652229968107x194135384867211400/icon%20512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "name": "anunx",
+    "short_name": "anunx",
+    "orientation": "portrait",
+    "theme_color": "#",
+    "start_url": "https://anunx.bubbleapps.io"
+}

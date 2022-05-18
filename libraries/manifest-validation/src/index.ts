@@ -31,9 +31,6 @@ export async function validateSingleField(field: string, value: any): Promise<Va
                 return true
             }
         }
-        else {
-            throw new Error(`${field} not found in this manifest`);
-        }
     }
 
     return undefined;
