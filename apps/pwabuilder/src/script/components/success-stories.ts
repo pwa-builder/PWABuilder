@@ -180,6 +180,7 @@ export class SuccessStories extends LitElement {
             cardValue=${card.value}
             company=${card.company}
             source=${card.source}
+            aria-label="${card.company} success story"
             >
             </success-card>
             `)}
