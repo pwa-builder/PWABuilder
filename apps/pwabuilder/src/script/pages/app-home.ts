@@ -544,7 +544,7 @@ export class AppHome extends LitElement {
                 <div id="input-area">
                   <div id="input-and-error">
                     <fast-text-field slot="input-container" type="text" id="input-box" placeholder="Enter the URL to your PWA" name="url-input"
-                      class="${classMap({ error: this.errorGettingURL })}" @input="${(e: InputEvent) => this.handleURL(e)}">
+                      class="${classMap({ error: this.errorGettingURL })}" aria-labelledby="input-header" @input="${(e: InputEvent) => this.handleURL(e)}">
                     </fast-text-field>
               
                     ${this.errorMessage && this.errorMessage.length > 0
