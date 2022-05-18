@@ -536,6 +536,7 @@ export class AppPublish extends LitElement {
   }
 
   async generateWindowsTestPackage() {
+    recordPWABuilderProcessStep("windows_test_package_clicked", AnalyticsBehavior.ProcessCheckpoint);
     let manifestContext = getManifestContext();
     if (manifestContext.isGenerated) {
       manifestContext = await fetchOrCreateManifest();
@@ -640,7 +641,7 @@ export class AppPublish extends LitElement {
   }
 
   showWindowsOptionsModal() {
-    recordPWABuilderProcessStep("windows_store_modal_opened", AnalyticsBehavior.ProcessCheckpoint)
+    recordPWABuilderProcessStep("windows_store_modal_opened", AnalyticsBehavior.ProcessCheckpoint);
     this.openWindowsOptions = true;
   }
 
