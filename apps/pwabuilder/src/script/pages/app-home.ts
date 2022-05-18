@@ -115,17 +115,6 @@ export class AppHome extends LitElement {
           font-weight: bold;
           margin-bottom: .25em;
         }
-        /* .grid-item-header h2 {
-          margin-right: .25em;
-          border-bottom: 1px solid rgb(79, 63, 182);
-          line-height: 20px;
-          font-size: 1em;
-          font-weight: bold;
-          margin: 0;
-          margin-right: .5em;
-          line-height: 1em;
-          color: #4F3FB6;
-        } */
         .grid-item-header a {
           text-decoration: none;
           border-bottom: 1px solid rgb(79, 63, 182);
