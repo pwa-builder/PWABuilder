@@ -187,7 +187,7 @@ export class ManifestInfoForm extends LitElement {
     input.classList.toggle("input-focused");
 
     const validation = await validateSingleField(fieldName!, updatedValue);
-    console.log("validation", validation);
+    //console.log("validation", validation);
 
     if(validation){
       // Since we already validated, we only send valid updates.

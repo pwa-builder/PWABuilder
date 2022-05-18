@@ -78,7 +78,7 @@ export class PWAManifestEditor extends LitElement {
   }
 
   async firstUpdated() {
-    console.log(await validateRequiredFields(this._initialManifest))
+    //console.log(await validateRequiredFields(this._initialManifest))
   }
 
   private updateManifest(field: any, change: any){
@@ -100,7 +100,7 @@ export class PWAManifestEditor extends LitElement {
 
   public resetManifest(){
     this.manifest = JSON.parse(JSON.stringify(this.initialManifest));
-    console.log("manifest in reset fun", this.manifest);
+    //console.log("manifest in reset fun", this.manifest);
 
     (this.shadowRoot!.getElementById("info-tab") as ManifestInfoForm).initMissingColors();
 
