@@ -52,7 +52,7 @@ export class SuccessStories extends LitElement {
         column-gap: 1em;
       }
 
-      //for screen reader only
+      /* for screen reader only */
       .screen-reader-only {
         border: 0; 
         clip: rect(0 0 0 0); 
