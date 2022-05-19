@@ -538,7 +538,10 @@ export class AppHome extends LitElement {
               <div id="input-block" role="region">
                 <div id="input-header-holder">
                   <h2 id="input-header">Ship your PWA to app stores</h2>
-                  <img src="/assets/new/store-logos.png" alt="store logos" />
+                  <img title="Windows" src="/assets/windows_icon.svg" alt="Windows" />
+                  <img title="iOS" src="/assets/apple_icon.svg" alt="iOS" />
+                  <img title="Android" src="/assets/android_icon_full.svg" alt="Android" />
+                  <img title="Meta Quest" src="/assets/meta_icon.svg" alt="Meta Quest" />
                 </div>
                 <div id="input-area">
                   <div id="input-and-error">
