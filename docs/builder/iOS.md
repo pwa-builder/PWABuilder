@@ -55,11 +55,15 @@ Before you can start the submission process, you'll need to build the Swift proj
    
 3. Run this command: `pod install`
 
-?> **Note** If you get an error running `pod install`, try running `sudo gem install cocoapods` first.
+?> **Note** If you get an error running `pod install`, try running `brew install cocoapods` first. (If you need to install Homebrew, [click here](https://docs.brew.sh/Installation))
 
-4. Open the `.xcworkspace` file in your src directory.
+4. Open the `.xcworkspace` file in your src directory. 
+
+!> If you open and attempt to build the `.xcodeproj` file, your build will fail. The `.xcworkspace` file is the correct file you need to build.
    
-5. Click `Product>Build` in Xcode to build your project.
+5. Click `Product` > `Build` in Xcode to build your project.
+
+6. With the project opened in Xcode, click ▶️ to test your PWA in the iPhone simulator. You may also choose other iOS simulators to try our your app on those devices.
 
 ## Publishing
 
