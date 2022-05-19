@@ -63,7 +63,7 @@ Before you can start the submission process, you'll need to build the Swift proj
    
 5. Click `Product` > `Build` in Xcode to build your project.
 
-6. With the project opened in Xcode, click ▶️ to test your PWA in the iPhone simulator. You may also choose other iOS simulators to try our your app on those devices.
+6. With the project opened in Xcode, click ▶️ to test your PWA in an iPhone simulator. You may also choose other iOS simulators to try our your app on those devices.
 
 ## Publishing
 
