@@ -164,7 +164,7 @@ export class CommunityCard extends LitElement {
               html`
               <div class="card-link-box">
                 <a @click=${() => recordPWABuilderProcessStep("home.bottom." + link.text + "_clicked", AnalyticsBehavior.ProcessCheckpoint)} href=${link.link} target="_blank" rel="noopener">${link.text}</a>
-                <img src="/assets/new/arrow.svg" alt="arrow" />
+                <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
               </div>
               `
             )}
