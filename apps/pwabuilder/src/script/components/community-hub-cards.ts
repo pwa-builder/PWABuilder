@@ -36,7 +36,7 @@ export const communityCards: Array<CardData> = [
     links: [
       {
         link: 'https://twitter.com/pwabuilder',
-        text: 'Follow now'
+        text: 'Follow our Twitter'
       }
     ],
     company: "twitter"
@@ -48,7 +48,7 @@ export const communityCards: Array<CardData> = [
     links: [
       {
         link: 'https://aka.ms/pwabuilderdiscord',
-        text: 'Join now'
+        text: 'Join our Discord'
       }
     ],
     company: "discord"
