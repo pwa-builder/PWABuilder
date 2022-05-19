@@ -247,7 +247,7 @@ export class AppTesting extends LitElement {
 
       <div id="glass">
         <div id="testing-container">
-          <span>${this.currentPhrase}</span>
+          <span role="status">${this.currentPhrase}</span>
 
           ${this.loading ? html`<fast-progress></fast-progress>` : null}
         </div>
