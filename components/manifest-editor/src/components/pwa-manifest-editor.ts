@@ -14,7 +14,7 @@ import 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist
 import { prettyString } from '../utils/pretty-json';
 import { ManifestInfoForm } from './manifest-info-form';
 import { ManifestPlatformForm } from './manifest-platform-form';
-import { validateRequiredFields } from '@pwabuilder/manifest-validation';
+//import { validateRequiredFields } from '@pwabuilder/manifest-validation';
 
 /**
  * @since 0.1
