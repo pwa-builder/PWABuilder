@@ -1,7 +1,5 @@
 <div align=center>
-  <a href="/">
   <img width="45" src="assets/icons/pwa-builder.png">
-  </a>
 </div>
 <br>
 
@@ -10,6 +8,9 @@
   <a href="#/studio/">  </a>
   <a href="#/builder/">  </a>
 --->
+
+- **Home** 
+  - <a href="#/"> About </a>
 
 - **PWA Starter** 
   - <a href="#/starter/quick-start"> Quick Start </a>

@@ -12,7 +12,7 @@ In these docs, you can find guides, tips, and info for three separate but relate
 
 If you're new to the PWABuilder suite, keep reading for a quick overview for each of our tools.
 
-## PWA Starter <!-- {docsify-ignore} -->
+## PWA Starter 
 
 The PWA Starter is our opinionated and production tested starter that the PWABuilder team uses to build all of our PWAs, including PWABuilder itself. 
 
@@ -22,7 +22,7 @@ It comes with the key pieces of any PWA, including a manifest and service worker
 
 To learn more about the starter's tech stack and how to develop on it, take a look at the [quick start.](#/starter/quick-start)
 
-## PWA Studio <!-- {docsify-ignore} -->
+## PWA Studio
 
 PWA Studio is an extension for Visual Studio Code that provides tooling for working with and creating progressive web apps.
 
@@ -42,7 +42,7 @@ You can use PWA Studio to:
 
 To learn more about PWA Studio, take a look at the [quick start.](#/studio/quick-start)
 
-## PWABuilder <!-- {docsify-ignore} -->
+## PWABuilder
 
 [PWABuilder.com](https://www.pwabuilder.com/) is the hallmark tool within the PWABuilder suite. 
 
