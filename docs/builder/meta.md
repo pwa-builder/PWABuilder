@@ -1,6 +1,6 @@
 # Packaging PWAs for Meta Quest
 
-PWABuilder’s Meta Quest platform utilizes the [CLI tool published by Meta](https://developer.oculus.com/documentation/web/pwa-packaging/) to generate an apk package that can be installed on a Meta Quest.
+PWABuilder’s support for Meta Quest utilizes the [CLI tool published by Meta](https://developer.oculus.com/documentation/web/pwa-packaging/) to generate an apk package that can be installed on a Meta Quest.
 
 ## Prerequisites
 
@@ -39,7 +39,6 @@ Here's a breakdown of the properties associated with your package:
 
 * Package ID: The ID of your Meta Quest app. We recommend a reverse-domain style string: com.domainname.appname. Letters, numbers, periods, hyphens, and underscores are allowed.
 * App name: The name of your app as displayed to users.
-* Launcher name: The name of your app in the Android launcher. This is typically the same as app name, or a shortened version of it. We prepopulate this with 
 * App version: This is the version string displayed to end users, e.g. “1.0.0.0”
 * App version code: This is an integer used as a private, internal version of your app.
 * Manifest URL: The URL of your app manifest. We prepopulate this for you.
