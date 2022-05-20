@@ -4,14 +4,14 @@ PWA Studio is an extension for Visual Studio Code that provides tooling for work
 
 You can use PWA Studio to: 
 
-* Create a new PWA using the [starter template]()
+* Create a new PWA using the [starter template](https://github.com/pwa-builder/pwa-starter)
 * Convert an existing web app into a PWA
 * Manage your app's manifest, service workers, and icons
-* Package your app's for the Microsoft, Google, and Apple Stores
+* Package your apps for the Microsoft, Google, and Apple Stores
 * Validate your PWA across several metrics
 * Add web capabilities with code snippets
 
-If you're new to developing PWAs and aren't sure where to start, check out this [blog series.]()
+If you're new to developing PWAs and aren't sure where to start, check out this [blog series.](https://microsoft.github.io/win-student-devs/#/)
 
 ## Getting the Extension
 The PWABuilder Code extension is available within Visual Studio Code in the extensions tab. If you search for `PWA Studio` or `PWABuilder`, it should be the first result. 
@@ -56,12 +56,12 @@ Here are a few places to check out in the documentation if you are using the ext
 <br>
 **Looking to build a new PWA from scratch?**
 <br>
-Check out how to [clone the PWA Starter application](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Start-building-a-new-PWA) with the extension.
+Check out how to [clone the PWA Starter application](https://github.com/pwa-builder/pwa-studio/wiki/Create-a-New-PWA) with the extension.
 
 **Want to convert your web app into a PWA?**
 <br>
-Take a look at [adding a web manifest](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Make-a-Web-App-a-Progressive-Web-App) to your existing web applicatioon.
+Take a look at [adding a web manifest](https://github.com/pwa-builder/pwa-studio/wiki/Convert-an-Existing-Web-App) to your existing web applicatioon.
 
 **Have a PWA already and want to get it Store-ready?**
 <br>
-Learn how to [validate your PWA](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Validate-your-PWA) and then [package it for stores.](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Package-your-PWA-for-the-app-stores!)
+Learn how to [validate your PWA](https://github.com/pwa-builder/pwa-studio/wiki/Validate) and then [package it for stores.](https://github.com/pwa-builder/pwa-studio/wiki/Package)

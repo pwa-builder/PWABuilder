@@ -34,7 +34,7 @@ You can use PWA Studio to:
   
 * Manage your app’s manifest, service workers, and icons
   
-* Package your app’s for the Microsoft, Google, and Apple Stores
+* Package your apps for the Microsoft, Google, and Apple Stores
   
 * Validate your PWA across several metrics
   

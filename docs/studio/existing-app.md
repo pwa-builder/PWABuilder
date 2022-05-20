@@ -12,7 +12,7 @@ PWA Studio comes with tooling for adding both manifests and service workers for 
 
 To add a manifest using the interface:
 
-1. Click the PWA Studio icon on the left side of the VSCode Window.
+1. Click the PWA Studio icon on the left side of the VS Code Window.
    
 2. One the left side of your Code window, you should see the PWA Studio UI.
    
@@ -38,7 +38,7 @@ This tutorial also uses the interface to create a service worker, but can also b
 
 The extension uses [Workbox](https://developers.google.com/web/tools/workbox/) to generate a Service Worker. Workbox is a helpful tool for creating and managing service workers that abstracts away a lot of the complexity.
 
-1. Tap the PWABuilder icon on the right side of the VSCode Window
+1. Tap the PWABuilder icon on the right side of the VS Code Window
 
 2. Tap the `Generate Service Worker` button
 
@@ -58,7 +58,7 @@ Be sure to check out the [Workbox documentation](https://developers.google.com/w
 
 ## Generate Icons
 
-Currently, PWAs running on different platforms, such as Windows, Android and iOS all require different sized icons for your PWA to display properly. The PWA Studio extension can help you generate the correct sized Icons for your application, using your [existing 512x512 sized icon](https://blog.pwabuilder.com/docs/image-recommendations-for-windows-pwa-packages/) and add them directly to your manifest.
+Currently, PWAs running on different platforms, such as Windows, Android and iOS all require different sized icons for your PWA to display properly. The PWA Studio extension can help you generate the correct sized icons for your application, using your [existing 512x512 sized icon](https://blog.pwabuilder.com/docs/image-recommendations-for-windows-pwa-packages/) and add them directly to your manifest.
 
 To generate icons:
 
