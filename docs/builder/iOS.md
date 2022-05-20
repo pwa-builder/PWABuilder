@@ -1,3 +1,5 @@
+!> iOS does not support PWAs natively and packaging PWAs for iOS is Experimental. We can not guarantee that your app will be accepted into Apple's App Store.
+
 # Publishing PWAs to the App Store
 
 PWABuilder now has support for creating iOS application packages that can be posted to the Apple App Store. However, there are a few extra steps to get your PWA ready for the App Store.

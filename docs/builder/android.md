@@ -40,8 +40,8 @@ The first step is to generate your Android package with PWABuilder:
 
 There are a ton of options you can configure when packaging for Android. Here's a breakdown of what each property means:
 
-| |                                                                                                                                                                                                                             |
-| :---------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Property | Description |
+| :---------------|---------------------------------------------------------------------------------------------------------------- |
 | **Package ID** | The Android identifier unique to your app                                                                                                                                                                                                        |
 | **App name** | The full name of your app. We prepopulate this with the app name from your PWA’s app manifest.                                                                                                                                                     |
 | **Launcher name** | The name of your app in the Android launcher. This is typically the same as app name, or a shortened version of it. We prepopulate this with short_name from your PWA’s app manifest.                                                         |
