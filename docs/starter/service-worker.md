@@ -1,6 +1,6 @@
 # Service Workers in the PWA Starter
 
-The PWA Starter uses Workbox to generate a pre-configured service worker without any set-up on your end.
+The PWA Starter uses [VitePWA](https://vite-plugin-pwa.netlify.app/) and [Workbox](https://developers.google.com/web/tools/workbox/) to generate a pre-configured service worker without any set-up on your end.
 
 If you just want basic service worker functionality, the PWA Starter default should be just fine.
 
@@ -98,7 +98,7 @@ export default defineConfig({
 
 The important thing to notice here is that we replaced the `workbox` property with an `injectManifest` property. We also set `strategies: "injectManifest"`, which will tell VitePWA that we plan to provide our own service worker. 
 
-For this configuration, we also provide the `globDirectory`, `globPatterns`, and `runtimeCaching` properties to define precaching, which will still be injected into our service worker for us.
+For this configuration, we also provide the `globDirectory` and `globPatterns` properties to define precaching, which will still be injected into our service worker for us.
 
 ?> **Note** You could also define a runtime caching strategy or the other properties listed above, but we've left them out for simplicity.
 

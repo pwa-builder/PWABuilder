@@ -4,7 +4,7 @@ The PWA Starter is a [Single-Page Application](https://developer.mozilla.org/en-
 
 To this end, we use [Vaadin Router](https://vaadin.github.io/router/vaadin-router/demo/#vaadin-router-getting-started-demos), which is a simple, declarative router that allows you to define a route, such as `/about`, and it's corresponding web-component. 
 
-The starter makes use of both pre-built ([Fluent Components]()) and custom web components ([Lit]()) to define both entire pages, and the smaller, functional components that make up those pages.
+The starter makes use of both pre-built ([Fluent Components](https://docs.microsoft.com/en-us/fluent-ui/web-components/)) and custom web components ([Lit](https://lit.dev/)) to define both entire pages, and the smaller, functional components that make up those pages.
 
 If you've never used web components before and want to learn more, check out this [primer](https://www.fast.design/docs/resources/why-web-components) on what they can bring to your web project.
 
@@ -72,7 +72,7 @@ Next, we'll take a look at adding a new page to the starter:
 
 To add a new page to your PWA, you will need to create a new component, and then add that component to your router code.
 
-#### Creating the Page
+#### Creating the Page Component
 
 1. Navigate to the `src/script/pages/` directory.
 
