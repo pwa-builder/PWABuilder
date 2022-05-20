@@ -45,7 +45,7 @@ In this snippet, we have a `app-home` component that lives at `/`, and a `app-ab
 
 The bare minimum you need to declare a route is a `path` and `component`, but the starter also makes use of several other properties:
 
-| Property |Use |
+| Property |Usage |
 | :------|------ |
 | **path** (*Required*)  |The path we want to use to define our route. For example: `/about`|
 | **component** (*Required*) |The component we want associated with our route. For example: `app-about` |

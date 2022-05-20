@@ -15,6 +15,7 @@
 - **PWA Starter** 
   - <a href="#/starter/quick-start"> Quick Start </a>
   - <a href="#/starter/adding-content"> Add Content </a>
+  - <a href="#/starter/service-worker"> Service Workers </a>
   - <a href="#/starter/publish"> Publish Your PWA </a>
   - <a href="#/starter/faq"> FAQ </a>
   
