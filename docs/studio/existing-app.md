@@ -18,14 +18,14 @@ To add a manifest using the interface:
    
 3. In the "Web Manifest" section, click the `Generate a Web Manifest` button.
    
-4. Fill out the Web Manifest form and click `Submit Manifest Options`. You can learn more about the Manifest fields [here.](https://developer.mozilla.org/en-US/docs/Web/Manifest)
+4. Select a location for your web manifest. 
 
-<div class="docs-image">
-    <img src="/assets/studio/existing-app/web-manifest-form.png" width=650>
-</div>
+5. Your new manifest will automatically open and hitting `Tab` will allow you to navigate between fields to edit.
 
+6. Fill out your manifest to match your application. You can learn more about the Manifest fields [here.](https://developer.mozilla.org/en-US/docs/Web/Manifest)
 
-After clicking submit, the extension will generate your `manifest.json` file and automatically add the required `link` tag to your `index.html`:
+7. Once you're done editing your manifest, add the required `link` tag to your `index.html`:
+
 ```html
 <link rel="manifest" href="manifest.json">
 ```
@@ -48,7 +48,8 @@ The basic service worker will work for most cases and will ensure your PWA works
 4. The Workbox CLI will be installed and will run `workbox wizard`. This command is used to learn about the structure of your PWA for [pre-caching.](https://developers.google.com/web/tools/workbox/modules/workbox-precaching#what_is_precaching)
 
 5. Follow the CLI prompts.
-   
+
+
 After filling out the prompts, Workbox will generate a Service Worker for you and add the register code to your `index.html`:
 
 ```html
