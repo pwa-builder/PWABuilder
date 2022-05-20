@@ -3,7 +3,7 @@
 If you have an existing web app that you want to convert to a progressive web app, you can use PWA Studio to add the necessary pieces to your app.
 Every [installable PWA](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Installable_PWAs) needs a web manifest and a service worker in order to be ready to be published on app stores.
 
-PWA Studio comes with tooling for adding both manifests and service workers for your web application. After you've added both, you can also use the extension to [validate]() that your PWA is properly store-ready.
+PWA Studio comes with tooling for adding both manifests and service workers for your web application. After you've added both, you can also use the extension to [validate](/studio/package?id=validate-your-pwa) that your PWA is properly store-ready.
 
 
 ## Add a Web Manifest
@@ -45,24 +45,27 @@ The extension uses [Workbox](https://developers.google.com/web/tools/workbox/) t
 3. Choose a `basic` or `advanced` Service Worker.
 The basic service worker will work for most cases and will ensure your PWA works offline. If you want to add your own code to your service worker, choose the advanced option.
 
-4. The Workbox CLI will be installed and will run `workbox wizard`. This command is used to learn about the structure of your PWA for [pre-caching.](https://developers.google.com/web/tools/workbox/modules/workbox-precaching#what_is_precaching) 
-[](..\..\..\pwabuilder-vscode.wiki\images\generate-icons.png)5. Follow the CLI prompts.
+4. The Workbox CLI will be installed and will run `workbox wizard`. This command is used to learn about the structure of your PWA for [pre-caching.](https://developers.google.com/web/tools/workbox/modules/workbox-precaching#what_is_precaching)
+
+5. Follow the CLI prompts.
    
 After filling out the prompts, Workbox will generate a Service Worker for you and add the register code to your `index.html`:
 
 ```html
-<script>navigator.serviceWorker.register("public/sw.js")</script>
+<script>
+    navigator.serviceWorker.register("public/sw.js")
+</script>
 ```
 
 Be sure to check out the [Workbox documentation](https://developers.google.com/web/tools/workbox/modules/workbox-cli#setup_and_configuration) for more information about Workbox and service workers.
 
 ## Generate Icons
 
-Currently, PWAs running on different platforms, such as Windows, Android and iOS all require different sized icons for your PWA to display properly. The PWA Studio extension can help you generate the correct sized icons for your application, using your [existing 512x512 sized icon](https://blog.pwabuilder.com/docs/image-recommendations-for-windows-pwa-packages/) and add them directly to your manifest.
+Currently, PWAs running on different platforms, such as Windows, Android and iOS all require different sized icons for your PWA to display properly. The PWA Studio extension can help you generate the correct sized icons for your application, using your existing 512x512 sized icon and add them directly to your manifest.
 
 To generate icons:
 
-1. Ensure you have a web manifest. See the [validation documentation.](Validate.md)
+1. Ensure you have a web manifest. See the [validation documentation.](/studio/package?id=validate-your-pwa)
    
 2. Hit `ctrl-shift-P` with Code open.
    

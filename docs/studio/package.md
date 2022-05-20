@@ -1,5 +1,5 @@
 # Package for Stores
-Once your app is published to the web, PWA Studio can use [PWABuilder](https://www.pwabuilder.com) APIs to package your PWA for various app stores, including iOS, Google Play, and Microsoft. Your PWA just needs to be available on the web, and you're all set. If you need help publishing your app to the web, check out this documentation on using [Azure Static Web Apps]().
+Once your app is published to the web, PWA Studio can use [PWABuilder](https://www.pwabuilder.com) APIs to package your PWA for various app stores, including iOS, Google Play, and Microsoft. Your PWA just needs to be available on the web, and you're all set. If you need help publishing your app to the web, check out this documentation on using [Azure Static Web Apps](/starter/publish?id=azure-static-web-apps).
 
 ## Add Your App's URL
 You can use PWA Studio to associate your progressive web app with a URL.
@@ -42,7 +42,7 @@ The checklist should look like this:
 
 In the example above, you can see that our app has the necessary features of a PWA, but hasn't yet be published to the web. As a result, the store-ready check fails overall.
 
-If your PWA is missing some features (like a service worker or web manifest), learn how to [convert an existing web app](/docs/studio/existing-app.md) to a PWA.
+If your PWA is missing some features (like a service worker or web manifest), learn how to [convert an existing web app](/studio/existing-app) to a PWA.
 
 ## Packaging for Stores
 

@@ -1,4 +1,4 @@
-# PWA Studio
+# PWA Studio Quick Start
 
 PWA Studio is an extension for Visual Studio Code that provides tooling for working with and creating progressive web apps. 
 
@@ -56,12 +56,12 @@ Here are a few places to check out in the documentation if you are using the ext
 <br>
 **Looking to build a new PWA from scratch?**
 <br>
-Check out how to [clone the PWA Starter application](https://github.com/pwa-builder/pwa-studio/wiki/Create-a-New-PWA) with the extension.
+Check out how to [clone the PWA Starter application](/studio/create-new) with the extension.
 
 **Want to convert your web app into a PWA?**
 <br>
-Take a look at [adding a web manifest](https://github.com/pwa-builder/pwa-studio/wiki/Convert-an-Existing-Web-App) to your existing web applicatioon.
+Take a look at [*Converting Existing Apps*](/studio/existing-app).
 
 **Have a PWA already and want to get it Store-ready?**
 <br>
-Learn how to [validate your PWA](https://github.com/pwa-builder/pwa-studio/wiki/Validate) and then [package it for stores.](https://github.com/pwa-builder/pwa-studio/wiki/Package)
+Learn how to [validate your PWA](/studio/package?id=validate-your-pwa) and then [package it for stores.](/studio/package?id=packaging-for-stores)

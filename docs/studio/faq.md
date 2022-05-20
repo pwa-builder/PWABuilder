@@ -15,7 +15,9 @@ As with the above issue, to fix this tap the "I have a Service Worker" button in
 #### I have generated my Web Manifest / Service Worker, but devtools says my PWA does not have this asset?
 You most likely have not saved your `index.html` file. The extension will insert the needed html into your `index.html`, but you will need to hit save to save the changes.
 
-#### I would like to try a pre-release version of PWA Studio
+#### Cn I try a pre-release version of PWA Studio?
+
+Yes, you can!
 
 1. [Open our Github Actions](https://github.com/pwa-builder/pwa-studio/actions)
 2. Choose your workflow run. Normally the first one is the latest one.

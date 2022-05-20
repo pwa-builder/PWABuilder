@@ -47,7 +47,7 @@ You can also start a new PWA with a command. To do this:
 After generating your app, you are now ready to start coding! You can also hit `F5` in VS Code to run your PWA right after cloning. The PWA Starter will open in a standalone browser window as an installed app.
 The extension initializes your app as a local git repository, but if you want to add it to GitHub, you'll need to associate it with an upstream repo.
 
-You can learn more about the PWA Starter, how to develop on it, and the stack it uses at the  [PWA Starter documentation.](https://aka.ms/starter-docs)
+You can learn more about the PWA Starter, how to develop on it, and the stack it uses at the  [PWA Starter documentation.](/starter/quick-start)
 There you can learn how to:
 
 - Add pages to your PWA and manage routing
