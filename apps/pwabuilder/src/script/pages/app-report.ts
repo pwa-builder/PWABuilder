@@ -11,19 +11,16 @@ import {
   smallBreakPoint,
 } from '../utils/css/breakpoints';
 
-import '../components/content-header';
-import '../components/report-card';
-import '../components/manifest-options';
-import '../components/sw-picker';
 import '../components/app-header';
-import '../components/app-sidebar';
-import '../components/app-modal';
+import '../components/todo-list-item';
+
 
 //@ts-ignore
 import style from '../../../styles/layout-defaults.css';
 import { RawTestResult, ScoreEvent } from '../utils/interfaces';
 import { giveOutBadges } from '../services/badges';
 import {  AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
+import { ceil } from 'lodash-es';
 
 const possible_messages = {
   overview: {
@@ -93,6 +90,8 @@ export class AppReport extends LitElement {
         #report-wrapper {
           width: 100%;
           display: flex;
+          flex-direction: column;
+          row-gap: 1.5em;
           align-items: baseline;
           height: 100vh;
           background-color: #F2F3FB;
@@ -250,7 +249,7 @@ export class AppReport extends LitElement {
           }
         }
 
-        #test-download p {
+        .arrow_link {
           margin: 0;
           border-bottom: 1px solid #4F3FB6;
         }
@@ -280,6 +279,105 @@ export class AppReport extends LitElement {
           margin: 0;
           font-size: 12px;
           font-weight: bold;
+        }
+
+        #todo {
+          width: 100%;
+          box-shadow: 0px 4px 30px 0px #00000014;
+        }
+
+        sl-details {
+          width: 100%;
+        }
+
+        sl-details::part(base) {
+          border-radius: 10px;
+        }
+
+        sl-details::part(header){
+          height: 60px;
+        }
+
+        sl-details::part(summary) {
+          color: #4F3FB6;
+          font-size: 20px;
+          font-weight: bold;
+        }
+
+        #manifest {
+          box-shadow: 0px 4px 30px 0px #00000014;
+          display: flex;
+          flex-direction: column;
+          background-color: white;
+          border-radius: 10px;
+          padding: 1em;
+        }
+
+        #manifest-header {
+          display: flex;
+          justify-content: space-between;
+        }
+
+        #mh-left {
+          display: flex;
+          flex-direction: column;
+          width: 50%;
+          row-gap: .5em;
+        }
+
+        #mh-header {
+          font-size: 24px;
+          font-weight: bold;
+          margin: 0;
+        }
+
+        #mh-desc {
+          margin: 0;
+          font-size: 17px;
+        }
+
+        #mh-right {
+          display: flex;
+          column-gap: 2.5em;
+        }
+        #mh-actions {
+          display: flex;
+          flex-direction: column;
+          row-gap: 1em;
+        }
+
+        #mh-actions a {
+          text-decoration: none;
+          font-size: 14px;
+          font-weight: bold;
+          margin: 0px 0.5em 0px 0px;
+          line-height: 1em;
+          color: rgb(79, 63, 182);
+          display: flex;
+          column-gap: 10px;
+        }
+        #mh-actions a:visited {
+          color: #4F3FB6;
+        }
+        #mh-actions:hover {
+          cursor: pointer;
+        }
+        #mh-actions:hover img {
+          animation: bounce 1s;
+        }
+
+        #mh-actions .alternate {
+          background: var(--secondary-color);
+          color: #4F3FB6;
+          border: 1px solid #4F3FB6;
+          font-size: 16px;
+          font-weight: bold;
+          border-radius: 50px;
+          padding: 1em 3em;
+        }
+
+        #mh-actions .alternate:hover {
+          box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
         }
 
         ${xxxLargeBreakPoint(
@@ -384,16 +482,6 @@ export class AppReport extends LitElement {
   render() {
     return html`
       <app-header></app-header>
-      <!-- error modal -->
-      <app-modal heading="Wait a minute!" .body="${this.errorMessage || ''}" ?open="${this.errored}" id="error-modal" tabindex="0">
-        <img class="modal-image" slot="modal-image" src="/assets/warning.svg" alt="warning icon" />
-
-        <div id="actions" slot="modal-actions">
-          <fast-anchor target="__blank" id="error-link" class="button" .href="${this.errorLink}">Documentation <ion-icon
-              name="link"></ion-icon>
-          </fast-anchor>
-        </div>
-      </app-modal>
 
       <div id="report-wrapper">
         <div id="header-row">
@@ -418,7 +506,7 @@ export class AppReport extends LitElement {
 
               <div id="package">
                 <button type="button" id="pfs" disabled>Package for store</button>
-                <button type="button" id="test-download"><p>Download test package</p><img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/></button>
+                <button type="button" id="test-download"><p class="arrow_link">Download test package</p><img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/></button>
               </div>
             </div>
             <div id="actions-footer">
@@ -431,7 +519,30 @@ export class AppReport extends LitElement {
           </div>
         </div>
         <div id="todo">
-          
+          <sl-details summary="To-do list">
+            <todo-item .status=${"red"} .content=${"This is an example to do item."}></todo-item>
+            <todo-item .status=${"red"} .content=${"Theoretically we'd loop through these."}></todo-item>
+            <todo-item .status=${"red"} .content=${"and display them here."}></todo-item>
+          </sl-details>
+        </div>
+        <div id="manifest">
+          <div id="manifest-header">
+            <div id="mh-left">
+              <p id="mh-header">Manifest</p>
+              <p id="mh-desc">PWABuilder has analyzed your Web Manifest. You do not have a web manifest. Use our Manifest editor to egenrate one. You can package for the store once you have a valid manifest.</p>
+            </div>
+            <div id="mh-right">
+              <div id="mh-actions">
+                <button type="button" class="alternate">Manifest Editor</button>
+                <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest" rel="noopener" target="_blank">
+                  <p class="arrow_link">Manifest Documentation</p> 
+                  <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+                </a>
+              </div>
+              <sl-progress-ring value="${(1.0/18) * 100}">1/18</sl-progress-ring>
+            </div>
+            
+          </div>
         </div>
       </div>
       `;
