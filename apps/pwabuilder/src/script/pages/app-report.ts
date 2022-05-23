@@ -69,10 +69,6 @@ export class AppReport extends LitElement {
   @state() maniScore = 0;
   @state() securityScore = 0;
 
-  @state() selectedTab: string = 'overview';
-  @state() currentHeader: string = possible_messages.overview.heading;
-  @state() currentSupporting: string = possible_messages.overview.supporting;
-
   @state() errored: boolean = false;
   @state() errorMessage: string | undefined = undefined;
   @state() errorLink: string | undefined = undefined;
@@ -83,163 +79,230 @@ export class AppReport extends LitElement {
 
   @state() isDeskTopView = this.mql.matches;
 
+  // will be used to control the state of the "Package for store" button.
+  @state() canPackage: Boolean = false;
+
   static get styles() {
     return [
       style,
       css`
-        h1 {
-          font-size: 44px;
-          line-height: 46px;
+        * {
+          box-sizing: border-box;
         }
 
-        #hero-p {
-          font-size: 16px;
-          line-height: 24px;
-          max-width: 406px;
+        #report-wrapper {
+          width: 100%;
+          display: flex;
+          align-items: baseline;
+          height: 100vh;
+          background-color: #F2F3FB;
+          padding: 20px;
+          box-sizing: border-box;
         }
 
-        #tablet-sidebar {
-          display: none;
+        #header-row {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          column-gap: 1em;
         }
 
-        #desktop-sidebar {
-          display: block;
+        #app-card {
+          width: 30%;
+          height: 180px;
+          background-color: white;
+          border-radius: 10px;
+          padding: 1em;
+
+          display: flex;
+          flex-direction: column;
+          row-gap: 10px;
+          box-shadow: 0px 4px 30px 0px #00000014;
         }
 
-        content-header::part(header) {
-          display: none;
+        #card-header {
+          display: flex;
+          column-gap: 10px;
+          align-items: center;
+          font-size: 14px;
+          font-weight: bold;
         }
 
-        .tab {
-          background: var(--background-color);
-          color: rgba(41, 44, 58, 1);
+        #card-header img {
+          height: 85px;
+          width: auto;
         }
 
-        .tab[aria-selected='true'] {
-          color: var(--font-color);
-          font-weight: var(--font-bold);
+        #site-name {
+          font-size: 24px;
         }
 
-        fast-tabs::part(activeIndicator) {
-          background: black;
-          border-radius: 0;
-          height: 2px;
-          margin-top: 0;
+        #card-info {
+          display: flex;
+          flex-direction: column;
         }
 
-        fast-tabs::part(tablist) {
-          margin-left: 26px;
+        #card-info p{
+          margin: 0;
         }
 
-        report-card {
-          margin-top: 20px;
+        #card-desc {
+          margin: 0;
+          font-size: 14px;
         }
 
-        manifest-options {
+        #app-actions { 
+          width: 70%;
+          display: flex;
+          flex-direction: column;
+          border-radius: 10px;
+          background-color: white;
+          height: 180px;
+          align-items: center;
+          justify-content: space-between;
+          box-shadow: 0px 4px 30px 0px #00000014;
+        }
+
+        #app-actions button {
+          font-weight: bold;
+        }
+
+        #actions {
+          display: flex;
+          align-items: center;
+          padding: 1em;
+          padding-bottom: 0;
           width: 100%;
         }
-
-        #overview-panel {
-          padding-left: 14px;
+        
+        #test {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          row-gap: 20px;
+          width: 45%;
         }
 
-        #error-link {
+        #retest {
+          background-color: #4F3FB6;
+          border-radius: 50px;
+          padding: 1em;
           color: white;
-          font-weight: var(--font-bold);
-          border-radius: var(--button-radius);
-          background: var(--error-color);
-          margin-right: 8px;
-          padding-left: 10px;
-          padding-right: 10px;
-          box-shadow: var(--button-shadow);
+          display: flex;
+          align-items: center;
+          column-gap: 10px;
+          font-size: 16px;
+          border: none;
+        }
+
+        #last-edited {
+          color: #808080;
+          font-size: 12px;
+          margin: 0;
+          display: flex;
+          align-items: center;
+          column-gap: 10px;
+        }
+
+        #package {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          row-gap: 20px;
+          width: 55%;
+        }
+
+        #pfs {
+          background-color: black;
+          color: white; 
+          font-size: 16px;
+          border-radius: 50px;
+          padding: 1em 3em;
+          border: none;
+        }
+
+        #test-download {
+          background-color: transparent;
+          color: #4F3FB6;
+          border: none;
+          width: fit-content;
+          display: flex;
+          column-gap: .5em;
+          align-items: center;
+        }
+
+        #test-download:hover img {
+          animation: bounce 1s;
+        }
+
+        @keyframes bounce {
+          0%, 20%, 50%, 80%, 100% {
+              transform: translateY(0);
+          }
+          40% {
+            transform: translateX(-5px);
+          }
+          60% {
+              transform: translateX(5px);
+          }
+        }
+
+        #test-download p {
+          margin: 0;
+          border-bottom: 1px solid #4F3FB6;
+        }
+
+        button:hover {
+          cursor: pointer;
+        }
+
+        #actions-footer {
+          background-color: #F2F3FB;
+          width: 100%;
+          display: flex;
+          column-gap: .75em;
+          align-items: center;
+          justify-content: center;
+          border-bottom-left-radius: 10px;
+          border-bottom-right-radius: 10px;
+          padding: .5em 1em;
+        }
+
+        #actions-footer img {
+          height: 20px;
+          width: auto;
+        }
+
+        #actions-footer p {
+          margin: 0;
+          font-size: 12px;
+          font-weight: bold;
         }
 
         ${xxxLargeBreakPoint(
         css`
-            #report {
-              max-width: 69em;
-            }
-
-            app-sidebar {
-              display: block;
-            }
-
-            #tablet-sidebar {
-              display: none;
-            }
-
-            #desktop-sidebar {
-              display: block;
-            }
-
-            #report-wrapper {
-              max-width: 69em;
-              background: white;
-            }
-
-            #grid {
-              background: white;
-            }
+            
           `
       )}
 
         ${largeBreakPoint(
         css`
-            #tablet-sidebar {
-              display: block;
-            }
-
-            #desktop-sidebar {
-              display: none;
-            }
+            
           `
       )}
 
         ${mediumBreakPoint(
         css`
-            .reportCard h1 {
-              font-size: 33px;
-              margin-top: 0;
-              margin-bottom: 1em;
-            }
-
-            .reportCard p {
-              display: none;
-            }
-
-            #desktop-sidebar {
-              display: none;
-            }
-
-            #tablet-sidebar {
-              display: block;
-            }
+            
           `
       )}
 
         ${smallBreakPoint(
         css`
-            fast-tabs::part(tablist) {
-              display: none;
-            }
-
-            .reportCard h1 {
-              font-size: 33px;
-              margin-top: 0;
-              margin-bottom: 1em;
-            }
-
-            .reportCard p {
-              display: none;
-            }
-
-            #desktop-sidebar {
-              display: none;
-            }
-
-            #tablet-sidebar {
-              display: block;
-            }
+            
           `
       )}
       `,
@@ -317,99 +380,60 @@ export class AppReport extends LitElement {
     }
   }
 
-  openManiOptions() {
-    const maniTab = this.shadowRoot?.querySelector('#mani');
-    (maniTab as HTMLButtonElement).click();
-  }
-
-  openSWOptions() {
-    const maniTab = this.shadowRoot?.querySelector('#sw');
-    (maniTab as HTMLButtonElement).click();
-  }
-
-  openOverview() {
-    const overviewTab = this.shadowRoot?.querySelector('#overview');
-    (overviewTab as HTMLButtonElement).click();
-  }
-
-  handleScoreForDisplay(type: string, score: number) {
-    if (type === 'sw') {
-      this.swScore = score;
-    } else if (type === 'manifest') {
-      this.maniScore = score;
-    } else if (type === 'security') {
-      this.securityScore = score;
-    }
-  }
-
-  handleTabsEvent(type: 'mani' | 'sw' | 'overview') {
-    recordPWABuilderProcessStep(type + "_tab_clicked", AnalyticsBehavior.ProcessCheckpoint);
-    this.selectedTab = type;
-
-    if (type === 'mani') {
-      this.currentHeader = possible_messages.mani.heading;
-      this.currentSupporting = possible_messages.mani.supporting;
-    } else if (type === 'sw') {
-      this.currentHeader = possible_messages.sw.heading;
-      this.currentSupporting = possible_messages.sw.supporting;
-    } else {
-      this.currentHeader = possible_messages.overview.heading;
-      this.currentSupporting = possible_messages.overview.supporting;
-    }
-  }
 
   render() {
-    return html`<!-- error modal -->
-<app-modal heading="Wait a minute!" .body="${this.errorMessage || ''}" ?open="${this.errored}" id="error-modal" tabindex="0">
-  <img class="modal-image" slot="modal-image" src="/assets/warning.svg" alt="warning icon" />
+    return html`
+      <app-header></app-header>
+      <!-- error modal -->
+      <app-modal heading="Wait a minute!" .body="${this.errorMessage || ''}" ?open="${this.errored}" id="error-modal" tabindex="0">
+        <img class="modal-image" slot="modal-image" src="/assets/warning.svg" alt="warning icon" />
 
-  <div id="actions" slot="modal-actions">
-    <fast-anchor target="__blank" id="error-link" class="button" .href="${this.errorLink}">Documentation <ion-icon
-        name="link"></ion-icon>
-    </fast-anchor>
-  </div>
-</app-modal>
+        <div id="actions" slot="modal-actions">
+          <fast-anchor target="__blank" id="error-link" class="button" .href="${this.errorLink}">Documentation <ion-icon
+              name="link"></ion-icon>
+          </fast-anchor>
+        </div>
+      </app-modal>
 
-<div id="report-wrapper">
-  <app-header></app-header>
+      <div id="report-wrapper">
+        <div id="header-row">
+          <div id="app-card">
+            <div id="card-header">
+              <img src="/assets/icons/icon_512.png" alt="Your sites logo" />
+              <div id="card-info">
+                <p id="site-name">Site Name</p>
+                <p>www.site.com</p>
+              </div>
+            </div>
+            <p id="card-desc">This is the description to my application and this is what it does and who its for.</p>
+          </div>
+          <div id="app-actions">
+            <div id="actions">
+              <div id="test">
+                <button type="button" id="retest"><img src="/assets/new/retest.png" alt="retest site" role="presentation" />Retest Site</button>
+                <p id="last-edited"><img src="/assets/new/last-edited.png" alt="pencil icon" role="presentation" />2 minutes ago</p>
+              </div>
 
-  <div id="grid" class="${classMap({
-      'grid-mobile': this.isDeskTopView == false,
-    })}">
-    <app-sidebar id="desktop-sidebar"></app-sidebar>
+              <img src="/assets/new/vertical-divider.png" role="presentation" />
 
-    <section id="report">
-      <content-header class="reportCard ${this.selectedTab}">
-        <h1 slot="hero-container">${this.currentHeader}</h1>
-        <p id="hero-p" slot="hero-container">${this.currentSupporting}</p>
-      </content-header>
-
-      <app-sidebar id="tablet-sidebar"></app-sidebar>
-
-      <fast-tabs activeId="sections">
-        <fast-tab class="tab" id="overview" @click="${() => this.handleTabsEvent('overview')}">Overview</fast-tab>
-        <fast-tab class="tab" id="mani" @click="${() => this.handleTabsEvent('mani')}">Manifest Options</fast-tab>
-        <fast-tab class="tab" id="sw" @click="${() => this.handleTabsEvent('sw')}">Service Worker Options</fast-tab>
-
-        <fast-tab-panel id="overview-panel">
-          <report-card @sw-scored="${(ev: CustomEvent<ScoreEvent>) =>
-        this.handleScoreForDisplay('sw', ev.detail.score)}" @mani-scored="${(ev: CustomEvent<ScoreEvent>) =>
-          this.handleScoreForDisplay('manifest', ev.detail.score)}" @security-scored="${(ev: CustomEvent<ScoreEvent>) =>
-            this.handleScoreForDisplay('manifest', ev.detail.score)}"
-            @open-mani-options="${() => this.openManiOptions()}" @open-sw-options="${() => this.openSWOptions()}"
-            .results="${this.resultOfTest}"></report-card>
-        </fast-tab-panel>
-        <fast-tab-panel id="maniPanel">
-          <manifest-options @back-to-overview=${()=> this.openOverview()}
-            >
-          </manifest-options>
-        </fast-tab-panel>
-        <fast-tab-panel id="swPanel">
-          <sw-picker @back-to-overview="${() => this.openOverview()}" score="${this.swScore}"></sw-picker>
-        </fast-tab-panel>
-      </fast-tabs>
-    </section>
-  </div>
-</div>`;
+              <div id="package">
+                <button type="button" id="pfs" disabled>Package for store</button>
+                <button type="button" id="test-download"><p>Download test package</p><img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/></button>
+              </div>
+            </div>
+            <div id="actions-footer">
+              <p>Available stores:</p>
+              <img title="Windows" src="/assets/windows_icon.svg" alt="Windows" />
+              <img title="iOS" src="/assets/apple_icon.svg" alt="iOS" />
+              <img title="Android" src="/assets/android_icon_full.svg" alt="Android" />
+              <img title="Meta Quest" src="/assets/meta_icon.svg" alt="Meta Quest" />
+            </div>
+          </div>
+        </div>
+        <div id="todo">
+          
+        </div>
+      </div>
+      `;
+    }
   }
-}

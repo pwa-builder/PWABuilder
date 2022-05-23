@@ -41,6 +41,20 @@
   <!-- preload font -->
   <link rel="preload" as="font" href="assets/fonts/Hind-Bold.ttf" />
   <link rel="preload" as="font" href="assets/fonts/Hind-Regular.ttf" />
+
+  <!--Shoelace-->
+  <link
+    rel="stylesheet"
+    media="(prefers-color-scheme:light)"
+    href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/themes/light.css"
+  />
+  <link
+    rel="stylesheet"
+    media="(prefers-color-scheme:dark)"
+    href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/themes/dark.css"
+    onload="document.documentElement.classList.add('sl-theme-dark');"
+  />
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/shoelace.js"></script>
 </head>
 
 <body>
