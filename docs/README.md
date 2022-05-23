@@ -53,5 +53,5 @@ In addition to store-ready packages, you can also generate side-loadable package
 To learn more about packaging with PWABuilder, take a look at the [quick start.](/builder/quick-start)
 
 <div class="docs-image">
-   <img src="assets/PWABuilder.png" alt="PWABuilder.com landing page" >
+   <img src="assets/PWABuilder.png" alt="PWABuilder.com landing page" />
 </div>
