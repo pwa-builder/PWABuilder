@@ -49,8 +49,8 @@ You can have an application package for your PWA in just a few steps:
 
 If you're looking for more specific guidance on how to publish a PWA to a specific store, check out the platform-specific articles:
 
-**[iOS App Store]()**
+**[Microsoft Store](/builder/windows)**
 
-**[Microsoft Store]()**
+**[Google Play Store](/builder/android)**
 
-**[Google Play Store]()**
+**[iOS App Store](/builder/ios)**

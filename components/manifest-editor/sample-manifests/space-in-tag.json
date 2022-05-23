@@ -1,0 +1,23 @@
+{ 
+  "name": "Enjoy Your Life", 
+  "short_name": "Enjoy Your Life", 
+  "description": "Enjoy Your Life | Votre carte EVC", 
+  "lang": "fr-FR", 
+  "start_url": "https://enjoyour-life.ci/", 
+  "display": "standalone", 
+  "orientation": "any", 
+  "theme_color": "#1c01d1", 
+  "icons": [ 
+    { 
+      "src": "https://enjoyour-life.ci/assets/img/logo1.png", 
+      "tailles": "192x192", 
+      "type": "image/png" 
+    }, 
+    { 
+      "src " :"https://enjoyour-life.ci/assets/img/logo1.png", 
+      "tailles": "512x512", 
+      "type": "image/png" 
+    } 
+  ],
+  "background_color": "#1c01d1" 
+}

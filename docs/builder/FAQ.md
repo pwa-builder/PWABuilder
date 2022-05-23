@@ -4,6 +4,8 @@ Welcome to the PWA Builder FAQ!
 
 Questions are separated by platform. If you're looking for a specific answer and don't see it right away, try entering some keywords in the search feature on the sidebar.
 
+If you have a question that isn't addressed here or elsewhere in the documentation, feel free to open an [issue.](https://github.com/pwa-builder/PWABuilder/issues/new/choose)
+
 ## Windows
 
 #### Where do I find my publisher information?

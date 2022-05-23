@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Manifest Editor</title>
+
+    <script type="module" src="/dist/index.js"></script>
+
+    <link rel="stylesheet" href="/global.css" />
+
+    <link
+      rel="stylesheet"
+      media="(prefers-color-scheme:light)"
+      href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/themes/light.css"
+    />
+    <link
+      rel="stylesheet"
+      media="(prefers-color-scheme:dark)"
+      href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/themes/dark.css"
+      onload="document.documentElement.classList.add('sl-theme-dark');"
+    />
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/shoelace.js"></script>
+  </head>
+
+  <body>
+    <div id="editor-holder">
+      <div id="close"><ion-icon name="close"></ion-icon></div>
+      <div id="editor-header">
+        <div id="header-text">
+          <h1>Generate a manifest</h1>
+          <p>Generate your Manifest Base Files Package below by editing the required fields. Once you have added the updated maifest to your PWA, re-test the url. Once you are staistifed with you score package your PWA for the stores.</p>
+        </div>
+        <div id="header-actions">
+          <button id="download-button">Download Manifest</button>
+          <button id="reset-button">Reset to original Manifest <ion-icon name="refresh"></ion-icon></button>
+          <div id="actions">
+            <span class="header-action"><a href="https://marketplace.visualstudio.com/items?itemName=PWABuilder.pwa-studio" target="_blank" rel="noopener">VS Code Extension </a> <img src="/assets/arrow.svg" alt="arrow" /> </span>
+            <span class="header-action"><a href="https://developer.mozilla.org/en-US/docs/Web/Manifest" target="_blank" rel="noopener">Manifest Documentation </a> <img src="/assets/arrow.svg" alt="arrow" /> </span>
+          </div>
+        </div>
+      </div>
+      <pwa-manifest-editor></pwa-manifest-editor>
+    </div>
+    <!-- Ion Icons -->
+    <script type="module" src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule="" src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons/ionicons.js"></script>
+
+    <script type="module">
+      let editor = document.querySelector("pwa-manifest-editor");
+
+      let resetBtn = document.getElementById("reset-button");
+      resetBtn.addEventListener("click", () => {
+        editor.resetManifest();
+      });
+
+      let downloadBtn = document.getElementById("download-button");
+      downloadBtn.addEventListener("click", () => {
+        editor.downloadManifest();
+      });
+
+      editor.initialManifest = {
+                                "dir": "ltr",
+                                "lang": "en",
+                                "name": "Webboard",
+                                "scope": "/",
+                                "display": "standalone",
+                                "start_url": "/",
+                                "short_name": "Webboard",
+                                "theme_color": "#FFFFFF",
+                                "description": "Enhance your work day and solve your cross platform whiteboarding needs with webboard! Draw text, shapes, attach images and more and share those whiteboards with anyone through OneDrive!",
+                                "orientation": "any",
+                                "background_color": "#FFFFFF",
+                                "related_applications": [],
+                                "prefer_related_applications": false,
+                                "screenshots": [
+                                  {
+                                    "src": "assets/screen.png"
+                                  },
+                                  {
+                                    "src": "assets/screen.png"
+                                  },
+                                  {
+                                    "src": "assets/screen.png"
+                                  }
+                                ],
+                                "features": [
+                                  "Cross Platform",
+                                  "low-latency inking",
+                                  "fast",
+                                  "useful AI"
+                                ],
+                                "icons": [
+                                  {
+                                    "src": "icons/android/android-launchericon-64-64.png",
+                                    "sizes": "64x64"
+                                  },
+                                  {
+                                    "src": "icons/android/maskable_icon_192.png",
+                                    "sizes": "192x192",
+                                    "purpose": "maskable"
+                                  },
+                                  {
+                                    "src": "icons/android/android-launchericon-48-48.png",
+                                    "sizes": "48x48"
+                                  },
+                                  {
+                                    "src": "icons/android/android-launchericon-512-512.png",
+                                    "sizes": "512x512"
+                                  },
+                                  {
+                                    "src": "icons/android/android-launchericon-28-28.png",
+                                    "sizes": "28x28"
+                                  }
+                                ],
+                                "categories": ["magazines"],
+                                "shortcuts" : [
+                                  {
+                                    "name": "Today's agenda",
+                                    "url": "/today",
+                                    "description": "List of events planned for today"
+                                  }
+                                ]
+                            }; //load an initial manifest
+      editor.manifestURL = "https://webboard.app/manifest.json"
+
+      let editedManifest = editor.manifest; // get edited or generated manifest
+      //console.log(editedManifest);
+
+      //editor.addEventListener('manifestUpdated', (e) => { console.log("Manifest Updated") });
+
+      //editor.addEventListener('screenshotsUpdated', (e) => { console.log("Screenshots Updated") });
+      //let screenshots = editor.getScreenshots(); // get blobs of all screenshots
+
+      /*
+      let icons = editor.getIcons(); // get blobs of all icons
+
+      // events
+      editor.addEventListener('iconsUpdated', (e) => { });
+      */
+
+   </script>
+  </body>
+</html>
+

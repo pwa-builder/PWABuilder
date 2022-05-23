@@ -360,7 +360,7 @@ export class AppReport extends LitElement {
 
   render() {
     return html`<!-- error modal -->
-<app-modal heading="Wait a minute!" .body="${this.errorMessage || ''}" ?open="${this.errored}" id="error-modal">
+<app-modal heading="Wait a minute!" .body="${this.errorMessage || ''}" ?open="${this.errored}" id="error-modal" tabindex="0">
   <img class="modal-image" slot="modal-image" src="/assets/warning.svg" alt="warning icon" />
 
   <div id="actions" slot="modal-actions">
