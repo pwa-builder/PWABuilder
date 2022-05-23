@@ -271,7 +271,7 @@ export class AppPublish extends LitElement {
         .packaged-tracker {
           height: max-content;
           width: 33%;
-          background-color: #E2F2E8;
+          background-color: #F1F2FA;
           align-self: flex-end;
           justify-self: flex-end;
           border-bottom-left-radius: 5px;
@@ -285,10 +285,9 @@ export class AppPublish extends LitElement {
         .packaged-tracker p {
           margin: 0;
           text-align: center;
-          color: #50BA87;
-          font-size: 10px;
+          color: black;
+          font-size: 12px;
           line-height: 12px;
-          font-weight: bold;
         }
 
         p {
@@ -683,11 +682,11 @@ export class AppPublish extends LitElement {
     return this.platforms.map(
       platform => html`
         <div class="card-wrapper">
-          ${true ? html`` :
+          ${platform.title === "iOS" ? 
             html`
-            <div class="packaged-tracker"> <!-- This will eventually be in an "if packaged previously" -->
-            <p>Packaged Previously</p>
-            </div>` 
+            <div class="packaged-tracker"> <!-- Used to show ios as experimental -->
+              <p>Experimental</p>
+            </div>` : html``
           }
           <div class="title-block">
             <img class="platform-icon" src="${platform.icon}" alt="platform icon" />
