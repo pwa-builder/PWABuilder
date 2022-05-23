@@ -18,7 +18,7 @@
   - [Create a New PWA](/studio/create-new "PWA Studio - Create a New PWA")
   - [Converting Existing Apps](/studio/existing-app "PWA Studio - Converting Existing Apps")
   - [Package Your PWA](/studio/package "PWA Studio - Package Your PWA For Stores")
-  - [Code Snippets](/studio/publish "PWA Studio - Code Snippets")
+  - [Code Snippets](/studio/snippets "PWA Studio - Code Snippets")
   - [FAQ](/studio/faq "PWA Studio - FAQ")
 
 - **PWABuilder**
