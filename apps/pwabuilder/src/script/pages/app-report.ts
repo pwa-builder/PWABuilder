@@ -1,6 +1,5 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 import { doubleCheckManifest, getManifestContext, setResults, setURL } from '../services/app-info';
 
 import {
@@ -19,8 +18,6 @@ import '../components/todo-list-item';
 import style from '../../../styles/layout-defaults.css';
 import { RawTestResult, ScoreEvent } from '../utils/interfaces';
 import { giveOutBadges } from '../services/badges';
-import {  AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
-import { ceil } from 'lodash-es';
 
 const possible_messages = {
   overview: {
@@ -290,15 +287,15 @@ export class AppReport extends LitElement {
           width: 100%;
         }
 
-        sl-details::part(base) {
+        #todo-detail::part(base) {
           border-radius: 10px;
         }
 
-        sl-details::part(header){
+        #todo-detail::part(header){
           height: 60px;
         }
 
-        sl-details::part(summary) {
+        #todo-detail::part(summary) {
           color: #4F3FB6;
           font-size: 20px;
           font-weight: bold;
@@ -310,12 +307,13 @@ export class AppReport extends LitElement {
           flex-direction: column;
           background-color: white;
           border-radius: 10px;
-          padding: 1em;
         }
 
         #manifest-header {
           display: flex;
           justify-content: space-between;
+          border-bottom: 1px solid #C4C4C4;
+          padding: 1em;
         }
 
         #mh-left {
@@ -378,6 +376,42 @@ export class AppReport extends LitElement {
 
         #mh-actions .alternate:hover {
           box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+        }
+
+        #manifest-details {
+
+        }
+
+        #manifest-detail-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+        }
+
+        .detail-list {
+          display: flex;
+          flex-direction: column;
+          row-gap: 10px;
+        }
+
+        .detail-list p {
+          font-size: 18px;
+          margin: 0;
+          font-weight: bold;
+        }
+
+        #manifest-details::part(base) {
+          border-radius: 0;
+          border-bottom-left-radius: 10px;
+          border-bottom-right-radius: 10px;
+        }
+
+        #manifest-details::part(summary) {
+          font-weight: bold;
+          font-size: 14px;
+        }
+
+        #manifest-details::part(header){
+          height: 40px;
         }
 
         ${xxxLargeBreakPoint(
@@ -519,7 +553,7 @@ export class AppReport extends LitElement {
           </div>
         </div>
         <div id="todo">
-          <sl-details summary="To-do list">
+          <sl-details id="todo-detail" summary="To-do list">
             <todo-item .status=${"red"} .content=${"This is an example to do item."}></todo-item>
             <todo-item .status=${"red"} .content=${"Theoretically we'd loop through these."}></todo-item>
             <todo-item .status=${"red"} .content=${"and display them here."}></todo-item>
@@ -541,8 +575,20 @@ export class AppReport extends LitElement {
               </div>
               <sl-progress-ring value="${(1.0/18) * 100}">1/18</sl-progress-ring>
             </div>
-            
           </div>
+          <sl-details summary="View details" id="manifest-details">
+            <div id="manifest-detail-grid">
+              <div class="detail-list">
+                <p>*Required</p>
+              </div>
+              <div class="detail-list">
+                <p>Recommended</p>
+              </div>
+              <div class="detail-list">
+                <p>Optional</p>
+              </div>
+            </div>
+          </sl-details>
         </div>
       </div>
       `;
