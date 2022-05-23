@@ -555,6 +555,7 @@ export class AppPublish extends LitElement {
   }
 
   async generateWindowsTestPackage() {
+    recordPWABuilderProcessStep("windows_test_package_clicked", AnalyticsBehavior.ProcessCheckpoint);
     let manifestContext = getManifestContext();
     if (manifestContext.isGenerated) {
       manifestContext = await fetchOrCreateManifest();
