@@ -91,18 +91,6 @@ export class AppPublish extends LitElement {
       icon: '/assets/Publish_Android.svg',
       renderDownloadButton: () => this.renderAndroidDownloadButton()
     },
-    
-    {
-      title: 'iOS',
-      factoids: [
-        "Leverage same codebase across all platforms",
-        "Large user base.",
-        "Premium devices."
-      ],
-      isActionCard: true,
-      icon: '/assets/Publish_Apple.svg',
-      renderDownloadButton: () => this.renderiOSDownloadButton()
-    },
     {
       title: 'Meta Quest',
       factoids: [
@@ -114,7 +102,18 @@ export class AppPublish extends LitElement {
       isActionCard: true,
       icon: '/assets/Publish_Meta.svg',
       renderDownloadButton: () => this.renderOculusDownloadButton()
-    }
+    },
+    {
+      title: 'iOS',
+      factoids: [
+        "Leverage same codebase across all platforms",
+        "Large user base.",
+        "Premium devices."
+      ],
+      isActionCard: true,
+      icon: '/assets/Publish_Apple.svg',
+      renderDownloadButton: () => this.renderiOSDownloadButton()
+    },
   ];
 
   constructor() {
@@ -280,6 +279,10 @@ export class AppPublish extends LitElement {
           position: absolute;
           top: 0;
           right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          column-gap: 5px;
         }
 
         .packaged-tracker p {
@@ -288,6 +291,7 @@ export class AppPublish extends LitElement {
           color: black;
           font-size: 12px;
           line-height: 12px;
+          font-weight: bold;
         }
 
         p {
@@ -684,10 +688,12 @@ export class AppPublish extends LitElement {
         <div class="card-wrapper">
           ${platform.title === "iOS" ? 
             html`
-            <div class="packaged-tracker"> <!-- Used to show ios as experimental -->
+            <div id="experimental" class="packaged-tracker"> <!-- Used to show ios as experimental -->
               <p>Experimental</p>
+              <ion-icon name="information-circle-outline" style="font-size: 14px"></ion-icon>
             </div>` : html``
           }
+          <hover-tooltip anchor="experimental" text="iOS does not support PWAs natively and packaging PWAs for iOS is Experimental. We can not guarantee that your app will be accepted into Apple's App Store." link="https://docs.pwabuilder.com/#/builder/app-store"></hover-tooltip>
           <div class="title-block">
             <img class="platform-icon" src="${platform.icon}" alt="platform icon" />
             <h3>${platform.title}</h3>
