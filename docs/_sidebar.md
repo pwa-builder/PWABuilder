@@ -1,33 +1,29 @@
 <div align=center>
-  <a href="/">
   <img width="45" src="assets/icons/pwa-builder.png">
-  </a>
 </div>
 <br>
 
-<!-- 
-  <a href="#/starter/">  </a>
-  <a href="#/studio/">  </a>
-  <a href="#/builder/">  </a>
---->
+- **Home** 
+  - [About](/ "PWABuilder Suite Documentation")
 
 - **PWA Starter** 
-  - <a href="#/starter/quick-start"> Quick Start </a>
-  - <a href="#/starter/adding-content"> Add Content </a>
-  - <a href="#/starter/publish"> Publish Your PWA </a>
-  - <a href="#/starter/faq"> FAQ </a>
+  - [Quick Start](/starter/quick-start "PWA Starter - Quick Start")
+  - [Add Content](/starter/adding-content "PWA Starter - Add Content To Your PWA")
+  - [Service Workers](/starter/service-worker "PWA Starter - Using Service Workers")
+  - [Publish Your PWA](/starter/publish "PWA Starter - Publish Your PWA to the Web")
+  - [FAQ](/starter/faq "PWA Starter - FAQ")
   
 - **PWA Studio**
-  - <a href="#/studio/quick-start">Quick Start</a>
-  - <a href="#/studio/create-new"> Create a New PWA </a>
-  - <a href="#/studio/existing-app"> Converting Existing Apps </a>
-  - <a href="#/studio/package"> Package Your PWA </a>
-  - <a href="#/studio/snippets"> Code Snippets </a>
-  - <a href="#/studio/faq"> FAQ </a>
+  - [Quick Start](/studio/quick-start "PWA Studio - Quick Start")
+  - [Create a New PWA](/studio/create-new "PWA Studio - Create a New PWA")
+  - [Converting Existing Apps](/studio/existing-app "PWA Studio - Converting Existing Apps")
+  - [Package Your PWA](/studio/package "PWA Studio - Package Your PWA For Stores")
+  - [Code Snippets](/studio/snippets "PWA Studio - Code Snippets")
+  - [FAQ](/studio/faq "PWA Studio - FAQ")
 
 - **PWABuilder**
-  - <a href="#/builder/quick-start"> Quick Start </a>
-  - <a href="#/builder/windows">  Microsoft Store </a>
-  - <a href="#/builder/android"> Google Play Store </a>
-  - <a href="#/builder/iOS"> iOS App Store </a>
-  - <a href="#/builder/FAQ"> FAQ </a>
+  - [Quick Start](/builder/quick-start "PWABuilder - Quick Start" )
+  - [Microsoft Store](/builder/windows "PWABuilder - Packaging for the Microsoft Store")
+  - [Google Play Store](/builder/android "PWABuilder - Packaging for the Google Play Store")
+  - [iOS App Store](/builder/app-store "PWABuilder - Packaging for the App Store")
+  - [FAQ](/builder/faq "PWABuilder - FAQ")

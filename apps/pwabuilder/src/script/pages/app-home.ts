@@ -115,20 +115,14 @@ export class AppHome extends LitElement {
           font-weight: bold;
           margin-bottom: .25em;
         }
-        .grid-item-header h2 {
-          margin-right: .25em;
+        .grid-item-header a {
+          text-decoration: none;
           border-bottom: 1px solid rgb(79, 63, 182);
-          line-height: 20px;
           font-size: 1em;
           font-weight: bold;
-          margin: 0;
-          margin-right: .5em;
+          margin: 0px 0.5em 0px 0px;
           line-height: 1em;
-          color: #4F3FB6;
-        }
-        .grid-item-header a {
-          color: #4F3FB6;
-          text-decoration: none;
+          color: rgb(79, 63, 182);
         }
         .grid-item-header a:visited {
           color: #4F3FB6;
@@ -515,8 +509,8 @@ export class AppHome extends LitElement {
             <section id="content-grid" slot="grid-container">
               <div class="intro-grid-item">
                 <div class="grid-item-header">  
-                  <h2><a @click=${() => recordPWABuilderProcessStep("home.top.PWAStarter_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://github.com/pwa-builder/pwa-starter/wiki/Getting-Started" target="_blank" rel="noopener">Start a new PWA</a></h2>
-                  <img src="/assets/new/arrow.svg" alt="arrow" />
+                  <a @click=${() => recordPWABuilderProcessStep("home.top.PWAStarter_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://github.com/pwa-builder/pwa-starter/wiki/Getting-Started" target="_blank" rel="noopener">Start a new PWA</a>
+                  <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
                   
                 </div>
                 <p>
@@ -526,8 +520,8 @@ export class AppHome extends LitElement {
           
               <div class="intro-grid-item">
                 <div class="grid-item-header">  
-                  <h2><a @click=${() => recordPWABuilderProcessStep("home.top.PWAStudio_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://aka.ms/install-pwa-studio" target="_blank" rel="noopener">Use dev tools</a></h2>
-                  <img src="/assets/new/arrow.svg" alt="arrow" />
+                  <a @click=${() => recordPWABuilderProcessStep("home.top.PWAStudio_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://aka.ms/install-pwa-studio" target="_blank" rel="noopener">Use dev tools</a>
+                  <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
                 </div>
                 <p>
                   Use our VS Code extension to create, improve, and package your PWA directly in your code editor.
@@ -544,7 +538,7 @@ export class AppHome extends LitElement {
                 <div id="input-area">
                   <div id="input-and-error">
                     <fast-text-field slot="input-container" type="text" id="input-box" placeholder="Enter the URL to your PWA" name="url-input"
-                      class="${classMap({ error: this.errorGettingURL })}" @input="${(e: InputEvent) => this.handleURL(e)}">
+                      class="${classMap({ error: this.errorGettingURL })}" aria-labelledby="input-header" @input="${(e: InputEvent) => this.handleURL(e)}">
                     </fast-text-field>
               
                     ${this.errorMessage && this.errorMessage.length > 0
