@@ -1,6 +1,6 @@
 # Publishing PWAs to the Microsoft Store
 
-You can use PWABuilder to build application packages that are submittable the Microsoft Store. Once you have your packages through PWABuilder, you'll need to go through the <a href=""> Microsoft Partner Center </a> to create your app submission.
+You can use PWABuilder to build application packages that are submittable the Microsoft Store. Once you have your packages through PWABuilder, you'll need to go through the <a href="https://partner.microsoft.com/en-us"> Microsoft Partner Center </a> to create your app submission.
 
 #### How does it work?
 

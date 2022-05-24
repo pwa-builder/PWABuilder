@@ -1,0 +1,75 @@
+{
+    "name": "T2C - Tram & Bus",
+    "short_name": "T2C",
+    "icons": [
+      {
+        "src": "images/192x192.png",
+        "type": "image/png",
+        "sizes": "192x192"
+      },
+      {
+        "src": "images/2251x2251.png",
+        "type": "image/png",
+        "sizes": "2251x2251"
+      },
+      {
+        "src": "images/512x512.png",
+        "type": "image/png",
+        "sizes": "512x512"
+      }
+    ],
+    "start_url": "/?utm_source=launcher",
+    "display": "standalone",
+    "background_color": "none",
+    "theme_color": "none",
+    "shortcuts": [
+      {
+        "icons": [
+          {
+            "src": "/images/shortcuts/a.png",
+            "sizes": "96x96"
+          }
+        ],
+        "short_name": "Jaude - A",
+        "name": "Jaude Ligne A",
+        "url": "https://t2c.app/A/Jaude/Les%20Vergnes?utm_source=launcher_shortcuts",
+        "description": "Horaire de la ligne A à l'arrêt Jaude"
+      },
+      {
+        "icons": [
+          {
+            "src": "/images/shortcuts/b.png",
+            "sizes": "96x96"
+          }
+        ],
+        "short_name": "Jaude - B",
+        "name": "Jaude Ligne B",
+        "url": "https://t2c.app/B/Jaude/Royat%20Pl.%20Allard?utm_source=launcher_shortcuts",
+        "description": "Horaire de la ligne B à l'arrêt Jaude"
+      },
+      {
+        "icons": [
+          {
+            "src": "/images/shortcuts/c.png",
+            "sizes": "96x96"
+          }
+        ],
+        "short_name": "Jaude - C",
+        "name": "Jaude Ligne C",
+        "url": "https://t2c.app/C/Jaude/Tamaris?utm_source=launcher_shortcuts",
+        "description": "Horaire de la ligne C à l'arrêt Jaude"
+      },
+      {
+        "icons": [
+          {
+            "src": "/images/shortcuts/a.png",
+            "sizes": "96x96"
+          }
+        ],
+        "short_name": "Université - A",
+        "name": "Université Ligne A",
+        "url": "https://t2c.app/A/Universités/Les Vergnes?utm_source=launcher_shortcuts",
+        "description": "Horaire de la ligne A à l'arrêt Université"
+      }
+    ]
+  }

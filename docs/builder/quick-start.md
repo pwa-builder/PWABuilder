@@ -1,6 +1,6 @@
 # Quick Start
     
-PWABuilder is an open source tool that allows developers to package their PWAs for publishing to various stores, including Microsoft, Google Play, and the iOS App Store. 
+PWABuilder is an open source tool that allows developers to package their PWAs for publishing to various stores, including Microsoft, Google Play, Meta Quest, and the iOS App Store. 
 
 ## Prerequisites
 
@@ -49,8 +49,8 @@ You can have an application package for your PWA in just a few steps:
 
 If you're looking for more specific guidance on how to publish a PWA to a specific store, check out the platform-specific articles:
 
-**[iOS App Store]()**
+**[Microsoft Store](/builder/windows)**
 
-**[Microsoft Store]()**
+**[Google Play Store](/builder/android)**
 
-**[Google Play Store]()**
+**[iOS App Store](/builder/ios)**

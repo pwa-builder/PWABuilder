@@ -1,5 +1,5 @@
 # Create a New PWA
-Creating a new progressive web app with PWA Studio is easy: the extension has a built in command to clone the [PWA Starter template.]()
+Creating a new progressive web app with PWA Studio is easy: the extension has a built in command to clone the [PWA Starter template.](https://github.com/pwa-builder/pwa-starter)
 The PWA Starter is a lightweight, fast, extensible template that allows you to get your progressive web app off the ground right away. 
 Combined with the extension, it's perfect for someone to looking to build their first PWA.
 
@@ -32,7 +32,7 @@ You can also start a new PWA with a command. To do this:
    
 3. Select `PWABuilder: New PWA`.
    
-4. Enter a repoitory name and hit enter.
+4. Enter a repository name and hit enter.
    
 5. Choose a location for your repository to live.
    
@@ -47,7 +47,7 @@ You can also start a new PWA with a command. To do this:
 After generating your app, you are now ready to start coding! You can also hit `F5` in VS Code to run your PWA right after cloning. The PWA Starter will open in a standalone browser window as an installed app.
 The extension initializes your app as a local git repository, but if you want to add it to GitHub, you'll need to associate it with an upstream repo.
 
-You can learn more about the PWA Starter, how to develop on it, and the stack it uses at the  [PWA Starter documentation.](https://aka.ms/starter-docs)
+You can learn more about the PWA Starter, how to develop on it, and the stack it uses at the  [PWA Starter documentation.](/starter/quick-start)
 There you can learn how to:
 
 - Add pages to your PWA and manage routing
