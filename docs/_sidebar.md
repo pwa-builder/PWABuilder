@@ -25,6 +25,7 @@
   - [Quick Start](/builder/quick-start "PWABuilder - Quick Start" )
   - [Microsoft Store](/builder/windows "PWABuilder - Packaging for the Microsoft Store")
   - [Google Play Store](/builder/android "PWABuilder - Packaging for the Google Play Store")
+  - [Meta Quest](/builder/meta "PWABuilder - Meta Quest")
   - [iOS App Store](/builder/app-store "PWABuilder - Packaging for the App Store")
   - [FAQ](/builder/faq "PWABuilder - FAQ")
 
