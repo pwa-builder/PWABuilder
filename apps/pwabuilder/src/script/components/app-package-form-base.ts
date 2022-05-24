@@ -62,12 +62,12 @@ export class AppPackageFormBase extends LitElement {
     )}
 
       ${smallBreakPoint(
-        css`
+      css`
           #form-layout {
             max-height: 20em;
           }
         `
-      )}
+    )}
     `;
 
     return [
@@ -107,7 +107,7 @@ export class AppPackageFormBase extends LitElement {
         name="${ifDefined(formInput.name)}" minlength="${ifDefined(formInput.minLength)}"
         maxlength="${ifDefined(formInput.maxLength)}" min=${ifDefined(formInput.minValue)}
         max="${ifDefined(formInput.maxValue)}" pattern="${ifDefined(formInput.pattern)}"
-        spellcheck="${ifDefined(formInput.spellcheck)}" ?checked="${formInput.checked}"
+        spellcheck="${ifDefined(formInput.spellcheck)}" ?checked="${formInput.checked}" ?readonly="${formInput.readonly}"
         custom-validation-error-message="${ifDefined(formInput.validationErrorMessage)}"
         @input="${(e: UIEvent) => this.inputChanged(e, formInput)}" @invalid=${this.inputInvalid} />
     `;
@@ -255,6 +255,7 @@ export interface FormInput {
   maxValue?: number;
   pattern?: string;
   spellcheck?: boolean;
+  readonly?: boolean;
   validationErrorMessage?: string;
   checked?: boolean;
   inputHandler?: (val: string, checked: boolean, input: HTMLInputElement) => void;

@@ -10,6 +10,7 @@ import '../components/loading-button';
 import '../components/windows-form';
 import '../components/android-form';
 import '../components/ios-form';
+import '../components/oculus-form';
 import '../components/info-circle-tooltip';
 import { Router } from '@vaadin/router';
 
@@ -40,6 +41,8 @@ import { WindowsPackageOptions } from '../utils/win-validation';
 import { fetchOrCreateManifest } from '../services/manifest';
 import { createWindowsPackageOptionsFromManifest } from '../services/publish/windows-publish';
 import { AndroidPackageOptions } from '../utils/android-validation';
+import { OculusAppPackageOptions } from '../utils/oculus-validation';
+
 @customElement('app-publish')
 export class AppPublish extends LitElement {
   @state() errored = false;
@@ -58,39 +61,59 @@ export class AppPublish extends LitElement {
   @state() openWindowsOptions = false;
   @state() openAndroidOptions = false;
   @state() openiOSOptions = false;
-
+  @state() openOculusOptions = false;
   @state() generating = false;
   @state() isGooglePlay = true;
-
   @state() finalChecks: checkResults | undefined;
-
   @state() reportPackageErrorUrl = '';
 
   readonly platforms: ICardData[] = [
     {
       title: 'Windows',
-      description:
-        'Publish your PWA to the Microsoft Store to make it available to the 1 billion Windows users worldwide.',
+      factoids: [
+        "PWAs can be indistinguishable from native apps on Windows",
+        "PWAs are first class applications.",
+        "Collect 100% of revenue generated via third party commerce platforms.",
+        "1B+ store enabled devices."
+      ],
       isActionCard: true,
-      icon: '/assets/windows_icon.svg',
+      icon: '/assets/Publish_Windows.svg',
       renderDownloadButton: () => this.renderWindowsDownloadButton()
     },
     {
       title: 'Android',
-      description:
-        'Publish your PWA to the Google Play Store to make your app more discoverable for Android users.',
+      factoids: [
+        "PWAs are first class applications",
+        "One app store listing for all devices (mobile, tablet, desktop)",
+        "2.5 billion store enabled devices"
+      ],
       isActionCard: true,
-      icon: '/assets/android_icon.svg',
+      icon: '/assets/Publish_Android.svg',
       renderDownloadButton: () => this.renderAndroidDownloadButton()
     },
     {
-      title: 'iOS',
-      description:
-        'Publish your PWA to the iOS App Store to make it available to iPhone and iPad users. Requires a Mac to build the package.',
+      title: 'Meta Quest',
+      factoids: [
+        "PWAs are first class applications",
+        "Bring your 2D apps to VR's immersive screen",
+        "Build immersive 3D experiences for VR using WebXR",
+        "Currently in developer preview via sideloading"
+      ],
       isActionCard: true,
-      icon: '/assets/apple_icon.svg',
+      icon: '/assets/Publish_Meta.svg',
+      renderDownloadButton: () => this.renderOculusDownloadButton()
+    },
+    {
+      title: 'iOS',
+      factoids: [
+        "Leverage same codebase across all platforms",
+        "Large user base.",
+        "Premium devices."
+      ],
+      isActionCard: true,
+      icon: '/assets/Publish_Apple.svg',
       renderDownloadButton: () => this.renderiOSDownloadButton()
-    }
+    },
   ];
 
   constructor() {
@@ -124,10 +147,19 @@ export class AppPublish extends LitElement {
         }
 
         #summary-block {
-          padding: 16px 16px 16px 36px;
-          border-bottom: var(--list-border);
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          row-gap: .5em;
+        }
 
-          margin-right: 2em;
+        #summary-block h2 {
+          margin: 0;
+        }
+
+        #summary-block p {
+          margin: 0;
         }
 
         h1 {
@@ -144,20 +176,15 @@ export class AppPublish extends LitElement {
         h2,
         h4 {
           font-size: var(--medium-font-size);
-          margin-bottom: 8px;
-        }
-
-        h3 {
-          margin-bottom: 8px;
-          margin-top: 0;
         }
 
         .container {
-          padding: 16px 16px 16px 36px;
+          padding: 2em 5em;
           display: flex;
           flex-direction: column;
           justify-items: center;
           align-items: center;
+          row-gap: 1em;
         }
 
         .container .action-buttons {
@@ -188,29 +215,87 @@ export class AppPublish extends LitElement {
           font-weight: bold;
         }
 
-        #up-next {
+        #store-cards {
           width: 100%;
+          display: grid;
+          /* grid-template-columns: repeat(auto-fill, 300px); */
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* causes funky grid spacing */
+          grid-gap: 1em;
         }
 
-        ul {
-          list-style: none;
+        .card-wrapper {
+          width: 100%;
+          height: 400px;
+          display: flex;
+          flex-direction: column;
+          box-shadow: 0px 4px 10px 4px rgba(0, 0, 0, 0.05);
+          position: relative;
+        }
+
+        .title-block {
+          box-sizing: border-box;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: flex-start;
+          width: 100%;
+          height: 99%;
+          padding: 1em 1.5em;
+          row-gap: .45em;
+        }
+
+        .title-block h3 {
           margin: 0;
-          padding: 0;
-
-          width: 100%;
         }
 
-        li {
+        .factoids {
+          width: 100%;
+          height: max-content;
+          padding-left: 16px;
+          margin: 0;
+          margin-top: 10px;
+        }
+
+        .factoids li {
+          font-size: 14px;
+        }
+
+        .platform-actions-block {
+          align-self: center;
+          display: flex;
+          flex-direction: column;
+          row-gap: 10px;
+        }
+
+        .packaged-tracker {
+          height: max-content;
+          width: 33%;
+          background-color: #F1F2FA;
+          align-self: flex-end;
+          justify-self: flex-end;
+          border-bottom-left-radius: 5px;
+          padding: 7px;
+          padding-left: 9px;
+          position: absolute;
+          top: 0;
+          right: 0;
           display: flex;
           align-items: center;
-          justify-content: space-between;
-          padding-top: 35px;
-          padding-bottom: 35px;
-          border-bottom: var(--list-border);
+          justify-content: center;
+          column-gap: 5px;
         }
 
-        li h3 {
-          font-size: var(--small-medium-font-size);
+        .packaged-tracker p {
+          margin: 0;
+          text-align: center;
+          color: black;
+          font-size: 12px;
+          line-height: 12px;
+          font-weight: bold;
+        }
+
+        .packaged-tracker img {
+          width: 16px;
         }
 
         p {
@@ -221,6 +306,23 @@ export class AppPublish extends LitElement {
 
         content-header::part(header) {
           display: none;
+        }
+
+        #banner-header h1 {
+          display: flex;
+          flex-direction: column;
+          width: max-content;
+          margin-bottom: 0;
+          font-size: 36px;
+        }
+        #banner-header h1 span {
+          color: #4F3FB6;
+        }
+
+        #hero-p {
+          margin: 0;
+          margin-top: .5em;
+          font-size: 17px;
         }
 
         .modal-image {
@@ -258,13 +360,9 @@ export class AppPublish extends LitElement {
           margin-top: 15px;
         }
 
-        #test-package-button::part(underlying-button) {
-          --button-font-color: var(--font-color);
-        }
-
-        #platform-actions-block app-button,
-        #platform-actions-block loading-button::part(underlying-button) {
-          --button-width: 152px;
+        .platform-actions-block app-button,
+        .platform-actions-block loading-button::part(underlying-button) {
+          --button-width: 223px;
         }
 
         #actions {
@@ -289,6 +387,7 @@ export class AppPublish extends LitElement {
 
         .platform-icon {
           max-width: 37px;
+          height: 37px;
           image-rendering: smooth;
         }
 
@@ -339,6 +438,10 @@ export class AppPublish extends LitElement {
         .unselected-apk {
           border-bottom: 5px solid transparent;
         }
+
+        sl-tooltip::part(base){
+          width: 300px;
+        }
       `,
       xxxLargeBreakPoint(
         css`
@@ -359,7 +462,6 @@ export class AppPublish extends LitElement {
           }
 
           #publish-wrapper {
-            max-width: 69em;
             background: white;
           }
 
@@ -369,6 +471,9 @@ export class AppPublish extends LitElement {
 
           #ios-options-modal::part(modal-layout) {
             width: 600px;
+          }
+          .container {
+            padding: 2em 10em;
           }
         `
       ),
@@ -402,50 +507,18 @@ export class AppPublish extends LitElement {
             align-items: flex-start;
           }
 
-          #title-block {
-            width: 100%;
-          }
-
-          #title-block p {
-            width: unset;
-          }
-
-          #platform-actions-block {
+          .platform-actions-block {
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 2em;
           }
           
         `
       ),
-      mediumBreakPoint(
-        css`
-          loading-button {
-            --loading-button-height: 64px;
-          }
-          loading-button::part(underlying-button) {
-            --font-size: 22px;
-          }
-          .container .action-buttons fast-anchor,
-          .container .action-buttons app-button {
-            --button-width: 127px;
-            font-size: var(--mobile-button-fontsize);
-            height: var(--mobile-button-height);
-            width: var(--button-width);
-            margin: 22px;
-          }
-        `,
-        'no-lower'
-      ),
       smallBreakPoint(css`
         #error-modal::part(modal-layout) {
           width: 100vw;
-        }
-
-        #test-package-button app-button::part(underlying-button) {
-          font-size: var(--font-size);
         }
 
         li {
@@ -453,20 +526,11 @@ export class AppPublish extends LitElement {
           align-items: flex-start;
         }
 
-        #title-block {
-          width: 100%;
-        }
-
-        #title-block p {
-          width: unset;
-        }
-
-        #platform-actions-block {
+        .platform-actions-block {
           width: 100%;
           display: flex;
           flex-direction: column;
           align-items: center;
-          margin-top: 2em;
         }
 
         .publish h1 {
@@ -478,6 +542,16 @@ export class AppPublish extends LitElement {
 
         .publish p {
           display: none;
+        }
+        #banner-header h1 {
+          font-size: 18px;
+          line-height: 24px;
+        }
+        .container {
+          padding: 2em 2em;
+        }
+        #summary-block {
+          text-align: center;
         }
       `),
     ];
@@ -491,50 +565,6 @@ export class AppPublish extends LitElement {
     }
   }
 
-  getWindowsFinalChecksErrorMessage(): string | null {
-    if (this.finalChecks) {
-      const maniCheck = this.finalChecks.manifest;
-      const baseIcon = this.finalChecks.baseIcon;
-      const validURL = this.finalChecks.validURL;
-
-      if (maniCheck === false) {
-        return 'Your PWA does not have a valid Web Manifest';
-      }
-
-      if (baseIcon === false) {
-        return 'Your PWA needs at least a 512x512 PNG icon';
-      }
-
-      if (validURL === false) {
-        return 'Your PWA does not have a valid URL';
-      }
-    }
-
-    return null;
-  }
-
-  getAndroidFinalChecksErrorMessage(): string | null {
-    if (this.finalChecks) {
-      const maniCheck = this.finalChecks.manifest;
-      const baseIcon = this.finalChecks.baseIcon;
-      const validURL = this.finalChecks.validURL;
-
-      if (maniCheck === false) {
-        return 'Your PWA does not have a valid Web Manifest';
-      }
-
-      if (baseIcon === false) {
-        return 'Your PWA needs at least a 512x512 PNG icon';
-      }
-
-      if (validURL === false) {
-        return 'Your PWA does not have a valid URL';
-      }
-    }
-
-    return null;
-  }
-
   async generateWindowsTestPackage() {
     recordPWABuilderProcessStep("windows_test_package_clicked", AnalyticsBehavior.ProcessCheckpoint);
     let manifestContext = getManifestContext();
@@ -546,7 +576,7 @@ export class AppPublish extends LitElement {
     await this.generate("windows", options);
   }
 
-  async generate(platform: Platform, options?: AndroidPackageOptions | IOSAppPackageOptions | WindowsPackageOptions) {
+  async generate(platform: Platform, options?: AndroidPackageOptions | IOSAppPackageOptions | WindowsPackageOptions | OculusAppPackageOptions) {
     // Record analysis results to our analytics portal.
     recordProcessStep(
       'analyze-and-package-pwa',
@@ -596,6 +626,7 @@ export class AppPublish extends LitElement {
       this.openAndroidOptions = false;
       this.openWindowsOptions = false;
       this.openiOSOptions = false;
+      this.openOculusOptions = false;
     }
   }
 
@@ -641,7 +672,7 @@ export class AppPublish extends LitElement {
   }
 
   showWindowsOptionsModal() {
-    recordPWABuilderProcessStep("windows_store_modal_opened", AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep("windows_store_modal_opened", AnalyticsBehavior.ProcessCheckpoint)
     this.openWindowsOptions = true;
   }
 
@@ -655,21 +686,37 @@ export class AppPublish extends LitElement {
     this.openiOSOptions = true;
   }
 
+  showOculusOptionsModal() {
+    this.openOculusOptions = true;
+  }
+
   renderContentCards(): TemplateResult[] {
     return this.platforms.map(
       platform => html`
-        <li>
-          <div id="title-block">
+        <div class="card-wrapper">
+          ${platform.title === "iOS" ? 
+            html`
+            <sl-tooltip 
+              content="iOS does not support PWAs natively and packaging PWAs for iOS is Experimental. We can not guarantee that your app will be accepted into Apple's App Store.">
+              <div id="experimental" class="packaged-tracker"> <!-- Used to show ios as experimental -->
+                <p>Experimental</p>
+                <img src="/assets/new/help.svg" alt="experimental help icon" />
+              </div>
+            
+            </sl-tooltip>` : html``
+          }
+          <div class="title-block">
             <img class="platform-icon" src="${platform.icon}" alt="platform icon" />
             <h3>${platform.title}</h3>
-            <p>${platform.description}</p>
+            <!-- TODO need to fix the platform action blocks text spacing for the left. -->
+            <div class="platform-actions-block">
+              ${platform.renderDownloadButton()}
+            </div>
+            <ul class="factoids">
+              ${platform.factoids.map((fact: string) => html`<li>${fact}</li>`)}
+            </ul>
           </div>
-        
-          <!-- TODO need to fix the platform action blocks text spacing for the left. -->
-          <div id="platform-actions-block">
-            ${platform.renderDownloadButton()}
-          </div>
-        </li>`
+        </div>`
     );
   }
 
@@ -679,12 +726,11 @@ export class AppPublish extends LitElement {
         Store Package
       </app-button>
       <div>
-        <loading-button id="windows-test-pkg-btn" class="navigation secondary" ?loading=${this.generating} id="test-package-button"
+        <loading-button id="windows-test-pkg-btn" class="navigation alternate" ?loading=${this.generating} id="test-package-button"
           @click="${this.generateWindowsTestPackage}" .secondary="${true}">
           Test Package
         </loading-button>
-        <hover-tooltip
-          anchor="windows-test-pkg-btn" 
+        <hover-tooltip anchor="windows-test-pkg-btn"
           text="Generate a package you can use to test your app on your Windows Device before going to the Microsoft Store."
           link="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps.md#1-test-your-app-on-your-windows-machine">
         </hover-tooltip>
@@ -703,6 +749,14 @@ export class AppPublish extends LitElement {
   renderiOSDownloadButton(): TemplateResult {
     return html`
       <app-button class="navigation" id="ios-package-button" @click="${() => this.showiOSOptionsModal()}">
+        Store Package
+      </app-button>
+    `;
+  }
+
+  renderOculusDownloadButton(): TemplateResult {
+    return html`
+      <app-button class="navigation" id="oculus-package-button" @click="${() => this.showOculusOptionsModal()}">
         Store Package
       </app-button>
     `;
@@ -737,6 +791,7 @@ export class AppPublish extends LitElement {
     this.openWindowsOptions = false;
     this.openAndroidOptions = false;
     this.openiOSOptions = false;
+    this.openOculusOptions = false;
   }
 
   fetchAndroidNav() {
@@ -830,6 +885,14 @@ export class AppPublish extends LitElement {
         </ios-form>
       </app-modal>
       
+      <!-- oculus options modal -->
+      <app-modal id="oculus-options-modal" heading="Meta Quest App Options" body="Customize your Meta Quest app below"
+        ?open="${this.openOculusOptions}" @app-modal-close="${() => this.storeOptionsCancel()}">
+        <oculus-form slot="modal-form" .generating=${this.generating}
+          @init-oculus-gen="${(ev: CustomEvent) => this.generate('oculus', ev.detail)}">
+        </oculus-form>
+      </app-modal>
+      
       <div id="publish-wrapper">
         <app-header></app-header>
       
@@ -840,7 +903,10 @@ export class AppPublish extends LitElement {
       
           <div>
             <content-header class="publish">
-              <h1 slot="hero-container">Your PWA is Store Ready!</h1>
+              <div id="banner-header" slot="hero-container">
+                <h1> <span>Awesome!</span> Your PWA is Store Ready.</h1>
+              </div>
+              
               <p id="hero-p" slot="hero-container">
                 You are now ready to ship your PWA to the app stores!
               </p>
@@ -848,33 +914,17 @@ export class AppPublish extends LitElement {
       
             <app-sidebar id="tablet-sidebar"></app-sidebar>
       
-            <section id="summary-block">
-              <h2>Publish your PWA to stores</h2>
-      
-              <p>
-                Generate store-ready packages for the Microsoft Store, Google
-                Play and more!
-              </p>
-            </section>
-      
             <section class="container">
-              <ul>
-                ${this.renderContentCards()}
-              </ul>
-      
-              <div id="up-next">
-                <h4>Congrats!</h4>
-      
+              <div id="summary-block">
+                <h2>Publish your PWA to stores</h2>
+        
                 <p>
-                  Make sure you check our documentation for help submitting your
-                  generated packages! Click next to see what else you can do
-                  with your PWA!
+                  Generate store-ready packages for the Microsoft Store, Google
+                  Play and more!
                 </p>
               </div>
-      
-              <div class="action-buttons">
-                <app-button @click="${() => this.returnToFix()}">Back</app-button>
-                <fast-anchor class="button" href="/congrats">Next</fast-anchor>
+              <div id="store-cards">
+                ${this.renderContentCards()}
               </div>
             </section>
           </div>
@@ -885,8 +935,8 @@ export class AppPublish extends LitElement {
 }
 
 interface ICardData {
-  title: 'Windows' | 'Android' | 'iOS';
-  description: string;
+  title: 'Windows' | 'Android' | 'iOS' | "Meta Quest";
+  factoids: string[];
   isActionCard: boolean;
   icon: string;
   renderDownloadButton: () => TemplateResult;

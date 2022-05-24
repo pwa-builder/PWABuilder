@@ -30,6 +30,16 @@ export const fastButtonCss = css`
     border-color: transparent;
   }
 
+  fast-button.alternate {
+    background: var(--secondary-color);
+    color: #4F3FB6;
+    border: 1px solid #4F3FB6;
+  }
+
+  fast-button.alternate:hover {
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+  }
+
   fast-button[appearance='lightweight'] {
     --accent-foreground-rest: var(--secondary-font-color);
     --accent-foreground-active: var(--font-color);

@@ -41,9 +41,12 @@ export class AndroidForm extends AppPackageFormBase {
       .form-generate-button {
         width: 135px;
         height: 40px;
-        display: inherit;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
     `;
+    
     return [
       super.styles,
       localStyles

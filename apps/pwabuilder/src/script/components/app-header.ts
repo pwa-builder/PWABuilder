@@ -68,13 +68,13 @@ export class AppHeader extends LitElement {
         font-weight: var(--font-bold);
       }
 
-      #resources span {
+      .nav_link span {
         display: inline-block;
         height: 18px;
         border-bottom: 1px solid transparent;
       }
     
-      #resources:hover span{
+      .nav_link:hover span{
         border-color: var(--font-color);
       }
 
@@ -166,14 +166,25 @@ export class AppHeader extends LitElement {
       
         <nav id="desktop-nav">
           <fast-anchor
-            id="resources"
+            class="nav_link"
+            appearance="hypertext"
+            href="https://docs.pwabuilder.com"
+            target="__blank"
+            aria-label="PWABuilder Docs, will open in separate tab"
+            rel="noopener"
+            @click=${() => recordPWABuilderProcessStep(`.header.docs_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+            ><span>Docs</span></fast-anchor
+          >
+
+          <fast-anchor
+          class="nav_link"
             appearance="hypertext"
             href="https://blog.pwabuilder.com"
             target="__blank"
-            aria-label="Resources, will open in separate tab"
+            aria-label="PWABuilder Blog, will open in separate tab"
             rel="noopener"
-            @click=${() => recordPWABuilderProcessStep(`.header.resources_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
-            ><span>Resources</span></fast-anchor
+            @click=${() => recordPWABuilderProcessStep(`.header.blog_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+            ><span>Blog</span></fast-anchor
           >
 
           <fast-anchor
