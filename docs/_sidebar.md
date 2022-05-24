@@ -27,3 +27,6 @@
   - [Google Play Store](/builder/android "PWABuilder - Packaging for the Google Play Store")
   - [iOS App Store](/builder/app-store "PWABuilder - Packaging for the App Store")
   - [FAQ](/builder/faq "PWABuilder - FAQ")
+
+- **Release Notes**
+  - [2022](/release-notes/2022 "Release Notes - 2022")
