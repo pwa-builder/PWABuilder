@@ -11,8 +11,9 @@ import {
 } from '../utils/css/breakpoints';
 
 import '../components/app-header';
+import '../components/app-modal';
 import '../components/todo-list-item';
-
+import '../components/manifest-editor-frame'
 
 //@ts-ignore
 import style from '../../../styles/layout-defaults.css';
@@ -74,7 +75,8 @@ export class AppReport extends LitElement {
   @state() isDeskTopView = this.mql.matches;
 
   // will be used to control the state of the "Package for store" button.
-  @state() canPackage: Boolean = false;
+  @state() canPackage: boolean = false;
+  @state() manifestEditorOpened: boolean = false;
 
   static get styles() {
     return [
@@ -90,7 +92,6 @@ export class AppReport extends LitElement {
           flex-direction: column;
           row-gap: 1.5em;
           align-items: baseline;
-          height: 100vh;
           background-color: #F2F3FB;
           padding: 20px;
           box-sizing: border-box;
@@ -307,6 +308,7 @@ export class AppReport extends LitElement {
           flex-direction: column;
           background-color: white;
           border-radius: 10px;
+          width: 100%;
         }
 
         #manifest-header {
@@ -323,15 +325,15 @@ export class AppReport extends LitElement {
           row-gap: .5em;
         }
 
-        #mh-header {
+        .card-header {
           font-size: 24px;
           font-weight: bold;
           margin: 0;
         }
 
-        #mh-desc {
+        .card-desc {
           margin: 0;
-          font-size: 17px;
+          font-size: 14px;
         }
 
         #mh-right {
@@ -344,7 +346,7 @@ export class AppReport extends LitElement {
           row-gap: 1em;
         }
 
-        #mh-actions a {
+        .arrow_anchor {
           text-decoration: none;
           font-size: 14px;
           font-weight: bold;
@@ -354,32 +356,28 @@ export class AppReport extends LitElement {
           display: flex;
           column-gap: 10px;
         }
-        #mh-actions a:visited {
+        .arrow_anchor:visited {
           color: #4F3FB6;
         }
-        #mh-actions:hover {
+        .arrow_anchor:hover {
           cursor: pointer;
         }
-        #mh-actions:hover img {
+        .arrow_anchor:hover img {
           animation: bounce 1s;
         }
 
-        #mh-actions .alternate {
+        #report-wrapper .alternate {
           background: var(--secondary-color);
           color: #4F3FB6;
           border: 1px solid #4F3FB6;
           font-size: 16px;
           font-weight: bold;
           border-radius: 50px;
-          padding: 1em 3em;
+          padding: .5em 2em;
         }
 
-        #mh-actions .alternate:hover {
+        #report-wrapper .alternate:hover {
           box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
-        }
-
-        #manifest-details {
-
         }
 
         #manifest-detail-grid {
@@ -399,19 +397,166 @@ export class AppReport extends LitElement {
           font-weight: bold;
         }
 
-        #manifest-details::part(base) {
+        .details::part(base) {
           border-radius: 0;
           border-bottom-left-radius: 10px;
           border-bottom-right-radius: 10px;
+          border: none;
         }
 
-        #manifest-details::part(summary) {
+        .details::part(summary) {
           font-weight: bold;
           font-size: 14px;
         }
 
-        #manifest-details::part(header){
+        .details::part(header){
           height: 40px;
+        }
+
+        #two-cell-row {
+          display: flex;
+          column-gap: 1em;
+          width: 100%;
+        }
+
+        #sw {
+          display: flex;
+          flex-direction: column;
+
+          width: 50%;
+          border-radius: 10px;
+          background-color: white;
+          
+          row-gap: .5em;
+        }
+
+        #sw-header {
+          display: flex;
+          flex-direction: column;
+          row-gap: .5em;
+          
+          padding: 1em;
+        }
+
+        #swh-top {
+          display: flex;
+          column-gap: 1em;
+        }
+
+        #swh-text {
+          display: flex;
+          flex-direction: column;
+          row-gap: .5em;
+        } 
+
+        #sw-ring {
+          --size: 80px;
+          height: fit-content;
+        }
+
+        #sw-actions {
+          display: flex;
+          flex-direction: column;
+          row-gap: 1em;
+          width: 66%;
+        }
+
+        .detail-grid {
+          display: flex;
+          flex-direction: column;
+          row-gap: .5em;
+        }
+
+        .red {
+          --indicator-color: #EB5757;
+        }
+
+        .yellow {
+          --indicator-color: #EED202;
+        }
+
+        .green {
+          --indicator-color: #50BA87;
+        }
+
+        #security {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+
+          width: 50%;
+          border-radius: 10px;
+          background-color: white;
+          
+          row-gap: .5em;
+        }
+
+        #sec-header {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          row-gap: .5em;
+          height: 100%;
+          padding: 1em;
+        }
+
+        #sec-top {
+          display: flex;
+          column-gap: 1em;
+        }
+
+        #sec-text {
+          display: flex;
+          flex-direction: column;
+          row-gap: .5em;
+        } 
+
+        #sec-actions {
+          display: flex;
+          flex-direction: column;
+          row-gap: 1em;
+          width: 66%;
+        }
+
+        #manifest-editor-modal {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: transparent;
+          backdrop-filter: blur(10px);
+          z-index: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          z-index: 3;
+        }
+
+        .close_x {
+          position: absolute;
+          top: 1em;
+          right: 1em;
+          height: 20px;
+          width: auto;
+        }
+
+        .close_x:hover {
+          cursor: pointer;
+        }
+
+        #modal {
+          background: white;
+          max-width: 75%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+          border-radius: 10px;
+          box-shadow: 0px 16px 24px rgba(0, 0, 0, 0.12);
+          position: relative;
+          z-index: 4;
         }
 
         ${xxxLargeBreakPoint(
@@ -512,6 +657,11 @@ export class AppReport extends LitElement {
     }
   }
 
+  toggleManifestEditorModal(){
+    this.manifestEditorOpened = !this.manifestEditorOpened;
+    this.requestUpdate();
+  }
+
 
   render() {
     return html`
@@ -562,21 +712,21 @@ export class AppReport extends LitElement {
         <div id="manifest">
           <div id="manifest-header">
             <div id="mh-left">
-              <p id="mh-header">Manifest</p>
-              <p id="mh-desc">PWABuilder has analyzed your Web Manifest. You do not have a web manifest. Use our Manifest editor to egenrate one. You can package for the store once you have a valid manifest.</p>
+              <p class="card-header">Manifest</p>
+              <p class="card-desc">PWABuilder has analyzed your Web Manifest. You do not have a web manifest. Use our Manifest editor to egenrate one. You can package for the store once you have a valid manifest.</p>
             </div>
             <div id="mh-right">
               <div id="mh-actions">
-                <button type="button" class="alternate">Manifest Editor</button>
-                <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest" rel="noopener" target="_blank">
+                <button type="button" class="alternate" @click=${() => this.toggleManifestEditorModal()}>Manifest Editor</button>
+                <a class="arrow_anchor" href="https://developer.mozilla.org/en-US/docs/Web/Manifest" rel="noopener" target="_blank">
                   <p class="arrow_link">Manifest Documentation</p> 
                   <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
                 </a>
               </div>
-              <sl-progress-ring value="${(1.0/18) * 100}">1/18</sl-progress-ring>
+              <sl-progress-ring class="red" value="${(1.0/18) * 100}">1/18</sl-progress-ring>
             </div>
           </div>
-          <sl-details summary="View details" id="manifest-details">
+          <sl-details summary="View details" class="details">
             <div id="manifest-detail-grid">
               <div class="detail-list">
                 <p>*Required</p>
@@ -590,6 +740,74 @@ export class AppReport extends LitElement {
             </div>
           </sl-details>
         </div>
+        <div id="two-cell-row">
+          <div id="sw">
+            <div id="sw-header">
+              <div id="swh-top">
+                <div id="swh-text">
+                  <p class="card-header">Service Worker</p>
+                  <p class="card-desc">PWABuilder has analyzed your Service Worker, check out the results below. Want to add a Service Worker or check out our pre-built Service Workers? Tap Genereate Service Worker. </p>
+                </div>
+                <sl-progress-ring class="yellow" id="sw-ring" value="${(2.0/3) * 100}">2/3</sl-progress-ring>
+              </div>
+              <div id="sw-actions">
+                <button type="button" class="alternate">Generate Service Worker</button>
+                <a class="arrow_anchor" href="" rel="noopener" target="_blank">
+                  <p class="arrow_link">Service Worker Documentation</p> 
+                  <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+                </a>
+              </div>
+            </div>
+            <sl-details summary="View details" class="details">
+            <div class="detail-grid">
+                <div class="detail-list">
+                  <p>*Required</p>
+                </div>
+                <div class="detail-list">
+                  <p>Recommended</p>
+                </div>
+                <div class="detail-list">
+                  <p>Optional</p>
+                </div>
+              </div>
+            </sl-details>
+          </div>
+          <div id="security">
+            <div id="sec-header">
+              <div id="sec-top">
+                <div id="sec-text">
+                  <p class="card-header">Security</p>
+                  <p class="card-desc">PWABuilder has done a basic analysis of your HTTPS setup. You can use LetsEncrypt to get a free HTTPS certificate, or publish to Azure to get built-in HTTPS support.</p>
+                </div>
+                <sl-progress-ring class="green" id="sw-ring" value="${(3/3) * 100}">3/3</sl-progress-ring>
+              </div>
+              <div id="sec-actions">
+                <a class="arrow_anchor" href="" rel="noopener" target="_blank">
+                  <p class="arrow_link">Security Documentation</p> 
+                  <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+                </a>
+              </div>
+            </div>
+            <sl-details summary="View details" class="details">
+            <div class="detail-grid">
+                <div class="detail-list">
+                  <p>*Required</p>
+                </div>
+              </div>
+            </sl-details>
+          </div>
+        </div>
+
+        ${this.manifestEditorOpened ? 
+          html`
+            <div id="manifest-editor-modal">
+              <div id="modal">
+                <img class="close_x" src="/assets/Close_desk.png" @click=${() => this.toggleManifestEditorModal()} />
+                <manifest-editor-frame slot="modal-form"></manifest-editor-frame>
+              </div>
+            </div>` : 
+          html``
+        }
       </div>
       `;
     }
