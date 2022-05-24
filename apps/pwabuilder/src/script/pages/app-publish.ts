@@ -294,6 +294,10 @@ export class AppPublish extends LitElement {
           font-weight: bold;
         }
 
+        .packaged-tracker img {
+          width: 16px;
+        }
+
         p {
           font-size: var(--font-size);
           color: var(--font-color);
@@ -688,12 +692,15 @@ export class AppPublish extends LitElement {
         <div class="card-wrapper">
           ${platform.title === "iOS" ? 
             html`
-            <div id="experimental" class="packaged-tracker"> <!-- Used to show ios as experimental -->
-              <p>Experimental</p>
-              <ion-icon name="information-circle-outline" style="font-size: 14px"></ion-icon>
-            </div>` : html``
+            <sl-tooltip 
+              content="iOS does not support PWAs natively and packaging PWAs for iOS is Experimental. We can not guarantee that your app will be accepted into Apple's App Store.">
+              <div id="experimental" class="packaged-tracker"> <!-- Used to show ios as experimental -->
+                <p>Experimental</p>
+                <img src="/assets/new/help.svg" alt="experimental help icon" />
+              </div>
+            
+            </sl-tooltip>` : html``
           }
-          <hover-tooltip anchor="experimental" text="iOS does not support PWAs natively and packaging PWAs for iOS is Experimental. We can not guarantee that your app will be accepted into Apple's App Store." link="https://docs.pwabuilder.com/#/builder/app-store"></hover-tooltip>
           <div class="title-block">
             <img class="platform-icon" src="${platform.icon}" alt="platform icon" />
             <h3>${platform.title}</h3>
