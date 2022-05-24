@@ -687,6 +687,7 @@ export class AppPublish extends LitElement {
   }
 
   showOculusOptionsModal() {
+    recordPWABuilderProcessStep("meta_store_modal_opened", AnalyticsBehavior.ProcessCheckpoint);
     this.openOculusOptions = true;
   }
 
