@@ -438,6 +438,10 @@ export class AppPublish extends LitElement {
         .unselected-apk {
           border-bottom: 5px solid transparent;
         }
+
+        sl-tooltip::part(base){
+          width: 300px;
+        }
       `,
       xxxLargeBreakPoint(
         css`
