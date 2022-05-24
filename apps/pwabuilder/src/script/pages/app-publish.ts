@@ -91,18 +91,6 @@ export class AppPublish extends LitElement {
       icon: '/assets/Publish_Android.svg',
       renderDownloadButton: () => this.renderAndroidDownloadButton()
     },
-    
-    {
-      title: 'iOS',
-      factoids: [
-        "Leverage same codebase across all platforms",
-        "Large user base.",
-        "Premium devices."
-      ],
-      isActionCard: true,
-      icon: '/assets/Publish_Apple.svg',
-      renderDownloadButton: () => this.renderiOSDownloadButton()
-    },
     {
       title: 'Meta Quest',
       factoids: [
@@ -114,7 +102,18 @@ export class AppPublish extends LitElement {
       isActionCard: true,
       icon: '/assets/Publish_Meta.svg',
       renderDownloadButton: () => this.renderOculusDownloadButton()
-    }
+    },
+    {
+      title: 'iOS',
+      factoids: [
+        "Leverage same codebase across all platforms",
+        "Large user base.",
+        "Premium devices."
+      ],
+      isActionCard: true,
+      icon: '/assets/Publish_Apple.svg',
+      renderDownloadButton: () => this.renderiOSDownloadButton()
+    },
   ];
 
   constructor() {
@@ -271,7 +270,7 @@ export class AppPublish extends LitElement {
         .packaged-tracker {
           height: max-content;
           width: 33%;
-          background-color: #E2F2E8;
+          background-color: #F1F2FA;
           align-self: flex-end;
           justify-self: flex-end;
           border-bottom-left-radius: 5px;
@@ -280,15 +279,23 @@ export class AppPublish extends LitElement {
           position: absolute;
           top: 0;
           right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          column-gap: 5px;
         }
 
         .packaged-tracker p {
           margin: 0;
           text-align: center;
-          color: #50BA87;
-          font-size: 10px;
+          color: black;
+          font-size: 12px;
           line-height: 12px;
           font-weight: bold;
+        }
+
+        .packaged-tracker img {
+          width: 16px;
         }
 
         p {
@@ -430,6 +437,10 @@ export class AppPublish extends LitElement {
         
         .unselected-apk {
           border-bottom: 5px solid transparent;
+        }
+
+        sl-tooltip::part(base){
+          width: 300px;
         }
       `,
       xxxLargeBreakPoint(
@@ -683,11 +694,16 @@ export class AppPublish extends LitElement {
     return this.platforms.map(
       platform => html`
         <div class="card-wrapper">
-          ${true ? html`` :
+          ${platform.title === "iOS" ? 
             html`
-            <div class="packaged-tracker"> <!-- This will eventually be in an "if packaged previously" -->
-            <p>Packaged Previously</p>
-            </div>` 
+            <sl-tooltip 
+              content="iOS does not support PWAs natively and packaging PWAs for iOS is Experimental. We can not guarantee that your app will be accepted into Apple's App Store.">
+              <div id="experimental" class="packaged-tracker"> <!-- Used to show ios as experimental -->
+                <p>Experimental</p>
+                <img src="/assets/new/help.svg" alt="experimental help icon" />
+              </div>
+            
+            </sl-tooltip>` : html``
           }
           <div class="title-block">
             <img class="platform-icon" src="${platform.icon}" alt="platform icon" />
