@@ -14,7 +14,7 @@ import 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist
 import { prettyString } from '../utils/pretty-json';
 import { ManifestInfoForm } from './manifest-info-form';
 import { ManifestPlatformForm } from './manifest-platform-form';
-import { validateRequiredFields } from '@pwabuilder/manifest-validation';
+//import { validateRequiredFields } from '@pwabuilder/manifest-validation';
 
 /**
  * @since 0.1
@@ -59,17 +59,23 @@ export class PWAManifestEditor extends LitElement {
   static get styles() {
     return css`
       sl-tab-group {
-        --indicator-color: var(--primary-color);
+        --indicator-color: #4F3FB6;
       }
 
       sl-tab[active]::part(base) {
-        color: var(--primary-color);
+        color: #4F3FB6;
       }
 
       sl-tab::part(base):hover {
-        color: var(--primary-color);
+        color: #4F3FB6;
       }
 
+      sl-tab-panel::part(base){
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: 500px;
+        width: 635px;
+      }
     `;
   }
 
@@ -78,7 +84,7 @@ export class PWAManifestEditor extends LitElement {
   }
 
   async firstUpdated() {
-    console.log(await validateRequiredFields(this._initialManifest))
+    //console.log(await validateRequiredFields(this._initialManifest))
   }
 
   private updateManifest(field: any, change: any){
@@ -100,7 +106,7 @@ export class PWAManifestEditor extends LitElement {
 
   public resetManifest(){
     this.manifest = JSON.parse(JSON.stringify(this.initialManifest));
-    console.log("manifest in reset fun", this.manifest);
+    //console.log("manifest in reset fun", this.manifest);
 
     (this.shadowRoot!.getElementById("info-tab") as ManifestInfoForm).initMissingColors();
 
