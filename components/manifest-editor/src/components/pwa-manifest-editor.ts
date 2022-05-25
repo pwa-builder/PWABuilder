@@ -59,15 +59,15 @@ export class PWAManifestEditor extends LitElement {
   static get styles() {
     return css`
       sl-tab-group {
-        --indicator-color: var(--primary-color);
+        --indicator-color: #4F3FB6;
       }
 
       sl-tab[active]::part(base) {
-        color: var(--primary-color);
+        color: #4F3FB6;
       }
 
       sl-tab::part(base):hover {
-        color: var(--primary-color);
+        color: #4F3FB6;
       }
 
       sl-tab-panel::part(base){
