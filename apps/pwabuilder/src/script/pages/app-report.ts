@@ -111,11 +111,13 @@ export class AppReport extends LitElement {
           background-color: white;
           border-radius: 10px;
           padding: 1em;
-
-          display: flex;
-          flex-direction: column;
           row-gap: 10px;
           box-shadow: 0px 4px 30px 0px #00000014;
+        }
+
+        .flex-col {
+          display: flex;
+          flex-direction: column;
         }
 
         #card-header {
@@ -135,11 +137,6 @@ export class AppReport extends LitElement {
           font-size: 24px;
         }
 
-        #card-info {
-          display: flex;
-          flex-direction: column;
-        }
-
         #card-info p{
           margin: 0;
         }
@@ -151,8 +148,6 @@ export class AppReport extends LitElement {
 
         #app-actions { 
           width: 70%;
-          display: flex;
-          flex-direction: column;
           border-radius: 10px;
           background-color: white;
           height: 180px;
@@ -174,12 +169,21 @@ export class AppReport extends LitElement {
         }
         
         #test {
+          row-gap: 20px;
+          width: 45%;
+        }
+
+        .flex-col-center {
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          row-gap: 20px;
-          width: 45%;
+        }
+
+        .flex-center {
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
         #retest {
@@ -204,10 +208,6 @@ export class AppReport extends LitElement {
         }
 
         #package {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
           row-gap: 20px;
           width: 55%;
         }
@@ -259,10 +259,7 @@ export class AppReport extends LitElement {
         #actions-footer {
           background-color: #F2F3FB;
           width: 100%;
-          display: flex;
           column-gap: .75em;
-          align-items: center;
-          justify-content: center;
           border-bottom-left-radius: 10px;
           border-bottom-right-radius: 10px;
           padding: .5em 1em;
@@ -304,8 +301,6 @@ export class AppReport extends LitElement {
 
         #manifest {
           box-shadow: 0px 4px 30px 0px #00000014;
-          display: flex;
-          flex-direction: column;
           background-color: white;
           border-radius: 10px;
           width: 100%;
@@ -319,8 +314,6 @@ export class AppReport extends LitElement {
         }
 
         #mh-left {
-          display: flex;
-          flex-direction: column;
           width: 50%;
           row-gap: .5em;
         }
@@ -341,8 +334,6 @@ export class AppReport extends LitElement {
           column-gap: 2.5em;
         }
         #mh-actions {
-          display: flex;
-          flex-direction: column;
           row-gap: 1em;
         }
 
@@ -420,21 +411,12 @@ export class AppReport extends LitElement {
         }
 
         #sw {
-          display: flex;
-          flex-direction: column;
-
-          width: 50%;
-          border-radius: 10px;
-          background-color: white;
           
-          row-gap: .5em;
         }
 
         #sw-header {
-          display: flex;
-          flex-direction: column;
           row-gap: .5em;
-          
+          border-bottom: 1px solid #C4C4C4;
           padding: 1em;
         }
 
@@ -444,8 +426,6 @@ export class AppReport extends LitElement {
         }
 
         #swh-text {
-          display: flex;
-          flex-direction: column;
           row-gap: .5em;
         } 
 
@@ -455,8 +435,6 @@ export class AppReport extends LitElement {
         }
 
         #sw-actions {
-          display: flex;
-          flex-direction: column;
           row-gap: 1em;
           width: 66%;
         }
@@ -480,9 +458,12 @@ export class AppReport extends LitElement {
         }
 
         #security {
+          justify-content: space-between;
+        }
+
+        .half-width-cards {
           display: flex;
           flex-direction: column;
-          justify-content: space-between;
 
           width: 50%;
           border-radius: 10px;
@@ -492,12 +473,11 @@ export class AppReport extends LitElement {
         }
 
         #sec-header {
-          display: flex;
-          flex-direction: column;
           justify-content: space-between;
           row-gap: .5em;
           height: 100%;
           padding: 1em;
+          border-bottom: 1px solid #C4C4C4;
         }
 
         #sec-top {
@@ -506,14 +486,10 @@ export class AppReport extends LitElement {
         }
 
         #sec-text {
-          display: flex;
-          flex-direction: column;
           row-gap: .5em;
         } 
 
         #sec-actions {
-          display: flex;
-          flex-direction: column;
           row-gap: 1em;
           width: 66%;
         }
@@ -526,11 +502,6 @@ export class AppReport extends LitElement {
           bottom: 0;
           background: transparent;
           backdrop-filter: blur(10px);
-          z-index: 1;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-
           z-index: 3;
         }
 
@@ -549,10 +520,6 @@ export class AppReport extends LitElement {
         #modal {
           background: white;
           max-width: 75%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          flex-direction: column;
           border-radius: 10px;
           box-shadow: 0px 16px 24px rgba(0, 0, 0, 0.12);
           position: relative;
@@ -669,31 +636,31 @@ export class AppReport extends LitElement {
 
       <div id="report-wrapper">
         <div id="header-row">
-          <div id="app-card">
+          <div id="app-card" class="flex-col">
             <div id="card-header">
               <img src="/assets/icons/icon_512.png" alt="Your sites logo" />
-              <div id="card-info">
+              <div id="card-info" class="flex-col">
                 <p id="site-name">Site Name</p>
                 <p>www.site.com</p>
               </div>
             </div>
             <p id="card-desc">This is the description to my application and this is what it does and who its for.</p>
           </div>
-          <div id="app-actions">
+          <div id="app-actions" class="flex-col">
             <div id="actions">
-              <div id="test">
+              <div id="test" class="flex-col-center">
                 <button type="button" id="retest"><img src="/assets/new/retest.png" alt="retest site" role="presentation" />Retest Site</button>
                 <p id="last-edited"><img src="/assets/new/last-edited.png" alt="pencil icon" role="presentation" />2 minutes ago</p>
               </div>
 
               <img src="/assets/new/vertical-divider.png" role="presentation" />
 
-              <div id="package">
+              <div id="package" class="flex-col-center">
                 <button type="button" id="pfs" disabled>Package for store</button>
                 <button type="button" id="test-download"><p class="arrow_link">Download test package</p><img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/></button>
               </div>
             </div>
-            <div id="actions-footer">
+            <div id="actions-footer" class="flex-center">
               <p>Available stores:</p>
               <img title="Windows" src="/assets/windows_icon.svg" alt="Windows" />
               <img title="iOS" src="/assets/apple_icon.svg" alt="iOS" />
@@ -709,14 +676,14 @@ export class AppReport extends LitElement {
             <todo-item .status=${"red"} .content=${"and display them here."}></todo-item>
           </sl-details>
         </div>
-        <div id="manifest">
+        <div id="manifest" class="flex-col">
           <div id="manifest-header">
-            <div id="mh-left">
+            <div id="mh-left" class="flex-col"> 
               <p class="card-header">Manifest</p>
               <p class="card-desc">PWABuilder has analyzed your Web Manifest. You do not have a web manifest. Use our Manifest editor to egenrate one. You can package for the store once you have a valid manifest.</p>
             </div>
             <div id="mh-right">
-              <div id="mh-actions">
+              <div id="mh-actions" class="flex-col">
                 <button type="button" class="alternate" @click=${() => this.toggleManifestEditorModal()}>Manifest Editor</button>
                 <a class="arrow_anchor" href="https://developer.mozilla.org/en-US/docs/Web/Manifest" rel="noopener" target="_blank">
                   <p class="arrow_link">Manifest Documentation</p> 
@@ -741,16 +708,16 @@ export class AppReport extends LitElement {
           </sl-details>
         </div>
         <div id="two-cell-row">
-          <div id="sw">
-            <div id="sw-header">
+          <div id="sw" class="half-width-cards">
+            <div id="sw-header" class="flex-col">
               <div id="swh-top">
-                <div id="swh-text">
+                <div id="swh-text" class="flex-col">
                   <p class="card-header">Service Worker</p>
                   <p class="card-desc">PWABuilder has analyzed your Service Worker, check out the results below. Want to add a Service Worker or check out our pre-built Service Workers? Tap Genereate Service Worker. </p>
                 </div>
                 <sl-progress-ring class="yellow" id="sw-ring" value="${(2.0/3) * 100}">2/3</sl-progress-ring>
               </div>
-              <div id="sw-actions">
+              <div id="sw-actions" class="flex-col">
                 <button type="button" class="alternate">Generate Service Worker</button>
                 <a class="arrow_anchor" href="" rel="noopener" target="_blank">
                   <p class="arrow_link">Service Worker Documentation</p> 
@@ -772,16 +739,16 @@ export class AppReport extends LitElement {
               </div>
             </sl-details>
           </div>
-          <div id="security">
-            <div id="sec-header">
+          <div id="security" class="half-width-cards">
+            <div id="sec-header" class="flex-col">
               <div id="sec-top">
-                <div id="sec-text">
+                <div id="sec-text" class="flex-col">
                   <p class="card-header">Security</p>
                   <p class="card-desc">PWABuilder has done a basic analysis of your HTTPS setup. You can use LetsEncrypt to get a free HTTPS certificate, or publish to Azure to get built-in HTTPS support.</p>
                 </div>
                 <sl-progress-ring class="green" id="sw-ring" value="${(3/3) * 100}">3/3</sl-progress-ring>
               </div>
-              <div id="sec-actions">
+              <div id="sec-actions" class="flex-col">
                 <a class="arrow_anchor" href="" rel="noopener" target="_blank">
                   <p class="arrow_link">Security Documentation</p> 
                   <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
@@ -800,8 +767,8 @@ export class AppReport extends LitElement {
 
         ${this.manifestEditorOpened ? 
           html`
-            <div id="manifest-editor-modal">
-              <div id="modal">
+            <div id="manifest-editor-modal" class="flex-center">
+              <div id="modal" class="flex-col-center">
                 <img class="close_x" src="/assets/Close_desk.png" @click=${() => this.toggleManifestEditorModal()} />
                 <manifest-editor-frame slot="modal-form"></manifest-editor-frame>
               </div>
