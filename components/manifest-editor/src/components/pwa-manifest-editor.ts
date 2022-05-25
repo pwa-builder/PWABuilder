@@ -70,6 +70,12 @@ export class PWAManifestEditor extends LitElement {
         color: var(--primary-color);
       }
 
+      sl-tab-panel::part(base){
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: 500px;
+        width: 635px;
+      }
     `;
   }
 

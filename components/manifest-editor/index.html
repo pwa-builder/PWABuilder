@@ -23,23 +23,10 @@
   </head>
 
   <body>
-    <div id="editor-holder">
-      <div id="close"><ion-icon name="close"></ion-icon></div>
-      <div id="editor-header">
-        <div id="header-text">
-          <h1>Generate a manifest</h1>
-          <p>Generate your Manifest Base Files Package below by editing the required fields. Once you have added the updated maifest to your PWA, re-test the url. Once you are staistifed with you score package your PWA for the stores.</p>
-        </div>
-        <div id="header-actions">
-          <button id="download-button">Download Manifest</button>
-          <button id="reset-button">Reset to original Manifest <ion-icon name="refresh"></ion-icon></button>
-          <div id="actions">
-            <span class="header-action"><a href="https://marketplace.visualstudio.com/items?itemName=PWABuilder.pwa-studio" target="_blank" rel="noopener">VS Code Extension </a> <img src="/assets/arrow.svg" alt="arrow" /> </span>
-            <span class="header-action"><a href="https://developer.mozilla.org/en-US/docs/Web/Manifest" target="_blank" rel="noopener">Manifest Documentation </a> <img src="/assets/arrow.svg" alt="arrow" /> </span>
-          </div>
-        </div>
+    <div id="manifest-editor-modal" class="flex-center">
+      <div id="modal" class="flex-col-center">
+        <pwa-manifest-editor></pwa-manifest-editor>
       </div>
-      <pwa-manifest-editor></pwa-manifest-editor>
     </div>
     <!-- Ion Icons -->
     <script type="module" src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons/ionicons.esm.js"></script>
@@ -48,7 +35,7 @@
     <script type="module">
       let editor = document.querySelector("pwa-manifest-editor");
 
-      let resetBtn = document.getElementById("reset-button");
+      /* let resetBtn = document.getElementById("reset-button");
       resetBtn.addEventListener("click", () => {
         editor.resetManifest();
       });
@@ -56,7 +43,7 @@
       let downloadBtn = document.getElementById("download-button");
       downloadBtn.addEventListener("click", () => {
         editor.downloadManifest();
-      });
+      }); */
 
       editor.initialManifest = {
                                 "dir": "ltr",
