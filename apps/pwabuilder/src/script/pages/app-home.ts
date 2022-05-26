@@ -285,7 +285,7 @@ export class AppHome extends LitElement {
             padding: 1em;
             padding-top: 4em;
             padding-bottom: 2em;
-            background: url(/assets/new/Hero320_withmani.jpg);
+            background: url(/assets/new/Hero480_withmani.jpg);
             background-position: center bottom;
             background-size: cover;
             background-repeat: no-repeat;
