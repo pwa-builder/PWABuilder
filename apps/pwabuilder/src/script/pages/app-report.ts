@@ -436,7 +436,7 @@ export class AppReport extends LitElement {
 
         #sw-actions {
           row-gap: 1em;
-          width: 66%;
+          width: 40%;
         }
 
         .detail-grid {
@@ -446,15 +446,15 @@ export class AppReport extends LitElement {
         }
 
         .red {
-          --indicator-color: #EB5757;
+          --indicator-color: var(--error-color);
         }
 
         .yellow {
-          --indicator-color: #EED202;
+          --indicator-color: var(--warning-color);
         }
 
         .green {
-          --indicator-color: #50BA87;
+          --indicator-color: var(--success-color);
         }
 
         #security {
@@ -494,17 +494,6 @@ export class AppReport extends LitElement {
           width: 66%;
         }
 
-        #manifest-editor-modal {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: transparent;
-          backdrop-filter: blur(10px);
-          z-index: 3;
-        }
-
         .close_x {
           position: absolute;
           top: 1em;
@@ -517,9 +506,19 @@ export class AppReport extends LitElement {
           cursor: pointer;
         }
 
+        #manifest-editor-modal {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: transparent;
+          backdrop-filter: blur(10px);
+          z-index: 3;
+        }
         #modal {
           background: white;
-          max-width: 75%;
+          max-width: 700px;
           border-radius: 10px;
           box-shadow: 0px 16px 24px rgba(0, 0, 0, 0.12);
           position: relative;
@@ -770,7 +769,7 @@ export class AppReport extends LitElement {
             <div id="manifest-editor-modal" class="flex-center">
               <div id="modal" class="flex-col-center">
                 <img class="close_x" src="/assets/Close_desk.png" @click=${() => this.toggleManifestEditorModal()} />
-                <manifest-editor-frame slot="modal-form"></manifest-editor-frame>
+                <manifest-editor-frame></manifest-editor-frame>
               </div>
             </div>` : 
           html``
