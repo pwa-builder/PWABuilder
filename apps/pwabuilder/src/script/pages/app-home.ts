@@ -50,7 +50,7 @@ export class AppHome extends LitElement {
           content: "";
         }
         #home-block {
-          background: url(/assets/new/HeroBackground1920.jpg);
+          background: url(/assets/new/Hero1920_withmani.png);
           background-position: center center;
           background-size: cover;
           background-repeat: no-repeat;
@@ -220,7 +220,7 @@ export class AppHome extends LitElement {
         ${largeBreakPoint(css`
           #home-block {
             padding-left: 4.5em;
-            background: url(/assets/new/HeroBackground1024.jpg);
+            background: url(/assets/new/Hero1024_withmani.png);
             background-position: center center;
             background-size: cover;
             background-repeat: no-repeat;
@@ -238,7 +238,7 @@ export class AppHome extends LitElement {
             padding: 1.5em;
             padding-top: 4em;
             padding-bottom: 6em;
-            background: url(/assets/new/HeroBackground480.jpg);
+            background: url(/assets/new/Hero480_withmani.jpg);
             background-position: center center;
             background-size: cover;
             background-repeat: no-repeat;
@@ -265,6 +265,7 @@ export class AppHome extends LitElement {
             font-size: 40px;
           }
         `)}
+
         @media (min-width: 480px) and (max-width: 580px) {
           #wrapper {
             width: 400px;
@@ -284,8 +285,8 @@ export class AppHome extends LitElement {
             padding: 1em;
             padding-top: 4em;
             padding-bottom: 2em;
-            background: url(/assets/new/HeroBackground320.jpg);
-            background-position: center center;
+            background: url(/assets/new/Hero320_withmani.jpg);
+            background-position: center bottom;
             background-size: cover;
             background-repeat: no-repeat;
           }
@@ -339,7 +340,7 @@ export class AppHome extends LitElement {
         }
         @media (min-width: 640px) and (max-width: 955px) {
           #home-block {
-            background-position: left;
+            background-position: center;
           }
           #wrapper {
             width: 600px;
@@ -348,7 +349,7 @@ export class AppHome extends LitElement {
         /*1024px - 1365px*/ 
         ${xLargeBreakPoint(css`
             #home-block {
-              background: url(/assets/new/HeroBackground1366.jpg);
+              background: url(/assets/new/Hero1366_withmani.png);
               background-position: center center;
               background-size: cover;
               background-repeat: no-repeat;
@@ -356,9 +357,6 @@ export class AppHome extends LitElement {
         `)}
           /* > 1920 */
         ${xxxLargeBreakPoint(css`
-            #home-block {
-              align-items: center;
-            }
             #wrapper {
               width: 1160px;
             }
