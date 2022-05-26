@@ -186,7 +186,7 @@ html, body {
 }
 #modal {
   background: white;
-  max-width: 75%;
+  max-width: 700px;
   border-radius: 10px;
   box-shadow: 0px 16px 24px rgba(0, 0, 0, 0.12);
   position: relative;

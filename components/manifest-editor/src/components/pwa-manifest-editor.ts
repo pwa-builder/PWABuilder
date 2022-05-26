@@ -58,8 +58,15 @@ export class PWAManifestEditor extends LitElement {
 
   static get styles() {
     return css`
+      :host {
+        font-size: 14px
+      }
       sl-tab-group {
         --indicator-color: #4F3FB6;
+      }
+
+      sl-tab-group::part(base){
+        width: 635px;
       }
 
       sl-tab[active]::part(base) {
@@ -136,7 +143,7 @@ export class PWAManifestEditor extends LitElement {
 
   render() {
     return html`
-      <sl-tab-group id="editor-tabs" >
+      <sl-tab-group id="editor-tabs">
         <sl-tab slot="nav" panel="info">Info</sl-tab>
         <sl-tab slot="nav" panel="settings">Settings</sl-tab>
         <sl-tab slot="nav" panel="platform">Platform</sl-tab>
