@@ -20,15 +20,19 @@
     <script type="text/javascript" src="https://js.monitor.azure.com/scripts/c/ms.analytics-web-3.min.js"></script>
 
     <script type="module">
-        import { recordPageView } from "./public/analytics/index.js"; 
-        window.recordPageView = recordPageView;
+        import { recordPageView } from "./public/analytics/index.js"; window.recordPageView = recordPageView;
     </script>
 
     <script>
         function getPageName() {
-            var results = (document.location.href).match("#\/[a-zA-Z\/-]+");
-            var parsedSubURL = results[0];
-            var pageName = "docs" + parsedSubURL.replace("#", "").replaceAll("/", "-");
+            var pageName = "docs-home-about";
+            try {
+                var results = (document.location.href).match("#\/[a-zA-Z\/-]+");
+                var parsedSubURL = results[0];
+                pageName = "docs" + parsedSubURL.replace("#", "").replaceAll("/", "-");
+            } catch {
+                console.warn("Failed to parse page name at: " + document.location.href);
+            }
 
             return pageName;
         }
