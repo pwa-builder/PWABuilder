@@ -50,7 +50,7 @@ export class AppHome extends LitElement {
           content: "";
         }
         #home-block {
-          background: url(/assets/new/Hero1920_withmani.png);
+          background: url(/assets/new/Hero1920_withmani.jpg);
           background-position: center center;
           background-size: cover;
           background-repeat: no-repeat;
