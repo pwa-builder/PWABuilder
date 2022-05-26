@@ -35,15 +35,12 @@
 
         window.$docsify = {
             repo: 'https://github.com/pwa-builder/PWABuilder',
-            // name: 'Otter Docs',
-            // coverpage: "coverpage.md ",
             loadSidebar: true,
             subMaxLevel: 2,
             auto2top: true,
             plugins: [
                 function(hook) {
                     hook.doneEach(function() {
-                        console.log(document.location.href);
                         window.recordPageView(document.location.href, getPageName());
                     });
                 }
