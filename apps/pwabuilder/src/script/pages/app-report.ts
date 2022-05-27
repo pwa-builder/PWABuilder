@@ -679,7 +679,7 @@ export class AppReport extends LitElement {
           <div id="manifest-header">
             <div id="mh-left" class="flex-col"> 
               <p class="card-header">Manifest</p>
-              <p class="card-desc">PWABuilder has analyzed your Web Manifest. You do not have a web manifest. Use our Manifest editor to egenrate one. You can package for the store once you have a valid manifest.</p>
+              <p class="card-desc">PWABuilder has analyzed your Web Manifest. You do not have a web manifest. Use our Manifest editor to generate one. You can package for the store once you have a valid manifest.</p>
             </div>
             <div id="mh-right">
               <div id="mh-actions" class="flex-col">
