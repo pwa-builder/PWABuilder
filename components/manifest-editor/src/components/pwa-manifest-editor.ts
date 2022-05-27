@@ -58,15 +58,13 @@ export class PWAManifestEditor extends LitElement {
 
   static get styles() {
     return css`
-      :host {
-        font-size: 14px
+      sl-tab::part(base) {
+        --sl-font-size-small: 14px;
+        --sl-spacing-medium: .75rem;
+        --sl-space-large: 1rem;
       }
       sl-tab-group {
         --indicator-color: #4F3FB6;
-      }
-
-      sl-tab-group::part(base){
-        width: 635px;
       }
 
       sl-tab[active]::part(base) {
@@ -81,7 +79,6 @@ export class PWAManifestEditor extends LitElement {
         overflow-y: auto;
         overflow-x: hidden;
         height: 500px;
-        width: 635px;
       }
     `;
   }

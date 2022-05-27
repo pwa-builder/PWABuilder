@@ -16,6 +16,7 @@
 }
 
 html, body {
+  font-size: min(max(1rem, 4vw), 22px);
   font-family: var(--font-family);
   padding: 0;
   margin: 0;

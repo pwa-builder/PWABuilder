@@ -80,7 +80,6 @@ export class ManifestEditorFrame extends LitElement {
   }
 
   firstUpdated(){
-   
   }
 
   render() {

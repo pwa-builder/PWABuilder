@@ -518,7 +518,7 @@ export class AppReport extends LitElement {
         }
         #modal {
           background: white;
-          max-width: 700px;
+          max-width: 765px;
           border-radius: 10px;
           box-shadow: 0px 16px 24px rgba(0, 0, 0, 0.12);
           position: relative;

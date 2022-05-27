@@ -27,10 +27,24 @@ export class ManifestPlatformForm extends LitElement {
 
   static get styles() {
     return css`
+
+      sl-input::part(base),
+      sl-select::part(control),
+      sl-menu-item::part(base),
+      sl-button::part(base),
+      sl-checkbox::part(base),
+      sl-checkbox::part(control) {
+        --sl-input-font-size-medium: 16px;
+        --sl-button-font-size-medium: 12px;
+        --sl-font-size-medium: 16px;
+        --sl-input-height-medium: 3em;
+        --sl-toggle-size: 16px;
+      }
+
       #form-holder {
         display: flex;
         flex-direction: column;
-        row-gap: 1.5em;
+        row-gap: 1em;
       }
       .form-row {
         display: flex;
@@ -129,8 +143,8 @@ export class ManifestPlatformForm extends LitElement {
       }
 
       sl-details::part(header){
-        height: 38px;
         padding: 10px 15px;
+        font-size: 16px;
       }
 
       .shortcut-holder {
@@ -141,6 +155,7 @@ export class ManifestPlatformForm extends LitElement {
       .shortcut-header{
         margin-bottom: 5px;
         margin-top: 0;
+        font-size: 16px;
       }
 
       .shortcut-details::part(content){
