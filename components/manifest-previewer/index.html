@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="Description" content="Put your description here.">
+  <base href="/">
+
+  <title>PWABuilder - Preview component</title>
+
+  <script type="module" src="./build/manifest-previewer.js"></script>
+
+  <style type="text/css" media="screen, print">
+    @font-face {
+      font-family: 'Hind';
+      src: url('/assets/fonts/Hind-Regular.ttf');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'Hind';
+      src: url('/assets/fonts/Hind-Bold.ttf');
+      font-weight: 700;
+      font-style: bold;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'Segoe';
+      src: url('/assets/fonts/SegoeUI.ttf');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'SF-Pro';
+      src: url('/assets/fonts/SFProDisplay-Light.ttf');
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'Roboto';
+      src: url('/assets/fonts/Roboto-Regular.ttf');
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    manifest-previewer {
+      --font-family: Hind;
+      --windows-font-family: Segoe;
+      --ios-font-family: SF-Pro;
+      --android-font-family: Roboto;
+    }
+
+    manifest-previewer::part(card) {
+      margin: 70px auto 0;
+    }
+  </style>
+</head>
+
+<body>
+  <manifest-previewer>
+  </manifest-previewer>
+
+
+  <input type="url" id="url-input" placeholder="Type a URL" value="https://www.pwabuilder.com" />
+  <button onclick="loadPwa()">Go</button>
+  <p id="error-dump" style="color: darkred;"></p>
+  <textarea id="manifestCodeEditor" oninput="codeEditorChanged()"
+    style="overflow: scroll; width: 500px; height: 500px;"></textarea>
+
+  <script type="text/javascript">
+
+    const errorElement = document.querySelector("#error-dump");
+    const urlInput = document.querySelector("#url-input");
+    const manifestPreviewer = document.querySelector("manifest-previewer");
+    const codeEditor = document.querySelector("#manifestCodeEditor");
+
+    loadPwa();
+
+    async function loadPwa() {
+      // Clear any error text
+      errorElement.innerText = "";
+
+      // Fetch the manifest for the URL
+      const url = urlInput.value;
+      const fetchResult = await fetch(`https://pwabuilder-manifest-finder.azurewebsites.net/api/findmanifest?url=${encodeURIComponent(url)}`);
+      if (!fetchResult.ok) {
+        errorElement.innerText = `Error fetching manifest: ${fetchResult.status} - ${fetchResult.statusText}`;
+        return;
+      }
+
+      const manifestDetection = await fetchResult.json();
+      if (!manifestDetection.manifestContents) {
+        errorElement.innerText = `Error fetching manifest: ${manifestDetection.error}`;
+        return;
+      }
+
+      // Update the manifest previewer.
+      manifestPreviewer.siteUrl = url;
+      manifestPreviewer.manifestUrl = manifestDetection.manifestUrl;
+      manifestPreviewer.manifest = manifestDetection.manifestContents;
+      codeEditor.value = JSON.stringify(manifestDetection.manifestContents, undefined, 2);
+    }
+
+    function codeEditorChanged() {
+      // Is the JSON valid?
+      let isJsonValid = false;
+      let newManifest = null;
+      try {
+        newManifest = JSON.parse(codeEditor.value);
+        isJsonValid = true;
+        errorElement.innerText = "";
+      } catch (error) {
+        errorElement.innerText = `Invalid JSON: ${error}`;
+        return;
+      }
+
+      manifestPreviewer.manifest = newManifest;
+    }
+
+  </script>
+</body>
+
+</html>

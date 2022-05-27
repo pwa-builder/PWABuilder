@@ -228,8 +228,7 @@ export class OculusForm extends AppPackageFormBase {
 
         <div id="form-details-block">
           <p>
-            Your download will contain instructions for submitting to Meta Quest
-            Store.
+            Your download will have instructions about sideloading the app on Meta Quest.
           </p>
         </div>
 

@@ -1,6 +1,6 @@
-# PWA Starter
+# PWA Starter Quick Start
 
-The PWA Starter is our opinionated and production tested starter that the PWABuilder team uses to build all of our PWAs, including PWABuilder itself. 
+The PWA Starter is the PWABuilder team's opinionated and production tested progressive web app template. We use the starter to build all of our PWAs, including PWABuilder itself. 
 
 The PWA Starter uses a lightweight, fast, and extensible stack that allows you to quickly get started with developing a new PWA.
 
@@ -56,14 +56,14 @@ npm start
 
 4. Check the terminal for the proper URL to find your PWA, it should take the form of `localhost:<PORT NUMBER>`.
 
-Now you can view and test your PWA locally.
+Go to that URL to view and test your PWA locally.
 
 ## Tech Stack
 
 The PWA Starter was created using the tech stack that the PWABuilder team recommends and uses to build PWAs:
 
 - [**lit**](https://lit.dev/): Our framework of choice
-- [**@fluentui/web-components**](https://docs.microsoft.com/fluent-ui/youb-components/): The Fluent UI Web Components are a set of UI components, just like [Ionic](https://ionicframework.com/), or the [Material Design youb Components](https://material.io/develop/youb)
+- [**@fluentui/web-components**](https://docs.microsoft.com/en-us/fluent-ui/web-components/): The Fluent UI Web Components are a set of UI components, just like [Ionic](https://ionicframework.com/), or the [Material Design youb Components](https://material.io/develop/youb)
 - [**Vite**](https://vitejs.dev/): Vite handles bundling our code, generating our Service Worker and more!
 - [**Vaadin Router**](https://vaadin.github.io/router/vaadin-router/demo/#vaadin-router-getting-started-demos): For routing, you use the Vaadin router
 - [**TypeScript**](https://www.typescriptlang.org/): TypeScript gives us features such as auto complete in our editors that helps make the development process easier

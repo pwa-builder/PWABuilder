@@ -1,6 +1,5 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 import { doubleCheckManifest, getManifestContext, setResults, setURL } from '../services/app-info';
 
 import {
@@ -11,19 +10,15 @@ import {
   smallBreakPoint,
 } from '../utils/css/breakpoints';
 
-import '../components/content-header';
-import '../components/report-card';
-import '../components/manifest-options';
-import '../components/sw-picker';
 import '../components/app-header';
-import '../components/app-sidebar';
 import '../components/app-modal';
+import '../components/todo-list-item';
+import '../components/manifest-editor-frame'
 
 //@ts-ignore
 import style from '../../../styles/layout-defaults.css';
 import { RawTestResult, ScoreEvent } from '../utils/interfaces';
 import { giveOutBadges } from '../services/badges';
-import {  AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
 const possible_messages = {
   overview: {
@@ -69,10 +64,6 @@ export class AppReport extends LitElement {
   @state() maniScore = 0;
   @state() securityScore = 0;
 
-  @state() selectedTab: string = 'overview';
-  @state() currentHeader: string = possible_messages.overview.heading;
-  @state() currentSupporting: string = possible_messages.overview.supporting;
-
   @state() errored: boolean = false;
   @state() errorMessage: string | undefined = undefined;
   @state() errorLink: string | undefined = undefined;
@@ -83,163 +74,478 @@ export class AppReport extends LitElement {
 
   @state() isDeskTopView = this.mql.matches;
 
+  // will be used to control the state of the "Package for store" button.
+  @state() canPackage: boolean = false;
+  @state() manifestEditorOpened: boolean = false;
+
   static get styles() {
     return [
       style,
       css`
-        h1 {
-          font-size: 44px;
-          line-height: 46px;
+        * {
+          box-sizing: border-box;
         }
 
-        #hero-p {
+        #report-wrapper {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          row-gap: 1.5em;
+          align-items: baseline;
+          background-color: #F2F3FB;
+          padding: 20px;
+          box-sizing: border-box;
+        }
+
+        #header-row {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          column-gap: 1em;
+        }
+
+        #app-card {
+          width: 30%;
+          height: 180px;
+          background-color: white;
+          border-radius: 10px;
+          padding: 1em;
+          row-gap: 10px;
+          box-shadow: 0px 4px 30px 0px #00000014;
+        }
+
+        .flex-col {
+          display: flex;
+          flex-direction: column;
+        }
+
+        #card-header {
+          display: flex;
+          column-gap: 10px;
+          align-items: center;
+          font-size: 14px;
+          font-weight: bold;
+        }
+
+        #card-header img {
+          height: 85px;
+          width: auto;
+        }
+
+        #site-name {
+          font-size: 24px;
+        }
+
+        #card-info p{
+          margin: 0;
+        }
+
+        #card-desc {
+          margin: 0;
+          font-size: 14px;
+        }
+
+        #app-actions { 
+          width: 70%;
+          border-radius: 10px;
+          background-color: white;
+          height: 180px;
+          align-items: center;
+          justify-content: space-between;
+          box-shadow: 0px 4px 30px 0px #00000014;
+        }
+
+        #app-actions button {
+          font-weight: bold;
+        }
+
+        #actions {
+          display: flex;
+          align-items: center;
+          padding: 1em;
+          padding-bottom: 0;
+          width: 100%;
+        }
+        
+        #test {
+          row-gap: 20px;
+          width: 45%;
+        }
+
+        .flex-col-center {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .flex-center {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        #retest {
+          background-color: #4F3FB6;
+          border-radius: 50px;
+          padding: 1em;
+          color: white;
+          display: flex;
+          align-items: center;
+          column-gap: 10px;
           font-size: 16px;
-          line-height: 24px;
-          max-width: 406px;
+          border: none;
         }
 
-        #tablet-sidebar {
-          display: none;
+        #last-edited {
+          color: #808080;
+          font-size: 12px;
+          margin: 0;
+          display: flex;
+          align-items: center;
+          column-gap: 10px;
         }
 
-        #desktop-sidebar {
-          display: block;
+        #package {
+          row-gap: 20px;
+          width: 55%;
         }
 
-        content-header::part(header) {
-          display: none;
+        #pfs {
+          background-color: black;
+          color: white; 
+          font-size: 16px;
+          border-radius: 50px;
+          padding: 1em 3em;
+          border: none;
         }
 
-        .tab {
-          background: var(--background-color);
-          color: rgba(41, 44, 58, 1);
+        #test-download {
+          background-color: transparent;
+          color: #4F3FB6;
+          border: none;
+          width: fit-content;
+          display: flex;
+          column-gap: .5em;
+          align-items: center;
         }
 
-        .tab[aria-selected='true'] {
-          color: var(--font-color);
-          font-weight: var(--font-bold);
+        #test-download:hover img {
+          animation: bounce 1s;
         }
 
-        fast-tabs::part(activeIndicator) {
-          background: black;
-          border-radius: 0;
-          height: 2px;
-          margin-top: 0;
+        @keyframes bounce {
+          0%, 20%, 50%, 80%, 100% {
+              transform: translateY(0);
+          }
+          40% {
+            transform: translateX(-5px);
+          }
+          60% {
+              transform: translateX(5px);
+          }
         }
 
-        fast-tabs::part(tablist) {
-          margin-left: 26px;
+        .arrow_link {
+          margin: 0;
+          border-bottom: 1px solid #4F3FB6;
         }
 
-        report-card {
-          margin-top: 20px;
+        button:hover {
+          cursor: pointer;
         }
 
-        manifest-options {
+        #actions-footer {
+          background-color: #F2F3FB;
+          width: 100%;
+          column-gap: .75em;
+          border-bottom-left-radius: 10px;
+          border-bottom-right-radius: 10px;
+          padding: .5em 1em;
+        }
+
+        #actions-footer img {
+          height: 20px;
+          width: auto;
+        }
+
+        #actions-footer p {
+          margin: 0;
+          font-size: 12px;
+          font-weight: bold;
+        }
+
+        #todo {
+          width: 100%;
+          box-shadow: 0px 4px 30px 0px #00000014;
+        }
+
+        sl-details {
           width: 100%;
         }
 
-        #overview-panel {
-          padding-left: 14px;
+        #todo-detail::part(base) {
+          border-radius: 10px;
         }
 
-        #error-link {
-          color: white;
-          font-weight: var(--font-bold);
-          border-radius: var(--button-radius);
-          background: var(--error-color);
-          margin-right: 8px;
-          padding-left: 10px;
-          padding-right: 10px;
-          box-shadow: var(--button-shadow);
+        #todo-detail::part(header){
+          height: 60px;
+        }
+
+        #todo-detail::part(summary) {
+          color: #4F3FB6;
+          font-size: 20px;
+          font-weight: bold;
+        }
+
+        #manifest {
+          box-shadow: 0px 4px 30px 0px #00000014;
+          background-color: white;
+          border-radius: 10px;
+          width: 100%;
+        }
+
+        #manifest-header {
+          display: flex;
+          justify-content: space-between;
+          border-bottom: 1px solid #C4C4C4;
+          padding: 1em;
+        }
+
+        #mh-left {
+          width: 50%;
+          row-gap: .5em;
+        }
+
+        .card-header {
+          font-size: 24px;
+          font-weight: bold;
+          margin: 0;
+        }
+
+        .card-desc {
+          margin: 0;
+          font-size: 14px;
+        }
+
+        #mh-right {
+          display: flex;
+          column-gap: 2.5em;
+        }
+        #mh-actions {
+          row-gap: 1em;
+        }
+
+        .arrow_anchor {
+          text-decoration: none;
+          font-size: 14px;
+          font-weight: bold;
+          margin: 0px 0.5em 0px 0px;
+          line-height: 1em;
+          color: rgb(79, 63, 182);
+          display: flex;
+          column-gap: 10px;
+        }
+        .arrow_anchor:visited {
+          color: #4F3FB6;
+        }
+        .arrow_anchor:hover {
+          cursor: pointer;
+        }
+        .arrow_anchor:hover img {
+          animation: bounce 1s;
+        }
+
+        #report-wrapper .alternate {
+          background: var(--secondary-color);
+          color: #4F3FB6;
+          border: 1px solid #4F3FB6;
+          font-size: 16px;
+          font-weight: bold;
+          border-radius: 50px;
+          padding: .5em 2em;
+        }
+
+        #report-wrapper .alternate:hover {
+          box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+        }
+
+        #manifest-detail-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+        }
+
+        .detail-list {
+          display: flex;
+          flex-direction: column;
+          row-gap: 10px;
+        }
+
+        .detail-list p {
+          font-size: 18px;
+          margin: 0;
+          font-weight: bold;
+        }
+
+        .details::part(base) {
+          border-radius: 0;
+          border-bottom-left-radius: 10px;
+          border-bottom-right-radius: 10px;
+          border: none;
+        }
+
+        .details::part(summary) {
+          font-weight: bold;
+          font-size: 14px;
+        }
+
+        .details::part(header){
+          height: 40px;
+        }
+
+        #two-cell-row {
+          display: flex;
+          column-gap: 1em;
+          width: 100%;
+        }
+
+        #sw {
+          
+        }
+
+        #sw-header {
+          row-gap: .5em;
+          border-bottom: 1px solid #C4C4C4;
+          padding: 1em;
+        }
+
+        #swh-top {
+          display: flex;
+          column-gap: 1em;
+        }
+
+        #swh-text {
+          row-gap: .5em;
+        } 
+
+        #sw-ring {
+          --size: 80px;
+          height: fit-content;
+        }
+
+        #sw-actions {
+          row-gap: 1em;
+          width: 40%;
+        }
+
+        .detail-grid {
+          display: flex;
+          flex-direction: column;
+          row-gap: .5em;
+        }
+
+        .red {
+          --indicator-color: var(--error-color);
+        }
+
+        .yellow {
+          --indicator-color: var(--warning-color);
+        }
+
+        .green {
+          --indicator-color: var(--success-color);
+        }
+
+        #security {
+          justify-content: space-between;
+        }
+
+        .half-width-cards {
+          display: flex;
+          flex-direction: column;
+
+          width: 50%;
+          border-radius: 10px;
+          background-color: white;
+          
+          row-gap: .5em;
+        }
+
+        #sec-header {
+          justify-content: space-between;
+          row-gap: .5em;
+          height: 100%;
+          padding: 1em;
+          border-bottom: 1px solid #C4C4C4;
+        }
+
+        #sec-top {
+          display: flex;
+          column-gap: 1em;
+        }
+
+        #sec-text {
+          row-gap: .5em;
+        } 
+
+        #sec-actions {
+          row-gap: 1em;
+          width: 66%;
+        }
+
+        .close_x {
+          position: absolute;
+          top: 1em;
+          right: 1em;
+          height: 20px;
+          width: auto;
+        }
+
+        .close_x:hover {
+          cursor: pointer;
+        }
+
+        #manifest-editor-modal {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: transparent;
+          backdrop-filter: blur(10px);
+          z-index: 3;
+        }
+        #modal {
+          background: white;
+          max-width: 765px;
+          border-radius: 10px;
+          box-shadow: 0px 16px 24px rgba(0, 0, 0, 0.12);
+          position: relative;
+          z-index: 4;
         }
 
         ${xxxLargeBreakPoint(
         css`
-            #report {
-              max-width: 69em;
-            }
-
-            app-sidebar {
-              display: block;
-            }
-
-            #tablet-sidebar {
-              display: none;
-            }
-
-            #desktop-sidebar {
-              display: block;
-            }
-
-            #report-wrapper {
-              max-width: 69em;
-              background: white;
-            }
-
-            #grid {
-              background: white;
-            }
+            
           `
       )}
 
         ${largeBreakPoint(
         css`
-            #tablet-sidebar {
-              display: block;
-            }
-
-            #desktop-sidebar {
-              display: none;
-            }
+            
           `
       )}
 
         ${mediumBreakPoint(
         css`
-            .reportCard h1 {
-              font-size: 33px;
-              margin-top: 0;
-              margin-bottom: 1em;
-            }
-
-            .reportCard p {
-              display: none;
-            }
-
-            #desktop-sidebar {
-              display: none;
-            }
-
-            #tablet-sidebar {
-              display: block;
-            }
+            
           `
       )}
 
         ${smallBreakPoint(
         css`
-            fast-tabs::part(tablist) {
-              display: none;
-            }
-
-            .reportCard h1 {
-              font-size: 33px;
-              margin-top: 0;
-              margin-bottom: 1em;
-            }
-
-            .reportCard p {
-              display: none;
-            }
-
-            #desktop-sidebar {
-              display: none;
-            }
-
-            #tablet-sidebar {
-              display: block;
-            }
+            
           `
       )}
       `,
@@ -317,99 +623,158 @@ export class AppReport extends LitElement {
     }
   }
 
-  openManiOptions() {
-    const maniTab = this.shadowRoot?.querySelector('#mani');
-    (maniTab as HTMLButtonElement).click();
+  toggleManifestEditorModal(){
+    this.manifestEditorOpened = !this.manifestEditorOpened;
+    this.requestUpdate();
   }
 
-  openSWOptions() {
-    const maniTab = this.shadowRoot?.querySelector('#sw');
-    (maniTab as HTMLButtonElement).click();
-  }
-
-  openOverview() {
-    const overviewTab = this.shadowRoot?.querySelector('#overview');
-    (overviewTab as HTMLButtonElement).click();
-  }
-
-  handleScoreForDisplay(type: string, score: number) {
-    if (type === 'sw') {
-      this.swScore = score;
-    } else if (type === 'manifest') {
-      this.maniScore = score;
-    } else if (type === 'security') {
-      this.securityScore = score;
-    }
-  }
-
-  handleTabsEvent(type: 'mani' | 'sw' | 'overview') {
-    recordPWABuilderProcessStep(type + "_tab_clicked", AnalyticsBehavior.ProcessCheckpoint);
-    this.selectedTab = type;
-
-    if (type === 'mani') {
-      this.currentHeader = possible_messages.mani.heading;
-      this.currentSupporting = possible_messages.mani.supporting;
-    } else if (type === 'sw') {
-      this.currentHeader = possible_messages.sw.heading;
-      this.currentSupporting = possible_messages.sw.supporting;
-    } else {
-      this.currentHeader = possible_messages.overview.heading;
-      this.currentSupporting = possible_messages.overview.supporting;
-    }
-  }
 
   render() {
-    return html`<!-- error modal -->
-<app-modal heading="Wait a minute!" .body="${this.errorMessage || ''}" ?open="${this.errored}" id="error-modal">
-  <img class="modal-image" slot="modal-image" src="/assets/warning.svg" alt="warning icon" />
+    return html`
+      <app-header></app-header>
 
-  <div id="actions" slot="modal-actions">
-    <fast-anchor target="__blank" id="error-link" class="button" .href="${this.errorLink}">Documentation <ion-icon
-        name="link"></ion-icon>
-    </fast-anchor>
-  </div>
-</app-modal>
+      <div id="report-wrapper">
+        <div id="header-row">
+          <div id="app-card" class="flex-col">
+            <div id="card-header">
+              <img src="/assets/icons/icon_512.png" alt="Your sites logo" />
+              <div id="card-info" class="flex-col">
+                <p id="site-name">Site Name</p>
+                <p>www.site.com</p>
+              </div>
+            </div>
+            <p id="card-desc">This is the description to my application and this is what it does and who its for.</p>
+          </div>
+          <div id="app-actions" class="flex-col">
+            <div id="actions">
+              <div id="test" class="flex-col-center">
+                <button type="button" id="retest"><img src="/assets/new/retest.png" alt="retest site" role="presentation" />Retest Site</button>
+                <p id="last-edited"><img src="/assets/new/last-edited.png" alt="pencil icon" role="presentation" />2 minutes ago</p>
+              </div>
 
-<div id="report-wrapper">
-  <app-header></app-header>
+              <img src="/assets/new/vertical-divider.png" role="presentation" />
 
-  <div id="grid" class="${classMap({
-      'grid-mobile': this.isDeskTopView == false,
-    })}">
-    <app-sidebar id="desktop-sidebar"></app-sidebar>
+              <div id="package" class="flex-col-center">
+                <button type="button" id="pfs" disabled>Package for store</button>
+                <button type="button" id="test-download"><p class="arrow_link">Download test package</p><img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/></button>
+              </div>
+            </div>
+            <div id="actions-footer" class="flex-center">
+              <p>Available stores:</p>
+              <img title="Windows" src="/assets/windows_icon.svg" alt="Windows" />
+              <img title="iOS" src="/assets/apple_icon.svg" alt="iOS" />
+              <img title="Android" src="/assets/android_icon_full.svg" alt="Android" />
+              <img title="Meta Quest" src="/assets/meta_icon.svg" alt="Meta Quest" />
+            </div>
+          </div>
+        </div>
+        <div id="todo">
+          <sl-details id="todo-detail" summary="To-do list">
+            <todo-item .status=${"red"} .content=${"This is an example to do item."}></todo-item>
+            <todo-item .status=${"red"} .content=${"Theoretically we'd loop through these."}></todo-item>
+            <todo-item .status=${"red"} .content=${"and display them here."}></todo-item>
+          </sl-details>
+        </div>
+        <div id="manifest" class="flex-col">
+          <div id="manifest-header">
+            <div id="mh-left" class="flex-col"> 
+              <p class="card-header">Manifest</p>
+              <p class="card-desc">PWABuilder has analyzed your Web Manifest. You do not have a web manifest. Use our Manifest editor to generate one. You can package for the store once you have a valid manifest.</p>
+            </div>
+            <div id="mh-right">
+              <div id="mh-actions" class="flex-col">
+                <button type="button" class="alternate" @click=${() => this.toggleManifestEditorModal()}>Manifest Editor</button>
+                <a class="arrow_anchor" href="https://developer.mozilla.org/en-US/docs/Web/Manifest" rel="noopener" target="_blank">
+                  <p class="arrow_link">Manifest Documentation</p> 
+                  <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+                </a>
+              </div>
+              <sl-progress-ring class="red" value="${(1.0/18) * 100}">1/18</sl-progress-ring>
+            </div>
+          </div>
+          <sl-details summary="View details" class="details">
+            <div id="manifest-detail-grid">
+              <div class="detail-list">
+                <p>*Required</p>
+              </div>
+              <div class="detail-list">
+                <p>Recommended</p>
+              </div>
+              <div class="detail-list">
+                <p>Optional</p>
+              </div>
+            </div>
+          </sl-details>
+        </div>
+        <div id="two-cell-row">
+          <div id="sw" class="half-width-cards">
+            <div id="sw-header" class="flex-col">
+              <div id="swh-top">
+                <div id="swh-text" class="flex-col">
+                  <p class="card-header">Service Worker</p>
+                  <p class="card-desc">PWABuilder has analyzed your Service Worker, check out the results below. Want to add a Service Worker or check out our pre-built Service Workers? Tap Genereate Service Worker. </p>
+                </div>
+                <sl-progress-ring class="yellow" id="sw-ring" value="${(2.0/3) * 100}">2/3</sl-progress-ring>
+              </div>
+              <div id="sw-actions" class="flex-col">
+                <button type="button" class="alternate">Generate Service Worker</button>
+                <a class="arrow_anchor" href="" rel="noopener" target="_blank">
+                  <p class="arrow_link">Service Worker Documentation</p> 
+                  <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+                </a>
+              </div>
+            </div>
+            <sl-details summary="View details" class="details">
+            <div class="detail-grid">
+                <div class="detail-list">
+                  <p>*Required</p>
+                </div>
+                <div class="detail-list">
+                  <p>Recommended</p>
+                </div>
+                <div class="detail-list">
+                  <p>Optional</p>
+                </div>
+              </div>
+            </sl-details>
+          </div>
+          <div id="security" class="half-width-cards">
+            <div id="sec-header" class="flex-col">
+              <div id="sec-top">
+                <div id="sec-text" class="flex-col">
+                  <p class="card-header">Security</p>
+                  <p class="card-desc">PWABuilder has done a basic analysis of your HTTPS setup. You can use LetsEncrypt to get a free HTTPS certificate, or publish to Azure to get built-in HTTPS support.</p>
+                </div>
+                <sl-progress-ring class="green" id="sw-ring" value="${(3/3) * 100}">3/3</sl-progress-ring>
+              </div>
+              <div id="sec-actions" class="flex-col">
+                <a class="arrow_anchor" href="" rel="noopener" target="_blank">
+                  <p class="arrow_link">Security Documentation</p> 
+                  <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+                </a>
+              </div>
+            </div>
+            <sl-details summary="View details" class="details">
+            <div class="detail-grid">
+                <div class="detail-list">
+                  <p>*Required</p>
+                </div>
+              </div>
+            </sl-details>
+          </div>
+        </div>
 
-    <section id="report">
-      <content-header class="reportCard ${this.selectedTab}">
-        <h1 slot="hero-container">${this.currentHeader}</h1>
-        <p id="hero-p" slot="hero-container">${this.currentSupporting}</p>
-      </content-header>
-
-      <app-sidebar id="tablet-sidebar"></app-sidebar>
-
-      <fast-tabs activeId="sections">
-        <fast-tab class="tab" id="overview" @click="${() => this.handleTabsEvent('overview')}">Overview</fast-tab>
-        <fast-tab class="tab" id="mani" @click="${() => this.handleTabsEvent('mani')}">Manifest Options</fast-tab>
-        <fast-tab class="tab" id="sw" @click="${() => this.handleTabsEvent('sw')}">Service Worker Options</fast-tab>
-
-        <fast-tab-panel id="overview-panel">
-          <report-card @sw-scored="${(ev: CustomEvent<ScoreEvent>) =>
-        this.handleScoreForDisplay('sw', ev.detail.score)}" @mani-scored="${(ev: CustomEvent<ScoreEvent>) =>
-          this.handleScoreForDisplay('manifest', ev.detail.score)}" @security-scored="${(ev: CustomEvent<ScoreEvent>) =>
-            this.handleScoreForDisplay('manifest', ev.detail.score)}"
-            @open-mani-options="${() => this.openManiOptions()}" @open-sw-options="${() => this.openSWOptions()}"
-            .results="${this.resultOfTest}"></report-card>
-        </fast-tab-panel>
-        <fast-tab-panel id="maniPanel">
-          <manifest-options @back-to-overview=${()=> this.openOverview()}
-            >
-          </manifest-options>
-        </fast-tab-panel>
-        <fast-tab-panel id="swPanel">
-          <sw-picker @back-to-overview="${() => this.openOverview()}" score="${this.swScore}"></sw-picker>
-        </fast-tab-panel>
-      </fast-tabs>
-    </section>
-  </div>
-</div>`;
+        ${this.manifestEditorOpened ? 
+          html`
+            <div id="manifest-editor-modal" class="flex-center">
+              <div id="modal" class="flex-col-center">
+                <img class="close_x" src="/assets/Close_desk.png" @click=${() => this.toggleManifestEditorModal()} />
+                <manifest-editor-frame></manifest-editor-frame>
+              </div>
+            </div>` : 
+          html``
+        }
+      </div>
+      `;
+    }
   }
-}
