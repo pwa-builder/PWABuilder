@@ -345,6 +345,19 @@ export class AppHome extends LitElement {
             width: 600px;
           }
         }
+        @media screen and (-ms-high-contrast: white-on-black) {
+          #input-form fast-text-field::part(control):focus:not(:focus-visible) {
+            outline: none;
+          }
+          #input-form fast-text-field::part(control):focus-visible {
+            outline: skyblue solid 3px;
+            outline-offset: 2px;
+          }
+          #input-form fast-text-field::part(control) {
+            color: white;
+          }
+        } 
+        
         /*1024px - 1365px*/ 
         ${xLargeBreakPoint(css`
             #home-block {
