@@ -17,48 +17,9 @@ import '../components/manifest-editor-frame'
 
 //@ts-ignore
 import style from '../../../styles/layout-defaults.css';
-import { RawTestResult, ScoreEvent } from '../utils/interfaces';
-import { giveOutBadges } from '../services/badges';
-
-const possible_messages = {
-  overview: {
-    heading: "Your PWA's report card.",
-    supporting:
-      'Check out the the Overview below to see if your PWA is store-ready! If not, tap the section that needs work to begin upgrading your PWA.',
-  },
-  mani: {
-    heading: 'Manifest great PWAs.',
-    supporting:
-      'PWABuilder has analyzed your Web Manifest, check out the results below. If you are missing something, tap Manifest Options to update your Manifest.',
-  },
-  sw: {
-    heading: 'Secret Ingredient: A Service Worker',
-    supporting:
-      'PWABuilder has analyzed your Service Worker, check out the results below. Want to add a Service Worker or check out our pre-built Service Workers? Tap Service Worker Options.',
-  },
-};
-
-const error_messages = {
-  icon: {
-    message:
-      'Your app is missing a 512x512 or larger PNG icon. Because of this your PWA cannot currently be packaged. Please visit the documentation below for how to fix this.',
-    link: 'https://docs.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/icon-theme-color#define-icons',
-  },
-  start_url: {
-    message:
-      'Your app is missing a start_url, because of this your PWA cannot currently be packaged. Please visit the documentation below for how to fix this.',
-    link: 'https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url',
-  },
-  name: {
-    message:
-      'Your app is missing a name, because of this your PWA cannot currently be packaged. Please visit the documentation below for how to fix this.',
-    link: 'https://developer.mozilla.org/en-US/docs/Web/Manifest/name',
-  },
-};
 
 @customElement('app-report')
 export class AppReport extends LitElement {
-  @property({ type: Object }) resultOfTest: RawTestResult | undefined;
 
   @state() swScore = 0;
   @state() maniScore = 0;
