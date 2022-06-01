@@ -14,12 +14,52 @@ import '../components/app-header';
 import '../components/app-modal';
 import '../components/todo-list-item';
 import '../components/manifest-editor-frame'
+import '../components/publish-pane'
 
 //@ts-ignore
 import style from '../../../styles/layout-defaults.css';
+import { RawTestResult, ScoreEvent } from '../utils/interfaces';
+import { giveOutBadges } from '../services/badges';
+
+const possible_messages = {
+  overview: {
+    heading: "Your PWA's report card.",
+    supporting:
+      'Check out the the Overview below to see if your PWA is store-ready! If not, tap the section that needs work to begin upgrading your PWA.',
+  },
+  mani: {
+    heading: 'Manifest great PWAs.',
+    supporting:
+      'PWABuilder has analyzed your Web Manifest, check out the results below. If you are missing something, tap Manifest Options to update your Manifest.',
+  },
+  sw: {
+    heading: 'Secret Ingredient: A Service Worker',
+    supporting:
+      'PWABuilder has analyzed your Service Worker, check out the results below. Want to add a Service Worker or check out our pre-built Service Workers? Tap Service Worker Options.',
+  },
+};
+
+const error_messages = {
+  icon: {
+    message:
+      'Your app is missing a 512x512 or larger PNG icon. Because of this your PWA cannot currently be packaged. Please visit the documentation below for how to fix this.',
+    link: 'https://docs.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/icon-theme-color#define-icons',
+  },
+  start_url: {
+    message:
+      'Your app is missing a start_url, because of this your PWA cannot currently be packaged. Please visit the documentation below for how to fix this.',
+    link: 'https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url',
+  },
+  name: {
+    message:
+      'Your app is missing a name, because of this your PWA cannot currently be packaged. Please visit the documentation below for how to fix this.',
+    link: 'https://developer.mozilla.org/en-US/docs/Web/Manifest/name',
+  },
+};
 
 @customElement('app-report')
 export class AppReport extends LitElement {
+  @property({ type: Object }) resultOfTest: RawTestResult | undefined;
 
   @state() swScore = 0;
   @state() maniScore = 0;
@@ -38,6 +78,7 @@ export class AppReport extends LitElement {
   // will be used to control the state of the "Package for store" button.
   @state() canPackage: boolean = false;
   @state() manifestEditorOpened: boolean = false;
+  @state() publishModalOpened: boolean = true;
 
   static get styles() {
     return [
@@ -47,27 +88,15 @@ export class AppReport extends LitElement {
           box-sizing: border-box;
         }
 
-        app-header {
-          background-color: white;
-        }
-
-        #report-card-page {
-          background-color: #F2F3FB;
-          width: 100%;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-        }
-
         #report-wrapper {
-          max-width: 1366px;
+          width: 100%;
           display: flex;
           flex-direction: column;
           row-gap: 1.5em;
           align-items: baseline;
+          background-color: #F2F3FB;
           padding: 20px;
           box-sizing: border-box;
-          align-self: center;
         }
 
         #header-row {
@@ -194,6 +223,10 @@ export class AppReport extends LitElement {
           border: none;
         }
 
+        #hover {
+          background-color: rgba(0, 0, 0, 0.75);
+        }
+
         #test-download {
           background-color: transparent;
           color: #4F3FB6;
@@ -223,7 +256,6 @@ export class AppReport extends LitElement {
         .arrow_link {
           margin: 0;
           border-bottom: 1px solid #4F3FB6;
-          white-space: nowrap;
         }
 
         button:hover {
@@ -474,13 +506,14 @@ export class AppReport extends LitElement {
           right: 1em;
           height: 20px;
           width: auto;
+          z-index: 10;
         }
 
         .close_x:hover {
           cursor: pointer;
         }
 
-        #manifest-editor-modal {
+        .modal-blur {
           position: fixed;
           top: 0;
           left: 0;
@@ -490,13 +523,16 @@ export class AppReport extends LitElement {
           backdrop-filter: blur(10px);
           z-index: 3;
         }
-        #modal {
+        .modal {
           background: white;
           max-width: 765px;
+          max-height: 840px;
           border-radius: 10px;
           box-shadow: 0px 16px 24px rgba(0, 0, 0, 0.12);
           position: relative;
           z-index: 4;
+
+          display: flex;
         }
 
         ${xxxLargeBreakPoint(
@@ -602,73 +638,109 @@ export class AppReport extends LitElement {
     this.requestUpdate();
   }
 
+  togglePublishModal(){
+    this.publishModalOpened = !this.publishModalOpened;
+    this.requestUpdate();
+  }
+
 
   render() {
     return html`
-      <div id="report-card-page">
-        <app-header></app-header>
+      <app-header></app-header>
 
-        <div id="report-wrapper">
-          <div id="header-row">
-            <div id="app-card" class="flex-col">
-              <div id="card-header">
-                <img src="/assets/icons/icon_512.png" alt="Your sites logo" />
-                <div id="card-info" class="flex-col">
-                  <p id="site-name">Site Name</p>
-                  <p>www.site.com</p>
-                </div>
-              </div>
-              <p id="card-desc">This is the description to my application and this is what it does and who its for.</p>
-            </div>
-            <div id="app-actions" class="flex-col">
-              <div id="actions">
-                <div id="test" class="flex-col-center">
-                  <button type="button" id="retest"><img src="/assets/new/retest.png" alt="retest site" role="presentation" />Retest Site</button>
-                  <p id="last-edited"><img src="/assets/new/last-edited.png" alt="pencil icon" role="presentation" />2 minutes ago</p>
-                </div>
-
-                <img src="/assets/new/vertical-divider.png" role="presentation" />
-
-                <div id="package" class="flex-col-center">
-                  <button type="button" id="pfs" disabled>Package for store</button>
-                  <button type="button" id="test-download"><p class="arrow_link">Download test package</p><img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/></button>
-                </div>
-              </div>
-              <div id="actions-footer" class="flex-center">
-                <p>Available stores:</p>
-                <img title="Windows" src="/assets/windows_icon.svg" alt="Windows" />
-                <img title="iOS" src="/assets/apple_icon.svg" alt="iOS" />
-                <img title="Android" src="/assets/android_icon_full.svg" alt="Android" />
-                <img title="Meta Quest" src="/assets/meta_icon.svg" alt="Meta Quest" />
+      <div id="report-wrapper">
+        <div id="header-row">
+          <div id="app-card" class="flex-col">
+            <div id="card-header">
+              <img src="/assets/icons/icon_512.png" alt="Your sites logo" />
+              <div id="card-info" class="flex-col">
+                <p id="site-name">Site Name</p>
+                <p>www.site.com</p>
               </div>
             </div>
+            <p id="card-desc">This is the description to my application and this is what it does and who its for.</p>
           </div>
-          <div id="todo">
-            <sl-details id="todo-detail" summary="To-do list">
-              <todo-item .status=${"red"} .content=${"This is an example to do item."}></todo-item>
-              <todo-item .status=${"red"} .content=${"Theoretically we'd loop through these."}></todo-item>
-              <todo-item .status=${"red"} .content=${"and display them here."}></todo-item>
-            </sl-details>
-          </div>
-          <div id="manifest" class="flex-col">
-            <div id="manifest-header">
-              <div id="mh-left" class="flex-col"> 
-                <p class="card-header">Manifest</p>
-                <p class="card-desc">PWABuilder has analyzed your Web Manifest. You do not have a web manifest. Use our Manifest editor to generate one. You can package for the store once you have a valid manifest.</p>
+          <div id="app-actions" class="flex-col">
+            <div id="actions">
+              <div id="test" class="flex-col-center">
+                <button type="button" id="retest"><img src="/assets/new/retest.png" alt="retest site" role="presentation" />Retest Site</button>
+                <p id="last-edited"><img src="/assets/new/last-edited.png" alt="pencil icon" role="presentation" />2 minutes ago</p>
               </div>
-              <div id="mh-right">
-                <div id="mh-actions" class="flex-col">
-                  <button type="button" class="alternate" @click=${() => this.toggleManifestEditorModal()}>Manifest Editor</button>
-                  <a class="arrow_anchor" href="https://developer.mozilla.org/en-US/docs/Web/Manifest" rel="noopener" target="_blank">
-                    <p class="arrow_link">Manifest Documentation</p> 
-                    <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
-                  </a>
+
+              <img src="/assets/new/vertical-divider.png" role="presentation" />
+
+              <div id="package" class="flex-col-center">
+                <button type="button" id="pfs" @click=${() => this.togglePublishModal()}>Package for store</button>
+                <button type="button" id="test-download"><p class="arrow_link">Download test package</p><img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/></button>
+              </div>
+            </div>
+            <div id="actions-footer" class="flex-center">
+              <p>Available stores:</p>
+              <img title="Windows" src="/assets/windows_icon.svg" alt="Windows" />
+              <img title="iOS" src="/assets/apple_icon.svg" alt="iOS" />
+              <img title="Android" src="/assets/android_icon_full.svg" alt="Android" />
+              <img title="Meta Quest" src="/assets/meta_icon.svg" alt="Meta Quest" />
+            </div>
+          </div>
+        </div>
+        <div id="todo">
+          <sl-details id="todo-detail" summary="To-do list">
+            <todo-item .status=${"red"} .content=${"This is an example to do item."}></todo-item>
+            <todo-item .status=${"red"} .content=${"Theoretically we'd loop through these."}></todo-item>
+            <todo-item .status=${"red"} .content=${"and display them here."}></todo-item>
+          </sl-details>
+        </div>
+        <div id="manifest" class="flex-col">
+          <div id="manifest-header">
+            <div id="mh-left" class="flex-col"> 
+              <p class="card-header">Manifest</p>
+              <p class="card-desc">PWABuilder has analyzed your Web Manifest. You do not have a web manifest. Use our Manifest editor to generate one. You can package for the store once you have a valid manifest.</p>
+            </div>
+            <div id="mh-right">
+              <div id="mh-actions" class="flex-col">
+                <button type="button" class="alternate" @click=${() => this.toggleManifestEditorModal()}>Manifest Editor</button>
+                <a class="arrow_anchor" href="https://developer.mozilla.org/en-US/docs/Web/Manifest" rel="noopener" target="_blank">
+                  <p class="arrow_link">Manifest Documentation</p> 
+                  <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+                </a>
+              </div>
+              <sl-progress-ring class="red" value="${(1.0/18) * 100}">1/18</sl-progress-ring>
+            </div>
+          </div>
+          <sl-details summary="View details" class="details">
+            <div id="manifest-detail-grid">
+              <div class="detail-list">
+                <p>*Required</p>
+              </div>
+              <div class="detail-list">
+                <p>Recommended</p>
+              </div>
+              <div class="detail-list">
+                <p>Optional</p>
+              </div>
+            </div>
+          </sl-details>
+        </div>
+        <div id="two-cell-row">
+          <div id="sw" class="half-width-cards">
+            <div id="sw-header" class="flex-col">
+              <div id="swh-top">
+                <div id="swh-text" class="flex-col">
+                  <p class="card-header">Service Worker</p>
+                  <p class="card-desc">PWABuilder has analyzed your Service Worker, check out the results below. Want to add a Service Worker or check out our pre-built Service Workers? Tap Genereate Service Worker. </p>
                 </div>
-                <sl-progress-ring class="red" value="${(1.0/18) * 100}">1/18</sl-progress-ring>
+                <sl-progress-ring class="yellow" id="sw-ring" value="${(2.0/3) * 100}">2/3</sl-progress-ring>
+              </div>
+              <div id="sw-actions" class="flex-col">
+                <button type="button" class="alternate">Generate Service Worker</button>
+                <a class="arrow_anchor" href="" rel="noopener" target="_blank">
+                  <p class="arrow_link">Service Worker Documentation</p> 
+                  <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+                </a>
               </div>
             </div>
             <sl-details summary="View details" class="details">
-              <div id="manifest-detail-grid">
+            <div class="detail-grid">
                 <div class="detail-list">
                   <p>*Required</p>
                 </div>
@@ -681,77 +753,54 @@ export class AppReport extends LitElement {
               </div>
             </sl-details>
           </div>
-          <div id="two-cell-row">
-            <div id="sw" class="half-width-cards">
-              <div id="sw-header" class="flex-col">
-                <div id="swh-top">
-                  <div id="swh-text" class="flex-col">
-                    <p class="card-header">Service Worker</p>
-                    <p class="card-desc">PWABuilder has analyzed your Service Worker, check out the results below. Want to add a Service Worker or check out our pre-built Service Workers? Tap Genereate Service Worker. </p>
-                  </div>
-                  <sl-progress-ring class="yellow" id="sw-ring" value="${(2.0/3) * 100}">2/3</sl-progress-ring>
+          <div id="security" class="half-width-cards">
+            <div id="sec-header" class="flex-col">
+              <div id="sec-top">
+                <div id="sec-text" class="flex-col">
+                  <p class="card-header">Security</p>
+                  <p class="card-desc">PWABuilder has done a basic analysis of your HTTPS setup. You can use LetsEncrypt to get a free HTTPS certificate, or publish to Azure to get built-in HTTPS support.</p>
                 </div>
-                <div id="sw-actions" class="flex-col">
-                  <button type="button" class="alternate">Generate Service Worker</button>
-                  <a class="arrow_anchor" href="" rel="noopener" target="_blank">
-                    <p class="arrow_link">Service Worker Documentation</p> 
-                    <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
-                  </a>
+                <sl-progress-ring class="green" id="sw-ring" value="${(3/3) * 100}">3/3</sl-progress-ring>
+              </div>
+              <div id="sec-actions" class="flex-col">
+                <a class="arrow_anchor" href="" rel="noopener" target="_blank">
+                  <p class="arrow_link">Security Documentation</p> 
+                  <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+                </a>
+              </div>
+            </div>
+            <sl-details summary="View details" class="details">
+            <div class="detail-grid">
+                <div class="detail-list">
+                  <p>*Required</p>
                 </div>
               </div>
-              <sl-details summary="View details" class="details">
-              <div class="detail-grid">
-                  <div class="detail-list">
-                    <p>*Required</p>
-                  </div>
-                  <div class="detail-list">
-                    <p>Recommended</p>
-                  </div>
-                  <div class="detail-list">
-                    <p>Optional</p>
-                  </div>
-                </div>
-              </sl-details>
-            </div>
-            <div id="security" class="half-width-cards">
-              <div id="sec-header" class="flex-col">
-                <div id="sec-top">
-                  <div id="sec-text" class="flex-col">
-                    <p class="card-header">Security</p>
-                    <p class="card-desc">PWABuilder has done a basic analysis of your HTTPS setup. You can use LetsEncrypt to get a free HTTPS certificate, or publish to Azure to get built-in HTTPS support.</p>
-                  </div>
-                  <sl-progress-ring class="green" id="sw-ring" value="${(3/3) * 100}">3/3</sl-progress-ring>
-                </div>
-                <div id="sec-actions" class="flex-col">
-                  <a class="arrow_anchor" href="" rel="noopener" target="_blank">
-                    <p class="arrow_link">Security Documentation</p> 
-                    <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
-                  </a>
-                </div>
-              </div>
-              <sl-details summary="View details" class="details">
-              <div class="detail-grid">
-                  <div class="detail-list">
-                    <p>*Required</p>
-                  </div>
-                </div>
-              </sl-details>
-            </div>
+            </sl-details>
           </div>
         </div>
 
-          ${this.manifestEditorOpened ? 
-            html`
-              <div id="manifest-editor-modal" class="flex-center">
-                <div id="modal" class="flex-col-center">
-                  <img class="close_x" src="/assets/Close_desk.png" @click=${() => this.toggleManifestEditorModal()} />
-                  <manifest-editor-frame></manifest-editor-frame>
-                </div>
-              </div>` : 
-            html``
-          }
-        </div>
-      
+        ${this.manifestEditorOpened ? 
+          html`
+            <div class="modal-blur flex-center">
+              <div class="modal flex-col-center">
+                <img class="close_x" src="/assets/Close_desk.png" @click=${() => this.toggleManifestEditorModal()} />
+                <manifest-editor-frame></manifest-editor-frame>
+              </div>
+            </div>` : 
+          html``
+        }
+
+        ${this.publishModalOpened ? 
+          html`
+            <div class="modal-blur flex-center">
+              <div class="modal flex-col-center">
+                <img class="close_x" src="/assets/Close_desk.png" @click=${() => this.togglePublishModal()} />
+                <publish-pane></publish-pane>
+              </div>
+            </div>` : 
+          html``
+        }
+      </div>
       `;
     }
   }
