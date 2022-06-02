@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { doubleCheckManifest, getManifestContext, setResults, setURL } from '../services/app-info';
+import { doubleCheckManifest, getManifestContext } from '../services/app-info';
 
 import {
   BreakpointValues,
@@ -13,12 +13,21 @@ import {
 import '../components/app-header';
 import '../components/app-modal';
 import '../components/todo-list-item';
-import '../components/manifest-editor-frame'
+import '../components/manifest-editor-frame';
+
+import { testSecurity } from '../services/tests/security';
+import { testServiceWorker } from '../services/tests/service-worker';
+import { testManifest } from '../services/tests/manifest';
 
 //@ts-ignore
 import style from '../../../styles/layout-defaults.css';
-import { RawTestResult, ScoreEvent } from '../utils/interfaces';
+import {
+  ManifestContext,
+  RawTestResult,
+  ScoreEvent,
+} from '../utils/interfaces';
 import { giveOutBadges } from '../services/badges';
+import { fetchOrCreateManifest } from '../services/manifest';
 
 const possible_messages = {
   overview: {
@@ -59,7 +68,15 @@ const error_messages = {
 @customElement('app-report')
 export class AppReport extends LitElement {
   @property({ type: Object }) resultOfTest: RawTestResult | undefined;
-
+  @property() appCard = {
+    siteName: 'Site Name',
+    description: "Your site's description",
+    siteUrl: 'Site URL',
+  };
+  @property() manifestCard = {};
+  @property() serviceWorkerCard = {};
+  @property() securityCard = {};
+  @property() siteURL = '';
   @state() swScore = 0;
   @state() maniScore = 0;
   @state() securityScore = 0;
@@ -72,6 +89,7 @@ export class AppReport extends LitElement {
     `(min-width: ${BreakpointValues.largeUpper}px)`
   );
 
+  @state() isAppCardInfoLoading: boolean = false;
   @state() isDeskTopView = this.mql.matches;
 
   // will be used to control the state of the "Package for store" button.
@@ -92,7 +110,7 @@ export class AppReport extends LitElement {
           flex-direction: column;
           row-gap: 1.5em;
           align-items: baseline;
-          background-color: #F2F3FB;
+          background-color: #f2f3fb;
           padding: 20px;
           box-sizing: border-box;
         }
@@ -126,6 +144,7 @@ export class AppReport extends LitElement {
           align-items: center;
           font-size: 14px;
           font-weight: bold;
+          width: 100%;
         }
 
         #card-header img {
@@ -137,16 +156,21 @@ export class AppReport extends LitElement {
           font-size: 24px;
         }
 
-        #card-info p{
+        #card-info {
+          width: 100%;
+        }
+
+        #card-info p {
           margin: 0;
         }
 
         #card-desc {
           margin: 0;
           font-size: 14px;
+          with: 100%;
         }
 
-        #app-actions { 
+        #app-actions {
           width: 70%;
           border-radius: 10px;
           background-color: white;
@@ -167,7 +191,7 @@ export class AppReport extends LitElement {
           padding-bottom: 0;
           width: 100%;
         }
-        
+
         #test {
           row-gap: 20px;
           width: 45%;
@@ -187,7 +211,7 @@ export class AppReport extends LitElement {
         }
 
         #retest {
-          background-color: #4F3FB6;
+          background-color: #4f3fb6;
           border-radius: 50px;
           padding: 1em;
           color: white;
@@ -214,7 +238,7 @@ export class AppReport extends LitElement {
 
         #pfs {
           background-color: black;
-          color: white; 
+          color: white;
           font-size: 16px;
           border-radius: 50px;
           padding: 1em 3em;
@@ -223,11 +247,11 @@ export class AppReport extends LitElement {
 
         #test-download {
           background-color: transparent;
-          color: #4F3FB6;
+          color: #4f3fb6;
           border: none;
           width: fit-content;
           display: flex;
-          column-gap: .5em;
+          column-gap: 0.5em;
           align-items: center;
         }
 
@@ -236,20 +260,24 @@ export class AppReport extends LitElement {
         }
 
         @keyframes bounce {
-          0%, 20%, 50%, 80%, 100% {
-              transform: translateY(0);
+          0%,
+          20%,
+          50%,
+          80%,
+          100% {
+            transform: translateY(0);
           }
           40% {
             transform: translateX(-5px);
           }
           60% {
-              transform: translateX(5px);
+            transform: translateX(5px);
           }
         }
 
         .arrow_link {
           margin: 0;
-          border-bottom: 1px solid #4F3FB6;
+          border-bottom: 1px solid #4f3fb6;
         }
 
         button:hover {
@@ -257,12 +285,12 @@ export class AppReport extends LitElement {
         }
 
         #actions-footer {
-          background-color: #F2F3FB;
+          background-color: #f2f3fb;
           width: 100%;
-          column-gap: .75em;
+          column-gap: 0.75em;
           border-bottom-left-radius: 10px;
           border-bottom-right-radius: 10px;
-          padding: .5em 1em;
+          padding: 0.5em 1em;
         }
 
         #actions-footer img {
@@ -289,12 +317,12 @@ export class AppReport extends LitElement {
           border-radius: 10px;
         }
 
-        #todo-detail::part(header){
+        #todo-detail::part(header) {
           height: 60px;
         }
 
         #todo-detail::part(summary) {
-          color: #4F3FB6;
+          color: #4f3fb6;
           font-size: 20px;
           font-weight: bold;
         }
@@ -309,13 +337,13 @@ export class AppReport extends LitElement {
         #manifest-header {
           display: flex;
           justify-content: space-between;
-          border-bottom: 1px solid #C4C4C4;
+          border-bottom: 1px solid #c4c4c4;
           padding: 1em;
         }
 
         #mh-left {
           width: 50%;
-          row-gap: .5em;
+          row-gap: 0.5em;
         }
 
         .card-header {
@@ -348,7 +376,7 @@ export class AppReport extends LitElement {
           column-gap: 10px;
         }
         .arrow_anchor:visited {
-          color: #4F3FB6;
+          color: #4f3fb6;
         }
         .arrow_anchor:hover {
           cursor: pointer;
@@ -359,16 +387,16 @@ export class AppReport extends LitElement {
 
         #report-wrapper .alternate {
           background: var(--secondary-color);
-          color: #4F3FB6;
-          border: 1px solid #4F3FB6;
+          color: #4f3fb6;
+          border: 1px solid #4f3fb6;
           font-size: 16px;
           font-weight: bold;
           border-radius: 50px;
-          padding: .5em 2em;
+          padding: 0.5em 2em;
         }
 
         #report-wrapper .alternate:hover {
-          box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
         }
 
         #manifest-detail-grid {
@@ -400,7 +428,7 @@ export class AppReport extends LitElement {
           font-size: 14px;
         }
 
-        .details::part(header){
+        .details::part(header) {
           height: 40px;
         }
 
@@ -411,12 +439,11 @@ export class AppReport extends LitElement {
         }
 
         #sw {
-          
         }
 
         #sw-header {
-          row-gap: .5em;
-          border-bottom: 1px solid #C4C4C4;
+          row-gap: 0.5em;
+          border-bottom: 1px solid #c4c4c4;
           padding: 1em;
         }
 
@@ -426,8 +453,8 @@ export class AppReport extends LitElement {
         }
 
         #swh-text {
-          row-gap: .5em;
-        } 
+          row-gap: 0.5em;
+        }
 
         #sw-ring {
           --size: 80px;
@@ -442,7 +469,7 @@ export class AppReport extends LitElement {
         .detail-grid {
           display: flex;
           flex-direction: column;
-          row-gap: .5em;
+          row-gap: 0.5em;
         }
 
         .red {
@@ -468,16 +495,16 @@ export class AppReport extends LitElement {
           width: 50%;
           border-radius: 10px;
           background-color: white;
-          
-          row-gap: .5em;
+
+          row-gap: 0.5em;
         }
 
         #sec-header {
           justify-content: space-between;
-          row-gap: .5em;
+          row-gap: 0.5em;
           height: 100%;
           padding: 1em;
-          border-bottom: 1px solid #C4C4C4;
+          border-bottom: 1px solid #c4c4c4;
         }
 
         #sec-top {
@@ -486,8 +513,8 @@ export class AppReport extends LitElement {
         }
 
         #sec-text {
-          row-gap: .5em;
-        } 
+          row-gap: 0.5em;
+        }
 
         #sec-actions {
           row-gap: 1em;
@@ -525,36 +552,19 @@ export class AppReport extends LitElement {
           z-index: 4;
         }
 
-        ${xxxLargeBreakPoint(
-        css`
-            
-          `
-      )}
+        ${xxxLargeBreakPoint(css``)}
 
-        ${largeBreakPoint(
-        css`
-            
-          `
-      )}
+        ${largeBreakPoint(css``)}
 
-        ${mediumBreakPoint(
-        css`
-            
-          `
-      )}
+        ${mediumBreakPoint(css``)}
 
-        ${smallBreakPoint(
-        css`
-            
-          `
-      )}
+        ${smallBreakPoint(css``)}
       `,
     ];
   }
 
   constructor() {
     super();
-
     this.mql.addEventListener('change', e => {
       this.isDeskTopView = e.matches;
     });
@@ -562,34 +572,78 @@ export class AppReport extends LitElement {
 
   async firstUpdated() {
     const search = new URLSearchParams(location.search);
-    const results = search.get('results');
-
-    const url = search.get('site');
-    const hasBadges = sessionStorage.getItem('current_badges');
-    setURL(url!);
-    
-    if (results) {
-      /*
-        cache results string as we may need this farther in the flow
-        if the user needs to be redirected back here.
-        Normally this would be because of issues with their manifest
-        that are causing issues with packaging
-      */
-      sessionStorage.setItem('results-string', results);
-
-      this.resultOfTest = JSON.parse(results);
-      setResults((this.resultOfTest as RawTestResult));
-
-      this.resultOfTest = JSON.parse(results);
-
-      if(!hasBadges) {
-        giveOutBadges();
-      }
+    const site = search.get('site');
+    if (site) {
+      this.siteURL = site;
+      this.runAllTests(site);
     }
-
-    await this.handleDoubleChecks();
   }
 
+  async getManifest(url: string) {
+    this.isAppCardInfoLoading = true;
+    const manifestContext = await fetchOrCreateManifest(url);
+    sessionStorage.setItem('manifest_context', JSON.stringify(manifestContext));
+    this.isAppCardInfoLoading = false;
+    this.populateAppCard(manifestContext, url);
+  }
+
+  populateAppCard(manifestContext: ManifestContext, url: string) {
+    if (manifestContext) {
+      const parsedManifestContext = manifestContext;
+      this.appCard = {
+        siteName: parsedManifestContext.manifest.name
+          ? parsedManifestContext.manifest.name
+          : 'Untitled App',
+        siteUrl: url,
+        description: parsedManifestContext.manifest.description
+          ? parsedManifestContext.manifest.description
+          : 'Add an app description to your manifest',
+      };
+    }
+  }
+  async runAllTests(url: string) {
+    this.getManifest(url);
+    testManifest(url);
+    testServiceWorker(url);
+    testSecurity(url);
+    //this.updateTimeLastTested();
+  }
+
+  async testManifest(url: string) {
+    //add manifest validation logic
+    const manifestTestResult = await testManifest(url, false);
+    sessionStorage.setItem(
+      'manifest_tests',
+      JSON.stringify(manifestTestResult)
+    );
+
+    //TODO: Fire event when ready
+  }
+
+  async testServiceWorker(url: string) {
+    //call service worker tests
+    const serviceWorkerTestResult = await testServiceWorker(url);
+    //save serviceworker tests in session storage
+    sessionStorage.setItem(
+      'service_worker_tests',
+      JSON.stringify(serviceWorkerTestResult)
+    );
+    console.log(serviceWorkerTestResult);
+  }
+
+  async testSecurity(url: string) {
+    //Call security tests
+    const securityTests = await testSecurity(url);
+    //save security tests in session storage
+    sessionStorage.setItem('security_tests', JSON.stringify(securityTests));
+    console.log(securityTests);
+  }
+
+  async retest() {
+    if (this.siteURL) {
+      this.runAllTests(this.siteURL);
+    }
+  }
   async handleDoubleChecks() {
     const maniContext = getManifestContext();
 
@@ -623,73 +677,144 @@ export class AppReport extends LitElement {
     }
   }
 
-  toggleManifestEditorModal(){
+  toggleManifestEditorModal() {
     this.manifestEditorOpened = !this.manifestEditorOpened;
     this.requestUpdate();
   }
 
-
   render() {
     return html`
       <app-header></app-header>
-
       <div id="report-wrapper">
         <div id="header-row">
-          <div id="app-card" class="flex-col">
+          <div id="app-card" class="flex-col skeleton-effects">
             <div id="card-header">
               <img src="/assets/icons/icon_512.png" alt="Your sites logo" />
               <div id="card-info" class="flex-col">
-                <p id="site-name">Site Name</p>
-                <p>www.site.com</p>
+                ${this.isAppCardInfoLoading
+                  ? html`<sl-skeleton effect="pulse"></sl-skeleton>`
+                  : html`<p id="site-name">${this.appCard.siteName}</p>
+                      <p>${this.appCard.siteUrl}</p>`}
               </div>
             </div>
-            <p id="card-desc">This is the description to my application and this is what it does and who its for.</p>
+            ${this.isAppCardInfoLoading
+              ? html`<sl-skeleton effect="pulse"></sl-skeleton>`
+              : html`<p id="card-desc">${this.appCard.description}</p>`}
           </div>
           <div id="app-actions" class="flex-col">
             <div id="actions">
               <div id="test" class="flex-col-center">
-                <button type="button" id="retest"><img src="/assets/new/retest.png" alt="retest site" role="presentation" />Retest Site</button>
-                <p id="last-edited"><img src="/assets/new/last-edited.png" alt="pencil icon" role="presentation" />2 minutes ago</p>
+                <button
+                  type="button"
+                  id="retest"
+                  @click=${() => {
+                    this.retest();
+                  }}
+                >
+                  <img
+                    src="/assets/new/retest.png"
+                    alt="retest site"
+                    role="presentation"
+                  />Retest Site
+                </button>
+                <p id="last-edited">
+                  <img
+                    src="/assets/new/last-edited.png"
+                    alt="pencil icon"
+                    role="presentation"
+                  />2 minutes ago
+                </p>
               </div>
 
               <img src="/assets/new/vertical-divider.png" role="presentation" />
 
               <div id="package" class="flex-col-center">
-                <button type="button" id="pfs" disabled>Package for store</button>
-                <button type="button" id="test-download"><p class="arrow_link">Download test package</p><img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/></button>
+                <button type="button" id="pfs" disabled>
+                  Package for store
+                </button>
+                <button type="button" id="test-download">
+                  <p class="arrow_link">Download test package</p>
+                  <img
+                    src="/assets/new/arrow.svg"
+                    alt="arrow"
+                    role="presentation"
+                  />
+                </button>
               </div>
             </div>
             <div id="actions-footer" class="flex-center">
               <p>Available stores:</p>
-              <img title="Windows" src="/assets/windows_icon.svg" alt="Windows" />
+              <img
+                title="Windows"
+                src="/assets/windows_icon.svg"
+                alt="Windows"
+              />
               <img title="iOS" src="/assets/apple_icon.svg" alt="iOS" />
-              <img title="Android" src="/assets/android_icon_full.svg" alt="Android" />
-              <img title="Meta Quest" src="/assets/meta_icon.svg" alt="Meta Quest" />
+              <img
+                title="Android"
+                src="/assets/android_icon_full.svg"
+                alt="Android"
+              />
+              <img
+                title="Meta Quest"
+                src="/assets/meta_icon.svg"
+                alt="Meta Quest"
+              />
             </div>
           </div>
         </div>
         <div id="todo">
           <sl-details id="todo-detail" summary="To-do list">
-            <todo-item .status=${"red"} .content=${"This is an example to do item."}></todo-item>
-            <todo-item .status=${"red"} .content=${"Theoretically we'd loop through these."}></todo-item>
-            <todo-item .status=${"red"} .content=${"and display them here."}></todo-item>
+            <todo-item
+              .status=${'red'}
+              .content=${'This is an example to do item.'}
+            ></todo-item>
+            <todo-item
+              .status=${'red'}
+              .content=${"Theoretically we'd loop through these."}
+            ></todo-item>
+            <todo-item
+              .status=${'red'}
+              .content=${'and display them here.'}
+            ></todo-item>
           </sl-details>
         </div>
         <div id="manifest" class="flex-col">
           <div id="manifest-header">
-            <div id="mh-left" class="flex-col"> 
+            <div id="mh-left" class="flex-col">
               <p class="card-header">Manifest</p>
-              <p class="card-desc">PWABuilder has analyzed your Web Manifest. You do not have a web manifest. Use our Manifest editor to generate one. You can package for the store once you have a valid manifest.</p>
+              <p class="card-desc">
+                PWABuilder has analyzed your Web Manifest. You do not have a web
+                manifest. Use our Manifest editor to generate one. You can
+                package for the store once you have a valid manifest.
+              </p>
             </div>
             <div id="mh-right">
               <div id="mh-actions" class="flex-col">
-                <button type="button" class="alternate" @click=${() => this.toggleManifestEditorModal()}>Manifest Editor</button>
-                <a class="arrow_anchor" href="https://developer.mozilla.org/en-US/docs/Web/Manifest" rel="noopener" target="_blank">
-                  <p class="arrow_link">Manifest Documentation</p> 
-                  <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+                <button
+                  type="button"
+                  class="alternate"
+                  @click=${() => this.toggleManifestEditorModal()}
+                >
+                  Manifest Editor
+                </button>
+                <a
+                  class="arrow_anchor"
+                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
+                  rel="noopener"
+                  target="_blank"
+                >
+                  <p class="arrow_link">Manifest Documentation</p>
+                  <img
+                    src="/assets/new/arrow.svg"
+                    alt="arrow"
+                    role="presentation"
+                  />
                 </a>
               </div>
-              <sl-progress-ring class="red" value="${(1.0/18) * 100}">1/18</sl-progress-ring>
+              <sl-progress-ring class="red" value="${(1.0 / 18) * 100}"
+                >1/18</sl-progress-ring
+              >
             </div>
           </div>
           <sl-details summary="View details" class="details">
@@ -712,20 +837,35 @@ export class AppReport extends LitElement {
               <div id="swh-top">
                 <div id="swh-text" class="flex-col">
                   <p class="card-header">Service Worker</p>
-                  <p class="card-desc">PWABuilder has analyzed your Service Worker, check out the results below. Want to add a Service Worker or check out our pre-built Service Workers? Tap Genereate Service Worker. </p>
+                  <p class="card-desc">
+                    PWABuilder has analyzed your Service Worker, check out the
+                    results below. Want to add a Service Worker or check out our
+                    pre-built Service Workers? Tap Genereate Service Worker.
+                  </p>
                 </div>
-                <sl-progress-ring class="yellow" id="sw-ring" value="${(2.0/3) * 100}">2/3</sl-progress-ring>
+                <sl-progress-ring
+                  class="yellow"
+                  id="sw-ring"
+                  value="${(2.0 / 3) * 100}"
+                  >2/3</sl-progress-ring
+                >
               </div>
               <div id="sw-actions" class="flex-col">
-                <button type="button" class="alternate">Generate Service Worker</button>
+                <button type="button" class="alternate">
+                  Generate Service Worker
+                </button>
                 <a class="arrow_anchor" href="" rel="noopener" target="_blank">
-                  <p class="arrow_link">Service Worker Documentation</p> 
-                  <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+                  <p class="arrow_link">Service Worker Documentation</p>
+                  <img
+                    src="/assets/new/arrow.svg"
+                    alt="arrow"
+                    role="presentation"
+                  />
                 </a>
               </div>
             </div>
             <sl-details summary="View details" class="details">
-            <div class="detail-grid">
+              <div class="detail-grid">
                 <div class="detail-list">
                   <p>*Required</p>
                 </div>
@@ -743,19 +883,32 @@ export class AppReport extends LitElement {
               <div id="sec-top">
                 <div id="sec-text" class="flex-col">
                   <p class="card-header">Security</p>
-                  <p class="card-desc">PWABuilder has done a basic analysis of your HTTPS setup. You can use LetsEncrypt to get a free HTTPS certificate, or publish to Azure to get built-in HTTPS support.</p>
+                  <p class="card-desc">
+                    PWABuilder has done a basic analysis of your HTTPS setup.
+                    You can use LetsEncrypt to get a free HTTPS certificate, or
+                    publish to Azure to get built-in HTTPS support.
+                  </p>
                 </div>
-                <sl-progress-ring class="green" id="sw-ring" value="${(3/3) * 100}">3/3</sl-progress-ring>
+                <sl-progress-ring
+                  class="green"
+                  id="sw-ring"
+                  value="${(3 / 3) * 100}"
+                  >3/3</sl-progress-ring
+                >
               </div>
               <div id="sec-actions" class="flex-col">
                 <a class="arrow_anchor" href="" rel="noopener" target="_blank">
-                  <p class="arrow_link">Security Documentation</p> 
-                  <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+                  <p class="arrow_link">Security Documentation</p>
+                  <img
+                    src="/assets/new/arrow.svg"
+                    alt="arrow"
+                    role="presentation"
+                  />
                 </a>
               </div>
             </div>
             <sl-details summary="View details" class="details">
-            <div class="detail-grid">
+              <div class="detail-grid">
                 <div class="detail-list">
                   <p>*Required</p>
                 </div>
@@ -764,17 +917,19 @@ export class AppReport extends LitElement {
           </div>
         </div>
 
-        ${this.manifestEditorOpened ? 
-          html`
-            <div id="manifest-editor-modal" class="flex-center">
+        ${this.manifestEditorOpened
+          ? html` <div id="manifest-editor-modal" class="flex-center">
               <div id="modal" class="flex-col-center">
-                <img class="close_x" src="/assets/Close_desk.png" @click=${() => this.toggleManifestEditorModal()} />
+                <img
+                  class="close_x"
+                  src="/assets/Close_desk.png"
+                  @click=${() => this.toggleManifestEditorModal()}
+                />
                 <manifest-editor-frame></manifest-editor-frame>
               </div>
-            </div>` : 
-          html``
-        }
+            </div>`
+          : html``}
       </div>
-      `;
-    }
+    `;
   }
+}
