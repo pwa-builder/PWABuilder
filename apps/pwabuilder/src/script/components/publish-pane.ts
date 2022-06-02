@@ -24,7 +24,7 @@ import './oculus-form';
 @customElement('publish-pane')
 export class PublishPane extends LitElement {
 
-  // tells page we are generating
+  // tells page we are generating a package
   @state() generating = false;
 
   // Used to switch from cards to form true = cards, false = forms

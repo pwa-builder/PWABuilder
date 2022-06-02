@@ -256,6 +256,7 @@ export class AppReport extends LitElement {
         .arrow_link {
           margin: 0;
           border-bottom: 1px solid #4F3FB6;
+          white-space: nowrap;
         }
 
         button:hover {
