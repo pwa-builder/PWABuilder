@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { doubleCheckManifest, getManifestContext } from '../services/app-info';
-
+import { validateManifest, Validation } from '@pwabuilder/manifest-validation'
 import {
   BreakpointValues,
   mediumBreakPoint,
@@ -103,6 +103,11 @@ export class AppReport extends LitElement {
 
   // Controls the last tested section
   @state() lastTested: string = "Last tested seconds ago";
+
+  // manifest validation
+  @state() validationResults: Validation[] = [];
+  @state() manifestTotalScore: number = 0;
+  @state() manifestValidCounter: number = 0;
 
 
   static get styles() {
@@ -665,14 +670,30 @@ export class AppReport extends LitElement {
 
   async runAllTests(url: string) {
     this.getManifest(url);
-    testManifest(url);
-    testServiceWorker(url);
-    testSecurity(url);
+    this.testManifest(url);
+    this.testServiceWorker(url);
+    this.testSecurity(url);
     //this.updateTimeLastTested();
   }
 
   async testManifest(url: string) {
+    
     //add manifest validation logic
+    // note: wrap in try catch (can fail if invalid json)
+    let manifest = JSON.parse(sessionStorage.getItem("manifest_context")!).manifest;
+    console.log("testing manifest", manifest)
+    this.validationResults = await validateManifest(manifest);
+    console.log("RESULTS", this.validationResults);
+    console.log(this.validationResults.length)
+    this.manifestTotalScore = this.validationResults.length;
+    this.validationResults.forEach((test: Validation) => {
+      if(test.valid){
+        this.manifestValidCounter++;
+      }
+    })
+    console.log("part", this.manifestValidCounter);
+    console.log("total", this.manifestTotalScore);
+
     const manifestTestResult = await testManifest(url, false);
     sessionStorage.setItem(
       'manifest_tests',
@@ -680,6 +701,7 @@ export class AppReport extends LitElement {
     );
 
     //TODO: Fire event when ready
+    this.requestUpdate();
   }
 
   async testServiceWorker(url: string) {
@@ -690,7 +712,7 @@ export class AppReport extends LitElement {
       'service_worker_tests',
       JSON.stringify(serviceWorkerTestResult)
     );
-    console.log(serviceWorkerTestResult);
+    //console.log(serviceWorkerTestResult);
   }
 
   async testSecurity(url: string) {
@@ -698,7 +720,7 @@ export class AppReport extends LitElement {
     const securityTests = await testSecurity(url);
     //save security tests in session storage
     sessionStorage.setItem('security_tests', JSON.stringify(securityTests));
-    console.log(securityTests);
+    //console.log(securityTests);
   }
 
   async retest() {
@@ -933,8 +955,8 @@ export class AppReport extends LitElement {
                   />
                 </a>
               </div>
-              <sl-progress-ring class="red" value="${(1.0 / 18) * 100}"
-                >1/18</sl-progress-ring
+              <sl-progress-ring class="red" value="${(parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore) * 100}"
+                >${this.manifestValidCounter} / ${this.manifestTotalScore}</sl-progress-ring
               >
             </div>
           </div>
