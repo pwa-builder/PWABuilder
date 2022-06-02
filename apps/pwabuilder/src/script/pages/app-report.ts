@@ -14,6 +14,7 @@ import '../components/app-header';
 import '../components/app-modal';
 import '../components/todo-list-item';
 import '../components/manifest-editor-frame'
+import '../components/publish-pane'
 
 //@ts-ignore
 import style from '../../../styles/layout-defaults.css';
@@ -77,6 +78,7 @@ export class AppReport extends LitElement {
   // will be used to control the state of the "Package for store" button.
   @state() canPackage: boolean = false;
   @state() manifestEditorOpened: boolean = false;
+  @state() publishModalOpened: boolean = true;
 
   static get styles() {
     return [
@@ -221,6 +223,10 @@ export class AppReport extends LitElement {
           border: none;
         }
 
+        #hover {
+          background-color: rgba(0, 0, 0, 0.75);
+        }
+
         #test-download {
           background-color: transparent;
           color: #4F3FB6;
@@ -250,6 +256,7 @@ export class AppReport extends LitElement {
         .arrow_link {
           margin: 0;
           border-bottom: 1px solid #4F3FB6;
+          white-space: nowrap;
         }
 
         button:hover {
@@ -500,13 +507,14 @@ export class AppReport extends LitElement {
           right: 1em;
           height: 20px;
           width: auto;
+          z-index: 10;
         }
 
         .close_x:hover {
           cursor: pointer;
         }
 
-        #manifest-editor-modal {
+        .modal-blur {
           position: fixed;
           top: 0;
           left: 0;
@@ -516,13 +524,16 @@ export class AppReport extends LitElement {
           backdrop-filter: blur(10px);
           z-index: 3;
         }
-        #modal {
+        .modal {
           background: white;
           max-width: 765px;
+          max-height: 840px;
           border-radius: 10px;
           box-shadow: 0px 16px 24px rgba(0, 0, 0, 0.12);
           position: relative;
           z-index: 4;
+
+          display: flex;
         }
 
         ${xxxLargeBreakPoint(
@@ -628,6 +639,11 @@ export class AppReport extends LitElement {
     this.requestUpdate();
   }
 
+  togglePublishModal(){
+    this.publishModalOpened = !this.publishModalOpened;
+    this.requestUpdate();
+  }
+
 
   render() {
     return html`
@@ -655,7 +671,7 @@ export class AppReport extends LitElement {
               <img src="/assets/new/vertical-divider.png" role="presentation" />
 
               <div id="package" class="flex-col-center">
-                <button type="button" id="pfs" disabled>Package for store</button>
+                <button type="button" id="pfs" @click=${() => this.togglePublishModal()}>Package for store</button>
                 <button type="button" id="test-download"><p class="arrow_link">Download test package</p><img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/></button>
               </div>
             </div>
@@ -766,10 +782,21 @@ export class AppReport extends LitElement {
 
         ${this.manifestEditorOpened ? 
           html`
-            <div id="manifest-editor-modal" class="flex-center">
-              <div id="modal" class="flex-col-center">
+            <div class="modal-blur flex-center">
+              <div class="modal flex-col-center">
                 <img class="close_x" src="/assets/Close_desk.png" @click=${() => this.toggleManifestEditorModal()} />
                 <manifest-editor-frame></manifest-editor-frame>
+              </div>
+            </div>` : 
+          html``
+        }
+
+        ${this.publishModalOpened ? 
+          html`
+            <div class="modal-blur flex-center">
+              <div class="modal flex-col-center">
+                <img class="close_x" src="/assets/Close_desk.png" @click=${() => this.togglePublishModal()} />
+                <publish-pane></publish-pane>
               </div>
             </div>` : 
           html``
