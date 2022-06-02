@@ -14,7 +14,7 @@ import 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist
 import { prettyString } from '../utils/pretty-json';
 import { ManifestInfoForm } from './manifest-info-form';
 import { ManifestPlatformForm } from './manifest-platform-form';
-import { validateRequiredFields } from '@pwabuilder/manifest-validation';
+import { validateRequiredFields, validateManifest } from '@pwabuilder/manifest-validation';
 
 /**
  * @since 0.1
@@ -78,10 +78,11 @@ export class PWAManifestEditor extends LitElement {
   }
 
   async firstUpdated() {
-    console.log(await validateRequiredFields(this._initialManifest))
+    console.log(await validateRequiredFields(this._initialManifest));
+    console.log(await validateManifest(this._initialManifest));
   }
 
-  private updateManifest(field: any, change: any){
+  private async updateManifest(field: any, change: any){
 
     // we want to add generated photos to the current
     // field instead of replacing them
@@ -96,6 +97,8 @@ export class PWAManifestEditor extends LitElement {
     this.manifest = {...this.manifest, [field]: change};
 
     console.log("updated manifest -->", this.manifest);
+
+    console.log(await validateManifest(this.manifest));
   }
 
   public resetManifest(){
