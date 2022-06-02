@@ -2,6 +2,7 @@ export interface Validation {
     infoString?: string;
     category: string;
     member: string;
+    valid?: boolean;
     defaultValue?: string | any[];
     docsLink?: string;
     errorString?: string;

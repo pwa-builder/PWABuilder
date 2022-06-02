@@ -53,7 +53,7 @@ export const maniTests: Array<Validation> = [
         errorString: "name should not have any leading or trailing whitespace",
         quickFix: true,
         test: (value: string) => {
-            if (value.trim() !== value) {
+            if (value && value.trim() !== value) {
                 return value.trim();
             }
             else {
@@ -83,7 +83,7 @@ export const maniTests: Array<Validation> = [
         errorString: "short_name should not have any leading or trailing whitespace",
         quickFix: true,
         test: (value: string) => {
-            if (value.trim() !== value) {
+            if (value && value.trim() !== value) {
                 return value.trim();
             }
             else {
@@ -277,7 +277,7 @@ export const maniTests: Array<Validation> = [
         errorString: "description should not have any leading or trailing whitespace",
         quickFix: true,
         test: (value: string) => {
-            if (value.trim() !== value) {
+            if (value && value.trim() !== value) {
                 return value.trim();
             }
             else {
