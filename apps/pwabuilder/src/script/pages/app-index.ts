@@ -123,13 +123,6 @@ export class AppIndex extends LitElement {
             },
           },
           {
-            path: '/congrats',
-            component: 'app-congrats',
-            action: async () => {
-              await import('./app-congrats.js');
-            },
-          },
-          {
             path: 'imageGenerator',
             component: 'image-generator',
             action: async () => {
