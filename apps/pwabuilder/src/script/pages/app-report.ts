@@ -23,12 +23,15 @@ import { testManifest } from '../services/tests/manifest';
 //@ts-ignore
 import style from '../../../styles/layout-defaults.css';
 import {
+  Icon,
+  Manifest,
   ManifestContext,
   RawTestResult,
   ScoreEvent,
 } from '../utils/interfaces';
-import { giveOutBadges } from '../services/badges';
+
 import { fetchOrCreateManifest } from '../services/manifest';
+import { resolveUrl } from '../utils/url';
 
 const possible_messages = {
   overview: {
@@ -69,7 +72,7 @@ const error_messages = {
 @customElement('app-report')
 export class AppReport extends LitElement {
   @property({ type: Object }) resultOfTest: RawTestResult | undefined;
-  @property() appCard = {
+  @property({ type: Object }) appCard = {
     siteName: 'Site Name',
     description: "Your site's description",
     siteUrl: 'Site URL',
@@ -97,6 +100,10 @@ export class AppReport extends LitElement {
   @state() canPackage: boolean = false;
   @state() manifestEditorOpened: boolean = false;
   @state() publishModalOpened: boolean = false;
+
+  // Controls the last tested section
+  @state() lastTested: string = "Last tested seconds ago";
+
 
   static get styles() {
     return [
@@ -128,8 +135,8 @@ export class AppReport extends LitElement {
         #app-card {
           width: 30%;
           height: 180px;
-          background-color: white;
           border-radius: 10px;
+          background-color: white;
           padding: 1em;
           row-gap: 10px;
           box-shadow: 0px 4px 30px 0px #00000014;
@@ -170,6 +177,12 @@ export class AppReport extends LitElement {
           margin: 0;
           font-size: 14px;
           with: 100%;
+          white-space: normal;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box !important;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
         }
 
         #app-actions {
@@ -192,6 +205,17 @@ export class AppReport extends LitElement {
           padding: 1em;
           padding-bottom: 0;
           width: 100%;
+        }
+
+        #app-image-skeleton {
+          height: 85px;
+          width: 130px;
+          --border-radius: 0;
+        }
+
+        .app-info-skeleton {
+          width: 100%;
+          margin-bottom: 10px;
         }
 
         #test {
@@ -587,7 +611,30 @@ export class AppReport extends LitElement {
     if (site) {
       this.siteURL = site;
       this.runAllTests(site);
+      sessionStorage.setItem('last_tested', JSON.stringify(new Date()));
     }
+
+    setInterval(() => this.pollLastTested(), 120000);
+  }
+
+  pollLastTested(){
+    let last = new Date(JSON.parse(sessionStorage.getItem('last_tested')!));
+    let now = new Date();
+    let diff = now.getTime() - last.getTime();
+    
+    if(diff < 60000){
+      this.lastTested = "Last tested seconds ago";
+    } else if (diff < 3600000) {
+      let mins = Math.floor(diff / 60000);
+      this.lastTested = "Last tested " + mins + " minutes ago";
+    } else if (diff < 86400000) {
+      let hours = Math.floor(diff / 3600000);
+      this.lastTested = "Last tested " + hours + " hours ago";
+    } else {
+      let days = Math.floor(diff / 86400000);
+      this.lastTested = "Last tested " + days + " days ago";
+    }
+    this.requestUpdate();
   }
 
   async getManifest(url: string) {
@@ -602,16 +649,20 @@ export class AppReport extends LitElement {
     if (manifestContext) {
       const parsedManifestContext = manifestContext;
       this.appCard = {
-        siteName: parsedManifestContext.manifest.name
-          ? parsedManifestContext.manifest.name
-          : 'Untitled App',
+        siteName: parsedManifestContext.manifest.short_name
+          ? parsedManifestContext.manifest.short_name
+          : (parsedManifestContext.manifest.name ? parsedManifestContext.manifest.name : 'Untitled App'),
         siteUrl: url,
         description: parsedManifestContext.manifest.description
           ? parsedManifestContext.manifest.description
           : 'Add an app description to your manifest',
       };
     }
+
+    
+
   }
+
   async runAllTests(url: string) {
     this.getManifest(url);
     testManifest(url);
@@ -655,6 +706,7 @@ export class AppReport extends LitElement {
       this.runAllTests(this.siteURL);
     }
   }
+
   async handleDoubleChecks() {
     const maniContext = getManifestContext();
 
@@ -698,25 +750,74 @@ export class AppReport extends LitElement {
     this.requestUpdate();
   }
 
+  iconSrcListParse() {
+
+    let manifest = getManifestContext().manifest;
+    let manifestURL = getManifestContext().manifestUrl;
+
+    if (!manifest && !manifestURL) {
+      return ["/assets/icons/icon_512.png"];
+    }
+
+    let screenshotSrcList: any[] = [];
+
+    manifest!.icons?.forEach((icon: any) => {
+      let iconURL: string = this.handleImageUrl(icon, manifest, manifestURL) || '';
+      if(iconURL){
+        screenshotSrcList.push((iconURL as string));
+      }
+    })
+
+    return screenshotSrcList;
+  }
+
+  handleImageUrl(icon: Icon, manifest: Manifest, manifestURL: string) {
+    if (icon.src.indexOf('data:') === 0 && icon.src.indexOf('base64') !== -1) {
+      return icon.src;
+    }
+
+    let url = resolveUrl(manifestURL, manifest?.startUrl);
+    url = resolveUrl(url?.href, icon.src);
+
+    if (url) {
+      return url.href;
+    }
+
+    return undefined;
+  }
+
+
+
   render() {
     return html`
       <app-header></app-header>
       <div id="report-wrapper">
         <div id="header-row">
+        ${this.isAppCardInfoLoading ?
+        html`
           <div id="app-card" class="flex-col skeleton-effects">
             <div id="card-header">
-              <img src="/assets/icons/icon_512.png" alt="Your sites logo" />
+              <sl-skeleton id="app-image-skeleton" effect="pulse"></sl-skeleton>
               <div id="card-info" class="flex-col">
-                ${this.isAppCardInfoLoading
-                  ? html`<sl-skeleton effect="pulse"></sl-skeleton>`
-                  : html`<p id="site-name">${this.appCard.siteName}</p>
-                      <p>${this.appCard.siteUrl}</p>`}
+                <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
+                <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
               </div>
             </div>
-            ${this.isAppCardInfoLoading
-              ? html`<sl-skeleton effect="pulse"></sl-skeleton>`
-              : html`<p id="card-desc">${this.appCard.description}</p>`}
-          </div>
+            <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
+          </div>`
+          :
+          html`
+          <div id="app-card" class="flex-col skeleton-effects">
+            <div id="card-header">
+              <img src=${this.iconSrcListParse()![0]} alt="Your sites logo" />
+              <div id="card-info" class="flex-col">
+                <p id="site-name">${this.appCard.siteName}</p>
+                <p>${this.appCard.siteUrl}</p>
+              </div>
+            </div>
+            <p id="card-desc">${this.appCard.description}</p>
+          </div>`}
+
           <div id="app-actions" class="flex-col">
             <div id="actions">
               <div id="test" class="flex-col-center">
@@ -738,7 +839,7 @@ export class AppReport extends LitElement {
                     src="/assets/new/last-edited.png"
                     alt="pencil icon"
                     role="presentation"
-                  />2 minutes ago
+                  />${this.lastTested}
                 </p>
               </div>
 
