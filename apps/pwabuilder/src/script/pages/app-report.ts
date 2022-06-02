@@ -104,10 +104,18 @@ export class AppReport extends LitElement {
   // Controls the last tested section
   @state() lastTested: string = "Last tested seconds ago";
 
-  // manifest validation
+  // validation
   @state() validationResults: Validation[] = [];
   @state() manifestTotalScore: number = 0;
   @state() manifestValidCounter: number = 0;
+
+  @state() serviceWorkerResults: any[] = [];
+  @state() swTotalScore: number = 0;
+  @state() swValidCounter: number = 0;
+
+  @state() securityResults: any[] = [];
+  @state() secTotalScore: number = 0;
+  @state() secValidCounter: number = 0;
 
 
   static get styles() {
@@ -669,13 +677,14 @@ export class AppReport extends LitElement {
   }
 
   async runAllTests(url: string) {
-    this.getManifest(url);
+    await this.getManifest(url);
     this.testManifest(url);
     this.testServiceWorker(url);
     this.testSecurity(url);
     //this.updateTimeLastTested();
   }
 
+  // idk if we need the url for this function bc we can just get the manifest context
   async testManifest(url: string) {
     
     //add manifest validation logic
@@ -693,17 +702,14 @@ export class AppReport extends LitElement {
 
     let ring = this.shadowRoot!.getElementById("manifestProgressRing");
     let ratio = parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore
-    console.log("ratio", ratio)
-    if(ratio < 1.0/3) {
-      ring!.classList.add("red")
-    } else if(ratio < 2/3.0){
-      console.log("hitting here!")
-      ring!.classList.add("yellow")
-    } else if(ratio == 1){      
+    
+    if(ratio == 1){      
       ring!.classList.add("green")
+    } else if(ratio < 1.0/3) {
+      ring!.classList.add("red")
+    } else {
+      ring!.classList.add("yellow")
     }
-
-    console.log(ring?.classList)
 
     sessionStorage.setItem(
       'manifest_tests',
@@ -717,20 +723,60 @@ export class AppReport extends LitElement {
   async testServiceWorker(url: string) {
     //call service worker tests
     const serviceWorkerTestResult = await testServiceWorker(url);
+    this.serviceWorkerResults = serviceWorkerTestResult;
+    this.serviceWorkerResults.forEach((result: any) => {
+      if(result.result){
+        this.swValidCounter++;
+      }
+    })
+    this.swTotalScore = this.serviceWorkerResults.length;
+
+    let ring = this.shadowRoot!.getElementById("swProgressRing");
+    let ratio = parseFloat(JSON.stringify(this.swValidCounter)) / this.swTotalScore;
+    
+    if(ratio == 1){      
+      ring!.classList.add("green")
+    } else if(ratio < 1.0/3) {
+      ring!.classList.add("red")
+    } else {
+      ring!.classList.add("yellow")
+    }
+
     //save serviceworker tests in session storage
     sessionStorage.setItem(
       'service_worker_tests',
       JSON.stringify(serviceWorkerTestResult)
     );
     //console.log(serviceWorkerTestResult);
+    this.requestUpdate();
   }
 
   async testSecurity(url: string) {
     //Call security tests
     const securityTests = await testSecurity(url);
+    this.securityResults = securityTests;
+    this.securityResults.forEach((result: any) => {
+      if(result.result){
+        this.secValidCounter++;
+      }
+    })
+    this.secTotalScore = this.securityResults.length;
+
+    let ring = this.shadowRoot!.getElementById("secProgressRing");
+    let ratio = parseFloat(JSON.stringify(this.secValidCounter)) / this.secTotalScore;
+    console.log(ratio);
+    console.log(this.securityResults)
+    if(ratio == 1){      
+      ring!.classList.add("green")
+    } else if(ratio < 1.0/3) {
+      ring!.classList.add("red")
+    } else {
+      ring!.classList.add("yellow")
+    }
     //save security tests in session storage
     sessionStorage.setItem('security_tests', JSON.stringify(securityTests));
     //console.log(securityTests);
+    this.requestUpdate();
   }
 
   async retest() {
@@ -1000,10 +1046,10 @@ export class AppReport extends LitElement {
                   </p>
                 </div>
                 <sl-progress-ring
-                  class="yellow"
+                  id="swProgressRing"
                   id="sw-ring"
-                  value="${(2.0 / 3) * 100}"
-                  >2/3</sl-progress-ring
+                  value="${(parseFloat(JSON.stringify(this.swValidCounter)) / this.swTotalScore) * 100}"
+                  >${this.swValidCounter} / ${this.swTotalScore}</sl-progress-ring
                 >
               </div>
               <div id="sw-actions" class="flex-col">
@@ -1024,12 +1070,15 @@ export class AppReport extends LitElement {
               <div class="detail-grid">
                 <div class="detail-list">
                   <p>*Required</p>
+                  ${this.serviceWorkerResults.map((result: Validation) => result.category === "required" ? html`<p>${result.infoString}</p>` : html``)}
                 </div>
                 <div class="detail-list">
                   <p>Recommended</p>
+                  ${this.serviceWorkerResults.map((result: Validation) => result.category === "recommended" ? html`<p>${result.infoString}</p>` : html``)}
                 </div>
                 <div class="detail-list">
                   <p>Optional</p>
+                  ${this.serviceWorkerResults.map((result: Validation) => result.category === "optional" ? html`<p>${result.infoString}</p>` : html``)}
                 </div>
               </div>
             </sl-details>
@@ -1046,10 +1095,9 @@ export class AppReport extends LitElement {
                   </p>
                 </div>
                 <sl-progress-ring
-                  class="green"
-                  id="sw-ring"
-                  value="${(3 / 3) * 100}"
-                  >3/3</sl-progress-ring
+                  id="secProgressRing"
+                  value="${(parseFloat(JSON.stringify(this.secValidCounter)) / this.secTotalScore) * 100}"
+                  >${this.secValidCounter} / ${this.secTotalScore}</sl-progress-ring
                 >
               </div>
               <div id="sec-actions" class="flex-col">
@@ -1067,6 +1115,7 @@ export class AppReport extends LitElement {
               <div class="detail-grid">
                 <div class="detail-list">
                   <p>*Required</p>
+                  ${this.securityResults.map((result: Validation) => result.category === "required" ? html`<p>${result.infoString}</p>` : html``)}
                 </div>
               </div>
             </sl-details>
