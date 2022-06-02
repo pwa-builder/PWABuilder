@@ -78,7 +78,7 @@ export class AppReport extends LitElement {
   // will be used to control the state of the "Package for store" button.
   @state() canPackage: boolean = false;
   @state() manifestEditorOpened: boolean = false;
-  @state() publishModalOpened: boolean = true;
+  @state() publishModalOpened: boolean = false;
 
   static get styles() {
     return [
@@ -784,7 +784,7 @@ export class AppReport extends LitElement {
           html`
             <div class="modal-blur flex-center">
               <div class="modal flex-col-center">
-                <img class="close_x" src="/assets/Close_desk.png" @click=${() => this.toggleManifestEditorModal()} />
+                <img class="close_x" alt="close button" src="/assets/Close_desk.png" @click=${() => this.toggleManifestEditorModal()} />
                 <manifest-editor-frame></manifest-editor-frame>
               </div>
             </div>` : 
@@ -795,7 +795,7 @@ export class AppReport extends LitElement {
           html`
             <div class="modal-blur flex-center">
               <div class="modal flex-col-center">
-                <img class="close_x" src="/assets/Close_desk.png" @click=${() => this.togglePublishModal()} />
+                <img class="close_x" alt="close button" src="/assets/Close_desk.png" @click=${() => this.togglePublishModal()} />
                 <publish-pane></publish-pane>
               </div>
             </div>` : 

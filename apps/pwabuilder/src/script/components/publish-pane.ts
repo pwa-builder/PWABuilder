@@ -7,6 +7,7 @@ import { WindowsPackageOptions } from '../utils/win-validation';
 import { AndroidPackageOptions } from '../utils/android-validation';
 import { OculusAppPackageOptions } from '../utils/oculus-validation';
 import { generatePackage, Platform } from '../services/publish';
+import { fileSave } from 'browser-fs-access';
 
 import {
   smallBreakPoint,
@@ -36,9 +37,11 @@ export class PublishPane extends LitElement {
   @state() selectedStore = "";
 
   // Used to download files
+  @state() readyToDownload = false;
   @state() blob: Blob | File | null | undefined;
   @state() testBlob: Blob | File | null | undefined;
   @state() downloadFileName: string | null = null;
+  
 
   readonly platforms: ICardData[] = [
     {
@@ -93,7 +96,6 @@ export class PublishPane extends LitElement {
   static get styles() {
     return [
     css`
-
       * {
         box-sizing: border-box;
       }
@@ -474,17 +476,22 @@ export class PublishPane extends LitElement {
 
     try {
       this.generating = true;
+      console.log("generating files");
       const packageData = await generatePackage(platform, options);
 
       if (packageData) {
+        console.log("succesfully generated files");
         this.downloadFileName = `${packageData.appName}.zip`;
         if (packageData.type === 'test') {
           this.testBlob = packageData.blob;
         } else {
+          console.log("non test blob");
           this.blob = packageData.blob;
+          this.readyToDownload = true;
         }
       }
     } catch (err) {
+      console.log("error");
       console.error(err);
       //this.showAlertModal(err as Error, platform);
       recordProcessStep(
@@ -509,6 +516,18 @@ export class PublishPane extends LitElement {
       this.openWindowsOptions = false;
       this.openiOSOptions = false;
       this.openOculusOptions = false; */
+    }
+  }
+
+  async downloadPackage(){
+    if (this.blob || this.testBlob) {
+      await fileSave((this.blob as Blob) || (this.testBlob as Blob), {
+        fileName: this.downloadFileName || 'your_pwa.zip',
+        extensions: ['.zip'],
+      });
+
+      this.blob = undefined;
+      this.testBlob = undefined;
     }
   }
 
@@ -563,11 +582,21 @@ export class PublishPane extends LitElement {
                 <p>Customize your ${this.selectedStore} app below!</p>
               </div>
             </div>
-          </div>        
-          <div id="form-area">
-            ${this.renderForm()}
-          </div>`
-          }
+          </div> 
+          ${!this.readyToDownload ?   
+            // so if this is false then we wanna show the form  
+            html`
+              <div id="form-area">
+                ${this.renderForm()}
+              </div>
+            ` :
+            // when this becomes true this means that we are ready to download something
+            html`
+              <button type="button" @click=${() => this.downloadPackage()}>Download package!</button>
+            `
+          }  
+        `
+        }
         </div>
       </div>
         
