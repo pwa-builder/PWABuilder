@@ -3,37 +3,49 @@ import { isValidJSON } from "./utils/validation-utils";
 import { maniTests } from "./validations";
 
 export async function validateManifest(manifest: Manifest): Promise<Validation[]> {
-    return new Promise((resolve, reject) => {
-        const validationErrors: Validation[] = [];
+
+    return new Promise(async(resolve, reject) => {
+
+        // const validationErrors: Validation[] = [];
         console.log('validating manifest', manifest);
-
         const validJSON = isValidJSON(manifest);
-
         if (validJSON === false) {
-            throw new Error('Manifest is not valid JSON');
-            reject();
+            reject('Manifest is not valid JSON');
         }
+        let data = await loopThroughKeys(manifest);
+        if (data && data.length > 0) {
+            resolve(data);
+        }
+        // resolve(validationErrors);
+    });
 
-        Object.keys(manifest).forEach(async (key) => {
-            for await (const test of maniTests) {
+}
+
+async function loopThroughKeys(manifest: Manifest): Promise<Array<Validation>> {
+
+    return new Promise((resolve) => {
+
+        let data: Array<Validation> = [];
+        const keys = Object.keys(manifest);
+
+        keys.forEach((key) => {
+            maniTests.forEach(async (test) => {
                 if (test.member === key && test.test) {
                     const testResult = await test.test(manifest[key]);
 
-
                     if (testResult === false) {
                         test.valid = false;
-                        validationErrors.push(test);
+                        data.push(test);
                     }
                     else {
                         test.valid = true;
-                        validationErrors.push(test);
+                        data.push(test);
                     }
                 }
-            }
-        });
-
-        resolve(validationErrors);
-    });
+            })
+        })
+        resolve(data);
+    })
 }
 
 export async function validateSingleField(field: string, value: any): Promise<Validation | boolean | undefined> {
