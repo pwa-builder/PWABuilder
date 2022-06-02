@@ -681,23 +681,33 @@ export class AppReport extends LitElement {
     //add manifest validation logic
     // note: wrap in try catch (can fail if invalid json)
     let manifest = JSON.parse(sessionStorage.getItem("manifest_context")!).manifest;
-    console.log("testing manifest", manifest)
     this.validationResults = await validateManifest(manifest);
-    console.log("RESULTS", this.validationResults);
-    console.log(this.validationResults.length)
+    
     this.manifestTotalScore = this.validationResults.length;
+
     this.validationResults.forEach((test: Validation) => {
       if(test.valid){
         this.manifestValidCounter++;
       }
-    })
-    console.log("part", this.manifestValidCounter);
-    console.log("total", this.manifestTotalScore);
+    });
 
-    const manifestTestResult = await testManifest(url, false);
+    let ring = this.shadowRoot!.getElementById("manifestProgressRing");
+    let ratio = parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore
+    console.log("ratio", ratio)
+    if(ratio < 1.0/3) {
+      ring!.classList.add("red")
+    } else if(ratio < 2/3.0){
+      console.log("hitting here!")
+      ring!.classList.add("yellow")
+    } else if(ratio == 1){      
+      ring!.classList.add("green")
+    }
+
+    console.log(ring?.classList)
+
     sessionStorage.setItem(
       'manifest_tests',
-      JSON.stringify(manifestTestResult)
+      JSON.stringify(this.validationResults)
     );
 
     //TODO: Fire event when ready
@@ -955,7 +965,7 @@ export class AppReport extends LitElement {
                   />
                 </a>
               </div>
-              <sl-progress-ring class="red" value="${(parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore) * 100}"
+              <sl-progress-ring id="manifestProgressRing" value="${(parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore) * 100}"
                 >${this.manifestValidCounter} / ${this.manifestTotalScore}</sl-progress-ring
               >
             </div>
@@ -964,12 +974,15 @@ export class AppReport extends LitElement {
             <div id="manifest-detail-grid">
               <div class="detail-list">
                 <p>*Required</p>
+                ${this.validationResults.map((result: Validation) => result.category === "required" ? html`<p>${result.infoString}</p>` : html``)}
               </div>
               <div class="detail-list">
                 <p>Recommended</p>
+                ${this.validationResults.map((result: Validation) => result.category === "recommended" ? html`<p>${result.infoString}</p>` : html``)}
               </div>
               <div class="detail-list">
                 <p>Optional</p>
+                ${this.validationResults.map((result: Validation) => result.category === "optional" ? html`<p>${result.infoString}</p>` : html``)}
               </div>
             </div>
           </sl-details>
