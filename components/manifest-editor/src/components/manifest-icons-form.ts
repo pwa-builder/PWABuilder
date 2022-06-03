@@ -45,7 +45,7 @@ export class ManifestIconsForm extends LitElement {
       #form-holder {
         display: flex;
         flex-direction: column;
-        row-gap: 1em;
+        row-gap: 1.5em;
       }
       .form-field {
         width: 50%;

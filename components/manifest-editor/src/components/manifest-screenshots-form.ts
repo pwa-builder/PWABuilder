@@ -26,17 +26,10 @@ export class ManifestScreenshotsForm extends LitElement {
 
   static get styles() {
     return css`
-
-      sl-input::part(base),
-      sl-select::part(control) {
-        --sl-input-font-size-medium: 16px;
-        --sl-input-height-medium: 3em;
-      }
-      
       #form-holder {
         display: flex;
         flex-direction: column;
-        row-gap: 1em;
+        row-gap: 1.5em;
       }
       .form-field {
         width: 50%;
