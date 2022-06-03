@@ -1,16 +1,19 @@
 import { Manifest, Validation } from "./interfaces";
-import { isValidJSON } from "./utils/validation-utils";
+import { isValidJSON, loopThroughKeys, loopThroughRequiredKeys } from "./utils/validation-utils";
 import { maniTests } from "./validations";
 
 export async function validateManifest(manifest: Manifest): Promise<Validation[]> {
-
     return new Promise(async(resolve, reject) => {
-
-        // const validationErrors: Validation[] = [];
-        console.log('validating manifest', manifest);
         const validJSON = isValidJSON(manifest);
+
         if (validJSON === false) {
             reject('Manifest is not valid JSON');
+        }
+
+        let data = await loopThroughKeys(manifest);
+
+        if (data && data.length > 0) {
+            resolve(data);
         }
         let data = await loopThroughKeys(manifest);
         if (data && data.length > 0) {
@@ -18,34 +21,6 @@ export async function validateManifest(manifest: Manifest): Promise<Validation[]
         }
         // resolve(validationErrors);
     });
-
-}
-
-async function loopThroughKeys(manifest: Manifest): Promise<Array<Validation>> {
-
-    return new Promise((resolve) => {
-
-        let data: Array<Validation> = [];
-        const keys = Object.keys(manifest);
-
-        keys.forEach((key) => {
-            maniTests.forEach(async (test) => {
-                if (test.member === key && test.test) {
-                    const testResult = await test.test(manifest[key]);
-
-                    if (testResult === false) {
-                        test.valid = false;
-                        data.push(test);
-                    }
-                    else {
-                        test.valid = true;
-                        data.push(test);
-                    }
-                }
-            })
-        })
-        resolve(data);
-    })
 }
 
 export async function validateSingleField(field: string, value: any): Promise<Validation | boolean | undefined> {
@@ -61,27 +36,19 @@ export async function validateSingleField(field: string, value: any): Promise<Va
 }
 
 export async function validateRequiredFields(manifest: Manifest): Promise<Validation[]> {
-    const requiredValidationErrors: Validation[] = [];
+    return new Promise(async(resolve, reject) => {
+        const validJSON = isValidJSON(manifest);
 
-    const validJSON = isValidJSON(manifest);
-
-    if (validJSON === false) {
-        throw new Error('Manifest is not valid JSON');
-    }
-
-    for await (const test of maniTests) {
-        if (test && test.category === "required" && test.test) {
-            if (Object.keys(manifest).includes(test.member) === false) {
-                const testResult = await test.test(manifest[test.member]);
-
-                if (testResult === false) {
-                    requiredValidationErrors.push(test);
-                }
-            }
+        if (validJSON === false) {
+            reject('Manifest is not valid JSON');
         }
-    }
 
-    return requiredValidationErrors;
+        let data = await loopThroughRequiredKeys(manifest);
+
+        if (data && data.length > 0) {
+            resolve(data);
+        }
+    });
 }
 
 export async function validateImprovements(manifest: Manifest): Promise<Validation[]> {
