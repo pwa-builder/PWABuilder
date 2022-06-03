@@ -1,5 +1,6 @@
 export interface Validation {
     infoString?: string;
+    displayString?: string;
     category: string;
     member: string;
     defaultValue?: string | any[];
