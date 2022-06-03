@@ -1,17 +1,4 @@
 export interface Validation {
-<<<<<<< HEAD
-    infoString?: string;
-    displayString?: string;
-    category: string;
-    member: string;
-    valid?: boolean;
-    defaultValue?: string | any[];
-    docsLink?: string;
-    errorString?: string;
-    quickFix: boolean;
-    test?: Function;
-    testName?: string;
-=======
   infoString?: string;
   category: string;
   member: string;
@@ -22,7 +9,6 @@ export interface Validation {
   quickFix: boolean;
   test?: Function;
   testName?: string;
->>>>>>> a1c70943a84a39f22b3a4383bc12b64959fe3759
 }
 
 export interface Manifest {
