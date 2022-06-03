@@ -715,10 +715,11 @@ export class AppReport extends LitElement {
   async testManifest(url: string) {
     //add manifest validation logic
     // note: wrap in try catch (can fail if invalid json)
+    let details = (this.shadowRoot!.getElementById("mani-details") as any);
+    details!.disabled = true;
+
     let manifest = JSON.parse(sessionStorage.getItem("manifest_context")!).manifest;
     this.validationResults = await validateManifest(manifest);
-    
-    this.manifestDataLoading = false;
     
     this.manifestTotalScore = this.validationResults.length;
 
@@ -727,6 +728,9 @@ export class AppReport extends LitElement {
         this.manifestValidCounter++;
       }
     });
+
+    this.manifestDataLoading = false;
+    details!.disabled = false;
 
     sessionStorage.setItem(
       'manifest_tests',
@@ -738,6 +742,9 @@ export class AppReport extends LitElement {
 
   async testServiceWorker(url: string) {
     //call service worker tests
+    let details = (this.shadowRoot!.getElementById("sw-details") as any);
+    details!.disabled = true;
+
     const serviceWorkerTestResult = await testServiceWorker(url);
     this.serviceWorkerResults = serviceWorkerTestResult;
     this.serviceWorkerResults.forEach((result: any) => {
@@ -746,8 +753,9 @@ export class AppReport extends LitElement {
       }
     })
     this.swTotalScore = this.serviceWorkerResults.length;
-
+    
     this.swDataLoading = false;
+    details!.disabled = false;
 
     //save serviceworker tests in session storage
     sessionStorage.setItem(
@@ -760,6 +768,9 @@ export class AppReport extends LitElement {
 
   async testSecurity(url: string) {
     //Call security tests
+    let details = (this.shadowRoot!.getElementById("sec-details") as any);
+    details!.disabled = true;
+
     const securityTests = await testSecurity(url);
     this.securityResults = securityTests;
     this.securityResults.forEach((result: any) => {
@@ -770,6 +781,7 @@ export class AppReport extends LitElement {
     this.secTotalScore = this.securityResults.length;
 
     this.secDataLoading = false;
+    details!.disabled = false;
 
     //save security tests in session storage
     sessionStorage.setItem('security_tests', JSON.stringify(securityTests));
@@ -1031,7 +1043,7 @@ export class AppReport extends LitElement {
               }
             </div>
           </div>
-          <sl-details summary="View details" class="details">
+          <sl-details summary="View details" id="mani-details" class="details">
             <div id="manifest-detail-grid">
               <div class="detail-list">
                 <p>*Required</p>
@@ -1105,7 +1117,7 @@ export class AppReport extends LitElement {
                 </a>
               </div>
             </div>
-            <sl-details summary="View details" class="details">
+            <sl-details summary="View details" id="sw-details" class="details">
               <div class="detail-grid">
                 <div class="detail-list">
                   <p>*Required</p>
@@ -1177,7 +1189,7 @@ export class AppReport extends LitElement {
                 </a>
               </div>
             </div>
-            <sl-details summary="View details" class="details">
+            <sl-details summary="View Details" id="sec-details" class="details">
               <div class="detail-grid">
                 <div class="detail-list">
                   <p>*Required</p>
