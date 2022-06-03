@@ -8,22 +8,22 @@ export interface CardData {
 
 export const resourceCards: Array<CardData> = [
   {
-    imageUrl: '/assets/images/blog-card.webp',
-    title: localeStrings.text.resource_hub.titles.blog,
-    description: localeStrings.text.resource_hub.description.blog,
-    linkUrl: 'https://blog.pwabuilder.com',
+    imageUrl: '/assets/new/manifest.svg',
+    title: localeStrings.text.resource_hub_new.titles.manifest,
+    description: localeStrings.text.resource_hub_new.description.manifest,
+    linkUrl: 'https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/03',
   },
   {
-    imageUrl: '/assets/images/demo-card.webp',
-    title: localeStrings.text.resource_hub.titles.demo,
-    description: localeStrings.text.resource_hub.description.demo,
-    linkUrl: 'https://blog.pwabuilder.com/demos',
+    imageUrl: '/assets/new/sw.svg',
+    title: localeStrings.text.resource_hub_new.titles.sw,
+    description: localeStrings.text.resource_hub_new.description.sw,
+    linkUrl: 'https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/05',
   },
   {
-    imageUrl: '/assets/images/docs-card.webp',
-    title: localeStrings.text.resource_hub.titles.documentation,
-    description: localeStrings.text.resource_hub.description.documentation,
-    linkUrl: 'https://blog.pwabuilder.com/docs',
+    imageUrl: '/assets/new/https.svg',
+    title: localeStrings.text.resource_hub_new.titles.https,
+    description: localeStrings.text.resource_hub_new.description.https,
+    linkUrl: 'https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/04',
   },
 ];
 
