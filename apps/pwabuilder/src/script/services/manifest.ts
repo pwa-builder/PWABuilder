@@ -32,7 +32,7 @@ export let emptyManifest: Manifest = {
   screenshots: [],
 };
 
-export function resetInitialManifest() {
+export function resetInitialManifest(){
   initialManifest = undefined;
 }
 
@@ -162,10 +162,7 @@ function timeoutAfter(milliseconds: number): Promise<void> {
  * @param url The URL from which to detect the manifest.
  * @returns A manifest detection result.
  */
-async function fetchManifest(
-  url: string,
-  createIfNone = true
-): Promise<ManifestDetectionResult> {
+async function fetchManifest(url: string): Promise<ManifestDetectionResult> {
   // Manifest detection is surprisingly tricky due to redirects, dynamic code generation, SSL problems, and other issues.
   // We have 2 techniques to detect the manifest:
   // 1. An Azure function that uses Chrome Puppeteer to fetch the manifest
@@ -201,7 +198,7 @@ async function fetchManifest(
     //@ts-ignore:next-line
     if (manifestDetectionResult) {
       const context = getManifestContext();
-
+      
       if (!context.initialManifest) {
         //@ts-ignore:next-line
         initialManifest = manifestDetectionResult.content;
@@ -213,17 +210,13 @@ async function fetchManifest(
       resolve(manifestDetectionResult);
     } else {
       console.error('All manifest detectors failed: Timeout expired.');
-      if (createIfNone) {
-        const createdManifest = await createManifestFromPageOrEmpty(
-          knownGoodUrl
-        );
-        const createdManifestResult = wrapManifestInDetectionResult(
-          createdManifest,
-          knownGoodUrl,
-          true
-        );
-        resolve(createdManifestResult);
-      }
+      const createdManifest = await createManifestFromPageOrEmpty(knownGoodUrl);
+      const createdManifestResult = wrapManifestInDetectionResult(
+        createdManifest,
+        knownGoodUrl,
+        true
+      );
+      resolve(createdManifestResult);
     }
   });
 }
@@ -236,8 +229,7 @@ async function fetchManifest(
  * @returns The manifest context.
  */
 export async function fetchOrCreateManifest(
-  url?: string | null | undefined,
-  createIfNone = true
+  url?: string | null | undefined
 ): Promise<ManifestContext> {
   const siteUrl = url || getSiteUrlFromManifestOrQueryString();
   if (!siteUrl) {
@@ -245,7 +237,7 @@ export async function fetchOrCreateManifest(
   }
 
   setURL(siteUrl);
-  const detectionResult = await fetchManifest(siteUrl, createIfNone);
+  const detectionResult = await fetchManifest(siteUrl);
 
   // Update our global manifest state.
   const context = {

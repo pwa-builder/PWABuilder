@@ -17,7 +17,6 @@ export class ManifestCodeForm extends LitElement {
       css`
         #code-holder {
           position: relative;
-          max-width: 700px;
         }
         #code-editor {
           overflow-x: scroll;
@@ -25,7 +24,6 @@ export class ManifestCodeForm extends LitElement {
           background-color: #f6f8fa;
           padding: 5px;
           padding-top: 0;
-          font-size: 16px;
         }
         #copy-manifest {
           position: absolute;

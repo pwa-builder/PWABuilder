@@ -97,11 +97,10 @@ const default_results: TestResult[] = [
 ];
 
 export async function testManifest(
-  url: string,
-  createIfNone = true
+  url: string
 ): Promise<Array<TestResult> | boolean> {
   try {
-    const manifestData = fetchOrCreateManifest(url, createIfNone);
+    const manifestData = fetchOrCreateManifest(url);
 
     const twentySecondTimeout = new Promise<Array<TestResult>>(resolve =>
       setTimeout(() => resolve(default_results), default_timeout)
