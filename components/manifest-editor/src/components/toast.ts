@@ -17,6 +17,7 @@ export class AppToast extends LitElement {
         font-weight: bold;
         animation-name: slideup;
         animation-duration: 300ms;
+        font-size: 16px;
       }
       @keyframes slideup {
         from {

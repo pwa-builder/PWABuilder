@@ -16,6 +16,7 @@
 }
 
 html, body {
+  font-size: min(max(1rem, 4vw), 22px);
   font-family: var(--font-family);
   padding: 0;
   margin: 0;
@@ -172,4 +173,36 @@ html, body {
   60% {
     transform: translateX(2px);
   }
+}
+
+#manifest-editor-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  backdrop-filter: blur(10px);
+  z-index: 3;
+}
+#modal {
+  background: white;
+  max-width: 700px;
+  border-radius: 10px;
+  box-shadow: 0px 16px 24px rgba(0, 0, 0, 0.12);
+  position: relative;
+  z-index: 4;
+  padding: 1em;
+}
+
+.flex-col-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

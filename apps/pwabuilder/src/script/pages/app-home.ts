@@ -15,10 +15,9 @@ import { isValidURL } from '../utils/url';
 
 import '../components/content-header';
 import '../components/loading-button';
-import '../components/dropdown-menu';
 import '../components/app-sidebar';
 import '../components/companies-packaged';
-import '../components/resource-hub-new';
+import '../components/resource-hub';
 import '../components/success-stories';
 import '../components/community-hub';
 
@@ -30,8 +29,15 @@ import '@pwabuilder/pwainstall';
 import { Router } from '@vaadin/router';
 import { getProgress, getURL, setProgress } from '../services/app-info';
 import { Lazy, ProgressList, Status } from '../utils/interfaces';
-import { fetchOrCreateManifest, resetInitialManifest } from '../services/manifest';
-import { AnalyticsBehavior, recordProcessStep, recordPWABuilderProcessStep } from '../utils/analytics';
+import {
+  fetchOrCreateManifest,
+  resetInitialManifest,
+} from '../services/manifest';
+import {
+  AnalyticsBehavior,
+  recordProcessStep,
+  recordPWABuilderProcessStep,
+} from '../utils/analytics';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -47,7 +53,7 @@ export class AppHome extends LitElement {
       style,
       css`
         #home-block::before {
-          content: "";
+          content: '';
         }
         #home-block {
           background: url(/assets/new/HeroBackground1920.jpg);
@@ -83,7 +89,7 @@ export class AppHome extends LitElement {
           font-weight: bold;
           margin: 0;
           line-height: 1.75em;
-          color: #4F3FB6;
+          color: #4f3fb6;
         }
         #content-grid {
           padding: 0;
@@ -97,14 +103,18 @@ export class AppHome extends LitElement {
           margin-right: 1em;
         }
         @keyframes bounce {
-          0%, 20%, 50%, 80%, 100% {
-              transform: translateY(0);
+          0%,
+          20%,
+          50%,
+          80%,
+          100% {
+            transform: translateY(0);
           }
           40% {
             transform: translateX(-5px);
           }
           60% {
-              transform: translateX(5px);
+            transform: translateX(5px);
           }
         }
         .grid-item-header {
@@ -112,7 +122,7 @@ export class AppHome extends LitElement {
           align-items: center;
           justify-content: flex-start;
           font-weight: bold;
-          margin-bottom: .25em;
+          margin-bottom: 0.25em;
         }
         .grid-item-header a {
           text-decoration: none;
@@ -124,7 +134,7 @@ export class AppHome extends LitElement {
           color: rgb(79, 63, 182);
         }
         .grid-item-header a:visited {
-          color: #4F3FB6;
+          color: #4f3fb6;
         }
         .grid-item-header:hover {
           cursor: pointer;
@@ -134,8 +144,8 @@ export class AppHome extends LitElement {
         }
         .intro-grid-item p {
           margin: 0;
-          color: #292C3A;
-          font-size: .75em;
+          color: #292c3a;
+          font-size: 0.75em;
           width: 15em;
         }
         #input-form {
@@ -195,10 +205,10 @@ export class AppHome extends LitElement {
           width: 100%;
         }
         #demo {
-          font-size: .55em;
+          font-size: 0.55em;
           margin: 0;
           margin-top: 5px;
-          color: #292C3A;
+          color: #292c3a;
         }
         #demo-action {
           margin: 0;
@@ -210,7 +220,7 @@ export class AppHome extends LitElement {
           font-size: 1em;
           margin-left: 1px;
         }
-        #demo-action:hover{
+        #demo-action:hover {
           cursor: pointer;
         }
         #home-header {
@@ -261,7 +271,7 @@ export class AppHome extends LitElement {
           #input-form fast-text-field {
             margin-right: 0;
           }
-          #home-header{
+          #home-header {
             font-size: 40px;
           }
         `)}
@@ -277,7 +287,7 @@ export class AppHome extends LitElement {
             row-gap: 5px;
           }
         }
-        
+
         /* < 480px */
         @media (max-width: 480px) {
           #home-block {
@@ -300,7 +310,7 @@ export class AppHome extends LitElement {
             flex-direction: column;
             row-gap: 1em;
           }
-          #input-and-error{
+          #input-and-error {
             width: 85%;
           }
           #input-area {
@@ -345,6 +355,7 @@ export class AppHome extends LitElement {
             width: 600px;
           }
         }
+<<<<<<< HEAD
         @media screen and (-ms-high-contrast: white-on-black) {
           #input-form fast-text-field::part(control):focus:not(:focus-visible) {
             outline: none;
@@ -359,22 +370,25 @@ export class AppHome extends LitElement {
         } 
         
         /*1024px - 1365px*/ 
+=======
+        /*1024px - 1365px*/
+>>>>>>> a1c70943a84a39f22b3a4383bc12b64959fe3759
         ${xLargeBreakPoint(css`
-            #home-block {
-              background: url(/assets/new/HeroBackground1366.jpg);
-              background-position: center center;
-              background-size: cover;
-              background-repeat: no-repeat;
-            }
+          #home-block {
+            background: url(/assets/new/HeroBackground1366.jpg);
+            background-position: center center;
+            background-size: cover;
+            background-repeat: no-repeat;
+          }
         `)}
-          /* > 1920 */
+        /* > 1920 */
         ${xxxLargeBreakPoint(css`
-            #home-block {
-              align-items: center;
-            }
-            #wrapper {
-              width: 1160px;
-            }
+          #home-block {
+            align-items: center;
+          }
+          #wrapper {
+            width: 1160px;
+          }
         `)}
       `,
     ];
@@ -388,7 +402,7 @@ export class AppHome extends LitElement {
     // Resetting for a new url
     sessionStorage.clear();
     resetInitialManifest();
-    
+
     const search = new URLSearchParams(location.search);
     const site = search.get('site');
 
@@ -397,7 +411,10 @@ export class AppHome extends LitElement {
       await this.analyzeSite();
     }
 
-    recordPWABuilderProcessStep('landing-page-loaded', AnalyticsBehavior.StartProcess);
+    recordPWABuilderProcessStep(
+      'landing-page-loaded',
+      AnalyticsBehavior.StartProcess
+    );
 
     /*
     Step 1: Start the process on home page load
@@ -426,7 +443,7 @@ export class AppHome extends LitElement {
   }
 
   async analyzeSite() {
-    if(this.siteURL !== demoURL){
+    if (this.siteURL !== demoURL) {
       sessionStorage.setItem('demoURL', JSON.stringify(false));
     }
 
@@ -439,75 +456,74 @@ export class AppHome extends LitElement {
         AnalyticsBehavior.StartProcess,
         {
           url: this.siteURL,
-          valid: isValidUrl
-        });
-      recordPWABuilderProcessStep('.top.entered_link_testing_started', AnalyticsBehavior.ProcessCheckpoint, 
-      {
-        url: this.siteURL,
-        valid: isValidUrl
-      });
-      
+          valid: isValidUrl,
+        }
+      );
+      recordPWABuilderProcessStep(
+        '.top.entered_link_testing_started',
+        AnalyticsBehavior.ProcessCheckpoint,
+        {
+          url: this.siteURL,
+          valid: isValidUrl,
+        }
+      );
+
       if (isValidUrl) {
         try {
-          const manifestContext = await fetchOrCreateManifest(this.siteURL);
-          this.errorGettingURL = false;
-
-          const progress = getProgress();
-          this.updateProgress(progress);
-
-          const goodURL = manifestContext.siteUrl;
-          
-          if (goodURL !== undefined) {
-            Router.go(`/testing?site=${goodURL}`);
-          }
+          Router.go(`/reportcard?site=${this.siteURL}`);
         } catch (err) {
           // couldnt get manifest
           // continue forward with zeroed out results
-          // and use generated manifest
-          this.errorGettingURL = false;
-
-          const progress = getProgress();
-          this.updateProgress(progress);
-
-          const goodURL = getURL();
-
-          if (goodURL !== undefined) {
-            Router.go(`/testing?site=${goodURL}`);
-          }
+          // // and use generated manifest
+          // this.errorGettingURL = false;
+          // const progress = getProgress();
+          // this.updateProgress(progress);
+          // const goodURL = getURL();
+          // if (goodURL !== undefined) {
+          //   Router.go(`/testing?site=${goodURL}`);
+          // }
         }
       } else {
         this.errorMessage = localeStrings.input.home.error.invalidURL;
         this.errorGettingURL = true;
-        
+
         await this.updateComplete;
 
-        (this.shadowRoot?.querySelector('.error-message') as HTMLSpanElement)?.focus();
+        (
+          this.shadowRoot?.querySelector('.error-message') as HTMLSpanElement
+        )?.focus();
       }
 
       // HACK: Lit 2.0 crashes on Safari 14 desktop on the following line:
       // this.gettingManifest = false;
       // To fix this, we've found that putting that call in a 100ms timeout fixes the issue.
-      setTimeout(() => this.gettingManifest = false, 100);
+      setTimeout(() => (this.gettingManifest = false), 100);
     }
   }
 
   updateProgress(progressData: ProgressList) {
-    if (progressData && progressData.progress[0] && progressData.progress[0].items[0]) {
+    if (
+      progressData &&
+      progressData.progress[0] &&
+      progressData.progress[0].items[0]
+    ) {
       progressData.progress[0].items[0].done = Status.DONE;
       const newProgress = progressData;
       setProgress(newProgress);
     }
   }
 
-  placeDemoURL(){
+  placeDemoURL() {
     sessionStorage.setItem('demoURL', JSON.stringify(true));
-    recordPWABuilderProcessStep("home.top.DemoURL_clicked", AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep(
+      'home.top.DemoURL_clicked',
+      AnalyticsBehavior.ProcessCheckpoint
+    );
     this.siteURL = demoURL;
-    let box = this.shadowRoot!.getElementById("input-box");
+    let box = this.shadowRoot!.getElementById('input-box');
     (box as HTMLInputElement)!.value = this.siteURL;
     this.analyzeSite();
   }
-
 
   render() {
     return html`
@@ -520,58 +536,131 @@ export class AppHome extends LitElement {
             </h1>
             <section id="content-grid" slot="grid-container">
               <div class="intro-grid-item">
-                <div class="grid-item-header">  
-                  <a @click=${() => recordPWABuilderProcessStep("home.top.PWAStarter_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://github.com/pwa-builder/pwa-starter/wiki/Getting-Started" target="_blank" rel="noopener">Start a new PWA</a>
-                  <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
-                  
+                <div class="grid-item-header">
+                  <a
+                    @click=${() =>
+                      recordPWABuilderProcessStep(
+                        'home.top.PWAStarter_clicked',
+                        AnalyticsBehavior.ProcessCheckpoint
+                      )}
+                    href="https://github.com/pwa-builder/pwa-starter/wiki/Getting-Started"
+                    target="_blank"
+                    rel="noopener"
+                    >Start a new PWA</a
+                  >
+                  <img
+                    src="/assets/new/arrow.svg"
+                    alt="arrow"
+                    role="presentation"
+                  />
                 </div>
                 <p>
-                  Looking to build a new Progressive Web App? Checkout all the documentation here.
+                  Looking to build a new Progressive Web App? Checkout all the
+                  documentation here.
                 </p>
               </div>
-          
+
               <div class="intro-grid-item">
-                <div class="grid-item-header">  
-                  <a @click=${() => recordPWABuilderProcessStep("home.top.PWAStudio_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://aka.ms/install-pwa-studio" target="_blank" rel="noopener">Use dev tools</a>
-                  <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+                <div class="grid-item-header">
+                  <a
+                    @click=${() =>
+                      recordPWABuilderProcessStep(
+                        'home.top.PWAStudio_clicked',
+                        AnalyticsBehavior.ProcessCheckpoint
+                      )}
+                    href="https://aka.ms/install-pwa-studio"
+                    target="_blank"
+                    rel="noopener"
+                    >Use dev tools</a
+                  >
+                  <img
+                    src="/assets/new/arrow.svg"
+                    alt="arrow"
+                    role="presentation"
+                  />
                 </div>
                 <p>
-                  Use our VS Code extension to create, improve, and package your PWA directly in your code editor.
+                  Use our VS Code extension to create, improve, and package your
+                  PWA directly in your code editor.
                 </p>
               </div>
             </section>
-          
-            <form id="input-form" slot="input-container" @submit="${(e: InputEvent) => this.start(e)}">
+
+            <form
+              id="input-form"
+              slot="input-container"
+              @submit="${(e: InputEvent) => this.start(e)}"
+            >
               <div id="input-block" role="region">
                 <div id="input-header-holder">
                   <h2 id="input-header">Ship your PWA to app stores</h2>
-                  <img title="Windows" src="/assets/windows_icon.svg" alt="Windows" />
+                  <img
+                    title="Windows"
+                    src="/assets/windows_icon.svg"
+                    alt="Windows"
+                  />
                   <img title="iOS" src="/assets/apple_icon.svg" alt="iOS" />
-                  <img title="Android" src="/assets/android_icon_full.svg" alt="Android" />
-                  <img title="Meta Quest" src="/assets/meta_icon.svg" alt="Meta Quest" />
+                  <img
+                    title="Android"
+                    src="/assets/android_icon_full.svg"
+                    alt="Android"
+                  />
+                  <img
+                    title="Meta Quest"
+                    src="/assets/meta_icon.svg"
+                    alt="Meta Quest"
+                  />
                 </div>
                 <div id="input-area">
                   <div id="input-and-error">
-                    <fast-text-field slot="input-container" type="text" id="input-box" placeholder="Enter the URL to your PWA" name="url-input"
-                      class="${classMap({ error: this.errorGettingURL })}" aria-labelledby="input-header" @input="${(e: InputEvent) => this.handleURL(e)}">
+                    <fast-text-field
+                      slot="input-container"
+                      type="text"
+                      id="input-box"
+                      placeholder="Enter the URL to your PWA"
+                      name="url-input"
+                      class="${classMap({ error: this.errorGettingURL })}"
+                      aria-labelledby="input-header"
+                      @input="${(e: InputEvent) => this.handleURL(e)}"
+                    >
                     </fast-text-field>
-              
+
                     ${this.errorMessage && this.errorMessage.length > 0
-                      ? html`<span role="alert" aria-live="polite" class="error-message">${this.errorMessage}</span>`
+                      ? html`<span
+                          role="alert"
+                          aria-live="polite"
+                          class="error-message"
+                          >${this.errorMessage}</span
+                        >`
                       : null}
                   </div>
-            
-                  <loading-button id="start-button" type="submit" class="navigation raise" ?loading="${this.gettingManifest}" ?disabled="${this.disableStart}"
-                  @click="${(e: InputEvent) => this.start(e)}">Start</loading-button>
-                  <p id="demo">Try a <button id="demo-action" aria-label="click here for demo url" @click=${() => this.placeDemoURL()}>demo url</button></p>
+
+                  <loading-button
+                    id="start-button"
+                    type="submit"
+                    class="navigation raise"
+                    ?loading="${this.gettingManifest}"
+                    ?disabled="${this.disableStart}"
+                    @click="${(e: InputEvent) => this.start(e)}"
+                    >Start</loading-button
+                  >
+                  <p id="demo">
+                    Try a
+                    <button
+                      id="demo-action"
+                      aria-label="click here for demo url"
+                      @click=${() => this.placeDemoURL()}
+                    >
+                      demo url
+                    </button>
+                  </p>
                 </div>
-                
               </div>
             </form>
           </div>
         </div>
         <companies-packaged></companies-packaged>
-        <resource-hub-new></resource-hub-new>
+        <resource-hub></resource-hub>
         <success-stories></success-stories>
         <community-hub></community-hub>
       </main>
@@ -579,4 +668,4 @@ export class AppHome extends LitElement {
   }
 }
 
-const demoURL: string = "https://webboard.app";
+const demoURL: string = 'https://webboard.app';
