@@ -1,6 +1,3 @@
-import { Manifest, Validation } from "../interfaces";
-import { maniTests } from "../validations";
-
 export function isStandardOrientation(orientation: string): boolean {
   const standardOrientations = [
     "any",
