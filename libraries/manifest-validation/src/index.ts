@@ -9,12 +9,7 @@ export async function validateManifest(manifest: Manifest): Promise<Validation[]
         if (validJSON === false) {
             reject('Manifest is not valid JSON');
         }
-
-        let data = await loopThroughKeys(manifest);
-
-        if (data && data.length > 0) {
-            resolve(data);
-        }
+        
         let data = await loopThroughKeys(manifest);
         if (data && data.length > 0) {
             resolve(data);
