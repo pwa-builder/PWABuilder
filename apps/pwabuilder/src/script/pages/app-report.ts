@@ -9,6 +9,7 @@ import {
   xxxLargeBreakPoint,
   smallBreakPoint,
 } from '../utils/css/breakpoints';
+import {classMap} from 'lit/directives/class-map.js';
 
 import '../components/app-header';
 import '../components/app-modal';
@@ -18,7 +19,6 @@ import '../components/publish-pane';
 
 import { testSecurity } from '../services/tests/security';
 import { testServiceWorker } from '../services/tests/service-worker';
-import { testManifest } from '../services/tests/manifest';
 
 //@ts-ignore
 import style from '../../../styles/layout-defaults.css';
@@ -26,14 +26,13 @@ import {
   Icon,
   Manifest,
   ManifestContext,
-  RawTestResult,
-  ScoreEvent,
+  RawTestResult
 } from '../utils/interfaces';
 
 import { fetchOrCreateManifest } from '../services/manifest';
 import { resolveUrl } from '../utils/url';
 
-const possible_messages = {
+/* const possible_messages = {
   overview: {
     heading: "Your PWA's report card.",
     supporting:
@@ -49,7 +48,7 @@ const possible_messages = {
     supporting:
       'PWABuilder has analyzed your Service Worker, check out the results below. Want to add a Service Worker or check out our pre-built Service Workers? Tap Service Worker Options.',
   },
-};
+}; */
 
 const error_messages = {
   icon: {
@@ -68,6 +67,10 @@ const error_messages = {
     link: 'https://developer.mozilla.org/en-US/docs/Web/Manifest/name',
   },
 };
+
+const valid_src = "/assets/new/valid.svg";
+const yield_src = "/assets/new/yield.svg";
+const stop_src = "/assets/new/stop.svg";
 
 @customElement('app-report')
 export class AppReport extends LitElement {
@@ -108,14 +111,17 @@ export class AppReport extends LitElement {
   @state() validationResults: Validation[] = [];
   @state() manifestTotalScore: number = 0;
   @state() manifestValidCounter: number = 0;
+  @state() manifestDataLoading: boolean = true;
 
   @state() serviceWorkerResults: any[] = [];
   @state() swTotalScore: number = 0;
   @state() swValidCounter: number = 0;
+  @state() swDataLoading: boolean = true;
 
   @state() securityResults: any[] = [];
   @state() secTotalScore: number = 0;
   @state() secValidCounter: number = 0;
+  @state() secDataLoading: boolean = true;
 
 
   static get styles() {
@@ -600,6 +606,27 @@ export class AppReport extends LitElement {
           display: flex;
         }
 
+        .progressRingSkeleton::part(base) {
+          height: 128px;
+          width: 128px;
+          border-radius: 50%;
+        }
+
+        .test-result {
+          display: flex;
+          gap: .5em;
+          align-items: center;
+        }
+
+        .test-result p {
+          font-weight: normal;
+          font-size: 14px;
+        }
+
+        .test-result img {
+          height: 17px;
+        }
+
         ${xxxLargeBreakPoint(css``)}
 
         ${largeBreakPoint(css``)}
@@ -686,11 +713,12 @@ export class AppReport extends LitElement {
 
   // idk if we need the url for this function bc we can just get the manifest context
   async testManifest(url: string) {
-    
     //add manifest validation logic
     // note: wrap in try catch (can fail if invalid json)
     let manifest = JSON.parse(sessionStorage.getItem("manifest_context")!).manifest;
     this.validationResults = await validateManifest(manifest);
+    
+    this.manifestDataLoading = false;
     
     this.manifestTotalScore = this.validationResults.length;
 
@@ -700,22 +728,10 @@ export class AppReport extends LitElement {
       }
     });
 
-    let ring = this.shadowRoot!.getElementById("manifestProgressRing");
-    let ratio = parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore
-    
-    if(ratio == 1){      
-      ring!.classList.add("green")
-    } else if(ratio < 1.0/3) {
-      ring!.classList.add("red")
-    } else {
-      ring!.classList.add("yellow")
-    }
-
     sessionStorage.setItem(
       'manifest_tests',
       JSON.stringify(this.validationResults)
     );
-
     //TODO: Fire event when ready
     this.requestUpdate();
   }
@@ -731,16 +747,7 @@ export class AppReport extends LitElement {
     })
     this.swTotalScore = this.serviceWorkerResults.length;
 
-    let ring = this.shadowRoot!.getElementById("swProgressRing");
-    let ratio = parseFloat(JSON.stringify(this.swValidCounter)) / this.swTotalScore;
-    
-    if(ratio == 1){      
-      ring!.classList.add("green")
-    } else if(ratio < 1.0/3) {
-      ring!.classList.add("red")
-    } else {
-      ring!.classList.add("yellow")
-    }
+    this.swDataLoading = false;
 
     //save serviceworker tests in session storage
     sessionStorage.setItem(
@@ -762,17 +769,8 @@ export class AppReport extends LitElement {
     })
     this.secTotalScore = this.securityResults.length;
 
-    let ring = this.shadowRoot!.getElementById("secProgressRing");
-    let ratio = parseFloat(JSON.stringify(this.secValidCounter)) / this.secTotalScore;
-    console.log(ratio);
-    console.log(this.securityResults)
-    if(ratio == 1){      
-      ring!.classList.add("green")
-    } else if(ratio < 1.0/3) {
-      ring!.classList.add("red")
-    } else {
-      ring!.classList.add("yellow")
-    }
+    this.secDataLoading = false;
+
     //save security tests in session storage
     sessionStorage.setItem('security_tests', JSON.stringify(securityTests));
     //console.log(securityTests);
@@ -862,6 +860,18 @@ export class AppReport extends LitElement {
     }
 
     return undefined;
+  }
+
+  decideColor(valid: number, total: number){
+    let ratio = parseFloat(JSON.stringify(valid)) / total;
+    
+    if(ratio == 1){      
+      return {"green": true, "red": false, "yellow": false};
+    } else if(ratio < 1.0/3) {
+      return {"green": false, "red": true, "yellow": false};
+    } else {
+      return {"green": false, "red": false, "yellow": true};
+    }
   }
 
 
@@ -1011,24 +1021,48 @@ export class AppReport extends LitElement {
                   />
                 </a>
               </div>
-              <sl-progress-ring id="manifestProgressRing" value="${(parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore) * 100}"
-                >${this.manifestValidCounter} / ${this.manifestTotalScore}</sl-progress-ring
-              >
+              ${this.manifestDataLoading ? 
+                  html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
+                  html`<sl-progress-ring 
+                          id="manifestProgressRing" 
+                          class=${classMap(this.decideColor(this.manifestValidCounter, this.manifestTotalScore))}
+                          value="${(parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore) * 100}"
+                        >${this.manifestValidCounter} / ${this.manifestTotalScore}</sl-progress-ring>`
+              }
             </div>
           </div>
           <sl-details summary="View details" class="details">
             <div id="manifest-detail-grid">
               <div class="detail-list">
                 <p>*Required</p>
-                ${this.validationResults.map((result: Validation) => result.category === "required" ? html`<p>${result.infoString}</p>` : html``)}
+                ${this.validationResults.map((result: Validation) => result.category === "required" ? 
+                html`
+                  <div class="test-result">
+                    ${result.valid ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="passing result icon"/>`}
+                    <p>${result.infoString}</p>
+                  </div>
+                ` : 
+                html``)}
               </div>
               <div class="detail-list">
                 <p>Recommended</p>
-                ${this.validationResults.map((result: Validation) => result.category === "recommended" ? html`<p>${result.infoString}</p>` : html``)}
+                ${this.validationResults.map((result: Validation) => result.category === "recommended" ? 
+                html`
+                  <div class="test-result">
+                    ${result.valid ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
+                    <p>${result.infoString}</p>
+                  </div>
+                ` : html``)}
               </div>
               <div class="detail-list">
                 <p>Optional</p>
-                ${this.validationResults.map((result: Validation) => result.category === "optional" ? html`<p>${result.infoString}</p>` : html``)}
+                ${this.validationResults.map((result: Validation) => result.category === "optional" ? 
+                html`
+                  <div class="test-result">
+                    ${result.valid ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
+                    <p>${result.infoString}</p>
+                  </div>
+                ` : html``)}
               </div>
             </div>
           </sl-details>
@@ -1045,12 +1079,17 @@ export class AppReport extends LitElement {
                     pre-built Service Workers? Tap Genereate Service Worker.
                   </p>
                 </div>
-                <sl-progress-ring
+
+                ${this.swDataLoading ? 
+                  html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
+                  html`<sl-progress-ring
                   id="swProgressRing"
-                  id="sw-ring"
+                  class=${classMap(this.decideColor(this.swValidCounter, this.swTotalScore))}
                   value="${(parseFloat(JSON.stringify(this.swValidCounter)) / this.swTotalScore) * 100}"
-                  >${this.swValidCounter} / ${this.swTotalScore}</sl-progress-ring
-                >
+                  >${this.swValidCounter} / ${this.swTotalScore}</sl-progress-ring>
+                  `
+                }
+
               </div>
               <div id="sw-actions" class="flex-col">
                 <button type="button" class="alternate">
@@ -1070,15 +1109,36 @@ export class AppReport extends LitElement {
               <div class="detail-grid">
                 <div class="detail-list">
                   <p>*Required</p>
-                  ${this.serviceWorkerResults.map((result: Validation) => result.category === "required" ? html`<p>${result.infoString}</p>` : html``)}
+                  ${this.serviceWorkerResults.map((result: Validation) => result.category === "required" ? 
+                  html`
+                    <div class="test-result">
+                      ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="passing result icon"/>`}
+                      <p>${result.infoString}</p>
+                    </div>
+                  ` : 
+                  html``)}
                 </div>
                 <div class="detail-list">
                   <p>Recommended</p>
-                  ${this.serviceWorkerResults.map((result: Validation) => result.category === "recommended" ? html`<p>${result.infoString}</p>` : html``)}
+                  ${this.serviceWorkerResults.map((result: Validation) => result.category === "recommended" ? 
+                  html`
+                   <div class="test-result">
+                      ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
+                      <p>${result.infoString}</p>
+                    </div>
+                  ` : 
+                  html``)}
                 </div>
                 <div class="detail-list">
                   <p>Optional</p>
-                  ${this.serviceWorkerResults.map((result: Validation) => result.category === "optional" ? html`<p>${result.infoString}</p>` : html``)}
+                  ${this.serviceWorkerResults.map((result: Validation) => result.category === "optional" ? 
+                  html`
+                    <div class="test-result">
+                      ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
+                      <p>${result.infoString}</p>
+                    </div>
+                  ` : 
+                  html``)}
                 </div>
               </div>
             </sl-details>
@@ -1094,11 +1154,17 @@ export class AppReport extends LitElement {
                     publish to Azure to get built-in HTTPS support.
                   </p>
                 </div>
-                <sl-progress-ring
+
+                ${this.secDataLoading ? 
+                  html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
+                  html`<sl-progress-ring
                   id="secProgressRing"
+                  class=${classMap(this.decideColor(this.secValidCounter, this.secTotalScore))}
                   value="${(parseFloat(JSON.stringify(this.secValidCounter)) / this.secTotalScore) * 100}"
-                  >${this.secValidCounter} / ${this.secTotalScore}</sl-progress-ring
-                >
+                  >${this.secValidCounter} / ${this.secTotalScore}</sl-progress-ring>
+                  `
+                }
+                
               </div>
               <div id="sec-actions" class="flex-col">
                 <a class="arrow_anchor" href="" rel="noopener" target="_blank">
@@ -1115,7 +1181,14 @@ export class AppReport extends LitElement {
               <div class="detail-grid">
                 <div class="detail-list">
                   <p>*Required</p>
-                  ${this.securityResults.map((result: Validation) => result.category === "required" ? html`<p>${result.infoString}</p>` : html``)}
+                  ${this.securityResults.map((result: Validation) => result.category === "required" ? 
+                    html`
+                      <div class="test-result">
+                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="passing result icon"/>`}
+                        <p>${result.infoString}</p>
+                      </div>
+                    ` : 
+                    html``)}
                 </div>
               </div>
             </sl-details>

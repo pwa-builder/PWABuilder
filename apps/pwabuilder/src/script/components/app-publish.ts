@@ -577,11 +577,11 @@ export class AppPublish extends LitElement {
       AnalyticsBehavior.CompleteProcess,
       { url: getURL() });
 
-      recordProcessStep(
-        'pwa-builder',
-        `create-${platform}-package`,
-        AnalyticsBehavior.CompleteProcess,
-        { url: getURL() });
+    recordProcessStep(
+      'pwa-builder',
+      `create-${platform}-package`,
+      AnalyticsBehavior.CompleteProcess,
+      { url: getURL() });
 
     try {
       this.generating = true;
