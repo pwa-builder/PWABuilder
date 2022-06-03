@@ -79,7 +79,6 @@ test('Should reject because of improper JSON', async (t) => {
   assert.rejects(maniLib.validateManifest('{'));
 });
 
-
 /*
   * Test validateSingleField method
 */
@@ -91,12 +90,28 @@ test('can validate a single field, should return true', async (t) => {
 });
 
 test('can validate a single field, should return false', async (t) => {
-  const validity = await maniLib.validateSingleField("theme_color", "black");
+  const validityMember = await maniLib.validateSingleField("theme_color", "black");
 
-  // validity should be a boolean, and false in this case
-  assert.strictEqual(validity, false);
+  // validity should return a Validation, and we check that its the right validation
+  assert.strictEqual(validityMember.member, "theme_color");
 });
 
 /*
  * test validateRequiredFields method
 */
+test('can validate required fields', async (t) => {
+  assert.doesNotReject(maniLib.validateRequiredFields(test_manifest));
+});
+
+test('should reject because of missing required field', async (t) => {
+  const manifest = JSON.parse(test_manifest);
+  delete manifest.short_name;
+  const newMani = JSON.stringify(manifest);
+
+  assert.rejects(maniLib.validateRequiredFields(newMani));
+});
+
+// should reject because of improper json
+test('should reject because of improper json', async (t) => {
+  assert.rejects(maniLib.validateRequiredFields('{'));
+});
