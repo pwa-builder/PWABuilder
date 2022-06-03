@@ -1,22 +1,21 @@
 import { Manifest, Validation } from "./interfaces";
+import { isValidJSON, loopThroughKeys, loopThroughRequiredKeys } from "./utils/validation-utils";
 import { maniTests } from "./validations";
 
 export async function validateManifest(manifest: Manifest): Promise<Validation[]> {
-    const validationErrors: Validation[] = [];
+    return new Promise(async(resolve, reject) => {
+        const validJSON = isValidJSON(manifest);
 
-    Object.keys(manifest).forEach(async (key) => {
-        for await (const test of maniTests) {
-            if (test.member === key && test.test) {
-                const testResult = await test.test(manifest[key]);
+        if (validJSON === false) {
+            reject('Manifest is not valid JSON');
+        }
 
-                if (testResult === false) {
-                    validationErrors.push(test)
-                }
-            }
+        let data = await loopThroughKeys(manifest);
+
+        if (data && data.length > 0) {
+            resolve(data);
         }
     });
-
-    return validationErrors;
 }
 
 export async function validateSingleField(field: string, value: any): Promise<Validation | boolean | undefined> {
@@ -37,15 +36,17 @@ export async function validateSingleField(field: string, value: any): Promise<Va
 }
 
 export async function validateRequiredFields(manifest: Manifest): Promise<Validation[]> {
-    const requiredValidationErrors: Validation[] = [];
+    return new Promise(async(resolve, reject) => {
+        const validJSON = isValidJSON(manifest);
 
-    for await (const test of maniTests) {
-        if (test.category === "required") {
-            if (Object.keys(manifest).includes(test.member) === false) {
-                requiredValidationErrors.push(test);
-            }
+        if (validJSON === false) {
+            reject('Manifest is not valid JSON');
         }
-    }
 
-    return requiredValidationErrors;
+        let data = await loopThroughRequiredKeys(manifest);
+
+        if (data && data.length > 0) {
+            resolve(data);
+        }
+    });
 }
