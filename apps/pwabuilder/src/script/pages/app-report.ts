@@ -131,7 +131,6 @@ export class AppReport extends LitElement {
         * {
           box-sizing: border-box;
         }
-
         #report-wrapper {
           width: 100%;
           display: flex;
@@ -142,7 +141,6 @@ export class AppReport extends LitElement {
           padding: 20px;
           box-sizing: border-box;
         }
-
         #header-row {
           width: 100%;
           display: flex;
@@ -150,7 +148,6 @@ export class AppReport extends LitElement {
           justify-content: center;
           column-gap: 1em;
         }
-
         #app-card {
           width: 30%;
           height: 180px;
@@ -160,12 +157,10 @@ export class AppReport extends LitElement {
           row-gap: 10px;
           box-shadow: 0px 4px 30px 0px #00000014;
         }
-
         .flex-col {
           display: flex;
           flex-direction: column;
         }
-
         #card-header {
           display: flex;
           column-gap: 10px;
@@ -174,24 +169,19 @@ export class AppReport extends LitElement {
           font-weight: bold;
           width: 100%;
         }
-
         #card-header img {
           height: 85px;
           width: auto;
         }
-
         #site-name {
           font-size: 24px;
         }
-
         #card-info {
           width: 100%;
         }
-
         #card-info p {
           margin: 0;
         }
-
         #card-desc {
           margin: 0;
           font-size: 14px;
@@ -203,7 +193,6 @@ export class AppReport extends LitElement {
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
         }
-
         #app-actions {
           width: 70%;
           border-radius: 10px;
@@ -213,11 +202,9 @@ export class AppReport extends LitElement {
           justify-content: space-between;
           box-shadow: 0px 4px 30px 0px #00000014;
         }
-
         #app-actions button {
           font-weight: bold;
         }
-
         #actions {
           display: flex;
           align-items: center;
@@ -225,36 +212,30 @@ export class AppReport extends LitElement {
           padding-bottom: 0;
           width: 100%;
         }
-
         #app-image-skeleton {
           height: 85px;
           width: 130px;
           --border-radius: 0;
         }
-
         .app-info-skeleton {
           width: 100%;
           margin-bottom: 10px;
         }
-
         #test {
           row-gap: 20px;
           width: 45%;
         }
-
         .flex-col-center {
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
         }
-
         .flex-center {
           display: flex;
           align-items: center;
           justify-content: center;
         }
-
         #retest {
           background-color: #4f3fb6;
           border-radius: 50px;
@@ -266,7 +247,6 @@ export class AppReport extends LitElement {
           font-size: 16px;
           border: none;
         }
-
         #last-edited {
           color: #808080;
           font-size: 12px;
@@ -275,12 +255,10 @@ export class AppReport extends LitElement {
           align-items: center;
           column-gap: 10px;
         }
-
         #package {
           row-gap: 20px;
           width: 55%;
         }
-
         #pfs {
           background-color: black;
           color: white;
@@ -289,11 +267,9 @@ export class AppReport extends LitElement {
           padding: 1em 3em;
           border: none;
         }
-
         #hover {
           background-color: rgba(0, 0, 0, 0.75);
         }
-
         #test-download {
           background-color: transparent;
           color: #4f3fb6;
@@ -303,11 +279,9 @@ export class AppReport extends LitElement {
           column-gap: 0.5em;
           align-items: center;
         }
-
         #test-download:hover img {
           animation: bounce 1s;
         }
-
         @keyframes bounce {
           0%,
           20%,
@@ -323,17 +297,14 @@ export class AppReport extends LitElement {
             transform: translateX(5px);
           }
         }
-
         .arrow_link {
           margin: 0;
           border-bottom: 1px solid #4f3fb6;
           white-space: nowrap;
         }
-
         button:hover {
           cursor: pointer;
         }
-
         #actions-footer {
           background-color: #f2f3fb;
           width: 100%;
@@ -342,71 +313,58 @@ export class AppReport extends LitElement {
           border-bottom-right-radius: 10px;
           padding: 0.5em 1em;
         }
-
         #actions-footer img {
           height: 20px;
           width: auto;
         }
-
         #actions-footer p {
           margin: 0;
           font-size: 12px;
           font-weight: bold;
         }
-
         #todo {
           width: 100%;
           box-shadow: 0px 4px 30px 0px #00000014;
         }
-
         sl-details {
           width: 100%;
         }
-
         #todo-detail::part(base) {
           border-radius: 10px;
         }
-
         #todo-detail::part(header) {
           height: 60px;
         }
-
         #todo-detail::part(summary) {
           color: #4f3fb6;
           font-size: 20px;
           font-weight: bold;
         }
-
         #manifest {
           box-shadow: 0px 4px 30px 0px #00000014;
           background-color: white;
           border-radius: 10px;
           width: 100%;
         }
-
         #manifest-header {
           display: flex;
           justify-content: space-between;
           border-bottom: 1px solid #c4c4c4;
           padding: 1em;
         }
-
         #mh-left {
           width: 50%;
           row-gap: 0.5em;
         }
-
         .card-header {
           font-size: 24px;
           font-weight: bold;
           margin: 0;
         }
-
         .card-desc {
           margin: 0;
           font-size: 14px;
         }
-
         #mh-right {
           display: flex;
           column-gap: 2.5em;
@@ -414,7 +372,6 @@ export class AppReport extends LitElement {
         #mh-actions {
           row-gap: 1em;
         }
-
         .arrow_anchor {
           text-decoration: none;
           font-size: 14px;
@@ -434,7 +391,6 @@ export class AppReport extends LitElement {
         .arrow_anchor:hover img {
           animation: bounce 1s;
         }
-
         #report-wrapper .alternate {
           background: var(--secondary-color);
           color: #4f3fb6;
@@ -444,111 +400,88 @@ export class AppReport extends LitElement {
           border-radius: 50px;
           padding: 0.5em 2em;
         }
-
         #report-wrapper .alternate:hover {
           box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
         }
-
         #manifest-detail-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
         }
-
         .detail-list {
           display: flex;
           flex-direction: column;
           row-gap: 10px;
         }
-
         .detail-list p {
           font-size: 18px;
           margin: 0;
           font-weight: bold;
         }
-
         .details::part(base) {
           border-radius: 0;
           border-bottom-left-radius: 10px;
           border-bottom-right-radius: 10px;
           border: none;
         }
-
         .details::part(summary) {
           font-weight: bold;
           font-size: 14px;
         }
-
         .details::part(header) {
           height: 40px;
         }
-
         #two-cell-row {
           display: flex;
           column-gap: 1em;
           width: 100%;
         }
-
         #sw {
         }
-
         #sw-header {
           row-gap: 0.5em;
           border-bottom: 1px solid #c4c4c4;
           padding: 1em;
         }
-
         #swh-top {
           display: flex;
           column-gap: 1em;
         }
-
         #swh-text {
           row-gap: 0.5em;
         }
-
         #sw-ring {
           --size: 80px;
           height: fit-content;
         }
-
         #sw-actions {
           row-gap: 1em;
           width: 40%;
         }
-
         .detail-grid {
           display: flex;
           flex-direction: column;
           row-gap: 0.5em;
         }
-
         .red {
           --indicator-color: var(--error-color);
         }
-
         .yellow {
           --indicator-color: var(--warning-color);
         }
-
         .green {
           --indicator-color: var(--success-color);
         }
-
         #security {
           justify-content: space-between;
         }
-
         .half-width-cards {
           display: flex;
           flex-direction: column;
-
           width: 50%;
           border-radius: 10px;
           background-color: white;
-
           row-gap: 0.5em;
         }
-
         #sec-header {
           justify-content: space-between;
           row-gap: 0.5em;
@@ -556,21 +489,17 @@ export class AppReport extends LitElement {
           padding: 1em;
           border-bottom: 1px solid #c4c4c4;
         }
-
         #sec-top {
           display: flex;
           column-gap: 1em;
         }
-
         #sec-text {
           row-gap: 0.5em;
         }
-
         #sec-actions {
           row-gap: 1em;
           width: 66%;
         }
-
         .close_x {
           position: absolute;
           top: 1em;
@@ -579,11 +508,9 @@ export class AppReport extends LitElement {
           width: auto;
           z-index: 10;
         }
-
         .close_x:hover {
           cursor: pointer;
         }
-
         .modal-blur {
           position: fixed;
           top: 0;
@@ -602,37 +529,32 @@ export class AppReport extends LitElement {
           box-shadow: 0px 16px 24px rgba(0, 0, 0, 0.12);
           position: relative;
           z-index: 4;
-
           display: flex;
         }
-
         .progressRingSkeleton::part(base) {
           height: 128px;
           width: 128px;
           border-radius: 50%;
         }
-
         .test-result {
           display: flex;
           gap: .5em;
           align-items: center;
         }
-
         .test-result p {
           font-weight: normal;
           font-size: 14px;
         }
-
         .test-result img {
           height: 17px;
         }
-
+        .summary-skeleton {
+          width: 200px;
+          --color: #d0d0d3
+        }
         ${xxxLargeBreakPoint(css``)}
-
         ${largeBreakPoint(css``)}
-
         ${mediumBreakPoint(css``)}
-
         ${smallBreakPoint(css``)}
       `,
     ];
@@ -917,7 +839,6 @@ export class AppReport extends LitElement {
             </div>
             <p id="card-desc">${this.appCard.description}</p>
           </div>`}
-
           <div id="app-actions" class="flex-col">
             <div id="actions">
               <div id="test" class="flex-col-center">
@@ -942,9 +863,7 @@ export class AppReport extends LitElement {
                   />${this.lastTested}
                 </p>
               </div>
-
               <img src="/assets/new/vertical-divider.png" role="presentation" />
-
               <div id="package" class="flex-col-center">
                 <button
                   type="button"
@@ -1043,7 +962,8 @@ export class AppReport extends LitElement {
               }
             </div>
           </div>
-          <sl-details summary="View details" id="mani-details" class="details">
+          <sl-details id="mani-details" class="details">
+            ${this.manifestDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
             <div id="manifest-detail-grid">
               <div class="detail-list">
                 <p>*Required</p>
@@ -1091,7 +1011,6 @@ export class AppReport extends LitElement {
                     pre-built Service Workers? Tap Genereate Service Worker.
                   </p>
                 </div>
-
                 ${this.swDataLoading ? 
                   html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
                   html`<sl-progress-ring
@@ -1101,7 +1020,6 @@ export class AppReport extends LitElement {
                   >${this.swValidCounter} / ${this.swTotalScore}</sl-progress-ring>
                   `
                 }
-
               </div>
               <div id="sw-actions" class="flex-col">
                 <button type="button" class="alternate">
@@ -1117,7 +1035,8 @@ export class AppReport extends LitElement {
                 </a>
               </div>
             </div>
-            <sl-details summary="View details" id="sw-details" class="details">
+            <sl-details id="sw-details" class="details">
+              ${this.swDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
               <div class="detail-grid">
                 <div class="detail-list">
                   <p>*Required</p>
@@ -1166,7 +1085,6 @@ export class AppReport extends LitElement {
                     publish to Azure to get built-in HTTPS support.
                   </p>
                 </div>
-
                 ${this.secDataLoading ? 
                   html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
                   html`<sl-progress-ring
@@ -1189,7 +1107,8 @@ export class AppReport extends LitElement {
                 </a>
               </div>
             </div>
-            <sl-details summary="View Details" id="sec-details" class="details">
+            <sl-details id="sec-details" class="details">
+            ${this.secDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
               <div class="detail-grid">
                 <div class="detail-list">
                   <p>*Required</p>
@@ -1206,7 +1125,6 @@ export class AppReport extends LitElement {
             </sl-details>
           </div>
         </div>
-
         ${this.manifestEditorOpened
           ? html` <div class="modal-blur flex-center">
               <div class="modal flex-col-center">
