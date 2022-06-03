@@ -627,11 +627,6 @@ export class AppReport extends LitElement {
           height: 17px;
         }
 
-        .summary-skeleton {
-          width: 200px;
-          --color: #d0d0d3
-        }
-
         ${xxxLargeBreakPoint(css``)}
 
         ${largeBreakPoint(css``)}
@@ -1048,8 +1043,7 @@ export class AppReport extends LitElement {
               }
             </div>
           </div>
-          <sl-details id="mani-details" class="details">
-            ${this.manifestDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
+          <sl-details summary="View details" id="mani-details" class="details">
             <div id="manifest-detail-grid">
               <div class="detail-list">
                 <p>*Required</p>
@@ -1123,8 +1117,7 @@ export class AppReport extends LitElement {
                 </a>
               </div>
             </div>
-            <sl-details id="sw-details" class="details">
-              ${this.swDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
+            <sl-details summary="View details" id="sw-details" class="details">
               <div class="detail-grid">
                 <div class="detail-list">
                   <p>*Required</p>
@@ -1196,9 +1189,7 @@ export class AppReport extends LitElement {
                 </a>
               </div>
             </div>
-            <sl-details id="sec-details" class="details">
-            ${this.secDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
-
+            <sl-details summary="View Details" id="sec-details" class="details">
               <div class="detail-grid">
                 <div class="detail-list">
                   <p>*Required</p>
