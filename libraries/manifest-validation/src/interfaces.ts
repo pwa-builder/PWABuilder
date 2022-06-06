@@ -10,6 +10,7 @@ export interface Validation {
     quickFix: boolean;
     test?: Function;
     testName?: string;
+    valid?: boolean;
 }
 
 export interface Manifest {
