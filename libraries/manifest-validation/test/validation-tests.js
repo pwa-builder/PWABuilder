@@ -80,6 +80,15 @@ test('Should reject because of improper JSON', async (t) => {
 });
 
 /*
+* Test reportMissing method
+*/
+test('can report missing fields', async (t) => {
+  const report = await maniLib.reportMissing(test_manifest);
+  assert.equal(report.length > 0, true);
+  assert.equal(report.includes("iarc_rating_id"), true);
+})
+
+/*
   * Test validateSingleField method
 */
 test('can validate a single field, should return true', async (t) => {

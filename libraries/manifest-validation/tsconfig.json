@@ -5,5 +5,8 @@
     "rootDir": "./src",
     "outDir": "./dist",                                   /* Specify an output folder for all emitted files. */
     "removeComments": true,                           /* Disable emitting comments. */
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "module": "CommonJS",
   }
 }
