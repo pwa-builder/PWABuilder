@@ -22,6 +22,13 @@ This package runs our validation tests against a Web Manifest. It can be used in
     ```javascript 
     const result = validateRequiredFields(manifest);
     ```
+- reportMissing
+  - This method will find all of fields that are missing in the passed manifest
+  - Parameters:
+    - manifest: The manifest to validate as a standard JSON object
+  - Returns: An array of `string` that contains each field that could not be found in the manifest
+  - Usage Example: Same as the above method
+  
 - validateManifest
   - This method will validate the manifest against all fields and all issues
   - Parameters:
