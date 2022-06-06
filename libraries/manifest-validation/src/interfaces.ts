@@ -3,13 +3,13 @@ export interface Validation {
     displayString?: string;
     category: string;
     member: string;
-    valid?: boolean;
     defaultValue?: string | any[];
     docsLink?: string;
     errorString?: string;
     quickFix: boolean;
     test?: Function;
     testName?: string;
+    valid?: boolean;
 }
 
 export interface Manifest {

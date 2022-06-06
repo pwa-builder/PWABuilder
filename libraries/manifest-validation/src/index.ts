@@ -1,21 +1,23 @@
 import { Manifest, Validation } from "./interfaces";
-import { isValidJSON, loopThroughKeys, loopThroughRequiredKeys } from "./utils/validation-utils";
+import { isValidJSON, loopThroughRequiredKeys } from "./utils/validation-utils";
 import { maniTests } from "./validations";
 
 export async function validateManifest(manifest: Manifest): Promise<Validation[]> {
-    return new Promise(async(resolve, reject) => {
-        const validJSON = isValidJSON(manifest);
+    const validationErrors: Validation[] = [];
 
-        if (validJSON === false) {
-            reject('Manifest is not valid JSON');
-        }
+    Object.keys(manifest).forEach(async (key) => {
+        for await (const test of maniTests) {
+            if (test.member === key && test.test) {
+                const testResult = await test.test(manifest[key]);
 
-        let data = await loopThroughKeys(manifest);
-
-        if (data && data.length > 0) {
-            resolve(data);
+                if (testResult === false) {
+                    validationErrors.push(test)
+                }
+            }
         }
     });
+
+    return validationErrors;
 }
 
 export async function validateSingleField(field: string, value: any): Promise<Validation | boolean | undefined> {
