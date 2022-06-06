@@ -70,6 +70,8 @@ Before you can submit your PWA to the Microsoft Store, you'll need to create the
 
 You can now use the packages you downloaded to submit your application through Partner Center.
 
+?> **Note** PWABuilder generates icons for you when creating your package. These are the icons that will appear on the OS when your application is installed.
+
 ## Submitting Your PWA
 
 To submit your PWA through Partner Center:
