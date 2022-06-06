@@ -10,6 +10,7 @@ import {
   smallBreakPoint,
 } from '../utils/css/breakpoints';
 import {classMap} from 'lit/directives/class-map.js';
+import { styleMap } from 'lit/directives/style-map.js';
 
 import '../components/app-header';
 import '../components/app-modal';
@@ -80,6 +81,8 @@ export class AppReport extends LitElement {
     description: "Your site's description",
     siteUrl: 'Site URL',
   };
+  @property()
+  styles = { backgroundColor: 'white' };
   @property() manifestCard = {};
   @property() serviceWorkerCard = {};
   @property() securityCard = {};
@@ -624,6 +627,9 @@ export class AppReport extends LitElement {
           ? parsedManifestContext.manifest.description
           : 'Add an app description to your manifest',
       };
+      if(manifestContext.manifest.background_color){
+        this.styles.backgroundColor = manifestContext.manifest.background_color;
+      }
     }
 
     
@@ -656,6 +662,12 @@ export class AppReport extends LitElement {
         this.manifestValidCounter++;
       }
     });
+
+    // call report missing
+    // add total missing to total
+    // add the missing fields to the this.validationResults
+    // so that the display string can show
+
 
     this.manifestDataLoading = false;
     details!.disabled = false;
@@ -836,7 +848,7 @@ export class AppReport extends LitElement {
             </div>`
             :
             html`
-            <div id="app-card" class="flex-col skeleton-effects">
+            <div id="app-card" class="flex-col" style=${styleMap(this.styles)}>
               <div id="card-header">
                 <img src=${this.iconSrcListParse()![0]} alt="Your sites logo" />
                 <div id="card-info" class="flex-col">
