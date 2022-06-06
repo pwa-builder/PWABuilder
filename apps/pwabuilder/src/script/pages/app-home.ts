@@ -433,14 +433,7 @@ export class AppHome extends LitElement {
     if (this.siteURL) {
       this.gettingManifest = true;
       const isValidUrl = isValidURL(this.siteURL);
-      recordProcessStep(
-        'analyze-and-package-pwa',
-        'url-analysis-started',
-        AnalyticsBehavior.StartProcess,
-        {
-          url: this.siteURL,
-          valid: isValidUrl
-        });
+      
       recordPWABuilderProcessStep('.top.entered_link_testing_started', AnalyticsBehavior.ProcessCheckpoint, 
       {
         url: this.siteURL,
