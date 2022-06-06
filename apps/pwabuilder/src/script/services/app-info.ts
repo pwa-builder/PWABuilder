@@ -10,6 +10,7 @@ import {
 import { runManifestChecks } from '../utils/manifest-validation';
 import { getSetSWCounter } from './service_worker';
 
+
 let site_url: string | undefined;
 let results: RawTestResult | undefined;
 let manifestContext: ManifestContext | undefined;
@@ -138,6 +139,7 @@ export function getResults(): RawTestResult | undefined {
 }
 
 export async function baseOrPublish(): Promise<'base' | 'publish'> {
+  
   // This counter != 0 if the user has selected a custom SW.
   const setSWCounter = getSetSWCounter();
 
@@ -252,30 +254,25 @@ export function isManifestEdited(
 
   // loop through all the values in the original manifest
   // and see if they are diffrent in the newMani
-  Object.keys(originalMani).forEach(key => {
+  Object.keys(originalMani).forEach((key) => {
+
     if (Array.isArray(originalMani[key]) && Array.isArray(newMani[key])) {
       let flattened_original: Array<any> = originalMani[key].flat(2);
       let flattened_new: Array<any> = newMani[key].flat(2);
 
       flattened_original.forEach((item: any, index) => {
-        if (
-          flattened_new.includes(item) === true &&
-          flattened_new[index] !== item
-        ) {
+        if (flattened_new.includes(item) === true && flattened_new[index] !== item) {
           getManifestContext().isEdited = true;
         }
-      });
-    } else if (
-      JSON.stringify(originalMani[key]) !== JSON.stringify(newMani[key])
-    ) {
+      })
+    }
+    else if (JSON.stringify(originalMani[key]) !== JSON.stringify(newMani[key])) {
       getManifestContext().isEdited = true;
     }
   });
 }
 
-export async function doubleCheckManifest(
-  maniContext: ManifestContext
-): Promise<{
+export async function doubleCheckManifest(maniContext: ManifestContext): Promise<{
   startURL: boolean;
   name: boolean;
   shortName: boolean;
@@ -297,10 +294,7 @@ export async function doubleCheckManifest(
       if (test.infoString.includes('short_name')) {
         shortName = test.result;
       }
-      if (
-        test.infoString.includes('name') &&
-        test.infoString.toLowerCase().includes('short_name') === false
-      ) {
+      if (test.infoString.includes('name') && test.infoString.toLowerCase().includes('short_name') === false) {
         name = test.result;
       }
       if (test.infoString.includes('512')) {
