@@ -136,10 +136,15 @@ export class AppReport extends LitElement {
           display: flex;
           flex-direction: column;
           row-gap: 1.5em;
-          align-items: baseline;
+          align-items: center;
           background-color: #f2f3fb;
           padding: 20px;
-          box-sizing: border-box;
+        }
+        #content-holder {
+          max-width: 1300px;
+          display: flex;
+          flex-direction: column;
+          row-gap: 1.5em;
         }
         #header-row {
           width: 100%;
@@ -643,8 +648,6 @@ export class AppReport extends LitElement {
     let manifest = JSON.parse(sessionStorage.getItem("manifest_context")!).manifest;
     
     this.validationResults = await validateManifest(manifest);
-
-    console.log(this.validationResults);
     
     this.manifestTotalScore = this.validationResults.length;
 
@@ -817,305 +820,234 @@ export class AppReport extends LitElement {
     return html`
       <app-header></app-header>
       <div id="report-wrapper">
-        <div id="header-row">
-        ${this.isAppCardInfoLoading ?
-        html`
-          <div id="app-card" class="flex-col skeleton-effects">
-            <div id="card-header">
-              <sl-skeleton id="app-image-skeleton" effect="pulse"></sl-skeleton>
-              <div id="card-info" class="flex-col">
-                <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
-                <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
-              </div>
-            </div>
-            <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
-          </div>`
-          :
+        <div id="content-holder">
+          <div id="header-row">
+          ${this.isAppCardInfoLoading ?
           html`
-          <div id="app-card" class="flex-col skeleton-effects">
-            <div id="card-header">
-              <img src=${this.iconSrcListParse()![0]} alt="Your sites logo" />
-              <div id="card-info" class="flex-col">
-                <p id="site-name">${this.appCard.siteName}</p>
-                <p>${this.appCard.siteUrl}</p>
+            <div id="app-card" class="flex-col skeleton-effects">
+              <div id="card-header">
+                <sl-skeleton id="app-image-skeleton" effect="pulse"></sl-skeleton>
+                <div id="card-info" class="flex-col">
+                  <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
+                  <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
+                </div>
               </div>
-            </div>
-            <p id="card-desc">${this.appCard.description}</p>
-          </div>`}
-          <div id="app-actions" class="flex-col">
-            <div id="actions">
-              <div id="test" class="flex-col-center">
-                <button
-                  type="button"
-                  id="retest"
-                  @click=${() => {
-                    this.retest();
-                  }}
-                >
-                  <img
-                    src="/assets/new/retest.png"
-                    alt="retest site"
-                    role="presentation"
-                  />Retest Site
-                </button>
-                <p id="last-edited">
-                  <img
-                    src="/assets/new/last-edited.png"
-                    alt="pencil icon"
-                    role="presentation"
-                  />${this.lastTested}
-                </p>
+              <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
+            </div>`
+            :
+            html`
+            <div id="app-card" class="flex-col skeleton-effects">
+              <div id="card-header">
+                <img src=${this.iconSrcListParse()![0]} alt="Your sites logo" />
+                <div id="card-info" class="flex-col">
+                  <p id="site-name">${this.appCard.siteName}</p>
+                  <p>${this.appCard.siteUrl}</p>
+                </div>
               </div>
-              <img src="/assets/new/vertical-divider.png" role="presentation" />
-              <div id="package" class="flex-col-center">
-                <button
-                  type="button"
-                  id="pfs"
-                  @click=${() => this.togglePublishModal()}
-                >
-                  Package for store
-                </button>
-                <button type="button" id="test-download">
-                  <p class="arrow_link">Download test package</p>
-                  <img
-                    src="/assets/new/arrow.svg"
-                    alt="arrow"
-                    role="presentation"
-                  />
-                </button>
-              </div>
-            </div>
-            <div id="actions-footer" class="flex-center">
-              <p>Available stores:</p>
-              <img
-                title="Windows"
-                src="/assets/windows_icon.svg"
-                alt="Windows"
-              />
-              <img title="iOS" src="/assets/apple_icon.svg" alt="iOS" />
-              <img
-                title="Android"
-                src="/assets/android_icon_full.svg"
-                alt="Android"
-              />
-              <img
-                title="Meta Quest"
-                src="/assets/meta_icon.svg"
-                alt="Meta Quest"
-              />
-            </div>
-          </div>
-        </div>
-        <div id="todo">
-          <sl-details id="todo-detail" summary="To-do list">
-            <todo-item
-              .status=${'red'}
-              .content=${'This is an example to do item.'}
-            ></todo-item>
-            <todo-item
-              .status=${'red'}
-              .content=${"Theoretically we'd loop through these."}
-            ></todo-item>
-            <todo-item
-              .status=${'red'}
-              .content=${'and display them here.'}
-            ></todo-item>
-          </sl-details>
-        </div>
-        <div id="manifest" class="flex-col">
-          <div id="manifest-header">
-            <div id="mh-left" class="flex-col">
-              <p class="card-header">Manifest</p>
-              <p class="card-desc">
-                PWABuilder has analyzed your Web Manifest. You do not have a web
-                manifest. Use our Manifest editor to generate one. You can
-                package for the store once you have a valid manifest.
-              </p>
-            </div>
-            <div id="mh-right">
-              <div id="mh-actions" class="flex-col">
-                <button
-                  type="button"
-                  class="alternate"
-                  @click=${() => this.toggleManifestEditorModal()}
-                >
-                  Manifest Editor
-                </button>
-                <a
-                  class="arrow_anchor"
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
-                  rel="noopener"
-                  target="_blank"
-                >
-                  <p class="arrow_link">Manifest Documentation</p>
-                  <img
-                    src="/assets/new/arrow.svg"
-                    alt="arrow"
-                    role="presentation"
-                  />
-                </a>
-              </div>
-              ${this.manifestDataLoading ? 
-                  html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
-                  html`<sl-progress-ring 
-                          id="manifestProgressRing" 
-                          class=${classMap(this.decideColor(this.manifestValidCounter, this.manifestTotalScore))}
-                          value="${(parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore) * 100}"
-                        >${this.manifestValidCounter} / ${this.manifestTotalScore}</sl-progress-ring>`
-              }
-            </div>
-          </div>
-          <sl-details id="mani-details" class="details">
-            ${this.manifestDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
-            <div id="manifest-detail-grid">
-              <div class="detail-list">
-                <p>*Required</p>
-                ${this.validationResults.map((result: Validation) => result.category === "required" ? 
-                html`
-                  <div class="test-result">
-                    ${result.valid ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="passing result icon"/>`}
-                    <p>${result.displayString}</p>
-                  </div>
-                ` : 
-                html``)}
-              </div>
-              <div class="detail-list">
-                <p>Recommended</p>
-                ${this.validationResults.map((result: Validation) => result.category === "recommended" ? 
-                html`
-                  <div class="test-result">
-                    ${result.valid ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
-                    <p>${result.displayString}</p>
-                  </div>
-                ` : html``)}
-              </div>
-              <div class="detail-list">
-                <p>Optional</p>
-                ${this.validationResults.map((result: Validation) => result.category === "optional" ? 
-                html`
-                  <div class="test-result">
-                    ${result.valid ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
-                    <p>${result.displayString}</p>
-                  </div>
-                ` : html``)}
-              </div>
-            </div>
-          </sl-details>
-        </div>
-        <div id="two-cell-row">
-          <div id="sw" class="half-width-cards">
-            <div id="sw-header" class="flex-col">
-              <div id="swh-top">
-                <div id="swh-text" class="flex-col">
-                  <p class="card-header">Service Worker</p>
-                  <p class="card-desc">
-                    PWABuilder has analyzed your Service Worker, check out the
-                    results below. Want to add a Service Worker or check out our
-                    pre-built Service Workers? Tap Genereate Service Worker.
+              <p id="card-desc">${this.appCard.description}</p>
+            </div>`}
+            <div id="app-actions" class="flex-col">
+              <div id="actions">
+                <div id="test" class="flex-col-center">
+                  <button
+                    type="button"
+                    id="retest"
+                    @click=${() => {
+                      this.retest();
+                    }}
+                  >
+                    <img
+                      src="/assets/new/retest.png"
+                      alt="retest site"
+                      role="presentation"
+                    />Retest Site
+                  </button>
+                  <p id="last-edited">
+                    <img
+                      src="/assets/new/last-edited.png"
+                      alt="pencil icon"
+                      role="presentation"
+                    />${this.lastTested}
                   </p>
                 </div>
-                ${this.swDataLoading ? 
-                  html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
-                  html`<sl-progress-ring
-                  id="swProgressRing"
-                  class=${classMap(this.decideColor(this.swValidCounter, this.swTotalScore))}
-                  value="${(parseFloat(JSON.stringify(this.swValidCounter)) / this.swTotalScore) * 100}"
-                  >${this.swValidCounter} / ${this.swTotalScore}</sl-progress-ring>
-                  `
-                }
+                <img src="/assets/new/vertical-divider.png" role="presentation" />
+                <div id="package" class="flex-col-center">
+                  <button
+                    type="button"
+                    id="pfs"
+                    @click=${() => this.togglePublishModal()}
+                  >
+                    Package for store
+                  </button>
+                  <button type="button" id="test-download">
+                    <p class="arrow_link">Download test package</p>
+                    <img
+                      src="/assets/new/arrow.svg"
+                      alt="arrow"
+                      role="presentation"
+                    />
+                  </button>
+                </div>
               </div>
-              <div id="sw-actions" class="flex-col">
-                <button type="button" class="alternate">
-                  Generate Service Worker
-                </button>
-                <a class="arrow_anchor" href="" rel="noopener" target="_blank">
-                  <p class="arrow_link">Service Worker Documentation</p>
-                  <img
-                    src="/assets/new/arrow.svg"
-                    alt="arrow"
-                    role="presentation"
-                  />
-                </a>
+              <div id="actions-footer" class="flex-center">
+                <p>Available stores:</p>
+                <img
+                  title="Windows"
+                  src="/assets/windows_icon.svg"
+                  alt="Windows"
+                />
+                <img title="iOS" src="/assets/apple_icon.svg" alt="iOS" />
+                <img
+                  title="Android"
+                  src="/assets/android_icon_full.svg"
+                  alt="Android"
+                />
+                <img
+                  title="Meta Quest"
+                  src="/assets/meta_icon.svg"
+                  alt="Meta Quest"
+                />
               </div>
             </div>
-            <sl-details id="sw-details" class="details">
-              ${this.swDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
-              <div class="detail-grid">
+          </div>
+          <div id="todo">
+            <sl-details id="todo-detail" summary="To-do list">
+              <todo-item
+                .status=${'red'}
+                .content=${'This is an example to do item.'}
+              ></todo-item>
+              <todo-item
+                .status=${'red'}
+                .content=${"Theoretically we'd loop through these."}
+              ></todo-item>
+              <todo-item
+                .status=${'red'}
+                .content=${'and display them here.'}
+              ></todo-item>
+            </sl-details>
+          </div>
+          <div id="manifest" class="flex-col">
+            <div id="manifest-header">
+              <div id="mh-left" class="flex-col">
+                <p class="card-header">Manifest</p>
+                <p class="card-desc">
+                  PWABuilder has analyzed your Web Manifest. You do not have a web
+                  manifest. Use our Manifest editor to generate one. You can
+                  package for the store once you have a valid manifest.
+                </p>
+              </div>
+              <div id="mh-right">
+                <div id="mh-actions" class="flex-col">
+                  <button
+                    type="button"
+                    class="alternate"
+                    @click=${() => this.toggleManifestEditorModal()}
+                  >
+                    Manifest Editor
+                  </button>
+                  <a
+                    class="arrow_anchor"
+                    href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
+                    rel="noopener"
+                    target="_blank"
+                  >
+                    <p class="arrow_link">Manifest Documentation</p>
+                    <img
+                      src="/assets/new/arrow.svg"
+                      alt="arrow"
+                      role="presentation"
+                    />
+                  </a>
+                </div>
+                ${this.manifestDataLoading ? 
+                    html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
+                    html`<sl-progress-ring 
+                            id="manifestProgressRing" 
+                            class=${classMap(this.decideColor(this.manifestValidCounter, this.manifestTotalScore))}
+                            value="${(parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore) * 100}"
+                          >${this.manifestValidCounter} / ${this.manifestTotalScore}</sl-progress-ring>`
+                }
+              </div>
+            </div>
+            <sl-details id="mani-details" class="details">
+              ${this.manifestDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
+              <div id="manifest-detail-grid">
                 <div class="detail-list">
                   <p>*Required</p>
-                  ${this.serviceWorkerResults.map((result: Validation) => result.category === "required" ? 
+                  ${this.validationResults.map((result: Validation) => result.category === "required" ? 
                   html`
                     <div class="test-result">
-                      ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="passing result icon"/>`}
-                      <p>${result.infoString}</p>
+                      ${result.valid ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="passing result icon"/>`}
+                      <p>${result.displayString}</p>
                     </div>
                   ` : 
                   html``)}
                 </div>
                 <div class="detail-list">
                   <p>Recommended</p>
-                  ${this.serviceWorkerResults.map((result: Validation) => result.category === "recommended" ? 
+                  ${this.validationResults.map((result: Validation) => result.category === "recommended" ? 
                   html`
-                   <div class="test-result">
-                      ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
-                      <p>${result.infoString}</p>
+                    <div class="test-result">
+                      ${result.valid ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
+                      <p>${result.displayString}</p>
                     </div>
-                  ` : 
-                  html``)}
+                  ` : html``)}
                 </div>
                 <div class="detail-list">
                   <p>Optional</p>
-                  ${this.serviceWorkerResults.map((result: Validation) => result.category === "optional" ? 
+                  ${this.validationResults.map((result: Validation) => result.category === "optional" ? 
                   html`
                     <div class="test-result">
-                      ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
-                      <p>${result.infoString}</p>
+                      ${result.valid ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
+                      <p>${result.displayString}</p>
                     </div>
-                  ` : 
-                  html``)}
+                  ` : html``)}
                 </div>
               </div>
             </sl-details>
           </div>
-          <div id="security" class="half-width-cards">
-            <div id="sec-header" class="flex-col">
-              <div id="sec-top">
-                <div id="sec-text" class="flex-col">
-                  <p class="card-header">Security</p>
-                  <p class="card-desc">
-                    PWABuilder has done a basic analysis of your HTTPS setup.
-                    You can use LetsEncrypt to get a free HTTPS certificate, or
-                    publish to Azure to get built-in HTTPS support.
-                  </p>
+          <div id="two-cell-row">
+            <div id="sw" class="half-width-cards">
+              <div id="sw-header" class="flex-col">
+                <div id="swh-top">
+                  <div id="swh-text" class="flex-col">
+                    <p class="card-header">Service Worker</p>
+                    <p class="card-desc">
+                      PWABuilder has analyzed your Service Worker, check out the
+                      results below. Want to add a Service Worker or check out our
+                      pre-built Service Workers? Tap Genereate Service Worker.
+                    </p>
+                  </div>
+                  ${this.swDataLoading ? 
+                    html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
+                    html`<sl-progress-ring
+                    id="swProgressRing"
+                    class=${classMap(this.decideColor(this.swValidCounter, this.swTotalScore))}
+                    value="${(parseFloat(JSON.stringify(this.swValidCounter)) / this.swTotalScore) * 100}"
+                    >${this.swValidCounter} / ${this.swTotalScore}</sl-progress-ring>
+                    `
+                  }
                 </div>
-                ${this.secDataLoading ? 
-                  html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
-                  html`<sl-progress-ring
-                  id="secProgressRing"
-                  class=${classMap(this.decideColor(this.secValidCounter, this.secTotalScore))}
-                  value="${(parseFloat(JSON.stringify(this.secValidCounter)) / this.secTotalScore) * 100}"
-                  >${this.secValidCounter} / ${this.secTotalScore}</sl-progress-ring>
-                  `
-                }
-                
+                <div id="sw-actions" class="flex-col">
+                  <button type="button" class="alternate">
+                    Generate Service Worker
+                  </button>
+                  <a class="arrow_anchor" href="" rel="noopener" target="_blank">
+                    <p class="arrow_link">Service Worker Documentation</p>
+                    <img
+                      src="/assets/new/arrow.svg"
+                      alt="arrow"
+                      role="presentation"
+                    />
+                  </a>
+                </div>
               </div>
-              <div id="sec-actions" class="flex-col">
-                <a class="arrow_anchor" href="" rel="noopener" target="_blank">
-                  <p class="arrow_link">Security Documentation</p>
-                  <img
-                    src="/assets/new/arrow.svg"
-                    alt="arrow"
-                    role="presentation"
-                  />
-                </a>
-              </div>
-            </div>
-            <sl-details id="sec-details" class="details">
-            ${this.secDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
-              <div class="detail-grid">
-                <div class="detail-list">
-                  <p>*Required</p>
-                  ${this.securityResults.map((result: Validation) => result.category === "required" ? 
+              <sl-details id="sw-details" class="details">
+                ${this.swDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
+                <div class="detail-grid">
+                  <div class="detail-list">
+                    <p>*Required</p>
+                    ${this.serviceWorkerResults.map((result: Validation) => result.category === "required" ? 
                     html`
                       <div class="test-result">
                         ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="passing result icon"/>`}
@@ -1123,27 +1055,100 @@ export class AppReport extends LitElement {
                       </div>
                     ` : 
                     html``)}
+                  </div>
+                  <div class="detail-list">
+                    <p>Recommended</p>
+                    ${this.serviceWorkerResults.map((result: Validation) => result.category === "recommended" ? 
+                    html`
+                    <div class="test-result">
+                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
+                        <p>${result.infoString}</p>
+                      </div>
+                    ` : 
+                    html``)}
+                  </div>
+                  <div class="detail-list">
+                    <p>Optional</p>
+                    ${this.serviceWorkerResults.map((result: Validation) => result.category === "optional" ? 
+                    html`
+                      <div class="test-result">
+                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
+                        <p>${result.infoString}</p>
+                      </div>
+                    ` : 
+                    html``)}
+                  </div>
+                </div>
+              </sl-details>
+            </div>
+            <div id="security" class="half-width-cards">
+              <div id="sec-header" class="flex-col">
+                <div id="sec-top">
+                  <div id="sec-text" class="flex-col">
+                    <p class="card-header">Security</p>
+                    <p class="card-desc">
+                      PWABuilder has done a basic analysis of your HTTPS setup.
+                      You can use LetsEncrypt to get a free HTTPS certificate, or
+                      publish to Azure to get built-in HTTPS support.
+                    </p>
+                  </div>
+                  ${this.secDataLoading ? 
+                    html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
+                    html`<sl-progress-ring
+                    id="secProgressRing"
+                    class=${classMap(this.decideColor(this.secValidCounter, this.secTotalScore))}
+                    value="${(parseFloat(JSON.stringify(this.secValidCounter)) / this.secTotalScore) * 100}"
+                    >${this.secValidCounter} / ${this.secTotalScore}</sl-progress-ring>
+                    `
+                  }
+                  
+                </div>
+                <div id="sec-actions" class="flex-col">
+                  <a class="arrow_anchor" href="" rel="noopener" target="_blank">
+                    <p class="arrow_link">Security Documentation</p>
+                    <img
+                      src="/assets/new/arrow.svg"
+                      alt="arrow"
+                      role="presentation"
+                    />
+                  </a>
                 </div>
               </div>
-            </sl-details>
+              <sl-details id="sec-details" class="details">
+              ${this.secDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
+                <div class="detail-grid">
+                  <div class="detail-list">
+                    <p>*Required</p>
+                    ${this.securityResults.map((result: Validation) => result.category === "required" ? 
+                      html`
+                        <div class="test-result">
+                          ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="passing result icon"/>`}
+                          <p>${result.infoString}</p>
+                        </div>
+                      ` : 
+                      html``)}
+                  </div>
+                </div>
+              </sl-details>
+            </div>
           </div>
+          ${this.manifestEditorOpened
+            ? html` <div class="modal-blur flex-center">
+                <div class="modal flex-col-center">
+                  <img class="close_x" alt="close button" src="/assets/Close_desk.png" @click=${() => this.toggleManifestEditorModal()} />
+                  <manifest-editor-frame></manifest-editor-frame>
+                </div>
+              </div>`
+            : html``}
+          ${this.publishModalOpened
+            ? html` <div class="modal-blur flex-center">
+                <div class="modal flex-col-center">
+                  <img class="close_x" alt="close button" src="/assets/Close_desk.png" @click=${() => this.togglePublishModal()} />
+                  <publish-pane></publish-pane>
+                </div>
+              </div>`
+            : html``}
         </div>
-        ${this.manifestEditorOpened
-          ? html` <div class="modal-blur flex-center">
-              <div class="modal flex-col-center">
-                <img class="close_x" alt="close button" src="/assets/Close_desk.png" @click=${() => this.toggleManifestEditorModal()} />
-                <manifest-editor-frame></manifest-editor-frame>
-              </div>
-            </div>`
-          : html``}
-        ${this.publishModalOpened
-          ? html` <div class="modal-blur flex-center">
-              <div class="modal flex-col-center">
-                <img class="close_x" alt="close button" src="/assets/Close_desk.png" @click=${() => this.togglePublishModal()} />
-                <publish-pane></publish-pane>
-              </div>
-            </div>`
-          : html``}
       </div>
     `;
   }

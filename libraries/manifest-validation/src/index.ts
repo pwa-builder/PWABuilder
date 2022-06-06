@@ -1,5 +1,5 @@
 import { Manifest, Validation } from "./interfaces";
-import { isValidJSON, loopThroughKeys } from "./utils/validation-utils";
+import { isValidJSON, loopThroughKeys, loopThroughRequiredKeys } from "./utils/validation-utils";
 import { maniTests } from "./validations";
 
 export async function validateManifest(manifest: Manifest): Promise<Validation[]> {
@@ -7,7 +7,7 @@ export async function validateManifest(manifest: Manifest): Promise<Validation[]
     return new Promise(async(resolve, reject) => {
 
         // const validationErrors: Validation[] = [];
-        console.log('validating manifest', manifest);
+        //console.log('validating manifest', manifest);
         const validJSON = isValidJSON(manifest);
         if (validJSON === false) {
             reject('Manifest is not valid JSON');
@@ -34,27 +34,19 @@ export async function validateSingleField(field: string, value: any): Promise<Va
 }
 
 export async function validateRequiredFields(manifest: Manifest): Promise<Validation[]> {
-    const requiredValidationErrors: Validation[] = [];
 
-    const validJSON = isValidJSON(manifest);
+    return new Promise(async(resolve, reject) => {
 
-    if (validJSON === false) {
-        throw new Error('Manifest is not valid JSON');
-    }
-
-    for await (const test of maniTests) {
-        if (test && test.category === "required" && test.test) {
-            if (Object.keys(manifest).includes(test.member) === false) {
-                const testResult = await test.test(manifest[test.member]);
-
-                if (testResult === false) {
-                    requiredValidationErrors.push(test);
-                }
-            }
+        const validJSON = isValidJSON(manifest);
+        if (validJSON === false) {
+            reject('Manifest is not valid JSON');
         }
-    }
 
-    return requiredValidationErrors;
+        let data = await loopThroughRequiredKeys(manifest);
+        if (data && data.length > 0) {
+            resolve(data);
+        }
+    });
 }
 
 export async function validateImprovements(manifest: Manifest): Promise<Validation[]> {
