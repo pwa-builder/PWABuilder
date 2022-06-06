@@ -330,14 +330,6 @@ export class ReportCard extends LitElement {
     this.overallScore = getOverallScore();
 
     // Record analysis results to our analytics portal.
-    recordProcessStep('analyze-and-package-pwa', 'url-analyzed', AnalyticsBehavior.ProcessCheckpoint, {
-      url: this.currentURL || '',
-      score: this.overallScore,
-      hasManifest: Array.isArray(this.scoreCardResults.manifest) && this.scoreCardResults.manifest.some(t => t.result === true),
-      hasServiceWorker: this.scoreCardResults.service_worker.some(t => t.result === true),
-      hasHttps: this.scoreCardResults.security.some(t => t.result === true)
-    });
-
     recordPWABuilderProcessStep('url-analyzed', AnalyticsBehavior.ProcessCheckpoint, {
       url: this.currentURL || '',
       score: this.overallScore,
