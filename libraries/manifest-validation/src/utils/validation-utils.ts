@@ -68,6 +68,10 @@ export async function loopThroughKeys(manifest: Manifest): Promise<Array<Validat
             data.push(test);
           }
         }
+        else {
+          test.valid = false;
+          data.push(test);
+        }
       })
     })
 
