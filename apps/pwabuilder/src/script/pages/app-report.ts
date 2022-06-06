@@ -185,7 +185,7 @@ export class AppReport extends LitElement {
         #card-desc {
           margin: 0;
           font-size: 14px;
-          with: 100%;
+          width: 100%;
           white-space: normal;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -641,7 +641,10 @@ export class AppReport extends LitElement {
     details!.disabled = true;
 
     let manifest = JSON.parse(sessionStorage.getItem("manifest_context")!).manifest;
+    
     this.validationResults = await validateManifest(manifest);
+
+    console.log(this.validationResults);
     
     this.manifestTotalScore = this.validationResults.length;
 
@@ -971,7 +974,7 @@ export class AppReport extends LitElement {
                 html`
                   <div class="test-result">
                     ${result.valid ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="passing result icon"/>`}
-                    <p>${result.infoString}</p>
+                    <p>${result.displayString}</p>
                   </div>
                 ` : 
                 html``)}
@@ -982,7 +985,7 @@ export class AppReport extends LitElement {
                 html`
                   <div class="test-result">
                     ${result.valid ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
-                    <p>${result.infoString}</p>
+                    <p>${result.displayString}</p>
                   </div>
                 ` : html``)}
               </div>
@@ -992,7 +995,7 @@ export class AppReport extends LitElement {
                 html`
                   <div class="test-result">
                     ${result.valid ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
-                    <p>${result.infoString}</p>
+                    <p>${result.displayString}</p>
                   </div>
                 ` : html``)}
               </div>

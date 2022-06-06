@@ -10,10 +10,17 @@ export class ManifestSettingsForm extends LitElement {
 
   static get styles() {
     return css`
+      sl-input::part(base),
+      sl-select::part(control),
+      sl-menu-item::part(base) {
+        --sl-input-font-size-medium: 16px;
+        --sl-font-size-medium: 16px;
+        --sl-input-height-medium: 3em;
+      }
       #form-holder {
         display: flex;
         flex-direction: column;
-        row-gap: 1.5em;
+        row-gap: 1em;
       }
       .form-row {
         display: flex;
@@ -61,25 +68,21 @@ export class ManifestSettingsForm extends LitElement {
         left: 10px;
         z-index: 1;
       }
-
       .field-header a {
         display: flex;
         align-items: center;
         position: relative;
         color: black;
       }
-
       a:hover .toolTip {
         visibility: visible;
       }
       a:visited, a:focus {
         color: black;
       }
-
       sl-menu {
         width: 100%;
       }
-
     `;
   }
 
