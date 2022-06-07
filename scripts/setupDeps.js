@@ -3,6 +3,12 @@ var fs = require('fs');
 var execSync = require('child_process').execSync;
 
 const ignoreDirs = ['node_modules'];
+const envVar = 'PWABUILDER_PREINSTALL';
+
+// skip running if already in running
+if (process.env[envVar]) {
+  return;
+}
 
 // function to get package.json from current directory
 function getPkgFromCurrentDir() {
@@ -60,7 +66,7 @@ function getAllLocalDeps(pkgJson) {
 
 // run npm i and npm run build for a specific package
 function setupPackage(packageName, packageLocation) {
-  console.info('\x1b[33m%s\x1b[0m', `${packageName}: npm i && npm run build`)
+  console.info('\x1b[33m%s\x1b[0m', `${packageName}: npm i `)
   execSync('npm i && npm run build', {cwd: packageLocation, stdio: 'inherit'});
   console.info('\x1b[33m%s\x1b[0m', `${packageName}: finished`)
 
@@ -68,26 +74,69 @@ function setupPackage(packageName, packageLocation) {
 
 // function to recursively run npm i and npm run build on all dependencies 
 // this will not work if there are circular dependencies
-function setupAllDeps(packageName, allPackages, mainPackage = packageName) {
+function setupAllDeps(packageName, allPackages, mainPackage = packageName, completedDeps = new Set()) {
   const package = allPackages[packageName];
+
+  if (completedDeps.has(packageName)) {
+    return;
+  }
+
   if (package) {
     // iterate through all packages and setup
     for (let dependency of package.localDeps) {
-      setupAllDeps(dependency, allPackages, mainPackage);
+      setupAllDeps(dependency, allPackages, mainPackage, completedDeps);
     }
 
     // only setup if not the calling package
     if (packageName !== mainPackage) {
       setupPackage(packageName, allPackages[packageName].filepath);
     }
+
+    completedDeps.add(packageName);
   }
 }
 
-const currentPackage = getPkgFromCurrentDir();
-if (currentPackage) {
-  console.info('\x1b[36m%s\x1b[0m', `Initializing all local dependencies for package ${currentPackage.name}`);
-  const pkgs = getAllPkgs();
-  setupAllDeps(currentPackage.name, pkgs);
-} else {
-  console.log('no package.json found in current directory');
+// function to recursively run npm i and npm run build on all dependencies 
+// this will not work if there are circular dependencies
+function getAllDepsInOrder(packageName, allPackages, mainPackage = packageName, completedDeps = new Set()) {
+  const package = allPackages[packageName];
+  let results = [];
+
+  if (completedDeps.has(packageName)) {
+    return [];
+  }
+
+  if (package) {
+    // iterate through all packages and setup
+    for (let dependency of package.localDeps) {
+      results = [...results, ...getAllDepsInOrder(dependency, allPackages, mainPackage, completedDeps, results)];
+    }
+
+    // only setup if not the calling package
+    if (packageName !== mainPackage) {
+      results.push(packageName);
+    }
+
+    completedDeps.add(packageName);
+  }
+
+  return results;
+}
+
+try {
+  process.env[envVar] = 'true'
+
+  const currentPackage = getPkgFromCurrentDir();
+  if (currentPackage) {
+    console.info('\x1b[36m%s\x1b[0m', `Initializing all local dependencies for package ${currentPackage.name}`);
+    const pkgs = getAllPkgs();
+    setupAllDeps(currentPackage.name, pkgs);
+    // console.log(getAllDepsInOrder(currentPackage.name, pkgs));
+  } else {
+    console.log('no package.json found in current directory');
+  }
+} catch (e) {
+  throw (e);
+} finally {
+  delete process.env[envVar];
 }
