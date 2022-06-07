@@ -11,10 +11,10 @@ if (process.env[envVar]) {
 }
 
 // run npm i and npm run build for a specific package
-function setupPackage(packageName, packageLocation) {
-  console.info('\x1b[33m%s\x1b[0m', `${packageName}: npm i `)
-  execSync('npm i && npm run build', {cwd: packageLocation, stdio: 'inherit'});
-  console.info('\x1b[33m%s\x1b[0m', `${packageName}: finished`)
+function setupPackage(pkg) {
+  console.info('\x1b[33m%s\x1b[0m', `${pkg.json.name}: npm i `)
+  execSync('npm i && npm run build', {cwd: pkg.filepath, stdio: 'inherit'});
+  console.info('\x1b[33m%s\x1b[0m', `${pkg.json.name}: finished`)
 
 }
 
@@ -24,10 +24,13 @@ try {
   const currentPackage = getPkgFromCurrentDir();
   if (currentPackage) {
     console.info('\x1b[36m%s\x1b[0m', `Initializing all local dependencies for package ${currentPackage.name}`);
-    const pkgs = getAllPkgs();
-    const dependencies = getAllDepsInOrder(currentPackage.name, pkgs);
+    const allPackages = getAllPkgs();
+
+    const dependencies = getAllDepsInOrder(currentPackage.name, allPackages);
+
     for (let dependency of dependencies) {
-      setupPackage(dependency);
+      const pkg = allPackages[dependency];
+      setupPackage(pkg);
     }
   } else {
     console.log('no package.json found in current directory');

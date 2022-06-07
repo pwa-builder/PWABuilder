@@ -33,7 +33,8 @@ const getAllPkgs = (startPath = path.join(__dirname, '..')) => {
 
         results[pkg.name] = {
           filepath: path.resolve(filename), 
-          localDeps: getAllLocalDeps(pkg)
+          localDeps: getAllLocalDeps(pkg),
+          json: pkg
         }
       } else {
         results = {...results, ...getAllPkgs(filename)}; //recurse
