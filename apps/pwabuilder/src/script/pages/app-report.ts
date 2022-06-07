@@ -73,6 +73,10 @@ const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
 const stop_src = "/assets/new/stop.svg";
 
+const required_fields = ["icons", "name", "short_name", "start_url"];
+const reccommended_fields = ["display", "background_color", "theme_color", "orientation", "screenshots", "shortcuts"];
+const optional_fields = ["iarc_rating_id", "related_applications", "lang", "dir", "description", "protocol_handlers", "display_override"];
+
 @customElement('app-report')
 export class AppReport extends LitElement {
   @property({ type: Object }) resultOfTest: RawTestResult | undefined;
@@ -711,8 +715,9 @@ export class AppReport extends LitElement {
       }
     });
 
-    let missing = await reportMissing(manifest);
-    console.log("missing", missing);
+    let amt_missing = await this.handleMissingFields(manifest);
+
+    this.manifestTotalScore += amt_missing;
 
     this.manifestDataLoading = false;
     details!.disabled = false;
@@ -723,6 +728,20 @@ export class AppReport extends LitElement {
     );
     //TODO: Fire event when ready
     this.requestUpdate();
+  }
+
+  async handleMissingFields(manifest: Manifest){
+    let missing = await reportMissing(manifest);
+    missing.forEach((field: string) => {
+      if(required_fields.includes(field)){
+        this.requiredMissingFields.push(field)
+      } else if(reccommended_fields.includes(field)){
+        this.reccMissingFields.push(field)
+      } if(optional_fields.includes(field)){
+        this.optMissingFields.push(field)
+      } 
+    });
+    return missing.length;
   }
 
   async testServiceWorker(url: string) {
@@ -1036,11 +1055,23 @@ export class AppReport extends LitElement {
                   ${this.validationResults.map((result: Validation) => result.category === "required" ? 
                   html`
                     <div class="test-result">
-                      ${result.valid ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="passing result icon"/>`}
+                      ${result.valid ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="stop result icon"/>`}
                       <p>${result.displayString}</p>
                     </div>
                   ` : 
                   html``)}
+
+                  ${this.requiredMissingFields.length > 0 ?
+                  html`
+                    <p>-- Missing Fields --</p>
+                    ${this.requiredMissingFields.map((field: string) =>
+                    html`<div class="test-result">
+                      <img src=${stop_src} alt="stop result icon"/>
+                      <p>Manifest includes ${field} field</p>
+                    </div>`
+                    )}
+                  ` :
+                  html``}
                   
                 </div>
                 <div class="detail-list">
@@ -1048,10 +1079,22 @@ export class AppReport extends LitElement {
                   ${this.validationResults.map((result: Validation) => result.category === "recommended" ? 
                   html`
                     <div class="test-result">
-                      ${result.valid ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
+                      ${result.valid ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
                       <p>${result.displayString}</p>
                     </div>
                   ` : html``)}
+
+                  ${this.reccMissingFields.length > 0 ?
+                  html`
+                    <p>-- Missing Fields --</p>
+                    ${this.reccMissingFields.map((field: string) =>
+                    html`<div class="test-result">
+                      <img src=${yield_src} alt="yield result icon"/>
+                      <p>Manifest includes ${field} field</p>
+                    </div>`
+                    )}
+                  ` :
+                  html``}
                 </div>
                 <div class="detail-list">
                   <p>Optional</p>
@@ -1062,6 +1105,18 @@ export class AppReport extends LitElement {
                       <p>${result.displayString}</p>
                     </div>
                   ` : html``)}
+
+                  ${this.optMissingFields.length > 0 ?
+                  html`
+                    <p>-- Missing Fields --</p>
+                    ${this.optMissingFields.map((field: string) =>
+                    html`<div class="test-result">
+                      <img src=${yield_src} alt="yield result icon"/>
+                      <p>Manifest includes ${field} field</p>
+                    </div>`
+                    )}
+                  ` :
+                  html``}
                 </div>
               </div>
             </sl-details>

@@ -49,42 +49,29 @@ export function isValidJSON(json: Manifest): boolean {
 }
 
 export async function loopThroughKeys(manifest: Manifest): Promise<Array<Validation>> {
-  return new Promise(async (resolve) => {
-    let data: Array<Validation> = [];
+  return new Promise((resolve) => {
+      let data: Array<Validation> = [];
 
-    const keys = Object.keys(manifest);
+      const keys = Object.keys(manifest);
 
-    for (const key of possibleManiKeys) {
-      if (keys.includes(key) === false) {
-        // find the key in maniTests
-        const test = maniTests.find((test) => test.member === key);
+      keys.forEach((key) => {
+          maniTests.forEach(async (test) => {
+              if (test.member === key && test.test) {
+                  const testResult = await test.test(manifest[key]);
+  
+                  if (testResult === false) {
+                      test.valid = false;
+                      data.push(test);
+                  }
+                  else {
+                      test.valid = true;
+                      data.push(test);
+                  }
+              }
+          })
+      })
 
-        if (test) {
-          test.valid = false;
-          data.push(test);
-        }
-      }
-      else if (keys.includes(key) === true) {
-        // find the key in maniTests
-        const test = maniTests.find((test) => test.member === key);
-
-        // run the test
-        if (test && test.test) {
-          const testResult = await test.test(manifest[key]);
-
-          if (testResult === false) {
-            test.valid = false;
-            data.push(test);
-          }
-          else {
-            test.valid = true;
-            data.push(test);
-          }
-        }
-      }
-    }
-
-    resolve(data);
+      resolve(data);
   })
 }
 
