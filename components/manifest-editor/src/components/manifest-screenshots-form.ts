@@ -26,10 +26,16 @@ export class ManifestScreenshotsForm extends LitElement {
 
   static get styles() {
     return css`
+      sl-input::part(base),
+      sl-select::part(control) {
+        --sl-input-font-size-medium: 16px;
+        --sl-input-height-medium: 3em;
+      }
+      
       #form-holder {
         display: flex;
         flex-direction: column;
-        row-gap: 1.5em;
+        row-gap: 1em;
       }
       .form-field {
         width: 50%;
@@ -55,7 +61,6 @@ export class ManifestScreenshotsForm extends LitElement {
         align-items: center;
         column-gap: 5px;
       }
-
       .toolTip {
         visibility: hidden;
         width: 200px;
@@ -70,21 +75,18 @@ export class ManifestScreenshotsForm extends LitElement {
         left: 10px;
         z-index: 1;
       }
-
       .field-header a {
         display: flex;
         align-items: center;
         position: relative;
         color: black;
       }
-
       a:hover .toolTip {
         visibility: visible;
       }
       a:visited, a:focus {
         color: black;
       }
-
       .sc-gallery {
         display: flex;
         gap: 7px;
@@ -333,10 +335,8 @@ export class ManifestScreenshotsForm extends LitElement {
           <div class="sc-gallery">
             ${this.initialScreenshotLength > 0 ? this.screenshotSrcListParse().map((img: any) => html`<img class="screenshot" src=${img} alt="your app screenshot" decoding="async" loading="lazy"/>`) : html`<div class="center_text"><ion-icon name="images"></ion-icon> There are no screenshots in your manifest</div>`}
           </div>
-
           <h3>Generate Screenshots</h3>
           <p>Specify the URLs to generate desktop and mobile screenshots from. You may add up to 8 screenshots or Store Listings.</p>
-
           ${this.renderScreenshotInputUrlList()}
           <button id="add-sc" @click=${this.addNewScreenshot} ?disabled=${this.addScreenshotUrlDisabled}>+ Add URL</button>
           <div class="sc-gallery">

@@ -3,12 +3,6 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { Manifest } from '../utils/interfaces';
 import { validateSingleField } from '@pwabuilder/manifest-validation';
 
-import 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/components/select/select.js';
-import 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/components/menu-item/menu-item.js';
-import 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/components/input/input.js';
-import 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/components/radio/radio.js';
-import 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/components/switch/switch.js';
-
 const displayOptions: Array<string> =  ['fullscreen', 'standalone', 'minimal-ui', 'browser'];
 const defaultColor: string = "#000000";
 let manifestInitialized: boolean = false;
@@ -23,10 +17,17 @@ export class ManifestInfoForm extends LitElement {
 
   static get styles() {
     return css`
+      sl-input::part(base),
+      sl-select::part(control),
+      sl-menu-item::part(base) {
+        --sl-input-font-size-medium: 16px;
+        --sl-font-size-medium: 16px;
+        --sl-input-height-medium: 3em;
+      }
       #form-holder {
         display: flex;
         flex-direction: column;
-        row-gap: 1.5em;
+        row-gap: 1em;
       }
       .form-row {
         display: flex;
@@ -74,21 +75,18 @@ export class ManifestInfoForm extends LitElement {
         left: 10px;
         z-index: 1;
       }
-
       .field-header a {
         display: flex;
         align-items: center;
         position: relative;
         color: black;
       }
-
       a:hover .toolTip {
         visibility: visible;
       }
       a:visited, a:focus {
         color: black;
       }
-
       .color_field input[type="radio"]{
         height: 25px;
         width: fit-content;
@@ -107,38 +105,30 @@ export class ManifestInfoForm extends LitElement {
         border: 1px solid #808080;
         outline: none;
       }
-
       .color_field input[type="color"]::-webkit-color-swatch-wrapper {
         padding: 0;
       }
-
       .color_field input[type="color"]:hover {
         cursor: pointer;
       }
-
       .color-holder p {
-        font-size: 1em;
+        font-size: 16px;
         color: #808080;
       }
-
       sl-menu {
         width: 100%;
       }
-
       .switch_box {
         display: flex;
         align-items: center;
         gap: 10px;
       }
-
       .switch_box p {
         font-size: 16px;
       }
-
       sl-switch {
         --height: 22px;
       }
-
     `;
   }
 
@@ -187,7 +177,7 @@ export class ManifestInfoForm extends LitElement {
     input.classList.toggle("input-focused");
 
     const validation = await validateSingleField(fieldName!, updatedValue);
-    console.log("validation", validation);
+    //console.log("validation", validation);
 
     if(validation){
       // Since we already validated, we only send valid updates.
@@ -313,7 +303,7 @@ export class ManifestInfoForm extends LitElement {
               </a>
             </div>
             <p>Select a Background color</p>
-              <span class="color-holder"><input type="color" id="background_color_picker" .value=${this.manifest.background_color! || defaultColor} data-field="background_color" @change=${() => this.handleColorSwitch("background_color")} /> <p id="background_color_string">${this.manifest.background_color?.toLocaleUpperCase() || defaultColor}</p></span>
+              <span class="color-holder"><input type="color" id="background_color_picker" .value=${this.manifest.background_color! || defaultColor} data-field="background_color" @change=${() => this.handleColorSwitch("background_color")} /> <p id="background_color_string" class="color_string">${this.manifest.background_color?.toLocaleUpperCase() || defaultColor}</p></span>
             </div>
           <div class="form-field color_field">
             <div class="field-header">
@@ -330,7 +320,7 @@ export class ManifestInfoForm extends LitElement {
               </a>
             </div>
               <p>Select a Theme color</p>
-              <span class="color-holder"><input type="color" id="theme_color_picker" .value=${this.manifest.theme_color! || defaultColor} data-field="theme_color" @change=${() => this.handleColorSwitch("theme_color")} /> <p id="theme_color_string">${this.manifest.theme_color?.toLocaleUpperCase() || defaultColor}</p></span>
+              <span class="color-holder"><input type="color" id="theme_color_picker" .value=${this.manifest.theme_color! || defaultColor} data-field="theme_color" @change=${() => this.handleColorSwitch("theme_color")} /> <p id="theme_color_string" class="color_string">${this.manifest.theme_color?.toLocaleUpperCase() || defaultColor}</p></span>
           </div>
         </div>
       </div>
