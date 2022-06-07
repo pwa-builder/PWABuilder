@@ -1,24 +1,22 @@
 import { Manifest, Validation } from "./interfaces";
-import { isValidJSON, loopThroughKeys, loopThroughRequiredKeys } from "./utils/validation-utils";
+import { findMissingKeys, isValidJSON, loopThroughKeys, loopThroughRequiredKeys } from "./utils/validation-utils";
 import { maniTests } from "./validations";
 
 export async function validateManifest(manifest: Manifest): Promise<Validation[]> {
-
     return new Promise(async(resolve, reject) => {
-
-        // const validationErrors: Validation[] = [];
-        //console.log('validating manifest', manifest);
         const validJSON = isValidJSON(manifest);
+
         if (validJSON === false) {
             reject('Manifest is not valid JSON');
         }
+
         let data = await loopThroughKeys(manifest);
+
         if (data && data.length > 0) {
             resolve(data);
         }
         // resolve(validationErrors);
     });
-
 }
 
 export async function validateSingleField(field: string, value: any): Promise<Validation | boolean | undefined> {
@@ -33,10 +31,17 @@ export async function validateSingleField(field: string, value: any): Promise<Va
     return undefined;
 }
 
+export async function reportMissing(manifest: Manifest): Promise<Array<string>> {
+    return new Promise(async(resolve) => {
+        const data = await findMissingKeys(manifest);
+        if (data && data.length > 0) {
+            resolve(data);
+        }
+    })
+}
+
 export async function validateRequiredFields(manifest: Manifest): Promise<Validation[]> {
-
     return new Promise(async(resolve, reject) => {
-
         const validJSON = isValidJSON(manifest);
         if (validJSON === false) {
             reject('Manifest is not valid JSON');
