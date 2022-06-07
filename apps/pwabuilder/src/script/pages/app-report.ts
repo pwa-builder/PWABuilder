@@ -674,25 +674,34 @@ export class AppReport extends LitElement {
 
   async runAllTests(url: string) {
     await this.getManifest(url);
-    this.testManifest(url);
+    this.testManifest();
     this.testServiceWorker(url);
     this.testSecurity(url);
     //this.updateTimeLastTested();
   }
 
   // idk if we need the url for this function bc we can just get the manifest context
-  async testManifest(url: string) {
+  async testManifest() {
     //add manifest validation logic
     // note: wrap in try catch (can fail if invalid json)
     let details = (this.shadowRoot!.getElementById("mani-details") as any);
     details!.disabled = true;
 
     let manifest = JSON.parse(sessionStorage.getItem("manifest_context")!).manifest;
-
-    console.log("manifest", manifest);
     
     this.validationResults = await validateManifest(manifest);
-    console.log(this.validationResults);
+
+    //  This just makes it so that the valid things are first
+    // and the invalid things show after.
+    this.validationResults.sort((a, b) => {
+      if(a.valid && !b.valid){
+        return -1;
+      } else if(b.valid && !a.valid){
+        return 1;
+      } else {
+        return a.field - b.field;
+      }
+    });
     
     this.manifestTotalScore = this.validationResults.length;
 
@@ -702,9 +711,8 @@ export class AppReport extends LitElement {
       }
     });
 
-    let missing = reportMissing(manifest);
+    let missing = await reportMissing(manifest);
     console.log("missing", missing);
-
 
     this.manifestDataLoading = false;
     details!.disabled = false;
