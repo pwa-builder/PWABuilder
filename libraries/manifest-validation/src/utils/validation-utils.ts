@@ -126,3 +126,20 @@ export async function loopThroughRequiredKeys(manifest: Manifest): Promise<Array
     resolve(data);
   })
 }
+
+export async function findSingleField(field: string, value: any): Promise<Validation | boolean | undefined> {
+  return new Promise(async (resolve) => {
+    let singleField = undefined;
+
+    maniTests.forEach((test) => {
+      if (test.member === field && test.test) {
+        const testResult = test.test(value);
+
+        console.log("testResult", testResult);
+        singleField = testResult;
+      }
+    });
+
+    resolve(singleField);
+  })
+}

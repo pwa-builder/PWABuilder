@@ -109,7 +109,7 @@ test('can validate a single field, should return false', async () => {
   const validityMember = await maniLib.validateSingleField("theme_color", "black");
 
   // validity should return a Validation, and we check that its the right validation
-  assert.strictEqual(validityMember.member, "theme_color");
+  assert.strictEqual(validityMember, false);
 });
 
 /*
