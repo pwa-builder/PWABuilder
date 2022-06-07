@@ -3,10 +3,12 @@ The simplest way to create progressive web apps across platforms and devices.
 
 This repo is home to several projects in the PWABuilder family of tools. The main projects are
 
-| Name  | Overview | Project Root | Docs | Contribute |
-|-------| ----- | --------------- | -------------- | --------|
-| PWABuilder.com | Source code for [pwabuilder.com](https://pwabuilder.com) - the best way to package PWAs for various stores. | [/apps/pwabuilder](/apps/pwabuilder) | [PWABuilder docs](https://docs.pwabuilder.com) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
-| PWABuilder docs | Source code for [docs.pwabuilder.com](https://docs.pwabuilder.com) | [/docs](/docs) | [TODO: add wiki link] | [TODO: add wiki link]
+| Name  | Overview | Project | Source | Docs | Contribute |
+|-------| ----- | --------------- | -------- | -------------- | --------|
+| PWABuilder.com | Source code for [pwabuilder.com](https://pwabuilder.com) - the best way to package PWAs for various stores. | [pwabuilder.com](https://pwabuilder.com) | [/apps/pwabuilder](/apps/pwabuilder) | [PWABuilder docs](https://docs.pwabuilder.com) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
+| PWABuilder docs | Source code for [docs.pwabuilder.com](https://docs.pwabuilder.com) | [docs.pwabuilder.com](https://docs.pwabuilder.com) | [/docs](/docs) | [TODO: add wiki link] | [TODO: add wiki link]
+| `<pwa-auth>` | Web component for authenticating users | [![npm version](https://badge.fury.io/js/@pwabuilder%2Fpwaauth.svg)](https://badge.fury.io/js/@pwabuilder%2Fpwaauth) | [/components/pwa-auth](/components/pwa-auth) | [/components/pwa-auth/docs](/components/pwa-auth/docs) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
+| `<pwa-update>` | Web component for great PWA update experience | [![npm version](https://badge.fury.io/js/@pwabuilder%2Fpwaupdate.svg)](https://badge.fury.io/js/@pwabuilder%2Fpwaupdate) | [/components/pwa-update](/components/pwa-update) | [/components/pwa-update](/components/pwa-update) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
 
 ### Prerequisites
 
