@@ -13,12 +13,12 @@ This repo is home to several projects in the PWABuilder family of tools.
 | [blog.pwabuilder.com](https://blog.pwabuilder.com) | [/apps/blog](/apps/blog) | [/apps/blog](/apps/blog)
 
 
-| Components  | Overview | NPM | Source | Docs | Contribute |
-|-------| ----- | -------- | --- | -------------- | --------|
-| `<pwa-auth>` | Web component for authenticating users | [![npm version](https://badge.fury.io/js/@pwabuilder%2Fpwaauth.svg)](https://badge.fury.io/js/@pwabuilder%2Fpwaauth) | [/components/pwa-auth](/components/pwa-auth) | [/components/pwa-auth/docs](/components/pwa-auth/docs) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
-| `<pwa-update>` | Web component for great PWA update experience | [![npm version](https://badge.fury.io/js/@pwabuilder%2Fpwaupdate.svg)](https://badge.fury.io/js/@pwabuilder%2Fpwaupdate) | [/components/pwa-update](/components/pwa-update) | [/components/pwa-update](/components/pwa-update) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
-| `<pwa-install>` | Web component for great PWA install experience | [![npm version](https://badge.fury.io/js/@pwabuilder%2Fpwainstall.svg)](https://badge.fury.io/js/@pwabuilder%2Fpwainstall) | [/components/pwa-install](/components/pwa-install) | [/components/pwa-install](/components/pwa-install) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
-| `<pwa-inking>` | Web component for adding inking to your PWAs | [![npm version](https://badge.fury.io/js/@pwabuilder%2Fpwa-inking.svg)](https://badge.fury.io/js/@pwabuilder%2Fpwa-inking) | [/components/pwa-inking](/components/pwa-inking) | [/components/pwa-inking](/components/pwa-inking) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
+| Components  | Overview | Source | Docs | Contribute |
+|-------| ----- | -------- | -------------- | --------|
+| `<pwa-auth>`<br /><br /> [![npm version](https://badge.fury.io/js/@pwabuilder%2Fpwaauth.svg)](https://badge.fury.io/js/@pwabuilder%2Fpwaauth) | Web component for authenticating users | [/components/pwa-auth](/components/pwa-auth) | [/components/pwa-auth/docs](/components/pwa-auth/docs) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
+| `<pwa-update>`<br /><br /> [![npm version](https://badge.fury.io/js/@pwabuilder%2Fpwaupdate.svg)](https://badge.fury.io/js/@pwabuilder%2Fpwaupdate) | Web component for great PWA update experience | [/components/pwa-update](/components/pwa-update) | [/components/pwa-update](/components/pwa-update) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
+| `<pwa-install>`<br /><br /> [![npm version](https://badge.fury.io/js/@pwabuilder%2Fpwainstall.svg)](https://badge.fury.io/js/@pwabuilder%2Fpwainstall) | Web component for great PWA install experience | [/components/pwa-install](/components/pwa-install) | [/components/pwa-install](/components/pwa-install) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
+| `<pwa-inking>`<br /><br /> [![npm version](https://badge.fury.io/js/@pwabuilder%2Fpwa-inking.svg)](https://badge.fury.io/js/@pwabuilder%2Fpwa-inking) | Web component for adding inking to your PWAs | [/components/pwa-inking](/components/pwa-inking) | [/components/pwa-inking](/components/pwa-inking) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
 
 
 ## Recommended Development setup
