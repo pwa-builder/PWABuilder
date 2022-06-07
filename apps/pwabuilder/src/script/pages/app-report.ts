@@ -32,6 +32,7 @@ import {
 
 import { fetchOrCreateManifest } from '../services/manifest';
 import { resolveUrl } from '../utils/url';
+import { reportMissing } from '@pwabuilder/manifest-validation';
 
 /* const possible_messages = {
   overview: {
@@ -125,6 +126,10 @@ export class AppReport extends LitElement {
   @state() secValidCounter: number = 0;
   @state() secDataLoading: boolean = true;
 
+  @state() requiredMissingFields: any[] = [];
+  @state() reccMissingFields: any[] = [];
+  @state() optMissingFields: any[] = [];
+
 
   static get styles() {
     return [
@@ -184,6 +189,7 @@ export class AppReport extends LitElement {
           justify-content: center;
           background-color: white;
           border-radius: 10px;
+          box-shadow: rgb(0 0 0 / 20%) 0px 4px 30px 0px;
         }
         #card-header img {
           height: 85px;
@@ -195,6 +201,8 @@ export class AppReport extends LitElement {
         }
         #card-info {
           width: 100%;
+          overflow: hidden;
+          white-space: nowrap;
         }
         #card-info p {
           margin: 0;
@@ -683,6 +691,7 @@ export class AppReport extends LitElement {
     let manifest = JSON.parse(sessionStorage.getItem("manifest_context")!).manifest;
     
     this.validationResults = await validateManifest(manifest);
+    console.log(this.validationResults);
     
     this.manifestTotalScore = this.validationResults.length;
 
@@ -692,10 +701,8 @@ export class AppReport extends LitElement {
       }
     });
 
-    // call report missing
-    // add total missing to total
-    // add the missing fields to the this.validationResults
-    // so that the display string can show
+    let missing = reportMissing(manifest);
+    console.log("missing", missing);
 
 
     this.manifestDataLoading = false;
@@ -1025,6 +1032,7 @@ export class AppReport extends LitElement {
                     </div>
                   ` : 
                   html``)}
+                  
                 </div>
                 <div class="detail-list">
                   <p>Recommended</p>
