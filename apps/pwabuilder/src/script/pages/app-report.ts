@@ -688,6 +688,8 @@ export class AppReport extends LitElement {
     details!.disabled = true;
 
     let manifest = JSON.parse(sessionStorage.getItem("manifest_context")!).manifest;
+
+    console.log("manifest", manifest);
     
     this.validationResults = await validateManifest(manifest);
     console.log(this.validationResults);
