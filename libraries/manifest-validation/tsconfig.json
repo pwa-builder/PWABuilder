@@ -7,6 +7,6 @@
     "removeComments": true,                           /* Disable emitting comments. */
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "module": "CommonJS",
+    "module": "ES2020",
   }
 }
