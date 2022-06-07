@@ -86,6 +86,13 @@ test('includes missing fields', async () => {
   assert.equal(data.includes("iarc_rating_id"), false);
 });
 
+// should return the correct number of fields
+test('returns correct number of fields', async () => {
+  const data = await maniLib.validateManifest(test_manifest);
+
+  assert.equal(data.length, 15);
+});
+
 /*
 * Test reportMissing method
 */
