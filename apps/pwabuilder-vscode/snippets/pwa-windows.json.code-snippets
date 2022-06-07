@@ -1,0 +1,89 @@
+{
+	// Icons
+	"Icons": {
+		"scope": "json",
+		"prefix": "icons",
+		"body": [
+			"\"icons\": [",
+			"\t{",
+			"\t\t\"src\": \"${1:icon-192x192.png}\",",
+			"\t\t\"type\": \"image/png\",",
+			"\t\t\"sizes\": \"${2:192x192}\"",
+			"\t},",
+			"\t{",
+			"\t\t\"src\": \"${3:icon-256x256.png}\",",
+			"\t\t\"type\": \"image/png\",",
+			"\t\t\"sizes\": \"${4:256x256}\"",
+			"\t},",
+			"\t{",
+			"\t\t\"src\": \"${5:icon-384x384.png}\",",
+			"\t\t\"type\": \"image/png\",",
+			"\t\t\"sizes\": \"${6:384x384}\"",
+			"\t},",
+			"\t{",
+			"\t\t\"src\": \"${7:icon.png}\",",
+			"\t\t\"type\": \"image/png\",",
+			"\t\t\"sizes\": \"${0:512x512}\"",
+			"\t}",
+			"]"
+		],
+		"description": "To define icons in the manifest"
+	},
+
+	// Theme color
+	"Theme Color": {
+		"scope": "json",
+		"prefix": "theme-color",
+		"body": [
+			"\"theme_color\": \"${0:#0d4c73}\""
+		],
+		"description": "To define the theme color in the manifest"
+	},
+
+	// Handle files
+	"File Handlers": {
+		"scope": "json",
+		"prefix": "file-handlers",
+		"body": [
+			"\"file_handlers\": [",
+			"\t{",
+			"\t\t\"action\": \"${1:The URL the operating system should navigate to when launching your PWA}\",",
+			"\t\t\"accept\": {",
+			"\t\t\t\"${2:*/*}\": [",
+			"\t\t\t\t\"${0:.txt}\"",
+			"\t\t\t]",
+			"\t\t}",
+			"\t}",
+			"]"
+		],
+	},
+
+	"Shortcuts" : {
+		"scope": "json",
+		"prefix": "shortcuts",
+		"body": [
+			"\"shortcuts\": [",
+            "\t{",
+            "\t\t\"name\":\"${15:The name you would like to be displayed for your shortcut}\",",
+            "\t\t\"url\":\"${16:The url you would like to open when the user chooses this shortcut. This must be a URL local to your PWA. For example: If my start_url is /, this URL must be something like /shortcut}\",",
+            "\t\t\"description\":\"${17:A description of the functionality of this shortcut}\"",
+            "\t}",
+            "]",
+		]
+	},
+
+	"Screenshots" : {
+		"scope": "json",
+		"prefix": "screenshots",
+		"body": [
+			"\"screenshots\": [",
+            "\t{",
+            "\t\t\"src\":\"${15:The src to your screenshot}\",",
+            "\t\t\"sizes\":\"${16:The size of your screenshot, such as 2880x1800}\",",
+			"\t\t\"type\":\"${17:The type of your image, such as image/png}\"",
+            "\t\t\"description\":\"${17:A description of the screenshot}\"",
+            "\t}",
+            "]",
+		]
+	}
+}
