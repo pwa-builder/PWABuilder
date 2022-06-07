@@ -1,18 +1,27 @@
 # PWABuilder
 The simplest way to create progressive web apps across platforms and devices.
 
-This repo is home to several projects in the PWABuilder family of tools. The main projects are
+This repo is home to several projects in the PWABuilder family of tools. 
 
-| Name  | Overview | Project | Source | Docs | Contribute |
-|-------| ----- | --------------- | -------- | -------------- | --------|
-| PWABuilder.com | Source code for [pwabuilder.com](https://pwabuilder.com) - the best way to package PWAs for various stores. | [pwabuilder.com](https://pwabuilder.com) | [/apps/pwabuilder](/apps/pwabuilder) | [PWABuilder docs](https://docs.pwabuilder.com) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
-| PWABuilder docs | Source code for [docs.pwabuilder.com](https://docs.pwabuilder.com) | [docs.pwabuilder.com](https://docs.pwabuilder.com) | [/docs](/docs) | [TODO: add wiki link] | [TODO: add wiki link]
+| Tools  | Overview | Source | Docs | Contribute |
+|-------| ----- | -------- | -------------- | --------|
+| [PWABuilder.com](https://pwabuilder.com) | The best way to package PWAs for various stores. | [/apps/pwabuilder](/apps/pwabuilder) | [PWABuilder docs](https://docs.pwabuilder.com) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
+
+| Docs | Source | Contribute |
+| -------- | -------------- | --------|
+| [docs.pwabuilder.com](https://docs.pwabuilder.com) | [/docs](/docs) | [TODO: add wiki link]
+| [blog.pwabuilder.com](https://blog.pwabuilder.com) | [/apps/blog](/apps/blog) | [/apps/blog](/apps/blog)
+
+
+| Components  | Overview | NPM | Source | Docs | Contribute |
+|-------| ----- | -------- | --- | -------------- | --------|
 | `<pwa-auth>` | Web component for authenticating users | [![npm version](https://badge.fury.io/js/@pwabuilder%2Fpwaauth.svg)](https://badge.fury.io/js/@pwabuilder%2Fpwaauth) | [/components/pwa-auth](/components/pwa-auth) | [/components/pwa-auth/docs](/components/pwa-auth/docs) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
 | `<pwa-update>` | Web component for great PWA update experience | [![npm version](https://badge.fury.io/js/@pwabuilder%2Fpwaupdate.svg)](https://badge.fury.io/js/@pwabuilder%2Fpwaupdate) | [/components/pwa-update](/components/pwa-update) | [/components/pwa-update](/components/pwa-update) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
 | `<pwa-install>` | Web component for great PWA install experience | [![npm version](https://badge.fury.io/js/@pwabuilder%2Fpwainstall.svg)](https://badge.fury.io/js/@pwabuilder%2Fpwainstall) | [/components/pwa-install](/components/pwa-install) | [/components/pwa-install](/components/pwa-install) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
 | `<pwa-inking>` | Web component for adding inking to your PWAs | [![npm version](https://badge.fury.io/js/@pwabuilder%2Fpwa-inking.svg)](https://badge.fury.io/js/@pwabuilder%2Fpwa-inking) | [/components/pwa-inking](/components/pwa-inking) | [/components/pwa-inking](/components/pwa-inking) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
 
-### Prerequisites
+
+## Recommended Development setup
 
 You will need the following things properly installed on your computer.
 
@@ -21,7 +30,6 @@ You will need the following things properly installed on your computer.
 
 You should also be familiar with [TypeScript](https://www.typescriptlang.org/) which we use for this project. This helps give you more guidance as you code from [intellisense](https://code.visualstudio.com/docs/editor/intellisense) when using [VSCode](https://code.visualstudio.com/).
 
-### Recommended Development setup
 
 We recommend the following tools for your dev setup:
 
