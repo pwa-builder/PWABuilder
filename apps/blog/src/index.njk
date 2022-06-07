@@ -1,0 +1,14 @@
+---
+pagination:
+  data: collections.post
+  size: 12
+  alias: posts
+  reverse: true
+permalink: "/{% if pagination.pageNumber > 0 %}page/{{ pagination.pageNumber + 1 }}/{% endif %}"
+image: blog-card.webp
+---
+
+{% extends 'layouts/home.njk' %}
+{% block body %}
+  {% include "posts.njk" %}
+{% endblock %}
