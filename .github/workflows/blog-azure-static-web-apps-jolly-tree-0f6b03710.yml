@@ -1,4 +1,4 @@
-name: [BLOG] Azure Static Web Apps CI/CD
+name: BLOG SWA CI/CD
 
 on:
   push:
