@@ -28,6 +28,7 @@ Today, the PWABuilder project is excited to release a brand new VSCode Extension
 The PWA Studio VSCode extension brings everything you need to build high quality PWAs, right to your VSCode. 
 
 You can:
+
 -	Start building a new PWA, with all the best practices, excellent developer experience and exceptional performance that you expect, in seconds using the PWABuilder pwa-starter.
 -	Learn how to publish your app to the Web with Azure Static Web Apps
 -	Add a Web Manifest and Service Worker to your existing web app
