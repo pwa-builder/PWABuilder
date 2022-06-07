@@ -17,6 +17,7 @@ export class ManifestCodeForm extends LitElement {
       css`
         #code-holder {
           position: relative;
+          max-width: 700px;
         }
         #code-editor {
           overflow-x: scroll;
@@ -24,12 +25,12 @@ export class ManifestCodeForm extends LitElement {
           background-color: #f6f8fa;
           padding: 5px;
           padding-top: 0;
+          font-size: 16px;
         }
         #copy-manifest {
           position: absolute;
           top: 5px;
           right: 5px;
-
           display: flex;
           align-items: center;
         }
@@ -64,7 +65,6 @@ export class ManifestCodeForm extends LitElement {
         <button id="copy-manifest" @click=${() => this.copyToClip()}><ion-icon name="copy"></ion-icon>Copy Manifest</button>
       </div>
       ${this.showCopyToast ? html`<app-toast>Manifest Copied to Clipboard</app-toast>` : html``}
-
     `;
   }
 }

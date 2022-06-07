@@ -1,6 +1,29 @@
 import { Manifest, Validation } from "../interfaces";
 import { maniTests } from "../validations";
 
+const possibleManiKeys = [
+  "background_color",
+  "description",
+  "dir",
+  "display",
+  "lang",
+  "name",
+  "orientation",
+  "prefer_related_applications",
+  "related_applications",
+  "scope",
+  "short_name",
+  "start_url",
+  "theme_color",
+  "generated",
+  "shortcuts",
+  "categories",
+  "screenshots",
+  "iarc_rating_id",
+  "icons",
+  "share_target"
+];
+
 export function isStandardOrientation(orientation: string): boolean {
   const standardOrientations = [
     "any",
@@ -27,56 +50,95 @@ export function isValidJSON(json: Manifest): boolean {
 
 export async function loopThroughKeys(manifest: Manifest): Promise<Array<Validation>> {
   return new Promise((resolve) => {
-      let data: Array<Validation> = [];
+    let data: Array<Validation> = [];
 
-      const keys = Object.keys(manifest);
+    const keys = Object.keys(manifest);
 
-      keys.forEach((key) => {
-          maniTests.forEach(async (test) => {
-              if (test.member === key && test.test) {
-                  const testResult = await test.test(manifest[key]);
-  
-                  if (testResult === false) {
-                      test.valid = false;
-                      data.push(test);
-                  }
-                  else {
-                      test.valid = true;
-                      data.push(test);
-                  }
-              }
-          })
+    keys.forEach((key) => {
+      maniTests.forEach(async (test) => {
+        if (test.member === key && test.test) {
+          const testResult = await test.test(manifest[key]);
+
+          if (testResult === false) {
+            test.valid = false;
+            data.push(test);
+          }
+          else {
+            test.valid = true;
+            data.push(test);
+          }
+        }
+        else {
+          test.valid = false;
+          data.push(test);
+        }
       })
+    })
 
-      resolve(data);
+    resolve(data);
   })
+}
+
+
+export async function findMissingKeys(manifest: Manifest): Promise<Array<string>> {
+  return new Promise((resolve) => {
+    let data: string[] = [];
+
+    const keys = Object.keys(manifest);
+
+    // find missing possible keys in manifest
+    possibleManiKeys.forEach((key) => {
+      if (keys.includes(key) === false) {
+        data.push(key);
+      }
+    })
+
+    resolve(data);
+  });
 }
 
 export async function loopThroughRequiredKeys(manifest: Manifest): Promise<Array<Validation>> {
   return new Promise((resolve) => {
-      let data: Array<Validation> = [];
+    let data: Array<Validation> = [];
 
-      const keys = Object.keys(manifest);
+    const keys = Object.keys(manifest);
 
-      keys.forEach((key) => {
-          maniTests.forEach(async (test) => {
-              if (test.category === "required") {
-                  if (test.member === key && test.test) {
-                      const testResult = await test.test(manifest[key]);
-  
-                      if (testResult === false) {
-                          test.valid = false;
-                          data.push(test);
-                      }
-                      else {
-                          test.valid = true;
-                          data.push(test);
-                      }
-                  }
-              }
-          })
+    keys.forEach((key) => {
+      maniTests.forEach(async (test) => {
+        if (test.category === "required") {
+          if (test.member === key && test.test) {
+            const testResult = await test.test(manifest[key]);
+
+            if (testResult === false) {
+              test.valid = false;
+              data.push(test);
+            }
+            else {
+              test.valid = true;
+              data.push(test);
+            }
+          }
+        }
       })
+    })
 
-      resolve(data);
+    resolve(data);
+  })
+}
+
+export async function findSingleField(field: string, value: any): Promise<Validation | boolean | undefined> {
+  return new Promise(async (resolve) => {
+    let singleField = undefined;
+
+    maniTests.forEach((test) => {
+      if (test.member === field && test.test) {
+        const testResult = test.test(value);
+
+        console.log("testResult", testResult);
+        singleField = testResult;
+      }
+    });
+
+    resolve(singleField);
   })
 }
