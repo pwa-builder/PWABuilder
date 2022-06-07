@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { doubleCheckManifest, getManifestContext } from '../services/app-info';
-import { validateManifest, Validation } from '@pwabuilder/manifest-validation'
+import { validateManifest, Validation, reportMissing } from '@pwabuilder/manifest-validation'
 import {
   BreakpointValues,
   mediumBreakPoint,
@@ -32,7 +32,6 @@ import {
 
 import { fetchOrCreateManifest } from '../services/manifest';
 import { resolveUrl } from '../utils/url';
-import { reportMissing } from '@pwabuilder/manifest-validation';
 
 /* const possible_messages = {
   overview: {
