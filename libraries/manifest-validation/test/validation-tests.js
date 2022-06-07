@@ -71,25 +71,41 @@ const test_manifest = JSON.stringify({
 /*
   * Test validateManifest method
 */
-test('can validate whole manifest', async (t) => {
+test('can validate whole manifest', async () => {
   assert.doesNotReject(maniLib.validateManifest(test_manifest));
 });
 
-test('Should reject because of improper JSON', async (t) => {
+test('Should reject because of improper JSON', async () => {
   assert.rejects(maniLib.validateManifest('{'));
+});
+
+// should include missing fields
+test('includes missing fields', async () => {
+  const data = await maniLib.validateManifest(test_manifest);
+
+  assert.equal(data.includes("iarc_rating_id"), false);
+});
+
+/*
+* Test reportMissing method
+*/
+test('can report missing fields', async () => {
+  const report = await maniLib.reportMissing(test_manifest);
+  assert.equal(report.length > 0, true);
+  assert.equal(report.includes("iarc_rating_id"), true);
 });
 
 /*
   * Test validateSingleField method
 */
-test('can validate a single field, should return true', async (t) => {
+test('can validate a single field, should return true', async () => {
   const validity = await maniLib.validateSingleField("short_name", "Webboard");
 
   // validity should be a boolean, and true in this case
   assert.strictEqual(validity, true);
 });
 
-test('can validate a single field, should return false', async (t) => {
+test('can validate a single field, should return false', async () => {
   const validityMember = await maniLib.validateSingleField("theme_color", "black");
 
   // validity should return a Validation, and we check that its the right validation
@@ -99,11 +115,11 @@ test('can validate a single field, should return false', async (t) => {
 /*
  * test validateRequiredFields method
 */
-test('can validate required fields', async (t) => {
+test('can validate required fields', async () => {
   assert.doesNotReject(maniLib.validateRequiredFields(test_manifest));
 });
 
-test('should reject because of missing required field', async (t) => {
+test('should reject because of missing required field', async () => {
   const manifest = JSON.parse(test_manifest);
   delete manifest.short_name;
   const newMani = JSON.stringify(manifest);
@@ -112,6 +128,6 @@ test('should reject because of missing required field', async (t) => {
 });
 
 // should reject because of improper json
-test('should reject because of improper json', async (t) => {
+test('should reject because of improper json', async () => {
   assert.rejects(maniLib.validateRequiredFields('{'));
 });

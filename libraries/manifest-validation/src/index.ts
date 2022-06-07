@@ -1,5 +1,5 @@
 import { Manifest, Validation } from "./interfaces";
-import { isValidJSON, loopThroughKeys, loopThroughRequiredKeys } from "./utils/validation-utils";
+import { findMissingKeys, isValidJSON, loopThroughKeys, loopThroughRequiredKeys } from "./utils/validation-utils";
 import { maniTests } from "./validations";
 
 export async function validateManifest(manifest: Manifest): Promise<Validation[]> {
@@ -33,6 +33,15 @@ export async function validateSingleField(field: string, value: any): Promise<Va
     }
 
     return undefined;
+}
+
+export async function reportMissing(manifest: Manifest): Promise<Array<string>> {
+    return new Promise(async(resolve) => {
+        const data = await findMissingKeys(manifest);
+        if (data && data.length > 0) {
+            resolve(data);
+        }
+    })
 }
 
 export async function validateRequiredFields(manifest: Manifest): Promise<Validation[]> {
