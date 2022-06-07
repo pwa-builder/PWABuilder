@@ -49,14 +49,27 @@ export function isValidJSON(json: Manifest): boolean {
 }
 
 export async function loopThroughKeys(manifest: Manifest): Promise<Array<Validation>> {
-  return new Promise((resolve) => {
+  return new Promise(async (resolve) => {
     let data: Array<Validation> = [];
 
     const keys = Object.keys(manifest);
 
-    keys.forEach((key) => {
-      maniTests.forEach(async (test) => {
-        if (test.member === key && test.test) {
+    for (const key of possibleManiKeys) {
+      if (keys.includes(key) === false) {
+        // find the key in maniTests
+        const test = maniTests.find((test) => test.member === key);
+
+        if (test) {
+          test.valid = false;
+          data.push(test);
+        }
+      }
+      else if (keys.includes(key) === true) {
+        // find the key in maniTests
+        const test = maniTests.find((test) => test.member === key);
+
+        // run the test
+        if (test && test.test) {
           const testResult = await test.test(manifest[key]);
 
           if (testResult === false) {
@@ -68,12 +81,13 @@ export async function loopThroughKeys(manifest: Manifest): Promise<Array<Validat
             data.push(test);
           }
         }
-        else {
-          test.valid = false;
+
+        if (test) {
+          test.valid = true;
           data.push(test);
         }
-      })
-    })
+      }
+    }
 
     resolve(data);
   })
@@ -87,8 +101,6 @@ export async function findMissingKeys(manifest: Manifest): Promise<Array<string>
 
     // find missing possible keys in manifest
     possibleManiKeys.forEach((key) => {
-      console.log("key", key);
-      console.log("test", keys.includes(key));
       if (keys.includes(key) === false) {
         data.push(key);
       }
@@ -135,7 +147,6 @@ export async function findSingleField(field: string, value: any): Promise<Valida
       if (test.member === field && test.test) {
         const testResult = test.test(value);
 
-        console.log("testResult", testResult);
         singleField = testResult;
       }
     });
