@@ -81,8 +81,7 @@ export class AppReport extends LitElement {
     description: "Your site's description",
     siteUrl: 'Site URL',
   };
-  @property()
-  styles = { backgroundColor: 'white' };
+  @property({ type: Object }) styles = { backgroundColor: 'white', color: 'black' };
   @property() manifestCard = {};
   @property() serviceWorkerCard = {};
   @property() securityCard = {};
@@ -177,9 +176,19 @@ export class AppReport extends LitElement {
           font-weight: bold;
           width: 100%;
         }
+        #pwa-image-holder {
+          height: fit-content;
+          width: fit-content;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: white;
+          border-radius: 10px;
+        }
         #card-header img {
           height: 85px;
           width: auto;
+          padding: 10px;
         }
         #site-name {
           font-size: 24px;
@@ -618,22 +627,42 @@ export class AppReport extends LitElement {
   populateAppCard(manifestContext: ManifestContext, url: string) {
     if (manifestContext) {
       const parsedManifestContext = manifestContext;
+
+      let cleanURL = url.replace(/(^\w+:|^)\/\//, '')
+
+
       this.appCard = {
         siteName: parsedManifestContext.manifest.short_name
           ? parsedManifestContext.manifest.short_name
           : (parsedManifestContext.manifest.name ? parsedManifestContext.manifest.name : 'Untitled App'),
-        siteUrl: url,
+        siteUrl: cleanURL,
         description: parsedManifestContext.manifest.description
           ? parsedManifestContext.manifest.description
           : 'Add an app description to your manifest',
       };
-      if(manifestContext.manifest.background_color){
-        this.styles.backgroundColor = manifestContext.manifest.background_color;
+      if(manifestContext.manifest.theme_color){
+        this.styles.backgroundColor = manifestContext.manifest.theme_color;
+        // calculate whether is best to use white or black
+        this.styles.color = this.pickTextColorBasedOnBgColorAdvanced(manifestContext.manifest.theme_color, '#ffffff', '#000000');
+
       }
     }
+  }
 
-    
-
+  pickTextColorBasedOnBgColorAdvanced(bgColor: string, lightColor: string, darkColor: string) {
+    var color = (bgColor.charAt(0) === '#') ? bgColor.substring(1, 7) : bgColor;
+    var r = parseInt(color.substring(0, 2), 16); // hexToR
+    var g = parseInt(color.substring(2, 4), 16); // hexToG
+    var b = parseInt(color.substring(4, 6), 16); // hexToB
+    var uicolors = [r / 255, g / 255, b / 255];
+    var c = uicolors.map((col) => {
+      if (col <= 0.03928) {
+        return col / 12.92;
+      }
+      return Math.pow((col + 0.055) / 1.055, 2.4);
+    });
+    var L = (0.2126 * c[0]) + (0.7152 * c[1]) + (0.0722 * c[2]);
+    return (L > 0.3) ? darkColor : lightColor;
   }
 
   async runAllTests(url: string) {
@@ -850,7 +879,9 @@ export class AppReport extends LitElement {
             html`
             <div id="app-card" class="flex-col" style=${styleMap(this.styles)}>
               <div id="card-header">
-                <img src=${this.iconSrcListParse()![0]} alt="Your sites logo" />
+                <div id="pwa-image-holder">
+                  <img src=${this.iconSrcListParse()![0]} alt="Your sites logo" />
+                </div>
                 <div id="card-info" class="flex-col">
                   <p id="site-name">${this.appCard.siteName}</p>
                   <p>${this.appCard.siteUrl}</p>
