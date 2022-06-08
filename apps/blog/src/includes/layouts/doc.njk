@@ -1,0 +1,76 @@
+---
+permalink: "{% if path %}{{ path | slug }}{% else %}{{'/docs/'}}{{ title | slug }}{% endif %}/index.html"
+---
+
+{% extends 'layouts/basedoc.njk' %}
+{% block body %}
+  <div class="flex flex-col justify-center items-start">
+    <div class="w-full flex justify-between items-center">
+      <div>
+        <h1>
+          {{title}}</h1>
+        {% if date %}
+          {% if updatedDate and (date | string) !== (updatedDate | string) %}
+            <p class="text-sm italic">Last updated on <small datetime="{{ date }}">{{ updatedDate | dateDisplay }}</small></p>
+          {% else %}
+            <small class="text-sm italic">
+              <span datetime="{{ date }}">{{ date | dateDisplay }}</span>
+            </small>
+          {% endif %}
+        {% endif %}
+        {% if author %}
+          <span>{{author.name}}</span>
+        {% endif %}
+      </div>
+      <button class="share bg-primary capitalize px-5 py-1 shadow rounded-full font-bold ml-auto">Share</button>
+    </div>
+
+    <div class="my-8">
+      {{ content | safe }}
+    </div>
+
+    <div class="flex items-center mb-8">
+      {% if tags %}
+        <div>
+          {% for tag in tags %}
+            {%- if tag !== "post" and tag !== "docs" -%}
+              <a
+      class="tag {{ tag | replace('.', '') }} mr-2 font-light"
+      href="{{ site.baseUrl }}tags/{{ tag | slug }}"
+      >{{ tag }}</a
+    >
+            {%- endif -%}
+          {% endfor %}
+        </div>
+      {% endif %}
+      <button class="share bg-primary capitalize px-5 py-1 shadow rounded-full font-bold">Share</button>
+    </div>
+    <hr class="opacity-10">
+    <div class="w-full flex items-center justify-between">
+      <div>
+        {%- set nextPost = collections['docsWithoutDrafts'] |
+  getNextCollectionItem(page) %}
+        {%- if nextPost %}
+          <p class="uppercase text-xs mt-6">Next</p>
+          <p class="font-bold mb-2">
+            <a href="{{ nextPost.url | url }}">{{ nextPost.data.title }}</a>
+          </p>
+        {% endif %}
+      </div>
+      <div>
+        {%- set previousPost = collections['docsWithoutDrafts'] |
+  getPreviousCollectionItem(page) %}
+        {%- if previousPost %}
+          <p class="uppercase text-xs mt-6">Previous</p>
+          <p class="font-bold">
+            <a href="{{ previousPost.url | url }}">{{ previousPost.data.title }}</a>
+          </p>
+        {% endif %}
+      </div>
+    </div>
+
+    {% include "recommended.njk" %}
+    <a class="bg-secondary text-secondary-font rounded-full px-8 py-2 mx-auto" href="/docs">Back to Documentation Home</a>
+  </div>
+
+{% endblock %}

@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "lib": [
+      "dom",
+      "es2017"
+    ],
+    "module": "es2015",
+    "moduleResolution": "node",
+    "target": "es2017",
+    "outDir": "build",
+    "declaration": true,
+    "esModuleInterop": true,
+    "sourceMap": false,
+    "rootDir": "src",
+    "strict": true
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "src", "index.d.ts"
+  ]
+}
